@@ -64,12 +64,18 @@
         __block UAAuthToken *responseToken;
         __block UASemaphore *semaphore = [UASemaphore semaphore];
 
-        [self.client tokenWithChannelID:self.channel.identifier completionHandler:^(UAAuthToken * _Nullable token, NSError * _Nullable error) {
-            if (!token || error) {
+        [self.client tokenWithChannelID:self.channel.identifier completionHandler:^(UAAuthTokenResponse * _Nullable response, NSError * _Nullable error) {
+            if (error) {
                 UA_LDEBUG(@"Unable to retrieve auth token: %@", error);
+            } else {
+                if ([response isSuccess]) {
+                    responseToken = response.token;
+                } else {
+                    UA_LDEBUG(@"Auth token retrieval failed with status: %lu", (unsigned long)response.status);
+                }
             }
 
-            responseToken = token;
+            responseToken = response.token;
 
             [semaphore signal];
         }];

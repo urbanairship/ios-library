@@ -37,9 +37,10 @@
     [[[self.mockClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        void (^completionHandler)(UAAuthToken * _Nullable, NSError * _Nullable) = (__bridge void(^)(UAAuthToken * _Nullable, NSError * _Nullable))arg;
+        void (^completionHandler)(UAAuthTokenResponse * _Nullable, NSError * _Nullable) = (__bridge void(^)(UAAuthTokenResponse * _Nullable, NSError * _Nullable))arg;
         UAAuthToken *token = [UAAuthToken authTokenWithChannelID:self.channelID token:@"token" expiration:[NSDate distantFuture]];
-        completionHandler(token, nil);
+        UAAuthTokenResponse *response = [[UAAuthTokenResponse alloc] initWithStatus:200 authToken:token];
+        completionHandler(response, nil);
     }] tokenWithChannelID:self.channelID completionHandler:OCMOCK_ANY];
 
     [self.manager tokenWithCompletionHandler:^(NSString * _Nullable token) {
@@ -72,9 +73,10 @@
     [[[self.mockClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        void (^completionHandler)(UAAuthToken * _Nullable, NSError * _Nullable) = (__bridge void(^)(UAAuthToken * _Nullable, NSError * _Nullable))arg;
+        void (^completionHandler)(UAAuthTokenResponse * _Nullable, NSError * _Nullable) = (__bridge void(^)(UAAuthTokenResponse * _Nullable, NSError * _Nullable))arg;
         UAAuthToken *token = [UAAuthToken authTokenWithChannelID:self.channelID token:@"token" expiration:[NSDate distantFuture]];
-        completionHandler(token, nil);
+        UAAuthTokenResponse *response = [[UAAuthTokenResponse alloc] initWithStatus:200 authToken:token];
+        completionHandler(response, nil);
     }] tokenWithChannelID:self.channelID completionHandler:OCMOCK_ANY];
 
     __block NSString *firstToken;
@@ -132,11 +134,12 @@
     [[[self.mockClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        void (^completionHandler)(UAAuthToken * _Nullable, NSError * _Nullable) = (__bridge void(^)(UAAuthToken * _Nullable, NSError * _Nullable))arg;
+        void (^completionHandler)(UAAuthTokenResponse * _Nullable, NSError * _Nullable) = (__bridge void(^)(UAAuthTokenResponse * _Nullable, NSError * _Nullable))arg;
         UAAuthToken *token = [UAAuthToken authTokenWithChannelID:self.channelID token:@"token"
                                                       expiration:[NSDate dateWithTimeInterval:24 * 60 * 60
                                                                                     sinceDate:self.testDate.now]];
-        completionHandler(token, nil);
+        UAAuthTokenResponse *response = [[UAAuthTokenResponse alloc] initWithStatus:200 authToken:token];
+        completionHandler(response, nil);
     }] tokenWithChannelID:self.channelID completionHandler:OCMOCK_ANY];
 
     __block NSString *firstToken;
@@ -160,9 +163,10 @@
     [[[self.mockClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        void (^completionHandler)(UAAuthToken * _Nullable, NSError * _Nullable) = (__bridge void(^)(UAAuthToken * _Nullable, NSError * _Nullable))arg;
+        void (^completionHandler)(UAAuthTokenResponse * _Nullable, NSError * _Nullable) = (__bridge void(^)(UAAuthTokenResponse * _Nullable, NSError * _Nullable))arg;
         UAAuthToken *token = [UAAuthToken authTokenWithChannelID:self.channelID token:@"some other token" expiration:[NSDate distantFuture]];
-        completionHandler(token, nil);
+        UAAuthTokenResponse *response = [[UAAuthTokenResponse alloc] initWithStatus:200 authToken:token];
+        completionHandler(response, nil);
     }] tokenWithChannelID:self.channelID completionHandler:OCMOCK_ANY];
 
     __block NSString *secondToken;
@@ -185,9 +189,10 @@
     [[[self.mockClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        void (^completionHandler)(UAAuthToken * _Nullable, NSError * _Nullable) = (__bridge void(^)(UAAuthToken * _Nullable, NSError * _Nullable))arg;
+        void (^completionHandler)(UAAuthTokenResponse * _Nullable, NSError * _Nullable) = (__bridge void(^)(UAAuthTokenResponse * _Nullable, NSError * _Nullable))arg;
         UAAuthToken *token = [UAAuthToken authTokenWithChannelID:self.channelID token:@"token" expiration:[NSDate distantFuture]];
-        completionHandler(token, nil);
+        UAAuthTokenResponse *response = [[UAAuthTokenResponse alloc] initWithStatus:200 authToken:token];
+        completionHandler(response, nil);
     }] tokenWithChannelID:self.channelID completionHandler:OCMOCK_ANY];
 
     __block NSString *firstToken;
@@ -210,9 +215,10 @@
     [[[self.mockClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        void (^completionHandler)(UAAuthToken * _Nullable, NSError * _Nullable) = (__bridge void(^)(UAAuthToken * _Nullable, NSError * _Nullable))arg;
+        void (^completionHandler)(UAAuthTokenResponse * _Nullable, NSError * _Nullable) = (__bridge void(^)(UAAuthTokenResponse * _Nullable, NSError * _Nullable))arg;
         UAAuthToken *token = [UAAuthToken authTokenWithChannelID:self.channelID token:@"some other token" expiration:[NSDate distantFuture]];
-        completionHandler(token, nil);
+        UAAuthTokenResponse *response = [[UAAuthTokenResponse alloc] initWithStatus:200 authToken:token];
+        completionHandler(response, nil);
     }] tokenWithChannelID:self.channelID completionHandler:OCMOCK_ANY];
 
     __block NSString *secondToken;
@@ -236,9 +242,10 @@
     [[[self.mockClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        void (^completionHandler)(UAAuthToken * _Nullable, NSError * _Nullable) = (__bridge void(^)(UAAuthToken * _Nullable, NSError * _Nullable))arg;
+        void (^completionHandler)(UAAuthTokenResponse * _Nullable, NSError * _Nullable) = (__bridge void(^)(UAAuthTokenResponse * _Nullable, NSError * _Nullable))arg;
         UAAuthToken *token = [UAAuthToken authTokenWithChannelID:self.channelID token:@"token" expiration:[NSDate distantFuture]];
-        completionHandler(token, nil);
+        UAAuthTokenResponse *response = [[UAAuthTokenResponse alloc] initWithStatus:200 authToken:token];
+        completionHandler(response, nil);
     }] tokenWithChannelID:self.channelID completionHandler:OCMOCK_ANY];
 
     [[self.mockClient reject] tokenWithChannelID:OCMOCK_ANY completionHandler:OCMOCK_ANY];
@@ -272,10 +279,11 @@
     [[[self.mockClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        void (^completionHandler)(UAAuthToken * _Nullable, NSError * _Nullable) = (__bridge void(^)(UAAuthToken * _Nullable, NSError * _Nullable))arg;
+        void (^completionHandler)(UAAuthTokenResponse * _Nullable, NSError * _Nullable) = (__bridge void(^)(UAAuthTokenResponse * _Nullable, NSError * _Nullable))arg;
         UAAuthToken *token = [UAAuthToken authTokenWithChannelID:self.channelID token:@"token" expiration:[NSDate dateWithTimeInterval:24 * 60 * 60
                                                                                                                              sinceDate:self.testDate.now]];
-        completionHandler(token, nil);
+        UAAuthTokenResponse *response = [[UAAuthTokenResponse alloc] initWithStatus:200 authToken:token];
+        completionHandler(response, nil);
     }] tokenWithChannelID:self.channelID completionHandler:OCMOCK_ANY];
 
     __block NSString *firstToken;
@@ -302,12 +310,13 @@
     [[[self.mockClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        void (^completionHandler)(UAAuthToken * _Nullable, NSError * _Nullable) = (__bridge void(^)(UAAuthToken * _Nullable, NSError * _Nullable))arg;
+        void (^completionHandler)(UAAuthTokenResponse * _Nullable, NSError * _Nullable) = (__bridge void(^)(UAAuthTokenResponse * _Nullable, NSError * _Nullable))arg;
 
         // Complete with a fresh token
         UAAuthToken *token = [UAAuthToken authTokenWithChannelID:self.channelID token:@"some other token" expiration:[NSDate dateWithTimeInterval:24 * 60 * 60 * 3
                                                                                                                                         sinceDate:self.testDate.now]];
-        completionHandler(token, nil);
+        UAAuthTokenResponse *response = [[UAAuthTokenResponse alloc] initWithStatus:200 authToken:token];
+        completionHandler(response, nil);
     }] tokenWithChannelID:self.channelID completionHandler:OCMOCK_ANY];
 
     [self.manager tokenWithCompletionHandler:^(NSString * _Nullable token) {

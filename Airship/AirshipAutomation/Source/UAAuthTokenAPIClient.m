@@ -10,6 +10,23 @@
 
 NSString * const UAAuthTokenAPIClientErrorDomain = @"com.urbanairship.auth_token_api_client";
 
+@interface UAAuthTokenResponse()
+@property(nonatomic, strong) UAAuthToken *token;
+@end
+
+@implementation UAAuthTokenResponse
+
+- (instancetype)initWithStatus:(NSUInteger)status authToken:(UAAuthToken *)token {
+    self = [super initWithStatus:status];
+
+    if (self) {
+        self.token = token;
+    }
+
+    return self;
+}
+@end
+
 @interface UAAuthTokenAPIClient()
 @property(nonatomic, strong) UARuntimeConfig *config;
 @property(nonatomic, strong) UARequestSession *session;
@@ -51,7 +68,7 @@ NSString * const UAAuthTokenAPIClientErrorDomain = @"com.urbanairship.auth_token
     return request;
 }
 
-- (void)tokenWithChannelID:(NSString *)channelID completionHandler:(void (^)(UAAuthToken * _Nullable, NSError * _Nullable))completionHandler {
+- (void)tokenWithChannelID:(NSString *)channelID completionHandler:(void (^)(UAAuthTokenResponse * _Nullable, NSError * _Nullable))completionHandler {
     UARequest *request = [self authTokenRequestWithChannelID:channelID];
 
     [self.session performHTTPRequest:request completionHandler:^(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response, NSError * _Nullable error) {
@@ -64,14 +81,7 @@ NSString * const UAAuthTokenAPIClientErrorDomain = @"com.urbanairship.auth_token
 
         // Unsuccessful HTTP response
         if (!(status >= 200 && status <= 299)) {
-            UA_LTRACE(@"Auth token request failed with status: %lu", (unsigned long)status);
-            NSString *msg = [NSString stringWithFormat:@"Auth token API client encountered an unsuccessful status"];
-
-            NSError *error = [NSError errorWithDomain:UAAuthTokenAPIClientErrorDomain
-                                                 code:UAAuthTokenAPIClientErrorUnsuccessfulStatus
-                                             userInfo:@{NSLocalizedDescriptionKey:msg}];
-
-            return completionHandler(nil, error);
+            return completionHandler([[UAAuthTokenResponse alloc] initWithStatus:response.statusCode authToken:nil], nil);
         }
 
         // Successful HTTP response
@@ -91,7 +101,7 @@ NSString * const UAAuthTokenAPIClientErrorDomain = @"com.urbanairship.auth_token
         }
 
         // Successful auth token request
-        completionHandler(authToken, nil);
+        completionHandler([[UAAuthTokenResponse alloc] initWithStatus:response.statusCode authToken:authToken], nil);
     }];
 }
 

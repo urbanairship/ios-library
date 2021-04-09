@@ -49,8 +49,8 @@
 
     XCTestExpectation *tokenRetrieved = [self expectationWithDescription:@"token retrieved"];
 
-    [self.client tokenWithChannelID:@"channel ID" completionHandler:^(UAAuthToken * _Nullable token, NSError * _Nullable error) {
-        if (token && !error) {
+    [self.client tokenWithChannelID:@"channel ID" completionHandler:^(UAAuthTokenResponse * _Nullable response, NSError * _Nullable error) {
+        if (response.token && !error) {
             [tokenRetrieved fulfill];
         }
     }];
@@ -73,8 +73,8 @@
 
     XCTestExpectation *tokenRetrieved = [self expectationWithDescription:@"token retrieved"];
 
-    [self.client tokenWithChannelID:@"channel ID" completionHandler:^(UAAuthToken * _Nullable token, NSError * _Nullable error) {
-        if (!token && error) {
+    [self.client tokenWithChannelID:@"channel ID" completionHandler:^(UAAuthTokenResponse * _Nullable response, NSError * _Nullable error) {
+        if (!response.token && error) {
             XCTAssertEqualObjects(error.domain, UAAuthTokenAPIClientErrorDomain);
             XCTAssertEqual(error.code, UAAuthTokenAPIClientErrorInvalidResponse);
             [tokenRetrieved fulfill];
@@ -99,12 +99,12 @@
 
     XCTestExpectation *tokenRetrieved = [self expectationWithDescription:@"token retrieved"];
 
-    [self.client tokenWithChannelID:@"channel ID" completionHandler:^(UAAuthToken * _Nullable token, NSError * _Nullable error) {
-        if (!token && error) {
-            XCTAssertEqualObjects(error.domain, UAAuthTokenAPIClientErrorDomain);
-            XCTAssertEqual(error.code, UAAuthTokenAPIClientErrorUnsuccessfulStatus);
-            [tokenRetrieved fulfill];
-        }
+    [self.client tokenWithChannelID:@"channel ID" completionHandler:^(UAAuthTokenResponse * _Nullable response, NSError * _Nullable error) {
+        XCTAssertNil(response.token);
+        XCTAssertNil(error);
+        XCTAssertTrue(response.isClientError);
+        XCTAssertFalse(response.isSuccess);
+        [tokenRetrieved fulfill];
     }];
 
     [self waitForTestExpectations];
