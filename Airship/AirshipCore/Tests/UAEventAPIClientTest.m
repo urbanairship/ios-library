@@ -69,7 +69,7 @@
 
     XCTestExpectation *callbackCalled = [self expectationWithDescription:@"Callback called"];
     [self.client uploadEvents:@[@{@"some": @"event"}] headers:headers
-            completionHandler:^(NSDictionary *responseHeaders, NSError *error) {
+            completionHandler:^(UAEventAPIResponse *response, NSError *error) {
         [callbackCalled fulfill];
     }];
 
@@ -82,8 +82,7 @@
  * Test that a successful event upload passes the response headers with no errors
  */
 - (void)testUploadEvents {
-
-    NSDictionary *headers = @{@"foo" : @"bar"};
+    NSDictionary *headers = @{@"X-UA-Max-Total" : @"123", @"X-UA-Max-Batch" : @"234", @"X-UA-Min-Batch-Interval": @"345"};
 
     NSHTTPURLResponse *expectedResponse = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:headers];
 
@@ -95,10 +94,14 @@
     }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *expectation = [self expectationWithDescription:@"Callback called"];
-    [self.client uploadEvents:@[@{@"some": @"event"}] headers:headers
-            completionHandler:^(NSDictionary *responseHeaders, NSError *error) {
+    [self.client uploadEvents:@[@{@"some": @"event"}]
+                      headers:@{@"foo" : @"bar"}
+            completionHandler:^(UAEventAPIResponse *response, NSError *error) {
         XCTAssertNil(error);
-        XCTAssertEqualObjects(responseHeaders, headers);
+        XCTAssertEqual(response.status, 200);
+        XCTAssertEqualObjects(response.maxTotalDBSize, @(123));
+        XCTAssertEqualObjects(response.maxBatchSize, @(234));
+        XCTAssertEqualObjects(response.minBatchInterval, @(345));
         [expectation fulfill];
     }];
 
@@ -109,8 +112,7 @@
  * Test that a non-200 event upload passes the response headers with an unsuccessful status error
  */
 - (void)testUploadEventsUnsuccessfulStatus {
-
-    NSDictionary *headers = @{@"foo" : @"bar"};
+    NSDictionary *headers = @{@"X-UA-Max-Total" : @"123", @"X-UA-Max-Batch" : @"234", @"X-UA-Min-Batch-Interval": @"345"};
 
     NSHTTPURLResponse *expectedResponse = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:400 HTTPVersion:nil headerFields:headers];
 
@@ -123,11 +125,14 @@
 
     XCTestExpectation *expectation = [self expectationWithDescription:@"Callback called"];
 
-    [self.client uploadEvents:@[@{@"some": @"event"}] headers:headers
-            completionHandler:^(NSDictionary *responseHeaders, NSError *error) {
-        XCTAssertEqualObjects(error.domain, UAEventAPIClientErrorDomain);
-        XCTAssertEqual(error.code, UAEventAPIClientErrorUnsuccessfulStatus);
-        XCTAssertEqualObjects(responseHeaders, headers);
+    [self.client uploadEvents:@[@{@"some": @"event"}]
+                      headers:@{@"foo" : @"bar"}
+            completionHandler:^(UAEventAPIResponse *response, NSError *error) {
+        XCTAssertNil(error);
+        XCTAssertEqual(response.status, 400);
+        XCTAssertEqualObjects(response.maxTotalDBSize, @(123));
+        XCTAssertEqualObjects(response.maxBatchSize, @(234));
+        XCTAssertEqualObjects(response.minBatchInterval, @(345));
         [expectation fulfill];
     }];
 
@@ -138,8 +143,6 @@
  * Test that a failed event upload passes nil response headers, and the error, when a non-HTTP error is encountered
  */
 - (void)testUploadEventsError {
-
-    NSDictionary *headers = @{@"foo" : @"bar"};
     NSError *expectedError = [NSError errorWithDomain:NSCocoaErrorDomain code:0 userInfo:@{}];
 
     [(UARequestSession *)[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
@@ -151,8 +154,10 @@
 
     XCTestExpectation *expectation = [self expectationWithDescription:@"Callback called"];
 
-    [self.client uploadEvents:@[@{@"some": @"event"}] headers:headers
-            completionHandler:^(NSDictionary *responseHeaders, NSError *error) {
+    [self.client uploadEvents:@[@{@"some": @"event"}]
+                      headers:@{@"foo" : @"bar"}
+            completionHandler:^(UAEventAPIResponse *response, NSError *error) {
+        XCTAssertNil(response);
         XCTAssertEqualObjects(error, expectedError);
         [expectation fulfill];
     }];

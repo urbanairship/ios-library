@@ -3,10 +3,46 @@
 #import <Foundation/Foundation.h>
 #import "UAAnalytics+Internal.h"
 #import "UARequestSession.h"
+#import "UAHTTPResponse.h"
 
 @class UARuntimeConfig;
 
 NS_ASSUME_NONNULL_BEGIN
+
+/**
+ * Event API response.
+ */
+@interface UAEventAPIResponse : UAHTTPResponse
+
+/**
+ * Maximum total database size in kB, as determined by the analytics server.
+ */
+@property(nonatomic, readonly, nullable) NSNumber *maxTotalDBSize;
+
+/**
+ * Maximum batch size in kB, as determined by the analytics server.
+ */
+@property(nonatomic, readonly, nullable) NSNumber *maxBatchSize;
+
+/**
+ * Minimum batch interval in seconds, as determined by the analytics server.
+ */
+@property(nonatomic, readonly, nullable) NSNumber *minBatchInterval;
+
+/**
+ * Init method.
+ *
+ * @param status The status code.
+ * @param maxTotalDBSize The maximum total database size.
+ * @param maxBatchSize The maximum batch size.
+ * @param minBatchInterval The minimum batch interval.
+ */
+- (instancetype)initWithStatus:(NSUInteger)status
+                maxTotalDBSize:(nullable NSNumber *)maxTotalDBSize
+                  maxBatchSize:(nullable NSNumber *)maxBatchSize
+              minBatchInterval:(nullable NSNumber *)minBatchInterval;
+
+@end
 
 /**
  * Represents possible event API client errors.
@@ -55,7 +91,7 @@ extern NSString * const UAEventAPIClientErrorDomain;
  * @param headers The event headers.
  * @param completionHandler A completion handler.
  */
-- (UADisposable *)uploadEvents:(NSArray *)events headers:(NSDictionary<NSString *, NSString *> *)headers completionHandler:(void (^)(NSDictionary * _Nullable, NSError * _Nullable))completionHandler;
+- (UADisposable *)uploadEvents:(NSArray *)events headers:(NSDictionary<NSString *, NSString *> *)headers completionHandler:(void (^)(UAEventAPIResponse * _Nullable, NSError * _Nullable))completionHandler;
 
 @end
 

@@ -235,10 +235,10 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
     [[[self.mockClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:4];
-        void (^returnBlock)(NSDictionary *, NSError *)= (__bridge void (^)(NSDictionary *, NSError *))arg;
+        void (^returnBlock)(UAEventAPIResponse *, NSError *)= (__bridge void (^)(UAEventAPIResponse *, NSError *))arg;
 
         // Return a successful response
-        returnBlock(@{@"foo" : @"bar"}, nil);
+        returnBlock([[UAEventAPIResponse alloc] initWithStatus:200 maxTotalDBSize:@(123) maxBatchSize:@(234) minBatchInterval:@(345)], nil);
         [clientCalled fulfill];
     }] uploadEvents:[OCMArg checkWithBlock:^BOOL(id obj) {
         NSArray *events = (NSArray *)obj;
@@ -327,10 +327,10 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
     [[[self.mockClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:4];
-        void (^returnBlock)(NSDictionary *, NSError *)= (__bridge void (^)(NSDictionary *, NSError *))arg;
+        void (^returnBlock)(UAEventAPIResponse *, NSError *)= (__bridge void (^)(UAEventAPIResponse *, NSError *))arg;
 
         // Return a successful response
-        returnBlock(@{@"foo" : @"bar"}, nil);
+        returnBlock([[UAEventAPIResponse alloc] initWithStatus:200 maxTotalDBSize:@(123) maxBatchSize:@(234) minBatchInterval:@(345)], nil);
         [clientCalled fulfill];
     }] uploadEvents:[OCMArg checkWithBlock:^BOOL(id obj) {
         NSArray *uploadedEventIDs = [(NSArray *)obj valueForKey:@"event_id"];

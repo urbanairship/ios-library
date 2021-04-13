@@ -9,6 +9,32 @@
 
 NSString * const UAEventAPIClientErrorDomain = @"com.urbanairship.event_api_client";
 
+@interface UAEventAPIResponse()
+@property(nonatomic, copy, nullable) NSNumber *maxTotalDBSize;
+@property(nonatomic, copy, nullable) NSNumber *maxBatchSize;
+@property(nonatomic, copy, nullable) NSNumber *minBatchInterval;
+@end
+
+@implementation UAEventAPIResponse
+
+- (instancetype)initWithStatus:(NSUInteger)status
+                maxTotalDBSize:(nullable NSNumber *)maxTotalDBSize
+                  maxBatchSize:(nullable NSNumber *)maxBatchSize
+              minBatchInterval:(nullable NSNumber *)minBatchInterval {
+
+    self = [super initWithStatus:status];
+
+    if (self) {
+        self.maxTotalDBSize = maxTotalDBSize;
+        self.maxBatchSize = maxBatchSize;
+        self.minBatchInterval = minBatchInterval;
+    }
+
+    return self;
+}
+
+@end
+
 @interface UAEventAPIClient()
 @property(nonatomic, strong) UARuntimeConfig *config;
 @property(nonatomic, strong) UARequestSession *session;
@@ -33,7 +59,7 @@ NSString * const UAEventAPIClientErrorDomain = @"com.urbanairship.event_api_clie
     return [[self alloc] initWithConfig:config session:session];
 }
 
-- (UADisposable *)uploadEvents:(NSArray *)events headers:(NSDictionary *)headers completionHandler:(void (^)(NSDictionary * _Nullable responseHeaders, NSError * _Nullable error))completionHandler {
+- (UADisposable *)uploadEvents:(NSArray *)events headers:(NSDictionary *)headers completionHandler:(void (^)(UAEventAPIResponse * _Nullable response, NSError * _Nullable error))completionHandler {
     UARequest *request = [self requestWithEvents:events headers:headers];
 
     if (uaLogLevel >= UALogLevelTrace) {
@@ -49,7 +75,17 @@ NSString * const UAEventAPIClientErrorDomain = @"com.urbanairship.event_api_clie
             return completionHandler(nil, error);
         }
 
-        completionHandler(response.allHeaderFields, response.statusCode != 200 ? [self unsuccessfulStatusError] : nil);
+        NSDictionary *headers = response.allHeaderFields;
+
+        NSNumber *maxTotal = headers[@"X-UA-Max-Total"] ? @([headers[@"X-UA-Max-Total"] integerValue]) : nil;
+        NSNumber *maxBatch = headers[@"X-UA-Max-Batch"] ? @([headers[@"X-UA-Max-Batch"] integerValue]) : nil;
+        NSNumber *minBatchInterval = headers[@"X-UA-Min-Batch-Interval"] ? @([headers[@"X-UA-Min-Batch-Interval"] integerValue]) : nil;
+
+        UAEventAPIResponse *eventAPIResponse = [[UAEventAPIResponse alloc] initWithStatus:response.statusCode
+                                                                           maxTotalDBSize:maxTotal
+                                                                             maxBatchSize:maxBatch
+                                                                         minBatchInterval:minBatchInterval];
+        completionHandler(eventAPIResponse, nil);
     }];
 }
 
