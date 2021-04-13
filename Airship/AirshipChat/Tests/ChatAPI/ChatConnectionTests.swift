@@ -77,13 +77,13 @@ class ChatConnectionTests: XCTestCase {
 
         XCTAssertNotNil(self.mockWebSocket.lastMessage)
 
-        let object = JSONSerialization.object(with: self.mockWebSocket.lastMessage!) as! [String: String]
-        let payload = JSONSerialization.object(with: object["payload"]!) as! [String: Any]
-        let message = payload["message"] as! [String : String]
+        let object = JSONSerialization.object(with: self.mockWebSocket.lastMessage!) as! [String: Any]
+        let payload = object["payload"] as! [String : String]
 
-        XCTAssertEqual("send_message", object["action"])
-        XCTAssertEqual("request!", message["request_id"])
-        XCTAssertEqual("neat!", message["text"])
+        XCTAssertEqual("some-uvp", object["uvp"] as! String)
+        XCTAssertEqual("send_message", object["action"] as! String)
+        XCTAssertEqual("request!", payload["request_id"])
+        XCTAssertEqual("neat!", payload["text"])
     }
 
     func testNewMessageResponse() throws {

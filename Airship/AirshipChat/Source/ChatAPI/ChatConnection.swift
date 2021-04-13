@@ -70,17 +70,7 @@ class ChatConnection : ChatConnectionProtocol, WebSocketDelegate  {
     }
 
     func sendMessage(requestID: String, text: String) {
-        let pendingMessage = PendingMessage(requestID: requestID, text: text)
-        let sendMessagePayload = SendMessageRequestPayload(message: pendingMessage)
-
-        guard let data = try? encoder.encode(sendMessagePayload) else {
-            return
-        }
-
-        guard let payload = String(data:data, encoding: .utf8) else {
-            return
-        }
-
+        let payload = SendMessageRequestPayload(requestID: requestID, text: text)
         let sendMessageRequest = SendMessageRequest(uvp: self.uvp!, payload: payload)
         send(sendMessageRequest)
     }
@@ -131,7 +121,7 @@ class ChatConnection : ChatConnectionProtocol, WebSocketDelegate  {
     private struct SendMessageRequest : Encodable {
         let action: String = "send_message"
         let uvp: String
-        let payload: String
+        let payload: SendMessageRequestPayload
 
         enum CodingKeys: String, CodingKey {
             case action = "action"
@@ -140,21 +130,13 @@ class ChatConnection : ChatConnectionProtocol, WebSocketDelegate  {
         }
     }
 
-    private struct PendingMessage : Encodable {
+    private struct SendMessageRequestPayload : Encodable {
         let requestID: String
         let text: String
 
         enum CodingKeys: String, CodingKey {
             case text = "text"
             case requestID = "request_id"
-        }
-    }
-
-    private struct SendMessageRequestPayload : Encodable {
-        let message: PendingMessage
-
-        enum CodingKeys: String, CodingKey {
-            case message = "message"
         }
     }
 

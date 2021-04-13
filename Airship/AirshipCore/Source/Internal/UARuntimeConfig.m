@@ -168,7 +168,7 @@ NSString *const UARuntimeConfigEURemoteDataAPIURL = @"https://remote-data.asnapi
             return nil;
         case UACloudSiteUS:
         default:
-            return UARuntimeConfigUSRemoteDataAPIURL;
+            return UARuntimeConfigUSChatAPIURL;
     }
 }
 
