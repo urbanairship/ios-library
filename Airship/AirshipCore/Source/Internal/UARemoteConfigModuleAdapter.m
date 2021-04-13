@@ -12,6 +12,7 @@ NSString * const UALegacyInAppMessagingClassName = @"UALegacyInAppMessaging";
 NSString * const UAInAppMessageManagerClassName = @"UAInAppMessageManager";
 NSString * const UAActionAutomationClassName = @"UAActionAutomation";
 NSString * const UAMessageCenterClassName = @"UAMessageCenter";
+NSString * const UAirshipChatClassName = @"UAirshipChat";
 
 @implementation UARemoteConfigModuleAdapter
 
@@ -51,6 +52,11 @@ NSString * const UAMessageCenterClassName = @"UAMessageCenter";
     if ([moduleName isEqualToString:kUARemoteConfigModuleLocation]) {
         id location = [[UAirship shared] componentForClassName:UALocationClassName];
         return location ? @[location] : @[];
+    }
+
+    if ([moduleName isEqualToString:kUARemoteConfigModuleChat]) {
+        id chat = [[UAirship shared] componentForClassName:UAirshipChatClassName];
+        return chat ? @[chat] : @[];
     }
 
     return @[];

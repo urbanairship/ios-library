@@ -3,12 +3,18 @@
 @testable
 import AirshipChat
 
-class MockConversation : ConversationProtocol {
-    var isConnected: Bool = false
+class MockConversation : InternalConversationProtocol {
+    var enabled: Bool = true
+    var isConnected = false
     var delegate: ConversationDelegate?
 
     var lastMessageSent : String?
     var messages : [ChatMessage]?
+    var refreshed = false
+
+    func refresh() {
+        self.refreshed = true
+    }
     
 
     func send(_ text: String) {

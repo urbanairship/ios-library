@@ -11,11 +11,11 @@ class AirshipChatTests: XCTestCase {
     var mockConversation: MockConversation!
 
     override func setUp() {
-        let mockConversation = MockConversation()
+        self.mockConversation = MockConversation()
         let dataStore = UAPreferenceDataStore(keyPrefix: UUID().uuidString)
 
         self.airshipChat = AirshipChat(dataStore: dataStore,
-                                       conversation: mockConversation)
+                                       conversation: self.mockConversation)
 
     }
 
@@ -37,5 +37,13 @@ class AirshipChatTests: XCTestCase {
 
         XCTAssertTrue(mockOpenDelegate.openCalled)
         XCTAssertEqual("neat", mockOpenDelegate.lastOpenMessage)
+    }
+
+    func testDisable() throws {
+        self.airshipChat.enabled = false
+        XCTAssertFalse(self.mockConversation.enabled)
+
+        self.airshipChat.enabled = true
+        XCTAssertTrue(self.mockConversation.enabled)
     }
 }

@@ -56,15 +56,18 @@ public protocol ConversationProtocol {
     func fetchMessages(completionHandler: @escaping (Array<ChatMessage>) -> ())
 }
 
-protocol Refreshable  {
+protocol InternalConversationProtocol: ConversationProtocol  {
     func refresh()
+    var enabled : Bool { get set }
+
 }
 
 /**
  * Chat conversation.
  */
 @available(iOS 13.0, *)
-class Conversation : ConversationProtocol, ChatConnectionDelegate, Refreshable {
+class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
+
 
     private static let uvpStorageKey : String = "AirshipChat.UVP"
     private static let uvpRetryDelay : Double = 30
@@ -80,6 +83,12 @@ class Conversation : ConversationProtocol, ChatConnectionDelegate, Refreshable {
 
     private var isPendingSent = false
     private var isUVPCreating = false
+
+    var enabled: Bool = true {
+        didSet {
+            self.updateConnection()
+        }
+    }
 
     @objc
     private(set) var isConnected: Bool = false {
@@ -209,6 +218,10 @@ class Conversation : ConversationProtocol, ChatConnectionDelegate, Refreshable {
      */
     private func updateConnection(open: Bool = false) {
         dispatcher.dispatchAsyncIfNecessary {
+            guard self.enabled else {
+                self.chatConnection.close()
+                return
+            }
 
             var shouldOpen = false
             if (open || !self.isPendingSent || self.appStateTracker.state == UAApplicationState.active) {
@@ -249,6 +262,11 @@ class Conversation : ConversationProtocol, ChatConnectionDelegate, Refreshable {
 
     private func createUVP(after: TimeInterval = 0) {
         self.dispatcher.dispatch(after: after) {
+            guard self.enabled else {
+                self.chatConnection.close()
+                return
+            }
+            
             guard !self.isUVPCreating else {
                 return
             }

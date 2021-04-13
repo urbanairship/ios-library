@@ -39,13 +39,37 @@ public class AirshipChat : UAComponent, UAPushableComponent {
     @objc
     public weak var openChatDelegate: AirshipChatOpenDelegate?
 
+
+    private static let enableKey = "AirshipChat.enabled"
+    /**
+     * Enables or disables chat.
+     */
+    public var enabled: Bool {
+        get {
+            return self.dataStore.bool(forKey: AirshipChat.enableKey, defaultValue:true)
+        }
+        set {
+            self.dataStore.setBool(newValue, forKey: AirshipChat.enableKey)
+            self.updateConversationEnablement()
+        }
+    }
+
     /**
      * The default conversation.
      */
     @objc
-    public let conversation : ConversationProtocol
+    public var conversation : ConversationProtocol {
+        get {
+            return self.internalConversation
+        }
+    }
 
-    convenience init(dataStore: UAPreferenceDataStore, config: UARuntimeConfig, channel: UAChannel) {
+    let internalConversation : InternalConversationProtocol
+
+
+    private let dataStore: UAPreferenceDataStore
+
+    internal convenience init(dataStore: UAPreferenceDataStore, config: UARuntimeConfig, channel: UAChannel) {
         let conversation = Conversation(dataStore: dataStore,
                                          chatConfig: config,
                                          channel: channel)
@@ -53,13 +77,22 @@ public class AirshipChat : UAComponent, UAPushableComponent {
         self.init(dataStore: dataStore, conversation: conversation)
     }
 
-    init(dataStore: UAPreferenceDataStore,
-         conversation: ConversationProtocol) {
+    internal init(dataStore: UAPreferenceDataStore,
+                  conversation: InternalConversationProtocol) {
 
-        self.conversation = conversation
+        self.dataStore = dataStore
+        self.internalConversation = conversation
         super.init(dataStore: dataStore)
 
         AirshipLogger.info("AirshipChat initialized")
+    }
+
+    public override func onComponentEnableChange() {
+        self.updateConversationEnablement()
+    }
+
+    func updateConversationEnablement() {
+        self.internalConversation.enabled = self.enabled && self.componentEnabled()
     }
 
     /**
@@ -81,9 +114,7 @@ public class AirshipChat : UAComponent, UAPushableComponent {
      * @note For internal use only. :nodoc:
      */
     public func receivedRemoteNotification(_ notification: UANotificationContent, completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        if let refreshable = self.conversation as? Refreshable {
-            refreshable.refresh()
-        }
+        self.internalConversation.refresh()
         completionHandler(.newData)
     }
 }

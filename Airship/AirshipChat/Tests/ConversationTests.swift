@@ -206,6 +206,19 @@ class ConversationTests: XCTestCase {
         XCTAssertFalse(self.conversation.isConnected)
     }
 
+    func testConnectWhileDisabled() throws {
+        self.conversation.enabled = false
+        connect()
+        XCTAssertFalse(self.mockChatConnection.isOpenOrOpening)
+        XCTAssertNil(self.mockAPIClient.lastChannel)
+    }
+
+    func testDisableWhileConnected() throws {
+        connect()
+        self.conversation.enabled = false
+        XCTAssertFalse(self.mockChatConnection.isOpenOrOpening)
+    }
+
     func connect() {
         self.mockChannel.identifier = "channel id"
         self.mockAPIClient.result = (UVPResponse(status: 200, uvp: "some-uvp"), nil)

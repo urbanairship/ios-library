@@ -54,9 +54,7 @@ NSString * const UAExtendedActionsModuleLoaderClassName = @"UAExtendedActionsMod
 NSString * const UAAccengageModuleLoaderClassName = @"UAAccengageModuleLoader";
 NSString * const UADebugLibraryModuleLoaderClassName = @"AirshipDebug.UADebugLibraryModuleLoader";
 
-NSString * const UAAirshipChatModuleLoaderClassName = @"Airship.AirshipChatModuleLoader";
-NSString * const UAAirshipChatModuleLoaderClassAltName = @"AirshipChat.AirshipChatModuleLoader";
-
+NSString * const UAAirshipChatModuleLoaderClassName = @"UAirshipChatModuleLoader";
 
 // AirshipReady payload
 NSString * const UAAirshipReadyChannelIdentifier = @"channel_id";
@@ -601,9 +599,6 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
     if (@available(iOS 13.0, *)) {
         Class cls = NSClassFromString(UAAirshipChatModuleLoaderClassName);
-        if (!cls) {
-            cls = NSClassFromString(UAAirshipChatModuleLoaderClassAltName);
-        }
         if ([cls conformsToProtocol:@protocol(UAAirshipChatModuleLoaderFactory)]) {
             return [cls moduleLoaderWithDataStore:dataStore
                                            config:config

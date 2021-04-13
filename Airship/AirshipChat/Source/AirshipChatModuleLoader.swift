@@ -11,7 +11,7 @@ import Airship
  * @note For internal use only. :nodoc:
  */
 @available(iOS 13.0, *)
-@objc
+@objc(UAirshipChatModuleLoader)
 public class AirshipChatModuleLoader : NSObject, UAModuleLoader, UAAirshipChatModuleLoaderFactory {
 
     private var module: UAComponent
