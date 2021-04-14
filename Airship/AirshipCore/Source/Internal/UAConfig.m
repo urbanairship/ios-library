@@ -46,7 +46,11 @@ NSString *const UALogLevelTraceName = @"TRACE";
         self.requestAuthorizationToUseNotifications = YES;
         self.automaticSetupEnabled = YES;
         self.analyticsEnabled = YES;
+#if !TARGET_OS_MACCATALYST
         self.profilePath = [[NSBundle mainBundle] pathForResource:@"embedded" ofType:@"mobileprovision"];
+#else
+        self.profilePath = [[[[NSBundle mainBundle] resourcePath] stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"embedded.provisionprofile"];
+#endif
         self.clearUserOnAppRestore = NO;
         self.URLAllowList = @[];
         self.URLAllowListScopeJavaScriptInterface = @[];
