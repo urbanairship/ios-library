@@ -31,7 +31,7 @@ protocol WebSocketDelegate: AnyObject {
 /**
  * Web socket protocol.
  */
-protocol WebSocketProtocol {
+protocol WebSocketProtocol: AnyObject {
     /**
      * Opens the socket.
      */

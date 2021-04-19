@@ -90,11 +90,13 @@ static NSString * const UAChatWebSocketURLKey = @"chat_web_socket_url";
 - (BOOL)isEqual:(id)other {
     if (other == self) {
         return YES;
-    } else if (![super isEqual:other]) {
-        return NO;
-    } else {
-        return [self isEqualToRemoteURLConfig:other];
     }
+
+    if (![other isKindOfClass:[self class]]) {
+        return NO;
+    }
+
+    return [self isEqualToRemoteURLConfig:other];
 }
 
 - (BOOL)isEqualToRemoteURLConfig:(nullable UARemoteConfig *)other {

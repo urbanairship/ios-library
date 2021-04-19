@@ -309,9 +309,9 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
 
     @objc
     private func onRemoteConfigUpdated() {
-        self.dataStore.removeObject(forKey: Conversation.uvpStorageKey)
         self.dispatcher.dispatchAsync {
             self.chatConnection.close()
+            self.dataStore.removeObject(forKey: Conversation.uvpStorageKey)
             self.createUVP()
         }
     }

@@ -2,15 +2,25 @@
 
 import Foundation
 
+#if canImport(AirshipCore)
+import AirshipCore
+#elseif !COCOAPODS && canImport(Airship)
+import Airship
+#endif
+
+
 @available(iOS 13.0, *)
 class ChatConnection : ChatConnectionProtocol, WebSocketDelegate  {
     private let chatConfig: ChatConfig!
-    private var uvp: String?
-    private var socket: WebSocketProtocol?
     private let lock = NSRecursiveLock()
     private let decoder: JSONDecoder
     private let encoder: JSONEncoder
     private let socketFactory: WebSocketFactoryProtocol
+    private let dispatcher: UADispatcher
+
+    private var uvp: String?
+    private var socket: WebSocketProtocol?
+
 
     weak var delegate: ChatConnectionDelegate?
     var isOpenOrOpening : Bool {
@@ -19,9 +29,12 @@ class ChatConnection : ChatConnectionProtocol, WebSocketDelegate  {
         }
     }
 
-    init(chatConfig: ChatConfig, socketFactory: WebSocketFactoryProtocol = WebSocketFactory()) {
+    init(chatConfig: ChatConfig,
+         socketFactory: WebSocketFactoryProtocol = WebSocketFactory(),
+         dispatcher: UADispatcher = UADispatcher.global()) {
         self.chatConfig = chatConfig
         self.socketFactory = socketFactory
+        self.dispatcher = dispatcher
         self.encoder = JSONEncoder()
         self.decoder = JSONDecoder()
         self.decoder.dateDecodingStrategy = .iso8601
@@ -61,18 +74,48 @@ class ChatConnection : ChatConnectionProtocol, WebSocketDelegate  {
         self.socket?.delegate = self
         self.socket?.open()
 
+        self.heartBeat(socket: socket)
+
         self.lock.unlock()
     }
 
     func requestConversation() {
-        let requestConversation = FetchConversationRequest(uvp: self.uvp!)
+        guard let uvp = self.uvp else {
+            return
+        }
+
+        let requestConversation = FetchConversationRequest(uvp: uvp)
         send(requestConversation)
     }
 
     func sendMessage(requestID: String, text: String?, attachment: URL?) {
+        guard let uvp = self.uvp else {
+            return
+        }
+
         let payload = SendMessageRequestPayload(requestID: requestID, text: text, attachment: attachment)
-        let sendMessageRequest = SendMessageRequest(uvp: self.uvp!, payload: payload)
+        let sendMessageRequest = SendMessageRequest(uvp: uvp, payload: payload)
         send(sendMessageRequest)
+    }
+
+    private func heartBeat(socket: WebSocketProtocol?) {
+        self.lock.lock()
+
+        guard self.socket === socket else {
+            return
+        }
+
+        guard let uvp = self.uvp else {
+            return
+        }
+
+        send(HeartbeatRequest(uvp: uvp))
+
+         self.dispatcher.dispatch(after: 60) { [weak self] in
+            self?.heartBeat(socket: socket)
+        }
+
+        self.lock.unlock()
     }
 
     private func send<T: Encodable>(_ value: T) {
@@ -110,6 +153,16 @@ class ChatConnection : ChatConnectionProtocol, WebSocketDelegate  {
 
     private struct FetchConversationRequest : Encodable {
         let action: String = "fetch_conversation"
+        let uvp: String
+
+        enum CodingKeys: String, CodingKey {
+            case action = "action"
+            case uvp = "uvp"
+        }
+    }
+
+    private struct HeartbeatRequest : Encodable {
+        let action: String = "heartbeat"
         let uvp: String
 
         enum CodingKeys: String, CodingKey {

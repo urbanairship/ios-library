@@ -10,6 +10,7 @@ class ChatConnectionTests: XCTestCase {
     var mockWebSocket: MockWebSocket!
     var mockWebSocketFactory: MockWebSocketFactory!
     var mockDelegate: MockChatConnectionDelegate!
+    var mockDispatcher: MockDispatcher!
     var mockConfig: MockChatConfig!
 
     var connection: ChatConnection!
@@ -20,13 +21,18 @@ class ChatConnectionTests: XCTestCase {
         self.mockWebSocket = MockWebSocket()
         self.mockWebSocketFactory = MockWebSocketFactory(socket: self.mockWebSocket)
         self.mockDelegate = MockChatConnectionDelegate()
+        self.mockDispatcher = MockDispatcher()
 
         self.mockConfig = MockChatConfig(appKey: "app Key",
                                          chatURL: "https://test",
                                          chatWebSocketURL: "wss:test")
 
+
+
         self.connection = ChatConnection(chatConfig: self.mockConfig,
-                                         socketFactory: self.mockWebSocketFactory)
+                                         socketFactory: self.mockWebSocketFactory,
+                                         dispatcher: self.mockDispatcher)
+
         self.connection.delegate = self.mockDelegate
     }
 
@@ -222,6 +228,30 @@ class ChatConnectionTests: XCTestCase {
         self.connection.open(uvp: "some-uvp")
         self.mockWebSocket.delegate?.onClose()
         XCTAssertEqual(CloseReason.server, self.mockDelegate.lastCloseReason)
+    }
+
+    func testHeartbeat() throws {
+        self.connection.open(uvp: "some-uvp")
+
+        let expected = [
+            "action": "heartbeat",
+            "uvp": "some-uvp"
+        ]
+
+        var object = JSONSerialization.object(with: self.mockWebSocket.lastMessage!) as! [String: String]
+        XCTAssertEqual(expected, object)
+
+        self.mockWebSocket.lastMessage = nil
+
+        self.mockDispatcher.advanceTime(60)
+        object = JSONSerialization.object(with: self.mockWebSocket.lastMessage!) as! [String: String]
+        XCTAssertEqual(expected, object)
+
+        self.mockWebSocket.lastMessage = nil
+        self.connection.close()
+        self.mockDispatcher.advanceTime(60)
+
+        XCTAssertNil(self.mockWebSocket.lastMessage)
     }
 }
 

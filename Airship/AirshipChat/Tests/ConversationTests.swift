@@ -6,20 +6,6 @@ import XCTest
 import AirshipChat
 import AirshipCore
 
-class ImmediateDispatcher : UADispatcher {
-    override func dispatchSync(_ block: @escaping () -> Void) {
-        block()
-    }
-
-    override func dispatchAsync(_ block: @escaping () -> Void) {
-        block()
-    }
-
-    override func dispatch(after delay: TimeInterval, block: @escaping () -> Void) -> UADisposable {
-        block()
-        return UADisposable()
-    }
-}
 
 class ConversationTests: XCTestCase {
     var mockChatConnection : MockChatConnection!
@@ -37,7 +23,7 @@ class ConversationTests: XCTestCase {
         self.mockStateTracker = MockAppStateTracker()
         self.mockAPIClient = MockChatAPIClient()
 
-        self.chatDAO = ChatDAO(dispatcher: ImmediateDispatcher())
+        self.chatDAO = ChatDAO(dispatcher: MockDispatcher())
         self.notificationCenter = NotificationCenter()
         let dataStore = UAPreferenceDataStore(keyPrefix: UUID().uuidString)
 
@@ -52,7 +38,7 @@ class ConversationTests: XCTestCase {
                                          chatConnection: self.mockChatConnection,
                                          chatDAO: self.chatDAO,
                                          appStateTracker: self.mockStateTracker,
-                                         dispatcher: ImmediateDispatcher(),
+                                         dispatcher: MockDispatcher(),
                                          notificationCenter: self.notificationCenter)
     }
 
