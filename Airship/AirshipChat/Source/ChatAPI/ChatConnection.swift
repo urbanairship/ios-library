@@ -69,8 +69,8 @@ class ChatConnection : ChatConnectionProtocol, WebSocketDelegate  {
         send(requestConversation)
     }
 
-    func sendMessage(requestID: String, text: String) {
-        let payload = SendMessageRequestPayload(requestID: requestID, text: text)
+    func sendMessage(requestID: String, text: String?, attachment: URL?) {
+        let payload = SendMessageRequestPayload(requestID: requestID, text: text, attachment: attachment)
         let sendMessageRequest = SendMessageRequest(uvp: self.uvp!, payload: payload)
         send(sendMessageRequest)
     }
@@ -132,10 +132,12 @@ class ChatConnection : ChatConnectionProtocol, WebSocketDelegate  {
 
     private struct SendMessageRequestPayload : Encodable {
         let requestID: String
-        let text: String
+        let text: String?
+        let attachment: URL?
 
         enum CodingKeys: String, CodingKey {
             case text = "text"
+            case attachment = "attachment"
             case requestID = "request_id"
         }
     }

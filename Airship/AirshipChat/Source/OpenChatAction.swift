@@ -15,7 +15,7 @@ import Airship
  *
  * This action is registered under the name `open_chat_action`.
  *
- * Expected argument value is nil, or a dictionary with `message` key with the prefilled message as a String.
+ * Expected argument value is nil, or a dictionary with `chat_input` key with the prefilled message as a String.
  *
  * Valid situations:  UASituationLaunchedFromPush, UASituationWebViewInvocation, UASituationManualInvocation,
  * UASituationForegroundInteractiveButton, and UASituationAutomation
@@ -55,7 +55,7 @@ public class OpenChatAction : UAAction {
 
     public override func perform(with arguments: UAActionArguments, completionHandler: @escaping UAActionCompletionHandler) {
         let args = arguments.value as? [String: Any]
-        let message = args?["message"] as? String
+        let message = args?["chat_input"] as? String
         self.chatProvider().openChat(message: message)
 
         completionHandler(UAActionResult.empty())

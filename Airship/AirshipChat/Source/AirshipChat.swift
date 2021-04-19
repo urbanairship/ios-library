@@ -29,7 +29,7 @@ public protocol AirshipChatOpenDelegate {
 @objc(UAirshipChat)
 public class AirshipChat : UAComponent, UAPushableComponent {
 
-    private static let refreshKey = "com.urbanairship.chat"
+    private static let refreshKey = "com.urbanairship.refresh_chat"
 
     /**
      * Chat delegate.

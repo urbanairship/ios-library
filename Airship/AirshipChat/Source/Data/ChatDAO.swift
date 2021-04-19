@@ -22,15 +22,20 @@ class ChatDAO: ChatDAOProtocol {
         self.dispatcher = dispatcher
     }
 
-    func upsertMessage(messageID: Int, text: String, createdOn: Date, direction: UInt, attachment: String?) {
+    func upsertMessage(messageID: Int, requestID: String?, text: String?, createdOn: Date, direction: UInt, attachment: URL?) {
         dispatcher.dispatchAsync {
-            self.messages["\(messageID)"] = ChatMessageData(messageID: messageID, text: text, createdOn: createdOn, direction: direction, attachment: attachment)
+            self.messages["\(messageID)"] = ChatMessageData(messageID: messageID,
+                                                            requestID: requestID,
+                                                            text: text,
+                                                            createdOn: createdOn,
+                                                            direction: direction,
+                                                            attachment: attachment)
         }
     }
 
-    func insertPending(requestID: String, text: String, createdOn: Date) {
+    func insertPending(requestID: String, text: String?, attachment: URL?, createdOn: Date) {
         dispatcher.dispatchAsync {
-            self.pendingMessages[requestID] = PendingChatMessageData(requestID: requestID, text: text, createdOn: createdOn)
+            self.pendingMessages[requestID] = PendingChatMessageData(requestID: requestID, text: text, attachment: attachment, createdOn: createdOn)
         }
     }
 

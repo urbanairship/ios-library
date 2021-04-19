@@ -43,8 +43,16 @@ public protocol ConversationProtocol {
 
    /**
     * Sends a message.
-    * @text The message.
+    * @param text The message.
+    * @param attachment The attachment.
     */
+    @objc
+    func send(_ text: String?, attachment: URL?)
+
+    /**
+     * Sends a message.
+     * @param text The message.
+     */
     @objc
     func send(_ text: String)
 
@@ -159,22 +167,31 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
             object: nil)
     }
 
-    /**
-     * Sends a message.
-     * @text The message.
-     */
+
+
     @objc
     public func send(_ text: String) {
+        self.send(text, attachment: nil)
+    }
+
+
+    @objc
+    public func send(_ text: String?, attachment: URL? = nil) {
+        guard text != nil || attachment != nil else {
+            AirshipLogger.error("Both text and attachment should not be nil")
+            return
+        }
+        
         let requestID = UUID().uuidString
 
-        self.chatDAO.insertPending(requestID: requestID, text: text, createdOn: Date())
+        self.chatDAO.insertPending(requestID: requestID, text: text, attachment: attachment, createdOn: Date())
         UADispatcher.main().dispatchAsync {
             self.delegate?.onMessagesUpdated()
         }
 
         dispatcher.dispatchAsync {
             if (self.chatConnection.isOpenOrOpening && self.isPendingSent) {
-                self.chatConnection.sendMessage(requestID: requestID, text: text)
+                self.chatConnection.sendMessage(requestID: requestID, text: text, attachment: attachment)
             } else {
                 self.updateConnection()
             }
@@ -302,11 +319,11 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
     private func syncPending() {
         self.dispatcher.dispatchAsync {
             let semaphore = UASemaphore()
-            var pendingCopy: [(String, String)]? = nil
+            var pendingCopy: [(String, String?, URL?)]? = nil
 
             self.chatDAO.fetchPending { pending in
                 // Copy to tuples to keep honor
-                pendingCopy = pending.map { ($0.requestID, $0.text) }
+                pendingCopy = pending.map { ($0.requestID, $0.text, $0.attachment) }
                 semaphore.signal()
             }
 
@@ -314,7 +331,7 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
 
             if (self.chatConnection.isOpenOrOpening) {
                 pendingCopy?.forEach {
-                    self.chatConnection.sendMessage(requestID: $0.0, text: $0.1)
+                    self.chatConnection.sendMessage(requestID: $0.0, text: $0.1, attachment: $0.2)
                 }
                 self.isPendingSent = true
             }
@@ -345,7 +362,12 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
     func onChatResponse(_ response: ChatResponse) {
         switch response.payload {
         case let convoLoadedResponse as ChatResponse.ConversationLoadedResponsePayload:
-            convoLoadedResponse.messages?.forEach { self.chatDAO.upsertResponseMessage($0) }
+            convoLoadedResponse.messages?.forEach {
+                if let requestID = $0.requestID {
+                    self.chatDAO.removePending(requestID)
+                }
+                self.chatDAO.upsertResponseMessage($0)
+            }
             syncPending()
         case let newMessageResponse as ChatResponse.NewMessageResponsePayload:
             self.chatDAO.upsertResponseMessage(newMessageResponse.message)
@@ -369,21 +391,25 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
 extension ChatMessageData {
     func toChatMessage() -> ChatMessage {
         let chatDirection = ChatMessageDirection.init(rawValue: self.direction) ?? .incoming
-        let attachmentURL = self.attachment == nil ? nil : URL(string: self.attachment!)
-        return ChatMessage(messageID: "\(self.messageID)", text: self.text, timestamp: self.createdOn, direction: chatDirection, delivered: true, attachment:attachmentURL)
+        return ChatMessage(messageID: self.requestID ?? "\(self.messageID)",
+                           text: self.text,
+                           timestamp: self.createdOn,
+                           direction: chatDirection,
+                           delivered: true,
+                           attachment:self.attachment)
     }
 }
 
 @available(iOS 13.0, *)
 extension PendingChatMessageData {
     func toChatMessage() -> ChatMessage {
-        return ChatMessage(messageID: nil, text: self.text, timestamp: Date.distantFuture, direction: .outgoing, delivered: false)
+        return ChatMessage(messageID: self.requestID, text: self.text, timestamp: Date.distantFuture, direction: .outgoing, delivered: false)
     }
 }
 
 @available(iOS 13.0, *)
 extension ChatDAOProtocol {
     func upsertResponseMessage(_ message: ChatResponse.Message) {
-        upsertMessage(messageID: message.messageID, text: message.text, createdOn: message.createdOn, direction: message.direction, attachment: message.attachment)
+        upsertMessage(messageID: message.messageID, requestID: message.requestID, text: message.text, createdOn: message.createdOn, direction: message.direction, attachment: message.attachment)
     }
 }

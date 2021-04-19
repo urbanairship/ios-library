@@ -72,8 +72,9 @@ class ChatConnectionTests: XCTestCase {
     }
 
     func testSend() throws {
+        let url = URL(string: "https://neat")
         self.connection.open(uvp: "some-uvp")
-        self.connection.sendMessage(requestID: "request!", text: "neat!")
+        self.connection.sendMessage(requestID: "request!", text: "neat!", attachment: url )
 
         XCTAssertNotNil(self.mockWebSocket.lastMessage)
 
@@ -84,6 +85,7 @@ class ChatConnectionTests: XCTestCase {
         XCTAssertEqual("send_message", object["action"] as! String)
         XCTAssertEqual("request!", payload["request_id"])
         XCTAssertEqual("neat!", payload["text"])
+        XCTAssertEqual("https://neat", payload["attachment"])
     }
 
     func testNewMessageResponse() throws {
@@ -99,7 +101,7 @@ class ChatConnectionTests: XCTestCase {
                     "created_on":"2021-04-07T18:16:55Z",
                     "direction":0,
                     "text":"Sup",
-                    "attachment":null,
+                    "attachment": "https://neat",
                     "request_id":"D9DD85A9-F5A1-4E56-9060-4DB4462CFF32"
                 }
             }
@@ -116,6 +118,8 @@ class ChatConnectionTests: XCTestCase {
         XCTAssertEqual("D9DD85A9-F5A1-4E56-9060-4DB4462CFF32", payload.message.requestID)
         XCTAssertEqual(0, payload.message.direction)
         XCTAssertEqual("Sup", payload.message.text)
+        XCTAssertEqual(URL(string: "https://neat"), payload.message.attachment)
+
     }
 
     func testReceivedMessageResponse() throws {

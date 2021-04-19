@@ -45,7 +45,7 @@ struct ChatResponse : Decodable {
         let createdOn: Date
         let direction: UInt
         let text: String
-        let attachment: String?
+        let attachment: URL?
         let requestID: String?
 
         enum CodingKeys: String, CodingKey {

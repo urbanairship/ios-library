@@ -5,7 +5,7 @@ import AirshipChat
 
 class MockChatConnection: ChatConnectionProtocol {
     var isOpenOrOpening = false
-    var lastSendMessage: (String, String)?
+    var lastSendMessage: (String, String?, URL?)?
     var requestedConversation = false
     var delegate: ChatConnectionDelegate?
     var lastUVP: String?
@@ -23,7 +23,7 @@ class MockChatConnection: ChatConnectionProtocol {
         self.requestedConversation = true
     }
 
-    func sendMessage(requestID: String, text: String) {
-        self.lastSendMessage = (requestID, text)
+    func sendMessage(requestID: String, text: String?, attachment: URL?) {
+        self.lastSendMessage = (requestID, text, attachment)
     }
 }

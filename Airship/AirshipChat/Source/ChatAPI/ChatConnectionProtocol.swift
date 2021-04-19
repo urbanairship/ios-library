@@ -79,7 +79,8 @@ protocol ChatConnectionProtocol  {
      * Sends a message.
      * @param requestID The request ID.
      * @param text The message's text.
+     * @param attachment The attachment.
      */
-    func sendMessage(requestID: String, text: String)
+    func sendMessage(requestID: String, text: String?, attachment: URL?)
 }
 

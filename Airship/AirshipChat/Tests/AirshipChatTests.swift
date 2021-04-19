@@ -46,4 +46,17 @@ class AirshipChatTests: XCTestCase {
         self.airshipChat.enabled = true
         XCTAssertTrue(self.mockConversation.enabled)
     }
+
+    func testBackgroundPushRefresh() throws {
+        let notificationInfo = ["com.urbanairship.refresh_chat": true ]
+        let notification = UANotificationContent.notification(withNotificationInfo: notificationInfo)
+
+        let expectation = XCTestExpectation(description: "Callback")
+        self.airshipChat.receivedRemoteNotification(notification, completionHandler: { (result) in
+            XCTAssertEqual(UIBackgroundFetchResult.newData, result)
+            expectation.fulfill()
+        })
+
+        XCTAssertTrue(mockConversation.refreshed)
+    }
 }

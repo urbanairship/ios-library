@@ -126,6 +126,16 @@ class ConversationTests: XCTestCase {
         XCTAssertEqual("hello!", self.mockChatConnection.lastSendMessage?.1)
     }
 
+    func testSendMessageNilTextAndAttachment() throws {
+        self.connect()
+        let fetchConvoPayload = ChatResponse.ConversationLoadedResponsePayload(messages: nil)
+        let fetchConvo = ChatResponse(type: "fetch_conversation", payload: fetchConvoPayload)
+        self.mockChatConnection.delegate?.onChatResponse(fetchConvo)
+
+        self.conversation.send(nil, attachment: nil)
+        XCTAssertNil(self.mockChatConnection.lastSendMessage)
+    }
+
     func testSendMessageBeforeConnect() throws {
         self.conversation.send("hello!")
         XCTAssertNil(self.mockChatConnection.lastSendMessage)

@@ -9,6 +9,8 @@ class MockConversation : InternalConversationProtocol {
     var delegate: ConversationDelegate?
 
     var lastMessageSent : String?
+    var lastAttachmentSent : URL?
+
     var messages : [ChatMessage]?
     var refreshed = false
 
@@ -18,7 +20,12 @@ class MockConversation : InternalConversationProtocol {
     
 
     func send(_ text: String) {
+        self.send(text, attachment: nil)
+    }
+
+    func send(_ text: String?, attachment: URL?) {
         self.lastMessageSent = text
+        self.lastAttachmentSent = attachment
     }
 
     func fetchMessages(completionHandler: @escaping (Array<ChatMessage>) -> ()) {

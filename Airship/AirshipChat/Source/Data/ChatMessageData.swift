@@ -13,9 +13,14 @@ class ChatMessageData : NSObject {
     public let messageID: Int
 
     /**
+     * The message request ID.
+     */
+    public let requestID: String?
+
+    /**
      * The message text.
      */
-    public let text: String
+    public let text: String?
 
     /**
      * The message created date.
@@ -30,10 +35,11 @@ class ChatMessageData : NSObject {
     /**
      * The message attachment.
      */
-    public let attachment: String?
+    public let attachment: URL?
 
-    init(messageID: Int, text: String, createdOn: Date, direction: UInt, attachment: String?) {
+    init(messageID: Int, requestID: String?, text: String?, createdOn: Date, direction: UInt, attachment: URL?) {
         self.messageID = messageID
+        self.requestID = requestID
         self.text = text
         self.createdOn = createdOn
         self.direction = direction

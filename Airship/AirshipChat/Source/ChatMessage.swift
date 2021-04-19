@@ -30,13 +30,13 @@ public class ChatMessage : NSObject {
      * The message ID.
      */
     @objc
-    public let messageID: String?
+    public let messageID: String
 
     /**
      * The message text.
      */
     @objc
-    public let text: String
+    public let text: String?
 
     /**
      * The message created date.
@@ -62,7 +62,7 @@ public class ChatMessage : NSObject {
     @objc
     public let attachment: URL?
 
-    init(messageID: String?, text: String, timestamp: Date, direction: ChatMessageDirection, delivered: Bool, attachment: URL? = nil) {
+    init(messageID: String, text: String?, timestamp: Date, direction: ChatMessageDirection, delivered: Bool, attachment: URL? = nil) {
         self.messageID = messageID
         self.text = text
         self.timestamp = timestamp
