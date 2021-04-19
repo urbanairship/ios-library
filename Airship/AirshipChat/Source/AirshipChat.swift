@@ -69,7 +69,10 @@ public class AirshipChat : UAComponent, UAPushableComponent {
 
     private let dataStore: UAPreferenceDataStore
 
+    private var viewController : UIViewController?
+
     internal convenience init(dataStore: UAPreferenceDataStore, config: UARuntimeConfig, channel: UAChannel) {
+
         let conversation = Conversation(dataStore: dataStore,
                                          chatConfig: config,
                                          channel: channel)
@@ -106,7 +109,7 @@ public class AirshipChat : UAComponent, UAPushableComponent {
             strongDelegate.openChat(message: message)
         } else {
             AirshipLogger.trace("Launching OOTB chat")
-            // TODO: launch OOTB chat
+            openDefaultChat(message: message)
         }
     }
 
@@ -116,6 +119,51 @@ public class AirshipChat : UAComponent, UAPushableComponent {
     public func receivedRemoteNotification(_ notification: UANotificationContent, completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         self.internalConversation.refresh()
         completionHandler(.newData)
+    }
+
+    private func openDefaultChat(message: String? = nil) {
+        guard viewController == nil else {
+            AirshipLogger.debug("Already displaying chat: \(self.viewController!.description)")
+            return
+        }
+
+        AirshipLogger.debug("Opening default chat UI")
+        let vc = chatViewController(message: message)
+        viewController = vc
+
+        UAUtils.topController()?.present(vc, animated: true, completion: {
+            AirshipLogger.trace("Presented chat view controller: \(vc.description)")
+        })
+    }
+
+    private func chatViewController(message: String?) -> UIViewController {
+        let nav = UINavigationController(nibName: nil, bundle: nil)
+
+        nav.modalTransitionStyle = UIModalTransitionStyle.crossDissolve
+        nav.modalPresentationStyle = UIModalPresentationStyle.fullScreen
+
+        let cvc = ChatViewController.init(nibName: "ChatViewController", bundle: Resources.bundle())
+        cvc.message = message
+
+        // TODO: Localization
+        cvc.title = "Chat"
+
+        cvc.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismiss))
+
+        nav.viewControllers.append(cvc)
+
+        return nav
+    }
+
+    @objc private func dismiss(sender: Any) {
+        if let vc = viewController {
+            vc.dismiss(animated: true) {
+                AirshipLogger.trace("Dismissed chat view controller: \(vc.description)")
+                self.viewController = nil
+            }
+        } else {
+            AirshipLogger.debug("Chat already dismissed")
+        }
     }
 }
 
