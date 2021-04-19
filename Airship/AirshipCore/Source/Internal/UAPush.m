@@ -61,8 +61,9 @@ NSString *const UAPresentationOptionSound = @"sound";
 NSString *const UAPresentationOptionList = @"list";
 NSString *const UAPresentationOptionBanner = @"banner";
 
-// Foreground presentation key
-NSString *const UAForegroundPresentationkey = @"foreground_presentation";
+// Foreground presentation keys
+NSString *const UAForegroundPresentationLegacykey = @"foreground_presentation";
+NSString *const UAForegroundPresentationkey = @"com.urbanairship.foreground_presentation";
 
 NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
 
@@ -882,6 +883,10 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
 #if !TARGET_OS_TV   // UNNotificationContent.userInfo not available on tvOS
     // get the presentation options from the the notification
     presentationOptions = [notification.request.content.userInfo objectForKey:UAForegroundPresentationkey];
+
+    if (!presentationOptions) {
+        presentationOptions = [notification.request.content.userInfo objectForKey:UAForegroundPresentationLegacykey];
+    }
 #endif
     return presentationOptions;
 }

@@ -1748,7 +1748,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
         array = @[@"list", @"banner", @"sound", @"badge"];
     }
     
-    [[[self.mockUserInfo stub] andReturnValue:OCMOCK_VALUE(array)] objectForKey:@"foreground_presentation"];
+    [[[self.mockUserInfo stub] andReturnValue:OCMOCK_VALUE(array)] objectForKey:@"com.urbanairship.foreground_presentation"];
     self.push.pushNotificationDelegate = nil;
     
         
@@ -1772,7 +1772,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 - (void)testPresentationOptionsForNotificationWithoutForegroundOptionsWithoutDelegate {
     // SETUP
     NSArray *array = @[];
-    [[[self.mockUserInfo stub] andReturnValue:OCMOCK_VALUE(array)] objectForKey:@"foreground_presentation"];
+    [[[self.mockUserInfo stub] andReturnValue:OCMOCK_VALUE(array)] objectForKey:@"com.urbanairship.foreground_presentation"];
     
     self.push.defaultPresentationOptions = UNNotificationPresentationOptionAlert;
     
@@ -1795,6 +1795,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     // VERIFY
     XCTAssertEqual(result, options);
 }
+
 
 /**
  * Test on first launch when user has not been prompted for notification.
