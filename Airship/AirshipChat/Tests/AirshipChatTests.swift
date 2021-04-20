@@ -8,15 +8,17 @@ import AirshipCore
 
 class AirshipChatTests: XCTestCase {
     var airshipChat: AirshipChat!
+    var dataStore: UAPreferenceDataStore!
     var mockConversation: MockConversation!
 
     override func setUp() {
         self.mockConversation = MockConversation()
-        let dataStore = UAPreferenceDataStore(keyPrefix: UUID().uuidString)
+        self.dataStore = UAPreferenceDataStore(keyPrefix: UUID().uuidString)
 
         self.airshipChat = AirshipChat(dataStore: dataStore,
                                        conversation: self.mockConversation)
 
+        self.dataStore.setBool(true, forKey:"com.urbanairship.data_collection_enabled")
     }
 
     func testOpenDelegate() throws {
@@ -45,6 +47,16 @@ class AirshipChatTests: XCTestCase {
 
         self.airshipChat.enabled = true
         XCTAssertTrue(self.mockConversation.enabled)
+    }
+
+    func testDataCollectionDisabled() throws {
+        XCTAssertTrue(self.mockConversation.enabled)
+
+        self.dataStore.setBool(false, forKey:"com.urbanairship.data_collection_enabled")
+        self.airshipChat.onDataCollectionEnabledChanged()
+
+        XCTAssertFalse(self.mockConversation.enabled)
+        XCTAssertTrue(self.mockConversation.clearDataCalled)
     }
 
     func testBackgroundPushRefresh() throws {

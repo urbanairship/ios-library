@@ -65,4 +65,11 @@ class ChatDAO: ChatDAOProtocol {
             completionHandler(!self.pendingMessages.isEmpty)
         }
     }
+
+    func deleteAll() {
+        dispatcher.dispatchAsync {
+            self.pendingMessages.removeAll()
+            self.messages.removeAll()
+        }
+    }
 }

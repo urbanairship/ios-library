@@ -67,7 +67,7 @@ public protocol ConversationProtocol {
 protocol InternalConversationProtocol: ConversationProtocol  {
     func refresh()
     var enabled : Bool { get set }
-
+    func clearData()
 }
 
 /**
@@ -181,7 +181,12 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
             AirshipLogger.error("Both text and attachment should not be nil")
             return
         }
-        
+
+        guard self.enabled else {
+            AirshipLogger.error("Unable to send message, chat disabled.")
+            return
+        }
+
         let requestID = UUID().uuidString
 
         self.chatDAO.insertPending(requestID: requestID, text: text, attachment: attachment, createdOn: Date())
@@ -346,6 +351,14 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
     func refresh() {
         dispatcher.dispatchAsync {
             self.updateConnection(open: true)
+        }
+    }
+
+    func clearData() {
+        dispatcher.dispatchAsync {
+            self.chatConnection.close()
+            self.dataStore.removeObject(forKey: Conversation.uvpStorageKey)
+            self.chatDAO.deleteAll()
         }
     }
 

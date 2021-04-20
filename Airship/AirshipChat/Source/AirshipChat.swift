@@ -94,8 +94,15 @@ public class AirshipChat : UAComponent, UAPushableComponent {
         self.updateConversationEnablement()
     }
 
+    public override func onDataCollectionEnabledChanged() {
+        self.updateConversationEnablement()
+    }
+
     func updateConversationEnablement() {
-        self.internalConversation.enabled = self.enabled && self.componentEnabled()
+        self.internalConversation.enabled = self.enabled && self.componentEnabled() && self.isDataCollectionEnabled
+        if (!self.isDataCollectionEnabled) {
+            self.internalConversation.clearData()
+        }
     }
 
     /**

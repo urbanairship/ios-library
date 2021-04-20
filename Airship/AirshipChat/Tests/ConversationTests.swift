@@ -215,6 +215,64 @@ class ConversationTests: XCTestCase {
         XCTAssertFalse(self.mockChatConnection.isOpenOrOpening)
     }
 
+    func testSendWhileDisabled() throws {
+        self.conversation.enabled = false
+        self.conversation.send("sup")
+
+        let expectation = XCTestExpectation(description: "check")
+        self.chatDAO.fetchPending { (pending) in
+            XCTAssertTrue(pending.isEmpty)
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 10.0)
+    }
+
+
+    func testClearDataWipesUVP() throws {
+        self.mockChannel.identifier = "channel id"
+        self.mockAPIClient.result = (UVPResponse(status: 200, uvp: "some-uvp"), nil)
+        foreground()
+
+        XCTAssertTrue(self.mockChatConnection.isOpenOrOpening)
+        XCTAssertEqual("some-uvp", self.mockChatConnection.lastUVP)
+
+        self.conversation.clearData()
+
+        self.mockAPIClient.result = (UVPResponse(status: 200, uvp: "some-other-uvp"), nil)
+        self.foreground()
+
+        XCTAssertTrue(self.mockChatConnection.isOpenOrOpening)
+        XCTAssertEqual("some-other-uvp", self.mockChatConnection.lastUVP)
+    }
+
+    func testClearDataClosesConnection() throws {
+        connect()
+        XCTAssertTrue(self.mockChatConnection.isOpenOrOpening)
+
+        self.conversation.clearData()
+        XCTAssertFalse(self.mockChatConnection.isOpenOrOpening)
+    }
+
+    func testClearDataWipesMessages() throws {
+        self.conversation.send("sup")
+
+        var expectation = XCTestExpectation(description: "check")
+        self.chatDAO.fetchPending { (pending) in
+            XCTAssertFalse(pending.isEmpty)
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 10.0)
+
+        self.conversation.clearData()
+
+        expectation = XCTestExpectation(description: "check")
+        self.chatDAO.fetchPending { (pending) in
+            XCTAssertTrue(pending.isEmpty)
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 10.0)
+    }
+
     func connect() {
         self.mockChannel.identifier = "channel id"
         self.mockAPIClient.result = (UVPResponse(status: 200, uvp: "some-uvp"), nil)

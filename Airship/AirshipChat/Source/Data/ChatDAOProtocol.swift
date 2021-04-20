@@ -18,4 +18,5 @@ protocol ChatDAOProtocol {
     func fetchMessages(completionHandler: @escaping (Array<ChatMessageData>, Array<PendingChatMessageData>)->())
     func fetchPending(completionHandler: @escaping (Array<PendingChatMessageData>)->())
     func hasPendingMessages(completionHandler: @escaping (Bool)->())
+    func deleteAll()
 }

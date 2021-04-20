@@ -7,6 +7,7 @@ class MockConversation : InternalConversationProtocol {
     var enabled: Bool = true
     var isConnected = false
     var delegate: ConversationDelegate?
+    var clearDataCalled = false
 
     var lastMessageSent : String?
     var lastAttachmentSent : URL?
@@ -17,7 +18,10 @@ class MockConversation : InternalConversationProtocol {
     func refresh() {
         self.refreshed = true
     }
-    
+
+    func clearData() {
+        self.clearDataCalled = true;
+    }
 
     func send(_ text: String) {
         self.send(text, attachment: nil)
