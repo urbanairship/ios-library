@@ -270,15 +270,11 @@ typedef NS_ENUM(NSUInteger, UACloudSite) {
 
 /**
  * The Airship chat API URL.
- *
- * @note This option is reserved for internal debugging. :nodoc:
  */
 @property (nonatomic, copy, nullable) NSString *chatURL;
 
 /**
  * The Airship web socket URL.
- *
- * @note This option is reserved for internal debugging. :nodoc:
  */
 @property (nonatomic, copy, nullable) NSString *chatWebSocketURL;
 

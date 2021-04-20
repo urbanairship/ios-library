@@ -215,6 +215,14 @@ class ConversationTests: XCTestCase {
         XCTAssertFalse(self.mockChatConnection.isOpenOrOpening)
     }
 
+    func testConnectWhenDisabled() throws {
+        self.mockConfig.chatURL = nil
+        self.mockConfig.chatWebSocketURL = nil
+        connect()
+        XCTAssertFalse(self.mockChatConnection.isOpenOrOpening)
+        XCTAssertNil(self.mockAPIClient.lastChannel)
+    }
+
     func testSendWhileDisabled() throws {
         self.conversation.enabled = false
         self.conversation.send("sup")

@@ -41,8 +41,6 @@
 NSString *const UARuntimeConfigUSDeviceAPIURL = @"https://device-api.urbanairship.com";
 NSString *const UARuntimeConfigUSAnalyticsURL = @"https://combine.urbanairship.com";
 NSString *const UARuntimeConfigUSRemoteDataAPIURL = @"https://remote-data.urbanairship.com";
-NSString *const UARuntimeConfigUSChatAPIURL = @"https://rb2socketscontacts.replybuy.net";
-NSString *const UARuntimeConfigUSChatWebSocketAPIURL = @"wss://rb2socketscontacts.replybuy.net";
 
 // EU
 NSString *const UARuntimeConfigEUDeviceAPIURL = @"https://device-api.asnapieu.com";
@@ -159,31 +157,11 @@ NSString *const UARuntimeConfigEURemoteDataAPIURL = @"https://remote-data.asnapi
 }
 
 - (NSString *)chatURL {
-    if (self.internalChatURL) {
-        return self.internalChatURL;
-    }
-
-    switch (self.config.site) {
-        case UACloudSiteEU:
-            return nil;
-        case UACloudSiteUS:
-        default:
-            return UARuntimeConfigUSChatAPIURL;
-    }
+    return self.urlManager.chatURL ?: self.internalChatURL;
 }
 
 - (NSString *)chatWebSocketURL {
-    if (self.internalChatWebSocketURL) {
-        return self.internalChatWebSocketURL;
-    }
-
-    switch (self.config.site) {
-        case UACloudSiteEU:
-            return nil;
-        case UACloudSiteUS:
-        default:
-            return UARuntimeConfigUSChatWebSocketAPIURL;
-    }
+    return self.urlManager.chatWebSocketURL ?: self.internalChatWebSocketURL;
 }
 
 @end

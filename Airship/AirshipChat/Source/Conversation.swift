@@ -82,6 +82,8 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
     private static let chatReconnectionDelay : Double = 10
 
     private let dataStore : UAPreferenceDataStore
+    private let chatConfig: ChatConfig
+
     private let channel: AirshipChannel
     private let appStateTracker: UAAppStateTracker
     private let client: ChatAPIClientProtocol
@@ -133,6 +135,7 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
          notificationCenter: NotificationCenter = NotificationCenter.default) {
 
         self.dataStore = dataStore
+        self.chatConfig = chatConfig
         self.channel = channel
         self.client = client
         self.chatConnection = chatConnection
@@ -167,13 +170,10 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
             object: nil)
     }
 
-
-
     @objc
     public func send(_ text: String) {
         self.send(text, attachment: nil)
     }
-
 
     @objc
     public func send(_ text: String?, attachment: URL? = nil) {
@@ -240,7 +240,7 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
      */
     private func updateConnection(open: Bool = false) {
         dispatcher.dispatchAsyncIfNecessary {
-            guard self.enabled else {
+            guard self.enabled && self.isConfigured() else {
                 self.chatConnection.close()
                 return
             }
@@ -276,6 +276,10 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
                 self.chatConnection.close()
             }
         }
+    }
+
+    private func isConfigured() -> Bool {
+        return self.chatConfig.chatURL != nil && self.chatConfig.chatWebSocketURL != nil
     }
 
     private func getUVP() -> String? {
