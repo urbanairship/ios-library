@@ -149,7 +149,7 @@ public class AirshipChat : UAComponent, UAPushableComponent {
         nav.modalTransitionStyle = UIModalTransitionStyle.crossDissolve
         nav.modalPresentationStyle = UIModalPresentationStyle.fullScreen
 
-        let cvc = ChatViewController.init(nibName: "ChatViewController", bundle: Resources.bundle())
+        let cvc = ChatViewController.init(nibName: "UAChatViewController", bundle: ChatResources.bundle())
         cvc.message = message
 
         // TODO: Localization

@@ -75,6 +75,7 @@ Pod::Spec.new do |s|
    s.subspec "Chat" do |chat|
       chat.ios.source_files              = "Airship/AirshipChat/Source/**/*.{h,m,swift}"
       chat.ios.exclude_files             = "Airship/AirshipChat/Source/AirshipChat.h"
+      chat.ios.resources                 = "Airship/AirshipChat/Resources/**/*"
       chat.dependency                      "Airship/Core"
    end
 end

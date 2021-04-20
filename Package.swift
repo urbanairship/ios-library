@@ -174,7 +174,9 @@ let package = Package(
                 path: "Airship/AirshipChat",
                 exclude: ["Source/AirshipChat.h",
                           "Info.plist"],
-                sources : ["Source"]
+                sources : ["Source"],
+                resources: [
+                    .process("Resources")]
         )
     ]
 )

@@ -10,60 +10,56 @@ import Airship
 
 @available(iOS 13.0, *)
 @objc(UAChatViewController)
-class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextViewDelegate, ConversationDelegate {
+public class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextViewDelegate, ConversationDelegate {
     final var message: String?
     
     @IBOutlet private var tableView: UITableView!
+    @IBOutlet private var placeHolder: UILabel!
+    @IBOutlet private var textView: UITextView!
+    @IBOutlet private var sendButton: UIButton!
+    @IBOutlet private var inputBar: UIView!
 
+    @IBOutlet weak var bottomConstraint: NSLayoutConstraint!
+    @IBOutlet weak var textViewHeightConstraint: NSLayoutConstraint!
+
+    private var textViewHeight: CGFloat!
     private var messages: Array<ChatMessage> = Array<ChatMessage>()
-    private var messageInputBarView: MessageInputBarView?
 
-    func onMessagesUpdated() {
+    public func onMessagesUpdated() {
         AirshipChat.shared().conversation.fetchMessages(completionHandler: { (messages) in
             self.messages = messages
             self.reload()
         })
     }
 
-    func onConnectionStatusChanged() {
+    public func onConnectionStatusChanged() {
         AirshipLogger.debug("Connection status changed: \(AirshipChat.shared().conversation.isConnected)")
     }
 
-    // Provide the message input var view as an accessory, tying it to the keyboard
-    override var inputAccessoryView: UIView? {
-        get {
-            return messageInputBarView
-        }
+    public override var nibBundle: Bundle? {
+        return ChatResources.bundle()
     }
 
-    override var canBecomeFirstResponder: Bool {
-        return true
-    }
-
-    override var canResignFirstResponder: Bool {
-        return true
-    }
-
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.tableView.register(UINib(nibName: "ChatMessageCell", bundle: Resources.bundle()), forCellReuseIdentifier: "ChatMessageCell")
+        self.textViewHeight = self.textView.bounds.size.height
 
-        if (messageInputBarView == nil) {
-            let bundle = Resources.bundle()!
-            messageInputBarView = bundle.loadNibNamed("MessageInputBarView", owner: self, options: nil)!.first as? MessageInputBarView
-        }
+        self.tableView.register(UINib(nibName: "ChatMessageCell", bundle: ChatResources.bundle()), forCellReuseIdentifier: "ChatMessageCell")
 
         if let prefill = message {
-            self.messageInputBarView!.textView.text = prefill
+            self.textView.text = prefill
         }
+
+        updatePlaceholder()
+        resizeTextView()
 
         observeNotficationCenterEvents()
         setupGestureRecognizers()
         updatePlaceholder()
 
-        messageInputBarView!.textView.delegate = self
-        messageInputBarView!.sendButton.addTarget(self, action: #selector(sendMessage(sender:)), for: .touchUpInside)
+        self.textView.delegate = self
+        self.sendButton.addTarget(self, action: #selector(sendMessage(sender:)), for: .touchUpInside)
 
         tableView.delegate = self
         tableView.dataSource = self
@@ -75,17 +71,18 @@ class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDe
         onMessagesUpdated()
     }
 
-    override func viewDidLayoutSubviews() {
+    public override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         scrollToBottom(animated: false)
     }
 
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let rows = messages.count
         return rows
     }
 
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let message = messages[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "ChatMessageCell", for:indexPath) as! ChatMessageCell
 
@@ -117,78 +114,56 @@ class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDe
         return cell
     }
 
-    func textViewDidEndEditing(_ textView: UITextView) {
+    public func textViewDidEndEditing(_ textView: UITextView) {
         updatePlaceholder()
+        resizeTextView()
     }
 
-    func textViewDidChange(_ textView: UITextView) {
+    public func textViewDidChange(_ textView: UITextView) {
         updatePlaceholder()
-        messageInputBarView?.updateHeightConstraint()
+        resizeTextView()
     }
+
 
     func observeNotficationCenterEvents() {
         NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardWillShow(_:)),
-                                               name: UIResponder.keyboardWillShowNotification,
-                                               object: nil)
-
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardWillHide(_:)),
-                                               name: UIResponder.keyboardWillHideNotification,
+                                               selector: #selector(onKeyboardWillChangeFrame(_:)),
+                                               name: UIResponder.keyboardWillChangeFrameNotification,
                                                object: nil)
     }
 
     func setupGestureRecognizers() {
-        let gesture = UISwipeGestureRecognizer(target: self, action: #selector(swipedInputBar))
-        gesture.direction = .down
-        self.messageInputBarView!.textView.addGestureRecognizer(gesture)
+        let tap = UITapGestureRecognizer(target: self, action: #selector(tappedTableView))
+        self.tableView.addGestureRecognizer(tap)
     }
 
-    @objc func keyboardWillShow(_ notification: NSNotification) {
-        adjustForKeyboard(shown: true, notification: notification)
-    }
+    @objc
+    func onKeyboardWillChangeFrame(_ notification: NSNotification) {
+        guard let userInfo = notification.userInfo else {
+            return
+        }
 
-    @objc func keyboardWillHide(_ notification: NSNotification) {
-        adjustForKeyboard(shown: false, notification: notification)
+        guard let frameEnd = userInfo[UIWindow.keyboardFrameEndUserInfoKey] as? CGRect else {
+            return
+        }
+
+        let bottomInsets = self.view.safeAreaInsets.bottom
+        let bottomSpacing = self.view.frame.height - frameEnd.origin.y - bottomInsets
+        self.bottomConstraint.constant = bottomSpacing > 0 ? -bottomSpacing : 0
+
+        self.view.layoutIfNeeded()
     }
 
     @objc func swipedInputBar(gesture: UISwipeGestureRecognizer) {
-        self.messageInputBarView!.textView.resignFirstResponder()
+        self.textView.resignFirstResponder()
     }
 
-    // Adjust content insets for the tableview to accomodate the onscreen keyboard
-    func adjustForKeyboard(shown: Bool, notification: NSNotification) {
-        guard notification.name == UIResponder.keyboardWillShowNotification || notification.name == UIResponder.keyboardWillChangeFrameNotification || notification.name == UIResponder.keyboardWillHideNotification else {
+    @objc func tappedTableView(gesture: UISwipeGestureRecognizer) {
+        if (gesture.state != .ended) {
             return
         }
 
-        let userInfo = notification.userInfo!
-        let frameEnd = userInfo[UIWindow.keyboardFrameEndUserInfoKey] as! CGRect
-        let duration = userInfo[UIWindow.keyboardAnimationDurationUserInfoKey] as! Double
-
-        let bottomPadding:CGFloat = 30
-        let accessoryHeight = messageInputBarView!.bounds.size.height
-
-        let inputHeight = shown ? frameEnd.size.height + bottomPadding : accessoryHeight + bottomPadding
-
-        if tableView.contentInset.bottom == inputHeight {
-            return
-        }
-
-        let distanceFromBottom = bottomOffset().y - tableView.contentOffset.y
-
-        var insets = tableView.contentInset
-        insets.bottom = inputHeight
-
-        UIView.animate(withDuration: duration, delay: 0, options:.curveEaseInOut, animations: {
-
-            self.tableView.contentInset = insets
-            self.tableView.scrollIndicatorInsets = insets
-
-            if distanceFromBottom < 10 {
-                self.tableView.contentOffset = self.bottomOffset()
-            }
-        }, completion: nil)
+        self.textView.resignFirstResponder()
     }
 
     func reload() {
@@ -212,25 +187,23 @@ class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
 
     func updatePlaceholder() {
-        if !messageInputBarView!.textView.hasText || messageInputBarView!.textView.text.isEmpty {
-            messageInputBarView!.placeholder?.isHidden = false
-        } else {
-            messageInputBarView!.placeholder?.isHidden = true
-        }
+        self.placeHolder.isHidden = self.textView.text?.isEmpty == false
     }
 
     @IBAction func sendMessage(sender: UIButton) {
-        let inputText = messageInputBarView!.textView.text
+        let inputText = self.textView.text
 
         if let message = inputText {
             if (!message.isEmpty) {
                 AirshipChat.shared().conversation.send(message)
-                messageInputBarView!.textView.text = ""
-
-                // Resize the input bar in case the text view has expanded
-                messageInputBarView?.invalidateIntrinsicContentSize()
-                messageInputBarView?.updateHeightConstraint()
+                self.textView.text = ""
             }
         }
+        updatePlaceholder()
+        resizeTextView()
+    }
+
+    private func resizeTextView() {
+        textViewHeightConstraint.constant = min(120, max(self.textViewHeight, self.textView.contentSize.height))
     }
 }
