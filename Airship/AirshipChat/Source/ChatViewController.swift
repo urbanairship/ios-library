@@ -11,7 +11,11 @@ import Airship
 @available(iOS 13.0, *)
 @objc(UAChatViewController)
 public class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextViewDelegate, ConversationDelegate {
-    final var message: String?
+    public var messageDraft: String? {
+        didSet {
+            self.textView?.text = messageDraft ?? ""
+        }
+    }
     
     @IBOutlet private var tableView: UITableView!
     @IBOutlet private var placeHolder: UILabel!
@@ -47,7 +51,7 @@ public class ChatViewController: UIViewController, UITableViewDataSource, UITabl
 
         self.tableView.register(UINib(nibName: "ChatMessageCell", bundle: ChatResources.bundle()), forCellReuseIdentifier: "ChatMessageCell")
 
-        if let prefill = message {
+        if let prefill = self.messageDraft {
             self.textView.text = prefill
         }
 
@@ -146,9 +150,7 @@ public class ChatViewController: UIViewController, UITableViewDataSource, UITabl
         guard let frameEnd = userInfo[UIWindow.keyboardFrameEndUserInfoKey] as? CGRect else {
             return
         }
-
-        let bottomInsets = self.view.safeAreaInsets.bottom
-        let bottomSpacing = self.view.frame.height - frameEnd.origin.y - bottomInsets
+        let bottomSpacing = self.view.frame.height + self.view.frame.origin.y - frameEnd.origin.y - self.view.safeAreaInsets.bottom
         self.bottomConstraint.constant = bottomSpacing > 0 ? -bottomSpacing : 0
 
         self.view.layoutIfNeeded()

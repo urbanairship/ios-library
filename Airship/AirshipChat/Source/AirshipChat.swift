@@ -130,7 +130,7 @@ public class AirshipChat : UAComponent, UAPushableComponent {
 
     private func openDefaultChat(message: String? = nil) {
         guard viewController == nil else {
-            AirshipLogger.debug("Already displaying chat: \(self.viewController!.description)")
+            AirshipLogger.debug("Already displaying chat: \(self.viewController?.description ?? "")")
             return
         }
 
@@ -150,7 +150,7 @@ public class AirshipChat : UAComponent, UAPushableComponent {
         nav.modalPresentationStyle = UIModalPresentationStyle.fullScreen
 
         let cvc = ChatViewController.init(nibName: "UAChatViewController", bundle: ChatResources.bundle())
-        cvc.message = message
+        cvc.messageDraft = message
 
         // TODO: Localization
         cvc.title = "Chat"
