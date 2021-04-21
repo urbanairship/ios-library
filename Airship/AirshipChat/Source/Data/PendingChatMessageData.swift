@@ -1,36 +1,30 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+import CoreData
 
 /**
  * Pending chat message data.
  */
-class PendingChatMessageData : NSObject {
-
+@objc(UAPendingChatMessageData)
+class PendingChatMessageData : NSManagedObject, PendingChatMessageDataProtocol {
     /**
      * The message ID.
      */
-    public let requestID: String
+    @NSManaged dynamic var requestID: String
 
     /**
      * The message text.
      */
-    public let text: String?
+    @NSManaged dynamic var text: String?
 
     /**
      * The message URL
      */
-    public let attachment: URL?
+    @NSManaged dynamic var attachment: URL?
 
     /**
      * The message created date.
      */
-    public let createdOn: Date
-
-    init(requestID: String, text: String?, attachment: URL?, createdOn: Date) {
-        self.requestID = requestID
-        self.text = text
-        self.attachment = attachment
-        self.createdOn = createdOn
-    }
+    @NSManaged dynamic var createdOn: Date
 }

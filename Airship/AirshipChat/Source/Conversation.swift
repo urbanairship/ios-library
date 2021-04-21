@@ -121,7 +121,8 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
                   chatConfig: chatConfig,
                   channel: channel,
                   client: ChatAPIClient(chatConfig: chatConfig),
-                  chatConnection: ChatConnection(chatConfig: chatConfig))
+                  chatConnection: ChatConnection(chatConfig: chatConfig),
+                  chatDAO: ChatDAO(config: chatConfig))
     }
 
     init(dataStore: UAPreferenceDataStore,
@@ -129,7 +130,7 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
          channel: AirshipChannel,
          client: ChatAPIClientProtocol,
          chatConnection: ChatConnectionProtocol,
-         chatDAO: ChatDAOProtocol = ChatDAO(),
+         chatDAO: ChatDAOProtocol,
          appStateTracker: UAAppStateTracker = UAAppStateTracker.shared(),
          dispatcher: UADispatcher = UADispatcher.serial(),
          notificationCenter: NotificationCenter = NotificationCenter.default) {
@@ -405,7 +406,7 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
 }
 
 @available(iOS 13.0, *)
-extension ChatMessageData {
+extension ChatMessageDataProtocol {
     func toChatMessage() -> ChatMessage {
         let chatDirection = ChatMessageDirection.init(rawValue: self.direction) ?? .incoming
         return ChatMessage(messageID: self.requestID ?? "\(self.messageID)",
@@ -418,7 +419,7 @@ extension ChatMessageData {
 }
 
 @available(iOS 13.0, *)
-extension PendingChatMessageData {
+extension PendingChatMessageDataProtocol {
     func toChatMessage() -> ChatMessage {
         return ChatMessage(messageID: self.requestID, text: self.text, timestamp: Date.distantFuture, direction: .outgoing, delivered: false)
     }

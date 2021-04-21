@@ -1,48 +1,41 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+import CoreData
 
 /**
  * Chat message data.
  */
-class ChatMessageData : NSObject {
+@objc(UAChatMessageData)
+class ChatMessageData : NSManagedObject, ChatMessageDataProtocol {
 
     /**
      * The message ID.
      */
-    public let messageID: Int
+    @NSManaged dynamic var messageID: Int
 
     /**
      * The message request ID.
      */
-    public let requestID: String?
+    @NSManaged dynamic var requestID: String?
 
     /**
      * The message text.
      */
-    public let text: String?
+    @NSManaged dynamic var text: String?
 
     /**
      * The message created date.
      */
-    public let createdOn: Date
+    @NSManaged dynamic var createdOn: Date
 
     /**
      * The message source.
      */
-    public let direction: UInt
+    @NSManaged dynamic var direction: UInt
 
     /**
      * The message attachment.
      */
-    public let attachment: URL?
-
-    init(messageID: Int, requestID: String?, text: String?, createdOn: Date, direction: UInt, attachment: URL?) {
-        self.messageID = messageID
-        self.requestID = requestID
-        self.text = text
-        self.createdOn = createdOn
-        self.direction = direction
-        self.attachment = attachment
-    }
+    @NSManaged dynamic var attachment: URL?
 }

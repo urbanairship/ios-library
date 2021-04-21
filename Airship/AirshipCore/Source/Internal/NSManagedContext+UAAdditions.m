@@ -19,7 +19,7 @@ NSString *const UAManagedContextStoreDirectory = @"com.urbanairship.no-backup";
 }
 
 - (void)addPersistentSqlStore:(NSString *)storeName
-            completionHandler:(nonnull void(^)(NSPersistentStore *, NSError *))completionHandler {
+            completionHandler:(nonnull void(^)(NSPersistentStore  * _Nullable , NSError * _Nullable))completionHandler {
 
     [self performBlock:^{
 

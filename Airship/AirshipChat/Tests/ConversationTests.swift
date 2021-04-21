@@ -14,7 +14,7 @@ class ConversationTests: XCTestCase {
     var mockStateTracker: MockAppStateTracker!
     var mockConfig: MockChatConfig!
     var notificationCenter: NotificationCenter!
-    var chatDAO: ChatDAOProtocol!
+    var mockChatDAO: MockChatDAO!
 
     var conversation : Conversation!
     override func setUp() {
@@ -23,20 +23,20 @@ class ConversationTests: XCTestCase {
         self.mockStateTracker = MockAppStateTracker()
         self.mockAPIClient = MockChatAPIClient()
 
-        self.chatDAO = ChatDAO(dispatcher: MockDispatcher())
         self.notificationCenter = NotificationCenter()
         let dataStore = UAPreferenceDataStore(keyPrefix: UUID().uuidString)
 
         self.mockConfig = MockChatConfig(appKey: "someAppKey",
                                          chatURL: "https://test",
                                          chatWebSocketURL: "wss:test")
+        self.mockChatDAO = MockChatDAO()
 
         self.conversation = Conversation(dataStore: dataStore,
                                          chatConfig: self.mockConfig,
                                          channel: self.mockChannel,
                                          client: self.mockAPIClient,
                                          chatConnection: self.mockChatConnection,
-                                         chatDAO: self.chatDAO,
+                                         chatDAO: self.mockChatDAO,
                                          appStateTracker: self.mockStateTracker,
                                          dispatcher: MockDispatcher(),
                                          notificationCenter: self.notificationCenter)
@@ -228,7 +228,7 @@ class ConversationTests: XCTestCase {
         self.conversation.send("sup")
 
         let expectation = XCTestExpectation(description: "check")
-        self.chatDAO.fetchPending { (pending) in
+        self.mockChatDAO.fetchPending { (pending) in
             XCTAssertTrue(pending.isEmpty)
             expectation.fulfill()
         }
@@ -265,7 +265,7 @@ class ConversationTests: XCTestCase {
         self.conversation.send("sup")
 
         var expectation = XCTestExpectation(description: "check")
-        self.chatDAO.fetchPending { (pending) in
+        self.mockChatDAO.fetchPending { (pending) in
             XCTAssertFalse(pending.isEmpty)
             expectation.fulfill()
         }
@@ -274,7 +274,7 @@ class ConversationTests: XCTestCase {
         self.conversation.clearData()
 
         expectation = XCTestExpectation(description: "check")
-        self.chatDAO.fetchPending { (pending) in
+        self.mockChatDAO.fetchPending { (pending) in
             XCTAssertTrue(pending.isEmpty)
             expectation.fulfill()
         }
