@@ -23,7 +23,7 @@
             <subviews>
                 <wkWebView clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OX7-dF-5oP">
                     <rect key="frame" x="0.0" y="0.0" width="320" height="436"/>
-                    <wkWebViewConfiguration key="configuration">
+                    <wkWebViewConfiguration key="configuration" allowsInlineMediaPlayback="YES">
                         <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
                         <wkPreferences key="preferences"/>
                     </wkWebViewConfiguration>
