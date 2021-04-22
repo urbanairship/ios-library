@@ -16,14 +16,14 @@ public class AirshipChatModuleLoader : NSObject, UAModuleLoader, UAAirshipChatMo
 
     private var module: UAComponent
 
-    public init(_ module: AirshipChat) {
+    public init(_ module: Chat) {
         self.module = module
     }
 
     public static func moduleLoader(with dataStore: UAPreferenceDataStore,
                                     config: UARuntimeConfig,
                                     channel: UAChannel) -> UAModuleLoader {
-        let airshipChat = AirshipChat(dataStore: dataStore, config: config, channel: channel)
+        let airshipChat = Chat(dataStore: dataStore, config: config, channel: channel)
         return AirshipChatModuleLoader(airshipChat)
     }
 

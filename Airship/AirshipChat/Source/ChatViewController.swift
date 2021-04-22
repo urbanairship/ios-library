@@ -43,14 +43,14 @@ public class ChatViewController: UIViewController, UITableViewDataSource, UITabl
     public var chatStyle: ChatStyle?
 
     public func onMessagesUpdated() {
-        AirshipChat.shared().conversation.fetchMessages(completionHandler: { (messages) in
+        Chat.shared().conversation.fetchMessages(completionHandler: { (messages) in
             self.messages = messages
             self.reload()
         })
     }
 
     public func onConnectionStatusChanged() {
-        AirshipLogger.debug("Connection status changed: \(AirshipChat.shared().conversation.isConnected)")
+        AirshipLogger.debug("Connection status changed: \(Chat.shared().conversation.isConnected)")
     }
 
     public override var nibBundle: Bundle? {
@@ -86,7 +86,7 @@ public class ChatViewController: UIViewController, UITableViewDataSource, UITabl
         tableView.delegate = self
         tableView.dataSource = self
 
-        AirshipChat.shared().conversation.delegate = self
+        Chat.shared().conversation.delegate = self
 
         onMessagesUpdated()
     }
@@ -223,7 +223,7 @@ public class ChatViewController: UIViewController, UITableViewDataSource, UITabl
 
         if let message = inputText {
             if (!message.isEmpty) {
-                AirshipChat.shared().conversation.sendMessage(message)
+                Chat.shared().conversation.sendMessage(message)
                 self.textView.text = ""
             }
         }

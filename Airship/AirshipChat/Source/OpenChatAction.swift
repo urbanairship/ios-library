@@ -28,14 +28,14 @@ public class OpenChatAction : UAAction {
 
     public static let name = "open_chat_action"
 
-    public typealias AirshipChatProvider = () -> AirshipChat
+    public typealias AirshipChatProvider = () -> Chat
 
     private let chatProvider : AirshipChatProvider
 
     @objc
     public override convenience init() {
         self.init {
-            return AirshipChat.shared()
+            return Chat.shared()
         }
     }
 

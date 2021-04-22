@@ -12,7 +12,7 @@ import Airship
  * Open chat delegate.
  */
 @objc(UAirshipChatDelegate)
-public protocol AirshipChatOpenDelegate {
+public protocol ChatOpenDelegate {
 
     /**
      * Called when the chat should be openend.
@@ -27,7 +27,7 @@ public protocol AirshipChatOpenDelegate {
  */
 @available(iOS 13.0, *)
 @objc(UAirshipChat)
-public class AirshipChat : UAComponent, UAPushableComponent {
+public class Chat : UAComponent, UAPushableComponent {
 
     private static let refreshKey = "com.urbanairship.refresh_chat"
 
@@ -37,7 +37,7 @@ public class AirshipChat : UAComponent, UAPushableComponent {
      * If set, the delegate will be called instead of launching the OOTB chat screen.
      */
     @objc
-    public weak var openChatDelegate: AirshipChatOpenDelegate?
+    public weak var openChatDelegate: ChatOpenDelegate?
 
 
     private static let enableKey = "AirshipChat.enabled"
@@ -48,10 +48,10 @@ public class AirshipChat : UAComponent, UAPushableComponent {
     @objc
     public var enabled: Bool {
         get {
-            return self.dataStore.bool(forKey: AirshipChat.enableKey, defaultValue:true)
+            return self.dataStore.bool(forKey: Chat.enableKey, defaultValue:true)
         }
         set {
-            self.dataStore.setBool(newValue, forKey: AirshipChat.enableKey)
+            self.dataStore.setBool(newValue, forKey: Chat.enableKey)
             self.updateConversationEnablement()
         }
     }
