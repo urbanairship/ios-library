@@ -3,9 +3,6 @@
     "author_url":"https://urbanairship.com",
     "github_url":"https://github.com/urbanairship/ios-library",
     "readme":"readme-for-jazzy.md",
-    "theme":"theme",
-
     "documentation":"Documentation/Migration/M*md",
     "abstract":"Documentation/abstracts/*md"
-
 }
