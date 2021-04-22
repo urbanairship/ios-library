@@ -2,6 +2,12 @@
 
 import Foundation
 
+#if canImport(AirshipCore)
+import AirshipCore
+#elseif !COCOAPODS && canImport(Airship)
+import Airship
+#endif
+
 /**
  * Resources for AirshipChat.
  */
@@ -18,5 +24,9 @@ public class ChatResources : NSObject {
         let mainBundle = Bundle.main
         let path = mainBundle.path(forResource: "Airship_AirshipChat", ofType: "bundle") ?? ""
         return Bundle(path: path) ?? Bundle(for: Self.self)
+    }
+
+    static func localizedString(key: String) -> String? {
+        return key.localizedString(withTable:"UrbanAirship", moduleBundle:bundle())
     }
 }

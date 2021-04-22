@@ -81,6 +81,7 @@ public class ChatViewController: UIViewController, UITableViewDataSource, UITabl
 
         self.textView.delegate = self
         self.sendButton.addTarget(self, action: #selector(sendMessage(sender:)), for: .touchUpInside)
+        self.sendButton.setTitle(ChatResources.localizedString(key: "ua_chat_send_button"), for: .normal)
 
         tableView.delegate = self
         tableView.dataSource = self

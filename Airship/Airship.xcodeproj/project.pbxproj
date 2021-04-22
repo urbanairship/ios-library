@@ -58,7 +58,7 @@
 		3C0D06692624EB6C002337B0 /* ChatMessageCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C0D06642624EB6C002337B0 /* ChatMessageCell.xib */; };
 		3C0D066A2624EB6C002337B0 /* ChatMessageCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C0D06642624EB6C002337B0 /* ChatMessageCell.xib */; };
 		3C0D067E2624EBD3002337B0 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C0D06792624EBD2002337B0 /* ChatViewController.swift */; };
-		3C0D06802624EBD3002337B0 /* Resources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C0D067A2624EBD3002337B0 /* Resources.swift */; };
+		3C0D06802624EBD3002337B0 /* ChatResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C0D067A2624EBD3002337B0 /* ChatResources.swift */; };
 		3C0D06842624EBD3002337B0 /* ChatMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C0D067C2624EBD3002337B0 /* ChatMessageCell.swift */; };
 		3C13BFB62384AC0E0071E80C /* UAAutomationResources.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C13BFB42384AC0E0071E80C /* UAAutomationResources.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3C13BFB72384AC0E0071E80C /* UAAutomationResources.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C13BFB52384AC0E0071E80C /* UAAutomationResources.m */; };
@@ -2734,7 +2734,7 @@
 		3C07644A25EDEDE4007F425C /* UAStateOverridesTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAStateOverridesTest.m; sourceTree = "<group>"; };
 		3C0D06642624EB6C002337B0 /* ChatMessageCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ChatMessageCell.xib; sourceTree = "<group>"; };
 		3C0D06792624EBD2002337B0 /* ChatViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
-		3C0D067A2624EBD3002337B0 /* Resources.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Resources.swift; sourceTree = "<group>"; };
+		3C0D067A2624EBD3002337B0 /* ChatResources.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatResources.swift; sourceTree = "<group>"; };
 		3C0D067C2624EBD3002337B0 /* ChatMessageCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatMessageCell.swift; sourceTree = "<group>"; };
 		3C13BFB42384AC0E0071E80C /* UAAutomationResources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAAutomationResources.h; sourceTree = "<group>"; };
 		3C13BFB52384AC0E0071E80C /* UAAutomationResources.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAutomationResources.m; sourceTree = "<group>"; };
@@ -5206,7 +5206,7 @@
 			children = (
 				3C0D067C2624EBD3002337B0 /* ChatMessageCell.swift */,
 				3C0D06792624EBD2002337B0 /* ChatViewController.swift */,
-				3C0D067A2624EBD3002337B0 /* Resources.swift */,
+				3C0D067A2624EBD3002337B0 /* ChatResources.swift */,
 				6E7C0730261287FA006D0E84 /* AirshipLogger.swift */,
 				6E9D5472261E0D35009BD6EB /* WebSocket */,
 				6E9D53C8261D2EC2009BD6EB /* HTTP */,
@@ -8708,7 +8708,7 @@
 				6E9D57C1261F99BF009BD6EB /* ChatConfig.swift in Sources */,
 				6E7C07C026139223006D0E84 /* ChatConnectionProtocol.swift in Sources */,
 				6E7C080926139F74006D0E84 /* ChatAPIClientProtocol.swift in Sources */,
-				3C0D06802624EBD3002337B0 /* Resources.swift in Sources */,
+				3C0D06802624EBD3002337B0 /* ChatResources.swift in Sources */,
 				6E9D55C3261E3A92009BD6EB /* AirshipChannel.swift in Sources */,
 				6E877771261CED2C00B03FC0 /* ChatMessageData.swift in Sources */,
 			);

@@ -170,8 +170,7 @@ public class AirshipChat : UAComponent, UAPushableComponent {
         cvc.messageDraft = message
         cvc.chatStyle = style
 
-        // TODO: localization
-        cvc.title = style?.title ?? "Chat"
+        cvc.title = ChatResources.localizedString(key: "ua_chat_title")
 
         nav.navigationBar.barTintColor = style?.navigationBarColor ?? nav.navigationBar.barTintColor
 
