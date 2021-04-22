@@ -149,7 +149,7 @@ NSString * const UANavigationBarStyleKey = @"navigationBarStyle";
     }
 
     if (!([fontSize doubleValue] > 0)) {
-        UA_LERR(@"Font name must be a valid string representing a double greater than 0.");
+        UA_LERR(@"Font size must be a valid string representing a double greater than 0.");
         return nil;
     }
 

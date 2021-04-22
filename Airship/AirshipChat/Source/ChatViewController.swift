@@ -29,6 +29,8 @@ public class ChatViewController: UIViewController, UITableViewDataSource, UITabl
     private var textViewHeight: CGFloat!
     private var messages: Array<ChatMessage> = Array<ChatMessage>()
 
+    public var style: ChatStyle?
+
     public func onMessagesUpdated() {
         AirshipChat.shared().conversation.fetchMessages(completionHandler: { (messages) in
             self.messages = messages
@@ -55,10 +57,14 @@ public class ChatViewController: UIViewController, UITableViewDataSource, UITabl
             self.textView.text = prefill
         }
 
+        if style != nil {
+            applyStyle(style: style!)
+        }
+
         updatePlaceholder()
         resizeTextView()
 
-        observeNotficationCenterEvents()
+        observeNotificationCenterEvents()
         setupGestureRecognizers()
         updatePlaceholder()
 
@@ -67,8 +73,6 @@ public class ChatViewController: UIViewController, UITableViewDataSource, UITabl
 
         tableView.delegate = self
         tableView.dataSource = self
-
-        // TODO: styles
 
         AirshipChat.shared().conversation.delegate = self
 
@@ -92,18 +96,21 @@ public class ChatViewController: UIViewController, UITableViewDataSource, UITabl
 
         if (message.direction == .incoming) {
             cell.stackView.alignment = .leading
-            cell.messageTextLabel.backgroundColor = UIColor.systemGray6
-            cell.containerView.backgroundColor = UIColor.systemGray6
+            cell.messageTextLabel.backgroundColor = style?.incomingChatBubbleColor ?? UIColor.systemGray6
+            cell.containerView.backgroundColor = style?.incomingChatBubbleColor ?? UIColor.systemGray6
+            cell.messageTextLabel.textColor = style?.incomingTextColor ?? cell.messageTextLabel.textColor
         } else {
             cell.stackView.alignment = .trailing
-            cell.messageTextLabel.backgroundColor = UIColor.systemBlue
-            cell.containerView.backgroundColor = UIColor.systemBlue
-            cell.messageTextLabel.textColor = UIColor.systemGray6
+            cell.messageTextLabel.backgroundColor = style?.outgoingChatBubbleColor ?? UIColor.systemBlue
+            cell.containerView.backgroundColor = style?.outgoingChatBubbleColor ?? UIColor.systemBlue
+            cell.messageTextLabel.textColor = style?.outgoingTextColor ?? UIColor.systemGray6
         }
 
+        cell.messageTextLabel.font = style?.messageTextFont ?? cell.messageTextLabel.font
         cell.messageTextLabel?.text = message.text
 
-        // TODO: styles
+        cell.messageDateLabel.textColor = style?.dateColor ?? cell.messageDateLabel.textColor
+        cell.messageDateLabel.font = style?.dateFont ?? cell.messageDateLabel.font
 
         if (message.isDelivered) {
             let formatter = DateFormatter()
@@ -112,6 +119,7 @@ public class ChatViewController: UIViewController, UITableViewDataSource, UITabl
             formatter.locale = UAirship.shared().locale.currentLocale
             cell.messageDateLabel?.text = formatter.string(from: message.timestamp)
         } else {
+            // TODO: localization
             cell.messageDateLabel?.text = "Sending"
         }
 
@@ -128,8 +136,14 @@ public class ChatViewController: UIViewController, UITableViewDataSource, UITabl
         resizeTextView()
     }
 
+    func applyStyle(style: ChatStyle) {
+        self.tableView.backgroundColor = style.backgroundColor ?? self.tableView.backgroundColor
+        self.view.backgroundColor = style.backgroundColor ?? self.view.backgroundColor
+        self.inputBar.backgroundColor = style.backgroundColor ?? self.inputBar.backgroundColor
+        self.sendButton.tintColor = style.tintColor ?? self.sendButton.tintColor
+    }
 
-    func observeNotficationCenterEvents() {
+    func observeNotificationCenterEvents() {
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(onKeyboardWillChangeFrame(_:)),
                                                name: UIResponder.keyboardWillChangeFrameNotification,

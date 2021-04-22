@@ -111,6 +111,7 @@
 		3C927F7A23A2F94C003C5FC8 /* UAAppStateTrackerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C927F7923A2F94C003C5FC8 /* UAAppStateTrackerTest.m */; };
 		3C927F8123A425F0003C5FC8 /* UAUIKitStateTrackerAdapterTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C927F8023A425F0003C5FC8 /* UAUIKitStateTrackerAdapterTest.m */; };
 		3C927F8423A97CDA003C5FC8 /* UADefaultValueTransformerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C927F8323A97CD9003C5FC8 /* UADefaultValueTransformerTest.m */; };
+		3C9AC940262F9AC300D6E346 /* ChatStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C9AC93F262F9AC300D6E346 /* ChatStyle.swift */; };
 		3C9E9D6821D42EEB0072F65B /* UAInAppMessageResolutionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C9E9D6721D42EEB0072F65B /* UAInAppMessageResolutionTest.m */; };
 		3CA0E2A0237CCE2600EE76CF /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		3CA0E2AE237CD05F00EE76CF /* AssociatedIdentifiersTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E22B237CCBA600EE76CF /* AssociatedIdentifiersTableViewController.swift */; };
@@ -2780,6 +2781,7 @@
 		3C927F7923A2F94C003C5FC8 /* UAAppStateTrackerTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAAppStateTrackerTest.m; sourceTree = "<group>"; };
 		3C927F8023A425F0003C5FC8 /* UAUIKitStateTrackerAdapterTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAUIKitStateTrackerAdapterTest.m; sourceTree = "<group>"; };
 		3C927F8323A97CD9003C5FC8 /* UADefaultValueTransformerTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UADefaultValueTransformerTest.m; sourceTree = "<group>"; };
+		3C9AC93F262F9AC300D6E346 /* ChatStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatStyle.swift; sourceTree = "<group>"; };
 		3C9E9D6721D42EEB0072F65B /* UAInAppMessageResolutionTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageResolutionTest.m; sourceTree = "<group>"; };
 		3CA0E21D237CCBA600EE76CF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/AirshipDebug.strings; sourceTree = "<group>"; };
 		3CA0E21F237CCBA600EE76CF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = en; path = en.lproj/AirshipDebug.stringsdict; sourceTree = "<group>"; };
@@ -5218,6 +5220,7 @@
 				6E9D55C2261E3A92009BD6EB /* AirshipChannel.swift */,
 				6E9D57C0261F99BF009BD6EB /* ChatConfig.swift */,
 				6E9D580A261FC344009BD6EB /* OpenChatAction.swift */,
+				3C9AC93F262F9AC300D6E346 /* ChatStyle.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -8686,6 +8689,7 @@
 				6E9D5463261E0CD6009BD6EB /* WebSocketFactory.swift in Sources */,
 				6E7C06AF26127606006D0E84 /* AirshipChat.swift in Sources */,
 				6E7C0731261287FA006D0E84 /* AirshipLogger.swift in Sources */,
+				3C9AC940262F9AC300D6E346 /* ChatStyle.swift in Sources */,
 				6E7C07FA26139C02006D0E84 /* ChatDAOProtocol.swift in Sources */,
 				6E7C07CF26139B4A006D0E84 /* Conversation.swift in Sources */,
 				6E7C07DE26139B58006D0E84 /* ChatMessage.swift in Sources */,

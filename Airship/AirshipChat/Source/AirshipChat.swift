@@ -41,6 +41,7 @@ public class AirshipChat : UAComponent, UAPushableComponent {
 
 
     private static let enableKey = "AirshipChat.enabled"
+
     /**
      * Enables or disables chat.
      */
@@ -53,6 +54,11 @@ public class AirshipChat : UAComponent, UAPushableComponent {
             self.updateConversationEnablement()
         }
     }
+
+    /**
+     * Chat style
+     */
+    public var style: ChatStyle?
 
     /**
      * The default conversation.
@@ -85,6 +91,7 @@ public class AirshipChat : UAComponent, UAPushableComponent {
 
         self.dataStore = dataStore
         self.internalConversation = conversation
+        self.style = ChatStyle(file: "AirshipChatStyle")
         super.init(dataStore: dataStore)
 
         AirshipLogger.info("AirshipChat initialized")
@@ -151,9 +158,19 @@ public class AirshipChat : UAComponent, UAPushableComponent {
 
         let cvc = ChatViewController.init(nibName: "UAChatViewController", bundle: ChatResources.bundle())
         cvc.messageDraft = message
+        cvc.style = style
 
-        // TODO: Localization
-        cvc.title = "Chat"
+        // TODO: localization
+        cvc.title = style?.title ?? "Chat"
+
+        nav.navigationBar.barTintColor = style?.navigationBarColor ?? nav.navigationBar.barTintColor
+
+        var titleAttributes: [NSAttributedString.Key : Any] = [:]
+        titleAttributes[NSAttributedString.Key.foregroundColor] = style?.titleColor
+        titleAttributes[NSAttributedString.Key.font] = style?.titleFont
+
+        nav.navigationBar.titleTextAttributes = titleAttributes
+        nav.navigationBar.tintColor = style?.tintColor
 
         cvc.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismiss))
 
