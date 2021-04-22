@@ -94,7 +94,7 @@ class ConversationTests: XCTestCase {
 
         self.mockChatConnection.delegate?.onChatResponse(fetchConvo)
 
-        self.conversation.send("hello!")
+        self.conversation.sendMessage("hello!")
 
         XCTAssertEqual("hello!", self.mockChatConnection.lastSendMessage?.1)
     }
@@ -102,7 +102,7 @@ class ConversationTests: XCTestCase {
     func testSendMessageBeforeSync() throws {
         self.connect()
 
-        self.conversation.send("hello!")
+        self.conversation.sendMessage("hello!")
         XCTAssertNil(self.mockChatConnection.lastSendMessage)
 
         let fetchConvoPayload = ChatResponse.ConversationLoadedResponsePayload(messages: nil)
@@ -118,12 +118,12 @@ class ConversationTests: XCTestCase {
         let fetchConvo = ChatResponse(type: "fetch_conversation", payload: fetchConvoPayload)
         self.mockChatConnection.delegate?.onChatResponse(fetchConvo)
 
-        self.conversation.send(nil, attachment: nil)
+        self.conversation.sendMessage(nil, attachment: nil)
         XCTAssertNil(self.mockChatConnection.lastSendMessage)
     }
 
     func testSendMessageBeforeConnect() throws {
-        self.conversation.send("hello!")
+        self.conversation.sendMessage("hello!")
         XCTAssertNil(self.mockChatConnection.lastSendMessage)
 
         self.connect()
@@ -155,7 +155,7 @@ class ConversationTests: XCTestCase {
 
     func testBackgroundPendingMessages() throws  {
         self.connect()
-        self.conversation.send("hello!")
+        self.conversation.sendMessage("hello!")
 
         self.background()
         XCTAssertTrue(self.mockChatConnection.isOpenOrOpening)
@@ -225,7 +225,7 @@ class ConversationTests: XCTestCase {
 
     func testSendWhileDisabled() throws {
         self.conversation.enabled = false
-        self.conversation.send("sup")
+        self.conversation.sendMessage("sup")
 
         let expectation = XCTestExpectation(description: "check")
         self.mockChatDAO.fetchPending { (pending) in
@@ -262,7 +262,7 @@ class ConversationTests: XCTestCase {
     }
 
     func testClearDataWipesMessages() throws {
-        self.conversation.send("sup")
+        self.conversation.sendMessage("sup")
 
         var expectation = XCTestExpectation(description: "check")
         self.mockChatDAO.fetchPending { (pending) in

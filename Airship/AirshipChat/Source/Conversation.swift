@@ -47,14 +47,14 @@ public protocol ConversationProtocol {
     * @param attachment The attachment.
     */
     @objc
-    func send(_ text: String?, attachment: URL?)
+    func sendMessage(_ text: String?, attachment: URL?)
 
     /**
      * Sends a message.
      * @param text The message.
      */
     @objc
-    func send(_ text: String)
+    func sendMessage(_ text: String)
 
     /**
      * Fetches the messages.
@@ -172,12 +172,12 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
     }
 
     @objc
-    public func send(_ text: String) {
-        self.send(text, attachment: nil)
+    public func sendMessage(_ text: String) {
+        self.sendMessage(text, attachment: nil)
     }
 
     @objc
-    public func send(_ text: String?, attachment: URL? = nil) {
+    public func sendMessage(_ text: String?, attachment: URL? = nil) {
         guard text != nil || attachment != nil else {
             AirshipLogger.error("Both text and attachment should not be nil")
             return

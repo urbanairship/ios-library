@@ -8,9 +8,16 @@ import AirshipCore
 import Airship
 #endif
 
+/**
+ * Chat view controller.
+ */
 @available(iOS 13.0, *)
 @objc(UAChatViewController)
 public class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextViewDelegate, ConversationDelegate {
+    /**
+     * Message draft.
+     */
+    @objc
     public var messageDraft: String? {
         didSet {
             self.textView?.text = messageDraft ?? ""
@@ -29,7 +36,11 @@ public class ChatViewController: UIViewController, UITableViewDataSource, UITabl
     private var textViewHeight: CGFloat!
     private var messages: Array<ChatMessage> = Array<ChatMessage>()
 
-    public var style: ChatStyle?
+    /**
+     * Message style.
+     */
+    @objc
+    public var chatStyle: ChatStyle?
 
     public func onMessagesUpdated() {
         AirshipChat.shared().conversation.fetchMessages(completionHandler: { (messages) in
@@ -57,8 +68,8 @@ public class ChatViewController: UIViewController, UITableViewDataSource, UITabl
             self.textView.text = prefill
         }
 
-        if style != nil {
-            applyStyle(style: style!)
+        if chatStyle != nil {
+            applyStyle(style: chatStyle!)
         }
 
         updatePlaceholder()
@@ -96,21 +107,21 @@ public class ChatViewController: UIViewController, UITableViewDataSource, UITabl
 
         if (message.direction == .incoming) {
             cell.stackView.alignment = .leading
-            cell.messageTextLabel.backgroundColor = style?.incomingChatBubbleColor ?? UIColor.systemGray6
-            cell.containerView.backgroundColor = style?.incomingChatBubbleColor ?? UIColor.systemGray6
-            cell.messageTextLabel.textColor = style?.incomingTextColor ?? cell.messageTextLabel.textColor
+            cell.messageTextLabel.backgroundColor = chatStyle?.incomingChatBubbleColor ?? UIColor.systemGray6
+            cell.containerView.backgroundColor = chatStyle?.incomingChatBubbleColor ?? UIColor.systemGray6
+            cell.messageTextLabel.textColor = chatStyle?.incomingTextColor ?? cell.messageTextLabel.textColor
         } else {
             cell.stackView.alignment = .trailing
-            cell.messageTextLabel.backgroundColor = style?.outgoingChatBubbleColor ?? UIColor.systemBlue
-            cell.containerView.backgroundColor = style?.outgoingChatBubbleColor ?? UIColor.systemBlue
-            cell.messageTextLabel.textColor = style?.outgoingTextColor ?? UIColor.systemGray6
+            cell.messageTextLabel.backgroundColor = chatStyle?.outgoingChatBubbleColor ?? UIColor.systemBlue
+            cell.containerView.backgroundColor = chatStyle?.outgoingChatBubbleColor ?? UIColor.systemBlue
+            cell.messageTextLabel.textColor = chatStyle?.outgoingTextColor ?? UIColor.systemGray6
         }
 
-        cell.messageTextLabel.font = style?.messageTextFont ?? cell.messageTextLabel.font
+        cell.messageTextLabel.font = chatStyle?.messageTextFont ?? cell.messageTextLabel.font
         cell.messageTextLabel?.text = message.text
 
-        cell.messageDateLabel.textColor = style?.dateColor ?? cell.messageDateLabel.textColor
-        cell.messageDateLabel.font = style?.dateFont ?? cell.messageDateLabel.font
+        cell.messageDateLabel.textColor = chatStyle?.dateColor ?? cell.messageDateLabel.textColor
+        cell.messageDateLabel.font = chatStyle?.dateFont ?? cell.messageDateLabel.font
 
         if (message.isDelivered) {
             let formatter = DateFormatter()
@@ -211,7 +222,7 @@ public class ChatViewController: UIViewController, UITableViewDataSource, UITabl
 
         if let message = inputText {
             if (!message.isEmpty) {
-                AirshipChat.shared().conversation.send(message)
+                AirshipChat.shared().conversation.sendMessage(message)
                 self.textView.text = ""
             }
         }

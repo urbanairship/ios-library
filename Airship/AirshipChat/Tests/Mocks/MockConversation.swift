@@ -23,11 +23,11 @@ class MockConversation : InternalConversationProtocol {
         self.clearDataCalled = true;
     }
 
-    func send(_ text: String) {
-        self.send(text, attachment: nil)
+    func sendMessage(_ text: String) {
+        self.sendMessage(text, attachment: nil)
     }
 
-    func send(_ text: String?, attachment: URL?) {
+    func sendMessage(_ text: String?, attachment: URL?) {
         self.lastMessageSent = text
         self.lastAttachmentSent = attachment
     }

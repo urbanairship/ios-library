@@ -45,6 +45,7 @@ public class AirshipChat : UAComponent, UAPushableComponent {
     /**
      * Enables or disables chat.
      */
+    @objc
     public var enabled: Bool {
         get {
             return self.dataStore.bool(forKey: AirshipChat.enableKey, defaultValue:true)
@@ -58,6 +59,7 @@ public class AirshipChat : UAComponent, UAPushableComponent {
     /**
      * Chat style
      */
+    @objc
     public var style: ChatStyle?
 
     /**
@@ -114,10 +116,18 @@ public class AirshipChat : UAComponent, UAPushableComponent {
 
     /**
      * Opens the chat.
+     */
+    @objc
+    public func openChat() {
+        openChat(message: nil)
+    }
+
+    /**
+     * Opens the chat.
      * @param message Optional message to prefill the chat input.
      */
     @objc
-    public func openChat(message: String? = nil) {
+    public func openChat(message: String?) {
         if let strongDelegate = self.openChatDelegate {
             AirshipLogger.trace("Opening chat through delegate with message \(message ?? "")")
             strongDelegate.openChat(message: message)
@@ -158,7 +168,7 @@ public class AirshipChat : UAComponent, UAPushableComponent {
 
         let cvc = ChatViewController.init(nibName: "UAChatViewController", bundle: ChatResources.bundle())
         cvc.messageDraft = message
-        cvc.style = style
+        cvc.chatStyle = style
 
         // TODO: localization
         cvc.title = style?.title ?? "Chat"
