@@ -13,8 +13,9 @@ import Foundation
  */
 @available(iOS 13.0, *)
 class ChatDAO: ChatDAOProtocol {
-    private static let ChatMessageDataEntityName = "ChatMessageData"
-    private static let PendingChatMessageDataEntityName = "PendingChatMessageData"
+    private static let chatMessageDataEntityName = "ChatMessageData"
+    private static let pendingChatMessageDataEntityName = "PendingChatMessageData"
+    private static let fetchLimit = 50
 
     private let storeName: String
     private let managedContext: NSManagedObjectContext
@@ -35,7 +36,7 @@ class ChatDAO: ChatDAOProtocol {
 
     func upsertMessage(messageID: Int, requestID: String?, text: String?, createdOn: Date, direction: UInt, attachment: URL?) {
         safePerformBlock {
-            let data = self.getMessage(messageID) ?? self.insertNewEntity(ChatDAO.ChatMessageDataEntityName) as! ChatMessageData
+            let data = self.getMessage(messageID) ?? self.insertNewEntity(ChatDAO.chatMessageDataEntityName) as! ChatMessageData
             data.messageID = messageID
             data.requestID = requestID
             data.text = text
@@ -47,7 +48,7 @@ class ChatDAO: ChatDAOProtocol {
 
     func insertPending(requestID: String, text: String?, attachment: URL?, createdOn: Date) {
         safePerformBlock {
-            let data = self.insertNewEntity(ChatDAO.PendingChatMessageDataEntityName) as! PendingChatMessageData
+            let data = self.insertNewEntity(ChatDAO.pendingChatMessageDataEntityName) as! PendingChatMessageData
             data.requestID = requestID
             data.text = text
             data.createdOn = createdOn
@@ -87,10 +88,10 @@ class ChatDAO: ChatDAOProtocol {
 
     func deleteAll() {
         safePerformBlock {
-            let pendingRequest = NSFetchRequest<NSFetchRequestResult>(entityName: ChatDAO.PendingChatMessageDataEntityName)
+            let pendingRequest = NSFetchRequest<NSFetchRequestResult>(entityName: ChatDAO.pendingChatMessageDataEntityName)
             let pendingDeleteRequest = NSBatchDeleteRequest(fetchRequest: pendingRequest)
 
-            let messageRequest = NSFetchRequest<NSFetchRequestResult>(entityName: ChatDAO.ChatMessageDataEntityName)
+            let messageRequest = NSFetchRequest<NSFetchRequestResult>(entityName: ChatDAO.chatMessageDataEntityName)
             let messageDeleteRequest = NSBatchDeleteRequest(fetchRequest: messageRequest)
 
             do {
@@ -142,8 +143,9 @@ class ChatDAO: ChatDAOProtocol {
     }
 
     private func getMessages() -> [ChatMessageData] {
-        let request = NSFetchRequest<NSFetchRequestResult>(entityName: ChatDAO.ChatMessageDataEntityName)
+        let request = NSFetchRequest<NSFetchRequestResult>(entityName: ChatDAO.chatMessageDataEntityName)
         request.sortDescriptors = [NSSortDescriptor(key: "createdOn", ascending: true)]
+        request.fetchLimit = ChatDAO.fetchLimit
 
         do {
             let result = try self.managedContext.fetch(request)
@@ -155,7 +157,7 @@ class ChatDAO: ChatDAOProtocol {
     }
 
     private func getPendingMessages() -> [PendingChatMessageData] {
-        let request = NSFetchRequest<NSFetchRequestResult>(entityName: ChatDAO.PendingChatMessageDataEntityName)
+        let request = NSFetchRequest<NSFetchRequestResult>(entityName: ChatDAO.pendingChatMessageDataEntityName)
         request.sortDescriptors = [NSSortDescriptor(key: "createdOn", ascending: true)]
 
         do {
@@ -168,7 +170,7 @@ class ChatDAO: ChatDAOProtocol {
     }
 
     private func getPendingMessage(_ requestID: String) -> PendingChatMessageData? {
-        let request = NSFetchRequest<NSFetchRequestResult>(entityName: ChatDAO.PendingChatMessageDataEntityName)
+        let request = NSFetchRequest<NSFetchRequestResult>(entityName: ChatDAO.pendingChatMessageDataEntityName)
         request.predicate = NSPredicate(format: "requestID == %@", requestID)
         do {
             let result = try self.managedContext.fetch(request)
@@ -180,7 +182,7 @@ class ChatDAO: ChatDAOProtocol {
     }
 
     private func getMessage(_ messageID: Int) -> ChatMessageData? {
-        let request = NSFetchRequest<NSFetchRequestResult>(entityName: ChatDAO.ChatMessageDataEntityName)
+        let request = NSFetchRequest<NSFetchRequestResult>(entityName: ChatDAO.chatMessageDataEntityName)
         request.predicate = NSPredicate(format: "messageID == %ld", messageID)
         do {
             let result = try self.managedContext.fetch(request)
