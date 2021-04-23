@@ -156,7 +156,7 @@ public class ChatStyle : NSObject {
         let hexColor = UAColorUtils.color(withHexString: string)
         let namedColor = UIColor(named: string)
 
-        guard hexColor != nil && namedColor != nil else {
+        guard hexColor != nil || namedColor != nil else {
             AirshipLogger.error("Color must be a valid string representing either a valid color hexidecimal or a named color corresponding to a color asset in the main bundle.")
 
             return nil
