@@ -3,6 +3,15 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 14.4.0 April 26, 2021
+
+Minor release that adds support for Airship Live Chat.
+
+### Changes
+- Added new AirshipChat module.
+- Allow inline media playback in message center.
+- Fixed automatic inProduction selection for catalyst apps.
+
 ## Version 14.3.0 March 11, 2021
 
 Minor release that improves background task management and drops support for uploading historic location data to Airship. The location module can still be used to listen for location updates within the app and will be deprecated in a future release.
