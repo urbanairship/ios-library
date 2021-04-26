@@ -87,6 +87,7 @@ NSString *const UALogLevelTraceName = @"TRACE";
         _inProduction = config.inProduction;
         _detectProvisioningMode = config.detectProvisioningMode;
         _requestAuthorizationToUseNotifications = config.requestAuthorizationToUseNotifications;
+        _suppressAllowListError = config.suppressAllowListError;
         _requireInitialRemoteConfigEnabled = config.requireInitialRemoteConfigEnabled;
 
         _automaticSetupEnabled = config.automaticSetupEnabled;
@@ -125,6 +126,7 @@ NSString *const UALogLevelTraceName = @"TRACE";
             "Production Log Level: %ld\n"
             "Detect Provisioning Mode: %d\n"
             "Request Authorization To Use Notifications: %@\n"
+            "Suppress Allow List Error: %@\n"
             "Require initial remote config: %@\n"
             "Analytics Enabled: %d\n"
             "Analytics URL: %@\n"
@@ -159,6 +161,7 @@ NSString *const UALogLevelTraceName = @"TRACE";
             (long)self.productionLogLevel,
             self.detectProvisioningMode,
             self.requestAuthorizationToUseNotifications ? @"YES" : @"NO",
+            self.suppressAllowListError ? @"YES" : @"NO",
             self.requireInitialRemoteConfigEnabled ? @"YES" : @"NO",
             self.analyticsEnabled,
             self.analyticsURL,
@@ -315,7 +318,7 @@ NSString *const UALogLevelTraceName = @"TRACE";
         if (oldKeyMap[key]) {
             UA_LWARN(@"%@ is a legacy config key, use %@ instead", key, oldKeyMap[key]);
         }
-        
+
         if ([key isEqualToString:@"openURLWhitelistingEnabled"]) {
             UA_LWARN(@"The config key %@ has been removed. Use %@ and %@ instead", key, @"URLAllowListScopeJavaScriptInterface", @"URLAllowListScopeOpenURL");
             continue;
@@ -335,7 +338,7 @@ NSString *const UALogLevelTraceName = @"TRACE";
                 }
             }
         }
-        
+
         if ([key isEqualToString:UADevelopmentLogLevelKey] || [key isEqualToString:UAProductionLogLevelKey]) {
             //The log level value
             id value = keyedValues[key];

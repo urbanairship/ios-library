@@ -201,19 +201,13 @@ NSString *const UAAccengageSettingsMigrated = @"UAAccengageSettingsMigrated";
 
     // get the Accengage ID and set it as an identity hint
     NSDictionary *dataDictionary = self.accengageSettings;
-    id accengageDeviceIDObject = dataDictionary[@"BMA4SID"];
+    id accengageDeviceID = dataDictionary[@"BMA4SID"];
 
-    NSString *accengageDeviceID = @"";
-    if ([accengageDeviceIDObject isKindOfClass:[NSString class]]) {
-        accengageDeviceID = accengageDeviceIDObject;
-    } else {
-        accengageDeviceID = UIDevice.currentDevice.identifierForVendor.UUIDString;
+    if ([accengageDeviceID isKindOfClass:[NSString class]]) {
+        if ([self isValidDeviceID:accengageDeviceID]) {
+            payload.accengageDeviceID = accengageDeviceID;
+        }
     }
-
-    if ([self isValidDeviceID:accengageDeviceID]) {
-        payload.accengageDeviceID = accengageDeviceID;
-    }
-
 
     completionHandler(payload);
 }

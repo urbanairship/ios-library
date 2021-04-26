@@ -11,7 +11,6 @@
 #import "UARuntimeConfig.h"
 #import "UAChannel.h"
 #import "UAirship.h"
-#import "NSOperationQueue+UAAdditions.h"
 #import "UADispatcher.h"
 #import "UAAppStateTracker.h"
 #import "UATaskManager.h"
@@ -147,20 +146,17 @@ static NSUInteger const FetchEventLimit = 500;
     }
 }
 
-- (void)updateAnalyticsParametersWithResponseHeaders:(NSDictionary *)responseHeaders {
-    id maxTotalValue = [responseHeaders objectForKey:@"X-UA-Max-Total"];
-    if (maxTotalValue) {
-        self.maxTotalDBSize = (NSUInteger)[maxTotalValue integerValue] * 1024; //value returned in KB;
+- (void)updateAnalyticsParametersWithResponse:(UAEventAPIResponse *)response {
+    if (response.maxTotalDBSize) {
+        self.maxTotalDBSize = (NSUInteger)[response.maxTotalDBSize integerValue] * 1024; //value returned in KB;
     }
 
-    id maxBatchValue = [responseHeaders objectForKey:@"X-UA-Max-Batch"];
-    if (maxBatchValue) {
-        self.maxBatchSize = (NSUInteger)[maxBatchValue integerValue] * 1024; //value return in KB
+    if (response.maxBatchSize) {
+        self.maxBatchSize = (NSUInteger)[response.maxBatchSize integerValue] * 1024; //value return in KB
     }
 
-    id minBatchValue = [responseHeaders objectForKey:@"X-UA-Min-Batch-Interval"];
-    if (minBatchValue) {
-        self.minBatchInterval = (NSUInteger)[minBatchValue integerValue];
+    if (response.minBatchInterval) {
+        self.minBatchInterval = (NSUInteger)[response.minBatchInterval integerValue];
     }
 }
 
@@ -297,24 +293,29 @@ static NSUInteger const FetchEventLimit = 500;
 
     UA_WEAKIFY(self);
     UASemaphore *semaphore = [UASemaphore semaphore];
-    UADisposable *request = [self.client uploadEvents:events headers:headers completionHandler:^(NSDictionary * _Nullable responseHeaders, NSError * _Nullable error) {
+    UADisposable *request = [self.client uploadEvents:events headers:headers completionHandler:^(UAEventAPIResponse * _Nullable response, NSError * _Nullable error) {
         UA_STRONGIFY(self);
         self.lastSendTime = [NSDate date];
 
-        if (!error) {
-            UA_LTRACE(@"Analytic upload success");
-            [self.eventStore deleteEventsWithIDs:[events valueForKey:@"event_id"]];
-            [self updateAnalyticsParametersWithResponseHeaders:responseHeaders];
-            [task taskCompleted];
-
-            UA_WEAKIFY(self)
-            [[UADispatcher mainDispatcher] dispatchAsync:^{
-                UA_STRONGIFY(self)
-                [self scheduleUpload];
-            }];
-        } else {
+        if (error) {
             UA_LTRACE(@"Analytics upload request failed: %@", error);
             [task taskFailed];
+        } else {
+            if ([response isSuccess]) {
+                UA_LTRACE(@"Analytic upload success");
+                [self.eventStore deleteEventsWithIDs:[events valueForKey:@"event_id"]];
+                [self updateAnalyticsParametersWithResponse:response];
+                [task taskCompleted];
+
+                UA_WEAKIFY(self)
+                [[UADispatcher mainDispatcher] dispatchAsync:^{
+                    UA_STRONGIFY(self)
+                    [self scheduleUpload];
+                }];
+            } else {
+                UA_LTRACE(@"Analytics upload request failed with status: %lu", (unsigned long)response.status);
+                [task taskFailed];
+            }
         }
 
         [semaphore signal];

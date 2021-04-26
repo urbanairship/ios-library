@@ -140,8 +140,6 @@
 
     UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
     id payloadMock = OCMPartialMock(payload);
-
-    NSString *accengageDeviceID = UIDevice.currentDevice.identifierForVendor.UUIDString;
     
     [[payloadMock expect] setAccengageDeviceID:testDeviceID];
     
@@ -153,7 +151,7 @@
 
     accengage.accengageSettings = @{};
 
-    [[payloadMock expect] setAccengageDeviceID:accengageDeviceID];
+    [[payloadMock reject] setAccengageDeviceID:OCMOCK_ANY];
     
     [accengage extendChannelRegistrationPayload:payloadMock completionHandler:handler];
     

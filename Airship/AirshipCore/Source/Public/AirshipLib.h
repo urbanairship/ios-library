@@ -3,7 +3,6 @@
 #import "NSJSONSerialization+UAAdditions.h"
 #import "NSManagedObjectContext+UAAdditions.h"
 #import "NSObject+UAAdditions.h"
-#import "NSOperationQueue+UAAdditions.h"
 #import "NSString+UALocalizationAdditions.h"
 #import "NSString+UAURLEncoding.h"
 #import "NSURLResponse+UAAdditions.h"
