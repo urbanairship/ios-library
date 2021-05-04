@@ -226,6 +226,12 @@ NS_ASSUME_NONNULL_BEGIN
         self.messageTable.separatorColor = [UIColor separatorColor];
     }
     
+    self.messageTable.separatorStyle = self.messageCenterStyle.cellSeparatorStyle;
+    
+    if (!UIEdgeInsetsEqualToEdgeInsets(self.messageCenterStyle.cellSeparatorInset, UIEdgeInsetsZero)) {
+        self.messageTable.separatorInset = self.messageCenterStyle.cellSeparatorInset;
+    }
+    
     if (self.messageCenterStyle.refreshTintColor) {
         self.refreshControl.tintColor = self.messageCenterStyle.refreshTintColor;
     }

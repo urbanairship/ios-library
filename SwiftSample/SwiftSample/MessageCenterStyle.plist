@@ -14,5 +14,14 @@
 	<true/>
 	<key>navigationBarStyle</key>
 	<string>black</string>
+	<key>cellSeparatorInset</key>
+	<dict>
+		<key>left</key>
+		<integer>5</integer>
+		<key>right</key>
+		<integer>5</integer>
+	</dict>
+	<key>cellSeparatorStyle</key>
+	<string>default</string>
 </dict>
 </plist>

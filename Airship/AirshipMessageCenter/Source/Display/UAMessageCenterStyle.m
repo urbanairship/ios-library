@@ -8,7 +8,16 @@
 NSString * const UANavigationBarStyleDefaultKey = @"default";
 NSString * const UANavigationBarStyleBlackKey = @"black";
 
+NSString * const UACellSeparatorStyleDefaultKey = @"default";
+NSString * const UACellSeparatorStyleNoneKey = @"none";
+
 NSString * const UANavigationBarStyleKey = @"navigationBarStyle";
+NSString * const UACellSeparatorStyleKey = @"cellSeparatorStyle";
+NSString * const UACellSeparatorInsetKey = @"cellSeparatorInset";
+
+NSString * const UACellSeparatorInsetLeftKey = @"left";
+NSString * const UACellSeparatorInsetRightKey = @"right";
+
 
 
 @implementation UAMessageCenterStyle
@@ -46,12 +55,20 @@ NSString * const UANavigationBarStyleKey = @"navigationBarStyle";
     NSDictionary *normalizedStyleDict = [UAMessageCenterStyle normalizeDictionary:styleDict];
     NSMutableDictionary *mutableStyle = [normalizedStyleDict mutableCopy];
     [mutableStyle removeObjectForKey:UANavigationBarStyleKey];
+    [mutableStyle removeObjectForKey:UACellSeparatorStyleKey];
+    [mutableStyle removeObjectForKey:UACellSeparatorInsetKey];
 
     [style setValuesForKeysWithDictionary:mutableStyle];
 
     UANavigationBarStyle navBarStyle = [UAMessageCenterStyle parseNavigationBarStyle:normalizedStyleDict];
     style.navigationBarStyle = navBarStyle;
+    
+    UIEdgeInsets separatorInset = [UAMessageCenterStyle parseEdgeInsets:normalizedStyleDict];
+    style.cellSeparatorInset = separatorInset;
 
+    UITableViewCellSeparatorStyle separatorStyle = [UAMessageCenterStyle parseSeparatorStyle:normalizedStyleDict];
+    style.cellSeparatorStyle = separatorStyle;
+    
     UA_LTRACE(@"Message Center style options: %@", [normalizedStyleDict description]);
 
     return style;
@@ -65,6 +82,34 @@ NSString * const UANavigationBarStyleKey = @"navigationBarStyle";
      }
 
      return UANavigationBarStyleDefault;
+}
+
++ (UIEdgeInsets)parseEdgeInsets:(NSDictionary *)styleDict {
+    NSDictionary *insetDict = styleDict[UACellSeparatorInsetKey];
+
+    if (insetDict) {
+        id insetLeft = insetDict[UACellSeparatorInsetLeftKey];
+        id insetRight = insetDict[UACellSeparatorInsetRightKey];
+        
+        if ([insetLeft isKindOfClass:[NSNumber class]] && [insetRight isKindOfClass:[NSNumber class]]) {
+            UIEdgeInsets separatorInset = UIEdgeInsetsMake(0, [insetLeft floatValue], 0, [insetRight floatValue]);
+            return separatorInset;
+        } else {
+            UA_LERR(@"Both right and left insets must be numbers stored under the keys \"right\" and \"left\" respectively.");
+        }
+    }
+    
+    return UIEdgeInsetsZero;
+}
+
++ (UITableViewCellSeparatorStyle)parseSeparatorStyle:(NSDictionary *)styleDict {
+    NSString *separatorStyleString = styleDict[UACellSeparatorStyleKey];
+
+    if ([separatorStyleString isEqualToString:UACellSeparatorStyleNoneKey]) {
+         return UITableViewCellSeparatorStyleNone;
+    }
+
+    return UITableViewCellSeparatorStyleSingleLine;
 }
 
 // Validates and normalizes style values
@@ -198,6 +243,8 @@ NSString * const UANavigationBarStyleKey = @"navigationBarStyle";
     BOOL haveEqualCellDateColor = (!self.cellDateColor && !style.cellDateColor) || [self.cellDateColor isEqual:style.cellDateColor];
     BOOL haveEqualCellDateHighlightedColor = (!self.cellDateHighlightedColor && !style.cellDateHighlightedColor) || [self.cellDateHighlightedColor isEqual:style.cellDateHighlightedColor];
     BOOL haveEqualCellSeparatorColor = (!self.cellSeparatorColor && !style.cellSeparatorColor) || [self.cellSeparatorColor isEqual:style.cellSeparatorColor];
+    BOOL haveEqualCellSeparatorStyle = (self.cellSeparatorStyle == style.cellSeparatorStyle);
+    BOOL haveEqualCellSeparatorInset = (self.cellSeparatorInset.bottom == style.cellSeparatorInset.bottom && self.cellSeparatorInset.top == style.cellSeparatorInset.top && self.cellSeparatorInset.left == style.cellSeparatorInset.left && self.cellSeparatorInset.right == style.cellSeparatorInset.right);
     BOOL haveEqualCellTintColor = (!self.cellTintColor && !style.cellTintColor) || [self.cellTintColor isEqual:style.cellTintColor];
     BOOL haveEqualUnreadIndicatorColor = (!self.unreadIndicatorColor && !style.unreadIndicatorColor) || [self.unreadIndicatorColor isEqual:style.unreadIndicatorColor];
     BOOL haveEqualSelectAllButtonTitleColor = (!self.selectAllButtonTitleColor && !style.selectAllButtonTitleColor) || [self.selectAllButtonTitleColor isEqual:style.selectAllButtonTitleColor];
@@ -225,6 +272,8 @@ NSString * const UANavigationBarStyleKey = @"navigationBarStyle";
         haveEqualCellDateColor &&
         haveEqualCellDateHighlightedColor &&
         haveEqualCellSeparatorColor &&
+        haveEqualCellSeparatorStyle &&
+        haveEqualCellSeparatorInset &&
         haveEqualCellTintColor &&
         haveEqualUnreadIndicatorColor &&
         haveEqualSelectAllButtonTitleColor &&
@@ -266,6 +315,11 @@ NSString * const UANavigationBarStyleKey = @"navigationBarStyle";
     result = 31 * result + [self.cellDateColor hash];
     result = 31 * result + [self.cellDateHighlightedColor hash];
     result = 31 * result + [self.cellSeparatorColor hash];
+    result = 31 * result + self.cellSeparatorStyle;
+    result = 31 * result + self.cellSeparatorInset.top;
+    result = 31 * result + self.cellSeparatorInset.bottom;
+    result = 31 * result + self.cellSeparatorInset.left;
+    result = 31 * result + self.cellSeparatorInset.right;
     result = 31 * result + [self.cellTintColor hash];
     result = 31 * result + [self.unreadIndicatorColor hash];
     result = 31 * result + [self.selectAllButtonTitleColor hash];

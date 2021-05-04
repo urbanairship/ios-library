@@ -143,6 +143,16 @@ extern NSString *const UANavigationBarStyleBlackKey;
 @property(nonatomic, strong) UIColor *cellSeparatorColor;
 
 /**
+ * The message cell separator inset.
+ */
+@property(nonatomic, assign) UIEdgeInsets cellSeparatorInset;
+
+/**
+ * The message cell separator style.
+ */
+@property(nonatomic, assign) UITableViewCellSeparatorStyle cellSeparatorStyle;
+
+/**
  * The message cell tint color.
  */
 @property(nonatomic, strong) UIColor *cellTintColor;
