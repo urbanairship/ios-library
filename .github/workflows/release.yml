@@ -107,9 +107,9 @@ jobs:
         run: |
           VERSION=${{ steps.get_version.outputs.VERSION }}
           NOTES="$(awk "/## Version $VERSION/{flag=1;next}/## Version/{flag=0}flag" CHANGELOG.md)"
-          NOTES="${NOTES//'%'/'%25'}"
-          NOTES="${NOTES//$'\n'/'%0A'}"
-          NOTES="${NOTES//$'\r'/'%0D'}"
+          NOTES="${NOTES//'%'/%25}"
+          NOTES="${NOTES//$'\n'/%0A}"
+          NOTES="${NOTES//$'\r'/%0D}"
           echo ::set-output name=NOTES::"$NOTES"
       - uses: actions/cache@v1
         with:
