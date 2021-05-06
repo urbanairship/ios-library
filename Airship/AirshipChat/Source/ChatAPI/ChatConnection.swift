@@ -213,6 +213,10 @@ class ChatConnection : ChatConnectionProtocol, WebSocketDelegate  {
     func onReceive(message: String) {
         AirshipLogger.trace("Received message: \(message)")
 
+        guard !message.isEmpty else {
+            return
+        }
+
         guard let data = message.data(using: .utf8) else {
             return
         }
