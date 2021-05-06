@@ -12,7 +12,7 @@ import Airship
 @available(iOS 13.0, *)
 class ChatConnection : ChatConnectionProtocol, WebSocketDelegate  {
     private let chatConfig: ChatConfig!
-    private let lock = NSRecursiveLock()
+    private let lock = Lock()
     private let decoder: JSONDecoder
     private let encoder: JSONEncoder
     private let socketFactory: WebSocketFactoryProtocol
@@ -45,38 +45,33 @@ class ChatConnection : ChatConnectionProtocol, WebSocketDelegate  {
     }
 
     private func close(_ reason: CloseReason) {
-        self.lock.lock()
-
-        if (self.isOpenOrOpening) {
-            self.socket?.close()
-            self.uvp = nil
-            self.delegate?.onClose(reason)
+        lock.sync {
+            if (self.isOpenOrOpening) {
+                self.socket?.close()
+                self.uvp = nil
+                self.delegate?.onClose(reason)
+            }
         }
-
-        self.lock.unlock()
     }
 
     func open(uvp: String) {
-        self.lock.lock()
+        lock.sync {
+            guard !self.isOpenOrOpening else {
+                AirshipLogger.debug("ChatConnection already opened.")
+                return
+            }
 
-        guard !self.isOpenOrOpening else {
-            self.lock.unlock()
-            AirshipLogger.debug("ChatConnection already opened.")
-            return
+            guard let url = createURL(uvp: uvp) else {
+                return
+            }
+
+            self.uvp = uvp
+            self.socket = self.socketFactory.createWebSocket(url: url)
+            self.socket?.delegate = self
+            self.socket?.open()
+
+            self.heartBeat(socket: socket)
         }
-
-        guard let url = createURL(uvp: uvp) else {
-            return
-        }
-
-        self.uvp = uvp
-        self.socket = self.socketFactory.createWebSocket(url: url)
-        self.socket?.delegate = self
-        self.socket?.open()
-
-        self.heartBeat(socket: socket)
-
-        self.lock.unlock()
     }
 
     func requestConversation() {
@@ -99,23 +94,21 @@ class ChatConnection : ChatConnectionProtocol, WebSocketDelegate  {
     }
 
     private func heartBeat(socket: WebSocketProtocol?) {
-        self.lock.lock()
+        lock.sync {
+            guard self.socket === socket else {
+                return
+            }
 
-        guard self.socket === socket else {
-            return
+            guard let uvp = self.uvp else {
+                return
+            }
+
+            send(HeartbeatRequest(uvp: uvp))
+
+            self.dispatcher.dispatch(after: 60) { [weak self] in
+                self?.heartBeat(socket: socket)
+            }
         }
-
-        guard let uvp = self.uvp else {
-            return
-        }
-
-        send(HeartbeatRequest(uvp: uvp))
-
-         self.dispatcher.dispatch(after: 60) { [weak self] in
-            self?.heartBeat(socket: socket)
-        }
-
-        self.lock.unlock()
     }
 
     private func send<T: Encodable>(_ value: T) {

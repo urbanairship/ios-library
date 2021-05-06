@@ -14,7 +14,7 @@ import Airship
 @available(iOS 13.0, *)
 class WebSocket : NSObject, WebSocketProtocol, URLSessionWebSocketDelegate {
     private let url : URL
-    private let lock = NSRecursiveLock()
+    private let lock = Lock()
     private lazy var urlSession: URLSession = URLSession(configuration: .default,
                                                          delegate: self,
                                                          delegateQueue: nil)
@@ -36,78 +36,76 @@ class WebSocket : NSObject, WebSocketProtocol, URLSessionWebSocketDelegate {
     }
 
     func open() {
-        lock.lock()
-        guard !self.isOpenOrOpening else {
-            lock.unlock()
-            return
+        lock.sync {
+            guard !self.isOpenOrOpening else {
+                return
+            }
+
+            var request = URLRequest(url: self.url)
+            request.timeoutInterval = 5
+
+            self.webSocketTask = self.urlSession.webSocketTask(with: request)
+            self.webSocketTask?.resume()
+
+            receive()
+            schedulePing()
         }
-
-        var request = URLRequest(url: self.url)
-        request.timeoutInterval = 5
-
-        self.webSocketTask = self.urlSession.webSocketTask(with: request)
-        self.webSocketTask?.resume()
-        lock.unlock()
-
-        receive()
-        schedulePing()
     }
 
     func close() {
-        lock.lock()
-        if (self.webSocketTask != nil) {
-            self.webSocketTask?.cancel(with: .goingAway, reason: nil)
-            self.webSocketTask = nil
-            self.delegate?.onClose()
+        lock.sync {
+            if (self.webSocketTask != nil) {
+                self.webSocketTask?.cancel(with: .goingAway, reason: nil)
+                self.webSocketTask = nil
+                self.delegate?.onClose()
+            }
         }
-        lock.unlock()
     }
 
     func send(_ message: String, completionHandler: @escaping (Error?) -> ()) {
-        lock.lock()
-        let socketMessage = URLSessionWebSocketTask.Message.string(message)
-        webSocketTask?.send(socketMessage, completionHandler: completionHandler)
-        lock.unlock()
+        lock.sync {
+            let socketMessage = URLSessionWebSocketTask.Message.string(message)
+            webSocketTask?.send(socketMessage, completionHandler: completionHandler)
+        }
     }
 
     func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didCloseWith closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {
-        self.lock.lock()
-        if  (self.webSocketTask == webSocketTask) {
-            self.delegate?.onClose()
+        lock.sync {
+            if  (self.webSocketTask == webSocketTask) {
+                self.delegate?.onClose()
+            }
         }
-        self.lock.unlock()
     }
 
     func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {
-        self.lock.lock()
-        if  (self.webSocketTask == webSocketTask) {
-            self.delegate?.onOpen()
+        lock.sync {
+            if  (self.webSocketTask == webSocketTask) {
+                self.delegate?.onOpen()
+            }
         }
-        self.lock.unlock()
     }
 
     private func receive() {
         let webSocketTask = self.webSocketTask
         webSocketTask?.receive { [weak self] result in
-            self?.lock.lock()
+            self?.lock.sync {
+                guard self?.webSocketTask == webSocketTask else {
+                    return
+                }
 
-            guard self?.webSocketTask == webSocketTask else {
-                return
-            }
-
-            switch result {
-            case .failure(let error):
-                self?.delegate?.onError(error: error)
-            case .success(let message):
-                switch message {
-                case .string(let text):
-                    self?.delegate?.onReceive(message: text)
-                default:
-                    AirshipLogger.error("Unexpected result: \(result)")
+                switch result {
+                case .failure(let error):
+                    self?.delegate?.onError(error: error)
+                case .success(let message):
+                    switch message {
+                    case .string(let text):
+                        self?.delegate?.onReceive(message: text)
+                    default:
+                        AirshipLogger.error("Unexpected result: \(result)")
+                    }
                 }
             }
 
-            self?.lock.unlock()
             self?.receive()
         }
     }
@@ -120,3 +118,4 @@ class WebSocket : NSObject, WebSocketProtocol, URLSessionWebSocketDelegate {
         }
     }
 }
+
