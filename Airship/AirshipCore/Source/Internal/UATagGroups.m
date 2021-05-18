@@ -30,7 +30,7 @@
     self = [super init];
 
     if (self) {
-        self.tags = [coder decodeObjectForKey:kUATagGroupsTagsKey];
+        self.tags = [coder decodeObjectOfClass:[NSDictionary class] forKey:kUATagGroupsTagsKey];
     }
 
     return self;
@@ -38,6 +38,10 @@
 
 - (void)encodeWithCoder:(NSCoder *)coder {
     [coder encodeObject:self.tags forKey:kUATagGroupsTagsKey];
+}
+
++ (BOOL)supportsSecureCoding {
+    return YES;
 }
 
 - (NSDictionary *)normalizeTags:(NSDictionary *)tags {

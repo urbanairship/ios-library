@@ -24,25 +24,25 @@
     return [[self alloc] initWithDataStore:dataStore key:key];
 }
 
-- (void)addObject:(id<NSCoding>)object {
+- (void)addObject:(id<NSSecureCoding>)object {
     @synchronized(self) {
-        NSMutableArray<id<NSCoding>> *objects = [[self objects] mutableCopy];
+        NSMutableArray<id<NSSecureCoding>> *objects = [[self objects] mutableCopy];
         [objects addObject:object];
         [self setObjects:objects];
     }
 }
 
-- (void)addObjects:(NSArray<id<NSCoding>> *)objects {
+- (void)addObjects:(NSArray<id<NSSecureCoding>> *)objects {
     @synchronized(self) {
-        NSArray<id<NSCoding>> *newObjects = [self objects];
+        NSArray<id<NSSecureCoding>> *newObjects = [self objects];
         newObjects = [newObjects arrayByAddingObjectsFromArray:objects];
         [self setObjects:newObjects];
     }
 }
 
-- (nullable id<NSCoding>)peekObject {
+- (nullable id<NSSecureCoding>)peekObject {
     @synchronized(self) {
-        NSArray<id<NSCoding>> *objects = [self objects];
+        NSArray<id<NSSecureCoding>> *objects = [self objects];
 
         if (!objects.count) {
             return nil;
@@ -52,15 +52,15 @@
     }
 }
 
-- (nullable id<NSCoding>)popObject {
+- (nullable id<NSSecureCoding>)popObject {
     @synchronized(self) {
-        NSMutableArray<id<NSCoding>> *objects = [[self objects] mutableCopy];
+        NSMutableArray<id<NSSecureCoding>> *objects = [[self objects] mutableCopy];
 
         if (!objects.count) {
             return nil;
         }
 
-        id<NSCoding> object = objects[0];
+        id<NSSecureCoding> object = objects[0];
         [objects removeObjectAtIndex:0];
 
         if (objects.count) {
@@ -73,7 +73,7 @@
     }
 }
 
-- (NSArray<id<NSCoding>> *)objects {
+- (NSArray<id<NSSecureCoding>> *)objects {
     @synchronized(self) {
         NSData *encodedItems = [self.dataStore objectForKey:self.key];
 
@@ -85,7 +85,7 @@
     }
 }
 
-- (void)setObjects:(NSArray<id<NSCoding>> *)objects {
+- (void)setObjects:(NSArray<id<NSSecureCoding>> *)objects {
     @synchronized(self) {
         NSData *encodedObjects = [NSKeyedArchiver archivedDataWithRootObject:objects];
         [self.dataStore setObject:encodedObjects forKey:self.key];
@@ -98,9 +98,9 @@
     }
 }
 
-- (void)collapse:(NSArray<id<NSCoding>> * (^)(NSArray<id<NSCoding>> *))block {
+- (void)collapse:(NSArray<id<NSSecureCoding>> * (^)(NSArray<id<NSSecureCoding>> *))block {
     @synchronized (self) {
-        NSArray<id<NSCoding>> *result = block([self.objects copy]);
+        NSArray<id<NSSecureCoding>> *result = block([self.objects copy]);
         [self setObjects:result];
     }
 }

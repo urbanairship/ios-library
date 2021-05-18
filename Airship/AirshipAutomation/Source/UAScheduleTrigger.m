@@ -5,7 +5,7 @@
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UARegionEvent.h"
 
-// JSON/NSCoding Keys
+// JSON/NSSecureCoding Keys
 NSString *const UAScheduleTriggerTypeKey = @"type";
 NSString *const UAScheduleTriggerPredicateKey = @"predicate";
 NSString *const UAScheduleTriggerGoalKey = @"goal";

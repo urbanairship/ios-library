@@ -24,12 +24,16 @@
     self = [super init];
     
     if (self) {
-        self.addTagGroups = [coder decodeObjectForKey:kUATagGroupsAddKey];
-        self.removeTagGroups = [coder decodeObjectForKey:kUATagGroupsRemoveKey];
-        self.setTagGroups = [coder decodeObjectForKey:kUATagGroupsSetKey];
+        self.addTagGroups = [coder decodeObjectOfClass:[NSDictionary class] forKey:kUATagGroupsAddKey];
+        self.removeTagGroups = [coder decodeObjectOfClass:[NSDictionary class] forKey:kUATagGroupsRemoveKey];
+        self.setTagGroups = [coder decodeObjectOfClass:[NSDictionary class] forKey:kUATagGroupsSetKey];
     }
 
     return self;
+}
+
++ (BOOL)supportsSecureCoding {
+    return YES;
 }
 
 + (instancetype)mutationToAddTags:(NSArray *)tags group:(NSString *)group {

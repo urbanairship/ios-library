@@ -56,7 +56,7 @@ NSString *const UAAttributeRemoveActionKey = @"remove";
     self = [super init];
 
     if (self) {
-        self.mutationsPayload = [coder decodeObjectForKey:UAAttributeMutationsCodableKey];
+        self.mutationsPayload = [coder decodeObjectOfClass:[NSArray class] forKey:UAAttributeMutationsCodableKey];
     }
 
     return self;
@@ -64,6 +64,10 @@ NSString *const UAAttributeRemoveActionKey = @"remove";
 
 - (void)encodeWithCoder:(NSCoder *)coder {
     [coder encodeObject:self.mutationsPayload forKey:UAAttributeMutationsCodableKey];
+}
+
++ (BOOL)supportsSecureCoding {
+    return YES;
 }
 
 + (NSArray <NSDictionary *>*)mutationsPayload:(UAAttributeMutations *)mutations timestampedWithDate:(UADate *)date {

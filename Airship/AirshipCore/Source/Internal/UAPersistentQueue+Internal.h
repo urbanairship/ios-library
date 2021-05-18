@@ -7,7 +7,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * A queue which serializes to a preference data store objects that conform to the
- * NSCoding protocol. Useful for sequentially feeding data to API clients, or other
+ * NSSecureCoding protocol. Useful for sequentially feeding data to API clients, or other
  * queue-like operations that also require persistence. This class is thread-safe.
  */
 @interface UAPersistentQueue : NSObject
@@ -25,42 +25,42 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param object The object.
  */
-- (void)addObject:(id<NSCoding>)object;
+- (void)addObject:(id<NSSecureCoding>)object;
 
 /**
  * Adds multiple objects to the queue.
  *
  * @param objects The objects.
  */
-- (void)addObjects:(NSArray<id<NSCoding>> *)objects;
+- (void)addObjects:(NSArray<id<NSSecureCoding>> *)objects;
 
 /**
  * Peeks the top-most object.
  *
  * @return The top-most object if present, or nil if the queue is empty.
  */
-- (nullable id<NSCoding>)peekObject;
+- (nullable id<NSSecureCoding>)peekObject;
 
 /**
  * Pops the top-most object.
  *
  * @return The top-most object if present, or nil if the queue is empty.
  */
-- (nullable id<NSCoding>)popObject;
+- (nullable id<NSSecureCoding>)popObject;
 
 /**
  * Returns all objects from the queue.
  *
  * @return All objects from the queue, or an empty array if the queue is empty.
  */
-- (NSArray<id<NSCoding>> *)objects;
+- (NSArray<id<NSSecureCoding>> *)objects;
 
 /**
  * Replaces the queue with the provided objects
  *
  * @param objects The objects.
  */
-- (void)setObjects:(NSArray<id<NSCoding>> *)objects;
+- (void)setObjects:(NSArray<id<NSSecureCoding>> *)objects;
 
 /**
  * Clears the queue.
@@ -73,7 +73,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param block The collapse block.
  */
-- (void)collapse:(NSArray<id<NSCoding>> * (^)(NSArray<id<NSCoding>> *))block;
+- (void)collapse:(NSArray<id<NSSecureCoding>> * (^)(NSArray<id<NSSecureCoding>> *))block;
 
 @end
 

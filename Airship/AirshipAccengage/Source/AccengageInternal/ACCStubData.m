@@ -13,4 +13,8 @@
     
 }
 
++ (BOOL)supportsSecureCoding {
+    return YES;
+}
+
 @end

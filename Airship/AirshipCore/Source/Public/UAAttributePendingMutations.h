@@ -19,7 +19,7 @@ extern NSString *const UAAttributeRemoveActionKey;
  * Defines timestamped and immutable changes to perform on channel attributes that are pending upload.
  * @note For internal use only. :nodoc:
  */
-@interface UAAttributePendingMutations : NSObject <NSCoding>
+@interface UAAttributePendingMutations : NSObject <NSSecureCoding>
 
 ///---------------------------------------------------------------------------------------
 /// @name Pending Attribute Mutations Internal Methods

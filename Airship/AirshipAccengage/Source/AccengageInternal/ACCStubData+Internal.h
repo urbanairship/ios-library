@@ -4,7 +4,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ACCStubData : NSObject <NSCoding>
+@interface ACCStubData : NSObject <NSSecureCoding>
 
 @end
 

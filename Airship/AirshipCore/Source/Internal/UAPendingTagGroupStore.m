@@ -133,7 +133,7 @@ NSString * const UATagGroupsNamedUserStoreKey = @"named_user";
 }
 
 - (void)collapsePendingMutations {
-    [self.pendingTagGroupsMutations collapse:^(NSArray<id<NSCoding>>* objects) {
+    [self.pendingTagGroupsMutations collapse:^(NSArray<id<NSSecureCoding>>* objects) {
         return [UATagGroupsMutation collapseMutations:(NSArray<UATagGroupsMutation *>*)objects];
     }];
 }

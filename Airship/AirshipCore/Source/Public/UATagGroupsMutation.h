@@ -8,7 +8,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Defines changes to perform on tag groups.
  * @note For internal use only. :nodoc:
  */
-@interface UATagGroupsMutation : NSObject <NSCoding>
+@interface UATagGroupsMutation : NSObject <NSSecureCoding>
 
 
 /**

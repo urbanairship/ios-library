@@ -63,12 +63,16 @@
     self = [super init];
 
     if (self) {
-        self.tagGroups = [coder decodeObjectForKey:kUATagGroupsLookupResponseTagGroupsKey];
-        self.lastModifiedTimestamp = [coder decodeObjectForKey:kUATagGroupsLookupResponseLastModifiedTimestampKey];
-        self.status = [[coder decodeObjectForKey:kUATagGroupsLookupResponseStatusKey] unsignedIntegerValue];
+        self.tagGroups = [coder decodeObjectOfClass:[UATagGroups class] forKey:kUATagGroupsLookupResponseTagGroupsKey];
+        self.lastModifiedTimestamp = [coder decodeObjectOfClass:[NSString class] forKey:kUATagGroupsLookupResponseLastModifiedTimestampKey];
+        self.status = [[coder decodeObjectOfClass:[NSNumber class] forKey:kUATagGroupsLookupResponseStatusKey] unsignedIntegerValue];
     }
 
     return self;
+}
+
++ (BOOL)supportsSecureCoding {
+    return YES;
 }
 
 @end

@@ -77,7 +77,7 @@ static NSString *const NamedUserPersistentQueueKey = @"com.urbanairship.named_us
 }
 
 - (void)collapseQueuedPendingMutations {
-    [self.pendingAttributeMutationsQueue collapse:^NSArray<id<NSCoding>> * (NSArray<id<NSCoding>> *mutations) {
+    [self.pendingAttributeMutationsQueue collapse:^NSArray<id<NSSecureCoding>> * (NSArray<id<NSSecureCoding>> *mutations) {
         if (mutations.count == 0) {
             return mutations;
         }

@@ -4,7 +4,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ACCDeviceInformationSet : NSObject <NSCoding>
+@interface ACCDeviceInformationSet : NSObject <NSSecureCoding>
 
 /*!
  *  @brief Set a string parameter to the data

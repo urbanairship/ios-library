@@ -8,7 +8,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Convenience wrapper around sets of tag groups with common operations.
  * @note For internal use only. :nodoc:
  */
-@interface UATagGroups : NSObject <NSCoding>
+@interface UATagGroups : NSObject <NSSecureCoding>
 
 /**
  * The raw tags, as a map of group IDs and tag sets.
