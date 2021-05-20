@@ -16,6 +16,7 @@
 #import "UATestDispatcher.h"
 #import "UANotificationContent.h"
 #import "UNNotificationContent+UAAdditions.h"
+#import "UAPrivacyManager+Internal.h"
 
 @interface UAPushTest : UAAirshipBaseTest
 @property (nonatomic, strong) id mockApplication;
@@ -32,6 +33,7 @@
 @property (nonatomic, strong) id mockAnalytics;
 
 @property (nonatomic, strong) UAPush *push;
+@property (nonatomic, strong) UAPrivacyManager *privacyManager;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property (nonatomic, copy) NSDictionary *notification;
 @property (nonatomic, copy) NSData *validAPNSDeviceToken;
@@ -48,8 +50,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
 - (void)setUp {
     [super setUp];
-
-    [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
     
     self.validAPNSDeviceToken = [validDeviceToken dataUsingEncoding:NSASCIIStringEncoding];
     assert([self.validAPNSDeviceToken length] <= 32);
@@ -134,6 +134,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
     self.mockAppStateTracker = [self mockForClass:[UAAppStateTracker class]];
 
+    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
+    
     self.push = [UAPush pushWithConfig:self.config
                              dataStore:self.dataStore
                                channel:self.mockChannel
@@ -142,7 +144,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
                     notificationCenter:self.notificationCenter
                       pushRegistration:self.mockPushRegistration
                            application:self.mockApplication
-                            dispatcher:[UATestDispatcher testDispatcher]];
+                            dispatcher:[UATestDispatcher testDispatcher]
+                        privacyManager:self.privacyManager];
 
     self.push.registrationDelegate = self.mockRegistrationDelegate;
     self.push.pushRegistration = self.mockPushRegistration;
@@ -1070,16 +1073,16 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
  * Test that pushTokenRegistrationEnabled defaults to the current value of dataCollectionEnabled.
  */
 -(void)testPushTokenRegistrationEnabledDataCollection {
-    [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
+    [self.privacyManager enableFeatures:UAFeaturesPush];
     XCTAssertTrue(self.push.pushTokenRegistrationEnabled);
 
-    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
+    [self.privacyManager disableFeatures:UAFeaturesPush];
     XCTAssertFalse(self.push.pushTokenRegistrationEnabled);
 
     self.push.pushTokenRegistrationEnabled = YES;
     XCTAssertTrue(self.push.pushTokenRegistrationEnabled);
 
-    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
+    [self.privacyManager disableFeatures:UAFeaturesPush];
     XCTAssertTrue(self.push.pushTokenRegistrationEnabled);
 }
 
@@ -1093,7 +1096,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
     XCTAssertTrue(self.push.backgroundPushNotificationsAllowed);
 
-    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
+    [self.privacyManager disableFeatures:UAFeaturesPush];
     XCTAssertFalse(self.push.userPushNotificationsAllowed);
 }
 
@@ -2003,7 +2006,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 }
 
 - (void)testRegistrationPayloadEnabledTokenRegistrationDatOptOut {
-    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
+    [self.privacyManager disableFeatures:UAFeaturesPush];
     NSData *token = [@"some-token" dataUsingEncoding:NSASCIIStringEncoding];
     [self.push application:self.mockApplication didRegisterForRemoteNotificationsWithDeviceToken:token];
 

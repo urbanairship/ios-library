@@ -20,9 +20,15 @@
 #import "UAAppForegroundEvent+Internal.h"
 #import "UAAppBackgroundEvent+Internal.h"
 #import "UAirship+Internal.h"
+#import "UAPrivacyManager+Internal.h"
+
+@interface UAAnalytics()
+- (void)onEnabledFeaturesChanged;
+@end
 
 @interface UAAnalyticsTest: UAAirshipBaseTest
 @property (nonatomic, strong) UAAnalytics *analytics;
+@property (nonatomic, strong) UAPrivacyManager *privacyManager;
 @property (nonatomic, strong) id mockEventManager;
 @property (nonatomic, strong) id mockChannel;
 @property (nonatomic, strong) id mockLocaleClass;
@@ -59,10 +65,10 @@
     
     self.mockChannel = [self mockForClass:[UAChannel class]];
     self.mockAppStateTracker = [self mockForClass:[UAAppStateTracker class]];
-
+    
+    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
+  
     self.analytics = [self createAnalytics];
-
-    [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
     
     // Channel ID
     NSString *channelIDString = @"someChannelID";
@@ -167,7 +173,7 @@
  * Test disabling analytics will result in deleting the database.
  */
 - (void)testDisablingAnalytics {
-    self.analytics.dataCollectionEnabled = YES;
+    [self.privacyManager enableFeatures:UAFeaturesAnalytics];
     [[self.mockEventManager expect] setUploadsEnabled:NO];
     [[self.mockEventManager expect] deleteAllEvents];
     self.analytics.enabled = NO;
@@ -222,7 +228,7 @@
  * Test isEnabled always returns NO when data collection is disabled.
  */
 - (void)testIsEnabledDataCollectionDisabled {
-    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
+    [self.privacyManager disableFeatures:UAFeaturesAnalytics];
 
     self.analytics = [self createAnalytics];
 
@@ -237,14 +243,13 @@
  * Test isEnabled returns YES if enabled was previously set to YES when data collection becomes enabled.
  */
 - (void)testIsEnabledDataCollectionEnabled {
-    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
-
     self.analytics = [self createAnalytics];
-
+    
+    [self.privacyManager disableFeatures:UAFeaturesAnalytics];
     self.analytics.enabled = YES;
     XCTAssertFalse(self.analytics.enabled);
 
-    [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
+    [self.privacyManager enableFeatures:UAFeaturesAnalytics];
 
     XCTAssertTrue(self.analytics.enabled);
 }
@@ -346,7 +351,7 @@
  * Test associateIdentifiers does nothing if data collection is disabled.
  */
 - (void)testAssociateDeviceIdentifiersDataCollectionDisabled {
-    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
+    [self.privacyManager disableFeatures:UAFeaturesAnalytics];
     
     NSDictionary *identifiers = @{@"some identifier": @"some value"};
 
@@ -589,7 +594,7 @@
 - (void)testComponentEnabledSwitch {
     self.analytics.componentEnabled = YES;
     self.analytics.enabled = YES;
-    self.analytics.dataCollectionEnabled = YES;
+    [self.privacyManager enableFeatures:UAFeaturesAnalytics];
 
     // expectations
     [[self.mockEventManager expect] setUploadsEnabled:NO];
@@ -651,7 +656,7 @@
 - (void)testOnDataCollectionDisabled {
     self.analytics.componentEnabled = YES;
     self.analytics.enabled = YES;
-    self.analytics.dataCollectionEnabled = YES;
+    [self.privacyManager enableFeatures:UAFeaturesAnalytics];
 
     NSDictionary *identifiers = @{@"some identifier": @"some value"};
 
@@ -663,8 +668,8 @@
     [[self.mockEventManager expect] setUploadsEnabled:NO];
     [[self.mockEventManager expect] deleteAllEvents];
 
-    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
-    [self.analytics onDataCollectionEnabledChanged];
+    [self.privacyManager disableFeatures:UAFeaturesAnalytics];
+    [self.analytics onEnabledFeaturesChanged];
 
     [self.mockEventManager verify];
 
@@ -674,8 +679,8 @@
 - (void)testOnDataCollectionEnabled {
     [[self.mockEventManager expect] setUploadsEnabled:YES];
 
-    [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
-    [self.analytics onDataCollectionEnabledChanged];
+    [self.privacyManager enableFeatures:UAFeaturesAnalytics];
+    [self.analytics onEnabledFeaturesChanged];
 
     [self.mockEventManager verify];
 }
@@ -689,7 +694,8 @@
                                                          date:self.testDate
                                                    dispatcher:[UADispatcher mainDispatcher]
                                                 localeManager:self.mockLocaleClass
-                                              appStateTracker:self.mockAppStateTracker];
+                                              appStateTracker:self.mockAppStateTracker
+                                               privacyManager:self.privacyManager];
 
     NSString *sessionID = analytics.sessionID;
 
@@ -715,7 +721,8 @@
                                        date:self.testDate
                                  dispatcher:[UATestDispatcher testDispatcher]
                               localeManager:self.mockLocaleClass
-                            appStateTracker:self.mockAppStateTracker];
+                            appStateTracker:self.mockAppStateTracker
+                             privacyManager:self.privacyManager];
 }
 
 @end

@@ -11,13 +11,16 @@ class OpenChatActionTests: XCTestCase {
     var airshipChat: AirshipChat!
     var mockConversation: MockConversation!
     var mockOpenDelegate: MockAirshipChatOpenDelegate!
+    var privacyManager : UAPrivacyManager!
 
     override func setUp() {
         let mockConversation = MockConversation()
         let dataStore = UAPreferenceDataStore(keyPrefix: UUID().uuidString)
+        self.privacyManager = UAirship.shared().privacyManager
 
         self.airshipChat = AirshipChat(dataStore: dataStore,
-                                       conversation: mockConversation)
+                                       conversation: mockConversation,
+                                       privacyManager:self.privacyManager)
 
         self.mockOpenDelegate = MockAirshipChatOpenDelegate()
         self.airshipChat.openChatDelegate = self.mockOpenDelegate

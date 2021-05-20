@@ -26,7 +26,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (id<UAModuleLoader>)moduleLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
                                         config:(UARuntimeConfig *)config
-                                        channel:(UAChannel *)channel;
+                                        channel:(UAChannel *)channel
+                                 privacyManager:(UAPrivacyManager *)privacyManager;
 
 @end
 

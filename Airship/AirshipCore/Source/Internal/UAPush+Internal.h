@@ -156,12 +156,14 @@ extern NSString *const UAPushEnabledKey;
  * @param dataStore The preference data store.
  * @param channel The channel.
  * @param analytics The analytics instance.
+ * @param privacyManager The privacy manager instance.
  * @return A new push instance.
  */
 + (instancetype)pushWithConfig:(UARuntimeConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
                        channel:(UAChannel<UAExtendableChannelRegistration> *)channel
-                     analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics;
+                     analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics
+                privacyManager:(UAPrivacyManager *)privacyManager;
 
 
 /**
@@ -175,6 +177,7 @@ extern NSString *const UAPushEnabledKey;
  * @param pushRegistration The push registration instance.
  * @param application The application.
  * @param dispatcher The dispatcher.
+ * @param privacyManager The privacy manager instance.
  * @return A new push instance.
  */
 + (instancetype)pushWithConfig:(UARuntimeConfig *)config
@@ -185,7 +188,8 @@ extern NSString *const UAPushEnabledKey;
             notificationCenter:(NSNotificationCenter *)notificationCenter
               pushRegistration:(id<UAAPNSRegistrationProtocol>)pushRegistration
                    application:(UIApplication *)application
-                    dispatcher:(UADispatcher *)dispatcher;
+                    dispatcher:(UADispatcher *)dispatcher
+                privacyManager:(UAPrivacyManager *)privacyManager;
 
 /**
  * Get the local time zone, considered the default.

@@ -6,16 +6,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+extern NSString * const UAirshipDataCollectionEnabledKey;
+
 /**
  * Base class for main SDK components.
  */
 @interface UAComponent : NSObject
-
-/**
- * Whether the component is opted in to data collection.
- * @note For internal use only. :nodoc:
- */
-@property(nonatomic, readonly) BOOL isDataCollectionEnabled;
 
 /**
 * `init` is not available. Use the `initWithDataStore:` initializer method.
@@ -43,12 +39,6 @@ NS_ASSUME_NONNULL_BEGIN
  * @note For internal use only. :nodoc:
  */
 - (void)onComponentEnableChange;
-
-/**
- * Called when the data collection enabled  flag has changed value.
- * @note For internal use only. :nodoc:
- */
-- (void)onDataCollectionEnabledChanged;
 
 /**
  * Called when remote config is loaded. If no config is available for the component, config will be nil.

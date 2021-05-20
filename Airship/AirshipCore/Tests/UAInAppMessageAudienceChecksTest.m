@@ -9,6 +9,7 @@
 #import "UATagSelector.h"
 #import "UAApplicationMetrics.h"
 #import "UAJSONPredicate.h"
+#import "UAPrivacyManager+Internal.h"
 
 @interface UAScheduleAudienceChecksTest : UABaseTest
 
@@ -16,6 +17,7 @@
 @property (nonatomic, strong) id mockLocationProvider;
 @property (nonatomic, strong) id mockPush;
 @property (nonatomic, strong) id mockChannel;
+@property (nonatomic, strong) id mockPrivacyManager;
 @property (nonatomic, assign) BOOL isDataCollectionEnabled;
 
 @end
@@ -26,20 +28,25 @@
     [super setUp];
 
     self.isDataCollectionEnabled = YES;
-
+    
     self.mockAirship = [self mockForClass:[UAirship class]];
     self.mockPush = [self mockForClass:[UAPush class]];
     self.mockChannel = [self mockForClass:[UAChannel class]];
-
+    
     [[[self.mockAirship stub] andReturn:self.mockPush] sharedPush];
     [[[self.mockAirship stub] andReturn:self.mockChannel] sharedChannel];
-
+    
+    self.mockPrivacyManager = [self mockForClass:[UAPrivacyManager class]];
+    
     UA_WEAKIFY(self)
-    [[[self.mockAirship stub] andDo:^(NSInvocation *invocation) {
+    [[[self.mockPrivacyManager stub] andDo:^(NSInvocation *invocation) {
         UA_STRONGIFY(self)
         BOOL enabled = self.isDataCollectionEnabled;
         [invocation setReturnValue:(void *)&enabled];
-    }] isDataCollectionEnabled];
+    }] isAnyFeatureEnabled];
+    
+    [[[self.mockAirship stub] andReturn:self.mockPrivacyManager] privacyManager];
+    [UAirship setSharedAirship:self.mockAirship];
 
     [UAirship setSharedAirship:self.mockAirship];
 

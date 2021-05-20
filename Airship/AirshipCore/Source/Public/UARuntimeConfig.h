@@ -3,6 +3,7 @@
 #import <Foundation/Foundation.h>
 
 #import "UAGlobal.h"
+#import "UAPrivacyManager.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -176,6 +177,12 @@ NS_ASSUME_NONNULL_BEGIN
  * `UAirship.dataCollectionEnabled`.
  */
 @property (readonly, getter=isDataCollectionOptInEnabled) BOOL dataCollectionOptInEnabled;
+
+/**
+ * Default enabled Airship features for the app. For more details, see PrivacyManager.
+ * Defaults to UAFeaturesAll.
+ */
+@property (readonly) UAFeatures enabledFeatures;
 
 ///---------------------------------------------------------------------------------------
 /// @name Resolved Options

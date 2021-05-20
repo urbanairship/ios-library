@@ -2381,6 +2381,7 @@
 		A615E23126554678004FA211 /* UNNotificationContent+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = A615E2292652B014004FA211 /* UNNotificationContent+UAAdditions.m */; };
 		A615E23226554A89004FA211 /* UNNotificationContent+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = A615E21F2652AD87004FA211 /* UNNotificationContent+UAAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A615E23326554A89004FA211 /* UNNotificationContent+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = A615E21F2652AD87004FA211 /* UNNotificationContent+UAAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A615E215264EAFB9004FA211 /* UAPrivacyManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A615E214264EAFB9004FA211 /* UAPrivacyManagerTest.m */; };
 		A6AFF39525F0EDF80032D5D9 /* UARemoteConfigTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A6AFF39425F0EDF80032D5D9 /* UARemoteConfigTest.m */; };
 		A6B483D825ADE89E00550305 /* UARemoteConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = A6B483D725ADE89E00550305 /* UARemoteConfig.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6B483D925ADE89E00550305 /* UARemoteConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = A6B483D725ADE89E00550305 /* UARemoteConfig.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -2398,6 +2399,18 @@
 		A6B8F2FC25AC9B110037B51B /* UARemoteConfigURLManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A6B8F2FA25AC9B110037B51B /* UARemoteConfigURLManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6B8F2FD25AC9B110037B51B /* UARemoteConfigURLManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A6B8F2FA25AC9B110037B51B /* UARemoteConfigURLManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6B8F2FE25AC9B110037B51B /* UARemoteConfigURLManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A6B8F2FA25AC9B110037B51B /* UARemoteConfigURLManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A6C50BEC264BE7940019F7F8 /* UAPrivacyManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A6C50BEB264BE7930019F7F8 /* UAPrivacyManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A6C50BED264BE7940019F7F8 /* UAPrivacyManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A6C50BEB264BE7930019F7F8 /* UAPrivacyManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A6C50BEE264BE7940019F7F8 /* UAPrivacyManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A6C50BEB264BE7930019F7F8 /* UAPrivacyManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A6C50BEF264BE7940019F7F8 /* UAPrivacyManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A6C50BEB264BE7930019F7F8 /* UAPrivacyManager.h */; };
+		A6C50BF2264BE7B50019F7F8 /* UAPrivacyManager+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = A6C50BF0264BE7B50019F7F8 /* UAPrivacyManager+Internal.h */; };
+		A6C50BF3264BE7B50019F7F8 /* UAPrivacyManager+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = A6C50BF0264BE7B50019F7F8 /* UAPrivacyManager+Internal.h */; };
+		A6C50BF4264BE7B50019F7F8 /* UAPrivacyManager+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = A6C50BF0264BE7B50019F7F8 /* UAPrivacyManager+Internal.h */; };
+		A6C50BF5264BE7B50019F7F8 /* UAPrivacyManager+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = A6C50BF0264BE7B50019F7F8 /* UAPrivacyManager+Internal.h */; };
+		A6C50BF6264BE7B50019F7F8 /* UAPrivacyManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A6C50BF1264BE7B50019F7F8 /* UAPrivacyManager.m */; };
+		A6C50BF7264BE7B50019F7F8 /* UAPrivacyManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A6C50BF1264BE7B50019F7F8 /* UAPrivacyManager.m */; };
+		A6C50BF8264BE7B50019F7F8 /* UAPrivacyManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A6C50BF1264BE7B50019F7F8 /* UAPrivacyManager.m */; };
+		A6C50BF9264BE7B50019F7F8 /* UAPrivacyManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A6C50BF1264BE7B50019F7F8 /* UAPrivacyManager.m */; };
 		A6CF89312593910300006C83 /* AddTagGroupsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6CF89302593910300006C83 /* AddTagGroupsTableViewController.swift */; };
 		A6E002D1258BABCA00620226 /* UAModifyAttributesAction.h in Headers */ = {isa = PBXBuildFile; fileRef = A6E002CC258BABCA00620226 /* UAModifyAttributesAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6E002D2258BABCA00620226 /* UAModifyAttributesAction.h in Headers */ = {isa = PBXBuildFile; fileRef = A6E002CC258BABCA00620226 /* UAModifyAttributesAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -3629,12 +3642,16 @@
 		A60A242A258D0D77006B7D80 /* UAAttributesActionPredicate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAAttributesActionPredicate.m; path = Internal/UAAttributesActionPredicate.m; sourceTree = "<group>"; };
 		A615E21F2652AD87004FA211 /* UNNotificationContent+UAAdditions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UNNotificationContent+UAAdditions.h"; path = "Public/UNNotificationContent+UAAdditions.h"; sourceTree = "<group>"; };
 		A615E2292652B014004FA211 /* UNNotificationContent+UAAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UNNotificationContent+UAAdditions.m"; path = "Internal/UNNotificationContent+UAAdditions.m"; sourceTree = "<group>"; };
+		A615E214264EAFB9004FA211 /* UAPrivacyManagerTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAPrivacyManagerTest.m; sourceTree = "<group>"; };
 		A649F50A252F4F39005453CB /* UAInbox 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAInbox 2.xcdatamodel"; sourceTree = "<group>"; };
 		A6AFF39425F0EDF80032D5D9 /* UARemoteConfigTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UARemoteConfigTest.m; sourceTree = "<group>"; };
 		A6B483D725ADE89E00550305 /* UARemoteConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UARemoteConfig.h; path = Public/UARemoteConfig.h; sourceTree = "<group>"; };
 		A6B483E825ADE8AA00550305 /* UARemoteConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UARemoteConfig.m; path = Internal/UARemoteConfig.m; sourceTree = "<group>"; };
 		A6B8F2E925AC9AF70037B51B /* UARemoteConfigURLManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UARemoteConfigURLManager.m; path = Internal/UARemoteConfigURLManager.m; sourceTree = "<group>"; };
 		A6B8F2FA25AC9B110037B51B /* UARemoteConfigURLManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UARemoteConfigURLManager.h; path = Public/UARemoteConfigURLManager.h; sourceTree = "<group>"; };
+		A6C50BEB264BE7930019F7F8 /* UAPrivacyManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAPrivacyManager.h; path = AirshipCore/Source/Public/UAPrivacyManager.h; sourceTree = SOURCE_ROOT; };
+		A6C50BF0264BE7B50019F7F8 /* UAPrivacyManager+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAPrivacyManager+Internal.h"; path = "AirshipCore/Source/Internal/UAPrivacyManager+Internal.h"; sourceTree = SOURCE_ROOT; };
+		A6C50BF1264BE7B50019F7F8 /* UAPrivacyManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAPrivacyManager.m; path = AirshipCore/Source/Internal/UAPrivacyManager.m; sourceTree = SOURCE_ROOT; };
 		A6CF89302593910300006C83 /* AddTagGroupsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTagGroupsTableViewController.swift; sourceTree = "<group>"; };
 		A6E002CC258BABCA00620226 /* UAModifyAttributesAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAModifyAttributesAction.h; path = Public/UAModifyAttributesAction.h; sourceTree = "<group>"; };
 		A6E002E1258BABE100620226 /* UAModifyAttributesAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAModifyAttributesAction.m; path = Internal/UAModifyAttributesAction.m; sourceTree = "<group>"; };
@@ -5587,6 +5604,7 @@
 		6E937300237615B400AA9C2A /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				A6C50BD3264972070019F7F8 /* Privacy Manager */,
 				6EA57DEC25433C57005998C7 /* Tasks */,
 				6E411EE22538F8E300FEE4E8 /* AirshipCore.h */,
 				6E41144E2538C09F00FEE4E8 /* UAGlobal.h */,
@@ -5810,6 +5828,16 @@
 				6EFB377C234595C9005E4E44 /* UAMessageCenterNativeBridgeExtensionTest.m */,
 			);
 			name = NativeBridge;
+			sourceTree = "<group>";
+		};
+		A6C50BD3264972070019F7F8 /* Privacy Manager */ = {
+			isa = PBXGroup;
+			children = (
+				A6C50BF1264BE7B50019F7F8 /* UAPrivacyManager.m */,
+				A6C50BF0264BE7B50019F7F8 /* UAPrivacyManager+Internal.h */,
+				A6C50BEB264BE7930019F7F8 /* UAPrivacyManager.h */,
+			);
+			path = "Privacy Manager";
 			sourceTree = "<group>";
 		};
 		CC04F1FF1DCAB22E00B4842D /* Automation */ = {
@@ -6133,6 +6161,7 @@
 		CC04F2191DCAB7BE00B4842D /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				A615E214264EAFB9004FA211 /* UAPrivacyManagerTest.m */,
 				CCB902221DCBBCDA009A66D7 /* UAAsyncOperationTest.m */,
 				457366422137084B00C5993A /* UAJSONSerializationTest.m */,
 				CC64F0651D8B781C009CEF27 /* NSJSONSerialization_UAAdditionsTests.m */,
@@ -6464,6 +6493,7 @@
 				6E411B132538C20700FEE4E8 /* UADeviceRegistrationEvent+Internal.h in Headers */,
 				6E41158F2538C0AE00FEE4E8 /* UAVersionMatcher.h in Headers */,
 				6E41154F2538C0AC00FEE4E8 /* UARegionEvent.h in Headers */,
+				A6C50BF4264BE7B50019F7F8 /* UAPrivacyManager+Internal.h in Headers */,
 				6E4114CB2538C0A900FEE4E8 /* UARequestSession.h in Headers */,
 				6E41151F2538C0AB00FEE4E8 /* UAAction+Operators.h in Headers */,
 				6E4116332538C0B200FEE4E8 /* UADebugLibraryModuleLoaderFactory.h in Headers */,
@@ -6524,6 +6554,7 @@
 				6E41159B2538C0AE00FEE4E8 /* UADispatcher.h in Headers */,
 				6E4115F72538C0B000FEE4E8 /* UARemoveTagsAction.h in Headers */,
 				6EB4E596254B414F00E3FFD0 /* UATaskManager+Internal.h in Headers */,
+				A6C50BEE264BE7940019F7F8 /* UAPrivacyManager.h in Headers */,
 				6E4116232538C0B100FEE4E8 /* UANativeBridge.h in Headers */,
 				6E4116972538C0B400FEE4E8 /* UAPushableComponent.h in Headers */,
 				6E4118632538C1FD00FEE4E8 /* UALocaleManager+Internal.h in Headers */,
@@ -7024,6 +7055,7 @@
 				6E4119752538C20100FEE4E8 /* UAirship+Internal.h in Headers */,
 				6E4115BD2538C0AF00FEE4E8 /* UAJSONValueMatcher.h in Headers */,
 				6E41150D2538C0AA00FEE4E8 /* UAGlobal.h in Headers */,
+				A6C50BEC264BE7940019F7F8 /* UAPrivacyManager.h in Headers */,
 				6EE7715E238F16A600E79944 /* UAAutomationStore+Internal.h in Headers */,
 				6EE7715F238F16A600E79944 /* UAScheduleTriggerData+Internal.h in Headers */,
 				6EE77160238F16A600E79944 /* UAScheduleDelayData+Internal.h in Headers */,
@@ -7080,6 +7112,7 @@
 				6EE7718C238F16A600E79944 /* UAInAppMessageAssets+Internal.h in Headers */,
 				6E411B052538C20700FEE4E8 /* UAComponent+Internal.h in Headers */,
 				6E41159D2538C0AE00FEE4E8 /* UAConfig.h in Headers */,
+				A6C50BF2264BE7B50019F7F8 /* UAPrivacyManager+Internal.h in Headers */,
 				6EE7718F238F16A600E79944 /* UAInAppMessageSceneManager+Internal.h in Headers */,
 				6EE77190238F16A600E79944 /* UAInAppMessagingRemoteConfig+Internal.h in Headers */,
 				6EE77191238F16A600E79944 /* UAInAppMessagingTagGroupsConfig+Internal.h in Headers */,
@@ -7260,6 +7293,7 @@
 				6E4116122538C0B100FEE4E8 /* UANamedUser.h in Headers */,
 				6EC32282254FC65800EA5B38 /* NSObject+UAAdditions.h in Headers */,
 				6E41194E2538C20000FEE4E8 /* UAEventAPIClient+Internal.h in Headers */,
+				A6C50BF3264BE7B50019F7F8 /* UAPrivacyManager+Internal.h in Headers */,
 				6E4117C62538C1FA00FEE4E8 /* UACircularRegion+Internal.h in Headers */,
 				6E4117F22538C1FB00FEE4E8 /* UAInteractiveNotificationEvent+Internal.h in Headers */,
 				6E4116622538C0B300FEE4E8 /* UAAccengageModuleLoaderFactory.h in Headers */,
@@ -7320,6 +7354,7 @@
 				6E4114EE2538C0AA00FEE4E8 /* UAirshipVersion.h in Headers */,
 				6E4115BA2538C0AF00FEE4E8 /* UARetailEventTemplate.h in Headers */,
 				6E4115B62538C0AE00FEE4E8 /* UANSDictionaryValueTransformer.h in Headers */,
+				A6C50BED264BE7940019F7F8 /* UAPrivacyManager.h in Headers */,
 				6EB4E595254B414F00E3FFD0 /* UATaskManager+Internal.h in Headers */,
 				6E41195E2538C20000FEE4E8 /* UAURLActionPredicate+Internal.h in Headers */,
 				6E4115AE2538C0AE00FEE4E8 /* UAAutomationModuleLoaderFactory.h in Headers */,
@@ -7484,6 +7519,7 @@
 				6E411B142538C20700FEE4E8 /* UADeviceRegistrationEvent+Internal.h in Headers */,
 				6E4115902538C0AE00FEE4E8 /* UAVersionMatcher.h in Headers */,
 				6E4115502538C0AC00FEE4E8 /* UARegionEvent.h in Headers */,
+				A6C50BF5264BE7B50019F7F8 /* UAPrivacyManager+Internal.h in Headers */,
 				6E4114CC2538C0A900FEE4E8 /* UARequestSession.h in Headers */,
 				6E4115202538C0AB00FEE4E8 /* UAAction+Operators.h in Headers */,
 				6E4116342538C0B200FEE4E8 /* UADebugLibraryModuleLoaderFactory.h in Headers */,
@@ -7544,6 +7580,7 @@
 				6E4115F82538C0B000FEE4E8 /* UARemoveTagsAction.h in Headers */,
 				6E4116242538C0B100FEE4E8 /* UANativeBridge.h in Headers */,
 				6EB4E597254B414F00E3FFD0 /* UATaskManager+Internal.h in Headers */,
+				A6C50BEF264BE7940019F7F8 /* UAPrivacyManager.h in Headers */,
 				6E4116982538C0B400FEE4E8 /* UAPushableComponent.h in Headers */,
 				6E4118642538C1FD00FEE4E8 /* UALocaleManager+Internal.h in Headers */,
 				6E411AFC2538C20700FEE4E8 /* UAAttributeMutations+Internal.h in Headers */,
@@ -8553,6 +8590,7 @@
 				6E4118A32538C1FE00FEE4E8 /* UATagGroupsRegistrar.m in Sources */,
 				6E4118072538C1FB00FEE4E8 /* UABeveledLoadingIndicator.m in Sources */,
 				6E4119AB2538C20100FEE4E8 /* UAEventData.m in Sources */,
+				A6C50BF8264BE7B50019F7F8 /* UAPrivacyManager.m in Sources */,
 				6E411A1F2538C20300FEE4E8 /* UAirship.m in Sources */,
 				6E411B172538C20700FEE4E8 /* UANSURLValueTransformer.m in Sources */,
 				6E41188F2538C1FD00FEE4E8 /* UAEnableFeatureActionPredicate.m in Sources */,
@@ -9092,6 +9130,7 @@
 				6EE7724E238F172A00E79944 /* UAJSONValueTransformer.m in Sources */,
 				6E4119612538C20000FEE4E8 /* NSURLResponse+UAAdditions.m in Sources */,
 				6EE7724F238F172A00E79944 /* UAInboxAPIClient.m in Sources */,
+				A6C50BF6264BE7B50019F7F8 /* UAPrivacyManager.m in Sources */,
 				45E08F4824CA045E00041803 /* UIImage+UAAdditions+Internal.m in Sources */,
 				6EE77250238F172A00E79944 /* UAInboxMessage.m in Sources */,
 				6E4118A12538C1FE00FEE4E8 /* UATagGroupsRegistrar.m in Sources */,
@@ -9204,6 +9243,7 @@
 				6E4119AA2538C20100FEE4E8 /* UAEventData.m in Sources */,
 				6E411A1E2538C20300FEE4E8 /* UAirship.m in Sources */,
 				6E411B162538C20700FEE4E8 /* UANSURLValueTransformer.m in Sources */,
+				A6C50BF7264BE7B50019F7F8 /* UAPrivacyManager.m in Sources */,
 				6E41188E2538C1FD00FEE4E8 /* UAEnableFeatureActionPredicate.m in Sources */,
 				6E411ADA2538C20600FEE4E8 /* UAConfig.m in Sources */,
 				6E4117AE2538C1FA00FEE4E8 /* UA_Base64.m in Sources */,
@@ -9447,6 +9487,7 @@
 				3C5649CF2127746C007E82D2 /* UAInAppMessagingRemoteConfigTest.m in Sources */,
 				CC64F0F61D8B781C009CEF27 /* UAMessageCenterStyleTest.m in Sources */,
 				CC64F1161D8B781C009CEF27 /* UANotificationCategoryTest.m in Sources */,
+				A615E215264EAFB9004FA211 /* UAPrivacyManagerTest.m in Sources */,
 				6EEAE81824CF9FBF0046E311 /* UAScheduleDeferredDataTest.m in Sources */,
 				6E90F0FC228F5F5600E1FCB0 /* UATestRuntimeConfig.m in Sources */,
 				3C152F5E24E4B33000CF1181 /* UAAuthTokenAPIClientTest.m in Sources */,
@@ -9549,6 +9590,7 @@
 				6E4119AC2538C20100FEE4E8 /* UAEventData.m in Sources */,
 				6E411A202538C20300FEE4E8 /* UAirship.m in Sources */,
 				6E411B182538C20700FEE4E8 /* UANSURLValueTransformer.m in Sources */,
+				A6C50BF9264BE7B50019F7F8 /* UAPrivacyManager.m in Sources */,
 				6E4118902538C1FD00FEE4E8 /* UAEnableFeatureActionPredicate.m in Sources */,
 				6E411ADC2538C20600FEE4E8 /* UAConfig.m in Sources */,
 				6E4117B02538C1FA00FEE4E8 /* UA_Base64.m in Sources */,

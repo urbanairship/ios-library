@@ -7,19 +7,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-extern NSString * const UAirshipDataCollectionEnabledKey;
-
 @interface UAComponent()
 
 /**
  * Flag indicating whether the component is enabled. Clear to disable. Set to enable.
  */
 @property (assign) BOOL componentEnabled;
-
-/**
- * Component data collection flag.
- */
-@property (nonatomic, assign, getter=isDataCollectionEnabled) BOOL dataCollectionEnabled;
 
 @end
 

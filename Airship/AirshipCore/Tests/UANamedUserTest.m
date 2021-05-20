@@ -11,10 +11,15 @@
 #import "UATestDate.h"
 #import "UAAttributePendingMutations.h"
 #import "UATaskManager.h"
+#import "UAPrivacyManager+Internal.h"
 
 static NSString * const UANamedUserUpdateTaskID = @"UANamedUser.update";
 static NSString * const UANamedUserTagUpdateTaskID = @"UANamedUser.tags.update";
 static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attributes.update";
+
+@interface UANamedUser()
+- (void)onEnabledFeaturesChanged;
+@end
 
 @interface UANamedUserTest : UAAirshipBaseTest
 
@@ -26,19 +31,19 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
 @property (nonatomic, strong) id mockTimeZone;
 @property (nonatomic, strong) id mockNotificationCenter;
 @property (nonatomic, strong) id mockTaskManager;
+@property (nonatomic, strong) id mockPrivacyManager;
 @property (nonatomic, strong) UATestDate *testDate;
 @property (nonatomic, strong) UANamedUser *namedUser;
 @property (nonatomic, copy) NSString *channelID;
 @property (nonatomic, copy) UAChannelRegistrationExtenderBlock channelRegistrationExtenderBlock;
 @property (nonatomic, copy) void (^launchHandler)(id<UATask>);
+@property (nonatomic, assign) BOOL isFeatureEnabled;
 @end
 
 @implementation UANamedUserTest
 
 - (void)setUp {
     [super setUp];
-
-    [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
 
     self.mockChannel = [self mockForClass:[UAChannel class]];
     [[[self.mockChannel stub] andDo:^(NSInvocation *invocation) {
@@ -79,6 +84,17 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
         self.launchHandler =  (__bridge void (^)(id<UATask>))arg;
     }] registerForTaskWithIDs:@[UANamedUserUpdateTaskID, UANamedUserTagUpdateTaskID, UANamedUserAttributeUpdateTaskID] dispatcher:OCMOCK_ANY launchHandler:OCMOCK_ANY];
 
+    self.mockPrivacyManager = [self mockForClass:[UAPrivacyManager class]];
+    
+    UA_WEAKIFY(self)
+    [[[[self.mockPrivacyManager stub] andDo:^(NSInvocation *invocation) {
+        UA_STRONGIFY(self)
+        BOOL enabled = self.isFeatureEnabled;
+        [invocation setReturnValue:(void *)&enabled];
+    }] ignoringNonObjectArgs] isEnabled:0];
+    
+    self.isFeatureEnabled = YES;
+    
     self.namedUser = [UANamedUser namedUserWithChannel:self.mockChannel
                                                 config:self.config
                                     notificationCenter:self.mockNotificationCenter
@@ -87,11 +103,13 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
                                     attributeRegistrar:self.mockAttributeRegistrar
                                                   date:self.testDate
                                            taskManager:self.mockTaskManager
-                                       namedUserClient:self.mockedNamedUserClient];
+                                       namedUserClient:self.mockedNamedUserClient
+                                        privacyManager:self.mockPrivacyManager];
 }
 
 - (void)tearDown {
     [self.mockTimeZone stopMocking];
+    [self.mockNotificationCenter removeObserver:self.namedUser];
     [self.mockNotificationCenter stopMocking];
     [super tearDown];
 }
@@ -161,7 +179,7 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
 
 - (void)testSetIdentifierDataCollectionDisabled {
     self.namedUser.identifier = nil;
-    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
+    self.isFeatureEnabled = NO;
     self.namedUser.identifier = @"neat";
     XCTAssertNil(self.namedUser.identifier);
 }
@@ -181,7 +199,8 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
                                     attributeRegistrar:self.mockAttributeRegistrar
                                                   date:self.testDate
                                            taskManager:self.mockTaskManager
-                                       namedUserClient:self.mockedNamedUserClient];
+                                       namedUserClient:self.mockedNamedUserClient
+                                        privacyManager:self.mockPrivacyManager];
 
 
     [self.mockTagGroupsRegistrar verify];
@@ -660,7 +679,7 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
  * Test that the tag groups registrar is not called when UANamedUser is asked to add device tags and data collection is disabled.
  */
 - (void)testAddDeviceTagsDataCollectionDisabled {
-    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
+    self.isFeatureEnabled = NO;
 
     NSArray *tags = @[@"foo", @"bar"];
     NSString *group = @"group";
@@ -679,7 +698,7 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
  * Test that the tag groups registrar is called when UANamedUser is asked to add device tags when data collection is enabled.
  */
 - (void)testAddDeviceTagsDataCollectionEnabled {
-    [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
+    self.isFeatureEnabled = YES;
 
     NSArray *tags = @[@"foo", @"bar"];
     NSString *group = @"group";
@@ -715,7 +734,7 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
  * Test that the tag groups registrar is not called when UANamedUser is asked to remove device tags and data collection is disabled.
  */
 - (void)testRemoveDeviceTagsDataCollectionDisabled {
-    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
+    self.isFeatureEnabled = NO;
 
     NSArray *tags = @[@"foo", @"bar"];
     NSString *group = @"group";
@@ -734,7 +753,7 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
  * Test that the tag groups registrar is called when UANamedUser is asked to remove device tags when data collection is enabled.
  */
 - (void)testRemoveDeviceTagsDataCollectionEnabled {
-    [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
+    self.isFeatureEnabled = YES;
 
     NSArray *tags = @[@"foo", @"bar"];
     NSString *group = @"group";
@@ -770,7 +789,7 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
  * Test that the tag groups registrar is not called when UANamedUser is asked to set device tags and data collection is disabled.
  */
 - (void)testSetDeviceTagsDataCollectionDisabled {
-    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
+    self.isFeatureEnabled = NO;
 
     NSArray *tags = @[@"foo", @"bar"];
     NSString *group = @"group";
@@ -789,7 +808,7 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
  * Test that the tag groups registrar is called when UANamedUser is asked to set device tags when data collection is enabled.
  */
 - (void)testSetDeviceTagsDataCollectionEnabled {
-    [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
+    self.isFeatureEnabled = YES;
 
     NSArray *tags = @[@"foo", @"bar"];
     NSString *group = @"group";
@@ -810,8 +829,8 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
 
     [[self.mockTaskManager expect] enqueueRequestWithID:UANamedUserUpdateTaskID options:OCMOCK_ANY];
 
-    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
-    [self.namedUser onDataCollectionEnabledChanged];
+    self.isFeatureEnabled = NO;
+    [self.namedUser onEnabledFeaturesChanged];
 
     XCTAssertNil(self.namedUser.identifier);
 
@@ -848,8 +867,8 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
     // expect pending mutations to be deleted
     [[self.mockAttributeRegistrar expect] clearPendingMutations];
 
-    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
-    [self.namedUser onDataCollectionEnabledChanged];
+    self.isFeatureEnabled = NO;
+    [self.namedUser onEnabledFeaturesChanged];
 
     [self.mockAttributeRegistrar verify];
 }
@@ -898,7 +917,7 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
  * Test updateNamedUserAttributes method if data collection is disabled.
  */
 - (void)testUpdateNamedUserAttributesIfDataDisabled {
-    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
+    self.isFeatureEnabled = NO;
 
     id mockTask = [self mockForProtocol:@protocol(UATask)];
     [[[mockTask stub] andReturn:UANamedUserAttributeUpdateTaskID] taskID];
@@ -984,8 +1003,8 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
 - (void)testSetDataCollectionEnabledYES {
     [[self.mockTaskManager expect] enqueueRequestWithID:UANamedUserUpdateTaskID options:OCMOCK_ANY];
 
-    [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
-    [self.namedUser onDataCollectionEnabledChanged];
+    self.isFeatureEnabled = YES;
+    [self.namedUser onEnabledFeaturesChanged];
 
     [self.mockTaskManager verify];
 }
@@ -994,8 +1013,8 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
     self.namedUser.identifier = @"neat";
 
     self.namedUser.componentEnabled = NO;
-    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
-    [self.namedUser onDataCollectionEnabledChanged];
+    self.isFeatureEnabled = NO;
+    [self.namedUser onEnabledFeaturesChanged];
 
     [[self.mockTaskManager expect] enqueueRequestWithID:UANamedUserUpdateTaskID options:OCMOCK_ANY];
     XCTAssertNil(self.namedUser.identifier);

@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (id<UAModuleLoader, UALocationProviderLoader>)locationModuleLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
                                                                           channel:(UAChannel<UAExtendableChannelRegistration> *)channel
-                                                                        analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics;
+                                                                        analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics privacyManager:(UAPrivacyManager *)privacyManager;
 
 @end
 

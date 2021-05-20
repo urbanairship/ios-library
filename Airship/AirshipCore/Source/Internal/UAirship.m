@@ -29,6 +29,7 @@
 #import "UAAccengageModuleLoaderFactory.h"
 #import "UADebugLibraryModuleLoaderFactory.h"
 #import "UALocaleManager+Internal.h"
+#import "UAPrivacyManager+Internal.h"
 #import "UARemoteConfigURLManager.h"
 #import "UAAirshipChatModuleLoaderFactory.h"
 
@@ -116,40 +117,41 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         self.dataStore = dataStore;
         self.config = config;
 
-        // Default data collection enabled value
-        // Note: UAComponent depends on this value, so it should be initialized first
-        if (![self.dataStore objectForKey:UAirshipDataCollectionEnabledKey]) {
-            [self.dataStore setBool:!(config.isDataCollectionOptInEnabled) forKey:UAirshipDataCollectionEnabledKey];
-        }
-
         self.actionRegistry = [UAActionRegistry defaultRegistry];
         self.URLAllowList = [UAURLAllowList allowListWithConfig:config];
         self.applicationMetrics = [UAApplicationMetrics applicationMetricsWithDataStore:self.dataStore];
         self.sharedLocaleManager = [UALocaleManager localeManagerWithDataStore:self.dataStore];
 
+        self.sharedPrivacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:config.enabledFeatures];
+        [self.sharedPrivacyManager migrateData];
+        
         self.sharedChannel = [UAChannel channelWithDataStore:self.dataStore
                                                       config:self.config
-                                               localeManager:self.sharedLocaleManager];
+                                               localeManager:self.sharedLocaleManager
+                                              privacyManager:self.sharedPrivacyManager];
 
         [components addObject:self.sharedChannel];
 
         self.sharedAnalytics = [UAAnalytics analyticsWithConfig:self.config
                                                       dataStore:self.dataStore
                                                         channel:self.sharedChannel
-                                                  localeManager:self.sharedLocaleManager];
+                                                  localeManager:self.sharedLocaleManager
+                                                 privacyManager:self.sharedPrivacyManager];
         [components addObject:self.sharedAnalytics];
 
 
         self.sharedPush = [UAPush pushWithConfig:self.config
                                        dataStore:self.dataStore
                                          channel:self.sharedChannel
-                                       analytics:self.sharedAnalytics];
+                                       analytics:self.sharedAnalytics
+                                  privacyManager:self.sharedPrivacyManager];
         [components addObject:self.sharedPush];
 
 
         self.sharedNamedUser = [UANamedUser namedUserWithChannel:self.sharedChannel
                                                           config:self.config
-                                                       dataStore:self.dataStore];
+                                                       dataStore:self.dataStore
+                                                  privacyManager:self.sharedPrivacyManager];
         [components addObject:self.sharedNamedUser];
 
         self.sharedRemoteDataManager = [UARemoteDataManager remoteDataManagerWithConfig:self.config
@@ -171,7 +173,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
         id<UAModuleLoader, UALocationProviderLoader> locationLoader = [UAirship locationLoaderWithDataStore:self.dataStore
                                                                                                     channel:self.sharedChannel
-                                                                                                  analytics:self.sharedAnalytics];
+                                                                                                  analytics:self.sharedAnalytics privacyManager:self.sharedPrivacyManager];
         if (locationLoader) {
             [loaders addObject:locationLoader];
             self.locationProvider = locationLoader.locationProvider;
@@ -207,7 +209,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
             [loaders addObject:extendedActionsLoader];
         }
 
-        id<UAModuleLoader> airshipChatLoader = [UAirship airshipChatModuleLoaderWithDataStore:self.dataStore config:self.config channel:self.sharedChannel];
+        id<UAModuleLoader> airshipChatLoader = [UAirship airshipChatModuleLoaderWithDataStore:self.dataStore config:self.config channel:self.sharedChannel privacyManager:self.sharedPrivacyManager];
 
         if (airshipChatLoader) {
             [loaders addObject:airshipChatLoader];
@@ -469,6 +471,10 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     return sharedAirship_.sharedLocaleManager;
 }
 
++ (UAPrivacyManager *)privacyManager {
+    return sharedAirship_.sharedPrivacyManager;
+}
+
 - (UAAnalytics *)analytics {
     return self.sharedAnalytics;
 }
@@ -551,10 +557,10 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
 + (nullable id<UAModuleLoader, UALocationProviderLoader>)locationLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
                                                                              channel:(UAChannel<UAExtendableChannelRegistration> *)channel
-                                                                           analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics {
+                                                                           analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics privacyManager:(UAPrivacyManager *)privacyManager {
     Class cls = NSClassFromString(UALocationModuleLoaderClassName);
     if ([cls conformsToProtocol:@protocol(UALocationModuleLoaderFactory)]) {
-        return [cls locationModuleLoaderWithDataStore:dataStore channel:channel analytics:analytics];
+        return [cls locationModuleLoaderWithDataStore:dataStore channel:channel analytics:analytics privacyManager:privacyManager];
     }
     return nil;
 }
@@ -595,14 +601,16 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
 + (nullable id<UAModuleLoader>)airshipChatModuleLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
                                                              config:(UARuntimeConfig *)config
-                                                            channel:(UAChannel *)channel {
+                                                            channel:(UAChannel *)channel
+                                                     privacyManager:(UAPrivacyManager *)privacyManager {
 
     if (@available(iOS 13.0, *)) {
         Class cls = NSClassFromString(UAAirshipChatModuleLoaderClassName);
         if ([cls conformsToProtocol:@protocol(UAAirshipChatModuleLoaderFactory)]) {
             return [cls moduleLoaderWithDataStore:dataStore
                                            config:config
-                                          channel:channel];
+                                          channel:channel
+                                   privacyManager:privacyManager];
         }
     }
     return nil;
@@ -618,16 +626,14 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
 - (void)setDataCollectionEnabled:(BOOL)enabled {
     if (self.isDataCollectionEnabled != enabled) {
-        // save value to data store
-        [self.dataStore setBool:enabled forKey:UAirshipDataCollectionEnabledKey];
-        for (UAComponent *component in sharedAirship_.components) {
-            [component onDataCollectionEnabledChanged];
-        }
+        [self.sharedPrivacyManager setEnabledFeatures:UAFeaturesNone];
+    } else {
+        [self.sharedPrivacyManager setEnabledFeatures:UAFeaturesAll];
     }
 }
 
 - (BOOL)isDataCollectionEnabled {
-    return [self.dataStore boolForKey:UAirshipDataCollectionEnabledKey];
+    return [self.sharedPrivacyManager isAnyFeatureEnabled];
 }
 
 @end

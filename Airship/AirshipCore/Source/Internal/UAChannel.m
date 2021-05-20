@@ -11,6 +11,7 @@
 #import "UAAppStateTracker.h"
 #import "UALocaleManager+Internal.h"
 #import "UASemaphore.h"
+#import "UAPrivacyManager.h"
 
 NSString *const UAChannelTagsSettingsKey = @"com.urbanairship.channel.tags";
 
@@ -50,6 +51,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 @property (nonatomic, strong) NSMutableArray<UAChannelRegistrationExtenderBlock> *registrationExtenderBlocks;
 @property (nonatomic, strong) UADate *date;
 @property (nonatomic, strong) UATaskManager *taskManager;
+@property (nonatomic, strong) UAPrivacyManager *privacyManager;
 @end
 
 @implementation UAChannel
@@ -62,7 +64,8 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
                attributeRegistrar:(UAAttributeRegistrar *)attributeRegistrar
                     localeManager:(UALocaleManager *)localeManager
                              date:(UADate *)date
-                      taskManager:(UATaskManager *)taskManager {
+                      taskManager:(UATaskManager *)taskManager
+                   privacyManager:(UAPrivacyManager *)privacyManager{
     self = [super initWithDataStore:dataStore];
 
     if (self) {
@@ -73,6 +76,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
         self.tagGroupsRegistrar = tagGroupsRegistrar;
         self.attributeRegistrar = attributeRegistrar;
         self.localeManager = localeManager;
+        self.privacyManager = privacyManager;
         self.date = date;
         self.taskManager = taskManager;
         
@@ -122,7 +126,8 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 
 + (instancetype)channelWithDataStore:(UAPreferenceDataStore *)dataStore
                               config:(UARuntimeConfig *)config
-                       localeManager:(UALocaleManager *)localeManager {
+                       localeManager:(UALocaleManager *)localeManager
+                      privacyManager:(UAPrivacyManager *)privacyManager{
     
     UATagGroupsRegistrar *tagGroupsRegistrar = [UATagGroupsRegistrar channelTagGroupsRegistrarWithConfig:config dataStore:dataStore];
     return [[self alloc] initWithDataStore:dataStore
@@ -135,7 +140,8 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
                                                                                   dataStore:dataStore]
                              localeManager:localeManager
                                       date:[[UADate alloc] init]
-                               taskManager:[UATaskManager shared]];
+                               taskManager:[UATaskManager shared]
+                            privacyManager:privacyManager];
 }
 
 + (instancetype)channelWithDataStore:(UAPreferenceDataStore *)dataStore
@@ -146,7 +152,8 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
                   attributeRegistrar:(UAAttributeRegistrar *)attributeRegistrar
                        localeManager:(UALocaleManager *)localeManager
                                 date:(UADate *)date
-                         taskManager:(UATaskManager *)taskManager {
+                         taskManager:(UATaskManager *)taskManager
+                      privacyManager:(UAPrivacyManager *)privacyManager {
     return [[self alloc] initWithDataStore:dataStore
                                     config:config
                         notificationCenter:notificationCenter
@@ -155,7 +162,8 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
                         attributeRegistrar:attributeRegistrar
                              localeManager:localeManager
                                       date:date
-                               taskManager:taskManager];
+                               taskManager:taskManager
+                            privacyManager:privacyManager];
 }
 
 - (void)observeNotificationCenterEvents {
@@ -187,6 +195,11 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
     [self.notificationCenter addObserver:self
                                 selector:@selector(remoteConfigUpdated)
                                     name:UARemoteConfigURLManagerConfigUpdated
+                                  object:nil];
+    
+    [self.notificationCenter addObserver:self
+                                selector:@selector(onEnabledFeaturesChanged)
+                                    name:UAPrivacyManagerEnabledFeaturesChangedEvent
                                   object:nil];
 }
 
@@ -244,7 +257,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 }
 
 - (void)setTags:(NSArray *)tags {
-    if (!self.isDataCollectionEnabled) {
+    if (![self.privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
         UA_LWARN(@"Unable to modify channel tags %@ when data collection is disabled.", [tags description]);
         return;
     }
@@ -267,7 +280,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 }
 
 - (void)removeTags:(NSArray *)tags {
-    if (!self.isDataCollectionEnabled) {
+    if (![self.privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
         UA_LWARN(@"Unable to modify channel tags %@ when data collection is disabled.", [tags description]);
         return;
     }
@@ -281,7 +294,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 #pragma mark Tag Groups
 
 - (void)addTags:(NSArray *)tags group:(NSString *)tagGroupID {
-    if (!self.isDataCollectionEnabled) {
+    if (![self.privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
         UA_LWARN(@"Unable to add tags %@ for group %@ when data collection is disabled.", [tags description], tagGroupID);
         return;
     }
@@ -295,7 +308,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 }
 
 - (void)removeTags:(NSArray *)tags group:(NSString *)tagGroupID {
-    if (!self.isDataCollectionEnabled) {
+    if (![self.privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
         UA_LWARN(@"Unable to remove tags %@ for group %@ when data collection is disabled.", [tags description], tagGroupID);
         return;
     }
@@ -309,7 +322,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 }
 
 - (void)setTags:(NSArray *)tags group:(NSString *)tagGroupID {
-    if (!self.isDataCollectionEnabled) {
+    if (![self.privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
         UA_LWARN(@"Unable to set tags %@ for group %@ when data collection is disabled.", [tags description], tagGroupID);
         return;
     }
@@ -326,7 +339,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 #pragma mark Channel Attributes
 
 - (void)applyAttributeMutations:(UAAttributeMutations *)mutations {
-    if (!self.isDataCollectionEnabled) {
+    if (![self.privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
         UA_LWARN(@"Unable to apply attributes %@ when data collection is disabled.", mutations);
         return;
     }
@@ -400,7 +413,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 }
 
 - (void)handleTagUpdateTask:(id<UATask>)task {
-    if (!self.componentEnabled || !self.dataCollectionEnabled) {
+    if (!self.componentEnabled || ![self.privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
         [task taskCompleted];
         return;
     }
@@ -431,7 +444,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 }
 
 - (void)handleAttributeUpdateTask:(id<UATask>)task {
-    if (!self.componentEnabled || !self.dataCollectionEnabled) {
+    if (!self.componentEnabled || ![self.privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
         [task taskCompleted];
         return;
     }
@@ -486,7 +499,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
     }
 
     // Only set the device model, carrier name and channel tags if the app is opted in to data collection
-    if (self.isDataCollectionEnabled) {
+    if ([self.privacyManager isEnabled:UAFeaturesAnalytics]) {
         payload.deviceModel = [UAUtils deviceModelName];
         payload.carrier = [UAUtils carrierName];
     }
@@ -568,8 +581,8 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
     }
 }
 
-- (void)onDataCollectionEnabledChanged {
-    if (!self.isDataCollectionEnabled) {
+- (void)onEnabledFeaturesChanged {
+    if (![self.privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
         // Clear channel tags and pending mutations
         [self.dataStore setObject:@[] forKey:UAChannelTagsSettingsKey];
         [self.attributeRegistrar clearPendingMutations];

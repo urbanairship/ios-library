@@ -6,6 +6,7 @@
 #import "UAScheduleAudience+Internal.h"
 #import "UATagSelector+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
+#import "UAPrivacyManager.h"
 
 @implementation UAScheduleAudienceChecks
 
@@ -44,7 +45,7 @@
     }
 
     // Data collection enabled
-    BOOL isDataCollectionEnabled = [UAirship shared].isDataCollectionEnabled;
+    BOOL isDataCollectionEnabled = [[UAirship shared].privacyManager isAnyFeatureEnabled];
     
     // Location opt-in
     if (audience.locationOptIn) {

@@ -3,6 +3,7 @@
 #import <Foundation/Foundation.h>
 
 #import "UAGlobal.h"
+#import "UAPrivacyManager.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -75,12 +76,20 @@ typedef NS_ENUM(NSUInteger, UACloudSite) {
 @property (nonatomic, assign) UACloudSite site;
 
 /**
+ * Default enabled Airship features for the app. For more details, see PrivacyManager.
+ * Defaults to UAFeaturesAll.
+ */
+
+@property (nonatomic, assign) UAFeatures enabledFeatures;
+
+/**
  * Flag indicating whether data collection needs to be opted in with
  * `UAirship.dataCollectionEnabled`. This flag will only take affect on first run.
  * If previously not enabled, the device will still have data collection enabled until disabled with
  * `UAirship.dataCollectionEnabled`.
+ * @deprecated Deprecated – to be removed in SDK version 15.0. Please use enabledFeatures.
 */
-@property (nonatomic, assign, getter=isDataCollectionOptInEnabled) BOOL dataCollectionOptInEnabled;
+@property (nonatomic, assign, getter=isDataCollectionOptInEnabled) BOOL dataCollectionOptInEnabled DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 15.0. Please use enabledFeatures.");
 
 /**
  * The default app key. Depending on the `inProduction` status,

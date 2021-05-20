@@ -35,6 +35,7 @@
 @property (nonatomic, copy) NSString *internalChatURL;
 @property (nonatomic, copy) NSString *internalChatWebSocketURL;
 
+@property (nonatomic, assign) UAFeatures enabledFeatures;
 @end
 
 // US
@@ -75,12 +76,16 @@ NSString *const UARuntimeConfigEURemoteDataAPIURL = @"https://remote-data.asnapi
         self.extendedBroadcastsEnabled = config.extendedBroadcastsEnabled;
         self.messageCenterStyleConfig = config.messageCenterStyleConfig;
         self.itunesID = config.itunesID;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         self.dataCollectionOptInEnabled = config.dataCollectionOptInEnabled;
+#pragma clang diagnostic pop
         self.internalAnalyticsURL = config.analyticsURL;
         self.internalDeviceAPIURL = config.deviceAPIURL;
         self.internalRemoteDataAPIURL = config.remoteDataAPIURL;
         self.internalChatURL = config.chatURL;
         self.internalChatWebSocketURL = config.chatWebSocketURL;
+        self.enabledFeatures = config.enabledFeatures;
     }
 
     return self;

@@ -29,11 +29,13 @@ NS_ASSUME_NONNULL_BEGIN
  * @param channel The UAChannel instance.
  * @param config The Airship config.
  * @param dataStore The shared preference data store.
+ * @param privacyManager A UAPrivacyManager instance.
  * @return A named user instance.
  */
 + (instancetype)namedUserWithChannel:(UAChannel *)channel
                               config:(UARuntimeConfig *)config
-                           dataStore:(UAPreferenceDataStore *)dataStore;
+                           dataStore:(UAPreferenceDataStore *)dataStore
+                      privacyManager:(UAPrivacyManager *)privacyManager;
 
 /**
  * Factory method to create a named user. For testing.
@@ -46,6 +48,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param date The date for setting the timestamp.
  * @param taskManager The task manager.
  * @param namedUserClient The API client.
+ * @param privacyManager A UAPrivacyManager instance.
  * @return A named user instance.
  */
 + (instancetype)namedUserWithChannel:(UAChannel *)channel
@@ -56,7 +59,8 @@ NS_ASSUME_NONNULL_BEGIN
                   attributeRegistrar:(UAAttributeRegistrar *)attributeRegistrar
                                 date:(UADate *)date
                          taskManager:(UATaskManager *)taskManager
-                     namedUserClient:(UANamedUserAPIClient *)namedUserClient;
+                     namedUserClient:(UANamedUserAPIClient *)namedUserClient
+                      privacyManager:(UAPrivacyManager *)privacyManager;
 
 @end
 

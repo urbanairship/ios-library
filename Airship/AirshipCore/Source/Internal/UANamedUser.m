@@ -12,6 +12,7 @@
 #import "UATaskManager.h"
 #import "UASemaphore.h"
 #import "UARemoteConfigURLManager.h"
+#import "UAPrivacyManager.h"
 
 #define kUAMaxNamedUserIDLength 128
 
@@ -41,6 +42,7 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
 @property (nonatomic, strong) UANamedUserAPIClient *namedUserAPIClient;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) UAChannel<UAExtendableChannelRegistration> *channel;
+@property (nonatomic, strong) UAPrivacyManager *privacyManager;
 @property (nonatomic, strong) UARuntimeConfig *config;
 @property (nonatomic, strong) UATagGroupsRegistrar *tagGroupsRegistrar;
 @property (nonatomic, copy) NSString *lastChannelID;
@@ -60,7 +62,8 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
              attributeRegistrar:(UAAttributeRegistrar *)attributeRegistrar
                            date:(UADate *)date
                     taskManager:(UATaskManager *)taskManager
-                namedUserClient:(UANamedUserAPIClient *)namedUserClient {
+                namedUserClient:(UANamedUserAPIClient *)namedUserClient
+                 privacyManager:(UAPrivacyManager *)privacyManager {
 
     self = [super initWithDataStore:dataStore];
     if (self) {
@@ -68,6 +71,7 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
         self.config = config;
         self.notificationCenter = notificationCenter;
         self.dataStore = dataStore;
+        self.privacyManager = privacyManager;
         self.namedUserAPIClient = namedUserClient;
         self.tagGroupsRegistrar = tagGroupsRegistrar;
         self.attributeRegistrar = attributeRegistrar;
@@ -87,6 +91,11 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
         [self.notificationCenter addObserver:self
                                     selector:@selector(remoteConfigUpdated)
                                         name:UARemoteConfigURLManagerConfigUpdated
+                                      object:nil];
+        
+        [self.notificationCenter addObserver:self
+                                    selector:@selector(onEnabledFeaturesChanged)
+                                        name:UAPrivacyManagerEnabledFeaturesChangedEvent
                                       object:nil];
         UA_WEAKIFY(self)
         [self.channel addChannelExtenderBlock:^(UAChannelRegistrationPayload *payload, UAChannelRegistrationExtenderCompletionHandler completionHandler) {
@@ -119,7 +128,8 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
 
 + (instancetype)namedUserWithChannel:(UAChannel<UAExtendableChannelRegistration> *)channel
                               config:(UARuntimeConfig *)config
-                           dataStore:(UAPreferenceDataStore *)dataStore {
+                           dataStore:(UAPreferenceDataStore *)dataStore
+                      privacyManager:(UAPrivacyManager *)privacyManager {
 
     UATagGroupsRegistrar *tagGroupsRegistrar = [UATagGroupsRegistrar namedUserTagGroupsRegistrarWithConfig:config dataStore:dataStore];
     UAAttributeRegistrar *atttributeRegistrar = [UAAttributeRegistrar namedUserRegistrarWithConfig:config
@@ -133,7 +143,8 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
                              attributeRegistrar:atttributeRegistrar
                                            date:[[UADate alloc] init]
                                     taskManager:[UATaskManager shared]
-                                namedUserClient:[UANamedUserAPIClient clientWithConfig:config]];
+                                namedUserClient:[UANamedUserAPIClient clientWithConfig:config]
+                                 privacyManager:privacyManager];
 }
 
 + (instancetype)namedUserWithChannel:(UAChannel<UAExtendableChannelRegistration> *)channel
@@ -144,7 +155,8 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
                   attributeRegistrar:(UAAttributeRegistrar *)attributeRegistrar
                                 date:(UADate *)date
                          taskManager:(UATaskManager *)taskManager
-                     namedUserClient:(UANamedUserAPIClient *)namedUserClient {
+                     namedUserClient:(UANamedUserAPIClient *)namedUserClient
+                      privacyManager:(UAPrivacyManager *)privacyManager {
 
     return [[UANamedUser alloc] initWithChannel:channel
                                          config:config
@@ -154,7 +166,8 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
                              attributeRegistrar:attributeRegistrar
                                            date:date
                                     taskManager:taskManager
-                                namedUserClient:namedUserClient];
+                                namedUserClient:namedUserClient
+                                 privacyManager:privacyManager];
 }
 
 - (void)update {
@@ -245,7 +258,7 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
 }
 
 - (void)handleTagUpdateTask:(id<UATask>)task {
-    if (!self.componentEnabled || !self.dataCollectionEnabled) {
+    if (!self.componentEnabled || ![self.privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
         [task taskCompleted];
         return;
     }
@@ -277,7 +290,7 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
 }
 
 - (void)handleAttributeUpdateTask:(id<UATask>)task {
-    if (!self.componentEnabled || !self.dataCollectionEnabled) {
+    if (!self.componentEnabled || ![self.privacyManager isEnabled:UAFeaturesContacts]) {
         [task taskCompleted];
         return;
     }
@@ -312,7 +325,7 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
 }
 
 - (void)setIdentifier:(NSString *)identifier {
-    if (identifier && !self.isDataCollectionEnabled) {
+    if (identifier && ![self.privacyManager isEnabled:UAFeaturesContacts]) {
         UA_LWARN(@"Ignoring named user ID request, global data collection is disabled");
         return;
     }
@@ -444,7 +457,7 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
 }
 
 - (void)addTags:(NSArray *)tags group:(NSString *)tagGroupID {
-    if (!self.isDataCollectionEnabled) {
+    if (![self.privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
         UA_LWARN(@"Unable to add tags %@ for group %@ when data collection is disabled.", [tags description], tagGroupID);
         return;
     }
@@ -453,7 +466,7 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
 }
 
 - (void)removeTags:(NSArray *)tags group:(NSString *)tagGroupID {
-    if (!self.isDataCollectionEnabled) {
+    if (![self.privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
         UA_LWARN(@"Unable to remove tags %@ for group %@ when data collection is disabled.", [tags description], tagGroupID);
         return;
     }
@@ -462,7 +475,7 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
 }
 
 - (void)setTags:(NSArray *)tags group:(NSString *)tagGroupID {
-    if (!self.isDataCollectionEnabled) {
+    if (![self.privacyManager isEnabled:UAFeaturesContacts]) {
         UA_LWARN(@"Unable to set tags %@ for group %@ when data collection is disabled.", [tags description], tagGroupID);
         return;
     }
@@ -523,10 +536,13 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
     }
 }
 
-- (void)onDataCollectionEnabledChanged {
-    if (!self.isDataCollectionEnabled) {
-        // Clear the identifier and all pending mutations
+- (void)onEnabledFeaturesChanged {
+    if (![self.privacyManager isEnabled:UAFeaturesContacts]) {
+        // Clear the identifier
         self.identifier = nil;
+    }
+    if (![self.privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
+       // Clear the pending mutations
         [self.attributeRegistrar clearPendingMutations];
         [self.tagGroupsRegistrar clearPendingMutations];
     }
@@ -546,7 +562,7 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
 #pragma mark Named User Attributes
 
 - (void)applyAttributeMutations:(UAAttributeMutations *)mutations {
-    if (!self.isDataCollectionEnabled) {
+    if (![self.privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
         UA_LWARN(@"Unable to apply attributes %@ when data collection is disabled.", mutations);
         return;
     }

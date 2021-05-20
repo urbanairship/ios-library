@@ -2,6 +2,7 @@
 
 #import "UALocation+Internal.h"
 #import "UALocationEvent.h"
+#import "UAPrivacyManager.h"
 
 NSString *const UALocationAutoRequestAuthorizationEnabled = @"UALocationAutoRequestAuthorizationEnabled";
 NSString *const UALocationUpdatesEnabled = @"UALocationUpdatesEnabled";
@@ -9,6 +10,7 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
 
 @interface UALocation()
 @property (nonatomic, strong) UAAnalytics<UAExtendableAnalyticsHeaders> *analytics;
+@property (nonatomic, strong) UAPrivacyManager *privacyManager;
 @end
 
 @implementation UALocation
@@ -16,7 +18,8 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
 
 - (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore
                           channel:(UAChannel<UAExtendableChannelRegistration> *)channel
-                        analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics {
+                        analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics
+                   privacyManager:(UAPrivacyManager *)privacyManager {
 
     self = [super initWithDataStore:dataStore];
 
@@ -24,6 +27,7 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
         self.locationManager = [[CLLocationManager alloc] init];
         self.dataStore = dataStore;
         self.analytics = analytics;
+        self.privacyManager = privacyManager;
         self.systemVersion = [UASystemVersion systemVersion];
         self.locationManager.delegate = self;
 
@@ -39,6 +43,12 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
         [notificationCenter addObserver:self
                                selector:@selector(updateLocationService)
                                    name:UAApplicationDidBecomeActiveNotification
+                                 object:nil];
+        
+        // Update the location service when enabled features change
+        [notificationCenter addObserver:self
+                               selector:@selector(onEnabledFeaturesChanged)
+                                   name:UAPrivacyManagerEnabledFeaturesChangedEvent
                                  object:nil];
 
         if (self.componentEnabled) {
@@ -62,8 +72,9 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
 
 + (instancetype)locationWithDataStore:(UAPreferenceDataStore *)dataStore
                               channel:(UAChannel<UAExtendableChannelRegistration> *)channel
-                            analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics {
-    return [[self alloc] initWithDataStore:dataStore channel:channel analytics:analytics];
+                            analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics
+                       privacyManager:(UAPrivacyManager *)privacyManager{
+    return [[self alloc] initWithDataStore:dataStore channel:channel analytics:analytics privacyManager:privacyManager];
 }
 
 #pragma mark -
@@ -73,7 +84,7 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
                        completionHandler:(UAChannelRegistrationExtenderCompletionHandler)completionHandler {
 
     // Only set location settings if the app is opted in to data collection
-    if (self.isDataCollectionEnabled) {
+    if ([self.privacyManager isEnabled:UAFeaturesLocation])  {
         payload.locationSettings = self.locationUpdatesEnabled ? @(YES) : @(NO);
     }
 
@@ -159,7 +170,7 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
         return;
     }
 
-    if (!self.isDataCollectionEnabled) {
+    if (![self.privacyManager isEnabled:UAFeaturesLocation]) {
         [self stopLocationUpdates];
         return;
     }
@@ -225,7 +236,7 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
 }
 
 - (void)startLocationUpdates {
-    if (!self.componentEnabled || !self.isDataCollectionEnabled) {
+    if (!self.componentEnabled || ![self.privacyManager isEnabled:UAFeaturesLocation]) {
         return;
     }
     
@@ -299,7 +310,7 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
 }
 
 - (BOOL)isLocationOptedIn {
-    if (!self.isDataCollectionEnabled) {
+    if (![self.privacyManager isEnabled:UAFeaturesLocation]) {
         return NO;
     }
 
@@ -331,7 +342,7 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
 }
 
 - (BOOL)isLocationAccuracyReduced {
-    if (!self.isDataCollectionEnabled) {
+    if (![self.privacyManager isEnabled:UAFeaturesLocation]) {
         return NO;
     }
 
@@ -389,7 +400,7 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
     [self updateLocationService];
 }
 
-- (void)onDataCollectionEnabledChanged {
+- (void)onEnabledFeaturesChanged {
     [self updateLocationService];
 }
 

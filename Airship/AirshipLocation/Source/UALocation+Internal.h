@@ -43,7 +43,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (instancetype)locationWithDataStore:(UAPreferenceDataStore *)dataStore
                               channel:(UAChannel<UAExtendableChannelRegistration> *)channel
-                            analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics;
+                            analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics
+                       privacyManager:(UAPrivacyManager *)privacyManager;
 
 NS_ASSUME_NONNULL_END
 

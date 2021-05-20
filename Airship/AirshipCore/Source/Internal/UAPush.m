@@ -18,6 +18,7 @@
 #import "UAAppStateTracker.h"
 #import "NSObject+UAAdditions.h"
 #import "UASemaphore.h"
+#import "UAPrivacyManager.h"
 
 NSString *const UAUserPushNotificationsEnabledKey = @"UAUserPushNotificationsEnabled";
 NSString *const UABackgroundPushNotificationsEnabledKey = @"UABackgroundPushNotificationsEnabled";
@@ -78,6 +79,7 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
 @property (nonatomic, strong) UAChannel<UAExtendableChannelRegistration> *channel;
 @property (nonatomic, strong) UAAppStateTracker *appStateTracker;
 @property (nonatomic, assign) BOOL waitForDeviceToken;
+@property (nonatomic, strong) UAPrivacyManager *privacyManager;
 
 @end
 
@@ -91,7 +93,8 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
             notificationCenter:(NSNotificationCenter *)notificationCenter
               pushRegistration:(id<UAAPNSRegistrationProtocol>)pushRegistration
                    application:(UIApplication *)application
-                    dispatcher:(UADispatcher *)dispatcher {
+                    dispatcher:(UADispatcher *)dispatcher
+                privacyManager:(UAPrivacyManager *)privacyManager {
 
     self = [super initWithDataStore:dataStore];
     if (self) {
@@ -100,7 +103,8 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
         self.dispatcher = dispatcher;
         self.dataStore = dataStore;
         self.channel = channel;
-
+        self.privacyManager = privacyManager;
+        
         self.appStateTracker = appStateTracker;
         self.notificationCenter = notificationCenter;
         self.registrationDelegateWrapper = [[UARegistrationDelegateWrapper alloc] init];
@@ -151,7 +155,8 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
 + (instancetype)pushWithConfig:(UARuntimeConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
                        channel:(UAChannel<UAExtendableChannelRegistration> *)channel
-                     analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics {
+                     analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics
+                privacyManager:(UAPrivacyManager *)privacyManager {
     return [[self alloc] initWithConfig:config
                               dataStore:dataStore
                                 channel:channel
@@ -160,7 +165,8 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
                      notificationCenter:[NSNotificationCenter defaultCenter]
                        pushRegistration:[[UAAPNSRegistration alloc] init]
                             application:[UIApplication sharedApplication]
-                             dispatcher:[UADispatcher mainDispatcher]];
+                             dispatcher:[UADispatcher mainDispatcher]
+                         privacyManager:privacyManager];
 }
 
 + (instancetype)pushWithConfig:(UARuntimeConfig *)config
@@ -171,7 +177,8 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
             notificationCenter:(NSNotificationCenter *)notificationCenter
               pushRegistration:(id<UAAPNSRegistrationProtocol>)pushRegistration
                    application:(UIApplication *)application
-                    dispatcher:(UADispatcher *)dispatcher {
+                    dispatcher:(UADispatcher *)dispatcher
+                privacyManager:(UAPrivacyManager *)privacyManager {
     return [[self alloc] initWithConfig:config
                               dataStore:dataStore
                                 channel:channel
@@ -180,7 +187,8 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
                      notificationCenter:notificationCenter
                        pushRegistration:pushRegistration
                             application:application
-                             dispatcher:dispatcher];
+                             dispatcher:dispatcher
+                         privacyManager:privacyManager];
 }
 
 - (void)observeNotificationCenterEvents {
@@ -398,7 +406,7 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
 
 - (BOOL)pushTokenRegistrationEnabled {
     if (![self.dataStore objectForKey:UAPushTokenRegistrationEnabledKey]) {
-        return self.isDataCollectionEnabled;
+        return [self.privacyManager isEnabled:UAFeaturesPush];
     }
 
     return [self.dataStore boolForKey:UAPushTokenRegistrationEnabledKey];

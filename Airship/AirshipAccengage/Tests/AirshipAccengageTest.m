@@ -13,6 +13,7 @@
 #import "UARuntimeConfig+Internal.h"
 #import "UALocaleManager+Internal.h"
 #import "UARemoteConfigURLManager.h"
+#import "UAPrivacyManager+Internal.h"
 
 @interface AirshipAccengageTests : XCTestCase
 
@@ -22,6 +23,7 @@
 @property (nonatomic, strong) UAAnalytics *analytics;
 @property (nonatomic, strong) UALocaleManager *localeManager;
 @property (nonatomic, strong) id mockPush;
+@property (nonatomic, strong) UAPrivacyManager *privacyManager;
 
 @end
 
@@ -43,13 +45,14 @@
 
 - (void)setUp {
     self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"test"];
+    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
     UARemoteConfigURLManager *urlManager = [UARemoteConfigURLManager remoteConfigURLManagerWithDataStore:self.dataStore];
     self.config = [[UARuntimeConfig alloc] initWithConfig:[UAConfig defaultConfig] urlManager:urlManager];
     self.localeManager = [UALocaleManager localeManagerWithDataStore:self.dataStore];
-    self.channel = [UAChannel channelWithDataStore:self.dataStore config:self.config localeManager:self.localeManager];
-    self.analytics = [UAAnalytics analyticsWithConfig:self.config dataStore:self.dataStore channel:self.channel localeManager:self.localeManager];
+    self.channel = [UAChannel channelWithDataStore:self.dataStore config:self.config localeManager:self.localeManager privacyManager:self.privacyManager];
+    self.analytics = [UAAnalytics analyticsWithConfig:self.config dataStore:self.dataStore channel:self.channel localeManager:self.localeManager privacyManager:self.privacyManager];
     id registration = OCMClassMock([UAAPNSRegistration class]);
-    UAPush *push = [UAPush pushWithConfig:self.config dataStore:self.dataStore channel:self.channel analytics:self.analytics appStateTracker:[UAAppStateTracker shared] notificationCenter:[NSNotificationCenter defaultCenter] pushRegistration:registration application:[UIApplication sharedApplication] dispatcher:[UADispatcher mainDispatcher]];
+    UAPush *push = [UAPush pushWithConfig:self.config dataStore:self.dataStore channel:self.channel analytics:self.analytics appStateTracker:[UAAppStateTracker shared] notificationCenter:[NSNotificationCenter defaultCenter] pushRegistration:registration application:[UIApplication sharedApplication] dispatcher:[UADispatcher mainDispatcher] privacyManager:self.privacyManager];
     self.mockPush = OCMPartialMock(push);
 }
 
@@ -119,7 +122,7 @@
 }
 
 - (void)testInitWithDataStore {
-    UAChannel *channel = [UAChannel channelWithDataStore:self.dataStore config:self.config localeManager:self.localeManager];
+    UAChannel *channel = [UAChannel channelWithDataStore:self.dataStore config:self.config localeManager:self.localeManager privacyManager:self.privacyManager];
     id channelMock = OCMPartialMock(channel);
     [[channelMock expect] addChannelExtenderBlock:OCMOCK_ANY];
   
@@ -159,8 +162,6 @@
 }
 
 - (void)testMigrateSettings {
-    [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
-
     UAAccengage *accengage = [[UAAccengage alloc] init];
 
     accengage.accengageSettings = @{@"DoNotTrack":@NO};

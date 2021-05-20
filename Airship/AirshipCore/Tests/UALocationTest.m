@@ -8,10 +8,12 @@
 #import "UAAnalytics.h"
 #import "UAComponent+Internal.h"
 #import "UAChannel+Internal.h"
+#import "UAPrivacyManager+Internal.h"
 
 @interface UALocationTest : UAAirshipBaseTest
 
 @property (nonatomic, strong) UALocation *location;
+@property (nonatomic, strong) UAPrivacyManager *privacyManager;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property (nonatomic, strong) id mockAnalytics;
 @property (nonatomic, strong) id mockChannel;
@@ -34,8 +36,6 @@
     [super setUp];
     self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:[NSString stringWithFormat:@"ualocation.test.%@",self.name]];
     [self.dataStore removeAll]; // start with an empty datastore
-
-    [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
     
     self.mockedApplication = [self mockForClass:[UIApplication class]];
     [[[self.mockedApplication stub] andReturn:self.mockedApplication] sharedApplication];
@@ -46,7 +46,9 @@
 
     self.notificationCenter = [NSNotificationCenter defaultCenter];
 
-    self.location = [UALocation locationWithDataStore:self.dataStore channel:self.mockChannel analytics:self.mockAnalytics];
+    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
+    
+    self.location = [UALocation locationWithDataStore:self.dataStore channel:self.mockChannel analytics:self.mockAnalytics privacyManager:self.privacyManager];
         
     self.location.locationManager = self.mockLocationManager;
     self.location.componentEnabled = YES;
@@ -714,7 +716,7 @@
     UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
     id payloadMock = [self partialMockForObject:payload];
 
-    [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
+    [self.privacyManager enableFeatures:UAFeaturesLocation];
     self.location.locationUpdatesEnabled = YES;
     
     [[payloadMock expect] setLocationSettings:@YES];
@@ -743,7 +745,7 @@
     // data collection disabled   
     payloadMock = [self partialMockForObject:payload];
     
-    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
+    [self.privacyManager disableFeatures:UAFeaturesLocation];
    
     [[payloadMock reject] setLocationSettings:OCMOCK_ANY];
              

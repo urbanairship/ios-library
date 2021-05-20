@@ -19,6 +19,18 @@ NSString *const UALogLevelInfoName = @"INFO";
 NSString *const UALogLevelDebugName = @"DEBUG";
 NSString *const UALogLevelTraceName = @"TRACE";
 
+static NSString *const UAConfigEnabledFeaturesKey = @"enabledFeatures";
+static NSString *const UAConfigInAppAutomation = @"in_app_automation";
+static NSString *const UATagsAndAttributes = @"tags_and_attributes";
+static NSString *const UAConfigAnalytics = @"analytics";
+static NSString *const UAConfigMessageCenter = @"message_center";
+static NSString *const UAConfigPush = @"push";
+static NSString *const UAConfigChat = @"chat";
+static NSString *const UAConfigContacts = @"contacts";
+static NSString *const UAConfigLocation = @"location";
+static NSString *const UAConfigAllFeatures = @"all";
+static NSString *const UAConfigNoFeatures = @"none";
+
 @interface UAConfig()
 
 @property (nonatomic, copy, nullable) NSString *profilePath;
@@ -38,7 +50,11 @@ NSString *const UALogLevelTraceName = @"TRACE";
     self = [super init];
     if (self) {
         self.site = UACloudSiteUS;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         self.dataCollectionOptInEnabled = NO;
+#pragma clang diagnostic pop
+        self.enabledFeatures = UAFeaturesAll;
         self.developmentLogLevel = UALogLevelDebug;
         self.productionLogLevel = UALogLevelError;
         self.inProduction = NO;
@@ -82,8 +98,11 @@ NSString *const UALogLevelTraceName = @"TRACE";
         _analyticsURL = config.analyticsURL;
         _developmentLogLevel = config.developmentLogLevel;
         _productionLogLevel = config.productionLogLevel;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         _dataCollectionOptInEnabled = config.dataCollectionOptInEnabled;
-
+#pragma clang diagnostic pop
+        _enabledFeatures = config.enabledFeatures;
         _inProduction = config.inProduction;
         _detectProvisioningMode = config.detectProvisioningMode;
         _requestAuthorizationToUseNotifications = config.requestAuthorizationToUseNotifications;
@@ -145,7 +164,8 @@ NSString *const UALogLevelTraceName = @"TRACE";
             "Default Message Center Style Config File: %@\n"
             "Use iTunes ID: %@\n"
             "Site:  %ld\n"
-            "DataCollectionOptInEnabled:  %d\n",
+            "DataCollectionOptInEnabled:  %d\n"
+            "Enabled features  %ld\n",
             self.inProduction,
             _inProduction,
             self.appKey,
@@ -180,7 +200,11 @@ NSString *const UALogLevelTraceName = @"TRACE";
             self.messageCenterStyleConfig,
             self.itunesID,
             (long) self.site,
-            self.dataCollectionOptInEnabled];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+            self.dataCollectionOptInEnabled,
+#pragma clang diagnostic pop
+            (long) self.enabledFeatures];
 }
 
 #pragma mark -
@@ -296,7 +320,16 @@ NSString *const UALogLevelTraceName = @"TRACE";
     if ([self.developmentAppSecret isEqualToString:self.productionAppSecret]) {
         UA_LWARN(@"Production App Secret matches Development App Secret.");
     }
-
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    if (self.dataCollectionOptInEnabled) {
+#pragma clang diagnostic pop
+        UA_LWARN(@"DataCollectionOptInEnabled is deprecated. Use enabledFeatures instead.");
+        if (self.enabledFeatures == UAFeaturesAll) {
+            self.enabledFeatures = UAFeaturesNone;
+        }
+    }
+               
     return valid;
 }
 
@@ -378,6 +411,15 @@ NSString *const UALogLevelTraceName = @"TRACE";
             }
         }
 
+        if ([key isEqualToString:UAConfigEnabledFeaturesKey]) {
+            id value = keyedValues[key];
+            if ([value isKindOfClass:[NSArray class]]) {
+                NSInteger features = [UAConfig convertFeatureNames:value];
+                newKeyedValues[key] = @(features);
+                continue;
+            }
+        }
+        
         NSString *realKey = [oldKeyMap objectForKey:key] ?: key;
         id value = [keyedValues objectForKey:key];
 
@@ -402,6 +444,35 @@ NSString *const UALogLevelTraceName = @"TRACE";
     }
 
     return newKeyedValues;
+}
+
++ (NSInteger)convertFeatureNames:(NSArray *)names {
+
+    NSInteger features = UAFeaturesNone;
+    
+    for (NSString *name in names) {
+        if ([name isEqualToString:UAConfigInAppAutomation]) {
+            features |= UAFeaturesInAppAutomation;
+        } else if ([name isEqualToString:UATagsAndAttributes]) {
+            features |= UAFeaturesTagsAndAttributes;
+        } else if ([name isEqualToString:UAConfigAnalytics]) {
+            features |= UAFeaturesAnalytics;
+        } else if ([name isEqualToString:UAConfigMessageCenter]) {
+            features |= UAFeaturesMessageCenter;
+        } else if ([name isEqualToString:UAConfigPush]) {
+            features |= UAFeaturesPush;
+        } else if ([name isEqualToString:UAConfigChat]) {
+            features |= UAFeaturesChat;
+        } else if ([name isEqualToString:UAConfigContacts]) {
+            features |= UAFeaturesContacts;
+        } else if ([name isEqualToString:UAConfigLocation]) {
+            features |= UAFeaturesLocation;
+        } else if ([name isEqualToString:UAConfigAllFeatures]) {
+            features |= UAFeaturesAll;
+        }
+    }
+    
+    return features;
 }
 
 #pragma mark -

@@ -57,12 +57,14 @@ NS_ASSUME_NONNULL_BEGIN
  * @param dataStore The shared preference data store.
  * @param channel The channel instance.
  * @param localeManager A UALocaleManager.
+ * @param privacyManager A UAPrivacyManager.
  * @return A new analytics instance.
  */
 + (instancetype)analyticsWithConfig:(UARuntimeConfig *)airshipConfig
                           dataStore:(UAPreferenceDataStore *)dataStore
                             channel:(UAChannel *)channel
-                      localeManager:(UALocaleManager *)localeManager;
+                      localeManager:(UALocaleManager *)localeManager
+                      privacyManager:(UAPrivacyManager *)privacyManager;
 
 
 /**
@@ -77,6 +79,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param dispatcher The dispatcher.
  * @param localeManager A UALocaleManager.
  * @param appStateTracker The app state tracker.
+ * @param privacyManager A UAPrivacyManager.
  * @return A new analytics instance.
  */
 + (instancetype)analyticsWithConfig:(UARuntimeConfig *)airshipConfig
@@ -87,7 +90,8 @@ NS_ASSUME_NONNULL_BEGIN
                                date:(UADate *)date
                          dispatcher:(UADispatcher *)dispatcher
                       localeManager:(UALocaleManager *)localeManager
-                    appStateTracker:(UAAppStateTracker *)appStateTracker;
+                    appStateTracker:(UAAppStateTracker *)appStateTracker
+                     privacyManager:(UAPrivacyManager *)privacyManager;
 
 /**
  * Called to notify analytics the app was launched from a push notification.

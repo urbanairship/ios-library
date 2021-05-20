@@ -20,6 +20,7 @@
 #import "UAPush+Internal.h"
 #import "UAChannel.h"
 #import "UALocaleManager.h"
+#import "UAPrivacyManager.h"
 
 #define kUAAssociatedIdentifiers @"UAAssociatedIdentifiers"
 
@@ -28,6 +29,7 @@
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) UAChannel *channel;
 @property (nonatomic, strong) UAEventManager *eventManager;
+@property (nonatomic, strong) UAPrivacyManager *privacyManager;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property (nonatomic, strong) UADate *date;
 @property (nonatomic, strong) UADispatcher *dispatcher;
@@ -61,7 +63,8 @@ NSString *const UAEventKey = @"event";
                           date:(UADate *)date
                     dispatcher:(UADispatcher *)dispatcher
                  localeManager:(UALocaleManager *)localeManager
-               appStateTracker:(UAAppStateTracker *)appStateTracker {
+               appStateTracker:(UAAppStateTracker *)appStateTracker
+                privacyManager:(UAPrivacyManager *)privacyManager {
 
     self = [super initWithDataStore:dataStore];
 
@@ -75,6 +78,7 @@ NSString *const UAEventKey = @"event";
         self.date = date;
         self.dispatcher = dispatcher;
         self.localeManager = localeManager;
+        self.privacyManager = privacyManager;
         self.appStateTracker = appStateTracker;
         self.SDKExtensions = [NSMutableArray array];
         self.headerBlocks = [NSMutableArray array];
@@ -108,6 +112,11 @@ NSString *const UAEventKey = @"event";
                                     selector:@selector(applicationWillTerminate)
                                         name:UAApplicationWillTerminateNotification
                                       object:nil];
+        
+        [notificationCenter addObserver:self
+                               selector:@selector(onEnabledFeaturesChanged)
+                                   name:UAPrivacyManagerEnabledFeaturesChangedEvent
+                                 object:nil];
 
         if (!self.isEnabled) {
             [self.eventManager deleteAllEvents];
@@ -127,7 +136,8 @@ NSString *const UAEventKey = @"event";
 + (instancetype)analyticsWithConfig:(UARuntimeConfig *)config
                           dataStore:(UAPreferenceDataStore *)dataStore
                             channel:(UAChannel *)channel
-                      localeManager:(UALocaleManager *)localeManager {
+                      localeManager:(UALocaleManager *)localeManager
+                     privacyManager:(UAPrivacyManager *)privacyManager {
     return [[self alloc] initWithConfig:config
                               dataStore:dataStore
                                 channel:channel
@@ -136,7 +146,8 @@ NSString *const UAEventKey = @"event";
                                    date:[[UADate alloc] init]
                              dispatcher:[UADispatcher mainDispatcher]
                           localeManager:localeManager
-                        appStateTracker:[UAAppStateTracker shared]];
+                        appStateTracker:[UAAppStateTracker shared]
+                         privacyManager:privacyManager];
 }
 
 + (instancetype)analyticsWithConfig:(UARuntimeConfig *)airshipConfig
@@ -147,7 +158,8 @@ NSString *const UAEventKey = @"event";
                                date:(UADate *)date
                          dispatcher:(UADispatcher *)dispatcher
                       localeManager:(UALocaleManager *)localeManager
-                    appStateTracker:(UAAppStateTracker *)appStateTracker {
+                    appStateTracker:(UAAppStateTracker *)appStateTracker
+                     privacyManager:(UAPrivacyManager *)privacyManager {
 
     return [[self alloc] initWithConfig:airshipConfig
                               dataStore:dataStore
@@ -157,7 +169,8 @@ NSString *const UAEventKey = @"event";
                                    date:date
                              dispatcher:dispatcher
                           localeManager:localeManager
-                        appStateTracker:appStateTracker];
+                        appStateTracker:appStateTracker
+                         privacyManager:privacyManager];
 }
 
 #pragma mark -
@@ -217,7 +230,7 @@ NSString *const UAEventKey = @"event";
         return;
     }
 
-    if (!self.isEnabled || !self.isDataCollectionEnabled) {
+    if (!self.isEnabled) {
         UA_LTRACE(@"Analytics disabled, ignoring event: %@", event.eventType);
         return;
     }
@@ -277,7 +290,7 @@ NSString *const UAEventKey = @"event";
 }
 
 - (BOOL)isEnabled {
-    return [self.dataStore boolForKey:kUAAnalyticsEnabled] && self.config.analyticsEnabled && self.isDataCollectionEnabled;
+    return [self.dataStore boolForKey:kUAAnalyticsEnabled] && self.config.analyticsEnabled && [self.privacyManager isEnabled:UAFeaturesAnalytics];
 }
 
 - (void)setEnabled:(BOOL)enabled {
@@ -287,8 +300,8 @@ NSString *const UAEventKey = @"event";
         [self.eventManager deleteAllEvents];
     }
 
-    if (enabled && !self.isDataCollectionEnabled) {
-        UA_LWARN(@"Analytics will remain disabled until data collection is opted in");
+    if (enabled && ![self.privacyManager isEnabled:UAFeaturesAnalytics]) {
+        UA_LWARN(@"Analytics will remain disabled until the feature is enabled in Privacy manager");
     }
 
     [self.dataStore setBool:enabled forKey:kUAAnalyticsEnabled];
@@ -296,7 +309,7 @@ NSString *const UAEventKey = @"event";
 }
 
 - (void)associateDeviceIdentifiers:(UAAssociatedIdentifiers *)associatedIdentifiers {
-    if (!self.isDataCollectionEnabled) {
+    if (![self.privacyManager isEnabled:UAFeaturesAnalytics]) {
         UA_LWARN(@"Unable to associate identifiers %@ when data collection is disabled", associatedIdentifiers.allIDs);
         return;
     }
@@ -428,16 +441,16 @@ NSString *const UAEventKey = @"event";
     [self.headerBlocks addObject:headersBlock];
 }
 
-- (void)onDataCollectionEnabledChanged {
+- (void)onEnabledFeaturesChanged {
     [self updateEventManagerUploadsEnabled];
-    if (!self.isDataCollectionEnabled) {
+    if (![self.privacyManager isEnabled:UAFeaturesAnalytics]) {
         [self.eventManager deleteAllEvents];
         [self.dataStore setValue:nil forKey:kUAAssociatedIdentifiers];
     }
 }
 
 - (void)updateEventManagerUploadsEnabled {
-    if (self.isEnabled && self.componentEnabled && self.isDataCollectionEnabled) {
+    if (self.isEnabled && self.componentEnabled && [self.privacyManager isEnabled:UAFeaturesAnalytics]) {
         self.eventManager.uploadsEnabled = YES;
         [self.eventManager scheduleUpload];
     } else {

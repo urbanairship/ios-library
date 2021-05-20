@@ -34,6 +34,7 @@
 @class UAChannel;
 @class UAComponent;
 @class UALocaleManager;
+@class UAPrivacyManager;
 
 //---------------------------------------------------------------------------------------
 // UADeepLinkDelegate Protocol
@@ -153,6 +154,11 @@ extern NSString * const UAAirshipReadyNotification;
 @property (nonatomic, strong, readonly) UALocaleManager *locale;
 
 /**
+ * Privacy manager instance.
+ */
+@property (nonatomic, strong, readonly) UAPrivacyManager *privacyManager;
+
+/**
  * Global data collection flag. Enabled by default, unless `UAConfig.dataCollectionOptInEnabled`
  * is set to `YES` on the first run.
  *
@@ -163,8 +169,9 @@ extern NSString * const UAAirshipReadyNotification;
  * has been explicitly set to `YES`, otherwise it will default to the current state  of `isDataCollectionEnabled`.
  *
  * @note To disable by default, set the `UAConfig.dataCollectionOptInEnabled` flag to `YES` on the first run.
+ * @deprecated Deprecated – to be removed in SDK version 15.0. Please use the Privacy Manager.
  */
-@property (nonatomic, assign, getter=isDataCollectionEnabled) BOOL dataCollectionEnabled;
+@property (nonatomic, assign, getter=isDataCollectionEnabled) BOOL dataCollectionEnabled DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 15.0. Please use the Privacy Manager.");
 
 ///---------------------------------------------------------------------------------------
 /// @name Logging

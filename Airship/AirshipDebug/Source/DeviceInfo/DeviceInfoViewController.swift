@@ -292,7 +292,7 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
         case dataCollectionEnabled:
             cell.title.text = "ua_device_info_data_enabled".localized()
             cell.cellSwitch.isHidden = false
-            cell.cellSwitch.isOn = UAirship.shared().isDataCollectionEnabled
+            cell.cellSwitch.isOn = UAirship.shared().privacyManager.isAnyFeatureEnabled()
             cell.subtitle?.adjustsFontSizeToFitWidth = true
             cell.subtitle?.minimumScaleFactor = 0.25
             cell.subtitle?.numberOfLines = 2
@@ -414,7 +414,11 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             showCopiedAlert()
         case dataCollectionEnabled:
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
-            UAirship.shared().isDataCollectionEnabled = cell.cellSwitch.isOn
+            if (cell.cellSwitch.isOn) {
+                UAirship.shared().privacyManager.enable(UAFeatures.all)
+            } else {
+                UAirship.shared().privacyManager.enable([])
+            }
         case analyticsEnabled:
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
             UAirship.shared().analytics.isEnabled = cell.cellSwitch.isOn

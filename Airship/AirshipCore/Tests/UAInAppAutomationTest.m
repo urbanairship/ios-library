@@ -16,6 +16,7 @@
 #import "UAInAppMessageCustomDisplayContent+Internal.h"
 #import "UADeferredSchedule+Internal.h"
 #import "UAFrequencyLimitManager+Internal.h"
+#import "UAPrivacyManager+Internal.h"
 
 @interface UAInAppAutomationTest : UAAirshipBaseTest
 @property(nonatomic, strong) UAInAppAutomation *inAppAutomation;
@@ -23,10 +24,11 @@
 @property(nonatomic, strong) id mockAudienceManager;
 @property(nonatomic, strong) id mockRemoteDataClient;
 @property(nonatomic, strong) id mockInAppMessageManager;
-@property(nonatomic, strong) id mockAirship;
 @property(nonatomic, strong) id mockDeferredClient;
 @property(nonatomic, strong) id mockChannel;
+@property(nonatomic, strong) id mockAirship;
 @property(nonatomic, strong) id mockFrequencyLimitManager;
+@property(nonatomic, strong) id mockPrivacyManager;
 
 @property(nonatomic, strong) id<UAAutomationEngineDelegate> engineDelegate;
 @end
@@ -36,8 +38,10 @@
 - (void)setUp {
     [super setUp];
 
+    UAPrivacyManager *privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
+    
     self.mockAirship = [self mockForClass:[UAirship class]];
-    [[[self.mockAirship stub] andReturnValue:@(YES)] isDataCollectionEnabled];
+    [[[self.mockAirship stub] andReturn:privacyManager] privacyManager];
     [UAirship setSharedAirship:self.mockAirship];
 
     self.mockAutomationEngine = [self mockForClass:[UAAutomationEngine class]];

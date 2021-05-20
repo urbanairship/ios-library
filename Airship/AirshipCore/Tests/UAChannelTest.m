@@ -17,9 +17,14 @@
 #import "UAPush+Internal.h"
 #import "UALocaleManager.h"
 #import "UATaskManager.h"
+#import "UAPrivacyManager+Internal.h"
 
 static NSString * const UAChannelTagUpdateTaskID = @"UAChannel.tags.update";
 static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.update";
+
+@interface UAChannel()
+- (void)onEnabledFeaturesChanged;
+@end
 
 @interface UAChannelTest : UAAirshipBaseTest
 @property(nonatomic, strong) id mockTagGroupsRegistrar;
@@ -29,6 +34,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 @property(nonatomic, strong) id mockTimeZone;
 @property(nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property(nonatomic, strong) UAChannel *channel;
+@property(nonatomic, strong) UAPrivacyManager *privacyManager;
 @property(nonatomic, copy) NSString *channelIDFromMockChannelRegistrar;
 @property(nonatomic, copy) NSString *deviceToken;
 @property(nonatomic, strong) UATestDate *testDate;
@@ -52,8 +58,6 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 
 - (void)setUp {
     [super setUp];
-
-    [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
 
     self.mockedApplication = [self mockForClass:[UIApplication class]];
     [[[self.mockedApplication stub] andReturn:self.mockedApplication] sharedApplication];
@@ -85,6 +89,8 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
         [invocation getArgument:&arg atIndex:4];
         self.launchHandler =  (__bridge void (^)(id<UATask>))arg;
     }] registerForTaskWithIDs:@[UAChannelTagUpdateTaskID, UAChannelAttributeUpdateTaskID] dispatcher:OCMOCK_ANY launchHandler:OCMOCK_ANY];
+    
+    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
 
     // Put setup code here. This method is called before the invocation of each test method in the class.
     self.channel = [self createChannel];
@@ -92,7 +98,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
     self.mockedPush = [self mockForClass:[UAPush class]];
 
     self.mockedActionRunner = [self mockForClass:[UAActionRunner class]];
-
+    
     self.mockedAirship = [self mockForClass:[UAirship class]];
     [UAirship setSharedAirship:self.mockedAirship];
     [[[self.mockedAirship stub] andReturn:@[self.channel]] components];
@@ -121,7 +127,8 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
                                       attributeRegistrar:self.mockAttributeRegistrar
                                            localeManager:self.mockLocaleManager
                                                     date:self.testDate
-                                             taskManager:self.mockTaskManager];
+                                             taskManager:self.mockTaskManager
+                                          privacyManager:self.privacyManager];
 
     return channel;
 }
@@ -224,7 +231,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 - (void)testSetTagsWhenDataCollectionDisabled {
     // SETUP
     self.channel.tags = @[];
-    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
+    [self.privacyManager disableFeatures:UAFeaturesTagsAndAttributes];
 
     // TEST
     self.channel.tags = @[@"haha", @"no"];
@@ -236,7 +243,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 - (void)testAddTagsWhenDataCollectionDisabled {
     // SETUP
     self.channel.tags = @[];
-    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
+    [self.privacyManager disableFeatures:UAFeaturesTagsAndAttributes];
 
 
     // TEST
@@ -249,7 +256,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 - (void)testAddTagWhenDataCollectionDisabled {
     // SETUP
     self.channel.tags = @[];
-    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
+    [self.privacyManager disableFeatures:UAFeaturesTagsAndAttributes];
 
     // TEST
     [self.channel addTag:@"nope"];
@@ -262,7 +269,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
     // SETUP
     NSArray *tags = @[@"this_shouldn't", @"happen"];
     self.channel.tags = tags;
-    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
+    [self.privacyManager disableFeatures:UAFeaturesTagsAndAttributes];
 
     // TEST
     [self.channel removeTags:tags];
@@ -274,7 +281,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 - (void)testRemoveTagWhenDataCollectionDisabled {
     // SETUP
     self.channel.tags = @[@"this_shouldn't_happen"];
-    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
+    [self.privacyManager disableFeatures:UAFeaturesTagsAndAttributes];
 
     // TEST
     [self.channel removeTag:@"this_shouldn't_happen"];
@@ -330,7 +337,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 
 - (void)testSetTagsWithGroupWhenDataCollectionDisabled {
     // SETUP
-    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
+    [self.privacyManager disableFeatures:UAFeaturesTagsAndAttributes];
 
     // EXPECTATIONS
     [[self.mockTagGroupsRegistrar reject] setTags:OCMOCK_ANY group:OCMOCK_ANY];
@@ -344,7 +351,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 
 - (void)testAddTagsWithGroupWhenDataCollectionDisabled {
     // SETUP
-    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
+    [self.privacyManager disableFeatures:UAFeaturesTagsAndAttributes];
 
     // EXPECTATIONS
     [[self.mockTagGroupsRegistrar reject] addTags:OCMOCK_ANY group:OCMOCK_ANY];
@@ -358,7 +365,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 
 - (void)testRemoveTagsWithGroupWhenDataCollectionDisabled {
     // SETUP
-    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
+    [self.privacyManager disableFeatures:UAFeaturesTagsAndAttributes];
 
     // EXPECTATIONS
     [[self.mockTagGroupsRegistrar reject] removeTags:OCMOCK_ANY group:OCMOCK_ANY];
@@ -373,8 +380,8 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 - (void)testDataCollectionDisabledClearsTags {
     self.channel.tags = @[@"cool", @"rad"];
 
-    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
-    [self.channel onDataCollectionEnabledChanged];
+    [self.privacyManager disableFeatures:UAFeaturesTagsAndAttributes];
+    [self.channel onEnabledFeaturesChanged];
 
     XCTAssertEqualObjects(self.channel.tags, @[]);
 }
@@ -461,7 +468,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
  */
 - (void)testRegistrationPayload {
     self.channel.channelTagRegistrationEnabled = YES;
-    [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
+    [self.privacyManager enableFeatures:UAFeaturesTagsAndAttributes];
 
     self.channel.tags = @[@"cool", @"story"];
     [[[self.mockTimeZone stub] andReturn:@"cool zone"] name];
@@ -493,7 +500,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
  */
 - (void)testRegistrationPayloadChannelTagRegistrationDisabled {
     self.channel.channelTagRegistrationEnabled = NO;
-    [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
+    [self.privacyManager enableFeatures:UAFeaturesTagsAndAttributes];
 
     self.channel.tags = @[@"cool", @"story"];
     [[[self.mockTimeZone stub] andReturn:@"cool zone"] name];
@@ -524,7 +531,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
  */
 - (void)testRegistrationPayloadDataCollectionDisabled {
     self.channel.channelTagRegistrationEnabled = YES;
-    [self.dataStore setBool:NO forKey:UAirshipDataCollectionEnabledKey];
+    [self.privacyManager disableFeatures:UAFeaturesTagsAndAttributes | UAFeaturesAnalytics];
 
     self.channel.tags = @[@"cool", @"story"];
     [[[self.mockTimeZone stub] andReturn:@"cool zone"] name];
@@ -900,7 +907,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 }
 
 - (void)testUpdateTagGroups {
-    [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
+    [self.privacyManager enableFeatures:UAFeaturesTagsAndAttributes];
     self.channelIDFromMockChannelRegistrar = @"123456";
     self.channel.componentEnabled = YES;
 
@@ -925,7 +932,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 }
 
 - (void)testUpdateTagsFailed {
-    [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
+    [self.privacyManager enableFeatures:UAFeaturesTagsAndAttributes];
     self.channelIDFromMockChannelRegistrar = @"123456";
     self.channel.componentEnabled = YES;
 
@@ -950,7 +957,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 }
 
 - (void)testUpdateTagsUpToDate {
-    [self.dataStore setBool:YES forKey:UAirshipDataCollectionEnabledKey];
+    [self.privacyManager enableFeatures:UAFeaturesTagsAndAttributes];
     self.channelIDFromMockChannelRegistrar = @"123456";
     self.channel.componentEnabled = YES;
 
@@ -1180,7 +1187,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
  */
 - (void)testUpdateRegistrationOnDataCollectionChanged {
     [[self.mockChannelRegistrar expect] registerForcefully:NO];
-    [self.channel onDataCollectionEnabledChanged];
+    [self.channel onEnabledFeaturesChanged];
     [self.mockChannelRegistrar verify];
 }
 

@@ -19,9 +19,10 @@
 
 + (nonnull id<UAModuleLoader>)locationModuleLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
                                                         channel:(UAChannel<UAExtendableChannelRegistration> *)channel
-                                                      analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics {
+                                                      analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics
+                                                 privacyManager: (UAPrivacyManager *)privacyManager{
 
-    UALocation *location = [UALocation locationWithDataStore:dataStore channel:channel analytics:analytics];
+    UALocation *location = [UALocation locationWithDataStore:dataStore channel:channel analytics:analytics privacyManager:(UAPrivacyManager *)privacyManager];
     return [[self alloc] initWithLocation:location];
 }
 

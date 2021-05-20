@@ -6,6 +6,7 @@
 @class UAChannelCapture;
 @class UARemoteConfigManager;
 @class UARemoteConfigURLManager;
+@class UAPrivacyManager;
 
 @interface UAirship()
 
@@ -62,6 +63,11 @@ NS_ASSUME_NONNULL_BEGIN
  * Shared localeManager.
  */
 @property (nonatomic, strong) UALocaleManager *sharedLocaleManager;
+
+/**
+ * Shared privacyManager.
+ */
+@property (nonatomic, strong) UAPrivacyManager *sharedPrivacyManager;
 
 /**
  * Returns the `UARemoteDataManager` instance.

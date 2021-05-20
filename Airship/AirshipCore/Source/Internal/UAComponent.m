@@ -55,16 +55,8 @@ NSString * const UAirshipDataCollectionEnabledKey = @"com.urbanairship.data_coll
     return [NSString stringWithFormat:@"%@.%@.%@", UAComponentKey, [self componentIdentifier], UAComponentEnabledKey];
 }
 
-- (BOOL)isDataCollectionEnabled {
-    return [self.componentDataStore boolForKey:UAirshipDataCollectionEnabledKey];
-}
-
 - (void)onComponentEnableChange {
     // placeholder - sub-classes should override if they want notification when the components enable/disable state changes
-}
-
-- (void)onDataCollectionEnabledChanged {
-    // placeholder - sub-classes should override if they want notification when the data collection enable/disable state changes
 }
 
 - (void)applyRemoteConfig:(nullable id)config  {

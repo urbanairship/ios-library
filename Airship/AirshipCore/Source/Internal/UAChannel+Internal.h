@@ -22,7 +22,8 @@ extern NSString *const UAChannelCreationOnForeground;
 
 + (instancetype)channelWithDataStore:(UAPreferenceDataStore *)dataStore
                               config:(UARuntimeConfig *)config
-                       localeManager:(UALocaleManager *)localeManager;
+                       localeManager:(UALocaleManager *)localeManager
+                      privacyManager:(UAPrivacyManager *)privacyManager;
 
 + (instancetype)channelWithDataStore:(UAPreferenceDataStore *)dataStore
                               config:(UARuntimeConfig *)config
@@ -32,7 +33,8 @@ extern NSString *const UAChannelCreationOnForeground;
                   attributeRegistrar:(UAAttributeRegistrar *)attributeRegistrar
                        localeManager:(UALocaleManager *)localeManager
                                 date:(UADate *)date
-                         taskManager:(UATaskManager *)taskManager;
+                         taskManager:(UATaskManager *)taskManager
+                      privacyManager:(UAPrivacyManager *)privacyManager;
 
 /**
  * Registers or updates the current registration with an API call. If push notifications are

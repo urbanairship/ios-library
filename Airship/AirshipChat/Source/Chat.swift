@@ -76,26 +76,37 @@ public class Chat : UAComponent, UAPushableComponent {
 
 
     private let dataStore: UAPreferenceDataStore
+    
+    private let privacyManager: UAPrivacyManager
 
     private var viewController : UIViewController?
 
-    internal convenience init(dataStore: UAPreferenceDataStore, config: UARuntimeConfig, channel: UAChannel) {
+    internal convenience init(dataStore: UAPreferenceDataStore, config: UARuntimeConfig, channel: UAChannel, privacyManager: UAPrivacyManager) {
 
         let conversation = Conversation(dataStore: dataStore,
                                          chatConfig: config,
                                          channel: channel)
 
-        self.init(dataStore: dataStore, conversation: conversation)
+        self.init(dataStore: dataStore, conversation: conversation, privacyManager: privacyManager)
     }
 
     internal init(dataStore: UAPreferenceDataStore,
-                  conversation: InternalConversationProtocol) {
-
+                  conversation: InternalConversationProtocol,
+                  privacyManager: UAPrivacyManager) {
+        
         self.dataStore = dataStore
         self.internalConversation = conversation
+        self.privacyManager = privacyManager
         self.style = ChatStyle(file: "AirshipChatStyle")
+        
         super.init(dataStore: dataStore)
 
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(self.onEnabledFeaturesChange),
+            name: Notification.Name(UAPrivacyManagerEnabledFeaturesChangedEvent),
+            object: nil)
+        
         AirshipLogger.info("AirshipChat initialized")
     }
 
@@ -103,15 +114,15 @@ public class Chat : UAComponent, UAPushableComponent {
         self.updateConversationEnablement()
     }
 
-    public override func onDataCollectionEnabledChanged() {
-        self.updateConversationEnablement()
-    }
-
     func updateConversationEnablement() {
-        self.internalConversation.enabled = self.enabled && self.componentEnabled() && self.isDataCollectionEnabled
-        if (!self.isDataCollectionEnabled) {
+        self.internalConversation.enabled = self.enabled && self.componentEnabled() && self.privacyManager.isEnabled(UAFeatures.chat)
+        if (!self.privacyManager.isEnabled(UAFeatures.chat)) {
             self.internalConversation.clearData()
         }
+    }
+    
+    @objc func onEnabledFeaturesChange() {
+        self.updateConversationEnablement()
     }
 
     /**

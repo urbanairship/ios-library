@@ -91,6 +91,7 @@
 #import "UAPadding.h"
 #import "UAPasteboardAction.h"
 #import "UAPreferenceDataStore.h"
+#import "UAPrivacyManager.h"
 #import "UAProximityRegion.h"
 #import "UAPush.h"
 #import "UAPushProviderDelegate.h"

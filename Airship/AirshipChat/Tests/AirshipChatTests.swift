@@ -10,15 +10,18 @@ class AirshipChatTests: XCTestCase {
     var airshipChat: AirshipChat!
     var dataStore: UAPreferenceDataStore!
     var mockConversation: MockConversation!
+    var privacyManager : UAPrivacyManager
 
     override func setUp() {
         self.mockConversation = MockConversation()
         self.dataStore = UAPreferenceDataStore(keyPrefix: UUID().uuidString)
+        self.privacyManager = UAirship.shared().privacyManager
 
         self.airshipChat = AirshipChat(dataStore: dataStore,
-                                       conversation: self.mockConversation)
+                                       conversation: self.mockConversation,
+                                       privacyManager: self.privacyManager)
 
-        self.dataStore.setBool(true, forKey:"com.urbanairship.data_collection_enabled")
+        self.privacyManager.setEnabledFeatures(UAFeatures.all)
     }
 
     func testOpenDelegate() throws {
@@ -52,7 +55,7 @@ class AirshipChatTests: XCTestCase {
     func testDataCollectionDisabled() throws {
         XCTAssertTrue(self.mockConversation.enabled)
 
-        self.dataStore.setBool(false, forKey:"com.urbanairship.data_collection_enabled")
+        self.privacyManager.setEnabledFeatures([])
         self.airshipChat.onDataCollectionEnabledChanged()
 
         XCTAssertFalse(self.mockConversation.enabled)
