@@ -168,4 +168,13 @@
     return [self.notificationInfo description];
 }
 
+- (BOOL)isAirshipNotificationContent {
+    for (NSString *key in self.notificationInfo.allKeys) {
+        if ([key hasPrefix:@"com.urbanairship"]) {
+            return YES;
+        }
+    }
+    return NO;
+}
+
 @end

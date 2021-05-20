@@ -125,3 +125,4 @@
 #import "UAirship.h"
 #import "UAirshipCoreResources.h"
 #import "UAirshipVersion.h"
+#import "UNNotificationContent+UAAdditions.h"

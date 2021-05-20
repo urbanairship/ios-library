@@ -109,6 +109,13 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (instancetype)notificationWithUNNotification:(UNNotification *)notification;
 
+/**
+ * Checks if the notification was sent from Airship.
+ *
+ * @return YES if it's an Airship notification, otherwise NO.
+ */
+- (BOOL)isAirshipNotificationContent;
+
 @end
 
 NS_ASSUME_NONNULL_END

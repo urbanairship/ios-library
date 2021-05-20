@@ -14,6 +14,8 @@
 #import "UAPreferenceDataStore+Internal.h"
 #import "UARuntimeConfig.h"
 #import "UATestDispatcher.h"
+#import "UANotificationContent.h"
+#import "UNNotificationContent+UAAdditions.h"
 
 @interface UAPushTest : UAAirshipBaseTest
 @property (nonatomic, strong) id mockApplication;
@@ -2079,6 +2081,28 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     [self waitForTestExpectations];
 
     XCTAssertEqual(validDeviceToken, payload.pushAddress);
+}
+
+/**
+ * Test if the notification comes from Airship or not.
+ */
+- (void)testIsAirshipNotification {
+    NSDictionary *airshipNotificationInfo = @{ @"_":@"e68c9ab6-c645-4a47-8ad5-b17480b3d03c",
+                                               @"com.urbanairship.metadata":@"metadata"};
+    UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
+    
+    content.userInfo = airshipNotificationInfo;
+    
+    XCTAssertTrue([content.copy isAirshipNotificationContent], @"The notification is not an Airship notification");
+    
+    NSDictionary *otherNotificationInfo = @{ @"_":@"e68c9ab6-c645-4a47-8ad5-b17480b3d03c",
+                                               @"com.intruder.metadata":@"metadata"};
+    
+    UNMutableNotificationContent *otherContent = [[UNMutableNotificationContent alloc] init];
+    
+    otherContent.userInfo = otherNotificationInfo;
+    
+    XCTAssertFalse([otherContent.copy isAirshipNotificationContent], @"The notification is an Airship notification");
 }
 
 - (void)expectUpdatePushRegistrationWithOptions:(UANotificationOptions)expectedOptions categories:(NSSet<UANotificationCategory *> *)expectedCategories {
