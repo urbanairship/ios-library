@@ -366,8 +366,9 @@
     [self createnotificationCenterDelegate];
     
     XCTestExpectation *callBackFinished = [self expectationWithDescription:@"Notification Center delegate callback called"];
-    
-    id mockUNNotification = [self partialMockForObject:[UNNotification new]];
+
+
+    id mockUNNotification = [self mockForClass:[UNNotification class]];
     [mockUNNotification setValue:[NSDate date] forKey:@"date"];
     
     UNNotificationPresentationOptions expectedOptions = UNNotificationPresentationOptionBadge;
@@ -446,7 +447,7 @@
     XCTestExpectation *callBackFinished = [self expectationWithDescription:@"Notification Centert delegate callback called"];
     
     NSString *actionIdentifier = @"test-action";
-    id mockUNNotificationResponse = [self partialMockForObject:[UNNotificationResponse new]];
+    id mockUNNotificationResponse = [self mockForClass:[UNNotification class]];
     [mockUNNotificationResponse setValue:actionIdentifier forKey:@"actionIdentifier"];
     
     // Add implementation to the app delegate

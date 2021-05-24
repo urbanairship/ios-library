@@ -2,6 +2,7 @@
 
 #import "UAAirshipBaseTest.h"
 #import "UARequestSession.h"
+#import "UAirship+Internal.h"
 
 @interface UARequestSessionTest : UAAirshipBaseTest
 @property (nonatomic, strong) id mockNSURLSession;
@@ -80,6 +81,30 @@ typedef void (^NSURLResponseCallback)(NSData * _Nullable data, NSURLResponse * _
     completionHandler(returnData, returnResponse, nil);
     XCTAssertTrue(completionHandlerCalled);
  }
+
+- (void)testDefaultHeaders {
+
+    UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder *builder) {
+        builder.method = @"POST";
+        builder.URL = [NSURL URLWithString:@"https://www.urbanairship.com"];
+    }];
+
+    // Expect a call to the NSURLSession and capture the callback
+    [(NSURLSession *)[self.mockNSURLSession expect]  dataTaskWithRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
+        NSURLRequest *urlRequest = (NSURLRequest *)obj;
+        NSString *expectedUserAgent = [NSString stringWithFormat:@"(UALib %@; %@)", [UAirshipVersion get], self.config.appKey];
+        XCTAssertEqualObjects(expectedUserAgent, urlRequest.allHTTPHeaderFields[@"User-Agent"]);
+
+        XCTAssertEqualObjects(self.config.appKey, urlRequest.allHTTPHeaderFields[@"X-UA-App-Key"]);
+
+        return YES;
+    }] completionHandler:OCMOCK_ANY];
+
+    [self.session performHTTPRequest:request completionHandler:^(NSData *data, NSHTTPURLResponse *response, NSError *error) {}];
+
+    // Verify the session was called
+    [self.mockNSURLSession verify];
+}
 
 - (void)testCancel {
     // Create a test request

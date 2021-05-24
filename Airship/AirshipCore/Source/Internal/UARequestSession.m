@@ -22,6 +22,7 @@ NSString * const UARequestSessionErrorDomain = @"com.urbanairship.request_sessio
         self.session = session;
         [self setValue:@"gzip;q=1.0, compress;q=0.5" forHeader:@"Accept-Encoding"];
         [self setValue:[UARequestSession userAgentWithAppKey:config.appKey] forHeader:@"User-Agent"];
+        [self setValue:config.appKey forHeader:@"X-UA-App-Key"];
     }
 
     return self;
@@ -129,28 +130,7 @@ NSString * const UARequestSessionErrorDomain = @"com.urbanairship.request_sessio
 }
 
 + (NSString *)userAgentWithAppKey:(NSString *)appKey {
-    /*
-     * [LIB-101] User agent string should be:
-     * App 1.0 (iPad; iPhone OS 5.0.1; UALib 1.1.2; <app key>; en_US)
-     */
-
-    UIDevice *device = [UIDevice currentDevice];
-
-    NSBundle *bundle = [NSBundle mainBundle];
-    NSDictionary *info = [bundle infoDictionary];
-
-    NSString *appName = [info objectForKey:(NSString*)kCFBundleNameKey];
-    NSString *appVersion = [info objectForKey:@"CFBundleShortVersionString"];
-
-    NSString *deviceModel = [device model];
-    NSString *osName = [device systemName];
-    NSString *osVersion = [device systemVersion];
-
-    NSString *libVersion = [UAirshipVersion get];
-    NSString *locale = [[NSLocale autoupdatingCurrentLocale] localeIdentifier];
-
-    return [NSString stringWithFormat:@"%@ %@ (%@; %@ %@; UALib %@; %@; %@)",
-            appName, appVersion, deviceModel, osName, osVersion, libVersion, appKey, locale];
+    return [NSString stringWithFormat:@"(UALib %@; %@)", [UAirshipVersion get], appKey];
 }
 
 @end
