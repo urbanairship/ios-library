@@ -12,15 +12,18 @@
 #import "UATaskManager.h"
 #import "UATask.h"
 #import "UASemaphore.h"
-
-NSTimeInterval const k24HoursInSeconds = 24 * 60 * 60;
+#import "UAKeychainUtils+Internal.h"
 
 NSString *const UAChannelRegistrarChannelIDKey = @"UAChannelID";
-NSString *const UALastSuccessfulUpdateKey = @"last-update-key";
-NSString *const UALastSuccessfulPayloadKey = @"payload-key";
+
+static NSTimeInterval const k24HoursInSeconds = 24 * 60 * 60;
+static NSString *const UALastSuccessfulUpdateKey = @"last-update-key";
+static NSString *const UALastSuccessfulPayloadKey = @"payload-key";
+static NSString * const UADeviceIDKey = @"deviceID";
 
 static NSString * const UAChannelRegistrationTaskID = @"UAChannelRegistrar.registration";
 static NSString * const UAChannelRegistrarTaskExtrasForcefully = @"forcefully";
+
 
 @interface UAChannelRegistrar ()
 
@@ -65,8 +68,6 @@ static NSString * const UAChannelRegistrarTaskExtrasForcefully = @"forcefully";
 @property (nonnull, strong) UATaskManager *taskManager;
 
 @end
-
-UARuntimeConfig *config;
 
 @implementation UAChannelRegistrar
 
@@ -128,14 +129,6 @@ UARuntimeConfig *config;
     }];
 }
 
-- (void)resetChannel {
-    [self.dispatcher dispatchAsync:^{
-        UA_LDEBUG(@"Clearing previous channel.");
-        [self clearChannelData];
-        [self registerForcefully:YES];
-    }];
-}
-
 - (void)clearChannelData {
     self.channelID = nil;
     self.lastSuccessfulPayload = nil;
@@ -161,6 +154,12 @@ UARuntimeConfig *config;
 
 - (void)registerTasks {
     UA_WEAKIFY(self)
+    if (self.channelID) {
+        [self.dispatcher dispatchAsync:^{
+            [self checkAppRestore];
+        }];
+    }
+
     [self.taskManager registerForTaskWithIDs:@[UAChannelRegistrationTaskID]
                                   dispatcher:self.dispatcher
                                launchHandler:^(id<UATask> task) {
@@ -181,6 +180,7 @@ UARuntimeConfig *config;
     BOOL forcefully = [extras[UAChannelRegistrarTaskExtrasForcefully] boolValue];
 
     NSString *channelID = self.channelID;
+
     UAChannelRegistrationPayload *payload = [self createPayload];
     UAChannelRegistrationPayload *lastSuccessfulPayload = self.lastSuccessfulPayload;
     BOOL shouldUpdateRegistration = [self shouldUpdateRegistration:payload];
@@ -195,6 +195,19 @@ UARuntimeConfig *config;
         [self updateChannelWithPayload:payload lastSuccessfulPayload:lastSuccessfulPayload identifier:channelID task:task];
     } else {
         [self createChannelWithPayload:payload task:task];
+        [self.dataStore setObject:[UAKeychainUtils getDeviceID] forKey:UADeviceIDKey];
+    }
+}
+
+- (void)checkAppRestore {
+    NSString *currentDeviceID = [UAKeychainUtils getDeviceID];
+    NSString *previousDeviceID = [self.dataStore stringForKey:UADeviceIDKey];
+    if (previousDeviceID && ![previousDeviceID isEqualToString:currentDeviceID]) {
+        // Device ID changed since the last open. Most likely due to an app restore
+        // on a different device.
+        UA_LDEBUG(@"Device ID changed.");
+        [self clearChannelData];
+        [self.dataStore setObject:currentDeviceID forKey:UADeviceIDKey];
     }
 }
 

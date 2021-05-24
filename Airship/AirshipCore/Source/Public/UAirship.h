@@ -65,12 +65,6 @@ NS_ASSUME_NONNULL_BEGIN
  * this exception being thrown.
  */
 extern NSString * const UAirshipTakeOffBackgroundThreadException;
-
-/**
- * Internal device ID changed notificaiton.
- */
-extern NSString * const UADeviceIDChangedNotification;
-
 /**
  * NSNotification posted when Airship is ready.
  */

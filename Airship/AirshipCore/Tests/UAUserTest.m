@@ -19,7 +19,6 @@
 @end
 
 static NSString * const UAUserUpdateTaskID = @"UAUser.update";
-static NSString * const UAUserResetTaskID = @"UAUser.reset";
 
 @interface UAUserTest : UAAirshipBaseTest
 @property (nonatomic, strong) UAUser *user;
@@ -59,7 +58,7 @@ static NSString * const UAUserResetTaskID = @"UAUser.reset";
         void *arg;
         [invocation getArgument:&arg atIndex:4];
         self.launchHandler =  (__bridge void (^)(id<UATask>))arg;
-    }] registerForTaskWithIDs:@[UAUserUpdateTaskID,UAUserResetTaskID] dispatcher:OCMOCK_ANY launchHandler:OCMOCK_ANY];
+    }] registerForTaskWithIDs:@[UAUserUpdateTaskID] dispatcher:OCMOCK_ANY launchHandler:OCMOCK_ANY];
 
 
     self.notificationCenter = [[NSNotificationCenter alloc] init];
@@ -111,13 +110,7 @@ static NSString * const UAUserResetTaskID = @"UAUser.reset";
     [[self.mockTaskManager expect] enqueueRequestWithID:UAUserUpdateTaskID options:OCMOCK_ANY];
     self.user.enabled = YES;
     [self.mockTaskManager verify];
-}
-
-- (void)testResetOnDeviceIDChange {
-    [[self.mockTaskManager expect] enqueueRequestWithID:UAUserResetTaskID options:OCMOCK_ANY];
-    [self.notificationCenter postNotificationName:UADeviceIDChangedNotification object:nil];
-    [self.mockTaskManager verify];
-}
+}	
 
 /**
  * Test user ID is added to the CRA payload.
@@ -135,20 +128,6 @@ static NSString * const UAUserResetTaskID = @"UAUser.reset";
     [self waitForTestExpectations];
 }
 
-- (void)testResetTask {
-    [self.userDataDAO saveUserData:self.userData completionHandler:^(BOOL success) {}];
-    XCTAssertNotNil([self.userDataDAO getUserDataSync]);
-
-    id mockTask = [self mockForProtocol:@protocol(UATask)];
-    [[[mockTask stub] andReturn:UAUserResetTaskID] taskID];
-    [[mockTask expect] taskCompleted];
-
-    self.launchHandler(mockTask);
-    XCTAssertNil([self.userDataDAO getUserDataSync]);
-
-    [mockTask verify];
-}
-
 - (void)testUpdateTaskCreatesChannel {
     id mockTask = [self mockForProtocol:@protocol(UATask)];
     [[[mockTask stub] andReturn:UAUserUpdateTaskID] taskID];
@@ -157,22 +136,20 @@ static NSString * const UAUserResetTaskID = @"UAUser.reset";
     self.channelID = @"some-channel";
 
     XCTestExpectation *apiCalled = [self expectationWithDescription:@"API client called"];
-
-    __block void (^completionHandler)(UAUserCreateResponse * _Nullable response, NSError * _Nullable error);
     [[[self.mockUserClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        completionHandler = (__bridge  void (^)(UAUserCreateResponse * _Nullable response, NSError * _Nullable error))arg;
+        void (^completionHandler)(UAUserCreateResponse * _Nullable response, NSError * _Nullable error) = completionHandler = (__bridge  void (^)(UAUserCreateResponse * _Nullable response, NSError * _Nullable error))arg;
+
+        UAUserCreateResponse *response = [[UAUserCreateResponse alloc] initWithStatus:200 userData:self.userData];
+        completionHandler(response, nil);
+
         [apiCalled fulfill];
     }] createUserWithChannelID:self.channelID completionHandler:OCMOCK_ANY];
 
     self.launchHandler(mockTask);
-    XCTAssertNil([self.userDataDAO getUserDataSync]);
     [self waitForTestExpectations];
 
-    UAUserCreateResponse *response = [[UAUserCreateResponse alloc] initWithStatus:200 userData:self.userData];
-
-    completionHandler(response, nil);
     XCTAssertEqualObjects(self.userDataDAO.getUserDataSync, self.userData, @"Saved and response user data should match");
 
     [self.mockUserClient verify];
@@ -188,21 +165,20 @@ static NSString * const UAUserResetTaskID = @"UAUser.reset";
 
     XCTestExpectation *apiCalled = [self expectationWithDescription:@"API client called"];
 
-    __block void (^completionHandler)(UAUserCreateResponse * _Nullable response, NSError * _Nullable error);
     [[[self.mockUserClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        completionHandler = (__bridge  void (^)(UAUserCreateResponse * _Nullable response, NSError * _Nullable error))arg;
+        void (^completionHandler)(UAUserCreateResponse * _Nullable response, NSError * _Nullable error) = completionHandler = (__bridge  void (^)(UAUserCreateResponse * _Nullable response, NSError * _Nullable error))arg;
+
+        NSError *error = [NSError errorWithDomain:NSCocoaErrorDomain code:0 userInfo:nil];
+        completionHandler(nil, error);
+
         [apiCalled fulfill];
     }] createUserWithChannelID:self.channelID completionHandler:OCMOCK_ANY];
 
     self.launchHandler(mockTask);
     XCTAssertNil([self.userDataDAO getUserDataSync]);
     [self waitForTestExpectations];
-
-    NSError *error = [NSError errorWithDomain:NSCocoaErrorDomain code:0 userInfo:nil];
-
-    completionHandler(nil, error);
     [self.mockUserClient verify];
     [mockTask verify];
 }
@@ -216,11 +192,14 @@ static NSString * const UAUserResetTaskID = @"UAUser.reset";
 
     XCTestExpectation *apiCalled = [self expectationWithDescription:@"API client called"];
 
-    __block void (^completionHandler)(UAUserCreateResponse * _Nullable response, NSError * _Nullable error);
     [[[self.mockUserClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        completionHandler = (__bridge  void (^)(UAUserCreateResponse * _Nullable response, NSError * _Nullable error))arg;
+        void (^completionHandler)(UAUserCreateResponse * _Nullable response, NSError * _Nullable error) =  (__bridge  void (^)(UAUserCreateResponse * _Nullable response, NSError * _Nullable error))arg;
+
+        UAUserCreateResponse *response = [[UAUserCreateResponse alloc] initWithStatus:500 userData:self.userData];
+        completionHandler(response, nil);
+
         [apiCalled fulfill];
     }] createUserWithChannelID:self.channelID completionHandler:OCMOCK_ANY];
 
@@ -228,9 +207,6 @@ static NSString * const UAUserResetTaskID = @"UAUser.reset";
     XCTAssertNil([self.userDataDAO getUserDataSync]);
     [self waitForTestExpectations];
 
-    UAUserCreateResponse *response = [[UAUserCreateResponse alloc] initWithStatus:500 userData:self.userData];
-
-    completionHandler(response, nil);
     [self.mockUserClient verify];
     [mockTask verify];
 }
@@ -244,11 +220,14 @@ static NSString * const UAUserResetTaskID = @"UAUser.reset";
 
     XCTestExpectation *apiCalled = [self expectationWithDescription:@"API client called"];
 
-    __block void (^completionHandler)(UAUserCreateResponse * _Nullable response, NSError * _Nullable error);
     [[[self.mockUserClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        completionHandler = (__bridge  void (^)(UAUserCreateResponse * _Nullable response, NSError * _Nullable error))arg;
+        void (^completionHandler)(UAUserCreateResponse * _Nullable response, NSError * _Nullable error) = completionHandler = (__bridge  void (^)(UAUserCreateResponse * _Nullable response, NSError * _Nullable error))arg;
+
+        UAUserCreateResponse *response = [[UAUserCreateResponse alloc] initWithStatus:400 userData:self.userData];
+        completionHandler(response, nil);
+
         [apiCalled fulfill];
     }] createUserWithChannelID:self.channelID completionHandler:OCMOCK_ANY];
 
@@ -256,14 +235,11 @@ static NSString * const UAUserResetTaskID = @"UAUser.reset";
     XCTAssertNil([self.userDataDAO getUserDataSync]);
     [self waitForTestExpectations];
 
-    UAUserCreateResponse *response = [[UAUserCreateResponse alloc] initWithStatus:400 userData:self.userData];
-
-    completionHandler(response, nil);
     [self.mockUserClient verify];
     [mockTask verify];
 }
 
-- (void)testUpdateTaskUpdatesUser {
+- (void)testUpdateDifferentChannelRecreatesUser {
     // Create the channel
     [self testUpdateTaskCreatesChannel];
 
@@ -274,25 +250,22 @@ static NSString * const UAUserResetTaskID = @"UAUser.reset";
     self.channelID = @"some-other-channel";
 
     XCTestExpectation *apiCalled = [self expectationWithDescription:@"API client called"];
-
-    __block void (^completionHandler)(UAHTTPResponse * _Nullable response, NSError * _Nullable error);
     [[[self.mockUserClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        completionHandler = (__bridge  void (^)(UAHTTPResponse * _Nullable response, NSError * _Nullable error))arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(UAUserCreateResponse * _Nullable response, NSError * _Nullable error) = completionHandler = (__bridge  void (^)(UAUserCreateResponse * _Nullable response, NSError * _Nullable error))arg;
+
+        UAUserCreateResponse *response = [[UAUserCreateResponse alloc] initWithStatus:200 userData:self.userData];
+        completionHandler(response, nil);
+
         [apiCalled fulfill];
-    }] updateUserWithData:self.userData channelID:self.channelID completionHandler:OCMOCK_ANY];
+    }] createUserWithChannelID:self.channelID completionHandler:OCMOCK_ANY];
 
     self.launchHandler(mockTask);
     [self waitForTestExpectations];
-
-    UAHTTPResponse *response = [[UAHTTPResponse alloc] initWithStatus:200];
-
-    completionHandler(response, nil);
     [self.mockUserClient verify];
     [mockTask verify];
 }
-
 
 - (void)testUpdateUserWithError {
     // Create the channel
@@ -302,24 +275,23 @@ static NSString * const UAUserResetTaskID = @"UAUser.reset";
     [[[mockTask stub] andReturn:UAUserUpdateTaskID] taskID];
     [[mockTask expect] taskFailed];
 
-    self.channelID = @"some-other-channel";
+    // force an update
+    [self.notificationCenter postNotificationName:UARemoteConfigURLManagerConfigUpdated object:nil];
 
     XCTestExpectation *apiCalled = [self expectationWithDescription:@"API client called"];
-
-    __block void (^completionHandler)(UAHTTPResponse * _Nullable response, NSError * _Nullable error);
     [[[self.mockUserClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:4];
-        completionHandler = (__bridge  void (^)(UAHTTPResponse * _Nullable response, NSError * _Nullable error))arg;
+        void (^completionHandler)(UAHTTPResponse * _Nullable response, NSError * _Nullable error) = completionHandler = (__bridge  void (^)(UAHTTPResponse * _Nullable response, NSError * _Nullable error))arg;
+
+        NSError *error = [NSError errorWithDomain:NSCocoaErrorDomain code:0 userInfo:nil];
+        completionHandler(nil, error);
+
         [apiCalled fulfill];
     }] updateUserWithData:self.userData channelID:self.channelID completionHandler:OCMOCK_ANY];
 
     self.launchHandler(mockTask);
     [self waitForTestExpectations];
-
-    NSError *error = [NSError errorWithDomain:NSCocoaErrorDomain code:0 userInfo:nil];
-
-    completionHandler(nil, error);
     [self.mockUserClient verify];
     [mockTask verify];
 }
@@ -332,24 +304,24 @@ static NSString * const UAUserResetTaskID = @"UAUser.reset";
     [[[mockTask stub] andReturn:UAUserUpdateTaskID] taskID];
     [[mockTask expect] taskCompleted];
 
-    self.channelID = @"some-other-channel";
+    // force an update
+    [self.notificationCenter postNotificationName:UARemoteConfigURLManagerConfigUpdated object:nil];
 
     XCTestExpectation *apiCalled = [self expectationWithDescription:@"API client called"];
 
-    __block void (^completionHandler)(UAHTTPResponse * _Nullable response, NSError * _Nullable error);
     [[[self.mockUserClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:4];
-        completionHandler = (__bridge  void (^)(UAHTTPResponse * _Nullable response, NSError * _Nullable error))arg;
+        void (^completionHandler)(UAHTTPResponse * _Nullable response, NSError * _Nullable error) = completionHandler = (__bridge  void (^)(UAHTTPResponse * _Nullable response, NSError * _Nullable error))arg;
+
+        UAHTTPResponse *response = [[UAHTTPResponse alloc] initWithStatus:400];
+        completionHandler(response, nil);
+
         [apiCalled fulfill];
     }] updateUserWithData:self.userData channelID:self.channelID completionHandler:OCMOCK_ANY];
 
     self.launchHandler(mockTask);
     [self waitForTestExpectations];
-
-    UAHTTPResponse *response = [[UAHTTPResponse alloc] initWithStatus:400];
-
-    completionHandler(response, nil);
     [self.mockUserClient verify];
     [mockTask verify];
 }
@@ -362,29 +334,30 @@ static NSString * const UAUserResetTaskID = @"UAUser.reset";
     [[[mockTask stub] andReturn:UAUserUpdateTaskID] taskID];
     [[mockTask expect] taskFailed];
 
-    self.channelID = @"some-other-channel";
+    // force an update
+    [self.notificationCenter postNotificationName:UARemoteConfigURLManagerConfigUpdated object:nil];
 
     XCTestExpectation *apiCalled = [self expectationWithDescription:@"API client called"];
-
-    __block void (^completionHandler)(UAHTTPResponse * _Nullable response, NSError * _Nullable error);
     [[[self.mockUserClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:4];
-        completionHandler = (__bridge  void (^)(UAHTTPResponse * _Nullable response, NSError * _Nullable error))arg;
+        void (^completionHandler)(UAHTTPResponse * _Nullable response, NSError * _Nullable error) = completionHandler = (__bridge  void (^)(UAHTTPResponse * _Nullable response, NSError * _Nullable error))arg;
+
+        UAHTTPResponse *response = [[UAHTTPResponse alloc] initWithStatus:500];
+        completionHandler(response, nil);
+
         [apiCalled fulfill];
     }] updateUserWithData:self.userData channelID:self.channelID completionHandler:OCMOCK_ANY];
 
     self.launchHandler(mockTask);
     [self waitForTestExpectations];
-
-    UAHTTPResponse *response = [[UAHTTPResponse alloc] initWithStatus:500];
-
-    completionHandler(response, nil);
     [self.mockUserClient verify];
     [mockTask verify];
 }
 
 - (void)testUpdateUserWithUnauthorizedStatus {
+    [self.userDataDAO saveUserData:self.userData completionHandler:^(BOOL success) {}];
+
     // Create the channel
     [self testUpdateTaskCreatesChannel];
 
@@ -392,29 +365,26 @@ static NSString * const UAUserResetTaskID = @"UAUser.reset";
     [[[mockTask stub] andReturn:UAUserUpdateTaskID] taskID];
     [[mockTask expect] taskCompleted];
 
-    self.channelID = @"some-other-channel";
+    // force an update
+    [self.notificationCenter postNotificationName:UARemoteConfigURLManagerConfigUpdated object:nil];
 
     XCTestExpectation *apiCalled = [self expectationWithDescription:@"API client called"];
 
-    __block void (^completionHandler)(UAHTTPResponse * _Nullable response, NSError * _Nullable error);
     [[[self.mockUserClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:4];
-        completionHandler = (__bridge  void (^)(UAHTTPResponse * _Nullable response, NSError * _Nullable error))arg;
+        void (^completionHandler)(UAHTTPResponse * _Nullable response, NSError * _Nullable error) = completionHandler = (__bridge  void (^)(UAHTTPResponse * _Nullable response, NSError * _Nullable error))arg;
+        UAHTTPResponse *response = [[UAHTTPResponse alloc] initWithStatus:401];
+        completionHandler(response, nil);
+
         [apiCalled fulfill];
     }] updateUserWithData:self.userData channelID:self.channelID completionHandler:OCMOCK_ANY];
 
     self.launchHandler(mockTask);
     [self waitForTestExpectations];
 
-    UAHTTPResponse *response = [[UAHTTPResponse alloc] initWithStatus:401];
+    XCTAssertNil([self.userDataDAO getUserDataSync]);
 
-    [self.userDataDAO saveUserData:self.userData completionHandler:^(BOOL success) {}];
-    XCTAssertNotNil([self.userDataDAO getUserDataSync]);
-
-    [[self.mockTaskManager expect] enqueueRequestWithID:UAUserResetTaskID options:OCMOCK_ANY];
-
-    completionHandler(response, nil);
     [self.mockUserClient verify];
     [self.mockTaskManager verify];
     [mockTask verify];
@@ -479,20 +449,19 @@ static NSString * const UAUserResetTaskID = @"UAUser.reset";
 
     XCTestExpectation *apiCalled = [self expectationWithDescription:@"API client called"];
 
-    __block void (^completionHandler)(UAHTTPResponse * _Nullable response, NSError * _Nullable error);
     [[[self.mockUserClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:4];
-        completionHandler = (__bridge  void (^)(UAHTTPResponse * _Nullable response, NSError * _Nullable error))arg;
+        void (^completionHandler)(UAHTTPResponse * _Nullable response, NSError * _Nullable error) = completionHandler = (__bridge  void (^)(UAHTTPResponse * _Nullable response, NSError * _Nullable error))arg;
+
+        UAHTTPResponse *response = [[UAHTTPResponse alloc] initWithStatus:200];
+        completionHandler(response, nil);
+
         [apiCalled fulfill];
     }] updateUserWithData:self.userData channelID:self.channelID completionHandler:OCMOCK_ANY];
 
     self.launchHandler(mockTask);
     [self waitForTestExpectations];
-
-    UAHTTPResponse *response = [[UAHTTPResponse alloc] initWithStatus:200];
-
-    completionHandler(response, nil);
     [self.mockUserClient verify];
     [mockTask verify];
 }

@@ -47,10 +47,6 @@ extern NSString *const UAChannelCreationOnForeground;
  */
 - (void)updateRegistrationForcefully:(BOOL)forcefully;
 
-/**
- * Removes the existing channel and causes the registrar to create a new channel on next registration.
- */
-- (void)reset;
 
 @end
 

@@ -607,12 +607,6 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
     XCTAssertTrue(isMainThread);
 }
 
-- (void)testDeviceIDChanged {
-    [[self.mockChannelRegistrar expect] resetChannel];
-    [self.notificationCenter postNotificationName:UADeviceIDChangedNotification object:nil];
-    [self.mockChannelRegistrar verify];
-}
-
 /**
  * Test applicationDidBecomeActive, when run after app was backgrounded, does register
  */
@@ -783,19 +777,6 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
     [self.channel applyAttributeMutations:addMutation];
 
     [self.mockAttributeRegistrar verify];
-}
-
-/**
- * Tests channel reset
- */
-- (void)testResetChannel {
-    [[self.mockChannelRegistrar expect] resetChannel];
-
-    [self.channel reset];
-
-    XCTAssertNoThrow([self.mockChannelRegistrar verify]);
-
-    XCTAssertNil([self.dataStore objectForKey:UAChannelRegistrarChannelIDKey], @"Channel reset should remove channel id");
 }
 
 /**

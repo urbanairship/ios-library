@@ -12,6 +12,7 @@
 #import "UALocaleManager+Internal.h"
 #import "UASemaphore.h"
 #import "UAPrivacyManager.h"
+#import "UAKeychainUtils+Internal.h"
 
 NSString *const UAChannelTagsSettingsKey = @"com.urbanairship.channel.tags";
 
@@ -52,6 +53,8 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 @property (nonatomic, strong) UADate *date;
 @property (nonatomic, strong) UATaskManager *taskManager;
 @property (nonatomic, strong) UAPrivacyManager *privacyManager;
+@property (nonatomic, strong) UARuntimeConfig *config;
+
 @end
 
 @implementation UAChannel
@@ -168,11 +171,6 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 
 - (void)observeNotificationCenterEvents {
     [self.notificationCenter addObserver:self
-                                selector:@selector(reset)
-                                    name:UADeviceIDChangedNotification
-                                  object:nil];
-
-    [self.notificationCenter addObserver:self
                                 selector:@selector(applicationBackgroundRefreshStatusChanged)
                                     name:UIApplicationBackgroundRefreshStatusDidChangeNotification
                                   object:nil];
@@ -201,10 +199,6 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
                                 selector:@selector(onEnabledFeaturesChanged)
                                     name:UAPrivacyManagerEnabledFeaturesChangedEvent
                                   object:nil];
-}
-
-- (void)reset {
-    [self.channelRegistrar resetChannel];
 }
 
 - (NSString *)identifier {

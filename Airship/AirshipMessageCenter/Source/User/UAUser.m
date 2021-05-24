@@ -8,11 +8,12 @@
 #import "UAUserData+Internal.h"
 #import "UARemoteConfigURLManager.h"
 
-NSString * const UAUserRegisteredChannelIDKey= @"UAUserRegisteredChannelID";
+static NSString * const UAUserRegisteredChannelIDKey= @"UAUserRegisteredChannelID";
+static NSString * const UAUserRequireUpdate= @"UAUserRequireUpdate";
+
 NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.user_created";
 
 static NSString * const UAUserUpdateTaskID = @"UAUser.update";
-static NSString * const UAUserResetTaskID = @"UAUser.reset";
 
 @interface UAUser()
 @property (nonatomic, strong) UAChannel<UAExtendableChannelRegistration> *channel;
@@ -21,6 +22,8 @@ static NSString * const UAUserResetTaskID = @"UAUser.reset";
 @property (nonatomic, strong) UAUserAPIClient *apiClient;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (copy) NSString *registeredChannelID;
+@property (assign) BOOL requireUserUpdate;
+
 @property (nonatomic, strong) UATaskManager *taskManager;
 @end
 
@@ -49,10 +52,6 @@ static NSString * const UAUserResetTaskID = @"UAUser.reset";
                                         name:UAChannelCreatedEvent
                                       object:nil];
 
-        [self.notificationCenter addObserver:self
-                                    selector:@selector(enqueueResetTask)
-                                        name:UADeviceIDChangedNotification
-                                      object:nil];
 
         [self.notificationCenter addObserver:self
                                     selector:@selector(remoteURLConfigUpdated)
@@ -65,13 +64,11 @@ static NSString * const UAUserResetTaskID = @"UAUser.reset";
             [self extendChannelRegistrationPayload:payload completionHandler:completionHandler];
         }];
 
-        [self.taskManager registerForTaskWithIDs:@[UAUserUpdateTaskID, UAUserResetTaskID]
+        [self.taskManager registerForTaskWithIDs:@[UAUserUpdateTaskID]
                                       dispatcher:[UADispatcher serialDispatcher]
                                    launchHandler:^(id<UATask> task) {
             UA_STRONGIFY(self)
-            if ([task.taskID isEqualToString:UAUserResetTaskID]) {
-                [self handleResetTask:task];
-            } else if ([task.taskID isEqualToString:UAUserUpdateTaskID]) {
+            if ([task.taskID isEqualToString:UAUserUpdateTaskID]) {
                 [self handleUpdateTask:task];
             } else {
                 UA_LERR(@"Invalid task: %@", task.taskID);
@@ -134,27 +131,25 @@ static NSString * const UAUserResetTaskID = @"UAUser.reset";
     [self.dataStore setValue:registeredChannelID forKey:UAUserRegisteredChannelIDKey];
 }
 
+- (BOOL)requireUserUpdate {
+    return [self.dataStore boolForKey:UAUserRequireUpdate];
+}
+
+- (void)setRequireUserUpdate:(BOOL)requireUpdate {
+    return [self.dataStore setBool:requireUpdate forKey:UAUserRequireUpdate];
+}
+
 - (void)enqueueUpdateTask {
+    if (!self.enabled) {
+        UA_LDEBUG(@"Skipping user registration, user disabled.");
+        return;
+    }
+
     UATaskRequestOptions *requestOptions = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyKeep
                                                                            requiresNetwork:YES
                                                                                     extras:nil];
     [self.taskManager enqueueRequestWithID:UAUserUpdateTaskID
                                    options:requestOptions];
-}
-
-- (void)enqueueResetTask {
-    UATaskRequestOptions *requestOptions = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyKeep
-                                                                           requiresNetwork:NO
-                                                                                    extras:nil];
-    [self.taskManager enqueueRequestWithID:UAUserResetTaskID
-                                   options:requestOptions];
-}
-
-- (void)handleResetTask:(id<UATask>)task {
-    self.registeredChannelID = nil;
-    [self.userDataDAO clearUser];
-    [self enqueueUpdateTask];
-    [task taskCompleted];
 }
 
 - (void)handleUpdateTask:(id<UATask>)task {
@@ -170,25 +165,101 @@ static NSString * const UAUserResetTaskID = @"UAUser.reset";
         return;
     }
 
-    UAUserData *data = [self getUserDataSync];
+    UAUserData *data = nil;
+    if ([self.registeredChannelID isEqualToString:channelID]) {
+        data = [self getUserDataSync];
+    } else {
+        [self reset];
+    }
 
-    if (data && [self.registeredChannelID isEqualToString:channelID]) {
+    if (data && !self.requireUserUpdate) {
         [task taskCompleted];
         return;
     }
 
-    UADisposable *request;
+    UASemaphore *semaphore = [UASemaphore semaphore];
+    void (^completionHandler)(BOOL) = ^(BOOL completed) {
+        [semaphore signal];
+        if (completed) {
+            [task taskCompleted];
+            self.requireUserUpdate = false;
+        } else {
+            [task taskFailed];
+        }
+    };
 
+    UADisposable *request;
     if (data) {
-        request = [self performUserUpdateWithData:data channelID:channelID task:task];
+        request = [self performUserUpdateWithData:data channelID:channelID completionHandler:completionHandler];
     } else {
-        request = [self performUserCreateWithChannelID:channelID task:task];
+        request = [self performUserCreateWithChannelID:channelID completionHandler:completionHandler];
     }
+
+    [semaphore wait];
 
     task.expirationHandler = ^{
         [request dispose];
     };
 }
+
+- (UADisposable *)performUserUpdateWithData:(UAUserData *)userData
+                                  channelID:(NSString *)channelID
+                          completionHandler:(void (^)(BOOL completed))completionHandler {
+    UA_WEAKIFY(self)
+    return [self.apiClient updateUserWithData:userData channelID:channelID completionHandler:^(UAHTTPResponse * _Nullable response, NSError * _Nullable error) {
+        UA_STRONGIFY(self)
+        if (error) {
+            UA_LDEBUG(@"User update failed with error %@", error);
+            completionHandler(false);
+        } else if (!response.isSuccess) {
+            UA_LDEBUG(@"User update failed with status %lul", (unsigned long)response.status);
+
+            if (response.status == 401) {
+                [self reset];
+                [self enqueueUpdateTask];
+                completionHandler(true);
+            } else {
+                completionHandler(!response.isServerError);
+            }
+        } else {
+            UA_LINFO(@"Updated user %@ successfully.", userData.username);
+            self.registeredChannelID = channelID;
+            completionHandler(true);
+        }
+    }];
+}
+
+- (UADisposable *)performUserCreateWithChannelID:(NSString *)channelID
+                               completionHandler:(void (^)(BOOL completed))completionHandler {
+
+    UA_WEAKIFY(self)
+    return [self.apiClient createUserWithChannelID:channelID completionHandler:^(UAUserCreateResponse * _Nullable response, NSError * _Nullable error) {
+        if (error) {
+            UA_LDEBUG(@"User creation failed with error %@", error);
+            completionHandler(false);
+        } else if (!response.isSuccess) {
+            UA_LDEBUG(@"User creation failed with status %lul", (unsigned long)response.status);
+            completionHandler(!response.isServerError);
+        } else {
+            UA_STRONGIFY(self)
+            [self.userDataDAO saveUserData:response.userData completionHandler:^(BOOL success) {
+                UA_STRONGIFY(self)
+                if (success) {
+                    UA_LINFO(@"Created user %@ successfully.", response.userData.username);
+                    self.registeredChannelID = channelID;
+                    [[UADispatcher mainDispatcher] dispatchAsync:^{
+                        [self.notificationCenter postNotificationName:UAUserCreatedNotification object:nil];
+                    }];
+                    completionHandler(true);
+                } else {
+                    UA_LINFO(@"Failed to save user");
+                    completionHandler(false);
+                }
+            }];
+        }
+    }];
+}
+
 
 - (void)setEnabled:(BOOL)enabled {
     if (_enabled != enabled) {
@@ -197,66 +268,6 @@ static NSString * const UAUserResetTaskID = @"UAUser.reset";
             [self enqueueUpdateTask];
         }
     }
-}
-
-- (UADisposable *)performUserUpdateWithData:(UAUserData *)userData channelID:(NSString *)channelID task:(id<UATask>)task {
-    UA_WEAKIFY(self)
-    return [self.apiClient updateUserWithData:userData channelID:channelID completionHandler:^(UAHTTPResponse * _Nullable response, NSError * _Nullable error) {
-        UA_STRONGIFY(self)
-        if (error) {
-            UA_LDEBUG(@"User update failed with error %@", error);
-            [task taskFailed];
-        } else if (!response.isSuccess) {
-            UA_LDEBUG(@"User update failed with status %lul", (unsigned long)response.status);
-
-            if (response.isServerError) {
-                [task taskFailed];
-            } else {
-                if (response.status == 401) {
-                    UA_LDEBUG(@"Recreating user");
-                    [self enqueueResetTask];
-                }
-
-                [task taskCompleted];
-            }
-        } else {
-            UA_LINFO(@"Updated user %@ successfully.", userData.username);
-            self.registeredChannelID = channelID;
-            [task taskCompleted];
-        }
-    }];
-}
-
-- (UADisposable *)performUserCreateWithChannelID:(NSString *)channelID task:(id<UATask>)task {
-    UA_WEAKIFY(self)
-    return [self.apiClient createUserWithChannelID:channelID completionHandler:^(UAUserCreateResponse * _Nullable response, NSError * _Nullable error) {
-        if (error) {
-            UA_LDEBUG(@"User creation failed with error %@", error);
-            [task taskFailed];
-        } else if (!response.isSuccess) {
-            UA_LDEBUG(@"User creation failed with status %lul", (unsigned long)response.status);
-
-            if (response.isServerError) {
-                [task taskFailed];
-            } else {
-                [task taskCompleted];
-            }
-        } else {
-            UA_STRONGIFY(self)
-            [self.userDataDAO saveUserData:response.userData completionHandler:^(BOOL success) {
-                UA_STRONGIFY(self)
-                if (success) {
-                    UA_LINFO(@"Created user %@ successfully.", response.userData.username);
-                    self.registeredChannelID = channelID;
-                    [self.notificationCenter postNotificationName:UAUserCreatedNotification object:nil];
-                    [task taskCompleted];
-                } else {
-                    UA_LINFO(@"Failed to save user");
-                    [task taskFailed];
-                }
-            }];
-        }
-    }];
 }
 
 - (void)extendChannelRegistrationPayload:(UAChannelRegistrationPayload *)payload
@@ -269,8 +280,13 @@ static NSString * const UAUserResetTaskID = @"UAUser.reset";
 
 - (void)remoteURLConfigUpdated {
     // clear registered channel ID to force an update
-    self.registeredChannelID = nil;
+    self.requireUserUpdate = true;
     [self enqueueUpdateTask];
+}
+
+- (void)reset {
+    self.registeredChannelID = nil;
+    [self.userDataDAO clearUser];
 }
 
 @end

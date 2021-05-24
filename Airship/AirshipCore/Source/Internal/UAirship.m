@@ -38,14 +38,12 @@
 #endif
 
 // Notifications
-NSString * const UADeviceIDChangedNotification = @"com.urbanairship.device_id_changed";
 NSString * const UAAirshipReadyNotification = @"com.urbanairship.airship_ready";
+
+static NSString *const UAResetKeychainKey = @"com.urbanairship.reset_keychain";
 
 // Exceptions
 NSString * const UAirshipTakeOffBackgroundThreadException = @"UAirshipTakeOffBackgroundThreadException";
-
-NSString * const UAResetKeychainKey = @"com.urbanairship.reset_keychain";
-NSString * const UALibraryVersion = @"com.urbanairship.library_version";
 
 // Optional components
 NSString * const UALocationModuleLoaderClassName = @"UALocationModuleLoader";
@@ -288,15 +286,20 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
  * This is an unsafe version of takeOff - use takeOff: instead for dispatch_once
  */
 + (void)executeUnsafeTakeOff:(UAConfig *)config {
-
     // Airships only take off once!
     if (sharedAirship_) {
         return;
     }
 
+    // Clearing the key chain
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:UAResetKeychainKey]) {
+        UA_LDEBUG(@"Deleting the keychain credentials");
+        [UAKeychainUtils deleteKeychainValue:config.appKey];
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAResetKeychainKey];
+    }
+
     // Data store
     UAPreferenceDataStore *dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:[NSString stringWithFormat:@"com.urbanairship.%@.", config.appKey]];
-    [dataStore migrateUnprefixedKeys:@[UALibraryVersion]];
 
     UARemoteConfigURLManager *remoteConfigURLManager = [UARemoteConfigURLManager remoteConfigURLManagerWithDataStore:dataStore];
     UARuntimeConfig *runtimeConfig = [UARuntimeConfig runtimeConfigWithConfig:config urlManager:remoteConfigURLManager];
@@ -317,49 +320,11 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     UA_LINFO(@"UAirship Take Off! Lib Version: %@ App Key: %@ Production: %@.",
              [UAirshipVersion get], runtimeConfig.appKey, runtimeConfig.inProduction ?  @"YES" : @"NO");
 
-    // Clearing the key chain
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:UAResetKeychainKey]) {
-        UA_LDEBUG(@"Deleting the keychain credentials");
-        [UAKeychainUtils deleteKeychainValue:runtimeConfig.appKey];
-
-        UA_LDEBUG(@"Deleting the Airship device ID");
-        [UAKeychainUtils deleteKeychainValue:UAKeychainDeviceIDKey];
-
-        // Delete the Device ID in the data store so we don't clear the channel
-        [dataStore removeObjectForKey:@"deviceId"];
-
-        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UAResetKeychainKey];
-    }
-
-    [UAUtils getDeviceID:^(NSString *currentDeviceID) {
-        NSString *previousDeviceID = [dataStore stringForKey:@"deviceId"];
-        if (previousDeviceID && ![previousDeviceID isEqualToString:currentDeviceID]) {
-            // Device ID changed since the last open. Most likely due to an app restore
-            // on a different device.
-            UA_LDEBUG(@"Device ID changed.");
-            [[NSNotificationCenter defaultCenter] postNotificationName:UADeviceIDChangedNotification
-                                                                object:nil];
-        }
-        // Save the Device ID to the data store to detect when it changes
-        [dataStore setObject:currentDeviceID forKey:@"deviceId"];
-    } dispatcher:[UADispatcher mainDispatcher]];
-
     // Create Airship
     [UAirship setSharedAirship:[[UAirship alloc] initWithRuntimeConfig:runtimeConfig
                                                              dataStore:dataStore]];
 
-    // Save the version
-    if ([[UAirshipVersion get] isEqualToString:@"0.0.0"]) {
-        UA_LIMPERR(@"_UA_VERSION is undefined - this commonly indicates an issue with the build configuration, UA_VERSION will be set to \"0.0.0\".");
-    } else {
-        NSString *previousVersion = [sharedAirship_.dataStore stringForKey:UALibraryVersion];
-        if (![[UAirshipVersion get] isEqualToString:previousVersion]) {
-            [dataStore setObject:[UAirshipVersion get] forKey:UALibraryVersion];
-            if (previousVersion) {
-                UA_LINFO(@"Airship library version changed from %@ to %@.", previousVersion, [UAirshipVersion get]);
-            }
-        }
-    }
+    
 
     // Validate any setup issues
     if (!runtimeConfig.inProduction) {

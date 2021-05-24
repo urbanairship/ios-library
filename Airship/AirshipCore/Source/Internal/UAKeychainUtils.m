@@ -154,7 +154,9 @@ static NSString *cachedDeviceID_ = nil;
     [searchDictionary setObject:encodedIdentifier forKey:(__bridge id)kSecAttrGeneric];
 
     NSString *bundleID = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleIdentifier"];
-    [searchDictionary setObject:bundleID forKey:(__bridge id)kSecAttrService];
+    if (bundleID) {
+        [searchDictionary setObject:bundleID forKey:(__bridge id)kSecAttrService];
+    }
 
     return searchDictionary; 
 }
