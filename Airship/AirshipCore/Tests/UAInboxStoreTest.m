@@ -12,13 +12,11 @@
 
 - (void)setUp {
     [super setUp];
-    self.inboxStore = [UAInboxStore storeWithName:@"UAInboxStoreTest." inMemory:YES];
+    self.inboxStore = [UAInboxStore storeWithName:[NSUUID UUID].UUIDString inMemory:YES];
 }
 
 - (void)tearDown {
     [self.inboxStore shutDown];
-    [self.inboxStore waitForIdle];
-
     [super tearDown];
 }
 

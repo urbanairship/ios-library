@@ -3,7 +3,7 @@
 @testable
 import AirshipChat
 
-class MockAirshipChatOpenDelegate : AirshipChatOpenDelegate {
+class MockChatOpenDelegate : ChatOpenDelegate {
     var openCalled = false
     var lastOpenMessage: String?
     

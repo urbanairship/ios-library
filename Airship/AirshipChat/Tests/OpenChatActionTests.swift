@@ -8,21 +8,21 @@ import AirshipCore
 
 class OpenChatActionTests: XCTestCase {
     var action: OpenChatAction!
-    var airshipChat: AirshipChat!
+    var airshipChat: Chat!
     var mockConversation: MockConversation!
-    var mockOpenDelegate: MockAirshipChatOpenDelegate!
+    var mockOpenDelegate: MockChatOpenDelegate!
     var privacyManager : UAPrivacyManager!
 
     override func setUp() {
         let mockConversation = MockConversation()
         let dataStore = UAPreferenceDataStore(keyPrefix: UUID().uuidString)
-        self.privacyManager = UAirship.shared().privacyManager
+        self.privacyManager = UAPrivacyManager(dataStore: dataStore, defaultEnabledFeatures: .all)
 
-        self.airshipChat = AirshipChat(dataStore: dataStore,
-                                       conversation: mockConversation,
-                                       privacyManager:self.privacyManager)
+        self.airshipChat = Chat(dataStore: dataStore,
+                                conversation: mockConversation,
+                                privacyManager:self.privacyManager)
 
-        self.mockOpenDelegate = MockAirshipChatOpenDelegate()
+        self.mockOpenDelegate = MockChatOpenDelegate()
         self.airshipChat.openChatDelegate = self.mockOpenDelegate
 
         self.action = OpenChatAction() {

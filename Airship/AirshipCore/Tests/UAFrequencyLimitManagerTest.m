@@ -14,7 +14,7 @@
 @implementation UAFrequencyLimitManagerTest
 
 - (void)setUp {
-    self.store = [UAFrequencyLimitStore storeWithName:@"UAFrequencyLimitStoreTest" inMemory:YES];
+    self.store = [UAFrequencyLimitStore storeWithName:[NSUUID UUID].UUIDString inMemory:YES];
     self.date = [[UATestDate alloc] init];
     self.manager = [UAFrequencyLimitManager managerWithDataStore:self.store
                                                             date:self.date
@@ -23,7 +23,6 @@
 
 - (void)tearDown {
     [self.store shutDown];
-    [self.store waitForIdle];
     [super tearDown];
 }
 

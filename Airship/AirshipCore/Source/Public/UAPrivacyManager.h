@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
+#import "UAPreferenceDataStore.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -91,6 +92,17 @@ typedef NS_OPTIONS(NSUInteger, UAFeatures) {
     // Sets enabled features to all.
     UAFeaturesAll = (UAFeaturesInAppAutomation | UAFeaturesMessageCenter | UAFeaturesPush | UAFeaturesChat | UAFeaturesAnalytics | UAFeaturesTagsAndAttributes | UAFeaturesContacts | UAFeaturesLocation)
 };
+
+/**
+ * Factory method to create a Privacy Manager instance.
+ * @note For internal use only. :nodoc:
+ *
+ * @param dataStore The shared preference data store.
+ * @param features Default enabled features.
+ * @return A new privacy manager instance.
+ */
++ (instancetype)privacyManagerWithDataStore:(UAPreferenceDataStore *)dataStore
+                     defaultEnabledFeatures:(UAFeatures)features;
 
 /**
  * Sets the current enabled features.

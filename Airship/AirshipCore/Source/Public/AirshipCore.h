@@ -11,5 +11,3 @@ FOUNDATION_EXPORT double AirshipCoreVersionNumber;
 FOUNDATION_EXPORT const unsigned char AirshipCoreVersionString[];
 
 #import "AirshipLib.h"
-
-

@@ -7,25 +7,25 @@ import AirshipChat
 import AirshipCore
 
 class AirshipChatTests: XCTestCase {
-    var airshipChat: AirshipChat!
+    var airshipChat: Chat!
     var dataStore: UAPreferenceDataStore!
     var mockConversation: MockConversation!
-    var privacyManager : UAPrivacyManager
+    var privacyManager : UAPrivacyManager!
 
     override func setUp() {
         self.mockConversation = MockConversation()
         self.dataStore = UAPreferenceDataStore(keyPrefix: UUID().uuidString)
-        self.privacyManager = UAirship.shared().privacyManager
+        self.privacyManager = UAPrivacyManager(dataStore: self.dataStore, defaultEnabledFeatures: .all)
 
-        self.airshipChat = AirshipChat(dataStore: dataStore,
-                                       conversation: self.mockConversation,
-                                       privacyManager: self.privacyManager)
+        self.airshipChat = Chat(dataStore: dataStore,
+                                conversation: self.mockConversation,
+                                privacyManager: self.privacyManager)
 
         self.privacyManager.setEnabledFeatures(UAFeatures.all)
     }
 
     func testOpenDelegate() throws {
-        let mockOpenDelegate = MockAirshipChatOpenDelegate()
+        let mockOpenDelegate = MockChatOpenDelegate()
         self.airshipChat.openChatDelegate = mockOpenDelegate
 
         self.airshipChat.openChat()
@@ -35,7 +35,7 @@ class AirshipChatTests: XCTestCase {
     }
 
     func testOpenDelegateWithMessage() throws {
-        let mockOpenDelegate = MockAirshipChatOpenDelegate()
+        let mockOpenDelegate = MockChatOpenDelegate()
         self.airshipChat.openChatDelegate = mockOpenDelegate
 
         self.airshipChat.openChat(message: "neat")
@@ -56,8 +56,6 @@ class AirshipChatTests: XCTestCase {
         XCTAssertTrue(self.mockConversation.enabled)
 
         self.privacyManager.setEnabledFeatures([])
-        self.airshipChat.onDataCollectionEnabledChanged()
-
         XCTAssertFalse(self.mockConversation.enabled)
         XCTAssertTrue(self.mockConversation.clearDataCalled)
     }

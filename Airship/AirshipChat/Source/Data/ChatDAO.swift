@@ -17,26 +17,20 @@ class ChatDAO: ChatDAOProtocol {
     private static let pendingChatMessageDataEntityName = "PendingChatMessageData"
     private static let fetchLimit = 50
 
-    private let storeName: String
-    private let managedContext: NSManagedObjectContext
-
-    private var persistentStore: NSPersistentStore?
+    private let coreData: UACoreData
 
     init(config: ChatConfig) {
         let bundle = ChatResources.bundle()
         let modelURL = bundle?.url(forResource: "ChatMessageData", withExtension: "momd")
-        self.managedContext = NSManagedObjectContext(forModelURL: modelURL!, concurrencyType: .privateQueueConcurrencyType)
-        self.managedContext.mergePolicy = NSMergeByPropertyStoreTrumpMergePolicy
-        self.storeName = "Chat-message-data-\(config.appKey).sqlite"
-
-        self.addStores()
-
-        NotificationCenter.default.addObserver(self, selector: #selector(protectedDataAvailable), name: UIApplication.protectedDataDidBecomeAvailableNotification, object: nil)
+        self.coreData = UACoreData(modelURL: modelURL!,
+                                   inMemory: false,
+                                   stores: ["Chat-message-data-\(config.appKey).sqlite"],
+                                   mergePolicy: NSMergeByPropertyStoreTrumpMergePolicy)
     }
 
     func upsertMessage(messageID: Int, requestID: String?, text: String?, createdOn: Date, direction: UInt, attachment: URL?) {
-        safePerformBlock {
-            let data = self.getMessage(messageID) ?? self.insertNewEntity(ChatDAO.chatMessageDataEntityName) as! ChatMessageData
+        safePerformBlock { context in
+            let data = self.getMessage(messageID, context: context) ?? self.insertNewEntity(ChatDAO.chatMessageDataEntityName, context: context) as! ChatMessageData
             data.messageID = messageID
             data.requestID = requestID
             data.text = text
@@ -47,8 +41,8 @@ class ChatDAO: ChatDAOProtocol {
     }
 
     func insertPending(requestID: String, text: String?, attachment: URL?, createdOn: Date) {
-        safePerformBlock {
-            let data = self.insertNewEntity(ChatDAO.pendingChatMessageDataEntityName) as! PendingChatMessageData
+        safePerformBlock { context in
+            let data = self.insertNewEntity(ChatDAO.pendingChatMessageDataEntityName, context: context) as! PendingChatMessageData
             data.requestID = requestID
             data.text = text
             data.createdOn = createdOn
@@ -57,37 +51,37 @@ class ChatDAO: ChatDAOProtocol {
     }
 
     func removePending(_ requestID: String) {
-        safePerformBlock {
-            if let pending = self.getPendingMessage(requestID) {
-                self.managedContext.delete(pending)
+        safePerformBlock { context in
+            if let pending = self.getPendingMessage(requestID, context: context) {
+                context.delete(pending)
             }
         }
     }
 
     func fetchMessages(completionHandler: @escaping (Array<ChatMessageDataProtocol>, Array<PendingChatMessageDataProtocol>)->()) {
-        safePerformBlock {
-            let messagesData = self.getMessages()
-            let pendingMessagesData = self.getPendingMessages()
+        safePerformBlock { context in
+            let messagesData = self.getMessages(context)
+            let pendingMessagesData = self.getPendingMessages(context)
             completionHandler(messagesData, pendingMessagesData)
         }
     }
 
     func fetchPending(completionHandler: @escaping (Array<PendingChatMessageDataProtocol>)->()) {
-        safePerformBlock {
-            let pendingMessagesData = self.getPendingMessages()
+        safePerformBlock { context in
+            let pendingMessagesData = self.getPendingMessages(context)
             completionHandler(pendingMessagesData)
         }
     }
 
     func hasPendingMessages(completionHandler: @escaping (Bool)->()) {
-        safePerformBlock {
-            let pendingMessagesData = self.getPendingMessages()
+        safePerformBlock { context in
+            let pendingMessagesData = self.getPendingMessages(context)
             completionHandler(!pendingMessagesData.isEmpty)
         }
     }
 
     func deleteAll() {
-        safePerformBlock {
+        safePerformBlock { context in
             let pendingRequest = NSFetchRequest<NSFetchRequestResult>(entityName: ChatDAO.pendingChatMessageDataEntityName)
             let pendingDeleteRequest = NSBatchDeleteRequest(fetchRequest: pendingRequest)
 
@@ -95,8 +89,8 @@ class ChatDAO: ChatDAOProtocol {
             let messageDeleteRequest = NSBatchDeleteRequest(fetchRequest: messageRequest)
 
             do {
-                try self.managedContext.execute(pendingDeleteRequest)
-                try self.managedContext.execute(messageDeleteRequest)
+                try context.execute(pendingDeleteRequest)
+                try context.execute(messageDeleteRequest)
             } catch {
                 AirshipLogger.error("Unable to delete messages: \(error)")
             }
@@ -104,51 +98,26 @@ class ChatDAO: ChatDAOProtocol {
         }
     }
 
-    @objc private func protectedDataAvailable() {
-        if let storeCount = self.managedContext.persistentStoreCoordinator?.persistentStores.count {
-            if storeCount == 0 {
-                self.addStores()
-            }
-        }
-    }
-
-    private func addStores() {
-        self.managedContext.addPersistentSqlStore(self.storeName) { (store: NSPersistentStore?, error: Error?) in
-            if (error != nil) {
-                AirshipLogger.error("Failed to create chat persistent store: \(error!.localizedDescription)")
-                return
-            }
-
-            self.persistentStore = store
-        }
-    }
-
-    private func safePerformBlock(block: @escaping () -> Void) {
-        self.managedContext.safePerform { (safe: Bool) in
+    private func safePerformBlock(block: @escaping (NSManagedObjectContext) -> Void) {
+        self.coreData.safePerform { safe, context in
             if (safe) {
-                block()
-                self.managedContext.safeSave()
+                block(context)
+                UACoreData.safeSave(context)
             }
         }
     }
 
-    private func insertNewEntity(_ name: String) -> NSManagedObject {
-        let object = NSEntityDescription.insertNewObject(forEntityName: name, into: self.managedContext)
-
-        if let store = self.persistentStore {
-            self.managedContext.assign(object, to: store)
-        }
-
-        return object
+    private func insertNewEntity(_ name: String, context: NSManagedObjectContext) -> NSManagedObject {
+        return NSEntityDescription.insertNewObject(forEntityName: name, into: context)
     }
 
-    private func getMessages() -> [ChatMessageData] {
+    private func getMessages(_ context: NSManagedObjectContext) -> [ChatMessageData] {
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: ChatDAO.chatMessageDataEntityName)
         request.sortDescriptors = [NSSortDescriptor(key: "createdOn", ascending: true)]
         request.fetchLimit = ChatDAO.fetchLimit
 
         do {
-            let result = try self.managedContext.fetch(request)
+            let result = try context.fetch(request)
             return result as! [ChatMessageData]
         } catch {
             AirshipLogger.error("Unable to get message data: \(error)")
@@ -156,12 +125,12 @@ class ChatDAO: ChatDAOProtocol {
         }
     }
 
-    private func getPendingMessages() -> [PendingChatMessageData] {
+    private func getPendingMessages(_ context: NSManagedObjectContext) -> [PendingChatMessageData] {
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: ChatDAO.pendingChatMessageDataEntityName)
         request.sortDescriptors = [NSSortDescriptor(key: "createdOn", ascending: true)]
 
         do {
-            let result = try self.managedContext.fetch(request)
+            let result = try context.fetch(request)
             return result as! [PendingChatMessageData]
         } catch {
             AirshipLogger.error("Unable to get pending message data: \(error)")
@@ -169,11 +138,11 @@ class ChatDAO: ChatDAOProtocol {
         }
     }
 
-    private func getPendingMessage(_ requestID: String) -> PendingChatMessageData? {
+    private func getPendingMessage(_ requestID: String, context: NSManagedObjectContext) -> PendingChatMessageData? {
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: ChatDAO.pendingChatMessageDataEntityName)
         request.predicate = NSPredicate(format: "requestID == %@", requestID)
         do {
-            let result = try self.managedContext.fetch(request)
+            let result = try context.fetch(request)
             return result.first as? PendingChatMessageData
         } catch {
             AirshipLogger.error("Unable to get pending message data: \(error)")
@@ -181,11 +150,11 @@ class ChatDAO: ChatDAOProtocol {
         }
     }
 
-    private func getMessage(_ messageID: Int) -> ChatMessageData? {
+    private func getMessage(_ messageID: Int, context: NSManagedObjectContext) -> ChatMessageData? {
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: ChatDAO.chatMessageDataEntityName)
         request.predicate = NSPredicate(format: "messageID == %ld", messageID)
         do {
-            let result = try self.managedContext.fetch(request)
+            let result = try context.fetch(request)
             return result.first as? ChatMessageData
         } catch {
             AirshipLogger.error("Unable to get message data: \(error)")

@@ -27,6 +27,7 @@
 #import "NSURLResponse+UAAdditions.h"
 #import "NSString+UALocalizationAdditions.h"
 #import "NSManagedObjectContext+UAAdditions.h"
+#import "UACoreData.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAAction.h"
 #import "UATaskManager.h"

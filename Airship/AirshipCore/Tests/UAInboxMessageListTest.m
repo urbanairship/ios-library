@@ -103,7 +103,6 @@ static NSString * const UAInboxMessageListSyncDeletedMessagesTask = @"UAInboxMes
 
 - (void)tearDown {
     [self.testStore shutDown];
-    [self.testStore waitForIdle];
 
     [self.notificationCenter removeObserver:self.mockMessageListNotificationObserver];
     [super tearDown];

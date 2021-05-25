@@ -2,14 +2,11 @@
 
 #import "UAEventData+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
-
 #import "UAEventStore+Internal.h"
-#import "NSManagedObjectContext+UAAdditions.h"
-#import <CoreData/CoreData.h>
+#import "UACoreData.h"
 #import "UARuntimeConfig.h"
 #import "UAEvent.h"
 #import "UAirship.h"
-#import "UASQLite+Internal.h"
 #import "UAJSONSerialization.h"
 #import "UAirshipCoreResources.h"
 
@@ -17,7 +14,7 @@ NSString *const UAEventStoreFileFormat = @"Events-%@.sqlite";
 NSString *const UAEventDataEntityName = @"UAEventData";
 
 @interface UAEventStore ()
-@property (nonatomic, strong) NSManagedObjectContext *managedContext;
+@property (nonatomic, strong) UACoreData *coreData;
 @property (nonatomic, copy) NSString *storeName;
 
 @end
@@ -28,12 +25,9 @@ NSString *const UAEventDataEntityName = @"UAEventData";
     self = [super init];
 
     if (self) {
-        self.storeName = [NSString stringWithFormat:UAEventStoreFileFormat, config.appKey];
+        NSString *storeName = [NSString stringWithFormat:UAEventStoreFileFormat, config.appKey];
         NSURL *modelURL = [[UAirshipCoreResources bundle] URLForResource:@"UAEvents" withExtension:@"momd"];
-        self.managedContext = [NSManagedObjectContext managedObjectContextForModelURL:modelURL
-                                                                      concurrencyType:NSPrivateQueueConcurrencyType];
-
-        [self addPersistentStore];
+        self.coreData = [UACoreData coreDataWithModelURL:modelURL inMemory:NO stores:@[storeName]];
     }
 
     return self;
@@ -43,27 +37,8 @@ NSString *const UAEventDataEntityName = @"UAEventData";
     return [[UAEventStore alloc] initWithConfig:config];
 }
 
-- (void)addPersistentStore {
-    UA_WEAKIFY(self);
-    [self.managedContext addPersistentSqlStore:self.storeName completionHandler:^(NSPersistentStore *store, NSError *error) {
-        UA_STRONGIFY(self)
-        if (!store) {
-            UA_LERR(@"Failed to create analytics persistent store: %@", error);
-            return;
-        }
-
-        [self migrateOldDatabase];
-    }];
-
-}
-- (void)protectedDataAvailable {
-    if (!self.managedContext.persistentStoreCoordinator.persistentStores.count) {
-        [self addPersistentStore];
-    }
-}
-
 - (void)saveEvent:(UAEvent *)event sessionID:(NSString *)sessionID {
-    [self.managedContext safePerformBlock:^(BOOL isSafe) {
+    [self.coreData safePerformBlock:^(BOOL isSafe, NSManagedObjectContext *context) {
         if (!isSafe) {
             UA_LERR(@"Unable to save event: %@. Persistent store unavailable", event);
             return;
@@ -73,9 +48,10 @@ NSString *const UAEventDataEntityName = @"UAEventData";
                      eventType:event.eventType
                      eventTime:event.time
                      eventBody:event.data
-                     sessionID:sessionID];
+                     sessionID:sessionID
+                       context:context];
 
-        [self.managedContext safeSave];
+        [UACoreData safeSave:context];
     }];
 }
 
@@ -83,7 +59,7 @@ NSString *const UAEventDataEntityName = @"UAEventData";
            completionHandler:(void (^)(NSArray<UAEventData *> *))completionHandler {
 
 
-    [self.managedContext safePerformBlock:^(BOOL isSafe) {
+    [self.coreData safePerformBlock:^(BOOL isSafe, NSManagedObjectContext *context) {
         if (!isSafe) {
             completionHandler(@[]);
             return;
@@ -94,20 +70,20 @@ NSString *const UAEventDataEntityName = @"UAEventData";
         request.sortDescriptors = @[ [NSSortDescriptor sortDescriptorWithKey:@"storeDate" ascending:YES] ];
 
         NSError *error;
-        NSArray *result = [self.managedContext executeFetchRequest:request error:&error];
+        NSArray *result = [context executeFetchRequest:request error:&error];
 
         if (error) {
             UA_LERR(@"Error fetching events %@", error);
             completionHandler(@[]);
         } else {
             completionHandler(result);
-            [self.managedContext safeSave];
+            [UACoreData safeSave:context];
         }
     }];
 }
 
 - (void)deleteEventsWithIDs:(NSArray<NSString *> *)eventIDs {
-    [self.managedContext safePerformBlock:^(BOOL isSafe) {
+    [self.coreData safePerformBlock:^(BOOL isSafe, NSManagedObjectContext *context) {
         if (!isSafe) {
             return;
         }
@@ -117,19 +93,19 @@ NSString *const UAEventDataEntityName = @"UAEventData";
 
         NSError *error;
         NSBatchDeleteRequest *deleteRequest = [[NSBatchDeleteRequest alloc] initWithFetchRequest:request];
-        [self.managedContext executeRequest:deleteRequest error:&error];
+        [context executeRequest:deleteRequest error:&error];
 
         if (error) {
             UA_LERR(@"Error deleting analytics events %@", error);
             return;
         }
 
-        [self.managedContext safeSave];
+        [UACoreData safeSave:context];
     }];
 }
 
 - (void)deleteAllEvents {
-    [self.managedContext safePerformBlock:^(BOOL isSafe) {
+    [self.coreData safePerformBlock:^(BOOL isSafe, NSManagedObjectContext *context) {
         if (!isSafe) {
             return;
         }
@@ -138,41 +114,41 @@ NSString *const UAEventDataEntityName = @"UAEventData";
 
         NSError *error;
         NSBatchDeleteRequest *deleteRequest = [[NSBatchDeleteRequest alloc] initWithFetchRequest:request];
-        [self.managedContext executeRequest:deleteRequest error:&error];
+        [context executeRequest:deleteRequest error:&error];
 
         if (error) {
             UA_LERR(@"Error deleting analytics events %@", error);
             return;
         }
 
-        [self.managedContext safeSave];
+        [UACoreData safeSave:context];
     }];
 }
 
 - (void)trimEventsToStoreSize:(NSUInteger)maxSize {
-    [self.managedContext safePerformBlock:^(BOOL isSafe) {
+    [self.coreData safePerformBlock:^(BOOL isSafe, NSManagedObjectContext *context) {
         if (!isSafe) {
             return;
         }
 
-        while ([self fetchTotalEventSize] > maxSize) {
-            NSString *sessionID = [self fetchOldestSessionID];
-            if (!sessionID || ![self deleteSession:sessionID]) {
+        while ([self fetchTotalEventSizeWithContext:context] > maxSize) {
+            NSString *sessionID = [self fetchOldestSessionIDWithContext:context];
+            if (!sessionID || ![self deleteSession:sessionID context:context]) {
                 return;
             }
         }
 
-        [self.managedContext safeSave];
+        [UACoreData safeSave:context];
     }];
 }
 
-- (BOOL)deleteSession:(NSString *)sessionID {
+- (BOOL)deleteSession:(NSString *)sessionID context:(NSManagedObjectContext *)context {
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:UAEventDataEntityName];
     request.predicate = [NSPredicate predicateWithFormat:@"sessionID == %@", sessionID];
 
     NSError *error;
     NSBatchDeleteRequest *deleteRequest = [[NSBatchDeleteRequest alloc] initWithFetchRequest:request];
-    [self.managedContext executeRequest:deleteRequest error:&error];
+    [context executeRequest:deleteRequest error:&error];
 
     if (error) {
         UA_LERR(@"Error deleting session %@", sessionID);
@@ -182,14 +158,14 @@ NSString *const UAEventDataEntityName = @"UAEventData";
     return YES;
 }
 
-- (NSString *)fetchOldestSessionID {
+- (NSString *)fetchOldestSessionIDWithContext:(NSManagedObjectContext *)context {
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:UAEventDataEntityName];
     request.fetchLimit = 1;
     request.sortDescriptors = @[ [NSSortDescriptor sortDescriptorWithKey:@"storeDate" ascending:YES] ];
     request.propertiesToFetch = @[@"sessionID"];
 
     NSError *error;
-    NSArray *result = [self.managedContext executeFetchRequest:request error:&error];
+    NSArray *result = [context executeFetchRequest:request error:&error];
 
     if (error || !result.count) {
         UA_LERR(@"Error fetching oldest sessionID %@", error);
@@ -199,7 +175,7 @@ NSString *const UAEventDataEntityName = @"UAEventData";
     return [result[0] sessionID];
 }
 
-- (NSUInteger)fetchTotalEventSize {
+- (NSUInteger)fetchTotalEventSizeWithContext:(NSManagedObjectContext *)context {
     NSExpressionDescription *sumDescription = [[NSExpressionDescription alloc] init];
     sumDescription.name = @"sum";
     sumDescription.expression = [NSExpression expressionForFunction:@"sum:"
@@ -211,7 +187,7 @@ NSString *const UAEventDataEntityName = @"UAEventData";
     request.propertiesToFetch = @[sumDescription];
 
     NSError *error = nil;
-    NSArray *result = [self.managedContext executeFetchRequest:request error:&error];
+    NSArray *result = [context executeFetchRequest:request error:&error];
     if (error || !result.count) {
         UA_LERR(@"Error trimming analytic event store %@", error);
         return 0;
@@ -221,70 +197,7 @@ NSString *const UAEventDataEntityName = @"UAEventData";
     return value.unsignedIntegerValue;
 }
 
-- (void)migrateOldDatabase {
-    NSString *libraryPath = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) lastObject];
-    NSString *writableDBPath = [libraryPath stringByAppendingPathComponent:@"UAAnalyticsDB"];
-
-    if (![[NSFileManager defaultManager] fileExistsAtPath:writableDBPath]) {
-        return;
-    }
-
-    UASQLite *db = [[UASQLite alloc] initWithDBPath:writableDBPath];
-    if (![db tableExists:@"analytics"]) {
-        [db close];
-        [[NSFileManager defaultManager] removeItemAtPath:writableDBPath error:nil];
-        return;
-    }
-
-    UA_LTRACE(@"Migrating old analytic store.");
-
-    NSArray *events = nil;
-    do {
-        // (type, event_id, time, data, session_id, event_size)
-        events = [db executeQuery:@"SELECT * FROM analytics ORDER BY _id LIMIT ?", [NSNumber numberWithUnsignedInteger:200]];
-        if (!events.count) {
-            break;
-        }
-
-        // begin delete
-        [db beginTransaction];
-
-        for (id event in events) {
-            NSError *error = nil;
-            id data = [NSPropertyListSerialization
-                       propertyListWithData:event[@"data"]
-                       options:NSPropertyListMutableContainersAndLeaves
-                       format:NULL
-                       error:&error];
-
-            if (error) {
-                UA_LERR(@"Unable to migrate event. %@", error);
-                continue;
-            }
-
-            [self storeEventWithID:event[@"event_id"]
-                         eventType:event[@"type"]
-                         eventTime:event[@"time"]
-                         eventBody:data
-                         sessionID:event[@"session_id"]];
-
-            // delete
-            [db executeUpdate:@"DELETE FROM analytics WHERE event_id = ?", [event objectForKey:@"event_id"]];
-        }
-
-        // commit delete
-        [db commit];
-
-
-    } while (events.count);
-
-    [db close];
-    [[NSFileManager defaultManager] removeItemAtPath:writableDBPath error:nil];
-
-    [self.managedContext safeSave];
-}
-
-- (void)storeEventWithID:(NSString *)eventID eventType:(NSString *)eventType eventTime:(NSString *)eventTime eventBody:(id)eventBody sessionID:(NSString *)sessionID {
+- (void)storeEventWithID:(NSString *)eventID eventType:(NSString *)eventType eventTime:(NSString *)eventTime eventBody:(id)eventBody sessionID:(NSString *)sessionID context:(NSManagedObjectContext *)context {
     NSError *error;
     id json = [UAJSONSerialization dataWithJSONObject:eventBody options:0 error:&error];
     if (error) {
@@ -293,7 +206,7 @@ NSString *const UAEventDataEntityName = @"UAEventData";
     }
 
     UAEventData *eventData = [NSEntityDescription insertNewObjectForEntityForName:UAEventDataEntityName
-                                                           inManagedObjectContext:self.managedContext];
+                                                           inManagedObjectContext:context];
 
     eventData.sessionID = sessionID;
     eventData.type = eventType;
@@ -307,5 +220,6 @@ NSString *const UAEventDataEntityName = @"UAEventData";
 
     UA_LTRACE(@"Event saved: %@", eventID);
 }
+
 
 @end

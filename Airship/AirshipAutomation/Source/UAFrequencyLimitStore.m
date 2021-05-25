@@ -11,11 +11,7 @@ static NSString *const FrequencyConstraintEntityName = @"UAFrequencyConstraintDa
 static NSString *const OccurrenceEntityName = @"UAOccurrenceData";
 
 @interface UAFrequencyLimitStore ()
-@property (nonatomic, strong) NSManagedObjectContext *managedContext;
-@property (nonatomic, strong) NSPersistentStore *mainStore;
-@property (nonatomic, copy) NSString *storeName;
-@property (nonatomic, assign) BOOL inMemory;
-@property (atomic, assign) BOOL finished;
+@property (nonatomic, strong) UACoreData *coreData;
 @end
 
 @implementation UAFrequencyLimitStore
@@ -24,24 +20,9 @@ static NSString *const OccurrenceEntityName = @"UAOccurrenceData";
     self = [super init];
     
     if (self){
-        self.storeName = name;
-
-        self.inMemory = inMemory;
-        self.finished = NO;
-
         NSBundle *bundle = [UAAutomationResources bundle];
         NSURL *modelURL = [bundle URLForResource:@"UAFrequencyLimits" withExtension:@"momd"];
-
-        self.managedContext = [NSManagedObjectContext managedObjectContextForModelURL:modelURL
-                                                                      concurrencyType:NSPrivateQueueConcurrencyType];
-        self.managedContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy;
-
-        [self addStores];
-
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(protectedDataAvailable)
-                                                     name:UIApplicationProtectedDataDidBecomeAvailable
-                                                   object:nil];
+        self.coreData = [UACoreData coreDataWithModelURL:modelURL inMemory:inMemory stores:@[name] mergePolicy:NSMergeByPropertyObjectTrumpMergePolicy];
     }
 
     return self;
@@ -55,43 +36,14 @@ static NSString *const OccurrenceEntityName = @"UAOccurrenceData";
     return [[self alloc] initWithName:[NSString stringWithFormat:@"Frequency-limits-%@.sqlite", config.appKey]
                              inMemory:NO];
 }
-
-- (void)addStores {
-    UA_WEAKIFY(self)
-    void (^completion)(NSPersistentStore *, NSError *) = ^void(NSPersistentStore *store, NSError *error) {
-        UA_STRONGIFY(self);
-
-        if (!store) {
-            UA_LERR(@"Failed to create automation persistent store: %@", error);
-            return;
-        }
-
-        if (!self.mainStore) {
-            self.mainStore = store;
-        }
-    };
-
-    if (self.inMemory) {
-        [self.managedContext addPersistentInMemoryStore:self.storeName completionHandler:completion];
-    } else {
-        [self.managedContext addPersistentSqlStore:self.storeName completionHandler:completion];
-    }
-}
-
-- (void)protectedDataAvailable {
-    if (!self.managedContext.persistentStoreCoordinator.persistentStores.count) {
-        [self addStores];
-    }
-}
-
 #pragma mark -
 #pragma mark Public Data Access
 
 - (NSArray<UAFrequencyConstraint *> *)getConstraints:(NSArray<NSString *> *)constraintIDs {
     __block NSArray<UAFrequencyConstraint *> *constraints;
 
-    [self safePerformSync:^{
-        constraints = [self constraintsFromData:[self getConstraintsDataForIDs:constraintIDs]];
+    [self.coreData safePerformBlockAndWait:^(BOOL isSafe, NSManagedObjectContext *context) {
+        constraints = [self constraintsFromData:[self getConstraintsDataForIDs:constraintIDs context:context]];
     }];
 
     return constraints;
@@ -100,8 +52,8 @@ static NSString *const OccurrenceEntityName = @"UAOccurrenceData";
 - (NSArray<UAFrequencyConstraint *> *)getConstraints {
     __block NSArray<UAFrequencyConstraint *> *constraints;
 
-    [self safePerformSync:^{
-        constraints = [self constraintsFromData:[self getConstraintsData]];
+    [self.coreData safePerformBlockAndWait:^(BOOL isSafe, NSManagedObjectContext *context) {
+        constraints = [self constraintsFromData:[self getConstraintsDataWithContext:context]];
     }];
 
     return constraints;
@@ -110,16 +62,16 @@ static NSString *const OccurrenceEntityName = @"UAOccurrenceData";
 - (BOOL)saveConstraint:(UAFrequencyConstraint *)constraint {
     __block BOOL success;
 
-    [self safePerformSync:^ {
-        NSArray<UAFrequencyConstraintData *> *result = [self getConstraintsDataForIDs:@[constraint.identifier]];
+    [self.coreData safePerformBlockAndWait:^(BOOL isSafe, NSManagedObjectContext *context) {
+        NSArray<UAFrequencyConstraintData *> *result = [self getConstraintsDataForIDs:@[constraint.identifier] context:context];
 
         if (result.count) {
             [self copyConstraint:constraint data:result.firstObject];
         } else {
-            [self addDataForConstraint:constraint];
+            [self addDataForConstraint:constraint context:context];
         }
 
-        success = [self.managedContext safeSave];
+        success = [UACoreData safeSave:context];
     }];
 
     return success;
@@ -128,12 +80,12 @@ static NSString *const OccurrenceEntityName = @"UAOccurrenceData";
 - (BOOL)deleteConstraints:(NSArray<NSString *> *)constraintIDs {
     __block BOOL success;
 
-    [self safePerformSync:^ {
-        NSArray<UAFrequencyConstraintData *> *result = [self getConstraintsDataForIDs:constraintIDs];
+    [self.coreData safePerformBlockAndWait:^(BOOL isSafe, NSManagedObjectContext *context) {
+        NSArray<UAFrequencyConstraintData *> *result = [self getConstraintsDataForIDs:constraintIDs context:context];
 
         for (UAFrequencyConstraintData * data in result) {
-            [self.managedContext deleteObject:data];
-            success = [self.managedContext safeSave];
+            [context deleteObject:data];
+            success = [UACoreData safeSave:context];
         }
     }];
 
@@ -147,8 +99,8 @@ static NSString *const OccurrenceEntityName = @"UAOccurrenceData";
 - (NSArray<UAOccurrence *> *)getOccurrences:(NSString *)constraintID {
     __block NSArray<UAOccurrence *> *occurrences;
 
-    [self safePerformSync:^{
-        occurrences = [self occurrencesFromData:[self getOccurrencesData:constraintID]];
+    [self.coreData safePerformBlockAndWait:^(BOOL isSafe, NSManagedObjectContext *context) {
+        occurrences = [self occurrencesFromData:[self getOccurrencesData:constraintID context:context]];
     }];
 
     return occurrences;
@@ -157,19 +109,27 @@ static NSString *const OccurrenceEntityName = @"UAOccurrenceData";
 - (BOOL)saveOccurrences:(NSArray<UAOccurrence *> *)occurrences {
     __block BOOL success;
 
-    [self safePerformSync:^ {
-        for (UAOccurrence *occurrence in occurrences) {
-            UAFrequencyConstraintData *constraintData = [self getConstraintsDataForIDs:@[occurrence.parentConstraintID]].firstObject;
-            [self addDataForOccurrence:occurrence constraintData:constraintData];
+    [self.coreData safePerformBlockAndWait:^(BOOL isSafe, NSManagedObjectContext *context) {
+        if (!isSafe) {
+            return;
         }
 
-        success = [self.managedContext safeSave];
+        for (UAOccurrence *occurrence in occurrences) {
+            UAFrequencyConstraintData *constraintData = [self getConstraintsDataForIDs:@[occurrence.parentConstraintID] context:context].firstObject;
+            [self addDataForOccurrence:occurrence constraintData:constraintData context:context];
+        }
+
+        success = [UACoreData safeSave:context];
     }];
 
     return success;
 }
 
-- (NSArray<UAFrequencyConstraintData *> *)getConstraintsDataForIDs:(NSArray<NSString *> *)constraintIDs {
+
+#pragma mark -
+#pragma mark Helpers
+
+- (NSArray<UAFrequencyConstraintData *> *)getConstraintsDataForIDs:(NSArray<NSString *> *)constraintIDs context:(NSManagedObjectContext *)context {
     if (!constraintIDs.count) {
         return @[];
     }
@@ -177,61 +137,33 @@ static NSString *const OccurrenceEntityName = @"UAOccurrenceData";
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:FrequencyConstraintEntityName];
     request.predicate = [NSPredicate predicateWithFormat:@"identifier IN %@", constraintIDs];
 
-    return [self performFetchRequest:request];
+    return [self performFetchRequest:request context:context];
 }
 
 
-- (NSArray<UAFrequencyConstraintData *> *)getConstraintsData {
+- (NSArray<UAFrequencyConstraintData *> *)getConstraintsDataWithContext:(NSManagedObjectContext *)context {
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:FrequencyConstraintEntityName];
-    return [self performFetchRequest:request];
+    return [self performFetchRequest:request context:context];
 }
 
-- (NSArray<UAOccurrenceData *> *)getOccurrencesData:(NSString *)constraintID {
+- (NSArray<UAOccurrenceData *> *)getOccurrencesData:(NSString *)constraintID  context:(NSManagedObjectContext *)context {
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:OccurrenceEntityName];
     request.predicate = [NSPredicate predicateWithFormat:@"constraint.identifier == %@", constraintID];
     request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"timestamp" ascending:YES]];
 
-    return [self performFetchRequest:request];
+    return [self performFetchRequest:request context:context];
 }
 
-#pragma mark -
-#pragma mark Helpers
+- (NSArray *)performFetchRequest:(NSFetchRequest *)fetchRequest context:(NSManagedObjectContext *)context {
+    NSError *error;
+    NSArray *entities = [context executeFetchRequest:fetchRequest error:&error];
 
-- (void)safePerformSync:(void (^)(void))block {
-    if (!self.finished) {
-        [self.managedContext safePerformBlockAndWait:^(BOOL safe){
-            if (safe && !self.finished) {
-                block();
-            }
-        }];
+    if (error) {
+        UA_LERR(@"Error fetching entities for name %@: %@", fetchRequest.entityName, error);
+        return nil;
+    } else {
+        return entities;
     }
-}
-
-- (id)insertNewEntityForName:(NSString *)name {
-    id object = [NSEntityDescription insertNewObjectForEntityForName:name inManagedObjectContext:self.managedContext];
-
-    if (self.mainStore) {
-        [self.managedContext assignObject:object toPersistentStore:self.mainStore];
-    }
-
-    return object;
-}
-
-- (NSArray *)performFetchRequest:(NSFetchRequest *)fetchRequest {
-    __block NSArray *result;
-
-    [self safePerformSync:^ {
-        NSError *error;
-        NSArray *entities = [self.managedContext executeFetchRequest:fetchRequest error:&error];
-
-        if (error) {
-            UA_LERR(@"Error fetching entities for name %@: %@", fetchRequest.entityName, error);
-        } else {
-            result = entities;
-        }
-    }];
-
-    return result;
 }
 
 #pragma mark -
@@ -260,17 +192,15 @@ static NSString *const OccurrenceEntityName = @"UAOccurrenceData";
     return result;
 }
 
-- (void)addDataForConstraint:(UAFrequencyConstraint *)constraint {
-    UAFrequencyConstraintData *data = [self insertNewEntityForName:FrequencyConstraintEntityName];
-
+- (void)addDataForConstraint:(UAFrequencyConstraint *)constraint context:(NSManagedObjectContext *)context {
+    UAFrequencyConstraintData *data = [NSEntityDescription insertNewObjectForEntityForName:FrequencyConstraintEntityName inManagedObjectContext:context];
     data.identifier = constraint.identifier;
     data.count = constraint.count;
     data.range = constraint.range;
 }
 
-- (void)addDataForOccurrence:(UAOccurrence *)occurrence constraintData:(UAFrequencyConstraintData *)constraintData {
-    UAOccurrenceData *data = [self insertNewEntityForName:OccurrenceEntityName];
-
+- (void)addDataForOccurrence:(UAOccurrence *)occurrence constraintData:(UAFrequencyConstraintData *)constraintData context:(NSManagedObjectContext *)context {
+    UAOccurrenceData *data = [NSEntityDescription insertNewObjectForEntityForName:OccurrenceEntityName inManagedObjectContext:context];
     data.timestamp = occurrence.timestamp;
     data.constraint = constraintData;
 }
@@ -284,12 +214,8 @@ static NSString *const OccurrenceEntityName = @"UAOccurrenceData";
 #pragma mark -
 #pragma mark Testing
 
-- (void)waitForIdle {
-    [self.managedContext performBlockAndWait:^{}];
-}
-
 - (void)shutDown {
-    self.finished = YES;
+    [self.coreData shutDown];
 }
 
 @end

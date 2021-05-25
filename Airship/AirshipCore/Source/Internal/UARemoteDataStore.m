@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UARemoteDataStore+Internal.h"
-#import "NSManagedObjectContext+UAAdditions.h"
+#import "UACoreData.h"
 #import "UARemoteDataPayload+Internal.h"
 #import "UARemoteDataStorePayload+Internal.h"
 #import "UAirship+Internal.h"
@@ -10,10 +10,7 @@
 #define kUARemoteDataDBEntityName @"UARemoteDataStorePayload"
 
 @interface UARemoteDataStore()
-@property (nonatomic, copy) NSString *storeName;
-@property (strong, nonatomic) NSManagedObjectContext *managedContext;
-@property (nonatomic, assign) BOOL inMemory;
-@property (nonatomic, assign) BOOL finished;
+@property (strong, nonatomic) UACoreData *coreData;
 @end
 
 @implementation UARemoteDataStore
@@ -22,19 +19,9 @@
     self = [super init];
     
     if (self) {
-        self.storeName = storeName;
-        self.inMemory = inMemory;
-        self.finished = NO;
-        
-        NSURL *modelURL = [[UAirshipCoreResources bundle] URLForResource:@"UARemoteData" withExtension:@"momd"];
-        self.managedContext = [NSManagedObjectContext managedObjectContextForModelURL:modelURL
-                                                                      concurrencyType:NSPrivateQueueConcurrencyType];
-        [self addStores];
 
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(protectedDataAvailable)
-                                                     name:UIApplicationProtectedDataDidBecomeAvailable
-                                                   object:nil];
+        NSURL *modelURL = [[UAirshipCoreResources bundle] URLForResource:@"UARemoteData" withExtension:@"momd"];
+        self.coreData = [UACoreData coreDataWithModelURL:modelURL inMemory:inMemory stores:@[storeName]];
     }
     return self;
 }
@@ -47,38 +34,10 @@
     return [[self alloc] initWithName:storeName inMemory:NO];
 }
 
-- (void)protectedDataAvailable {
-    if (!self.managedContext.persistentStoreCoordinator.persistentStores.count) {
-        [self addStores];
-    }
-}
-
-- (void)addStores {
-    void (^completion)(NSPersistentStore *, NSError *) = ^void(NSPersistentStore *store, NSError *error) {
-        if (!store) {
-            UA_LERR(@"Failed to create automation persistent store: %@", error);
-        }
-    };
-
-    if (self.inMemory) {
-        [self.managedContext addPersistentInMemoryStore:self.storeName completionHandler:completion];
-    } else {
-        [self.managedContext addPersistentSqlStore:self.storeName completionHandler:completion];
-    }
-}
-
-- (void)safePerformBlock:(void (^)(BOOL))block {
-    @synchronized(self) {
-        if (!self.finished) {
-            [self.managedContext safePerformBlock:block];
-        }
-    }
-}
-
 - (void)fetchRemoteDataFromCacheWithPredicate:(nullable NSPredicate *)predicate
                             completionHandler:(void(^)(NSArray<UARemoteDataStorePayload *>*remoteDataPayloads))completionHandler {
     
-    [self safePerformBlock:^(BOOL isSafe) {
+    [self.coreData safePerformBlock:^(BOOL isSafe, NSManagedObjectContext *context) {
         if (!isSafe) {
             completionHandler(@[]);
             return;
@@ -88,11 +47,11 @@
         
         NSFetchRequest *request = [[NSFetchRequest alloc] init];
         request.entity = [NSEntityDescription entityForName:kUARemoteDataDBEntityName
-                                     inManagedObjectContext:self.managedContext];
+                                     inManagedObjectContext:context];
         
         request.predicate = predicate;
         
-        NSArray *resultData = [self.managedContext executeFetchRequest:request error:&error];
+        NSArray *resultData = [context executeFetchRequest:request error:&error];
         
         if (error) {
             UA_LERR(@"Error executing fetch request: %@ with error: %@", request, error);
@@ -101,14 +60,14 @@
         }
         
         completionHandler(resultData);
-        [self.managedContext safeSave];
+        [UACoreData safeSave:context];
     }];
 
 }
 
 - (void)overwriteCachedRemoteDataWithResponse:(NSArray<UARemoteDataPayload *> *)remoteDataPayloads
                  completionHandler:(void(^)(BOOL))completionHandler {
-    [self safePerformBlock:^(BOOL isSafe) {
+    [self.coreData safePerformBlock:^(BOOL isSafe, NSManagedObjectContext *context) {
         if (!isSafe) {
             completionHandler(NO);
             return;
@@ -118,30 +77,30 @@
         NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kUARemoteDataDBEntityName];
         NSError *error;
 
-        if (self.inMemory) {
+        if (self.coreData.inMemory) {
             request.includesPropertyValues = NO;
-            NSArray *payloads = [self.managedContext executeFetchRequest:request error:&error];
+            NSArray *payloads = [context executeFetchRequest:request error:&error];
             for (NSManagedObject *payload in payloads) {
-                [self.managedContext deleteObject:payload];
+                [context deleteObject:payload];
             }
         } else {
             NSBatchDeleteRequest *deleteRequest = [[NSBatchDeleteRequest alloc] initWithFetchRequest:request];
-            [self.managedContext executeRequest:deleteRequest error:&error];
+            [context executeRequest:deleteRequest error:&error];
         }
 
         for (UARemoteDataPayload *remoteDataPayload in remoteDataPayloads) {
-            [self addRemoteDataStorePayloadFromRemoteData:remoteDataPayload];
+            [self addRemoteDataStorePayloadFromRemoteData:remoteDataPayload context:context];
         }
         
-        completionHandler([self.managedContext safeSave]);
+        completionHandler([UACoreData safeSave:context]);
     }];
 }
 
 
-- (void)addRemoteDataStorePayloadFromRemoteData:(UARemoteDataPayload *)remoteDataPayload {
+- (void)addRemoteDataStorePayloadFromRemoteData:(UARemoteDataPayload *)remoteDataPayload context:(NSManagedObjectContext *)context {
     // create the NSManagedObject
     UARemoteDataStorePayload *remoteDataStorePayload = (UARemoteDataStorePayload *)[NSEntityDescription insertNewObjectForEntityForName:kUARemoteDataDBEntityName
-                                                                                                                 inManagedObjectContext:self.managedContext];
+                                                                                                                 inManagedObjectContext:context];
     // set the properties
     remoteDataStorePayload.type = remoteDataPayload.type;
     remoteDataStorePayload.timestamp = remoteDataPayload.timestamp;
@@ -150,9 +109,7 @@
 }
 
 - (void)shutDown {
-    @synchronized(self) {
-        self.finished = YES;
-    }
+    [self.coreData shutDown];
 }
 
 @end

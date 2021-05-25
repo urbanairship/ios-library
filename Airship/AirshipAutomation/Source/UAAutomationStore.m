@@ -13,52 +13,38 @@
 #import "UAScheduleAudience+Internal.h"
 #import "UAAutomationResources.h"
 
-NSString *const UAInAppAutomationStoreFileFormat = @"In-app-automation-%@.sqlite";
-NSString *const UALegacyActionAutomationStoreFileFormat = @"Automation-%@.sqlite";
+static NSString *const UAInAppAutomationStoreFileFormat = @"In-app-automation-%@.sqlite";
+static NSString *const UALegacyActionAutomationStoreFileFormat = @"Automation-%@.sqlite";
 
-@interface UAAutomationStore ()
-@property (nonatomic, strong) NSManagedObjectContext *managedContext;
+@interface UAAutomationStore () <UACoreDataDelegate>
+@property (nonatomic, strong) UACoreData *coreData;
 @property (nonatomic, strong) NSPersistentStore *mainStore;
-@property (nonatomic, copy) NSString *storeName;
-@property (nonatomic, copy) NSString *legacyActionStoreName;
-
 @property (nonatomic, strong) UADate *date;
 @property (nonatomic, assign) NSUInteger scheduleLimit;
-@property (nonatomic, assign) BOOL inMemory;
-@property (nonatomic, assign) BOOL finished;
 @end
-
-
 
 @implementation UAAutomationStore
 
 - (instancetype)initWithConfig:(UARuntimeConfig *)config
                  scheduleLimit:(NSUInteger)scheduleLimit
-                      inMemory:(BOOL)inMemory date:(UADate *)date {
+                      inMemory:(BOOL)inMemory
+                          date:(UADate *)date {
 
     self = [super init];
 
     if (self) {
-        self.storeName = [NSString stringWithFormat:UAInAppAutomationStoreFileFormat, config.appKey];
-        self.legacyActionStoreName = [NSString stringWithFormat:UALegacyActionAutomationStoreFileFormat, config.appKey];
-
         self.scheduleLimit = scheduleLimit;
-        self.inMemory = inMemory;
         self.date = date;
-        self.finished = NO;
 
         NSBundle *bundle = [UAAutomationResources bundle];
         NSURL *modelURL = [bundle URLForResource:@"UAAutomation" withExtension:@"momd"];
+        NSString *storeName = [NSString stringWithFormat:UAInAppAutomationStoreFileFormat, config.appKey];
+        NSString *legacyActionStoreName = [NSString stringWithFormat:UALegacyActionAutomationStoreFileFormat, config.appKey];
 
-        self.managedContext = [NSManagedObjectContext managedObjectContextForModelURL:modelURL
-                                                                      concurrencyType:NSPrivateQueueConcurrencyType];
-        self.managedContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy;
-        [self addStores];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(protectedDataAvailable)
-                                                     name:UIApplicationProtectedDataDidBecomeAvailable
-                                                   object:nil];
+        self.coreData = [UACoreData coreDataWithModelURL:modelURL
+                                                inMemory:inMemory
+                                                  stores:@[storeName, legacyActionStoreName]
+                                             mergePolicy:NSMergeByPropertyObjectTrumpMergePolicy];
     }
 
     return self;
@@ -78,95 +64,61 @@ NSString *const UALegacyActionAutomationStoreFileFormat = @"Automation-%@.sqlite
                                                 date:[[UADate alloc] init]];
 }
 
-- (void)addStores {
-    UA_WEAKIFY(self)
-    void (^completion)(NSPersistentStore *, NSError *) = ^void(NSPersistentStore *store, NSError *error) {
-        UA_STRONGIFY(self);
+- (void)persistentStoreCreated:(NSPersistentStore *)store
+                          name:(NSString *)name
+                       context:(NSManagedObjectContext *)context {
 
-        if (!store) {
-            UA_LERR(@"Failed to create automation persistent store: %@", error);
-            return;
-        }
-
-        if (!self.mainStore) {
-            self.mainStore = store;
-        }
-
-        if (!self.inMemory) {
-            [self migrateData];
-        }
-    };
-
-    if (self.inMemory) {
-        [self.managedContext addPersistentInMemoryStore:self.storeName completionHandler:completion];
-    } else {
-        // Instead of trying to copy data from one store to the other, we are going to attach both stores
-        // to the context, but only save new data on the primary store.
-        [self.managedContext addPersistentSqlStore:self.storeName completionHandler:completion];
-        [self.managedContext addPersistentSqlStore:self.legacyActionStoreName completionHandler:completion];
+    if (!self.mainStore) {
+        self.mainStore = store;
     }
-}
-- (void)protectedDataAvailable {
-    if (!self.managedContext.persistentStoreCoordinator.persistentStores.count) {
-        [self addStores];
-    }
-}
 
-- (void)migrateData {
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"UAScheduleData"];
     request.predicate = [NSPredicate predicateWithFormat:@"dataVersion < %d", UAScheduleDataVersion];
     NSError *error;
-    NSArray *result = [self.managedContext executeFetchRequest:request error:&error];
+    NSArray *result = [context executeFetchRequest:request error:&error];
 
     if (error) {
         UA_LERR(@"Error fetching schedules %@", error);
         return;
     }
-    [UAScheduleDataMigrator migrateSchedules:result];
-    [self.managedContext safeSave];
-}
 
-- (void)safePerformBlock:(void (^)(BOOL))block {
-    @synchronized(self) {
-        if (!self.finished) {
-            [self.managedContext safePerformBlock:block];
-        }
-    }
+    [UAScheduleDataMigrator migrateSchedules:result];
+    [UACoreData safeSave:context];
 }
 
 #pragma mark -
 #pragma mark Data Access
 
 - (void)saveSchedule:(UASchedule *)schedule completionHandler:(void (^)(BOOL))completionHandler {
-    [self safePerformBlock:^(BOOL isSafe) {
+    [self.coreData safePerformBlock:^(BOOL isSafe, NSManagedObjectContext *context) {
         if (!isSafe) {
             completionHandler(NO);
             return;
         }
 
         NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"UAScheduleData"];
-        NSUInteger count = [self.managedContext countForFetchRequest:request error:nil];
+        NSUInteger count = [context countForFetchRequest:request error:nil];
         if (count >= self.scheduleLimit) {
             UA_LERR(@"Max schedule limit reached. Unable to save new schedule.");
             completionHandler(NO);
             return;
         }
 
-        [self addScheduleDataFromSchedule:schedule];
+        [self addScheduleDataFromSchedule:schedule context:context];
 
-        completionHandler([self.managedContext safeSave]);
+        completionHandler([UACoreData safeSave:context]);
     }];
 }
 
 - (void)saveSchedules:(NSArray<UASchedule *> *)schedules completionHandler:(void (^)(BOOL))completionHandler {
-    [self safePerformBlock:^(BOOL isSafe) {
+    [self.coreData safePerformBlock:^(BOOL isSafe, NSManagedObjectContext *context) {
         if (!isSafe) {
             completionHandler(NO);
             return;
         }
 
         NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"UAScheduleData"];
-        NSUInteger count = [self.managedContext countForFetchRequest:request error:nil];
+        NSUInteger count = [context countForFetchRequest:request error:nil];
         if (count + schedules.count > self.scheduleLimit) {
             UA_LERR(@"Max schedule limit reached. Unable to save new schedules.");
             completionHandler(NO);
@@ -175,10 +127,10 @@ NSString *const UALegacyActionAutomationStoreFileFormat = @"Automation-%@.sqlite
         
         // create managed object for each schedule
         for (UASchedule *schedule in schedules) {
-            [self addScheduleDataFromSchedule:schedule];
+            [self addScheduleDataFromSchedule:schedule context:context];
         }
         
-        completionHandler([self.managedContext safeSave]);
+        completionHandler([UACoreData safeSave:context]);
     }];
 }
 
@@ -247,13 +199,13 @@ NSString *const UALegacyActionAutomationStoreFileFormat = @"Automation-%@.sqlite
 }
 
 - (void)getScheduleCount:(void (^)(NSNumber *))completionHandler {
-    [self safePerformBlock:^(BOOL isSafe) {
+    [self.coreData safePerformBlock:^(BOOL isSafe, NSManagedObjectContext *context) {
         if (!isSafe) {
             completionHandler(nil);
             return;
         }
         NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"UAScheduleData"];
-        NSUInteger count = [self.managedContext countForFetchRequest:request error:nil];
+        NSUInteger count = [context countForFetchRequest:request error:nil];
         completionHandler(@(count));
     }];
 }
@@ -261,7 +213,7 @@ NSString *const UALegacyActionAutomationStoreFileFormat = @"Automation-%@.sqlite
 - (void)fetchSchedulesWithPredicate:(NSPredicate *)predicate
                               limit:(NSUInteger)limit
                   completionHandler:(void (^)(NSArray<UAScheduleData *> *))completionHandler {
-    [self safePerformBlock:^(BOOL isSafe) {
+    [self.coreData safePerformBlock:^(BOOL isSafe, NSManagedObjectContext *context) {
         if (!isSafe) {
             completionHandler(@[]);
             return;
@@ -272,20 +224,20 @@ NSString *const UALegacyActionAutomationStoreFileFormat = @"Automation-%@.sqlite
         request.fetchLimit = limit;
 
         NSError *error;
-        NSArray *result = [self.managedContext executeFetchRequest:request error:&error];
+        NSArray *result = [context executeFetchRequest:request error:&error];
 
         if (error) {
             UA_LERR(@"Error fetching schedules %@", error);
             completionHandler(@[]);
         } else {
             completionHandler(result);
-            [self.managedContext safeSave];
+            [UACoreData safeSave:context];
         }
     }];
 }
 
 - (void)fetchTriggersWithPredicate:(NSPredicate *)predicate completionHandler:(void (^)(NSArray<UAScheduleTriggerData *> *))completionHandler {
-    [self safePerformBlock:^(BOOL isSafe) {
+    [self.coreData safePerformBlock:^(BOOL isSafe, NSManagedObjectContext *context) {
         if (!isSafe) {
             completionHandler(@[]);
             return;
@@ -295,22 +247,22 @@ NSString *const UALegacyActionAutomationStoreFileFormat = @"Automation-%@.sqlite
         request.predicate = predicate;
 
         NSError *error;
-        NSArray *result = [self.managedContext executeFetchRequest:request error:&error];
+        NSArray *result = [context executeFetchRequest:request error:&error];
         if (error) {
             UA_LERR(@"Error fetching triggers %@", error);
             completionHandler(@[]);
         } else {
             completionHandler(result);
-            [self.managedContext safeSave];
+            [UACoreData safeSave:context];
         }
     }];
 }
 
-- (id)insertNewEntityForName:(NSString *)name {
-    id object = [NSEntityDescription insertNewObjectForEntityForName:name inManagedObjectContext:self.managedContext];
+- (id)insertNewEntityForName:(NSString *)name context:(NSManagedObjectContext *)context {
+    id object = [NSEntityDescription insertNewObjectForEntityForName:name inManagedObjectContext:context];
 
     if (self.mainStore) {
-        [self.managedContext assignObject:object toPersistentStore:self.mainStore];
+        [context assignObject:object toPersistentStore:self.mainStore];
     }
 
     return object;
@@ -319,8 +271,8 @@ NSString *const UALegacyActionAutomationStoreFileFormat = @"Automation-%@.sqlite
 #pragma mark -
 #pragma mark Converters
 
-- (void)addScheduleDataFromSchedule:(UASchedule *)schedule {
-    UAScheduleData *scheduleData = [self insertNewEntityForName:@"UAScheduleData"];
+- (void)addScheduleDataFromSchedule:(UASchedule *)schedule context:(NSManagedObjectContext *)context {
+    UAScheduleData *scheduleData = [self insertNewEntityForName:@"UAScheduleData" context:context];
 
     scheduleData.identifier = schedule.identifier;
     scheduleData.limit = @(schedule.limit);
@@ -328,7 +280,7 @@ NSString *const UALegacyActionAutomationStoreFileFormat = @"Automation-%@.sqlite
     scheduleData.type = @(schedule.type);
     scheduleData.priority = [NSNumber numberWithInteger:schedule.priority];
     scheduleData.group = schedule.group;
-    scheduleData.triggers = [self createTriggerDataFromTriggers:schedule.triggers scheduleStart:schedule.start schedule:scheduleData];
+    scheduleData.triggers = [self createTriggerDataFromTriggers:schedule.triggers scheduleStart:schedule.start schedule:scheduleData context:context];
     scheduleData.start = schedule.start;
     scheduleData.end = schedule.end;
     scheduleData.interval = @(schedule.interval);
@@ -343,12 +295,16 @@ NSString *const UALegacyActionAutomationStoreFileFormat = @"Automation-%@.sqlite
     }
 
     if (schedule.delay) {
-        scheduleData.delay = [self createDelayDataFromDelay:schedule.delay scheduleStart:schedule.start schedule:scheduleData];
+        scheduleData.delay = [self createDelayDataFromDelay:schedule.delay scheduleStart:schedule.start schedule:scheduleData context:context];
     }
 }
 
-- (UAScheduleDelayData *)createDelayDataFromDelay:(UAScheduleDelay *)delay scheduleStart:(NSDate *)scheduleStart schedule:(UAScheduleData *)schedule {
-    UAScheduleDelayData *delayData = [self insertNewEntityForName:@"UAScheduleDelayData"];
+- (UAScheduleDelayData *)createDelayDataFromDelay:(UAScheduleDelay *)delay
+                                    scheduleStart:(NSDate *)scheduleStart
+                                         schedule:(UAScheduleData *)schedule
+                                          context:(NSManagedObjectContext *)context {
+
+    UAScheduleDelayData *delayData = [self insertNewEntityForName:@"UAScheduleDelayData" context:context];
     delayData.seconds = @(delay.seconds);
     delayData.appState = @(delay.appState);
     delayData.regionID = delay.regionID;
@@ -358,18 +314,19 @@ NSString *const UALegacyActionAutomationStoreFileFormat = @"Automation-%@.sqlite
             delayData.screens = [[NSString alloc] initWithData:screensData encoding:NSUTF8StringEncoding];
         }
     }
-    delayData.cancellationTriggers = [self createTriggerDataFromTriggers:delay.cancellationTriggers scheduleStart:scheduleStart schedule:schedule];
+    delayData.cancellationTriggers = [self createTriggerDataFromTriggers:delay.cancellationTriggers scheduleStart:scheduleStart schedule:schedule context:context];
 
     return delayData;
 }
 
 - (NSSet<UAScheduleTriggerData *> *)createTriggerDataFromTriggers:(NSArray <UAScheduleTrigger *> *)triggers
                                                     scheduleStart:(NSDate *)scheduleStart
-                                                         schedule:(UAScheduleData *)schedule {
+                                                         schedule:(UAScheduleData *)schedule
+                                                          context:(NSManagedObjectContext *)context {
     NSMutableSet *data = [NSMutableSet set];
 
     for (UAScheduleTrigger *trigger in triggers) {
-        UAScheduleTriggerData *triggerData = [self createTriggerDataFromTrigger:trigger scheduleStart:scheduleStart schedule:schedule];
+        UAScheduleTriggerData *triggerData = [self createTriggerDataFromTrigger:trigger scheduleStart:scheduleStart schedule:schedule context:context];
         [data addObject:triggerData];
     }
 
@@ -378,9 +335,10 @@ NSString *const UALegacyActionAutomationStoreFileFormat = @"Automation-%@.sqlite
 
 - (UAScheduleTriggerData *)createTriggerDataFromTrigger:(UAScheduleTrigger *)trigger
                                           scheduleStart:(NSDate *)scheduleStart
-                                               schedule:(UAScheduleData *)schedule {
+                                               schedule:(UAScheduleData *)schedule
+                                                context:(NSManagedObjectContext *)context {
 
-    UAScheduleTriggerData *triggerData = [self insertNewEntityForName:@"UAScheduleTriggerData"];
+    UAScheduleTriggerData *triggerData = [self insertNewEntityForName:@"UAScheduleTriggerData" context:context];
     triggerData.type = @(trigger.type);
     triggerData.goal = trigger.goal;
     triggerData.start = scheduleStart;
@@ -396,14 +354,11 @@ NSString *const UALegacyActionAutomationStoreFileFormat = @"Automation-%@.sqlite
 }
 
 - (void)waitForIdle {
-    [self.managedContext performBlockAndWait:^{}];
+    [self.coreData waitForIdle];
 }
 
 - (void)shutDown {
-    @synchronized(self) {
-        self.finished = YES;
-    }
+    [self.coreData shutDown];
 }
-
 
 @end

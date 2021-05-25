@@ -65,6 +65,7 @@
 #import "UARemoteDataProvider.h"
 #import "UAVersionMatcher.h"
 #import "NSManagedObjectContext+UAAdditions.h"
+#import "UACoreData.h"
 #import "UAActionPredicateProtocol.h"
 #import "UAJSONSerialization.h"
 #import "UANamedUser.h"

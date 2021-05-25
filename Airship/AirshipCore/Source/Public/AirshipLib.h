@@ -43,6 +43,7 @@
 #import "UAColorUtils.h"
 #import "UAComponent.h"
 #import "UAConfig.h"
+#import "UACoreData.h"
 #import "UACustomEvent.h"
 #import "UADate.h"
 #import "UADebugLibraryModuleLoaderFactory.h"
