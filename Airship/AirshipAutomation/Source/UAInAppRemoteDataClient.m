@@ -56,7 +56,7 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
 @interface UAInAppRemoteDataClient()
 @property(nonatomic, strong) UAInAppMessageManager *inAppMessageManager;
 @property(nonatomic, strong) UAPreferenceDataStore *dataStore;
-@property(nonatomic, strong) UADisposable *remoteDataSubscription;
+@property(atomic, strong) UADisposable *remoteDataSubscription;
 @property(nonatomic, strong) NSOperationQueue *operationQueue;
 @property(nonatomic, strong) id<UARemoteDataProvider> remoteDataProvider;
 @property(nonatomic, copy) NSDate *scheduleNewUserCutOffTime;
@@ -109,19 +109,32 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
 }
 
 - (void)subscribe {
-    UA_WEAKIFY(self);
-    self.remoteDataSubscription = [self.remoteDataProvider subscribeWithTypes:@[UAInAppMessages]
-                                                                   block:^(NSArray<UARemoteDataPayload *> * _Nonnull messagePayloads) {
-        UA_STRONGIFY(self);
-        [self.operationQueue addOperationWithBlock:^{
+    @synchronized (self) {
+        if (self.remoteDataSubscription != nil) {
+            return;
+        }
+
+        UA_WEAKIFY(self);
+        self.remoteDataSubscription = [self.remoteDataProvider subscribeWithTypes:@[UAInAppMessages]
+                                                                            block:^(NSArray<UARemoteDataPayload *> * _Nonnull messagePayloads) {
             UA_STRONGIFY(self);
-            [self processInAppMessageData:[messagePayloads firstObject]];
+            [self.operationQueue addOperationWithBlock:^{
+                UA_STRONGIFY(self);
+                [self processInAppMessageData:[messagePayloads firstObject]];
+            }];
         }];
-    }];
+    }
+}
+
+- (void)unsubscribe {
+    @synchronized (self) {
+        [self.remoteDataSubscription dispose];
+        self.remoteDataSubscription = nil;
+    }
 }
 
 - (void)dealloc {
-    [self.remoteDataSubscription dispose];
+    [self unsubscribe];
 }
 
 - (void)notifyOnUpdate:(void (^)(void))completionHandler {

@@ -28,7 +28,7 @@
 @property(nonatomic, strong) id mockChannel;
 @property(nonatomic, strong) id mockAirship;
 @property(nonatomic, strong) id mockFrequencyLimitManager;
-@property(nonatomic, strong) id mockPrivacyManager;
+@property(nonatomic, strong) UAPrivacyManager *privacyManager;
 
 @property(nonatomic, strong) id<UAAutomationEngineDelegate> engineDelegate;
 @end
@@ -38,10 +38,10 @@
 - (void)setUp {
     [super setUp];
 
-    UAPrivacyManager *privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
+    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
     
     self.mockAirship = [self mockForClass:[UAirship class]];
-    [[[self.mockAirship stub] andReturn:privacyManager] privacyManager];
+    [[[self.mockAirship stub] andReturn:self.privacyManager] privacyManager];
     [UAirship setSharedAirship:self.mockAirship];
 
     self.mockAutomationEngine = [self mockForClass:[UAAutomationEngine class]];
@@ -65,7 +65,8 @@
                                                inAppMessageManager:self.mockInAppMessageManager
                                                            channel:self.mockChannel
                                          deferredScheduleAPIClient:self.mockDeferredClient
-                                             frequencyLimitManager:self.mockFrequencyLimitManager];
+                                             frequencyLimitManager:self.mockFrequencyLimitManager
+                                                    privacyManager:self.privacyManager];
     XCTAssertNotNil(self.engineDelegate);
 }
 
@@ -1618,28 +1619,28 @@
     [self.mockAutomationEngine verify];
 }
 
-- (void)testEnable {
-    XCTAssertTrue(self.inAppAutomation.isEnabled);
+- (void)testPrivacyManager {
+    [self.inAppAutomation airshipReady:self.mockAirship];
 
     // test disable
     [[self.mockAutomationEngine expect] pause];
-    self.inAppAutomation.enabled = NO;
+    [[self.mockRemoteDataClient expect] unsubscribe];
 
-    // verify
-    XCTAssertFalse(self.inAppAutomation.isEnabled);
+    self.privacyManager.enabledFeatures = UAFeaturesNone;
+
     [self.mockAutomationEngine verify];
+    [self.mockRemoteDataClient verify];
+    XCTAssertFalse(self.inAppAutomation.isEnabled);
 
     // test enable
     [[self.mockAutomationEngine expect] resume];
-    self.inAppAutomation.enabled = YES;
+    [[self.mockRemoteDataClient expect] subscribe];
 
-    // verify
-    XCTAssertTrue(self.inAppAutomation.isEnabled);
+    self.privacyManager.enabledFeatures = UAFeaturesInAppAutomation;
+
     [self.mockAutomationEngine verify];
+    [self.mockRemoteDataClient verify];
+    XCTAssertTrue(self.inAppAutomation.isEnabled);
 }
 
 @end
-
-
-
-

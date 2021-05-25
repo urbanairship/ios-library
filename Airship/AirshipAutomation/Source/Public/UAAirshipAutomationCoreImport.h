@@ -74,4 +74,5 @@
 #import "UATaskManager.h"
 #import "NSDictionary+UAAdditions.h"
 #import "UANetworkMonitor.h"
+#import "UAPrivacyManager.h"
 #endif

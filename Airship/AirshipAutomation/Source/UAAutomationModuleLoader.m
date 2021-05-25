@@ -24,7 +24,8 @@
                                              channel:(UAChannel *)channel
                                            namedUser:(UANamedUser *)namedUser
                                            analytics:(UAAnalytics *)analytics
-                                  remoteDataProvider:(id<UARemoteDataProvider>)remoteDataProvider {
+                                  remoteDataProvider:(id<UARemoteDataProvider>)remoteDataProvider
+                                      privacyManager:(UAPrivacyManager *)privacyManager {
 
     NSMutableArray *components = [NSMutableArray array];
 
@@ -38,7 +39,8 @@
                                                               remoteDataProvider:remoteDataProvider
                                                                        dataStore:dataStore
                                                                          channel:channel
-                                                                       analytics:analytics];
+                                                                       analytics:analytics
+                                                                  privacyManager:privacyManager];
     [components addObject:inAppAutomation];
 
 

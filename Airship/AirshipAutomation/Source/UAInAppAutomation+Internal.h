@@ -31,6 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param channel The channel instance.
  * @param deferredScheduleAPIClient The deferred API client.
  * @param frequencyLimitManager The frequency limit manager.
+ * @param privacyManager The privacy manager.
  * @return A in-app automation manager instance.
  */
 + (instancetype)automationWithEngine:(UAAutomationEngine *)automationEngine
@@ -40,7 +41,8 @@ NS_ASSUME_NONNULL_BEGIN
                  inAppMessageManager:(UAInAppMessageManager *)inAppMessageManager
                              channel:(UAChannel *)channel
            deferredScheduleAPIClient:(UADeferredScheduleAPIClient *)deferredScheduleAPIClient
-               frequencyLimitManager:(UAFrequencyLimitManager *)frequencyLimitManager;
+               frequencyLimitManager:(UAFrequencyLimitManager *)frequencyLimitManager
+                      privacyManager:(UAPrivacyManager *)privacyManager;
 
 /**
  * Factory method.
@@ -51,6 +53,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param dataStore The preference data store.
  * @param channel The channel.
  * @param analytics The system analytics instance.
+ * @param privacyManager The privacy manager.
  * @return A in-app automation manager instance.
  */
 + (instancetype)automationWithConfig:(UARuntimeConfig *)config
@@ -58,7 +61,8 @@ NS_ASSUME_NONNULL_BEGIN
                   remoteDataProvider:(id<UARemoteDataProvider>)remoteDataProvider
                            dataStore:(UAPreferenceDataStore *)dataStore
                              channel:(UAChannel *)channel
-                           analytics:(UAAnalytics *)analytics;
+                           analytics:(UAAnalytics *)analytics
+                      privacyManager:(UAPrivacyManager *)privacyManager;
 
 - (void)cancelSchedulesWithType:(UAScheduleType)scheduleType
               completionHandler:(nullable void (^)(BOOL))completionHandler;

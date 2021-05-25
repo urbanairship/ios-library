@@ -66,7 +66,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, readonly) NSDate *scheduleNewUserCutOffTime;
 
-
 /**
  * Create a remote data client for in-app messaging.
  *
@@ -94,6 +93,11 @@ NS_ASSUME_NONNULL_BEGIN
  * Subscribes to updates.
  */
 - (void)subscribe;
+
+/**
+ * Unsubscribes from updates.
+ */
+- (void)unsubscribe;
 
 /**
  * Checks if a schedule is remote.

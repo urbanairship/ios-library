@@ -26,6 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param namedUser The named user.
  * @param analytics Analytics instance.
  * @param remoteDataProvider Remote data provider.
+ * @param privacyManager The privacy manager.
  * @return The module loader.
  */
 + (id<UAModuleLoader>)inAppModuleLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
@@ -33,7 +34,8 @@ NS_ASSUME_NONNULL_BEGIN
                                              channel:(UAChannel *)channel
                                            namedUser:(UANamedUser *)namedUser
                                            analytics:(UAAnalytics *)analytics
-                                  remoteDataProvider:(id<UARemoteDataProvider>)remoteDataProvider;
+                                  remoteDataProvider:(id<UARemoteDataProvider>)remoteDataProvider
+                                      privacyManager:(UAPrivacyManager *)privacyManager;
 @end
 
 NS_ASSUME_NONNULL_END

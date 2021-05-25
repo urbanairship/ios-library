@@ -19,12 +19,9 @@
 NS_ASSUME_NONNULL_BEGIN
 
 static NSTimeInterval const MaxSchedules = 1000;
-
-NSString *const UAInAppMessageManagerEnabledKey = @"UAInAppMessageManagerEnabled";
-NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
+static NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 
 @interface UAInAppAutomation () <UAAutomationEngineDelegate, UAInAppAudienceManagerDelegate, UAInAppRemoteDataClientDelegate, UAInAppMessagingExecutionDelegate>
-
 @property(nonatomic, strong) UAAutomationEngine *automationEngine;
 @property(nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property(nonatomic, strong) UAInAppAudienceManager *audienceManager;
@@ -35,6 +32,8 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 @property(nonatomic, strong) UAChannel *channel;
 @property(nonatomic, strong) UAFrequencyLimitManager *frequencyLimitManager;
 @property(nonatomic, strong) NSMutableDictionary<NSString *, UAFrequencyChecker *> *frequencyCheckers;
+@property(nonatomic, strong) UAPrivacyManager *privacyManager;
+@property(nonatomic, assign) dispatch_once_t engineStarted;
 @end
 
 @implementation UAInAppAutomation
@@ -46,7 +45,8 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
                  inAppMessageManager:(UAInAppMessageManager *)inAppMessageManager
                              channel:(UAChannel *)channel
            deferredScheduleAPIClient:(UADeferredScheduleAPIClient *)deferredScheduleAPIClient
-               frequencyLimitManager:(UAFrequencyLimitManager *)frequencyLimitManager {
+               frequencyLimitManager:(UAFrequencyLimitManager *)frequencyLimitManager
+                      privacyManager:(UAPrivacyManager *)privacyManager {
 
     return [[self alloc] initWithAutomationEngine:automationEngine
                                   audienceManager:audienceManager
@@ -55,7 +55,8 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
                               inAppMessageManager:inAppMessageManager
                                           channel:channel
                         deferredScheduleAPIClient:deferredScheduleAPIClient
-                            frequencyLimitManager:frequencyLimitManager];
+                            frequencyLimitManager:frequencyLimitManager
+                                   privacyManager:privacyManager];
 }
 
 + (instancetype)automationWithConfig:(UARuntimeConfig *)config
@@ -63,7 +64,8 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
                   remoteDataProvider:(id<UARemoteDataProvider>)remoteDataProvider
                            dataStore:(UAPreferenceDataStore *)dataStore
                              channel:(UAChannel *)channel
-                           analytics:(UAAnalytics *)analytics {
+                           analytics:(UAAnalytics *)analytics
+                      privacyManager:(UAPrivacyManager *)privacyManager {
 
 
     UAAutomationStore *store = [UAAutomationStore automationStoreWithConfig:config
@@ -93,7 +95,8 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
                                            inAppMessageManager:inAppMessageManager
                                                        channel:channel
                                      deferredScheduleAPIClient:deferredScheduleAPIClient
-                                         frequencyLimitManager:frequencyLimitManager];
+                                         frequencyLimitManager:frequencyLimitManager
+                                                privacyManager:privacyManager];
 }
 
 - (instancetype)initWithAutomationEngine:(UAAutomationEngine *)automationEngine
@@ -103,7 +106,8 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
                      inAppMessageManager:(UAInAppMessageManager *)inAppMessageManager
                                  channel:(UAChannel *)channel
                deferredScheduleAPIClient:(UADeferredScheduleAPIClient *)deferredScheduleAPIClient
-                   frequencyLimitManager:(UAFrequencyLimitManager *)frequencyLimitManager {
+                   frequencyLimitManager:(UAFrequencyLimitManager *)frequencyLimitManager
+                          privacyManager:(UAPrivacyManager *)privacyManager {
 
     self = [super initWithDataStore:dataStore];
 
@@ -118,25 +122,30 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
         self.frequencyLimitManager = frequencyLimitManager;
         self.prepareSchedulePipeline = [UARetriablePipeline pipeline];
         self.frequencyCheckers = [NSMutableDictionary dictionary];
-
+        self.privacyManager = privacyManager;
         self.automationEngine.delegate = self;
         self.audienceManager.delegate = self;
         self.remoteDataClient.delegate = self;
         self.inAppMessageManager.executionDelegate = self;
-
-        [self.remoteDataClient subscribe];
     }
 
     return self;
 }
 
--(void)airshipReady:(UAirship *)airship {
-    [self.automationEngine start];
+- (void)airshipReady:(UAirship *)airship {
+    // Update in-app automation when enabled features change
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(onEnabledFeaturesChanged)
+                                                 name:UAPrivacyManagerEnabledFeaturesChangedEvent
+                                               object:nil];
+
+    [self updateSubscription];
     [self updateEnginePauseState];
 }
 
 - (void)getMessageScheduleWithID:(NSString *)identifier
                completionHandler:(void (^)(UAInAppMessageSchedule *))completionHandler {
+    [self ensureEngineStarted];
     [self.automationEngine getScheduleWithID:identifier
                                         type:UAScheduleTypeInAppMessage
                            completionHandler:^(UASchedule *schedule) {
@@ -146,17 +155,20 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 
 - (void)getMessageSchedulesWithGroup:(NSString *)group
                    completionHandler:(void (^)(NSArray<UAInAppMessageSchedule *> *))completionHandler {
+    [self ensureEngineStarted];
     [self.automationEngine getSchedulesWithGroup:group
                                             type:UAScheduleTypeInAppMessage
                                completionHandler:completionHandler];
 }
 
 - (void)getMessageSchedules:(void (^)(NSArray<UAInAppMessageSchedule *> *))completionHandler {
+    [self ensureEngineStarted];
     [self.automationEngine getSchedulesWithType:UAScheduleTypeInAppMessage completionHandler:completionHandler];
 }
 
 - (void)getActionScheduleWithID:(NSString *)identifier
               completionHandler:(void (^)(UAActionSchedule *))completionHandler {
+    [self ensureEngineStarted];
     [self.automationEngine getScheduleWithID:identifier
                                         type:UAScheduleTypeActions
                            completionHandler:^(UASchedule *schedule) {
@@ -168,44 +180,53 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 
 - (void)getActionSchedulesWithGroup:(NSString *)group
                   completionHandler:(void (^)(NSArray<UAActionSchedule *> *))completionHandler {
+    [self ensureEngineStarted];
     [self.automationEngine getSchedulesWithGroup:group
                                             type:UAScheduleTypeActions
                                completionHandler:completionHandler];
 }
 
 - (void)getActionSchedules:(void (^)(NSArray<UAActionSchedule *> *))completionHandler {
+    [self ensureEngineStarted];
     [self.automationEngine getSchedulesWithType:UAScheduleTypeActions completionHandler:completionHandler];
 }
 
 - (void)getSchedules:(void (^)(NSArray<UASchedule *> *))completionHandler {
+    [self ensureEngineStarted];
     [self.automationEngine getSchedules:completionHandler];
 }
 
 - (void)schedule:(UASchedule *)schedule completionHandler:(void (^)(BOOL))completionHandler {
+    [self ensureEngineStarted];
     [self.automationEngine schedule:schedule completionHandler:completionHandler];
 }
 
 - (void)scheduleMultiple:(NSArray<UASchedule *> *)schedules completionHandler:(void (^)(BOOL))completionHandler {
+    [self ensureEngineStarted];
     [self.automationEngine scheduleMultiple:schedules completionHandler:completionHandler];
 }
 
 - (void)cancelScheduleWithID:(NSString *)scheduleID
            completionHandler:(nullable void (^)(BOOL))completionHandler {
+    [self ensureEngineStarted];
     [self.automationEngine cancelScheduleWithID:scheduleID completionHandler:completionHandler];
 }
 
 - (void)cancelSchedulesWithType:(UAScheduleType)scheduleType
               completionHandler:(nullable void (^)(BOOL))completionHandler {
+    [self ensureEngineStarted];
     [self.automationEngine cancelSchedulesWithType:scheduleType completionHandler:completionHandler];
 }
 
 - (void)cancelSchedulesWithGroup:(NSString *)group
                completionHandler:(nullable void (^)(BOOL))completionHandler {
+    [self ensureEngineStarted];
     [self.automationEngine cancelSchedulesWithGroup:group completionHandler:completionHandler];
 }
 
 - (void)cancelMessageSchedulesWithGroup:(NSString *)group
                       completionHandler:(nullable void (^)(BOOL))completionHandler {
+    [self ensureEngineStarted];
     [self.automationEngine cancelSchedulesWithGroup:group
                                                type:UAScheduleTypeInAppMessage
                                   completionHandler:completionHandler];
@@ -213,6 +234,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 
 - (void)cancelActionSchedulesWithGroup:(NSString *)group
                      completionHandler:(nullable void (^)(BOOL))completionHandler {
+    [self ensureEngineStarted];
     [self.automationEngine cancelSchedulesWithGroup:group
                                                type:UAScheduleTypeActions
                                   completionHandler:completionHandler];
@@ -222,6 +244,7 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 - (void)editScheduleWithID:(NSString *)scheduleID
                      edits:(UAScheduleEdits *)edits
          completionHandler:(nullable void (^)(BOOL))completionHandler {
+    [self ensureEngineStarted];
     [self.automationEngine editScheduleWithID:scheduleID edits:edits completionHandler:completionHandler];
 }
 
@@ -542,37 +565,17 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 }
 
 - (void)setPaused:(BOOL)paused {
-    // If we're unpausing, alert the automation engine
-    if (self.isPaused == YES && self.isPaused != paused) {
-        [self.automationEngine scheduleConditionsChanged];
-    }
-
     [self.dataStore setBool:paused forKey:UAInAppMessageManagerPausedKey];
+    [self updateEnginePauseState];
 }
 
 - (BOOL)isPaused{
     return [self.dataStore boolForKey:UAInAppMessageManagerPausedKey defaultValue:NO];
 }
 
-- (void)setEnabled:(BOOL)enabled {
-    [self.dataStore setBool:enabled forKey:UAInAppMessageManagerEnabledKey];
-    [self updateEnginePauseState];
-}
-
-- (BOOL)isEnabled {
-    return [self.dataStore boolForKey:UAInAppMessageManagerEnabledKey defaultValue:YES];
-}
-
-- (void)updateEnginePauseState {
-    if (self.componentEnabled && self.isEnabled) {
-        [self.automationEngine resume];
-    } else {
-        [self.automationEngine pause];
-    }
-}
-
 - (void)dealloc {
     [self.automationEngine stop];
+    [self.remoteDataClient unsubscribe];
     self.automationEngine.delegate = nil;
 }
 
@@ -619,7 +622,50 @@ NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 }
 
 - (void)cancelScheduleWithID:(nonnull NSString *)scheduleID {
+    [self ensureEngineStarted];
     [self.automationEngine cancelScheduleWithID:scheduleID completionHandler:nil];
+}
+
+- (void)onEnabledFeaturesChanged {
+    [self updateSubscription];
+    [self updateEnginePauseState];
+}
+
+- (void)setEnabled:(BOOL)enabled {
+    if (enabled) {
+        return [self.privacyManager enableFeatures:UAFeaturesInAppAutomation];
+    } else {
+        return [self.privacyManager disableFeatures:UAFeaturesInAppAutomation];
+    }
+}
+
+- (BOOL)isEnabled {
+    return [self.privacyManager isEnabled:UAFeaturesInAppAutomation];
+}
+
+- (void)updateEnginePauseState {
+    if (self.componentEnabled && [self.privacyManager isEnabled:UAFeaturesInAppAutomation]) {
+        [self.automationEngine resume];
+    } else {
+        [self.automationEngine pause];
+    }
+}
+
+- (void)updateSubscription {
+    @synchronized (self.remoteDataClient) {
+        if ([self.privacyManager isEnabled:UAFeaturesInAppAutomation]) {
+            [self ensureEngineStarted];
+            [self.remoteDataClient subscribe];
+        } else {
+            [self.remoteDataClient unsubscribe];
+        }
+    }
+}
+
+- (void)ensureEngineStarted {
+    dispatch_once(&_engineStarted, ^{
+        [self.automationEngine start];
+    });
 }
 
 @end

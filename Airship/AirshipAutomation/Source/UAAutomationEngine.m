@@ -225,11 +225,7 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
 - (void)resume {
     if (self.paused) {
         self.paused = NO;
-        if (!self.isStarted) {
-            [self start];
-        } else {
-            [self scheduleConditionsChanged];
-        }
+        [self scheduleConditionsChanged];
     }
 }
 
@@ -936,6 +932,9 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
  * Called when one of the schedule conditions changes.
  */
 - (void)scheduleConditionsChanged {
+    if (!self.isStarted) {
+        return;
+    }
     UA_WEAKIFY(self)
     [self.automationStore getSchedulesWithStates:@[@(UAScheduleStateWaitingScheduleConditions)]
                                completionHandler:^(NSArray<UAScheduleData *> *schedulesData) {

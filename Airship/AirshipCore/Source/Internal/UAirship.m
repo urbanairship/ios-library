@@ -182,7 +182,8 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
                                                                                     channel:self.sharedChannel
                                                                                   namedUser:self.sharedNamedUser
                                                                                   analytics:self.sharedAnalytics
-                                                                          remoteDataManager:self.sharedRemoteDataManager];
+                                                                          remoteDataManager:self.sharedRemoteDataManager
+                                                                             privacyManager:self.sharedPrivacyManager];
         if (automationLoader) {
             [loaders addObject:automationLoader];
         }
@@ -535,7 +536,8 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
                                                            channel:(UAChannel *)channel
                                                          namedUser:(UANamedUser *)namedUser
                                                          analytics:(UAAnalytics *)analytics
-                                                 remoteDataManager:(UARemoteDataManager *)remoteDataManager  {
+                                                 remoteDataManager:(UARemoteDataManager *)remoteDataManager
+                                                    privacyManager:(UAPrivacyManager *)privacyManager {
 
     Class cls = NSClassFromString(UAAutomationModuleLoaderClassName);
     if ([cls conformsToProtocol:@protocol(UAAutomationModuleLoaderFactory)]) {
@@ -544,7 +546,8 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
                                            channel:channel
                                          namedUser:namedUser
                                          analytics:analytics
-                                remoteDataProvider:remoteDataManager];
+                                remoteDataProvider:remoteDataManager
+                                    privacyManager:privacyManager];
     }
     return nil;
 }
