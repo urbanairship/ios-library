@@ -190,7 +190,8 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
         id<UAModuleLoader> messageCenterLoader = [UAirship messageCenterLoaderWithDataStore:self.dataStore
                                                                                      config:self.config
-                                                                                    channel:self.sharedChannel];
+                                                                                    channel:self.sharedChannel
+                                                                             privacyManager:self.sharedPrivacyManager];
         if (messageCenterLoader) {
             [loaders addObject:messageCenterLoader];
         }
@@ -449,6 +450,10 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     return self.sharedLocaleManager;
 }
 
+- (UAPrivacyManager *)privacyManager {
+    return self.sharedPrivacyManager;
+}
+
 + (UARemoteDataManager *)remoteDataManager {
     return sharedAirship_.sharedRemoteDataManager;
 }
@@ -505,10 +510,11 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
 + (nullable id<UAModuleLoader>)messageCenterLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
                                                          config:(UARuntimeConfig *)config
-                                                        channel:(UAChannel<UAExtendableChannelRegistration> *)channel {
+                                                        channel:(UAChannel<UAExtendableChannelRegistration> *)channel
+                                                 privacyManager:(UAPrivacyManager *)privacyManager {
     Class cls = NSClassFromString(UAMessageCenterModuleLoaderClassName);
     if ([cls conformsToProtocol:@protocol(UAMessageCenterModuleLoaderFactory)]) {
-        return [cls messageCenterModuleLoaderWithDataStore:dataStore config:config channel:channel];
+        return [cls messageCenterModuleLoaderWithDataStore:dataStore config:config channel:channel privacyManager:privacyManager];
     }
     return nil;
 }
@@ -593,7 +599,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 }
 
 - (void)setDataCollectionEnabled:(BOOL)enabled {
-    if (self.isDataCollectionEnabled != enabled) {
+    if (enabled) {
         [self.sharedPrivacyManager setEnabledFeatures:UAFeaturesNone];
     } else {
         [self.sharedPrivacyManager setEnabledFeatures:UAFeaturesAll];

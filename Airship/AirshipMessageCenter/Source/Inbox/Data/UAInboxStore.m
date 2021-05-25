@@ -281,6 +281,34 @@
     }
 }
 
+- (void)deleteMessages {
+    [self.coreData safePerformBlock:^(BOOL isSafe, NSManagedObjectContext *context) {
+        if (!isSafe) {
+            return;
+        }
+
+        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kUAInboxDBEntityName];
+        NSError *error;
+
+        if (self.coreData.inMemory) {
+            request.includesPropertyValues = NO;
+            NSArray *messages = [context executeFetchRequest:request error:&error];
+            for (NSManagedObject *message in messages) {
+                [context deleteObject:message];
+            }
+        } else {
+            NSBatchDeleteRequest *deleteRequest = [[NSBatchDeleteRequest alloc] initWithFetchRequest:request];
+            [context executeRequest:deleteRequest error:&error];
+        }
+
+        if (error) {
+            UA_LERR(@"Error deleting messages %@", error);
+            return;
+        }
+
+        [UACoreData safeSave:context];
+    }];
+}
 
 - (void)addMessageFromDictionary:(NSDictionary *)dictionary context:(NSManagedObjectContext *)context {
     UAInboxMessageData *data = (UAInboxMessageData *)[NSEntityDescription insertNewObjectForEntityForName:kUAInboxDBEntityName

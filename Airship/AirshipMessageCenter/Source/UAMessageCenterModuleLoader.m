@@ -20,11 +20,13 @@
 
 + (id<UAModuleLoader>)messageCenterModuleLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
                                                       config:(UARuntimeConfig *)config
-                                                     channel:(UAChannel<UAExtendableChannelRegistration> *)channel {
+                                                     channel:(UAChannel<UAExtendableChannelRegistration> *)channel
+                                              privacyManager:(UAPrivacyManager *)privacyManager {
 
     UAMessageCenter *messageCenter = [UAMessageCenter messageCenterWithDataStore:dataStore
                                                                           config:config
-                                                                         channel:channel];
+                                                                         channel:channel
+                                                                  privacyManager:privacyManager];
     return [[self alloc] initWithMessageCenter:messageCenter];
 }
 

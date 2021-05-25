@@ -21,11 +21,13 @@ NS_ASSUME_NONNULL_BEGIN
  * @param dataStore The datastore.
  * @param config The config
  * @param channel The channel.
+ * @param privacyManager The privacy manager.
  * @return A module loader.
  */
 + (id<UAModuleLoader>)messageCenterModuleLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
                                                       config:(UARuntimeConfig *)config
-                                                     channel:(UAChannel<UAExtendableChannelRegistration> *)channel;
+                                                     channel:(UAChannel<UAExtendableChannelRegistration> *)channel
+                                              privacyManager:(UAPrivacyManager *)privacyManager;
 
 
 @end

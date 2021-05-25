@@ -6,6 +6,7 @@
 #import "UAUser.h"
 #import "UAInboxMessageList.h"
 #import "UAComponent+Internal.h"
+#import "UAPrivacyManager+Internal.h"
 
 @interface UAMessageCenterTest : UAAirshipBaseTest
 @property (nonatomic, strong) id mockDefaultUI;
@@ -14,6 +15,7 @@
 @property (nonatomic, strong) id mockDisplayDelegate;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property (nonatomic, strong) UAMessageCenter *messageCenter;
+@property (nonatomic, strong) UAPrivacyManager *privacyManager;
 @end
 
 @implementation UAMessageCenterTest
@@ -21,17 +23,19 @@
 - (void)setUp {
     [super setUp];
 
-    self.notificationCenter = [[NSNotificationCenter alloc] init];
+    self.notificationCenter = [NSNotificationCenter defaultCenter];
     self.mockDefaultUI = [self strictMockForClass:[UADefaultMessageCenterUI class]];
     self.mockUser = [self mockForClass:[UAUser class]];
     self.mockMessageList = [self mockForClass:[UAInboxMessageList class]];
     self.mockDisplayDelegate = [self strictMockForProtocol:@protocol(UAMessageCenterDisplayDelegate)];
+    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
 
     self.messageCenter = [UAMessageCenter messageCenterWithDataStore:self.dataStore
                                                                 user:self.mockUser
                                                          messageList:self.mockMessageList
                                                            defaultUI:self.mockDefaultUI
-                                                  notificationCenter:self.notificationCenter];
+                                                  notificationCenter:self.notificationCenter
+                                                      privacyManager:self.privacyManager];
 }
 
 
@@ -104,6 +108,21 @@
     [[self.mockMessageList expect] retrieveMessageListWithSuccessBlock:OCMOCK_ANY withFailureBlock:OCMOCK_ANY];
     [self.notificationCenter postNotificationName:UAUserCreatedNotification object:nil];
     [self.mockMessageList verify];
+}
+
+- (void)testFeatureEnablement {
+    [[self.mockMessageList expect] setEnabled:NO];
+    [[self.mockUser expect] setEnabled:NO];
+
+    [self.privacyManager disableFeatures:UAFeaturesMessageCenter];
+
+    [[self.mockMessageList expect] setEnabled:YES];
+    [[self.mockUser expect] setEnabled:YES];
+
+    [self.privacyManager enableFeatures:UAFeaturesMessageCenter];
+
+    [self.mockMessageList verify];
+    [self.mockUser verify];
 }
 
 @end

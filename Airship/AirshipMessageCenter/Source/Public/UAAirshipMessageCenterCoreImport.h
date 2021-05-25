@@ -34,4 +34,5 @@
 #import "UASemaphore.h"
 #import "UARequestSession.h"
 #import "UARequest.h"
+#import "UAPrivacyManager.h"
 #endif

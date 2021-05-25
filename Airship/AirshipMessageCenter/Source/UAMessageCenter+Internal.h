@@ -7,6 +7,7 @@
 @class UAUser;
 @class UARuntimeConfig;
 @class UAPreferenceDataStore;
+@class UAPrivacyManager;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -25,11 +26,13 @@ NS_ASSUME_NONNULL_BEGIN
  * @param dataStore The data store.
  * @param config The config
  * @param channel The channel.
+ * @param privacyManager The privacy manager.
  * @return A message center instance.
  */
 + (instancetype)messageCenterWithDataStore:(UAPreferenceDataStore *)dataStore
                                     config:(UARuntimeConfig *)config
-                                   channel:(UAChannel<UAExtendableChannelRegistration> *)channel;
+                                   channel:(UAChannel<UAExtendableChannelRegistration> *)channel
+                            privacyManager:(UAPrivacyManager *)privacyManager;
 
 /**
  * Factory method for testing.
@@ -38,13 +41,15 @@ NS_ASSUME_NONNULL_BEGIN
  * @param messageList The message list.
  * @param defaultUI The default UI.
  * @param notificationCenter The notification center.
+ * @param privacyManager The privacy manager.
  * @return A message center instance.
 */
 + (instancetype)messageCenterWithDataStore:(UAPreferenceDataStore *)dataStore
                                       user:(UAUser *)user
                                messageList:(UAInboxMessageList *)messageList
                                  defaultUI:(UADefaultMessageCenterUI *)defaultUI
-                        notificationCenter:(NSNotificationCenter *)notificationCenter;
+                        notificationCenter:(NSNotificationCenter *)notificationCenter
+                            privacyManager:(UAPrivacyManager *)privacyManager;
 
 @end
 

@@ -67,6 +67,12 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
         [self.taskManager registerForTaskWithIDs:@[UAUserUpdateTaskID]
                                       dispatcher:[UADispatcher serialDispatcher]
                                    launchHandler:^(id<UATask> task) {
+            if (!self.enabled) {
+                UA_LDEBUG(@"User disabled, unable to run task %@", task);
+                [task taskCompleted];
+                return;
+            }
+
             UA_STRONGIFY(self)
             if ([task.taskID isEqualToString:UAUserUpdateTaskID]) {
                 [self handleUpdateTask:task];
@@ -153,12 +159,6 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
 }
 
 - (void)handleUpdateTask:(id<UATask>)task {
-    if (!self.enabled) {
-        UA_LDEBUG(@"Skipping user registration, user disabled.");
-        [task taskCompleted];
-        return;
-    }
-
     NSString *channelID = self.channel.identifier;
     if (!channelID) {
         [task taskCompleted];
@@ -272,10 +272,15 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
 
 - (void)extendChannelRegistrationPayload:(UAChannelRegistrationPayload *)payload
                        completionHandler:(UAChannelRegistrationExtenderCompletionHandler)completionHandler {
-    [self.userDataDAO getUserData:^(UAUserData *userData) {
-        payload.userID = userData.username;
+
+    if (self.enabled) {
+        [self.userDataDAO getUserData:^(UAUserData *userData) {
+            payload.userID = userData.username;
+            completionHandler(payload);
+        }];
+    } else {
         completionHandler(payload);
-    }];
+    }
 }
 
 - (void)remoteURLConfigUpdated {

@@ -21,8 +21,10 @@ static NSString * const UAInboxMessageListExtraRetrieveCallback = @"retrieveCall
 @interface UAInboxMessageList()
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property (nonatomic, strong) UADispatcher *mainDispatcher;
+@property (nonatomic, strong) UADispatcher *taskDispatcher;
 @property (nonatomic, strong) UADate *date;
 @property (nonatomic, strong) UATaskManager *taskManager;
+@property (nonatomic, strong) UAPrivacyManager *privacyManager;
 
 @property (atomic, assign) NSUInteger retrieveCount;
 @property (atomic, assign) NSUInteger batchUpdateCount;
@@ -32,6 +34,7 @@ static NSString * const UAInboxMessageListExtraRetrieveCallback = @"retrieveCall
 @implementation UAInboxMessageList
 
 @synthesize messages = _messages;
+@synthesize enabled = _enabled;
 
 #pragma mark Create Inbox
 
@@ -59,7 +62,7 @@ static NSString * const UAInboxMessageListExtraRetrieveCallback = @"retrieveCall
         self.mainDispatcher = dispatcher;
         self.date = date;
         self.taskManager = taskManager;
-
+        self.taskDispatcher = [UADispatcher serialDispatcher];
         [self registerTasks];
     }
 
@@ -96,7 +99,6 @@ static NSString * const UAInboxMessageListExtraRetrieveCallback = @"retrieveCall
                                date:(UADate *)date
                         taskManager:(UATaskManager *)taskManager {
 
-
     return [[UAInboxMessageList alloc] initWithUser:user
                                              client:client
                                              config:config
@@ -132,6 +134,26 @@ static NSString * const UAInboxMessageListExtraRetrieveCallback = @"retrieveCall
     return _messages;
 }
 
+- (void)setEnabled:(BOOL)enabled {
+    if (_enabled != enabled) {
+        _enabled = enabled;
+        if (!enabled) {
+            [self.client cancelAllRequests];
+        }
+    }
+
+    [self.taskDispatcher dispatchAsync:^{
+        if (!enabled) {
+            [self.inboxStore deleteMessages];
+            [self loadSavedMessages];
+        }
+    }];
+}
+
+- (BOOL)enabled {
+    return _enabled;
+}
+
 - (NSArray<UAInboxMessage *> *)messagesFilteredUsingPredicate:(NSPredicate *)predicate {
     @synchronized(self) {
         return [_messages filteredArrayUsingPredicate:predicate];
@@ -143,9 +165,8 @@ static NSString * const UAInboxMessageListExtraRetrieveCallback = @"retrieveCall
 - (void)registerTasks {
     UA_WEAKIFY(self)
     [self.taskManager registerForTaskWithIDs:@[UAInboxMessageListRetrieveTask, UAInboxMessageListSyncReadMessagesTask, UAInboxMessageListSyncDeletedMessagesTask]
-                                  dispatcher:[UADispatcher serialDispatcher]
+                                  dispatcher:self.taskDispatcher
                                launchHandler:^(id<UATask> task) {
-
         @synchronized (self) {
             if (!self.enabled) {
                 UA_LDEBUG(@"Message list disabled, unable to run task %@", task);
@@ -162,7 +183,7 @@ static NSString * const UAInboxMessageListExtraRetrieveCallback = @"retrieveCall
 
         if ([task.taskID isEqualToString:UAInboxMessageListRetrieveTask]) {
             [self handleRetrieveTask:task];
-        } else if ([task.taskID isEqualToString:UAInboxMessageListSyncReadMessagesTask])  {
+        } else if ([task.taskID isEqualToString:UAInboxMessageListSyncReadMessagesTask]) {
             [self handleSyncReadMessagesTask:task];
         } else if ([task.taskID isEqualToString:UAInboxMessageListSyncDeletedMessagesTask]) {
             [self handleSyncDeletedMessagesTask:task];
@@ -247,6 +268,12 @@ static NSString * const UAInboxMessageListExtraRetrieveCallback = @"retrieveCall
 
 - (UADisposable *)retrieveMessageListWithSuccessBlock:(UAInboxMessageListCallbackBlock)successBlock
                                      withFailureBlock:(UAInboxMessageListCallbackBlock)failureBlock {
+    if (!self.enabled) {
+        if (failureBlock) {
+            failureBlock();
+        }
+    }
+
     __block UAInboxMessageListCallbackBlock successBlockCopy = successBlock;
     __block UAInboxMessageListCallbackBlock failureBlockCopy = failureBlock;
 
@@ -291,16 +318,24 @@ static NSString * const UAInboxMessageListExtraRetrieveCallback = @"retrieveCall
 
 
 - (UADisposable *)markMessagesRead:(NSArray *)messages completionHandler:(UAInboxMessageListCallbackBlock)completionHandler {
-    if (!messages.count) {
-        return nil;
-    }
-
-    NSArray *messageIDs = [messages valueForKeyPath:@"messageID"];
-
     __block UAInboxMessageListCallbackBlock inboxMessageListCompletionBlock = completionHandler;
     UADisposable *disposable = [UADisposable disposableWithBlock:^{
         inboxMessageListCompletionBlock = nil;
     }];
+
+
+    if (!self.enabled || !messages.count) {
+        // Invoke callback
+        [self.mainDispatcher dispatchAsync:^{
+            UAInboxMessageListCallbackBlock block = inboxMessageListCompletionBlock;
+            if (block) {
+                block();
+            }
+        }];
+        return disposable;
+    }
+
+    NSArray *messageIDs = [messages valueForKeyPath:@"messageID"];
 
     UA_WEAKIFY(self)
     [self.mainDispatcher doSync:^{
@@ -324,8 +359,9 @@ static NSString * const UAInboxMessageListExtraRetrieveCallback = @"retrieveCall
                 self.batchUpdateCount--;
             }
 
-            if (inboxMessageListCompletionBlock) {
-                inboxMessageListCompletionBlock();
+            UAInboxMessageListCallbackBlock block = inboxMessageListCompletionBlock;
+            if (block) {
+                block();
             }
 
             [self sendMessageListUpdatedNotification];
@@ -338,16 +374,24 @@ static NSString * const UAInboxMessageListExtraRetrieveCallback = @"retrieveCall
 }
 
 - (UADisposable *)markMessagesDeleted:(NSArray *)messages completionHandler:(UAInboxMessageListCallbackBlock)completionHandler {
-    if (!messages.count) {
-        return nil;
-    }
-
-    NSArray *messageIDs = [messages valueForKeyPath:@"messageID"];
-
     __block UAInboxMessageListCallbackBlock inboxMessageListCompletionBlock = completionHandler;
     UADisposable *disposable = [UADisposable disposableWithBlock:^{
         inboxMessageListCompletionBlock = nil;
     }];
+
+
+    if (!self.enabled || !messages.count) {
+        // Invoke callback
+        [self.mainDispatcher dispatchAsync:^{
+            UAInboxMessageListCallbackBlock block = inboxMessageListCompletionBlock;
+            if (block) {
+                block();
+            }
+        }];
+        return disposable;
+    }
+
+    NSArray *messageIDs = [messages valueForKeyPath:@"messageID"];
 
     UA_WEAKIFY(self)
     [self.mainDispatcher doSync:^{
@@ -366,13 +410,14 @@ static NSString * const UAInboxMessageListExtraRetrieveCallback = @"retrieveCall
 
         // Invoke callback
         [self.mainDispatcher doSync:^{
+            UA_STRONGIFY(self)
             if (self.batchUpdateCount >= 0) {
                 self.batchUpdateCount--;
             }
 
-            UA_STRONGIFY(self)
-            if (inboxMessageListCompletionBlock) {
-                inboxMessageListCompletionBlock();
+            UAInboxMessageListCallbackBlock block = inboxMessageListCompletionBlock;
+            if (block) {
+                block();
             }
 
             [self sendMessageListUpdatedNotification];

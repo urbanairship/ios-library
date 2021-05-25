@@ -101,6 +101,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)syncMessagesWithResponse:(NSArray *)messages;
 
 /**
+ * Deletes all messages.
+ */
+- (void)deleteMessages;
+
+/**
  * Fetches locally read message reporting data.
  * @return A dictionary of message IDs to message reporting dictionaries
  */

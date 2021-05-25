@@ -128,6 +128,20 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
     [self waitForTestExpectations];
 }
 
+- (void)testRegistrationPayloadDisabled {
+    self.user.enabled = NO;
+    [self.userDataDAO saveUserData:self.userData completionHandler:^(BOOL success) {}];
+
+    UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
+    XCTestExpectation *extendedPayload = [self expectationWithDescription:@"extended payload"];
+    self.extenderBlock(payload, ^(UAChannelRegistrationPayload * _Nonnull payload) {
+        XCTAssertNil(payload.userID);
+        [extendedPayload fulfill];
+    });
+
+    [self waitForTestExpectations];
+}
+
 - (void)testUpdateTaskCreatesChannel {
     id mockTask = [self mockForProtocol:@protocol(UATask)];
     [[[mockTask stub] andReturn:UAUserUpdateTaskID] taskID];

@@ -15,6 +15,7 @@
 @property (nonatomic, strong) UADefaultMessageCenterUI *defaultUI;
 @property (nonatomic, strong) UAInboxMessageList *messageList;
 @property (nonatomic, strong) UAUser *user;
+@property (nonatomic, strong) UAPrivacyManager *privacyManager;
 @end
 
 @implementation UAMessageCenter
@@ -25,16 +26,17 @@ NSString *const UAMessageDataScheme = @"message";
                              user:(UAUser *)user
                       messageList:(UAInboxMessageList *)messageList
                         defaultUI:(UADefaultMessageCenterUI *)defaultUI
-               notificationCenter:(NSNotificationCenter *)notificationCenter {
+               notificationCenter:(NSNotificationCenter *)notificationCenter
+                   privacyManager:(UAPrivacyManager *)privacyManager {
 
     self = [super initWithDataStore:dataStore];
     if (self) {
         self.user = user;
         self.messageList = messageList;
         self.defaultUI = defaultUI;
+        self.privacyManager = privacyManager;
 
-        self.user.enabled = self.componentEnabled;
-        self.messageList.enabled = self.componentEnabled;
+        [self updateEnableState];
 
         [notificationCenter addObserver:self
                                selector:@selector(userCreated)
@@ -45,6 +47,12 @@ NSString *const UAMessageDataScheme = @"message";
                                selector:@selector(applicationDidTransitionToForeground)
                                    name:UAApplicationDidTransitionToForeground
                                  object:nil];
+        
+        // Update message center when enabled features change
+        [notificationCenter addObserver:self
+                               selector:@selector(onEnabledFeaturesChanged)
+                                   name:UAPrivacyManagerEnabledFeaturesChangedEvent
+                                 object:nil];
 
         [self.messageList loadSavedMessages];
     }
@@ -54,7 +62,8 @@ NSString *const UAMessageDataScheme = @"message";
 
 + (instancetype)messageCenterWithDataStore:(UAPreferenceDataStore *)dataStore
                                     config:(UARuntimeConfig *)config
-                                   channel:(UAChannel<UAExtendableChannelRegistration> *)channel {
+                                   channel:(UAChannel<UAExtendableChannelRegistration> *)channel
+                            privacyManager:(UAPrivacyManager *)privacyManager {
 
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
     UADefaultMessageCenterUI *defaultUI = [[UADefaultMessageCenterUI alloc] init];
@@ -63,7 +72,7 @@ NSString *const UAMessageDataScheme = @"message";
     UAUser *user = [UAUser userWithChannel:channel
                                     config:config
                                  dataStore:dataStore];
-
+    
     UAInboxMessageList *messageList = [UAInboxMessageList messageListWithUser:user
                                                                        config:config
                                                                     dataStore:dataStore];
@@ -72,20 +81,23 @@ NSString *const UAMessageDataScheme = @"message";
                                       user:user
                                messageList:messageList
                                  defaultUI:defaultUI
-                        notificationCenter:notificationCenter];
+                        notificationCenter:notificationCenter
+                            privacyManager:privacyManager];
 }
 
 + (instancetype)messageCenterWithDataStore:(UAPreferenceDataStore *)dataStore
                                       user:(UAUser *)user
                                messageList:(UAInboxMessageList *)messageList
                                  defaultUI:(UADefaultMessageCenterUI *)defaultUI
-                        notificationCenter:(NSNotificationCenter *)notificationCenter {
+                        notificationCenter:(NSNotificationCenter *)notificationCenter
+                            privacyManager:(UAPrivacyManager *)privacyManager {
 
     return [[self alloc] initWithDataStore:dataStore
                                       user:user
                                messageList:messageList
                                  defaultUI:defaultUI
-                        notificationCenter:notificationCenter];
+                        notificationCenter:notificationCenter
+                            privacyManager:privacyManager];
 }
 
 - (void)display:(BOOL)animated {
@@ -94,7 +106,11 @@ NSString *const UAMessageDataScheme = @"message";
 }
 
 - (void)display {
-    [self display:YES];
+    if ([self.privacyManager isEnabled:UAFeaturesMessageCenter]) {
+        [self display:YES];
+    } else {
+        UA_LWARN(@"Message center disabled. Unable to display.");
+    }
 }
 
 - (void)displayMessageForID:(NSString *)messageID animated:(BOOL)animated {
@@ -103,7 +119,11 @@ NSString *const UAMessageDataScheme = @"message";
 }
 
 - (void)displayMessageForID:(NSString *)messageID {
-    [self displayMessageForID:messageID animated:YES];
+    if (self.componentEnabled && [self.privacyManager isEnabled:UAFeaturesMessageCenter]) {
+        [self displayMessageForID:messageID animated:YES];
+    } else {
+        UA_LWARN(@"Message center disabled. Unable to display the message.");
+    }
 }
 
 - (void)dismiss:(BOOL)animated {
@@ -124,10 +144,14 @@ NSString *const UAMessageDataScheme = @"message";
 }
 
 - (void)onComponentEnableChange {
-    self.user.enabled = self.componentEnabled;
-    self.messageList.enabled = self.componentEnabled;
+    [self updateEnableState];
 }
 
+- (void)updateEnableState {
+    BOOL isEnabled = self.componentEnabled && [self.privacyManager isEnabled:UAFeaturesMessageCenter];
+    self.user.enabled = isEnabled;
+    self.messageList.enabled = isEnabled;
+}
 #pragma mark -
 #pragma mark UAPushableComponent
 
@@ -152,5 +176,10 @@ NSString *const UAMessageDataScheme = @"message";
 }
 
 #pragma mark -
+#pragma mark UAPrivacyManager
+
+- (void)onEnabledFeaturesChanged {
+    [self updateEnableState];
+}
 
 @end
