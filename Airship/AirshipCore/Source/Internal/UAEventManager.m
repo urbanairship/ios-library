@@ -255,6 +255,9 @@ static NSUInteger const FetchEventLimit = 500;
 
 - (void)uploadEventsTask:(id<UATask>)task {
     if (!self.uploadsEnabled) {
+        @synchronized (self) {
+            self.nextUploadDate = nil;
+        }
         [task taskCompleted];
         return;
     }
