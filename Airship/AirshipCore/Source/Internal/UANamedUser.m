@@ -106,6 +106,13 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
         [self.taskManager registerForTaskWithIDs:@[UANamedUserUpdateTaskID, UANamedUserTagUpdateTaskID, UANamedUserAttributeUpdateTaskID]
                                       dispatcher:[UADispatcher serialDispatcher]
                                    launchHandler:^(id<UATask> task) {
+
+            if (!self.componentEnabled) {
+                UA_LERR(@"Component disabled, unable to handle task");
+                [task taskCompleted];
+                return;
+            }
+
             UA_STRONGIFY(self)
             if ([task.taskID isEqualToString:UANamedUserUpdateTaskID]) {
                 [self handleUpdateTask:task];
@@ -171,13 +178,9 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
 }
 
 - (void)update {
-    // Enqueue named user tasks
     [self enqueueUpdateNamedUserTask];
-
-    if (self.identifier) {
-        [self enqueueUpdateTagGroupsTask];
-        [self enqueueUpdateAttributesTask];
-    }
+    [self enqueueUpdateTagGroupsTask];
+    [self enqueueUpdateAttributesTask];
 }
 
 - (void)enqueueUpdateNamedUserTask {
@@ -187,7 +190,7 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
 }
 
 - (void)enqueueUpdateTagGroupsTask {
-    if (self.identifier) {
+    if (self.identifier && [self.privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
         UATaskRequestOptions *requestOptions = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyAppend requiresNetwork:YES extras:nil];
         [self.taskManager enqueueRequestWithID:UANamedUserTagUpdateTaskID
                                        options:requestOptions];
@@ -195,7 +198,7 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
 }
 
 - (void)enqueueUpdateAttributesTask {
-    if (self.identifier) {
+    if (self.identifier && [self.privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
         UATaskRequestOptions *requestOptions = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyAppend requiresNetwork:YES extras:nil];
         [self.taskManager enqueueRequestWithID:UANamedUserAttributeUpdateTaskID
                                        options:requestOptions];
@@ -258,7 +261,7 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
 }
 
 - (void)handleTagUpdateTask:(id<UATask>)task {
-    if (!self.componentEnabled || ![self.privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
+    if (!(self.identifier && [self.privacyManager isEnabled:UAFeaturesTagsAndAttributes])) {
         [task taskCompleted];
         return;
     }
@@ -290,7 +293,7 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
 }
 
 - (void)handleAttributeUpdateTask:(id<UATask>)task {
-    if (!self.componentEnabled || ![self.privacyManager isEnabled:UAFeaturesContacts]) {
+    if (!(self.identifier && [self.privacyManager isEnabled:UAFeaturesTagsAndAttributes])) {
         [task taskCompleted];
         return;
     }
@@ -326,7 +329,7 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
 
 - (void)setIdentifier:(NSString *)identifier {
     if (identifier && ![self.privacyManager isEnabled:UAFeaturesContacts]) {
-        UA_LWARN(@"Ignoring named user ID request, global data collection is disabled");
+        UA_LWARN(@"Ignoring named user ID request, contacts are disabled.");
         return;
     }
 
@@ -458,7 +461,12 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
 
 - (void)addTags:(NSArray *)tags group:(NSString *)tagGroupID {
     if (![self.privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
-        UA_LWARN(@"Unable to add tags %@ for group %@ when data collection is disabled.", [tags description], tagGroupID);
+        UA_LWARN(@"Unable to add tags %@ for group %@ when tags and attributes are disabled.", [tags description], tagGroupID);
+        return;
+    }
+
+    if (!self.identifier) {
+        UA_LERR(@"Can't update tags without first setting a named user identifier.");
         return;
     }
 
@@ -467,7 +475,12 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
 
 - (void)removeTags:(NSArray *)tags group:(NSString *)tagGroupID {
     if (![self.privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
-        UA_LWARN(@"Unable to remove tags %@ for group %@ when data collection is disabled.", [tags description], tagGroupID);
+        UA_LWARN(@"Unable to remove tags %@ for group %@ when tags and attributes are disabled.", [tags description], tagGroupID);
+        return;
+    }
+
+    if (!self.identifier) {
+        UA_LERR(@"Can't update tags without first setting a named user identifier.");
         return;
     }
 
@@ -475,8 +488,13 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
 }
 
 - (void)setTags:(NSArray *)tags group:(NSString *)tagGroupID {
-    if (![self.privacyManager isEnabled:UAFeaturesContacts]) {
-        UA_LWARN(@"Unable to set tags %@ for group %@ when data collection is disabled.", [tags description], tagGroupID);
+    if (![self.privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
+        UA_LWARN(@"Unable to set tags %@ for group %@ when tags and attributes are disabled.", [tags description], tagGroupID);
+        return;
+    }
+
+    if (!self.identifier) {
+        UA_LERR(@"Can't update tags without first setting a named user identifier.");
         return;
     }
 
@@ -484,6 +502,11 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
 }
 
 - (void)updateTags {
+    if (![self.privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
+        UA_LWARN(@"Can't update contacts are disabled");
+        return;
+    }
+
     if (!self.identifier) {
         UA_LERR(@"Can't update tags without first setting a named user identifier.");
         return;
@@ -495,7 +518,6 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
 - (void)extendChannelRegistrationPayload:(UAChannelRegistrationPayload *)payload
                        completionHandler:(UAChannelRegistrationExtenderCompletionHandler)completionHandler {
     payload.namedUserId = self.identifier;
-
     completionHandler(payload);
 }
 
@@ -507,7 +529,7 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
         if (!self.identifier) {
             [self forceUpdate];
         }
-    } else {
+    } else if (self.identifier) {
         // Once we get a channel, update the named user if necessary.
         [self forceUpdate];
     }
@@ -537,17 +559,17 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
 }
 
 - (void)onEnabledFeaturesChanged {
-    if (![self.privacyManager isEnabled:UAFeaturesContacts]) {
-        // Clear the identifier
-        self.identifier = nil;
-    }
     if (![self.privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
-       // Clear the pending mutations
+        // Clear the pending mutations
         [self.attributeRegistrar clearPendingMutations];
         [self.tagGroupsRegistrar clearPendingMutations];
     }
 
-    [self forceUpdate];
+    if (![self.privacyManager isEnabled:UAFeaturesContacts] && self.identifier != nil) {
+        // Clear the identifier
+        self.identifier = nil;
+        [self update];
+    }
 }
 
 - (NSArray<UATagGroupsMutation *> *)pendingTagGroups {
@@ -563,7 +585,7 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
 
 - (void)applyAttributeMutations:(UAAttributeMutations *)mutations {
     if (![self.privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
-        UA_LWARN(@"Unable to apply attributes %@ when data collection is disabled.", mutations);
+        UA_LWARN(@"Unable to apply attributes %@ when tags and attributes are disabled.", mutations);
         return;
     }
 

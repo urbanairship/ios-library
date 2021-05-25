@@ -17,10 +17,6 @@ static NSString * const UANamedUserUpdateTaskID = @"UANamedUser.update";
 static NSString * const UANamedUserTagUpdateTaskID = @"UANamedUser.tags.update";
 static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attributes.update";
 
-@interface UANamedUser()
-- (void)onEnabledFeaturesChanged;
-@end
-
 @interface UANamedUserTest : UAAirshipBaseTest
 
 @property (nonatomic, strong) id mockedAirship;
@@ -31,19 +27,19 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
 @property (nonatomic, strong) id mockTimeZone;
 @property (nonatomic, strong) id mockNotificationCenter;
 @property (nonatomic, strong) id mockTaskManager;
-@property (nonatomic, strong) id mockPrivacyManager;
+@property (nonatomic, strong) UAPrivacyManager *privacyManager;
 @property (nonatomic, strong) UATestDate *testDate;
 @property (nonatomic, strong) UANamedUser *namedUser;
 @property (nonatomic, copy) NSString *channelID;
 @property (nonatomic, copy) UAChannelRegistrationExtenderBlock channelRegistrationExtenderBlock;
 @property (nonatomic, copy) void (^launchHandler)(id<UATask>);
-@property (nonatomic, assign) BOOL isFeatureEnabled;
 @end
 
 @implementation UANamedUserTest
 
 - (void)setUp {
     [super setUp];
+
 
     self.mockChannel = [self mockForClass:[UAChannel class]];
     [[[self.mockChannel stub] andDo:^(NSInvocation *invocation) {
@@ -84,17 +80,8 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
         self.launchHandler =  (__bridge void (^)(id<UATask>))arg;
     }] registerForTaskWithIDs:@[UANamedUserUpdateTaskID, UANamedUserTagUpdateTaskID, UANamedUserAttributeUpdateTaskID] dispatcher:OCMOCK_ANY launchHandler:OCMOCK_ANY];
 
-    self.mockPrivacyManager = [self mockForClass:[UAPrivacyManager class]];
-    
-    UA_WEAKIFY(self)
-    [[[[self.mockPrivacyManager stub] andDo:^(NSInvocation *invocation) {
-        UA_STRONGIFY(self)
-        BOOL enabled = self.isFeatureEnabled;
-        [invocation setReturnValue:(void *)&enabled];
-    }] ignoringNonObjectArgs] isEnabled:0];
-    
-    self.isFeatureEnabled = YES;
-    
+
+    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
     self.namedUser = [UANamedUser namedUserWithChannel:self.mockChannel
                                                 config:self.config
                                     notificationCenter:self.mockNotificationCenter
@@ -104,7 +91,7 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
                                                   date:self.testDate
                                            taskManager:self.mockTaskManager
                                        namedUserClient:self.mockedNamedUserClient
-                                        privacyManager:self.mockPrivacyManager];
+                                        privacyManager:self.privacyManager];
 }
 
 - (void)tearDown {
@@ -179,7 +166,7 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
 
 - (void)testSetIdentifierDataCollectionDisabled {
     self.namedUser.identifier = nil;
-    self.isFeatureEnabled = NO;
+    [self.privacyManager disableFeatures:UAFeaturesContacts];
     self.namedUser.identifier = @"neat";
     XCTAssertNil(self.namedUser.identifier);
 }
@@ -200,7 +187,7 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
                                                   date:self.testDate
                                            taskManager:self.mockTaskManager
                                        namedUserClient:self.mockedNamedUserClient
-                                        privacyManager:self.mockPrivacyManager];
+                                        privacyManager:self.privacyManager];
 
 
     [self.mockTagGroupsRegistrar verify];
@@ -527,6 +514,8 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
 }
 
 - (void)testChannelCreated {
+    self.namedUser.identifier = @"neat";
+    
     [[self.mockTaskManager expect] enqueueRequestWithID:UANamedUserUpdateTaskID options:OCMOCK_ANY];
 
     // Send a channel created event
@@ -679,7 +668,8 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
  * Test that the tag groups registrar is not called when UANamedUser is asked to add device tags and data collection is disabled.
  */
 - (void)testAddDeviceTagsDataCollectionDisabled {
-    self.isFeatureEnabled = NO;
+    self.namedUser.identifier = @"me";
+    [self.privacyManager disableFeatures:UAFeaturesTagsAndAttributes];
 
     NSArray *tags = @[@"foo", @"bar"];
     NSString *group = @"group";
@@ -698,7 +688,7 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
  * Test that the tag groups registrar is called when UANamedUser is asked to add device tags when data collection is enabled.
  */
 - (void)testAddDeviceTagsDataCollectionEnabled {
-    self.isFeatureEnabled = YES;
+    self.namedUser.identifier = @"me";
 
     NSArray *tags = @[@"foo", @"bar"];
     NSString *group = @"group";
@@ -717,6 +707,7 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
  * Test that the tag groups registrar is called when UANamedUser is asked to remove tags
  */
 - (void)testRemoveTags {
+    self.namedUser.identifier = @"me";
     NSArray *tags = @[@"foo", @"bar"];
     NSString *group = @"group";
 
@@ -734,7 +725,8 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
  * Test that the tag groups registrar is not called when UANamedUser is asked to remove device tags and data collection is disabled.
  */
 - (void)testRemoveDeviceTagsDataCollectionDisabled {
-    self.isFeatureEnabled = NO;
+    self.namedUser.identifier = @"me";
+    [self.privacyManager disableFeatures:UAFeaturesTagsAndAttributes];
 
     NSArray *tags = @[@"foo", @"bar"];
     NSString *group = @"group";
@@ -753,7 +745,7 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
  * Test that the tag groups registrar is called when UANamedUser is asked to remove device tags when data collection is enabled.
  */
 - (void)testRemoveDeviceTagsDataCollectionEnabled {
-    self.isFeatureEnabled = YES;
+    self.namedUser.identifier = @"me";
 
     NSArray *tags = @[@"foo", @"bar"];
     NSString *group = @"group";
@@ -772,6 +764,8 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
  * Test that the tag groups registrar is called when UANamedUser is asked to set tags
  */
 - (void)testSetTags {
+    self.namedUser.identifier = @"me";
+
     NSArray *tags = @[@"foo", @"bar"];
     NSString *group = @"group";
 
@@ -789,7 +783,8 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
  * Test that the tag groups registrar is not called when UANamedUser is asked to set device tags and data collection is disabled.
  */
 - (void)testSetDeviceTagsDataCollectionDisabled {
-    self.isFeatureEnabled = NO;
+    self.namedUser.identifier = @"me";
+    [self.privacyManager disableFeatures:UAFeaturesTagsAndAttributes];
 
     NSArray *tags = @[@"foo", @"bar"];
     NSString *group = @"group";
@@ -808,7 +803,7 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
  * Test that the tag groups registrar is called when UANamedUser is asked to set device tags when data collection is enabled.
  */
 - (void)testSetDeviceTagsDataCollectionEnabled {
-    self.isFeatureEnabled = YES;
+    self.namedUser.identifier = @"me";
 
     NSArray *tags = @[@"foo", @"bar"];
     NSString *group = @"group";
@@ -829,8 +824,7 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
 
     [[self.mockTaskManager expect] enqueueRequestWithID:UANamedUserUpdateTaskID options:OCMOCK_ANY];
 
-    self.isFeatureEnabled = NO;
-    [self.namedUser onEnabledFeaturesChanged];
+    [self.privacyManager disableFeatures:UAFeaturesContacts];
 
     XCTAssertNil(self.namedUser.identifier);
 
@@ -867,8 +861,7 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
     // expect pending mutations to be deleted
     [[self.mockAttributeRegistrar expect] clearPendingMutations];
 
-    self.isFeatureEnabled = NO;
-    [self.namedUser onEnabledFeaturesChanged];
+    [self.privacyManager disableFeatures:UAFeaturesTagsAndAttributes];
 
     [self.mockAttributeRegistrar verify];
 }
@@ -917,7 +910,7 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
  * Test updateNamedUserAttributes method if data collection is disabled.
  */
 - (void)testUpdateNamedUserAttributesIfDataDisabled {
-    self.isFeatureEnabled = NO;
+    [self.privacyManager disableFeatures:UAFeaturesContacts];
 
     id mockTask = [self mockForProtocol:@protocol(UATask)];
     [[[mockTask stub] andReturn:UANamedUserAttributeUpdateTaskID] taskID];
@@ -1000,22 +993,12 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
     [mockTask verify];
 }
 
-- (void)testSetDataCollectionEnabledYES {
-    [[self.mockTaskManager expect] enqueueRequestWithID:UANamedUserUpdateTaskID options:OCMOCK_ANY];
-
-    self.isFeatureEnabled = YES;
-    [self.namedUser onEnabledFeaturesChanged];
-
-    [self.mockTaskManager verify];
-}
 
 - (void)testSetDataCollectionEnabledNO {
     self.namedUser.identifier = @"neat";
 
-    self.namedUser.componentEnabled = NO;
-    self.isFeatureEnabled = NO;
-    [self.namedUser onEnabledFeaturesChanged];
-
+    [self.privacyManager disableFeatures:UAFeaturesContacts];
+    
     [[self.mockTaskManager expect] enqueueRequestWithID:UANamedUserUpdateTaskID options:OCMOCK_ANY];
     XCTAssertNil(self.namedUser.identifier);
 }
