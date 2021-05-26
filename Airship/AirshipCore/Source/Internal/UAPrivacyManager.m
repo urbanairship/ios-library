@@ -12,110 +12,112 @@ NSString *const UAChatEnabledKey = @"AirshipChat.enabled";
 @interface UAPrivacyManager()
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
-@property (nonatomic, assign) UAFeatures defaultEnabledFeatures;
 @end
 
 @implementation UAPrivacyManager
 
 + (instancetype)privacyManagerWithDataStore:(UAPreferenceDataStore *)dataStore
-                     defaultEnabledFeatures:(UAFeatures)features {
+                     defaultEnabledFeatures:(UAFeatures)defaultEnabledFeatures {
     return [[UAPrivacyManager alloc] initWithDataStore:dataStore
-                                defaultEnabledFeatures:(UAFeatures)features
+                                defaultEnabledFeatures:defaultEnabledFeatures
                                     notificationCenter:[NSNotificationCenter defaultCenter]];
 }
 
 - (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore
-           defaultEnabledFeatures:(UAFeatures)features
+           defaultEnabledFeatures:(UAFeatures)defaultEnabledFeatures
                notificationCenter:(NSNotificationCenter *)notificationCenter {
     self = [super init];
     if (self) {
         self.dataStore = dataStore;
         self.notificationCenter = notificationCenter;
-        self.defaultEnabledFeatures = features;
+
+        if ([self.dataStore keyExists:UAPrivacyManagerEnabledFeaturesKey]) {
+            _enabledFeatures = [self.dataStore integerForKey:UAPrivacyManagerEnabledFeaturesKey];
+        } else {
+            _enabledFeatures = defaultEnabledFeatures;
+        }
     }
     return self;
 }
 
 - (void)setEnabledFeatures:(UAFeatures)features {
-    NSInteger enabledFeatures = features;
-    [self.dataStore setObject:@(enabledFeatures) forKey:UAPrivacyManagerEnabledFeaturesKey];
-    [self.notificationCenter postNotificationName:UAPrivacyManagerEnabledFeaturesChangedEvent object:nil];
-}
+    if (_enabledFeatures != features) {
+        _enabledFeatures = features;
+        [self.dataStore setObject:@(features) forKey:UAPrivacyManagerEnabledFeaturesKey];
 
-- (UAFeatures)enabledFeatures {
-    NSNumber *enabledFeatures = [self.dataStore objectForKey:UAPrivacyManagerEnabledFeaturesKey];
-    if (!enabledFeatures) {
-        return self.defaultEnabledFeatures;
+        [[UADispatcher mainDispatcher] dispatchAsyncIfNecessary:^{
+            [self.notificationCenter postNotificationName:UAPrivacyManagerEnabledFeaturesChangedEvent object:nil];
+        }];
     }
-    return [enabledFeatures integerValue];
 }
 
 - (void)enableFeatures:(UAFeatures)features {
-    NSInteger updatedFeatures = ([self enabledFeatures] | features);
-    [self.dataStore setObject:@(updatedFeatures) forKey:UAPrivacyManagerEnabledFeaturesKey];
-    [self.notificationCenter postNotificationName:UAPrivacyManagerEnabledFeaturesChangedEvent object:nil];
+    self.enabledFeatures |= features;
 }
 
 - (void)disableFeatures:(UAFeatures)features {
-    NSInteger updatedFeatures = ([self enabledFeatures] & ~features);
-    [self.dataStore setObject:@(updatedFeatures) forKey:UAPrivacyManagerEnabledFeaturesKey];
-    [self.notificationCenter postNotificationName:UAPrivacyManagerEnabledFeaturesChangedEvent object:nil];
+    self.enabledFeatures &= ~features;
 }
 
 - (BOOL)isEnabled:(UAFeatures)feature {
-    NSInteger enabledFeatures = [self enabledFeatures];
-    
     if (feature == UAFeaturesNone) {
-        return (enabledFeatures == UAFeaturesNone);
+        return (self.enabledFeatures == UAFeaturesNone);
     } else {
-        return (enabledFeatures & feature) == feature;
+        return (self.enabledFeatures & feature) == feature;
     }
 }
 
 - (BOOL)isAnyFeatureEnabled {
-    NSInteger enabledFeatures = [self enabledFeatures];
-    return (enabledFeatures != UAFeaturesNone);
+    return (self.enabledFeatures != UAFeaturesNone);
 }
 
 - (void)migrateData {
+    UAFeatures features = self.enabledFeatures;
     if ([self.dataStore keyExists:UAirshipDataCollectionEnabledKey]) {
         if ([self.dataStore boolForKey:UAirshipDataCollectionEnabledKey]) {
-            [self enableFeatures:UAFeaturesNone];
+            features = UAFeaturesNone;
         } else {
-            [self enableFeatures:UAFeaturesAll];
+            features= UAFeaturesAll;
         }
         [self.dataStore removeObjectForKey:UAirshipDataCollectionEnabledKey];
     }
+
     if ([self.dataStore keyExists:UAPushEnabledKey]) {
         if (![self.dataStore boolForKey:UAPushEnabledKey]) {
-            [self disableFeatures:UAFeaturesPush];
+            features &= ~UAFeaturesPush;
         }
         [self.dataStore removeObjectForKey:UAPushEnabledKey];
     }
+
     if ([self.dataStore keyExists:UAPushTokenRegistrationEnabledKey]) {
         if (![self.dataStore boolForKey:UAPushTokenRegistrationEnabledKey]) {
-            [self disableFeatures:UAFeaturesPush];
+            features &= ~UAFeaturesPush;
         }
         [self.dataStore removeObjectForKey:UAPushTokenRegistrationEnabledKey];
     }
+
     if ([self.dataStore keyExists:kUAAnalyticsEnabled]) {
         if (![self.dataStore boolForKey:kUAAnalyticsEnabled]) {
-            [self disableFeatures:UAFeaturesAnalytics];
+            features &= ~UAFeaturesAnalytics;
         }
         [self.dataStore removeObjectForKey:kUAAnalyticsEnabled];
     }
+
     if ([self.dataStore keyExists:UAInAppAutomationEnabledKey]) {
         if (![self.dataStore boolForKey:UAInAppAutomationEnabledKey]) {
-            [self disableFeatures:UAFeaturesInAppAutomation];
+            features &= ~UAFeaturesInAppAutomation;
         }
         [self.dataStore removeObjectForKey:UAInAppAutomationEnabledKey];
     }
+
     if ([self.dataStore keyExists:UAChatEnabledKey]) {
         if (![self.dataStore boolForKey:UAChatEnabledKey]) {
-            [self disableFeatures:UAFeaturesChat];
+            features &= ~UAFeaturesChat;
         }
         [self.dataStore removeObjectForKey:UAChatEnabledKey];
     }
+
+    self.enabledFeatures = features;
 }
 
 @end

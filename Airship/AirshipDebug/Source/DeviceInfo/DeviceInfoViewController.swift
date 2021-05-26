@@ -417,7 +417,7 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             if (cell.cellSwitch.isOn) {
                 UAirship.shared().privacyManager.enable(UAFeatures.all)
             } else {
-                UAirship.shared().privacyManager.setEnabledFeatures([])
+                UAirship.shared().privacyManager.enabledFeatures = []
             }
         case analyticsEnabled:
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)

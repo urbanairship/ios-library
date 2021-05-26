@@ -21,7 +21,7 @@ class AirshipChatTests: XCTestCase {
                                 conversation: self.mockConversation,
                                 privacyManager: self.privacyManager)
 
-        self.privacyManager.setEnabledFeatures(UAFeatures.all)
+        self.privacyManager.enabledFeatures = UAFeatures.all
     }
 
     func testOpenDelegate() throws {
@@ -55,7 +55,7 @@ class AirshipChatTests: XCTestCase {
     func testDataCollectionDisabled() throws {
         XCTAssertTrue(self.mockConversation.enabled)
 
-        self.privacyManager.setEnabledFeatures([])
+        self.privacyManager.enabledFeatures = []
         XCTAssertFalse(self.mockConversation.enabled)
         XCTAssertTrue(self.mockConversation.clearDataCalled)
     }

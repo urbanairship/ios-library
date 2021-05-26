@@ -105,18 +105,11 @@ typedef NS_OPTIONS(NSUInteger, UAFeatures) {
                      defaultEnabledFeatures:(UAFeatures)features;
 
 /**
- * Sets the current enabled features.
- *
- * @param features The features to set as enabled.
- */
-- (void)setEnabledFeatures:(UAFeatures)features;
-
-/**
  * Gets the current enabled features.
  *
  * @return The enabled features.
  */
-- (UAFeatures)enabledFeatures;
+@property(nonatomic, assign) UAFeatures enabledFeatures;
 
 /**
  * Enables features.

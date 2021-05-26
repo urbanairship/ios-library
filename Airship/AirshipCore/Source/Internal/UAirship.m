@@ -600,9 +600,9 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
 - (void)setDataCollectionEnabled:(BOOL)enabled {
     if (enabled) {
-        [self.sharedPrivacyManager setEnabledFeatures:UAFeaturesNone];
+        self.sharedPrivacyManager.enabledFeatures = UAFeaturesNone;
     } else {
-        [self.sharedPrivacyManager setEnabledFeatures:UAFeaturesAll];
+        self.sharedPrivacyManager.enabledFeatures = UAFeaturesAll;
     }
 }
 

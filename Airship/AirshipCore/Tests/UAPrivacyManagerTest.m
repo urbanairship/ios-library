@@ -84,4 +84,38 @@
     XCTAssertFalse([self.privacyManager isAnyFeatureEnabled]);
 }
 
+- (void)testSetEnabled {
+    self.privacyManager.enabledFeatures = UAFeaturesChat;
+
+    XCTAssertTrue([self.privacyManager isEnabled:UAFeaturesChat]);
+    XCTAssertFalse([self.privacyManager isEnabled:UAFeaturesAnalytics]);
+
+    self.privacyManager.enabledFeatures = UAFeaturesAnalytics;
+    XCTAssertTrue([self.privacyManager isEnabled:UAFeaturesAnalytics]);
+}
+
+- (void)testNotifiedOnChnage {
+    __block NSUInteger eventCount = 0;
+    id observer = [[NSNotificationCenter defaultCenter] addObserverForName:UAPrivacyManagerEnabledFeaturesChangedEvent
+                                                                     object:nil
+                                                                      queue:nil
+                                                                 usingBlock:^(NSNotification * _Nonnull note) {
+        eventCount++;
+    }];
+
+    self.privacyManager.enabledFeatures = UAFeaturesAll;
+    [self.privacyManager disableFeatures:UAFeaturesNone];
+    [self.privacyManager enableFeatures:UAFeaturesAll];
+    [self.privacyManager enableFeatures:UAFeaturesAnalytics];
+    XCTAssertEqual(0, eventCount);
+
+    [self.privacyManager disableFeatures:UAFeaturesChat];
+    XCTAssertEqual(1, eventCount);
+
+    [self.privacyManager enableFeatures:UAFeaturesChat];
+    XCTAssertEqual(2, eventCount);
+
+    [[NSNotificationCenter defaultCenter] removeObserver:observer];
+}
+
 @end
