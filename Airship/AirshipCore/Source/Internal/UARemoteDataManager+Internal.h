@@ -29,11 +29,13 @@ NS_ASSUME_NONNULL_BEGIN
  * @param config The Airship config.
  * @param dataStore A UAPreferenceDataStore to store persistent preferences
  * @param localeManager A UALocaleManager.
+ * @param privacyManager The privacy manager.
  * @return The remote data manager instance.
  */
 + (instancetype)remoteDataManagerWithConfig:(UARuntimeConfig *)config
                                   dataStore:(UAPreferenceDataStore *)dataStore
-                              localeManager:(UALocaleManager *)localeManager;
+                              localeManager:(UALocaleManager *)localeManager
+                             privacyManager:(UAPrivacyManager *)privacyManager;
 
 /**
  * The minimum amount of time in seconds between remote data refreshes. Increase this
@@ -54,6 +56,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param date The date.
  * @param localeManager A UALocaleManager.
  * @param taskManager The task manager.
+ * @param privacyManager The privacy manager.
  * @return The remote data manager instance.
  */
 + (instancetype)remoteDataManagerWithConfig:(UARuntimeConfig *)config
@@ -65,7 +68,8 @@ NS_ASSUME_NONNULL_BEGIN
                                  dispatcher:(UADispatcher *)dispatcher
                                        date:(UADate *)date
                               localeManager:(UALocaleManager *)localeManager
-                                taskManager:(UATaskManager *)taskManager;
+                                taskManager:(UATaskManager *)taskManager
+                             privacyManager:(UAPrivacyManager *)privacyManager;
 
 @end
 

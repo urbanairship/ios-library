@@ -103,6 +103,7 @@ static NSString * const UALastRemoteDataModifiedTime = @"UALastRemoteDataModifie
 @property (nonatomic, strong) UAAppStateTracker *appStateTracker;
 @property (nonatomic, strong) UALocaleManager *localeManager;
 @property (nonatomic, strong) UATaskManager *taskManager;
+@property (nonatomic, strong) UAPrivacyManager *privacyManager;
 @end
 
 @implementation UARemoteDataManager
@@ -116,7 +117,8 @@ static NSString * const UALastRemoteDataModifiedTime = @"UALastRemoteDataModifie
                              dispatcher:(UADispatcher *)dispatcher
                                    date:(UADate *)date
                                  locale:(UALocaleManager *)localeManager
-                            taskManager:(UATaskManager *)taskManager {
+                            taskManager:(UATaskManager *)taskManager
+                         privacyManager:(UAPrivacyManager *)privacyManager {
 
     self = [super initWithDataStore:dataStore];
     if (self) {
@@ -130,6 +132,7 @@ static NSString * const UALastRemoteDataModifiedTime = @"UALastRemoteDataModifie
         self.appStateTracker = appStateTracker;
         self.localeManager = localeManager;
         self.taskManager = taskManager;
+        self.privacyManager = privacyManager;
 
         // Register for locale change notification
         [self.notificationCenter addObserver:self
@@ -147,10 +150,21 @@ static NSString * const UALastRemoteDataModifiedTime = @"UALastRemoteDataModifie
                                         name:UARemoteConfigURLManagerConfigUpdated
                                       object:nil];
 
+        [self.notificationCenter addObserver:self
+                                    selector:@selector(checkRefresh)
+                                        name:UAPrivacyManagerEnabledFeaturesChangedEvent
+                                      object:nil];
+
         UA_WEAKIFY(self)
         [self.taskManager registerForTaskWithID:UARemoteDataRefreshTask
                                      dispatcher:[UADispatcher serialDispatcher]
                                   launchHandler:^(id<UATask> task) {
+
+            if (![self.privacyManager isAnyFeatureEnabled]) {
+                [task taskCompleted];
+                return;
+            }
+
             UA_STRONGIFY(self)
             [self handleRefreshTask:task];
         }];
@@ -163,7 +177,8 @@ static NSString * const UALastRemoteDataModifiedTime = @"UALastRemoteDataModifie
 
 + (UARemoteDataManager *)remoteDataManagerWithConfig:(UARuntimeConfig *)config
                                            dataStore:(UAPreferenceDataStore *)dataStore
-                                       localeManager:(UALocaleManager *)localeManager {
+                                       localeManager:(UALocaleManager *)localeManager
+                                       privacyManager:(UAPrivacyManager *)privacyManager {
     UARemoteDataStore *remoteDataStore = [UARemoteDataStore storeWithName:[NSString stringWithFormat:UACoreDataStoreName, config.appKey]];
     return [self remoteDataManagerWithConfig:config
                                    dataStore:dataStore
@@ -174,7 +189,8 @@ static NSString * const UALastRemoteDataModifiedTime = @"UALastRemoteDataModifie
                                   dispatcher:[UADispatcher mainDispatcher]
                                         date:[[UADate alloc] init]
                                localeManager:localeManager
-                                 taskManager:[UATaskManager shared]];
+                                 taskManager:[UATaskManager shared]
+                              privacyManager:privacyManager];
 }
 
 + (instancetype)remoteDataManagerWithConfig:(UARuntimeConfig *)config
@@ -186,7 +202,8 @@ static NSString * const UALastRemoteDataModifiedTime = @"UALastRemoteDataModifie
                                  dispatcher:(UADispatcher *)dispatcher
                                        date:(UADate *)date
                               localeManager:(UALocaleManager *)localeManager
-                                taskManager:(UATaskManager *)taskManager {
+                                taskManager:(UATaskManager *)taskManager
+                             privacyManager:(UAPrivacyManager *)privacyManager {
 
     return [[self alloc] initWithConfig:config
                               dataStore:dataStore
@@ -197,16 +214,14 @@ static NSString * const UALastRemoteDataModifiedTime = @"UALastRemoteDataModifie
                              dispatcher:dispatcher
                                    date:date
                                  locale:localeManager
-                            taskManager:taskManager];
+                            taskManager:taskManager
+                         privacyManager:privacyManager];
 }
 
 - (NSUInteger)remoteDataRefreshInterval {
-    // if key isn't in the data store, default it.
     if (![self.dataStore keyExists:UARemoteDataRefreshIntervalKey]) {
-        [self.dataStore setInteger:UARemoteDataRefreshIntervalDefault forKey:UARemoteDataRefreshIntervalKey];
+        return UARemoteDataRefreshIntervalDefault;
     }
-
-    // return the value in the datastore
     return [self.dataStore integerForKey:UARemoteDataRefreshIntervalKey];
 }
 
@@ -258,31 +273,37 @@ static NSString * const UALastRemoteDataModifiedTime = @"UALastRemoteDataModifie
 }
 
 - (void)enqueueRefreshTask {
-    [self.taskManager enqueueRequestWithID:UARemoteDataRefreshTask
+    if ([self.privacyManager isAnyFeatureEnabled]) {
+        [self.taskManager enqueueRequestWithID:UARemoteDataRefreshTask
                                    options:[UATaskRequestOptions defaultOptions]];
+    }
 }
 
 - (BOOL)shouldRefresh {
+    if (![self.privacyManager isAnyFeatureEnabled]) {
+        return NO;
+    }
+
     NSDate *lastRefreshTime = [self.dataStore objectForKey:UARemoteDataLastRefreshTimeKey] ?: [NSDate distantPast];
     NSTimeInterval timeSinceLastRefresh = -([lastRefreshTime timeIntervalSinceDate:self.date.now]);
 
     if (self.appStateTracker.state != UAApplicationStateActive) {
-        return false;
+        return NO;
     }
 
     if (self.remoteDataRefreshInterval <= timeSinceLastRefresh) {
-        return true;
+        return YES;
     }
 
     if (![self isLastAppVersionCurrent]) {
-        return true;
+        return YES;
     }
 
     if (![self isLastMetadataCurrent]) {
-        return true;
+        return YES;
     }
 
-    return false;
+    return NO;
 }
 
 - (void)handleRefreshTask:(id<UATask>)task {

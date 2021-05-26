@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UARemoteConfigManager+Internal.h"
-#import "UABaseTest.h"
+#import "UAAirshipBaseTest.h"
 #import "UARemoteDataManager+Internal.h"
 #import "UAirship+Internal.h"
 #import "UARemoteDataPayload+Internal.h"
@@ -19,12 +19,12 @@
 @property (nonatomic, strong, nonnull) NSMutableDictionary *appliedConfig;
 @end
 
-@interface UARemoteConfigManagerTest : UABaseTest
+@interface UARemoteConfigManagerTest : UAAirshipBaseTest
 @property(nonatomic, strong) id mockRemoteDataManager;
-@property(nonatomic, strong) id mockApplicationMetrics;
 @property(nonatomic, strong) UATestRemoteConfigModuleAdapter *testModuleAdapter;
 @property(nonatomic, strong) UARemoteDataPublishBlock publishBlock;
 @property(nonatomic, strong) UARemoteConfigManager *remoteConfigManager;
+@property(nonatomic, strong) UAPrivacyManager *privacyManager;
 @property(nonatomic, copy) NSString *appVersion;
 
 @end
@@ -34,8 +34,11 @@
 - (void)setUp {
     [super setUp];
 
-    // Mock application metrics
-    self.mockApplicationMetrics = [self mockForClass:[UAApplicationMetrics class]];
+    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
+
+    UADisposable *disposable = [UADisposable disposableWithBlock:^{
+        self.publishBlock = nil;
+    }];
 
     // Mock remote data
     self.mockRemoteDataManager = [self mockForClass:[UARemoteDataManager class]];
@@ -48,22 +51,36 @@
         XCTAssertTrue([types containsObject:@"app_config:ios"]);
         [invocation getArgument:&arg atIndex:3];
         self.publishBlock = (__bridge UARemoteDataPublishBlock)arg;
+        [invocation setReturnValue:(void *)&disposable];
     }] subscribeWithTypes:OCMOCK_ANY block:OCMOCK_ANY];
 
     // Mock module adapter
     self.testModuleAdapter = [[UATestRemoteConfigModuleAdapter alloc] init];
 
+    UA_WEAKIFY(self);
     self.remoteConfigManager = [UARemoteConfigManager remoteConfigManagerWithRemoteDataManager:self.mockRemoteDataManager
-                                                                            applicationMetrics:self.mockApplicationMetrics
-                                                                                 moduleAdapter:self.testModuleAdapter];
+                                                                                privacyManager:self.privacyManager
+                                                                                 moduleAdapter:self.testModuleAdapter versionBlock:^NSString *{
+        UA_STRONGIFY(self);
+        return self.appVersion;
+    }];
 
-    [[[self.mockApplicationMetrics stub] andCall:@selector(appVersion) onObject:self] currentAppVersion];
     self.appVersion = @"0.0.0";
 }
 
 - (void)tearDown {
     self.publishBlock = nil;
     [super tearDown];
+}
+
+- (void)testSubscription {
+    XCTAssertNotNil(self.publishBlock);
+
+    self.privacyManager.enabledFeatures = UAFeaturesNone;
+    XCTAssertNil(self.publishBlock);
+
+    self.privacyManager.enabledFeatures = UAFeaturesChat;
+    XCTAssertNotNil(self.publishBlock);
 }
 
 /**
@@ -83,7 +100,6 @@
     UARemoteDataPayload *common = [UARemoteConfigManagerTest disablePayloadWithName:@"app_config"
                                                                     refreshInterval:nil
                                                                      disableModules:kUARemoteConfigModuleAllModules];
-
 
     UARemoteDataPayload *platform = [UARemoteConfigManagerTest disablePayloadWithName:@"app_config:ios"
                                                                       refreshInterval:nil

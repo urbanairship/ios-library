@@ -9,6 +9,7 @@
 #import "UARemoteConfigDisableInfo+Internal.h"
 #import "UARemoteConfigModuleNames+Internal.h"
 #import "UARemoteConfig.h"
+#import "UAUtils.h"
 
 NSString * const UAAppConfigCommon = @"app_config";
 NSString * const UAAppConfigIOS = @"app_config:ios";
@@ -26,46 +27,57 @@ NSString * const UAAirshipRemoteConfigUpdatedKey = @"com.urbanairship.airship_re
 @property (nonatomic, strong) UADisposable *remoteDataSubscription;
 @property (nonatomic, strong) UARemoteConfigModuleAdapter *moduleAdapter;
 @property (nonatomic, strong) UARemoteDataManager *remoteDataManager;
-@property (nonatomic, strong) UAApplicationMetrics *applicationMetrics;
+@property (nonatomic, strong) UAPrivacyManager *privacyManager;
+@property (nonatomic, copy) NSString *(^versionBlock)(void);
+
 @end
 
 @implementation UARemoteConfigManager
 
 + (instancetype)remoteConfigManagerWithRemoteDataManager:(UARemoteDataManager *)remoteDataManager
-                                      applicationMetrics:(UAApplicationMetrics *)applicationMetrics {
+                                          privacyManager:(UAPrivacyManager *)privacyManager {
 
     return [[UARemoteConfigManager alloc] initWithRemoteDataManager:remoteDataManager
-                                                 applicationMetrics:applicationMetrics
-                                                      moduleAdapter:[[UARemoteConfigModuleAdapter alloc] init]];
+                                                     privacyManager:privacyManager
+                                                      moduleAdapter:[[UARemoteConfigModuleAdapter alloc] init]
+                                                       versionBlock:^NSString *{
+        return [UAUtils bundleShortVersionString];
+    }];
 }
 
 + (instancetype)remoteConfigManagerWithRemoteDataManager:(UARemoteDataManager *)remoteDataManager
-                                      applicationMetrics:(UAApplicationMetrics *)applicationMetrics
-                                           moduleAdapter:(UARemoteConfigModuleAdapter *)moduleAdapter {
-
+                                          privacyManager:(UAPrivacyManager *)privacyManager
+                                           moduleAdapter:(UARemoteConfigModuleAdapter *)moduleAdapter
+                                            versionBlock:(NSString *(^)(void))versionBlock {
 
     return [[UARemoteConfigManager alloc] initWithRemoteDataManager:remoteDataManager
-                                                 applicationMetrics:applicationMetrics
-                                                      moduleAdapter:moduleAdapter];
+                                                     privacyManager:privacyManager
+                                                      moduleAdapter:moduleAdapter
+                                                       versionBlock:versionBlock];
 }
 
 - (instancetype)initWithRemoteDataManager:(UARemoteDataManager *)remoteDataManager
-                       applicationMetrics:(UAApplicationMetrics *)applicationMetrics
-                            moduleAdapter:(UARemoteConfigModuleAdapter *)moduleAdapter {
+                           privacyManager:(UAPrivacyManager *)privacyManager
+                            moduleAdapter:(UARemoteConfigModuleAdapter *)moduleAdapter
+                             versionBlock:(NSString *(^)(void))versionBlock {
+
 
     self = [super init];
-    
+
     if (self) {
         self.remoteDataManager = remoteDataManager;
-        self.applicationMetrics = applicationMetrics;
+        self.privacyManager = privacyManager;
         self.moduleAdapter = moduleAdapter;
+        self.versionBlock = versionBlock;
 
-        self.remoteDataSubscription = [remoteDataManager subscribeWithTypes:@[UAAppConfigCommon, UAAppConfigIOS]
-                                                                               block:^(NSArray<UARemoteDataPayload *> *remoteConfig) {
-                                                                                   [self processRemoteConfig:remoteConfig];
-                                                                               }];
+        [self updateRemoteConfigSubscription];
+
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(updateRemoteConfigSubscription)
+                                                     name:UAPrivacyManagerEnabledFeaturesChangedEvent
+                                                   object:nil];
     }
-    
+
     return self;
 }
 
@@ -85,7 +97,7 @@ NSString * const UAAirshipRemoteConfigUpdatedKey = @"com.urbanairship.airship_re
 
     // Module config
     [self applyConfigsFromRemoteData:combinedData];
-    
+
     //Remote config
     [self applyRemoteConfigFromRemoteData:combinedData];
 }
@@ -115,7 +127,7 @@ NSString * const UAAirshipRemoteConfigUpdatedKey = @"com.urbanairship.airship_re
     // Filter out any that do not apply
     NSArray *filteredDisableInfos = [UARemoteConfigManager filterDisableInfos:disableInfos
                                                                    sdkVersion:[UAirshipVersion get]
-                                                                   appVersion:self.applicationMetrics.currentAppVersion];
+                                                                   appVersion:self.versionBlock()];
 
     NSMutableSet<NSString *> *disableModuleNames = [NSMutableSet set];
     NSUInteger remoteDataRefreshInterval = UARemoteConfigDisableRefreshIntervalDefault;
@@ -189,5 +201,18 @@ NSString * const UAAirshipRemoteConfigUpdatedKey = @"com.urbanairship.airship_re
     }]];
 }
 
+- (void)updateRemoteConfigSubscription {
+    if ([self.privacyManager isAnyFeatureEnabled] && !self.remoteDataSubscription) {
+        self.remoteDataSubscription = [self.remoteDataManager subscribeWithTypes:@[UAAppConfigCommon, UAAppConfigIOS]
+                                                                           block:^(NSArray<UARemoteDataPayload *> *remoteConfig) {
+            [self processRemoteConfig:remoteConfig];
+        }];
+    } else {
+        [self.remoteDataSubscription dispose];
+        self.remoteDataSubscription = nil;
+    }
+}
 
 @end
+
+

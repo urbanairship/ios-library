@@ -154,11 +154,12 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
         self.sharedRemoteDataManager = [UARemoteDataManager remoteDataManagerWithConfig:self.config
                                                                               dataStore:self.dataStore
-                                                                          localeManager:self.sharedLocaleManager];
+                                                                          localeManager:self.sharedLocaleManager
+                                                                         privacyManager:self.sharedPrivacyManager];
         [components addObject:self.sharedRemoteDataManager];
 
         self.sharedRemoteConfigManager = [UARemoteConfigManager remoteConfigManagerWithRemoteDataManager:self.sharedRemoteDataManager
-                                                                                      applicationMetrics:self.applicationMetrics];
+                                                                                          privacyManager:self.sharedPrivacyManager];
 
 #if !TARGET_OS_TV
         // UIPasteboard is not available in tvOS

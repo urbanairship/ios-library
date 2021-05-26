@@ -18,6 +18,7 @@
 #import "UALocaleManager+Internal.h"
 #import "UARemoteDataAPIClient+Internal.h"
 #import "UARemoteConfigURLManager.h"
+#import "UAPrivacyManager+Internal.h"
 
 /**
  * Used to test what UARemoteDataManager does when the cache fails underneath it.
@@ -32,6 +33,7 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
 @property (nonatomic, strong) id mockTaskManager;
 
 @property (nonatomic, strong) UARemoteDataManager *remoteDataManager;
+@property (nonatomic, strong) UAPrivacyManager *privacyManager;
 @property (nonatomic, strong) UARemoteDataStore *testStore;
 @property (nonatomic, strong) UATestAppStateTracker *testAppStateTracker;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
@@ -85,6 +87,7 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
     }] registerForTaskWithID:RefreshTask dispatcher:OCMOCK_ANY launchHandler:OCMOCK_ANY];
 
 
+    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
     self.testAppStateTracker = [UATestAppStateTracker shared];
     self.remoteDataManager = [self createManager];
 }
@@ -597,7 +600,8 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
                                                  dispatcher:[UATestDispatcher testDispatcher]
                                                        date:self.testDate
                                               localeManager:self.mockLocaleManager
-                                                taskManager:self.mockTaskManager];
+                                                taskManager:self.mockTaskManager
+                                             privacyManager:self.privacyManager];
 }
 
 @end
