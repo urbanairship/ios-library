@@ -29,11 +29,6 @@ extern NSString *const UAUserPushNotificationsEnabledKey;
 extern NSString *const UABackgroundPushNotificationsEnabledKey;
 
 /**
- * Device token sent during channel registration enabled data store key.
- */
-extern NSString *const UAPushTokenRegistrationEnabledKey;
-
-/**
  * Extended push notification permission enabled data store key.
  */
 extern NSString *const UAExtendedPushNotificationPermissionEnabledKey;

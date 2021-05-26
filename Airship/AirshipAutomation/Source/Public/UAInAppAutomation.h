@@ -21,8 +21,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * In-app automation enable flag.
+ * @deprecated Deprecated – to be removed in SDK version 15.0. Please use the Privacy Manager.
  */
-@property (nonatomic, assign, getter=isEnabled) BOOL enabled;
+@property (nonatomic, assign, getter=isEnabled) BOOL enabled DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 15.0. Please use the Privacy Manager.");
 
 /**
  * In-app automation pause flag.

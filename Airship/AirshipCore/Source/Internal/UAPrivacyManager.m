@@ -4,10 +4,15 @@
 #import "UAComponent.h"
 #import "UAPush+Internal.h"
 
-NSString *const UAPrivacyManagerEnabledFeaturesKey = @"com.urbanairship.privacymanager.enabledfeatures";
+static NSString *const UAPrivacyManagerEnabledFeaturesKey = @"com.urbanairship.privacymanager.enabledfeatures";
 NSString *const UAPrivacyManagerEnabledFeaturesChangedEvent = @"com.urbanairship.privacymanager.enabledfeatures_changed";
-NSString *const UAInAppAutomationEnabledKey = @"UAInAppMessageManagerEnabled";
-NSString *const UAChatEnabledKey = @"AirshipChat.enabled";
+
+static NSString *const LegacyIAAEnableFlag = @"UAInAppMessageManagerEnabled";
+static NSString *const LegacyChatEnableFlag = @"AirshipChat.enabled";
+static NSString *const LegacyLocationEnableFlag = @"UALocationUpdatesEnabled";
+static NSString *const LegacyAnalyticsEnableFlag = @"UAAnalyticsEnabled";
+static NSString *const LegacyPushTokenRegistrationEnableFlag = @"UAPushTokenRegistrationEnabled";
+static NSString *const LegacyDataCollectionEnableEnableFlag = @"com.urbanairship.data_collection_enabled";
 
 @interface UAPrivacyManager()
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
@@ -73,13 +78,13 @@ NSString *const UAChatEnabledKey = @"AirshipChat.enabled";
 
 - (void)migrateData {
     UAFeatures features = self.enabledFeatures;
-    if ([self.dataStore keyExists:UAirshipDataCollectionEnabledKey]) {
-        if ([self.dataStore boolForKey:UAirshipDataCollectionEnabledKey]) {
-            features = UAFeaturesNone;
+    if ([self.dataStore keyExists:LegacyDataCollectionEnableEnableFlag]) {
+        if ([self.dataStore boolForKey:LegacyDataCollectionEnableEnableFlag]) {
+            features = UAFeaturesAll;
         } else {
-            features= UAFeaturesAll;
+            features= UAFeaturesNone;
         }
-        [self.dataStore removeObjectForKey:UAirshipDataCollectionEnabledKey];
+        [self.dataStore removeObjectForKey:LegacyDataCollectionEnableEnableFlag];
     }
 
     if ([self.dataStore keyExists:UAPushEnabledKey]) {
@@ -89,32 +94,39 @@ NSString *const UAChatEnabledKey = @"AirshipChat.enabled";
         [self.dataStore removeObjectForKey:UAPushEnabledKey];
     }
 
-    if ([self.dataStore keyExists:UAPushTokenRegistrationEnabledKey]) {
-        if (![self.dataStore boolForKey:UAPushTokenRegistrationEnabledKey]) {
+    if ([self.dataStore keyExists:LegacyPushTokenRegistrationEnableFlag]) {
+        if (![self.dataStore boolForKey:LegacyPushTokenRegistrationEnableFlag]) {
             features &= ~UAFeaturesPush;
         }
-        [self.dataStore removeObjectForKey:UAPushTokenRegistrationEnabledKey];
+        [self.dataStore removeObjectForKey:LegacyPushTokenRegistrationEnableFlag];
     }
 
-    if ([self.dataStore keyExists:kUAAnalyticsEnabled]) {
-        if (![self.dataStore boolForKey:kUAAnalyticsEnabled]) {
+    if ([self.dataStore keyExists:LegacyAnalyticsEnableFlag]) {
+        if (![self.dataStore boolForKey:LegacyAnalyticsEnableFlag]) {
             features &= ~UAFeaturesAnalytics;
         }
-        [self.dataStore removeObjectForKey:kUAAnalyticsEnabled];
+        [self.dataStore removeObjectForKey:LegacyAnalyticsEnableFlag];
     }
 
-    if ([self.dataStore keyExists:UAInAppAutomationEnabledKey]) {
-        if (![self.dataStore boolForKey:UAInAppAutomationEnabledKey]) {
+    if ([self.dataStore keyExists:LegacyIAAEnableFlag]) {
+        if (![self.dataStore boolForKey:LegacyIAAEnableFlag]) {
             features &= ~UAFeaturesInAppAutomation;
         }
-        [self.dataStore removeObjectForKey:UAInAppAutomationEnabledKey];
+        [self.dataStore removeObjectForKey:LegacyIAAEnableFlag];
     }
 
-    if ([self.dataStore keyExists:UAChatEnabledKey]) {
-        if (![self.dataStore boolForKey:UAChatEnabledKey]) {
+    if ([self.dataStore keyExists:LegacyChatEnableFlag]) {
+        if (![self.dataStore boolForKey:LegacyChatEnableFlag]) {
             features &= ~UAFeaturesChat;
         }
-        [self.dataStore removeObjectForKey:UAChatEnabledKey];
+        [self.dataStore removeObjectForKey:LegacyChatEnableFlag];
+    }
+
+    if ([self.dataStore keyExists:LegacyLocationEnableFlag]) {
+        if (![self.dataStore boolForKey:LegacyLocationEnableFlag]) {
+            [self disableFeatures:UAFeaturesLocation];
+        }
+        [self.dataStore removeObjectForKey:LegacyLocationEnableFlag];
     }
 
     self.enabledFeatures = features;

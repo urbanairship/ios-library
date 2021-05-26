@@ -329,33 +329,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 }
 
 /**
- * Test enabling or disabling pushTokenRegistrationEnabled saves its settings
- * to NSUserDefaults and triggers a channel registration update.
- */
-- (void)testPushTokenRegistrationEnabled {
-    self.push.pushTokenRegistrationEnabled = NO;
-
-    // TEST
-    self.push.pushTokenRegistrationEnabled = YES;
-
-    // VERIFY
-    XCTAssertTrue([self.dataStore boolForKey:UAPushTokenRegistrationEnabledKey],
-                  @"pushTokenRegistrationEnabled should be stored in standardUserDefaults");
-
-    // EXPECTATIONS
-    [[self.mockChannel expect] updateRegistration];
-
-    // TEST
-    self.push.pushTokenRegistrationEnabled = NO;
-
-    // VERIFY
-    XCTAssertFalse([self.dataStore boolForKey:UAPushTokenRegistrationEnabledKey],
-                   @"pushTokenRegistrationEnabled should be stored in standardUserDefaults");
-
-    XCTAssertNoThrow([self.mockChannel verify],  @"should update channel registration");
-}
-
-/**
  * Test enabling extended user notification permission saves its settings
  * to NSUserDefaults and updates apns registration.
  */
@@ -1067,23 +1040,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
     XCTAssertFalse(self.push.userPushNotificationsAllowed,
                    @"UserPushNotificationsAllowed should be NO");
-}
-
-/**
- * Test that pushTokenRegistrationEnabled defaults to the current value of dataCollectionEnabled.
- */
--(void)testPushTokenRegistrationEnabledDataCollection {
-    [self.privacyManager enableFeatures:UAFeaturesPush];
-    XCTAssertTrue(self.push.pushTokenRegistrationEnabled);
-
-    [self.privacyManager disableFeatures:UAFeaturesPush];
-    XCTAssertFalse(self.push.pushTokenRegistrationEnabled);
-
-    self.push.pushTokenRegistrationEnabled = YES;
-    XCTAssertTrue(self.push.pushTokenRegistrationEnabled);
-
-    [self.privacyManager disableFeatures:UAFeaturesPush];
-    XCTAssertTrue(self.push.pushTokenRegistrationEnabled);
 }
 
 - (void)testBackgroundPushNotificationsAllowedDataCollectionDisabled {

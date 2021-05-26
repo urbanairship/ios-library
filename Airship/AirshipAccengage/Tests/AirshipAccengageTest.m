@@ -14,6 +14,7 @@
 #import "UALocaleManager+Internal.h"
 #import "UARemoteConfigURLManager.h"
 #import "UAPrivacyManager+Internal.h"
+#import "UAirship+Internal.h"
 
 @interface AirshipAccengageTests : XCTestCase
 
@@ -23,6 +24,7 @@
 @property (nonatomic, strong) UAAnalytics *analytics;
 @property (nonatomic, strong) UALocaleManager *localeManager;
 @property (nonatomic, strong) id mockPush;
+@property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) UAPrivacyManager *privacyManager;
 
 @end
@@ -46,6 +48,11 @@
 - (void)setUp {
     self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"test"];
     self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
+    
+    self.mockAirship = OCMClassMock([UAirship class]);
+    [UAirship setSharedAirship:self.mockAirship];
+    [[[self.mockAirship stub] andReturn:self.privacyManager] privacyManager];
+    
     UARemoteConfigURLManager *urlManager = [UARemoteConfigURLManager remoteConfigURLManagerWithDataStore:self.dataStore];
     self.config = [[UARuntimeConfig alloc] initWithConfig:[UAConfig defaultConfig] urlManager:urlManager];
     self.localeManager = [UALocaleManager localeManagerWithDataStore:self.dataStore];
@@ -166,11 +173,11 @@
 
     accengage.accengageSettings = @{@"DoNotTrack":@NO};
     [accengage migrateSettingsToAnalytics:self.analytics];
-    XCTAssertTrue(self.analytics.isEnabled);
+    XCTAssertTrue([self.privacyManager isEnabled:UAFeaturesAnalytics]);
 
     accengage.accengageSettings =  @{@"DoNotTrack":@YES};;
     [accengage migrateSettingsToAnalytics:self.analytics];
-    XCTAssertFalse(self.analytics.isEnabled);
+    XCTAssertFalse([self.privacyManager isEnabled:UAFeaturesAnalytics]);
 }
 
 - (void)testPresentationOptionsforNotification {

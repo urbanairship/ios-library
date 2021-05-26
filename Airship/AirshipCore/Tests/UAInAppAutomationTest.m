@@ -1630,7 +1630,6 @@
 
     [self.mockAutomationEngine verify];
     [self.mockRemoteDataClient verify];
-    XCTAssertFalse(self.inAppAutomation.isEnabled);
 
     // test enable
     [[self.mockAutomationEngine expect] resume];
@@ -1640,7 +1639,6 @@
 
     [self.mockAutomationEngine verify];
     [self.mockRemoteDataClient verify];
-    XCTAssertTrue(self.inAppAutomation.isEnabled);
 }
 
 @end

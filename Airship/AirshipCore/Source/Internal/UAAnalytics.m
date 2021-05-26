@@ -82,12 +82,6 @@ NSString *const UAEventKey = @"event";
         self.appStateTracker = appStateTracker;
         self.SDKExtensions = [NSMutableArray array];
         self.headerBlocks = [NSMutableArray array];
-
-        // Default analytics value
-        if (![self.dataStore objectForKey:kUAAnalyticsEnabled]) {
-            [self.dataStore setBool:YES forKey:kUAAnalyticsEnabled];
-        }
-
         self.eventManager.delegate = self;
         [self updateEventManagerUploadsEnabled];
 
@@ -113,14 +107,11 @@ NSString *const UAEventKey = @"event";
                                         name:UAApplicationWillTerminateNotification
                                       object:nil];
         
-        [notificationCenter addObserver:self
+        [self.notificationCenter addObserver:self
                                selector:@selector(onEnabledFeaturesChanged)
                                    name:UAPrivacyManagerEnabledFeaturesChangedEvent
                                  object:nil];
 
-        if (!self.isEnabled) {
-            [self.eventManager deleteAllEvents];
-        }
 
         // If analytics is initialized in the background state, we are responding to a
         // content-available push. If it's initialized in the foreground state takeOff
@@ -230,16 +221,17 @@ NSString *const UAEventKey = @"event";
         return;
     }
 
-    if (!self.isEnabled) {
-        UA_LTRACE(@"Analytics disabled, ignoring event: %@", event.eventType);
-        return;
-    }
 
     NSString *sessionID = self.sessionID;
 
     UA_WEAKIFY(self)
     [self.dispatcher dispatchAsync:^{
         UA_STRONGIFY(self)
+
+        if (!self.isAnalyticsEnabled) {
+            UA_LTRACE(@"Analytics disabled, ignoring event: %@", event.eventType);
+            return;
+        }
 
         UA_LDEBUG(@"Adding %@ event %@.", event.eventType, event.eventID);
         [self.eventManager addEvent:event sessionID:sessionID];
@@ -290,27 +282,20 @@ NSString *const UAEventKey = @"event";
 }
 
 - (BOOL)isEnabled {
-    return [self.dataStore boolForKey:kUAAnalyticsEnabled] && self.config.analyticsEnabled && [self.privacyManager isEnabled:UAFeaturesAnalytics];
+    return [self.privacyManager isEnabled:UAFeaturesAnalytics];
 }
 
 - (void)setEnabled:(BOOL)enabled {
-    // If we are disabling the runtime flag clear all events
-    if ([self.dataStore boolForKey:kUAAnalyticsEnabled] && !enabled) {
-        UA_LINFO(@"Deleting all analytics events.");
-        [self.eventManager deleteAllEvents];
+    if (enabled) {
+        [self.privacyManager enableFeatures:UAFeaturesAnalytics];
+    } else {
+        [self.privacyManager disableFeatures:UAFeaturesAnalytics];
     }
-
-    if (enabled && ![self.privacyManager isEnabled:UAFeaturesAnalytics]) {
-        UA_LWARN(@"Analytics will remain disabled until the feature is enabled in Privacy manager");
-    }
-
-    [self.dataStore setBool:enabled forKey:kUAAnalyticsEnabled];
-    [self updateEventManagerUploadsEnabled];
 }
 
 - (void)associateDeviceIdentifiers:(UAAssociatedIdentifiers *)associatedIdentifiers {
-    if (![self.privacyManager isEnabled:UAFeaturesAnalytics]) {
-        UA_LWARN(@"Unable to associate identifiers %@ when data collection is disabled", associatedIdentifiers.allIDs);
+    if (!self.isAnalyticsEnabled) {
+        UA_LWARN(@"Unable to associate identifiers %@ when analytics is disabled", associatedIdentifiers.allIDs);
         return;
     }
 
@@ -443,19 +428,21 @@ NSString *const UAEventKey = @"event";
 
 - (void)onEnabledFeaturesChanged {
     [self updateEventManagerUploadsEnabled];
-    if (![self.privacyManager isEnabled:UAFeaturesAnalytics]) {
+}
+
+- (void)updateEventManagerUploadsEnabled {
+    if (self.isAnalyticsEnabled) {
+        self.eventManager.uploadsEnabled = YES;
+        [self.eventManager scheduleUpload];
+    } else {
+        self.eventManager.uploadsEnabled = NO;
         [self.eventManager deleteAllEvents];
         [self.dataStore setValue:nil forKey:kUAAssociatedIdentifiers];
     }
 }
 
-- (void)updateEventManagerUploadsEnabled {
-    if (self.isEnabled && self.componentEnabled && [self.privacyManager isEnabled:UAFeaturesAnalytics]) {
-        self.eventManager.uploadsEnabled = YES;
-        [self.eventManager scheduleUpload];
-    } else {
-        self.eventManager.uploadsEnabled = NO;
-    }
+- (BOOL)isAnalyticsEnabled {
+    return self.componentEnabled && self.config.isAnalyticsEnabled && [self.privacyManager isEnabled:UAFeaturesAnalytics];
 }
 
 @end

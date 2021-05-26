@@ -15,11 +15,13 @@
 #import "UADeviceRegistrationEvent+Internal.h"
 #import "UAPushReceivedEvent+Internal.h"
 #import "UAUtils+Internal.h"
+#import "UAPrivacyManager+Internal.h"
 
 @interface UAEventTest : UABaseTest
 
 // stubs
 @property (nonatomic, strong) id analytics;
+@property (nonatomic, strong) id privacyManager;
 @property (nonatomic, strong) id airship;
 @property (nonatomic, strong) id reachability;
 @property (nonatomic, strong) id timeZone;
@@ -40,13 +42,14 @@
     self.analytics = [self mockForClass:[UAAnalytics class]];
     self.push = [self mockForClass:[UAPush class]];
     self.channel = [self mockForClass:[UAChannel class]];
+    self.privacyManager = [self mockForClass:[UAPrivacyManager class]];
 
     self.airship = [self mockForClass:[UAirship class]];
 
     [[[self.airship stub] andReturn:self.analytics] sharedAnalytics];
     [[[self.airship stub] andReturn:self.push] push];
     [[[self.airship stub] andReturn:self.channel] channel];
-
+    [[[self.airship stub] andReturn:self.privacyManager] privacyManager];
 
     [UAirship setSharedAirship:self.airship];
 
@@ -185,7 +188,7 @@
  * Test device registration event when pushTokenRegistrationEnabled is YES.
  */
 - (void)testRegistrationEvent {
-    [[[self.push stub] andReturnValue:@YES] pushTokenRegistrationEnabled];
+    [[[self.privacyManager stub] andReturnValue:@YES] isEnabled:UAFeaturesPush];
     [[[self.push stub] andReturn:@"a12312ad"] deviceToken];
     [[[self.channel stub] andReturn:@"someChannelID"] identifier];
 
@@ -204,7 +207,7 @@
  * Test device registration event when pushTokenRegistrationEnabled is NO.
  */
 - (void)testRegistrationEventPushTokenRegistrationEnabledNo {
-    [[[self.push stub] andReturnValue:@NO] pushTokenRegistrationEnabled];
+    [[[self.privacyManager stub] andReturnValue:@NO] isEnabled:UAFeaturesPush];
     [[[self.push stub] andReturn:@"a12312ad"] deviceToken];
     [[[self.channel stub] andReturn:@"someChannelID"] identifier];
 

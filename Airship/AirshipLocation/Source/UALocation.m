@@ -5,12 +5,15 @@
 #import "UAPrivacyManager.h"
 
 NSString *const UALocationAutoRequestAuthorizationEnabled = @"UALocationAutoRequestAuthorizationEnabled";
-NSString *const UALocationUpdatesEnabled = @"UALocationUpdatesEnabled";
 NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdatesAllowed";
 
 @interface UALocation()
 @property (nonatomic, strong) UAAnalytics<UAExtendableAnalyticsHeaders> *analytics;
 @property (nonatomic, strong) UAPrivacyManager *privacyManager;
+@end
+
+@interface UAPrivacyManager()
+@property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @end
 
 @implementation UALocation
@@ -32,6 +35,7 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
         self.locationManager.delegate = self;
 
         NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+        self.privacyManager.notificationCenter = notificationCenter;
 
         // Update the location service on app background
         [notificationCenter addObserver:self
@@ -84,9 +88,8 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
                        completionHandler:(UAChannelRegistrationExtenderCompletionHandler)completionHandler {
 
     // Only set location settings if the app is opted in to data collection
-    if ([self.privacyManager isEnabled:UAFeaturesLocation])  {
-        payload.locationSettings = self.locationUpdatesEnabled ? @(YES) : @(NO);
-    }
+    payload.locationSettings = @([self.privacyManager isEnabled:UAFeaturesLocation]);
+  
 
     completionHandler(payload);
 }
@@ -95,10 +98,16 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
 #pragma mark Analytics
 
 - (NSDictionary<NSString *, NSString *> *)analyticsHeaders {
-    return @{
-        @"X-UA-Location-Permission": [self locationProviderPermissionStatus],
-        @"X-UA-Location-Service-Enabled": self.locationUpdatesEnabled ? @"true" : @"false"
-    };
+    if ([self.privacyManager isEnabled:UAFeaturesLocation]) {
+        return @{
+            @"X-UA-Location-Permission": [self locationProviderPermissionStatus],
+            @"X-UA-Location-Service-Enabled": [self.privacyManager isEnabled:UAFeaturesLocation] ? @"true" : @"false"
+        };
+    } else {
+        return @{
+            @"X-UA-Location-Service-Enabled": [self.privacyManager isEnabled:UAFeaturesLocation] ? @"true" : @"false"
+        };
+    }
 }
 
 - (NSString *)locationProviderPermissionStatus {
@@ -132,16 +141,15 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
 }
 
 - (BOOL)isLocationUpdatesEnabled {
-    return [self.dataStore boolForKey:UALocationUpdatesEnabled];
+    return [self.privacyManager isEnabled:UAFeaturesLocation];
 }
 
 - (void)setLocationUpdatesEnabled:(BOOL)locationUpdatesEnabled {
-    if (locationUpdatesEnabled == self.isLocationUpdatesEnabled) {
-        return;
+    if (locationUpdatesEnabled) {
+        [self.privacyManager enableFeatures:UAFeaturesLocation];
+    } else {
+        [self.privacyManager disableFeatures:UAFeaturesLocation];
     }
-
-    [self.dataStore setBool:locationUpdatesEnabled forKey:UALocationUpdatesEnabled];
-    [self updateLocationService];
 }
 
 - (BOOL)isBackgroundLocationUpdatesAllowed {
@@ -171,12 +179,6 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
     }
 
     if (![self.privacyManager isEnabled:UAFeaturesLocation]) {
-        [self stopLocationUpdates];
-        return;
-    }
-    
-    // Check if location updates are enabled
-    if (!self.locationUpdatesEnabled) {
         [self stopLocationUpdates];
         return;
     }
@@ -313,10 +315,6 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
     if (![self.privacyManager isEnabled:UAFeaturesLocation]) {
         return NO;
     }
-
-    if (!self.locationUpdatesEnabled) {
-        return NO;
-    }
     
     switch ([CLLocationManager authorizationStatus]) {
         case kCLAuthorizationStatusDenied:
@@ -343,10 +341,6 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
 
 - (BOOL)isLocationAccuracyReduced {
     if (![self.privacyManager isEnabled:UAFeaturesLocation]) {
-        return NO;
-    }
-
-    if (!self.locationUpdatesEnabled) {
         return NO;
     }
 #if !TARGET_OS_MACCATALYST

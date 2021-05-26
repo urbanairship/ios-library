@@ -13,7 +13,7 @@
 
     NSMutableDictionary *data = [NSMutableDictionary dictionary];
 
-    if ([UAirship push].pushTokenRegistrationEnabled) {
+    if ([[UAirship shared].privacyManager isEnabled:UAFeaturesPush]) {
         [data setValue:[UAirship push].deviceToken forKey:@"device_token"];
     }
 

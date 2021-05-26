@@ -22,7 +22,6 @@
 
 NSString *const UAUserPushNotificationsEnabledKey = @"UAUserPushNotificationsEnabled";
 NSString *const UABackgroundPushNotificationsEnabledKey = @"UABackgroundPushNotificationsEnabled";
-NSString *const UAPushTokenRegistrationEnabledKey = @"UAPushTokenRegistrationEnabled";
 NSString *const UAExtendedPushNotificationPermissionEnabledKey = @"UAExtendedPushNotificationPermissionEnabled";
 
 NSString *const UAPushAliasSettingsKey = @"UAPushAlias";
@@ -405,19 +404,14 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
 }
 
 - (BOOL)pushTokenRegistrationEnabled {
-    if (![self.dataStore objectForKey:UAPushTokenRegistrationEnabledKey]) {
-        return [self.privacyManager isEnabled:UAFeaturesPush];
-    }
-
-    return [self.dataStore boolForKey:UAPushTokenRegistrationEnabledKey];
+    return [self.privacyManager isEnabled:UAFeaturesPush];
 }
 
 - (void)setPushTokenRegistrationEnabled:(BOOL)enabled {
-    BOOL previousValue = self.pushTokenRegistrationEnabled;
-    [self.dataStore setBool:enabled forKey:UAPushTokenRegistrationEnabledKey];
-
-    if (enabled != previousValue) {
-        [self.channel updateRegistration];
+    if (enabled) {
+        [self.privacyManager enableFeatures:UAFeaturesPush];
+    } else {
+        [self.privacyManager disableFeatures:UAFeaturesPush];
     }
 }
 

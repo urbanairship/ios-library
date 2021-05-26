@@ -6,7 +6,6 @@
 NSString * const UAComponentKey = @"UAComponent";
 NSString * const UAComponentEnabledKey = @"enabled";
 BOOL const UAComponentEnabledDefault = YES;
-NSString * const UAirshipDataCollectionEnabledKey = @"com.urbanairship.data_collection_enabled";
 
 @interface UAComponent()
 @property (nonatomic, strong) UAPreferenceDataStore *componentDataStore;

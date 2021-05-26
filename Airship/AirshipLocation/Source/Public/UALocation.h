@@ -57,8 +57,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Flag to enable/disable location updates. Defaults to `NO`.
+ * @deprecated Deprecated – to be removed in SDK version 15.0. Please use the Privacy Manager.
  */
-@property (nonatomic, assign, getter=isLocationUpdatesEnabled) BOOL locationUpdatesEnabled;
+@property (nonatomic, assign, getter=isLocationUpdatesEnabled) BOOL locationUpdatesEnabled  DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 15.0. Please use the Privacy Manager.");;
 
 /**
  * Flag to allow/disallow location updates in the background. Defaults to `NO`.

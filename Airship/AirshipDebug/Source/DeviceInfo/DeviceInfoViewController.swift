@@ -47,10 +47,14 @@ class DeviceInfoCell: UITableViewCell {
 
 var isInAppAutomationEnabled: Bool {
     get {
-        return UAInAppAutomation.shared().isEnabled
+        return UAirship.shared().privacyManager.isEnabled(UAFeatures.inAppAutomation)
     }
     set (value) {
-        UAInAppAutomation.shared().isEnabled = value
+        if (value) {
+            UAirship.shared().privacyManager.enable(UAFeatures.inAppAutomation)
+        } else {
+            UAirship.shared().privacyManager.disableFeatures(UAFeatures.inAppAutomation)
+        }
     }
 }
 
@@ -342,16 +346,16 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             cell.subtitle?.text = "ua_device_info_enable_analytics_tracking".localized()
 
             cell.cellSwitch.isHidden = false
-            cell.cellSwitch.isOn = UAirship.analytics().isEnabled
+            cell.cellSwitch.isOn = UAirship.shared().privacyManager.isEnabled(UAFeatures.analytics)
         case locationEnabled:
             cell.title.text = "ua_device_info_enable_location_enabled".localized()
 
             cell.cellSwitch.isHidden = false
-            cell.cellSwitch.isOn = UALocation.shared().isLocationUpdatesEnabled
+            cell.cellSwitch.isOn = UAirship.shared().privacyManager.isEnabled(UAFeatures.location)
 
             let optedInToLocation = UALocation.shared().isLocationOptedIn()
 
-            if (UALocation.shared().isLocationUpdatesEnabled && !optedInToLocation) {
+            if (UAirship.shared().privacyManager.isEnabled(UAFeatures.location) && !optedInToLocation) {
                 cell.subtitle?.text = "ua_location_enabled_detail".localized(comment: "Enable GPS and WIFI Based Location detail label") + " - NOT OPTED IN"
             } else {
                 cell.subtitle?.text = localizedNone
@@ -421,10 +425,18 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             }
         case analyticsEnabled:
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
-            UAirship.shared().analytics.isEnabled = cell.cellSwitch.isOn
+            if (cell.cellSwitch.isOn) {
+                UAirship.shared().privacyManager.enable(UAFeatures.analytics)
+            } else {
+                UAirship.shared().privacyManager.disableFeatures(UAFeatures.analytics)
+            }
         case locationEnabled:
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
-            UALocation.shared().isLocationUpdatesEnabled = cell.cellSwitch.isOn
+            if (cell.cellSwitch.isOn) {
+                UAirship.shared().privacyManager.enable(UAFeatures.location)
+            } else {
+                UAirship.shared().privacyManager.disableFeatures(UAFeatures.location)
+            }
         default:
             break
         }

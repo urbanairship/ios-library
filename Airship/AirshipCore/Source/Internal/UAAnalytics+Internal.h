@@ -8,7 +8,6 @@
 #import "UAExtendableAnalyticsHeaders.h"
 #import "UAEventManager+Internal.h"
 
-#define kUAAnalyticsEnabled @"UAAnalyticsEnabled"
 #define kUAMissingSendID @"MISSING_SEND_ID"
 #define kUAPushMetadata @"com.urbanairship.metadata"
 

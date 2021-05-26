@@ -26,6 +26,10 @@
 - (void)onEnabledFeaturesChanged;
 @end
 
+@interface UAPrivacyManager()
+@property (nonatomic, strong) NSNotificationCenter *notificationCenter;
+@end
+
 @interface UAAnalyticsTest: UAAirshipBaseTest
 @property (nonatomic, strong) UAAnalytics *analytics;
 @property (nonatomic, strong) UAPrivacyManager *privacyManager;
@@ -67,7 +71,8 @@
     self.mockAppStateTracker = [self mockForClass:[UAAppStateTracker class]];
     
     self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
-  
+    self.privacyManager.notificationCenter = self.notificationCenter;
+    
     self.analytics = [self createAnalytics];
     
     // Channel ID
@@ -176,82 +181,11 @@
     [self.privacyManager enableFeatures:UAFeaturesAnalytics];
     [[self.mockEventManager expect] setUploadsEnabled:NO];
     [[self.mockEventManager expect] deleteAllEvents];
-    self.analytics.enabled = NO;
+    [self.privacyManager disableFeatures:UAFeaturesAnalytics];
 
 
     [self.mockEventManager verify];
-    XCTAssertFalse(self.analytics.enabled);
-}
-
-/**
- * Test the default value of enabled is YES and will not reset the value to YES
- * on init if its set to NO.
- */
-- (void)testDefaultAnalyticsEnableValue {
-    XCTAssertTrue(self.analytics.enabled);
-    self.analytics.enabled = NO;
-
-    // Recreate analytics and see if its still disabled
-   self.analytics = [self createAnalytics];
-
-    XCTAssertFalse(self.analytics.enabled);
-}
-
-/**
- * Test isEnabled always returns YES only if UARuntimeConfig enables analytics and the
- * runtime setting is enabled.
- */
-- (void)testIsEnabled {
-    self.analytics.enabled = YES;
-    XCTAssertTrue(self.analytics.enabled);
-
-    self.analytics.enabled = NO;
-    XCTAssertFalse(self.analytics.enabled);
-}
-
-/**
- * Test isEnabled always returns NO when UARuntimeConfig disables analytics.
- */
-- (void)testIsEnabledConfigOverride {
-    self.config.analyticsEnabled = NO;
-
-    self.analytics = [self createAnalytics];
-
-    self.analytics.enabled = YES;
-    XCTAssertFalse(self.analytics.enabled);
-
-    self.analytics.enabled = NO;
-    XCTAssertFalse(self.analytics.enabled);
-}
-
-/**
- * Test isEnabled always returns NO when data collection is disabled.
- */
-- (void)testIsEnabledDataCollectionDisabled {
-    [self.privacyManager disableFeatures:UAFeaturesAnalytics];
-
-    self.analytics = [self createAnalytics];
-
-    self.analytics.enabled = YES;
-    XCTAssertFalse(self.analytics.enabled);
-
-    self.analytics.enabled = NO;
-    XCTAssertFalse(self.analytics.enabled);
-}
-
-/**
- * Test isEnabled returns YES if enabled was previously set to YES when data collection becomes enabled.
- */
-- (void)testIsEnabledDataCollectionEnabled {
-    self.analytics = [self createAnalytics];
-    
-    [self.privacyManager disableFeatures:UAFeaturesAnalytics];
-    self.analytics.enabled = YES;
-    XCTAssertFalse(self.analytics.enabled);
-
-    [self.privacyManager enableFeatures:UAFeaturesAnalytics];
-
-    XCTAssertTrue(self.analytics.enabled);
+    XCTAssertFalse([self.privacyManager isEnabled:UAFeaturesAnalytics]);
 }
 
 /**
@@ -302,7 +236,7 @@
  * Expects adding a valid event when analytics is disabled drops event.
  */
 - (void)testAddEventAnalyticsDisabled {
-    self.analytics.enabled = NO;
+    [self.privacyManager disableFeatures:UAFeaturesAnalytics];
 
     // Mock valid event
     id mockEvent = [self mockForClass:[UAEvent class]];
@@ -593,7 +527,6 @@
 // Test disabling / enabling the analytics component disables / enables eventmanager uploads
 - (void)testComponentEnabledSwitch {
     self.analytics.componentEnabled = YES;
-    self.analytics.enabled = YES;
     [self.privacyManager enableFeatures:UAFeaturesAnalytics];
 
     // expectations
@@ -655,7 +588,6 @@
 
 - (void)testOnDataCollectionDisabled {
     self.analytics.componentEnabled = YES;
-    self.analytics.enabled = YES;
     [self.privacyManager enableFeatures:UAFeaturesAnalytics];
 
     NSDictionary *identifiers = @{@"some identifier": @"some value"};

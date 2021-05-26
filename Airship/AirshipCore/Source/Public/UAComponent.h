@@ -6,8 +6,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-extern NSString * const UAirshipDataCollectionEnabledKey;
-
 /**
  * Base class for main SDK components.
  */

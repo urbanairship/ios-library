@@ -44,14 +44,6 @@ class AirshipChatTests: XCTestCase {
         XCTAssertEqual("neat", mockOpenDelegate.lastOpenMessage)
     }
 
-    func testDisable() throws {
-        self.airshipChat.enabled = false
-        XCTAssertFalse(self.mockConversation.enabled)
-
-        self.airshipChat.enabled = true
-        XCTAssertTrue(self.mockConversation.enabled)
-    }
-
     func testDataCollectionDisabled() throws {
         XCTAssertTrue(self.mockConversation.enabled)
 

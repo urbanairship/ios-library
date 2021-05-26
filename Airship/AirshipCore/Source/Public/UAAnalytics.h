@@ -94,8 +94,9 @@ extern NSString *const UAScreenKey;
  *
  * Note: This property will always return `NO` if analytics is disabled in
  * UARuntimeConfig, or if data collecton is not opted in.
+ * @deprecated Deprecated – to be removed in SDK version 15.0. Please use the Privacy Manager.
  */
-@property (nonatomic, assign, getter=isEnabled) BOOL enabled;
+@property (nonatomic, assign, getter=isEnabled) BOOL enabled DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 15.0. Please use the Privacy Manager.");
 
 ///---------------------------------------------------------------------------------------
 /// @name Analytics Core Methods

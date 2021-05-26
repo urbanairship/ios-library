@@ -241,16 +241,16 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
             cell.subtitle?.text = "ua_device_info_enable_analytics_tracking".localized(comment: "Enable analytics tracking")
 
             cell.cellSwitch.isHidden = false
-            cell.cellSwitch.isOn = UAirship.analytics().isEnabled
+            cell.cellSwitch.isOn = UAirship.shared().privacyManager.isEnabled(UAFeatures.analytics)
         case locationEnabled:
             cell.title.text = "ua_device_info_location_settings".localized(comment: "Location Settings")
 
             cell.cellSwitch.isHidden = false
-            cell.cellSwitch.isOn = UALocation.shared().isLocationUpdatesEnabled
+            cell.cellSwitch.isOn = UAirship.shared().privacyManager.isEnabled(UAFeatures.location)
 
             let optedInToLocation = UALocation.shared().isLocationOptedIn()
 
-            if (UALocation.shared().isLocationUpdatesEnabled && !optedInToLocation) {
+            if (UAirship.shared().privacyManager.isEnabled(UAFeatures.location) && !optedInToLocation) {
                 cell.subtitle?.text = "ua_location_enabled_detail".localized(comment: "Enable GPS and WIFI Based Location detail label") + " - NOT OPTED IN"
             } else {
                 cell.subtitle?.text = localizedNone
@@ -280,10 +280,18 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
             performSegue(withIdentifier: "tagsSegue", sender: self)
         case analyticsEnabled:
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
-            UAirship.shared().analytics.isEnabled = cell.cellSwitch.isOn
+            if (cell.cellSwitch.isOn) {
+                UAirship.shared().privacyManager.enable(UAFeatures.analytics)
+            } else {
+                UAirship.shared().privacyManager.disableFeatures(UAFeatures.analytics)
+            }
         case locationEnabled:
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
-            UALocation.shared().isLocationUpdatesEnabled = cell.cellSwitch.isOn
+            if (cell.cellSwitch.isOn) {
+                UAirship.shared().privacyManager.enable(UAFeatures.location)
+            } else {
+                UAirship.shared().privacyManager.disableFeatures(UAFeatures.location)
+            }
         default:
             break
         }

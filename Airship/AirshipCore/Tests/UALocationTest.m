@@ -46,7 +46,7 @@
 
     self.notificationCenter = [NSNotificationCenter defaultCenter];
 
-    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
+    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesNone];
     
     self.location = [UALocation locationWithDataStore:self.dataStore channel:self.mockChannel analytics:self.mockAnalytics privacyManager:self.privacyManager];
         
@@ -107,7 +107,7 @@
     [[self.mockLocationManager expect] startMonitoringSignificantLocationChanges];
 
     // Enable location
-    self.location.locationUpdatesEnabled = YES;
+    [self.privacyManager enableFeatures:UAFeaturesLocation];
 
     // Verify we starting location updates
     [self.mockLocationManager verify];
@@ -136,7 +136,7 @@
     [[self.mockLocationManager reject] startMonitoringSignificantLocationChanges];
 
     // Enable location
-    self.location.locationUpdatesEnabled = YES;
+    [self.privacyManager enableFeatures:UAFeaturesLocation];
 
     // Verify we start location updates
     [self.mockLocationManager verify];
@@ -160,7 +160,7 @@
     [[self.mockLocationManager reject] startMonitoringSignificantLocationChanges];
 
     // Enable location
-    self.location.locationUpdatesEnabled = YES;
+    [self.privacyManager enableFeatures:UAFeaturesLocation];
 
     // Verify we starting location updates
     [self.mockLocationManager verify];
@@ -189,7 +189,7 @@
     [[self.mockLocationManager expect] startMonitoringSignificantLocationChanges];
 
     // Enable location
-    self.location.locationUpdatesEnabled = YES;
+    [self.privacyManager enableFeatures:UAFeaturesLocation];
 
     // Verify we starting location updates
     [self.mockLocationManager verify];
@@ -213,7 +213,7 @@
     [[self.mockLocationManager reject] startMonitoringSignificantLocationChanges];
 
     // Enable location
-    self.location.locationUpdatesEnabled = YES;
+    [self.privacyManager enableFeatures:UAFeaturesLocation];
 
     // Verify we starting location updates
     [self.mockLocationManager verify];
@@ -240,7 +240,7 @@
     [[self.mockLocationManager expect] startMonitoringSignificantLocationChanges];
 
     // Enable location
-    self.location.locationUpdatesEnabled = YES;
+    [self.privacyManager enableFeatures:UAFeaturesLocation];
 
     // Verify we starting location updates
     [self.mockLocationManager verify];
@@ -260,7 +260,7 @@
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
 
     // Enable location updates
-    self.location.locationUpdatesEnabled = YES;
+    [self.privacyManager enableFeatures:UAFeaturesLocation];
 
     // Expect to stop monitoring significant location changes
     [[self.mockLocationManager expect] stopMonitoringSignificantLocationChanges];
@@ -289,7 +289,7 @@
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
 
     // Enable location updates
-    self.location.locationUpdatesEnabled = YES;
+    [self.privacyManager enableFeatures:UAFeaturesLocation];
 
     // Expect to start monitoring significant location changes
     [[self.mockLocationManager expect] startMonitoringSignificantLocationChanges];
@@ -315,13 +315,13 @@
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
 
     // Enable location updates
-    self.location.locationUpdatesEnabled = YES;
+    [self.privacyManager enableFeatures:UAFeaturesLocation];
 
     // Expect to stop monitoring significant location changes
     [[self.mockLocationManager expect] stopMonitoringSignificantLocationChanges];
 
     // Disable location
-    self.location.locationUpdatesEnabled = NO;
+    [self.privacyManager disableFeatures:UAFeaturesLocation];
 
     // Verify we stopped location updates
     [self.mockLocationManager verify];
@@ -342,7 +342,7 @@
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
 
     // Enable location updates
-    self.location.locationUpdatesEnabled = YES;
+    [self.privacyManager enableFeatures:UAFeaturesLocation];
 
     // Expect to start monitoring significant location changes
     [[self.mockLocationManager expect] startMonitoringSignificantLocationChanges];
@@ -372,7 +372,7 @@
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
 
     // Enable location updates
-    self.location.locationUpdatesEnabled = YES;
+    [self.privacyManager enableFeatures:UAFeaturesLocation];
 
     // Expect to start monitoring significant location changes
     [[self.mockLocationManager reject] startMonitoringSignificantLocationChanges];
@@ -398,7 +398,7 @@
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
 
     // Enable location updates
-    self.location.locationUpdatesEnabled = YES;
+    [self.privacyManager enableFeatures:UAFeaturesLocation];
     self.location.backgroundLocationUpdatesAllowed = YES;
 
     // Expect to stop monitoring significant location changes
@@ -417,7 +417,7 @@
  */
 - (void)testAppActive {
     // Enable location updates
-    self.location.locationUpdatesEnabled = YES;
+    [self.privacyManager enableFeatures:UAFeaturesLocation];
     
     // Authorize location
     [self stubLocationAuthorizationStatus:kCLAuthorizationStatusAuthorizedAlways];
@@ -445,7 +445,7 @@
  */
 - (void)testAppEnterBackground {
     // Enable location updates
-    self.location.locationUpdatesEnabled = YES;
+    [self.privacyManager enableFeatures:UAFeaturesLocation];
     self.location.locationUpdatesStarted = YES;
     
     // Authorize location
@@ -486,7 +486,7 @@
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(NO)] significantLocationChangeMonitoringAvailable];
 
     // Enable location
-    self.location.locationUpdatesEnabled = YES;
+    [self.privacyManager enableFeatures:UAFeaturesLocation];
 
     // Verify we did not start location updates
     [self.mockLocationManager verify];
@@ -510,7 +510,7 @@
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
 
     // Enable location
-    self.location.locationUpdatesEnabled = YES;
+    [self.privacyManager enableFeatures:UAFeaturesLocation];
 
     // Verify we did not start location updates
     [self.mockLocationManager verify];
@@ -533,7 +533,7 @@
     [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
 
     // Enable location
-    self.location.locationUpdatesEnabled = YES;
+    [self.privacyManager enableFeatures:UAFeaturesLocation];
 
     // Verify we did not start location updates
     [self.mockLocationManager verify];
@@ -557,7 +557,7 @@
     [[self.mockLocationManager expect] requestAlwaysAuthorization];
 
     // Enable location
-    self.location.locationUpdatesEnabled = YES;
+    [self.privacyManager enableFeatures:UAFeaturesLocation];
 
     // Verify we requested location authorization
     [self.mockLocationManager verify];
@@ -584,7 +584,7 @@
     self.location.autoRequestAuthorizationEnabled = NO;
 
     // Enable location
-    self.location.locationUpdatesEnabled = YES;
+    [self.privacyManager enableFeatures:UAFeaturesLocation];
 
     // Verify we did not request location authorization
     [self.mockLocationManager verify];
@@ -608,7 +608,7 @@
     [[self.mockLocationManager reject] requestAlwaysAuthorization];
 
     // Enable location
-    self.location.locationUpdatesEnabled = YES;
+    [self.privacyManager enableFeatures:UAFeaturesLocation];
 
     // Verify we did not request location authorization
     [self.mockLocationManager verify];
@@ -644,7 +644,7 @@
     [[self.mockLocationManager expect] requestAlwaysAuthorization];
 
     // Enable location
-    self.location.locationUpdatesEnabled = YES;
+    [self.privacyManager enableFeatures:UAFeaturesLocation];
 
     // Verify we did not request location authorization
     [self.mockLocationManager verify];
@@ -674,7 +674,7 @@
     [[self.mockLocationManager reject] requestAlwaysAuthorization];
 
     // Enable location
-    self.location.locationUpdatesEnabled = YES;
+    [self.privacyManager enableFeatures:UAFeaturesLocation];
 
     // Verify we did not request location authorization
     [self.mockLocationManager verify];
@@ -701,7 +701,7 @@
     [[self.mockLocationManager reject] requestAlwaysAuthorization];
 
     // Enable location
-    self.location.locationUpdatesEnabled = YES;
+    [self.privacyManager enableFeatures:UAFeaturesLocation];
 
     // Verify we did not request location authorization
     [self.mockLocationManager verify];
@@ -717,7 +717,6 @@
     id payloadMock = [self partialMockForObject:payload];
 
     [self.privacyManager enableFeatures:UAFeaturesLocation];
-    self.location.locationUpdatesEnabled = YES;
     
     [[payloadMock expect] setLocationSettings:@YES];
        
@@ -732,7 +731,7 @@
     // data collection enabled and location services disabled
     payloadMock = [self partialMockForObject:payload];
     
-    self.location.locationUpdatesEnabled = NO;
+    [self.privacyManager disableFeatures:UAFeaturesLocation];
     
     [[payloadMock expect] setLocationSettings:@NO];
              
@@ -741,17 +740,6 @@
     [payloadMock verify];
     
     [payloadMock stopMocking];
-    
-    // data collection disabled   
-    payloadMock = [self partialMockForObject:payload];
-    
-    [self.privacyManager disableFeatures:UAFeaturesLocation];
-   
-    [[payloadMock reject] setLocationSettings:OCMOCK_ANY];
-             
-    [self.location extendChannelRegistrationPayload:payloadMock completionHandler:handler];
-          
-    [payloadMock verify];
 }
 
 /**

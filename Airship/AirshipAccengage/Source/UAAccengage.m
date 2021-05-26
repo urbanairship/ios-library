@@ -154,7 +154,11 @@ NSString *const UAAccengageSettingsMigrated = @"UAAccengageSettingsMigrated";
     id accAnalytics = dataDictionary[@"DoNotTrack"];
     if ([accAnalytics isKindOfClass:[NSNumber class]]) {
         NSNumber *analyticsDisabled = accAnalytics;
-        analytics.enabled = ![analyticsDisabled boolValue];
+        if (![analyticsDisabled boolValue]) {
+            [[UAirship shared].privacyManager enableFeatures:UAFeaturesAnalytics];
+        } else {
+            [[UAirship shared].privacyManager disableFeatures:UAFeaturesAnalytics];
+        }
     }
 }
 

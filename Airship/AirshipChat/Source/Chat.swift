@@ -46,13 +46,17 @@ public class Chat : UAComponent, UAPushableComponent {
      * Enables or disables chat.
      */
     @objc
+    @available(*, deprecated, message: "Deprecated – to be removed in SDK version 15.0. Please use the Privacy Manager.")
     public var enabled: Bool {
         get {
-            return self.dataStore.bool(forKey: Chat.enableKey, defaultValue:true)
+            return self.privacyManager.isEnabled(UAFeatures.chat)
         }
         set {
-            self.dataStore.setBool(newValue, forKey: Chat.enableKey)
-            self.updateConversationEnablement()
+            if (newValue) {
+                self.privacyManager.enable(UAFeatures.chat)
+            } else {
+                self.privacyManager.disableFeatures(UAFeatures.chat)
+            }
         }
     }
 
@@ -106,7 +110,7 @@ public class Chat : UAComponent, UAPushableComponent {
             selector: #selector(self.onEnabledFeaturesChange),
             name: Notification.Name(UAPrivacyManagerEnabledFeaturesChangedEvent),
             object: nil)
-        
+
         AirshipLogger.info("AirshipChat initialized")
     }
 
@@ -115,7 +119,7 @@ public class Chat : UAComponent, UAPushableComponent {
     }
 
     func updateConversationEnablement() {
-        self.internalConversation.enabled = self.enabled && self.componentEnabled() && self.privacyManager.isEnabled(UAFeatures.chat)
+        self.internalConversation.enabled = self.componentEnabled() && self.privacyManager.isEnabled(UAFeatures.chat)
         if (!self.privacyManager.isEnabled(UAFeatures.chat)) {
             self.internalConversation.clearData()
         }
