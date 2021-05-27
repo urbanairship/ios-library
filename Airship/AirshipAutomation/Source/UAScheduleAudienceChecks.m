@@ -44,15 +44,8 @@
         return YES;
     }
 
-    // Data collection enabled
-    BOOL isDataCollectionEnabled = [[UAirship shared].privacyManager isAnyFeatureEnabled];
-    
     // Location opt-in
     if (audience.locationOptIn) {
-        if (!isDataCollectionEnabled) {
-            return NO;
-        }
-
         if ([audience.locationOptIn boolValue] != [UAirship shared].locationProvider.isLocationOptedIn) {
             return NO;
         }
@@ -60,10 +53,6 @@
 
     // Notification opt-in
     if (audience.notificationsOptIn) {
-        if (!isDataCollectionEnabled) {
-            return NO;
-        }
-
         if ([audience.notificationsOptIn boolValue] != [self isNotificationsOptedIn]) {
             return NO;
         }
@@ -71,7 +60,7 @@
 
     // Tag Selector
     if (audience.tagSelector) {
-        if (!isDataCollectionEnabled) {
+        if (![[UAirship shared].privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
             return NO;
         }
 

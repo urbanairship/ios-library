@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import "UABaseTest.h"
+#import "UAAirshipBaseTest.h"
 #import "UAScheduleAudienceChecks+Internal.h"
 #import "UAScheduleAudience+Internal.h"
 #import "UAVersionMatcher.h"
@@ -11,15 +11,13 @@
 #import "UAJSONPredicate.h"
 #import "UAPrivacyManager+Internal.h"
 
-@interface UAScheduleAudienceChecksTest : UABaseTest
+@interface UAScheduleAudienceChecksTest : UAAirshipBaseTest
 
 @property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) id mockLocationProvider;
 @property (nonatomic, strong) id mockPush;
 @property (nonatomic, strong) id mockChannel;
-@property (nonatomic, strong) id mockPrivacyManager;
-@property (nonatomic, assign) BOOL isDataCollectionEnabled;
-
+@property (nonatomic, strong) UAPrivacyManager *privacyManager;
 @end
 
 @implementation UAScheduleAudienceChecksTest
@@ -27,31 +25,20 @@
 - (void)setUp {
     [super setUp];
 
-    self.isDataCollectionEnabled = YES;
-    
     self.mockAirship = [self mockForClass:[UAirship class]];
     self.mockPush = [self mockForClass:[UAPush class]];
     self.mockChannel = [self mockForClass:[UAChannel class]];
-    
-    [[[self.mockAirship stub] andReturn:self.mockPush] sharedPush];
-    [[[self.mockAirship stub] andReturn:self.mockChannel] sharedChannel];
-    
-    self.mockPrivacyManager = [self mockForClass:[UAPrivacyManager class]];
-    
-    UA_WEAKIFY(self)
-    [[[self.mockPrivacyManager stub] andDo:^(NSInvocation *invocation) {
-        UA_STRONGIFY(self)
-        BOOL enabled = self.isDataCollectionEnabled;
-        [invocation setReturnValue:(void *)&enabled];
-    }] isAnyFeatureEnabled];
-    
-    [[[self.mockAirship stub] andReturn:self.mockPrivacyManager] privacyManager];
-    [UAirship setSharedAirship:self.mockAirship];
 
-    [UAirship setSharedAirship:self.mockAirship];
+    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore
+                                                 defaultEnabledFeatures:UAFeaturesAll];
 
     self.mockLocationProvider = [self mockForProtocol:@protocol(UALocationProvider)];
+
+    [[[self.mockAirship stub] andReturn:self.mockPush] sharedPush];
+    [[[self.mockAirship stub] andReturn:self.mockChannel] sharedChannel];
+    [[[self.mockAirship stub] andReturn:self.privacyManager] privacyManager];
     [[[self.mockAirship stub] andReturn:self.mockLocationProvider] locationProvider];
+    [UAirship setSharedAirship:self.mockAirship];
 }
 
 - (void)testEmptyAudience {
@@ -79,26 +66,6 @@
     XCTAssertFalse([UAScheduleAudienceChecks checkDisplayAudienceConditions:requiresOptedOut]);
 }
 
-- (void)testLocationOptInWhenDataCollectionDisabled {
-    self.isDataCollectionEnabled = NO;
-
-    // setup
-    UAScheduleAudience *requiresOptedIn = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
-        builder.locationOptIn = @YES;
-    }];
-
-    UAScheduleAudience *requiresOptedOut = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
-        builder.locationOptIn = @NO;
-    }];
-
-    [[[self.mockLocationProvider stub] andReturnValue:@YES] isLocationOptedIn];
-    [[[self.mockLocationProvider stub] andReturnValue:@YES] isLocationUpdatesEnabled];
-
-    // test
-    XCTAssertFalse([UAScheduleAudienceChecks checkDisplayAudienceConditions:requiresOptedIn]);
-    XCTAssertFalse([UAScheduleAudienceChecks checkDisplayAudienceConditions:requiresOptedOut]);
-}
-
 - (void)testLocationOptOut {
     // setup
     UAScheduleAudience *requiresOptedIn = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
@@ -115,26 +82,6 @@
     // test
     XCTAssertFalse([UAScheduleAudienceChecks checkDisplayAudienceConditions:requiresOptedIn]);
     XCTAssertTrue([UAScheduleAudienceChecks checkDisplayAudienceConditions:requiresOptedOut]);
-}
-
-- (void)testLocationOptOutWhenDataCollectionDisabled {
-    self.isDataCollectionEnabled = NO;
-
-    // setup
-    UAScheduleAudience *requiresOptedIn = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
-        builder.locationOptIn = @YES;
-    }];
-
-    UAScheduleAudience *requiresOptedOut = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
-        builder.locationOptIn = @NO;
-    }];
-
-    [[[self.mockLocationProvider stub] andReturnValue:@NO] isLocationOptedIn];
-    [[[self.mockLocationProvider stub] andReturnValue:@YES] isLocationUpdatesEnabled];
-
-    // test
-    XCTAssertFalse([UAScheduleAudienceChecks checkDisplayAudienceConditions:requiresOptedIn]);
-    XCTAssertFalse([UAScheduleAudienceChecks checkDisplayAudienceConditions:requiresOptedOut]);
 }
 
 - (void)testNotificationOptIn {
@@ -155,26 +102,6 @@
     XCTAssertFalse([UAScheduleAudienceChecks checkDisplayAudienceConditions:requiresOptedOut]);
 }
 
-- (void)testNotificationOptInWhenDataCollectionDisabled {
-    self.isDataCollectionEnabled = NO;
-
-    // setup
-    UAScheduleAudience *requiresOptedIn = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
-        builder.notificationsOptIn = @YES;
-    }];
-
-    UAScheduleAudience *requiresOptedOut = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
-        builder.notificationsOptIn = @NO;
-    }];
-
-    [[[self.mockPush stub] andReturnValue:@YES] userPushNotificationsEnabled];
-    [[[self.mockPush stub] andReturnValue:@(UAAuthorizedNotificationSettingsAlert)] authorizedNotificationSettings];
-
-    // test
-    XCTAssertFalse([UAScheduleAudienceChecks checkDisplayAudienceConditions:requiresOptedIn]);
-    XCTAssertFalse([UAScheduleAudienceChecks checkDisplayAudienceConditions:requiresOptedOut]);
-}
-
 - (void)testNotificationOptOut {
     // setup
     UAScheduleAudience *requiresOptedIn = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
@@ -190,25 +117,6 @@
     // test
     XCTAssertFalse([UAScheduleAudienceChecks checkDisplayAudienceConditions:requiresOptedIn]);
     XCTAssertTrue([UAScheduleAudienceChecks checkDisplayAudienceConditions:requiresOptedOut]);
-}
-
-- (void)testNotificationOptOutWhenDataCollectionDisabled {
-    self.isDataCollectionEnabled = NO;
-
-    // setup
-    UAScheduleAudience *requiresOptedIn = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
-        builder.notificationsOptIn = @YES;
-    }];
-
-    UAScheduleAudience *requiresOptedOut = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
-        builder.notificationsOptIn = @NO;
-    }];
-
-    [[[self.mockPush stub] andReturnValue:@NO] userPushNotificationsEnabled];
-
-    // test
-    XCTAssertFalse([UAScheduleAudienceChecks checkDisplayAudienceConditions:requiresOptedIn]);
-    XCTAssertFalse([UAScheduleAudienceChecks checkDisplayAudienceConditions:requiresOptedOut]);
 }
 
 - (void)testNewUser {
@@ -247,8 +155,8 @@
     XCTAssertTrue([UAScheduleAudienceChecks checkDisplayAudienceConditions:audience]);
 }
 
-- (void)testTagSelectorWhenDataCollectionDisabled {
-    self.isDataCollectionEnabled = NO;
+- (void)testTagSelectorWhenTagsDisabled {
+    [self.privacyManager disableFeatures:UAFeaturesTagsAndAttributes];
 
     // setup
     NSMutableArray<NSString *> *tags = [NSMutableArray array];
