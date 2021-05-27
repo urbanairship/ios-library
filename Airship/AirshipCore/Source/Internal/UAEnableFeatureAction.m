@@ -70,11 +70,15 @@ NSString *const UAEnableBackgroundLocationActionValue = @"background_location";
 }
 
 - (void)enableUserNotifications:(UAActionCompletionHandler)completionHandler {
+    [[UAirship shared].privacyManager enableFeatures:UAFeaturesPush];
     [UAirship push].userPushNotificationsEnabled = YES;
+
     if ([UAirship push].userPromptedForNotifications) {
         [self isNotificationsAuthorized:^(BOOL authorized) {
             if (!authorized) {
                 [self navigateToSystemSettingsWithCompletionHandler:completionHandler];
+            } else {
+                completionHandler([UAActionResult emptyResult]);
             }
         }];
     } else {
@@ -83,6 +87,8 @@ NSString *const UAEnableBackgroundLocationActionValue = @"background_location";
 }
 
 - (void)enableBackgroundLocation:(UAActionCompletionHandler)completionHandler {
+    [[UAirship shared].privacyManager enableFeatures:UAFeaturesLocation];
+
     id<UALocationProvider> locationProvider = [UAirship shared].locationProvider;
 
     locationProvider.locationUpdatesEnabled = YES;
@@ -96,12 +102,15 @@ NSString *const UAEnableBackgroundLocationActionValue = @"background_location";
 }
 
 - (void)enableLocation:(UAActionCompletionHandler)completionHandler {
+    [[UAirship shared].privacyManager enableFeatures:UAFeaturesLocation];
+
     id<UALocationProvider> locationProvider = [UAirship shared].locationProvider;
 
     locationProvider.locationUpdatesEnabled = YES;
 
     if ([self isLocationDeniedOrRestricted]) {
         [self navigateToSystemSettingsWithCompletionHandler:completionHandler];
+        completionHandler([UAActionResult emptyResult]);
     } else {
         completionHandler([UAActionResult emptyResult]);
     }

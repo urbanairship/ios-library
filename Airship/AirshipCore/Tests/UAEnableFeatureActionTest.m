@@ -7,6 +7,7 @@
 #import "UAirship+Internal.h"
 #import "UAPush+Internal.h"
 #import "UAAPNSRegistration+Internal.h"
+#import "UAPrivacyManager.h"
 
 @interface UAEnableFeatureActionTest : UABaseTest
 
@@ -18,6 +19,7 @@
 @property(nonatomic, strong) id mockAirship;
 @property(nonatomic, strong) id mockPushRegistration;
 @property(nonatomic, strong) id mockApplication;
+@property(nonatomic, strong) id mockPrivacyManager;
 
 @end
 
@@ -35,11 +37,13 @@
     self.mockAirship = [self strictMockForClass:[UAirship class]];
     self.mockPushRegistration = [self mockForProtocol:@protocol(UAAPNSRegistrationProtocol)];
     self.mockApplication = [self mockForClass:[UIApplication class]];
+    self.mockPrivacyManager = [self mockForClass:[UAPrivacyManager class]];
 
     [UAirship setSharedAirship:self.mockAirship];
     [[[self.mockAirship stub] andReturn:self.mockPush] sharedPush];
 
     [[[self.mockAirship stub] andReturn:self.mockLocationProvider] locationProvider];
+    [[[self.mockAirship stub] andReturn:self.mockPrivacyManager] privacyManager];
 
     [[[self.mockPush stub] andReturn:self.mockPushRegistration] pushRegistration];
     [[[self.mockApplication stub] andReturn:self.mockApplication] sharedApplication];
@@ -99,6 +103,8 @@
 
     [[self.mockPush expect] userPromptedForNotifications];
     [[self.mockPush expect] setUserPushNotificationsEnabled:YES];
+    [[self.mockPrivacyManager expect] enableFeatures:UAFeaturesPush];
+
     [[self.mockApplication reject] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]
                                    options:OCMOCK_ANY
                          completionHandler:OCMOCK_ANY];
@@ -130,6 +136,8 @@
     [[[self.mockPush stub] andReturnValue:@YES] userPromptedForNotifications];
 
     [[self.mockPush expect] setUserPushNotificationsEnabled:YES];
+    [[self.mockPrivacyManager expect] enableFeatures:UAFeaturesPush];
+
     [[[self.mockApplication stub] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:4];
@@ -155,6 +163,8 @@
     arguments.value = UAEnableLocationActionValue;
 
     [[self.mockLocationProvider expect] setLocationUpdatesEnabled:YES];
+    [[self.mockPrivacyManager expect] enableFeatures:UAFeaturesLocation];
+
     [[self.mockApplication reject] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]
                                    options:OCMOCK_ANY
                          completionHandler:OCMOCK_ANY];
@@ -176,6 +186,8 @@
     arguments.value = UAEnableLocationActionValue;
 
     [[self.mockLocationProvider expect] setLocationUpdatesEnabled:YES];
+    [[self.mockPrivacyManager expect] enableFeatures:UAFeaturesLocation];
+
     [[[self.mockApplication stub] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:4];
@@ -202,6 +214,8 @@
 
     [[self.mockLocationProvider expect] setLocationUpdatesEnabled:YES];
     [[self.mockLocationProvider expect] setBackgroundLocationUpdatesAllowed:YES];
+    [[self.mockPrivacyManager expect] enableFeatures:UAFeaturesLocation];
+
     [[self.mockApplication reject] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]
                                    options:OCMOCK_ANY
                          completionHandler:OCMOCK_ANY];
@@ -224,6 +238,8 @@
 
     [[self.mockLocationProvider expect] setLocationUpdatesEnabled:YES];
     [[self.mockLocationProvider expect] setBackgroundLocationUpdatesAllowed:YES];
+    [[self.mockPrivacyManager expect] enableFeatures:UAFeaturesLocation];
+
     [[[self.mockApplication stub] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:4];
