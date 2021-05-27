@@ -20,11 +20,12 @@
 + (id<UAModuleLoader>)moduleLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
                                         channel:(UAChannel *)channel
                                            push:(UAPush *)push
-                                      analytics:(UAAnalytics *)analytics {
+                                 privacyManager:(UAPrivacyManager *)privacyManager {
+
     UAAccengage *accengage = [UAAccengage accengageWithDataStore:dataStore
                                                          channel:channel
                                                             push:push
-                                                       analytics:analytics];
+                                                  privacyManager:privacyManager];
 
     return [[self alloc] initWithAccengage:accengage];
 }

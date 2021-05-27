@@ -22,13 +22,13 @@ NS_ASSUME_NONNULL_BEGIN
  * @param dataStore The preference data store.
  * @param channel The Airship channel instance.
  * @param push The push instance.
- * @param analytics The analytics instance.
+ * @param privacyManager The privacy manager.
  * @return A module loader.
  */
 + (id<UAModuleLoader>)moduleLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
                                         channel:(UAChannel *)channel
                                            push:(UAPush *)push
-                                      analytics:(UAAnalytics *)analytics;
+                                 privacyManager:(UAPrivacyManager *)privacyManager;
 
 @end
 

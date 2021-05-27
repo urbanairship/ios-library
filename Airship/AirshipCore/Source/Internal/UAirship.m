@@ -200,7 +200,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         id<UAModuleLoader> accengageLoader = [UAirship accengageModuleLoaderWithDataStore:self.dataStore
                                                                                   channel:self.sharedChannel
                                                                                      push:self.sharedPush
-                                                                                analytics:self.sharedAnalytics];
+                                                                           privacyManager:self.sharedPrivacyManager];
         if (accengageLoader) {
             [loaders addObject:accengageLoader];
         }
@@ -562,14 +562,14 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 + (nullable id<UAModuleLoader>)accengageModuleLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
                                                           channel:(UAChannel *)channel
                                                              push:(UAPush *)push
-                                                        analytics:(UAAnalytics *)analytics {
+                                                   privacyManager:(UAPrivacyManager *)privacyManager{
 
     Class cls = NSClassFromString(UAAccengageModuleLoaderClassName);
     if ([cls conformsToProtocol:@protocol(UAAccengageModuleLoaderFactory)]) {
         return [cls moduleLoaderWithDataStore:dataStore
                                       channel:channel
                                          push:push
-                                    analytics:analytics];
+                               privacyManager:privacyManager];
     }
     return nil;
 }

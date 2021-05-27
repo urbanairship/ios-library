@@ -25,13 +25,28 @@ NS_ASSUME_NONNULL_BEGIN
  * @param dataStore The preference data store.
  * @param channel The Airship channel instance.
  * @param push The push instance.
- * @param analytics The analytics instance.
- * @return A Accengage component.
+ * @param privacyManager The privacy manager.
+ * @return An Accengage component.
  */
 + (instancetype)accengageWithDataStore:(UAPreferenceDataStore *)dataStore
                                channel:(UAChannel *)channel
                                   push:(UAPush *)push
-                             analytics:(UAAnalytics *)analytics;
+                        privacyManager:(UAPrivacyManager *)privacyManager;
+
+/**
+ * Factory method. Used for tests.
+ * @param dataStore The preference data store.
+ * @param channel The Airship channel instance.
+ * @param push The push instance.
+ * @param privacyManager The privacy manager.
+ * @param settings The accengage settings.
+ * @return An Accengage component.
+ */
++ (instancetype)accengageWithDataStore:(UAPreferenceDataStore *)dataStore
+                               channel:(UAChannel *)channel
+                                  push:(UAPush *)push
+                        privacyManager:(UAPrivacyManager *)privacyManager
+                              settings:(NSDictionary *)settings;
 
 @end
 
