@@ -115,13 +115,13 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         self.dataStore = dataStore;
         self.config = config;
 
-        self.actionRegistry = [UAActionRegistry defaultRegistry];
-        self.URLAllowList = [UAURLAllowList allowListWithConfig:config];
-        self.applicationMetrics = [UAApplicationMetrics applicationMetricsWithDataStore:self.dataStore];
-        self.sharedLocaleManager = [UALocaleManager localeManagerWithDataStore:self.dataStore];
-
         self.sharedPrivacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:config.enabledFeatures];
         [self.sharedPrivacyManager migrateData];
+
+        self.actionRegistry = [UAActionRegistry defaultRegistry];
+        self.URLAllowList = [UAURLAllowList allowListWithConfig:config];
+        self.applicationMetrics = [UAApplicationMetrics applicationMetricsWithDataStore:self.dataStore privacyManager:self.sharedPrivacyManager];
+        self.sharedLocaleManager = [UALocaleManager localeManagerWithDataStore:self.dataStore];
         
         self.sharedChannel = [UAChannel channelWithDataStore:self.dataStore
                                                       config:self.config

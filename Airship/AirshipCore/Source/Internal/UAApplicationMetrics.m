@@ -8,6 +8,7 @@
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) UADate *date;
 @property (nonatomic, assign) BOOL isAppVersionUpdated;
+@property (nonatomic, strong) UAPrivacyManager *privacyManager;
 @end
 
 @implementation UAApplicationMetrics
@@ -15,67 +16,78 @@ NSString *const UAApplicationMetricLastOpenDate = @"UAApplicationMetricLastOpenD
 NSString *const UAApplicationMetricsLastAppVersion = @"UAApplicationMetricsLastAppVersion";
 
 - (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore
+                   privacyManager:(UAPrivacyManager *)privacyManager
                notificationCenter:(NSNotificationCenter *)notificationCenter
                              date:(UADate *)date {
+
     self = [super init];
     if (self) {
         self.dataStore = dataStore;
+        self.privacyManager = privacyManager;
         self.date = date;
 
-        [notificationCenter addObserver:self
-                                    selector:@selector(applicationDidBecomeActive)
-                                        name:UAApplicationDidBecomeActiveNotification
-                                      object:nil];
+        [self updateData];
 
-        [self checkAppVersion];
+        [notificationCenter addObserver:self
+                               selector:@selector(applicationDidBecomeActive)
+                                   name:UAApplicationDidBecomeActiveNotification
+                                 object:nil];
+
+        [notificationCenter addObserver:self
+                               selector:@selector(updateData)
+                                   name:UAPrivacyManagerEnabledFeaturesChangedEvent
+                                 object:nil];
     }
 
     return self;
 }
 
-+ (instancetype)applicationMetricsWithDataStore:(UAPreferenceDataStore *)dataStore {
++ (instancetype)applicationMetricsWithDataStore:(UAPreferenceDataStore *)dataStore privacyManager:(UAPrivacyManager *)privacyManager {
     return [[UAApplicationMetrics alloc] initWithDataStore:dataStore
+                                            privacyManager:privacyManager
                                         notificationCenter:[NSNotificationCenter defaultCenter]
                                                       date:[[UADate alloc] init]];
 }
 
 + (instancetype)applicationMetricsWithDataStore:(UAPreferenceDataStore *)dataStore
+                                 privacyManager:(UAPrivacyManager *)privacyManager
                              notificationCenter:(NSNotificationCenter *)notificationCenter
                                            date:(UADate *)date {
     return [[UAApplicationMetrics alloc] initWithDataStore:dataStore
+                                            privacyManager:privacyManager
                                         notificationCenter:notificationCenter
                                                       date:date];
-}
-
-- (void)applicationDidBecomeActive {
-    self.lastApplicationOpenDate = [self.date now];
 }
 
 - (NSDate *)lastApplicationOpenDate {
     return [self.dataStore objectForKey:UAApplicationMetricLastOpenDate];
 }
 
-- (void)setLastApplicationOpenDate:(NSDate *)date {
-    [self.dataStore setObject:date forKey:UAApplicationMetricLastOpenDate];
-}
-
 - (NSString *)currentAppVersion {
     return [UAUtils bundleShortVersionString];
 }
 
-- (NSString *)lastAppVersion {
-    return [self.dataStore objectForKey:UAApplicationMetricsLastAppVersion];
+- (void)applicationDidBecomeActive {
+    if ([self.privacyManager isEnabled:UAFeaturesInAppAutomation] || [self.privacyManager isEnabled:UAFeaturesAnalytics]) {
+        [self.dataStore setObject:[self.date now] forKey:UAApplicationMetricLastOpenDate];
+    }
 }
 
-- (void)checkAppVersion {
-    NSString *lastVersion = [self lastAppVersion];
-    NSString *currentVersion = [self currentAppVersion];
+- (void)updateData {
+    if ([self.privacyManager isEnabled:UAFeaturesInAppAutomation] || [self.privacyManager isEnabled:UAFeaturesAnalytics]) {
+        NSString *lastVersion = [self.dataStore objectForKey:UAApplicationMetricsLastAppVersion];
+        NSString *currentVersion = [self currentAppVersion];
 
-    if (lastVersion && [UAUtils compareVersion:lastVersion toVersion:currentVersion] == NSOrderedAscending) {
-        self.isAppVersionUpdated = YES;
+        if (lastVersion && [UAUtils compareVersion:lastVersion toVersion:currentVersion] == NSOrderedAscending) {
+            self.isAppVersionUpdated = YES;
+        }
+
+        [self.dataStore setObject:currentVersion forKey:UAApplicationMetricsLastAppVersion];
+    } else {
+        [self.dataStore removeObjectForKey:UAApplicationMetricLastOpenDate];
+        [self.dataStore removeObjectForKey:UAApplicationMetricsLastAppVersion];
     }
-
-    [self.dataStore setObject:currentVersion forKey:UAApplicationMetricsLastAppVersion];
 }
 
 @end
+

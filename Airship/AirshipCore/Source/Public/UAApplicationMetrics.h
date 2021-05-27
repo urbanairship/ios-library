@@ -15,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * The date of the last time the application was active.
+ * Only tracked if UAFeatureInAppAutomation or UAFeatureAnalytics are enabled in the privacy manager.
  */
 @property (nonatomic, readonly, strong, nullable) NSDate *lastApplicationOpenDate;
 
@@ -25,6 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Determines whether the application's short version string has been updated.
+ * Only tracked if UAFeatureInAppAutomation or UAFeatureAnalytics are enabled in the privacy manager.
  */
 @property (nonatomic, readonly) BOOL isAppVersionUpdated;
 

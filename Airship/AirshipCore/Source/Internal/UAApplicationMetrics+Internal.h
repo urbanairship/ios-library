@@ -4,6 +4,7 @@
 #import "UAApplicationMetrics.h"
 #import "UADate.h"
 #import "UAPreferenceDataStore+Internal.h"
+#import "UAPrivacyManager.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -12,11 +13,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UAApplicationMetrics ()
 
-///---------------------------------------------------------------------------------------
-/// @name Application Metrics Internal Properties
-///---------------------------------------------------------------------------------------
-
-@property (nonatomic, strong, nullable) NSDate *lastApplicationOpenDate;
 
 ///---------------------------------------------------------------------------------------
 /// @name Application Metrics Internal Methods
@@ -25,18 +21,21 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Application metrics factory method.
  * @param dataStore The dataStore.
+ * @param privacyManager The privacy manager.
  * @return An application metrics instance.
  */
-+ (instancetype)applicationMetricsWithDataStore:(UAPreferenceDataStore *)dataStore;
++ (instancetype)applicationMetricsWithDataStore:(UAPreferenceDataStore *)dataStore privacyManager:(UAPrivacyManager *)privacyManager;
 
 /**
  * Application metrics factory method. Used for testing.
  * @param dataStore The dataStore.
+ * @param privacyManager The privacy manager.
  * @param notificationCenter The notification center.
  * @param date The date.
  * @return An application metrics instance.
  */
 + (instancetype)applicationMetricsWithDataStore:(UAPreferenceDataStore *)dataStore
+                                 privacyManager:(UAPrivacyManager *)privacyManager
                              notificationCenter:(NSNotificationCenter *)notificationCenter
                                            date:(UADate *)date;
 

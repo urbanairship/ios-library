@@ -11,7 +11,7 @@
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property (nonatomic, strong) UATestDate *testDate;
 @property (nonatomic, strong) id mockBundle;
-
+@property (nonatomic, strong) UAPrivacyManager *privacyManager;
 @end
 
 @implementation UAApplicationMetricsTest
@@ -22,10 +22,12 @@
     self.testDate = [[UATestDate alloc] init];
     self.testDate.absoluteTime = [NSDate date];
 
-    self.notificationCenter = [[NSNotificationCenter alloc] init];
+    self.notificationCenter = [NSNotificationCenter defaultCenter];
+    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
     self.mockBundle = [self mockForClass:[NSBundle class]];
     [[[self.mockBundle stub] andReturn:self.mockBundle] mainBundle];
     self.metrics = [UAApplicationMetrics applicationMetricsWithDataStore:self.dataStore
+                                                          privacyManager:self.privacyManager
                                                       notificationCenter:self.notificationCenter
                                                                     date:self.testDate];
 }
@@ -43,6 +45,7 @@
     // Fresh install
     [[[self.mockBundle expect] andReturn:@{@"CFBundleShortVersionString": @"1.0.0"}] infoDictionary];
     self.metrics = [UAApplicationMetrics applicationMetricsWithDataStore:self.dataStore
+                                                          privacyManager:self.privacyManager
                                                       notificationCenter:self.notificationCenter
                                                                     date:self.testDate];
 
@@ -53,6 +56,7 @@
     // Nothing changed
     [[[self.mockBundle expect] andReturn:@{@"CFBundleShortVersionString": @"1.0.0"}] infoDictionary];
     self.metrics = [UAApplicationMetrics applicationMetricsWithDataStore:self.dataStore
+                                                          privacyManager:self.privacyManager
                                                       notificationCenter:self.notificationCenter
                                                                     date:self.testDate];
     XCTAssertFalse(self.metrics.isAppVersionUpdated);
@@ -61,9 +65,26 @@
     // Upgrade
     [[[self.mockBundle expect] andReturn:@{@"CFBundleShortVersionString": @"2.0.0"}] infoDictionary];
     self.metrics = [UAApplicationMetrics applicationMetricsWithDataStore:self.dataStore
+                                                          privacyManager:self.privacyManager
                                                       notificationCenter:self.notificationCenter
                                                                     date:self.testDate];
     XCTAssertTrue(self.metrics.isAppVersionUpdated);
+}
+
+- (void)testOptedOut {
+    [self.notificationCenter postNotificationName:UAApplicationDidBecomeActiveNotification object:nil];
+    XCTAssertNotNil(self.metrics.lastApplicationOpenDate);
+
+    [self.privacyManager disableFeatures:UAFeaturesAnalytics];
+    XCTAssertNotNil(self.metrics.lastApplicationOpenDate);
+
+    [self.privacyManager enableFeatures:UAFeaturesAnalytics];
+    [self.privacyManager disableFeatures:UAFeaturesInAppAutomation];
+    XCTAssertNotNil(self.metrics.lastApplicationOpenDate);
+
+    [self.privacyManager disableFeatures:UAFeaturesAnalytics];
+    [self.privacyManager disableFeatures:UAFeaturesInAppAutomation];
+    XCTAssertNil(self.metrics.lastApplicationOpenDate);
 }
 
 @end
