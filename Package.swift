@@ -173,7 +173,8 @@ let package = Package(
                 dependencies: [.target(name: "AirshipCore")],
                 path: "Airship/AirshipChat",
                 exclude: ["Source/AirshipChat.h",
-                          "Info.plist"],
+                          "Info.plist",
+                          "Tests"],
                 sources : ["Source"],
                 resources: [
                     .process("Resources")]

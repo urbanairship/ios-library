@@ -64,6 +64,7 @@ public protocol ConversationProtocol {
     func fetchMessages(completionHandler: @escaping (Array<ChatMessage>) -> ())
 }
 
+@available(iOS 13.0, *) 
 protocol InternalConversationProtocol: ConversationProtocol  {
     func refresh()
     var enabled : Bool { get set }
