@@ -34,11 +34,6 @@ extern NSString *const UABackgroundPushNotificationsEnabledKey;
 extern NSString *const UAExtendedPushNotificationPermissionEnabledKey;
 
 /**
- * Alias data store key.
- */
-extern NSString *const UAPushAliasSettingsKey;
-
-/**
  * Tags data store key.
  *
  * Note: This should only be used for migration purposes, as
@@ -76,20 +71,12 @@ extern NSString *const UAPushQuietTimeStartKey;
  */
 extern NSString *const UAPushQuietTimeEndKey;
 
-/**
- * If push enabled settings have been migrated data store key.
- */
-extern NSString *const UAPushEnabledSettingsMigratedKey;
 
 /**
  * If push tags have been migrated to channel tags data store key.
  */
 extern NSString *const UAPushTagsMigratedToChannelTagsKey;
 
-/**
- * Old push enabled key.
- */
-extern NSString *const UAPushEnabledKey;
 
 
 @interface UAPush () <UAPushProviderDelegate>
@@ -209,11 +196,6 @@ extern NSString *const UAPushEnabledKey;
  */
 - (BOOL)userPushNotificationsAllowed;
 
-/**
- * Migrates the old pushEnabled setting to the new userPushNotificationsEnabled
- * setting.
- */
-- (void)migratePushSettings;
 
 /**
  * Migrates push tags to channel tags.

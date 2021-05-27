@@ -87,13 +87,6 @@ static NSString *const LegacyDataCollectionEnableEnableFlag = @"com.urbanairship
         [self.dataStore removeObjectForKey:LegacyDataCollectionEnableEnableFlag];
     }
 
-    if ([self.dataStore keyExists:UAPushEnabledKey]) {
-        if (![self.dataStore boolForKey:UAPushEnabledKey]) {
-            features &= ~UAFeaturesPush;
-        }
-        [self.dataStore removeObjectForKey:UAPushEnabledKey];
-    }
-
     if ([self.dataStore keyExists:LegacyPushTokenRegistrationEnableFlag]) {
         if (![self.dataStore boolForKey:LegacyPushTokenRegistrationEnableFlag]) {
             features &= ~UAFeaturesPush;

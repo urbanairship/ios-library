@@ -24,7 +24,6 @@ NSString *const UAUserPushNotificationsEnabledKey = @"UAUserPushNotificationsEna
 NSString *const UABackgroundPushNotificationsEnabledKey = @"UABackgroundPushNotificationsEnabled";
 NSString *const UAExtendedPushNotificationPermissionEnabledKey = @"UAExtendedPushNotificationPermissionEnabled";
 
-NSString *const UAPushAliasSettingsKey = @"UAPushAlias";
 NSString *const UAPushLegacyTagsSettingsKey = @"UAPushTags";
 NSString *const UAPushBadgeSettingsKey = @"UAPushBadge";
 NSString *const UAPushDeviceTokenKey = @"UADeviceToken";
@@ -33,7 +32,6 @@ NSString *const UAPushQuietTimeSettingsKey = @"UAPushQuietTime";
 NSString *const UAPushQuietTimeEnabledSettingsKey = @"UAPushQuietTimeEnabled";
 NSString *const UAPushTimeZoneSettingsKey = @"UAPushTimeZone";
 
-NSString *const UAPushEnabledSettingsMigratedKey = @"UAPushEnabledSettingsMigrated";
 NSString *const UAPushTagsMigratedToChannelTagsKey = @"UAPushTagsMigrated";
 
 NSString *const UAPushTypesAuthorizedKey = @"UAPushTypesAuthorized";
@@ -79,6 +77,7 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
 @property (nonatomic, strong) UAAppStateTracker *appStateTracker;
 @property (nonatomic, assign) BOOL waitForDeviceToken;
 @property (nonatomic, strong) UAPrivacyManager *privacyManager;
+@property (nonatomic, assign) BOOL pushEnabled;
 
 @end
 
@@ -110,7 +109,12 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
 
         self.pushRegistration = pushRegistration;
         self.requireAuthorizationForDefaultCategories = YES;
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         self.backgroundPushNotificationsEnabledByDefault = YES;
+#pragma clang diagnostic pop
+
         self.shouldUpdateAPNSRegistration = YES;
 
         self.notificationOptions = UANotificationOptionBadge;
@@ -120,21 +124,12 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
 
         [self observeNotificationCenterEvents];
 
-        // Do not remove migratePushSettings call from init. It needs to be run
-        // prior to allowing the application to set defaults.
-        [self migratePushSettings];
-
         // Migrate push tags to channel tags
         [self migratePushTagsToChannelTags];
-
-        // Register for remote notifications right away. This does not prompt for permissions to show notifications,
-        // but starts the device token registration.
-        [self.application registerForRemoteNotifications];
-
-        [self updateAuthorizedNotificationTypes];
         self.defaultPresentationOptions = UNNotificationPresentationOptionNone;
-
         self.waitForDeviceToken = self.channel.identifier == nil;
+
+        [self updatePushEnablement];
 
         UA_WEAKIFY(self)
         [self.channel addChannelExtenderBlock:^(UAChannelRegistrationPayload *payload, UAChannelRegistrationExtenderCompletionHandler completionHandler) {
@@ -215,10 +210,23 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
                                 selector:@selector(channelRegistrationFailed)
                                     name:UAChannelRegistrationFailedEvent
                                   object:nil];
+
+    [self.notificationCenter addObserver:self
+                                selector:@selector(onEnabledFeaturesChanged)
+                                    name:UAPrivacyManagerEnabledFeaturesChangedEvent
+                                  object:nil];
 }
 
 - (void)updateAuthorizedNotificationTypes {
+    if (![self.privacyManager isEnabled:UAFeaturesPush]) {
+        return;
+    }
+
     [self.pushRegistration getAuthorizedSettingsWithCompletionHandler:^(UAAuthorizedNotificationSettings authorizedSettings, UAAuthorizationStatus status) {
+        if (![self.privacyManager isEnabled:UAFeaturesPush]) {
+            return;
+        }
+
         if (self.userPromptedForNotifications || authorizedSettings != UAAuthorizedNotificationSettingsNone) {
             self.userPromptedForNotifications = YES;
             self.authorizedNotificationSettings = authorizedSettings;
@@ -232,6 +240,24 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
             [self.channel updateRegistration];
         }
     }];
+}
+
+- (void)onEnabledFeaturesChanged {
+    [self updatePushEnablement];
+}
+
+- (void)updatePushEnablement {
+    if (self.componentEnabled && [self.privacyManager isEnabled:UAFeaturesPush]) {
+        if (!self.pushEnabled) {
+            [self.application registerForRemoteNotifications];
+            self.shouldUpdateAPNSRegistration = YES;
+            [self updateAuthorizedNotificationTypes];
+            [self updateRegistration];
+            self.pushEnabled = YES;
+        }
+    } else {
+        self.pushEnabled = NO;
+    }
 }
 
 #pragma mark -
@@ -312,21 +338,12 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
     [self.dataStore setBool:autobadgeEnabled forKey:UAPushBadgeSettingsKey];
 }
 
-- (NSString *)alias {
-    return [self.dataStore stringForKey:UAPushAliasSettingsKey];
-}
-
-- (void)setAlias:(NSString *)alias {
-    NSString * trimmedAlias = [alias stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-    [self.dataStore setObject:trimmedAlias forKey:UAPushAliasSettingsKey];
-}
-
 - (BOOL)userPushNotificationsEnabled {
     if (![self.dataStore objectForKey:UAUserPushNotificationsEnabledKey]) {
-        if ([self.dataStore boolForKey:UAPushEnabledSettingsMigratedKey]) {
-            [self.dataStore setBool:self.userPushNotificationsEnabledByDefault forKey:UAUserPushNotificationsEnabledKey];
-        }
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         return self.userPushNotificationsEnabledByDefault;
+#pragma clang diagnostic pop
     }
 
     return [self.dataStore boolForKey:UAUserPushNotificationsEnabledKey];
@@ -388,7 +405,10 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
 
 - (BOOL)backgroundPushNotificationsEnabled {
     if (![self.dataStore objectForKey:UABackgroundPushNotificationsEnabledKey]) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         return self.backgroundPushNotificationsEnabledByDefault;
+#pragma clang diagnostic pop
     }
 
     return [self.dataStore boolForKey:UABackgroundPushNotificationsEnabledKey];
@@ -540,27 +560,37 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
 #pragma mark App State Observation
 
 - (void)applicationDidTransitionToForeground {
-    [self updateAuthorizedNotificationTypes];
+    if ([self.privacyManager isEnabled:UAFeaturesPush]) {
+        [self updateAuthorizedNotificationTypes];
+    }
 }
 
 - (void)applicationDidEnterBackground {
     self.launchNotificationResponse = nil;
 
-    UA_LTRACE(@"Application entered the background. Updating authorization.");
-    [self updateAuthorizedNotificationTypes];
+    if ([self.privacyManager isEnabled:UAFeaturesPush]) {
+        UA_LTRACE(@"Application entered the background. Updating authorization.");
+        [self updateAuthorizedNotificationTypes];
+    }
 }
 
 - (void)applicationBackgroundRefreshStatusChanged {
-    UA_LTRACE(@"Background refresh status changed.");
+    if ([self.privacyManager isEnabled:UAFeaturesPush]) {
+        UA_LTRACE(@"Background refresh status changed.");
 
-    if (self.application.backgroundRefreshStatus == UIBackgroundRefreshStatusAvailable) {
-        [self.application registerForRemoteNotifications];
-    } else {
-        [self updateRegistration];
+        if (self.application.backgroundRefreshStatus == UIBackgroundRefreshStatusAvailable) {
+            [self.application registerForRemoteNotifications];
+        } else {
+            [self.channel updateRegistration];
+        }
     }
 }
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+    if (![self.privacyManager isEnabled:UAFeaturesPush]) {
+        return;
+    }
+
     self.deviceToken = [UAUtils deviceTokenStringFromDeviceToken:deviceToken];
 
     if (self.appStateTracker.state == UAApplicationStateBackground && self.channel.identifier) {
@@ -573,6 +603,10 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
 }
 
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
+    if (![self.privacyManager isEnabled:UAFeaturesPush]) {
+        return;
+    }
+
     [self.registrationDelegateWrapper apnsRegistrationFailedWithError:error];
 }
 
@@ -625,8 +659,8 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
         allowed = NO;
     }
 
-    if (!self.pushTokenRegistrationEnabled) {
-        UA_LTRACE(@"Opted out: push token registration disabled");
+    if (![self.privacyManager isEnabled:UAFeaturesPush]) {
+        UA_LTRACE(@"Opted out: push is disabled");
         allowed = NO;
     }
 
@@ -637,7 +671,7 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
     if (!self.deviceToken
         || !self.backgroundPushNotificationsEnabled
         || ![UAirship shared].remoteNotificationBackgroundModeEnabled
-        || !self.pushTokenRegistrationEnabled) {
+        || ![self.privacyManager isEnabled:UAFeaturesPush]) {
         return NO;
     }
 
@@ -651,6 +685,10 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
 }
 
 - (void)updateRegistration {
+    if (![self.privacyManager isEnabled:UAFeaturesPush]) {
+        return;
+    }
+
     if (self.shouldUpdateAPNSRegistration) {
         UA_LDEBUG(@"APNS registration is out of date, updating.");
         UA_WEAKIFY(self)
@@ -664,25 +702,27 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
 }
 
 - (void)onComponentEnableChange {
-    if (self.componentEnabled) {
-        // If component was disabled and is now enabled, register push
-        [self updateRegistration];
-    }
+    [self updatePushEnablement];
 }
 
 - (void)updateAPNSRegistration:(nonnull void(^)(BOOL success))completionHandler {
-    self.shouldUpdateAPNSRegistration = NO;
-
-    UANotificationOptions options = UANotificationOptionNone;
-    NSSet *categories = nil;
-
-    if (self.userPushNotificationsEnabled) {
-        options = self.notificationOptions;
-        categories = self.combinedCategories;
+    if (![self.privacyManager isEnabled:UAFeaturesPush]) {
+        completionHandler(NO);
+        return;
     }
+
+    self.shouldUpdateAPNSRegistration = NO;
 
     [self.pushRegistration getAuthorizedSettingsWithCompletionHandler:^(UAAuthorizedNotificationSettings authorizedSettings,
                                                                         UAAuthorizationStatus status) {
+
+        UANotificationOptions options = UANotificationOptionNone;
+        NSSet *categories = nil;
+
+        if (self.userPushNotificationsEnabled) {
+            options = self.notificationOptions;
+            categories = self.combinedCategories;
+        }
 
         if (!self.config.requestAuthorizationToUseNotifications) {
             // The app is handling notification authorization
@@ -699,7 +739,6 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
                                                completionHandler:^(BOOL result,
                                                                    UAAuthorizedNotificationSettings authorizedSettings,
                                                                    UAAuthorizationStatus status) {
-
                 [self notificationRegistrationFinishedWithAuthorizedSettings:authorizedSettings status:status];
                 completionHandler(result);
             }];
@@ -740,6 +779,9 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
 }
 
 - (void)notificationRegistrationFinishedWithAuthorizedSettings:(UAAuthorizedNotificationSettings)authorizedSettings status:(UAAuthorizationStatus)status {
+    if (![self.privacyManager isEnabled:UAFeaturesPush]) {
+        return;
+    }
 
     if (!self.deviceToken) {
         UA_WEAKIFY(self)
@@ -763,16 +805,19 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
 #pragma mark Analytics
 
 - (NSDictionary<NSString *, NSString *> *)analyticsHeaders {
-    NSMutableDictionary *headers = [NSMutableDictionary dictionary];
-    [headers setValue:self.userPushNotificationsAllowed ? @"true" : @"false" forKey:@"X-UA-Channel-Opted-In"];
-    [headers setValue:self.userPromptedForNotifications ? @"true" : @"false" forKey:@"X-UA-Notification-Prompted"];
-    [headers setValue:self.backgroundPushNotificationsAllowed ? @"true" : @"false" forKey:@"X-UA-Channel-Background-Enabled"];
-
-    // Only send up token if enabled
-    if (self.pushTokenRegistrationEnabled) {
+    if ([self.privacyManager isEnabled:UAFeaturesPush]) {
+        NSMutableDictionary *headers = [NSMutableDictionary dictionary];
+        [headers setValue:self.userPushNotificationsAllowed ? @"true" : @"false" forKey:@"X-UA-Channel-Opted-In"];
+        [headers setValue:self.userPromptedForNotifications ? @"true" : @"false" forKey:@"X-UA-Notification-Prompted"];
+        [headers setValue:self.backgroundPushNotificationsAllowed ? @"true" : @"false" forKey:@"X-UA-Channel-Background-Enabled"];
         [headers setValue:self.deviceToken forKey:@"X-UA-Push-Address"];
+        return headers;
+    } else {
+        return @{
+            @"X-UA-Channel-Opted-In": @"false",
+            @"X-UA-Channel-Background-Enabled": @"false"
+        };
     }
-    return headers;
 }
 
 #pragma mark -
@@ -787,28 +832,32 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
     [self.registrationDelegateWrapper registrationFailed];
 }
 
-
 - (void)extendChannelRegistrationPayload:(UAChannelRegistrationPayload *)payload
                        completionHandler:(UAChannelRegistrationExtenderCompletionHandler)completionHandler {
+
+    if (![self.privacyManager isEnabled:UAFeaturesPush]) {
+        completionHandler(payload);
+        return;
+    }
+
     UA_WEAKIFY(self);
     [self waitForDeviceTokenRegistration:^{
         UA_STRONGIFY(self);
 
-        if (self.pushTokenRegistrationEnabled) {
+        if ([self.privacyManager isEnabled:UAFeaturesPush]) {
             payload.pushAddress = self.deviceToken;
             payload.optedIn = self.userPushNotificationsAllowed;
             payload.backgroundEnabled = self.backgroundPushNotificationsAllowed;
-        }
 
-        if (self.autobadgeEnabled) {
-            payload.badge = @(self.badgeNumber);
-        }
+            if (self.autobadgeEnabled) {
+                payload.badge = @(self.badgeNumber);
+            }
 
-        if (self.timeZone.name && self.quietTime && self.isQuietTimeEnabled) {
-            payload.quietTime = self.quietTime;
-            payload.quietTimeTimeZone = self.timeZone.name;
+            if (self.timeZone.name && self.quietTime && self.isQuietTimeEnabled) {
+                payload.quietTime = self.quietTime;
+                payload.quietTimeTimeZone = self.timeZone.name;
+            }
         }
-
         completionHandler(payload);
     }];
 }
@@ -817,7 +866,7 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
     UA_WEAKIFY(self);
     [self.dispatcher dispatchAsync:^{
         UA_STRONGIFY(self);
-        if (self.waitForDeviceToken && self.pushTokenRegistrationEnabled && !self.deviceToken && self.application.isRegisteredForRemoteNotifications) {
+        if (self.waitForDeviceToken && [self.privacyManager isEnabled:UAFeaturesPush] && !self.deviceToken && self.application.isRegisteredForRemoteNotifications) {
             UASemaphore *semaphore = [UASemaphore semaphore];
             self.waitForDeviceToken = NO;
             __block UADisposable *disposable = [self observeAtKeyPath:@"deviceToken" withBlock:^(id  _Nonnull value) {
@@ -840,6 +889,9 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
 #pragma mark Push handling
 
 - (UNNotificationPresentationOptions)presentationOptionsForNotification:(UNNotification *)notification {
+    if (![self.privacyManager isEnabled:UAFeaturesPush]) {
+        return UNNotificationPresentationOptionNone;
+    }
 
     UNNotificationPresentationOptions options = UNNotificationPresentationOptionNone;
 
@@ -894,6 +946,11 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
 }
 
 - (void)handleNotificationResponse:(UANotificationResponse *)response completionHandler:(void (^)(void))handler {
+    if (![self.privacyManager isEnabled:UAFeaturesPush]) {
+        handler();
+        return;
+    }
+
     if ([response.actionIdentifier isEqualToString:UANotificationDefaultActionIdentifier]) {
         self.launchNotificationResponse = response;
     }
@@ -911,6 +968,11 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
 }
 
 - (void)handleRemoteNotification:(UANotificationContent *)notification foreground:(BOOL)foreground completionHandler:(void (^)(UIBackgroundFetchResult))handler {
+    if (![self.privacyManager isEnabled:UAFeaturesPush]) {
+        handler(UIBackgroundFetchResultNoData);
+        return;
+    }
+
     BOOL delegateCalled = NO;
     id delegate = self.pushNotificationDelegate;
 
@@ -959,40 +1021,12 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
     _userPushNotificationsEnabledByDefault = enabled;
 }
 
-- (void)migratePushSettings {
-    [self.dataStore migrateUnprefixedKeys:@[UAUserPushNotificationsEnabledKey, UABackgroundPushNotificationsEnabledKey,
-                                            UAPushAliasSettingsKey, UAPushLegacyTagsSettingsKey, UAPushBadgeSettingsKey,
-                                            UAPushDeviceTokenKey, UAPushQuietTimeSettingsKey, UAPushQuietTimeEnabledSettingsKey,
-                                            UAPushEnabledSettingsMigratedKey, UAPushEnabledKey, UAPushTimeZoneSettingsKey]];
-
-    if ([self.dataStore boolForKey:UAPushEnabledSettingsMigratedKey]) {
-        // Already migrated
+- (void)migratePushTagsToChannelTags {
+    if (![self.dataStore keyExists:UAPushLegacyTagsSettingsKey]) {
+        // Nothing to migrate
         return;
     }
 
-    // Migrate userNotificationEnabled setting to YES if we are currently registered for notification types
-    if (![self.dataStore objectForKey:UAUserPushNotificationsEnabledKey]) {
-
-        // If the previous pushEnabled was set
-        if ([self.dataStore objectForKey:UAPushEnabledKey]) {
-            BOOL previousValue = [self.dataStore boolForKey:UAPushEnabledKey];
-            UA_LTRACE(@"Migrating userPushNotificationEnabled to %@ from previous pushEnabledValue.", previousValue ? @"YES" : @"NO");
-            [self.dataStore setBool:previousValue forKey:UAUserPushNotificationsEnabledKey];
-            [self.dataStore removeObjectForKey:UAPushEnabledKey];
-        } else {
-            [self.pushRegistration getAuthorizedSettingsWithCompletionHandler:^(UAAuthorizedNotificationSettings authorizedSettings, UAAuthorizationStatus status) {
-                if (status == UAAuthorizationStatusAuthorized) {
-                    UA_LTRACE(@"Migrating userPushNotificationEnabled to YES because application was authorized for notifications");
-                    [self.dataStore setBool:YES forKey:UAUserPushNotificationsEnabledKey];
-                }
-            }];
-        }
-    }
-
-    [self.dataStore setBool:YES forKey:UAPushEnabledSettingsMigratedKey];
-}
-
-- (void)migratePushTagsToChannelTags {
     if ([self.dataStore boolForKey:UAPushTagsMigratedToChannelTagsKey]) {
         // Already migrated tags
         return;
@@ -1015,6 +1049,5 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
     [self.dataStore setBool:YES forKey:UAPushTagsMigratedToChannelTagsKey];
     [self.dataStore removeObjectForKey:UAPushLegacyTagsSettingsKey];
 }
+
 @end
-
-

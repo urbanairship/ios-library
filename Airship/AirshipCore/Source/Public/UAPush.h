@@ -235,8 +235,9 @@ typedef NS_ENUM(NSInteger, UAAuthorizationStatus) {
  * Sets the default value for backgroundPushNotificationsEnabled. The default is `YES`.
  * After the backgroundPushNotificationsEnabled value has been directly set, this
  * value has no effect.
+ * @deprecated Deprecated - to be removed in SDK 15.0.
  */
-@property (nonatomic, assign) BOOL backgroundPushNotificationsEnabledByDefault;
+@property (nonatomic, assign) BOOL backgroundPushNotificationsEnabledByDefault DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 15.0.");
 
 /**
  * Enables/disables user notifications on this device through Airship.
@@ -245,18 +246,20 @@ typedef NS_ENUM(NSInteger, UAAuthorizationStatus) {
 @property (nonatomic, assign) BOOL userPushNotificationsEnabled;
 
 /**
- * Enables/disables sending the device token during channel registration.
- * Defaults to `UAirship.isDataCollectionEnabled`. If set to `NO`, the app will not be able to receive push
- * notifications.
+ * Enables/disables sending the device token during channel registration. Flag will now just call through to Privacy Manager.
+ *
+ * @deprecated Deprecated – to be removed in SDK version 15.0. Please use the Privacy Manager.
  */
-@property (nonatomic, assign) BOOL pushTokenRegistrationEnabled;
+@property (nonatomic, assign) BOOL pushTokenRegistrationEnabled DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 15.0. Please use the Privacy Manager.");
+
 
 /**
  * Sets the default value for userPushNotificationsEnabled. The default is `NO`.
  * After the userPushNotificationsEnabled value has been directly set, this value
  * has no effect.
+ * @deprecated Deprecated - to be removed in SDK 15.0.
  */
-@property (nonatomic, assign) BOOL userPushNotificationsEnabledByDefault;
+@property (nonatomic, assign) BOOL userPushNotificationsEnabledByDefault DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 15.0.");
 
 /**
  * Enables/disables extended App Clip user notifications on this device through Airship.
@@ -321,6 +324,7 @@ typedef NS_ENUM(NSInteger, UAAuthorizationStatus) {
 
 /**
  * The current authorized notification settings.
+ * If push is disabled in privacy manager, this value could be out of date.
  *
  * Note: this value reflects all the notification settings currently enabled in the
  * Settings app and does not take into account which options were originally requested.
@@ -329,11 +333,13 @@ typedef NS_ENUM(NSInteger, UAAuthorizationStatus) {
 
 /**
  * The current authorization status.
+ * If push is disabled in privacy manager, this value could be out of date.
  */
 @property (nonatomic, readonly) UAAuthorizationStatus authorizationStatus;
 
 /**
  * Indicates whether the user has been prompted for notifications or not.
+ * If push is disabled in privacy manager, this value will be out of date.
  */
 @property (nonatomic, assign, readonly) BOOL userPromptedForNotifications;
 
