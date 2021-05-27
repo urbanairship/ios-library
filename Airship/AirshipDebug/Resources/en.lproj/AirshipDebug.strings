@@ -24,7 +24,14 @@
 "ua_device_info_in_app_automation_settings" = "In-App Automation Settings";
 "ua_device_info_in_app_automation_display_interval" = "Display interval";
 
-"ua_device_info_data_enabled" = "Data Collection Enabled";
+"ua_device_info_in_app_automation_feature_enabled" = "In-App Automation";
+"ua_device_info_message_center_feature_enabled" = "Message Center";
+"ua_device_info_push_feature_enabled" = "Push";
+"ua_device_info_chat_feature_enabled" = "Chat";
+"ua_device_info_analytics_feature_enabled" = "Analytics";
+"ua_device_info_tags_and_attributes_feature_enabled" = "Tags and Attributes";
+"ua_device_info_contacts_feature_enabled" = "Contacts";
+"ua_device_info_location_feature_enabled" = "Location";
 
 "ua_device_info_channel_id" = "Channel ID";
 "ua_device_info_username" = "Inbox Username";
@@ -45,6 +52,7 @@
 "ua_location_enabled_detail" = "Enable GPS and WIFI Based Location";
 
 "ua_device_info_device_settings" = "Device Settings";
+"ua_device_info_privacy_manager_settings" = "Privacy Manager Settings";
 "ua_device_info_SDK_info" = "SDK Info";
 "ua_device_info_location_settings" = "Location Settings";
 "ua_device_info_analytics_settings" = "Analytics Settings";

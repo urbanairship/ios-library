@@ -75,7 +75,7 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
     var launchCompletionHandler : (() -> Void)?
 
     private let localizedNone = "ua_none".localized(comment: "None")
-    private let sectionCount = 7
+    private let sectionCount = 8
     
     @IBOutlet private var tableView: UITableView!
 
@@ -86,10 +86,11 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
     let pushSettings = 0,
     inAppAutomationSettings = 1,
     deviceSettings = 2,
-    locationSettings = 3,
-    analyticsSettings = 4,
-    sdkInfo = 5,
-    appInfo = 6
+    privacyManagerSettings = 3,
+    locationSettings = 4,
+    analyticsSettings = 5,
+    sdkInfo = 6,
+    appInfo = 7
 
     // Push settings
     private let pushEnabled = IndexPath(row: 0, section: 0)
@@ -99,29 +100,38 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
     displayInterval = IndexPath(row: 1, section: 1)
     
     // Device settings
-    private let dataCollectionEnabled = IndexPath(row: 0, section: 2),
-    channelID = IndexPath(row: 1, section: 2),
-    username = IndexPath(row: 2, section: 2),
-    namedUser = IndexPath(row: 3, section: 2),
-    tags = IndexPath(row: 4, section: 2),
-    tagGroups = IndexPath(row: 5, section: 2),
-    associatedIdentifiers = IndexPath(row: 6, section: 2),
-    channelAttributes = IndexPath(row: 7, section: 2),
-    namedUserAttributes = IndexPath(row: 8, section: 2)
+    private let channelID = IndexPath(row: 0, section: 2),
+    username = IndexPath(row: 1, section: 2),
+    namedUser = IndexPath(row: 2, section: 2),
+    tags = IndexPath(row: 3, section: 2),
+    tagGroups = IndexPath(row: 4, section: 2),
+    associatedIdentifiers = IndexPath(row: 5, section: 2),
+    channelAttributes = IndexPath(row: 6, section: 2),
+    namedUserAttributes = IndexPath(row: 7, section: 2)
+    
+    // Privacy Manager settings
+    private let inAppAutomationFeatureEnabled = IndexPath(row: 0, section: 3),
+    messageCenterFeatureEnabled = IndexPath(row: 1, section: 3),
+    pushFeatureEnabled = IndexPath(row: 2, section: 3),
+    chatFeatureEnabled = IndexPath(row: 3, section: 3),
+    analyticsFeatureEnabled = IndexPath(row: 4, section: 3),
+    tagsAndAttributesFeatureEnabled = IndexPath(row: 5, section: 3),
+    contactsFeatureEnabled = IndexPath(row: 6, section: 3),
+    locationFeatureEnabled = IndexPath(row: 7, section: 3)
 
     // Location settings
-    private let locationEnabled = IndexPath(row: 0, section: 3),
-    timezone = IndexPath(row: 1, section: 3)
+    private let locationEnabled = IndexPath(row: 0, section: 4),
+    timezone = IndexPath(row: 1, section: 4)
 
     // Analytics settigns
-    private let analyticsEnabled = IndexPath(row: 0, section: 4)
+    private let analyticsEnabled = IndexPath(row: 0, section: 5)
     
     // SDK Info
-    private let sdkVersion = IndexPath(row: 0, section: 5),
-    localeInfo = IndexPath(row: 1, section: 5)
+    private let sdkVersion = IndexPath(row: 0, section: 6),
+    localeInfo = IndexPath(row: 1, section: 6)
 
     // App Info
-    private let appVersion = IndexPath(row: 0, section: 6)
+    private let appVersion = IndexPath(row: 0, section: 7)
     
     @objc func pushSettingsButtonTapped(sender:Any) {
         UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: [:],completionHandler: nil)
@@ -204,6 +214,8 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             return "ua_device_info_in_app_automation_settings".localized()
         case deviceSettings:
             return "ua_device_info_device_settings".localized()
+        case privacyManagerSettings:
+            return "ua_device_info_privacy_manager_settings".localized()
         case sdkInfo:
             return "ua_device_info_SDK_info".localized()
         case analyticsSettings:
@@ -230,7 +242,9 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
         case inAppAutomationSettings:
             return 2
         case deviceSettings:
-            return 9
+            return 8
+        case privacyManagerSettings:
+            return 8
         case analyticsSettings:
             return 1
         case locationSettings:
@@ -293,10 +307,59 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             cell.displayIntervalStepper.isHidden = false;
             cell.displayIntervalStepper.value = Double(inAppAutomationDisplayInterval)
             cell.displayIntervalStepper.tintColor = ThemeManager.shared.currentTheme.WidgetTint;
-        case dataCollectionEnabled:
-            cell.title.text = "ua_device_info_data_enabled".localized()
+        case inAppAutomationFeatureEnabled:
+            cell.title.text = "ua_device_info_in_app_automation_feature_enabled".localized()
             cell.cellSwitch.isHidden = false
-            cell.cellSwitch.isOn = UAirship.shared().privacyManager.isAnyFeatureEnabled()
+            cell.cellSwitch.isOn = UAirship.shared().privacyManager.isEnabled(UAFeatures.inAppAutomation)
+            cell.subtitle?.adjustsFontSizeToFitWidth = true
+            cell.subtitle?.minimumScaleFactor = 0.25
+            cell.subtitle?.numberOfLines = 2
+        case messageCenterFeatureEnabled:
+            cell.title.text = "ua_device_info_message_center_feature_enabled".localized()
+            cell.cellSwitch.isHidden = false
+            cell.cellSwitch.isOn = UAirship.shared().privacyManager.isEnabled(UAFeatures.messageCenter)
+            cell.subtitle?.adjustsFontSizeToFitWidth = true
+            cell.subtitle?.minimumScaleFactor = 0.25
+            cell.subtitle?.numberOfLines = 2
+        case pushFeatureEnabled:
+            cell.title.text = "ua_device_info_push_feature_enabled".localized()
+            cell.cellSwitch.isHidden = false
+            cell.cellSwitch.isOn = UAirship.shared().privacyManager.isEnabled(UAFeatures.push)
+            cell.subtitle?.adjustsFontSizeToFitWidth = true
+            cell.subtitle?.minimumScaleFactor = 0.25
+            cell.subtitle?.numberOfLines = 2
+        case chatFeatureEnabled:
+            cell.title.text = "ua_device_info_chat_feature_enabled".localized()
+            cell.cellSwitch.isHidden = false
+            cell.cellSwitch.isOn = UAirship.shared().privacyManager.isEnabled(UAFeatures.chat)
+            cell.subtitle?.adjustsFontSizeToFitWidth = true
+            cell.subtitle?.minimumScaleFactor = 0.25
+            cell.subtitle?.numberOfLines = 2
+        case analyticsFeatureEnabled:
+            cell.title.text = "ua_device_info_analytics_feature_enabled".localized()
+            cell.cellSwitch.isHidden = false
+            cell.cellSwitch.isOn = UAirship.shared().privacyManager.isEnabled(UAFeatures.analytics)
+            cell.subtitle?.adjustsFontSizeToFitWidth = true
+            cell.subtitle?.minimumScaleFactor = 0.25
+            cell.subtitle?.numberOfLines = 2
+        case tagsAndAttributesFeatureEnabled:
+            cell.title.text = "ua_device_info_tags_and_attributes_feature_enabled".localized()
+            cell.cellSwitch.isHidden = false
+            cell.cellSwitch.isOn = UAirship.shared().privacyManager.isEnabled(UAFeatures.tagsAndAttributes)
+            cell.subtitle?.adjustsFontSizeToFitWidth = true
+            cell.subtitle?.minimumScaleFactor = 0.25
+            cell.subtitle?.numberOfLines = 2
+        case contactsFeatureEnabled:
+            cell.title.text = "ua_device_info_contacts_feature_enabled".localized()
+            cell.cellSwitch.isHidden = false
+            cell.cellSwitch.isOn = UAirship.shared().privacyManager.isEnabled(UAFeatures.contacts)
+            cell.subtitle?.adjustsFontSizeToFitWidth = true
+            cell.subtitle?.minimumScaleFactor = 0.25
+            cell.subtitle?.numberOfLines = 2
+        case locationFeatureEnabled:
+            cell.title.text = "ua_device_info_location_feature_enabled".localized()
+            cell.cellSwitch.isHidden = false
+            cell.cellSwitch.isOn = UAirship.shared().privacyManager.isEnabled(UAFeatures.location)
             cell.subtitle?.adjustsFontSizeToFitWidth = true
             cell.subtitle?.minimumScaleFactor = 0.25
             cell.subtitle?.numberOfLines = 2
@@ -416,12 +479,61 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
         case sdkVersion:
             UIPasteboard.general.string = cell.subtitle?.text
             showCopiedAlert()
-        case dataCollectionEnabled:
+        case inAppAutomationFeatureEnabled:
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
             if (cell.cellSwitch.isOn) {
-                UAirship.shared().privacyManager.enable(UAFeatures.all)
+                UAirship.shared().privacyManager.enable(UAFeatures.inAppAutomation)
             } else {
-                UAirship.shared().privacyManager.enabledFeatures = []
+                UAirship.shared().privacyManager.disableFeatures(UAFeatures.inAppAutomation)
+            }
+        case messageCenterFeatureEnabled:
+            cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
+            if (cell.cellSwitch.isOn) {
+                UAirship.shared().privacyManager.enable(UAFeatures.messageCenter)
+            } else {
+                UAirship.shared().privacyManager.disableFeatures(UAFeatures.messageCenter)
+            }
+        case pushFeatureEnabled:
+            cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
+            if (cell.cellSwitch.isOn) {
+                UAirship.shared().privacyManager.enable(UAFeatures.push)
+            } else {
+                UAirship.shared().privacyManager.disableFeatures(UAFeatures.push)
+            }
+        case chatFeatureEnabled:
+            cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
+            if (cell.cellSwitch.isOn) {
+                UAirship.shared().privacyManager.enable(UAFeatures.chat)
+            } else {
+                UAirship.shared().privacyManager.disableFeatures(UAFeatures.chat)
+            }
+        case analyticsFeatureEnabled:
+            cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
+            if (cell.cellSwitch.isOn) {
+                UAirship.shared().privacyManager.enable(UAFeatures.analytics)
+            } else {
+                UAirship.shared().privacyManager.disableFeatures(UAFeatures.analytics)
+            }
+        case tagsAndAttributesFeatureEnabled:
+            cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
+            if (cell.cellSwitch.isOn) {
+                UAirship.shared().privacyManager.enable(UAFeatures.tagsAndAttributes)
+            } else {
+                UAirship.shared().privacyManager.disableFeatures(UAFeatures.tagsAndAttributes)
+            }
+        case contactsFeatureEnabled:
+            cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
+            if (cell.cellSwitch.isOn) {
+                UAirship.shared().privacyManager.enable(UAFeatures.contacts)
+            } else {
+                UAirship.shared().privacyManager.disableFeatures(UAFeatures.contacts)
+            }
+        case locationFeatureEnabled:
+            cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
+            if (cell.cellSwitch.isOn) {
+                UAirship.shared().privacyManager.enable(UAFeatures.location)
+            } else {
+                UAirship.shared().privacyManager.disableFeatures(UAFeatures.location)
             }
         case analyticsEnabled:
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
