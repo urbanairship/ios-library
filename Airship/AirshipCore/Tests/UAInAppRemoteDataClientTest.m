@@ -844,35 +844,6 @@
     XCTAssertEqual(cancelledMessages, 2);
 }
 
-- (void)testNewUserCutoffTime {
-    // verify
-    NSDate *scheduleNewUserCutoffTime = [self.remoteDataClient.scheduleNewUserCutOffTime copy];
-    XCTAssertEqualWithAccuracy([scheduleNewUserCutoffTime timeIntervalSinceNow], 0, 1, @"after first init, schedule new user cut off time should be approximately now");
-
-    // test
-    self.remoteDataClient = [UAInAppRemoteDataClient clientWithRemoteDataProvider:self.mockRemoteDataProvider
-                                                                        dataStore:self.dataStore
-                                                                          channel:self.mockChannel];
-    // verify
-    XCTAssertEqualObjects(self.remoteDataClient.scheduleNewUserCutOffTime, scheduleNewUserCutoffTime, @"after second init, schedule new user cut off time should stay the same.");
-}
-
-- (void)testExistingUserCutoffTime {
-    // start with empty data store (new app install)
-    [self.dataStore removeAll];
-
-    // an existing user already has a channelID
-    self.mockChannel = [self mockForClass:[UAChannel class]];
-    [[[self.mockChannel expect] andReturn:@"sample-channel-id"] identifier];
-
-    // test
-    self.remoteDataClient = [UAInAppRemoteDataClient clientWithRemoteDataProvider:self.mockRemoteDataProvider
-                                                                        dataStore:self.dataStore
-                                                                          channel:self.mockChannel];
-    // verify
-    XCTAssertEqualObjects(self.remoteDataClient.scheduleNewUserCutOffTime, [NSDate distantPast], @"existing users should get a cut-off time in the distant past");
-}
-
 - (void)testValidSchedule {
     id remoteDataMetadata = @{@"neat": @"rad"};
     UASchedule *schedule = [UAActionSchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder * _Nonnull builder) {

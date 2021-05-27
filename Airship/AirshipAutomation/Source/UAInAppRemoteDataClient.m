@@ -61,6 +61,7 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
 @property(nonatomic, strong) id<UARemoteDataProvider> remoteDataProvider;
 @property(nonatomic, copy) NSDate *scheduleNewUserCutOffTime;
 @property(nonatomic, copy) NSDictionary *lastPayloadMetadata;
+@property(nonatomic, strong) UAChannel *channel;
 @end
 
 @implementation UAInAppRemoteDataClient
@@ -76,9 +77,7 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
         self.operationQueue = operationQueue;
         self.remoteDataProvider = remoteDataProvider;
         self.dataStore = dataStore;
-        if (!self.scheduleNewUserCutOffTime) {
-            self.scheduleNewUserCutOffTime = (channel.identifier) ? [NSDate distantPast] : [NSDate date];
-        }
+        self.channel = channel;
     }
 
     return self;
@@ -112,6 +111,17 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
     @synchronized (self) {
         if (self.remoteDataSubscription != nil) {
             return;
+        }
+
+        if (!self.scheduleNewUserCutOffTime) {
+            NSURL *documentsDirectoryURL = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
+            NSDate *installDate = [[[NSFileManager defaultManager] attributesOfItemAtPath:documentsDirectoryURL.path error:nil] objectForKey:NSFileCreationDate];
+
+            if (installDate) {
+                self.scheduleNewUserCutOffTime = installDate;
+            } else {
+                self.scheduleNewUserCutOffTime = (self.channel.identifier) ? [NSDate distantPast] : [NSDate date];
+            }
         }
 
         UA_WEAKIFY(self);
