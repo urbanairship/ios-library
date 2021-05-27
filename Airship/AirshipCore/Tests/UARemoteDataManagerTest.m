@@ -585,7 +585,7 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
 }
 
 - (void)testSettingRefreshInterval {
-    XCTAssertEqual(self.remoteDataManager.remoteDataRefreshInterval, 0);
+    XCTAssertEqual(self.remoteDataManager.remoteDataRefreshInterval, UARemoteDataRefreshIntervalDefault);
     self.remoteDataManager.remoteDataRefreshInterval = 9999;
     XCTAssertEqual(self.remoteDataManager.remoteDataRefreshInterval, 9999);
 }

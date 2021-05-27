@@ -11,9 +11,6 @@ NSString * const UARemoteConfigDisableRefreshIntervalKey = @"remote_data_refresh
 NSString * const UARemoteConfigDisableSDKVersionsKey = @"sdk_versions";
 NSString * const UARemoteConfigDisableAppVersionsKey = @"app_versions";
 
-// Default values
-NSUInteger const UARemoteConfigDisableRefreshIntervalDefault = 0; // default is no minimum refresh interval
-
 @interface UARemoteConfigDisableInfo()
 @property (nonatomic, copy) NSArray<NSString *> *disableModuleNames;
 @property (nonatomic, strong) UAJSONPredicate *appVersionConstraint;

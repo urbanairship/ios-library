@@ -8,11 +8,6 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * Default refresh interval.
- */
-extern NSUInteger const UARemoteConfigDisableRefreshIntervalDefault;
-
-/**
  * Defines disable info delivered in a remote config.
  */
 @interface UARemoteConfigDisableInfo : NSObject

@@ -17,6 +17,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+ * Default foreground refresh interval.
+ */
+extern NSTimeInterval const UARemoteDataRefreshIntervalDefault;
+
 @interface UARemoteDataManager : UAComponent <UARemoteDataProvider, UAPushableComponent>
 
 ///---------------------------------------------------------------------------------------
@@ -41,7 +46,7 @@ NS_ASSUME_NONNULL_BEGIN
  * The minimum amount of time in seconds between remote data refreshes. Increase this
  * value to reduce the frequency of refreshes.
  */
-@property (nonatomic, assign) NSUInteger remoteDataRefreshInterval;
+@property (nonatomic, assign) NSTimeInterval remoteDataRefreshInterval;
 
 /**
  * Create the remote data manager. Used for testing.

@@ -15,11 +15,13 @@
 #import "UASemaphore.h"
 #import "UARemoteConfigURLManager.h"
 
+NSTimeInterval const UARemoteDataRefreshIntervalDefault = 10;
+
 static NSString * const UACoreDataStoreName = @"RemoteData-%@.sqlite";
 static NSString * const UARemoteDataRefreshPayloadKey = @"com.urbanairship.remote-data.update";
 static NSString * const UARemoteDataRefreshTask = @"UARemoteDataManager.refresh";
-static NSInteger const UARemoteDataRefreshIntervalDefault = 0;
 static NSString * const UARemoteDataURLMetadataKey = @"url";
+
 
 // Datastore keys
 static NSString * const UARemoteDataRefreshIntervalKey = @"remotedata.REFRESH_INTERVAL";
@@ -37,7 +39,6 @@ static NSString * const UALastRemoteDataModifiedTime = @"UALastRemoteDataModifie
 @property (nonatomic, copy) NSArray<NSString *> *payloadTypes;
 @property (nonatomic, copy) UARemoteDataPublishBlock publishBlock;
 @property (nonatomic, copy) NSArray<UARemoteDataPayload *> *previousPayloads;
-
 @end
 
 @implementation UARemoteDataSubscription
@@ -104,6 +105,7 @@ static NSString * const UALastRemoteDataModifiedTime = @"UALastRemoteDataModifie
 @property (nonatomic, strong) UALocaleManager *localeManager;
 @property (nonatomic, strong) UATaskManager *taskManager;
 @property (nonatomic, strong) UAPrivacyManager *privacyManager;
+@property (assign) BOOL updatedSinceLastForeground;
 @end
 
 @implementation UARemoteDataManager
@@ -141,7 +143,7 @@ static NSString * const UALastRemoteDataModifiedTime = @"UALastRemoteDataModifie
                                       object:nil];
 
         [self.notificationCenter addObserver:self
-                                    selector:@selector(checkRefresh)
+                                    selector:@selector(applicationDidForeground)
                                         name:UAApplicationDidTransitionToForeground
                                       object:nil];
 
@@ -218,16 +220,23 @@ static NSString * const UALastRemoteDataModifiedTime = @"UALastRemoteDataModifie
                          privacyManager:privacyManager];
 }
 
-- (NSUInteger)remoteDataRefreshInterval {
+
+- (void)applicationDidForeground {
+    self.updatedSinceLastForeground = NO;
+    [self checkRefresh];
+}
+
+
+- (NSTimeInterval)remoteDataRefreshInterval {
     if (![self.dataStore keyExists:UARemoteDataRefreshIntervalKey]) {
         return UARemoteDataRefreshIntervalDefault;
     }
-    return [self.dataStore integerForKey:UARemoteDataRefreshIntervalKey];
+    return [self.dataStore doubleForKey:UARemoteDataRefreshIntervalKey];
 }
 
-- (void)setRemoteDataRefreshInterval:(NSUInteger)remoteDataRefreshInterval {
+- (void)setRemoteDataRefreshInterval:(NSTimeInterval)remoteDataRefreshInterval {
     // save in the data store
-    [self.dataStore setInteger:remoteDataRefreshInterval forKey:UARemoteDataRefreshIntervalKey];
+    [self.dataStore setDouble:remoteDataRefreshInterval forKey:UARemoteDataRefreshIntervalKey];
 }
 
 - (NSDictionary *)lastMetadata {
@@ -284,15 +293,8 @@ static NSString * const UALastRemoteDataModifiedTime = @"UALastRemoteDataModifie
         return NO;
     }
 
-    NSDate *lastRefreshTime = [self.dataStore objectForKey:UARemoteDataLastRefreshTimeKey] ?: [NSDate distantPast];
-    NSTimeInterval timeSinceLastRefresh = -([lastRefreshTime timeIntervalSinceDate:self.date.now]);
-
     if (self.appStateTracker.state != UAApplicationStateActive) {
         return NO;
-    }
-
-    if (self.remoteDataRefreshInterval <= timeSinceLastRefresh) {
-        return YES;
     }
 
     if (![self isLastAppVersionCurrent]) {
@@ -301,6 +303,15 @@ static NSString * const UALastRemoteDataModifiedTime = @"UALastRemoteDataModifie
 
     if (![self isLastMetadataCurrent]) {
         return YES;
+    }
+
+    if (!self.updatedSinceLastForeground) {
+        NSDate *lastRefreshTime = [self.dataStore objectForKey:UARemoteDataLastRefreshTimeKey] ?: [NSDate distantPast];
+        NSTimeInterval timeSinceLastRefresh = -([lastRefreshTime timeIntervalSinceDate:self.date.now]);
+
+        if (self.remoteDataRefreshInterval <= timeSinceLastRefresh) {
+            return YES;
+        }
     }
 
     return NO;
@@ -328,6 +339,7 @@ static NSString * const UALastRemoteDataModifiedTime = @"UALastRemoteDataModifie
         }
 
         if (response.status == 304) {
+            self.updatedSinceLastForeground = YES;
             [self.dataStore setValue:self.date.now forKey:UARemoteDataLastRefreshTimeKey];
             [self.dataStore setObject:[UAUtils bundleShortVersionString] forKey:UARemoteDataLastRefreshAppVersionKey];
             [task taskCompleted];
@@ -349,6 +361,7 @@ static NSString * const UALastRemoteDataModifiedTime = @"UALastRemoteDataModifie
 
                     // notify remote data subscribers
                     [self notifySubscribersWithRemoteData:payloads completionHandler:^{
+                        self.updatedSinceLastForeground = YES;
                         [task taskCompleted];
                         [semaphore signal];
                     }];

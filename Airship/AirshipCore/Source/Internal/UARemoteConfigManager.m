@@ -130,7 +130,7 @@ NSString * const UAAirshipRemoteConfigUpdatedKey = @"com.urbanairship.airship_re
                                                                    appVersion:self.versionBlock()];
 
     NSMutableSet<NSString *> *disableModuleNames = [NSMutableSet set];
-    NSUInteger remoteDataRefreshInterval = UARemoteConfigDisableRefreshIntervalDefault;
+    NSTimeInterval remoteDataRefreshInterval = UARemoteDataRefreshIntervalDefault;
 
     // Pass through all the filtered disable info to find the disabled modules and the max remote data refresh
     for (UARemoteConfigDisableInfo *disableInfo in filteredDisableInfos) {
@@ -214,5 +214,3 @@ NSString * const UAAirshipRemoteConfigUpdatedKey = @"com.urbanairship.airship_re
 }
 
 @end
-
-
