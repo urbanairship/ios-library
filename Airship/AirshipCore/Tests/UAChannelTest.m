@@ -531,20 +531,14 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
  */
 - (void)testRegistrationPayloadDataCollectionDisabled {
     self.channel.channelTagRegistrationEnabled = YES;
-    [self.privacyManager disableFeatures:UAFeaturesTagsAndAttributes | UAFeaturesAnalytics];
+    self.privacyManager.enabledFeatures = UAFeaturesNone;
 
     self.channel.tags = @[@"cool", @"story"];
     [[[self.mockTimeZone stub] andReturn:@"cool zone"] name];
 
     UAChannelRegistrationPayload *expectedPayload = [[UAChannelRegistrationPayload alloc] init];
-    expectedPayload.language = [[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleLanguageCode];
-    expectedPayload.country = [[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleCountryCode];
-    expectedPayload.timeZone = @"cool zone";
     expectedPayload.setTags = YES;
     expectedPayload.tags = @[];
-    expectedPayload.appVersion = [UAUtils bundleShortVersionString];
-    expectedPayload.SDKVersion = [UAirshipVersion get];
-    expectedPayload.deviceOS = [UIDevice currentDevice].systemVersion;
 
     XCTestExpectation *createdPayload = [self expectationWithDescription:@"create payload"];
 
@@ -611,9 +605,6 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
  * Test applicationDidBecomeActive, when run after app was backgrounded, does register
  */
 - (void)testApplicationDidBecomeActiveAfterBackgrounding {
-    // SETUP
-    [self.dataStore setBool:YES forKey:UAChannelCreationOnForeground];
-
     // Expect UAChannel to update channel registration
     [[self.mockChannelRegistrar expect] registerForcefully:NO];
 
@@ -624,28 +615,6 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
     XCTAssertNoThrow([self.mockChannelRegistrar verify], @"should update channel registration");
 }
 
-/**
- * Test applicationDidEnterBackground clears the notification and sets
- * the hasEnteredBackground flag
- */
-- (void)testApplicationDidEnterBackground {
-    [self.notificationCenter postNotificationName:UAApplicationDidEnterBackgroundNotification object:nil];
-
-    XCTAssertTrue([self.dataStore boolForKey:UAChannelCreationOnForeground], @"applicationDidEnterBackground should set channelCreationOnForeground to true");
-}
-
-/**
- * Test update registration is called when the device enters a background and
- * we do not have a channel ID
- */
-- (void)testApplicationDidEnterBackgroundCreatesChannel {
-    // Expect UAChannel to update channel registration
-    [[self.mockChannelRegistrar expect] registerForcefully:NO];
-
-    [self.notificationCenter postNotificationName:UAApplicationDidEnterBackgroundNotification object:nil];
-
-    XCTAssertNoThrow([self.mockChannelRegistrar verify], @"Channel registration should be called");
-}
 
 /**
  * Test existing channel created posts an NSNotification
@@ -1184,6 +1153,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 
 - (void)testConfigUpdateChannelCreationEnabled {
     self.channel.channelCreationEnabled = YES;
+    self.channelIDFromMockChannelRegistrar = @"some-id";
 
     [[self.mockChannelRegistrar expect] performFullRegistration];
 

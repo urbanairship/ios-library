@@ -8,7 +8,6 @@
 #import "UAPushableComponent.h"
 
 extern NSString *const UAChannelTagsSettingsKey;
-extern NSString *const UAChannelCreationOnForeground;
 
 @interface UAChannel () <UAChannelRegistrarDelegate, UATagGroupsRegistrarDelegate, UAExtendableChannelRegistration, UAPushableComponent, UAAttributeRegistrarDelegate>
 

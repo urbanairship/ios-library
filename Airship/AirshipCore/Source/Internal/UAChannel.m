@@ -35,8 +35,6 @@ NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.channel.ex
 
 NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.channel.identifier";
 
-NSString *const UAChannelCreationOnForeground = @"com.urbanairship.channel.creation_on_foreground";
-
 static NSString * const UAChannelTagUpdateTaskID = @"UAChannel.tags.update";
 static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.update";
 
@@ -110,6 +108,12 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
         [self.taskManager registerForTaskWithIDs:@[UAChannelTagUpdateTaskID, UAChannelAttributeUpdateTaskID]
                                       dispatcher:[UADispatcher serialDispatcher]
                                    launchHandler:^(id<UATask> task) {
+            if (!self.componentEnabled) {
+                UA_LWARN(@"Channel component is disabled");
+                [task taskCompleted];
+                return;
+            }
+
             UA_STRONGIFY(self)
             if ([task.taskID isEqualToString:UAChannelTagUpdateTaskID]) {
                 [self handleTagUpdateTask:task];
@@ -122,6 +126,8 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
         }];
 
         [self observeNotificationCenterEvents];
+
+        [self updateRegistration];
     }
 
     return self;
@@ -179,11 +185,6 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
                                 selector:@selector(applicationDidTransitionToForeground)
                                     name:UAApplicationDidTransitionToForeground
                                   object:nil];
-
-    [self.notificationCenter addObserver:self
-                                selector:@selector(applicationDidEnterBackground)
-                                    name:UAApplicationDidEnterBackgroundNotification
-                                  object:nil];
     
     [self.notificationCenter addObserver:self
                                 selector:@selector(localeUpdated)
@@ -205,38 +206,21 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
     return self.channelRegistrar.channelID;
 }
 
-- (BOOL)shouldPerformChannelRegistrationOnForeground {
-    return [self.dataStore boolForKey:UAChannelCreationOnForeground];
-}
-
-- (void)setShouldPerformChannelRegistrationOnForeground:(BOOL)value {
-    [self.dataStore setBool:value forKey:UAChannelCreationOnForeground];
-}
-
 #pragma mark -
 #pragma mark Application State Observation
 
 - (void)applicationDidTransitionToForeground {
-    if (self.shouldPerformChannelRegistrationOnForeground) {
+    if ([self.privacyManager isAnyFeatureEnabled]) {
         UA_LTRACE(@"Application did become active. Updating registration.");
         [self updateRegistration];
     }
 }
 
-- (void)applicationDidEnterBackground {
-    // Enable forground channel registration after first run
-    self.shouldPerformChannelRegistrationOnForeground = YES;
-
-    // Create a channel if we do not have a channel ID
-    if (!self.identifier) {
-        UA_LTRACE(@"Application entered the background without a channel ID. Updating registration.");
+- (void)applicationBackgroundRefreshStatusChanged {
+    if ([self.privacyManager isAnyFeatureEnabled]) {
+        UA_LTRACE(@"Background refresh status changed.");
         [self updateRegistration];
     }
-}
-
-- (void)applicationBackgroundRefreshStatusChanged {
-    UA_LTRACE(@"Background refresh status changed.");
-    [self updateRegistration];
 }
 
 #pragma mark -
@@ -372,14 +356,17 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
         return;
     }
 
+    if (self.identifier == nil && ![self.privacyManager isAnyFeatureEnabled]) {
+        UA_LTRACE(@"Skipping channel create. All features are disabled.");
+        return;
+    }
+
     [self.channelRegistrar registerForcefully:forcefully];
 }
 
 - (void)updateRegistration {
-    if (self.identifier) {
-        [self enqueueUpdateAttributesTask];
-        [self enqueueUpdateTagGroupsTask];
-    }
+    [self enqueueUpdateAttributesTask];
+    [self enqueueUpdateTagGroupsTask];
     [self updateRegistrationForcefully:NO];
 }
 
@@ -395,19 +382,23 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 #pragma mark Task Manager
 
 - (void)enqueueUpdateTagGroupsTask {
-    UATaskRequestOptions *requestOptions = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyAppend requiresNetwork:YES extras:nil];
-    [self.taskManager enqueueRequestWithID:UAChannelTagUpdateTaskID
-                                   options:requestOptions];
+    if (self.identifier && self.componentEnabled && [self.privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
+        UATaskRequestOptions *requestOptions = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyAppend requiresNetwork:YES extras:nil];
+        [self.taskManager enqueueRequestWithID:UAChannelTagUpdateTaskID
+                                       options:requestOptions];
+    }
 }
 
 - (void)enqueueUpdateAttributesTask {
-    UATaskRequestOptions *requestOptions = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyAppend requiresNetwork:YES extras:nil];
-    [self.taskManager enqueueRequestWithID:UAChannelAttributeUpdateTaskID
-                                   options:requestOptions];
+    if (self.identifier && self.componentEnabled && [self.privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
+        UATaskRequestOptions *requestOptions = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyAppend requiresNetwork:YES extras:nil];
+        [self.taskManager enqueueRequestWithID:UAChannelAttributeUpdateTaskID
+                                       options:requestOptions];
+    }
 }
 
 - (void)handleTagUpdateTask:(id<UATask>)task {
-    if (!self.componentEnabled || ![self.privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
+    if (!self.identifier || !self.componentEnabled || ![self.privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
         [task taskCompleted];
         return;
     }
@@ -438,7 +429,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 }
 
 - (void)handleAttributeUpdateTask:(id<UATask>)task {
-    if (!self.componentEnabled || ![self.privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
+    if (!self.identifier || !self.componentEnabled || ![self.privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
         [task taskCompleted];
         return;
     }
@@ -468,22 +459,11 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
     [semaphore wait];
 }
 
-
-
 #pragma mark -
 #pragma mark Channel Registrar Delegate
 
 - (void)createChannelPayload:(void (^)(UAChannelRegistrationPayload *))completionHandler {
     UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
-    
-    NSLocale *currentLocale = [self.localeManager currentLocale];
-    
-    payload.language = [currentLocale objectForKey:NSLocaleLanguageCode];
-    payload.country = [currentLocale objectForKey: NSLocaleCountryCode];
-    payload.timeZone = [NSTimeZone defaultTimeZone].name;
-    payload.appVersion = [UAUtils bundleShortVersionString];
-    payload.SDKVersion = [UAirshipVersion get];
-    payload.deviceOS = [UIDevice currentDevice].systemVersion;
 
     if (self.channelTagRegistrationEnabled) {
         payload.tags = self.tags;
@@ -492,16 +472,27 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
         payload.setTags = NO;
     }
 
-    // Only set the device model, carrier name and channel tags if the app is opted in to data collection
     if ([self.privacyManager isEnabled:UAFeaturesAnalytics]) {
         payload.deviceModel = [UAUtils deviceModelName];
         payload.carrier = [UAUtils carrierName];
+        payload.appVersion = [UAUtils bundleShortVersionString];
+        payload.deviceOS = [UIDevice currentDevice].systemVersion;
     }
 
-    id extendersCopy = [self.registrationExtenderBlocks mutableCopy];
-    [UAChannel extendPayload:payload extenders:extendersCopy completionHandler:^(UAChannelRegistrationPayload *payload) {
+    if ([self.privacyManager isAnyFeatureEnabled]) {
+        NSLocale *currentLocale = [self.localeManager currentLocale];
+        payload.language = [currentLocale objectForKey:NSLocaleLanguageCode];
+        payload.country = [currentLocale objectForKey: NSLocaleCountryCode];
+        payload.timeZone = [NSTimeZone defaultTimeZone].name;
+        payload.SDKVersion = [UAirshipVersion get];
+
+        id extendersCopy = [self.registrationExtenderBlocks mutableCopy];
+        [UAChannel extendPayload:payload extenders:extendersCopy completionHandler:^(UAChannelRegistrationPayload *payload) {
+            completionHandler(payload);
+        }];
+    } else {
         completionHandler(payload);
-    }];
+    }
 }
 
 - (void)registrationSucceeded {
@@ -578,12 +569,12 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 - (void)onEnabledFeaturesChanged {
     if (![self.privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
         // Clear channel tags and pending mutations
-        [self.dataStore setObject:@[] forKey:UAChannelTagsSettingsKey];
+        [self.dataStore removeObjectForKey:UAChannelTagsSettingsKey];
         [self.attributeRegistrar clearPendingMutations];
         [self.tagGroupsRegistrar clearPendingMutations];
     }
 
-    [self updateRegistration];
+    [self updateRegistrationForcefully:NO];
 }
 
 - (void)addChannelExtenderBlock:(UAChannelRegistrationExtenderBlock)extender {
@@ -616,7 +607,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 }
 
 - (void)remoteConfigUpdated {
-    if (self.isChannelCreationEnabled) {
+    if (self.isChannelCreationEnabled && self.identifier) {
         [self.channelRegistrar performFullRegistration];
     }
 }
@@ -640,5 +631,6 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 - (void)localeUpdated {
     [self updateRegistrationForcefully:NO];
 }
+
 
 @end
