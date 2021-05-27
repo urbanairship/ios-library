@@ -24,7 +24,7 @@ class HomeViewController: UIViewController {
     }
 
     @objc func refreshView () {
-        if (UAirship.shared() != nil && UAirship.push().userPushNotificationsEnabled) {
+        if (checkNotificationsEnabled()) {
             channelIDButton.setTitle(UAirship.channel().identifier, for: [])
             channelIDButton.isHidden = false
             enablePushButton.isHidden = true
@@ -38,6 +38,7 @@ class HomeViewController: UIViewController {
 
         if (sender == enablePushButton) {
             UAirship.push().userPushNotificationsEnabled = true
+            UAirship.shared().privacyManager.enable(.push)
         }
 
         //The channel ID will need to wait for push registration to return the channel ID
@@ -59,6 +60,20 @@ class HomeViewController: UIViewController {
                 self.present(alert, animated: true, completion: nil)
             }
         }
+
+        refreshView()
+    }
+
+    func checkNotificationsEnabled() -> Bool {
+        if (UAirship.shared() == nil) {
+            return false
+        }
+
+        if (!UAirship.push().userPushNotificationsEnabled) {
+            return false
+        }
+
+        return UAirship.shared().privacyManager.isEnabled(.push)
     }
 }
 

@@ -268,7 +268,14 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
         switch indexPath {
         case pushEnabled:
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
-            UAirship.push().userPushNotificationsEnabled = cell.cellSwitch.isOn
+            if (cell.cellSwitch.isOn) {
+                UAirship.push().userPushNotificationsEnabled = true
+                UAirship.shared().privacyManager.enable(.push)
+            } else {
+                UAirship.push().userPushNotificationsEnabled = false
+                UAirship.shared().privacyManager.disableFeatures(.push)
+            }
+
         case channelID:
             if (UAirship.channel().identifier != nil) {
                 UIPasteboard.general.string = cell.subtitle?.text
@@ -289,8 +296,10 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
             if (cell.cellSwitch.isOn) {
                 UAirship.shared().privacyManager.enable(UAFeatures.location)
+                UALocation.shared().isLocationUpdatesEnabled = true
             } else {
                 UAirship.shared().privacyManager.disableFeatures(UAFeatures.location)
+                UALocation.shared().isLocationUpdatesEnabled = false
             }
         default:
             break

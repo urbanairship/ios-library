@@ -28,6 +28,7 @@
 - (IBAction)buttonTapped:(id)sender {
     if (sender == self.enablePushButton) {
         [UAirship push].userPushNotificationsEnabled = YES;
+        [[UAirship shared].privacyManager enableFeatures:UAFeaturesPush];
     }
 
     if (sender == self.channelIDButton && [UAirship channel].identifier) {
@@ -47,10 +48,12 @@
 
         [self presentViewController:alert animated:YES completion:nil];
     }
+
+    [self refreshView];
 }
 
 - (void)refreshView {
-    if ([UAirship push].userPushNotificationsEnabled) {
+    if ([self checkNotificationsEnabled]) {
         [self.channelIDButton setTitle:[UAirship channel].identifier forState:UIControlStateNormal];
         self.channelIDButton.hidden = NO;
         self.enablePushButton.hidden = YES;
@@ -59,5 +62,8 @@
     self.channelIDButton.hidden = YES;
     self.enablePushButton.hidden = NO;
 }
- 
+
+- (BOOL)checkNotificationsEnabled {
+    return [UAirship push].userPushNotificationsEnabled && [[UAirship shared].privacyManager isEnabled:UAFeaturesPush];
+}
 @end

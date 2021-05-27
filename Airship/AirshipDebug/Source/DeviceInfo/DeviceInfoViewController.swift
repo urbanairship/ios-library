@@ -83,55 +83,50 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
      * Note: Number of sections and sections for row are defined in their respective
      * table view data source methods
      */
-    let pushSettings = 0,
-    inAppAutomationSettings = 1,
-    deviceSettings = 2,
-    privacyManagerSettings = 3,
+    let privacyManagerSettings = 0,
+    pushSettings = 1,
+    inAppAutomationSettings = 2,
+    deviceSettings = 3,
     locationSettings = 4,
-    analyticsSettings = 5,
-    sdkInfo = 6,
-    appInfo = 7
+    sdkInfo = 5,
+    appInfo = 6
+
+    // Privacy Manager settings
+    private let inAppAutomationFeatureEnabled = IndexPath(row: 0, section: 0),
+                messageCenterFeatureEnabled = IndexPath(row: 1, section: 0),
+                pushFeatureEnabled = IndexPath(row: 2, section: 0),
+                chatFeatureEnabled = IndexPath(row: 3, section: 0),
+                analyticsFeatureEnabled = IndexPath(row: 4, section: 0),
+                tagsAndAttributesFeatureEnabled = IndexPath(row: 5, section: 0),
+                contactsFeatureEnabled = IndexPath(row: 6, section: 0),
+                locationFeatureEnabled = IndexPath(row: 7, section: 0)
 
     // Push settings
-    private let pushEnabled = IndexPath(row: 0, section: 0)
+    private let notificationsEnabled = IndexPath(row: 0, section: 1)
 
     // In-App automation settings
-    private let inAppAutomationEnabled = IndexPath(row: 0, section: 1),
-    displayInterval = IndexPath(row: 1, section: 1)
+    private let displayInterval = IndexPath(row: 0, section: 2)
     
     // Device settings
-    private let channelID = IndexPath(row: 0, section: 2),
-    username = IndexPath(row: 1, section: 2),
-    namedUser = IndexPath(row: 2, section: 2),
-    tags = IndexPath(row: 3, section: 2),
-    tagGroups = IndexPath(row: 4, section: 2),
-    associatedIdentifiers = IndexPath(row: 5, section: 2),
-    channelAttributes = IndexPath(row: 6, section: 2),
-    namedUserAttributes = IndexPath(row: 7, section: 2)
-    
-    // Privacy Manager settings
-    private let inAppAutomationFeatureEnabled = IndexPath(row: 0, section: 3),
-    messageCenterFeatureEnabled = IndexPath(row: 1, section: 3),
-    pushFeatureEnabled = IndexPath(row: 2, section: 3),
-    chatFeatureEnabled = IndexPath(row: 3, section: 3),
-    analyticsFeatureEnabled = IndexPath(row: 4, section: 3),
-    tagsAndAttributesFeatureEnabled = IndexPath(row: 5, section: 3),
-    contactsFeatureEnabled = IndexPath(row: 6, section: 3),
-    locationFeatureEnabled = IndexPath(row: 7, section: 3)
+    private let channelID = IndexPath(row: 0, section: 3),
+    username = IndexPath(row: 1, section: 3),
+    namedUser = IndexPath(row: 2, section: 3),
+    tags = IndexPath(row: 3, section: 3),
+    tagGroups = IndexPath(row: 4, section: 3),
+    associatedIdentifiers = IndexPath(row: 5, section: 3),
+    channelAttributes = IndexPath(row: 6, section: 3),
+    namedUserAttributes = IndexPath(row: 7, section: 3),
+    timezone = IndexPath(row: 8, section: 3)
 
     // Location settings
-    private let locationEnabled = IndexPath(row: 0, section: 4),
-    timezone = IndexPath(row: 1, section: 4)
+    private let locationEnabled = IndexPath(row: 0, section: 4)
 
-    // Analytics settigns
-    private let analyticsEnabled = IndexPath(row: 0, section: 5)
-    
     // SDK Info
-    private let sdkVersion = IndexPath(row: 0, section: 6),
-    localeInfo = IndexPath(row: 1, section: 6)
+    private let sdkVersion = IndexPath(row: 0, section: 5),
+    localeInfo = IndexPath(row: 1, section: 5)
 
     // App Info
-    private let appVersion = IndexPath(row: 0, section: 7)
+    private let appVersion = IndexPath(row: 0, section: 6)
     
     @objc func pushSettingsButtonTapped(sender:Any) {
         UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: [:],completionHandler: nil)
@@ -218,8 +213,6 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             return "ua_device_info_privacy_manager_settings".localized()
         case sdkInfo:
             return "ua_device_info_SDK_info".localized()
-        case analyticsSettings:
-            return "ua_device_info_analytics_settings".localized()
         case locationSettings:
             return "ua_device_info_location_settings".localized()
         case appInfo:
@@ -240,15 +233,13 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
         case pushSettings:
             return 1
         case inAppAutomationSettings:
-            return 2
+            return 1
         case deviceSettings:
-            return 8
+            return 9
         case privacyManagerSettings:
             return 8
-        case analyticsSettings:
-            return 1
         case locationSettings:
-            return 2
+            return 1
         case sdkInfo:
             return 2
         case appInfo:
@@ -281,20 +272,11 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
 
 
         switch indexPath {
-        case pushEnabled:
-            cell.title.text = "ua_device_info_push_settings".localized()
-            cell.subtitle.text = "ua_device_info_enable_push".localized()
+        case notificationsEnabled:
+            cell.title.text = "ua_device_info_enable_notifications".localized()
             cell.cellSwitch.isHidden = false
             cell.cellSwitch.isOn = UAirship.push()?.userPushNotificationsEnabled ?? false
             cell.subtitle?.text = pushTypeString()
-            cell.subtitle?.adjustsFontSizeToFitWidth = true;
-            cell.subtitle?.minimumScaleFactor = 0.25;
-            cell.subtitle?.numberOfLines = 1;
-        case inAppAutomationEnabled:
-            cell.title.text = "ua_device_info_in_app_automation_settings".localized()
-            cell.subtitle?.text = " "
-            cell.cellSwitch.isHidden = false
-            cell.cellSwitch.isOn = isInAppAutomationEnabled
             cell.subtitle?.adjustsFontSizeToFitWidth = true;
             cell.subtitle?.minimumScaleFactor = 0.25;
             cell.subtitle?.numberOfLines = 1;
@@ -404,12 +386,6 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
         case namedUserAttributes:
             cell.title.text = "ua_device_info_named_user_attributes".localized()
             cell.accessoryType = .disclosureIndicator
-        case analyticsEnabled:
-            cell.title.text = "ua_device_info_analytics_enabled".localized()
-            cell.subtitle?.text = "ua_device_info_enable_analytics_tracking".localized()
-
-            cell.cellSwitch.isHidden = false
-            cell.cellSwitch.isOn = UAirship.shared().privacyManager.isEnabled(UAFeatures.analytics)
         case locationEnabled:
             cell.title.text = "ua_device_info_enable_location_enabled".localized()
 
@@ -447,7 +423,7 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
         let cell = tableView.cellForRow(at: indexPath) as! DeviceInfoCell
 
         switch indexPath {
-        case pushEnabled:
+        case notificationsEnabled:
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
             UAirship.push().userPushNotificationsEnabled = cell.cellSwitch.isOn
         case channelID:
@@ -455,10 +431,6 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
                 UIPasteboard.general.string = cell.subtitle?.text
                 showCopiedAlert()
             }
-        case inAppAutomationEnabled:
-            cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
-            let isEnabled = cell.cellSwitch.isOn
-            isInAppAutomationEnabled = isEnabled
         case username:
             UAMessageCenter.shared().user.getData({ (userData) in
                 UIPasteboard.general.string = userData.username
@@ -534,13 +506,6 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
                 UAirship.shared().privacyManager.enable(UAFeatures.location)
             } else {
                 UAirship.shared().privacyManager.disableFeatures(UAFeatures.location)
-            }
-        case analyticsEnabled:
-            cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
-            if (cell.cellSwitch.isOn) {
-                UAirship.shared().privacyManager.enable(UAFeatures.analytics)
-            } else {
-                UAirship.shared().privacyManager.disableFeatures(UAFeatures.analytics)
             }
         case locationEnabled:
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)

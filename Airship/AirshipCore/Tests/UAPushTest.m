@@ -878,24 +878,31 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
  * Test setting the default userPushNotificationsEnabled value.
  */
 - (void)testUserPushNotificationsEnabledByDefault {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     self.push.userPushNotificationsEnabledByDefault = YES;
+
     XCTAssertTrue(self.push.userPushNotificationsEnabled, @"default user notification value taking affect.");
 
     [self.dataStore removeAll];
-
     self.push.userPushNotificationsEnabledByDefault = NO;
     XCTAssertFalse(self.push.userPushNotificationsEnabled, @"default user notification value not taking affect.");
+#pragma clang diagnostic pop
 }
 
 /**
  * Test setting the default backgroundPushNotificationEnabled value.
  */
 - (void)testBackgroundPushNotificationsEnabledByDefault {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     self.push.backgroundPushNotificationsEnabledByDefault = YES;
     XCTAssertTrue(self.push.backgroundPushNotificationsEnabled, @"default background notification value not taking affect.");
 
     self.push.backgroundPushNotificationsEnabledByDefault = NO;
     XCTAssertFalse(self.push.backgroundPushNotificationsEnabled, @"default background notification value not taking affect.");
+#pragma clang diagnostic pop
+
 }
 
 /**

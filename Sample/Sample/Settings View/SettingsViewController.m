@@ -185,7 +185,7 @@ typedef NS_ENUM(NSUInteger, UASettingsViewControllerSection) {
             cell.title.text = NSLocalizedStringFromTable(@"ua_device_info_push_settings", @"UAPushUI", @"Push Settings");
             cell.subtitle.text = NSLocalizedStringFromTable(@"ua_device_info_enable_push", @"UAPushUI", @"Enable Push");
             cell.cellSwitch.hidden = NO;
-            cell.cellSwitch.on = UAirship.push.userPushNotificationsEnabled;
+            cell.cellSwitch.on = UAirship.push.userPushNotificationsEnabled && [[UAirship shared].privacyManager isEnabled:UAFeaturesPush];
             cell.subtitle.text = [self pushTypeString];
             cell.subtitle.adjustsFontSizeToFitWidth = YES;
             cell.subtitle.minimumScaleFactor = 0.25;
@@ -218,7 +218,7 @@ typedef NS_ENUM(NSUInteger, UASettingsViewControllerSection) {
             cell.title.text = NSLocalizedStringFromTable(@"ua_device_info_analytics_enabled", @"UAPushUI", @"Analytics Enabled");
             cell.subtitle.text = NSLocalizedStringFromTable(@"ua_device_info_enable_analytics_tracking", @"UAPushUI", @"Enable analytics tracking");
             cell.cellSwitch.hidden = NO;
-            cell.cellSwitch.on = UAirship.analytics.isEnabled;
+            cell.cellSwitch.on = [[UAirship shared].privacyManager isEnabled:UAFeaturesAnalytics];
             cell.subtitle.adjustsFontSizeToFitWidth = YES;
         }
     }
@@ -245,7 +245,14 @@ typedef NS_ENUM(NSUInteger, UASettingsViewControllerSection) {
     if (indexPath.section == 0) {
         if (indexPath.row == self.pushEnabled.row) {
             [cell.cellSwitch setOn:!cell.cellSwitch.on animated:YES];
-            UAirship.push.userPushNotificationsEnabled = cell.cellSwitch.on;
+
+            if (cell.cellSwitch.on) {
+                UAirship.push.userPushNotificationsEnabled = YES;
+                [[UAirship shared].privacyManager enableFeatures:UAFeaturesPush];
+            } else {
+                UAirship.push.userPushNotificationsEnabled = NO;
+                [[UAirship shared].privacyManager disableFeatures:UAFeaturesPush];
+            }
         }
     }
     if (indexPath.section == 1) {
@@ -265,13 +272,23 @@ typedef NS_ENUM(NSUInteger, UASettingsViewControllerSection) {
     if (indexPath.section == 2) {
         if (indexPath.row == self.analyticsEnabled.row) {
             [cell.cellSwitch setOn:!cell.cellSwitch.on animated:YES];
-            UAirship.analytics.enabled = cell.cellSwitch.on;
+            if (cell.cellSwitch.on) {
+                [[UAirship shared].privacyManager enableFeatures:UAFeaturesAnalytics];
+            } else {
+                [[UAirship shared].privacyManager disableFeatures:UAFeaturesAnalytics];
+            }
         }
     }
     if (indexPath.section == 3) {
         if (indexPath.row == self.locationEnabled.row) {
             [cell.cellSwitch setOn:!cell.cellSwitch.on animated:YES];
-            UALocation.shared.locationUpdatesEnabled = cell.cellSwitch.on;
+            if (cell.cellSwitch.on) {
+                UALocation.shared.locationUpdatesEnabled = YES;
+                [[UAirship shared].privacyManager enableFeatures:UAFeaturesLocation];
+            } else {
+                UALocation.shared.locationUpdatesEnabled = NO;
+                [[UAirship shared].privacyManager disableFeatures:UAFeaturesLocation];
+            }
         }
     }
 

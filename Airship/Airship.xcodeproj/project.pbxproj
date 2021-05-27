@@ -2345,6 +2345,8 @@
 		6EF4A441265C4DDD0066E2F2 /* UACoreData.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EF4A43F265C4DDD0066E2F2 /* UACoreData.m */; };
 		6EF4A442265C4DDD0066E2F2 /* UACoreData.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EF4A43F265C4DDD0066E2F2 /* UACoreData.m */; };
 		6EF4A443265C4DDD0066E2F2 /* UACoreData.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EF4A43F265C4DDD0066E2F2 /* UACoreData.m */; };
+		6EF4A45826603C3C0066E2F2 /* AirshipCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E411EE22538F8E300FEE4E8 /* AirshipCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6EF4A45926603C3D0066E2F2 /* AirshipCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E411EE22538F8E300FEE4E8 /* AirshipCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6EFB377D234595C9005E4E44 /* UAMessageCenterNativeBridgeExtensionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EFB377C234595C9005E4E44 /* UAMessageCenterNativeBridgeExtensionTest.m */; };
 		6EFBDEE1262DF71C008380AC /* MockDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFBDEE0262DF71C008380AC /* MockDispatcher.swift */; };
 		8449BB5225F7AD99004F4A49 /* UADeferredSchedule.h in Headers */ = {isa = PBXBuildFile; fileRef = 8449BB5125F7AD99004F4A49 /* UADeferredSchedule.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -2373,14 +2375,14 @@
 		9987672A1FBE6B4200197AF4 /* UAInAppMessageBannerDisplayContentTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 998767291FBE6B4200197AF4 /* UAInAppMessageBannerDisplayContentTest.m */; };
 		A604DB7E25597F85001ADCA8 /* UASearchEventTemplateTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A604DB7D25597F85001ADCA8 /* UASearchEventTemplateTest.m */; };
 		A60A23EE258CEBBE006B7D80 /* UAModifyAttributesActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A60A23ED258CEBBE006B7D80 /* UAModifyAttributesActionTest.m */; };
-		A60A242B258D0D78006B7D80 /* UAAttributesActionPredicate+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = A60A2429258D0D77006B7D80 /* UAAttributesActionPredicate+Internal.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A60A242B258D0D78006B7D80 /* UAAttributesActionPredicate+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = A60A2429258D0D77006B7D80 /* UAAttributesActionPredicate+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A60A242C258D0D78006B7D80 /* UAAttributesActionPredicate.m in Sources */ = {isa = PBXBuildFile; fileRef = A60A242A258D0D77006B7D80 /* UAAttributesActionPredicate.m */; };
 		A60A2439258D0D7C006B7D80 /* UAAttributesActionPredicate.m in Sources */ = {isa = PBXBuildFile; fileRef = A60A242A258D0D77006B7D80 /* UAAttributesActionPredicate.m */; };
 		A60A243A258D0D7D006B7D80 /* UAAttributesActionPredicate.m in Sources */ = {isa = PBXBuildFile; fileRef = A60A242A258D0D77006B7D80 /* UAAttributesActionPredicate.m */; };
 		A60A243B258D0D7D006B7D80 /* UAAttributesActionPredicate.m in Sources */ = {isa = PBXBuildFile; fileRef = A60A242A258D0D77006B7D80 /* UAAttributesActionPredicate.m */; };
-		A60A2448258D0D81006B7D80 /* UAAttributesActionPredicate+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = A60A2429258D0D77006B7D80 /* UAAttributesActionPredicate+Internal.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A60A2455258D0D81006B7D80 /* UAAttributesActionPredicate+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = A60A2429258D0D77006B7D80 /* UAAttributesActionPredicate+Internal.h */; };
-		A60A2462258D0D82006B7D80 /* UAAttributesActionPredicate+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = A60A2429258D0D77006B7D80 /* UAAttributesActionPredicate+Internal.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A60A2448258D0D81006B7D80 /* UAAttributesActionPredicate+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = A60A2429258D0D77006B7D80 /* UAAttributesActionPredicate+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A60A2455258D0D81006B7D80 /* UAAttributesActionPredicate+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = A60A2429258D0D77006B7D80 /* UAAttributesActionPredicate+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A60A2462258D0D82006B7D80 /* UAAttributesActionPredicate+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = A60A2429258D0D77006B7D80 /* UAAttributesActionPredicate+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A615E215264EAFB9004FA211 /* UAPrivacyManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A615E214264EAFB9004FA211 /* UAPrivacyManagerTest.m */; };
 		A615E2212652AD87004FA211 /* UNNotificationContent+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = A615E21F2652AD87004FA211 /* UNNotificationContent+UAAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A615E2232652AD87004FA211 /* UNNotificationContent+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = A615E21F2652AD87004FA211 /* UNNotificationContent+UAAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -7021,6 +7023,7 @@
 				6EE771D9238F16A600E79944 /* UAInboxMessageList.h in Headers */,
 				6E4115A52538C0AE00FEE4E8 /* UAPushProviderDelegate.h in Headers */,
 				6E4118152538C1FC00FEE4E8 /* UAChannel+Internal.h in Headers */,
+				6EF4A45826603C3C0066E2F2 /* AirshipCore.h in Headers */,
 				6EE771DB238F16A600E79944 /* UAInboxUtils.h in Headers */,
 				6E411AED2538C20600FEE4E8 /* UAShareActionPredicate+Internal.h in Headers */,
 				6EE771DC238F16A600E79944 /* UAMessageCenterNativeBridgeExtension.h in Headers */,
@@ -7423,6 +7426,7 @@
 				6E4114F22538C0AA00FEE4E8 /* UAComponent.h in Headers */,
 				6E41197A2538C20100FEE4E8 /* UADelay+Internal.h in Headers */,
 				6E411A7E2538C20500FEE4E8 /* UAAppStateTracker+Internal.h in Headers */,
+				6EF4A45926603C3D0066E2F2 /* AirshipCore.h in Headers */,
 				6E41185E2538C1FD00FEE4E8 /* UAFetchDeviceInfoActionPredicate+Internal.h in Headers */,
 				6E41157E2538C0AD00FEE4E8 /* UAAnalytics.h in Headers */,
 				6E41150A2538C0AA00FEE4E8 /* UAAsyncOperation.h in Headers */,

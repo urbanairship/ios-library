@@ -81,12 +81,14 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
     self.mockNetworkMonitor = [self mockForClass:[UANetworkMonitor class]];
 
     // Capture network monitor callback block
-    [[[self.mockNetworkMonitor stub] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:2];
-        void (^callbackBlock)(BOOL) = (__bridge void(^)(BOOL))arg;
-        self.networkMonitorCallback = callbackBlock;
-    }] connectionUpdates:OCMOCK_ANY];
+    if (@available(iOS 12, *)) {
+        [[[self.mockNetworkMonitor stub] andDo:^(NSInvocation *invocation) {
+            void *arg;
+            [invocation getArgument:&arg atIndex:2];
+            void (^callbackBlock)(BOOL) = (__bridge void(^)(BOOL))arg;
+            self.networkMonitorCallback = callbackBlock;
+        }] connectionUpdates:OCMOCK_ANY];
+    }
 
     self.automationEngine = [UAAutomationEngine automationEngineWithAutomationStore:self.testStore
                                                                     appStateTracker:self.mockAppStateTracker
