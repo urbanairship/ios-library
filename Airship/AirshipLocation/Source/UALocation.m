@@ -6,6 +6,7 @@
 
 NSString *const UALocationAutoRequestAuthorizationEnabled = @"UALocationAutoRequestAuthorizationEnabled";
 NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdatesAllowed";
+NSString *const UALocationUpdatesEnabled = @"UALocationUpdatesEnabled";
 
 @interface UALocation()
 @property (nonatomic, strong) UAAnalytics<UAExtendableAnalyticsHeaders> *analytics;
@@ -87,9 +88,9 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
 - (void)extendChannelRegistrationPayload:(UAChannelRegistrationPayload *)payload
                        completionHandler:(UAChannelRegistrationExtenderCompletionHandler)completionHandler {
 
+    BOOL enabled = self.componentEnabled &&  self.locationUpdatesEnabled && [self.privacyManager isEnabled:UAFeaturesLocation];
     // Only set location settings if the app is opted in to data collection
-    payload.locationSettings = @([self.privacyManager isEnabled:UAFeaturesLocation]);
-  
+    payload.locationSettings = @(enabled);
 
     completionHandler(payload);
 }
@@ -98,14 +99,14 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
 #pragma mark Analytics
 
 - (NSDictionary<NSString *, NSString *> *)analyticsHeaders {
-    if ([self.privacyManager isEnabled:UAFeaturesLocation]) {
+    if ([self.privacyManager isEnabled:UAFeaturesLocation] && self.componentEnabled) {
         return @{
             @"X-UA-Location-Permission": [self locationProviderPermissionStatus],
-            @"X-UA-Location-Service-Enabled": [self.privacyManager isEnabled:UAFeaturesLocation] ? @"true" : @"false"
+            @"X-UA-Location-Service-Enabled": self.locationUpdatesEnabled ? @"true" : @"false"
         };
     } else {
         return @{
-            @"X-UA-Location-Service-Enabled": [self.privacyManager isEnabled:UAFeaturesLocation] ? @"true" : @"false"
+            @"X-UA-Location-Service-Enabled": @"false"
         };
     }
 }
@@ -141,16 +142,18 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
 }
 
 - (BOOL)isLocationUpdatesEnabled {
-    return [self.privacyManager isEnabled:UAFeaturesLocation];
+    return [self.dataStore boolForKey:UALocationUpdatesEnabled];
 }
 
 - (void)setLocationUpdatesEnabled:(BOOL)locationUpdatesEnabled {
-    if (locationUpdatesEnabled) {
-        [self.privacyManager enableFeatures:UAFeaturesLocation];
-    } else {
-        [self.privacyManager disableFeatures:UAFeaturesLocation];
+    if (locationUpdatesEnabled == self.isLocationUpdatesEnabled) {
+        return;
     }
+
+    [self.dataStore setBool:locationUpdatesEnabled forKey:UALocationUpdatesEnabled];
+    [self updateLocationService];
 }
+
 
 - (BOOL)isBackgroundLocationUpdatesAllowed {
     return [self.dataStore boolForKey:UALocationBackgroundUpdatesAllowed];
@@ -173,12 +176,7 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
 }
 
 - (void)updateLocationService {
-    if (!self.componentEnabled) {
-        [self stopLocationUpdates];
-        return;
-    }
-
-    if (![self.privacyManager isEnabled:UAFeaturesLocation]) {
+    if (!self.componentEnabled || !self.locationUpdatesEnabled || ![self.privacyManager isEnabled:UAFeaturesLocation]) {
         [self stopLocationUpdates];
         return;
     }
@@ -312,10 +310,14 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
 }
 
 - (BOOL)isLocationOptedIn {
+    if (!self.locationUpdatesEnabled) {
+        return NO;
+    }
+
     if (![self.privacyManager isEnabled:UAFeaturesLocation]) {
         return NO;
     }
-    
+
     switch ([CLLocationManager authorizationStatus]) {
         case kCLAuthorizationStatusDenied:
         case kCLAuthorizationStatusRestricted:
@@ -343,6 +345,11 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
     if (![self.privacyManager isEnabled:UAFeaturesLocation]) {
         return NO;
     }
+
+    if (!self.locationUpdatesEnabled) {
+        return NO;
+    }
+
 #if !TARGET_OS_MACCATALYST
     if (@available(iOS 14.0, *)) {
         switch (self.locationManager.accuracyAuthorization) {
