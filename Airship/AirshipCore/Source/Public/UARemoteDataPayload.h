@@ -10,14 +10,6 @@ NS_ASSUME_NONNULL_BEGIN
 @interface UARemoteDataPayload : NSObject <NSCopying>
 
 ///---------------------------------------------------------------------------------------
-/// @name Public Metadata Keys
-///---------------------------------------------------------------------------------------
-
-extern NSString *const UARemoteDataMetadataLanguageKey;
-extern NSString *const UARemoteDataMetadataCountryKey;
-extern NSString *const UARemoteDataMetadataSDKVersionKey;
-
-///---------------------------------------------------------------------------------------
 /// @name Properties
 ///---------------------------------------------------------------------------------------
 

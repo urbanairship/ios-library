@@ -13,7 +13,7 @@ import Airship
  */
 @available(iOS 13.0, *)
 @objc(UAChatViewController)
-public class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextViewDelegate, ConversationDelegate {
+open class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextViewDelegate, ConversationDelegate {
     /**
      * Message draft.
      */
@@ -110,7 +110,7 @@ public class ChatViewController: UIViewController, UITableViewDataSource, UITabl
             cell.stackView.alignment = .leading
             cell.messageTextLabel.backgroundColor = chatStyle?.incomingChatBubbleColor ?? UIColor.systemGray6
             cell.containerView.backgroundColor = chatStyle?.incomingChatBubbleColor ?? UIColor.systemGray6
-            cell.messageTextLabel.textColor = chatStyle?.incomingTextColor ?? cell.messageTextLabel.textColor
+            cell.messageTextLabel.textColor = chatStyle?.incomingTextColor ?? UIColor.black
         } else {
             cell.stackView.alignment = .trailing
             cell.messageTextLabel.backgroundColor = chatStyle?.outgoingChatBubbleColor ?? UIColor.systemBlue
@@ -119,7 +119,7 @@ public class ChatViewController: UIViewController, UITableViewDataSource, UITabl
         }
 
         cell.messageTextLabel.font = chatStyle?.messageTextFont ?? cell.messageTextLabel.font
-        cell.messageTextLabel?.text = message.text
+        cell.messageTextLabel.text = message.text
 
         cell.messageDateLabel.textColor = chatStyle?.dateColor ?? cell.messageDateLabel.textColor
         cell.messageDateLabel.font = chatStyle?.dateFont ?? cell.messageDateLabel.font

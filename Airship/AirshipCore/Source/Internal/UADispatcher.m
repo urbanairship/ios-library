@@ -81,6 +81,8 @@ static NSMutableDictionary *globalDispatchers;
 - (void)doSync:(void (^)(void))block {
     if ([self isCurrentQueue]) {
         block();
+    } else if (self == [UADispatcher mainDispatcher] && [NSThread isMainThread]) {
+        block();
     } else {
         [self dispatchSync:block];
     }

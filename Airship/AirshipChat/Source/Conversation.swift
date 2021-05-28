@@ -64,6 +64,7 @@ public protocol ConversationProtocol {
     func fetchMessages(completionHandler: @escaping (Array<ChatMessage>) -> ())
 }
 
+@available(iOS 13.0, *) 
 protocol InternalConversationProtocol: ConversationProtocol  {
     func refresh()
     var enabled : Bool { get set }
@@ -172,12 +173,12 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
     }
 
     @objc
-    public func sendMessage(_ text: String) {
+    func sendMessage(_ text: String) {
         self.sendMessage(text, attachment: nil)
     }
 
     @objc
-    public func sendMessage(_ text: String?, attachment: URL? = nil) {
+    func sendMessage(_ text: String?, attachment: URL? = nil) {
         guard text != nil || attachment != nil else {
             AirshipLogger.error("Both text and attachment should not be nil")
             return
@@ -209,7 +210,7 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
      * @param completionHandler The message completion handler.
      */
     @objc
-    public func fetchMessages(completionHandler: @escaping (Array<ChatMessage>) -> ()) {
+    func fetchMessages(completionHandler: @escaping (Array<ChatMessage>) -> ()) {
         self.chatDAO.fetchMessages(completionHandler: { (messageData, pendingMessages) in
             var messages = [ChatMessage]()
             messages.append(contentsOf: messageData.map { $0.toChatMessage() })

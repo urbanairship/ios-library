@@ -26,7 +26,7 @@ public class ChatResources : NSObject {
         return Bundle(path: path) ?? Bundle(for: Self.self)
     }
 
-    static func localizedString(key: String) -> String? {
+    public static func localizedString(key: String) -> String? {
         return key.localizedString(withTable:"UrbanAirship", moduleBundle:bundle())
     }
 }

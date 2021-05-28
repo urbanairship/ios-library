@@ -44,7 +44,7 @@ struct ChatResponse : Decodable {
         let messageID: Int
         let createdOn: Date
         let direction: UInt
-        let text: String
+        let text: String?
         let attachment: URL?
         let requestID: String?
 

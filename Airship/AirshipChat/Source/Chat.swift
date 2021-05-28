@@ -76,8 +76,7 @@ public class Chat : UAComponent, UAPushableComponent {
         }
     }
 
-    let internalConversation : InternalConversationProtocol
-
+    private let internalConversation : InternalConversationProtocol
 
     private let dataStore: UAPreferenceDataStore
     
@@ -118,14 +117,15 @@ public class Chat : UAComponent, UAPushableComponent {
         self.updateConversationEnablement()
     }
 
-    func updateConversationEnablement() {
+    private func updateConversationEnablement() {
         self.internalConversation.enabled = self.componentEnabled() && self.privacyManager.isEnabled(UAFeatures.chat)
         if (!self.privacyManager.isEnabled(UAFeatures.chat)) {
             self.internalConversation.clearData()
         }
     }
     
-    @objc func onEnabledFeaturesChange() {
+    @objc
+    func onEnabledFeaturesChange() {
         self.updateConversationEnablement()
     }
 

@@ -13,7 +13,7 @@ class AirshipLogger {
     @available(macOS 11.0, iOS 14.0, watchOS 7.0, tvOS 14.0, *)
     static let LOGGER = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Airship")
     
-    public static func trace(_ message: String,
+    static func trace(_ message: String,
                              file: String = #file,
                              line: Int = #line,
                              function: String = #function) {
@@ -25,7 +25,7 @@ class AirshipLogger {
             function: function)
     }
 
-    public static func debug(_ message: String,
+    static func debug(_ message: String,
                              file: String = #file,
                              line: Int = #line,
                              function: String = #function) {
@@ -38,7 +38,7 @@ class AirshipLogger {
     }
     
 
-    public static func info(_ message: String,
+    static func info(_ message: String,
                             file: String = #file,
                             line: Int = #line,
                             function: String = #function) {
@@ -49,7 +49,7 @@ class AirshipLogger {
             function: function)
     }
 
-    public static func warn(_ message: String,
+    static func warn(_ message: String,
                             file: String = #file,
                             line: Int = #line,
                             function: String = #function) {
@@ -60,7 +60,7 @@ class AirshipLogger {
             function: function)
     }
 
-    public static func error(_ message: String,
+    static func error(_ message: String,
                             file: String = #file,
                             line: Int = #line,
                             function: String = #function) {

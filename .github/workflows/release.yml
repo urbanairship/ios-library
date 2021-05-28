@@ -107,9 +107,9 @@ jobs:
         run: |
           VERSION=${{ steps.get_version.outputs.VERSION }}
           NOTES="$(awk "/## Version $VERSION/{flag=1;next}/## Version/{flag=0}flag" CHANGELOG.md)"
-          NOTES="${NOTES//'%'/'%25'}"
-          NOTES="${NOTES//$'\n'/'%0A'}"
-          NOTES="${NOTES//$'\r'/'%0D'}"
+          NOTES="${NOTES//'%'/%25}"
+          NOTES="${NOTES//$'\n'/%0A}"
+          NOTES="${NOTES//$'\r'/%0D}"
           echo ::set-output name=NOTES::"$NOTES"
       - uses: actions/cache@v1
         with:
@@ -180,11 +180,6 @@ jobs:
           type: ${{ job.status }}
           job_name: "Uploaded iOS SDK API docs :female-doctor: :male-doctor:"
           url: ${{ secrets.SLACK_WEBHOOK }}
-
-      - name: Publish Bintray
-        env:
-          BINTRAY_AUTH: ${{ secrets.BINTRAY_AUTH }}
-        run: bash ./scripts/deploy_bintray.sh
       - name: Slack Notification
         uses: homoluctus/slatify@master
         if: always()

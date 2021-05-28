@@ -3,6 +3,14 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 14.4.1 May 7, 2021
+Patch release with task manager and chat-related bugfixes. Applications seeing issues related to the task manager and applications using AirshipChat are encouraged to update.
+
+### Changes
+- Fixed a dispatch_sync bug that could trigger exceptions in the task manager
+- Fixed a websocket connection deadlock in AirshipChat
+- Fixed a bug in AirshipChat causing unreadable message text
+
 ## Version 14.4.0 April 26, 2021
 
 Minor release that adds support for Airship Live Chat.
