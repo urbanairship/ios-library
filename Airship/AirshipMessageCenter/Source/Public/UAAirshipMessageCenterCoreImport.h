@@ -35,4 +35,5 @@
 #import "UARequestSession.h"
 #import "UARequest.h"
 #import "UAPrivacyManager.h"
+#import "UARemoteConfigURLManager.h"
 #endif

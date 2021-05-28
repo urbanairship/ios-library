@@ -9,6 +9,7 @@ static NSString *const UAManagedContextStoreDirectory = @"com.urbanairship.no-ba
 @interface UACoreData()
 @property (nonatomic, strong) NSManagedObjectContext *context;
 @property (nonatomic, strong) NSMutableArray *pendingStores;
+@property (nonatomic, strong) NSArray *storeNames;
 @property (assign) BOOL shouldCreateStore;
 @property (assign) BOOL inMemory;
 @property (assign) BOOL isFinished;
@@ -23,6 +24,7 @@ static NSString *const UAManagedContextStoreDirectory = @"com.urbanairship.no-ba
     if (self) {
         self.context = context;
         self.pendingStores = [stores mutableCopy];
+        self.storeNames = [stores copy];
         self.inMemory = inMemory;
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(protectedDataAvailable)
@@ -73,6 +75,27 @@ static NSString *const UAManagedContextStoreDirectory = @"com.urbanairship.no-ba
 - (void)safePerformBlockAndWait:(void (^)(BOOL, NSManagedObjectContext *))block {
     [self.context performBlockAndWait:^{
         if (self.isFinished) {
+            return;
+        }
+
+        self.shouldCreateStore = YES;
+        [self createPendingStores];
+
+        if (self.context.persistentStoreCoordinator.persistentStores.count) {
+            block(YES, self.context);
+        } else {
+            block(NO, self.context);
+        }
+    }];
+}
+
+- (void)performBlockIfStoresExist:(void (^)(BOOL, NSManagedObjectContext *))block {
+    [self.context performBlock:^{
+        if (self.isFinished) {
+            return;
+        }
+
+        if (!(self.inMemory || [self storesExistOnDisk])) {
             return;
         }
 
@@ -142,7 +165,7 @@ static NSString *const UAManagedContextStoreDirectory = @"com.urbanairship.no-ba
     }
 }
 
-- (BOOL)createSqlStoreWithName:(NSString *)storeName {
+- (nullable NSURL *)storeURL:(NSString *)storeName createDirectories:(BOOL)createDirectories {
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSURL *libraryDirectoryURL = [[fileManager URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] lastObject];
     NSURL *cachesDirectoryURL = [[fileManager URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] lastObject];
@@ -156,7 +179,7 @@ static NSString *const UAManagedContextStoreDirectory = @"com.urbanairship.no-ba
         storeURL = [libraryStoreDirectoryURL URLByAppendingPathComponent:storeName];
     } else if ([fileManager fileExistsAtPath:[cachesStoreDirectoryURL path]]) {
         storeURL = [cachesStoreDirectoryURL URLByAppendingPathComponent:storeName];
-    } else {
+    } else if (createDirectories) {
         NSError *error = nil;
         if ([fileManager createDirectoryAtURL:libraryStoreDirectoryURL withIntermediateDirectories:YES attributes:nil error:&error]) {
             storeURL = [libraryStoreDirectoryURL URLByAppendingPathComponent:storeName];
@@ -166,9 +189,26 @@ static NSString *const UAManagedContextStoreDirectory = @"com.urbanairship.no-ba
             [UAUtils addSkipBackupAttributeToItemAtURL:cachesStoreDirectoryURL];
         } else {
             UA_LERR(@"Failed to create store %@: %@", storeName, error);
-            return NO;
+            return nil;
         }
     }
+
+    return storeURL;
+}
+
+- (BOOL)storesExistOnDisk {
+    for (NSString *name in self.storeNames) {
+        NSURL *storeURL = [self storeURL:name createDirectories:NO];
+        if (storeURL && [[NSFileManager defaultManager] fileExistsAtPath:[storeURL path]]) {
+            return YES;
+        }
+    }
+
+    return NO;
+}
+
+- (BOOL)createSqlStoreWithName:(NSString *)storeName {
+    NSURL *storeURL = [self storeURL:storeName createDirectories:YES];
 
     // Make sure it does not already exist
     for (NSPersistentStore *store in self.context.persistentStoreCoordinator.persistentStores) {

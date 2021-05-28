@@ -54,6 +54,12 @@ NSString *const UAMessageDataScheme = @"message";
                                    name:UAPrivacyManagerEnabledFeaturesChangedEvent
                                  object:nil];
 
+        [notificationCenter addObserver:self
+                                    selector:@selector(remoteURLConfigUpdated)
+                                        name:UARemoteConfigURLManagerConfigUpdated
+                                      object:nil];
+
+
         [self.messageList loadSavedMessages];
     }
 
@@ -152,6 +158,11 @@ NSString *const UAMessageDataScheme = @"message";
     self.user.enabled = isEnabled;
     self.messageList.enabled = isEnabled;
 }
+
+- (void)remoteURLConfigUpdated {
+    [self.messageList retrieveMessageListWithSuccessBlock:nil withFailureBlock:nil];
+}
+
 #pragma mark -
 #pragma mark UAPushableComponent
 

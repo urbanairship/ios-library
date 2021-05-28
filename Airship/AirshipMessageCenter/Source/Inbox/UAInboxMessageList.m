@@ -24,7 +24,6 @@ static NSString * const UAInboxMessageListExtraRetrieveCallback = @"retrieveCall
 @property (nonatomic, strong) UADispatcher *taskDispatcher;
 @property (nonatomic, strong) UADate *date;
 @property (nonatomic, strong) UATaskManager *taskManager;
-@property (nonatomic, strong) UAPrivacyManager *privacyManager;
 
 @property (atomic, assign) NSUInteger retrieveCount;
 @property (atomic, assign) NSUInteger batchUpdateCount;
@@ -142,12 +141,16 @@ static NSString * const UAInboxMessageListExtraRetrieveCallback = @"retrieveCall
         }
     }
 
-    [self.taskDispatcher dispatchAsync:^{
-        if (!enabled) {
-            [self.inboxStore deleteMessages];
-            [self loadSavedMessages];
-        }
-    }];
+    if (!_enabled) {
+        UA_WEAKIFY(self)
+        [self.taskDispatcher dispatchAsync:^{
+            UA_STRONGIFY(self)
+            if (!self.enabled) {
+                [self.inboxStore deleteMessages];
+                [self loadSavedMessages];
+            }
+        }];
+    }
 }
 
 - (BOOL)enabled {
@@ -447,22 +450,29 @@ static NSString * const UAInboxMessageListExtraRetrieveCallback = @"retrieveCall
  * Refreshes the publicly exposed inbox messages.
  */
 - (void)refreshInbox:(void (^)(void))completionHandler {
-    NSString *predicateFormat = @"(messageExpiration == nil || messageExpiration >= %@) && (deletedClient == NO || deletedClient == nil)";
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:predicateFormat, [self.date now]];
+    if (self.enabled) {
+        NSString *predicateFormat = @"(messageExpiration == nil || messageExpiration >= %@) && (deletedClient == NO || deletedClient == nil)";
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:predicateFormat, [self.date now]];
 
-    [self.inboxStore fetchMessagesWithPredicate:predicate completionHandler:^(NSArray<UAInboxMessage *> *messages) {
-        [self updateMessages:messages];
+        [self.inboxStore fetchMessagesWithPredicate:predicate completionHandler:^(NSArray<UAInboxMessage *> *messages) {
+            [self updateMessages:messages];
+            completionHandler();
+        }];
+    } else {
+        [self updateMessages:@[]];
         completionHandler();
-    }];
+    }
 }
 
 - (void)refreshInbox {
-    NSString *predicateFormat = @"(messageExpiration == nil || messageExpiration >= %@) && (deletedClient == NO || deletedClient == nil)";
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:predicateFormat, [self.date now]];
-
-    NSArray<UAInboxMessage *> *messages = [self.inboxStore fetchMessagesWithPredicate:predicate];
-
-    [self updateMessages:messages];
+    if (self.enabled) {
+        NSString *predicateFormat = @"(messageExpiration == nil || messageExpiration >= %@) && (deletedClient == NO || deletedClient == nil)";
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:predicateFormat, [self.date now]];
+        NSArray<UAInboxMessage *> *messages = [self.inboxStore fetchMessagesWithPredicate:predicate];
+        [self updateMessages:messages];
+    } else {
+        [self updateMessages:@[]];
+    }
 }
 
 - (void)updateMessages:(NSArray<UAInboxMessage *> *)messages {

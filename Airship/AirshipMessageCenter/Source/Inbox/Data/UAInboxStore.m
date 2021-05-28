@@ -282,7 +282,7 @@
 }
 
 - (void)deleteMessages {
-    [self.coreData safePerformBlock:^(BOOL isSafe, NSManagedObjectContext *context) {
+    [self.coreData performBlockIfStoresExist:^(BOOL isSafe, NSManagedObjectContext *context) {
         if (!isSafe) {
             return;
         }

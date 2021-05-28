@@ -81,20 +81,21 @@ class ChatDAO: ChatDAOProtocol {
     }
 
     func deleteAll() {
-        safePerformBlock { context in
-            let pendingRequest = NSFetchRequest<NSFetchRequestResult>(entityName: ChatDAO.pendingChatMessageDataEntityName)
-            let pendingDeleteRequest = NSBatchDeleteRequest(fetchRequest: pendingRequest)
+        self.coreData.performBlockIfStoresExist { safe, context in
+            if (safe) {
+                let pendingRequest = NSFetchRequest<NSFetchRequestResult>(entityName: ChatDAO.pendingChatMessageDataEntityName)
+                let pendingDeleteRequest = NSBatchDeleteRequest(fetchRequest: pendingRequest)
 
-            let messageRequest = NSFetchRequest<NSFetchRequestResult>(entityName: ChatDAO.chatMessageDataEntityName)
-            let messageDeleteRequest = NSBatchDeleteRequest(fetchRequest: messageRequest)
+                let messageRequest = NSFetchRequest<NSFetchRequestResult>(entityName: ChatDAO.chatMessageDataEntityName)
+                let messageDeleteRequest = NSBatchDeleteRequest(fetchRequest: messageRequest)
 
-            do {
-                try context.execute(pendingDeleteRequest)
-                try context.execute(messageDeleteRequest)
-            } catch {
-                AirshipLogger.error("Unable to delete messages: \(error)")
+                do {
+                    try context.execute(pendingDeleteRequest)
+                    try context.execute(messageDeleteRequest)
+                } catch {
+                    AirshipLogger.error("Unable to delete messages: \(error)")
+                }
             }
-
         }
     }
 
