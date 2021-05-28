@@ -13,7 +13,7 @@ import Airship
  */
 @available(iOS 13.0, *)
 @objc(UAChatViewController)
-public class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextViewDelegate, ConversationDelegate {
+open class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextViewDelegate, ConversationDelegate {
     /**
      * Message draft.
      */
