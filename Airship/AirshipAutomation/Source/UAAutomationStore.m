@@ -88,6 +88,8 @@ NSString *const UALegacyActionAutomationStoreFileFormat = @"Automation-%@.sqlite
             return;
         }
 
+        UA_LTRACE(@"Created automation persistent store: %@", store.URL);
+
         if (!self.mainStore) {
             self.mainStore = store;
         }

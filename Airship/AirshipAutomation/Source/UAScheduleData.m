@@ -3,6 +3,7 @@
 #import "UAScheduleData+Internal.h"
 #import "UAJSONSerialization.h"
 #import "UAScheduleTriggerData+Internal.h"
+#import "UAGlobal.h"
 
 // Data version - for migration
 NSUInteger const UAScheduleDataVersion = 3;
@@ -51,6 +52,24 @@ NSUInteger const UAScheduleDataVersion = 3;
 
 - (BOOL)isExpired {
     return [self.end compare:[NSDate date]] == NSOrderedAscending;
+}
+
+- (BOOL)checkState:(UAScheduleState)state {
+    return [self.executionState unsignedIntegerValue] == state;
+}
+
+- (BOOL)verifyState:(UAScheduleState)state {
+    if (![self checkState:state]) {
+        UA_LTRACE("Schedule %@ in invalid state. Expected %ld, actual %@", self.identifier, (long)state, self.executionState);
+        return NO;
+    } else {
+        return YES;
+    }
+}
+
+- (void)updateState:(UAScheduleState)state {
+    UA_LTRACE("Updating schedule %@ state from %@ to %ld", self.identifier, self.executionState, (long) state);
+    self.executionState = @(state);
 }
 
 @end
