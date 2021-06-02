@@ -45,6 +45,7 @@ static NSString *const UALegacyActionAutomationStoreFileFormat = @"Automation-%@
                                                 inMemory:inMemory
                                                   stores:@[storeName, legacyActionStoreName]
                                              mergePolicy:NSMergeByPropertyObjectTrumpMergePolicy];
+        self.coreData.delegate = self;
     }
 
     return self;
@@ -67,10 +68,11 @@ static NSString *const UALegacyActionAutomationStoreFileFormat = @"Automation-%@
 - (void)persistentStoreCreated:(NSPersistentStore *)store
                           name:(NSString *)name
                        context:(NSManagedObjectContext *)context {
-
     if (!self.mainStore) {
         self.mainStore = store;
     }
+
+    UA_LTRACE(@"Created automation persistent store: %@", store.URL);
 
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"UAScheduleData"];
     request.predicate = [NSPredicate predicateWithFormat:@"dataVersion < %d", UAScheduleDataVersion];

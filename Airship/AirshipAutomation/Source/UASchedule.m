@@ -191,5 +191,9 @@ NSUInteger const UAScheduleMaxTriggers = 10;
     return result;
 }
 
+- (NSString *)description {
+    return [NSString stringWithFormat:@"UASchedule %@", self.identifier];
+}
+
 @end
 

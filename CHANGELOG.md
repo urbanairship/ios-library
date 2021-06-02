@@ -3,6 +3,14 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 14.4.2 June 2, 2021
+Patch release that improves verbose logging for IAA for better debugging and fixes carthage and SPM issues with the live chat module.
+
+### Changes
+- Improve trace logs for IAA
+- Exclude tests directory from SPM
+- Fix Chat deployment target
+
 ## Version 14.4.1 May 7, 2021
 Patch release with task manager and chat-related bugfixes. Applications seeing issues related to the task manager and applications using AirshipChat are encouraged to update.
 

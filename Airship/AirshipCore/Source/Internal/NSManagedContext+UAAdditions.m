@@ -25,27 +25,26 @@ NSString *const UAManagedContextStoreDirectory = @"com.urbanairship.no-backup";
 
 
         NSFileManager *fileManager = [NSFileManager defaultManager];
-        NSURL *libraryDirectoryURL = [[fileManager URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] lastObject];
-        NSURL *cachesDirectoryURL = [[fileManager URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] lastObject];
-        NSURL *libraryStoreDirectoryURL = [libraryDirectoryURL URLByAppendingPathComponent:UAManagedContextStoreDirectory];
-        NSURL *cachesStoreDirectoryURL = [cachesDirectoryURL URLByAppendingPathComponent:UAManagedContextStoreDirectory];
 
-        NSURL *storeURL;
+#if TARGET_OS_TV
+        NSURL *baseDirectory = [[fileManager URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] lastObject];
+#else
+        NSURL *baseDirectory = [[fileManager URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] lastObject];
+#endif
 
-        // Create the store directory if it doesn't exist
-        if ([fileManager fileExistsAtPath:[libraryStoreDirectoryURL path]]) {
-            storeURL = [libraryStoreDirectoryURL URLByAppendingPathComponent:storeName];
-        } else if ([fileManager fileExistsAtPath:[cachesStoreDirectoryURL path]]) {
-            storeURL = [cachesStoreDirectoryURL URLByAppendingPathComponent:storeName];
-        } else {
+        NSURL *airshipDirectory = [baseDirectory URLByAppendingPathComponent:UAManagedContextStoreDirectory];
+
+        NSURL *storeURL = [airshipDirectory URLByAppendingPathComponent:storeName];
+
+        if (![fileManager fileExistsAtPath:[airshipDirectory path]]) {
             NSError *error = nil;
-            if ([fileManager createDirectoryAtURL:libraryStoreDirectoryURL withIntermediateDirectories:YES attributes:nil error:&error]) {
-                storeURL = [libraryStoreDirectoryURL URLByAppendingPathComponent:storeName];
-                [UAUtils addSkipBackupAttributeToItemAtURL:libraryStoreDirectoryURL];
-            } else if ([fileManager createDirectoryAtURL:cachesStoreDirectoryURL withIntermediateDirectories:YES attributes:nil error:&error]) {
-                storeURL = [cachesStoreDirectoryURL URLByAppendingPathComponent:storeName];
-                [UAUtils addSkipBackupAttributeToItemAtURL:cachesStoreDirectoryURL];
-            } else {
+            BOOL created = [fileManager createDirectoryAtURL:airshipDirectory
+                                 withIntermediateDirectories:YES
+                                                  attributes:nil
+                                                       error:&error];
+
+            if (!created) {
+                UA_LTRACE(@"Faaled to create aiship SQL directory. %@", error);
                 completionHandler(nil, error);
                 return;
             }
@@ -114,9 +113,7 @@ NSString *const UAManagedContextStoreDirectory = @"com.urbanairship.no-backup";
         return NO;
     }
 
-    [self save:&error];
-
-    if (error) {
+    if (![self save:&error]) {
         UA_LERR(@"Error saving context %@", error);
         return NO;
     }

@@ -165,40 +165,26 @@ static NSString *const UAManagedContextStoreDirectory = @"com.urbanairship.no-ba
     }
 }
 
-- (nullable NSURL *)storeURL:(NSString *)storeName createDirectories:(BOOL)createDirectories {
+- (nullable NSURL *)storeSQLDirectory {
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSURL *libraryDirectoryURL = [[fileManager URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] lastObject];
-    NSURL *cachesDirectoryURL = [[fileManager URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] lastObject];
-    NSURL *libraryStoreDirectoryURL = [libraryDirectoryURL URLByAppendingPathComponent:UAManagedContextStoreDirectory];
-    NSURL *cachesStoreDirectoryURL = [cachesDirectoryURL URLByAppendingPathComponent:UAManagedContextStoreDirectory];
 
-    NSURL *storeURL;
+#if TARGET_OS_TV
+    NSURL *baseDirectory = [[fileManager URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] lastObject];
+#else
+    NSURL *baseDirectory = [[fileManager URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] lastObject];
+#endif
 
-    // Create the store directory if it doesn't exist
-    if ([fileManager fileExistsAtPath:[libraryStoreDirectoryURL path]]) {
-        storeURL = [libraryStoreDirectoryURL URLByAppendingPathComponent:storeName];
-    } else if ([fileManager fileExistsAtPath:[cachesStoreDirectoryURL path]]) {
-        storeURL = [cachesStoreDirectoryURL URLByAppendingPathComponent:storeName];
-    } else if (createDirectories) {
-        NSError *error = nil;
-        if ([fileManager createDirectoryAtURL:libraryStoreDirectoryURL withIntermediateDirectories:YES attributes:nil error:&error]) {
-            storeURL = [libraryStoreDirectoryURL URLByAppendingPathComponent:storeName];
-            [UAUtils addSkipBackupAttributeToItemAtURL:libraryStoreDirectoryURL];
-        } else if ([fileManager createDirectoryAtURL:cachesStoreDirectoryURL withIntermediateDirectories:YES attributes:nil error:&error]) {
-            storeURL = [cachesStoreDirectoryURL URLByAppendingPathComponent:storeName];
-            [UAUtils addSkipBackupAttributeToItemAtURL:cachesStoreDirectoryURL];
-        } else {
-            UA_LERR(@"Failed to create store %@: %@", storeName, error);
-            return nil;
-        }
-    }
+    return [baseDirectory URLByAppendingPathComponent:UAManagedContextStoreDirectory];
+}
 
-    return storeURL;
+
+- (nullable NSURL *)storeURL:(NSString *)storeName {
+    return [[self storeSQLDirectory] URLByAppendingPathComponent:storeName];
 }
 
 - (BOOL)storesExistOnDisk {
     for (NSString *name in self.storeNames) {
-        NSURL *storeURL = [self storeURL:name createDirectories:NO];
+        NSURL *storeURL = [self storeURL:name];
         if (storeURL && [[NSFileManager defaultManager] fileExistsAtPath:[storeURL path]]) {
             return YES;
         }
@@ -208,7 +194,23 @@ static NSString *const UAManagedContextStoreDirectory = @"com.urbanairship.no-ba
 }
 
 - (BOOL)createSqlStoreWithName:(NSString *)storeName {
-    NSURL *storeURL = [self storeURL:storeName createDirectories:YES];
+    NSURL *storeURL = [self storeURL:storeName];
+    NSURL *storeDirectory = [self storeSQLDirectory];
+
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+
+    if (![fileManager fileExistsAtPath:[storeDirectory path]]) {
+        NSError *error = nil;
+        BOOL created = [fileManager createDirectoryAtURL:storeDirectory
+                             withIntermediateDirectories:YES
+                                              attributes:nil
+                                                   error:&error];
+
+        if (!created) {
+            UA_LTRACE(@"Failed to create aiship SQL directory. %@", error);
+            return NO;
+        }
+    }
 
     // Make sure it does not already exist
     for (NSPersistentStore *store in self.context.persistentStoreCoordinator.persistentStores) {
@@ -244,9 +246,7 @@ static NSString *const UAManagedContextStoreDirectory = @"com.urbanairship.no-ba
         return NO;
     }
 
-    [context save:&error];
-
-    if (error) {
+    if (![context save:&error]) {
         UA_LERR(@"Error saving context %@", error);
         return NO;
     }

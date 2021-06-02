@@ -190,6 +190,26 @@ extern NSUInteger const UAScheduleDataVersion;
  */
 - (BOOL)isExpired;
 
+/**
+ * Verifies the state. Logs a message if state is invalid.
+ * @param state The state to check.
+ * @returns `YES` if state matches, otherwise `NO`
+ */
+- (BOOL)verifyState:(UAScheduleState)state;
+
+/**
+ * Checks the state.
+ * @param state The state to check.
+ * @returns `YES` if state matches, otherwise `NO`
+ */
+- (BOOL)checkState:(UAScheduleState)state;
+
+/**
+ * Updates the state.
+ * @param state The state.
+ */
+- (void)updateState:(UAScheduleState)state;
+
 @end
 
 NS_ASSUME_NONNULL_END
