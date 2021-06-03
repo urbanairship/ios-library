@@ -35,6 +35,9 @@ NSString *const UAChannelTimeZoneJSONKey = @"tz";
 NSString *const UAChannelAliasJSONKey = @"alias";
 NSString *const UAChannelSetTagsKey = @"set_tags";
 NSString *const UAChannelTagsJSONKey = @"tags";
+NSString *const UAChannelTagChangesJSONKey = @"tag_changes";
+NSString *const UAChannelTagChangesAddJSONKey = @"add";
+NSString *const UAChannelTagChangesRemoveJSONKey = @"remove";
 
 NSString *const UABackgroundEnabledJSONKey = @"background";
 
@@ -76,6 +79,7 @@ NSString *const UABackgroundEnabledJSONKey = @"background";
             self.backgroundEnabled = [topLevel[UABackgroundEnabledJSONKey] boolValue];
             self.setTags = [topLevel[UAChannelSetTagsKey] boolValue];
             self.tags = topLevel[UAChannelTagsJSONKey];
+            self.tagChanges = topLevel[UAChannelTagChangesJSONKey];
             self.language = topLevel[UAChannelTopLevelLanguageJSONKey];
             self.country = topLevel[UAChannelTopLevelCountryJSONKey];
             self.timeZone = topLevel[UAChannelTopLevelTimeZoneJSONKey];
@@ -126,6 +130,7 @@ NSString *const UABackgroundEnabledJSONKey = @"background";
     [channel setValue:[NSNumber numberWithBool:self.setTags] forKey:UAChannelSetTagsKey];
     if (self.setTags) {
         [channel setValue:self.tags forKey:UAChannelTagsJSONKey];
+        [channel setValue:self.tagChanges forKey:UAChannelTagChangesJSONKey];
     }
 
     NSMutableDictionary *ios = [NSMutableDictionary dictionary];
@@ -168,6 +173,7 @@ NSString *const UABackgroundEnabledJSONKey = @"background";
         copy.namedUserId = self.namedUserId;
         copy.setTags = self.setTags;
         copy.tags = [self.tags copyWithZone:zone];
+        copy.tagChanges = [self.tagChanges copyWithZone:zone];
         copy.quietTime = [self.quietTime copyWithZone:zone];
         copy.quietTimeTimeZone = self.quietTimeTimeZone;
         copy.timeZone = self.timeZone;
@@ -221,6 +227,8 @@ NSString *const UABackgroundEnabledJSONKey = @"background";
         if ([lastPayload.tags isEqualToArray:self.tags]) {
             minPayload.setTags = NO;
             minPayload.tags = nil;
+        } else {
+            minPayload.tagChanges = [self getTagChanges:lastPayload.tags];
         }
     }
 
@@ -270,6 +278,38 @@ NSString *const UABackgroundEnabledJSONKey = @"background";
     }
 
     return minPayload;
+}
+
+- (NSDictionary *)getTagChanges:(NSArray<NSString *> *)lastTags {
+    NSMutableArray *add = [@[] mutableCopy];
+    for (NSString* tag in self.tags)
+    {
+        if (![lastTags containsObject:tag])
+        {
+            [add addObject:tag];
+        }
+    }
+    
+    NSMutableArray *remove = [@[] mutableCopy];
+    for (NSString* tag in lastTags)
+    {
+        if (![self.tags containsObject:tag])
+        {
+            [remove addObject:tag];
+        }
+    }
+    
+    NSMutableDictionary *tagChanges = [[NSMutableDictionary alloc] initWithCapacity:2];
+    if ([add count] > 0)
+    {
+        [tagChanges setValue:add forKey:UAChannelTagChangesAddJSONKey];
+    }
+    if ([remove count] > 0)
+    {
+        [tagChanges setValue:remove forKey:UAChannelTagChangesRemoveJSONKey];
+    }
+    
+    return tagChanges;
 }
 
 @end

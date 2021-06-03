@@ -358,28 +358,35 @@
     copy.deviceOS = @"deviceOS CHANGED";
     copy.carrier = @"carrier CHANGED";
 
-    UAChannelRegistrationPayload *minPayload = [self.payload minimalUpdatePayloadWithLastPayload:copy];
-    XCTAssertEqualObjects(self.payload.country, minPayload.country);
-    XCTAssertEqualObjects(self.payload.timeZone, minPayload.timeZone);
-    XCTAssertEqualObjects(self.payload.language, minPayload.language);
-    XCTAssertEqualObjects(self.payload.tags, minPayload.tags);
-    XCTAssertEqualObjects(self.payload.locationSettings, minPayload.locationSettings);
-    XCTAssertEqualObjects(self.payload.SDKVersion, minPayload.SDKVersion);
-    XCTAssertEqualObjects(self.payload.appVersion, minPayload.appVersion);
-    XCTAssertEqualObjects(self.payload.deviceModel, minPayload.deviceModel);
-    XCTAssertEqualObjects(self.payload.deviceOS, minPayload.deviceOS);
-    XCTAssertEqualObjects(self.payload.carrier, minPayload.carrier);
+    NSMutableDictionary *expectedTagChanges = [[NSMutableDictionary alloc] initWithCapacity:2];
+    NSArray *expectedAdd = @[@"tags CHANGED"];
+    NSArray *expectedRemove = @[@"tagOne", @"tagTwo"];
+    [expectedTagChanges setValue:expectedAdd forKey:@"add"];
+    [expectedTagChanges setValue:expectedRemove forKey:@"remove"];
+    
+    UAChannelRegistrationPayload *minPayload = [copy minimalUpdatePayloadWithLastPayload:self.payload];
+    XCTAssertEqualObjects(copy.country, minPayload.country);
+    XCTAssertEqualObjects(copy.timeZone, minPayload.timeZone);
+    XCTAssertEqualObjects(copy.language, minPayload.language);
+    XCTAssertEqualObjects(copy.tags, minPayload.tags);
+    XCTAssertEqualObjects(expectedTagChanges, minPayload.tagChanges);
+    XCTAssertEqualObjects(copy.locationSettings, minPayload.locationSettings);
+    XCTAssertEqualObjects(copy.SDKVersion, minPayload.SDKVersion);
+    XCTAssertEqualObjects(copy.appVersion, minPayload.appVersion);
+    XCTAssertEqualObjects(copy.deviceModel, minPayload.deviceModel);
+    XCTAssertEqualObjects(copy.deviceOS, minPayload.deviceOS);
+    XCTAssertEqualObjects(copy.carrier, minPayload.carrier);
 
     XCTAssertNil(minPayload.userID);
     XCTAssertNil(minPayload.deviceID);
     XCTAssertTrue(minPayload.setTags);
 
-    XCTAssertEqual(self.payload.backgroundEnabled, minPayload.backgroundEnabled);
-    XCTAssertEqual(self.payload.optedIn, minPayload.optedIn);
-    XCTAssertEqualObjects(self.payload.pushAddress, minPayload.pushAddress);
-    XCTAssertEqualObjects(self.payload.quietTimeTimeZone, minPayload.quietTimeTimeZone);
-    XCTAssertEqualObjects(self.payload.quietTime, minPayload.quietTime);
-    XCTAssertEqualObjects(self.payload.badge, minPayload.badge);
+    XCTAssertEqual(copy.backgroundEnabled, minPayload.backgroundEnabled);
+    XCTAssertEqual(copy.optedIn, minPayload.optedIn);
+    XCTAssertEqualObjects(copy.pushAddress, minPayload.pushAddress);
+    XCTAssertEqualObjects(copy.quietTimeTimeZone, minPayload.quietTimeTimeZone);
+    XCTAssertEqualObjects(copy.quietTime, minPayload.quietTime);
+    XCTAssertEqualObjects(copy.badge, minPayload.badge);
 }
 
 - (void)testMinimalUpdatePayloadDifferentNamedUserId {
@@ -453,28 +460,28 @@
     copy.deviceOS = nil;
     copy.carrier = nil;
 
-    UAChannelRegistrationPayload *minPayload = [self.payload minimalUpdatePayloadWithLastPayload:copy];
-    XCTAssertEqualObjects(self.payload.country, minPayload.country);
-    XCTAssertEqualObjects(self.payload.timeZone, minPayload.timeZone);
-    XCTAssertEqualObjects(self.payload.language, minPayload.language);
-    XCTAssertEqualObjects(self.payload.tags, minPayload.tags);
-    XCTAssertEqualObjects(self.payload.locationSettings, minPayload.locationSettings);
-    XCTAssertEqualObjects(self.payload.SDKVersion, minPayload.SDKVersion);
-    XCTAssertEqualObjects(self.payload.appVersion, minPayload.appVersion);
-    XCTAssertEqualObjects(self.payload.deviceModel, minPayload.deviceModel);
-    XCTAssertEqualObjects(self.payload.deviceOS, minPayload.deviceOS);
-    XCTAssertEqualObjects(self.payload.carrier, minPayload.carrier);
+    UAChannelRegistrationPayload *minPayload = [copy minimalUpdatePayloadWithLastPayload:self.payload];
+    XCTAssertEqualObjects(copy.country, minPayload.country);
+    XCTAssertEqualObjects(copy.timeZone, minPayload.timeZone);
+    XCTAssertEqualObjects(copy.language, minPayload.language);
+    XCTAssertEqualObjects(copy.tags, minPayload.tags);
+    XCTAssertEqualObjects(copy.locationSettings, minPayload.locationSettings);
+    XCTAssertEqualObjects(copy.SDKVersion, minPayload.SDKVersion);
+    XCTAssertEqualObjects(copy.appVersion, minPayload.appVersion);
+    XCTAssertEqualObjects(copy.deviceModel, minPayload.deviceModel);
+    XCTAssertEqualObjects(copy.deviceOS, minPayload.deviceOS);
+    XCTAssertEqualObjects(copy.carrier, minPayload.carrier);
 
     XCTAssertNil(minPayload.userID);
     XCTAssertNil(minPayload.deviceID);
     XCTAssertTrue(minPayload.setTags);
 
-    XCTAssertEqual(self.payload.backgroundEnabled, minPayload.backgroundEnabled);
-    XCTAssertEqual(self.payload.optedIn, minPayload.optedIn);
-    XCTAssertEqualObjects(self.payload.pushAddress, minPayload.pushAddress);
-    XCTAssertEqualObjects(self.payload.quietTimeTimeZone, minPayload.quietTimeTimeZone);
-    XCTAssertEqualObjects(self.payload.quietTime, minPayload.quietTime);
-    XCTAssertEqualObjects(self.payload.badge, minPayload.badge);
+    XCTAssertEqual(copy.backgroundEnabled, minPayload.backgroundEnabled);
+    XCTAssertEqual(copy.optedIn, minPayload.optedIn);
+    XCTAssertEqualObjects(copy.pushAddress, minPayload.pushAddress);
+    XCTAssertEqualObjects(copy.quietTimeTimeZone, minPayload.quietTimeTimeZone);
+    XCTAssertEqualObjects(copy.quietTime, minPayload.quietTime);
+    XCTAssertEqualObjects(copy.badge, minPayload.badge);
 }
 
 #pragma mark -

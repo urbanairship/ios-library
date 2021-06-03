@@ -33,6 +33,9 @@ extern NSString *const UAChannelTimeZoneJSONKey;
 extern NSString *const UAChannelAliasJSONKey;
 extern NSString *const UAChannelSetTagsKey;
 extern NSString *const UAChannelTagsJSONKey;
+extern NSString *const UAChannelTagChangesJSONKey;
+extern NSString *const UAChannelTagChangesAddJSONKey;
+extern NSString *const UAChannelTagChangesRemoveJSONKey;
 
 extern NSString *const UABackgroundEnabledJSONKey;
 
