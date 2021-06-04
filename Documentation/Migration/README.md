@@ -1,5 +1,6 @@
 
 # Airship iOS SDK Migration Guides
+* [SDK 14.x to 14.5](migration-guide-14.5.md)
 * [SDK 13.2 to 14.x](migration-guide-13-14.md)
 * [SDK 13.0/13.1 to 13.2](migration-guide-13.2.md)
 * [SDK 12.x to 13.x](migration-guide-12-13.md)
