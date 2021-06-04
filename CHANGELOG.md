@@ -3,6 +3,15 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 14.5.0 June 4, 2021
+Minor release changing how the SDK handles data collection by introducing the privacy manager. Privacy manager allows fine-grained control over what data is allowed to be collected or accessed by the Airship SDK.
+
+### Changes
+- Added privacy manager
+- Deprecated existing data collection flags
+
+See the [Migration Guide](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration/migration-guide-14.5.md) and the [Data Collection docs](https://docs.airship.com/platform/ios/data-collection/) for further details.
+
 ## Version 14.4.2 June 2, 2021
 Patch release that improves verbose logging for IAA for better debugging and fixes carthage and SPM issues with the live chat module.
 
