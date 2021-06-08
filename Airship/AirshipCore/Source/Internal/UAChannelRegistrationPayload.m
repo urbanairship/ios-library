@@ -281,31 +281,25 @@ NSString *const UABackgroundEnabledJSONKey = @"background";
 }
 
 - (NSDictionary *)getTagChanges:(NSArray<NSString *> *)lastTags {
-    NSMutableArray *add = [@[] mutableCopy];
-    for (NSString* tag in self.tags)
-    {
-        if (![lastTags containsObject:tag])
-        {
+    NSMutableArray *add = [NSMutableArray array];
+    for (NSString* tag in self.tags) {
+        if (![lastTags containsObject:tag]) {
             [add addObject:tag];
         }
     }
     
-    NSMutableArray *remove = [@[] mutableCopy];
-    for (NSString* tag in lastTags)
-    {
-        if (![self.tags containsObject:tag])
-        {
+    NSMutableArray *remove = [NSMutableArray array];
+    for (NSString* tag in lastTags) {
+        if (![self.tags containsObject:tag]) {
             [remove addObject:tag];
         }
     }
     
     NSMutableDictionary *tagChanges = [[NSMutableDictionary alloc] initWithCapacity:2];
-    if ([add count] > 0)
-    {
+    if (add.count) {
         [tagChanges setValue:add forKey:UAChannelTagChangesAddJSONKey];
     }
-    if ([remove count] > 0)
-    {
+    if (remove.count) {
         [tagChanges setValue:remove forKey:UAChannelTagChangesRemoveJSONKey];
     }
     
