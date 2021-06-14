@@ -21,7 +21,7 @@ class ChatDAO: ChatDAOProtocol {
 
     init(config: ChatConfig) {
         let bundle = ChatResources.bundle()
-        let modelURL = bundle?.url(forResource: "ChatMessageData", withExtension: "momd")
+        let modelURL = bundle?.url(forResource: "ChatMessageDataModel", withExtension: "momd")
         self.coreData = UACoreData(modelURL: modelURL!,
                                    inMemory: false,
                                    stores: ["Chat-message-data-\(config.appKey).sqlite"],

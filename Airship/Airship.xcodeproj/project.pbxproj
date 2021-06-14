@@ -207,8 +207,6 @@
 		3CB37A1E251151A400E60392 /* UADebugResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB37A1D251151A400E60392 /* UADebugResources.swift */; };
 		3CCFD5DF23A082EF001AF966 /* UADefaultMessageCenterSplitViewDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CCFD5DD23A082EF001AF966 /* UADefaultMessageCenterSplitViewDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3CCFD5E023A082EF001AF966 /* UADefaultMessageCenterSplitViewDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CCFD5DE23A082EF001AF966 /* UADefaultMessageCenterSplitViewDelegate.m */; };
-		3CD192CD262E4CAE00C6A86D /* ChatMessageData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3CD192CB262E4CAE00C6A86D /* ChatMessageData.xcdatamodeld */; };
-		3CD192CE262E4CAE00C6A86D /* ChatMessageData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3CD192CB262E4CAE00C6A86D /* ChatMessageData.xcdatamodeld */; };
 		3CF5E808255619DC0074B2A0 /* UAFrequencyLimitManager+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CF5E806255619DC0074B2A0 /* UAFrequencyLimitManager+Internal.h */; };
 		3CF5E809255619DC0074B2A0 /* UAFrequencyLimitManager+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CF5E806255619DC0074B2A0 /* UAFrequencyLimitManager+Internal.h */; };
 		3CF5E80A255619DC0074B2A0 /* UAFrequencyLimitManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF5E807255619DC0074B2A0 /* UAFrequencyLimitManager.m */; };
@@ -2374,6 +2372,7 @@
 		997140F61FB0F45000EF5445 /* UAInAppMessageTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 997140F31FB0F45000EF5445 /* UAInAppMessageTest.m */; };
 		997AC8221FE5ACE000260440 /* UAInAppMessageFullScreenDisplayContentTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 997AC8211FE5ACE000260440 /* UAInAppMessageFullScreenDisplayContentTest.m */; };
 		9987672A1FBE6B4200197AF4 /* UAInAppMessageBannerDisplayContentTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 998767291FBE6B4200197AF4 /* UAInAppMessageBannerDisplayContentTest.m */; };
+		A6031ED326738CE600FFE328 /* ChatMessageDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A6031ED126738CE600FFE328 /* ChatMessageDataModel.xcdatamodeld */; };
 		A604DB7E25597F85001ADCA8 /* UASearchEventTemplateTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A604DB7D25597F85001ADCA8 /* UASearchEventTemplateTest.m */; };
 		A60A23EE258CEBBE006B7D80 /* UAModifyAttributesActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A60A23ED258CEBBE006B7D80 /* UAModifyAttributesActionTest.m */; };
 		A60A242B258D0D78006B7D80 /* UAAttributesActionPredicate+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = A60A2429258D0D77006B7D80 /* UAAttributesActionPredicate+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2909,7 +2908,6 @@
 		3CBB6F2F212CE32C00E094B0 /* UARetriable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UARetriable.m; sourceTree = "<group>"; };
 		3CCFD5DD23A082EF001AF966 /* UADefaultMessageCenterSplitViewDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UADefaultMessageCenterSplitViewDelegate.h; sourceTree = "<group>"; };
 		3CCFD5DE23A082EF001AF966 /* UADefaultMessageCenterSplitViewDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UADefaultMessageCenterSplitViewDelegate.m; sourceTree = "<group>"; };
-		3CD192CC262E4CAE00C6A86D /* ChatMessageData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ChatMessageData.xcdatamodel; sourceTree = "<group>"; };
 		3CD9C1D021D1A43600B129A6 /* UAInAppMessageResolution+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageResolution+Internal.h"; sourceTree = "<group>"; };
 		3CF5E806255619DC0074B2A0 /* UAFrequencyLimitManager+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAFrequencyLimitManager+Internal.h"; sourceTree = "<group>"; };
 		3CF5E807255619DC0074B2A0 /* UAFrequencyLimitManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAFrequencyLimitManager.m; sourceTree = "<group>"; };
@@ -3650,6 +3648,7 @@
 		99EC01821FE0953100B9C408 /* UAInAppMessageFullScreenViewController+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageFullScreenViewController+Internal.h"; sourceTree = "<group>"; };
 		99EC01901FE095B600B9C408 /* UAInAppMessageFullScreenDisplayContent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInAppMessageFullScreenDisplayContent.h; sourceTree = "<group>"; };
 		99EC01971FE1FED100B9C408 /* UAInAppMessageFullScreenAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInAppMessageFullScreenAdapter.h; sourceTree = "<group>"; };
+		A6031ED226738CE600FFE328 /* ChatMessageDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ChatMessageDataModel.xcdatamodel; sourceTree = "<group>"; };
 		A604DB7D25597F85001ADCA8 /* UASearchEventTemplateTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UASearchEventTemplateTest.m; sourceTree = "<group>"; };
 		A60A23ED258CEBBE006B7D80 /* UAModifyAttributesActionTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAModifyAttributesActionTest.m; sourceTree = "<group>"; };
 		A60A2429258D0D77006B7D80 /* UAAttributesActionPredicate+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAAttributesActionPredicate+Internal.h"; path = "Internal/UAAttributesActionPredicate+Internal.h"; sourceTree = "<group>"; };
@@ -4210,9 +4209,9 @@
 		3C0D06612624EB38002337B0 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				A6031ED126738CE600FFE328 /* ChatMessageDataModel.xcdatamodeld */,
 				6E88ECC3262E92FF00C46A23 /* UAChatViewController.xib */,
 				3C0D06642624EB6C002337B0 /* ChatMessageCell.xib */,
-				3CD192CB262E4CAE00C6A86D /* ChatMessageData.xcdatamodeld */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -8757,6 +8756,7 @@
 				6E7C07DE26139B58006D0E84 /* ChatMessage.swift in Sources */,
 				6E8E1C9B26447B3800B11791 /* Lock.swift in Sources */,
 				6E877761261CED1A00B03FC0 /* PendingChatMessageData.swift in Sources */,
+				A6031ED326738CE600FFE328 /* ChatMessageDataModel.xcdatamodeld in Sources */,
 				6E9D5595261E35C1009BD6EB /* ChatAPIClient.swift in Sources */,
 				6E877782261CF0A400B03FC0 /* ChatResponse.swift in Sources */,
 				6E7C06A0261275F6006D0E84 /* AirshipChatModuleLoader.swift in Sources */,
@@ -8764,7 +8764,6 @@
 				6E9D5433261E0C49009BD6EB /* WebSocketProtocol.swift in Sources */,
 				6E9D5443261E0C62009BD6EB /* WebSocketFactoryProtocol.swift in Sources */,
 				6E9D580B261FC344009BD6EB /* OpenChatAction.swift in Sources */,
-				3CD192CE262E4CAE00C6A86D /* ChatMessageData.xcdatamodeld in Sources */,
 				3C0D067E2624EBD3002337B0 /* ChatViewController.swift in Sources */,
 				6E9D554B261E31D2009BD6EB /* ChatConnection.swift in Sources */,
 				3C0D06842624EBD3002337B0 /* ChatMessageCell.swift in Sources */,
@@ -9102,7 +9101,6 @@
 				6EE77235238F172900E79944 /* UAInAppMessageUtils.m in Sources */,
 				6EE77236238F172900E79944 /* UAInAppRemoteDataClient.m in Sources */,
 				6EB4E4082548A36600E3FFD0 /* UAExpirableTask.m in Sources */,
-				3CD192CD262E4CAE00C6A86D /* ChatMessageData.xcdatamodeld in Sources */,
 				6E411A3D2538C20400FEE4E8 /* UADelay.m in Sources */,
 				6EE77237238F172900E79944 /* UAScheduleAudience.m in Sources */,
 				6E4119C52538C20200FEE4E8 /* UAPushReceivedEvent.m in Sources */,
@@ -11106,16 +11104,6 @@
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};
-		3CD192CB262E4CAE00C6A86D /* ChatMessageData.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				3CD192CC262E4CAE00C6A86D /* ChatMessageData.xcdatamodel */,
-			);
-			currentVersion = 3CD192CC262E4CAE00C6A86D /* ChatMessageData.xcdatamodel */;
-			path = ChatMessageData.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
 		6E2A85BD2582969D0067E824 /* UAFrequencyLimits.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
@@ -11155,6 +11143,16 @@
 			);
 			currentVersion = 83A674F723AA7AA4005C0C8F /* AirshipDebugPushData.xcdatamodel */;
 			path = AirshipDebugPushData.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+		A6031ED126738CE600FFE328 /* ChatMessageDataModel.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				A6031ED226738CE600FFE328 /* ChatMessageDataModel.xcdatamodel */,
+			);
+			currentVersion = A6031ED226738CE600FFE328 /* ChatMessageDataModel.xcdatamodel */;
+			path = ChatMessageDataModel.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};
