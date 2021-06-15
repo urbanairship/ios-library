@@ -91,6 +91,11 @@ open class ChatViewController: UIViewController, UITableViewDataSource, UITableV
         onMessagesUpdated()
     }
 
+    public override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(false)
+        Chat.shared().conversation.connect()
+    }
+
     public override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         scrollToBottom(animated: false)

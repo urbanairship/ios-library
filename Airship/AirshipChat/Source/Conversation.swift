@@ -62,6 +62,13 @@ public protocol ConversationProtocol {
      */
     @objc
     func fetchMessages(completionHandler: @escaping (Array<ChatMessage>) -> ())
+    
+    /**
+     * Opens the connection. When the connection opens, it will remain open
+     * until the app moves to background.
+     */
+    @objc
+    func connect()
 }
 
 @available(iOS 13.0, *) 
@@ -94,6 +101,7 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
 
     private var isPendingSent = false
     private var isUVPCreating = false
+    private var shouldConnect = false
 
     var enabled: Bool = true {
         didSet {
@@ -146,12 +154,6 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
         self.dispatcher = dispatcher
 
         self.chatConnection.delegate = self
-
-        notificationCenter.addObserver(
-            self,
-            selector: #selector(self.onForeground),
-            name: NSNotification.Name.UAApplicationDidTransitionToForeground,
-            object: nil)
 
         notificationCenter.addObserver(
             self,
@@ -222,12 +224,8 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
     }
 
     @objc
-    private func onForeground() {
-        self.updateConnection()
-    }
-
-    @objc
     private func onBackground() {
+        self.shouldConnect = false
         self.updateConnection()
     }
 
@@ -236,6 +234,11 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
         createUVP()
     }
 
+    public func connect() {
+        self.shouldConnect = true
+        self.updateConnection()
+    }
+    
     /**
      * Updates the connection. When the connection opens, it will remain open
      * until the conversation is fetched and the pending messages are sent.
@@ -246,9 +249,8 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
                 self.chatConnection.close()
                 return
             }
-
             var shouldOpen = false
-            if (open || !self.isPendingSent || self.appStateTracker.state == UAApplicationState.active) {
+            if (open || !self.isPendingSent || (self.shouldConnect && self.appStateTracker.state == UAApplicationState.active)) {
                 shouldOpen = true
             } else {
                 let semaphore = UASemaphore()

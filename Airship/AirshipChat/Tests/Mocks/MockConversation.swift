@@ -14,11 +14,13 @@ class MockConversation : InternalConversationProtocol {
 
     var messages : [ChatMessage]?
     var refreshed = false
-
+   
+    func connect() {}
+    
     func refresh() {
         self.refreshed = true
     }
-
+    
     func clearData() {
         self.clearDataCalled = true;
     }
