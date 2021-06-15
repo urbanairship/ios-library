@@ -55,6 +55,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, nullable) NSArray<NSString *> *tags;
 
 /**
+ * The tag changes for this request.
+ */
+@property (nonatomic, copy, nullable) NSDictionary *tagChanges;
+
+/**
  * Quiet time settings for this device.
  */
 @property (nonatomic, copy, nullable) NSDictionary *quietTime;
