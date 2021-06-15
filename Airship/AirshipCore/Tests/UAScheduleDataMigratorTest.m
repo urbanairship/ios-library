@@ -3,7 +3,6 @@
 #import "UABaseTest.h"
 #import <CoreData/CoreData.h>
 #import "UAirship.h"
-#import "NSManagedObjectContext+UAAdditions.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAScheduleDataMigrator+Internal.h"
 #import "UAScheduleData+Internal.h"
@@ -20,10 +19,20 @@
 
     NSBundle *bundle = [NSBundle bundleForClass:[UAAutomationStore class]];
     NSURL *modelURL = [bundle URLForResource:@"UAAutomation" withExtension:@"momd"];
-    self.managedContext = [NSManagedObjectContext managedObjectContextForModelURL:modelURL
-                                                                  concurrencyType:NSPrivateQueueConcurrencyType];
 
-    [self.managedContext addPersistentInMemoryStore:@"Test" completionHandler:^(NSPersistentStore *result, NSError *error) {}];
+    NSManagedObjectModel *mom = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
+    NSPersistentStoreCoordinator *psc = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:mom];
+    NSManagedObjectContext *moc = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
+    [moc setPersistentStoreCoordinator:psc];
+    self.managedContext = moc;
+
+    NSDictionary *options = @{ NSMigratePersistentStoresAutomaticallyOption : @YES,
+                               NSInferMappingModelAutomaticallyOption : @YES };
+    NSPersistentStore *result = [self.managedContext.persistentStoreCoordinator addPersistentStoreWithType:NSInMemoryStoreType
+                                                                              configuration:nil
+                                                                                        URL:nil
+                                                                                    options:options
+                                                                                      error:nil];
 }
 
 - (void)tearDown {

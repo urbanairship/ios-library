@@ -7,8 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6E65D5A02396E9DB00AF2D1A /* Airship.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5592396E99A00AF2D1A /* Airship.framework */; };
-		6E65D5A12396E9DB00AF2D1A /* Airship.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5592396E99A00AF2D1A /* Airship.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6E698DE4267825A200654DB2 /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D55D2396E99A00AF2D1A /* AirshipCore.framework */; };
 		996A03D31EF1BA6A003424E0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DFEB1BD71E7A142100437516 /* Main.storyboard */; };
 		99B3F4FF1ED641A1008F7C16 /* PushSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCDA35AA1B8D233A00950AD5 /* PushSettingsViewController.swift */; };
 		99B3F50A1ED7465B008F7C16 /* AddTagsDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99B3F5091ED7465B008F7C16 /* AddTagsDetailViewController.swift */; };
@@ -47,20 +46,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = 1BB4C02A239FE5E50000559B;
 			remoteInfo = AirshipAccengageTests;
-		};
-		6E65D5562396E99A00AF2D1A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6E65D5492396E99A00AF2D1A /* Airship.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 6EE7712C238F15D000E79944;
-			remoteInfo = Airship;
-		};
-		6E65D5582396E99A00AF2D1A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6E65D5492396E99A00AF2D1A /* Airship.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 6EE7739B238F197600E79944;
-			remoteInfo = "Airship tvOS";
 		};
 		6E65D55A2396E99A00AF2D1A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -118,12 +103,26 @@
 			remoteGlobalIDString = 45C6912A238DC79400A03C94;
 			remoteInfo = AirshipExtendedActions;
 		};
-		6E65D5A22396E9E500AF2D1A /* PBXContainerItemProxy */ = {
+		6E698DDE2678258000654DB2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D5492396E99A00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6E7C067B26127557006D0E84;
+			remoteInfo = AirshipChat;
+		};
+		6E698DE02678258000654DB2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D5492396E99A00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6E8776A7261BC1E100B03FC0;
+			remoteInfo = AirshipChatTests;
+		};
+		6E698DE22678258300654DB2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6E65D5492396E99A00AF2D1A /* Airship.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 6EE7725E238F197600E79944;
-			remoteInfo = "Airship tvOS";
+			remoteGlobalIDString = DF6DD4FE1E7A1EB8000C281A;
+			remoteInfo = "AirshipCore tvOS";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -143,7 +142,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				6E65D5A12396E9DB00AF2D1A /* Airship.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -185,7 +183,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E65D5A02396E9DB00AF2D1A /* Airship.framework in Frameworks */,
+				6E698DE4267825A200654DB2 /* AirshipCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -232,8 +230,6 @@
 		6E65D54A2396E99A00AF2D1A /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				6E65D5572396E99A00AF2D1A /* Airship.framework */,
-				6E65D5592396E99A00AF2D1A /* Airship.framework */,
 				6E65D55B2396E99A00AF2D1A /* AirshipCore.framework */,
 				6E65D55D2396E99A00AF2D1A /* AirshipCore.framework */,
 				6E65D55F2396E99A00AF2D1A /* AirshipTests.xctest */,
@@ -244,6 +240,8 @@
 				6E65D5692396E99A00AF2D1A /* AirshipExtendedActions.framework */,
 				1BD4198A24F90B810096B89C /* AirshipAccengage.framework */,
 				1BD4198C24F90B810096B89C /* AirshipAccengageTests.xctest */,
+				6E698DDF2678258000654DB2 /* AirshipChat.framework */,
+				6E698DE12678258000654DB2 /* AirshipChatTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -309,7 +307,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				6E65D5A32396E9E500AF2D1A /* PBXTargetDependency */,
+				6E698DE32678258300654DB2 /* PBXTargetDependency */,
 			);
 			name = tvOSSample;
 			productName = tvOSSample;
@@ -389,20 +387,6 @@
 			remoteRef = 1BD4198B24F90B810096B89C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6E65D5572396E99A00AF2D1A /* Airship.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = Airship.framework;
-			remoteRef = 6E65D5562396E99A00AF2D1A /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		6E65D5592396E99A00AF2D1A /* Airship.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = Airship.framework;
-			remoteRef = 6E65D5582396E99A00AF2D1A /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		6E65D55B2396E99A00AF2D1A /* AirshipCore.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -459,6 +443,20 @@
 			remoteRef = 6E65D5682396E99A00AF2D1A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		6E698DDF2678258000654DB2 /* AirshipChat.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipChat.framework;
+			remoteRef = 6E698DDE2678258000654DB2 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6E698DE12678258000654DB2 /* AirshipChatTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = AirshipChatTests.xctest;
+			remoteRef = 6E698DE02678258000654DB2 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -504,10 +502,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		6E65D5A32396E9E500AF2D1A /* PBXTargetDependency */ = {
+		6E698DE32678258300654DB2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = "Airship tvOS";
-			targetProxy = 6E65D5A22396E9E500AF2D1A /* PBXContainerItemProxy */;
+			name = "AirshipCore tvOS";
+			targetProxy = 6E698DE22678258300654DB2 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

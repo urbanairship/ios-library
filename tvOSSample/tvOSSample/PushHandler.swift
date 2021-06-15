@@ -2,7 +2,7 @@
 
 import UIKit
 import AVFoundation
-import Airship
+import AirshipCore
 
 class PushHandler: NSObject, UAPushNotificationDelegate {
 

@@ -56,29 +56,6 @@ class UAProjectValidationTest: XCTestCase {
     }
 
 
-    func testAirship() {
-        validateTarget(target: "Airship",
-                       sourcePaths: ["Airship/Source",
-                                     "AirshipCore/Source/Public",
-                                     "AirshipCore/Source/Internal",
-                                     "AirshipAutomation/Source",
-                                     "AirshipAutomation/Source/Public",
-                                     "AirshipMessageCenter/Source",
-                                     "AirshipMessageCenter/Source/Public",
-                                     "AirshipExtendedActions/Source",
-                                     "AirshipExtendedActions/Source/Public"],
-                       excludeFiles: ["AirshipCore/Source/Public/AirshipCore.h",
-                                      "AirshipAutomation/Source/AirshipAutomation.h",
-                                      "AirshipMessageCenter/Source/AirshipMessageCenter.h",
-                                      "AirshipExtendedActions/Source/AirshipExtendedActions.h"])
-
-
-        validateTarget(target: "Airship tvOS",
-                       sourcePaths: ["Airship/Source", "AirshipCore/Source/Public", "AirshipCore/Source/Internal"],
-                       excludeFiles: ["AirshipCore/Source/Public/AirshipCore.h"])
-    }
-    
-
     func convertSourceTreeFolderToURL(sourceTreeFolder: SourceTreeFolder) -> URL {
         if (sourceTreeFolder != .sourceRoot) {
             XCTFail("SourceTreeFolders other than .sourceRoot are not currently supported by this tool")

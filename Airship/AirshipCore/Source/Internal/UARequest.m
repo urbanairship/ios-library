@@ -6,7 +6,6 @@
 #import "UAirship.h"
 #import "UADisposable.h"
 #import "UARuntimeConfig.h"
-#import "UADelayOperation+Internal.h"
 
 @interface UARequestBuilder()
 @property (nonatomic, strong) NSMutableDictionary *headers;

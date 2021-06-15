@@ -4,7 +4,6 @@
 #import "UARuntimeConfig.h"
 #import "UAUtils+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
-#import "NSURLResponse+UAAdditions.h"
 #import "UAJSONSerialization.h"
 
 #define kUANamedUserPath @"/api/named_users"

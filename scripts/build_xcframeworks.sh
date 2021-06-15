@@ -102,18 +102,6 @@ build_archive "AirshipExtensions" "AirshipNotificationServiceExtension" "iOS"
 build_archive "AirshipExtensions" "AirshipNotificationServiceExtension" "maccatalyst"
 build_archive "AirshipExtensions" "AirshipNotificationContentExtension" "iOS"
 build_archive "AirshipExtensions" "AirshipNotificationContentExtension" "maccatalyst"
-build_archive "Airship" "Airship" "iOS"
-build_archive "Airship" "Airship" "maccatalyst"
-build_archive "Airship" "Airship tvOS" "tvOS"
-
-# Package Airship
-xcodebuild -create-xcframework \
--framework "$ARCHIVE_PATH/xcarchive/Airship/Airship/iphoneos.xcarchive/Products/Library/Frameworks/Airship.framework" \
--framework "$ARCHIVE_PATH/xcarchive/Airship/Airship/iphonesimulator.xcarchive/Products/Library/Frameworks/Airship.framework" \
--framework "$ARCHIVE_PATH/xcarchive/Airship/Airship/mac.xcarchive/Products/Library/Frameworks/Airship.framework" \
--framework "$ARCHIVE_PATH/xcarchive/Airship/Airship tvOS/appletvos.xcarchive/Products/Library/Frameworks/Airship.framework" \
--framework "$ARCHIVE_PATH/xcarchive/Airship/Airship tvOS/appletvsimulator.xcarchive/Products/Library/Frameworks/Airship.framework" \
--output "$OUTPUT/Airship.xcframework"
 
 # Package AirshipCore
 xcodebuild -create-xcframework \
