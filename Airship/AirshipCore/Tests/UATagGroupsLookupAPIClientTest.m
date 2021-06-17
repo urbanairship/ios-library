@@ -3,12 +3,16 @@
 #import "UABaseTest.h"
 #import "UATagGroupsLookupAPIClient+Internal.h"
 
+@import AirshipCore;
+
 @interface UATagGroupsLookupAPIClientTest : UABaseTest
 @property (nonatomic, strong) UATagGroupsLookupAPIClient *client;
 @property (nonatomic, strong) id mockConfig;
 @property (nonatomic, strong) id mockSession;
 @property (nonatomic, strong) id mockSessionClass;
 @end
+
+typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response, NSError * _Nullable error);
 
 @implementation UATagGroupsLookupAPIClientTest
 
@@ -17,8 +21,6 @@
 
     self.mockConfig = [self mockForClass:[UARuntimeConfig class]];
     self.mockSession = [self mockForClass:[UARequestSession class]];
-    self.mockSessionClass = [self mockForClass:[UARequestSession class]];
-    [[[self.mockSessionClass stub] andReturn:self.mockSession] sessionWithConfig:OCMOCK_ANY];
 
     self.client = [UATagGroupsLookupAPIClient clientWithConfig:self.mockConfig session:self.mockSession];
 }
@@ -128,7 +130,7 @@
         [invocation getArgument:&arg atIndex:3];
         UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
 
-        XCTAssertEqualObjects([request.URL absoluteString], expectedLookupURL);
+        XCTAssertEqualObjects([request.url absoluteString], expectedLookupURL);
         XCTAssertEqualObjects(request.body, expectedPayloadData);
         completionHandler(nil, nil, nil);
     }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];

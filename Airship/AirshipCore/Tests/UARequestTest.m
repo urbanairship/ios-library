@@ -1,7 +1,8 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UARequest.h"
+
+@import AirshipCore;
 
 @interface UARequestTest : UABaseTest
 @end
@@ -13,15 +14,15 @@
     UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder *builder) {
         builder.method = @"POST";
         builder.body = [@"body" dataUsingEncoding:NSUTF8StringEncoding];
-        builder.URL = [NSURL URLWithString:@"www.urbanairship.com"];
+        builder.url = [NSURL URLWithString:@"www.urbanairship.com"];
         builder.username = @"name";
         builder.password = @"password";
-        [builder setValue:@"header_value" forHeader:@"header_key"];
+        [builder setValue:@"header_value" header:@"header_key"];
         [builder addHeaders:@{@"cool": @"story"}];
     }];
 
     XCTAssertEqualObjects(request.method, @"POST");
-    XCTAssertEqualObjects(request.URL.absoluteString, @"www.urbanairship.com");
+    XCTAssertEqualObjects(request.url.absoluteString, @"www.urbanairship.com");
     XCTAssertEqualObjects(request.body, [@"body" dataUsingEncoding:NSUTF8StringEncoding]);
     XCTAssertEqualObjects(request.headers[@"header_key"], @"header_value");
     XCTAssertEqualObjects(request.headers[@"cool"], @"story");
@@ -33,10 +34,9 @@
         builder.body = [@"body" dataUsingEncoding:NSUTF8StringEncoding];
         builder.compressBody = YES;
     }];
-    
-    XCTAssertTrue([[request.body base64EncodedStringWithOptions:0] isEqualToString:@"H4sIAAAAAAAAA0vKT6kEALILqNsEAAAA"] || [[request.body base64EncodedStringWithOptions:0] isEqualToString:@"H4sIAAAAAAAAE0vKT6kEALILqNsEAAAA"]);
-    XCTAssertEqualObjects(request.headers[@"Content-Encoding"], @"gzip");
 
+    XCTAssertEqualObjects(@"H4sIAAAAAAAAE0vKT6kEALILqNsEAAAA", [request.body base64EncodedStringWithOptions:0]);
+    XCTAssertEqualObjects(request.headers[@"Content-Encoding"], @"gzip");
 }
 
 @end

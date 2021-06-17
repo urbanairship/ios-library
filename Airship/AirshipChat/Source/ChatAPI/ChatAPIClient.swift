@@ -15,7 +15,7 @@ class ChatAPIClient : ChatAPIClientProtocol {
     private let chatConfig: ChatConfig
     private let session: HTTPRequestSession
 
-    init(chatConfig: ChatConfig, session: HTTPRequestSession = UARequestSession.sharedNSURLSession()) {
+    init(chatConfig: ChatConfig, session: HTTPRequestSession = UARequestSession.sharedURLSession) {
         self.chatConfig = chatConfig
         self.session = session
     }
@@ -43,7 +43,7 @@ class ChatAPIClient : ChatAPIClientProtocol {
 
                 let uvp = parsedResponse?["uvp"] as? String
                 guard uvp != nil else {
-                    callback(nil, NSError.airshipParseError(withMessage: "Failed to parse UVP response"))
+                    callback(nil, AirshipErrors.parseError("Failed to parse UVP response"))
                     return
                 }
                 callback(UVPResponse(status: UInt(response!.statusCode), uvp: uvp), nil)

@@ -1,7 +1,8 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAHTTPResponse.h"
+
+@import AirshipCore;
 
 @interface UAHTTPResponseTest : UABaseTest
 

@@ -5,6 +5,12 @@
 #import "UAInAppMessage+Internal.h"
 #import "UAStateOverrides+Internal.h"
 
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+@import AirshipCore;
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
+
 #define kUADeferredScheduleAPIClientPlatformKey @"platform"
 #define kUADeferredScheduleAPIClientChannelIDKey @"channel_id"
 #define kUADeferredScheduleAPIClientPlatformiOS @"ios"
@@ -67,7 +73,7 @@ NSString * const UADeferredScheduleAPIClientErrorDomain = @"com.urbanairship.def
 
 + (instancetype)clientWithConfig:(UARuntimeConfig *)config authManager:(nonnull UAAuthTokenManager *)authManager {
     return [[self alloc] initWithConfig:config
-                                session:[UARequestSession sessionWithConfig:config]
+                                session:[[UARequestSession alloc] initWithConfig:config]
                              dispatcher:[UADispatcher serialDispatcher]
                             authManager:authManager
                  stateOverridesProvider:[self defaultStateOverridesProvider]];
@@ -297,15 +303,15 @@ attributeOverrides:(UAAttributePendingMutations *)attributeOverrides
 
     UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder * _Nonnull builder) {
         builder.method = @"POST";
-        builder.URL = URL;
+        builder.url = URL;
 
         builder.body = [self requestBodyWithChannelID:channelID
                                        triggerContext:triggerContext
                                          tagOverrides:tagOverrides
                                    attributeOverrides:attributeOverrides];
 
-        [builder setValue:@"application/vnd.urbanairship+json; version=3;" forHeader:@"Accept"];
-        [builder setValue:[@"Bearer " stringByAppendingString:authToken] forHeader:@"Authorization"];
+        [builder setValue:@"application/vnd.urbanairship+json; version=3;" header:@"Accept"];
+        [builder setValue:[@"Bearer " stringByAppendingString:authToken] header:@"Authorization"];
     }];
 
     return request;

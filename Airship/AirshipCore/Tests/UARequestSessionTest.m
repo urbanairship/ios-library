@@ -1,8 +1,11 @@
 /* Copyright Airship and Contributors */
 
 #import "UAAirshipBaseTest.h"
-#import "UARequestSession.h"
 #import "UAirship+Internal.h"
+
+@import AirshipCore;
+
+typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response, NSError * _Nullable error);
 
 @interface UARequestSessionTest : UAAirshipBaseTest
 @property (nonatomic, strong) id mockNSURLSession;
@@ -16,8 +19,7 @@ typedef void (^NSURLResponseCallback)(NSData * _Nullable data, NSURLResponse * _
 - (void)setUp {
     [super setUp];
     self.mockNSURLSession = [self mockForClass:[NSURLSession class]];
-    self.session = [UARequestSession sessionWithConfig:self.config
-                                          NSURLSession:self.mockNSURLSession];
+    self.session = [[UARequestSession alloc] initWithConfig:self.config session:self.mockNSURLSession];
 }
 
 - (void)testPerformHTTPRequest {
@@ -25,10 +27,10 @@ typedef void (^NSURLResponseCallback)(NSData * _Nullable data, NSURLResponse * _
     UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder *builder) {
         builder.method = @"POST";
         builder.body = [@"body" dataUsingEncoding:NSUTF8StringEncoding];
-        builder.URL = [NSURL URLWithString:@"https://www.urbanairship.com"];
+        builder.url = [NSURL URLWithString:@"https://www.urbanairship.com"];
         builder.username = @"name";
         builder.password = @"password";
-        [builder setValue:@"header_value" forHeader:@"header_key"];
+        [builder setValue:@"header_value" header:@"header_key"];
     }];
 
     // Expect a call to the NSURLSession and capture the callback
@@ -44,7 +46,7 @@ typedef void (^NSURLResponseCallback)(NSData * _Nullable data, NSURLResponse * _
             return NO;
         }
 
-        if (![urlRequest.URL isEqual:request.URL]) {
+        if (![urlRequest.URL isEqual:request.url]) {
             return NO;
         }
 
@@ -86,7 +88,7 @@ typedef void (^NSURLResponseCallback)(NSData * _Nullable data, NSURLResponse * _
 
     UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder *builder) {
         builder.method = @"POST";
-        builder.URL = [NSURL URLWithString:@"https://www.urbanairship.com"];
+        builder.url = [NSURL URLWithString:@"https://www.urbanairship.com"];
     }];
 
     // Expect a call to the NSURLSession and capture the callback
@@ -111,7 +113,7 @@ typedef void (^NSURLResponseCallback)(NSData * _Nullable data, NSURLResponse * _
     UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder *builder) {
         builder.method = @"POST";
         builder.body = [@"body" dataUsingEncoding:NSUTF8StringEncoding];
-        builder.URL = [NSURL URLWithString:@"https://www.urbanairship.com"];
+        builder.url = [NSURL URLWithString:@"https://www.urbanairship.com"];
     }];
 
     id mockTask = [self mockForClass:[NSURLSessionTask class]];
@@ -133,7 +135,7 @@ typedef void (^NSURLResponseCallback)(NSData * _Nullable data, NSURLResponse * _
     // Create a test request
     UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder *builder) {
         builder.method = @"POST";
-        builder.URL = [NSURL URLWithString:@"https://www.urbanairship.com"];
+        builder.url = [NSURL URLWithString:@"https://www.urbanairship.com"];
     }];
 
     // Expect a call to the NSURLSession and capture the callback
@@ -170,7 +172,7 @@ typedef void (^NSURLResponseCallback)(NSData * _Nullable data, NSURLResponse * _
     // Create a test request
     UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder *builder) {
         builder.method = @"POST";
-        builder.URL = [NSURL URLWithString:@"https://www.urbanairship.com"];
+        builder.url = [NSURL URLWithString:@"https://www.urbanairship.com"];
     }];
 
     // Expect a call to the NSURLSession and capture the callback
@@ -189,8 +191,7 @@ typedef void (^NSURLResponseCallback)(NSData * _Nullable data, NSURLResponse * _
     [self.session performHTTPRequest:request completionHandler:^(NSData *data, NSHTTPURLResponse *response, NSError *error) {
         XCTAssertNil(data);
         XCTAssertNil(response);
-        XCTAssertEqual(UARequestSessionErrorDomain, error.domain);
-        XCTAssertEqual(UARequestSessionErrorInvalidHTTPResponse, error.code);
+        XCTAssertNotNil(error);
         completionHandlerCalled = YES;
     }];
 

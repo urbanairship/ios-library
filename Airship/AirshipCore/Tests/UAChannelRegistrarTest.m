@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UAAirshipBaseTest.h"
-#import "UAChannelAPIClient+Internal.h"
 #import "UAChannelRegistrar+Internal.h"
 #import "UAChannelRegistrationPayload+Internal.h"
 #import "UAPush.h"
@@ -12,6 +11,11 @@
 #import "UATestDispatcher.h"
 
 @import AirshipCore;
+
+
+typedef void (^UAChannelAPIClientCreateCompletionHandler)(UAChannelCreateResponse * _Nullable response, NSError * _Nullable error);
+typedef void (^UAChannelAPIClientUpdateCompletionHandler)(UAHTTPResponse * _Nullable response, NSError * _Nullable error);
+
 
 static NSString * const UAChannelRegistrationTaskID = @"UAChannelRegistrar.registration";
 

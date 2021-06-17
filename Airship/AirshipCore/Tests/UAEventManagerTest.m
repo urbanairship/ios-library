@@ -4,7 +4,6 @@
 
 #import "UAEventManager+Internal.h"
 #import "UAEventStore+Internal.h"
-#import "UAEventAPIClient+Internal.h"
 #import "UARuntimeConfig.h"
 #import "UACustomEvent.h"
 #import "UARegionEvent.h"

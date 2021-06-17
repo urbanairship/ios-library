@@ -9,6 +9,12 @@
 
 #import "UAAirshipMessageCenterCoreImport.h"
 
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+@import AirshipCore;
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
+
 NSString * const UAInboxMessageListWillUpdateNotification = @"com.urbanairship.notification.message_list_will_update";
 NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.notification.message_list_updated";
 
@@ -73,7 +79,7 @@ static NSString * const UAInboxMessageListExtraRetrieveCallback = @"retrieveCall
                           dataStore:(UAPreferenceDataStore *)dataStore {
 
     UAInboxAPIClient *client = [UAInboxAPIClient clientWithConfig:config
-                                                          session:[UARequestSession sessionWithConfig:config]
+                                                          session:[[UARequestSession alloc] initWithConfig:config]
                                                              user:user
                                                         dataStore:dataStore];
 

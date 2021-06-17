@@ -37,7 +37,7 @@
         [invocation getArgument:&arg atIndex:4];
         void (^completionHandler)(UAHTTPResponse *, NSError *) = (__bridge void (^)(UAHTTPResponse *, NSError *))arg;
         completionHandler(response, nil);
-    }] updateTagGroupsForId:@"someID" tagGroupsMutation:[OCMArg checkWithBlock:^BOOL(id obj) {
+    }] updateTagGroups:@"someID" mutation:[OCMArg checkWithBlock:^BOOL(id obj) {
         UATagGroupsMutation *mutation = (UATagGroupsMutation *)obj;
         NSDictionary *expectedPayload = @{@"set": @{ @"group2": @[@"tag1"] } };
         return [expectedPayload isEqualToDictionary:[mutation payload]];
@@ -64,7 +64,7 @@
         [invocation getArgument:&arg atIndex:4];
         void (^completionHandler)(UAHTTPResponse *, NSError *) = (__bridge void (^)(UAHTTPResponse *, NSError *))arg;
         completionHandler(response, nil);
-    }] updateTagGroupsForId:@"someID" tagGroupsMutation:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] updateTagGroups:@"someID" mutation:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [self.registrar setTags:@[@"tag1"] group:@"group2"];
 
@@ -90,7 +90,7 @@
 
         void (^completionHandler)(UAHTTPResponse *, NSError *) = (__bridge void (^)(UAHTTPResponse *, NSError *))arg;
         completionHandler(response, nil);
-    }] updateTagGroupsForId:@"someID" tagGroupsMutation:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] updateTagGroups:@"someID" mutation:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [self.registrar setTags:@[@"tag1"] group:@"group2"];
 
@@ -116,7 +116,7 @@
 
         void (^completionHandler)(UAHTTPResponse *, NSError *) = (__bridge void (^)(UAHTTPResponse *, NSError *))arg;
         completionHandler(response, nil);
-    }] updateTagGroupsForId:@"someID" tagGroupsMutation:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] updateTagGroups:@"someID" mutation:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [self.registrar setTags:@[@"tag1"] group:@"group2"];
 
@@ -143,7 +143,7 @@
 
         void (^completionHandler)(UAHTTPResponse *, NSError *) = (__bridge void (^)(UAHTTPResponse *, NSError *))arg;
         completionHandler(nil, error);
-    }] updateTagGroupsForId:@"someID" tagGroupsMutation:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] updateTagGroups:@"someID" mutation:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [self.registrar setTags:@[@"tag1"] group:@"group2"];
 

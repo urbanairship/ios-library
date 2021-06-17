@@ -4,6 +4,12 @@
 #import "UATagGroupsLookupResponse+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
 
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+@import AirshipCore;
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
+
 #define kUATagGroupsLookupAPIClientLookupPath @"/api/channel-tags-lookup"
 #define kUATagGroupsLookupAPIClientChannelIDKey @"channel_id"
 #define kUATagGroupsLookupAPIClientTagGroupsKey @"tag_groups"
@@ -28,7 +34,7 @@
 }
 
 + (instancetype)clientWithConfig:(UARuntimeConfig *)config {
-    return [[self alloc] initWithConfig:config session:[UARequestSession sessionWithConfig:config]];
+    return [[self alloc] initWithConfig:config session:[[UARequestSession alloc] initWithConfig:config]];
 }
 
 + (instancetype)clientWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session {
@@ -65,15 +71,15 @@
                                                            cachedResponse:cachedResponse];
 
     UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder *builder) {
-        builder.URL = [self lookupURL];
+        builder.url = [self lookupURL];
         builder.method = @"POST";
         builder.username = self.config.appKey;
         builder.password = self.config.appSecret;
 
         builder.body = [NSJSONSerialization dataWithJSONObject:payloadDictionary options:NSJSONWritingPrettyPrinted error:nil];
 
-        [builder setValue:@"application/vnd.urbanairship+json; version=3;" forHeader:@"Accept"];
-        [builder setValue:@"application/json" forHeader:@"Content-Type"];
+        [builder setValue:@"application/vnd.urbanairship+json; version=3;" header:@"Accept"];
+        [builder setValue:@"application/json" header:@"Content-Type"];
     }];
 
     UA_LTRACE(@"Performing tag group lookup with payload: %@", payloadDictionary);

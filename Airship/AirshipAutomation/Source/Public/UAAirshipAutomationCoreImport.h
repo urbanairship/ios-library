@@ -42,8 +42,6 @@
 #import "UAPushableComponent.h"
 #import "UARegionEvent.h"
 #import "UARemoteDataPayload.h"
-#import "UARequest.h"
-#import "UARequestSession.h"
 #import "UARuntimeConfig.h"
 #import "UASystemVersion.h"
 #import "UATagGroups.h"

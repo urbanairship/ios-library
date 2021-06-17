@@ -3,7 +3,6 @@
 #import "UAAirshipBaseTest.h"
 #import "UAirship+Internal.h"
 #import "UANamedUser+Internal.h"
-#import "UANamedUserAPIClient+Internal.h"
 #import "UAChannel+Internal.h"
 #import "UARuntimeConfig.h"
 #import "UATagGroupsRegistrar+Internal.h"

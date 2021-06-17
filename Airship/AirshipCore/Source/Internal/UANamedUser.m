@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UANamedUser+Internal.h"
-#import "UANamedUserAPIClient+Internal.h"
 #import "UAChannel.h"
 #import "UATagGroupsRegistrar+Internal.h"
 #import "UATagUtils+Internal.h"
@@ -156,7 +155,7 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
                              attributeRegistrar:atttributeRegistrar
                                            date:[[UADate alloc] init]
                                     taskManager:[UATaskManager shared]
-                                namedUserClient:[UANamedUserAPIClient clientWithConfig:config]
+                                namedUserClient:[[UANamedUserAPIClient alloc] initWithConfig:config]
                                  privacyManager:privacyManager];
 }
 

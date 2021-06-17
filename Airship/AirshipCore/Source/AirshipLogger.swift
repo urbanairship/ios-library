@@ -20,98 +20,98 @@ public class AirshipLogger : NSObject {
     public static var logLevel: UALogLevel = .error
 
     @available(macOS 11.0, iOS 14.0, watchOS 7.0, tvOS 14.0, *)
-    static let LOGGER = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Airship")
+    static let LOGGER = Logger(subsystem: Bundle.main.bundleIdentifier ?? "", category: "Airship")
 
     public static func trace(_ message: String,
-                             file: String = #file,
+                             fileID: String = #fileID,
                              line: Int = #line,
                              function: String = #function) {
 
         log(logLevel: UALogLevel.trace,
             message: message,
-            file:file,
+            fileID: fileID,
             line: line,
             function: function)
     }
 
     public static func debug(_ message: String,
-                             file: String = #file,
+                             fileID: String = #fileID,
                              line: Int = #line,
                              function: String = #function) {
 
         log(logLevel: UALogLevel.debug,
             message: message,
-            file:file,
+            fileID: fileID,
             line: line,
             function: function)
     }
 
 
     public static func info(_ message: String,
-                            file: String = #file,
+                            fileID: String = #fileID,
                             line: Int = #line,
                             function: String = #function) {
         log(logLevel: UALogLevel.trace,
             message: message,
-            file:file,
+            fileID: fileID,
             line: line,
             function: function)
     }
 
     public static func warn(_ message: String,
-                            file: String = #file,
+                            fileID: String = #fileID,
                             line: Int = #line,
                             function: String = #function) {
         log(logLevel: UALogLevel.trace,
             message: message,
-            file:file,
+            fileID: fileID,
             line: line,
             function: function)
     }
 
     public static func error(_ message: String,
-                            file: String = #file,
-                            line: Int = #line,
-                            function: String = #function) {
+                             fileID: String = #fileID,
+                             line: Int = #line,
+                             function: String = #function) {
 
         log(logLevel: UALogLevel.trace,
             message: message,
-            file:file,
+            fileID: fileID,
             line: line,
             function: function)
     }
 
     public static func impError(_ message: String,
-                             file: String = #file,
-                             line: Int = #line,
-                             function: String = #function) {
+                                fileID: String = #fileID,
+                                line: Int = #line,
+                                function: String = #function) {
 
         if (self.implementationErrorLoggingEnabled) {
             log(logLevel: UALogLevel.error,
                 message: "🚨Airship Implementation Error🚨: \(message)",
-                file:file,
+                fileID: fileID,
                 line: line,
                 function: function)
         } else {
             log(logLevel: UALogLevel.error,
                 message: "Airship Implementation Error: \(message)",
-                file:file,
+                fileID: fileID,
                 line: line,
                 function: function)
         }
     }
 
     private static func log(logLevel: UALogLevel,
-                    message: String, file:
-                        String = #file,
-                    line: Int = #line,
-                    function: String = #function) {
+                            message: String,
+                            fileID: String,
+                            line: Int,
+                            function: String) {
 
-        if (loggingEnabled && logLevel.rawValue >= self.logLevel.rawValue) {
+        if (loggingEnabled && self.logLevel.rawValue >= logLevel.rawValue) {
             if #available(macOS 11.0, iOS 14.0, watchOS 7.0, tvOS 14.0, *) {
-                LOGGER.log(level: logType(logLevel), "[\(logInitial(logLevel))] \(function) [Line \(line)] \(message)")
+                LOGGER.log(level: logType(logLevel), "[\(logInitial(logLevel))] \(fileID) \(function) [Line \(line)] \(message)")
             } else {
-                print("[\(logInitial(logLevel))] \(function) [Line \(line)] \(message)")
+                print("[\(logInitial(logLevel))] \(fileID) \(function) [Line \(line)] \(message)")
             }
         }
     }
@@ -138,3 +138,4 @@ public class AirshipLogger : NSObject {
         }
     }
 }
+

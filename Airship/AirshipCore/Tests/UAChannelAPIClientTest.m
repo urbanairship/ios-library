@@ -3,13 +3,15 @@
 #import "UAAirshipBaseTest.h"
 #import <Foundation/Foundation.h>
 #import "UAChannelRegistrationPayload+Internal.h"
-#import "UAChannelAPIClient+Internal.h"
 #import "UAirship.h"
 #import "UARuntimeConfig.h"
 #import "UAAnalytics+Internal.h"
+#import "AirshipTests-Swift.h"
+
+@import AirshipCore;
 
 @interface UAChannelAPIClientTest : UAAirshipBaseTest
-@property (nonatomic, strong) id mockSession;
+@property (nonatomic, strong) UATestRequestSession *testSession;
 @property (nonatomic, strong) UAChannelAPIClient *client;
 @end
 
@@ -17,52 +19,15 @@
 
 - (void)setUp {
     [super setUp];
-    self.mockSession = [self mockForClass:[UARequestSession class]];
-    self.client = [UAChannelAPIClient clientWithConfig:self.config session:self.mockSession];
+    self.testSession = [[UATestRequestSession alloc] init];
+    self.client = [[UAChannelAPIClient alloc] initWithConfig:self.config session:self.testSession];
 }
 
 - (void)testCreateChannel {
-    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:@{}];
-    NSData *responseData = [@"{ \"ok\":true, \"channel_id\": \"someChannelID\"}" dataUsingEncoding:NSUTF8StringEncoding];
+    self.testSession.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:@{}];
+    self.testSession.data = [@"{ \"ok\":true, \"channel_id\": \"someChannelID\"}" dataUsingEncoding:NSUTF8StringEncoding];
     UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
 
-    BOOL (^checkRequestBlock)(id obj) = ^(id obj) {
-        UARequest *request = obj;
-
-        // check the url
-        if (![[request.URL absoluteString] isEqualToString:@"https://device-api.urbanairship.com/api/channels/"]) {
-            return NO;
-        }
-
-        // check that its a POST
-        if (![request.method isEqualToString:@"POST"]) {
-            return NO;
-        }
-
-        // Check that it contains an accept header
-        if (![[request.headers valueForKey:@"Accept"] isEqualToString:@"application/vnd.urbanairship+json; version=3;"]) {
-            return NO;
-        }
-
-        // Check that it contains an content type header
-        if (![[request.headers valueForKey:@"Content-Type"] isEqualToString:@"application/json"]) {
-            return NO;
-        }
-
-        if (![request.body isEqualToData:[payload asJSONData]]) {
-            return NO;
-        }
-
-        // Check the body contains the payload
-        return YES;
-    };
-
-    [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
-        completionHandler(responseData, response, nil);
-    }] performHTTPRequest:[OCMArg checkWithBlock:checkRequestBlock] completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
     [self.client createChannelWithPayload:payload
@@ -74,19 +39,20 @@
     }];
 
     [self waitForTestExpectations];
-    [self.mockSession verify];
+
+
+    UARequest *request = self.testSession.lastRequest;
+
+    XCTAssertEqualObjects(@"https://device-api.urbanairship.com/api/channels/", request.url.absoluteString);
+    XCTAssertEqualObjects(@"POST", request.method);
+    XCTAssertEqualObjects(@"application/vnd.urbanairship+json; version=3;", request.headers[@"Accept"]);
+    XCTAssertEqualObjects(@"application/json", request.headers[@"Content-Type"]);
+    XCTAssertEqualObjects(payload.asJSONData, request.body);
 }
 
 - (void)testCreateChannelParseError {
-    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:@{}];
-    NSData *responseData = [@"{ \"ok\":true }" dataUsingEncoding:NSUTF8StringEncoding];
-
-    [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
-        completionHandler(responseData, response, nil);
-    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    self.testSession.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:@{}];
+    self.testSession.data = [@"{ \"ok\":true }" dataUsingEncoding:NSUTF8StringEncoding];
 
     XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
     [self.client createChannelWithPayload:[[UAChannelRegistrationPayload alloc] init]
@@ -100,14 +66,7 @@
 }
 
 - (void)testCreateChannelFailure {
-    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:400 HTTPVersion:nil headerFields:@{}];
-
-    [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
-        completionHandler(nil, response, nil);
-    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    self.testSession.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:400 HTTPVersion:nil headerFields:@{}];
 
     XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
     [self.client createChannelWithPayload:[[UAChannelRegistrationPayload alloc] init]
@@ -122,19 +81,12 @@
 }
 
 - (void)testCreateChannelError {
-    NSError *responseError = [[NSError alloc] initWithDomain:@"neat" code:1 userInfo:nil];
-
-    [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
-        completionHandler(nil, nil, responseError);
-    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    self.testSession.error = [[NSError alloc] initWithDomain:@"neat" code:1 userInfo:nil];
 
     XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
     [self.client createChannelWithPayload:[[UAChannelRegistrationPayload alloc] init]
                         completionHandler:^(UAChannelCreateResponse *response, NSError *error){
-        XCTAssertEqual(responseError, error);
+        XCTAssertEqual(self.testSession.error, error);
         XCTAssertNil(response);
         [callbackCalled fulfill];
     }];
@@ -144,46 +96,7 @@
 
 - (void)testUpdateChannel {
     UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
-
-    BOOL (^checkRequestBlock)(id obj) = ^(id obj) {
-        UARequest *request = obj;
-
-        // check the url
-        if (![[request.URL absoluteString] isEqualToString:@"https://device-api.urbanairship.com/api/channels/someChannelID"]) {
-            return NO;
-        }
-
-        // check that its a POST
-        if (![request.method isEqualToString:@"PUT"]) {
-            return NO;
-        }
-
-        // Check that it contains an accept header
-        if (![[request.headers valueForKey:@"Accept"] isEqualToString:@"application/vnd.urbanairship+json; version=3;"]) {
-            return NO;
-        }
-
-        // Check that it contains an content type header
-        if (![[request.headers valueForKey:@"Content-Type"] isEqualToString:@"application/json"]) {
-            return NO;
-        }
-
-        if (![request.body isEqualToData:[payload asJSONData]]) {
-            return NO;
-        }
-
-        // Check the body contains the payload
-        return YES;
-    };
-
-    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:@{}];
-
-    [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
-        completionHandler(nil, response, nil);
-    }] performHTTPRequest:[OCMArg checkWithBlock:checkRequestBlock] completionHandler:OCMOCK_ANY];
+    self.testSession.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:@{}];
 
     XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
     [self.client updateChannelWithID:@"someChannelID"
@@ -195,18 +108,18 @@
     }];
 
     [self waitForTestExpectations];
-    [self.mockSession verify];
+
+    UARequest *request = self.testSession.lastRequest;
+
+    XCTAssertEqualObjects(@"https://device-api.urbanairship.com/api/channels/someChannelID", request.url.absoluteString);
+    XCTAssertEqualObjects(@"PUT", request.method);
+    XCTAssertEqualObjects(@"application/vnd.urbanairship+json; version=3;", request.headers[@"Accept"]);
+    XCTAssertEqualObjects(@"application/json", request.headers[@"Content-Type"]);
+    XCTAssertEqualObjects(payload.asJSONData, request.body);
 }
 
 - (void)testUpdateChannelFailure {
-    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:400 HTTPVersion:nil headerFields:@{}];
-
-    [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
-        completionHandler(nil, response, nil);
-    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    self.testSession.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:400 HTTPVersion:nil headerFields:@{}];
 
     XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
     [self.client updateChannelWithID:@"some-payload"
@@ -221,20 +134,13 @@
 }
 
 - (void)testUpdateChannelError {
-    NSError *responseError = [[NSError alloc] initWithDomain:@"neat" code:1 userInfo:nil];
-
-    [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
-        completionHandler(nil, nil, responseError);
-    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    self.testSession.error = [[NSError alloc] initWithDomain:@"neat" code:1 userInfo:nil];
 
     XCTestExpectation *callbackCalled = [self expectationWithDescription:@"callback called"];
     [self.client updateChannelWithID:@"some-payload"
                          withPayload:[[UAChannelRegistrationPayload alloc] init]
                    completionHandler:^(UAHTTPResponse *response, NSError *error){
-        XCTAssertEqual(responseError, error);
+        XCTAssertEqual(self.testSession.error, error);
         XCTAssertNil(response);
         [callbackCalled fulfill];
     }];

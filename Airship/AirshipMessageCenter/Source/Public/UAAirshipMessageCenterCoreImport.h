@@ -29,7 +29,5 @@
 #import "UAAction.h"
 #import "UATaskManager.h"
 #import "UASemaphore.h"
-#import "UARequestSession.h"
-#import "UARequest.h"
 #import "UARemoteConfigURLManager.h"
 #endif

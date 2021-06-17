@@ -7,6 +7,7 @@
 @class UAUser;
 @class UARuntimeConfig;
 @class UAPreferenceDataStore;
+@class UARequestSession;
 
 NS_ASSUME_NONNULL_BEGIN
 

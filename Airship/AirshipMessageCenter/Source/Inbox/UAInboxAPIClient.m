@@ -59,16 +59,16 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
 
         NSURL *requestUrl = [NSURL URLWithString: urlString];
 
-        builder.URL = requestUrl;
+        builder.url = requestUrl;
         builder.method = @"GET";
         builder.username = userData.username;
         builder.password = userData.password;
 
-        [builder setValue:[UAirship channel].identifier forHeader:kUAChannelIDHeader];
+        [builder setValue:[UAirship channel].identifier header:kUAChannelIDHeader];
 
         NSString *lastModified = [self.dataStore stringForKey:[NSString stringWithFormat:UALastMessageListModifiedTime, userData.username]];
         if (lastModified) {
-            [builder setValue:lastModified forHeader:@"If-Modified-Since"];
+            [builder setValue:lastModified header:@"If-Modified-Since"];
         }
 
         UA_LTRACE(@"Request to retrieve message list: %@", urlString);
@@ -181,14 +181,14 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
                                userData.username,
                                @"/messages/delete/"];
 
-        builder.URL = [NSURL URLWithString:urlString];
+        builder.url = [NSURL URLWithString:urlString];
         builder.method = @"POST";
         builder.username = userData.username;
         builder.password = userData.password;
         builder.body = bodyData;
-        [builder setValue:@"application/vnd.urbanairship+json; version=3;" forHeader:@"Accept"];
-        [builder setValue:@"application/json" forHeader:@"Content-Type"];
-        [builder setValue:[UAirship channel].identifier forHeader:kUAChannelIDHeader ];
+        [builder setValue:@"application/vnd.urbanairship+json; version=3;" header:@"Accept"];
+        [builder setValue:@"application/json" header:@"Content-Type"];
+        [builder setValue:[UAirship channel].identifier header:kUAChannelIDHeader ];
 
         UA_LTRACE(@"Request to perform batch delete: %@  body: %@", urlString, body);
     }];
@@ -244,14 +244,14 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
                                userData.username,
                                @"/messages/unread/"];
 
-        builder.URL = [NSURL URLWithString:urlString];
+        builder.url = [NSURL URLWithString:urlString];
         builder.method = @"POST";
         builder.username = userData.username;
         builder.password = userData.password;
         builder.body = bodyData;
-        [builder setValue:@"application/vnd.urbanairship+json; version=3;" forHeader:@"Accept"];
-        [builder setValue:@"application/json" forHeader:@"Content-Type"];
-        [builder setValue:[UAirship channel].identifier forHeader:kUAChannelIDHeader];
+        [builder setValue:@"application/vnd.urbanairship+json; version=3;" header:@"Accept"];
+        [builder setValue:@"application/json" header:@"Content-Type"];
+        [builder setValue:[UAirship channel].identifier header:kUAChannelIDHeader];
 
         UA_LTRACE(@"Request to perfom batch mark messages as read: %@ body: %@", urlString, body);
     }];

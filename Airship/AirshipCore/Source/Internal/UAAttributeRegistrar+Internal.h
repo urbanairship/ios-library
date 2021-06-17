@@ -4,9 +4,10 @@
 #import "UAPersistentQueue+Internal.h"
 #import "UAAttributePendingMutations.h"
 #import "UARuntimeConfig+Internal.h"
-#import "UAAttributeAPIClient+Internal.h"
 
 @class UAPreferenceDataStore;
+@class UAAttributeAPIClient;
+@class UADisposable;
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -28,11 +28,11 @@
 
     NSDictionary *options = @{ NSMigratePersistentStoresAutomaticallyOption : @YES,
                                NSInferMappingModelAutomaticallyOption : @YES };
-    NSPersistentStore *result = [self.managedContext.persistentStoreCoordinator addPersistentStoreWithType:NSInMemoryStoreType
-                                                                              configuration:nil
-                                                                                        URL:nil
-                                                                                    options:options
-                                                                                      error:nil];
+    [self.managedContext.persistentStoreCoordinator addPersistentStoreWithType:NSInMemoryStoreType
+                                                                 configuration:nil
+                                                                           URL:nil
+                                                                       options:options
+                                                                         error:nil];
 }
 
 - (void)tearDown {

@@ -5,6 +5,8 @@
 #import "UATagGroupsLookupResponse+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
 
+@class UARequestSession;
+
 NS_ASSUME_NONNULL_BEGIN
 
 /**

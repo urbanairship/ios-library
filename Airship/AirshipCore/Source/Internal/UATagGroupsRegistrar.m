@@ -2,7 +2,6 @@
 
 #import "UATagGroupsRegistrar+Internal.h"
 #import "UATagGroupsMutation+Internal.h"
-#import "UATagGroupsAPIClient+Internal.h"
 #import "UATagUtils+Internal.h"
 #import "UAAsyncOperation.h"
 #import "UAPendingTagGroupStore+Internal.h"
@@ -122,9 +121,9 @@
         }
     };
 
-    return [self.tagGroupsAPIClient updateTagGroupsForId:identifier
-                                       tagGroupsMutation:mutation
-                                       completionHandler:apiCompletionBlock];
+    return [self.tagGroupsAPIClient updateTagGroups:identifier
+                                           mutation:mutation
+                                  completionHandler:apiCompletionBlock];
 }
 
 - (void)popPendingMutation:(UATagGroupsMutation *)mutation identifier:(NSString *)identifier {

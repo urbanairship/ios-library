@@ -3,9 +3,9 @@
 #import <Foundation/Foundation.h>
 #import "UATagGroupsMutation+Internal.h"
 #import "UATagGroups.h"
-#import "UATagGroupsAPIClient+Internal.h"
 
 @class UAPreferenceDataStore;
+@class UATagGroupsAPIClient;
 
 NS_ASSUME_NONNULL_BEGIN
 

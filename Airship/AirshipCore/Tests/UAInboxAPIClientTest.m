@@ -7,9 +7,10 @@
 #import "UAUser+Internal.h"
 #import "UAInboxAPIClient+Internal.h"
 #import "UAUserData+Internal.h"
-#import "UARequestSession.h"
 
 @import AirshipCore;
+
+typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response, NSError * _Nullable error);
 
 @interface UAInboxAPIClientTest : UAAirshipBaseTest
 

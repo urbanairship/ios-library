@@ -5,7 +5,6 @@
 #import "UAEventStore+Internal.h"
 #import "UAEventData+Internal.h"
 #import "UAAsyncOperation.h"
-#import "UAEventAPIClient+Internal.h"
 #import "UAEvent+Internal.h"
 #import "UARuntimeConfig.h"
 #import "UAChannel.h"
@@ -96,7 +95,7 @@ static NSUInteger const FetchEventLimit = 500;
                              dataStore:(UAPreferenceDataStore *)dataStore
                                channel:(UAChannel *)channel {
     UAEventStore *eventStore = [UAEventStore eventStoreWithConfig:config];
-    UAEventAPIClient *client = [UAEventAPIClient clientWithConfig:config];
+    UAEventAPIClient *client = [[UAEventAPIClient alloc] initWithConfig:config];
 
     UADelay *(^delayProvider)(NSTimeInterval) = ^(NSTimeInterval delay) {
         return [UADelay delayWithSeconds:delay];

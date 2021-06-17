@@ -2,6 +2,9 @@
 
 import Foundation
 
+#if canImport(AirshipCore)
+import AirshipCore
+#endif
 protocol HTTPRequestSession {
     func performHTTPDataTask(_ request: URLRequest, completionHandler: @escaping (Data?, HTTPURLResponse?, Error?) -> Void)
 }
@@ -15,7 +18,7 @@ extension URLSession: HTTPRequestSession {
             }
 
             guard let httpResponse = response as? HTTPURLResponse else {
-                completionHandler(data, nil,  NSError.airshipParseError(withMessage: "Bad response"))
+                completionHandler(data, nil,  AirshipErrors.parseError("Bad response"))
                 return
             }
 

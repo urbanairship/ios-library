@@ -1,8 +1,13 @@
 /* Copyright Airship and Contributors */
 
 #import <CommonCrypto/CommonHMAC.h>
-
 #import "UAAuthTokenAPIClient+Internal.h"
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+@import AirshipCore;
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
 
 #define kUAAuthTokenPath @"/api/auth/device"
 #define kUAAuthTokenTokenKey @"token"
@@ -12,19 +17,40 @@ NSString * const UAAuthTokenAPIClientErrorDomain = @"com.urbanairship.auth_token
 
 @interface UAAuthTokenResponse()
 @property(nonatomic, strong) UAAuthToken *token;
+@property(nonatomic, assign) NSUInteger status;
+
 @end
 
 @implementation UAAuthTokenResponse
 
 - (instancetype)initWithStatus:(NSUInteger)status authToken:(UAAuthToken *)token {
-    self = [super initWithStatus:status];
+    self = [super init];
 
     if (self) {
+        self.status = status;
         self.token = token;
     }
-
     return self;
+
 }
+
+- (bool)isSuccess {
+    return self.status >= 200 && self.status <= 299;
+}
+
+- (bool)isClientError  {
+    return self.status >= 400 && self.status <= 499;
+}
+
+- (bool)isServerError  {
+    return self.status >= 500 && self.status <= 599;
+}
+
+- (NSString *)description {
+    return [NSString stringWithFormat:@"UAAuthTokenResponse(status=%ld)", self.status];
+}
+
+
 @end
 
 @interface UAAuthTokenAPIClient()
@@ -45,7 +71,7 @@ NSString * const UAAuthTokenAPIClientErrorDomain = @"com.urbanairship.auth_token
 
 + (instancetype)clientWithConfig:(UARuntimeConfig *)config {
 
-    return [[self alloc] initWithConfig:config session:[UARequestSession sessionWithConfig:config]];
+    return [[self alloc] initWithConfig:config session:[[UARequestSession alloc] initWithConfig:config]];
 }
 
 + (instancetype)clientWithConfig:(UARuntimeConfig *)config session:(UARequestSession *)session {
@@ -58,11 +84,11 @@ NSString * const UAAuthTokenAPIClientErrorDomain = @"com.urbanairship.auth_token
 
     UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder * _Nonnull builder) {
         builder.method = @"GET";
-        builder.URL = [NSURL URLWithString:urlString];
-        [builder setValue:@"application/vnd.urbanairship+json; version=3;" forHeader:@"Accept"];
-        [builder setValue:channelID forHeader:@"X-UA-Channel-ID"];
-        [builder setValue:self.config.appKey forHeader:@"X-UA-App-Key"];
-        [builder setValue:[@"Bearer " stringByAppendingString:bearerToken] forHeader:@"Authorization"];
+        builder.url = [NSURL URLWithString:urlString];
+        [builder setValue:@"application/vnd.urbanairship+json; version=3;" header:@"Accept"];
+        [builder setValue:channelID header:@"X-UA-Channel-ID"];
+        [builder setValue:self.config.appKey header:@"X-UA-App-Key"];
+        [builder setValue:[@"Bearer " stringByAppendingString:bearerToken] header:@"Authorization"];
     }];
 
     return request;
@@ -91,13 +117,7 @@ NSString * const UAAuthTokenAPIClientErrorDomain = @"com.urbanairship.auth_token
         UAAuthToken *authToken = [self parseAuthToken:responseBody channelID:channelID];
 
         if (!authToken) {
-            NSString *msg = [NSString stringWithFormat:@"Unable to create auth token"];
-
-            NSError *error = [NSError errorWithDomain:UAAuthTokenAPIClientErrorDomain
-                                                 code:UAAuthTokenAPIClientErrorInvalidResponse
-                                             userInfo:@{NSLocalizedDescriptionKey:msg}];
-
-            return completionHandler(nil, error);
+            return completionHandler(nil, [UAirshipErrors parseError:@"Failed to parse token"]);
         }
 
         // Successful auth token request

@@ -11,6 +11,8 @@
 #import "UAUserData+Internal.h"
 #import "UAJSONSerialization.h"
 
+typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response, NSError * _Nullable error);
+
 @interface UAUserAPIClientTest : UAAirshipBaseTest
 @property (nonatomic, strong) UAUserAPIClient *client;
 @property (nonatomic, strong) id mockRequest;
@@ -42,7 +44,7 @@
         UARequest *request = obj;
 
         // Check the url
-        if (![[request.URL absoluteString] isEqualToString:@"https://device-api.urbanairship.com/api/user/"]) {
+        if (![[request.url absoluteString] isEqualToString:@"https://device-api.urbanairship.com/api/user/"]) {
             return NO;
         }
 
@@ -203,7 +205,7 @@
         UARequest *request = obj;
 
         // Check the url
-        if (![[request.URL absoluteString] isEqualToString:@"https://device-api.urbanairship.com/api/user/username/"]) {
+        if (![[request.url absoluteString] isEqualToString:@"https://device-api.urbanairship.com/api/user/username/"]) {
             return NO;
         }
 

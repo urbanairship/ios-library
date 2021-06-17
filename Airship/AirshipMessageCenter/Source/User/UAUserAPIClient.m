@@ -2,23 +2,47 @@
 
 #import "UAUserAPIClient+Internal.h"
 #import "UAUserData+Internal.h"
-#import "NSError+UAAdditions.h"
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+@import AirshipCore;
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
 
 @interface UAUserCreateResponse()
 @property(nonatomic, strong) UAUserData *userData;
+@property(nonatomic, assign) NSUInteger status;
 @end
 
 @implementation UAUserCreateResponse
 
 - (instancetype)initWithStatus:(NSUInteger)status userData:(UAUserData *)userData {
-    self = [super initWithStatus:status];
+    self = [super init];
 
     if (self) {
+        self.status = status;
         self.userData = userData;
     }
 
     return self;
 }
+
+- (bool)isSuccess {
+    return self.status >= 200 && self.status <= 299;
+}
+
+- (bool)isClientError  {
+    return self.status >= 400 && self.status <= 499;
+}
+
+- (bool)isServerError  {
+    return self.status >= 500 && self.status <= 599;
+}
+
+- (NSString *)description {
+    return [NSString stringWithFormat:@"UAUserCreateResponse(status=%ld)", self.status];
+}
+
 @end
 
 @interface UAUserAPIClient()
@@ -42,7 +66,7 @@
 }
 
 + (instancetype)clientWithConfig:(UARuntimeConfig *)config {
-    return [UAUserAPIClient clientWithConfig:config session:[UARequestSession sessionWithConfig:config]];
+    return [UAUserAPIClient clientWithConfig:config session:[[UARequestSession alloc] initWithConfig:config]];
 }
 
 - (UADisposable *)createUserWithChannelID:(NSString *)channelID
@@ -57,13 +81,13 @@
                                      self.config.deviceAPIURL,
                                      @"/api/user/"];
 
-        builder.URL = [NSURL URLWithString:createURLString];
+        builder.url = [NSURL URLWithString:createURLString];
         builder.method = @"POST";
         builder.username = self.config.appKey;
         builder.password = self.config.appSecret;
 
-        [builder setValue:@"application/json" forHeader:@"Content-Type"];
-        [builder setValue:@"application/vnd.urbanairship+json; version=3;" forHeader:@"Accept"];
+        [builder setValue:@"application/json" header:@"Content-Type"];
+        [builder setValue:@"application/vnd.urbanairship+json; version=3;" header:@"Accept"];
 
         builder.body = [UAJSONSerialization dataWithJSONObject:requestBody
                                                        options:0
@@ -98,13 +122,13 @@
                                      @"/api/user/",
                                      userData.username];
 
-        builder.URL = [NSURL URLWithString:updateURLString];
+        builder.url = [NSURL URLWithString:updateURLString];
         builder.method = @"POST";
         builder.username = userData.username;
         builder.password = userData.password;
 
-        [builder setValue:@"application/json" forHeader:@"Content-Type"];
-        [builder setValue:@"application/vnd.urbanairship+json; version=3;" forHeader:@"Accept"];
+        [builder setValue:@"application/json" header:@"Content-Type"];
+        [builder setValue:@"application/vnd.urbanairship+json; version=3;" header:@"Accept"];
 
         builder.body = [UAJSONSerialization dataWithJSONObject:requestBody
                                                        options:0
@@ -128,7 +152,7 @@
 
     if (!username || !password) {
         NSString *msg = [NSString stringWithFormat:@"User API failed. Unable to parse response %@", jsonResponse];
-        *error = [NSError airshipParseErrorWithMessage:msg];
+        *error = [UAirshipErrors parseError:msg];
         return nil;
     }
 

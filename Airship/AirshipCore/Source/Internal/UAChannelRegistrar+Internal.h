@@ -3,13 +3,13 @@
 #import <UIKit/UIKit.h>
 
 #import "UAChannelRegistrationPayload.h"
-#import "UAChannelAPIClient+Internal.h"
 #import "UARuntimeConfig.h"
 #import "UADate.h"
 #import "UADispatcher.h"
 #import "UATaskManager.h"
 
 @class UAPreferenceDataStore;
+@class UAChannelAPIClient;
 
 NS_ASSUME_NONNULL_BEGIN
 

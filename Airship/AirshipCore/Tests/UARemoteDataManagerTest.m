@@ -1,23 +1,22 @@
 /* Copyright Airship and Contributors */
 
-#import "UARemoteDataAPIClient+Internal.h"
 #import "UARemoteDataManager+Internal.h"
 
 #import "UARemoteDataPayload+Internal.h"
 #import "UARemoteDataStore+Internal.h"
-
-@import AirshipCore;
 #import "UARuntimeConfig.h"
 #import "UAUtils+Internal.h"
-
 #import "UAAirshipBaseTest.h"
 #import "UATestDispatcher.h"
 #import "UATestDate.h"
 #import "UATestAppStateTracker+Internal.h"
 #import "UATaskManager.h"
 #import "UALocaleManager+Internal.h"
-#import "UARemoteDataAPIClient+Internal.h"
 #import "UARemoteConfigURLManager.h"
+
+@import AirshipCore;
+
+typedef void (^UARemoteDataAPIClientCompletionHandler)(UARemoteDataResponse * _Nullable response, NSError * _Nullable error);
 
 /**
  * Used to test what UARemoteDataManager does when the cache fails underneath it.

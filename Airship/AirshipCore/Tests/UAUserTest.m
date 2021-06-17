@@ -11,7 +11,7 @@
 #import "UARuntimeConfig+Internal.h"
 #import "UAChannel+Internal.h"
 #import "UAAppStateTracker.h"
-#import "NSError+UAAdditions.h"
+
 @import AirshipCore;
 
 @interface UATestUserDataDAO : UAUserDataDAO

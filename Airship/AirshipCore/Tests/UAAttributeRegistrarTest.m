@@ -2,13 +2,15 @@
 
 #import "UAAirshipBaseTest.h"
 #import "UAAttributeRegistrar+Internal.h"
-#import "UAAttributeAPIClient+Internal.h"
 #import "UAUtils+Internal.h"
 #import "UATestDate.h"
 #import "UAAttributePendingMutations.h"
 #import "UAPersistentQueue+Internal.h"
 #import "UAAttributeMutations.h"
 #import "UATaskManager.h"
+
+@import AirshipCore;
+
 
 @interface UAAttributeRegistrarTest : UAAirshipBaseTest
 @property (nonatomic, strong) UAAttributeRegistrar *registrar;
@@ -57,7 +59,7 @@
         [invocation getArgument:&arg atIndex:4];
         void (^completionHandler)(UAHTTPResponse *, NSError *) = (__bridge void (^)(UAHTTPResponse *, NSError *))arg;
         completionHandler(response, nil);
-    }] updateWithIdentifier:self.registrar.identifier attributeMutations:expectedMutations completionHandler:OCMOCK_ANY];
+    }] updateWithIdentifier:self.registrar.identifier mutations:expectedMutations completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *updateCompleted = [self expectationWithDescription:@"updateCompleted"];
     [self.registrar updateAttributesWithCompletionHandler:^(UAAttributeUploadResult result) {
@@ -84,7 +86,7 @@
         [invocation getArgument:&arg atIndex:4];
         void (^completionHandler)(UAHTTPResponse *, NSError *) = (__bridge void (^)(UAHTTPResponse *, NSError *))arg;
         completionHandler(response, nil);
-    }] updateWithIdentifier:self.registrar.identifier attributeMutations:pending completionHandler:OCMOCK_ANY];
+    }] updateWithIdentifier:self.registrar.identifier mutations:pending completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *updateCompleted = [self expectationWithDescription:@"updateCompleted"];
     [self.registrar updateAttributesWithCompletionHandler:^(UAAttributeUploadResult result) {
@@ -112,7 +114,7 @@
         [invocation getArgument:&arg atIndex:4];
         void (^completionHandler)(UAHTTPResponse *, NSError *) = (__bridge void (^)(UAHTTPResponse *, NSError *))arg;
         completionHandler(response, nil);
-    }] updateWithIdentifier:self.registrar.identifier attributeMutations:pending completionHandler:OCMOCK_ANY];
+    }] updateWithIdentifier:self.registrar.identifier mutations:pending completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *updateCompleted = [self expectationWithDescription:@"updateCompleted"];
     [self.registrar updateAttributesWithCompletionHandler:^(UAAttributeUploadResult result) {
@@ -140,7 +142,7 @@
         [invocation getArgument:&arg atIndex:4];
         void (^completionHandler)(UAHTTPResponse *, NSError *) = (__bridge void (^)(UAHTTPResponse *, NSError *))arg;
         completionHandler(nil, error);
-    }] updateWithIdentifier:self.registrar.identifier attributeMutations:pending completionHandler:OCMOCK_ANY];
+    }] updateWithIdentifier:self.registrar.identifier mutations:pending completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *updateCompleted = [self expectationWithDescription:@"updateCompleted"];
     [self.registrar updateAttributesWithCompletionHandler:^(UAAttributeUploadResult result) {

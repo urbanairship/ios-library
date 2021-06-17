@@ -4,20 +4,44 @@
 
 #import "UAAirshipMessageCenterCoreImport.h"
 #import "UAUserData.h"
-#import "UAHTTPResponse.h"
 
+@class UAHTTPResponse;
+@class UARequestSession;
 
 NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Create user response.
  */
-@interface UAUserCreateResponse : UAHTTPResponse
+@interface UAUserCreateResponse : NSObject
+
+/**
+ * The HTTP status.
+ */
+@property(nonatomic, assign, readonly) NSUInteger status;
 
 /**
  * Created user data.
  */
 @property(nonatomic, readonly, nullable) UAUserData *userData;
+
+/**
+ * Checks if the status is success (2xx).
+ * @return `YES` if success, otherwise `NO`.
+ */
+- (bool)isSuccess;
+
+/**
+ * Checks if the status is client error (4xx).
+ * @return `YES` if client error, otherwise `NO`.
+ */
+- (bool)isClientError;
+
+/**
+ * Checks if the status is server error (5xx).
+ * @return `YES` if server error, otherwise `NO`.
+ */
+- (bool)isServerError;
 
 /**
  * Init method.

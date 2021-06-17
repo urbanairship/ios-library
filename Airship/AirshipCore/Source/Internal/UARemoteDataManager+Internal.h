@@ -6,7 +6,6 @@
 #import "UARuntimeConfig.h"
 #import "UADispatcher.h"
 #import "UARemoteDataStore+Internal.h"
-#import "UARemoteDataAPIClient+Internal.h"
 #import "UAComponent.h"
 #import "UAPushableComponent.h"
 #import "UARemoteDataProvider.h"
@@ -15,6 +14,8 @@
 #import "UATaskManager.h"
 
 NS_ASSUME_NONNULL_BEGIN
+
+@class UARemoteDataAPIClient;
 
 /**
  * Default foreground refresh interval.

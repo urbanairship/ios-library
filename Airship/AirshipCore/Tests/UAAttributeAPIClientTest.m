@@ -2,7 +2,6 @@
 
 #import "UAAirshipBaseTest.h"
 #import <Foundation/Foundation.h>
-#import "UAAttributeAPIClient+Internal.h"
 #import "UAirship.h"
 #import "UARuntimeConfig.h"
 #import "UAAnalytics+Internal.h"
@@ -11,19 +10,21 @@
 #import "UAJSONSerialization.h"
 #import "UAirship+Internal.h"
 #import "UAChannel+Internal.h"
+#import "AirshipTests-Swift.h"
+
+@import AirshipCore;
+
 
 @interface UAAttributeAPIClientTest : UAAirshipBaseTest
-@property(nonatomic, strong) id mockSession;
+@property (nonatomic, strong) UATestRequestSession *testSession;
 @property(nonatomic, strong) UAAttributeAPIClient *client;
 @end
 
 @implementation UAAttributeAPIClientTest
 
 - (void)setUp {
-    self.mockSession = [self mockForClass:[UARequestSession class]];
-    self.client = [UAAttributeAPIClient clientWithConfig:self.config
-                                                 session:self.mockSession
-                                         URLFactoryBlock:^NSURL * _Nonnull(UARuntimeConfig *config, NSString *identifier) {
+    self.testSession = [[UATestRequestSession alloc] init];
+    self.client = [[UAAttributeAPIClient alloc] initWithConfig:self.config session:self.testSession urlFactoryBlock:^(UARuntimeConfig *config, NSString *identifier) {
         return [NSURL URLWithString:[NSString stringWithFormat:@"https://test/%@", identifier]];
     }];
 }
@@ -33,7 +34,7 @@
  */
 - (void)testResponse {
     // Create a response
-    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
+    self.testSession.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
                                                               statusCode:200
                                                              HTTPVersion:nil
                                                             headerFields:nil];
@@ -41,27 +42,9 @@
     id mockMutation = [self mockForClass:[UAAttributePendingMutations class]];
     [[[mockMutation stub] andReturn:@{@"neat": @"payload"}] payload];
 
-    // Stub the session to return a the response
-    [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
-        completionHandler(nil, response, nil);
-    }] performHTTPRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
-        UARequest *request = (UARequest *)obj;
-        id body = [UAJSONSerialization dataWithJSONObject:@{@"neat": @"payload"}
-                                                  options:0
-                                                    error:nil];
-
-        return [request.method isEqualToString:@"POST"] &&
-        [request.body isEqualToData:body] &&
-        [request.URL isEqual:[NSURL URLWithString:@"https://test/bobby"]];
-    }] completionHandler:OCMOCK_ANY];
-
-
     XCTestExpectation *callback = [self expectationWithDescription:@"callback"];
     [self.client updateWithIdentifier:@"bobby"
-                   attributeMutations:mockMutation
+                   mutations:mockMutation
                     completionHandler:^(UAHTTPResponse *response, NSError * _Nullable error) {
         XCTAssertNil(error);
         XCTAssertEqual(200, response.status);
@@ -69,12 +52,24 @@
     }];
 
     [self waitForTestExpectations];
-    [self.mockSession verify];
+
+    UARequest *request = self.testSession.lastRequest;
+
+    id expectedBody = [UAJSONSerialization dataWithJSONObject:@{@"neat": @"payload"}
+                                                      options:0
+                                                        error:nil];
+
+    XCTAssertEqualObjects(@"https://test/bobby", request.url.absoluteString);
+    XCTAssertEqualObjects(@"POST", request.method);
+    XCTAssertEqualObjects(@"application/vnd.urbanairship+json; version=3;", request.headers[@"Accept"]);
+    XCTAssertEqualObjects(@"application/json", request.headers[@"Content-Type"]);
+    XCTAssertEqualObjects(expectedBody, request.body);
+
 }
 
 - (void)testFailedUpdate {
     // Create a response
-    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
+    self.testSession.response =  [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
                                                               statusCode:420
                                                              HTTPVersion:nil
                                                             headerFields:nil];
@@ -82,71 +77,34 @@
     id mockMutation = [self mockForClass:[UAAttributePendingMutations class]];
     [[[mockMutation stub] andReturn:@{@"neat": @"payload"}] payload];
 
-    // Stub the session to return a the response
-    [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
-        completionHandler(nil, response, nil);
-    }] performHTTPRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
-        UARequest *request = (UARequest *)obj;
-        id body = [UAJSONSerialization dataWithJSONObject:@{@"neat": @"payload"}
-                                                  options:0
-                                                    error:nil];
-
-        return [request.method isEqualToString:@"POST"] &&
-        [request.body isEqualToData:body] &&
-        [request.URL isEqual:[NSURL URLWithString:@"https://test/bobby"]];
-    }] completionHandler:OCMOCK_ANY];
-
 
     XCTestExpectation *callback = [self expectationWithDescription:@"callback"];
     [self.client updateWithIdentifier:@"bobby"
-                   attributeMutations:mockMutation
+                            mutations:mockMutation
                     completionHandler:^(UAHTTPResponse *response, NSError * _Nullable error) {
         XCTAssertNil(error);
         XCTAssertEqual(420, response.status);
         [callback fulfill];
     }];
     [self waitForTestExpectations];
-    [self.mockSession verify];
 }
 
 - (void)testUpdateError {
-    NSError *responseError = [[NSError alloc] initWithDomain:@"whatever" code:1 userInfo:nil];
+    self.testSession.error = [[NSError alloc] initWithDomain:@"whatever" code:1 userInfo:nil];
 
     id mockMutation = [self mockForClass:[UAAttributePendingMutations class]];
     [[[mockMutation stub] andReturn:@{@"neat": @"payload"}] payload];
 
-    // Stub the session to return a the response
-    [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
-        completionHandler(nil, nil, responseError);
-    }] performHTTPRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
-        UARequest *request = (UARequest *)obj;
-        id body = [UAJSONSerialization dataWithJSONObject:@{@"neat": @"payload"}
-                                                  options:0
-                                                    error:nil];
-
-        return [request.method isEqualToString:@"POST"] &&
-        [request.body isEqualToData:body] &&
-        [request.URL isEqual:[NSURL URLWithString:@"https://test/bobby"]];
-    }] completionHandler:OCMOCK_ANY];
-
-
     XCTestExpectation *callback = [self expectationWithDescription:@"callback"];
     [self.client updateWithIdentifier:@"bobby"
-                   attributeMutations:mockMutation
+                   mutations:mockMutation
                     completionHandler:^(UAHTTPResponse *response, NSError * _Nullable error) {
-        XCTAssertEqual(responseError, error);
+        XCTAssertEqual(self.testSession.error, error);
         XCTAssertNil(response);
         [callback fulfill];
     }];
 
     [self waitForTestExpectations];
-    [self.mockSession verify];
 }
 
 /**
@@ -156,7 +114,7 @@
     UAAttributeAPIClient *namedUserClient = [UAAttributeAPIClient namedUserClientWithConfig:self.config];
     NSString *namedUser = @"test/named/user";
     NSString *expected = @"https://device-api.urbanairship.com/api/named_users/test%2Fnamed%2Fuser/attributes";
-    NSString *actual = [namedUserClient.URLFactoryBlock(self.config, namedUser) absoluteString];
+    NSString *actual = [namedUserClient.urlFactoryBlock(self.config, namedUser) absoluteString];
     XCTAssertEqualObjects(expected, actual);
 }
 

@@ -3,12 +3,13 @@
 #import <Foundation/Foundation.h>
 #import "UARuntimeConfig.h"
 #import "UAPendingTagGroupStore+Internal.h"
-#import "UATagGroupsAPIClient+Internal.h"
 #import "UAComponent+Internal.h"
 #import "UATagGroupsMutation+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class UATagGroupsAPIClient;
+@class UADisposable;
 
 /**
  * Tag group upload results.

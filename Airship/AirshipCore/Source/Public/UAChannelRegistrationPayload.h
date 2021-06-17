@@ -124,6 +124,14 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, assign, getter=isBackgroundEnabled) BOOL backgroundEnabled;
 
+
+/**
+ * The UAChannelRegistrationPayload as JSON data.
+ * @return The payload as JSON data.
+ */
+- (NSData *)asJSONData;
+
+
 @end
 
 NS_ASSUME_NONNULL_END

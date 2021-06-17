@@ -14,7 +14,6 @@
 #import "UAirship.h"
 #import "UARuntimeConfig.h"
 #import "UAKeychainUtils.h"
-#import "UARequest.h"
 
 // C includes
 #include <sys/types.h>
@@ -26,6 +25,12 @@
 #if !TARGET_OS_TV   // CoreTelephony not supported in tvOS
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
 #import <CoreTelephony/CTCarrier.h>
+#endif
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
 #endif
 
 @implementation UAUtils
@@ -163,7 +168,7 @@ NSString * const UAConnectionTypeWifi = @"wifi";
               @"\n\tBody: %@",
               message,
               error,
-              [request.URL absoluteString],
+              [request.url absoluteString],
               [request.headers description],
               request.method,
               [request.body description],

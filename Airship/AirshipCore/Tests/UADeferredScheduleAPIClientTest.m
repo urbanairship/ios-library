@@ -6,6 +6,8 @@
 #import "UAInAppMessage+Internal.h"
 #import "UATestDispatcher.h"
 
+typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response, NSError * _Nullable error);
+
 @interface UADeferredScheduleAPIClientTest : UAAirshipBaseTest
 @property (nonatomic, strong) UADeferredScheduleAPIClient *client;
 @property (nonatomic, strong) id mockSession;
@@ -86,7 +88,7 @@
         UARequest *request = obj;
 
         XCTAssertEqualObjects(request.method, @"POST");
-        XCTAssertEqualObjects(request.URL, URL);
+        XCTAssertEqualObjects(request.url, URL);
         XCTAssertEqualObjects(request.headers[@"Accept"], @"application/vnd.urbanairship+json; version=3;");
         XCTAssertEqualObjects(request.headers[@"Authorization"], [@"Bearer " stringByAppendingString:token]);
 
@@ -182,7 +184,7 @@
         UARequest *request = obj;
 
         XCTAssertEqualObjects(request.method, @"POST");
-        XCTAssertEqualObjects(request.URL, URL);
+        XCTAssertEqualObjects(request.url, URL);
         XCTAssertEqualObjects(request.headers[@"Accept"], @"application/vnd.urbanairship+json; version=3;");
         XCTAssertEqualObjects(request.headers[@"Authorization"], [@"Bearer " stringByAppendingString:token]);
 
@@ -261,7 +263,7 @@
 
 
         XCTAssertEqualObjects(request.method, @"POST");
-        XCTAssertEqualObjects(request.URL, URL);
+        XCTAssertEqualObjects(request.url, URL);
         XCTAssertEqualObjects(request.headers[@"Accept"], @"application/vnd.urbanairship+json; version=3;");
         XCTAssertEqualObjects(request.headers[@"Authorization"], [@"Bearer " stringByAppendingString:token]);
 
@@ -355,7 +357,7 @@
         UARequest *request = obj;
 
         XCTAssertEqualObjects(request.method, @"POST");
-        XCTAssertEqualObjects(request.URL, URL);
+        XCTAssertEqualObjects(request.url, URL);
         XCTAssertEqualObjects(request.headers[@"Accept"], @"application/vnd.urbanairship+json; version=3;");
         XCTAssertEqualObjects(request.headers[@"Authorization"], [@"Bearer " stringByAppendingString:token]);
 

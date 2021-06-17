@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UAChannelRegistrar+Internal.h"
-#import "UAChannelAPIClient+Internal.h"
 #import "UAGlobal.h"
 #import "UAUtils+Internal.h"
 #import "UAChannelRegistrationPayload+Internal.h"
@@ -98,7 +97,7 @@ static NSString * const UAChannelRegistrarTaskExtrasForcefully = @"forcefully";
 + (instancetype)channelRegistrarWithConfig:(UARuntimeConfig *)config
                                  dataStore:(UAPreferenceDataStore *)dataStore {
     return [[self alloc] initWithDataStore:dataStore
-                          channelAPIClient:[UAChannelAPIClient clientWithConfig:config]
+                          channelAPIClient:[[UAChannelAPIClient alloc] initWithConfig:config]
                                       date:[[UADate alloc] init]
                                 dispatcher:[UADispatcher serialDispatcher]
                                taskManager:[UATaskManager shared]];

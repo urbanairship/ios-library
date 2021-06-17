@@ -2,13 +2,14 @@
 
 #import "UAAirshipBaseTest.h"
 #import "UARuntimeConfig.h"
-#import "UANamedUserAPIClient+Internal.h"
 #import "UAirship+Internal.h"
+#import "AirshipTests-Swift.h"
+
+@import AirshipCore;
 
 @interface UANamedUserAPIClientTest : UAAirshipBaseTest
 
-@property (nonatomic, strong) id mockAirship;
-@property (nonatomic, strong) id mockSession;
+@property (nonatomic, strong) UATestRequestSession *testSession;
 @property (nonatomic, strong) UANamedUserAPIClient *client;
 
 @end
@@ -18,27 +19,16 @@
 - (void)setUp {
     [super setUp];
 
-    self.mockSession = [self mockForClass:[UARequestSession class]];
+    self.testSession = [[UATestRequestSession alloc] init];
 
-    self.mockAirship = [self mockForClass:[UAirship class]];
-    [UAirship setSharedAirship:self.mockAirship];
-    [[[self.mockAirship stub] andReturn:self.config] config];
-
-    self.client = [UANamedUserAPIClient clientWithConfig:self.config session:self.mockSession];
+    self.client = [[UANamedUserAPIClient alloc] initWithConfig:self.config session:self.testSession];
 }
 
 -(void)testAssociate {
-    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
+    self.testSession.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
                                                               statusCode:200
                                                              HTTPVersion:nil
                                                             headerFields:nil];
-
-    [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
-        completionHandler(nil, response, nil);
-    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *finishedCallbacks = [self expectationWithDescription:@"Finished callbacks"];
     [self.client associate:@"fakeNamedUserID"
@@ -50,23 +40,21 @@
     }];
 
     [self waitForTestExpectations];
+
+    UARequest *request = self.testSession.lastRequest;
+    XCTAssertEqualObjects(@"https://device-api.urbanairship.com/api/named_users/associate", request.url.absoluteString);
+    XCTAssertEqualObjects(@"POST", request.method);
+    XCTAssertEqualObjects(@"application/vnd.urbanairship+json; version=3;", request.headers[@"Accept"]);
+    XCTAssertEqualObjects(@"application/json", request.headers[@"Content-Type"]);
 }
 
 -(void)testAssociateError {
-    NSError *responseError = [NSError errorWithDomain:@"domain" code:100 userInfo:nil];
-
-    [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
-        completionHandler(nil, nil, responseError);
-    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
-
+    self.testSession.error = [NSError errorWithDomain:@"domain" code:100 userInfo:nil];
     XCTestExpectation *finishedCallbacks = [self expectationWithDescription:@"Finished callbacks"];
     [self.client associate:@"fakeNamedUserID"
                  channelID:@"fakeChannel"
          completionHandler:^(UAHTTPResponse *response, NSError *error) {
-        XCTAssertEqual(responseError, error);
+        XCTAssertEqual(self.testSession.error, error);
         XCTAssertNil(response);
         [finishedCallbacks fulfill];
     }];
@@ -75,17 +63,10 @@
 }
 
 -(void)testDisassociate {
-    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
+    self.testSession.response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""]
                                                               statusCode:200
                                                              HTTPVersion:nil
                                                             headerFields:nil];
-
-    [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
-        completionHandler(nil, response, nil);
-    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *finishedCallbacks = [self expectationWithDescription:@"Finished callbacks"];
     [self.client disassociate:@"fakeNamedUserID"
@@ -96,22 +77,21 @@
     }];
 
     [self waitForTestExpectations];
+
+    UARequest *request = self.testSession.lastRequest;
+    XCTAssertEqualObjects(@"https://device-api.urbanairship.com/api/named_users/disassociate", request.url.absoluteString);
+    XCTAssertEqualObjects(@"POST", request.method);
+    XCTAssertEqualObjects(@"application/vnd.urbanairship+json; version=3;", request.headers[@"Accept"]);
+    XCTAssertEqualObjects(@"application/json", request.headers[@"Content-Type"]);
 }
 
 -(void)testDisassociateError {
-    NSError *responseError = [NSError errorWithDomain:@"domain" code:100 userInfo:nil];
-
-    [[[self.mockSession stub] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
-        completionHandler(nil, nil, responseError);
-    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    self.testSession.error = [NSError errorWithDomain:@"domain" code:100 userInfo:nil];
 
     XCTestExpectation *finishedCallbacks = [self expectationWithDescription:@"Finished callbacks"];
     [self.client disassociate:@"fakeNamedUserID"
             completionHandler:^(UAHTTPResponse *response, NSError *error) {
-        XCTAssertEqual(responseError, error);
+        XCTAssertEqual(self.testSession.error, error);
         XCTAssertNil(response);
         [finishedCallbacks fulfill];
     }];

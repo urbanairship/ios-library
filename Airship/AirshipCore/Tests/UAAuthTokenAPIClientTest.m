@@ -5,6 +5,8 @@
 #import "UAAirshipBaseTest.h"
 #import "UAAuthTokenAPIClient+Internal.h"
 
+typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response, NSError * _Nullable error);
+
 @interface UAAuthTokenAPIClientTest : UAAirshipBaseTest
 @property (nonatomic, strong) UAAuthTokenAPIClient *client;
 @property (nonatomic, strong) id mockSession;
@@ -38,7 +40,7 @@
         NSString *bearerToken =  [hash base64EncodedStringWithOptions:0];
 
         XCTAssertEqualObjects(request.method, @"GET");
-        XCTAssertEqualObjects(request.URL.absoluteString, [self.config.deviceAPIURL stringByAppendingString:@"/api/auth/device"]);
+        XCTAssertEqualObjects(request.url.absoluteString, [self.config.deviceAPIURL stringByAppendingString:@"/api/auth/device"]);
         XCTAssertEqualObjects(request.headers[@"X-UA-Channel-ID"], @"channel ID");
         XCTAssertEqualObjects(request.headers[@"X-UA-App-Key"], self.config.appKey);
         XCTAssertEqualObjects(request.headers[@"Accept"], @"application/vnd.urbanairship+json; version=3;");
@@ -75,8 +77,6 @@
 
     [self.client tokenWithChannelID:@"channel ID" completionHandler:^(UAAuthTokenResponse * _Nullable response, NSError * _Nullable error) {
         if (!response.token && error) {
-            XCTAssertEqualObjects(error.domain, UAAuthTokenAPIClientErrorDomain);
-            XCTAssertEqual(error.code, UAAuthTokenAPIClientErrorInvalidResponse);
             [tokenRetrieved fulfill];
         }
     }];

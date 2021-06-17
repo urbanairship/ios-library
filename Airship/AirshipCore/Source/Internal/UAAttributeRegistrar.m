@@ -2,10 +2,15 @@
 
 #import "UAAttributeRegistrar+Internal.h"
 #import "UAPersistentQueue+Internal.h"
-#import "UAAttributeAPIClient+Internal.h"
 #import "UAAttributeMutations+Internal.h"
 #import "UAAttributePendingMutations.h"
 #import "UAUtils.h"
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
 
 static NSString *const ChannelPersistentQueueKey = @"com.urbanairship.channel_attributes.registrar_persistent_queue_key";
 static NSString *const NamedUserPersistentQueueKey = @"com.urbanairship.named_user_attributes.registrar_persistent_queue_key";
@@ -125,7 +130,7 @@ static NSString *const NamedUserPersistentQueueKey = @"com.urbanairship.named_us
     };
 
     return [self.client updateWithIdentifier:identifier
-                          attributeMutations:mutations
+                                   mutations:mutations
                            completionHandler:apiCompletionBlock];
 }
 

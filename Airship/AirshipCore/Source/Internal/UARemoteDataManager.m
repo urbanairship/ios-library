@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UARemoteDataManager+Internal.h"
-#import "UARemoteDataAPIClient+Internal.h"
 #import "UARemoteDataStore+Internal.h"
 #import "UARemoteDataStorePayload+Internal.h"
 #import "UARemoteDataPayload+Internal.h"
@@ -190,7 +189,7 @@ static NSString * const UALastRemoteDataModifiedTime = @"UALastRemoteDataModifie
     return [self remoteDataManagerWithConfig:config
                                    dataStore:dataStore
                              remoteDataStore:remoteDataStore
-                         remoteDataAPIClient:[UARemoteDataAPIClient clientWithConfig:config]
+                         remoteDataAPIClient:[[UARemoteDataAPIClient alloc] initWithConfig:config]
                           notificationCenter:[NSNotificationCenter defaultCenter]
                              appStateTracker:[UAAppStateTracker shared]
                                   dispatcher:[UADispatcher mainDispatcher]
