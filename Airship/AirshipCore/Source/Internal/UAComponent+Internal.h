@@ -3,7 +3,6 @@
 #import <Foundation/Foundation.h>
 
 #import "UAComponent.h"
-#import "UAPreferenceDataStore+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

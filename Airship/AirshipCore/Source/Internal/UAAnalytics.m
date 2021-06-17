@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UAAnalytics+Internal.h"
-#import "UAPreferenceDataStore+Internal.h"
 #import "UAEventManager+Internal.h"
 #import "UARuntimeConfig.h"
 #import "UAEvent.h"
@@ -20,9 +19,14 @@
 #import "UAPush+Internal.h"
 #import "UAChannel.h"
 #import "UALocaleManager.h"
-#import "UAPrivacyManager.h"
 
 #define kUAAssociatedIdentifiers @"UAAssociatedIdentifiers"
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
 
 @interface UAAnalytics()
 @property (nonatomic, strong) UARuntimeConfig *config;
@@ -106,10 +110,10 @@ NSString *const UAEventKey = @"event";
                                     selector:@selector(applicationWillTerminate)
                                         name:UAApplicationWillTerminateNotification
                                       object:nil];
-        
+
         [self.notificationCenter addObserver:self
                                selector:@selector(onEnabledFeaturesChanged)
-                                   name:UAPrivacyManagerEnabledFeaturesChangedEvent
+                                   name:UAPrivacyManager.changeEvent
                                  object:nil];
 
 

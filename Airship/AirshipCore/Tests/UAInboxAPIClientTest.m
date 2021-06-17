@@ -5,10 +5,11 @@
 #import "UAirship+Internal.h"
 #import "UAChannel.h"
 #import "UAUser+Internal.h"
-#import "UAPreferenceDataStore+Internal.h"
 #import "UAInboxAPIClient+Internal.h"
 #import "UAUserData+Internal.h"
 #import "UARequestSession.h"
+
+@import AirshipCore;
 
 @interface UAInboxAPIClientTest : UAAirshipBaseTest
 

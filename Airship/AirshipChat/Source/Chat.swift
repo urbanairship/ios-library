@@ -4,9 +4,8 @@ import Foundation;
 
 #if canImport(AirshipCore)
 import AirshipCore
-#elseif !COCOAPODS && canImport(Airship)
-import Airship
 #endif
+
 
 /**
  * Open chat delegate.
@@ -53,7 +52,7 @@ public class Chat : UAComponent, UAPushableComponent {
         }
         set {
             if (newValue) {
-                self.privacyManager.enable(UAFeatures.chat)
+                self.privacyManager.enableFeatures(UAFeatures.chat)
             } else {
                 self.privacyManager.disableFeatures(UAFeatures.chat)
             }
@@ -107,7 +106,7 @@ public class Chat : UAComponent, UAPushableComponent {
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(self.onEnabledFeaturesChange),
-            name: Notification.Name(UAPrivacyManagerEnabledFeaturesChangedEvent),
+            name: UAPrivacyManager.changeEvent,
             object: nil)
 
         AirshipLogger.info("AirshipChat initialized")

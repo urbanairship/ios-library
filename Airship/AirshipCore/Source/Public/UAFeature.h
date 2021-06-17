@@ -1,41 +1,12 @@
 /* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-#import "UAPreferenceDataStore.h"
-
-NS_ASSUME_NONNULL_BEGIN
-
-/**
- * The privacy manager allow enabling/disabling features in the SDK.
- * The SDK will not make any network requests or collect data if all features our disabled, with
- * a few exceptions when going from enabled -> disabled. To have the SDK opt-out of all features on startup,
- * set the default enabled features in the AirshipConfig to UAFeaturesNone, or in the
- * airshipconfig.plist file with `enabledFeatures = none`.
- * If any feature is enabled, the SDK will collect and send the following data:
- * - Channel ID
- * - Locale
- * - TimeZone
- * - Platform
- * - Opt in state (push and notifications)
- * - SDK version
- * - Accengage Device ID (Accengage module for migration)
- */
-@interface UAPrivacyManager : NSObject
-
-/**
- * NSNotification event when enabled feature list is updated.
- */
-
-extern NSString *const UAPrivacyManagerEnabledFeaturesChangedEvent;
 
 /**
  * Enabled Features
  */
 typedef NS_OPTIONS(NSUInteger, UAFeatures) {
-    
-    // Sets enabled features to none.
-    UAFeaturesNone = 0,
-    
+
     // Enables In-App Automation.
     // In addition to the default data collection, In-App Automation will collect:
     // - App Version (App update triggers)
@@ -93,53 +64,5 @@ typedef NS_OPTIONS(NSUInteger, UAFeatures) {
     UAFeaturesAll = (UAFeaturesInAppAutomation | UAFeaturesMessageCenter | UAFeaturesPush | UAFeaturesChat | UAFeaturesAnalytics | UAFeaturesTagsAndAttributes | UAFeaturesContacts | UAFeaturesLocation)
 };
 
-/**
- * Factory method to create a Privacy Manager instance.
- * @note For internal use only. :nodoc:
- *
- * @param dataStore The shared preference data store.
- * @param features Default enabled features.
- * @return A new privacy manager instance.
- */
-+ (instancetype)privacyManagerWithDataStore:(UAPreferenceDataStore *)dataStore
-                     defaultEnabledFeatures:(UAFeatures)features;
-
-/**
- * Gets the current enabled features.
- *
- * @return The enabled features.
- */
-@property(nonatomic, assign) UAFeatures enabledFeatures;
-
-/**
- * Enables features.
- *
- * @param features The features to enable.
- */
-- (void)enableFeatures:(UAFeatures)features;
-
-/**
- * Disables features.
- *
- * @param features The features to disable.
- */
-- (void)disableFeatures:(UAFeatures)features;
-
-/**
- * Checks if a given feature is enabled.
- *
- * @param feature The features to check.
- * @return True if the provided features are enabled, otherwise false.
-*/
-- (BOOL)isEnabled:(UAFeatures)feature;
-
-/**
- * Checks if any feature is enabled.
- *
- * @return True if any feature is enabled, otherwise false.
- */
-- (BOOL)isAnyFeatureEnabled;
-
-@end
-
-NS_ASSUME_NONNULL_END
+// Sets enabled features to none.
+static const UAFeatures UAFeaturesNone NS_SWIFT_UNAVAILABLE("Use [] instead.") = 0;

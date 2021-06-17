@@ -2,7 +2,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UAEventManager+Internal.h"
-#import "UAPreferenceDataStore+Internal.h"
 #import "UAEventStore+Internal.h"
 #import "UAEventData+Internal.h"
 #import "UAAsyncOperation.h"
@@ -16,6 +15,12 @@
 #import "UATaskManager.h"
 #import "UASemaphore.h"
 #import "UADelay+Internal.h"
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
 
 @interface UAEventManager()
 @property(nonatomic, strong, nonnull) UARuntimeConfig *config;

@@ -13,8 +13,10 @@
 #import "UARuntimeConfig+Internal.h"
 #import "UALocaleManager+Internal.h"
 #import "UARemoteConfigURLManager.h"
-#import "UAPrivacyManager+Internal.h"
 #import "UAirship+Internal.h"
+
+@import AirshipCore;
+
 
 @interface AirshipAccengageTests : XCTestCase
 
@@ -31,9 +33,10 @@
 @implementation AirshipAccengageTests
 
 - (void)setUp {
-    self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:NSUUID.UUID.UUIDString];
-    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesNone];
-
+    self.dataStore = [[UAPreferenceDataStore alloc ] initWithKeyPrefix:NSUUID.UUID.UUIDString];
+    self.privacyManager = [[UAPrivacyManager alloc] initWithDataStore:self.dataStore
+                                               defaultEnabledFeatures:UAFeaturesNone];
+    
     UARemoteConfigURLManager *urlManager = [UARemoteConfigURLManager remoteConfigURLManagerWithDataStore:self.dataStore];
     self.config = [[UARuntimeConfig alloc] initWithConfig:[UAConfig defaultConfig] urlManager:urlManager];
     self.localeManager = [UALocaleManager localeManagerWithDataStore:self.dataStore];

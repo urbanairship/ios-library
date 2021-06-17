@@ -13,7 +13,6 @@
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAAppInitEvent+Internal.h"
 #import "UAAppExitEvent+Internal.h"
-#import "UAPreferenceDataStore+Internal.h"
 #import "UANamedUser+Internal.h"
 #import "UAAppIntegration.h"
 #import "UARemoteDataManager+Internal.h"
@@ -29,12 +28,18 @@
 #import "UAAccengageModuleLoaderFactory.h"
 #import "UADebugLibraryModuleLoaderFactory.h"
 #import "UALocaleManager+Internal.h"
-#import "UAPrivacyManager+Internal.h"
 #import "UARemoteConfigURLManager.h"
 #import "UAAirshipChatModuleLoaderFactory.h"
+#import "UAFeature.h"
 
 #if !TARGET_OS_TV
 #import "UAChannelCapture+Internal.h"
+#endif
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
 #endif
 
 // Notifications
@@ -85,14 +90,17 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 #pragma mark Logging
 + (void)setLogging:(BOOL)value {
     uaLoggingEnabled = value;
+    UAirshipLogger.loggingEnabled = value;
 }
 
 + (void)setLogLevel:(UALogLevel)level {
     uaLogLevel = level;
+    UAirshipLogger.logLevel = level;
 }
 
 + (void)setLoudImpErrorLogging:(BOOL)enabled{
     uaLoudImpErrorLoggingEnabled = enabled;
+    UAirshipLogger.implementationErrorLoggingEnabled = enabled;
 }
 
 + (void)load {
@@ -115,14 +123,13 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         self.dataStore = dataStore;
         self.config = config;
 
-        self.sharedPrivacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:config.enabledFeatures];
-        [self.sharedPrivacyManager migrateData];
+        self.sharedPrivacyManager = [[UAPrivacyManager alloc] initWithDataStore:dataStore defaultEnabledFeatures:self.config.enabledFeatures];
 
         self.actionRegistry = [UAActionRegistry defaultRegistry];
         self.URLAllowList = [UAURLAllowList allowListWithConfig:config];
         self.applicationMetrics = [UAApplicationMetrics applicationMetricsWithDataStore:self.dataStore privacyManager:self.sharedPrivacyManager];
         self.sharedLocaleManager = [UALocaleManager localeManagerWithDataStore:self.dataStore];
-        
+
         self.sharedChannel = [UAChannel channelWithDataStore:self.dataStore
                                                       config:self.config
                                                localeManager:self.sharedLocaleManager
@@ -302,7 +309,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     }
 
     // Data store
-    UAPreferenceDataStore *dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:[NSString stringWithFormat:@"com.urbanairship.%@.", config.appKey]];
+    UAPreferenceDataStore *dataStore = [[UAPreferenceDataStore alloc] initWithKeyPrefix:[NSString stringWithFormat:@"com.urbanairship.%@.", config.appKey]];
 
     UARemoteConfigURLManager *remoteConfigURLManager = [UARemoteConfigURLManager remoteConfigURLManagerWithDataStore:dataStore];
     UARuntimeConfig *runtimeConfig = [UARuntimeConfig runtimeConfigWithConfig:config urlManager:remoteConfigURLManager];
@@ -327,7 +334,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     [UAirship setSharedAirship:[[UAirship alloc] initWithRuntimeConfig:runtimeConfig
                                                              dataStore:dataStore]];
 
-    
+
 
     // Validate any setup issues
     if (!runtimeConfig.inProduction) {

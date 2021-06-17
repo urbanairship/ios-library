@@ -3,7 +3,7 @@
 #import <Foundation/Foundation.h>
 
 #import "UAGlobal.h"
-#import "UAPrivacyManager.h"
+#import "UAFeature.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

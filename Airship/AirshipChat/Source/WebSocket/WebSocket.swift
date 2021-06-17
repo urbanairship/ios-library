@@ -4,9 +4,8 @@ import Foundation
 
 #if canImport(AirshipCore)
 import AirshipCore
-#elseif !COCOAPODS && canImport(Airship)
-import Airship
 #endif
+
 
 /**
  * Web socket implementation that uses NSURLSessionWebSocketTasks.

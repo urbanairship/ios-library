@@ -2,9 +2,8 @@
 
 #if canImport(AirshipCore)
 import AirshipCore
-#elseif !COCOAPODS && canImport(Airship)
-import Airship
 #endif
+
 
 protocol ChatConfig {
     var appKey: String { get }

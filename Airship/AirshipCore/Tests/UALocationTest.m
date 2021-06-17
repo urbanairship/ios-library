@@ -4,11 +4,11 @@
 #import "UALocation+Internal.h"
 #import "UALocation.h"
 #import "UALocationEvent.h"
-#import "UAPreferenceDataStore+Internal.h"
 #import "UAAnalytics.h"
 #import "UAComponent+Internal.h"
 #import "UAChannel+Internal.h"
-#import "UAPrivacyManager+Internal.h"
+
+@import AirshipCore;
 
 @interface UALocationTest : UAAirshipBaseTest
 
@@ -33,10 +33,7 @@
 @implementation UALocationTest
 
 - (void)setUp {
-    [super setUp];
-    self.dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:[NSString stringWithFormat:@"ualocation.test.%@",self.name]];
-    [self.dataStore removeAll]; // start with an empty datastore
-    
+    [super setUp];    
     self.mockedApplication = [self mockForClass:[UIApplication class]];
     [[[self.mockedApplication stub] andReturn:self.mockedApplication] sharedApplication];
 
@@ -46,8 +43,8 @@
 
     self.notificationCenter = [NSNotificationCenter defaultCenter];
 
-    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
-    
+    self.privacyManager = [[UAPrivacyManager alloc] initWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
+
     self.location = [UALocation locationWithDataStore:self.dataStore channel:self.mockChannel analytics:self.mockAnalytics privacyManager:self.privacyManager];
         
     self.location.locationManager = self.mockLocationManager;
@@ -73,9 +70,7 @@
 
 - (void)tearDown {
     [self.mockProcessInfo stopMocking];
-    [self.dataStore removeAll];
     self.location = nil;
-
     [super tearDown];
 }
 

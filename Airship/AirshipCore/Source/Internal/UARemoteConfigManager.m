@@ -11,6 +11,12 @@
 #import "UARemoteConfig.h"
 #import "UAUtils.h"
 
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
+
 NSString * const UAAppConfigCommon = @"app_config";
 NSString * const UAAppConfigIOS = @"app_config:ios";
 
@@ -74,7 +80,7 @@ NSString * const UAAirshipRemoteConfigUpdatedKey = @"com.urbanairship.airship_re
 
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(updateRemoteConfigSubscription)
-                                                     name:UAPrivacyManagerEnabledFeaturesChangedEvent
+                                                     name:UAPrivacyManager.changeEvent
                                                    object:nil];
     }
 

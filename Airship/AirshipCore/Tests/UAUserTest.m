@@ -7,12 +7,12 @@
 #import "UAKeychainUtils.h"
 #import "UAirship+Internal.h"
 #import "UARuntimeConfig.h"
-#import "UAPreferenceDataStore+Internal.h"
 #import "UATestDispatcher.h"
 #import "UARuntimeConfig+Internal.h"
 #import "UAChannel+Internal.h"
 #import "UAAppStateTracker.h"
 #import "NSError+UAAdditions.h"
+@import AirshipCore;
 
 @interface UATestUserDataDAO : UAUserDataDAO
 @property (nonatomic, strong) UAUserData *userData;

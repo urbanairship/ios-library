@@ -12,7 +12,13 @@
 #import "UATaskManager.h"
 #import "UASemaphore.h"
 #import "UARemoteConfigURLManager.h"
-#import "UAPrivacyManager.h"
+#import "UAGlobal.h"
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
 
 #define kUAMaxNamedUserIDLength 128
 
@@ -92,10 +98,10 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
                                     selector:@selector(remoteConfigUpdated)
                                         name:UARemoteConfigURLManagerConfigUpdated
                                       object:nil];
-        
+
         [self.notificationCenter addObserver:self
                                     selector:@selector(onEnabledFeaturesChanged)
-                                        name:UAPrivacyManagerEnabledFeaturesChangedEvent
+                                        name:UAPrivacyManager.changeEvent
                                       object:nil];
         UA_WEAKIFY(self)
         [self.channel addChannelExtenderBlock:^(UAChannelRegistrationPayload *payload, UAChannelRegistrationExtenderCompletionHandler completionHandler) {

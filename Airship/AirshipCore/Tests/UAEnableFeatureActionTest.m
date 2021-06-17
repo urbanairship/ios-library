@@ -7,7 +7,8 @@
 #import "UAirship+Internal.h"
 #import "UAPush+Internal.h"
 #import "UAAPNSRegistration+Internal.h"
-#import "UAPrivacyManager.h"
+
+@import AirshipCore;
 
 @interface UAEnableFeatureActionTest : UABaseTest
 

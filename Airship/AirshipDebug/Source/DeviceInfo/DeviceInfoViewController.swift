@@ -51,7 +51,7 @@ var isInAppAutomationEnabled: Bool {
     }
     set (value) {
         if (value) {
-            UAirship.shared().privacyManager.enable(UAFeatures.inAppAutomation)
+            UAirship.shared().privacyManager.enableFeatures(UAFeatures.inAppAutomation)
         } else {
             UAirship.shared().privacyManager.disableFeatures(UAFeatures.inAppAutomation)
         }
@@ -454,63 +454,63 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
         case inAppAutomationFeatureEnabled:
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
             if (cell.cellSwitch.isOn) {
-                UAirship.shared().privacyManager.enable(UAFeatures.inAppAutomation)
+                UAirship.shared().privacyManager.enableFeatures(UAFeatures.inAppAutomation)
             } else {
                 UAirship.shared().privacyManager.disableFeatures(UAFeatures.inAppAutomation)
             }
         case messageCenterFeatureEnabled:
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
             if (cell.cellSwitch.isOn) {
-                UAirship.shared().privacyManager.enable(UAFeatures.messageCenter)
+                UAirship.shared().privacyManager.enableFeatures(UAFeatures.messageCenter)
             } else {
                 UAirship.shared().privacyManager.disableFeatures(UAFeatures.messageCenter)
             }
         case pushFeatureEnabled:
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
             if (cell.cellSwitch.isOn) {
-                UAirship.shared().privacyManager.enable(UAFeatures.push)
+                UAirship.shared().privacyManager.enableFeatures(UAFeatures.push)
             } else {
                 UAirship.shared().privacyManager.disableFeatures(UAFeatures.push)
             }
         case chatFeatureEnabled:
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
             if (cell.cellSwitch.isOn) {
-                UAirship.shared().privacyManager.enable(UAFeatures.chat)
+                UAirship.shared().privacyManager.enableFeatures(UAFeatures.chat)
             } else {
                 UAirship.shared().privacyManager.disableFeatures(UAFeatures.chat)
             }
         case analyticsFeatureEnabled:
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
             if (cell.cellSwitch.isOn) {
-                UAirship.shared().privacyManager.enable(UAFeatures.analytics)
+                UAirship.shared().privacyManager.enableFeatures(UAFeatures.analytics)
             } else {
                 UAirship.shared().privacyManager.disableFeatures(UAFeatures.analytics)
             }
         case tagsAndAttributesFeatureEnabled:
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
             if (cell.cellSwitch.isOn) {
-                UAirship.shared().privacyManager.enable(UAFeatures.tagsAndAttributes)
+                UAirship.shared().privacyManager.enableFeatures(UAFeatures.tagsAndAttributes)
             } else {
                 UAirship.shared().privacyManager.disableFeatures(UAFeatures.tagsAndAttributes)
             }
         case contactsFeatureEnabled:
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
             if (cell.cellSwitch.isOn) {
-                UAirship.shared().privacyManager.enable(UAFeatures.contacts)
+                UAirship.shared().privacyManager.enableFeatures(UAFeatures.contacts)
             } else {
                 UAirship.shared().privacyManager.disableFeatures(UAFeatures.contacts)
             }
         case locationFeatureEnabled:
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
             if (cell.cellSwitch.isOn) {
-                UAirship.shared().privacyManager.enable(UAFeatures.location)
+                UAirship.shared().privacyManager.enableFeatures(UAFeatures.location)
             } else {
                 UAirship.shared().privacyManager.disableFeatures(UAFeatures.location)
             }
         case locationEnabled:
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
             if (cell.cellSwitch.isOn) {
-                UAirship.shared().privacyManager.enable(UAFeatures.location)
+                UAirship.shared().privacyManager.enableFeatures(UAFeatures.location)
             } else {
                 UAirship.shared().privacyManager.disableFeatures(UAFeatures.location)
             }

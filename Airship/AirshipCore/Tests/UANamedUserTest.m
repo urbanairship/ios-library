@@ -2,7 +2,6 @@
 
 #import "UAAirshipBaseTest.h"
 #import "UAirship+Internal.h"
-#import "UAPreferenceDataStore+Internal.h"
 #import "UANamedUser+Internal.h"
 #import "UANamedUserAPIClient+Internal.h"
 #import "UAChannel+Internal.h"
@@ -11,7 +10,8 @@
 #import "UATestDate.h"
 #import "UAAttributePendingMutations.h"
 #import "UATaskManager.h"
-#import "UAPrivacyManager+Internal.h"
+
+@import AirshipCore;
 
 static NSString * const UANamedUserUpdateTaskID = @"UANamedUser.update";
 static NSString * const UANamedUserTagUpdateTaskID = @"UANamedUser.tags.update";
@@ -81,7 +81,7 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
     }] registerForTaskWithIDs:@[UANamedUserUpdateTaskID, UANamedUserTagUpdateTaskID, UANamedUserAttributeUpdateTaskID] dispatcher:OCMOCK_ANY launchHandler:OCMOCK_ANY];
 
 
-    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
+    self.privacyManager = [[UAPrivacyManager alloc] initWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
     self.namedUser = [UANamedUser namedUserWithChannel:self.mockChannel
                                                 config:self.config
                                     notificationCenter:self.mockNotificationCenter

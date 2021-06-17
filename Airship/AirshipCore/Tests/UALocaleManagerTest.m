@@ -2,7 +2,8 @@
 
 #import "UAAirshipBaseTest.h"
 #import "UALocaleManager+Internal.h"
-#import "UAPreferenceDataStore+Internal.h"
+
+@import AirshipCore;
 
 @interface UALocaleManagerTest : UAAirshipBaseTest
 @property (nonatomic, strong) UALocaleManager *localeManager;

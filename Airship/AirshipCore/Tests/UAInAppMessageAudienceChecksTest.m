@@ -9,7 +9,8 @@
 #import "UATagSelector.h"
 #import "UAApplicationMetrics.h"
 #import "UAJSONPredicate.h"
-#import "UAPrivacyManager+Internal.h"
+
+@import AirshipCore;
 
 @interface UAScheduleAudienceChecksTest : UAAirshipBaseTest
 
@@ -29,8 +30,8 @@
     self.mockPush = [self mockForClass:[UAPush class]];
     self.mockChannel = [self mockForClass:[UAChannel class]];
 
-    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore
-                                                 defaultEnabledFeatures:UAFeaturesAll];
+    self.privacyManager = [[UAPrivacyManager alloc] initWithDataStore:self.dataStore
+                                               defaultEnabledFeatures:UAFeaturesAll];
 
     self.mockLocationProvider = [self mockForProtocol:@protocol(UALocationProvider)];
 

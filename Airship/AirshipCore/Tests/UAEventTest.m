@@ -15,7 +15,8 @@
 #import "UADeviceRegistrationEvent+Internal.h"
 #import "UAPushReceivedEvent+Internal.h"
 #import "UAUtils+Internal.h"
-#import "UAPrivacyManager+Internal.h"
+
+@import AirshipCore;
 
 @interface UAEventTest : UABaseTest
 

@@ -5,7 +5,6 @@
 #import "UAEventManager+Internal.h"
 #import "UAEventStore+Internal.h"
 #import "UAEventAPIClient+Internal.h"
-#import "UAPreferenceDataStore+Internal.h"
 #import "UARuntimeConfig.h"
 #import "UACustomEvent.h"
 #import "UARegionEvent.h"
@@ -14,6 +13,8 @@
 #import "UAAppStateTracker.h"
 #import "UATaskManager.h"
 #import "UADelay+Internal.h"
+
+@import AirshipCore;
 
 static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
 

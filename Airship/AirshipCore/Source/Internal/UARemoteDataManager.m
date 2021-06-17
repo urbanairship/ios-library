@@ -5,7 +5,6 @@
 #import "UARemoteDataStore+Internal.h"
 #import "UARemoteDataStorePayload+Internal.h"
 #import "UARemoteDataPayload+Internal.h"
-#import "UAPreferenceDataStore+Internal.h"
 #import "UAirshipVersion.h"
 #import "UAUtils+Internal.h"
 #import "UAAppStateTracker.h"
@@ -14,6 +13,12 @@
 #import "UATask.h"
 #import "UASemaphore.h"
 #import "UARemoteConfigURLManager.h"
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
 
 NSTimeInterval const UARemoteDataRefreshIntervalDefault = 10;
 
@@ -154,7 +159,7 @@ static NSString * const UALastRemoteDataModifiedTime = @"UALastRemoteDataModifie
 
         [self.notificationCenter addObserver:self
                                     selector:@selector(checkRefresh)
-                                        name:UAPrivacyManagerEnabledFeaturesChangedEvent
+                                        name:UAPrivacyManager.changeEvent
                                       object:nil];
 
         UA_WEAKIFY(self)
@@ -429,7 +434,7 @@ static NSString * const UALastRemoteDataModifiedTime = @"UALastRemoteDataModifie
  */
 - (void)notifySubscribersWithRemoteData:(NSArray<UARemoteDataPayload *> *)remoteDataPayloads completionHandler:(void (^)(void))completionHandler {
     NSArray *subscriptions = [self.subscriptions copy];
-    
+
     dispatch_group_t dispatchGroup = dispatch_group_create();
 
     // notify each subscription

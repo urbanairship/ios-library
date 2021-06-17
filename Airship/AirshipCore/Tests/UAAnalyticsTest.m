@@ -4,7 +4,6 @@
 
 #import "UAAnalytics+Internal.h"
 #import "UARuntimeConfig.h"
-#import "UAPreferenceDataStore+Internal.h"
 #import "UAEvent.h"
 #import "UAAssociateIdentifiersEvent+Internal.h"
 #import "UAScreenTrackingEvent+Internal.h"
@@ -20,7 +19,8 @@
 #import "UAAppForegroundEvent+Internal.h"
 #import "UAAppBackgroundEvent+Internal.h"
 #import "UAirship+Internal.h"
-#import "UAPrivacyManager+Internal.h"
+
+@import AirshipCore;
 
 @interface UAAnalytics()
 - (void)onEnabledFeaturesChanged;
@@ -70,8 +70,7 @@
     self.mockChannel = [self mockForClass:[UAChannel class]];
     self.mockAppStateTracker = [self mockForClass:[UAAppStateTracker class]];
     
-    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
-    self.privacyManager.notificationCenter = self.notificationCenter;
+    self.privacyManager = [[UAPrivacyManager alloc] initWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll notificationCenter:self.notificationCenter];
     
     self.analytics = [self createAnalytics];
     

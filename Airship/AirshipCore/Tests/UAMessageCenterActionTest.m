@@ -8,7 +8,8 @@
 #import "UAirship+Internal.h"
 #import "UAInboxMessage.h"
 #import "UAMessageCenter.h"
-#import "UAPreferenceDataStore+Internal.h"
+
+@import AirshipCore;
 
 @interface UAMessageCenterActionTest : UABaseTest
 @property (nonatomic, strong) UAMessageCenterAction *action;

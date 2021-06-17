@@ -4,6 +4,12 @@
 #import "UARemoteConfig.h"
 #import "UARemoteConfigManager+Internal.h"
 
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
+
 static NSString * const UARemoteConfigKey = @"com.urbanairship.config.remote_config_key";
 
 NSNotificationName const UARemoteConfigURLManagerConfigUpdated = @"com.urbanairship.remote_url_config_updated";
@@ -30,9 +36,9 @@ NSNotificationName const UARemoteConfigURLManagerConfigUpdated = @"com.urbanairs
 - (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore
                notificationCenter:(NSNotificationCenter *)notificationCenter {
 
-   
+
     self = [super init];
- 
+
     if (self) {
         self.notificationCenter = notificationCenter;
         self.dataStore = dataStore;
@@ -44,7 +50,7 @@ NSNotificationName const UARemoteConfigURLManagerConfigUpdated = @"com.urbanairs
                                         name:UAAirshipRemoteConfigUpdatedEvent
                                       object:nil];
     }
-   
+
     return self;
 }
 

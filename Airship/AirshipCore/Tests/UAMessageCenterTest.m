@@ -6,7 +6,8 @@
 #import "UAUser.h"
 #import "UAInboxMessageList.h"
 #import "UAComponent+Internal.h"
-#import "UAPrivacyManager+Internal.h"
+
+@import AirshipCore;
 
 @interface UAMessageCenterTest : UAAirshipBaseTest
 @property (nonatomic, strong) id mockDefaultUI;
@@ -28,7 +29,7 @@
     self.mockUser = [self mockForClass:[UAUser class]];
     self.mockMessageList = [self mockForClass:[UAInboxMessageList class]];
     self.mockDisplayDelegate = [self strictMockForProtocol:@protocol(UAMessageCenterDisplayDelegate)];
-    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
+    self.privacyManager = [[UAPrivacyManager alloc] initWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
 
     self.messageCenter = [UAMessageCenter messageCenterWithDataStore:self.dataStore
                                                                 user:self.mockUser

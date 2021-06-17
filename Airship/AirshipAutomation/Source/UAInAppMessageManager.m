@@ -18,6 +18,12 @@
 #import "UAAirshipAutomationCoreImport.h"
 #import "UAAutomationEngine+Internal.h"
 
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+@import AirshipCore;
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
+
 NS_ASSUME_NONNULL_BEGIN
 
 NSString *const UAInAppMessageManagerDisplayIntervalKey = @"UAInAppMessageManagerDisplayInterval";

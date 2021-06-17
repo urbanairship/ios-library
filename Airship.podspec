@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
 
    s.subspec "Core" do |core|
       core.public_header_files        = "Airship/AirshipCore/Source/Public/*.h", "Cocoapods/Airship.h"
-      core.source_files               = "Airship/AirshipCore/Source/Public/*.h", "Airship/AirshipCore/Source/Internal/*.{h,m}", "Cocoapods/Airship.h"
+      core.source_files               = "Airship/AirshipCore/Source/Public/*.h", "Airship/AirshipCore/Source/Internal/*.{h,m}", "Cocoapods/Airship.h", "Airship/AirshipCore/Source/*.{swift}"
       core.private_header_files       = "Airship/AirshipCore/Source/Internal/*.h"
       core.resources                  = "Airship/AirshipCore/Resources/*"
       core.exclude_files              = "Airship/AirshipCore/Resources/Info.plist", "Airship/AirshipCore/Source/Public/AirshipCore.h"

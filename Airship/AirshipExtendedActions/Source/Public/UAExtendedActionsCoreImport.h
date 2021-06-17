@@ -17,6 +17,6 @@
 #import "NSString+UALocalizationAdditions.h"
 #import "UADispatcher.h"
 #import "UARuntimeConfig.h"
-#import "UAPreferenceDataStore.h"
 #import "UASystemVersion.h"
+#import "NSDictionary+UAAdditions.h"
 #endif

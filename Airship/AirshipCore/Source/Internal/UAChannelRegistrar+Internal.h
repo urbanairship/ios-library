@@ -5,10 +5,11 @@
 #import "UAChannelRegistrationPayload.h"
 #import "UAChannelAPIClient+Internal.h"
 #import "UARuntimeConfig.h"
-#import "UAPreferenceDataStore.h"
 #import "UADate.h"
 #import "UADispatcher.h"
 #import "UATaskManager.h"
+
+@class UAPreferenceDataStore;
 
 NS_ASSUME_NONNULL_BEGIN
 

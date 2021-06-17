@@ -11,8 +11,13 @@
 #import "UAAppStateTracker.h"
 #import "UALocaleManager+Internal.h"
 #import "UASemaphore.h"
-#import "UAPrivacyManager.h"
 #import "UAKeychainUtils+Internal.h"
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
 
 NSString *const UAChannelTagsSettingsKey = @"com.urbanairship.channel.tags";
 
@@ -80,7 +85,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
         self.privacyManager = privacyManager;
         self.date = date;
         self.taskManager = taskManager;
-        
+
         self.channelTagRegistrationEnabled = YES;
         self.registrationExtenderBlocks = [NSMutableArray array];
 
@@ -137,7 +142,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
                               config:(UARuntimeConfig *)config
                        localeManager:(UALocaleManager *)localeManager
                       privacyManager:(UAPrivacyManager *)privacyManager{
-    
+
     UATagGroupsRegistrar *tagGroupsRegistrar = [UATagGroupsRegistrar channelTagGroupsRegistrarWithConfig:config dataStore:dataStore];
     return [[self alloc] initWithDataStore:dataStore
                                     config:config
@@ -185,7 +190,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
                                 selector:@selector(applicationDidTransitionToForeground)
                                     name:UAApplicationDidTransitionToForeground
                                   object:nil];
-    
+
     [self.notificationCenter addObserver:self
                                 selector:@selector(localeUpdated)
                                     name:UALocaleUpdatedEvent
@@ -195,10 +200,10 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
                                 selector:@selector(remoteConfigUpdated)
                                     name:UARemoteConfigURLManagerConfigUpdated
                                   object:nil];
-    
+
     [self.notificationCenter addObserver:self
                                 selector:@selector(onEnabledFeaturesChanged)
-                                    name:UAPrivacyManagerEnabledFeaturesChangedEvent
+                                    name:UAPrivacyManager.changeEvent
                                   object:nil];
 }
 
@@ -538,7 +543,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
                                                    object:self
                                                  userInfo:@{UAChannelCreatedEventChannelKey: channelID,
                                                             UAChannelCreatedEventExistingKey: @(existing)}];
-        }]; 
+        }];
     } else {
         UA_LERR(@"Channel creation failed. Missing channelID: %@", channelID);
     }

@@ -17,5 +17,4 @@
 #import "UAExtendableAnalyticsHeaders.h"
 #import "UAAppStateTracker.h"
 #import "UAChannel.h"
-#import "UAPrivacyManager.h"
 #endif

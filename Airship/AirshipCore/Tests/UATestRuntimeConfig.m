@@ -2,6 +2,7 @@
 
 #import "UATestRuntimeConfig.h"
 #import "UARuntimeConfig+Internal.h"
+@import AirshipCore;
 
 @implementation UATestRuntimeConfig
 @synthesize appKey;
@@ -28,7 +29,7 @@
     config.defaultAppKey = @"0000000000000000000000";
     config.defaultAppSecret = @"0000000000000000000000";
 
-    UAPreferenceDataStore *dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:[NSString stringWithFormat:@"uaRuntimeConfigTest"]];
+    UAPreferenceDataStore *dataStore = [[UAPreferenceDataStore alloc] initWithKeyPrefix:[NSString stringWithFormat:@"uaRuntimeConfigTest"]];
     UARemoteConfigURLManager *urlManager = [UARemoteConfigURLManager remoteConfigURLManagerWithDataStore:dataStore];
    
     self = [super initWithConfig:config urlManager:urlManager];

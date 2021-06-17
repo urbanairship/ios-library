@@ -1,7 +1,8 @@
 /* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-#import "UAPreferenceDataStore+Internal.h"
+
+@class UAPreferenceDataStore;
 
 NS_ASSUME_NONNULL_BEGIN
 

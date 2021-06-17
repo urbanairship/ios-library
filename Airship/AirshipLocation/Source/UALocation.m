@@ -2,7 +2,12 @@
 
 #import "UALocation+Internal.h"
 #import "UALocationEvent.h"
-#import "UAPrivacyManager.h"
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+@import AirshipCore;
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
 
 NSString *const UALocationAutoRequestAuthorizationEnabled = @"UALocationAutoRequestAuthorizationEnabled";
 NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdatesAllowed";
@@ -36,7 +41,6 @@ NSString *const UALocationUpdatesEnabled = @"UALocationUpdatesEnabled";
         self.locationManager.delegate = self;
 
         NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
-        self.privacyManager.notificationCenter = notificationCenter;
 
         // Update the location service on app background
         [notificationCenter addObserver:self
@@ -49,11 +53,11 @@ NSString *const UALocationUpdatesEnabled = @"UALocationUpdatesEnabled";
                                selector:@selector(updateLocationService)
                                    name:UAApplicationDidBecomeActiveNotification
                                  object:nil];
-        
+
         // Update the location service when enabled features change
         [notificationCenter addObserver:self
                                selector:@selector(onEnabledFeaturesChanged)
-                                   name:UAPrivacyManagerEnabledFeaturesChangedEvent
+                                   name:UAPrivacyManager.changeEvent
                                  object:nil];
 
         if (self.componentEnabled) {
@@ -239,7 +243,7 @@ NSString *const UALocationUpdatesEnabled = @"UALocationUpdatesEnabled";
     if (!self.componentEnabled || ![self.privacyManager isEnabled:UAFeaturesLocation]) {
         return;
     }
-    
+
     if (self.locationUpdatesStarted) {
         // Already started
         return;

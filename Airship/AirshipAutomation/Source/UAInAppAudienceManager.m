@@ -5,6 +5,12 @@
 #import "UATagGroupsLookupResponse+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
 
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+@import AirshipCore;
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
+
 #define kUAInAppAudienceManagerEnabledKey @"com.urbanairship.tag_groups.FETCH_ENABLED"
 
 #define kUAInAppAudienceManagerPreferLocalTagDataTimeKey @"com.urbanairship.tag_groups.PREFER_LOCAL_TAG_DATA_TIME"

@@ -11,12 +11,12 @@
 #import "UANotificationCategories.h"
 #import "UANotificationCategory.h"
 #import "UANotificationAction.h"
-#import "UAPreferenceDataStore+Internal.h"
 #import "UARuntimeConfig.h"
 #import "UATestDispatcher.h"
 #import "UANotificationContent.h"
 #import "UNNotificationContent+UAAdditions.h"
-#import "UAPrivacyManager+Internal.h"
+
+@import AirshipCore;
 
 @interface UAPushTest : UAAirshipBaseTest
 @property (nonatomic, strong) id mockApplication;
@@ -134,7 +134,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
     self.mockAppStateTracker = [self mockForClass:[UAAppStateTracker class]];
 
-    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
+    self.privacyManager = [[UAPrivacyManager alloc] initWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
     
     self.push = [UAPush pushWithConfig:self.config
                              dataStore:self.dataStore
@@ -157,7 +157,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     self.push.registrationDelegate = nil;
     self.push = nil;
 
-    [self.dataStore removeAll];
     [self.mockUserInfo stopMocking];
     [self.mockUNNotification stopMocking];
     [super tearDown];
@@ -874,21 +873,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     XCTAssertFalse(self.push.quietTimeEnabled, @"QuietTime should be disabled");
 }
 
-/**
- * Test setting the default userPushNotificationsEnabled value.
- */
-- (void)testUserPushNotificationsEnabledByDefault {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    self.push.userPushNotificationsEnabledByDefault = YES;
-
-    XCTAssertTrue(self.push.userPushNotificationsEnabled, @"default user notification value taking affect.");
-
-    [self.dataStore removeAll];
-    self.push.userPushNotificationsEnabledByDefault = NO;
-    XCTAssertFalse(self.push.userPushNotificationsEnabled, @"default user notification value not taking affect.");
-#pragma clang diagnostic pop
-}
 
 /**
  * Test setting the default backgroundPushNotificationEnabled value.

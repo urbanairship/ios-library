@@ -270,7 +270,7 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
             if (cell.cellSwitch.isOn) {
                 UAirship.push().userPushNotificationsEnabled = true
-                UAirship.shared().privacyManager.enable(.push)
+                UAirship.shared().privacyManager.enableFeatures(.push)
             } else {
                 UAirship.push().userPushNotificationsEnabled = false
                 UAirship.shared().privacyManager.disableFeatures(.push)
@@ -288,14 +288,14 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
         case analyticsEnabled:
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
             if (cell.cellSwitch.isOn) {
-                UAirship.shared().privacyManager.enable(UAFeatures.analytics)
+                UAirship.shared().privacyManager.enableFeatures(UAFeatures.analytics)
             } else {
                 UAirship.shared().privacyManager.disableFeatures(UAFeatures.analytics)
             }
         case locationEnabled:
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
             if (cell.cellSwitch.isOn) {
-                UAirship.shared().privacyManager.enable(UAFeatures.location)
+                UAirship.shared().privacyManager.enableFeatures(UAFeatures.location)
                 UALocation.shared().isLocationUpdatesEnabled = true
             } else {
                 UAirship.shared().privacyManager.disableFeatures(UAFeatures.location)

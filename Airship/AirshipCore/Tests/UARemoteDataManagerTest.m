@@ -6,7 +6,7 @@
 #import "UARemoteDataPayload+Internal.h"
 #import "UARemoteDataStore+Internal.h"
 
-#import "UAPreferenceDataStore+Internal.h"
+@import AirshipCore;
 #import "UARuntimeConfig.h"
 #import "UAUtils+Internal.h"
 
@@ -18,7 +18,6 @@
 #import "UALocaleManager+Internal.h"
 #import "UARemoteDataAPIClient+Internal.h"
 #import "UARemoteConfigURLManager.h"
-#import "UAPrivacyManager+Internal.h"
 
 /**
  * Used to test what UARemoteDataManager does when the cache fails underneath it.
@@ -87,7 +86,7 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
     }] registerForTaskWithID:RefreshTask dispatcher:OCMOCK_ANY launchHandler:OCMOCK_ANY];
 
 
-    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
+    self.privacyManager = [[UAPrivacyManager alloc] initWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
     self.testAppStateTracker = [UATestAppStateTracker shared];
     self.remoteDataManager = [self createManager];
 }

@@ -8,9 +8,10 @@
 #import "UARuntimeConfig.h"
 #import "UANamedUser+Internal.h"
 #import "UAirship.h"
-#import "UAPreferenceDataStore+Internal.h"
 #import "UATestDate.h"
 #import "UATestDispatcher.h"
+
+@import AirshipCore;
 
 static NSString * const UAChannelRegistrationTaskID = @"UAChannelRegistrar.registration";
 

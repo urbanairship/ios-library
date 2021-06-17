@@ -3,9 +3,14 @@
 #import "UAChannelCapture+Internal.h"
 #import "UAChannel.h"
 #import "UARuntimeConfig.h"
-#import "UAPreferenceDataStore+Internal.h"
 #import "UAAppStateTracker.h"
 #import "UADate.h"
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
 
 static NSUInteger const UAChannelCaptureKnocksToTriggerChannelCapture = 6;
 static NSTimeInterval const UAChannelCaptureKnocksMaxTimeSeconds = 30;
@@ -74,21 +79,21 @@ static NSTimeInterval const UAChannelCaptureKnocksPasteboardExpirationSeconds = 
     if (!self.enabled) {
         return;
     }
-    
+
     // save time of transition
     if (self.knockTimes.count >= UAChannelCaptureKnocksToTriggerChannelCapture) {
         [self.knockTimes removeObjectAtIndex:0];
     }
     [self.knockTimes addObject:[self.date now]];
-    
+
     if (self.knockTimes.count < UAChannelCaptureKnocksToTriggerChannelCapture) {
         return;
     };
-    
+
     if ([self.knockTimes[UAChannelCaptureKnocksToTriggerChannelCapture - 1] timeIntervalSinceDate:self.knockTimes[0]] > UAChannelCaptureKnocksMaxTimeSeconds) {
         return;
     };
-         
+
     [self.knockTimes removeAllObjects];
 
     if (!self.channel.identifier) {

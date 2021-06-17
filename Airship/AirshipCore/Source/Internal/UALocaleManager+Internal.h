@@ -1,7 +1,8 @@
 /* Copyright Airship and Contributors */
 
 #import "UALocaleManager.h"
-#import "UAPreferenceDataStore.h"
+
+@class UAPreferenceDataStore;
 
 NS_ASSUME_NONNULL_BEGIN
 

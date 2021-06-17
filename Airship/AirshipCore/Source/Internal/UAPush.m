@@ -9,7 +9,6 @@
 #import "UAUtils+Internal.h"
 #import "UANotificationCategories.h"
 #import "UANotificationCategory.h"
-#import "UAPreferenceDataStore+Internal.h"
 #import "UARuntimeConfig.h"
 #import "UANotificationCategory.h"
 #import "UATagUtils+Internal.h"
@@ -18,7 +17,12 @@
 #import "UAAppStateTracker.h"
 #import "NSObject+UAAdditions.h"
 #import "UASemaphore.h"
-#import "UAPrivacyManager.h"
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
 
 NSString *const UAUserPushNotificationsEnabledKey = @"UAUserPushNotificationsEnabled";
 NSString *const UABackgroundPushNotificationsEnabledKey = @"UABackgroundPushNotificationsEnabled";
@@ -102,7 +106,7 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
         self.dataStore = dataStore;
         self.channel = channel;
         self.privacyManager = privacyManager;
-        
+
         self.appStateTracker = appStateTracker;
         self.notificationCenter = notificationCenter;
         self.registrationDelegateWrapper = [[UARegistrationDelegateWrapper alloc] init];
@@ -213,7 +217,7 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
 
     [self.notificationCenter addObserver:self
                                 selector:@selector(onEnabledFeaturesChanged)
-                                    name:UAPrivacyManagerEnabledFeaturesChangedEvent
+                                    name:UAPrivacyManager.changeEvent
                                   object:nil];
 }
 
@@ -371,7 +375,7 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
     if(!self.userPushNotificationsEnabled) {
         return;
     }
-    
+
     BOOL previousValue = self.extendedPushNotificationPermissionEnabled;
     [self.dataStore setBool:enabled forKey:UAExtendedPushNotificationPermissionEnabledKey];
 

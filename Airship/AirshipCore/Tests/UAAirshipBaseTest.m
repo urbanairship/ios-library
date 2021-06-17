@@ -4,14 +4,12 @@
 #import "UAirship+Internal.h"
 #import "UARuntimeConfig+Internal.h"
 
+@import AirshipCore;
+
 @implementation UAAirshipBaseTest
 
 - (void)tearDown {
     [UAirship land];
-
-    if (_dataStore) {
-        [_dataStore removeAll];
-    }
     [super tearDown];
 }
 
@@ -19,21 +17,7 @@
     if (_dataStore) {
         return _dataStore;
     }
-
-    // self.name is "-[TEST_CLASS TEST_NAME]". For key prefix, re-format to "TEST_CLASS.TEST_NAME", e.g. UAAnalyticsTest.testAddEvent
-    NSString *prefStorePrefix = [self.name stringByReplacingOccurrencesOfString:@"\\s"
-                                                                     withString:@"."
-                                                                        options:NSRegularExpressionSearch
-                                                                          range:NSMakeRange(0, [self.name length])];
-    prefStorePrefix = [prefStorePrefix stringByReplacingOccurrencesOfString:@"-|\\[|\\]"
-                                                                 withString:@""
-                                                                    options:NSRegularExpressionSearch
-                                                                      range:NSMakeRange(0, [prefStorePrefix length])];
-
-    _dataStore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:prefStorePrefix];
-
-    [_dataStore removeAll];
-
+    _dataStore = [[UAPreferenceDataStore alloc] initWithKeyPrefix:NSUUID.UUID.UUIDString];
     return _dataStore;
 }
 

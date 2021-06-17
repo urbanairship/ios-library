@@ -4,9 +4,9 @@
 #import "UARuntimeConfig.h"
 #import "UARequestSession.h"
 #import "UARemoteDataAPIClient+Internal.h"
-#import "UAPreferenceDataStore+Internal.h"
 #import "UARemoteDataPayload+Internal.h"
 #import "UAirshipVersion.h"
+@import AirshipCore;
 
 @interface UARemoteDataAPIClientTest : UAAirshipBaseTest
 @property (nonatomic, strong) UARemoteDataAPIClient *remoteDataAPIClient;

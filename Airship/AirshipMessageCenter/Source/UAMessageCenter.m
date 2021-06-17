@@ -10,6 +10,11 @@
 
 #import "UAAirshipMessageCenterCoreImport.h"
 
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+@import AirshipCore;
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
 
 @interface UAMessageCenter()
 @property (nonatomic, strong) UADefaultMessageCenterUI *defaultUI;
@@ -47,11 +52,11 @@ NSString *const UAMessageDataScheme = @"message";
                                selector:@selector(applicationDidTransitionToForeground)
                                    name:UAApplicationDidTransitionToForeground
                                  object:nil];
-        
+
         // Update message center when enabled features change
         [notificationCenter addObserver:self
                                selector:@selector(onEnabledFeaturesChanged)
-                                   name:UAPrivacyManagerEnabledFeaturesChangedEvent
+                                   name:UAPrivacyManager.changeEvent
                                  object:nil];
 
         [notificationCenter addObserver:self
@@ -78,7 +83,7 @@ NSString *const UAMessageDataScheme = @"message";
     UAUser *user = [UAUser userWithChannel:channel
                                     config:config
                                  dataStore:dataStore];
-    
+
     UAInboxMessageList *messageList = [UAInboxMessageList messageListWithUser:user
                                                                        config:config
                                                                     dataStore:dataStore];

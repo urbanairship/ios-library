@@ -3,10 +3,11 @@
 #import "UABaseTest.h"
 
 #import "UAirship+Internal.h"
-#import "UAPreferenceDataStore+Internal.h"
 #import "UAInAppMessage+Internal.h"
 #import "UAInAppMessageBannerDisplayContent+Internal.h"
 #import "UAInAppMessageCustomDisplayContent.h"
+
+@import AirshipCore;
 
 @interface UAInAppMessageTest : UABaseTest
 @property(nonatomic, copy) NSDictionary *json;

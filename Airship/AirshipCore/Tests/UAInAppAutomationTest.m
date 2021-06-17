@@ -5,7 +5,6 @@
 #import "UAirship+Internal.h"
 #import "UAInAppMessageManager+Internal.h"
 #import "UASchedule+Internal.h"
-#import "UAPreferenceDataStore+Internal.h"
 #import "UAScheduleAudience.h"
 #import "UAScheduleAudienceChecks+Internal.h"
 #import "UATagSelector+Internal.h"
@@ -16,7 +15,8 @@
 #import "UAInAppMessageCustomDisplayContent+Internal.h"
 #import "UADeferredSchedule+Internal.h"
 #import "UAFrequencyLimitManager+Internal.h"
-#import "UAPrivacyManager+Internal.h"
+
+@import AirshipCore;
 
 @interface UAInAppAutomationTest : UAAirshipBaseTest
 @property(nonatomic, strong) UAInAppAutomation *inAppAutomation;
@@ -38,7 +38,7 @@
 - (void)setUp {
     [super setUp];
 
-    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
+    self.privacyManager = [[UAPrivacyManager alloc] initWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
     
     self.mockAirship = [self mockForClass:[UAirship class]];
     [[[self.mockAirship stub] andReturn:self.privacyManager] privacyManager];

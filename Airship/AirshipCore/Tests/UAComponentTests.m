@@ -3,7 +3,8 @@
 #import "UAAirshipBaseTest.h"
 #import "UAComponent+Internal.h"
 #import "UAirship+Internal.h"
-#import "UAPreferenceDataStore+Internal.h"
+
+@import AirshipCore;
 
 @interface UATestComponent : UAComponent
 

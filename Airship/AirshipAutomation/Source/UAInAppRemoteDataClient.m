@@ -12,6 +12,12 @@
 #import "UAActionSchedule.h"
 #import "UADeferredSchedule+Internal.h"
 
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+@import AirshipCore;
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
+
 static NSString * const UAInAppMessagesLastPayloadTimeStampKey = @"UAInAppRemoteDataClient.LastPayloadTimeStamp";
 static NSString * const UAInAppMessagesLastPayloadMetadataKey = @"UAInAppRemoteDataClient.LastPayloadMetadata";
 

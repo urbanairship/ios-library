@@ -38,7 +38,7 @@ class HomeViewController: UIViewController {
 
         if (sender == enablePushButton) {
             UAirship.push().userPushNotificationsEnabled = true
-            UAirship.shared().privacyManager.enable(.push)
+            UAirship.shared().privacyManager.enableFeatures(.push)
         }
 
         //The channel ID will need to wait for push registration to return the channel ID

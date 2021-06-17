@@ -218,13 +218,9 @@
 		45C6911F238DC79400A03C94 /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		45C69131238DC82C00A03C94 /* UARateAppActionPredicate+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 992F89881EFD99B000E4C8FE /* UARateAppActionPredicate+Internal.h */; };
 		45C69132238DC82C00A03C94 /* UARateAppActionPredicate.m in Sources */ = {isa = PBXBuildFile; fileRef = 992F89891EFD99B000E4C8FE /* UARateAppActionPredicate.m */; };
-		45C69133238DC82C00A03C94 /* UARateAppAction+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 45FD232C21890EAA0056F111 /* UARateAppAction+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		45C69134238DC82C00A03C94 /* UARateAppAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 996A03AB1EF08E1E003424E0 /* UARateAppAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		45C69135238DC82C00A03C94 /* UARateAppAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 996A03AC1EF08E1E003424E0 /* UARateAppAction.m */; };
-		45C69136238DC82C00A03C94 /* UARateAppPromptViewController+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 9928146F1EF4A14400D0D388 /* UARateAppPromptViewController+Internal.h */; };
-		45C69137238DC82C00A03C94 /* UARateAppPromptViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 992814701EF4A14400D0D388 /* UARateAppPromptViewController.m */; };
 		45C69139238DC86600A03C94 /* UAExtendedActionsModuleLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E27A7D42367AC3200F46B69 /* UAExtendedActionsModuleLoader.m */; };
-		45C6913A238DC88B00A03C94 /* UARateAppPromptView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E9376EA2376236C00AA9C2A /* UARateAppPromptView.xib */; };
 		45C6913B238DC89F00A03C94 /* UAExtendedActions.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6E8A5513236768CC004AE2A0 /* UAExtendedActions.plist */; };
 		45C6913E238DC91900A03C94 /* AirshipExtendedActions.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 45C6912A238DC79400A03C94 /* AirshipExtendedActions.framework */; };
 		45C69141238DCC2700A03C94 /* AirshipExtendedActions.h in Headers */ = {isa = PBXBuildFile; fileRef = 45C6913F238DC93B00A03C94 /* AirshipExtendedActions.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -286,8 +282,6 @@
 		6E4114F42538C0AA00FEE4E8 /* UAComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114472538C09F00FEE4E8 /* UAComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E4114F72538C0AA00FEE4E8 /* UAEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114482538C09F00FEE4E8 /* UAEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E4114F82538C0AA00FEE4E8 /* UAEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114482538C09F00FEE4E8 /* UAEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E4114FB2538C0AA00FEE4E8 /* UAPreferenceDataStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114492538C09F00FEE4E8 /* UAPreferenceDataStore.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E4114FC2538C0AA00FEE4E8 /* UAPreferenceDataStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114492538C09F00FEE4E8 /* UAPreferenceDataStore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E4114FF2538C0AA00FEE4E8 /* UAProximityRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E41144A2538C09F00FEE4E8 /* UAProximityRegion.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E4115002538C0AA00FEE4E8 /* UAProximityRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E41144A2538C09F00FEE4E8 /* UAProximityRegion.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E4115032538C0AA00FEE4E8 /* UAViewUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E41144B2538C09F00FEE4E8 /* UAViewUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -567,8 +561,6 @@
 		6E4118502538C1FC00FEE4E8 /* UAEventAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4116F22538C1E800FEE4E8 /* UAEventAPIClient.m */; };
 		6E4118532538C1FC00FEE4E8 /* UAWebView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4116F32538C1E800FEE4E8 /* UAWebView.m */; };
 		6E4118542538C1FC00FEE4E8 /* UAWebView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4116F32538C1E800FEE4E8 /* UAWebView.m */; };
-		6E4118572538C1FC00FEE4E8 /* UAPreferenceDataStore+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4116F42538C1E800FEE4E8 /* UAPreferenceDataStore+Internal.h */; };
-		6E4118582538C1FD00FEE4E8 /* UAPreferenceDataStore+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4116F42538C1E800FEE4E8 /* UAPreferenceDataStore+Internal.h */; };
 		6E41185B2538C1FD00FEE4E8 /* UAAddCustomEventAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4116F52538C1E900FEE4E8 /* UAAddCustomEventAction.m */; };
 		6E41185C2538C1FD00FEE4E8 /* UAAddCustomEventAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4116F52538C1E900FEE4E8 /* UAAddCustomEventAction.m */; };
 		6E41185F2538C1FD00FEE4E8 /* UAFetchDeviceInfoActionPredicate+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4116F62538C1E900FEE4E8 /* UAFetchDeviceInfoActionPredicate+Internal.h */; };
@@ -893,8 +885,6 @@
 		6E411B202538C20700FEE4E8 /* UAShareActionPredicate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4117A62538C1F900FEE4E8 /* UAShareActionPredicate.m */; };
 		6E411B232538C20700FEE4E8 /* UASwizzler+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4117A72538C1FA00FEE4E8 /* UASwizzler+Internal.h */; };
 		6E411B242538C20700FEE4E8 /* UASwizzler+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4117A72538C1FA00FEE4E8 /* UASwizzler+Internal.h */; };
-		6E411B272538C20700FEE4E8 /* UAPreferenceDataStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4117A82538C1FA00FEE4E8 /* UAPreferenceDataStore.m */; };
-		6E411B282538C20700FEE4E8 /* UAPreferenceDataStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4117A82538C1FA00FEE4E8 /* UAPreferenceDataStore.m */; };
 		6E411B382538C44300FEE4E8 /* AirshipLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E411B352538C44300FEE4E8 /* AirshipLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E411B392538C44300FEE4E8 /* AirshipLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E411B352538C44300FEE4E8 /* AirshipLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E411B702538C4E600FEE4E8 /* UADefaultActions.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6E411B6A2538C4E500FEE4E8 /* UADefaultActions.plist */; };
@@ -956,6 +946,14 @@
 		6E65D537239632EF00AF2D1A /* UALocationCoreImport.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E65D536239632EA00AF2D1A /* UALocationCoreImport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E65D53B2396DBF800AF2D1A /* UAExtendedActionsCoreImport.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E65D53A2396DB3F00AF2D1A /* UAExtendedActionsCoreImport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E65D53C2396DED400AF2D1A /* UARateAppActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 996A03B91EF08EBF003424E0 /* UARateAppActionTest.m */; };
+		6E698DEC26790AC300654DB2 /* UAPreferenceDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698DE826790AC300654DB2 /* UAPreferenceDataStore.swift */; };
+		6E698DED26790AC300654DB2 /* UAPreferenceDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698DE826790AC300654DB2 /* UAPreferenceDataStore.swift */; };
+		6E698DEE26790AC300654DB2 /* UAFeature.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E698DE926790AC300654DB2 /* UAFeature.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E698DEF26790AC300654DB2 /* UAFeature.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E698DE926790AC300654DB2 /* UAFeature.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E698DF026790AC300654DB2 /* AirshipLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698DEA26790AC300654DB2 /* AirshipLogger.swift */; };
+		6E698DF126790AC300654DB2 /* AirshipLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698DEA26790AC300654DB2 /* AirshipLogger.swift */; };
+		6E698DF226790AC300654DB2 /* UAPrivacyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698DEB26790AC300654DB2 /* UAPrivacyManager.swift */; };
+		6E698DF326790AC300654DB2 /* UAPrivacyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698DEB26790AC300654DB2 /* UAPrivacyManager.swift */; };
 		6E6CC31B239A2EA9003D583C /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		6E6CC32E239A2F18003D583C /* UAAccengage+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E6CC303239A2E8F003D583C /* UAAccengage+Internal.h */; };
 		6E6CC32F239A2F19003D583C /* UAAccengageModuleLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E6CC304239A2E8F003D583C /* UAAccengageModuleLoader.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -976,7 +974,6 @@
 		6E7C06BE26127669006D0E84 /* UAAirshipChatModuleLoaderFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E7C06BD26127669006D0E84 /* UAAirshipChatModuleLoaderFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E7C06DB261276DB006D0E84 /* UAAirshipChatModuleLoaderFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E7C06BD26127669006D0E84 /* UAAirshipChatModuleLoaderFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E7C070326128035006D0E84 /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; };
-		6E7C0731261287FA006D0E84 /* AirshipLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7C0730261287FA006D0E84 /* AirshipLogger.swift */; };
 		6E7C07C026139223006D0E84 /* ChatConnectionProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7C07BF26139223006D0E84 /* ChatConnectionProtocol.swift */; };
 		6E7C07CF26139B4A006D0E84 /* Conversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7C07CE26139B4A006D0E84 /* Conversation.swift */; };
 		6E7C07DE26139B58006D0E84 /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7C07DD26139B58006D0E84 /* ChatMessage.swift */; };
@@ -1311,12 +1308,6 @@
 		A6B8F2ED25AC9AF70037B51B /* UARemoteConfigURLManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A6B8F2E925AC9AF70037B51B /* UARemoteConfigURLManager.m */; };
 		A6B8F2FD25AC9B110037B51B /* UARemoteConfigURLManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A6B8F2FA25AC9B110037B51B /* UARemoteConfigURLManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6B8F2FE25AC9B110037B51B /* UARemoteConfigURLManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A6B8F2FA25AC9B110037B51B /* UARemoteConfigURLManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A6C50BEE264BE7940019F7F8 /* UAPrivacyManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A6C50BEB264BE7930019F7F8 /* UAPrivacyManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A6C50BEF264BE7940019F7F8 /* UAPrivacyManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A6C50BEB264BE7930019F7F8 /* UAPrivacyManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A6C50BF4264BE7B50019F7F8 /* UAPrivacyManager+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = A6C50BF0264BE7B50019F7F8 /* UAPrivacyManager+Internal.h */; };
-		A6C50BF5264BE7B50019F7F8 /* UAPrivacyManager+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = A6C50BF0264BE7B50019F7F8 /* UAPrivacyManager+Internal.h */; };
-		A6C50BF8264BE7B50019F7F8 /* UAPrivacyManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A6C50BF1264BE7B50019F7F8 /* UAPrivacyManager.m */; };
-		A6C50BF9264BE7B50019F7F8 /* UAPrivacyManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A6C50BF1264BE7B50019F7F8 /* UAPrivacyManager.m */; };
 		A6CF89312593910300006C83 /* AddTagGroupsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6CF89302593910300006C83 /* AddTagGroupsTableViewController.swift */; };
 		A6E002D3258BABCA00620226 /* UAModifyAttributesAction.h in Headers */ = {isa = PBXBuildFile; fileRef = A6E002CC258BABCA00620226 /* UAModifyAttributesAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6E002D4258BABCA00620226 /* UAModifyAttributesAction.h in Headers */ = {isa = PBXBuildFile; fileRef = A6E002CC258BABCA00620226 /* UAModifyAttributesAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1871,7 +1862,6 @@
 		45F651ACE8833830E1D2333D /* Pods_AirshipAccengageTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AirshipAccengageTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		45FD23172187C7B70056F111 /* UATestSystemVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UATestSystemVersion.h; sourceTree = "<group>"; };
 		45FD23182187C7B70056F111 /* UATestSystemVersion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UATestSystemVersion.m; sourceTree = "<group>"; };
-		45FD232C21890EAA0056F111 /* UARateAppAction+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UARateAppAction+Internal.h"; sourceTree = "<group>"; };
 		494DD9571B0EB677009C134E /* AirshipCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		494DD95B1B0EB677009C134E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		62C67C80125440E0C4F9982D /* Pods-AirshipTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipTests/Pods-AirshipTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -1915,7 +1905,6 @@
 		6E4114462538C09F00FEE4E8 /* UAirshipVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAirshipVersion.h; path = Public/UAirshipVersion.h; sourceTree = "<group>"; };
 		6E4114472538C09F00FEE4E8 /* UAComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAComponent.h; path = Public/UAComponent.h; sourceTree = "<group>"; };
 		6E4114482538C09F00FEE4E8 /* UAEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAEvent.h; path = Public/UAEvent.h; sourceTree = "<group>"; };
-		6E4114492538C09F00FEE4E8 /* UAPreferenceDataStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAPreferenceDataStore.h; path = Public/UAPreferenceDataStore.h; sourceTree = "<group>"; };
 		6E41144A2538C09F00FEE4E8 /* UAProximityRegion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAProximityRegion.h; path = Public/UAProximityRegion.h; sourceTree = "<group>"; };
 		6E41144B2538C09F00FEE4E8 /* UAViewUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAViewUtils.h; path = Public/UAViewUtils.h; sourceTree = "<group>"; };
 		6E41144C2538C09F00FEE4E8 /* NSDictionary+UAAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSDictionary+UAAdditions.h"; path = "Public/NSDictionary+UAAdditions.h"; sourceTree = "<group>"; };
@@ -2056,7 +2045,6 @@
 		6E4116F12538C1E800FEE4E8 /* UAPasteboardAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAPasteboardAction.m; path = Internal/UAPasteboardAction.m; sourceTree = "<group>"; };
 		6E4116F22538C1E800FEE4E8 /* UAEventAPIClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAEventAPIClient.m; path = Internal/UAEventAPIClient.m; sourceTree = "<group>"; };
 		6E4116F32538C1E800FEE4E8 /* UAWebView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAWebView.m; path = Internal/UAWebView.m; sourceTree = "<group>"; };
-		6E4116F42538C1E800FEE4E8 /* UAPreferenceDataStore+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAPreferenceDataStore+Internal.h"; path = "Internal/UAPreferenceDataStore+Internal.h"; sourceTree = "<group>"; };
 		6E4116F52538C1E900FEE4E8 /* UAAddCustomEventAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAAddCustomEventAction.m; path = Internal/UAAddCustomEventAction.m; sourceTree = "<group>"; };
 		6E4116F62538C1E900FEE4E8 /* UAFetchDeviceInfoActionPredicate+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAFetchDeviceInfoActionPredicate+Internal.h"; path = "Internal/UAFetchDeviceInfoActionPredicate+Internal.h"; sourceTree = "<group>"; };
 		6E4116F72538C1E900FEE4E8 /* UALocaleManager+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UALocaleManager+Internal.h"; path = "Internal/UALocaleManager+Internal.h"; sourceTree = "<group>"; };
@@ -2219,7 +2207,6 @@
 		6E4117A52538C1F900FEE4E8 /* UAUIKitStateTrackerAdapter+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAUIKitStateTrackerAdapter+Internal.h"; path = "Internal/UAUIKitStateTrackerAdapter+Internal.h"; sourceTree = "<group>"; };
 		6E4117A62538C1F900FEE4E8 /* UAShareActionPredicate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAShareActionPredicate.m; path = Internal/UAShareActionPredicate.m; sourceTree = "<group>"; };
 		6E4117A72538C1FA00FEE4E8 /* UASwizzler+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UASwizzler+Internal.h"; path = "Internal/UASwizzler+Internal.h"; sourceTree = "<group>"; };
-		6E4117A82538C1FA00FEE4E8 /* UAPreferenceDataStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAPreferenceDataStore.m; path = Internal/UAPreferenceDataStore.m; sourceTree = "<group>"; };
 		6E411B352538C44300FEE4E8 /* AirshipLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirshipLib.h; path = Public/AirshipLib.h; sourceTree = "<group>"; };
 		6E411B6A2538C4E500FEE4E8 /* UADefaultActions.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UADefaultActions.plist; sourceTree = "<group>"; };
 		6E411B6B2538C4E500FEE4E8 /* UADefaultActionsTvOS.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UADefaultActionsTvOS.plist; sourceTree = "<group>"; };
@@ -2304,6 +2291,10 @@
 		6E5F723520169A6600D684B7 /* UADeepLinkActionTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UADeepLinkActionTest.m; sourceTree = "<group>"; };
 		6E65D536239632EA00AF2D1A /* UALocationCoreImport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UALocationCoreImport.h; sourceTree = "<group>"; };
 		6E65D53A2396DB3F00AF2D1A /* UAExtendedActionsCoreImport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAExtendedActionsCoreImport.h; sourceTree = "<group>"; };
+		6E698DE826790AC300654DB2 /* UAPreferenceDataStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UAPreferenceDataStore.swift; sourceTree = "<group>"; };
+		6E698DE926790AC300654DB2 /* UAFeature.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAFeature.h; path = Public/UAFeature.h; sourceTree = "<group>"; };
+		6E698DEA26790AC300654DB2 /* AirshipLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirshipLogger.swift; sourceTree = "<group>"; };
+		6E698DEB26790AC300654DB2 /* UAPrivacyManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UAPrivacyManager.swift; sourceTree = "<group>"; };
 		6E6CC2FF239A2E8F003D583C /* info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = info.plist; sourceTree = "<group>"; };
 		6E6CC301239A2E8F003D583C /* UAAccengageModuleLoader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAAccengageModuleLoader.m; sourceTree = "<group>"; };
 		6E6CC302239A2E8F003D583C /* UAAccengage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAAccengage.m; sourceTree = "<group>"; };
@@ -2322,7 +2313,6 @@
 		6E7C069F261275F6006D0E84 /* AirshipChatModuleLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipChatModuleLoader.swift; sourceTree = "<group>"; };
 		6E7C06AE26127606006D0E84 /* Chat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chat.swift; sourceTree = "<group>"; };
 		6E7C06BD26127669006D0E84 /* UAAirshipChatModuleLoaderFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAAirshipChatModuleLoaderFactory.h; path = Public/UAAirshipChatModuleLoaderFactory.h; sourceTree = "<group>"; };
-		6E7C0730261287FA006D0E84 /* AirshipLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipLogger.swift; sourceTree = "<group>"; };
 		6E7C07BF26139223006D0E84 /* ChatConnectionProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatConnectionProtocol.swift; sourceTree = "<group>"; };
 		6E7C07CE26139B4A006D0E84 /* Conversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Conversation.swift; sourceTree = "<group>"; };
 		6E7C07DD26139B58006D0E84 /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
@@ -2366,7 +2356,6 @@
 		6E9375602376164600AA9C2A /* AirshipLocation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipLocation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E93762A237616EF00AA9C2A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6E937642237618AF00AA9C2A /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/CoreLocation.framework; sourceTree = DEVELOPER_DIR; };
-		6E9376EA2376236C00AA9C2A /* UARateAppPromptView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UARateAppPromptView.xib; sourceTree = "<group>"; };
 		6E9D53C9261D2ED6009BD6EB /* HTTPRequestSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPRequestSession.swift; sourceTree = "<group>"; };
 		6E9D53F7261D6B0F009BD6EB /* MockHTTPRequestSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockHTTPRequestSession.swift; sourceTree = "<group>"; };
 		6E9D5432261E0C49009BD6EB /* WebSocketProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketProtocol.swift; sourceTree = "<group>"; };
@@ -2464,8 +2453,6 @@
 		991A94641FCF2C6B00B57D24 /* UAInAppMessageTextInfoTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageTextInfoTest.m; sourceTree = "<group>"; };
 		991A94661FCF2C7F00B57D24 /* UAInAppMessageButtonInfoTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageButtonInfoTest.m; sourceTree = "<group>"; };
 		991A94681FCF2CEF00B57D24 /* UAInAppMessageMediaInfoTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageMediaInfoTest.m; sourceTree = "<group>"; };
-		9928146F1EF4A14400D0D388 /* UARateAppPromptViewController+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UARateAppPromptViewController+Internal.h"; sourceTree = "<group>"; };
-		992814701EF4A14400D0D388 /* UARateAppPromptViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UARateAppPromptViewController.m; sourceTree = "<group>"; };
 		992F89861EFD7F8600E4C8FE /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		992F89881EFD99B000E4C8FE /* UARateAppActionPredicate+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UARateAppActionPredicate+Internal.h"; sourceTree = "<group>"; };
 		992F89891EFD99B000E4C8FE /* UARateAppActionPredicate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UARateAppActionPredicate.m; sourceTree = "<group>"; };
@@ -2537,9 +2524,6 @@
 		A6B483E825ADE8AA00550305 /* UARemoteConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UARemoteConfig.m; path = Internal/UARemoteConfig.m; sourceTree = "<group>"; };
 		A6B8F2E925AC9AF70037B51B /* UARemoteConfigURLManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UARemoteConfigURLManager.m; path = Internal/UARemoteConfigURLManager.m; sourceTree = "<group>"; };
 		A6B8F2FA25AC9B110037B51B /* UARemoteConfigURLManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UARemoteConfigURLManager.h; path = Public/UARemoteConfigURLManager.h; sourceTree = "<group>"; };
-		A6C50BEB264BE7930019F7F8 /* UAPrivacyManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAPrivacyManager.h; path = AirshipCore/Source/Public/UAPrivacyManager.h; sourceTree = SOURCE_ROOT; };
-		A6C50BF0264BE7B50019F7F8 /* UAPrivacyManager+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAPrivacyManager+Internal.h"; path = "AirshipCore/Source/Internal/UAPrivacyManager+Internal.h"; sourceTree = SOURCE_ROOT; };
-		A6C50BF1264BE7B50019F7F8 /* UAPrivacyManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAPrivacyManager.m; path = AirshipCore/Source/Internal/UAPrivacyManager.m; sourceTree = SOURCE_ROOT; };
 		A6CF89302593910300006C83 /* AddTagGroupsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTagGroupsTableViewController.swift; sourceTree = "<group>"; };
 		A6E002CC258BABCA00620226 /* UAModifyAttributesAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAModifyAttributesAction.h; path = Public/UAModifyAttributesAction.h; sourceTree = "<group>"; };
 		A6E002E1258BABE100620226 /* UAModifyAttributesAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAModifyAttributesAction.m; path = Internal/UAModifyAttributesAction.m; sourceTree = "<group>"; };
@@ -3411,7 +3395,6 @@
 		45C6912D238DC7B300A03C94 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				6E9376EA2376236C00AA9C2A /* UARateAppPromptView.xib */,
 				6E8A5513236768CC004AE2A0 /* UAExtendedActions.plist */,
 			);
 			path = Resources;
@@ -3434,10 +3417,7 @@
 			children = (
 				992F89881EFD99B000E4C8FE /* UARateAppActionPredicate+Internal.h */,
 				992F89891EFD99B000E4C8FE /* UARateAppActionPredicate.m */,
-				45FD232C21890EAA0056F111 /* UARateAppAction+Internal.h */,
 				996A03AC1EF08E1E003424E0 /* UARateAppAction.m */,
-				9928146F1EF4A14400D0D388 /* UARateAppPromptViewController+Internal.h */,
-				992814701EF4A14400D0D388 /* UARateAppPromptViewController.m */,
 			);
 			path = RateApp;
 			sourceTree = "<group>";
@@ -3606,7 +3586,6 @@
 		6E411CEF2538CC2900FEE4E8 /* Airship */ = {
 			isa = PBXGroup;
 			children = (
-				6E411DAA2538D37100FEE4E8 /* Data Store */,
 				6E411DA92538D36100FEE4E8 /* Loaders */,
 				6E4114472538C09F00FEE4E8 /* UAComponent.h */,
 				6E4117922538C1F800FEE4E8 /* UAComponent.m */,
@@ -4000,14 +3979,13 @@
 			name = Loaders;
 			sourceTree = "<group>";
 		};
-		6E411DAA2538D37100FEE4E8 /* Data Store */ = {
+		6E698DE726790A9C00654DB2 /* PrivacyManager */ = {
 			isa = PBXGroup;
 			children = (
-				6E4114492538C09F00FEE4E8 /* UAPreferenceDataStore.h */,
-				6E4117A82538C1FA00FEE4E8 /* UAPreferenceDataStore.m */,
-				6E4116F42538C1E800FEE4E8 /* UAPreferenceDataStore+Internal.h */,
+				6E698DE926790AC300654DB2 /* UAFeature.h */,
+				6E698DEB26790AC300654DB2 /* UAPrivacyManager.swift */,
 			);
-			name = "Data Store";
+			name = PrivacyManager;
 			sourceTree = "<group>";
 		};
 		6E6CC2FE239A2E5F003D583C /* AirshipAccengage */ = {
@@ -4082,7 +4060,6 @@
 				3C0D067C2624EBD3002337B0 /* ChatMessageCell.swift */,
 				3C0D06792624EBD2002337B0 /* ChatViewController.swift */,
 				3C0D067A2624EBD3002337B0 /* ChatResources.swift */,
-				6E7C0730261287FA006D0E84 /* AirshipLogger.swift */,
 				6E9D5472261E0D35009BD6EB /* WebSocket */,
 				6E9D53C8261D2EC2009BD6EB /* HTTP */,
 				6E877780261CF02C00B03FC0 /* ChatAPI */,
@@ -4463,7 +4440,9 @@
 		6E937300237615B400AA9C2A /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				A6C50BD3264972070019F7F8 /* Privacy Manager */,
+				6E698DEA26790AC300654DB2 /* AirshipLogger.swift */,
+				6E698DE826790AC300654DB2 /* UAPreferenceDataStore.swift */,
+				6E698DE726790A9C00654DB2 /* PrivacyManager */,
 				6EA57DEC25433C57005998C7 /* Tasks */,
 				6E411EE22538F8E300FEE4E8 /* AirshipCore.h */,
 				6E41144E2538C09F00FEE4E8 /* UAGlobal.h */,
@@ -4661,16 +4640,6 @@
 				6EFB377C234595C9005E4E44 /* UAMessageCenterNativeBridgeExtensionTest.m */,
 			);
 			name = NativeBridge;
-			sourceTree = "<group>";
-		};
-		A6C50BD3264972070019F7F8 /* Privacy Manager */ = {
-			isa = PBXGroup;
-			children = (
-				A6C50BF1264BE7B50019F7F8 /* UAPrivacyManager.m */,
-				A6C50BF0264BE7B50019F7F8 /* UAPrivacyManager+Internal.h */,
-				A6C50BEB264BE7930019F7F8 /* UAPrivacyManager.h */,
-			);
-			path = "Privacy Manager";
 			sourceTree = "<group>";
 		};
 		CC04F1FF1DCAB22E00B4842D /* Automation */ = {
@@ -5249,11 +5218,9 @@
 				45C69141238DCC2700A03C94 /* AirshipExtendedActions.h in Headers */,
 				6E65D53B2396DBF800AF2D1A /* UAExtendedActionsCoreImport.h in Headers */,
 				45C69142238DCC4600A03C94 /* UAExtendedActionsModuleLoader.h in Headers */,
-				45C69136238DC82C00A03C94 /* UARateAppPromptViewController+Internal.h in Headers */,
 				45C69134238DC82C00A03C94 /* UARateAppAction.h in Headers */,
 				1BB4C015239FB4CD0000559B /* UAExtendedActionsResources.h in Headers */,
 				1B70A13F24F7B3D8003209E0 /* AirshipExtendedActionsLib.h in Headers */,
-				45C69133238DC82C00A03C94 /* UARateAppAction+Internal.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5325,7 +5292,6 @@
 				6E411B132538C20700FEE4E8 /* UADeviceRegistrationEvent+Internal.h in Headers */,
 				6E41158F2538C0AE00FEE4E8 /* UAVersionMatcher.h in Headers */,
 				6E41154F2538C0AC00FEE4E8 /* UARegionEvent.h in Headers */,
-				A6C50BF4264BE7B50019F7F8 /* UAPrivacyManager+Internal.h in Headers */,
 				6E4114CB2538C0A900FEE4E8 /* UARequestSession.h in Headers */,
 				6E41151F2538C0AB00FEE4E8 /* UAAction+Operators.h in Headers */,
 				6E4116332538C0B200FEE4E8 /* UADebugLibraryModuleLoaderFactory.h in Headers */,
@@ -5386,10 +5352,10 @@
 				6E41159B2538C0AE00FEE4E8 /* UADispatcher.h in Headers */,
 				6E4115F72538C0B000FEE4E8 /* UARemoveTagsAction.h in Headers */,
 				6EB4E596254B414F00E3FFD0 /* UATaskManager+Internal.h in Headers */,
-				A6C50BEE264BE7940019F7F8 /* UAPrivacyManager.h in Headers */,
 				6E4116232538C0B100FEE4E8 /* UANativeBridge.h in Headers */,
 				6E4116972538C0B400FEE4E8 /* UAPushableComponent.h in Headers */,
 				6E4118632538C1FD00FEE4E8 /* UALocaleManager+Internal.h in Headers */,
+				6E698DEE26790AC300654DB2 /* UAFeature.h in Headers */,
 				6E411AFB2538C20700FEE4E8 /* UAAttributeMutations+Internal.h in Headers */,
 				6E41166B2538C0B300FEE4E8 /* UABespokeCloseView.h in Headers */,
 				6EF4A43D265C4DD00066E2F2 /* UACoreData.h in Headers */,
@@ -5419,7 +5385,6 @@
 				6E4115E32538C0B000FEE4E8 /* UA_Base64.h in Headers */,
 				6E4116872538C0B400FEE4E8 /* UAModifyTagsAction.h in Headers */,
 				6E411E752538F4C700FEE4E8 /* UAAction+Internal.h in Headers */,
-				6E4118572538C1FC00FEE4E8 /* UAPreferenceDataStore+Internal.h in Headers */,
 				6E4116772538C0B300FEE4E8 /* UALocaleManager.h in Headers */,
 				6E4118972538C1FD00FEE4E8 /* UARemoteDataManager+Internal.h in Headers */,
 				6E4119B72538C20200FEE4E8 /* UAAttributeAPIClient+Internal.h in Headers */,
@@ -5473,7 +5438,6 @@
 				6E41195B2538C20000FEE4E8 /* UAAppExitEvent+Internal.h in Headers */,
 				6E41152F2538C0AB00FEE4E8 /* UAPush.h in Headers */,
 				6E3494F02580254D007F5357 /* UANSArrayValueTransformer.h in Headers */,
-				6E4114FB2538C0AA00FEE4E8 /* UAPreferenceDataStore.h in Headers */,
 				6E41152B2538C0AB00FEE4E8 /* UAJavaScriptCommandDelegate.h in Headers */,
 				6E411A772538C20400FEE4E8 /* UARemoteDataStorePayload+Internal.h in Headers */,
 				6E4114F72538C0AA00FEE4E8 /* UAEvent.h in Headers */,
@@ -5724,7 +5688,6 @@
 				6E411B142538C20700FEE4E8 /* UADeviceRegistrationEvent+Internal.h in Headers */,
 				6E4115902538C0AE00FEE4E8 /* UAVersionMatcher.h in Headers */,
 				6E4115502538C0AC00FEE4E8 /* UARegionEvent.h in Headers */,
-				A6C50BF5264BE7B50019F7F8 /* UAPrivacyManager+Internal.h in Headers */,
 				6E4114CC2538C0A900FEE4E8 /* UARequestSession.h in Headers */,
 				6E4115202538C0AB00FEE4E8 /* UAAction+Operators.h in Headers */,
 				6E4116342538C0B200FEE4E8 /* UADebugLibraryModuleLoaderFactory.h in Headers */,
@@ -5785,11 +5748,11 @@
 				6E4115F82538C0B000FEE4E8 /* UARemoveTagsAction.h in Headers */,
 				6E4116242538C0B100FEE4E8 /* UANativeBridge.h in Headers */,
 				6EB4E597254B414F00E3FFD0 /* UATaskManager+Internal.h in Headers */,
-				A6C50BEF264BE7940019F7F8 /* UAPrivacyManager.h in Headers */,
 				6E4116982538C0B400FEE4E8 /* UAPushableComponent.h in Headers */,
 				6E4118642538C1FD00FEE4E8 /* UALocaleManager+Internal.h in Headers */,
 				6E411AFC2538C20700FEE4E8 /* UAAttributeMutations+Internal.h in Headers */,
 				6E41166C2538C0B300FEE4E8 /* UABespokeCloseView.h in Headers */,
+				6E698DEF26790AC300654DB2 /* UAFeature.h in Headers */,
 				6E4114EC2538C0AA00FEE4E8 /* UAJavaScriptEnvironment.h in Headers */,
 				6E4115442538C0AC00FEE4E8 /* UANotificationCategories.h in Headers */,
 				6EF4A43E265C4DD00066E2F2 /* UACoreData.h in Headers */,
@@ -5816,7 +5779,6 @@
 				6E4115E42538C0B000FEE4E8 /* UA_Base64.h in Headers */,
 				A6B8F2FE25AC9B110037B51B /* UARemoteConfigURLManager.h in Headers */,
 				6E4116882538C0B400FEE4E8 /* UAModifyTagsAction.h in Headers */,
-				6E4118582538C1FD00FEE4E8 /* UAPreferenceDataStore+Internal.h in Headers */,
 				6E411EB22538F4D100FEE4E8 /* UAAction+Internal.h in Headers */,
 				6E4116782538C0B300FEE4E8 /* UALocaleManager.h in Headers */,
 				6E4118982538C1FD00FEE4E8 /* UARemoteDataManager+Internal.h in Headers */,
@@ -5873,7 +5835,6 @@
 				6E41195C2538C20000FEE4E8 /* UAAppExitEvent+Internal.h in Headers */,
 				6E4115302538C0AB00FEE4E8 /* UAPush.h in Headers */,
 				6E3494F12580254D007F5357 /* UANSArrayValueTransformer.h in Headers */,
-				6E4114FC2538C0AA00FEE4E8 /* UAPreferenceDataStore.h in Headers */,
 				6E41152C2538C0AB00FEE4E8 /* UAJavaScriptCommandDelegate.h in Headers */,
 				6E411A782538C20400FEE4E8 /* UARemoteDataStorePayload+Internal.h in Headers */,
 				6E4114F82538C0AA00FEE4E8 /* UAEvent.h in Headers */,
@@ -6146,7 +6107,7 @@
 						CreatedOnToolsVersion = 6.3.1;
 						DevelopmentTeam = PGJV57GD94;
 						DevelopmentTeamName = "Urban Airship Inc.";
-						LastSwiftMigration = 1170;
+						LastSwiftMigration = 1250;
 					};
 					6E7C067A26127557006D0E84 = {
 						CreatedOnToolsVersion = 12.4;
@@ -6162,7 +6123,7 @@
 						ProvisioningStyle = Automatic;
 					};
 					DF6DD4FE1E7A1EB8000C281A = {
-						LastSwiftMigration = 1170;
+						LastSwiftMigration = 1250;
 						ProvisioningStyle = Manual;
 					};
 				};
@@ -6268,7 +6229,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				45C6913A238DC88B00A03C94 /* UARateAppPromptView.xib in Resources */,
 				45C6913B238DC89F00A03C94 /* UAExtendedActions.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6646,7 +6606,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				45C69137238DC82C00A03C94 /* UARateAppPromptViewController.m in Sources */,
 				45C69139238DC86600A03C94 /* UAExtendedActionsModuleLoader.m in Sources */,
 				45C69135238DC82C00A03C94 /* UARateAppAction.m in Sources */,
 				45C69132238DC82C00A03C94 /* UARateAppActionPredicate.m in Sources */,
@@ -6677,6 +6636,7 @@
 				6E4118532538C1FC00FEE4E8 /* UAWebView.m in Sources */,
 				6E4119B32538C20200FEE4E8 /* UAShareAction.m in Sources */,
 				6E41187B2538C1FD00FEE4E8 /* UANSDictionaryValueTransformer.m in Sources */,
+				6E698DF226790AC300654DB2 /* UAPrivacyManager.swift in Sources */,
 				6E41183B2538C1FC00FEE4E8 /* UAAddCustomEventActionPredicate.m in Sources */,
 				6E41185B2538C1FD00FEE4E8 /* UAAddCustomEventAction.m in Sources */,
 				6E41182B2538C1FC00FEE4E8 /* UAUIKitStateTrackerAdapter.m in Sources */,
@@ -6694,6 +6654,7 @@
 				6E411A432538C20400FEE4E8 /* UARemoveTagsAction.m in Sources */,
 				6E4117BB2538C1FA00FEE4E8 /* UAAssociateIdentifiersEvent.m in Sources */,
 				6E4119532538C20000FEE4E8 /* UATagsActionPredicate.m in Sources */,
+				6E698DEC26790AC300654DB2 /* UAPreferenceDataStore.swift in Sources */,
 				6E4118B32538C1FE00FEE4E8 /* UADeepLinkAction.m in Sources */,
 				6E411E6F2538F4C700FEE4E8 /* UAAction+Operators.m in Sources */,
 				6E411ABF2538C20600FEE4E8 /* UAAssociatedIdentifiers.m in Sources */,
@@ -6704,7 +6665,6 @@
 				6E4118A32538C1FE00FEE4E8 /* UATagGroupsRegistrar.m in Sources */,
 				6E4118072538C1FB00FEE4E8 /* UABeveledLoadingIndicator.m in Sources */,
 				6E4119AB2538C20100FEE4E8 /* UAEventData.m in Sources */,
-				A6C50BF8264BE7B50019F7F8 /* UAPrivacyManager.m in Sources */,
 				6E411A1F2538C20300FEE4E8 /* UAirship.m in Sources */,
 				6E411B172538C20700FEE4E8 /* UANSURLValueTransformer.m in Sources */,
 				6E41188F2538C1FD00FEE4E8 /* UAEnableFeatureActionPredicate.m in Sources */,
@@ -6722,6 +6682,7 @@
 				6E41184F2538C1FC00FEE4E8 /* UAEventAPIClient.m in Sources */,
 				6E22BB0C25F1B3D300E5FCB0 /* NSError+UAAdditions.m in Sources */,
 				6E41184B2538C1FC00FEE4E8 /* UAPasteboardAction.m in Sources */,
+				6E698DF026790AC300654DB2 /* AirshipLogger.swift in Sources */,
 				6E41193B2538C20000FEE4E8 /* UAEvent.m in Sources */,
 				6E4119E32538C20200FEE4E8 /* UARemoteDataManager.m in Sources */,
 				6E411AD32538C20600FEE4E8 /* NSString+UALocalizationAdditions.m in Sources */,
@@ -6761,7 +6722,6 @@
 				6E41186F2538C1FD00FEE4E8 /* UAInteractiveNotificationEvent.m in Sources */,
 				6E411E742538F4C700FEE4E8 /* UAActionRunner.m in Sources */,
 				6E4118AB2538C1FE00FEE4E8 /* UANotificationCategories.m in Sources */,
-				6E411B272538C20700FEE4E8 /* UAPreferenceDataStore.m in Sources */,
 				6E411E6C2538F4C700FEE4E8 /* UAActionArguments.m in Sources */,
 				A615E22C2652B014004FA211 /* UNNotificationContent+UAAdditions.m in Sources */,
 				6E4119AF2538C20200FEE4E8 /* UATagGroups.m in Sources */,
@@ -6839,7 +6799,6 @@
 				6E9D53CA261D2ED6009BD6EB /* HTTPRequestSession.swift in Sources */,
 				6E9D5463261E0CD6009BD6EB /* WebSocketFactory.swift in Sources */,
 				6E7C06AF26127606006D0E84 /* Chat.swift in Sources */,
-				6E7C0731261287FA006D0E84 /* AirshipLogger.swift in Sources */,
 				3C9AC940262F9AC300D6E346 /* ChatStyle.swift in Sources */,
 				6E7C07FA26139C02006D0E84 /* ChatDAOProtocol.swift in Sources */,
 				6E7C07CF26139B4A006D0E84 /* Conversation.swift in Sources */,
@@ -7214,6 +7173,7 @@
 				6E4118542538C1FC00FEE4E8 /* UAWebView.m in Sources */,
 				6E4119B42538C20200FEE4E8 /* UAShareAction.m in Sources */,
 				6E41187C2538C1FD00FEE4E8 /* UANSDictionaryValueTransformer.m in Sources */,
+				6E698DF326790AC300654DB2 /* UAPrivacyManager.swift in Sources */,
 				6E41183C2538C1FC00FEE4E8 /* UAAddCustomEventActionPredicate.m in Sources */,
 				6E41185C2538C1FD00FEE4E8 /* UAAddCustomEventAction.m in Sources */,
 				6E411EA72538F4D100FEE4E8 /* UAActionArguments.m in Sources */,
@@ -7231,6 +7191,7 @@
 				6E411A442538C20400FEE4E8 /* UARemoveTagsAction.m in Sources */,
 				6E4117BC2538C1FA00FEE4E8 /* UAAssociateIdentifiersEvent.m in Sources */,
 				6E4119542538C20000FEE4E8 /* UATagsActionPredicate.m in Sources */,
+				6E698DED26790AC300654DB2 /* UAPreferenceDataStore.swift in Sources */,
 				6E4118B42538C1FE00FEE4E8 /* UADeepLinkAction.m in Sources */,
 				6E411AC02538C20600FEE4E8 /* UAAssociatedIdentifiers.m in Sources */,
 				6E4118202538C1FC00FEE4E8 /* UAActivityViewController.m in Sources */,
@@ -7241,7 +7202,6 @@
 				6E4119AC2538C20100FEE4E8 /* UAEventData.m in Sources */,
 				6E411A202538C20300FEE4E8 /* UAirship.m in Sources */,
 				6E411B182538C20700FEE4E8 /* UANSURLValueTransformer.m in Sources */,
-				A6C50BF9264BE7B50019F7F8 /* UAPrivacyManager.m in Sources */,
 				6E4118902538C1FD00FEE4E8 /* UAEnableFeatureActionPredicate.m in Sources */,
 				6E411ADC2538C20600FEE4E8 /* UAConfig.m in Sources */,
 				6E4117B02538C1FA00FEE4E8 /* UA_Base64.m in Sources */,
@@ -7259,6 +7219,7 @@
 				6E41193C2538C20000FEE4E8 /* UAEvent.m in Sources */,
 				6E22BB0D25F1B3D300E5FCB0 /* NSError+UAAdditions.m in Sources */,
 				6E4119E42538C20200FEE4E8 /* UARemoteDataManager.m in Sources */,
+				6E698DF126790AC300654DB2 /* AirshipLogger.swift in Sources */,
 				6E411AD42538C20600FEE4E8 /* NSString+UALocalizationAdditions.m in Sources */,
 				6E411B042538C20700FEE4E8 /* UABespokeCloseView.m in Sources */,
 				6E411AC82538C20600FEE4E8 /* UAFetchDeviceInfoActionPredicate.m in Sources */,
@@ -7299,7 +7260,6 @@
 				6E4118702538C1FD00FEE4E8 /* UAInteractiveNotificationEvent.m in Sources */,
 				6E411EA82538F4D100FEE4E8 /* UAActionRegistry.m in Sources */,
 				6E4118AC2538C1FE00FEE4E8 /* UANotificationCategories.m in Sources */,
-				6E411B282538C20700FEE4E8 /* UAPreferenceDataStore.m in Sources */,
 				6E4119B02538C20200FEE4E8 /* UATagGroups.m in Sources */,
 				6E411B0C2538C20700FEE4E8 /* UAURLAllowList.m in Sources */,
 				6E411A682538C20400FEE4E8 /* UAJavaScriptCommand.m in Sources */,
@@ -7527,6 +7487,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = C3AEC8D23AA7835AC1E74C9A /* Pods-AirshipAccengageTests.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -7557,6 +7518,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 6D0D4500368AC9710E0F37B7 /* Pods-AirshipAccengageTests.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -7834,6 +7796,7 @@
 				);
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TVOS_DEPLOYMENT_TARGET = 11.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -7897,6 +7860,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TVOS_DEPLOYMENT_TARGET = 11.0;
 				VALIDATE_PRODUCT = YES;
@@ -7937,7 +7901,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = "";
 				VALID_ARCHS = "$(inherited) x86_64";
 			};
 			name = Debug;
@@ -7972,7 +7935,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.urbanairship.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = "";
 				VALID_ARCHS = "$(inherited) x86_64";
 			};
 			name = Release;
@@ -8172,6 +8134,7 @@
 		6E8776B0261BC1E100B03FC0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -8203,6 +8166,7 @@
 		6E8776B1261BC1E100B03FC0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -8283,6 +8247,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 0F55D47F540C142B0F469570 /* Pods-AirshipTests.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -8319,6 +8284,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 62C67C80125440E0C4F9982D /* Pods-AirshipTests.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -8378,7 +8344,6 @@
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 3;
 			};
 			name = Debug;
@@ -8411,7 +8376,6 @@
 				PRODUCT_NAME = AirshipCore;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 3;
 			};
 			name = Release;

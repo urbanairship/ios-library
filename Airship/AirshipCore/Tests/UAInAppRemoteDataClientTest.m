@@ -6,7 +6,6 @@
 #import "UAirship+Internal.h"
 #import "UARemoteDataPayload+Internal.h"
 #import "UAUtils+Internal.h"
-#import "UAPreferenceDataStore+Internal.h"
 #import "UAPush+Internal.h"
 #import "UASchedule+Internal.h"
 #import "UAScheduleEdits+Internal.h"
@@ -16,6 +15,8 @@
 #import "UAInappMessageSchedule.h"
 #import "UADeferredSchedule+Internal.h"
 #import "UAInAppMessageCustomDisplayContent.h"
+
+@import AirshipCore;
 
 @interface UAInAppRemoteDataClientTest : UAAirshipBaseTest
 @property (nonatomic,strong) UAInAppRemoteDataClient *remoteDataClient;

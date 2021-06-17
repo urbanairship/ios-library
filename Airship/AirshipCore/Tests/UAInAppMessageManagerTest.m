@@ -5,7 +5,6 @@
 #import "UAirship+Internal.h"
 #import "UAInAppMessageAdapterProtocol.h"
 #import "UAInAppMessageManager+Internal.h"
-#import "UAPreferenceDataStore+Internal.h"
 #import "UAInAppMessageBannerDisplayContent+Internal.h"
 #import "UAInAppMessageCustomDisplayContent+Internal.h"
 #import "UAActionRunner.h"
@@ -15,6 +14,8 @@
 #import "UAInAppMessageAssetCache+Internal.h"
 #import "UAInAppMessage+Internal.h"
 #import "NSObject+UAAdditions.h"
+
+@import AirshipCore;
 
 NSString * const UAInAppMessageManagerTestScheduleID = @"schedule ID";
 

@@ -38,7 +38,6 @@
 #import "UANotificationContent.h"
 #import "UANotificationResponse.h"
 #import "UAPadding.h"
-#import "UAPreferenceDataStore.h"
 #import "UAPush.h"
 #import "UAPushableComponent.h"
 #import "UARegionEvent.h"
@@ -73,5 +72,4 @@
 #import "UATaskManager.h"
 #import "NSDictionary+UAAdditions.h"
 #import "UANetworkMonitor.h"
-#import "UAPrivacyManager.h"
 #endif

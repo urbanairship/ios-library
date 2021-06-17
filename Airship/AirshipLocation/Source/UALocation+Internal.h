@@ -3,6 +3,9 @@
 #import "UALocation.h"
 #import "UALocationCoreImport.h"
 
+@class UAPreferenceDataStore;
+@class UAPrivacyManager;
+
 /*
  * SDK-private extensions to UALocation
  */

@@ -1,9 +1,10 @@
 /* Copyright Airship and Contributors */
 
 #import "UAAirshipBaseTest.h"
-#import "UAPreferenceDataStore+Internal.h"
 #import "UAPendingTagGroupStore+Internal.h"
 #import "UATagGroupsRegistrar+Internal.h"
+
+@import AirshipCore;
 
 @interface UAPendingTagGroupStoreTest : UAAirshipBaseTest
 

@@ -4,9 +4,8 @@ import UIKit
 
 #if canImport(AirshipCore)
 import AirshipCore
-#elseif !COCOAPODS && canImport(Airship)
-import Airship
 #endif
+
 
 /**
  * Chat view controller.

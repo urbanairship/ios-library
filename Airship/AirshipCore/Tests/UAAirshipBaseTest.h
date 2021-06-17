@@ -1,8 +1,10 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAPreferenceDataStore+Internal.h"
 #import "UATestRuntimeConfig.h"
+
+@import AirshipCore;
+
 
 NS_ASSUME_NONNULL_BEGIN
 

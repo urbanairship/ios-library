@@ -8,7 +8,6 @@
 #import "UAUtils.h"
 #import "UARuntimeConfig.h"
 #import "UAPushableComponent.h"
-#import "UAPreferenceDataStore.h"
 #import "UANativeBridgeExtensionDelegate.h"
 #import "UANativeBridge.h"
 #import "UAModuleLoader.h"
@@ -32,6 +31,5 @@
 #import "UASemaphore.h"
 #import "UARequestSession.h"
 #import "UARequest.h"
-#import "UAPrivacyManager.h"
 #import "UARemoteConfigURLManager.h"
 #endif

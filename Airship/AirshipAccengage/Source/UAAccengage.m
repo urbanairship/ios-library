@@ -12,6 +12,12 @@
 #import "UAPush.h"
 #import "ACCStubData+Internal.h"
 
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+@import AirshipCore;
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
+
 static NSString * const UAAccengageIDKey = @"a4sid";
 static NSString * const UAAccengageForegroundKey = @"a4sd";
 NSString *const UAAccengageSettingsMigrated = @"UAAccengageSettingsMigrated";

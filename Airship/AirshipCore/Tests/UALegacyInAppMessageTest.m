@@ -4,7 +4,8 @@
 
 #import "UALegacyInAppMessage.h"
 #import "UAirship+Internal.h"
-#import "UAPreferenceDataStore+Internal.h"
+
+@import AirshipCore;
 
 @interface UALegacyInAppMessageTest : UAAirshipBaseTest
 @property(nonatomic, strong) id mockAirship;

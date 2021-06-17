@@ -3,8 +3,9 @@
 #import <Foundation/Foundation.h>
 #import "UAApplicationMetrics.h"
 #import "UADate.h"
-#import "UAPreferenceDataStore+Internal.h"
-#import "UAPrivacyManager.h"
+
+@class UAPrivacyManager;
+@class UAPreferenceDataStore;
 
 NS_ASSUME_NONNULL_BEGIN
 

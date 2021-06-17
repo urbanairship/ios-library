@@ -3,17 +3,26 @@
 import Foundation
 import os
 
-#if canImport(AirshipCore)
-import AirshipCore
-#elseif !COCOAPODS && canImport(Airship)
-import Airship
-#endif
+/**
+ * Airship logger.
+ * @note For internal use only. :nodoc:
+ */
+@objc(UAirshipLogger)
+public class AirshipLogger : NSObject {
 
-class AirshipLogger {
+    @objc
+    public static var loggingEnabled = true
+
+    @objc
+    public static var implementationErrorLoggingEnabled = true
+
+    @objc
+    public static var logLevel: UALogLevel = .error
+
     @available(macOS 11.0, iOS 14.0, watchOS 7.0, tvOS 14.0, *)
     static let LOGGER = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Airship")
-    
-    static func trace(_ message: String,
+
+    public static func trace(_ message: String,
                              file: String = #file,
                              line: Int = #line,
                              function: String = #function) {
@@ -25,7 +34,7 @@ class AirshipLogger {
             function: function)
     }
 
-    static func debug(_ message: String,
+    public static func debug(_ message: String,
                              file: String = #file,
                              line: Int = #line,
                              function: String = #function) {
@@ -36,9 +45,9 @@ class AirshipLogger {
             line: line,
             function: function)
     }
-    
 
-    static func info(_ message: String,
+
+    public static func info(_ message: String,
                             file: String = #file,
                             line: Int = #line,
                             function: String = #function) {
@@ -49,7 +58,7 @@ class AirshipLogger {
             function: function)
     }
 
-    static func warn(_ message: String,
+    public static func warn(_ message: String,
                             file: String = #file,
                             line: Int = #line,
                             function: String = #function) {
@@ -60,7 +69,7 @@ class AirshipLogger {
             function: function)
     }
 
-    static func error(_ message: String,
+    public static func error(_ message: String,
                             file: String = #file,
                             line: Int = #line,
                             function: String = #function) {
@@ -70,6 +79,26 @@ class AirshipLogger {
             file:file,
             line: line,
             function: function)
+    }
+
+    public static func impError(_ message: String,
+                             file: String = #file,
+                             line: Int = #line,
+                             function: String = #function) {
+
+        if (self.implementationErrorLoggingEnabled) {
+            log(logLevel: UALogLevel.error,
+                message: "🚨Airship Implementation Error🚨: \(message)",
+                file:file,
+                line: line,
+                function: function)
+        } else {
+            log(logLevel: UALogLevel.error,
+                message: "Airship Implementation Error: \(message)",
+                file:file,
+                line: line,
+                function: function)
+        }
     }
 
     private static func log(logLevel: UALogLevel,
@@ -78,7 +107,7 @@ class AirshipLogger {
                     line: Int = #line,
                     function: String = #function) {
 
-        if (uaLoggingEnabled.boolValue && logLevel.rawValue >= uaLogLevel.rawValue) {
+        if (loggingEnabled && logLevel.rawValue >= self.logLevel.rawValue) {
             if #available(macOS 11.0, iOS 14.0, watchOS 7.0, tvOS 14.0, *) {
                 LOGGER.log(level: logType(logLevel), "[\(logInitial(logLevel))] \(function) [Line \(line)] \(message)")
             } else {

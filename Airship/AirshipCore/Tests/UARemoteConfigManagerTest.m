@@ -33,8 +33,7 @@
 
 - (void)setUp {
     [super setUp];
-
-    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
+    self.privacyManager = [[UAPrivacyManager alloc] initWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
 
     UADisposable *disposable = [UADisposable disposableWithBlock:^{
         self.publishBlock = nil;

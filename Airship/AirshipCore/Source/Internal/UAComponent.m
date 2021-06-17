@@ -1,7 +1,12 @@
 /* Copyright Airship and Contributors */
 
 #import "UAComponent+Internal.h"
-#import "UAPreferenceDataStore+Internal.h"
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
 
 NSString * const UAComponentKey = @"UAComponent";
 NSString * const UAComponentEnabledKey = @"enabled";
@@ -19,11 +24,11 @@ BOOL const UAComponentEnabledDefault = YES;
 
 - (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore {
     self = [super init];
-    
+
     if (self) {
         self.componentDataStore = dataStore;
     }
-    
+
     return self;
 }
 
@@ -40,10 +45,10 @@ BOOL const UAComponentEnabledDefault = YES;
 
 - (void)setComponentEnabled:(BOOL)componentEnabled {
     BOOL valueChanged = (self.componentEnabled != componentEnabled);
-    
+
     // save value to data store
     [self.componentDataStore setBool:componentEnabled forKey:[self componentEnabledKey]];
-    
+
     if (valueChanged) {
         [self onComponentEnableChange];
     }

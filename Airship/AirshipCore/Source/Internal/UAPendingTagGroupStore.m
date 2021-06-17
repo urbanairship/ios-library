@@ -3,6 +3,12 @@
 #import "UAPendingTagGroupStore+Internal.h"
 #import "UAPersistentQueue+Internal.h"
 
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
+
 #define kUATagGroupsSentMutationsDefaultMaxAge 60 * 60 * 24 // 1 Day
 
 // Legacy prefix for channel tag group keys
@@ -35,7 +41,7 @@ NSString * const UATagGroupsNamedUserStoreKey = @"named_user";
 
     if (self) {
         self.dataStore = dataStore;
-        
+
         self.storeKey = storeKey;
 
         if ([self.storeKey isEqualToString:UATagGroupsNamedUserStoreKey]) {
@@ -45,7 +51,7 @@ NSString * const UATagGroupsNamedUserStoreKey = @"named_user";
             self.pendingTagGroupsMutations = [UAPersistentQueue persistentQueueWithDataStore:dataStore
                                                                                          key:kUAPendingChannelTagGroupsMutationsKey];
         }
-        
+
         [self migrateLegacyDataStoreKeys];
     }
 
@@ -88,20 +94,20 @@ NSString * const UATagGroupsNamedUserStoreKey = @"named_user";
     NSString *addTagsKey = [self legacyAddTagsKey];
     NSString *removeTagsKey = [self legacyRemoveTagsKey];
     NSString *mutationsKey = [self legacyMutationsKey];
-    
+
     NSDictionary *addTags = [self.dataStore objectForKey:addTagsKey];
     NSDictionary *removeTags = [self.dataStore objectForKey:removeTagsKey];
-    
+
     id encodedMutations = [self.dataStore objectForKey:mutationsKey];
     NSArray *mutations = encodedMutations == nil ? nil : [NSKeyedUnarchiver unarchiveObjectWithData:encodedMutations];
-    
+
     if (addTags || removeTags) {
         UATagGroupsMutation *mutation = [UATagGroupsMutation mutationWithAddTags:addTags removeTags:removeTags];
         [self addPendingMutation:mutation];
         [self.dataStore removeObjectForKey:addTagsKey];
         [self.dataStore removeObjectForKey:removeTagsKey];
     }
-    
+
     if (mutations.count) {
         [self.pendingTagGroupsMutations addObjects:mutations];
         [self.dataStore removeObjectForKey:mutationsKey];

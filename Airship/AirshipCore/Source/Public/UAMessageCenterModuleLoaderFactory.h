@@ -2,9 +2,10 @@
 
 #import <Foundation/Foundation.h>
 #import "UAModuleLoader.h"
-#import "UAPreferenceDataStore.h"
 #import "UAChannel.h"
 #import "UAExtendableChannelRegistration.h"
+
+@class UAPreferenceDataStore;
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -17,7 +17,8 @@
 #import "UAPush+Internal.h"
 #import "UALocaleManager.h"
 #import "UATaskManager.h"
-#import "UAPrivacyManager+Internal.h"
+
+@import AirshipCore;
 
 static NSString * const UAChannelTagUpdateTaskID = @"UAChannel.tags.update";
 static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.update";
@@ -90,8 +91,8 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
         self.launchHandler =  (__bridge void (^)(id<UATask>))arg;
     }] registerForTaskWithIDs:@[UAChannelTagUpdateTaskID, UAChannelAttributeUpdateTaskID] dispatcher:OCMOCK_ANY launchHandler:OCMOCK_ANY];
     
-    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
-
+    self.privacyManager = [[UAPrivacyManager alloc] initWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
+    
     // Put setup code here. This method is called before the invocation of each test method in the class.
     self.channel = [self createChannel];
 

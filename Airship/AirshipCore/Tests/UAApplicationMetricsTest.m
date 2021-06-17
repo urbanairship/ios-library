@@ -2,9 +2,10 @@
 
 #import "UAAirshipBaseTest.h"
 #import "UAApplicationMetrics+Internal.h"
-#import "UAPreferenceDataStore+Internal.h"
 #import "UATestDate.h"
 #import "UAAppStateTracker.h"
+
+@import AirshipCore;
 
 @interface UAApplicationMetricsTest : UAAirshipBaseTest
 @property (nonatomic, strong) UAApplicationMetrics *metrics;
@@ -23,7 +24,7 @@
     self.testDate.absoluteTime = [NSDate date];
 
     self.notificationCenter = [NSNotificationCenter defaultCenter];
-    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
+    self.privacyManager = [[UAPrivacyManager alloc] initWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
     self.mockBundle = [self mockForClass:[NSBundle class]];
     [[[self.mockBundle stub] andReturn:self.mockBundle] mainBundle];
     self.metrics = [UAApplicationMetrics applicationMetricsWithDataStore:self.dataStore

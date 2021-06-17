@@ -3,7 +3,6 @@
 #import "UAAirshipBaseTest.h"
 #import "UALegacyInAppMessaging+Internal.h"
 #import "UAirship+Internal.h"
-#import "UAPreferenceDataStore+Internal.h"
 #import "UAAnalytics.h"
 #import "UAActionRegistry.h"
 #import "UAInAppMessageBannerDisplayContent.h"
@@ -11,6 +10,8 @@
 #import "UAInAppMessage+Internal.h"
 #import "UAInAppAutomation.h"
 #import "UALegacyInAppMessage.h"
+
+@import AirshipCore;
 
 @interface UALegacyInAppMessagingTest : UAAirshipBaseTest
 @property(nonatomic, strong) id mockAnalytics;

@@ -6,13 +6,18 @@
 #import "UAUtils+Internal.h"
 #import "UAChannelRegistrationPayload+Internal.h"
 #import "UARuntimeConfig.h"
-#import "UAPreferenceDataStore+Internal.h"
 #import "UADate.h"
 #import "UADispatcher.h"
 #import "UATaskManager.h"
 #import "UATask.h"
 #import "UASemaphore.h"
 #import "UAKeychainUtils+Internal.h"
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
 
 NSString *const UAChannelRegistrarChannelIDKey = @"UAChannelID";
 

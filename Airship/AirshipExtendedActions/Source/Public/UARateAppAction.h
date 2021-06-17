@@ -45,30 +45,8 @@ extern NSString * const UARateAppActionDefaultRegistryAlias;
 extern NSString *const UARateAppShowLinkPromptKey;
 
 /**
- * The link prompt's title key.
- */
-extern NSString *const UARateAppLinkPromptTitleKey;
-
-/**
- * The link prompt's body key.
- */
-extern NSString *const UARateAppLinkPromptBodyKey;
-
-/**
  * The itunes ID key.
  */
 extern NSString *const UARateAppItunesIDKey;
-
-/**
- * Returns an NSArray of NSNumbers representing the time intervals for each call to display the link prompt since epoch.
- * Timestamps older than 1 year are automatically removed. Timestamps will only be collected for release builds.
- */
--(NSArray *)rateAppLinkPromptTimestamps;
-
-/**
- * Returns an NSArray of NSNumbers representing the time intervals for each call to display the system prompt since epoch.
- * Timestamps older than 1 year are automatically removed. Timestamps for debug and release builds will be collected in separate stores.
- */
--(NSArray *)rateAppPromptTimestamps;
 
 @end

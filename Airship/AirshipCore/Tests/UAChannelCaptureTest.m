@@ -2,11 +2,12 @@
 
 #import "UAAirshipBaseTest.h"
 #import "UAChannelCapture+Internal.h"
-#import "UAPreferenceDataStore+Internal.h"
 #import "UAChannel.h"
 #import "UARuntimeConfig.h"
 #import "UAAppStateTracker.h"
 #import "UATestDate.h"
+
+@import AirshipCore;
 
 @interface UAChannelCaptureTest : UAAirshipBaseTest
 @property(nonatomic, strong) UAChannelCapture *channelCapture;

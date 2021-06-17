@@ -31,8 +31,8 @@ class UAProjectValidationTest: XCTestCase {
     }
 
     func testAirshipCore() {
-        validateTarget(target: "AirshipCore", sourcePaths:["AirshipCore/Source/Internal", "AirshipCore/Source/Public"])
-        validateTarget(target: "AirshipCore tvOS", sourcePaths:["AirshipCore/Source/Internal", "AirshipCore/Source/Public"])
+        validateTarget(target: "AirshipCore", sourcePaths:["AirshipCore/Source/Internal", "AirshipCore/Source/Public", "AirshipCore/Source"])
+        validateTarget(target: "AirshipCore tvOS", sourcePaths:["AirshipCore/Source/Internal", "AirshipCore/Source/Public", "AirshipCore/Source"])
     }
 
     func testAirshipLocation() {

@@ -2,7 +2,8 @@
 
 #import <XCTest/XCTest.h>
 #import "UAAirshipBaseTest.h"
-#import "UAPrivacyManager+Internal.h"
+
+@import AirshipCore;
 
 @interface UAPrivacyManagerTest : UAAirshipBaseTest
 @property (nonatomic, strong) UAPrivacyManager *privacyManager;
@@ -11,20 +12,19 @@
 @implementation UAPrivacyManagerTest
 
 - (void)setUp {
-    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
+    self.privacyManager = [[UAPrivacyManager alloc] initWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
 }
 
 - (void)testDefaultFeatures {
     XCTAssertEqual(self.privacyManager.enabledFeatures, UAFeaturesAll);
     
-    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesNone];
-    
+    self.privacyManager = [[UAPrivacyManager alloc] initWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesNone];
     XCTAssertEqual(self.privacyManager.enabledFeatures, UAFeaturesNone);
 }
 
 - (void)testEnableFeatures {
-    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesNone];
-    
+    self.privacyManager = [[UAPrivacyManager alloc] initWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesNone];
+
     XCTAssertEqual(self.privacyManager.enabledFeatures, UAFeaturesNone);
     
     [self.privacyManager enableFeatures:UAFeaturesPush];
@@ -55,8 +55,8 @@
 }
 
 - (void)testIsEnabled {
-    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesNone];
-    
+    self.privacyManager = [[UAPrivacyManager alloc] initWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesNone];
+
     XCTAssertFalse([self.privacyManager isEnabled:UAFeaturesChat]);
     
     [self.privacyManager enableFeatures:UAFeaturesContacts];
@@ -94,9 +94,9 @@
     XCTAssertTrue([self.privacyManager isEnabled:UAFeaturesAnalytics]);
 }
 
-- (void)testNotifiedOnChnage {
+- (void)testNotifiedOnChange {
     __block NSUInteger eventCount = 0;
-    id observer = [[NSNotificationCenter defaultCenter] addObserverForName:UAPrivacyManagerEnabledFeaturesChangedEvent
+    id observer = [[NSNotificationCenter defaultCenter] addObserverForName:UAPrivacyManager.changeEvent
                                                                      object:nil
                                                                       queue:nil
                                                                  usingBlock:^(NSNotification * _Nonnull note) {

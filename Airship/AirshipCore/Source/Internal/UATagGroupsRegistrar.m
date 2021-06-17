@@ -1,12 +1,17 @@
 /* Copyright Airship and Contributors */
 
 #import "UATagGroupsRegistrar+Internal.h"
-
 #import "UATagGroupsMutation+Internal.h"
 #import "UATagGroupsAPIClient+Internal.h"
 #import "UATagUtils+Internal.h"
 #import "UAAsyncOperation.h"
 #import "UAPendingTagGroupStore+Internal.h"
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
 
 @interface UATagGroupsRegistrar()
 
@@ -37,7 +42,7 @@
 - (instancetype)initWithPendingTagGroupStore:(UAPendingTagGroupStore *)pendingTagGroupStore
                                    apiClient:(UATagGroupsAPIClient *)apiClient
                                  application:application {
-    
+
     self = [super init];
 
     if (self) {
@@ -189,7 +194,7 @@
         if (clearPendingOnChange && ![identifier isEqualToString:self.identifier]) {
             [self clearPendingMutations];
         }
-        
+
         self.identifier = identifier;
     }
 }

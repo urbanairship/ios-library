@@ -16,6 +16,14 @@
 #import "UAInAppMessageSchedule.h"
 #import "UADeferredScheduleAPIClient+Internal.h"
 
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+@import AirshipCore;
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
+
+
 NS_ASSUME_NONNULL_BEGIN
 
 static NSTimeInterval const MaxSchedules = 1000;
@@ -70,7 +78,7 @@ static NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerP
 
     UAAutomationStore *store = [UAAutomationStore automationStoreWithConfig:config
                                                               scheduleLimit:MaxSchedules];
-    
+
     UAAutomationEngine *automationEngine = [UAAutomationEngine automationEngineWithAutomationStore:store];
 
     UAInAppRemoteDataClient *dataClient = [UAInAppRemoteDataClient clientWithRemoteDataProvider:remoteDataProvider
@@ -136,7 +144,7 @@ static NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerP
     // Update in-app automation when enabled features change
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(onEnabledFeaturesChanged)
-                                                 name:UAPrivacyManagerEnabledFeaturesChangedEvent
+                                                 name:UAPrivacyManager.changeEvent
                                                object:nil];
 
     [self updateSubscription];

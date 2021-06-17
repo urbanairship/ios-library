@@ -2,11 +2,12 @@
 
 #import <Foundation/Foundation.h>
 #import "UAModuleLoader.h"
-#import "UAPreferenceDataStore.h"
 #import "UAExtendableChannelRegistration.h"
 #import "UAExtendableAnalyticsHeaders.h"
 #import "UAAnalytics.h"
 #import "UALocationProvider.h"
+
+@class UAPreferenceDataStore;
 
 NS_ASSUME_NONNULL_BEGIN
 
