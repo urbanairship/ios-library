@@ -35,6 +35,7 @@
 @class UAComponent;
 @class UALocaleManager;
 @class UAPrivacyManager;
+@class UAContact;
 
 //---------------------------------------------------------------------------------------
 // UADeepLinkDelegate Protocol
@@ -256,6 +257,13 @@ extern NSString * const UAAirshipReadyNotification;
  * @return The `UANamedUser` instance.
  */
 + (null_unspecified UANamedUser *)namedUser;
+
+/**
+ * Returns the `UAContact` instance.
+ *
+ * @return The `UAContact` instance.
+ */
++ (null_unspecified UAContact *)contact;
 
 /**
  * Returns the default `UAAnalytics` instance.

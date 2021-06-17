@@ -29,6 +29,10 @@ NSString * const UAirshipChatClassName = @"UAirshipChat";
            return @[[UAirship namedUser]];
     }
 
+    if ([moduleName isEqualToString:kUARemoteConfigModuleContact]) {
+        return @[[UAirship contact]];
+    }
+
     if ([moduleName isEqualToString:kUARemoteConfigModuleAnalytics]) {
         return @[[UAirship analytics]];
     }

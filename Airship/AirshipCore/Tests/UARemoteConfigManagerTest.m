@@ -86,7 +86,7 @@
  * Test current modules list matches hardcoded expectation.
  */
 - (void)testCurrentModules {
-    NSArray *expectedModules = @[kUARemoteConfigModulePush, kUARemoteConfigModuleChannel, kUARemoteConfigModuleAnalytics, kUARemoteConfigModuleMessageCenter, kUARemoteConfigModuleInAppMessaging, kUARemoteConfigModuleAutomation, kUARemoteConfigModuleNamedUser, kUARemoteConfigModuleLocation, kUARemoteConfigModuleChat];
+    NSArray *expectedModules = @[kUARemoteConfigModulePush, kUARemoteConfigModuleChannel, kUARemoteConfigModuleAnalytics, kUARemoteConfigModuleMessageCenter, kUARemoteConfigModuleInAppMessaging, kUARemoteConfigModuleAutomation, kUARemoteConfigModuleNamedUser, kUARemoteConfigModuleLocation, kUARemoteConfigModuleChat, kUARemoteConfigModuleContact];
 
     NSArray *currentModules = kUARemoteConfigModuleAllModules;
     XCTAssertEqualObjects(currentModules, expectedModules);

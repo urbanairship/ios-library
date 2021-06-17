@@ -159,6 +159,12 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
                                                   privacyManager:self.sharedPrivacyManager];
         [components addObject:self.sharedNamedUser];
 
+        self.sharedContact = [[UAContact alloc] initWithDataStore:self.dataStore
+                                                           config:self.config
+                                                          channel:self.sharedChannel
+                                                   privacyManager:self.sharedPrivacyManager];
+        [components addObject:self.sharedContact];
+
         self.sharedRemoteDataManager = [UARemoteDataManager remoteDataManagerWithConfig:self.config
                                                                               dataStore:self.dataStore
                                                                           localeManager:self.sharedLocaleManager
@@ -436,6 +442,10 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
 + (UANamedUser *)namedUser {
     return sharedAirship_.sharedNamedUser;
+}
+
++ (UAContact *)contact {
+    return sharedAirship_.sharedContact;
 }
 
 + (UAAnalytics *)analytics {

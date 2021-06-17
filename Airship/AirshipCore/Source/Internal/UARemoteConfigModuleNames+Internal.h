@@ -13,7 +13,8 @@
 #define kUARemoteConfigModuleInAppMessaging @"in_app_v2"
 #define kUARemoteConfigModuleAutomation @"automation"
 #define kUARemoteConfigModuleNamedUser @"named_user"
+#define kUARemoteConfigModuleContact @"contact"
 #define kUARemoteConfigModuleLocation @"location"
 #define kUARemoteConfigModuleChat @"chat"
 
-#define kUARemoteConfigModuleAllModules @[kUARemoteConfigModulePush, kUARemoteConfigModuleChannel, kUARemoteConfigModuleAnalytics, kUARemoteConfigModuleMessageCenter, kUARemoteConfigModuleInAppMessaging, kUARemoteConfigModuleAutomation, kUARemoteConfigModuleNamedUser, kUARemoteConfigModuleLocation, kUARemoteConfigModuleChat]
+#define kUARemoteConfigModuleAllModules @[kUARemoteConfigModulePush, kUARemoteConfigModuleChannel, kUARemoteConfigModuleAnalytics, kUARemoteConfigModuleMessageCenter, kUARemoteConfigModuleInAppMessaging, kUARemoteConfigModuleAutomation, kUARemoteConfigModuleNamedUser, kUARemoteConfigModuleLocation, kUARemoteConfigModuleChat, kUARemoteConfigModuleContact]

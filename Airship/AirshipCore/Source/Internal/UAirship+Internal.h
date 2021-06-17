@@ -45,6 +45,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) UANamedUser *sharedNamedUser;
 
 /**
+ * The contact.
+ */
+@property (nonatomic, strong) UAContact *sharedContact;
+
+/**
  * The shared analytics manager.
  */
 @property (nonatomic, strong) UAAnalytics *sharedAnalytics;
