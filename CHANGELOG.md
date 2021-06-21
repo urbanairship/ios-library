@@ -3,6 +3,15 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 14.5.1 June 16, 2021
+Patch release fixing archive issues with AirshpChat when using SPM, localization conflict issues in Cocoapods, and UI/localization issues in AirshipChat. Apps using SPM, Cocoapods or Live Chat are encouraged to upgrade.
+
+### Changes
+- Renamed files in AirshipChat to avoid conflicts during archival
+- Changed Airship.podspec to use resource bundles for all modules
+- Fixed a UI crash in AirshipChat in SPM and Cocoapods-based Swift apps
+- Fixed default localization in AirshipChat
+
 ## Version 14.5.0 June 4, 2021
 Minor release changing how the SDK handles data collection by introducing the privacy manager. Privacy manager allows fine-grained control over what data is allowed to be collected or accessed by the Airship SDK.
 

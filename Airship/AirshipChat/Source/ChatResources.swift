@@ -21,8 +21,13 @@ public class ChatResources : NSObject {
     @objc
     public static func bundle() -> Bundle? {
         let mainBundle = Bundle.main
-        let path = mainBundle.path(forResource: "Airship_AirshipChat", ofType: "bundle") ?? ""
-        return Bundle(path: path) ?? Bundle(for: Self.self)
+        let sourceBundle = Bundle(for: Self.self)
+
+        let path = mainBundle.path(forResource: "Airship_AirshipChat", ofType: "bundle") ??
+                   mainBundle.path(forResource: "AirshipChatResources", ofType: "bundle") ??
+                   sourceBundle.path(forResource: "AirshipChatResources", ofType: "bundle") ?? ""
+
+        return Bundle(path: path) ?? sourceBundle
     }
 
     public static func localizedString(key: String) -> String? {
