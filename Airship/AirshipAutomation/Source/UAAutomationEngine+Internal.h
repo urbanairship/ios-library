@@ -6,9 +6,10 @@
 #import "UASchedule.h"
 #import "UAAirshipAutomationCoreImport.h"
 
-NS_ASSUME_NONNULL_BEGIN
-
+@class UAAppStateTracker;
 @class UAScheduleTriggerContext;
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Prepare results

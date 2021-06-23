@@ -5,7 +5,13 @@
 #import "UAAnalytics.h"
 #import "UAirship.h"
 #import "UAUtils+Internal.h"
-#import "UAAppStateTracker.h"
+
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
 
 @implementation UAAppInitEvent
 

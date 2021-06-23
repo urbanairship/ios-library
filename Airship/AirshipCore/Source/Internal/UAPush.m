@@ -14,7 +14,6 @@
 #import "UATagUtils+Internal.h"
 #import "UARegistrationDelegateWrapper+Internal.h"
 #import "UADispatcher.h"
-#import "UAAppStateTracker.h"
 #import "NSObject+UAAdditions.h"
 #import "UASemaphore.h"
 
@@ -197,12 +196,12 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
 
     [self.notificationCenter addObserver:self
                                 selector:@selector(applicationDidTransitionToForeground)
-                                    name:UAApplicationDidTransitionToForeground
+                                    name:UAAppStateTracker.didTransitionToForeground
                                   object:nil];
 
     [self.notificationCenter addObserver:self
                                 selector:@selector(applicationDidEnterBackground)
-                                    name:UAApplicationDidEnterBackgroundNotification
+                                    name:UAAppStateTracker.didEnterBackgroundNotification
                                   object:nil];
 
     [self.notificationCenter addObserver:self

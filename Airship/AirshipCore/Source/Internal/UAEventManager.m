@@ -10,7 +10,6 @@
 #import "UAChannel.h"
 #import "UAirship.h"
 #import "UADispatcher.h"
-#import "UAAppStateTracker.h"
 #import "UATaskManager.h"
 #import "UASemaphore.h"
 #import "UADelay+Internal.h"
@@ -77,7 +76,7 @@ static NSUInteger const FetchEventLimit = 500;
 
         [self.notificationCenter addObserver:self
                                     selector:@selector(applicationDidEnterBackground)
-                                        name:UAApplicationDidEnterBackgroundNotification
+                                        name:UAAppStateTracker.didEnterBackgroundNotification
                                       object:nil];
 
         UA_WEAKIFY(self)

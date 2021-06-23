@@ -9,10 +9,10 @@
 #import "UAAirshipBaseTest.h"
 #import "UATestDispatcher.h"
 #import "UATestDate.h"
-#import "UATestAppStateTracker+Internal.h"
 #import "UATaskManager.h"
 #import "UALocaleManager+Internal.h"
 #import "UARemoteConfigURLManager.h"
+#import "AirshipTests-Swift.h"
 
 @import AirshipCore;
 
@@ -86,7 +86,8 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
 
 
     self.privacyManager = [[UAPrivacyManager alloc] initWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
-    self.testAppStateTracker = [UATestAppStateTracker shared];
+    self.testAppStateTracker = [[UATestAppStateTracker alloc] init];
+    self.testAppStateTracker.currentState = UAApplicationStateActive;
     self.remoteDataManager = [self createManager];
 }
 
@@ -98,7 +99,7 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
 - (void)testForegroundRefresh {
     [[self.mockTaskManager expect] enqueueRequestWithID:RefreshTask options:OCMOCK_ANY];
 
-    [self.notificationCenter postNotificationName:UAApplicationDidTransitionToForeground object:nil];
+    [self.notificationCenter postNotificationName:UAAppStateTracker.didTransitionToForeground object:nil];
 
     [self.mockTaskManager verify];
 }
@@ -123,12 +124,12 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
         count++;
     }] enqueueRequestWithID:RefreshTask options:OCMOCK_ANY];
 
-    [self.notificationCenter postNotificationName:UAApplicationDidTransitionToForeground object:nil];
+    [self.notificationCenter postNotificationName:UAAppStateTracker.didTransitionToForeground object:nil];
     XCTAssertEqual(0, count);
 
     // Refresh interval
     self.testDate.timeOffset += 100;
-    [self.notificationCenter postNotificationName:UAApplicationDidTransitionToForeground object:nil];
+    [self.notificationCenter postNotificationName:UAAppStateTracker.didTransitionToForeground object:nil];
     XCTAssertEqual(1, count);
 }
 
@@ -145,7 +146,7 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
         count++;
     }] enqueueRequestWithID:RefreshTask options:OCMOCK_ANY];
 
-    [self.notificationCenter postNotificationName:UAApplicationDidTransitionToForeground object:nil];
+    [self.notificationCenter postNotificationName:UAAppStateTracker.didTransitionToForeground object:nil];
     XCTAssertEqual(0, count);
 
     // change app version
@@ -153,7 +154,7 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
     [[[mockedBundle stub] andReturn:mockedBundle] mainBundle];
     [[[mockedBundle stub] andReturn:@{@"CFBundleShortVersionString": @"1.1.1"}] infoDictionary];
 
-    [self.notificationCenter postNotificationName:UAApplicationDidTransitionToForeground object:nil];
+    [self.notificationCenter postNotificationName:UAAppStateTracker.didTransitionToForeground object:nil];
     XCTAssertEqual(1, count);
 }
 
@@ -169,13 +170,13 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
         count++;
     }] enqueueRequestWithID:RefreshTask options:OCMOCK_ANY];
 
-    [self.notificationCenter postNotificationName:UAApplicationDidTransitionToForeground object:nil];
+    [self.notificationCenter postNotificationName:UAAppStateTracker.didTransitionToForeground object:nil];
     XCTAssertEqual(0, count);
 
     // change URL
     self.requestURL = [NSURL URLWithString:@"some-other-url"];
 
-    [self.notificationCenter postNotificationName:UAApplicationDidTransitionToForeground object:nil];
+    [self.notificationCenter postNotificationName:UAAppStateTracker.didTransitionToForeground object:nil];
     XCTAssertEqual(1, count);
 }
 

@@ -1,7 +1,9 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAAppStateTracker+Internal.h"
+#import "AirshipTests-Swift.h"
+
+@import AirshipCore;
 
 @interface UAAppStateTrackerTest : UABaseTest
 @property(nonatomic, strong) UAAppStateTracker *tracker;
@@ -14,7 +16,7 @@
 - (void)setUp {
     self.mockNotificationCenter = [self mockForClass:[NSNotificationCenter class]];
     self.mockAdapter = [self mockForProtocol:@protocol(UAAppStateTrackerAdapter)];
-
+    [[[self.mockAdapter stub] andReturnValue:@(UAApplicationStateInactive)] state];
     [self createTracker];
 }
 
@@ -33,19 +35,8 @@
     [self.mockAdapter verify];
 }
 
-- (void)testApplicationDidFinishLaunching {
-    id launchDict = @{@"foo" : @"bar"};
-
-    [[self.mockNotificationCenter expect] postNotificationName:UAApplicationDidFinishLaunchingNotification
-                                                        object:nil
-                                                      userInfo:@{UAApplicationLaunchOptionsRemoteNotificationKey : launchDict}];
-
-    [self.tracker applicationDidFinishLaunching:launchDict];
-    [self.mockNotificationCenter verify];
-}
-
 - (void)testApplicationDidBecomeActive {
-    [[self.mockNotificationCenter expect] postNotificationName:UAApplicationDidBecomeActiveNotification
+    [[self.mockNotificationCenter expect] postNotificationName:UAAppStateTracker.didBecomeActiveNotification
                                                         object:nil];
 
     [self.tracker applicationDidBecomeActive];
@@ -57,7 +48,7 @@
     [self.tracker applicationDidEnterBackground];
     [self.tracker applicationWillEnterForeground];
 
-    [[self.mockNotificationCenter expect] postNotificationName:UAApplicationDidTransitionToForeground
+    [[self.mockNotificationCenter expect] postNotificationName:UAAppStateTracker.didTransitionToForeground
                                                         object:nil];
 
     [self.tracker applicationDidBecomeActive];
@@ -66,7 +57,7 @@
 }
 
 - (void)testApplicationDidTransitionToForegroundOnStart {
-    [[self.mockNotificationCenter expect] postNotificationName:UAApplicationDidTransitionToForeground
+    [[self.mockNotificationCenter expect] postNotificationName:UAAppStateTracker.didTransitionToForeground
                                                         object:nil];
 
     [self.tracker applicationDidBecomeActive];
@@ -75,7 +66,7 @@
 }
 
 - (void)testApplicationWillEnterForeground {
-    [[self.mockNotificationCenter expect] postNotificationName:UAApplicationWillEnterForegroundNotification
+    [[self.mockNotificationCenter expect] postNotificationName:UAAppStateTracker.willEnterForegroundNotification
                                                         object:nil];
 
     [self.tracker applicationWillEnterForeground];
@@ -84,7 +75,7 @@
 }
 
 - (void)testApplicationDidEnterBackground {
-    [[self.mockNotificationCenter expect] postNotificationName:UAApplicationDidEnterBackgroundNotification
+    [[self.mockNotificationCenter expect] postNotificationName:UAAppStateTracker.didEnterBackgroundNotification
                                                         object:nil];
 
     [self.tracker applicationDidEnterBackground];
@@ -96,7 +87,7 @@
     [self.tracker applicationDidBecomeActive];
     [self.tracker applicationWillResignActive];
 
-    [[self.mockNotificationCenter expect] postNotificationName:UAApplicationDidTransitionToBackground
+    [[self.mockNotificationCenter expect] postNotificationName:UAAppStateTracker.didTransitionToBackground
                                                         object:nil];
 
     [self.tracker applicationDidEnterBackground];
@@ -105,7 +96,7 @@
 }
 
 - (void)testApplicationWillResignActive {
-    [[self.mockNotificationCenter expect] postNotificationName:UAApplicationWillResignActiveNotification
+    [[self.mockNotificationCenter expect] postNotificationName:UAAppStateTracker.willResignActiveNotification
                                                         object:nil];
 
     [self.tracker applicationWillResignActive];
@@ -114,18 +105,12 @@
 }
 
 - (void)testApplicationWillTerminate {
-    [[self.mockNotificationCenter expect] postNotificationName:UAApplicationWillTerminateNotification
+    [[self.mockNotificationCenter expect] postNotificationName:UAAppStateTracker.willTerminateNotification
                                                         object:nil];
 
     [self.tracker applicationWillTerminate];
 
     [self.mockNotificationCenter verify];
-}
-
-- (void)testState {
-    XCTAssertEqual(UAApplicationStateActive, self.tracker.state);
-    [[[self.mockAdapter stub] andReturnValue:@(UAApplicationStateInactive)] state];
-    XCTAssertEqual(UAApplicationStateInactive, self.tracker.state);
 }
 
 @end

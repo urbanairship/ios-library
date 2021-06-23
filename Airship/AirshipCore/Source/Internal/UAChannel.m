@@ -8,7 +8,6 @@
 #import "UAChannelRegistrationPayload+Internal.h"
 #import "UAAttributePendingMutations.h"
 #import "UADate.h"
-#import "UAAppStateTracker.h"
 #import "UALocaleManager+Internal.h"
 #import "UASemaphore.h"
 #import "UAKeychainUtils+Internal.h"
@@ -188,7 +187,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 
     [self.notificationCenter addObserver:self
                                 selector:@selector(applicationDidTransitionToForeground)
-                                    name:UAApplicationDidTransitionToForeground
+                                    name:UAAppStateTracker.didTransitionToForeground
                                   object:nil];
 
     [self.notificationCenter addObserver:self

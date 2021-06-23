@@ -3,6 +3,13 @@
 #import "UAActiveTimer+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
 
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+@import AirshipCore;
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
+
+
 @interface UAActiveTimer()
 @property (assign, getter=isStarted) BOOL started;
 @property (assign, getter=isActive) BOOL active;
@@ -21,12 +28,12 @@
 
         [notificationCenter addObserver:self
                                selector:@selector(applicationDidBecomeActive)
-                                   name:UAApplicationDidBecomeActiveNotification
+                                   name:UAAppStateTracker.didBecomeActiveNotification
                                  object:nil];
 
         [notificationCenter addObserver:self
                                selector:@selector(applicationWillResignActive)
-                                   name:UAApplicationWillResignActiveNotification
+                                   name:UAAppStateTracker.willResignActiveNotification
                                  object:nil];
 
     }

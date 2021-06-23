@@ -4,7 +4,6 @@
 #import "UAChannelCapture+Internal.h"
 #import "UAChannel.h"
 #import "UARuntimeConfig.h"
-#import "UAAppStateTracker.h"
 #import "UATestDate.h"
 
 @import AirshipCore;
@@ -281,7 +280,7 @@
 */
 - (void)knock {
     [self.testDate setTimeOffset:self.testDate.timeOffset + 1];
-    [self.notificationCenter postNotificationName:UAApplicationDidTransitionToForeground object:nil];
+    [self.notificationCenter postNotificationName:UAAppStateTracker.didTransitionToForeground object:nil];
 }
 
 /**

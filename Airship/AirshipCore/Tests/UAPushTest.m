@@ -1046,7 +1046,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     [[[self.mockAppStateTracker expect] andReturnValue:@(UAApplicationStateActive)] state];
 
     // TEST
-    [self.notificationCenter postNotificationName:UAApplicationDidTransitionToForeground object:nil];
+    [self.notificationCenter postNotificationName:UAAppStateTracker.didTransitionToForeground object:nil];
 
     // VERIFY
     XCTAssertTrue(self.push.userPromptedForNotifications);
@@ -1103,7 +1103,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 - (void)testApplicationDidEnterBackground {
     self.push.launchNotificationResponse = [[UANotificationResponse alloc] init];
 
-    [self.notificationCenter postNotificationName:UAApplicationDidEnterBackgroundNotification object:nil];
+    [self.notificationCenter postNotificationName:UAAppStateTracker.didEnterBackgroundNotification object:nil];
 
     XCTAssertNil(self.push.launchNotificationResponse, @"applicationDidEnterBackground should clear the launch notification");
 }

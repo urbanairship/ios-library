@@ -50,7 +50,7 @@ NSString *const UAMessageDataScheme = @"message";
 
         [notificationCenter addObserver:self
                                selector:@selector(applicationDidTransitionToForeground)
-                                   name:UAApplicationDidTransitionToForeground
+                                   name:UAAppStateTracker.didTransitionToForeground
                                  object:nil];
 
         // Update message center when enabled features change

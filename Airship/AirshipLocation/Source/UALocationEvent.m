@@ -4,6 +4,13 @@
 #import "UALocationEvent.h"
 #import "UALocationCoreImport.h"
 
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+@import AirshipCore;
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
+
+
 @interface UALocationInfo ()
 @property (nonatomic, assign) double latitude;
 @property (nonatomic, assign) double longitude;

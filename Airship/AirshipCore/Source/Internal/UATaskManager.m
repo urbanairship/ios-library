@@ -5,12 +5,18 @@
 #import "UATaskManager.h"
 #import "UAGlobal.h"
 #import "UADispatcher.h"
-#import "UAAppStateTracker.h"
 #import "UANetworkMonitor.h"
 #import "UATask.h"
 #import "UAExpirableTask+Internal.h"
 #import "UATaskLauncher+Internal.h"
 #import "UATaskRequest+Internal.h"
+
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
 
 #define kUATaskManagerInitialBackOff 30.0
 #define kUATaskManagerMaxBackOff 120.0
@@ -45,12 +51,12 @@
 
         [notificationCenter addObserver:self
                                selector:@selector(didBecameActive)
-                                   name:UAApplicationDidBecomeActiveNotification
+                                   name:UAAppStateTracker.didBecomeActiveNotification
                                       object:nil];
 
         [notificationCenter addObserver:self
                                selector:@selector(didEnterBackground)
-                                   name:UAApplicationDidEnterBackgroundNotification
+                                   name:UAAppStateTracker.didEnterBackgroundNotification
                                  object:nil];
 
         if (@available(ios 12.0, tvOS 12.0, *)) {

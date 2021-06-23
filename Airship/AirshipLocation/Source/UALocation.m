@@ -45,13 +45,13 @@ NSString *const UALocationUpdatesEnabled = @"UALocationUpdatesEnabled";
         // Update the location service on app background
         [notificationCenter addObserver:self
                                selector:@selector(updateLocationService)
-                                   name:UAApplicationDidEnterBackgroundNotification
+                                   name:UAAppStateTracker.didEnterBackgroundNotification
                                  object:nil];
 
         // Update the location service on app becoming active
         [notificationCenter addObserver:self
                                selector:@selector(updateLocationService)
-                                   name:UAApplicationDidBecomeActiveNotification
+                                   name:UAAppStateTracker.didBecomeActiveNotification
                                  object:nil];
 
         // Update the location service when enabled features change

@@ -290,6 +290,6 @@ class ConversationTests: XCTestCase {
 
     func background() {
         self.mockStateTracker.mockState = UAApplicationState.background
-        self.notificationCenter.post(name: NSNotification.Name.UAApplicationDidTransitionToBackground, object: nil)
+        self.notificationCenter.post(name: UAAppStateTracker.didTransitionToBackground, object: nil)
     }
 }

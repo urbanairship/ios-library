@@ -6,7 +6,6 @@
 #import "UARemoteDataPayload+Internal.h"
 #import "UAirshipVersion.h"
 #import "UAUtils+Internal.h"
-#import "UAAppStateTracker.h"
 #import "UALocaleManager+Internal.h"
 #import "UATaskManager.h"
 #import "UATask.h"
@@ -148,7 +147,7 @@ static NSString * const UALastRemoteDataModifiedTime = @"UALastRemoteDataModifie
 
         [self.notificationCenter addObserver:self
                                     selector:@selector(applicationDidForeground)
-                                        name:UAApplicationDidTransitionToForeground
+                                        name:UAAppStateTracker.didTransitionToForeground
                                       object:nil];
 
         [self.notificationCenter addObserver:self

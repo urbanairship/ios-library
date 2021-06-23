@@ -2,7 +2,6 @@
 
 #import "UAApplicationMetrics+Internal.h"
 #import "UAUtils+Internal.h"
-#import "UAAppStateTracker.h"
 
 #if __has_include("AirshipCore/AirshipCore-Swift.h")
 #import <AirshipCore/AirshipCore-Swift.h>
@@ -36,7 +35,7 @@ NSString *const UAApplicationMetricsLastAppVersion = @"UAApplicationMetricsLastA
 
         [notificationCenter addObserver:self
                                selector:@selector(applicationDidBecomeActive)
-                                   name:UAApplicationDidBecomeActiveNotification
+                                   name:UAAppStateTracker.didBecomeActiveNotification
                                  object:nil];
 
         [notificationCenter addObserver:self

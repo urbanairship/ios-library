@@ -9,7 +9,6 @@
 #import "UAUserData+Internal.h"
 #import "UATestDate.h"
 #import "UAAttributePendingMutations.h"
-#import "UAAppStateTracker.h"
 #import "UAActionResult.h"
 #import "UAirship+Internal.h"
 #import "UAActionRunner.h"
@@ -610,7 +609,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
     [[self.mockChannelRegistrar expect] registerForcefully:NO];
 
     // TEST
-    [self.notificationCenter postNotificationName:UAApplicationDidTransitionToForeground object:nil];
+    [self.notificationCenter postNotificationName:UAAppStateTracker.didTransitionToForeground object:nil];
 
     // VERIFY
     XCTAssertNoThrow([self.mockChannelRegistrar verify], @"should update channel registration");

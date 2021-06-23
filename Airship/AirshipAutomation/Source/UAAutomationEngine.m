@@ -16,6 +16,13 @@
 #import "UAActionSchedule.h"
 #import "UADeferredSchedule+Internal.h"
 
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+@import AirshipCore;
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
+
+
 static NSString * const UAAutomationEngineDelayTaskID = @"UAAutomationEngine.delay";
 static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.interval";
 static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
@@ -179,12 +186,12 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
 
     [self.notificationCenter addObserver:self
                                 selector:@selector(applicationDidTransitionToBackground)
-                                    name:UAApplicationDidTransitionToBackground
+                                    name:UAAppStateTracker.didTransitionToBackground
                                   object:nil];
 
     [self.notificationCenter addObserver:self
                                 selector:@selector(applicationDidTransitionToForeground)
-                                    name:UAApplicationDidTransitionToForeground
+                                    name:UAAppStateTracker.didTransitionToForeground
                                   object:nil];
 
     [self finishExecutionSchedules];

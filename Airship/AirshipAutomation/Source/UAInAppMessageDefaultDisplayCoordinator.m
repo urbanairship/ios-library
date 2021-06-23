@@ -3,6 +3,14 @@
 #import "UAInAppMessageDefaultDisplayCoordinator+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
 
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+@import AirshipCore;
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
+
+
+
 @interface UAInAppMessageDefaultDisplayCoordinator ()
 @property (nonatomic, assign) BOOL isDisplayLocked;
 @property (nonatomic, strong) UADispatcher *dispatcher;
@@ -18,8 +26,8 @@
         self.dispatcher = dispatcher;
         self.notificationCenter = notificationCenter;
 
-        [self.notificationCenter addObserver:self selector:@selector(applicationDidBecomeActive) name:UAApplicationDidBecomeActiveNotification object:nil];
-        [self.notificationCenter addObserver:self selector:@selector(applicationDidEnterBackground) name:UAApplicationDidEnterBackgroundNotification object:nil];
+        [self.notificationCenter addObserver:self selector:@selector(applicationDidBecomeActive) name:UAAppStateTracker.didBecomeActiveNotification object:nil];
+        [self.notificationCenter addObserver:self selector:@selector(applicationDidEnterBackground) name:UAAppStateTracker.didEnterBackgroundNotification object:nil];
     }
 
     return self;

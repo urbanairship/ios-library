@@ -139,7 +139,7 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
          client: ChatAPIClientProtocol,
          chatConnection: ChatConnectionProtocol,
          chatDAO: ChatDAOProtocol,
-         appStateTracker: UAAppStateTracker = UAAppStateTracker.shared(),
+         appStateTracker: UAAppStateTracker = UAAppStateTracker.shared,
          dispatcher: UADispatcher = UADispatcher.serial(),
          notificationCenter: NotificationCenter = NotificationCenter.default) {
 
@@ -157,7 +157,7 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
         notificationCenter.addObserver(
             self,
             selector: #selector(self.onBackground),
-            name: NSNotification.Name.UAApplicationDidTransitionToBackground,
+            name: UAAppStateTracker.didTransitionToBackground,
             object: nil)
 
         notificationCenter.addObserver(

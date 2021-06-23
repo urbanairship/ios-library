@@ -9,12 +9,12 @@
 #import "UAComponent.h"
 #import "UAPushableComponent.h"
 #import "UARemoteDataProvider.h"
-#import "UAAppStateTracker.h"
 #import "UADate.h"
 #import "UATaskManager.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class UAAppStateTracker;
 @class UARemoteDataAPIClient;
 
 /**

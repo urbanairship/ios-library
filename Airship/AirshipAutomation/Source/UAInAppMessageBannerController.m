@@ -11,6 +11,12 @@
 #import "UAInAppMessageBannerStyle.h"
 #import "UAAirshipAutomationCoreImport.h"
 
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+@import AirshipCore;
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
+
 NS_ASSUME_NONNULL_BEGIN
 
 @class UAInAppMessageTextView;
@@ -435,12 +441,12 @@ static double const MinimumSwipeVelocity = 100.0;
 - (void)observeAppState {
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(applicationDidBecomeActive)
-                                                 name:UAApplicationDidBecomeActiveNotification
+                                                 name:UAAppStateTracker.didBecomeActiveNotification
                                                object:[UIApplication sharedApplication]];
 
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(applicationWillResignActive)
-                                                 name:UAApplicationWillResignActiveNotification
+                                                 name:UAAppStateTracker.willResignActiveNotification
                                                object:[UIApplication sharedApplication]];
 }
 

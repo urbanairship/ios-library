@@ -1,9 +1,9 @@
 /* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-#import "UAAppStateTracker.h"
 #import "UAChannel.h"
 
+@class UAAppStateTracker;
 @class UAEvent;
 @class UARuntimeConfig;
 @class UAPreferenceDataStore;

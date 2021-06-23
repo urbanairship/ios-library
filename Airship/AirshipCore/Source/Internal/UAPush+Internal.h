@@ -7,10 +7,10 @@
 #import "UAComponent+Internal.h"
 #import "UAChannel+Internal.h"
 #import "UADispatcher.h"
-#import "UAAppStateTracker.h"
 #import "UAPushProviderDelegate.h"
 #import "UAAnalytics+Internal.h"
 
+@class UAAppStateTracker;
 @class UAPreferenceDataStore;
 @class UARuntimeConfig;
 @class UATagGroupsAPIClient;

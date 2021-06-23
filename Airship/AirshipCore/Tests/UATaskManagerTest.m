@@ -4,7 +4,8 @@
 #import "UAAirshipBaseTest.h"
 #import "UATaskManager+Internal.h"
 #import "UATestDispatcher.h"
-#import "UAAppStateTracker.h"
+
+@import AirshipCore;
 
 @interface UATestNetworkMonitor : UANetworkMonitor
 @property (nonatomic, assign) BOOL isConnectedOverride;
@@ -287,7 +288,7 @@
 
     XCTAssertFalse(ran);
     backgroundRemainingTime = 30;
-    [self.notificationCenter postNotificationName:UAApplicationDidBecomeActiveNotification object:nil];
+    [self.notificationCenter postNotificationName:UAAppStateTracker.didBecomeActiveNotification object:nil];
     XCTAssertTrue(ran);
 }
 
@@ -312,7 +313,7 @@
 
     XCTAssertFalse(ran);
     backgroundTask = 30;
-    [self.notificationCenter postNotificationName:UAApplicationDidBecomeActiveNotification object:nil];
+    [self.notificationCenter postNotificationName:UAAppStateTracker.didBecomeActiveNotification object:nil];
     XCTAssertTrue(ran);
 }
 
@@ -332,7 +333,7 @@
     [self.taskManager enqueueRequestWithID:@"test" options:requestOptions];
     XCTAssertEqual(1, attempts);
 
-    [self.notificationCenter postNotificationName:UAApplicationDidEnterBackgroundNotification object:nil];
+    [self.notificationCenter postNotificationName:UAAppStateTracker.didEnterBackgroundNotification object:nil];
     XCTAssertEqual(2, attempts);
 }
 

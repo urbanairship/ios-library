@@ -13,7 +13,6 @@
 #import "UAAssociateIdentifiersEvent+Internal.h"
 #import "UAAssociatedIdentifiers.h"
 #import "UACustomEvent.h"
-#import "UAAppStateTracker.h"
 #import "UAUtils+Internal.h"
 #import "UAirship.h"
 #import "UAPush+Internal.h"
@@ -93,22 +92,22 @@ NSString *const UAEventKey = @"event";
 
         [self.notificationCenter addObserver:self
                                     selector:@selector(applicationDidTransitionToForeground)
-                                        name:UAApplicationDidTransitionToForeground
+                                        name:UAAppStateTracker.didTransitionToForeground
                                       object:nil];
 
         [self.notificationCenter addObserver:self
                                     selector:@selector(applicationWillEnterForeground)
-                                        name:UAApplicationWillEnterForegroundNotification
+                                        name:UAAppStateTracker.willEnterForegroundNotification
                                       object:nil];
 
         [self.notificationCenter addObserver:self
                                     selector:@selector(applicationDidEnterBackground)
-                                        name:UAApplicationDidEnterBackgroundNotification
+                                        name:UAAppStateTracker.didEnterBackgroundNotification
                                       object:nil];
 
         [self.notificationCenter addObserver:self
                                     selector:@selector(applicationWillTerminate)
-                                        name:UAApplicationWillTerminateNotification
+                                        name:UAAppStateTracker.willTerminateNotification
                                       object:nil];
 
         [self.notificationCenter addObserver:self

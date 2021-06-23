@@ -3,7 +3,6 @@
 #import "UAChannelCapture+Internal.h"
 #import "UAChannel.h"
 #import "UARuntimeConfig.h"
-#import "UAAppStateTracker.h"
 #import "UADate.h"
 
 #if __has_include("AirshipCore/AirshipCore-Swift.h")
@@ -46,7 +45,7 @@ static NSTimeInterval const UAChannelCaptureKnocksPasteboardExpirationSeconds = 
 
         [self.notificationCenter addObserver:self
                                     selector:@selector(applicationDidTransitionToForeground)
-                                        name:UAApplicationDidTransitionToForeground
+                                        name:UAAppStateTracker.didTransitionToForeground
                                       object:nil];
     }
 

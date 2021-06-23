@@ -12,7 +12,6 @@
 #import "UAEventManager+Internal.h"
 #import "UATestDate.h"
 #import "UATestDispatcher.h"
-#import "UAAppStateTracker.h"
 #import "UAUtils+Internal.h"
 #import "UALocaleManager.h"
 #import "UAAppInitEvent+Internal.h"
@@ -122,7 +121,7 @@
         return [obj isMemberOfClass:[UAAppForegroundEvent class]];
     }] sessionID:OCMOCK_ANY];
 
-    [self.notificationCenter postNotificationName:UAApplicationDidTransitionToForeground object:nil];
+    [self.notificationCenter postNotificationName:UAAppStateTracker.didTransitionToForeground object:nil];
 
     [self.mockEventManager verify];
 }
@@ -132,8 +131,8 @@
         return [obj isMemberOfClass:[UAAppForegroundEvent class]];
     }] sessionID:OCMOCK_ANY];
 
-    [self.notificationCenter postNotificationName:UAApplicationDidTransitionToForeground object:nil];
-    [self.notificationCenter postNotificationName:UAApplicationDidTransitionToForeground object:nil];
+    [self.notificationCenter postNotificationName:UAAppStateTracker.didTransitionToForeground object:nil];
+    [self.notificationCenter postNotificationName:UAAppStateTracker.didTransitionToForeground object:nil];
 
 
     [self.mockEventManager verify];
@@ -152,13 +151,13 @@
         return [obj isMemberOfClass:[UAAppBackgroundEvent class]];
     }] sessionID:OCMOCK_ANY];
 
-    [self.notificationCenter postNotificationName:UAApplicationDidEnterBackgroundNotification object:nil];
+    [self.notificationCenter postNotificationName:UAAppStateTracker.didEnterBackgroundNotification object:nil];
 
     [self.mockEventManager verify];
 }
 
 - (void)testBackgroundAfterForegroundDoesNotEmitAppInit {
-    [self.notificationCenter postNotificationName:UAApplicationDidTransitionToForeground object:nil];
+    [self.notificationCenter postNotificationName:UAAppStateTracker.didTransitionToForeground object:nil];
 
     [[self.mockEventManager reject] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
         return [obj isMemberOfClass:[UAAppInitEvent class]];
@@ -168,7 +167,7 @@
         return [obj isMemberOfClass:[UAAppBackgroundEvent class]];
     }] sessionID:OCMOCK_ANY];
     
-    [self.notificationCenter postNotificationName:UAApplicationDidEnterBackgroundNotification object:nil];
+    [self.notificationCenter postNotificationName:UAAppStateTracker.didEnterBackgroundNotification object:nil];
 
     [self.mockEventManager verify];
 }
@@ -409,7 +408,7 @@
     }] sessionID:OCMOCK_ANY];
 
     // Background
-    [self.notificationCenter postNotificationName:UAApplicationDidEnterBackgroundNotification
+    [self.notificationCenter postNotificationName:UAAppStateTracker.didEnterBackgroundNotification
                                            object:nil];
 
     [self waitForTestExpectations];
@@ -439,7 +438,7 @@
     }] sessionID:OCMOCK_ANY];
 
     // Terminate
-    [self.notificationCenter postNotificationName:UAApplicationWillTerminateNotification object:nil];
+    [self.notificationCenter postNotificationName:UAAppStateTracker.willTerminateNotification object:nil];
 
     [self waitForTestExpectations];
 
@@ -637,7 +636,7 @@
     }] addEvent:OCMOCK_ANY sessionID:sessionID];
 
     // Background app
-    [self.notificationCenter postNotificationName:UAApplicationDidEnterBackgroundNotification object:nil];
+    [self.notificationCenter postNotificationName:UAAppStateTracker.didEnterBackgroundNotification object:nil];
 
     [self waitForTestExpectations];
     [self.mockEventManager verify];

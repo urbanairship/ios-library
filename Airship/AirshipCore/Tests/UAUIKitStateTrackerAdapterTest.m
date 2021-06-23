@@ -1,8 +1,9 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAUIKitStateTrackerAdapter+Internal.h"
 #import "UATestDispatcher.h"
+
+@import AirshipCore;
 
 @interface UAUIKitStateTrackerAdapterTest : UABaseTest
 @property(nonatomic, strong) UAUIKitStateTrackerAdapter *adapter;
@@ -24,7 +25,7 @@
 
 
 - (void)createAdapter {
-    self.adapter = [UAUIKitStateTrackerAdapter adapterWithNotificationCenter:[NSNotificationCenter defaultCenter] dispatcher:self.dispatcher];
+    self.adapter = [[UAUIKitStateTrackerAdapter alloc] initWithNotificationCenter:[NSNotificationCenter defaultCenter]  dispatcher:self.dispatcher];
     self.adapter.stateTrackerDelegate = self.mockDelegate;
 }
 
@@ -41,18 +42,6 @@
 - (void)testBackgroundState {
     [[[self.mockApplication stub] andReturnValue:@(UIApplicationStateBackground)] applicationState];
     XCTAssertEqual(self.adapter.state, UAApplicationStateBackground);
-}
-
-- (void)testApplicationDidFinishLaunching {
-    id launchDict = @{@"foo" : @"bar"};
-    id userInfo = @{UIApplicationLaunchOptionsRemoteNotificationKey : launchDict};
-
-    [[self.mockDelegate expect] applicationDidFinishLaunching:launchDict];
-
-    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidFinishLaunchingNotification
-                                                        object:nil
-                                                      userInfo:userInfo];
-    [self.mockDelegate verify];
 }
 
 - (void)testApplicationDidBecomeActive {

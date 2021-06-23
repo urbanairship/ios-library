@@ -9,7 +9,6 @@
 #import "UARegionEvent.h"
 #import "UAirship+Internal.h"
 #import "UAChannel.h"
-#import "UAAppStateTracker.h"
 #import "UATaskManager.h"
 #import "UADelay+Internal.h"
 
@@ -170,7 +169,7 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
  */
 - (void)testBackground {
     [[self.mockTaskManager expect] enqueueRequestWithID:UAEventManagerUploadTask options:OCMOCK_ANY initialDelay:0];
-    [self.notificationCenter postNotificationName:UAApplicationDidEnterBackgroundNotification object:nil];
+    [self.notificationCenter postNotificationName:UAAppStateTracker.didEnterBackgroundNotification object:nil];
     [self.mockTaskManager verify];
 }
 

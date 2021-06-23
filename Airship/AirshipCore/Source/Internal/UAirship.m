@@ -20,7 +20,6 @@
 #import "UATagGroupsRegistrar+Internal.h"
 #import "UAPendingTagGroupStore+Internal.h"
 #import "UAChannel+Internal.h"
-#import "UAAppStateTracker.h"
 #import "UALocationModuleLoaderFactory.h"
 #import "UAAutomationModuleLoaderFactory.h"
 #import "UAExtendedActionsModuleLoaderFactory.h"
@@ -108,7 +107,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 + (void)load {
     [[NSNotificationCenter defaultCenter] addObserver:[UAirship class]
                                              selector:@selector(applicationDidFinishLaunching:)
-                                                 name:UAApplicationDidFinishLaunchingNotification
+                                                 name:UIApplicationDidFinishLaunchingNotification
                                                object:nil];
 }
 
@@ -393,13 +392,19 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
         return;
     }
+    
     // If we are inactive the app is launching
     if ([UAAppStateTracker shared].state != UAApplicationStateBackground) {
+
+#if !TARGET_OS_TV    // UIApplicationLaunchOptionsRemoteNotificationKey not available on tvOS
+        NSDictionary *remoteNotification = [notification.userInfo objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
+
         // Required before the app init event to track conversion push ID
-        NSDictionary *remoteNotification = notification.userInfo[UAApplicationLaunchOptionsRemoteNotificationKey];
         if (remoteNotification) {
             [sharedAirship_.sharedAnalytics launchedFromNotification:remoteNotification];
         }
+
+#endif
     }
 
     // Update registration on the next run loop to allow apps to customize

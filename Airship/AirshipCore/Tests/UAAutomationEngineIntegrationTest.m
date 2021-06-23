@@ -13,11 +13,12 @@
 #import "UAApplicationMetrics+Internal.h"
 #import "UATestDispatcher.h"
 #import "UATestDate.h"
-#import "UAAppStateTracker.h"
 #import "UATestRuntimeConfig.h"
 #import "UAActionSchedule.h"
 #import "UAScheduleEdits+Internal.h"
 #import "UANetworkMonitor.h"
+
+@import AirshipCore;
 
 static NSString * const UAAutomationEngineDelayTaskID = @"UAAutomationEngine.delay";
 static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.interval";
@@ -710,7 +711,7 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
 
 - (void)testBackgroundDelay {
     // Start with a foreground state
-    [self.notificationCenter postNotificationName:UAApplicationDidTransitionToForeground object:nil];
+    [self.notificationCenter postNotificationName:UAAppStateTracker.didTransitionToForeground object:nil];
 
 
     UAScheduleDelay *delay = [UAScheduleDelay delayWithBuilderBlock:^(UAScheduleDelayBuilder * builder) {
@@ -719,7 +720,7 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
 
     [self verifyDelay:delay fulfillmentBlock:^{
         [[[self.mockAppStateTracker expect] andReturnValue:@(UAApplicationStateBackground)] state];
-        [self.notificationCenter postNotificationName:UAApplicationDidTransitionToBackground object:nil];
+        [self.notificationCenter postNotificationName:UAAppStateTracker.didTransitionToBackground object:nil];
     }];
 }
 
@@ -1335,11 +1336,11 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
  * Helper method for simulating a full transition from the background to the active state.
  */
 - (void)simulateForegroundTransition {
-    [self.notificationCenter postNotificationName:UAApplicationDidTransitionToForeground object:nil];
+    [self.notificationCenter postNotificationName:UAAppStateTracker.didTransitionToForeground object:nil];
 }
 
 - (void)simulateBackgroundTransition {
-    [self.notificationCenter postNotificationName:UAApplicationDidTransitionToBackground object:nil];
+    [self.notificationCenter postNotificationName:UAAppStateTracker.didTransitionToBackground object:nil];
 }
 
 - (void)verifyDelay:(UAScheduleDelay *)delay fulfillmentBlock:(void (^)(void))fulfillmentBlock {

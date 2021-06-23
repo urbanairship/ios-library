@@ -3,7 +3,6 @@
 #import "UAAirshipBaseTest.h"
 #import "UAApplicationMetrics+Internal.h"
 #import "UATestDate.h"
-#import "UAAppStateTracker.h"
 
 @import AirshipCore;
 
@@ -36,7 +35,7 @@
 - (void)testApplicationActive {
     XCTAssertNil(self.metrics.lastApplicationOpenDate);
 
-    [self.notificationCenter postNotificationName:UAApplicationDidBecomeActiveNotification object:nil];
+    [self.notificationCenter postNotificationName:UAAppStateTracker.didBecomeActiveNotification object:nil];
 
     XCTAssertEqualObjects([self.testDate now], self.metrics.lastApplicationOpenDate);
 
@@ -73,7 +72,7 @@
 }
 
 - (void)testOptedOut {
-    [self.notificationCenter postNotificationName:UAApplicationDidBecomeActiveNotification object:nil];
+    [self.notificationCenter postNotificationName:UAAppStateTracker.didBecomeActiveNotification object:nil];
     XCTAssertNotNil(self.metrics.lastApplicationOpenDate);
 
     [self.privacyManager disableFeatures:UAFeaturesAnalytics];

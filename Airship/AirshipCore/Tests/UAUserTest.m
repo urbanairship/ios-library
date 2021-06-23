@@ -10,7 +10,6 @@
 #import "UATestDispatcher.h"
 #import "UARuntimeConfig+Internal.h"
 #import "UAChannel+Internal.h"
-#import "UAAppStateTracker.h"
 
 @import AirshipCore;
 

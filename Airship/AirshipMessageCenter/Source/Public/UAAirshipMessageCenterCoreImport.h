@@ -21,7 +21,6 @@
 #import "UAColorUtils.h"
 #import "UAChannel.h"
 #import "UABeveledLoadingIndicator.h"
-#import "UAAppStateTracker.h"
 #import "UAActionArguments.h"
 #import "NSString+UALocalizationAdditions.h"
 #import "UACoreData.h"
