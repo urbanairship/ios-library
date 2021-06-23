@@ -39,6 +39,9 @@ let package = Package(
         .library(
             name: "AirshipChat",
             targets: ["AirshipChat"]),
+        .library(
+            name: "AirshipPreferenceCenter",
+            targets: ["AirshipPreferenceCenter"]),
     ],
     targets: [
         .target(name: "AirshipCore",
@@ -173,6 +176,16 @@ let package = Package(
                 dependencies: [.target(name: "AirshipCore")],
                 path: "Airship/AirshipChat",
                 exclude: ["Source/AirshipChat.h",
+                          "Info.plist",
+                          "Tests"],
+                sources : ["Source"],
+                resources: [
+                    .process("Resources")]
+        ),
+        .target(name:"AirshipPreferenceCenter",
+                dependencies: [.target(name: "AirshipCore")],
+                path: "Airship/AirshipPreferenceCenter",
+                exclude: ["Source/AirshipPreferenceCenter.h",
                           "Info.plist",
                           "Tests"],
                 sources : ["Source"],

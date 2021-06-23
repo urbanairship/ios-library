@@ -89,6 +89,7 @@
 #import "UAOpenExternalURLAction.h"
 #import "UAPadding.h"
 #import "UAPasteboardAction.h"
+#import "UAPreferenceCenterModuleLoaderFactory.h"
 #import "UAProximityRegion.h"
 #import "UAPush.h"
 #import "UAPushProviderDelegate.h"

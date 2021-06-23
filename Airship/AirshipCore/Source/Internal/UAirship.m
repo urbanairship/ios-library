@@ -31,6 +31,7 @@
 #import "UARemoteConfigURLManager.h"
 #import "UAAirshipChatModuleLoaderFactory.h"
 #import "UAFeature.h"
+#import "UAPreferenceCenterModuleLoaderFactory.h"
 
 #if !TARGET_OS_TV
 #import "UAChannelCapture+Internal.h"
@@ -59,6 +60,7 @@ NSString * const UAAccengageModuleLoaderClassName = @"UAAccengageModuleLoader";
 NSString * const UADebugLibraryModuleLoaderClassName = @"AirshipDebug.UADebugLibraryModuleLoader";
 
 NSString * const UAAirshipChatModuleLoaderClassName = @"UAirshipChatModuleLoader";
+NSString * const UAPrenferenceCenterModuleLoaderClassName = @"UAirshipPreferenceCenterModuleLoader";
 
 // AirshipReady payload
 NSString * const UAAirshipReadyChannelIdentifier = @"channel_id";
@@ -227,6 +229,11 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
         if (airshipChatLoader) {
             [loaders addObject:airshipChatLoader];
+        }
+        
+        id<UAModuleLoader> preferenceCenterLoader = [UAirship preferenceCenterModuleLoaderWithDataStore:self.dataStore config:self.config channel:self.sharedChannel privacyManager:self.sharedPrivacyManager];
+        if (preferenceCenterLoader) {
+            [loaders addObject:preferenceCenterLoader];
         }
 
         id<UAModuleLoader> debugLibraryLoader = [UAirship debugLibraryModuleLoaderWithAnalytics:self.sharedAnalytics];
@@ -604,6 +611,21 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
                                           channel:channel
                                    privacyManager:privacyManager];
         }
+    }
+    return nil;
+}
+
++ (nullable id<UAModuleLoader>)preferenceCenterModuleLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
+                                                                  config:(UARuntimeConfig *)config
+                                                                 channel:(UAChannel *)channel
+                                                          privacyManager:(UAPrivacyManager *)privacyManager {
+    
+    Class cls = NSClassFromString(UAPrenferenceCenterModuleLoaderClassName);
+    if ([cls conformsToProtocol:@protocol(UAPreferenceCenterModuleLoaderFactory)]) {
+        return [cls moduleLoaderWithDataStore:dataStore
+                                       config:config
+                                      channel:channel
+                               privacyManager:privacyManager];
     }
     return nil;
 }
