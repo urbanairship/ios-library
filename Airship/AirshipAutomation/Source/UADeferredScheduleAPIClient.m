@@ -74,7 +74,7 @@ NSString * const UADeferredScheduleAPIClientErrorDomain = @"com.urbanairship.def
 + (instancetype)clientWithConfig:(UARuntimeConfig *)config authManager:(nonnull UAAuthTokenManager *)authManager {
     return [[self alloc] initWithConfig:config
                                 session:[[UARequestSession alloc] initWithConfig:config]
-                             dispatcher:[UADispatcher serialDispatcher]
+                             dispatcher:UADispatcher.serial
                             authManager:authManager
                  stateOverridesProvider:[self defaultStateOverridesProvider]];
 }
@@ -197,7 +197,7 @@ attributeOverrides:(UAAttributePendingMutations *)attributeOverrides
 
 - (NSString *)authToken {
     __block NSString *authToken;
-    __block UASemaphore *semaphore = [UASemaphore semaphore];
+    __block UASemaphore *semaphore = [[UASemaphore alloc] init];
 
     [self.authManager tokenWithCompletionHandler:^(NSString * _Nullable token) {
         authToken = token;
@@ -224,7 +224,7 @@ attributeOverrides:(UAAttributePendingMutations *)attributeOverrides
                                  attributeOverrides:attributeOverrides];
 
     __block UADeferredScheduleAPIClientResponse *clientResponse;
-    __block UASemaphore *semaphore = [UASemaphore semaphore];
+    __block UASemaphore *semaphore = [[UASemaphore alloc] init];
 
     [self.session performHTTPRequest:request completionHandler:^(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response, NSError * _Nullable error) {
         clientResponse = [[UADeferredScheduleAPIClientResponse alloc] init];

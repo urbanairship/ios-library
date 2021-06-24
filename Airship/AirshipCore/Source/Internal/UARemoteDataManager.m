@@ -9,7 +9,6 @@
 #import "UALocaleManager+Internal.h"
 #import "UATaskManager.h"
 #import "UATask.h"
-#import "UASemaphore.h"
 #import "UARemoteConfigURLManager.h"
 
 #if __has_include("AirshipCore/AirshipCore-Swift.h")
@@ -162,7 +161,7 @@ static NSString * const UALastRemoteDataModifiedTime = @"UALastRemoteDataModifie
 
         UA_WEAKIFY(self)
         [self.taskManager registerForTaskWithID:UARemoteDataRefreshTask
-                                     dispatcher:[UADispatcher serialDispatcher]
+                                     dispatcher:UADispatcher.serial
                                   launchHandler:^(id<UATask> task) {
 
             if (![self.privacyManager isAnyFeatureEnabled]) {
@@ -191,7 +190,7 @@ static NSString * const UALastRemoteDataModifiedTime = @"UALastRemoteDataModifie
                          remoteDataAPIClient:[[UARemoteDataAPIClient alloc] initWithConfig:config]
                           notificationCenter:[NSNotificationCenter defaultCenter]
                              appStateTracker:[UAAppStateTracker shared]
-                                  dispatcher:[UADispatcher mainDispatcher]
+                                  dispatcher:UADispatcher.main
                                         date:[[UADate alloc] init]
                                localeManager:localeManager
                                  taskManager:[UATaskManager shared]
@@ -260,7 +259,7 @@ static NSString * const UALastRemoteDataModifiedTime = @"UALastRemoteDataModifie
     }
 
     UA_WEAKIFY(self);
-    UADisposable *disposable = [UADisposable disposableWithBlock:^{
+    UADisposable *disposable = [[UADisposable alloc] init:^{
         UA_STRONGIFY(self);
         @synchronized(subscription) {
             subscription.publishBlock = nil;
@@ -327,7 +326,7 @@ static NSString * const UALastRemoteDataModifiedTime = @"UALastRemoteDataModifie
     }
     NSLocale *locale = self.localeManager.currentLocale;
 
-    UASemaphore *semaphore = [UASemaphore semaphore];
+    UASemaphore *semaphore = [[UASemaphore alloc] init];
 
     UA_WEAKIFY(self);
     UADisposable *disposable = [self.remoteDataAPIClient fetchRemoteDataWithLocale:locale

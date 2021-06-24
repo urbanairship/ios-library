@@ -1,8 +1,8 @@
 
 #import "UABaseTest.h"
 #import "UAAuthTokenManager+Internal.h"
-#import "UATestDate.h"
-#import "UATestDispatcher.h"
+
+#import "AirshipTests-Swift.h"
 
 @interface UAAuthTokenManagerTest : UABaseTest
 @property(nonatomic, strong) UAAuthTokenManager *manager;
@@ -24,11 +24,11 @@
 
     self.channelID = @"channel ID";
 
-    self.testDate = [[UATestDate alloc] initWithAbsoluteTime:[NSDate date]];
+    self.testDate = [[UATestDate alloc] initWithOffset:0 dateOverride:[NSDate date]];
     self.manager = [UAAuthTokenManager authTokenManagerWithAPIClient:self.mockClient
                                                              channel:self.mockChannel
                                                                 date:self.testDate
-                                                          dispatcher:[UATestDispatcher testDispatcher]];
+                                                          dispatcher:[[UATestDispatcher alloc] init]];
 }
 
 - (void)testTokenWithCompletionHandler {
@@ -156,8 +156,7 @@
     XCTestExpectation *secondTokenRetrieved = [self expectationWithDescription:@"second token retrieved"];
 
     // Invalidate the cache "naturally"
-    [self.testDate setAbsoluteTime:[NSDate dateWithTimeInterval:24 * 60 * 60 * 2
-                                                      sinceDate:self.testDate.now]];
+    self.testDate.dateOverride = [NSDate dateWithTimeInterval:24 * 60 * 60 * 2 sinceDate:self.testDate.now];
 
     // On the subsequent lookup the token should be re-fetched
     [[[self.mockClient expect] andDo:^(NSInvocation *invocation) {
@@ -299,7 +298,7 @@
     [self waitForTestExpectations];
 
     // Make the cached auth naturally expired
-    self.testDate.absoluteTime = [NSDate dateWithTimeInterval:24 * 60 * 60 * 2
+    self.testDate.dateOverride = [NSDate dateWithTimeInterval:24 * 60 * 60 * 2
                                                     sinceDate:self.testDate.now];
 
     __block NSString *secondToken;
@@ -336,3 +335,4 @@
 }
 
 @end
+

@@ -7,7 +7,6 @@
 #import "UAKeychainUtils.h"
 #import "UAirship+Internal.h"
 #import "UARuntimeConfig.h"
-#import "UATestDispatcher.h"
 #import "UARuntimeConfig+Internal.h"
 #import "UAChannel+Internal.h"
 

@@ -24,7 +24,7 @@
 
     if (self) {
         self.config = config;
-        self.backgroundDispatcher = [UADispatcher globalDispatcher];
+        self.backgroundDispatcher = UADispatcher.global;
     }
 
     return self;

@@ -7,9 +7,7 @@
 #import "UARuntimeConfig.h"
 #import "UAAttributePendingMutations.h"
 #import "UAAttributeRegistrar+Internal.h"
-#import "UADate.h"
 #import "UATaskManager.h"
-#import "UASemaphore.h"
 #import "UARemoteConfigURLManager.h"
 #import "UAGlobal.h"
 
@@ -109,7 +107,7 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
         }];
 
         [self.taskManager registerForTaskWithIDs:@[UANamedUserUpdateTaskID, UANamedUserTagUpdateTaskID, UANamedUserAttributeUpdateTaskID]
-                                      dispatcher:[UADispatcher serialDispatcher]
+                                      dispatcher:UADispatcher.serial
                                    launchHandler:^(id<UATask> task) {
 
             if (!self.componentEnabled) {
@@ -233,7 +231,7 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
     }
 
     UADisposable *request;
-    UASemaphore *semaphore = [UASemaphore semaphore];
+    UASemaphore *semaphore = [[UASemaphore alloc] init];
 
     // Treat a nil or empty string as a command to disassociate the named user
     if (self.identifier && [self.identifier length] != 0) {
@@ -271,7 +269,7 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
         return;
     }
 
-    UASemaphore *semaphore = [UASemaphore semaphore];
+    UASemaphore *semaphore = [[UASemaphore alloc] init];
 
     UADisposable *request = [self.tagGroupsRegistrar updateTagGroupsWithCompletionHandler:^(UATagGroupsUploadResult result) {
         switch (result) {
@@ -303,7 +301,7 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
         return;
     }
 
-    UASemaphore *semaphore = [UASemaphore semaphore];
+    UASemaphore *semaphore = [[UASemaphore alloc] init];
 
     UADisposable *request = [self.attributeRegistrar updateAttributesWithCompletionHandler:^(UAAttributeUploadResult result) {
         switch (result) {

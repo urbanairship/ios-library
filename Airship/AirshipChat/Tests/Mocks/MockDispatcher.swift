@@ -18,6 +18,10 @@ class MockDispatcher: UADispatcher {
     private var currentTime : TimeInterval  = 0
     private lazy var pending = [Entry]()
 
+    public init() {
+        super.init(queue: DispatchQueue.main)
+    }
+
     public func advanceTime(_ time: TimeInterval) {
         currentTime += time
         pending.removeAll { (entry) -> Bool in

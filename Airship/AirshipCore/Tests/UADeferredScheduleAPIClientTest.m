@@ -4,7 +4,8 @@
 #import "UADeferredScheduleAPIClient+Internal.h"
 #import "UAScheduleTrigger+Internal.h"
 #import "UAInAppMessage+Internal.h"
-#import "UATestDispatcher.h"
+
+#import "AirshipTests-Swift.h"
 
 typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response, NSError * _Nullable error);
 
@@ -21,7 +22,7 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
     self.mockAuthManager = [self mockForClass:[UAAuthTokenManager class]];
     self.client = [UADeferredScheduleAPIClient clientWithConfig:self.config
                                                         session:self.mockSession
-                                                     dispatcher:[UATestDispatcher testDispatcher]
+                                                     dispatcher:[[UATestDispatcher alloc] init]
                                                     authManager:self.mockAuthManager
                                          stateOverridesProvider:[self testStateOverridesProvider]];
 }

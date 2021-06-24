@@ -7,9 +7,7 @@
 #import "UAUtils+Internal.h"
 #import "UAChannelRegistrationPayload+Internal.h"
 #import "UAAttributePendingMutations.h"
-#import "UADate.h"
 #import "UALocaleManager+Internal.h"
-#import "UASemaphore.h"
 #import "UAKeychainUtils+Internal.h"
 
 #if __has_include("AirshipCore/AirshipCore-Swift.h")
@@ -110,7 +108,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 
         UA_WEAKIFY(self)
         [self.taskManager registerForTaskWithIDs:@[UAChannelTagUpdateTaskID, UAChannelAttributeUpdateTaskID]
-                                      dispatcher:[UADispatcher serialDispatcher]
+                                      dispatcher:UADispatcher.serial
                                    launchHandler:^(id<UATask> task) {
             if (!self.componentEnabled) {
                 UA_LWARN(@"Channel component is disabled");
@@ -407,7 +405,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
         return;
     }
 
-    UASemaphore *semaphore = [UASemaphore semaphore];
+    UASemaphore *semaphore = [[UASemaphore alloc] init];
 
     UADisposable *request = [self.tagGroupsRegistrar updateTagGroupsWithCompletionHandler:^(UATagGroupsUploadResult result) {
         switch (result) {
@@ -438,7 +436,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
         return;
     }
 
-    UASemaphore *semaphore = [UASemaphore semaphore];
+    UASemaphore *semaphore = [[UASemaphore alloc] init];
 
     UADisposable *request = [self.attributeRegistrar updateAttributesWithCompletionHandler:^(UAAttributeUploadResult result) {
         switch (result) {
@@ -509,7 +507,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
         return;
     }
 
-    [[UADispatcher mainDispatcher] dispatchAsyncIfNecessary:^{
+    [UADispatcher.main dispatchAsyncIfNecessary:^{
         [self.notificationCenter postNotificationName:UAChannelUpdatedEvent
                                                object:self
                                              userInfo:@{UAChannelUpdatedEventChannelKey: channelID}];
@@ -519,7 +517,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 - (void)registrationFailed {
     UA_LINFO(@"Channel registration failed.");
 
-    [[UADispatcher mainDispatcher] dispatchAsyncIfNecessary:^{
+    [UADispatcher.main dispatchAsyncIfNecessary:^{
         [self.notificationCenter postNotificationName:UAChannelRegistrationFailedEvent
                                                object:self
                                              userInfo:nil];
@@ -537,7 +535,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
         [self.tagGroupsRegistrar setIdentifier:channelID clearPendingOnChange:NO];
         [self.attributeRegistrar setIdentifier:channelID clearPendingOnChange:NO];
 
-        [[UADispatcher mainDispatcher] dispatchAsyncIfNecessary:^{
+        [UADispatcher.main dispatchAsyncIfNecessary:^{
             [self.notificationCenter postNotificationName:UAChannelCreatedEvent
                                                    object:self
                                                  userInfo:@{UAChannelCreatedEventChannelKey: channelID,
@@ -603,7 +601,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
     UAChannelRegistrationExtenderBlock block = remainingExtenderBlocks.firstObject;
     [remainingExtenderBlocks removeObjectAtIndex:0];
 
-    [[UADispatcher mainDispatcher] dispatchAsyncIfNecessary:^{
+    [UADispatcher.main dispatchAsyncIfNecessary:^{
         block(payload, ^(UAChannelRegistrationPayload *payload) {
                 [self extendPayload:payload extenders:remainingExtenderBlocks completionHandler:completionHandler];
         });

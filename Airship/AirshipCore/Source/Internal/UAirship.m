@@ -362,7 +362,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     if (!handledLaunch_) {
         // Set up can occur after takeoff, so handle the launch notification on the
         // next run loop to allow app setup to finish
-        [[UADispatcher mainDispatcher] dispatchAsync: ^() {
+        [UADispatcher.main dispatchAsync: ^() {
             [UAirship applicationDidFinishLaunching:launchNotification_];
         }];
     }
@@ -383,7 +383,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
         // Log takeoff errors on the next run loop to give time for apps that
         // use class loader to call takeoff.
-        [[UADispatcher mainDispatcher] dispatchAsync:^{
+        [UADispatcher.main dispatchAsync:^{
             if (!sharedAirship_) {
                 UA_LERR(@"[UAirship takeOff] was not called in application:didFinishLaunchingWithOptions:");
                 UA_LERR(@"Please ensure that [UAirship takeOff] is called synchronously before application:didFinishLaunchingWithOptions: returns");

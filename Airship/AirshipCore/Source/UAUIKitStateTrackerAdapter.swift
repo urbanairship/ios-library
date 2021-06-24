@@ -38,7 +38,7 @@ public class UAUIKitStateTrackerAdapter: NSObject, UAAppStateTrackerAdapter {
     }
 
     convenience override init() {
-        self.init(notificationCenter: NotificationCenter.default, dispatcher: UADispatcher.main())
+        self.init(notificationCenter: NotificationCenter.default, dispatcher: UADispatcher.main)
     }
 
     func observeStateEvents() {

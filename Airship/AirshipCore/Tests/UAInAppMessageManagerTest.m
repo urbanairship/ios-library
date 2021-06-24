@@ -8,12 +8,12 @@
 #import "UAInAppMessageBannerDisplayContent+Internal.h"
 #import "UAInAppMessageCustomDisplayContent+Internal.h"
 #import "UAActionRunner.h"
-#import "UATestDispatcher.h"
 #import "UAInAppMessageDefaultDisplayCoordinator+Internal.h"
 #import "UAInAppMessageAssetManager+Internal.h"
 #import "UAInAppMessageAssetCache+Internal.h"
 #import "UAInAppMessage+Internal.h"
 #import "NSObject+UAAdditions.h"
+#import "AirshipTests-Swift.h"
 
 @import AirshipCore;
 
@@ -50,7 +50,7 @@ NSString * const UAInAppMessageManagerTestScheduleID = @"schedule ID";
     self.mockAdapter = [self mockForProtocol:@protocol(UAInAppMessageAdapterProtocol)];
 
     self.mockActionRunner = [self mockForClass:[UAActionRunner class]];
-    self.testDispatcher = [UATestDispatcher testDispatcher];
+    self.testDispatcher = [[UATestDispatcher alloc] init];
     self.mockDefaultDisplayCoordinator = [self mockForClass:[UAInAppMessageDefaultDisplayCoordinator class]];
 
     // Note: KVO fails for protocol mocks

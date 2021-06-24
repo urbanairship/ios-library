@@ -2,7 +2,8 @@
 
 #import "UAAirshipBaseTest.h"
 #import "UAApplicationMetrics+Internal.h"
-#import "UATestDate.h"
+#import "AirshipTests-Swift.h"
+
 
 @import AirshipCore;
 
@@ -20,7 +21,7 @@
     [super setUp];
 
     self.testDate = [[UATestDate alloc] init];
-    self.testDate.absoluteTime = [NSDate date];
+    self.testDate.dateOverride = [NSDate date];
 
     self.notificationCenter = [NSNotificationCenter defaultCenter];
     self.privacyManager = [[UAPrivacyManager alloc] initWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];

@@ -199,7 +199,7 @@ static double const MinimumSwipeVelocity = 100.0;
 - (void)dismissWithResolution:(UAInAppMessageResolution *)resolution  {
     [self beginTeardown];
 
-    [[UADispatcher mainDispatcher] dispatchAsync:^{
+    [UADispatcher.main dispatchAsync:^{
         [self bannerView:self.bannerView animateOutWithParentView:self.bannerView.superview completionHandler:^{
             [self finishTeardown];
 
@@ -506,6 +506,3 @@ static double const MinimumSwipeVelocity = 100.0;
 @end
 
 NS_ASSUME_NONNULL_END
-
-
-

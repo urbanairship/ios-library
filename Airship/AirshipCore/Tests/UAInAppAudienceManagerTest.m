@@ -6,7 +6,7 @@
 #import "UAChannel.h"
 #import "UATagGroupsLookupAPIClient+Internal.h"
 #import "UAPendingTagGroupStore+Internal.h"
-#import "UATestDate.h"
+#import "AirshipTests-Swift.h"
 
 @interface UAInAppAudienceManagerTest : UAAirshipBaseTest
 @property (nonatomic, strong) UAInAppAudienceManager *manager;
@@ -135,7 +135,7 @@
     [[[self.mockCache expect] andReturnValue:@(NO)] needsRefresh];
 
 
-    self.testDate.absoluteTime = [NSDate date];
+    self.testDate.dateOverride = [NSDate date];
 
     [[[self.mockHistorian expect] andReturn:localHistory] tagHistoryNewerThan:[cacheRefreshDate dateByAddingTimeInterval:-self.manager.preferLocalTagDataTime]];
 
@@ -192,7 +192,7 @@
     [[[self.mockCache expect] andReturn:response] response];
     [[[self.mockCache expect] andReturnValue:@(NO)] isStale];
 
-    self.testDate.absoluteTime = [NSDate date];
+    self.testDate.dateOverride = [NSDate date];
 
     [[[self.mockHistorian expect] andReturn:localHistory] tagHistoryNewerThan:[cacheRefreshDate dateByAddingTimeInterval:-self.manager.preferLocalTagDataTime]];
 
@@ -243,7 +243,7 @@
     [[[self.mockCache expect] andReturn:cacheRefreshDate] refreshDate];
     [[[self.mockCache expect] andReturnValue:@(NO)] isStale];
 
-    self.testDate.absoluteTime = [NSDate date];
+    self.testDate.dateOverride = [NSDate date];
 
     NSArray *localHistory = @[
         [UATagGroupsMutation mutationToAddTags:@[@"bar", @"baz"] group:@"foo"],
@@ -394,7 +394,7 @@
 }
 
 - (void)testTagOverrides {
-    self.testDate.absoluteTime = [NSDate date];
+    self.testDate.dateOverride = [NSDate date];
 
     NSArray *localHistory = @[
         [UATagGroupsMutation mutationToRemoveTags:@[@"one", @"two"] group:@"foo"],
@@ -402,7 +402,7 @@
         [UATagGroupsMutation mutationToSetTags:@[@"1"] group:@"baz"]
     ];
 
-    [[[self.mockHistorian expect] andReturn:localHistory] tagHistoryNewerThan:[self.testDate.absoluteTime dateByAddingTimeInterval:-self.manager.preferLocalTagDataTime]];
+    [[[self.mockHistorian expect] andReturn:localHistory] tagHistoryNewerThan:[self.testDate.dateOverride dateByAddingTimeInterval:-self.manager.preferLocalTagDataTime]];
 
     NSArray *pendingNamedUser = @[
         [UATagGroupsMutation mutationToSetTags:@[@"3"] group:@"baz"],
@@ -427,14 +427,14 @@
 }
 
 - (void)testAttributeOverrides {
-    self.testDate.absoluteTime = [NSDate date];
+    self.testDate.dateOverride = [NSDate date];
 
     NSArray *localHistory = @[
         [self removeAttributeMutationWithKey:@"foo"],
         [self setAttributeMutationWithKey:@"bar" value:@"1"],
         [self setAttributeMutationWithKey:@"baz" value:@"a"]
     ];
-    [[[self.mockHistorian expect] andReturn:localHistory] attributeHistoryNewerThan:[self.testDate.absoluteTime dateByAddingTimeInterval:-self.manager.preferLocalTagDataTime]];
+    [[[self.mockHistorian expect] andReturn:localHistory] attributeHistoryNewerThan:[self.testDate.dateOverride dateByAddingTimeInterval:-self.manager.preferLocalTagDataTime]];
 
     UAAttributePendingMutations *pendingNamedUser = [self setAttributeMutationWithKey:@"foo" value:@"some-value"];
     [[[self.mockNamedUser expect] andReturn:pendingNamedUser] pendingAttributes];

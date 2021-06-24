@@ -67,7 +67,7 @@ static NSString * const UAInboxMessageListExtraRetrieveCallback = @"retrieveCall
         self.mainDispatcher = dispatcher;
         self.date = date;
         self.taskManager = taskManager;
-        self.taskDispatcher = [UADispatcher serialDispatcher];
+        self.taskDispatcher = UADispatcher.serial;
         [self registerTasks];
     }
 
@@ -90,7 +90,7 @@ static NSString * const UAInboxMessageListExtraRetrieveCallback = @"retrieveCall
                                             config:config
                                         inboxStore:inboxStore
                                 notificationCenter:[NSNotificationCenter defaultCenter]
-                                        dispatcher:[UADispatcher mainDispatcher]
+                                        dispatcher:UADispatcher.main
                                               date:[[UADate alloc] init]
                                        taskManager:[UATaskManager shared]];
 }
@@ -314,7 +314,7 @@ static NSString * const UAInboxMessageListExtraRetrieveCallback = @"retrieveCall
 
     [self.taskManager enqueueRequestWithID:UAInboxMessageListRetrieveTask options:options];
 
-    UADisposable *disposable = [UADisposable disposableWithBlock:^{
+    UADisposable *disposable = [[UADisposable alloc] init:^{
         UA_STRONGIFY(self)
         [self.mainDispatcher doSync:^{
             successBlockCopy = nil;
@@ -328,7 +328,7 @@ static NSString * const UAInboxMessageListExtraRetrieveCallback = @"retrieveCall
 
 - (UADisposable *)markMessagesRead:(NSArray *)messages completionHandler:(UAInboxMessageListCallbackBlock)completionHandler {
     __block UAInboxMessageListCallbackBlock inboxMessageListCompletionBlock = completionHandler;
-    UADisposable *disposable = [UADisposable disposableWithBlock:^{
+    UADisposable *disposable = [[UADisposable alloc] init:^{
         inboxMessageListCompletionBlock = nil;
     }];
 
@@ -384,7 +384,7 @@ static NSString * const UAInboxMessageListExtraRetrieveCallback = @"retrieveCall
 
 - (UADisposable *)markMessagesDeleted:(NSArray *)messages completionHandler:(UAInboxMessageListCallbackBlock)completionHandler {
     __block UAInboxMessageListCallbackBlock inboxMessageListCompletionBlock = completionHandler;
-    UADisposable *disposable = [UADisposable disposableWithBlock:^{
+    UADisposable *disposable = [[UADisposable alloc] init:^{
         inboxMessageListCompletionBlock = nil;
     }];
 

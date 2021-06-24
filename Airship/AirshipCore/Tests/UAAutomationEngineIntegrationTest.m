@@ -11,12 +11,11 @@
 #import "UAScheduleDelay.h"
 #import "UAScheduleData+Internal.h"
 #import "UAApplicationMetrics+Internal.h"
-#import "UATestDispatcher.h"
-#import "UATestDate.h"
 #import "UATestRuntimeConfig.h"
 #import "UAActionSchedule.h"
 #import "UAScheduleEdits+Internal.h"
 #import "UANetworkMonitor.h"
+#import "AirshipTests-Swift.h"
 
 @import AirshipCore;
 
@@ -48,8 +47,8 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
 - (void)setUp {
     [super setUp];
 
-    self.testDate = [[UATestDate alloc] initWithAbsoluteTime:[NSDate date]];
-    self.dispatcher = [UATestDispatcher testDispatcher];
+    self.testDate = [[UATestDate alloc] initWithOffset:0 dateOverride:[NSDate date]];
+    self.dispatcher = [[UATestDispatcher alloc] init];
     self.mockedApplication = [self mockForClass:[UIApplication class]];
     self.mockAppStateTracker = [self mockForClass:[UAAppStateTracker class]];
 
@@ -481,7 +480,7 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
     [self waitForTestExpectations];
 
     // Shift time to one second after the futureDate
-    self.testDate.timeOffset = [futureDate timeIntervalSinceDate:self.testDate.now] + 1;
+    self.testDate.offset = [futureDate timeIntervalSinceDate:self.testDate.now] + 1;
 
     // Verify getScheduleWithIdentifier:completionHandler: does not return the expired schedule
     XCTestExpectation *groupExpectation = [self expectationWithDescription:@"fetched schedule"];
@@ -521,7 +520,7 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
     [self waitForTestExpectations];
 
     // Shift time to one second after the futureDate
-    self.testDate.timeOffset = [futureDate timeIntervalSinceDate:self.testDate.now] + 1;
+    self.testDate.offset = [futureDate timeIntervalSinceDate:self.testDate.now] + 1;
 
     // Schedule more actions
     UASchedule *schedule = [UAActionSchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
@@ -906,7 +905,7 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
     }] completionHandler:OCMOCK_ANY];
 
     // move ahead 1:30
-    self.testDate.timeOffset = 60 * 60 * 1.5;
+    self.testDate.offset = 60 * 60 * 1.5;
 
     // Trigger the scheduled actions
     UACustomEvent *purchase = [UACustomEvent eventWithName:@"purchase"];
@@ -1002,7 +1001,7 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
     }] completionHandler:OCMOCK_ANY];
 
     // move ahead 2:30
-    self.testDate.timeOffset = 60 * 60 * 2.5;
+    self.testDate.offset = 60 * 60 * 2.5;
 
     // Trigger the scheduled actions
     UACustomEvent *purchase = [UACustomEvent eventWithName:@"purchase"];
@@ -1530,7 +1529,7 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
     triggerFireBlock();
 
     // Shift time to one second after the start date
-    self.testDate.timeOffset = [startDate timeIntervalSinceDate:self.testDate.now] + 1;
+    self.testDate.offset = [startDate timeIntervalSinceDate:self.testDate.now] + 1;
 
     [self.automationEngine resume];
 

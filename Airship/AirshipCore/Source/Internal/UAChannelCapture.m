@@ -3,7 +3,6 @@
 #import "UAChannelCapture+Internal.h"
 #import "UAChannel.h"
 #import "UARuntimeConfig.h"
-#import "UADate.h"
 
 #if __has_include("AirshipCore/AirshipCore-Swift.h")
 #import <AirshipCore/AirshipCore-Swift.h>

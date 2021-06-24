@@ -4,7 +4,13 @@
 #import "UAAction+Internal.h"
 #import "UAActionResult+Internal.h"
 #import "UAGlobal.h"
-#import "UADispatcher.h"
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
+
 
 @implementation UAAction
 
@@ -28,7 +34,7 @@
     completionHandler = completionHandler ?: ^(UAActionResult *result) {};
     
     // Make sure the initial acceptsArguments/willPerform/perform is executed on the main queue
-    [[UADispatcher mainDispatcher] dispatchAsyncIfNecessary:^{
+    [UADispatcher.main dispatchAsyncIfNecessary:^{
         if (![self acceptsArguments:arguments]) {
             UA_LDEBUG(@"Action %@ rejected arguments %@.", [self description], [arguments description]);
             completionHandler([UAActionResult rejectedArgumentsResult]);
@@ -37,7 +43,7 @@
             [self willPerformWithArguments:arguments];
             [self performWithArguments:arguments completionHandler:^(UAActionResult *result) {
                 // Make sure the passed completion handler and didPerformWithArguments are executed on the main queue
-                [[UADispatcher mainDispatcher] dispatchAsyncIfNecessary:^{
+                [UADispatcher.main dispatchAsyncIfNecessary:^{
                     if (!result) {
                         UA_LTRACE("Action %@ called the completion handler with a nil result", [self description]);
                     }

@@ -7,8 +7,6 @@
 #import "UARuntimeConfig.h"
 #import "UAUtils+Internal.h"
 #import "UAAirshipBaseTest.h"
-#import "UATestDispatcher.h"
-#import "UATestDate.h"
 #import "UATaskManager.h"
 #import "UALocaleManager+Internal.h"
 #import "UARemoteConfigURLManager.h"
@@ -57,7 +55,7 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
     }] remoteDataURLWithLocale:OCMOCK_ANY];
 
     self.testStore = [UARemoteDataStore storeWithName:[NSUUID UUID].UUIDString inMemory:YES];
-    self.testDate = [[UATestDate alloc] initWithAbsoluteTime:[NSDate date]];
+    self.testDate = [[UATestDate alloc] initWithOffset:0 dateOverride:[NSDate date]];
     self.notificationCenter = [[NSNotificationCenter alloc] init];
 
     self.locale = @"en-US";
@@ -128,7 +126,7 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
     XCTAssertEqual(0, count);
 
     // Refresh interval
-    self.testDate.timeOffset += 100;
+    self.testDate.offset += 100;
     [self.notificationCenter postNotificationName:UAAppStateTracker.didTransitionToForeground object:nil];
     XCTAssertEqual(1, count);
 }
@@ -596,7 +594,7 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
                                         remoteDataAPIClient:self.mockAPIClient
                                          notificationCenter:self.notificationCenter
                                             appStateTracker:self.testAppStateTracker
-                                                 dispatcher:[UATestDispatcher testDispatcher]
+                                                 dispatcher:[[UATestDispatcher alloc] init]
                                                        date:self.testDate
                                               localeManager:self.mockLocaleManager
                                                 taskManager:self.mockTaskManager

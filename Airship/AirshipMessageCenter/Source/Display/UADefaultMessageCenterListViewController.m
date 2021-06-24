@@ -8,8 +8,14 @@
 #import "UAMessageCenterLocalization.h"
 #import "UAMessageCenterStyle.h"
 #import "UAMessageCenterResources.h"
-
 #import "UAAirshipMessageCenterCoreImport.h"
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+@import AirshipCore;
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
+
 
 /*
  * List-view image controls: default image path and cache values
@@ -895,7 +901,7 @@ NS_ASSUME_NONNULL_BEGIN
             UIImage *iconImage = [UIImage imageWithData:iconImageData];
             iconImage = [self scaleImage:iconImage toSize:iconSize];
 
-           [[UADispatcher mainDispatcher] dispatchAsync:^{
+           [UADispatcher.main dispatchAsync:^{
                 // Recapture self for the duration of this block
                 UA_STRONGIFY(self)
 

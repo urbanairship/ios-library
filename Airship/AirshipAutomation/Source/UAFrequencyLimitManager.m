@@ -8,6 +8,12 @@
 #import "UAOccurrenceData+Internal.h"
 #import "UAFrequencyLimitStore+Internal.h"
 
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+@import AirshipCore;
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
+
 @interface UAFrequencyLimitManager ()
 @property(nonatomic, strong) NSMutableDictionary<UAFrequencyConstraint *, NSMutableArray<UAOccurrence *> *> *occurrencesMap;
 @property(nonatomic, strong) NSMutableArray<UAOccurrence *> *pendingOccurrences;
@@ -41,7 +47,7 @@
 + (instancetype)managerWithConfig:(UARuntimeConfig *)config {
     return [[self alloc] initWithDataStore:[UAFrequencyLimitStore storeWithConfig:config]
                                       date:[[UADate alloc] init]
-                                dispatcher:[UADispatcher serialDispatcher]];
+                                dispatcher:UADispatcher.serial];
 }
 
 - (void)getFrequencyChecker:(NSArray<NSString *> *)constraintIDs completionHandler:(void (^)(UAFrequencyChecker *))completionHandler {

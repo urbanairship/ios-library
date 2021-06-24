@@ -34,7 +34,7 @@
 }
 
 - (instancetype)init {
-    return [self initWithDispatcher:[UADispatcher mainDispatcher]
+    return [self initWithDispatcher:UADispatcher.main
                  notificationCenter:[NSNotificationCenter defaultCenter]];
 }
 

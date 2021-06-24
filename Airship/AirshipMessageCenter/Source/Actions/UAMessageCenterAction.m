@@ -5,9 +5,13 @@
 #import "UAInboxMessageList.h"
 #import "UAInboxUtils.h"
 #import "UAMessageCenter.h"
-
 #import "UAAirshipMessageCenterCoreImport.h"
 
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+@import AirshipCore;
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
 
 #define kUAMessageCenterActionMessageIDPlaceHolder @"auto"
 
@@ -35,7 +39,7 @@
     // Parse the message ID
     NSString *messageID = [UAMessageCenterAction parseMessageIDFromArgs:arguments];
 
-    [[UADispatcher mainDispatcher] dispatchAsync:^{
+    [UADispatcher.main dispatchAsync:^{
         if (!messageID) {
             [[UAMessageCenter shared] display];
         } else {

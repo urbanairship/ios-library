@@ -1,7 +1,8 @@
 /* Copyright Airship and Contributors */
 
 #import "UAUtils.h"
-#import "UADispatcher.h"
+
+@class UADispatcher;
 
 NS_ASSUME_NONNULL_BEGIN
 

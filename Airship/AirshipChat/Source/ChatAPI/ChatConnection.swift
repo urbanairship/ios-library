@@ -30,7 +30,7 @@ class ChatConnection : ChatConnectionProtocol, WebSocketDelegate  {
 
     init(chatConfig: ChatConfig,
          socketFactory: WebSocketFactoryProtocol = WebSocketFactory(),
-         dispatcher: UADispatcher = UADispatcher.global()) {
+         dispatcher: UADispatcher = UADispatcher.global) {
         self.chatConfig = chatConfig
         self.socketFactory = socketFactory
         self.dispatcher = dispatcher

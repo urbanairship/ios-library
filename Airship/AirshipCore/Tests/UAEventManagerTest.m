@@ -10,7 +10,6 @@
 #import "UAirship+Internal.h"
 #import "UAChannel.h"
 #import "UATaskManager.h"
-#import "UADelay+Internal.h"
 
 @import AirshipCore;
 
@@ -64,7 +63,7 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
     }] registerForTaskWithID:UAEventManagerUploadTask dispatcher:OCMOCK_ANY launchHandler:OCMOCK_ANY];
 
     self.delayProvider = ^(NSTimeInterval delay) {
-        return [UADelay delayWithSeconds:0];
+        return [[UADelay alloc] init:0];
     };
 
     self.eventManager = [UAEventManager eventManagerWithConfig:self.config

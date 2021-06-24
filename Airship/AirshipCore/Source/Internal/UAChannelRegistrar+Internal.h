@@ -4,12 +4,12 @@
 
 #import "UAChannelRegistrationPayload.h"
 #import "UARuntimeConfig.h"
-#import "UADate.h"
-#import "UADispatcher.h"
 #import "UATaskManager.h"
 
 @class UAPreferenceDataStore;
 @class UAChannelAPIClient;
+@class UADate;
+@class UADispatcher;
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -2,10 +2,16 @@
 
 #import "UANetworkMonitor.h"
 #import "Network/Network.h"
-#import "UADisposable.h"
 #import "UAGlobal.h"
 #import "NSObject+UAAdditions.h"
 #import "UAUtils.h"
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
+
 
 @interface UANetworkMonitor()
 @property(nonatomic, strong) nw_path_monitor_t pathMonitor  API_AVAILABLE(ios(12), tvos(12));

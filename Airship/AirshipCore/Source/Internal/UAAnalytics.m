@@ -138,7 +138,7 @@ NSString *const UAEventKey = @"event";
                            eventManager:[UAEventManager eventManagerWithConfig:config dataStore:dataStore channel:channel]
                      notificationCenter:[NSNotificationCenter defaultCenter]
                                    date:[[UADate alloc] init]
-                             dispatcher:[UADispatcher mainDispatcher]
+                             dispatcher:UADispatcher.main
                           localeManager:localeManager
                         appStateTracker:[UAAppStateTracker shared]
                          privacyManager:privacyManager];

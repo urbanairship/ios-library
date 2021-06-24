@@ -3,7 +3,7 @@
 #import "UABaseTest.h"
 #import "UAInboxMessage+Internal.h"
 #import "UAInboxMessageList+Internal.h"
-#import "UATestDate.h"
+#import "AirshipTests-Swift.h"
 
 @interface UAInboxMessageTest : UABaseTest
 @property (nonatomic, strong) UATestDate *testDate;
@@ -28,7 +28,7 @@
 - (void)setUp {
     [super setUp];
 
-    self.testDate = [[UATestDate alloc] initWithAbsoluteTime:[NSDate date]];
+    self.testDate = [[UATestDate alloc] initWithOffset:0 dateOverride:[NSDate date]];
 }
 
 /**

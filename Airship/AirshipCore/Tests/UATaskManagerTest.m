@@ -3,7 +3,7 @@
 #import <XCTest/XCTest.h>
 #import "UAAirshipBaseTest.h"
 #import "UATaskManager+Internal.h"
-#import "UATestDispatcher.h"
+#import "AirshipTests-Swift.h"
 
 @import AirshipCore;
 
@@ -39,7 +39,7 @@
 @implementation UATaskManagerTest
 
 - (void)setUp {
-    self.testDispatcher = [UATestDispatcher testDispatcher];
+    self.testDispatcher = [[UATestDispatcher alloc] init];
     self.notificationCenter = [[NSNotificationCenter alloc] init];
     self.mockApplication = [self mockForClass:[UIApplication class]];
     self.testNetworkMonitor = [[UATestNetworkMonitor alloc] init];
@@ -55,7 +55,7 @@
     [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)45)] backgroundTimeRemaining];
 
     XCTestExpectation *taskRan = [self expectationWithDescription:@"task ran"];
-    [self.taskManager registerForTaskWithID:@"test" dispatcher:[UADispatcher mainDispatcher] launchHandler:^(id<UATask>task) {
+    [self.taskManager registerForTaskWithID:@"test" dispatcher:UADispatcher.main launchHandler:^(id<UATask>task) {
         XCTAssertEqual(@"test", task.taskID);
         XCTAssertEqual(UATaskConflictPolicyAppend, task.requestOptions.conflictPolicy);
         XCTAssertFalse(task.requestOptions.isNetworkRequired);
@@ -119,7 +119,7 @@
     XCTestExpectation *taskRan = [self expectationWithDescription:@"task ran"];
     XCTestExpectation *taskExpired = [self expectationWithDescription:@"task expired"];
 
-    [self.taskManager registerForTaskWithID:@"test" dispatcher:[UADispatcher mainDispatcher] launchHandler:^(id<UATask>task) {
+    [self.taskManager registerForTaskWithID:@"test" dispatcher:UADispatcher.main launchHandler:^(id<UATask>task) {
         UA_WEAKIFY(task)
         task.expirationHandler = ^{
             UA_STRONGIFY(task)

@@ -3,6 +3,13 @@
 #import "UATaskLauncher+Internal.h"
 #import "UAGlobal.h"
 
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
+
+
 @interface UATaskLauncher()
 @property(nonatomic, strong) UADispatcher *dispatcher;
 @property(nonatomic, copy) void (^launchHandler)(id<UATask>);
@@ -14,7 +21,7 @@
                      launchHandler:(void (^)(id<UATask>))launchHandler {
     self = [super init];
     if (self) {
-        self.dispatcher = dispatcher ?: [UADispatcher globalDispatcher];
+        self.dispatcher = dispatcher ?: UADispatcher.global;
         self.launchHandler = launchHandler;
     }
     return self;

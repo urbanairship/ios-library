@@ -4,7 +4,7 @@
 #import "UAChannelCapture+Internal.h"
 #import "UAChannel.h"
 #import "UARuntimeConfig.h"
-#import "UATestDate.h"
+#import "AirshipTests-Swift.h"
 
 @import AirshipCore;
 
@@ -34,7 +34,7 @@
 
     self.notificationCenter = [[NSNotificationCenter alloc] init];
 
-    self.testDate = [[UATestDate alloc] initWithAbsoluteTime:[NSDate date]];
+    self.testDate = [[UATestDate alloc] initWithOffset:0 dateOverride:[NSDate date]];
 
     self.config.channelCaptureEnabled = YES;
     
@@ -208,8 +208,7 @@
 - (void)testChannelCapturedByKnocksAfterNonKnockForegrounds {
     // Add a couple of old foregrounds to simulate app-has-been-running state
     [self knock:2];
-    [self.testDate setTimeOffset:self.testDate.timeOffset + 30];
-    
+    self.testDate.offset += 30;
     [self verifyChannelIsCapturedAfterKnocks];
 }
 
@@ -267,8 +266,8 @@
     [self expectMockPasteboardToBeSet:NO];
 
     [self knock];
-    
-    [self.testDate setTimeOffset:self.testDate.timeOffset + 30];
+
+    self.testDate.offset += 30;
     
     [self knock:5];
     
@@ -279,7 +278,7 @@
 * Helper method to simulate a knock
 */
 - (void)knock {
-    [self.testDate setTimeOffset:self.testDate.timeOffset + 1];
+    self.testDate.offset += 1;
     [self.notificationCenter postNotificationName:UAAppStateTracker.didTransitionToForeground object:nil];
 }
 

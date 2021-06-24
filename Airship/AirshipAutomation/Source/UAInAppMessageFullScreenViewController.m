@@ -11,6 +11,12 @@
 #import "UAAirshipAutomationCoreImport.h"
 #import "UAAutomationResources.h"
 
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+@import AirshipCore;
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
+
 NS_ASSUME_NONNULL_BEGIN
 
 @class UAInAppMessageTextView;
@@ -510,7 +516,7 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
 }
 
 - (void)dismissWithResolution:(UAInAppMessageResolution *)resolution  {
-    [[UADispatcher mainDispatcher] dispatchAsync:^{
+    [UADispatcher.main dispatchAsync:^{
         self.verticalConstraint.constant = self.view.bounds.size.height;
 
         [UIView animateWithDuration:DefaultFullScreenAnimationDuration delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{

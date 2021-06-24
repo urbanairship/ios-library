@@ -1,10 +1,10 @@
 /* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-
 #import "UAUser.h"
-
 #import "UAAirshipMessageCenterCoreImport.h"
+
+@class UADisposable;
 
 NS_ASSUME_NONNULL_BEGIN
 

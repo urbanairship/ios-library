@@ -3,8 +3,6 @@
 #import <Foundation/Foundation.h>
 #import "UAAnalytics.h"
 #import "UAComponent+Internal.h"
-#import "UADate.h"
-#import "UADispatcher.h"
 #import "UAExtendableAnalyticsHeaders.h"
 #import "UAEventManager+Internal.h"
 
@@ -15,6 +13,8 @@
 @class UARegionEvent;
 @class UAPreferenceDataStore;
 @class UARuntimeConfig;
+@class UADispatcher;
+@class UADate;
 
 NS_ASSUME_NONNULL_BEGIN
 

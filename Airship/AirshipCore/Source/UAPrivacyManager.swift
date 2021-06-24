@@ -53,7 +53,7 @@ public class UAPrivacyManager : NSObject {
             if (_enabledFeatures != newValue) {
                 _enabledFeatures = newValue
                 dataStore.setObject(NSNumber(value: enabledFeatures.rawValue), forKey: UAPrivacyManagerEnabledFeaturesKey)
-                UADispatcher.main().dispatchAsyncIfNecessary({ [self] in
+                UADispatcher.main.dispatchAsyncIfNecessary({ [self] in
                     notificationCenter.post(name: UAPrivacyManager.changeEvent, object: nil)
                 })
             }

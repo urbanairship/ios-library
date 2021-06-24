@@ -11,8 +11,14 @@
 #import "UAMessageCenterLocalization.h"
 #import "UAUser+Internal.h"
 #import "UAMessageCenter.h"
-
 #import "UAAirshipMessageCenterCoreImport.h"
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+@import AirshipCore;
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
+
 
 static NSString *UAMessageCenterMessageViewControllerAboutBlank = @"about:blank";
 
@@ -267,7 +273,7 @@ typedef enum MessageState {
     UA_WEAKIFY(self);
 
     [[UAMessageCenter shared].messageList retrieveMessageListWithSuccessBlock:^{
-        [[UADispatcher mainDispatcher] dispatchAsync:^{
+        [UADispatcher.main dispatchAsync:^{
             UA_STRONGIFY(self)
 
             UAInboxMessage *message = [[UAMessageCenter shared].messageList messageForID:messageID];
@@ -290,7 +296,7 @@ typedef enum MessageState {
             return;
         }];
     } withFailureBlock:^{
-        [[UADispatcher mainDispatcher] dispatchAsync:^{
+        [UADispatcher.main dispatchAsync:^{
             UA_STRONGIFY(self);
             
             [self hideLoadingIndicator];
@@ -352,7 +358,7 @@ typedef enum MessageState {
         NSString *auth = [UAInboxUtils userAuthHeaderString:userData];
         [requestObj setValue:auth forHTTPHeaderField:@"Authorization"];
         [self.webView loadRequest:requestObj];
-    } dispatcher:[UADispatcher mainDispatcher]];
+    } dispatcher:UADispatcher.main];
 }
 
 - (void) contentSizeDidChange {

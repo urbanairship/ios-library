@@ -2,7 +2,6 @@
 
 #import "UAUtils+Internal.h"
 #import "UAActionResult.h"
-#import "UADispatcher.h"
 
 // Frameworks
 #import <CommonCrypto/CommonDigest.h>
@@ -88,9 +87,9 @@ NSString * const UAConnectionTypeWifi = @"wifi";
 }
 
 + (void)getDeviceID:(void (^)(NSString *))completionHandler dispatcher:(nullable UADispatcher *)dispatcher {
-    [[UADispatcher globalDispatcher] dispatchAsync:^{
+    [UADispatcher.global dispatchAsync:^{
         NSString *deviceID = [UAKeychainUtils getDeviceID];
-        UADispatcher *completionDispatcher = dispatcher ? : [UADispatcher mainDispatcher];
+        UADispatcher *completionDispatcher = dispatcher ? : UADispatcher.main;
 
         [completionDispatcher dispatchAsync:^{
             completionHandler(deviceID);

@@ -2,10 +2,10 @@
 
 #import <Foundation/Foundation.h>
 #import "UAApplicationMetrics.h"
-#import "UADate.h"
 
 @class UAPrivacyManager;
 @class UAPreferenceDataStore;
+@class UADate;
 
 NS_ASSUME_NONNULL_BEGIN
 

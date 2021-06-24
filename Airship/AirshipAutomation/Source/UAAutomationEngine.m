@@ -103,7 +103,7 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
 
         UA_WEAKIFY(self)
         [self.taskManager registerForTaskWithIDs:@[UAAutomationEngineDelayTaskID, UAAutomationEngineIntervalTaskID]
-                                      dispatcher:[UADispatcher serialDispatcher]
+                                      dispatcher:UADispatcher.serial
                                    launchHandler:^(id<UATask> task) {
             UA_STRONGIFY(self)
             if ([task.taskID isEqualToString:UAAutomationEngineDelayTaskID]) {
@@ -156,7 +156,7 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
                                                    taskManager:[UATaskManager shared]
                                                 networkMonitor:[[UANetworkMonitor alloc] init]
                                             notificationCenter:[NSNotificationCenter defaultCenter]
-                                                    dispatcher:[UADispatcher mainDispatcher]
+                                                    dispatcher:UADispatcher.main
                                                    application:[UIApplication sharedApplication]
                                                           date:[[UADate alloc] init]];
 }

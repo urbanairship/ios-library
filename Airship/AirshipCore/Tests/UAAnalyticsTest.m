@@ -10,14 +10,14 @@
 #import "UARegionEvent.h"
 #import "UACustomEvent.h"
 #import "UAEventManager+Internal.h"
-#import "UATestDate.h"
-#import "UATestDispatcher.h"
 #import "UAUtils+Internal.h"
 #import "UALocaleManager.h"
 #import "UAAppInitEvent+Internal.h"
 #import "UAAppForegroundEvent+Internal.h"
 #import "UAAppBackgroundEvent+Internal.h"
 #import "UAirship+Internal.h"
+
+#import "AirshipTests-Swift.h"
 
 @import AirshipCore;
 
@@ -448,7 +448,7 @@
 // Tests that starting a screen tracking event when one is already started adds the event with the correct start and stop times
 - (void)testStartTrackScreenAddEvent {
 
-    self.testDate.absoluteTime = [NSDate dateWithTimeIntervalSince1970:0];
+    self.testDate.dateOverride = [NSDate dateWithTimeIntervalSince1970:0];
     [self.analytics trackScreen:@"first_screen"];
 
     // Expect that the mock event is added to the mock DB Manager
@@ -468,7 +468,7 @@
         return [event.screen isEqualToString:@"first_screen"];
     }] sessionID:OCMOCK_ANY];
 
-    self.testDate.timeOffset = 20;
+    self.testDate.offset = 20;
 
     [self.analytics trackScreen:@"second_screen"];
 
@@ -622,7 +622,7 @@
                                                  eventManager:self.mockEventManager
                                            notificationCenter:self.notificationCenter
                                                          date:self.testDate
-                                                   dispatcher:[UADispatcher mainDispatcher]
+                                                   dispatcher:UADispatcher.main
                                                 localeManager:self.mockLocaleClass
                                               appStateTracker:self.mockAppStateTracker
                                                privacyManager:self.privacyManager];
@@ -649,7 +649,7 @@
                                eventManager:self.mockEventManager
                          notificationCenter:self.notificationCenter
                                        date:self.testDate
-                                 dispatcher:[UATestDispatcher testDispatcher]
+                                 dispatcher:[[UATestDispatcher alloc] init]
                               localeManager:self.mockLocaleClass
                             appStateTracker:self.mockAppStateTracker
                              privacyManager:self.privacyManager];

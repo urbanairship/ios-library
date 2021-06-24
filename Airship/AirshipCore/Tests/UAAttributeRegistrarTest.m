@@ -3,11 +3,11 @@
 #import "UAAirshipBaseTest.h"
 #import "UAAttributeRegistrar+Internal.h"
 #import "UAUtils+Internal.h"
-#import "UATestDate.h"
 #import "UAAttributePendingMutations.h"
 #import "UAPersistentQueue+Internal.h"
 #import "UAAttributeMutations.h"
 #import "UATaskManager.h"
+#import "AirshipTests-Swift.h"
 
 @import AirshipCore;
 
@@ -23,7 +23,7 @@
 @implementation UAAttributeRegistrarTest
 
 - (void)setUp {
-    self.testDate = [[UATestDate alloc] initWithAbsoluteTime:[NSDate date]];
+    self.testDate = [[UATestDate alloc] initWithOffset:0 dateOverride:[NSDate date]];
     self.mockApplication = [self mockForClass:[UIApplication class]];
     self.mockApiClient = [self mockForClass:[UAAttributeAPIClient class]];
 

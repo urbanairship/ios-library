@@ -71,7 +71,7 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
         }];
 
         [self.taskManager registerForTaskWithIDs:@[UAUserUpdateTaskID]
-                                      dispatcher:[UADispatcher serialDispatcher]
+                                      dispatcher:UADispatcher.serial
                                    launchHandler:^(id<UATask> task) {
             if (!self.enabled) {
                 UA_LDEBUG(@"User disabled, unable to run task %@", task);
@@ -183,7 +183,7 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
         return;
     }
 
-    UASemaphore *semaphore = [UASemaphore semaphore];
+    UASemaphore *semaphore = [[UASemaphore alloc] init];
     void (^completionHandler)(BOOL) = ^(BOOL completed) {
         [semaphore signal];
         if (completed) {
@@ -253,7 +253,7 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
                 if (success) {
                     UA_LINFO(@"Created user %@ successfully.", response.userData.username);
                     self.registeredChannelID = channelID;
-                    [[UADispatcher mainDispatcher] dispatchAsync:^{
+                    [UADispatcher.main dispatchAsync:^{
                         [self.notificationCenter postNotificationName:UAUserCreatedNotification object:nil];
                     }];
                     completionHandler(true);

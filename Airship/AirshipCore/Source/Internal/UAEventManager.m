@@ -9,10 +9,7 @@
 #import "UARuntimeConfig.h"
 #import "UAChannel.h"
 #import "UAirship.h"
-#import "UADispatcher.h"
 #import "UATaskManager.h"
-#import "UASemaphore.h"
-#import "UADelay+Internal.h"
 
 #if __has_include("AirshipCore/AirshipCore-Swift.h")
 #import <AirshipCore/AirshipCore-Swift.h>
@@ -81,7 +78,7 @@ static NSUInteger const FetchEventLimit = 500;
 
         UA_WEAKIFY(self)
         [self.taskManager registerForTaskWithID:UAEventManagerUploadTask
-                                     dispatcher:[UADispatcher serialDispatcher]
+                                     dispatcher:UADispatcher.serial
                                   launchHandler:^(id<UATask> task) {
             UA_STRONGIFY(self)
             [self uploadEventsTask:task];
@@ -97,7 +94,7 @@ static NSUInteger const FetchEventLimit = 500;
     UAEventAPIClient *client = [[UAEventAPIClient alloc] initWithConfig:config];
 
     UADelay *(^delayProvider)(NSTimeInterval) = ^(NSTimeInterval delay) {
-        return [UADelay delayWithSeconds:delay];
+        return [[UADelay alloc] init:delay];
     };
 
     return [[self alloc] initWithConfig:config
@@ -267,7 +264,7 @@ static NSUInteger const FetchEventLimit = 500;
 
     __block NSTimeInterval batchDelay = ForegroundTaskBatchDelay;
 
-    [[UADispatcher mainDispatcher] doSync:^{
+    [UADispatcher.main doSync:^{
         if (self.appStateTracker.state == UAApplicationStateBackground) {
             batchDelay = BackgroundTaskBatchDelay;
         }
@@ -298,7 +295,7 @@ static NSUInteger const FetchEventLimit = 500;
     NSDictionary *headers = [self prepareHeaders];
 
     UA_WEAKIFY(self);
-    UASemaphore *semaphore = [UASemaphore semaphore];
+    UASemaphore *semaphore = [[UASemaphore alloc] init];
     UADisposable *request = [self.client uploadEvents:events headers:headers completionHandler:^(UAEventAPIResponse * _Nullable response, NSError * _Nullable error) {
         UA_STRONGIFY(self);
         self.lastSendTime = [NSDate date];
@@ -314,7 +311,7 @@ static NSUInteger const FetchEventLimit = 500;
                 [task taskCompleted];
 
                 UA_WEAKIFY(self)
-                [[UADispatcher mainDispatcher] dispatchAsync:^{
+                [UADispatcher.main dispatchAsync:^{
                     UA_STRONGIFY(self)
                     [self scheduleUpload];
                 }];
@@ -348,7 +345,7 @@ static NSUInteger const FetchEventLimit = 500;
 
 - (NSDictionary *)prepareHeaders {
     __block NSDictionary *headers = nil;
-    [[UADispatcher mainDispatcher] doSync:^{
+    [UADispatcher.main doSync:^{
         headers = [self.delegate analyticsHeaders] ?: @{};
     }];
     return headers;
@@ -356,7 +353,7 @@ static NSUInteger const FetchEventLimit = 500;
 
 - (NSArray *)prepareEvents {
     __block NSMutableArray *preparedEvents = nil;
-    UASemaphore *semaphore = [UASemaphore semaphore];
+    UASemaphore *semaphore = [[UASemaphore alloc] init];
 
     NSUInteger maxBatchSize = self.maxBatchSize;
 

@@ -4,10 +4,8 @@
 #import "UAChannel+Internal.h"
 #import "UAChannelRegistrar+Internal.h"
 #import "UAChannelRegistrationPayload+Internal.h"
-#import "UATestDispatcher.h"
 #import "UAUtils+Internal.h"
 #import "UAUserData+Internal.h"
-#import "UATestDate.h"
 #import "UAAttributePendingMutations.h"
 #import "UAActionResult.h"
 #import "UAirship+Internal.h"
@@ -16,6 +14,7 @@
 #import "UAPush+Internal.h"
 #import "UALocaleManager.h"
 #import "UATaskManager.h"
+#import "AirshipTests-Swift.h"
 
 @import AirshipCore;
 
@@ -79,7 +78,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
     self.mockLocaleManager = [self mockForClass:[UALocaleManager class]];
     [[[self.mockLocaleManager stub] andReturn:[NSLocale autoupdatingCurrentLocale]] currentLocale];
 
-    self.testDate = [[UATestDate alloc] initWithAbsoluteTime:[NSDate date]];
+    self.testDate = [[UATestDate alloc] initWithOffset:0 dateOverride:[NSDate date]];
 
     self.mockTaskManager = [self mockForClass:[UATaskManager class]];
 
@@ -728,7 +727,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
     UAAttributeMutations *addMutation = [UAAttributeMutations mutations];
 
     [addMutation setString:@"string" forAttribute:@"attribute"];
-    self.testDate = [[UATestDate alloc] initWithAbsoluteTime:[NSDate date]];
+    self.testDate = [[UATestDate alloc] initWithOffset:0 dateOverride:[NSDate date]];
 
     [UAAttributePendingMutations pendingMutationsWithMutations:addMutation
     date:self.testDate];

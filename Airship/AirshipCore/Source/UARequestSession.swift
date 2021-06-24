@@ -72,7 +72,7 @@ open class UARequestSession : NSObject {
 
         task.resume()
 
-        return UADisposable(block: {
+        return UADisposable({
             task.cancel()
         })
     }

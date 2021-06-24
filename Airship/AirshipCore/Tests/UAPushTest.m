@@ -12,9 +12,9 @@
 #import "UANotificationCategory.h"
 #import "UANotificationAction.h"
 #import "UARuntimeConfig.h"
-#import "UATestDispatcher.h"
 #import "UANotificationContent.h"
 #import "UNNotificationContent+UAAdditions.h"
+#import "AirshipTests-Swift.h"
 
 @import AirshipCore;
 
@@ -144,7 +144,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
                     notificationCenter:self.notificationCenter
                       pushRegistration:self.mockPushRegistration
                            application:self.mockApplication
-                            dispatcher:[UATestDispatcher testDispatcher]
+                            dispatcher:[[UATestDispatcher alloc] init]
                         privacyManager:self.privacyManager];
 
     self.push.registrationDelegate = self.mockRegistrationDelegate;
@@ -1863,7 +1863,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
         [extendedPayload fulfill];
     });
 
-    [[UADispatcher mainDispatcher] dispatchAsync:^{
+    [UADispatcher.main dispatchAsync:^{
         self.push.deviceToken = validDeviceToken;
     }];
 

@@ -112,7 +112,7 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
     private(set) var isConnected: Bool = false {
         didSet {
             if (oldValue != isConnected) {
-                UADispatcher.main().dispatchAsync {
+                UADispatcher.main.dispatchAsync {
                     self.delegate?.onConnectionStatusChanged()
                 }
             }
@@ -193,7 +193,7 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
         let requestID = UUID().uuidString
 
         self.chatDAO.insertPending(requestID: requestID, text: text, attachment: attachment, createdOn: Date())
-        UADispatcher.main().dispatchAsync {
+        UADispatcher.main.dispatchAsync {
             self.delegate?.onMessagesUpdated()
         }
 
@@ -216,7 +216,7 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
             var messages = [ChatMessage]()
             messages.append(contentsOf: messageData.map { $0.toChatMessage() })
             messages.append(contentsOf: pendingMessages.map { $0.toChatMessage() })
-            UADispatcher.main().dispatchAsync {
+            UADispatcher.main.dispatchAsync {
                 completionHandler(messages)
             }
         })
@@ -401,7 +401,7 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
             AirshipLogger.trace("Unexpected response: \(response)")
         }
 
-        UADispatcher.main().dispatchAsync {
+        UADispatcher.main.dispatchAsync {
             self.delegate?.onMessagesUpdated()
         }
     }

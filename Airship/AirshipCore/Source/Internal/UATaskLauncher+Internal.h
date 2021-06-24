@@ -1,8 +1,10 @@
 /* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-#import "UADispatcher.h"
 #import "UATask.h"
+
+@class UADispatcher;
+
 
 NS_ASSUME_NONNULL_BEGIN
 

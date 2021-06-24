@@ -9,11 +9,10 @@
 #import "UAInboxStore+Internal.h"
 #import "UAUtils+Internal.h"
 #import "UAInboxStore+Internal.h"
-#import "UATestDispatcher.h"
-#import "UATestDate.h"
 #import "UAInboxMessage.h"
 #import "UAUserData+Internal.h"
-#import "UAAutoDisposable.h"
+#import "AirshipTests-Swift.h"
+
 
 static NSString * const UAInboxMessageListRetrieveTask = @"UAInboxMessageList.retrieve";
 static NSString * const UAInboxMessageListSyncReadMessagesTask = @"UAInboxMessageList.sync_read_messages";
@@ -87,7 +86,7 @@ static NSString * const UAInboxMessageListSyncDeletedMessagesTask = @"UAInboxMes
                                                         config:self.config
                                                     inboxStore:self.testStore
                                             notificationCenter:self.notificationCenter
-                                                    dispatcher:[UATestDispatcher testDispatcher]
+                                                    dispatcher:[[UATestDispatcher alloc] init]
                                                           date:self.testDate
                                                    taskManager:self.mockTaskManager];
 
@@ -195,8 +194,8 @@ static NSString * const UAInboxMessageListSyncDeletedMessagesTask = @"UAInboxMes
  * filtering out any expired messages.
  */
 - (void)testFilterMessagesOnRefresh {
-    self.testDate.absoluteTime = [NSDate dateWithTimeIntervalSince1970:0];
-    NSDate *expiry = [NSDate dateWithTimeInterval:1 sinceDate:self.testDate.absoluteTime];
+    self.testDate.dateOverride = [NSDate dateWithTimeIntervalSince1970:0];
+    NSDate *expiry = [NSDate dateWithTimeInterval:1 sinceDate:self.testDate.dateOverride];
 
     [self.testStore syncMessagesWithResponse:@[[self createMessageDictionaryWithMessageID:@"messageID" expiry:expiry]]];
 
@@ -225,7 +224,7 @@ static NSString * const UAInboxMessageListSyncDeletedMessagesTask = @"UAInboxMes
     XCTAssertEqual(@"messageID", self.messageList.messages[0].messageID);
 
     // Move the data past the expiry
-    self.testDate.absoluteTime = [NSDate dateWithTimeInterval:1 sinceDate:expiry];
+    self.testDate.dateOverride = [NSDate dateWithTimeInterval:1 sinceDate:expiry];
 
     // Refresh the message again
     testExpectation = [self expectationWithDescription:@"request finished"];
@@ -246,26 +245,10 @@ static NSString * const UAInboxMessageListSyncDeletedMessagesTask = @"UAInboxMes
     XCTAssertEqual(0, self.messageList.messages.count);
 }
 
-/**
- * Helper method for substituting UAAutoDisposable for UADisposable in test.
- */
-- (void)useAutoDisposable {
-    id mock = [self mockForClass:[UADisposable class]];
-
-     [[[mock stub] andDo:^(NSInvocation *invocation) {
-         void *arg;
-         [invocation getArgument:&arg atIndex:2];
-         UADisposalBlock disposalBlock = (__bridge UADisposalBlock) arg;
-         [invocation setReturnValue:(__bridge void * _Nonnull)([UAAutoDisposable disposableWithBlock:disposalBlock])];
-     }] disposableWithBlock:OCMOCK_ANY];
-}
-
 //if successful, the observer should get messageListWillLoad and messageListLoaded callbacks.
 //UAInboxMessageListWillUpdateNotification and UAInboxMessageListUpdatedNotification should be emitted.
 //if dispose is called on the disposable, the succcessBlock should not be executed.
 - (void)testRetrieveMessageListWithBlocksSuccessDisposal {
-    [self useAutoDisposable];
-
     XCTestExpectation *messageListWillUpdate = [self expectationWithDescription:@"messageListWillUpdate notification received"];
     XCTestExpectation *messageListUpdated = [self expectationWithDescription:@"messageListUpdated notification received"];
 
@@ -299,8 +282,6 @@ static NSString * const UAInboxMessageListSyncDeletedMessagesTask = @"UAInboxMes
 //UAInboxMessageListWillUpdateNotification and UAInboxMessageListUpdatedNotification should be emitted.
 //if dispose is called on the disposable, the failureBlock should not be executed.
 - (void)testRetrieveMessageListWithBlocksFailureDisposal {
-    [self useAutoDisposable];
-
     XCTestExpectation *messageListWillUpdate = [self expectationWithDescription:@"messageListWillUpdate notification received"];
     XCTestExpectation *messageListUpdated = [self expectationWithDescription:@"messageListUpdated notification received"];
 

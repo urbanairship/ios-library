@@ -58,7 +58,7 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
         [invocation getArgument:&arg atIndex:3];
         UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
         completionHandler(responseData, response, nil);
-        [invocation setReturnValue:(__bridge void *)([UADisposable disposableWithBlock:^{}])];
+        [invocation setReturnValue:(__bridge void *)([[UADisposable alloc] init])];
     }] performHTTPRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
         UARequest *request = obj;
 
@@ -90,7 +90,7 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
         completionHandler(nil, response, [NSError errorWithDomain:UAInboxAPIClientErrorDomain
                                                              code:UAInboxAPIClientErrorUnsuccessfulStatus
                                                          userInfo:nil]);
-        [invocation setReturnValue:(__bridge void *)([UADisposable disposableWithBlock:^{}])];
+        [invocation setReturnValue:(__bridge void *)([[UADisposable alloc] init])];
     }] performHTTPRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
         UARequest *request = obj;
 
@@ -121,7 +121,7 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
         [invocation getArgument:&arg atIndex:3];
         UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
         completionHandler(nil, response, [NSError errorWithDomain:UAInboxAPIClientErrorDomain code:UAInboxAPIClientErrorInvalidResponse userInfo:nil]);
-        [invocation setReturnValue:(__bridge void *)([UADisposable disposableWithBlock:^{}])];
+        [invocation setReturnValue:(__bridge void *)([[UADisposable alloc] init])];
     }] performHTTPRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
         UARequest *request = obj;
 
@@ -153,7 +153,7 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
         [invocation getArgument:&arg atIndex:3];
         UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
         completionHandler(responseData, response, nil);
-        [invocation setReturnValue:(__bridge void *)([UADisposable disposableWithBlock:^{}])];
+        [invocation setReturnValue:(__bridge void *)([[UADisposable alloc] init])];
     }] performHTTPRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
         UARequest *request = obj;
 
@@ -184,7 +184,7 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
         [invocation getArgument:&arg atIndex:3];
         UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
         completionHandler(nil, response, [NSError errorWithDomain:UAInboxAPIClientErrorDomain code:UAInboxAPIClientErrorUnsuccessfulStatus userInfo:nil]);
-        [invocation setReturnValue:(__bridge void *)([UADisposable disposableWithBlock:^{}])];
+        [invocation setReturnValue:(__bridge void *)([[UADisposable alloc] init])];
     }] performHTTPRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
         UARequest *request = obj;
 
@@ -216,7 +216,7 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
         [invocation getArgument:&arg atIndex:3];
         UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
         completionHandler(responseData, response, nil);
-        [invocation setReturnValue:(__bridge void *)([UADisposable disposableWithBlock:^{}])];
+        [invocation setReturnValue:(__bridge void *)([[UADisposable alloc] init])];
     }] performHTTPRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
         UARequest *request = obj;
 
@@ -247,7 +247,7 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
         [invocation getArgument:&arg atIndex:3];
         UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
         completionHandler(nil, response, [NSError errorWithDomain:UAInboxAPIClientErrorDomain code:UAInboxAPIClientErrorUnsuccessfulStatus userInfo:nil]);
-        [invocation setReturnValue:(__bridge void *)([UADisposable disposableWithBlock:^{}])];
+        [invocation setReturnValue:(__bridge void *)([[UADisposable alloc] init])];
     }] performHTTPRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
         UARequest *request = obj;
 

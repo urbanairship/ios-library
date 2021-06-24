@@ -6,9 +6,9 @@
 #import "UAChannel+Internal.h"
 #import "UARuntimeConfig.h"
 #import "UATagGroupsRegistrar+Internal.h"
-#import "UATestDate.h"
 #import "UAAttributePendingMutations.h"
 #import "UATaskManager.h"
+#import "AirshipTests-Swift.h"
 
 @import AirshipCore;
 
@@ -59,7 +59,7 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
 
     self.mockNotificationCenter = [self partialMockForObject:[NSNotificationCenter defaultCenter]];
 
-    self.testDate = [[UATestDate alloc] initWithAbsoluteTime:[NSDate date]];
+    self.testDate = [[UATestDate alloc] initWithOffset:0 dateOverride:[NSDate date]];
 
     self.mockedNamedUserClient = [self mockForClass:[UANamedUserAPIClient class]];
 

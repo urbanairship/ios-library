@@ -4,7 +4,6 @@
 
 #import "UATaskManager.h"
 #import "UAGlobal.h"
-#import "UADispatcher.h"
 #import "UANetworkMonitor.h"
 #import "UATask.h"
 #import "UAExpirableTask+Internal.h"
@@ -90,7 +89,7 @@
     dispatch_once(&onceToken, ^{
         sharedTaskManager = [[UATaskManager alloc] initWithApplication:[UIApplication sharedApplication]
                                                     notificationCenter:[NSNotificationCenter defaultCenter]
-                                                            dispatcher:[UADispatcher globalDispatcher]
+                                                            dispatcher:UADispatcher.global
                                                         networkMonitor:[[UANetworkMonitor alloc] init]];
     });
     return sharedTaskManager;
@@ -292,7 +291,7 @@
 
 - (BOOL)checkRequestRequirements:(UATaskRequest *)request {
     __block NSTimeInterval remainingTime = 0;
-    [[UADispatcher mainDispatcher] doSync:^{
+    [UADispatcher.main doSync:^{
         remainingTime = self.application.backgroundTimeRemaining;
     }];
 

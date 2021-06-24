@@ -5,7 +5,12 @@
 #import "UAChannel.h"
 #import "UAAttributePendingMutations.h"
 #import "UAAttributeMutations+Internal.h"
-#import "UADate.h"
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
 
 NSString *const UAAttributeMutationsCodableKey = @"com.urbanairship.attributes";
 

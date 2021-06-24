@@ -2,8 +2,9 @@
 
 #import <Foundation/Foundation.h>
 #import "UATask.h"
-#import "UADispatcher.h"
 #import "UATaskRequestOptions.h"
+
+@class UADispatcher;
 
 NS_ASSUME_NONNULL_BEGIN
 

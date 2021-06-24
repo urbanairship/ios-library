@@ -4,7 +4,13 @@
 #import "UAirship+Internal.h"
 #import "UAAppIntegration+Internal.h"
 #import "UASwizzler+Internal.h"
-#import "UADispatcher.h"
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
+
 
 static UAAutoIntegration *instance_;
 
@@ -156,7 +162,7 @@ void UserNotificationCenterWillPresentNotificationWithCompletionHandler(id self,
         void (^completionHandler)(UNNotificationPresentationOptions) = ^(UNNotificationPresentationOptions options) {
 
             // Make sure the app's completion handler is called on the main queue
-            [[UADispatcher mainDispatcher] dispatchAsync:^{
+            [UADispatcher.main dispatchAsync:^{
                 if (completionHandlerCalled) {
                     UA_LTRACE(@"Completion handler called multiple times.");
                     return;
@@ -179,7 +185,7 @@ void UserNotificationCenterWillPresentNotificationWithCompletionHandler(id self,
     dispatch_group_enter(dispatchGroup);
     [UAAppIntegration userNotificationCenter:notificationCenter willPresentNotification:notification withCompletionHandler:^(UNNotificationPresentationOptions options) {
         // Make sure the app's completion handler is called on the main queue
-        [[UADispatcher mainDispatcher] dispatchAsync:^{
+        [UADispatcher.main dispatchAsync:^{
             if (completionHandlerCalled) {
                 UA_LTRACE(@"Completion handler called multiple times.");
                 return;
@@ -211,7 +217,7 @@ void UserNotificationCenterDidReceiveNotificationResponseWithCompletionHandler(i
         void (^completionHandler)(void) = ^() {
 
             // Make sure the app's completion handler is called on the main queue
-            [[UADispatcher mainDispatcher] dispatchAsync:^{
+            [UADispatcher.main dispatchAsync:^{
                 if (completionHandlerCalled) {
                     UA_LTRACE(@"Completion handler called multiple times.");
                     return;
@@ -286,7 +292,7 @@ void ApplicationPerformFetchWithCompletionHandler(id self,
         void (^completionHandler)(UIBackgroundFetchResult) = ^(UIBackgroundFetchResult result) {
 
             // Make sure the app's completion handler is called on the main queue
-            [[UADispatcher mainDispatcher] dispatchAsync:^{
+            [UADispatcher.main dispatchAsync:^{
                 if (completionHandlerCalled) {
                     UA_LTRACE(@"Completion handler called multiple times.");
                     return;
@@ -370,7 +376,7 @@ void ApplicationDidReceiveRemoteNotificationFetchCompletionHandler(id self,
         void (^completionHandler)(UIBackgroundFetchResult) = ^(UIBackgroundFetchResult result) {
 
             // Make sure the app's completion handler is called on the main queue
-            [[UADispatcher mainDispatcher] dispatchAsync:^{
+            [UADispatcher.main dispatchAsync:^{
                 if (completionHandlerCalled) {
                     UA_LTRACE(@"Completion handler called multiple times.");
                     return;

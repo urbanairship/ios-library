@@ -5,11 +5,8 @@
 #import "UAUtils+Internal.h"
 #import "UAChannelRegistrationPayload+Internal.h"
 #import "UARuntimeConfig.h"
-#import "UADate.h"
-#import "UADispatcher.h"
 #import "UATaskManager.h"
 #import "UATask.h"
-#import "UASemaphore.h"
 #import "UAKeychainUtils+Internal.h"
 
 #if __has_include("AirshipCore/AirshipCore-Swift.h")
@@ -99,7 +96,7 @@ static NSString * const UAChannelRegistrarTaskExtrasForcefully = @"forcefully";
     return [[self alloc] initWithDataStore:dataStore
                           channelAPIClient:[[UAChannelAPIClient alloc] initWithConfig:config]
                                       date:[[UADate alloc] init]
-                                dispatcher:[UADispatcher serialDispatcher]
+                                dispatcher:UADispatcher.serial
                                taskManager:[UATaskManager shared]];
 }
 
@@ -144,7 +141,7 @@ static NSString * const UAChannelRegistrarTaskExtrasForcefully = @"forcefully";
 
 - (UAChannelRegistrationPayload *)createPayload {
     __block UAChannelRegistrationPayload *result;
-    UASemaphore *semaphore = [UASemaphore semaphore];
+    UASemaphore *semaphore = [[UASemaphore alloc] init];
 
     [self.delegate createChannelPayload:^(UAChannelRegistrationPayload *payload) {
         result = payload;
@@ -216,7 +213,7 @@ static NSString * const UAChannelRegistrarTaskExtrasForcefully = @"forcefully";
 }
 
 - (void)createChannelWithPayload:(UAChannelRegistrationPayload *)payload task:(id<UATask>)task {
-    UASemaphore *semaphore = [UASemaphore semaphore];
+    UASemaphore *semaphore = [[UASemaphore alloc] init];
     UADisposable *disposable = [self.channelAPIClient createChannelWithPayload:payload
                                                              completionHandler:^(UAChannelCreateResponse * _Nullable response, NSError * _Nullable error) {
 
@@ -255,7 +252,7 @@ static NSString * const UAChannelRegistrarTaskExtrasForcefully = @"forcefully";
            lastSuccessfulPayload:(UAChannelRegistrationPayload *)lastSuccessfulPayload
                       identifier:(NSString *)identifier
                             task:(id<UATask>)task {
-    UASemaphore *semaphore = [UASemaphore semaphore];
+    UASemaphore *semaphore = [[UASemaphore alloc] init];
     UAChannelRegistrationPayload *minPayload = [payload minimalUpdatePayloadWithLastPayload:lastSuccessfulPayload];
 
     UADisposable *disposable = [self.channelAPIClient updateChannelWithID:identifier

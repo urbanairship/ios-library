@@ -74,7 +74,7 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
         UA_LTRACE(@"Request to retrieve message list: %@", urlString);
     }];
 
-    UASemaphore *semaphore = [UASemaphore semaphore];
+    UASemaphore *semaphore = [[UASemaphore alloc] init];
 
     __block NSData *data;
     __block NSHTTPURLResponse *response;
@@ -193,7 +193,7 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
         UA_LTRACE(@"Request to perform batch delete: %@  body: %@", urlString, body);
     }];
 
-    UASemaphore *semaphore = [UASemaphore semaphore];
+    UASemaphore *semaphore = [[UASemaphore alloc] init];
 
     __block NSData *data;
     __block NSHTTPURLResponse *response;
@@ -256,7 +256,7 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
         UA_LTRACE(@"Request to perfom batch mark messages as read: %@ body: %@", urlString, body);
     }];
 
-    UASemaphore *semaphore = [UASemaphore semaphore];
+    UASemaphore *semaphore = [[UASemaphore alloc] init];
 
     __block NSData *data;
     __block NSHTTPURLResponse *response;

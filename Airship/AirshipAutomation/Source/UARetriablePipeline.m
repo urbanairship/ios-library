@@ -1,8 +1,13 @@
 /* Copyright Airship and Contributors */
 
 #import "UARetriablePipeline+Internal.h"
-#import "UAGlobal.h"
 #import "UAAsyncOperation.h"
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+@import AirshipCore;
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
 
 @interface UARetriableChain : NSObject
 @property (nonatomic, strong) NSMutableArray *retriables;
@@ -36,7 +41,7 @@
 + (instancetype)pipeline {
     NSOperationQueue *queue = [[NSOperationQueue alloc] init];
     queue.maxConcurrentOperationCount = 1;
-    return [self pipelineWithQueue:queue dispatcher:[UADispatcher globalDispatcher]];
+    return [self pipelineWithQueue:queue dispatcher:UADispatcher.global];
 }
 
 - (void)addRetriable:(UARetriable *)retriable {

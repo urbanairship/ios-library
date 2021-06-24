@@ -2,8 +2,9 @@
 
 #import <Foundation/Foundation.h>
 #import "UARetriable+Internal.h"
-#import "UADispatcher.h"
 #import "UAAsyncOperation.h"
+
+@class UADispatcher;
 
 /**
  * An interface for running retriables with optional operation dependency semantics,

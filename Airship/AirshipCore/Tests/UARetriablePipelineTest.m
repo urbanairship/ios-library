@@ -2,7 +2,7 @@
 
 #import "UABaseTest.h"
 #import "UARetriablePipeline+Internal.h"
-#import "UATestDispatcher.h"
+#import "AirshipTests-Swift.h"
 
 @interface UARetriablePipelineTest : UABaseTest
 @property (nonatomic, strong) UARetriablePipeline *pipeline;
@@ -18,7 +18,7 @@
     self.queue = [[NSOperationQueue alloc] init];
     self.queue.maxConcurrentOperationCount = 1;
 
-    self.testDispatcher = [UATestDispatcher testDispatcher];
+    self.testDispatcher = [[UATestDispatcher alloc] init];
     self.pipeline = [UARetriablePipeline pipelineWithQueue:self.queue dispatcher:self.testDispatcher];
 }
 

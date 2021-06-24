@@ -6,6 +6,7 @@
 
 @class UAInboxMessageList;
 @class UAInboxMessage;
+@class UADisposable;
 
 NS_ASSUME_NONNULL_BEGIN
 

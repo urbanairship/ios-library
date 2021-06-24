@@ -2,6 +2,12 @@
 
 #import "UAAuthTokenManager+Internal.h"
 
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+@import AirshipCore;
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
+
 @interface UAAuthTokenManager ()
 @property(nonatomic, strong) UAAuthTokenAPIClient *client;
 @property(nonatomic, strong) UAChannel *channel;
@@ -46,7 +52,7 @@
     return [[self alloc] initWithAPIClient:client
                                    channel:channel
                                       date:[[UADate alloc] init]
-                                dispatcher:[UADispatcher serialDispatcher]];
+                                dispatcher:UADispatcher.serial];
 }
 
 - (void)tokenWithCompletionHandler:(void (^)(NSString *))completionHandler {
@@ -62,7 +68,7 @@
         }
 
         __block UAAuthToken *responseToken;
-        __block UASemaphore *semaphore = [UASemaphore semaphore];
+        __block UASemaphore *semaphore = [[UASemaphore alloc] init];
 
         [self.client tokenWithChannelID:self.channel.identifier completionHandler:^(UAAuthTokenResponse * _Nullable response, NSError * _Nullable error) {
             if (error) {

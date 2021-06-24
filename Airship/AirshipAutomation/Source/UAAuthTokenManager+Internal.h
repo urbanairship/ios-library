@@ -4,9 +4,9 @@
 #import "UAAuthToken+Internal.h"
 #import "UAAuthTokenAPIClient+Internal.h"
 #import "UAChannel.h"
-#import "UADate.h"
-#import "UADispatcher.h"
-#import "UASemaphore.h"
+
+@class UADate;
+@class UADispatcher;
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -1,21 +1,21 @@
 /* Copyright Airship and Contributors */
 
 #import <UIKit/UIKit.h>
-#import "UADisposable.h"
 #import "UARemoteDataPayload+Internal.h"
 #import "UARuntimeConfig.h"
-#import "UADispatcher.h"
 #import "UARemoteDataStore+Internal.h"
 #import "UAComponent.h"
 #import "UAPushableComponent.h"
 #import "UARemoteDataProvider.h"
-#import "UADate.h"
 #import "UATaskManager.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @class UAAppStateTracker;
 @class UARemoteDataAPIClient;
+@class UADisposable;
+@class UADate;
+@class UADispatcher;
 
 /**
  * Default foreground refresh interval.

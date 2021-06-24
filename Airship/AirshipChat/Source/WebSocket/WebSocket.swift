@@ -110,7 +110,7 @@ class WebSocket : NSObject, WebSocketProtocol, URLSessionWebSocketDelegate {
     }
 
     private func schedulePing() {
-        UADispatcher.main().dispatch(after: 30) { [weak self] in
+        UADispatcher.main.dispatch(after: 30) { [weak self] in
             self?.webSocketTask?.sendPing(pongReceiveHandler: { (error) in
                 self?.schedulePing()
             })

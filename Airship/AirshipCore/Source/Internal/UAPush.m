@@ -13,9 +13,7 @@
 #import "UANotificationCategory.h"
 #import "UATagUtils+Internal.h"
 #import "UARegistrationDelegateWrapper+Internal.h"
-#import "UADispatcher.h"
 #import "NSObject+UAAdditions.h"
-#import "UASemaphore.h"
 
 #if __has_include("AirshipCore/AirshipCore-Swift.h")
 #import <AirshipCore/AirshipCore-Swift.h>
@@ -162,7 +160,7 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
                      notificationCenter:[NSNotificationCenter defaultCenter]
                        pushRegistration:[[UAAPNSRegistration alloc] init]
                             application:[UIApplication sharedApplication]
-                             dispatcher:[UADispatcher mainDispatcher]
+                             dispatcher:UADispatcher.main
                          privacyManager:privacyManager];
 }
 
@@ -870,14 +868,14 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
     [self.dispatcher dispatchAsync:^{
         UA_STRONGIFY(self);
         if (self.waitForDeviceToken && [self.privacyManager isEnabled:UAFeaturesPush] && !self.deviceToken && self.application.isRegisteredForRemoteNotifications) {
-            UASemaphore *semaphore = [UASemaphore semaphore];
+            UASemaphore *semaphore = [[UASemaphore alloc] init];
             self.waitForDeviceToken = NO;
             __block UADisposable *disposable = [self observeAtKeyPath:@"deviceToken" withBlock:^(id  _Nonnull value) {
                 [semaphore signal];
                 [disposable dispose];
             }];
 
-            [[UADispatcher globalDispatcher] dispatchAsync:^{
+            [UADispatcher.global dispatchAsync:^{
                 UA_STRONGIFY(self);
                 [semaphore wait:UADeviceTokenRegistrationWaitTime];
                 [self.dispatcher dispatchAsync:completionHandler];

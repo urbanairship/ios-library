@@ -1,9 +1,10 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UADate.h"
 #import "UAUtils+Internal.h"
 #import "UAAttributeMutations+Internal.h"
+
+@import AirshipCore;
 
 @interface UAAttributeMutationsTest : UABaseTest
 @end

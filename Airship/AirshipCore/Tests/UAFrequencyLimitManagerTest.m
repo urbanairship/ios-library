@@ -2,8 +2,7 @@
 
 #import "UAAirshipBaseTest.h"
 #import "UAFrequencyLimitManager+Internal.h"
-#import "UATestDispatcher.h"
-#import "UATestDate.h"
+#import "AirshipTests-Swift.h"
 
 @interface UAFrequencyLimitManagerTest : UAAirshipBaseTest
 @property(nonatomic, strong) UAFrequencyLimitManager *manager;
@@ -18,7 +17,7 @@
     self.date = [[UATestDate alloc] init];
     self.manager = [UAFrequencyLimitManager managerWithDataStore:self.store
                                                             date:self.date
-                                                      dispatcher:[UATestDispatcher testDispatcher]];
+                                                      dispatcher:[[UATestDispatcher alloc] init]];
 }
 
 - (void)tearDown {
@@ -52,7 +51,7 @@
 
 
     NSDate *startDate = [NSDate dateWithTimeIntervalSince1970:0];
-    self.date.absoluteTime = startDate;
+    self.date.dateOverride = startDate;
 
     __block UAFrequencyChecker *checker;
     [self.manager getFrequencyChecker:@[@"foo"] completionHandler:^(UAFrequencyChecker *c) {
@@ -66,7 +65,7 @@
     XCTAssertFalse(checker.isOverLimit);
     XCTAssertTrue([checker checkAndIncrement]);
 
-    [self.date setTimeOffset:1];
+    self.date.offset = 1;
     XCTAssertFalse(checker.isOverLimit);
     XCTAssertTrue([checker checkAndIncrement]);
 
@@ -75,7 +74,7 @@
     XCTAssertFalse([checker checkAndIncrement]);
 
     // After the range has passed we should no longer be over the limit
-    [self.date setTimeOffset:11];
+    self.date.offset = 11;
     XCTAssertFalse(checker.isOverLimit);
 
     // One more increment should push us back over the limit
@@ -98,7 +97,7 @@
     [self.manager updateConstraints:@[constraint]];
 
     NSDate *startDate = [NSDate dateWithTimeIntervalSince1970:0];
-    self.date.absoluteTime = startDate;
+    self.date.dateOverride = startDate;
 
     XCTestExpectation *fetchedChecker1 = [self expectationWithDescription:@"Fetched frequency checker"];
 
@@ -125,8 +124,7 @@
 
     XCTAssertTrue([checker1 checkAndIncrement]);
 
-    [self.date setTimeOffset:1];
-
+    self.date.offset = 1;
     XCTAssertTrue([checker2 checkAndIncrement]);
 
     // We should now be over the limit
@@ -134,7 +132,7 @@
     XCTAssertTrue([checker2 isOverLimit]);
 
     // After the range has passed we should no longer be over the limit
-    [self.date setTimeOffset:11];
+    self.date.offset = 11;
     XCTAssertFalse([checker1 isOverLimit]);
     XCTAssertFalse([checker2 isOverLimit]);
 
@@ -159,7 +157,7 @@
     [self.manager updateConstraints:@[constraint1, constraint2]];
 
     NSDate *startDate = [NSDate dateWithTimeIntervalSince1970:0];
-    self.date.absoluteTime = startDate;
+    self.date.dateOverride = startDate;
 
     XCTestExpectation *fetchedChecker = [self expectationWithDescription:@"Fetched frequency checker"];
 
@@ -174,25 +172,23 @@
     XCTAssertFalse(checker.isOverLimit);
     XCTAssertTrue([checker checkAndIncrement]);
 
-    [self.date setTimeOffset:1];
-
+    self.date.offset = 1;
     // We should now be violating constraint 2
     XCTAssertTrue(checker.isOverLimit);
     XCTAssertFalse([checker checkAndIncrement]);
 
-    [self.date setTimeOffset:3];
-
+    self.date.offset = 3;
     // We should no longer be violating constraint 2
     XCTAssertFalse(checker.isOverLimit);
     XCTAssertTrue([checker checkAndIncrement]);
 
     // We should now be violating constraint 1
-    [self.date setTimeOffset:9];
+    self.date.offset = 9;
     XCTAssertTrue(checker.isOverLimit);
     XCTAssertFalse([checker checkAndIncrement]);
 
     // We should now be violating neither constraint
-    [self.date setTimeOffset:11];
+    self.date.offset = 11;
     XCTAssertFalse(checker.isOverLimit);
 
     // One more increment should hit the limit
@@ -206,7 +202,7 @@
     [self.manager updateConstraints:@[constraint1, constraint2]];
 
     NSDate *startDate = [NSDate dateWithTimeIntervalSince1970:0];
-    self.date.absoluteTime = startDate;
+    self.date.dateOverride = startDate;
 
     XCTestExpectation *fetchedChecker = [self expectationWithDescription:@"Fetched frequency checker"];
 
@@ -238,7 +234,7 @@
     [self.manager updateConstraints:@[constraint]];
 
     NSDate *startDate = [NSDate dateWithTimeIntervalSince1970:100];
-    self.date.absoluteTime = startDate;
+    self.date.dateOverride = startDate;
 
     XCTestExpectation *fetchedChecker = [self expectationWithDescription:@"Fetched frequency checker"];
 
@@ -264,7 +260,7 @@
     [self.manager updateConstraints:@[constraint]];
 
     NSDate *startDate = [NSDate dateWithTimeIntervalSince1970:100];
-    self.date.absoluteTime = startDate;
+    self.date.dateOverride = startDate;
 
     XCTestExpectation *fetchedChecker = [self expectationWithDescription:@"Fetched frequency checker"];
 

@@ -4,6 +4,13 @@
 #import "UAGlobal.h"
 #import <objc/runtime.h>
 
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
+
+
 @interface UAAnonymousObserver()
 
 @property (nonatomic, strong) id object;
@@ -50,7 +57,7 @@
     [obs observe:self atKeypath:keyPath withBlock:block];
 
     UA_WEAKIFY(self)
-    return [UADisposable disposableWithBlock:^{
+    return [[UADisposable alloc] init:^{
         UA_STRONGIFY(self)
         [self removeObserver:obs forKeyPath:keyPath];
         @synchronized(self) {

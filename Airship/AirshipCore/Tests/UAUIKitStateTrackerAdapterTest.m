@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UATestDispatcher.h"
 
 @import AirshipCore;
 
@@ -9,7 +8,7 @@
 @property(nonatomic, strong) UAUIKitStateTrackerAdapter *adapter;
 @property(nonatomic, strong) id mockApplication;
 @property(nonatomic, strong) id mockDelegate;
-@property(nonatomic, strong) UATestDispatcher *dispatcher;
+@property(nonatomic, strong) UADispatcher *dispatcher;
 @end
 
 @implementation UAUIKitStateTrackerAdapterTest
@@ -18,7 +17,7 @@
     self.mockApplication = [self mockForClass:[UIApplication class]];
     [[[self.mockApplication stub] andReturn:self.mockApplication] sharedApplication];
     self.mockDelegate = [self mockForProtocol:@protocol(UAAppStateTrackerDelegate)];
-    self.dispatcher = [UATestDispatcher mainDispatcher];
+    self.dispatcher = UADispatcher.main;
 
     [self createAdapter];
 }

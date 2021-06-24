@@ -1,11 +1,12 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UADate.h"
 #import "UAUtils+Internal.h"
 #import "UAAttributePendingMutations.h"
 #import "UAAttributeMutations+Internal.h"
-#import "UATestDate.h"
+
+#import "AirshipTests-Swift.h"
+@import AirshipCore;
 
 @interface UAAttributePendingMutationsTest : UABaseTest
 @property (nonatomic, strong) UATestDate *testDate;
@@ -14,7 +15,7 @@
 @implementation UAAttributePendingMutationsTest
 
 - (void)setUp {
-    self.testDate = [[UATestDate alloc] initWithAbsoluteTime:[NSDate date]];
+    self.testDate = [[UATestDate alloc] initWithOffset:0 dateOverride:[NSDate date]];
 }
 
 /**
@@ -22,7 +23,6 @@
 */
 -(void)testPendingMutationsPayload {
     NSDateFormatter *isoDateFormatter = [UAUtils ISODateFormatterUTCWithDelimiter];
-    self.testDate = [[UATestDate alloc] initWithAbsoluteTime:[NSDate date]];
     NSString *timestamp = [isoDateFormatter stringFromDate:self.testDate.now];
 
     NSDictionary *expectedPayload = @{
@@ -63,7 +63,7 @@
 */
 -(void)testAddAddRemove {
     NSDateFormatter *isoDateFormatter = [UAUtils ISODateFormatterUTCWithDelimiter];
-    self.testDate = [[UATestDate alloc] initWithAbsoluteTime:[NSDate date]];
+    self.testDate = [[UATestDate alloc] initWithOffset:0 dateOverride:[NSDate date]];
     NSString *timestamp = [isoDateFormatter stringFromDate:self.testDate.now];
 
     NSDictionary *expectedPayload = @{
@@ -95,7 +95,6 @@
 */
 -(void)testAddRemoveRemove {
     NSDateFormatter *isoDateFormatter = [UAUtils ISODateFormatterUTCWithDelimiter];
-    self.testDate = [[UATestDate alloc] initWithAbsoluteTime:[NSDate date]];
     NSString *timestamp = [isoDateFormatter stringFromDate:self.testDate.now];
 
     NSDictionary *expectedPayload = @{
@@ -127,7 +126,6 @@
 */
 -(void)testRemoveAdd {
     NSDateFormatter *isoDateFormatter = [UAUtils ISODateFormatterUTCWithDelimiter];
-    self.testDate = [[UATestDate alloc] initWithAbsoluteTime:[NSDate date]];
     NSString *timestamp = [isoDateFormatter stringFromDate:self.testDate.now];
 
     NSDictionary *expectedPayload = @{

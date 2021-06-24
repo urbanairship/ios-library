@@ -117,7 +117,7 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
 
     return [[UAInAppMessageManager alloc] initWithDataStore:dataStore
                                                   analytics:analytics
-                                                 dispatcher:[UADispatcher mainDispatcher]
+                                                 dispatcher:UADispatcher.main
                                          displayCoordinator:[[UAInAppMessageDefaultDisplayCoordinator alloc] init]
                                                assetManager:[UAInAppMessageAssetManager assetManager]];
 

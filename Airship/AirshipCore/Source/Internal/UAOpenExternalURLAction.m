@@ -3,7 +3,13 @@
 #import "UAOpenExternalURLAction.h"
 #import "UAirship.h"
 #import "UAURLAllowList.h"
-#import "UADispatcher.h"
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
+
 
 NSString * const UAOpenExternalURLActionDefaultRegistryName = @"open_external_url_action";
 NSString * const UAOpenExternalURLActionDefaultRegistryAlias = @"^u";
@@ -42,7 +48,7 @@ NSString * const UAOpenExternalURLActionErrorDomain = @"com.urbanairship.actions
 }
 
 - (void)openURL:(NSURL *)url completionHandler:(UAActionCompletionHandler)completionHandler {
-   [[UADispatcher mainDispatcher] dispatchAsync:^{
+   [UADispatcher.main dispatchAsync:^{
         [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:^(BOOL success) {
             if (!success) {
                 // Unable to open url

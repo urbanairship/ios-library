@@ -6,7 +6,6 @@
 #import "UAAPNSRegistration+Internal.h"
 #import "UAComponent+Internal.h"
 #import "UAChannel+Internal.h"
-#import "UADispatcher.h"
 #import "UAPushProviderDelegate.h"
 #import "UAAnalytics+Internal.h"
 
@@ -15,6 +14,7 @@
 @class UARuntimeConfig;
 @class UATagGroupsAPIClient;
 @class UATagGroupsRegistrar;
+@class UADispatcher;
 
 NS_ASSUME_NONNULL_BEGIN
 

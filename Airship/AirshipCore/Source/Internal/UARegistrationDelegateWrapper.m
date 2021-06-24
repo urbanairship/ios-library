@@ -1,7 +1,13 @@
 /* Copyright Airship and Contributors */
 
 #import "UARegistrationDelegateWrapper+Internal.h"
-#import "UADispatcher.h"
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
+
 
 @implementation UARegistrationDelegateWrapper
 
@@ -33,13 +39,13 @@
     SEL newSelectorWithStatus = @selector(notificationRegistrationFinishedWithAuthorizedSettings:categories:status:);
 
     if ([strongDelegate respondsToSelector:newSelector]) {
-        [[UADispatcher mainDispatcher] dispatchAsync:^{
+        [UADispatcher.main dispatchAsync:^{
             [strongDelegate notificationRegistrationFinishedWithAuthorizedSettings:authorizedSettings categories:categories];
         }];
     }
 
     if ([strongDelegate respondsToSelector:newSelectorWithStatus]) {
-        [[UADispatcher mainDispatcher] dispatchAsync:^{
+        [UADispatcher.main dispatchAsync:^{
             [strongDelegate notificationRegistrationFinishedWithAuthorizedSettings:authorizedSettings
                                                                         categories:categories
                                                                             status:status];

@@ -7,8 +7,7 @@
 #import "UARuntimeConfig.h"
 #import "UANamedUser+Internal.h"
 #import "UAirship.h"
-#import "UATestDate.h"
-#import "UATestDispatcher.h"
+#import "AirshipTests-Swift.h"
 
 @import AirshipCore;
 
@@ -67,7 +66,7 @@ static NSString * const UAChannelRegistrationTaskID = @"UAChannelRegistrar.regis
                                                            dataStore:self.dataStore
                                                     channelAPIClient:self.mockedChannelClient
                                                                 date:self.testDate
-                                                          dispatcher:[UATestDispatcher testDispatcher]
+                                                          dispatcher:[[UATestDispatcher alloc] init]
                                                          taskManager:self.mockTaskManager];
     self.registrar.delegate = self.mockedRegistrarDelegate;
 }
@@ -403,7 +402,7 @@ static NSString * const UAChannelRegistrationTaskID = @"UAChannelRegistrar.regis
     [self createChannel:@"some-channel"];
 
     // Fast forward
-    self.testDate.timeOffset = (24 * 60 * 60);
+    self.testDate.offset = (24 * 60 * 60);
 
     UAHTTPResponse *response = [[UAHTTPResponse alloc] initWithStatus:200];
     [[[self.mockedChannelClient expect] andDo:^(NSInvocation *invocation) {
