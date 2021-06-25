@@ -7,6 +7,12 @@
 #import "UAAutomationResources.h"
 #import "UAOccurrenceData+Internal.h"
 
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+@import AirshipCore;
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
+
 static NSString *const FrequencyConstraintEntityName = @"UAFrequencyConstraintData";
 static NSString *const OccurrenceEntityName = @"UAOccurrenceData";
 
@@ -22,7 +28,7 @@ static NSString *const OccurrenceEntityName = @"UAOccurrenceData";
     if (self){
         NSBundle *bundle = [UAAutomationResources bundle];
         NSURL *modelURL = [bundle URLForResource:@"UAFrequencyLimits" withExtension:@"momd"];
-        self.coreData = [UACoreData coreDataWithModelURL:modelURL inMemory:inMemory stores:@[name] mergePolicy:NSMergeByPropertyObjectTrumpMergePolicy];
+        self.coreData = [[UACoreData alloc] initWithModelURL:modelURL inMemory:inMemory stores:@[name] mergePolicy:NSMergeByPropertyObjectTrumpMergePolicy];
     }
 
     return self;

@@ -8,6 +8,7 @@
 
 @class UAAppStateTracker;
 @class UAScheduleTriggerContext;
+@class UANetworkMonitor;
 
 NS_ASSUME_NONNULL_BEGIN
 

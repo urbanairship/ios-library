@@ -1,7 +1,9 @@
 /* Copyright Airship and Contributors */
 
 #import "UATaskManager.h"
-#import "UANetworkMonitor.h"
+
+@class UADispatcher;
+@class UANetworkMonitor;
 
 @interface UATaskManager()
 

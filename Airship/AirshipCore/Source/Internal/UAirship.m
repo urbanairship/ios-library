@@ -1,4 +1,5 @@
 /* Copyright Airship and Contributors */
+
 #import "UAirship+Internal.h"
 #import "UAAnalytics+Internal.h"
 #import "UAUtils+Internal.h"
@@ -7,7 +8,6 @@
 #import "UAPush+Internal.h"
 #import "UAConfig.h"
 #import "UARuntimeConfig+Internal.h"
-#import "UAApplicationMetrics+Internal.h"
 #import "UAActionRegistry.h"
 #import "UAAutoIntegration+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
@@ -26,7 +26,6 @@
 #import "UAMessageCenterModuleLoaderFactory.h"
 #import "UAAccengageModuleLoaderFactory.h"
 #import "UADebugLibraryModuleLoaderFactory.h"
-#import "UALocaleManager+Internal.h"
 #import "UARemoteConfigURLManager.h"
 #import "UAAirshipChatModuleLoaderFactory.h"
 #import "UAFeature.h"
@@ -128,8 +127,8 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
         self.actionRegistry = [UAActionRegistry defaultRegistry];
         self.URLAllowList = [UAURLAllowList allowListWithConfig:config];
-        self.applicationMetrics = [UAApplicationMetrics applicationMetricsWithDataStore:self.dataStore privacyManager:self.sharedPrivacyManager];
-        self.sharedLocaleManager = [UALocaleManager localeManagerWithDataStore:self.dataStore];
+        self.applicationMetrics = [[UAApplicationMetrics alloc] initWithDataStore:self.dataStore privacyManager:self.sharedPrivacyManager];
+        self.sharedLocaleManager = [[UALocaleManager alloc] initWithDataStore:self.dataStore];
 
         self.sharedChannel = [UAChannel channelWithDataStore:self.dataStore
                                                       config:self.config

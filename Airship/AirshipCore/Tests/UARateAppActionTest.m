@@ -6,7 +6,7 @@
 #import "UAirship+Internal.h"
 #import "UARuntimeConfig.h"
 #import "UARateAppAction.h"
-#import "UATestSystemVersion.h"
+#import "AirshipTests-Swift.h"
 
 @import AirshipCore;
 

@@ -15,6 +15,7 @@ class Entry {
 public class TestDispatcher: UADispatcher {
     private var currentTime : TimeInterval  = 0
     private lazy var pending = [Entry]()
+    private let internalDispatcher = UADispatcher.serial(.default)
 
     @objc
     public init() {
@@ -23,11 +24,13 @@ public class TestDispatcher: UADispatcher {
 
     @objc
     public func advanceTime(_ time: TimeInterval) {
-        currentTime += time
-        let expired = pending.filter { $0.time <= currentTime }
-        expired.forEach { $0.block() }
-        pending.removeAll { (entry) in
-            expired.contains { $0 === entry }
+        internalDispatcher.doSync { [self] in
+            self.currentTime += time
+            let expired = self.pending.filter { $0.time <= self.currentTime }
+            expired.forEach { $0.block() }
+            self.pending.removeAll { (entry) in
+                expired.contains { $0 === entry }
+            }
         }
     }
 
@@ -40,10 +43,18 @@ public class TestDispatcher: UADispatcher {
     }
 
     public override func dispatch(after delay: TimeInterval, timebase: UADispatcherTimeBase, block: @escaping () -> Void) -> UADisposable {
-        let entry = Entry(time: currentTime + Swift.max(delay, 0), block: block)
-        self.pending.append(entry)
-        return UADisposable() { [weak self] in
-            self?.pending.removeAll { $0 === entry }
+
+        var disposable : UADisposable? = nil
+        self.internalDispatcher.doSync { [self] in
+            let entry = Entry(time: self.currentTime + Swift.max(delay, 0), block: block)
+            self.pending.append(entry)
+            disposable = UADisposable() { [weak self] in
+                self?.internalDispatcher.doSync {
+                    self?.pending.removeAll { $0 === entry }
+                }
+            }
         }
+
+        return disposable!
     }
 }

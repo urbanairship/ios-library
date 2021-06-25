@@ -9,6 +9,12 @@
 #import "UAAirshipAutomationCoreImport.h"
 #import "UAAutomationResources.h"
 
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+@import AirshipCore;
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
+
 /*
  * Hand tuned value that removes excess vertical safe area to make the
  * top padding look more consistent with the iPhone X nub

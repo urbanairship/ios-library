@@ -3,7 +3,6 @@
 #import "UAGlobal.h"
 #import "UALocationProvider.h"
 #import "UAURLAllowList.h"
-#import "UAirshipVersion.h"
 
 // Frameworks
 #import <SystemConfiguration/SystemConfiguration.h>

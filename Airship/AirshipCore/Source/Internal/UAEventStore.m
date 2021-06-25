@@ -3,12 +3,17 @@
 #import "UAEventData+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAEventStore+Internal.h"
-#import "UACoreData.h"
 #import "UARuntimeConfig.h"
 #import "UAEvent.h"
 #import "UAirship.h"
 #import "UAJSONSerialization.h"
-#import "UAirshipCoreResources.h"
+
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
 
 NSString *const UAEventStoreFileFormat = @"Events-%@.sqlite";
 NSString *const UAEventDataEntityName = @"UAEventData";
@@ -27,7 +32,7 @@ NSString *const UAEventDataEntityName = @"UAEventData";
     if (self) {
         NSString *storeName = [NSString stringWithFormat:UAEventStoreFileFormat, config.appKey];
         NSURL *modelURL = [[UAirshipCoreResources bundle] URLForResource:@"UAEvents" withExtension:@"momd"];
-        self.coreData = [UACoreData coreDataWithModelURL:modelURL inMemory:NO stores:@[storeName]];
+        self.coreData = [[UACoreData alloc] initWithModelURL:modelURL inMemory:NO stores:@[storeName]];
     }
 
     return self;

@@ -5,6 +5,7 @@
 
 @class UAPreferenceDataStore;
 @class UAPrivacyManager;
+@class UASystemVersion;
 
 /*
  * SDK-private extensions to UALocation

@@ -7,7 +7,6 @@
 #import "UAUtils+Internal.h"
 #import "UAChannelRegistrationPayload+Internal.h"
 #import "UAAttributePendingMutations.h"
-#import "UALocaleManager+Internal.h"
 #import "UAKeychainUtils+Internal.h"
 
 #if __has_include("AirshipCore/AirshipCore-Swift.h")
@@ -190,7 +189,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 
     [self.notificationCenter addObserver:self
                                 selector:@selector(localeUpdated)
-                                    name:UALocaleUpdatedEvent
+                                    name:UALocaleManager.localeUpdatedEvent
                                   object:nil];
 
     [self.notificationCenter addObserver:self

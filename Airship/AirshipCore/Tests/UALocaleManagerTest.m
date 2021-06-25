@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UAAirshipBaseTest.h"
-#import "UALocaleManager+Internal.h"
 
 @import AirshipCore;
 
@@ -37,8 +36,8 @@
 
 - (void)testSetLocale {
     NSLocale *locale = [NSLocale localeWithLocaleIdentifier:@"fr"];
-    [[self.mockNotificationCenter expect] postNotificationName:UALocaleUpdatedEvent
-            object:[NSDictionary dictionaryWithObject:locale forKey:UALocaleUpdatedEventLocaleKey]];
+    [[self.mockNotificationCenter expect] postNotificationName:UALocaleManager.localeUpdatedEvent
+            object:[NSDictionary dictionaryWithObject:locale forKey:UALocaleManager.localeEventKey]];
     
     self.localeManager.currentLocale = locale;
     XCTAssertEqual(self.localeManager.currentLocale, locale);
@@ -49,8 +48,8 @@
     NSLocale *locale = [NSLocale localeWithLocaleIdentifier:@"fr"];
     self.localeManager.currentLocale = locale;
     
-    [[self.mockNotificationCenter expect] postNotificationName:UALocaleUpdatedEvent
-         object:[NSDictionary dictionaryWithObject:[NSLocale autoupdatingCurrentLocale] forKey:UALocaleUpdatedEventLocaleKey]];
+    [[self.mockNotificationCenter expect] postNotificationName:UALocaleManager.localeUpdatedEvent
+         object:[NSDictionary dictionaryWithObject:[NSLocale autoupdatingCurrentLocale] forKey:UALocaleManager.localeEventKey]];
     [self.localeManager clearLocale];
     
     XCTAssertEqual(self.localeManager.currentLocale.localeIdentifier, [NSLocale autoupdatingCurrentLocale].localeIdentifier);
@@ -62,20 +61,4 @@
      [self.mockNotificationCenter verify];
 }
 
-- (void)testSetLocaleToNil {
-    NSLocale *locale = [NSLocale localeWithLocaleIdentifier:@"fr"];
-    self.localeManager.currentLocale = locale;
-    
-    [[self.mockNotificationCenter expect] postNotificationName:UALocaleUpdatedEvent
-    object:[NSDictionary dictionaryWithObject:[NSLocale autoupdatingCurrentLocale] forKey:UALocaleUpdatedEventLocaleKey]];
-    self.localeManager.currentLocale = nil;
-    
-    XCTAssertEqual(self.localeManager.currentLocale.localeIdentifier, [NSLocale autoupdatingCurrentLocale].localeIdentifier);
-    XCTAssertEqual(self.localeManager.currentLocale.countryCode, [NSLocale autoupdatingCurrentLocale].countryCode);
-    XCTAssertEqual(self.localeManager.currentLocale.languageCode, [NSLocale autoupdatingCurrentLocale].languageCode);
-    XCTAssertEqual(self.localeManager.currentLocale.scriptCode, [NSLocale autoupdatingCurrentLocale].scriptCode);
-    XCTAssertEqual(self.localeManager.currentLocale.variantCode, [NSLocale autoupdatingCurrentLocale].variantCode);
-    XCTAssertEqual(self.localeManager.currentLocale.currencyCode, [NSLocale autoupdatingCurrentLocale].currencyCode);
-    [self.mockNotificationCenter verify];
-}
 @end

@@ -1,11 +1,15 @@
 /* Copyright Airship and Contributors */
 
 #import "UARemoteDataStore+Internal.h"
-#import "UACoreData.h"
 #import "UARemoteDataPayload+Internal.h"
 #import "UARemoteDataStorePayload+Internal.h"
 #import "UAirship+Internal.h"
-#import "UAirshipCoreResources.h"
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
 
 #define kUARemoteDataDBEntityName @"UARemoteDataStorePayload"
 
@@ -21,7 +25,7 @@
     if (self) {
 
         NSURL *modelURL = [[UAirshipCoreResources bundle] URLForResource:@"UARemoteData" withExtension:@"momd"];
-        self.coreData = [UACoreData coreDataWithModelURL:modelURL inMemory:inMemory stores:@[storeName]];
+        self.coreData = [[UACoreData alloc] initWithModelURL:modelURL inMemory:inMemory stores:@[storeName]];
     }
     return self;
 }

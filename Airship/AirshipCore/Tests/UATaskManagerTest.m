@@ -7,29 +7,9 @@
 
 @import AirshipCore;
 
-@interface UATestNetworkMonitor : UANetworkMonitor
-@property (nonatomic, assign) BOOL isConnectedOverride;
-@end
-
-@implementation UATestNetworkMonitor
-
-- (BOOL)isConnected {
-    return self.isConnectedOverride;
-}
-
-- (void)setIsConnectedOverride:(BOOL)isConnectedOverride {
-    [self willChangeValueForKey:@"isConnected"];
-    [self willChangeValueForKey:@"isConnectedOverride"];
-    _isConnectedOverride = isConnectedOverride;
-    [self didChangeValueForKey:@"isConnected"];
-    [self didChangeValueForKey:@"isConnectedOverride"];
-}
-@end
-
 @interface UATaskManagerTest : UABaseTest
 @property (nonatomic, strong) UATaskManager *taskManager;
 @property (nonatomic, strong) UATestDispatcher *testDispatcher;
-
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property (nonatomic, strong) id mockApplication;
 @property (nonatomic, strong) UATestNetworkMonitor *testNetworkMonitor;

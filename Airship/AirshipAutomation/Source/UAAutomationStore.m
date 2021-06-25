@@ -47,10 +47,10 @@ static NSString *const UALegacyActionAutomationStoreFileFormat = @"Automation-%@
         NSString *storeName = [NSString stringWithFormat:UAInAppAutomationStoreFileFormat, config.appKey];
         NSString *legacyActionStoreName = [NSString stringWithFormat:UALegacyActionAutomationStoreFileFormat, config.appKey];
 
-        self.coreData = [UACoreData coreDataWithModelURL:modelURL
-                                                inMemory:inMemory
-                                                  stores:@[storeName, legacyActionStoreName]
-                                             mergePolicy:NSMergeByPropertyObjectTrumpMergePolicy];
+        self.coreData = [[UACoreData alloc] initWithModelURL:modelURL
+                                                    inMemory:inMemory
+                                                      stores:@[storeName, legacyActionStoreName]
+                                                 mergePolicy:NSMergeByPropertyObjectTrumpMergePolicy];
         self.coreData.delegate = self;
     }
 
@@ -132,12 +132,12 @@ static NSString *const UALegacyActionAutomationStoreFileFormat = @"Automation-%@
             completionHandler(NO);
             return;
         }
-        
+
         // create managed object for each schedule
         for (UASchedule *schedule in schedules) {
             [self addScheduleDataFromSchedule:schedule context:context];
         }
-        
+
         completionHandler([UACoreData safeSave:context]);
     }];
 }
@@ -370,3 +370,4 @@ static NSString *const UALegacyActionAutomationStoreFileFormat = @"Automation-%@
 }
 
 @end
+

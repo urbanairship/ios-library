@@ -32,7 +32,7 @@
 
         NSData *digest = [[UAUtils sha256DigestWithString:channel] subdataWithRange:NSMakeRange(0, 16)];
         for (NSString *testDevice in audience.testDevices) {
-            NSData *decoded = UA_dataFromBase64String(testDevice);
+            NSData *decoded = [UABase64 dataFromString:testDevice];
             if ([decoded isEqual:digest]) {
                 return YES;
             }

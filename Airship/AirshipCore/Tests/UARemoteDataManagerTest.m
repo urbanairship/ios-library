@@ -8,7 +8,6 @@
 #import "UAUtils+Internal.h"
 #import "UAAirshipBaseTest.h"
 #import "UATaskManager.h"
-#import "UALocaleManager+Internal.h"
 #import "UARemoteConfigURLManager.h"
 #import "AirshipTests-Swift.h"
 
@@ -181,7 +180,7 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
 - (void)testLocaleChangeRefresh {
     [[self.mockTaskManager expect] enqueueRequestWithID:RefreshTask options:OCMOCK_ANY];
 
-    [self.notificationCenter postNotificationName:UALocaleUpdatedEvent object:nil];
+    [self.notificationCenter postNotificationName:UALocaleManager.localeUpdatedEvent object:nil];
 
     [self.mockTaskManager verify];
 }

@@ -11,7 +11,6 @@
 #import "UAAccengagePayload.h"
 #import "UAAccengageUtils.h"
 #import "UARuntimeConfig+Internal.h"
-#import "UALocaleManager+Internal.h"
 #import "UARemoteConfigURLManager.h"
 #import "UAirship+Internal.h"
 
@@ -39,7 +38,7 @@
     
     UARemoteConfigURLManager *urlManager = [UARemoteConfigURLManager remoteConfigURLManagerWithDataStore:self.dataStore];
     self.config = [[UARuntimeConfig alloc] initWithConfig:[UAConfig defaultConfig] urlManager:urlManager];
-    self.localeManager = [UALocaleManager localeManagerWithDataStore:self.dataStore];
+    self.localeManager = [[UALocaleManager alloc] initWithDataStore:self.dataStore];
 
     self.mockChannel = OCMClassMock([UAChannel class]);
     self.mockPush = OCMClassMock([UAPush class]);

@@ -7,8 +7,8 @@
 #import "UAirship+Internal.h"
 #import "UAPush+Internal.h"
 #import "UATagSelector.h"
-#import "UAApplicationMetrics.h"
 #import "UAJSONPredicate.h"
+#import "AirshipTests-Swift.h"
 
 @import AirshipCore;
 

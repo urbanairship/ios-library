@@ -16,6 +16,5 @@
 #import "UAUtils.h"
 #import "NSString+UALocalizationAdditions.h"
 #import "UARuntimeConfig.h"
-#import "UASystemVersion.h"
 #import "NSDictionary+UAAdditions.h"
 #endif

@@ -6,9 +6,6 @@
 // Frameworks
 #import <CommonCrypto/CommonDigest.h>
 
-// Airship external libraries
-#import "UA_Base64.h"
-
 // UALib
 #import "UAirship.h"
 #import "UARuntimeConfig.h"
@@ -182,7 +179,8 @@ NSString * const UAConnectionTypeWifi = @"wifi";
 }
 
 + (NSString *)authHeaderStringWithName:(NSString *)username password:(NSString *)password {
-    NSString *authString = UA_base64EncodedStringFromData([[NSString stringWithFormat:@"%@:%@", username, password] dataUsingEncoding:NSUTF8StringEncoding]);
+    NSData *data = [[NSString stringWithFormat:@"%@:%@", username, password] dataUsingEncoding:NSUTF8StringEncoding];
+    NSString *authString = [UABase64 stringFromData:data];
 
     //strip carriage return and linefeed characters
     authString = [authString stringByReplacingOccurrencesOfString:@"\n" withString:@""];

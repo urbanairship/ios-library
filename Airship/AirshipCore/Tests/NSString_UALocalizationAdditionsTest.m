@@ -2,7 +2,8 @@
 
 #import "UABaseTest.h"
 #import "NSString+UALocalizationAdditions.h"
-#import "UAirshipCoreResources.h"
+
+@import AirshipCore;
 
 @interface NSString_UALocalizationAdditionsTest : UABaseTest
 @end

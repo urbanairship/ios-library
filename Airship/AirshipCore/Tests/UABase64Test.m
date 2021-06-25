@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
-#import "UA_Base64.h"
 #import "UABaseTest.h"
+@import AirshipCore;
 
 // Examples from Wikipedia page on base64 encoding
 // http://en.wikipedia.org/wiki/Base64
@@ -43,50 +43,50 @@ NSString *easure64InterstitialNewline = @"ZWFzdXJlLg=\n=";
 
 - (void)testBase64Encode {
     NSData *dataToEncode = [pleasure dataUsingEncoding:NSASCIIStringEncoding];
-    NSString* encoded = UA_base64EncodedStringFromData(dataToEncode);
+    NSString* encoded = [UABase64 stringFromData:dataToEncode];
     XCTAssertTrue([encoded isEqualToString:pleasure64]);
     dataToEncode = [leasure dataUsingEncoding:NSASCIIStringEncoding];
-    encoded = UA_base64EncodedStringFromData(dataToEncode);
+    encoded = [UABase64 stringFromData:dataToEncode];
     XCTAssertTrue([encoded isEqualToString:leasure64]);
     dataToEncode = [easure dataUsingEncoding:NSASCIIStringEncoding];
-    encoded = UA_base64EncodedStringFromData(dataToEncode);
+    encoded = [UABase64 stringFromData:dataToEncode];
     XCTAssertTrue([encoded isEqualToString:easure64]);
 }
 
 - (void)testBase64Decode {
-    NSData *decodedData = UA_dataFromBase64String(pleasure64);
+    NSData *decodedData = [UABase64 dataFromString:pleasure64];
     NSString *decodedString = [[NSString alloc] initWithData:decodedData encoding:NSASCIIStringEncoding];
     XCTAssertTrue([decodedString isEqualToString:pleasure]);
 
-    decodedData = UA_dataFromBase64String(leasure64);
+    decodedData = [UABase64 dataFromString:leasure64];
     decodedString = [[NSString alloc] initWithData:decodedData encoding:NSASCIIStringEncoding];
     XCTAssertTrue([decodedString isEqualToString:leasure]);
 
-    decodedData = UA_dataFromBase64String(easure64);
+    decodedData = [UABase64 dataFromString:easure64];
     decodedString = [[NSString alloc] initWithData:decodedData encoding:NSASCIIStringEncoding];
     XCTAssertTrue([decodedString isEqualToString:easure]);
 
-    decodedData = UA_dataFromBase64String(easure64PartiallyPadded);
+    decodedData = [UABase64 dataFromString:easure64PartiallyPadded];
     decodedString = [[NSString alloc] initWithData:decodedData encoding:NSASCIIStringEncoding];
     XCTAssertTrue([decodedString isEqualToString:easure]);
 
-    decodedData = UA_dataFromBase64String(easure64Unpadded);
+    decodedData = [UABase64 dataFromString:easure64Unpadded];
     decodedString = [[NSString alloc] initWithData:decodedData encoding:NSASCIIStringEncoding];
     XCTAssertTrue([decodedString isEqualToString:easure]);
 
-    decodedData = UA_dataFromBase64String(easure64Newline);
+    decodedData = [UABase64 dataFromString:easure64Newline];
     decodedString = [[NSString alloc] initWithData:decodedData encoding:NSASCIIStringEncoding];
     XCTAssertTrue([decodedString isEqualToString:easure]);
 
-    decodedData = UA_dataFromBase64String(easure64InterstitialNewline);
+    decodedData = [UABase64 dataFromString:easure64InterstitialNewline];
     decodedString = [[NSString alloc] initWithData:decodedData encoding:NSASCIIStringEncoding];
     XCTAssertTrue([decodedString isEqualToString:easure]);
 }
 
 - (void)testBase64DecodeInvalidString {
-    XCTAssertNoThrow(UA_dataFromBase64String(@"."));
-    XCTAssertNoThrow(UA_dataFromBase64String(@" "));
-    XCTAssertNoThrow(UA_dataFromBase64String(nil));
+    XCTAssertNoThrow([UABase64 dataFromString:@"."]);
+    XCTAssertNoThrow([UABase64 dataFromString:@" "]);
+    XCTAssertNoThrow([UABase64 dataFromString:nil]);
 }
 
 @end

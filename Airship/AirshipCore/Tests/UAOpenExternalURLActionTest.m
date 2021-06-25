@@ -6,7 +6,7 @@
 #import "UAActionArguments+Internal.h"
 #import "UAURLAllowList.h"
 #import "UAirship+Internal.h"
-#import "UATestSystemVersion.h"
+#import "AirshipTests-Swift.h"
 
 @interface UAOpenExternalURLActionTest : UABaseTest
 

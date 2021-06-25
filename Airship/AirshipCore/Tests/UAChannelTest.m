@@ -12,7 +12,6 @@
 #import "UAActionRunner.h"
 #import "UAAppIntegration+Internal.h"
 #import "UAPush+Internal.h"
-#import "UALocaleManager.h"
 #import "UATaskManager.h"
 #import "AirshipTests-Swift.h"
 

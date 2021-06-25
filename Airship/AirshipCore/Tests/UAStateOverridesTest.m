@@ -4,10 +4,10 @@
 #import "UABaseTest.h"
 #import "UAStateOverrides+Internal.h"
 #import "UAirship+Internal.h"
-#import "UAirshipVersion.h"
 #import "UAUtils+Internal.h"
 #import "UAPush+Internal.h"
-#import "UALocaleManager+Internal.h"
+
+@import AirshipCore;
 
 @interface UAStateOverridesTest : UABaseTest
 @property(nonatomic, strong) id mockAirship;

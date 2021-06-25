@@ -7,7 +7,13 @@
 #import "UANotificationCategory.h"
 #import "UANotificationAction.h"
 #import "UATextInputNotificationAction.h"
-#import "UAirshipCoreResources.h"
+
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
 
 @implementation UANotificationCategories
 

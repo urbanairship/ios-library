@@ -4,6 +4,12 @@
 #import "UAMessageCenterResources.h"
 #import "UAAirshipMessageCenterCoreImport.h"
 
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+@import AirshipCore;
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
+
 @interface UAInboxStore()
 @property (strong, nonatomic) UACoreData *coreData;
 @end
@@ -16,7 +22,7 @@
 
     if (self) {
         NSURL *modelURL = [[UAMessageCenterResources bundle] URLForResource:@"UAInbox" withExtension:@"momd"];
-        self.coreData = [UACoreData coreDataWithModelURL:modelURL inMemory:inMemory stores:@[storeName]];
+        self.coreData = [[UACoreData alloc] initWithModelURL:modelURL inMemory:inMemory stores:@[storeName]];
     }
 
     return self;

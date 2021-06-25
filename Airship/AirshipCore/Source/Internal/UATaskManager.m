@@ -4,7 +4,6 @@
 
 #import "UATaskManager.h"
 #import "UAGlobal.h"
-#import "UANetworkMonitor.h"
 #import "UATask.h"
 #import "UAExpirableTask+Internal.h"
 #import "UATaskLauncher+Internal.h"
@@ -60,12 +59,12 @@
 
         if (@available(ios 12.0, tvOS 12.0, *)) {
             UA_WEAKIFY(self)
-            [self.networkMonitor connectionUpdates:^(BOOL connected) {
+            self.networkMonitor.connectionUpdates = ^(BOOL connected) {
                 UA_STRONGIFY(self)
                 if (connected) {
                     [self retryWaitingConditions];
                 }
-            }];
+            };
         }
     }
 

@@ -1,10 +1,8 @@
 /* Copyright Airship and Contributors */
 
 #import "UARemoteConfigManager+Internal.h"
-#import "UAirshipVersion.h"
 #import "UARemoteDataManager+Internal.h"
 #import "UARemoteDataPayload+Internal.h"
-#import "UAApplicationMetrics.h"
 #import "UARemoteConfigDisableInfo+Internal.h"
 #import "UARemoteConfigModuleNames+Internal.h"
 #import "UARemoteConfig.h"

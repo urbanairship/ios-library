@@ -4,9 +4,7 @@
 #import "UARemoteDataStore+Internal.h"
 #import "UARemoteDataStorePayload+Internal.h"
 #import "UARemoteDataPayload+Internal.h"
-#import "UAirshipVersion.h"
 #import "UAUtils+Internal.h"
-#import "UALocaleManager+Internal.h"
 #import "UATaskManager.h"
 #import "UATask.h"
 #import "UARemoteConfigURLManager.h"
@@ -141,7 +139,7 @@ static NSString * const UALastRemoteDataModifiedTime = @"UALastRemoteDataModifie
         // Register for locale change notification
         [self.notificationCenter addObserver:self
                                     selector:@selector(checkRefresh)
-                                        name:UALocaleUpdatedEvent
+                                        name:UALocaleManager.localeUpdatedEvent
                                       object:nil];
 
         [self.notificationCenter addObserver:self

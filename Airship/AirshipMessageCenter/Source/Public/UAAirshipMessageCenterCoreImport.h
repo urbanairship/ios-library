@@ -3,7 +3,6 @@
 #import <AirshipCore/AirshipCore.h>
 #else
 #import "UAirship.h"
-#import "UAViewUtils.h"
 #import "UAKeychainUtils.h"
 #import "UAUtils.h"
 #import "UARuntimeConfig.h"
@@ -17,10 +16,8 @@
 #import "UAExtendableChannelRegistration.h"
 #import "UAColorUtils.h"
 #import "UAChannel.h"
-#import "UABeveledLoadingIndicator.h"
 #import "UAActionArguments.h"
 #import "NSString+UALocalizationAdditions.h"
-#import "UACoreData.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAAction.h"
 #import "UATaskManager.h"

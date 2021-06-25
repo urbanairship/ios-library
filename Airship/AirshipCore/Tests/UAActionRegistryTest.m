@@ -2,7 +2,6 @@
 
 #import "UABaseTest.h"
 #import "UAActionRegistry+Internal.h"
-#import "UAApplicationMetrics+Internal.h"
 #import "UAirship+Internal.h"
 #import "UAAddTagsAction.h"
 #import "UATagsActionPredicate+Internal.h"

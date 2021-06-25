@@ -118,13 +118,13 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
 
         if (@available(ios 12.0, tvOS 12.0, *)) {
             __block BOOL started = NO;
-            [self.networkMonitor connectionUpdates:^(BOOL connected) {
+            self.networkMonitor.connectionUpdates = ^(BOOL connected) {
                 UA_STRONGIFY(self)
                 if (connected && started) {
                     [self scheduleConditionsChanged];
                 }
                 started = YES;
-            }];
+            };
         }
     }
 

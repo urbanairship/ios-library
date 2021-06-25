@@ -11,7 +11,6 @@
 #import "UACustomEvent.h"
 #import "UAEventManager+Internal.h"
 #import "UAUtils+Internal.h"
-#import "UALocaleManager.h"
 #import "UAAppInitEvent+Internal.h"
 #import "UAAppForegroundEvent+Internal.h"
 #import "UAAppBackgroundEvent+Internal.h"

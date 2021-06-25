@@ -37,7 +37,7 @@ NSString *const UALocationUpdatesEnabled = @"UALocationUpdatesEnabled";
         self.dataStore = dataStore;
         self.analytics = analytics;
         self.privacyManager = privacyManager;
-        self.systemVersion = [UASystemVersion systemVersion];
+        self.systemVersion = [[UASystemVersion alloc] init];
         self.locationManager.delegate = self;
 
         NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
