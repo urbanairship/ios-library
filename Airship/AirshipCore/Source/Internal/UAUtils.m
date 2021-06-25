@@ -264,15 +264,25 @@ NSString * const UAConnectionTypeWifi = @"wifi";
         window = appDelegate.window;
     }
 
-    // Otherwise fall back on the first window of the app's collection, if present.
-    window = window ?: [[UIApplication sharedApplication].windows firstObject];
+    // Otherwise fall back on the first non-hidden window of the app's collection, if present.
+    for (UIWindow *w in [UIApplication sharedApplication].windows) {
+        if (!w.isHidden) {
+            return w;
+        }
+    }
 
     return window;
 }
 
 + (nullable UIWindow *)mainWindow:(UIWindowScene *)scene API_AVAILABLE(ios(13.0)){
-    // Try to get the primary window of the scene, and fall back on the application's window if necessary.
-    return scene.windows.firstObject ?: [self mainWindow];
+    // Try to get the first non-hidden window of the scene, and fall back on the application's window if necessary.
+    for (UIWindow *w in scene.windows) {
+        if (!w.isHidden) {
+            return w;
+        }
+    }
+
+    return [self mainWindow];
 }
 
 + (nullable UIWindow *)windowForView:(UIView *)view {
