@@ -9,7 +9,6 @@
 #import "UARuntimeConfig.h"
 #import "UAChannel.h"
 #import "UAirship.h"
-#import "UATaskManager.h"
 
 #if __has_include("AirshipCore/AirshipCore-Swift.h")
 #import <AirshipCore/AirshipCore-Swift.h>

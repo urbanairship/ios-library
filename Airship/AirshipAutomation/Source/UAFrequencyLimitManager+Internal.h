@@ -6,6 +6,8 @@
 #import "UAFrequencyLimitStore+Internal.h"
 #import "UAFrequencyChecker+Internal.h"
 
+@class UADispatcher;
+
 NS_ASSUME_NONNULL_BEGIN
 
 /**

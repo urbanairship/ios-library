@@ -9,6 +9,8 @@
 @class UAAppStateTracker;
 @class UAScheduleTriggerContext;
 @class UANetworkMonitor;
+@class UADispatcher;
+@class UATaskManager;
 
 NS_ASSUME_NONNULL_BEGIN
 

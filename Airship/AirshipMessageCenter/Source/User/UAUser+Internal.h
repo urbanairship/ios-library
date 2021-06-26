@@ -7,6 +7,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class UATaskManager;
+
 /*
  * SDK-private extensions to UAUser
  */

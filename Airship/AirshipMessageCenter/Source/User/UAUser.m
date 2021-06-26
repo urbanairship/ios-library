@@ -4,7 +4,6 @@
 #import "UAUserData.h"
 #import "UAUserAPIClient+Internal.h"
 #import "UAAirshipMessageCenterCoreImport.h"
-#import "UATaskManager.h"
 #import "UAUserData+Internal.h"
 #import "UARemoteConfigURLManager.h"
 
@@ -157,9 +156,10 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
         return;
     }
 
-    UATaskRequestOptions *requestOptions = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyKeep
-                                                                           requiresNetwork:YES
-                                                                                    extras:nil];
+    UATaskRequestOptions *requestOptions = [[UATaskRequestOptions alloc] initWithConflictPolicy:UATaskConflictPolicyKeep
+                                                                                requiresNetwork:YES
+                                                                                         extras:nil];
+
     [self.taskManager enqueueRequestWithID:UAUserUpdateTaskID
                                    options:requestOptions];
 }

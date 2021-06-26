@@ -2,7 +2,6 @@
 
 #import <XCTest/XCTest.h>
 #import "UAAirshipBaseTest.h"
-#import "UATaskManager+Internal.h"
 #import "AirshipTests-Swift.h"
 
 @import AirshipCore;
@@ -24,10 +23,10 @@
     self.mockApplication = [self mockForClass:[UIApplication class]];
     self.testNetworkMonitor = [[UATestNetworkMonitor alloc] init];
 
-    self.taskManager = [UATaskManager taskManagerWithApplication:self.mockApplication
-                                              notificationCenter:self.notificationCenter
-                                                      dispatcher:self.testDispatcher
-                                                  networkMonitor:self.testNetworkMonitor];
+    self.taskManager = [[UATaskManager alloc] initWithApplication:self.mockApplication
+                                               notificationCenter:self.notificationCenter
+                                                       dispatcher:self.testDispatcher
+                                                   networkMonitor:self.testNetworkMonitor];
 }
 
 - (void)testLaunch {
@@ -47,9 +46,9 @@
         [taskRan fulfill];
     }];
 
-    UATaskRequestOptions *requestOptions = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyAppend
-                                                                           requiresNetwork:NO
-                                                                                    extras:@{@"neat": @"story"}];
+    UATaskRequestOptions *requestOptions = [[UATaskRequestOptions alloc] initWithConflictPolicy:UATaskConflictPolicyAppend
+                                                                                requiresNetwork:NO
+                                                                                         extras:@{@"neat": @"story"}];
 
     [self.taskManager enqueueRequestWithID:@"test" options:requestOptions];
     [self waitForTestExpectations];
@@ -65,9 +64,9 @@
         [task taskFailed];
     }];
 
-    UATaskRequestOptions *requestOptions = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyAppend
-                                                                           requiresNetwork:NO
-                                                                                    extras:@{@"neat": @"story"}];
+    UATaskRequestOptions *requestOptions = [[UATaskRequestOptions alloc] initWithConflictPolicy:UATaskConflictPolicyAppend
+                                                                                requiresNetwork:NO
+                                                                                         extras:@{@"neat": @"story"}];
     [self.taskManager enqueueRequestWithID:@"test" options:requestOptions];
 
 
@@ -112,9 +111,9 @@
         [taskRan fulfill];
     }];
 
-    UATaskRequestOptions *requestOptions = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyAppend
-                                                                           requiresNetwork:NO
-                                                                                    extras:@{@"neat": @"story"}];
+    UATaskRequestOptions *requestOptions = [[UATaskRequestOptions alloc] initWithConflictPolicy:UATaskConflictPolicyAppend
+                                                                                requiresNetwork:NO
+                                                                                         extras:@{@"neat": @"story"}];
 
     [self.taskManager enqueueRequestWithID:@"test" options:requestOptions];
     [self waitForTestExpectations:@[taskRan]];
@@ -133,9 +132,9 @@
         [task taskCompleted];
     }];
 
-    UATaskRequestOptions *requestOptions = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyAppend
-                                                                           requiresNetwork:NO
-                                                                                    extras:@{@"neat": @"story"}];
+    UATaskRequestOptions *requestOptions = [[UATaskRequestOptions alloc] initWithConflictPolicy:UATaskConflictPolicyAppend
+                                                                                requiresNetwork:NO
+                                                                                         extras:@{@"neat": @"story"}];
     [self.taskManager enqueueRequestWithID:@"test" options:requestOptions initialDelay:100];
 
     [self.testDispatcher advanceTime:30];
@@ -156,15 +155,15 @@
         [task taskCompleted];
     }];
 
-    UATaskRequestOptions *firstOptions = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyReplace
-                                                                           requiresNetwork:NO
-                                                                                    extras:@{@"subtask": @"first"}];
+    UATaskRequestOptions *firstOptions = [[UATaskRequestOptions alloc] initWithConflictPolicy:UATaskConflictPolicyReplace
+                                                                              requiresNetwork:NO
+                                                                                       extras:@{@"subtask": @"first"}];
     [self.taskManager enqueueRequestWithID:@"test" options:firstOptions initialDelay:100];
 
 
-    UATaskRequestOptions *secondOptions = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyReplace
-                                                                           requiresNetwork:NO
-                                                                                    extras:@{@"subtask": @"second"}];
+    UATaskRequestOptions *secondOptions = [[UATaskRequestOptions alloc] initWithConflictPolicy:UATaskConflictPolicyReplace
+                                                                               requiresNetwork:NO
+                                                                                        extras:@{@"subtask": @"second"}];
     [self.taskManager enqueueRequestWithID:@"test" options:secondOptions initialDelay:100];
 
     [self.testDispatcher advanceTime:100];
@@ -183,15 +182,15 @@
         [task taskCompleted];
     }];
 
-    UATaskRequestOptions *firstOptions = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyReplace
-                                                                         requiresNetwork:NO
-                                                                                  extras:@{@"subtask": @"first"}];
+    UATaskRequestOptions *firstOptions = [[UATaskRequestOptions alloc] initWithConflictPolicy:UATaskConflictPolicyReplace
+                                                                              requiresNetwork:NO
+                                                                                       extras:@{@"subtask": @"first"}];
     [self.taskManager enqueueRequestWithID:@"test" options:firstOptions initialDelay:100];
 
 
-    UATaskRequestOptions *secondOptions = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyKeep
-                                                                          requiresNetwork:NO
-                                                                                   extras:@{@"subtask": @"second"}];
+    UATaskRequestOptions *secondOptions = [[UATaskRequestOptions alloc] initWithConflictPolicy:UATaskConflictPolicyKeep
+                                                                               requiresNetwork:NO
+                                                                                        extras:@{@"subtask": @"second"}];
     [self.taskManager enqueueRequestWithID:@"test" options:secondOptions initialDelay:100];
 
     [self.testDispatcher advanceTime:100];
@@ -208,15 +207,15 @@
         [task taskCompleted];
     }];
 
-    UATaskRequestOptions *firstOptions = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyReplace
-                                                                         requiresNetwork:NO
-                                                                                  extras:@{@"subtask": @"first"}];
+    UATaskRequestOptions *firstOptions = [[UATaskRequestOptions alloc] initWithConflictPolicy:UATaskConflictPolicyReplace
+                                                                              requiresNetwork:NO
+                                                                                       extras:@{@"subtask": @"first"}];
     [self.taskManager enqueueRequestWithID:@"test" options:firstOptions initialDelay:100];
 
 
-    UATaskRequestOptions *secondOptions = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyAppend
-                                                                          requiresNetwork:NO
-                                                                                   extras:@{@"subtask": @"second"}];
+    UATaskRequestOptions *secondOptions = [[UATaskRequestOptions alloc] initWithConflictPolicy:UATaskConflictPolicyAppend
+                                                                               requiresNetwork:NO
+                                                                                        extras:@{@"subtask": @"second"}];
     [self.taskManager enqueueRequestWithID:@"test" options:secondOptions initialDelay:100];
 
     [self.testDispatcher advanceTime:100];
@@ -237,7 +236,7 @@
         [task taskCompleted];
     }];
 
-    UATaskRequestOptions *options = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyReplace
+    UATaskRequestOptions *options = [[UATaskRequestOptions alloc] initWithConflictPolicy:UATaskConflictPolicyReplace
                                                                          requiresNetwork:YES
                                                                                   extras:nil];
     [self.taskManager enqueueRequestWithID:@"test" options:options];
@@ -261,9 +260,9 @@
         [task taskCompleted];
     }];
 
-    UATaskRequestOptions *options = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyReplace
-                                                                    requiresNetwork:NO
-                                                                             extras:nil];
+    UATaskRequestOptions *options = [[UATaskRequestOptions alloc] initWithConflictPolicy:UATaskConflictPolicyReplace
+                                                                         requiresNetwork:NO
+                                                                                  extras:nil];
     [self.taskManager enqueueRequestWithID:@"test" options:options];
 
     XCTAssertFalse(ran);
@@ -286,9 +285,9 @@
         [task taskCompleted];
     }];
 
-    UATaskRequestOptions *options = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyReplace
-                                                                    requiresNetwork:NO
-                                                                             extras:nil];
+    UATaskRequestOptions *options = [[UATaskRequestOptions alloc] initWithConflictPolicy:UATaskConflictPolicyReplace
+                                                                         requiresNetwork:NO
+                                                                                  extras:nil];
     [self.taskManager enqueueRequestWithID:@"test" options:options];
 
     XCTAssertFalse(ran);
@@ -307,9 +306,9 @@
         [task taskFailed];
     }];
 
-    UATaskRequestOptions *requestOptions = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyAppend
-                                                                           requiresNetwork:NO
-                                                                                    extras:nil];
+    UATaskRequestOptions *requestOptions = [[UATaskRequestOptions alloc] initWithConflictPolicy:UATaskConflictPolicyAppend
+                                                                                requiresNetwork:NO
+                                                                                         extras:nil];
     [self.taskManager enqueueRequestWithID:@"test" options:requestOptions];
     XCTAssertEqual(1, attempts);
 
@@ -318,3 +317,4 @@
 }
 
 @end
+

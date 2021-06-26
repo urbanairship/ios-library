@@ -5,6 +5,8 @@
 
 #import "UAAirshipMessageCenterCoreImport.h"
 
+@class UADispatcher;
+
 NS_ASSUME_NONNULL_BEGIN
 
 /**

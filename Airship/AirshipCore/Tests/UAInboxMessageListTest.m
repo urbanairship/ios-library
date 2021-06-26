@@ -355,10 +355,11 @@ static NSString * const UAInboxMessageListSyncDeletedMessagesTask = @"UAInboxMes
     };
 
     [[[mockTask stub] andReturn:UAInboxMessageListRetrieveTask] taskID];
-    [[[mockTask stub] andReturn:[UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyAppend
-                                                                requiresNetwork:NO
-                                                                         extras:@{@"retrieveCallback" : callback}]] requestOptions];
+    [[[mockTask stub] andReturn:[[UATaskRequestOptions alloc] initWithConflictPolicy:UATaskConflictPolicyAppend
+                requiresNetwork:NO
+                         extras:@{@"retrieveCallback" : callback}]] requestOptions];
     self.launchHandler(mockTask);
 }
 
 @end
+

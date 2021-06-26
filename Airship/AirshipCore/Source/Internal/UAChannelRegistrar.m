@@ -5,8 +5,6 @@
 #import "UAUtils+Internal.h"
 #import "UAChannelRegistrationPayload+Internal.h"
 #import "UARuntimeConfig.h"
-#import "UATaskManager.h"
-#import "UATask.h"
 #import "UAKeychainUtils+Internal.h"
 
 #if __has_include("AirshipCore/AirshipCore-Swift.h")
@@ -321,9 +319,9 @@ static NSString * const UAChannelRegistrarTaskExtrasForcefully = @"forcefully";
 
     UATaskConflictPolicy policy = forcefully ? UATaskConflictPolicyReplace : UATaskConflictPolicyKeep;
 
-    UATaskRequestOptions *requestOptions = [UATaskRequestOptions optionsWithConflictPolicy:policy
-                                                                           requiresNetwork:YES
-                                                                                    extras:extras];
+    UATaskRequestOptions *requestOptions = [[UATaskRequestOptions alloc] initWithConflictPolicy:policy
+                                                                                requiresNetwork:YES
+                                                                                         extras:extras];
 
     [self.taskManager enqueueRequestWithID:UAChannelRegistrationTaskID options:requestOptions];
 }

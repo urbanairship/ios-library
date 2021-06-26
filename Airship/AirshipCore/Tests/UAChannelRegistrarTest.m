@@ -475,9 +475,9 @@ static NSString * const UAChannelRegistrationTaskID = @"UAChannelRegistrar.regis
 #pragma mark Utility methods
 
 - (id<UATask>)registrationTask:(BOOL)forcefully {
-    UATaskRequestOptions *options = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyKeep
-                                                                    requiresNetwork:YES
-                                                                             extras:@{@"forcefully" : @(forcefully)}];
+    UATaskRequestOptions *options = [[UATaskRequestOptions alloc] initWithConflictPolicy:UATaskConflictPolicyKeep
+                                                                         requiresNetwork:YES
+                                                                                  extras:@{@"forcefully" : @(forcefully)}];
 
     id mockTask = [self mockForProtocol:@protocol(UATask)];
     [[[mockTask stub] andReturn:UAChannelRegistrationTaskID] taskID];

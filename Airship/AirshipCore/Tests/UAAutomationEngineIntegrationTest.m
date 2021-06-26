@@ -722,11 +722,12 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
         [invocation getArgument:&arg atIndex:3];
         UATaskRequestOptions *options = (__bridge UATaskRequestOptions *)arg;
 
+
         id mockTask = [self mockForProtocol:@protocol(UATask)];
         [[[mockTask stub] andReturn:UAAutomationEngineDelayTaskID] taskID];
-        [[[mockTask stub] andReturn:[UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyAppend
-                                                                    requiresNetwork:NO
-                                                                             extras:@{@"identifier" : options.extras[@"identifier"]}]] requestOptions];
+        [[[mockTask stub] andReturn:[[UATaskRequestOptions alloc] initWithConflictPolicy:UATaskConflictPolicyAppend
+                                                                         requiresNetwork:NO
+                                                                                  extras:@{@"identifier" : options.extras[@"identifier"]}]] requestOptions];
         self.launchHandler(mockTask);
 
     }] enqueueRequestWithID:OCMOCK_ANY options:OCMOCK_ANY initialDelay:1.0];
@@ -1226,9 +1227,9 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
 
     id mockTask = [self mockForProtocol:@protocol(UATask)];
     [[[mockTask stub] andReturn:UAAutomationEngineIntervalTaskID] taskID];
-    [[[mockTask stub] andReturn:[UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyAppend
-                                                                requiresNetwork:NO
-                                                                         extras:@{@"identifier" : @"test"}]] requestOptions];
+    [[[mockTask stub] andReturn:[[UATaskRequestOptions alloc] initWithConflictPolicy:UATaskConflictPolicyAppend
+                                                                     requiresNetwork:NO
+                                                                              extras:@{@"identifier" : @"test"}]] requestOptions];
     // Launch the task
     self.launchHandler(mockTask);
 
@@ -1556,3 +1557,4 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
 }
 
 @end
+

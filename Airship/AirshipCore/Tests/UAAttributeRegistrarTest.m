@@ -6,7 +6,6 @@
 #import "UAAttributePendingMutations.h"
 #import "UAPersistentQueue+Internal.h"
 #import "UAAttributeMutations.h"
-#import "UATaskManager.h"
 #import "AirshipTests-Swift.h"
 
 @import AirshipCore;

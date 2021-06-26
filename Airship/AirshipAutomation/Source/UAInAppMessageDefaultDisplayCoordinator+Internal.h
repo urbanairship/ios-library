@@ -6,6 +6,8 @@
 
 #define kUAInAppMessageDefaultDisplayInterval 30
 
+@class UADispatcher;
+
 @interface UAInAppMessageDefaultDisplayCoordinator ()
 
 + (instancetype)coordinatorWithDispatcher:(UADispatcher *)dispatcher notificationCenter:(NSNotificationCenter *)notificationCenter;

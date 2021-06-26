@@ -712,9 +712,11 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
 - (void)enqueueDelayTaskForSchedule:(UAScheduleData *)scheduleData timeInterval:(NSTimeInterval)timeInterval {
     id extras = @{UAAutomationEngineTaskExtrasIdentifier : scheduleData.identifier};
 
-    UATaskRequestOptions *requestOptions = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyAppend
-                                                                           requiresNetwork:NO
-                                                                                    extras:extras];
+    UATaskRequestOptions *requestOptions = [[UATaskRequestOptions alloc] initWithConflictPolicy:UATaskConflictPolicyAppend
+                                                                                requiresNetwork:NO
+                                                                                         extras:extras];
+
+
     [self.taskManager enqueueRequestWithID:UAAutomationEngineDelayTaskID
                                    options:requestOptions
                               initialDelay:timeInterval];
@@ -723,9 +725,11 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
 - (void)enqueueIntervalTaskForSchedule:(UAScheduleData *)scheduleData timeInterval:(NSTimeInterval)timeInterval {
     id extras = @{UAAutomationEngineTaskExtrasIdentifier : scheduleData.identifier};
 
-    UATaskRequestOptions *requestOptions = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyAppend
-                                                                           requiresNetwork:NO
-                                                                                    extras:extras];
+    UATaskRequestOptions *requestOptions = [[UATaskRequestOptions alloc] initWithConflictPolicy:UATaskConflictPolicyAppend
+                                                                                requiresNetwork:NO
+                                                                                         extras:extras];
+
+
     [self.taskManager enqueueRequestWithID:UAAutomationEngineIntervalTaskID
                                    options:requestOptions
                               initialDelay:timeInterval];

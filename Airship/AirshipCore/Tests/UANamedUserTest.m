@@ -7,7 +7,6 @@
 #import "UARuntimeConfig.h"
 #import "UATagGroupsRegistrar+Internal.h"
 #import "UAAttributePendingMutations.h"
-#import "UATaskManager.h"
 #import "AirshipTests-Swift.h"
 
 @import AirshipCore;

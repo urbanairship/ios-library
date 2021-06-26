@@ -384,7 +384,9 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 
 - (void)enqueueUpdateTagGroupsTask {
     if (self.identifier && self.componentEnabled && [self.privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
-        UATaskRequestOptions *requestOptions = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyAppend requiresNetwork:YES extras:nil];
+        UATaskRequestOptions *requestOptions = [[UATaskRequestOptions alloc] initWithConflictPolicy:UATaskConflictPolicyAppend
+                                                                                    requiresNetwork:YES
+                                                                                             extras:nil];
         [self.taskManager enqueueRequestWithID:UAChannelTagUpdateTaskID
                                        options:requestOptions];
     }
@@ -392,7 +394,9 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 
 - (void)enqueueUpdateAttributesTask {
     if (self.identifier && self.componentEnabled && [self.privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
-        UATaskRequestOptions *requestOptions = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyAppend requiresNetwork:YES extras:nil];
+        UATaskRequestOptions *requestOptions = [[UATaskRequestOptions alloc] initWithConflictPolicy:UATaskConflictPolicyAppend
+                                                                                    requiresNetwork:YES
+                                                                                             extras:nil];
         [self.taskManager enqueueRequestWithID:UAChannelAttributeUpdateTaskID
                                        options:requestOptions];
     }

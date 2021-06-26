@@ -9,7 +9,6 @@
 #import "UARegionEvent.h"
 #import "UAirship+Internal.h"
 #import "UAChannel.h"
-#import "UATaskManager.h"
 
 @import AirshipCore;
 

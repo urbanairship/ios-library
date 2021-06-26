@@ -52,6 +52,5 @@
 #import "UANamedUser.h"
 #import "UATagGroupsMutation.h"
 #import "UAAttributePendingMutations.h"
-#import "UATaskManager.h"
 #import "NSDictionary+UAAdditions.h"
 #endif

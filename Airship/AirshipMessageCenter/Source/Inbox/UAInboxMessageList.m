@@ -308,11 +308,12 @@ static NSString * const UAInboxMessageListExtraRetrieveCallback = @"retrieveCall
         [self sendMessageListWillUpdateNotification];
     }];
 
-    UATaskRequestOptions *options = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyAppend
-                                                                    requiresNetwork:NO
-                                                                             extras:extras];
 
-    [self.taskManager enqueueRequestWithID:UAInboxMessageListRetrieveTask options:options];
+    UATaskRequestOptions *requestOptions = [[UATaskRequestOptions alloc] initWithConflictPolicy:UATaskConflictPolicyAppend
+                                                                                requiresNetwork:NO
+                                                                                         extras:extras];
+
+    [self.taskManager enqueueRequestWithID:UAInboxMessageListRetrieveTask options:requestOptions];
 
     UADisposable *disposable = [[UADisposable alloc] init:^{
         UA_STRONGIFY(self)
@@ -499,19 +500,19 @@ static NSString * const UAInboxMessageListExtraRetrieveCallback = @"retrieveCall
 }
 
 - (void)enqueueSyncReadMessagesTask {
-    UATaskRequestOptions *options = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyKeep
-                                                                    requiresNetwork:NO
-                                                                             extras:nil];
+    UATaskRequestOptions *requestOptions = [[UATaskRequestOptions alloc] initWithConflictPolicy:UATaskConflictPolicyKeep
+                                                                                requiresNetwork:NO
+                                                                                         extras:nil];
 
-    [self.taskManager enqueueRequestWithID:UAInboxMessageListSyncReadMessagesTask options:options];
+    [self.taskManager enqueueRequestWithID:UAInboxMessageListSyncReadMessagesTask options:requestOptions];
 }
 
 - (void)enqueueSyncDeletedMessagesTask {
-    UATaskRequestOptions *options = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyKeep
-                                                                    requiresNetwork:NO
-                                                                             extras:nil];
+    UATaskRequestOptions *requestOptions = [[UATaskRequestOptions alloc] initWithConflictPolicy:UATaskConflictPolicyKeep
+                                                                                requiresNetwork:NO
+                                                                                         extras:nil];
 
-    [self.taskManager enqueueRequestWithID:UAInboxMessageListSyncDeletedMessagesTask options:options];
+    [self.taskManager enqueueRequestWithID:UAInboxMessageListSyncDeletedMessagesTask options:requestOptions];
 }
 
 /**

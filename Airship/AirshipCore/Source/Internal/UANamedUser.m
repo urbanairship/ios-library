@@ -7,7 +7,6 @@
 #import "UARuntimeConfig.h"
 #import "UAAttributePendingMutations.h"
 #import "UAAttributeRegistrar+Internal.h"
-#import "UATaskManager.h"
 #import "UARemoteConfigURLManager.h"
 #import "UAGlobal.h"
 
@@ -187,14 +186,19 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
 }
 
 - (void)enqueueUpdateNamedUserTask {
-    UATaskRequestOptions *requestOptions = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyReplace requiresNetwork:YES extras:nil];
+    UATaskRequestOptions *requestOptions = [[UATaskRequestOptions alloc] initWithConflictPolicy:UATaskConflictPolicyReplace
+                                                                                requiresNetwork:YES
+                                                                                         extras:nil];
+
     [self.taskManager enqueueRequestWithID:UANamedUserUpdateTaskID
                                    options:requestOptions];
 }
 
 - (void)enqueueUpdateTagGroupsTask {
     if (self.identifier && [self.privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
-        UATaskRequestOptions *requestOptions = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyAppend requiresNetwork:YES extras:nil];
+        UATaskRequestOptions *requestOptions = [[UATaskRequestOptions alloc] initWithConflictPolicy:UATaskConflictPolicyAppend
+                                                                                    requiresNetwork:YES
+                                                                                             extras:nil];
         [self.taskManager enqueueRequestWithID:UANamedUserTagUpdateTaskID
                                        options:requestOptions];
     }
@@ -202,7 +206,9 @@ static NSString * const UANamedUserAttributeUpdateTaskID = @"UANamedUser.attribu
 
 - (void)enqueueUpdateAttributesTask {
     if (self.identifier && [self.privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
-        UATaskRequestOptions *requestOptions = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyAppend requiresNetwork:YES extras:nil];
+        UATaskRequestOptions *requestOptions = [[UATaskRequestOptions alloc] initWithConflictPolicy:UATaskConflictPolicyAppend
+                                                                                    requiresNetwork:YES
+                                                                                             extras:nil];
         [self.taskManager enqueueRequestWithID:UANamedUserAttributeUpdateTaskID
                                        options:requestOptions];
     }

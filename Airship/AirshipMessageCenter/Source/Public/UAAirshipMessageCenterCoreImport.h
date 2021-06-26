@@ -20,6 +20,5 @@
 #import "NSString+UALocalizationAdditions.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAAction.h"
-#import "UATaskManager.h"
 #import "UARemoteConfigURLManager.h"
 #endif

@@ -2,7 +2,7 @@
 
 #import <XCTest/XCTest.h>
 #import "UABaseTest.h"
-#import "UAExpirableTask+Internal.h"
+@import AirshipCore;
 
 @interface UAExpirableTaskTest : UABaseTest
 
@@ -12,7 +12,7 @@
 
 - (void)testExpireNoExpirationHandler {
     __block BOOL completionCalled = NO;
-    UAExpirableTask *task = [UAExpirableTask taskWithID:@"neat" options:[UATaskRequestOptions defaultOptions] completionHandler:^(BOOL result) {
+    UAExpirableTask *task = [[UAExpirableTask alloc] initWithTaskID:@"neat" requestOptions:[UATaskRequestOptions defaultOptions] completionHandler:^(BOOL result) {
         XCTAssertFalse(completionCalled);
         completionCalled = YES;
 
@@ -25,7 +25,7 @@
 
 - (void)testExpire {
     __block BOOL completionCalled = NO;
-    UAExpirableTask *task = [UAExpirableTask taskWithID:@"neat" options:[UATaskRequestOptions defaultOptions] completionHandler:^(BOOL result) {
+    UAExpirableTask *task = [[UAExpirableTask alloc] initWithTaskID:@"neat" requestOptions:[UATaskRequestOptions defaultOptions] completionHandler:^(BOOL result) {
         XCTAssertFalse(completionCalled);
         completionCalled = YES;
     }];
@@ -58,7 +58,7 @@
 
 - (void)testCompletionHandler {
     __block BOOL completionCalled = NO;
-    UAExpirableTask *task = [UAExpirableTask taskWithID:@"neat" options:[UATaskRequestOptions defaultOptions] completionHandler:^(BOOL result) {
+    UAExpirableTask *task = [[UAExpirableTask alloc] initWithTaskID:@"neat" requestOptions:[UATaskRequestOptions defaultOptions] completionHandler:^(BOOL result) {
         XCTAssertFalse(completionCalled);
         completionCalled = YES;
 

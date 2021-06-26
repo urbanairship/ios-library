@@ -12,7 +12,6 @@
 #import "UAActionRunner.h"
 #import "UAAppIntegration+Internal.h"
 #import "UAPush+Internal.h"
-#import "UATaskManager.h"
 #import "AirshipTests-Swift.h"
 
 @import AirshipCore;
@@ -87,16 +86,16 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
         [invocation getArgument:&arg atIndex:4];
         self.launchHandler =  (__bridge void (^)(id<UATask>))arg;
     }] registerForTaskWithIDs:@[UAChannelTagUpdateTaskID, UAChannelAttributeUpdateTaskID] dispatcher:OCMOCK_ANY launchHandler:OCMOCK_ANY];
-    
+
     self.privacyManager = [[UAPrivacyManager alloc] initWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
-    
+
     // Put setup code here. This method is called before the invocation of each test method in the class.
     self.channel = [self createChannel];
 
     self.mockedPush = [self mockForClass:[UAPush class]];
 
     self.mockedActionRunner = [self mockForClass:[UAActionRunner class]];
-    
+
     self.mockedAirship = [self mockForClass:[UAirship class]];
     [UAirship setSharedAirship:self.mockedAirship];
     [[[self.mockedAirship stub] andReturn:@[self.channel]] components];
@@ -729,11 +728,11 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
     self.testDate = [[UATestDate alloc] initWithOffset:0 dateOverride:[NSDate date]];
 
     [UAAttributePendingMutations pendingMutationsWithMutations:addMutation
-    date:self.testDate];
+                                                          date:self.testDate];
 
     [[self.mockAttributeRegistrar expect] savePendingMutations:OCMOCK_ANY];
 
-    UATaskRequestOptions *options = [UATaskRequestOptions optionsWithConflictPolicy:UATaskConflictPolicyAppend requiresNetwork:YES extras:nil];
+    UATaskRequestOptions *options = [[UATaskRequestOptions alloc] initWithConflictPolicy:UATaskConflictPolicyAppend requiresNetwork:YES extras:nil];
     id mockTask = [self mockForProtocol:@protocol(UATask)];
 
     [[[mockTask stub] andReturn:UAChannelAttributeUpdateTaskID] taskID];
@@ -1161,3 +1160,4 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 }
 
 @end
+

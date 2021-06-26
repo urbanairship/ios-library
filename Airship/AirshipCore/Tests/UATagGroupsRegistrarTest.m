@@ -3,7 +3,8 @@
 #import "UAAirshipBaseTest.h"
 #import "UATagGroupsRegistrar+Internal.h"
 #import "UATagGroupsMutation+Internal.h"
-#import "UATaskManager.h"
+
+@import AirshipCore;
 
 @interface UATagGroupsRegistrarTest : UAAirshipBaseTest
 @property (nonatomic, strong) UAPendingTagGroupStore *pendingTagGroupStore;

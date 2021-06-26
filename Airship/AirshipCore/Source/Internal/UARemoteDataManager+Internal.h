@@ -7,7 +7,6 @@
 #import "UAComponent.h"
 #import "UAPushableComponent.h"
 #import "UARemoteDataProvider.h"
-#import "UATaskManager.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -16,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class UADisposable;
 @class UADate;
 @class UADispatcher;
+@class UATaskManager;
 
 /**
  * Default foreground refresh interval.
