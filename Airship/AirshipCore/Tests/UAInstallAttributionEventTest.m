@@ -1,7 +1,8 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAInstallAttributionEvent.h"
+
+@import AirshipCore;
 
 @interface UAInstallAttributionEventTest : UABaseTest
 
@@ -26,8 +27,8 @@
     UAInstallAttributionEvent *event = [UAInstallAttributionEvent eventWithAppPurchaseDate:purchaseDate
                                                                          iAdImpressionDate:iAdImpressionDate];
 
-    XCTAssertEqualObjects(@"100.000000", [event.data objectForKey:@"app_store_purchase_date"]);
-    XCTAssertEqualObjects(@"1000.000000", [event.data objectForKey:@"app_store_ad_impression_date"]);
+    XCTAssertEqualObjects(@"100.0", [event.data objectForKey:@"app_store_purchase_date"]);
+    XCTAssertEqualObjects(@"1000.0", [event.data objectForKey:@"app_store_ad_impression_date"]);
     XCTAssertTrue(event.isValid);
 }
 

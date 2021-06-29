@@ -4,7 +4,8 @@
 #import "UAMediaEventTemplate.h"
 #import "UAAnalytics.h"
 #import "UAirship.h"
-#import "UACustomEvent.h"
+
+@import AirshipCore;
 
 @interface UAMediaEventTemplateTest : UABaseTest
 @property (nonatomic, strong) id analytics;

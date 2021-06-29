@@ -1,7 +1,8 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAScreenTrackingEvent+Internal.h"
+
+@import AirshipCore;
 
 @interface UAScreenTrackingEventTest : UABaseTest
 @end
@@ -12,7 +13,7 @@
  * Test event data directly.
  */
 - (void)testScreenTrackingEventData {
-    UAScreenTrackingEvent *event = [UAScreenTrackingEvent eventWithScreen:@"test_screen"
+    UAScreenTrackingEvent *event = [[UAScreenTrackingEvent alloc] initWithScreen:@"test_screen"
                                                            previousScreen:@"previous_screen"
                                                                 startTime:0
                                                                  stopTime:1];
@@ -34,18 +35,16 @@
 - (void)testScreenValidation {
     NSString *screenName = [@"" stringByPaddingToLength:255 withString:@"test_screen_name" startingAtIndex:0];
 
-    UAScreenTrackingEvent *event = [UAScreenTrackingEvent eventWithScreen:screenName previousScreen:nil startTime:0 stopTime:1];
+    UAScreenTrackingEvent *event = [[UAScreenTrackingEvent alloc] initWithScreen:screenName previousScreen:nil startTime:0 stopTime:1];
     XCTAssertEqualObjects(event.screen, screenName);
     XCTAssertTrue(event.isValid);
 
     screenName = [@"" stringByPaddingToLength:256 withString:@"test_screen_name" startingAtIndex:0];
-    event = [UAScreenTrackingEvent eventWithScreen:screenName previousScreen:nil startTime:0 stopTime:1];
-    XCTAssertEqualObjects(event.screen, screenName);
+    event = [[UAScreenTrackingEvent alloc] initWithScreen:screenName previousScreen:nil startTime:0 stopTime:1];
     XCTAssertFalse(event.isValid);
 
     screenName = @"";
-    event = [UAScreenTrackingEvent eventWithScreen:screenName previousScreen:nil startTime:0 stopTime:1];
-    XCTAssertEqualObjects(event.screen, screenName);
+    event = [[UAScreenTrackingEvent alloc] initWithScreen:screenName previousScreen:nil startTime:0 stopTime:1];
     XCTAssertFalse(event.isValid);
 }
 
@@ -54,15 +53,15 @@
  */
 - (void)testStopTimeValidation {
     // Test invalid screen tracking event with stop time equal to start time
-    UAScreenTrackingEvent *event = [UAScreenTrackingEvent eventWithScreen:@"test_screen" previousScreen:nil startTime:0 stopTime:0];
+    UAScreenTrackingEvent *event = [[UAScreenTrackingEvent alloc] initWithScreen:@"test_screen" previousScreen:nil startTime:0 stopTime:0];
     XCTAssertFalse(event.isValid);
 
     // Test invalid screen tracking event with stop time before start time
-    event = [UAScreenTrackingEvent eventWithScreen:@"test_screen" previousScreen:nil startTime:1 stopTime:0];
+    event = [[UAScreenTrackingEvent alloc] initWithScreen:@"test_screen" previousScreen:nil startTime:1 stopTime:0];
     XCTAssertFalse(event.isValid);
 
     // Test valid screen tracking event with stop time after start time
-    event = [UAScreenTrackingEvent eventWithScreen:@"test_screen" previousScreen:nil startTime:0 stopTime:1];
+    event = [[UAScreenTrackingEvent alloc] initWithScreen:@"test_screen" previousScreen:nil startTime:0 stopTime:1];
     XCTAssertTrue(event.isValid);
 }
 

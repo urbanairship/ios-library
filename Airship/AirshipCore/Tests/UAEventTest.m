@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import "UABaseTest.h"
+#import "UAAirshipBaseTest.h"
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
 #import <CoreTelephony/CTCarrier.h>
 
@@ -8,31 +8,23 @@
 #import "UAEvent+Internal.h"
 #import "UAirship+Internal.h"
 #import "UAAnalytics.h"
-#import "UAAppInitEvent+Internal.h"
-#import "UAAppExitEvent+Internal.h"
-#import "UAAppBackgroundEvent+Internal.h"
-#import "UAAppForegroundEvent+Internal.h"
-#import "UADeviceRegistrationEvent+Internal.h"
-#import "UAPushReceivedEvent+Internal.h"
 #import "UAUtils+Internal.h"
 
 @import AirshipCore;
 
-@interface UAEventTest : UABaseTest
+@interface UAEventTest : UAAirshipBaseTest
 
 // stubs
 @property (nonatomic, strong) id analytics;
-@property (nonatomic, strong) id privacyManager;
 @property (nonatomic, strong) id airship;
 @property (nonatomic, strong) id reachability;
 @property (nonatomic, strong) id timeZone;
-@property (nonatomic, strong) id airshipVersion;
 @property (nonatomic, strong) id application;
 @property (nonatomic, strong) id push;
 @property (nonatomic, strong) id channel;
 @property (nonatomic, strong) id currentDevice;
 @property (nonatomic, strong) id utils;
-
+@property (nonatomic, strong) UAPrivacyManager *privacyManager;
 @end
 
 @implementation UAEventTest
@@ -40,10 +32,10 @@
 - (void)setUp {
     [super setUp];
 
+    self.privacyManager = [[UAPrivacyManager  alloc] initWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesNone];
     self.analytics = [self mockForClass:[UAAnalytics class]];
     self.push = [self mockForClass:[UAPush class]];
     self.channel = [self mockForClass:[UAChannel class]];
-    self.privacyManager = [self mockForClass:[UAPrivacyManager class]];
 
     self.airship = [self mockForClass:[UAirship class]];
 
@@ -58,8 +50,6 @@
 
     self.timeZone = [self mockForClass:[NSTimeZone class]];
     [[[self.timeZone stub] andReturn:self.timeZone] defaultTimeZone];
-
-    self.airshipVersion = [self mockForClass:[UAirshipVersion class]];
 
     self.application = [self mockForClass:[UIApplication class]];
     [[[self.application stub] andReturn:self.application] sharedApplication];
@@ -86,8 +76,6 @@
 
     [(UIDevice *)[[self.currentDevice stub] andReturn:@"os version"]systemVersion];
 
-    [[[self.airshipVersion stub] andReturn:@"airship version"] get];
-
     [[[self.application stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
 
     [[[self.utils stub] andReturnValue:OCMOCK_VALUE(UAConnectionTypeCell)] connectionType];
@@ -102,11 +90,11 @@
                                    @"notification_types": @[],
                                    @"notification_authorization": @"not_determined",
                                    @"os_version": @"os version",
-                                   @"lib_version": @"airship version",
+                                   @"lib_version": UAirshipVersion.get,
                                    @"package_version": @"",
                                    @"foreground": @"true"};
 
-    UAAppInitEvent *event = [UAAppInitEvent event];
+    UAAppInitEvent *event = [[UAAppInitEvent alloc] init];
 
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"app_init", @"Event type is unexpected.");
@@ -128,8 +116,6 @@
 
     [(UIDevice *)[[self.currentDevice stub] andReturn:@"os version"]systemVersion];
 
-    [[[self.airshipVersion stub] andReturn:@"airship version"] get];
-
     [[[self.push stub] andReturnValue:OCMOCK_VALUE(UAAuthorizationStatusProvisional)] authorizationStatus];
 
     // Same as app init but without the foreground key
@@ -141,11 +127,11 @@
                                    @"notification_types": @[],
                                    @"notification_authorization": @"provisional",
                                    @"os_version": @"os version",
-                                   @"lib_version": @"airship version",
+                                   @"lib_version": UAirshipVersion.get,
                                    @"package_version": @""};
 
 
-    UAAppForegroundEvent *event = [UAAppForegroundEvent event];
+    UAAppForegroundEvent *event = [[UAAppForegroundEvent alloc] init];
 
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"app_foreground", @"Event type is unexpected.");
@@ -167,7 +153,7 @@
                                    @"push_id": @"push ID",
                                    @"metadata": @"base64metadataString"};
 
-    UAAppExitEvent *event = [UAAppExitEvent event];
+    UAAppExitEvent *event = [[UAAppExitEvent alloc] init];
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"app_exit", @"Event type is unexpected.");
     XCTAssertNotNil(event.eventID, @"Event should have an ID");
@@ -179,7 +165,7 @@
 - (void)UAAppBackgroundEvent {
     NSDictionary *expectedData = @{@"class_name": @""};
 
-    UAAppBackgroundEvent *event = [UAAppBackgroundEvent event];
+    UAAppBackgroundEvent *event = [[UAAppBackgroundEvent alloc] init];
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"app_background", @"Event type is unexpected.");
     XCTAssertNotNil(event.eventID, @"Event should have an ID");
@@ -189,7 +175,7 @@
  * Test device registration event when pushTokenRegistrationEnabled is YES.
  */
 - (void)testRegistrationEvent {
-    [[[self.privacyManager stub] andReturnValue:@YES] isEnabled:UAFeaturesPush];
+    [self.privacyManager enableFeatures:UAFeaturesPush];
     [[[self.push stub] andReturn:@"a12312ad"] deviceToken];
     [[[self.channel stub] andReturn:@"someChannelID"] identifier];
 
@@ -197,7 +183,7 @@
                                    @"channel_id": @"someChannelID",
                                    };
 
-    UADeviceRegistrationEvent *event = [UADeviceRegistrationEvent event];
+    UADeviceRegistrationEvent *event = [[UADeviceRegistrationEvent alloc] init];
 
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"device_registration", @"Event type is unexpected.");
@@ -208,13 +194,13 @@
  * Test device registration event when pushTokenRegistrationEnabled is NO.
  */
 - (void)testRegistrationEventPushTokenRegistrationEnabledNo {
-    [[[self.privacyManager stub] andReturnValue:@NO] isEnabled:UAFeaturesPush];
+    [self.privacyManager disableFeatures:UAFeaturesPush];
     [[[self.push stub] andReturn:@"a12312ad"] deviceToken];
     [[[self.channel stub] andReturn:@"someChannelID"] identifier];
 
     NSDictionary *expectedData = @{@"channel_id": @"someChannelID"};
 
-    UADeviceRegistrationEvent *event = [UADeviceRegistrationEvent event];
+    UADeviceRegistrationEvent *event = [[UADeviceRegistrationEvent alloc] init];
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"device_registration", @"Event type is unexpected.");
     XCTAssertNotNil(event.eventID, @"Event should have an ID");
@@ -232,7 +218,7 @@
     NSDictionary *expectedData = @{@"push_id": @"push ID",
                                    @"metadata": @"base64metadataString"};
 
-    UAPushReceivedEvent *event = [UAPushReceivedEvent eventWithNotification:notification];
+    UAPushReceivedEvent *event = [[UAPushReceivedEvent alloc] initWithNotification:notification];
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"push_received", @"Event type is unexpected.");
     XCTAssertNotNil(event.eventID, @"Event should have an ID");
@@ -247,49 +233,10 @@
 
     NSDictionary *expectedData = @{@"push_id": @"MISSING_SEND_ID"};
 
-    UAPushReceivedEvent *event = [UAPushReceivedEvent eventWithNotification:notification];
+    UAPushReceivedEvent *event = [[UAPushReceivedEvent alloc] initWithNotification:notification];
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"push_received", @"Event type is unexpected.");
     XCTAssertNotNil(event.eventID, @"Event should have an ID");
-}
-
-/**
- * Test authorization status
- */
-- (void)testAuthorizationStatus {
-    UAEvent *event = [[UAEvent alloc] init];
-    
-    __block UAAuthorizationStatus status;
-    [[[self.push stub] andDo:^(NSInvocation *invocation) {
-        [invocation setReturnValue:(void *)&status];
-    }] authorizationStatus];
-
-    status = UAAuthorizationStatusNotDetermined;
-    XCTAssertEqualObjects(event.notificationAuthorization, @"not_determined");
-    
-    status = UAAuthorizationStatusDenied;
-    XCTAssertEqualObjects(event.notificationAuthorization, @"denied");
-    
-    status = UAAuthorizationStatusAuthorized;
-    XCTAssertEqualObjects(event.notificationAuthorization, @"authorized");
-    
-    status = UAAuthorizationStatusProvisional;
-    XCTAssertEqualObjects(event.notificationAuthorization, @"provisional");
-    
-    status = UAAuthorizationStatusEphemeral;
-    XCTAssertEqualObjects(event.notificationAuthorization, @"ephemeral");
-    
-    // this tests that the next enum value returns "unknown". If an enum value is added
-    // without updating [UAEvent notificationAuthorization] and this test, the test will fail.
-    NSArray<NSNumber *> *allStatus = [NSArray arrayWithObjects:
-                                                 [NSNumber numberWithInteger:UAAuthorizationStatusNotDetermined],
-                                                 [NSNumber numberWithInteger:UAAuthorizationStatusDenied],
-                                                 [NSNumber numberWithInteger:UAAuthorizationStatusAuthorized],
-                                                 [NSNumber numberWithInteger:UAAuthorizationStatusProvisional],
-                                                 [NSNumber numberWithInteger:UAAuthorizationStatusEphemeral],
-                                                 nil];
-    status = (UAAuthorizationStatus)([[allStatus valueForKeyPath:@"@max.self"] integerValue] + 1);
-    XCTAssertEqualObjects(event.notificationAuthorization, @"not_determined");
 }
 
 @end

@@ -4,7 +4,8 @@
 #import "UAAccountEventTemplate.h"
 #import "UAAnalytics.h"
 #import "UAirship.h"
-#import "UACustomEvent.h"
+
+@import AirshipCore;
 
 @interface UAAccountEventTemplateTest : UABaseTest
 @property (nonatomic, strong) id analytics;

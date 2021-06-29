@@ -14,4 +14,3 @@ FOUNDATION_EXPORT const unsigned char AirshipLocationVersionString[];
 
 #import "UALocation.h"
 #import "UALocationModuleLoader.h"
-#import "UALocationEvent.h"

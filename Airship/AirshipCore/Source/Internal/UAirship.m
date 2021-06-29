@@ -11,8 +11,6 @@
 #import "UAActionRegistry.h"
 #import "UAAutoIntegration+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
-#import "UAAppInitEvent+Internal.h"
-#import "UAAppExitEvent+Internal.h"
 #import "UANamedUser+Internal.h"
 #import "UAAppIntegration.h"
 #import "UARemoteDataManager+Internal.h"
@@ -417,7 +415,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
 + (void)willTerminate {
     // Add app_exit event
-    [UAirship.analytics addEvent:[UAAppExitEvent event]];
+    [UAirship.analytics addEvent:[[UAAppExitEvent alloc] init]];
 
     // Land it
     [UAirship land];

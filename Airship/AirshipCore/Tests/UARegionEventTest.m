@@ -1,13 +1,12 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UARegionEvent+Internal.h"
 #import "UAEvent+Internal.h"
 #import "UAAnalytics.h"
 #import "UAirship.h"
 #import "NSJSONSerialization+UAAdditions.h"
-#import "UAProximityRegion+Internal.h"
-#import "UACircularRegion+Internal.h"
+
+@import AirshipCore;
 
 @interface UARegionEventTest : UABaseTest
 @property (nonatomic, strong) id analytics;
@@ -20,16 +19,22 @@
  * Test region event data directly.
  */
 - (void)testRegionEventData {
-    UARegionEvent *event = [UARegionEvent regionEventWithRegionID:@"region_id" source:@"source" boundaryEvent:UABoundaryEventEnter];
-    UACircularRegion *circularRegion = [UACircularRegion circularRegionWithRadius:@11 latitude:@45.5200 longitude:@122.6819];
-    UAProximityRegion *proximityRegion = [UAProximityRegion proximityRegionWithID:@"proximity_id" major:@1 minor:@11];
+    UACircularRegion *circularRegion = [UACircularRegion circularRegionWithRadius:11
+                                                                         latitude:45.5200
+                                                                        longitude:122.6819];
 
-    proximityRegion.latitude = @45.5200;
-    proximityRegion.longitude = @122.6819;
-    proximityRegion.RSSI = @-59;
+    UAProximityRegion *proximityRegion = [UAProximityRegion proximityRegionWithID:@"proximity_id"
+                                                                            major:1
+                                                                            minor:11
+                                                                             rssi:-59
+                                                                         latitude:45.5200
+                                                                        longitude:122.6819];
 
-    event.circularRegion = circularRegion;
-    event.proximityRegion = proximityRegion;
+    UARegionEvent *event = [UARegionEvent regionEventWithRegionID:@"region_id"
+                                                           source:@"source"
+                                                    boundaryEvent:UABoundaryEventEnter
+                                                   circularRegion:circularRegion
+                                                  proximityRegion:proximityRegion];
 
     NSDictionary *expectedData = @{ @"action": @"enter",
                                     @"region_id": @"region_id",
@@ -102,133 +107,7 @@
 
     XCTAssertEqualObjects(regionID, [event.data objectForKey:@"region_id"], @"Unexpected region id.");
     XCTAssertEqualObjects(source, [event.data objectForKey:@"source"], @"Unexpected region source.");
-    XCTAssertEqualObjects(UARegionBoundaryEventEnterValue, [event.data objectForKey:@"action"], @"Unexpected boundary event.");
-}
-
-/**
- * Test creating a region event and setting a valid circular region
- */
-- (void)testSetCircularRegionEvent {
-    NSString *regionID = [@"" stringByPaddingToLength:255 withString:@"REGION_ID" startingAtIndex:0];
-    NSString *source = [@"" stringByPaddingToLength:255 withString:@"SOURCE" startingAtIndex:0];
-
-    NSNumber *radius = @11;
-    NSNumber *latitude = @45.5200;
-    NSNumber *longitude = @122.6819;
-
-    UARegionEvent *event = [UARegionEvent regionEventWithRegionID:regionID source:source boundaryEvent:UABoundaryEventExit];
-
-    UACircularRegion *circularRegion = [UACircularRegion circularRegionWithRadius:radius latitude:latitude longitude:longitude];
-
-    event.circularRegion = circularRegion;
-
-    XCTAssertEqualObjects(regionID, [event.data objectForKey:@"region_id"], @"Unexpected region id.");
-    XCTAssertEqualObjects(source, [event.data objectForKey:@"source"], @"Unexpected region source.");
-    XCTAssertEqualObjects(UARegionBoundaryEventExitValue, [event.data objectForKey:@"action"], @"Unexpected boundary event.");
-
-    XCTAssertEqualObjects(@"11.0", [[event.data objectForKey:@"circular_region"] objectForKey:@"radius"], @"Unexpected radius.");
-    XCTAssertEqualObjects(@"45.5200000", [[event.data objectForKey:@"circular_region"] objectForKey:@"latitude"], @"Unexpected latitude.");
-    XCTAssertEqualObjects(@"122.6819000", [[event.data objectForKey:@"circular_region"] objectForKey:@"longitude"], @"Unexpected longitude.");
-}
-
-/**
- * Test creating a region event and setting a valid proximity region
- */
-- (void)testSetProximityRegionEvent {
-    NSString *regionID = [@"" stringByPaddingToLength:255 withString:@"REGION_ID" startingAtIndex:0];
-    NSString *source = [@"" stringByPaddingToLength:255 withString:@"SOURCE" startingAtIndex:0];
-
-    NSString *proximityID = [@"" stringByPaddingToLength:255 withString:@"PROXIMITY_ID" startingAtIndex:0];
-    NSNumber *major = @1;
-    NSNumber *minor = @2;
-
-    UARegionEvent *event = [UARegionEvent regionEventWithRegionID:regionID source:source boundaryEvent:UABoundaryEventExit];
-
-    UAProximityRegion *proximityRegion = [UAProximityRegion proximityRegionWithID:proximityID major:major minor:minor];
-
-    proximityRegion.latitude = @45.5200;
-    proximityRegion.longitude = @122.6819;
-    proximityRegion.RSSI = @-59;
-
-    event.proximityRegion = proximityRegion;
-
-    XCTAssertEqualObjects(event.proximityRegion.proximityID, [[event.data objectForKey:@"proximity"] objectForKey:@"proximity_id"], @"Unexpected proximity ID.");
-    XCTAssertEqualObjects(event.proximityRegion.major, [[event.data objectForKey:@"proximity"] objectForKey:@"major"], @"Unexpected major.");
-    XCTAssertEqualObjects(event.proximityRegion.minor, [[event.data objectForKey:@"proximity"] objectForKey:@"minor"], @"Unexpected minor.");
-    XCTAssertEqualObjects(@"45.5200000", [[event.data objectForKey:@"proximity"] objectForKey:@"latitude"], @"Unexpected latitude.");
-    XCTAssertEqualObjects(@"122.6819000", [[event.data objectForKey:@"proximity"] objectForKey:@"longitude"], @"Unexpected longitude.");
-    XCTAssertEqualObjects(event.proximityRegion.RSSI, [[event.data objectForKey:@"proximity"] objectForKey:@"rssi"], @"Unexpected RSSI.");
-}
-
-/**
- * Test character count validation
- */
-- (void)testCharacterCountValidation {
-    NSString *validString = @"wat";
-    NSString *invalidString = [@"" stringByPaddingToLength:256 withString:@"wat" startingAtIndex:0];
-
-    XCTAssertTrue([UARegionEvent regionEventCharacterCountIsValid:validString], @"Region the string %@ should be valid.", validString);
-    XCTAssertFalse([UARegionEvent regionEventCharacterCountIsValid:invalidString], @"Region event strings greater than 255 characters should be invalid.");
-}
-
-/**
- * Test latitude validation
- */
-- (void)testLatitudeValidation {
-    NSNumber *validLatitude = @11;
-    NSNumber *invalidLatitudeMax = @(91);
-    NSNumber *invalidLatitudeMin = @(-91);
-    NSNumber *invalidLatitudeNil = nil;
-
-    XCTAssertTrue([UARegionEvent regionEventLatitudeIsValid:validLatitude], @"The latitude %@ should be valid.", validLatitude);
-    XCTAssertFalse([UARegionEvent regionEventLatitudeIsValid:invalidLatitudeMax], @"The latitude %@ should be invalid.", invalidLatitudeMax);
-    XCTAssertFalse([UARegionEvent regionEventLatitudeIsValid:invalidLatitudeMin], @"The latitude %@ should be invalid.", invalidLatitudeMin);
-    XCTAssertFalse([UARegionEvent regionEventLatitudeIsValid:invalidLatitudeNil], @"Nil latitudes should be invalid.");
-}
-
-/**
- * Test longitude validation
- */
-- (void)testLongitudeValidation {
-    NSNumber *validLongitude = @11;
-    NSNumber *invalidLongitudeMax = @(181);
-    NSNumber *invalidLongitudeMin = @(-181);
-    NSNumber *invalidLongitudeNil = nil;
-
-    XCTAssertTrue([UARegionEvent regionEventLatitudeIsValid:validLongitude], @"The longitude %@ should be valid.", validLongitude);
-    XCTAssertFalse([UARegionEvent regionEventLatitudeIsValid:invalidLongitudeMax], @"The longitude %@ should be invalid.", invalidLongitudeMax);
-    XCTAssertFalse([UARegionEvent regionEventLatitudeIsValid:invalidLongitudeMin], @"The longitude %@ should be invalid.", invalidLongitudeMin);
-    XCTAssertFalse([UARegionEvent regionEventLatitudeIsValid:invalidLongitudeNil], @"Nil longitudes should be invalid.");
-}
-
-/**
- * Test radius validation
- */
-- (void)testRadiusValidation {
-    NSNumber *validRadius = @11;
-    NSNumber *invalidRadiusMax = @(100001);
-    NSNumber *invalidRadiusMin = @(0);
-    NSNumber *invalidRadiusNil = nil;
-
-    XCTAssertTrue([UARegionEvent regionEventRadiusIsValid:validRadius], @"The radius %@ should be valid.", validRadius);
-    XCTAssertFalse([UARegionEvent regionEventRadiusIsValid:invalidRadiusMax], @"The radius %@ should be invalid.", invalidRadiusMax);
-    XCTAssertFalse([UARegionEvent regionEventRadiusIsValid:invalidRadiusMin], @"The radius %@ should be invalid.", invalidRadiusMin);
-    XCTAssertFalse([UARegionEvent regionEventRadiusIsValid:invalidRadiusNil], @"Nil radii should be invalid.");
-}
-
-/**
- * Test RSSI validation
- */
-- (void)testRSSIValidation {
-    NSNumber *validRSSI = @11;
-    NSNumber *invalidRSSIMax = @(101);
-    NSNumber *invalidRSSIMin = @(-101);
-    NSNumber *invalidRSSINil = nil;
-
-    XCTAssertTrue([UARegionEvent regionEventRSSIIsValid:validRSSI], @"The RSSI %@ should be valid.", validRSSI);
-    XCTAssertFalse([UARegionEvent regionEventRSSIIsValid:invalidRSSIMax], @"The RSSI %@ should be invalid.", invalidRSSIMax);
-    XCTAssertFalse([UARegionEvent regionEventRSSIIsValid:invalidRSSIMin], @"The RSSI %@ should be invalid.", invalidRSSIMin);
-    XCTAssertFalse([UARegionEvent regionEventRSSIIsValid:invalidRSSINil], @"Nil RSSIs should be invalid.");
+    XCTAssertEqualObjects(@"enter", [event.data objectForKey:@"action"], @"Unexpected boundary event.");
 }
 
 /**

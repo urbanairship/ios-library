@@ -6,13 +6,7 @@
 #import "UAEvent.h"
 #import "UAUtils+Internal.h"
 
-#import "UAAppBackgroundEvent+Internal.h"
-#import "UAAppForegroundEvent+Internal.h"
-#import "UAScreenTrackingEvent+Internal.h"
-#import "UARegionEvent+Internal.h"
-#import "UAAssociateIdentifiersEvent+Internal.h"
 #import "UAAssociatedIdentifiers.h"
-#import "UACustomEvent.h"
 #import "UAUtils+Internal.h"
 #import "UAirship.h"
 #import "UAPush+Internal.h"
@@ -183,7 +177,7 @@ NSString *const UAEventKey = @"event";
     [self startSession];
 
     // Add app_foreground event
-    [self addEvent:[UAAppForegroundEvent event]];
+    [self addEvent:[[UAAppForegroundEvent alloc] init]];
 }
 
 - (void)applicationWillEnterForeground {
@@ -202,7 +196,7 @@ NSString *const UAEventKey = @"event";
     [self ensureInit];
 
     // Add app_background event
-    [self addEvent:[UAAppBackgroundEvent event]];
+    [self addEvent:[[UAAppBackgroundEvent alloc] init]];
 
     [self startSession];
     self.conversionSendID = nil;
@@ -259,7 +253,7 @@ NSString *const UAEventKey = @"event";
 
 - (void)ensureInit {
     dispatch_once(&_ensureInitToken, ^{
-        [self addEvent:[UAAppInitEvent event]];
+        [self addEvent:[[UAAppInitEvent alloc] init]];
     });
 }
 
@@ -309,7 +303,7 @@ NSString *const UAEventKey = @"event";
     }
 
     [self.dataStore setObject:associatedIdentifiers.allIDs forKey:kUAAssociatedIdentifiers];
-    [self addEvent:[UAAssociateIdentifiersEvent eventWithIDs:associatedIdentifiers]];
+    [self addEvent:[[UAAssociateIdentifiersEvent alloc] initWithIdentifiers:associatedIdentifiers]];
 }
 
 - (UAAssociatedIdentifiers *)currentAssociatedDeviceIdentifiers {
@@ -330,11 +324,11 @@ NSString *const UAEventKey = @"event";
 
         // If there's a screen currently being tracked set it's stop time and add it to analytics
         if (self.currentScreen) {
-            UAScreenTrackingEvent *ste = [UAScreenTrackingEvent eventWithScreen:self.currentScreen
-                                                                 previousScreen:self.previousScreen
-                                                                      startTime:self.startTime
-                                                                       stopTime:self.date.now.timeIntervalSince1970];
-
+            UAScreenTrackingEvent *ste = [[UAScreenTrackingEvent alloc] initWithScreen:self.currentScreen
+                                                                        previousScreen:self.previousScreen
+                                                                             startTime:self.startTime
+                                                                              stopTime:self.date.now.timeIntervalSince1970];
+            
             // Set previous screen to last tracked screen
             self.previousScreen = self.currentScreen;
 

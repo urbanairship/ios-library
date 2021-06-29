@@ -1,7 +1,9 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAAssociateIdentifiersEvent+Internal.h"
+
+
+@import AirshipCore;
 
 @interface UAAssociateIdentifiersEventTest : UABaseTest
 
@@ -13,7 +15,9 @@
  * Test the event's type.
  */
 - (void)testType {
-    XCTAssertEqualObjects(@"associate_identifiers", [[UAAssociateIdentifiersEvent alloc] init].eventType);
+    UAAssociatedIdentifiers *identifiers = [UAAssociatedIdentifiers identifiers];
+    UAAssociateIdentifiersEvent *event = [[UAAssociateIdentifiersEvent alloc] initWithIdentifiers:identifiers];
+    XCTAssertEqualObjects(@"associate_identifiers", event.eventType);
 }
 
 /**
@@ -25,7 +29,7 @@
     identifiers.advertisingID = @"ad ID";
     identifiers.advertisingTrackingEnabled = YES;
 
-    UAAssociateIdentifiersEvent *event = [UAAssociateIdentifiersEvent eventWithIDs:identifiers];
+    UAAssociateIdentifiersEvent *event = [[UAAssociateIdentifiersEvent alloc] initWithIdentifiers:identifiers];
 
     XCTAssertEqualObjects(identifiers.allIDs, event.data);
 }

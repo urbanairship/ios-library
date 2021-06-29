@@ -1,7 +1,8 @@
 /* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-#import "UACustomEvent.h"
+
+@class UACustomEvent;
 
 NS_ASSUME_NONNULL_BEGIN
 

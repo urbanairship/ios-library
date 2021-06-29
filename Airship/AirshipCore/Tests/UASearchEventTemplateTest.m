@@ -1,8 +1,8 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UASearchEventTemplate.h"
-#import "UACustomEvent.h"
+
+@import AirshipCore;
 
 @interface UASearchEventTemplateTest : UABaseTest
 @end

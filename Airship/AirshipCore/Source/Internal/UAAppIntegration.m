@@ -5,10 +5,6 @@
 #import "UAAnalytics+Internal.h"
 #import "UAPush+Internal.h"
 #import "UAPushableComponent.h"
-
-#import "UADeviceRegistrationEvent+Internal.h"
-#import "UAPushReceivedEvent+Internal.h"
-#import "UAInteractiveNotificationEvent+Internal.h"
 #import "UANotificationAction.h"
 #import "UANotificationCategory.h"
 #import "UAActionArguments.h"
@@ -16,6 +12,12 @@
 #import "UARuntimeConfig.h"
 #import "UAActionRunner.h"
 #import "UAActionRegistry+Internal.h"
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
 
 #define kUANotificationActionKey @"com.urbanairship.interactive_actions"
 
@@ -34,7 +36,7 @@
 + (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     UA_LINFO(@"Application registered device token: %@", [UAUtils deviceTokenStringFromDeviceToken:deviceToken]);
 
-    [[UAirship analytics] addEvent:[UADeviceRegistrationEvent event]];
+    [[UAirship analytics] addEvent:[[UADeviceRegistrationEvent alloc] init]];
 
     [[UAirship push] application:application didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
 }
@@ -150,10 +152,10 @@
             if (notificationAction.options & UANotificationActionOptionForeground) {
                 [[UAirship analytics] launchedFromNotification:response.notificationContent.notificationInfo];
             }
-            id event = [UAInteractiveNotificationEvent eventWithNotificationAction:notificationAction
-                                                                        categoryID:response.notificationContent.categoryIdentifier
-                                                                      notification:response.notificationContent.notificationInfo
-                                                                      responseText:response.responseText];
+            id event = [[UAInteractiveNotificationEvent alloc] initWithAction:notificationAction
+                                                                   category:response.notificationContent.categoryIdentifier
+                                                                 notification:response.notificationContent.notificationInfo
+                                                                 responseText:response.responseText];
             [[UAirship analytics] addEvent:event];
         }
     }

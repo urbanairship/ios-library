@@ -3,7 +3,8 @@
 #import "UABaseTest.h"
 #import "UANotificationAction.h"
 #import "UAEvent+Internal.h"
-#import "UAInteractiveNotificationEvent+Internal.h"
+
+@import AirshipCore;
 
 @interface UAInteractiveNotificationEventTest : UABaseTest
 @property (nonatomic, copy) NSDictionary *notification;
@@ -19,9 +20,9 @@
                                       @"badge": @2,
                                       @"sound": @"cat",
                                       @"category": @"notificationCategory"
-                                    },
+    },
                            @"_": @"send ID"
-                        };
+    };
 
     self.action = [UANotificationAction actionWithIdentifier:@"action_identifier"
                                                        title:@"action_title"
@@ -32,7 +33,10 @@
  * Test the event type is interactive_notification_action.
  */
 - (void)testEventType {
-    UAInteractiveNotificationEvent *event = [[UAInteractiveNotificationEvent alloc] init];
+    UAInteractiveNotificationEvent *event = [[UAInteractiveNotificationEvent alloc] initWithAction:self.action
+                                                                                          category:@"category_id"
+                                                                                      notification:self.notification
+                                                                                      responseText:@"hello"];
     XCTAssertEqualObjects(event.eventType, @"interactive_notification_action", @"Event has wrong type.");
 }
 
@@ -41,15 +45,16 @@
  */
 - (void)testEventDataForegroundAction {
 
-    UAInteractiveNotificationEvent *event = [UAInteractiveNotificationEvent eventWithNotificationAction:self.action
-                                                                                             categoryID:@"category_id"
-                                                                                           notification:self.notification];
+    UAInteractiveNotificationEvent *event = [[UAInteractiveNotificationEvent alloc ] initWithAction:self.action
+                                                                                           category:@"category_id"
+                                                                                       notification:self.notification                               responseText:nil];
+
 
     NSDictionary *expectedData = @{@"foreground": @"true",
-                     @"button_id": @"action_identifier",
-                     @"button_description": @"action_title",
-                     @"button_group": @"category_id",
-                     @"send_id": @"send ID"};
+                                   @"button_id": @"action_identifier",
+                                   @"button_description": @"action_title",
+                                   @"button_group": @"category_id",
+                                   @"send_id": @"send ID"};
 
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertNotNil(event.eventID, @"Event should have an ID");
@@ -64,15 +69,16 @@
                                                        title:@"action_title"
                                                      options:0];
 
-      UAInteractiveNotificationEvent *event = [UAInteractiveNotificationEvent eventWithNotificationAction:self.action
-                                                                                             categoryID:@"category_id"
-                                                                                           notification:self.notification];
+    UAInteractiveNotificationEvent *event = [[UAInteractiveNotificationEvent alloc] initWithAction:self.action
+                                                                                          category:@"category_id"
+                                                                                      notification:self.notification
+                                                                                      responseText:nil];
 
     NSDictionary *expectedData = @{@"foreground": @"false",
-                     @"button_id": @"action_identifier",
-                     @"button_description": @"action_title",
-                     @"button_group": @"category_id",
-                     @"send_id": @"send ID"};
+                                   @"button_id": @"action_identifier",
+                                   @"button_description": @"action_title",
+                                   @"button_group": @"category_id",
+                                   @"send_id": @"send ID"};
 
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertNotNil(event.eventID, @"Event should have an ID");
@@ -82,9 +88,12 @@
  * Test the event is high priority
  */
 - (void)testHighPriority {
-    UAInteractiveNotificationEvent *event = [UAInteractiveNotificationEvent eventWithNotificationAction:self.action
-                                                                                             categoryID:@"category_id"
-                                                                                           notification:self.notification];
+    UAInteractiveNotificationEvent *event = [[UAInteractiveNotificationEvent alloc] initWithAction:self.action
+                                                                                          category:@"category_id"
+                                                                                      notification:self.notification
+                                                                                      responseText:@"hello"];
+
+
     XCTAssertEqual(UAEventPriorityHigh, event.priority);
 }
 
@@ -92,10 +101,10 @@
  * Test the event payload when its created with a responseInfo.
  */
 - (void)testEventResponseInfo {
-    UAInteractiveNotificationEvent *event = [UAInteractiveNotificationEvent eventWithNotificationAction:self.action
-                                                                                             categoryID:@"category_id"
-                                                                                           notification:self.notification
-                                                                                           responseText:@"hello"];
+    UAInteractiveNotificationEvent *event = [[UAInteractiveNotificationEvent alloc] initWithAction:self.action
+                                                                                          category:@"category_id"
+                                                                                      notification:self.notification
+                                                                                      responseText:@"hello"];
 
     NSDictionary *expectedData = @{@"foreground": @"true",
                                    @"button_id": @"action_identifier",
@@ -115,10 +124,10 @@
 
     NSString *overMaxUserInput = [@"" stringByPaddingToLength:256 withString:@"User_INPUT" startingAtIndex:0];
 
-    UAInteractiveNotificationEvent *event = [UAInteractiveNotificationEvent eventWithNotificationAction:self.action
-                                                                                             categoryID:@"category_id"
-                                                                                           notification:self.notification
-                                                                                           responseText:overMaxUserInput];
+    UAInteractiveNotificationEvent *event = [[UAInteractiveNotificationEvent alloc] initWithAction:self.action
+                                                                                          category:@"category_id"
+                                                                                      notification:self.notification
+                                                                                      responseText:overMaxUserInput];
 
     NSString *maxUserInput = [@"" stringByPaddingToLength:255 withString:@"User_INPUT" startingAtIndex:0];
 
@@ -139,10 +148,10 @@
 
     NSString *maxUserInput = [@"" stringByPaddingToLength:255 withString:@"User_INPUT" startingAtIndex:0];
 
-    UAInteractiveNotificationEvent *event = [UAInteractiveNotificationEvent eventWithNotificationAction:self.action
-                                                                                             categoryID:@"category_id"
-                                                                                           notification:self.notification
-                                                                                           responseText:maxUserInput];
+    UAInteractiveNotificationEvent *event = [[UAInteractiveNotificationEvent alloc] initWithAction:self.action
+                                                                                          category:@"category_id"
+                                                                                      notification:self.notification
+                                                                                      responseText:maxUserInput];
 
     NSDictionary *expectedData = @{@"foreground": @"true",
                                    @"button_id": @"action_identifier",
@@ -158,10 +167,10 @@
  * Test when the user_input is an empty string.
  */
 - (void)testEventEmptyUserInput {
-    UAInteractiveNotificationEvent *event = [UAInteractiveNotificationEvent eventWithNotificationAction:self.action
-                                                                                             categoryID:@"category_id"
-                                                                                           notification:self.notification
-                                                                                           responseText:@""];
+    UAInteractiveNotificationEvent *event = [[UAInteractiveNotificationEvent alloc] initWithAction:self.action
+                                                                                          category:@"category_id"
+                                                                                      notification:self.notification
+                                                                                      responseText:@""];
 
     NSDictionary *expectedData = @{@"foreground": @"true",
                                    @"button_id": @"action_identifier",
@@ -174,3 +183,6 @@
 }
 
 @end
+
+
+

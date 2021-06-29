@@ -1,29 +1,29 @@
 /* Copyright Airship and Contributors */
 
-#import "UABaseTest.h"
+#import "UAAirshipBaseTest.h"
 
 #import "UAAppIntegration+Internal.h"
 #import "UANotificationAction.h"
 #import "UANotificationCategory.h"
 #import "UAPush+Internal.h"
 #import "UAAnalytics+Internal.h"
-#import "UAInteractiveNotificationEvent+Internal.h"
-#import "UAPushReceivedEvent+Internal.h"
 #import "UAActionRunner.h"
 #import "UAActionRegistry+Internal.h"
-#import "UADeviceRegistrationEvent+Internal.h"
 #import "UARuntimeConfig.h"
 #import "UANotificationContent.h"
 #import "UAirship+Internal.h"
 #import "UAPushableComponent.h"
 
-@interface UAAppIntegrationTest : UABaseTest
+@import AirshipCore;
+
+@interface UAAppIntegrationTest : UAAirshipBaseTest
 @property (nonatomic, strong) id mockedApplication;
 @property (nonatomic, strong) id mockedUserNotificationCenter;
 @property (nonatomic, strong) id mockedAirship;
 @property (nonatomic, strong) id mockedAnalytics;
 @property (nonatomic, strong) id mockedPush;
 @property (nonatomic, strong) id mockedActionRunner;
+@property (nonatomic, strong) UAPrivacyManager *privacyManager;
 
 @property (nonatomic, strong) id mockedUNNotificationResponse;
 @property (nonatomic, strong) id mockedUANotificationContent;
@@ -39,6 +39,8 @@
 
 - (void)setUp {
     [super setUp];
+
+    self.privacyManager = [[UAPrivacyManager alloc] initWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
 
     // Set up a mocked application
     self.mockedApplication = [self mockForClass:[UIApplication class]];
@@ -56,6 +58,7 @@
     self.mockedAirship = [self mockForClass:[UAirship class]];
     [[[self.mockedAirship stub] andReturn:self.mockedAnalytics] sharedAnalytics];
     [[[self.mockedAirship stub] andReturn:self.mockedPush] push];
+    [[[self.mockedAirship stub] andReturn:self.privacyManager] privacyManager];
 
     [UAirship setSharedAirship:self.mockedAirship];
 

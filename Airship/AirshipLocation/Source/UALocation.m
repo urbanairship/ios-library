@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UALocation+Internal.h"
-#import "UALocationEvent.h"
 
 #if __has_include("AirshipCore/AirshipCore-Swift.h")
 @import AirshipCore;

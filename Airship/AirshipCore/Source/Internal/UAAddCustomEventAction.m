@@ -1,10 +1,15 @@
 /* Copyright Airship and Contributors */
 
 #import "UAAddCustomEventAction.h"
-#import "UACustomEvent+Internal.h"
 #import "UAirship.h"
 #import "UAAnalytics.h"
 #import "UAAnalytics+Internal.h"
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
 
 NSString * const UAAddCustomEventActionErrorDomain = @"UAAddCustomEventActionError";
 NSString * const UAAddCustomEventActionDefaultRegistryName = @"add_custom_event_action";
@@ -13,7 +18,7 @@ NSString * const UAAddCustomEventActionDefaultRegistryName = @"add_custom_event_
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
     if ([arguments.value isKindOfClass:[NSDictionary class]]) {
-        NSString *eventName = [arguments.value valueForKey:UACustomEventNameKey];
+        NSString *eventName = [arguments.value valueForKey:UACustomEvent.eventNameKey];
         if (eventName) {
             return YES;
         } else {
@@ -31,12 +36,12 @@ NSString * const UAAddCustomEventActionDefaultRegistryName = @"add_custom_event_
 
     NSDictionary *dict = [NSDictionary dictionaryWithDictionary:arguments.value];
 
-    NSString *eventName = [self parseStringFromDictionary:dict key:UACustomEventNameKey];
-    NSString *eventValue = [self parseStringFromDictionary:dict key:UACustomEventValueKey];
-    NSString *interactionID = [self parseStringFromDictionary:dict key:UACustomEventInteractionIDKey];
-    NSString *interactionType = [self parseStringFromDictionary:dict key:UACustomEventInteractionTypeKey];
-    NSString *transactionID = [self parseStringFromDictionary:dict key:UACustomEventTransactionIDKey];
-    id properties = dict[UACustomEventPropertiesKey];
+    NSString *eventName = [self parseStringFromDictionary:dict key:UACustomEvent.eventNameKey];
+    NSString *eventValue = [self parseStringFromDictionary:dict key:UACustomEvent.eventValueKey];
+    NSString *interactionID = [self parseStringFromDictionary:dict key:UACustomEvent.eventInteractionIDKey];
+    NSString *interactionType = [self parseStringFromDictionary:dict key:UACustomEvent.eventInteractionTypeKey];
+    NSString *transactionID = [self parseStringFromDictionary:dict key:UACustomEvent.eventTransactionIDKey];
+    id properties = dict[UACustomEvent.eventPropertiesKey];
 
     UACustomEvent *event = [UACustomEvent eventWithName:eventName valueFromString:eventValue];
     event.transactionID = transactionID;

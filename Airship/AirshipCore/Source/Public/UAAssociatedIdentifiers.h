@@ -42,7 +42,7 @@ extern NSUInteger const UAAssociatedIdentifiersMaxCharacterCount;
 /**
  * A map of all the associated identifiers.
  */
-@property (nonatomic, readonly) NSDictionary *allIDs;
+@property (nonatomic, readonly) NSDictionary<NSString *, NSString *> *allIDs;
 
 ///---------------------------------------------------------------------------------------
 /// @name Associated Identifiers Factories

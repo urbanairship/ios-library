@@ -5,7 +5,8 @@
 #import "UAirship+Internal.h"
 #import "UAAddCustomEventAction.h"
 #import "UAAction+Internal.h"
-#import "UACustomEvent.h"
+
+@import AirshipCore;
 
 @interface UAAddCustomEventActionTest : UABaseTest
 @property (nonatomic, strong) id analytics;

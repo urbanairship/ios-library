@@ -5,15 +5,8 @@
 #import "UAAnalytics+Internal.h"
 #import "UARuntimeConfig.h"
 #import "UAEvent.h"
-#import "UAAssociateIdentifiersEvent+Internal.h"
-#import "UAScreenTrackingEvent+Internal.h"
-#import "UARegionEvent.h"
-#import "UACustomEvent.h"
 #import "UAEventManager+Internal.h"
 #import "UAUtils+Internal.h"
-#import "UAAppInitEvent+Internal.h"
-#import "UAAppForegroundEvent+Internal.h"
-#import "UAAppBackgroundEvent+Internal.h"
 #import "UAirship+Internal.h"
 
 #import "AirshipTests-Swift.h"
@@ -36,7 +29,6 @@
 @property (nonatomic, strong) id mockLocaleClass;
 @property (nonatomic, strong) id mockTimeZoneClass;
 @property (nonatomic, strong) id mockAppStateTracker;
-@property (nonatomic, strong) id mockInitEvent;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property (nonatomic, strong) UATestDate *testDate;
 @property (nonatomic, strong) id<UAEventManagerDelegate> eventManagerDelegate;
@@ -47,9 +39,6 @@
 - (void)setUp {
     [super setUp];
 
-    self.mockInitEvent = [self mockForClass:[UAAppInitEvent class]];
-    UAAppInitEvent *event = [[UAAppInitEvent alloc] init];
-    [[[self.mockInitEvent stub] andReturn:event] event];
 
     self.notificationCenter = [[NSNotificationCenter alloc] init];
     self.testDate = [[UATestDate alloc] init];
@@ -84,7 +73,6 @@
 
 - (void)tearDown {
     [self.mockTimeZoneClass stopMocking];
-    [self.mockInitEvent stopMocking];
     [super tearDown];
 }
 

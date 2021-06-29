@@ -1,15 +1,15 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UACustomEvent+Internal.h"
 #import "UAAnalytics.h"
 #import "UAirship+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 
+@import AirshipCore;
+
 @interface UACustomEventTest : UABaseTest
 @property (nonatomic, strong) id analytics;
 @property (nonatomic, strong) id airship;
-
 @end
 
 @implementation UACustomEventTest

@@ -5,8 +5,6 @@
 #import "UAEventManager+Internal.h"
 #import "UAEventStore+Internal.h"
 #import "UARuntimeConfig.h"
-#import "UACustomEvent.h"
-#import "UARegionEvent.h"
 #import "UAirship+Internal.h"
 #import "UAChannel.h"
 
@@ -150,7 +148,7 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
  * Test adding a high priority event schedules a task with 0 second delay.
  */
 - (void)testAddHighPriorityEvent {
-    UARegionEvent *event = [[UARegionEvent alloc] init];
+    UARegionEvent *event = [UARegionEvent regionEventWithRegionID:@"some-id" source:@"some-souurce" boundaryEvent:UABoundaryEventExit];
 
     [[self.mockStore expect] saveEvent:event sessionID:@"story"];
     [[self.mockTaskManager expect] enqueueRequestWithID:UAEventManagerUploadTask options:OCMOCK_ANY initialDelay:0];
@@ -195,7 +193,7 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
 
     [[self.mockTaskManager expect] enqueueRequestWithID:UAEventManagerUploadTask options:OCMOCK_ANY initialDelay:0];
 
-    UARegionEvent *regionEvent = [[UARegionEvent alloc] init];
+    UARegionEvent *regionEvent = [UARegionEvent regionEventWithRegionID:@"some-id" source:@"some-souurce" boundaryEvent:UABoundaryEventExit];
     [self.eventManager addEvent:regionEvent sessionID:@"story"];
 
     [self.mockTaskManager verify];
