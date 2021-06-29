@@ -6,7 +6,6 @@
 #import "UAEvent.h"
 #import "UAUtils+Internal.h"
 
-#import "UAAssociatedIdentifiers.h"
 #import "UAUtils+Internal.h"
 #import "UAirship.h"
 #import "UAPush+Internal.h"

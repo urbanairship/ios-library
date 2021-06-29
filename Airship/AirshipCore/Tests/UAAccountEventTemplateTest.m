@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAAccountEventTemplate.h"
 #import "UAAnalytics.h"
 #import "UAirship.h"
 

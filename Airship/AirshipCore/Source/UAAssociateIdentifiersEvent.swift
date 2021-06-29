@@ -25,19 +25,19 @@ public class UAAssociateIdentifiersEvent : UAEvent {
     public init?(identifiers: UAAssociatedIdentifiers?) {
         self._data = identifiers?.allIDs ?? [:]
 
-        guard self._data.count <= UAAssociatedIdentifiersMaxCount else {
-            AirshipLogger.error("Associated identifiers count exceed \(UAAssociatedIdentifiersMaxCount)")
+        guard self._data.count <= UAAssociatedIdentifiers.maxCount else {
+            AirshipLogger.error("Associated identifiers count exceed \(UAAssociatedIdentifiers.maxCount)")
             return nil
         }
 
         let containsInvalid = self._data.contains {
-            if ($0.key.count > UAAssociatedIdentifiersMaxCount) {
-                AirshipLogger.error("Associated identifier \($0) key exceeds \(UAAssociatedIdentifiersMaxCharacterCount) characters")
+            if ($0.key.count > UAAssociatedIdentifiers.maxCharacterCount) {
+                AirshipLogger.error("Associated identifier \($0) key exceeds \(UAAssociatedIdentifiers.maxCharacterCount) characters")
                 return true
             }
 
-            if ($0.value.count > UAAssociatedIdentifiersMaxCount) {
-                AirshipLogger.error("Associated identifier \($0) value exceeds \(UAAssociatedIdentifiersMaxCharacterCount) characters")
+            if ($0.value.count > UAAssociatedIdentifiers.maxCharacterCount) {
+                AirshipLogger.error("Associated identifier \($0) value exceeds \(UAAssociatedIdentifiers.maxCharacterCount) characters")
                 return true
             }
 

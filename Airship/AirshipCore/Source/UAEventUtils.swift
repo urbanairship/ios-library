@@ -1,10 +1,4 @@
-//
-//  UARegionEventUtils.swift
-//  Airship
-//
-//  Created by Ryan Lepinski on 6/25/21.
-//  Copyright © 2021 Urban Airship. All rights reserved.
-//
+/* Copyright Airship and Contributors */
 
 import Foundation
 

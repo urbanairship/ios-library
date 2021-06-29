@@ -1,7 +1,8 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAAssociatedIdentifiers.h"
+
+@import AirshipCore;
 
 @interface UAAssociatedIdentifiersTest : UABaseTest
 @end
@@ -27,20 +28,6 @@
     identifiers.advertisingTrackingEnabled = YES;
     XCTAssertTrue(identifiers.advertisingTrackingEnabled);
     XCTAssertEqualObjects(@"false", identifiers.allIDs[@"com.urbanairship.limited_ad_tracking_enabled"]);
-}
-
-/**
- * Test creating associated identifiers with invalid dictionary
- */
-- (void)testAssociateDeviceIdentifiersInvalidDictionary {
-
-    NSDictionary *invalidDictionary = @{@"some identifier": @2};
-    UAAssociatedIdentifiers *identifiers = [UAAssociatedIdentifiers identifiersWithDictionary:invalidDictionary];
-    XCTAssertEqual(identifiers.allIDs.count, 0, @"Should be empty associated identifiers instance.");
-
-    NSDictionary *anotherInvalidDictionary = @{@2: @"identifier"};
-    UAAssociatedIdentifiers *someIdentifiers = [UAAssociatedIdentifiers identifiersWithDictionary:anotherInvalidDictionary];
-    XCTAssertEqual(someIdentifiers.allIDs.count, 0, @"Should be empty associated identifiers instance.");
 }
 
 @end
