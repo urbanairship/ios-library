@@ -1158,6 +1158,7 @@
 		6EEAE81824CF9FBF0046E311 /* UAScheduleDeferredDataTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EEAE81724CF9FBF0046E311 /* UAScheduleDeferredDataTest.m */; };
 		6EFB377D234595C9005E4E44 /* UAMessageCenterNativeBridgeExtensionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EFB377C234595C9005E4E44 /* UAMessageCenterNativeBridgeExtensionTest.m */; };
 		6EFBDEE1262DF71C008380AC /* MockDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFBDEE0262DF71C008380AC /* MockDispatcher.swift */; };
+		841E7D12268617C800EA0317 /* PreferenceCenterConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841E7D11268617C800EA0317 /* PreferenceCenterConfig.swift */; };
 		842EE1BE268128DD00F2BEF4 /* empty in Resources */ = {isa = PBXBuildFile; fileRef = 842EE1BD268128DD00F2BEF4 /* empty */; };
 		84483A68267CF0C000D0DA7D /* PreferenceCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84483A67267CF0C000D0DA7D /* PreferenceCenter.swift */; };
 		8449BB5225F7AD99004F4A49 /* UADeferredSchedule.h in Headers */ = {isa = PBXBuildFile; fileRef = 8449BB5125F7AD99004F4A49 /* UADeferredSchedule.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -2288,6 +2289,7 @@
 		6EFB377C234595C9005E4E44 /* UAMessageCenterNativeBridgeExtensionTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAMessageCenterNativeBridgeExtensionTest.m; sourceTree = "<group>"; };
 		6EFBDEE0262DF71C008380AC /* MockDispatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockDispatcher.swift; sourceTree = "<group>"; };
 		83A674F723AA7AA4005C0C8F /* AirshipDebugPushData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = AirshipDebugPushData.xcdatamodel; sourceTree = "<group>"; };
+		841E7D11268617C800EA0317 /* PreferenceCenterConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterConfig.swift; sourceTree = "<group>"; };
 		842EE1BD268128DD00F2BEF4 /* empty */ = {isa = PBXFileReference; lastKnownFileType = text; path = empty; sourceTree = "<group>"; };
 		84483A67267CF0C000D0DA7D /* PreferenceCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenter.swift; sourceTree = "<group>"; };
 		8449BB5125F7AD99004F4A49 /* UADeferredSchedule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UADeferredSchedule.h; sourceTree = "<group>"; };
@@ -4467,6 +4469,7 @@
 				847BFFF6267CD73A007CD249 /* AirshipPreferenceCenter.h */,
 				847B0012267CE558007CD249 /* AirshipPreferenceCenterModuleLoader.swift */,
 				84483A67267CF0C000D0DA7D /* PreferenceCenter.swift */,
+				841E7D11268617C800EA0317 /* PreferenceCenterConfig.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -6755,6 +6758,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				841E7D12268617C800EA0317 /* PreferenceCenterConfig.swift in Sources */,
 				847B0013267CE558007CD249 /* AirshipPreferenceCenterModuleLoader.swift in Sources */,
 				84483A68267CF0C000D0DA7D /* PreferenceCenter.swift in Sources */,
 			);
