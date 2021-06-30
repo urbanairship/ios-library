@@ -4,20 +4,31 @@
  * @note For Interrnal use only :nodoc:
  */
 @objc
-public class UAAppInitEvent : UAEvent {
+public class UAAppInitEvent : NSObject, UAEvent {
+
     @objc
-    public override var eventType : String {
+    public var priority: UAEventPriority {
+        get {
+            return .normal
+        }
+    }
+
+    
+    @objc
+    public var eventType : String {
         get {
             return "app_init"
         }
     }
 
     @objc
-    public override var data: [AnyHashable : Any] {
+    public var data: [AnyHashable : Any] {
         get {
             return self.gatherData()
         }
     }
+
+    
 
     open func gatherData() -> [AnyHashable : Any] {
         var data: [AnyHashable : Any] = [:]

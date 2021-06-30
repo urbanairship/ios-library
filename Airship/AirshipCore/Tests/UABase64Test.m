@@ -86,7 +86,6 @@ NSString *easure64InterstitialNewline = @"ZWFzdXJlLg=\n=";
 - (void)testBase64DecodeInvalidString {
     XCTAssertNoThrow([UABase64 dataFromString:@"."]);
     XCTAssertNoThrow([UABase64 dataFromString:@" "]);
-    XCTAssertNoThrow([UABase64 dataFromString:nil]);
 }
 
 @end

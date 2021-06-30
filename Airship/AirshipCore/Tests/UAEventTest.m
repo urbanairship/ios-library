@@ -5,7 +5,7 @@
 #import <CoreTelephony/CTCarrier.h>
 
 #import "UAPush+Internal.h"
-#import "UAEvent+Internal.h"
+#import "UAEvent.h"
 #import "UAirship+Internal.h"
 #import "UAAnalytics.h"
 #import "UAUtils+Internal.h"
@@ -98,7 +98,6 @@
 
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"app_init", @"Event type is unexpected.");
-    XCTAssertNotNil(event.eventID, @"Event should have an ID");
 
 }
 
@@ -135,7 +134,6 @@
 
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"app_foreground", @"Event type is unexpected.");
-    XCTAssertNotNil(event.eventID, @"Event should have an ID");
 
 }
 
@@ -156,7 +154,6 @@
     UAAppExitEvent *event = [[UAAppExitEvent alloc] init];
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"app_exit", @"Event type is unexpected.");
-    XCTAssertNotNil(event.eventID, @"Event should have an ID");
 }
 
 /**
@@ -168,7 +165,6 @@
     UAAppBackgroundEvent *event = [[UAAppBackgroundEvent alloc] init];
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"app_background", @"Event type is unexpected.");
-    XCTAssertNotNil(event.eventID, @"Event should have an ID");
 }
 
 /**
@@ -187,7 +183,6 @@
 
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"device_registration", @"Event type is unexpected.");
-    XCTAssertNotNil(event.eventID, @"Event should have an ID");
 }
 
 /**
@@ -203,7 +198,6 @@
     UADeviceRegistrationEvent *event = [[UADeviceRegistrationEvent alloc] init];
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"device_registration", @"Event type is unexpected.");
-    XCTAssertNotNil(event.eventID, @"Event should have an ID");
 }
 
 /**
@@ -221,7 +215,6 @@
     UAPushReceivedEvent *event = [[UAPushReceivedEvent alloc] initWithNotification:notification];
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"push_received", @"Event type is unexpected.");
-    XCTAssertNotNil(event.eventID, @"Event should have an ID");
 }
 
 /**
@@ -236,7 +229,6 @@
     UAPushReceivedEvent *event = [[UAPushReceivedEvent alloc] initWithNotification:notification];
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"push_received", @"Event type is unexpected.");
-    XCTAssertNotNil(event.eventID, @"Event should have an ID");
 }
 
 @end

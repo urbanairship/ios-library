@@ -81,7 +81,7 @@
 
     [[self.mockEventManager expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
         return [obj isMemberOfClass:[UAAppInitEvent class]];
-    }] sessionID:OCMOCK_ANY];
+    }] eventID:OCMOCK_ANY eventDate:OCMOCK_ANY sessionID:OCMOCK_ANY];
 
     [self createAnalytics];
     [self.mockEventManager verify];
@@ -89,7 +89,7 @@
 
 - (void)testInactiveInitDoesNotEmitEvents {
     [[[self.mockAppStateTracker stub] andReturnValue:@(UAApplicationStateInactive)] state];
-    [[self.mockEventManager reject] addEvent:OCMOCK_ANY sessionID:OCMOCK_ANY];
+    [[self.mockEventManager reject] addEvent:OCMOCK_ANY eventID:OCMOCK_ANY eventDate:OCMOCK_ANY sessionID:OCMOCK_ANY];
 
     [self createAnalytics];
     [self.mockEventManager verify];
@@ -102,11 +102,11 @@
     
     [[self.mockEventManager expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
         return [obj isMemberOfClass:[UAAppInitEvent class]];
-    }] sessionID:OCMOCK_ANY];
+    }] eventID:OCMOCK_ANY eventDate:OCMOCK_ANY sessionID:OCMOCK_ANY];
 
     [[self.mockEventManager reject] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
         return [obj isMemberOfClass:[UAAppForegroundEvent class]];
-    }] sessionID:OCMOCK_ANY];
+    }] eventID:OCMOCK_ANY eventDate:OCMOCK_ANY sessionID:OCMOCK_ANY];
 
     [self.notificationCenter postNotificationName:UAAppStateTracker.didTransitionToForeground object:nil];
 
@@ -116,7 +116,7 @@
 - (void)testSubsequentTransitionToForegroundEmitsForegroundEvent {
     [[self.mockEventManager expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
         return [obj isMemberOfClass:[UAAppForegroundEvent class]];
-    }] sessionID:OCMOCK_ANY];
+    }] eventID:OCMOCK_ANY eventDate:OCMOCK_ANY sessionID:OCMOCK_ANY];
 
     [self.notificationCenter postNotificationName:UAAppStateTracker.didTransitionToForeground object:nil];
     [self.notificationCenter postNotificationName:UAAppStateTracker.didTransitionToForeground object:nil];
@@ -132,11 +132,11 @@
     
     [[self.mockEventManager expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
         return [obj isMemberOfClass:[UAAppInitEvent class]];
-    }] sessionID:OCMOCK_ANY];
+    }] eventID:OCMOCK_ANY eventDate:OCMOCK_ANY sessionID:OCMOCK_ANY];
 
     [[self.mockEventManager expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
         return [obj isMemberOfClass:[UAAppBackgroundEvent class]];
-    }] sessionID:OCMOCK_ANY];
+    }] eventID:OCMOCK_ANY eventDate:OCMOCK_ANY sessionID:OCMOCK_ANY];
 
     [self.notificationCenter postNotificationName:UAAppStateTracker.didEnterBackgroundNotification object:nil];
 
@@ -148,11 +148,11 @@
 
     [[self.mockEventManager reject] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
         return [obj isMemberOfClass:[UAAppInitEvent class]];
-    }] sessionID:OCMOCK_ANY];
+    }] eventID:OCMOCK_ANY eventDate:OCMOCK_ANY sessionID:OCMOCK_ANY];
 
     [[self.mockEventManager expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
         return [obj isMemberOfClass:[UAAppBackgroundEvent class]];
-    }] sessionID:OCMOCK_ANY];
+    }] eventID:OCMOCK_ANY eventDate:OCMOCK_ANY sessionID:OCMOCK_ANY];
     
     [self.notificationCenter postNotificationName:UAAppStateTracker.didEnterBackgroundNotification object:nil];
 
@@ -179,11 +179,11 @@
  */
 - (void)testAddInvalidEvent {
     // Mock invalid event
-    id mockEvent = [self mockForClass:[UAEvent class]];
+    id mockEvent = [self mockForProtocol:@protocol(UAEvent)];
     [[[mockEvent stub] andReturnValue:OCMOCK_VALUE(NO)] isValid];
 
     // Ensure event add is never attempted
-    [[self.mockEventManager reject] addEvent:mockEvent sessionID:OCMOCK_ANY];
+    [[self.mockEventManager reject] addEvent:mockEvent eventID:OCMOCK_ANY eventDate:OCMOCK_ANY sessionID:OCMOCK_ANY];
 
     // Add invalid event
     [self.analytics addEvent:mockEvent];
@@ -198,14 +198,14 @@
  */
 - (void)testAddEvent {
     // Mock valid event
-    id mockEvent = [self mockForClass:[UAEvent class]];
+    id mockEvent = [self mockForProtocol:@protocol(UAEvent)];
     [[[mockEvent stub] andReturnValue:OCMOCK_VALUE(YES)] isValid];
 
     // Ensure event is added
     XCTestExpectation *eventAdded = [self expectationWithDescription:@"Notification event added"];
     [[[self.mockEventManager expect] andDo:^(NSInvocation *invocation) {
         [eventAdded fulfill];
-    }] addEvent:mockEvent sessionID:OCMOCK_ANY];
+    }] addEvent:mockEvent eventID:OCMOCK_ANY eventDate:OCMOCK_ANY sessionID:OCMOCK_ANY];
 
 
     // Add valid event
@@ -224,11 +224,11 @@
     [self.privacyManager disableFeatures:UAFeaturesAnalytics];
 
     // Mock valid event
-    id mockEvent = [self mockForClass:[UAEvent class]];
+    id mockEvent = [self mockForProtocol:@protocol(UAEvent)];
     [[[mockEvent stub] andReturnValue:OCMOCK_VALUE(YES)] isValid];
 
     // Ensure event add is never attempted
-    [[self.mockEventManager reject] addEvent:mockEvent sessionID:OCMOCK_ANY];
+    [[self.mockEventManager reject] addEvent:mockEvent eventID:OCMOCK_ANY eventDate:OCMOCK_ANY sessionID:OCMOCK_ANY];
 
     // Add valid event
     [self.analytics addEvent:mockEvent];
@@ -254,7 +254,7 @@
 
         UAAssociateIdentifiersEvent *event = obj;
         return [event.data isEqualToDictionary:identifiers];
-    }] sessionID:OCMOCK_ANY];
+    }] eventID:OCMOCK_ANY eventDate:OCMOCK_ANY sessionID:OCMOCK_ANY];
 
     // Associate the identifiers
     [self.analytics associateDeviceIdentifiers:[UAAssociatedIdentifiers identifiersWithDictionary:identifiers]];
@@ -296,7 +296,7 @@
 
         UAAssociateIdentifiersEvent *event = obj;
         return [event.data isEqualToDictionary:identifiers];
-    }] sessionID:OCMOCK_ANY];
+    }] eventID:OCMOCK_ANY eventDate:OCMOCK_ANY sessionID:OCMOCK_ANY];
 
     // Associate the identifiers
     [self.analytics associateDeviceIdentifiers:[UAAssociatedIdentifiers identifiersWithDictionary:identifiers]];
@@ -304,7 +304,7 @@
     [self waitForTestExpectations];
 
     // Reject duplicate call
-    [[self.mockEventManager reject] addEvent:OCMOCK_ANY sessionID:OCMOCK_ANY];
+    [[self.mockEventManager reject] addEvent:OCMOCK_ANY eventID:OCMOCK_ANY eventDate:OCMOCK_ANY sessionID:OCMOCK_ANY];
 
     // Associate the duplicate identifiers
     [self.analytics associateDeviceIdentifiers:[UAAssociatedIdentifiers identifiersWithDictionary:identifiers]];
@@ -392,7 +392,7 @@
         UAScreenTrackingEvent *event = obj;
 
         return [event.screen isEqualToString:@"test_screen"];
-    }] sessionID:OCMOCK_ANY];
+    }] eventID:OCMOCK_ANY eventDate:OCMOCK_ANY sessionID:OCMOCK_ANY];
 
     // Background
     [self.notificationCenter postNotificationName:UAAppStateTracker.didEnterBackgroundNotification
@@ -422,7 +422,7 @@
         UAScreenTrackingEvent *event = obj;
 
         return [event.screen isEqualToString:@"test_screen"];
-    }] sessionID:OCMOCK_ANY];
+    }] eventID:OCMOCK_ANY eventDate:OCMOCK_ANY sessionID:OCMOCK_ANY];
 
     // Terminate
     [self.notificationCenter postNotificationName:UAAppStateTracker.willTerminateNotification object:nil];
@@ -453,7 +453,7 @@
         XCTAssertEqualWithAccuracy(event.stopTime, 20, 1);
 
         return [event.screen isEqualToString:@"first_screen"];
-    }] sessionID:OCMOCK_ANY];
+    }] eventID:OCMOCK_ANY eventDate:OCMOCK_ANY sessionID:OCMOCK_ANY];
 
     self.testDate.offset = 20;
 
@@ -620,7 +620,7 @@
     XCTestExpectation *eventAdded = [self expectationWithDescription:@"Notification event added"];
     [[[self.mockEventManager expect] andDo:^(NSInvocation *invocation) {
         [eventAdded fulfill];
-    }] addEvent:OCMOCK_ANY sessionID:sessionID];
+    }] addEvent:OCMOCK_ANY eventID:OCMOCK_ANY eventDate:OCMOCK_ANY sessionID:sessionID];
 
     // Background app
     [self.notificationCenter postNotificationName:UAAppStateTracker.didEnterBackgroundNotification object:nil];

@@ -29,7 +29,6 @@
 
     XCTAssertEqualObjects(@"100.0", [event.data objectForKey:@"app_store_purchase_date"]);
     XCTAssertEqualObjects(@"1000.0", [event.data objectForKey:@"app_store_ad_impression_date"]);
-    XCTAssertTrue(event.isValid);
 }
 
 /**
@@ -38,7 +37,6 @@
 - (void)testDataNoDates {
     UAInstallAttributionEvent *event = [UAInstallAttributionEvent event];
     XCTAssertEqual(0, event.data.count);
-    XCTAssertTrue(event.isValid);
 }
 
 @end

@@ -2,9 +2,9 @@
 
 #import <Foundation/Foundation.h>
 #import "UAChannel.h"
+#import "UAEvent.h"
 
 @class UAAppStateTracker;
-@class UAEvent;
 @class UARuntimeConfig;
 @class UAPreferenceDataStore;
 @class UAEventAPIClient;
@@ -107,9 +107,14 @@
  * Adds an analytic event to be batched and uploaded to Airship.
  *
  * @param event The analytic event.
+ * @param eventID The event ID.
+ * @param eventDate The event date.
  * @param sessionID The analytic session ID.
  */
-- (void)addEvent:(UAEvent *)event sessionID:(NSString *)sessionID;
+- (void)addEvent:(id<UAEvent>)event
+         eventID:(NSString *)eventID
+       eventDate:(NSDate *)eventDate
+       sessionID:(NSString *)sessionID;
 
 /**
  * Deletes all events and cancels any uploads in progress.

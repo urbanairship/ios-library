@@ -7,6 +7,9 @@
 NSString *const UAInAppMessageDisplayEventType = @"in_app_display";
 NSString *const UAInAppMessageDisplayEventLocaleKey = @"locale";
 
+@interface UAInAppMessageDisplayEvent()
+@property(nonatomic, copy) NSDictionary *eventData;
+@end
 
 @implementation UAInAppMessageDisplayEvent
 
@@ -33,6 +36,10 @@ NSString *const UAInAppMessageDisplayEventLocaleKey = @"locale";
 
 - (NSDictionary *)data {
     return self.eventData;
+}
+
+- (UAEventPriority)priority {
+    return UAEventPriorityNormal;
 }
 
 @end

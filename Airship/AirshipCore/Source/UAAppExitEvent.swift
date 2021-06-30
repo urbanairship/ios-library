@@ -4,18 +4,25 @@
  * @note For Interrnal use only :nodoc:
  */
 @objc
-public class UAAppExitEvent : UAEvent {
+public class UAAppExitEvent : NSObject, UAEvent {
     private let _data : [AnyHashable : Any]
 
     @objc
-    public override var eventType : String {
+    public var priority: UAEventPriority {
+        get {
+            return .normal
+        }
+    }
+
+    @objc
+    public var eventType : String {
         get {
             return "app_exit"
         }
     }
 
     @objc
-    public override var data: [AnyHashable : Any] {
+    public var data: [AnyHashable : Any] {
         get {
             return self._data
         }

@@ -2,7 +2,6 @@
 
 #import "UABaseTest.h"
 #import "UANotificationAction.h"
-#import "UAEvent+Internal.h"
 
 @import AirshipCore;
 
@@ -57,7 +56,6 @@
                                    @"send_id": @"send ID"};
 
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
-    XCTAssertNotNil(event.eventID, @"Event should have an ID");
 }
 
 
@@ -81,7 +79,6 @@
                                    @"send_id": @"send ID"};
 
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
-    XCTAssertNotNil(event.eventID, @"Event should have an ID");
 }
 
 /**
@@ -114,7 +111,6 @@
                                    @"user_input": @"hello"};
 
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
-    XCTAssertNotNil(event.eventID, @"Event should have an ID");
 }
 
 /**

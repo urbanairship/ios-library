@@ -30,38 +30,23 @@ typedef NS_ENUM(NSInteger, UAEventPriority) {
 
 
 /**
- * This base class encapsulates analytics events.
+ * Defines an Airship event.
  */
-@interface UAEvent : NSObject
+@protocol UAEvent <NSObject>
 
-///---------------------------------------------------------------------------------------
-/// @name Event Properties
-///---------------------------------------------------------------------------------------
-
-/**
- * The time the event was created.
- */
-@property (nonatomic, readonly, copy) NSString *time;
-
-/**
- * The unique event ID.
- */
-@property (nonatomic, readonly, copy) NSString *eventID;
+@required
 
 /**
  * The event's data.
+ * @note For internal use only. :nodoc:
  */
 @property (nonatomic, readonly) NSDictionary *data;
 
 /**
  * The event's type.
+ * @note For internal use only. :nodoc:
  */
 @property (nonatomic, readonly) NSString *eventType;
-
-/**
- * The event's data.
- */
-@property (nonatomic, copy) NSDictionary *eventData;
 
 /**
  * The event's priority.
@@ -69,9 +54,7 @@ typedef NS_ENUM(NSInteger, UAEventPriority) {
  */
 @property (nonatomic, readonly) UAEventPriority priority;
 
-///---------------------------------------------------------------------------------------
-/// @name Event Validation
-///---------------------------------------------------------------------------------------
+@optional
 
 /**
  * Checks if the event is valid. Invalid events will be dropped.

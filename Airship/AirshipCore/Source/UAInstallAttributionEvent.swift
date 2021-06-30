@@ -4,10 +4,10 @@
  * Event to track install attributions.
  */
 @objc
-public class UAInstallAttributionEvent : UAEvent {
+public class UAInstallAttributionEvent : NSObject, UAEvent {
 
     @objc
-    public override var eventType : String {
+    public var eventType : String {
         get {
             return "install_attribution"
         }
@@ -16,9 +16,16 @@ public class UAInstallAttributionEvent : UAEvent {
     private let _data : [AnyHashable : Any]
 
     @objc
-    public override var data: [AnyHashable : Any] {
+    public  var data: [AnyHashable : Any] {
         get {
             return self._data
+        }
+    }
+
+    @objc
+    public var priority: UAEventPriority {
+        get {
+            return .normal
         }
     }
 

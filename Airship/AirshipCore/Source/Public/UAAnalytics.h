@@ -106,7 +106,7 @@ extern NSString *const UAScreenKey;
  * Triggers an analytics event.
  * @param event The event to be triggered
  */
-- (void)addEvent:(nullable UAEvent *)event;
+- (void)addEvent:(nullable id<UAEvent>)event;
 
 /**
  * Associates identifiers with the device. This call will add a special event

@@ -241,9 +241,6 @@
 
     XCTAssertEqualObjects(event.data, expectedData);
     XCTAssertEqualObjects(event.eventType, @"in_app_resolution");
-    XCTAssertNotNil(event.eventID);
-    XCTAssertTrue([event isValid]);
-
 
     UAInAppMessage *legacyMessage = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder *builder) {
         builder.source = UAInAppMessageSourceLegacyPush;
@@ -260,8 +257,6 @@
 
     XCTAssertEqualObjects(event.data, expectedData);
     XCTAssertEqualObjects(event.eventType, @"in_app_resolution");
-    XCTAssertNotNil(event.eventID);
-    XCTAssertTrue([event isValid]);
 
     UAInAppMessage *appDefined = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder *builder) {
         builder.source = UAInAppMessageSourceAppDefined;
@@ -278,8 +273,6 @@
 
     XCTAssertEqualObjects(event.data, expectedData);
     XCTAssertEqualObjects(event.eventType, @"in_app_resolution");
-    XCTAssertNotNil(event.eventID);
-    XCTAssertTrue([event isValid]);
 }
 
 @end

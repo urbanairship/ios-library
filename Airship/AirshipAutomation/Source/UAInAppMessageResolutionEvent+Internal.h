@@ -9,7 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * In-app message resolution event.
  */
-@interface UAInAppMessageResolutionEvent : UAEvent
+@interface UAInAppMessageResolutionEvent : NSObject<UAEvent>
 
 /**
  * Creates a replaced in-app resolution event.

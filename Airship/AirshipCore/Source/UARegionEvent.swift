@@ -21,7 +21,7 @@ public enum UABoundaryEvent : Int {
  * A region event captures information regarding a region event for analytics.
  */
 @objc
-public class UARegionEvent : UAEvent {
+public class UARegionEvent : NSObject, UAEvent {
 
     @objc
     public static let regionIDKey = "region_id"
@@ -70,21 +70,21 @@ public class UARegionEvent : UAEvent {
     public let proximityRegion: UAProximityRegion?
 
     @objc
-    public override var eventType : String {
+    public var eventType : String {
         get {
             return "region_event"
         }
     }
 
     @objc
-    public override var priority : UAEventPriority {
+    public var priority : UAEventPriority {
         get {
             return .high
         }
     }
 
     @objc
-    public override var data: [AnyHashable : Any] {
+    public var data: [AnyHashable : Any] {
         get {
             return self.generatePayload(stringifyFields: true)
         }

@@ -5,7 +5,7 @@
  * UAAnalytics.
  */
 @objc
-public class UACustomEvent : UAEvent {
+public class UACustomEvent : NSObject, UAEvent {
 
     private static let interactionMCRAP = "ua_mcrap"
 
@@ -116,9 +116,16 @@ public class UACustomEvent : UAEvent {
     public var properties : [AnyHashable: Any]?
 
     @objc
-    public override var eventType : String {
+    public var eventType : String {
         get {
             return "enhanced_custom_event"
+        }
+    }
+
+    @objc
+    public var priority: UAEventPriority {
+        get {
+            return .normal
         }
     }
 
@@ -207,7 +214,7 @@ public class UACustomEvent : UAEvent {
     }
 
     @objc
-    public override func isValid() -> Bool {
+    public func isValid() -> Bool {
         var isValid = true
         isValid = self.isValid(string: self.eventName, name: "eventName", required: true) && isValid
         isValid = self.isValid(string: self.interactionType, name: "interactionType", required: false) && isValid
@@ -256,7 +263,7 @@ public class UACustomEvent : UAEvent {
     }
 
     @objc
-    public override var data : [AnyHashable : Any] {
+    public var data : [AnyHashable : Any] {
         get {
             let sendID = conversionSendID ?? UAirship.analytics()?.conversionSendID
             let sendMetadata = conversionPushMetadata ?? UAirship.analytics()?.conversionPushMetadata

@@ -4,10 +4,17 @@
  * @note For Interrnal use only :nodoc:
  */
 @objc
-public class UAPushReceivedEvent : UAEvent {
+public class UAPushReceivedEvent : NSObject, UAEvent {
 
     @objc
-    public override var eventType : String {
+    public var priority: UAEventPriority {
+        get {
+            return .normal
+        }
+    }
+
+    @objc
+    public var eventType : String {
         get {
             return "push_received"
         }
@@ -16,7 +23,7 @@ public class UAPushReceivedEvent : UAEvent {
     private let _data : [AnyHashable : Any]
 
     @objc
-    public override var data: [AnyHashable : Any] {
+    public var data: [AnyHashable : Any] {
         get {
             return self._data
         }

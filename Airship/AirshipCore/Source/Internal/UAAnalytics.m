@@ -5,7 +5,6 @@
 #import "UARuntimeConfig.h"
 #import "UAEvent.h"
 #import "UAUtils+Internal.h"
-
 #import "UAUtils+Internal.h"
 #import "UAirship.h"
 #import "UAPush+Internal.h"
@@ -210,14 +209,15 @@ NSString *const UAEventKey = @"event";
 #pragma mark -
 #pragma mark Analytics
 
-- (void)addEvent:(UAEvent *)event {
-    if (!event.isValid) {
+- (void)addEvent:(id<UAEvent>)event {
+    if ([event respondsToSelector:@selector(isValid)] && ![event isValid]) {
         UA_LERR(@"Dropping invalid event %@.", event);
         return;
     }
 
-
     NSString *sessionID = self.sessionID;
+    NSDate *date = [NSDate date];
+    NSString *identifier = NSUUID.UUID.UUIDString;
 
     UA_WEAKIFY(self)
     [self.dispatcher dispatchAsync:^{
@@ -228,12 +228,12 @@ NSString *const UAEventKey = @"event";
             return;
         }
 
-        UA_LDEBUG(@"Adding %@ event %@.", event.eventType, event.eventID);
-        [self.eventManager addEvent:event sessionID:sessionID];
+        UA_LDEBUG(@"Adding %@ event %@", event.eventType, identifier);
+        [self.eventManager addEvent:event eventID:identifier eventDate:date sessionID:sessionID];
         UA_LTRACE(@"Event added: %@.", event);
 
         if (self.eventConsumer) {
-            [self.eventConsumer eventAdded:event];
+            [self.eventConsumer eventAdded:event identifier:identifier date:date];
         }
 
         if ([event isKindOfClass:[UACustomEvent class]]) {

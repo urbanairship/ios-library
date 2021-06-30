@@ -4,9 +4,17 @@
  * @note For Interrnal use only :nodoc:
  */
 @objc
-public class UAAssociateIdentifiersEvent : UAEvent {
+public class UAAssociateIdentifiersEvent : NSObject, UAEvent {
+
     @objc
-    public override var eventType : String {
+    public var priority: UAEventPriority {
+        get {
+            return .normal
+        }
+    }
+
+    @objc
+    public var eventType : String {
         get {
             return "associate_identifiers"
         }
@@ -15,7 +23,7 @@ public class UAAssociateIdentifiersEvent : UAEvent {
     private let _data : [String : String]
 
     @objc
-    public override var data: [AnyHashable : Any] {
+    public var data: [AnyHashable : Any] {
         get {
             return self._data
         }

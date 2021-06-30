@@ -96,12 +96,13 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
  * Test adding an event.
  */
 - (void)testAddEventInitialDelay {
+    NSDate *date = [NSDate now];
     UACustomEvent *event = [UACustomEvent eventWithName:@"cool"];
 
-    [[self.mockStore expect] saveEvent:event sessionID:@"story"];
+    [[self.mockStore expect] saveEvent:event eventID:@"neat" eventDate:date sessionID:@"story"];
     [[self.mockTaskManager expect] enqueueRequestWithID:UAEventManagerUploadTask options:OCMOCK_ANY initialDelay:15];
 
-    [self.eventManager addEvent:event sessionID:@"story"];
+    [self.eventManager addEvent:event eventID:@"neat" eventDate:date sessionID:@"story"];
 
     [self.mockStore verify];
     [self.mockTaskManager verify];
@@ -115,11 +116,12 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
     [[[self.mockAppStateTracker stub] andReturnValue:@(UAApplicationStateBackground)] state];
 
     UACustomEvent *event = [UACustomEvent eventWithName:@"cool"];
+    NSDate *date = [NSDate now];
 
-    [[self.mockStore expect] saveEvent:event sessionID:@"story"];
+    [[self.mockStore expect] saveEvent:event eventID:@"neat" eventDate:date sessionID:@"story"];
     [[self.mockTaskManager expect] enqueueRequestWithID:UAEventManagerUploadTask options:OCMOCK_ANY initialDelay:0];
 
-    [self.eventManager addEvent:event sessionID:@"story"];
+    [self.eventManager addEvent:event eventID:@"neat" eventDate:date sessionID:@"story"];
 
     [self.mockStore verify];
     [self.mockTaskManager verify];
@@ -132,13 +134,14 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
     self.eventManager.uploadsEnabled = NO;
 
     UACustomEvent *event = [UACustomEvent eventWithName:@"cool"];
+    NSDate *date = [NSDate now];
 
     [[[self.mockTaskManager reject] ignoringNonObjectArgs] enqueueRequestWithID:OCMOCK_ANY
                                                                         options:OCMOCK_ANY
                                                                    initialDelay:0];
-    [[self.mockStore expect] saveEvent:event sessionID:@"story"];
+    [[self.mockStore expect] saveEvent:event eventID:@"neat" eventDate:date sessionID:@"story"];
 
-    [self.eventManager addEvent:event sessionID:@"story"];
+    [self.eventManager addEvent:event eventID:@"neat" eventDate:date sessionID:@"story"];
 
     [self.mockStore verify];
     [self.mockTaskManager verify];
@@ -149,11 +152,12 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
  */
 - (void)testAddHighPriorityEvent {
     UARegionEvent *event = [UARegionEvent regionEventWithRegionID:@"some-id" source:@"some-souurce" boundaryEvent:UABoundaryEventExit];
+    NSDate *date = [NSDate now];
 
-    [[self.mockStore expect] saveEvent:event sessionID:@"story"];
+    [[self.mockStore expect] saveEvent:event eventID:@"neat" eventDate:date sessionID:@"story"];
     [[self.mockTaskManager expect] enqueueRequestWithID:UAEventManagerUploadTask options:OCMOCK_ANY initialDelay:0];
 
-    [self.eventManager addEvent:event sessionID:@"story"];
+    [self.eventManager addEvent:event eventID:@"neat" eventDate:date sessionID:@"story"];
 
     [self.mockStore verify];
     [self.mockTaskManager verify];
@@ -188,13 +192,16 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
     [[self.mockTaskManager expect] enqueueRequestWithID:UAEventManagerUploadTask options:OCMOCK_ANY initialDelay:15];
 
     UACustomEvent *event = [UACustomEvent eventWithName:@"cool"];
-    [self.eventManager addEvent:event sessionID:@"story"];
+    NSDate *date = [NSDate now];
+
+    [[self.mockStore expect] saveEvent:event eventID:@"neat" eventDate:date sessionID:@"story"];
+    [self.eventManager addEvent:event eventID:@"neat" eventDate:date sessionID:@"story"];
     [self.mockTaskManager verify];
 
     [[self.mockTaskManager expect] enqueueRequestWithID:UAEventManagerUploadTask options:OCMOCK_ANY initialDelay:0];
 
     UARegionEvent *regionEvent = [UARegionEvent regionEventWithRegionID:@"some-id" source:@"some-souurce" boundaryEvent:UABoundaryEventExit];
-    [self.eventManager addEvent:regionEvent sessionID:@"story"];
+    [self.eventManager addEvent:regionEvent eventID:@"other-event" eventDate:date sessionID:@"story"];
 
     [self.mockTaskManager verify];
 }

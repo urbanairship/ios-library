@@ -67,8 +67,8 @@ class EventDataManager: NSObject, UAAnalyticsEventConsumerProtocol {
         batchDeleteEventsOlderThanStorageDays()
     }
 
-    @objc func eventAdded(_ event:UAEvent) {
-        let event = Event(event: event)
+    @objc func eventAdded(_ event:UAEvent, identifier: String, date: Date) {
+        let event = Event(event: event, identifier:identifier, date:date)
         EventDataManager.shared.saveEvent(event)
 
         delegate?.eventAdded()

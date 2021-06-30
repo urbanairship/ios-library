@@ -5,7 +5,7 @@
 #import "UAEventStore+Internal.h"
 #import "UAEventData+Internal.h"
 #import "UAAsyncOperation.h"
-#import "UAEvent+Internal.h"
+#import "UAEvent.h"
 #import "UARuntimeConfig.h"
 #import "UAChannel.h"
 #import "UAirship.h"
@@ -191,8 +191,12 @@ static NSUInteger const FetchEventLimit = 500;
 #pragma mark -
 #pragma mark Events
 
-- (void)addEvent:(UAEvent *)event sessionID:(NSString *)sessionID {
-    [self.eventStore saveEvent:event sessionID:sessionID];
+- (void)addEvent:(id<UAEvent>)event
+         eventID:(NSString *)eventID
+       eventDate:(NSDate *)eventDate
+       sessionID:(NSString *)sessionID {
+
+    [self.eventStore saveEvent:event eventID:eventID eventDate:eventDate sessionID:sessionID];
     [self scheduleUploadWithPriority:event.priority];
 }
 

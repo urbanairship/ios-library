@@ -25,6 +25,10 @@ NSString *const UAInAppMessageResolutionEventButtonClick = @"button_click";
 NSString *const UAInAppMessageResolutionEventUserDismissed = @"user_dismissed";
 NSString *const UAInAppMessageResolutionEventTimedOut = @"timed_out";
 
+@interface UAInAppMessageResolutionEvent()
+@property(nonatomic, copy) NSDictionary *eventData;
+@end
+
 @implementation UAInAppMessageResolutionEvent
 
 + (instancetype)legacyReplacedEventWithMessageID:(NSString *)messageID
@@ -121,6 +125,10 @@ NSString *const UAInAppMessageResolutionEventTimedOut = @"timed_out";
 
 - (NSDictionary *)data {
     return self.eventData;
+}
+
+- (UAEventPriority)priority {
+    return UAEventPriorityNormal;
 }
 
 @end

@@ -24,8 +24,12 @@ NS_ASSUME_NONNULL_BEGIN
  * @note For internal use only. :nodoc:
  *
  * @param event The UAEvent.
+ * @param identifier The event ID.
+ * @param date The event date.
  */
-- (void)eventAdded:(UAEvent *)event;
+- (void)eventAdded:(id<UAEvent>)event
+        identifier:(NSString *)identifier
+              date:(NSDate *)date;
 
 @end
 

@@ -2,8 +2,8 @@
 
 #import <Foundation/Foundation.h>
 #import "UAEventData+Internal.h"
+#import "UAEvent.h"
 
-@class UAEvent;
 @class UARuntimeConfig;
 
 /**
@@ -27,9 +27,14 @@
  * Saves an event.
  *
  * @param event The event to store.
+ * @param eventID The event ID.
+ * @param eventDate The event date.
  * @param sessionID The event's session ID.
  */
-- (void)saveEvent:(UAEvent *)event sessionID:(NSString *)sessionID;
+- (void)saveEvent:(id<UAEvent>)event
+          eventID:(NSString *)eventID
+        eventDate:(NSDate *)eventDate
+        sessionID:(NSString *)sessionID;
 
 /**
  * Fetches a batch of events.

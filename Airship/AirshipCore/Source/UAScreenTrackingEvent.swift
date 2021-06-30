@@ -4,7 +4,7 @@
  * @note For Interrnal use only :nodoc:
  */
 @objc
-public class UAScreenTrackingEvent : UAEvent {
+public class UAScreenTrackingEvent : NSObject, UAEvent {
 
     private let _data : [String : Any]
 
@@ -21,16 +21,23 @@ public class UAScreenTrackingEvent : UAEvent {
     public let stopTime : TimeInterval;
 
     @objc
-    public override var eventType : String {
+    public var eventType : String {
         get {
             return "screen_tracking"
         }
     }
 
     @objc
-    public override var data: [AnyHashable : Any] {
+    public var data: [AnyHashable : Any] {
         get {
             return self._data
+        }
+    }
+
+    @objc
+    public var priority: UAEventPriority {
+        get {
+            return .normal
         }
     }
 

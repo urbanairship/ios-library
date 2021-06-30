@@ -8,7 +8,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * In-app message display event.
  */
-@interface UAInAppMessageDisplayEvent : UAEvent
+@interface UAInAppMessageDisplayEvent : NSObject<UAEvent>
 
 ///---------------------------------------------------------------------------------------
 /// @name In App Display Event Internal Methods

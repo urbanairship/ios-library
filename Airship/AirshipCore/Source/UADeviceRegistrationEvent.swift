@@ -4,9 +4,16 @@
  * @note For Interrnal use only :nodoc:
  */
 @objc
-public class UADeviceRegistrationEvent : UAEvent {
+public class UADeviceRegistrationEvent : NSObject, UAEvent {
     @objc
-    public override var eventType : String {
+    public var priority: UAEventPriority {
+        get {
+            return .normal
+        }
+    }
+    
+    @objc
+    public var eventType : String {
         get {
             return "device_registration"
         }
@@ -15,7 +22,7 @@ public class UADeviceRegistrationEvent : UAEvent {
     private let _data : [AnyHashable : Any]
 
     @objc
-    public override var data: [AnyHashable : Any] {
+    public var data: [AnyHashable : Any] {
         get {
             return self._data
         }

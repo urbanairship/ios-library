@@ -50,11 +50,11 @@ struct Event {
     var data:String
 
 
-    init(event:UAEvent) {
+    init(event: UAEvent, identifier: String, date: Date) {
         self.data = String(data: try! JSONSerialization.data(withJSONObject:event.data, options:.prettyPrinted), encoding:.utf8) ?? event.data.description
-        self.time = Double(event.time)!
+        self.time = date.timeIntervalSince1970
         self.eventType = prettyTypes[event.eventType] ?? event.eventType
-        self.eventID = event.eventID
+        self.eventID = identifier
     }
 
     init(eventData:EventData) {

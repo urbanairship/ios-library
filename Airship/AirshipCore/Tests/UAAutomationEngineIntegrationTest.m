@@ -1534,7 +1534,7 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
     [self waitForTestExpectations];
 }
 
-- (void)emitEvent:(UAEvent *)event {
+- (void)emitEvent:(id<UAEvent>)event {
     if ([event isKindOfClass:[UACustomEvent class]]) {
         [self.notificationCenter postNotificationName:UACustomEventAdded
                                                object:self

@@ -4,7 +4,6 @@
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAEventStore+Internal.h"
 #import "UARuntimeConfig.h"
-#import "UAEvent.h"
 #import "UAirship.h"
 #import "UAJSONSerialization.h"
 
@@ -42,16 +41,20 @@ NSString *const UAEventDataEntityName = @"UAEventData";
     return [[UAEventStore alloc] initWithConfig:config];
 }
 
-- (void)saveEvent:(UAEvent *)event sessionID:(NSString *)sessionID {
+- (void)saveEvent:(id<UAEvent>)event
+          eventID:(NSString *)eventID
+        eventDate:(NSDate *)eventDate
+        sessionID:(NSString *)sessionID {
+    NSString *eventTime = [NSString stringWithFormat:@"%f", [eventDate timeIntervalSince1970]];
     [self.coreData safePerformBlock:^(BOOL isSafe, NSManagedObjectContext *context) {
         if (!isSafe) {
             UA_LERR(@"Unable to save event: %@. Persistent store unavailable", event);
             return;
         }
 
-        [self storeEventWithID:event.eventID
+        [self storeEventWithID:eventID
                      eventType:event.eventType
-                     eventTime:event.time
+                     eventTime:eventTime
                      eventBody:event.data
                      sessionID:sessionID
                        context:context];
