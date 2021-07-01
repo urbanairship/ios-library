@@ -77,7 +77,7 @@ static NSString * const UALastRemoteDataModifiedTime = @"UALastRemoteDataModifie
     }];
 
     [dispatcher dispatchAsync:^{
-        if (remoteDataPayloads.count && ![self.previousPayloads isEqualToArray:sorted]) {
+        if (![self.previousPayloads isEqualToArray:sorted]) {
             @synchronized(self) {
                 if (self.publishBlock) {
                     self.publishBlock(sorted);

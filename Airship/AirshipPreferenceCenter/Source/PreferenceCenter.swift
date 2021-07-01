@@ -6,7 +6,6 @@ import Foundation;
 import AirshipCore
 #endif
 
-
 /**
  * Open delegate.
  */
@@ -27,6 +26,8 @@ public protocol PreferenceCenterOpenDelegate {
 @objc(UAirshipPreferenceCenter)
 public class PreferenceCenter : UAComponent {
     
+    private static let payloadType = "preference_forms"
+    private static let preferenceFormsKey = "preference_forms"
     /**
      * Open delegate.
      *
@@ -36,16 +37,14 @@ public class PreferenceCenter : UAComponent {
     public weak var openDelegate: PreferenceCenterOpenDelegate?
     
     private let dataStore: UAPreferenceDataStore
-    private let channel: UAChannel
     private let privacyManager: UAPrivacyManager
+    private let remoteDataProvider: UARemoteDataProvider
     
-    init(dataStore: UAPreferenceDataStore, config: UARuntimeConfig, channel: UAChannel, privacyManager: UAPrivacyManager) {
+    init(dataStore: UAPreferenceDataStore, privacyManager: UAPrivacyManager, remoteDataProvider: UARemoteDataProvider) {
         self.dataStore = dataStore
-        self.channel = channel
         self.privacyManager = privacyManager
-        
+        self.remoteDataProvider = remoteDataProvider
         super.init(dataStore: dataStore)
-        
         AirshipLogger.info("PreferenceCenter initialized")
     }
     
@@ -53,8 +52,8 @@ public class PreferenceCenter : UAComponent {
      * Opens the Preference Center with the given ID.
      * @param preferenceCenterId The ID of the preference center.
      */
-    @objc
-    private func open(preferenceCenterId: String) {
+    @objc(openPreferenceCenter:)
+    public func open(_ preferenceCenterId: String) {
         if let strongDelegate = self.openDelegate {
             AirshipLogger.trace("Opening preference center \(preferenceCenterId) through delegate")
             strongDelegate.open(id: preferenceCenterId)
@@ -68,19 +67,36 @@ public class PreferenceCenter : UAComponent {
      * Opens the OOTB Preference Center with the given ID.
      * @param preferenceCenterId The ID of the preference center.
      */
-    @objc
     private func openDefaultPreferenceCenter(preferenceCenterId: String) {
         
     }
 
     /**
      * Returns the configuration of the Preference Center with the given ID trough a callback method.
-     * @param preferenceCenterId The ID of the Preference Center.
-     * @param callback The callback that will receive the requested PreferenceCenterConfig
+     * @param preferenceCenterID The ID of the Preference Center.
+     * @param completionHandler The completion handler that will receive the requested PreferenceCenterConfig
      */
-    @objc
-    private func getConfig(preferenceCenterId: String, callback: @escaping (PreferenceCenterConfig?, Error?) -> ()) {
-        callback(nil, nil)
-        return
+    @objc(configForPreferenceCenterID:completionHandler:)
+    @discardableResult
+    public func config(preferenceCenterID: String, completionHandler: @escaping (PreferenceCenterConfig?) -> ()) -> UADisposable {
+        return self.remoteDataProvider.subscribe(withTypes: [PreferenceCenter.payloadType]) { payloads in
+            
+            guard let preferences = payloads.first?.data[PreferenceCenter.preferenceFormsKey] as? [[AnyHashable : Any]] else {
+                completionHandler(nil)
+                return
+            }
+            
+            let responses : [PrefrenceCenterResponse] = preferences.compactMap {
+                do {
+                    return try PreferenceCenterDecoder.decodeConfig(object: $0)
+                } catch {
+                    AirshipLogger.error("Failed to parse preference center config \(error)")
+                    return nil
+                }
+            }
+            
+            let config = responses.first { $0.config.identifier == preferenceCenterID }?.config
+            completionHandler(config)
+        }
     }
 }

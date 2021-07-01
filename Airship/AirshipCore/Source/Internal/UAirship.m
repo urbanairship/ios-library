@@ -227,7 +227,9 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
             [loaders addObject:airshipChatLoader];
         }
         
-        id<UAModuleLoader> preferenceCenterLoader = [UAirship preferenceCenterModuleLoaderWithDataStore:self.dataStore config:self.config channel:self.sharedChannel privacyManager:self.sharedPrivacyManager];
+        id<UAModuleLoader> preferenceCenterLoader = [UAirship preferenceCenterModuleLoaderWithDataStore:self.dataStore
+                                                                                         privacyManager:self.sharedPrivacyManager
+                                                                                     remoteDataProvider:self.sharedRemoteDataManager];
         if (preferenceCenterLoader) {
             [loaders addObject:preferenceCenterLoader];
         }
@@ -618,16 +620,14 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 }
 
 + (nullable id<UAModuleLoader>)preferenceCenterModuleLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
-                                                                  config:(UARuntimeConfig *)config
-                                                                 channel:(UAChannel *)channel
-                                                          privacyManager:(UAPrivacyManager *)privacyManager {
+                                                          privacyManager:(UAPrivacyManager *)privacyManager
+                                                      remoteDataProvider:(id<UARemoteDataProvider>)remoteDataProvider {
     
     Class cls = NSClassFromString(UAPrenferenceCenterModuleLoaderClassName);
     if ([cls conformsToProtocol:@protocol(UAPreferenceCenterModuleLoaderFactory)]) {
         return [cls moduleLoaderWithDataStore:dataStore
-                                       config:config
-                                      channel:channel
-                               privacyManager:privacyManager];
+                               privacyManager:privacyManager
+                           remoteDataProvider:remoteDataProvider];
     }
     return nil;
 }

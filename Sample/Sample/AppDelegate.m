@@ -2,6 +2,8 @@
 
 @import AirshipCore;
 @import AirshipMessageCenter;
+@import AirshipPreferenceCenter;
+
 #if DEBUG
 @import AirshipDebug;
 #endif

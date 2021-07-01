@@ -227,6 +227,11 @@
 		54DE2901247B2AF059E46862 /* Pods_AirshipTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EBF83042659DAF0D42AD7A9E /* Pods_AirshipTests.framework */; };
 		6E1892B1268CE8FE00417887 /* Lock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8E1C9A26447B3800B11791 /* Lock.swift */; };
 		6E1892B2268CE8FE00417887 /* Lock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8E1C9A26447B3800B11791 /* Lock.swift */; };
+		6E1892C8268D15C300417887 /* PreferenceCenterTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1892C7268D15C300417887 /* PreferenceCenterTest.swift */; };
+		6E1892CD268D17D200417887 /* MockRemoteDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1892CC268D17D200417887 /* MockRemoteDataProvider.swift */; };
+		6E1892D1268E26A100417887 /* MockPreferenceCenterOpenDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1892D0268E26A100417887 /* MockPreferenceCenterOpenDelegate.swift */; };
+		6E1892D5268E3D8500417887 /* PreferenceCenterDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1892D4268E3D8500417887 /* PreferenceCenterDecoder.swift */; };
+		6E1892D7268E3F1800417887 /* PreferenceCenterDecoderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1892D6268E3F1800417887 /* PreferenceCenterDecoderTest.swift */; };
 		6E18E6EF23207B57004E09DF /* UAInAppMessageSceneManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E18E6EE23207B57004E09DF /* UAInAppMessageSceneManagerTest.m */; };
 		6E20BF6724F5C21D005347EC /* UAScheduleTriggerContextTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E20BF6624F5C21D005347EC /* UAScheduleTriggerContextTest.m */; };
 		6E21734B237C7FC20084933A /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
@@ -1159,7 +1164,7 @@
 		6EEAE81824CF9FBF0046E311 /* UAScheduleDeferredDataTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EEAE81724CF9FBF0046E311 /* UAScheduleDeferredDataTest.m */; };
 		6EFB377D234595C9005E4E44 /* UAMessageCenterNativeBridgeExtensionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EFB377C234595C9005E4E44 /* UAMessageCenterNativeBridgeExtensionTest.m */; };
 		6EFBDEE1262DF71C008380AC /* MockDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFBDEE0262DF71C008380AC /* MockDispatcher.swift */; };
-		841E7D12268617C800EA0317 /* PreferenceCenterConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841E7D11268617C800EA0317 /* PreferenceCenterConfig.swift */; };
+		841E7D12268617C800EA0317 /* PreferenceCenterResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841E7D11268617C800EA0317 /* PreferenceCenterResponse.swift */; };
 		842EE1BE268128DD00F2BEF4 /* empty in Resources */ = {isa = PBXBuildFile; fileRef = 842EE1BD268128DD00F2BEF4 /* empty */; };
 		84483A68267CF0C000D0DA7D /* PreferenceCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84483A67267CF0C000D0DA7D /* PreferenceCenter.swift */; };
 		8449BB5225F7AD99004F4A49 /* UADeferredSchedule.h in Headers */ = {isa = PBXBuildFile; fileRef = 8449BB5125F7AD99004F4A49 /* UADeferredSchedule.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1769,6 +1774,12 @@
 		6D0D4500368AC9710E0F37B7 /* Pods-AirshipAccengageTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipAccengageTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipAccengageTests/Pods-AirshipAccengageTests.release.xcconfig"; sourceTree = "<group>"; };
 		6E12138C1E5D1B95006738FD /* UAScheduleDelay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAScheduleDelay.h; sourceTree = "<group>"; };
 		6E12138D1E5D1B95006738FD /* UAScheduleDelay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAScheduleDelay.m; sourceTree = "<group>"; };
+		6E1892C7268D15C300417887 /* PreferenceCenterTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterTest.swift; sourceTree = "<group>"; };
+		6E1892C9268D16E200417887 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6E1892CC268D17D200417887 /* MockRemoteDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockRemoteDataProvider.swift; sourceTree = "<group>"; };
+		6E1892D0268E26A100417887 /* MockPreferenceCenterOpenDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockPreferenceCenterOpenDelegate.swift; sourceTree = "<group>"; };
+		6E1892D4268E3D8500417887 /* PreferenceCenterDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterDecoder.swift; sourceTree = "<group>"; };
+		6E1892D6268E3F1800417887 /* PreferenceCenterDecoderTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PreferenceCenterDecoderTest.swift; path = AirshipPreferenceCenter/Tests/PreferenceCenterDecoderTest.swift; sourceTree = SOURCE_ROOT; };
 		6E18E6DB23204F71004E09DF /* UAInAppMessageSceneManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInAppMessageSceneManager.h; sourceTree = "<group>"; };
 		6E18E6DC23204F71004E09DF /* UAInAppMessageSceneManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageSceneManager.m; sourceTree = "<group>"; };
 		6E18E6E1232055A0004E09DF /* UAInAppMessageSceneManager+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageSceneManager+Internal.h"; sourceTree = "<group>"; };
@@ -2290,7 +2301,7 @@
 		6EFB377C234595C9005E4E44 /* UAMessageCenterNativeBridgeExtensionTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAMessageCenterNativeBridgeExtensionTest.m; sourceTree = "<group>"; };
 		6EFBDEE0262DF71C008380AC /* MockDispatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockDispatcher.swift; sourceTree = "<group>"; };
 		83A674F723AA7AA4005C0C8F /* AirshipDebugPushData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = AirshipDebugPushData.xcdatamodel; sourceTree = "<group>"; };
-		841E7D11268617C800EA0317 /* PreferenceCenterConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterConfig.swift; sourceTree = "<group>"; };
+		841E7D11268617C800EA0317 /* PreferenceCenterResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterResponse.swift; sourceTree = "<group>"; };
 		842EE1BD268128DD00F2BEF4 /* empty */ = {isa = PBXFileReference; lastKnownFileType = text; path = empty; sourceTree = "<group>"; };
 		84483A67267CF0C000D0DA7D /* PreferenceCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenter.swift; sourceTree = "<group>"; };
 		8449BB5125F7AD99004F4A49 /* UADeferredSchedule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UADeferredSchedule.h; sourceTree = "<group>"; };
@@ -3334,6 +3345,26 @@
 				847BFFFC267CD73A007CD249 /* AirshipPreferenceCenterTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		6E1892C5268D159900417887 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				6E1892CB268D17C500417887 /* Mocks */,
+				6E1892C9268D16E200417887 /* Info.plist */,
+				6E1892C7268D15C300417887 /* PreferenceCenterTest.swift */,
+				6E1892D6268E3F1800417887 /* PreferenceCenterDecoderTest.swift */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		6E1892CB268D17C500417887 /* Mocks */ = {
+			isa = PBXGroup;
+			children = (
+				6E1892CC268D17D200417887 /* MockRemoteDataProvider.swift */,
+				6E1892D0268E26A100417887 /* MockPreferenceCenterOpenDelegate.swift */,
+			);
+			path = Mocks;
 			sourceTree = "<group>";
 		};
 		6E18E6ED23207A61004E09DF /* Scene */ = {
@@ -4470,7 +4501,8 @@
 				847BFFF6267CD73A007CD249 /* AirshipPreferenceCenter.h */,
 				847B0012267CE558007CD249 /* AirshipPreferenceCenterModuleLoader.swift */,
 				84483A67267CF0C000D0DA7D /* PreferenceCenter.swift */,
-				841E7D11268617C800EA0317 /* PreferenceCenterConfig.swift */,
+				841E7D11268617C800EA0317 /* PreferenceCenterResponse.swift */,
+				6E1892D4268E3D8500417887 /* PreferenceCenterDecoder.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -4478,6 +4510,7 @@
 		847BFFF5267CD73A007CD249 /* AirshipPreferenceCenter */ = {
 			isa = PBXGroup;
 			children = (
+				6E1892C5268D159900417887 /* Tests */,
 				847B0011267CD925007CD249 /* Source */,
 				847B0010267CD91B007CD249 /* Resources */,
 				847BFFF7267CD73A007CD249 /* Info.plist */,
@@ -5876,6 +5909,7 @@
 					};
 					847BFFFB267CD73A007CD249 = {
 						CreatedOnToolsVersion = 12.5;
+						LastSwiftMigration = 1250;
 					};
 					CC64F0531D8B77E3009CEF27 = {
 						CreatedOnToolsVersion = 8.0;
@@ -6759,7 +6793,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				841E7D12268617C800EA0317 /* PreferenceCenterConfig.swift in Sources */,
+				6E1892CD268D17D200417887 /* MockRemoteDataProvider.swift in Sources */,
+				841E7D12268617C800EA0317 /* PreferenceCenterResponse.swift in Sources */,
+				6E1892D5268E3D8500417887 /* PreferenceCenterDecoder.swift in Sources */,
 				847B0013267CE558007CD249 /* AirshipPreferenceCenterModuleLoader.swift in Sources */,
 				84483A68267CF0C000D0DA7D /* PreferenceCenter.swift in Sources */,
 			);
@@ -6769,6 +6805,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E1892D1268E26A100417887 /* MockPreferenceCenterOpenDelegate.swift in Sources */,
+				6E1892D7268E3F1800417887 /* PreferenceCenterDecoderTest.swift in Sources */,
+				6E1892C8268D15C300417887 /* PreferenceCenterTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8153,6 +8192,7 @@
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
@@ -8161,7 +8201,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = PGJV57GD94;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
-				INFOPLIST_FILE = AirshipPreferenceCenterTests/Info.plist;
+				INFOPLIST_FILE = AirshipPreferenceCenter/Tests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -8173,6 +8213,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = Airship.AirshipPreferenceCenterTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -8185,6 +8226,7 @@
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
@@ -8192,7 +8234,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = PGJV57GD94;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
-				INFOPLIST_FILE = AirshipPreferenceCenterTests/Info.plist;
+				INFOPLIST_FILE = AirshipPreferenceCenter/Tests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

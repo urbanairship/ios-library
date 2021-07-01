@@ -457,7 +457,7 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
     NSArray *update = @[@{ @"type": @"test", @"timestamp":@"2018-01-01T12:00:00", @"data": @{ @"super": @"cool" }}];
 
     XCTestExpectation *callbackCalled = [self expectationWithDescription:@"Callback called"];
-    callbackCalled.expectedFulfillmentCount = 2;
+    callbackCalled.expectedFulfillmentCount = 3;
     NSMutableArray *responses = [NSMutableArray array];
     [self.remoteDataManager subscribeWithTypes:@[@"test"] block:^(NSArray<UARemoteDataPayload *> * _Nonnull remoteDataArray) {
         [responses addObject:remoteDataArray];
@@ -469,12 +469,12 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
 
     [self waitForTestExpectations];
 
-    XCTAssertEqual(2, responses.count);
-    UARemoteDataPayload *payload = responses[0][0];
+    XCTAssertEqual(3, responses.count);
+    UARemoteDataPayload *payload = responses[1][0];
     XCTAssertEqualObjects(payloads[0][@"data"], payload.data);
     XCTAssertEqualObjects(@"test", payload.type);
 
-    payload = responses[1][0];
+    payload = responses[2][0];
     XCTAssertEqualObjects(update[0][@"data"], payload.data);
     XCTAssertEqualObjects(@"test", payload.type);
 }
@@ -483,6 +483,7 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
     NSArray *payloads = @[@{ @"type": @"test", @"timestamp":@"2017-01-01T12:00:00", @"data": @{ @"foo": @"bar" }}];
 
     XCTestExpectation *callbackCalled = [self expectationWithDescription:@"Callback called"];
+    callbackCalled.expectedFulfillmentCount = 2;
     NSMutableArray *responses = [NSMutableArray array];
     [self.remoteDataManager subscribeWithTypes:@[@"test"] block:^(NSArray<UARemoteDataPayload *> * _Nonnull remoteDataArray) {
         [responses addObject:remoteDataArray];
@@ -494,8 +495,8 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
 
     [self waitForTestExpectations];
 
-    XCTAssertEqual(1, responses.count);
-    UARemoteDataPayload *payload = responses[0][0];
+    XCTAssertEqual(2, responses.count);
+    UARemoteDataPayload *payload = responses[1][0];
     XCTAssertEqualObjects(payloads[0][@"data"], payload.data);
     XCTAssertEqualObjects(@"test", payload.type);
 }
@@ -504,7 +505,7 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
     NSArray *payloads = @[@{ @"type": @"test", @"timestamp":@"2017-01-01T12:00:00", @"data": @{ @"foo": @"bar" }}];
 
     XCTestExpectation *callbackCalled = [self expectationWithDescription:@"Callback called"];
-    callbackCalled.expectedFulfillmentCount = 2;
+    callbackCalled.expectedFulfillmentCount = 3;
     NSMutableArray *responses = [NSMutableArray array];
     [self.remoteDataManager subscribeWithTypes:@[@"test"] block:^(NSArray<UARemoteDataPayload *> * _Nonnull remoteDataArray) {
         [responses addObject:remoteDataArray];
@@ -520,12 +521,12 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
 
     [self waitForTestExpectations];
 
-    XCTAssertEqual(2, responses.count);
-    UARemoteDataPayload *payload = responses[0][0];
+    XCTAssertEqual(3, responses.count);
+    UARemoteDataPayload *payload = responses[1][0];
     XCTAssertEqualObjects(payloads[0][@"data"], payload.data);
     XCTAssertEqualObjects(@"test", payload.type);
 
-    payload = responses[1][0];
+    payload = responses[2][0];
     XCTAssertEqualObjects(payloads[0][@"data"], payload.data);
     XCTAssertEqualObjects(@"test", payload.type);
 }
