@@ -225,6 +225,8 @@
 		45E08F4724CA045E00041803 /* UIImage+UAAdditions+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 45E08F4424CA045E00041803 /* UIImage+UAAdditions+Internal.h */; };
 		45E08F4924CA045E00041803 /* UIImage+UAAdditions+Internal.m in Sources */ = {isa = PBXBuildFile; fileRef = 45E08F4524CA045E00041803 /* UIImage+UAAdditions+Internal.m */; };
 		54DE2901247B2AF059E46862 /* Pods_AirshipTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EBF83042659DAF0D42AD7A9E /* Pods_AirshipTests.framework */; };
+		6E1892B1268CE8FE00417887 /* Lock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8E1C9A26447B3800B11791 /* Lock.swift */; };
+		6E1892B2268CE8FE00417887 /* Lock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8E1C9A26447B3800B11791 /* Lock.swift */; };
 		6E18E6EF23207B57004E09DF /* UAInAppMessageSceneManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E18E6EE23207B57004E09DF /* UAInAppMessageSceneManagerTest.m */; };
 		6E20BF6724F5C21D005347EC /* UAScheduleTriggerContextTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E20BF6624F5C21D005347EC /* UAScheduleTriggerContextTest.m */; };
 		6E21734B237C7FC20084933A /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
@@ -1059,7 +1061,6 @@
 		6E8BF45926852E8D009A8BD4 /* UATaskManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8BF44D26852E4B009A8BD4 /* UATaskManager.swift */; };
 		6E8BF45A26852E90009A8BD4 /* UATaskRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8BF44E26852E4B009A8BD4 /* UATaskRequest.swift */; };
 		6E8BF45B26852E92009A8BD4 /* UATaskRequestOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8BF44C26852E4A009A8BD4 /* UATaskRequestOptions.swift */; };
-		6E8E1C9B26447B3800B11791 /* Lock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8E1C9A26447B3800B11791 /* Lock.swift */; };
 		6E90F0FC228F5F5600E1FCB0 /* UATestRuntimeConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E90F0F4228F592F00E1FCB0 /* UATestRuntimeConfig.m */; };
 		6E90F0FE228F61B400E1FCB0 /* UARuntimeConfigTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E90F0FD228F61B400E1FCB0 /* UARuntimeConfigTest.m */; };
 		6E91B43C26868A6300DDB1A8 /* UACircularRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E91B43B26868A6300DDB1A8 /* UACircularRegion.swift */; };
@@ -3900,7 +3901,6 @@
 				6E9D57C0261F99BF009BD6EB /* ChatConfig.swift */,
 				6E9D580A261FC344009BD6EB /* OpenChatAction.swift */,
 				3C9AC93F262F9AC300D6E346 /* ChatStyle.swift */,
-				6E8E1C9A26447B3800B11791 /* Lock.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -4268,6 +4268,7 @@
 			isa = PBXGroup;
 			children = (
 				6E698E02267A799500654DB2 /* UAirshipErrors.swift */,
+				6E8E1C9A26447B3800B11791 /* Lock.swift */,
 				6E698DEA26790AC300654DB2 /* AirshipLogger.swift */,
 				6E698DE826790AC300654DB2 /* UAPreferenceDataStore.swift */,
 				6E698DE726790A9C00654DB2 /* PrivacyManager */,
@@ -6486,6 +6487,7 @@
 				6E411A8F2538C20500FEE4E8 /* UANativeBridgeActionHandler.m in Sources */,
 				6E411AA32538C20500FEE4E8 /* UARemoteDataStore.m in Sources */,
 				6E95292F268BBD7D00398B54 /* UARetailEventTemplate.swift in Sources */,
+				6E1892B1268CE8FE00417887 /* Lock.swift in Sources */,
 				6E698E0C267A88D600654DB2 /* UAEventAPIClient.swift in Sources */,
 				6E4118CF2538C1FE00FEE4E8 /* NSJSONSerialization+UAAdditions.m in Sources */,
 				6E411A572538C20400FEE4E8 /* UARemoteConfigDisableInfo.m in Sources */,
@@ -6590,7 +6592,6 @@
 				6E7C07FA26139C02006D0E84 /* ChatDAOProtocol.swift in Sources */,
 				6E7C07CF26139B4A006D0E84 /* Conversation.swift in Sources */,
 				6E7C07DE26139B58006D0E84 /* ChatMessage.swift in Sources */,
-				6E8E1C9B26447B3800B11791 /* Lock.swift in Sources */,
 				6E877761261CED1A00B03FC0 /* PendingChatMessageData.swift in Sources */,
 				A6031ED326738CE600FFE328 /* ChatMessageDataModel.xcdatamodeld in Sources */,
 				6E9D5595261E35C1009BD6EB /* ChatAPIClient.swift in Sources */,
@@ -7049,6 +7050,7 @@
 				6E411A902538C20500FEE4E8 /* UANativeBridgeActionHandler.m in Sources */,
 				6E411AA42538C20500FEE4E8 /* UARemoteDataStore.m in Sources */,
 				6E952930268BBD7D00398B54 /* UARetailEventTemplate.swift in Sources */,
+				6E1892B2268CE8FE00417887 /* Lock.swift in Sources */,
 				6E8BF45B26852E92009A8BD4 /* UATaskRequestOptions.swift in Sources */,
 				6E698E0D267A88D600654DB2 /* UAEventAPIClient.swift in Sources */,
 				6E4118D02538C1FE00FEE4E8 /* NSJSONSerialization+UAAdditions.m in Sources */,

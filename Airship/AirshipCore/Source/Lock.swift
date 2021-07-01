@@ -2,10 +2,15 @@
 
 import Foundation
 
-class Lock {
+/**
+ * @note For internal use only. :nodoc:
+ */
+public class Lock {
     private let lock = NSRecursiveLock()
 
-    func sync(closure: () -> ()) {
+    public init() {}
+    
+    public func sync(closure: () -> ()) {
         self.lock.lock()
         closure()
         self.lock.unlock()

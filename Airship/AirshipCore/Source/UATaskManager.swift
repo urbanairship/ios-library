@@ -16,6 +16,8 @@ public class UATaskManager : NSObject {
     private var currentRequests: [String : [UATaskRequest]] = [:]
     private var waitingConditionsRequests: [UATaskRequest] = []
     private var retryingRequests: [UATaskRequest] = []
+    
+    private let requestsLock = Lock()
 
     private let application: UIApplication
     private let dispatcher: UADispatcher
@@ -67,7 +69,7 @@ public class UATaskManager : NSObject {
     public func register(taskID: String, dispatcher: UADispatcher?, launchHandler: @escaping (UATask) -> Void) {
         let taskLauncher = UATaskLauncher(dispatcher: dispatcher, launchHandler: launchHandler)
 
-        synchronized(self.launcherMap) {
+        requestsLock.sync {
             if (self.launcherMap[taskID] == nil) {
                 self.launcherMap[taskID] = []
             }
@@ -90,24 +92,24 @@ public class UATaskManager : NSObject {
 
         let requests = launchers.map { UATaskRequest(taskID: taskID, options: options, launcher: $0) }
 
-        synchronized(self.currentRequests) {
-            let currentRequests = self.currentRequests[taskID]
+        requestsLock.sync {
+            let currentRequestsForID = self.currentRequests[taskID]
 
             switch (options.conflictPolicy) {
             case .keep:
-                if (currentRequests?.count ?? 0 > 0) {
+                if (currentRequestsForID?.count ?? 0 > 0) {
                     AirshipLogger.trace("Request already scheduled, ignoring new request \(taskID)")
                 } else {
                     self.currentRequests[taskID] = requests
                 }
 
             case .append:
-                var appended = currentRequests ?? []
+                var appended = currentRequestsForID ?? []
                 appended.append(contentsOf: requests)
                 self.currentRequests[taskID] = appended
 
             case .replace:
-                if (currentRequests?.count ?? 0 > 0) {
+                if (currentRequestsForID?.count ?? 0 > 0) {
                     AirshipLogger.trace("Request already scheduled, replacing with new request \(taskID)")
                 }
                 self.currentRequests[taskID] = requests
@@ -119,7 +121,7 @@ public class UATaskManager : NSObject {
 
     private func launchers(for taskID: String) -> [UATaskLauncher] {
         var launchers : [UATaskLauncher]? = nil
-        synchronized(self.launcherMap) {
+        requestsLock.sync {
             launchers = self.launcherMap[taskID]
         }
         return launchers ?? []
@@ -138,7 +140,7 @@ public class UATaskManager : NSObject {
     }
 
     private func retryRequest(_ request: UATaskRequest, delay: TimeInterval) {
-        synchronized(self.retryingRequests) {
+        requestsLock.sync {
             self.retryingRequests.append(request)
         }
 
@@ -148,7 +150,7 @@ public class UATaskManager : NSObject {
             }
 
             var launch = false
-            strongSelf.synchronized(strongSelf.retryingRequests) {
+            strongSelf.requestsLock.sync {
                 if let index = strongSelf.retryingRequests.firstIndex(where: { $0 === request }) {
                     strongSelf.retryingRequests.remove(at: index)
                     launch = true
@@ -167,7 +169,7 @@ public class UATaskManager : NSObject {
         }
 
         guard self.checkRequestRequirements(request) else {
-            synchronized(self.waitingConditionsRequests) {
+            requestsLock.sync {
                 self.waitingConditionsRequests.append(request)
             }
             return
@@ -200,7 +202,7 @@ public class UATaskManager : NSObject {
         }
 
         guard backgroundTask != UIBackgroundTaskIdentifier.invalid else {
-            synchronized(self.waitingConditionsRequests) {
+            requestsLock.sync {
                 self.waitingConditionsRequests.append(request)
             }
             return
@@ -229,7 +231,7 @@ public class UATaskManager : NSObject {
     }
 
     private func requestFinished(_ request: UATaskRequest) {
-        synchronized(self.currentRequests) {
+        requestsLock.sync {
             self.currentRequests[request.taskID]?.removeAll(where: { $0 === request })
         }
     }
@@ -237,7 +239,7 @@ public class UATaskManager : NSObject {
     private func retryWaitingConditions() {
         var copyWaitinigCondiitions : [UATaskRequest]? = nil
 
-        synchronized(self.waitingConditionsRequests) {
+        requestsLock.sync {
             copyWaitinigCondiitions = self.waitingConditionsRequests
             self.waitingConditionsRequests = []
         }
@@ -256,24 +258,17 @@ public class UATaskManager : NSObject {
 
         var copyRetryingRequests : [UATaskRequest]? = nil
 
-        synchronized(self.retryingRequests) {
+        requestsLock.sync {
             copyRetryingRequests = self.retryingRequests
             self.retryingRequests = []
         }
 
         copyRetryingRequests?.forEach { self.attemptRequest($0, nextBackOff: UATaskManager.initialBackOff) }
-
-    }
-
-    private func synchronized(_ lock: Any, closure: () -> ()) {
-        objc_sync_enter(lock)
-        closure()
-        objc_sync_exit(lock)
     }
 
     private func isRequestCurrent(_ request: UATaskRequest) -> Bool {
         var current = false
-        synchronized(self.currentRequests) {
+        requestsLock.sync {
             current = self.currentRequests[request.taskID]?.contains(where: { $0 === request }) ?? false
         }
         return current
