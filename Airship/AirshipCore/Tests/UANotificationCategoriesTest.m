@@ -2,10 +2,12 @@
 
 #import "UABaseTest.h"
 #import <UserNotifications/UserNotifications.h>
-#import "UANotificationCategories.h"
 #import "UANotificationCategory.h"
 #import "UANotificationAction.h"
 #import "UATextInputNotificationAction.h"
+
+#import "AirshipTests-Swift.h"
+
 
 @interface UANotificationCategoriesTest : UABaseTest
 

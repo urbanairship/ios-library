@@ -25,7 +25,6 @@
 #import "UAJSONValueMatcher.h"
 #import "UAModuleLoader.h"
 #import "UANotificationAction.h"
-#import "UANotificationCategories.h"
 #import "UANotificationCategory.h"
 #import "UANotificationContent.h"
 #import "UANotificationResponse.h"

@@ -13,6 +13,8 @@
 #import "UAAttributeMutations.h"
 #endif
 
+@class UANotificationCategories;
+
 NS_ASSUME_NONNULL_BEGIN
 
 /**

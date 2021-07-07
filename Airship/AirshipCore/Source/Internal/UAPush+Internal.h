@@ -15,6 +15,7 @@
 @class UATagGroupsAPIClient;
 @class UATagGroupsRegistrar;
 @class UADispatcher;
+@class UANotificationCategories;
 
 NS_ASSUME_NONNULL_BEGIN
 

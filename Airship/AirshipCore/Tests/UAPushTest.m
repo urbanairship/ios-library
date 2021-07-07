@@ -8,7 +8,6 @@
 #import "UAUtils+Internal.h"
 #import "UAChannelRegistrationPayload+Internal.h"
 #import "UAEvent.h"
-#import "UANotificationCategories.h"
 #import "UANotificationCategory.h"
 #import "UANotificationAction.h"
 #import "UARuntimeConfig.h"
