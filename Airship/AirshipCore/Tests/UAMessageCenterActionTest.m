@@ -48,7 +48,7 @@
 
     UAActionArguments *arguments = [[UAActionArguments alloc] init];
 
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 5; i++) {
         arguments.situation = validSituations[i];
         XCTAssertTrue([self.action acceptsArguments:arguments], @"action should accept situation %zd", validSituations[i]);
     }

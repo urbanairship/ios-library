@@ -131,6 +131,34 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (NSData *)asJSONData;
 
+/**
+ * Factory method that builds a payload from NSData.
+ * @return A UAChannelRegistrationPayload instance.
+ */
++ (UAChannelRegistrationPayload *)channelRegistrationPayloadWithData:(NSData *)data;
+
+/**
+ * Returns a Boolean value that indicates whether the contents of the receiving
+ * payload are equal to the contents of another given payload.
+ * @param payload The payload to compare with.
+ * @return YES if the contents of the payload are equal to the contents of the
+ *         receiving payload, otherwise NO.
+ */
+- (BOOL)isEqualToPayload:(nullable UAChannelRegistrationPayload *)payload;
+
+/**
+ * The UAChannelRegistrationPayload as an NSDictionary.
+ * @return The payload as an NSDictionary.
+ */
+- (NSDictionary *)payloadDictionary;
+
+/**
+ * Creates a new payload with the minimal amount required and optional data for an update.
+ * @param lastPayload The last payload.
+ * @return The minimal update payload.
+ */
+- (UAChannelRegistrationPayload *)minimalUpdatePayloadWithLastPayload:(nullable UAChannelRegistrationPayload *)lastPayload;
+
 
 @end
 

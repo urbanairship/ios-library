@@ -51,18 +51,30 @@ public class AirshipLogger : NSObject {
                             fileID: String = #fileID,
                             line: Int = #line,
                             function: String = #function) {
-        log(logLevel: UALogLevel.trace,
+        log(logLevel: UALogLevel.info,
             message: message,
             fileID: fileID,
             line: line,
             function: function)
+    }
+    
+    public static func importantInfo(_ message: String,
+                            fileID: String = #fileID,
+                            line: Int = #line,
+                            function: String = #function) {
+        log(logLevel: UALogLevel.info,
+            message: message,
+            fileID: fileID,
+            line: line,
+            function: function,
+            skipLogLevelCheck: true)
     }
 
     public static func warn(_ message: String,
                             fileID: String = #fileID,
                             line: Int = #line,
                             function: String = #function) {
-        log(logLevel: UALogLevel.trace,
+        log(logLevel: UALogLevel.warn,
             message: message,
             fileID: fileID,
             line: line,
@@ -74,7 +86,7 @@ public class AirshipLogger : NSObject {
                              line: Int = #line,
                              function: String = #function) {
 
-        log(logLevel: UALogLevel.trace,
+        log(logLevel: UALogLevel.error,
             message: message,
             fileID: fileID,
             line: line,
@@ -105,9 +117,18 @@ public class AirshipLogger : NSObject {
                             message: String,
                             fileID: String,
                             line: Int,
-                            function: String) {
+                            function: String,
+                            skipLogLevelCheck: Bool = false) {
+        
+        guard loggingEnabled else {
+            return
+        }
+        
+        guard self.logLevel.rawValue <= UALogLevel.none.rawValue else {
+            return
+        }
 
-        if (loggingEnabled && self.logLevel.rawValue >= logLevel.rawValue) {
+        if (skipLogLevelCheck || self.logLevel.rawValue >= logLevel.rawValue) {
             if #available(macOS 11.0, iOS 14.0, watchOS 7.0, tvOS 14.0, *) {
                 LOGGER.log(level: logType(logLevel), "[\(logInitial(logLevel))] \(fileID) \(function) [Line \(line)] \(message)")
             } else {

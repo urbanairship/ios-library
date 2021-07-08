@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UAChannel+Internal.h"
-#import "UAChannelRegistrar+Internal.h"
 #import "UATagGroupsRegistrar+Internal.h"
 #import "UATagUtils+Internal.h"
 #import "UAUtils+Internal.h"
@@ -39,7 +38,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.channel.ide
 static NSString * const UAChannelTagUpdateTaskID = @"UAChannel.tags.update";
 static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.update";
 
-@interface UAChannel ()
+@interface UAChannel () <UAChannelRegistrarDelegate>
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property (nonatomic, strong) UAChannelRegistrar *channelRegistrar;
@@ -143,8 +142,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
     return [[self alloc] initWithDataStore:dataStore
                                     config:config
                         notificationCenter:[NSNotificationCenter defaultCenter]
-                        channelRegistrar:[UAChannelRegistrar channelRegistrarWithConfig:config
-                                                                              dataStore:dataStore]
+                        channelRegistrar:[[UAChannelRegistrar alloc] initWithConfig:config dataStore:dataStore]
                         tagGroupsRegistrar:tagGroupsRegistrar
                         attributeRegistrar:[UAAttributeRegistrar channelRegistrarWithConfig:config
                                                                                   dataStore:dataStore]
@@ -467,7 +465,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 #pragma mark -
 #pragma mark Channel Registrar Delegate
 
-- (void)createChannelPayload:(void (^)(UAChannelRegistrationPayload *))completionHandler {
+- (void)createChannelPayloadWithCompletionHandler:(void (^ _Nonnull)(UAChannelRegistrationPayload * _Nonnull))completionHandler {
     UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
 
     if (self.channelTagRegistrationEnabled) {
@@ -527,8 +525,9 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
     }];
 }
 
-- (void)channelCreated:(NSString *)channelID
-              existing:(BOOL)existing {
+
+- (void)channelCreatedWithChannelID:(NSString *)channelID
+                           existing:(BOOL)existing {
 
     if (channelID) {
         if (uaLogLevel >= UALogLevelError) {

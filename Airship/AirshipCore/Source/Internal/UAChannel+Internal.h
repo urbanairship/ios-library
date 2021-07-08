@@ -1,15 +1,17 @@
 /* Copyright Airship and Contributors */
 
 #import "UAChannel.h"
-#import "UAChannelRegistrar+Internal.h"
 #import "UATagGroupsRegistrar+Internal.h"
 #import "UAExtendableChannelRegistration.h"
 #import "UAAttributeRegistrar+Internal.h"
 #import "UAPushableComponent.h"
 
+@class UAChannelRegistrar;
+@class UATaskManager;
+
 extern NSString *const UAChannelTagsSettingsKey;
 
-@interface UAChannel () <UAChannelRegistrarDelegate, UATagGroupsRegistrarDelegate, UAExtendableChannelRegistration, UAPushableComponent, UAAttributeRegistrarDelegate>
+@interface UAChannel () <UATagGroupsRegistrarDelegate, UAExtendableChannelRegistration, UAPushableComponent, UAAttributeRegistrarDelegate>
 
 /**
  * Allows disabling channel registration before a channel is created.  Channel registration will resume

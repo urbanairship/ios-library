@@ -2,7 +2,6 @@
 
 #import "UAAirshipBaseTest.h"
 #import "UAChannel+Internal.h"
-#import "UAChannelRegistrar+Internal.h"
 #import "UAChannelRegistrationPayload+Internal.h"
 #import "UAUtils+Internal.h"
 #import "UAUserData+Internal.h"
@@ -43,11 +42,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 @property(nonatomic, copy) void (^launchHandler)(id<UATask>);
 @end
 
-@interface UAChannel()
-- (void)registrationSucceeded;
-- (void)registrationFailed;
-- (void)channelCreated:(NSString *)channelID
-              existing:(BOOL)existing;
+@interface UAChannel() <UAChannelRegistrarDelegate>
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @end
 
@@ -484,7 +479,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 
     XCTestExpectation *createdPayload = [self expectationWithDescription:@"create payload"];
 
-    [self.channel createChannelPayload:^(UAChannelRegistrationPayload * _Nonnull payload) {
+    [self.channel createChannelPayloadWithCompletionHandler:^(UAChannelRegistrationPayload * _Nonnull payload) {
         XCTAssertEqualObjects(payload, expectedPayload);
         [createdPayload fulfill];
     }];
@@ -515,7 +510,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 
     XCTestExpectation *createdPayload = [self expectationWithDescription:@"create payload"];
 
-    [self.channel createChannelPayload:^(UAChannelRegistrationPayload * _Nonnull payload) {
+    [self.channel createChannelPayloadWithCompletionHandler:^(UAChannelRegistrationPayload * _Nonnull payload) {
         XCTAssertEqualObjects(payload, expectedPayload);
         [createdPayload fulfill];
     }];
@@ -539,7 +534,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 
     XCTestExpectation *createdPayload = [self expectationWithDescription:@"create payload"];
 
-    [self.channel createChannelPayload:^(UAChannelRegistrationPayload * _Nonnull payload) {
+    [self.channel createChannelPayloadWithCompletionHandler:^(UAChannelRegistrationPayload * _Nonnull payload) {
         XCTAssertEqualObjects(payload, expectedPayload);
         [createdPayload fulfill];
     }];
@@ -562,7 +557,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
     }];
 
     XCTestExpectation *createdPayload = [self expectationWithDescription:@"create payload"];
-    [self.channel createChannelPayload:^(UAChannelRegistrationPayload * _Nonnull payload) {
+    [self.channel createChannelPayloadWithCompletionHandler:^(UAChannelRegistrationPayload * _Nonnull payload) {
         XCTAssertEqualObjects(@"WHAT! OK!", payload.pushAddress);
         [createdPayload fulfill];
     }];
@@ -589,7 +584,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
     }];
 
     XCTestExpectation *createdPayload = [self expectationWithDescription:@"create payload"];
-    [self.channel createChannelPayload:^(UAChannelRegistrationPayload * _Nonnull payload) {
+    [self.channel createChannelPayloadWithCompletionHandler:^(UAChannelRegistrationPayload * _Nonnull payload) {
         XCTAssertEqualObjects(@"WHAT! OK!", payload.pushAddress);
         [createdPayload fulfill];
     }];
@@ -628,7 +623,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
         [notificationFired fulfill];
     }];
 
-    [self.channel channelCreated:@"someChannelID" existing:YES];
+    [self.channel channelCreatedWithChannelID:@"someChannelID" existing:YES];
 
     [self waitForTestExpectations];
     XCTAssertEqualObjects(expectedUserInfo, notification.userInfo);
@@ -650,7 +645,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
         [notificationFired fulfill];
     }];
 
-    [self.channel channelCreated:@"someChannelID" existing:NO];
+    [self.channel channelCreatedWithChannelID:@"someChannelID" existing:NO];
 
     [self waitForTestExpectations];
     XCTAssertEqualObjects(expectedUserInfo, notification.userInfo);
@@ -670,7 +665,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
     [[self.mockTagGroupsRegistrar expect] setIdentifier:@"foo" clearPendingOnChange:NO];
     [[self.mockAttributeRegistrar expect] setIdentifier:@"foo" clearPendingOnChange:NO];
 
-    [self.channel channelCreated:@"foo" existing:NO];
+    [self.channel channelCreatedWithChannelID:@"foo" existing:NO];
 
     [self.mockTagGroupsRegistrar verify];
     [self.mockAttributeRegistrar verify];
@@ -1043,7 +1038,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
     id mockNotificationCenter = [self mockForClass:[NSNotificationCenter class]];
     self.channel.notificationCenter = mockNotificationCenter;
     [[mockNotificationCenter expect] postNotificationName:UAChannelCreatedEvent object:OCMOCK_ANY userInfo:OCMOCK_ANY];
-    [self.channel channelCreated:@"123456" existing:YES];
+    [self.channel channelCreatedWithChannelID:@"123456" existing:YES];
     [mockNotificationCenter verify];
 }
 
@@ -1054,7 +1049,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
     id mockNotificationCenter = [self mockForClass:[NSNotificationCenter class]];
     self.channel.notificationCenter = mockNotificationCenter;
     [[mockNotificationCenter reject] postNotificationName:UAChannelCreatedEvent object:OCMOCK_ANY userInfo:OCMOCK_ANY];
-    [self.channel channelCreated:nil existing:YES];
+    [self.channel channelCreatedWithChannelID:nil existing:YES];
     [mockNotificationCenter verify];
 }
 
