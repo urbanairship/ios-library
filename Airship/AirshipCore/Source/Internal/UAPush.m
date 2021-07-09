@@ -11,7 +11,6 @@
 #import "UARuntimeConfig.h"
 #import "UANotificationCategory.h"
 #import "UATagUtils+Internal.h"
-#import "UARegistrationDelegateWrapper+Internal.h"
 #import "NSObject+UAAdditions.h"
 
 #if __has_include("AirshipCore/AirshipCore-Swift.h")
@@ -69,7 +68,6 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
 @property (nonatomic, strong) UADispatcher *dispatcher;
 @property (nonatomic, strong) UIApplication *application;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
-@property (nonatomic, strong) UARegistrationDelegateWrapper *registrationDelegateWrapper;
 @property (nonatomic, readonly) BOOL isRegisteredForRemoteNotifications;
 @property (nonatomic, readonly) BOOL isBackgroundRefreshStatusAvailable;
 @property (nonatomic, strong) UARuntimeConfig *config;
@@ -105,7 +103,6 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
 
         self.appStateTracker = appStateTracker;
         self.notificationCenter = notificationCenter;
-        self.registrationDelegateWrapper = [[UARegistrationDelegateWrapper alloc] init];
 
         self.pushRegistration = pushRegistration;
         self.requireAuthorizationForDefaultCategories = YES;
@@ -202,16 +199,6 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
                                   object:nil];
 
     [self.notificationCenter addObserver:self
-                                selector:@selector(channelUpdated:)
-                                    name:UAChannelUpdatedEvent
-                                  object:nil];
-
-    [self.notificationCenter addObserver:self
-                                selector:@selector(channelRegistrationFailed)
-                                    name:UAChannelRegistrationFailedEvent
-                                  object:nil];
-
-    [self.notificationCenter addObserver:self
                                 selector:@selector(onEnabledFeaturesChanged)
                                     name:UAPrivacyManager.changeEvent
                                   object:nil];
@@ -273,8 +260,9 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
         [self.dataStore setInteger:(NSInteger)authorizedSettings forKey:UAPushTypesAuthorizedKey];
         [self updateRegistration];
 
-        [self.registrationDelegateWrapper notificationAuthorizedSettingsDidChange:authorizedSettings
-                                                                    legacyOptions:[self legacyOptionsForAuthorizedSettings:authorizedSettings]];
+        if ([self.registrationDelegate respondsToSelector:@selector(notificationAuthorizedSettingsDidChange:)]) {
+            [self.registrationDelegate notificationAuthorizedSettingsDidChange:authorizedSettings];
+        }
     }
 }
 
@@ -495,14 +483,6 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
     self.shouldUpdateAPNSRegistration = YES;
 }
 
-- (void)setRegistrationDelegate:(id<UARegistrationDelegate>)registrationDelegate {
-    self.registrationDelegateWrapper.delegate = registrationDelegate;
-}
-
-- (id<UARegistrationDelegate>)registrationDelegate {
-    return self.registrationDelegateWrapper.delegate;
-}
-
 #pragma mark -
 #pragma mark Open APIs - Property Setters
 
@@ -599,7 +579,9 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
         [self.channel updateRegistration];
     }
 
-    [self.registrationDelegateWrapper apnsRegistrationSucceededWithDeviceToken:deviceToken];
+    if ([self.registrationDelegate respondsToSelector:@selector(apnsRegistrationSucceededWithDeviceToken:)]) {
+        [self.registrationDelegate apnsRegistrationSucceededWithDeviceToken:deviceToken];
+    }
 }
 
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
@@ -607,7 +589,9 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
         return;
     }
 
-    [self.registrationDelegateWrapper apnsRegistrationFailedWithError:error];
+    if ([self.registrationDelegate respondsToSelector:@selector(apnsRegistrationFailedWithError:)]) {
+        [self.registrationDelegate apnsRegistrationFailedWithError:error];
+    }
 }
 
 #pragma mark -
@@ -795,10 +779,16 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
     self.authorizedNotificationSettings = authorizedSettings;
     self.authorizationStatus = status;
 
-    [self.registrationDelegateWrapper notificationRegistrationFinishedWithAuthorizedSettings:authorizedSettings
-                                                                               legacyOptions:[self legacyOptionsForAuthorizedSettings:authorizedSettings]
-                                                                                  categories:self.combinedCategories
-                                                                                      status:status];
+    [[UADispatcher main] dispatchAsync:^{
+        if ([self.registrationDelegate respondsToSelector:@selector(notificationRegistrationFinishedWithAuthorizedSettings:categories:)]) {
+            [self.registrationDelegate notificationRegistrationFinishedWithAuthorizedSettings:authorizedSettings
+                                                                                   categories:self.combinedCategories];
+        }
+
+        if ([self.registrationDelegate respondsToSelector:@selector(notificationRegistrationFinishedWithAuthorizedSettings:categories:status:)]) {
+            [self.registrationDelegate notificationRegistrationFinishedWithAuthorizedSettings:authorizedSettings categories:self.combinedCategories status:status];
+        }
+    }];
 }
 
 #pragma mark -
@@ -821,16 +811,7 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
 }
 
 #pragma mark -
-#pragma mark Channel Registration Events
-
-- (void)channelUpdated:(NSNotification *)notification {
-    NSString *channelID = notification.userInfo[UAChannelUpdatedEventChannelKey];
-    [self.registrationDelegateWrapper registrationSucceededForChannelID:channelID deviceToken:self.deviceToken];
-}
-
-- (void)channelRegistrationFailed {
-    [self.registrationDelegateWrapper registrationFailed];
-}
+#pragma mark Channel Registration
 
 - (void)extendChannelRegistrationPayload:(UAChannelRegistrationPayload *)payload
                        completionHandler:(UAChannelRegistrationExtenderCompletionHandler)completionHandler {

@@ -83,37 +83,6 @@ typedef NS_ENUM(NSInteger, UAAuthorizationStatus) {
 @optional
 
 /**
- * Called after the device channel registers with Airship. Successful
- * registrations could be disabling push, enabling push, or updating the device
- * registration settings.
- *
- * The device token will only be available once the application successfully
- * registers with APNS.
- *
- * When registration finishes in the background, any async tasks that are triggered
- * from this call should request a background task.
- *
- * @note This method may be called at any time. It does not guarantee a channel 
- * registration just occurred.
- *
- * @param channelID The channel ID string.
- * @param deviceToken The device token string.
- *
- * @deprecated Deprecated – to be removed in SDK version 15.0. Please use the UAChannelUpdatedEvent NSNotification.
- */
-- (void)registrationSucceededForChannelID:(NSString *)channelID deviceToken:(NSString *)deviceToken DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 15.0. Please use the UAChannelUpdatedEvent NSNotification.");
-
-/**
- * Called when the device channel failed to register with Airship.
- *
- * When registration finishes in the background, any async tasks that are triggered
- * from this call should request a background task.
- *
- * @deprecated Deprecated – to be removed in SDK version 15.0. Please use the UAChannelRegistrationFailedEvent NSNotification.
- */
-- (void)registrationFailed DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 15.0. Please use the UAChannelRegistrationFailedEvent NSNotification.");
-
-/**
  * Called when APNS registration completes.
  *
  * @param authorizedSettings The settings that were authorized at the time of registration.
