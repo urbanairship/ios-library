@@ -30,7 +30,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 // Message Center action name
 #define kUALegacyMessageCenterActionName @"_uamid"
 
-@interface UALegacyInAppMessaging ()
+@interface UALegacyInAppMessaging () <UAPushableComponent>
 @property(nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property(nonatomic, strong) UAAnalytics *analytics;
 @property(nonatomic, weak) UAInAppAutomation *inAppAutomation;

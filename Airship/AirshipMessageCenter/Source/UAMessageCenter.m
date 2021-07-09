@@ -16,7 +16,7 @@
 #import <Airship/Airship-Swift.h>
 #endif
 
-@interface UAMessageCenter()
+@interface UAMessageCenter() <UAPushableComponent>
 @property (nonatomic, strong) UADefaultMessageCenterUI *defaultUI;
 @property (nonatomic, strong) UAInboxMessageList *messageList;
 @property (nonatomic, strong) UAUser *user;

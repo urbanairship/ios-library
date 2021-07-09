@@ -192,7 +192,7 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
     UANotificationContent *content = [UANotificationContent notificationWithNotificationInfo:@{
         @"com.urbanairship.remote-data.update": @(true)
     }];
-    [self.remoteDataManager receivedRemoteNotification:content completionHandler:^(UIBackgroundFetchResult result) {
+    [((NSObject<UAPushableComponent> *)self.remoteDataManager) receivedRemoteNotification:content completionHandler:^(UIBackgroundFetchResult result) {
         XCTAssertEqual(UAActionFetchResultNewData, result);
         [expectation fulfill];
     }];

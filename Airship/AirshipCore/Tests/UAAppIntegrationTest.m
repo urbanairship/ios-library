@@ -12,7 +12,6 @@
 #import "UARuntimeConfig.h"
 #import "UANotificationContent.h"
 #import "UAirship+Internal.h"
-#import "UAPushableComponent.h"
 
 @import AirshipCore;
 

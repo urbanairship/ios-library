@@ -38,7 +38,7 @@ NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.channel.ide
 static NSString * const UAChannelTagUpdateTaskID = @"UAChannel.tags.update";
 static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.update";
 
-@interface UAChannel () <UAChannelRegistrarDelegate>
+@interface UAChannel () <UAChannelRegistrarDelegate, UAPushableComponent>
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property (nonatomic, strong) UAChannelRegistrar *channelRegistrar;

@@ -91,7 +91,7 @@ static NSString * const UALastRemoteDataModifiedTime = @"UALastRemoteDataModifie
 
 @end
 
-@interface UARemoteDataManager()
+@interface UARemoteDataManager() <UARemoteDataProvider>
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) UARemoteDataAPIClient *remoteDataAPIClient;
 @property (nonatomic, strong) NSMutableArray<UARemoteDataSubscription *> *subscriptions;

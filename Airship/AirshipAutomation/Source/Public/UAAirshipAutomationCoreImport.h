@@ -30,7 +30,6 @@
 #import "UANotificationResponse.h"
 #import "UAPadding.h"
 #import "UAPush.h"
-#import "UAPushableComponent.h"
 #import "UARemoteDataPayload.h"
 #import "UARuntimeConfig.h"
 #import "UATagGroups.h"

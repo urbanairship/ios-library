@@ -74,7 +74,6 @@
 #import "UAPreferenceCenterModuleLoaderFactory.h"
 #import "UAPush.h"
 #import "UAPushProviderDelegate.h"
-#import "UAPushableComponent.h"
 #import "UARemoteConfig.h"
 #import "UARemoteConfigURLManager.h"
 #import "UARemoteDataPayload.h"

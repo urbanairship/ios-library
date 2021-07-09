@@ -4,7 +4,6 @@
 #import "UAirship+Internal.h"
 #import "UAAnalytics+Internal.h"
 #import "UAPush+Internal.h"
-#import "UAPushableComponent.h"
 #import "UANotificationAction.h"
 #import "UANotificationCategory.h"
 #import "UAActionArguments.h"

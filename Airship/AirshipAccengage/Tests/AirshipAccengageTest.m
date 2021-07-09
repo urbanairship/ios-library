@@ -95,18 +95,18 @@
     
     UANotificationResponse *response = [UANotificationResponse notificationResponseWithNotificationInfo:notificationInfo actionIdentifier:UANotificationDefaultActionIdentifier responseText:nil];
     [[runnerMock expect] runActionWithName:@"landing_page_action" value:@"someurl.com"     situation:UASituationLaunchedFromPush];
-    [accengage receivedNotificationResponse:response completionHandler:^{}];
+    [((NSObject<UAPushableComponent> *)accengage) receivedNotificationResponse:response completionHandler:^{}];
     [runnerMock verify];
     
     response = [UANotificationResponse notificationResponseWithNotificationInfo:notificationInfo actionIdentifier:@"1" responseText:nil];
     [[runnerMock expect] runActionWithName:@"landing_page_action" value:@"someotherurl.com"     situation:UASituationForegroundInteractiveButton];
-    [accengage receivedNotificationResponse:response completionHandler:^{}];
+    [((NSObject<UAPushableComponent> *)accengage) receivedNotificationResponse:response completionHandler:^{}];
     [runnerMock verify];
     
     response = [UANotificationResponse notificationResponseWithNotificationInfo:notificationInfo actionIdentifier:@"2" responseText:nil];
 
     [[runnerMock expect] runActionWithName:@"open_external_url_action" value:@"someotherurl.com"     situation:UASituationForegroundInteractiveButton];
-    [accengage receivedNotificationResponse:response completionHandler:^{}];
+    [((NSObject<UAPushableComponent> *)accengage) receivedNotificationResponse:response completionHandler:^{}];
     [runnerMock verify];
     
     notificationInfo = @{
@@ -120,7 +120,7 @@
     };
     response = [UANotificationResponse notificationResponseWithNotificationInfo:notificationInfo actionIdentifier:UANotificationDefaultActionIdentifier responseText:nil];
     [[runnerMock expect] runActionWithName:@"open_external_url_action" value:@"someurl.com"     situation:UASituationLaunchedFromPush];
-    [accengage receivedNotificationResponse:response completionHandler:^{}];
+    [((NSObject<UAPushableComponent> *)accengage) receivedNotificationResponse:response completionHandler:^{}];
     [runnerMock verify];
 }
 
@@ -196,7 +196,7 @@
         defaultOptions = UNNotificationPresentationOptionList | UNNotificationPresentationOptionBanner;
     }
 
-    UNNotificationPresentationOptions options = [accengage presentationOptionsForNotification:mockNotification defaultPresentationOptions:defaultOptions];
+    UNNotificationPresentationOptions options = [((NSObject<UAPushableComponent> *)accengage) presentationOptionsForNotification:mockNotification defaultPresentationOptions:defaultOptions];
 
     XCTAssertEqual(options, UNNotificationPresentationOptionNone, @"Incorrect notification presentation options");
 
@@ -231,7 +231,7 @@
     [[[mockRequest stub] andReturn:mockContent] content];
     [[[mockContent stub] andReturn:notificationInfo] userInfo];
 
-    options = [accengage presentationOptionsForNotification:mockNotification defaultPresentationOptions:defaultOptions];
+    options = [((NSObject<UAPushableComponent> *)accengage) presentationOptionsForNotification:mockNotification defaultPresentationOptions:defaultOptions];
 
     XCTAssertEqual(options, [UAPush shared].defaultPresentationOptions, @"Incorrect notification presentation options");
 
@@ -264,7 +264,7 @@
     [[[mockRequest stub] andReturn:mockContent] content];
     [[[mockContent stub] andReturn:notificationInfo] userInfo];
 
-    options = [accengage presentationOptionsForNotification:mockNotification defaultPresentationOptions:defaultOptions];
+    options = [((NSObject<UAPushableComponent> *)accengage) presentationOptionsForNotification:mockNotification defaultPresentationOptions:defaultOptions];
 
     XCTAssertEqual(options, defaultOptions, @"Incorrect notification presentation options");
 }

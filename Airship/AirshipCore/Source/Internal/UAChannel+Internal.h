@@ -4,14 +4,13 @@
 #import "UATagGroupsRegistrar+Internal.h"
 #import "UAExtendableChannelRegistration.h"
 #import "UAAttributeRegistrar+Internal.h"
-#import "UAPushableComponent.h"
 
 @class UAChannelRegistrar;
 @class UATaskManager;
 
 extern NSString *const UAChannelTagsSettingsKey;
 
-@interface UAChannel () <UATagGroupsRegistrarDelegate, UAExtendableChannelRegistration, UAPushableComponent, UAAttributeRegistrarDelegate>
+@interface UAChannel () <UATagGroupsRegistrarDelegate, UAExtendableChannelRegistration, UAAttributeRegistrarDelegate>
 
 /**
  * Allows disabling channel registration before a channel is created.  Channel registration will resume

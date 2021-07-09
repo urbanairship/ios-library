@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 /*
  * SDK-private extensions to UAMessageCenter
  */
-@interface UAMessageCenter () <UAPushableComponent>
+@interface UAMessageCenter ()
 
 
 ///---------------------------------------------------------------------------------------

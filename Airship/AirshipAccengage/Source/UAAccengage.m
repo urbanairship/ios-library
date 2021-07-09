@@ -60,7 +60,7 @@ NSString *const UAAccengageSettingsMigrated = @"UAAccengageSettingsMigrated";
 
 @end
 
-@interface UAAccengage() <NSKeyedUnarchiverDelegate>
+@interface UAAccengage() <NSKeyedUnarchiverDelegate, UAPushableComponent>
 @end
 
 @implementation UAAccengage

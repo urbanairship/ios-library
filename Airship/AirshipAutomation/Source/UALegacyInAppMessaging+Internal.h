@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 /*
  * SDK-private extensions to UALegacyInAppMessaging
  */
-@interface UALegacyInAppMessaging () <UAPushableComponent>
+@interface UALegacyInAppMessaging ()
 
 ///---------------------------------------------------------------------------------------
 /// @name Legacy In App Messaging Internal Properties

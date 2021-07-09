@@ -9,7 +9,6 @@
 #import "UAChannel.h"
 #import "UAPush.h"
 #import "UAAnalytics.h"
-#import "UAPushableComponent.h"
 #import "UAAttributeMutations.h"
 #endif
 
@@ -20,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Accengage transition component.
  */
-@interface UAAccengage : UAComponent<UAPushableComponent>
+@interface UAAccengage : UAComponent
 
 /**
  * Factory method.

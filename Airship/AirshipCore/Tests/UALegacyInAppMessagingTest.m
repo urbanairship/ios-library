@@ -115,7 +115,7 @@
     }] cancelScheduleWithID:messageID completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *testExpectation = [self expectationWithDescription:@"completion handler called"];
-    [self.inAppMessaging receivedNotificationResponse:response completionHandler:^{
+    [((NSObject<UAPushableComponent> *) self.inAppMessaging) receivedNotificationResponse:response completionHandler:^{
         [testExpectation fulfill];
     }];
 
@@ -146,7 +146,7 @@
     [[self.mockInAppAutomation reject] cancelScheduleWithID:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *testExpectation = [self expectationWithDescription:@"completion handler called"];
-    [self.inAppMessaging receivedNotificationResponse:response completionHandler:^{
+    [((NSObject<UAPushableComponent> *) self.inAppMessaging) receivedNotificationResponse:response completionHandler:^{
         [testExpectation fulfill];
     }];
 
@@ -189,7 +189,7 @@
     [[self.mockInAppAutomation reject] cancelScheduleWithID:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *testExpectation = [self expectationWithDescription:@"completion handler called"];
-    [self.inAppMessaging receivedNotificationResponse:response completionHandler:^{
+    [((NSObject<UAPushableComponent> *) self.inAppMessaging) receivedNotificationResponse:response completionHandler:^{
         [testExpectation fulfill];
     }];
     [self waitForTestExpectations];
@@ -221,7 +221,7 @@
     }] schedule:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *testExpectation = [self expectationWithDescription:@"completion handler called"];
-    [self.inAppMessaging receivedRemoteNotification:content completionHandler:^(UIBackgroundFetchResult fetchResult) {
+    [((NSObject<UAPushableComponent> *) self.inAppMessaging) receivedRemoteNotification:content completionHandler:^(UIBackgroundFetchResult fetchResult) {
         XCTAssertEqual(UIBackgroundFetchResultNoData, fetchResult);
         [testExpectation fulfill];
     }];
@@ -245,7 +245,7 @@
     UANotificationContent *content = [UANotificationContent notificationWithNotificationInfo:notification];
 
     XCTestExpectation *testExpectation = [self expectationWithDescription:@"completion handler called"];
-    [self.inAppMessaging receivedRemoteNotification:content completionHandler:^(UIBackgroundFetchResult fetchResult) {
+    [((NSObject<UAPushableComponent> *) self.inAppMessaging) receivedRemoteNotification:content completionHandler:^(UIBackgroundFetchResult fetchResult) {
         XCTAssertEqual(UIBackgroundFetchResultNoData, fetchResult);
         [testExpectation fulfill];
     }];
@@ -284,7 +284,7 @@
     }] schedule:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *testExpectation = [self expectationWithDescription:@"completion handler called"];
-    [self.inAppMessaging receivedRemoteNotification:content completionHandler:^(UIBackgroundFetchResult fetchResult) {
+    [((NSObject<UAPushableComponent> *) self.inAppMessaging) receivedRemoteNotification:content completionHandler:^(UIBackgroundFetchResult fetchResult) {
         XCTAssertEqual(UIBackgroundFetchResultNoData, fetchResult);
         [testExpectation fulfill];
     }];
@@ -329,7 +329,7 @@
     }] schedule:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *testExpectation = [self expectationWithDescription:@"completion handler called"];
-    [self.inAppMessaging receivedRemoteNotification:content completionHandler:^(UIBackgroundFetchResult fetchResult) {
+    [((NSObject<UAPushableComponent> *) self.inAppMessaging) receivedRemoteNotification:content completionHandler:^(UIBackgroundFetchResult fetchResult) {
         XCTAssertEqual(UIBackgroundFetchResultNoData, fetchResult);
         [testExpectation fulfill];
     }];
@@ -366,7 +366,8 @@
     }] schedule:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *testExpectation = [self expectationWithDescription:@"completion handler called"];
-    [self.inAppMessaging receivedRemoteNotification:content completionHandler:^(UIBackgroundFetchResult fetchResult) {
+    [((NSObject<UAPushableComponent> *) self.inAppMessaging)
+     receivedRemoteNotification:content completionHandler:^(UIBackgroundFetchResult fetchResult) {
         XCTAssertEqual(UIBackgroundFetchResultNoData, fetchResult);
         [testExpectation fulfill];
     }];

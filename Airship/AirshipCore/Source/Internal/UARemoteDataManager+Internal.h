@@ -5,7 +5,6 @@
 #import "UARuntimeConfig.h"
 #import "UARemoteDataStore+Internal.h"
 #import "UAComponent.h"
-#import "UAPushableComponent.h"
 #import "UARemoteDataProvider.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -22,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 extern NSTimeInterval const UARemoteDataRefreshIntervalDefault;
 
-@interface UARemoteDataManager : UAComponent <UARemoteDataProvider, UAPushableComponent>
+@interface UARemoteDataManager : UAComponent <UARemoteDataProvider>
 
 ///---------------------------------------------------------------------------------------
 /// @name Internal Properties & Methods

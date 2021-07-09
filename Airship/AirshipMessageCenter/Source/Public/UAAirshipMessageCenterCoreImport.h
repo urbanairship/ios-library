@@ -6,7 +6,6 @@
 #import "UAKeychainUtils.h"
 #import "UAUtils.h"
 #import "UARuntimeConfig.h"
-#import "UAPushableComponent.h"
 #import "UANativeBridgeExtensionDelegate.h"
 #import "UANativeBridge.h"
 #import "UAModuleLoader.h"
