@@ -1203,6 +1203,10 @@
 		A615E22C2652B014004FA211 /* UNNotificationContent+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = A615E2292652B014004FA211 /* UNNotificationContent+UAAdditions.m */; };
 		A615E23126554678004FA211 /* UNNotificationContent+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = A615E2292652B014004FA211 /* UNNotificationContent+UAAdditions.m */; };
 		A615E23326554A89004FA211 /* UNNotificationContent+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = A615E21F2652AD87004FA211 /* UNNotificationContent+UAAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A67F87D2268DECCE00EF5F43 /* ContactAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67F87D1268DECCE00EF5F43 /* ContactAPIClient.swift */; };
+		A67F87D3268DECCE00EF5F43 /* ContactAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67F87D1268DECCE00EF5F43 /* ContactAPIClient.swift */; };
+		A67F87D5268E07E800EF5F43 /* ContactAPIResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67F87D4268E07E800EF5F43 /* ContactAPIResponse.swift */; };
+		A67F87D6268E07E800EF5F43 /* ContactAPIResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67F87D4268E07E800EF5F43 /* ContactAPIResponse.swift */; };
 		A6AFF39525F0EDF80032D5D9 /* UARemoteConfigTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A6AFF39425F0EDF80032D5D9 /* UARemoteConfigTest.m */; };
 		A6B483DA25ADE89E00550305 /* UARemoteConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = A6B483D725ADE89E00550305 /* UARemoteConfig.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6B483DB25ADE89E00550305 /* UARemoteConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = A6B483D725ADE89E00550305 /* UARemoteConfig.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1212,6 +1216,7 @@
 		A6B8F2ED25AC9AF70037B51B /* UARemoteConfigURLManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A6B8F2E925AC9AF70037B51B /* UARemoteConfigURLManager.m */; };
 		A6B8F2FD25AC9B110037B51B /* UARemoteConfigURLManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A6B8F2FA25AC9B110037B51B /* UARemoteConfigURLManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6B8F2FE25AC9B110037B51B /* UARemoteConfigURLManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A6B8F2FA25AC9B110037B51B /* UARemoteConfigURLManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A6CDD8D0269491BE0040A673 /* ContactAPIClientTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6CDD8CF269491BE0040A673 /* ContactAPIClientTest.swift */; };
 		A6CF89312593910300006C83 /* AddTagGroupsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6CF89302593910300006C83 /* AddTagGroupsTableViewController.swift */; };
 		A6E002D3258BABCA00620226 /* UAModifyAttributesAction.h in Headers */ = {isa = PBXBuildFile; fileRef = A6E002CC258BABCA00620226 /* UAModifyAttributesAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6E002D4258BABCA00620226 /* UAModifyAttributesAction.h in Headers */ = {isa = PBXBuildFile; fileRef = A6E002CC258BABCA00620226 /* UAModifyAttributesAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -2386,11 +2391,14 @@
 		A615E21F2652AD87004FA211 /* UNNotificationContent+UAAdditions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UNNotificationContent+UAAdditions.h"; path = "Public/UNNotificationContent+UAAdditions.h"; sourceTree = "<group>"; };
 		A615E2292652B014004FA211 /* UNNotificationContent+UAAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UNNotificationContent+UAAdditions.m"; path = "Internal/UNNotificationContent+UAAdditions.m"; sourceTree = "<group>"; };
 		A649F50A252F4F39005453CB /* UAInbox 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAInbox 2.xcdatamodel"; sourceTree = "<group>"; };
+		A67F87D1268DECCE00EF5F43 /* ContactAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactAPIClient.swift; sourceTree = "<group>"; };
+		A67F87D4268E07E800EF5F43 /* ContactAPIResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactAPIResponse.swift; sourceTree = "<group>"; };
 		A6AFF39425F0EDF80032D5D9 /* UARemoteConfigTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UARemoteConfigTest.m; sourceTree = "<group>"; };
 		A6B483D725ADE89E00550305 /* UARemoteConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UARemoteConfig.h; path = Public/UARemoteConfig.h; sourceTree = "<group>"; };
 		A6B483E825ADE8AA00550305 /* UARemoteConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UARemoteConfig.m; path = Internal/UARemoteConfig.m; sourceTree = "<group>"; };
 		A6B8F2E925AC9AF70037B51B /* UARemoteConfigURLManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UARemoteConfigURLManager.m; path = Internal/UARemoteConfigURLManager.m; sourceTree = "<group>"; };
 		A6B8F2FA25AC9B110037B51B /* UARemoteConfigURLManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UARemoteConfigURLManager.h; path = Public/UARemoteConfigURLManager.h; sourceTree = "<group>"; };
+		A6CDD8CF269491BE0040A673 /* ContactAPIClientTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactAPIClientTest.swift; sourceTree = "<group>"; };
 		A6CF89302593910300006C83 /* AddTagGroupsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTagGroupsTableViewController.swift; sourceTree = "<group>"; };
 		A6E002CC258BABCA00620226 /* UAModifyAttributesAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAModifyAttributesAction.h; path = Public/UAModifyAttributesAction.h; sourceTree = "<group>"; };
 		A6E002E1258BABE100620226 /* UAModifyAttributesAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAModifyAttributesAction.m; path = Internal/UAModifyAttributesAction.m; sourceTree = "<group>"; };
@@ -3611,6 +3619,8 @@
 			isa = PBXGroup;
 			children = (
 				6E698E3B267BEDC300654DB2 /* AttributesEditor.swift */,
+				A67F87D1268DECCE00EF5F43 /* ContactAPIClient.swift */,
+				A67F87D4268E07E800EF5F43 /* ContactAPIResponse.swift */,
 				6E698E3A267BEDC300654DB2 /* Contact.swift */,
 				6E698E3C267BEDC300654DB2 /* TagGroupsEditor.swift */,
 				6E4114A72538C0A600FEE4E8 /* UANamedUser.h */,
@@ -4510,6 +4520,14 @@
 			path = AirshipPreferenceCenter;
 			sourceTree = "<group>";
 		};
+		A6CDD8CE269491850040A673 /* Contacts */ = {
+			isa = PBXGroup;
+			children = (
+				A6CDD8CF269491BE0040A673 /* ContactAPIClientTest.swift */,
+			);
+			name = Contacts;
+			sourceTree = "<group>";
+		};
 		CC04F1FF1DCAB22E00B4842D /* Automation */ = {
 			isa = PBXGroup;
 			children = (
@@ -4883,6 +4901,7 @@
 		CC64F0551D8B77E3009CEF27 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				A6CDD8CE269491850040A673 /* Contacts */,
 				6EB4E654254C88E500E3FFD0 /* Tasks */,
 				6EA734B724BE5E680012B737 /* InAppAutomation */,
 				1B05132624AE100C00F5051F /* Locale */,
@@ -6496,6 +6515,7 @@
 				6E4119BF2538C20200FEE4E8 /* UARemoteConfigManager.m in Sources */,
 				6E952920268A6C1500398B54 /* UASearchEventTemplate.swift in Sources */,
 				6E4119372538C20000FEE4E8 /* UAUtils.m in Sources */,
+				A67F87D5268E07E800EF5F43 /* ContactAPIResponse.swift in Sources */,
 				6E8BF45026852E4B009A8BD4 /* UATaskLauncher.swift in Sources */,
 				6E41181B2538C1FC00FEE4E8 /* UAAPNSRegistration.m in Sources */,
 				6E6ED1572683DBC300A2CBD0 /* UAViewUtils.swift in Sources */,
@@ -6577,6 +6597,7 @@
 				6E4117EB2538C1FB00FEE4E8 /* UASwizzler.m in Sources */,
 				6E91B44E26883B6E00DDB1A8 /* UAAppBackgroundEvent.swift in Sources */,
 				6E41198F2538C20100FEE4E8 /* UAEnableFeatureAction.m in Sources */,
+				A67F87D2268DECCE00EF5F43 /* ContactAPIClient.swift in Sources */,
 				6E6ED13B2683A58D00A2CBD0 /* UADispatcher.swift in Sources */,
 				6E41197F2538C20100FEE4E8 /* UAJSONSerialization.m in Sources */,
 				6E91B45026883B6E00DDB1A8 /* UAAppInitEvent.swift in Sources */,
@@ -6909,6 +6930,7 @@
 				3C927F8123A425F0003C5FC8 /* UAUIKitStateTrackerAdapterTest.m in Sources */,
 				CC64F0E31D8B781C009CEF27 /* UAAnalyticsTest.m in Sources */,
 				CC64F12D1D8B781C009CEF27 /* UAURLAllowListTest.m in Sources */,
+				A6CDD8D0269491BE0040A673 /* ContactAPIClientTest.swift in Sources */,
 				6E18E6EF23207B57004E09DF /* UAInAppMessageSceneManagerTest.m in Sources */,
 				CC64F10D1D8B781C009CEF27 /* UALandingPageActionTest.m in Sources */,
 				6E6ED1452683BC7F00A2CBD0 /* TestDispatcher.swift in Sources */,
@@ -7064,6 +7086,7 @@
 				6E4119C02538C20200FEE4E8 /* UARemoteConfigManager.m in Sources */,
 				6E952921268A6C1500398B54 /* UASearchEventTemplate.swift in Sources */,
 				6E4119382538C20000FEE4E8 /* UAUtils.m in Sources */,
+				A67F87D6268E07E800EF5F43 /* ContactAPIResponse.swift in Sources */,
 				6E41181C2538C1FC00FEE4E8 /* UAAPNSRegistration.m in Sources */,
 				6E6ED1582683DBC300A2CBD0 /* UAViewUtils.swift in Sources */,
 				6E698E5A267BF63B00654DB2 /* UAAppStateTracker.swift in Sources */,
@@ -7145,6 +7168,7 @@
 				6E41186C2538C1FD00FEE4E8 /* NSString+UAURLEncoding.m in Sources */,
 				6E91B44F26883B6E00DDB1A8 /* UAAppBackgroundEvent.swift in Sources */,
 				6E4117EC2538C1FB00FEE4E8 /* UASwizzler.m in Sources */,
+				A67F87D3268DECCE00EF5F43 /* ContactAPIClient.swift in Sources */,
 				6E6ED13C2683A58D00A2CBD0 /* UADispatcher.swift in Sources */,
 				6E4119902538C20100FEE4E8 /* UAEnableFeatureAction.m in Sources */,
 				6E91B45126883B6E00DDB1A8 /* UAAppInitEvent.swift in Sources */,

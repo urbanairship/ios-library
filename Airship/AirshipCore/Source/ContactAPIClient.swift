@@ -1,0 +1,209 @@
+/* Copyright Airship and Contributors */
+
+import Foundation
+
+/**
+ * @note For internal use only. :nodoc:
+ */
+
+class ContactAPIClient : NSObject {
+    private static let path = "/api/contacts"
+
+    private static let channelIDKey = "channel_id"
+    private static let namedUserIDKey = "named_user_id"
+    private static let contactIDKey = "contact_id"
+    private static let deviceTypeKey = "device_type"
+
+    private let config: UARuntimeConfig
+    private let session: UARequestSession
+
+    init(config: UARuntimeConfig, session: UARequestSession) {
+        self.config = config
+        self.session = session
+        super.init()
+    }
+
+    convenience init(config: UARuntimeConfig) {
+        self.init(config: config, session: UARequestSession(config: config))
+    }
+    
+    @discardableResult
+    func resolve(channelID: String, completionHandler: @escaping (ContactAPIResponse?, Error?) -> Void) -> UADisposable {
+
+        AirshipLogger.debug("Resolving contact with channel ID \(channelID)")
+
+        let payload: [String : String] = [
+            ContactAPIClient.channelIDKey: channelID,
+            ContactAPIClient.deviceTypeKey: "ios"
+        ]
+
+        let request = self.request(payload, "\(config.deviceAPIURL ?? "")\(ContactAPIClient.path)/resolve")
+
+        return session.performHTTPRequest(request, completionHandler: { (data, response, error) in
+            guard let response = response else {
+                AirshipLogger.debug("Resolving contact finished with error: \(error.debugDescription)")
+                completionHandler(nil, error)
+                return
+            }
+
+            if (response.statusCode == 200) {
+                do {
+                    guard data != nil else {
+                        completionHandler(nil, AirshipErrors.parseError("Missing body"))
+                        return
+                    }
+
+                    let jsonResponse = try JSONSerialization.jsonObject(with: data!, options: .allowFragments) as? [AnyHashable : Any]
+                    guard let contactID = jsonResponse?["contact_id"] as? String else {
+                        completionHandler(nil, AirshipErrors.parseError("Missing contact_id"))
+                        return
+                    }
+                    guard let isAnonymous = jsonResponse?["is_anonymous"] as? Bool else {
+                        completionHandler(nil, AirshipErrors.parseError("Missing is_anonymous"))
+                        return
+                    }
+
+                    AirshipLogger.debug("Resolved contact with response: \(response)")
+                    let contactDataResponse = ContactAPIResponse(status: response.statusCode, contactID: contactID, isAnonymous: isAnonymous)
+                    completionHandler(contactDataResponse, nil)
+                } catch {
+                    completionHandler(nil, error)
+                }
+            } else {
+                let contactDataResponse = ContactAPIResponse(status: response.statusCode, contactID: nil, isAnonymous: false)
+                completionHandler(contactDataResponse, nil)
+            }
+        })
+    }
+
+    @discardableResult
+    func identify(channelID: String, namedUserID: String, contactID: String?, completionHandler: @escaping (ContactAPIResponse?, Error?) -> Void) -> UADisposable {
+
+        AirshipLogger.debug("Identifying contact with channel ID \(channelID)")
+
+        var payload: [String : String] = [
+            ContactAPIClient.channelIDKey: channelID,
+            ContactAPIClient.namedUserIDKey: namedUserID,
+            ContactAPIClient.deviceTypeKey: "ios"
+        ]
+
+        if (contactID != nil) {
+            payload[ContactAPIClient.contactIDKey] = contactID
+        }
+        
+        let request = self.request(payload, "\(config.deviceAPIURL ?? "")\(ContactAPIClient.path)/identify")
+
+        return session.performHTTPRequest(request, completionHandler: { (data, response, error) in
+            
+            guard let response = response else {
+                AirshipLogger.debug("Identifying contact finished with error: \(error.debugDescription)")
+                completionHandler(nil, error)
+                return
+            }
+
+            if (response.statusCode == 200) {
+                do {
+                    guard data != nil else {
+                        completionHandler(nil, AirshipErrors.parseError("Missing body"))
+                        return
+                    }
+
+                    let jsonResponse = try JSONSerialization.jsonObject(with: data!, options: .allowFragments) as? [AnyHashable : Any]
+                    guard let contactID = jsonResponse?["contact_id"] as? String else {
+                        completionHandler(nil, AirshipErrors.parseError("Missing contact_id"))
+                        return
+                    }
+
+                    AirshipLogger.debug("Identified contact with response: \(response)")
+                    let contactDataResponse = ContactAPIResponse(status: response.statusCode, contactID: contactID, isAnonymous: false)
+                    completionHandler(contactDataResponse, nil)
+                } catch {
+                    completionHandler(nil, error)
+                }
+            } else {
+                let contactDataResponse = ContactAPIResponse(status: response.statusCode, contactID: nil, isAnonymous: false)
+                completionHandler(contactDataResponse, nil)
+            }
+        })
+    }
+    
+    @discardableResult
+    func reset(channelID: String, completionHandler: @escaping (ContactAPIResponse?, Error?) -> Void) -> UADisposable {
+
+        AirshipLogger.debug("Resetting contact with channel ID \(channelID)")
+
+        let payload: [String : String] = [
+            ContactAPIClient.channelIDKey: channelID,
+            ContactAPIClient.deviceTypeKey: "ios"
+        ]
+
+        let request = self.request(payload, "\(config.deviceAPIURL ?? "")\(ContactAPIClient.path)/reset")
+
+        return session.performHTTPRequest(request, completionHandler: { (data, response, error) in
+            guard let response = response else {
+                AirshipLogger.debug("Resetting contact finished with error: \(error.debugDescription)")
+                completionHandler(nil, error)
+                return
+            }
+
+            if (response.statusCode == 200) {
+                do {
+                    guard data != nil else {
+                        completionHandler(nil, AirshipErrors.parseError("Missing body"))
+                        return
+                    }
+
+                    let jsonResponse = try JSONSerialization.jsonObject(with: data!, options: .allowFragments) as? [AnyHashable : Any]
+                    guard let contactID = jsonResponse?["contact_id"] as? String else {
+                        completionHandler(nil, AirshipErrors.parseError("Missing contact_id"))
+                        return
+                    }
+
+                    AirshipLogger.debug("Reset contact with response: \(response)")
+                    let contactDataResponse = ContactAPIResponse(status: response.statusCode, contactID: contactID, isAnonymous: false)
+                    completionHandler(contactDataResponse, nil)
+                } catch {
+                    completionHandler(nil, error)
+                }
+            } else {
+                let contactDataResponse = ContactAPIResponse(status: response.statusCode, contactID: nil, isAnonymous: false)
+                completionHandler(contactDataResponse, nil)
+            }
+        })
+    }
+    
+    @discardableResult
+    func update(identifier: String,
+                           attributeMutations: UAAttributePendingMutations,
+                           tagMutations: UATagGroupsMutation,
+                           completionHandler: @escaping (UAHTTPResponse?, Error?) -> Void) -> UADisposable {
+
+        AirshipLogger.debug("Updating contact with identifier \(identifier)")
+
+        let payload = attributeMutations.payload()?.merging(tagMutations.payload()) { $1 }
+        let request = self.request(payload ?? [:], "\(config.deviceAPIURL ?? "")/api/contacts/\(identifier)")
+
+        return session.performHTTPRequest(request, completionHandler: { (data, response, error) in
+            guard let response = response else {
+                AirshipLogger.debug("Update finished with error: \(error.debugDescription)")
+                completionHandler(nil, error)
+                return
+            }
+
+            AirshipLogger.debug("Update finished with response: \(response)")
+            completionHandler(UAHTTPResponse(status: response.statusCode), nil)
+        })
+    }
+    
+    private func request(_ payload: [AnyHashable : Any], _ urlString: String) -> UARequest {
+        return UARequest(builderBlock: { [self] builder in
+            builder.method = "POST"
+            builder.url = URL(string: urlString)
+            builder.username = config.appKey
+            builder.password = config.appSecret
+            builder.setValue("application/vnd.urbanairship+json; version=3;", header: "Accept")
+            builder.setValue("application/json", header: "Content-Type")
+            builder.body = try? UAJSONSerialization.data(withJSONObject: payload, options: [])
+        })
+    }
+}
