@@ -435,6 +435,11 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
     }
 }
 
+- (void)setAccengageCategories:(NSSet<UANotificationCategory *> *)categories {
+    _accengageCategories = categories;
+    self.shouldUpdateAPNSRegistration = YES;
+}
+
 - (void)setCustomCategories:(NSSet<UANotificationCategory *> *)categories {
     _customCategories = [categories filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
         UANotificationCategory *category = evaluatedObject;

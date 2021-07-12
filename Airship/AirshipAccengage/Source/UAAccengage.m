@@ -72,6 +72,7 @@ NSString *const UAAccengageSettingsMigrated = @"UAAccengageSettingsMigrated";
         if (accengageDeviceID) {
             NSSet *accengageCategories = [UANotificationCategories createCategoriesFromFile:[[UAAccengageResources bundle] pathForResource:@"UAAccengageNotificationCategories" ofType:@"plist"]];
             push.accengageCategories = accengageCategories;
+            [push updateRegistration];
 
             [channel addChannelExtenderBlock:^(UAChannelRegistrationPayload *payload, UAChannelRegistrationExtenderCompletionHandler completionHandler) {
                 payload.accengageDeviceID = accengageDeviceID;
