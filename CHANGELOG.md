@@ -3,6 +3,14 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 14.5.2 July 12, 2021
+Patch release fixing an issue with IAA banners displayed in hidden windows, fixing a race condition when loading Accengage notification categories, and changing the behavior of UAPush to persist notification options. Apps having issues with IAA banner display in multi-window UIs or apps using the Accengage module are encouraged to update.
+ 
+### Changes
+- IAA banners no longer display in hidden windows
+- Fixed race condition loading Accengage notification categories
+- Requested notification options are persisted between application runs
+
 ## Version 14.5.1 June 16, 2021
 Patch release fixing archive issues with AirshpChat when using SPM, localization conflict issues in Cocoapods, and UI/localization issues in AirshipChat. Apps using SPM, Cocoapods or Live Chat are encouraged to upgrade.
 
