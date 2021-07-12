@@ -20,6 +20,7 @@
 #import "UASemaphore.h"
 #import "UAPrivacyManager.h"
 
+NSString *const UAUserPushNotificationsOptionsKey = @"UAUserPushNotificationsOptions";
 NSString *const UAUserPushNotificationsEnabledKey = @"UAUserPushNotificationsEnabled";
 NSString *const UABackgroundPushNotificationsEnabledKey = @"UABackgroundPushNotificationsEnabled";
 NSString *const UAExtendedPushNotificationPermissionEnabledKey = @"UAExtendedPushNotificationPermissionEnabled";
@@ -117,10 +118,12 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
 
         self.shouldUpdateAPNSRegistration = YES;
 
-        self.notificationOptions = UANotificationOptionBadge;
+        if (![self.dataStore objectForKey:UAUserPushNotificationsOptionsKey]) {
+          self.notificationOptions = UANotificationOptionBadge;
 #if !TARGET_OS_TV  // Sound and Alert not supported on tvOS
-        self.notificationOptions = self.notificationOptions|UANotificationOptionSound|UANotificationOptionAlert;
+          self.notificationOptions = self.notificationOptions|UANotificationOptionSound|UANotificationOptionAlert;
 #endif
+      }
 
         [self observeNotificationCenterEvents];
 
@@ -496,8 +499,12 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
 }
 
 - (void)setNotificationOptions:(UANotificationOptions)notificationOptions {
-    _notificationOptions = notificationOptions;
+    [self.dataStore setObject:[NSNumber numberWithUnsignedInteger:notificationOptions] forKey:UAUserPushNotificationsOptionsKey];
     self.shouldUpdateAPNSRegistration = YES;
+}
+
+- (UANotificationOptions)notificationOptions {
+    return [(NSNumber *)[self.dataStore objectForKey:UAUserPushNotificationsOptionsKey] unsignedIntegerValue];
 }
 
 - (void)setRegistrationDelegate:(id<UARegistrationDelegate>)registrationDelegate {
