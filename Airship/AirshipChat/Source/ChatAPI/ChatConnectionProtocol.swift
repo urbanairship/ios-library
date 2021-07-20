@@ -80,7 +80,8 @@ protocol ChatConnectionProtocol  {
      * @param requestID The request ID.
      * @param text The message's text.
      * @param attachment The attachment.
+     * @param routing The routing object
      */
-    func sendMessage(requestID: String, text: String?, attachment: URL?)
+    func sendMessage(requestID: String, text: String?, attachment: URL?, routing: ChatRouting?)
 }
 

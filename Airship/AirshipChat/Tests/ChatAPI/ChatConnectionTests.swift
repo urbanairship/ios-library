@@ -80,18 +80,20 @@ class ChatConnectionTests: XCTestCase {
     func testSend() throws {
         let url = URL(string: "https://neat")
         self.connection.open(uvp: "some-uvp")
-        self.connection.sendMessage(requestID: "request!", text: "neat!", attachment: url )
+        self.connection.sendMessage(requestID: "request!", text: "neat!", attachment: url, routing: ChatRouting(agent: "agent!"))
 
         XCTAssertNotNil(self.mockWebSocket.lastMessage)
 
         let object = JSONSerialization.object(with: self.mockWebSocket.lastMessage!) as! [String: Any]
-        let payload = object["payload"] as! [String : String]
+        let payload = object["payload"] as! [String : Any]
+        let routing = payload["routing"] as! [String : Any]
 
         XCTAssertEqual("some-uvp", object["uvp"] as! String)
         XCTAssertEqual("send_message", object["action"] as! String)
-        XCTAssertEqual("request!", payload["request_id"])
-        XCTAssertEqual("neat!", payload["text"])
-        XCTAssertEqual("https://neat", payload["attachment"])
+        XCTAssertEqual("request!", payload["request_id"] as! String)
+        XCTAssertEqual("neat!", payload["text"] as! String)
+        XCTAssertEqual("https://neat", payload["attachment"] as! String)
+        XCTAssertEqual("agent!", routing["agent"] as! String)
     }
 
     func testNewMessageResponse() throws {

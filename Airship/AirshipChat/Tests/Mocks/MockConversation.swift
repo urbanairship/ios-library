@@ -8,6 +8,7 @@ class MockConversation : InternalConversationProtocol {
     var isConnected = false
     var delegate: ConversationDelegate?
     var clearDataCalled = false
+    var routing: ChatRouting? = ChatRouting(agent: "")
 
     var lastMessageSent : String?
     var lastAttachmentSent : URL?

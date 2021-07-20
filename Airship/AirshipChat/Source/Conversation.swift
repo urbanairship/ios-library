@@ -37,6 +37,12 @@ public protocol ConversationProtocol {
      */
     @objc
     var isConnected : Bool { get }
+    
+    /**
+     * Determines which agent a conversation gets assigned to by matching this value to an agent in Live Chat Manager.
+     */
+    @objc
+    var routing : ChatRouting? { get set }
 
     @objc
     var delegate: ConversationDelegate? { get set }
@@ -111,6 +117,9 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
             }
         }
     }
+    
+    @objc
+    var routing: ChatRouting? = ChatRouting(agent: "")
 
     @objc
     weak var delegate: ConversationDelegate?
@@ -198,7 +207,7 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
 
         dispatcher.dispatchAsync {
             if (self.chatConnection.isOpenOrOpening && self.isPendingSent) {
-                self.chatConnection.sendMessage(requestID: requestID, text: text, attachment: attachment)
+                self.chatConnection.sendMessage(requestID: requestID, text: text, attachment: attachment, routing: self.routing)
             } else {
                 self.updateConnection()
             }
@@ -342,7 +351,7 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
 
             if (self.chatConnection.isOpenOrOpening) {
                 pendingCopy?.forEach {
-                    self.chatConnection.sendMessage(requestID: $0.0, text: $0.1, attachment: $0.2)
+                    self.chatConnection.sendMessage(requestID: $0.0, text: $0.1, attachment: $0.2, routing: self.routing)
                 }
                 self.isPendingSent = true
             }

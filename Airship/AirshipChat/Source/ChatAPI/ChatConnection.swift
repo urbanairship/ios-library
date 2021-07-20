@@ -83,12 +83,12 @@ class ChatConnection : ChatConnectionProtocol, WebSocketDelegate  {
         send(requestConversation)
     }
 
-    func sendMessage(requestID: String, text: String?, attachment: URL?) {
+    func sendMessage(requestID: String, text: String?, attachment: URL?, routing: ChatRouting?) {
         guard let uvp = self.uvp else {
             return
         }
-
-        let payload = SendMessageRequestPayload(requestID: requestID, text: text, attachment: attachment)
+        
+        let payload = SendMessageRequestPayload(requestID: requestID, text: text, attachment: attachment, routing: routing)
         let sendMessageRequest = SendMessageRequest(uvp: uvp, payload: payload)
         send(sendMessageRequest)
     }
@@ -180,11 +180,13 @@ class ChatConnection : ChatConnectionProtocol, WebSocketDelegate  {
         let requestID: String
         let text: String?
         let attachment: URL?
+        let routing: ChatRouting?
 
         enum CodingKeys: String, CodingKey {
             case text = "text"
             case attachment = "attachment"
             case requestID = "request_id"
+            case routing = "routing"
         }
     }
 
