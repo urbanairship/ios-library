@@ -1135,6 +1135,10 @@
 		6EA734B424B7AA600012B737 /* UAInAppAutomation.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EA734AF24B7AA600012B737 /* UAInAppAutomation.m */; };
 		6EA734B624B7AA600012B737 /* UAInAppAutomation.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EA734B024B7AA600012B737 /* UAInAppAutomation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6EA734B924BE5E920012B737 /* UAInAppAutomationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EA734B824BE5E920012B737 /* UAInAppAutomationTest.m */; };
+		6EB11C872697ACBF00DC698F /* ContactOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB11C862697ACBF00DC698F /* ContactOperation.swift */; };
+		6EB11C892697AF5600DC698F /* TagGroupUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB11C882697AF5600DC698F /* TagGroupUpdate.swift */; };
+		6EB11C8B2697AFC700DC698F /* AttributeUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB11C8A2697AFC700DC698F /* AttributeUpdate.swift */; };
+		6EB11C8D2698C50F00DC698F /* AudienceUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB11C8C2698C50F00DC698F /* AudienceUtils.swift */; };
 		6EB4E4C02549F9BF00E3FFD0 /* Network.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EB4E4A32549F95200E3FFD0 /* Network.framework */; };
 		6EB4E4C12549F9C500E3FFD0 /* Network.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EB4E4BE2549F9B900E3FFD0 /* Network.framework */; };
 		6EB4E656254C890900E3FFD0 /* UATaskManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB4E655254C890800E3FFD0 /* UATaskManagerTest.m */; };
@@ -1144,6 +1148,29 @@
 		6EC32283254FC65800EA5B38 /* NSObject+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EC32280254FC65800EA5B38 /* NSObject+UAAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6EC32284254FC65800EA5B38 /* NSObject+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EC32280254FC65800EA5B38 /* NSObject+UAAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6EC74C2C234BF223003AF4C6 /* UARemoteConfigDisableInfoTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EC74C2B234BF223003AF4C6 /* UARemoteConfigDisableInfoTest.m */; };
+		6EC7E469269E0E340038CFDD /* TagGroupUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB11C882697AF5600DC698F /* TagGroupUpdate.swift */; };
+		6EC7E46A269E0E370038CFDD /* AttributeUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB11C8A2697AFC700DC698F /* AttributeUpdate.swift */; };
+		6EC7E46B269E0E3E0038CFDD /* AudienceUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB11C8C2698C50F00DC698F /* AudienceUtils.swift */; };
+		6EC7E46C269E0E3E0038CFDD /* ContactOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB11C862697ACBF00DC698F /* ContactOperation.swift */; };
+		6EC7E46E269E2A4C0038CFDD /* AttributeEditorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC7E46D269E2A4C0038CFDD /* AttributeEditorTest.swift */; };
+		6EC7E470269E33290038CFDD /* TagGroupsEditorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC7E46F269E33290038CFDD /* TagGroupsEditorTest.swift */; };
+		6EC7E472269E51030038CFDD /* AttributeUpdateTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC7E471269E51030038CFDD /* AttributeUpdateTest.swift */; };
+		6EC7E474269E52600038CFDD /* ContactOperationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC7E473269E52600038CFDD /* ContactOperationTest.swift */; };
+		6EC7E47626A5EE910038CFDD /* AudienceUtilsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC7E47526A5EE910038CFDD /* AudienceUtilsTest.swift */; };
+		6EC7E47826A604080038CFDD /* ContactTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC7E47726A604080038CFDD /* ContactTest.swift */; };
+		6EC7E47C26A6060E0038CFDD /* TaskManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC7E47B26A6060E0038CFDD /* TaskManagerProtocol.swift */; };
+		6EC7E47D26A607210038CFDD /* TestTaskManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC7E47926A6057C0038CFDD /* TestTaskManager.swift */; };
+		6EC7E48026A60BF30038CFDD /* TaskManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC7E47B26A6060E0038CFDD /* TaskManagerProtocol.swift */; };
+		6EC7E48226A60C060038CFDD /* AirshipChannelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC7E48126A60C060038CFDD /* AirshipChannelProtocol.swift */; };
+		6EC7E48326A60C060038CFDD /* AirshipChannelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC7E48126A60C060038CFDD /* AirshipChannelProtocol.swift */; };
+		6EC7E48526A60CDF0038CFDD /* TestChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC7E48426A60CDF0038CFDD /* TestChannel.swift */; };
+		6EC7E48726A60DD60038CFDD /* TestContactAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC7E48626A60DD60038CFDD /* TestContactAPIClient.swift */; };
+		6EC7E48A26A738670038CFDD /* ContactConflictDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC7E48926A738670038CFDD /* ContactConflictDelegate.swift */; };
+		6EC7E48B26A738670038CFDD /* ContactConflictDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC7E48926A738670038CFDD /* ContactConflictDelegate.swift */; };
+		6EC7E48D26A738C80038CFDD /* ContactData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC7E48C26A738C70038CFDD /* ContactData.swift */; };
+		6EC7E48E26A738C80038CFDD /* ContactData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC7E48C26A738C70038CFDD /* ContactData.swift */; };
+		6EC7E49026A739890038CFDD /* JsonValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC7E48F26A739890038CFDD /* JsonValue.swift */; };
+		6EC7E49126A739890038CFDD /* JsonValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC7E48F26A739890038CFDD /* JsonValue.swift */; };
 		6ED3C04520081013002A746B /* UAInAppMessageCustomDisplayContentTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ED3C04420081013002A746B /* UAInAppMessageCustomDisplayContentTest.m */; };
 		6EE6529122A7E2DA00F7D54D /* UAInAppMessageHTMLStyleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EE6529022A7E2DA00F7D54D /* UAInAppMessageHTMLStyleTest.m */; };
 		6EE6529322A7E3B800F7D54D /* Valid-UAInAppMessageHTMLStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6EE6529222A7E3B800F7D54D /* Valid-UAInAppMessageHTMLStyle.plist */; };
@@ -2262,6 +2289,10 @@
 		6EA734B824BE5E920012B737 /* UAInAppAutomationTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppAutomationTest.m; sourceTree = "<group>"; };
 		6EADE7001FA8FA0D0007F924 /* UAAutomationEngine+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAAutomationEngine+Internal.h"; sourceTree = "<group>"; };
 		6EADE7011FA8FA0E0007F924 /* UAAutomationEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAutomationEngine.m; sourceTree = "<group>"; };
+		6EB11C862697ACBF00DC698F /* ContactOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactOperation.swift; sourceTree = "<group>"; };
+		6EB11C882697AF5600DC698F /* TagGroupUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagGroupUpdate.swift; sourceTree = "<group>"; };
+		6EB11C8A2697AFC700DC698F /* AttributeUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributeUpdate.swift; sourceTree = "<group>"; };
+		6EB11C8C2698C50F00DC698F /* AudienceUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudienceUtils.swift; sourceTree = "<group>"; };
 		6EB4E4A32549F95200E3FFD0 /* Network.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Network.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/Network.framework; sourceTree = DEVELOPER_DIR; };
 		6EB4E4BE2549F9B900E3FFD0 /* Network.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Network.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS14.0.sdk/System/Library/Frameworks/Network.framework; sourceTree = DEVELOPER_DIR; };
 		6EB4E655254C890800E3FFD0 /* UATaskManagerTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UATaskManagerTest.m; sourceTree = "<group>"; };
@@ -2271,6 +2302,20 @@
 		6EC74C25234BD10D003AF4C6 /* UAInAppMessagingTagGroupsConfig+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessagingTagGroupsConfig+Internal.h"; sourceTree = "<group>"; };
 		6EC74C26234BD10D003AF4C6 /* UAInAppMessagingTagGroupsConfig.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessagingTagGroupsConfig.m; sourceTree = "<group>"; };
 		6EC74C2B234BF223003AF4C6 /* UARemoteConfigDisableInfoTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UARemoteConfigDisableInfoTest.m; sourceTree = "<group>"; };
+		6EC7E46D269E2A4C0038CFDD /* AttributeEditorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributeEditorTest.swift; sourceTree = "<group>"; };
+		6EC7E46F269E33290038CFDD /* TagGroupsEditorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagGroupsEditorTest.swift; sourceTree = "<group>"; };
+		6EC7E471269E51030038CFDD /* AttributeUpdateTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributeUpdateTest.swift; sourceTree = "<group>"; };
+		6EC7E473269E52600038CFDD /* ContactOperationTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactOperationTest.swift; sourceTree = "<group>"; };
+		6EC7E47526A5EE910038CFDD /* AudienceUtilsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudienceUtilsTest.swift; sourceTree = "<group>"; };
+		6EC7E47726A604080038CFDD /* ContactTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactTest.swift; sourceTree = "<group>"; };
+		6EC7E47926A6057C0038CFDD /* TestTaskManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestTaskManager.swift; sourceTree = "<group>"; };
+		6EC7E47B26A6060E0038CFDD /* TaskManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskManagerProtocol.swift; sourceTree = "<group>"; };
+		6EC7E48126A60C060038CFDD /* AirshipChannelProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipChannelProtocol.swift; sourceTree = "<group>"; };
+		6EC7E48426A60CDF0038CFDD /* TestChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestChannel.swift; sourceTree = "<group>"; };
+		6EC7E48626A60DD60038CFDD /* TestContactAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestContactAPIClient.swift; sourceTree = "<group>"; };
+		6EC7E48926A738670038CFDD /* ContactConflictDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactConflictDelegate.swift; sourceTree = "<group>"; };
+		6EC7E48C26A738C70038CFDD /* ContactData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactData.swift; sourceTree = "<group>"; };
+		6EC7E48F26A739890038CFDD /* JsonValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonValue.swift; sourceTree = "<group>"; };
 		6ECEBF5421C452A300FAAB08 /* UAScheduleDataMigrator+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAScheduleDataMigrator+Internal.h"; sourceTree = "<group>"; };
 		6ECEBF5521C452A300FAAB08 /* UAScheduleDataMigrator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAScheduleDataMigrator.m; sourceTree = "<group>"; };
 		6ED3C03A200801C4002A746B /* UAInAppMessageCustomDisplayContent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAInAppMessageCustomDisplayContent.h; sourceTree = "<group>"; };
@@ -3595,6 +3640,7 @@
 				6E698E11267A98AB00654DB2 /* UAChannelAPIClient.swift */,
 				6E698E14267A98BE00654DB2 /* UAChannelCreateResponse.swift */,
 				6E1892DD2694F1C100417887 /* UAChannelRegistrar.swift */,
+				6EC7E48126A60C060038CFDD /* AirshipChannelProtocol.swift */,
 			);
 			name = Channel;
 			sourceTree = "<group>";
@@ -3611,10 +3657,17 @@
 			isa = PBXGroup;
 			children = (
 				6E698E3B267BEDC300654DB2 /* AttributesEditor.swift */,
+				6E698E3C267BEDC300654DB2 /* TagGroupsEditor.swift */,
 				A67F87D1268DECCE00EF5F43 /* ContactAPIClient.swift */,
 				A67F87D4268E07E800EF5F43 /* ContactAPIResponse.swift */,
+				6EB11C862697ACBF00DC698F /* ContactOperation.swift */,
+				6EB11C882697AF5600DC698F /* TagGroupUpdate.swift */,
+				6EB11C8A2697AFC700DC698F /* AttributeUpdate.swift */,
+				6EC7E48F26A739890038CFDD /* JsonValue.swift */,
+				6EB11C8C2698C50F00DC698F /* AudienceUtils.swift */,
+				6EC7E48926A738670038CFDD /* ContactConflictDelegate.swift */,
+				6EC7E48C26A738C70038CFDD /* ContactData.swift */,
 				6E698E3A267BEDC300654DB2 /* Contact.swift */,
-				6E698E3C267BEDC300654DB2 /* TagGroupsEditor.swift */,
 				6E4114A72538C0A600FEE4E8 /* UANamedUser.h */,
 				6E4117252538C1ED00FEE4E8 /* UANamedUser.m */,
 				6E4116DA2538C1E600FEE4E8 /* UANamedUser+Internal.h */,
@@ -4411,6 +4464,7 @@
 				6E8BF44D26852E4B009A8BD4 /* UATaskManager.swift */,
 				6E8BF44E26852E4B009A8BD4 /* UATaskRequest.swift */,
 				6E8BF44C26852E4A009A8BD4 /* UATaskRequestOptions.swift */,
+				6EC7E47B26A6060E0038CFDD /* TaskManagerProtocol.swift */,
 			);
 			name = Tasks;
 			sourceTree = "<group>";
@@ -4514,6 +4568,12 @@
 			isa = PBXGroup;
 			children = (
 				A6CDD8CF269491BE0040A673 /* ContactAPIClientTest.swift */,
+				6EC7E46D269E2A4C0038CFDD /* AttributeEditorTest.swift */,
+				6EC7E46F269E33290038CFDD /* TagGroupsEditorTest.swift */,
+				6EC7E471269E51030038CFDD /* AttributeUpdateTest.swift */,
+				6EC7E473269E52600038CFDD /* ContactOperationTest.swift */,
+				6EC7E47526A5EE910038CFDD /* AudienceUtilsTest.swift */,
+				6EC7E47726A604080038CFDD /* ContactTest.swift */,
 			);
 			name = Contacts;
 			sourceTree = "<group>";
@@ -4554,6 +4614,9 @@
 				6E6ED1442683BC7F00A2CBD0 /* TestDispatcher.swift */,
 				6E6ED16F2683F14B00A2CBD0 /* TestSystemVersion.swift */,
 				6E6ED171268448EC00A2CBD0 /* TestNetworkMonitor.swift */,
+				6EC7E47926A6057C0038CFDD /* TestTaskManager.swift */,
+				6EC7E48426A60CDF0038CFDD /* TestChannel.swift */,
+				6EC7E48626A60DD60038CFDD /* TestContactAPIClient.swift */,
 			);
 			name = TestUtils;
 			sourceTree = "<group>";
@@ -6427,11 +6490,14 @@
 				6E698E06267A7D5300654DB2 /* UARemoteDataResponse.swift in Sources */,
 				6E4119A32538C20100FEE4E8 /* UAAttributeRegistrar.m in Sources */,
 				6E411AFF2538C20700FEE4E8 /* UANotificationResponse.m in Sources */,
+				6EC7E48226A60C060038CFDD /* AirshipChannelProtocol.swift in Sources */,
 				A6B483EB25ADE8AA00550305 /* UARemoteConfig.m in Sources */,
 				6E4119972538C20100FEE4E8 /* UANotificationCategory.m in Sources */,
 				6E4118432538C1FC00FEE4E8 /* UAWalletAction.m in Sources */,
+				6EB11C8D2698C50F00DC698F /* AudienceUtils.swift in Sources */,
 				6E4118F72538C1FF00FEE4E8 /* UARemoteDataStorePayload.m in Sources */,
 				6E4118FB2538C1FF00FEE4E8 /* UAJSONValueMatcher.m in Sources */,
+				6EC7E49026A739890038CFDD /* JsonValue.swift in Sources */,
 				6E698DFE267A78CA00654DB2 /* UARequest.swift in Sources */,
 				6E411AA72538C20500FEE4E8 /* UARuntimeConfig.m in Sources */,
 				6E411AB32538C20500FEE4E8 /* UAModifyTagsAction.m in Sources */,
@@ -6492,6 +6558,7 @@
 				6E91B44026868C3400DDB1A8 /* UARegionEvent.swift in Sources */,
 				6E4119E32538C20200FEE4E8 /* UARemoteDataManager.m in Sources */,
 				6E411AD32538C20600FEE4E8 /* NSString+UALocalizationAdditions.m in Sources */,
+				6EB11C8B2697AFC700DC698F /* AttributeUpdate.swift in Sources */,
 				6E411AC72538C20600FEE4E8 /* UAFetchDeviceInfoActionPredicate.m in Sources */,
 				6E91B4692689327D00DDB1A8 /* UACustomEvent.swift in Sources */,
 				6E91B4612689092F00DDB1A8 /* UAInstallAttributionEvent.swift in Sources */,
@@ -6525,6 +6592,7 @@
 				6E698E03267A799500654DB2 /* UAirshipErrors.swift in Sources */,
 				6E698E3F267BEDC300654DB2 /* AttributesEditor.swift in Sources */,
 				6E698DFC267A78CA00654DB2 /* UAHTTPResponse.swift in Sources */,
+				6EB11C892697AF5600DC698F /* TagGroupUpdate.swift in Sources */,
 				6E41199B2538C20100FEE4E8 /* UAOpenExternalURLAction.m in Sources */,
 				6E4119672538C20000FEE4E8 /* UAPush.m in Sources */,
 				6E4118EF2538C1FE00FEE4E8 /* UAAggregateActionResult.m in Sources */,
@@ -6538,6 +6606,7 @@
 				6E411E6C2538F4C700FEE4E8 /* UAActionArguments.m in Sources */,
 				6E91B44226868C3400DDB1A8 /* UAProximityRegion.swift in Sources */,
 				A615E22C2652B014004FA211 /* UNNotificationContent+UAAdditions.m in Sources */,
+				6EC7E47C26A6060E0038CFDD /* TaskManagerProtocol.swift in Sources */,
 				6E4119AF2538C20200FEE4E8 /* UATagGroups.m in Sources */,
 				6E411B0B2538C20700FEE4E8 /* UAURLAllowList.m in Sources */,
 				6E411A672538C20400FEE4E8 /* UAJavaScriptCommand.m in Sources */,
@@ -6549,6 +6618,7 @@
 				6E4118732538C1FD00FEE4E8 /* UAPendingTagGroupStore.m in Sources */,
 				6E698E00267A78CA00654DB2 /* UARequestSession.swift in Sources */,
 				6E8BF45126852E4B009A8BD4 /* UATaskRequestOptions.swift in Sources */,
+				6EC7E48D26A738C80038CFDD /* ContactData.swift in Sources */,
 				6E411A5B2538C20400FEE4E8 /* UAJSONPredicate.m in Sources */,
 				6E91B45226883B6E00DDB1A8 /* UAAppExitEvent.swift in Sources */,
 				6E411AAB2538C20500FEE4E8 /* UAChannel.m in Sources */,
@@ -6571,6 +6641,7 @@
 				6E952926268B8F6600398B54 /* UAAssociatedIdentifiers.swift in Sources */,
 				6E411A4F2538C20400FEE4E8 /* UATagGroupsMutation.m in Sources */,
 				6E4118BB2538C1FE00FEE4E8 /* UAJSONMatcher.m in Sources */,
+				6EB11C872697ACBF00DC698F /* ContactOperation.swift in Sources */,
 				6E4117FB2538C1FB00FEE4E8 /* UAColorUtils.m in Sources */,
 				6E4117E32538C1FB00FEE4E8 /* UAAttributePendingMutations.m in Sources */,
 				6E411A0F2538C20300FEE4E8 /* UAAddTagsAction.m in Sources */,
@@ -6581,6 +6652,7 @@
 				6E41186B2538C1FD00FEE4E8 /* NSString+UAURLEncoding.m in Sources */,
 				6E4117EB2538C1FB00FEE4E8 /* UASwizzler.m in Sources */,
 				6E91B44E26883B6E00DDB1A8 /* UAAppBackgroundEvent.swift in Sources */,
+				6EC7E48A26A738670038CFDD /* ContactConflictDelegate.swift in Sources */,
 				6E41198F2538C20100FEE4E8 /* UAEnableFeatureAction.m in Sources */,
 				A67F87D2268DECCE00EF5F43 /* ContactAPIClient.swift in Sources */,
 				6E6ED13B2683A58D00A2CBD0 /* UADispatcher.swift in Sources */,
@@ -6865,6 +6937,7 @@
 				9987672A1FBE6B4200197AF4 /* UAInAppMessageBannerDisplayContentTest.m in Sources */,
 				6E746507235FA9B6000BF09C /* UAMessageCenterTest.m in Sources */,
 				3C07645825EDEDEE007F425C /* UAStateOverridesTest.m in Sources */,
+				6EC7E47D26A607210038CFDD /* TestTaskManager.swift in Sources */,
 				3230E60B24D04C75002C344D /* UAInAppAudienceHistorianTest.m in Sources */,
 				3C3DAA0C22EF9ABC00202570 /* UAChannelTest.m in Sources */,
 				991A94691FCF2CEF00B57D24 /* UAInAppMessageMediaInfoTest.m in Sources */,
@@ -6872,9 +6945,11 @@
 				CC64F1081D8B781C009CEF27 /* UAirshipTest.m in Sources */,
 				459D4051209245E500C40E2D /* UAInAppMessageBannerStyleTest.m in Sources */,
 				DF0C1B29244E562B0011ACCA /* UAAirshipBaseTest.m in Sources */,
+				6EC7E46E269E2A4C0038CFDD /* AttributeEditorTest.swift in Sources */,
 				6E598D862003F014005B234B /* UAInAppMessageResolutionEventTest.m in Sources */,
 				6EE6529122A7E2DA00F7D54D /* UAInAppMessageHTMLStyleTest.m in Sources */,
 				A604DB7E25597F85001ADCA8 /* UASearchEventTemplateTest.m in Sources */,
+				6EC7E470269E33290038CFDD /* TagGroupsEditorTest.swift in Sources */,
 				CC64F1031D8B781C009CEF27 /* UAInboxMessageListTest.m in Sources */,
 				CC64F1201D8B781C009CEF27 /* UAScheduleActionTests.m in Sources */,
 				DFB1EA2022275AF100CDBD7E /* UAInAppMessageAssetsTest.m in Sources */,
@@ -6887,6 +6962,8 @@
 				CC64F0E91D8B781C009CEF27 /* UAAutoIntegrationTest.m in Sources */,
 				3C2C53C524ECB43F009D45D0 /* UADeferredScheduleAPIClientTest.m in Sources */,
 				DF147BE321B89A9A00506D3D /* UAScheduleDataMigratorTest.m in Sources */,
+				6EC7E474269E52600038CFDD /* ContactOperationTest.swift in Sources */,
+				6EC7E47626A5EE910038CFDD /* AudienceUtilsTest.swift in Sources */,
 				DF96667D1FB526A000CC243C /* UARemoteConfigManagerTest.m in Sources */,
 				6E5062B424E23FB100689C6D /* UAInAppMessageScheduleTests.m in Sources */,
 				DF7E22BC1ED63E9200C79C46 /* UAProjectValidationTest.swift in Sources */,
@@ -6914,14 +6991,18 @@
 				457EDBF0234D685500700FF8 /* UAAttributeRegistrarTest.m in Sources */,
 				3C927F8123A425F0003C5FC8 /* UAUIKitStateTrackerAdapterTest.m in Sources */,
 				CC64F0E31D8B781C009CEF27 /* UAAnalyticsTest.m in Sources */,
+				6EC7E48526A60CDF0038CFDD /* TestChannel.swift in Sources */,
 				CC64F12D1D8B781C009CEF27 /* UAURLAllowListTest.m in Sources */,
 				A6CDD8D0269491BE0040A673 /* ContactAPIClientTest.swift in Sources */,
 				6E18E6EF23207B57004E09DF /* UAInAppMessageSceneManagerTest.m in Sources */,
+				6EC7E48726A60DD60038CFDD /* TestContactAPIClient.swift in Sources */,
 				CC64F10D1D8B781C009CEF27 /* UALandingPageActionTest.m in Sources */,
 				6E6ED1452683BC7F00A2CBD0 /* TestDispatcher.swift in Sources */,
 				6E2178A425F72B7700E1EFAA /* UARemoteConfigURLManagerTest.m in Sources */,
 				CC64F1151D8B781C009CEF27 /* UANotificationCategoriesTest.m in Sources */,
 				6E65D53C2396DED400AF2D1A /* UARateAppActionTest.m in Sources */,
+				6EC7E47826A604080038CFDD /* ContactTest.swift in Sources */,
+				6EC7E472269E51030038CFDD /* AttributeUpdateTest.swift in Sources */,
 				CC64F1121D8B781C009CEF27 /* UANamedUserAPIClientTest.m in Sources */,
 				6E698E62267C03C700654DB2 /* TestAppStateTracker.swift in Sources */,
 				CC64F0E81D8B781C009CEF27 /* UAAssociateIdentifiersEventTest.m in Sources */,
@@ -7002,7 +7083,9 @@
 				6E4118442538C1FC00FEE4E8 /* UAWalletAction.m in Sources */,
 				6E4118F82538C1FF00FEE4E8 /* UARemoteDataStorePayload.m in Sources */,
 				6E4118FC2538C1FF00FEE4E8 /* UAJSONValueMatcher.m in Sources */,
+				6EC7E48326A60C060038CFDD /* AirshipChannelProtocol.swift in Sources */,
 				6E698DFF267A78CA00654DB2 /* UARequest.swift in Sources */,
+				6EC7E49126A739890038CFDD /* JsonValue.swift in Sources */,
 				6E411AA82538C20500FEE4E8 /* UARuntimeConfig.m in Sources */,
 				6E411AB42538C20500FEE4E8 /* UAModifyTagsAction.m in Sources */,
 				6E4119B42538C20200FEE4E8 /* UAShareAction.m in Sources */,
@@ -7020,6 +7103,7 @@
 				6E4119C42538C20200FEE4E8 /* UANativeBridge.m in Sources */,
 				6E411A8C2538C20500FEE4E8 /* UAPadding.m in Sources */,
 				6E41191C2538C1FF00FEE4E8 /* UANamedUser.m in Sources */,
+				6EC7E46A269E0E370038CFDD /* AttributeUpdate.swift in Sources */,
 				6E411A082538C20300FEE4E8 /* UANotificationContent.m in Sources */,
 				6E4118F42538C1FF00FEE4E8 /* UAVersionMatcher.m in Sources */,
 				6E411A442538C20400FEE4E8 /* UARemoveTagsAction.m in Sources */,
@@ -7043,6 +7127,7 @@
 				6E952924268B812000398B54 /* UAAccountEventTemplate.swift in Sources */,
 				6E91B45C268904D900DDB1A8 /* UAPushReceivedEvent.swift in Sources */,
 				6E411ADC2538C20600FEE4E8 /* UAConfig.m in Sources */,
+				6EC7E469269E0E340038CFDD /* TagGroupUpdate.swift in Sources */,
 				6E698E3E267BEDC300654DB2 /* Contact.swift in Sources */,
 				6E411B202538C20700FEE4E8 /* UAShareActionPredicate.m in Sources */,
 				6E411CB02538C6A600FEE4E8 /* UAEvents.xcdatamodeld in Sources */,
@@ -7075,6 +7160,7 @@
 				6E41181C2538C1FC00FEE4E8 /* UAAPNSRegistration.m in Sources */,
 				6E6ED1582683DBC300A2CBD0 /* UAViewUtils.swift in Sources */,
 				6E698E5A267BF63B00654DB2 /* UAAppStateTracker.swift in Sources */,
+				6EC7E46B269E0E3E0038CFDD /* AudienceUtils.swift in Sources */,
 				6E91B45526883B6E00DDB1A8 /* UAAppForegroundEvent.swift in Sources */,
 				6E698E0A267A7DD900654DB2 /* UARemoteDataAPIClient.swift in Sources */,
 				6E698E37267BEC4500654DB2 /* UACompression.m in Sources */,
@@ -7105,6 +7191,7 @@
 				6E698E31267BCC1500654DB2 /* UANamedUserAPIClient.swift in Sources */,
 				6E4119482538C20000FEE4E8 /* UAURLActionPredicate.m in Sources */,
 				6E698E16267A98BE00654DB2 /* UAChannelCreateResponse.swift in Sources */,
+				6EC7E48026A60BF30038CFDD /* TaskManagerProtocol.swift in Sources */,
 				6E6ED1382683A58D00A2CBD0 /* UADelay.swift in Sources */,
 				6E411EA82538F4D100FEE4E8 /* UAActionRegistry.m in Sources */,
 				6E91B44326868C3400DDB1A8 /* UAProximityRegion.swift in Sources */,
@@ -7114,10 +7201,12 @@
 				6E4119E82538C20200FEE4E8 /* UAAnalytics.m in Sources */,
 				6E411EAB2538F4D100FEE4E8 /* UAActionResult.m in Sources */,
 				6E6ED1682683DBC300A2CBD0 /* UACoreData.swift in Sources */,
+				6EC7E46C269E0E3E0038CFDD /* ContactOperation.swift in Sources */,
 				6E6ED14A2683D8E200A2CBD0 /* UALocaleManager.swift in Sources */,
 				6E6ED16A2683DBC300A2CBD0 /* UANetworkMonitor.swift in Sources */,
 				6E411CAC2538C6A600FEE4E8 /* UARemoteData.xcdatamodeld in Sources */,
 				6E4118742538C1FD00FEE4E8 /* UAPendingTagGroupStore.m in Sources */,
+				6EC7E48E26A738C80038CFDD /* ContactData.swift in Sources */,
 				6E698E01267A78CA00654DB2 /* UARequestSession.swift in Sources */,
 				6E411A5C2538C20400FEE4E8 /* UAJSONPredicate.m in Sources */,
 				6E91B45326883B6E00DDB1A8 /* UAAppExitEvent.swift in Sources */,
@@ -7151,6 +7240,7 @@
 				6E4118A82538C1FE00FEE4E8 /* UATextInputNotificationAction.m in Sources */,
 				6E41186C2538C1FD00FEE4E8 /* NSString+UAURLEncoding.m in Sources */,
 				6E91B44F26883B6E00DDB1A8 /* UAAppBackgroundEvent.swift in Sources */,
+				6EC7E48B26A738670038CFDD /* ContactConflictDelegate.swift in Sources */,
 				6E4117EC2538C1FB00FEE4E8 /* UASwizzler.m in Sources */,
 				A67F87D3268DECCE00EF5F43 /* ContactAPIClient.swift in Sources */,
 				6E6ED13C2683A58D00A2CBD0 /* UADispatcher.swift in Sources */,

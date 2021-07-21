@@ -2,11 +2,10 @@
 
 import UIKit
 
-/**
- * @note For internal use only. :nodoc:
- */
+
+// NOTE: For internal use only. :nodoc:
 @objc
-public class UATaskManager : NSObject {
+public class UATaskManager : NSObject, TaskManagerProtocol {
 
     private static let initialBackOff = 30.0
     private static let maxBackOff = 120.0

@@ -124,7 +124,7 @@ public class AirshipLogger : NSObject {
             return
         }
         
-        guard self.logLevel.rawValue <= UALogLevel.none.rawValue else {
+        guard self.logLevel.rawValue > UALogLevel.none.rawValue else {
             return
         }
 

@@ -7,35 +7,73 @@ import Foundation
  */
 @objc(UATagGroupsEdiitor)
 public class TagGroupsEditor: NSObject {
+    
+    private var tagUpdates : [TagGroupUpdate] = []
+    private var allowDeviceTagGroup = false
+    private let completionHandler : ([TagGroupUpdate]) -> Void
 
+    
+    init(allowDeviceTagGroup : Bool, completionHandler: @escaping ([TagGroupUpdate]) -> Void) {
+        self.allowDeviceTagGroup = allowDeviceTagGroup
+        self.completionHandler = completionHandler
+        super.init()
+    }
+    
+    convenience init(completionHandler: @escaping ([TagGroupUpdate]) -> Void) {
+        self.init(allowDeviceTagGroup: false, completionHandler: completionHandler)
+    }
+    
     /**
      * Adds tags to the given group.
-     * @param tags The tags.
-     * @param group The group.
+     * - Parameters:
+     *   - tags: The tags.
+     *   - group: The tag group.
      */
     @objc(addTags:group:)
-    public func add(_ tags: Array<String>, group: String) {
-
+    public func add(_ tags: [String], group: String) {
+        let group = normalize(group: group)
+        let tags = normalize(tags: tags)
+        
+        guard isValid(group: group) else { return }
+        guard !tags.isEmpty else { return }
+        
+        let update = TagGroupUpdate(group: group, tags: tags, type: .add)
+        tagUpdates.append(update)
     }
 
     /**
      * Removes tags from the given group.
-     * @param tags The tags.
-     * @param group The group.
+     * - Parameters:
+     *   - tags: The tags.
+     *   - group: The tag group.
      */
     @objc(removeTags:group:)
-    public func remove(_ tags: Array<String>, group: String) {
+    public func remove(_ tags: [String], group: String) {
+        let group = normalize(group: group)
+        let tags = normalize(tags: tags)
 
+        guard isValid(group: group) else { return }
+        guard !tags.isEmpty else { return }
+        
+        let update = TagGroupUpdate(group: group, tags: tags, type: .remove)
+        tagUpdates.append(update)
     }
 
     /**
      * Sets tags on the given group.
-     * @param tags The tags.
-     * @param group The group.
+     * - Parameters:
+     *   - tags: The tags.
+     *   - group: The tag group.
      */
     @objc(setTags:group:)
-    public func set(_ tags: Array<String>, group: String) {
+    public func set(_ tags: [String], group: String) {
+        let group = normalize(group: group)
+        let tags = normalize(tags: tags)
 
+        guard isValid(group: group) else { return }
+        
+        let update = TagGroupUpdate(group: group, tags: tags, type: .set)
+        tagUpdates.append(update)
     }
 
     /**
@@ -43,6 +81,36 @@ public class TagGroupsEditor: NSObject {
      */
     @objc
     public func apply() {
-
+        self.completionHandler(tagUpdates)
+        tagUpdates.removeAll()
+    }
+    
+    private func isValid(group: String) -> Bool {
+        guard !group.isEmpty else {
+            AirshipLogger.error("Invalid tag group \(group)")
+            return false
+        }
+        
+        if (group == "ua_device" && !allowDeviceTagGroup) {
+            AirshipLogger.error("Unable to modify device tag group")
+            return false
+        }
+        
+        return true
+    }
+    
+    private func normalize(tags: [String]) -> [String] {
+        return tags.compactMap { tag in
+            let trimmed = tag.trimmingCharacters(in: .whitespacesAndNewlines)
+            if (trimmed.isEmpty || trimmed.count > 128) {
+                AirshipLogger.error("Tag \(trimmed) must be between 1-128 characters. Ignoring")
+                return nil
+            }
+            return trimmed
+        }
+    }
+    
+    private func normalize(group: String) -> String {
+        return group.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }

@@ -2,11 +2,26 @@
 
 import Foundation
 
-/**
- * @note For internal use only. :nodoc:
- */
+// NOTE: For internal use only. :nodoc:
+protocol ContactsAPIClientProtocol {
+    @discardableResult
+    func resolve(channelID: String, completionHandler: @escaping (ContactAPIResponse?, Error?) -> Void) -> UADisposable
 
-class ContactAPIClient : NSObject {
+    @discardableResult
+    func identify(channelID: String, namedUserID: String, contactID: String?, completionHandler: @escaping (ContactAPIResponse?, Error?) -> Void) -> UADisposable
+    
+    @discardableResult
+    func reset(channelID: String, completionHandler: @escaping (ContactAPIResponse?, Error?) -> Void) -> UADisposable
+    
+    @discardableResult
+    func update(identifier: String,
+                tagGroupUpdates: [TagGroupUpdate]?,
+                attributeUpdates: [AttributeUpdate]?,
+                completionHandler: @escaping (UAHTTPResponse?, Error?) -> Void) -> UADisposable
+}
+
+// NOTE: For internal use only. :nodoc:
+class ContactAPIClient : ContactsAPIClientProtocol {
     private static let path = "/api/contacts"
 
     private static let channelIDKey = "channel_id"
@@ -20,7 +35,6 @@ class ContactAPIClient : NSObject {
     init(config: UARuntimeConfig, session: UARequestSession) {
         self.config = config
         self.session = session
-        super.init()
     }
 
     convenience init(config: UARuntimeConfig) {
@@ -174,14 +188,27 @@ class ContactAPIClient : NSObject {
     
     @discardableResult
     func update(identifier: String,
-                           attributeMutations: UAAttributePendingMutations,
-                           tagMutations: UATagGroupsMutation,
-                           completionHandler: @escaping (UAHTTPResponse?, Error?) -> Void) -> UADisposable {
+                tagGroupUpdates: [TagGroupUpdate]?,
+                attributeUpdates: [AttributeUpdate]?,
+                completionHandler: @escaping (UAHTTPResponse?, Error?) -> Void) -> UADisposable {
 
         AirshipLogger.debug("Updating contact with identifier \(identifier)")
 
-        let payload = attributeMutations.payload()?.merging(tagMutations.payload()) { $1 }
-        let request = self.request(payload ?? [:], "\(config.deviceAPIURL ?? "")/api/contacts/\(identifier)")
+        if (tagGroupUpdates?.isEmpty ?? true && attributeUpdates?.isEmpty ?? true) {
+            completionHandler(nil, AirshipErrors.error("Both tags & attributes are empty"))
+        }
+        
+        var payload: [String: Any] = [:]
+        
+        if let attributes = attributeUpdates {
+            payload["attributes"] = map(attributeUpdates: AudienceUtils.collapse(attributes))
+        }
+        
+        if let tags = tagGroupUpdates {
+            payload["tags"] = map(tagUpdates: AudienceUtils.collapse(tags))            
+        }
+        
+        let request = self.request(payload, "\(config.deviceAPIURL ?? "")/api/contacts/\(identifier)")
 
         return session.performHTTPRequest(request, completionHandler: { (data, response, error) in
             guard let response = response else {
@@ -206,4 +233,54 @@ class ContactAPIClient : NSObject {
             builder.body = try? UAJSONSerialization.data(withJSONObject: payload, options: [])
         })
     }
+    
+    private func map(attributeUpdates: [AttributeUpdate]) -> [[AnyHashable : Any]] {
+        return attributeUpdates.map { (attribute) -> ([AnyHashable : Any]) in
+            switch(attribute.type) {
+            case .set:
+                return [
+                    "action": "set",
+                    "key": attribute.attribute,
+                    "value": attribute.jsonValue!.value()!,
+                    "timestamp": UAUtils.isoDateFormatterUTCWithDelimiter().string(from: attribute.date)
+                ]
+            case .remove:
+                return [
+                    "action": "remove",
+                    "key": attribute.attribute,
+                    "timestamp": UAUtils.isoDateFormatterUTCWithDelimiter().string(from: attribute.date)
+                ]
+            }
+        }
+    }
+    
+    private func map(tagUpdates: [TagGroupUpdate]) -> [AnyHashable : Any] {
+        var tagsPayload : [String : [String: [String]]] = [:]
+        
+        AudienceUtils.collapse(tagUpdates).forEach { tagUpdate in
+            switch (tagUpdate.type) {
+            case .add:
+                if (tagsPayload["add"] == nil) {
+                    tagsPayload["add"] = [:]
+                }
+                tagsPayload["add"]?[tagUpdate.group] = tagUpdate.tags
+                break
+            case .remove:
+                if (tagsPayload["remove"] == nil) {
+                    tagsPayload["remove"] = [:]
+                }
+                tagsPayload["remove"]?[tagUpdate.group] = tagUpdate.tags
+                break
+            case .set:
+                if (tagsPayload["set"] == nil) {
+                    tagsPayload["set"] = [:]
+                }
+                tagsPayload["set"]?[tagUpdate.group] = tagUpdate.tags
+                break
+            }
+        }
+        
+        return tagsPayload
+    }
 }
+
