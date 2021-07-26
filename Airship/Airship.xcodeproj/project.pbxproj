@@ -1200,6 +1200,11 @@
 		A60A242C258D0D78006B7D80 /* UAAttributesActionPredicate.m in Sources */ = {isa = PBXBuildFile; fileRef = A60A242A258D0D77006B7D80 /* UAAttributesActionPredicate.m */; };
 		A60A243B258D0D7D006B7D80 /* UAAttributesActionPredicate.m in Sources */ = {isa = PBXBuildFile; fileRef = A60A242A258D0D77006B7D80 /* UAAttributesActionPredicate.m */; };
 		A60A2462258D0D82006B7D80 /* UAAttributesActionPredicate+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = A60A2429258D0D77006B7D80 /* UAAttributesActionPredicate+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A615178D26A0436E008A41C4 /* PreferenceCenterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A615178A26A0436E008A41C4 /* PreferenceCenterViewController.swift */; };
+		A615179126A07A66008A41C4 /* PreferenceCenterViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A615178E26A07A66008A41C4 /* PreferenceCenterViewController.xib */; };
+		A615179726A1C6DC008A41C4 /* PreferenceCenterCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A615179626A1C6DC008A41C4 /* PreferenceCenterCell.swift */; };
+		A61517A926A1E447008A41C4 /* PreferenceCenterResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61517A826A1E447008A41C4 /* PreferenceCenterResources.swift */; };
+		A61517AB26A6DC48008A41C4 /* PreferenceCenterCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A61517AA26A6DC48008A41C4 /* PreferenceCenterCell.xib */; };
 		A615E215264EAFB9004FA211 /* UAPrivacyManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A615E214264EAFB9004FA211 /* UAPrivacyManagerTest.m */; };
 		A67F87D2268DECCE00EF5F43 /* ContactAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67F87D1268DECCE00EF5F43 /* ContactAPIClient.swift */; };
 		A67F87D3268DECCE00EF5F43 /* ContactAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67F87D1268DECCE00EF5F43 /* ContactAPIClient.swift */; };
@@ -2387,6 +2392,11 @@
 		A60A23ED258CEBBE006B7D80 /* UAModifyAttributesActionTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAModifyAttributesActionTest.m; sourceTree = "<group>"; };
 		A60A2429258D0D77006B7D80 /* UAAttributesActionPredicate+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAAttributesActionPredicate+Internal.h"; path = "Internal/UAAttributesActionPredicate+Internal.h"; sourceTree = "<group>"; };
 		A60A242A258D0D77006B7D80 /* UAAttributesActionPredicate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAAttributesActionPredicate.m; path = Internal/UAAttributesActionPredicate.m; sourceTree = "<group>"; };
+		A615178A26A0436E008A41C4 /* PreferenceCenterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterViewController.swift; sourceTree = "<group>"; };
+		A615178E26A07A66008A41C4 /* PreferenceCenterViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PreferenceCenterViewController.xib; sourceTree = "<group>"; };
+		A615179626A1C6DC008A41C4 /* PreferenceCenterCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterCell.swift; sourceTree = "<group>"; };
+		A61517A826A1E447008A41C4 /* PreferenceCenterResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterResources.swift; sourceTree = "<group>"; };
+		A61517AA26A6DC48008A41C4 /* PreferenceCenterCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PreferenceCenterCell.xib; sourceTree = "<group>"; };
 		A615E214264EAFB9004FA211 /* UAPrivacyManagerTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAPrivacyManagerTest.m; sourceTree = "<group>"; };
 		A649F50A252F4F39005453CB /* UAInbox 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAInbox 2.xcdatamodel"; sourceTree = "<group>"; };
 		A67F87D1268DECCE00EF5F43 /* ContactAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactAPIClient.swift; sourceTree = "<group>"; };
@@ -4483,6 +4493,8 @@
 			isa = PBXGroup;
 			children = (
 				842EE1BD268128DD00F2BEF4 /* empty */,
+				A615178E26A07A66008A41C4 /* PreferenceCenterViewController.xib */,
+				A61517AA26A6DC48008A41C4 /* PreferenceCenterCell.xib */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -4495,6 +4507,9 @@
 				84483A67267CF0C000D0DA7D /* PreferenceCenter.swift */,
 				841E7D11268617C800EA0317 /* PreferenceCenterResponse.swift */,
 				6E1892D4268E3D8500417887 /* PreferenceCenterDecoder.swift */,
+				A615178A26A0436E008A41C4 /* PreferenceCenterViewController.swift */,
+				A615179626A1C6DC008A41C4 /* PreferenceCenterCell.swift */,
+				A61517A826A1E447008A41C4 /* PreferenceCenterResources.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -6080,7 +6095,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A615179126A07A66008A41C4 /* PreferenceCenterViewController.xib in Resources */,
 				842EE1BE268128DD00F2BEF4 /* empty in Resources */,
+				A61517AB26A6DC48008A41C4 /* PreferenceCenterCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6784,9 +6801,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A615178D26A0436E008A41C4 /* PreferenceCenterViewController.swift in Sources */,
 				6E1892CD268D17D200417887 /* MockRemoteDataProvider.swift in Sources */,
 				841E7D12268617C800EA0317 /* PreferenceCenterResponse.swift in Sources */,
 				6E1892D5268E3D8500417887 /* PreferenceCenterDecoder.swift in Sources */,
+				A615179726A1C6DC008A41C4 /* PreferenceCenterCell.swift in Sources */,
+				A61517A926A1E447008A41C4 /* PreferenceCenterResources.swift in Sources */,
 				847B0013267CE558007CD249 /* AirshipPreferenceCenterModuleLoader.swift in Sources */,
 				84483A68267CF0C000D0DA7D /* PreferenceCenter.swift in Sources */,
 			);

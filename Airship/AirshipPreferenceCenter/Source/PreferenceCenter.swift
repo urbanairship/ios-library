@@ -40,6 +40,8 @@ public class PreferenceCenter : UAComponent {
     private let privacyManager: UAPrivacyManager
     private let remoteDataProvider: UARemoteDataProvider
     
+    private var viewController : UIViewController?
+    
     init(dataStore: UAPreferenceDataStore, privacyManager: UAPrivacyManager, remoteDataProvider: UARemoteDataProvider) {
         self.dataStore = dataStore
         self.privacyManager = privacyManager
@@ -68,9 +70,47 @@ public class PreferenceCenter : UAComponent {
      * @param preferenceCenterId The ID of the preference center.
      */
     private func openDefaultPreferenceCenter(preferenceCenterId: String) {
+        guard viewController == nil else {
+            AirshipLogger.debug("Already displaying preference center: \(self.viewController!.description)")
+            return
+        }
+
+        AirshipLogger.debug("Opening default preference center UI")
+        let preferenceCenterVC = preferenceCenterViewController(preferenceCenterId: preferenceCenterId)
         
+        viewController = preferenceCenterVC
+
+        UAUtils.topController()?.present(preferenceCenterVC, animated: true, completion: {
+            AirshipLogger.trace("Presented preference center view controller: \(preferenceCenterVC.description)")
+        })
     }
 
+    private func preferenceCenterViewController(preferenceCenterId: String) -> UIViewController {
+        let navController = UINavigationController(nibName: nil, bundle: nil)
+
+        navController.modalTransitionStyle = UIModalTransitionStyle.crossDissolve
+        navController.modalPresentationStyle = UIModalPresentationStyle.fullScreen
+
+        let preferenceCenterVC = PreferenceCenterViewController.init(identifier:preferenceCenterId, nibName: "PreferenceCenterViewController", bundle: PreferenceCenterResources.bundle())
+
+        navController.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismiss))
+
+        navController.viewControllers.append(preferenceCenterVC)
+
+        return navController
+    }
+    
+    @objc private func dismiss(sender: Any) {
+        if let vc = viewController {
+            vc.dismiss(animated: true) {
+                AirshipLogger.trace("Dismissed preference center view controller: \(vc.description)")
+                self.viewController = nil
+            }
+        } else {
+            AirshipLogger.debug("Preference center already dismissed")
+        }
+    }
+    
     /**
      * Returns the configuration of the Preference Center with the given ID trough a callback method.
      * @param preferenceCenterID The ID of the Preference Center.
