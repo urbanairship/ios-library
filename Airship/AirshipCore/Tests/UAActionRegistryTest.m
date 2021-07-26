@@ -12,7 +12,6 @@
 @property (nonatomic, strong) UAActionRegistry *registry;
 @property (nonatomic, strong) id mockMetrics;
 @property (nonatomic, strong) id mockAirship;
-
 @end
 
 @implementation UAActionRegistryTest
@@ -37,8 +36,8 @@
  * Test registering an action
  */
 - (void)testRegisterAction {
-    UAAction *action = [[UAAction alloc] init];
-    UAAction *anotherAction = [[UAAction alloc] init];
+    UAEmptyAction *action = [[UAEmptyAction alloc] init];
+    UAEmptyAction *anotherAction = [[UAEmptyAction alloc] init];
 
     UAActionPredicate predicate = ^(UAActionArguments *args) { return YES; };
 
@@ -61,7 +60,7 @@
  */
 - (void)testRegisterActionClass {
 
-    Class actionClass = [UAAction class];
+    Class actionClass = [UAEmptyAction class];
     Class anotherActionClass = [UAAddTagsAction class];
 
     id<UAActionPredicateProtocol> predicate = [[[UATagsActionPredicate class] alloc] init];
@@ -88,7 +87,7 @@
  * Test registryEntryForName: returns a registry entry whose name or alias matches
  */
 - (void)testregistryEntryForName {
-    UAAction *action = [[UAAction alloc] init];
+    UAEmptyAction *action = [[UAEmptyAction alloc] init];
     [self.registry registerAction:action names:@[@"name", @"alias"]];
 
     XCTAssertNotNil([self.registry registryEntryWithName:@"name"], "RegistryEntry is not returning entries for names");
@@ -100,10 +99,10 @@
  * Test addSituationOverride to an entry
  */
 - (void)testSituationOverride {
-    UAAction *action = [[UAAction alloc] init];
+    UAEmptyAction *action = [[UAEmptyAction alloc] init];
     [self.registry registerAction:action names:@[@"name", @"alias"]];
 
-    UAAction *situationOverrideAction = [[UAAction alloc] init];
+    UAEmptyAction *situationOverrideAction = [[UAEmptyAction alloc] init];
     [self.registry addSituationOverride:UASituationForegroundPush forEntryWithName:@"alias" action:situationOverrideAction];
 
     UAActionRegistryEntry *entry = [self.registry registryEntryWithName:@"name"];
@@ -119,7 +118,7 @@
  * Test addSituationOverride for invalid values
  */
 - (void)testSituationOverrideInvalid {
-    UAAction *situationOverrideAction = [[UAAction alloc] init];
+    UAEmptyAction *situationOverrideAction = [[UAEmptyAction alloc] init];
 
     XCTAssertFalse([self.registry addSituationOverride:UASituationForegroundPush forEntryWithName:@"name" action:situationOverrideAction], @"Situation return NO if the registry for the name does not exist.");
 }
@@ -131,7 +130,7 @@
     UAActionPredicate yesPredicate = ^(UAActionArguments *args) { return YES; };
     UAActionPredicate noPredicate = ^(UAActionArguments *args) { return NO; };
 
-    UAAction *action = [[UAAction alloc] init];
+    UAEmptyAction *action = [[UAEmptyAction alloc] init];
     [self.registry registerAction:action name:@"name" predicate:yesPredicate];
 
     [self validateActionIsRegistered:action names:@[@"name"] predicate:yesPredicate];
@@ -149,8 +148,8 @@
  * Test updateAction with valid values
  */
 - (void)testUpdateAction {
-    UAAction *anotherAction = [[UAAction alloc] init];
-    UAAction *action = [[UAAction alloc] init];
+    UAEmptyAction *anotherAction = [[UAEmptyAction alloc] init];
+    UAEmptyAction *action = [[UAEmptyAction alloc] init];
 
     [self.registry registerAction:action name:@"name"];
 
@@ -162,7 +161,7 @@
  * Test updateActionClass
  */
 - (void)testUpdateActionClass {
-    Class actionClass = [UAAction class];
+    Class actionClass = [UAEmptyAction class];
     Class anotherActionClass = [UAAddTagsAction class];
 
     [self.registry registerActionClass:actionClass name:@"name"];
@@ -175,7 +174,7 @@
  * Test updateAction with invalid values
  */
 - (void)testUpdateActionInvalid {
-    UAAction *action = [[UAAction alloc] init];
+    UAEmptyAction *action = [[UAEmptyAction alloc] init];
     [self.registry registerAction:action name:@"name"];
 
     XCTAssertFalse([self.registry updateAction:action forEntryWithName:@"not-found"], @"Update action should return NO if the registry for the name does not exist.");
@@ -185,7 +184,7 @@
  * Test updateActionClass with invalid values
  */
 - (void)testUpdateActionClassInvalid {
-    Class actionClass = [UAAction class];
+    Class actionClass = [UAEmptyAction class];
     [self.registry registerActionClass:actionClass name:@"name"];
 
     XCTAssertFalse([self.registry updateActionClass:actionClass forEntryWithName:@"not-found"], @"Update action should return NO if the registry for the name does not exist.");
@@ -195,7 +194,7 @@
  * Test addName with valid values
  */
 - (void)testAddName {
-    UAAction *action = [[UAAction alloc] init];
+    UAEmptyAction *action = [[UAEmptyAction alloc] init];
 
     [self.registry registerAction:action name:@"name"];
 
@@ -208,7 +207,7 @@
  * Test addName with valid values
  */
 - (void)testAddNameLazyLoad {
-    Class actionClass = [UAAction class];
+    Class actionClass = [UAEmptyAction class];
 
     [self.registry registerActionClass:actionClass name:@"name"];
 
@@ -221,7 +220,7 @@
  * Test removeName with valid values
  */
 - (void)testRemoveName {
-    Class actionClass = [UAAction class];
+    Class actionClass = [UAEmptyAction class];
 
     [self.registry registerActionClass:actionClass names:@[@"name", @"anotherName"]];
 
@@ -236,7 +235,7 @@
  * Test removeEntry with valid values
  */
 - (void)testRemoveEntry {
-    UAAction *action = [[UAAction alloc] init];
+    UAEmptyAction *action = [[UAEmptyAction alloc] init];
 
     [self.registry registerAction:action names:@[@"name", @"anotherName"]];
 
@@ -250,7 +249,7 @@
  * Test removeEntry with valid values on a lazy loading action
  */
 - (void)testRemoveEntryLazyLoad {
-    [self.registry registerActionClass:[UAAction class] names:@[@"name", @"anotherName"]];
+    [self.registry registerActionClass:[UAEmptyAction class] names:@[@"name", @"anotherName"]];
 
     XCTAssertTrue([self.registry removeEntryWithName:@"name"], @"Should be able to remove an entry.");
     XCTAssertEqual((NSUInteger) 0, [self.registry.registeredEntries count], @"The entry should be dropped.");
@@ -262,7 +261,7 @@
  * Test registeredEntries
  */
 - (void)testRegisteredEntries {
-    UAAction *action = [[UAAction alloc] init];
+    UAEmptyAction *action = [[UAEmptyAction alloc] init];
     [self.registry registerAction:action names:@[@"name", @"anotherName"]];
     XCTAssertEqual((NSUInteger)1, [self.registry.registeredEntries count], @"Duplicate names should be ignored.");
 }
@@ -271,12 +270,12 @@
  * Test registeredEntries lazy loading actions
  */
 - (void)testRegisteredEntriesLazyLoad {
-    [self.registry registerActionClass:[UAAction class] names:@[@"name", @"anotherName"]];
+    [self.registry registerActionClass:[UAEmptyAction class] names:@[@"name", @"anotherName"]];
     XCTAssertEqual((NSUInteger)1, [self.registry.registeredEntries count], @"Duplicate names should be ignored.");
 }
 
 
-- (void)validateActionIsRegistered:(UAAction *)action
+- (void)validateActionIsRegistered:(id<UAAction>)action
                              names:(NSArray *)names
                          predicate:(UAActionPredicate)predicate {
 

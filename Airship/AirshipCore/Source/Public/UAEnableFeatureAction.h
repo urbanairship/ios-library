@@ -47,7 +47,7 @@ extern NSString *const UAEnableBackgroundLocationActionValue;
  *
  * Result value: Empty.
  */
-@interface UAEnableFeatureAction : UAAction
+@interface UAEnableFeatureAction : NSObject<UAAction>
 
 
 @end

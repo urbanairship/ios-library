@@ -16,7 +16,7 @@
  *
  * Result value: nil.
  */
-@interface UACancelSchedulesAction : UAAction
+@interface UACancelSchedulesAction : NSObject<UAAction>
 
 /**
  * Default registry name for cancel schedules action.

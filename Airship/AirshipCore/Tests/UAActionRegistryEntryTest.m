@@ -4,6 +4,8 @@
 #import "UAActionRegistryEntry.h"
 #import "UALandingPageAction.h"
 
+@import AirshipCore;
+
 @interface UAActionRegistryEntryTest : UABaseTest
 
 @end
@@ -11,7 +13,8 @@
 @implementation UAActionRegistryEntryTest
 
 - (void)testEntryForAction {
-    UAAction *action = [[UAAction alloc] init];
+    UAEmptyAction *action = [[UAEmptyAction alloc] init];
+    
     UAActionPredicate predicate = ^(UAActionArguments *args) { return NO; };
 
     UAActionRegistryEntry *entry = [UAActionRegistryEntry entryForAction:action predicate:predicate];

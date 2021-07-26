@@ -2,7 +2,6 @@
 
 #import "UABaseTest.h"
 #import <StoreKit/StoreKit.h>
-#import "UAAction+Internal.h"
 #import "UAirship+Internal.h"
 #import "UARuntimeConfig.h"
 #import "UARateAppAction.h"

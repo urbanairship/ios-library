@@ -14,7 +14,7 @@
  *
  * Result value: Schedule ID or nil if the schedule failed.
  */
-@interface UAScheduleAction : UAAction
+@interface UAScheduleAction : NSObject<UAAction>
 
 /**
  * Default registry name for schedule action.

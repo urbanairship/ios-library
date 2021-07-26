@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * Result value: nil
  */
-@interface UAMessageCenterAction : UAAction
+@interface UAMessageCenterAction : NSObject<UAAction>
 
 @end
 

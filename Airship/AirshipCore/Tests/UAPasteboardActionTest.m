@@ -5,6 +5,7 @@
 
 #import "UAPasteboardAction.h"
 #import "UAActionArguments+Internal.h"
+#import "UAActionResult.h"
 
 @interface UAPasteboardActionTest : UABaseTest
 @property(nonatomic, strong) UAPasteboardAction *action;

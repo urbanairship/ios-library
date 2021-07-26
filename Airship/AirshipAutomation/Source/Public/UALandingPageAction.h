@@ -55,7 +55,7 @@ NS_ASSUME_NONNULL_BEGIN
 * Fetch result: UAActionFetchResultNewData, or UAActionFetchResultFailed if the data could not be fetched.
 *
 */
-@interface UALandingPageAction : UAAction
+@interface UALandingPageAction : NSObject<UAAction>
 
 /**
  * Default registry name for landing page action.

@@ -1,6 +1,8 @@
 /* Copyright Airship and Contributors */
 
 #import "UAURLActionPredicate+Internal.h"
+#import "UAActionArguments.h"
+#import "UAActionResult.h"
 
 @implementation UAURLActionPredicate
 

@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAAction+Internal.h"
 #import "UAAddTagsAction.h"
 #import "UARemoveTagsAction.h"
 #import "UAChannel.h"
@@ -57,7 +56,7 @@
 /**
  * Makes sure that the passed action rejects the background situation
  */
-- (void)validateSituationForTagAction:(UAAction *)action {
+- (void)validateSituationForTagAction:(id<UAAction>)action {
     UASituation situations[6] = {
         UASituationLaunchedFromPush,
         UASituationForegroundPush,
@@ -86,7 +85,7 @@
 /**
  * Add/Remove tags should accept strings, empty arrays, and arrays of strings
  */
-- (void)validateArgumentsForAddRemoveTagsAction:(UAAction *)action {
+- (void)validateArgumentsForAddRemoveTagsAction:(id<UAAction>)action {
     [self validateSituationForTagAction:action];
 
     XCTAssertTrue([action acceptsArguments:self.stringArgs], @"strings should be accepted");
@@ -102,7 +101,7 @@
 /**
  * Set tags should accept empty arrays, and arrays of strings
  */
-- (void)validateArgumentsForSetTagsAction:(UAAction *)action {
+- (void)validateArgumentsForSetTagsAction:(id<UAAction>)action {
     [self validateSituationForTagAction:action];
 
     XCTAssertTrue([action acceptsArguments:self.arrayArgs], @"arrays should be accepted");
@@ -124,15 +123,14 @@
     [[self.mockChannel expect] addTags:[OCMArg any]];
     [[self.mockChannel expect] updateRegistration];
 
-    [action runWithArguments:self.stringArgs
-           completionHandler:^(UAActionResult *result) {
+    [action performWithArguments:self.stringArgs completionHandler:^(UAActionResult *result) {
            [self.mockChannel verify];
     }];
 
     [[self.mockChannel expect] addTags:[OCMArg any]];
     [[self.mockChannel expect] updateRegistration];
 
-    [action runWithArguments:self.arrayArgs completionHandler:^(UAActionResult *result) {
+    [action performWithArguments:self.arrayArgs completionHandler:^(UAActionResult *result) {
            [self.mockChannel verify];
     }];
 
@@ -143,7 +141,7 @@
     [[self.mockChannel expect] updateRegistration];
     [[self.mockNamedUser expect] updateTags];
 
-    [action runWithArguments:self.dictArgs completionHandler:^(UAActionResult *result) {
+    [action performWithArguments:self.dictArgs completionHandler:^(UAActionResult *result) {
         [self.mockChannel verify];
         [self.mockNamedUser verify];
     }];
@@ -160,14 +158,14 @@
     [[self.mockChannel expect] removeTags:[OCMArg any]];
     [[self.mockChannel expect] updateRegistration];
 
-    [action runWithArguments:self.stringArgs completionHandler:^(UAActionResult *result) {
+    [action performWithArguments:self.stringArgs completionHandler:^(UAActionResult *result) {
            [self.mockChannel verify];
     }];
 
     [[self.mockChannel expect] removeTags:[OCMArg any]];
     [[self.mockChannel expect] updateRegistration];
 
-    [action runWithArguments:self.arrayArgs completionHandler:^(UAActionResult *result) {
+    [action performWithArguments:self.arrayArgs completionHandler:^(UAActionResult *result) {
            [self.mockChannel verify];
     }];
 
@@ -178,7 +176,7 @@
     [[self.mockChannel expect] updateRegistration];
     [[self.mockNamedUser expect] updateTags];
     
-    [action runWithArguments:self.dictArgs completionHandler:^(UAActionResult *result) {
+    [action performWithArguments:self.dictArgs completionHandler:^(UAActionResult *result) {
         [self.mockChannel verify];
         [self.mockNamedUser verify];
     }];

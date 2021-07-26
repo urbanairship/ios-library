@@ -5,7 +5,7 @@
 /**
  * This is the base class for UAAddTagsAction and UARemoveTagsAction.
  */
-@interface UAModifyTagsAction : UAAction
+@interface UAModifyTagsAction : NSObject<UAAction>
 
 ///---------------------------------------------------------------------------------------
 /// @name Modify Tags Action Methods

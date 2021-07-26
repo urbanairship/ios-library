@@ -2,11 +2,11 @@
 
 #import "UABaseTest.h"
 #import "UAModifyAttributesAction.h"
-#import "UAAction+Operators.h"
 #import "UAActionArguments+Internal.h"
 #import "UAirship+Internal.h"
 #import "UAChannel+Internal.h"
 #import "UANamedUser+Internal.h"
+#import "UAActionResult.h"
 
 @interface UAModifyAttributesActionTest : UABaseTest
 
@@ -44,7 +44,7 @@
  * Test that the action accepts valid arguments.
  */
 - (void)testAcceptsArguments {
-    UAAction *action = [[UAModifyAttributesAction alloc] init];
+    id<UAAction> action = [[UAModifyAttributesAction alloc] init];
 
     self.arguments.value = @{
         @"channel": @{
@@ -147,7 +147,7 @@
     };
     self.arguments.situation = UASituationManualInvocation;
 
-    UAAction *action = [[UAModifyAttributesAction alloc] init];
+    id<UAAction> action = [[UAModifyAttributesAction alloc] init];
 
     [[self.mockChannel expect] applyAttributeMutations:OCMOCK_ANY];
     [[self.mockNamedUser expect] applyAttributeMutations:OCMOCK_ANY];
@@ -167,7 +167,7 @@
 - (void)testPerformWithArgumentsExpectChannel {
     self.arguments.situation = UASituationManualInvocation;
 
-    UAAction *action = [[UAModifyAttributesAction alloc] init];
+    id<UAAction> action = [[UAModifyAttributesAction alloc] init];
     
     self.arguments.value = @{
         @"channel": @{
@@ -194,7 +194,7 @@
 - (void)testPerformWithArgumentsExpectNamedUser {
     self.arguments.situation = UASituationManualInvocation;
 
-    UAAction *action = [[UAModifyAttributesAction alloc] init];
+    id<UAAction> action = [[UAModifyAttributesAction alloc] init];
     
     self.arguments.value = @{
         @"named_user": @{

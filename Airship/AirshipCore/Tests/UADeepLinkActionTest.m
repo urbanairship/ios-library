@@ -3,6 +3,8 @@
 #import "UABaseTest.h"
 #import "UADeepLinkAction.h"
 #import "UAirship+Internal.h"
+#import "UAActionResult.h"
+#import "UAActionArguments.h"
 
 @interface UADeepLinkActionTest : UABaseTest
 @property (nonatomic, strong) id mockAirship;

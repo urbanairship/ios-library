@@ -2,7 +2,6 @@
 
 #import "UABaseTest.h"
 #import "UALandingPageAction.h"
-#import "UAAction+Internal.h"
 #import "UAirship+Internal.h"
 #import "UARuntimeConfig.h"
 #import "UAUtils+Internal.h"
@@ -10,6 +9,8 @@
 #import "UAInAppAutomation.h"
 #import "UAInAppMessageHTMLDisplayContent+Internal.h"
 #import "UASchedule+Internal.h"
+#import "UAActionResult.h"
+#import "UAActionArguments.h"
 
 @interface UALandingPageActionTest : UABaseTest
 

@@ -2,6 +2,7 @@
 
 #import <Foundation/Foundation.h>
 #import "UAAction.h"
+#import "UAActionArguments.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -17,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The entry's action.
  */
-@property (nonatomic, strong) UAAction *action;
+@property (nonatomic, strong) id<UAAction> action;
 
 /**
  * The entry's predicate.
@@ -38,7 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param action The entry's action.
  * @param predicate The entry's predicate.
  */
-+ (instancetype)entryForAction:(UAAction *)action predicate:(UAActionPredicate)predicate;
++ (instancetype)entryForAction:(id<UAAction>)action predicate:(UAActionPredicate)predicate;
 
 /**
  * UAActionRegistryEntry class factory method.
@@ -57,7 +58,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param situation The specified UASituation enum value
  * @return UAAction for the situation.
  */
-- (UAAction *)actionForSituation:(UASituation)situation;
+- (id<UAAction>)actionForSituation:(UASituation)situation;
 
 @end
 

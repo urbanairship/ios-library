@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UAShareActionPredicate+Internal.h"
+#import "UAActionArguments.h"
 
 @implementation UAShareActionPredicate
 

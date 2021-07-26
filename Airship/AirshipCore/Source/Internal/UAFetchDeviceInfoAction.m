@@ -6,6 +6,8 @@
 #import "UAPush.h"
 #import "UAChannel.h"
 #import "UANamedUser.h"
+#import "UAActionArguments.h"
+#import "UAActionResult.h"
 
 @implementation UAFetchDeviceInfoAction
 
@@ -38,5 +40,10 @@ NSString *const UALocationEnabledKey = @"location_enabled";
 
     completionHandler([UAActionResult resultWithValue:dict]);
 }
+
+- (BOOL)acceptsArguments:(nonnull UAActionArguments *)arguments {
+    return YES;
+}
+
 
 @end

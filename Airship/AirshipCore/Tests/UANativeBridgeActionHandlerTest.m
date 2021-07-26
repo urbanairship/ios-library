@@ -7,6 +7,8 @@
 #import "UAirship+Internal.h"
 #import "UARuntimeConfig.h"
 
+@import AirshipCore;
+
 @interface UANativeBridgeActionHandlerTest : UABaseTest
 @property (nonatomic, strong) UANativeBridgeActionHandler *actionHandler;
 @property (nonatomic, strong) UAActionRegistry *registry;
@@ -31,7 +33,7 @@
  * Test running actions with a callback.
  */
 - (void)testRunActionCB {
-    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler) {
+    UABlockAction *test = [[UABlockAction alloc] initWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler) {
         handler([UAActionResult resultWithValue:args.value]);
     }];
 
@@ -48,7 +50,7 @@
  * Test action result returns the result's description if it's unable to be serialized.
  */
 - (void)testRunActionCBUnserializableResult {
-    UAAction *unserializable = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler) {
+    UABlockAction *unserializable = [[UABlockAction alloc] initWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler) {
         handler([UAActionResult resultWithValue:self]);
     }];
 
@@ -89,7 +91,7 @@
  * Test running an action with a callback and no arguments
  */
 - (void)testRunActionCBEmptyArgs {
-    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler) {
+    UABlockAction *test = [[UABlockAction alloc] initWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler) {
         XCTAssertNil(args.value);
         handler([UAActionResult resultWithValue:@"howdy"]);
     }];
@@ -111,12 +113,12 @@
     __block BOOL ran = NO;
     __block BOOL alsoRan = NO;
 
-    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler) {
+    UABlockAction *test = [[UABlockAction alloc] initWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler) {
         ran = YES;
         handler([UAActionResult resultWithValue:@"howdy"]);
     }];
 
-    UAAction *alsoTest = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler) {
+    UABlockAction *alsoTest = [[UABlockAction alloc] initWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler) {
         alsoRan = YES;
         handler([UAActionResult resultWithValue:@"yeah!"]);
     }];
@@ -147,7 +149,7 @@
  */
 - (void)testRunActionsInvalidArgs {
     __block BOOL ran = NO;
-    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler) {
+    UABlockAction *test = [[UABlockAction alloc] initWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler) {
         ran = YES;
         handler([UAActionResult resultWithValue:@"howdy"]);
     }];
@@ -166,7 +168,7 @@
  */
 - (void)testRunActionsMultipleArgs {
     __block int runCount = 0;
-    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler) {
+    UABlockAction *test = [[UABlockAction alloc] initWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler) {
         runCount ++;
         handler([UAActionResult resultWithValue:@"howdy"]);
     }];
@@ -187,12 +189,12 @@
     __block BOOL ran = NO;
     __block BOOL alsoRan = NO;
 
-    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler) {
+    UABlockAction *test = [[UABlockAction alloc] initWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler) {
         ran = YES;
         handler([UAActionResult resultWithValue:@"howdy"]);
     }];
 
-    UAAction *alsoTest = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler) {
+    UABlockAction *alsoTest = [[UABlockAction alloc] initWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler) {
         alsoRan = YES;
         handler([UAActionResult resultWithValue:@"yeah!"]);
     }];
@@ -213,7 +215,7 @@
  */
 - (void)testRunBasicActionsMultipleArgs {
      __block int runCount = 0;
-    UAAction *test = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler) {
+    UABlockAction *test = [[UABlockAction alloc] initWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler) {
         runCount ++;
         handler([UAActionResult resultWithValue:@"howdy"]);
     }];

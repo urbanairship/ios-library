@@ -1,10 +1,16 @@
 /* Copyright Airship and Contributors */
 
 #import "UAActionRunner.h"
-#import "UAAction+Internal.h"
 #import "UAActionRegistryEntry.h"
 #import "UAActionResult+Internal.h"
 #import "UAirship.h"
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
+
 
 NSString * const UAActionRunnerErrorDomain = @"com.urbanairship.actions.runner";
 
@@ -55,8 +61,8 @@ NSString * const UAActionRunnerErrorDomain = @"com.urbanairship.actions.runner";
 
         UAActionArguments *arguments = [UAActionArguments argumentsWithValue:value withSituation:situation metadata:fullMetadata];
         if (!entry.predicate || entry.predicate(arguments)) {
-            UAAction *action = [entry actionForSituation:situation];
-            [action runWithArguments:arguments completionHandler:completionHandler];
+            id<UAAction> action = [entry actionForSituation:situation];
+            [self runAction:action args:arguments completionHandler:completionHandler];
         } else {
             UA_LDEBUG(@"Not running action %@ because of predicate.", [entry.names firstObject]);
             if (completionHandler) {
@@ -72,14 +78,14 @@ NSString * const UAActionRunnerErrorDomain = @"com.urbanairship.actions.runner";
 }
 
 
-+ (void)runAction:(UAAction *)action
++ (void)runAction:(id<UAAction>)action
             value:(id)value
         situation:(UASituation)situation {
 
     [self runAction:action value:value situation:situation metadata:nil completionHandler:nil];
 }
 
-+ (void)runAction:(UAAction *)action
++ (void)runAction:(id<UAAction>)action
             value:(id)value
         situation:(UASituation)situation
          metadata:(NSDictionary *)metadata {
@@ -87,7 +93,7 @@ NSString * const UAActionRunnerErrorDomain = @"com.urbanairship.actions.runner";
     [self runAction:action value:value situation:situation metadata:metadata completionHandler:nil];
 }
 
-+ (void)runAction:(UAAction *)action
++ (void)runAction:(id<UAAction>)action
             value:(id)value
         situation:(UASituation)situation
 completionHandler:(UAActionCompletionHandler)completionHandler {
@@ -95,14 +101,14 @@ completionHandler:(UAActionCompletionHandler)completionHandler {
     [self runAction:action value:value situation:situation metadata:nil completionHandler:completionHandler];
 }
 
-+ (void)runAction:(UAAction *)action
++ (void)runAction:(id<UAAction>)action
             value:(id)value
         situation:(UASituation)situation
          metadata:(NSDictionary *)metadata
 completionHandler:(UAActionCompletionHandler)completionHandler {
 
     UAActionArguments *arguments = [UAActionArguments argumentsWithValue:value withSituation:situation metadata:metadata];
-    [action runWithArguments:arguments completionHandler:completionHandler];
+    [self runAction:action args:arguments completionHandler:completionHandler];
 }
 
 + (void)runActionsWithActionValues:(NSDictionary *)actionValues
@@ -174,4 +180,45 @@ completionHandler:(UAActionCompletionHandler)completionHandler {
         completionHandler(aggregateResult);
     });
 }
+
++ (void)runAction:(id<UAAction>)action
+             args:(UAActionArguments *)arguments
+completionHandler:(UAActionCompletionHandler)completionHandler {
+
+    // If no completion handler was passed, use an empty block in its place
+    completionHandler = completionHandler ?: ^(UAActionResult *result) {};
+    
+    // Make sure the initial acceptsArguments/willPerform/perform is executed on the main queue
+    [UADispatcher.main dispatchAsyncIfNecessary:^{
+        if (![action acceptsArguments:arguments]) {
+            UA_LDEBUG(@"Action %@ rejected arguments %@.", [self description], [arguments description]);
+            completionHandler([UAActionResult rejectedArgumentsResult]);
+        } else {
+            UA_LDEBUG(@"Action %@ performing with arguments %@.", [self description], [arguments description]);
+            
+            if ([action respondsToSelector:@selector(willPerformWithArguments:)]) {
+                [action willPerformWithArguments:arguments];
+            }
+            
+            [action performWithArguments:arguments completionHandler:^(UAActionResult *result) {
+                // Make sure the passed completion handler and didPerformWithArguments are executed on the main queue
+                [UADispatcher.main dispatchAsyncIfNecessary:^{
+                    if (!result) {
+                        UA_LTRACE("Action %@ called the completion handler with a nil result", [self description]);
+                    }
+
+                    UAActionResult *normalizedResult = result ?: [UAActionResult emptyResult];
+                    
+                    if ([action respondsToSelector:@selector(didPerformWithArguments:withResult:)]) {
+                        [action didPerformWithArguments:arguments withResult:normalizedResult];
+                    }
+                    
+                    completionHandler(normalizedResult);
+                }];
+            }];
+        }
+    }];
+}
+
+
 @end

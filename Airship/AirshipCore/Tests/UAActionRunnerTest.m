@@ -6,6 +6,7 @@
 #import "UAActionRegistry.h"
 #import "UAirship+Internal.h"
 
+@import AirshipCore;
 @interface UAActionRunnerTest : UABaseTest
 @property (nonatomic, strong) UAActionRegistry *registry;
 @property (nonatomic, strong) id mockAirship;
@@ -34,7 +35,7 @@ NSString *anotherActionName = @"AnotherActionName";
     __block BOOL didCompletionHandlerRun = NO;
     __block BOOL didActionRun = NO;
 
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+    UABlockAction *action = [[UABlockAction alloc] initWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
         didActionRun = YES;
         XCTAssertEqualObjects(@"value", args.value, @"Runner should pass the supplied value to the action");
         XCTAssertEqual(UASituationForegroundPush, args.situation, @"Runner should pass the situation to the action");
@@ -103,7 +104,7 @@ NSString *anotherActionName = @"AnotherActionName";
     __block int actionRunCount = 0;
     NSString *thirdActionName = @"A Third Action Name";
 
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+    UABlockAction *action = [[UABlockAction alloc] initWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
         actionRunCount++;
         completionHandler([UAActionResult emptyResult]);
     }];
@@ -155,7 +156,7 @@ NSString *anotherActionName = @"AnotherActionName";
 - (void)testRunActionWithNameNoPredicate {
     __block BOOL didCompletionHandlerRun = NO;
 
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+    UABlockAction *action = [[UABlockAction alloc] initWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
         XCTFail(@"Action should not run if the predicate returns NO");
         completionHandler([UAActionResult emptyResult]);
     }];
@@ -192,7 +193,7 @@ NSString *anotherActionName = @"AnotherActionName";
     __block BOOL didCompletionHandlerRun = NO;
     __block BOOL didActionRun = NO;
 
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+    UABlockAction *action = [[UABlockAction alloc] initWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
         didActionRun = YES;
         XCTAssertEqualObjects(@"value", args.value, @"Runner should pass the supplied value to the action");
         XCTAssertEqual(UASituationForegroundPush, args.situation, @"Runner should pass the situation to the action");
@@ -285,7 +286,7 @@ NSString *anotherActionName = @"AnotherActionName";
     
     UAActionResult *result = [UAActionResult emptyResult];
     
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+    UABlockAction *action = [[UABlockAction alloc] initWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
         XCTAssertEqualObjects(@"value", args.value, @"Runner should pass the supplied value to the action");
         XCTAssertEqual(UASituationLaunchedFromPush, args.situation, @"Runner should pass the situation to the action");
         XCTAssertNil(args.metadata, @"Runner should pass the action name in the metadata");
@@ -307,7 +308,7 @@ NSString *anotherActionName = @"AnotherActionName";
 - (void)testRunActionPayload {
     __block int actionRunCount = 0;
 
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+    UABlockAction *action = [[UABlockAction alloc] initWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
         actionRunCount++;
 
         XCTAssertEqualObjects(@"value", args.value, @"Runner should pass the supplied value to the action");
@@ -330,7 +331,7 @@ NSString *anotherActionName = @"AnotherActionName";
         return YES;
     }];
 
-    UAAction *anotherAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+    UABlockAction *anotherAction = [[UABlockAction alloc] initWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
         actionRunCount++;
 
         XCTAssertEqualObjects(@"another value", args.value, @"Runner should pass the supplied value to the action");
@@ -379,7 +380,7 @@ NSString *anotherActionName = @"AnotherActionName";
 - (void)testRunActionPayloadDedupes {
     __block int actionRunCount = 0;
 
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+    UABlockAction *action = [[UABlockAction alloc] initWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
         actionRunCount++;
         completionHandler([UAActionResult emptyResult]);
     }];
@@ -408,7 +409,7 @@ NSString *anotherActionName = @"AnotherActionName";
 - (void)testRunActionPayloadOverCompletionDoesNotCrash {
     __block int actionRunCount = 0;
 
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+    UABlockAction *action = [[UABlockAction alloc] initWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
         actionRunCount++;
         completionHandler([UAActionResult emptyResult]);
         completionHandler([UAActionResult emptyResult]);
@@ -440,7 +441,7 @@ NSString *anotherActionName = @"AnotherActionName";
 - (void)testRunActionNullCompletionHandler {
     UAActionResult *result = [UAActionResult emptyResult];
     
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+    UABlockAction *action = [[UABlockAction alloc] initWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
         completionHandler(result);
     }];
     

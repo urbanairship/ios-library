@@ -19,7 +19,7 @@
  *
  */
 API_UNAVAILABLE(tvos)
-@interface UAPasteboardAction : UAAction
+@interface UAPasteboardAction : NSObject<UAAction>
 
 /**
  * Default registry name for pasteboard action.

@@ -4,6 +4,9 @@
 #import "UAirship.h"
 #import "UAChannel.h"
 #import "UANamedUser.h"
+#import "UAActionArguments.h"
+#import "UAActionArguments.h"
+#import "UAActionResult.h"
 
 NSString *const UAModifyTagsNamedUserKey = @"named_user";
 NSString *const UAModifyTagsChannelKey = @"channel";

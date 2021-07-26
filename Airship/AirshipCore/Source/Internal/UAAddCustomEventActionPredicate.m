@@ -1,6 +1,8 @@
 /* Copyright Airship and Contributors */
 
 #import "UAAddCustomEventActionPredicate+Internal.h"
+#import "UAActionArguments.h"
+#import "UAActionResult.h"
 
 @implementation UAAddCustomEventActionPredicate
 

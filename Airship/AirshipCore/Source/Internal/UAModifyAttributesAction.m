@@ -5,6 +5,8 @@
 #import "UAChannel.h"
 #import "UANamedUser.h"
 #import "UAAttributesActionPredicate+Internal.h"
+#import "UAActionArguments.h"
+#import "UAActionResult.h"
 
 NSString *const UAModifyAttributesNamedUserKey = @"named_user";
 NSString *const UAModifyAttributesChannelKey = @"channel";

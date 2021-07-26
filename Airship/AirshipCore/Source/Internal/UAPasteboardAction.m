@@ -2,6 +2,7 @@
 
 #import "UAPasteboardAction.h"
 #import "UAActionArguments.h"
+#import "UAActionResult.h"
 
 @implementation UAPasteboardAction
 

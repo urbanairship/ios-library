@@ -46,7 +46,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @return `YES` if the action was registered, `NO` if the action was unable to
  * be registered because the name is nil, or the action is `nil`.
  */
-- (BOOL)registerAction:(UAAction *)action
+- (BOOL)registerAction:(id<UAAction>)action
                   name:(NSString *)name
              predicate:(nullable UAActionPredicate)predicate;
 
@@ -81,7 +81,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @return `YES` if the action was registered, `NO` if the action was unable to
  * be registered because no names were specified, or the action is `nil`.
  */
-- (BOOL)registerAction:(UAAction *)action
+- (BOOL)registerAction:(id<UAAction>)action
                  names:(NSArray *)names
              predicate:(nullable UAActionPredicate)predicate;
 
@@ -114,7 +114,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @return `YES` if the action was registered, `NO` if the action was unable to
  * be registered because the name is nil, or the action is nil.
  */
-- (BOOL)registerAction:(UAAction *)action name:(NSString *)name;
+- (BOOL)registerAction:(id<UAAction>)action name:(NSString *)name;
 
 /**
  * Registers an action.
@@ -127,7 +127,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @return `YES` if the action was registered, `NO` if the action was unable to
  * be registered because no names were specified, or the action is `nil`.
  */
-- (BOOL)registerAction:(UAAction *)action names:(NSArray *)names;
+- (BOOL)registerAction:(id<UAAction>)action names:(NSArray *)names;
 
 /**
  * Registers an action class.
@@ -187,7 +187,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (BOOL)addSituationOverride:(UASituation)situation
             forEntryWithName:(NSString *)name
-                      action:(nullable UAAction *)action;
+                      action:(nullable id<UAAction>)action;
 
 /**
  * Updates the predicate for a registered entry.
@@ -210,7 +210,7 @@ NS_ASSUME_NONNULL_BEGIN
  * is unable to be found with the given name.
  *
  */
-- (BOOL)updateAction:(UAAction *)action forEntryWithName:(NSString *)name;
+- (BOOL)updateAction:(id<UAAction>)action forEntryWithName:(NSString *)name;
 
 /**
  * Updates the default action for a registered entry.

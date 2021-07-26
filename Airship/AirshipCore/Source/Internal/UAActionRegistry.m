@@ -33,11 +33,11 @@ NSString *const UAActionRegistryPredicateClassKey = @"predicate";
     return registry;
 }
 
-- (BOOL)registerAction:(UAAction *)action names:(NSArray *)names {
+- (BOOL)registerAction:(id<UAAction>)action names:(NSArray *)names {
     return [self registerAction:action names:names predicate:nil];
 }
 
-- (BOOL)registerAction:(UAAction *)action name:(NSString *)name {
+- (BOOL)registerAction:(id<UAAction>)action name:(NSString *)name {
     return [self registerAction:action name:name predicate:nil];
 }
 
@@ -49,7 +49,7 @@ NSString *const UAActionRegistryPredicateClassKey = @"predicate";
     return [self registerActionClass:actionClass name:name predicate:nil];
 }
 
-- (BOOL)registerAction:(UAAction *)action
+- (BOOL)registerAction:(id<UAAction>)action
                   name:(NSString *)name
              predicate:(UAActionPredicate)predicate {
 
@@ -74,8 +74,8 @@ NSString *const UAActionRegistryPredicateClassKey = @"predicate";
                       names:(NSArray *)names
                   predicate:(UAActionPredicate)predicate {
 
-    if (![actionClass isSubclassOfClass:[UAAction class]]) {
-        UA_LERR(@"Unable to register an action class that isn't a subclass of UAAction.");
+    if (![actionClass conformsToProtocol:@protocol(UAAction)]) {
+        UA_LERR(@"Unable to register an action class that doesn't implement protocol UAAction.");
         return NO;
     }
 
@@ -90,7 +90,7 @@ NSString *const UAActionRegistryPredicateClassKey = @"predicate";
     return [self registerEntry:entry names:names];
 }
 
-- (BOOL)registerAction:(UAAction *)action
+- (BOOL)registerAction:(id<UAAction>)action
                  names:(NSArray *)names
              predicate:(UAActionPredicate)predicate {
 
@@ -183,7 +183,7 @@ NSString *const UAActionRegistryPredicateClassKey = @"predicate";
 
 - (BOOL)addSituationOverride:(UASituation)situation
             forEntryWithName:(NSString *)name
-                      action:(UAAction *)action {
+                      action:(id<UAAction>)action {
     if (!name) {
         return NO;
     }
@@ -204,7 +204,7 @@ NSString *const UAActionRegistryPredicateClassKey = @"predicate";
     return (entry != nil);
 }
 
-- (BOOL)updateAction:(UAAction *)action forEntryWithName:(NSString *)name {
+- (BOOL)updateAction:(id<UAAction>)action forEntryWithName:(NSString *)name {
     if (!name || !action) {
         return NO;
     }
@@ -248,8 +248,8 @@ NSString *const UAActionRegistryPredicateClassKey = @"predicate";
         }
 
         Class actionClass = NSClassFromString(actionClassName);
-        if (![actionClass isSubclassOfClass:[UAAction class]]) {
-            UA_LERR(@"Unable to register an action class that isn't a subclass of UAAction. Invalid action class for entry: %@", actionEntry);
+        if (![actionClass conformsToProtocol:@protocol(UAAction)]) {
+            UA_LERR(@"Unable to register an action class that doesn't implement protocol UAAction. Invalid action class for entry: %@", actionEntry);
             continue;
         }
 

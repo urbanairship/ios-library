@@ -1,6 +1,8 @@
 /* Copyright Airship and Contributors */
 
 #import "UAEnableFeatureActionPredicate+Internal.h"
+#import "UAActionArguments.h"
+#import "UAActionResult.h"
 
 @implementation UAEnableFeatureActionPredicate
 

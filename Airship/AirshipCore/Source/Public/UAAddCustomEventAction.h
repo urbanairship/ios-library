@@ -49,7 +49,7 @@ extern NSString * const UAAddCustomEventActionErrorDomain;
  * Default predicate: Only accepts UASituationWebViewInvocation and UASituationManualInvocation
  *
  */
-@interface UAAddCustomEventAction : UAAction
+@interface UAAddCustomEventAction : NSObject<UAAction>
 
 @end
 

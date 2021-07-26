@@ -1,10 +1,9 @@
 /* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-#import "UAActionResult.h"
-#import "UAActionArguments.h"
 
-@class UAAction;
+@class UAActionArguments;
+@class UAActionResult;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -24,13 +23,9 @@ typedef void (^UAActionCompletionHandler)(UAActionResult *);
 typedef void (^UAActionBlock)(UAActionArguments *, UAActionCompletionHandler completionHandler);
 
 /**
- * Base class for actions, which defines a modular unit of work.
+ * Action protocol, which defines a modular unit of work.
  */
-@interface UAAction : NSObject
-
-///---------------------------------------------------------------------------------------
-/// @name Action Core Methods
-///---------------------------------------------------------------------------------------
+@protocol UAAction <NSObject>
 
 /**
  * Called before an action is performed to determine if the
@@ -44,6 +39,21 @@ typedef void (^UAActionBlock)(UAActionArguments *, UAActionCompletionHandler com
  * @return YES if the action can perform with the arguments, otherwise NO
  */
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments;
+
+/**
+ * Performs the action.
+ *
+ * Subclasses of UAAction should override this method to define custom behavior.
+ *
+ * @note You should not ordinarily call this method directly. Instead, use the `UAActionRunner`.
+ * @param arguments A UAActionArguments value representing the arguments passed to the action.
+ * @param completionHandler A completion handler.
+ */
+- (void)performWithArguments:(UAActionArguments *)arguments
+           completionHandler:(UAActionCompletionHandler)completionHandler;
+
+
+@optional
 
 /**
  * Called before the action's performWithArguments:withCompletionHandler:
@@ -65,46 +75,6 @@ typedef void (^UAActionBlock)(UAActionArguments *, UAActionCompletionHandler com
 - (void)didPerformWithArguments:(UAActionArguments *)arguments
                      withResult:(UAActionResult *)result;
 
-/**
- * Performs the action.
- *
- * Subclasses of UAAction should override this method to define custom behavior.
- *
- * @note You should not ordinarily call this method directly. Instead, use the `UAActionRunner`.
- * @param arguments A UAActionArguments value representing the arguments passed to the action.
- * @param completionHandler A UAActionCompletionHandler that will be called when the action has finished executing.
- */
-- (void)performWithArguments:(UAActionArguments *)arguments
-           completionHandler:(UAActionCompletionHandler)completionHandler;
-
-///---------------------------------------------------------------------------------------
-/// @name Action Factories
-///---------------------------------------------------------------------------------------
-
-/**
- * Factory method for creating anonymous actions
- *
- * @param actionBlock A UAActionBlock representing the primary work performed by the action.
- * @return An action instance.
- */
-+ (instancetype)actionWithBlock:(UAActionBlock)actionBlock;
-
-/**
- * Factory method for creating anonymous actions
- *
- * @param actionBlock A UAActionBlock representing the primary work performed by the action.
- * @param predicateBlock A UAActionPredicate limiting the scope of the arguments.
- * @return An action instance.
- */
-+ (instancetype)actionWithBlock:(UAActionBlock)actionBlock
-             acceptingArguments:(nullable UAActionPredicate)predicateBlock;
-
-/**
- * Factory method for creating an action. Used when registering actions from a plist.
- *
- * @return An action instance.
- */
-+ (instancetype)action;
 
 @end
 

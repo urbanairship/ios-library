@@ -1,6 +1,8 @@
 /* Copyright Airship and Contributors */
 
 #import "UAFetchDeviceInfoActionPredicate+Internal.h"
+#import "UAActionArguments.h"
+#import "UAActionResult.h"
 
 @implementation UAFetchDeviceInfoActionPredicate
 

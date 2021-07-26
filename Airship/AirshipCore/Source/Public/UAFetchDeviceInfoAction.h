@@ -27,7 +27,7 @@
  *
  * Default Registration Predicate: Only accepts UASituationManualInvocation and UASituationWebViewInvocation
  */
-@interface UAFetchDeviceInfoAction : UAAction
+@interface UAFetchDeviceInfoAction : NSObject<UAAction>
 
 /**
  * Default registry name for fetch device info action.

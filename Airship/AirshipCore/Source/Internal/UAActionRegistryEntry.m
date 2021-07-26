@@ -1,6 +1,8 @@
 /* Copyright Airship and Contributors */
 
 #import "UAActionRegistryEntry+Internal.h"
+#import "UAActionArguments.h"
+#import "UAActionResult.h"
 
 @interface UAActionRegistryEntry()
 @property (nonatomic, strong) NSMutableDictionary *situationOverrides;
@@ -8,11 +10,10 @@
 @implementation UAActionRegistryEntry
 @dynamic names;
 
-- (instancetype)initWithAction:(UAAction *)action predicate:(UAActionPredicate)predicate {
+- (instancetype)initWithAction:(id<UAAction>)action predicate:(UAActionPredicate)predicate {
     self = [super init];
     if (self) {
         self.action = action;
-        self.actionClass = [action class];
         self.predicate = predicate;
         self.mutableNames = [NSMutableArray array];
         self.situationOverrides = [NSMutableDictionary dictionary];
@@ -33,7 +34,7 @@
     return self;
 }
 
-- (UAAction *)action
+- (id<UAAction>)action
 {
     if (_action == nil)
     {
@@ -42,11 +43,11 @@
     return _action;
 }
 
-- (UAAction *)actionForSituation:(UASituation)situation {
+- (id<UAAction>)actionForSituation:(UASituation)situation {
     return [self.situationOverrides objectForKey:[NSNumber numberWithInteger:situation]] ?: self.action;
 }
 
-- (void)addSituationOverride:(UASituation)situation withAction:(UAAction *)action {
+- (void)addSituationOverride:(UASituation)situation withAction:(id<UAAction>)action {
     if (action) {
         [self.situationOverrides setObject:action forKey:@(situation)];
     } else {
@@ -54,7 +55,7 @@
     }
 }
 
-+ (instancetype)entryForAction:(UAAction *)action predicate:(UAActionPredicate)predicate {
++ (instancetype)entryForAction:(id<UAAction>)action predicate:(UAActionPredicate)predicate {
     return [[self alloc] initWithAction:action predicate:predicate];
 }
 

@@ -36,7 +36,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface UAModifyAttributesAction : UAAction
+@interface UAModifyAttributesAction : NSObject<UAAction>
 
 /**
  * Default registry name for modify attributes action.

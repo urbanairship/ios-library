@@ -2,6 +2,8 @@
 
 #import "UAActionRegistryEntry.h"
 #import "UAAction.h"
+#import "UAActionArguments.h"
+#import "UAActionResult.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -33,7 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param situation The situation override to add.
  * @param action The action to be added.
  */
-- (void)addSituationOverride:(UASituation)situation withAction:(UAAction *)action;
+- (void)addSituationOverride:(UASituation)situation withAction:(id<UAAction>)action;
 
 @end
 

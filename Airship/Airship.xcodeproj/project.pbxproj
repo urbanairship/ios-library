@@ -283,8 +283,6 @@
 		6E4115142538C0AB00FEE4E8 /* UAActionRunner.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E41144F2538C09F00FEE4E8 /* UAActionRunner.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E4115172538C0AB00FEE4E8 /* UAUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114502538C09F00FEE4E8 /* UAUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E4115182538C0AB00FEE4E8 /* UAUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114502538C09F00FEE4E8 /* UAUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E41151F2538C0AB00FEE4E8 /* UAAction+Operators.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114522538C09F00FEE4E8 /* UAAction+Operators.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E4115202538C0AB00FEE4E8 /* UAAction+Operators.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114522538C09F00FEE4E8 /* UAAction+Operators.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E4115272538C0AB00FEE4E8 /* UAExtendedActionsModuleLoaderFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114542538C09F00FEE4E8 /* UAExtendedActionsModuleLoaderFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E4115282538C0AB00FEE4E8 /* UAExtendedActionsModuleLoaderFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114542538C09F00FEE4E8 /* UAExtendedActionsModuleLoaderFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E41152B2538C0AB00FEE4E8 /* UAJavaScriptCommandDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114552538C0A000FEE4E8 /* UAJavaScriptCommandDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -672,14 +670,11 @@
 		6E411E6C2538F4C700FEE4E8 /* UAActionArguments.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E411E602538F4C500FEE4E8 /* UAActionArguments.m */; };
 		6E411E6D2538F4C700FEE4E8 /* UAActionRegistry+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E411E612538F4C600FEE4E8 /* UAActionRegistry+Internal.h */; };
 		6E411E6E2538F4C700FEE4E8 /* UAActionRegistry.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E411E622538F4C600FEE4E8 /* UAActionRegistry.m */; };
-		6E411E6F2538F4C700FEE4E8 /* UAAction+Operators.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E411E632538F4C600FEE4E8 /* UAAction+Operators.m */; };
 		6E411E702538F4C700FEE4E8 /* UAActionResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E411E642538F4C600FEE4E8 /* UAActionResult.m */; };
 		6E411E712538F4C700FEE4E8 /* UAActionArguments+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E411E652538F4C600FEE4E8 /* UAActionArguments+Internal.h */; };
 		6E411E722538F4C700FEE4E8 /* UAActionResult+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E411E662538F4C600FEE4E8 /* UAActionResult+Internal.h */; };
 		6E411E732538F4C700FEE4E8 /* UAActionRegistryEntry+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E411E672538F4C600FEE4E8 /* UAActionRegistryEntry+Internal.h */; };
 		6E411E742538F4C700FEE4E8 /* UAActionRunner.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E411E682538F4C700FEE4E8 /* UAActionRunner.m */; };
-		6E411E752538F4C700FEE4E8 /* UAAction+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E411E692538F4C700FEE4E8 /* UAAction+Internal.h */; };
-		6E411E762538F4C700FEE4E8 /* UAAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E411E6A2538F4C700FEE4E8 /* UAAction.m */; };
 		6E411EA72538F4D100FEE4E8 /* UAActionArguments.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E411E602538F4C500FEE4E8 /* UAActionArguments.m */; };
 		6E411EA82538F4D100FEE4E8 /* UAActionRegistry.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E411E622538F4C600FEE4E8 /* UAActionRegistry.m */; };
 		6E411EA92538F4D100FEE4E8 /* UAActionRegistryEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E411E5F2538F4C500FEE4E8 /* UAActionRegistryEntry.m */; };
@@ -687,11 +682,8 @@
 		6E411EAB2538F4D100FEE4E8 /* UAActionResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E411E642538F4C600FEE4E8 /* UAActionResult.m */; };
 		6E411EAC2538F4D100FEE4E8 /* UAActionRunner.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E411E682538F4C700FEE4E8 /* UAActionRunner.m */; };
 		6E411EAD2538F4D100FEE4E8 /* UAActionRegistryEntry+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E411E672538F4C600FEE4E8 /* UAActionRegistryEntry+Internal.h */; };
-		6E411EAE2538F4D100FEE4E8 /* UAAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E411E6A2538F4C700FEE4E8 /* UAAction.m */; };
 		6E411EAF2538F4D100FEE4E8 /* UAActionArguments+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E411E652538F4C600FEE4E8 /* UAActionArguments+Internal.h */; };
 		6E411EB02538F4D100FEE4E8 /* UAActionResult+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E411E662538F4C600FEE4E8 /* UAActionResult+Internal.h */; };
-		6E411EB12538F4D100FEE4E8 /* UAAction+Operators.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E411E632538F4C600FEE4E8 /* UAAction+Operators.m */; };
-		6E411EB22538F4D100FEE4E8 /* UAAction+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E411E692538F4C700FEE4E8 /* UAAction+Internal.h */; };
 		6E411EE32538F8E300FEE4E8 /* AirshipCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E411EE22538F8E300FEE4E8 /* AirshipCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E411EE42538F8E300FEE4E8 /* AirshipCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E411EE22538F8E300FEE4E8 /* AirshipCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E4627CC1E64E0C300A5BF3B /* UAScheduleDelayTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4627CB1E64E0C300A5BF3B /* UAScheduleDelayTests.m */; };
@@ -1152,6 +1144,10 @@
 		6EC7E49026A739890038CFDD /* JsonValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC7E48F26A739890038CFDD /* JsonValue.swift */; };
 		6EC7E49126A739890038CFDD /* JsonValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC7E48F26A739890038CFDD /* JsonValue.swift */; };
 		6ED3C04520081013002A746B /* UAInAppMessageCustomDisplayContentTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ED3C04420081013002A746B /* UAInAppMessageCustomDisplayContentTest.m */; };
+		6ED6ECA426ADCA6F00973364 /* BlockAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED6ECA326ADCA6F00973364 /* BlockAction.swift */; };
+		6ED6ECA526ADCA6F00973364 /* BlockAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED6ECA326ADCA6F00973364 /* BlockAction.swift */; };
+		6ED6ECA726AE05B700973364 /* EmptyAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED6ECA626AE05B700973364 /* EmptyAction.swift */; };
+		6ED6ECA826AE05B700973364 /* EmptyAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED6ECA626AE05B700973364 /* EmptyAction.swift */; };
 		6EE6529122A7E2DA00F7D54D /* UAInAppMessageHTMLStyleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EE6529022A7E2DA00F7D54D /* UAInAppMessageHTMLStyleTest.m */; };
 		6EE6529322A7E3B800F7D54D /* Valid-UAInAppMessageHTMLStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6EE6529222A7E3B800F7D54D /* Valid-UAInAppMessageHTMLStyle.plist */; };
 		6EE7725B238F179300E79944 /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; settings = {ATTRIBUTES = (Required, ); }; };
@@ -1232,7 +1228,6 @@
 		CC64F0D21D8B781C009CEF27 /* NSJSONSerialization_UAAdditionsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0651D8B781C009CEF27 /* NSJSONSerialization_UAAdditionsTests.m */; };
 		CC64F0D51D8B781C009CEF27 /* NSString_UALocalizationAdditionsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F06A1D8B781C009CEF27 /* NSString_UALocalizationAdditionsTest.m */; };
 		CC64F0D71D8B781C009CEF27 /* UAAccountEventTemplateTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F06C1D8B781C009CEF27 /* UAAccountEventTemplateTest.m */; };
-		CC64F0D81D8B781C009CEF27 /* UAAction_OperatorTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F06D1D8B781C009CEF27 /* UAAction_OperatorTest.m */; };
 		CC64F0D91D8B781C009CEF27 /* UAActionArgumentsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F06E1D8B781C009CEF27 /* UAActionArgumentsTest.m */; };
 		CC64F0DB1D8B781C009CEF27 /* UANativeBridgeActionHandlerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0701D8B781C009CEF27 /* UANativeBridgeActionHandlerTest.m */; };
 		CC64F0DC1D8B781C009CEF27 /* UAActionRegistryEntryTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0711D8B781C009CEF27 /* UAActionRegistryEntryTest.m */; };
@@ -1819,7 +1814,6 @@
 		6E41144E2538C09F00FEE4E8 /* UAGlobal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAGlobal.h; path = Public/UAGlobal.h; sourceTree = "<group>"; };
 		6E41144F2538C09F00FEE4E8 /* UAActionRunner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAActionRunner.h; path = Public/UAActionRunner.h; sourceTree = "<group>"; };
 		6E4114502538C09F00FEE4E8 /* UAUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAUtils.h; path = Public/UAUtils.h; sourceTree = "<group>"; };
-		6E4114522538C09F00FEE4E8 /* UAAction+Operators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAAction+Operators.h"; path = "Public/UAAction+Operators.h"; sourceTree = "<group>"; };
 		6E4114542538C09F00FEE4E8 /* UAExtendedActionsModuleLoaderFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAExtendedActionsModuleLoaderFactory.h; path = Public/UAExtendedActionsModuleLoaderFactory.h; sourceTree = "<group>"; };
 		6E4114552538C0A000FEE4E8 /* UAJavaScriptCommandDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAJavaScriptCommandDelegate.h; path = Public/UAJavaScriptCommandDelegate.h; sourceTree = "<group>"; };
 		6E4114562538C0A000FEE4E8 /* UAPush.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAPush.h; path = Public/UAPush.h; sourceTree = "<group>"; };
@@ -2047,14 +2041,11 @@
 		6E411E602538F4C500FEE4E8 /* UAActionArguments.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAActionArguments.m; path = Internal/UAActionArguments.m; sourceTree = "<group>"; };
 		6E411E612538F4C600FEE4E8 /* UAActionRegistry+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAActionRegistry+Internal.h"; path = "Internal/UAActionRegistry+Internal.h"; sourceTree = "<group>"; };
 		6E411E622538F4C600FEE4E8 /* UAActionRegistry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAActionRegistry.m; path = Internal/UAActionRegistry.m; sourceTree = "<group>"; };
-		6E411E632538F4C600FEE4E8 /* UAAction+Operators.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UAAction+Operators.m"; path = "Internal/UAAction+Operators.m"; sourceTree = "<group>"; };
 		6E411E642538F4C600FEE4E8 /* UAActionResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAActionResult.m; path = Internal/UAActionResult.m; sourceTree = "<group>"; };
 		6E411E652538F4C600FEE4E8 /* UAActionArguments+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAActionArguments+Internal.h"; path = "Internal/UAActionArguments+Internal.h"; sourceTree = "<group>"; };
 		6E411E662538F4C600FEE4E8 /* UAActionResult+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAActionResult+Internal.h"; path = "Internal/UAActionResult+Internal.h"; sourceTree = "<group>"; };
 		6E411E672538F4C600FEE4E8 /* UAActionRegistryEntry+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAActionRegistryEntry+Internal.h"; path = "Internal/UAActionRegistryEntry+Internal.h"; sourceTree = "<group>"; };
 		6E411E682538F4C700FEE4E8 /* UAActionRunner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAActionRunner.m; path = Internal/UAActionRunner.m; sourceTree = "<group>"; };
-		6E411E692538F4C700FEE4E8 /* UAAction+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAAction+Internal.h"; path = "Internal/UAAction+Internal.h"; sourceTree = "<group>"; };
-		6E411E6A2538F4C700FEE4E8 /* UAAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAAction.m; path = Internal/UAAction.m; sourceTree = "<group>"; };
 		6E411EE22538F8E300FEE4E8 /* AirshipCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirshipCore.h; path = Public/AirshipCore.h; sourceTree = "<group>"; };
 		6E4627CB1E64E0C300A5BF3B /* UAScheduleDelayTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAScheduleDelayTests.m; sourceTree = "<group>"; };
 		6E4A00781F2A4A4A0069D8A0 /* UABaseTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UABaseTest.m; sourceTree = "<group>"; };
@@ -2290,6 +2281,8 @@
 		6ED3C03B200801C4002A746B /* UAInAppMessageCustomDisplayContent.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageCustomDisplayContent.m; sourceTree = "<group>"; };
 		6ED3C0402008038B002A746B /* UAInAppMessageCustomDisplayContent+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageCustomDisplayContent+Internal.h"; sourceTree = "<group>"; };
 		6ED3C04420081013002A746B /* UAInAppMessageCustomDisplayContentTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageCustomDisplayContentTest.m; sourceTree = "<group>"; };
+		6ED6ECA326ADCA6F00973364 /* BlockAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockAction.swift; sourceTree = "<group>"; };
+		6ED6ECA626AE05B700973364 /* EmptyAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyAction.swift; sourceTree = "<group>"; };
 		6ED87F9A1FEB18DD003B652A /* UAInAppMessageMediaInfo+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageMediaInfo+Internal.h"; sourceTree = "<group>"; };
 		6ED87FA01FEB315B003B652A /* UAInAppMessageTextInfo+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageTextInfo+Internal.h"; sourceTree = "<group>"; };
 		6ED87FA91FEB3A47003B652A /* UAInAppMessageButtonInfo+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageButtonInfo+Internal.h"; sourceTree = "<group>"; };
@@ -2445,7 +2438,6 @@
 		CC64F0651D8B781C009CEF27 /* NSJSONSerialization_UAAdditionsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSJSONSerialization_UAAdditionsTests.m; sourceTree = "<group>"; };
 		CC64F06A1D8B781C009CEF27 /* NSString_UALocalizationAdditionsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSString_UALocalizationAdditionsTest.m; sourceTree = "<group>"; };
 		CC64F06C1D8B781C009CEF27 /* UAAccountEventTemplateTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAccountEventTemplateTest.m; sourceTree = "<group>"; };
-		CC64F06D1D8B781C009CEF27 /* UAAction_OperatorTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAction_OperatorTest.m; sourceTree = "<group>"; };
 		CC64F06E1D8B781C009CEF27 /* UAActionArgumentsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAActionArgumentsTest.m; sourceTree = "<group>"; };
 		CC64F0701D8B781C009CEF27 /* UANativeBridgeActionHandlerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UANativeBridgeActionHandlerTest.m; sourceTree = "<group>"; };
 		CC64F0711D8B781C009CEF27 /* UAActionRegistryEntryTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAActionRegistryEntryTest.m; sourceTree = "<group>"; };
@@ -3402,10 +3394,6 @@
 			isa = PBXGroup;
 			children = (
 				6E41149A2538C0A500FEE4E8 /* UAAction.h */,
-				6E411E6A2538F4C700FEE4E8 /* UAAction.m */,
-				6E411E692538F4C700FEE4E8 /* UAAction+Internal.h */,
-				6E4114522538C09F00FEE4E8 /* UAAction+Operators.h */,
-				6E411E632538F4C600FEE4E8 /* UAAction+Operators.m */,
 				6E4114782538C0A200FEE4E8 /* UAActionArguments.h */,
 				6E411E602538F4C500FEE4E8 /* UAActionArguments.m */,
 				6E411E652538F4C600FEE4E8 /* UAActionArguments+Internal.h */,
@@ -3463,6 +3451,8 @@
 				A60A242A258D0D77006B7D80 /* UAAttributesActionPredicate.m */,
 				A60A2429258D0D77006B7D80 /* UAAttributesActionPredicate+Internal.h */,
 				A6E002E1258BABE100620226 /* UAModifyAttributesAction.m */,
+				6ED6ECA326ADCA6F00973364 /* BlockAction.swift */,
+				6ED6ECA626AE05B700973364 /* EmptyAction.swift */,
 			);
 			name = Actions;
 			sourceTree = "<group>";
@@ -4713,7 +4703,6 @@
 			isa = PBXGroup;
 			children = (
 				CC04F20F1DCAB5D800B4842D /* Actions */,
-				CC64F06D1D8B781C009CEF27 /* UAAction_OperatorTest.m */,
 				CC64F06E1D8B781C009CEF27 /* UAActionArgumentsTest.m */,
 				CC64F0711D8B781C009CEF27 /* UAActionRegistryEntryTest.m */,
 				CC64F0721D8B781C009CEF27 /* UAActionRegistryTest.m */,
@@ -5159,7 +5148,6 @@
 				6E4115E72538C0B000FEE4E8 /* UAPadding.h in Headers */,
 				6EC32283254FC65800EA5B38 /* NSObject+UAAdditions.h in Headers */,
 				6E41158F2538C0AE00FEE4E8 /* UAVersionMatcher.h in Headers */,
-				6E41151F2538C0AB00FEE4E8 /* UAAction+Operators.h in Headers */,
 				6E4116332538C0B200FEE4E8 /* UADebugLibraryModuleLoaderFactory.h in Headers */,
 				6E411A232538C20300FEE4E8 /* UAEventManager+Internal.h in Headers */,
 				6E4116132538C0B100FEE4E8 /* UANamedUser.h in Headers */,
@@ -5223,7 +5211,6 @@
 				6E4119DB2538C20200FEE4E8 /* UAKeychainUtils+Internal.h in Headers */,
 				A6B8F2FD25AC9B110037B51B /* UARemoteConfigURLManager.h in Headers */,
 				6E4116872538C0B400FEE4E8 /* UAModifyTagsAction.h in Headers */,
-				6E411E752538F4C700FEE4E8 /* UAAction+Internal.h in Headers */,
 				6E4118972538C1FD00FEE4E8 /* UARemoteDataManager+Internal.h in Headers */,
 				6E41168F2538C0B400FEE4E8 /* UAActionRegistry.h in Headers */,
 				6E4115EF2538C0B000FEE4E8 /* UAAppIntegration.h in Headers */,
@@ -5489,7 +5476,6 @@
 				6E4115E82538C0B000FEE4E8 /* UAPadding.h in Headers */,
 				6EC32284254FC65800EA5B38 /* NSObject+UAAdditions.h in Headers */,
 				6E4115902538C0AE00FEE4E8 /* UAVersionMatcher.h in Headers */,
-				6E4115202538C0AB00FEE4E8 /* UAAction+Operators.h in Headers */,
 				6E4116342538C0B200FEE4E8 /* UADebugLibraryModuleLoaderFactory.h in Headers */,
 				6E411A242538C20300FEE4E8 /* UAEventManager+Internal.h in Headers */,
 				6E4116142538C0B100FEE4E8 /* UANamedUser.h in Headers */,
@@ -5552,7 +5538,6 @@
 				6E4119DC2538C20200FEE4E8 /* UAKeychainUtils+Internal.h in Headers */,
 				A6B8F2FE25AC9B110037B51B /* UARemoteConfigURLManager.h in Headers */,
 				6E4116882538C0B400FEE4E8 /* UAModifyTagsAction.h in Headers */,
-				6E411EB22538F4D100FEE4E8 /* UAAction+Internal.h in Headers */,
 				6E4118982538C1FD00FEE4E8 /* UARemoteDataManager+Internal.h in Headers */,
 				6E4116902538C0B400FEE4E8 /* UAActionRegistry.h in Headers */,
 				6E4115F02538C0B000FEE4E8 /* UAAppIntegration.h in Headers */,
@@ -6453,12 +6438,12 @@
 				6E41183B2538C1FC00FEE4E8 /* UAAddCustomEventActionPredicate.m in Sources */,
 				6E95292C268B98A200398B54 /* UAMediaEventTemplate.swift in Sources */,
 				6E41185B2538C1FD00FEE4E8 /* UAAddCustomEventAction.m in Sources */,
+				6ED6ECA426ADCA6F00973364 /* BlockAction.swift in Sources */,
 				3CC95B2B2696549B00FE2ACD /* UAPushableComponent.swift in Sources */,
 				6E6ED1632683DBC300A2CBD0 /* UAApplicationMetrics.swift in Sources */,
 				6E698E12267A98AB00654DB2 /* UAChannelAPIClient.swift in Sources */,
 				6E4119C32538C20200FEE4E8 /* UANativeBridge.m in Sources */,
 				6E411A8B2538C20500FEE4E8 /* UAPadding.m in Sources */,
-				6E411E762538F4C700FEE4E8 /* UAAction.m in Sources */,
 				6E41191B2538C1FF00FEE4E8 /* UANamedUser.m in Sources */,
 				6E4118F32538C1FF00FEE4E8 /* UAVersionMatcher.m in Sources */,
 				6E411A432538C20400FEE4E8 /* UARemoveTagsAction.m in Sources */,
@@ -6468,7 +6453,6 @@
 				6E4119532538C20000FEE4E8 /* UATagsActionPredicate.m in Sources */,
 				6E698DEC26790AC300654DB2 /* UAPreferenceDataStore.swift in Sources */,
 				6E4118B32538C1FE00FEE4E8 /* UADeepLinkAction.m in Sources */,
-				6E411E6F2538F4C700FEE4E8 /* UAAction+Operators.m in Sources */,
 				6E41181F2538C1FC00FEE4E8 /* UAActivityViewController.m in Sources */,
 				6E411A932538C20500FEE4E8 /* UAEventStore.m in Sources */,
 				6E41192B2538C1FF00FEE4E8 /* UAAutoIntegration.m in Sources */,
@@ -6525,6 +6509,7 @@
 				6E4118772538C1FD00FEE4E8 /* UARemoteDataPayload.m in Sources */,
 				6E411A8F2538C20500FEE4E8 /* UANativeBridgeActionHandler.m in Sources */,
 				6E411AA32538C20500FEE4E8 /* UARemoteDataStore.m in Sources */,
+				6ED6ECA726AE05B700973364 /* EmptyAction.swift in Sources */,
 				6E95292F268BBD7D00398B54 /* UARetailEventTemplate.swift in Sources */,
 				6E1892B1268CE8FE00417887 /* Lock.swift in Sources */,
 				6E698E0C267A88D600654DB2 /* UAEventAPIClient.swift in Sources */,
@@ -6849,7 +6834,6 @@
 				DF0221F21FD9F6EF00EF8C9D /* UAInAppMessageAudienceTest.m in Sources */,
 				6E6ED172268448EC00A2CBD0 /* TestNetworkMonitor.swift in Sources */,
 				CC64F1091D8B781C009CEF27 /* UAJSONMatcherTests.m in Sources */,
-				CC64F0D81D8B781C009CEF27 /* UAAction_OperatorTest.m in Sources */,
 				DF9FED0A1F75D64900C79417 /* UARemoteDataStoreTest.m in Sources */,
 				E29D35EF1DB9751F003C292F /* UAFetchDeviceInfoActionTest.m in Sources */,
 				CC64F0ED1D8B781C009CEF27 /* UAChannelAPIClientTest.m in Sources */,
@@ -7035,6 +7019,7 @@
 				6E95292D268B98A200398B54 /* UAMediaEventTemplate.swift in Sources */,
 				6E41183C2538C1FC00FEE4E8 /* UAAddCustomEventActionPredicate.m in Sources */,
 				3CC95B2C2696549B00FE2ACD /* UAPushableComponent.swift in Sources */,
+				6ED6ECA526ADCA6F00973364 /* BlockAction.swift in Sources */,
 				6E41185C2538C1FD00FEE4E8 /* UAAddCustomEventAction.m in Sources */,
 				6E6ED1642683DBC300A2CBD0 /* UAApplicationMetrics.swift in Sources */,
 				6E411EA72538F4D100FEE4E8 /* UAActionArguments.m in Sources */,
@@ -7105,6 +7090,7 @@
 				A6E002E6258BABE200620226 /* UAModifyAttributesAction.m in Sources */,
 				6E411EA92538F4D100FEE4E8 /* UAActionRegistryEntry.m in Sources */,
 				A60A243B258D0D7D006B7D80 /* UAAttributesActionPredicate.m in Sources */,
+				6ED6ECA826AE05B700973364 /* EmptyAction.swift in Sources */,
 				6E4118782538C1FD00FEE4E8 /* UARemoteDataPayload.m in Sources */,
 				6E411A902538C20500FEE4E8 /* UANativeBridgeActionHandler.m in Sources */,
 				6E411AA42538C20500FEE4E8 /* UARemoteDataStore.m in Sources */,
@@ -7120,7 +7106,6 @@
 				6E698E04267A799500654DB2 /* UAirshipErrors.swift in Sources */,
 				6E698E40267BEDC300654DB2 /* AttributesEditor.swift in Sources */,
 				6E698DFD267A78CA00654DB2 /* UAHTTPResponse.swift in Sources */,
-				6E411EB12538F4D100FEE4E8 /* UAAction+Operators.m in Sources */,
 				6E41199C2538C20100FEE4E8 /* UAOpenExternalURLAction.m in Sources */,
 				6E4119682538C20000FEE4E8 /* UAPush.m in Sources */,
 				6E4118F02538C1FF00FEE4E8 /* UAAggregateActionResult.m in Sources */,
@@ -7163,7 +7148,6 @@
 				3CC95B20268E785900FE2ACD /* UANotificationCategories.swift in Sources */,
 				6E411A542538C20400FEE4E8 /* UAAttributeMutations.m in Sources */,
 				6E411AD02538C20600FEE4E8 /* UAComponent.m in Sources */,
-				6E411EAE2538F4D100FEE4E8 /* UAAction.m in Sources */,
 				6E952927268B8F6600398B54 /* UAAssociatedIdentifiers.swift in Sources */,
 				6E8BF45626852E86009A8BD4 /* UATask.swift in Sources */,
 				6E411A502538C20400FEE4E8 /* UATagGroupsMutation.m in Sources */,

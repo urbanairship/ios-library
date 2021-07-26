@@ -2,6 +2,8 @@
 
 #import "UADeepLinkAction.h"
 #import "UAirship.h"
+#import "UAActionArguments.h"
+#import "UAActionResult.h"
 
 @implementation UADeepLinkAction
 

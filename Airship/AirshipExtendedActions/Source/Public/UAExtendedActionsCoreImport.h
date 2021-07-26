@@ -7,6 +7,7 @@
 #if UA_USE_MODULE_IMPORT
 #import <AirshipCore/AirshipCore.h>
 #else
+#import "UAAction.h"
 #import "UAActionRegistry.h"
 #import "UAirship.h"
 #import "UAModuleLoader.h"

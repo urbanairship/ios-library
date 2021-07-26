@@ -2,7 +2,6 @@
 
 #import "UABaseTest.h"
 #import "UAOpenExternalURLAction.h"
-#import "UAAction+Operators.h"
 #import "UAActionArguments+Internal.h"
 #import "UAURLAllowList.h"
 #import "UAirship+Internal.h"
@@ -41,7 +40,7 @@
 - (void)testAcceptsArguments {
     [[[[self.mockURLAllowList stub] andReturnValue:OCMOCK_VALUE(YES)] ignoringNonObjectArgs] isAllowed:OCMOCK_ANY scope:UAURLAllowListScopeOpenURL];
 
-    UAAction *action = [[UAOpenExternalURLAction alloc] init];
+    UAOpenExternalURLAction *action = [[UAOpenExternalURLAction alloc] init];
 
     self.arguments.value = @"http://some-valid-url";
     XCTAssertTrue([action acceptsArguments:self.arguments], @"action should accept valid string URLs");
@@ -72,7 +71,7 @@
 - (void)testURLAllowList {
     [[[[self.mockURLAllowList stub] andReturnValue:OCMOCK_VALUE(NO)] ignoringNonObjectArgs] isAllowed:OCMOCK_ANY scope:UAURLAllowListScopeOpenURL];
 
-    UAAction *action = [[UAOpenExternalURLAction alloc] init];
+    UAOpenExternalURLAction *action = [[UAOpenExternalURLAction alloc] init];
 
     self.arguments.value = @"http://some-valid-url";
     XCTAssertFalse([action acceptsArguments:self.arguments]);
@@ -95,9 +94,7 @@
     self.arguments.value = @"ftp://some-valid-url";
     self.arguments.situation = UASituationForegroundPush;
 
-    UAAction *action = [[[UAOpenExternalURLAction alloc] init] postExecution:^(UAActionArguments *args, UAActionResult *result){
-        [openURLExpectation fulfill];
-    }];
+    UAOpenExternalURLAction *action = [[UAOpenExternalURLAction alloc] init];
 
     [[self.mockApplication expect] openURL:[NSURL URLWithString:self.arguments.value] options:@{} completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         BOOL (^handler)(BOOL) = obj;
@@ -108,6 +105,7 @@
     [action performWithArguments:self.arguments completionHandler:^(UAActionResult *performResult) {
         XCTAssertEqualObjects(performResult.value, self.arguments.value, @"results value should be the url");
         XCTAssertNil(performResult.error, @"result should have no error if the application successfully opens the url");
+        [openURLExpectation fulfill];
     }];
 
     [self waitForTestExpectations];
@@ -126,10 +124,8 @@
     self.arguments.value = [NSURL URLWithString:@"scheme://some-valid-url"];
     self.arguments.situation = UASituationForegroundPush;
 
-    UAAction *action = [[[UAOpenExternalURLAction alloc] init] postExecution:^(UAActionArguments *args, UAActionResult *result){
-        [openURLExpectation fulfill];
-    }];
-
+    UAOpenExternalURLAction *action = [[UAOpenExternalURLAction alloc] init];
+    
     [[self.mockApplication expect] openURL:self.arguments.value options:@{} completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         BOOL (^handler)(BOOL) = obj;
         handler(YES);
@@ -139,6 +135,7 @@
     [action performWithArguments:self.arguments completionHandler:^(UAActionResult *performResult) {
         XCTAssertEqualObjects(performResult.value, ((NSURL *)self.arguments.value).absoluteString, @"results value should be the url");
         XCTAssertNil(performResult.error, @"result should have no error if the application successfully opens the url");
+        [openURLExpectation fulfill];
     }];
 
     [self waitForTestExpectations];
@@ -154,8 +151,7 @@
 
     XCTestExpectation *openURLExpectation = [self expectationWithDescription:@"openURL finished"];
 
-    UAAction *action = [[[UAOpenExternalURLAction alloc] init] postExecution:^(UAActionArguments *args, UAActionResult *result){
-    }];
+    UAOpenExternalURLAction *action = [[UAOpenExternalURLAction alloc] init];
 
     self.arguments.value = [NSURL URLWithString:@"scheme://some-valid-url"];
     self.arguments.situation = UASituationForegroundPush;

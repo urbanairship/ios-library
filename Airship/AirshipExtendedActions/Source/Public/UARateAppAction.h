@@ -27,7 +27,7 @@
  *
  * Result value: nil
  */
-@interface UARateAppAction : UAAction
+@interface UARateAppAction : NSObject<UAAction>
 
 /**
  * Default registry name for rate-app action action.

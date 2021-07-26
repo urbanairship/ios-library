@@ -4,6 +4,8 @@
 #import "UAUtils+Internal.h"
 #import "UAGlobal.h"
 #import "UAActivityViewController.h"
+#import "UAActionArguments.h"
+#import "UAActionResult.h"
 
 #if !TARGET_OS_TV
 

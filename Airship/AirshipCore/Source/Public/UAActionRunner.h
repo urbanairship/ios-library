@@ -89,7 +89,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param value The action's argument value.
  * @param situation The action's situation.
  */
-+ (void)runAction:(UAAction *)action
++ (void)runAction:(id<UAAction>)action
             value:(nullable id)value
         situation:(UASituation)situation;
 
@@ -101,7 +101,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param situation The action's situation.
  * @param metadata The action's metadata.
  */
-+ (void)runAction:(UAAction *)action
++ (void)runAction:(id<UAAction>)action
             value:(nullable id)value
         situation:(UASituation)situation
          metadata:(nullable NSDictionary *)metadata;
@@ -114,7 +114,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param situation The action's situation.
  * @param completionHandler Optional completion handler to run when the action completes.
  */
-+ (void)runAction:(UAAction *)action
++ (void)runAction:(id<UAAction>)action
             value:(nullable id)value
         situation:(UASituation)situation
 completionHandler:(UAActionCompletionHandler)completionHandler;
@@ -129,7 +129,7 @@ completionHandler:(UAActionCompletionHandler)completionHandler;
  * @param metadata The action's metadata.
  * @param completionHandler Optional completion handler to run when the action completes.
  */
-+ (void)runAction:(UAAction *)action
++ (void)runAction:(id<UAAction>)action
             value:(nullable id)value
         situation:(UASituation)situation
          metadata:(nullable NSDictionary *)metadata

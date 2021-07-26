@@ -7,6 +7,7 @@
 #import "UAChannel.h"
 #import "UANamedUser.h"
 #import "UAActionArguments+Internal.h"
+#import "UAActionResult.h"
 
 @interface UAFetchDeviceInfoActionTest : UABaseTest
 

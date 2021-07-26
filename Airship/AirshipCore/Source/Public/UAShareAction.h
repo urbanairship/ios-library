@@ -24,7 +24,7 @@
  *
  */
 API_UNAVAILABLE(tvos)
-@interface UAShareAction : UAAction
+@interface UAShareAction : NSObject<UAAction>
 
 /**
  * Default registry name for share action.

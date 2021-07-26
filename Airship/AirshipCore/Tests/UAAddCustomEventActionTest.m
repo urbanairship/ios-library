@@ -4,7 +4,6 @@
 #import "UAanalytics.h"
 #import "UAirship+Internal.h"
 #import "UAAddCustomEventAction.h"
-#import "UAAction+Internal.h"
 
 @import AirshipCore;
 

@@ -46,7 +46,7 @@ extern NSString * const UAOpenExternalURLActionErrorDomain;
  *
  * Fetch result: UAActionFetchResultNoData
  */
-@interface UAOpenExternalURLAction : UAAction
+@interface UAOpenExternalURLAction : NSObject<UAAction>
 
 /**
  * Parses the NSURL from the action arguments.
