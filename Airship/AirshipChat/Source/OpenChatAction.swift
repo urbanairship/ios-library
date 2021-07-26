@@ -53,9 +53,14 @@ public class OpenChatAction : NSObject, UAAction {
     }
 
     public func perform(with arguments: UAActionArguments, completionHandler: @escaping UAActionCompletionHandler) {
+        let chat = self.chatProvider()
         let args = arguments.value as? [String: Any]
         let message = args?["chat_input"] as? String
-        self.chatProvider().openChat(message: message)
+        if let routing = args?["chat_routing"] as? ChatRouting {
+            chat.conversation.routing = routing
+        }
+        
+        chat.openChat(message: message)
 
         completionHandler(UAActionResult.empty())
     }

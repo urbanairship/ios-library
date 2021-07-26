@@ -17,6 +17,7 @@
 #import <Airship/Airship-Swift.h>
 #endif
 
+NSString *const UAUserPushNotificationsOptionsKey = @"UAUserPushNotificationsOptions";
 NSString *const UAUserPushNotificationsEnabledKey = @"UAUserPushNotificationsEnabled";
 NSString *const UABackgroundPushNotificationsEnabledKey = @"UABackgroundPushNotificationsEnabled";
 NSString *const UAExtendedPushNotificationPermissionEnabledKey = @"UAExtendedPushNotificationPermissionEnabled";
@@ -113,10 +114,12 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
 
         self.shouldUpdateAPNSRegistration = YES;
 
-        self.notificationOptions = UANotificationOptionBadge;
+        if (![self.dataStore objectForKey:UAUserPushNotificationsOptionsKey]) {
+          self.notificationOptions = UANotificationOptionBadge;
 #if !TARGET_OS_TV  // Sound and Alert not supported on tvOS
-        self.notificationOptions = self.notificationOptions|UANotificationOptionSound|UANotificationOptionAlert;
+          self.notificationOptions = self.notificationOptions|UANotificationOptionSound|UANotificationOptionAlert;
 #endif
+      }
 
         [self observeNotificationCenterEvents];
 
@@ -424,6 +427,11 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
 
 
 #if !TARGET_OS_TV
+- (void)setAccengageCategories:(NSSet<UNNotificationCategory *> *)categories {
+    _accengageCategories = categories;
+    self.shouldUpdateAPNSRegistration = YES;
+}
+
 - (void)setCustomCategories:(NSSet<UNNotificationCategory *> *)categories {
     _customCategories = [categories filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
         UNNotificationCategory *category = evaluatedObject;
@@ -481,8 +489,12 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
 }
 
 - (void)setNotificationOptions:(UANotificationOptions)notificationOptions {
-    _notificationOptions = notificationOptions;
+    [self.dataStore setObject:[NSNumber numberWithUnsignedInteger:notificationOptions] forKey:UAUserPushNotificationsOptionsKey];
     self.shouldUpdateAPNSRegistration = YES;
+}
+
+- (UANotificationOptions)notificationOptions {
+    return [(NSNumber *)[self.dataStore objectForKey:UAUserPushNotificationsOptionsKey] unsignedIntegerValue];
 }
 
 #pragma mark -

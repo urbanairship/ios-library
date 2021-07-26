@@ -23,7 +23,7 @@ class MockChatConnection: ChatConnectionProtocol {
         self.requestedConversation = true
     }
 
-    func sendMessage(requestID: String, text: String?, attachment: URL?) {
+    func sendMessage(requestID: String, text: String?, attachment: URL?, routing: ChatRouting?) {
         self.lastSendMessage = (requestID, text, attachment)
     }
 }

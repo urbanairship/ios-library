@@ -1343,6 +1343,7 @@
 		DFFCF5AF1FCF53100014DE2E /* UAInAppRemoteDataClientTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DFFCF5AE1FCF53100014DE2E /* UAInAppRemoteDataClientTest.m */; };
 		E29D35EF1DB9751F003C292F /* UAFetchDeviceInfoActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = E29D35EE1DB9751F003C292F /* UAFetchDeviceInfoActionTest.m */; };
 		E39D6A22D2DD999CD2FA0A4F /* Pods_AirshipAccengageTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 45F651ACE8833830E1D2333D /* Pods_AirshipAccengageTests.framework */; };
+		E8A58B38268FDF12005079F3 /* ChatRouting.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8A58B37268FDF12005079F3 /* ChatRouting.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -2582,6 +2583,7 @@
 		DFFCF5AE1FCF53100014DE2E /* UAInAppRemoteDataClientTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppRemoteDataClientTest.m; sourceTree = "<group>"; };
 		DFFCF5B91FD1E65F0014DE2E /* UAInAppRemoteDataClient+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInAppRemoteDataClient+Internal.h"; sourceTree = "<group>"; };
 		E29D35EE1DB9751F003C292F /* UAFetchDeviceInfoActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAFetchDeviceInfoActionTest.m; sourceTree = "<group>"; };
+		E8A58B37268FDF12005079F3 /* ChatRouting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatRouting.swift; sourceTree = "<group>"; };
 		EBF83042659DAF0D42AD7A9E /* Pods_AirshipTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AirshipTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -3922,6 +3924,7 @@
 				6E9D55C2261E3A92009BD6EB /* AirshipChannel.swift */,
 				6E9D57C0261F99BF009BD6EB /* ChatConfig.swift */,
 				6E9D580A261FC344009BD6EB /* OpenChatAction.swift */,
+				E8A58B37268FDF12005079F3 /* ChatRouting.swift */,
 				3C9AC93F262F9AC300D6E346 /* ChatStyle.swift */,
 			);
 			path = Source;
@@ -6619,6 +6622,7 @@
 				6E7C07FA26139C02006D0E84 /* ChatDAOProtocol.swift in Sources */,
 				6E7C07CF26139B4A006D0E84 /* Conversation.swift in Sources */,
 				6E7C07DE26139B58006D0E84 /* ChatMessage.swift in Sources */,
+				E8A58B38268FDF12005079F3 /* ChatRouting.swift in Sources */,
 				6E877761261CED1A00B03FC0 /* PendingChatMessageData.swift in Sources */,
 				A6031ED326738CE600FFE328 /* ChatMessageDataModel.xcdatamodeld in Sources */,
 				6E9D5595261E35C1009BD6EB /* ChatAPIClient.swift in Sources */,
