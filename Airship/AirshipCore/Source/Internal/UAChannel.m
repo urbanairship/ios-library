@@ -27,8 +27,6 @@ NSString *const UAChannelUploadedTagGroupMutationNotification = @"com.urbanairsh
 NSString *const UAChannelUploadedAttributeMutationsNotification = @"com.urbanairship.channel.uploaded_attribute_mutations";
 
 NSString *const UAChannelUploadedAudienceMutationNotificationMutationKey = @"mutation";
-NSString *const UAChannelUploadedAudienceMutationNotificationDateKey = @"date";
-NSString *const UAChannelUploadedAudienceMutationNotificationIdentifierKey = @"identifier";
 
 NSString *const UAChannelCreatedEventChannelKey = @"com.urbanairship.channel.identifier";
 NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.channel.existing";
@@ -551,17 +549,13 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 - (void)uploadedTagGroupsMutation:(UATagGroupsMutation *)mutation identifier:(NSString *)identifier {
     [[NSNotificationCenter defaultCenter] postNotificationName:UAChannelUploadedTagGroupMutationNotification
                                                         object:nil
-                                                      userInfo:@{UAChannelUploadedAudienceMutationNotificationMutationKey:mutation,
-                                                                 UAChannelUploadedAudienceMutationNotificationDateKey:[NSDate date],
-                                                                 UAChannelUploadedAudienceMutationNotificationIdentifierKey:identifier }];
+                                                      userInfo:@{UAChannelUploadedAudienceMutationNotificationMutationKey:mutation}];
 }
 
 - (void)uploadedAttributeMutations:(UAAttributePendingMutations *)mutations identifier:(NSString *)identifier {
     [[NSNotificationCenter defaultCenter] postNotificationName:UAChannelUploadedAttributeMutationsNotification
                                                         object:nil
-                                                      userInfo:@{UAChannelUploadedAudienceMutationNotificationMutationKey:mutations,
-                                                                 UAChannelUploadedAudienceMutationNotificationDateKey:[NSDate date],
-                                                                 UAChannelUploadedAudienceMutationNotificationIdentifierKey:identifier }];
+                                                      userInfo:@{UAChannelUploadedAudienceMutationNotificationMutationKey:mutations}];
 }
 
 - (void)onComponentEnableChange {

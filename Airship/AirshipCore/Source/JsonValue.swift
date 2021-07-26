@@ -21,5 +21,4 @@ struct JsonValue : Codable {
             self.jsonEncodedValue = nil
         }
     }
-    
 }

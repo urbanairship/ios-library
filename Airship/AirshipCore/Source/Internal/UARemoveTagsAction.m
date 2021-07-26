@@ -3,8 +3,13 @@
 #import "UARemoveTagsAction.h"
 #import "UAirship.h"
 #import "UAChannel.h"
-#import "UANamedUser.h"
 #import "UATagsActionPredicate+Internal.h"
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
 
 @implementation UARemoveTagsAction
 
@@ -20,7 +25,9 @@ NSString * const UARemoveTagsActionDefaultRegistryAlias = @"^-t";
 }
 
 - (void)applyNamedUserTags:(NSArray *)tags group:(NSString *)group {
-    [[UAirship namedUser] removeTags:tags group:group];
+    UATagGroupsEditor *editor = [[UAirship contact] editTags];
+    [editor removeTags:tags group:group];
+    [editor apply];
 }
 
 @end

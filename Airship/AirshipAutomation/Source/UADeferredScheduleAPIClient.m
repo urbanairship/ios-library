@@ -101,8 +101,8 @@ NSString * const UADeferredScheduleAPIClientErrorDomain = @"com.urbanairship.def
 - (void)resolveURL:(NSURL *)URL
          channelID:(NSString *)channelID
     triggerContext:(nullable UAScheduleTriggerContext *)triggerContext
-      tagOverrides:(NSArray<UATagGroupsMutation *> *)tagOverrides
-attributeOverrides:(UAAttributePendingMutations *)attributeOverrides
+      tagOverrides:(NSArray<UATagGroupUpdate *> *)tagOverrides
+attributeOverrides:(NSArray<UAAttributeUpdate *> *)attributeOverrides
  completionHandler:(void (^)(UADeferredScheduleResult * _Nullable, NSError * _Nullable))completionHandler {
 
     UA_WEAKIFY(self)
@@ -213,8 +213,8 @@ attributeOverrides:(UAAttributePendingMutations *)attributeOverrides
                                                     URL:(NSURL *)URL
                                               channelID:(NSString *)channelID
                                          triggerContext:(UAScheduleTriggerContext *)triggerContext
-                                           tagOverrides:(NSArray<UATagGroupsMutation *> *)tagOverrides
-                                     attributeOverrides:(UAAttributePendingMutations *)attributeOverrides {
+                                           tagOverrides:(NSArray<UATagGroupUpdate *> *)tagOverrides
+                                     attributeOverrides:(NSArray<UAAttributeUpdate *> *)attributeOverrides {
 
     UARequest *request = [self requestWithAuthToken:authToken
                                                 URL:URL
@@ -247,9 +247,9 @@ attributeOverrides:(UAAttributePendingMutations *)attributeOverrides
 
 - (NSData *)requestBodyWithChannelID:(NSString *)channelID
                       triggerContext:(nullable UAScheduleTriggerContext *)triggerContext
-                        tagOverrides:(NSArray<UATagGroupsMutation *> *)tagOverrides
-                  attributeOverrides:(UAAttributePendingMutations *)attributeOverrides {
-
+                        tagOverrides:(NSArray<UATagGroupUpdate *> *)tagOverrides
+                  attributeOverrides:(NSArray<UAAttributeUpdate *> *)attributeOverrides {
+    
     NSMutableDictionary *payload = [NSMutableDictionary dictionary];
     [payload addEntriesFromDictionary:@{kUADeferredScheduleAPIClientPlatformKey: kUADeferredScheduleAPIClientPlatformiOS,
                                         kUADeferredScheduleAPIClientChannelIDKey: channelID}];
@@ -263,23 +263,14 @@ attributeOverrides:(UAAttributePendingMutations *)attributeOverrides
     }
 
     if (tagOverrides.count) {
-        NSMutableArray *overrides = [NSMutableArray array];
-
-        for (UATagGroupsMutation *mutation in tagOverrides) {
-            [overrides addObject:[mutation payload]];
-        }
-
-        payload[kUADeferredScheduleAPIClientTagOverridesKey] = overrides;
+        payload[kUADeferredScheduleAPIClientTagOverridesKey] = [self tagPayloadFromUpdates:tagOverrides];
     }
-
-    NSArray<NSDictionary *>* attributeMutationsPayload = attributeOverrides.mutationsPayload;
-
-    if (attributeMutationsPayload.count) {
-        payload[kUADeferredScheduleAPIClientAttributeOverridesKey] = attributeMutationsPayload;
+    
+    if (attributeOverrides.count) {
+        payload[kUADeferredScheduleAPIClientAttributeOverridesKey] = [self attributesPayloadFromUpdates:attributeOverrides];
     }
 
     UAStateOverrides *stateOverrides = self.stateOverridesProvider();
-
     NSMutableDictionary *stateOverridesPayload = [NSMutableDictionary dictionary];
     [stateOverridesPayload setValue:stateOverrides.sdkVersion forKey:kUADeferredScheduleAPIClientSDKVersionKey];
     [stateOverridesPayload setValue:stateOverrides.appVersion forKey:kUADeferredScheduleAPIClientAppVersionKey];
@@ -298,8 +289,8 @@ attributeOverrides:(UAAttributePendingMutations *)attributeOverrides
                                 URL:(NSURL *)URL
                           channelID:(NSString *)channelID
                      triggerContext:(nullable UAScheduleTriggerContext *)triggerContext
-                       tagOverrides:(NSArray<UATagGroupsMutation *> *)tagOverrides
-                 attributeOverrides:(UAAttributePendingMutations *)attributeOverrides {
+                       tagOverrides:(NSArray<UATagGroupUpdate *> *)tagOverrides
+                 attributeOverrides:(NSArray<UAAttributeUpdate *> *)attributeOverrides {
 
     UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder * _Nonnull builder) {
         builder.method = @"POST";
@@ -333,6 +324,65 @@ attributeOverrides:(UAAttributePendingMutations *)attributeOverrides
     }
 
     return [UADeferredScheduleResult resultWithMessage:message audienceMatch:audienceMatch];
+}
+
+- (id)attributesPayloadFromUpdates:(NSArray<UAAttributeUpdate *> *)updates {
+    updates = [UAAudienceUtils collapseAttributeUpdates:updates];
+    
+    NSMutableArray *payload = [NSMutableArray array];
+    NSDateFormatter *formatter = [UAUtils ISODateFormatterUTCWithDelimiter];
+    
+    for (UAAttributeUpdate *update in updates) {
+        NSMutableDictionary *attributePayload = [NSMutableDictionary dictionary];
+        NSString *type = update.type == UAAttributeUpdateTypeSet ? @"set" : @"remove";
+        [attributePayload setValue:type forKey:@"action"];
+        [attributePayload setValue:update.attribute forKey:@"key"];
+        [attributePayload setValue:update.value forKey:@"value"];
+        [attributePayload setValue:[formatter stringFromDate:update.date] forKey:@"timestamp"];
+        
+        [payload addObject:attributePayload];
+    }
+    
+    return payload;
+}
+    
+- (id)tagPayloadFromUpdates:(NSArray<UATagGroupUpdate *> *)updates {
+    updates = [UAAudienceUtils collapseTagGroupUpdates:updates];
+
+    NSMutableDictionary *payload = [NSMutableDictionary dictionary];
+    NSMutableDictionary *addTags = [NSMutableDictionary dictionary];
+    NSMutableDictionary *removeTags = [NSMutableDictionary dictionary];
+    NSMutableDictionary *setTags = [NSMutableDictionary dictionary];
+    
+    for (UATagGroupUpdate *update in updates) {
+        switch (update.type) {
+            case UATagGroupUpdateTypeAdd:
+                addTags[update.group] = update.tags;
+                break;
+
+            case UATagGroupUpdateTypeRemove:
+                removeTags[update.group] = update.tags;
+                break;
+                
+            case UATagGroupUpdateTypeSet:
+                setTags[update.group] = update.tags;
+                break;
+        }
+    }
+    
+    if (addTags.count) {
+        payload[@"add"] = addTags;
+    }
+    
+    if (removeTags.count) {
+        payload[@"remove"] = removeTags;
+    }
+    
+    if (setTags.count) {
+        payload[@"set"] = setTags;
+    }
+    
+    return payload;
 }
 
 @end

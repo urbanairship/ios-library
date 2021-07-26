@@ -89,25 +89,4 @@
     XCTAssertNil([self.pendingTagGroupStore popPendingMutation]);
 }
 
-- (void)testMigration {
-    NSDictionary *oldAddTags = @{ @"group1": @[@"tag1"] };
-    [self.dataStore setObject:oldAddTags forKey:@"UAPushAddTagGroups"];
-
-    NSDictionary *oldRemoveTags = @{ @"group2": @[@"tag2"] };
-    [self.dataStore setObject:oldRemoveTags forKey:@"UAPushRemoveTagGroups"];
-
-    UATagGroupsMutation *oldMutation = [UATagGroupsMutation mutationToAddTags:@[@"foo", @"bar"] group:@"group1"];
-    NSData *encodedMutations = [NSKeyedArchiver archivedDataWithRootObject:@[oldMutation]];
-    [self.dataStore setObject:encodedMutations forKey:@"UAPushTagGroupsMutations"];
-
-    UAPendingTagGroupStore *channelTagGroupsMutationHistory = [UAPendingTagGroupStore channelHistoryWithDataStore:self.dataStore];
-
-    UATagGroupsMutation *oldAddRemoveFromHistory = [channelTagGroupsMutationHistory popPendingMutation];
-    NSDictionary *expected = @{ @"add": @{ @"group1": @[@"tag1"] }, @"remove": @{ @"group2": @[@"tag2"] } };
-    XCTAssertEqualObjects(expected, oldAddRemoveFromHistory.payload);
-
-    UATagGroupsMutation *oldMutationFromHistory = [channelTagGroupsMutationHistory popPendingMutation];
-    XCTAssertEqualObjects(oldMutation.payload, oldMutationFromHistory.payload);
-}
-
 @end

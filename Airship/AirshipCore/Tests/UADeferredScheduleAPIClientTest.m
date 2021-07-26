@@ -71,15 +71,18 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
 
     XCTestExpectation *sessionFinished = [self expectationWithDescription:@"Session finished"];
 
-    UATagGroupsMutation *mutation = [UATagGroupsMutation mutationToAddTags:@[@"neat", @"rad"] group:@"cool"];
-    UATagGroupsMutation *mutation2 = [UATagGroupsMutation mutationToAddTags:@[@"awesome", @"nice"] group:@"great"];
-
-    NSArray<UATagGroupsMutation *> *tagOverrides = @[mutation, mutation2];
-
-    UAAttributeMutations *attributeMutations = [UAAttributeMutations mutations];
-    [attributeMutations setString:@"absolutely" forAttribute:@"fabulous"];
-    UAAttributePendingMutations *attributeOverrides = [UAAttributePendingMutations pendingMutationsWithMutations:attributeMutations
-                                                                                                            date:[[UADate alloc] init]];
+    NSArray *tagUpdates = @[
+        [[UATagGroupUpdate alloc] initWithGroup:@"add-group" tags:@[@"tag-1", @"tag-2"] type:UATagGroupUpdateTypeAdd],
+        [[UATagGroupUpdate alloc] initWithGroup:@"set-group" tags:@[@"tag-3", @"tag-4"] type:UATagGroupUpdateTypeSet],
+        [[UATagGroupUpdate alloc] initWithGroup:@"remove-group" tags:@[@"tag-5", @"tag-6"] type:UATagGroupUpdateTypeRemove],
+    ];
+    
+    NSDate *attributeDate = NSDate.now;
+    NSArray *attributeUpdates = @[
+        [[UAAttributeUpdate alloc] initWithAttribute:@"remove-attribute" type:UAAttributeUpdateTypeRemove value:nil date:attributeDate],
+        [[UAAttributeUpdate alloc] initWithAttribute:@"set-attribute" type:UAAttributeUpdateTypeSet value:@"hi" date:attributeDate]
+    ];
+    
     [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
@@ -100,10 +103,20 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
         id expectedTrigger = @{@"type": trigger.typeName, @"goal" : trigger.goal, @"event": event};
         XCTAssertEqualObjects(body[@"trigger"], expectedTrigger);
 
-        id expectedOverrides = @[mutation.payload, mutation2.payload];
-        XCTAssertEqualObjects(body[@"tag_overrides"], expectedOverrides);
+        
+        id exepctedTagOverrides = @{ @"add": @{ @"add-group": @[@"tag-1", @"tag-2"] },
+                                     @"set": @{ @"set-group": @[@"tag-3", @"tag-4"] },
+                                     @"remove": @{ @"remove-group": @[@"tag-5", @"tag-6"] } };
+        
+        
+        XCTAssertEqualObjects(body[@"tag_overrides"], exepctedTagOverrides);
 
-        XCTAssertEqualObjects(body[@"attribute_overrides"], attributeOverrides.mutationsPayload);
+        id timestamp = [UAUtils.ISODateFormatterUTCWithDelimiter stringFromDate:attributeDate];
+
+        id exepctedAttributeOverrides = @[ @{ @"action": @"remove", @"key": @"remove-attribute", @"timestamp": timestamp},
+                                           @{ @"action": @"set", @"value": @"hi", @"key": @"set-attribute", @"timestamp": timestamp} ];
+
+        XCTAssertEqualObjects(body[@"attribute_overrides"], exepctedAttributeOverrides);
 
         id expectedStateOverrides = @{@"app_version" : @"1.2.3", @"sdk_version" : @"2.3.4",
                                       @"locale_language" : @"en", @"locale_country": @"US",
@@ -121,8 +134,8 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
     [self.client resolveURL:URL
                   channelID:channelID
              triggerContext:triggerContext
-               tagOverrides:tagOverrides
-         attributeOverrides:attributeOverrides
+               tagOverrides:tagUpdates
+         attributeOverrides:attributeUpdates
           completionHandler:^(UADeferredScheduleResult * _Nullable result, NSError * _Nullable error) {
 
         XCTAssertNotNil(result);
@@ -170,12 +183,6 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
 
     XCTestExpectation *sessionFinished = [self expectationWithDescription:@"Session finished"];
 
-    NSArray<UATagGroupsMutation *> *tagOverrides = @[];
-
-    UAAttributeMutations *attributeMutations = [UAAttributeMutations mutations];
-    UAAttributePendingMutations *attributeOverrides = [UAAttributePendingMutations pendingMutationsWithMutations:attributeMutations
-                                                                                                            date:[[UADate alloc] init]];
-
     [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
@@ -209,8 +216,8 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
     [self.client resolveURL:URL
                   channelID:channelID
              triggerContext:triggerContext
-               tagOverrides:tagOverrides
-         attributeOverrides:attributeOverrides
+               tagOverrides:@[]
+         attributeOverrides:@[]
           completionHandler:^(UADeferredScheduleResult * _Nullable result, NSError * _Nullable error) {
 
         XCTAssertNotNil(result);
@@ -278,24 +285,14 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
 
         return YES;
     }] completionHandler:OCMOCK_ANY];
-
-    UATagGroupsMutation *mutation = [UATagGroupsMutation mutationToAddTags:@[@"neat", @"rad"] group:@"cool"];
-    UATagGroupsMutation *mutation2 = [UATagGroupsMutation mutationToAddTags:@[@"awesome", @"nice"] group:@"great"];
-
-    NSArray<UATagGroupsMutation *> *tagOverrides = @[mutation, mutation2];
-
-    UAAttributeMutations *attributeMutations = [UAAttributeMutations mutations];
-    [attributeMutations setString:@"absolutely" forAttribute:@"fabulous"];
-    UAAttributePendingMutations *attributeOverrides = [UAAttributePendingMutations pendingMutationsWithMutations:attributeMutations
-                                                                                                            date:[[UADate alloc] init]];
-
+                                     
     XCTestExpectation *resultResolved = [self expectationWithDescription:@"Result resolved"];
 
     [self.client resolveURL:URL
                   channelID:channelID
              triggerContext:nil
-               tagOverrides:tagOverrides
-         attributeOverrides:attributeOverrides
+               tagOverrides:@[]
+         attributeOverrides:@[]
           completionHandler:^(UADeferredScheduleResult * _Nullable result, NSError * _Nullable error) {
 
         XCTAssertNotNil(result);
@@ -343,12 +340,6 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
 
     XCTestExpectation *sessionFinished = [self expectationWithDescription:@"Session finished"];
 
-    NSArray<UATagGroupsMutation *> *tagOverrides = @[];
-
-    UAAttributeMutations *attributeMutations = [UAAttributeMutations mutations];
-    UAAttributePendingMutations *attributeOverrides = [UAAttributePendingMutations pendingMutationsWithMutations:attributeMutations
-                                                                                                            date:[[UADate alloc] init]];
-
     [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
@@ -382,8 +373,8 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
     [self.client resolveURL:URL
                   channelID:channelID
              triggerContext:triggerContext
-               tagOverrides:tagOverrides
-         attributeOverrides:attributeOverrides
+               tagOverrides:@[]
+         attributeOverrides:@[]
           completionHandler:^(UADeferredScheduleResult * _Nullable result, NSError * _Nullable error) {
 
         XCTAssertNotNil(result);
@@ -417,23 +408,13 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
 
     [[self.mockSession reject] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-    UATagGroupsMutation *mutation = [UATagGroupsMutation mutationToAddTags:@[@"neat", @"rad"] group:@"cool"];
-    UATagGroupsMutation *mutation2 = [UATagGroupsMutation mutationToAddTags:@[@"awesome", @"nice"] group:@"great"];
-
-    NSArray<UATagGroupsMutation *> *tagOverrides = @[mutation, mutation2];
-
-    UAAttributeMutations *attributeMutations = [UAAttributeMutations mutations];
-    [attributeMutations setString:@"absolutely" forAttribute:@"fabulous"];
-    UAAttributePendingMutations *attributeOverrides = [UAAttributePendingMutations pendingMutationsWithMutations:attributeMutations
-                                                                                                            date:[[UADate alloc] init]];
-
     XCTestExpectation *resultResolved = [self expectationWithDescription:@"Result resolved"];
 
     [self.client resolveURL:URL
                   channelID:channelID
              triggerContext:triggerContext
-               tagOverrides:tagOverrides
-         attributeOverrides:attributeOverrides
+               tagOverrides:@[]
+         attributeOverrides:@[]
           completionHandler:^(UADeferredScheduleResult * _Nullable result, NSError * _Nullable error) {
 
         XCTAssertNil(result);
@@ -478,23 +459,13 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
         [sessionFinished fulfill];
     }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-    UATagGroupsMutation *mutation = [UATagGroupsMutation mutationToAddTags:@[@"neat", @"rad"] group:@"cool"];
-    UATagGroupsMutation *mutation2 = [UATagGroupsMutation mutationToAddTags:@[@"awesome", @"nice"] group:@"great"];
-
-    NSArray<UATagGroupsMutation *> *tagOverrides = @[mutation, mutation2];
-
-    UAAttributeMutations *attributeMutations = [UAAttributeMutations mutations];
-    [attributeMutations setString:@"absolutely" forAttribute:@"fabulous"];
-    UAAttributePendingMutations *attributeOverrides = [UAAttributePendingMutations pendingMutationsWithMutations:attributeMutations
-                                                                                                            date:[[UADate alloc] init]];
-
     XCTestExpectation *resultResolved = [self expectationWithDescription:@"Result resolved"];
 
     [self.client resolveURL:URL
                   channelID:channelID
              triggerContext:triggerContext
-               tagOverrides:tagOverrides
-         attributeOverrides:attributeOverrides
+               tagOverrides:@[]
+         attributeOverrides:@[]
           completionHandler:^(UADeferredScheduleResult * _Nullable result, NSError * _Nullable error) {
 
         XCTAssertNil(result);
@@ -543,16 +514,6 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
         [sessionFinished fulfill];
     }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-    UATagGroupsMutation *mutation = [UATagGroupsMutation mutationToAddTags:@[@"neat", @"rad"] group:@"cool"];
-    UATagGroupsMutation *mutation2 = [UATagGroupsMutation mutationToAddTags:@[@"awesome", @"nice"] group:@"great"];
-
-    NSArray<UATagGroupsMutation *> *tagOverrides = @[mutation, mutation2];
-
-    UAAttributeMutations *attributeMutations = [UAAttributeMutations mutations];
-    [attributeMutations setString:@"absolutely" forAttribute:@"fabulous"];
-    UAAttributePendingMutations *attributeOverrides = [UAAttributePendingMutations pendingMutationsWithMutations:attributeMutations
-                                                                                                            date:[[UADate alloc] init]];
-
     XCTestExpectation *resultResolved = [self expectationWithDescription:@"Result resolved"];
 
     XCTestExpectation *newTokenRetrieved = [self expectationWithDescription:@"New auth token retrieved"];
@@ -583,8 +544,8 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
     [self.client resolveURL:URL
                   channelID:channelID
              triggerContext:triggerContext
-               tagOverrides:tagOverrides
-         attributeOverrides:attributeOverrides
+               tagOverrides:@[]
+         attributeOverrides:@[]
           completionHandler:^(UADeferredScheduleResult * _Nullable result, NSError * _Nullable error) {
 
         XCTAssertNotNil(result);
@@ -631,23 +592,13 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
         [sessionFinished fulfill];
     }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-    UATagGroupsMutation *mutation = [UATagGroupsMutation mutationToAddTags:@[@"neat", @"rad"] group:@"cool"];
-    UATagGroupsMutation *mutation2 = [UATagGroupsMutation mutationToAddTags:@[@"awesome", @"nice"] group:@"great"];
-
-    NSArray<UATagGroupsMutation *> *tagOverrides = @[mutation, mutation2];
-
-    UAAttributeMutations *attributeMutations = [UAAttributeMutations mutations];
-    [attributeMutations setString:@"absolutely" forAttribute:@"fabulous"];
-    UAAttributePendingMutations *attributeOverrides = [UAAttributePendingMutations pendingMutationsWithMutations:attributeMutations
-                                                                                                            date:[[UADate alloc] init]];
-
     XCTestExpectation *resultResolved = [self expectationWithDescription:@"Result resolved"];
 
     [self.client resolveURL:URL
                   channelID:channelID
              triggerContext:triggerContext
-               tagOverrides:tagOverrides
-         attributeOverrides:attributeOverrides
+               tagOverrides:@[]
+         attributeOverrides:@[]
           completionHandler:^(UADeferredScheduleResult * _Nullable result, NSError * _Nullable error) {
 
         XCTAssertNotNil(result);

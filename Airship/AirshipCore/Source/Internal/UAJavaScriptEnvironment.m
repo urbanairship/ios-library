@@ -5,7 +5,6 @@
 #import "UAGlobal.h"
 #import "UAirship.h"
 #import "UAChannel.h"
-#import "UANamedUser.h"
 #import "UARuntimeConfig.h"
 
 
@@ -32,7 +31,7 @@
 + (instancetype)defaultEnvironment {
     UAJavaScriptEnvironment *environment = [[self alloc] init];
     [environment addStringGetter:@"getDeviceModel" value:[UIDevice currentDevice].model];
-    [environment addStringGetter:@"getNamedUser" value:[UAirship namedUser].identifier];
+    [environment addStringGetter:@"getNamedUser" value:[UAirship contact].namedUserID];
     [environment addStringGetter:@"getChannelId" value:[UAirship channel].identifier];
     [environment addStringGetter:@"getAppKey" value:[UAirship shared].config.appKey];
     return environment;

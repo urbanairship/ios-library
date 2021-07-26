@@ -4,6 +4,7 @@
 
 @class UAAttributeMutations;
 @class UADate;
+@class UAAttributeUpdate;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -51,6 +52,8 @@ extern NSString *const UAAttributeRemoveActionKey;
  @return An immutable copy of the JSON safe mutations dictionary to be used in a request body or nil if compression resulted in an empty mutation payload.
  */
 - (nullable NSDictionary *)payload;
+
+- (NSArray<UAAttributeUpdate *> *)attributeUpdates;
 
 @end
 

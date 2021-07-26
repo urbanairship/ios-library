@@ -3,10 +3,15 @@
 #import "UAModifyAttributesAction.h"
 #import "UAirship.h"
 #import "UAChannel.h"
-#import "UANamedUser.h"
 #import "UAAttributesActionPredicate+Internal.h"
 #import "UAActionArguments.h"
 #import "UAActionResult.h"
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
 
 NSString *const UAModifyAttributesNamedUserKey = @"named_user";
 NSString *const UAModifyAttributesChannelKey = @"channel";
@@ -45,27 +50,18 @@ NSString * const UAModifyAttributesActionDefaultRegistryAlias = @"^a";
 
 - (void)performWithArguments:(UAActionArguments *)arguments
            completionHandler:(UAActionCompletionHandler)completionHandler {
+    
     id channelAttributes = arguments.value[UAModifyAttributesChannelKey];
-    UAAttributeMutations *channelMutations;
     if (channelAttributes) {
-        channelMutations = [self mutationsWithArguments:channelAttributes];
+        UAAttributeMutations *channelMutations = [self mutationsWithArguments:channelAttributes];
+        [[UAirship channel] applyAttributeMutations:channelMutations];
     }
     
     id namedUserAttributes = arguments.value[UAModifyAttributesNamedUserKey];
-    UAAttributeMutations *namedUserMutations;
     if (namedUserAttributes) {
-        namedUserMutations = [self mutationsWithArguments:namedUserAttributes];
+        [self applyEdits:[UAirship contact].editAttibutes attributes:namedUserAttributes];
     }
     
-    
-    if (channelAttributes) {
-        [[UAirship channel] applyAttributeMutations:channelMutations];
-    }
-
-    if (namedUserAttributes) {
-        [[UAirship namedUser] applyAttributeMutations:namedUserMutations];
-    }
-
     completionHandler([UAActionResult emptyResult]);
 }
 
@@ -88,6 +84,24 @@ NSString * const UAModifyAttributesActionDefaultRegistryAlias = @"^a";
     return mutations;
 }
 
+- (void)applyEdits:(UAAttributesEditor *)editor attributes:(id)args {
+    id setAttributeMutations = args[UAModifyAttributesSetActionKey];
+    for (id key in setAttributeMutations) {
+        if ([setAttributeMutations[key] isKindOfClass:[NSString class]]) {
+            [editor setString:setAttributeMutations[key] attribute:key];
+        } else if ([setAttributeMutations[key] isKindOfClass:[NSNumber class]]) {
+            [editor setNumber:setAttributeMutations[key] attribute:key];
+        } else if ([setAttributeMutations[key] isKindOfClass:[NSDate class]]) {
+            [editor setDate:setAttributeMutations[key] attribute:key];
+        }
+    }
+    id removeAttributeMutations = args[UAModifyAttributesRemoveActionKey];
+    for (id attribute in removeAttributeMutations) {
+        [editor removeAttribute:attribute];
+    }
+
+    [editor apply];
+}
 - (BOOL)areAttributeMutationsValid:(id)attributeMutations {
     if (![attributeMutations isKindOfClass:[NSDictionary class]]) {
         return NO;

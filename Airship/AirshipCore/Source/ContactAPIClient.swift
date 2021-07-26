@@ -234,6 +234,7 @@ class ContactAPIClient : ContactsAPIClientProtocol {
         })
     }
     
+    
     private func map(attributeUpdates: [AttributeUpdate]) -> [[AnyHashable : Any]] {
         return attributeUpdates.map { (attribute) -> ([AnyHashable : Any]) in
             switch(attribute.type) {

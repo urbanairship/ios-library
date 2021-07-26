@@ -5,14 +5,13 @@ import Foundation
 /**
  * Tag groups editor.
  */
-@objc(UATagGroupsEdiitor)
+@objc(UATagGroupsEditor)
 public class TagGroupsEditor: NSObject {
     
     private var tagUpdates : [TagGroupUpdate] = []
     private var allowDeviceTagGroup = false
     private let completionHandler : ([TagGroupUpdate]) -> Void
 
-    
     init(allowDeviceTagGroup : Bool, completionHandler: @escaping ([TagGroupUpdate]) -> Void) {
         self.allowDeviceTagGroup = allowDeviceTagGroup
         self.completionHandler = completionHandler

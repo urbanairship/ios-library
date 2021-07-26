@@ -3,8 +3,6 @@
 #import "UAModifyTagsAction.h"
 #import "UAirship.h"
 #import "UAChannel.h"
-#import "UANamedUser.h"
-#import "UAActionArguments.h"
 #import "UAActionArguments.h"
 #import "UAActionResult.h"
 
@@ -62,7 +60,6 @@ NSString *const UAModifyTagsDeviceKey = @"device";
            completionHandler:(UAActionCompletionHandler)completionHandler {
 
     BOOL updateChannelRegistration = NO;
-    BOOL updateNamedUser = NO;
 
     if ([arguments.value isKindOfClass:[NSString class]]) {
         [self applyChannelTags:@[arguments.value]];
@@ -84,8 +81,6 @@ NSString *const UAModifyTagsDeviceKey = @"device";
             for (id key in namedUserTagGroups) {
                 [self applyNamedUserTags:namedUserTagGroups[key] group:key];
             }
-
-            updateNamedUser = YES;
         }
 
         id deviceTags = arguments.value[UAModifyTagsDeviceKey];
@@ -93,10 +88,6 @@ NSString *const UAModifyTagsDeviceKey = @"device";
             [self applyChannelTags:deviceTags];
             updateChannelRegistration = YES;
         }
-    }
-
-    if (updateNamedUser) {
-        [[UAirship namedUser] updateTags];
     }
 
     if (updateChannelRegistration) {

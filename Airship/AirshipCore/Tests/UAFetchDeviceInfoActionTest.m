@@ -5,9 +5,10 @@
 #import "UAirship+Internal.h"
 #import "UAPush.h"
 #import "UAChannel.h"
-#import "UANamedUser.h"
 #import "UAActionArguments+Internal.h"
 #import "UAActionResult.h"
+
+@import AirshipCore;
 
 @interface UAFetchDeviceInfoActionTest : UABaseTest
 
@@ -15,7 +16,7 @@
 @property(nonatomic, strong) id mockAirship;
 @property(nonatomic, strong) id mockPush;
 @property(nonatomic, strong) id mockChannel;
-@property(nonatomic, strong) id mockNamedUser;
+@property(nonatomic, strong) id mockContact;
 
 @end
 
@@ -26,12 +27,12 @@
     
     self.mockPush = [self mockForClass:[UAPush class]];
     self.mockChannel = [self mockForClass:[UAChannel class]];
-    self.mockNamedUser = [self mockForClass:[UANamedUser class]];
+    self.mockContact = [self mockForClass:[UAContact class]];
     self.mockAirship = [self mockForClass:[UAirship class]];
     [UAirship setSharedAirship:self.mockAirship];
     [[[self.mockAirship stub] andReturn:self.mockPush] push];
     [[[self.mockAirship stub] andReturn:self.mockChannel] channel];
-    [[[self.mockAirship stub] andReturn:self.mockNamedUser] namedUser];
+    [[[self.mockAirship stub] andReturn:self.mockContact] contact];
 
     self.action = [[UAFetchDeviceInfoAction alloc] init];
 }
@@ -69,7 +70,7 @@
     [[[self.mockChannel stub] andReturn:channelID] identifier];
     [(UAChannel *)[[self.mockChannel stub] andReturn:tags] tags];
     [(UAPush *)[[self.mockPush stub] andReturnValue:OCMOCK_VALUE(expectedSettings)] authorizedNotificationSettings];
-    [(UANamedUser *)[[self.mockNamedUser stub] andReturn:namedUserID] identifier];
+    [(UAContact *)[[self.mockContact stub] andReturn:namedUserID] namedUserID];
     
     __block BOOL actionPerformed = NO;
 
@@ -96,7 +97,7 @@
     [[[self.mockChannel stub] andReturn:channelID] identifier];
     [(UAChannel *)[[self.mockChannel stub] andReturn:tags] tags];
     [(UAPush *)[[self.mockPush stub] andReturnValue:OCMOCK_VALUE(expectedSettings)] authorizedNotificationSettings];
-    [(UANamedUser *)[[self.mockNamedUser stub] andReturn:namedUserID] identifier];
+    [(UAContact *)[[self.mockContact stub] andReturn:namedUserID] namedUserID];
     
     __block BOOL actionPerformed = NO;
     

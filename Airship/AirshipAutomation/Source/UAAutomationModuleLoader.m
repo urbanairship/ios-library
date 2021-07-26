@@ -22,7 +22,7 @@
 + (id<UAModuleLoader>)inAppModuleLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
                                               config:(UARuntimeConfig *)config
                                              channel:(UAChannel *)channel
-                                           namedUser:(UANamedUser *)namedUser
+                                             contact:(UAContact *)contact
                                            analytics:(UAAnalytics *)analytics
                                   remoteDataProvider:(id<UARemoteDataProvider>)remoteDataProvider
                                       privacyManager:(UAPrivacyManager *)privacyManager {
@@ -32,7 +32,7 @@
     UAInAppAudienceManager *audienceManager = [UAInAppAudienceManager managerWithConfig:config
                                                                               dataStore:dataStore
                                                                                 channel:channel
-                                                                              namedUser:namedUser];
+                                                                              contact:contact];
 
     UAInAppAutomation *inAppAutomation = [UAInAppAutomation automationWithConfig:config
                                                                 audienceManager:audienceManager
@@ -66,4 +66,5 @@
 
 
 @end
+
 

@@ -89,14 +89,6 @@ typedef NS_ENUM(NSUInteger, UATagGroupsUploadResult) {
 + (instancetype)channelTagGroupsRegistrarWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
 
 /**
- * Factory method to create a named user tag groups registrar.
- * @param config The runtime config.
- * @param dataStore The preference data store.
- * @return A new tag groups registrar instance.
- */
-+ (instancetype)namedUserTagGroupsRegistrarWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore;
-
-/**
  * Update the tag groups.
  *
  * @param completionHandler The completion handler.

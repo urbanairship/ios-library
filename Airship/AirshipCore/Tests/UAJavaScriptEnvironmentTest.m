@@ -5,15 +5,16 @@
 #import "UAJavaScriptEnvironment.h"
 #import "UAirship+Internal.h"
 #import "UAChannel.h"
-#import "UANamedUser.h"
 #import "UARuntimeConfig.h"
+
+@import AirshipCore;
 
 @interface UAJavaScriptEnvironmentTest : UAAirshipBaseTest
 @property (nonatomic, strong) JSContext *jsc;
 @property (nonatomic, strong) id mockUIDevice;
 @property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) id mockChannel;
-@property (nonatomic, strong) id mockNamedUser;
+@property (nonatomic, strong) id mockContact;
 @end
 
 @implementation UAJavaScriptEnvironmentTest
@@ -24,13 +25,13 @@
     [self.jsc evaluateScript:@"window = {}"];
 
     self.mockChannel = [self mockForClass:[UAChannel class]];
-    self.mockNamedUser = [self mockForClass:[UANamedUser class]];
+    self.mockContact = [self mockForClass:[UAContact class]];
     self.mockUIDevice = [self mockForClass:[UIDevice class]];
     [[[self.mockUIDevice stub] andReturn:self.mockUIDevice] currentDevice];
 
     self.mockAirship = [self mockForClass:[UAirship class]];
     [[[self.mockAirship stub] andReturn:self.mockChannel] channel];
-    [[[self.mockAirship stub] andReturn:self.mockNamedUser] namedUser];
+    [[[self.mockAirship stub] andReturn:self.mockContact] contact];
     [[[self.mockAirship stub] andReturn:self.config] config];
 
     [UAirship setSharedAirship:self.mockAirship];
@@ -42,7 +43,7 @@
 - (void)testDefaultEnvironment {
     [[[self.mockUIDevice stub] andReturn:@"device model"] model];
     [[[self.mockChannel stub] andReturn:@"channel ID"] identifier];
-    [[[self.mockNamedUser stub] andReturn:@"named user"] identifier];
+    [[[self.mockContact stub] andReturn:@"named user"] namedUserID];
 
     // Inject the default JavaScript environment
     [self.jsc evaluateScript:[[UAJavaScriptEnvironment defaultEnvironment] build]];

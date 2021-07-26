@@ -6,6 +6,8 @@
 #import "UAAirshipAutomationCoreImport.h"
 #import "UAInAppAudienceHistorian+Internal.h"
 
+@class UATagGroupUpdate;
+@class UAAttributeUpdate;
 NS_ASSUME_NONNULL_BEGIN
 
 /**
@@ -96,14 +98,14 @@ extern NSTimeInterval const UAInAppAudienceManagerDefaultPreferLocalAudienceData
  *
  * @return An array of tag overrides.
  */
-- (NSArray<UATagGroupsMutation *> *)tagOverrides;
+- (NSArray<UATagGroupUpdate *> *)tagOverrides;
 
 /**
  * Attribute overrides.
  *
  * @return Any attribute overrides.
  */
-- (UAAttributePendingMutations *)attributeOverrides;
+- (NSArray<UAAttributeUpdate *> *)attributeOverrides;
 
 /**
  * UAInAppAudienceManager class factory method.
@@ -111,20 +113,20 @@ extern NSTimeInterval const UAInAppAudienceManagerDefaultPreferLocalAudienceData
  * @param config An instance of UARuntimeConfig.
  * @param dataStore A data store.
  * @param channel The channel.
- * @param namedUser The named user.
+ * @param contact The contact.
  * @return A manager instance.
  */
 + (instancetype)managerWithConfig:(UARuntimeConfig *)config
                         dataStore:(UAPreferenceDataStore *)dataStore
                           channel:(UAChannel *)channel
-                        namedUser:(UANamedUser *)namedUser;
+                          contact:(UAContact *)contact;
 /**
  * UAInAppAudienceManager class factory method. Used for testing.
  *
  * @param client A tag groups lookup API client.
  * @param dataStore A data store.
  * @param channel The channel.
- * @param namedUser The named user.
+ * @param contact The contact.
  * @param cache A lookup response cache.
  * @param historian The historian.
  * @param currentTime A UADate to be used for getting the current time.
@@ -133,7 +135,7 @@ extern NSTimeInterval const UAInAppAudienceManagerDefaultPreferLocalAudienceData
 + (instancetype)managerWithAPIClient:(UATagGroupsLookupAPIClient *)client
                            dataStore:(UAPreferenceDataStore *)dataStore
                              channel:(UAChannel *)channel
-                           namedUser:(UANamedUser *)namedUser
+                             contact:(UAContact *)contact
                                cache:(UATagGroupsLookupResponseCache *)cache
                            historian:(UAInAppAudienceHistorian *)historian
                          currentTime:(UADate *)currentTime;

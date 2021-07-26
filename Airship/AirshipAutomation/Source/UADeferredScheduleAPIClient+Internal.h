@@ -7,6 +7,9 @@
 #import "UAStateOverrides+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
 
+@class UATagGroupUpdate;
+@class UAAttributeUpdate;
+
 NS_ASSUME_NONNULL_BEGIN
 
 /**
@@ -74,8 +77,8 @@ extern NSString * const UADeferredScheduleAPIClientErrorDomain;
 - (void)resolveURL:(NSURL *)URL
          channelID:(NSString *)channelID
     triggerContext:(nullable UAScheduleTriggerContext *)triggerContext
-      tagOverrides:(NSArray<UATagGroupsMutation *> *)tagOverrides
-attributeOverrides:(UAAttributePendingMutations *)attributeOverrides
+      tagOverrides:(NSArray<UATagGroupUpdate *> *)tagOverrides
+attributeOverrides:(NSArray<UAAttributeUpdate *> *)attributeOverrides
  completionHandler:(void (^)(UADeferredScheduleResult * _Nullable, NSError * _Nullable))completionHandler;
 
 @end

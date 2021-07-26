@@ -47,18 +47,6 @@ extern NSString *const UAChannelUploadedAttributeMutationsNotification;
 extern NSString *const UAChannelUploadedAudienceMutationNotificationMutationKey;
 
 /**
- * The identifier key for UAChannelUploadedTagGroupMutationNotification and UAChannelUploadedAttributeMutationsNotification.
- * @note For internal use only. :nodoc:
- */
-extern NSString *const UAChannelUploadedAudienceMutationNotificationIdentifierKey;
-
-/**
- * The date key for UAChannelUploadedTagGroupMutationNotification and UAChannelUploadedAttributeMutationsNotification.
- * @note For internal use only. :nodoc:
- */
-extern NSString *const UAChannelUploadedAudienceMutationNotificationDateKey;
-
-/**
 * This singleton provides an interface to the channel functionality provided by the Airship iOS Push API.
 */
 @interface UAChannel : UAComponent

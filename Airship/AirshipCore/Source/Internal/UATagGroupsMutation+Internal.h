@@ -25,14 +25,6 @@ NS_ASSUME_NONNULL_BEGIN
                          removeTags:(nullable NSDictionary *)removeTags;
 
 /**
- * Applies the mutation to a collection of tag groups.
- *
- * @param tagGroups A dictionary mapping tag group ID strings to either tag arrays or tag sets
- * @return A modified dictionary mapping tag group ID strings to tag sets.
- */
-- (NSDictionary *)applyToTagGroups:(NSDictionary *)tagGroups;
-
-/**
  * Compares tag group mutations for equality by payload value.
  *
  * @param mutation The mutation to compare to the receiver.

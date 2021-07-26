@@ -41,7 +41,6 @@
 #import "UAVersionMatcher.h"
 #import "UAActionPredicateProtocol.h"
 #import "UAJSONSerialization.h"
-#import "UANamedUser.h"
 #import "UATagGroupsMutation.h"
 #import "UAAttributePendingMutations.h"
 #import "NSDictionary+UAAdditions.h"

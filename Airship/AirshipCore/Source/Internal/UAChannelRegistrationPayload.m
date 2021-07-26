@@ -15,7 +15,7 @@ NSString *const UAChannelKey = @"channel";
 NSString *const UAChannelDeviceTypeKey = @"device_type";
 NSString *const UAChannelOptInKey = @"opt_in";
 NSString *const UAChannelPushAddressKey = @"push_address";
-NSString *const UAChannelNamedUserIdKey = @"named_user_id";
+NSString *const UAChannelContactIDKey = @"contact_id";
 
 NSString *const UAChannelTopLevelTimeZoneJSONKey = @"timezone";
 NSString *const UAChannelTopLevelLanguageJSONKey = @"locale_language";
@@ -72,7 +72,7 @@ NSString *const UABackgroundEnabledJSONKey = @"background";
 
             self.deviceID = topLevel[UAChannelDeviceIDKey];
             self.pushAddress = topLevel[UAChannelPushAddressKey];
-            self.namedUserId = topLevel[UAChannelNamedUserIdKey];
+            self.contactID = topLevel[UAChannelContactIDKey];
             self.userID = topLevel[UAChannelUserIDKey];
             self.accengageDeviceID = topLevel[UAChannelAccengageDeviceIDKey];
             self.optedIn = [topLevel[UAChannelOptInKey] boolValue];
@@ -125,7 +125,7 @@ NSString *const UABackgroundEnabledJSONKey = @"background";
     [channel setValue:[NSNumber numberWithBool:self.backgroundEnabled] forKey:UABackgroundEnabledJSONKey];
     [channel setValue:self.pushAddress forKey:UAChannelPushAddressKey];
 
-    [channel setValue:self.namedUserId forKey:UAChannelNamedUserIdKey];
+    [channel setValue:self.contactID forKey:UAChannelContactIDKey];
 
     [channel setValue:[NSNumber numberWithBool:self.setTags] forKey:UAChannelSetTagsKey];
     if (self.setTags) {
@@ -170,7 +170,7 @@ NSString *const UABackgroundEnabledJSONKey = @"background";
         copy.optedIn = self.optedIn;
         copy.backgroundEnabled = self.backgroundEnabled;
         copy.pushAddress = self.pushAddress;
-        copy.namedUserId = self.namedUserId;
+        copy.contactID = self.contactID;
         copy.setTags = self.setTags;
         copy.tags = [self.tags copyWithZone:zone];
         copy.tagChanges = [self.tagChanges copyWithZone:zone];
@@ -237,8 +237,8 @@ NSString *const UABackgroundEnabledJSONKey = @"background";
     minPayload.deviceID = nil;
     minPayload.accengageDeviceID = nil;
 
-    // Only remove attributes if named user Id is null or is the same as the last payload
-    if (!self.namedUserId || ([lastPayload.namedUserId isEqual:self.namedUserId])) {
+    // Only remove attributes if contact Id is null or is the same as the last payload
+    if (!self.contactID || ([lastPayload.contactID isEqual:self.contactID])) {
         // Optional attributes
         if ([self.country isEqual:lastPayload.country]) {
             minPayload.country = nil;

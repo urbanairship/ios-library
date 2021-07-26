@@ -3,39 +3,49 @@
 #import "UAInAppAudienceHistorian+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
 
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
+
+
 NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(NSUInteger, UAInAppAudienceRecordType) {
-    UAInAppAudienceRecordTypeChannel,
-    UAInAppAudienceRecordTypeNamedUser
+    UAInAppAudienceRecordTypeAttributes,
+    UAInAppAudienceRecordTypeTags
 };
 
-#define kUAInAppAudienceHistorianRecordIdentifier @"identifier"
-#define kUAInAppAudienceHistorianRecordType @"type"
-#define kUAInAppAudienceHistorianRecordMutation @"mutation"
+#define kUAInAppAudienceHistorianRecordUpdates @"updates"
 #define kUAInAppAudienceHistorianRecordDate @"date"
+#define kUAInAppAudienceHistorianRecordType @"type"
 
 NS_ASSUME_NONNULL_END
 
 @interface UAInAppAudienceHistorian()
 
 @property (nonatomic, strong) UAChannel *channel;
-@property (nonatomic, strong) UANamedUser *namedUser;
-@property (nonatomic, strong) NSMutableArray *tagRecords;
-@property (nonatomic, strong) NSMutableArray *attributeRecords;
+@property (nonatomic, strong) UAContact *contact;
+@property (nonatomic, strong) UADate *date;
+
+@property (nonatomic, strong) NSMutableArray *contactRecords;
+@property (nonatomic, strong) NSMutableArray *channelRecords;
 @end
 
 @implementation UAInAppAudienceHistorian
 
 - (instancetype)initWithChannel:(UAChannel *)channel
-                      namedUser:(UANamedUser *)namedUser {
+                        contact:(UAContact *)contact
+                           date:(UADate *)date{
     self = [super init];
 
     if (self) {
         self.channel = channel;
-        self.namedUser = namedUser;
-        self.tagRecords = [NSMutableArray array];
-        self.attributeRecords = [NSMutableArray array];
+        self.contact = contact;
+        self.date = date;
+        self.channelRecords = [NSMutableArray array];
+        self.contactRecords = [NSMutableArray array];
 
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(uploadedChannelTagGroupsMutation:)
@@ -48,103 +58,103 @@ NS_ASSUME_NONNULL_END
                                                      name:UAChannelUploadedAttributeMutationsNotification
                                                    object:nil];
 
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(uploadedNamedUserTagGroupsMutation:)
-                                                     name:UANamedUserUploadedTagGroupMutationNotification
-                                                   object:nil];
 
         [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(uploadedNamedUserAttributeMutations:)
-                                                     name:UANamedUserUploadedAttributeMutationsNotification
+                                                 selector:@selector(contactAudienceUpdated:)
+                                                     name:UAContact.audienceUpdatedEvent
+                                                   object:nil];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(contactChanged)
+                                                     name:UAContact.contactChangedEvent
                                                    object:nil];
     }
 
     return self;
 }
 
-+ (instancetype)historianWithChannel:(UAChannel *)channel namedUser:(UANamedUser *)namedUser {
-    return [[self alloc] initWithChannel:channel namedUser:namedUser];
++ (instancetype)historianWithChannel:(UAChannel *)channel contact:(UAContact *)contact {
+    return [[self alloc] initWithChannel:channel contact:contact date:[[UADate alloc] init]];
 }
+
++ (instancetype)historianWithChannel:(UAChannel *)channel contact:(UAContact *)contact date:(UADate *)date {
+    return [[self alloc] initWithChannel:channel contact:contact date:date];
+}
+
 
 - (void)uploadedChannelTagGroupsMutation:(NSNotification *)notification {
     UATagGroupsMutation *mutation = [notification.userInfo objectForKey:UAChannelUploadedAudienceMutationNotificationMutationKey];
-    NSDate *date = [notification.userInfo objectForKey:UAChannelUploadedAudienceMutationNotificationDateKey];
-    NSString *identifier = [notification.userInfo objectForKey:UAChannelUploadedAudienceMutationNotificationIdentifierKey];
 
-    if (mutation && date && identifier) {
-        [self.tagRecords addObject:@{ kUAInAppAudienceHistorianRecordType: @(UAInAppAudienceRecordTypeChannel),
-                                      kUAInAppAudienceHistorianRecordDate: date,
-                                      kUAInAppAudienceHistorianRecordMutation: mutation,
-                                      kUAInAppAudienceHistorianRecordIdentifier: identifier }];
+    if (mutation) {
+        [self.channelRecords addObject:@{ kUAInAppAudienceHistorianRecordDate: self.date.now,
+                                          kUAInAppAudienceHistorianRecordType: @(UAInAppAudienceRecordTypeTags),
+                                          kUAInAppAudienceHistorianRecordUpdates: mutation.tagGroupUpdates }];
     }
 }
 
 - (void)uploadedChannelAttributeMutations:(NSNotification *)notification {
     UAAttributePendingMutations *mutations = [notification.userInfo objectForKey:UAChannelUploadedAudienceMutationNotificationMutationKey];
-    NSDate *date = [notification.userInfo objectForKey:UAChannelUploadedAudienceMutationNotificationDateKey];
-    NSString *identifier = [notification.userInfo objectForKey:UAChannelUploadedAudienceMutationNotificationIdentifierKey];
 
-    if (mutations && date && identifier) {
-        [self.attributeRecords addObject:@{ kUAInAppAudienceHistorianRecordType: @(UAInAppAudienceRecordTypeChannel),
-                                            kUAInAppAudienceHistorianRecordDate: date,
-                                            kUAInAppAudienceHistorianRecordMutation: mutations,
-                                            kUAInAppAudienceHistorianRecordIdentifier: identifier }];
+    if (mutations) {
+        [self.channelRecords addObject:@{ kUAInAppAudienceHistorianRecordDate: self.date.now,
+                                          kUAInAppAudienceHistorianRecordType: @(UAInAppAudienceRecordTypeAttributes),
+                                          kUAInAppAudienceHistorianRecordUpdates: mutations.attributeUpdates }];
     }
 }
 
-- (void)uploadedNamedUserTagGroupsMutation:(NSNotification *)notification {
-    UATagGroupsMutation *mutation = [notification.userInfo objectForKey:UANamedUserUploadedAudienceMutationNotificationMutationKey];
-    NSDate *date = [notification.userInfo objectForKey:UANamedUserUploadedAudienceMutationNotificationDateKey];
-    NSString *identifier = [notification.userInfo objectForKey:UANamedUserUploadedAudienceMutationNotificationIdentifierKey];
-
-    if (mutation && date && identifier) {
-        [self.tagRecords addObject:@{ kUAInAppAudienceHistorianRecordType: @(UAInAppAudienceRecordTypeNamedUser),
-                                      kUAInAppAudienceHistorianRecordDate: date,
-                                      kUAInAppAudienceHistorianRecordMutation: mutation,
-                                      kUAInAppAudienceHistorianRecordIdentifier: identifier }];
+- (void)contactAudienceUpdated:(NSNotification *)notification {
+    NSArray<UAAttributeUpdate *> *attributes = [notification.userInfo objectForKey:UAContact.attributesKey];
+    if (attributes.count) {
+        [self.contactRecords addObject:@{ kUAInAppAudienceHistorianRecordDate: self.date.now,
+                                          kUAInAppAudienceHistorianRecordType: @(UAInAppAudienceRecordTypeAttributes),
+                                          kUAInAppAudienceHistorianRecordUpdates: attributes }];
+    }
+    
+    NSArray<UATagGroupUpdate *> *tags = [notification.userInfo objectForKey:UAContact.tagsKey];
+    if (tags.count) {
+        [self.contactRecords addObject:@{ kUAInAppAudienceHistorianRecordDate: self.date.now,
+                                          kUAInAppAudienceHistorianRecordType: @(UAInAppAudienceRecordTypeTags),
+                                          kUAInAppAudienceHistorianRecordUpdates: tags }];
     }
 }
 
 
-- (void)uploadedNamedUserAttributeMutations:(NSNotification *)notification {
-    UAAttributePendingMutations *mutations = [notification.userInfo objectForKey:UANamedUserUploadedAudienceMutationNotificationMutationKey];
-    NSDate *date = [notification.userInfo objectForKey:UANamedUserUploadedAudienceMutationNotificationDateKey];
-    NSString *identifier = [notification.userInfo objectForKey:UANamedUserUploadedAudienceMutationNotificationIdentifierKey];
+- (NSArray *)updatesNewerThan:(NSDate *)date type:(UAInAppAudienceRecordType)type {
+    NSMutableArray *updates = [NSMutableArray array];
 
-    if (mutations && date && identifier) {
-        [self.attributeRecords addObject:@{ kUAInAppAudienceHistorianRecordType: @(UAInAppAudienceRecordTypeNamedUser),
-                                            kUAInAppAudienceHistorianRecordDate: date,
-                                            kUAInAppAudienceHistorianRecordMutation: mutations,
-                                            kUAInAppAudienceHistorianRecordIdentifier: identifier }];
-    }
-}
-
-- (NSArray *)mutationsFromRecords:(NSArray *)records newerThan:(NSDate *)date {
-    NSString *namedUserIdentifier = self.namedUser.identifier;
-    NSMutableArray *mutations = [NSMutableArray array];
-
-    for (id record in records) {
+    for (id record in self.combinedRecords) {
+        if ([record[kUAInAppAudienceHistorianRecordType] unsignedIntValue] != type) {
+            continue;
+        }
+        
         if ([record[kUAInAppAudienceHistorianRecordDate] compare:date] == NSOrderedAscending) {
             continue;
         }
 
-        if ([record[kUAInAppAudienceHistorianRecordType] unsignedIntegerValue] == UAInAppAudienceRecordTypeNamedUser && ![record[kUAInAppAudienceHistorianRecordIdentifier] isEqualToString:namedUserIdentifier]) {
-            continue;
-        }
-
-        [mutations addObject:record[kUAInAppAudienceHistorianRecordMutation]];
+        [updates addObjectsFromArray:record[kUAInAppAudienceHistorianRecordUpdates]];
     }
 
-    return mutations;
+    return updates;
 }
 
-- (NSArray<UATagGroupsMutation *> *)tagHistoryNewerThan:(NSDate *)date {
-    return [self mutationsFromRecords:self.tagRecords newerThan:date];
+- (NSArray<UATagGroupUpdate *> *)tagHistoryNewerThan:(NSDate *)date {
+    return [self updatesNewerThan:date type:UAInAppAudienceRecordTypeTags];
 }
 
-- (NSArray<UATagGroupsMutation *> *)attributeHistoryNewerThan:(NSDate *)date {
-    return [self mutationsFromRecords:self.attributeRecords newerThan:date];
+- (NSArray<UAAttributeUpdate *> *)attributeHistoryNewerThan:(NSDate *)date {
+    return [self updatesNewerThan:date type:UAInAppAudienceRecordTypeAttributes];
 }
 
+- (NSArray *)combinedRecords {
+    NSMutableArray *combined = [NSMutableArray array];
+    [combined addObjectsFromArray:self.channelRecords];
+    [combined addObjectsFromArray:self.contactRecords];
+    return combined;
+}
+
+- (void)contactChanged {
+    [self.contactRecords removeAllObjects];
+}
 @end
+
 

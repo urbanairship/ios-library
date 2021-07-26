@@ -20,6 +20,7 @@ class ContactTest: XCTestCase {
     var notificationCenter: NotificationCenter!
     var date: UATestDate!
     var privacyManager: UAPrivacyManager!
+    var dataStore: UAPreferenceDataStore!
         
     override func setUpWithError() throws {
 
@@ -33,10 +34,13 @@ class ContactTest: XCTestCase {
     
         self.date = UATestDate()
         
-        let dataStore = UAPreferenceDataStore(keyPrefix: UUID().uuidString)
-        self.privacyManager = UAPrivacyManager(dataStore: dataStore, defaultEnabledFeatures: .all, notificationCenter: self.notificationCenter)
+        self.dataStore = UAPreferenceDataStore(keyPrefix: UUID().uuidString)
+        self.privacyManager = UAPrivacyManager(dataStore: self.dataStore, defaultEnabledFeatures: .all, notificationCenter: self.notificationCenter)
         
-        self.contact = Contact(dataStore: dataStore,
+        let config = UARuntimeConfig()
+        
+        self.contact = Contact(dataStore: self.dataStore,
+                               config: config,
                                channel: self.channel,
                                privacyManager: self.privacyManager,
                                contactAPIClient: self.apiClient,
@@ -49,6 +53,34 @@ class ContactTest: XCTestCase {
         self.taskManager.enqueuedRequests.removeAll()
         
         self.channel.identifier = "channel id"
+    }
+    
+    func testMigrateNamedUser() throws {
+        let testDate = UATestDate()
+        testDate.dateOverride = Date()
+        
+        let attributeMutation = UAAttributeMutations()
+        attributeMutation.removeAttribute("some-attribute")
+        
+        let pendingAttribute = [UAAttributePendingMutations(mutations: attributeMutation, date: testDate)]
+        let pendingAttributesData = try NSKeyedArchiver.archivedData(withRootObject:pendingAttribute, requiringSecureCoding:true)
+        self.dataStore.setObject(pendingAttributesData, forKey: Contact.legacyPendingAttributesKey)
+        
+        let tagMutations = [UATagGroupsMutation(toAddTags: ["tag"], group: "some-group")]
+        let tagMutationsData = try NSKeyedArchiver.archivedData(withRootObject:tagMutations, requiringSecureCoding:true)
+        self.dataStore.setObject(tagMutationsData, forKey: Contact.legacyPendingTagGroupsKey)
+        
+        self.dataStore.setObject("named-user", forKey: Contact.legacyNamedUserKey)
+        
+        self.contact.migrateNamedUser()
+
+        XCTAssertEqual("named-user", contact.namedUserID)
+        
+        let pendingTagUpdates = [TagGroupUpdate(group: "some-group", tags: ["tag"], type: .add)]
+        XCTAssertEqual(pendingTagUpdates, self.contact.pendingTagGroupUpdates)
+
+        let pendingAttributeUpdates = [AttributeUpdate.remove(attribute: "some-attribute")]
+        XCTAssertEqual(pendingAttributeUpdates, self.contact.pendingAttributeUpdates)
     }
     
     func testNoPendingOperations() throws {
@@ -75,6 +107,45 @@ class ContactTest: XCTestCase {
         XCTAssertTrue(task.completed)
         
         wait(for: [expectation], timeout: 10.0)
+    }
+    
+    func testExtendRegistrationPaylaodNilContactID() throws {
+        XCTAssertEqual(1, self.channel.extenders.count)
+        
+        let expectation = XCTestExpectation(description: "callback called")
+        self.channel.extenders[0](UAChannelRegistrationPayload()) { payload in
+            XCTAssertNil(payload.contactID)
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: 10.0)
+    }
+    
+    func testExtendRegistrationPaylaod() throws {
+        notificationCenter.post(Notification(name: UAAppStateTracker.didBecomeActiveNotification))
+    
+        XCTAssertEqual(1, self.taskManager.enqueuedRequests.count)
+        
+        let expectation = XCTestExpectation(description: "callback called")
+        self.apiClient.resolveCallback = { channelID, callback in
+            callback(ContactAPIResponse(status: 200, contactID: "some-contact-id", isAnonymous: true), nil)
+            expectation.fulfill()
+        }
+        
+        let task = self.taskManager.launchSync(taskID: Contact.updateTaskID)
+        XCTAssertTrue(task.completed)
+        
+        wait(for: [expectation], timeout: 10.0)
+        
+        XCTAssertEqual(1, self.channel.extenders.count)
+        
+        let extendedCallback = XCTestExpectation(description: "callback called")
+        self.channel.extenders[0](UAChannelRegistrationPayload()) { payload in
+            XCTAssertEqual("some-contact-id", payload.contactID)
+            extendedCallback.fulfill()
+        }
+        
+        wait(for: [extendedCallback], timeout: 10.0)
     }
 
     func testForegroundResolves() throws {

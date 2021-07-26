@@ -39,7 +39,7 @@
     self.payload.userID = @"fakeUser";
     self.payload.deviceID = @"fakeDeviceID";
     self.payload.accengageDeviceID = @"fakeAccengageDeviceID";
-    self.payload.namedUserId = @"fakeNamedUserID";
+    self.payload.contactID = @"some-contact-id";
     self.payload.badge = [NSNumber numberWithInteger:1];
     self.payload.quietTime =  quietTime;
     self.payload.timeZone = @"timezone";
@@ -389,9 +389,9 @@
     XCTAssertEqualObjects(copy.badge, minPayload.badge);
 }
 
-- (void)testMinimalUpdatePayloadDifferentNamedUserId {
+- (void)testMinimalUpdatePayloadDifferentContactID {
     UAChannelRegistrationPayload *thisPayload = [self.payload copy];
-    thisPayload.namedUserId = @"differentFakeNamedUserID";
+    thisPayload.contactID = @"some-other-contact-id";
 
     UAChannelRegistrationPayload *minPayload = [thisPayload minimalUpdatePayloadWithLastPayload:self.payload];
     XCTAssertEqualObjects(thisPayload.country, minPayload.country);
@@ -418,9 +418,9 @@
     XCTAssertEqualObjects(thisPayload.badge, minPayload.badge);
 }
 
-- (void)testMinimalUpdatePayloadChangeToNilNamedUserId {
+- (void)testMinimalUpdatePayloadChangeToNilContactID {
     UAChannelRegistrationPayload *thisPayload = [self.payload copy];
-    thisPayload.namedUserId = nil;
+    thisPayload.contactID = nil;
 
     UAChannelRegistrationPayload *minPayload = [thisPayload minimalUpdatePayloadWithLastPayload:self.payload];
     XCTAssertNil(minPayload.country);

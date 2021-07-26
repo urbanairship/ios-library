@@ -33,19 +33,6 @@ public class UAAttributeAPIClient : NSObject {
     }
 
     @objc
-    public class func namedUserClient(config: UARuntimeConfig) -> UAAttributeAPIClient {
-        let urlBlock: ((UARuntimeConfig, String) -> URL?) = { config, identifier in
-            let attributeEndpoint = "\(config.deviceAPIURL ?? "")/api/named_users/\(identifier.urlEncoded() ?? "")/attributes"
-            return URL(string: attributeEndpoint)
-        }
-
-        return UAAttributeAPIClient(
-            config: config,
-            session: UARequestSession(config: config),
-            urlFactoryBlock: urlBlock)
-    }
-
-    @objc
     @discardableResult
     public func update(identifier: String,
                        mutations: UAAttributePendingMutations,

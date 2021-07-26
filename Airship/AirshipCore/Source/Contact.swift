@@ -14,10 +14,30 @@ public class Contact : UAComponent {
     static let contactInfoKey = "Contact.contactInfo"
     static let anonContactDataKey = "Contact.anonContactData"
     static let resolveDateKey = "Contact.resolveDate"
-    
+
+    static let legacyPendingTagGroupsKey = "com.urbanairship.tag_groups.pending_named_user_tag_groups_mutations"
+    static let legacyPendingAttributesKey = "com.urbanairship.named_user_attributes.registrar_persistent_queue_key"
+    static let legacyNamedUserKey = "UANamedUserID"
+
     static let foregroundResolveInterval : TimeInterval = 24 * 60 * 60 // 24 hours
+    
+    @objc
+    public static let contactChangedEvent = NSNotification.Name("com.urbanairship.contact_changed")
+    
+    @objc
+    public static let audienceUpdatedEvent = NSNotification.Name("com.urbanairship.audience_updated")
+
+    @objc
+    public static let tagsKey = "tag_updates"
+
+    @objc
+    public static let attributesKey = "attribute_updates"
+
+    @objc
+    public static let maxNamedUserIDLength = 128
 
     private let dataStore: UAPreferenceDataStore
+    private let config: UARuntimeConfig
     private let privacyManager: UAPrivacyManager
     private let channel: AirshipChannelProtocol
     private let contactAPIClient: ContactsAPIClientProtocol
@@ -26,10 +46,33 @@ public class Contact : UAComponent {
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
     private let date : UADate
-    
+    private let notificationCenter: NotificationCenter
+
     @objc
     public weak var conflictDelegate: ContactConflictDelegate?
 
+    /**
+     * The current named user ID.
+     */
+    @objc
+    public var namedUserID : String? {
+        get {
+            var namedUserID : String? = nil
+            operationLock.sync {
+                if let lastIdentifyOperation = self.getOperations().reversed().first(where: { $0.type == .reset || $0.type == .identify }) {
+                    if (lastIdentifyOperation.type == .reset) {
+                        namedUserID = nil
+                    } else {
+                        namedUserID = (lastIdentifyOperation.payload as? IdentifyPayload)?.identifier
+                    }
+                } else {
+                    namedUserID = self.lastContactInfo?.namedUserID
+                }
+            }
+            return namedUserID
+        }
+    }
+    
     private var lastContactInfo: ContactInfo? {
         get {
             if let data = self.dataStore.data(forKey: Contact.contactInfoKey) {
@@ -70,6 +113,44 @@ public class Contact : UAComponent {
         }
     }
     
+    // NOTE: For internal use only. :nodoc:
+    @objc
+    public var pendingAttributeUpdates : [AttributeUpdate] {
+        get {
+            var updates : [AttributeUpdate]!
+            operationLock.sync {
+                updates = getOperations().compactMap() { (operation: ContactOperation) -> [AttributeUpdate]? in
+                    if (operation.type == .update) {
+                        let payload = operation.payload as? UpdatePayload
+                        return payload?.attrubuteUpdates
+                    } else {
+                        return nil
+                    }
+                }.reduce([], +)
+            }
+            return updates
+        }
+    }
+    
+    // NOTE: For internal use only. :nodoc:
+    @objc
+    public var pendingTagGroupUpdates : [TagGroupUpdate] {
+        get {
+            var updates : [TagGroupUpdate]!
+            operationLock.sync {
+                updates = getOperations().compactMap() { (operation: ContactOperation) -> [TagGroupUpdate]? in
+                    if (operation.type == .update) {
+                        let payload = operation.payload as? UpdatePayload
+                        return payload?.tagUpdates
+                    } else {
+                        return nil
+                    }
+                }.reduce([], +)
+            }
+            return updates
+        }
+    }
+    
     private var isContactIDRefreshed = false
     private var operationLock = Lock()
  
@@ -78,18 +159,22 @@ public class Contact : UAComponent {
      * :nodoc:
      */
     init(dataStore: UAPreferenceDataStore,
-                channel: AirshipChannelProtocol,
-                privacyManager: UAPrivacyManager,
-                contactAPIClient: ContactsAPIClientProtocol,
-                taskManager: TaskManagerProtocol,
-                notificationCenter: NotificationCenter = NotificationCenter.default,
-                date: UADate = UADate()) {
+         config: UARuntimeConfig,
+         channel: AirshipChannelProtocol,
+         privacyManager: UAPrivacyManager,
+         contactAPIClient: ContactsAPIClientProtocol,
+         taskManager: TaskManagerProtocol,
+         notificationCenter: NotificationCenter = NotificationCenter.default,
+         date: UADate = UADate()) {
+        
         self.dataStore = dataStore
+        self.config = config
         self.channel = channel
         self.privacyManager = privacyManager
         self.contactAPIClient = contactAPIClient
         self.taskManager = taskManager
         self.date = date
+        self.notificationCenter = notificationCenter
         
         super.init(dataStore: dataStore)
         
@@ -97,19 +182,24 @@ public class Contact : UAComponent {
             self?.handleUpdateTask(task: task)
         }
         
-        notificationCenter.addObserver(
+        self.channel.addRegistrationExtender { [weak self] payload, completionHandler in
+            payload.contactID = self?.lastContactInfo?.contactID
+            completionHandler(payload)
+        }
+        
+        self.notificationCenter.addObserver(
             self,
             selector: #selector(didBecomeActive),
             name: UAAppStateTracker.didBecomeActiveNotification,
             object: nil)
 
-        notificationCenter.addObserver(
+        self.notificationCenter.addObserver(
             self,
             selector: #selector(channelCreated),
             name: NSNotification.Name.UAChannelCreatedEvent,
             object: nil)
         
-        notificationCenter.addObserver(
+        self.notificationCenter.addObserver(
             self,
             selector: #selector(checkPrivacyManager),
             name: UAPrivacyManager.changeEvent,
@@ -129,6 +219,7 @@ public class Contact : UAComponent {
                             channel: UAChannel,
                             privacyManager: UAPrivacyManager) {
         self.init(dataStore: dataStore,
+                  config: config,
                   channel: channel,
                   privacyManager: privacyManager,
                   contactAPIClient: ContactAPIClient(config: config),
@@ -144,6 +235,13 @@ public class Contact : UAComponent {
     public func identify(_ namedUserID: String) {
         guard self.privacyManager.isEnabled(.contacts) else {
             AirshipLogger.warn("Contacts disabled. Enable to identify user.")
+            return
+        }
+        
+        let trimmedID = namedUserID.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        guard trimmedID.count > 0 && trimmedID.count <= Contact.maxNamedUserIDLength else {
+            AirshipLogger.error("Unable to set named user \(namedUserID). IDs must be between 1 and \(Contact.maxNamedUserIDLength) characters.")
             return
         }
         
@@ -242,8 +340,14 @@ public class Contact : UAComponent {
     }
     
     @objc
-    private func channelCreated() {
-        resolveContact()
+    private func channelCreated(notification: NSNotification) {
+        let existing = notification.userInfo?[UAChannelCreatedEventExistingKey] as? Bool
+        
+        if (existing == true && self.config.clearNamedUserOnAppRestore) {
+            self.reset()
+        } else {
+            self.resolveContact()
+        }
     }
     
     private func resolveContact() {
@@ -310,8 +414,16 @@ public class Contact : UAComponent {
             let updatePayload = operation.payload as! UpdatePayload
             return self.contactAPIClient.update(identifier: contactInfo.contactID, tagGroupUpdates: updatePayload.tagUpdates, attributeUpdates: updatePayload.attrubuteUpdates) { response, error in
                 Contact.logOperationResult(operation: operation, response: response, error: error)
-                if (response?.isSuccess == true && contactInfo.isAnonymous) {
-                    self.updateAnonData(updatePayload)
+                if (response?.isSuccess == true) {
+                    if (contactInfo.isAnonymous) {
+                        self.updateAnonData(updatePayload)
+                    }
+                    
+                    let payload : [String : Any] = [
+                        Contact.tagsKey : updatePayload.tagUpdates ?? [],
+                        Contact.attributesKey : updatePayload.attrubuteUpdates ?? []
+                    ]
+                    self.notificationCenter.post(name: Contact.audienceUpdatedEvent, object: payload)
                 }
                 completionHandler(response)
             }
@@ -395,22 +507,30 @@ public class Contact : UAComponent {
     private func processContactResponse(_ response: ContactAPIResponse?, namedUserID: String? = nil) {
         if let response = response {
             if (response.isSuccess) {
-                if let lastContactInfo = self.lastContactInfo {
-                    if (lastContactInfo.contactID != response.contactID) {
-                        if (lastContactInfo.isAnonymous) {
-                            self.onConflict(namedUserID)
-                        }
+                
+                let lastInfo = self.lastContactInfo
+                
+                if (lastInfo == nil || lastInfo?.contactID != response.contactID) {
+                    if (lastContactInfo?.isAnonymous == true) {
+                        self.onConflict(namedUserID)
+                    }
+                    
+                    self.lastContactInfo = ContactInfo(contactID: response.contactID!, isAnonymous: response.isAnonymous!, namedUserID: namedUserID)
+                    self.channel.updateRegistration()
+                    self.anonContactData = nil
+                    
+                    self.notificationCenter.post(name: Contact.contactChangedEvent, object: nil)
+                } else {
+                    self.lastContactInfo = ContactInfo(contactID: response.contactID!,
+                                                       isAnonymous: response.isAnonymous!,
+                                                       namedUserID: namedUserID ?? lastInfo?.namedUserID)
+                    
+                    if (response.isAnonymous == false) {
                         self.anonContactData = nil
                     }
                 }
                 
-                if (response.isAnonymous == false) {
-                    self.anonContactData = nil
-                }
-
                 self.isContactIDRefreshed = true
-                self.lastContactInfo = ContactInfo(contactID: response.contactID!, isAnonymous: response.isAnonymous!, namedUserID: namedUserID)
-                self.channel.updateRegistration()
             }
         }
     }
@@ -542,6 +662,46 @@ public class Contact : UAComponent {
         }
         
         return next
+    }
+    
+    func migrateNamedUser() {
+        defer {
+            self.dataStore.removeObject(forKey: Contact.legacyNamedUserKey)
+            self.dataStore.removeObject(forKey: Contact.legacyPendingTagGroupsKey)
+            self.dataStore.removeObject(forKey: Contact.legacyPendingAttributesKey)
+        }
+        
+        guard let legacyNamedUserID = self.dataStore.string(forKey: Contact.legacyNamedUserKey) else {
+            return
+        }
+  
+        guard self.lastContactInfo == nil else {
+            return
+        }
+        
+        self.identify(legacyNamedUserID)
+        
+        if (self.privacyManager.isEnabled([.contacts, .tagsAndAttributes])) {
+            var pendingTagUpdates : [TagGroupUpdate]?
+            var pendingAttributeUpdates : [AttributeUpdate]?
+            
+            if let pendingTagGroupsData = self.dataStore.data(forKey: Contact.legacyPendingTagGroupsKey) {
+                if let pendingTagGroups = NSKeyedUnarchiver.unarchiveObject(with: pendingTagGroupsData) as? [UATagGroupsMutation] {
+                    pendingTagUpdates = pendingTagGroups.map { $0.tagGroupUpdates() }.reduce([], +)
+                }
+            }
+            
+            if let pendingAttributesData = self.dataStore.data(forKey: Contact.legacyPendingAttributesKey) {
+                if let pendingAttributes = NSKeyedUnarchiver.unarchiveObject(with: pendingAttributesData) as? [UAAttributePendingMutations] {
+                    pendingAttributeUpdates = pendingAttributes.map { $0.attributeUpdates() }.reduce([], +)
+                }
+            }
+            
+            if (pendingTagUpdates != nil || pendingAttributeUpdates != nil) {
+                let operation = ContactOperation.update(tagUpdates: pendingTagUpdates, attributeUpdates: pendingAttributeUpdates)
+                addOperation(operation)
+            }
+        }
     }
 }
 

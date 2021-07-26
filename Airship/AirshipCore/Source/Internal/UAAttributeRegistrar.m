@@ -13,7 +13,6 @@
 #endif
 
 static NSString *const ChannelPersistentQueueKey = @"com.urbanairship.channel_attributes.registrar_persistent_queue_key";
-static NSString *const NamedUserPersistentQueueKey = @"com.urbanairship.named_user_attributes.registrar_persistent_queue_key";
 
 @interface UAAttributeRegistrar()
 @property(nonatomic, strong) UAPersistentQueue *pendingAttributeMutationsQueue;
@@ -32,17 +31,6 @@ static NSString *const NamedUserPersistentQueueKey = @"com.urbanairship.named_us
                                                                            key:ChannelPersistentQueueKey];
 
     return [[UAAttributeRegistrar alloc] initWithAPIClient:[UAAttributeAPIClient channelClientWithConfig:config]
-                                           persistentQueue:queue
-                                               application:[UIApplication sharedApplication]];
-}
-
-+ (instancetype)namedUserRegistrarWithConfig:(UARuntimeConfig *)config
-                                   dataStore:(UAPreferenceDataStore *)dataStore {
-
-    UAPersistentQueue *queue = [UAPersistentQueue persistentQueueWithDataStore:dataStore
-                                                                           key:NamedUserPersistentQueueKey];
-
-    return [[UAAttributeRegistrar alloc] initWithAPIClient:[UAAttributeAPIClient namedUserClientWithConfig:config]
                                            persistentQueue:queue
                                                application:[UIApplication sharedApplication]];
 }

@@ -5,9 +5,14 @@
 #import "UAirship.h"
 #import "UAPush.h"
 #import "UAChannel.h"
-#import "UANamedUser.h"
 #import "UAActionArguments.h"
 #import "UAActionResult.h"
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
 
 @implementation UAFetchDeviceInfoAction
 
@@ -25,7 +30,7 @@ NSString *const UALocationEnabledKey = @"location_enabled";
     
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [dict setValue:[UAirship channel].identifier forKey:UAChannelIDKey];
-    [dict setValue:[UAirship namedUser].identifier forKey:UANamedUserKey];
+    [dict setValue:[UAirship contact].namedUserID forKey:UANamedUserKey];
     
     NSArray *tags = [[UAirship channel] tags];
     if (tags.count) {
@@ -37,6 +42,7 @@ NSString *const UALocationEnabledKey = @"location_enabled";
 
     BOOL locationEnabled = [UAirship shared].locationProvider.locationUpdatesEnabled;
     [dict setValue:@(locationEnabled) forKey:UALocationEnabledKey];
+    
 
     completionHandler([UAActionResult resultWithValue:dict]);
 }

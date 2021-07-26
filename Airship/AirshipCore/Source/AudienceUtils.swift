@@ -3,39 +3,41 @@
 import Foundation
 
 // NOTE: For internal use only. :nodoc:
-class AudienceUtils {
+@objc(UAAudienceUtils)
+public class AudienceUtils : NSObject {
     
-    class func collapse(_ updates: [TagGroupUpdate]) -> [TagGroupUpdate] {
-        var adds: [String : Set<String>] = [:]
-        var removes: [String : Set<String>] = [:]
-        var sets: [String : Set<String>] = [:]
+    @objc(collapseTagGroupUpdates:)
+    public class func collapse(_ updates: [TagGroupUpdate]) -> [TagGroupUpdate] {
+        var adds: [String : [String]] = [:]
+        var removes: [String : [String]] = [:]
+        var sets: [String : [String]] = [:]
         
         updates.forEach { update in
             switch(update.type) {
             case .add:
                 if (sets[update.group] != nil) {
-                    update.tags.forEach { sets[update.group]?.insert($0) }
+                    update.tags.forEach { sets[update.group]?.append($0) }
                 } else {
-                    removes[update.group]?.subtract(update.tags)
+                    removes[update.group]?.removeAll(where: { update.tags.contains($0) })
                     if (adds[update.group] == nil) {
-                        adds[update.group] = Set<String>()
+                        adds[update.group] = []
                     }
-                    update.tags.forEach { adds[update.group]?.insert($0) }
+                    update.tags.forEach { adds[update.group]?.append($0) }
                 }
             case .remove:
                 if (sets[update.group] != nil) {
-                    sets[update.group]?.subtract(update.tags)
+                    sets[update.group]?.removeAll(where: { update.tags.contains($0) })
                 } else {
-                    adds[update.group]?.subtract(update.tags)
+                    adds[update.group]?.removeAll(where: { update.tags.contains($0) })
                     if (removes[update.group] == nil) {
-                        removes[update.group] = Set<String>()
+                        removes[update.group] = []
                     }
-                    update.tags.forEach { removes[update.group]?.insert($0) }
+                    update.tags.forEach { removes[update.group]?.append($0) }
                 }
             case .set:
                 removes[update.group] = nil
                 adds[update.group] = nil
-                sets[update.group] = Set(update.tags)
+                sets[update.group] = update.tags
             }
         }
         
@@ -46,7 +48,8 @@ class AudienceUtils {
         return setUpdates + addUpdates + removeUpdates
     }
     
-    class func collapse(_ updates: [AttributeUpdate]) -> [AttributeUpdate] {
+    @objc(collapseAttributeUpdates:)
+    public class func collapse(_ updates: [AttributeUpdate]) -> [AttributeUpdate] {
         var found : [String] = []
         let latest : [AttributeUpdate] = updates.reversed().compactMap { update in
             if (!found.contains(update.attribute)) {
@@ -59,7 +62,8 @@ class AudienceUtils {
         return latest.reversed()
     }
     
-    class func applyTagUpdates(tagGroups: [String : [String]]?, tagGroupUpdates: [TagGroupUpdate]?) -> [String : [String]] {
+    @objc
+    public class func applyTagUpdates(tagGroups: [String : [String]]?, tagGroupUpdates: [TagGroupUpdate]?) -> [String : [String]] {
         var updated = tagGroups ?? [:]
         
         tagGroupUpdates?.forEach { update in
@@ -93,5 +97,4 @@ class AudienceUtils {
         
         return updated
     }
-    
 }

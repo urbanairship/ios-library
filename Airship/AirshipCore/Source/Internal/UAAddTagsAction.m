@@ -3,8 +3,13 @@
 #import "UAAddTagsAction.h"
 #import "UATagsActionPredicate+Internal.h"
 #import "UAChannel.h"
-#import "UANamedUser.h"
 #import "UAirship.h"
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
 
 @implementation UAAddTagsAction
 
@@ -20,7 +25,9 @@ NSString * const UAAddTagsActionDefaultRegistryAlias = @"^+t";
 }
 
 - (void)applyNamedUserTags:(NSArray *)tags group:(NSString *)group {
-    [[UAirship namedUser] addTags:tags group:group];
+    UATagGroupsEditor *editor = [[UAirship contact] editTags];
+    [editor addTags:tags group:group];
+    [editor apply];
 }
 
 @end

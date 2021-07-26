@@ -12,7 +12,7 @@
 @property (nonatomic, strong) UAInAppAudienceManager *manager;
 @property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) id mockChannel;
-@property (nonatomic, strong) id mockNamedUser;
+@property (nonatomic, strong) id mockContact;
 @property (nonatomic, strong) id mockAPIClient;
 @property (nonatomic, strong) id mockCache;
 @property (nonatomic, strong) id mockHistorian;
@@ -45,13 +45,12 @@
 - (void)setupMocks:(NSString *)channelID channelTagsEnabled:(BOOL)enabled {
     self.mockAirship = [self mockForClass:[UAirship class]];
     self.mockChannel = [self mockForClass:[UAChannel class]];
-    self.mockNamedUser = [self mockForClass:[UANamedUser class]];
+    self.mockContact = [self mockForClass:[UAContact class]];
     self.mockAPIClient = [self mockForClass:[UATagGroupsLookupAPIClient class]];
     self.mockHistorian = [self mockForClass:[UAInAppAudienceHistorian class]];
     self.mockCache = [self mockForClass:[UATagGroupsLookupResponseCache class]];
 
     [[[self.mockAirship stub] andReturn:self.mockChannel] channel];
-
     [[[self.mockChannel stub] andReturn:@[@"test"]] tags];
     [[[self.mockChannel stub] andReturn:channelID] identifier];
     [[[self.mockChannel stub] andReturnValue:@(enabled)] isChannelTagRegistrationEnabled];
@@ -59,7 +58,7 @@
     self.manager = [UAInAppAudienceManager managerWithAPIClient:self.mockAPIClient
                                                       dataStore:self.dataStore
                                                         channel:self.mockChannel
-                                                      namedUser:self.mockNamedUser
+                                                        contact:self.mockContact
                                                           cache:self.mockCache
                                                       historian:self.mockHistorian
                                                     currentTime:self.testDate];
@@ -122,10 +121,11 @@
                                                                                     status:200
                                                                      lastModifiedTimestamp:@"2018-03-02T22:56:09"];
 
+    
     NSArray *localHistory = @[
-        [UATagGroupsMutation mutationToAddTags:@[@"bar", @"baz"] group:@"foo"],
-        [UATagGroupsMutation mutationToAddTags:@[@"bloop"] group:@"bleep"]
-    ];
+        [[UATagGroupUpdate alloc] initWithGroup:@"foo" tags:@[@"bar", @"baz"] type:UATagGroupUpdateTypeAdd],
+        [[UATagGroupUpdate alloc] initWithGroup:@"bleep" tags:@[@"bloop"] type:UATagGroupUpdateTypeAdd],
+   ];
 
     NSDate *cacheRefreshDate = [NSDate dateWithTimeIntervalSinceNow:-60];
 
@@ -133,7 +133,6 @@
     [[[self.mockCache expect] andReturn:self.requestedTagGroups] requestedTagGroups];
     [[[self.mockCache expect] andReturn:cacheRefreshDate] refreshDate];
     [[[self.mockCache expect] andReturnValue:@(NO)] needsRefresh];
-
 
     self.testDate.dateOverride = [NSDate date];
 
@@ -170,9 +169,9 @@
 
 
     NSArray *localHistory = @[
-        [UATagGroupsMutation mutationToAddTags:@[@"bar", @"baz"] group:@"foo"],
-        [UATagGroupsMutation mutationToAddTags:@[@"bloop"] group:@"bleep"]
-    ];
+        [[UATagGroupUpdate alloc] initWithGroup:@"foo" tags:@[@"bar", @"baz"] type:UATagGroupUpdateTypeAdd],
+        [[UATagGroupUpdate alloc] initWithGroup:@"bleep" tags:@[@"bloop"] type:UATagGroupUpdateTypeAdd],
+   ];
 
     XCTestExpectation *apiFetchCompleted = [self expectationWithDescription:@"API fetch completed"];
 
@@ -246,10 +245,10 @@
     self.testDate.dateOverride = [NSDate date];
 
     NSArray *localHistory = @[
-        [UATagGroupsMutation mutationToAddTags:@[@"bar", @"baz"] group:@"foo"],
-        [UATagGroupsMutation mutationToAddTags:@[@"bloop"] group:@"bleep"]
-    ];
-
+        [[UATagGroupUpdate alloc] initWithGroup:@"foo" tags:@[@"bar", @"baz"] type:UATagGroupUpdateTypeAdd],
+        [[UATagGroupUpdate alloc] initWithGroup:@"bleep" tags:@[@"bloop"] type:UATagGroupUpdateTypeAdd],
+   ];
+    
     [[[self.mockHistorian expect] andReturn:localHistory] tagHistoryNewerThan:[cacheRefreshDate dateByAddingTimeInterval:-self.manager.preferLocalTagDataTime]];
 
     UATagGroups *expectedTagGroups = [UATagGroups tagGroupsWithTags:@{@"foo" : @[@"bar", @"baz"]}];
@@ -397,19 +396,19 @@
     self.testDate.dateOverride = [NSDate date];
 
     NSArray *localHistory = @[
-        [UATagGroupsMutation mutationToRemoveTags:@[@"one", @"two"] group:@"foo"],
-        [UATagGroupsMutation mutationToSetTags:@[@"a"] group:@"bar"],
-        [UATagGroupsMutation mutationToSetTags:@[@"1"] group:@"baz"]
-    ];
+        [[UATagGroupUpdate alloc] initWithGroup:@"foo" tags:@[@"one", @"two"] type:UATagGroupUpdateTypeRemove],
+        [[UATagGroupUpdate alloc] initWithGroup:@"bar" tags:@[@"a"] type:UATagGroupUpdateTypeSet],
+        [[UATagGroupUpdate alloc] initWithGroup:@"baz" tags:@[@"1"] type:UATagGroupUpdateTypeSet],
+   ];
 
     [[[self.mockHistorian expect] andReturn:localHistory] tagHistoryNewerThan:[self.testDate.dateOverride dateByAddingTimeInterval:-self.manager.preferLocalTagDataTime]];
 
-    NSArray *pendingNamedUser = @[
-        [UATagGroupsMutation mutationToSetTags:@[@"3"] group:@"baz"],
-        [UATagGroupsMutation mutationToAddTags:@[@"one"] group:@"foo"]
+    NSArray *pendingTagUpates = @[
+        [[UATagGroupUpdate alloc] initWithGroup:@"baz" tags:@[@"3"] type:UATagGroupUpdateTypeAdd],
+        [[UATagGroupUpdate alloc] initWithGroup:@"foo" tags:@[@"one"] type:UATagGroupUpdateTypeAdd],
     ];
 
-    [[[self.mockNamedUser expect] andReturn:pendingNamedUser] pendingTagGroups];
+    [[[self.mockContact expect] andReturn:pendingTagUpates] pendingTagGroupUpdates];
 
     NSArray *pendingChannel = @[
         [UATagGroupsMutation mutationToAddTags:@[@"2"] group:@"baz"],
@@ -420,42 +419,63 @@
 
     NSMutableArray *expected = [NSMutableArray array];
     [expected addObjectsFromArray:localHistory];
-    [expected addObjectsFromArray:pendingNamedUser];
-    [expected addObjectsFromArray:pendingChannel];
-
-    XCTAssertEqualObjects([UATagGroupsMutation collapseMutations:expected], self.manager.tagOverrides);
+    [expected addObjectsFromArray:pendingTagUpates];
+    [expected addObjectsFromArray:[pendingChannel[0] tagGroupUpdates]];
+    [expected addObjectsFromArray:[pendingChannel[1] tagGroupUpdates]];
+    
+    NSSet *expectedSet = [NSSet setWithArray:[UAAudienceUtils collapseTagGroupUpdates:expected]];
+    XCTAssertEqualObjects(expectedSet, [NSSet setWithArray:self.manager.tagOverrides]);
+    XCTAssertTrue(YES);
 }
 
 - (void)testAttributeOverrides {
     self.testDate.dateOverride = [NSDate date];
 
     NSArray *localHistory = @[
-        [self removeAttributeMutationWithKey:@"foo"],
-        [self setAttributeMutationWithKey:@"bar" value:@"1"],
-        [self setAttributeMutationWithKey:@"baz" value:@"a"]
+        [[UAAttributeUpdate alloc] initWithAttribute:@"foo"
+                                                type:UAAttributeUpdateTypeRemove
+                                               value:nil
+                                                date:[NSDate date]],
+        
+        [[UAAttributeUpdate alloc] initWithAttribute:@"bar"
+                                                type:UAAttributeUpdateTypeSet
+                                               value:@"1"
+                                                date:[NSDate date]],
+        
+        [[UAAttributeUpdate alloc] initWithAttribute:@"baz"
+                                                type:UAAttributeUpdateTypeSet
+                                               value:@"a"
+                                                date:[NSDate date]]
     ];
+    
     [[[self.mockHistorian expect] andReturn:localHistory] attributeHistoryNewerThan:[self.testDate.dateOverride dateByAddingTimeInterval:-self.manager.preferLocalTagDataTime]];
 
-    UAAttributePendingMutations *pendingNamedUser = [self setAttributeMutationWithKey:@"foo" value:@"some-value"];
-    [[[self.mockNamedUser expect] andReturn:pendingNamedUser] pendingAttributes];
+    NSArray *pendingContact = @[
+        [[UAAttributeUpdate alloc] initWithAttribute:@"foo"
+                                                type:UAAttributeUpdateTypeSet
+                                               value:@"some-value"
+                                                date:[NSDate date]],
+    ];
+    
+    [[[self.mockContact expect] andReturn:pendingContact] pendingAttributeUpdates];
 
     UAAttributePendingMutations *pendingChannel = [self setAttributeMutationWithKey:@"bar" value:@"2"];
     [[[self.mockChannel expect] andReturn:pendingChannel] pendingAttributes];
 
     NSMutableArray *expected = [NSMutableArray array];
     [expected addObjectsFromArray:localHistory];
-    [expected addObject:pendingNamedUser];
-    [expected addObject:pendingChannel];
+    [expected addObjectsFromArray:pendingContact];
+    [expected addObjectsFromArray:pendingChannel.attributeUpdates];
 
-    XCTAssertEqualObjects([UAAttributePendingMutations collapseMutations:expected], self.manager.attributeOverrides);
+    XCTAssertEqualObjects([UAAudienceUtils collapseAttributeUpdates:expected], self.manager.attributeOverrides);
 }
 
-- (void)testNamedUserChanged {
+- (void)testContactChanged {
     [[self.mockCache expect] setResponse:nil];
 
-    [[NSNotificationCenter defaultCenter] postNotificationName:UANamedUserIdentifierChangedNotification
+    [[NSNotificationCenter defaultCenter] postNotificationName:UAContact.contactChangedEvent
                                                         object:nil
-                                                      userInfo:@{UANamedUserIdentifierChangedNotificationIdentifierKey : @"identifier"}];
+                                                      userInfo:nil];
 
     [self.mockCache verify];
 }

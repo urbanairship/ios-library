@@ -107,15 +107,4 @@
     [self waitForTestExpectations];
 }
 
-/**
- * Test named user identifiers are encoded.
- */
-- (void)testNamedUserIdentifierEncoded {
-    UAAttributeAPIClient *namedUserClient = [UAAttributeAPIClient namedUserClientWithConfig:self.config];
-    NSString *namedUser = @"test/named/user";
-    NSString *expected = @"https://device-api.urbanairship.com/api/named_users/test%2Fnamed%2Fuser/attributes";
-    NSString *actual = [namedUserClient.urlFactoryBlock(self.config, namedUser) absoluteString];
-    XCTAssertEqualObjects(expected, actual);
-}
-
 @end

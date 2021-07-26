@@ -11,7 +11,6 @@
 #import "UAActionRegistry.h"
 #import "UAAutoIntegration+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
-#import "UANamedUser+Internal.h"
 #import "UAAppIntegration.h"
 #import "UARemoteDataManager+Internal.h"
 #import "UARemoteConfigManager+Internal.h"
@@ -151,17 +150,20 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         [components addObject:self.sharedPush];
 
 
-        self.sharedNamedUser = [UANamedUser namedUserWithChannel:self.sharedChannel
-                                                          config:self.config
-                                                       dataStore:self.dataStore
-                                                  privacyManager:self.sharedPrivacyManager];
-        [components addObject:self.sharedNamedUser];
-
+        
         self.sharedContact = [[UAContact alloc] initWithDataStore:self.dataStore
                                                            config:self.config
                                                           channel:self.sharedChannel
                                                    privacyManager:self.sharedPrivacyManager];
         [components addObject:self.sharedContact];
+        
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
+        self.sharedNamedUser = [[UANamedUser alloc] initWithDataStore:self.dataStore contact:self.sharedContact];
+        [components addObject:self.sharedNamedUser];
+
+#pragma clang diagnostic popu
 
         self.sharedRemoteDataManager = [UARemoteDataManager remoteDataManagerWithConfig:self.config
                                                                               dataStore:self.dataStore
@@ -192,7 +194,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         id<UAModuleLoader> automationLoader = [UAirship automationModuleLoaderWithDataStore:self.dataStore
                                                                                      config:self.config
                                                                                     channel:self.sharedChannel
-                                                                                  namedUser:self.sharedNamedUser
+                                                                                    contact:self.sharedContact
                                                                                   analytics:self.sharedAnalytics
                                                                           remoteDataManager:self.sharedRemoteDataManager
                                                                              privacyManager:self.sharedPrivacyManager];
@@ -451,9 +453,14 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     return sharedAirship_.sharedPush;
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
 + (UANamedUser *)namedUser {
     return sharedAirship_.sharedNamedUser;
 }
+
+#pragma clang diagnostic pop
 
 + (UAContact *)contact {
     return sharedAirship_.sharedContact;
@@ -569,7 +576,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 + (nullable id<UAModuleLoader>)automationModuleLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
                                                             config:(UARuntimeConfig *)config
                                                            channel:(UAChannel *)channel
-                                                         namedUser:(UANamedUser *)namedUser
+                                                           contact:(UAContact *)contact
                                                          analytics:(UAAnalytics *)analytics
                                                  remoteDataManager:(UARemoteDataManager *)remoteDataManager
                                                     privacyManager:(UAPrivacyManager *)privacyManager {
@@ -579,7 +586,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         return [cls inAppModuleLoaderWithDataStore:dataStore
                                             config:config
                                            channel:channel
-                                         namedUser:namedUser
+                                           contact:contact
                                          analytics:analytics
                                 remoteDataProvider:remoteDataManager
                                     privacyManager:privacyManager];

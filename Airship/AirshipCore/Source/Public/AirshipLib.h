@@ -59,7 +59,6 @@
 #import "UANSArrayValueTransformer.h"
 #import "UANSDictionaryValueTransformer.h"
 #import "UANSURLValueTransformer.h"
-#import "UANamedUser.h"
 #import "UANativeBridge.h"
 #import "UANativeBridgeDelegate.h"
 #import "UANativeBridgeExtensionDelegate.h"

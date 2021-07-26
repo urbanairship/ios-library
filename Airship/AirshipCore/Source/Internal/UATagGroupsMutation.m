@@ -6,10 +6,17 @@
 #define kUATagGroupsAddKey @"add"
 #define kUATagGroupsRemoveKey @"remove"
 
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
+
+
 @interface UATagGroupsMutation()
-@property(nonatomic, copy) NSDictionary *addTagGroups;
-@property(nonatomic, copy) NSDictionary *removeTagGroups;
-@property(nonatomic, copy) NSDictionary *setTagGroups;
+@property(nonatomic, copy) NSDictionary<NSString *, NSSet<NSString *> *> *addTagGroups;
+@property(nonatomic, copy) NSDictionary<NSString *, NSSet<NSString *> *> *removeTagGroups;
+@property(nonatomic, copy) NSDictionary<NSString *, NSSet<NSString *> *> *setTagGroups;
 @end
 
 @implementation UATagGroupsMutation
@@ -318,5 +325,31 @@
     return result;
 }
 
+- (NSArray<UATagGroupUpdate *> *)tagGroupUpdates {
+    NSMutableArray *updates = [NSMutableArray array];
+    for (NSString *group in self.addTagGroups.allKeys) {
+        UATagGroupUpdate *update = [[UATagGroupUpdate alloc] initWithGroup:group
+                                                                      tags:self.addTagGroups[group].allObjects
+                                                                      type:UATagGroupUpdateTypeAdd];
+        [updates addObject:update];
+    }
+    
+    for (NSString *group in self.removeTagGroups.allKeys) {
+        UATagGroupUpdate *update = [[UATagGroupUpdate alloc] initWithGroup:group
+                                                                      tags:self.removeTagGroups[group].allObjects
+                                                                      type:UATagGroupUpdateTypeRemove];
+        [updates addObject:update];
+    }
+    
+    
+    for (NSString *group in self.setTagGroups.allKeys) {
+        UATagGroupUpdate *update = [[UATagGroupUpdate alloc] initWithGroup:group
+                                                                      tags:self.setTagGroups[group].allObjects
+                                                                      type:UATagGroupUpdateTypeSet];
+        [updates addObject:update];
+    }
+    
+    return updates;
+}
 
 @end

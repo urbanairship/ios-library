@@ -4,12 +4,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class UATagGroupUpdate;
+
 /**
  * Defines changes to perform on tag groups.
  * @note For internal use only. :nodoc:
  */
 @interface UATagGroupsMutation : NSObject <NSSecureCoding>
-
 
 /**
  * Factory method to define tags to be added to a tag group.
@@ -53,13 +54,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (NSDictionary *)payload;
 
-/**
- * Applies the mutation to a collection of tag groups.
- *
- * @param tagGroups A dictionary mapping tag group ID strings to either tag arrays or tag sets
- * @return A modified dictionary mapping tag group ID strings to tag sets.
- */
-- (NSDictionary *)applyToTagGroups:(NSDictionary *)tagGroups;
+- (NSArray<UATagGroupUpdate *> *)tagGroupUpdates;
 
 @end
 

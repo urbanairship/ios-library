@@ -72,16 +72,6 @@
                                           application:[UIApplication sharedApplication]];
 }
 
-+ (instancetype)namedUserTagGroupsRegistrarWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
-
-    UAPendingTagGroupStore *pendingTagGroupStore = [UAPendingTagGroupStore namedUserHistoryWithDataStore:dataStore];
-    UATagGroupsAPIClient *client =  [UATagGroupsAPIClient namedUserClientWithConfig:config];
-
-    return [[self alloc] initWithPendingTagGroupStore:pendingTagGroupStore
-                                            apiClient:client
-                                          application:[UIApplication sharedApplication]];
-}
-
 - (UADisposable *)updateTagGroupsWithCompletionHandler:(void(^)(UATagGroupsUploadResult result))completionHandler {
     UATagGroupsMutation *mutation;
     NSString *identifier;

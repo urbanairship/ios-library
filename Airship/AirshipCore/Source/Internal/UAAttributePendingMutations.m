@@ -159,4 +159,41 @@ NSString *const UAAttributeRemoveActionKey = @"remove";
     return self.payload.description;
 }
 
+- (NSArray<UAAttributeUpdate *> *)attributeUpdates {
+    NSMutableArray *updates = [NSMutableArray array];
+    NSDateFormatter *isoDateFormatter = [UAUtils ISODateFormatterUTCWithDelimiter];
+
+    for (NSDictionary *mutation in self.mutationsPayload) {
+        
+        NSString *name = mutation[UAAttributeNameKey];
+        NSString *timeStamp = mutation[UAAttributeTimestampKey];
+        NSString *action = mutation[UAAttributeActionKey];
+        NSDate *date = [isoDateFormatter dateFromString:timeStamp];
+        
+        UAAttributeUpdate *update;
+        
+        if ([action isEqualToString:UAAttributeSetActionKey]) {
+            id value = mutation[UAAttributeValueKey];
+            update = [[UAAttributeUpdate alloc] initWithAttribute:name
+                                                             type:UAAttributeUpdateTypeSet
+                                                            value:value
+                                                             date:date];
+        } else if ([action isEqualToString:UAAttributeRemoveActionKey]) {
+            update = [[UAAttributeUpdate alloc] initWithAttribute:name
+                                                             type:UAAttributeUpdateTypeRemove
+                                                            value:nil
+                                                             date:date];
+        } else {
+            UA_LERR(@"invalid attribute action %@", action);
+        }
+        
+        if (update) {
+            [updates addObject:update];
+        }
+    }
+    
+    return updates;
+}
+
+
 @end

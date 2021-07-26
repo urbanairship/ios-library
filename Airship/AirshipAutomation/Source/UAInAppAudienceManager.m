@@ -27,7 +27,7 @@ NSString * const UAInAppAudienceManagerErrorDomain = @"com.urbanairship.in_app_a
 @property (nonatomic, strong) UATagGroupsLookupAPIClient *lookupAPIClient;
 @property (nonatomic, strong) UATagGroupsLookupResponseCache *cache;
 @property (nonatomic, strong) UADate *currentTime;
-@property (nonatomic, strong) UANamedUser *namedUser;
+@property (nonatomic, strong) UAContact *contact;
 @property (nonatomic, strong) UAChannel *channel;
 
 @property (nonatomic, readonly) NSTimeInterval maxSentMutationAge;
@@ -39,7 +39,7 @@ NSString * const UAInAppAudienceManagerErrorDomain = @"com.urbanairship.in_app_a
 - (instancetype)initWithAPIClient:(UATagGroupsLookupAPIClient *)client
                         dataStore:(UAPreferenceDataStore *)dataStore
                           channel:(UAChannel *)channel
-                        namedUser:(UANamedUser *)namedUser
+                          contact:(UAContact *)contact
                             cache:(UATagGroupsLookupResponseCache *)cache
                         historian:(UAInAppAudienceHistorian *)historian
                       currentTime:(UADate *)currentTime {
@@ -52,12 +52,12 @@ NSString * const UAInAppAudienceManagerErrorDomain = @"com.urbanairship.in_app_a
         self.historian = historian;
         self.lookupAPIClient = client;
         self.currentTime = currentTime;
-        self.namedUser = namedUser;
+        self.contact = contact;
         self.channel = channel;
 
         [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(namedUserChanged:)
-                                                     name:UANamedUserIdentifierChangedNotification
+                                                 selector:@selector(contactChanged)
+                                                     name:UAContact.contactChangedEvent
                                                    object:nil];
     }
 
@@ -67,21 +67,21 @@ NSString * const UAInAppAudienceManagerErrorDomain = @"com.urbanairship.in_app_a
 + (instancetype)managerWithConfig:(UARuntimeConfig *)config
                         dataStore:(UAPreferenceDataStore *)dataStore
                           channel:(UAChannel *)channel
-                        namedUser:(UANamedUser *)namedUser {
+                        contact:(UAContact *)contact {
 
     return [[self alloc] initWithAPIClient:[UATagGroupsLookupAPIClient clientWithConfig:config]
                                  dataStore:dataStore
                                    channel:channel
-                                 namedUser:namedUser
+                                 contact:contact
                                      cache:[UATagGroupsLookupResponseCache cacheWithDataStore:dataStore]
-                                 historian:[UAInAppAudienceHistorian historianWithChannel:channel namedUser:namedUser]
+                                 historian:[UAInAppAudienceHistorian historianWithChannel:channel contact:contact]
                                currentTime:[[UADate alloc] init]];
 }
 
 + (instancetype)managerWithAPIClient:(UATagGroupsLookupAPIClient *)client
                            dataStore:(UAPreferenceDataStore *)dataStore
                              channel:(UAChannel *)channel
-                           namedUser:(UANamedUser *)namedUser
+                           contact:(UAContact *)contact
                                cache:(UATagGroupsLookupResponseCache *)cache
                            historian:(UAInAppAudienceHistorian *)historian
                          currentTime:(UADate *)currentTime {
@@ -89,7 +89,7 @@ NSString * const UAInAppAudienceManagerErrorDomain = @"com.urbanairship.in_app_a
     return [[self alloc] initWithAPIClient:client
                                  dataStore:dataStore
                                    channel:channel
-                                 namedUser:namedUser
+                                 contact:contact
                                      cache:cache
                                  historian:historian
                                currentTime:currentTime];
@@ -138,47 +138,49 @@ NSString * const UAInAppAudienceManagerErrorDomain = @"com.urbanairship.in_app_a
                            userInfo:@{NSLocalizedDescriptionKey:message}];
 }
 
-- (NSArray<UATagGroupsMutation *> *)tagOverrides {
+- (NSArray<UATagGroupUpdate *> *)tagOverrides {
     NSDate *date = [self.currentTime.now dateByAddingTimeInterval:-self.preferLocalTagDataTime];
     return [self tagOverridesNewerThan:date];
 }
 
-- (NSArray<UATagGroupsMutation *> *)tagOverridesNewerThan:(NSDate *)date {
+- (NSArray<UATagGroupUpdate *> *)tagOverridesNewerThan:(NSDate *)date {
     NSMutableArray *overrides = [[self.historian tagHistoryNewerThan:date] mutableCopy];
 
-    [overrides addObjectsFromArray:self.namedUser.pendingTagGroups];
-    [overrides addObjectsFromArray:self.channel.pendingTagGroups];
+    [overrides addObjectsFromArray:self.contact.pendingTagGroupUpdates];
+    
+    for (UATagGroupsMutation *mutation in self.channel.pendingTagGroups) {
+        [overrides addObjectsFromArray:mutation.tagGroupUpdates];
+    }
 
     // Channel tags
     if (self.channel.isChannelTagRegistrationEnabled) {
-        [overrides addObject:[UATagGroupsMutation mutationToSetTags:self.channel.tags group:@"device"]];
+        [overrides addObject:[[UATagGroupUpdate alloc] initWithGroup:@"device" tags:self.channel.tags type:UATagGroupUpdateTypeSet]];
     }
 
-    return [UATagGroupsMutation collapseMutations:overrides];
+    return [UAAudienceUtils collapseTagGroupUpdates:overrides];
 }
 
-- (UAAttributePendingMutations *)attributeOverrides {
+- (NSArray<UAAttributeUpdate *> *)attributeOverrides {
     NSDate *date = [self.currentTime.now dateByAddingTimeInterval:-UAInAppAudienceManagerDefaultPreferLocalAudienceDataTimeSeconds];
     NSMutableArray *overrides = [[self.historian attributeHistoryNewerThan:date] mutableCopy];
 
-    [overrides addObject:self.namedUser.pendingAttributes];
-    [overrides addObject:self.channel.pendingAttributes];
+    [overrides addObjectsFromArray:self.contact.pendingAttributeUpdates];
+    [overrides addObjectsFromArray:self.channel.pendingAttributes.attributeUpdates];
 
-    return [UAAttributePendingMutations collapseMutations:overrides];
+    return [UAAudienceUtils collapseAttributeUpdates:overrides];
 }
 
 - (UATagGroups *)generateTagGroups:(UATagGroups *)requestedTagGroups
                     cachedResponse:(UATagGroupsLookupResponse *)cachedResponse
                        refreshDate:(NSDate *)refreshDate {
 
-    NSDictionary *tags = cachedResponse.tagGroups.tags;
+    NSDictionary *tags = cachedResponse.tagGroups.toJSON;
 
     // Apply local history
     NSDate *date = [refreshDate dateByAddingTimeInterval:-self.preferLocalTagDataTime];
-    for (UATagGroupsMutation *mutation in [self tagOverridesNewerThan:date]) {
-        tags = [mutation applyToTagGroups:tags];
-    }
-
+    NSArray<UATagGroupUpdate *> *updates = [self tagOverridesNewerThan:date];
+    tags = [UAAudienceUtils applyTagUpdatesWithTagGroups:tags tagGroupUpdates:updates];
+    
     // Only return the requested tags if available
     return [requestedTagGroups intersect:[UATagGroups tagGroupsWithTags:tags]];
 }
@@ -256,8 +258,9 @@ NSString * const UAInAppAudienceManagerErrorDomain = @"com.urbanairship.in_app_a
     }];
 }
 
-- (void)namedUserChanged:(NSNotification *)notification {
+- (void)contactChanged {
     self.cache.response = nil;
 }
 
 @end
+

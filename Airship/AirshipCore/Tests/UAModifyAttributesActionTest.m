@@ -5,14 +5,15 @@
 #import "UAActionArguments+Internal.h"
 #import "UAirship+Internal.h"
 #import "UAChannel+Internal.h"
-#import "UANamedUser+Internal.h"
 #import "UAActionResult.h"
+
+@import AirshipCore;
 
 @interface UAModifyAttributesActionTest : UABaseTest
 
 @property (nonatomic, assign) id mockAirship;
 @property (nonatomic, assign) id mockChannel;
-@property (nonatomic, assign) id mockNamedUser;
+@property (nonatomic, assign) id mockContact;
 @property (nonatomic, strong) UAActionArguments *arguments;
 
 @end
@@ -26,17 +27,17 @@
     self.arguments = [[UAActionArguments alloc] init];
     
     self.mockChannel = [self mockForClass:[UAChannel class]];
-    self.mockNamedUser = [self mockForClass:[UANamedUser class]];
+    self.mockContact = [self mockForClass:[UAContact class]];
     self.mockAirship = [self mockForClass:[UAirship class]];
     [UAirship setSharedAirship:self.mockAirship];
     [[[self.mockAirship stub] andReturn:self.mockChannel] channel];
-    [[[self.mockAirship stub] andReturn:self.mockNamedUser] namedUser];
+    [[[self.mockAirship stub] andReturn:self.mockContact] contact];
 }
 
 - (void)tearDown {
     [self.mockAirship stopMocking];
     [self.mockChannel stopMocking];
-    [self.mockNamedUser stopMocking];
+    [self.mockContact stopMocking];
     [super tearDown];
 }
 
@@ -150,15 +151,15 @@
     id<UAAction> action = [[UAModifyAttributesAction alloc] init];
 
     [[self.mockChannel expect] applyAttributeMutations:OCMOCK_ANY];
-    [[self.mockNamedUser expect] applyAttributeMutations:OCMOCK_ANY];
-    
+    [[self.mockContact expect] editAttibutes];
+
     [action performWithArguments:self.arguments completionHandler:^(UAActionResult *performResult) {
         XCTAssertNil(performResult.value);
         XCTAssertNil(performResult.error);
     }];
-    
+
     [self.mockChannel verify];
-    [self.mockNamedUser verify];
+    [self.mockContact verify];
 }
  
 /**
@@ -177,7 +178,7 @@
     };
     
     [[self.mockChannel expect] applyAttributeMutations:OCMOCK_ANY];
-    [[self.mockNamedUser reject] applyAttributeMutations:OCMOCK_ANY];
+    [[self.mockContact reject] editAttibutes];
     
     [action performWithArguments:self.arguments completionHandler:^(UAActionResult *performResult) {
         XCTAssertNil(performResult.value);
@@ -185,7 +186,7 @@
     }];
     
     [self.mockChannel verify];
-    [self.mockNamedUser verify];
+    [self.mockContact verify];
 }
 
 /**
@@ -204,7 +205,7 @@
     };
     
     [[self.mockChannel reject] applyAttributeMutations:OCMOCK_ANY];
-    [[self.mockNamedUser expect] applyAttributeMutations:OCMOCK_ANY];
+    [[self.mockContact expect] editAttibutes];
     
     [action performWithArguments:self.arguments completionHandler:^(UAActionResult *performResult) {
         XCTAssertNil(performResult.value);
@@ -212,7 +213,7 @@
     }];
     
     [self.mockChannel verify];
-    [self.mockNamedUser verify];
+    [self.mockContact verify];
 }
 
 @end

@@ -66,13 +66,6 @@ typedef NS_ENUM(NSUInteger, UAAttributeUploadResult) {
 + (instancetype)channelRegistrarWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dateStore;
 
 /**
- * Factory method to create the named user attribute registrar.
- * @param config The Airship config.
- * @return A new attribute registrar instance.
- */
-+ (instancetype)namedUserRegistrarWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dateStore;
-
-/**
  * Factory method to create an attribute registrar for testing.
  * @param APIClient The attributes API client.
  * @param persistentQueue The queue.

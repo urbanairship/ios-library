@@ -40,9 +40,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *pushAddress;
 
 /**
- * The named user identifier.
+ * The contact ID.
  */
-@property (nonatomic, copy, nullable) NSString *namedUserId;
+@property (nonatomic, copy, nullable) NSString *contactID;
 
 /**
  * The flag indicates tags in this request should be handled.
