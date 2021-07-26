@@ -28,9 +28,13 @@
 
 - (id)reverseTransformedValue:(id)value {
     NSError *error = nil;
-    id result = [NSKeyedUnarchiver unarchivedObjectOfClass:[NSArray class]
-                                                  fromData:value
-                                                     error:&error];
+
+    NSSet<Class> *classes = [NSSet setWithArray:@[[NSDictionary class], [NSArray class],
+                                                  [NSString class], [NSNumber class],
+                                                  [NSSet class], [NSDate class], [NSData class],
+                                                  [NSURL class], [NSUUID class], [NSNull class]]];
+
+    id result = [NSKeyedUnarchiver unarchivedObjectOfClasses:classes fromData:value error:&error];
 
     if (error) {
         UA_LERR(@"Failed to transform value: %@, error: %@", value, error);
