@@ -189,10 +189,9 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
 
     XCTestExpectation *expectation = [self expectationWithDescription:@"Callback called"];
 
-    UANotificationContent *content = [UANotificationContent notificationWithNotificationInfo:@{
+    [((NSObject<UAPushableComponent> *)self.remoteDataManager) receivedRemoteNotification:@{
         @"com.urbanairship.remote-data.update": @(true)
-    }];
-    [((NSObject<UAPushableComponent> *)self.remoteDataManager) receivedRemoteNotification:content completionHandler:^(UIBackgroundFetchResult result) {
+    } completionHandler:^(UIBackgroundFetchResult result) {
         XCTAssertEqual(UAActionFetchResultNewData, result);
         [expectation fulfill];
     }];

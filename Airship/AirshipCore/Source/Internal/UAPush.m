@@ -7,9 +7,7 @@
 #import "UAAnalytics+Internal.h"
 
 #import "UAUtils+Internal.h"
-#import "UANotificationCategory.h"
 #import "UARuntimeConfig.h"
-#import "UANotificationCategory.h"
 #import "UATagUtils+Internal.h"
 #import "NSObject+UAAdditions.h"
 
@@ -48,6 +46,7 @@ NSString *const UAPushQuietTimeEndKey = @"end";
 NSString *const UAPushDefaultDeviceTagGroup = @"device";
 
 NSString *const UAReceivedNotificationResponseEvent = @"com.urbanairship.push.received_notification_response";
+NSString *const UAReceivedNotificationResponseEventResponseKey = @"response";
 NSString *const UAReceivedForegroundNotificationEvent = @"com.urbanairship.push.received_foreground_notification";
 NSString *const UAReceivedBackgroundNotificationEvent = @"com.urbanairship.push.received_background_notification";
 
@@ -423,9 +422,11 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
     }
 }
 
-- (void)setCustomCategories:(NSSet<UANotificationCategory *> *)categories {
+
+#if !TARGET_OS_TV
+- (void)setCustomCategories:(NSSet<UNNotificationCategory *> *)categories {
     _customCategories = [categories filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
-        UANotificationCategory *category = evaluatedObject;
+        UNNotificationCategory *category = evaluatedObject;
         if ([category.identifier hasPrefix:@"ua_"]) {
             UA_LWARN(@"Ignoring category %@, only Airship notification categories are allowed to have prefix ua_.", category.identifier);
             return NO;
@@ -437,16 +438,17 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
     self.shouldUpdateAPNSRegistration = YES;
 }
 
-- (void)setRequireAuthorizationForDefaultCategories:(BOOL)requireAuthorizationForDefaultCategories {
-    _requireAuthorizationForDefaultCategories = requireAuthorizationForDefaultCategories;
-    self.shouldUpdateAPNSRegistration = YES;
-}
-
-- (NSSet<UANotificationCategory *> *)combinedCategories {
+- (NSSet<UNNotificationCategory *> *)combinedCategories {
     NSMutableSet *categories = [NSMutableSet setWithSet:[UANotificationCategories defaultCategoriesWithRequireAuth:self.requireAuthorizationForDefaultCategories]];
     [categories unionSet:self.customCategories];
     [categories unionSet:self.accengageCategories];
     return categories;
+}
+#endif
+
+- (void)setRequireAuthorizationForDefaultCategories:(BOOL)requireAuthorizationForDefaultCategories {
+    _requireAuthorizationForDefaultCategories = requireAuthorizationForDefaultCategories;
+    self.shouldUpdateAPNSRegistration = YES;
 }
 
 - (NSDictionary *)quietTime {
@@ -546,8 +548,9 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
 }
 
 - (void)applicationDidEnterBackground {
+#if !TARGET_OS_TV
     self.launchNotificationResponse = nil;
-
+#endif
     if ([self.privacyManager isEnabled:UAFeaturesPush]) {
         UA_LTRACE(@"Application entered the background. Updating authorization.");
         [self updateAuthorizedNotificationTypes];
@@ -701,11 +704,14 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
                                                                         UAAuthorizationStatus status) {
 
         UANotificationOptions options = UANotificationOptionNone;
+#if !TARGET_OS_TV
         NSSet *categories = nil;
-
+#endif
         if (self.userPushNotificationsEnabled) {
             options = self.notificationOptions;
+#if !TARGET_OS_TV
             categories = self.combinedCategories;
+#endif
         }
 
         if (!self.config.requestAuthorizationToUseNotifications) {
@@ -718,6 +724,7 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
             [self notificationRegistrationFinishedWithAuthorizedSettings:authorizedSettings status:status];
             completionHandler(YES);
         } else {
+#if !TARGET_OS_TV
             [self.pushRegistration updateRegistrationWithOptions:options
                                                       categories:categories
                                                completionHandler:^(BOOL result,
@@ -726,6 +733,15 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
                 [self notificationRegistrationFinishedWithAuthorizedSettings:authorizedSettings status:status];
                 completionHandler(result);
             }];
+#else
+            [self.pushRegistration updateRegistrationWithOptions:options
+                                               completionHandler:^(BOOL result,
+                                                                   UAAuthorizedNotificationSettings authorizedSettings,
+                                                                   UAAuthorizationStatus status) {
+                [self notificationRegistrationFinishedWithAuthorizedSettings:authorizedSettings status:status];
+                completionHandler(result);
+            }];
+#endif
         }
     }];
 }
@@ -780,14 +796,17 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
     self.authorizationStatus = status;
 
     [[UADispatcher main] dispatchAsync:^{
-        if ([self.registrationDelegate respondsToSelector:@selector(notificationRegistrationFinishedWithAuthorizedSettings:categories:)]) {
-            [self.registrationDelegate notificationRegistrationFinishedWithAuthorizedSettings:authorizedSettings
-                                                                                   categories:self.combinedCategories];
-        }
-
+#if !TARGET_OS_TV
         if ([self.registrationDelegate respondsToSelector:@selector(notificationRegistrationFinishedWithAuthorizedSettings:categories:status:)]) {
-            [self.registrationDelegate notificationRegistrationFinishedWithAuthorizedSettings:authorizedSettings categories:self.combinedCategories status:status];
+            [self.registrationDelegate notificationRegistrationFinishedWithAuthorizedSettings:authorizedSettings
+                                                                                   categories:self.combinedCategories
+                                                                                       status:status];
         }
+#else
+        if ([self.registrationDelegate respondsToSelector:@selector(notificationRegistrationFinishedWithAuthorizedSettings:status:)]) {
+            [self.registrationDelegate notificationRegistrationFinishedWithAuthorizedSettings:authorizedSettings status:status];
+        }
+#endif
     }];
 }
 
@@ -926,19 +945,20 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
     return presentationOptions;
 }
 
-- (void)handleNotificationResponse:(UANotificationResponse *)response completionHandler:(void (^)(void))handler {
+#if !TARGET_OS_TV
+- (void)handleNotificationResponse:(UNNotificationResponse *)response completionHandler:(void (^)(void))handler {
     if (![self.privacyManager isEnabled:UAFeaturesPush]) {
         handler();
         return;
     }
 
-    if ([response.actionIdentifier isEqualToString:UANotificationDefaultActionIdentifier]) {
+    if ([response.actionIdentifier isEqualToString:UNNotificationDefaultActionIdentifier]) {
         self.launchNotificationResponse = response;
     }
 
     [self.notificationCenter postNotificationName:UAReceivedNotificationResponseEvent
                                            object:self
-                                         userInfo:response.notificationContent.notificationInfo];
+                                         userInfo:@{UAReceivedNotificationResponseEventResponseKey:response}];
 
     id delegate = self.pushNotificationDelegate;
     if ([delegate respondsToSelector:@selector(receivedNotificationResponse:completionHandler:)]) {
@@ -947,8 +967,9 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
         handler();
     }
 }
+#endif
 
-- (void)handleRemoteNotification:(UANotificationContent *)notification foreground:(BOOL)foreground completionHandler:(void (^)(UIBackgroundFetchResult))handler {
+- (void)handleRemoteNotification:(NSDictionary *)userInfo foreground:(BOOL)foreground completionHandler:(void (^)(UIBackgroundFetchResult))handler {
     if (![self.privacyManager isEnabled:UAFeaturesPush]) {
         handler(UIBackgroundFetchResultNoData);
         return;
@@ -958,29 +979,29 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
     id delegate = self.pushNotificationDelegate;
 
     if (foreground) {
-
         if (self.autobadgeEnabled) {
-            [self.application setApplicationIconBadgeNumber:notification.badge.integerValue];
+            NSNumber *badge = userInfo[@"aps"][@"badge"];
+            [self.application setApplicationIconBadgeNumber:badge.integerValue];
         }
 
         [self.notificationCenter postNotificationName:UAReceivedForegroundNotificationEvent
                                                object:self
-                                             userInfo:notification.notificationInfo];
+                                             userInfo:userInfo];
 
         if ([delegate respondsToSelector:@selector(receivedForegroundNotification:completionHandler:)]) {
             delegateCalled = YES;
-            [delegate receivedForegroundNotification:notification completionHandler:^{
+            [delegate receivedForegroundNotification:userInfo completionHandler:^{
                 handler(UIBackgroundFetchResultNoData);
             }];
         }
     } else {
         [self.notificationCenter postNotificationName:UAReceivedBackgroundNotificationEvent
                                                object:self
-                                             userInfo:notification.notificationInfo];
+                                             userInfo:userInfo];
 
         if ([delegate respondsToSelector:@selector(receivedBackgroundNotification:completionHandler:)]) {
             delegateCalled = YES;
-            [delegate receivedBackgroundNotification:notification completionHandler:^(UIBackgroundFetchResult fetchResult) {
+            [delegate receivedBackgroundNotification:userInfo completionHandler:^(UIBackgroundFetchResult fetchResult) {
                 handler(fetchResult);
             }];
         }

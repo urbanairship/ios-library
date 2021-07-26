@@ -8,11 +8,7 @@
 #import "UAUtils+Internal.h"
 #import "UAChannelRegistrationPayload+Internal.h"
 #import "UAEvent.h"
-#import "UANotificationCategory.h"
-#import "UANotificationAction.h"
 #import "UARuntimeConfig.h"
-#import "UANotificationContent.h"
-#import "UNNotificationContent+UAAdditions.h"
 #import "AirshipTests-Swift.h"
 
 @import AirshipCore;
@@ -201,12 +197,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     self.push.userPushNotificationsEnabled = NO;
 
     // EXPECTATIONS
-    __block NSMutableSet *expectedCategories = [NSMutableSet set];
-    for (UANotificationCategory *category in self.push.combinedCategories) {
-        [expectedCategories addObject:[category asUNNotificationCategory]];
-    }
     UANotificationOptions expectedOptions = UANotificationOptionAlert | UANotificationOptionBadge | UANotificationOptionSound;
-    [self expectUpdatePushRegistrationWithOptions:expectedOptions categories:expectedCategories];
+    [self expectUpdatePushRegistrationWithOptions:expectedOptions categories:self.push.combinedCategories];
 
     // TEST
     self.push.userPushNotificationsEnabled = YES;
@@ -335,12 +327,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     self.push.userPushNotificationsEnabled = NO;
 
     // EXPECTATIONS
-    __block NSMutableSet *expectedCategories = [NSMutableSet set];
-    for (UANotificationCategory *category in self.push.combinedCategories) {
-        [expectedCategories addObject:[category asUNNotificationCategory]];
-    }
     UANotificationOptions expectedOptions = UANotificationOptionAlert | UANotificationOptionBadge | UANotificationOptionSound;
-    [self expectUpdatePushRegistrationWithOptions:expectedOptions categories:expectedCategories];
+    [self expectUpdatePushRegistrationWithOptions:expectedOptions categories:self.push.combinedCategories];
 
     // TEST
     self.push.userPushNotificationsEnabled = YES;
@@ -473,12 +461,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     self.authorizedNotificationSettings = UAAuthorizedNotificationSettingsAlert;
 
     // EXPECTATIONS
-    __block NSMutableSet *expectedCategories = [NSMutableSet set];
-    for (UANotificationCategory *category in self.push.combinedCategories) {
-        [expectedCategories addObject:[category asUNNotificationCategory]];
-    }
-
-    [self expectUpdatePushRegistrationWithOptions:self.push.notificationOptions categories:expectedCategories];
+    [self expectUpdatePushRegistrationWithOptions:self.push.notificationOptions categories:self.push.combinedCategories];
 
     // TEST
     [self.push updateAPNSRegistration:^(BOOL success) {}];
@@ -518,11 +501,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     self.authorizedNotificationSettings = UAAuthorizedNotificationSettingsAlert;
 
     // EXPECTATIONS
-    __block NSMutableSet *expectedCategories = [NSMutableSet set];
-    for (UANotificationCategory *category in self.push.combinedCategories) {
-        [expectedCategories addObject:[category asUNNotificationCategory]];
-    }
-    [self expectUpdatePushRegistrationWithOptions:self.push.notificationOptions categories:expectedCategories];
+    [self expectUpdatePushRegistrationWithOptions:self.push.notificationOptions categories:self.push.combinedCategories];
 
     XCTestExpectation *delegateCalled = [self expectationWithDescription:@"Delegate called"];
     XCTestExpectation *completionHandlerCalled = [self expectationWithDescription:@"Enable push completion handler called"];
@@ -530,8 +509,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
         [delegateCalled fulfill];
     }]  notificationRegistrationFinishedWithAuthorizedSettings:self.authorizedNotificationSettings categories:[OCMArg checkWithBlock:^BOOL(id obj) {
         NSSet *categories = (NSSet *)obj;
-        return (categories.count == expectedCategories.count);
-    }]];
+        return (categories.count == self.push.combinedCategories.count);
+    }] status:UAAuthorizationStatusAuthorized];
 
     // TEST
     [self.push enableUserPushNotifications:^(BOOL success) {
@@ -553,10 +532,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     self.authorizedNotificationSettings = UAAuthorizedNotificationSettingsAlert;
 
     // EXPECTATIONS
-    __block NSMutableSet *expectedCategories = [NSMutableSet set];
-    for (UANotificationCategory *category in self.push.combinedCategories) {
-        [expectedCategories addObject:[category asUNNotificationCategory]];
-    }
     [self rejectUpdatePushRegistrationWithOptions];
 
     XCTestExpectation *delegateCalled = [self expectationWithDescription:@"Delegate called"];
@@ -565,8 +540,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
         [delegateCalled fulfill];
     }]  notificationRegistrationFinishedWithAuthorizedSettings:self.authorizedNotificationSettings categories:[OCMArg checkWithBlock:^BOOL(id obj) {
         NSSet *categories = (NSSet *)obj;
-        return (categories.count == expectedCategories.count);
-    }]];
+        return (categories.count == self.push.combinedCategories.count);
+    }] status:UAAuthorizationStatusAuthorized];
 
     // TEST
     [self.push enableUserPushNotifications:^(BOOL success) {
@@ -681,8 +656,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     XCTAssertTrue(self.push.combinedCategories.count);
 
     self.push.requireAuthorizationForDefaultCategories = YES;
-    for (UANotificationCategory *category in self.push.combinedCategories) {
-        for (UANotificationAction *action in category.actions) {
+    for (UNNotificationCategory *category in self.push.combinedCategories) {
+        for (UNNotificationAction *action in category.actions) {
             // Only check background actions
             if ((action.options & UNNotificationActionOptionForeground) == UANotificationOptionNone) {
                 XCTAssertTrue((action.options & UNNotificationActionOptionAuthenticationRequired) > 0, @"Invalid options for action: %@", action.identifier);
@@ -692,8 +667,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     }
 
     self.push.requireAuthorizationForDefaultCategories = NO;
-    for (UANotificationCategory *category in self.push.combinedCategories) {
-        for (UANotificationAction *action in category.actions) {
+    for (UNNotificationCategory *category in self.push.combinedCategories) {
+        for (UNNotificationAction *action in category.actions) {
             // Only check background actions
             if ((action.options & UNNotificationActionOptionForeground) == UANotificationOptionNone) {
                 XCTAssertFalse((action.options & UNNotificationActionOptionAuthenticationRequired) > 0, @"Invalid options for action: %@", action.identifier);
@@ -710,9 +685,9 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 - (void)testNotificationCategories {
     self.push.userPushNotificationsEnabled = YES;
 
-    UANotificationCategory *defaultCategory = [UANotificationCategory categoryWithIdentifier:@"defaultCategory" actions:@[]  intentIdentifiers:@[] options:UANotificationCategoryOptionNone];
-    UANotificationCategory *customCategory = [UANotificationCategory categoryWithIdentifier:@"customCategory" actions:@[]  intentIdentifiers:@[] options:UANotificationCategoryOptionNone];
-    UANotificationCategory *anotherCustomCategory = [UANotificationCategory categoryWithIdentifier:@"anotherCustomCategory" actions:@[] intentIdentifiers:@[] options:UANotificationCategoryOptionNone];
+    UNNotificationCategory *defaultCategory = [UNNotificationCategory categoryWithIdentifier:@"defaultCategory" actions:@[]  intentIdentifiers:@[] options:UNNotificationCategoryOptionNone];
+    UNNotificationCategory *customCategory = [UNNotificationCategory categoryWithIdentifier:@"customCategory" actions:@[]  intentIdentifiers:@[] options:UNNotificationCategoryOptionNone];
+    UNNotificationCategory *anotherCustomCategory = [UNNotificationCategory categoryWithIdentifier:@"anotherCustomCategory" actions:@[] intentIdentifiers:@[] options:UNNotificationCategoryOptionNone];
 
     NSSet *defaultSet = [NSSet setWithArray:@[defaultCategory]];
     [[[self.mockDefaultNotificationCategories stub] andReturn:defaultSet] defaultCategoriesWithRequireAuth:self.push.requireAuthorizationForDefaultCategories];
@@ -1100,7 +1075,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
  * Test applicationDidEnterBackground clears the notification.
  */
 - (void)testApplicationDidEnterBackground {
-    self.push.launchNotificationResponse = [[UANotificationResponse alloc] init];
+    self.push.launchNotificationResponse = [self mockForClass:[UNNotificationResponse class]];
 
     [self.notificationCenter postNotificationName:UAAppStateTracker.didEnterBackgroundNotification object:nil];
 
@@ -1167,11 +1142,9 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     self.push.autobadgeEnabled = NO;
     [[self.mockApplication reject] setApplicationIconBadgeNumber:2];
 
-    UANotificationContent *notificationContent = [UANotificationContent notificationWithNotificationInfo:self.notification];
-
     // TEST
-    [self.push handleRemoteNotification:notificationContent foreground:YES completionHandler:^(UIBackgroundFetchResult result) {}];
-    [self.push handleRemoteNotification:notificationContent foreground:NO completionHandler:^(UIBackgroundFetchResult result) {}];
+    [self.push handleRemoteNotification:self.notification foreground:YES completionHandler:^(UIBackgroundFetchResult result) {}];
+    [self.push handleRemoteNotification:self.notification foreground:NO completionHandler:^(UIBackgroundFetchResult result) {}];
 
     // VERIFY
     XCTAssertNoThrow([self.mockApplication verify]);
@@ -1184,14 +1157,12 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 - (void)testHandleNotificationAutoBadgeEnabled {
     self.push.autobadgeEnabled = YES;
 
-    UANotificationContent *notificationContent = [UANotificationContent notificationWithNotificationInfo:self.notification];
-
     [[self.mockApplication expect] setApplicationIconBadgeNumber:2];
-    [self.push handleRemoteNotification:notificationContent foreground:YES completionHandler:^(UIBackgroundFetchResult result) {}];
+    [self.push handleRemoteNotification:self.notification foreground:YES completionHandler:^(UIBackgroundFetchResult result) {}];
     XCTAssertNoThrow([self.mockApplication verify], @"[UIApplication setApplicationIconBadgeNumber] should be called");
 
     [[self.mockApplication reject] setApplicationIconBadgeNumber:2];
-    [self.push handleRemoteNotification:notificationContent foreground:NO completionHandler:^(UIBackgroundFetchResult result) {}];
+    [self.push handleRemoteNotification:self.notification foreground:NO completionHandler:^(UIBackgroundFetchResult result) {}];
     XCTAssertNoThrow([self.mockApplication verify], @"[UIApplication setApplicationIconBadgeNumber] should not be called");
 }
 
@@ -1202,9 +1173,9 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 - (void)testHandleNotificationLaunchNotification {
     self.push.launchNotificationResponse = nil;
 
-    UANotificationResponse *response = [UANotificationResponse notificationResponseWithNotificationInfo:self.notification
-                                                                                       actionIdentifier:UANotificationDefaultActionIdentifier
-                                                                                           responseText:nil];
+    id response = [self mockForClass:[UNNotificationResponse class]];
+    [[[response stub] andReturn:self.mockUNNotification] notification];
+    [[[response stub] andReturn:UNNotificationDefaultActionIdentifier] actionIdentifier];
 
     [self.push handleNotificationResponse:response completionHandler:^{}];
 
@@ -1215,12 +1186,10 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
  * Test handleRemoteNotification when foreground and autobadge is enabled.
  */
 - (void)testHandleRemoteNotificationForegroundAutobadgeEnabled {
-    UANotificationContent *expectedNotificationContent = [UANotificationContent notificationWithNotificationInfo:self.notification];
-
     self.push.autobadgeEnabled = YES;
 
     // Application should set icon badge number when autobadge is enabled
-    [[self.mockApplication expect] setApplicationIconBadgeNumber:expectedNotificationContent.badge.integerValue];
+    [[self.mockApplication expect] setApplicationIconBadgeNumber:2];
 
     __block NSNotification *notification;
 
@@ -1230,25 +1199,25 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
         [notificationFired fulfill];
     }];
 
-    [[self.mockPushDelegate expect] receivedForegroundNotification:expectedNotificationContent completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
+    [[self.mockPushDelegate expect] receivedForegroundNotification:self.notification completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void (^handler)(void) = obj;
         handler();
         return YES;
     }]];
 
-    [[self.mockPushDelegate reject] receivedBackgroundNotification:expectedNotificationContent completionHandler:OCMOCK_ANY];
+    [[self.mockPushDelegate reject] receivedBackgroundNotification:self.notification completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *completionHandlerCalledExpectation = [self expectationWithDescription:@"handleRemoteNotification completionHandler should be called"];
 
     // TEST
-    [self.push handleRemoteNotification:expectedNotificationContent foreground:YES completionHandler:^(UIBackgroundFetchResult result) {
+    [self.push handleRemoteNotification:self.notification foreground:YES completionHandler:^(UIBackgroundFetchResult result) {
         [completionHandlerCalledExpectation fulfill];
     }];
 
     // VERIFY
     [self waitForTestExpectations];
 
-    XCTAssertEqualObjects(expectedNotificationContent.notificationInfo, notification.userInfo);
+    XCTAssertEqualObjects(self.notification, notification.userInfo);
 
     [self.mockApplication verify];
     [self.mockPushDelegate verify];
@@ -1258,12 +1227,10 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
  * Test handleRemoteNotification when foreground and autobadge is disabled.
  */
 - (void)testHandleRemoteNotificationForegroundAutobadgeDisabled {
-    UANotificationContent *expectedNotificationContent = [UANotificationContent notificationWithNotificationInfo:self.notification];
-
     self.push.autobadgeEnabled = NO;
 
     // Application should set icon badge number when autobadge is enabled
-    [[self.mockApplication reject] setApplicationIconBadgeNumber:expectedNotificationContent.badge.integerValue];
+    [[self.mockApplication reject] setApplicationIconBadgeNumber:2];
 
     __block NSNotification *notification;
 
@@ -1273,25 +1240,25 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
         [notificationFired fulfill];
     }];
 
-    [[self.mockPushDelegate expect] receivedForegroundNotification:expectedNotificationContent completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
+    [[self.mockPushDelegate expect] receivedForegroundNotification:self.notification completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void (^handler)(void) = obj;
         handler();
         return YES;
     }]];
 
-    [[self.mockPushDelegate reject] receivedBackgroundNotification:expectedNotificationContent completionHandler:OCMOCK_ANY];
+    [[self.mockPushDelegate reject] receivedBackgroundNotification:self.notification completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *completionHandlerCalledExpectation = [self expectationWithDescription:@"handleRemoteNotification completionHandler should be called"];
 
     // TEST
-    [self.push handleRemoteNotification:expectedNotificationContent foreground:YES completionHandler:^(UIBackgroundFetchResult result) {
+    [self.push handleRemoteNotification:self.notification foreground:YES completionHandler:^(UIBackgroundFetchResult result) {
         [completionHandlerCalledExpectation fulfill];
     }];
 
     // VERIFY
     [self waitForTestExpectations];
 
-    XCTAssertEqualObjects(expectedNotificationContent.notificationInfo, notification.userInfo);
+    XCTAssertEqualObjects(self.notification, notification.userInfo);
 
     [self.mockApplication verify];
     XCTAssertNoThrow([self.mockPushDelegate verify], @"push delegate should be called");
@@ -1301,8 +1268,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
  * Test handleRemoteNotification when background push.
  */
 - (void)testHandleRemoteNotificationBackground {
-    UANotificationContent *expectedNotificationContent = [UANotificationContent notificationWithNotificationInfo:self.notification];
-
     __block NSNotification *notification;
 
     XCTestExpectation *notificationFired = [self expectationWithDescription:@"Notification event fired"];
@@ -1311,9 +1276,9 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
         [notificationFired fulfill];
     }];
 
-    [[self.mockPushDelegate reject] receivedForegroundNotification:expectedNotificationContent completionHandler:OCMOCK_ANY];
+    [[self.mockPushDelegate reject] receivedForegroundNotification:self.notification completionHandler:OCMOCK_ANY];
 
-    [[self.mockPushDelegate expect] receivedBackgroundNotification:expectedNotificationContent completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
+    [[self.mockPushDelegate expect] receivedBackgroundNotification:self.notification completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void (^handler)(void) = obj;
         handler();
         return YES;
@@ -1322,14 +1287,14 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     XCTestExpectation *completionHandlerCalledExpectation = [self expectationWithDescription:@"handleRemoteNotification completionHandler should be called"];
 
     // TEST
-    [self.push handleRemoteNotification:expectedNotificationContent foreground:NO completionHandler:^(UIBackgroundFetchResult result) {
+    [self.push handleRemoteNotification:self.notification foreground:NO completionHandler:^(UIBackgroundFetchResult result) {
         [completionHandlerCalledExpectation fulfill];
     }];
 
     // VERIFY
     [self waitForTestExpectations];
 
-    XCTAssertEqualObjects(expectedNotificationContent.notificationInfo, notification.userInfo);
+    XCTAssertEqualObjects(self.notification, notification.userInfo);
     XCTAssertNoThrow([self.mockPushDelegate verify], @"push delegate should be called");
 }
 
@@ -1337,8 +1302,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
  * Test handleRemoteNotification when no delegate is set.
  */
 - (void)testHandleRemoteNotificationNoDelegate {
-    UANotificationContent *expectedNotificationContent = [UANotificationContent notificationWithNotificationInfo:self.notification];
-
     self.push.pushNotificationDelegate = nil;
 
     XCTestExpectation *completionHandlerCalledExpectation = [self expectationWithDescription:@"handleRemoteNotification completionHandler should be called"];
@@ -1352,23 +1315,25 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     }];
 
     // TEST
-    [self.push handleRemoteNotification:expectedNotificationContent foreground:YES completionHandler:^(UIBackgroundFetchResult result) {
+    [self.push handleRemoteNotification:self.notification foreground:YES completionHandler:^(UIBackgroundFetchResult result) {
         [completionHandlerCalledExpectation fulfill];
         XCTAssertEqual(result, UIBackgroundFetchResultNoData);
     }];
 
     // VERIFY
     [self waitForTestExpectations];
-    XCTAssertEqualObjects(expectedNotificationContent.notificationInfo, notification.userInfo);
+    XCTAssertEqualObjects(self.notification, notification.userInfo);
 }
 
 /**
  * Test handleNotificationResponse when launched from push.
  */
 - (void)testHandleNotificationResponseLaunchedFromPush {
-    UANotificationResponse *expectedNotificationLaunchFromPush = [UANotificationResponse notificationResponseWithNotificationInfo:self.notification
-                                                                                                                 actionIdentifier:UANotificationDefaultActionIdentifier
-                                                                                                                     responseText:@"test_response_text"];
+    id response = [self mockForClass:[UNTextInputNotificationResponse class]];
+    [[[response stub] andReturn:self.mockUNNotification] notification];
+    [[[response stub] andReturn:UNNotificationDefaultActionIdentifier] actionIdentifier];
+    [[[response stub] andReturn:@"test_response_text"] userText];
+
     // delegate needs to be unresponsive to receivedNotificationResponse callback
     self.push.pushNotificationDelegate = nil;
 
@@ -1381,23 +1346,23 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     }];
 
     // Call handleNotificationResponse
-    [self.push handleNotificationResponse:expectedNotificationLaunchFromPush completionHandler:^{
+    [self.push handleNotificationResponse:response completionHandler:^{
     }];
 
     [self waitForTestExpectations];
 
     // Check that the launchNotificationReponse is set to expected response
-    XCTAssertEqualObjects(self.push.launchNotificationResponse, expectedNotificationLaunchFromPush);
-    XCTAssertEqualObjects(expectedNotificationLaunchFromPush.notificationContent.notificationInfo, notification.userInfo);
+    XCTAssertEqualObjects(self.push.launchNotificationResponse, response);
 }
 
 /**
  * Test handleNotificationResponse when not launched from push.
  */
 - (void)testHandleNotificationResponseNotLaunchedFromPush {
-    UANotificationResponse *expectedNotificationNotLaunchedFromPush = [UANotificationResponse notificationResponseWithNotificationInfo:self.notification
-                                                                                                                      actionIdentifier:@"test_action_identifier"
-                                                                                                                          responseText:@"test_response_text"];
+    id response = [self mockForClass:[UNTextInputNotificationResponse class]];
+    [[[response stub] andReturn:self.mockUNNotification] notification];
+    [[[response stub] andReturn:@"test_action_identifier"] actionIdentifier];
+    [[[response stub] andReturn:@"test_response_text"] userText];
 
     [[self.mockPushDelegate expect] receivedNotificationResponse:OCMOCK_ANY completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void (^handler)(void) = obj;
@@ -1416,7 +1381,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     }];
 
     // TEST
-    [self.push handleNotificationResponse:expectedNotificationNotLaunchedFromPush completionHandler:^{
+    [self.push handleNotificationResponse:response completionHandler:^{
         [completionHandlerCalledExpectation fulfill];
     }];
 
@@ -1424,7 +1389,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     [self waitForTestExpectations];
     XCTAssertNil(self.push.launchNotificationResponse);
     XCTAssertNoThrow([self.mockPushDelegate verify], @"push delegate should be called");
-    XCTAssertEqualObjects(expectedNotificationNotLaunchedFromPush.notificationContent.notificationInfo, notification.userInfo);
+    XCTAssertEqualObjects(response, notification.userInfo[UAReceivedNotificationResponseEventResponseKey]);
 }
 
 /**
@@ -1433,14 +1398,15 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 - (void)testHandleNotificationResponse {
     self.push.pushNotificationDelegate = nil;
 
-    UANotificationResponse *expectedNotification = [UANotificationResponse notificationResponseWithNotificationInfo:self.notification
-                                                                                                   actionIdentifier:@"test_action_identifier"
-                                                                                                       responseText:@"test_response_text"];
+    id response = [self mockForClass:[UNTextInputNotificationResponse class]];
+    [[[response stub] andReturn:self.mockUNNotification] notification];
+    [[[response stub] andReturn:@"test_action_identifier"] actionIdentifier];
+    [[[response stub] andReturn:@"test_response_text"] userText];
 
     XCTestExpectation *completionHandlerCalledExpectation = [self expectationWithDescription:@"handleRemoteNotification completionHandler should be called"];
 
     // TEST
-    [self.push handleNotificationResponse:expectedNotification completionHandler:^{
+    [self.push handleNotificationResponse:response completionHandler:^{
         [completionHandlerCalledExpectation fulfill];
     }];
 
@@ -1637,11 +1603,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     self.push.userPushNotificationsEnabled = YES;
 
     // EXPECTATIONS
-    __block NSMutableSet *expectedCategories = [NSMutableSet set];
-    for (UANotificationCategory *category in self.push.combinedCategories) {
-        [expectedCategories addObject:[category asUNNotificationCategory]];
-    }
-    [self expectUpdatePushRegistrationWithOptions:self.push.notificationOptions categories:expectedCategories];
+    [self expectUpdatePushRegistrationWithOptions:self.push.notificationOptions categories:self.push.combinedCategories];
 
     // Test
     self.push.componentEnabled = YES;
@@ -1809,29 +1771,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     XCTAssertEqual(validDeviceToken, payload.pushAddress);
 }
 
-/**
- * Test if the notification comes from Airship or not.
- */
-- (void)testIsAirshipNotification {
-    NSDictionary *airshipNotificationInfo = @{ @"_":@"e68c9ab6-c645-4a47-8ad5-b17480b3d03c",
-                                               @"com.urbanairship.metadata":@"metadata"};
-    UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
-    
-    content.userInfo = airshipNotificationInfo;
-    
-    XCTAssertTrue([content.copy isAirshipNotificationContent], @"The notification is not an Airship notification");
-    
-    NSDictionary *otherNotificationInfo = @{ @"_":@"e68c9ab6-c645-4a47-8ad5-b17480b3d03c",
-                                               @"com.intruder.metadata":@"metadata"};
-    
-    UNMutableNotificationContent *otherContent = [[UNMutableNotificationContent alloc] init];
-    
-    otherContent.userInfo = otherNotificationInfo;
-    
-    XCTAssertFalse([otherContent.copy isAirshipNotificationContent], @"The notification is an Airship notification");
-}
-
-- (void)expectUpdatePushRegistrationWithOptions:(UANotificationOptions)expectedOptions categories:(NSSet<UANotificationCategory *> *)expectedCategories {
+- (void)expectUpdatePushRegistrationWithOptions:(UANotificationOptions)expectedOptions categories:(NSSet<UNNotificationCategory *> *)expectedCategories {
     [[[[self.mockPushRegistration expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:2];
@@ -1845,7 +1785,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
             completionHandler(YES);
         }
 
-        [self.mockRegistrationDelegate notificationRegistrationFinishedWithAuthorizedSettings:self.authorizedNotificationSettings categories:expectedCategories];
+        [self.mockRegistrationDelegate notificationRegistrationFinishedWithAuthorizedSettings:self.authorizedNotificationSettings categories:expectedCategories status:UAAuthorizationStatusAuthorized];
     }] ignoringNonObjectArgs] updateRegistrationWithOptions:0 categories:[OCMArg checkWithBlock:^BOOL(NSSet<UNNotificationCategory *> *categories) {
         return (expectedCategories.count == categories.count);
     }] completionHandler:OCMOCK_ANY];

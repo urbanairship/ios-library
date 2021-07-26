@@ -2,7 +2,6 @@
 
 #import "UABaseTest.h"
 #import "UAAPNSRegistration+Internal.h"
-#import "UANotificationCategory.h"
 
 @interface UAAPNSRegistrationTest : UABaseTest
 
@@ -10,7 +9,7 @@
 @property (nonatomic, strong) id mockedUserNotificationCenter;
 
 @property (nonatomic, strong) UAAPNSRegistration *pushRegistration;
-@property (nonatomic, copy) NSSet<UANotificationCategory *> *testCategories;
+@property (nonatomic, copy) NSSet<UNNotificationCategory *> *testCategories;
 
 @end
 
@@ -30,9 +29,9 @@
     self.pushRegistration = [[UAAPNSRegistration alloc] init];
 
     //Set ip some categories to use
-    UANotificationCategory *defaultCategory = [UANotificationCategory categoryWithIdentifier:@"defaultCategory" actions:@[]  intentIdentifiers:@[] options:UANotificationCategoryOptionNone];
-    UANotificationCategory *customCategory = [UANotificationCategory categoryWithIdentifier:@"customCategory" actions:@[]  intentIdentifiers:@[] options:UANotificationCategoryOptionNone];
-    UANotificationCategory *anotherCustomCategory = [UANotificationCategory categoryWithIdentifier:@"anotherCustomCategory" actions:@[] intentIdentifiers:@[] hiddenPreviewsBodyPlaceholder:@"Push Notification" options:UANotificationCategoryOptionNone];
+    UNNotificationCategory *defaultCategory = [UNNotificationCategory categoryWithIdentifier:@"defaultCategory" actions:@[]  intentIdentifiers:@[] options:UNNotificationCategoryOptionNone];
+    UNNotificationCategory *customCategory = [UNNotificationCategory categoryWithIdentifier:@"customCategory" actions:@[]  intentIdentifiers:@[] options:UNNotificationCategoryOptionNone];
+    UNNotificationCategory *anotherCustomCategory = [UNNotificationCategory categoryWithIdentifier:@"anotherCustomCategory" actions:@[] intentIdentifiers:@[] hiddenPreviewsBodyPlaceholder:@"Push Notification" options:UNNotificationCategoryOptionNone];
 
     self.testCategories = [NSSet setWithArray:@[defaultCategory, customCategory, anotherCustomCategory]];
 }
@@ -47,14 +46,7 @@
 
     UANotificationOptions expectedOptions = UANotificationOptionAlert & UANotificationOptionBadge;
 
-    // Normalize the test categories
-    NSMutableSet *normalizedCategories = [NSMutableSet set];
-    // Normalize our abstract categories to iOS-appropriate type
-    for (UANotificationCategory *category in self.testCategories) {
-        [normalizedCategories addObject:[category asUNNotificationCategory]];
-    }
-
-    [[self.mockedUserNotificationCenter expect] setNotificationCategories:normalizedCategories];
+    [[self.mockedUserNotificationCenter expect] setNotificationCategories:self.testCategories];
 
     [self.pushRegistration updateRegistrationWithOptions:expectedOptions categories:self.testCategories completionHandler:nil];
 
@@ -63,12 +55,6 @@
 
 -(void)testUpdateRegistration {
     UANotificationOptions expectedOptions = UANotificationOptionAlert | UANotificationOptionBadge;
-
-    // Normalize the test categories
-    NSMutableSet *normalizedCategories = [NSMutableSet set];
-    for (UANotificationCategory *category in self.testCategories) {
-        [normalizedCategories addObject:[category asUNNotificationCategory]];
-    }
 
     // Normalize the options
     UNAuthorizationOptions normalizedOptions = (UNAuthorizationOptionAlert | UNAuthorizationOptionBadge | UNAuthorizationOptionSound | UNAuthorizationOptionCarPlay);

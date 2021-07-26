@@ -92,24 +92,127 @@
     XCTAssertEqual(button.actionType, @"webView", @"Incorrect Accengage button action type");
     XCTAssertEqual(button.identifier, @"1", @"Incorrect Accengage button identifier");
     XCTAssertEqual(button.url, @"someotherurl.com", @"Incorrect Accengage button url");
-    
-    UANotificationResponse *response = [UANotificationResponse notificationResponseWithNotificationInfo:notificationInfo actionIdentifier:UANotificationDefaultActionIdentifier responseText:nil];
-    [[runnerMock expect] runActionWithName:@"landing_page_action" value:@"someurl.com"     situation:UASituationLaunchedFromPush];
-    [((NSObject<UAPushableComponent> *)accengage) receivedNotificationResponse:response completionHandler:^{}];
+
+    id mockNotification = OCMClassMock([UNNotification class]);
+    id mockRequest = OCMClassMock([UNNotificationRequest class]);
+    id mockContent = OCMClassMock([UNNotificationContent class]);
+    id mockResponse = OCMClassMock([UNNotificationResponse class]);
+
+    [[[mockResponse stub] andReturn:mockNotification] notification];
+    [[[mockResponse stub] andReturn:UNNotificationDefaultActionIdentifier] actionIdentifier];
+    [[[mockNotification stub] andReturn:mockRequest] request];
+    [[[mockRequest stub] andReturn:mockContent] content];
+    [[[mockContent stub] andReturn:notificationInfo] userInfo];
+
+    [[runnerMock expect] runActionWithName:@"landing_page_action" value:@"someurl.com" situation:UASituationLaunchedFromPush];
+    [((NSObject<UAPushableComponent> *)accengage) receivedNotificationResponse:mockResponse completionHandler:^{}];
     [runnerMock verify];
-    
-    response = [UANotificationResponse notificationResponseWithNotificationInfo:notificationInfo actionIdentifier:@"1" responseText:nil];
+}
+
+- (void)testReceivedNotificationResponseButtonActionsWebView {
+    UAAccengage *accengage = [self createAccengageWithSettings:@{}];
+    UAActionRunner *runner = [[UAActionRunner alloc] init];
+    id runnerMock = [OCMockObject partialMockForObject:runner];
+
+    NSDictionary *notificationInfo = @{
+        @"aps": @{
+                @"alert": @"test",
+                @"category": @"test_category"
+        },
+        @"a4sid": @"7675",
+        @"a4surl": @"someurl.com",
+        @"a4sb": @[@{
+                       @"action": @"webView",
+                       @"bid": @"1",
+                       @"url": @"someotherurl.com",
+        },
+                   @{
+                       @"action": @"browser",
+                       @"bid": @"2",
+                       @"url": @"someotherurl.com",
+        }]
+    };
+
+    UAAccengagePayload *payload = [UAAccengagePayload payloadWithDictionary:notificationInfo];
+    XCTAssertEqual(payload.identifier, @"7675", @"Incorrect Accengage identifier");
+    XCTAssertEqual(payload.url, @"someurl.com", @"Incorrect Accengage url");
+
+    UAAccengageButton *button = [payload.buttons firstObject];
+    XCTAssertEqual(button.actionType, @"webView", @"Incorrect Accengage button action type");
+    XCTAssertEqual(button.identifier, @"1", @"Incorrect Accengage button identifier");
+    XCTAssertEqual(button.url, @"someotherurl.com", @"Incorrect Accengage button url");
+
+    id mockNotification = OCMClassMock([UNNotification class]);
+    id mockRequest = OCMClassMock([UNNotificationRequest class]);
+    id mockContent = OCMClassMock([UNNotificationContent class]);
+    id mockResponse = OCMClassMock([UNNotificationResponse class]);
+
+    [[[mockResponse stub] andReturn:mockNotification] notification];
+    [[[mockNotification stub] andReturn:mockRequest] request];
+    [[[mockRequest stub] andReturn:mockContent] content];
+    [[[mockContent stub] andReturn:notificationInfo] userInfo];
+    [[[mockResponse stub] andReturn:@"1"] actionIdentifier];
+
     [[runnerMock expect] runActionWithName:@"landing_page_action" value:@"someotherurl.com"     situation:UASituationForegroundInteractiveButton];
-    [((NSObject<UAPushableComponent> *)accengage) receivedNotificationResponse:response completionHandler:^{}];
+    [((NSObject<UAPushableComponent> *)accengage) receivedNotificationResponse:mockResponse completionHandler:^{}];
     [runnerMock verify];
-    
-    response = [UANotificationResponse notificationResponseWithNotificationInfo:notificationInfo actionIdentifier:@"2" responseText:nil];
+}
+
+- (void)testReceivedNotificationResponseButtonActionsBrowser {
+    UAAccengage *accengage = [self createAccengageWithSettings:@{}];
+    UAActionRunner *runner = [[UAActionRunner alloc] init];
+    id runnerMock = [OCMockObject partialMockForObject:runner];
+
+    NSDictionary *notificationInfo = @{
+        @"aps": @{
+                @"alert": @"test",
+                @"category": @"test_category"
+        },
+        @"a4sid": @"7675",
+        @"a4surl": @"someurl.com",
+        @"a4sb": @[@{
+                       @"action": @"webView",
+                       @"bid": @"1",
+                       @"url": @"someotherurl.com",
+        },
+                   @{
+                       @"action": @"browser",
+                       @"bid": @"2",
+                       @"url": @"someotherurl.com",
+        }]
+    };
+
+    UAAccengagePayload *payload = [UAAccengagePayload payloadWithDictionary:notificationInfo];
+    XCTAssertEqual(payload.identifier, @"7675", @"Incorrect Accengage identifier");
+    XCTAssertEqual(payload.url, @"someurl.com", @"Incorrect Accengage url");
+
+    UAAccengageButton *button = [payload.buttons firstObject];
+    XCTAssertEqual(button.actionType, @"webView", @"Incorrect Accengage button action type");
+    XCTAssertEqual(button.identifier, @"1", @"Incorrect Accengage button identifier");
+    XCTAssertEqual(button.url, @"someotherurl.com", @"Incorrect Accengage button url");
+
+    id mockNotification = OCMClassMock([UNNotification class]);
+    id mockRequest = OCMClassMock([UNNotificationRequest class]);
+    id mockContent = OCMClassMock([UNNotificationContent class]);
+    id mockResponse = OCMClassMock([UNNotificationResponse class]);
+
+    [[[mockResponse stub] andReturn:mockNotification] notification];
+    [[[mockNotification stub] andReturn:mockRequest] request];
+    [[[mockRequest stub] andReturn:mockContent] content];
+    [[[mockContent stub] andReturn:notificationInfo] userInfo];
+    [[[mockResponse stub] andReturn:@"2"] actionIdentifier];
 
     [[runnerMock expect] runActionWithName:@"open_external_url_action" value:@"someotherurl.com"     situation:UASituationForegroundInteractiveButton];
-    [((NSObject<UAPushableComponent> *)accengage) receivedNotificationResponse:response completionHandler:^{}];
+    [((NSObject<UAPushableComponent> *)accengage) receivedNotificationResponse:mockResponse completionHandler:^{}];
     [runnerMock verify];
-    
-    notificationInfo = @{
+}
+
+- (void)testReceivedNotificationResponseOpenWithSafari {
+    UAAccengage *accengage = [self createAccengageWithSettings:@{}];
+    UAActionRunner *runner = [[UAActionRunner alloc] init];
+    id runnerMock = [OCMockObject partialMockForObject:runner];
+
+    NSDictionary *notificationInfo = @{
         @"aps": @{
                 @"alert": @"test",
                 @"category": @"test_category"
@@ -118,9 +221,27 @@
         @"a4surl": @"someurl.com",
         @"openWithSafari": @"yes",
     };
-    response = [UANotificationResponse notificationResponseWithNotificationInfo:notificationInfo actionIdentifier:UANotificationDefaultActionIdentifier responseText:nil];
+
+    UAAccengagePayload *payload = [UAAccengagePayload payloadWithDictionary:notificationInfo];
+    XCTAssertEqual(payload.identifier, @"7675", @"Incorrect Accengage identifier");
+    XCTAssertEqual(payload.url, @"someurl.com", @"Incorrect Accengage url");
+
+    id mockNotification = OCMClassMock([UNNotification class]);
+    id mockRequest = OCMClassMock([UNNotificationRequest class]);
+    id mockContent = OCMClassMock([UNNotificationContent class]);
+    id mockResponse = OCMClassMock([UNNotificationResponse class]);
+
+    [[[mockResponse stub] andReturn:mockNotification] notification];
+    [[[mockResponse stub] andReturn:UNNotificationDefaultActionIdentifier] actionIdentifier];
+    [[[mockNotification stub] andReturn:mockRequest] request];
+    [[[mockRequest stub] andReturn:mockContent] content];
+    [[[mockContent stub] andReturn:notificationInfo] userInfo];
+
+    [[[mockResponse stub] andReturn:UNNotificationDefaultActionIdentifier] actionIdentifier];
+    [[[mockContent stub] andReturn:notificationInfo] userInfo];
+
     [[runnerMock expect] runActionWithName:@"open_external_url_action" value:@"someurl.com"     situation:UASituationLaunchedFromPush];
-    [((NSObject<UAPushableComponent> *)accengage) receivedNotificationResponse:response completionHandler:^{}];
+    [((NSObject<UAPushableComponent> *)accengage) receivedNotificationResponse:mockResponse completionHandler:^{}];
     [runnerMock verify];
 }
 

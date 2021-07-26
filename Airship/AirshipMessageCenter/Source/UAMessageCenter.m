@@ -171,9 +171,9 @@ NSString *const UAMessageDataScheme = @"message";
 #pragma mark -
 #pragma mark UAPushableComponent
 
--(void)receivedRemoteNotification:(UANotificationContent *)notification
+-(void)receivedRemoteNotification:(NSDictionary *)userInfo
                 completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
-    NSString *messageID = [UAInboxUtils inboxMessageIDFromNotification:notification.notificationInfo];
+    NSString *messageID = [UAInboxUtils inboxMessageIDFromNotification:userInfo];
     if (!messageID) {
         completionHandler(UIBackgroundFetchResultNoData);
         return;

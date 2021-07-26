@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UAPush.h"
-#import "UANotificationCategory.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -24,6 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 -(void)getAuthorizedSettingsWithCompletionHandler:(void (^)(UAAuthorizedNotificationSettings, UAAuthorizationStatus))completionHandler;
 
+#if !TARGET_OS_TV
 /**
  * Updates APNS registration.
  *
@@ -32,10 +32,22 @@ NS_ASSUME_NONNULL_BEGIN
  * @param completionHandler The completion handler with registration result.
  */
 -(void)updateRegistrationWithOptions:(UANotificationOptions)options
-                          categories:(NSSet<UANotificationCategory *> *)categories
+                          categories:(NSSet<UNNotificationCategory *> *)categories
                    completionHandler:(nullable void(^)(BOOL success,
                                                        UAAuthorizedNotificationSettings authorizedSettings,
                                                        UAAuthorizationStatus status))completionHandler;
+#else
+/**
+ * Updates APNS registration.
+ *
+ * @param options The notification options to register.
+ * @param completionHandler The completion handler with registration result.
+ */
+-(void)updateRegistrationWithOptions:(UANotificationOptions)options
+                   completionHandler:(nullable void(^)(BOOL success,
+                                                       UAAuthorizedNotificationSettings authorizedSettings,
+                                                       UAAuthorizationStatus status))completionHandler;
+#endif
 
 @end
 

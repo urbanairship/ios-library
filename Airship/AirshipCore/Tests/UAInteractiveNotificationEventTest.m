@@ -1,13 +1,13 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UANotificationAction.h"
+@import UserNotifications;
 
 @import AirshipCore;
 
 @interface UAInteractiveNotificationEventTest : UABaseTest
 @property (nonatomic, copy) NSDictionary *notification;
-@property (nonatomic, strong) UANotificationAction *action;
+@property (nonatomic, strong) UNNotificationAction *action;
 @end
 
 @implementation UAInteractiveNotificationEventTest
@@ -23,9 +23,9 @@
                            @"_": @"send ID"
     };
 
-    self.action = [UANotificationAction actionWithIdentifier:@"action_identifier"
+    self.action = [UNNotificationAction actionWithIdentifier:@"action_identifier"
                                                        title:@"action_title"
-                                                     options:(UANotificationActionOptions)UNNotificationActionOptionForeground];
+                                                     options:(UNNotificationActionOptions)UNNotificationActionOptionForeground];
 }
 
 /**
@@ -63,7 +63,7 @@
  * Test the event payload when its created with a background action.
  */
 - (void)testEventDataBackgroundAction {
-    self.action = [UANotificationAction actionWithIdentifier:@"action_identifier"
+    self.action = [UNNotificationAction actionWithIdentifier:@"action_identifier"
                                                        title:@"action_title"
                                                      options:0];
 

@@ -19,8 +19,8 @@
 @class UAPreferenceDataStore;
 @class UAAnalytics;
 @class UAPush;
-@class UANotificationResponse;
-@class UANotificationContent;
+@class UNNotificationResponse;
+@class UNNotificationContent;
 @class UAInAppAutomation;
 
 NS_ASSUME_NONNULL_BEGIN

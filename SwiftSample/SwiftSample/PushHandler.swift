@@ -6,7 +6,7 @@ import AirshipCore
 
 class PushHandler: NSObject, UAPushNotificationDelegate {
 
-    func receivedBackgroundNotification(_ notificationContent: UANotificationContent, completionHandler: @escaping (UIBackgroundFetchResult) -> Swift.Void) {
+    func receivedBackgroundNotification(_ userInfo: [AnyHashable: Any], completionHandler: @escaping (UIBackgroundFetchResult) -> Swift.Void) {
         // Application received a background notification
         print("The application received a background notification");
 
@@ -14,20 +14,20 @@ class PushHandler: NSObject, UAPushNotificationDelegate {
         completionHandler(.noData)
     }
 
-    func receivedForegroundNotification(_ notificationContent: UANotificationContent, completionHandler: @escaping () -> Swift.Void) {
+    func receivedForegroundNotification(_ userInfo: [AnyHashable : Any], completionHandler: @escaping () -> Swift.Void) {
         // Application received a foreground notification
         print("The application received a foreground notification");
         completionHandler()
     }
 
-    func receivedNotificationResponse(_ notificationResponse: UANotificationResponse, completionHandler: @escaping () -> Swift.Void) {
-        let notificationContent = notificationResponse.notificationContent
+    func receivedNotificationResponse(_ notificationResponse: UNNotificationResponse, completionHandler: @escaping () -> Swift.Void) {
+        let notificationContent = notificationResponse.notification.request.content
         NSLog("Received a notification response")
-        NSLog("Alert Title:         \(notificationContent.alertTitle ?? "nil")")
-        NSLog("Alert Body:          \(notificationContent.alertBody ?? "nil")")
+        NSLog("Alert Title:         \(notificationContent.title)")
+        NSLog("Alert Body:          \(notificationContent.body)")
         NSLog("Action Identifier:   \(notificationResponse.actionIdentifier)")
-        NSLog("Category Identifier: \(notificationContent.categoryIdentifier ?? "nil")")
-        NSLog("Response Text:       \(notificationResponse.responseText)")
+        NSLog("Category Identifier: \(notificationContent.categoryIdentifier)")
+        NSLog("Response Text:       \((notificationResponse as? UNTextInputNotificationResponse)?.userText ?? "")")
 
         completionHandler()
     }

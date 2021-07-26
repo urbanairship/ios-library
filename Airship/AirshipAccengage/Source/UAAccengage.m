@@ -143,10 +143,10 @@ NSString *const UAAccengageSettingsMigrated = @"UAAccengageSettingsMigrated";
     }
 }
 
-- (void)receivedNotificationResponse:(UANotificationResponse *)response
+- (void)receivedNotificationResponse:(UNNotificationResponse *)response
                    completionHandler:(void (^)(void))completionHandler {
     // check for accengage push response, handle actions
-    NSDictionary *notificationInfo = response.notificationContent.notificationInfo;
+    NSDictionary *notificationInfo = response.notification.request.content.userInfo;
 
     UAAccengagePayload *payload = [UAAccengagePayload payloadWithDictionary:notificationInfo];
 
@@ -168,7 +168,7 @@ NSString *const UAAccengageSettingsMigrated = @"UAAccengageSettingsMigrated";
         }
     }
 
-    if (![response.actionIdentifier isEqualToString:UANotificationDismissActionIdentifier] && ![response.actionIdentifier isEqualToString:UANotificationDefaultActionIdentifier] &&
+    if (![response.actionIdentifier isEqualToString:UNNotificationDismissActionIdentifier] && ![response.actionIdentifier isEqualToString:UNNotificationDefaultActionIdentifier] &&
         payload.buttons) {
         for (UAAccengageButton *button in payload.buttons) {
             if ([button.identifier isEqualToString:response.actionIdentifier]) {

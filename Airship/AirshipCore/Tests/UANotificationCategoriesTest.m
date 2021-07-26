@@ -2,15 +2,10 @@
 
 #import "UABaseTest.h"
 #import <UserNotifications/UserNotifications.h>
-#import "UANotificationCategory.h"
-#import "UANotificationAction.h"
-#import "UATextInputNotificationAction.h"
 
 #import "AirshipTests-Swift.h"
 
-
 @interface UANotificationCategoriesTest : UABaseTest
-
 @end
 
 @implementation UANotificationCategoriesTest
@@ -20,8 +15,8 @@
     XCTAssertEqual(37, categories.count);
 
     // Require auth defaults to true for background actions
-    for (UANotificationCategory *category in categories) {
-        for (UANotificationAction *action in category.actions) {
+    for (UNNotificationCategory *category in categories) {
+        for (UNNotificationAction *action in category.actions) {
             if (!(action.options & UNNotificationActionOptionForeground)) {
                 XCTAssertTrue(action.options & UNNotificationActionOptionAuthenticationRequired);
             }
@@ -34,8 +29,8 @@
     XCTAssertEqual(37, categories.count);
 
     // Verify require auth is false for background actions
-    for (UANotificationCategory *category in categories) {
-        for (UANotificationAction *action in category.actions) {
+    for (UNNotificationCategory *category in categories) {
+        for (UNNotificationAction *action in category.actions) {
             if (!(action.options & UNNotificationActionOptionForeground)) {
                 XCTAssertFalse(action.options & UNNotificationActionOptionAuthenticationRequired);
             }
@@ -50,12 +45,12 @@
     XCTAssertEqual(4, categories.count);
 
     // Share category
-    UANotificationCategory *share = [self findCategoryById:@"share_category" set:categories];
+    UNNotificationCategory *share = [self findCategoryById:@"share_category" set:categories];
     XCTAssertNotNil(share);
     XCTAssertEqual(1, share.actions.count);
 
     // Share action in share category
-    UANotificationAction  *shareAction = [self findActionById:@"share_button" category:share];
+    UNNotificationAction  *shareAction = [self findActionById:@"share_button" category:share];
     XCTAssertNotNil(shareAction);
     XCTAssertEqualObjects(@"Share", shareAction.title);
     XCTAssertTrue(shareAction.options & UNNotificationActionOptionForeground);
@@ -63,12 +58,12 @@
     XCTAssertFalse(shareAction.options & UNNotificationActionOptionDestructive);
 
     // Yes no category
-    UANotificationCategory *yesNo = [self findCategoryById:@"yes_no_category" set:categories];
+    UNNotificationCategory *yesNo = [self findCategoryById:@"yes_no_category" set:categories];
     XCTAssertNotNil(yesNo);
     XCTAssertEqual(2, yesNo.actions.count);
 
     // Yes action in yes no category
-    UANotificationAction  *yesAction = [self findActionById:@"yes_button" category:yesNo];
+    UNNotificationAction  *yesAction = [self findActionById:@"yes_button" category:yesNo];
     XCTAssertNotNil(yesAction);
     XCTAssertEqualObjects(@"Yes", yesAction.title);
     XCTAssertTrue(yesAction.options & UNNotificationActionOptionForeground);
@@ -76,7 +71,7 @@
     XCTAssertFalse(yesAction.options & UNNotificationActionOptionDestructive);
 
     // No action in yes no category
-    UANotificationAction  *noAction = [self findActionById:@"no_button" category:yesNo];
+    UNNotificationAction  *noAction = [self findActionById:@"no_button" category:yesNo];
     XCTAssertNotNil(noAction);
     XCTAssertEqualObjects(@"No", noAction.title);
 
@@ -85,12 +80,12 @@
     XCTAssertTrue(noAction.options & UNNotificationActionOptionDestructive);
 
     // text_input category
-    UANotificationCategory *textInput = [self findCategoryById:@"text_input_category" set:categories];
+    UNNotificationCategory *textInput = [self findCategoryById:@"text_input_category" set:categories];
     XCTAssertNotNil(textInput);
     XCTAssertEqual(1, textInput.actions.count);
     
     // Follow action in follow category
-    UATextInputNotificationAction *textInputAction = (UATextInputNotificationAction *)[self findActionById:@"text_input" category:textInput];
+    UNTextInputNotificationAction *textInputAction = (UNTextInputNotificationAction *)[self findActionById:@"text_input" category:textInput];
     XCTAssertNotNil(textInputAction);
     
     // Test when 'title_resource' value does not exist will fall back to 'title' value
@@ -102,12 +97,12 @@
     XCTAssertFalse(textInputAction.options & UNNotificationActionOptionDestructive);
     
     // Follow category
-    UANotificationCategory *follow = [self findCategoryById:@"follow_category" set:categories];
+    UNNotificationCategory *follow = [self findCategoryById:@"follow_category" set:categories];
     XCTAssertNotNil(follow);
     XCTAssertEqual(1, follow.actions.count);
 
     // Follow action in follow category
-    UANotificationAction  *followAction = [self findActionById:@"follow_button" category:follow];
+    UNNotificationAction  *followAction = [self findActionById:@"follow_button" category:follow];
     XCTAssertNotNil(followAction);
 
     // Test when 'title_resource' value does not exist will fall back to 'title' value
@@ -128,7 +123,7 @@
                            @"destructive": @YES,
                            @"authenticationRequired": @NO}];
 
-    UANotificationCategory *category = [UANotificationCategories createCategory:@"category" actions:actions];
+    UNNotificationCategory *category = [UANotificationCategories createCategory:@"category" actions:actions];
 
     XCTAssertNil(category);
 }
@@ -150,10 +145,10 @@
                            @"authenticationRequired": @NO}];
 
 
-    UANotificationCategory *category = [UANotificationCategories createCategory:@"category" actions:actions];
+    UNNotificationCategory *category = [UANotificationCategories createCategory:@"category" actions:actions];
 
     // Yes action
-    UANotificationAction  *yesAction = [self findActionById:@"yes" category:category];
+    UNNotificationAction  *yesAction = [self findActionById:@"yes" category:category];
     XCTAssertNotNil(yesAction);
     XCTAssertEqualObjects(@"Yes", yesAction.title);
 
@@ -162,7 +157,7 @@
     XCTAssertFalse(yesAction.options & UNNotificationActionOptionDestructive);
 
     // No action
-    UANotificationAction  *noAction = [self findActionById:@"no" category:category];
+    UNNotificationAction  *noAction = [self findActionById:@"no" category:category];
     XCTAssertNotNil(noAction);
     XCTAssertEqualObjects(@"No", noAction.title);
 
@@ -172,8 +167,8 @@
 }
 
 
-- (UANotificationCategory *)findCategoryById:(NSString *)identifier set:(NSSet *)categories {
-    for (UANotificationCategory *category in categories) {
+- (UNNotificationCategory *)findCategoryById:(NSString *)identifier set:(NSSet *)categories {
+    for (UNNotificationCategory *category in categories) {
         if ([category.identifier isEqualToString:identifier]) {
             return category;
         }
@@ -182,8 +177,8 @@
     return nil;
 }
 
-- (UANotificationAction  *)findActionById:(NSString *)identifier category:(UANotificationCategory *)category {
-    for (UANotificationAction  *action in category.actions) {
+- (UNNotificationAction  *)findActionById:(NSString *)identifier category:(UNNotificationCategory *)category {
+    for (UNNotificationAction  *action in category.actions) {
         if ([action.identifier isEqualToString:identifier]) {
             return action;
         }

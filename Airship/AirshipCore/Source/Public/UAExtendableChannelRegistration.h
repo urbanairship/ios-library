@@ -1,8 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-#import "UANotificationResponse.h"
-#import "UANotificationContent.h"
+
 #import "UAChannelRegistrationPayload.h"
 
 NS_ASSUME_NONNULL_BEGIN

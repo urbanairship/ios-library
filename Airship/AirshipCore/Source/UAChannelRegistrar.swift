@@ -58,6 +58,7 @@ public class UAChannelRegistrar : NSObject {
             self.dataStore.string(forKey: UAChannelRegistrar.channelIDKey)
         }
         set {
+            self.dataStore.setObject(newValue, forKey: UAChannelRegistrar.channelIDKey)
             AirshipLogger.importantInfo("Channel ID: \(newValue ?? "")")
         }
     }

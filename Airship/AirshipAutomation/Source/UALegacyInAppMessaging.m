@@ -77,14 +77,15 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
     [self.dataStore setObject:pendingMessageID forKey:kUAPendingInAppMessageIDDataStoreKey];
 }
 
--(void)receivedNotificationResponse:(UANotificationResponse *)response completionHandler:(void (^)(void))completionHandler {
-    NSDictionary *apnsPayload = response.notificationContent.notificationInfo;
-    if (!apnsPayload[kUALegacyIncomingInAppMessageKey]) {
+-(void)receivedNotificationResponse:(UNNotificationResponse *)response completionHandler:(void (^)(void))completionHandler {
+    NSDictionary *userInfo = response.notification.request.content.userInfo;
+
+    if (!userInfo[kUALegacyIncomingInAppMessageKey]) {
         completionHandler();
         return;
     }
 
-    NSString *newMessageID = apnsPayload[@"_"];
+    NSString *newMessageID = userInfo[@"_"];
     NSString *pendingMessageID = self.pendingMessageID;
 
     if (newMessageID.length && [newMessageID isEqualToString:pendingMessageID]) {
@@ -106,25 +107,24 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
     }
 }
 
--(void)receivedRemoteNotification:(UANotificationContent *)notification completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+-(void)receivedRemoteNotification:(NSDictionary *)userInfo completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
     // Set the send ID as the IAM unique identifier
-    NSDictionary *apnsPayload = notification.notificationInfo;
-    if (!apnsPayload[kUALegacyIncomingInAppMessageKey]) {
+    if (!userInfo[kUALegacyIncomingInAppMessageKey]) {
         completionHandler(UIBackgroundFetchResultNoData);
         return;
     }
 
-    NSMutableDictionary *messagePayload = [NSMutableDictionary dictionaryWithDictionary:apnsPayload[kUALegacyIncomingInAppMessageKey]];
+    NSMutableDictionary *messagePayload = [NSMutableDictionary dictionaryWithDictionary:userInfo[kUALegacyIncomingInAppMessageKey]];
     UALegacyInAppMessage *message = [UALegacyInAppMessage messageWithPayload:messagePayload];
 
-    if (apnsPayload[@"_"]) {
-        message.identifier = apnsPayload[@"_"];
+    if (userInfo[@"_"]) {
+        message.identifier = userInfo[@"_"];
     }
 
     // Copy the `_uamid` into the onClick actions if set on the payload to support launching the MC from an IAM
-    if (apnsPayload[kUALegacyMessageCenterActionName]) {
+    if (userInfo[kUALegacyMessageCenterActionName]) {
         NSMutableDictionary *actions = [NSMutableDictionary dictionaryWithDictionary:message.onClick];
-        actions[kUALegacyMessageCenterActionName] = apnsPayload[kUALegacyMessageCenterActionName];
+        actions[kUALegacyMessageCenterActionName] = userInfo[kUALegacyMessageCenterActionName];
         message.onClick = actions;
     }
 
@@ -188,7 +188,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
             if (i > UAInAppMessageBannerMaxButtons) {
                 break;
             }
-            UANotificationAction *notificationAction = [message.notificationActions objectAtIndex:i];
+            UNNotificationAction *notificationAction = [message.notificationActions objectAtIndex:i];
             UAInAppMessageTextInfo *labelInfo = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder * _Nonnull builder) {
                 builder.alignment = UAInAppMessageTextInfoAlignmentCenter;
                 builder.color = primaryColor;

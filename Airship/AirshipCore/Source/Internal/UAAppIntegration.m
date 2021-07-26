@@ -4,8 +4,6 @@
 #import "UAirship+Internal.h"
 #import "UAAnalytics+Internal.h"
 #import "UAPush+Internal.h"
-#import "UANotificationAction.h"
-#import "UANotificationCategory.h"
 #import "UAActionArguments.h"
 #import "UAUtils+Internal.h"
 #import "UARuntimeConfig.h"
@@ -18,7 +16,7 @@
 #import <Airship/Airship-Swift.h>
 #endif
 
-#define kUANotificationActionKey @"com.urbanairship.interactive_actions"
+#define kUNNotificationActionKey @"com.urbanairship.interactive_actions"
 
 @implementation UAAppIntegration
 
@@ -57,7 +55,7 @@
             }
 
             // Foreground push
-            [self handleIncomingNotification:[UANotificationContent notificationWithNotificationInfo:userInfo]
+            [self handleIncomingNotification:userInfo
                       foregroundPresentation:NO
                            completionHandler:completionHandler];
 
@@ -66,7 +64,7 @@
         case UIApplicationStateBackground:
         case UIApplicationStateInactive:
             // Background push
-            [self handleIncomingNotification:[UANotificationContent notificationWithNotificationInfo:userInfo]
+            [self handleIncomingNotification:userInfo
                       foregroundPresentation:NO
                            completionHandler:completionHandler];
             break;
@@ -107,8 +105,7 @@
 #if !TARGET_OS_TV   // UNNotificationResponse not available on tvOS
 + (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void(^)(void))completionHandler {
     UA_LTRACE(@"Received notification response: %@", response);
-    UANotificationResponse *airshipResponse = [UANotificationResponse notificationResponseWithUNNotificationResponse:response];
-    [self handleNotificationResponse:airshipResponse completionHandler:completionHandler];
+    [self handleNotificationResponse:response completionHandler:completionHandler];
 }
 #endif
 
@@ -127,34 +124,46 @@
 #endif
     #pragma clang diagnostic pop
 
-    UANotificationContent *notificationContent = [UANotificationContent notificationWithUNNotification:notification];
+    NSDictionary *userInfo = nil;
+#if !TARGET_OS_TV
+    userInfo = notification.request.content.userInfo;
+#endif
 
-    [self handleIncomingNotification:notificationContent
+    [self handleIncomingNotification:userInfo
               foregroundPresentation:foregroundPresentation
                    completionHandler:^(UIBackgroundFetchResult result) {
                        completionHandler();
                    }];
 }
 
-+ (void)handleNotificationResponse:(UANotificationResponse *)response completionHandler:(void (^)(void))completionHandler {
+#if !TARGET_OS_TV
++ (void)handleNotificationResponse:(UNNotificationResponse *)response completionHandler:(void (^)(void))completionHandler {
     UA_LINFO(@"Received notification response: %@", response);
 
     dispatch_group_t dispatchGroup = dispatch_group_create();
 
+    NSDictionary *userInfo = response.notification.request.content.userInfo;
+    NSString *categoryIdentifier = response.notification.request.content.categoryIdentifier;
+
+    NSString *responseText;
+    if ([response isKindOfClass:[UNTextInputNotificationResponse class]]) {
+        responseText = ((UNTextInputNotificationResponse *)response).userText;
+    }
+
     // Analytics
-    if ([response.actionIdentifier isEqualToString:UANotificationDefaultActionIdentifier]) {
-        [[UAirship analytics] launchedFromNotification:response.notificationContent.notificationInfo];
+    if ([response.actionIdentifier isEqualToString:UNNotificationDefaultActionIdentifier]) {
+        [[UAirship analytics] launchedFromNotification:response.notification.request.content.userInfo];
     } else {
-        UANotificationAction *notificationAction = [self notificationActionForCategory:response.notificationContent.categoryIdentifier
+        UNNotificationAction *notificationAction = [self notificationActionForCategory:categoryIdentifier
                                                                       actionIdentifier:response.actionIdentifier];
         if (notificationAction) {
-            if (notificationAction.options & UANotificationActionOptionForeground) {
-                [[UAirship analytics] launchedFromNotification:response.notificationContent.notificationInfo];
+            if (notificationAction.options & UNNotificationActionOptionForeground) {
+                [[UAirship analytics] launchedFromNotification:userInfo];
             }
             id event = [[UAInteractiveNotificationEvent alloc] initWithAction:notificationAction
-                                                                   category:response.notificationContent.categoryIdentifier
-                                                                 notification:response.notificationContent.notificationInfo
-                                                                 responseText:response.responseText];
+                                                                   category:categoryIdentifier
+                                                                 notification:userInfo
+                                                                 responseText:responseText];
             [[UAirship analytics] addEvent:event];
         }
     }
@@ -185,11 +194,12 @@
 
     dispatch_group_notify(dispatchGroup, dispatch_get_main_queue(), completionHandler);
 }
+#endif
 
-+ (void)handleIncomingNotification:(UANotificationContent *)notificationContent
++ (void)handleIncomingNotification:(NSDictionary *)userInfo
             foregroundPresentation:(BOOL)foregroundPresentation
                  completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
-    UA_LINFO(@"Received notification: %@", notificationContent);
+    UA_LINFO(@"Received notification: %@", userInfo);
 
     dispatch_group_t dispatchGroup = dispatch_group_create();
     __block NSMutableArray *fetchResults = [NSMutableArray array];
@@ -204,7 +214,7 @@
          UAComponent<UAPushableComponent> *pushable = (UAComponent<UAPushableComponent> *)component;
          if ([pushable respondsToSelector:@selector(receivedRemoteNotification:completionHandler:)]) {
              dispatch_group_enter(dispatchGroup);
-             [pushable receivedRemoteNotification:notificationContent completionHandler:^(UIBackgroundFetchResult fetchResult) {
+             [pushable receivedRemoteNotification:userInfo completionHandler:^(UIBackgroundFetchResult fetchResult) {
                  @synchronized (fetchResults) {
                      [fetchResults addObject:@(fetchResult)];
                  }
@@ -215,13 +225,13 @@
 
     // Actions then push
     dispatch_group_enter(dispatchGroup);
-    [self runActionsForRemoteNotification:notificationContent foregroundPresentation:foregroundPresentation completionHandler:^(UIBackgroundFetchResult result) {
+    [self runActionsForRemoteNotification:userInfo foregroundPresentation:foregroundPresentation completionHandler:^(UIBackgroundFetchResult result) {
         @synchronized (fetchResults) {
             [fetchResults addObject:@(result)];
         }
 
         // UAPush
-        [[UAirship push] handleRemoteNotification:notificationContent foreground:foreground completionHandler:^(UIBackgroundFetchResult result) {
+        [[UAirship push] handleRemoteNotification:userInfo foreground:foreground completionHandler:^(UIBackgroundFetchResult result) {
             @synchronized (fetchResults) {
                 [fetchResults addObject:@(result)];
             }
@@ -238,19 +248,26 @@
 #pragma mark -
 #pragma mark Helpers
 
-+ (void)runActionsForResponse:(UANotificationResponse *)response completionHandler:(void (^)(void))completionHandler {
+#if !TARGET_OS_TV
++ (void)runActionsForResponse:(UNNotificationResponse *)response completionHandler:(void (^)(void))completionHandler {
     // Payload
-    NSDictionary *actionsPayload = [self actionsPayloadForNotificationContent:response.notificationContent
-                                                             actionIdentifier:response.actionIdentifier];
+    NSDictionary *userInfo = response.notification.request.content.userInfo;
+    NSString *responseText;
+    if ([response isKindOfClass:[UNTextInputNotificationResponse class]]) {
+        responseText = ((UNTextInputNotificationResponse *)response).userText;
+    }
+
+    NSDictionary *actionsPayload = [self actionsPayloadForNotification:userInfo
+                                                      actionIdentifier:response.actionIdentifier];
     // Determine situation
     UASituation situation;
-    if ([response.actionIdentifier isEqualToString:UANotificationDefaultActionIdentifier]) {
+    if ([response.actionIdentifier isEqualToString:UNNotificationDefaultActionIdentifier]) {
         situation = UASituationLaunchedFromPush;
     } else {
-        UANotificationAction *notificationAction = [self notificationActionForCategory:response.notificationContent.categoryIdentifier
-                                                                               actionIdentifier:response.actionIdentifier];
+        UNNotificationAction *notificationAction = [self notificationActionForCategory:response.notification.request.content.categoryIdentifier
+                                                                      actionIdentifier:response.actionIdentifier];
 
-        if (notificationAction.options & UANotificationActionOptionForeground) {
+        if (notificationAction.options & UNNotificationActionOptionForeground) {
             situation = UASituationForegroundInteractiveButton;
         } else {
             situation = UASituationBackgroundInteractiveButton;
@@ -260,8 +277,8 @@
     // Metadata
     NSMutableDictionary *metadata = [NSMutableDictionary dictionary];
     [metadata setValue:response.actionIdentifier forKey:UAActionMetadataUserNotificationActionIDKey];
-    [metadata setValue:response.notificationContent.notificationInfo forKey:UAActionMetadataPushPayloadKey];
-    [metadata setValue:response.responseText forKey:UAActionMetadataResponseInfoKey];
+    [metadata setValue:userInfo forKey:UAActionMetadataPushPayloadKey];
+    [metadata setValue:responseText forKey:UAActionMetadataResponseInfoKey];
 
     // Run the actions
     [UAActionRunner runActionsWithActionValues:actionsPayload
@@ -271,15 +288,16 @@
                                 completionHandler();
                              }];
 }
+#endif
 
-+ (void)runActionsForRemoteNotification:(UANotificationContent *)notificationContent
++ (void)runActionsForRemoteNotification:(NSDictionary *)userInfo
                  foregroundPresentation:(BOOL)foregroundPresentation
                       completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
     UASituation situation = [UIApplication sharedApplication].applicationState == UIApplicationStateActive ? UASituationForegroundPush : UASituationBackgroundPush;
-    NSDictionary *actionsPayload = [self actionsPayloadForNotificationContent:notificationContent actionIdentifier:nil];
+    NSDictionary *actionsPayload = userInfo;
 
     NSDictionary *metadata = @{ UAActionMetadataForegroundPresentationKey: @(foregroundPresentation),
-                                UAActionMetadataPushPayloadKey: notificationContent.notificationInfo };
+                                UAActionMetadataPushPayloadKey: userInfo };
 
     // Run the actions
     [UAActionRunner runActionsWithActionValues:actionsPayload
@@ -291,22 +309,23 @@
 
 }
 
-+ (NSDictionary *)actionsPayloadForNotificationContent:(UANotificationContent *)notificationContent
-                                      actionIdentifier:(NSString *)actionIdentifier {
-    if (!actionIdentifier || [actionIdentifier isEqualToString:UANotificationDefaultActionIdentifier]) {
-        return notificationContent.notificationInfo;
+#if !TARGET_OS_TV
++ (NSDictionary *)actionsPayloadForNotification:(NSDictionary *)userInfo
+                               actionIdentifier:(NSString *)actionIdentifier {
+    if (!actionIdentifier || [actionIdentifier isEqualToString:UNNotificationDefaultActionIdentifier]) {
+        return userInfo;
     }
 
-    return notificationContent.notificationInfo[kUANotificationActionKey][actionIdentifier];
+    return userInfo[kUNNotificationActionKey][actionIdentifier];
 }
 
-+ (UANotificationAction *)notificationActionForCategory:(NSString *)category actionIdentifier:(NSString *)identifier {
-    NSSet *categories = [UAirship push].combinedCategories;
++ (UNNotificationAction *)notificationActionForCategory:(NSString *)category actionIdentifier:(NSString *)identifier {
+    NSSet<UNNotificationCategory *> *categories = [UAirship push].combinedCategories;
 
-    UANotificationCategory *notificationCategory;
-    UANotificationAction *notificationAction;
+    UNNotificationCategory *notificationCategory;
+    UNNotificationAction *notificationAction;
 
-    for (UANotificationCategory *possibleCategory in categories) {
+    for (UNNotificationCategory *possibleCategory in categories) {
         if ([possibleCategory.identifier isEqualToString:category]) {
             notificationCategory = possibleCategory;
             break;
@@ -320,7 +339,7 @@
 
     NSMutableArray *possibleActions = [NSMutableArray arrayWithArray:notificationCategory.actions];
 
-    for (UANotificationAction *possibleAction in possibleActions) {
+    for (UNNotificationAction *possibleAction in possibleActions) {
         if ([possibleAction.identifier isEqualToString:identifier]) {
             notificationAction = possibleAction;
             break;
@@ -334,5 +353,6 @@
 
     return notificationAction;
 }
+#endif
 
 @end

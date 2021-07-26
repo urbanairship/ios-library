@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UAAppIntegration.h"
-#import "UANotificationContent.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -24,12 +23,12 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Creates an actions payload
  *
- * @param notificationContent The notification content.
+ * @param notification The notification info.
  * @param actionIdentifier The associated action identifier.
  *
  * @return NSDictionary of the action payload.
  */
-+ (NSDictionary *)actionsPayloadForNotificationContent:(UANotificationContent *)notificationContent actionIdentifier:(nullable NSString *)actionIdentifier;
++ (NSDictionary *)actionsPayloadForNotification:(NSDictionary *)notification actionIdentifier:(nullable NSString *)actionIdentifier;
 
 @end
 

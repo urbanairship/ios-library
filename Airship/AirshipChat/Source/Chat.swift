@@ -154,7 +154,7 @@ public class Chat : UAComponent, UAPushableComponent {
     /**
      * @note For internal use only. :nodoc:
      */
-    public func receivedRemoteNotification(_ notification: UANotificationContent, completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+    public func receivedRemoteNotification(_ userInfo: [AnyHashable: Any], completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         self.internalConversation.refresh()
         completionHandler(.newData)
     }

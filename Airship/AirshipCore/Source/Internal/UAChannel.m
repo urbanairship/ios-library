@@ -619,7 +619,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 #pragma mark -
 #pragma mark UAPushableComponent
 
--(void)receivedRemoteNotification:(UANotificationContent *)notification
+-(void)receivedRemoteNotification:(UNNotificationContent *)notification
                 completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
     BOOL isInBackground = [UIApplication sharedApplication].applicationState == UIApplicationStateBackground;
     if (isInBackground && !self.identifier) {

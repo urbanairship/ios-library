@@ -4,7 +4,7 @@
 
 @implementation PushHandler
 
--(void)receivedBackgroundNotification:(UANotificationContent *)notificationContent completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+-(void)receivedBackgroundNotification:(UNNotificationContent *)notificationContent completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
     // Application received a background notification
     UA_LDEBUG(@"The application received a background notification");
 
@@ -12,20 +12,24 @@
     completionHandler(UIBackgroundFetchResultNoData);
 }
 
--(void)receivedForegroundNotification:(UANotificationContent *)notificationContent completionHandler:(void (^)(void))completionHandler {
+-(void)receivedForegroundNotification:(UNNotificationContent *)notificationContent completionHandler:(void (^)(void))completionHandler {
     UA_LDEBUG(@"The application received a foreground notification");
     completionHandler();
 }
 
--(void)receivedNotificationResponse:(UANotificationResponse *)notificationResponse completionHandler:(void (^)(void))completionHandler {
-    UANotificationContent *notificationContent = notificationResponse.notificationContent;
+-(void)receivedNotificationResponse:(UNNotificationResponse *)notificationResponse completionHandler:(void (^)(void))completionHandler {
+    UNNotificationContent *notificationContent = notificationResponse.notification.request.content;
+    NSString *userText = @"";
+    if ([notificationResponse isKindOfClass:[UNTextInputNotificationResponse class]]) {
+        userText = ((UNTextInputNotificationResponse *)notificationResponse).userText;
+    }
 
     NSLog(@"Received a notification response");
-    NSLog(@"Alert Title:         %@",notificationContent.alertTitle);
-    NSLog(@"Alert Body:          %@",notificationContent.alertBody);
+    NSLog(@"Alert Title:         %@",notificationContent.title);
+    NSLog(@"Alert Body:          %@",notificationContent.body);
     NSLog(@"Action Identifier:   %@",notificationResponse.actionIdentifier);
     NSLog(@"Category Identifier: %@",notificationContent.categoryIdentifier);
-    NSLog(@"Response Text:       %@",notificationResponse.responseText);
+    NSLog(@"Response Text:       %@",userText);
 
     completionHandler();
 }

@@ -142,11 +142,11 @@
     return payload;
 }
 
-- (UANotificationCategory *)buttonCategory {
+- (UNNotificationCategory *)buttonCategory {
     if (self.buttonGroup) {
-        NSSet *categories = [UAirship push].combinedCategories;
+        NSSet<UNNotificationCategory *> *categories = [UAirship push].combinedCategories;
 
-        for (UANotificationCategory *category in categories) {
+        for (UNNotificationCategory *category in categories) {
             // Find the category that matches our buttonGroup
             if ([category.identifier isEqualToString:self.buttonGroup]) {
                 return category;

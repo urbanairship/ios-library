@@ -3,14 +3,11 @@
 #import "UAAirshipBaseTest.h"
 
 #import "UAAppIntegration+Internal.h"
-#import "UANotificationAction.h"
-#import "UANotificationCategory.h"
 #import "UAPush+Internal.h"
 #import "UAAnalytics+Internal.h"
 #import "UAActionRunner.h"
 #import "UAActionRegistry+Internal.h"
 #import "UARuntimeConfig.h"
-#import "UANotificationContent.h"
 #import "UAirship+Internal.h"
 
 @import AirshipCore;
@@ -25,10 +22,9 @@
 @property (nonatomic, strong) UAPrivacyManager *privacyManager;
 
 @property (nonatomic, strong) id mockedUNNotificationResponse;
-@property (nonatomic, strong) id mockedUANotificationContent;
+@property (nonatomic, strong) id mockedUNNotificationContent;
 @property (nonatomic, strong) id mockedUNNotification;
 @property (nonatomic, strong) id mockedUNNotificationRequest;
-@property (nonatomic, strong) id mockedUNNotificationContent;
 
 @property (nonatomic, copy) NSDictionary *notification;
 
@@ -82,11 +78,6 @@
                           @"someActionKey": @"someActionValue"
                           };
 
-    // Mock the nested apple types with unavailable init methods
-    self.mockedUANotificationContent = [self mockForClass:[UANotificationContent class]];
-    [[[self.mockedUANotificationContent stub] andReturn:self.mockedUANotificationContent] notificationWithUNNotification:OCMOCK_ANY];
-    [[[self.mockedUANotificationContent stub] andReturn:self.notification] notificationInfo];
-
     self.mockedUNNotification = [self mockForClass:[UNNotification class]];
     self.mockedUNNotificationRequest = [self mockForClass:[UNNotificationRequest class]];
     self.mockedUNNotificationContent = [self mockForClass:[UNNotificationContent class]];
@@ -95,12 +86,11 @@
     [[[self.mockedUNNotificationRequest stub] andReturn:self.mockedUNNotificationContent] content];
     [[[self.mockedUNNotificationContent stub] andReturn:self.notification] userInfo];
 
-    self.mockedUNNotificationResponse = [self mockForClass:[UNNotificationResponse class]];
+    self.mockedUNNotificationResponse = [self mockForClass:[UNTextInputNotificationResponse class]];
     [[[self.mockedUNNotificationResponse stub] andReturn:self.mockedUNNotification] notification];
 }
 
 - (void)tearDown {
-    [self.mockedUANotificationContent stopMocking];
     [self.mockedUNNotification stopMocking];
     [self.mockedUserNotificationCenter stopMocking];
     [self.mockedUNNotificationContent stopMocking];
@@ -240,8 +230,8 @@
 
     // Expect UAPush to be called when automatic setup is enabled
     [[self.mockedPush expect] handleRemoteNotification:[OCMArg checkWithBlock:^BOOL(id obj) {
-        UANotificationContent *content = obj;
-        return [content.notificationInfo isEqualToDictionary:self.notification];
+        NSDictionary *content = obj;
+        return [content isEqualToDictionary:self.notification];
     }] foreground:YES completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void (^handler)(UIBackgroundFetchResult) = obj;
         handler(UIBackgroundFetchResultNewData);
@@ -300,9 +290,9 @@
 
     // Expect a call to UAPush
     [[self.mockedPush expect] handleNotificationResponse:[OCMArg checkWithBlock:^BOOL(id obj) {
-        UANotificationResponse *response = obj;
-        return [response.actionIdentifier isEqualToString:UANotificationDefaultActionIdentifier] &&
-        [response.notificationContent.notificationInfo isEqualToDictionary:self.notification];
+        UNNotificationResponse *response = obj;
+        return [response.actionIdentifier isEqualToString:UNNotificationDefaultActionIdentifier] &&
+        [response.notification.request.content.userInfo isEqualToDictionary:self.notification];
     }] completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void (^handler)(void) = obj;
         handler();
@@ -341,24 +331,24 @@
     UASituation expectedSituation = UASituationForegroundInteractiveButton;
 
     [[[self.mockedUNNotificationResponse stub] andReturn:@"foregroundIdentifier"] actionIdentifier];
-    [[[self.mockedUANotificationContent stub] andReturn:@"notificationCategory"] categoryIdentifier];
+    [[[self.mockedUNNotificationResponse stub] andReturn:@"userText"] userText];
+    [[[self.mockedUNNotificationContent stub] andReturn:@"notificationCategory"] categoryIdentifier];
 
-    UANotificationAction *foregroundAction = [UANotificationAction actionWithIdentifier:@"foregroundIdentifier"
+    UNNotificationAction *foregroundAction = [UNNotificationAction actionWithIdentifier:@"foregroundIdentifier"
                                                                                   title:@"title"
-                                                                                options:(UANotificationActionOptions)UNNotificationActionOptionForeground];
+                                                                                options:(UNNotificationActionOptions)UNNotificationActionOptionForeground];
 
-    UANotificationCategory *category = [UANotificationCategory categoryWithIdentifier:@"notificationCategory"
+    UNNotificationCategory *category = [UNNotificationCategory categoryWithIdentifier:@"notificationCategory"
                                                                               actions:@[foregroundAction]
                                                                     intentIdentifiers:@[]
                                                                               options:0];
 
     [[[self.mockedPush stub] andReturn:[NSSet setWithArray:@[category]]] combinedCategories];
 
-    UANotificationResponse *expectedAirshipResponse = [UANotificationResponse notificationResponseWithUNNotificationResponse:self.mockedUNNotificationResponse];
     NSMutableDictionary *expectedMetadata = [NSMutableDictionary dictionary];
-    [expectedMetadata setValue:[expectedAirshipResponse actionIdentifier] forKey:UAActionMetadataUserNotificationActionIDKey];
-    [expectedMetadata setValue:expectedAirshipResponse.notificationContent.notificationInfo forKey:UAActionMetadataPushPayloadKey];
-    [expectedMetadata setValue:expectedAirshipResponse.responseText forKey:UAActionMetadataResponseInfoKey];
+    [expectedMetadata setValue:@"foregroundIdentifier" forKey:UAActionMetadataUserNotificationActionIDKey];
+    [expectedMetadata setValue:self.notification forKey:UAActionMetadataPushPayloadKey];
+    [expectedMetadata setValue:@"userText" forKey:UAActionMetadataResponseInfoKey];
 
     // Expect a call to UAActionRunner
     [[self.mockedActionRunner expect] runActionsWithActionValues:self.notification[@"com.urbanairship.interactive_actions"][@"foregroundIdentifier"]
@@ -376,9 +366,9 @@
 
     // Expect a call to UAPush
     [[self.mockedPush expect] handleNotificationResponse:[OCMArg checkWithBlock:^BOOL(id obj) {
-        UANotificationResponse *response = obj;
+        UNNotificationResponse *response = obj;
         return [response.actionIdentifier isEqualToString:@"foregroundIdentifier"] &&
-        [response.notificationContent.notificationInfo isEqualToDictionary:self.notification];
+        [response.notification.request.content.userInfo isEqualToDictionary:self.notification];
     }] completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void (^handler)(void) = obj;
         handler();
@@ -415,24 +405,25 @@
 
     UASituation expectedSituation = UASituationForegroundInteractiveButton;
     [[[self.mockedUNNotificationResponse stub] andReturn:@"backgroundIdentifier"] actionIdentifier];
-    [[[self.mockedUANotificationContent stub] andReturn:@"notificationCategory"] categoryIdentifier];
+    [[[self.mockedUNNotificationContent stub] andReturn:@"notificationCategory"] categoryIdentifier];
+    [[[self.mockedUNNotificationResponse stub] andReturn:@"userText"] userText];
 
-    UANotificationAction *foregroundAction = [UANotificationAction actionWithIdentifier:@"backgroundIdentifier"
+    UNNotificationAction *foregroundAction = [UNNotificationAction actionWithIdentifier:@"backgroundIdentifier"
                                                                                   title:@"title"
-                                                                                options:(UANotificationActionOptions)UNNotificationActionOptionForeground];
+                                                                                options:(UNNotificationActionOptions)UNNotificationActionOptionForeground];
 
-    UANotificationCategory *category = [UANotificationCategory categoryWithIdentifier:@"notificationCategory"
+    UNNotificationCategory *category = [UNNotificationCategory categoryWithIdentifier:@"notificationCategory"
                                                                               actions:@[foregroundAction]
                                                                     intentIdentifiers:@[]
                                                                               options:0];
 
     [[[self.mockedPush stub] andReturn:[NSSet setWithArray:@[category]]] combinedCategories];
 
-    UANotificationResponse *expectedAirshipResponse = [UANotificationResponse notificationResponseWithUNNotificationResponse:self.mockedUNNotificationResponse];
+
     NSMutableDictionary *expectedMetadata = [NSMutableDictionary dictionary];
-    [expectedMetadata setValue:[expectedAirshipResponse actionIdentifier] forKey:UAActionMetadataUserNotificationActionIDKey];
-    [expectedMetadata setValue:expectedAirshipResponse.notificationContent.notificationInfo forKey:UAActionMetadataPushPayloadKey];
-    [expectedMetadata setValue:expectedAirshipResponse.responseText forKey:UAActionMetadataResponseInfoKey];
+    [expectedMetadata setValue:@"backgroundIdentifier" forKey:UAActionMetadataUserNotificationActionIDKey];
+    [expectedMetadata setValue:self.notification forKey:UAActionMetadataPushPayloadKey];
+    [expectedMetadata setValue:@"userText" forKey:UAActionMetadataResponseInfoKey];
 
     // Expect a call to UAActionRunner
     [[self.mockedActionRunner expect] runActionsWithActionValues:self.notification[@"com.urbanairship.interactive_actions"][@"backgroundIdentifier"]
@@ -447,9 +438,9 @@
 
     // Expect a call to UAPush
     [[self.mockedPush expect] handleNotificationResponse:[OCMArg checkWithBlock:^BOOL(id obj) {
-        UANotificationResponse *response = obj;
+        UNNotificationResponse *response = obj;
         return [response.actionIdentifier isEqualToString:@"backgroundIdentifier"] &&
-        [response.notificationContent.notificationInfo isEqualToDictionary:self.notification];
+        [response.notification.request.content.userInfo isEqualToDictionary:self.notification];
     }] completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void (^handler)(void) = obj;
         handler();
@@ -481,9 +472,9 @@
 
     // Expect the UAPush to be called
     [[self.mockedPush expect] handleNotificationResponse:[OCMArg checkWithBlock:^BOOL(id obj) {
-        UANotificationResponse *response = obj;
+        UNNotificationResponse *response = obj;
         return [response.actionIdentifier isEqualToString:@"testActionIdentifier"] &&
-        [response.notificationContent.notificationInfo isEqualToDictionary:self.notification];
+        [response.notification.request.content.userInfo isEqualToDictionary:self.notification];
     }] completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void (^handler)(void) = obj;
         handler();
@@ -549,8 +540,7 @@
     NSDictionary *expectedMetadata = @{ UAActionMetadataForegroundPresentationKey: @(NO),
                                         UAActionMetadataPushPayloadKey: self.notification};
 
-    NSDictionary *actionsPayload = [UAAppIntegration actionsPayloadForNotificationContent:
-                                    [UANotificationContent notificationWithNotificationInfo:self.notification] actionIdentifier:nil];
+    NSDictionary *actionsPayload = [UAAppIntegration actionsPayloadForNotification:self.notification actionIdentifier:nil];
 
     // Expect actions to be run for the action identifier
     [[self.mockedActionRunner expect] runActionsWithActionValues:actionsPayload
@@ -560,8 +550,8 @@
 
     // Expect the UAPush to be called
     [[self.mockedPush expect] handleRemoteNotification:[OCMArg checkWithBlock:^BOOL(id obj) {
-        UANotificationContent *content = obj;
-        return [content.notificationInfo isEqualToDictionary:self.notification];
+        NSDictionary *content = obj;
+        return [content isEqualToDictionary:self.notification];
     }] foreground:NO completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void (^handler)(UIBackgroundFetchResult) = obj;
         handler(UIBackgroundFetchResultNewData);
@@ -608,8 +598,7 @@
     NSDictionary *expectedMetadata = @{ UAActionMetadataForegroundPresentationKey: @(NO),
                                         UAActionMetadataPushPayloadKey: self.notification};
 
-    NSDictionary *actionsPayload = [UAAppIntegration actionsPayloadForNotificationContent:
-                                    [UANotificationContent notificationWithNotificationInfo:self.notification] actionIdentifier:nil];
+    NSDictionary *actionsPayload = [UAAppIntegration actionsPayloadForNotification:self.notification actionIdentifier:nil];
 
     // Expect actions to be run for the action identifier
     [[self.mockedActionRunner expect] runActionsWithActionValues:actionsPayload
@@ -619,8 +608,8 @@
 
     // Expect the UAPush to be called
     [[self.mockedPush expect] handleRemoteNotification:[OCMArg checkWithBlock:^BOOL(id obj) {
-        UANotificationContent *content = obj;
-        return [content.notificationInfo isEqualToDictionary:self.notification];
+        NSDictionary *content = obj;
+        return [content isEqualToDictionary:self.notification];
     }] foreground:NO completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void (^handler)(UIBackgroundFetchResult) = obj;
         handler(UIBackgroundFetchResultNewData);
@@ -674,8 +663,8 @@
 
     // Expect UAPush to be called
     [[self.mockedPush expect] handleRemoteNotification:[OCMArg checkWithBlock:^BOOL(id obj) {
-        UANotificationContent *content = obj;
-        return [content.notificationInfo isEqualToDictionary:self.notification];
+        NSDictionary *content = obj;
+        return [content isEqualToDictionary:self.notification];
     }] foreground:NO completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void (^handler)(UIBackgroundFetchResult) = obj;
         handler(UIBackgroundFetchResultNewData);
@@ -737,8 +726,8 @@
     [[[self.mockedAirship stub] andReturn:@[pushable]] components];
 
     [[pushable expect] receivedNotificationResponse:[OCMArg checkWithBlock:^BOOL(id obj) {
-        UANotificationResponse *response = obj;
-        return response.response == self.mockedUNNotificationResponse;
+        UNNotificationResponse *response = obj;
+        return response == self.mockedUNNotificationResponse;
     }] completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void (^handler)(void) = obj;
         handler();
@@ -777,8 +766,8 @@
     [[[self.mockedAirship stub] andReturn:@[pushable]] components];
 
     [[pushable expect] receivedRemoteNotification:[OCMArg checkWithBlock:^BOOL(id obj) {
-        UANotificationContent *content = obj;
-        return [content.notificationInfo isEqualToDictionary:self.notification];
+        NSDictionary *content = obj;
+        return [content isEqualToDictionary:self.notification];
     }] completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void (^handler)(UIBackgroundFetchResult) = obj;
         handler(UIBackgroundFetchResultNewData);
@@ -797,8 +786,8 @@
 
     // Expect UAPush to be called
     [[self.mockedPush expect] handleRemoteNotification:[OCMArg checkWithBlock:^BOOL(id obj) {
-        UANotificationContent *content = obj;
-        return [content.notificationInfo isEqualToDictionary:self.notification];
+        NSDictionary *content = obj;
+        return [content isEqualToDictionary:self.notification];
     }] foreground:NO completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void (^handler)(UIBackgroundFetchResult) = obj;
         handler(UIBackgroundFetchResultNoData);

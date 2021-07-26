@@ -38,14 +38,13 @@ struct PushNotification {
      */
     var data:String
 
-    init(push:UANotificationContent) {
-        self.data = String(data: try! JSONSerialization.data(withJSONObject:push.notificationInfo, options:.prettyPrinted), encoding:.utf8) ?? ""
+    init(push:[AnyHashable: Any]) {
+        self.data = String(data: try! JSONSerialization.data(withJSONObject:push, options:.prettyPrinted), encoding:.utf8) ?? ""
         print(push)
-        print(push.notificationInfo)
         self.time = Date().timeIntervalSince1970
-        let aps = push.notificationInfo[AnyHashable("aps")] as? [String:Any]
+        let aps = push[AnyHashable("aps")] as? [String:Any]
         self.alert = aps?["alert"] as? String ?? "No Alert"
-        self.pushID = push.notificationInfo[AnyHashable("_")] as! String
+        self.pushID = push[AnyHashable("_")] as! String
     }
     
     init(pushData: PushData) {

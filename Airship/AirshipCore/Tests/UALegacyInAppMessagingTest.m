@@ -58,13 +58,10 @@
                      @"identifier":@"send ID"
                      };
 
-    self.aps = @{
-                 @"aps": @{
-                         @"alert": @"sample alert",
-                         @"badge": @2,
-                         @"sound": @"cat",
-                         }
-                 };
+    self.aps = @{ @"alert": @"sample alert",
+                   @"badge": @2,
+                   @"sound": @"cat"
+                };
 }
 
 
@@ -101,9 +98,15 @@
                                    @"com.urbanairship.in_app": self.payload
                                    };
 
-    UANotificationResponse *response = [UANotificationResponse notificationResponseWithNotificationInfo:notification
-                                                                                       actionIdentifier:UANotificationDefaultActionIdentifier
-                                                                                           responseText:nil];
+    id unNotification = [self mockForClass:[UNNotification class]];
+    id request = [self mockForClass:[UNNotificationRequest class]];
+    id content = [self mockForClass:[UNNotificationContent class]];
+    id response = [self mockForClass:[UNNotificationResponse class]];
+    [[[response stub] andReturn:unNotification] notification];
+    [[[response stub] andReturn:UNNotificationDefaultActionIdentifier] actionIdentifier];
+    [[[unNotification stub] andReturn:request] request];
+    [[[request stub] andReturn:content] content];
+    [[[content stub] andReturn:notification] userInfo];
 
     [[self.mockAnalytics expect] addEvent:[OCMArg any]];
 
@@ -138,9 +141,15 @@
                                    @"aps": self.aps
                                    };
 
-    UANotificationResponse *response = [UANotificationResponse notificationResponseWithNotificationInfo:notification
-                                                                                       actionIdentifier:UANotificationDefaultActionIdentifier
-                                                                                           responseText:nil];
+    id unNotification = [self mockForClass:[UNNotification class]];
+    id request = [self mockForClass:[UNNotificationRequest class]];
+    id content = [self mockForClass:[UNNotificationContent class]];
+    id response = [self mockForClass:[UNNotificationResponse class]];
+    [[[response stub] andReturn:unNotification] notification];
+    [[[response stub] andReturn:UNNotificationDefaultActionIdentifier] actionIdentifier];
+    [[[unNotification stub] andReturn:request] request];
+    [[[request stub] andReturn:content] content];
+    [[[content stub] andReturn:notification] userInfo];
 
     [[self.mockAnalytics reject] addEvent:[OCMArg any]];
     [[self.mockInAppAutomation reject] cancelScheduleWithID:OCMOCK_ANY completionHandler:OCMOCK_ANY];
@@ -181,9 +190,16 @@
                                            }
                                    };
 
-    UANotificationResponse *response = [UANotificationResponse notificationResponseWithNotificationInfo:notification
-                                                                                       actionIdentifier:UANotificationDefaultActionIdentifier
-                                                                                           responseText:nil];
+    id unNotification = [self mockForClass:[UNNotification class]];
+    id request = [self mockForClass:[UNNotificationRequest class]];
+    id content = [self mockForClass:[UNNotificationContent class]];
+    id response = [self mockForClass:[UNNotificationResponse class]];
+    [[[response stub] andReturn:unNotification] notification];
+    [[[response stub] andReturn:UNNotificationDefaultActionIdentifier] actionIdentifier];
+    [[[unNotification stub] andReturn:request] request];
+    [[[request stub] andReturn:content] content];
+    [[[content stub] andReturn:notification] userInfo];
+
 
     [[self.mockAnalytics reject] addEvent:[OCMArg any]];
     [[self.mockInAppAutomation reject] cancelScheduleWithID:OCMOCK_ANY completionHandler:OCMOCK_ANY];
@@ -211,8 +227,6 @@
                                    @"com.urbanairship.in_app": self.payload
                                    };
 
-    UANotificationContent *content = [UANotificationContent notificationWithNotificationInfo:notification];
-
     [[[self.mockInAppAutomation expect] andDo:^(NSInvocation *invocation) {
         void *completionHandlerArg;
         [invocation getArgument:&completionHandlerArg atIndex:3];
@@ -221,7 +235,7 @@
     }] schedule:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *testExpectation = [self expectationWithDescription:@"completion handler called"];
-    [((NSObject<UAPushableComponent> *) self.inAppMessaging) receivedRemoteNotification:content completionHandler:^(UIBackgroundFetchResult fetchResult) {
+    [((NSObject<UAPushableComponent> *) self.inAppMessaging) receivedRemoteNotification:notification completionHandler:^(UIBackgroundFetchResult fetchResult) {
         XCTAssertEqual(UIBackgroundFetchResultNoData, fetchResult);
         [testExpectation fulfill];
     }];
@@ -242,10 +256,8 @@
                                    @"aps": self.aps
                                    };
 
-    UANotificationContent *content = [UANotificationContent notificationWithNotificationInfo:notification];
-
     XCTestExpectation *testExpectation = [self expectationWithDescription:@"completion handler called"];
-    [((NSObject<UAPushableComponent> *) self.inAppMessaging) receivedRemoteNotification:content completionHandler:^(UIBackgroundFetchResult fetchResult) {
+    [((NSObject<UAPushableComponent> *) self.inAppMessaging) receivedRemoteNotification:notification completionHandler:^(UIBackgroundFetchResult fetchResult) {
         XCTAssertEqual(UIBackgroundFetchResultNoData, fetchResult);
         [testExpectation fulfill];
     }];
@@ -266,8 +278,6 @@
                                    @"com.urbanairship.in_app": self.payload
                                    };
 
-    UANotificationContent *content = [UANotificationContent notificationWithNotificationInfo:notification];
-
     [[[self.mockInAppAutomation expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:2];
@@ -284,7 +294,7 @@
     }] schedule:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *testExpectation = [self expectationWithDescription:@"completion handler called"];
-    [((NSObject<UAPushableComponent> *) self.inAppMessaging) receivedRemoteNotification:content completionHandler:^(UIBackgroundFetchResult fetchResult) {
+    [((NSObject<UAPushableComponent> *) self.inAppMessaging) receivedRemoteNotification:notification completionHandler:^(UIBackgroundFetchResult fetchResult) {
         XCTAssertEqual(UIBackgroundFetchResultNoData, fetchResult);
         [testExpectation fulfill];
     }];
@@ -312,8 +322,6 @@
                                    @"com.urbanairship.in_app": payload
                                    };
 
-    UANotificationContent *content = [UANotificationContent notificationWithNotificationInfo:notification];
-
     [[[self.mockInAppAutomation expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:2];
@@ -329,7 +337,7 @@
     }] schedule:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *testExpectation = [self expectationWithDescription:@"completion handler called"];
-    [((NSObject<UAPushableComponent> *) self.inAppMessaging) receivedRemoteNotification:content completionHandler:^(UIBackgroundFetchResult fetchResult) {
+    [((NSObject<UAPushableComponent> *) self.inAppMessaging) receivedRemoteNotification:notification completionHandler:^(UIBackgroundFetchResult fetchResult) {
         XCTAssertEqual(UIBackgroundFetchResultNoData, fetchResult);
         [testExpectation fulfill];
     }];
@@ -350,8 +358,6 @@
                                    @"com.urbanairship.in_app": self.payload
                                    };
 
-    UANotificationContent *content = [UANotificationContent notificationWithNotificationInfo:notification];
-
     [[[self.mockInAppAutomation expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:2];
@@ -367,7 +373,7 @@
 
     XCTestExpectation *testExpectation = [self expectationWithDescription:@"completion handler called"];
     [((NSObject<UAPushableComponent> *) self.inAppMessaging)
-     receivedRemoteNotification:content completionHandler:^(UIBackgroundFetchResult fetchResult) {
+     receivedRemoteNotification:notification completionHandler:^(UIBackgroundFetchResult fetchResult) {
         XCTAssertEqual(UIBackgroundFetchResultNoData, fetchResult);
         [testExpectation fulfill];
     }];

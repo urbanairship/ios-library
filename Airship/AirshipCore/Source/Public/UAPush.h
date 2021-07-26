@@ -2,12 +2,9 @@
 
 #import "UAGlobal.h"
 #import "UAirship.h"
-#import "UANotificationContent.h"
-#import "UANotificationResponse.h"
-#import "UANotificationAction.h"
 #import "UAComponent.h"
 
-@class UANotificationCategory;
+@import UserNotifications;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -16,6 +13,11 @@ NS_ASSUME_NONNULL_BEGIN
  * The event will contain the payload dictionary as user info.
  */
 extern NSString *const UAReceivedNotificationResponseEvent;
+
+/**
+ * Response key for UAReceivedNotificationResponseEvent.
+ */
+extern NSString *const UAReceivedNotificationResponseEventResponseKey;
 
 /**
  * NSNotification event when a foreground notification is received.
@@ -82,6 +84,7 @@ typedef NS_ENUM(NSInteger, UAAuthorizationStatus) {
 @protocol UARegistrationDelegate <NSObject>
 @optional
 
+#if !TARGET_OS_TV
 /**
  * Called when APNS registration completes.
  *
@@ -90,17 +93,18 @@ typedef NS_ENUM(NSInteger, UAAuthorizationStatus) {
  * @param status The authorization status.
  */
 - (void)notificationRegistrationFinishedWithAuthorizedSettings:(UAAuthorizedNotificationSettings)authorizedSettings
-                                                    categories:(NSSet<UANotificationCategory *> *)categories
+                                                    categories:(NSSet<UNNotificationCategory *> *)categories
                                                         status:(UAAuthorizationStatus)status;
+#endif
 
 /**
  * Called when APNS registration completes.
  *
  * @param authorizedSettings The settings that were authorized at the time of registration.
- * @param categories NSSet of the categories that were most recently registered.
+ * @param status The authorization status.
  */
 - (void)notificationRegistrationFinishedWithAuthorizedSettings:(UAAuthorizedNotificationSettings)authorizedSettings
-                                                    categories:(NSSet<UANotificationCategory *> *)categories;
+                                                        status:(UAAuthorizationStatus)status;
 
 /**
  * Called when notification authentication changes with the new authorized settings.
@@ -141,32 +145,34 @@ typedef NS_ENUM(NSInteger, UAAuthorizationStatus) {
 /**
  * Called when a notification is received in the foreground.
  *
- * @param notificationContent UANotificationContent object representing the notification info.
+ * @param userInfo The notification info.
  *
  * @param completionHandler the completion handler to execute when notification processing is complete.
  */
--(void)receivedForegroundNotification:(UANotificationContent *)notificationContent completionHandler:(void (^)(void))completionHandler;
+-(void)receivedForegroundNotification:(NSDictionary *)userInfo completionHandler:(void (^)(void))completionHandler;
 
 /**
  * Called when a notification is received in the background.
  *
- * @param notificationContent UANotificationContent object representing the notification info.
+ * @param userInfo The notification info.
  *
  * @param completionHandler the completion handler to execute when notification processing is complete.
  */
--(void)receivedBackgroundNotification:(UANotificationContent *)notificationContent completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler;
+-(void)receivedBackgroundNotification:(NSDictionary *)userInfo completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler;
 
+#if !TARGET_OS_TV
 /**
  * Called when a notification is received in the background or foreground and results in a user interaction.
  * User interactions can include launching the application from the push, or using an interactive control on the notification interface
  * such as a button or text field.
  *
- * @param notificationResponse UANotificationResponse object representing the user's response
+ * @param notificationResponse UNNotificationResponse object representing the user's response
  * to the notification and the associated notification contents.
  *
  * @param completionHandler the completion handler to execute when processing the user's response has completed.
  */
--(void)receivedNotificationResponse:(UANotificationResponse *)notificationResponse completionHandler:(void (^)(void))completionHandler;
+-(void)receivedNotificationResponse:(UNNotificationResponse *)notificationResponse completionHandler:(void (^)(void))completionHandler;
+#endif
 
 /**
  * Called when a notification has arrived in the foreground and is available for display.
@@ -252,6 +258,7 @@ typedef NS_ENUM(NSInteger, UAAuthorizationStatus) {
  */
 @property (nonatomic, assign) UANotificationOptions notificationOptions;
 
+#if !TARGET_OS_TV
 /**
  * Custom notification categories. Airship default notification
  * categories will be unaffected by this field.
@@ -259,13 +266,14 @@ typedef NS_ENUM(NSInteger, UAAuthorizationStatus) {
  * Changes to this value will not take effect until the next time the app registers
  * with updateRegistration.
  */
-@property (nonatomic, copy) NSSet<UANotificationCategory *> *customCategories;
+@property (nonatomic, copy) NSSet<UNNotificationCategory *> *customCategories;
 
 /**
  * The combined set of notification categories from `customCategories` set by the app
  * and the Airship provided categories.
  */
-@property (nonatomic, readonly) NSSet<UANotificationCategory *> *combinedCategories;
+@property (nonatomic, readonly) NSSet<UNNotificationCategory *> *combinedCategories;
+#endif
 
 /**
  * Sets authorization required for the default Airship categories. Only applies
@@ -286,10 +294,12 @@ typedef NS_ENUM(NSInteger, UAAuthorizationStatus) {
  */
 @property (nonatomic, weak, nullable) id<UARegistrationDelegate> registrationDelegate;
 
+#if !TARGET_OS_TV
 /**
  * Notification response that launched the application.
  */
-@property (nonatomic, readonly, strong, nullable) UANotificationResponse *launchNotificationResponse;
+@property (nonatomic, readonly, strong, nullable) UNNotificationResponse *launchNotificationResponse;
+#endif
 
 /**
  * The current authorized notification settings.
@@ -324,11 +334,13 @@ typedef NS_ENUM(NSInteger, UAAuthorizationStatus) {
  */
 @property (nonatomic, assign) NSInteger badgeNumber;
 
+#if !TARGET_OS_TV
 /**
  * The set of Accengage notification categories.
  * @note For internal use only. :nodoc:
  */
-@property (nonatomic, copy) NSSet<UANotificationCategory *> *accengageCategories;
+@property (nonatomic, copy) NSSet<UNNotificationCategory *> *accengageCategories;
+#endif
 
 ///---------------------------------------------------------------------------------------
 /// @name Autobadge

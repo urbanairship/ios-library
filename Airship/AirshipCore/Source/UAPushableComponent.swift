@@ -15,8 +15,9 @@ public protocol UAPushableComponent: AnyObject {
      *    - completionHandler: The completion handler that must be called with the fetch result.
      */
     @objc
-    optional func receivedRemoteNotification(_ notification: UANotificationContent, completionHandler: @escaping (UIBackgroundFetchResult) -> Void)
+    optional func receivedRemoteNotification(_ notification: [AnyHashable: Any], completionHandler: @escaping (UIBackgroundFetchResult) -> Void)
 
+    #if !os(tvOS)
     /**
      * Called when a notification response is received.
      * - Parameters:
@@ -24,7 +25,8 @@ public protocol UAPushableComponent: AnyObject {
      *   - completionHandler: The completion handler that must be called after processing the response.
      */
     @objc
-    optional func receivedNotificationResponse(_ response: UANotificationResponse, completionHandler: @escaping () -> Void)
+    optional func receivedNotificationResponse(_ response: UNNotificationResponse, completionHandler: @escaping () -> Void)
+    #endif
 
     /**
      * Called when a notification is about to be presented.

@@ -2,6 +2,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import <UserNotifications/UserNotifications.h>
 
 /**
  * Enumeration of in-app message screen positions.
@@ -28,7 +29,6 @@ typedef NS_ENUM(NSInteger, UALegacyInAppMessageDisplayType) {
 };
 
 @class UALegacyInAppMessageButtonActionBinding;
-@class UANotificationCategory;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -138,11 +138,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, readonly, nullable) NSArray *notificationActions;
 
 /**
- * A UANotificationCategory instance,
+ * A UNNotificationCategory instance,
  * corresponding to the button group of the message.
  * If no matching category is found, this property will be nil.
  */
-@property(nonatomic, readonly, nullable) UANotificationCategory *buttonCategory;
+@property(nonatomic, readonly, nullable) UNNotificationCategory *buttonCategory;
 
 
 ///---------------------------------------------------------------------------------------

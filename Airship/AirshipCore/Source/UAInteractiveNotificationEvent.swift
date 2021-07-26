@@ -1,5 +1,6 @@
 /* Copyright Airship and Contributors */
 
+#if !os(tvOS)
 /**
  * @note For Interrnal use only :nodoc:
  */
@@ -31,7 +32,7 @@ public class UAInteractiveNotificationEvent : NSObject, UAEvent {
     }
 
     @objc
-    public init(action: UANotificationAction,
+    public init(action: UNNotificationAction,
                 category: String,
                 notification: [AnyHashable : Any],
                 responseText: String?) {
@@ -39,7 +40,7 @@ public class UAInteractiveNotificationEvent : NSObject, UAEvent {
         #if os(tvOS)
         let foreground = false
         #else
-        let foreground = (action.options.rawValue & UANotificationActionOptions.foreground.rawValue) > 0
+        let foreground = (action.options.rawValue & UNNotificationActionOptions.foreground.rawValue) > 0
         #endif
 
         var data: [AnyHashable : Any] = [:]
@@ -69,3 +70,4 @@ private extension Bool {
         return self ? "true" : "false"
     }
 }
+#endif

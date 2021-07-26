@@ -1085,8 +1085,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
     NSDictionary *expectedMetadata = @{ UAActionMetadataForegroundPresentationKey: @(NO),
                                         UAActionMetadataPushPayloadKey:notification};
 
-    NSDictionary *actionsPayload = [UAAppIntegration actionsPayloadForNotificationContent:
-                                    [UANotificationContent notificationWithNotificationInfo:notification] actionIdentifier:nil];
+    NSDictionary *actionsPayload = [UAAppIntegration actionsPayloadForNotification:notification actionIdentifier:nil];
 
     // Expect actions to be run for the action identifier
     [[self.mockedActionRunner expect] runActionsWithActionValues:actionsPayload
@@ -1096,8 +1095,8 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 
     // Expect the UAPush to be called
     [[self.mockedPush expect] handleRemoteNotification:[OCMArg checkWithBlock:^BOOL(id obj) {
-        UANotificationContent *content = obj;
-        return [content.notificationInfo isEqualToDictionary:notification];
+        NSDictionary *content = obj;
+        return [content isEqualToDictionary:notification];
     }] foreground:NO completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void (^handler)(UIBackgroundFetchResult) = obj;
         handler(UIBackgroundFetchResultNewData);

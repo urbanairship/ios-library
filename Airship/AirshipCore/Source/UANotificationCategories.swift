@@ -2,6 +2,7 @@
 
 import Foundation
 
+#if !os(tvOS)
 /**
  * Utility methods to create categories from plist files or NSDictionaries.
  */
@@ -15,7 +16,7 @@ public class UANotificationCategories : NSObject {
      * - Returns: A set of user notification categories
      */
     @objc
-    public class func defaultCategories() -> Set<UANotificationCategory> {
+    public class func defaultCategories() -> Set<UNNotificationCategory> {
         return self.defaultCategories(withRequireAuth: true)
     }
 
@@ -26,7 +27,7 @@ public class UANotificationCategories : NSObject {
      * - Returns: A set of user notification categories.
      */
     @objc
-    public class func defaultCategories(withRequireAuth requireAuth: Bool) -> Set<UANotificationCategory> {
+    public class func defaultCategories(withRequireAuth requireAuth: Bool) -> Set<UNNotificationCategory> {
         guard let path = UAirshipCoreResources.bundle.path(forResource: "UANotificationCategories", ofType: "plist") else {
             return []
         }
@@ -65,7 +66,7 @@ public class UANotificationCategories : NSObject {
      * - Returns: A set of categories
      */
     @objc
-    public class func createCategories(fromFile path: String) -> Set<UANotificationCategory> {
+    public class func createCategories(fromFile path: String) -> Set<UNNotificationCategory> {
         return self.createCategories(fromFile: path, actionDefinitionModBlock: { _ in })
     }
 
@@ -73,16 +74,16 @@ public class UANotificationCategories : NSObject {
      * Creates a user notification category with the specified ID and action definitions.
      *
      * - Parameter categoryId: The category identifier
-     * - Parameter actionDefinitions: An array of user notification action dictionaries used to construct UANotificationAction for the category.
+     * - Parameter actionDefinitions: An array of user notification action dictionaries used to construct UNNotificationAction for the category.
      * - Returns: The user notification category created, or `nil` if an error occurred.
      */
     @objc
-    public class func createCategory(_ categoryId: String, actions actionDefinitions: [[AnyHashable : Any]]) -> UANotificationCategory? {
+    public class func createCategory(_ categoryId: String, actions actionDefinitions: [[AnyHashable : Any]]) -> UNNotificationCategory? {
         guard let actions = self.getActionsFromActionDefinitions(actionDefinitions) else {
             return nil
         }
 
-        return UANotificationCategory(
+        return UNNotificationCategory(
             identifier: categoryId,
             actions: actions,
             intentIdentifiers: [],
@@ -94,18 +95,18 @@ public class UANotificationCategories : NSObject {
      * hiddenPreviewsBodyPlaceholder.
      *
      * - Parameter categoryId: The category identifier
-     * - Parameter actionDefinitions: An array of user notification action dictionaries used to construct UANotificationAction for the category.
+     * - Parameter actionDefinitions: An array of user notification action dictionaries used to construct UNNotificationAction for the category.
      * - Parameter hiddenPreviewsBodyPlaceholder: A placeholder string to display when the user has disabled notification previews for the app.
      * - Returns: The user notification category created or `nil` if an error occurred.
      */
     @objc
-    public class func createCategory(_ categoryId: String, actions actionDefinitions: [[AnyHashable : Any]], hiddenPreviewsBodyPlaceholder: String) -> UANotificationCategory? {
+    public class func createCategory(_ categoryId: String, actions actionDefinitions: [[AnyHashable : Any]], hiddenPreviewsBodyPlaceholder: String) -> UNNotificationCategory? {
 
         guard let actions = self.getActionsFromActionDefinitions(actionDefinitions) else {
             return nil
         }
 
-        return UANotificationCategory(
+        return UNNotificationCategory(
             identifier: categoryId,
             actions: actions,
             intentIdentifiers: [],
@@ -113,7 +114,7 @@ public class UANotificationCategories : NSObject {
             options: [])
     }
 
-    private class func createCategories(fromFile path: String, requireAuth: Bool) -> Set<UANotificationCategory> {
+    private class func createCategories(fromFile path: String, requireAuth: Bool) -> Set<UNNotificationCategory> {
         return self.createCategories(fromFile: path, actionDefinitionModBlock: { actionDefinition in
             if actionDefinition["foreground"] as? Bool == false {
                 actionDefinition["authenticationRequired"] = requireAuth
@@ -121,10 +122,10 @@ public class UANotificationCategories : NSObject {
         })
     }
 
-    private class func createCategories(fromFile path: String, actionDefinitionModBlock: @escaping (inout [AnyHashable : Any]) -> Void) -> Set<UANotificationCategory> {
+    private class func createCategories(fromFile path: String, actionDefinitionModBlock: @escaping (inout [AnyHashable : Any]) -> Void) -> Set<UNNotificationCategory> {
 
         let categoriesDictionary = NSDictionary(contentsOfFile: path) as? Dictionary ?? [:]
-        var categories: Set<UANotificationCategory> = []
+        var categories: Set<UNNotificationCategory> = []
 
         for key in categoriesDictionary.keys {
             guard let categoryId = key as? String else {
@@ -176,8 +177,8 @@ public class UANotificationCategories : NSObject {
         return title
     }
 
-    private class func getActionsFromActionDefinitions(_ actionDefinitions: [[AnyHashable : Any]]) -> [UANotificationAction]? {
-        var actions: [UANotificationAction] = []
+    private class func getActionsFromActionDefinitions(_ actionDefinitions: [[AnyHashable : Any]]) -> [UNNotificationAction]? {
+        var actions: [UNNotificationAction] = []
 
         for actionDefinition in actionDefinitions {
             guard let actionId = actionDefinition["identifier"] as? String else {
@@ -190,7 +191,7 @@ public class UANotificationCategories : NSObject {
                 return nil
             }
 
-            var options: UANotificationActionOptions = []
+            var options: UNNotificationActionOptions = []
 
             if actionDefinition["destructive"] as? Bool == true {
                 options.insert(.destructive)
@@ -214,16 +215,17 @@ public class UANotificationCategories : NSObject {
                     return nil
                 }
 
-                actions.append(UATextInputNotificationAction(identifier: actionId,
+                actions.append(UNTextInputNotificationAction(identifier: actionId,
                                                              title: title,
+                                                             options: options,
                                                              textInputButtonTitle: textInputButtonTitle,
-                                                             textInputPlaceholder: textInputPlaceholder,
-                                                             options: options))
+                                                             textInputPlaceholder: textInputPlaceholder))
             } else {
-                actions.append(UANotificationAction(identifier: actionId, title: title, options: options))
+                actions.append(UNNotificationAction(identifier: actionId, title: title, options: options))
             }
         }
 
         return actions
     }
 }
+#endif

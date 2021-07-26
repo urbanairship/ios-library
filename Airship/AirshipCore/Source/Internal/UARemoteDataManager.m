@@ -472,8 +472,8 @@ static NSString * const UALastRemoteDataModifiedTime = @"UALastRemoteDataModifie
 #pragma mark -
 #pragma mark UAPushableComponent
 
--(void)receivedRemoteNotification:(UANotificationContent *)notification completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
-    if (!notification.notificationInfo[UARemoteDataRefreshPayloadKey]) {
+-(void)receivedRemoteNotification:(NSDictionary *)userInfo completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+    if (!userInfo[UARemoteDataRefreshPayloadKey]) {
         completionHandler(UIBackgroundFetchResultNoData);
     } else {
         [self enqueueRefreshTask];

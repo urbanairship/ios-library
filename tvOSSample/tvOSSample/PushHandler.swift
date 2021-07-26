@@ -6,7 +6,7 @@ import AirshipCore
 
 class PushHandler: NSObject, UAPushNotificationDelegate {
 
-    func receivedBackgroundNotification(_ notificationContent: UANotificationContent, completionHandler: @escaping (UIBackgroundFetchResult) -> Swift.Void) {
+    func receivedBackgroundNotification(_ notificationContent: UNNotificationContent, completionHandler: @escaping (UIBackgroundFetchResult) -> Swift.Void) {
         // Application received a background notification
         print("The application received a background notification");
 
@@ -14,7 +14,7 @@ class PushHandler: NSObject, UAPushNotificationDelegate {
         completionHandler(.noData)
     }
 
-    func receivedForegroundNotification(_ notificationContent: UANotificationContent, completionHandler: @escaping () -> Swift.Void) {
+    func receivedForegroundNotification(_ notificationContent: UNNotificationContent, completionHandler: @escaping () -> Swift.Void) {
         // Application received a foreground notification
         print("The application received a foreground notification");
 

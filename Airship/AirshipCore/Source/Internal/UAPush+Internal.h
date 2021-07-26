@@ -91,10 +91,12 @@ extern NSString *const UAPushTagsMigratedToChannelTagsKey;
  */
 @property (nonatomic, copy, nullable) NSString *deviceToken;
 
+#if !TARGET_OS_TV
 /**
  * Notification that launched the application.
  */
-@property (nullable, nonatomic, strong) UANotificationResponse *launchNotificationResponse;
+@property (nullable, nonatomic, strong) UNNotificationResponse *launchNotificationResponse;
+#endif
 
 /**
  * Indicates whether APNS registration is out of date or not.
@@ -222,22 +224,24 @@ extern NSString *const UAPushTagsMigratedToChannelTagsKey;
  */
 - (UNNotificationPresentationOptions)presentationOptionsForNotification:(UNNotification *)notification;
 
+#if !TARGET_OS_TV
 /**
  * Called when a notification response is received.
  * 
  * @param response The notification response.
  * @param handler The completion handler.
  */
-- (void)handleNotificationResponse:(UANotificationResponse *)response completionHandler:(void (^)(void))handler;
+- (void)handleNotificationResponse:(UNNotificationResponse *)response completionHandler:(void (^)(void))handler;
+#endif
 
 /**
  * Called when a remote notification is received.
  *
- * @param notification The notification content.
+ * @param userInfo The notification info.
  * @param foreground If the notification was recieved in the foreground or not.
  * @param handler The completion handler.
  */
-- (void)handleRemoteNotification:(UANotificationContent *)notification foreground:(BOOL)foreground completionHandler:(void (^)(UIBackgroundFetchResult))handler;
+- (void)handleRemoteNotification:(NSDictionary *)userInfo foreground:(BOOL)foreground completionHandler:(void (^)(UIBackgroundFetchResult))handler;
 
 /**
  * Called by the UIApplicationDelegate's application:didRegisterForRemoteNotificationsWithDeviceToken:

@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UAAPNSRegistration+Internal.h"
-#import "UANotificationCategory.h"
 
 @implementation UAAPNSRegistration
 
@@ -124,27 +123,23 @@
     return unOptions;
 }
 
+#if !TARGET_OS_TV   // UNNotificationCategory not supported on tvOS
 -(void)updateRegistrationWithOptions:(UANotificationOptions)options
-                          categories:(NSSet<UANotificationCategory *> *)categories
+                          categories:(NSSet<UNNotificationCategory *> *)categories
                    completionHandler:(nullable void(^)(BOOL success,
                                                        UAAuthorizedNotificationSettings authorizedSettings,
                                                        UAAuthorizationStatus status))completionHandler {
 
-#if !TARGET_OS_TV   // UNNotificationCategory not supported on tvOS
-    NSMutableSet *normalizedCategories;
+    [[UNUserNotificationCenter currentNotificationCenter] setNotificationCategories:categories];
 
-    if (categories) {
-        normalizedCategories = [NSMutableSet set];
-
-        // Normalize our abstract categories to iOS-appropriate type
-        for (UANotificationCategory *category in categories) {
-            [normalizedCategories addObject:[category asUNNotificationCategory]];
-        }
-    }
-
-    [[UNUserNotificationCenter currentNotificationCenter] setNotificationCategories:[NSSet setWithSet:normalizedCategories]];
+    [self updateRegistrationWithOptions:options completionHandler:completionHandler];
+}
 #endif
 
+-(void)updateRegistrationWithOptions:(UANotificationOptions)options
+                   completionHandler:(nullable void(^)(BOOL success,
+                                                       UAAuthorizedNotificationSettings authorizedSettings,
+                                                       UAAuthorizationStatus status))completionHandler {
     UNAuthorizationOptions normalizedOptions = [self normalizedOptions:options];
 
     UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
