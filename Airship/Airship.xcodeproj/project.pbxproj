@@ -1195,6 +1195,10 @@
 		A615179726A1C6DC008A41C4 /* PreferenceCenterCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A615179626A1C6DC008A41C4 /* PreferenceCenterCell.swift */; };
 		A61517A926A1E447008A41C4 /* PreferenceCenterResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61517A826A1E447008A41C4 /* PreferenceCenterResources.swift */; };
 		A61517AB26A6DC48008A41C4 /* PreferenceCenterCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A61517AA26A6DC48008A41C4 /* PreferenceCenterCell.xib */; };
+		A61517B226A9C4C3008A41C4 /* SubscriptionListEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61517B126A9C4C3008A41C4 /* SubscriptionListEditor.swift */; };
+		A61517B326A9C4C3008A41C4 /* SubscriptionListEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61517B126A9C4C3008A41C4 /* SubscriptionListEditor.swift */; };
+		A61517B526AEEAAB008A41C4 /* SubscriptionListUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61517B426AEEAAB008A41C4 /* SubscriptionListUpdate.swift */; };
+		A61517B626AEEABA008A41C4 /* SubscriptionListUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61517B426AEEAAB008A41C4 /* SubscriptionListUpdate.swift */; };
 		A615E215264EAFB9004FA211 /* UAPrivacyManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A615E214264EAFB9004FA211 /* UAPrivacyManagerTest.m */; };
 		A67F87D2268DECCE00EF5F43 /* ContactAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67F87D1268DECCE00EF5F43 /* ContactAPIClient.swift */; };
 		A67F87D3268DECCE00EF5F43 /* ContactAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67F87D1268DECCE00EF5F43 /* ContactAPIClient.swift */; };
@@ -2380,6 +2384,8 @@
 		A615179626A1C6DC008A41C4 /* PreferenceCenterCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterCell.swift; sourceTree = "<group>"; };
 		A61517A826A1E447008A41C4 /* PreferenceCenterResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterResources.swift; sourceTree = "<group>"; };
 		A61517AA26A6DC48008A41C4 /* PreferenceCenterCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PreferenceCenterCell.xib; sourceTree = "<group>"; };
+		A61517B126A9C4C3008A41C4 /* SubscriptionListEditor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SubscriptionListEditor.swift; path = AirshipCore/Source/SubscriptionListEditor.swift; sourceTree = SOURCE_ROOT; };
+		A61517B426AEEAAB008A41C4 /* SubscriptionListUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SubscriptionListUpdate.swift; path = AirshipCore/Source/SubscriptionListUpdate.swift; sourceTree = SOURCE_ROOT; };
 		A615E214264EAFB9004FA211 /* UAPrivacyManagerTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAPrivacyManagerTest.m; sourceTree = "<group>"; };
 		A649F50A252F4F39005453CB /* UAInbox 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAInbox 2.xcdatamodel"; sourceTree = "<group>"; };
 		A67F87D1268DECCE00EF5F43 /* ContactAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactAPIClient.swift; sourceTree = "<group>"; };
@@ -4276,6 +4282,7 @@
 		6E937300237615B400AA9C2A /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				A61517AD26A97419008A41C4 /* Subscription Lists */,
 				6E698E02267A799500654DB2 /* UAirshipErrors.swift */,
 				6E8E1C9A26447B3800B11791 /* Lock.swift */,
 				6E698DEA26790AC300654DB2 /* AirshipLogger.swift */,
@@ -4500,6 +4507,15 @@
 				847BFFF7267CD73A007CD249 /* Info.plist */,
 			);
 			path = AirshipPreferenceCenter;
+			sourceTree = "<group>";
+		};
+		A61517AD26A97419008A41C4 /* Subscription Lists */ = {
+			isa = PBXGroup;
+			children = (
+				A61517B126A9C4C3008A41C4 /* SubscriptionListEditor.swift */,
+				A61517B426AEEAAB008A41C4 /* SubscriptionListUpdate.swift */,
+			);
+			path = "Subscription Lists";
 			sourceTree = "<group>";
 		};
 		A6CDD8CE269491850040A673 /* Contacts */ = {
@@ -6466,6 +6482,7 @@
 				6E4118DB2538C1FE00FEE4E8 /* UAJavaScriptEnvironment.m in Sources */,
 				6E6ED15B2683DBC300A2CBD0 /* UABase64.swift in Sources */,
 				6E4119F32538C20200FEE4E8 /* UAChannelCapture.m in Sources */,
+				A61517B226A9C4C3008A41C4 /* SubscriptionListEditor.swift in Sources */,
 				6E4119BF2538C20200FEE4E8 /* UARemoteConfigManager.m in Sources */,
 				6E952920268A6C1500398B54 /* UASearchEventTemplate.swift in Sources */,
 				6E4119372538C20000FEE4E8 /* UAUtils.m in Sources */,
@@ -6535,6 +6552,7 @@
 				6E6ED1392683A58D00A2CBD0 /* UASemaphore.swift in Sources */,
 				6E6ED1592683DBC300A2CBD0 /* UAWebView.swift in Sources */,
 				3CC95B1F268E785900FE2ACD /* UANotificationCategories.swift in Sources */,
+				A61517B526AEEAAB008A41C4 /* SubscriptionListUpdate.swift in Sources */,
 				6E8BF45526852E84009A8BD4 /* UATask.swift in Sources */,
 				6E411A532538C20400FEE4E8 /* UAAttributeMutations.m in Sources */,
 				6E411ACF2538C20600FEE4E8 /* UAComponent.m in Sources */,
@@ -7047,6 +7065,7 @@
 				6E4118DC2538C1FE00FEE4E8 /* UAJavaScriptEnvironment.m in Sources */,
 				6E4119F42538C20200FEE4E8 /* UAChannelCapture.m in Sources */,
 				6E6ED15C2683DBC300A2CBD0 /* UABase64.swift in Sources */,
+				A61517B326A9C4C3008A41C4 /* SubscriptionListEditor.swift in Sources */,
 				6E4119C02538C20200FEE4E8 /* UARemoteConfigManager.m in Sources */,
 				6E952921268A6C1500398B54 /* UASearchEventTemplate.swift in Sources */,
 				6E4119382538C20000FEE4E8 /* UAUtils.m in Sources */,
@@ -7115,6 +7134,7 @@
 				6E411A882538C20500FEE4E8 /* UATagUtils.m in Sources */,
 				6E6ED13A2683A58D00A2CBD0 /* UASemaphore.swift in Sources */,
 				6E6ED15A2683DBC300A2CBD0 /* UAWebView.swift in Sources */,
+				A61517B626AEEABA008A41C4 /* SubscriptionListUpdate.swift in Sources */,
 				3CC95B20268E785900FE2ACD /* UANotificationCategories.swift in Sources */,
 				6E411A542538C20400FEE4E8 /* UAAttributeMutations.m in Sources */,
 				6E411AD02538C20600FEE4E8 /* UAComponent.m in Sources */,

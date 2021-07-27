@@ -333,6 +333,15 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 }
 
 #pragma mark -
+#pragma mark Channel subscription lists
+
+- (UASubscriptionListsEditor *)editSubscriptionLists {
+    return [[UASubscriptionListsEditor alloc] initWithCompletionHandler:^(NSArray<UASubscriptionListUpdate *> *subscriptionListUpdates) {
+        // to do
+    }];
+}
+
+#pragma mark -
 #pragma mark Registration
 
 - (void)enableChannelCreation {
