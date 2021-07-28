@@ -3,16 +3,15 @@
 import Foundation
 
 /**
- * Subscription lists editor.
+ * Subscription list editor.
  */
-@objc(UASubscriptionListsEditor)
-public class SubscriptionListsEditor: NSObject {
+@objc(UASubscriptionListEditor)
+public class SubscriptionListEditor: NSObject {
     
     private var subscriptionListUpdates : [SubscriptionListUpdate] = []
     private let completionHandler : ([SubscriptionListUpdate]) -> Void
 
-    @objc(initWithCompletionHandler:)
-    public init(completionHandler: @escaping ([SubscriptionListUpdate]) -> Void) {
+    init(completionHandler: @escaping ([SubscriptionListUpdate]) -> Void) {
         self.completionHandler = completionHandler
         super.init()
     }
@@ -20,22 +19,22 @@ public class SubscriptionListsEditor: NSObject {
     /**
      *  Subscribes to a list.
      * - Parameters:
-     *   - subscriptionListId: The subscription list identifier.
+     *   - subscriptionListID: The subscription list identifier.
      */
     @objc(subscribe:)
-    public func subscribe(subscriptionListId: String) {
-        let subscriptionListUpdate = SubscriptionListUpdate(listId: subscriptionListId, type: .subscribe)
+    public func subscribe(_ subscriptionListID: String) {
+        let subscriptionListUpdate = SubscriptionListUpdate(listId: subscriptionListID, type: .subscribe)
         subscriptionListUpdates.append(subscriptionListUpdate)
     }
 
     /**
      *  Unsubscribes from a list.
      * - Parameters:
-     *   - subscriptionListId: The subscription list identifier.
+     *   - subscriptionListID: The subscription list identifier.
      */
     @objc(unsubscribe:)
-    public func unsubscribe(subscriptionListId: String) {
-        let subscriptionListUpdate = SubscriptionListUpdate(listId: subscriptionListId, type: .unsubscribe)
+    public func unsubscribe(_ subscriptionListID: String) {
+        let subscriptionListUpdate = SubscriptionListUpdate(listId: subscriptionListID, type: .unsubscribe)
         subscriptionListUpdates.append(subscriptionListUpdate)
     }
 
@@ -44,7 +43,7 @@ public class SubscriptionListsEditor: NSObject {
      */
     @objc
     public func apply() {
-        completionHandler(subscriptionListUpdates)
+        completionHandler(AudienceUtils.collapse(subscriptionListUpdates))
         subscriptionListUpdates.removeAll()
     }
 }

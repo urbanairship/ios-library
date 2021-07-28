@@ -43,6 +43,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 @property (nonatomic, strong) UATagGroupsRegistrar *tagGroupsRegistrar;
 @property (nonatomic, strong) UAAttributeRegistrar *attributeRegistrar;
 @property (nonatomic, strong) UALocaleManager *localeManager;
+@property (nonatomic, strong) UAChannelAudienceManager *audienceManager;
 
 @property (nonatomic, assign) BOOL shouldPerformChannelRegistrationOnForeground;
 @property (nonatomic, strong) NSMutableArray<UAChannelRegistrationExtenderBlock> *registrationExtenderBlocks;
@@ -61,10 +62,11 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
                  channelRegistrar:(UAChannelRegistrar *)channelRegistrar
                tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar
                attributeRegistrar:(UAAttributeRegistrar *)attributeRegistrar
+                  audienceManager:(UAChannelAudienceManager *)audienceManager
                     localeManager:(UALocaleManager *)localeManager
                              date:(UADate *)date
                       taskManager:(UATaskManager *)taskManager
-                   privacyManager:(UAPrivacyManager *)privacyManager{
+                   privacyManager:(UAPrivacyManager *)privacyManager {
     self = [super initWithDataStore:dataStore];
 
     if (self) {
@@ -78,6 +80,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
         self.privacyManager = privacyManager;
         self.date = date;
         self.taskManager = taskManager;
+        self.audienceManager = audienceManager;
 
         self.channelTagRegistrationEnabled = YES;
         self.registrationExtenderBlocks = [NSMutableArray array];
@@ -86,7 +89,10 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
         self.attributeRegistrar.delegate = self;
         [self.tagGroupsRegistrar setIdentifier:self.identifier clearPendingOnChange:NO];
         [self.attributeRegistrar setIdentifier:self.identifier clearPendingOnChange:NO];
-
+        
+        self.audienceManager.channelID = self.identifier;
+        self.audienceManager.enabled = self.componentEnabled;
+        
         // Check config to see if user wants to delay channel creation
         // If channel ID exists or channel creation delay is disabled then channelCreationEnabled
         if (self.identifier || !config.isChannelCreationDelayEnabled) {
@@ -137,6 +143,10 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
                       privacyManager:(UAPrivacyManager *)privacyManager{
 
     UATagGroupsRegistrar *tagGroupsRegistrar = [UATagGroupsRegistrar channelTagGroupsRegistrarWithConfig:config dataStore:dataStore];
+    
+    
+    UAChannelAudienceManager *audienceManager = [[UAChannelAudienceManager alloc] initWithDataStore:dataStore config:config privacyManager:privacyManager];
+                          
     return [[self alloc] initWithDataStore:dataStore
                                     config:config
                         notificationCenter:[NSNotificationCenter defaultCenter]
@@ -144,6 +154,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
                         tagGroupsRegistrar:tagGroupsRegistrar
                         attributeRegistrar:[UAAttributeRegistrar channelRegistrarWithConfig:config
                                                                                   dataStore:dataStore]
+                           audienceManager:audienceManager
                              localeManager:localeManager
                                       date:[[UADate alloc] init]
                                taskManager:[UATaskManager shared]
@@ -156,6 +167,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
                     channelRegistrar:(UAChannelRegistrar *)channelRegistrar
                   tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar
                   attributeRegistrar:(UAAttributeRegistrar *)attributeRegistrar
+                     audienceManager:(UAChannelAudienceManager *)audienceManager
                        localeManager:(UALocaleManager *)localeManager
                                 date:(UADate *)date
                          taskManager:(UATaskManager *)taskManager
@@ -166,6 +178,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
                           channelRegistrar:channelRegistrar
                         tagGroupsRegistrar:tagGroupsRegistrar
                         attributeRegistrar:attributeRegistrar
+                           audienceManager:audienceManager
                              localeManager:localeManager
                                       date:date
                                taskManager:taskManager
@@ -335,11 +348,14 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 #pragma mark -
 #pragma mark Channel subscription lists
 
-- (UASubscriptionListsEditor *)editSubscriptionLists {
-    return [[UASubscriptionListsEditor alloc] initWithCompletionHandler:^(NSArray<UASubscriptionListUpdate *> *subscriptionListUpdates) {
-        // to do
-    }];
+- (UASubscriptionListEditor *)editSubscriptionLists {
+    return [self.audienceManager editSubscriptionLists];
 }
+
+- (UADisposable *)fetchSubscriptionListsWithCompletionHandler:(void(^)(NSArray<NSString *> * _Nullable listIDs, NSError * _Nullable error))completionHandler {
+    return [self.audienceManager fetchSubscriptionListsWithCompletionHandler:completionHandler];
+}
+
 
 #pragma mark -
 #pragma mark Registration
@@ -543,6 +559,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 
         [self.tagGroupsRegistrar setIdentifier:channelID clearPendingOnChange:NO];
         [self.attributeRegistrar setIdentifier:channelID clearPendingOnChange:NO];
+        self.audienceManager.channelID = channelID;
 
         [UADispatcher.main dispatchAsyncIfNecessary:^{
             [self.notificationCenter postNotificationName:UAChannelCreatedEvent
@@ -571,6 +588,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
     if (self.componentEnabled) {
         [self updateRegistration];
     }
+    self.audienceManager.enabled = self.componentEnabled;
 }
 
 - (void)onEnabledFeaturesChanged {

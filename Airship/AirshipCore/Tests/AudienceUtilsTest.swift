@@ -74,4 +74,21 @@ class AudienceUtilsTest: XCTestCase {
         XCTAssertEqual(.remove, collapsed[1].type)
         XCTAssertEqual(.set, collapsed[0].type)
     }
+    
+    func testCollapseSubscriptionListUpdates() throws {
+        let updates = [
+            SubscriptionListUpdate(listId: "coffee", type: .unsubscribe),
+            SubscriptionListUpdate(listId: "pizza", type: .subscribe),
+            SubscriptionListUpdate(listId: "coffee", type: .subscribe),
+            SubscriptionListUpdate(listId: "pizza", type: .unsubscribe)
+        ]
+        
+        let collapsed = AudienceUtils.collapse(updates)
+        
+        XCTAssertEqual(2, collapsed.count)
+        XCTAssertEqual("coffee", collapsed[0].listId)
+        XCTAssertEqual(SubscriptionListUpdateType.subscribe, collapsed[0].type)
+        XCTAssertEqual("pizza", collapsed[1].listId)
+        XCTAssertEqual(SubscriptionListUpdateType.unsubscribe, collapsed[1].type)
+    }
 }

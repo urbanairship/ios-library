@@ -6,6 +6,9 @@
 #import "UATagGroupsMutation.h"
 #import "UAAttributePendingMutations.h"
 
+@class UASubscriptionListEditor;
+@class UADisposable;
+
 NS_ASSUME_NONNULL_BEGIN
 
 //---------------------------------------------------------------------------------------
@@ -82,6 +85,24 @@ extern NSString *const UAChannelUploadedAudienceMutationNotificationMutationKey;
  * server-side tagging. Defaults to `YES`.
  */
 @property (nonatomic, assign, getter=isChannelTagRegistrationEnabled) BOOL channelTagRegistrationEnabled;
+
+///---------------------------------------------------------------------------------------
+/// @name Subscription lists
+///---------------------------------------------------------------------------------------
+
+/**
+ * Creates a subscription list editor that can be used to edit the subscription lists on the channel.
+ * @return A subscription list editor.
+ */
+- (UASubscriptionListEditor *)editSubscriptionLists;
+
+
+/**
+ * Fetches subscriptoin lists.
+ * @param completionHandler The handler with the result. On error, caller should retry with exponetial backoff.
+ * @return A disposable to cancel the request.
+ */
+- (UADisposable *)fetchSubscriptionListsWithCompletionHandler:(void(^)(NSArray<NSString *> * _Nullable listIDs, NSError * _Nullable error)) completionHandler;
 
 ///---------------------------------------------------------------------------------------
 /// @name Tags

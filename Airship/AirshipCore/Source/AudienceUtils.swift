@@ -6,6 +6,28 @@ import Foundation
 @objc(UAAudienceUtils)
 public class AudienceUtils : NSObject {
     
+    class func collapse(_ updates: [SubscriptionListUpdate]) -> [SubscriptionListUpdate] {
+        var subscribes: [String]  = []
+        var unsubscribes: [String] = []
+        
+        updates.forEach { update in
+            switch(update.type) {
+            case .subscribe:
+                subscribes.append(update.listId)
+                unsubscribes.removeAll(where: { $0 == update.listId })
+            case .unsubscribe:
+                unsubscribes.append(update.listId)
+                subscribes.removeAll(where: { $0 == update.listId })
+            }
+        }
+        
+        let subscribeUpdates = subscribes.map { SubscriptionListUpdate(listId: $0, type: .subscribe) }
+        
+        let unsubscribeUpdates = unsubscribes.map { SubscriptionListUpdate(listId: $0, type: .unsubscribe) }
+        
+        return subscribeUpdates + unsubscribeUpdates
+    }
+    
     @objc(collapseTagGroupUpdates:)
     public class func collapse(_ updates: [TagGroupUpdate]) -> [TagGroupUpdate] {
         var adds: [String : [String]] = [:]

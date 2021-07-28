@@ -7,6 +7,7 @@
 
 @class UAChannelRegistrar;
 @class UATaskManager;
+@class UAChannelAudienceManager;
 
 extern NSString *const UAChannelTagsSettingsKey;
 
@@ -31,6 +32,7 @@ extern NSString *const UAChannelTagsSettingsKey;
                     channelRegistrar:(UAChannelRegistrar *)channelRegistrar
                   tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar
                   attributeRegistrar:(UAAttributeRegistrar *)attributeRegistrar
+                     audienceManager:(UAChannelAudienceManager *)audienceManager
                        localeManager:(UALocaleManager *)localeManager
                                 date:(UADate *)date
                          taskManager:(UATaskManager *)taskManager

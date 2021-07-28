@@ -200,6 +200,7 @@ NSString * const UAInAppAudienceManagerErrorDomain = @"com.urbanairship.in_app_a
                 self.cache.response = response;
                 self.cache.requestedTagGroups = tagGroups;
             }
+
             completionHandler();
         }];
     }];

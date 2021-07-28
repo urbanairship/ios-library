@@ -39,6 +39,8 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 @property (nonatomic, strong) id mockedPush;
 @property (nonatomic, strong) id mockedActionRunner;
 @property (nonatomic, strong) id mockTaskManager;
+@property (nonatomic, strong) id mockAudienceManager;
+
 @property(nonatomic, copy) void (^launchHandler)(id<UATask>);
 @end
 
@@ -84,6 +86,8 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 
     self.privacyManager = [[UAPrivacyManager alloc] initWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
 
+    self.mockAudienceManager = [self mockForClass:[UAChannelAudienceManager class]];
+    
     // Put setup code here. This method is called before the invocation of each test method in the class.
     self.channel = [self createChannel];
 
@@ -117,6 +121,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
                                         channelRegistrar:self.mockChannelRegistrar
                                       tagGroupsRegistrar:self.mockTagGroupsRegistrar
                                       attributeRegistrar:self.mockAttributeRegistrar
+                                         audienceManager:self.mockAudienceManager
                                            localeManager:self.mockLocaleManager
                                                     date:self.testDate
                                              taskManager:self.mockTaskManager
@@ -651,6 +656,19 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
     XCTAssertEqualObjects(expectedUserInfo, notification.userInfo);
 }
 
+- (void)testCreatedIdentifierPassedToAudienceManager {
+    [[self.mockAudienceManager expect] setChannelID:@"foo"];
+    [self.channel channelCreatedWithChannelID:@"foo" existing:NO];
+    [self.mockAudienceManager verify];
+}
+
+- (void)testInitialIdentifierPassedToAudienceManager {
+    self.channelIDFromMockChannelRegistrar = @"foo";
+    [[self.mockAudienceManager expect] setChannelID:@"foo"];
+    self.channel = [self createChannel];
+    [self.mockAudienceManager verify];
+}
+
 - (void)testInitialIdentifierPassedToRegistrars {
     [[self.mockTagGroupsRegistrar expect] setIdentifier:self.channelIDFromMockChannelRegistrar clearPendingOnChange:NO];
     [[self.mockAttributeRegistrar expect] setIdentifier:self.channelIDFromMockChannelRegistrar clearPendingOnChange:NO];
@@ -660,6 +678,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
     [self.mockTagGroupsRegistrar verify];
     [self.mockAttributeRegistrar verify];
 }
+
 
 - (void)testCreatedIdentifierPassedToRegistrars {
     [[self.mockTagGroupsRegistrar expect] setIdentifier:@"foo" clearPendingOnChange:NO];
