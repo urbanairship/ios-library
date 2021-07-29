@@ -14,10 +14,18 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
     @IBOutlet private var overlayView: UIView!
     @IBOutlet private var activityIndicator: UIActivityIndicatorView!
     private var config: PreferenceCenterConfig?
-    private var preferenceCenterId: String?
+    private var preferenceCenterID: String?
+    private var activeSubscriptions: [String] = []
+    private var disposable: UADisposable?
+    
+    /**
+     * Preference center style
+     */
+    @objc
+    public var style: PreferenceCenterStyle?
     
     init(identifier: String, nibName: String?, bundle:Bundle?) {
-        self.preferenceCenterId = identifier
+        self.preferenceCenterID = identifier
         super.init(nibName: nibName, bundle: bundle)        
     }
     
@@ -27,16 +35,16 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-
-        overlayView.alpha = 1;
-        activityIndicator.startAnimating()
         
-        tableView.register(UINib(nibName: "PreferenceCenterCell", bundle: PreferenceCenterResources.bundle()), forCellReuseIdentifier: "PreferenceCenterCell")
-
+        tableView.register(PreferenceCenterCell.self, forCellReuseIdentifier: "PreferenceCenterCell")
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.backgroundColor = style?.backgroundColor
         
-        onConfigUpdated()
+        let nib = UINib(nibName: "PreferenceCenterSectionHeader", bundle:PreferenceCenterResources.bundle())
+        tableView.register(nib, forHeaderFooterViewReuseIdentifier: "PreferenceCenterSectionHeader")
+        
+        refreshConfig()
     }
 
     public override func viewDidAppear(_ animated: Bool) {
@@ -48,6 +56,10 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
         super.viewDidLayoutSubviews()
        
     }
+    public override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        self.disposable?.dispose()
+    }
     
     public func numberOfSections(in tableView: UITableView) -> Int {
         guard let sections = config?.sections.count else { return 0 }
@@ -58,39 +70,135 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
         guard let rows = config?.sections[section].items.count else { return 0 }
         return rows
     }
-
+    
+    public func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 50
+    }
+    
+    public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: "PreferenceCenterSectionHeader") as! PreferenceCenterSectionHeader
+        header.titleLabel.text = config?.sections[section].display?.title
+        header.subtitleLabel.text = config?.sections[section].display?.subtitle
+        if (style?.sectionTextFont != nil) {
+            header.titleLabel.font = style?.sectionTextFont
+            header.subtitleLabel.font = style?.sectionTextFont
+        }
+        if (style?.sectionTextColor != nil) {
+            header.titleLabel.textColor = style?.sectionTextColor
+            header.subtitleLabel.textColor = style?.sectionTextColor
+        }
+        
+        return header
+    }
+    
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
        
-        let cell = tableView.dequeueReusableCell(withIdentifier: "PreferenceCenterCell", for: indexPath) as! PreferenceCenterCell
-
-        cell.textLabel?.text = config?.sections[indexPath.section].items[indexPath.row].display?.title
-        cell.detailTextLabel?.text = config?.sections[indexPath.section].items[indexPath.row].display?.subtitle
-      
+        let cell = tableView.dequeueReusableCell(withIdentifier: "PreferenceCenterCell", for: indexPath) as!
+                PreferenceCenterCell
+        
+        guard let item = config?.sections[indexPath.section].items[indexPath.row] else {
+            return cell
+        }
+        
+        cell.textLabel?.text = item.display?.title
+        cell.detailTextLabel?.text = item.display?.subtitle
+        if (style?.preferenceTextFont != nil) {
+            cell.textLabel?.font = style?.preferenceTextFont
+            cell.detailTextLabel?.font = style?.preferenceTextFont
+        }
+        if (style?.preferenceTextColor != nil) {
+            cell.textLabel?.textColor = style?.preferenceTextColor
+            cell.detailTextLabel?.textColor = style?.preferenceTextColor
+        }
+        if (style?.backgroundColor != nil) {
+            cell.backgroundColor = style?.backgroundColor
+        }
+            
+        let cellSwitch = cell.accessoryView as! UISwitch
+        if (activeSubscriptions.contains(item.identifier)) {
+            cellSwitch.setOn(true, animated: false)
+        } else {
+            cellSwitch.setOn(false, animated: false)
+        }
+        
         cell.callback = { isOn in
-            // Apply changes to subscription items
+            let editor = UAirship.channel().editSubscriptionLists()
+            if (isOn) {
+                self.activeSubscriptions.append(item.identifier)
+                editor.subscribe(item.identifier)
+            } else {
+                self.activeSubscriptions.removeAll(where: { $0 == item.identifier })
+                editor.unsubscribe(item.identifier)
+            }
+            
+            editor.apply()
+            tableView.reloadData()
         }
         
         return cell
     }
 
-    func onConfigUpdated() {
-        PreferenceCenter.shared().config(preferenceCenterID: self.preferenceCenterId!) { config in
+    func onConfigLoaded(config: PreferenceCenterConfig, lists: [String]) {
+        self.config = config
+        self.navigationItem.setTitle(title: (style?.title ?? config.display?.title ?? PreferenceCenterResources.localizedString(key: "ua_preference_center_title")), subtitle: style?.subtitle ?? config.display?.subtitle ?? "", style: style)
+        
+        self.overlayView.alpha = 0;
+        self.activityIndicator.stopAnimating()
+        self.activeSubscriptions = lists
+        self.refreshTable()
+    }
+    
+    func refreshConfig() {
+        overlayView.alpha = 1;
+        activityIndicator.startAnimating()
+        
+        self.disposable?.dispose()
+        
+        var onComplete : ((PreferenceCenterConfig, [String]) -> Void)? = { config, lists in
+            self.onConfigLoaded(config: config, lists: lists)
+        }
+        
+        guard let preferenceCenterID = self.preferenceCenterID else {
+            return
+        }
+        
+        var cancelled = false
+    
+        self.disposable = UADisposable {
+            cancelled = true
+            onComplete = nil
+        }
+        
+        UAirship.channel().fetchSubscriptionLists() { [weak self] subscribedIDs, error in
             
-            if (config == nil) {
+            guard error == nil, let subscribedIDs = subscribedIDs else {
+                UADispatcher.main.dispatch(after: 30, block: {
+                    if (!cancelled) {
+                        self?.refreshConfig()
+                    }
+                })
                 return
             }
             
-            self.config = config
-            self.title = config?.display?.title
-            
-            self.overlayView.alpha = 0;
-            self.activityIndicator.stopAnimating()
-            
-            self.reload()
+            PreferenceCenter.shared().config(preferenceCenterID: preferenceCenterID) { config in
+                guard let config = config else {
+                    UADispatcher.main.dispatch(after: 30, block: {
+                        if (!cancelled) {
+                            self?.refreshConfig()
+                        }
+                    })
+                    return
+                }
+                
+                UADispatcher.main.dispatchAsync {
+                    onComplete?(config, subscribedIDs)
+                }
+                
+            }
         }
     }
     
-    func reload() {
+    func refreshTable() {
         tableView.reloadData()
 
         // Recompute layout so that sizes are correct
@@ -99,3 +207,36 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
     }
 }
 
+fileprivate extension UINavigationItem {
+    func setTitle(title:String?, subtitle:String?, style:PreferenceCenterStyle?) {
+        let titleLabel = UILabel()
+        titleLabel.text = title
+        titleLabel.font = style?.titleFont ?? UIFont.systemFont(ofSize: 18)
+        if (style?.titleColor != nil) {
+            titleLabel.textColor = style?.titleColor
+        }
+        titleLabel.sizeToFit()
+        
+        let subtitleLabel = UILabel()
+        subtitleLabel.text = subtitle
+        subtitleLabel.font = style?.subtitleFont ?? UIFont.systemFont(ofSize: 12)
+        if (style?.subtitleColor != nil) {
+            subtitleLabel.textColor = style?.subtitleColor
+        }
+        subtitleLabel.textAlignment = .center
+        subtitleLabel.sizeToFit()
+        
+        let stackView = UIStackView(arrangedSubviews: [titleLabel, subtitleLabel])
+        stackView.distribution = .equalCentering
+        stackView.axis = .vertical
+        stackView.alignment = .center
+        
+        let width = max(subtitleLabel.frame.size.width, subtitleLabel.frame.size.width)
+        stackView.frame = CGRect(x: 0, y: 0, width: width, height: 35)
+        
+        titleLabel.sizeToFit()
+        subtitleLabel.sizeToFit()
+        
+        self.titleView = stackView
+    }
+}

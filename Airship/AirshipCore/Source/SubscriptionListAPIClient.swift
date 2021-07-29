@@ -45,8 +45,16 @@ class SubscriptionListAPIClient : SubscriptionListAPIClientProtocol {
             SubscriptionListAPIClient.audienceIDKey: audience,
             SubscriptionListAPIClient.subscriptionListsIDKey: map(subscriptionListsUpdates: subscriptionLists)
         ]
-
-        let request = self.request(payload, "\(config.deviceAPIURL ?? "")\(SubscriptionListAPIClient.updatePath)", method: "POST")
+                
+        let request = UARequest(builderBlock: { [self] builder in
+            builder.method = "POST"
+            builder.url = URL(string: "\(config.deviceAPIURL ?? "")\(SubscriptionListAPIClient.updatePath)")
+            builder.username = config.appKey
+            builder.password = config.appSecret
+            builder.setValue("application/vnd.urbanairship+json; version=3;", header: "Accept")
+            builder.setValue("application/json", header: "Content-Type")
+            builder.body = try? UAJSONSerialization.data(withJSONObject: payload, options: [])
+        })
 
         return session.performHTTPRequest(request, completionHandler: { (data, response, error) in
             guard let response = response else {
@@ -63,7 +71,13 @@ class SubscriptionListAPIClient : SubscriptionListAPIClientProtocol {
 
         AirshipLogger.debug("Retrieving subscription lists")
 
-        let request = self.request([:], "\(config.deviceAPIURL ?? "")\(SubscriptionListAPIClient.getPath)\(channelID)", method: "GET")
+        let request = UARequest(builderBlock: { [self] builder in
+            builder.method = "GET"
+            builder.url = URL(string: "\(config.deviceAPIURL ?? "")\(SubscriptionListAPIClient.getPath)\(channelID)")
+            builder.username = config.appKey
+            builder.password = config.appSecret
+            builder.setValue("application/vnd.urbanairship+json; version=3;", header: "Accept")
+        })
 
         return session.performHTTPRequest(request, completionHandler: { (data, response, error) in
             guard let response = response else {
@@ -101,19 +115,7 @@ class SubscriptionListAPIClient : SubscriptionListAPIClientProtocol {
             }
         })
     }
-    
-    private func request(_ payload: [AnyHashable : Any], _ urlString: String, method: String) -> UARequest {
-        return UARequest(builderBlock: { [self] builder in
-            builder.method = method
-            builder.url = URL(string: urlString)
-            builder.username = config.appKey
-            builder.password = config.appSecret
-            builder.setValue("application/vnd.urbanairship+json; version=3;", header: "Accept")
-            builder.setValue("application/json", header: "Content-Type")
-            builder.body = try? UAJSONSerialization.data(withJSONObject: payload, options: [])
-        })
-    }
-    
+
     private func map(subscriptionListsUpdates: [SubscriptionListUpdate]) -> [[AnyHashable : Any]] {
         return subscriptionListsUpdates.map { (list) -> ([AnyHashable : Any]) in
             switch(list.type) {

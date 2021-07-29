@@ -14,10 +14,16 @@ open class PreferenceCenterCell: UITableViewCell {
         return cellSwitch
     }()
 
-    open override func awakeFromNib() {
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
         self.accessoryView = preferenceSwitch
         self.selectionStyle = .none
     }
+    
+    required public init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     
     @objc func preferenceSwitchChanged(_ sender : UISwitch) {
         callback?(sender.isOn)

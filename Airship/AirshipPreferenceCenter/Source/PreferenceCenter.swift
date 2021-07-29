@@ -42,10 +42,17 @@ public class PreferenceCenter : UAComponent {
     
     private var viewController : UIViewController?
     
+    /**
+     * Preference center style
+     */
+    @objc
+    public var style: PreferenceCenterStyle?
+    
     init(dataStore: UAPreferenceDataStore, privacyManager: UAPrivacyManager, remoteDataProvider: UARemoteDataProvider) {
         self.dataStore = dataStore
         self.privacyManager = privacyManager
         self.remoteDataProvider = remoteDataProvider
+        self.style = PreferenceCenterStyle(file: "AirshipPreferenceCenterStyle")
         super.init(dataStore: dataStore)
         AirshipLogger.info("PreferenceCenter initialized")
     }
@@ -76,30 +83,29 @@ public class PreferenceCenter : UAComponent {
         }
 
         AirshipLogger.debug("Opening default preference center UI")
-        let preferenceCenterVC = preferenceCenterViewController(preferenceCenterId: preferenceCenterId)
+    
+        let preferenceCenterVC = PreferenceCenterViewController.init(identifier:preferenceCenterId, nibName: "PreferenceCenterViewController", bundle: PreferenceCenterResources.bundle())
+
+        preferenceCenterVC.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismiss))
+       
+        preferenceCenterVC.style = style
         
         viewController = preferenceCenterVC
-
-        UAUtils.topController()?.present(preferenceCenterVC, animated: true, completion: {
+        
+        let navController = UINavigationController(nibName: nil, bundle: nil)
+        navController.modalTransitionStyle = UIModalTransitionStyle.crossDissolve
+        navController.modalPresentationStyle = UIModalPresentationStyle.fullScreen
+        
+        navController.navigationBar.tintColor = style?.tintColor
+        navController.navigationBar.barTintColor = style?.navigationBarColor
+        
+        navController.pushViewController(preferenceCenterVC, animated: false)
+        
+        UAUtils.topController()?.present(navController, animated: true, completion: {
             AirshipLogger.trace("Presented preference center view controller: \(preferenceCenterVC.description)")
         })
     }
 
-    private func preferenceCenterViewController(preferenceCenterId: String) -> UIViewController {
-        let navController = UINavigationController(nibName: nil, bundle: nil)
-
-        navController.modalTransitionStyle = UIModalTransitionStyle.crossDissolve
-        navController.modalPresentationStyle = UIModalPresentationStyle.fullScreen
-
-        let preferenceCenterVC = PreferenceCenterViewController.init(identifier:preferenceCenterId, nibName: "PreferenceCenterViewController", bundle: PreferenceCenterResources.bundle())
-
-        navController.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismiss))
-
-        navController.viewControllers.append(preferenceCenterVC)
-
-        return navController
-    }
-    
     @objc private func dismiss(sender: Any) {
         if let vc = viewController {
             vc.dismiss(animated: true) {
