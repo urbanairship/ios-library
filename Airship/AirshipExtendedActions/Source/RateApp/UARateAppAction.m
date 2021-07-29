@@ -185,7 +185,7 @@ NSString *const UARateAppLinkPromptTimestampsKey = @"RateAppActionLinkPromptCoun
     return [self getTimestampsForKey:UARateAppPromptTimestampsKey];
 }
 
-- (BOOL)canLinkToStore:(NSString *)linkString {
+- (BOOL)canLinkToStore:(NSString *)linkString NS_EXTENSION_UNAVAILABLE("Method not available in app extensions") {
     // If the URL can't be opened, bail before displaying
     if (![[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:linkString]]) {
         UA_LWARN(@"Unable to open iTunes URL: %@", linkString);
@@ -195,7 +195,7 @@ NSString *const UARateAppLinkPromptTimestampsKey = @"RateAppActionLinkPromptCoun
 }
 
 // Opens link to iTunes store rating section
--(void)linkToStore:(NSString *)linkString {
+-(void)linkToStore:(NSString *)linkString NS_EXTENSION_UNAVAILABLE("Method not available in app extensions") {
     if (![self canLinkToStore:linkString]) {
         return;
     }

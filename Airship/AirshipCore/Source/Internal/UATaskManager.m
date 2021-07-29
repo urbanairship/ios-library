@@ -78,7 +78,7 @@
                               networkMonitor:networkMonitor];
 }
 
-+ (instancetype)shared {
++ (instancetype)shared NS_EXTENSION_UNAVAILABLE("Method not available in app extensions") {
     static UATaskManager *sharedTaskManager = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{

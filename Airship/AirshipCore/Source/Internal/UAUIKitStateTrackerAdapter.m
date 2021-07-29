@@ -70,7 +70,7 @@
 
 }
 
-- (UAApplicationState)state {
+- (UAApplicationState)state NS_EXTENSION_UNAVAILABLE("Method not available in app extensions") {
     __block UAApplicationState result;
     [self.dispatcher doSync:^{
         switch ([UIApplication sharedApplication].applicationState) {

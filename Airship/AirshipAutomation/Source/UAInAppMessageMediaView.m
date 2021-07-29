@@ -155,7 +155,7 @@ static CGFloat const DefaultVideoHeightPadding = 60;
     [[NSNotificationCenter defaultCenter] removeObserver:self.modalWindowResignedKey];
 }
 
--(void)layoutSubviews {
+-(void)layoutSubviews NS_EXTENSION_UNAVAILABLE("Method not available in app extensions") {
     [super layoutSubviews];
 
     if (self.hideWindowWhenVideoIsFullScreen) {

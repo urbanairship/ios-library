@@ -432,7 +432,7 @@ static double const MinimumSwipeVelocity = 100.0;
     [self.dismissalTimer invalidate];
 }
 
-- (void)observeAppState {
+- (void)observeAppState NS_EXTENSION_UNAVAILABLE("Method not available in app extensions") {
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(applicationDidBecomeActive)
                                                  name:UAApplicationDidBecomeActiveNotification

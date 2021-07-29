@@ -57,7 +57,7 @@ NSString *const UANativeBridgeMultiCommand = @"multi";
  *
  * If a uairship:// URL, process it ourselves
  */
-- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler {
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler NS_EXTENSION_UNAVAILABLE("Method not available in app extensions") {
     WKNavigationType navigationType = navigationAction.navigationType;
     NSURLRequest *request = navigationAction.request;
     NSURL *originatingURL = webView.URL;
@@ -308,7 +308,7 @@ NSString *const UANativeBridgeMultiCommand = @"multi";
  * @param url The link's URL.
  * @param completion  The completion handler to execute when openURL processing is complete.
  */
-- (void)handleLinkClick:(NSURL *)url completionHandler:(void (^)(BOOL success))completion {
+- (void)handleLinkClick:(NSURL *)url completionHandler:(void (^)(BOOL success))completion NS_EXTENSION_UNAVAILABLE("Method not available in app extensions") {
     NSArray *forwardSchemes = @[@"itms-apps", @"maps", @"sms", @"tel", @"mailto"];
     NSArray *forwardHosts = @[@"maps.google.com", @"www.youtube.com", @"phobos.apple.com", @"itunes.apple.com"];
     if ([forwardSchemes containsObject:[url scheme].lowercaseString] || [forwardHosts containsObject:[url host].lowercaseString]) {

@@ -58,7 +58,7 @@
                                           application:application];
 }
 
-+ (instancetype)channelTagGroupsRegistrarWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
++ (instancetype)channelTagGroupsRegistrarWithConfig:(UARuntimeConfig *)config  dataStore:(UAPreferenceDataStore *)dataStore NS_EXTENSION_UNAVAILABLE("Method not available in app extensions") {
 
     UAPendingTagGroupStore *pendingTagGroupStore = [UAPendingTagGroupStore channelHistoryWithDataStore:dataStore];
     UATagGroupsAPIClient *client =  [UATagGroupsAPIClient channelClientWithConfig:config];
@@ -68,7 +68,7 @@
                                           application:[UIApplication sharedApplication]];
 }
 
-+ (instancetype)namedUserTagGroupsRegistrarWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
++ (instancetype)namedUserTagGroupsRegistrarWithConfig:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore NS_EXTENSION_UNAVAILABLE("Method not available in app extensions") {
 
     UAPendingTagGroupStore *pendingTagGroupStore = [UAPendingTagGroupStore namedUserHistoryWithDataStore:dataStore];
     UATagGroupsAPIClient *client =  [UATagGroupsAPIClient namedUserClientWithConfig:config];

@@ -258,7 +258,7 @@ NSString *const UALocationUpdatesEnabled = @"UALocationUpdatesEnabled";
     }
 }
 
-- (void)requestAuthorization {
+- (void)requestAuthorization NS_EXTENSION_UNAVAILABLE("Method not available in app extensions") {
     // Already requested
     if ([CLLocationManager authorizationStatus] != kCLAuthorizationStatusNotDetermined) {
         return;

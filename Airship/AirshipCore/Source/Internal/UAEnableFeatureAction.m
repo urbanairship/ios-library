@@ -61,7 +61,7 @@ NSString *const UAEnableBackgroundLocationActionValue = @"background_location";
     return YES;
 }
 
-- (void)navigateToSystemSettingsWithCompletionHandler:(UAActionCompletionHandler)completionHandler {
+- (void)navigateToSystemSettingsWithCompletionHandler:(UAActionCompletionHandler)completionHandler NS_EXTENSION_UNAVAILABLE("Method not available in app extensions") {
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]
                                        options:@{}
                              completionHandler:^(BOOL success) {

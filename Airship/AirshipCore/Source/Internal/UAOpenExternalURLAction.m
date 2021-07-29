@@ -41,7 +41,7 @@ NSString * const UAOpenExternalURLActionErrorDomain = @"com.urbanairship.actions
     });
 }
 
-- (void)openURL:(NSURL *)url completionHandler:(UAActionCompletionHandler)completionHandler {
+- (void)openURL:(NSURL *)url completionHandler:(UAActionCompletionHandler)completionHandler NS_EXTENSION_UNAVAILABLE("Method not available in app extensions") {
    [[UADispatcher mainDispatcher] dispatchAsync:^{
         [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:^(BOOL success) {
             if (!success) {
