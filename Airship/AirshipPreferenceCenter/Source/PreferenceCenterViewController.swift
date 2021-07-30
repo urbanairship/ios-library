@@ -14,9 +14,9 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
     @IBOutlet private var overlayView: UIView!
     @IBOutlet private var activityIndicator: UIActivityIndicatorView!
     private var config: PreferenceCenterConfig?
-    private var preferenceCenterID: String?
     private var activeSubscriptions: [String] = []
     private var disposable: UADisposable?
+    public var preferenceCenterID: String?
     
     /**
      * Preference center style
@@ -30,7 +30,7 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
     }
     
     required public init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
+        super.init(nibName: "PreferenceCenterViewController", bundle: PreferenceCenterResources.bundle())
     }
     
     public override func viewDidLoad() {
