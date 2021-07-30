@@ -43,8 +43,7 @@ let package = Package(
     targets: [
         .target(name: "AirshipCore",
                 path: "Airship/AirshipCore",
-                exclude: ["Resources/Info.plist",
-                          "Source/Public/AirshipCore.h",
+                exclude: ["Source/Public/AirshipCore.h",
                           "generate_header_imports.sh",
                           "Info.plist",
                           "Tests"],
@@ -76,8 +75,7 @@ let package = Package(
         .target(name:"AirshipAutomation",
                 dependencies: [.target(name: "AirshipCore")],
                 path: "Airship/AirshipAutomation",
-                exclude: ["Resources/Info.plist",
-                          "Source/AirshipAutomation.h",
+                exclude: ["Source/AirshipAutomation.h",
                           "generate_header_imports.sh",
                           "Info.plist"],
                 sources : ["Source"],
@@ -92,8 +90,7 @@ let package = Package(
         .target(name:"AirshipMessageCenter",
                 dependencies: [.target(name: "AirshipCore")],
                 path: "Airship/AirshipMessageCenter",
-                exclude: ["Resources/Info.plist",
-                          "Source/AirshipMessageCenter.h",
+                exclude: ["Source/AirshipMessageCenter.h",
                           "generate_header_imports.sh",
                           "Info.plist"],
                 sources : ["Source"],
@@ -109,8 +106,7 @@ let package = Package(
         .target(name:"AirshipExtendedActions",
                 dependencies: [.target(name: "AirshipCore")],
                 path: "Airship/AirshipExtendedActions",
-                exclude: ["Resources/Info.plist",
-                          "Source/AirshipExtendedActions.h",
+                exclude: ["Source/AirshipExtendedActions.h",
                           "generate_header_imports.sh",
                           "Info.plist"],
                 sources : ["Source"],
@@ -155,8 +151,6 @@ let package = Package(
                           "Info.plist",
                           "Tests"],
                 sources : ["Source"],
-                resources: [
-                    .process("Resources")],
                 publicHeadersPath: "Source/Public"
         ),
         .target(name:"AirshipNotificationServiceExtension",
@@ -165,8 +159,6 @@ let package = Package(
                           "Info.plist",
                           "Tests"],
                 sources : ["Source"],
-                resources: [
-                    .process("Resources")],
                 publicHeadersPath: "Source"
         ),
         .target(name:"AirshipChat",
