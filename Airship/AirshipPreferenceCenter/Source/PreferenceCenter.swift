@@ -14,10 +14,12 @@ public protocol PreferenceCenterOpenDelegate {
 
     /**
      * Opens the Preference Center with the given ID.
-     * @param id The ID of the preference center.
+     * - Parameters:
+     *  - preferenceCenterID: The preference center ID.
+     *  - Returns: `true` if the preference center was opened, otherwise `false` to fallback to OOTB UI.
      */
     @objc
-    func open(id: String)
+    func openPreferenceCenter(_ preferenceCenterID: String) -> Bool
 }
 
 /**
@@ -59,24 +61,20 @@ public class PreferenceCenter : UAComponent {
     
     /**
      * Opens the Preference Center with the given ID.
-     * @param preferenceCenterId The ID of the preference center.
+     * - Parameters:
+     *  - preferenceCenterID: The preference center ID.
      */
     @objc(openPreferenceCenter:)
-    public func open(_ preferenceCenterId: String) {
-        if let strongDelegate = self.openDelegate {
-            AirshipLogger.trace("Opening preference center \(preferenceCenterId) through delegate")
-            strongDelegate.open(id: preferenceCenterId)
+    public func open(_ preferenceCenterID: String) {
+        if (self.openDelegate?.openPreferenceCenter(preferenceCenterID) == true) {
+            AirshipLogger.trace("Preference center \(preferenceCenterID) opened through delegate")
         } else {
             AirshipLogger.trace("Launching OOTB preference center")
-            openDefaultPreferenceCenter(preferenceCenterId: preferenceCenterId)
+            openDefaultPreferenceCenter(preferenceCenterID: preferenceCenterID)
         }
     }
     
-    /**
-     * Opens the OOTB Preference Center with the given ID.
-     * @param preferenceCenterId The ID of the preference center.
-     */
-    private func openDefaultPreferenceCenter(preferenceCenterId: String) {
+    private func openDefaultPreferenceCenter(preferenceCenterID: String) {
         guard viewController == nil else {
             AirshipLogger.debug("Already displaying preference center: \(self.viewController!.description)")
             return
@@ -84,7 +82,7 @@ public class PreferenceCenter : UAComponent {
 
         AirshipLogger.debug("Opening default preference center UI")
     
-        let preferenceCenterVC = PreferenceCenterViewController.init(identifier:preferenceCenterId, nibName: "PreferenceCenterViewController", bundle: PreferenceCenterResources.bundle())
+        let preferenceCenterVC = PreferenceCenterViewController.init(identifier:preferenceCenterID, nibName: "PreferenceCenterViewController", bundle: PreferenceCenterResources.bundle())
 
         preferenceCenterVC.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismiss))
        
@@ -106,7 +104,8 @@ public class PreferenceCenter : UAComponent {
         })
     }
 
-    @objc private func dismiss(sender: Any) {
+    @objc
+    private func dismiss(sender: Any) {
         if let vc = viewController {
             vc.dismiss(animated: true) {
                 AirshipLogger.trace("Dismissed preference center view controller: \(vc.description)")
@@ -119,8 +118,9 @@ public class PreferenceCenter : UAComponent {
     
     /**
      * Returns the configuration of the Preference Center with the given ID trough a callback method.
-     * @param preferenceCenterID The ID of the Preference Center.
-     * @param completionHandler The completion handler that will receive the requested PreferenceCenterConfig
+     * - Parameters:
+     *  - preferenceCenterID: The preference center ID.
+     *  - completionHandlerThe completion handler that will receive the requested PreferenceCenterConfig
      */
     @objc(configForPreferenceCenterID:completionHandler:)
     @discardableResult
@@ -144,5 +144,18 @@ public class PreferenceCenter : UAComponent {
             let config = responses.first { $0.config.identifier == preferenceCenterID }?.config
             completionHandler(config)
         }
+    }
+    
+    // NOTE: For internal use only. :nodoc:
+    public override func deepLink(_ deepLink: URL) -> Bool {
+        guard deepLink.scheme == UAirshipDeepLinkScheme,
+              deepLink.host == "preferences",
+              deepLink.pathComponents.count == 2 else {
+            return false
+        }
+        
+        let preferenceCenterID = deepLink.pathComponents[1]
+        self.open(preferenceCenterID)
+        return true
     }
 }

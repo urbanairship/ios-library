@@ -168,6 +168,32 @@ NSString *const UAMessageDataScheme = @"message";
     [self.messageList retrieveMessageListWithSuccessBlock:nil withFailureBlock:nil];
 }
 
+- (BOOL)deepLink:(NSURL *)deepLink {
+    if (![deepLink.scheme isEqualToString:UAirshipDeepLinkScheme]) {
+        return NO;
+    }
+    
+    if (![deepLink.host isEqualToString:@"message_center"]) {
+        return NO;
+    }
+    
+    if ([deepLink.path hasPrefix:@"/message/"]) {
+        if (deepLink.pathComponents.count != 3) {
+            return NO;
+        }
+        NSString *messageID = deepLink.pathComponents[2];
+        [self displayMessageForID:messageID];
+    } else {
+        if (deepLink.path.length && ![deepLink.path isEqualToString:@"/"]) {
+            return NO;
+        }
+
+        [self display];
+    }
+    
+    return YES;
+}
+
 #pragma mark -
 #pragma mark UAPushableComponent
 

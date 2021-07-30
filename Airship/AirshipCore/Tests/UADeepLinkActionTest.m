@@ -1,14 +1,14 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UADeepLinkAction.h"
 #import "UAirship+Internal.h"
 #import "UAActionResult.h"
 #import "UAActionArguments.h"
 
+@import AirshipCore;
+
 @interface UADeepLinkActionTest : UABaseTest
 @property (nonatomic, strong) id mockAirship;
-@property (nonatomic, strong) id mockDelegate;
 @property (nonatomic, strong) UADeepLinkAction *action;
 @end
 
@@ -20,26 +20,21 @@
     self.mockAirship = [self mockForClass:[UAirship class]];
     [UAirship setSharedAirship:self.mockAirship];
 
-    self.mockDelegate = [self mockForProtocol:@protocol(UADeepLinkDelegate)];
-
     self.action = [[UADeepLinkAction alloc] init];
 }
 
 /**
  * Test deep link action calls the delegate
  */
-- (void)testPerformWithDeepLinkDelegate {
-    [[[self.mockAirship stub] andReturn:self.mockDelegate] deepLinkDelegate];
-
+- (void)testPerformAirshipHandlesDeepLink {
     NSURL *url = [NSURL URLWithString:@"http://some-deep-link"];
     id arg = [UAActionArguments argumentsWithValue: @"http://some-deep-link" withSituation:UASituationManualInvocation];
 
-    [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
-        void (^completionHandler)(void);
+    [[[self.mockAirship expect] andDo:^(NSInvocation *invocation) {
+        void (^completionHandler)(BOOL);
         [invocation getArgument:&completionHandler atIndex:3];
-        completionHandler();
-    }] receivedDeepLink:url completionHandler:OCMOCK_ANY];
-
+        completionHandler(YES);
+    }] deepLink:url completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *actionFinished = [self expectationWithDescription:@"action finished"];
     [self.action performWithArguments:arg completionHandler:^(UAActionResult *result) {
@@ -47,15 +42,23 @@
     }];
 
     [self waitForTestExpectations];
-    [self.mockDelegate verify];
+    [self.mockAirship verify];
 }
 
 /**
- * Test that URLs that are not allowed will generate an error if the delegate is not set.
+ * Test that URLs that are not allowed will generate an error if the airship does not handle the deep link.
  */
-- (void)testURLAllowListNoDelegate {
-    id arg = [UAActionArguments argumentsWithValue: @"http://some-deep-link" withSituation:UASituationManualInvocation];
+- (void)testURLAllowListFallback {
+    NSURL *url = [NSURL URLWithString:@"http://some-deep-link"];
 
+    id arg = [UAActionArguments argumentsWithValue:url withSituation:UASituationManualInvocation];
+
+    [[[self.mockAirship expect] andDo:^(NSInvocation *invocation) {
+        void (^completionHandler)(BOOL);
+        [invocation getArgument:&completionHandler atIndex:3];
+        completionHandler(NO);
+    }] deepLink:url completionHandler:OCMOCK_ANY];
+    
     XCTestExpectation *actionFinished = [self expectationWithDescription:@"action finished"];
     [self.action performWithArguments:arg completionHandler:^(UAActionResult *result) {
         XCTAssertNotNil(result.error);
@@ -63,7 +66,7 @@
     }];
 
     [self waitForTestExpectations];
-    [self.mockDelegate verify];
+    [self.mockAirship verify];
 }
 
 

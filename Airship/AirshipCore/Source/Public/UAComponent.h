@@ -65,6 +65,14 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (BOOL)componentEnabled;
 
+/**
+ * Called to handle `uairship://` deep links. The first component that
+ * return `YES` will prevent others from receiving the deep link.
+ * @param deepLink The deep link.
+ * @return `YES` is the deep link was handled, otherwise `NO`.
+ */
+- (BOOL)deepLink:(NSURL *)deepLink;
+
 @end
 
 NS_ASSUME_NONNULL_END

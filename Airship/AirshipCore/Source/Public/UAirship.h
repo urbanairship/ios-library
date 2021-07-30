@@ -70,6 +70,11 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  */
 extern NSString * const UAAirshipReadyNotification;
 
+/*
+ * UAirship deep link host - `uairship`.
+ */
+extern NSString * const UAirshipDeepLinkScheme;
+
 /**
  * UAirship manages the shared state for all Airship services. [UAirship takeOff:] should be
  * called from within your application delegate's `application:didFinishLaunchingWithOptions:` method
@@ -280,7 +285,15 @@ extern NSString * const UAAirshipReadyNotification;
  */
 - (nullable UAComponent *)componentForClassName:(NSString *)className;
 
-NS_ASSUME_NONNULL_END
-
+/**
+ * Handles deep links.
+ * `uairship://` deep links will be handled internally. All other deep links
+ * will be forwarded to the the deep link delegate.
+ * @param deepLink The deep link.
+ * @param completionHandler The result. `YES` if the link was able to be procesed, otherwise `NO`.
+ */
+- (void)deepLink:(NSURL *)deepLink completionHandler:(void (^)(BOOL result))completionHandler;
 
 @end
+
+NS_ASSUME_NONNULL_END

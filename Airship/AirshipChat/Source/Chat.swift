@@ -212,6 +212,34 @@ public class Chat : UAComponent, UAPushableComponent {
             AirshipLogger.debug("Chat already dismissed")
         }
     }
+    
+    // NOTE: For internal use only. :nodoc:
+    public override func deepLink(_ deepLink: URL) -> Bool {
+        guard deepLink.scheme == UAirshipDeepLinkScheme,
+              deepLink.host == "chat",
+              deepLink.path.isEmpty || deepLink.path == "/" else {
+            return false
+        }
+        
+        let urlComponents = URLComponents(url: deepLink, resolvingAgainstBaseURL: false)
+        let queryMap = urlComponents?.queryItems?.reduce(into: [String : String?]()) {
+            $0[$1.name] = $1.value
+        } ?? [:]
+        
+        if let routing = queryMap["routing"] as? String {
+            do {
+                let parsedRouting = try JSONDecoder().decode(ChatRouting.self, from: Data(routing.utf8))
+                self.conversation.routing = parsedRouting
+            } catch {
+                AirshipLogger.error("Failed to parse routing \(error)")
+            }
+        }
+        
+        let draft = queryMap["chat_input"] as? String
+        self.openChat(message: draft)
+        
+        return true
+    }
 }
 
 

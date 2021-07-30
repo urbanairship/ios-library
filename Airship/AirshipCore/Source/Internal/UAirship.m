@@ -38,6 +38,8 @@
 #import <Airship/Airship-Swift.h>
 #endif
 
+NSString * const UAirshipDeepLinkScheme = @"uairship";
+
 // Notifications
 NSString * const UAAirshipReadyNotification = @"com.urbanairship.airship_ready";
 
@@ -657,6 +659,26 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
 - (BOOL)isDataCollectionEnabled {
     return [self.sharedPrivacyManager isAnyFeatureEnabled];
+}
+
+- (void)deepLink:(NSURL *)deepLink completionHandler:(void (^)(BOOL result))completionHandler {
+    if ([deepLink.scheme isEqualToString:UAirshipDeepLinkScheme]) {
+        for (UAComponent *component in self.components) {
+            if ([component deepLink:deepLink]) {
+                break;
+            }
+        }
+        completionHandler(YES);
+    } else {
+        id strongDelegate = self.deepLinkDelegate;
+        if ([strongDelegate respondsToSelector:@selector(receivedDeepLink:completionHandler:)]) {
+            [strongDelegate receivedDeepLink:deepLink completionHandler:^{
+                completionHandler(YES);
+            }];
+        } else{
+            completionHandler(NO);
+        }
+    }
 }
 
 @end

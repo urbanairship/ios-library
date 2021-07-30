@@ -71,4 +71,8 @@ BOOL const UAComponentEnabledDefault = YES;
     // placeholder – subclasses should override if they need to know when the shared airship is ready.
 }
 
+- (BOOL)deepLink:(NSURL *)deepLink {
+    return NO;
+}
+
 @end

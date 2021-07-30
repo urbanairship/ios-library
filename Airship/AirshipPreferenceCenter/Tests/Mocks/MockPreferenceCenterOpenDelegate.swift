@@ -2,8 +2,10 @@ import AirshipPreferenceCenter
 
 class MockPreferenceCenterOpenDelegate : PreferenceCenterOpenDelegate {
     var lastOpenId: String?
+    var result : Bool = false
     
-    func open(id: String) {
-        self.lastOpenId = id
+    func openPreferenceCenter(_ identifier: String) -> Bool {
+        self.lastOpenId = identifier
+        return false
     }
 }

@@ -83,11 +83,40 @@ class PreferenceCenterTest: XCTestCase {
         self.preferenceCenter.open("some-form")
         XCTAssertEqual("some-form", delegate.lastOpenId)
     }
+    
+    func testDeepLink() {
+        let delegate = MockPreferenceCenterOpenDelegate()
+        self.preferenceCenter.openDelegate = delegate
+        
+        let valid = URL(string: "uairship://preferences/some-id")!
+        XCTAssertTrue(self.preferenceCenter.deepLink(valid))
+        XCTAssertEqual("some-id", delegate.lastOpenId)
+        
+        let trailingSlash = URL(string: "uairship://preferences/some-other-id/")!
+        XCTAssertTrue(self.preferenceCenter.deepLink(trailingSlash))
+        XCTAssertEqual("some-other-id", delegate.lastOpenId)
+    }
+    
+    func testDeepLinkInvalid() {
+        let delegate = MockPreferenceCenterOpenDelegate()
+        self.preferenceCenter.openDelegate = delegate
+        
+        let wrongScheme = URL(string: "whatever://preferences/some-id")!
+        XCTAssertFalse(self.preferenceCenter.deepLink(wrongScheme))
+        
+        let wrongHost = URL(string: "uairship://message_center/some-id")!
+        XCTAssertFalse(self.preferenceCenter.deepLink(wrongHost))
+        
+        let tooManyArgs = URL(string: "uairship://preferences/some-other-id/what")!
+        XCTAssertFalse(self.preferenceCenter.deepLink(tooManyArgs))
+    }
 
     private func createPayload(_ json: String) -> UARemoteDataPayload {
         let data = try! JSONSerialization.jsonObject(with: json.data(using: .utf8)!, options: []) as! [AnyHashable : Any]
         
         return UARemoteDataPayload(type: "preference_forms", timestamp: Date(), data: data, metadata: [:])
     }
+    
+    
 
 }

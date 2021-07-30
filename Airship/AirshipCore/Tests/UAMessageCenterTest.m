@@ -132,4 +132,45 @@
     [self.mockMessageList verify];
 }
 
+- (void)testDeepLinks {
+    self.messageCenter.displayDelegate = self.mockDisplayDelegate;
+
+    NSURL *validMessage = [NSURL URLWithString:@"uairship://message_center/message/some-message"];
+    [[self.mockDisplayDelegate expect] displayMessageCenterForMessageID:@"some-message" animated:OCMOCK_ANY];
+    XCTAssertTrue([self.messageCenter deepLink:validMessage]);
+
+    NSURL *trailingSlashMessage = [NSURL URLWithString:@"uairship://message_center/message/some-other-message/"];
+    [[self.mockDisplayDelegate expect] displayMessageCenterForMessageID:@"some-other-message" animated:OCMOCK_ANY];
+    XCTAssertTrue([self.messageCenter deepLink:trailingSlashMessage]);
+    
+    NSURL *validCenter = [NSURL URLWithString:@"uairship://message_center"];
+    [[self.mockDisplayDelegate expect] displayMessageCenterAnimated:OCMOCK_ANY];
+    XCTAssertTrue([self.messageCenter deepLink:validCenter]);
+
+    NSURL *trailingSlashCenter = [NSURL URLWithString:@"uairship://message_center/"];
+    [[self.mockDisplayDelegate expect] displayMessageCenterAnimated:OCMOCK_ANY];
+    XCTAssertTrue([self.messageCenter deepLink:trailingSlashCenter]);
+    
+    [self.mockDisplayDelegate verify];
+}
+
+- (void)testInvalidDeepLinks {
+    self.messageCenter.displayDelegate = self.mockDisplayDelegate;
+
+    [[self.mockDisplayDelegate reject] displayMessageCenterForMessageID:OCMOCK_ANY animated:OCMOCK_ANY];
+    [[self.mockDisplayDelegate reject] displayMessageCenterAnimated:OCMOCK_ANY];
+
+    NSURL *tooManyArgs = [NSURL URLWithString:@"uairship://message_center/message/some-message/what"];
+    XCTAssertFalse([self.messageCenter deepLink:tooManyArgs]);
+
+    NSURL *wrongHost = [NSURL URLWithString:@"uairship://what/message/some-message"];
+    XCTAssertFalse([self.messageCenter deepLink:wrongHost]);
+    
+    NSURL *wrongScheme = [NSURL URLWithString:@"what://message_center/message/some-message"];
+    XCTAssertFalse([self.messageCenter deepLink:wrongScheme]);
+    
+    [self.mockDisplayDelegate verify];
+}
+
+
 @end
