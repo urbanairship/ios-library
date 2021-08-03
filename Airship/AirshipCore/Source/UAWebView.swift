@@ -6,7 +6,7 @@ import WebKit
 import Foundation
 
 @available(tvOS, unavailable)
-@objc
+@objc(UAWebView)
 public class UAWebView : WKWebView {
     required init?(coder: NSCoder) {
         // An initial frame for initialization must be set, but it will be overridden
