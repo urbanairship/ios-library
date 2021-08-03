@@ -8,7 +8,7 @@ import QuartzCore
  * loading indicator that embeds a UIActivityIndicatorView
  * in a translucent black beveled rect.
  */
-@objc
+@objc(UABeveledLoadingIndicator)
 public class UABeveledLoadingIndicator : UIView {
     private var activity: UIActivityIndicatorView?
 

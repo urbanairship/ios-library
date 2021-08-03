@@ -2,6 +2,7 @@
 
 import UIKit
 
+@objc(UAPreferenceCenterSectionHeader)
 class PreferenceCenterSectionHeader: UITableViewHeaderFooterView {
 
     @IBOutlet weak var titleLabel: UILabel!

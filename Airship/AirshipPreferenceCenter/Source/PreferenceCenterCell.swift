@@ -5,6 +5,7 @@ import UIKit
 import AirshipCore
 #endif
 
+@objc(UAPreferenceCenterCell)
 open class PreferenceCenterCell: UITableViewCell {
     var callback : ((Bool)->())?
     

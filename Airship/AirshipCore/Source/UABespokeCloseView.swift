@@ -6,7 +6,7 @@ import QuartzCore
 /**
  * A circle with an X in it, drawn to fill the frame.
  */
-@objc
+@objc(UABespokeCloseView)
 public class UABespokeCloseView : UIView {
 
     @objc
