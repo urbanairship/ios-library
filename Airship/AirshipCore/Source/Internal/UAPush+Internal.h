@@ -2,8 +2,6 @@
 
 #import "UAPush.h"
 #import "UAirship.h"
-#import "UAAPNSRegistrationProtocol+Internal.h"
-#import "UAAPNSRegistration+Internal.h"
 #import "UAComponent+Internal.h"
 #import "UAChannel+Internal.h"
 #import "UAPushProviderDelegate.h"
@@ -16,6 +14,7 @@
 @class UATagGroupsRegistrar;
 @class UADispatcher;
 @class UANotificationCategories;
+@class UAAPNSRegistration;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -129,7 +128,7 @@ extern NSString *const UAPushTagsMigratedToChannelTagsKey;
 /**
  * The push registration instance.
  */
-@property (nonatomic, strong) id<UAAPNSRegistrationProtocol> pushRegistration;
+@property (nonatomic, strong) UAAPNSRegistration *pushRegistration;
 
 ///---------------------------------------------------------------------------------------
 /// @name Push Internal Methods
@@ -171,7 +170,7 @@ extern NSString *const UAPushTagsMigratedToChannelTagsKey;
                      analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics
                appStateTracker:(UAAppStateTracker *)appStateTracker
             notificationCenter:(NSNotificationCenter *)notificationCenter
-              pushRegistration:(id<UAAPNSRegistrationProtocol>)pushRegistration
+              pushRegistration:(UAAPNSRegistration *)pushRegistration
                    application:(UIApplication *)application
                     dispatcher:(UADispatcher *)dispatcher
                 privacyManager:(UAPrivacyManager *)privacyManager;

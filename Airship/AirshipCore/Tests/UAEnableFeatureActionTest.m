@@ -6,7 +6,6 @@
 #import "UAEnableFeatureAction.h"
 #import "UAirship+Internal.h"
 #import "UAPush+Internal.h"
-#import "UAAPNSRegistration+Internal.h"
 
 @import AirshipCore;
 
@@ -36,7 +35,7 @@
     self.mockLocationProvider = [self mockForProtocol:@protocol(UALocationProvider)];
 
     self.mockAirship = [self strictMockForClass:[UAirship class]];
-    self.mockPushRegistration = [self mockForProtocol:@protocol(UAAPNSRegistrationProtocol)];
+    self.mockPushRegistration = [self mockForClass:[UAAPNSRegistration class]];
     self.mockApplication = [self mockForClass:[UIApplication class]];
     self.mockPrivacyManager = [self mockForClass:[UAPrivacyManager class]];
 

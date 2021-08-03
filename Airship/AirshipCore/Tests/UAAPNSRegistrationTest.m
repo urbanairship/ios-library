@@ -1,7 +1,8 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAAPNSRegistration+Internal.h"
+
+#import "AirshipTests-Swift.h"
 
 @interface UAAPNSRegistrationTest : UABaseTest
 

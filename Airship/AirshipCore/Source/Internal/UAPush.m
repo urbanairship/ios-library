@@ -87,7 +87,7 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
                      analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics
                appStateTracker:(UAAppStateTracker *)appStateTracker
             notificationCenter:(NSNotificationCenter *)notificationCenter
-              pushRegistration:(id<UAAPNSRegistrationProtocol>)pushRegistration
+              pushRegistration:(UAAPNSRegistration *)pushRegistration
                    application:(UIApplication *)application
                     dispatcher:(UADispatcher *)dispatcher
                 privacyManager:(UAPrivacyManager *)privacyManager {
@@ -168,7 +168,7 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
                      analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics
                appStateTracker:(UAAppStateTracker *)appStateTracker
             notificationCenter:(NSNotificationCenter *)notificationCenter
-              pushRegistration:(id<UAAPNSRegistrationProtocol>)pushRegistration
+              pushRegistration:(UAAPNSRegistration *)pushRegistration
                    application:(UIApplication *)application
                     dispatcher:(UADispatcher *)dispatcher
                 privacyManager:(UAPrivacyManager *)privacyManager {
