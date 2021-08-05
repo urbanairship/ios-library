@@ -11,10 +11,28 @@ public class UAPreferenceDataStore : NSObject {
 
     @objc
     public init(keyPrefix: String) {
-        self.defaults = UserDefaults.standard
+        self.defaults = UAPreferenceDataStore.createDefaults(keyPrefix: keyPrefix)
         self.keyPrefix = keyPrefix
+        super.init()
     }
-
+    
+    class func createDefaults(keyPrefix: String) -> UserDefaults {
+        let suiteName = "\(Bundle.main.bundleIdentifier ?? "").airship.settings"
+        guard let defaults = UserDefaults(suiteName: suiteName) else {
+            AirshipLogger.error("Failed to create defaults \(suiteName)")
+            return UserDefaults.standard
+        }
+        
+        for (key, value) in UserDefaults.standard.dictionaryRepresentation() {
+            if key.hasPrefix(keyPrefix) {
+                defaults.setValue(value, forKey: key)
+                UserDefaults.standard.removeObject(forKey: key)
+            }
+        }
+        
+        return defaults
+    }
+    
     func prefixKey(_ key: String) -> String {
         return (keyPrefix) + key
     }

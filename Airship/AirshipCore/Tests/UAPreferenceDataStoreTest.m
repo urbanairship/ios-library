@@ -12,9 +12,7 @@
 
 - (void)tearDown {
     [super tearDown];
-    [NSUserDefaults resetStandardUserDefaults];
 }
-
 
 - (void)testKeyIsStoredAndRetrieved {
     NSString *value = [[NSProcessInfo processInfo] globallyUniqueString];
@@ -28,6 +26,13 @@
     XCTAssertEqualObjects([self.dataStore objectForKey:@"key"], value);
     [self.dataStore removeObjectForKey:@"key"];
     XCTAssertNil([self.dataStore objectForKey:@"key"]);
+}
+
+- (void)testMigration {
+    NSString *prefix = NSUUID.UUID.UUIDString;
+    [NSUserDefaults.standardUserDefaults setBool:YES forKey:[NSString stringWithFormat:@"%@some-key", prefix]];
+    UAPreferenceDataStore *dataStore = [[UAPreferenceDataStore alloc] initWithKeyPrefix:prefix];
+    XCTAssertTrue([dataStore boolForKey:@"some-key"]);
 }
 
 @end
