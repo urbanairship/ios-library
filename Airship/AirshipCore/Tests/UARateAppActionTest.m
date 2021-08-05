@@ -19,7 +19,6 @@
 @property (nonatomic, strong) id mockConfig;
 
 @property (nonatomic, strong) UATestSystemVersion *testSystemVersion;
-
 @property (nonatomic, retain) UARateAppAction *action;
 @end
 
@@ -64,8 +63,10 @@
 
     NSNumber *todayTimestamp = [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]];
 
+    UAPreferenceDataStore *datastore = [UAPreferenceDataStore preferenceDataStoreWithKeyPrefix:@"mockAppKey"];
+    
     // Inject time stamps of zero one and two to indicate three timestamps long ago
-    [[NSUserDefaults standardUserDefaults] setObject:@[@0, @1, @2] forKey:[@"mockAppKey" stringByAppendingString:@"RateAppActionPromptCount"]];
+    [datastore setObject:@[@0, @1, @2] forKey:@"RateAppActionPromptCount"];
 
     // Make sure there are stored timestamps
     NSArray *timestamps = [dataStore arrayForKey:@"RateAppActionPromptCount"];

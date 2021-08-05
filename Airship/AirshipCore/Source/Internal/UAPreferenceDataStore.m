@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UAPreferenceDataStore+Internal.h"
+#import "UAGlobal.h"
 
 @interface UAPreferenceDataStore()
 @property (nonatomic, strong) NSUserDefaults *defaults;
@@ -12,9 +13,31 @@
 
 + (instancetype)preferenceDataStoreWithKeyPrefix:(NSString *)keyPrefix {
     UAPreferenceDataStore *dataStore = [[UAPreferenceDataStore alloc] init];
-    dataStore.defaults = [NSUserDefaults standardUserDefaults];
+    dataStore.defaults = [self createDefaultsWithPrefix:keyPrefix];
     dataStore.keyPrefix = keyPrefix;
     return dataStore;
+}
+
++ (NSUserDefaults *)createDefaultsWithPrefix:(NSString *)keyPrefix {
+    NSString *bundleID = NSBundle.mainBundle.bundleIdentifier ?: @"";
+    NSString *suiteName = [NSString stringWithFormat:@"%@.airship.settings", bundleID];
+    
+    NSUserDefaults *defaults = [[NSUserDefaults alloc] initWithSuiteName:suiteName];
+    if (!defaults) {
+        UA_LERR(@"Failed to create defaults %@", suiteName);
+        return NSUserDefaults.standardUserDefaults;
+    }
+    
+    NSDictionary *defaultDictionary = [NSUserDefaults.standardUserDefaults dictionaryRepresentation];
+    
+    for (NSString *key in defaultDictionary.allKeys) {
+        if ([key hasPrefix:keyPrefix]) {
+            [defaults setValue:defaultDictionary[key] forKey:key];
+            [NSUserDefaults.standardUserDefaults removeObjectForKey:key];
+        }
+    }
+    
+    return defaults;
 }
 
 - (NSString *)prefixKey:(nonnull NSString *)key {
@@ -122,14 +145,7 @@
 }
 
 - (void)migrateUnprefixedKeys:(NSArray *)keys {
-    
-    for (NSString *key in keys) {
-        id value = [self.defaults objectForKey:key];
-        if (value) {
-            [self.defaults setValue:value forKey:[self prefixKey:key]];
-            [self.defaults removeObjectForKey:key];
-        }
-    }
+    // No-Op
 }
 
 - (void)removeAll {
