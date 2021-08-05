@@ -16,7 +16,7 @@
 - (void)setUp {
     self.mockNotificationCenter = [self mockForClass:[NSNotificationCenter class]];
     self.mockAdapter = [self mockForProtocol:@protocol(UAAppStateTrackerAdapter)];
-    [[[self.mockAdapter stub] andReturnValue:@(UAApplicationStateInactive)] state];
+    [(UAAppStateTracker *)[[self.mockAdapter stub] andReturnValue:@(UAApplicationStateInactive)] state];
     [self createTracker];
 }
 

@@ -688,7 +688,7 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
     }];
 
     [self verifyDelay:delay fulfillmentBlock:^{
-        [[[self.mockAppStateTracker expect] andReturnValue:@(UAApplicationStateActive)] state];
+        [(UAAppStateTracker *)[[self.mockAppStateTracker expect] andReturnValue:@(UAApplicationStateActive)] state];
         [self simulateForegroundTransition];
     }];
 }
@@ -703,7 +703,7 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
     }];
 
     [self verifyDelay:delay fulfillmentBlock:^{
-        [[[self.mockAppStateTracker expect] andReturnValue:@(UAApplicationStateBackground)] state];
+        [(UAAppStateTracker *)[[self.mockAppStateTracker expect] andReturnValue:@(UAApplicationStateBackground)] state];
         [self.notificationCenter postNotificationName:UAAppStateTracker.didTransitionToBackground object:nil];
     }];
 }

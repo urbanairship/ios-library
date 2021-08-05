@@ -113,7 +113,7 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
  */
 - (void)testAddEventBackground {
     // Background application state
-    [[[self.mockAppStateTracker stub] andReturnValue:@(UAApplicationStateBackground)] state];
+    [(UAAppStateTracker *)[[self.mockAppStateTracker stub] andReturnValue:@(UAApplicationStateBackground)] state];
 
     UACustomEvent *event = [UACustomEvent eventWithName:@"cool"];
     NSDate *date = [NSDate now];
@@ -460,7 +460,7 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
  * Test batch delay foreground.
  */
 - (void)testBatchDelayForeground {
-    [[[self.mockAppStateTracker stub] andReturnValue:@(UAApplicationStateActive)] state];
+    [(UAAppStateTracker *)[[self.mockAppStateTracker stub] andReturnValue:@(UAApplicationStateActive)] state];
 
     id mockDelay = [self mockForClass:[UADelay class]];
     self.delayProvider = ^(NSTimeInterval delay) {
@@ -480,7 +480,7 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
  * Test batch delay background.
  */
 - (void)testBatchDelayBackground {
-    [[[self.mockAppStateTracker stub] andReturnValue:@(UAApplicationStateBackground)] state];
+    [(UAAppStateTracker *)[[self.mockAppStateTracker stub] andReturnValue:@(UAApplicationStateBackground)] state];
 
     id mockDelay = [self mockForClass:[UADelay class]];
     self.delayProvider = ^(NSTimeInterval delay) {

@@ -579,7 +579,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
  * Test receiving a call to application:didRegisterForRemoteNotificationsWithDeviceToken: results in that call being forwarded to the registration delegate
  */
 -(void)testPushForwardsDidRegisterForRemoteNotificationsWithDeviceTokenToRegistrationDelegateForeground {
-    [[[self.mockAppStateTracker stub] andReturnValue:@(UAApplicationStateActive)] state];
+    [(UAAppStateTracker *)[[self.mockAppStateTracker stub] andReturnValue:@(UAApplicationStateActive)] state];
 
     XCTestExpectation *delegateCalled = [self expectationWithDescription:@"Registration delegate called"];
 
@@ -608,7 +608,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
  * Test receiving a call to application:didRegisterForRemoteNotificationsWithDeviceToken: results in that call being forwarded to the registration delegate
  */
 -(void)testPushForwardsDidRegisterForRemoteNotificationsWithDeviceTokenToRegistrationDelegateBackground {
-    [[[self.mockAppStateTracker stub] andReturnValue:@(UAApplicationStateBackground)] state];
+    [(UAAppStateTracker *)[[self.mockAppStateTracker stub] andReturnValue:@(UAApplicationStateBackground)] state];
 
     // EXPECTATIONS
     [[self.mockRegistrationDelegate expect] apnsRegistrationSucceededWithDeviceToken:self.validAPNSDeviceToken];
@@ -1017,7 +1017,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
     [self rejectUpdatePushRegistrationWithOptions];
 
-    [[[self.mockAppStateTracker expect] andReturnValue:@(UAApplicationStateActive)] state];
+    [(UAAppStateTracker *)[[self.mockAppStateTracker expect] andReturnValue:@(UAApplicationStateActive)] state];
 
     // TEST
     [self.notificationCenter postNotificationName:UAAppStateTracker.didTransitionToForeground object:nil];
@@ -1548,7 +1548,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
  */
 - (void)testRegisteredDeviceToken {
     // SETUP
-    [[[self.mockAppStateTracker stub] andReturnValue:@(UAApplicationStateBackground)] state];
+    [(UAAppStateTracker *)[[self.mockAppStateTracker stub] andReturnValue:@(UAApplicationStateBackground)] state];
 
     // Expect UAPush to update channel registration
     [[self.mockChannel expect] updateRegistration];
@@ -1568,7 +1568,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
 -(void)testDidRegisterForRemoteNotificationsWithDeviceTokenDoesntRegisterChannelWhenInBackground {
     // SETUP
-    [[[self.mockAppStateTracker stub] andReturnValue:@(UAApplicationStateBackground)] state];
+    [(UAAppStateTracker *)[[self.mockAppStateTracker stub] andReturnValue:@(UAApplicationStateBackground)] state];
 
     [[[self.mockChannel stub] andReturn:@"someChannelID"] identifier];
 

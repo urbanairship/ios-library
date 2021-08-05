@@ -77,7 +77,7 @@
 }
 
 - (void)testBackgroundInitEmitsAppInitEvent {
-    [[[self.mockAppStateTracker stub] andReturnValue:@(UAApplicationStateBackground)] state];
+    [(UAAppStateTracker *)[[self.mockAppStateTracker stub] andReturnValue:@(UAApplicationStateBackground)] state];
 
     [[self.mockEventManager expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
         return [obj isMemberOfClass:[UAAppInitEvent class]];
@@ -88,7 +88,7 @@
 }
 
 - (void)testInactiveInitDoesNotEmitEvents {
-    [[[self.mockAppStateTracker stub] andReturnValue:@(UAApplicationStateInactive)] state];
+    [(UAAppStateTracker *)[[self.mockAppStateTracker stub] andReturnValue:@(UAApplicationStateInactive)] state];
     [[self.mockEventManager reject] addEvent:OCMOCK_ANY eventID:OCMOCK_ANY eventDate:OCMOCK_ANY sessionID:OCMOCK_ANY];
 
     [self createAnalytics];
@@ -97,7 +97,7 @@
 
 - (void)testFirstTransitionToForegroundEmitsAppInit {
     // Create analytics in inactive state so that init is deferred
-    [[[self.mockAppStateTracker stub] andReturnValue:@(UAApplicationStateInactive)] state];
+    [(UAAppStateTracker *)[[self.mockAppStateTracker stub] andReturnValue:@(UAApplicationStateInactive)] state];
     [self createAnalytics];
     
     [[self.mockEventManager expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
@@ -127,7 +127,7 @@
 
 - (void)testBackgroundBeforeForegroundEmitsAppInit {
     // Create analytics in inactive state so that init is deferred
-    [[[self.mockAppStateTracker stub] andReturnValue:@(UAApplicationStateInactive)] state];
+    [(UAAppStateTracker *)[[self.mockAppStateTracker stub] andReturnValue:@(UAApplicationStateInactive)] state];
     [self createAnalytics];
     
     [[self.mockEventManager expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
