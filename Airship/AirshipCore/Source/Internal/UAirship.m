@@ -496,7 +496,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     return sharedAirship_.sharedRemoteDataManager;
 }
 
-- (void)validate {
+- (void)validate NS_EXTENSION_UNAVAILABLE("Method not available in app extensions") {
     // Background notification validation
     if (self.remoteNotificationBackgroundModeEnabled) {
 

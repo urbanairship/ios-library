@@ -255,7 +255,7 @@ NSString * const UAConnectionTypeWifi = @"wifi";
     return success;
 }
 
-+ (UIWindow *)mainWindow {
++ (UIWindow *)mainWindow NS_EXTENSION_UNAVAILABLE("Method not available in app extensions") {
     UIWindow *window;
 
     id<UIApplicationDelegate> appDelegate = [UIApplication sharedApplication].delegate;

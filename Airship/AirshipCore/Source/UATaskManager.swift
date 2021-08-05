@@ -5,6 +5,7 @@ import UIKit
 
 // NOTE: For internal use only. :nodoc:
 @objc
+@available(iOSApplicationExtension, unavailable)
 public class UATaskManager : NSObject, TaskManagerProtocol {
 
     private static let initialBackOff = 30.0

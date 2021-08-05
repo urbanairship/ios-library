@@ -3,6 +3,14 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 14.6.0 July 30, 2021
+Minor release adding support for Chat routing and fixing build issues in Xcode 13.
+
+### Changes
+- Added Chat routing support
+- Resolved build warnings in Xcode 13
+- Fixed SPM build errors in Xcode 13 beta 3 and above
+
 ## Version 14.5.2 July 12, 2021
 Patch release fixing an issue with IAA banners displayed in hidden windows, fixing a race condition when loading Accengage notification categories, and changing the behavior of UAPush to persist notification options. Apps having issues with IAA banner display in multi-window UIs or apps using the Accengage module are encouraged to update.
  

@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 @objc
+@available(iOSApplicationExtension, unavailable)
 public class UAUIKitStateTrackerAdapter: NSObject, UAAppStateTrackerAdapter {
 
     @objc

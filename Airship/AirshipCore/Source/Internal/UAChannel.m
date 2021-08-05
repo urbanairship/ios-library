@@ -637,11 +637,11 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
     }
 }
 
-#pragma mark -
+#pragma mAark -
 #pragma mark UAPushableComponent
 
 -(void)receivedRemoteNotification:(UNNotificationContent *)notification
-                completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+                completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler NS_EXTENSION_UNAVAILABLE("Method not available in app extensions") {
     BOOL isInBackground = [UIApplication sharedApplication].applicationState == UIApplicationStateBackground;
     if (isInBackground && !self.identifier) {
         // Update registration if the channel identifier does not exist

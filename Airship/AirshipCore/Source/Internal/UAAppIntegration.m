@@ -198,7 +198,7 @@
 
 + (void)handleIncomingNotification:(NSDictionary *)userInfo
             foregroundPresentation:(BOOL)foregroundPresentation
-                 completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+                 completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler NS_EXTENSION_UNAVAILABLE("Method not available in app extensions") {
     UA_LINFO(@"Received notification: %@", userInfo);
 
     dispatch_group_t dispatchGroup = dispatch_group_create();
@@ -292,7 +292,7 @@
 
 + (void)runActionsForRemoteNotification:(NSDictionary *)userInfo
                  foregroundPresentation:(BOOL)foregroundPresentation
-                      completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+                      completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler NS_EXTENSION_UNAVAILABLE("Method not available in app extensions") {
     UASituation situation = [UIApplication sharedApplication].applicationState == UIApplicationStateActive ? UASituationForegroundPush : UASituationBackgroundPush;
     NSDictionary *actionsPayload = userInfo;
 

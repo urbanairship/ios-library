@@ -63,7 +63,7 @@
     [self emitChangeNotification:NO];
 }
 
-- (void)setIsDisplayLocked:(BOOL)isDisplayLocked {
+- (void)setIsDisplayLocked:(BOOL)isDisplayLocked NS_EXTENSION_UNAVAILABLE("Method not available in app extensions") {
     if (_isDisplayLocked != isDisplayLocked) {
         _isDisplayLocked = isDisplayLocked;
 
@@ -98,7 +98,7 @@
     self.isDisplayLocked = YES;
 }
 
-- (BOOL)isReady {
+- (BOOL)isReady NS_EXTENSION_UNAVAILABLE("Method not available in app extensions") {
     // Require an active application
     if ([[UIApplication sharedApplication] applicationState] != UIApplicationStateActive) {
         UA_LTRACE(@"Application is not active. Display Coordinator not ready: %@", self);
