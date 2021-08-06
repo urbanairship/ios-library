@@ -3,7 +3,7 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
-## Vesion 14.6.1 August 5, 2021
+## Vesion 14.6.1 August 6, 2021
 Patch release fixing KVO-related crashes in NSUserDefaults. Apps experiencing related crashes or having problems with SDK user defaults behavior are recommended to upgrade.
 
 ### Changes
