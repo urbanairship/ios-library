@@ -3,6 +3,12 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Vesion 14.6.1 August 6, 2021
+Patch release fixing KVO-related crashes in NSUserDefaults. Apps experiencing related crashes or having problems with SDK user defaults behavior are recommended to upgrade.
+
+### Changes
+- Migrated NSUserDefaults usage to a private suite name
+
 ## Version 14.6.0 July 30, 2021
 Minor release adding support for Chat routing and fixing build issues in Xcode 13.
 
