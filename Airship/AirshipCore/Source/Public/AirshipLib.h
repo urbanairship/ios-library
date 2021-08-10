@@ -25,7 +25,6 @@
 #import "UAAttributes.h"
 #import "UAAutomationModuleLoaderFactory.h"
 #import "UAChannel.h"
-#import "UAChannelCapture.h"
 #import "UAChannelNotificationCenterEvents.h"
 #import "UAChannelRegistrationPayload.h"
 #import "UAColorUtils.h"

@@ -266,8 +266,6 @@
 		6E34950625802571007F5357 /* UANSArrayValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E34950225802571007F5357 /* UANSArrayValueTransformer.m */; };
 		6E3673E01E8AF9D8005B5DFF /* UAEnableFeatureActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E3673DF1E8AF9D8005B5DFF /* UAEnableFeatureActionTest.m */; };
 		6E3942281F33DA52003D1C50 /* UAInboxStoreTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E3942271F33DA52003D1C50 /* UAInboxStoreTest.m */; };
-		6E4114CF2538C0A900FEE4E8 /* UAChannelCapture.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E41143E2538C09E00FEE4E8 /* UAChannelCapture.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E4114D02538C0A900FEE4E8 /* UAChannelCapture.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E41143E2538C09E00FEE4E8 /* UAChannelCapture.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E4114D32538C0A900FEE4E8 /* UANativeBridgeDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E41143F2538C09E00FEE4E8 /* UANativeBridgeDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E4114D42538C0A900FEE4E8 /* UANativeBridgeDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E41143F2538C09E00FEE4E8 /* UANativeBridgeDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E4114D72538C0A900FEE4E8 /* UANSURLValueTransformer.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114402538C09E00FEE4E8 /* UANSURLValueTransformer.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -545,8 +543,6 @@
 		6E4119E42538C20200FEE4E8 /* UARemoteDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4117572538C1F200FEE4E8 /* UARemoteDataManager.m */; };
 		6E4119E72538C20200FEE4E8 /* UAAnalytics.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4117582538C1F200FEE4E8 /* UAAnalytics.m */; };
 		6E4119E82538C20200FEE4E8 /* UAAnalytics.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4117582538C1F200FEE4E8 /* UAAnalytics.m */; };
-		6E4119F32538C20200FEE4E8 /* UAChannelCapture.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E41175B2538C1F300FEE4E8 /* UAChannelCapture.m */; };
-		6E4119F42538C20200FEE4E8 /* UAChannelCapture.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E41175B2538C1F300FEE4E8 /* UAChannelCapture.m */; };
 		6E4119FB2538C20200FEE4E8 /* UATagsActionPredicate+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E41175D2538C1F300FEE4E8 /* UATagsActionPredicate+Internal.h */; };
 		6E4119FC2538C20300FEE4E8 /* UATagsActionPredicate+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E41175D2538C1F300FEE4E8 /* UATagsActionPredicate+Internal.h */; };
 		6E411A0F2538C20300FEE4E8 /* UAAddTagsAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4117622538C1F300FEE4E8 /* UAAddTagsAction.m */; };
@@ -591,8 +587,6 @@
 		6E411A902538C20500FEE4E8 /* UANativeBridgeActionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4117822538C1F600FEE4E8 /* UANativeBridgeActionHandler.m */; };
 		6E411A932538C20500FEE4E8 /* UAEventStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4117832538C1F600FEE4E8 /* UAEventStore.m */; };
 		6E411A942538C20500FEE4E8 /* UAEventStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4117832538C1F600FEE4E8 /* UAEventStore.m */; };
-		6E411A972538C20500FEE4E8 /* UAChannelCapture+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4117842538C1F600FEE4E8 /* UAChannelCapture+Internal.h */; };
-		6E411A982538C20500FEE4E8 /* UAChannelCapture+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4117842538C1F600FEE4E8 /* UAChannelCapture+Internal.h */; };
 		6E411A9B2538C20500FEE4E8 /* UAUtils+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4117852538C1F600FEE4E8 /* UAUtils+Internal.h */; };
 		6E411A9C2538C20500FEE4E8 /* UAUtils+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4117852538C1F600FEE4E8 /* UAUtils+Internal.h */; };
 		6E411AA32538C20500FEE4E8 /* UARemoteDataStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4117872538C1F700FEE4E8 /* UARemoteDataStore.m */; };
@@ -1225,6 +1219,8 @@
 		A6E002D4258BABCA00620226 /* UAModifyAttributesAction.h in Headers */ = {isa = PBXBuildFile; fileRef = A6E002CC258BABCA00620226 /* UAModifyAttributesAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6E002E5258BABE200620226 /* UAModifyAttributesAction.m in Sources */ = {isa = PBXBuildFile; fileRef = A6E002E1258BABE100620226 /* UAModifyAttributesAction.m */; };
 		A6E002E6258BABE200620226 /* UAModifyAttributesAction.m in Sources */ = {isa = PBXBuildFile; fileRef = A6E002E1258BABE100620226 /* UAModifyAttributesAction.m */; };
+		C02D0B6626C1A3E200F673E6 /* ChannelCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02D0B6526C1A3E200F673E6 /* ChannelCapture.swift */; };
+		C0EE8CE526C1B3410006F003 /* ChannelCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02D0B6526C1A3E200F673E6 /* ChannelCapture.swift */; };
 		CC04F1C51DC27E6C00B4842D /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CC04F1C41DC27E6C00B4842D /* libsqlite3.tbd */; };
 		CC64F0591D8B77E3009CEF27 /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; };
 		CC64F0CE1D8B781C009CEF27 /* CustomNotificationCategories.plist in Resources */ = {isa = PBXBuildFile; fileRef = CC64F0611D8B781C009CEF27 /* CustomNotificationCategories.plist */; };
@@ -1810,7 +1806,6 @@
 		6E356F9B2579513D004CCCC8 /* UAAutomation 7.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAAutomation 7.xcdatamodel"; sourceTree = "<group>"; };
 		6E3673DF1E8AF9D8005B5DFF /* UAEnableFeatureActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAEnableFeatureActionTest.m; sourceTree = "<group>"; };
 		6E3942271F33DA52003D1C50 /* UAInboxStoreTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxStoreTest.m; sourceTree = "<group>"; };
-		6E41143E2538C09E00FEE4E8 /* UAChannelCapture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAChannelCapture.h; path = Public/UAChannelCapture.h; sourceTree = "<group>"; };
 		6E41143F2538C09E00FEE4E8 /* UANativeBridgeDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UANativeBridgeDelegate.h; path = Public/UANativeBridgeDelegate.h; sourceTree = "<group>"; };
 		6E4114402538C09E00FEE4E8 /* UANSURLValueTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UANSURLValueTransformer.h; path = Public/UANSURLValueTransformer.h; sourceTree = "<group>"; };
 		6E4114432538C09E00FEE4E8 /* UAAttributeMutations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAAttributeMutations.h; path = Public/UAAttributeMutations.h; sourceTree = "<group>"; };
@@ -1950,7 +1945,6 @@
 		6E4117552538C1F200FEE4E8 /* UAKeychainUtils+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAKeychainUtils+Internal.h"; path = "Internal/UAKeychainUtils+Internal.h"; sourceTree = "<group>"; };
 		6E4117572538C1F200FEE4E8 /* UARemoteDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UARemoteDataManager.m; path = Internal/UARemoteDataManager.m; sourceTree = "<group>"; };
 		6E4117582538C1F200FEE4E8 /* UAAnalytics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAAnalytics.m; path = Internal/UAAnalytics.m; sourceTree = "<group>"; };
-		6E41175B2538C1F300FEE4E8 /* UAChannelCapture.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAChannelCapture.m; path = Internal/UAChannelCapture.m; sourceTree = "<group>"; };
 		6E41175D2538C1F300FEE4E8 /* UATagsActionPredicate+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UATagsActionPredicate+Internal.h"; path = "Internal/UATagsActionPredicate+Internal.h"; sourceTree = "<group>"; };
 		6E4117622538C1F300FEE4E8 /* UAAddTagsAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAAddTagsAction.m; path = Internal/UAAddTagsAction.m; sourceTree = "<group>"; };
 		6E4117662538C1F400FEE4E8 /* UAirship.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAirship.m; path = Internal/UAirship.m; sourceTree = "<group>"; };
@@ -1973,7 +1967,6 @@
 		6E4117812538C1F600FEE4E8 /* UAPadding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAPadding.m; path = Internal/UAPadding.m; sourceTree = "<group>"; };
 		6E4117822538C1F600FEE4E8 /* UANativeBridgeActionHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UANativeBridgeActionHandler.m; path = Internal/UANativeBridgeActionHandler.m; sourceTree = "<group>"; };
 		6E4117832538C1F600FEE4E8 /* UAEventStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAEventStore.m; path = Internal/UAEventStore.m; sourceTree = "<group>"; };
-		6E4117842538C1F600FEE4E8 /* UAChannelCapture+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAChannelCapture+Internal.h"; path = "Internal/UAChannelCapture+Internal.h"; sourceTree = "<group>"; };
 		6E4117852538C1F600FEE4E8 /* UAUtils+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAUtils+Internal.h"; path = "Internal/UAUtils+Internal.h"; sourceTree = "<group>"; };
 		6E4117872538C1F700FEE4E8 /* UARemoteDataStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UARemoteDataStore.m; path = Internal/UARemoteDataStore.m; sourceTree = "<group>"; };
 		6E4117882538C1F700FEE4E8 /* UARuntimeConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UARuntimeConfig.m; path = Internal/UARuntimeConfig.m; sourceTree = "<group>"; };
@@ -2411,6 +2404,7 @@
 		A6CF89302593910300006C83 /* AddTagGroupsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTagGroupsTableViewController.swift; sourceTree = "<group>"; };
 		A6E002CC258BABCA00620226 /* UAModifyAttributesAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAModifyAttributesAction.h; path = Public/UAModifyAttributesAction.h; sourceTree = "<group>"; };
 		A6E002E1258BABE100620226 /* UAModifyAttributesAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAModifyAttributesAction.m; path = Internal/UAModifyAttributesAction.m; sourceTree = "<group>"; };
+		C02D0B6526C1A3E200F673E6 /* ChannelCapture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelCapture.swift; sourceTree = "<group>"; };
 		C3AEC8D23AA7835AC1E74C9A /* Pods-AirshipAccengageTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipAccengageTests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipAccengageTests/Pods-AirshipAccengageTests.debug.xcconfig"; sourceTree = "<group>"; };
 		CC04F1C41DC27E6C00B4842D /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 		CC40D87B1D8C703E00BABD4F /* libOCMock.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libOCMock.a; path = ../TestCommon/OCMockLibrary/libOCMock.a; sourceTree = "<group>"; };
@@ -3603,9 +3597,7 @@
 				6E4114B12538C0A700FEE4E8 /* UAChannel.h */,
 				6E4117892538C1F700FEE4E8 /* UAChannel.m */,
 				6E4116E42538C1E700FEE4E8 /* UAChannel+Internal.h */,
-				6E41143E2538C09E00FEE4E8 /* UAChannelCapture.h */,
-				6E41175B2538C1F300FEE4E8 /* UAChannelCapture.m */,
-				6E4117842538C1F600FEE4E8 /* UAChannelCapture+Internal.h */,
+				C02D0B6526C1A3E200F673E6 /* ChannelCapture.swift */,
 				6E4114B72538C0A700FEE4E8 /* UAChannelNotificationCenterEvents.h */,
 				6E4114B32538C0A700FEE4E8 /* UAChannelRegistrationPayload.h */,
 				6E41173B2538C1EF00FEE4E8 /* UAChannelRegistrationPayload.m */,
@@ -5144,7 +5136,6 @@
 				6E4118EB2538C1FE00FEE4E8 /* UAAutoIntegration+Internal.h in Headers */,
 				6E41157B2538C0AD00FEE4E8 /* UARuntimeConfig.h in Headers */,
 				6E4115732538C0AD00FEE4E8 /* UAEnableFeatureAction.h in Headers */,
-				6E411A972538C20500FEE4E8 /* UAChannelCapture+Internal.h in Headers */,
 				6E41196F2538C20100FEE4E8 /* UARemoteConfigDisableInfo+Internal.h in Headers */,
 				A60A242B258D0D78006B7D80 /* UAAttributesActionPredicate+Internal.h in Headers */,
 				6E4115DF2538C0AF00FEE4E8 /* UAAction.h in Headers */,
@@ -5176,7 +5167,6 @@
 				6E4115A32538C0AE00FEE4E8 /* UAModuleLoader.h in Headers */,
 				6E4115AB2538C0AE00FEE4E8 /* UAExtendableAnalyticsHeaders.h in Headers */,
 				6E4119932538C20100FEE4E8 /* UARemoteConfigModuleNames+Internal.h in Headers */,
-				6E4114CF2538C0A900FEE4E8 /* UAChannelCapture.h in Headers */,
 				6E411B072538C20700FEE4E8 /* UAComponent+Internal.h in Headers */,
 				6E41156B2538C0AD00FEE4E8 /* UAActionPredicateProtocol.h in Headers */,
 				6E4115CF2538C0AF00FEE4E8 /* UAJSONSerialization.h in Headers */,
@@ -5468,7 +5458,6 @@
 				6E4118EC2538C1FE00FEE4E8 /* UAAutoIntegration+Internal.h in Headers */,
 				6E41157C2538C0AD00FEE4E8 /* UARuntimeConfig.h in Headers */,
 				6E4115742538C0AD00FEE4E8 /* UAEnableFeatureAction.h in Headers */,
-				6E411A982538C20500FEE4E8 /* UAChannelCapture+Internal.h in Headers */,
 				6E4119702538C20100FEE4E8 /* UARemoteConfigDisableInfo+Internal.h in Headers */,
 				A60A2462258D0D82006B7D80 /* UAAttributesActionPredicate+Internal.h in Headers */,
 				6E4115E02538C0B000FEE4E8 /* UAAction.h in Headers */,
@@ -5499,7 +5488,6 @@
 				6E4115A42538C0AE00FEE4E8 /* UAModuleLoader.h in Headers */,
 				6E4115AC2538C0AE00FEE4E8 /* UAExtendableAnalyticsHeaders.h in Headers */,
 				6E4119942538C20100FEE4E8 /* UARemoteConfigModuleNames+Internal.h in Headers */,
-				6E4114D02538C0A900FEE4E8 /* UAChannelCapture.h in Headers */,
 				6E411B082538C20700FEE4E8 /* UAComponent+Internal.h in Headers */,
 				6E41156C2538C0AD00FEE4E8 /* UAActionPredicateProtocol.h in Headers */,
 				6E4115D02538C0AF00FEE4E8 /* UAJSONSerialization.h in Headers */,
@@ -6487,6 +6475,7 @@
 				6E4117DF2538C1FB00FEE4E8 /* NSDictionary+UAAdditions.m in Sources */,
 				6E91B4632689092F00DDB1A8 /* UAInteractiveNotificationEvent.swift in Sources */,
 				6E8BF45226852E4B009A8BD4 /* UATaskManager.swift in Sources */,
+				C02D0B6626C1A3E200F673E6 /* ChannelCapture.swift in Sources */,
 				6E4119732538C20100FEE4E8 /* UAChannelRegistrationPayload.m in Sources */,
 				6E411A6F2538C20400FEE4E8 /* UAKeychainUtils.m in Sources */,
 				6E698E5F267BF63B00654DB2 /* UAApplicationState.swift in Sources */,
@@ -6504,7 +6493,6 @@
 				A61517C626B009D6008A41C4 /* SubscriptionListFetchResponse.swift in Sources */,
 				6E4118DB2538C1FE00FEE4E8 /* UAJavaScriptEnvironment.m in Sources */,
 				6E6ED15B2683DBC300A2CBD0 /* UABase64.swift in Sources */,
-				6E4119F32538C20200FEE4E8 /* UAChannelCapture.m in Sources */,
 				A61517B226A9C4C3008A41C4 /* SubscriptionListEditor.swift in Sources */,
 				6E4119BF2538C20200FEE4E8 /* UARemoteConfigManager.m in Sources */,
 				6E952920268A6C1500398B54 /* UASearchEventTemplate.swift in Sources */,
@@ -7016,6 +7004,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C0EE8CE526C1B3410006F003 /* ChannelCapture.swift in Sources */,
 				3C8F915C26B881430097E9B9 /* UAAPNSRegistration.swift in Sources */,
 				6E411A602538C20400FEE4E8 /* UAAsyncOperation.m in Sources */,
 				6E6ED1602683DBC300A2CBD0 /* UAirshipCoreResources.swift in Sources */,
@@ -7094,7 +7083,6 @@
 				6E91B4622689092F00DDB1A8 /* UAInstallAttributionEvent.swift in Sources */,
 				A61517C726B009D6008A41C4 /* SubscriptionListFetchResponse.swift in Sources */,
 				6E4118DC2538C1FE00FEE4E8 /* UAJavaScriptEnvironment.m in Sources */,
-				6E4119F42538C20200FEE4E8 /* UAChannelCapture.m in Sources */,
 				6E6ED15C2683DBC300A2CBD0 /* UABase64.swift in Sources */,
 				A61517B326A9C4C3008A41C4 /* SubscriptionListEditor.swift in Sources */,
 				6E4119C02538C20200FEE4E8 /* UARemoteConfigManager.m in Sources */,

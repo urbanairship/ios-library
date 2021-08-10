@@ -28,10 +28,6 @@
 #import "UAFeature.h"
 #import "UAPreferenceCenterModuleLoaderFactory.h"
 
-#if !TARGET_OS_TV
-#import "UAChannelCapture+Internal.h"
-#endif
-
 #if __has_include("AirshipCore/AirshipCore-Swift.h")
 #import <AirshipCore/AirshipCore-Swift.h>
 #elif __has_include("Airship/Airship-Swift.h")
@@ -178,9 +174,9 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
 #if !TARGET_OS_TV
         // UIPasteboard is not available in tvOS
-        self.channelCapture = [UAChannelCapture channelCaptureWithConfig:self.config
-                                                                 channel:self.sharedChannel
-                                                               dataStore:self.dataStore];
+        self.channelCapture = [[UAChannelCapture alloc] initWithConfig:self.config
+                                                             dataStore:self.dataStore
+                                                               channel:self.sharedChannel];
 #endif
 
         NSMutableArray<id<UAModuleLoader>> *loaders = [NSMutableArray array];

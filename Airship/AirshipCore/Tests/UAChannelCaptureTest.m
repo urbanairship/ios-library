@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UAAirshipBaseTest.h"
-#import "UAChannelCapture+Internal.h"
 #import "UAChannel.h"
 #import "UARuntimeConfig.h"
 #import "AirshipTests-Swift.h"
@@ -14,6 +13,7 @@
 
 @property(nonatomic, strong) id mockChannel;
 @property(nonatomic, strong) id mockPasteboard;
+@property(nonatomic, copy) UIPasteboard* (^pasteboardProvider)(void);
 @property(nonatomic, strong) NSArray<NSDictionary<NSString *,id> *> *mockItems;
 @property(nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property(nonatomic, strong) UATestDate *testDate;
@@ -39,6 +39,11 @@
     self.config.channelCaptureEnabled = YES;
     
     self.mockItems = [NSMutableArray array];
+    
+    __weak typeof(self) weakSelf = self;
+    self.pasteboardProvider = ^UIPasteboard *{
+        return weakSelf.mockPasteboard;
+    };
 
     [self createChannelCapture];
 }
@@ -126,11 +131,12 @@
 }
 
 - (void)createChannelCapture {
-    self.channelCapture =  [UAChannelCapture channelCaptureWithConfig:self.config
-                                                              channel:self.mockChannel
-                                                            dataStore:self.dataStore
-                                                   notificationCenter:self.notificationCenter
-                                                                 date:self.testDate];
+    self.channelCapture = [[UAChannelCapture alloc] initWithConfig:self.config
+                                                         dataStore:self.dataStore
+                                                           channel:self.mockChannel
+                                                notificationCenter:self.notificationCenter
+                                                              date:self.testDate
+                                                pasteboardProvider:self.pasteboardProvider];
 }
 
 /**
@@ -292,4 +298,3 @@
 }
 
 @end
-
