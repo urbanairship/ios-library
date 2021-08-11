@@ -113,9 +113,9 @@ open class ChatViewController: UIViewController, UITableViewDataSource, UITableV
 
         if (message.direction == .incoming) {
             cell.stackView.alignment = .leading
-            cell.messageTextLabel.backgroundColor = chatStyle?.incomingChatBubbleColor ?? UIColor.systemGray6
-            cell.containerView.backgroundColor = chatStyle?.incomingChatBubbleColor ?? UIColor.systemGray6
-            cell.messageTextLabel.textColor = chatStyle?.incomingTextColor ?? UIColor.black
+            cell.messageTextLabel.backgroundColor = chatStyle?.incomingChatBubbleColor ?? UIColor.secondarySystemBackground
+            cell.containerView.backgroundColor = chatStyle?.incomingChatBubbleColor ?? UIColor.secondarySystemBackground
+            cell.messageTextLabel.textColor = chatStyle?.incomingTextColor ?? UIColor.label
         } else {
             cell.stackView.alignment = .trailing
             cell.messageTextLabel.backgroundColor = chatStyle?.outgoingChatBubbleColor ?? UIColor.systemBlue
