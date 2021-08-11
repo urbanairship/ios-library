@@ -53,35 +53,14 @@ NSString * const UAModifyAttributesActionDefaultRegistryAlias = @"^a";
     
     id channelAttributes = arguments.value[UAModifyAttributesChannelKey];
     if (channelAttributes) {
-        UAAttributeMutations *channelMutations = [self mutationsWithArguments:channelAttributes];
-        [[UAirship channel] applyAttributeMutations:channelMutations];
-    }
+        [self applyEdits:[UAirship channel].editAttributes attributes:channelAttributes];    }
     
     id namedUserAttributes = arguments.value[UAModifyAttributesNamedUserKey];
     if (namedUserAttributes) {
-        [self applyEdits:[UAirship contact].editAttibutes attributes:namedUserAttributes];
+        [self applyEdits:[UAirship contact].editAttributes attributes:namedUserAttributes];
     }
     
     completionHandler([UAActionResult emptyResult]);
-}
-
-- (UAAttributeMutations *)mutationsWithArguments:(id)args {
-    UAAttributeMutations *mutations = [UAAttributeMutations mutations];
-    id setAttributeMutations = args[UAModifyAttributesSetActionKey];
-    for (id key in setAttributeMutations) {
-        if ([setAttributeMutations[key] isKindOfClass:[NSString class]]) {
-            [mutations setString:setAttributeMutations[key] forAttribute:key];
-        } else if ([setAttributeMutations[key] isKindOfClass:[NSNumber class]]) {
-            [mutations setNumber:setAttributeMutations[key] forAttribute:key];
-        } else if ([setAttributeMutations[key] isKindOfClass:[NSDate class]]) {
-            [mutations setDate:setAttributeMutations[key] forAttribute:key];
-        }
-    }
-    id removeAttributeMutations = args[UAModifyAttributesRemoveActionKey];
-    for (id attribute in removeAttributeMutations) {
-        [mutations removeAttribute:attribute];
-    }
-    return mutations;
 }
 
 - (void)applyEdits:(UAAttributesEditor *)editor attributes:(id)args {

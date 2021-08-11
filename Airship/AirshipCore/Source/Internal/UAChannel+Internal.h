@@ -1,17 +1,15 @@
 /* Copyright Airship and Contributors */
 
 #import "UAChannel.h"
-#import "UATagGroupsRegistrar+Internal.h"
 #import "UAExtendableChannelRegistration.h"
-#import "UAAttributeRegistrar+Internal.h"
 
 @class UAChannelRegistrar;
-@class UATaskManager;
 @class UAChannelAudienceManager;
+@class UADate;
 
 extern NSString *const UAChannelTagsSettingsKey;
 
-@interface UAChannel () <UATagGroupsRegistrarDelegate, UAExtendableChannelRegistration, UAAttributeRegistrarDelegate>
+@interface UAChannel () <UAExtendableChannelRegistration>
 
 /**
  * Allows disabling channel registration before a channel is created.  Channel registration will resume
@@ -30,12 +28,9 @@ extern NSString *const UAChannelTagsSettingsKey;
                               config:(UARuntimeConfig *)config
                   notificationCenter:(NSNotificationCenter *)notificationCenter
                     channelRegistrar:(UAChannelRegistrar *)channelRegistrar
-                  tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar
-                  attributeRegistrar:(UAAttributeRegistrar *)attributeRegistrar
                      audienceManager:(UAChannelAudienceManager *)audienceManager
                        localeManager:(UALocaleManager *)localeManager
                                 date:(UADate *)date
-                         taskManager:(UATaskManager *)taskManager
                       privacyManager:(UAPrivacyManager *)privacyManager;
 
 /**

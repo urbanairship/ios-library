@@ -27,28 +27,25 @@
 }
 
 - (void)testTagHistory {
-    UATagGroupsMutation *mutation1 = [UATagGroupsMutation mutationToSetTags:@[@"baz", @"boz"] group:@"group1"];
-    UATagGroupsMutation *mutation2 = [UATagGroupsMutation mutationToSetTags:@[@"bleep", @"bloop"] group:@"group2"];
-
+    UATagGroupUpdate *tagUpdate1 = [[UATagGroupUpdate alloc] initWithGroup:@"group1" tags:@[@"baz", @"boz"] type:UATagGroupUpdateTypeSet];
+    UATagGroupUpdate *tagUpdate2 = [[UATagGroupUpdate alloc] initWithGroup:@"group2" tags:@[@"bleep", @"bloop"] type:UATagGroupUpdateTypeSet];
+    
     NSDate *recent = [NSDate dateWithTimeIntervalSinceNow:-60];
     NSDate *old = [NSDate distantPast];
 
     self.testDate.dateOverride = recent;
-    [[NSNotificationCenter defaultCenter] postNotificationName:UAChannelUploadedTagGroupMutationNotification
+    [[NSNotificationCenter defaultCenter] postNotificationName:UAChannelAudienceUpdatedEvent
                                                         object:nil
-                                                      userInfo:@{UAChannelUploadedAudienceMutationNotificationMutationKey:mutation1}];
+                                                      userInfo:@{ UAChannelAudienceUpdatedEventTagsKey: @[tagUpdate1] }];
 
     self.testDate.dateOverride = old;
-    [[NSNotificationCenter defaultCenter] postNotificationName:UAChannelUploadedTagGroupMutationNotification
+    [[NSNotificationCenter defaultCenter] postNotificationName:UAChannelAudienceUpdatedEvent
                                                         object:nil
-                                                      userInfo:@{UAChannelUploadedAudienceMutationNotificationMutationKey:mutation2}];
+                                                      userInfo:@{ UAChannelAudienceUpdatedEventTagsKey: @[tagUpdate2] }];
 
-    XCTAssertEqualObjects(mutation1.tagGroupUpdates, [self.historian tagHistoryNewerThan:recent]);
+    XCTAssertEqualObjects(@[tagUpdate1], [self.historian tagHistoryNewerThan:recent]);
 
-    
-    NSMutableArray *combined = [NSMutableArray array];
-    [combined addObjectsFromArray:mutation1.tagGroupUpdates];
-    [combined addObjectsFromArray:mutation2.tagGroupUpdates];
+    NSArray *combined = @[tagUpdate1, tagUpdate2];
     XCTAssertEqualObjects(combined, [self.historian tagHistoryNewerThan:old]);
 }
 
@@ -82,19 +79,20 @@
     NSDate *recent = [NSDate dateWithTimeIntervalSinceNow:-60];
     NSDate *old = [NSDate distantPast];
 
-    UAAttributeMutations *breakfastDrink = [UAAttributeMutations mutations];
-    [breakfastDrink setString:@"coffee" forAttribute:@"breakfastDrink"];
-    UAAttributePendingMutations *mutation1 = [UAAttributePendingMutations pendingMutationsWithMutations:breakfastDrink date:[[UADate alloc] init]];
+    UAAttributeUpdate *breakfastDrink = [[UAAttributeUpdate alloc] initWithAttribute:@"breakfastDrink"
+                                                                            type:UAAttributeUpdateTypeSet
+                                                                           value:@"coffee"
+                                                                            date:recent];
 
     UAAttributeUpdate *lunchDrink = [[UAAttributeUpdate alloc] initWithAttribute:@"lunchDrink"
                                                                             type:UAAttributeUpdateTypeSet
                                                                            value:@"code-red"
-                                                                            date:self.testDate.now];
+                                                                            date:old];
     
     self.testDate.dateOverride = recent;
-    [[NSNotificationCenter defaultCenter] postNotificationName:UAChannelUploadedAttributeMutationsNotification
+    [[NSNotificationCenter defaultCenter] postNotificationName:UAChannelAudienceUpdatedEvent
                                                         object:nil
-                                                      userInfo:@{UAChannelUploadedAudienceMutationNotificationMutationKey:mutation1}];
+                                                      userInfo:@{UAChannelAudienceUpdatedEventAttributesKey: @[breakfastDrink]}];
 
     self.testDate.dateOverride = old;
 
@@ -102,12 +100,9 @@
                                                         object:nil
                                                       userInfo:@{UAContact.attributesKey: @[lunchDrink]}];
 
-    XCTAssertEqualObjects(mutation1.attributeUpdates, [self.historian attributeHistoryNewerThan:recent]);
+    XCTAssertEqualObjects(@[breakfastDrink], [self.historian attributeHistoryNewerThan:recent]);
     
-    NSMutableArray *combined = [NSMutableArray array];
-    [combined addObjectsFromArray:mutation1.attributeUpdates];
-    [combined addObject:lunchDrink];
-    
+    NSArray *combined = @[breakfastDrink, lunchDrink];
     XCTAssertEqualObjects(combined, [self.historian attributeHistoryNewerThan:old]);
 }
 

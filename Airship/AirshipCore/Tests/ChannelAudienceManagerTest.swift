@@ -13,6 +13,8 @@ class ChannelAudienceManagerTest: XCTestCase {
     var privacyManager: UAPrivacyManager!
     var dataStore: UAPreferenceDataStore!
     var subscriptionListClient: TestSubscriptionListAPIClient!
+    var updateClient: TestChannelBulkUpdateAPIClient!
+
     var audienceManager: ChannelAudienceManager!
 
     override func setUpWithError() throws {
@@ -22,12 +24,24 @@ class ChannelAudienceManagerTest: XCTestCase {
         self.subscriptionListClient.defaultCallback = { method in
             XCTFail("Method \(method) called unexpectedly")
         }
+        
+        self.updateClient = TestChannelBulkUpdateAPIClient()
+        self.updateClient.defaultCallback = { method in
+            XCTFail("Method \(method) called unexpectedly")
+        }
+
     
         self.date = UATestDate()
         self.dataStore = UAPreferenceDataStore(keyPrefix: UUID().uuidString)
         self.privacyManager = UAPrivacyManager(dataStore: self.dataStore, defaultEnabledFeatures: .all, notificationCenter: self.notificationCenter)
         
-        self.audienceManager = ChannelAudienceManager(dataStore: self.dataStore, taskManager: self.taskManager, subscriptionListClient: self.subscriptionListClient, privacyManager: self.privacyManager, notificationCenter: self.notificationCenter, date: self.date);
+        self.audienceManager = ChannelAudienceManager(dataStore: self.dataStore,
+                                                      taskManager: self.taskManager,
+                                                      subscriptionListClient: self.subscriptionListClient,
+                                                      updateClient: self.updateClient,
+                                                      privacyManager: self.privacyManager,
+                                                      notificationCenter: self.notificationCenter,
+                                                      date: self.date);
         
         self.audienceManager.enabled = true
         self.audienceManager.channelID = "some-channel"
@@ -36,23 +50,32 @@ class ChannelAudienceManagerTest: XCTestCase {
     }
 
     func testUpdates() throws {
-        let editor = self.audienceManager.editSubscriptionLists()
-        editor.subscribe("pizza")
-        editor.unsubscribe("coffee")
-        editor.apply()
+        let subscriptionListEditor = self.audienceManager.editSubscriptionLists()
+        subscriptionListEditor.subscribe("pizza")
+        subscriptionListEditor.unsubscribe("coffee")
+        subscriptionListEditor.apply()
         
-        editor.subscribe("hotdogs")
-        editor.apply()
+        subscriptionListEditor.subscribe("hotdogs")
+        subscriptionListEditor.apply()
         
-        XCTAssertEqual(2, self.taskManager.enqueuedRequests.count)
+        let tagEditor = self.audienceManager.editTagGroups(allowDeviceGroup: true)
+        tagEditor.add(["tag"], group: "some-group")
+        tagEditor.apply()
+        
+        let attributeEditor = self.audienceManager.editAttributes()
+        attributeEditor.set(string: "hello", attribute: "some-attribute")
+        attributeEditor.apply()
+        
+        XCTAssertEqual(4, self.taskManager.enqueuedRequests.count)
 
         let expectation = XCTestExpectation(description: "callback called")
 
-        self.subscriptionListClient.updateCallback = { identifier, updates, callback in
+        self.updateClient.updateCallback = { identifier, subscriptionUpdates, tagUpdates, attributeUpdates, callback in
             expectation.fulfill()
-
             XCTAssertEqual("some-channel", identifier)
-            XCTAssertEqual(3, updates.count)
+            XCTAssertEqual(3, subscriptionUpdates!.count)
+            XCTAssertEqual(1, tagUpdates!.count)
+            XCTAssertEqual(1, attributeUpdates!.count)
             callback(UAHTTPResponse(status: 200), nil)
         }
         
@@ -128,7 +151,7 @@ class ChannelAudienceManagerTest: XCTestCase {
         wait(for: [expectation], timeout: 10.0)
     }
     
-    func testGetCacheInvalidatesOnUpate() throws {
+    func testGetCacheInvalidatesOnUpdate() throws {
         self.date.dateOverride = Date()
         
         var apiResult = ["cool", "story"]
@@ -152,7 +175,7 @@ class ChannelAudienceManagerTest: XCTestCase {
         editor.apply()
 
         expectation = XCTestExpectation(description: "callback called")
-        self.subscriptionListClient.updateCallback = { identifier, updates, callback in
+        self.updateClient.updateCallback = { identifier, subscriptions, tags, attributes, callback in
             expectation.fulfill()
             callback(UAHTTPResponse(status: 200), nil)
         }
@@ -204,6 +227,33 @@ class ChannelAudienceManagerTest: XCTestCase {
         self.privacyManager.enableFeatures(.tagsAndAttributes)
         let task = self.taskManager.launchSync(taskID: ChannelAudienceManager.updateTaskID)
         XCTAssertTrue(task.completed)
+    }
+    
+    func testMigrateMutations() throws {
+        let testDate = UATestDate()
+        testDate.dateOverride = Date()
+        
+        let attributePayload = [
+            "action": "remove",
+            "key": "some-attribute",
+            "timestamp": UAUtils.isoDateFormatterUTCWithDelimiter().string(from: testDate.now)
+        ]
+        
+        let attributeMutation = AttributePendingMutations(mutationsPayload: [attributePayload])
+        let attributeData = try! NSKeyedArchiver.archivedData(withRootObject:[attributeMutation], requiringSecureCoding:true)
+        dataStore.setObject(attributeData, forKey: ChannelAudienceManager.legacyPendingAttributesKey)
+        
+        let tagMutation = TagGroupsMutation(adds: ["some-group": Set(["tag"])], removes: nil, sets: nil)
+        let tagData = try! NSKeyedArchiver.archivedData(withRootObject:[tagMutation], requiringSecureCoding:true)
+        dataStore.setObject(tagData, forKey: ChannelAudienceManager.legacyPendingTagGroupsKey)
+        
+        self.audienceManager.migrateMutations()
+
+        let pendingTagUpdates = [TagGroupUpdate(group: "some-group", tags: ["tag"], type: .add)]
+        XCTAssertEqual(pendingTagUpdates, self.audienceManager.pendingTagGroupUpdates)
+
+        let pendingAttributeUpdates = [AttributeUpdate.remove(attribute: "some-attribute")]
+        XCTAssertEqual(pendingAttributeUpdates, self.audienceManager.pendingAttributeUpdates)
     }
     
 }

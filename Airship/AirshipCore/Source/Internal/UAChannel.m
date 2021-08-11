@@ -1,11 +1,8 @@
 /* Copyright Airship and Contributors */
 
 #import "UAChannel+Internal.h"
-#import "UATagGroupsRegistrar+Internal.h"
-#import "UATagUtils+Internal.h"
 #import "UAUtils+Internal.h"
 #import "UAChannelRegistrationPayload+Internal.h"
-#import "UAAttributePendingMutations.h"
 #import "UAKeychainUtils+Internal.h"
 
 #if __has_include("AirshipCore/AirshipCore-Swift.h")
@@ -23,32 +20,25 @@ NSNotificationName const UAChannelCreatedEvent = @"com.urbanairship.channel.chan
 NSString *const UAChannelUpdatedEvent = @"com.urbanairship.channel.channel_updated";
 NSString *const UAChannelRegistrationFailedEvent = @"com.urbanairship.channel.registration_failed";
 
-NSString *const UAChannelUploadedTagGroupMutationNotification = @"com.urbanairship.channel.uploaded_tag_group_mutation";
-NSString *const UAChannelUploadedAttributeMutationsNotification = @"com.urbanairship.channel.uploaded_attribute_mutations";
-
-NSString *const UAChannelUploadedAudienceMutationNotificationMutationKey = @"mutation";
+NSNotificationName const UAChannelAudienceUpdatedEvent = @"UAChannel.audienceUpdated";
+NSString *const UAChannelAudienceUpdatedEventTagsKey = @"tags";
+NSString *const UAChannelAudienceUpdatedEventAttributesKey = @"attributes";
 
 NSString *const UAChannelCreatedEventChannelKey = @"com.urbanairship.channel.identifier";
 NSString *const UAChannelCreatedEventExistingKey = @"com.urbanairship.channel.existing";
 
 NSString *const UAChannelUpdatedEventChannelKey = @"com.urbanairship.channel.identifier";
 
-static NSString * const UAChannelTagUpdateTaskID = @"UAChannel.tags.update";
-static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.update";
-
 @interface UAChannel () <UAChannelRegistrarDelegate, UAPushableComponent>
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property (nonatomic, strong) UAChannelRegistrar *channelRegistrar;
-@property (nonatomic, strong) UATagGroupsRegistrar *tagGroupsRegistrar;
-@property (nonatomic, strong) UAAttributeRegistrar *attributeRegistrar;
 @property (nonatomic, strong) UALocaleManager *localeManager;
 @property (nonatomic, strong) UAChannelAudienceManager *audienceManager;
 
 @property (nonatomic, assign) BOOL shouldPerformChannelRegistrationOnForeground;
 @property (nonatomic, strong) NSMutableArray<UAChannelRegistrationExtenderBlock> *registrationExtenderBlocks;
 @property (nonatomic, strong) UADate *date;
-@property (nonatomic, strong) UATaskManager *taskManager;
 @property (nonatomic, strong) UAPrivacyManager *privacyManager;
 @property (nonatomic, strong) UARuntimeConfig *config;
 
@@ -60,12 +50,9 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
                            config:(UARuntimeConfig *)config
                notificationCenter:(NSNotificationCenter *)notificationCenter
                  channelRegistrar:(UAChannelRegistrar *)channelRegistrar
-               tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar
-               attributeRegistrar:(UAAttributeRegistrar *)attributeRegistrar
                   audienceManager:(UAChannelAudienceManager *)audienceManager
                     localeManager:(UALocaleManager *)localeManager
                              date:(UADate *)date
-                      taskManager:(UATaskManager *)taskManager
                    privacyManager:(UAPrivacyManager *)privacyManager {
     self = [super initWithDataStore:dataStore];
 
@@ -74,22 +61,13 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
         self.notificationCenter = notificationCenter;
         self.channelRegistrar = channelRegistrar;
         self.channelRegistrar.delegate = self;
-        self.tagGroupsRegistrar = tagGroupsRegistrar;
-        self.attributeRegistrar = attributeRegistrar;
         self.localeManager = localeManager;
         self.privacyManager = privacyManager;
         self.date = date;
-        self.taskManager = taskManager;
         self.audienceManager = audienceManager;
 
         self.channelTagRegistrationEnabled = YES;
         self.registrationExtenderBlocks = [NSMutableArray array];
-
-        self.tagGroupsRegistrar.delegate = self;
-        self.attributeRegistrar.delegate = self;
-        [self.tagGroupsRegistrar setIdentifier:self.identifier clearPendingOnChange:NO];
-        [self.attributeRegistrar setIdentifier:self.identifier clearPendingOnChange:NO];
-        
         self.audienceManager.channelID = self.identifier;
         self.audienceManager.enabled = self.componentEnabled;
         
@@ -108,29 +86,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
             NSLog(@"Channel ID: %@", self.identifier);
         }
 
-        UA_WEAKIFY(self)
-        [self.taskManager registerForTaskWithIDs:@[UAChannelTagUpdateTaskID, UAChannelAttributeUpdateTaskID]
-                                      dispatcher:UADispatcher.serial
-                                   launchHandler:^(id<UATask> task) {
-            if (!self.componentEnabled) {
-                UA_LWARN(@"Channel component is disabled");
-                [task taskCompleted];
-                return;
-            }
-
-            UA_STRONGIFY(self)
-            if ([task.taskID isEqualToString:UAChannelTagUpdateTaskID]) {
-                [self handleTagUpdateTask:task];
-            } else if ([task.taskID isEqualToString:UAChannelAttributeUpdateTaskID]) {
-                 [self handleAttributeUpdateTask:task];
-            } else {
-                UA_LERR(@"Invalid task: %@", task.taskID);
-                [task taskCompleted];
-            }
-        }];
-
         [self observeNotificationCenterEvents];
-
         [self updateRegistration];
     }
 
@@ -141,9 +97,6 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
                               config:(UARuntimeConfig *)config
                        localeManager:(UALocaleManager *)localeManager
                       privacyManager:(UAPrivacyManager *)privacyManager{
-
-    UATagGroupsRegistrar *tagGroupsRegistrar = [UATagGroupsRegistrar channelTagGroupsRegistrarWithConfig:config dataStore:dataStore];
-    
     
     UAChannelAudienceManager *audienceManager = [[UAChannelAudienceManager alloc] initWithDataStore:dataStore config:config privacyManager:privacyManager];
                           
@@ -151,13 +104,9 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
                                     config:config
                         notificationCenter:[NSNotificationCenter defaultCenter]
                         channelRegistrar:[[UAChannelRegistrar alloc] initWithConfig:config dataStore:dataStore]
-                        tagGroupsRegistrar:tagGroupsRegistrar
-                        attributeRegistrar:[UAAttributeRegistrar channelRegistrarWithConfig:config
-                                                                                  dataStore:dataStore]
                            audienceManager:audienceManager
                              localeManager:localeManager
                                       date:[[UADate alloc] init]
-                               taskManager:[UATaskManager shared]
                             privacyManager:privacyManager];
 }
 
@@ -165,23 +114,18 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
                               config:(UARuntimeConfig *)config
                   notificationCenter:(NSNotificationCenter *)notificationCenter
                     channelRegistrar:(UAChannelRegistrar *)channelRegistrar
-                  tagGroupsRegistrar:(UATagGroupsRegistrar *)tagGroupsRegistrar
-                  attributeRegistrar:(UAAttributeRegistrar *)attributeRegistrar
                      audienceManager:(UAChannelAudienceManager *)audienceManager
                        localeManager:(UALocaleManager *)localeManager
                                 date:(UADate *)date
-                         taskManager:(UATaskManager *)taskManager
                       privacyManager:(UAPrivacyManager *)privacyManager {
+    
     return [[self alloc] initWithDataStore:dataStore
                                     config:config
                         notificationCenter:notificationCenter
                           channelRegistrar:channelRegistrar
-                        tagGroupsRegistrar:tagGroupsRegistrar
-                        attributeRegistrar:attributeRegistrar
                            audienceManager:audienceManager
                              localeManager:localeManager
                                       date:date
-                               taskManager:taskManager
                             privacyManager:privacyManager];
 }
 
@@ -250,7 +194,7 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
         return;
     }
 
-    [self.dataStore setObject:[UATagUtils normalizeTags:tags] forKey:UAChannelTagsSettingsKey];
+    [self.dataStore setObject:[UAAudienceUtils normalizeTags:tags] forKey:UAChannelTagsSettingsKey];
 }
 
 - (void)addTag:(NSString *)tag {
@@ -282,67 +226,39 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 #pragma mark Tag Groups
 
 - (void)addTags:(NSArray *)tags group:(NSString *)tagGroupID {
-    if (![self.privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
-        UA_LWARN(@"Unable to add tags %@ for group %@ when data collection is disabled.", [tags description], tagGroupID);
-        return;
-    }
-
-    if ([UAChannelDefaultDeviceTagGroup isEqualToString:tagGroupID] && self.channelTagRegistrationEnabled) {
-        UA_LERR(@"Unable to add tags %@ for device tag group when channelTagRegistrationEnabled is true.", [tags description]);
-        return;
-    }
-
-    [self.tagGroupsRegistrar addTags:tags group:tagGroupID];
+    UATagGroupsEditor *editor = [self editTagGroups];
+    [editor addTags:tags group:tagGroupID];
+    [editor apply];
 }
 
 - (void)removeTags:(NSArray *)tags group:(NSString *)tagGroupID {
-    if (![self.privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
-        UA_LWARN(@"Unable to remove tags %@ for group %@ when data collection is disabled.", [tags description], tagGroupID);
-        return;
-    }
-
-    if ([UAChannelDefaultDeviceTagGroup isEqualToString:tagGroupID] && self.channelTagRegistrationEnabled) {
-        UA_LERR(@"Unable to remove tags %@ for device tag group when channelTagRegistrationEnabled is true.", [tags description]);
-        return;
-    }
-
-    [self.tagGroupsRegistrar removeTags:tags group:tagGroupID];
+    UATagGroupsEditor *editor = [self editTagGroups];
+    [editor removeTags:tags group:tagGroupID];
+    [editor apply];
 }
 
 - (void)setTags:(NSArray *)tags group:(NSString *)tagGroupID {
-    if (![self.privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
-        UA_LWARN(@"Unable to set tags %@ for group %@ when data collection is disabled.", [tags description], tagGroupID);
-        return;
-    }
-
-    if ([UAChannelDefaultDeviceTagGroup isEqualToString:tagGroupID] && self.channelTagRegistrationEnabled) {
-        UA_LERR(@"Unable to set tags %@ for device tag group when channelTagRegistrationEnabled is true.", [tags description]);
-        return;
-    }
-
-    [self.tagGroupsRegistrar setTags:tags group:tagGroupID];
+    UATagGroupsEditor *editor = [self editTagGroups];
+    [editor setTags:tags group:tagGroupID];
+    [editor apply];
 }
+
+- (UATagGroupsEditor *)editTagGroups {
+    return [self.audienceManager editTagGroupsWithAllowDeviceGroup:!self.channelTagRegistrationEnabled];
+}
+
 
 #pragma mark -
 #pragma mark Channel Attributes
 
+- (UAAttributesEditor *)editAttributes {
+    return [self.audienceManager editAttributes];
+}
+
 - (void)applyAttributeMutations:(UAAttributeMutations *)mutations {
-    if (![self.privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
-        UA_LWARN(@"Unable to apply attributes %@ when data collection is disabled.", mutations);
-        return;
-    }
-
-    UAAttributePendingMutations *pendingMutations = [UAAttributePendingMutations pendingMutationsWithMutations:mutations date:self.date];
-
-    // Save pending mutations for upload
-    [self.attributeRegistrar savePendingMutations:pendingMutations];
-
-    if (!self.identifier) {
-          UA_LTRACE(@"Attribute mutations require a valid channel, mutations have been saved for future update.");
-          return;
-    }
-
-    [self enqueueUpdateAttributesTask];
+    UAAttributesEditor *editor = [self editAttributes];
+    [mutations applyMutationsWithEditor:editor];
+    [editor apply];
 }
 
 #pragma mark -
@@ -387,102 +303,15 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 }
 
 - (void)updateRegistration {
-    [self enqueueUpdateAttributesTask];
-    [self enqueueUpdateTagGroupsTask];
     [self updateRegistrationForcefully:NO];
 }
 
-- (NSArray<UATagGroupsMutation *> *)pendingTagGroups {
-    return self.tagGroupsRegistrar.pendingMutations;
+- (NSArray<UATagGroupUpdate *> *)pendingTagGroupUpdates {
+    return self.audienceManager.pendingTagGroupUpdates;
 }
 
-- (UAAttributePendingMutations *)pendingAttributes {
-    return self.attributeRegistrar.pendingMutations;
-}
-
-#pragma mark -
-#pragma mark Task Manager
-
-- (void)enqueueUpdateTagGroupsTask {
-    if (self.identifier && self.componentEnabled && [self.privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
-        UATaskRequestOptions *requestOptions = [[UATaskRequestOptions alloc] initWithConflictPolicy:UATaskConflictPolicyAppend
-                                                                                    requiresNetwork:YES
-                                                                                             extras:nil];
-        [self.taskManager enqueueRequestWithID:UAChannelTagUpdateTaskID
-                                       options:requestOptions];
-    }
-}
-
-- (void)enqueueUpdateAttributesTask {
-    if (self.identifier && self.componentEnabled && [self.privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
-        UATaskRequestOptions *requestOptions = [[UATaskRequestOptions alloc] initWithConflictPolicy:UATaskConflictPolicyAppend
-                                                                                    requiresNetwork:YES
-                                                                                             extras:nil];
-        [self.taskManager enqueueRequestWithID:UAChannelAttributeUpdateTaskID
-                                       options:requestOptions];
-    }
-}
-
-- (void)handleTagUpdateTask:(id<UATask>)task {
-    if (!self.identifier || !self.componentEnabled || ![self.privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
-        [task taskCompleted];
-        return;
-    }
-
-    UASemaphore *semaphore = [[UASemaphore alloc] init];
-
-    UADisposable *request = [self.tagGroupsRegistrar updateTagGroupsWithCompletionHandler:^(UATagGroupsUploadResult result) {
-        switch (result) {
-            case UATagGroupsUploadResultFinished:
-                [task taskCompleted];
-                [self enqueueUpdateTagGroupsTask];
-                break;
-            case UATagGroupsUploadResultUpToDate:
-                [task taskCompleted];
-                break;
-            case UATagGroupsUploadResultFailed:
-                [task taskFailed];
-                break;
-        }
-        [semaphore signal];
-    }];
-
-    task.expirationHandler = ^{
-        [request dispose];
-    };
-
-    [semaphore wait];
-}
-
-- (void)handleAttributeUpdateTask:(id<UATask>)task {
-    if (!self.identifier || !self.componentEnabled || ![self.privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
-        [task taskCompleted];
-        return;
-    }
-
-    UASemaphore *semaphore = [[UASemaphore alloc] init];
-
-    UADisposable *request = [self.attributeRegistrar updateAttributesWithCompletionHandler:^(UAAttributeUploadResult result) {
-        switch (result) {
-            case UAAttributeUploadResultFinished:
-                [task taskCompleted];
-                [self enqueueUpdateAttributesTask];
-                break;
-            case UAAttributeUploadResultUpToDate:
-                [task taskCompleted];
-                break;
-            case UAAttributeUploadResultFailed:
-                [task taskFailed];
-                break;
-        }
-        [semaphore signal];
-    }];
-
-    task.expirationHandler = ^{
-        [request dispose];
-    };
-
-    [semaphore wait];
+- (NSArray<UAAttributeUpdate *> *)pendingAttributeUpdates {
+    return self.audienceManager.pendingAttributeUpdates;
 }
 
 #pragma mark -
@@ -557,8 +386,6 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
             NSLog(@"Created channel with ID: %@", channelID);
         }
 
-        [self.tagGroupsRegistrar setIdentifier:channelID clearPendingOnChange:NO];
-        [self.attributeRegistrar setIdentifier:channelID clearPendingOnChange:NO];
         self.audienceManager.channelID = channelID;
 
         [UADispatcher.main dispatchAsyncIfNecessary:^{
@@ -572,18 +399,6 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
     }
 }
 
-- (void)uploadedTagGroupsMutation:(UATagGroupsMutation *)mutation identifier:(NSString *)identifier {
-    [[NSNotificationCenter defaultCenter] postNotificationName:UAChannelUploadedTagGroupMutationNotification
-                                                        object:nil
-                                                      userInfo:@{UAChannelUploadedAudienceMutationNotificationMutationKey:mutation}];
-}
-
-- (void)uploadedAttributeMutations:(UAAttributePendingMutations *)mutations identifier:(NSString *)identifier {
-    [[NSNotificationCenter defaultCenter] postNotificationName:UAChannelUploadedAttributeMutationsNotification
-                                                        object:nil
-                                                      userInfo:@{UAChannelUploadedAudienceMutationNotificationMutationKey:mutations}];
-}
-
 - (void)onComponentEnableChange {
     if (self.componentEnabled) {
         [self updateRegistration];
@@ -595,8 +410,6 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
     if (![self.privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
         // Clear channel tags and pending mutations
         [self.dataStore removeObjectForKey:UAChannelTagsSettingsKey];
-        [self.attributeRegistrar clearPendingMutations];
-        [self.tagGroupsRegistrar clearPendingMutations];
     }
 
     [self updateRegistrationForcefully:NO];
@@ -656,6 +469,5 @@ static NSString * const UAChannelAttributeUpdateTaskID = @"UAChannel.attributes.
 - (void)localeUpdated {
     [self updateRegistrationForcefully:NO];
 }
-
 
 @end

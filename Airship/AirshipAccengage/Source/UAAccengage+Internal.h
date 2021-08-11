@@ -9,7 +9,6 @@
 #import "UAChannel.h"
 #import "UAPush.h"
 #import "UAAnalytics.h"
-#import "UAAttributeMutations.h"
 #endif
 
 @class UANotificationCategories;

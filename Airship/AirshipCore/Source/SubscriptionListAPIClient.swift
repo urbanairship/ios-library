@@ -3,9 +3,6 @@
 // NOTE: For internal use only. :nodoc:
 protocol SubscriptionListAPIClientProtocol {
     @discardableResult
-    func update(channelID: String, subscriptionLists: [SubscriptionListUpdate], completionHandler: @escaping (UAHTTPResponse?, Error?) -> Void) -> UADisposable;
-    
-    @discardableResult
     func get(channelID: String, completionHandler: @escaping (SubscriptionListFetchResponse?, Error?) -> Void) -> UADisposable;
 }
 
@@ -13,12 +10,6 @@ protocol SubscriptionListAPIClientProtocol {
 class SubscriptionListAPIClient : SubscriptionListAPIClientProtocol {
 
     private static let getPath = "/api/subscription_lists/channels/"
-    
-    private static let updatePath = "/api/subscription_lists"
-    
-    private static let channelIDKey = "ios_channel"
-    private static let subscriptionListsIDKey = "subscription_lists"
-    private static let audienceIDKey = "audience"
     
     private var config: UARuntimeConfig
     private var session: UARequestSession
@@ -32,39 +23,6 @@ class SubscriptionListAPIClient : SubscriptionListAPIClientProtocol {
         self.init(config: config, session: UARequestSession(config: config))
     }
 
-    @discardableResult
-    func update(channelID: String, subscriptionLists: [SubscriptionListUpdate], completionHandler: @escaping (UAHTTPResponse?, Error?) -> Void) -> UADisposable {
-
-        AirshipLogger.debug("Updating subscription lists with channel ID \(channelID)")
-
-        let audience = [
-            SubscriptionListAPIClient.channelIDKey: channelID
-        ]
-        
-        let payload: [String : Any] = [
-            SubscriptionListAPIClient.audienceIDKey: audience,
-            SubscriptionListAPIClient.subscriptionListsIDKey: map(subscriptionListsUpdates: subscriptionLists)
-        ]
-                
-        let request = UARequest(builderBlock: { [self] builder in
-            builder.method = "POST"
-            builder.url = URL(string: "\(config.deviceAPIURL ?? "")\(SubscriptionListAPIClient.updatePath)")
-            builder.username = config.appKey
-            builder.password = config.appSecret
-            builder.setValue("application/vnd.urbanairship+json; version=3;", header: "Accept")
-            builder.setValue("application/json", header: "Content-Type")
-            builder.body = try? UAJSONSerialization.data(withJSONObject: payload, options: [])
-        })
-
-        return session.performHTTPRequest(request, completionHandler: { (data, response, error) in
-            guard let response = response else {
-                AirshipLogger.debug("Updating subscription lists finished with error: \(error.debugDescription)")
-                completionHandler(nil, error)
-                return
-            }
-            completionHandler(UAHTTPResponse(status: response.statusCode), nil)
-        })
-    }
     
     @discardableResult
     func get(channelID: String, completionHandler: @escaping (SubscriptionListFetchResponse?, Error?) -> Void) -> UADisposable {

@@ -401,15 +401,21 @@
         builder.campaigns = @{@"some": @"campaigns object"};
     }];
 
-    UATagGroupsMutation *mutation = [UATagGroupsMutation mutationToAddTags:@[@"neat", @"rad"] group:@"cool"];
-    UATagGroupsMutation *mutation2 = [UATagGroupsMutation mutationToAddTags:@[@"awesome", @"nice"] group:@"great"];
-
-    NSArray<UATagGroupsMutation *> *tagOverrides = @[mutation, mutation2];
-
-    UAAttributeMutations *attributeMutations = [UAAttributeMutations mutations];
-    [attributeMutations setString:@"absolutely" forAttribute:@"fabulous"];
-    UAAttributePendingMutations *attributeOverrides = [UAAttributePendingMutations pendingMutationsWithMutations:attributeMutations
-                                                                                                            date:[[UADate alloc] init]];
+    NSArray *tagOverrides = @[
+        [[UATagGroupUpdate alloc] initWithGroup:@"group1" tags:@[@"baz", @"boz"] type:UATagGroupUpdateTypeSet],
+        [[UATagGroupUpdate alloc] initWithGroup:@"group2" tags:@[@"bleep", @"bloop"] type:UATagGroupUpdateTypeSet]
+    ];
+    
+    NSArray *attributeOverrides = @[
+        [[UAAttributeUpdate alloc] initWithAttribute:@"breakfastDrink"
+                                                  type:UAAttributeUpdateTypeSet
+                                                 value:@"coffee"
+                                                  date:NSDate.now],
+        [[UAAttributeUpdate alloc] initWithAttribute:@"lunchDrink"
+                                                type:UAAttributeUpdateTypeSet
+                                               value:@"code-red"
+                                                date:NSDate.now]
+    ];
 
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
@@ -467,21 +473,27 @@
     UAScheduleDeferredData *deferred = [UAScheduleDeferredData deferredDataWithURL:[NSURL URLWithString:@"https://airship.com"]
                                                                 retriableOnTimeout:YES];
 
+    NSArray *tagOverrides = @[
+        [[UATagGroupUpdate alloc] initWithGroup:@"group1" tags:@[@"baz", @"boz"] type:UATagGroupUpdateTypeSet],
+        [[UATagGroupUpdate alloc] initWithGroup:@"group2" tags:@[@"bleep", @"bloop"] type:UATagGroupUpdateTypeSet]
+    ];
+    
+    NSArray *attributeOverrides = @[
+        [[UAAttributeUpdate alloc] initWithAttribute:@"breakfastDrink"
+                                                  type:UAAttributeUpdateTypeSet
+                                                 value:@"coffee"
+                                                  date:NSDate.now],
+        [[UAAttributeUpdate alloc] initWithAttribute:@"lunchDrink"
+                                                type:UAAttributeUpdateTypeSet
+                                               value:@"code-red"
+                                                date:NSDate.now]
+    ];
+    
     UASchedule *schedule = [UADeferredSchedule scheduleWithDeferredData:deferred builderBlock:^(UAScheduleBuilder *builder) {
         builder.triggers = @[trigger];
         builder.identifier = @"schedule ID";
         builder.campaigns = @{@"some": @"campaigns object"};
     }];
-
-    UATagGroupsMutation *mutation = [UATagGroupsMutation mutationToAddTags:@[@"neat", @"rad"] group:@"cool"];
-    UATagGroupsMutation *mutation2 = [UATagGroupsMutation mutationToAddTags:@[@"awesome", @"nice"] group:@"great"];
-
-    NSArray<UATagGroupsMutation *> *tagOverrides = @[mutation, mutation2];
-
-    UAAttributeMutations *attributeMutations = [UAAttributeMutations mutations];
-    [attributeMutations setString:@"absolutely" forAttribute:@"fabulous"];
-    UAAttributePendingMutations *attributeOverrides = [UAAttributePendingMutations pendingMutationsWithMutations:attributeMutations
-                                                                                                            date:[[UADate alloc] init]];
 
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
@@ -590,19 +602,9 @@
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         builder.identifier = @"schedule ID";
     }];
-
-    UATagGroupsMutation *mutation = [UATagGroupsMutation mutationToAddTags:@[@"neat", @"rad"] group:@"cool"];
-    UATagGroupsMutation *mutation2 = [UATagGroupsMutation mutationToAddTags:@[@"awesome", @"nice"] group:@"great"];
-
-    NSArray<UATagGroupsMutation *> *tagOverrides = @[mutation, mutation2];
-
-    UAAttributeMutations *attributeMutations = [UAAttributeMutations mutations];
-    [attributeMutations setString:@"absolutely" forAttribute:@"fabulous"];
-    UAAttributePendingMutations *attributeOverrides = [UAAttributePendingMutations pendingMutationsWithMutations:attributeMutations
-                                                                                                            date:[[UADate alloc] init]];
-
-    [[[self.mockAudienceManager expect] andReturn:tagOverrides] tagOverrides];
-    [[[self.mockAudienceManager expect] andReturn:attributeOverrides] attributeOverrides];
+    
+    [[[self.mockAudienceManager expect] andReturn:@[]] tagOverrides];
+    [[[self.mockAudienceManager expect] andReturn:@[]] attributeOverrides];
 
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
@@ -623,7 +625,7 @@
         [invocation getArgument:&block atIndex:7];
         block(nil, deferredResult);
     }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:nil
-     tagOverrides:tagOverrides attributeOverrides:attributeOverrides completionHandler:OCMOCK_ANY];
+     tagOverrides:@[] attributeOverrides:@[] completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
     [self.engineDelegate prepareSchedule:schedule
@@ -653,18 +655,8 @@
         }];
     }];
 
-    UATagGroupsMutation *mutation = [UATagGroupsMutation mutationToAddTags:@[@"neat", @"rad"] group:@"cool"];
-    UATagGroupsMutation *mutation2 = [UATagGroupsMutation mutationToAddTags:@[@"awesome", @"nice"] group:@"great"];
-
-    NSArray<UATagGroupsMutation *> *tagOverrides = @[mutation, mutation2];
-
-    UAAttributeMutations *attributeMutations = [UAAttributeMutations mutations];
-    [attributeMutations setString:@"absolutely" forAttribute:@"fabulous"];
-    UAAttributePendingMutations *attributeOverrides = [UAAttributePendingMutations pendingMutationsWithMutations:attributeMutations
-                                                                                                            date:[[UADate alloc] init]];
-
-    [[[self.mockAudienceManager expect] andReturn:tagOverrides] tagOverrides];
-    [[[self.mockAudienceManager expect] andReturn:attributeOverrides] attributeOverrides];
+    [[[self.mockAudienceManager expect] andReturn:@[]] tagOverrides];
+    [[[self.mockAudienceManager expect] andReturn:@[]] attributeOverrides];
 
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
@@ -681,7 +673,7 @@
         [invocation getArgument:&block atIndex:7];
         block(deferredResult, nil);
     }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:nil
-     tagOverrides:tagOverrides attributeOverrides:attributeOverrides completionHandler:OCMOCK_ANY];
+     tagOverrides:@[] attributeOverrides:@[] completionHandler:OCMOCK_ANY];
 
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
@@ -712,18 +704,8 @@
         }];
     }];
 
-    UATagGroupsMutation *mutation = [UATagGroupsMutation mutationToAddTags:@[@"neat", @"rad"] group:@"cool"];
-    UATagGroupsMutation *mutation2 = [UATagGroupsMutation mutationToAddTags:@[@"awesome", @"nice"] group:@"great"];
-
-    NSArray<UATagGroupsMutation *> *tagOverrides = @[mutation, mutation2];
-
-    UAAttributeMutations *attributeMutations = [UAAttributeMutations mutations];
-    [attributeMutations setString:@"absolutely" forAttribute:@"fabulous"];
-    UAAttributePendingMutations *attributeOverrides = [UAAttributePendingMutations pendingMutationsWithMutations:attributeMutations
-                                                                                                            date:[[UADate alloc] init]];
-
-    [[[self.mockAudienceManager expect] andReturn:tagOverrides] tagOverrides];
-    [[[self.mockAudienceManager expect] andReturn:attributeOverrides] attributeOverrides];
+    [[[self.mockAudienceManager expect] andReturn:@[]] tagOverrides];
+    [[[self.mockAudienceManager expect] andReturn:@[]] attributeOverrides];
 
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
@@ -740,7 +722,7 @@
         [invocation getArgument:&block atIndex:7];
         block(deferredResult, nil);
     }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:nil
-     tagOverrides:tagOverrides attributeOverrides:attributeOverrides completionHandler:OCMOCK_ANY];
+     tagOverrides:@[] attributeOverrides:@[] completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
     [self.engineDelegate prepareSchedule:schedule
@@ -1240,23 +1222,14 @@
     UAScheduleTriggerContext *triggerContext = [UAScheduleTriggerContext triggerContextWithTrigger:trigger
                                                                                              event:@"some event"];
 
-    UATagGroupsMutation *mutation = [UATagGroupsMutation mutationToAddTags:@[@"neat", @"rad"] group:@"cool"];
-    UATagGroupsMutation *mutation2 = [UATagGroupsMutation mutationToAddTags:@[@"awesome", @"nice"] group:@"great"];
-
-    NSArray<UATagGroupsMutation *> *tagOverrides = @[mutation, mutation2];
-
-    UAAttributeMutations *attributeMutations = [UAAttributeMutations mutations];
-    [attributeMutations setString:@"absolutely" forAttribute:@"fabulous"];
-    UAAttributePendingMutations *attributeOverrides = [UAAttributePendingMutations pendingMutationsWithMutations:attributeMutations
-                                                                                                            date:[[UADate alloc] init]];
-    [[[self.mockAudienceManager stub] andReturn:tagOverrides] tagOverrides];
-    [[[self.mockAudienceManager stub] andReturn:attributeOverrides] attributeOverrides];
+    [[[self.mockAudienceManager expect] andReturn:@[]] tagOverrides];
+    [[[self.mockAudienceManager expect] andReturn:@[]] attributeOverrides];
 
     [[[self.mockDeferredClient expect] andDo:^(NSInvocation *invocation) {
         void (^block)(UADeferredScheduleResult *, NSError *);
         [invocation getArgument:&block atIndex:7];
         block(deferredResult, nil);
-    }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:triggerContext tagOverrides:tagOverrides attributeOverrides:attributeOverrides completionHandler:OCMOCK_ANY];
+    }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:triggerContext tagOverrides:@[] attributeOverrides:@[] completionHandler:OCMOCK_ANY];
 
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
@@ -1324,24 +1297,15 @@
     UAScheduleTrigger *trigger = [UAScheduleTrigger foregroundTriggerWithCount:1];
     UAScheduleTriggerContext *triggerContext = [UAScheduleTriggerContext triggerContextWithTrigger:trigger
                                                                                              event:@"some event"];
-
-    UATagGroupsMutation *mutation = [UATagGroupsMutation mutationToAddTags:@[@"neat", @"rad"] group:@"cool"];
-    UATagGroupsMutation *mutation2 = [UATagGroupsMutation mutationToAddTags:@[@"awesome", @"nice"] group:@"great"];
-
-    NSArray<UATagGroupsMutation *> *tagOverrides = @[mutation, mutation2];
-
-    UAAttributeMutations *attributeMutations = [UAAttributeMutations mutations];
-    [attributeMutations setString:@"absolutely" forAttribute:@"fabulous"];
-    UAAttributePendingMutations *attributeOverrides = [UAAttributePendingMutations pendingMutationsWithMutations:attributeMutations
-                                                                                                            date:[[UADate alloc] init]];
-    [[[self.mockAudienceManager stub] andReturn:tagOverrides] tagOverrides];
-    [[[self.mockAudienceManager stub] andReturn:attributeOverrides] attributeOverrides];
+    
+    [[[self.mockAudienceManager expect] andReturn:@[]] tagOverrides];
+    [[[self.mockAudienceManager expect] andReturn:@[]] attributeOverrides];
 
     [[[self.mockDeferredClient expect] andDo:^(NSInvocation *invocation) {
         void (^block)(UADeferredScheduleResult *, NSError *);
         [invocation getArgument:&block atIndex:7];
         block(deferredResult, nil);
-    }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:triggerContext tagOverrides:tagOverrides attributeOverrides:attributeOverrides completionHandler:OCMOCK_ANY];
+    }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:triggerContext tagOverrides:@[] attributeOverrides:@[] completionHandler:OCMOCK_ANY];
 
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];

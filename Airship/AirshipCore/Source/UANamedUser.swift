@@ -60,10 +60,10 @@ public class UANamedUser : UAComponent {
      *  - tags: Array of tags.
      *  - group  Tag group..
      */
-    @available(*, deprecated, message: "Use Contact#editTags instead.")
+    @available(*, deprecated, message: "Use Contact#editTagGroups instead.")
     @objc(addTags:group:)
     public func addTags(_ tags: [String], group: String) {
-        let editor = contact.editTags()
+        let editor = contact.editTagGroups()
         editor.add(tags, group: group)
         editor.apply()
     }
@@ -74,10 +74,10 @@ public class UANamedUser : UAComponent {
      *  - tags: Array of tags.
      *  - group  Tag group.
      */
-    @available(*, deprecated, message: "Use Contact#editTags instead.")
+    @available(*, deprecated, message: "Use Contact#editTagGroups instead.")
     @objc(setTags:group:)
     public func setTags(_ tags: [String], group: String) {
-        let editor = contact.editTags()
+        let editor = contact.editTagGroups()
         editor.set(tags, group: group)
         editor.apply()
     }
@@ -88,10 +88,10 @@ public class UANamedUser : UAComponent {
      *  - tags: Array of tags.
      *  - group  Tag group.
      */
-    @available(*, deprecated, message: "Use Contact#editTags instead.")
+    @available(*, deprecated, message: "Use Contact#editTagGroups instead.")
     @objc(removeTags:group:)
     public func removeTags(_ tags: [String], group: String) {
-        let editor = contact.editTags()
+        let editor = contact.editTagGroups()
         editor.remove(tags, group: group)
         editor.apply()
     }
@@ -104,25 +104,9 @@ public class UANamedUser : UAComponent {
      */
     @available(*, deprecated, message: "Use Contact#editAttributes instead.")
     @objc(applyAttributeMutations:)
-    public func apply(_ mutations: UAAttributeMutations) {
-        let editor = contact.editAttibutes()
-        
-        let pending = UAAttributePendingMutations.init(mutations: mutations, date: UADate())
-        
-        let attributes = pending.payload()?[UAAttributePayloadKey] as? [[String : Any]]
-        attributes?.forEach { attribute in
-            if let name = attribute[UAAttributeNameKey] as? String {
-                if (UAAttributeSetActionKey == attribute[UAAttributeActionKey] as? String) {
-                    if let string = attribute[UAAttributeValueKey] as? String {
-                        editor.set(string: string, attribute: name)
-                    } else if let number = attribute[UAAttributeValueKey] as? NSNumber {
-                        editor.set(number: number, attribute: name)
-                    }
-                } else {
-                    editor.remove(name)
-                }
-            }
-        }
+    public func apply(_ mutations: AttributeMutations) {
+        let editor = contact.editAttributes()
+        mutations.applyMutations(editor: editor)
         editor.apply()
     }    
 }

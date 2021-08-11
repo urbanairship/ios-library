@@ -11,6 +11,7 @@
 @class UANetworkMonitor;
 @class UADispatcher;
 @class UATaskManager;
+@class UADate;
 
 NS_ASSUME_NONNULL_BEGIN
 

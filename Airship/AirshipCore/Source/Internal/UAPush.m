@@ -8,7 +8,6 @@
 
 #import "UAUtils+Internal.h"
 #import "UARuntimeConfig.h"
-#import "UATagUtils+Internal.h"
 #import "NSObject+UAAdditions.h"
 
 #if __has_include("AirshipCore/AirshipCore-Swift.h")
@@ -1056,7 +1055,7 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
             combinedTagsSet = [combinedTagsSet setByAddingObjectsFromArray:existingChannelTags];
             self.channel.tags = combinedTagsSet.allObjects;
         } else {
-            self.channel.tags = [UATagUtils normalizeTags:existingPushTags];
+            self.channel.tags = [UAAudienceUtils normalizeTags:existingPushTags];
         }
     }
 

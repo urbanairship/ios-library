@@ -16,10 +16,8 @@
 
 - (void)updateDeviceInformation:(ACCDeviceInformationSet *)deviceInformation withCompletionHandler:(nullable void(^)(NSError *__nullable error))completionHandler {
     
-    UAAttributeMutations *mutations = deviceInformation.attributeMutations;
-    
     // Apply the attribute changes to the channel
-    [UAirship.channel applyAttributeMutations:mutations];
+    [deviceInformation applyEdits];
     
     if (completionHandler) {
         completionHandler(nil);

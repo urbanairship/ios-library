@@ -105,6 +105,23 @@ public class AudienceUtils : NSObject {
         return updated.compactMapValues({ $0.isEmpty ? nil : $0})
     }
     
+    @objc
+    public class func normalizeTags(_ tags: [String]) -> [String] {
+        return tags.compactMap { tag in
+            let trimmed = tag.trimmingCharacters(in: .whitespacesAndNewlines)
+            if (trimmed.isEmpty || trimmed.count > 128) {
+                AirshipLogger.error("Tag \(trimmed) must be between 1-128 characters. Ignoring")
+                return nil
+            }
+            return trimmed
+        }
+    }
+    
+    @objc
+    public class func normalizeTagGroup(_ group: String) -> String {
+        return group.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+    
     class func applyAttributeUpdates(attributes: [String : JsonValue]?, attributeUpdates: [AttributeUpdate]?) -> [String : JsonValue] {
         var updated = attributes ?? [:]
         

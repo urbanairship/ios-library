@@ -8,7 +8,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ACCDeviceInformationSet()
 
-@property(nonatomic, strong) UAAttributeMutations *attributeMutations;
+- (void)applyEdits;
 
 @end
 

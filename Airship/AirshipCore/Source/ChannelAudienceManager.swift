@@ -7,17 +7,46 @@ import Foundation
 public class ChannelAudienceManager : NSObject {
     static let updateTaskID = "ChannelAudienceManager.update"
     static let updatesKey = "UAChannel.audienceUpdates"
+    
+    static let legacyPendingTagGroupsKey = "com.urbanairship.tag_groups.pending_channel_tag_groups_mutations"
+    static let legacyPendingAttributesKey = "com.urbanairship.channel_attributes.registrar_persistent_queue_key"
+    
     static let maxCacheTime : TimeInterval = 600 // 10 minutes
 
     private let dataStore: UAPreferenceDataStore
     private let privacyManager: UAPrivacyManager
     private let taskManager: TaskManagerProtocol
     private let subscriptionListClient: SubscriptionListAPIClientProtocol
+    private let updateClient: ChannelBulkUpdateAPIClientProtocol
+    private let notificationCenter: NotificationCenter
+
     private let date: UADate
     private let dispatcher = UADispatcher.serial()
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
     private let updateLock = Lock()
+    
+    @objc
+    public var pendingAttributeUpdates : [AttributeUpdate] {
+        get {
+            var updates : [AttributeUpdate]!
+            updateLock.sync {
+                updates = getUpdates().compactMap() { $0.attributeUpdates }.reduce([], +)
+            }
+            return updates
+        }
+    }
+    
+    @objc
+    public var pendingTagGroupUpdates : [TagGroupUpdate] {
+        get {
+            var updates : [TagGroupUpdate]!
+            updateLock.sync {
+                updates = getUpdates().compactMap() { $0.tagGroupUpdates }.reduce([], +)
+            }
+            return updates
+        }
+    }
     
     private var cachedSubscriptionListResponse : CachedSubscriptionListResponse?
     
@@ -38,6 +67,7 @@ public class ChannelAudienceManager : NSObject {
     init(dataStore: UAPreferenceDataStore,
         taskManager: TaskManagerProtocol,
         subscriptionListClient: SubscriptionListAPIClientProtocol,
+        updateClient: ChannelBulkUpdateAPIClientProtocol,
         privacyManager: UAPrivacyManager,
         notificationCenter: NotificationCenter,
         date: UADate) {
@@ -46,6 +76,8 @@ public class ChannelAudienceManager : NSObject {
         self.taskManager = taskManager;
         self.privacyManager = privacyManager;
         self.subscriptionListClient = subscriptionListClient
+        self.updateClient = updateClient
+        self.notificationCenter = notificationCenter
         self.date = date
         
         super.init()
@@ -53,6 +85,8 @@ public class ChannelAudienceManager : NSObject {
         self.taskManager.register(taskID: ChannelAudienceManager.updateTaskID, dispatcher: self.dispatcher) { [weak self] task in
             self?.handleUpdateTask(task)
         }
+        
+        self.migrateMutations()
         
         notificationCenter.addObserver(
             self,
@@ -66,6 +100,7 @@ public class ChannelAudienceManager : NSObject {
             name: NSNotification.Name.UARemoteConfigURLManagerConfigUpdated,
             object: nil)
         
+        
         self.checkPrivacyManager()
     }
     
@@ -77,6 +112,7 @@ public class ChannelAudienceManager : NSObject {
         self.init(dataStore: dataStore,
                   taskManager: UATaskManager.shared,
                   subscriptionListClient: SubscriptionListAPIClient(config: config),
+                  updateClient: ChannelBulkUpdateAPIClient(config: config),
                   privacyManager: privacyManager,
                   notificationCenter: NotificationCenter.default,
                   date: UADate())
@@ -94,7 +130,43 @@ public class ChannelAudienceManager : NSObject {
                 return
             }
             
-            let audienceUpdate = AudienceUpdate(subscriptionListUpdates: updates)
+            let audienceUpdate = AudienceUpdate(subscriptionListUpdates: updates, tagGroupUpdates: [], attributeUpdates: [])
+            self.addUpdate(audienceUpdate)
+            self.enqueueTask()
+        }
+    }
+    
+    @objc
+    public func editTagGroups(allowDeviceGroup: Bool) -> TagGroupsEditor {
+        return TagGroupsEditor(allowDeviceTagGroup: allowDeviceGroup) { updates in
+            guard !updates.isEmpty else {
+                return
+            }
+            
+            guard self.privacyManager.isEnabled( .tagsAndAttributes) else {
+                AirshipLogger.warn("Tags and attributes are disabled. Enable to apply tag group edits.")
+                return
+            }
+            
+            let audienceUpdate = AudienceUpdate(subscriptionListUpdates: [], tagGroupUpdates: updates, attributeUpdates: [])
+            self.addUpdate(audienceUpdate)
+            self.enqueueTask()
+        }
+    }
+    
+    @objc
+    public func editAttributes() -> AttributesEditor {
+        return AttributesEditor() { updates in
+            guard !updates.isEmpty else {
+                return
+            }
+            
+            guard self.privacyManager.isEnabled( .tagsAndAttributes) else {
+                AirshipLogger.warn("Tags and attributes are disabled. Enable to apply attribute edits.")
+                return
+            }
+            
+            let audienceUpdate = AudienceUpdate(subscriptionListUpdates: [], tagGroupUpdates: [], attributeUpdates: updates)
             self.addUpdate(audienceUpdate)
             self.enqueueTask()
         }
@@ -193,8 +265,10 @@ public class ChannelAudienceManager : NSObject {
         
         let semaphore = UASemaphore()
         
-        let disposable = self.subscriptionListClient.update(channelID: channelID,
-                                                            subscriptionLists: update.subscriptionListUpdates) { response, error in
+        let disposable = self.updateClient.update(channelID: channelID,
+                                                  subscriptionListUpdates: update.subscriptionListUpdates,
+                                                  tagGroupUpdates: update.tagGroupUpdates,
+                                                  attributeUpdates: update.attributeUpdates) { response, error in
             
             if let response = response {
                 AirshipLogger.debug("Update finished with response: \(response)")
@@ -203,6 +277,14 @@ public class ChannelAudienceManager : NSObject {
                     self.cachedSubscriptionListResponse = nil
                     task.taskCompleted()
                     self.enqueueTask()
+                    
+                    let payload : [String : Any] = [
+                        UAChannelAudienceUpdatedEventTagsKey : update.tagGroupUpdates,
+                        UAChannelAudienceUpdatedEventAttributesKey : update.attributeUpdates
+                    ]
+                    
+                    self.notificationCenter.post(name: NSNotification.Name.UAChannelAudienceUpdatedEvent, object: payload)
+                    
                 } else if (response.isServerError) {
                     task.taskFailed()
                 } else {
@@ -278,21 +360,66 @@ public class ChannelAudienceManager : NSObject {
     }
     
     private class func collapse(_ updates: [AudienceUpdate]) -> AudienceUpdate? {
-        var allUpdates : [SubscriptionListUpdate] = []
+        var subscriptionListUpdates : [SubscriptionListUpdate] = []
+        var tagGroupUpdates : [TagGroupUpdate] = []
+        var attributeUpdates : [AttributeUpdate] = []
+
+        updates.forEach {
+            subscriptionListUpdates.append(contentsOf: $0.subscriptionListUpdates)
+            tagGroupUpdates.append(contentsOf: $0.tagGroupUpdates)
+            attributeUpdates.append(contentsOf: $0.attributeUpdates)
+        }
         
-        updates.forEach { allUpdates.append(contentsOf: $0.subscriptionListUpdates) }
-        allUpdates = AudienceUtils.collapse(allUpdates)
-        
-        if (allUpdates.isEmpty) {
+        subscriptionListUpdates = AudienceUtils.collapse(subscriptionListUpdates)
+        tagGroupUpdates = AudienceUtils.collapse(tagGroupUpdates)
+        attributeUpdates = AudienceUtils.collapse(attributeUpdates)
+
+        guard !subscriptionListUpdates.isEmpty || !tagGroupUpdates.isEmpty || !attributeUpdates.isEmpty else {
             return nil
-        } else {
-            return AudienceUpdate(subscriptionListUpdates: allUpdates)
+        }
+        
+        return AudienceUpdate(subscriptionListUpdates: subscriptionListUpdates,
+                              tagGroupUpdates: tagGroupUpdates,
+                              attributeUpdates: attributeUpdates)
+    }
+    
+    
+    func migrateMutations() {
+        defer {
+            self.dataStore.removeObject(forKey: ChannelAudienceManager.legacyPendingTagGroupsKey)
+            self.dataStore.removeObject(forKey: ChannelAudienceManager.legacyPendingAttributesKey)
+        }
+
+        if (self.privacyManager.isEnabled(.tagsAndAttributes)) {
+            var pendingTagUpdates : [TagGroupUpdate]?
+            var pendingAttributeUpdates : [AttributeUpdate]?
+            
+            if let pendingTagGroupsData = self.dataStore.data(forKey: ChannelAudienceManager.legacyPendingTagGroupsKey) {
+                if let pendingTagGroups = NSKeyedUnarchiver.unarchiveObject(with: pendingTagGroupsData) as? [TagGroupsMutation] {
+                    pendingTagUpdates = pendingTagGroups.map { $0.tagGroupUpdates }.reduce([], +)
+                }
+            }
+            
+            if let pendingAttributesData = self.dataStore.data(forKey: ChannelAudienceManager.legacyPendingAttributesKey) {
+                if let pendingAttributes = NSKeyedUnarchiver.unarchiveObject(with: pendingAttributesData) as? [AttributePendingMutations] {
+                    pendingAttributeUpdates = pendingAttributes.map { $0.attributeUpdates }.reduce([], +)
+                }
+            }
+            
+            if (pendingTagUpdates != nil || pendingAttributeUpdates != nil) {
+                let update = AudienceUpdate(subscriptionListUpdates: [],
+                                            tagGroupUpdates: pendingTagUpdates ?? [],
+                                            attributeUpdates: pendingAttributeUpdates ?? [])
+                addUpdate(update)
+            }
         }
     }
 }
 
 internal struct AudienceUpdate : Codable {
     let subscriptionListUpdates : [SubscriptionListUpdate]
+    let tagGroupUpdates : [TagGroupUpdate]
+    let attributeUpdates : [AttributeUpdate]
 }
 
 internal struct CachedSubscriptionListResponse {

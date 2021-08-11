@@ -48,14 +48,8 @@ NS_ASSUME_NONNULL_END
         self.contactRecords = [NSMutableArray array];
 
         [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(uploadedChannelTagGroupsMutation:)
-                                                     name:UAChannelUploadedTagGroupMutationNotification
-                                                   object:nil];
-
-
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(uploadedChannelAttributeMutations:)
-                                                     name:UAChannelUploadedAttributeMutationsNotification
+                                                 selector:@selector(channelAudienceUpdated:)
+                                                     name:UAChannelAudienceUpdatedEvent
                                                    object:nil];
 
 
@@ -82,25 +76,22 @@ NS_ASSUME_NONNULL_END
 }
 
 
-- (void)uploadedChannelTagGroupsMutation:(NSNotification *)notification {
-    UATagGroupsMutation *mutation = [notification.userInfo objectForKey:UAChannelUploadedAudienceMutationNotificationMutationKey];
-
-    if (mutation) {
-        [self.channelRecords addObject:@{ kUAInAppAudienceHistorianRecordDate: self.date.now,
-                                          kUAInAppAudienceHistorianRecordType: @(UAInAppAudienceRecordTypeTags),
-                                          kUAInAppAudienceHistorianRecordUpdates: mutation.tagGroupUpdates }];
-    }
-}
-
-- (void)uploadedChannelAttributeMutations:(NSNotification *)notification {
-    UAAttributePendingMutations *mutations = [notification.userInfo objectForKey:UAChannelUploadedAudienceMutationNotificationMutationKey];
-
-    if (mutations) {
-        [self.channelRecords addObject:@{ kUAInAppAudienceHistorianRecordDate: self.date.now,
+- (void)channelAudienceUpdated:(NSNotification *)notification {
+    NSArray<UAAttributeUpdate *> *attributes = [notification.userInfo objectForKey:UAChannelAudienceUpdatedEventAttributesKey];
+    if (attributes.count) {
+        [self.contactRecords addObject:@{ kUAInAppAudienceHistorianRecordDate: self.date.now,
                                           kUAInAppAudienceHistorianRecordType: @(UAInAppAudienceRecordTypeAttributes),
-                                          kUAInAppAudienceHistorianRecordUpdates: mutations.attributeUpdates }];
+                                          kUAInAppAudienceHistorianRecordUpdates: attributes }];
+    }
+    
+    NSArray<UATagGroupUpdate *> *tags = [notification.userInfo objectForKey:UAChannelAudienceUpdatedEventTagsKey];
+    if (tags.count) {
+        [self.contactRecords addObject:@{ kUAInAppAudienceHistorianRecordDate: self.date.now,
+                                          kUAInAppAudienceHistorianRecordType: @(UAInAppAudienceRecordTypeTags),
+                                          kUAInAppAudienceHistorianRecordUpdates: tags }];
     }
 }
+
 
 - (void)contactAudienceUpdated:(NSNotification *)notification {
     NSArray<UAAttributeUpdate *> *attributes = [notification.userInfo objectForKey:UAContact.attributesKey];

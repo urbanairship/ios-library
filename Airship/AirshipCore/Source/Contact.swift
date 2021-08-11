@@ -15,7 +15,7 @@ public class Contact : UAComponent {
     static let anonContactDataKey = "Contact.anonContactData"
     static let resolveDateKey = "Contact.resolveDate"
 
-    static let legacyPendingTagGroupsKey = "com.urbanairship.tag_groups.pending_named_user_tag_groups_mutations"
+    static let legacyPendingTagGroupsKey = "com.urbanairship.tag_groups.pending_channel_tag_groups_mutations"
     static let legacyPendingAttributesKey = "com.urbanairship.named_user_attributes.registrar_persistent_queue_key"
     static let legacyNamedUserKey = "UANamedUserID"
 
@@ -268,7 +268,7 @@ public class Contact : UAComponent {
      * - Returns: A tag groups editor.
      */
     @objc
-    public func editTags() -> TagGroupsEditor {
+    public func editTagGroups() -> TagGroupsEditor {
         return TagGroupsEditor { updates in
             guard !updates.isEmpty else {
                 return
@@ -290,7 +290,7 @@ public class Contact : UAComponent {
      * - Returns: An attributes editor.
      */
     @objc
-    public func editAttibutes() -> AttributesEditor {
+    public func editAttributes() -> AttributesEditor {
         return AttributesEditor { updates in
             guard !updates.isEmpty else {
                 return
@@ -686,14 +686,14 @@ public class Contact : UAComponent {
             var pendingAttributeUpdates : [AttributeUpdate]?
             
             if let pendingTagGroupsData = self.dataStore.data(forKey: Contact.legacyPendingTagGroupsKey) {
-                if let pendingTagGroups = NSKeyedUnarchiver.unarchiveObject(with: pendingTagGroupsData) as? [UATagGroupsMutation] {
-                    pendingTagUpdates = pendingTagGroups.map { $0.tagGroupUpdates() }.reduce([], +)
+                if let pendingTagGroups = NSKeyedUnarchiver.unarchiveObject(with: pendingTagGroupsData) as? [TagGroupsMutation] {
+                    pendingTagUpdates = pendingTagGroups.map { $0.tagGroupUpdates }.reduce([], +)
                 }
             }
             
             if let pendingAttributesData = self.dataStore.data(forKey: Contact.legacyPendingAttributesKey) {
-                if let pendingAttributes = NSKeyedUnarchiver.unarchiveObject(with: pendingAttributesData) as? [UAAttributePendingMutations] {
-                    pendingAttributeUpdates = pendingAttributes.map { $0.attributeUpdates() }.reduce([], +)
+                if let pendingAttributes = NSKeyedUnarchiver.unarchiveObject(with: pendingAttributesData) as? [AttributePendingMutations] {
+                    pendingAttributeUpdates = pendingAttributes.map { $0.attributeUpdates }.reduce([], +)
                 }
             }
             

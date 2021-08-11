@@ -2,12 +2,14 @@
 
 #import "UAComponent.h"
 #import "UAChannelNotificationCenterEvents.h"
-#import "UAAttributeMutations.h"
-#import "UATagGroupsMutation.h"
-#import "UAAttributePendingMutations.h"
 
 @class UASubscriptionListEditor;
+@class UAAttributesEditor;
+@class UATagGroupsEditor;
 @class UADisposable;
+@class UAAttributeMutations;
+@class UATagGroupUpdate;
+@class UAAttributeUpdate;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -22,34 +24,24 @@ NS_ASSUME_NONNULL_BEGIN
 extern NSNotificationName const UAChannelCreatedEvent;
 
 /**
- * Notification posted when a channel tag group mutation is uploaded.
- *
- * User data will contain a UATagGroupsMutation, identifier string and NSDate under
- * UAChannelUploadedAudienceMutationNotificationMutationKey,
- * UAChannelUploadedAudienceMutationNotificationIdentifierKey, and
- * UAChannelUploadedAudienceMutationNotificationDateKey, respectively.
+ * Notification posted when a channel audience is updated.
  * @note For internal use only. :nodoc:
  */
-extern NSString *const UAChannelUploadedTagGroupMutationNotification;
+extern NSNotificationName const UAChannelAudienceUpdatedEvent;
 
 /**
- * Notification posted when a channel attribute mutation is uploaded.
- *
- * User data will contain a UAAttributePendingMutations, identifier string and NSDate under
- * UAChannelUploadedAudienceMutationNotificationMutationKey,
- * UAChannelUploadedAudienceMutationNotificationIdentifierKey, and
- * UAChannelUploadedAudienceMutationNotificationDateKey, respectively.
+ * Tag group updates key in the `UAChannelAudienceUpdatedEvent` event.
  * @note For internal use only. :nodoc:
  */
-extern NSString *const UAChannelUploadedAttributeMutationsNotification;
+extern NSString *const UAChannelAudienceUpdatedEventTagsKey;
 
 /**
- * The mutation key for UAChannelUploadedTagGroupMutationNotification and UAChannelUploadedAttributeMutationsNotification.
+ * Attribute updates key in the `UAChannelAudienceUpdatedEvent` event.
  * @note For internal use only. :nodoc:
  */
-extern NSString *const UAChannelUploadedAudienceMutationNotificationMutationKey;
+extern NSString *const UAChannelAudienceUpdatedEventAttributesKey;
 
-/**
+/**bu
 * This singleton provides an interface to the channel functionality provided by the Airship iOS Push API.
 */
 @interface UAChannel : UAComponent
@@ -60,16 +52,16 @@ extern NSString *const UAChannelUploadedAudienceMutationNotificationMutationKey;
 @property(nullable, nonatomic, readonly) NSString *identifier;
 
 /**
- * Returns the pending tag groups mutuations.
+ * Returns the pending tag groups updates.
  * @note For internal use only. :nodoc:
  */
-@property (nonatomic, readonly)NSArray<UATagGroupsMutation *> *pendingTagGroups;
+@property (nonatomic, readonly) NSArray<UATagGroupUpdate *> *pendingTagGroupUpdates;
 
 /**
- * Returns the pending attribute mutuations.
+ * Returns the pending attribute updates.
  * @note For internal use only. :nodoc:
  */
-@property (nonatomic, readonly) UAAttributePendingMutations *pendingAttributes;
+@property (nonatomic, readonly) NSArray<UAAttributeUpdate *> *pendingAttributeUpdates;
 
 /**
  Tags for this device.
@@ -95,7 +87,6 @@ extern NSString *const UAChannelUploadedAudienceMutationNotificationMutationKey;
  * @return A subscription list editor.
  */
 - (UASubscriptionListEditor *)editSubscriptionLists;
-
 
 /**
  * Fetches subscriptoin lists.
@@ -158,14 +149,20 @@ extern NSString *const UAChannelUploadedAudienceMutationNotificationMutationKey;
 ///---------------------------------------------------------------------------------------
 
 /**
+ * Creates a tag group editor for the channel.
+ * @return A tag group editor.
+ */
+- (UATagGroupsEditor *)editTagGroups;
+
+/**
  * Add tags to channel tag groups. To update the server,
  * make all of your changes, then call `updateRegistration`.
  *
  * @param tags Array of tags to add.
  * @param tagGroupID Tag group ID string.
+ * @deprecated Deprecated – to be removed in SDK version 16.0. Use  `editTagGroups`
  */
-- (void)addTags:(NSArray<NSString *> *)tags group:(NSString *)tagGroupID;
-
+- (void)addTags:(NSArray<NSString *> *)tags group:(NSString *)tagGroupID __attribute__ ((deprecated));
 
 /**
  * Removes tags from channel tag groups. To update the server,
@@ -173,8 +170,9 @@ extern NSString *const UAChannelUploadedAudienceMutationNotificationMutationKey;
  *
  * @param tags Array of tags to remove.
  * @param tagGroupID Tag group ID string.
+ * @deprecated Deprecated – to be removed in SDK version 16.0.  Use  `editTagGroups` instead.
  */
-- (void)removeTags:(NSArray<NSString *> *)tags group:(NSString *)tagGroupID;
+- (void)removeTags:(NSArray<NSString *> *)tags group:(NSString *)tagGroupID __attribute__ ((deprecated));
 
 /**
  * Sets tags for channel tag groups. To update the server,
@@ -182,8 +180,9 @@ extern NSString *const UAChannelUploadedAudienceMutationNotificationMutationKey;
  *
  * @param tags Array of tags to set.
  * @param tagGroupID Tag group ID string.
+ * @deprecated Deprecated – to be removed in SDK version 16.0. Use  `editTagGroups` instead.
  */
-- (void)setTags:(NSArray<NSString *> *)tags group:(NSString *)tagGroupID;
+- (void)setTags:(NSArray<NSString *> *)tags group:(NSString *)tagGroupID __attribute__ ((deprecated));
 
 
 ///---------------------------------------------------------------------------------------
@@ -194,8 +193,15 @@ extern NSString *const UAChannelUploadedAudienceMutationNotificationMutationKey;
  * Applies mutations to attributes associated with this device.
  *
  * @param mutations Attribute mutations to apply to this device.
+ * @deprecated Deprecated – to be removed in SDK version 16.0. Use  `editAttributes` instead.
  */
-- (void)applyAttributeMutations:(UAAttributeMutations *)mutations;
+- (void)applyAttributeMutations:(UAAttributeMutations *)mutations __attribute__ ((deprecated));
+
+/**
+ * Creates an attribute editor for the channel.
+ * @return An attribute editor.
+ */
+- (UAAttributesEditor *)editAttributes;
 
 ///---------------------------------------------------------------------------------------
 /// @name Channel Registration

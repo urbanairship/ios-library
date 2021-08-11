@@ -21,11 +21,12 @@ NSString * const UAAddTagsActionDefaultRegistryAlias = @"^+t";
 }
 
 - (void)applyChannelTags:(NSArray *)tags group:(NSString *)group {
-    [[UAirship channel] addTags:tags group:group];
-}
+    UATagGroupsEditor *editor = [[UAirship channel] editTagGroups];
+    [editor addTags:tags group:group];
+    [editor apply];}
 
 - (void)applyNamedUserTags:(NSArray *)tags group:(NSString *)group {
-    UATagGroupsEditor *editor = [[UAirship contact] editTags];
+    UATagGroupsEditor *editor = [[UAirship contact] editTagGroups];
     [editor addTags:tags group:group];
     [editor apply];
 }

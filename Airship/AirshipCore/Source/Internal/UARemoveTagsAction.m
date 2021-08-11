@@ -21,11 +21,13 @@ NSString * const UARemoveTagsActionDefaultRegistryAlias = @"^-t";
 }
 
 - (void)applyChannelTags:(NSArray *)tags group:(NSString *)group {
-    [[UAirship channel] removeTags:tags group:group];
+    UATagGroupsEditor *editor = [[UAirship channel] editTagGroups];
+    [editor removeTags:tags group:group];
+    [editor apply];
 }
 
 - (void)applyNamedUserTags:(NSArray *)tags group:(NSString *)group {
-    UATagGroupsEditor *editor = [[UAirship contact] editTags];
+    UATagGroupsEditor *editor = [[UAirship contact] editTagGroups];
     [editor removeTags:tags group:group];
     [editor apply];
 }

@@ -39,10 +39,15 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, strong) UAPush *sharedPush;
 
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 /**
  * The named user.
  */
 @property (nonatomic, strong) UANamedUser *sharedNamedUser;
+#pragma clang diagnostic popu
+
 
 /**
  * The contact.

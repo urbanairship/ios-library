@@ -2,6 +2,7 @@
 
 import XCTest
 
+
 @testable
 import AirshipCore
 
@@ -59,19 +60,22 @@ class ContactTest: XCTestCase {
         let testDate = UATestDate()
         testDate.dateOverride = Date()
         
-        let attributeMutation = UAAttributeMutations()
-        attributeMutation.removeAttribute("some-attribute")
+        let attributePayload = [
+            "action": "remove",
+            "key": "some-attribute",
+            "timestamp": UAUtils.isoDateFormatterUTCWithDelimiter().string(from: testDate.now)
+        ]
         
-        let pendingAttribute = [UAAttributePendingMutations(mutations: attributeMutation, date: testDate)]
-        let pendingAttributesData = try NSKeyedArchiver.archivedData(withRootObject:pendingAttribute, requiringSecureCoding:true)
-        self.dataStore.setObject(pendingAttributesData, forKey: Contact.legacyPendingAttributesKey)
+        let attributeMutation = AttributePendingMutations(mutationsPayload: [attributePayload])
+        let attributeData = try! NSKeyedArchiver.archivedData(withRootObject:[attributeMutation], requiringSecureCoding:true)
+        dataStore.setObject(attributeData, forKey: Contact.legacyPendingAttributesKey)
         
-        let tagMutations = [UATagGroupsMutation(toAddTags: ["tag"], group: "some-group")]
-        let tagMutationsData = try NSKeyedArchiver.archivedData(withRootObject:tagMutations, requiringSecureCoding:true)
-        self.dataStore.setObject(tagMutationsData, forKey: Contact.legacyPendingTagGroupsKey)
-        
+        let tagMutation = TagGroupsMutation(adds: ["some-group": Set(["tag"])], removes: nil, sets: nil)
+        let tagData = try! NSKeyedArchiver.archivedData(withRootObject:[tagMutation], requiringSecureCoding:true)
+        dataStore.setObject(tagData, forKey: Contact.legacyPendingTagGroupsKey)
+
+            
         self.dataStore.setObject("named-user", forKey: Contact.legacyNamedUserKey)
-        
         self.contact.migrateNamedUser()
 
         XCTAssertEqual("named-user", contact.namedUserID)
@@ -281,12 +285,12 @@ class ContactTest: XCTestCase {
     }
     
     func testCombineSequentialUpdates() throws {
-        let tagEdits = self.contact.editTags()
+        let tagEdits = self.contact.editTagGroups()
         tagEdits.add(["neat"], group: "cool")
         tagEdits.apply()
         XCTAssertEqual(1, self.taskManager.enqueuedRequests.count)
         
-        let attributeEdits = self.contact.editAttibutes()
+        let attributeEdits = self.contact.editAttributes()
         attributeEdits.set(int: 1, attribute: "one")
         attributeEdits.apply()
         XCTAssertEqual(2, self.taskManager.enqueuedRequests.count)
@@ -373,11 +377,11 @@ class ContactTest: XCTestCase {
         
         self.contact.conflictDelegate = delegate
         
-        let tagEdits = self.contact.editTags()
+        let tagEdits = self.contact.editTagGroups()
         tagEdits.add(["neat"], group: "cool")
         tagEdits.apply()
     
-        let attributeEdits = self.contact.editAttibutes()
+        let attributeEdits = self.contact.editAttributes()
         attributeEdits.set(int: 1, attribute: "one")
         attributeEdits.apply()
         
@@ -422,11 +426,11 @@ class ContactTest: XCTestCase {
         
         self.contact.conflictDelegate = delegate
         
-        let tagEdits = self.contact.editTags()
+        let tagEdits = self.contact.editTagGroups()
         tagEdits.add(["neat"], group: "cool")
         tagEdits.apply()
     
-        let attributeEdits = self.contact.editAttibutes()
+        let attributeEdits = self.contact.editAttributes()
         attributeEdits.set(int: 1, attribute: "one")
         attributeEdits.apply()
         
@@ -453,11 +457,11 @@ class ContactTest: XCTestCase {
     func testTagsAndAttributesSkippedContactsDisabled() {
         self.privacyManager.disableFeatures(.contacts)
         
-        let tagEdits = self.contact.editTags()
+        let tagEdits = self.contact.editTagGroups()
         tagEdits.add(["neat"], group: "cool")
         tagEdits.apply()
     
-        let attributeEdits = self.contact.editAttibutes()
+        let attributeEdits = self.contact.editAttributes()
         attributeEdits.set(int: 1, attribute: "one")
         attributeEdits.apply()
         
@@ -535,7 +539,7 @@ class ContactTest: XCTestCase {
     }
     
     func testUpdateFailed() throws {
-        let attributeEdits = self.contact.editAttibutes()
+        let attributeEdits = self.contact.editAttributes()
         attributeEdits.set(int: 1, attribute: "one")
         attributeEdits.apply()
 

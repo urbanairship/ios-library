@@ -30,8 +30,8 @@ public class TagGroupsEditor: NSObject {
      */
     @objc(addTags:group:)
     public func add(_ tags: [String], group: String) {
-        let group = normalize(group: group)
-        let tags = normalize(tags: tags)
+        let group = AudienceUtils.normalizeTagGroup(group)
+        let tags = AudienceUtils.normalizeTags(tags)
         
         guard isValid(group: group) else { return }
         guard !tags.isEmpty else { return }
@@ -48,8 +48,8 @@ public class TagGroupsEditor: NSObject {
      */
     @objc(removeTags:group:)
     public func remove(_ tags: [String], group: String) {
-        let group = normalize(group: group)
-        let tags = normalize(tags: tags)
+        let group = AudienceUtils.normalizeTagGroup(group)
+        let tags = AudienceUtils.normalizeTags(tags)
 
         guard isValid(group: group) else { return }
         guard !tags.isEmpty else { return }
@@ -66,8 +66,8 @@ public class TagGroupsEditor: NSObject {
      */
     @objc(setTags:group:)
     public func set(_ tags: [String], group: String) {
-        let group = normalize(group: group)
-        let tags = normalize(tags: tags)
+        let group = AudienceUtils.normalizeTagGroup(group)
+        let tags = AudienceUtils.normalizeTags(tags)
 
         guard isValid(group: group) else { return }
         
@@ -96,20 +96,5 @@ public class TagGroupsEditor: NSObject {
         }
         
         return true
-    }
-    
-    private func normalize(tags: [String]) -> [String] {
-        return tags.compactMap { tag in
-            let trimmed = tag.trimmingCharacters(in: .whitespacesAndNewlines)
-            if (trimmed.isEmpty || trimmed.count > 128) {
-                AirshipLogger.error("Tag \(trimmed) must be between 1-128 characters. Ignoring")
-                return nil
-            }
-            return trimmed
-        }
-    }
-    
-    private func normalize(group: String) -> String {
-        return group.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }

@@ -14,8 +14,6 @@
 #import "UAAppIntegration.h"
 #import "UARemoteDataManager+Internal.h"
 #import "UARemoteConfigManager+Internal.h"
-#import "UATagGroupsRegistrar+Internal.h"
-#import "UAPendingTagGroupStore+Internal.h"
 #import "UAChannel+Internal.h"
 #import "UALocationModuleLoaderFactory.h"
 #import "UAAutomationModuleLoaderFactory.h"

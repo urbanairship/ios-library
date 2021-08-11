@@ -136,19 +136,23 @@
     }];
 
     
-    [[self.mockChannel expect] addTags:@[@"device tag", @"another device tag"]];
-    [[self.mockChannel expect] addTags:@[@"tag1", @"tag2"] group:@"group1"];
-    [[self.mockChannel expect] addTags:@[@"tag3", @"tag4"] group:@"group2"];
-    [[self.mockChannel expect] updateRegistration];
+    id mockChannelTagEditor =  [self mockForClass:[UATagGroupsEditor class]];
+    [[[self.mockChannel stub] andReturn:mockChannelTagEditor] editTagGroups];
 
-    id mockTagEditor =  [self mockForClass:[UATagGroupsEditor class]];
-    [[[self.mockContact stub] andReturn:mockTagEditor] editTags];
-    [[mockTagEditor expect] addTags:@[@"tag5", @"tag6"] group:@"group3"];
-    [[mockTagEditor expect] apply];
+    [[self.mockChannel expect] addTags:@[@"device tag", @"another device tag"]];
+    [[mockChannelTagEditor expect] addTags:@[@"tag1", @"tag2"] group:@"group1"];
+    [[mockChannelTagEditor expect] addTags:@[@"tag3", @"tag4"] group:@"group2"];
+    [[mockChannelTagEditor expect] apply];
+
+    id mockContactTagEditor =  [self mockForClass:[UATagGroupsEditor class]];
+    [[[self.mockContact stub] andReturn:mockContactTagEditor] editTagGroups];
+    [[mockContactTagEditor expect] addTags:@[@"tag5", @"tag6"] group:@"group3"];
+    [[mockContactTagEditor expect] apply];
 
     [action performWithArguments:self.dictArgs completionHandler:^(UAActionResult *result) {
         [self.mockChannel verify];
-        [mockTagEditor verify];
+        [mockContactTagEditor verify];
+        [mockChannelTagEditor verify];
     }];
 }
 
@@ -174,21 +178,25 @@
            [self.mockChannel verify];
     }];
 
+    id mockChannelTagEditor =  [self mockForClass:[UATagGroupsEditor class]];
+    [[[self.mockChannel stub] andReturn:mockChannelTagEditor] editTagGroups];
+
+    
     [[self.mockChannel expect] removeTags:@[@"device tag", @"another device tag"]];
-    [[self.mockChannel expect] removeTags:@[@"tag1", @"tag2"] group:@"group1"];
-    [[self.mockChannel expect] removeTags:@[@"tag3", @"tag4"] group:@"group2"];
-    [[self.mockChannel expect] updateRegistration];
+    [[mockChannelTagEditor expect] removeTags:@[@"tag1", @"tag2"] group:@"group1"];
+    [[mockChannelTagEditor expect] removeTags:@[@"tag3", @"tag4"] group:@"group2"];
+    [[mockChannelTagEditor expect] apply];
     
     id mockTagEditor =  [self mockForClass:[UATagGroupsEditor class]];
-    [[[self.mockContact stub] andReturn:mockTagEditor] editTags];
+    [[[self.mockContact stub] andReturn:mockTagEditor] editTagGroups];
     [[mockTagEditor expect] removeTags:@[@"tag5", @"tag6"] group:@"group3"];
     [[mockTagEditor expect] apply];
-    
     
     
     [action performWithArguments:self.dictArgs completionHandler:^(UAActionResult *result) {
         [self.mockChannel verify];
         [mockTagEditor verify];
+        [mockChannelTagEditor verify];
     }];
 }
 

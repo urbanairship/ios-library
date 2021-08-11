@@ -7,6 +7,7 @@
 #import "UAFrequencyChecker+Internal.h"
 
 @class UADispatcher;
+@class UADate;
 
 NS_ASSUME_NONNULL_BEGIN
 

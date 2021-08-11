@@ -17,67 +17,6 @@ class SubscriptionListAPIClientTest: XCTestCase {
         self.client = SubscriptionListAPIClient(config: self.config, session: self.session)
     }
     
-    func testUpdate() throws {
-        self.session.response = HTTPURLResponse(url: URL(string: "https://neat")!,
-                                                  statusCode: 200,
-                                                  httpVersion: "",
-                                                  headerFields: [String: String]())
-        
-        let expectation = XCTestExpectation(description: "callback called")
-        
-        let updates = [
-            SubscriptionListUpdate(listId: "coffee", type: .unsubscribe),
-            SubscriptionListUpdate(listId: "pizza", type: .subscribe)
-        ]
-        
-        self.client.update(channelID: "some-channel", subscriptionLists: updates) { response, error in
-            XCTAssertEqual(response?.status, 200)
-            XCTAssertNil(error)
-            expectation.fulfill()
-        }
-        wait(for: [expectation], timeout: 10.0)
-        
-        let expectedBody = [
-            "audience": [
-                "ios_channel": "some-channel"
-            ],
-            "subscription_lists": [
-                [
-                    "action": "unsubscribe",
-                    "list_id": "coffee",
-                ],
-                [
-                    "action": "subscribe",
-                    "list_id": "pizza",
-                ]
-            ]
-        ] as NSDictionary
-        
-        let lastRequest = self.session.lastRequest!
-        let body = JSONSerialization.object(with: String(data: lastRequest.body!, encoding: .utf8)!) as? NSDictionary
-        XCTAssertEqual("POST", lastRequest.method)
-        XCTAssertEqual(expectedBody, body)
-    }
-    
-    func testUpdateError() throws {
-        let sessionError = AirshipErrors.error("error!")
-        self.session.error = sessionError
-        
-        let expectation = XCTestExpectation(description: "callback called")
-        
-        let updates = [
-            SubscriptionListUpdate(listId: "coffee", type: .unsubscribe),
-            SubscriptionListUpdate(listId: "pizza", type: .subscribe)
-        ]
-        
-        self.client.update(channelID: "some-channel", subscriptionLists: updates) { response, error in
-            XCTAssertEqual(sessionError as NSError, error! as NSError)
-            XCTAssertNil(response)
-            expectation.fulfill()
-        }
-        wait(for: [expectation], timeout: 10.0)
-    }
-    
     func testGet() throws {
         let responseBody = """
             {

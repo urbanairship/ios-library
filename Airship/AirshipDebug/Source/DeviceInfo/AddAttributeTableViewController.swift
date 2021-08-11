@@ -23,7 +23,7 @@ class AddAttributeTableViewController: UITableViewController, UITextFieldDelegat
 
     var applyButton:UIBarButtonItem = UIBarButtonItem(title: "ua_attributes_action_set".localized(comment: "Set"), style: .plain, target: self, action: #selector(AddAttributeTableViewController.addAttributeMutation))
 
-    let mutations = UAAttributeMutations()
+    let mutations = AttributeMutations()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -104,7 +104,7 @@ class AddAttributeTableViewController: UITableViewController, UITextFieldDelegat
         clearFields()
     }
 
-    internal func applyMutations(_ mutations : UAAttributeMutations) {
+    internal func applyMutations(_ mutations : AttributeMutations) {
         // override for channel, named user, etc.
     }
 

@@ -147,10 +147,7 @@ NSString * const UAInAppAudienceManagerErrorDomain = @"com.urbanairship.in_app_a
     NSMutableArray *overrides = [[self.historian tagHistoryNewerThan:date] mutableCopy];
 
     [overrides addObjectsFromArray:self.contact.pendingTagGroupUpdates];
-    
-    for (UATagGroupsMutation *mutation in self.channel.pendingTagGroups) {
-        [overrides addObjectsFromArray:mutation.tagGroupUpdates];
-    }
+    [overrides addObjectsFromArray:self.channel.pendingTagGroupUpdates];
 
     // Channel tags
     if (self.channel.isChannelTagRegistrationEnabled) {
@@ -165,7 +162,7 @@ NSString * const UAInAppAudienceManagerErrorDomain = @"com.urbanairship.in_app_a
     NSMutableArray *overrides = [[self.historian attributeHistoryNewerThan:date] mutableCopy];
 
     [overrides addObjectsFromArray:self.contact.pendingAttributeUpdates];
-    [overrides addObjectsFromArray:self.channel.pendingAttributes.attributeUpdates];
+    [overrides addObjectsFromArray:self.channel.pendingAttributeUpdates];
 
     return [UAAudienceUtils collapseAttributeUpdates:overrides];
 }

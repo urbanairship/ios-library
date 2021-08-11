@@ -150,8 +150,8 @@
 
     id<UAAction> action = [[UAModifyAttributesAction alloc] init];
 
-    [[self.mockChannel expect] applyAttributeMutations:OCMOCK_ANY];
-    [[self.mockContact expect] editAttibutes];
+    [[self.mockChannel expect] editAttributes];
+    [[self.mockContact expect] editAttributes];
 
     [action performWithArguments:self.arguments completionHandler:^(UAActionResult *performResult) {
         XCTAssertNil(performResult.value);
@@ -177,8 +177,8 @@
         }
     };
     
-    [[self.mockChannel expect] applyAttributeMutations:OCMOCK_ANY];
-    [[self.mockContact reject] editAttibutes];
+    [[self.mockChannel expect] editAttributes];
+    [[self.mockContact reject] editAttributes];
     
     [action performWithArguments:self.arguments completionHandler:^(UAActionResult *performResult) {
         XCTAssertNil(performResult.value);
@@ -204,8 +204,8 @@
         }
     };
     
-    [[self.mockChannel reject] applyAttributeMutations:OCMOCK_ANY];
-    [[self.mockContact expect] editAttibutes];
+    [[self.mockChannel reject] editAttributes];
+    [[self.mockContact expect] editAttributes];
     
     [action performWithArguments:self.arguments completionHandler:^(UAActionResult *performResult) {
         XCTAssertNil(performResult.value);
