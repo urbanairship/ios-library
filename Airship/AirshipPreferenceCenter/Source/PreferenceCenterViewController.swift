@@ -96,7 +96,7 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
         let cell = tableView.dequeueReusableCell(withIdentifier: "PreferenceCenterCell", for: indexPath) as!
                 PreferenceCenterCell
         
-        guard let item = config?.sections[indexPath.section].items[indexPath.row] else {
+        guard let item = config?.sections[indexPath.section].items[indexPath.row] as? ChannelSubscriptionItem else {
             return cell
         }
         
@@ -115,7 +115,7 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
         }
             
         let cellSwitch = cell.accessoryView as! UISwitch
-        if (activeSubscriptions.contains(item.identifier)) {
+        if (activeSubscriptions.contains(item.subscriptionID)) {
             cellSwitch.setOn(true, animated: false)
         } else {
             cellSwitch.setOn(false, animated: false)
@@ -124,11 +124,11 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
         cell.callback = { isOn in
             let editor = UAirship.channel().editSubscriptionLists()
             if (isOn) {
-                self.activeSubscriptions.append(item.identifier)
-                editor.subscribe(item.identifier)
+                self.activeSubscriptions.append(item.subscriptionID)
+                editor.subscribe(item.subscriptionID)
             } else {
-                self.activeSubscriptions.removeAll(where: { $0 == item.identifier })
-                editor.unsubscribe(item.identifier)
+                self.activeSubscriptions.removeAll(where: { $0 == item.subscriptionID })
+                editor.unsubscribe(item.subscriptionID)
             }
             
             editor.apply()

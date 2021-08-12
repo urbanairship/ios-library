@@ -178,6 +178,7 @@ public class Contact : UAComponent {
         
         super.init(dataStore: dataStore)
         
+        
         self.taskManager.register(taskID: Contact.updateTaskID, dispatcher: self.dispatcher) { [weak self] task in
             self?.handleUpdateTask(task: task)
         }
@@ -186,6 +187,8 @@ public class Contact : UAComponent {
             payload.contactID = self?.lastContactInfo?.contactID
             completionHandler(payload)
         }
+        
+        migrateNamedUser()
         
         self.notificationCenter.addObserver(
             self,

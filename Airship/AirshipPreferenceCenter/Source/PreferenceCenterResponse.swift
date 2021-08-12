@@ -167,7 +167,7 @@ public class ChannelSubscriptionItem : NSObject, Decodable, Item {
      * The subcription identifier.
      */
     @objc
-    public let subscriptionID: String?
+    public let subscriptionID: String
 
     enum CodingKeys: String, CodingKey {
         case identifier = "id"

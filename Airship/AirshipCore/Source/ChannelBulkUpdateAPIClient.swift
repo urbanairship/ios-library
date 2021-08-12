@@ -38,7 +38,7 @@ class ChannelBulkUpdateAPIClient : ChannelBulkUpdateAPIClientProtocol {
         AirshipLogger.debug("Updating channel with url \(url?.absoluteString ?? "") payload \(payload)")
 
         let request = UARequest(builderBlock: { [self] builder in
-            builder.method = "POST"
+            builder.method = "PUT"
             builder.url = url
             builder.username = config.appKey
             builder.password = config.appSecret
