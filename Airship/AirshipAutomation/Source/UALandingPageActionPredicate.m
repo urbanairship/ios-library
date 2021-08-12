@@ -6,9 +6,6 @@
 
 @implementation UALandingPageActionPredicate
 
-+ (instancetype)predicate {
-    return [[self alloc] init];
-}
 
 - (BOOL)applyActionArguments:(UAActionArguments *)args {
     return (BOOL)(args.situation != UASituationForegroundPush);

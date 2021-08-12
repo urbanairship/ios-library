@@ -33,19 +33,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, assign) UAActionStatus status;
 
-///---------------------------------------------------------------------------------------
-/// @name Action Result Internal Methods
-///---------------------------------------------------------------------------------------
-
-/**
- * Creates an action result that indicates the arguments were rejected.
- */
-+ (instancetype)rejectedArgumentsResult;
-
-/**
- * Creates an action result that indicates the action was not found.
- */
-+ (instancetype)actionNotFoundResult;
 
 @end
 

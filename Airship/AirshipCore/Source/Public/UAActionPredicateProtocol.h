@@ -25,11 +25,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (BOOL)applyActionArguments:(UAActionArguments *)args;
 
-/**
- * Factory method when loading the predicate from a plist.
- * @return The predicate.
- */
-+ (instancetype)predicate;
 
 @end
 

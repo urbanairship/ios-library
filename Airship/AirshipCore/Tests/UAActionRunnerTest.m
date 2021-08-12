@@ -2,11 +2,10 @@
 
 #import "UABaseTest.h"
 #import "UAAction.h"
-#import "UAActionRunner.h"
-#import "UAActionRegistry.h"
 #import "UAirship+Internal.h"
 
 @import AirshipCore;
+
 @interface UAActionRunnerTest : UABaseTest
 @property (nonatomic, strong) UAActionRegistry *registry;
 @property (nonatomic, strong) id mockAirship;
@@ -258,6 +257,7 @@ NSString *anotherActionName = @"AnotherActionName";
 - (void)testRunActionsEmptyDictionary {
     __block BOOL didCompletionHandlerRun = NO;
 
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Completion handler ran"];
 
     [UAActionRunner runActionsWithActionValues:[NSDictionary dictionary]
                                      situation:UASituationWebViewInvocation
@@ -269,12 +269,12 @@ NSString *anotherActionName = @"AnotherActionName";
                                  XCTAssertTrue([finalResult isKindOfClass:[UAAggregateActionResult class]], @"Running actions should return a UAAggregateActionResult");
 
                                  NSDictionary *resultDictionary = (NSDictionary  *)finalResult.value;
-
-
+                                 [expectation fulfill];
                                  XCTAssertEqual((NSUInteger) 0, resultDictionary.count, @"Should have an empty dictionary");
                                  XCTAssertEqual(finalResult.fetchResult, UAActionFetchResultNoData, @"Action that did not run should return a UAActionFetchResultNoData fetch result");
                              }];
 
+    [self waitForTestExpectations];
     XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did not run");
 }
 

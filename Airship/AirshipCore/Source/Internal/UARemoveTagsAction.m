@@ -3,7 +3,6 @@
 #import "UARemoveTagsAction.h"
 #import "UAirship.h"
 #import "UAChannel.h"
-#import "UATagsActionPredicate+Internal.h"
 
 #if __has_include("AirshipCore/AirshipCore-Swift.h")
 #import <AirshipCore/AirshipCore-Swift.h>

@@ -5,8 +5,6 @@
 #import "UAAppIntegration+Internal.h"
 #import "UAPush+Internal.h"
 #import "UAAnalytics+Internal.h"
-#import "UAActionRunner.h"
-#import "UAActionRegistry+Internal.h"
 #import "UARuntimeConfig.h"
 #import "UAirship+Internal.h"
 
@@ -54,6 +52,7 @@
     [[[self.mockedAirship stub] andReturn:self.mockedAnalytics] sharedAnalytics];
     [[[self.mockedAirship stub] andReturn:self.mockedPush] push];
     [[[self.mockedAirship stub] andReturn:self.privacyManager] privacyManager];
+    [[[self.mockedAirship stub] andReturn:[[UAActionRegistry alloc] init]] actionRegistry];
 
     [UAirship setSharedAirship:self.mockedAirship];
 

@@ -1,7 +1,8 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAAggregateActionResult.h"
+
+@import AirshipCore;
 
 @interface UAAggregateActionResultTest : UABaseTest
 

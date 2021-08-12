@@ -1,8 +1,9 @@
 /* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-#import "UAActionRegistry.h"
 #import "UAComponent.h"
+
+@class UAActionRegistry;
 
 NS_ASSUME_NONNULL_BEGIN
 

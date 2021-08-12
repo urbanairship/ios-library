@@ -2,8 +2,14 @@
 
 #import "UANativeBridgeActionHandler+Internal.h"
 #import "UAGlobal.h"
-#import "UAActionRunner.h"
 #import "NSJSONSerialization+UAAdditions.h"
+
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
 
 @implementation UANativeBridgeActionHandler
 

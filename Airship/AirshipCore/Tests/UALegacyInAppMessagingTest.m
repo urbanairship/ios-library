@@ -4,7 +4,6 @@
 #import "UALegacyInAppMessaging+Internal.h"
 #import "UAirship+Internal.h"
 #import "UAAnalytics.h"
-#import "UAActionRegistry.h"
 #import "UAInAppMessageBannerDisplayContent.h"
 #import "UASchedule+Internal.h"
 #import "UAInAppMessage+Internal.h"

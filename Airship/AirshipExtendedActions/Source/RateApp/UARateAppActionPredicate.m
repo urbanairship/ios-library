@@ -3,11 +3,13 @@
 #import "UARateAppActionPredicate+Internal.h"
 #import "UARateAppAction.h"
 
-@implementation UARateAppActionPredicate
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+@import AirshipCore;
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
 
-+ (instancetype)predicate {
-    return [[self alloc] init];
-}
+@implementation UARateAppActionPredicate
 
 - (BOOL)applyActionArguments:(UAActionArguments *)args {
     return (BOOL)(args.situation != UASituationForegroundPush);

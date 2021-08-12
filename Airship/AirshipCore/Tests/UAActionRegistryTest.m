@@ -1,12 +1,11 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAActionRegistry+Internal.h"
 #import "UAirship+Internal.h"
 #import "UAAddTagsAction.h"
-#import "UATagsActionPredicate+Internal.h"
-#import "UAActionRegistryEntry+Internal.h"
 #import "UALandingPageAction+Internal.h"
+
+@import AirshipCore;
 
 @interface UAActionRegistryTest : UABaseTest
 @property (nonatomic, strong) UAActionRegistry *registry;
@@ -21,9 +20,6 @@
     [super setUp];
 
     self.registry = [[UAActionRegistry alloc] init];
-
-    // Clear any default actions
-    [self.registry.registeredActionEntries removeAllObjects];
 
     self.mockAirship = [self mockForClass:[UAirship class]];
     [UAirship setSharedAirship:self.mockAirship];
@@ -224,11 +220,8 @@
 
     [self.registry registerActionClass:actionClass names:@[@"name", @"anotherName"]];
 
-    XCTAssertTrue([self.registry removeName:@"name"], @"Should be able to remove a name.");
+    [self.registry removeName:@"name"];
     [self validateActionClassIsRegistered:actionClass names:@[@"anotherName"] predicate:nil];
-
-    XCTAssertTrue([self.registry removeName:@"anotherName"], @"Should be able to remove a name.");
-    XCTAssertTrue([self.registry removeName:@"notFound"], @"Removing a name that does not exist should return YES.");
 }
 
 /**
@@ -239,10 +232,8 @@
 
     [self.registry registerAction:action names:@[@"name", @"anotherName"]];
 
-    XCTAssertTrue([self.registry removeEntryWithName:@"name"], @"Should be able to remove an entry.");
+    [self.registry removeEntryWithName:@"name"];
     XCTAssertEqual((NSUInteger) 0, [self.registry.registeredEntries count], @"The entry should be dropped.");
-
-    XCTAssertTrue([self.registry removeName:@"notFound"], @"Removing a name that does not exist should return YES.");
 }
 
 /**
@@ -251,10 +242,8 @@
 - (void)testRemoveEntryLazyLoad {
     [self.registry registerActionClass:[UAEmptyAction class] names:@[@"name", @"anotherName"]];
 
-    XCTAssertTrue([self.registry removeEntryWithName:@"name"], @"Should be able to remove an entry.");
+    [self.registry removeEntryWithName:@"name"];
     XCTAssertEqual((NSUInteger) 0, [self.registry.registeredEntries count], @"The entry should be dropped.");
-
-    XCTAssertTrue([self.registry removeName:@"notFound"], @"Removing a name that does not exist should return YES.");
 }
 
 /**
@@ -283,7 +272,9 @@
 
     XCTAssertNotNil(entry, @"Action is not registered");
     XCTAssertEqual(entry.action, action, @"Registered entry's action is incorrect");
-    XCTAssertEqual(entry.predicate, predicate, @"Registered entry's predicate is incorrect");
+    if (predicate) {
+        XCTAssertNotNil(entry.predicate);
+    }
     XCTAssertTrue([entry.names isEqualToArray:names], @"Registered entry's names are incorrect");
 }
 
@@ -295,8 +286,9 @@
 
     XCTAssertNotNil(entry, @"Action is not registered");
     XCTAssertNotNil(entry.action, @"Action should lazy load");
-    XCTAssertEqual(entry.actionClass, actionClass, @"Registered entry's action class is incorrect");
-    XCTAssertEqual(entry.predicate, predicate, @"Registered entry's predicate is incorrect");
+    if (predicate) {
+        XCTAssertNotNil(entry.predicate);
+    }
     XCTAssertTrue([entry.names isEqualToArray:names], @"Registered entry's names are incorrect");
 }
 

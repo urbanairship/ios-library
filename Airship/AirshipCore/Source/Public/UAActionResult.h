@@ -129,6 +129,16 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (instancetype)resultWithError:(NSError *)error withFetchResult:(UAActionFetchResult)fetchResult;
 
+/**
+ * Creates an action result that indicates the arguments were rejected.
+ */
++ (instancetype)rejectedArgumentsResult;
+
+/**
+ * Creates an action result that indicates the action was not found.
+ */
++ (instancetype)actionNotFoundResult;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAActionRegistry.h"
 #import "UANativeBridgeActionHandler+Internal.h"
 #import "UAJavaScriptCommand.h"
 #import "UAirship+Internal.h"

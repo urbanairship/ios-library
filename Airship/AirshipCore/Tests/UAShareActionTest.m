@@ -1,8 +1,9 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAShareAction.h"
 #import "UAActionArguments+Internal.h"
+
+@import AirshipCore;
 
 @interface UAShareActionTest : UABaseTest
 

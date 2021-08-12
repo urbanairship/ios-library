@@ -3,7 +3,6 @@
 #import "UAModifyAttributesAction.h"
 #import "UAirship.h"
 #import "UAChannel.h"
-#import "UAAttributesActionPredicate+Internal.h"
 #import "UAActionArguments.h"
 #import "UAActionResult.h"
 

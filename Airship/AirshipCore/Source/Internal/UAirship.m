@@ -8,7 +8,6 @@
 #import "UAPush+Internal.h"
 #import "UAConfig.h"
 #import "UARuntimeConfig+Internal.h"
-#import "UAActionRegistry.h"
 #import "UAAutoIntegration+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAAppIntegration.h"

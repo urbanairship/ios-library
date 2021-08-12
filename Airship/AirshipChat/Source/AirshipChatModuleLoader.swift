@@ -31,7 +31,7 @@ public class AirshipChatModuleLoader : NSObject, UAModuleLoader, UAAirshipChatMo
         return [self.module]
     }
 
-    public func registerActions(_ registry: UAActionRegistry) {
+    public func registerActions(_ registry: ActionRegistry) {
         registry.register(OpenChatAction(), name: OpenChatAction.name)
     }
 }

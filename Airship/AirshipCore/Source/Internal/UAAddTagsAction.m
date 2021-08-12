@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UAAddTagsAction.h"
-#import "UATagsActionPredicate+Internal.h"
 #import "UAChannel.h"
 #import "UAirship.h"
 

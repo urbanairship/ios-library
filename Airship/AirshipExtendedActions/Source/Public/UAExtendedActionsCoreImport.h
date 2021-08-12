@@ -8,7 +8,6 @@
 #import <AirshipCore/AirshipCore.h>
 #else
 #import "UAAction.h"
-#import "UAActionRegistry.h"
 #import "UAirship.h"
 #import "UAModuleLoader.h"
 #import "UAExtendedActionsModuleLoaderFactory.h"

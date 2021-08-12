@@ -23,3 +23,10 @@ UACustomEvent:
 - UACustomEventTransactionIDKey -> UACustomEvent.eventTransactionIDKey
 - UACustomEventInteractionIDKey -> UACustomEvent.eventInteractionIDKey
 - UACustomEventInteractionTypeKey -> UACustomEvent.eventInteractionTypeKey
+
+ActionRegistry:
+  - removeName, removeEntry, etc.. will no longer return a BOOL
+  - UAActionRegistryEntry is no longer mutable, mutate the entry through the registry
+
+ActionPredicate
+ - When loading from a file, the default init will be used instead of the factory method `predicate`.
