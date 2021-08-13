@@ -6,7 +6,6 @@
 #import "UARuntimeConfig.h"
 #import "UAEvent.h"
 #import "UAEventManager+Internal.h"
-#import "UAUtils+Internal.h"
 #import "UAirship+Internal.h"
 
 #import "AirshipTests-Swift.h"

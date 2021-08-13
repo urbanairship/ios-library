@@ -5,7 +5,6 @@
 #import "UARemoteDataPayload+Internal.h"
 #import "UARemoteDataStore+Internal.h"
 #import "UARuntimeConfig.h"
-#import "UAUtils+Internal.h"
 #import "UAAirshipBaseTest.h"
 #import "UARemoteConfigURLManager.h"
 #import "AirshipTests-Swift.h"

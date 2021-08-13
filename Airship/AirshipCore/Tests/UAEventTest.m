@@ -8,7 +8,6 @@
 #import "UAEvent.h"
 #import "UAirship+Internal.h"
 #import "UAAnalytics.h"
-#import "UAUtils+Internal.h"
 
 @import AirshipCore;
 
@@ -32,7 +31,7 @@
 - (void)setUp {
     [super setUp];
 
-    self.privacyManager = [[UAPrivacyManager  alloc] initWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesNone];
+    self.privacyManager = [[UAPrivacyManager alloc] initWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesNone];
     self.analytics = [self mockForClass:[UAAnalytics class]];
     self.push = [self mockForClass:[UAPush class]];
     self.channel = [self mockForClass:[UAChannel class]];
@@ -46,7 +45,7 @@
 
     [UAirship setSharedAirship:self.airship];
 
-    self.utils = [self mockForClass:[UAUtils class]];
+    self.utils = [self strictMockForClass:[UAUtils class]];
 
     self.timeZone = [self mockForClass:[NSTimeZone class]];
     [[[self.timeZone stub] andReturn:self.timeZone] defaultTimeZone];
@@ -78,11 +77,9 @@
 
     [[[self.application stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
 
-    [[[self.utils stub] andReturnValue:OCMOCK_VALUE(UAConnectionTypeCell)] connectionType];
-
     [[[self.push stub] andReturnValue:OCMOCK_VALUE(UAAuthorizationStatusNotDetermined)] authorizationStatus];
 
-    NSDictionary *expectedData = @{@"connection_type": @"cell",
+    NSDictionary *expectedData = @{@"connection_type": @"wifi",
                                    @"push_id": @"push ID",
                                    @"metadata": @"base64metadataString",
                                    @"time_zone": @2000,
@@ -111,14 +108,12 @@
     [[[self.timeZone stub] andReturnValue:OCMOCK_VALUE((NSInteger)2000)] secondsFromGMT];
     [[[self.timeZone stub] andReturnValue:OCMOCK_VALUE(YES)] isDaylightSavingTime];
 
-    [[[self.utils stub] andReturnValue:OCMOCK_VALUE(UAConnectionTypeCell)] connectionType];
-
     [(UIDevice *)[[self.currentDevice stub] andReturn:@"os version"]systemVersion];
 
     [[[self.push stub] andReturnValue:OCMOCK_VALUE(UAAuthorizationStatusProvisional)] authorizationStatus];
 
     // Same as app init but without the foreground key
-    NSDictionary *expectedData = @{@"connection_type": @"cell",
+    NSDictionary *expectedData = @{@"connection_type": @"wifi",
                                    @"push_id": @"push ID",
                                    @"metadata": @"base64metadataString",
                                    @"time_zone": @2000,
@@ -144,10 +139,8 @@
 
     [[[self.analytics stub] andReturn:@"push ID"] conversionSendID];
     [[[self.analytics stub] andReturn:@"base64metadataString"] conversionPushMetadata];
-
-    [[[self.utils stub] andReturnValue:OCMOCK_VALUE(UAConnectionTypeCell)] connectionType];
     
-    NSDictionary *expectedData = @{@"connection_type": @"cell",
+    NSDictionary *expectedData = @{@"connection_type": @"wifi",
                                    @"push_id": @"push ID",
                                    @"metadata": @"base64metadataString"};
 

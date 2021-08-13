@@ -5,7 +5,6 @@
 #import "UAAnalytics+Internal.h"
 #import "UAPush+Internal.h"
 #import "UAActionArguments.h"
-#import "UAUtils+Internal.h"
 #import "UARuntimeConfig.h"
 
 #if __has_include("AirshipCore/AirshipCore-Swift.h")

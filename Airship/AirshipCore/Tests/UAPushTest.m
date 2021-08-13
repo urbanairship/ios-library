@@ -5,7 +5,6 @@
 #import "UAPush+Internal.h"
 #import "UAChannel+Internal.h"
 #import "UAirship+Internal.h"
-#import "UAUtils+Internal.h"
 #import "UAChannelRegistrationPayload+Internal.h"
 #import "UAEvent.h"
 #import "UARuntimeConfig.h"

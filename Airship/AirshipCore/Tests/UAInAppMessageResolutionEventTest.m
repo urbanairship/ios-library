@@ -5,8 +5,13 @@
 #import "UAirship+Internal.h"
 #import "UAInAppMessageResolutionEvent+Internal.h"
 #import "UAInAppMessage+Internal.h"
-#import "UAUtils+Internal.h"
 #import "UAInAppMessageFullScreenDisplayContent.h"
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
 
 @interface UAInAppMessageResolutionEventTest : UABaseTest
 @property (nonatomic, strong) id analytics;

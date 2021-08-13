@@ -2,7 +2,12 @@
 
 #import "UABaseTest.h"
 #import "UATagGroupsLookupResponse+Internal.h"
-#import "UAUtils.h"
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
 
 @interface UATagGroupsLookupResponseTest : UABaseTest
 @property(nonatomic, strong) UATagGroupsLookupResponse *response;

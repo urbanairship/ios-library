@@ -4,7 +4,6 @@
 #import "UARemoteDataStore+Internal.h"
 #import "UARemoteDataStorePayload+Internal.h"
 #import "UARemoteDataPayload+Internal.h"
-#import "UAUtils+Internal.h"
 #import "UARemoteConfigURLManager.h"
 
 #if __has_include("AirshipCore/AirshipCore-Swift.h")

@@ -6,7 +6,6 @@
 #import "UAirship+Internal.h"
 #import "UAAnalytics+Internal.h"
 
-#import "UAUtils+Internal.h"
 #import "UARuntimeConfig.h"
 #import "NSObject+UAAdditions.h"
 

@@ -4,7 +4,6 @@
 #else
 #import "UAirship.h"
 #import "UAKeychainUtils.h"
-#import "UAUtils.h"
 #import "UARuntimeConfig.h"
 #import "UANativeBridgeExtensionDelegate.h"
 #import "UANativeBridge.h"

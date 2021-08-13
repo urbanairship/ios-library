@@ -17,7 +17,7 @@
  * Result value: nil
  *
  */
-@available(tvOS, unavailable)
+#if os(iOS)
 @objc(UAShareAction)
 public class ShareAction : NSObject, UAAction {
     
@@ -87,3 +87,4 @@ public class ShareAction : NSObject, UAAction {
         completionHandler(UAActionResult.empty())
     }
 }
+#endif

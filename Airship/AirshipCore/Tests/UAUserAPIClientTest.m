@@ -3,13 +3,18 @@
 #import "UAAirshipBaseTest.h"
 #import "UAUserAPIClient+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
-#import "UAUtils+Internal.h"
 #import "UARuntimeConfig.h"
 #import "UAirship+Internal.h"
 #import "UAUserAPIClient+Internal.h"
 #import "UAUser+Internal.h"
 #import "UAUserData+Internal.h"
 #import "UAJSONSerialization.h"
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
 
 typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response, NSError * _Nullable error);
 

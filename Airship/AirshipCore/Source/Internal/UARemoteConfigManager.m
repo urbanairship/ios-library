@@ -6,7 +6,6 @@
 #import "UARemoteConfigDisableInfo+Internal.h"
 #import "UARemoteConfigModuleNames+Internal.h"
 #import "UARemoteConfig.h"
-#import "UAUtils.h"
 
 #if __has_include("AirshipCore/AirshipCore-Swift.h")
 #import <AirshipCore/AirshipCore-Swift.h>

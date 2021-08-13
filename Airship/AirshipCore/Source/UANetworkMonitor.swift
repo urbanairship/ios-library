@@ -24,7 +24,7 @@ open class UANetworkMonitor : NSObject {
         if #available(iOS 12.0, tvOS 12.0, *) {
             return _isConnected
         } else {
-            return UAUtils.connectionType() != UAConnectionTypeNone
+            return UAUtils.connectionType() != UAConnectionType.none
         }
     }
 

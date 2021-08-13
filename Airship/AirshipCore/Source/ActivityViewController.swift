@@ -2,7 +2,7 @@
 
 import UIKit
 
-@available(tvOS, unavailable)
+#if os(iOS)
 @objc(UAActivityViewController)
 public class ActivityViewController :  UIActivityViewController, UIPopoverPresentationControllerDelegate, UIPopoverControllerDelegate {
     
@@ -30,3 +30,4 @@ public class ActivityViewController :  UIActivityViewController, UIPopoverPresen
         rect.pointee = sourceRect()
     }
 }
+#endif

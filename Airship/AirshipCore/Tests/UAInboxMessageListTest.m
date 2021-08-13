@@ -7,12 +7,16 @@
 #import "UAirship.h"
 #import "UARuntimeConfig.h"
 #import "UAInboxStore+Internal.h"
-#import "UAUtils+Internal.h"
 #import "UAInboxStore+Internal.h"
 #import "UAInboxMessage.h"
 #import "UAUserData+Internal.h"
 #import "AirshipTests-Swift.h"
 
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
 
 static NSString * const UAInboxMessageListRetrieveTask = @"UAInboxMessageList.retrieve";
 static NSString * const UAInboxMessageListSyncReadMessagesTask = @"UAInboxMessageList.sync_read_messages";

@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UAChannel+Internal.h"
-#import "UAUtils+Internal.h"
 #import "UAChannelRegistrationPayload+Internal.h"
 #import "UAKeychainUtils+Internal.h"
 

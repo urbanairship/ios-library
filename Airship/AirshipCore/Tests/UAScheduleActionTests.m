@@ -7,8 +7,13 @@
 #import "UAActionArguments+Internal.h"
 #import "UAInAppAutomation.h"
 #import "UAirship+Internal.h"
-#import "UAUtils+Internal.h"
 #import "UASchedule+Internal.h"
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
 
 @interface UAScheduleActionTests : UABaseTest
 @property(nonatomic, strong) UAScheduleAction *action;

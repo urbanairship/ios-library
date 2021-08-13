@@ -3,9 +3,14 @@
 #import "UAAirshipBaseTest.h"
 #import "UAAutomationNativeBridgeExtension+Internal.h"
 #import "UAirship+Internal.h"
-#import "UAUtils+Internal.h"
 #import "UAInAppMessage.h"
 #import "UAInAppMessageCustomDisplayContent.h"
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
 
 @interface UAAutomationNativeBridgeExtensionTest : UAAirshipBaseTest
 @property (nonatomic, strong) UAAutomationNativeBridgeExtension *extension;

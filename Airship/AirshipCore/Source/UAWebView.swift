@@ -22,7 +22,7 @@ public class UAWebView : WKWebView {
 
     @discardableResult
     public override func load(_ request: URLRequest) -> WKNavigation? {
-        guard UAUtils.connectionType() != UAConnectionTypeNone else {
+        guard UAUtils.connectionType() != UAConnectionType.none else {
             // If we have no connection, modify the request object to prefer the most agressive cache policy
             var modifiedRequest = request
             modifiedRequest.cachePolicy = .returnCacheDataElseLoad

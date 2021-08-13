@@ -3,7 +3,6 @@
 #import "UAAirshipBaseTest.h"
 #import "UAChannel+Internal.h"
 #import "UAChannelRegistrationPayload+Internal.h"
-#import "UAUtils+Internal.h"
 #import "UAUserData+Internal.h"
 #import "UAActionResult.h"
 #import "UAirship+Internal.h"

@@ -4,7 +4,6 @@
 #import "UABaseTest.h"
 #import "UAStateOverrides+Internal.h"
 #import "UAirship+Internal.h"
-#import "UAUtils+Internal.h"
 #import "UAPush+Internal.h"
 
 @import AirshipCore;

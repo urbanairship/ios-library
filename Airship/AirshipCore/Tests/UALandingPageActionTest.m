@@ -4,13 +4,18 @@
 #import "UALandingPageAction.h"
 #import "UAirship+Internal.h"
 #import "UARuntimeConfig.h"
-#import "UAUtils+Internal.h"
 #import "NSString+UAURLEncoding.h"
 #import "UAInAppAutomation.h"
 #import "UAInAppMessageHTMLDisplayContent+Internal.h"
 #import "UASchedule+Internal.h"
 #import "UAActionResult.h"
 #import "UAActionArguments.h"
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
 
 @interface UALandingPageActionTest : UABaseTest
 

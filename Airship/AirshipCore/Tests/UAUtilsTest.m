@@ -1,8 +1,13 @@
 /* Copyright Airship and Contributors */
 
-#import "UAUtils+Internal.h"
 #import "UAirship+Internal.h"
 #import "UAAirshipBaseTest.h"
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
 
 @interface UAUtilsTest : UAAirshipBaseTest
 @property(nonatomic, strong) NSCalendar *gregorianUTC;
@@ -36,32 +41,12 @@
 - (void)testDeviceModelName {
     // TEST
     NSString *deviceModelName = [UAUtils deviceModelName];
-    
+
     // VERIFY
     XCTAssertNotNil(deviceModelName);
 
     id validSimulatorModels = @[@"x86_64", @"arm64", @"mac"];
     XCTAssertTrue([validSimulatorModels containsObject:deviceModelName]);
-}
-
-- (void)testPluralize {
-    XCTAssertEqualObjects([UAUtils pluralize:0 singularForm:@"singular" pluralForm:@"plural"],@"plural");
-    XCTAssertEqualObjects([UAUtils pluralize:1 singularForm:@"singular" pluralForm:@"plural"],@"singular");
-    XCTAssertEqualObjects([UAUtils pluralize:2 singularForm:@"singular" pluralForm:@"plural"],@"plural");
-}
-
-- (void)testGetReadableFileSizeFromBytes {
-    XCTAssertEqualObjects([UAUtils getReadableFileSizeFromBytes:                            0],   @"0 bytes");
-    XCTAssertEqualObjects([UAUtils getReadableFileSizeFromBytes:                         1023],@"1023 bytes");
-    XCTAssertEqualObjects([UAUtils getReadableFileSizeFromBytes:                         1024],   @"1.00 KB");
-    XCTAssertEqualObjects([UAUtils getReadableFileSizeFromBytes:                     1.5*1024],   @"1.50 KB");
-    XCTAssertEqualObjects([UAUtils getReadableFileSizeFromBytes:                       2*1024],   @"2.00 KB");
-    XCTAssertEqualObjects([UAUtils getReadableFileSizeFromBytes:              1024.0*1024.0-1],@"1024.00 KB");
-    XCTAssertEqualObjects([UAUtils getReadableFileSizeFromBytes:                1024.0*1024.0],   @"1.00 MB");
-    XCTAssertEqualObjects([UAUtils getReadableFileSizeFromBytes:       1024.0*1024.0*1024.0-1],@"1024.00 MB");
-    XCTAssertEqualObjects([UAUtils getReadableFileSizeFromBytes:         1024.0*1024.0*1024.0],   @"1.00 GB");
-    XCTAssertEqualObjects([UAUtils getReadableFileSizeFromBytes:1024.0*1024.0*1024.0*1024.0-1],@"1024.00 GB");
-    XCTAssertEqualObjects([UAUtils getReadableFileSizeFromBytes:  1024.0*1024.0*1024.0*1024.0],   @"1.00 TB");
 }
 
 - (void)testAppAuthHeaderString {
@@ -72,7 +57,7 @@
     [[[mockUARuntimeConfig stub] andReturn:@"someAppSecret"] appSecret];
 
     [[[self.mockAirship stub] andReturn:mockUARuntimeConfig] config];
-    
+
     XCTAssertEqualObjects([UAUtils appAuthHeaderString],@"Basic c29tZUFwcEtleTpzb21lQXBwU2VjcmV0");
 }
 
@@ -202,7 +187,7 @@
     XCTAssertEqual(components.minute, 45);
     XCTAssertEqual(components.second, 22);
     NSDate *dateWithoutSubseconds = [date copy];
-    
+
     // yyyy-MM-ddThh:mm:ss.SSS
     date = [UAUtils parseISO8601DateFromString:@"2020-12-15T11:45:22.123"];
     components = [self componentsForDate:date];
@@ -319,7 +304,7 @@
                                                 @"alert": @"hello world"
                                                 }
                                         };
-    
+
     NSDictionary *notification = @{
                                    @"aps": @{
                                            @"alert": @"hello world",
@@ -327,7 +312,7 @@
                                            @"sound": @"cat"
                                            }
                                    };
-    
+
     NSDictionary *locKeyNotification = @{
                                          @"aps": @{
                                                  @"alert": @{
@@ -335,7 +320,7 @@
                                                          }
                                                  }
                                          };
-    
+
     NSDictionary *bodyNotification = @{
                                        @"aps": @{
                                                @"alert": @{
@@ -343,8 +328,8 @@
                                                        }
                                                }
                                        };
-    
-    
+
+
     XCTAssertTrue([UAUtils isAlertingPush:alertNotification]);
     XCTAssertTrue([UAUtils isAlertingPush:notification]);
     XCTAssertTrue([UAUtils isAlertingPush:locKeyNotification]);
@@ -357,13 +342,13 @@
                                                 @"content-available": @1
                                                 }
                                         };
-    
+
     NSDictionary *emptyAlert = @{
                                  @"aps": @{
                                          @"alert": @""
                                          }
                                  };
-    
+
     NSDictionary *emptyLocKey = @{
                                   @"aps": @{
                                           @"alert": @{
@@ -371,7 +356,7 @@
                                                   }
                                           }
                                   };
-    
+
     NSDictionary *emptyBody = @{
                                 @"aps": @{
                                         @"alert": @{
@@ -385,13 +370,13 @@
                                                 @"badge": @2
                                                 }
                                         };
-    
+
     NSDictionary *soundNotification = @{
                                         @"aps": @{
                                                 @"sound": @"cat"
                                                 }
                                         };
-    
+
     XCTAssertFalse([UAUtils isAlertingPush:emptyNotification]);
     XCTAssertFalse([UAUtils isAlertingPush:emptyAlert]);
     XCTAssertFalse([UAUtils isAlertingPush:emptyLocKey]);
@@ -409,11 +394,11 @@
     // empty fetchResults
     fetchResults = [NSMutableArray array];
     XCTAssertEqual([UAUtils mergeFetchResults:fetchResults], UIBackgroundFetchResultNoData);
-    
+
     // new data
     fetchResults[0] = [NSNumber numberWithInt:UIBackgroundFetchResultNewData];
     XCTAssertEqual([UAUtils mergeFetchResults:fetchResults], UIBackgroundFetchResultNewData);
-     
+
     // no data
     fetchResults[0] = [NSNumber numberWithInt:UIBackgroundFetchResultNoData];
     XCTAssertEqual([UAUtils mergeFetchResults:fetchResults], UIBackgroundFetchResultNoData);
@@ -452,22 +437,22 @@
 
     XCTAssertFalse([UAUtils float:10 isEqualToFloat:10.1 withAccuracy:0]);
     XCTAssertFalse([UAUtils float:10 isEqualToFloat:10.1 withAccuracy:0.01]);
-    
+
     // Around zero
     XCTAssertTrue([UAUtils float:0 isEqualToFloat:0.1 withAccuracy:0.1]);
     XCTAssertTrue([UAUtils float:0 isEqualToFloat:-0.1 withAccuracy:0.1]);
 
     XCTAssertFalse([UAUtils float:0 isEqualToFloat:0.1 withAccuracy:0.099]);
     XCTAssertFalse([UAUtils float:0 isEqualToFloat:-0.1 withAccuracy:0.099]);
-    
+
     // Negative numbers
     XCTAssertTrue([UAUtils float:-10 isEqualToFloat:-10.1 withAccuracy:0.1]);
     XCTAssertTrue([UAUtils float:-10 isEqualToFloat:-10.0 withAccuracy:0]);
     XCTAssertTrue([UAUtils float:-10 isEqualToFloat:-9.9 withAccuracy:0.1]);
-    
+
     XCTAssertFalse([UAUtils float:-10 isEqualToFloat:-10.1 withAccuracy:0]);
     XCTAssertFalse([UAUtils float:-10 isEqualToFloat:-10.1 withAccuracy:0.01]);
-    
+
     // Large numbers
     XCTAssertTrue([UAUtils float:1000000 isEqualToFloat:1000001 withAccuracy:1]);
     XCTAssertTrue([UAUtils float:1000000 isEqualToFloat:999999 withAccuracy:1]);

@@ -3,6 +3,12 @@
 #import "UAInAppMessageAssets+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
 
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+@import AirshipCore;
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
+
 @interface UAInAppMessageAssets()
 
 @property (nonatomic, strong) NSURL *rootURL;

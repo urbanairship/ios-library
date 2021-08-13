@@ -246,6 +246,7 @@
     matcher = [UAJSONValueMatcher matcherWithVersionConstraint:@"1.0+"];
     XCTAssertNotNil(matcher);
     XCTAssertTrue([matcher evaluateObject:@"1.0"]);
+    XCTAssertTrue([matcher evaluateObject:@"1.0.0"]);
     XCTAssertTrue([matcher evaluateObject:@"1.0" ignoreCase:YES]);
     XCTAssertFalse([matcher evaluateObject:@"2"]);
     XCTAssertFalse([matcher evaluateObject:@"2" ignoreCase:YES]);
@@ -253,7 +254,9 @@
     matcher = [UAJSONValueMatcher matcherWithVersionConstraint:@"[1.0,2.0]"];
     XCTAssertNotNil(matcher);
     XCTAssertTrue([matcher evaluateObject:@"1.0"]);
+    XCTAssertTrue([matcher evaluateObject:@"1.0.0"]);
     XCTAssertTrue([matcher evaluateObject:@"1.0" ignoreCase:YES]);
+    XCTAssertTrue([matcher evaluateObject:@"2.0.0"]);
     XCTAssertFalse([matcher evaluateObject:@"2.0.1"]);
     XCTAssertFalse([matcher evaluateObject:@"2.0.1 ignoreCase:YES"]);
 }
