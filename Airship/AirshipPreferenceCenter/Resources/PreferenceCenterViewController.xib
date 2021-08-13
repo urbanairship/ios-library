@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
-    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <device id="ipad10_2" orientation="portrait" layout="fullscreen" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
@@ -19,20 +19,18 @@
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view contentMode="scaleToFill" id="iN0-l3-epB">
-            <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+            <rect key="frame" x="0.0" y="0.0" width="810" height="1080"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Ftd-dq-zb9">
-                    <rect key="frame" x="0.0" y="44" width="414" height="818"/>
-                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="Ftd-dq-zb9">
+                    <rect key="frame" x="0.0" y="0.0" width="810" height="1080"/>
                     <color key="sectionIndexColor" systemColor="labelColor"/>
                 </tableView>
-                <view alpha="0.0" contentMode="scaleToFill" id="qdm-Qi-Cox">
-                    <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                <view alpha="0.0" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qdm-Qi-Cox">
+                    <rect key="frame" x="0.0" y="0.0" width="810" height="1080"/>
                     <subviews>
                         <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="Gad-xH-2IM">
-                            <rect key="frame" x="197" y="443" width="20" height="20"/>
+                            <rect key="frame" x="395" y="530" width="20" height="20"/>
                         </activityIndicatorView>
                     </subviews>
                     <viewLayoutGuide key="safeArea" id="IrJ-RI-Pjv"/>
@@ -43,7 +41,11 @@
             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
             <constraints>
                 <constraint firstItem="Gad-xH-2IM" firstAttribute="centerX" secondItem="vUN-kp-3ea" secondAttribute="centerX" id="1lj-kb-NrK"/>
+                <constraint firstItem="qdm-Qi-Cox" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="2.2737367544323206e-13" id="Pda-Nu-PiQ"/>
+                <constraint firstAttribute="leading" secondItem="qdm-Qi-Cox" secondAttribute="leading" id="VW3-yp-anp"/>
+                <constraint firstAttribute="trailing" secondItem="qdm-Qi-Cox" secondAttribute="trailing" id="W6U-aG-Ifb"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="top" secondItem="Ftd-dq-zb9" secondAttribute="top" id="WFN-HB-C0s" userLabel="Safe Area.top = Table View.top"/>
+                <constraint firstAttribute="bottom" secondItem="qdm-Qi-Cox" secondAttribute="bottom" id="XcP-zX-Fuz"/>
                 <constraint firstItem="Ftd-dq-zb9" firstAttribute="bottom" secondItem="vUN-kp-3ea" secondAttribute="bottom" id="cY6-XT-j4t" userLabel="Table View.bottom = Safe Area.bottom"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="Ftd-dq-zb9" secondAttribute="trailing" id="dj0-tW-v0Y" userLabel="Safe Area.trailing = Table View.trailing"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="leading" secondItem="Ftd-dq-zb9" secondAttribute="leading" id="e7c-sP-VhR" userLabel="Safe Area.leading = Table View.leading"/>

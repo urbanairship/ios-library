@@ -41,6 +41,14 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
         tableView.dataSource = self
         tableView.backgroundColor = style?.backgroundColor
         
+        let headerView = PreferenceCenterHeaderLabel(frame: CGRect(x: 0,
+                                              y: 0,
+                                              width: self.tableView.frame.width,
+                                              height: 50))
+        headerView.numberOfLines = 0
+        headerView.lineBreakMode = .byWordWrapping
+        self.tableView.tableHeaderView = headerView
+       
         let nib = UINib(nibName: "PreferenceCenterSectionHeader", bundle:PreferenceCenterResources.bundle())
         tableView.register(nib, forHeaderFooterViewReuseIdentifier: "PreferenceCenterSectionHeader")
         
@@ -54,8 +62,8 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
 
     public override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-       
     }
+    
     public override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         self.disposable?.dispose()
@@ -69,10 +77,6 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard let rows = config?.sections[section].items.count else { return 0 }
         return rows
-    }
-    
-    public func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 50
     }
     
     public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -114,6 +118,8 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
             cell.backgroundColor = style?.backgroundColor
         }
             
+        cell.detailTextLabel?.numberOfLines = 0
+        
         let cellSwitch = cell.accessoryView as! UISwitch
         if (activeSubscriptions.contains(item.subscriptionID)) {
             cellSwitch.setOn(true, animated: false)
@@ -140,7 +146,12 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
 
     func onConfigLoaded(config: PreferenceCenterConfig, lists: [String]) {
         self.config = config
-        self.navigationItem.setTitle(title: (style?.title ?? config.display?.title ?? PreferenceCenterResources.localizedString(key: "ua_preference_center_title")), subtitle: style?.subtitle ?? config.display?.subtitle ?? "", style: style)
+        self.navigationItem.title = style?.title ?? config.display?.title ?? PreferenceCenterResources.localizedString(key: "ua_preference_center_title")
+       
+        let description = style?.subtitle ?? config.display?.subtitle
+        let headerView = self.tableView.tableHeaderView as! UILabel
+        headerView.text = description
+        headerView.sizeToFit()
         
         self.overlayView.alpha = 0;
         self.activityIndicator.stopAnimating()
@@ -207,36 +218,3 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
     }
 }
 
-fileprivate extension UINavigationItem {
-    func setTitle(title:String?, subtitle:String?, style:PreferenceCenterStyle?) {
-        let titleLabel = UILabel()
-        titleLabel.text = title
-        titleLabel.font = style?.titleFont ?? UIFont.systemFont(ofSize: 18)
-        if (style?.titleColor != nil) {
-            titleLabel.textColor = style?.titleColor
-        }
-        titleLabel.sizeToFit()
-        
-        let subtitleLabel = UILabel()
-        subtitleLabel.text = subtitle
-        subtitleLabel.font = style?.subtitleFont ?? UIFont.systemFont(ofSize: 12)
-        if (style?.subtitleColor != nil) {
-            subtitleLabel.textColor = style?.subtitleColor
-        }
-        subtitleLabel.textAlignment = .center
-        subtitleLabel.sizeToFit()
-        
-        let stackView = UIStackView(arrangedSubviews: [titleLabel, subtitleLabel])
-        stackView.distribution = .equalCentering
-        stackView.axis = .vertical
-        stackView.alignment = .center
-        
-        let width = max(subtitleLabel.frame.size.width, subtitleLabel.frame.size.width)
-        stackView.frame = CGRect(x: 0, y: 0, width: width, height: 35)
-        
-        titleLabel.sizeToFit()
-        subtitleLabel.sizeToFit()
-        
-        self.titleView = stackView
-    }
-}
