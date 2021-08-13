@@ -2,7 +2,12 @@
 
 #import "UAInAppMessageTextInfo+Internal.h"
 #import "UABaseTest.h"
-#import "UAColorUtils.h"
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+@import AirshipCore;
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
 
 @interface UAInAppMessageTextInfoTest : UABaseTest
 

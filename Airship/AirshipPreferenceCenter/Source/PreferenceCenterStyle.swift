@@ -152,7 +152,7 @@ public class PreferenceCenterStyle : NSObject {
     }
 
     private func createColor(string: String) -> UIColor? {
-        let hexColor = UAColorUtils.color(withHexString: string)
+        let hexColor = UAColorUtils.color(string)
         let namedColor = UIColor(named: string)
 
         guard hexColor != nil || namedColor != nil else {

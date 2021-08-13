@@ -4,6 +4,12 @@
 #import <UIKit/UIKit.h>
 #import "UAAirshipAutomationCoreImport.h"
 
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
+
 NS_ASSUME_NONNULL_BEGIN
 NSString *const UAInAppMessageTextInfoDomain = @"com.urbanairship.in_app_message_text_info";
 

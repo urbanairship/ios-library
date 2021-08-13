@@ -13,7 +13,6 @@
 #import "UAJSONSerialization.h"
 #import "UAGlobal.h"
 #import "UAExtendableChannelRegistration.h"
-#import "UAColorUtils.h"
 #import "UAChannel.h"
 #import "UAActionArguments.h"
 #import "NSString+UALocalizationAdditions.h"

@@ -7,6 +7,12 @@
 #import "UAInAppMessageDisplayContent.h"
 #import "UAAirshipAutomationCoreImport.h"
 
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
+
 // JSON keys
 NSString *const UAInAppMessageBannerActionsKey = @"actions";
 NSString *const UAInAppMessageBannerDisplayContentDomain = @"com.urbanairship.banner_display_content";

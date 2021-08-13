@@ -18,7 +18,6 @@
 #import "UAChannel.h"
 #import "UAChannelNotificationCenterEvents.h"
 #import "UAChannelRegistrationPayload.h"
-#import "UAColorUtils.h"
 #import "UAComponent.h"
 #import "UACompression.h"
 #import "UAConfig.h"

@@ -9,6 +9,12 @@
 // 15 seconds
 #define kUADefaultInAppMessageDurationInterval 15
 
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+#import <AirshipCore/AirshipCore-Swift.h>
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
+
 @implementation UALegacyInAppMessage
 
 + (instancetype)message {

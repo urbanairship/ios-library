@@ -5,7 +5,6 @@
 #import "UAirship.h"
 #import "UAMessageCenter.h"
 #import "UAMessageCenterStyle.h"
-#import "UAColorUtils.h"
 
 @interface UAMessageCenterStyleTest : UABaseTest
 
