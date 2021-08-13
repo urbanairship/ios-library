@@ -5,6 +5,8 @@
 #import "UAInAppMessageStyleProtocol.h"
 #import "UAAirshipAutomationCoreImport.h"
 
+@class UAPadding;
+
 NS_ASSUME_NONNULL_BEGIN
 
 /**

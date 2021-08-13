@@ -3,6 +3,12 @@
 #import "UAInAppMessageModalStyle.h"
 #import "UAInAppMessageUtils+Internal.h"
 
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+@import AirshipCore;
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
+
 NSString *const UAModalDismissIconResourceKey = @"dismissIconResource";
 NSString *const UAModalAdditionalPaddingKey = @"additionalPadding";
 NSString *const UAModalButtonStyleKey = @"buttonStyle";
