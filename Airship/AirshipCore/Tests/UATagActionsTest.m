@@ -1,18 +1,17 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAAddTagsAction.h"
-#import "UARemoveTagsAction.h"
 #import "UAChannel.h"
 #import "UAActionArguments+Internal.h"
 #import "UAirship+Internal.h"
+#import "AirshipTests-Swift.h"
 
 @import AirshipCore;
 
 @interface UATagActionsTest : UABaseTest
-@property (nonatomic, strong) id mockChannel;
+@property (nonatomic, strong) UATestContact *testContact;
 @property (nonatomic, strong) id mockAirship;
-@property (nonatomic, strong) id mockContact;
+@property (nonatomic, strong) id mockChannel;
 
 @property (nonatomic, strong) UAActionArguments *stringArgs;
 @property (nonatomic, strong) UAActionArguments *arrayArgs;
@@ -29,7 +28,7 @@
 - (void)setUp {
     [super setUp];
     self.mockChannel = [self mockForClass:[UAChannel class]];
-    self.mockContact = [self mockForClass:[UAContact class]];
+    self.testContact = [[UATestContact alloc] init];
 
     self.stringArgs = [UAActionArguments argumentsWithValue:@"hi" withSituation:UASituationWebViewInvocation];
     self.arrayArgs = [UAActionArguments argumentsWithValue:@[@"hi", @"there"] withSituation:UASituationManualInvocation];
@@ -51,7 +50,7 @@
     self.mockAirship = [self mockForClass:[UAirship class]];
     [UAirship setSharedAirship:self.mockAirship];
     [[[self.mockAirship stub] andReturn:self.mockChannel] channel];
-    [[[self.mockAirship stub] andReturn:self.mockContact] contact];
+    [[[self.mockAirship stub] andReturn:self.testContact] contact];
 }
 
 /**
@@ -134,25 +133,25 @@
     [action performWithArguments:self.arrayArgs completionHandler:^(UAActionResult *result) {
            [self.mockChannel verify];
     }];
-
     
-    id mockChannelTagEditor =  [self mockForClass:[UATagGroupsEditor class]];
-    [[[self.mockChannel stub] andReturn:mockChannelTagEditor] editTagGroups];
+    __block NSArray *channelTagUpdates;
+    UATagGroupsEditor *channelTagGroupEditor = [[UATagGroupsEditor alloc] initWithAllowDeviceTagGroup:YES completionHandler:^(NSArray<UATagGroupUpdate *> *updates) {
+        channelTagUpdates = updates;
+    }];
+    [[[self.mockChannel stub] andReturn:channelTagGroupEditor] editTagGroups];
+    
+    __block NSArray *contactTagUpdates;
+    self.testContact.tagGroupEditor = [[UATagGroupsEditor alloc] initWithAllowDeviceTagGroup:YES completionHandler:^(NSArray<UATagGroupUpdate *> *updates) {
+        contactTagUpdates = updates;
+    }];
 
     [[self.mockChannel expect] addTags:@[@"device tag", @"another device tag"]];
-    [[mockChannelTagEditor expect] addTags:@[@"tag1", @"tag2"] group:@"group1"];
-    [[mockChannelTagEditor expect] addTags:@[@"tag3", @"tag4"] group:@"group2"];
-    [[mockChannelTagEditor expect] apply];
-
-    id mockContactTagEditor =  [self mockForClass:[UATagGroupsEditor class]];
-    [[[self.mockContact stub] andReturn:mockContactTagEditor] editTagGroups];
-    [[mockContactTagEditor expect] addTags:@[@"tag5", @"tag6"] group:@"group3"];
-    [[mockContactTagEditor expect] apply];
 
     [action performWithArguments:self.dictArgs completionHandler:^(UAActionResult *result) {
         [self.mockChannel verify];
-        [mockContactTagEditor verify];
-        [mockChannelTagEditor verify];
+        
+        XCTAssertEqualObjects(self.dictArgs.value[@"named_user"], [self tagsFromUpdates:contactTagUpdates]);
+        XCTAssertEqualObjects(self.dictArgs.value[@"channel"], [self tagsFromUpdates:channelTagUpdates]);
     }];
 }
 
@@ -177,27 +176,34 @@
     [action performWithArguments:self.arrayArgs completionHandler:^(UAActionResult *result) {
            [self.mockChannel verify];
     }];
-
-    id mockChannelTagEditor =  [self mockForClass:[UATagGroupsEditor class]];
-    [[[self.mockChannel stub] andReturn:mockChannelTagEditor] editTagGroups];
-
     
-    [[self.mockChannel expect] removeTags:@[@"device tag", @"another device tag"]];
-    [[mockChannelTagEditor expect] removeTags:@[@"tag1", @"tag2"] group:@"group1"];
-    [[mockChannelTagEditor expect] removeTags:@[@"tag3", @"tag4"] group:@"group2"];
-    [[mockChannelTagEditor expect] apply];
+    __block NSArray *channelTagUpdates;
+    UATagGroupsEditor *channelTagGroupEditor = [[UATagGroupsEditor alloc] initWithAllowDeviceTagGroup:YES completionHandler:^(NSArray<UATagGroupUpdate *> *updates) {
+        channelTagUpdates = updates;
+    }];
+    [[[self.mockChannel stub] andReturn:channelTagGroupEditor] editTagGroups];
     
-    id mockTagEditor =  [self mockForClass:[UATagGroupsEditor class]];
-    [[[self.mockContact stub] andReturn:mockTagEditor] editTagGroups];
-    [[mockTagEditor expect] removeTags:@[@"tag5", @"tag6"] group:@"group3"];
-    [[mockTagEditor expect] apply];
-    
+    __block NSArray *contactTagUpdates;
+    self.testContact.tagGroupEditor = [[UATagGroupsEditor alloc] initWithAllowDeviceTagGroup:YES completionHandler:^(NSArray<UATagGroupUpdate *> *updates) {
+        contactTagUpdates = updates;
+    }];
     
     [action performWithArguments:self.dictArgs completionHandler:^(UAActionResult *result) {
         [self.mockChannel verify];
-        [mockTagEditor verify];
-        [mockChannelTagEditor verify];
+        
+        XCTAssertEqualObjects(self.dictArgs.value[@"named_user"], [self tagsFromUpdates:contactTagUpdates]);
+        XCTAssertEqualObjects(self.dictArgs.value[@"channel"], [self tagsFromUpdates:channelTagUpdates]);
     }];
+}
+
+- (NSDictionary *)tagsFromUpdates:(NSArray *)tagGroupUpdates {
+    NSMutableDictionary *tags = [NSMutableDictionary dictionary];
+    
+    for (UATagGroupUpdate *update in tagGroupUpdates) {
+        [tags setValue:update.tags forKey:update.group];
+    }
+    
+    return tags;
 }
 
 @end

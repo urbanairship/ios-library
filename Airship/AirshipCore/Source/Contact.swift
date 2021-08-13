@@ -6,8 +6,59 @@ import Foundation
  * Airship contact. A contact is distinct from a channel and  represents a "user"
  * within Airship. Contacts may be named and have channels associated with it.
  */
+@objc(UAContactProtocol)
+public protocol ContactProtocol {
+    /**
+     * The current named user ID.
+     */
+    @objc
+    var namedUserID: String? { get }
+    
+    // NOTE: For internal use only. :nodoc:
+    @objc
+    var pendingAttributeUpdates : [AttributeUpdate] { get }
+
+    // NOTE: For internal use only. :nodoc:
+    @objc
+    var pendingTagGroupUpdates : [TagGroupUpdate] { get }
+    
+    /**
+     * Associates the contact with the given named user identifier.
+     * - Parameters:
+     *   - namedUserID: The named user ID.
+     */
+    @objc
+    func identify(_ namedUserID: String)
+
+    /**
+     * Disassociate the channel from its current contact, and create a new
+     * un-named contact.
+     */
+    @objc
+    func reset()
+        
+    /**
+     * Edits tags.
+     * - Returns: A tag groups editor.
+     */
+    @objc
+    func editTagGroups() -> TagGroupsEditor
+        
+    /**
+     * Edits attributes.
+     * - Returns: An attributes editor.
+     */
+    @objc
+    func editAttributes() -> AttributesEditor
+}
+
+
+/**
+ * Airship contact. A contact is distinct from a channel and  represents a "user"
+ * within Airship. Contacts may be named and have channels associated with it.
+ */
 @objc(UAContact)
-public class Contact : UAComponent {
+public class Contact : UAComponent, ContactProtocol {
 
     static let updateTaskID = "Contact.update"
     static let operationsKey = "Contact.operations"
@@ -51,9 +102,6 @@ public class Contact : UAComponent {
     @objc
     public weak var conflictDelegate: ContactConflictDelegate?
 
-    /**
-     * The current named user ID.
-     */
     @objc
     public var namedUserID : String? {
         get {
@@ -229,11 +277,6 @@ public class Contact : UAComponent {
                   taskManager: UATaskManager.shared)
     }
 
-    /**
-     * Associates the contact with the given named user identifier.
-     * - Parameters:
-     *   - namedUserID: The named user ID.
-     */
     @objc
     public func identify(_ namedUserID: String) {
         guard self.privacyManager.isEnabled(.contacts) else {
@@ -251,11 +294,7 @@ public class Contact : UAComponent {
         self.addOperation(ContactOperation.identify(identifier: namedUserID))
         self.enqueueTask()
     }
-
-    /**
-     * Disassociate the channel from its current contact, and create a new
-     * un-named contact.
-     */
+    
     @objc
     public func reset() {
         guard self.privacyManager.isEnabled(.contacts) else {
@@ -266,10 +305,6 @@ public class Contact : UAComponent {
         self.enqueueTask()
     }
 
-    /**
-     * Edits tags.
-     * - Returns: A tag groups editor.
-     */
     @objc
     public func editTagGroups() -> TagGroupsEditor {
         return TagGroupsEditor { updates in
@@ -288,10 +323,6 @@ public class Contact : UAComponent {
         }
     }
 
-    /**
-     * Edits attributes.
-     * - Returns: An attributes editor.
-     */
     @objc
     public func editAttributes() -> AttributesEditor {
         return AttributesEditor { updates in

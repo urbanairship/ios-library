@@ -26,7 +26,8 @@ NS_ASSUME_NONNULL_END
 @interface UAInAppAudienceHistorian()
 
 @property (nonatomic, strong) UAChannel *channel;
-@property (nonatomic, strong) UAContact *contact;
+@property (nonatomic, strong) id<UAContactProtocol> contact;
+
 @property (nonatomic, strong) UADate *date;
 
 @property (nonatomic, strong) NSMutableArray *contactRecords;
@@ -36,7 +37,7 @@ NS_ASSUME_NONNULL_END
 @implementation UAInAppAudienceHistorian
 
 - (instancetype)initWithChannel:(UAChannel *)channel
-                        contact:(UAContact *)contact
+                        contact:(id<UAContactProtocol>)contact
                            date:(UADate *)date{
     self = [super init];
 
@@ -67,11 +68,11 @@ NS_ASSUME_NONNULL_END
     return self;
 }
 
-+ (instancetype)historianWithChannel:(UAChannel *)channel contact:(UAContact *)contact {
++ (instancetype)historianWithChannel:(UAChannel *)channel contact:(id<UAContactProtocol>)contact {
     return [[self alloc] initWithChannel:channel contact:contact date:[[UADate alloc] init]];
 }
 
-+ (instancetype)historianWithChannel:(UAChannel *)channel contact:(UAContact *)contact date:(UADate *)date {
++ (instancetype)historianWithChannel:(UAChannel *)channel contact:(id<UAContactProtocol>)contact date:(UADate *)date {
     return [[self alloc] initWithChannel:channel contact:contact date:date];
 }
 

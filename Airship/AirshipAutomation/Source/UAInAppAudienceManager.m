@@ -27,7 +27,7 @@ NSString * const UAInAppAudienceManagerErrorDomain = @"com.urbanairship.in_app_a
 @property (nonatomic, strong) UATagGroupsLookupAPIClient *lookupAPIClient;
 @property (nonatomic, strong) UATagGroupsLookupResponseCache *cache;
 @property (nonatomic, strong) UADate *currentTime;
-@property (nonatomic, strong) UAContact *contact;
+@property (nonatomic, strong) id<UAContactProtocol> contact;
 @property (nonatomic, strong) UAChannel *channel;
 
 @property (nonatomic, readonly) NSTimeInterval maxSentMutationAge;
@@ -39,7 +39,7 @@ NSString * const UAInAppAudienceManagerErrorDomain = @"com.urbanairship.in_app_a
 - (instancetype)initWithAPIClient:(UATagGroupsLookupAPIClient *)client
                         dataStore:(UAPreferenceDataStore *)dataStore
                           channel:(UAChannel *)channel
-                          contact:(UAContact *)contact
+                          contact:(id<UAContactProtocol>)contact
                             cache:(UATagGroupsLookupResponseCache *)cache
                         historian:(UAInAppAudienceHistorian *)historian
                       currentTime:(UADate *)currentTime {
@@ -67,7 +67,7 @@ NSString * const UAInAppAudienceManagerErrorDomain = @"com.urbanairship.in_app_a
 + (instancetype)managerWithConfig:(UARuntimeConfig *)config
                         dataStore:(UAPreferenceDataStore *)dataStore
                           channel:(UAChannel *)channel
-                        contact:(UAContact *)contact {
+                        contact:(id<UAContactProtocol>)contact {
 
     return [[self alloc] initWithAPIClient:[UATagGroupsLookupAPIClient clientWithConfig:config]
                                  dataStore:dataStore
@@ -81,7 +81,7 @@ NSString * const UAInAppAudienceManagerErrorDomain = @"com.urbanairship.in_app_a
 + (instancetype)managerWithAPIClient:(UATagGroupsLookupAPIClient *)client
                            dataStore:(UAPreferenceDataStore *)dataStore
                              channel:(UAChannel *)channel
-                           contact:(UAContact *)contact
+                           contact:(id<UAContactProtocol>)contact
                                cache:(UATagGroupsLookupResponseCache *)cache
                            historian:(UAInAppAudienceHistorian *)historian
                          currentTime:(UADate *)currentTime {

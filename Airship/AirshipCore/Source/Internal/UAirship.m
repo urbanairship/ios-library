@@ -457,7 +457,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
 #pragma clang diagnostic pop
 
-+ (UAContact *)contact {
++ (id<UAContactProtocol>)contact {
     return sharedAirship_.sharedContact;
 }
 
@@ -571,7 +571,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 + (nullable id<UAModuleLoader>)automationModuleLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
                                                             config:(UARuntimeConfig *)config
                                                            channel:(UAChannel *)channel
-                                                           contact:(UAContact *)contact
+                                                           contact:(id<UAContactProtocol>)contact
                                                          analytics:(UAAnalytics *)analytics
                                                  remoteDataManager:(UARemoteDataManager *)remoteDataManager
                                                     privacyManager:(UAPrivacyManager *)privacyManager {

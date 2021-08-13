@@ -8,6 +8,8 @@
 
 @class UATagGroupUpdate;
 @class UAAttributeUpdate;
+@protocol UAContactProtocol;
+
 NS_ASSUME_NONNULL_BEGIN
 
 /**
@@ -119,7 +121,7 @@ extern NSTimeInterval const UAInAppAudienceManagerDefaultPreferLocalAudienceData
 + (instancetype)managerWithConfig:(UARuntimeConfig *)config
                         dataStore:(UAPreferenceDataStore *)dataStore
                           channel:(UAChannel *)channel
-                          contact:(UAContact *)contact;
+                          contact:(id<UAContactProtocol>)contact;
 /**
  * UAInAppAudienceManager class factory method. Used for testing.
  *
@@ -135,7 +137,7 @@ extern NSTimeInterval const UAInAppAudienceManagerDefaultPreferLocalAudienceData
 + (instancetype)managerWithAPIClient:(UATagGroupsLookupAPIClient *)client
                            dataStore:(UAPreferenceDataStore *)dataStore
                              channel:(UAChannel *)channel
-                             contact:(UAContact *)contact
+                             contact:(id<UAContactProtocol>)contact
                                cache:(UATagGroupsLookupResponseCache *)cache
                            historian:(UAInAppAudienceHistorian *)historian
                          currentTime:(UADate *)currentTime;

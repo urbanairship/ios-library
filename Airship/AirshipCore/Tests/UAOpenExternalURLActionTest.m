@@ -1,11 +1,12 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAOpenExternalURLAction.h"
 #import "UAActionArguments+Internal.h"
 #import "UAURLAllowList.h"
 #import "UAirship+Internal.h"
 #import "AirshipTests-Swift.h"
+
+@import AirshipCore;
 
 @interface UAOpenExternalURLActionTest : UABaseTest
 
@@ -165,8 +166,6 @@
 
     [action performWithArguments:self.arguments completionHandler:^(UAActionResult *performResult) {
         XCTAssertNotNil(performResult.error, @"result should have an error if the application failed to open the url");
-        XCTAssertEqualObjects(UAOpenExternalURLActionErrorDomain, performResult.error.domain, @"error domain should be set to UAOpenExternalURLActionErrorDomain");
-        XCTAssertEqual(UAOpenExternalURLActionErrorCodeURLFailedToOpen, performResult.error.code, @"error code should be set to UAOpenExternalURLActionErrorCodeURLFailedToOpen");
     }];
 
     [self waitForTestExpectations];
@@ -174,31 +173,5 @@
     XCTAssertNoThrow([self.mockApplication verify], @"application should try to open the url");
 }
 
-- (void)testParseURLFromArguments {
-    // Arguments contain an invalid class
-    self.arguments.value = [NSNumber numberWithBool:YES];
-    NSURL *url = [UAOpenExternalURLAction parseURLFromArguments:self.arguments];
-    XCTAssertNil(url);
-
-    // Arguments contain a valid string
-    self.arguments.value = @"http://google.com";
-    url = [UAOpenExternalURLAction parseURLFromArguments:self.arguments];
-    XCTAssertEqualObjects(url.absoluteString, self.arguments.value);
-
-    // Arguments contain a valid URL
-    self.arguments.value = [NSURL URLWithString:@"http://google.com"];
-    url = [UAOpenExternalURLAction parseURLFromArguments:self.arguments];
-    XCTAssertEqualObjects(url, self.arguments.value);
-    
-    // Arguments contain an apple itunes URL
-    self.arguments.value = @"ims://phobos.apple.com";
-    url = [UAOpenExternalURLAction parseURLFromArguments:self.arguments];
-    XCTAssertEqualObjects(url.absoluteString, @"ims://phobos.apple.com");
-    
-    // valid number
-    self.arguments.value = @"sms:21905;?&body=23Grande";
-    url = [UAOpenExternalURLAction parseURLFromArguments:self.arguments];
-    XCTAssertEqualObjects(url.absoluteString, self.arguments.value);
-}
 
 @end

@@ -34,7 +34,7 @@
 @class UAComponent;
 @class UALocaleManager;
 @class UAPrivacyManager;
-@class UAContact;
+@protocol UAContactProtocol;
 
 //---------------------------------------------------------------------------------------
 // UADeepLinkDelegate Protocol
@@ -267,7 +267,7 @@ extern NSString * const UAirshipDeepLinkScheme;
  *
  * @return The `UAContact` instance.
  */
-+ (null_unspecified UAContact *)contact;
++ (null_unspecified id<UAContactProtocol>)contact;
 
 /**
  * Returns the default `UAAnalytics` instance.

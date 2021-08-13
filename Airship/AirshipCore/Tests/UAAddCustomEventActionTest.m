@@ -3,7 +3,6 @@
 #import "UABaseTest.h"
 #import "UAanalytics.h"
 #import "UAirship+Internal.h"
-#import "UAAddCustomEventAction.h"
 
 @import AirshipCore;
 
@@ -124,10 +123,7 @@
 
     UAActionArguments *args = [UAActionArguments argumentsWithValue:dict withSituation:UASituationManualInvocation];
 
-    NSError *error = [NSError errorWithDomain:UAAddCustomEventActionErrorDomain
-                                         code:UAAddCustomEventActionErrorCodeInvalidEventName
-                                     userInfo:@{NSLocalizedDescriptionKey:@"Invalid event. Verify event name is not empty and within 255 characters."}];
-    
+    NSError *error = [UAirshipErrors error:@"Invalid custom event"];
     UAActionResult *expectedResult = [UAActionResult resultWithError:error];
 
     [self verifyPerformWithArgs:args withExpectedResult:expectedResult];

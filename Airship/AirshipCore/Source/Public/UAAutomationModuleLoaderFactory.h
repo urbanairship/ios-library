@@ -6,8 +6,8 @@
 #import "UAChannel.h"
 #import "UARemoteDataProvider.h"
 
-@class UAContact;
 @class UAPreferenceDataStore;
+@protocol UAContactProtocol;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -33,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (id<UAModuleLoader>)inAppModuleLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
                                               config:(UARuntimeConfig *)config
                                              channel:(UAChannel *)channel
-                                             contact:(UAContact *)contact
+                                             contact:(id<UAContactProtocol>)contact
                                            analytics:(UAAnalytics *)analytics
                                   remoteDataProvider:(id<UARemoteDataProvider>)remoteDataProvider
                                       privacyManager:(UAPrivacyManager *)privacyManager;

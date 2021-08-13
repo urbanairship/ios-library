@@ -28,7 +28,7 @@
 + (id<UAModuleLoader>)inAppModuleLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
                                               config:(UARuntimeConfig *)config
                                              channel:(UAChannel *)channel
-                                             contact:(UAContact *)contact
+                                             contact:(id<UAContactProtocol>)contact
                                            analytics:(UAAnalytics *)analytics
                                   remoteDataProvider:(id<UARemoteDataProvider>)remoteDataProvider
                                       privacyManager:(UAPrivacyManager *)privacyManager {

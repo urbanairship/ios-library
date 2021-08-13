@@ -12,7 +12,7 @@ import Foundation
 @objc
 public class UANamedUser : UAComponent {
     
-    private let contact : Contact
+    private let contact : ContactProtocol
     
     /**
      * The named user ID for this device.
@@ -33,7 +33,7 @@ public class UANamedUser : UAComponent {
     }
     
     @objc
-    public init(dataStore: UAPreferenceDataStore, contact: Contact) {
+    public init(dataStore: UAPreferenceDataStore, contact: ContactProtocol) {
         self.contact = contact
         super.init(dataStore: dataStore)
     }

@@ -6,6 +6,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class UADate;
+@protocol UAContactProtocol;
 
 @interface UAInAppAudienceHistorian : NSObject
 
@@ -17,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 * @return The initialized historian.
 */
 + (instancetype)historianWithChannel:(UAChannel *)channel
-                             contact:(UAContact *)contact;
+                             contact:(id<UAContactProtocol>)contact;
 
 
 /**
@@ -29,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 * @return The initialized historian.
 */
 + (instancetype)historianWithChannel:(UAChannel *)channel
-                             contact:(UAContact *)contact
+                             contact:(id<UAContactProtocol>)contact
                                 date:(UADate *)date;
 
 /**

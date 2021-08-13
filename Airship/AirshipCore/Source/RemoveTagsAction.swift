@@ -1,10 +1,8 @@
 /* Copyright Airship and Contributors */
 
-#import "UAModifyTagsAction.h"
-
 /**
- * Adds tags. This Action is registered under the
- * names ^+t and "add_tags_action".
+ * Removes tags. This Action is registered under the
+ * names ^-t and "remove_tags_action".
  *
  * Expected argument values: NSString (single tag), NSArray (single or multiple tags), or NSDictionary (tag groups).
  * An example tag group JSON payload:
@@ -23,7 +21,7 @@
  *
  * Valid situations: UASituationForegroundPush, UASituationLaunchedFromPush
  * UASituationWebViewInvocation, UASituationForegroundInteractiveButton,
- * UASituationBackgroundInteractiveButton, UASituationManualInvocation, and
+ * UASituationBackgroundInteractiveButton, UASituationManualInvocation and
  * UASituationAutomation
  *
  * Default predicate: Rejects foreground pushes with visible display options
@@ -34,16 +32,24 @@
  *
  * Fetch result: UAActionFetchResultNoData
  */
-@interface UAAddTagsAction : UAModifyTagsAction
-
-/**
- * Default registry name for add tags action.
- */
-extern NSString * const UAAddTagsActionDefaultRegistryName;
-
-/**
- * Default registry alias for add tags action.
- */
-extern NSString * const UAAddTagsActionDefaultRegistryAlias;
-
-@end
+@objc(UARemoveTagsAction)
+public class RemoveTagsAction : ModifyTagsAction {
+    
+    @objc
+    public static let name = "remove_tags_action"
+    
+    @objc
+    public static let shortName = "^-t"
+    
+    public override func onChannelTags(_ tags: [String], channel: UAChannel) {
+        channel.removeTags(tags)
+    }
+    
+    public override func onChannelTags(_ tags: [String], group: String, editor: TagGroupsEditor) {
+        editor.remove(tags, group: group)
+    }
+    
+    public override func onContactTags(_ tags: [String], group: String, editor: TagGroupsEditor) {
+        editor.remove(tags, group: group)
+    }
+}

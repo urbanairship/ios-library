@@ -52,7 +52,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The contact.
  */
-@property (nonatomic, strong) UAContact *sharedContact;
+@property (nonatomic, strong) id<UAContactProtocol> sharedContact;
 
 /**
  * The shared analytics manager.

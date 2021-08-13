@@ -1,15 +1,15 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
+#import "UAAirshipBaseTest.h"
 
 #import "UAActionArguments+Internal.h"
-#import "UAEnableFeatureAction.h"
 #import "UAirship+Internal.h"
-#import "UAPush+Internal.h"
+#import "UAPush.h"
 
 @import AirshipCore;
 
-@interface UAEnableFeatureActionTest : UABaseTest
+@interface UAEnableFeatureActionTest : UAAirshipBaseTest
 
 @property (nonatomic, strong) UAEnableFeatureAction *action;
 @property (nonatomic, strong) UAActionArguments *arguments;
@@ -17,9 +17,8 @@
 @property(nonatomic, strong) id mockPush;
 @property(nonatomic, strong) id mockLocationProvider;
 @property(nonatomic, strong) id mockAirship;
-@property(nonatomic, strong) id mockPushRegistration;
 @property(nonatomic, strong) id mockApplication;
-@property(nonatomic, strong) id mockPrivacyManager;
+@property(nonatomic, strong) UAPrivacyManager *privacyManager;
 
 @end
 
@@ -35,17 +34,15 @@
     self.mockLocationProvider = [self mockForProtocol:@protocol(UALocationProvider)];
 
     self.mockAirship = [self strictMockForClass:[UAirship class]];
-    self.mockPushRegistration = [self mockForClass:[UAAPNSRegistration class]];
     self.mockApplication = [self mockForClass:[UIApplication class]];
-    self.mockPrivacyManager = [self mockForClass:[UAPrivacyManager class]];
+    self.privacyManager = [[UAPrivacyManager alloc] initWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesNone];
 
     [UAirship setSharedAirship:self.mockAirship];
     [[[self.mockAirship stub] andReturn:self.mockPush] sharedPush];
 
     [[[self.mockAirship stub] andReturn:self.mockLocationProvider] locationProvider];
-    [[[self.mockAirship stub] andReturn:self.mockPrivacyManager] privacyManager];
+    [[[self.mockAirship stub] andReturn:self.privacyManager] privacyManager];
 
-    [[[self.mockPush stub] andReturn:self.mockPushRegistration] pushRegistration];
     [[[self.mockApplication stub] andReturn:self.mockApplication] sharedApplication];
 }
 
@@ -71,7 +68,11 @@
         UASituationBackgroundPush,
     };
 
-    NSArray *validValues = @[UAEnableLocationActionValue, UAEnableUserNotificationsActionValue, UAEnableBackgroundLocationActionValue];
+    NSArray *validValues = @[
+        UAEnableFeatureAction.userNotificationsActionValue,
+        UAEnableFeatureAction.backgroundLocationActionValue,
+        UAEnableFeatureAction.locationActionValue
+    ];
 
     for (id value in validValues) {
         arguments.value = value;
@@ -97,13 +98,13 @@
 
 - (void)testEnableUserNotifications {
     UAActionArguments *arguments = [[UAActionArguments alloc] init];
-    arguments.value = UAEnableUserNotificationsActionValue;
+    arguments.value = UAEnableFeatureAction.userNotificationsActionValue;
 
     XCTestExpectation *expectation = [self expectationWithDescription:@"action performed"];
 
     [[self.mockPush expect] userPromptedForNotifications];
     [[self.mockPush expect] setUserPushNotificationsEnabled:YES];
-    [[self.mockPrivacyManager expect] enableFeatures:UAFeaturesPush];
+    [[[self.mockPush stub] andReturnValue:OCMOCK_VALUE(UAAuthorizedNotificationSettingsAlert)] authorizedNotificationSettings];
 
     [[self.mockApplication reject] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]
                                    options:OCMOCK_ANY
@@ -116,27 +117,20 @@
     // Wait for the test expectations
     [self waitForTestExpectations];
     [self.mockPush verify];
+    
+    XCTAssertTrue([self.privacyManager isEnabled:UAFeaturesPush]);
 }
 
 - (void)testEnableUserNotificationsOptedOut {
     UAActionArguments *arguments = [[UAActionArguments alloc] init];
-    arguments.value = UAEnableUserNotificationsActionValue;
+    arguments.value = UAEnableFeatureAction.userNotificationsActionValue;
 
-    XCTestExpectation *settingsOpened = [self expectationWithDescription:@"settings opened"];
     XCTestExpectation *actionPerformed = [self expectationWithDescription:@"action performed"];
 
-    [[[self.mockPushRegistration stub] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:2];
-        void (^handler)(UANotificationOptions) = (__bridge void (^)(UANotificationOptions))arg;
-        handler(UANotificationOptionNone);
-        [settingsOpened fulfill];
-    }] getAuthorizedSettingsWithCompletionHandler:OCMOCK_ANY];
-
     [[[self.mockPush stub] andReturnValue:@YES] userPromptedForNotifications];
+    [[[self.mockPush stub] andReturnValue:OCMOCK_VALUE(UAAuthorizedNotificationSettingsNone)] authorizedNotificationSettings];
 
     [[self.mockPush expect] setUserPushNotificationsEnabled:YES];
-    [[self.mockPrivacyManager expect] enableFeatures:UAFeaturesPush];
 
     [[[self.mockApplication stub] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -152,6 +146,7 @@
     // Wait for the test expectations
     [self waitForTestExpectations];
     [self.mockPush verify];
+    XCTAssertTrue([self.privacyManager isEnabled:UAFeaturesPush]);
 }
 
 - (void)testEnableLocation {
@@ -160,10 +155,9 @@
     [[[self.mockLocationProvider stub] andReturnValue:@(NO)] isLocationDeniedOrRestricted];
 
     UAActionArguments *arguments = [[UAActionArguments alloc] init];
-    arguments.value = UAEnableLocationActionValue;
+    arguments.value = UAEnableFeatureAction.locationActionValue;
 
     [[self.mockLocationProvider expect] setLocationUpdatesEnabled:YES];
-    [[self.mockPrivacyManager expect] enableFeatures:UAFeaturesLocation];
 
     [[self.mockApplication reject] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]
                                    options:OCMOCK_ANY
@@ -175,6 +169,7 @@
 
     [self.mockLocationProvider verify];
     XCTAssertTrue(actionPerformed);
+    XCTAssertTrue([self.privacyManager isEnabled:UAFeaturesLocation]);
 }
 
 - (void)testEnableLocationOptedOut {
@@ -183,10 +178,9 @@
     [[[self.mockLocationProvider stub] andReturnValue:@(YES)] isLocationDeniedOrRestricted];
 
     UAActionArguments *arguments = [[UAActionArguments alloc] init];
-    arguments.value = UAEnableLocationActionValue;
+    arguments.value = UAEnableFeatureAction.locationActionValue;
 
     [[self.mockLocationProvider expect] setLocationUpdatesEnabled:YES];
-    [[self.mockPrivacyManager expect] enableFeatures:UAFeaturesLocation];
 
     [[[self.mockApplication stub] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -202,6 +196,7 @@
 
     [self.mockLocationProvider verify];
     XCTAssertTrue(actionPerformed);
+    XCTAssertTrue([self.privacyManager isEnabled:UAFeaturesLocation]);
 }
 
 - (void)testEnableBackgroundLocation {
@@ -210,11 +205,10 @@
     [[[self.mockLocationProvider stub] andReturnValue:@(NO)] isLocationDeniedOrRestricted];
 
     UAActionArguments *arguments = [[UAActionArguments alloc] init];
-    arguments.value = UAEnableBackgroundLocationActionValue;
+    arguments.value = UAEnableFeatureAction.backgroundLocationActionValue;
 
     [[self.mockLocationProvider expect] setLocationUpdatesEnabled:YES];
     [[self.mockLocationProvider expect] setBackgroundLocationUpdatesAllowed:YES];
-    [[self.mockPrivacyManager expect] enableFeatures:UAFeaturesLocation];
 
     [[self.mockApplication reject] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]
                                    options:OCMOCK_ANY
@@ -226,6 +220,7 @@
 
     [self.mockLocationProvider verify];
     XCTAssertTrue(actionPerformed);
+    XCTAssertTrue([self.privacyManager isEnabled:UAFeaturesLocation]);
 }
 
 - (void)testEnableBackgroundLocationOptedOut {
@@ -234,11 +229,10 @@
     [[[self.mockLocationProvider stub] andReturnValue:@(NO)] isLocationDeniedOrRestricted];
 
     UAActionArguments *arguments = [[UAActionArguments alloc] init];
-    arguments.value = UAEnableBackgroundLocationActionValue;
-
+    arguments.value = UAEnableFeatureAction.backgroundLocationActionValue;
+    
     [[self.mockLocationProvider expect] setLocationUpdatesEnabled:YES];
     [[self.mockLocationProvider expect] setBackgroundLocationUpdatesAllowed:YES];
-    [[self.mockPrivacyManager expect] enableFeatures:UAFeaturesLocation];
 
     [[[self.mockApplication stub] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -254,6 +248,7 @@
 
     [self.mockLocationProvider verify];
     XCTAssertTrue(actionPerformed);
+    XCTAssertTrue([self.privacyManager isEnabled:UAFeaturesLocation]);
 }
 
 @end

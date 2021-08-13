@@ -3,9 +3,10 @@
 #import <UIKit/UIKit.h>
 #import "UABaseTest.h"
 
-#import "UAPasteboardAction.h"
 #import "UAActionArguments+Internal.h"
 #import "UAActionResult.h"
+
+@import AirshipCore;
 
 @interface UAPasteboardActionTest : UABaseTest
 @property(nonatomic, strong) UAPasteboardAction *action;
@@ -69,7 +70,7 @@
 
     [self.action performWithArguments:arguments completionHandler:^(UAActionResult *result) {
         actionPerformed = YES;
-        XCTAssertEqual(arguments.value, result.value);
+        XCTAssertEqualObjects(arguments.value, result.value);
     }];
 
     XCTAssertTrue(actionPerformed);
@@ -90,7 +91,7 @@
 
     [self.action performWithArguments:arguments completionHandler:^(UAActionResult *result) {
         actionPerformed = YES;
-        XCTAssertEqual(arguments.value, result.value);
+        XCTAssertEqualObjects(arguments.value, result.value);
     }];
 
     XCTAssertTrue(actionPerformed);

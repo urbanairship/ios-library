@@ -2,7 +2,6 @@
 
 #import "UABaseTest.h"
 #import "UAirship+Internal.h"
-#import "UAAddTagsAction.h"
 #import "UALandingPageAction+Internal.h"
 
 @import AirshipCore;
