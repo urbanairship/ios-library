@@ -3,10 +3,10 @@
 #import <Foundation/Foundation.h>
 #import "UAModuleLoader.h"
 #import "UARemoteDataProvider.h"
-#import "UAChannel.h"
 #import "UARemoteDataProvider.h"
 
 @class UAPreferenceDataStore;
+@class UAChannel;
 @protocol UAContactProtocol;
 
 NS_ASSUME_NONNULL_BEGIN

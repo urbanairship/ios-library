@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-#import "UAChannel.h"
 #import "UAEvent.h"
 
 @class UAAppStateTracker;
@@ -11,6 +10,7 @@
 @class UAEventStore;
 @class UADelay;
 @class UATaskManager;
+@class UAChannel;
 
 /**
  * Delegate protocol for the event manager.

@@ -50,7 +50,7 @@ NS_ASSUME_NONNULL_END
 
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(channelAudienceUpdated:)
-                                                     name:UAChannelAudienceUpdatedEvent
+                                                     name:UAChannel.audienceUpdatedEvent
                                                    object:nil];
 
 
@@ -78,14 +78,14 @@ NS_ASSUME_NONNULL_END
 
 
 - (void)channelAudienceUpdated:(NSNotification *)notification {
-    NSArray<UAAttributeUpdate *> *attributes = [notification.userInfo objectForKey:UAChannelAudienceUpdatedEventAttributesKey];
+    NSArray<UAAttributeUpdate *> *attributes = [notification.userInfo objectForKey:UAChannel.audienceAttributesKey];
     if (attributes.count) {
         [self.contactRecords addObject:@{ kUAInAppAudienceHistorianRecordDate: self.date.now,
                                           kUAInAppAudienceHistorianRecordType: @(UAInAppAudienceRecordTypeAttributes),
                                           kUAInAppAudienceHistorianRecordUpdates: attributes }];
     }
     
-    NSArray<UATagGroupUpdate *> *tags = [notification.userInfo objectForKey:UAChannelAudienceUpdatedEventTagsKey];
+    NSArray<UATagGroupUpdate *> *tags = [notification.userInfo objectForKey:UAChannel.audienceTagsKey];
     if (tags.count) {
         [self.contactRecords addObject:@{ kUAInAppAudienceHistorianRecordDate: self.date.now,
                                           kUAInAppAudienceHistorianRecordType: @(UAInAppAudienceRecordTypeTags),

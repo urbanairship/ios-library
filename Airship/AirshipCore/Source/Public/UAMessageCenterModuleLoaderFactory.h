@@ -2,11 +2,9 @@
 
 #import <Foundation/Foundation.h>
 #import "UAModuleLoader.h"
-#import "UAChannel.h"
-#import "UAExtendableChannelRegistration.h"
 
 @class UAPreferenceDataStore;
-
+@class UAChannel;
 NS_ASSUME_NONNULL_BEGIN
 
 /**
@@ -27,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (id<UAModuleLoader>)messageCenterModuleLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
                                                       config:(UARuntimeConfig *)config
-                                                     channel:(UAChannel<UAExtendableChannelRegistration> *)channel
+                                                     channel:(UAChannel *)channel
                                               privacyManager:(UAPrivacyManager *)privacyManager;
 
 

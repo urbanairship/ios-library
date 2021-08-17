@@ -7,6 +7,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@protocol UAChannelProtocol;
 @class UATaskManager;
 
 /*
@@ -25,7 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param dataStore The preference data store.
  * @return User instance.
  */
-+ (instancetype)userWithChannel:(UAChannel<UAExtendableChannelRegistration> *)channel
++ (instancetype)userWithChannel:(id<UAChannelProtocol>)channel
                          config:(UARuntimeConfig *)config
                       dataStore:(UAPreferenceDataStore *)dataStore;
 
@@ -39,7 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param taskManager The task manager.
  * @return User instance.
  */
-+ (instancetype)userWithChannel:(UAChannel<UAExtendableChannelRegistration> *)channel
++ (instancetype)userWithChannel:(id<UAChannelProtocol>)channel
                       dataStore:(UAPreferenceDataStore *)dataStore
                          client:(UAUserAPIClient *)client
              notificationCenter:(NSNotificationCenter *)notificationCenter

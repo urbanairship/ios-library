@@ -15,7 +15,7 @@
 
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(refreshView)
-                                                 name:UAChannelUpdatedEvent
+                                                 name:UAChannel.channelCreatedEvent
                                                object:nil];
 }
 

@@ -5,6 +5,27 @@
  */
 @objc
 public class UADeviceRegistrationEvent : NSObject, UAEvent {
+    
+    @objc
+    public init(channel: ChannelProtocol?,
+                push: UAPush?,
+                privacyManager: UAPrivacyManager?) {
+         
+        var data: [AnyHashable : Any] = [:]
+        if privacyManager?.isEnabled(.push) == true {
+            data["device_token"] = push?.deviceToken
+        }
+
+        data["channel_id"] = channel?.identifier
+
+        self._data = data
+    }
+    
+    @objc
+    public override convenience init() {
+        self.init(channel: UAirship.channel(), push: UAirship.push(), privacyManager: UAirship.shared().privacyManager)
+    }
+    
     @objc
     public var priority: UAEventPriority {
         get {
@@ -26,19 +47,5 @@ public class UADeviceRegistrationEvent : NSObject, UAEvent {
         get {
             return self._data
         }
-    }
-
-    @objc
-    public override init() {
-        var data: [AnyHashable : Any] = [:]
-        if UAirship.shared()?.privacyManager.isEnabled(.push) ?? false {
-            data["device_token"] = UAirship.push()?.deviceToken
-        }
-
-        data["channel_id"] = UAirship.channel()?.identifier
-
-        self._data = data
-
-        super.init()
     }
 }

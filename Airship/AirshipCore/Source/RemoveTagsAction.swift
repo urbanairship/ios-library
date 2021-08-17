@@ -41,8 +41,8 @@ public class RemoveTagsAction : ModifyTagsAction {
     @objc
     public static let shortName = "^-t"
     
-    public override func onChannelTags(_ tags: [String], channel: UAChannel) {
-        channel.removeTags(tags)
+    public override func onChannelTags(_ tags: [String], editor: TagEditor) {
+        editor.remove(tags)
     }
     
     public override func onChannelTags(_ tags: [String], group: String, editor: TagGroupsEditor) {

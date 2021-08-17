@@ -46,6 +46,21 @@ public class ModifyAttributesAction : NSObject, UAAction {
     @objc
     public static let shortName = "^a"
 
+    private let channel: () -> ChannelProtocol
+    private let contact: () -> ContactProtocol
+    
+    @objc
+    public override convenience init() {
+        self.init(channel: Channel.supplier,
+                  contact: Contact.supplier)
+    }
+    
+    @objc
+    public init(channel: @escaping () -> ChannelProtocol,
+                contact: @escaping () -> ContactProtocol) {
+        self.channel = channel
+        self.contact = contact
+    }
     
     public func acceptsArguments(_ arguments: UAActionArguments) -> Bool {
         guard arguments.situation != .backgroundPush,
@@ -69,14 +84,12 @@ public class ModifyAttributesAction : NSObject, UAAction {
     public func perform(with arguments: UAActionArguments, completionHandler: UAActionCompletionHandler) {
         let dict = arguments.value as? [String : [String : Any]]
         if let channelAttributes = dict?[ModifyAttributesAction.channelsKey] {
-            applyEdits(channelAttributes, editor: UAirship.channel()?.editAttributes())
+            applyEdits(channelAttributes, editor: channel().editAttributes())
         }
-        
         
         if let namedUserAttributes = dict?[ModifyAttributesAction.namedUserKey] {
-            applyEdits(namedUserAttributes, editor: UAirship.contact()?.editAttributes())
+            applyEdits(namedUserAttributes, editor: contact().editAttributes())
         }
-
     }
     
     func applyEdits(_ attributeMutations : [String : Any], editor: AttributesEditor?) {

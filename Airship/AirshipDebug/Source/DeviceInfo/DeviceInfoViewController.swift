@@ -146,7 +146,7 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(DeviceInfoViewController.refreshView),
-            name: NSNotification.Name(rawValue: UAChannelUpdatedEvent),
+            name: Channel.channelUpdatedEvent,
             object: nil);
         
         // add observer to didBecomeActive to update upon retrun from system settings screen

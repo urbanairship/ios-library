@@ -16,7 +16,7 @@ public class ChannelCapture : NSObject {
     
     private let dataStore: UAPreferenceDataStore
     private let config: UARuntimeConfig
-    private let channel: UAChannel
+    private let channel: ChannelProtocol
     private let notificationCenter: NotificationCenter
     private let date: UADate
     private let pasteboardProvider: () -> UIPasteboard
@@ -33,7 +33,7 @@ public class ChannelCapture : NSObject {
     @objc
     public init(config: UARuntimeConfig,
                 dataStore: UAPreferenceDataStore,
-                channel: UAChannel,
+                channel: ChannelProtocol,
                 notificationCenter: NotificationCenter,
                 date: UADate,
                 pasteboardProvider: @escaping () -> UIPasteboard) {
@@ -58,7 +58,7 @@ public class ChannelCapture : NSObject {
     @objc
     public convenience init(config: UARuntimeConfig,
                             dataStore: UAPreferenceDataStore,
-                            channel: UAChannel) {
+                            channel: Channel) {
         
         self.init(config: config,
                   dataStore: dataStore,

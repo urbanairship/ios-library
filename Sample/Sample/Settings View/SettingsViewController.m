@@ -67,7 +67,7 @@ typedef NS_ENUM(NSUInteger, UASettingsViewControllerSection) {
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshView) name:UAChannelUpdatedEvent object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshView) name:UAChannel.channelUpdatedEvent object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didBecomeActive) name: UIApplicationDidBecomeActiveNotification object:nil];
     

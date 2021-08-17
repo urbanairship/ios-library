@@ -8,6 +8,7 @@ import Foundation
  */
 @objc(UAContactProtocol)
 public protocol ContactProtocol {
+    
     /**
      * The current named user ID.
      */
@@ -43,6 +44,14 @@ public protocol ContactProtocol {
      */
     @objc
     func editTagGroups() -> TagGroupsEditor
+    
+    /**
+     * Edits tags.
+     * - Parameters:
+     *  - editorBlock: The editor block with the editor. The editor will `apply` will be called after the block is executed.
+     */
+    @objc
+    func editTagGroups(_ editorBlock: (TagGroupsEditor) -> Void)
         
     /**
      * Edits attributes.
@@ -50,6 +59,14 @@ public protocol ContactProtocol {
      */
     @objc
     func editAttributes() -> AttributesEditor
+    
+    /**
+     * Edits  attributes.
+     * - Parameters:
+     *  - editorBlock: The editor block with the editor. The editor will `apply` will be called after the block is executed.
+     */
+    @objc
+    func editAttributes(_ editorBlock: (AttributesEditor) -> Void)
 }
 
 
@@ -60,6 +77,12 @@ public protocol ContactProtocol {
 @objc(UAContact)
 public class Contact : UAComponent, ContactProtocol {
 
+    // NOTE: For internal use only. :nodoc:
+    static let supplier : () -> (ContactProtocol) = {
+        return Contact.shared()
+    }
+    
+    
     static let updateTaskID = "Contact.update"
     static let operationsKey = "Contact.operations"
     static let contactInfoKey = "Contact.contactInfo"
@@ -90,7 +113,7 @@ public class Contact : UAComponent, ContactProtocol {
     private let dataStore: UAPreferenceDataStore
     private let config: UARuntimeConfig
     private let privacyManager: UAPrivacyManager
-    private let channel: AirshipChannelProtocol
+    private let channel: ChannelProtocol
     private let contactAPIClient: ContactsAPIClientProtocol
     private let taskManager: TaskManagerProtocol
     private let dispatcher = UADispatcher.serial()
@@ -208,7 +231,7 @@ public class Contact : UAComponent, ContactProtocol {
      */
     init(dataStore: UAPreferenceDataStore,
          config: UARuntimeConfig,
-         channel: AirshipChannelProtocol,
+         channel: ChannelProtocol,
          privacyManager: UAPrivacyManager,
          contactAPIClient: ContactsAPIClientProtocol,
          taskManager: TaskManagerProtocol,
@@ -247,7 +270,7 @@ public class Contact : UAComponent, ContactProtocol {
         self.notificationCenter.addObserver(
             self,
             selector: #selector(channelCreated),
-            name: NSNotification.Name.UAChannelCreatedEvent,
+            name: Channel.channelCreatedEvent,
             object: nil)
         
         self.notificationCenter.addObserver(
@@ -267,7 +290,7 @@ public class Contact : UAComponent, ContactProtocol {
     @objc
     public convenience init(dataStore: UAPreferenceDataStore,
                             config: UARuntimeConfig,
-                            channel: UAChannel,
+                            channel: Channel,
                             privacyManager: UAPrivacyManager) {
         self.init(dataStore: dataStore,
                   config: config,
@@ -322,6 +345,12 @@ public class Contact : UAComponent, ContactProtocol {
             self.enqueueTask()
         }
     }
+    
+    public func editTagGroups(_ editorBlock: (TagGroupsEditor) -> Void) {
+        let editor = editTagGroups()
+        editorBlock(editor)
+        editor.apply()
+    }
 
     @objc
     public func editAttributes() -> AttributesEditor {
@@ -339,6 +368,12 @@ public class Contact : UAComponent, ContactProtocol {
             self.addOperation(ContactOperation.update(attributeUpdates: updates))
             self.enqueueTask()
         }
+    }
+
+    public func editAttributes(_ editorBlock: (AttributesEditor) -> Void) {
+        let editor = editAttributes()
+        editorBlock(editor)
+        editor.apply()
     }
 
     /**
@@ -375,7 +410,7 @@ public class Contact : UAComponent, ContactProtocol {
     
     @objc
     private func channelCreated(notification: NSNotification) {
-        let existing = notification.userInfo?[UAChannelCreatedEventExistingKey] as? Bool
+        let existing = notification.userInfo?[Channel.channelExistingKey] as? Bool
         
         if (existing == true && self.config.clearNamedUserOnAppRestore) {
             self.reset()

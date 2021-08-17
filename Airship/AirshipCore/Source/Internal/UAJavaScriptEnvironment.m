@@ -4,9 +4,7 @@
 #import "NSString+UAURLEncoding.h"
 #import "UAGlobal.h"
 #import "UAirship.h"
-#import "UAChannel.h"
 #import "UARuntimeConfig.h"
-
 
 #if __has_include("AirshipCore/AirshipCore-Swift.h")
 #import <AirshipCore/AirshipCore-Swift.h>

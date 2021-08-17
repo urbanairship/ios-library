@@ -2,7 +2,6 @@
 
 #import <Foundation/Foundation.h>
 #import "UAModuleLoader.h"
-#import "UAChannel.h"
 #import "UAAnalytics.h"
 #import "UAPush.h"
 

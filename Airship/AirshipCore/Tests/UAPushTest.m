@@ -3,7 +3,6 @@
 
 #import "UAAirshipBaseTest.h"
 #import "UAPush+Internal.h"
-#import "UAChannel+Internal.h"
 #import "UAirship+Internal.h"
 #import "UAChannelRegistrationPayload+Internal.h"
 #import "UAEvent.h"
@@ -14,7 +13,7 @@
 
 @interface UAPushTest : UAAirshipBaseTest
 @property (nonatomic, strong) id mockApplication;
-@property (nonatomic, strong) id mockChannel;
+@property (nonatomic, strong) UATestChannel *testChannel;
 @property (nonatomic, strong) id mockAppStateTracker;
 @property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) id mockPushDelegate;
@@ -33,7 +32,6 @@
 @property (nonatomic, copy) NSData *validAPNSDeviceToken;
 @property (nonatomic, assign) UAAuthorizationStatus authorizationStatus;
 @property (nonatomic, assign) UAAuthorizedNotificationSettings authorizedNotificationSettings;
-@property (nonatomic, copy) UAChannelRegistrationExtenderBlock channelRegistrationExtenderBlock;
 @property (nonatomic, copy) UAAnalyticsHeadersBlock analyticHeadersBlock;
 
 @end
@@ -109,15 +107,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
     self.mockDefaultNotificationCategories = [self mockForClass:[UANotificationCategories class]];
 
-    self.mockChannel = [self mockForClass:[UAChannel class]];
+    self.testChannel = [[UATestChannel alloc] init];
     self.mockAnalytics = [self mockForClass:[UAAnalytics class]];
-
-    // Capture the channel payload extender
-    [[[self.mockChannel stub] andDo:^(NSInvocation *invocation) {
-           void *arg;
-           [invocation getArgument:&arg atIndex:2];
-           self.channelRegistrationExtenderBlock =  (__bridge UAChannelRegistrationExtenderBlock)arg;
-    }] addChannelExtenderBlock:OCMOCK_ANY];
 
     // Capture the analytics header extender
     [[[self.mockAnalytics stub] andDo:^(NSInvocation *invocation) {
@@ -132,7 +123,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     
     self.push = [UAPush pushWithConfig:self.config
                              dataStore:self.dataStore
-                               channel:self.mockChannel
+                               channel:self.testChannel
                              analytics:self.mockAnalytics
                        appStateTracker:self.mockAppStateTracker
                     notificationCenter:self.notificationCenter
@@ -304,9 +295,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     XCTAssertTrue([self.dataStore boolForKey:UABackgroundPushNotificationsEnabledKey],
                   @"backgroundPushNotificationsEnabled should be stored in standardUserDefaults");
 
-    // EXPECTATIONS
-    [[self.mockChannel expect] updateRegistration];
-
     // TEST
     self.push.backgroundPushNotificationsEnabled = NO;
 
@@ -314,7 +302,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     XCTAssertFalse([self.dataStore boolForKey:UABackgroundPushNotificationsEnabledKey],
                    @"backgroundPushNotificationsEnabled should be stored in standardUserDefaults");
 
-    XCTAssertNoThrow([self.mockChannel verify],  @"should update channel registration");
+    XCTAssertTrue(self.testChannel.updateRegistrationCalled);
 }
 
 /**
@@ -586,9 +574,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
         [delegateCalled fulfill];
     }]  apnsRegistrationSucceededWithDeviceToken:self.validAPNSDeviceToken];
 
-    // Expect UAPush to update its channel registration
-    [[self.mockChannel expect] updateRegistration];
-
     // TEST
     [self.push application:self.mockApplication didRegisterForRemoteNotificationsWithDeviceToken:self.validAPNSDeviceToken];
 
@@ -600,7 +585,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     // device token also should be set
     XCTAssertTrue([self.push.deviceToken isEqualToString:[UAUtils deviceTokenStringFromDeviceToken:self.validAPNSDeviceToken]]);
 
-    XCTAssertNoThrow([self.mockChannel verify], @"should update channel registration");
+    XCTAssertTrue(self.testChannel.updateRegistrationCalled);
 }
 
 /**
@@ -612,9 +597,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     // EXPECTATIONS
     [[self.mockRegistrationDelegate expect] apnsRegistrationSucceededWithDeviceToken:self.validAPNSDeviceToken];
 
-    // Expect UAPush to update its channel registration
-    [[self.mockChannel expect] updateRegistration];
-
     // TEST
     [self.push application:self.mockApplication didRegisterForRemoteNotificationsWithDeviceToken:self.validAPNSDeviceToken];
 
@@ -622,7 +604,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     XCTAssertTrue([self.push.deviceToken isEqualToString:[UAUtils deviceTokenStringFromDeviceToken:self.validAPNSDeviceToken]]);
 
     [self.mockRegistrationDelegate verify];
-    XCTAssertNoThrow([self.mockChannel verify], @"should update channel registration");
+    XCTAssertTrue(self.testChannel.updateRegistrationCalled);
 }
 
 /**
@@ -771,9 +753,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     // EXPECTATIONS
     [[self.mockApplication expect] setApplicationIconBadgeNumber:15];
 
-    // Expect UAPush to update its registration
-    [[self.mockChannel expect] updateRegistrationForcefully:YES];
-
     // TEST
     [self.push setBadgeNumber:15];
 
@@ -781,8 +760,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     XCTAssertNoThrow([self.mockApplication verify],
                      @"should update application icon badge number when its different");
 
-    XCTAssertNoThrow([self.mockChannel verify],
-                     @"should update registration so autobadge works");
+    XCTAssertTrue(self.testChannel.updateRegistrationCalled);
 }
 
 - (void)testSetBadgeNumberNoChange {
@@ -803,15 +781,13 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSInteger)30)] applicationIconBadgeNumber];
     [[self.mockApplication expect] setApplicationIconBadgeNumber:15];
 
-    // Reject device api client registration because autobadge is not enabled
-    [[self.mockChannel reject] updateRegistrationForcefully:YES];
-
+    self.testChannel.updateRegistrationCalled = NO;
+    
     [self.push setBadgeNumber:15];
     XCTAssertNoThrow([self.mockApplication verify],
                      @"should update application icon badge number when its different");
 
-    XCTAssertNoThrow([self.mockChannel verify],
-                     @"should not update registration because autobadge is disabled");
+    XCTAssertFalse(self.testChannel.updateRegistrationCalled);
 }
 
 - (void)testResetBadge {
@@ -868,13 +844,12 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 - (void)testUpdateRegistrationShouldUpdateAPNS {
     self.push.shouldUpdateAPNSRegistration = YES;
 
-    [[self.mockChannel expect] updateRegistration];
-
     [self.push updateRegistration];
 
     // Verify it reset the flag
     XCTAssertFalse(self.push.shouldUpdateAPNSRegistration, @"updateRegistration should handle APNS registration updates if shouldUpdateAPNSRegistration is YES.");
-    [self.mockChannel verify];
+    
+    XCTAssertTrue(self.testChannel.updateRegistrationCalled);
 }
 
 /**
@@ -1011,9 +986,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     self.authorizedNotificationSettings = UAAuthorizedNotificationSettingsAlert;
     UAAuthorizedNotificationSettings expectedSettings = UAAuthorizedNotificationSettingsAlert;
 
-    // EXPECTATIONS
-    [[self.mockChannel expect] updateRegistration];
-
     [self rejectUpdatePushRegistrationWithOptions];
 
     [(UAAppStateTracker *)[[self.mockAppStateTracker expect] andReturnValue:@(UAApplicationStateActive)] state];
@@ -1025,7 +997,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     XCTAssertTrue(self.push.userPromptedForNotifications);
     XCTAssertEqual(self.push.authorizedNotificationSettings, expectedSettings);
 
-    XCTAssertNoThrow([self.mockChannel verify], @"[UAChannel updateRegistration] should be called");
+    XCTAssertTrue(self.testChannel.updateRegistrationCalled);
     XCTAssertNoThrow([self.mockPushRegistration verify], @"[UAAPNSRegistration updateRegistrationWithOptions:categories:completionHandler:] should not be called");
 }
 
@@ -1045,11 +1017,10 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
 -(void)testApplicationBackgroundRefreshStatusChangedBackgroundDenied {
     [[[self.mockApplication stub] andReturnValue:@(UIBackgroundRefreshStatusDenied)] backgroundRefreshStatus];
-    [[self.mockChannel expect] updateRegistration];
 
     [self.push applicationBackgroundRefreshStatusChanged];
 
-    [self.mockChannel verify];
+    XCTAssertTrue(self.testChannel.updateRegistrationCalled);
 }
 
 -(void)testApplicationBackgroundRefreshStatusChangedBackgroundDeniedWhenAppIsHandlingAuthorization {
@@ -1084,19 +1055,14 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 - (void)testmigratePushTagsToChannelTags {
     [self.dataStore setObject:@[@"cool", @"rad"] forKey:UAPushLegacyTagsSettingsKey];
 
-    NSArray *channelTags = nil;
-
-    [[[self.mockChannel stub] andReturn:channelTags] tags];
+    NSArray *expectedTags = @[@"cool", @"rad"];
 
     // Force a migration
     [self.dataStore removeObjectForKey:UAPushTagsMigratedToChannelTagsKey];
 
-    [[self.mockChannel expect] setTags:@[@"cool", @"rad"]];
-
     [self.push migratePushTagsToChannelTags];
 
-    [self.mockChannel verify];
-
+    XCTAssertEqualObjects(self.testChannel.tags, expectedTags);
     XCTAssertTrue([self.dataStore boolForKey:UAPushTagsMigratedToChannelTagsKey]);
     XCTAssertNil([self.dataStore objectForKey:UAPushLegacyTagsSettingsKey]);
 }
@@ -1104,33 +1070,26 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 - (void)testMigratePushTagsToChannelTagsCombined {
     [self.dataStore setObject:@[@"cool", @"rad"] forKey:UAPushLegacyTagsSettingsKey];
 
-    NSArray *channelTags = @[@"not cool", @"not rad"];
-
-    [[[self.mockChannel stub] andReturn:channelTags] tags];
+    self.testChannel.tags = @[@"not cool", @"not rad"];
 
     // Force a migration
     [self.dataStore removeObjectForKey:UAPushTagsMigratedToChannelTagsKey];
-
-    [[self.mockChannel expect] setTags:[OCMArg checkWithBlock:^BOOL(id obj) {
-        return [[NSSet setWithArray:@[@"cool", @"rad", @"not cool", @"not rad"]] isEqualToSet:[NSSet setWithArray:obj]];
-    }]];
-
+    
     [self.push migratePushTagsToChannelTags];
-
-    [self.mockChannel verify];
 
     XCTAssertTrue([self.dataStore boolForKey:UAPushTagsMigratedToChannelTagsKey]);
     XCTAssertNil([self.dataStore objectForKey:UAPushLegacyTagsSettingsKey]);
+    
+    NSArray *expected = @[@"cool", @"rad", @"not cool", @"not rad"];
+    XCTAssertEqualObjects([NSSet setWithArray:self.testChannel.tags], [NSSet setWithArray:expected]);
 }
 
 - (void)testMigratePushTagsToChannelTagsAlreadyMigrated {
+    self.testChannel.tags = @[@"some-random-value"];
     [self.dataStore setBool:YES forKey:UAPushTagsMigratedToChannelTagsKey];
-
-    [[self.mockChannel reject] setTags:[OCMArg any]];
-
     [self.push migratePushTagsToChannelTags];
 
-    [self.mockChannel verify];
+    XCTAssertEqualObjects(self.testChannel.tags, @[@"some-random-value"]);
 }
 
 /**
@@ -1549,9 +1508,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     // SETUP
     [(UAAppStateTracker *)[[self.mockAppStateTracker stub] andReturnValue:@(UAApplicationStateBackground)] state];
 
-    // Expect UAPush to update channel registration
-    [[self.mockChannel expect] updateRegistration];
-
     NSData *token = [@"some-token" dataUsingEncoding:NSASCIIStringEncoding];
 
     // TEST
@@ -1562,18 +1518,16 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     // 736f6d652d746f6b656e = "some-token" in hex
     XCTAssertTrue([@"736f6d652d746f6b656e" isEqualToString:self.push.deviceToken]);
 
-    XCTAssertNoThrow([self.mockChannel verify], @"should update channel registration");
+    XCTAssertTrue(self.testChannel.updateRegistrationCalled);
 }
 
 -(void)testDidRegisterForRemoteNotificationsWithDeviceTokenDoesntRegisterChannelWhenInBackground {
+    self.testChannel.identifier = @"some-channel";
     // SETUP
     [(UAAppStateTracker *)[[self.mockAppStateTracker stub] andReturnValue:@(UAApplicationStateBackground)] state];
 
-    [[[self.mockChannel stub] andReturn:@"someChannelID"] identifier];
-
-    // EXPECTATIONS
-    [[self.mockChannel reject] updateRegistration];
-
+    self.testChannel.updateRegistrationCalled = NO;
+    
     // TEST
     NSData *token = [@"some-token" dataUsingEncoding:NSASCIIStringEncoding];
     [self.push application:self.mockApplication didRegisterForRemoteNotificationsWithDeviceToken:token];
@@ -1583,7 +1537,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     // 736f6d652d746f6b656e = "some-token" in hex
     XCTAssertTrue([@"736f6d652d746f6b656e" isEqualToString:self.push.deviceToken]);
 
-    XCTAssertNoThrow([self.mockChannel verify], @"should not update channel registration");
+    XCTAssertFalse(self.testChannel.updateRegistrationCalled);
 }
 
 -(void)testAuthorizedNotificationSettingsWhenPushNotificationsDisabled {
@@ -1597,7 +1551,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
 - (void)testEnablingDisabledPushUpdatesRegistration {
     // Setup
-    [[self.mockChannel stub] andReturn:@"someChannelID"];
+    self.testChannel.identifier = @"someChannelID";
     self.push.componentEnabled = NO;
     self.push.userPushNotificationsEnabled = YES;
 
@@ -1614,7 +1568,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     // Setup
     self.config.requestAuthorizationToUseNotifications = NO;
     self.push.userPushNotificationsEnabled = YES;
-    [[self.mockChannel stub] andReturn:@"someChannelID"];
+    self.testChannel.identifier = @"someChannelID";
     self.push.componentEnabled = NO;
 
     // EXPECTATIONS
@@ -1633,18 +1587,12 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     self.authorizedNotificationSettings = UAAuthorizedNotificationSettingsAlert | UAAuthorizedNotificationSettingsBadge;
     self.authorizationStatus = UAAuthorizationStatusAuthorized;
 
-    // EXPECTATIONS
-    XCTestExpectation *channelRegisterExpectation = [self expectationWithDescription:@"Called registerForcefully:NO"];
-    [[[self.mockChannel expect] andDo:^(NSInvocation *invocation) {
-        [channelRegisterExpectation fulfill];
-    }] updateRegistration];
 
     // TEST
     [self.push updateAuthorizedNotificationTypes];
 
     // VERIFY
-    [self waitForTestExpectations];
-    XCTAssertNoThrow([self.mockChannel verify], @"updateRegistration should be called");
+    XCTAssertTrue(self.testChannel.updateRegistrationCalled);
 }
 
 /**
@@ -1660,12 +1608,12 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
     UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
     XCTestExpectation *extendedPayload = [self expectationWithDescription:@"extended payload"];
-    self.channelRegistrationExtenderBlock(payload, ^(UAChannelRegistrationPayload * _Nonnull payload) {
+    [self.testChannel extendPayload:payload completionHandler:^(UAChannelRegistrationPayload * payload) {
         XCTAssertEqualObjects(@"736f6d652d746f6b656e", payload.pushAddress);
         XCTAssertEqualObjects(self.push.quietTime, payload.quietTime);
         XCTAssertEqualObjects(@"Pacific/Auckland", payload.quietTimeTimeZone);
         [extendedPayload fulfill];
-    });
+    }];
 
     [self waitForTestExpectations];
 }
@@ -1678,11 +1626,11 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
     UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
     XCTestExpectation *extendedPayload = [self expectationWithDescription:@"extended payload"];
-    self.channelRegistrationExtenderBlock(payload, ^(UAChannelRegistrationPayload * _Nonnull payload) {
+    [self.testChannel extendPayload:payload completionHandler:^(UAChannelRegistrationPayload * payload) {
         XCTAssertNil(payload.quietTime);
         XCTAssertNil(payload.quietTimeTimeZone);
         [extendedPayload fulfill];
-    });
+    }];
 
     [self waitForTestExpectations];
 }
@@ -1698,11 +1646,10 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
     UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
     XCTestExpectation *extendedPayload = [self expectationWithDescription:@"extended payload"];
-    self.channelRegistrationExtenderBlock(payload, ^(UAChannelRegistrationPayload * _Nonnull payload) {
-        XCTAssertNil(payload.pushAddress);
-        [extendedPayload fulfill];
-    });
-
+    [self.testChannel extendPayload:payload completionHandler:^(UAChannelRegistrationPayload * payload) {
+            XCTAssertNil(payload.pushAddress);
+            [extendedPayload fulfill];
+    }];
 
     [self waitForTestExpectations];
 }
@@ -1716,10 +1663,10 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
     UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
     XCTestExpectation *extendedPayload = [self expectationWithDescription:@"extended payload"];
-    self.channelRegistrationExtenderBlock(payload, ^(UAChannelRegistrationPayload * _Nonnull payload) {
+    [self.testChannel extendPayload:payload completionHandler:^(UAChannelRegistrationPayload *payload) {
         XCTAssertEqualObjects(payload.badge, @(30));
-        [extendedPayload fulfill];
-    });
+            [extendedPayload fulfill];
+    }];
 
     [self waitForTestExpectations];
 }
@@ -1757,9 +1704,9 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
     UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
     XCTestExpectation *extendedPayload = [self expectationWithDescription:@"extended payload"];
-    self.channelRegistrationExtenderBlock(payload, ^(UAChannelRegistrationPayload * _Nonnull payload) {
+    [self.testChannel extendPayload:payload completionHandler:^(UAChannelRegistrationPayload *payload) {
         [extendedPayload fulfill];
-    });
+    }];
 
     [UADispatcher.main dispatchAsync:^{
         self.push.deviceToken = validDeviceToken;
@@ -1795,3 +1742,5 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 }
 
 @end
+
+

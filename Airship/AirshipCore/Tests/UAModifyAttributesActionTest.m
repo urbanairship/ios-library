@@ -3,17 +3,17 @@
 #import "UABaseTest.h"
 #import "UAActionArguments+Internal.h"
 #import "UAirship+Internal.h"
-#import "UAChannel+Internal.h"
 #import "UAActionResult.h"
+#import "AirshipTests-Swift.h"
 
 @import AirshipCore;
 
 @interface UAModifyAttributesActionTest : UABaseTest
 
-@property (nonatomic, assign) id mockAirship;
-@property (nonatomic, assign) id mockChannel;
-@property (nonatomic, assign) id mockContact;
+@property (nonatomic, strong) UATestChannel *testChannel;
+@property (nonatomic, strong) UATestContact *testContact;
 @property (nonatomic, strong) UAActionArguments *arguments;
+@property (nonatomic, strong) UAModifyAttributesAction *action;
 
 @end
 
@@ -25,18 +25,13 @@
 
     self.arguments = [[UAActionArguments alloc] init];
     
-    self.mockChannel = [self mockForClass:[UAChannel class]];
-    self.mockContact = [self mockForClass:[UAContact class]];
-    self.mockAirship = [self mockForClass:[UAirship class]];
-    [UAirship setSharedAirship:self.mockAirship];
-    [[[self.mockAirship stub] andReturn:self.mockChannel] channel];
-    [[[self.mockAirship stub] andReturn:self.mockContact] contact];
+    self.testChannel = [[UATestChannel alloc] init];
+    self.testContact = [[UATestContact alloc] init];
+    self.action = [[UAModifyAttributesAction alloc] initWithChannel:^{ return self.testChannel; }
+                                                            contact:^{ return self.testContact; }];
 }
 
 - (void)tearDown {
-    [self.mockAirship stopMocking];
-    [self.mockChannel stopMocking];
-    [self.mockContact stopMocking];
     [super tearDown];
 }
 
@@ -44,8 +39,6 @@
  * Test that the action accepts valid arguments.
  */
 - (void)testAcceptsArguments {
-    id<UAAction> action = [[UAModifyAttributesAction alloc] init];
-
     self.arguments.value = @{
         @"channel": @{
                 @"set": @{@"name": @"clive"},
@@ -56,13 +49,13 @@
                 @"remove": @[@"zipcode"]
         }
     };
-    XCTAssertTrue([action acceptsArguments:self.arguments], @"Action should accept a valid JSON");
+    XCTAssertTrue([self.action acceptsArguments:self.arguments], @"Action should accept a valid JSON");
 
     self.arguments.situation = UASituationBackgroundPush;
-    XCTAssertFalse([action acceptsArguments:self.arguments], @"Action should not accept arguments with UASituationBackgroundPush situation");
+    XCTAssertFalse([self.action acceptsArguments:self.arguments], @"Action should not accept arguments with UASituationBackgroundPush situation");
     
     self.arguments.situation = UASituationManualInvocation;
-    XCTAssertTrue([action acceptsArguments:self.arguments], @"Action should accept any situations that is not UASituationBackgroundPush");
+    XCTAssertTrue([self.action acceptsArguments:self.arguments], @"Action should accept any situations that is not UASituationBackgroundPush");
     
     self.arguments.value = @{
         @"channel": @{
@@ -70,14 +63,14 @@
                 @"remove": @[@"zipcode"]
         }
     };
-    XCTAssertTrue([action acceptsArguments:self.arguments], @"Action should accept a valid JSON");
+    XCTAssertTrue([self.action acceptsArguments:self.arguments], @"Action should accept a valid JSON");
    
     self.arguments.value = @{
         @"named_user": @{
                 @"remove": @[@"zipcode"]
         }
     };
-    XCTAssertTrue([action acceptsArguments:self.arguments], @"Action should accept a valid JSON");
+    XCTAssertTrue([self.action acceptsArguments:self.arguments], @"Action should accept a valid JSON");
    
     
     self.arguments.value = @{
@@ -88,7 +81,7 @@
                 @"remove": @[@"zipcode"]
         }
     };
-    XCTAssertTrue([action acceptsArguments:self.arguments], @"Action should accept a valid JSON");
+    XCTAssertTrue([self.action acceptsArguments:self.arguments], @"Action should accept a valid JSON");
    
     
     self.arguments.value = @{
@@ -101,7 +94,7 @@
                 @"remove": @[@"zipcode"]
         }
     };
-    XCTAssertFalse([action acceptsArguments:self.arguments], @"Action shouldn't accept an invalid JSON");
+    XCTAssertFalse([self.action acceptsArguments:self.arguments], @"Action shouldn't accept an invalid JSON");
     
     self.arguments.value = @{
         @"channel": @{
@@ -113,7 +106,7 @@
                 @"remove": @[@"zipcode"]
         }
     };
-    XCTAssertFalse([action acceptsArguments:self.arguments], @"Action shouldn't accept an invalid JSON - a dictionary is expected");
+    XCTAssertFalse([self.action acceptsArguments:self.arguments], @"Action shouldn't accept an invalid JSON - a dictionary is expected");
     
 
     self.arguments.value = @{
@@ -126,7 +119,7 @@
                 @"remove": @[@"zipcode"]
         }
     };
-    XCTAssertFalse([action acceptsArguments:self.arguments], @"Action shouldn't accept an invalid JSON - an array is expected");
+    XCTAssertFalse([self.action acceptsArguments:self.arguments], @"Action shouldn't accept an invalid JSON - an array is expected");
     
 }
 
@@ -147,18 +140,22 @@
     };
     self.arguments.situation = UASituationManualInvocation;
 
-    id<UAAction> action = [[UAModifyAttributesAction alloc] init];
+    XCTestExpectation *contactEdited = [self expectationWithDescription:@"contact edited"];
+    self.testContact.attributeEditor = [[UAAttributesEditor alloc] initWithCompletionHandler:^(NSArray<UAAttributeUpdate *> *updates) {
+        [contactEdited fulfill];
+    }];
 
-    [[self.mockChannel expect] editAttributes];
-    [[self.mockContact expect] editAttributes];
+    XCTestExpectation *channelEdited = [self expectationWithDescription:@"channel edited"];
+    self.testChannel.attributeEditor = [[UAAttributesEditor alloc] initWithCompletionHandler:^(NSArray<UAAttributeUpdate *> *updates) {
+        [channelEdited fulfill];
+    }];
 
-    [action performWithArguments:self.arguments completionHandler:^(UAActionResult *performResult) {
+    [self.action performWithArguments:self.arguments completionHandler:^(UAActionResult *performResult) {
         XCTAssertNil(performResult.value);
         XCTAssertNil(performResult.error);
     }];
-
-    [self.mockChannel verify];
-    [self.mockContact verify];
+    
+    [self waitForTestExpectations];
 }
  
 /**
@@ -166,8 +163,6 @@
  */
 - (void)testPerformWithArgumentsExpectChannel {
     self.arguments.situation = UASituationManualInvocation;
-
-    id<UAAction> action = [[UAModifyAttributesAction alloc] init];
     
     self.arguments.value = @{
         @"channel": @{
@@ -175,17 +170,18 @@
                 @"remove": @[@"zipcode"]
         }
     };
-    
-    [[self.mockChannel expect] editAttributes];
-    [[self.mockContact reject] editAttributes];
-    
-    [action performWithArguments:self.arguments completionHandler:^(UAActionResult *performResult) {
+
+    XCTestExpectation *channelEdited = [self expectationWithDescription:@"channel edited"];
+    self.testChannel.attributeEditor = [[UAAttributesEditor alloc] initWithCompletionHandler:^(NSArray<UAAttributeUpdate *> *updates) {
+        [channelEdited fulfill];
+    }];
+
+    [self.action performWithArguments:self.arguments completionHandler:^(UAActionResult *performResult) {
         XCTAssertNil(performResult.value);
         XCTAssertNil(performResult.error);
     }];
-    
-    [self.mockChannel verify];
-    [self.mockContact verify];
+
+    [self waitForTestExpectations];
 }
 
 /**
@@ -193,8 +189,6 @@
  */
 - (void)testPerformWithArgumentsExpectNamedUser {
     self.arguments.situation = UASituationManualInvocation;
-
-    id<UAAction> action = [[UAModifyAttributesAction alloc] init];
     
     self.arguments.value = @{
         @"named_user": @{
@@ -203,16 +197,17 @@
         }
     };
     
-    [[self.mockChannel reject] editAttributes];
-    [[self.mockContact expect] editAttributes];
-    
-    [action performWithArguments:self.arguments completionHandler:^(UAActionResult *performResult) {
+    XCTestExpectation *contactEdited = [self expectationWithDescription:@"contact edited"];
+    self.testContact.attributeEditor = [[UAAttributesEditor alloc] initWithCompletionHandler:^(NSArray<UAAttributeUpdate *> *updates) {
+        [contactEdited fulfill];
+    }];
+
+    [self.action performWithArguments:self.arguments completionHandler:^(UAActionResult *performResult) {
         XCTAssertNil(performResult.value);
         XCTAssertNil(performResult.error);
     }];
     
-    [self.mockChannel verify];
-    [self.mockContact verify];
+    [self waitForTestExpectations];
 }
 
 @end

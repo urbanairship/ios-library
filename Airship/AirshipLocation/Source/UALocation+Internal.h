@@ -6,6 +6,7 @@
 @class UAPreferenceDataStore;
 @class UAPrivacyManager;
 @class UASystemVersion;
+@protocol UAChannelProtocol;
 
 /*
  * SDK-private extensions to UALocation
@@ -46,7 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @return A location instance.
  */
 + (instancetype)locationWithDataStore:(UAPreferenceDataStore *)dataStore
-                              channel:(UAChannel<UAExtendableChannelRegistration> *)channel
+                              channel:(id<UAChannelProtocol>)channel
                             analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics
                        privacyManager:(UAPrivacyManager *)privacyManager;
 

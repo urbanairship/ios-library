@@ -7,7 +7,6 @@
 #import "UAAsyncOperation.h"
 #import "UAEvent.h"
 #import "UARuntimeConfig.h"
-#import "UAChannel.h"
 #import "UAirship.h"
 
 #if __has_include("AirshipCore/AirshipCore-Swift.h")
@@ -67,7 +66,7 @@ static NSUInteger const FetchEventLimit = 500;
 
         [self.notificationCenter addObserver:self
                                     selector:@selector(scheduleUpload)
-                                        name:UAChannelCreatedEvent
+                                        name:UAChannel.channelCreatedEvent
                                       object:nil];
 
         [self.notificationCenter addObserver:self

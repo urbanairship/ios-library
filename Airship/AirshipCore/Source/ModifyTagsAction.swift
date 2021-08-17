@@ -9,6 +9,22 @@ public class ModifyTagsAction : NSObject, UAAction {
     static let channelKey = "channel"
     static let deviceKey = "device"
     
+    private let channel: () -> ChannelProtocol
+    private let contact: () -> ContactProtocol
+    
+    @objc
+    public override convenience init() {
+        self.init(channel: Channel.supplier,
+                  contact: Contact.supplier)
+    }
+    
+    @objc
+    public init(channel: @escaping () -> ChannelProtocol,
+                contact: @escaping () -> ContactProtocol) {
+        self.channel = channel
+        self.contact = contact
+    }
+    
     public func acceptsArguments(_ arguments: UAActionArguments) -> Bool {
         guard arguments.situation != .backgroundPush else {
             return false
@@ -41,22 +57,22 @@ public class ModifyTagsAction : NSObject, UAAction {
     }
 
     public func perform(with arguments: UAActionArguments, completionHandler: UAActionCompletionHandler) {
-        guard let channel = UAirship.channel(),
-              let contact = UAirship.contact() else {
-            completionHandler(UAActionResult(error: AirshipErrors.error("Takeoff not called")))
-            return
-        }
+        let channel = self.channel()
+        let contact = self.contact()
         
         if let tag = arguments.value as? String {
-            self.onChannelTags([tag], channel: channel)
-            channel.updateRegistration()
+            let editor = channel.editTags()
+            self.onChannelTags([tag], editor: editor)
+            editor.apply()
         } else if let tags = arguments.value as? [String] {
-            self.onChannelTags(tags, channel: channel)
-            channel.updateRegistration()
+            let editor = channel.editTags()
+            self.onChannelTags(tags, editor: editor)
+            editor.apply()
         } else if let dict = arguments.value as? [String : Any] {
-            if let deviceTags = dict[ModifyTagsAction.deviceKey] as? [String] {
-                self.onChannelTags(deviceTags, channel: channel)
-                channel.updateRegistration()
+            if let tags = dict[ModifyTagsAction.deviceKey] as? [String] {
+                let editor = channel.editTags()
+                self.onChannelTags(tags, editor: editor)
+                editor.apply()
             }
 
             if let tagGroups = dict[ModifyTagsAction.channelKey] as? [String : [String]] {
@@ -83,7 +99,7 @@ public class ModifyTagsAction : NSObject, UAAction {
         completionHandler(UAActionResult.empty())
     }
     
-    open func onChannelTags(_ tags: [String], channel: UAChannel) {}
+    open func onChannelTags(_ tags: [String], editor: TagEditor) {}
 
     open func onChannelTags(_ tags: [String], group: String, editor: TagGroupsEditor) {}
 

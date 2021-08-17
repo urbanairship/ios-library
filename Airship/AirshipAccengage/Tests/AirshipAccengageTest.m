@@ -4,9 +4,8 @@
 #import <XCTest/XCTest.h>
 
 #import "UAAccengage+Internal.h"
-#import "UAChannel+Internal.h"
-#import "UAPush+Internal.h"
-#import "UAAnalytics+Internal.h"
+#import "UAPush.h"
+#import "UAAnalytics.h"
 #import "UAAccengagePayload.h"
 #import "UAAccengageUtils.h"
 #import "UARuntimeConfig+Internal.h"
@@ -246,14 +245,14 @@
 
 
 - (void)testExtendChannel {
-    __block UAChannelRegistrationExtenderBlock channelRegistrationExtenderBlock;
+    __block void (^extenderBlock)(UAChannelRegistrationPayload *, void (^) (UAChannelRegistrationPayload *));
 
     // Capture the channel payload extender
     [[[self.mockChannel stub] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:2];
-        channelRegistrationExtenderBlock =  (__bridge UAChannelRegistrationExtenderBlock)arg;
-    }] addChannelExtenderBlock:OCMOCK_ANY];
+        extenderBlock =  (__bridge  void (^)(UAChannelRegistrationPayload *, void (^) (UAChannelRegistrationPayload *)))arg;
+    }] addRegistrationExtender:OCMOCK_ANY];
 
     NSString *testDeviceID = @"123456";
     [self createAccengageWithSettings:@{@"BMA4SID":testDeviceID}];
@@ -261,7 +260,7 @@
     UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
 
     XCTestExpectation *channelCallback = [self expectationWithDescription:@"channel callback"];
-    channelRegistrationExtenderBlock(payload, ^(UAChannelRegistrationPayload *payload) {
+    extenderBlock(payload, ^(UAChannelRegistrationPayload *payload) {
         XCTAssertEqual(testDeviceID, payload.accengageDeviceID);
         [channelCallback fulfill];
     });

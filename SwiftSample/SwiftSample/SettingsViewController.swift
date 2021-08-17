@@ -99,7 +99,7 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(SettingsViewController.refreshView),
-            name: NSNotification.Name(rawValue: UAChannelUpdatedEvent),
+            name: Channel.channelCreatedEvent,
             object: nil);
         
         // add observer to didBecomeActive to update upon retrun from system settings screen

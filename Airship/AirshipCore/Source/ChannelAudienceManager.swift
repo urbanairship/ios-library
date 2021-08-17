@@ -3,8 +3,37 @@
 import Foundation
 
 // NOTE: For internal use only. :nodoc:
+@objc(UAChannelAudienceManagerProtocol)
+public protocol ChannelAudienceManagerProtocol {
+    var pendingAttributeUpdates : [AttributeUpdate] { get }
+    
+    @objc
+    var pendingTagGroupUpdates : [TagGroupUpdate] { get }
+        
+    @objc
+    var channelID: String? { get set }
+    
+    @objc
+    var enabled: Bool { get set }
+        
+    @objc
+    func editSubscriptionLists() -> SubscriptionListEditor
+    
+    @objc
+    func editTagGroups(allowDeviceGroup: Bool) -> TagGroupsEditor
+    
+    @objc
+    func editAttributes() -> AttributesEditor
+    
+    @objc
+    @discardableResult
+    func fetchSubscriptionLists(completionHandler: @escaping ([String]?, Error?) -> Void) -> UADisposable
+}
+
+
+// NOTE: For internal use only. :nodoc:
 @objc(UAChannelAudienceManager)
-public class ChannelAudienceManager : NSObject {
+public class ChannelAudienceManager : NSObject, ChannelAudienceManagerProtocol {
     static let updateTaskID = "ChannelAudienceManager.update"
     static let updatesKey = "UAChannel.audienceUpdates"
     
@@ -279,11 +308,13 @@ public class ChannelAudienceManager : NSObject {
                     self.enqueueTask()
                     
                     let payload : [String : Any] = [
-                        UAChannelAudienceUpdatedEventTagsKey : update.tagGroupUpdates,
-                        UAChannelAudienceUpdatedEventAttributesKey : update.attributeUpdates
+                        Channel.audienceTagsKey: update.tagGroupUpdates,
+                        Channel.audienceAttributesKey: update.attributeUpdates
                     ]
                     
-                    self.notificationCenter.post(name: NSNotification.Name.UAChannelAudienceUpdatedEvent, object: payload)
+                    self.notificationCenter.post(name: Channel.audienceUpdatedEvent,
+                                                 object: nil,
+                                                 userInfo: payload)
                     
                 } else if (response.isServerError) {
                     task.taskFailed()

@@ -3,8 +3,8 @@
 /**
  * @note For internal use only. :nodoc:
  */ 
-@objc
-public class UAChannelAPIClient : NSObject {
+@objc(UAChannelAPIClient)
+public class ChannelAPIClient : NSObject {
     private let path = "/api/channels/"
 
     private let config: UARuntimeConfig

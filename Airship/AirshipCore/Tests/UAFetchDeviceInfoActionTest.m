@@ -3,7 +3,6 @@
 #import "UABaseTest.h"
 #import "UAirship+Internal.h"
 #import "UAPush.h"
-#import "UAChannel.h"
 #import "UAActionArguments+Internal.h"
 #import "UAActionResult.h"
 #import "AirshipTests-Swift.h"
@@ -13,9 +12,9 @@
 @interface UAFetchDeviceInfoActionTest : UABaseTest
 
 @property(nonatomic, strong) UAFetchDeviceInfoAction *action;
-@property(nonatomic, strong) id mockAirship;
+@property(nonatomic, strong) id mockLocation;
 @property(nonatomic, strong) id mockPush;
-@property(nonatomic, strong) id mockChannel;
+@property(nonatomic, strong) UATestChannel *testChannel;
 @property(nonatomic, strong) UATestContact *testContact;
 
 @end
@@ -26,15 +25,14 @@
     [super setUp];
     
     self.mockPush = [self mockForClass:[UAPush class]];
-    self.mockChannel = [self mockForClass:[UAChannel class]];
+    self.mockLocation = [self mockForProtocol:@protocol(UALocationProvider)];
+    self.testChannel = [[UATestChannel alloc] init];
     self.testContact = [[UATestContact alloc] init];
-    self.mockAirship = [self mockForClass:[UAirship class]];
-    [UAirship setSharedAirship:self.mockAirship];
-    [[[self.mockAirship stub] andReturn:self.mockPush] push];
-    [[[self.mockAirship stub] andReturn:self.mockChannel] channel];
-    [[[self.mockAirship stub] andReturn:self.testContact] contact];
 
-    self.action = [[UAFetchDeviceInfoAction alloc] init];
+    self.action = [[UAFetchDeviceInfoAction alloc] initWithChannel:^{ return self.testChannel; }
+                                                           contact:^{ return self.testContact; }
+                                                              push:^{ return self.mockPush; }
+                                                          location:^{ return self.mockLocation; }];
 }
 
 /**
@@ -67,8 +65,8 @@
     NSArray *tags = @[@"tag1", @"tag2", @"tag3"];
     UAAuthorizedNotificationSettings expectedSettings = 1;
     
-    [[[self.mockChannel stub] andReturn:channelID] identifier];
-    [(UAChannel *)[[self.mockChannel stub] andReturn:tags] tags];
+    self.testChannel.identifier = channelID;
+    self.testChannel.tags = tags;
     [(UAPush *)[[self.mockPush stub] andReturnValue:OCMOCK_VALUE(expectedSettings)] authorizedNotificationSettings];
     
     __block BOOL actionPerformed = NO;
@@ -93,8 +91,8 @@
     NSArray *tags = @[];
     UAAuthorizedNotificationSettings expectedSettings = 1;
     
-    [[[self.mockChannel stub] andReturn:channelID] identifier];
-    [(UAChannel *)[[self.mockChannel stub] andReturn:tags] tags];
+    self.testChannel.identifier = channelID;
+    self.testChannel.tags = tags;
     [(UAPush *)[[self.mockPush stub] andReturnValue:OCMOCK_VALUE(expectedSettings)] authorizedNotificationSettings];
     
     __block BOOL actionPerformed = NO;

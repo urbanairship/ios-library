@@ -7,6 +7,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class UADate;
 @protocol UAContactProtocol;
+@class UATagGroupUpdate;
+@class UAAttributeUpdate;
 
 @interface UAInAppAudienceHistorian : NSObject
 

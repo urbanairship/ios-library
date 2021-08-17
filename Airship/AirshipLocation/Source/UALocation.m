@@ -25,7 +25,7 @@ NSString *const UALocationUpdatesEnabled = @"UALocationUpdatesEnabled";
 
 
 - (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore
-                          channel:(UAChannel<UAExtendableChannelRegistration> *)channel
+                          channel:(id<UAChannelProtocol>)channel
                         analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics
                    privacyManager:(UAPrivacyManager *)privacyManager {
 
@@ -69,9 +69,13 @@ NSString *const UALocationUpdatesEnabled = @"UALocationUpdatesEnabled";
             return [self analyticsHeaders];
         }];
 
-        [channel addChannelExtenderBlock:^(UAChannelRegistrationPayload *payload, UAChannelRegistrationExtenderCompletionHandler completionHandler) {
+        [channel addRegistrationExtender:^(UAChannelRegistrationPayload *payload, void (^ completionHandler)(UAChannelRegistrationPayload * _Nonnull)) {
             UA_STRONGIFY(self)
-            [self extendChannelRegistrationPayload:payload completionHandler:completionHandler];
+            BOOL enabled = self.componentEnabled && self.locationUpdatesEnabled && [self.privacyManager isEnabled:UAFeaturesLocation];
+            // Only set location settings if the app is opted in to data collection
+            payload.locationSettings = @(enabled);
+
+            completionHandler(payload);
         }];
     }
 
@@ -79,23 +83,10 @@ NSString *const UALocationUpdatesEnabled = @"UALocationUpdatesEnabled";
 }
 
 + (instancetype)locationWithDataStore:(UAPreferenceDataStore *)dataStore
-                              channel:(UAChannel<UAExtendableChannelRegistration> *)channel
+                              channel:(id<UAChannelProtocol>)channel
                             analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics
                        privacyManager:(UAPrivacyManager *)privacyManager{
     return [[self alloc] initWithDataStore:dataStore channel:channel analytics:analytics privacyManager:privacyManager];
-}
-
-#pragma mark -
-#pragma mark Channel Registration
-
-- (void)extendChannelRegistrationPayload:(UAChannelRegistrationPayload *)payload
-                       completionHandler:(UAChannelRegistrationExtenderCompletionHandler)completionHandler {
-
-    BOOL enabled = self.componentEnabled &&  self.locationUpdatesEnabled && [self.privacyManager isEnabled:UAFeaturesLocation];
-    // Only set location settings if the app is opted in to data collection
-    payload.locationSettings = @(enabled);
-
-    completionHandler(payload);
 }
 
 #pragma mark -

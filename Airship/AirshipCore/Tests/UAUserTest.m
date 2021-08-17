@@ -8,7 +8,7 @@
 #import "UAirship+Internal.h"
 #import "UARuntimeConfig.h"
 #import "UARuntimeConfig+Internal.h"
-#import "UAChannel+Internal.h"
+#import "AirshipTests-Swift.h"
 
 @import AirshipCore;
 
@@ -21,13 +21,11 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
 @interface UAUserTest : UAAirshipBaseTest
 @property (nonatomic, strong) UAUser *user;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
-@property (nonatomic, strong) id mockChannel;
+@property (nonatomic, strong) UATestChannel *testChannel;
 @property (nonatomic, strong) id mockUserClient;
 @property (nonatomic, strong) id mockTaskManager;
 @property (nonatomic, strong) UAUserData *userData;
 @property (nonatomic, strong) UAUserDataDAO *userDataDAO;
-@property (nonatomic, copy) NSString *channelID;
-@property (nonatomic, copy) UAChannelRegistrationExtenderBlock extenderBlock;
 @property(nonatomic, copy) void (^launchHandler)(id<UATask>);
 @end
 
@@ -35,19 +33,7 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
 
 - (void)setUp {
     [super setUp];
-    self.mockChannel = [self mockForClass:[UAChannel class]];
-    [[[self.mockChannel stub] andDo:^(NSInvocation *invocation) {
-        NSString *channelID = self.channelID;
-        [invocation setReturnValue:(void *)&channelID];
-    }] identifier];
-
-    // Capture the channel payload extender
-    [[[self.mockChannel stub] andDo:^(NSInvocation *invocation) {
-          void *arg;
-          [invocation getArgument:&arg atIndex:2];
-          self.extenderBlock =  (__bridge UAChannelRegistrationExtenderBlock)arg;
-    }] addChannelExtenderBlock:OCMOCK_ANY];
-
+    self.testChannel = [[UATestChannel alloc] init];
     self.mockUserClient = [self mockForClass:[UAUserAPIClient class]];
     self.mockTaskManager = [self mockForClass:[UATaskManager class]];
 
@@ -62,7 +48,7 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
     self.notificationCenter = [[NSNotificationCenter alloc] init];
     self.userDataDAO = [[UATestUserDataDAO alloc] init];
 
-    self.user = [UAUser userWithChannel:self.mockChannel
+    self.user = [UAUser userWithChannel:self.testChannel
                               dataStore:self.dataStore
                                  client:self.mockUserClient
                      notificationCenter:self.notificationCenter
@@ -87,13 +73,13 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
 
 - (void)testUpdateOnChannelCreation {
     [[self.mockTaskManager expect] enqueueRequestWithID:UAUserUpdateTaskID options:OCMOCK_ANY];
-    [self.notificationCenter postNotificationName:UAChannelCreatedEvent object:nil];
+    [self.notificationCenter postNotificationName:UAChannel.channelCreatedEvent object:nil];
     [self.mockTaskManager verify];
 }
 
 - (void)testUpdateOnInit {
     [[self.mockTaskManager expect] enqueueRequestWithID:UAUserUpdateTaskID options:OCMOCK_ANY];
-    self.user = [UAUser userWithChannel:self.mockChannel
+    self.user = [UAUser userWithChannel:self.testChannel
                               dataStore:self.dataStore
                                  client:self.mockUserClient
                      notificationCenter:self.notificationCenter
@@ -116,13 +102,12 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
 - (void)testRegistrationPayload {
     [self.userDataDAO saveUserData:self.userData completionHandler:^(BOOL success) {}];
 
-    UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
+    
     XCTestExpectation *extendedPayload = [self expectationWithDescription:@"extended payload"];
-    self.extenderBlock(payload, ^(UAChannelRegistrationPayload * _Nonnull payload) {
-        XCTAssertEqualObjects(self.userData.username, payload.userID);
-        [extendedPayload fulfill];
-    });
-
+    [self.testChannel extendPayload:[[UAChannelRegistrationPayload alloc] init] completionHandler:^(UAChannelRegistrationPayload *payload) {
+            XCTAssertEqualObjects(self.userData.username, payload.userID);
+            [extendedPayload fulfill];
+    }];
     [self waitForTestExpectations];
 }
 
@@ -130,13 +115,11 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
     self.user.enabled = NO;
     [self.userDataDAO saveUserData:self.userData completionHandler:^(BOOL success) {}];
 
-    UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
     XCTestExpectation *extendedPayload = [self expectationWithDescription:@"extended payload"];
-    self.extenderBlock(payload, ^(UAChannelRegistrationPayload * _Nonnull payload) {
+    [self.testChannel extendPayload:[[UAChannelRegistrationPayload alloc] init] completionHandler:^(UAChannelRegistrationPayload *payload) {
         XCTAssertNil(payload.userID);
         [extendedPayload fulfill];
-    });
-
+    }];
     [self waitForTestExpectations];
 }
 
@@ -145,7 +128,7 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
     [[[mockTask stub] andReturn:UAUserUpdateTaskID] taskID];
     [[mockTask expect] taskCompleted];
 
-    self.channelID = @"some-channel";
+    self.testChannel.identifier = @"some-channel";
 
     XCTestExpectation *apiCalled = [self expectationWithDescription:@"API client called"];
     [[[self.mockUserClient expect] andDo:^(NSInvocation *invocation) {
@@ -157,7 +140,7 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
         completionHandler(response, nil);
 
         [apiCalled fulfill];
-    }] createUserWithChannelID:self.channelID completionHandler:OCMOCK_ANY];
+    }] createUserWithChannelID:self.self.testChannel.identifier completionHandler:OCMOCK_ANY];
 
     self.launchHandler(mockTask);
     [self waitForTestExpectations];
@@ -173,7 +156,7 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
     [[[mockTask stub] andReturn:UAUserUpdateTaskID] taskID];
     [[mockTask expect] taskFailed];
 
-    self.channelID = @"some-channel";
+    self.testChannel.identifier = @"some-channel";
 
     XCTestExpectation *apiCalled = [self expectationWithDescription:@"API client called"];
 
@@ -186,7 +169,7 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
         completionHandler(nil, error);
 
         [apiCalled fulfill];
-    }] createUserWithChannelID:self.channelID completionHandler:OCMOCK_ANY];
+    }] createUserWithChannelID:self.self.testChannel.identifier completionHandler:OCMOCK_ANY];
 
     self.launchHandler(mockTask);
     XCTAssertNil([self.userDataDAO getUserDataSync]);
@@ -200,7 +183,7 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
     [[[mockTask stub] andReturn:UAUserUpdateTaskID] taskID];
     [[mockTask expect] taskFailed];
 
-    self.channelID = @"some-channel";
+    self.self.testChannel.identifier = @"some-channel";
 
     XCTestExpectation *apiCalled = [self expectationWithDescription:@"API client called"];
 
@@ -213,7 +196,7 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
         completionHandler(response, nil);
 
         [apiCalled fulfill];
-    }] createUserWithChannelID:self.channelID completionHandler:OCMOCK_ANY];
+    }] createUserWithChannelID:self.self.testChannel.identifier completionHandler:OCMOCK_ANY];
 
     self.launchHandler(mockTask);
     XCTAssertNil([self.userDataDAO getUserDataSync]);
@@ -228,7 +211,7 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
     [[[mockTask stub] andReturn:UAUserUpdateTaskID] taskID];
     [[mockTask expect] taskCompleted];
 
-    self.channelID = @"some-channel";
+    self.testChannel.identifier = @"some-channel";
 
     XCTestExpectation *apiCalled = [self expectationWithDescription:@"API client called"];
 
@@ -241,7 +224,7 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
         completionHandler(response, nil);
 
         [apiCalled fulfill];
-    }] createUserWithChannelID:self.channelID completionHandler:OCMOCK_ANY];
+    }] createUserWithChannelID:self.self.testChannel.identifier completionHandler:OCMOCK_ANY];
 
     self.launchHandler(mockTask);
     XCTAssertNil([self.userDataDAO getUserDataSync]);
@@ -259,7 +242,7 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
     [[[mockTask stub] andReturn:UAUserUpdateTaskID] taskID];
     [[mockTask expect] taskCompleted];
 
-    self.channelID = @"some-other-channel";
+    self.testChannel.identifier = @"some-other-channel";
 
     XCTestExpectation *apiCalled = [self expectationWithDescription:@"API client called"];
     [[[self.mockUserClient expect] andDo:^(NSInvocation *invocation) {
@@ -271,7 +254,7 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
         completionHandler(response, nil);
 
         [apiCalled fulfill];
-    }] createUserWithChannelID:self.channelID completionHandler:OCMOCK_ANY];
+    }] createUserWithChannelID:self.self.testChannel.identifier completionHandler:OCMOCK_ANY];
 
     self.launchHandler(mockTask);
     [self waitForTestExpectations];
@@ -300,7 +283,7 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
         completionHandler(nil, error);
 
         [apiCalled fulfill];
-    }] updateUserWithData:self.userData channelID:self.channelID completionHandler:OCMOCK_ANY];
+    }] updateUserWithData:self.userData channelID:self.self.testChannel.identifier completionHandler:OCMOCK_ANY];
 
     self.launchHandler(mockTask);
     [self waitForTestExpectations];
@@ -330,7 +313,7 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
         completionHandler(response, nil);
 
         [apiCalled fulfill];
-    }] updateUserWithData:self.userData channelID:self.channelID completionHandler:OCMOCK_ANY];
+    }] updateUserWithData:self.userData channelID:self.self.testChannel.identifier completionHandler:OCMOCK_ANY];
 
     self.launchHandler(mockTask);
     [self waitForTestExpectations];
@@ -359,7 +342,7 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
         completionHandler(response, nil);
 
         [apiCalled fulfill];
-    }] updateUserWithData:self.userData channelID:self.channelID completionHandler:OCMOCK_ANY];
+    }] updateUserWithData:self.userData channelID:self.self.testChannel.identifier completionHandler:OCMOCK_ANY];
 
     self.launchHandler(mockTask);
     [self waitForTestExpectations];
@@ -390,7 +373,7 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
         completionHandler(response, nil);
 
         [apiCalled fulfill];
-    }] updateUserWithData:self.userData channelID:self.channelID completionHandler:OCMOCK_ANY];
+    }] updateUserWithData:self.userData channelID:self.self.testChannel.identifier completionHandler:OCMOCK_ANY];
 
     self.launchHandler(mockTask);
     [self waitForTestExpectations];
@@ -407,7 +390,7 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
     [[[mockTask stub] andReturn:UAUserUpdateTaskID] taskID];
     [[mockTask expect] taskCompleted];
 
-    self.channelID = nil;
+    self.self.testChannel.identifier = nil;
     [[self.mockUserClient reject] createUserWithChannelID:OCMOCK_ANY completionHandler:OCMOCK_ANY];
     [[self.mockUserClient reject] updateUserWithData:OCMOCK_ANY channelID:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
@@ -422,7 +405,7 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
     [[[mockTask stub] andReturn:UAUserUpdateTaskID] taskID];
     [[mockTask expect] taskCompleted];
 
-    self.channelID = @"some-channel";
+    self.self.testChannel.identifier = @"some-channel";
     [[self.mockUserClient reject] createUserWithChannelID:OCMOCK_ANY completionHandler:OCMOCK_ANY];
     [[self.mockUserClient reject] updateUserWithData:OCMOCK_ANY channelID:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
@@ -470,7 +453,7 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
         completionHandler(response, nil);
 
         [apiCalled fulfill];
-    }] updateUserWithData:self.userData channelID:self.channelID completionHandler:OCMOCK_ANY];
+    }] updateUserWithData:self.userData channelID:self.self.testChannel.identifier completionHandler:OCMOCK_ANY];
 
     self.launchHandler(mockTask);
     [self waitForTestExpectations];

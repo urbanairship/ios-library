@@ -41,8 +41,8 @@ public class AddTagsAction : ModifyTagsAction {
     @objc
     public static let shortName = "^+t"
     
-    public override func onChannelTags(_ tags: [String], channel: UAChannel) {
-        channel.addTags(tags)
+    public override func onChannelTags(_ tags: [String], editor: TagEditor) {
+        editor.add(tags)
     }
     
     public override func onChannelTags(_ tags: [String], group: String, editor: TagGroupsEditor) {

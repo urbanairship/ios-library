@@ -54,22 +54,51 @@ public class FetchDeviceInfoAction : NSObject, UAAction {
     @objc
     public static let locationEnabled  = "location_enabled"
 
+    private let channel: () -> ChannelProtocol
+    private let contact: () -> ContactProtocol
+    private let push: () -> UAPush
+    private let location: () -> UALocationProvider?
+    
+    @objc
+    public override convenience init() {
+        self.init(channel: Channel.supplier,
+                  contact: Contact.supplier,
+                  push: { return UAirship.push() },
+                  location: { return UAirship.shared().locationProvider })
+    }
+    
+    @objc
+    public init(channel: @escaping () -> ChannelProtocol,
+                contact: @escaping () -> ContactProtocol,
+                push: @escaping () -> UAPush,
+                location: @escaping () -> UALocationProvider?) {
+        self.channel = channel
+        self.contact = contact
+        self.push = push
+        self.location = location
+    }
+    
     public func acceptsArguments(_ arguments: UAActionArguments) -> Bool {
         return true
     }
     
     public func perform(with arguments: UAActionArguments, completionHandler: UAActionCompletionHandler) {
         var dict: [String : Any] = [:]
-        dict[FetchDeviceInfoAction.channelID] = UAirship.channel().identifier
-        dict[FetchDeviceInfoAction.namedUser] = UAirship.contact().namedUserID
+        let channel = self.channel()
+        let contact = self.contact()
+        let push = self.push()
+        let location = self.location()
+
+        dict[FetchDeviceInfoAction.channelID] = channel.identifier
+        dict[FetchDeviceInfoAction.namedUser] = contact.namedUserID
         
-        let tags = UAirship.channel().tags
+        let tags = channel.tags
         if (!tags.isEmpty) {
             dict[FetchDeviceInfoAction.tags] = tags
         }
         
-        dict[FetchDeviceInfoAction.pushOptIn] = UAirship.push().authorizedNotificationSettings != []
-        dict[FetchDeviceInfoAction.locationEnabled] = UAirship.shared().locationProvider?.isLocationUpdatesEnabled
+        dict[FetchDeviceInfoAction.pushOptIn] = push.authorizedNotificationSettings != []
+        dict[FetchDeviceInfoAction.locationEnabled] = location?.isLocationUpdatesEnabled
         completionHandler(UAActionResult(value: dict))
     }
 }

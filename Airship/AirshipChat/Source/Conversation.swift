@@ -172,7 +172,7 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
         notificationCenter.addObserver(
             self,
             selector: #selector(self.onChannelCreated),
-            name: NSNotification.Name.UAChannelCreatedEvent,
+            name: Channel.channelCreatedEvent,
             object: nil)
 
         notificationCenter.addObserver(

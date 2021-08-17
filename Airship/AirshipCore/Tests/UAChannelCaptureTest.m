@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UAAirshipBaseTest.h"
-#import "UAChannel.h"
 #import "UARuntimeConfig.h"
 #import "AirshipTests-Swift.h"
 
@@ -9,9 +8,7 @@
 
 @interface UAChannelCaptureTest : UAAirshipBaseTest
 @property(nonatomic, strong) UAChannelCapture *channelCapture;
-@property(nonatomic, strong) NSString *testChannelID;
-
-@property(nonatomic, strong) id mockChannel;
+@property(nonatomic, strong) UATestChannel *testChannel;
 @property(nonatomic, strong) id mockPasteboard;
 @property(nonatomic, copy) UIPasteboard* (^pasteboardProvider)(void);
 @property(nonatomic, strong) NSArray<NSDictionary<NSString *,id> *> *mockItems;
@@ -25,13 +22,9 @@
 - (void)setUp {
     [super setUp];
 
-    self.testChannelID = @"pushChannelID";
+    self.testChannel = [[UATestChannel alloc] init];
+    self.testChannel.identifier = @"pushChannelID";
     
-    self.mockChannel = [self mockForClass:[UAChannel class]];
-    [[[self.mockChannel stub] andDo:^(NSInvocation *invocation) {
-        [invocation setReturnValue:&self->_testChannelID];
-    }] identifier];
-
     self.notificationCenter = [[NSNotificationCenter alloc] init];
 
     self.testDate = [[UATestDate alloc] initWithOffset:0 dateOverride:[NSDate date]];
@@ -83,7 +76,7 @@
             NSString *pasteboard = (NSString *)item.allValues[0];
             self.mockItems = [items copy];
             
-            NSString *expectedPasteboard = (self.testChannelID) ? [NSString stringWithFormat:@"ua:%@", self.testChannelID] : @"ua:";
+            NSString *expectedPasteboard = self.testChannel.identifier == nil ? @"ua:" : [NSString stringWithFormat:@"ua:%@", self.testChannel.identifier];
             return [pasteboard isEqualToString:expectedPasteboard];
         }] options:[OCMArg checkWithBlock:^BOOL(id obj) {
             if (![obj isKindOfClass:[NSDictionary class]]) {
@@ -133,7 +126,7 @@
 - (void)createChannelCapture {
     self.channelCapture = [[UAChannelCapture alloc] initWithConfig:self.config
                                                          dataStore:self.dataStore
-                                                           channel:self.mockChannel
+                                                           channel:self.testChannel
                                                 notificationCenter:self.notificationCenter
                                                               date:self.testDate
                                                 pasteboardProvider:self.pasteboardProvider];
@@ -230,7 +223,7 @@
   * Test no channel id
  */
 - (void)testNoChannelId {
-    self.testChannelID = nil;
+    self.testChannel.identifier = nil;
     
     [self verifyChannelIsCapturedAfterKnocks];
 }

@@ -14,7 +14,7 @@ class HomeViewController: UIViewController {
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(HomeViewController.refreshView),
-            name: NSNotification.Name(UAChannelUpdatedEvent),
+            name: Channel.channelCreatedEvent,
             object: nil);
     }
 

@@ -69,7 +69,7 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
 @property (nonatomic, readonly) BOOL isRegisteredForRemoteNotifications;
 @property (nonatomic, readonly) BOOL isBackgroundRefreshStatusAvailable;
 @property (nonatomic, strong) UARuntimeConfig *config;
-@property (nonatomic, strong) UAChannel<UAExtendableChannelRegistration> *channel;
+@property (nonatomic, strong) UAChannel *channel;
 @property (nonatomic, strong) UAAppStateTracker *appStateTracker;
 @property (nonatomic, assign) BOOL waitForDeviceToken;
 @property (nonatomic, strong) UAPrivacyManager *privacyManager;
@@ -81,7 +81,7 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
 
 - (instancetype)initWithConfig:(UARuntimeConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
-                       channel:(UAChannel<UAExtendableChannelRegistration> *)channel
+                       channel:(UAChannel *)channel
                      analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics
                appStateTracker:(UAAppStateTracker *)appStateTracker
             notificationCenter:(NSNotificationCenter *)notificationCenter
@@ -129,7 +129,7 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
         [self updatePushEnablement];
 
         UA_WEAKIFY(self)
-        [self.channel addChannelExtenderBlock:^(UAChannelRegistrationPayload *payload, UAChannelRegistrationExtenderCompletionHandler completionHandler) {
+        [self.channel addRegistrationExtender:^(UAChannelRegistrationPayload *payload, void (^ completionHandler)(UAChannelRegistrationPayload * _Nonnull)) {
             UA_STRONGIFY(self)
             [self extendChannelRegistrationPayload:payload completionHandler:completionHandler];
         }];
@@ -145,7 +145,7 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
 
 + (instancetype)pushWithConfig:(UARuntimeConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
-                       channel:(UAChannel<UAExtendableChannelRegistration> *)channel
+                       channel:(UAChannel *)channel
                      analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics
                 privacyManager:(UAPrivacyManager *)privacyManager NS_EXTENSION_UNAVAILABLE("Method not available in app extensions") {
     return [[self alloc] initWithConfig:config
@@ -162,7 +162,7 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
 
 + (instancetype)pushWithConfig:(UARuntimeConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
-                       channel:(UAChannel<UAExtendableChannelRegistration> *)channel
+                       channel:(UAChannel *)channel
                      analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics
                appStateTracker:(UAAppStateTracker *)appStateTracker
             notificationCenter:(NSNotificationCenter *)notificationCenter
@@ -843,7 +843,7 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
 #pragma mark Channel Registration
 
 - (void)extendChannelRegistrationPayload:(UAChannelRegistrationPayload *)payload
-                       completionHandler:(UAChannelRegistrationExtenderCompletionHandler)completionHandler {
+                       completionHandler:(void (^)(UAChannelRegistrationPayload *))completionHandler {
 
     if (![self.privacyManager isEnabled:UAFeaturesPush]) {
         completionHandler(payload);

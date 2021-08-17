@@ -5,7 +5,7 @@
 #import "UALocation.h"
 #import "UAAnalytics.h"
 #import "UAComponent+Internal.h"
-#import "UAChannel+Internal.h"
+#import "AirshipTests-Swift.h"
 
 @import AirshipCore;
 
@@ -15,19 +15,14 @@
 @property (nonatomic, strong) UAPrivacyManager *privacyManager;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property (nonatomic, strong) id mockAnalytics;
-@property (nonatomic, strong) id mockChannel;
+@property (nonatomic, strong) UATestChannel *testChannel;
 @property (nonatomic, strong) id mockLocationManager;
 @property (nonatomic, strong) id mockedApplication;
 @property (nonatomic, strong) id mockedBundle;
 @property (nonatomic, strong) id mockProcessInfo;
 @property (nonatomic, assign) NSUInteger testOSMajorVersion;
-
 @end
 
-@interface UALocation()
-- (void)extendChannelRegistrationPayload:(UAChannelRegistrationPayload *)payload
-                       completionHandler:(UAChannelRegistrationExtenderCompletionHandler)completionHandler;
-@end
 
 @implementation UALocationTest
 
@@ -38,13 +33,13 @@
 
     self.mockAnalytics = [self mockForClass:[UAAnalytics class]];
     self.mockLocationManager = [self mockForClass:[CLLocationManager class]];
-    self.mockChannel = [self mockForClass:[UAChannel class]];
+    self.testChannel = [[UATestChannel alloc] init];
 
     self.notificationCenter = [NSNotificationCenter defaultCenter];
 
     self.privacyManager = [[UAPrivacyManager alloc] initWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
 
-    self.location = [UALocation locationWithDataStore:self.dataStore channel:self.mockChannel analytics:self.mockAnalytics privacyManager:self.privacyManager];
+    self.location = [UALocation locationWithDataStore:self.dataStore channel:self.testChannel analytics:self.mockAnalytics privacyManager:self.privacyManager];
         
     self.location.locationManager = self.mockLocationManager;
     self.location.componentEnabled = YES;
@@ -720,7 +715,6 @@
  * Test if the location settings are included in the CRA depending on the data collection status.
  */
 - (void)testLocationSettingsWithDataCollection {
-    
     // both data collection and location services enabled
     UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
     id payloadMock = [self partialMockForObject:payload];
@@ -729,12 +723,14 @@
     self.location.locationUpdatesEnabled = YES;
     
     [[payloadMock expect] setLocationSettings:@YES];
+    
+    XCTestExpectation *completed = [self expectationWithDescription:@"called"];
+    [self.testChannel extendPayload:payload completionHandler:^(UAChannelRegistrationPayload *payload) {
+        [payloadMock verify];
+        [completed fulfill];
+    }];
        
-    UAChannelRegistrationExtenderCompletionHandler handler = ^(UAChannelRegistrationPayload *payload) {};
-          
-    [self.location extendChannelRegistrationPayload:payloadMock completionHandler:handler];
-       
-    [payloadMock verify];
+    [self waitForTestExpectations];
     
     [payloadMock stopMocking];
     
@@ -745,9 +741,13 @@
     
     [[payloadMock expect] setLocationSettings:@NO];
              
-    [self.location extendChannelRegistrationPayload:payloadMock completionHandler:handler];
-          
-    [payloadMock verify];
+    completed = [self expectationWithDescription:@"called"];
+    [self.testChannel extendPayload:payload completionHandler:^(UAChannelRegistrationPayload *payload) {
+        [payloadMock verify];
+        [completed fulfill];
+    }];
+       
+    [self waitForTestExpectations];
     
     [payloadMock stopMocking];
 }

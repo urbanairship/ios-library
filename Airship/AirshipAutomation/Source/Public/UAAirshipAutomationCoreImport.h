@@ -12,7 +12,6 @@
 #import "UAAppIntegration.h"
 #import "UAAsyncOperation.h"
 #import "UAAutomationModuleLoaderFactory.h"
-#import "UAChannel.h"
 #import "UAComponent.h"
 #import "UAConfig.h"
 #import "UAEvent.h"

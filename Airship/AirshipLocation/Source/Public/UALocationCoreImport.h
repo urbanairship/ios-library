@@ -11,7 +11,5 @@
 #import "UAEvent.h"
 #import "UAComponent.h"
 #import "UAAnalytics.h"
-#import "UAExtendableChannelRegistration.h"
 #import "UAExtendableAnalyticsHeaders.h"
-#import "UAChannel.h"
 #endif

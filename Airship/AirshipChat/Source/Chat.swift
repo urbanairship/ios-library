@@ -83,7 +83,7 @@ public class Chat : UAComponent, UAPushableComponent {
 
     private var viewController : UIViewController?
 
-    internal convenience init(dataStore: UAPreferenceDataStore, config: UARuntimeConfig, channel: UAChannel, privacyManager: UAPrivacyManager) {
+    internal convenience init(dataStore: UAPreferenceDataStore, config: UARuntimeConfig, channel: Channel, privacyManager: UAPrivacyManager) {
 
         let conversation = Conversation(dataStore: dataStore,
                                          chatConfig: config,

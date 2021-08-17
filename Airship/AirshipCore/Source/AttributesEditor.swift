@@ -19,7 +19,8 @@ public class AttributesEditor: NSObject {
         super.init()
     }
     
-    convenience init(completionHandler : @escaping ([AttributeUpdate]) -> Void) {
+    @objc
+    public convenience init(completionHandler : @escaping ([AttributeUpdate]) -> Void) {
         self.init(date: UADate(), completionHandler: completionHandler)
     }
     

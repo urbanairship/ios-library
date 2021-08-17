@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (instancetype)messageCenterWithDataStore:(UAPreferenceDataStore *)dataStore
                                     config:(UARuntimeConfig *)config
-                                   channel:(UAChannel<UAExtendableChannelRegistration> *)channel
+                                   channel:(UAChannel *)channel
                             privacyManager:(UAPrivacyManager *)privacyManager;
 
 /**

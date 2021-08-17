@@ -7,6 +7,7 @@
 @class UARemoteConfigManager;
 @class UARemoteConfigURLManager;
 @class UAPrivacyManager;
+@class UAChannel;
 
 @interface UAirship()
 
@@ -52,7 +53,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The contact.
  */
-@property (nonatomic, strong) id<UAContactProtocol> sharedContact;
+@property (nonatomic, strong) UAContact *sharedContact;
 
 /**
  * The shared analytics manager.

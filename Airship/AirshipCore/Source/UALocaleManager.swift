@@ -1,10 +1,27 @@
 /* Copyright Airship and Contributors */
 
+
+@objc(UALocaleManagerProtocol)
+public protocol LocaleManagerProtocol {
+    /**
+     * Resets the current locale.
+     */
+    @objc
+    func clearLocale()
+    
+    /**
+     * The current locale used by Airship. Defaults to `autoupdatingCurrent`.
+     */
+    @objc
+    var currentLocale : Locale { get }
+
+    
+}
 /**
  * Airship locale manager.
  */
-@objc
-public class UALocaleManager : NSObject {
+@objc(UALocaleManager)
+public class LocaleManager : NSObject, LocaleManagerProtocol {
 
     private static let storeKey = "com.urbanairship.locale.locale"
 
@@ -23,7 +40,7 @@ public class UALocaleManager : NSObject {
     @objc
     public var currentLocale : Locale {
         get {
-            if let encodedLocale = dataStore.object(forKey: UALocaleManager.storeKey) as? Data {
+            if let encodedLocale = dataStore.object(forKey: LocaleManager.storeKey) as? Data {
                 if let locale = NSKeyedUnarchiver.unarchiveObject(with: encodedLocale) as? Locale {
                     return locale
                 }
@@ -32,8 +49,8 @@ public class UALocaleManager : NSObject {
         }
         set {
             let encodedLocale: Data = NSKeyedArchiver.archivedData(withRootObject: newValue)
-            dataStore.setValue(encodedLocale, forKey: UALocaleManager.storeKey)
-            notificationCenter.post(name: UALocaleManager.localeUpdatedEvent, object:[UALocaleManager.localeEventKey: newValue])
+            dataStore.setValue(encodedLocale, forKey: LocaleManager.storeKey)
+            notificationCenter.post(name: LocaleManager.localeUpdatedEvent, object:[LocaleManager.localeEventKey: newValue])
         }
     }
 
@@ -60,7 +77,7 @@ public class UALocaleManager : NSObject {
      */
     @objc
     public func clearLocale() {
-        dataStore.removeObject(forKey: UALocaleManager.storeKey)
-        notificationCenter.post(name: UALocaleManager.localeUpdatedEvent, object:[UALocaleManager.localeEventKey: self.currentLocale])
+        dataStore.removeObject(forKey: LocaleManager.storeKey)
+        notificationCenter.post(name: LocaleManager.localeUpdatedEvent, object:[LocaleManager.localeEventKey: self.currentLocale])
     }
 }

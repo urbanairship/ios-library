@@ -12,7 +12,6 @@
 #import "UAAppIntegration.h"
 #import "UARemoteDataManager+Internal.h"
 #import "UARemoteConfigManager+Internal.h"
-#import "UAChannel+Internal.h"
 #import "UALocationModuleLoaderFactory.h"
 #import "UAAutomationModuleLoaderFactory.h"
 #import "UAExtendedActionsModuleLoaderFactory.h"
@@ -121,10 +120,10 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         self.applicationMetrics = [[UAApplicationMetrics alloc] initWithDataStore:self.dataStore privacyManager:self.sharedPrivacyManager];
         self.sharedLocaleManager = [[UALocaleManager alloc] initWithDataStore:self.dataStore];
 
-        self.sharedChannel = [UAChannel channelWithDataStore:self.dataStore
-                                                      config:self.config
-                                               localeManager:self.sharedLocaleManager
-                                              privacyManager:self.sharedPrivacyManager];
+        self.sharedChannel = [[UAChannel alloc] initWithDataStore:self.dataStore
+                                                           config:self.config
+                                                   privacyManager:self.sharedPrivacyManager
+                                                    localeManager:self.sharedLocaleManager];
 
         [components addObject:self.sharedChannel];
 
@@ -540,7 +539,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
 + (nullable id<UAModuleLoader>)messageCenterLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
                                                          config:(UARuntimeConfig *)config
-                                                        channel:(UAChannel<UAExtendableChannelRegistration> *)channel
+                                                        channel:(UAChannel *)channel
                                                  privacyManager:(UAPrivacyManager *)privacyManager {
     Class cls = NSClassFromString(UAMessageCenterModuleLoaderClassName);
     if ([cls conformsToProtocol:@protocol(UAMessageCenterModuleLoaderFactory)]) {
@@ -558,7 +557,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 }
 
 + (nullable id<UAModuleLoader, UALocationProviderLoader>)locationLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
-                                                                             channel:(UAChannel<UAExtendableChannelRegistration> *)channel
+                                                                             channel:(UAChannel *)channel
                                                                            analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics privacyManager:(UAPrivacyManager *)privacyManager {
     Class cls = NSClassFromString(UALocationModuleLoaderClassName);
     if ([cls conformsToProtocol:@protocol(UALocationModuleLoaderFactory)]) {
@@ -674,5 +673,3 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 }
 
 @end
-
-

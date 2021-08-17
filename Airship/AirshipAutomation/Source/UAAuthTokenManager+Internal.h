@@ -3,10 +3,10 @@
 #import <Foundation/Foundation.h>
 #import "UAAuthToken+Internal.h"
 #import "UAAuthTokenAPIClient+Internal.h"
-#import "UAChannel.h"
 
 @class UADate;
 @class UADispatcher;
+@class UAChannel;
 
 NS_ASSUME_NONNULL_BEGIN
 

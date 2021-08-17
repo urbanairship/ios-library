@@ -8,7 +8,7 @@
 #import "UAEvent.h"
 #import "UAirship+Internal.h"
 #import "UAAnalytics.h"
-
+#import "AirshipTests-Swift.h"
 @import AirshipCore;
 
 @interface UAEventTest : UAAirshipBaseTest
@@ -20,7 +20,7 @@
 @property (nonatomic, strong) id timeZone;
 @property (nonatomic, strong) id application;
 @property (nonatomic, strong) id push;
-@property (nonatomic, strong) id channel;
+@property (nonatomic, strong) UATestChannel *testChannel;
 @property (nonatomic, strong) id currentDevice;
 @property (nonatomic, strong) id utils;
 @property (nonatomic, strong) UAPrivacyManager *privacyManager;
@@ -31,16 +31,15 @@
 - (void)setUp {
     [super setUp];
 
+    self.testChannel = [[UATestChannel alloc] init];
     self.privacyManager = [[UAPrivacyManager alloc] initWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesNone];
     self.analytics = [self mockForClass:[UAAnalytics class]];
     self.push = [self mockForClass:[UAPush class]];
-    self.channel = [self mockForClass:[UAChannel class]];
 
     self.airship = [self mockForClass:[UAirship class]];
 
     [[[self.airship stub] andReturn:self.analytics] sharedAnalytics];
     [[[self.airship stub] andReturn:self.push] push];
-    [[[self.airship stub] andReturn:self.channel] channel];
     [[[self.airship stub] andReturn:self.privacyManager] privacyManager];
 
     [UAirship setSharedAirship:self.airship];
@@ -166,14 +165,14 @@
 - (void)testRegistrationEvent {
     [self.privacyManager enableFeatures:UAFeaturesPush];
     [[[self.push stub] andReturn:@"a12312ad"] deviceToken];
-    [[[self.channel stub] andReturn:@"someChannelID"] identifier];
+    self.testChannel.identifier = @"someChannelID";
 
     NSDictionary *expectedData = @{@"device_token": @"a12312ad",
                                    @"channel_id": @"someChannelID",
                                    };
 
-    UADeviceRegistrationEvent *event = [[UADeviceRegistrationEvent alloc] init];
-
+    UADeviceRegistrationEvent *event = [[UADeviceRegistrationEvent alloc] initWithChannel:self.testChannel push:self.push privacyManager:self.privacyManager];
+    
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"device_registration", @"Event type is unexpected.");
 }
@@ -182,13 +181,14 @@
  * Test device registration event when pushTokenRegistrationEnabled is NO.
  */
 - (void)testRegistrationEventPushTokenRegistrationEnabledNo {
+    self.testChannel.identifier = @"someChannelID";
     [self.privacyManager disableFeatures:UAFeaturesPush];
     [[[self.push stub] andReturn:@"a12312ad"] deviceToken];
-    [[[self.channel stub] andReturn:@"someChannelID"] identifier];
+    
 
     NSDictionary *expectedData = @{@"channel_id": @"someChannelID"};
 
-    UADeviceRegistrationEvent *event = [[UADeviceRegistrationEvent alloc] init];
+    UADeviceRegistrationEvent *event = [[UADeviceRegistrationEvent alloc] initWithChannel:self.testChannel push:self.push privacyManager:self.privacyManager];
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"device_registration", @"Event type is unexpected.");
 }

@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAChannel.h"
 #import "UAActionArguments+Internal.h"
 #import "UAirship+Internal.h"
 #import "AirshipTests-Swift.h"
@@ -10,8 +9,7 @@
 
 @interface UATagActionsTest : UABaseTest
 @property (nonatomic, strong) UATestContact *testContact;
-@property (nonatomic, strong) id mockAirship;
-@property (nonatomic, strong) id mockChannel;
+@property (nonatomic, strong) UATestChannel *testChannel;
 
 @property (nonatomic, strong) UAActionArguments *stringArgs;
 @property (nonatomic, strong) UAActionArguments *arrayArgs;
@@ -27,7 +25,7 @@
 
 - (void)setUp {
     [super setUp];
-    self.mockChannel = [self mockForClass:[UAChannel class]];
+    self.testChannel = [[UATestChannel alloc] init];
     self.testContact = [[UATestContact alloc] init];
 
     self.stringArgs = [UAActionArguments argumentsWithValue:@"hi" withSituation:UASituationWebViewInvocation];
@@ -46,11 +44,6 @@
     
     NSDictionary *dictIntValues = @{@"channel" : @1, @"named_user" : @2};
     self.dictIntValuesArgs = [UAActionArguments argumentsWithValue:dictIntValues withSituation:UASituationWebViewInvocation];
-
-    self.mockAirship = [self mockForClass:[UAirship class]];
-    [UAirship setSharedAirship:self.mockAirship];
-    [[[self.mockAirship stub] andReturn:self.mockChannel] channel];
-    [[[self.mockAirship stub] andReturn:self.testContact] contact];
 }
 
 /**
@@ -117,41 +110,38 @@
  * Checks argument validation and UAPush side effects of the add tags action
  */
 - (void)testAddTagsAction {
-    UAAddTagsAction *action = [[UAAddTagsAction alloc] init];
+    UAAddTagsAction *action = [[UAAddTagsAction alloc] initWithChannel:^{
+        return self.testChannel;
+    } contact:^{
+        return self.testContact;
+    }];
     [self validateArgumentsForAddRemoveTagsAction:action];
 
-    [[self.mockChannel expect] addTags:[OCMArg any]];
-    [[self.mockChannel expect] updateRegistration];
-
     [action performWithArguments:self.stringArgs completionHandler:^(UAActionResult *result) {
-           [self.mockChannel verify];
+        XCTAssertEqualObjects(self.testChannel.tags, @[self.stringArgs.value]);
     }];
 
-    [[self.mockChannel expect] addTags:[OCMArg any]];
-    [[self.mockChannel expect] updateRegistration];
-
+    self.testChannel.tags = @[];
     [action performWithArguments:self.arrayArgs completionHandler:^(UAActionResult *result) {
-           [self.mockChannel verify];
+        XCTAssertEqualObjects(self.testChannel.tags, self.arrayArgs.value);
     }];
     
     __block NSArray *channelTagUpdates;
-    UATagGroupsEditor *channelTagGroupEditor = [[UATagGroupsEditor alloc] initWithAllowDeviceTagGroup:YES completionHandler:^(NSArray<UATagGroupUpdate *> *updates) {
+    self.testChannel.tagGroupEditor = [[UATagGroupsEditor alloc] initWithAllowDeviceTagGroup:YES completionHandler:^(NSArray<UATagGroupUpdate *> *updates) {
         channelTagUpdates = updates;
     }];
-    [[[self.mockChannel stub] andReturn:channelTagGroupEditor] editTagGroups];
-    
+     
     __block NSArray *contactTagUpdates;
     self.testContact.tagGroupEditor = [[UATagGroupsEditor alloc] initWithAllowDeviceTagGroup:YES completionHandler:^(NSArray<UATagGroupUpdate *> *updates) {
         contactTagUpdates = updates;
     }];
 
-    [[self.mockChannel expect] addTags:@[@"device tag", @"another device tag"]];
-
+    self.testChannel.tags = @[];
     [action performWithArguments:self.dictArgs completionHandler:^(UAActionResult *result) {
-        [self.mockChannel verify];
-        
         XCTAssertEqualObjects(self.dictArgs.value[@"named_user"], [self tagsFromUpdates:contactTagUpdates]);
         XCTAssertEqualObjects(self.dictArgs.value[@"channel"], [self tagsFromUpdates:channelTagUpdates]);
+        
+        XCTAssertEqualObjects(self.dictArgs.value[@"device"], self.testChannel.tags);
     }];
 }
 
@@ -159,38 +149,36 @@
  * Checks argument validation and UAPush side effects of the remove tags action
  */
 - (void)testRemoveTagsAction {
-    UARemoveTagsAction *action = [[UARemoveTagsAction alloc] init];
-
+    UARemoveTagsAction *action = [[UARemoveTagsAction alloc] initWithChannel:^{
+        return self.testChannel;
+    } contact:^{
+        return self.testContact;
+    }];
+    
     [self validateArgumentsForAddRemoveTagsAction:action];
-
-    [[self.mockChannel expect] removeTags:[OCMArg any]];
-    [[self.mockChannel expect] updateRegistration];
+    
+    self.testChannel.tags = @[@"hi", @"cool"];
 
     [action performWithArguments:self.stringArgs completionHandler:^(UAActionResult *result) {
-           [self.mockChannel verify];
+        XCTAssertEqualObjects(@[@"cool"], self.testChannel.tags);
     }];
-
-    [[self.mockChannel expect] removeTags:[OCMArg any]];
-    [[self.mockChannel expect] updateRegistration];
+    self.testChannel.tags = @[@"hi", @"there"];
 
     [action performWithArguments:self.arrayArgs completionHandler:^(UAActionResult *result) {
-           [self.mockChannel verify];
+        XCTAssertEqualObjects(@[], self.testChannel.tags);
     }];
-    
+
     __block NSArray *channelTagUpdates;
-    UATagGroupsEditor *channelTagGroupEditor = [[UATagGroupsEditor alloc] initWithAllowDeviceTagGroup:YES completionHandler:^(NSArray<UATagGroupUpdate *> *updates) {
+    self.testChannel.tagGroupEditor = [[UATagGroupsEditor alloc] initWithAllowDeviceTagGroup:YES completionHandler:^(NSArray<UATagGroupUpdate *> *updates) {
         channelTagUpdates = updates;
     }];
-    [[[self.mockChannel stub] andReturn:channelTagGroupEditor] editTagGroups];
-    
+
     __block NSArray *contactTagUpdates;
     self.testContact.tagGroupEditor = [[UATagGroupsEditor alloc] initWithAllowDeviceTagGroup:YES completionHandler:^(NSArray<UATagGroupUpdate *> *updates) {
         contactTagUpdates = updates;
     }];
-    
+
     [action performWithArguments:self.dictArgs completionHandler:^(UAActionResult *result) {
-        [self.mockChannel verify];
-        
         XCTAssertEqualObjects(self.dictArgs.value[@"named_user"], [self tagsFromUpdates:contactTagUpdates]);
         XCTAssertEqualObjects(self.dictArgs.value[@"channel"], [self tagsFromUpdates:channelTagUpdates]);
     }];

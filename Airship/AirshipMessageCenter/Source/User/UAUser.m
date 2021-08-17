@@ -21,7 +21,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 static NSString * const UAUserUpdateTaskID = @"UAUser.update";
 
 @interface UAUser()
-@property (nonatomic, strong) UAChannel<UAExtendableChannelRegistration> *channel;
+@property (nonatomic, strong) id<UAChannelProtocol> channel;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property (nonatomic, strong) UAUserDataDAO *userDataDAO;
 @property (nonatomic, strong) UAUserAPIClient *apiClient;
@@ -34,7 +34,7 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
 
 @implementation UAUser
 
-- (instancetype)initWithChannel:(UAChannel<UAExtendableChannelRegistration> *)channel
+- (instancetype)initWithChannel:(id<UAChannelProtocol>)channel
                   dataStore:(UAPreferenceDataStore *)dataStore
                      client:(UAUserAPIClient *)client
          notificationCenter:(NSNotificationCenter *)notificationCenter
@@ -54,7 +54,7 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
 
         [self.notificationCenter addObserver:self
                                     selector:@selector(enqueueUpdateTask)
-                                        name:UAChannelCreatedEvent
+                                        name:UAChannel.channelCreatedEvent
                                       object:nil];
 
 
@@ -64,11 +64,18 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
                                       object:nil];
 
         UA_WEAKIFY(self)
-        [self.channel addChannelExtenderBlock:^(UAChannelRegistrationPayload *payload, UAChannelRegistrationExtenderCompletionHandler completionHandler) {
+        [self.channel addRegistrationExtender:^(UAChannelRegistrationPayload * payload, void (^ completionHandler)(UAChannelRegistrationPayload *)) {
             UA_STRONGIFY(self)
-            [self extendChannelRegistrationPayload:payload completionHandler:completionHandler];
+            if (self.enabled) {
+                [self.userDataDAO getUserData:^(UAUserData *userData) {
+                    payload.userID = userData.username;
+                    completionHandler(payload);
+                }];
+            } else {
+                completionHandler(payload);
+            }
         }];
-
+        
         [self.taskManager registerForTaskWithIDs:@[UAUserUpdateTaskID]
                                       dispatcher:UADispatcher.serial
                                    launchHandler:^(id<UATask> task) {
@@ -93,7 +100,7 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
     return self;
 }
 
-+ (instancetype)userWithChannel:(UAChannel<UAExtendableChannelRegistration> *)channel config:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
++ (instancetype)userWithChannel:(id<UAChannelProtocol>)channel config:(UARuntimeConfig *)config dataStore:(UAPreferenceDataStore *)dataStore {
     return [[UAUser alloc] initWithChannel:channel
                                  dataStore:dataStore
                                     client:[UAUserAPIClient clientWithConfig:config]
@@ -102,7 +109,7 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
                                taskManager:[UATaskManager shared]];
 }
 
-+ (instancetype)userWithChannel:(UAChannel<UAExtendableChannelRegistration> *)channel
++ (instancetype)userWithChannel:(id<UAChannelProtocol>)channel
                       dataStore:(UAPreferenceDataStore *)dataStore
                          client:(UAUserAPIClient *)client
              notificationCenter:(NSNotificationCenter *)notificationCenter
@@ -276,19 +283,6 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
     }
 }
 
-- (void)extendChannelRegistrationPayload:(UAChannelRegistrationPayload *)payload
-                       completionHandler:(UAChannelRegistrationExtenderCompletionHandler)completionHandler {
-
-    if (self.enabled) {
-        [self.userDataDAO getUserData:^(UAUserData *userData) {
-            payload.userID = userData.username;
-            completionHandler(payload);
-        }];
-    } else {
-        completionHandler(payload);
-    }
-}
-
 - (void)remoteURLConfigUpdated {
     // clear registered channel ID to force an update
     self.requireUserUpdate = true;
@@ -301,3 +295,4 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
 }
 
 @end
+

@@ -3,7 +3,6 @@
 #import "UAPush.h"
 #import "UAirship.h"
 #import "UAComponent+Internal.h"
-#import "UAChannel+Internal.h"
 #import "UAPushProviderDelegate.h"
 #import "UAAnalytics+Internal.h"
 
@@ -145,7 +144,7 @@ extern NSString *const UAPushTagsMigratedToChannelTagsKey;
  */
 + (instancetype)pushWithConfig:(UARuntimeConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
-                       channel:(UAChannel<UAExtendableChannelRegistration> *)channel
+                       channel:(UAChannel *)channel
                      analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics
                 privacyManager:(UAPrivacyManager *)privacyManager;
 
@@ -166,7 +165,7 @@ extern NSString *const UAPushTagsMigratedToChannelTagsKey;
  */
 + (instancetype)pushWithConfig:(UARuntimeConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
-                       channel:(UAChannel<UAExtendableChannelRegistration> *)channel
+                       channel:(UAChannel *)channel
                      analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics
                appStateTracker:(UAAppStateTracker *)appStateTracker
             notificationCenter:(NSNotificationCenter *)notificationCenter

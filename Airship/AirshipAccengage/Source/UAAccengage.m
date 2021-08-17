@@ -3,7 +3,6 @@
 #import "UAAccengage+Internal.h"
 #import "UAAccengagePayload.h"
 #import "UAChannelRegistrationPayload.h"
-#import "UAExtendableChannelRegistration.h"
 #import "UAJSONSerialization.h"
 #import "UAAccengageUtils.h"
 #import "UAAccengageResources.h"
@@ -65,7 +64,7 @@ NSString *const UAAccengageSettingsMigrated = @"UAAccengageSettingsMigrated";
 @implementation UAAccengage
 
 - (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore
-                          channel:(UAChannel<UAExtendableChannelRegistration> *)channel
+                          channel:(UAChannel *)channel
                              push:(UAPush *)push
                    privacyManager:(UAPrivacyManager *)privacyManager
                 accengageSettings:(NSDictionary *)settings {
@@ -77,10 +76,10 @@ NSString *const UAAccengageSettingsMigrated = @"UAAccengageSettingsMigrated";
             NSSet *accengageCategories = [UANotificationCategories createCategoriesFromFile:[[UAAccengageResources bundle] pathForResource:@"UAAccengageNotificationCategories" ofType:@"plist"]];
             push.accengageCategories = accengageCategories;
             [push updateRegistration];
-
-            [channel addChannelExtenderBlock:^(UAChannelRegistrationPayload *payload, UAChannelRegistrationExtenderCompletionHandler completionHandler) {
-                payload.accengageDeviceID = accengageDeviceID;
-                completionHandler(payload);
+            
+            [channel addRegistrationExtender:^(UAChannelRegistrationPayload * payload, void (^ completionHandler)(UAChannelRegistrationPayload * _Nonnull)) {
+                            payload.accengageDeviceID = accengageDeviceID;
+                            completionHandler(payload);
             }];
 
             [self migrateSettings:settings
@@ -94,7 +93,7 @@ NSString *const UAAccengageSettingsMigrated = @"UAAccengageSettingsMigrated";
 }
 
 + (instancetype)accengageWithDataStore:(UAPreferenceDataStore *)dataStore
-                               channel:(UAChannel<UAExtendableChannelRegistration> *)channel
+                               channel:(UAChannel *)channel
                                   push:(UAPush *)push
                         privacyManager:(UAPrivacyManager *)privacyManager
                               settings:(NSDictionary *)settings {
@@ -106,7 +105,7 @@ NSString *const UAAccengageSettingsMigrated = @"UAAccengageSettingsMigrated";
 }
 
 + (instancetype)accengageWithDataStore:(UAPreferenceDataStore *)dataStore
-                               channel:(UAChannel<UAExtendableChannelRegistration> *)channel
+                               channel:(UAChannel *)channel
                                   push:(UAPush *)push
                         privacyManager:(UAPrivacyManager *)privacyManager {
     NSDictionary *settings = [[[UAAccengageSettingsLoader alloc] init] loadAccengageSettings];

@@ -5,6 +5,9 @@ import AirshipCore
 
 @objc(UATestContact)
 public class TestContact : NSObject, ContactProtocol {
+    
+   
+    
     public var namedUserID: String?
     
     public var pendingAttributeUpdates: [AttributeUpdate] = []
@@ -32,6 +35,19 @@ public class TestContact : NSObject, ContactProtocol {
     public func editAttributes() -> AttributesEditor {
         return attributeEditor!
     }
+    
+    public func editTagGroups(_ editorBlock: (TagGroupsEditor) -> Void) {
+        let editor = editTagGroups()
+        editorBlock(editor)
+        editor.apply()
+    }
+    
+    public func editAttributes(_ editorBlock: (AttributesEditor) -> Void) {
+        let editor = editAttributes()
+        editorBlock(editor)
+        editor.apply()
+    }
+
     
     
 }

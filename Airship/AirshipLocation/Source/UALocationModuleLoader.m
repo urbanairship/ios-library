@@ -18,7 +18,7 @@
 }
 
 + (nonnull id<UAModuleLoader>)locationModuleLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
-                                                        channel:(UAChannel<UAExtendableChannelRegistration> *)channel
+                                                        channel:(id<UAChannelProtocol>)channel
                                                       analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics
                                                  privacyManager: (UAPrivacyManager *)privacyManager{
 

@@ -6,7 +6,6 @@
 #import "UAEvent.h"
 #import "UAirship.h"
 #import "UAPush+Internal.h"
-#import "UAChannel.h"
 
 #define kUAAssociatedIdentifiers @"UAAssociatedIdentifiers"
 

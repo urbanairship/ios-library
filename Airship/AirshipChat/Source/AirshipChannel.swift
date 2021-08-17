@@ -9,4 +9,5 @@ protocol AirshipChannel {
     var identifier: String? { get }
 }
 
-extension UAChannel : AirshipChannel {}
+extension Channel : AirshipChannel {}
+

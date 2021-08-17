@@ -2,11 +2,11 @@
 
 #import <Foundation/Foundation.h>
 #import "UAModuleLoader.h"
-#import "UAChannel.h"
 #import "UAAnalytics.h"
 #import "UAPush.h"
 
 @class UAPreferenceDataStore;
+@class UAChannel;
 
 NS_ASSUME_NONNULL_BEGIN
 

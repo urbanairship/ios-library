@@ -11,8 +11,6 @@
 #import "UAMessageCenterModuleLoaderFactory.h"
 #import "UAJSONSerialization.h"
 #import "UAGlobal.h"
-#import "UAExtendableChannelRegistration.h"
-#import "UAChannel.h"
 #import "UAActionArguments.h"
 #import "NSString+UALocalizationAdditions.h"
 #import "NSJSONSerialization+UAAdditions.h"

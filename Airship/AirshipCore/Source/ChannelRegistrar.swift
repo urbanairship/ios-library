@@ -1,12 +1,26 @@
 /* Copyright Airship and Contributors */
 
+// NOTE: For internal use only. :nodoc:
+@objc(UAChannelRegistrarProtocol)
+public protocol ChannelRegistrarProtocol {
+    @objc
+    var delegate : ChannelRegistrarDelegate? { get set}
+    
+    var channelID : String? { get }
+    
+    @objc(registerForcefully:)
+    func register(forcefully: Bool)
+    
+    @objc
+    func performFullRegistration()
+}
 
 /**
  * The UAChannelRegistrarDelegate protocol for registration events.
  * - Note: For internal use only. :nodoc:
  */
-@objc
-public protocol UAChannelRegistrarDelegate {
+@objc(UAChannelRegistrarDelegate)
+public protocol ChannelRegistrarDelegate {
     /**
      * Get registration payload for current channel
      *
@@ -14,6 +28,7 @@ public protocol UAChannelRegistrarDelegate {
      *
      * - Parameter completionHandler: A completion handler which will be passed the created registration payload.
      */
+    @objc
     func createChannelPayload(completionHandler: @escaping (UAChannelRegistrationPayload) -> ())
     
     /**
@@ -35,11 +50,11 @@ public protocol UAChannelRegistrarDelegate {
 }
 
 /**
-* The UAChannelRegistrar class is responsible for device registrations.
+* The ChannelRegistrar class is responsible for device registrations.
 * - Note: For internal use only. :nodoc:
 */
 @objc
-public class UAChannelRegistrar : NSObject {
+public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
     private static let forcefullyKey = "forcefully";
     private static let taskID = "UAChannelRegistrar.registration";
     private static let channelIDKey = "UAChannelID";
@@ -47,25 +62,22 @@ public class UAChannelRegistrar : NSObject {
     private static let lastUpdateKey = "payload-update-key";
     private static let deviceIDKey = "deviceID";
 
-    /**
-     * The UAChannelRegistrarDelegate delegate.
-     */
     @objc
-    public weak var delegate : UAChannelRegistrarDelegate?
+    public weak var delegate : ChannelRegistrarDelegate?
     
     private var _channelID: String? {
         get {
-            self.dataStore.string(forKey: UAChannelRegistrar.channelIDKey)
+            self.dataStore.string(forKey: ChannelRegistrar.channelIDKey)
         }
         set {
-            self.dataStore.setObject(newValue, forKey: UAChannelRegistrar.channelIDKey)
+            self.dataStore.setObject(newValue, forKey: ChannelRegistrar.channelIDKey)
             AirshipLogger.importantInfo("Channel ID: \(newValue ?? "")")
         }
     }
     
     private var lastSuccessPayload: UAChannelRegistrationPayload? {
         get {
-            guard let data = self.dataStore.object(forKey: UAChannelRegistrar.lastPayloadKey) as? Data else {
+            guard let data = self.dataStore.object(forKey: ChannelRegistrar.lastPayloadKey) as? Data else {
                 return nil
             }
                         
@@ -73,19 +85,19 @@ public class UAChannelRegistrar : NSObject {
         }
         set {
             if let value = newValue {
-                self.dataStore.setObject(value.asJSONData(), forKey: UAChannelRegistrar.lastPayloadKey)
+                self.dataStore.setObject(value.asJSONData(), forKey: ChannelRegistrar.lastPayloadKey)
             } else {
-                self.dataStore.removeObject(forKey: UAChannelRegistrar.lastPayloadKey)
+                self.dataStore.removeObject(forKey: ChannelRegistrar.lastPayloadKey)
             }
         }
     }
     
     private var lastUpdateDate: Date {
         get {
-            return self.dataStore.object(forKey: UAChannelRegistrar.lastUpdateKey) as? Date ?? Date.distantPast
+            return self.dataStore.object(forKey: ChannelRegistrar.lastUpdateKey) as? Date ?? Date.distantPast
         }
         set {
-            self.dataStore.setObject(newValue, forKey: UAChannelRegistrar.lastPayloadKey)
+            self.dataStore.setObject(newValue, forKey: ChannelRegistrar.lastPayloadKey)
         }
     }
     
@@ -100,7 +112,7 @@ public class UAChannelRegistrar : NSObject {
     }
     
     private let dataStore: UAPreferenceDataStore
-    private let channelAPIClient: UAChannelAPIClient
+    private let channelAPIClient: ChannelAPIClient
     private let date: UADate
     private let dispatcher: UADispatcher
     private let taskManager: UATaskManager
@@ -108,7 +120,7 @@ public class UAChannelRegistrar : NSObject {
     @objc
     public init(config: UARuntimeConfig,
                 dataStore: UAPreferenceDataStore,
-                channelAPIClient: UAChannelAPIClient,
+                channelAPIClient: ChannelAPIClient,
                 date: UADate,
                 dispatcher: UADispatcher,
                 taskManager: UATaskManager) {
@@ -120,15 +132,15 @@ public class UAChannelRegistrar : NSObject {
         self.taskManager = taskManager
         
         super.init()
-        
+
         if (self.channelID != nil) {
             self.dispatcher.dispatchAsync {
                 self.checkAppRestore()
             }
         }
         
-        self.taskManager.register(taskID: UAChannelRegistrar.taskID, dispatcher: self.dispatcher) { [weak self] task in
-            if (task.taskID == UAChannelRegistrar.taskID) {
+        self.taskManager.register(taskID: ChannelRegistrar.taskID, dispatcher: self.dispatcher) { [weak self] task in
+            if (task.taskID == ChannelRegistrar.taskID) {
                 self?.handleRegistrationTask(task)
             } else {
                 AirshipLogger.error("Invalid task: \(task.taskID)")
@@ -142,7 +154,7 @@ public class UAChannelRegistrar : NSObject {
                             dataStore: UAPreferenceDataStore) {
         self.init(config: config,
                   dataStore:dataStore,
-                  channelAPIClient: UAChannelAPIClient(config: config),
+                  channelAPIClient: ChannelAPIClient(config: config),
                   date: UADate(),
                   dispatcher: UADispatcher.serial(),
                   taskManager: UATaskManager.shared)
@@ -155,13 +167,12 @@ public class UAChannelRegistrar : NSObject {
      *
      * - Parameter forcefully: YES to force the registration.
      */
-    @objc(registerForcefully:)
-    public func register(forcefully: Bool = false) {
-        let extras = [UAChannelRegistrar.forcefullyKey: forcefully]
+    public func register(forcefully: Bool) {
+        let extras = [ChannelRegistrar.forcefullyKey: forcefully]
         let policy = forcefully ? UATaskConflictPolicy.replace : UATaskConflictPolicy.keep
         let options = UATaskRequestOptions(conflictPolicy: policy, requiresNetwork: true, extras: extras)
         
-        self.taskManager.enqueueRequest(taskID: UAChannelRegistrar.taskID, options: options)
+        self.taskManager.enqueueRequest(taskID: ChannelRegistrar.taskID, options: options)
     }
     
     /**
@@ -179,22 +190,20 @@ public class UAChannelRegistrar : NSObject {
     private func checkAppRestore() {
         let deviceID = UAKeychainUtils.getDeviceID()
         
-        guard let previousDeviceID = self.dataStore.string(forKey: UAChannelRegistrar.deviceIDKey) else {
-            self.dataStore.setObject(deviceID, forKey:UAChannelRegistrar.deviceIDKey)
+        guard let previousDeviceID = self.dataStore.string(forKey: ChannelRegistrar.deviceIDKey) else {
+            self.dataStore.setObject(deviceID, forKey:ChannelRegistrar.deviceIDKey)
             return
         }
 
         if (deviceID != previousDeviceID) {
             AirshipLogger.debug("Device ID changed.")
             self.clearChannelData()
-            self.dataStore.setObject(deviceID, forKey:UAChannelRegistrar.deviceIDKey)
+            self.dataStore.setObject(deviceID, forKey:ChannelRegistrar.deviceIDKey)
         }
     }
     
     private func handleRegistrationTask(_ task: UATask) {
         AirshipLogger.trace("Handling registration task: \(task)")
-        
-        
         
         guard let payload = self.createPayload() else {
             AirshipLogger.error("Airship payload is nil, unable to update")
@@ -202,7 +211,7 @@ public class UAChannelRegistrar : NSObject {
             return
         }
         
-        let forcefully = task.requestOptions.extras[UAChannelRegistrar.forcefullyKey] as? Bool ?? false
+        let forcefully = task.requestOptions.extras[ChannelRegistrar.forcefullyKey] as? Bool ?? false
         let channelID = self.channelID
         let lastPayload = self.lastSuccessPayload
         let shouldUpdate = self.shouldUpdate(payload, lastPayload: lastPayload)
@@ -316,7 +325,7 @@ public class UAChannelRegistrar : NSObject {
             delegate?.registrationSucceeded()
             
             if (self.shouldUpdate(self.createPayload(), lastPayload: payload)) {
-                self.register()
+                self.register(forcefully: false)
             }
         } else {
             delegate?.registrationFailed()

@@ -194,7 +194,7 @@ class ContactTest: XCTestCase {
     }
     
     func testChannelCreatedResolves() throws {
-        notificationCenter.post(Notification(name: NSNotification.Name.UAChannelCreatedEvent))
+        notificationCenter.post(Notification(name: Channel.channelCreatedEvent))
     
         XCTAssertEqual(1, self.taskManager.enqueuedRequests.count)
         
@@ -324,12 +324,12 @@ class ContactTest: XCTestCase {
     
     func testSkipResolves() throws {
         self.contact.identify("one")
-        notificationCenter.post(Notification(name: NSNotification.Name.UAChannelCreatedEvent))
-        notificationCenter.post(Notification(name: NSNotification.Name.UAChannelCreatedEvent))
-        notificationCenter.post(Notification(name: NSNotification.Name.UAChannelCreatedEvent))
-        notificationCenter.post(Notification(name: NSNotification.Name.UAChannelCreatedEvent))
-        notificationCenter.post(Notification(name: NSNotification.Name.UAChannelCreatedEvent))
-        
+        notificationCenter.post(Notification(name: Channel.channelCreatedEvent))
+        notificationCenter.post(Notification(name: Channel.channelCreatedEvent))
+        notificationCenter.post(Notification(name: Channel.channelCreatedEvent))
+        notificationCenter.post(Notification(name: Channel.channelCreatedEvent))
+        notificationCenter.post(Notification(name: Channel.channelCreatedEvent))
+
         self.apiClient.resolveCallback = { channelID, callback in
             XCTFail()
         }
@@ -441,7 +441,7 @@ class ContactTest: XCTestCase {
         // attributes
         XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).completed)        
         // resolve with conflict
-        notificationCenter.post(Notification(name: NSNotification.Name.UAChannelCreatedEvent))
+        notificationCenter.post(Notification(name: Channel.channelCreatedEvent))
         XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).completed)
         
         wait(for: [conflictCalled], timeout: 10.0)
@@ -450,7 +450,7 @@ class ContactTest: XCTestCase {
     func testResolveSkippedContactsDisabled() {
         self.privacyManager.disableFeatures(.contacts)
         
-        notificationCenter.post(Notification(name: NSNotification.Name.UAChannelCreatedEvent))
+        notificationCenter.post(Notification(name: Channel.channelCreatedEvent))
         XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).completed)
     }
     

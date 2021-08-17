@@ -4,7 +4,6 @@
 #import "UAAirshipBaseTest.h"
 #import "UAJavaScriptEnvironment.h"
 #import "UAirship+Internal.h"
-#import "UAChannel.h"
 #import "UARuntimeConfig.h"
 
 @import AirshipCore;

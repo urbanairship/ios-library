@@ -2,7 +2,6 @@
 
 #import "UAAirshipBaseTest.h"
 #import "UAInAppAudienceHistorian+Internal.h"
-#import "UAChannel+Internal.h"
 #import "AirshipTests-Swift.h"
 
 @import AirshipCore;
@@ -34,14 +33,14 @@
     NSDate *old = [NSDate distantPast];
 
     self.testDate.dateOverride = recent;
-    [[NSNotificationCenter defaultCenter] postNotificationName:UAChannelAudienceUpdatedEvent
+    [[NSNotificationCenter defaultCenter] postNotificationName:UAChannel.audienceUpdatedEvent
                                                         object:nil
-                                                      userInfo:@{ UAChannelAudienceUpdatedEventTagsKey: @[tagUpdate1] }];
+                                                      userInfo:@{ UAChannel.audienceTagsKey: @[tagUpdate1] }];
 
     self.testDate.dateOverride = old;
-    [[NSNotificationCenter defaultCenter] postNotificationName:UAChannelAudienceUpdatedEvent
+    [[NSNotificationCenter defaultCenter] postNotificationName:UAChannel.audienceUpdatedEvent
                                                         object:nil
-                                                      userInfo:@{ UAChannelAudienceUpdatedEventTagsKey: @[tagUpdate2] }];
+                                                      userInfo:@{ UAChannel.audienceTagsKey: @[tagUpdate2] }];
 
     XCTAssertEqualObjects(@[tagUpdate1], [self.historian tagHistoryNewerThan:recent]);
 
@@ -90,9 +89,9 @@
                                                                             date:old];
     
     self.testDate.dateOverride = recent;
-    [[NSNotificationCenter defaultCenter] postNotificationName:UAChannelAudienceUpdatedEvent
+    [[NSNotificationCenter defaultCenter] postNotificationName:UAChannel.audienceUpdatedEvent
                                                         object:nil
-                                                      userInfo:@{UAChannelAudienceUpdatedEventAttributesKey: @[breakfastDrink]}];
+                                                      userInfo:@{UAChannel.audienceAttributesKey: @[breakfastDrink]}];
 
     self.testDate.dateOverride = old;
 

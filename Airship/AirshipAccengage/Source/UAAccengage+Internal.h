@@ -6,7 +6,6 @@
 @import AirshipCore;
 #else
 #import "UAComponent.h"
-#import "UAChannel.h"
 #import "UAPush.h"
 #import "UAAnalytics.h"
 #endif

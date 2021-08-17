@@ -6,7 +6,6 @@
 #import "UAEventStore+Internal.h"
 #import "UARuntimeConfig.h"
 #import "UAirship+Internal.h"
-#import "UAChannel.h"
 
 @import AirshipCore;
 
@@ -179,7 +178,7 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
 - (void)testChannelCreated {
     [[self.mockTaskManager expect] enqueueRequestWithID:UAEventManagerUploadTask options:OCMOCK_ANY initialDelay:15];
 
-    [self.notificationCenter postNotificationName:UAChannelCreatedEvent
+    [self.notificationCenter postNotificationName:UAChannel.channelCreatedEvent
                                            object:nil];
 
     [self.mockTaskManager verify];

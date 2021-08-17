@@ -73,7 +73,7 @@ NSString *const UAMessageDataScheme = @"message";
 
 + (instancetype)messageCenterWithDataStore:(UAPreferenceDataStore *)dataStore
                                     config:(UARuntimeConfig *)config
-                                   channel:(UAChannel<UAExtendableChannelRegistration> *)channel
+                                   channel:(UAChannel *)channel
                             privacyManager:(UAPrivacyManager *)privacyManager {
 
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
