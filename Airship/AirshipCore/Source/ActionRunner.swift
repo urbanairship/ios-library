@@ -171,7 +171,7 @@ public class ActionRunner : NSObject {
      *  - completionHandler: The completion handler.
      */
     @objc(runActionsWithActionValues:situation:metadata:completionHandler:)
-    public class func run(actionValues: [String : Any],
+    public class func run(actionValues: [AnyHashable : Any],
                           situation: UASituation,
                           metadata: [AnyHashable : Any]?,
                           completionHandler: UAActionCompletionHandler?) {
@@ -181,13 +181,15 @@ public class ActionRunner : NSObject {
         let dispatchGroup = DispatchGroup()
 
         actionValues.forEach { name, value in
-            if let entry = UAirship.shared()?.actionRegistry.registryEntry(name) {
-                if (!entries.contains(entry)) {
-                    entries.insert(entry)
-                    dispatchGroup.enter()
-                    self.run(name, entry: entry, value: value, situation: situation, metadata: metadata) { result in
-                        aggregateResult.add(result, actionName: name)
-                        dispatchGroup.leave()
+            if let actionName = name as? String {
+                if let entry = UAirship.shared()?.actionRegistry.registryEntry(actionName) {
+                    if (!entries.contains(entry)) {
+                        entries.insert(entry)
+                        dispatchGroup.enter()
+                        self.run(actionName, entry: entry, value: value, situation: situation, metadata: metadata) { result in
+                            aggregateResult.add(result, actionName: actionName)
+                            dispatchGroup.leave()
+                        }
                     }
                 }
             }

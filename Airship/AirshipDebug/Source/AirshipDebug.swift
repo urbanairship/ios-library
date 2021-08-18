@@ -184,19 +184,33 @@ public class AirshipDebug : NSObject {
     }
 
     @objc static func receivedForegroundNotification(notification: NSNotification) {
-        savePush(userInfo: notification.userInfo)
+        guard let userInfo = notification.userInfo else {
+            return
+        }
+        savePush(userInfo: userInfo)
     }
 
     @objc static func receivedBackgroundNotification(notification: NSNotification) {
-        savePush(userInfo: notification.userInfo)
+        guard let userInfo = notification.userInfo else {
+            return
+        }
+
+        savePush(userInfo: userInfo)
     }
 
     @objc static func receivedNotificationResponse(notification: NSNotification) {
-        savePush(userInfo: notification.userInfo)
+        guard let response = notification.userInfo?[UAReceivedNotificationResponseEventResponseKey] as? UNNotificationResponse else {
+            return
+        }
+        
+        let push = response.notification.request.content.userInfo
+        savePush(userInfo: push)
     }
 
-    static func savePush(userInfo : [AnyHashable: Any]?) {
-        let pushPayload = PushNotification.init(push: userInfo!)
+    static func savePush(userInfo : [AnyHashable: Any]) {
+        guard let pushPayload = try? PushNotification(push: userInfo) else {
+            return
+        }
         PushDataManager.shared.savePushNotification(pushPayload)
     }
 }

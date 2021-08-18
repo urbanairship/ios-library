@@ -38,9 +38,8 @@ struct PushNotification {
      */
     var data:String
 
-    init(push:[AnyHashable: Any]) {
-        self.data = String(data: try! JSONSerialization.data(withJSONObject:push, options:.prettyPrinted), encoding:.utf8) ?? ""
-        print(push)
+    init(push:[AnyHashable: Any]) throws {
+        self.data = String(data: try JSONSerialization.data(withJSONObject:push, options:.prettyPrinted), encoding:.utf8) ?? ""
         self.time = Date().timeIntervalSince1970
         let aps = push[AnyHashable("aps")] as? [String:Any]
         self.alert = aps?["alert"] as? String ?? "No Alert"
