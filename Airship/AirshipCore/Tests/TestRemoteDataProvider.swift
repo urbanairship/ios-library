@@ -1,15 +1,15 @@
 import Foundation
 import AirshipCore
 
-class MockRemoteDataProvider : NSObject, UARemoteDataProvider {
+class TestRemoteDataProvider : NSObject, UARemoteDataProvider {
     var remoteDataRefreshInterval: TimeInterval = 0
     func setRefreshInterval(_ refreshInterval: TimeInterval) {
         remoteDataRefreshInterval = refreshInterval
     }
     
     var isMetadataCurrent = true
-    private var subscribers: [String : [UUID]] = [:]
-    private var blocks: [UUID : UARemoteDataPublishBlock] = [:]
+    var subscribers: [String : [UUID]] = [:]
+    var blocks: [UUID : UARemoteDataPublishBlock] = [:]
     
     override init() {
         super.init()
@@ -21,6 +21,22 @@ class MockRemoteDataProvider : NSObject, UARemoteDataProvider {
             self.blocks[blockId]?([payload])
         })
     }
+    
+    func dispatchPayloads(_ payloads: [UARemoteDataPayload]) {
+        var blockIdMap: [UUID : [UARemoteDataPayload]] = [:]
+        
+        payloads.forEach { payload in
+            self.subscribers[payload.type]?.forEach { blockId in
+                blockIdMap[blockId] = blockIdMap[blockId] ?? []
+                blockIdMap[blockId]?.append(payload)
+            }
+        }
+        
+        blockIdMap.forEach { blockId, payloads in
+            self.blocks[blockId]?(payloads)
+        }
+    }
+    
     
     func subscribe(withTypes payloadTypes: [String], block publishBlock: @escaping UARemoteDataPublishBlock) -> UADisposable {
         let blockID = UUID()
@@ -37,7 +53,7 @@ class MockRemoteDataProvider : NSObject, UARemoteDataProvider {
             payloadTypes.forEach { type in
                 var blocks = self.subscribers[type] ?? []
                 blocks.removeAll { $0 == blockID }
-                self.subscribers[type] = blocks
+                self.subscribers[type] = blocks.isEmpty ? nil : blocks
             }
         }
     }

@@ -6,19 +6,16 @@
 #import "UAGlobal.h"
 #import "UAPush+Internal.h"
 #import "UAConfig.h"
-#import "UARuntimeConfig+Internal.h"
 #import "UAAutoIntegration+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAAppIntegration.h"
 #import "UARemoteDataManager+Internal.h"
-#import "UARemoteConfigManager+Internal.h"
 #import "UALocationModuleLoaderFactory.h"
 #import "UAAutomationModuleLoaderFactory.h"
 #import "UAExtendedActionsModuleLoaderFactory.h"
 #import "UAMessageCenterModuleLoaderFactory.h"
 #import "UAAccengageModuleLoaderFactory.h"
 #import "UADebugLibraryModuleLoaderFactory.h"
-#import "UARemoteConfigURLManager.h"
 #import "UAAirshipChatModuleLoaderFactory.h"
 #import "UAFeature.h"
 #import "UAPreferenceCenterModuleLoaderFactory.h"
@@ -164,8 +161,9 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
                                                                          privacyManager:self.sharedPrivacyManager];
         [components addObject:self.sharedRemoteDataManager];
 
-        self.sharedRemoteConfigManager = [UARemoteConfigManager remoteConfigManagerWithRemoteDataManager:self.sharedRemoteDataManager
-                                                                                          privacyManager:self.sharedPrivacyManager];
+        
+        self.sharedRemoteConfigManager = [[UARemoteConfigManager alloc] initWithRemoteDataManager:self.sharedRemoteDataManager
+                                                                                   privacyManager:self.sharedPrivacyManager];
 
 #if !TARGET_OS_TV
         // UIPasteboard is not available in tvOS
@@ -306,6 +304,14 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     if (sharedAirship_) {
         return;
     }
+    
+    // Ensure that app credentials are valid
+    if (![config validate]) {
+        UA_LIMPERR(@"The UAConfig is invalid, no application credentials were specified at runtime.");
+        // Bail now. Don't continue the takeOff sequence.
+        return;
+    }
+
 
     // Clearing the key chain
     if ([[NSUserDefaults standardUserDefaults] boolForKey:UAResetKeychainKey]) {
@@ -317,16 +323,8 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     // Data store
     UAPreferenceDataStore *dataStore = [[UAPreferenceDataStore alloc] initWithKeyPrefix:[NSString stringWithFormat:@"com.urbanairship.%@.", config.appKey]];
 
-    UARemoteConfigURLManager *remoteConfigURLManager = [UARemoteConfigURLManager remoteConfigURLManagerWithDataStore:dataStore];
-    UARuntimeConfig *runtimeConfig = [UARuntimeConfig runtimeConfigWithConfig:config urlManager:remoteConfigURLManager];
-
-    // Ensure that app credentials are valid
-    if (!runtimeConfig) {
-        UA_LIMPERR(@"The UAConfig is invalid, no application credentials were specified at runtime.");
-        // Bail now. Don't continue the takeOff sequence.
-        return;
-    }
-
+    UARuntimeConfig *runtimeConfig = [[UARuntimeConfig alloc] initWithConfig:config dataStore:dataStore];
+    
     [UAirship setLogLevel:runtimeConfig.logLevel];
 
     if (runtimeConfig.inProduction) {
@@ -348,7 +346,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     }
 
     // Automatic setup
-    if (sharedAirship_.config.automaticSetupEnabled) {
+    if (sharedAirship_.config.isAutomaticSetupEnabled) {
         UA_LINFO(@"Automatic setup enabled.");
         [UAAutoIntegration integrate];
     }
@@ -491,7 +489,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     // Background notification validation
     if (self.remoteNotificationBackgroundModeEnabled) {
 
-        if (self.config.automaticSetupEnabled) {
+        if (self.config.isAutomaticSetupEnabled) {
             id delegate = [UIApplication sharedApplication].delegate;
 
             // If its automatic setup up, make sure if they are implementing their own app delegates, that they are

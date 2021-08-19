@@ -177,8 +177,8 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
 
         notificationCenter.addObserver(
             self,
-            selector: #selector(self.onRemoteConfigUpdated),
-            name: NSNotification.Name.UARemoteConfigURLManagerConfigUpdated,
+            selector: #selector(self.onConfigUpdated),
+            name: RuntimeConfig.configUpdatedEvent,
             object: nil)
     }
 
@@ -329,7 +329,7 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
     }
 
     @objc
-    private func onRemoteConfigUpdated() {
+    private func onConfigUpdated() {
         self.dispatcher.dispatchAsync {
             self.chatConnection.close()
             self.dataStore.removeObject(forKey: Conversation.uvpStorageKey)

@@ -118,7 +118,7 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
     private let taskManager: UATaskManager
 
     @objc
-    public init(config: UARuntimeConfig,
+    public init(config: RuntimeConfig,
                 dataStore: UAPreferenceDataStore,
                 channelAPIClient: ChannelAPIClient,
                 date: UADate,
@@ -150,7 +150,7 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
     }
     
     @objc
-    public convenience init(config: UARuntimeConfig,
+    public convenience init(config: RuntimeConfig,
                             dataStore: UAPreferenceDataStore) {
         self.init(config: config,
                   dataStore:dataStore,

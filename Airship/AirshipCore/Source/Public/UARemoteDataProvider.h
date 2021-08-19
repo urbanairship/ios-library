@@ -38,6 +38,9 @@ typedef void (^UARemoteDataPublishBlock)(NSArray<UARemoteDataPayload *> *remoteD
  */
 - (BOOL)isMetadataCurrent:(NSDictionary *)metadata;
 
+
+- (void)setRefreshInterval:(NSTimeInterval)refreshInterval;
+
 @end
 
 NS_ASSUME_NONNULL_END

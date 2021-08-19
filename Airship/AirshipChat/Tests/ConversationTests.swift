@@ -51,7 +51,7 @@ class ConversationTests: XCTestCase {
         XCTAssertEqual("some-uvp", self.mockChatConnection.lastUVP)
 
         self.mockAPIClient.result = (UVPResponse(status: 200, uvp: "some-other-uvp"), nil)
-        self.notificationCenter.post(name: NSNotification.Name.UARemoteConfigURLManagerConfigUpdated, object: nil)
+        self.notificationCenter.post(name: RuntimeConfig.configUpdatedEvent, object: nil)
 
         XCTAssertTrue(self.mockChatConnection.isOpenOrOpening)
         XCTAssertEqual("some-other-uvp", self.mockChatConnection.lastUVP)

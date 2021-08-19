@@ -4,9 +4,7 @@
 
 #import "UARemoteDataPayload+Internal.h"
 #import "UARemoteDataStore+Internal.h"
-#import "UARuntimeConfig.h"
 #import "UAAirshipBaseTest.h"
-#import "UARemoteConfigURLManager.h"
 #import "AirshipTests-Swift.h"
 
 @import AirshipCore;
@@ -102,7 +100,7 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
 - (void)testRemoteConfigUpdated {
     [[self.mockTaskManager expect] enqueueRequestWithID:RefreshTask options:OCMOCK_ANY];
 
-    [self.notificationCenter postNotificationName:UARemoteConfigURLManagerConfigUpdated object:nil];
+    [self.notificationCenter postNotificationName:UARuntimeConfig.configUpdatedEvent object:nil];
 
     [self.mockTaskManager verify];
 }

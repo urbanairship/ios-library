@@ -1,14 +1,12 @@
 /* Copyright Airship and Contributors */
 
-#import "UABaseTest.h"
+#import "UAAirshipBaseTest.h"
 #import "UAAutomationEngine+Internal.h"
 #import "UAirship+Internal.h"
 #import "UAAutomationStore+Internal.h"
 #import "UAJSONPredicate.h"
-#import "UARuntimeConfig.h"
 #import "UAScheduleDelay.h"
 #import "UAScheduleData+Internal.h"
-#import "UATestRuntimeConfig.h"
 #import "UAActionSchedule.h"
 #import "UAScheduleEdits+Internal.h"
 #import "AirshipTests-Swift.h"
@@ -18,7 +16,7 @@
 static NSString * const UAAutomationEngineDelayTaskID = @"UAAutomationEngine.delay";
 static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.interval";
 
-@interface UAAutomationEngineIntegrationTest : UABaseTest
+@interface UAAutomationEngineIntegrationTest : UAAirshipBaseTest
 @property (nonatomic, strong) UAAutomationEngine *automationEngine;
 @property (nonatomic, strong) UAAutomationStore *testStore;
 @property (nonatomic, strong) id mockedApplication;
@@ -47,10 +45,9 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
     self.mockAppStateTracker = [self mockForClass:[UAAppStateTracker class]];
 
     self.mockDelegate = [self mockForProtocol:@protocol(UAAutomationEngineDelegate)];
-
-    UARuntimeConfig *config = [UATestRuntimeConfig testConfig];
-    self.testStore = [UAAutomationStore automationStoreWithConfig:config
-                                                    scheduleLimit:UAAUTOMATIONENGINETESTS_SCHEDULE_LIMIT
+    
+    self.testStore = [UAAutomationStore automationStoreWithConfig:self.config
+                                                     scheduleLimit:UAAUTOMATIONENGINETESTS_SCHEDULE_LIMIT
                                                          inMemory:YES
                                                              date:self.testDate];
 

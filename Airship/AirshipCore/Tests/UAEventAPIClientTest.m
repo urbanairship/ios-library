@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UAAirshipBaseTest.h"
-#import "UARuntimeConfig.h"
 #import "AirshipTests-Swift.h"
 
 @import AirshipCore;

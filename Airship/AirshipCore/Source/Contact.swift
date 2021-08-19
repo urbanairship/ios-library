@@ -111,7 +111,7 @@ public class Contact : UAComponent, ContactProtocol {
     public static let maxNamedUserIDLength = 128
 
     private let dataStore: UAPreferenceDataStore
-    private let config: UARuntimeConfig
+    private let config: RuntimeConfig
     private let privacyManager: UAPrivacyManager
     private let channel: ChannelProtocol
     private let contactAPIClient: ContactsAPIClientProtocol
@@ -230,7 +230,7 @@ public class Contact : UAComponent, ContactProtocol {
      * :nodoc:
      */
     init(dataStore: UAPreferenceDataStore,
-         config: UARuntimeConfig,
+         config: RuntimeConfig,
          channel: ChannelProtocol,
          privacyManager: UAPrivacyManager,
          contactAPIClient: ContactsAPIClientProtocol,
@@ -289,7 +289,7 @@ public class Contact : UAComponent, ContactProtocol {
      */
     @objc
     public convenience init(dataStore: UAPreferenceDataStore,
-                            config: UARuntimeConfig,
+                            config: RuntimeConfig,
                             channel: Channel,
                             privacyManager: UAPrivacyManager) {
         self.init(dataStore: dataStore,
@@ -380,7 +380,7 @@ public class Contact : UAComponent, ContactProtocol {
      * :nodoc:
      */
     public override func onComponentEnableChange() {
-        if (self.componentEnabled()) {
+        if (self.componentEnabled) {
             self.enqueueTask()
         }
     }

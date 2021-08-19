@@ -83,7 +83,7 @@ public class Chat : UAComponent, UAPushableComponent {
 
     private var viewController : UIViewController?
 
-    internal convenience init(dataStore: UAPreferenceDataStore, config: UARuntimeConfig, channel: Channel, privacyManager: UAPrivacyManager) {
+    internal convenience init(dataStore: UAPreferenceDataStore, config: RuntimeConfig, channel: Channel, privacyManager: UAPrivacyManager) {
 
         let conversation = Conversation(dataStore: dataStore,
                                          chatConfig: config,
@@ -117,7 +117,7 @@ public class Chat : UAComponent, UAPushableComponent {
     }
 
     private func updateConversationEnablement() {
-        self.internalConversation.enabled = self.componentEnabled() && self.privacyManager.isEnabled(UAFeatures.chat)
+        self.internalConversation.enabled = self.componentEnabled && self.privacyManager.isEnabled(UAFeatures.chat)
         if (!self.privacyManager.isEnabled(UAFeatures.chat)) {
             self.internalConversation.clearData()
         }

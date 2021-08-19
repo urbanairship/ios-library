@@ -14,6 +14,5 @@
 #import "UAAction.h"
 #import "UAActionPredicateProtocol.h"
 #import "NSString+UALocalizationAdditions.h"
-#import "UARuntimeConfig.h"
 #import "NSDictionary+UAAdditions.h"
 #endif

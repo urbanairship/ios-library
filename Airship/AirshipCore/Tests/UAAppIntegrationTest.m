@@ -5,7 +5,6 @@
 #import "UAAppIntegration+Internal.h"
 #import "UAPush+Internal.h"
 #import "UAAnalytics+Internal.h"
-#import "UARuntimeConfig.h"
 #import "UAirship+Internal.h"
 
 @import AirshipCore;

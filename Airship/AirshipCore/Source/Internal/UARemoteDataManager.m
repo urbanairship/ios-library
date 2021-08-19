@@ -4,7 +4,6 @@
 #import "UARemoteDataStore+Internal.h"
 #import "UARemoteDataStorePayload+Internal.h"
 #import "UARemoteDataPayload+Internal.h"
-#import "UARemoteConfigURLManager.h"
 
 #if __has_include("AirshipCore/AirshipCore-Swift.h")
 #import <AirshipCore/AirshipCore-Swift.h>
@@ -146,7 +145,7 @@ static NSString * const UALastRemoteDataModifiedTime = @"UALastRemoteDataModifie
 
         [self.notificationCenter addObserver:self
                                     selector:@selector(enqueueRefreshTask)
-                                        name:UARemoteConfigURLManagerConfigUpdated
+                                        name:UARuntimeConfig.configUpdatedEvent
                                       object:nil];
 
         [self.notificationCenter addObserver:self
@@ -389,6 +388,10 @@ static NSString * const UALastRemoteDataModifiedTime = @"UALastRemoteDataModifie
 - (BOOL)isMetadataCurrent:(NSDictionary *)metadata {
     NSDictionary *currentMetadata = [self createMetadataWithLocale:[self.localeManager currentLocale]];
     return [currentMetadata isEqualToDictionary:metadata];
+}
+
+- (void)setRefreshInterval:(NSTimeInterval)refreshInterval {
+    self.remoteDataRefreshInterval = refreshInterval;
 }
 
 - (BOOL)isLastMetadataCurrent {

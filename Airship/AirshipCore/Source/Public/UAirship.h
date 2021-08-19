@@ -35,6 +35,7 @@
 @class UALocaleManager;
 @class UAPrivacyManager;
 @class UAContact;
+@class UARuntimeConfig;
 
 //---------------------------------------------------------------------------------------
 // UADeepLinkDelegate Protocol

@@ -67,7 +67,7 @@ public class Channel : UAComponent, ChannelProtocol {
     public static let audienceAttributesKey = "attributes"
 
     private let dataStore: UAPreferenceDataStore
-    private let config: UARuntimeConfig
+    private let config: RuntimeConfig
     private let privacyManager: UAPrivacyManager
     private let localeManager: LocaleManagerProtocol
     private let audienceManager: ChannelAudienceManagerProtocol
@@ -133,7 +133,7 @@ public class Channel : UAComponent, ChannelProtocol {
     // NOTE: For internal use only. :nodoc:
     @objc
     public init(dataStore: UAPreferenceDataStore,
-         config: UARuntimeConfig,
+         config: RuntimeConfig,
          privacyManager: UAPrivacyManager,
          localeManager: LocaleManagerProtocol,
          audienceManager: ChannelAudienceManagerProtocol,
@@ -161,9 +161,7 @@ public class Channel : UAComponent, ChannelProtocol {
     
         self.channelRegistrar.delegate = self
         self.audienceManager.channelID = self.channelRegistrar.channelID
-        self.audienceManager.enabled = self.componentEnabled()
-        
-  
+        self.audienceManager.enabled = self.componentEnabled
         if let identifier = self.identifier {
             AirshipLogger.importantInfo("Channel ID \(identifier)")
         }
@@ -175,7 +173,7 @@ public class Channel : UAComponent, ChannelProtocol {
     // NOTE: For internal use only. :nodoc:
     @objc
     convenience public init(dataStore: UAPreferenceDataStore,
-                            config: UARuntimeConfig,
+                            config: RuntimeConfig,
                             privacyManager: UAPrivacyManager,
                             localeManager: LocaleManagerProtocol) {
         self.init(dataStore:dataStore,
@@ -200,7 +198,7 @@ public class Channel : UAComponent, ChannelProtocol {
         
         notificationCenter.addObserver(self,
                                        selector: #selector(remoteConfigUpdated),
-                                       name: NSNotification.Name.UARemoteConfigURLManagerConfigUpdated,
+                                       name: RuntimeConfig.configUpdatedEvent,
                                        object: nil)
 
         notificationCenter.addObserver(self,
@@ -229,10 +227,10 @@ public class Channel : UAComponent, ChannelProtocol {
     
     // NOTE: For internal use only. :nodoc:
     public override func onComponentEnableChange() {
-        if (self.componentEnabled()) {
+        if (self.componentEnabled) {
             self.updateRegistration()
         }
-        self.audienceManager.enabled = self.componentEnabled()
+        self.audienceManager.enabled = self.componentEnabled
     }
     
     @objc
@@ -431,7 +429,7 @@ public class Channel : UAComponent, ChannelProtocol {
     
     // NOTE: For internal use only. :nodoc:
     public func updateRegistration(forcefully: Bool) {
-        guard self.componentEnabled() else {
+        guard self.componentEnabled else {
             return
         }
         

@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UATestRuntimeConfig.h"
 
 @import AirshipCore;
 
@@ -20,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
  * A preference airship with unique appkey/secret. A runtime config is created
  * lazily when first used.
  */
-@property (nonatomic, strong) UATestRuntimeConfig *config;
+@property (nonatomic, strong) UARuntimeConfig *config;
 
 @end
 

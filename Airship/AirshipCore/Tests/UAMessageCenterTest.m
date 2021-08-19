@@ -128,7 +128,7 @@
 
 - (void)testURLConfigUpdated {
     [[self.mockMessageList expect] retrieveMessageListWithSuccessBlock:OCMOCK_ANY withFailureBlock:OCMOCK_ANY];
-    [self.notificationCenter postNotificationName:UARemoteConfigURLManagerConfigUpdated object:nil];
+    [self.notificationCenter postNotificationName:UARuntimeConfig.configUpdatedEvent object:nil];
     [self.mockMessageList verify];
 }
 

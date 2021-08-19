@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UAAirshipBaseTest.h"
-#import "UARuntimeConfig.h"
 #import "UAirship+Internal.h"
 #import "UAUser+Internal.h"
 #import "UAInboxAPIClient+Internal.h"

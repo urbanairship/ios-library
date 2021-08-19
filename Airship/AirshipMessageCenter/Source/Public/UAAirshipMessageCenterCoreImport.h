@@ -4,7 +4,6 @@
 #else
 #import "UAirship.h"
 #import "UAKeychainUtils.h"
-#import "UARuntimeConfig.h"
 #import "UANativeBridgeExtensionDelegate.h"
 #import "UANativeBridge.h"
 #import "UAModuleLoader.h"
@@ -15,5 +14,4 @@
 #import "NSString+UALocalizationAdditions.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAAction.h"
-#import "UARemoteConfigURLManager.h"
 #endif

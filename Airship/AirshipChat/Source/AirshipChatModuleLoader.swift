@@ -20,7 +20,7 @@ public class AirshipChatModuleLoader : NSObject, UAModuleLoader, UAAirshipChatMo
     }
 
     public static func moduleLoader(with dataStore: UAPreferenceDataStore,
-                                    config: UARuntimeConfig,
+                                    config: RuntimeConfig,
                                     channel: Channel,
                                     privacyManager: UAPrivacyManager) -> UAModuleLoader {
         let airshipChat = Chat(dataStore: dataStore, config: config, channel: channel, privacyManager: privacyManager)

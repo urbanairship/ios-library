@@ -49,18 +49,6 @@
     XCTAssertTrue([validSimulatorModels containsObject:deviceModelName]);
 }
 
-- (void)testAppAuthHeaderString {
-    XCTAssertEqualObjects([UAUtils appAuthHeaderString],@"Basic KG51bGwpOihudWxsKQ==");
-    
-    id mockUARuntimeConfig = [self mockForClass:[UARuntimeConfig class]];
-    [[[mockUARuntimeConfig stub] andReturn:@"someAppKey"] appKey];
-    [[[mockUARuntimeConfig stub] andReturn:@"someAppSecret"] appSecret];
-
-    [[[self.mockAirship stub] andReturn:mockUARuntimeConfig] config];
-
-    XCTAssertEqualObjects([UAUtils appAuthHeaderString],@"Basic c29tZUFwcEtleTpzb21lQXBwU2VjcmV0");
-}
-
 - (NSDateComponents *)componentsForDate:(NSDate *)date {
     return [self.gregorianUTC components:(NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay | NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond) fromDate:date];
 }

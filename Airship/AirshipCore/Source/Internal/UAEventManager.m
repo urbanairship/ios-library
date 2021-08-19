@@ -6,7 +6,6 @@
 #import "UAEventData+Internal.h"
 #import "UAAsyncOperation.h"
 #import "UAEvent.h"
-#import "UARuntimeConfig.h"
 #import "UAirship.h"
 
 #if __has_include("AirshipCore/AirshipCore-Swift.h")

@@ -6,8 +6,6 @@
 #import "UAUserData+Internal.h"
 #import "UAKeychainUtils.h"
 #import "UAirship+Internal.h"
-#import "UARuntimeConfig.h"
-#import "UARuntimeConfig+Internal.h"
 #import "AirshipTests-Swift.h"
 
 @import AirshipCore;
@@ -271,7 +269,7 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
     [[mockTask expect] taskFailed];
 
     // force an update
-    [self.notificationCenter postNotificationName:UARemoteConfigURLManagerConfigUpdated object:nil];
+    [self.notificationCenter postNotificationName:UARuntimeConfig.configUpdatedEvent object:nil];
 
     XCTestExpectation *apiCalled = [self expectationWithDescription:@"API client called"];
     [[[self.mockUserClient expect] andDo:^(NSInvocation *invocation) {
@@ -300,7 +298,7 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
     [[mockTask expect] taskCompleted];
 
     // force an update
-    [self.notificationCenter postNotificationName:UARemoteConfigURLManagerConfigUpdated object:nil];
+    [self.notificationCenter postNotificationName:UARuntimeConfig.configUpdatedEvent object:nil];
 
     XCTestExpectation *apiCalled = [self expectationWithDescription:@"API client called"];
 
@@ -330,7 +328,7 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
     [[mockTask expect] taskFailed];
 
     // force an update
-    [self.notificationCenter postNotificationName:UARemoteConfigURLManagerConfigUpdated object:nil];
+    [self.notificationCenter postNotificationName:UARuntimeConfig.configUpdatedEvent object:nil];
 
     XCTestExpectation *apiCalled = [self expectationWithDescription:@"API client called"];
     [[[self.mockUserClient expect] andDo:^(NSInvocation *invocation) {
@@ -361,7 +359,7 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
     [[mockTask expect] taskCompleted];
 
     // force an update
-    [self.notificationCenter postNotificationName:UARemoteConfigURLManagerConfigUpdated object:nil];
+    [self.notificationCenter postNotificationName:UARuntimeConfig.configUpdatedEvent object:nil];
 
     XCTestExpectation *apiCalled = [self expectationWithDescription:@"API client called"];
 
@@ -436,7 +434,7 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
 
     [[self.mockTaskManager expect] enqueueRequestWithID:UAUserUpdateTaskID options:OCMOCK_ANY];
 
-    [self.notificationCenter postNotificationName:UARemoteConfigURLManagerConfigUpdated object:nil];
+    [self.notificationCenter postNotificationName:UARuntimeConfig.configUpdatedEvent object:nil];
 
     id mockTask = [self mockForProtocol:@protocol(UATask)];
     [[[mockTask stub] andReturn:UAUserUpdateTaskID] taskID];

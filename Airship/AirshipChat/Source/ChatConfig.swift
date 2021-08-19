@@ -11,4 +11,4 @@ protocol ChatConfig {
     var chatWebSocketURL: String? { get }
 }
 
-extension UARuntimeConfig : ChatConfig {}
+extension RuntimeConfig : ChatConfig {}

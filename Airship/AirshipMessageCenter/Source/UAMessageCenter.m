@@ -61,7 +61,7 @@ NSString *const UAMessageDataScheme = @"message";
 
         [notificationCenter addObserver:self
                                     selector:@selector(remoteURLConfigUpdated)
-                                        name:UARemoteConfigURLManagerConfigUpdated
+                                        name:UARuntimeConfig.configUpdatedEvent
                                       object:nil];
 
 

@@ -7,17 +7,17 @@
 public class UARemoteDataAPIClient : NSObject {
     private let path = "api/remote-data/app"
     private let session: UARequestSession
-    private let config: UARuntimeConfig
+    private let config: RuntimeConfig
 
     @objc
-    public init(config: UARuntimeConfig, session: UARequestSession) {
+    public init(config: RuntimeConfig, session: UARequestSession) {
         self.config = config
         self.session = session
         super.init()
     }
 
     @objc
-    public convenience init(config: UARuntimeConfig) {
+    public convenience init(config: RuntimeConfig) {
         self.init(config: config, session: UARequestSession(config: config))
     }
 

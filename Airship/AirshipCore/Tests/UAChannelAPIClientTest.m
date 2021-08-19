@@ -4,7 +4,6 @@
 #import <Foundation/Foundation.h>
 #import "UAChannelRegistrationPayload+Internal.h"
 #import "UAirship.h"
-#import "UARuntimeConfig.h"
 #import "UAAnalytics+Internal.h"
 #import "AirshipTests-Swift.h"
 

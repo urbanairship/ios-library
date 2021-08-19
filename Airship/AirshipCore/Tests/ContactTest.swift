@@ -38,7 +38,8 @@ class ContactTest: XCTestCase {
         self.dataStore = UAPreferenceDataStore(keyPrefix: UUID().uuidString)
         self.privacyManager = UAPrivacyManager(dataStore: self.dataStore, defaultEnabledFeatures: .all, notificationCenter: self.notificationCenter)
         
-        let config = UARuntimeConfig()
+        
+        let config = RuntimeConfig(config: UAConfig(), dataStore: dataStore)
         
         self.contact = Contact(dataStore: self.dataStore,
                                config: config,

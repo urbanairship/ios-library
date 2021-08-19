@@ -2,7 +2,6 @@
 
 #import <UIKit/UIKit.h>
 #import "UARemoteDataPayload+Internal.h"
-#import "UARuntimeConfig.h"
 #import "UARemoteDataStore+Internal.h"
 #import "UAComponent.h"
 #import "UARemoteDataProvider.h"
@@ -15,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class UADate;
 @class UADispatcher;
 @class UATaskManager;
+@class UARuntimeConfig;
 
 /**
  * Default foreground refresh interval.

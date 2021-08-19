@@ -5,7 +5,6 @@
 #import "UAUserAPIClient+Internal.h"
 #import "UAAirshipMessageCenterCoreImport.h"
 #import "UAUserData+Internal.h"
-#import "UARemoteConfigURLManager.h"
 
 #if __has_include("AirshipCore/AirshipCore-Swift.h")
 @import AirshipCore;
@@ -60,7 +59,7 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
 
         [self.notificationCenter addObserver:self
                                     selector:@selector(remoteURLConfigUpdated)
-                                        name:UARemoteConfigURLManagerConfigUpdated
+                                        name:UARuntimeConfig.configUpdatedEvent
                                       object:nil];
 
         UA_WEAKIFY(self)

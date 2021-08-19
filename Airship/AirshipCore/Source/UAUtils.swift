@@ -454,17 +454,6 @@ public class UAUtils : NSObject {
     
     // MARK: UAHTTP Authenticated Request Helpers
     
-    /// Returns a basic auth header string using the app key and secret from `UARuntimeConfig`.
-    ///
-    /// - Returns: An HTTP Basic Auth header string value for the provided credentials in the form of: `Basic [Base64 Encoded "username:password"]`
-    @objc
-    public class func appAuthHeaderString() -> String? {
-        let config = UAirship.shared().config
-        let appKey = !config.appKey.isEmpty ? config.appKey : "(null)"
-        let appSecret = !config.appSecret.isEmpty ? config.appSecret : "(null)"
-        return authHeader(username: appKey, password: appSecret)
-    }
-    
     /// Returns a basic auth header string.
     ///
     /// - Parameters:

@@ -5,7 +5,6 @@
 #import "UAAnalytics+Internal.h"
 #import "UAPush+Internal.h"
 #import "UAActionArguments.h"
-#import "UARuntimeConfig.h"
 
 #if __has_include("AirshipCore/AirshipCore-Swift.h")
 #import <AirshipCore/AirshipCore-Swift.h>
@@ -89,7 +88,7 @@
         }
     }
 
-    if (![UAirship shared].config.automaticSetupEnabled) {
+    if (![UAirship shared].config.isAutomaticSetupEnabled) {
         [self handleForegroundNotification:notification mergedOptions:options withCompletionHandler:^{
             completionHandler(options);
         }];

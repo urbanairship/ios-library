@@ -3,7 +3,6 @@
 #import "UAEventData+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAEventStore+Internal.h"
-#import "UARuntimeConfig.h"
 #import "UAirship.h"
 #import "UAJSONSerialization.h"
 

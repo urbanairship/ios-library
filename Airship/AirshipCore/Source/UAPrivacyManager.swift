@@ -25,7 +25,7 @@ public class UAPrivacyManager : NSObject {
     * NSNotification event when enabled feature list is updated.
      */
     @objc
-    public static let changeEvent = NSNotification.Name("com.urbanairship.privacymanager.enabledfeatures_changed")
+    public static let changeEvent = Notification.Name("com.urbanairship.privacymanager.enabledfeatures_changed")
 
     private let UAPrivacyManagerEnabledFeaturesKey = "com.urbanairship.privacymanager.enabledfeatures"
     private let LegacyIAAEnableFlag = "UAInAppMessageManagerEnabled"

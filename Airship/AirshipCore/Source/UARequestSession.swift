@@ -8,7 +8,7 @@ open class UARequestSession : NSObject {
     public static var sharedURLSession: URLSession = UARequestSession.createSession()
 
     @objc
-    public init(config: UARuntimeConfig, session: URLSession) {
+    public init(config: RuntimeConfig, session: URLSession) {
         self.session = session
         super.init()
         self.setValue("gzip;q=1.0, compress;q=0.5", header: "Accept-Encoding")
@@ -17,7 +17,7 @@ open class UARequestSession : NSObject {
     }
 
     @objc
-    public convenience init(config: UARuntimeConfig) {
+    public convenience init(config: RuntimeConfig) {
         self.init(config: config, session: UARequestSession.sharedURLSession)
     }
 

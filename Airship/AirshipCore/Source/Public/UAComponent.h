@@ -73,6 +73,12 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (BOOL)deepLink:(NSURL *)deepLink;
 
+
+/**
+ * Flag indicating whether the component is enabled. Clear to disable. Set to enable.
+ */
+@property (assign) BOOL componentEnabled;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -22,7 +22,6 @@
 #import "UAModuleLoader.h"
 #import "UAPush.h"
 #import "UARemoteDataPayload.h"
-#import "UARuntimeConfig.h"
 #import "UATagGroups.h"
 #import "UAirship.h"
 #import "UAJavaScriptCommand.h"

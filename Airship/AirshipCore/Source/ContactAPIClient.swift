@@ -29,15 +29,15 @@ class ContactAPIClient : ContactsAPIClientProtocol {
     private static let contactIDKey = "contact_id"
     private static let deviceTypeKey = "device_type"
 
-    private let config: UARuntimeConfig
+    private let config: RuntimeConfig
     private let session: UARequestSession
 
-    init(config: UARuntimeConfig, session: UARequestSession) {
+    init(config: RuntimeConfig, session: UARequestSession) {
         self.config = config
         self.session = session
     }
 
-    convenience init(config: UARuntimeConfig) {
+    convenience init(config: RuntimeConfig) {
         self.init(config: config, session: UARequestSession(config: config))
     }
     

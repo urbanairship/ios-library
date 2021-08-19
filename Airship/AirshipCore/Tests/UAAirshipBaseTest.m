@@ -2,7 +2,6 @@
 
 #import "UAAirshipBaseTest.h"
 #import "UAirship+Internal.h"
-#import "UARuntimeConfig+Internal.h"
 
 @import AirshipCore;
 
@@ -21,14 +20,17 @@
     return _dataStore;
 }
 
-- (UATestRuntimeConfig *)config {
-    if (_config) {
-        return _config;
+- (UARuntimeConfig *)config {
+    if (!_config) {
+        UAConfig *config = [[UAConfig alloc] init];
+        config.inProduction = NO;
+        config.site = UACloudSiteUS;
+        config.developmentAppKey = @"test-app-key";
+        config.developmentAppSecret = @"test-app-secret";
+        _config = [[UARuntimeConfig alloc] initWithConfig:config dataStore:self.dataStore];
     }
-
-    _config = [UATestRuntimeConfig testConfig];
-    _config.appKey = [NSString stringWithFormat:@"dev-appKey-%@", self.name];
-    _config.appSecret = [NSString stringWithFormat:@"dev-appSecret-%@", self.name];
+    
+    
     return _config;
 }
 

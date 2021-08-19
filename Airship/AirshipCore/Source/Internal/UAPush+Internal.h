@@ -14,6 +14,7 @@
 @class UADispatcher;
 @class UANotificationCategories;
 @class UAAPNSRegistration;
+@protocol UAChannelProtocol;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -144,7 +145,7 @@ extern NSString *const UAPushTagsMigratedToChannelTagsKey;
  */
 + (instancetype)pushWithConfig:(UARuntimeConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
-                       channel:(UAChannel *)channel
+                       channel:(id<UAChannelProtocol>)channel
                      analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics
                 privacyManager:(UAPrivacyManager *)privacyManager;
 
@@ -165,7 +166,7 @@ extern NSString *const UAPushTagsMigratedToChannelTagsKey;
  */
 + (instancetype)pushWithConfig:(UARuntimeConfig *)config
                      dataStore:(UAPreferenceDataStore *)dataStore
-                       channel:(UAChannel *)channel
+                       channel:(id<UAChannelProtocol>)channel
                      analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics
                appStateTracker:(UAAppStateTracker *)appStateTracker
             notificationCenter:(NSNotificationCenter *)notificationCenter

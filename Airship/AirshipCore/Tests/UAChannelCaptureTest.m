@@ -1,12 +1,11 @@
 /* Copyright Airship and Contributors */
 
-#import "UAAirshipBaseTest.h"
-#import "UARuntimeConfig.h"
+#import "UABaseTest.h"
 #import "AirshipTests-Swift.h"
 
 @import AirshipCore;
 
-@interface UAChannelCaptureTest : UAAirshipBaseTest
+@interface UAChannelCaptureTest : UABaseTest
 @property(nonatomic, strong) UAChannelCapture *channelCapture;
 @property(nonatomic, strong) UATestChannel *testChannel;
 @property(nonatomic, strong) id mockPasteboard;
@@ -14,6 +13,8 @@
 @property(nonatomic, strong) NSArray<NSDictionary<NSString *,id> *> *mockItems;
 @property(nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property(nonatomic, strong) UATestDate *testDate;
+@property (nonatomic, strong) UAConfig *config;
+@property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 
 @end
 
@@ -22,6 +23,10 @@
 - (void)setUp {
     [super setUp];
 
+    self.config = [[UAConfig alloc] init];
+    self.config.channelCaptureEnabled = YES;
+    self.dataStore = [[UAPreferenceDataStore alloc] initWithKeyPrefix:NSUUID.UUID.UUIDString];
+
     self.testChannel = [[UATestChannel alloc] init];
     self.testChannel.identifier = @"pushChannelID";
     
@@ -29,7 +34,6 @@
 
     self.testDate = [[UATestDate alloc] initWithOffset:0 dateOverride:[NSDate date]];
 
-    self.config.channelCaptureEnabled = YES;
     
     self.mockItems = [NSMutableArray array];
     
@@ -124,7 +128,8 @@
 }
 
 - (void)createChannelCapture {
-    self.channelCapture = [[UAChannelCapture alloc] initWithConfig:self.config
+    UARuntimeConfig *config = [[UARuntimeConfig alloc] initWithConfig:self.config dataStore:self.dataStore];
+    self.channelCapture = [[UAChannelCapture alloc] initWithConfig:config
                                                          dataStore:self.dataStore
                                                            channel:self.testChannel
                                                 notificationCenter:self.notificationCenter

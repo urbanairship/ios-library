@@ -7,12 +7,12 @@ import AirshipCore
 
 class ChannelBulkUpdateAPIClientTest: XCTestCase {
 
-    var config: UARuntimeConfig!
+    var config: RuntimeConfig!
     var session: TestRequestSession!
     var client: ChannelBulkUpdateAPIClient!
 
     override func setUpWithError() throws {
-        self.config = UARuntimeConfig.init()
+        self.config = RuntimeConfig(config: UAConfig(), dataStore: UAPreferenceDataStore(keyPrefix: UUID().uuidString))
         self.session = TestRequestSession.init()
         self.client = ChannelBulkUpdateAPIClient(config: self.config, session: self.session)
     }

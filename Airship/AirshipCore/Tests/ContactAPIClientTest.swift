@@ -6,12 +6,12 @@ import AirshipCore
 
 class ContactAPIClientTest: XCTestCase {
     
-    var config: UARuntimeConfig!
+    var config: RuntimeConfig!
     var session: TestRequestSession!
     var contactAPIClient: ContactAPIClient!
 
     override func setUpWithError() throws {
-        self.config = UARuntimeConfig.init()
+        self.config = RuntimeConfig(config: UAConfig(), dataStore: UAPreferenceDataStore(keyPrefix: UUID().uuidString))
         self.session = TestRequestSession.init()
         self.session.response = HTTPURLResponse(url: URL(string: "https://contacts_test")!,
                                            statusCode: 200,

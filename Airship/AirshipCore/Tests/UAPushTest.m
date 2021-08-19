@@ -1,24 +1,22 @@
 
 /* Copyright Airship and Contributors */
 
-#import "UAAirshipBaseTest.h"
+#import "UABaseTest.h"
 #import "UAPush+Internal.h"
 #import "UAirship+Internal.h"
 #import "UAChannelRegistrationPayload+Internal.h"
 #import "UAEvent.h"
-#import "UARuntimeConfig.h"
 #import "AirshipTests-Swift.h"
 
 @import AirshipCore;
 
-@interface UAPushTest : UAAirshipBaseTest
+@interface UAPushTest : UABaseTest
 @property (nonatomic, strong) id mockApplication;
 @property (nonatomic, strong) UATestChannel *testChannel;
 @property (nonatomic, strong) id mockAppStateTracker;
 @property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) id mockPushDelegate;
 @property (nonatomic, strong) id mockRegistrationDelegate;
-@property (nonatomic, strong) id mockUAUtils;
 @property (nonatomic, strong) id mockDefaultNotificationCategories;
 @property (nonatomic, strong) id mockUNNotification;
 @property (nonatomic, strong) id mockPushRegistration;
@@ -33,6 +31,8 @@
 @property (nonatomic, assign) UAAuthorizationStatus authorizationStatus;
 @property (nonatomic, assign) UAAuthorizedNotificationSettings authorizedNotificationSettings;
 @property (nonatomic, copy) UAAnalyticsHeadersBlock analyticHeadersBlock;
+@property (nonatomic, strong) UAConfig *config;
+@property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 
 @end
 
@@ -42,6 +42,9 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
 - (void)setUp {
     [super setUp];
+    
+    self.config = [[UAConfig alloc] init];
+    self.dataStore = [[UAPreferenceDataStore alloc] initWithKeyPrefix:NSUUID.UUID.UUIDString];
     
     self.validAPNSDeviceToken = [validDeviceToken dataUsingEncoding:NSASCIIStringEncoding];
     assert([self.validAPNSDeviceToken length] <= 32);
@@ -121,17 +124,25 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
     self.privacyManager = [[UAPrivacyManager alloc] initWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
     
-    self.push = [UAPush pushWithConfig:self.config
-                             dataStore:self.dataStore
-                               channel:self.testChannel
-                             analytics:self.mockAnalytics
-                       appStateTracker:self.mockAppStateTracker
-                    notificationCenter:self.notificationCenter
-                      pushRegistration:self.mockPushRegistration
-                           application:self.mockApplication
-                            dispatcher:[[UATestDispatcher alloc] init]
-                        privacyManager:self.privacyManager];
+    [self createPush];
+}
 
+
+- (void)createPush {
+    UARuntimeConfig *runtimeConfig = [[UARuntimeConfig alloc] initWithConfig:self.config
+                                                                   dataStore:self.dataStore];
+    self.push = [UAPush pushWithConfig:runtimeConfig
+                        dataStore:self.dataStore
+                          channel:self.testChannel
+                        analytics:self.mockAnalytics
+                  appStateTracker:self.mockAppStateTracker
+               notificationCenter:self.notificationCenter
+                 pushRegistration:self.mockPushRegistration
+                      application:self.mockApplication
+                       dispatcher:[[UATestDispatcher alloc] init]
+                   privacyManager:self.privacyManager];
+    
+    
     self.push.registrationDelegate = self.mockRegistrationDelegate;
     self.push.pushRegistration = self.mockPushRegistration;
     self.push.pushNotificationDelegate = self.mockPushDelegate;
@@ -205,6 +216,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 - (void)testUserPushNotificationsEnabledWhenAppIsHandlingAuthorization {
     // SETUP
     self.config.requestAuthorizationToUseNotifications = NO;
+    [self createPush];
+    
     self.push.userPushNotificationsEnabled = NO;
 
     // EXPECTATIONS
@@ -255,7 +268,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 - (void)testUserPushNotificationsDisabledWhenAppIsHandlingAuthorization {
     // SETUP
     self.config.requestAuthorizationToUseNotifications = NO;
-
+    [self createPush];
+    
     self.push.userPushNotificationsEnabled = YES;
     self.push.deviceToken = validDeviceToken;
     self.push.shouldUpdateAPNSRegistration = NO;
@@ -461,7 +475,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 - (void)testUpdateAPNSRegistrationUserNotificationsEnabledWhenAppIsHandlingAuthorization {
     // SETUP
     self.config.requestAuthorizationToUseNotifications = NO;
-
+    [self createPush];
+    
     self.push.userPushNotificationsEnabled = YES;
     self.push.shouldUpdateAPNSRegistration = YES;
     self.push.customCategories = [NSSet set];
@@ -513,6 +528,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 - (void)testEnablePushNotificationsCompletionHandlerCalledWhenAppIsHandlingAuthorization {
     // SETUP
     self.config.requestAuthorizationToUseNotifications = NO;
+    [self createPush];
 
     self.push.customCategories = [NSSet set];
     self.push.notificationOptions = UANotificationOptionAlert;
@@ -704,6 +720,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 - (void)testUpdateAPNSRegistrationUserNotificationsDisabledWhenAppIsHandlingAuthorization {
     // SETUP
     self.config.requestAuthorizationToUseNotifications = NO;
+    [self createPush];
 
     // Make sure we have previously registered types
     self.authorizedNotificationSettings = UAAuthorizedNotificationSettingsBadge;
@@ -980,6 +997,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 - (void)testApplicationDidTransitionToForegroundWhenAppIsHandlingAuthorization {
     // SETUP
     self.config.requestAuthorizationToUseNotifications = NO;
+    [self createPush];
+    
     self.push.userPushNotificationsEnabled = YES;
     self.push.notificationOptions = UANotificationOptionAlert;
 
@@ -1567,6 +1586,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 - (void)testEnablingDisabledPushDoesNotUpdateRegistrationWhenAppIsHandlingAuthorization {
     // Setup
     self.config.requestAuthorizationToUseNotifications = NO;
+    [self createPush];
+    
     self.push.userPushNotificationsEnabled = YES;
     self.testChannel.identifier = @"someChannelID";
     self.push.componentEnabled = NO;

@@ -4,7 +4,6 @@
 #import "UANativeBridgeActionHandler+Internal.h"
 #import "UAJavaScriptCommand.h"
 #import "UAirship+Internal.h"
-#import "UARuntimeConfig.h"
 
 @import AirshipCore;
 

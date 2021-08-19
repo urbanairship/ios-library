@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UAAirshipBaseTest.h"
-#import "UARuntimeConfig.h"
 #import "UARemoteDataPayload+Internal.h"
 #import "AirshipTests-Swift.h"
 
@@ -19,7 +18,6 @@
     [super setUp];
     self.testSession = [[UATestRequestSession alloc] init];
     self.remoteDataAPIClient = [[UARemoteDataAPIClient alloc] initWithConfig:self.config session:self.testSession];
-    self.config.appKey = @"appKey";
 
     self.remoteData = @[ @{ @"type": @"test_data_type",
                             @"timestamp":@"2017-01-01T12:00:00",

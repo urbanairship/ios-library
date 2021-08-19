@@ -11,15 +11,15 @@ class SubscriptionListAPIClient : SubscriptionListAPIClientProtocol {
 
     private static let getPath = "/api/subscription_lists/channels/"
     
-    private var config: UARuntimeConfig
+    private var config: RuntimeConfig
     private var session: UARequestSession
 
-    init(config: UARuntimeConfig, session: UARequestSession) {
+    init(config: RuntimeConfig, session: UARequestSession) {
         self.config = config
         self.session = session
     }
     
-    convenience init(config: UARuntimeConfig) {
+    convenience init(config: RuntimeConfig) {
         self.init(config: config, session: UARequestSession(config: config))
     }
 

@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import "UAAirshipBaseTest.h"
+#import "UABaseTest.h"
 #import "UAChannelRegistrationPayload+Internal.h"
 #import "UAUserData+Internal.h"
 #import "UAActionResult.h"
@@ -11,20 +11,24 @@
 
 @import AirshipCore;
 
-@interface UAChannelTest : UAAirshipBaseTest
+@interface UAChannelTest : UABaseTest
 @property(nonatomic, strong) UATestChannelRegistrar *testRegistrar;
 @property(nonatomic, strong) UATestLocaleManager *testLocaleManager;
 @property(nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property(nonatomic, strong) UAChannel *channel;
 @property(nonatomic, strong) UAPrivacyManager *privacyManager;
 @property(nonatomic, strong) UATestChannelAudienceManager *testAudienceManager;
+@property (nonatomic, strong) UAConfig *config;
+@property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @end
 
 @implementation UAChannelTest
 
 - (void)setUp {
     [super setUp];
-
+    self.config = [[UAConfig alloc] init];
+    self.dataStore = [[UAPreferenceDataStore alloc] initWithKeyPrefix:NSUUID.UUID.UUIDString];
+    
     self.notificationCenter = [[NSNotificationCenter alloc] init];
     self.testAudienceManager = [[UATestChannelAudienceManager alloc] init];
 
@@ -40,9 +44,10 @@
     self.channel = [self createChannel];
 }
 
-- (UAChannel *)createChannel {
+- (UAChannel *) createChannel {
+    UARuntimeConfig *config = [[UARuntimeConfig alloc] initWithConfig:self.config dataStore:self.dataStore];
     return [[UAChannel alloc] initWithDataStore:self.dataStore
-                                         config:self.config
+                                         config:config
                                  privacyManager:self.privacyManager
                                   localeManager:self.testLocaleManager
                                 audienceManager:self.testAudienceManager
@@ -619,7 +624,7 @@
     self.config.channelCreationDelayEnabled = YES;
     self.channel = [self createChannel];
     
-    [self.notificationCenter postNotificationName:UARemoteConfigURLManagerConfigUpdated object:nil];
+    [self.notificationCenter postNotificationName:UARuntimeConfig.configUpdatedEvent object:nil];
 
     XCTAssertFalse(self.testRegistrar.fullRegistrationCalled);
 }
@@ -627,7 +632,7 @@
 - (void)testConfigUpdateChannelCreationEnabled {
     self.testRegistrar.channelID = @"some-id";
     
-    [self.notificationCenter postNotificationName:UARemoteConfigURLManagerConfigUpdated object:nil];
+    [self.notificationCenter postNotificationName:UARuntimeConfig.configUpdatedEvent object:nil];
 
     XCTAssertTrue(self.testRegistrar.fullRegistrationCalled);
 }

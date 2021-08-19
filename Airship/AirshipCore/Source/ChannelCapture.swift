@@ -15,7 +15,7 @@ public class ChannelCapture : NSObject {
     private static let pasteboardExpirationSeconds: TimeInterval = 60
     
     private let dataStore: UAPreferenceDataStore
-    private let config: UARuntimeConfig
+    private let config: RuntimeConfig
     private let channel: ChannelProtocol
     private let notificationCenter: NotificationCenter
     private let date: UADate
@@ -31,7 +31,7 @@ public class ChannelCapture : NSObject {
     public var enabled: Bool = false
     
     @objc
-    public init(config: UARuntimeConfig,
+    public init(config: RuntimeConfig,
                 dataStore: UAPreferenceDataStore,
                 channel: ChannelProtocol,
                 notificationCenter: NotificationCenter,
@@ -56,7 +56,7 @@ public class ChannelCapture : NSObject {
     }
     
     @objc
-    public convenience init(config: UARuntimeConfig,
+    public convenience init(config: RuntimeConfig,
                             dataStore: UAPreferenceDataStore,
                             channel: Channel) {
         

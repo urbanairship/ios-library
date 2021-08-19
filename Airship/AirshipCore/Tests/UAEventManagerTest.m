@@ -4,7 +4,6 @@
 
 #import "UAEventManager+Internal.h"
 #import "UAEventStore+Internal.h"
-#import "UARuntimeConfig.h"
 #import "UAirship+Internal.h"
 
 @import AirshipCore;

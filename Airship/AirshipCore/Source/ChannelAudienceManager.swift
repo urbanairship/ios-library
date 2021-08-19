@@ -126,7 +126,7 @@ public class ChannelAudienceManager : NSObject, ChannelAudienceManagerProtocol {
         notificationCenter.addObserver(
             self,
             selector: #selector(enqueueTask),
-            name: NSNotification.Name.UARemoteConfigURLManagerConfigUpdated,
+            name: RuntimeConfig.configUpdatedEvent,
             object: nil)
         
         
@@ -135,7 +135,7 @@ public class ChannelAudienceManager : NSObject, ChannelAudienceManagerProtocol {
     
     @objc
     public convenience init(dataStore: UAPreferenceDataStore,
-                            config: UARuntimeConfig,
+                            config: RuntimeConfig,
                             privacyManager: UAPrivacyManager) {
         
         self.init(dataStore: dataStore,

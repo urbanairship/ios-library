@@ -18,7 +18,8 @@ public class TestRequestSession : UARequestSession {
 
     @objc
     public init() {
-        super.init(config: UARuntimeConfig(), session: UARequestSession.sharedURLSession)
+        let config = RuntimeConfig(config: UAConfig(), dataStore: UAPreferenceDataStore(keyPrefix: UUID().uuidString))
+        super.init(config: config, session: UARequestSession.sharedURLSession)
     }
 
     public override func performHTTPRequest(_ request: UARequest, completionHandler: @escaping (Data?, HTTPURLResponse?, Error?) -> Void) -> UADisposable {

@@ -8,8 +8,6 @@
 #import "UAAnalytics.h"
 #import "UAAccengagePayload.h"
 #import "UAAccengageUtils.h"
-#import "UARuntimeConfig+Internal.h"
-#import "UARemoteConfigURLManager.h"
 #import "UAirship+Internal.h"
 
 @import AirshipCore;
@@ -34,8 +32,7 @@
     self.privacyManager = [[UAPrivacyManager alloc] initWithDataStore:self.dataStore
                                                defaultEnabledFeatures:UAFeaturesNone];
     
-    UARemoteConfigURLManager *urlManager = [UARemoteConfigURLManager remoteConfigURLManagerWithDataStore:self.dataStore];
-    self.config = [[UARuntimeConfig alloc] initWithConfig:[UAConfig defaultConfig] urlManager:urlManager];
+    self.config = [[UARuntimeConfig alloc] initWithConfig:[UAConfig defaultConfig] dataStore:self.dataStore];
     self.localeManager = [[UALocaleManager alloc] initWithDataStore:self.dataStore];
 
     self.mockChannel = OCMClassMock([UAChannel class]);

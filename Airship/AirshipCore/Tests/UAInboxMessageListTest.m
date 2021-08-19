@@ -5,7 +5,6 @@
 #import "UAInboxAPIClient+Internal.h"
 #import "UAActionArguments+Internal.h"
 #import "UAirship.h"
-#import "UARuntimeConfig.h"
 #import "UAInboxStore+Internal.h"
 #import "UAInboxStore+Internal.h"
 #import "UAInboxMessage.h"
