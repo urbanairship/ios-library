@@ -1,27 +1,21 @@
 /* Copyright Airship and Contributors */
 
-#import "UARemoteDataManager+Internal.h"
-
-#import "UARemoteDataPayload+Internal.h"
-#import "UARemoteDataStore+Internal.h"
 #import "UAAirshipBaseTest.h"
 #import "AirshipTests-Swift.h"
 
 @import AirshipCore;
 
-typedef void (^UARemoteDataAPIClientCompletionHandler)(UARemoteDataResponse * _Nullable response, NSError * _Nullable error);
-
 /**
  * Used to test what UARemoteDataManager does when the cache fails underneath it.
  */
 
-static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
+static NSString * const RefreshTask = @"RemoteDataManager.refresh";
 
 @interface UARemoteDataManagerTest : UAAirshipBaseTest
 
-@property (nonatomic, strong) id mockAPIClient;
-@property (nonatomic, strong) id mockLocaleManager;
-@property (nonatomic, strong) id mockTaskManager;
+@property (nonatomic, strong) UATestRemoteDataAPIClient *testAPIClient;
+@property (nonatomic, strong) UATestLocaleManager *testLocaleManager;
+@property (nonatomic, strong) UATestTaskManager *testTaskManager;
 
 @property (nonatomic, strong) UARemoteDataManager *remoteDataManager;
 @property (nonatomic, strong) UAPrivacyManager *privacyManager;
@@ -29,12 +23,9 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
 @property (nonatomic, strong) UATestAppStateTracker *testAppStateTracker;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 
-@property (nonatomic, copy) void (^launchHandler)(id<UATask>);
 @property (nonatomic, strong) UATestDate *testDate;
 @property (nonatomic, copy) NSArray<NSDictionary *> *remoteDataFromCloud;
-@property (nonatomic, strong) NSString *locale;
 @property (nonatomic, strong) NSURL *requestURL;
-
 @end
 
 @implementation UARemoteDataManagerTest
@@ -42,88 +33,81 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
 - (void)setUp {
     [super setUp];
 
-    self.mockAPIClient = [self mockForClass:[UARemoteDataAPIClient class]];
+    self.testAPIClient = [[UATestRemoteDataAPIClient alloc] init];
     self.requestURL = [NSURL URLWithString:@"some-url"];
-    [[[self.mockAPIClient stub] andDo:^(NSInvocation *invocation) {
-        id result = self.requestURL;
-        [invocation setReturnValue:(void *)&result];
-    }] remoteDataURLWithLocale:OCMOCK_ANY];
-
-    self.testStore = [UARemoteDataStore storeWithName:[NSUUID UUID].UUIDString inMemory:YES];
+    
+    UA_WEAKIFY(self)
+    self.testAPIClient.metdataCallback = ^(NSLocale * locale) {
+        UA_STRONGIFY(self)
+        return @{ @"url": self.requestURL.absoluteString };
+    };
+    
+    self.testStore = [[UARemoteDataStore alloc] initWithStoreName:[NSUUID UUID].UUIDString inMemory:YES];
     self.testDate = [[UATestDate alloc] initWithOffset:0 dateOverride:[NSDate date]];
     self.notificationCenter = [[NSNotificationCenter alloc] init];
 
-    self.locale = @"en-US";
-    self.mockLocaleManager = [self mockForClass:[UALocaleManager class]];
-    [[[self.mockLocaleManager stub] andDo:^(NSInvocation *invocation) {
-        id result = [NSLocale localeWithLocaleIdentifier:self.locale];
-        [invocation setReturnValue:(void *)&result];
-    }] currentLocale];
-
-    self.mockTaskManager = [self mockForClass:[UATaskManager class]];
-    // Capture the task launcher
-    [[[self.mockTaskManager stub] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        void (^launcher)(id<UATask>) =  (__bridge void (^)(id<UATask>))arg;
-
-        [invocation getArgument:&arg atIndex:3];
-        UADispatcher *dispatcher = (__bridge UADispatcher *)arg;
-
-        self.launchHandler = ^(id<UATask> task) {
-            [dispatcher dispatchAsync:^{
-                launcher(task);
-            }];
-        };
-    }] registerForTaskWithID:RefreshTask dispatcher:OCMOCK_ANY launchHandler:OCMOCK_ANY];
-
-
+    self.testLocaleManager = [[UATestLocaleManager alloc] init];
+    self.testLocaleManager.currentLocale = [[NSLocale alloc] initWithLocaleIdentifier:@"en-US"];
+    self.testTaskManager = [[UATestTaskManager alloc] init];
     self.privacyManager = [[UAPrivacyManager alloc] initWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
     self.testAppStateTracker = [[UATestAppStateTracker alloc] init];
     self.testAppStateTracker.currentState = UAApplicationStateActive;
     self.remoteDataManager = [self createManager];
+    
+    XCTAssertEqual(1, self.testTaskManager.enqueuedRequestsCount);
+    [self.testTaskManager clearEnqueuedRequests];
 }
+
 
 - (void)tearDown {
     [self.testStore shutDown];
     [super tearDown];
 }
 
-- (void)testForegroundRefresh {
-    [[self.mockTaskManager expect] enqueueRequestWithID:RefreshTask options:OCMOCK_ANY];
 
-    [self.notificationCenter postNotificationName:UAAppStateTracker.didTransitionToForeground object:nil];
-
-    [self.mockTaskManager verify];
+- (UARemoteDataManager *)createManager {
+    return [[UARemoteDataManager alloc] initWithDataStore:self.dataStore
+                                            localeManager:self.testLocaleManager
+                                           privacyManager:self.privacyManager
+                                                apiClient:self.testAPIClient
+                                          remoteDataStore:self.testStore
+                                              taskManager:self.testTaskManager
+                                               dispatcher:[[UATestDispatcher alloc] init]
+                                                     date:self.testDate
+                                       notificationCenter:self.notificationCenter
+                                          appStateTracker:self.testAppStateTracker];
 }
 
+
+- (void)testForegroundRefresh {
+    XCTAssertEqual(0, self.testTaskManager.enqueuedRequestsCount);
+    [self.notificationCenter postNotificationName:UAAppStateTracker.didTransitionToForeground object:nil];
+    XCTAssertEqual(1, self.testTaskManager.enqueuedRequestsCount);
+}
+
+
 - (void)testRemoteConfigUpdated {
-    [[self.mockTaskManager expect] enqueueRequestWithID:RefreshTask options:OCMOCK_ANY];
-
+    XCTAssertEqual(0, self.testTaskManager.enqueuedRequestsCount);
     [self.notificationCenter postNotificationName:UARuntimeConfig.configUpdatedEvent object:nil];
-
-    [self.mockTaskManager verify];
+    XCTAssertEqual(1, self.testTaskManager.enqueuedRequestsCount);
 }
 
 - (void)testCheckRefresh {
+    XCTAssertEqual(0, self.testTaskManager.enqueuedRequestsCount);
+
     // Set initial metadata
     NSArray *payloads =  @[@{ @"type": @"test", @"timestamp":@"2017-01-01T12:00:00", @"data": @{ @"foo": @"bar" }}];
     [self updatePayloads:payloads];
 
     self.remoteDataManager.remoteDataRefreshInterval = 100;
 
-    __block NSUInteger count = 0;
-    [[[self.mockTaskManager stub] andDo:^(NSInvocation *invocation) {
-        count++;
-    }] enqueueRequestWithID:RefreshTask options:OCMOCK_ANY];
-
     [self.notificationCenter postNotificationName:UAAppStateTracker.didTransitionToForeground object:nil];
-    XCTAssertEqual(0, count);
+    XCTAssertEqual(0, self.testTaskManager.enqueuedRequestsCount);
 
     // Refresh interval
     self.testDate.offset += 100;
     [self.notificationCenter postNotificationName:UAAppStateTracker.didTransitionToForeground object:nil];
-    XCTAssertEqual(1, count);
+    XCTAssertEqual(1, self.testTaskManager.enqueuedRequestsCount);
 }
 
 - (void)testCheckRefreshAppVersionChanages {
@@ -133,14 +117,8 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
     NSArray *payloads =  @[@{ @"type": @"test", @"timestamp":@"2017-01-01T12:00:00", @"data": @{ @"foo": @"bar" }}];
     [self updatePayloads:payloads];
 
-    __block NSUInteger count = 0;
-
-    [[[self.mockTaskManager stub] andDo:^(NSInvocation *invocation) {
-        count++;
-    }] enqueueRequestWithID:RefreshTask options:OCMOCK_ANY];
-
     [self.notificationCenter postNotificationName:UAAppStateTracker.didTransitionToForeground object:nil];
-    XCTAssertEqual(0, count);
+    XCTAssertEqual(0, self.testTaskManager.enqueuedRequestsCount);
 
     // change app version
     id mockedBundle = [self mockForClass:[NSBundle class]];
@@ -148,7 +126,7 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
     [[[mockedBundle stub] andReturn:@{@"CFBundleShortVersionString": @"1.1.1"}] infoDictionary];
 
     [self.notificationCenter postNotificationName:UAAppStateTracker.didTransitionToForeground object:nil];
-    XCTAssertEqual(1, count);
+    XCTAssertEqual(1, self.testTaskManager.enqueuedRequestsCount);
 }
 
 - (void)testCheckRefreshMetadataChanages {
@@ -158,31 +136,24 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
     NSArray *payloads =  @[@{ @"type": @"test", @"timestamp":@"2017-01-01T12:00:00", @"data": @{ @"foo": @"bar" }}];
     [self updatePayloads:payloads];
 
-    __block NSUInteger count = 0;
-    [[[self.mockTaskManager stub] andDo:^(NSInvocation *invocation) {
-        count++;
-    }] enqueueRequestWithID:RefreshTask options:OCMOCK_ANY];
-
     [self.notificationCenter postNotificationName:UAAppStateTracker.didTransitionToForeground object:nil];
-    XCTAssertEqual(0, count);
+    XCTAssertEqual(0, self.testTaskManager.enqueuedRequestsCount);
 
     // change URL
     self.requestURL = [NSURL URLWithString:@"some-other-url"];
 
     [self.notificationCenter postNotificationName:UAAppStateTracker.didTransitionToForeground object:nil];
-    XCTAssertEqual(1, count);
+    XCTAssertEqual(1, self.testTaskManager.enqueuedRequestsCount);
 }
 
 - (void)testLocaleChangeRefresh {
-    [[self.mockTaskManager expect] enqueueRequestWithID:RefreshTask options:OCMOCK_ANY];
-
+    XCTAssertEqual(0, self.testTaskManager.enqueuedRequestsCount);
     [self.notificationCenter postNotificationName:UALocaleManager.localeUpdatedEvent object:nil];
-
-    [self.mockTaskManager verify];
+    XCTAssertEqual(1, self.testTaskManager.enqueuedRequestsCount);
 }
 
 - (void)testContentAvailableRefresh {
-    [[self.mockTaskManager expect] enqueueRequestWithID:RefreshTask options:OCMOCK_ANY];
+    XCTAssertEqual(0, self.testTaskManager.enqueuedRequestsCount);
 
     XCTestExpectation *expectation = [self expectationWithDescription:@"Callback called"];
 
@@ -194,207 +165,88 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
     }];
 
     [self waitForTestExpectations];
-    [self.mockTaskManager verify];
+    XCTAssertEqual(1, self.testTaskManager.enqueuedRequestsCount);
 }
 
 - (void)testRefreshRemoteData {
     NSArray *payloads =  @[@{ @"type": @"test", @"timestamp":@"2017-01-01T12:00:00", @"data": @{ @"foo": @"bar" }}];
-    UARemoteDataResponse *response = [[UARemoteDataResponse alloc] initWithStatus:200
-                                                                       requestURL:self.requestURL
-                                                                         payloads:payloads
-                                                                     lastModified:@"2018-01-01T12:00:00"];
-
-    [[[self.mockAPIClient expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARemoteDataAPIClientCompletionHandler completionHandler = (__bridge UARemoteDataAPIClientCompletionHandler) arg;
-        completionHandler(response, nil);
-    }] fetchRemoteDataWithLocale:OCMOCK_ANY lastModified:OCMOCK_ANY completionHandler:OCMOCK_ANY];
-
-    id mockTask = [self mockForProtocol:@protocol(UATask)];
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Task finished"];
-    [[[mockTask expect] andDo:^(NSInvocation *invocation) {
-        [expectation fulfill];
-    }] taskCompleted];
-
-    self.launchHandler(mockTask);
-
-    [self waitForTestExpectations];
-
-    [self.mockAPIClient verify];
-    [mockTask verify];
+    [self updatePayloads:payloads];
 }
 
 - (void)testRefreshRemoteData304 {
-    NSArray *payloads =  @[@{ @"type": @"test", @"timestamp":@"2017-01-01T12:00:00", @"data": @{ @"foo": @"bar" }}];
-    UARemoteDataResponse *response = [[UARemoteDataResponse alloc] initWithStatus:200
-                                                                       requestURL:self.requestURL
-                                                                         payloads:payloads
-                                                                     lastModified:@"2018-01-01T12:00:00"];
-
-    [[[self.mockAPIClient expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARemoteDataAPIClientCompletionHandler completionHandler = (__bridge UARemoteDataAPIClientCompletionHandler) arg;
-        completionHandler(response, nil);
-    }] fetchRemoteDataWithLocale:OCMOCK_ANY lastModified:nil completionHandler:OCMOCK_ANY];
-
-
     UARemoteDataResponse *updateResponse = [[UARemoteDataResponse alloc] initWithStatus:304
-                                                                             requestURL:self.requestURL
+                                                                               metadata:nil
                                                                                payloads:nil
                                                                            lastModified:nil];
-
-    [[[self.mockAPIClient expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARemoteDataAPIClientCompletionHandler completionHandler = (__bridge UARemoteDataAPIClientCompletionHandler) arg;
+    
+    self.testAPIClient.fetchCallback = ^(NSLocale *locale, NSString *timeStamp, void (^completionHandler)(UARemoteDataResponse *, NSError *)) {
         completionHandler(updateResponse, nil);
-    }] fetchRemoteDataWithLocale:OCMOCK_ANY lastModified:@"2018-01-01T12:00:00" completionHandler:OCMOCK_ANY];
+    };
 
-    id mockTask = [self mockForProtocol:@protocol(UATask)];
-    XCTestExpectation *firstTask = [self expectationWithDescription:@"Task finished"];
-    [[[mockTask expect] andDo:^(NSInvocation *invocation) {
-        [firstTask fulfill];
-    }] taskCompleted];
-
-    self.launchHandler(mockTask);
-
-    XCTestExpectation *secontTask = [self expectationWithDescription:@"Task finished"];
-    [[[mockTask expect] andDo:^(NSInvocation *invocation) {
-        [secontTask fulfill];
-    }] taskCompleted];
-
-    self.launchHandler(mockTask);
-
-    [self waitForTestExpectations];
-
-    [self.mockAPIClient verify];
-    [mockTask verify];
+    UATestTask *task = [self.testTaskManager launchSyncWithTaskID:RefreshTask options:UATaskRequestOptions.defaultOptions];
+    XCTAssertTrue(task.completed);
 }
 
 - (void)testRefreshRemoteDataClientError {
     UARemoteDataResponse *response = [[UARemoteDataResponse alloc] initWithStatus:400
-                                                                       requestURL:self.requestURL
+                                                                         metadata:nil
                                                                          payloads:nil
                                                                      lastModified:nil];
 
-    [[[self.mockAPIClient expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARemoteDataAPIClientCompletionHandler completionHandler = (__bridge UARemoteDataAPIClientCompletionHandler) arg;
+    self.testAPIClient.fetchCallback = ^(NSLocale *locale, NSString *timeStamp, void (^completionHandler)(UARemoteDataResponse *, NSError *)) {
         completionHandler(response, nil);
-    }] fetchRemoteDataWithLocale:OCMOCK_ANY lastModified:nil completionHandler:OCMOCK_ANY];
+    };
 
-    id mockTask = [self mockForProtocol:@protocol(UATask)];
-    XCTestExpectation *firstTask = [self expectationWithDescription:@"Task finished"];
-    [[[mockTask expect] andDo:^(NSInvocation *invocation) {
-        [firstTask fulfill];
-    }] taskCompleted];
-
-    self.launchHandler(mockTask);
-
-    [self waitForTestExpectations];
-
-    [self.mockAPIClient verify];
-    [mockTask verify];
+    UATestTask *task = [self.testTaskManager launchSyncWithTaskID:RefreshTask options:UATaskRequestOptions.defaultOptions];
+    XCTAssertTrue(task.completed);
 }
 
 - (void)testRefreshRemoteDataServerError {
     UARemoteDataResponse *response = [[UARemoteDataResponse alloc] initWithStatus:500
-                                                                       requestURL:self.requestURL
+                                                                         metadata:nil
                                                                          payloads:nil
                                                                      lastModified:nil];
 
-    [[[self.mockAPIClient expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARemoteDataAPIClientCompletionHandler completionHandler = (__bridge UARemoteDataAPIClientCompletionHandler) arg;
+    self.testAPIClient.fetchCallback = ^(NSLocale *locale, NSString *timeStamp, void (^completionHandler)(UARemoteDataResponse *, NSError *)) {
         completionHandler(response, nil);
-    }] fetchRemoteDataWithLocale:OCMOCK_ANY lastModified:nil completionHandler:OCMOCK_ANY];
+    };
 
-    id mockTask = [self mockForProtocol:@protocol(UATask)];
-    XCTestExpectation *firstTask = [self expectationWithDescription:@"Task finished"];
-    [[[mockTask expect] andDo:^(NSInvocation *invocation) {
-        [firstTask fulfill];
-    }] taskFailed];
-
-    self.launchHandler(mockTask);
-
-    [self waitForTestExpectations];
-
-    [self.mockAPIClient verify];
-    [mockTask verify];
+    UATestTask *task = [self.testTaskManager launchSyncWithTaskID:RefreshTask options:UATaskRequestOptions.defaultOptions];
+    XCTAssertTrue(task.failed);
 }
 
 - (void)testRefreshLastModifiedMetadataChanges {
     NSArray *payloads =  @[@{ @"type": @"test", @"timestamp":@"2017-01-01T12:00:00", @"data": @{ @"foo": @"bar" }}];
-    UARemoteDataResponse *response = [[UARemoteDataResponse alloc] initWithStatus:200
-                                                                       requestURL:self.requestURL
-                                                                         payloads:payloads
-                                                                     lastModified:@"2018-01-01T12:00:00"];
-
-    [[[self.mockAPIClient expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARemoteDataAPIClientCompletionHandler completionHandler = (__bridge UARemoteDataAPIClientCompletionHandler) arg;
-        completionHandler(response, nil);
-    }] fetchRemoteDataWithLocale:OCMOCK_ANY lastModified:nil completionHandler:OCMOCK_ANY];
-
-    id mockTask = [self mockForProtocol:@protocol(UATask)];
-    XCTestExpectation *firstTask = [self expectationWithDescription:@"Task finished"];
-    [[[mockTask expect] andDo:^(NSInvocation *invocation) {
-        [firstTask fulfill];
-    }] taskCompleted];
-
-    self.launchHandler(mockTask);
-
-    [self waitForTestExpectations];
+    [self updatePayloads:payloads];
+    
+    self.testAPIClient.fetchCallback = ^(NSLocale *locale, NSString *timeStamp, void (^completionHandler)(UARemoteDataResponse *, NSError *)) {
+        XCTAssertNotNil(timeStamp);
+        completionHandler(nil, nil);
+    };
+    
+    UATestTask *task = [self.testTaskManager launchSyncWithTaskID:RefreshTask options:UATaskRequestOptions.defaultOptions];
+    XCTAssertTrue(task.failed);
 
     // change return URL
     self.requestURL = [NSURL URLWithString:@"some-other-url"];
 
-    [[[self.mockAPIClient expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARemoteDataAPIClientCompletionHandler completionHandler = (__bridge UARemoteDataAPIClientCompletionHandler) arg;
-        completionHandler(response, nil);
-    }] fetchRemoteDataWithLocale:OCMOCK_ANY lastModified:nil completionHandler:OCMOCK_ANY];
-
-    XCTestExpectation *secontTask = [self expectationWithDescription:@"Task finished"];
-    [[[mockTask expect] andDo:^(NSInvocation *invocation) {
-        [secontTask fulfill];
-    }] taskCompleted];
-
-    self.launchHandler(mockTask);
-
-    [self waitForTestExpectations];
-
-    [self.mockAPIClient verify];
-    [mockTask verify];
+    self.testAPIClient.fetchCallback = ^(NSLocale *locale, NSString *timeStamp, void (^completionHandler)(UARemoteDataResponse *, NSError *)) {
+        XCTAssertNil(timeStamp);
+        completionHandler(nil, nil);
+    };
+    task = [self.testTaskManager launchSyncWithTaskID:RefreshTask options:UATaskRequestOptions.defaultOptions];
+    XCTAssertTrue(task.failed);
 }
+
 
 - (void)testRefreshError {
     id error = [self mockForClass:[NSError class]];
-
-    [[[self.mockAPIClient expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARemoteDataAPIClientCompletionHandler completionHandler = (__bridge UARemoteDataAPIClientCompletionHandler) arg;
+    self.testAPIClient.fetchCallback = ^(NSLocale *locale, NSString *timeStamp, void (^completionHandler)(UARemoteDataResponse *, NSError *)) {
         completionHandler(nil, error);
-    }] fetchRemoteDataWithLocale:OCMOCK_ANY lastModified:nil completionHandler:OCMOCK_ANY];
-
-    id mockTask = [self mockForProtocol:@protocol(UATask)];
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Task finished"];
-    [[[mockTask expect] andDo:^(NSInvocation *invocation) {
-        [expectation fulfill];
-    }] taskFailed];
-
-    self.launchHandler(mockTask);
-
-    [self waitForTestExpectations];
-    [self.mockAPIClient verify];
-    [mockTask verify];
+    };
+    
+    UATestTask *task = [self.testTaskManager launchSyncWithTaskID:RefreshTask options:UATaskRequestOptions.defaultOptions];
+    XCTAssertTrue(task.failed);
 }
 
 - (void)testMetadata {
@@ -549,51 +401,44 @@ static NSString * const RefreshTask = @"UARemoteDataManager.refresh";
     XCTAssertEqualObjects(@"foo", ((UARemoteDataPayload *)remoteData[1]).type);
 }
 
+
 - (void)updatePayloads:(NSArray *)payloads {
-    UARemoteDataResponse *response = [[UARemoteDataResponse alloc] initWithStatus:200
-                                                                       requestURL:self.requestURL
-                                                                         payloads:payloads
-                                                                     lastModified:@"2018-01-01T12:00:00"];
-
-    [[[self.mockAPIClient expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UARemoteDataAPIClientCompletionHandler completionHandler = (__bridge UARemoteDataAPIClientCompletionHandler) arg;
+    UA_WEAKIFY(self)
+    self.testAPIClient.fetchCallback = ^(NSLocale * locale, NSString * timestamp, void (^completionHandler)(UARemoteDataResponse * _Nullable, NSError * _Nullable)) {
+        
+        UA_STRONGIFY(self)
+        
+        NSDictionary *metadata = self.testAPIClient.metdataCallback(locale);
+        NSMutableArray *parsed = [NSMutableArray array];
+        for (id payload in payloads) {
+            NSString *type = payload[@"type"];
+            NSDate *timestamp = [[UAUtils ISODateFormatterUTCWithDelimiter] dateFromString:payload[@"timestamp"]];
+            NSDictionary *data = payload[@"data"];
+            
+            UARemoteDataPayload *remoteData = [[UARemoteDataPayload alloc] initWithType:type
+                                                                              timestamp:timestamp
+                                                                                   data:data
+                                                                               metadata:metadata];
+            
+            [parsed addObject:remoteData];
+        }
+        
+        UARemoteDataResponse *response = [[UARemoteDataResponse alloc] initWithStatus:200
+                                                                             metadata:metadata
+                                                                              payloads:parsed
+                                                                         lastModified:@"2018-01-01T12:00:00"];
+        
         completionHandler(response, nil);
-    }] fetchRemoteDataWithLocale:OCMOCK_ANY lastModified:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    };
 
-    id mockTask = [self mockForProtocol:@protocol(UATask)];
-    XCTestExpectation *updateFinished = [self expectationWithDescription:@"Task finished"];
-    [[[mockTask expect] andDo:^(NSInvocation *invocation) {
-        [updateFinished fulfill];
-    }] taskCompleted];
-
-    self.launchHandler(mockTask);
-
-    [self waitForTestExpectations:@[updateFinished]];
-
-    [self.mockAPIClient verify];
-    [mockTask verify];
+    UATestTask *task = [self.testTaskManager launchSyncWithTaskID:RefreshTask options:UATaskRequestOptions.defaultOptions];
+    XCTAssertTrue(task.completed);
 }
 
 - (void)testSettingRefreshInterval {
-    XCTAssertEqual(self.remoteDataManager.remoteDataRefreshInterval, UARemoteDataRefreshIntervalDefault);
+    XCTAssertEqual(self.remoteDataManager.remoteDataRefreshInterval, 10);
     self.remoteDataManager.remoteDataRefreshInterval = 9999;
     XCTAssertEqual(self.remoteDataManager.remoteDataRefreshInterval, 9999);
-}
-
-- (UARemoteDataManager *)createManager {
-    return [UARemoteDataManager remoteDataManagerWithConfig:self.config
-                                                  dataStore:self.dataStore
-                                            remoteDataStore:self.testStore
-                                        remoteDataAPIClient:self.mockAPIClient
-                                         notificationCenter:self.notificationCenter
-                                            appStateTracker:self.testAppStateTracker
-                                                 dispatcher:[[UATestDispatcher alloc] init]
-                                                       date:self.testDate
-                                              localeManager:self.mockLocaleManager
-                                                taskManager:self.mockTaskManager
-                                             privacyManager:self.privacyManager];
 }
 
 @end

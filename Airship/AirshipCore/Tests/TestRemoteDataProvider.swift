@@ -1,7 +1,7 @@
 import Foundation
 import AirshipCore
 
-class TestRemoteDataProvider : NSObject, UARemoteDataProvider {
+class TestRemoteDataProvider : NSObject, RemoteDataProvider {
     var remoteDataRefreshInterval: TimeInterval = 0
     func setRefreshInterval(_ refreshInterval: TimeInterval) {
         remoteDataRefreshInterval = refreshInterval
@@ -9,21 +9,21 @@ class TestRemoteDataProvider : NSObject, UARemoteDataProvider {
     
     var isMetadataCurrent = true
     var subscribers: [String : [UUID]] = [:]
-    var blocks: [UUID : UARemoteDataPublishBlock] = [:]
+    var blocks: [UUID : (([RemoteDataPayload]) -> Void)] = [:]
     
     override init() {
         super.init()
     }
     
-    func dispatchPayload(_ payload: UARemoteDataPayload) {
+    func dispatchPayload(_ payload: RemoteDataPayload) {
         let blockIds = self.subscribers[payload.type]
         blockIds?.forEach({ blockId in
             self.blocks[blockId]?([payload])
         })
     }
     
-    func dispatchPayloads(_ payloads: [UARemoteDataPayload]) {
-        var blockIdMap: [UUID : [UARemoteDataPayload]] = [:]
+    func dispatchPayloads(_ payloads: [RemoteDataPayload]) {
+        var blockIdMap: [UUID : [RemoteDataPayload]] = [:]
         
         payloads.forEach { payload in
             self.subscribers[payload.type]?.forEach { blockId in
@@ -38,11 +38,11 @@ class TestRemoteDataProvider : NSObject, UARemoteDataProvider {
     }
     
     
-    func subscribe(withTypes payloadTypes: [String], block publishBlock: @escaping UARemoteDataPublishBlock) -> UADisposable {
+    public func subscribe(types: [String], block publishBlock: @escaping ([RemoteDataPayload]) -> Void) -> UADisposable {
         let blockID = UUID()
         self.blocks[blockID] = publishBlock
         
-        payloadTypes.forEach { type in
+        types.forEach { type in
             var blocks = self.subscribers[type] ?? []
             blocks.append(blockID)
             self.subscribers[type] = blocks
@@ -50,7 +50,7 @@ class TestRemoteDataProvider : NSObject, UARemoteDataProvider {
         
         return UADisposable {
             self.blocks[blockID] = nil
-            payloadTypes.forEach { type in
+            types.forEach { type in
                 var blocks = self.subscribers[type] ?? []
                 blocks.removeAll { $0 == blockID }
                 self.subscribers[type] = blocks.isEmpty ? nil : blocks

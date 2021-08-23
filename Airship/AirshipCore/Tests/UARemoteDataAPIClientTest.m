@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UAAirshipBaseTest.h"
-#import "UARemoteDataPayload+Internal.h"
 #import "AirshipTests-Swift.h"
 
 @import AirshipCore;
@@ -46,8 +45,21 @@
                                            lastModified:nil
                                       completionHandler:^(UARemoteDataResponse *response, NSError * _Nullable error) {
         XCTAssertNil(error);
-        XCTAssertEqualObjects(self.remoteData, response.payloads);
+        XCTAssertEqual(1, response.payloads.count);
+        
+        UARemoteDataPayload *remoteData = response.payloads.firstObject;
+        XCTAssertEqualObjects(self.remoteData[0][@"type"], remoteData.type);
+        XCTAssertEqualObjects(self.remoteData[0][@"data"], remoteData.data);
+        
+        NSString *timestamp = [UAUtils.ISODateFormatterUTCWithDelimiter stringFromDate:remoteData.timestamp];
+        XCTAssertEqualObjects(self.remoteData[0][@"timestamp"], timestamp);
+
         XCTAssertEqualObjects(responseLastModified, response.lastModified);
+        
+        id expectedMetadata = @{ @"url": self.testSession.lastRequest.url.absoluteString };
+        XCTAssertEqualObjects(expectedMetadata, response.metadata);
+        XCTAssertEqualObjects(expectedMetadata, remoteData.metadata);
+
         [refreshFinished fulfill];
     }];
 

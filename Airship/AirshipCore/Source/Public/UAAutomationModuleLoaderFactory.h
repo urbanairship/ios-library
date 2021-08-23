@@ -2,12 +2,11 @@
 
 #import <Foundation/Foundation.h>
 #import "UAModuleLoader.h"
-#import "UARemoteDataProvider.h"
-#import "UARemoteDataProvider.h"
 
 @class UAPreferenceDataStore;
 @class UAChannel;
 @protocol UAContactProtocol;
+@protocol UARemoteDataProvider;
 
 NS_ASSUME_NONNULL_BEGIN
 

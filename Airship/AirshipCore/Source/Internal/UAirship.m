@@ -9,7 +9,6 @@
 #import "UAAutoIntegration+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAAppIntegration.h"
-#import "UARemoteDataManager+Internal.h"
 #import "UALocationModuleLoaderFactory.h"
 #import "UAAutomationModuleLoaderFactory.h"
 #import "UAExtendedActionsModuleLoaderFactory.h"
@@ -155,8 +154,8 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
 #pragma clang diagnostic popu
 
-        self.sharedRemoteDataManager = [UARemoteDataManager remoteDataManagerWithConfig:self.config
-                                                                              dataStore:self.dataStore
+        self.sharedRemoteDataManager = [[UARemoteDataManager alloc] initWithConfig:self.config
+                                                                         dataStore:self.dataStore
                                                                           localeManager:self.sharedLocaleManager
                                                                          privacyManager:self.sharedPrivacyManager];
         [components addObject:self.sharedRemoteDataManager];

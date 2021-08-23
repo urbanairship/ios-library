@@ -13,13 +13,13 @@ public class RemoteConfigManager : NSObject {
     private let decoder = JSONDecoder()
     private var remoteDataSubscription: UADisposable?
     private let moduleAdapter: RemoteConfigModuleAdapterProtocol
-    private let remoteDataManager: UARemoteDataProvider
+    private let remoteDataManager: RemoteDataProvider
     private let privacyManager: UAPrivacyManager
     private let versionBlock: (() -> String)
     private let notificationCenter: NotificationCenter
 
     @objc
-    public convenience init(remoteDataManager: UARemoteDataProvider,
+    public convenience init(remoteDataManager: RemoteDataProvider,
                             privacyManager: UAPrivacyManager) {
 
         self.init(remoteDataManager: remoteDataManager,
@@ -29,7 +29,7 @@ public class RemoteConfigManager : NSObject {
                   versionBlock: { return UAUtils.bundleShortVersionString() ?? "" })
     }
     
-    init(remoteDataManager: UARemoteDataProvider,
+    init(remoteDataManager: RemoteDataProvider,
          privacyManager: UAPrivacyManager,
          moduleAdapter: RemoteConfigModuleAdapterProtocol,
          notificationCenter: NotificationCenter,
@@ -56,7 +56,7 @@ public class RemoteConfigManager : NSObject {
         remoteDataSubscription?.dispose()
     }
     
-    func processRemoteConfig(_ payloads: [UARemoteDataPayload]?) {
+    func processRemoteConfig(_ payloads: [RemoteDataPayload]?) {
         // Combine the data
         var combinedData: [AnyHashable : Any] = [:]
         payloads?.forEach {
@@ -95,7 +95,7 @@ public class RemoteConfigManager : NSObject {
             }
         
         var disableModules: [RemoteConfigModule] = []
-        var remoteDataRefreshInterval: TimeInterval = 10.0
+        var remoteDataRefreshInterval: TimeInterval = RemoteDataManager.defaultRefreshInterval
         
         disableInfos?.forEach {
             disableModules.append(contentsOf: $0.disableModules)
@@ -108,7 +108,7 @@ public class RemoteConfigManager : NSObject {
         let enabled = Set(RemoteConfigModule.allCases).subtracting(disabled)
         enabled.forEach { moduleAdapter.setComponentsEnabled(true, module: $0)}
         
-        remoteDataManager.setRefreshInterval(remoteDataRefreshInterval)
+        remoteDataManager.remoteDataRefreshInterval = remoteDataRefreshInterval
     }
 
     func applyConfigs(_ data: [AnyHashable : Any]) {
@@ -144,7 +144,7 @@ public class RemoteConfigManager : NSObject {
     func updateRemoteConfigSubscription() {
         if self.privacyManager.isAnyFeatureEnabled() && self.remoteDataSubscription == nil {
             self.remoteDataSubscription = self.remoteDataManager.subscribe(
-                withTypes: ["app_config", "app_config:ios"],
+                types: ["app_config", "app_config:ios"],
                 block: { [weak self] remoteConfig in
                     self?.processRemoteConfig(remoteConfig)
                 })

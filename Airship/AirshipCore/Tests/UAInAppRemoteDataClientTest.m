@@ -2,9 +2,7 @@
 
 #import "UAAirshipBaseTest.h"
 #import "UAInAppRemoteDataClient+Internal.h"
-#import "UARemoteDataManager+Internal.h"
 #import "UAirship+Internal.h"
-#import "UARemoteDataPayload+Internal.h"
 #import "UAPush+Internal.h"
 #import "UASchedule+Internal.h"
 #import "UAScheduleEdits+Internal.h"
@@ -19,7 +17,7 @@
 
 @interface UAInAppRemoteDataClientTest : UAAirshipBaseTest
 @property (nonatomic,strong) UAInAppRemoteDataClient *remoteDataClient;
-@property (nonatomic, strong) UARemoteDataPublishBlock publishBlock;
+@property (nonatomic, copy) void (^publishBlock)(NSArray<UARemoteDataPayload *> *);
 @property (nonatomic, strong) NSOperationQueue *queue;
 
 @property (nonatomic, strong) id mockRemoteDataProvider;
@@ -47,7 +45,7 @@
 
         // verify and check publishBlock
         [invocation getArgument:&arg atIndex:3];
-        self.publishBlock = (__bridge UARemoteDataPublishBlock)arg;
+        self.publishBlock = (__bridge void (^)(NSArray *))arg;
         XCTAssertNotNil(self.publishBlock);
     }] subscribeWithTypes:OCMOCK_ANY block:OCMOCK_ANY];
 

@@ -16,5 +16,8 @@ public class TestLocaleManager : NSObject, LocaleManagerProtocol {
         get {
             return self._locale ?? Locale.autoupdatingCurrent
         }
+        set {
+            self._locale = newValue
+        }
     }
 }

@@ -4,7 +4,6 @@
 #import "UAInAppMessageAssetManager+Internal.h"
 #import "UAInAppMessageBannerDisplayContent.h"
 #import "UAInAppMessageAssetCache+Internal.h"
-#import "UARemoteDataManager+Internal.h"
 #import "UAAsyncOperation.h"
 
 #if __has_include("AirshipCore/AirshipCore-Swift.h")

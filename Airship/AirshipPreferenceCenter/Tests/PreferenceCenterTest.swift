@@ -111,12 +111,9 @@ class PreferenceCenterTest: XCTestCase {
         XCTAssertFalse(self.preferenceCenter.deepLink(tooManyArgs))
     }
 
-    private func createPayload(_ json: String) -> UARemoteDataPayload {
+    private func createPayload(_ json: String) -> RemoteDataPayload {
         let data = try! JSONSerialization.jsonObject(with: json.data(using: .utf8)!, options: []) as! [AnyHashable : Any]
         
-        return UARemoteDataPayload(type: "preference_forms", timestamp: Date(), data: data, metadata: [:])
+        return RemoteDataPayload(type: "preference_forms", timestamp: Date(), data: data, metadata: [:])
     }
-    
-    
-
 }

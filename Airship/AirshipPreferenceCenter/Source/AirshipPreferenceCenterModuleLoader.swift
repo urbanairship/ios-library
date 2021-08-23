@@ -20,7 +20,7 @@ public class AirshipPreferenceCenterModuleLoader : NSObject, UAModuleLoader, UAP
     
     public static func moduleLoader(with dataStore: UAPreferenceDataStore,
                                     privacyManager: UAPrivacyManager,
-                                    remoteDataProvider: UARemoteDataProvider) -> UAModuleLoader {
+                                    remoteDataProvider: RemoteDataProvider) -> UAModuleLoader {
         let preferenceCenter = PreferenceCenter(dataStore: dataStore, privacyManager: privacyManager, remoteDataProvider: remoteDataProvider)
         return AirshipPreferenceCenterModuleLoader(preferenceCenter)
     }

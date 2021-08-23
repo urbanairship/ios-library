@@ -2,7 +2,7 @@
 
 // NOTE: For internal use only. :nodoc:
 class RemoteConfigCache  {
-    private static let dataStoreKey = "com.urbanairship.config.remote_config_key"
+    private static let dataStoreKey = "com.urbanairship.config.remote_config_cache"
     private let dataStore: UAPreferenceDataStore
     
     private var _remoteConfig: RemoteConfig?

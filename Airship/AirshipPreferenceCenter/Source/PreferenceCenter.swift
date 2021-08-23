@@ -40,7 +40,7 @@ public class PreferenceCenter : UAComponent {
     
     private let dataStore: UAPreferenceDataStore
     private let privacyManager: UAPrivacyManager
-    private let remoteDataProvider: UARemoteDataProvider
+    private let remoteDataProvider: RemoteDataProvider
     
     private var viewController : UIViewController?
     
@@ -50,7 +50,7 @@ public class PreferenceCenter : UAComponent {
     @objc
     public var style: PreferenceCenterStyle?
     
-    init(dataStore: UAPreferenceDataStore, privacyManager: UAPrivacyManager, remoteDataProvider: UARemoteDataProvider) {
+    init(dataStore: UAPreferenceDataStore, privacyManager: UAPrivacyManager, remoteDataProvider: RemoteDataProvider) {
         self.dataStore = dataStore
         self.privacyManager = privacyManager
         self.remoteDataProvider = remoteDataProvider
@@ -125,7 +125,7 @@ public class PreferenceCenter : UAComponent {
     @objc(configForPreferenceCenterID:completionHandler:)
     @discardableResult
     public func config(preferenceCenterID: String, completionHandler: @escaping (PreferenceCenterConfig?) -> ()) -> UADisposable {
-        return self.remoteDataProvider.subscribe(withTypes: [PreferenceCenter.payloadType]) { payloads in
+        return self.remoteDataProvider.subscribe(types: [PreferenceCenter.payloadType]) { payloads in
             
             guard let preferences = payloads.first?.data[PreferenceCenter.preferenceFormsKey] as? [[AnyHashable : Any]] else {
                 completionHandler(nil)

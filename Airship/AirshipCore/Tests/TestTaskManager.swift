@@ -3,11 +3,24 @@ import Foundation
 @testable
 import AirshipCore
 
-public class TestTaskManager : TaskManagerProtocol {
+@objc(UATestTaskManager)
+public class TestTaskManager : NSObject, TaskManagerProtocol {
     private var launchHandlers: [String : (UADispatcher, (UATask) -> Void)] = [:]
+    
     public var enqueuedRequests: [(String, UATaskRequestOptions, TimeInterval)] = []
     
-    init() {}
+    @objc
+    public var enqueuedRequestsCount : Int {
+        get {
+            return enqueuedRequests.count
+        }
+    }
+    
+    
+    @objc
+    public func clearEnqueuedRequests() {
+        self.enqueuedRequests.removeAll()
+    }
     
     public func register(taskIDs: [String], dispatcher: UADispatcher?, launchHandler: @escaping (UATask) -> Void) {
         taskIDs.forEach { register(taskID: $0, dispatcher: dispatcher, launchHandler: launchHandler) }
@@ -25,6 +38,7 @@ public class TestTaskManager : TaskManagerProtocol {
         enqueuedRequests.append((taskID, options, initialDelay))
     }
     
+    @objc
     public func launchSync(taskID: String, options: UATaskRequestOptions = UATaskRequestOptions.defaultOptions) -> TestTask {
         let testTask = TestTask(taskID, options)
         let dispatcher = self.launchHandlers[taskID]!.0
@@ -38,14 +52,21 @@ public class TestTaskManager : TaskManagerProtocol {
     }
 }
 
-public class TestTask : UATask {
+@objc(UATestTask)
+public class TestTask : NSObject, UATask {
+    @objc
     public var expirationHandler: (() -> Void)?
     
+    @objc
     public var taskID: String
     
+    @objc
     public var requestOptions: UATaskRequestOptions
     
+    @objc
     public var completed = false;
+    
+    @objc
     public var failed = false;
     
     init(_ taskID: String, _ options: UATaskRequestOptions) {
@@ -53,10 +74,12 @@ public class TestTask : UATask {
         self.requestOptions = options
     }
     
+    @objc
     public func taskCompleted() {
         completed = true
     }
     
+    @objc
     public func taskFailed() {
         failed = true
     }

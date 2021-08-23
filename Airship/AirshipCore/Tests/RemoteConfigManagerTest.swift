@@ -47,7 +47,7 @@ class RemoteConfigManagerTest: XCTestCase {
             ]
         ]
         
-        let payload = UARemoteDataPayload(type: "app_config", timestamp: Date(), data: data, metadata: nil)
+        let payload = RemoteDataPayload(type: "app_config", timestamp: Date(), data: data, metadata: nil)
         self.testRemoteDataProvider.dispatchPayload(payload)
         
         let expectedDisabled: Set<RemoteConfigModule> = Set([RemoteConfigModule.chat, RemoteConfigModule.channel])
@@ -57,7 +57,7 @@ class RemoteConfigManagerTest: XCTestCase {
     }
     
     func testEmptyConfig() throws {
-        let payload = UARemoteDataPayload(type: "app_config", timestamp: Date(), data: [:], metadata: nil)
+        let payload = RemoteDataPayload(type: "app_config", timestamp: Date(), data: [:], metadata: nil)
         self.testRemoteDataProvider.dispatchPayload(payload)
         
         XCTAssertEqual(Set(RemoteConfigModule.allCases), self.testModuleAdapter.enabledModules)
@@ -77,7 +77,7 @@ class RemoteConfigManagerTest: XCTestCase {
             ]
         ]
         
-        let payload = UARemoteDataPayload(type: "app_config", timestamp: Date(), data: data, metadata: nil)
+        let payload = RemoteDataPayload(type: "app_config", timestamp: Date(), data: data, metadata: nil)
         self.testRemoteDataProvider.dispatchPayload(payload)
         XCTAssertEqual(100.0, self.testRemoteDataProvider.remoteDataRefreshInterval)
     }
@@ -88,7 +88,7 @@ class RemoteConfigManagerTest: XCTestCase {
             "channel": ["neat"]
         ]
         
-        let payload = UARemoteDataPayload(type: "app_config:ios", timestamp: Date(), data: data, metadata: nil)
+        let payload = RemoteDataPayload(type: "app_config:ios", timestamp: Date(), data: data, metadata: nil)
         self.testRemoteDataProvider.dispatchPayload(payload)
         
         XCTAssertEqual("some-config", self.testModuleAdapter.moduleConfig[.contact] as! String)
@@ -115,7 +115,7 @@ class RemoteConfigManagerTest: XCTestCase {
             fromNotification = notification.userInfo?[RemoteConfigManager.remoteConfigKey] as? RemoteConfig
         }
         
-        let payload = UARemoteDataPayload(type: "app_config:ios", timestamp: Date(), data: data, metadata: nil)
+        let payload = RemoteDataPayload(type: "app_config:ios", timestamp: Date(), data: data, metadata: nil)
         self.testRemoteDataProvider.dispatchPayload(payload)
         
         XCTAssertEqual(remoteConfig, fromNotification)
@@ -131,8 +131,8 @@ class RemoteConfigManagerTest: XCTestCase {
             "contact": "some-other-config",
             "message_center": ["wild"]
         ]
-        let platformPayload = UARemoteDataPayload(type: "app_config:ios", timestamp: Date(), data: platformData, metadata: nil)
-        let commonPayload = UARemoteDataPayload(type: "app_config", timestamp: Date(), data: commonData, metadata: nil)
+        let platformPayload = RemoteDataPayload(type: "app_config:ios", timestamp: Date(), data: platformData, metadata: nil)
+        let commonPayload = RemoteDataPayload(type: "app_config", timestamp: Date(), data: commonData, metadata: nil)
         
         self.testRemoteDataProvider.dispatchPayloads([platformPayload, commonPayload])
         
@@ -172,7 +172,7 @@ class RemoteConfigManagerTest: XCTestCase {
             ]
         ]
         
-        let payload = UARemoteDataPayload(type: "app_config", timestamp: Date(), data: data, metadata: nil)
+        let payload = RemoteDataPayload(type: "app_config", timestamp: Date(), data: data, metadata: nil)
         
         self.appVersion = "0.0.0"
         self.testRemoteDataProvider.dispatchPayload(payload)
