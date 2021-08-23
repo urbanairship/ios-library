@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UAJavaScriptEnvironment.h"
-#import "NSString+UAURLEncoding.h"
 #import "UAGlobal.h"
 #import "UAirship.h"
 
@@ -44,7 +43,7 @@
     if (!value) {
         extension = [NSString stringWithFormat:@"_UAirship.%@ = function() {return null;};", methodName];
     } else {
-        NSString *encodedValue = [value urlEncodedString];
+        NSString *encodedValue = [value stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLHostAllowedCharacterSet]];
         extension = [NSString stringWithFormat:@"_UAirship.%@ = function() {return decodeURIComponent(\"%@\");};", methodName, encodedValue];
     }
     [self.extensions addObject:extension];

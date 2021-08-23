@@ -9,7 +9,6 @@
 #import "UAirship.h"
 #import "UAURLAllowList.h"
 #import "UAJavaScriptCommand.h"
-#import "NSString+UAURLEncoding.h"
 #import "UANativeBridgeActionHandler+Internal.h"
 
 

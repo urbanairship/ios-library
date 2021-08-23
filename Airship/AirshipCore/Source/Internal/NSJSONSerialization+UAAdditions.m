@@ -85,5 +85,4 @@ NSString * const UAJSONSerializationErrorDomain = @"com.urbanairship.json_serial
                                              error: error];
 }
 
-
 @end

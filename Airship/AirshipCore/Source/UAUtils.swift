@@ -502,4 +502,6 @@ public class UAUtils : NSObject {
         """
         AirshipLogger.trace(logMessage)
     }
+    
+
 }

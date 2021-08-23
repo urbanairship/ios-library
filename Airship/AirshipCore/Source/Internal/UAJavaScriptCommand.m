@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UAJavaScriptCommand.h"
-#import "NSString+UAURLEncoding.h"
 
 @interface UAJavaScriptCommand()
 @property (nonatomic, copy, nullable) NSString *name;
@@ -30,7 +29,7 @@
         NSMutableArray *decodedArguments = [NSMutableArray arrayWithCapacity:encodedArguments.count];
 
         for (NSString *encodedArgument in encodedArguments) {
-            [decodedArguments addObject:[encodedArgument urlDecodedString]];
+            [decodedArguments addObject:[encodedArgument stringByRemovingPercentEncoding]];
         }
 
         arguments = [decodedArguments copy];

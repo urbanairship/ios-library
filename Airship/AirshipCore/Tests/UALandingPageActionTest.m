@@ -3,7 +3,6 @@
 #import "UABaseTest.h"
 #import "UALandingPageAction.h"
 #import "UAirship+Internal.h"
-#import "NSString+UAURLEncoding.h"
 #import "UAInAppAutomation.h"
 #import "UAInAppMessageHTMLDisplayContent+Internal.h"
 #import "UASchedule+Internal.h"

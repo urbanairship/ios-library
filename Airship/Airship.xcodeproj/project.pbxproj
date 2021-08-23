@@ -249,6 +249,12 @@
 		6E15B72D26CF13BC0099C92D /* RemoteDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15B72C26CF13BC0099C92D /* RemoteDataProvider.swift */; };
 		6E15B72E26CF13BC0099C92D /* RemoteDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15B72C26CF13BC0099C92D /* RemoteDataProvider.swift */; };
 		6E15B73026CF4F6B0099C92D /* TestRemoteDataAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15B72F26CF4F6B0099C92D /* TestRemoteDataAPIClient.swift */; };
+		6E15B73D26D43F120099C92D /* UANSURLValueTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15B73A26D43F110099C92D /* UANSURLValueTransformer.swift */; };
+		6E15B73E26D43F120099C92D /* UANSURLValueTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15B73A26D43F110099C92D /* UANSURLValueTransformer.swift */; };
+		6E15B73F26D43F120099C92D /* UANSArrayValueTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15B73B26D43F120099C92D /* UANSArrayValueTransformer.swift */; };
+		6E15B74026D43F120099C92D /* UANSArrayValueTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15B73B26D43F120099C92D /* UANSArrayValueTransformer.swift */; };
+		6E15B74126D43F120099C92D /* UANSDictionaryValueTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15B73C26D43F120099C92D /* UANSDictionaryValueTransformer.swift */; };
+		6E15B74226D43F120099C92D /* UANSDictionaryValueTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15B73C26D43F120099C92D /* UANSDictionaryValueTransformer.swift */; };
 		6E1892B1268CE8FE00417887 /* Lock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8E1C9A26447B3800B11791 /* Lock.swift */; };
 		6E1892B2268CE8FE00417887 /* Lock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8E1C9A26447B3800B11791 /* Lock.swift */; };
 		6E1892C8268D15C300417887 /* PreferenceCenterTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1892C7268D15C300417887 /* PreferenceCenterTest.swift */; };
@@ -281,16 +287,10 @@
 		6E2D6AF626B0C6CA00B7C226 /* TestSubscriptionListAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2D6AF526B0C6CA00B7C226 /* TestSubscriptionListAPIClient.swift */; };
 		6E2E914F238D99F0008488D3 /* AirshipLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E9375602376164600AA9C2A /* AirshipLocation.framework */; };
 		6E2E9152238DA39E008488D3 /* AirshipLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E9375602376164600AA9C2A /* AirshipLocation.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
-		6E3494F02580254D007F5357 /* UANSArrayValueTransformer.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E3494EC2580254D007F5357 /* UANSArrayValueTransformer.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E3494F12580254D007F5357 /* UANSArrayValueTransformer.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E3494EC2580254D007F5357 /* UANSArrayValueTransformer.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E34950525802571007F5357 /* UANSArrayValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E34950225802571007F5357 /* UANSArrayValueTransformer.m */; };
-		6E34950625802571007F5357 /* UANSArrayValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E34950225802571007F5357 /* UANSArrayValueTransformer.m */; };
 		6E3673E01E8AF9D8005B5DFF /* UAEnableFeatureActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E3673DF1E8AF9D8005B5DFF /* UAEnableFeatureActionTest.m */; };
 		6E3942281F33DA52003D1C50 /* UAInboxStoreTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E3942271F33DA52003D1C50 /* UAInboxStoreTest.m */; };
 		6E4114D32538C0A900FEE4E8 /* UANativeBridgeDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E41143F2538C09E00FEE4E8 /* UANativeBridgeDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E4114D42538C0A900FEE4E8 /* UANativeBridgeDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E41143F2538C09E00FEE4E8 /* UANativeBridgeDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E4114D72538C0A900FEE4E8 /* UANSURLValueTransformer.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114402538C09E00FEE4E8 /* UANSURLValueTransformer.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E4114D82538C0A900FEE4E8 /* UANSURLValueTransformer.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114402538C09E00FEE4E8 /* UANSURLValueTransformer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E4114EB2538C0AA00FEE4E8 /* UAJavaScriptEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114452538C09E00FEE4E8 /* UAJavaScriptEnvironment.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E4114EC2538C0AA00FEE4E8 /* UAJavaScriptEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114452538C09E00FEE4E8 /* UAJavaScriptEnvironment.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E4114F32538C0AA00FEE4E8 /* UAComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114472538C09F00FEE4E8 /* UAComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -345,8 +345,6 @@
 		6E4115AC2538C0AE00FEE4E8 /* UAExtendableAnalyticsHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114812538C0A300FEE4E8 /* UAExtendableAnalyticsHeaders.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E4115AF2538C0AE00FEE4E8 /* UAAutomationModuleLoaderFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114822538C0A300FEE4E8 /* UAAutomationModuleLoaderFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E4115B02538C0AE00FEE4E8 /* UAAutomationModuleLoaderFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114822538C0A300FEE4E8 /* UAAutomationModuleLoaderFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E4115B72538C0AE00FEE4E8 /* UANSDictionaryValueTransformer.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114842538C0A400FEE4E8 /* UANSDictionaryValueTransformer.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E4115B82538C0AF00FEE4E8 /* UANSDictionaryValueTransformer.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114842538C0A400FEE4E8 /* UANSDictionaryValueTransformer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E4115BF2538C0AF00FEE4E8 /* UAJSONValueMatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114862538C0A400FEE4E8 /* UAJSONValueMatcher.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E4115C02538C0AF00FEE4E8 /* UAJSONValueMatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114862538C0A400FEE4E8 /* UAJSONValueMatcher.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E4115C32538C0AF00FEE4E8 /* UAirship.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114872538C0A400FEE4E8 /* UAirship.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -371,8 +369,6 @@
 		6E4116342538C0B200FEE4E8 /* UADebugLibraryModuleLoaderFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114AF2538C0A700FEE4E8 /* UADebugLibraryModuleLoaderFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E4116432538C0B200FEE4E8 /* UAChannelRegistrationPayload.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114B32538C0A700FEE4E8 /* UAChannelRegistrationPayload.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E4116442538C0B200FEE4E8 /* UAChannelRegistrationPayload.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114B32538C0A700FEE4E8 /* UAChannelRegistrationPayload.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E41165B2538C0B300FEE4E8 /* NSString+UAURLEncoding.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114B92538C0A700FEE4E8 /* NSString+UAURLEncoding.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E41165C2538C0B300FEE4E8 /* NSString+UAURLEncoding.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114B92538C0A700FEE4E8 /* NSString+UAURLEncoding.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E4116672538C0B300FEE4E8 /* UALocationProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114BC2538C0A800FEE4E8 /* UALocationProvider.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E4116682538C0B300FEE4E8 /* UALocationProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114BC2538C0A800FEE4E8 /* UALocationProvider.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E4116872135C4E4005CC871 /* UARetriablePipelineTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4116862135C4E4005CC871 /* UARetriablePipelineTest.m */; };
@@ -384,10 +380,6 @@
 		6E4117E82538C1FB00FEE4E8 /* UAEventStore+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4116D82538C1E500FEE4E8 /* UAEventStore+Internal.h */; };
 		6E4117EB2538C1FB00FEE4E8 /* UASwizzler.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4116D92538C1E600FEE4E8 /* UASwizzler.m */; };
 		6E4117EC2538C1FB00FEE4E8 /* UASwizzler.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4116D92538C1E600FEE4E8 /* UASwizzler.m */; };
-		6E41186B2538C1FD00FEE4E8 /* NSString+UAURLEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4116F92538C1E900FEE4E8 /* NSString+UAURLEncoding.m */; };
-		6E41186C2538C1FD00FEE4E8 /* NSString+UAURLEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4116F92538C1E900FEE4E8 /* NSString+UAURLEncoding.m */; };
-		6E41187B2538C1FD00FEE4E8 /* UANSDictionaryValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4116FD2538C1EA00FEE4E8 /* UANSDictionaryValueTransformer.m */; };
-		6E41187C2538C1FD00FEE4E8 /* UANSDictionaryValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4116FD2538C1EA00FEE4E8 /* UANSDictionaryValueTransformer.m */; };
 		6E4118932538C1FD00FEE4E8 /* UAAppIntegration+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4117032538C1EA00FEE4E8 /* UAAppIntegration+Internal.h */; };
 		6E4118942538C1FD00FEE4E8 /* UAAppIntegration+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4117032538C1EA00FEE4E8 /* UAAppIntegration+Internal.h */; };
 		6E41189F2538C1FD00FEE4E8 /* UAEventManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4117062538C1EA00FEE4E8 /* UAEventManager.m */; };
@@ -472,8 +464,6 @@
 		6E411B082538C20700FEE4E8 /* UAComponent+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4117A02538C1F900FEE4E8 /* UAComponent+Internal.h */; };
 		6E411B0B2538C20700FEE4E8 /* UAURLAllowList.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4117A12538C1F900FEE4E8 /* UAURLAllowList.m */; };
 		6E411B0C2538C20700FEE4E8 /* UAURLAllowList.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4117A12538C1F900FEE4E8 /* UAURLAllowList.m */; };
-		6E411B172538C20700FEE4E8 /* UANSURLValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4117A42538C1F900FEE4E8 /* UANSURLValueTransformer.m */; };
-		6E411B182538C20700FEE4E8 /* UANSURLValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4117A42538C1F900FEE4E8 /* UANSURLValueTransformer.m */; };
 		6E411B232538C20700FEE4E8 /* UASwizzler+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4117A72538C1FA00FEE4E8 /* UASwizzler+Internal.h */; };
 		6E411B242538C20700FEE4E8 /* UASwizzler+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4117A72538C1FA00FEE4E8 /* UASwizzler+Internal.h */; };
 		6E411B382538C44300FEE4E8 /* AirshipLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E411B352538C44300FEE4E8 /* AirshipLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1653,6 +1643,9 @@
 		6E15B72926CEDBA50099C92D /* RemoteDataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteDataManager.swift; sourceTree = "<group>"; };
 		6E15B72C26CF13BC0099C92D /* RemoteDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteDataProvider.swift; sourceTree = "<group>"; };
 		6E15B72F26CF4F6B0099C92D /* TestRemoteDataAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestRemoteDataAPIClient.swift; sourceTree = "<group>"; };
+		6E15B73A26D43F110099C92D /* UANSURLValueTransformer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UANSURLValueTransformer.swift; sourceTree = "<group>"; };
+		6E15B73B26D43F120099C92D /* UANSArrayValueTransformer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UANSArrayValueTransformer.swift; sourceTree = "<group>"; };
+		6E15B73C26D43F120099C92D /* UANSDictionaryValueTransformer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UANSDictionaryValueTransformer.swift; sourceTree = "<group>"; };
 		6E1892C7268D15C300417887 /* PreferenceCenterTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterTest.swift; sourceTree = "<group>"; };
 		6E1892C9268D16E200417887 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6E1892CC268D17D200417887 /* MockRemoteDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockRemoteDataProvider.swift; sourceTree = "<group>"; };
@@ -1683,13 +1676,10 @@
 		6E2D6AF326B0C3C500B7C226 /* ChannelAudienceManagerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelAudienceManagerTest.swift; sourceTree = "<group>"; };
 		6E2D6AF526B0C6CA00B7C226 /* TestSubscriptionListAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSubscriptionListAPIClient.swift; sourceTree = "<group>"; };
 		6E3494EB2580222A007F5357 /* UAAutomation 8.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAAutomation 8.xcdatamodel"; sourceTree = "<group>"; };
-		6E3494EC2580254D007F5357 /* UANSArrayValueTransformer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UANSArrayValueTransformer.h; path = Public/UANSArrayValueTransformer.h; sourceTree = "<group>"; };
-		6E34950225802571007F5357 /* UANSArrayValueTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UANSArrayValueTransformer.m; path = Internal/UANSArrayValueTransformer.m; sourceTree = "<group>"; };
 		6E356F9B2579513D004CCCC8 /* UAAutomation 7.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAAutomation 7.xcdatamodel"; sourceTree = "<group>"; };
 		6E3673DF1E8AF9D8005B5DFF /* UAEnableFeatureActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAEnableFeatureActionTest.m; sourceTree = "<group>"; };
 		6E3942271F33DA52003D1C50 /* UAInboxStoreTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxStoreTest.m; sourceTree = "<group>"; };
 		6E41143F2538C09E00FEE4E8 /* UANativeBridgeDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UANativeBridgeDelegate.h; path = Public/UANativeBridgeDelegate.h; sourceTree = "<group>"; };
-		6E4114402538C09E00FEE4E8 /* UANSURLValueTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UANSURLValueTransformer.h; path = Public/UANSURLValueTransformer.h; sourceTree = "<group>"; };
 		6E4114452538C09E00FEE4E8 /* UAJavaScriptEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAJavaScriptEnvironment.h; path = Public/UAJavaScriptEnvironment.h; sourceTree = "<group>"; };
 		6E4114472538C09F00FEE4E8 /* UAComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAComponent.h; path = Public/UAComponent.h; sourceTree = "<group>"; };
 		6E4114482538C09F00FEE4E8 /* UAEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAEvent.h; path = Public/UAEvent.h; sourceTree = "<group>"; };
@@ -1717,7 +1707,6 @@
 		6E4114802538C0A300FEE4E8 /* UAPushProviderDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAPushProviderDelegate.h; path = Public/UAPushProviderDelegate.h; sourceTree = "<group>"; };
 		6E4114812538C0A300FEE4E8 /* UAExtendableAnalyticsHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAExtendableAnalyticsHeaders.h; path = Public/UAExtendableAnalyticsHeaders.h; sourceTree = "<group>"; };
 		6E4114822538C0A300FEE4E8 /* UAAutomationModuleLoaderFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAAutomationModuleLoaderFactory.h; path = Public/UAAutomationModuleLoaderFactory.h; sourceTree = "<group>"; };
-		6E4114842538C0A400FEE4E8 /* UANSDictionaryValueTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UANSDictionaryValueTransformer.h; path = Public/UANSDictionaryValueTransformer.h; sourceTree = "<group>"; };
 		6E4114862538C0A400FEE4E8 /* UAJSONValueMatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAJSONValueMatcher.h; path = Public/UAJSONValueMatcher.h; sourceTree = "<group>"; };
 		6E4114872538C0A400FEE4E8 /* UAirship.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAirship.h; path = Public/UAirship.h; sourceTree = "<group>"; };
 		6E4114962538C0A400FEE4E8 /* UAJSONSerialization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAJSONSerialization.h; path = Public/UAJSONSerialization.h; sourceTree = "<group>"; };
@@ -1730,7 +1719,6 @@
 		6E4114AE2538C0A600FEE4E8 /* UAAnalyticsEventConsumerProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAAnalyticsEventConsumerProtocol.h; path = Public/UAAnalyticsEventConsumerProtocol.h; sourceTree = "<group>"; };
 		6E4114AF2538C0A700FEE4E8 /* UADebugLibraryModuleLoaderFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UADebugLibraryModuleLoaderFactory.h; path = Public/UADebugLibraryModuleLoaderFactory.h; sourceTree = "<group>"; };
 		6E4114B32538C0A700FEE4E8 /* UAChannelRegistrationPayload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAChannelRegistrationPayload.h; path = Public/UAChannelRegistrationPayload.h; sourceTree = "<group>"; };
-		6E4114B92538C0A700FEE4E8 /* NSString+UAURLEncoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSString+UAURLEncoding.h"; path = "Public/NSString+UAURLEncoding.h"; sourceTree = "<group>"; };
 		6E4114BC2538C0A800FEE4E8 /* UALocationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UALocationProvider.h; path = Public/UALocationProvider.h; sourceTree = "<group>"; };
 		6E4114C52538C0A900FEE4E8 /* UAJSONPredicate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAJSONPredicate.h; path = Public/UAJSONPredicate.h; sourceTree = "<group>"; };
 		6E4116862135C4E4005CC871 /* UARetriablePipelineTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UARetriablePipelineTest.m; sourceTree = "<group>"; };
@@ -1738,8 +1726,6 @@
 		6E4116D82538C1E500FEE4E8 /* UAEventStore+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAEventStore+Internal.h"; path = "Internal/UAEventStore+Internal.h"; sourceTree = "<group>"; };
 		6E4116D92538C1E600FEE4E8 /* UASwizzler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UASwizzler.m; path = Internal/UASwizzler.m; sourceTree = "<group>"; };
 		6E4116DD2538C1E600FEE4E8 /* UAColorUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAColorUtils.m; path = Internal/UAColorUtils.m; sourceTree = "<group>"; };
-		6E4116F92538C1E900FEE4E8 /* NSString+UAURLEncoding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSString+UAURLEncoding.m"; path = "Internal/NSString+UAURLEncoding.m"; sourceTree = "<group>"; };
-		6E4116FD2538C1EA00FEE4E8 /* UANSDictionaryValueTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UANSDictionaryValueTransformer.m; path = Internal/UANSDictionaryValueTransformer.m; sourceTree = "<group>"; };
 		6E4117032538C1EA00FEE4E8 /* UAAppIntegration+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAAppIntegration+Internal.h"; path = "Internal/UAAppIntegration+Internal.h"; sourceTree = "<group>"; };
 		6E4117062538C1EA00FEE4E8 /* UAEventManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAEventManager.m; path = Internal/UAEventManager.m; sourceTree = "<group>"; };
 		6E41170D2538C1EB00FEE4E8 /* UAJSONMatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAJSONMatcher.m; path = Internal/UAJSONMatcher.m; sourceTree = "<group>"; };
@@ -1782,7 +1768,6 @@
 		6E41179C2538C1F900FEE4E8 /* UAConfig+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAConfig+Internal.h"; path = "Internal/UAConfig+Internal.h"; sourceTree = "<group>"; };
 		6E4117A02538C1F900FEE4E8 /* UAComponent+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAComponent+Internal.h"; path = "Internal/UAComponent+Internal.h"; sourceTree = "<group>"; };
 		6E4117A12538C1F900FEE4E8 /* UAURLAllowList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAURLAllowList.m; path = Internal/UAURLAllowList.m; sourceTree = "<group>"; };
-		6E4117A42538C1F900FEE4E8 /* UANSURLValueTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UANSURLValueTransformer.m; path = Internal/UANSURLValueTransformer.m; sourceTree = "<group>"; };
 		6E4117A72538C1FA00FEE4E8 /* UASwizzler+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UASwizzler+Internal.h"; path = "Internal/UASwizzler+Internal.h"; sourceTree = "<group>"; };
 		6E411B352538C44300FEE4E8 /* AirshipLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirshipLib.h; path = Public/AirshipLib.h; sourceTree = "<group>"; };
 		6E411B6A2538C4E500FEE4E8 /* UADefaultActions.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UADefaultActions.plist; sourceTree = "<group>"; };
@@ -3523,8 +3508,6 @@
 				6E4116D62538C1E500FEE4E8 /* NSDictionary+UAAdditions.m */,
 				6E4114772538C0A200FEE4E8 /* NSString+UALocalizationAdditions.h */,
 				6E4117932538C1F800FEE4E8 /* NSString+UALocalizationAdditions.m */,
-				6E4114B92538C0A700FEE4E8 /* NSString+UAURLEncoding.h */,
-				6E4116F92538C1E900FEE4E8 /* NSString+UAURLEncoding.m */,
 				6E41144D2538C09F00FEE4E8 /* UAAsyncOperation.h */,
 				6E4117762538C1F500FEE4E8 /* UAAsyncOperation.m */,
 				6E41147B2538C0A300FEE4E8 /* UAKeychainUtils.h */,
@@ -3539,12 +3522,9 @@
 		6E411D842538D2F600FEE4E8 /* Value Transformers */ = {
 			isa = PBXGroup;
 			children = (
-				6E34950225802571007F5357 /* UANSArrayValueTransformer.m */,
-				6E3494EC2580254D007F5357 /* UANSArrayValueTransformer.h */,
-				6E4114842538C0A400FEE4E8 /* UANSDictionaryValueTransformer.h */,
-				6E4116FD2538C1EA00FEE4E8 /* UANSDictionaryValueTransformer.m */,
-				6E4114402538C09E00FEE4E8 /* UANSURLValueTransformer.h */,
-				6E4117A42538C1F900FEE4E8 /* UANSURLValueTransformer.m */,
+				6E15B73B26D43F120099C92D /* UANSArrayValueTransformer.swift */,
+				6E15B73C26D43F120099C92D /* UANSDictionaryValueTransformer.swift */,
+				6E15B73A26D43F110099C92D /* UANSURLValueTransformer.swift */,
 			);
 			name = "Value Transformers";
 			sourceTree = "<group>";
@@ -4851,7 +4831,6 @@
 				6E4115372538C0AB00FEE4E8 /* UANativeBridgeExtensionDelegate.h in Headers */,
 				6E4115EB2538C0B000FEE4E8 /* UAJSONMatcher.h in Headers */,
 				6E41150B2538C0AA00FEE4E8 /* UAAsyncOperation.h in Headers */,
-				6E4114D72538C0A900FEE4E8 /* UANSURLValueTransformer.h in Headers */,
 				6E4118EB2538C1FE00FEE4E8 /* UAAutoIntegration+Internal.h in Headers */,
 				6E4115DF2538C0AF00FEE4E8 /* UAAction.h in Headers */,
 				6E411AF32538C20600FEE4E8 /* UAEventData+Internal.h in Headers */,
@@ -4892,7 +4871,6 @@
 				6E4115572538C0AC00FEE4E8 /* UAActionResult.h in Headers */,
 				6E4115872538C0AD00FEE4E8 /* UAActionArguments.h in Headers */,
 				6E41191F2538C1FF00FEE4E8 /* UAJSONMatcher+Internal.h in Headers */,
-				6E41165B2538C0B300FEE4E8 /* NSString+UAURLEncoding.h in Headers */,
 				6E41158B2538C0AD00FEE4E8 /* UAJavaScriptCommand.h in Headers */,
 				6E4119DB2538C20200FEE4E8 /* UAKeychainUtils+Internal.h in Headers */,
 				6E4115EF2538C0B000FEE4E8 /* UAAppIntegration.h in Headers */,
@@ -4909,11 +4887,9 @@
 				6E4119772538C20100FEE4E8 /* UAirship+Internal.h in Headers */,
 				6E411B382538C44300FEE4E8 /* AirshipLib.h in Headers */,
 				6E411AEB2538C20600FEE4E8 /* UAChannelRegistrationPayload+Internal.h in Headers */,
-				6E4115B72538C0AE00FEE4E8 /* UANSDictionaryValueTransformer.h in Headers */,
 				6E411A3B2538C20400FEE4E8 /* UAAnalytics+Internal.h in Headers */,
 				6E41157F2538C0AD00FEE4E8 /* UAAnalytics.h in Headers */,
 				6E41152F2538C0AB00FEE4E8 /* UAPush.h in Headers */,
-				6E3494F02580254D007F5357 /* UANSArrayValueTransformer.h in Headers */,
 				6E41152B2538C0AB00FEE4E8 /* UAJavaScriptCommandDelegate.h in Headers */,
 				6E4114F72538C0AA00FEE4E8 /* UAEvent.h in Headers */,
 				6E698E2A267BAFCC00654DB2 /* UACompression.h in Headers */,
@@ -5116,7 +5092,6 @@
 				6E4115382538C0AB00FEE4E8 /* UANativeBridgeExtensionDelegate.h in Headers */,
 				6E4115EC2538C0B000FEE4E8 /* UAJSONMatcher.h in Headers */,
 				6E41150C2538C0AA00FEE4E8 /* UAAsyncOperation.h in Headers */,
-				6E4114D82538C0A900FEE4E8 /* UANSURLValueTransformer.h in Headers */,
 				6E4118EC2538C1FE00FEE4E8 /* UAAutoIntegration+Internal.h in Headers */,
 				6E4115E02538C0B000FEE4E8 /* UAAction.h in Headers */,
 				6E411AF42538C20600FEE4E8 /* UAEventData+Internal.h in Headers */,
@@ -5155,7 +5130,6 @@
 				6E4115582538C0AC00FEE4E8 /* UAActionResult.h in Headers */,
 				6E4115882538C0AD00FEE4E8 /* UAActionArguments.h in Headers */,
 				6E4119202538C1FF00FEE4E8 /* UAJSONMatcher+Internal.h in Headers */,
-				6E41165C2538C0B300FEE4E8 /* NSString+UAURLEncoding.h in Headers */,
 				6E41158C2538C0AD00FEE4E8 /* UAJavaScriptCommand.h in Headers */,
 				6E4119DC2538C20200FEE4E8 /* UAKeychainUtils+Internal.h in Headers */,
 				6E4115F02538C0B000FEE4E8 /* UAAppIntegration.h in Headers */,
@@ -5173,11 +5147,9 @@
 				6E4119782538C20100FEE4E8 /* UAirship+Internal.h in Headers */,
 				6E411B392538C44300FEE4E8 /* AirshipLib.h in Headers */,
 				6E411AEC2538C20600FEE4E8 /* UAChannelRegistrationPayload+Internal.h in Headers */,
-				6E4115B82538C0AF00FEE4E8 /* UANSDictionaryValueTransformer.h in Headers */,
 				6E411A3C2538C20400FEE4E8 /* UAAnalytics+Internal.h in Headers */,
 				6E4115802538C0AD00FEE4E8 /* UAAnalytics.h in Headers */,
 				6E4115302538C0AB00FEE4E8 /* UAPush.h in Headers */,
-				6E3494F12580254D007F5357 /* UANSArrayValueTransformer.h in Headers */,
 				6E41152C2538C0AB00FEE4E8 /* UAJavaScriptCommandDelegate.h in Headers */,
 				6E4114F82538C0AA00FEE4E8 /* UAEvent.h in Headers */,
 				6E698E2B267BAFCC00654DB2 /* UACompression.h in Headers */,
@@ -6035,7 +6007,6 @@
 				6E4118FB2538C1FF00FEE4E8 /* UAJSONValueMatcher.m in Sources */,
 				6EC7E49026A739890038CFDD /* JsonValue.swift in Sources */,
 				6E698DFE267A78CA00654DB2 /* UARequest.swift in Sources */,
-				6E41187B2538C1FD00FEE4E8 /* UANSDictionaryValueTransformer.m in Sources */,
 				6E91B4482688335000DDB1A8 /* UAScreenTrackingEvent.swift in Sources */,
 				6E698DF226790AC300654DB2 /* UAPrivacyManager.swift in Sources */,
 				6E95292C268B98A200398B54 /* UAMediaEventTemplate.swift in Sources */,
@@ -6065,7 +6036,6 @@
 				6E411A1F2538C20300FEE4E8 /* UAirship.m in Sources */,
 				6E9D529B26C1A77C004EA16B /* ActionRegistry.swift in Sources */,
 				6E6ED13D2683A58D00A2CBD0 /* UADisposable.swift in Sources */,
-				6E411B172538C20700FEE4E8 /* UANSURLValueTransformer.m in Sources */,
 				6E952923268B812000398B54 /* UAAccountEventTemplate.swift in Sources */,
 				6E91B45B268904D900DDB1A8 /* UAPushReceivedEvent.swift in Sources */,
 				6EC7E49626A8995F0038CFDD /* UANamedUser.swift in Sources */,
@@ -6080,6 +6050,7 @@
 				6E664BBB26C46BC600A2C8E5 /* EnableFeatureActionPredicate.swift in Sources */,
 				6E8BF45226852E4B009A8BD4 /* UATaskManager.swift in Sources */,
 				C02D0B6626C1A3E200F673E6 /* ChannelCapture.swift in Sources */,
+				6E15B74126D43F120099C92D /* UANSDictionaryValueTransformer.swift in Sources */,
 				6E4119732538C20100FEE4E8 /* UAChannelRegistrationPayload.m in Sources */,
 				6E411A6F2538C20400FEE4E8 /* UAKeychainUtils.m in Sources */,
 				6E698E5F267BF63B00654DB2 /* UAApplicationState.swift in Sources */,
@@ -6163,8 +6134,8 @@
 				6E698E5B267BF63B00654DB2 /* UAUIKitStateTrackerAdapter.swift in Sources */,
 				6E664BEA26C6DB7600A2C8E5 /* UAUtils.swift in Sources */,
 				6E41189F2538C1FD00FEE4E8 /* UAEventManager.m in Sources */,
+				6E15B73F26D43F120099C92D /* UANSArrayValueTransformer.swift in Sources */,
 				6E6ED1612683DBC300A2CBD0 /* UAirshipVersion.swift in Sources */,
-				6E34950525802571007F5357 /* UANSArrayValueTransformer.m in Sources */,
 				6E6ED1392683A58D00A2CBD0 /* UASemaphore.swift in Sources */,
 				6E6ED1592683DBC300A2CBD0 /* UAWebView.swift in Sources */,
 				3CC95B1F268E785900FE2ACD /* UANotificationCategories.swift in Sources */,
@@ -6179,7 +6150,6 @@
 				6E6ED16D2683DBC300A2CBD0 /* UABespokeCloseView.swift in Sources */,
 				6ED735DD26C7401D003B0A7D /* TagEditor.swift in Sources */,
 				6E698E41267BEDC300654DB2 /* TagGroupsEditor.swift in Sources */,
-				6E41186B2538C1FD00FEE4E8 /* NSString+UAURLEncoding.m in Sources */,
 				6E4117EB2538C1FB00FEE4E8 /* UASwizzler.m in Sources */,
 				6E91B44E26883B6E00DDB1A8 /* UAAppBackgroundEvent.swift in Sources */,
 				6EC7E48A26A738670038CFDD /* ContactConflictDelegate.swift in Sources */,
@@ -6193,6 +6163,7 @@
 				6E664BDF26C4CD8700A2C8E5 /* FetchDeviceInfoAction.swift in Sources */,
 				6E91B45026883B6E00DDB1A8 /* UAAppInitEvent.swift in Sources */,
 				6E411E702538F4C700FEE4E8 /* UAActionResult.m in Sources */,
+				6E15B73D26D43F120099C92D /* UANSURLValueTransformer.swift in Sources */,
 				6E698E57267BF63B00654DB2 /* UAAppStateTrackerAdapter.swift in Sources */,
 				6E9D529826C195F7004EA16B /* ActionRunner.swift in Sources */,
 			);
@@ -6621,7 +6592,6 @@
 				6E8BF45826852E8B009A8BD4 /* UATaskLauncher.swift in Sources */,
 				6E91B4492688335000DDB1A8 /* UAScreenTrackingEvent.swift in Sources */,
 				6E664BD126C4916600A2C8E5 /* AddTagsAction.swift in Sources */,
-				6E41187C2538C1FD00FEE4E8 /* UANSDictionaryValueTransformer.m in Sources */,
 				6E698DF326790AC300654DB2 /* UAPrivacyManager.swift in Sources */,
 				6E664BA826C4417400A2C8E5 /* ShareAction.swift in Sources */,
 				6E95292D268B98A200398B54 /* UAMediaEventTemplate.swift in Sources */,
@@ -6648,7 +6618,6 @@
 				6E91B45E268904D900DDB1A8 /* UAAssociateIdentifiersEvent.swift in Sources */,
 				6E9D529C26C1A77C004EA16B /* ActionRegistry.swift in Sources */,
 				6E411A202538C20300FEE4E8 /* UAirship.m in Sources */,
-				6E411B182538C20700FEE4E8 /* UANSURLValueTransformer.m in Sources */,
 				6E739D8026BB01C500BC6F6D /* ChannelBulkUpdateAPIClient.swift in Sources */,
 				6E15B72E26CF13BC0099C92D /* RemoteDataProvider.swift in Sources */,
 				6E698E10267A88E800654DB2 /* UAEventAPIResponse.swift in Sources */,
@@ -6660,6 +6629,7 @@
 				6EC7E49726A8995F0038CFDD /* UANamedUser.swift in Sources */,
 				6E411ADC2538C20600FEE4E8 /* UAConfig.m in Sources */,
 				6EC7E469269E0E340038CFDD /* TagGroupUpdate.swift in Sources */,
+				6E15B74226D43F120099C92D /* UANSDictionaryValueTransformer.swift in Sources */,
 				6E664BBC26C46BC600A2C8E5 /* EnableFeatureActionPredicate.swift in Sources */,
 				6E698E3E267BEDC300654DB2 /* Contact.swift in Sources */,
 				6E411CB02538C6A600FEE4E8 /* UAEvents.xcdatamodeld in Sources */,
@@ -6743,6 +6713,7 @@
 				6EC7E48E26A738C80038CFDD /* ContactData.swift in Sources */,
 				6E698E01267A78CA00654DB2 /* UARequestSession.swift in Sources */,
 				6E411A5C2538C20400FEE4E8 /* UAJSONPredicate.m in Sources */,
+				6E15B74026D43F120099C92D /* UANSArrayValueTransformer.swift in Sources */,
 				6E664BEB26C6DB7600A2C8E5 /* UAUtils.swift in Sources */,
 				6E91B45326883B6E00DDB1A8 /* UAAppExitEvent.swift in Sources */,
 				6E411A482538C20400FEE4E8 /* UAAppIntegration.m in Sources */,
@@ -6750,7 +6721,6 @@
 				6E4118A02538C1FE00FEE4E8 /* UAEventManager.m in Sources */,
 				6E6ED1622683DBC300A2CBD0 /* UAirshipVersion.swift in Sources */,
 				6E664BB626C46BC600A2C8E5 /* AddCustomEventActionPredicate.swift in Sources */,
-				6E34950625802571007F5357 /* UANSArrayValueTransformer.m in Sources */,
 				6E6ED13A2683A58D00A2CBD0 /* UASemaphore.swift in Sources */,
 				6E6ED15A2683DBC300A2CBD0 /* UAWebView.swift in Sources */,
 				A61517B626AEEABA008A41C4 /* SubscriptionListUpdate.swift in Sources */,
@@ -6763,7 +6733,6 @@
 				6E4118BC2538C1FE00FEE4E8 /* UAJSONMatcher.m in Sources */,
 				6E6ED16E2683DBC300A2CBD0 /* UABespokeCloseView.swift in Sources */,
 				6E698E42267BEDC300654DB2 /* TagGroupsEditor.swift in Sources */,
-				6E41186C2538C1FD00FEE4E8 /* NSString+UAURLEncoding.m in Sources */,
 				6E91B44F26883B6E00DDB1A8 /* UAAppBackgroundEvent.swift in Sources */,
 				6EC7E48B26A738670038CFDD /* ContactConflictDelegate.swift in Sources */,
 				6E4117EC2538C1FB00FEE4E8 /* UASwizzler.m in Sources */,
@@ -6773,6 +6742,7 @@
 				6E6ED13C2683A58D00A2CBD0 /* UADispatcher.swift in Sources */,
 				6E664BE026C4CD8700A2C8E5 /* FetchDeviceInfoAction.swift in Sources */,
 				6E91B45126883B6E00DDB1A8 /* UAAppInitEvent.swift in Sources */,
+				6E15B73E26D43F120099C92D /* UANSURLValueTransformer.swift in Sources */,
 				6E4119802538C20100FEE4E8 /* UAJSONSerialization.m in Sources */,
 				6E698E58267BF63B00654DB2 /* UAAppStateTrackerAdapter.swift in Sources */,
 			);
