@@ -55,7 +55,6 @@ class UAProjectValidationTest: XCTestCase {
         validateTarget(target: "AirshipAccengage", sourcePaths:["AirshipAccengage/Source"])
     }
 
-
     func convertSourceTreeFolderToURL(sourceTreeFolder: SourceTreeFolder) -> URL {
         if (sourceTreeFolder != .sourceRoot) {
             XCTFail("SourceTreeFolders other than .sourceRoot are not currently supported by this tool")

@@ -2,8 +2,10 @@
 
 import Foundation
 
+///Helper class for querying APNS authorization and updating registration.
+///For internal use only. :nodoc:
 @objc
-public class UAAPNSRegistration : NSObject {
+public class UAAPNSRegistration : NSObject, APNSRegistrationProtocol {
     @objc(getAuthorizedSettingsWithCompletionHandler:)
     public func getAuthorizedSettings(completionHandler: @escaping (UAAuthorizedNotificationSettings, UAAuthorizationStatus) -> Void) {
         UNUserNotificationCenter.current().getNotificationSettings { [self] notificationSettings in

@@ -10,7 +10,7 @@
 #import "UATagSelector+Internal.h"
 #import "UAInAppMessage+Internal.h"
 #import "UAInAppRemoteDataClient+Internal.h"
-#import "UAComponent+Internal.h"
+#import "UAComponent.h"
 #import "UAInAppAutomation+Internal.h"
 #import "UAInAppMessageCustomDisplayContent+Internal.h"
 #import "UADeferredSchedule+Internal.h"

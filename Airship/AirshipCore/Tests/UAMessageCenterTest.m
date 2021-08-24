@@ -5,7 +5,7 @@
 #import "UAMessageCenter+Internal.h"
 #import "UAUser.h"
 #import "UAInboxMessageList.h"
-#import "UAComponent+Internal.h"
+#import "UAComponent.h"
 
 @import AirshipCore;
 

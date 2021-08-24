@@ -35,6 +35,22 @@ public class EnableFeatureAction : NSObject, UAAction {
     
     @objc
     public static let backgroundLocationActionValue = "background_location"
+
+    private let push: () -> PushProtocol
+    private let location: () -> UALocationProvider?
+
+    @objc
+    public override convenience init() {
+        self.init(push: { return UAirship.push() },
+                  location: { return UAirship.shared().locationProvider })
+    }
+
+    @objc
+    public init(push: @escaping () -> Push,
+                location: @escaping () -> UALocationProvider?) {
+        self.push = push
+        self.location = location
+    }
     
     public func acceptsArguments(_ arguments: UAActionArguments) -> Bool {
         guard arguments.situation != .backgroundPush,
@@ -83,12 +99,11 @@ public class EnableFeatureAction : NSObject, UAAction {
 
     func enableUserNotifications(_ completionHandler: @escaping UAActionCompletionHandler) {
         UAirship.shared().privacyManager.enableFeatures(.push)
-        
-        let push = UAirship.push()!
-        push.userPushNotificationsEnabled = true
 
-        if (push.userPromptedForNotifications)  {
-            if (push.authorizedNotificationSettings == []) {
+        push().userPushNotificationsEnabled = true
+
+        if (push().userPromptedForNotifications)  {
+            if (push().authorizedNotificationSettings == []) {
                 navigateToSystemSettings(completionHandler)
             } else {
                 completionHandler(UAActionResult.empty())
@@ -99,14 +114,14 @@ public class EnableFeatureAction : NSObject, UAAction {
     }
 
     func enableBackgroundLocation(_ completionHandler: @escaping UAActionCompletionHandler) {
-        UAirship.shared().locationProvider?.isBackgroundLocationUpdatesAllowed = true
+        location()?.isBackgroundLocationUpdatesAllowed = true
         enableLocation(completionHandler)
     }
 
     func enableLocation(_ completionHandler: @escaping UAActionCompletionHandler) {
         UAirship.shared().privacyManager.enableFeatures(.location)
 
-        if let locationProvider = UAirship.shared().locationProvider {
+        if let locationProvider = location() {
             locationProvider.isLocationUpdatesEnabled = true
             if (locationProvider.isLocationDeniedOrRestricted()) {
                 navigateToSystemSettings(completionHandler)

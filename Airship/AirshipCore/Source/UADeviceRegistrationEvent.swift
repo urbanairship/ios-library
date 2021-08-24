@@ -8,7 +8,7 @@ public class UADeviceRegistrationEvent : NSObject, UAEvent {
     
     @objc
     public init(channel: ChannelProtocol?,
-                push: UAPush?,
+                push: PushProtocol?,
                 privacyManager: UAPrivacyManager?) {
          
         var data: [AnyHashable : Any] = [:]

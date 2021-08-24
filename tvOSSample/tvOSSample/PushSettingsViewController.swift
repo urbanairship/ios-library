@@ -3,7 +3,7 @@
 import AirshipCore
 import UIKit
 
-class PushSettingsViewController: UITableViewController, UARegistrationDelegate {
+class PushSettingsViewController: UITableViewController, RegistrationDelegate {
 
     @IBOutlet weak var pushEnabledCell: UITableViewCell!
     @IBOutlet weak var channelIDCell: UITableViewCell!

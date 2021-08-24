@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import "UAComponent+Internal.h"
+#import "UAComponent.h"
 
 #if __has_include("AirshipCore/AirshipCore-Swift.h")
 #import <AirshipCore/AirshipCore-Swift.h>
@@ -38,7 +38,7 @@ BOOL const UAComponentEnabledDefault = YES;
 }
 
 // getter and setter for component enabled flag
-- (BOOL)componentEnabled {
+- (BOOL)isComponentEnabled {
     // return value from the data store
     return [self.componentDataStore boolForKey:[self componentEnabledKey] defaultValue:UAComponentEnabledDefault];
 }

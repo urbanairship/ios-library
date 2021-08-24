@@ -4,7 +4,7 @@
 #import "UALocation+Internal.h"
 #import "UALocation.h"
 #import "UAAnalytics.h"
-#import "UAComponent+Internal.h"
+#import "UAComponent.h"
 #import "AirshipTests-Swift.h"
 
 @import AirshipCore;

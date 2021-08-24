@@ -2,7 +2,7 @@
 
 #import <Foundation/Foundation.h>
 #import "UAAnalytics.h"
-#import "UAComponent+Internal.h"
+#import "UAComponent.h"
 #import "UAExtendableAnalyticsHeaders.h"
 #import "UAEventManager+Internal.h"
 

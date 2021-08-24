@@ -3,7 +3,6 @@
 #import "UABaseTest.h"
 #import "UAChannelRegistrationPayload+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
-#import "UAPush+Internal.h"
 #import "UAChannelRegistrationPayload+Internal.h"
 #import "UAAnalytics.h"
 #import "UAirship+Internal.h"
@@ -499,8 +498,8 @@
                        (long)[cal components:NSCalendarUnitMinute fromDate:endDate].minute];
 
     return [NSMutableDictionary dictionaryWithObjectsAndKeys:
-            fromStr, UAPushQuietTimeStartKey,
-            toStr, UAPushQuietTimeEndKey, nil];
+            fromStr, @"start",
+            toStr, @"end", nil];
     
 }
 

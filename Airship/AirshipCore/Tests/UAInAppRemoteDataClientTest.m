@@ -3,7 +3,6 @@
 #import "UAAirshipBaseTest.h"
 #import "UAInAppRemoteDataClient+Internal.h"
 #import "UAirship+Internal.h"
-#import "UAPush+Internal.h"
 #import "UASchedule+Internal.h"
 #import "UAScheduleEdits+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"

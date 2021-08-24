@@ -380,7 +380,7 @@ public class Contact : UAComponent, ContactProtocol {
      * :nodoc:
      */
     public override func onComponentEnableChange() {
-        if (self.componentEnabled) {
+        if (self.isComponentEnabled) {
             self.enqueueTask()
         }
     }

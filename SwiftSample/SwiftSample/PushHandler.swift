@@ -4,7 +4,7 @@ import UIKit
 import AVFoundation
 import AirshipCore
 
-class PushHandler: NSObject, UAPushNotificationDelegate {
+class PushHandler: NSObject, PushNotificationDelegate {
 
     func receivedBackgroundNotification(_ userInfo: [AnyHashable: Any], completionHandler: @escaping (UIBackgroundFetchResult) -> Swift.Void) {
         // Application received a background notification

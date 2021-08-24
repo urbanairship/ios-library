@@ -5,7 +5,6 @@
 #import "UAScheduleAudience+Internal.h"
 #import "UAVersionMatcher.h"
 #import "UAirship+Internal.h"
-#import "UAPush+Internal.h"
 #import "UATagSelector.h"
 #import "UAJSONPredicate.h"
 #import "AirshipTests-Swift.h"

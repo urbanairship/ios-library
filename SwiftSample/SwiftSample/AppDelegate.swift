@@ -10,7 +10,7 @@ import AirshipDebug
 #endif
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, UARegistrationDelegate, UADeepLinkDelegate, UAInAppMessageCachePolicyDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, RegistrationDelegate, UADeepLinkDelegate, UAInAppMessageCachePolicyDelegate {
     let simulatorWarningDisabledKey = "ua-simulator-warning-disabled"
     let pushHandler = PushHandler()
 

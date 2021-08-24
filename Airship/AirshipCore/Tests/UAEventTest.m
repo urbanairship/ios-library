@@ -4,7 +4,6 @@
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
 #import <CoreTelephony/CTCarrier.h>
 
-#import "UAPush+Internal.h"
 #import "UAEvent.h"
 #import "UAirship+Internal.h"
 #import "UAAnalytics.h"

@@ -13,6 +13,12 @@ NS_ASSUME_NONNULL_BEGIN
 @interface UAComponent : NSObject
 
 /**
+ * Flag indicating whether the component is enabled. Clear to disable. Set to enable.
+ * @note For internal use only. :nodoc:
+ */
+@property (assign, getter=isComponentEnabled) BOOL componentEnabled;
+
+/**
 * `init` is not available. Use the `initWithDataStore:` initializer method.
 * :nodoc:
 */
@@ -58,26 +64,12 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)airshipReady:(UAirship *)airship;
 
 /**
- * Determines whether the component is currently enabled.
- * @note For internal use only. :nodoc:
- *
- * @return `YES` if the component is enabled, otherwise `NO`.
- */
-- (BOOL)componentEnabled;
-
-/**
  * Called to handle `uairship://` deep links. The first component that
  * return `YES` will prevent others from receiving the deep link.
  * @param deepLink The deep link.
  * @return `YES` is the deep link was handled, otherwise `NO`.
  */
 - (BOOL)deepLink:(NSURL *)deepLink;
-
-
-/**
- * Flag indicating whether the component is enabled. Clear to disable. Set to enable.
- */
-@property (assign) BOOL componentEnabled;
 
 @end
 

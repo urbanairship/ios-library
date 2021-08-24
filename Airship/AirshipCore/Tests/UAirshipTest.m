@@ -3,7 +3,7 @@
 #import "UABaseTest.h"
 #import "UAirship+Internal.h"
 #import "UAConfig.h"
-#import "UAComponent+Internal.h"
+#import "UAComponent.h"
 
 @interface UAirshipTest : UABaseTest
 @end

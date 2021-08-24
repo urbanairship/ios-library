@@ -6,7 +6,6 @@
 #import "UAActionResult.h"
 #import "UAirship+Internal.h"
 #import "UAAppIntegration+Internal.h"
-#import "UAPush+Internal.h"
 #import "AirshipTests-Swift.h"
 
 @import AirshipCore;

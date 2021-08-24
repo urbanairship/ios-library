@@ -161,7 +161,9 @@ public class Channel : UAComponent, ChannelProtocol {
     
         self.channelRegistrar.delegate = self
         self.audienceManager.channelID = self.channelRegistrar.channelID
-        self.audienceManager.enabled = self.componentEnabled
+
+        self.audienceManager.enabled = self.isComponentEnabled
+        
         if let identifier = self.identifier {
             AirshipLogger.importantInfo("Channel ID \(identifier)")
         }
@@ -227,10 +229,10 @@ public class Channel : UAComponent, ChannelProtocol {
     
     // NOTE: For internal use only. :nodoc:
     public override func onComponentEnableChange() {
-        if (self.componentEnabled) {
+        if (self.isComponentEnabled) {
             self.updateRegistration()
         }
-        self.audienceManager.enabled = self.componentEnabled
+        self.audienceManager.enabled = self.isComponentEnabled
     }
     
     @objc
@@ -429,7 +431,7 @@ public class Channel : UAComponent, ChannelProtocol {
     
     // NOTE: For internal use only. :nodoc:
     public func updateRegistration(forcefully: Bool) {
-        guard self.componentEnabled else {
+        guard self.isComponentEnabled else {
             return
         }
         

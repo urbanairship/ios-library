@@ -3,7 +3,6 @@
 #import <Foundation/Foundation.h>
 #import "UAModuleLoader.h"
 #import "UAAnalytics.h"
-#import "UAPush.h"
 
 @class UAPreferenceDataStore;
 @class UAChannel;

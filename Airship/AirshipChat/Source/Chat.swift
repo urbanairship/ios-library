@@ -117,7 +117,8 @@ public class Chat : UAComponent, UAPushableComponent {
     }
 
     private func updateConversationEnablement() {
-        self.internalConversation.enabled = self.componentEnabled && self.privacyManager.isEnabled(UAFeatures.chat)
+        self.internalConversation.enabled = self.isComponentEnabled && self.privacyManager.isEnabled(UAFeatures.chat)
+
         if (!self.privacyManager.isEnabled(UAFeatures.chat)) {
             self.internalConversation.clearData()
         }

@@ -56,7 +56,7 @@ public class FetchDeviceInfoAction : NSObject, UAAction {
 
     private let channel: () -> ChannelProtocol
     private let contact: () -> ContactProtocol
-    private let push: () -> UAPush
+    private let push: () -> PushProtocol
     private let location: () -> UALocationProvider?
     
     @objc
@@ -70,7 +70,7 @@ public class FetchDeviceInfoAction : NSObject, UAAction {
     @objc
     public init(channel: @escaping () -> ChannelProtocol,
                 contact: @escaping () -> ContactProtocol,
-                push: @escaping () -> UAPush,
+                push: @escaping () -> PushProtocol,
                 location: @escaping () -> UALocationProvider?) {
         self.channel = channel
         self.contact = contact

@@ -47,7 +47,7 @@ class RemoteConfigModuleAdapter : RemoteConfigModuleAdapterProtocol {
     }
 
     func setComponentsEnabled(_ enabled: Bool, module: RemoteConfigModule) {
-        self.components(module).forEach { $0.componentEnabled = enabled }
+        self.components(module).forEach { $0.isComponentEnabled = enabled }
     }
 
     func applyConfig(_ config: Any?, module: RemoteConfigModule) {

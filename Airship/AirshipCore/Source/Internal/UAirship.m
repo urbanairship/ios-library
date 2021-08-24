@@ -4,7 +4,6 @@
 #import "UAAnalytics+Internal.h"
 #import "UAKeychainUtils+Internal.h"
 #import "UAGlobal.h"
-#import "UAPush+Internal.h"
 #import "UAConfig.h"
 #import "UAAutoIntegration+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
@@ -130,12 +129,12 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
                                                  privacyManager:self.sharedPrivacyManager];
         [components addObject:self.sharedAnalytics];
 
+        self.sharedPush = [[UAPush alloc] initWithConfig:self.config
+                                               dataStore:self.dataStore
+                                                 channel:self.sharedChannel
+                                               analytics:self.sharedAnalytics
+                                          privacyManager:self.sharedPrivacyManager];
 
-        self.sharedPush = [UAPush pushWithConfig:self.config
-                                       dataStore:self.dataStore
-                                         channel:self.sharedChannel
-                                       analytics:self.sharedAnalytics
-                                  privacyManager:self.sharedPrivacyManager];
         [components addObject:self.sharedPush];
 
 

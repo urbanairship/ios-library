@@ -3,7 +3,6 @@
 #import "UAAirshipBaseTest.h"
 
 #import "UAAppIntegration+Internal.h"
-#import "UAPush+Internal.h"
 #import "UAAnalytics+Internal.h"
 #import "UAirship+Internal.h"
 
