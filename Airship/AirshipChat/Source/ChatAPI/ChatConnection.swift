@@ -6,8 +6,6 @@ import Foundation
 import AirshipCore
 #endif
 
-
-
 @available(iOS 13.0, *)
 class ChatConnection : ChatConnectionProtocol, WebSocketDelegate  {
     private let chatConfig: ChatConfig!
@@ -35,6 +33,8 @@ class ChatConnection : ChatConnectionProtocol, WebSocketDelegate  {
         self.socketFactory = socketFactory
         self.dispatcher = dispatcher
         self.encoder = JSONEncoder()
+        self.encoder.dateEncodingStrategy = .iso8601
+        
         self.decoder = JSONDecoder()
         self.decoder.dateDecodingStrategy = .iso8601
     }
@@ -82,12 +82,12 @@ class ChatConnection : ChatConnectionProtocol, WebSocketDelegate  {
         send(requestConversation)
     }
 
-    func sendMessage(requestID: String, text: String?, attachment: URL?, routing: ChatRouting?) {
+    func sendMessage(requestID: String, text: String?, attachment: URL?, direction: ChatMessageDirection, date: Date?, routing: ChatRouting?) {
         guard let uvp = self.uvp else {
             return
         }
         
-        let payload = SendMessageRequestPayload(requestID: requestID, text: text, attachment: attachment, routing: routing)
+        let payload = SendMessageRequestPayload(requestID: requestID, text: text, attachment: attachment, direction: direction.rawValue, routing: routing, date: date)
         let sendMessageRequest = SendMessageRequest(uvp: uvp, payload: payload)
         send(sendMessageRequest)
     }
@@ -179,13 +179,17 @@ class ChatConnection : ChatConnectionProtocol, WebSocketDelegate  {
         let requestID: String
         let text: String?
         let attachment: URL?
+        let direction: ChatMessageDirection.RawValue
         let routing: ChatRouting?
+        let date: Date?
 
         enum CodingKeys: String, CodingKey {
             case text = "text"
             case attachment = "attachment"
             case requestID = "request_id"
+            case direction = "direction"
             case routing = "routing"
+            case date = "created_on"
         }
     }
 

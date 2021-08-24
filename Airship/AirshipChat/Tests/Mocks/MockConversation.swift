@@ -12,6 +12,7 @@ class MockConversation : InternalConversationProtocol {
 
     var lastMessageSent : String?
     var lastAttachmentSent : URL?
+    var incoming: [ChatIncomingMessage] = []
 
     var messages : [ChatMessage]?
     var refreshed = false
@@ -37,5 +38,9 @@ class MockConversation : InternalConversationProtocol {
 
     func fetchMessages(completionHandler: @escaping (Array<ChatMessage>) -> ()) {
         completionHandler(self.messages ?? [])
+    }
+    
+    func addIncoming(_ messages: [ChatIncomingMessage]) {
+        self.incoming.append(contentsOf: messages)
     }
 }

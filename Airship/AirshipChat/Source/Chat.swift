@@ -28,6 +28,10 @@ public protocol ChatOpenDelegate {
 @objc(UAirshipChat)
 public class Chat : UAComponent, UAPushableComponent {
 
+    static let routingKey = "routing"
+    static let prepopulatedMessagesKey = "prepopulated_messages"
+    static let inputKey = "chat_input"
+    static let deepLinkHost = "chat"
     private static let refreshKey = "com.urbanairship.refresh_chat"
 
     /**
@@ -217,7 +221,7 @@ public class Chat : UAComponent, UAPushableComponent {
     // NOTE: For internal use only. :nodoc:
     public override func deepLink(_ deepLink: URL) -> Bool {
         guard deepLink.scheme == UAirshipDeepLinkScheme,
-              deepLink.host == "chat",
+              deepLink.host == Chat.deepLinkHost,
               deepLink.path.isEmpty || deepLink.path == "/" else {
             return false
         }
@@ -227,7 +231,8 @@ public class Chat : UAComponent, UAPushableComponent {
             $0[$1.name] = $1.value
         } ?? [:]
         
-        if let routing = queryMap["routing"] as? String {
+        
+        if let routing = queryMap[Chat.routingKey] as? String {
             do {
                 let parsedRouting = try JSONDecoder().decode(ChatRouting.self, from: Data(routing.utf8))
                 self.conversation.routing = parsedRouting
@@ -236,10 +241,26 @@ public class Chat : UAComponent, UAPushableComponent {
             }
         }
         
-        let draft = queryMap["chat_input"] as? String
+        if let incoming = queryMap[Chat.prepopulatedMessagesKey] as? String {
+            do {
+                let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = .iso8601
+                
+                let parsedIncoming = try decoder.decode([ChatIncomingMessage].self, from: Data(incoming.utf8))
+                self.internalConversation.addIncoming(parsedIncoming)
+            } catch {
+                AirshipLogger.error("Failed to parse prepopulated messages \(error)")
+            }
+        }
+        
+        let draft = queryMap[Chat.inputKey] as? String
         self.openChat(message: draft)
         
         return true
+    }
+    
+    func addIncoming(_ messages: [ChatIncomingMessage]) {
+        self.internalConversation.addIncoming(messages)
     }
 }
 

@@ -87,6 +87,8 @@ class ConversationTests: XCTestCase {
     }
 
     func testSendMessageAfterSync() throws {
+        self.conversation.routing = ChatRouting(agent: "person")
+
         self.mockStateTracker.mockState = UAApplicationState.active
         self.connect()
 
@@ -98,9 +100,17 @@ class ConversationTests: XCTestCase {
         self.conversation.sendMessage("hello!")
 
         XCTAssertEqual("hello!", self.mockChatConnection.lastSendMessage?.1)
+        XCTAssertNotNil(self.mockChatConnection.lastSendMessage?.0)
+        XCTAssertEqual("hello!", self.mockChatConnection.lastSendMessage?.1)
+        XCTAssertNil(self.mockChatConnection.lastSendMessage?.2)
+        XCTAssertEqual(ChatMessageDirection.outgoing,  self.mockChatConnection.lastSendMessage?.3)
+        XCTAssertNil(self.mockChatConnection.lastSendMessage?.4)
+        XCTAssertEqual(self.conversation.routing, self.mockChatConnection.lastSendMessage?.5)
     }
 
     func testSendMessageBeforeSync() throws {
+        self.conversation.routing = ChatRouting(agent: "person")
+
         self.connect()
 
         self.conversation.sendMessage("hello!")
@@ -110,7 +120,59 @@ class ConversationTests: XCTestCase {
         let fetchConvo = ChatResponse(type: "fetch_conversation", payload: fetchConvoPayload)
 
         self.mockChatConnection.delegate?.onChatResponse(fetchConvo)
+        XCTAssertNotNil(self.mockChatConnection.lastSendMessage?.0)
         XCTAssertEqual("hello!", self.mockChatConnection.lastSendMessage?.1)
+        XCTAssertNil(self.mockChatConnection.lastSendMessage?.2)
+        XCTAssertEqual(ChatMessageDirection.outgoing,  self.mockChatConnection.lastSendMessage?.3)
+        XCTAssertNil(self.mockChatConnection.lastSendMessage?.4)
+        XCTAssertEqual(self.conversation.routing, self.mockChatConnection.lastSendMessage?.5)
+    }
+    
+    func testSendIncomingBeforeSync() throws {
+        self.conversation.routing = ChatRouting(agent: "person")
+
+        self.connect()
+        
+        self.conversation.routing = ChatRouting(agent: "person")
+
+        let date = Date()
+        let incoming = [ChatIncomingMessage(message: "hi", url: nil, date:date, messageID: "some-message-id")]
+        self.conversation.addIncoming(incoming)
+        
+        XCTAssertNil(self.mockChatConnection.lastSendMessage)
+
+        let fetchConvoPayload = ChatResponse.ConversationLoadedResponsePayload(messages: nil)
+        let fetchConvo = ChatResponse(type: "fetch_conversation", payload: fetchConvoPayload)
+
+        self.mockChatConnection.delegate?.onChatResponse(fetchConvo)
+        XCTAssertEqual("some-message-id", self.mockChatConnection.lastSendMessage?.0)
+        XCTAssertEqual("hi", self.mockChatConnection.lastSendMessage?.1)
+        XCTAssertNil(self.mockChatConnection.lastSendMessage?.2)
+        XCTAssertEqual(ChatMessageDirection.incoming,  self.mockChatConnection.lastSendMessage?.3)
+        XCTAssertEqual(date, self.mockChatConnection.lastSendMessage?.4)
+        XCTAssertEqual(self.conversation.routing, self.mockChatConnection.lastSendMessage?.5)
+    }
+    
+    func testSendIncomingAfterSync() throws {
+        self.conversation.routing = ChatRouting(agent: "person")
+
+        self.mockStateTracker.mockState = UAApplicationState.active
+        self.connect()
+
+        let fetchConvoPayload = ChatResponse.ConversationLoadedResponsePayload(messages: nil)
+        let fetchConvo = ChatResponse(type: "fetch_conversation", payload: fetchConvoPayload)
+        
+        let date = Date()
+        let incoming = [ChatIncomingMessage(message: "hi", url: nil, date:date, messageID: "some-message-id")]
+        self.conversation.addIncoming(incoming)
+        
+        self.mockChatConnection.delegate?.onChatResponse(fetchConvo)
+        XCTAssertEqual("some-message-id", self.mockChatConnection.lastSendMessage?.0)
+        XCTAssertEqual("hi", self.mockChatConnection.lastSendMessage?.1)
+        XCTAssertNil(self.mockChatConnection.lastSendMessage?.2)
+        XCTAssertEqual(ChatMessageDirection.incoming,  self.mockChatConnection.lastSendMessage?.3)
+        XCTAssertEqual(date, self.mockChatConnection.lastSendMessage?.4)
+        XCTAssertEqual(self.conversation.routing, self.mockChatConnection.lastSendMessage?.5)
     }
 
     func testSendMessageNilTextAndAttachment() throws {
@@ -280,6 +342,37 @@ class ConversationTests: XCTestCase {
             expectation.fulfill()
         }
         wait(for: [expectation], timeout: 10.0)
+    }
+    
+    func testFetchMessagesPending() throws {
+        let date = Date()
+        let incoming = [ChatIncomingMessage(message: "incoming", url: nil, date:date, messageID: "some-message-id")]
+        self.conversation.addIncoming(incoming)
+        self.conversation.sendMessage("outgoing")
+        
+        let expectation = XCTestExpectation(description: "check")
+        var result: [ChatMessage]?
+        self.conversation.fetchMessages() { (pending) in
+            result = pending
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 10.0)
+        
+        XCTAssertEqual(2, result?.count)
+        
+        let incomingMessage = result![0]
+        XCTAssertEqual("some-message-id", incomingMessage.messageID)
+        XCTAssertEqual("incoming", incomingMessage.text)
+        XCTAssertEqual(ChatMessageDirection.incoming, incomingMessage.direction)
+        XCTAssertEqual(date, incomingMessage.timestamp)
+        XCTAssertTrue(incomingMessage.isDelivered) // it lies
+        
+        let outgoingMessage = result![1]
+        XCTAssertNotNil(outgoingMessage.messageID)
+        XCTAssertEqual("outgoing", outgoingMessage.text)
+        XCTAssertEqual(ChatMessageDirection.outgoing, outgoingMessage.direction)
+        XCTAssertNotNil(outgoingMessage.timestamp)
+        XCTAssertFalse(outgoingMessage.isDelivered)
     }
 
     func connect() {

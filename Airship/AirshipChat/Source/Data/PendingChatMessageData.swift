@@ -27,4 +27,9 @@ class PendingChatMessageData : NSManagedObject, PendingChatMessageDataProtocol {
      * The message created date.
      */
     @NSManaged dynamic var createdOn: Date
+
+    /**
+     * The message source.
+     */
+    @NSManaged dynamic var direction: UInt
 }

@@ -81,6 +81,12 @@ protocol InternalConversationProtocol: ConversationProtocol  {
     func refresh()
     var enabled : Bool { get set }
     func clearData()
+    /**
+     * Adds incoming messages.
+     * - Parameters:
+     *  - messages The messages to add.
+     */
+    func addIncoming(_ messages: [ChatIncomingMessage])
 }
 
 /**
@@ -201,14 +207,18 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
 
         let requestID = UUID().uuidString
 
-        self.chatDAO.insertPending(requestID: requestID, text: text, attachment: attachment, createdOn: Date())
+        self.chatDAO.upsertPending(requestID: requestID, text: text, attachment: attachment, createdOn: Date(), direction: ChatMessageDirection.outgoing.rawValue)
         UADispatcher.main.dispatchAsync {
             self.delegate?.onMessagesUpdated()
         }
 
         dispatcher.dispatchAsync {
             if (self.chatConnection.isOpenOrOpening && self.isPendingSent) {
-                self.chatConnection.sendMessage(requestID: requestID, text: text, attachment: attachment, routing: self.routing)
+                self.chatConnection.sendMessage(requestID: requestID,
+                                                text: text, attachment: attachment,
+                                                direction: ChatMessageDirection.outgoing,
+                                                date: nil,
+                                                routing: self.routing)
             } else {
                 self.updateConnection()
             }
@@ -229,6 +239,42 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
                 completionHandler(messages)
             }
         })
+    }
+    
+    func addIncoming(_ messages: [ChatIncomingMessage]) -> () {
+        for message in messages {
+            guard message.message != nil || message.url != nil else {
+                AirshipLogger.error("Invalid incoming \(message)")
+                continue
+            }
+            
+            let requestID = message.messageID ?? UUID().uuidString
+            let attachment = message.url == nil ? nil : URL(string: message.url!)
+            let createdOn = message.date ?? Date()
+            
+            self.chatDAO.upsertPending(requestID: requestID,
+                                       text: message.message,
+                                       attachment: attachment,
+                                       createdOn: createdOn,
+                                       direction: ChatMessageDirection.incoming.rawValue)
+            
+            UADispatcher.main.dispatchAsync {
+                self.delegate?.onMessagesUpdated()
+            }
+
+            dispatcher.dispatchAsync {
+                if (self.chatConnection.isOpenOrOpening && self.isPendingSent) {
+                    self.chatConnection.sendMessage(requestID: requestID,
+                                                    text: message.message,
+                                                    attachment: attachment,
+                                                    direction: ChatMessageDirection.incoming,
+                                                    date: createdOn,
+                                                    routing: self.routing)
+                } else {
+                    self.updateConnection()
+                }
+            }
+        }
     }
 
     @objc
@@ -340,11 +386,11 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
     private func syncPending() {
         self.dispatcher.dispatchAsync {
             let semaphore = UASemaphore()
-            var pendingCopy: [(String, String?, URL?)]? = nil
+            var pendingCopy: [(String, String?, URL?, UInt, Date?)]? = nil
 
             self.chatDAO.fetchPending { pending in
                 // Copy to tuples to keep honor
-                pendingCopy = pending.map { ($0.requestID, $0.text, $0.attachment) }
+                pendingCopy = pending.map { ($0.requestID, $0.text, $0.attachment, $0.direction, $0.createdOn) }
                 semaphore.signal()
             }
 
@@ -352,7 +398,16 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
 
             if (self.chatConnection.isOpenOrOpening) {
                 pendingCopy?.forEach {
-                    self.chatConnection.sendMessage(requestID: $0.0, text: $0.1, attachment: $0.2, routing: self.routing)
+                    let direction = ChatMessageDirection(rawValue: $0.3) ??
+                        ChatMessageDirection.outgoing
+                    let date = direction == .incoming ? $0.4 : nil
+                    
+                    self.chatConnection.sendMessage(requestID: $0.0,
+                                                    text: $0.1,
+                                                    attachment: $0.2,
+                                                    direction: direction,
+                                                    date: date,
+                                                    routing: self.routing)
                 }
                 self.isPendingSent = true
             }
@@ -432,7 +487,13 @@ extension ChatMessageDataProtocol {
 @available(iOS 13.0, *)
 extension PendingChatMessageDataProtocol {
     func toChatMessage() -> ChatMessage {
-        return ChatMessage(messageID: self.requestID, text: self.text, timestamp: Date.distantFuture, direction: .outgoing, delivered: false)
+        let direction = ChatMessageDirection(rawValue: self.direction) ?? .outgoing
+        let timestamp = direction == .incoming ? self.createdOn : nil
+        return ChatMessage(messageID: self.requestID,
+                           text: self.text,
+                           timestamp: timestamp ?? Date.distantFuture,
+                           direction: direction,
+                           delivered: direction == .incoming)
     }
 }
 

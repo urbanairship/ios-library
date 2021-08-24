@@ -78,9 +78,10 @@ class ChatConnectionTests: XCTestCase {
     }
 
     func testSend() throws {
+        let date = UAUtils.parseISO8601Date(from: "2021-08-24T18:15:01Z")
         let url = URL(string: "https://neat")
         self.connection.open(uvp: "some-uvp")
-        self.connection.sendMessage(requestID: "request!", text: "neat!", attachment: url, routing: ChatRouting(agent: "agent!"))
+        self.connection.sendMessage(requestID: "request!", text: "neat!", attachment: url, direction: ChatMessageDirection.outgoing, date: date, routing: ChatRouting(agent: "agent!"))
 
         XCTAssertNotNil(self.mockWebSocket.lastMessage)
 
@@ -93,7 +94,29 @@ class ChatConnectionTests: XCTestCase {
         XCTAssertEqual("request!", payload["request_id"] as! String)
         XCTAssertEqual("neat!", payload["text"] as! String)
         XCTAssertEqual("https://neat", payload["attachment"] as! String)
+        XCTAssertEqual(0, payload["direction"] as! UInt)
         XCTAssertEqual("agent!", routing["agent"] as! String)
+        XCTAssertEqual("2021-08-24T18:15:01Z", payload["created_on"] as! String)
+    }
+    
+    func testSendNilOptionalValues() throws {
+        self.connection.open(uvp: "some-uvp")
+        self.connection.sendMessage(requestID: "request!", text: "neat!", attachment: nil, direction: ChatMessageDirection.incoming, date: nil, routing: nil)
+
+        XCTAssertNotNil(self.mockWebSocket.lastMessage)
+
+        let object = JSONSerialization.object(with: self.mockWebSocket.lastMessage!) as! [String: Any]
+        let payload = object["payload"] as! [String : Any]
+
+        XCTAssertEqual("some-uvp", object["uvp"] as! String)
+        XCTAssertEqual("send_message", object["action"] as! String)
+        XCTAssertEqual("request!", payload["request_id"] as! String)
+        XCTAssertEqual("neat!", payload["text"] as! String)
+        XCTAssertEqual(1, payload["direction"] as! UInt)
+        
+        XCTAssertNil(payload["attachment"])
+        XCTAssertNil(payload["routing"])
+        XCTAssertNil(payload["created_on"])
     }
 
     func testNewMessageResponse() throws {

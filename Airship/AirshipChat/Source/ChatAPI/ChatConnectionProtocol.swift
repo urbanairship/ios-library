@@ -48,6 +48,7 @@ enum CloseReason {
 /**
  * Chat connection protocol.
  */
+@available(iOS 13.0, *)
 protocol ChatConnectionProtocol  {
     /**
      * If the connection is open or opening.
@@ -77,11 +78,15 @@ protocol ChatConnectionProtocol  {
 
     /**
      * Sends a message.
-     * @param requestID The request ID.
-     * @param text The message's text.
-     * @param attachment The attachment.
-     * @param routing The routing object
+     * - Parameters:
+     *  - requestID The request ID.
+     *  - text The message's text.
+     *  - attachment The attachment.
+     *  - direction The message direction.
+     *  - date The date.
+     *  - routing The routing object
      */
-    func sendMessage(requestID: String, text: String?, attachment: URL?, routing: ChatRouting?)
+    @available(iOS 13.0, *)
+    func sendMessage(requestID: String, text: String?, attachment: URL?, direction: ChatMessageDirection, date: Date?, routing: ChatRouting?)
 }
 

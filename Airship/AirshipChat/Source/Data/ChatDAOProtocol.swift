@@ -12,6 +12,7 @@ protocol PendingChatMessageDataProtocol {
     var text: String? {get}
     var attachment: URL? { get}
     var createdOn: Date {get}
+    var direction: UInt {get}
 }
 
 protocol ChatMessageDataProtocol  {
@@ -28,7 +29,7 @@ protocol ChatMessageDataProtocol  {
  */
 protocol ChatDAOProtocol {
     func upsertMessage(messageID: Int, requestID: String?, text: String?, createdOn: Date, direction: UInt, attachment: URL?)
-    func insertPending(requestID: String, text: String?, attachment: URL?, createdOn: Date)
+    func upsertPending(requestID: String, text: String?, attachment: URL?, createdOn: Date, direction: UInt)
     func removePending(_ requestID: String)
     func fetchMessages(completionHandler: @escaping (Array<ChatMessageDataProtocol>, Array<PendingChatMessageDataProtocol>)->())
     func fetchPending(completionHandler: @escaping (Array<PendingChatMessageDataProtocol>)->())

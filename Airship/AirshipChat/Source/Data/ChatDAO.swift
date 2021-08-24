@@ -39,13 +39,14 @@ class ChatDAO: ChatDAOProtocol {
         }
     }
 
-    func insertPending(requestID: String, text: String?, attachment: URL?, createdOn: Date) {
+    func upsertPending(requestID: String, text: String?, attachment: URL?, createdOn: Date, direction: UInt) {
         safePerformBlock { context in
-            let data = self.insertNewEntity(ChatDAO.pendingChatMessageDataEntityName, context: context) as! PendingChatMessageData
+            let data = self.getPendingMessage(requestID, context: context) ?? self.insertNewEntity(ChatDAO.pendingChatMessageDataEntityName, context: context) as! PendingChatMessageData
             data.requestID = requestID
             data.text = text
             data.createdOn = createdOn
             data.attachment = attachment
+            data.direction = direction
         }
     }
 

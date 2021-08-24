@@ -26,6 +26,9 @@ import AirshipCore
 public class OpenChatAction : NSObject, UAAction {
 
     public static let name = "open_chat_action"
+    static let routingKey = "chat_routing"
+    static let prepopulatedMessagesKey = "prepopulated_messages"
+    static let inputKey = "chat_input"
 
     public typealias AirshipChatProvider = () -> Chat
 
@@ -55,9 +58,22 @@ public class OpenChatAction : NSObject, UAAction {
     public func perform(with arguments: UAActionArguments, completionHandler: @escaping UAActionCompletionHandler) {
         let chat = self.chatProvider()
         let args = arguments.value as? [String: Any]
-        let message = args?["chat_input"] as? String
-        if let routing = args?["chat_routing"] as? ChatRouting {
+        let message = args?[OpenChatAction.inputKey] as? String
+        if let routing = args?[OpenChatAction.routingKey] as? ChatRouting {
             chat.conversation.routing = routing
+        }
+        if let incoming = args?[OpenChatAction.prepopulatedMessagesKey] as? [Any] {
+            do {
+                let jsonData = try JSONSerialization.data(withJSONObject: incoming, options: .fragmentsAllowed)
+                
+                let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = .iso8601
+                let parsed = try decoder.decode([ChatIncomingMessage].self, from: jsonData)
+                chat.addIncoming(parsed)
+            }
+            catch {
+                AirshipLogger.error("Failed to parse outgoing messages \(error)")
+            }
         }
         
         chat.openChat(message: message)

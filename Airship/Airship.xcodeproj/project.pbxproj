@@ -1201,6 +1201,7 @@
 		DFFCF5AF1FCF53100014DE2E /* UAInAppRemoteDataClientTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DFFCF5AE1FCF53100014DE2E /* UAInAppRemoteDataClientTest.m */; };
 		E29D35EF1DB9751F003C292F /* UAFetchDeviceInfoActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = E29D35EE1DB9751F003C292F /* UAFetchDeviceInfoActionTest.m */; };
 		E39D6A22D2DD999CD2FA0A4F /* Pods_AirshipAccengageTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 45F651ACE8833830E1D2333D /* Pods_AirshipAccengageTests.framework */; };
+		E84591B326CDCB31000E87FA /* ChatIncomingMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E84591B226CDCB30000E87FA /* ChatIncomingMessage.swift */; };
 		E8A58B38268FDF12005079F3 /* ChatRouting.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8A58B37268FDF12005079F3 /* ChatRouting.swift */; };
 /* End PBXBuildFile section */
 
@@ -1647,6 +1648,7 @@
 		6E15B73A26D43F110099C92D /* UANSURLValueTransformer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UANSURLValueTransformer.swift; sourceTree = "<group>"; };
 		6E15B73B26D43F120099C92D /* UANSArrayValueTransformer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UANSArrayValueTransformer.swift; sourceTree = "<group>"; };
 		6E15B73C26D43F120099C92D /* UANSDictionaryValueTransformer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UANSDictionaryValueTransformer.swift; sourceTree = "<group>"; };
+		6E15B74826D4A8380099C92D /* ChatMessageDataModel 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "ChatMessageDataModel 2.xcdatamodel"; sourceTree = "<group>"; };
 		6E1892C7268D15C300417887 /* PreferenceCenterTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterTest.swift; sourceTree = "<group>"; };
 		6E1892C9268D16E200417887 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6E1892CC268D17D200417887 /* MockRemoteDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockRemoteDataProvider.swift; sourceTree = "<group>"; };
@@ -2370,6 +2372,7 @@
 		DFFCF5AE1FCF53100014DE2E /* UAInAppRemoteDataClientTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppRemoteDataClientTest.m; sourceTree = "<group>"; };
 		DFFCF5B91FD1E65F0014DE2E /* UAInAppRemoteDataClient+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInAppRemoteDataClient+Internal.h"; sourceTree = "<group>"; };
 		E29D35EE1DB9751F003C292F /* UAFetchDeviceInfoActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAFetchDeviceInfoActionTest.m; sourceTree = "<group>"; };
+		E84591B226CDCB30000E87FA /* ChatIncomingMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatIncomingMessage.swift; sourceTree = "<group>"; };
 		E8A58B37268FDF12005079F3 /* ChatRouting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatRouting.swift; sourceTree = "<group>"; };
 		EBF83042659DAF0D42AD7A9E /* Pods_AirshipTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AirshipTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -3631,6 +3634,7 @@
 				6E7C06AE26127606006D0E84 /* Chat.swift */,
 				6E7C07CE26139B4A006D0E84 /* Conversation.swift */,
 				6E7C07DD26139B58006D0E84 /* ChatMessage.swift */,
+				E84591B226CDCB30000E87FA /* ChatIncomingMessage.swift */,
 				6E9D55C2261E3A92009BD6EB /* AirshipChannel.swift */,
 				6E9D57C0261F99BF009BD6EB /* ChatConfig.swift */,
 				6E9D580A261FC344009BD6EB /* OpenChatAction.swift */,
@@ -6186,6 +6190,7 @@
 				6E9D5463261E0CD6009BD6EB /* WebSocketFactory.swift in Sources */,
 				6E7C06AF26127606006D0E84 /* Chat.swift in Sources */,
 				3C9AC940262F9AC300D6E346 /* ChatStyle.swift in Sources */,
+				E84591B326CDCB31000E87FA /* ChatIncomingMessage.swift in Sources */,
 				6E7C07FA26139C02006D0E84 /* ChatDAOProtocol.swift in Sources */,
 				6E7C07CF26139B4A006D0E84 /* Conversation.swift in Sources */,
 				6E7C07DE26139B58006D0E84 /* ChatMessage.swift in Sources */,
@@ -8191,9 +8196,10 @@
 		A6031ED126738CE600FFE328 /* ChatMessageDataModel.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				6E15B74826D4A8380099C92D /* ChatMessageDataModel 2.xcdatamodel */,
 				A6031ED226738CE600FFE328 /* ChatMessageDataModel.xcdatamodel */,
 			);
-			currentVersion = A6031ED226738CE600FFE328 /* ChatMessageDataModel.xcdatamodel */;
+			currentVersion = 6E15B74826D4A8380099C92D /* ChatMessageDataModel 2.xcdatamodel */;
 			path = ChatMessageDataModel.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

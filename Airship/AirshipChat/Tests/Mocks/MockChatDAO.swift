@@ -25,6 +25,7 @@ struct MockPendingChatMessageData : PendingChatMessageDataProtocol {
     var text: String?
     var attachment: URL?
     var createdOn: Date
+    var direction: UInt
 }
 
 class MockChatDAO: ChatDAOProtocol {
@@ -47,9 +48,9 @@ class MockChatDAO: ChatDAOProtocol {
         }
     }
 
-    func insertPending(requestID: String, text: String?, attachment: URL?, createdOn: Date) {
+    func upsertPending(requestID: String, text: String?, attachment: URL?, createdOn: Date, direction: UInt) {
         dispatcher.dispatchAsync {
-            self.pendingMessages[requestID] = MockPendingChatMessageData(requestID: requestID, text: text, attachment: attachment, createdOn: createdOn)
+            self.pendingMessages[requestID] = MockPendingChatMessageData(requestID: requestID, text: text, attachment: attachment, createdOn: createdOn, direction: direction)
         }
     }
 
