@@ -717,39 +717,26 @@
 - (void)testLocationSettingsWithDataCollection {
     // both data collection and location services enabled
     UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
-    id payloadMock = [self partialMockForObject:payload];
-
     [self.privacyManager enableFeatures:UAFeaturesLocation];
     self.location.locationUpdatesEnabled = YES;
     
-    [[payloadMock expect] setLocationSettings:@YES];
-    
     XCTestExpectation *completed = [self expectationWithDescription:@"called"];
     [self.testChannel extendPayload:payload completionHandler:^(UAChannelRegistrationPayload *payload) {
-        [payloadMock verify];
+        XCTAssertTrue([payload.channel.locationEnabledNumber boolValue]);
         [completed fulfill];
     }];
        
     [self waitForTestExpectations];
     
-    [payloadMock stopMocking];
-    
-    // data collection enabled and location services disabled
-    payloadMock = [self partialMockForObject:payload];
-    
     [self.privacyManager disableFeatures:UAFeaturesLocation];
-    
-    [[payloadMock expect] setLocationSettings:@NO];
              
     completed = [self expectationWithDescription:@"called"];
     [self.testChannel extendPayload:payload completionHandler:^(UAChannelRegistrationPayload *payload) {
-        [payloadMock verify];
+        XCTAssertFalse([payload.channel.locationEnabledNumber boolValue]);
         [completed fulfill];
     }];
        
-    [self waitForTestExpectations];
-    
-    [payloadMock stopMocking];
+    [self waitForTestExpectations];    
 }
 
 /**

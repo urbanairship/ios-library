@@ -118,8 +118,8 @@ class ContactTest: XCTestCase {
         XCTAssertEqual(1, self.channel.extenders.count)
         
         let expectation = XCTestExpectation(description: "callback called")
-        self.channel.extenders[0](UAChannelRegistrationPayload()) { payload in
-            XCTAssertNil(payload.contactID)
+        self.channel.extenders[0](ChannelRegistrationPayload()) { payload in
+            XCTAssertNil(payload.channel.contactID)
             expectation.fulfill()
         }
         
@@ -145,8 +145,8 @@ class ContactTest: XCTestCase {
         XCTAssertEqual(1, self.channel.extenders.count)
         
         let extendedCallback = XCTestExpectation(description: "callback called")
-        self.channel.extenders[0](UAChannelRegistrationPayload()) { payload in
-            XCTAssertEqual("some-contact-id", payload.contactID)
+        self.channel.extenders[0](ChannelRegistrationPayload()) { payload in
+            XCTAssertEqual("some-contact-id", payload.channel.contactID)
             extendedCallback.fulfill()
         }
         

@@ -56,7 +56,7 @@ public protocol ChannelProtocol {
     
     // NOTE: For internal use only. :nodoc:
     @objc
-    func addRegistrationExtender(_ extender: @escaping  (UAChannelRegistrationPayload, (@escaping (UAChannelRegistrationPayload) -> Void)) -> Void)
+    func addRegistrationExtender(_ extender: @escaping  (ChannelRegistrationPayload, (@escaping (ChannelRegistrationPayload) -> Void)) -> Void)
     
     /**
      * Edits channel tags.

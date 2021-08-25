@@ -240,7 +240,6 @@
     [runnerMock verify];
 }
 
-
 - (void)testExtendChannel {
     __block void (^extenderBlock)(UAChannelRegistrationPayload *, void (^) (UAChannelRegistrationPayload *));
 
@@ -258,7 +257,7 @@
 
     XCTestExpectation *channelCallback = [self expectationWithDescription:@"channel callback"];
     extenderBlock(payload, ^(UAChannelRegistrationPayload *payload) {
-        XCTAssertEqual(testDeviceID, payload.accengageDeviceID);
+        XCTAssertEqual(testDeviceID, payload.identityHints.accengageDeviceID);
         [channelCallback fulfill];
     });
 

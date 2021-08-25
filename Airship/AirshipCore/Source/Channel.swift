@@ -76,7 +76,7 @@ public class Channel : UAComponent, ChannelProtocol {
     private let tagsLock = Lock()
 
     private var shouldPerformChannelRegistrationOnForeground = false
-    private var extensionBlocks: [((UAChannelRegistrationPayload, @escaping (UAChannelRegistrationPayload) -> Void) -> Void)] = []
+    private var extensionBlocks: [((ChannelRegistrationPayload, @escaping (ChannelRegistrationPayload) -> Void) -> Void)] = []
 
 
     @objc
@@ -253,7 +253,7 @@ public class Channel : UAComponent, ChannelProtocol {
     }
     
     // NOTE: For internal use only. :nodoc:
-    public func addRegistrationExtender(_ extender: @escaping(UAChannelRegistrationPayload, (@escaping (UAChannelRegistrationPayload) -> Void)) -> Void) {
+    public func addRegistrationExtender(_ extender: @escaping(ChannelRegistrationPayload, (@escaping (ChannelRegistrationPayload) -> Void)) -> Void) {
         self.extensionBlocks.append(extender)
     }
     
@@ -461,30 +461,30 @@ extension Channel : UAPushableComponent {
 
 extension Channel : ChannelRegistrarDelegate {
     
-    public func createChannelPayload(completionHandler: @escaping (UAChannelRegistrationPayload) -> ()) {
-        let payload = UAChannelRegistrationPayload()
+    public func createChannelPayload(completionHandler: @escaping (ChannelRegistrationPayload) -> ()) {
+        let payload = ChannelRegistrationPayload()
         
         if (self.isChannelTagRegistrationEnabled) {
-            payload.tags = self.tags
-            payload.setTags = true
+            payload.channel.tags = self.tags
+            payload.channel.setTags = true
         } else {
-            payload.setTags = false
+            payload.channel.setTags = false
         }
         
         if (self.privacyManager.isEnabled(.analytics)) {
-            payload.deviceModel = UAUtils.deviceModelName()
-            payload.carrier = UAUtils.carrierName()
-            payload.appVersion = UAUtils.bundleShortVersionString()
-            payload.deviceOS = UIDevice.current.systemVersion
+            payload.channel.deviceModel = UAUtils.deviceModelName()
+            payload.channel.carrier = UAUtils.carrierName()
+            payload.channel.appVersion = UAUtils.bundleShortVersionString()
+            payload.channel.deviceOS = UIDevice.current.systemVersion
         }
         
 
         if (self.privacyManager.isAnyFeatureEnabled()) {
             let currentLocale = self.localeManager.currentLocale
-            payload.language = currentLocale.languageCode
-            payload.country = currentLocale.regionCode
-            payload.timeZone = TimeZone.current.identifier
-            payload.sdkVersion = UAirshipVersion.get()
+            payload.channel.language = currentLocale.languageCode
+            payload.channel.country = currentLocale.regionCode
+            payload.channel.timeZone = TimeZone.current.identifier
+            payload.channel.sdkVersion = UAirshipVersion.get()
             
             Channel.extendPayload(payload,
                                   extenders: self.extensionBlocks,
@@ -527,9 +527,9 @@ extension Channel : ChannelRegistrarDelegate {
     }
     
     
-    class func extendPayload(_ payload: UAChannelRegistrationPayload,
-                             extenders: [((UAChannelRegistrationPayload, @escaping (UAChannelRegistrationPayload) -> Void) -> Void)],
-                             completionHandler: @escaping (UAChannelRegistrationPayload) -> Void) {
+    class func extendPayload(_ payload: ChannelRegistrationPayload,
+                             extenders: [((ChannelRegistrationPayload, @escaping (ChannelRegistrationPayload) -> Void) -> Void)],
+                             completionHandler: @escaping (ChannelRegistrationPayload) -> Void) {
         
         guard extenders.count > 0 else {
             completionHandler(payload)

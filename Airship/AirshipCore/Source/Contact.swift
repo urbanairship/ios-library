@@ -255,7 +255,7 @@ public class Contact : UAComponent, ContactProtocol {
         }
         
         self.channel.addRegistrationExtender { [weak self] payload, completionHandler in
-            payload.contactID = self?.lastContactInfo?.contactID
+            payload.channel.contactID = self?.lastContactInfo?.contactID
             completionHandler(payload)
         }
         

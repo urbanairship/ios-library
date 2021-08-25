@@ -103,7 +103,7 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
     
     XCTestExpectation *extendedPayload = [self expectationWithDescription:@"extended payload"];
     [self.testChannel extendPayload:[[UAChannelRegistrationPayload alloc] init] completionHandler:^(UAChannelRegistrationPayload *payload) {
-            XCTAssertEqualObjects(self.userData.username, payload.userID);
+            XCTAssertEqualObjects(self.userData.username, payload.identityHints.userID);
             [extendedPayload fulfill];
     }];
     [self waitForTestExpectations];
@@ -115,7 +115,7 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
 
     XCTestExpectation *extendedPayload = [self expectationWithDescription:@"extended payload"];
     [self.testChannel extendPayload:[[UAChannelRegistrationPayload alloc] init] completionHandler:^(UAChannelRegistrationPayload *payload) {
-        XCTAssertNil(payload.userID);
+        XCTAssertNil(payload.identityHints.userID);
         [extendedPayload fulfill];
     }];
     [self waitForTestExpectations];

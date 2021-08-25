@@ -6,7 +6,7 @@ import AirshipCore
 @objc(UATestChannel)
 public class TestChannel : NSObject, ChannelProtocol {
     
-    public var extenders: [((UAChannelRegistrationPayload, @escaping (UAChannelRegistrationPayload) -> Void) -> Void)] = []
+    public var extenders: [((ChannelRegistrationPayload, @escaping (ChannelRegistrationPayload) -> Void) -> Void)] = []
     
     @objc
     public var identifier: String? = nil
@@ -93,7 +93,7 @@ public class TestChannel : NSObject, ChannelProtocol {
         self.updateRegistrationCalled = true
     }
     
-    public func addRegistrationExtender(_ extender: @escaping  (UAChannelRegistrationPayload, (@escaping (UAChannelRegistrationPayload) -> Void)) -> Void) {
+    public func addRegistrationExtender(_ extender: @escaping  (ChannelRegistrationPayload, (@escaping (ChannelRegistrationPayload) -> Void)) -> Void) {
         self.extenders.append(extender)
     }
     
@@ -102,7 +102,7 @@ public class TestChannel : NSObject, ChannelProtocol {
     }
     
     @objc
-    public func extendPayload(_ payload: UAChannelRegistrationPayload, completionHandler: @escaping (UAChannelRegistrationPayload) -> Void) {
+    public func extendPayload(_ payload: ChannelRegistrationPayload, completionHandler: @escaping (ChannelRegistrationPayload) -> Void) {
         Channel.extendPayload(payload,
                               extenders: self.extenders,
                               completionHandler: completionHandler)

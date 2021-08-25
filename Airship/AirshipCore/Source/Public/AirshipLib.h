@@ -14,7 +14,6 @@
 #import "UAAsyncOperation.h"
 #import "UAAttributes.h"
 #import "UAAutomationModuleLoaderFactory.h"
-#import "UAChannelRegistrationPayload.h"
 #import "UAComponent.h"
 #import "UACompression.h"
 #import "UAConfig.h"

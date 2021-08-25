@@ -29,7 +29,7 @@ public protocol ChannelRegistrarDelegate {
      * - Parameter completionHandler: A completion handler which will be passed the created registration payload.
      */
     @objc
-    func createChannelPayload(completionHandler: @escaping (UAChannelRegistrationPayload) -> ())
+    func createChannelPayload(completionHandler: @escaping (ChannelRegistrationPayload) -> ())
     
     /**
      * Called when the channel registrar failed to register.
@@ -58,7 +58,7 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
     private static let forcefullyKey = "forcefully";
     private static let taskID = "UAChannelRegistrar.registration";
     private static let channelIDKey = "UAChannelID";
-    private static let lastPayloadKey = "payload-key";
+    private static let lastPayloadKey = "ChannelRegistrar.payload";
     private static let lastUpdateKey = "payload-update-key";
     private static let deviceIDKey = "deviceID";
 
@@ -75,17 +75,24 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
         }
     }
     
-    private var lastSuccessPayload: UAChannelRegistrationPayload? {
+    private var lastSuccessPayload: ChannelRegistrationPayload? {
         get {
-            guard let data = self.dataStore.object(forKey: ChannelRegistrar.lastPayloadKey) as? Data else {
+            if let data = self.dataStore.data(forKey: ChannelRegistrar.lastPayloadKey) {
+                do {
+                    return try ChannelRegistrationPayload.decode(data)
+                } catch {
+                    AirshipLogger.error("Unable to load last payload \(error)")
+                    return nil
+                }
+            } else {
                 return nil
             }
-                        
-            return UAChannelRegistrationPayload(data: data)
         }
         set {
-            if let value = newValue {
-                self.dataStore.setObject(value.asJSONData(), forKey: ChannelRegistrar.lastPayloadKey)
+            if (newValue != nil) {
+                if let data = try? newValue?.encode() {
+                    self.dataStore.setValue(data, forKey: ChannelRegistrar.lastPayloadKey)
+                }
             } else {
                 self.dataStore.removeObject(forKey: ChannelRegistrar.lastPayloadKey)
             }
@@ -97,7 +104,7 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
             return self.dataStore.object(forKey: ChannelRegistrar.lastUpdateKey) as? Date ?? Date.distantPast
         }
         set {
-            self.dataStore.setObject(newValue, forKey: ChannelRegistrar.lastPayloadKey)
+            self.dataStore.setObject(newValue, forKey: ChannelRegistrar.lastUpdateKey)
         }
     }
     
@@ -229,7 +236,7 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
         }
     }
     
-    private func updateChannel(_ channelID: String, payload: UAChannelRegistrationPayload, lastPayload: UAChannelRegistrationPayload?,  task: UATask) {
+    private func updateChannel(_ channelID: String, payload: ChannelRegistrationPayload, lastPayload: ChannelRegistrationPayload?,  task: UATask) {
         let semaphore = UASemaphore()
         let disposable = self.channelAPIClient.updateChannel(withID: channelID, withPayload: payload) { response, error in
             guard let response = response else {
@@ -271,7 +278,7 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
         semaphore.wait()
     }
     
-    private func createChannel(payload: UAChannelRegistrationPayload, task: UATask) {
+    private func createChannel(payload: ChannelRegistrationPayload, task: UATask) {
         let semaphore = UASemaphore()
         let disposable = self.channelAPIClient.createChannel(withPayload: payload) { response, error in
             
@@ -318,7 +325,7 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
         self.lastSuccessPayload = nil
     }
     
-    private func registrationFinished(_ payload: UAChannelRegistrationPayload, success: Bool) {
+    private func registrationFinished(_ payload: ChannelRegistrationPayload, success: Bool) {
         if (success) {
             self.lastSuccessPayload = payload
             self.lastUpdateDate = self.date.now
@@ -333,7 +340,7 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
     }
 
     
-    private func shouldUpdate(_ payload: UAChannelRegistrationPayload?, lastPayload: UAChannelRegistrationPayload?) -> Bool {
+    private func shouldUpdate(_ payload: ChannelRegistrationPayload?, lastPayload: ChannelRegistrationPayload?) -> Bool {
         guard let payload = payload else {
             return false
         }
@@ -345,7 +352,7 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
             return true;
         }
         
-        if (!payload.isEqual(to: lastPayload)) {
+        if (payload != lastPayload) {
             AirshipLogger.trace("Should update registration. Channel registration payload has changed.")
             return true
         }
@@ -359,8 +366,8 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
         return false
     }
     
-    private func createPayload() -> UAChannelRegistrationPayload? {
-        var result: UAChannelRegistrationPayload?
+    private func createPayload() -> ChannelRegistrationPayload? {
+        var result: ChannelRegistrationPayload?
         let semaphore = UASemaphore()
         
         guard let strongDelegate = delegate else {

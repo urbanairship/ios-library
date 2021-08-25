@@ -2,7 +2,6 @@
 
 #import "UAAirshipBaseTest.h"
 #import <Foundation/Foundation.h>
-#import "UAChannelRegistrationPayload+Internal.h"
 #import "UAirship.h"
 #import "UAAnalytics+Internal.h"
 #import "AirshipTests-Swift.h"
@@ -46,7 +45,7 @@
     XCTAssertEqualObjects(@"POST", request.method);
     XCTAssertEqualObjects(@"application/vnd.urbanairship+json; version=3;", request.headers[@"Accept"]);
     XCTAssertEqualObjects(@"application/json", request.headers[@"Content-Type"]);
-    XCTAssertEqualObjects(payload.asJSONData, request.body);
+    XCTAssertEqualObjects([payload encodeWithError:nil], request.body);
 }
 
 - (void)testCreateChannelParseError {
@@ -114,7 +113,7 @@
     XCTAssertEqualObjects(@"PUT", request.method);
     XCTAssertEqualObjects(@"application/vnd.urbanairship+json; version=3;", request.headers[@"Accept"]);
     XCTAssertEqualObjects(@"application/json", request.headers[@"Content-Type"]);
-    XCTAssertEqualObjects(payload.asJSONData, request.body);
+    XCTAssertEqualObjects([payload encodeWithError:nil], request.body);
 }
 
 - (void)testUpdateChannelFailure {

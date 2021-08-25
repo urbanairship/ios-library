@@ -3,7 +3,6 @@
 
 #import "UAAirshipBaseTest.h"
 #import "UAirship+Internal.h"
-#import "UAChannelRegistrationPayload+Internal.h"
 #import "UAEvent.h"
 #import "AirshipTests-Swift.h"
 
@@ -1285,9 +1284,10 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
     XCTestExpectation *extendedPayload = [self expectationWithDescription:@"extended payload"];
     [self.testChannel extendPayload:payload completionHandler:^(UAChannelRegistrationPayload * payload) {
-        XCTAssertEqualObjects(@"736f6d652d746f6b656e", payload.pushAddress);
-        XCTAssertEqualObjects(self.push.quietTime, payload.quietTime);
-        XCTAssertEqualObjects(@"Pacific/Auckland", payload.quietTimeTimeZone);
+        XCTAssertEqualObjects(@"736f6d652d746f6b656e", payload.channel.pushAddress);
+        XCTAssertEqualObjects(self.push.quietTime[@"end"], payload.channel.iOSChannelSettings.quietTime.end);
+        XCTAssertEqualObjects(self.push.quietTime[@"start"], payload.channel.iOSChannelSettings.quietTime.start);
+        XCTAssertEqualObjects(@"Pacific/Auckland", payload.channel.iOSChannelSettings.quietTimeTimeZone);
         [extendedPayload fulfill];
     }];
 
@@ -1303,8 +1303,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
     XCTestExpectation *extendedPayload = [self expectationWithDescription:@"extended payload"];
     [self.testChannel extendPayload:payload completionHandler:^(UAChannelRegistrationPayload * payload) {
-        XCTAssertNil(payload.quietTime);
-        XCTAssertNil(payload.quietTimeTimeZone);
+        XCTAssertNil(payload.channel.iOSChannelSettings);
         [extendedPayload fulfill];
     }];
 
@@ -1323,7 +1322,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
     XCTestExpectation *extendedPayload = [self expectationWithDescription:@"extended payload"];
     [self.testChannel extendPayload:payload completionHandler:^(UAChannelRegistrationPayload * payload) {
-            XCTAssertNil(payload.pushAddress);
+            XCTAssertNil(payload.channel.pushAddress);
             [extendedPayload fulfill];
     }];
 
@@ -1340,7 +1339,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
     XCTestExpectation *extendedPayload = [self expectationWithDescription:@"extended payload"];
     [self.testChannel extendPayload:payload completionHandler:^(UAChannelRegistrationPayload *payload) {
-        XCTAssertEqualObjects(payload.badge, @(30));
+        XCTAssertEqualObjects(payload.channel.iOSChannelSettings.badgeNumber, @(30));
             [extendedPayload fulfill];
     }];
 
@@ -1418,7 +1417,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
     [self waitForTestExpectations];
 
-    XCTAssertEqualObjects(validDeviceToken, payload.pushAddress);
+    XCTAssertEqualObjects(validDeviceToken, payload.channel.pushAddress);
 }
 
 - (void)expectUpdatePushRegistrationWithOptions:(UANotificationOptions)expectedOptions categories:(NSSet<UNNotificationCategory *> *)expectedCategories {

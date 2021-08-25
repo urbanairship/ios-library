@@ -67,7 +67,10 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
             UA_STRONGIFY(self)
             if (self.enabled) {
                 [self.userDataDAO getUserData:^(UAUserData *userData) {
-                    payload.userID = userData.username;
+                    if (userData.username) {
+                        payload.identityHints = payload.identityHints ?: [[UAIdentityHints alloc] init];
+                        payload.identityHints.userID = userData.username;
+                    }
                     completionHandler(payload);
                 }];
             } else {

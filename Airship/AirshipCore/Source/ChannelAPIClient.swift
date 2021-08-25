@@ -24,8 +24,14 @@ public class ChannelAPIClient : NSObject {
 
     @objc
     @discardableResult
-    public func createChannel(withPayload payload: UAChannelRegistrationPayload, completionHandler: @escaping (UAChannelCreateResponse?, Error?) -> Void) -> UADisposable {
-        AirshipLogger.debug("Creating channel with: \(payload)")
+    public func createChannel(withPayload payload: ChannelRegistrationPayload, completionHandler: @escaping (UAChannelCreateResponse?, Error?) -> Void) -> UADisposable {
+        
+        guard let data = try? payload.encode() else {
+            completionHandler(nil, AirshipErrors.error("Unable to encode data."))
+            return UADisposable()
+        }
+        
+        AirshipLogger.debug("Creating channel with: \(String(data:data, encoding: .utf8) ?? "")")
 
         let url = URL(string: "\(self.config.deviceAPIURL ?? "")\(self.path)")
         let request = UARequest(builderBlock: { [self] builder in
@@ -33,7 +39,7 @@ public class ChannelAPIClient : NSObject {
             builder.method = "POST"
             builder.username = config.appKey
             builder.password = config.appSecret
-            builder.body = payload.asJSONData()
+            builder.body = data
             builder.setValue("application/vnd.urbanairship+json; version=3;", header: "Accept")
             builder.setValue("application/json", header: "Content-Type")
         })
@@ -75,7 +81,7 @@ public class ChannelAPIClient : NSObject {
 
     @objc
     @discardableResult
-    public func updateChannel(withID channelID: String, withPayload payload: UAChannelRegistrationPayload, completionHandler: @escaping (UAHTTPResponse?, Error?) -> Void) -> UADisposable {
+    public func updateChannel(withID channelID: String, withPayload payload: ChannelRegistrationPayload, completionHandler: @escaping (UAHTTPResponse?, Error?) -> Void) -> UADisposable {
         AirshipLogger.debug("Updating channel with: \(payload)")
 
         let channelLocation = "\(config.deviceAPIURL ?? "")\(self.path)\(channelID)"
@@ -85,7 +91,7 @@ public class ChannelAPIClient : NSObject {
             builder.method = "PUT"
             builder.username = config.appKey
             builder.password = config.appSecret
-            builder.body = payload.asJSONData()
+            builder.body = try? payload.encode()
             builder.setValue("application/vnd.urbanairship+json; version=3;", header: "Accept")
             builder.setValue("application/json", header: "Content-Type")
         })

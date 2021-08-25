@@ -1185,7 +1185,7 @@ public class Push: UAComponent, PushProtocol {
 
     // MARK: - Extenders
 
-    private func extendChannelRegistrationPayload(_ payload: UAChannelRegistrationPayload, completionHandler: @escaping (UAChannelRegistrationPayload) -> Void) {
+    private func extendChannelRegistrationPayload(_ payload: ChannelRegistrationPayload, completionHandler: @escaping (ChannelRegistrationPayload) -> Void) {
         guard self.privacyManager.isEnabled(.push) else {
             completionHandler(payload)
             return
@@ -1195,24 +1195,33 @@ public class Push: UAComponent, PushProtocol {
             guard let self = self else {
                 return
             }
+            
+            guard self.privacyManager.isEnabled(.push) else {
+                completionHandler(payload)
+                return
+            }
+            
+            payload.channel.pushAddress = self.deviceToken
+            payload.channel.isOptedIn = self.userPushNotificationsAllowed()
+            payload.channel.isBackgroundEnabled = self.backgroundPushNotificationsAllowed()
 
-            if self.privacyManager.isEnabled(.push) {
-                if let token = self.deviceToken {
-                    payload.pushAddress = token
-                }
-                payload.isOptedIn = self.userPushNotificationsAllowed()
-                payload.isBackgroundEnabled = self.backgroundPushNotificationsAllowed()
-
-                if self.autobadgeEnabled {
-                    payload.badge = self.badgeNumber as NSNumber
-                }
-
-                if let timeZoneName = self.timeZone?.name {
-                    if self.quietTime != nil && self.quietTimeEnabled {
-                        payload.quietTime = self.quietTime
-                        payload.quietTimeTimeZone = timeZoneName
-                    }
-                }
+            if (self.autobadgeEnabled) {
+                payload.channel.iOSChannelSettings = payload.channel.iOSChannelSettings ?? ChannelRegistrationPayload.iOSChannelSettings()
+                
+                payload.channel.iOSChannelSettings?.badge = self.badgeNumber
+            }
+            
+            if let timeZoneName = self.timeZone?.name,
+               let quietTimeStart = self.quietTime?[Push.QuietTimeStartKey] as? String,
+               let quietTimeEnd = self.quietTime?[Push.QuietTimeEndKey] as? String,
+               self.quietTimeEnabled {
+                
+                
+                payload.channel.iOSChannelSettings = payload.channel.iOSChannelSettings ?? ChannelRegistrationPayload.iOSChannelSettings()
+                
+                let quietTime = ChannelRegistrationPayload.QuietTime(start: quietTimeStart, end: quietTimeEnd)
+                payload.channel.iOSChannelSettings?.quietTimeTimeZone = timeZoneName
+                payload.channel.iOSChannelSettings?.quietTime = quietTime
             }
 
             completionHandler(payload)

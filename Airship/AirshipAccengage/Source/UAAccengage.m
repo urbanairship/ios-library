@@ -2,7 +2,6 @@
 
 #import "UAAccengage+Internal.h"
 #import "UAAccengagePayload.h"
-#import "UAChannelRegistrationPayload.h"
 #import "UAJSONSerialization.h"
 #import "UAAccengageUtils.h"
 #import "UAAccengageResources.h"
@@ -78,8 +77,9 @@ NSString *const UAAccengageSettingsMigrated = @"UAAccengageSettingsMigrated";
             [push updateRegistration];
             
             [channel addRegistrationExtender:^(UAChannelRegistrationPayload * payload, void (^ completionHandler)(UAChannelRegistrationPayload * _Nonnull)) {
-                            payload.accengageDeviceID = accengageDeviceID;
-                            completionHandler(payload);
+                payload.identityHints = payload.identityHints ?: [[UAIdentityHints alloc] init];
+                payload.identityHints.accengageDeviceID = accengageDeviceID;
+                completionHandler(payload);
             }];
 
             [self migrateSettings:settings

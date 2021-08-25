@@ -73,7 +73,7 @@ NSString *const UALocationUpdatesEnabled = @"UALocationUpdatesEnabled";
             UA_STRONGIFY(self)
             BOOL enabled = self.componentEnabled && self.locationUpdatesEnabled && [self.privacyManager isEnabled:UAFeaturesLocation];
             // Only set location settings if the app is opted in to data collection
-            payload.locationSettings = @(enabled);
+            payload.channel.locationEnabledNumber = @(enabled);
 
             completionHandler(payload);
         }];
