@@ -24,7 +24,7 @@
     [super setUp];
 
     self.config = [[UAConfig alloc] init];
-    self.config.channelCaptureEnabled = YES;
+    self.config.isChannelCaptureEnabled = YES;
     self.dataStore = [[UAPreferenceDataStore alloc] initWithKeyPrefix:NSUUID.UUID.UUIDString];
 
     self.testChannel = [[UATestChannel alloc] init];
@@ -148,7 +148,7 @@
  * Test channel is not captured when disabled in the config.
  */
 - (void)testChannelNotCapturedWhenDisabledViaConfig {
-    self.config.channelCaptureEnabled = NO;
+    self.config.isChannelCaptureEnabled = NO;
     [self createChannelCapture];
 
     [self verifyChannelIsNotCapturedAfterKnocks];
@@ -196,7 +196,7 @@
  * Test enabling channel capture with config disabled.
  */
 - (void)testEnableWhenDisabledInConfig {
-    self.config.channelCaptureEnabled = NO;
+    self.config.isChannelCaptureEnabled = NO;
     [self createChannelCapture];
 
     [self verifyChannelIsNotCapturedAfterKnocks];

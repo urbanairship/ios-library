@@ -2,8 +2,9 @@
 #import <UIKit/UIKit.h>
 #import "UABaseTest.h"
 #import "UAirship+Internal.h"
-#import "UAConfig.h"
 #import "UAComponent.h"
+
+@import AirshipCore;
 
 @interface UAirshipTest : UABaseTest
 @end

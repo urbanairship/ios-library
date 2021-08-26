@@ -17,7 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         // Populate AirshipConfig.plist with your app's info from https://go.urbanairship.com
         // or set runtime properties here.
-        let config = UAConfig.default()
+        let config = Config.default()
         config.developmentLogLevel = UALogLevel.trace
 
         if (config.validate() != true) {

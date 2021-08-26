@@ -12,7 +12,6 @@
 #import "UAAsyncOperation.h"
 #import "UAAutomationModuleLoaderFactory.h"
 #import "UAComponent.h"
-#import "UAConfig.h"
 #import "UAEvent.h"
 #import "UAGlobal.h"
 #import "UAJSONMatcher.h"

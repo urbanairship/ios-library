@@ -16,7 +16,6 @@
 #import "UAAutomationModuleLoaderFactory.h"
 #import "UAComponent.h"
 #import "UACompression.h"
-#import "UAConfig.h"
 #import "UADebugLibraryModuleLoaderFactory.h"
 #import "UAEvent.h"
 #import "UAExtendableAnalyticsHeaders.h"

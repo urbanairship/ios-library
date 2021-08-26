@@ -12,7 +12,7 @@ class SubscriptionListAPIClientTest: XCTestCase {
     var client: SubscriptionListAPIClient!
 
     override func setUpWithError() throws {
-        self.config = RuntimeConfig(config: UAConfig(), dataStore: UAPreferenceDataStore(keyPrefix: UUID().uuidString))
+        self.config = RuntimeConfig(config: Config(), dataStore: UAPreferenceDataStore(keyPrefix: UUID().uuidString))
         self.session = TestRequestSession.init()
         self.client = SubscriptionListAPIClient(config: self.config, session: self.session)
     }

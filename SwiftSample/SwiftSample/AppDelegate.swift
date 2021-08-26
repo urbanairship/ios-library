@@ -33,7 +33,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, RegistrationDelegate, UAD
 
         // Populate AirshipConfig.plist with your app's info from https://go.urbanairship.com
         // or set runtime properties here.
-        let config = UAConfig.default()
+        let config = Config.default()
 
         if (config.validate() != true) {
             showInvalidConfigAlert()

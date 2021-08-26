@@ -147,7 +147,7 @@ open class RuntimeConfig: NSObject {
     @objc
     public let enabledFeatures: UAFeatures
     
-    private let site: UACloudSite
+    private let site: CloudSite
     private let remoteConfigCache: RemoteConfigCache
     private let notificationCenter: NotificationCenter
 
@@ -167,9 +167,9 @@ open class RuntimeConfig: NSObject {
             }
             
             switch self.site {
-            case .EU:
+            case .eu:
                 return RuntimeConfig.configEUDeviceAPIURL
-            case .US:
+            case .us:
                 return RuntimeConfig.configUSDeviceAPIURL
             @unknown default:
                 return nil
@@ -192,9 +192,9 @@ open class RuntimeConfig: NSObject {
             }
 
             switch self.site {
-            case .EU:
+            case .eu:
                 return RuntimeConfig.configEURemoteDataAPIURL
-            case .US:
+            case .us:
                 return RuntimeConfig.configUSRemoteDataAPIURL
             @unknown default:
                 return nil
@@ -216,9 +216,9 @@ open class RuntimeConfig: NSObject {
             }
             
             switch self.site {
-            case .EU:
+            case .eu:
                 return RuntimeConfig.configEUAnalyticsURL
-            case .US:
+            case .us:
                 return RuntimeConfig.configUSAnalyticsURL
             @unknown default:
                 return nil
@@ -244,17 +244,17 @@ open class RuntimeConfig: NSObject {
     }
     
     @objc
-    public convenience init(config: UAConfig, dataStore: UAPreferenceDataStore) {
+    public convenience init(config: Config, dataStore: UAPreferenceDataStore) {
         self.init(config: config,
                   dataStore: dataStore,
                   notificationCenter: NotificationCenter.default)
     }
     
-    init(config: UAConfig, dataStore: UAPreferenceDataStore, notificationCenter: NotificationCenter) {
+    init(config: Config, dataStore: UAPreferenceDataStore, notificationCenter: NotificationCenter) {
         self.logLevel = config.logLevel
         self.appKey = config.appKey
         self.appSecret = config.appSecret
-        self.inProduction = config.isInProduction
+        self.inProduction = config.inProduction
         self.requestAuthorizationToUseNotifications = config.requestAuthorizationToUseNotifications
         self.requireInitialRemoteConfigEnabled = config.requireInitialRemoteConfigEnabled
         self.isAutomaticSetupEnabled = config.isAutomaticSetupEnabled
@@ -273,11 +273,11 @@ open class RuntimeConfig: NSObject {
         self.itunesID = config.itunesID
         self.enabledFeatures = config.enabledFeatures
         self.site = config.site
-        self.defaultAnalyticsURL = config.analyticsURL
-        self.defaultDeviceAPIURL = config.deviceAPIURL
-        self.defaultRemoteDataAPIURL = config.remoteDataAPIURL
-        self.defaultChatURL = config.chatURL
-        self.defaultChatWebSocketURL = config.chatWebSocketURL
+        self.defaultAnalyticsURL = config.analyticsURL?.normalizeURLString()
+        self.defaultDeviceAPIURL = config.deviceAPIURL?.normalizeURLString()
+        self.defaultRemoteDataAPIURL = config.remoteDataAPIURL?.normalizeURLString()
+        self.defaultChatURL = config.chatURL?.normalizeURLString()
+        self.defaultChatWebSocketURL = config.chatWebSocketURL?.normalizeURLString()
         self.remoteConfigCache = RemoteConfigCache(dataStore: dataStore)
         self.notificationCenter = notificationCenter
         super.init()
@@ -299,5 +299,15 @@ open class RuntimeConfig: NSObject {
             self.remoteConfigCache.remoteConfig = config
             self.notificationCenter.post(name: RuntimeConfig.configUpdatedEvent, object: nil)
         }
+    }
+}
+
+private extension String {
+    func normalizeURLString() -> String {
+        var copy = self
+        if (copy.hasSuffix("/")) {
+            copy.removeLast()
+        }
+        return copy
     }
 }

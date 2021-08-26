@@ -196,7 +196,7 @@
 - (void)testChannelCreationFlagDisabled {
     // Test when channel creation is disabled
     self.testRegistrar.registerCalled = NO;
-    self.config.channelCreationDelayEnabled = YES;
+    self.config.isChannelCreationDelayEnabled = YES;
     self.channel = [self createChannel];
     [self.channel updateRegistration];
 
@@ -209,7 +209,7 @@
 - (void)testChannelCreationFlagEnabled {
     // Test when channel creation is enabled
     self.testRegistrar.registerCalled = NO;
-    self.config.channelCreationDelayEnabled = YES;
+    self.config.isChannelCreationDelayEnabled = YES;
     self.channel = [self createChannel];
 
     [self.channel enableChannelCreation];
@@ -224,7 +224,7 @@
 - (void)testEnableChannelCreation {
     // Test when channel creation starts disabled
     self.testRegistrar.registerCalled = NO;
-    self.config.channelCreationDelayEnabled = YES;
+    self.config.isChannelCreationDelayEnabled = YES;
     self.channel = [self createChannel];
 
     // TEST
@@ -239,7 +239,7 @@
  */
 - (void)testEnableChannelDelayWithChannelID {
     // Set channelCreationDelayEnabled to NO
-    self.config.channelCreationDelayEnabled = NO;
+    self.config.isChannelCreationDelayEnabled = NO;
 
     // Init channel
     self.channel = [self createChannel];
@@ -248,7 +248,7 @@
     XCTAssertTrue(self.channel.isChannelCreationEnabled);
 
     // Set channelCreationDelayEnabled to YES
-    self.config.channelCreationDelayEnabled = YES;
+    self.config.isChannelCreationDelayEnabled = YES;
 
     // Init channel
     self.channel = [self createChannel];
@@ -619,7 +619,7 @@
 }
 
 - (void)testConfigUpdateChannelCreationDisabled {
-    self.config.channelCreationDelayEnabled = YES;
+    self.config.isChannelCreationDelayEnabled = YES;
     self.channel = [self createChannel];
 
     [self.notificationCenter postNotificationName:UARuntimeConfig.configUpdatedEvent object:nil];

@@ -12,8 +12,6 @@
 #import <Availability.h>
 #import <UserNotifications/UserNotifications.h>
 
-#import "UAConfig.h"
-
 #if !TARGET_OS_TV    // CoreTelephony and WebKit not supported in tvOS
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
 #import <CoreTelephony/CTCarrier.h>

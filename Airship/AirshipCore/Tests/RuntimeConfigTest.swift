@@ -10,8 +10,8 @@ class RuntimeConfigTest: XCTestCase {
     let notificationCenter = NotificationCenter()
 
     func testUSSiteURLS() throws {
-        let appConfig = UAConfig()
-        appConfig.site = .US
+        let appConfig = Config()
+        appConfig.site = .us
         
         let config = RuntimeConfig(config: appConfig, dataStore: self.dataStore)
         XCTAssertEqual("https://device-api.urbanairship.com", config.deviceAPIURL)
@@ -20,8 +20,8 @@ class RuntimeConfigTest: XCTestCase {
     }
 
     func testEUSiteURLS() throws {
-        let appConfig = UAConfig()
-        appConfig.site = .EU
+        let appConfig = Config()
+        appConfig.site = .eu
         
         let config = RuntimeConfig(config: appConfig, dataStore: self.dataStore)
         XCTAssertEqual("https://device-api.asnapieu.com", config.deviceAPIURL);
@@ -30,7 +30,7 @@ class RuntimeConfigTest: XCTestCase {
     }
 
     func testURLOverrides() throws {
-        let appConfig = UAConfig()
+        let appConfig = Config()
         appConfig.deviceAPIURL = "cool://devices"
         appConfig.analyticsURL = "cool://analytics"
         appConfig.remoteDataAPIURL = "cool://remote"
@@ -42,7 +42,7 @@ class RuntimeConfigTest: XCTestCase {
     }
     
     func testRequireInitialRemoteConfigEnabled() throws {
-        let appConfig = UAConfig()
+        let appConfig = Config()
         appConfig.requireInitialRemoteConfigEnabled = true
 
         let config = RuntimeConfig(config: appConfig, dataStore: self.dataStore)
@@ -57,7 +57,7 @@ class RuntimeConfigTest: XCTestCase {
             updatedCount += 1
         }
         
-        let config = RuntimeConfig(config: UAConfig(),
+        let config = RuntimeConfig(config: Config(),
                                    dataStore: self.dataStore,
                                    notificationCenter: self.notificationCenter)
         

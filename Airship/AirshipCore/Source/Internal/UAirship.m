@@ -4,7 +4,6 @@
 #import "UAAnalytics+Internal.h"
 #import "UAKeychainUtils+Internal.h"
 #import "UAGlobal.h"
-#import "UAConfig.h"
 #import "UAAutoIntegration+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAAppIntegration.h"

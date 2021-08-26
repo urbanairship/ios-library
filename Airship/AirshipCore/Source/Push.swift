@@ -407,12 +407,7 @@ public class Push: UAComponent, PushProtocol {
                 self.dataStore.setObject(deviceToken, forKey: Push.DeviceTokenKey);
                 self.deviceTokenAvailableBlock?()
                 self.didChangeValue(forKey: "deviceToken");
-
-                // Log the device token at error level, but without logging
-                // it as an error.
-                if (uaLogLevel.rawValue >= UALogLevel.error.rawValue) {
-                    print("Device token: \(deviceToken)")
-                }
+                AirshipLogger.importantInfo("Device token: \(deviceToken)")
             } catch {
                 AirshipLogger.error("Unable to set device token")
             }

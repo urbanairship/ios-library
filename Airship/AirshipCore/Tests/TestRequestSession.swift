@@ -18,7 +18,7 @@ public class TestRequestSession : UARequestSession {
 
     @objc
     public init() {
-        let config = RuntimeConfig(config: UAConfig(), dataStore: UAPreferenceDataStore(keyPrefix: UUID().uuidString))
+        let config = RuntimeConfig(config: Config(), dataStore: UAPreferenceDataStore(keyPrefix: UUID().uuidString))
         super.init(config: config, session: UARequestSession.sharedURLSession)
     }
 

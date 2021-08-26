@@ -3,7 +3,8 @@
 #import <UIKit/UIKit.h>
 #import "UAAirshipBaseTest.h"
 #import "UAURLAllowList.h"
-#import "UAConfig.h"
+
+@import AirshipCore;
 
 @interface UAURLAllowListTest : UAAirshipBaseTest
 

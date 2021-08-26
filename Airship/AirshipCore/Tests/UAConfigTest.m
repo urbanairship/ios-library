@@ -1,7 +1,8 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAConfig+Internal.h"
+
+@import AirshipCore;
 
 @interface UAConfigTest : UABaseTest
 @end
@@ -10,7 +11,6 @@
 
 - (void)testUnknownKeyHandling {
     // ensure that unknown values don't crash the app with an unkown key exception
-
     UAConfig *config =[[UAConfig alloc] init];
     XCTAssertNoThrow([config setValue:@"someValue" forKey:@"thisKeyDoesNotExist"], @"Invalid key incorrectly throws an exception.");
 }
@@ -29,16 +29,8 @@
     XCTAssertTrue([UAConfig isProductionProvisioningProfile:@""], @"Missing profiles should result in a production mode determination.");
 }
 
-- (void)testDeviceTypeDetermination {
-    // First make sure the simulator string works
-    UAConfig *simulatorConfig = [[UAConfig alloc] init];
-    XCTAssertTrue(simulatorConfig.isSimulator, @"The configuration init method incorrectly determined the isSimulator value on a simulator.");
-}
-
 - (void)testSimulatorFallback {
-
     // Ensure that the simulator falls back to the inProduction flag as it was set if there isn't a profile
-
     UAConfig *configInProduction = [[UAConfig alloc] init];
     configInProduction.profilePath = nil;
     configInProduction.inProduction = YES;
@@ -99,10 +91,6 @@
     config.detectProvisioningMode = YES;
     XCTAssertTrue(config.detectProvisioningMode, @"detectProvisioningMode defaults to YES.");
     XCTAssertTrue(config.inProduction, @"The embedded provisioning profile is a production profile.");
-
-    // ensure that our dispatch_once block works when wrapping the in production flag
-    config.profilePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"development-embedded" ofType:@"mobileprovision"];
-    XCTAssertTrue(config.inProduction, @"The development profile path should not be used as the file will only be read once.");
 }
 
 /**
@@ -193,8 +181,8 @@
     XCTAssertEqual(config.developmentLogLevel, 1, @"Development log level was improperly loaded.");
     XCTAssertEqual(config.productionLogLevel, 5, @"Production log level was improperly loaded.");
     XCTAssertTrue(config.detectProvisioningMode, @"detectProvisioningMode was improperly loaded.");
-    XCTAssertTrue(config.channelCreationDelayEnabled, @"channelCreationDelayEnabled was improperly loaded.");
-    XCTAssertTrue(config.extendedBroadcastsEnabled, @"extendedBroadcastsEnabled was improperly loaded.");
+    XCTAssertTrue(config.isChannelCreationDelayEnabled, @"channelCreationDelayEnabled was improperly loaded.");
+    XCTAssertTrue(config.isExtendedBroadcastsEnabled, @"extendedBroadcastsEnabled was improperly loaded.");
 
     //special case this one since we have to disable detectProvisioningMode
     config.detectProvisioningMode = NO;
@@ -217,7 +205,7 @@
     XCTAssertEqual(config.developmentLogLevel, 1, @"Development log level was improperly loaded.");
     XCTAssertEqual(config.productionLogLevel, 5, @"Production log level was improperly loaded.");
     XCTAssertTrue(config.detectProvisioningMode, @"detectProvisioningMode was improperly loaded.");
-    XCTAssertTrue(config.channelCreationDelayEnabled, @"channelCreationDelayEnabled was improperly loaded.");
+    XCTAssertTrue(config.isChannelCreationDelayEnabled, @"channelCreationDelayEnabled was improperly loaded.");
 
     //special case this one since we have to disable detectProvisioningMode
     config.detectProvisioningMode = NO;
@@ -259,36 +247,6 @@
 
 }
 
-- (void) testSetAnalyticsURL {
-    UAConfig *config =[[UAConfig alloc] init];
-
-    config.analyticsURL = @"http://some-other-url.com";
-    XCTAssertEqualObjects(@"http://some-other-url.com", config.analyticsURL, @"Analytics URL does not set correctly");
-    
-    config.analyticsURL = @"http://some-url.com/";
-    XCTAssertEqualObjects(@"http://some-url.com", config.analyticsURL, @"Analytics URL still contains trailing slash");
-}
-
-- (void) testSetDeviceAPIURL {
-    UAConfig *config =[[UAConfig alloc] init];
-
-    config.deviceAPIURL = @"http://some-other-url.com";
-    XCTAssertEqualObjects(@"http://some-other-url.com", config.deviceAPIURL, @"Device API URL does not set correctly");
-    
-    config.deviceAPIURL = @"http://some-url.com/";
-    XCTAssertEqualObjects(@"http://some-url.com", config.deviceAPIURL, @"Device API URL still contains trailing slash");
-}
-
-- (void) testSetRemoteDataAPIURL {
-    UAConfig *config =[[UAConfig alloc] init];
-    
-    config.remoteDataAPIURL = @"http://some-other-url.com";
-    XCTAssertEqualObjects(@"http://some-other-url.com", config.remoteDataAPIURL, @"Remote Data API URL does not set correctly");
-    
-    config.remoteDataAPIURL = @"http://some-url.com/";
-    XCTAssertEqualObjects(@"http://some-url.com", config.remoteDataAPIURL, @"Remote Data API URL still contains trailing slash");
-}
-
 - (void) testCopyConfig {
     NSString *plistPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"AirshipConfig-Valid" ofType:@"plist"];
 
@@ -307,29 +265,25 @@
     XCTAssertTrue(copy.productionLogLevel == config.productionLogLevel);
     XCTAssertTrue(copy.inProduction == config.inProduction);
     XCTAssertTrue(copy.detectProvisioningMode == config.detectProvisioningMode);
-    XCTAssertTrue(copy.automaticSetupEnabled == config.automaticSetupEnabled);
-    XCTAssertTrue(copy.analyticsEnabled == config.analyticsEnabled);
     XCTAssertTrue(copy.profilePath == config.profilePath);
+    XCTAssertTrue(copy.isAnalyticsEnabled == config.isAnalyticsEnabled);
     XCTAssertTrue(copy.clearUserOnAppRestore == config.clearUserOnAppRestore);
     XCTAssertTrue(copy.URLAllowList == config.URLAllowList);
     XCTAssertTrue(copy.URLAllowListScopeJavaScriptInterface == config.URLAllowListScopeJavaScriptInterface);
     XCTAssertTrue(copy.URLAllowListScopeOpenURL == config.URLAllowListScopeOpenURL);
     XCTAssertTrue(copy.clearNamedUserOnAppRestore == config.clearNamedUserOnAppRestore);
-    XCTAssertTrue(copy.channelCaptureEnabled == config.channelCaptureEnabled);
-    XCTAssertTrue(copy.customConfig == config.customConfig);
-    XCTAssertTrue(copy.channelCreationDelayEnabled == config.channelCreationDelayEnabled);
-    XCTAssertTrue(copy.extendedBroadcastsEnabled == config.extendedBroadcastsEnabled);
-    XCTAssertTrue(copy.defaultDetectProvisioningMode == config.defaultDetectProvisioningMode);
+    XCTAssertTrue(copy.isChannelCaptureEnabled == config.isChannelCaptureEnabled);
+    XCTAssertEqualObjects(copy.customConfig, config.customConfig);
+    XCTAssertTrue(copy.isChannelCreationDelayEnabled == config.isChannelCreationDelayEnabled);
+    XCTAssertTrue(copy.isExtendedBroadcastsEnabled == config.isExtendedBroadcastsEnabled);
     XCTAssertTrue(copy.messageCenterStyleConfig == config.messageCenterStyleConfig);
     XCTAssertTrue(copy.itunesID == config.itunesID);
     XCTAssertTrue(copy.requestAuthorizationToUseNotifications == config.requestAuthorizationToUseNotifications);
     XCTAssertTrue(copy.requireInitialRemoteConfigEnabled == config.requireInitialRemoteConfigEnabled);
-
 }
 
-- (void) testInitialConfig {
+- (void)testInitialConfig {
     UAConfig *config = [UAConfig config];
-
     XCTAssertEqual(UACloudSiteUS, config.site);
     XCTAssertNil(config.deviceAPIURL);
     XCTAssertNil(config.remoteDataAPIURL);
@@ -337,19 +291,18 @@
     XCTAssertEqual(config.developmentLogLevel, UALogLevelDebug);
     XCTAssertEqual(config.productionLogLevel, UALogLevelError);
     XCTAssertFalse(config.inProduction);
-    XCTAssertTrue(config.detectProvisioningMode);   // True because defaultDetectProvisioningMode is set true after this is set false
-    XCTAssertTrue(config.automaticSetupEnabled);
-    XCTAssertTrue(config.analyticsEnabled);
+    XCTAssertTrue(config.detectProvisioningMode);
+    XCTAssertTrue(config.isAutomaticSetupEnabled);
+    XCTAssertTrue(config.isAnalyticsEnabled);
     XCTAssertFalse(config.clearUserOnAppRestore);
     XCTAssertEqual(config.URLAllowList.count, 0);
     XCTAssertEqual(config.URLAllowListScopeJavaScriptInterface.count, 0);
     XCTAssertEqual(config.URLAllowListScopeOpenURL.count, 0);
     XCTAssertFalse(config.clearNamedUserOnAppRestore);
-    XCTAssertTrue(config.channelCaptureEnabled);
+    XCTAssertTrue(config.isChannelCaptureEnabled);
     XCTAssertEqual(config.customConfig.count, 0);
-    XCTAssertFalse(config.channelCreationDelayEnabled);
-    XCTAssertFalse(config.extendedBroadcastsEnabled);
-    XCTAssertTrue(config.defaultDetectProvisioningMode);
+    XCTAssertFalse(config.isChannelCreationDelayEnabled);
+    XCTAssertFalse(config.isExtendedBroadcastsEnabled);
     XCTAssertTrue(config.requestAuthorizationToUseNotifications);
     XCTAssertFalse(config.requireInitialRemoteConfigEnabled);
 }
