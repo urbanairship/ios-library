@@ -156,7 +156,7 @@ public class UAAccountEventTemplate : NSObject {
      */
     @objc
     public func createEvent() -> UACustomEvent? {
-        var propertyDictionary: [AnyHashable : Any] = [:]
+        var propertyDictionary: [String : Any] = [:]
         propertyDictionary["ltv"] = self.eventValue != nil
         propertyDictionary["user_id"] = self.userID
         propertyDictionary["category"] = self.category

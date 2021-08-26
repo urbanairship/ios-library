@@ -98,7 +98,7 @@ class CustomEventTableViewController: UITableViewController, UITextFieldDelegate
             return
         }
 
-        var properties:[String : Any] = customEvent.properties as! [String : Any]
+        var properties: [String : Any] = customEvent.properties
         for pp in pendingProperties {
             guard let ppId = pp.identifier else { continue }
             if (pp.type == .json) {

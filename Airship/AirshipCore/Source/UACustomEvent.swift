@@ -113,7 +113,7 @@ public class UACustomEvent : NSObject, UAEvent {
      * The event's properties. Properties must be valid JSON.
      */
     @objc
-    public var properties : [AnyHashable: Any]?
+    public var properties : [String: Any] = [:]
 
     @objc
     public var eventType : String {
@@ -235,17 +235,15 @@ public class UACustomEvent : NSObject, UAEvent {
             }
         }
 
-        if let properties = self.properties {
-            do {
-                let propetyData = try JSONSerialization.data(withJSONObject: properties, options: [])
-                if (propetyData.count > UACustomEvent.maxPropertiesSize) {
-                    AirshipLogger.error("Event properties (%lu bytes) are larger than the maximum size of \(UACustomEvent.maxPropertiesSize) bytes.")
-                    isValid = false
-                }
-            } catch {
-                AirshipLogger.error("Event properties serialization error \(error)")
+        do {
+            let propertyData = try JSONSerialization.data(withJSONObject: properties, options: [])
+            if (propertyData.count > UACustomEvent.maxPropertiesSize) {
+                AirshipLogger.error("Event properties (%lu bytes) are larger than the maximum size of \(UACustomEvent.maxPropertiesSize) bytes.")
                 isValid = false
             }
+        } catch {
+            AirshipLogger.error("Event properties serialization error \(error)")
+            isValid = false
         }
 
         return isValid

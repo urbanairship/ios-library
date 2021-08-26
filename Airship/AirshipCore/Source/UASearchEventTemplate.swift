@@ -83,7 +83,7 @@ public class UASearchEventTemplate : NSObject {
      */
     @objc
     public func createEvent() -> UACustomEvent {
-        var propertyDictionary: [AnyHashable : Any] = [:]
+        var propertyDictionary: [String : Any] = [:]
         propertyDictionary["ltv"] = self.eventValue != nil
         propertyDictionary["id"] = identifier
         propertyDictionary["category"] = category

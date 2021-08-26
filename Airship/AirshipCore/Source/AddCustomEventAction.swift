@@ -54,7 +54,7 @@ public class AddCustomEventAction : NSObject, UAAction {
         
         let event = UACustomEvent(name: eventName, stringValue: eventValue)
         event.transactionID = transactionID
-        event.properties = properties
+        event.properties = properties ?? [:]
         
         if (interactionID != nil || interactionType != nil) {
             event.interactionType = interactionType

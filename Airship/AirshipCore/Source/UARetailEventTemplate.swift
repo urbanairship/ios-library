@@ -313,7 +313,7 @@ public class UARetailEventTemplate: NSObject {
      */
     @objc
     public func createEvent() -> UACustomEvent {
-        var propertyDictionary: [AnyHashable : Any] = [:]
+        var propertyDictionary: [String : Any] = [:]
         propertyDictionary["ltv"] = self.eventName == "purchased" && self.eventValue != nil
         propertyDictionary["id"] = self.identifier
         propertyDictionary["category"] = self.category

@@ -158,7 +158,7 @@ public class UAMediaEventTemplate : NSObject {
      */
     @objc
     public func createEvent() -> UACustomEvent {
-        var propertyDictionary: [AnyHashable : Any] = [:]
+        var propertyDictionary: [String : Any] = [:]
         propertyDictionary["ltv"] = self.eventValue != nil
         propertyDictionary["id"] = self.identifier
         propertyDictionary["category"] = self.category
