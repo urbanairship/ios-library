@@ -355,10 +355,14 @@ public class Config: NSObject, NSCopying {
         developmentAppSecret = config.developmentAppSecret
         productionAppKey = config.productionAppKey
         productionAppSecret = config.productionAppSecret
+        defaultAppKey = config.defaultAppKey
+        defaultAppSecret = config.defaultAppSecret
         deviceAPIURL = config.deviceAPIURL
         remoteDataAPIURL = config.remoteDataAPIURL
-        site = config.site
+        chatWebSocketURL = config.chatWebSocketURL
+        chatURL = config.chatURL
         analyticsURL = config.analyticsURL
+        site = config.site
         developmentLogLevel = config.developmentLogLevel
         productionLogLevel = config.productionLogLevel
         enabledFeatures = config.enabledFeatures
@@ -491,25 +495,40 @@ public class Config: NSObject, NSCopying {
             "APP_STORE_OR_AD_HOC_BUILD": "inProduction",
             "AIRSHIP_SERVER": "deviceAPIURL",
             "ANALYTICS_SERVER": "analyticsURL",
-            "whitelist": "URLAllowList",
+            "whitelist": "urlAllowList",
             "analyticsEnabled": "isAnalyticsEnabled",
             "extendedBroadcastsEnabled": "isExtendedBroadcastsEnabled",
             "channelCaptureEnabled": "isChannelCaptureEnabled",
             "channelCreationDelayEnabled": "isChannelCreationDelayEnabled",
             "automaticSetupEnabled": "isAutomaticSetupEnabled",
-            "isInProduction": "inProduction"
+            "isInProduction": "inProduction",
         ]
-                
+        
+        let swiftToObjcMap = [
+            "urlAllowList": "URLAllowList",
+            "urlAllowListScopeOpenURL": "URLAllowListScopeOpenURL",
+            "urlAllowListScopeJavaScriptInterface": "URLAllowListScopeJavaScriptInterface",
+        ]
+        
         let mirror = Mirror(reflecting: self)
-        var properties: [String : Any.Type] = [:]
+        var propertyInfo: [String : (String, Any.Type)] = [:]
         mirror.children.forEach { child in
             if let label = child.label {
-                properties[label] = type(of: child.value)
+                var normalizedLabel = label
+                if (normalizedLabel.hasPrefix("_")) {
+                    normalizedLabel.removeFirst()
+                }
+                
+                if let objcName = swiftToObjcMap[normalizedLabel] {
+                    normalizedLabel = objcName
+                }
+                
+                propertyInfo[normalizedLabel.lowercased()] = (normalizedLabel, type(of: child.value))
             }
         }
         
         for key in keyedValues.keys {
-            guard var key = key as? String else {
+            guard var key = (key as? String) else {
                 continue
             }
             
@@ -527,7 +546,10 @@ public class Config: NSObject, NSCopying {
                 value = stringValue.trimmingCharacters(in: CharacterSet.whitespaces)
             }
 
-            if let propertyType = properties[key] ?? properties["_\(key)"] {
+            if let propertyInfo = propertyInfo[key.lowercased()] {
+                let propertyKey = propertyInfo.0
+                let propertyType = propertyInfo.1
+                
                 var normalizedValue: Any?
                 if (propertyType == CloudSite.self || propertyType == CloudSite?.self) {
                     // we do all the work to parse it to a log level, but setValue(forKey:) does not work for enums
@@ -542,11 +564,11 @@ public class Config: NSObject, NSCopying {
                 } else {
                     normalizedValue = value
                 }
-                
+
                 if let normalizedValue = normalizedValue {
-                    self.setValue(normalizedValue, forKey: key)
+                    self.setValue(normalizedValue, forKey: propertyKey)
                 } else {
-                    AirshipLogger.error("Invalid config \(key) \(value)")
+                    AirshipLogger.error("Invalid config \(propertyKey)(\(key)) \(value)")
                 }
             } else {
                 AirshipLogger.error("Unknown config \(key)")

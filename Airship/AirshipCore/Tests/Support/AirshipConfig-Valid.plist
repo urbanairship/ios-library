@@ -2,6 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>urlAllowListScopeOpenURL</key>
+	<array>
+		<string>*</string>
+	</array>
+	<key>chatURL</key>
+	<string>https://some-chat-url</string>
 	<key>requireInitialRemoteConfigEnabled</key>
 	<true/>
 	<key>developmentAppKey</key>

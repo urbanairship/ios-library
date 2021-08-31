@@ -142,6 +142,9 @@
     XCTAssertTrue(config.detectProvisioningMode, @"detectProvisioningMode should be true");
     XCTAssertTrue(config.inProduction, @"inProduction should be true");
     XCTAssertEqual(UACloudSiteEU, config.site);
+    XCTAssertEqualObjects(@"https://some-chat-url", config.chatURL);
+    XCTAssertEqualObjects(@[@"*"], config.URLAllowListScopeOpenURL);
+
 }
 
 - (void)testOldPlistFormat {
@@ -268,9 +271,9 @@
     XCTAssertTrue(copy.profilePath == config.profilePath);
     XCTAssertTrue(copy.isAnalyticsEnabled == config.isAnalyticsEnabled);
     XCTAssertTrue(copy.clearUserOnAppRestore == config.clearUserOnAppRestore);
-    XCTAssertTrue(copy.URLAllowList == config.URLAllowList);
-    XCTAssertTrue(copy.URLAllowListScopeJavaScriptInterface == config.URLAllowListScopeJavaScriptInterface);
-    XCTAssertTrue(copy.URLAllowListScopeOpenURL == config.URLAllowListScopeOpenURL);
+    XCTAssertEqualObjects(copy.URLAllowList, config.URLAllowList);
+    XCTAssertEqualObjects(copy.URLAllowListScopeJavaScriptInterface, config.URLAllowListScopeJavaScriptInterface);
+    XCTAssertEqualObjects(copy.URLAllowListScopeOpenURL, config.URLAllowListScopeOpenURL);
     XCTAssertTrue(copy.clearNamedUserOnAppRestore == config.clearNamedUserOnAppRestore);
     XCTAssertTrue(copy.isChannelCaptureEnabled == config.isChannelCaptureEnabled);
     XCTAssertEqualObjects(copy.customConfig, config.customConfig);

@@ -76,7 +76,7 @@ public protocol ConversationProtocol {
     func connect()
 }
 
-@available(iOS 13.0, *) 
+@available(iOS 13.0, *)
 protocol InternalConversationProtocol: ConversationProtocol  {
     func refresh()
     var enabled : Bool { get set }
@@ -175,6 +175,12 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
             name: UAAppStateTracker.didTransitionToBackground,
             object: nil)
 
+        notificationCenter.addObserver(
+            self,
+            selector: #selector(self.onForeground),
+            name: UAAppStateTracker.didTransitionToForeground,
+            object: nil)
+        
         notificationCenter.addObserver(
             self,
             selector: #selector(self.onChannelCreated),
@@ -280,6 +286,11 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
     @objc
     private func onBackground() {
         self.shouldConnect = false
+        self.updateConnection()
+    }
+    
+    @objc
+    private func onForeground() {
         self.updateConnection()
     }
 

@@ -79,8 +79,8 @@ class ConversationTests: XCTestCase {
     func testForegroundConnects() throws {
         self.mockChannel.identifier = "channel id"
         self.mockAPIClient.result = (UVPResponse(status: 200, uvp: "some-uvp"), nil)
-
-        self.conversation.connect()
+        
+        foreground()
 
         XCTAssertTrue(self.mockChatConnection.isOpenOrOpening)
         XCTAssertEqual("some-uvp", self.mockChatConnection.lastUVP)
@@ -199,6 +199,7 @@ class ConversationTests: XCTestCase {
         XCTAssertEqual("hello!", self.mockChatConnection.lastSendMessage?.1)
     }
 
+    
     func testBackgroundClosesConnectionIfPendingSent() throws  {
         self.connect()
         XCTAssertTrue(self.mockChatConnection.isOpenOrOpening)
@@ -384,5 +385,10 @@ class ConversationTests: XCTestCase {
     func background() {
         self.mockStateTracker.mockState = UAApplicationState.background
         self.notificationCenter.post(name: UAAppStateTracker.didTransitionToBackground, object: nil)
+    }
+    
+    func foreground() {
+        self.mockStateTracker.mockState = UAApplicationState.active
+        self.notificationCenter.post(name: UAAppStateTracker.didTransitionToForeground, object: nil)
     }
 }
