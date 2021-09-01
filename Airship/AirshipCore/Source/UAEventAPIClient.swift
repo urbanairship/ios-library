@@ -4,7 +4,7 @@
  * @note For internal use only. :nodoc:
  */
 @objc
-public class UAEventAPIClient : NSObject {
+public class UAEventAPIClient : NSObject, EventAPIClientProtocol {
     private let config: RuntimeConfig
     private let session: UARequestSession
 

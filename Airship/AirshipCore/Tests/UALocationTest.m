@@ -3,7 +3,6 @@
 #import "UAAirshipBaseTest.h"
 #import "UALocation+Internal.h"
 #import "UALocation.h"
-#import "UAAnalytics.h"
 #import "UAComponent.h"
 #import "AirshipTests-Swift.h"
 

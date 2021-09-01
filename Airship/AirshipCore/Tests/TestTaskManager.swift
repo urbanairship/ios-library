@@ -40,7 +40,7 @@ public class TestTaskManager : NSObject, TaskManagerProtocol {
     
     @objc
     public func launchSync(taskID: String, options: UATaskRequestOptions = UATaskRequestOptions.defaultOptions) -> TestTask {
-        let testTask = TestTask(taskID, options)
+        let testTask = TestTask(taskID, options, 0)
         let dispatcher = self.launchHandlers[taskID]!.0
         let launcher = self.launchHandlers[taskID]!.1
         
@@ -49,6 +49,26 @@ public class TestTaskManager : NSObject, TaskManagerProtocol {
         }
         
         return testTask
+    }
+
+    @objc
+    public func runEnqueuedRequests(taskID: String) -> TestTask? {
+        var task: TestTask?
+        for (identifier, options, initialDelay) in enqueuedRequests {
+            let testTask = TestTask(identifier, options, initialDelay)
+            let dispatcher = self.launchHandlers[identifier]!.0
+            let launcher = self.launchHandlers[identifier]!.1
+
+            dispatcher.dispatchSync {
+                launcher(testTask)
+                if (identifier == taskID) {
+                    task = testTask
+                }
+            }
+        }
+
+        return task;
+
     }
 }
 
@@ -68,10 +88,14 @@ public class TestTask : NSObject, UATask {
     
     @objc
     public var failed = false;
+
+    @objc
+    public var initialDelay: TimeInterval
     
-    init(_ taskID: String, _ options: UATaskRequestOptions) {
+    init(_ taskID: String, _ options: UATaskRequestOptions, _ initialDelay: TimeInterval) {
         self.taskID = taskID
         self.requestOptions = options
+        self.initialDelay = initialDelay
     }
     
     @objc

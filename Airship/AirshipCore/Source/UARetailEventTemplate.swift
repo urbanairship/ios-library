@@ -8,6 +8,15 @@ import Foundation
  */
 @objc
 public class UARetailEventTemplate: NSObject {
+
+    /**
+     * Analytics supplier for testing. :nodoc:
+     */
+    @objc
+    public var analyticsSupplier: () -> AnalyticsProtocol = {
+        return UAirship.analytics()
+    }
+
     /**
      * The event's value. The value must be between -2^31 and
      * 2^31 - 1 or it will invalidate the event.
@@ -326,6 +335,7 @@ public class UARetailEventTemplate: NSObject {
         propertyDictionary["description"] = self.eventDescription
 
         let event = UACustomEvent(name: self.eventName)
+        event.analyticsSupplier = analyticsSupplier
         event.templateType = "retail"
         event.eventValue = self.eventValue
         event.transactionID = self.transactionID

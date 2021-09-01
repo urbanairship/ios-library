@@ -8,6 +8,9 @@
 
 @import AirshipCore;
 
+@protocol UAPushTestAnalyticsProtocol <UAAnalyticsProtocol, UAExtendableAnalyticsHeaders>
+@end
+
 @interface UAPushTest : UABaseTest
 @property (nonatomic, strong) id mockApplication;
 @property (nonatomic, strong) UATestChannel *testChannel;
@@ -111,7 +114,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     self.mockDefaultNotificationCategories = [self mockForClass:[UANotificationCategories class]];
 
     self.testChannel = [[UATestChannel alloc] init];
-    self.mockAnalytics = [self mockForClass:[UAAnalytics class]];
+    self.mockAnalytics = [self mockForProtocol:@protocol(UAPushTestAnalyticsProtocol)];
 
     // Capture the analytics header extender
     [[[self.mockAnalytics stub] andDo:^(NSInvocation *invocation) {
@@ -181,7 +184,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
  * to NSUserDefaults and updates apns registration.
  */
 - (void)testUserPushNotificationsEnabled {
-    // TODO: include a disabled variant or make a new test, for what happens in registration when it's disabled (yo)
     // SETUP
     self.push.userPushNotificationsEnabled = NO;
 

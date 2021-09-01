@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UAirship+Internal.h"
-#import "UAAnalytics+Internal.h"
 #import "UAKeychainUtils+Internal.h"
 #import "UAGlobal.h"
 #import "UAAutoIntegration+Internal.h"
@@ -121,11 +120,12 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
         [components addObject:self.sharedChannel];
 
-        self.sharedAnalytics = [UAAnalytics analyticsWithConfig:self.config
-                                                      dataStore:self.dataStore
-                                                        channel:self.sharedChannel
-                                                  localeManager:self.sharedLocaleManager
-                                                 privacyManager:self.sharedPrivacyManager];
+        self.sharedAnalytics = [[UAAnalytics alloc] initWithConfig:self.config
+                                                         dataStore:self.dataStore
+                                                           channel:self.sharedChannel
+                                                     localeManager:self.sharedLocaleManager
+                                                    privacyManager:self.sharedPrivacyManager];
+        
         [components addObject:self.sharedAnalytics];
 
         self.sharedPush = [[UAPush alloc] initWithConfig:self.config

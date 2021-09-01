@@ -1533,22 +1533,22 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
 
 - (void)emitEvent:(id<UAEvent>)event {
     if ([event isKindOfClass:[UACustomEvent class]]) {
-        [self.notificationCenter postNotificationName:UACustomEventAdded
+        [self.notificationCenter postNotificationName:UAAnalytics.customEventAdded
                                                object:self
-                                             userInfo:@{UAEventKey: event}];
+                                             userInfo:@{UAAnalytics.eventKey: event}];
     }
 
     if ([event isKindOfClass:[UARegionEvent class]]) {
-        [self.notificationCenter postNotificationName:UARegionEventAdded
+        [self.notificationCenter postNotificationName:UAAnalytics.regionEventAdded
                                                object:self
-                                             userInfo:@{UAEventKey: event}];
+                                             userInfo:@{UAAnalytics.eventKey: event}];
     }
 }
 
 - (void)emitScreenTracked:(NSString *)screen {
-    [self.notificationCenter postNotificationName:UAScreenTracked
+    [self.notificationCenter postNotificationName:UAAnalytics.screenTracked
                                            object:self
-                                         userInfo:screen == nil ? @{} : @{UAScreenKey: screen}];
+                                         userInfo:screen == nil ? @{} : @{UAAnalytics.screenKey: screen}];
 }
 
 @end

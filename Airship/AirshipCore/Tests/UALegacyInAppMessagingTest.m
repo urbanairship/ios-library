@@ -3,7 +3,6 @@
 #import "UAAirshipBaseTest.h"
 #import "UALegacyInAppMessaging+Internal.h"
 #import "UAirship+Internal.h"
-#import "UAAnalytics.h"
 #import "UAInAppMessageBannerDisplayContent.h"
 #import "UASchedule+Internal.h"
 #import "UAInAppMessage+Internal.h"

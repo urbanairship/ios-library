@@ -7,6 +7,11 @@
 public class UAAppInitEvent : NSObject, UAEvent {
 
     @objc
+    public var analyticsSupplier: () -> AnalyticsProtocol? = {
+        return UAirship.analytics()
+    }
+
+    @objc
     public var priority: UAEventPriority {
         get {
             return .normal
@@ -28,15 +33,11 @@ public class UAAppInitEvent : NSObject, UAEvent {
         }
     }
 
-    
-
     open func gatherData() -> [AnyHashable : Any] {
         var data: [AnyHashable : Any] = [:]
 
-        let analytics = UAirship.analytics()
-
-        data["push_id"] = analytics?.conversionSendID
-        data["metadata"] = analytics?.conversionPushMetadata
+        data["push_id"] = self.analyticsSupplier()?.conversionSendID
+        data["metadata"] = self.analyticsSupplier()?.conversionPushMetadata
         data["carrier"] = UAUtils.carrierName()
         data["connection_type"] = UAUtils.connectionType()
 

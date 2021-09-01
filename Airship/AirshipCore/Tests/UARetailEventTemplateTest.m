@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAAnalytics.h"
 #import "UAirship.h"
 
 @import AirshipCore;
@@ -16,7 +15,7 @@
 - (void)setUp {
     [super setUp];
 
-    self.analytics = [self mockForClass:[UAAnalytics class]];
+    self.analytics = [self mockForProtocol:@protocol(UAAnalyticsProtocol)];
     self.airship = [self strictMockForClass:[UAirship class]];
     [[[self.airship stub] andReturn:self.airship] shared];
     [[[self.airship stub] andReturn:self.analytics] analytics];
@@ -27,7 +26,11 @@
  */
 - (void)testBasicBrowsedEvent {
     UARetailEventTemplate *eventTemplate = [UARetailEventTemplate browsedTemplate];
+    eventTemplate.analyticsSupplier = ^{
+        return self.analytics;
+    };
     UACustomEvent *customEvent = [eventTemplate createEvent];
+
     [customEvent track];
 
     XCTAssertEqualObjects(@"browsed", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
@@ -40,7 +43,11 @@
  */
 - (void)testBrowsedEventWithValue {
     UARetailEventTemplate *eventTemplate = [UARetailEventTemplate browsedTemplateWithValue:@(INT32_MIN)];
+    eventTemplate.analyticsSupplier = ^{
+        return self.analytics;
+    };
     UACustomEvent *customEvent = [eventTemplate createEvent];
+
     [customEvent track];
 
     XCTAssertEqualObjects(@"browsed", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
@@ -54,6 +61,9 @@
  */
 - (void)testBrowsedEventWithValueStringProperties {
     UARetailEventTemplate *eventTemplate = [UARetailEventTemplate browsedTemplateWithValueFromString:@"100.00"];
+    eventTemplate.analyticsSupplier = ^{
+        return self.analytics;
+    };
     eventTemplate.category = @"retail-category";
     eventTemplate.identifier = @"12345";
     eventTemplate.eventDescription = @"Browsed retail event.";
@@ -61,6 +71,7 @@
     eventTemplate.brand = @"Airship";
     eventTemplate.isNewItem = YES;
     UACustomEvent *customEvent = [eventTemplate createEvent];
+
     [customEvent track];
 
     XCTAssertEqualObjects(@"browsed", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
@@ -80,7 +91,11 @@
  */
 - (void)testAddedToCartEvent {
     UARetailEventTemplate *eventTemplate = [UARetailEventTemplate addedToCartTemplate];
+    eventTemplate.analyticsSupplier = ^{
+        return self.analytics;
+    };
     UACustomEvent *customEvent = [eventTemplate createEvent];
+
     [customEvent track];
 
     XCTAssertEqualObjects(@"added_to_cart", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
@@ -93,7 +108,11 @@
  */
 - (void)testAddedToCartEventWithValue {
     UARetailEventTemplate *eventTemplate = [UARetailEventTemplate addedToCartTemplateWithValue:@(INT32_MIN)];
+    eventTemplate.analyticsSupplier = ^{
+        return self.analytics;
+    };
     UACustomEvent *customEvent = [eventTemplate createEvent];
+
     [customEvent track];
 
     XCTAssertEqualObjects(@"added_to_cart", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
@@ -107,6 +126,9 @@
  */
 - (void)testAddedToCartEventWithValueStringProperties {
     UARetailEventTemplate *eventTemplate = [UARetailEventTemplate addedToCartTemplateWithValueFromString:@"100.00"];
+    eventTemplate.analyticsSupplier = ^{
+        return self.analytics;
+    };
     eventTemplate.category = @"retail-category";
     eventTemplate.identifier = @"12345";
     eventTemplate.eventDescription = @"Added to cart retail event.";
@@ -114,6 +136,7 @@
     eventTemplate.brand = @"Airship";
     eventTemplate.isNewItem = YES;
     UACustomEvent *customEvent = [eventTemplate createEvent];
+
     [customEvent track];
 
     XCTAssertEqualObjects(@"added_to_cart", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
@@ -133,6 +156,9 @@
  */
 - (void)testStarredProductEvent {
     UARetailEventTemplate *eventTemplate = [UARetailEventTemplate starredProductTemplate];
+    eventTemplate.analyticsSupplier = ^{
+        return self.analytics;
+    };
     UACustomEvent *customEvent = [eventTemplate createEvent];
     [customEvent track];
 
@@ -146,6 +172,9 @@
  */
 - (void)testStarredProductEventWithValue {
     UARetailEventTemplate *eventTemplate = [UARetailEventTemplate starredProductTemplateWithValue:@(INT32_MIN)];
+    eventTemplate.analyticsSupplier = ^{
+        return self.analytics;
+    };
     UACustomEvent *customEvent = [eventTemplate createEvent];
     [customEvent track];
 
@@ -160,6 +189,9 @@
  */
 - (void)testStarredProductEventWithValueStringProperties {
     UARetailEventTemplate *eventTemplate = [UARetailEventTemplate starredProductTemplateWithValueFromString:@"100.00"];
+    eventTemplate.analyticsSupplier = ^{
+        return self.analytics;
+    };
     eventTemplate.category = @"retail-category";
     eventTemplate.identifier = @"12345";
     eventTemplate.eventDescription = @"Starred product retail event.";
@@ -186,6 +218,9 @@
  */
 - (void)testPurchasedEvent {
     UARetailEventTemplate *eventTemplate = [UARetailEventTemplate purchasedTemplate];
+    eventTemplate.analyticsSupplier = ^{
+        return self.analytics;
+    };
     UACustomEvent *customEvent = [eventTemplate createEvent];
     [customEvent track];
 
@@ -199,6 +234,9 @@
  */
 - (void)testPurchasedEventWithValue {
     UARetailEventTemplate *eventTemplate = [UARetailEventTemplate purchasedTemplateWithValue:@(INT32_MIN)];
+    eventTemplate.analyticsSupplier = ^{
+        return self.analytics;
+    };
     UACustomEvent *customEvent = [eventTemplate createEvent];
     [customEvent track];
 
@@ -213,6 +251,9 @@
  */
 - (void)testPurchasedEventWithValueStringProperties {
     UARetailEventTemplate *eventTemplate = [UARetailEventTemplate purchasedTemplateWithValueFromString:@"100.00"];
+    eventTemplate.analyticsSupplier = ^{
+        return self.analytics;
+    };
     eventTemplate.category = @"retail-category";
     eventTemplate.identifier = @"12345";
     eventTemplate.eventDescription = @"Purchased retail event.";
@@ -239,6 +280,9 @@
  */
 - (void)testSharedProductEvent {
     UARetailEventTemplate *eventTemplate = [UARetailEventTemplate sharedProductTemplate];
+    eventTemplate.analyticsSupplier = ^{
+        return self.analytics;
+    };
     UACustomEvent *customEvent = [eventTemplate createEvent];
     [customEvent track];
 
@@ -252,6 +296,9 @@
  */
 - (void)testSharedProductEventWithValue {
     UARetailEventTemplate *eventTemplate = [UARetailEventTemplate sharedProductTemplateWithValue:@(INT32_MIN)];
+    eventTemplate.analyticsSupplier = ^{
+        return self.analytics;
+    };
     UACustomEvent *customEvent = [eventTemplate createEvent];
     [customEvent track];
 
@@ -266,6 +313,9 @@
  */
 - (void)testSharedProductEventWithValueStringProperties {
     UARetailEventTemplate *eventTemplate = [UARetailEventTemplate sharedProductTemplateWithValueFromString:@"100.00"];
+    eventTemplate.analyticsSupplier = ^{
+        return self.analytics;
+    };
     eventTemplate.category = @"retail-category";
     eventTemplate.identifier = @"12345";
     eventTemplate.eventDescription = @"Shared product retail event.";
@@ -292,6 +342,9 @@
  */
 - (void)testSharedProductEventSourceMedium {
     UARetailEventTemplate *eventTemplate = [UARetailEventTemplate sharedProductTemplateWithSource:@"facebook" withMedium:@"social"];
+    eventTemplate.analyticsSupplier = ^{
+        return self.analytics;
+    };
     UACustomEvent *customEvent = [eventTemplate createEvent];
     [customEvent track];
 
@@ -307,6 +360,9 @@
  */
 - (void)testSharedProductEventWithValueSourceMedium {
     UARetailEventTemplate *eventTemplate = [UARetailEventTemplate sharedProductTemplateWithValue:@(INT32_MIN) withSource:@"facebook" withMedium:@"social"];
+    eventTemplate.analyticsSupplier = ^{
+        return self.analytics;
+    };
     UACustomEvent *customEvent = [eventTemplate createEvent];
     [customEvent track];
 
@@ -323,6 +379,9 @@
  */
 - (void)testSharedProductEventWithValueStringPropertiesSourceMedium {
     UARetailEventTemplate *eventTemplate = [UARetailEventTemplate sharedProductTemplateWithValueFromString:@"100.00" withSource:@"facebook" withMedium:@"social"];
+    eventTemplate.analyticsSupplier = ^{
+        return self.analytics;
+    };
     eventTemplate.category = @"retail-category";
     eventTemplate.identifier = @"12345";
     eventTemplate.eventDescription = @"Shared product retail event.";
@@ -351,6 +410,9 @@
  */
 - (void)testWishlistEvent {
     UARetailEventTemplate *eventTemplate = [UARetailEventTemplate wishlistTemplate];
+    eventTemplate.analyticsSupplier = ^{
+        return self.analytics;
+    };
     UACustomEvent *customEvent = [eventTemplate createEvent];
     [customEvent track];
 
@@ -364,6 +426,9 @@
  */
 - (void)testWishlistEventWithNameAndID {
     UARetailEventTemplate *eventTemplate = [UARetailEventTemplate wishlistTemplateWithName:@"wishlist_test" wishlistID:@"1234"];
+    eventTemplate.analyticsSupplier = ^{
+        return self.analytics;
+    };
     UACustomEvent *customEvent = [eventTemplate createEvent];
     [customEvent track];
 

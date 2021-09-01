@@ -144,7 +144,7 @@ public class UAAPNSRegistration : NSObject, APNSRegistrationProtocol {
             return .authorized
         }
 
-        #if !os(tvOS) && !os(macOS)
+        #if !os(tvOS) && !targetEnvironment(macCatalyst)
 
         if #available(iOS 14.0, *) {
             if (status == .ephemeral) {

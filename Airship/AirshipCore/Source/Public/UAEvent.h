@@ -59,7 +59,7 @@ typedef NS_ENUM(NSInteger, UAEventPriority) {
 /**
  * Checks if the event is valid. Invalid events will be dropped.
  * @return YES if the event is valid.
- */
+ */ 
 - (BOOL)isValid;
 
 @end

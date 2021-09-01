@@ -7,7 +7,6 @@
 #else
 #import "UAComponent.h"
 #import "UAPush.h"
-#import "UAAnalytics.h"
 #endif
 
 @class UANotificationCategories;

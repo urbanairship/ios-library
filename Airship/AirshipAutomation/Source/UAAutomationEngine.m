@@ -171,17 +171,17 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
 
     [self.notificationCenter addObserver:self
                                 selector:@selector(customEventAdded:)
-                                    name:UACustomEventAdded
+                                    name:UAAnalytics.customEventAdded
                                   object:nil];
 
     [self.notificationCenter addObserver:self
                                 selector:@selector(screenTracked:)
-                                    name:UAScreenTracked
+                                    name:UAAnalytics.screenTracked
                                   object:nil];
 
     [self.notificationCenter addObserver:self
                                 selector:@selector(regionEventAdded:)
-                                    name:UARegionEventAdded
+                                    name:UAAnalytics.regionEventAdded
                                   object:nil];
 
     [self.notificationCenter addObserver:self
@@ -582,7 +582,7 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
 }
 
 -(void)customEventAdded:(NSNotification *)notification {
-    UACustomEvent *event = notification.userInfo[UAEventKey];
+    UACustomEvent *event = notification.userInfo[UAAnalytics.eventKey];
 
     [self updateTriggersWithType:UAScheduleTriggerCustomEventCount
                         argument:event.payload
@@ -596,7 +596,7 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
 }
 
 -(void)regionEventAdded:(NSNotification *)notification {
-    UARegionEvent *event = notification.userInfo[UAEventKey];
+    UARegionEvent *event = notification.userInfo[UAAnalytics.eventKey];
 
     UAScheduleTriggerType triggerType;
 
@@ -614,7 +614,7 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
 }
 
 -(void)screenTracked:(NSNotification *)notification {
-    NSString *screenName = notification.userInfo[UAScreenKey];
+    NSString *screenName = notification.userInfo[UAAnalytics.screenKey];
 
     if (screenName) {
         [self updateTriggersWithType:UAScheduleTriggerScreen argument:screenName incrementAmount:1.0];

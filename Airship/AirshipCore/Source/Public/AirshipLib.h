@@ -8,7 +8,6 @@
 #import "UAActionPredicateProtocol.h"
 #import "UAActionResult.h"
 #import "UAAirshipChatModuleLoaderFactory.h"
-#import "UAAnalytics.h"
 #import "UAAnalyticsEventConsumerProtocol.h"
 #import "UAAppIntegration.h"
 #import "UAAsyncOperation.h"

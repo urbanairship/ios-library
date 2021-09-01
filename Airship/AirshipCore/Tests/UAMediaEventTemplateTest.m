@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAAnalytics.h"
 #import "UAirship.h"
 
 @import AirshipCore;
@@ -16,7 +15,7 @@
 - (void)setUp {
     [super setUp];
 
-    self.analytics = [self mockForClass:[UAAnalytics class]];
+    self.analytics = [self mockForProtocol:@protocol(UAAnalyticsProtocol)];
     self.airship = [self strictMockForClass:[UAirship class]];
     [[[self.airship stub] andReturn:self.airship] shared];
     [[[self.airship stub] andReturn:self.analytics] analytics];
@@ -28,6 +27,9 @@
 - (void)testBasicBrowsedEvent {
     UAMediaEventTemplate *eventTemplate = [UAMediaEventTemplate browsedTemplate];
     UACustomEvent *customEvent = [eventTemplate createEvent];
+    customEvent.analyticsSupplier = ^{
+        return self.analytics;
+    };
     [customEvent track];
 
     XCTAssertEqualObjects(@"browsed_content", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
@@ -49,6 +51,9 @@
     eventTemplate.publishedDate = @"November 13, 2015";
 
     UACustomEvent *customEvent = [eventTemplate createEvent];
+    customEvent.analyticsSupplier = ^{
+        return self.analytics;
+    };
     [customEvent track];
 
     XCTAssertEqualObjects(@"browsed_content", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
@@ -69,6 +74,9 @@
 - (void)testBasicStarredEvent {
     UAMediaEventTemplate *eventTemplate = [UAMediaEventTemplate starredTemplate];
     UACustomEvent *customEvent = [eventTemplate createEvent];
+    customEvent.analyticsSupplier = ^{
+        return self.analytics;
+    };
     [customEvent track];
 
     XCTAssertEqualObjects(@"starred_content", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
@@ -90,6 +98,9 @@
     eventTemplate.publishedDate = @"November 13, 2015";
 
     UACustomEvent *customEvent = [eventTemplate createEvent];
+    customEvent.analyticsSupplier = ^{
+        return self.analytics;
+    };
     [customEvent track];
 
     XCTAssertEqualObjects(@"starred_content", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
@@ -110,6 +121,9 @@
 - (void)testBasicSharedEvent {
     UAMediaEventTemplate *eventTemplate = [UAMediaEventTemplate sharedTemplate];
     UACustomEvent *customEvent = [eventTemplate createEvent];
+    customEvent.analyticsSupplier = ^{
+        return self.analytics;
+    };
     [customEvent track];
 
     XCTAssertEqualObjects(@"shared_content", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
@@ -130,6 +144,9 @@
     eventTemplate.isFeature = YES;
     eventTemplate.publishedDate = @"November 13, 2015";
     UACustomEvent *customEvent = [eventTemplate createEvent];
+    customEvent.analyticsSupplier = ^{
+        return self.analytics;
+    };
     [customEvent track];
 
     XCTAssertEqualObjects(@"shared_content", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
@@ -152,6 +169,9 @@
 - (void)testBasicConsumedEvent {
     UAMediaEventTemplate *eventTemplate = [UAMediaEventTemplate consumedTemplate];
     UACustomEvent *customEvent = [eventTemplate createEvent];
+    customEvent.analyticsSupplier = ^{
+        return self.analytics;
+    };
     [customEvent track];
 
     XCTAssertEqualObjects(@"consumed_content", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
@@ -165,6 +185,9 @@
 - (void)testConsumedEventWithValueFromString {
     UAMediaEventTemplate *eventTemplate = [UAMediaEventTemplate consumedTemplateWithValueFromString:@"100.00"];
     UACustomEvent *customEvent = [eventTemplate createEvent];
+    customEvent.analyticsSupplier = ^{
+        return self.analytics;
+    };
     [customEvent track];
 
     XCTAssertEqualObjects(@"consumed_content", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
@@ -186,6 +209,9 @@
     eventTemplate.isFeature = YES;
     eventTemplate.publishedDate = @"November 13, 2015";
     UACustomEvent *customEvent = [eventTemplate createEvent];
+    customEvent.analyticsSupplier = ^{
+        return self.analytics;
+    };
     [customEvent track];
 
     XCTAssertEqualObjects(@"consumed_content", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");

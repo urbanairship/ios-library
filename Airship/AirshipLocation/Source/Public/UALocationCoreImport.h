@@ -10,6 +10,5 @@
 #import "UALocationProvider.h"
 #import "UAEvent.h"
 #import "UAComponent.h"
-#import "UAAnalytics.h"
 #import "UAExtendableAnalyticsHeaders.h"
 #endif

@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAAnalytics.h"
 #import "UAirship.h"
 
 @import AirshipCore;
@@ -15,7 +14,7 @@
 
 - (void)setUp {
     [super setUp];
-    self.analytics = [self mockForClass:[UAAnalytics class]];
+    self.analytics = [self mockForProtocol:@protocol(UAAnalyticsProtocol)];
     self.airship = [self strictMockForClass:[UAirship class]];
     [[[self.airship stub] andReturn:self.airship] shared];
     [[[self.airship stub] andReturn:self.analytics] analytics];
@@ -27,6 +26,9 @@
 - (void)testBasicRegisteredAccountEvent {
     UAAccountEventTemplate *event = [UAAccountEventTemplate registeredTemplate];
     UACustomEvent *customEvent = [event createEvent];
+    customEvent.analyticsSupplier = ^{
+        return self.analytics;
+    };
 
     XCTAssertEqualObjects(@"registered_account", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
     XCTAssertEqualObjects(@NO, customEvent.data[@"properties"][@"ltv"], @"Property ltv should be NO.");
@@ -39,6 +41,9 @@
 - (void)testRegisteredAccountEventWithValueFromString {
     UAAccountEventTemplate *event = [UAAccountEventTemplate registeredTemplateWithValueFromString:@"100.00"];
     UACustomEvent *customEvent = [event createEvent];
+    customEvent.analyticsSupplier = ^{
+        return self.analytics;
+    };
 
     XCTAssertEqualObjects(@"registered_account", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
     XCTAssertEqualObjects(@(100.00), customEvent.eventValue, @"Event value should be set from a valid numeric string.");
@@ -52,6 +57,9 @@
 - (void)testRegisteredAccountEventWithValue {
     UAAccountEventTemplate *event = [UAAccountEventTemplate registeredTemplateWithValue:@(INT32_MIN)];
     UACustomEvent *customEvent = [event createEvent];
+    customEvent.analyticsSupplier = ^{
+        return self.analytics;
+    };
 
     XCTAssertEqualObjects(@"registered_account", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
     XCTAssertEqualObjects(@(INT32_MIN * 1000000.0), [customEvent.data objectForKey:@"event_value"], @"Unexpected event value.");
@@ -69,6 +77,9 @@
     eventTemplate.category = @"Premium";
 
     UACustomEvent *customEvent = [eventTemplate createEvent];
+    customEvent.analyticsSupplier = ^{
+        return self.analytics;
+    };
     [customEvent track];
 
     XCTAssertEqualObjects(@"registered_account", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
@@ -85,6 +96,9 @@
 - (void)testBasicLoggedInAccountEvent {
     UAAccountEventTemplate *event = [UAAccountEventTemplate loggedInTemplate];
     UACustomEvent *customEvent = [event createEvent];
+    customEvent.analyticsSupplier = ^{
+        return self.analytics;
+    };
 
     XCTAssertEqualObjects(@"logged_in", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
     XCTAssertEqualObjects(@NO, customEvent.data[@"properties"][@"ltv"], @"Property ltv should be NO.");
@@ -97,6 +111,9 @@
 - (void)testLoggedInAccountEventWithValueFromString {
     UAAccountEventTemplate *event = [UAAccountEventTemplate loggedInTemplateWithValueFromString:@"100.00"];
     UACustomEvent *customEvent = [event createEvent];
+    customEvent.analyticsSupplier = ^{
+        return self.analytics;
+    };
 
     XCTAssertEqualObjects(@"logged_in", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
     XCTAssertEqualObjects(@(100.00), customEvent.eventValue, @"Event value should be set from a valid numeric string.");
@@ -110,6 +127,9 @@
 - (void)testLoggedInAccountEventWithValue {
     UAAccountEventTemplate *event = [UAAccountEventTemplate loggedInTemplateWithValue:@(INT32_MIN)];
     UACustomEvent *customEvent = [event createEvent];
+    customEvent.analyticsSupplier = ^{
+        return self.analytics;
+    };
 
     XCTAssertEqualObjects(@"logged_in", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
     XCTAssertEqualObjects(@(INT32_MIN * 1000000.0), [customEvent.data objectForKey:@"event_value"], @"Unexpected event value.");
@@ -129,6 +149,9 @@
     eventTemplate.type = @"FakeType";
 
     UACustomEvent *customEvent = [eventTemplate createEvent];
+    customEvent.analyticsSupplier = ^{
+        return self.analytics;
+    };
     [customEvent track];
 
     XCTAssertEqualObjects(@"logged_in", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
@@ -147,6 +170,9 @@
 - (void)testBasicLoggedOutAccountEvent {
     UAAccountEventTemplate *event = [UAAccountEventTemplate loggedOutTemplate];
     UACustomEvent *customEvent = [event createEvent];
+    customEvent.analyticsSupplier = ^{
+        return self.analytics;
+    };
 
     XCTAssertEqualObjects(@"logged_out", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
     XCTAssertEqualObjects(@NO, customEvent.data[@"properties"][@"ltv"], @"Property ltv should be NO.");
@@ -159,6 +185,9 @@
 - (void)testLoggedOutAccountEventWithValueFromString {
     UAAccountEventTemplate *event = [UAAccountEventTemplate loggedOutTemplateWithValueFromString:@"100.00"];
     UACustomEvent *customEvent = [event createEvent];
+    customEvent.analyticsSupplier = ^{
+        return self.analytics;
+    };
 
     XCTAssertEqualObjects(@"logged_out", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
     XCTAssertEqualObjects(@(100.00), customEvent.eventValue, @"Event value should be set from a valid numeric string.");
@@ -172,6 +201,9 @@
 - (void)testLoggedOutAccountEventWithValue {
     UAAccountEventTemplate *event = [UAAccountEventTemplate loggedOutTemplateWithValue:@(INT32_MIN)];
     UACustomEvent *customEvent = [event createEvent];
+    customEvent.analyticsSupplier = ^{
+        return self.analytics;
+    };
 
     XCTAssertEqualObjects(@"logged_out", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
     XCTAssertEqualObjects(@(INT32_MIN * 1000000.0), [customEvent.data objectForKey:@"event_value"], @"Unexpected event value.");
@@ -191,6 +223,9 @@
     eventTemplate.type = @"FakeType";
 
     UACustomEvent *customEvent = [eventTemplate createEvent];
+    customEvent.analyticsSupplier = ^{
+        return self.analytics;
+    };
     [customEvent track];
 
     XCTAssertEqualObjects(@"logged_out", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");

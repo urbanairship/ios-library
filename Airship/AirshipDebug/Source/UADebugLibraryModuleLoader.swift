@@ -8,7 +8,7 @@ import Airship
 #endif
 
 @objc public class UADebugLibraryModuleLoader : NSObject, UAModuleLoader, UADebugLibraryModuleLoaderFactory {
-    public static func debugLibraryModuleLoader(with analytics: UAAnalytics) -> UAModuleLoader {
+    public static func debugLibraryModuleLoader(with analytics: Analytics) -> UAModuleLoader {
         AirshipDebug.takeOff(analytics)
 
         return UADebugLibraryModuleLoader()

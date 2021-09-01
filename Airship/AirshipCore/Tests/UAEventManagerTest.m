@@ -1,41 +1,25 @@
 /* Copyright Airship and Contributors */
 
 #import "UAAirshipBaseTest.h"
+#import "AirshipTests-Swift.h"
 
-#import "UAEventManager+Internal.h"
-#import "UAEventStore+Internal.h"
 #import "UAirship+Internal.h"
 
 @import AirshipCore;
 
 static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
 
-/**
- * Test event data class to work around not being able to mock UAEventData
- */
-@interface UAEventTestData : NSObject
-@property (nullable, nonatomic, copy) NSString *sessionID;
-@property (nullable, nonatomic, copy) NSData *data;
-@property (nullable, nonatomic, copy) NSString *time;
-@property (nullable, nonatomic, copy) NSString *type;
-@property (nullable, nonatomic, copy) NSString *identifier;
-@property (nullable, nonatomic, strong) NSNumber *bytes;
-@end
-
-@implementation UAEventTestData
-@end
-
 @interface UAEventManagerTest : UAAirshipBaseTest
 @property (nonatomic, strong) UAEventManager *eventManager;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @property (nonatomic, strong) id mockClient;
 @property (nonatomic, strong) id mockStore;
-@property (nonatomic, strong) id mockAppStateTracker;
+@property (nonatomic, strong) UATestAppStateTracker *testAppStateTracker;
 @property (nonatomic, strong) id mockChannel;
 @property (nonatomic, strong) id mockDelegate;
-@property (nonatomic, strong) id mockTaskManager;
-@property(nonatomic, copy) void (^launchHandler)(id<UATask>);
+@property (nonatomic, strong) UATestTaskManager *testTaskManager;
 @property(nonatomic, copy) UADelay *(^delayProvider)(NSTimeInterval);
+@property(nonatomic, strong) NSManagedObjectContext *coreDataContext;
 @end
 
 @implementation UAEventManagerTest
@@ -44,31 +28,25 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
     [super setUp];
 
     self.mockClient = [self mockForClass:[UAEventAPIClient class]];
-    self.mockStore = [self mockForClass:[UAEventStore class]];
-    self.mockChannel = [self mockForClass:[UAChannel class]];
-    self.mockAppStateTracker = [self mockForClass:[UAAppStateTracker class]];
+    self.mockStore = [self mockForProtocol:@protocol(UAEventStoreProtocol)];
+    self.mockChannel = [self mockForProtocol:@protocol(UAChannelProtocol)];
+    self.testAppStateTracker = [[UATestAppStateTracker alloc] init];
+    self.testAppStateTracker.currentState = UAApplicationStateActive;
     self.notificationCenter = [[NSNotificationCenter alloc] init];
-    self.mockTaskManager = [self mockForClass:[UATaskManager class]];
-
-    // Capture the task launcher
-    [[[self.mockTaskManager stub] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        self.launchHandler =  (__bridge void (^)(id<UATask>))arg;
-    }] registerForTaskWithID:UAEventManagerUploadTask dispatcher:OCMOCK_ANY launchHandler:OCMOCK_ANY];
+    self.testTaskManager = [[UATestTaskManager alloc] init];
 
     self.delayProvider = ^(NSTimeInterval delay) {
         return [[UADelay alloc] init:0];
     };
 
-    self.eventManager = [UAEventManager eventManagerWithConfig:self.config
+    self.eventManager = [[UAEventManager alloc] initWithConfig:self.config
                                                      dataStore:self.dataStore
                                                        channel:self.mockChannel
                                                     eventStore:self.mockStore
                                                         client:self.mockClient
                                             notificationCenter:self.notificationCenter
-                                               appStateTracker:self.mockAppStateTracker
-                                                   taskManager:self.mockTaskManager
+                                               appStateTracker:self.testAppStateTracker
+                                                   taskManager:self.testTaskManager
                                                  delayProvider:^(NSTimeInterval delay){
         return self.delayProvider(delay);
     }];
@@ -76,6 +54,26 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
     self.mockDelegate = [self mockForProtocol:@protocol(UAEventManagerDelegate)];
     self.eventManager.delegate = self.mockDelegate;
     self.eventManager.uploadsEnabled = YES;
+    self.coreDataContext = [self createCoreDataContext];
+}
+
+- (NSManagedObjectContext *)createCoreDataContext {
+    NSURL *momRUL = [[UAirshipCoreResources bundle] URLForResource:@"UAEvents" withExtension:@"momd"];
+    NSManagedObjectModel *mom = [[NSManagedObjectModel alloc] initWithContentsOfURL:momRUL];
+    NSPersistentContainer *container = [[NSPersistentContainer alloc] initWithName:@"UAEvents" managedObjectModel:mom];
+
+    NSPersistentStoreDescription *description = [[NSPersistentStoreDescription alloc] init];
+    description.type = NSInMemoryStoreType;
+
+    container.persistentStoreDescriptions = @[description];
+    [container loadPersistentStoresWithCompletionHandler:^(NSPersistentStoreDescription * _Nonnull desc, NSError * _Nullable err) {}];
+
+    return [container newBackgroundContext];
+}
+
+- (UAEventData *)createEventData {
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"UAEventData" inManagedObjectContext:self.coreDataContext];
+    return [[UAEventData alloc] initWithEntity:entity insertIntoManagedObjectContext:self.coreDataContext];
 }
 
 /*
@@ -97,13 +95,15 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
     NSDate *date = [NSDate now];
     UACustomEvent *event = [UACustomEvent eventWithName:@"cool"];
 
-    [[self.mockStore expect] saveEvent:event eventID:@"neat" eventDate:date sessionID:@"story"];
-    [[self.mockTaskManager expect] enqueueRequestWithID:UAEventManagerUploadTask options:OCMOCK_ANY initialDelay:15];
+    [[self.mockStore expect] save:event eventID:@"neat" eventDate:date sessionID:@"story"];
 
-    [self.eventManager addEvent:event eventID:@"neat" eventDate:date sessionID:@"story"];
+    [self.eventManager add:event eventID:@"neat" eventDate:date sessionID:@"story"];
+
+    UATestTask *task = [self.testTaskManager runEnqueuedRequestsWithTaskID:UAEventManagerUploadTask];
+    XCTAssertTrue(task.completed);
+    XCTAssertEqual(task.initialDelay, 15);
 
     [self.mockStore verify];
-    [self.mockTaskManager verify];
 }
 
 /**
@@ -111,18 +111,20 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
  */
 - (void)testAddEventBackground {
     // Background application state
-    [(UAAppStateTracker *)[[self.mockAppStateTracker stub] andReturnValue:@(UAApplicationStateBackground)] state];
+    self.testAppStateTracker.currentState = UAApplicationStateBackground;
 
     UACustomEvent *event = [UACustomEvent eventWithName:@"cool"];
     NSDate *date = [NSDate now];
 
-    [[self.mockStore expect] saveEvent:event eventID:@"neat" eventDate:date sessionID:@"story"];
-    [[self.mockTaskManager expect] enqueueRequestWithID:UAEventManagerUploadTask options:OCMOCK_ANY initialDelay:0];
+    [[self.mockStore expect] save:event eventID:@"neat" eventDate:date sessionID:@"story"];
 
-    [self.eventManager addEvent:event eventID:@"neat" eventDate:date sessionID:@"story"];
+    [self.eventManager add:event eventID:@"neat" eventDate:date sessionID:@"story"];
+
+    UATestTask *task = [self.testTaskManager runEnqueuedRequestsWithTaskID:UAEventManagerUploadTask];
+    XCTAssertTrue(task.completed);
+    XCTAssertEqual(task.initialDelay, 0);
 
     [self.mockStore verify];
-    [self.mockTaskManager verify];
 }
 
 /**
@@ -134,15 +136,15 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
     UACustomEvent *event = [UACustomEvent eventWithName:@"cool"];
     NSDate *date = [NSDate now];
 
-    [[[self.mockTaskManager reject] ignoringNonObjectArgs] enqueueRequestWithID:OCMOCK_ANY
-                                                                        options:OCMOCK_ANY
-                                                                   initialDelay:0];
-    [[self.mockStore expect] saveEvent:event eventID:@"neat" eventDate:date sessionID:@"story"];
+    [[self.mockStore expect] save:event eventID:@"neat" eventDate:date sessionID:@"story"];
 
-    [self.eventManager addEvent:event eventID:@"neat" eventDate:date sessionID:@"story"];
+    [self.eventManager add:event eventID:@"neat" eventDate:date sessionID:@"story"];
+
+    UATestTask *task = [self.testTaskManager runEnqueuedRequestsWithTaskID:UAEventManagerUploadTask];
+    XCTAssertFalse(task.completed);
+    XCTAssertEqual(task.initialDelay, 0);
 
     [self.mockStore verify];
-    [self.mockTaskManager verify];
 }
 
 /**
@@ -152,13 +154,14 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
     UARegionEvent *event = [UARegionEvent regionEventWithRegionID:@"some-id" source:@"some-souurce" boundaryEvent:UABoundaryEventExit];
     NSDate *date = [NSDate now];
 
-    [[self.mockStore expect] saveEvent:event eventID:@"neat" eventDate:date sessionID:@"story"];
-    [[self.mockTaskManager expect] enqueueRequestWithID:UAEventManagerUploadTask options:OCMOCK_ANY initialDelay:0];
+    [[self.mockStore expect] save:event eventID:@"neat" eventDate:date sessionID:@"story"];
 
-    [self.eventManager addEvent:event eventID:@"neat" eventDate:date sessionID:@"story"];
+    [self.eventManager add:event eventID:@"neat" eventDate:date sessionID:@"story"];
+    UATestTask *task = [self.testTaskManager runEnqueuedRequestsWithTaskID:UAEventManagerUploadTask];
+    XCTAssertTrue(task.completed);
+    XCTAssertEqual(task.initialDelay, 0);
 
     [self.mockStore verify];
-    [self.mockTaskManager verify];
 }
 
 
@@ -166,42 +169,21 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
  * Test entering background schedules an upload immediately.
  */
 - (void)testBackground {
-    [[self.mockTaskManager expect] enqueueRequestWithID:UAEventManagerUploadTask options:OCMOCK_ANY initialDelay:0];
     [self.notificationCenter postNotificationName:UAAppStateTracker.didEnterBackgroundNotification object:nil];
-    [self.mockTaskManager verify];
+    UATestTask *task = [self.testTaskManager runEnqueuedRequestsWithTaskID:UAEventManagerUploadTask];
+    XCTAssertTrue(task.completed);
+    XCTAssertEqual(task.initialDelay, 0);
 }
 
 /**
  * Test creating a channel schedules an upload.
  */
 - (void)testChannelCreated {
-    [[self.mockTaskManager expect] enqueueRequestWithID:UAEventManagerUploadTask options:OCMOCK_ANY initialDelay:15];
-
     [self.notificationCenter postNotificationName:UAChannel.channelCreatedEvent
                                            object:nil];
-
-    [self.mockTaskManager verify];
-}
-
-/**
- * Test scheduling an upload with an earlier time will cancel the current operations.
- */
-- (void)testRescheduleUpload {
-    [[self.mockTaskManager expect] enqueueRequestWithID:UAEventManagerUploadTask options:OCMOCK_ANY initialDelay:15];
-
-    UACustomEvent *event = [UACustomEvent eventWithName:@"cool"];
-    NSDate *date = [NSDate now];
-
-    [[self.mockStore expect] saveEvent:event eventID:@"neat" eventDate:date sessionID:@"story"];
-    [self.eventManager addEvent:event eventID:@"neat" eventDate:date sessionID:@"story"];
-    [self.mockTaskManager verify];
-
-    [[self.mockTaskManager expect] enqueueRequestWithID:UAEventManagerUploadTask options:OCMOCK_ANY initialDelay:0];
-
-    UARegionEvent *regionEvent = [UARegionEvent regionEventWithRegionID:@"some-id" source:@"some-souurce" boundaryEvent:UABoundaryEventExit];
-    [self.eventManager addEvent:regionEvent eventID:@"other-event" eventDate:date sessionID:@"story"];
-
-    [self.mockTaskManager verify];
+    UATestTask *task = [self.testTaskManager runEnqueuedRequestsWithTaskID:UAEventManagerUploadTask];
+    XCTAssertTrue(task.completed);
+    XCTAssertEqual(task.initialDelay, 15);
 }
 
 /**
@@ -210,8 +192,7 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
 - (void)testScheduleUpload {
     [[[self.mockChannel stub] andReturn:@"channel ID"] identifier];
 
-    // Set  up a mock event data
-    UAEventTestData *eventData = [[UAEventTestData alloc] init];
+    UAEventData *eventData = [self createEventData];
     eventData.type = @"mock_event";
     eventData.time = @"100";
     eventData.identifier = @"mock_event_id";
@@ -269,25 +250,15 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
     // Expect the store to delete the event
     [[self.mockStore expect] deleteEventsWithIDs:@[@"mock_event_id"]];
 
-    id mockTask = [self mockForProtocol:@protocol(UATask)];
-    [[mockTask expect] taskCompleted];
+    [self.eventManager scheduleUpload];
 
-    // End of the upload another upload should be scheduled
-    XCTestExpectation *uploadScheduled = [self expectationWithDescription:@"upload scheduled"];
-    [[[[self.mockTaskManager expect] ignoringNonObjectArgs] andDo:^(NSInvocation *invocation) {
-        [uploadScheduled fulfill];
-    }] enqueueRequestWithID:UAEventManagerUploadTask options:OCMOCK_ANY initialDelay:0];
-
-    // Start the upload
-    self.launchHandler(mockTask);
+    UATestTask *task = [self.testTaskManager runEnqueuedRequestsWithTaskID:UAEventManagerUploadTask];
 
     [self waitForTestExpectations];
     [self.mockClient verify];
     [self.mockStore verify];
-    [self.mockTaskManager verify];
-    [mockTask verify];
+    XCTAssertTrue(task.completed);
 }
-
 
 /**
  * Test batch limit.
@@ -297,7 +268,7 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
 
     NSMutableArray *events = [NSMutableArray array];
     for (int i = 0; i <= 1000; i++) {
-        UAEventTestData *eventData = [[UAEventTestData alloc] init];
+        UAEventData *eventData = [self createEventData];
         eventData.type = @"mock_event";
         eventData.time = @"100";
         eventData.identifier = [NSString stringWithFormat:@"event: %d", i];
@@ -340,17 +311,15 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
     // Expect the store to delete the event
     [[self.mockStore expect] deleteEventsWithIDs:expectedEventIDs];
 
-    id mockTask = [self mockForProtocol:@protocol(UATask)];
-    [[mockTask expect] taskCompleted];
-
     // Start the upload
-    self.launchHandler(mockTask);
+    [self.eventManager scheduleUpload];
+    UATestTask *task = [self.testTaskManager runEnqueuedRequestsWithTaskID:UAEventManagerUploadTask];
+
 
     [self waitForTestExpectations];
     [self.mockClient verify];
     [self.mockStore verify];
-    [self.mockTaskManager verify];
-    [mockTask verify];
+    XCTAssertTrue(task.completed);
 }
 
 /**
@@ -371,16 +340,12 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
 
     // test
     [self.eventManager scheduleUpload];
-
-    // Start the upload
-    id mockTask = [self mockForProtocol:@protocol(UATask)];
-    [[mockTask expect] taskCompleted];
-    self.launchHandler(mockTask);
+    UATestTask *task = [self.testTaskManager runEnqueuedRequestsWithTaskID:UAEventManagerUploadTask];
 
     // verify
     [self.mockClient verify];
     [self.mockStore verify];
-    [mockTask verify];
+    XCTAssertFalse(task.completed);
 }
 
 /**
@@ -391,7 +356,7 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
     [[[self.mockChannel stub] andReturn:@"channel ID"] identifier];
 
     // Set  up a mock event data
-    UAEventTestData *eventData = [[UAEventTestData alloc] init];
+    UAEventData *eventData = [self createEventData];
     eventData.type = @"mock_event";
     eventData.time = @"100";
     eventData.identifier = @"mock_event_id";
@@ -421,16 +386,13 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
 
     // Start the upload
     [self.eventManager scheduleUpload];
-
-    // Start the upload
-    id mockTask = [self mockForProtocol:@protocol(UATask)];
-    [[mockTask expect] taskFailed];
-    self.launchHandler(mockTask);
+    UATestTask *task = [self.testTaskManager runEnqueuedRequestsWithTaskID:UAEventManagerUploadTask];
 
     // Verify
     [self.mockClient verify];
     [self.mockStore verify];
-    [mockTask verify];
+    XCTAssertFalse(task.completed);
+
 }
 
 /**
@@ -445,20 +407,19 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
     [[self.mockClient reject] uploadEvents:OCMOCK_ANY headers:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     // Start the upload
-    id mockTask = [self mockForProtocol:@protocol(UATask)];
-    [[mockTask expect] taskCompleted];
-    self.launchHandler(mockTask);
+    [self.eventManager scheduleUpload];
+    UATestTask *task = [self.testTaskManager runEnqueuedRequestsWithTaskID:UAEventManagerUploadTask];
 
     [self.mockClient verify];
     [self.mockStore verify];
-    [mockTask verify];
+    XCTAssertTrue(task.completed);
 }
 
 /**
  * Test batch delay foreground.
  */
 - (void)testBatchDelayForeground {
-    [(UAAppStateTracker *)[[self.mockAppStateTracker stub] andReturnValue:@(UAApplicationStateActive)] state];
+    self.testAppStateTracker.currentState = UAApplicationStateInactive;
 
     id mockDelay = [self mockForClass:[UADelay class]];
     self.delayProvider = ^(NSTimeInterval delay) {
@@ -469,16 +430,18 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
     [(UADelay *)[mockDelay expect] start];
 
     // Start the upload
-    id mockTask = [self mockForProtocol:@protocol(UATask)];
-    self.launchHandler(mockTask);
+    [self.eventManager scheduleUpload];
+    UATestTask *task = [self.testTaskManager runEnqueuedRequestsWithTaskID:UAEventManagerUploadTask];
+
     [mockDelay verify];
+    XCTAssertTrue(task.completed);
 }
 
 /**
  * Test batch delay background.
  */
 - (void)testBatchDelayBackground {
-    [(UAAppStateTracker *)[[self.mockAppStateTracker stub] andReturnValue:@(UAApplicationStateBackground)] state];
+    self.testAppStateTracker.currentState = UAApplicationStateBackground;
 
     id mockDelay = [self mockForClass:[UADelay class]];
     self.delayProvider = ^(NSTimeInterval delay) {
@@ -489,8 +452,8 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
     [(UADelay *)[mockDelay expect] start];
 
     // Start the upload
-    id mockTask = [self mockForProtocol:@protocol(UATask)];
-    self.launchHandler(mockTask);
+    [self.eventManager scheduleUpload];
+    UATestTask *task = [self.testTaskManager runEnqueuedRequestsWithTaskID:UAEventManagerUploadTask];
 
     [mockDelay verify];
 }

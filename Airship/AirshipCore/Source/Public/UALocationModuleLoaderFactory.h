@@ -3,7 +3,6 @@
 #import <Foundation/Foundation.h>
 #import "UAModuleLoader.h"
 #import "UAExtendableAnalyticsHeaders.h"
-#import "UAAnalytics.h"
 #import "UALocationProvider.h"
 
 @class UAPreferenceDataStore;

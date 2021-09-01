@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAanalytics.h"
 #import "UAirship+Internal.h"
 
 @import AirshipCore;
@@ -17,7 +16,7 @@
 - (void)setUp {
     [super setUp];
 
-    self.analytics = [self mockForClass:[UAAnalytics class]];
+    self.analytics = [self mockForProtocol:@protocol(UAAnalyticsProtocol)];
     self.airship = [self strictMockForClass:[UAirship class]];
     [[[self.airship stub] andReturn:self.analytics] sharedAnalytics];
 

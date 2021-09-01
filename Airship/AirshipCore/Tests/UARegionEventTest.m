@@ -2,7 +2,6 @@
 
 #import "UABaseTest.h"
 #import "UAEvent.h"
-#import "UAAnalytics.h"
 #import "UAirship.h"
 #import "NSJSONSerialization+UAAdditions.h"
 

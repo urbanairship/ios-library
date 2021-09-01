@@ -38,7 +38,7 @@ class PushSettingsViewController: UITableViewController, RegistrationDelegate {
             object: nil);
 
         pushEnabled = UAirship.push().userPushNotificationsEnabled
-        analytics = UAirship.analytics().isEnabled
+        analytics = UAirship.shared().privacyManager.isEnabled(.analytics)
 
         refreshView()
 
@@ -100,7 +100,11 @@ class PushSettingsViewController: UITableViewController, RegistrationDelegate {
             break
         case (analyticsEnabledIndexPath!.section, analyticsEnabledIndexPath!.row) :
             analytics = !analytics;
-            UAirship.analytics().isEnabled = analytics
+            if analytics {
+                UAirship.shared().privacyManager.enableFeatures(.analytics)
+            } else {
+                UAirship.shared().privacyManager.disableFeatures(.analytics)
+            }
             refreshView()
             break
         default:

@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAAnalytics.h"
 #import "UAirship+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
 

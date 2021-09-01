@@ -2,7 +2,6 @@
 
 #import "UAAppIntegration.h"
 #import "UAirship+Internal.h"
-#import "UAAnalytics+Internal.h"
 #import "UAActionArguments.h"
 
 #if __has_include("AirshipCore/AirshipCore-Swift.h")

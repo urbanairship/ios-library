@@ -6,7 +6,6 @@
 
 #import "UAEvent.h"
 #import "UAirship+Internal.h"
-#import "UAAnalytics.h"
 #import "AirshipTests-Swift.h"
 @import AirshipCore;
 
@@ -32,7 +31,7 @@
 
     self.testChannel = [[UATestChannel alloc] init];
     self.privacyManager = [[UAPrivacyManager alloc] initWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesNone];
-    self.analytics = [self mockForClass:[UAAnalytics class]];
+    self.analytics = [self mockForProtocol:@protocol(UAAnalyticsProtocol)];
     self.push = [self mockForClass:[UAPush class]];
 
     self.airship = [self mockForClass:[UAirship class]];
@@ -124,6 +123,9 @@
 
 
     UAAppForegroundEvent *event = [[UAAppForegroundEvent alloc] init];
+    event.analyticsSupplier = ^{
+        return self.analytics;
+    };
 
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"app_foreground", @"Event type is unexpected.");
@@ -143,6 +145,10 @@
                                    @"metadata": @"base64metadataString"};
 
     UAAppExitEvent *event = [[UAAppExitEvent alloc] init];
+    event.analyticsSupplier = ^{
+        return self.analytics;
+    };
+
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"app_exit", @"Event type is unexpected.");
 }

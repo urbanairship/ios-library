@@ -2,7 +2,6 @@
 
 #import <Foundation/Foundation.h>
 #import "UAModuleLoader.h"
-#import "UAAnalytics.h"
 
 @class UAPreferenceDataStore;
 

@@ -35,6 +35,14 @@ public class UACustomEvent : NSObject, UAEvent {
     static let eventTemplateTypeKey = "template_type"
 
     /**
+     * Analytics supplier, for testing purposes. :nodoc:
+     */
+    @objc
+    public var analyticsSupplier: () -> AnalyticsProtocol? = {
+        return UAirship.analytics()
+    }
+
+    /**
      * The send ID that triggered the event.
      * @note For internal use only. :nodoc:
      */
@@ -130,12 +138,14 @@ public class UACustomEvent : NSObject, UAEvent {
     }
 
     /**
-     * Constructor.
+     * Constructor for testing. :nodoc:
      *
-     * @param name The name of the event. The event's name must not exceed
+     * - Parameter name: The name of the event. The event's name must not exceed
      * 255 characters or it will invalidate the event.
-     * @returns A Custom event instance
+     * - Parameter value: The event value.
+     * - Returns: A Custom event instance
      */
+    @objc
     public init(name: String, value: NSNumber?) {
         self.eventName = name
         super.init()
@@ -151,6 +161,7 @@ public class UACustomEvent : NSObject, UAEvent {
      * number between -2^31 and 2^31 - 1 or it will invalidate the event.
      * @returns A Custom event instance
      */
+    @objc
     public convenience init(name: String, stringValue: String?) {
         let decimalValue = stringValue != nil ? NSDecimalNumber(string: stringValue) : nil
         self.init(name: name, value: decimalValue)
@@ -263,8 +274,8 @@ public class UACustomEvent : NSObject, UAEvent {
     @objc
     public var data : [AnyHashable : Any] {
         get {
-            let sendID = conversionSendID ?? UAirship.analytics()?.conversionSendID
-            let sendMetadata = conversionPushMetadata ?? UAirship.analytics()?.conversionPushMetadata
+            let sendID = conversionSendID ?? self.analyticsSupplier()?.conversionSendID
+            let sendMetadata = conversionPushMetadata ?? self.analyticsSupplier()?.conversionPushMetadata
 
             var dictionary: [AnyHashable : Any] = [:]
             dictionary[UACustomEvent.eventNameKey] = eventName
@@ -313,7 +324,7 @@ public class UACustomEvent : NSObject, UAEvent {
      */
     @objc
     public func track() {
-        UAirship.analytics()?.add(self)
+        self.analyticsSupplier()?.addEvent(self)
     }
 
     private func isValid(string: String?, name: String, required: Bool = false) -> Bool {
