@@ -1,10 +1,10 @@
 /* Copyright Airship and Contributors */
 
-#if !os(tvOS)
 /**
  * @note For Interrnal use only :nodoc:
  */
 @objc
+@available(tvOS, unavailable)
 public class UAInteractiveNotificationEvent : NSObject, UAEvent {
     private static let notificationEventCharacterLimit = 255
 
@@ -70,4 +70,3 @@ private extension Bool {
         return self ? "true" : "false"
     }
 }
-#endif

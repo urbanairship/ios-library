@@ -156,6 +156,10 @@ extern NSString * const UAirshipDeepLinkScheme;
  */
 @property (nonatomic, strong, readonly) UAPrivacyManager *privacyManager;
 
+
+@property (nonatomic, copy, readonly) NSArray<UAComponent *> *components;
+
+
 /**
  * Global data collection flag. Enabled by default, unless `UAConfig.dataCollectionOptInEnabled`
  * is set to `YES` on the first run.

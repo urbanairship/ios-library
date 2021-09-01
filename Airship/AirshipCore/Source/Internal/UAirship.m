@@ -3,9 +3,8 @@
 #import "UAirship+Internal.h"
 #import "UAKeychainUtils+Internal.h"
 #import "UAGlobal.h"
-#import "UAAutoIntegration+Internal.h"
+#import "UAAutoIntegration.h"
 #import "NSJSONSerialization+UAAdditions.h"
-#import "UAAppIntegration.h"
 #import "UALocationModuleLoaderFactory.h"
 #import "UAAutomationModuleLoaderFactory.h"
 #import "UAExtendedActionsModuleLoaderFactory.h"
@@ -335,17 +334,18 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     [UAirship setSharedAirship:[[UAirship alloc] initWithRuntimeConfig:runtimeConfig
                                                              dataStore:dataStore]];
 
-
-
     // Validate any setup issues
     if (!runtimeConfig.inProduction) {
         [sharedAirship_ validate];
     }
-
+    
+    UADefaultAppIntegrationDelegate *integrationDelegate = [[UADefaultAppIntegrationDelegate alloc] init];
     // Automatic setup
     if (sharedAirship_.config.isAutomaticSetupEnabled) {
         UA_LINFO(@"Automatic setup enabled.");
-        [UAAutoIntegration integrate];
+        [UAAutoIntegration integrateWithDelegate:integrationDelegate];
+    } else {
+        UAAppIntegration.integrationDelegate = integrationDelegate;
     }
 
     if (!handledLaunch_) {

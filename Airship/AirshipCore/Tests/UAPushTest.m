@@ -48,7 +48,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     self.config = [[UAConfig alloc] init];
     self.dataStore = [[UAPreferenceDataStore alloc] initWithKeyPrefix:NSUUID.UUID.UUIDString];
 
-    self.validAPNSDeviceToken = [validDeviceToken dataUsingEncoding:NSASCIIStringEncoding];
+    self.validAPNSDeviceToken = [self dataFromHexString:validDeviceToken];
     assert([self.validAPNSDeviceToken length] <= 32);
 
     self.authorizationStatus = UAAuthorizationStatusAuthorized;
@@ -175,8 +175,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     return out;
 }
 
-- (void)setDeviceToken:(NSString *)tokenString {
-    [self.push application:self.mockApplication didRegisterForRemoteNotificationsWithDeviceToken:[self dataFromTokenString:tokenString]];
+- (void)setDeviceToken:(NSData *)data {
+    [LegacyPushTestUtils setDeviceTokenWithPush:self.push token:data];
 }
 
 /**
@@ -228,7 +228,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 - (void)testUserPushNotificationsDisabled {
     // SETUP
     self.push.userPushNotificationsEnabled = YES;
-    [self setDeviceToken:validDeviceToken];
+    [self setDeviceToken:self.validAPNSDeviceToken];
 
     // Make sure we have previously registered types
     self.authorizedNotificationSettings = UAAuthorizedNotificationSettingsBadge;
@@ -254,7 +254,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     [self createPush];
 
     self.push.userPushNotificationsEnabled = YES;
-    [self setDeviceToken:validDeviceToken];
+    [self setDeviceToken:self.validAPNSDeviceToken];
 
     // Make sure we have previously registered types
     self.authorizedNotificationSettings = UAAuthorizedNotificationSettingsBadge;
@@ -485,7 +485,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
     // set authorized types
     self.authorizedNotificationSettings = expectedSettings;
-    [self.push updateAuthorizedNotificationTypes];
+    [LegacyPushTestUtils updateAuthorizedNotificationTypesWithPush:self.push];
 
     [self waitForTestExpectations];
 
@@ -503,8 +503,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     }]  apnsRegistrationSucceededWithDeviceToken:self.validAPNSDeviceToken];
 
     // TEST
-    [self.push application:self.mockApplication didRegisterForRemoteNotificationsWithDeviceToken:self.validAPNSDeviceToken];
-
+    [self setDeviceToken:self.validAPNSDeviceToken];
+    
     // VERIFY
     [self waitForTestExpectations];
 
@@ -526,8 +526,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     [[self.mockRegistrationDelegate expect] apnsRegistrationSucceededWithDeviceToken:self.validAPNSDeviceToken];
 
     // TEST
-    [self.push application:self.mockApplication didRegisterForRemoteNotificationsWithDeviceToken:self.validAPNSDeviceToken];
-
+    [self setDeviceToken:self.validAPNSDeviceToken];
+    
     // VERIFY
     XCTAssertTrue([self.push.deviceToken isEqualToString:[UAUtils deviceTokenStringFromDeviceToken:self.validAPNSDeviceToken]]);
 
@@ -547,7 +547,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
         [delegateCalled fulfill];
     }]  apnsRegistrationFailedWithError:error];
 
-    [self.push application:self.mockApplication didFailToRegisterForRemoteNotificationsWithError:error];
+    
+    [LegacyPushTestUtils didFailToRegisterForRemoteNotificationsWithPush:self.push error:error];
 
     [self waitForTestExpectations];
 
@@ -613,7 +614,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     // Set the right values so we can check if a device api client call was made or not
     self.push.userPushNotificationsEnabled = YES;
     self.push.autobadgeEnabled = YES;
-    [self setDeviceToken:validDeviceToken];
+    [self setDeviceToken:self.validAPNSDeviceToken];
 
     [[[self.mockApplication stub] andReturnValue:OCMOCK_VALUE((NSInteger)30)] applicationIconBadgeNumber];
 
@@ -641,7 +642,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
 - (void)testSetBadgeNumberAutoBadgeDisabled {
     self.push.userPushNotificationsEnabled = YES;
-    [self setDeviceToken:validDeviceToken];
+    [self setDeviceToken:self.validAPNSDeviceToken];
 
     self.push.autobadgeEnabled = NO;
 
@@ -750,8 +751,10 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     [[[response stub] andReturn:UNNotificationDefaultActionIdentifier] actionIdentifier];
     [[[response stub] andReturn:@"test_response_text"] userText];
 
-    [self.push handleNotificationResponse:response completionHandler:^{}];
-
+    [LegacyPushTestUtils didReceiveNotificationResponseWithPush:self.push
+                                                       response:response
+                                              completionHandler:^{}];
+  
     [self.notificationCenter postNotificationName:UAAppStateTracker.didEnterBackgroundNotification object:nil];
 
     XCTAssertNil(self.push.launchNotificationResponse, @"applicationDidEnterBackground should clear the launch notification");
@@ -805,10 +808,18 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     self.push.autobadgeEnabled = NO;
     [[self.mockApplication reject] setApplicationIconBadgeNumber:2];
 
+    
     // TEST
-    [self.push handleRemoteNotification:self.notification foreground:YES completionHandler:^(UIBackgroundFetchResult result) {}];
-    [self.push handleRemoteNotification:self.notification foreground:NO completionHandler:^(UIBackgroundFetchResult result) {}];
-
+    [LegacyPushTestUtils didReceiveRemoteNotificationWithPush:self.push
+                                                     userInfo:self.notification
+                                                 isForeground:YES
+                                            completionHandler:^(UIBackgroundFetchResult result) {}];
+    
+    [LegacyPushTestUtils didReceiveRemoteNotificationWithPush:self.push
+                                                     userInfo:self.notification
+                                                 isForeground:NO
+                                            completionHandler:^(UIBackgroundFetchResult result) {}];
+    
     // VERIFY
     XCTAssertNoThrow([self.mockApplication verify]);
 }
@@ -821,11 +832,20 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     self.push.autobadgeEnabled = YES;
 
     [[self.mockApplication expect] setApplicationIconBadgeNumber:2];
-    [self.push handleRemoteNotification:self.notification foreground:YES completionHandler:^(UIBackgroundFetchResult result) {}];
+    [LegacyPushTestUtils didReceiveRemoteNotificationWithPush:self.push
+                                                     userInfo:self.notification
+                                                 isForeground:YES
+                                            completionHandler:^(UIBackgroundFetchResult result) {}];
+    
+    
     XCTAssertNoThrow([self.mockApplication verify], @"[UIApplication setApplicationIconBadgeNumber] should be called");
 
     [[self.mockApplication reject] setApplicationIconBadgeNumber:2];
-    [self.push handleRemoteNotification:self.notification foreground:NO completionHandler:^(UIBackgroundFetchResult result) {}];
+    
+    [LegacyPushTestUtils didReceiveRemoteNotificationWithPush:self.push
+                                                     userInfo:self.notification
+                                                 isForeground:NO
+                                            completionHandler:^(UIBackgroundFetchResult result) {}];
     XCTAssertNoThrow([self.mockApplication verify], @"[UIApplication setApplicationIconBadgeNumber] should not be called");
 }
 
@@ -838,7 +858,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     [[[response stub] andReturn:self.mockUNNotification] notification];
     [[[response stub] andReturn:UNNotificationDefaultActionIdentifier] actionIdentifier];
 
-    [self.push handleNotificationResponse:response completionHandler:^{}];
+    [LegacyPushTestUtils didReceiveNotificationResponseWithPush:self.push response:response completionHandler:^{}];
 
     XCTAssertEqual(self.push.launchNotificationResponse, response);
 }
@@ -871,9 +891,13 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     XCTestExpectation *completionHandlerCalledExpectation = [self expectationWithDescription:@"handleRemoteNotification completionHandler should be called"];
 
     // TEST
-    [self.push handleRemoteNotification:self.notification foreground:YES completionHandler:^(UIBackgroundFetchResult result) {
+    [LegacyPushTestUtils didReceiveRemoteNotificationWithPush:self.push
+                                                     userInfo:self.notification
+                                                 isForeground:YES
+                                            completionHandler:^(UIBackgroundFetchResult result) {
         [completionHandlerCalledExpectation fulfill];
     }];
+    
 
     // VERIFY
     [self waitForTestExpectations];
@@ -912,10 +936,14 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     XCTestExpectation *completionHandlerCalledExpectation = [self expectationWithDescription:@"handleRemoteNotification completionHandler should be called"];
 
     // TEST
-    [self.push handleRemoteNotification:self.notification foreground:YES completionHandler:^(UIBackgroundFetchResult result) {
+    
+    [LegacyPushTestUtils didReceiveRemoteNotificationWithPush:self.push
+                                                     userInfo:self.notification
+                                                 isForeground:YES
+                                            completionHandler:^(UIBackgroundFetchResult result) {
         [completionHandlerCalledExpectation fulfill];
     }];
-
+    
     // VERIFY
     [self waitForTestExpectations];
 
@@ -948,10 +976,13 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     XCTestExpectation *completionHandlerCalledExpectation = [self expectationWithDescription:@"handleRemoteNotification completionHandler should be called"];
 
     // TEST
-    [self.push handleRemoteNotification:self.notification foreground:NO completionHandler:^(UIBackgroundFetchResult result) {
+    [LegacyPushTestUtils didReceiveRemoteNotificationWithPush:self.push
+                                                     userInfo:self.notification
+                                                 isForeground:NO
+                                            completionHandler:^(UIBackgroundFetchResult result) {
         [completionHandlerCalledExpectation fulfill];
     }];
-
+    
     // VERIFY
     [self waitForTestExpectations];
 
@@ -976,10 +1007,14 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     }];
 
     // TEST
-    [self.push handleRemoteNotification:self.notification foreground:YES completionHandler:^(UIBackgroundFetchResult result) {
+    [LegacyPushTestUtils didReceiveRemoteNotificationWithPush:self.push
+                                                     userInfo:self.notification
+                                                 isForeground:YES
+                                            completionHandler:^(UIBackgroundFetchResult result) {
         [completionHandlerCalledExpectation fulfill];
         XCTAssertEqual(result, UIBackgroundFetchResultNoData);
     }];
+    
 
     // VERIFY
     [self waitForTestExpectations];
@@ -1007,9 +1042,10 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     }];
 
     // Call handleNotificationResponse
-    [self.push handleNotificationResponse:response completionHandler:^{
-    }];
-
+    [LegacyPushTestUtils didReceiveNotificationResponseWithPush:self.push
+                                                       response:response
+                                              completionHandler:^{}];
+    
     [self waitForTestExpectations];
 
     // Check that the launchNotificationReponse is set to expected response
@@ -1042,10 +1078,12 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     }];
 
     // TEST
-    [self.push handleNotificationResponse:response completionHandler:^{
+    [LegacyPushTestUtils didReceiveNotificationResponseWithPush:self.push
+                                                       response:response
+                                              completionHandler:^{
         [completionHandlerCalledExpectation fulfill];
     }];
-
+    
     // VERIFY
     [self waitForTestExpectations];
     XCTAssertNil(self.push.launchNotificationResponse);
@@ -1067,10 +1105,12 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     XCTestExpectation *completionHandlerCalledExpectation = [self expectationWithDescription:@"handleRemoteNotification completionHandler should be called"];
 
     // TEST
-    [self.push handleNotificationResponse:response completionHandler:^{
+    [LegacyPushTestUtils didReceiveNotificationResponseWithPush:self.push
+                                                       response:response
+                                              completionHandler:^{
         [completionHandlerCalledExpectation fulfill];
     }];
-
+    
     // VERIFY
     [self waitForTestExpectations];
     XCTAssertNil(self.push.launchNotificationResponse);
@@ -1091,9 +1131,9 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
     [[[self.mockAirship stub] andReturn:self.push] push];
 
-    UNNotificationPresentationOptions presentationOptions = [self.push presentationOptionsForNotification:self.mockUNNotification];
-
-    XCTAssertEqual(presentationOptions, self.push.defaultPresentationOptions);
+    UNNotificationPresentationOptions result = [LegacyPushTestUtils presentationOptionsWithPush:self.push notification:self.mockUNNotification];
+    
+    XCTAssertEqual(result, self.push.defaultPresentationOptions);
 }
 
 /**
@@ -1108,7 +1148,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
         [[[self.mockPushDelegate stub] andReturnValue:OCMOCK_VALUE(UNNotificationPresentationOptionAlert)] extendPresentationOptions:UNNotificationPresentationOptionNone notification:self.mockUNNotification];
     }
 
-    UNNotificationPresentationOptions result = [self.push presentationOptionsForNotification:self.mockUNNotification];
+    
+    UNNotificationPresentationOptions result = [LegacyPushTestUtils presentationOptionsWithPush:self.push notification:self.mockUNNotification];
 
     if (@available(iOS 14.0, *)) {
         XCTAssertEqual(result, UNNotificationPresentationOptionList | UNNotificationPresentationOptionBanner);
@@ -1140,8 +1181,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     }
 
     // TEST
-    UNNotificationPresentationOptions result = [self.push presentationOptionsForNotification:self.mockUNNotification];
-
+    UNNotificationPresentationOptions result = [LegacyPushTestUtils presentationOptionsWithPush:self.push notification:self.mockUNNotification];
+    
     // VERIFY
     XCTAssertEqual(result, options);
 }
@@ -1169,8 +1210,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     }
 
     // TEST
-    UNNotificationPresentationOptions result = [self.push presentationOptionsForNotification:self.mockUNNotification];
-
+    UNNotificationPresentationOptions result = [LegacyPushTestUtils presentationOptionsWithPush:self.push notification:self.mockUNNotification];
+    
     // VERIFY
     XCTAssertEqual(result, options);
 }
@@ -1193,7 +1234,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     NSData *token = [@"some-token" dataUsingEncoding:NSASCIIStringEncoding];
 
     // TEST
-    [self.push application:self.mockApplication didRegisterForRemoteNotificationsWithDeviceToken:token];
+    [self setDeviceToken:token];
 
     // VERIFY
     // Expect UAPush to receive the device token string
@@ -1212,7 +1253,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
     // TEST
     NSData *token = [@"some-token" dataUsingEncoding:NSASCIIStringEncoding];
-    [self.push application:self.mockApplication didRegisterForRemoteNotificationsWithDeviceToken:token];
+    [self setDeviceToken:token];
 
     // VERIFY
     // Expect UAPush to receive the device token string
@@ -1264,9 +1305,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     self.authorizedNotificationSettings = UAAuthorizedNotificationSettingsAlert | UAAuthorizedNotificationSettingsBadge;
     self.authorizationStatus = UAAuthorizationStatusAuthorized;
 
-
     // TEST
-    [self.push updateAuthorizedNotificationTypes];
+    [LegacyPushTestUtils updateAuthorizedNotificationTypesWithPush:self.push];
 
     // VERIFY
     XCTAssertTrue(self.testChannel.updateRegistrationCalled);
@@ -1277,8 +1317,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
  */
 - (void)testRegistrationPayload {
     NSData *token = [@"some-token" dataUsingEncoding:NSASCIIStringEncoding];
-    [self.push application:self.mockApplication didRegisterForRemoteNotificationsWithDeviceToken:token];
-
+    [self setDeviceToken:token];
+    
     self.push.quietTimeEnabled = YES;
     self.push.timeZone = [NSTimeZone timeZoneWithName:@"Pacific/Auckland"];
     [self.push setQuietTimeStartHour:12 startMinute:30 endHour:14 endMinute:58];
@@ -1317,7 +1357,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
  */
 - (void)testRegistrationPayloadDisabledTokenRegistration {
     NSData *token = [@"some-token" dataUsingEncoding:NSASCIIStringEncoding];
-    [self.push application:self.mockApplication didRegisterForRemoteNotificationsWithDeviceToken:token];
+    [self setDeviceToken:token];
 
     [self.privacyManager disableFeatures:UAFeaturesPush];
 
@@ -1377,7 +1417,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 }
 
 - (void)testAnalyticsHeaders {
-    [self setDeviceToken:validDeviceToken];
+    [self setDeviceToken:self.validAPNSDeviceToken];
 
     NSDictionary *headers = self.analyticHeadersBlock();
     id expected = @{
@@ -1391,7 +1431,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 }
 
 - (void)testAnalyticsHeadersPushDisabled {
-    [self setDeviceToken:validDeviceToken];
+    [self setDeviceToken:self.validAPNSDeviceToken];
 
     [self.privacyManager disableFeatures:UAFeaturesPush];
 
@@ -1414,7 +1454,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     }];
 
     [UADispatcher.main dispatchAsync:^{
-        [self setDeviceToken:validDeviceToken];
+        [self setDeviceToken:self.validAPNSDeviceToken];
     }];
 
     [self waitForTestExpectations];

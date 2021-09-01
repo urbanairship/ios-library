@@ -7,7 +7,6 @@
 #import "UAAction.h"
 #import "UAActionArguments.h"
 #import "UAActionResult.h"
-#import "UAAppIntegration.h"
 #import "UAAsyncOperation.h"
 #import "UAAutomationModuleLoaderFactory.h"
 #import "UAComponent.h"

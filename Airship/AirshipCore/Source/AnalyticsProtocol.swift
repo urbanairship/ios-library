@@ -71,3 +71,12 @@ public protocol AnalyticsProtocol {
     @objc
     func launched(fromNotification notification: [AnyHashable : Any])
 }
+
+
+protocol InternalAnalyticsProtocol {
+    func onDeviceRegistration()
+
+    #if !os(tvOS)
+    func onNotificationResponse(response: UNNotificationResponse, action: UNNotificationAction?)
+    #endif
+}

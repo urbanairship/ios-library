@@ -2,20 +2,20 @@
 
 #import <Foundation/Foundation.h>
 #import <UserNotifications/UserNotifications.h>
+#import "UAAppIntegrationDelegate.h"
 
-@interface UAAutoIntegrationDummyDelegate : NSObject<UNUserNotificationCenterDelegate>
-
-@end
-
+/**
+ * Auto app integration.
+ * @note For internal use only. :nodoc:
+ */
 @interface UAAutoIntegration : NSObject
 
 ///---------------------------------------------------------------------------------------
 /// @name Auto Integration Internal Methods
 ///---------------------------------------------------------------------------------------
 
-+ (void)integrate;
++ (void)integrateWithDelegate:(id<UAAppIntegrationDelegate>)delegate;
 
-// Used to reset any state for testing only.
 + (void)reset;
 
 @end

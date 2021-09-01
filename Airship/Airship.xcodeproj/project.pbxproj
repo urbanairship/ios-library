@@ -371,8 +371,6 @@
 		6E4115E02538C0B000FEE4E8 /* UAAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E41149A2538C0A500FEE4E8 /* UAAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E4115EB2538C0B000FEE4E8 /* UAJSONMatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E41149D2538C0A500FEE4E8 /* UAJSONMatcher.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E4115EC2538C0B000FEE4E8 /* UAJSONMatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E41149D2538C0A500FEE4E8 /* UAJSONMatcher.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E4115EF2538C0B000FEE4E8 /* UAAppIntegration.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E41149E2538C0A500FEE4E8 /* UAAppIntegration.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E4115F02538C0B000FEE4E8 /* UAAppIntegration.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E41149E2538C0A500FEE4E8 /* UAAppIntegration.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E4115F32538C0B000FEE4E8 /* UATagGroups.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E41149F2538C0A500FEE4E8 /* UATagGroups.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E4115F42538C0B000FEE4E8 /* UATagGroups.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E41149F2538C0A500FEE4E8 /* UATagGroups.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E4116172538C0B100FEE4E8 /* UALocationModuleLoaderFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114A82538C0A600FEE4E8 /* UALocationModuleLoaderFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -392,16 +390,14 @@
 		6E4117E02538C1FB00FEE4E8 /* NSDictionary+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4116D62538C1E500FEE4E8 /* NSDictionary+UAAdditions.m */; };
 		6E4117EB2538C1FB00FEE4E8 /* UASwizzler.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4116D92538C1E600FEE4E8 /* UASwizzler.m */; };
 		6E4117EC2538C1FB00FEE4E8 /* UASwizzler.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4116D92538C1E600FEE4E8 /* UASwizzler.m */; };
-		6E4118932538C1FD00FEE4E8 /* UAAppIntegration+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4117032538C1EA00FEE4E8 /* UAAppIntegration+Internal.h */; };
-		6E4118942538C1FD00FEE4E8 /* UAAppIntegration+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4117032538C1EA00FEE4E8 /* UAAppIntegration+Internal.h */; };
 		6E4118BB2538C1FE00FEE4E8 /* UAJSONMatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E41170D2538C1EB00FEE4E8 /* UAJSONMatcher.m */; };
 		6E4118BC2538C1FE00FEE4E8 /* UAJSONMatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E41170D2538C1EB00FEE4E8 /* UAJSONMatcher.m */; };
 		6E4118CF2538C1FE00FEE4E8 /* NSJSONSerialization+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4117122538C1EC00FEE4E8 /* NSJSONSerialization+UAAdditions.m */; };
 		6E4118D02538C1FE00FEE4E8 /* NSJSONSerialization+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4117122538C1EC00FEE4E8 /* NSJSONSerialization+UAAdditions.m */; };
 		6E4118DB2538C1FE00FEE4E8 /* UAJavaScriptEnvironment.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4117152538C1EC00FEE4E8 /* UAJavaScriptEnvironment.m */; };
 		6E4118DC2538C1FE00FEE4E8 /* UAJavaScriptEnvironment.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4117152538C1EC00FEE4E8 /* UAJavaScriptEnvironment.m */; };
-		6E4118EB2538C1FE00FEE4E8 /* UAAutoIntegration+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4117192538C1EC00FEE4E8 /* UAAutoIntegration+Internal.h */; };
-		6E4118EC2538C1FE00FEE4E8 /* UAAutoIntegration+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4117192538C1EC00FEE4E8 /* UAAutoIntegration+Internal.h */; };
+		6E4118EB2538C1FE00FEE4E8 /* UAAutoIntegration.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4117192538C1EC00FEE4E8 /* UAAutoIntegration.h */; };
+		6E4118EC2538C1FE00FEE4E8 /* UAAutoIntegration.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4117192538C1EC00FEE4E8 /* UAAutoIntegration.h */; };
 		6E4118F32538C1FF00FEE4E8 /* UAVersionMatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E41171B2538C1EC00FEE4E8 /* UAVersionMatcher.m */; };
 		6E4118F42538C1FF00FEE4E8 /* UAVersionMatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E41171B2538C1EC00FEE4E8 /* UAVersionMatcher.m */; };
 		6E4118FB2538C1FF00FEE4E8 /* UAJSONValueMatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E41171D2538C1ED00FEE4E8 /* UAJSONValueMatcher.m */; };
@@ -426,8 +422,6 @@
 		6E411A202538C20300FEE4E8 /* UAirship.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4117662538C1F400FEE4E8 /* UAirship.m */; };
 		6E411A2B2538C20300FEE4E8 /* UANativeBridgeActionHandler+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4117692538C1F400FEE4E8 /* UANativeBridgeActionHandler+Internal.h */; };
 		6E411A2C2538C20300FEE4E8 /* UANativeBridgeActionHandler+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4117692538C1F400FEE4E8 /* UANativeBridgeActionHandler+Internal.h */; };
-		6E411A472538C20400FEE4E8 /* UAAppIntegration.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4117702538C1F400FEE4E8 /* UAAppIntegration.m */; };
-		6E411A482538C20400FEE4E8 /* UAAppIntegration.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4117702538C1F400FEE4E8 /* UAAppIntegration.m */; };
 		6E411A5B2538C20400FEE4E8 /* UAJSONPredicate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4117752538C1F500FEE4E8 /* UAJSONPredicate.m */; };
 		6E411A5C2538C20400FEE4E8 /* UAJSONPredicate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4117752538C1F500FEE4E8 /* UAJSONPredicate.m */; };
 		6E411A5F2538C20400FEE4E8 /* UAAsyncOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4117762538C1F500FEE4E8 /* UAAsyncOperation.m */; };
@@ -862,6 +856,15 @@
 		6E87BD6826D6A39A0005D20D /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BD6626D6A39A0005D20D /* Config.swift */; };
 		6E87BD8326D757CA0005D20D /* CloudSite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BD8226D757CA0005D20D /* CloudSite.swift */; };
 		6E87BD8726D7F6640005D20D /* CloudSite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BD8226D757CA0005D20D /* CloudSite.swift */; };
+		6E87BD8D26D815780005D20D /* AppIntegration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BD8C26D815780005D20D /* AppIntegration.swift */; };
+		6E87BD8E26D815780005D20D /* AppIntegration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BD8C26D815780005D20D /* AppIntegration.swift */; };
+		6E87BD9226D963B60005D20D /* DefaultAppIntegrationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BD9126D963B60005D20D /* DefaultAppIntegrationDelegate.swift */; };
+		6E87BD9426D98E510005D20D /* UAAppIntegrationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E87BD9326D98E510005D20D /* UAAppIntegrationDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E87BD9526D98E510005D20D /* UAAppIntegrationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E87BD9326D98E510005D20D /* UAAppIntegrationDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E87BD9926DD3FE90005D20D /* LegacyPushTestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BD9826DD3FE90005D20D /* LegacyPushTestUtils.swift */; };
+		6E87BD9A26DD78180005D20D /* DefaultAppIntegrationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BD9126D963B60005D20D /* DefaultAppIntegrationDelegate.swift */; };
+		6E87BD9D26DD78CC0005D20D /* DefaultAppIntegrationDelegateTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BD9C26DD78CC0005D20D /* DefaultAppIntegrationDelegateTest.swift */; };
+		6E87BD9F26DDDB250005D20D /* AppIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BD9E26DDDB250005D20D /* AppIntegrationTests.swift */; };
 		6E88ECC4262E92FF00C46A23 /* UAChatViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E88ECC3262E92FF00C46A23 /* UAChatViewController.xib */; };
 		6E88EDB2262F7C0B00C46A23 /* MockChatDAO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E88EDB1262F7C0B00C46A23 /* MockChatDAO.swift */; };
 		6E8BF44F26852E4B009A8BD4 /* UAExpirableTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8BF44A26852E4A009A8BD4 /* UAExpirableTask.swift */; };
@@ -1097,7 +1100,6 @@
 		CC64F0E21D8B781C009CEF27 /* UAAggregateActionResultTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0771D8B781C009CEF27 /* UAAggregateActionResultTest.m */; };
 		CC64F0E31D8B781C009CEF27 /* UAAnalyticsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0791D8B781C009CEF27 /* UAAnalyticsTest.m */; };
 		CC64F0E41D8B781C009CEF27 /* UAAPNSRegistrationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F07A1D8B781C009CEF27 /* UAAPNSRegistrationTest.m */; };
-		CC64F0E51D8B781C009CEF27 /* UAAppIntegrationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F07B1D8B781C009CEF27 /* UAAppIntegrationTest.m */; };
 		CC64F0E61D8B781C009CEF27 /* UAApplicationMetricsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F07C1D8B781C009CEF27 /* UAApplicationMetricsTest.m */; };
 		CC64F0E71D8B781C009CEF27 /* UAAssociatedIdentifiersTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F07D1D8B781C009CEF27 /* UAAssociatedIdentifiersTest.m */; };
 		CC64F0E81D8B781C009CEF27 /* UAAssociateIdentifiersEventTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F07E1D8B781C009CEF27 /* UAAssociateIdentifiersEventTest.m */; };
@@ -1712,7 +1714,6 @@
 		6E4114962538C0A400FEE4E8 /* UAJSONSerialization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAJSONSerialization.h; path = Public/UAJSONSerialization.h; sourceTree = "<group>"; };
 		6E41149A2538C0A500FEE4E8 /* UAAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAAction.h; path = Public/UAAction.h; sourceTree = "<group>"; };
 		6E41149D2538C0A500FEE4E8 /* UAJSONMatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAJSONMatcher.h; path = Public/UAJSONMatcher.h; sourceTree = "<group>"; };
-		6E41149E2538C0A500FEE4E8 /* UAAppIntegration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAAppIntegration.h; path = Public/UAAppIntegration.h; sourceTree = "<group>"; };
 		6E41149F2538C0A500FEE4E8 /* UATagGroups.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UATagGroups.h; path = Public/UATagGroups.h; sourceTree = "<group>"; };
 		6E4114A82538C0A600FEE4E8 /* UALocationModuleLoaderFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UALocationModuleLoaderFactory.h; path = Public/UALocationModuleLoaderFactory.h; sourceTree = "<group>"; };
 		6E4114AB2538C0A600FEE4E8 /* UANativeBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UANativeBridge.h; path = Public/UANativeBridge.h; sourceTree = "<group>"; };
@@ -1724,11 +1725,10 @@
 		6E4116D62538C1E500FEE4E8 /* NSDictionary+UAAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSDictionary+UAAdditions.m"; path = "Internal/NSDictionary+UAAdditions.m"; sourceTree = "<group>"; };
 		6E4116D92538C1E600FEE4E8 /* UASwizzler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UASwizzler.m; path = Internal/UASwizzler.m; sourceTree = "<group>"; };
 		6E4116DD2538C1E600FEE4E8 /* UAColorUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAColorUtils.m; path = Internal/UAColorUtils.m; sourceTree = "<group>"; };
-		6E4117032538C1EA00FEE4E8 /* UAAppIntegration+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAAppIntegration+Internal.h"; path = "Internal/UAAppIntegration+Internal.h"; sourceTree = "<group>"; };
 		6E41170D2538C1EB00FEE4E8 /* UAJSONMatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAJSONMatcher.m; path = Internal/UAJSONMatcher.m; sourceTree = "<group>"; };
 		6E4117122538C1EC00FEE4E8 /* NSJSONSerialization+UAAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSJSONSerialization+UAAdditions.m"; path = "Internal/NSJSONSerialization+UAAdditions.m"; sourceTree = "<group>"; };
 		6E4117152538C1EC00FEE4E8 /* UAJavaScriptEnvironment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAJavaScriptEnvironment.m; path = Internal/UAJavaScriptEnvironment.m; sourceTree = "<group>"; };
-		6E4117192538C1EC00FEE4E8 /* UAAutoIntegration+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAAutoIntegration+Internal.h"; path = "Internal/UAAutoIntegration+Internal.h"; sourceTree = "<group>"; };
+		6E4117192538C1EC00FEE4E8 /* UAAutoIntegration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAAutoIntegration.h; path = Internal/UAAutoIntegration.h; sourceTree = "<group>"; };
 		6E41171B2538C1EC00FEE4E8 /* UAVersionMatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAVersionMatcher.m; path = Internal/UAVersionMatcher.m; sourceTree = "<group>"; };
 		6E41171D2538C1ED00FEE4E8 /* UAJSONValueMatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAJSONValueMatcher.m; path = Internal/UAJSONValueMatcher.m; sourceTree = "<group>"; };
 		6E4117262538C1ED00FEE4E8 /* UAJSONMatcher+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAJSONMatcher+Internal.h"; path = "Internal/UAJSONMatcher+Internal.h"; sourceTree = "<group>"; };
@@ -1741,7 +1741,6 @@
 		6E4117552538C1F200FEE4E8 /* UAKeychainUtils+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAKeychainUtils+Internal.h"; path = "Internal/UAKeychainUtils+Internal.h"; sourceTree = "<group>"; };
 		6E4117662538C1F400FEE4E8 /* UAirship.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAirship.m; path = Internal/UAirship.m; sourceTree = "<group>"; };
 		6E4117692538C1F400FEE4E8 /* UANativeBridgeActionHandler+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UANativeBridgeActionHandler+Internal.h"; path = "Internal/UANativeBridgeActionHandler+Internal.h"; sourceTree = "<group>"; };
-		6E4117702538C1F400FEE4E8 /* UAAppIntegration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAAppIntegration.m; path = Internal/UAAppIntegration.m; sourceTree = "<group>"; };
 		6E4117752538C1F500FEE4E8 /* UAJSONPredicate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAJSONPredicate.m; path = Internal/UAJSONPredicate.m; sourceTree = "<group>"; };
 		6E4117762538C1F500FEE4E8 /* UAAsyncOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAAsyncOperation.m; path = Internal/UAAsyncOperation.m; sourceTree = "<group>"; };
 		6E4117782538C1F500FEE4E8 /* UAJavaScriptCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAJavaScriptCommand.m; path = Internal/UAJavaScriptCommand.m; sourceTree = "<group>"; };
@@ -1947,6 +1946,12 @@
 		6E87BD6326D594870005D20D /* ChannelRegistrationPayload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelRegistrationPayload.swift; sourceTree = "<group>"; };
 		6E87BD6626D6A39A0005D20D /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		6E87BD8226D757CA0005D20D /* CloudSite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudSite.swift; sourceTree = "<group>"; };
+		6E87BD8C26D815780005D20D /* AppIntegration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIntegration.swift; sourceTree = "<group>"; };
+		6E87BD9126D963B60005D20D /* DefaultAppIntegrationDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultAppIntegrationDelegate.swift; sourceTree = "<group>"; };
+		6E87BD9326D98E510005D20D /* UAAppIntegrationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAAppIntegrationDelegate.h; path = Public/UAAppIntegrationDelegate.h; sourceTree = "<group>"; };
+		6E87BD9826DD3FE90005D20D /* LegacyPushTestUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyPushTestUtils.swift; sourceTree = "<group>"; };
+		6E87BD9C26DD78CC0005D20D /* DefaultAppIntegrationDelegateTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultAppIntegrationDelegateTest.swift; sourceTree = "<group>"; };
+		6E87BD9E26DDDB250005D20D /* AppIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIntegrationTests.swift; sourceTree = "<group>"; };
 		6E88ECC3262E92FF00C46A23 /* UAChatViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAChatViewController.xib; sourceTree = "<group>"; };
 		6E88EDB1262F7C0B00C46A23 /* MockChatDAO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockChatDAO.swift; sourceTree = "<group>"; };
 		6E8A54B9236243A3004AE2A0 /* UAAutomationModuleLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAutomationModuleLoader.m; sourceTree = "<group>"; };
@@ -2235,7 +2240,6 @@
 		CC64F0771D8B781C009CEF27 /* UAAggregateActionResultTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAggregateActionResultTest.m; sourceTree = "<group>"; };
 		CC64F0791D8B781C009CEF27 /* UAAnalyticsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAnalyticsTest.m; sourceTree = "<group>"; };
 		CC64F07A1D8B781C009CEF27 /* UAAPNSRegistrationTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAPNSRegistrationTest.m; sourceTree = "<group>"; };
-		CC64F07B1D8B781C009CEF27 /* UAAppIntegrationTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAppIntegrationTest.m; sourceTree = "<group>"; };
 		CC64F07C1D8B781C009CEF27 /* UAApplicationMetricsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAApplicationMetricsTest.m; sourceTree = "<group>"; };
 		CC64F07D1D8B781C009CEF27 /* UAAssociatedIdentifiersTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAssociatedIdentifiersTest.m; sourceTree = "<group>"; };
 		CC64F07E1D8B781C009CEF27 /* UAAssociateIdentifiersEventTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAssociateIdentifiersEventTest.m; sourceTree = "<group>"; };
@@ -3256,13 +3260,13 @@
 		6E411CFC2538CC7A00FEE4E8 /* Integration */ = {
 			isa = PBXGroup;
 			children = (
+				6E87BD9326D98E510005D20D /* UAAppIntegrationDelegate.h */,
+				6E4117292538C1EE00FEE4E8 /* UAAutoIntegration.m */,
+				6E4117192538C1EC00FEE4E8 /* UAAutoIntegration.h */,
 				6E4116D92538C1E600FEE4E8 /* UASwizzler.m */,
 				6E4117A72538C1FA00FEE4E8 /* UASwizzler+Internal.h */,
-				6E41149E2538C0A500FEE4E8 /* UAAppIntegration.h */,
-				6E4117702538C1F400FEE4E8 /* UAAppIntegration.m */,
-				6E4117032538C1EA00FEE4E8 /* UAAppIntegration+Internal.h */,
-				6E4117292538C1EE00FEE4E8 /* UAAutoIntegration.m */,
-				6E4117192538C1EC00FEE4E8 /* UAAutoIntegration+Internal.h */,
+				6E87BD8C26D815780005D20D /* AppIntegration.swift */,
+				6E87BD9126D963B60005D20D /* DefaultAppIntegrationDelegate.swift */,
 			);
 			name = Integration;
 			sourceTree = "<group>";
@@ -3978,6 +3982,15 @@
 			path = ChatAPI;
 			sourceTree = "<group>";
 		};
+		6E87BD9B26DD78B40005D20D /* Integration */ = {
+			isa = PBXGroup;
+			children = (
+				6E87BD9C26DD78CC0005D20D /* DefaultAppIntegrationDelegateTest.swift */,
+				6E87BD9E26DDDB250005D20D /* AppIntegrationTests.swift */,
+			);
+			name = Integration;
+			sourceTree = "<group>";
+		};
 		6E90F0ED228F550900E1FCB0 /* Config */ = {
 			isa = PBXGroup;
 			children = (
@@ -4350,6 +4363,7 @@
 				CC04F20A1DCAB50C00B4842D /* APNS */,
 				CC04F20B1DCAB52900B4842D /* Interactive */,
 				CC64F0B81D8B781C009CEF27 /* UAPushTest.m */,
+				6E87BD9826DD3FE90005D20D /* LegacyPushTestUtils.swift */,
 			);
 			name = Push;
 			sourceTree = "<group>";
@@ -4518,7 +4532,6 @@
 				CC04F2161DCAB74900B4842D /* Actions */,
 				CC04F2171DCAB75E00B4842D /* Events */,
 				CC64F0791D8B781C009CEF27 /* UAAnalyticsTest.m */,
-				CC64F07B1D8B781C009CEF27 /* UAAppIntegrationTest.m */,
 				CC64F07C1D8B781C009CEF27 /* UAApplicationMetricsTest.m */,
 				CC64F07D1D8B781C009CEF27 /* UAAssociatedIdentifiersTest.m */,
 				CCB902231DCBBCDA009A66D7 /* UAEventAPIClientTest.m */,
@@ -4612,6 +4625,7 @@
 		CC64F0551D8B77E3009CEF27 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				6E87BD9B26DD78B40005D20D /* Integration */,
 				6E2D6AF026B0B62900B7C226 /* Subscription Lists */,
 				A6CDD8CE269491850040A673 /* Contacts */,
 				6EB4E654254C88E500E3FFD0 /* Tasks */,
@@ -4815,7 +4829,7 @@
 				6E4115372538C0AB00FEE4E8 /* UANativeBridgeExtensionDelegate.h in Headers */,
 				6E4115EB2538C0B000FEE4E8 /* UAJSONMatcher.h in Headers */,
 				6E41150B2538C0AA00FEE4E8 /* UAAsyncOperation.h in Headers */,
-				6E4118EB2538C1FE00FEE4E8 /* UAAutoIntegration+Internal.h in Headers */,
+				6E4118EB2538C1FE00FEE4E8 /* UAAutoIntegration.h in Headers */,
 				6E4115DF2538C0AF00FEE4E8 /* UAAction.h in Headers */,
 				6E4115AF2538C0AE00FEE4E8 /* UAAutomationModuleLoaderFactory.h in Headers */,
 				6E411E722538F4C700FEE4E8 /* UAActionResult+Internal.h in Headers */,
@@ -4828,6 +4842,7 @@
 				6E4119A72538C20100FEE4E8 /* UAJSONValueMatcher+Internal.h in Headers */,
 				6E4115532538C0AC00FEE4E8 /* UAAttributes.h in Headers */,
 				6E4115A32538C0AE00FEE4E8 /* UAModuleLoader.h in Headers */,
+				6E87BD9426D98E510005D20D /* UAAppIntegrationDelegate.h in Headers */,
 				6E4115AB2538C0AE00FEE4E8 /* UAExtendableAnalyticsHeaders.h in Headers */,
 				6E41156B2538C0AD00FEE4E8 /* UAActionPredicateProtocol.h in Headers */,
 				6E4115CF2538C0AF00FEE4E8 /* UAJSONSerialization.h in Headers */,
@@ -4836,7 +4851,6 @@
 				6E411AE72538C20600FEE4E8 /* UANativeBridge+Internal.h in Headers */,
 				6E4115C32538C0AF00FEE4E8 /* UAirship.h in Headers */,
 				6E41153F2538C0AB00FEE4E8 /* UAMessageCenterModuleLoaderFactory.h in Headers */,
-				6E4118932538C1FD00FEE4E8 /* UAAppIntegration+Internal.h in Headers */,
 				6E4115932538C0AE00FEE4E8 /* UAKeychainUtils.h in Headers */,
 				6E4116232538C0B100FEE4E8 /* UANativeBridge.h in Headers */,
 				6E698DEE26790AC300654DB2 /* UAFeature.h in Headers */,
@@ -4849,7 +4863,6 @@
 				6E41191F2538C1FF00FEE4E8 /* UAJSONMatcher+Internal.h in Headers */,
 				6E41158B2538C0AD00FEE4E8 /* UAJavaScriptCommand.h in Headers */,
 				6E4119DB2538C20200FEE4E8 /* UAKeychainUtils+Internal.h in Headers */,
-				6E4115EF2538C0B000FEE4E8 /* UAAppIntegration.h in Headers */,
 				6E411A2B2538C20300FEE4E8 /* UANativeBridgeActionHandler+Internal.h in Headers */,
 				6E4115632538C0AC00FEE4E8 /* NSJSONSerialization+UAAdditions.h in Headers */,
 				6E4115BF2538C0AF00FEE4E8 /* UAJSONValueMatcher.h in Headers */,
@@ -5064,7 +5077,7 @@
 				6E4115382538C0AB00FEE4E8 /* UANativeBridgeExtensionDelegate.h in Headers */,
 				6E4115EC2538C0B000FEE4E8 /* UAJSONMatcher.h in Headers */,
 				6E41150C2538C0AA00FEE4E8 /* UAAsyncOperation.h in Headers */,
-				6E4118EC2538C1FE00FEE4E8 /* UAAutoIntegration+Internal.h in Headers */,
+				6E4118EC2538C1FE00FEE4E8 /* UAAutoIntegration.h in Headers */,
 				6E4115E02538C0B000FEE4E8 /* UAAction.h in Headers */,
 				6E4115B02538C0AE00FEE4E8 /* UAAutomationModuleLoaderFactory.h in Headers */,
 				6E4114F42538C0AA00FEE4E8 /* UAComponent.h in Headers */,
@@ -5076,6 +5089,7 @@
 				6E4119A82538C20100FEE4E8 /* UAJSONValueMatcher+Internal.h in Headers */,
 				6E4115542538C0AC00FEE4E8 /* UAAttributes.h in Headers */,
 				6E4115A42538C0AE00FEE4E8 /* UAModuleLoader.h in Headers */,
+				6E87BD9526D98E510005D20D /* UAAppIntegrationDelegate.h in Headers */,
 				6E4115AC2538C0AE00FEE4E8 /* UAExtendableAnalyticsHeaders.h in Headers */,
 				6E41156C2538C0AD00FEE4E8 /* UAActionPredicateProtocol.h in Headers */,
 				6E4115D02538C0AF00FEE4E8 /* UAJSONSerialization.h in Headers */,
@@ -5083,7 +5097,6 @@
 				6E411AE82538C20600FEE4E8 /* UANativeBridge+Internal.h in Headers */,
 				6E4115C42538C0AF00FEE4E8 /* UAirship.h in Headers */,
 				6E4115402538C0AC00FEE4E8 /* UAMessageCenterModuleLoaderFactory.h in Headers */,
-				6E4118942538C1FD00FEE4E8 /* UAAppIntegration+Internal.h in Headers */,
 				6E4115942538C0AE00FEE4E8 /* UAKeychainUtils.h in Headers */,
 				6E4116242538C0B100FEE4E8 /* UANativeBridge.h in Headers */,
 				6E698DEF26790AC300654DB2 /* UAFeature.h in Headers */,
@@ -5096,7 +5109,6 @@
 				6E4119202538C1FF00FEE4E8 /* UAJSONMatcher+Internal.h in Headers */,
 				6E41158C2538C0AD00FEE4E8 /* UAJavaScriptCommand.h in Headers */,
 				6E4119DC2538C20200FEE4E8 /* UAKeychainUtils+Internal.h in Headers */,
-				6E4115F02538C0B000FEE4E8 /* UAAppIntegration.h in Headers */,
 				6E411A2C2538C20300FEE4E8 /* UANativeBridgeActionHandler+Internal.h in Headers */,
 				6E4115642538C0AC00FEE4E8 /* NSJSONSerialization+UAAdditions.h in Headers */,
 				6E411EB02538F4D100FEE4E8 /* UAActionResult+Internal.h in Headers */,
@@ -6015,8 +6027,10 @@
 				6E698DF026790AC300654DB2 /* AirshipLogger.swift in Sources */,
 				6E664BD326C4917000A2C8E5 /* RemoveTagsAction.swift in Sources */,
 				6EAD7CE526B216DB00B88EA7 /* DeepLinkAction.swift in Sources */,
+				6E87BD9226D963B60005D20D /* DefaultAppIntegrationDelegate.swift in Sources */,
 				6E8BF45326852E4B009A8BD4 /* UATaskRequest.swift in Sources */,
 				6E91B44026868C3400DDB1A8 /* UARegionEvent.swift in Sources */,
+				6E87BD8D26D815780005D20D /* AppIntegration.swift in Sources */,
 				6E411AD32538C20600FEE4E8 /* NSString+UALocalizationAdditions.m in Sources */,
 				6EB11C8B2697AFC700DC698F /* AttributeUpdate.swift in Sources */,
 				6E91B4692689327D00DDB1A8 /* UACustomEvent.swift in Sources */,
@@ -6094,7 +6108,6 @@
 				6E664BA126C43F5400A2C8E5 /* ActivityViewController.swift in Sources */,
 				6E411A5B2538C20400FEE4E8 /* UAJSONPredicate.m in Sources */,
 				6E91B45226883B6E00DDB1A8 /* UAAppExitEvent.swift in Sources */,
-				6E411A472538C20400FEE4E8 /* UAAppIntegration.m in Sources */,
 				6E698E5B267BF63B00654DB2 /* UAUIKitStateTrackerAdapter.swift in Sources */,
 				6E664BEA26C6DB7600A2C8E5 /* UAUtils.swift in Sources */,
 				6E15B73F26D43F120099C92D /* UANSArrayValueTransformer.swift in Sources */,
@@ -6409,7 +6422,6 @@
 				6E15B6FA26CDCA6A0099C92D /* RuntimeConfigTest.swift in Sources */,
 				DF829AD8222341C60090386E /* UAInAppMessageAssetCacheTest.m in Sources */,
 				CCB902271DCBBCDA009A66D7 /* UAEventManagerTest.m in Sources */,
-				CC64F0E51D8B781C009CEF27 /* UAAppIntegrationTest.m in Sources */,
 				CC64F12A1D8B781C009CEF27 /* UAUtilsTest.m in Sources */,
 				CC64F0D91D8B781C009CEF27 /* UAActionArgumentsTest.m in Sources */,
 				CC64F11A1D8B781C009CEF27 /* UAPasteboardActionTest.m in Sources */,
@@ -6467,6 +6479,7 @@
 				6E15B70526CE07180099C92D /* TestRemoteDataProvider.swift in Sources */,
 				6E4627CC1E64E0C300A5BF3B /* UAScheduleDelayTests.m in Sources */,
 				3C927F8123A425F0003C5FC8 /* UAUIKitStateTrackerAdapterTest.m in Sources */,
+				6E87BD9926DD3FE90005D20D /* LegacyPushTestUtils.swift in Sources */,
 				CC64F0E31D8B781C009CEF27 /* UAAnalyticsTest.m in Sources */,
 				6E2D6AF426B0C3C500B7C226 /* ChannelAudienceManagerTest.swift in Sources */,
 				6EC7E48526A60CDF0038CFDD /* TestChannel.swift in Sources */,
@@ -6511,6 +6524,7 @@
 				991A94651FCF2C6B00B57D24 /* UAInAppMessageTextInfoTest.m in Sources */,
 				CC64F0DB1D8B781C009CEF27 /* UANativeBridgeActionHandlerTest.m in Sources */,
 				CC64F0F41D8B781C009CEF27 /* UAConfigTest.m in Sources */,
+				6E87BD9D26DD78CC0005D20D /* DefaultAppIntegrationDelegateTest.swift in Sources */,
 				6E598D8820040E7F005B234B /* UAInAppMessageDisplayEventTest.m in Sources */,
 				6E15B73026CF4F6B0099C92D /* TestRemoteDataAPIClient.swift in Sources */,
 				CC64F1021D8B781C009CEF27 /* UAInboxAPIClientTest.m in Sources */,
@@ -6518,6 +6532,7 @@
 				3C77BF922016B22900AD37F3 /* UAInAppMessageHTMLDisplayContentTest.m in Sources */,
 				CC64F10B1D8B781C009CEF27 /* UAJSONValueMatcherTests.m in Sources */,
 				6EFB377D234595C9005E4E44 /* UAMessageCenterNativeBridgeExtensionTest.m in Sources */,
+				6E87BD9F26DDDB250005D20D /* AppIntegrationTests.swift in Sources */,
 				CC64F12B1D8B781C009CEF27 /* UAJavaScriptCommandTest.m in Sources */,
 				CC64F1281D8B781C009CEF27 /* UAUserAPIClientTest.m in Sources */,
 				6E2D6AF626B0C6CA00B7C226 /* TestSubscriptionListAPIClient.swift in Sources */,
@@ -6604,6 +6619,7 @@
 				6E4117E02538C1FB00FEE4E8 /* NSDictionary+UAAdditions.m in Sources */,
 				6EC32273254FC64C00EA5B38 /* NSObject+UAAdditions.m in Sources */,
 				6E664BD426C4917000A2C8E5 /* RemoveTagsAction.swift in Sources */,
+				6E87BD8E26D815780005D20D /* AppIntegration.swift in Sources */,
 				6E91B4642689093000DDB1A8 /* UAInteractiveNotificationEvent.swift in Sources */,
 				6E8BF45926852E8D009A8BD4 /* UATaskManager.swift in Sources */,
 				6E411A702538C20400FEE4E8 /* UAKeychainUtils.m in Sources */,
@@ -6611,6 +6627,7 @@
 				6E698E60267BF63B00654DB2 /* UAApplicationState.swift in Sources */,
 				6EAD7CE626B216DB00B88EA7 /* DeepLinkAction.swift in Sources */,
 				6E664BBA26C46BC600A2C8E5 /* AttributesActionPredicate.swift in Sources */,
+				6E87BD9A26DD78180005D20D /* DefaultAppIntegrationDelegate.swift in Sources */,
 				6E8BF45A26852E90009A8BD4 /* UATaskRequest.swift in Sources */,
 				6E91B44126868C3400DDB1A8 /* UARegionEvent.swift in Sources */,
 				6E698DF126790AC300654DB2 /* AirshipLogger.swift in Sources */,
@@ -6688,7 +6705,6 @@
 				6E15B74026D43F120099C92D /* UANSArrayValueTransformer.swift in Sources */,
 				6E664BEB26C6DB7600A2C8E5 /* UAUtils.swift in Sources */,
 				6E91B45326883B6E00DDB1A8 /* UAAppExitEvent.swift in Sources */,
-				6E411A482538C20400FEE4E8 /* UAAppIntegration.m in Sources */,
 				6E698E5C267BF63B00654DB2 /* UAUIKitStateTrackerAdapter.swift in Sources */,
 				6E6ED1622683DBC300A2CBD0 /* UAirshipVersion.swift in Sources */,
 				6E664BB626C46BC600A2C8E5 /* AddCustomEventActionPredicate.swift in Sources */,

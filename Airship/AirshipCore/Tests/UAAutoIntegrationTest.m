@@ -3,13 +3,12 @@
 #import "UABaseTest.h"
 #import <objc/runtime.h>
 #import <UserNotifications/UserNotifications.h>
-#import "UAAutoIntegration+Internal.h"
-#import "UAAppIntegration.h"
-#import "UAAppIntegration+Internal.h"
+#import "UAAppIntegrationDelegate.h"
+#import "UAAutoIntegration.h"
 
 @interface UAAutoIntegrationTest : UABaseTest
 
-@property (nonatomic, strong) id mockAppIntegration;
+@property (nonatomic, strong) id mockDelegate;
 @property (nonatomic, strong) id delegate;
 @property (nonatomic, strong) id mockApplication;
 @property (nonatomic, strong) id mockUserNotificationCenter;
@@ -24,7 +23,7 @@
 - (void)setUp {
     [super setUp];
 
-    self.mockAppIntegration = [self mockForClass:[UAAppIntegration class]];
+    self.mockDelegate = [self mockForProtocol:@protocol(UAAppIntegrationDelegate)];
 
     // Generate a new class for each test run to avoid test pollution
     self.GeneratedClassForAppDelegate = objc_allocateClassPair([NSObject class], [[NSUUID UUID].UUIDString UTF8String], 0);
@@ -78,27 +77,12 @@
                                      XCTAssertEqualObjects(expectedError, error);
                                  }];
 
-    [UAAutoIntegration integrate];
+    [UAAutoIntegration integrateWithDelegate:self.mockDelegate];
 
     [self.delegate application:[UIApplication sharedApplication] didFailToRegisterForRemoteNotificationsWithError:expectedError];
 
     // Verify everything was called
     XCTAssertTrue(appDelegateCalled);
-}
-
-/**
- * Test UNUserNotificationCenter's setDelegate is called to set the delegate to the dummy delegate by default.
- */
-- (void)testProxyUserNotificationCenterSetDummyDelegate {
-    // Expect the setDelegate call
-    [[self.mockUserNotificationCenter expect] setDelegate:[OCMArg checkWithBlock:^BOOL(id obj) {
-        return [obj isKindOfClass:[UAAutoIntegrationDummyDelegate class]];
-    }]];
-
-    // Proxy the delegate
-    [UAAutoIntegration integrate];
-
-    [self.mockUserNotificationCenter verify];
 }
 
 /**
@@ -121,17 +105,17 @@
                                  }];
 
     // Expect the UAAppHook call
-    [[self.mockAppIntegration expect] application:self.mockApplication didRegisterForRemoteNotificationsWithDeviceToken:expectedDeviceToken];
+    [[self.mockDelegate expect] didRegisterForRemoteNotificationsWithDeviceToken:expectedDeviceToken];
 
     // Proxy the delegate
-    [UAAutoIntegration integrate];
+    [UAAutoIntegration integrateWithDelegate:self.mockDelegate];
 
     // Call application:didRegisterForRemoteNotificationsWithDeviceToken:
     [self.delegate application:[UIApplication sharedApplication] didRegisterForRemoteNotificationsWithDeviceToken:expectedDeviceToken];
 
     // Verify everything was called
     XCTAssertTrue(appDelegateCalled);
-    [self.mockAppIntegration verify];
+    [self.mockDelegate verify];
 }
 
 /**
@@ -141,16 +125,16 @@
     NSData *expectedDeviceToken = [@"device_token" dataUsingEncoding:NSUTF8StringEncoding];
 
     // Expect the UAAppHook call
-    [[self.mockAppIntegration expect] application:self.mockApplication   didRegisterForRemoteNotificationsWithDeviceToken:expectedDeviceToken];
+    [[self.mockDelegate expect] didRegisterForRemoteNotificationsWithDeviceToken:expectedDeviceToken];
 
     // Proxy the delegate
-    [UAAutoIntegration integrate];
-
+    [UAAutoIntegration integrateWithDelegate:self.mockDelegate];
+    
     // Call application:didRegisterForRemoteNotificationsWithDeviceToken:
     [self.delegate application:[UIApplication sharedApplication] didRegisterForRemoteNotificationsWithDeviceToken:expectedDeviceToken];
 
     // Verify everything was called
-    [self.mockAppIntegration verify];
+    [self.mockDelegate verify];
 }
 
 /*
@@ -173,65 +157,36 @@
                                      completion(appDelegateResult);
                                  }];
 
-    // Add an implementation for UAPush that calls an expected fetch result
-    __block UIBackgroundFetchResult fetchResult;
-    __block BOOL fetchCalled;
+   
 
-    void (^fetchBlock)(NSInvocation *) = ^(NSInvocation *invocation) {
-        fetchCalled = YES;
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        void (^handler)(UIBackgroundFetchResult result) = (__bridge void (^)(UIBackgroundFetchResult))arg;
-        handler(fetchResult);
-        handler(fetchResult); // should handle being called multiple times
-    };
-
-    [[[self.mockAppIntegration stub] andDo:fetchBlock] application:self.mockApplication
-                                 performFetchWithCompletionHandler:OCMOCK_ANY];
-
+    [[self.mockDelegate expect] onBackgroundAppRefresh];
+    
     // Proxy the delegate
-    [UAAutoIntegration integrate];
+    [UAAutoIntegration integrateWithDelegate:self.mockDelegate];
 
     // Iterate through the results to verify we combine them properly
     UIBackgroundFetchResult allBackgroundFetchResults[] = { UIBackgroundFetchResultNoData,
         UIBackgroundFetchResultFailed, UIBackgroundFetchResultNewData };
 
-    // The expected matrix from the different combined values of allBackgroundFetchResults indicies
-    UIBackgroundFetchResult expectedResults[3][3] = {
-        {UIBackgroundFetchResultNoData, UIBackgroundFetchResultFailed, UIBackgroundFetchResultNewData},
-        {UIBackgroundFetchResultFailed, UIBackgroundFetchResultFailed, UIBackgroundFetchResultNewData},
-        {UIBackgroundFetchResultNewData, UIBackgroundFetchResultNewData, UIBackgroundFetchResultNewData}
-    };
 
     for (int i = 0; i < 3; i++) {
-        // Set the push result
-        fetchResult = allBackgroundFetchResults[i];
+        // Set the app delegate result
+        appDelegateResult = allBackgroundFetchResults[i];
+        appDelegateCalled = NO;
 
-        for (int j = 0; j < 3; j++) {
+        XCTestExpectation *callBackFinished = [self expectationWithDescription:@"Callback called"];
 
-            appDelegateCalled = NO;
-            fetchCalled = NO;
+        [self.delegate application:[UIApplication sharedApplication] performFetchWithCompletionHandler:^(UIBackgroundFetchResult result){
+            XCTAssertEqual(appDelegateResult, result);
+            [callBackFinished fulfill];
+        }];
 
-            XCTestExpectation *callBackFinished = [self expectationWithDescription:@"Callback called"];
-            UIBackgroundFetchResult expectedResult = expectedResults[i][j];
-
-            // Set the app delegate result
-            appDelegateResult = allBackgroundFetchResults[j];
-
-            // Verify that the expected value is returned from combining the two results
-            [self.delegate application:[UIApplication sharedApplication] performFetchWithCompletionHandler:^(UIBackgroundFetchResult result){
-                XCTAssertEqual(expectedResult, result);
-                [callBackFinished fulfill];
-            }];
-
-            // Wait for the test expectations
-            [self waitForTestExpectations];
-            XCTAssertTrue(fetchCalled);
-            XCTAssertTrue(appDelegateCalled);
-        }
+        // Wait for the test expectations
+        [self waitForTestExpectations];
+        XCTAssertTrue(appDelegateCalled);
     }
-
 }
+
 
 /*
  * Tests proxying application:didReceiveRemoteNotification:fetchCompletionHandler
@@ -268,14 +223,12 @@
         handler(pushResult);
     };
 
-    [[[self.mockAppIntegration stub] andDo:pushBlock] application:self.mockApplication
-                               didReceiveRemoteNotification:expectedNotification
-                                     fetchCompletionHandler:OCMOCK_ANY];
+    [[[self.mockDelegate stub] andDo:pushBlock]
+                               didReceiveRemoteNotification:expectedNotification isForeground:YES completionHandler:OCMOCK_ANY];
 
 
     // Proxy the delegate
-    [UAAutoIntegration integrate];
-
+    [UAAutoIntegration integrateWithDelegate:self.mockDelegate];
 
     // Iterate through the results to verify we combine them properly
 
@@ -320,6 +273,7 @@
     }
 }
 
+
 /*
  * Tests adding application:didReceiveRemoteNotification:fetchCompletionHandler calls
  * through to UAAppHooks.
@@ -336,17 +290,15 @@
         [invocation getArgument:&arg atIndex:4];
         void (^handler)(UIBackgroundFetchResult result) = (__bridge void (^)(UIBackgroundFetchResult))arg;
         handler(UIBackgroundFetchResultNewData);
-        handler(UIBackgroundFetchResultNewData); // should handle being called multiple times
-
     };
 
-    [[[self.mockAppIntegration stub] andDo:pushBlock] application:self.mockApplication
-                               didReceiveRemoteNotification:expectedNotification
-                                     fetchCompletionHandler:OCMOCK_ANY];
+    [[[self.mockDelegate stub] andDo:pushBlock] didReceiveRemoteNotification:expectedNotification
+                                                             isForeground:YES
+                                                        completionHandler:OCMOCK_ANY];
 
 
     // Proxy the delegate
-    [UAAutoIntegration integrate];
+    [UAAutoIntegration integrateWithDelegate:self.mockDelegate];
 
     // Verify that the expected value is returned from combining the two results
     [self.delegate application:[UIApplication sharedApplication]
@@ -354,7 +306,7 @@
         fetchCompletionHandler:^(UIBackgroundFetchResult result){
             XCTAssertEqual(UIBackgroundFetchResultNewData, result);
         }];
-    
+
     XCTAssertTrue(pushCalled);
 }
 
@@ -364,45 +316,33 @@
 
 - (void)testProxyWillPresentNotification {
     [self createnotificationCenterDelegate];
-    
+
     XCTestExpectation *callBackFinished = [self expectationWithDescription:@"Notification Center delegate callback called"];
 
 
     id mockUNNotification = [self mockForClass:[UNNotification class]];
+    
     [mockUNNotification setValue:[NSDate date] forKey:@"date"];
-    
+
     UNNotificationPresentationOptions expectedOptions = UNNotificationPresentationOptionBadge;
-    
+
     // Add implementation to the app delegate
     __block BOOL notificationCenterDelegateCalled = NO;
     [self addImplementationForNotificationCenterDelegateProtocol:@protocol(UNUserNotificationCenterDelegate) selector:@selector(userNotificationCenter:willPresentNotification:withCompletionHandler:)
                                                            block:^(id self, UNUserNotificationCenter *notificationCenter, UNNotification *notification, void (^completion)(UNNotificationPresentationOptions) ) {
                                                                notificationCenterDelegateCalled = YES;
-                                                               
+
                                                                // Verify the parameters
                                                                XCTAssertEqualObjects([UNUserNotificationCenter currentNotificationCenter], notificationCenter);
                                                                XCTAssertEqualObjects(mockUNNotification, notification);
-                                                               
+
                                                                XCTAssertNotNil(completion);
                                                                completion(expectedOptions);
                                                            }];
+
+    [[[self.mockDelegate stub] andReturnValue:OCMOCK_VALUE(expectedOptions)] presentationOptionsForNotification:mockUNNotification];
     
-    // Stub the implementation for UAAppIntegration that handles userNotificationCenter:willPresentNotification:withCompletionHandler:
-    // + (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler;
-    __block BOOL appIntegrationForWillPresentNotificationCalled = NO;
-    void (^appIntegrationForWillPresentNotificationBlock)(NSInvocation *) = ^(NSInvocation *invocation) {
-        appIntegrationForWillPresentNotificationCalled = YES;
-        void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        void (^handler)(UNNotificationPresentationOptions) = (__bridge void (^)(UNNotificationPresentationOptions))arg;
-        handler(expectedOptions);
-        handler(expectedOptions); // should handle being called multiple times
-    };
-    
-    [[[self.mockAppIntegration stub] andDo:appIntegrationForWillPresentNotificationBlock] userNotificationCenter:self.mockUserNotificationCenter
-                                                                                         willPresentNotification:mockUNNotification
-                                                                                           withCompletionHandler:OCMOCK_ANY];
-    
+
     // Stub the implementation for UAAppIntegration that handles handleForegroundNotification:mergedOptions:withCompletionHandler:
     // + (void)handleForegroundNotification:(UNNotification *)notification mergedOptions:(UNNotificationPresentationOptions)options withCompletionHandler:(void(^)())completionHandler {
     __block BOOL appIntegrationForHandleForegroundNotificationCalled = NO;
@@ -415,14 +355,12 @@
         UNNotificationPresentationOptions options = (UNNotificationPresentationOptions)arg;
         handler(options);
     };
-    
-    [[[self.mockAppIntegration stub] andDo:appIntegrationForHandleForegroundNotificationBlock] handleForegroundNotification:mockUNNotification
-                                                                                  mergedOptions:expectedOptions
-                                                                          withCompletionHandler:OCMOCK_ANY];
-    
+
+    [[[self.mockDelegate stub] andDo:appIntegrationForHandleForegroundNotificationBlock] willPresentNotification:OCMOCK_ANY presentationOptions:expectedOptions completionHandler:OCMOCK_ANY];
+
     // Proxy the delegate
-    [UAAutoIntegration integrate];
-    
+    [UAAutoIntegration integrateWithDelegate:self.mockDelegate];
+
     // Verify that the expected value is returned from combining the two results
     __block BOOL completionHandlerCalled = NO;
     [self.notificationCenterDelegate userNotificationCenter:[UNUserNotificationCenter currentNotificationCenter]
@@ -432,57 +370,54 @@
                                           XCTAssertEqual(expectedOptions,options);
                                           completionHandlerCalled = YES;
                                       }];
-    
+
     [self waitForTestExpectations];
     XCTAssertTrue(completionHandlerCalled);
     XCTAssertTrue(notificationCenterDelegateCalled);
-    XCTAssertTrue(appIntegrationForWillPresentNotificationCalled);
     XCTAssertTrue(appIntegrationForHandleForegroundNotificationCalled);
 }
 
-
 - (void)testProxyDidReceiveNotificationResponse {
     [self createnotificationCenterDelegate];
-    
+
     XCTestExpectation *callBackFinished = [self expectationWithDescription:@"Notification Centert delegate callback called"];
-    
+
     NSString *actionIdentifier = @"test-action";
     id mockUNNotificationResponse = [self mockForClass:[UNNotification class]];
     [mockUNNotificationResponse setValue:actionIdentifier forKey:@"actionIdentifier"];
-    
+
     // Add implementation to the app delegate
     __block BOOL notificationCenterDelegateCalled;
     [self addImplementationForNotificationCenterDelegateProtocol:@protocol(UNUserNotificationCenterDelegate) selector:@selector(userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:)
                                                            block:^(id self, UNUserNotificationCenter *notificationCenter, UNNotificationResponse *response, void (^completion)(void) ) {
                                      notificationCenterDelegateCalled = YES;
-                                     
+
                                      // Verify the parameters
                                      XCTAssertEqualObjects([UNUserNotificationCenter currentNotificationCenter], notificationCenter);
                                      XCTAssertEqualObjects(mockUNNotificationResponse, response);
-                                     
+
                                      XCTAssertNotNil(completion);
                                      completion();
                                  }];
-    
-    
+
+
     // Stub the implementation for UAPush that calls an expected fetch result
     __block BOOL appIntegrationCalled;
     void (^appIntegrationBlock)(NSInvocation *) = ^(NSInvocation *invocation) {
         appIntegrationCalled = YES;
         void *arg;
-        [invocation getArgument:&arg atIndex:4];
+        [invocation getArgument:&arg atIndex:3];
         void (^handler)(void) = (__bridge void(^)(void))arg;
         handler();
         handler(); // should handle being called multiple times
     };
-    
-    [[[self.mockAppIntegration stub] andDo:appIntegrationBlock] userNotificationCenter:self.mockUserNotificationCenter
-                                                        didReceiveNotificationResponse:mockUNNotificationResponse
-                                                                 withCompletionHandler:OCMOCK_ANY];
+
+    [[[self.mockDelegate stub] andDo:appIntegrationBlock] didReceiveNotificationResponse:mockUNNotificationResponse
+                                                                 completionHandler:OCMOCK_ANY];
 
     // Proxy the delegate
-    [UAAutoIntegration integrate];
-    
+    [UAAutoIntegration integrateWithDelegate:self.mockDelegate];
+
     // Verify that the expected value is returned from combining the two results
     __block BOOL completionHandlerCalled;
     [self.notificationCenterDelegate userNotificationCenter:[UNUserNotificationCenter currentNotificationCenter]
@@ -491,13 +426,12 @@
                                           [callBackFinished fulfill];
                                           completionHandlerCalled = YES;
                                       }];
-    
+
     [self waitForTestExpectations];
     XCTAssertTrue(completionHandlerCalled);
     XCTAssertTrue(notificationCenterDelegateCalled);
     XCTAssertTrue(appIntegrationCalled);
 }
-
 
 #pragma Helpers
 
@@ -539,3 +473,4 @@
     [[[self.mockUserNotificationCenter stub] andReturn:self.notificationCenterDelegate] delegate];
 }
 @end
+

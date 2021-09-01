@@ -106,3 +106,16 @@ public protocol PushProtocol {
     @objc
     var badgeNumber: Int { get set }
 }
+
+protocol InternalPushProtocol {
+    func updateAuthorizedNotificationTypes()
+    func didRegisterForRemoteNotifications(_ deviceToken: Data)
+    func didFailToRegisterForRemoteNotifications(_ error: Error)
+    func didReceiveRemoteNotification(_ userInfo: [AnyHashable : Any], isForeground: Bool, completionHandler: @escaping (UIBackgroundFetchResult) -> Void)
+    func presentationOptionsForNotification(_ notification: UNNotification) -> UNNotificationPresentationOptions
+    
+    #if !os(tvOS)
+    func didReceiveNotificationResponse(_ response: UNNotificationResponse, completionHandler: @escaping () -> Void)
+    var combinedCategories: Set<UNNotificationCategory> { get }
+    #endif
+}

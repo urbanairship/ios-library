@@ -3,6 +3,8 @@
 import Foundation
 import UserNotifications
 
+
+
 //---------------------------------------------------------------------------------------
 // RegistrationDelegate
 //---------------------------------------------------------------------------------------
@@ -583,8 +585,7 @@ public class Push: UAComponent, PushProtocol {
     /// registration as needed.
     ///
     /// For internal use only. :nodoc:
-    @objc
-    public func updateAuthorizedNotificationTypes() {
+    func updateAuthorizedNotificationTypes() {
         guard self.privacyManager.isEnabled(.push) else {
             return
         }
@@ -954,197 +955,6 @@ public class Push: UAComponent, PushProtocol {
         self.updatePushEnablement()
     }
 
-    // MARK: - App Integration
-
-    /// Called by the UIApplicationDelegate's application:didRegisterForRemoteNotificationsWithDeviceToken:
-    /// so UAPush can forward the delegate call to its registration delegate.
-    ///
-    /// For internal use only. :nodoc:
-    ///
-    /// - Parameters:
-    ///   - application: The application instance.
-    ///   - deviceToken: The APNS device token.
-    @objc
-    public func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        guard self.privacyManager.isEnabled(.push) else {
-            return
-        }
-
-        self.deviceToken = UAUtils.deviceTokenStringFromDeviceToken(deviceToken)
-
-        if self.appStateTracker.state == .background && self.channel.identifier != nil {
-            AirshipLogger.debug("Skipping channel registration. The app is currently backgrounded and we already have a channel ID.")
-        } else {
-            self.channel.updateRegistration()
-        }
-
-        self.registrationDelegate?.apnsRegistrationSucceeded?(withDeviceToken: deviceToken)
-    }
-
-    /// Called by the UIApplicationDelegate's application:didFailToRegisterForRemoteNotificationsWithError:
-    /// so UAPush can forward the delegate call to its registration delegate.
-    ///
-    /// For internal use only. :nodoc:
-    ///
-    /// - Parameters:
-    ///   - application: The application instance.
-    ///   - error: An NSError object that encapsulates information why registration did not succeed.
-    @objc
-    public func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-        guard self.privacyManager.isEnabled(.push) else {
-            return
-        }
-
-        self.registrationDelegate?.apnsRegistrationFailedWithError?(error)
-    }
-
-
-    /// Called to return the presentation options for a notification.
-    ///
-    /// For internal use only. :nodoc:
-    ///
-    /// - Parameter notification: The notification.
-    /// - Returns: Foreground presentation options.
-    @objc
-    public func presentationOptionsForNotification(_ notification: UNNotification) -> UNNotificationPresentationOptions {
-        guard self.privacyManager.isEnabled(.push) else {
-            return []
-        }
-
-        var options: UNNotificationPresentationOptions = [];
-
-        //Get foreground presentation options defined from the push API/dashboard
-        if let payloadPresentationOptions = self.foregroundPresentationOptions(notification:notification) {
-            if payloadPresentationOptions.count > 0 {
-                // build the options bitmask from the array
-                for presentationOption in payloadPresentationOptions {
-                    switch presentationOption {
-                    case Push.PresentationOptionBadge:
-                        options.insert(.badge)
-                    case Push.PresentationOptionAlert:
-                        options.insert(.alert)
-                    case Push.PresentationOptionSound:
-                        options.insert(.sound)
-                    #if !targetEnvironment(macCatalyst)
-                    case Push.PresentationOptionList:
-                        if #available(iOS 14.0, tvOS 14.0, *) {
-                            options.insert(.list)
-                        }
-                    case Push.PresentationOptionBanner:
-                        if #available(iOS 14.0, tvOS 14.0, *) {
-                            options.insert(.banner)
-                        } else {
-                            // Fallback on earlier versions
-                        }
-                    #endif
-                    default:
-                        break
-                    }
-                }
-            } else {
-                options = self.defaultPresentationOptions;
-            }
-        } else {
-            options = self.defaultPresentationOptions
-        }
-
-        if let extendedOptions = self.pushNotificationDelegate?.extend?(options, notification: notification) {
-            options = extendedOptions
-        }
-
-        return options;
-    }
-
-    #if !os(tvOS)
-    /// Called when a notification response is received.
-    ///
-    /// For internal use only. :nodoc:
-    ///
-    /// - Parameters:
-    ///   - response: The notification response.
-    ///   - handler: The completion handler.
-    @objc
-    public func handleNotificationResponse(_ response: UNNotificationResponse, completionHandler handler: @escaping () -> Void) {
-        guard self.privacyManager.isEnabled(.push) else {
-            handler();
-            return;
-        }
-
-        if response.actionIdentifier == UNNotificationDefaultActionIdentifier {
-            self.launchNotificationResponse = response
-        }
-
-        self.notificationCenter.post(name: Push.ReceivedNotificationResponseEvent, object: self, userInfo:[Push.ReceivedNotificationResponseEventResponseKey : response]);
-
-        if let callback = self.pushNotificationDelegate?.receivedNotificationResponse {
-            callback(response, handler)
-        } else {
-            handler()
-        }
-    }
-    #endif
-
-    /// Called when a remote notification is received.
-    ///
-    /// For internal use only. :nodoc:
-    ///
-    /// - Parameters:
-    ///   - notification: The notification content.
-    ///   - foreground: If the notification was recieved in the foreground or not.
-    ///   - handler: The completion handler.
-    @objc
-    public func handleRemoteNotification(_ notification: [AnyHashable : Any], foreground: Bool, completionHandler handler: @escaping (UIBackgroundFetchResult) -> Void) {
-        guard self.privacyManager.isEnabled(.push) else {
-            handler(.noData);
-            return;
-        }
-
-        let delegate = self.pushNotificationDelegate
-
-        if (foreground) {
-            if (self.autobadgeEnabled) {
-                if let aps = notification["aps"] as? [AnyHashable : Any] {
-                    if let badge = aps["badge"] as? Int {
-                        self.application.applicationIconBadgeNumber = badge
-                    }
-                }
-            }
-
-            self.notificationCenter.post(name: Push.ReceivedForegroundNotificationEvent, object: self, userInfo: notification)
-
-            if let callback = delegate?.receivedForegroundNotification {
-                callback(notification, {
-                    handler(.noData)
-                });
-            } else {
-                handler(.noData)
-            }
-        } else {
-            self.notificationCenter.post(name: Push.ReceivedBackgroundNotificationEvent, object: self, userInfo: notification)
-
-            if let callback = delegate?.receivedBackgroundNotification {
-                callback(notification, { result in
-                    handler(result)
-                })
-            } else {
-                handler(.noData)
-            }
-        }
-    }
-
-    private func foregroundPresentationOptions(notification: UNNotification) -> [String]? {
-        var presentationOptions: [String]? = nil;
-    #if !os(tvOS)   // UNNotificationContent.userInfo not available on tvOS
-        // get the presentation options from the the notification
-        presentationOptions = notification.request.content.userInfo[Push.ForegroundPresentationkey] as? [String]
-
-        if (presentationOptions == nil) {
-            presentationOptions = notification.request.content.userInfo[Push.ForegroundPresentationLegacykey] as? [String]
-        }
-    #endif
-        return presentationOptions;
-    }
-
     // MARK: - App lifecycle
 
     @objc
@@ -1235,5 +1045,157 @@ public class Push: UAComponent, PushProtocol {
         } else {
             return ["X-UA-Channel-Opted-In" : "false", "X-UA-Channel-Background-Enabled" : "false"]
         }
+    }
+}
+
+/// - Note: For internal use only. :nodoc:
+extension Push : InternalPushProtocol {
+    public  func didRegisterForRemoteNotifications(_ deviceToken: Data) {
+        guard self.privacyManager.isEnabled(.push) else {
+            return
+        }
+        
+        let tokenString = UAUtils.deviceTokenStringFromDeviceToken(deviceToken)
+        AirshipLogger.info("Device token string: \(tokenString)")
+        self.deviceToken = tokenString
+
+        if self.appStateTracker.state == .background && self.channel.identifier != nil {
+            AirshipLogger.debug("Skipping channel registration. The app is currently backgrounded and we already have a channel ID.")
+        } else {
+            self.channel.updateRegistration()
+        }
+
+        self.registrationDelegate?.apnsRegistrationSucceeded?(withDeviceToken: deviceToken)
+    }
+
+    public func didFailToRegisterForRemoteNotifications(_ error: Error) {
+        guard self.privacyManager.isEnabled(.push) else {
+            return
+        }
+
+        self.registrationDelegate?.apnsRegistrationFailedWithError?(error)
+    }
+
+    public func presentationOptionsForNotification(_ notification: UNNotification) -> UNNotificationPresentationOptions {
+        guard self.privacyManager.isEnabled(.push) else {
+            return []
+        }
+
+        var options: UNNotificationPresentationOptions = [];
+
+        //Get foreground presentation options defined from the push API/dashboard
+        if let payloadPresentationOptions = self.foregroundPresentationOptions(notification:notification) {
+            if payloadPresentationOptions.count > 0 {
+                // build the options bitmask from the array
+                for presentationOption in payloadPresentationOptions {
+                    switch presentationOption {
+                    case Push.PresentationOptionBadge:
+                        options.insert(.badge)
+                    case Push.PresentationOptionAlert:
+                        options.insert(.alert)
+                    case Push.PresentationOptionSound:
+                        options.insert(.sound)
+                    #if !targetEnvironment(macCatalyst)
+                    case Push.PresentationOptionList:
+                        if #available(iOS 14.0, tvOS 14.0, *) {
+                            options.insert(.list)
+                        }
+                    case Push.PresentationOptionBanner:
+                        if #available(iOS 14.0, tvOS 14.0, *) {
+                            options.insert(.banner)
+                        } else {
+                            // Fallback on earlier versions
+                        }
+                    #endif
+                    default:
+                        break
+                    }
+                }
+            } else {
+                options = self.defaultPresentationOptions;
+            }
+        } else {
+            options = self.defaultPresentationOptions
+        }
+
+        if let extendedOptions = self.pushNotificationDelegate?.extend?(options, notification: notification) {
+            options = extendedOptions
+        }
+
+        return options;
+    }
+
+    #if !os(tvOS)
+    public func didReceiveNotificationResponse(_ response: UNNotificationResponse, completionHandler: @escaping () -> Void) {
+        guard self.privacyManager.isEnabled(.push) else {
+            completionHandler();
+            return;
+        }
+
+        if response.actionIdentifier == UNNotificationDefaultActionIdentifier {
+            self.launchNotificationResponse = response
+        }
+
+        self.notificationCenter.post(name: Push.ReceivedNotificationResponseEvent, object: self, userInfo:[Push.ReceivedNotificationResponseEventResponseKey : response]);
+
+        if let callback = self.pushNotificationDelegate?.receivedNotificationResponse {
+            callback(response, completionHandler)
+        } else {
+            completionHandler()
+        }
+    }
+    
+    #endif
+
+    public func didReceiveRemoteNotification(_ notification: [AnyHashable : Any], isForeground: Bool, completionHandler handler: @escaping (UIBackgroundFetchResult) -> Void) {
+        guard self.privacyManager.isEnabled(.push) else {
+            handler(.noData);
+            return;
+        }
+
+        let delegate = self.pushNotificationDelegate
+
+        if (isForeground) {
+            if (self.autobadgeEnabled) {
+                if let aps = notification["aps"] as? [AnyHashable : Any] {
+                    if let badge = aps["badge"] as? Int {
+                        self.application.applicationIconBadgeNumber = badge
+                    }
+                }
+            }
+
+            self.notificationCenter.post(name: Push.ReceivedForegroundNotificationEvent, object: self, userInfo: notification)
+
+            if let callback = delegate?.receivedForegroundNotification {
+                callback(notification, {
+                    handler(.noData)
+                });
+            } else {
+                handler(.noData)
+            }
+        } else {
+            self.notificationCenter.post(name: Push.ReceivedBackgroundNotificationEvent, object: self, userInfo: notification)
+
+            if let callback = delegate?.receivedBackgroundNotification {
+                callback(notification, { result in
+                    handler(result)
+                })
+            } else {
+                handler(.noData)
+            }
+        }
+    }
+
+    private func foregroundPresentationOptions(notification: UNNotification) -> [String]? {
+        var presentationOptions: [String]? = nil;
+    #if !os(tvOS)   // UNNotificationContent.userInfo not available on tvOS
+        // get the presentation options from the the notification
+        presentationOptions = notification.request.content.userInfo[Push.ForegroundPresentationkey] as? [String]
+
+        if (presentationOptions == nil) {
+            presentationOptions = notification.request.content.userInfo[Push.ForegroundPresentationLegacykey] as? [String]
+        }
+    #endif
+        return presentationOptions;
     }
 }

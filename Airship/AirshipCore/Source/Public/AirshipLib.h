@@ -9,7 +9,7 @@
 #import "UAActionResult.h"
 #import "UAAirshipChatModuleLoaderFactory.h"
 #import "UAAnalyticsEventConsumerProtocol.h"
-#import "UAAppIntegration.h"
+#import "UAAppIntegrationDelegate.h"
 #import "UAAsyncOperation.h"
 #import "UAAttributes.h"
 #import "UAAutomationModuleLoaderFactory.h"

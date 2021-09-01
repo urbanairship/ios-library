@@ -526,3 +526,31 @@ public class Analytics: UAComponent, AnalyticsProtocol, UAExtendableAnalyticsHea
         }
     }
 }
+
+extension Analytics : InternalAnalyticsProtocol {
+    func onDeviceRegistration() {
+        addEvent(UADeviceRegistrationEvent())
+    }
+    
+    @available(tvOS, unavailable)
+    func onNotificationResponse(response: UNNotificationResponse, action: UNNotificationAction?) {
+        let userInfo = response.notification.request.content.userInfo
+
+        if (response.actionIdentifier == UNNotificationDefaultActionIdentifier) {
+            self.launched(fromNotification: userInfo)
+        } else if let action = action {
+            let categoryID = response.notification.request.content.categoryIdentifier
+            let responseText = (response as? UNTextInputNotificationResponse)?.userText
+            
+            if (action.options.contains(.foreground) == true) {
+                self.launched(fromNotification: userInfo)
+            }
+            
+            let event = UAInteractiveNotificationEvent(action: action,
+                                                       category: categoryID,
+                                                       notification: userInfo,
+                                                       responseText: responseText)
+            addEvent(event)
+        }
+    }
+}
