@@ -17,13 +17,14 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Provides a control interface for creating, canceling and executing in-app automations.
  */
-@interface UAInAppAutomation : UAComponent
+@interface UAInAppAutomation : NSObject<UAComponent>
 
 /**
- * In-app automation enable flag.
- * @deprecated Deprecated – to be removed in SDK version 15.0. Please use the Privacy Manager.
+ * The shared InAppAutomation instance.
+ * @returns The shared InAppAutomation instance.
  */
-@property (nonatomic, assign, getter=isEnabled) BOOL enabled DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 15.0. Please use the Privacy Manager.");
++(UAInAppAutomation *)shared;
+
 
 /**
  * In-app automation pause flag.

@@ -21,11 +21,17 @@
 @property (nonatomic, strong) UAInboxMessageList *messageList;
 @property (nonatomic, strong) UAUser *user;
 @property (nonatomic, strong) UAPrivacyManager *privacyManager;
+@property (nonatomic, strong) UAComponentDisableHelper *disableHelper;
+
 @end
 
 @implementation UAMessageCenter
 
 NSString *const UAMessageDataScheme = @"message";
+
++ (UAMessageCenter *)shared {
+    return (UAMessageCenter *)[UAirship componentForClassName:NSStringFromClass([self class])];
+}
 
 - (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore
                              user:(UAUser *)user
@@ -34,14 +40,22 @@ NSString *const UAMessageDataScheme = @"message";
                notificationCenter:(NSNotificationCenter *)notificationCenter
                    privacyManager:(UAPrivacyManager *)privacyManager {
 
-    self = [super initWithDataStore:dataStore];
+    self = [super init];
     if (self) {
         self.user = user;
         self.messageList = messageList;
         self.defaultUI = defaultUI;
         self.privacyManager = privacyManager;
-
+        self.disableHelper = [[UAComponentDisableHelper alloc] initWithDataStore:dataStore
+                                                                       className:@"UAMessageCenter"];
+        
         [self updateEnableState];
+        
+        UA_WEAKIFY(self)
+        self.disableHelper.onChange = ^{
+            UA_STRONGIFY(self)
+            [self updateEnableState];
+        };
 
         [notificationCenter addObserver:self
                                selector:@selector(userCreated)
@@ -154,10 +168,6 @@ NSString *const UAMessageDataScheme = @"message";
     [self.messageList retrieveMessageListWithSuccessBlock:nil withFailureBlock:nil];
 }
 
-- (void)onComponentEnableChange {
-    [self updateEnableState];
-}
-
 - (void)updateEnableState {
     BOOL isEnabled = self.componentEnabled && [self.privacyManager isEnabled:UAFeaturesMessageCenter];
     self.user.enabled = isEnabled;
@@ -192,6 +202,14 @@ NSString *const UAMessageDataScheme = @"message";
     }
     
     return YES;
+}
+
+- (BOOL)isComponentEnabled {
+    return self.disableHelper.enabled;
+}
+
+- (void)setComponentEnabled:(BOOL)componentEnabled {
+    self.disableHelper.enabled = componentEnabled;
 }
 
 #pragma mark -

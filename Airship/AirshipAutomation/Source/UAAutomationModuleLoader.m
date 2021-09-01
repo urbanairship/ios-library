@@ -12,12 +12,12 @@
 #endif
 
 @interface UAAutomationModuleLoader()
-@property (nonatomic, copy) NSArray<UAComponent *> *automationComponents;
+@property (nonatomic, copy) NSArray<id<UAComponent>> *automationComponents;
 @end
 
 @implementation UAAutomationModuleLoader
 
-- (instancetype)initWithComponents:(NSArray<UAComponent *> *)components {
+- (instancetype)initWithComponents:(NSArray<id<UAComponent>> *)components {
     self = [super init];
     if (self) {
         self.automationComponents = components;
@@ -58,7 +58,7 @@
     return [[self alloc] initWithComponents:components];
 }
 
-- (NSArray<UAComponent *> *)components {
+- (NSArray<id<UAComponent>> *)components {
     return self.automationComponents;
 }
 

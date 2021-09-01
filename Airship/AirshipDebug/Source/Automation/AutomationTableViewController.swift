@@ -67,7 +67,7 @@ class AutomationTableViewController: UITableViewController {
     }
 
     @objc private func refreshInAppAutomation() {
-        self.inAppAutomation?.getSchedules({ (schedulesFromAutomation) in
+        self.inAppAutomation.getSchedules({ (schedulesFromAutomation) in
             self.schedules = schedulesFromAutomation
             self.tableView.reloadData()
             self.refreshControl?.endRefreshing()

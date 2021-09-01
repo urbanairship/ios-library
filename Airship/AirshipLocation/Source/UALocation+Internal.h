@@ -7,6 +7,9 @@
 @class UAPrivacyManager;
 @class UASystemVersion;
 @protocol UAChannelProtocol;
+@class UAAnalytics;
+@protocol UAExtendableAnalyticsHeaders;
+
 
 /*
  * SDK-private extensions to UALocation

@@ -30,7 +30,7 @@
     return [[self alloc] initWithAccengage:accengage];
 }
 
-- (NSArray<UAComponent *> *)components {
+- (NSArray<id<UAComponent>> *)components {
     return @[self.accengage];
 }
 

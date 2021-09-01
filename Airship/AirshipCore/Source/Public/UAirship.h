@@ -29,7 +29,7 @@
 @class UAChannelCapture;
 @class UARemoteDataManager;
 @class UAChannel;
-@class UAComponent;
+@protocol UAComponent;
 @class UALocaleManager;
 @class UAPrivacyManager;
 @class UAContact;
@@ -156,8 +156,10 @@ extern NSString * const UAirshipDeepLinkScheme;
  */
 @property (nonatomic, strong, readonly) UAPrivacyManager *privacyManager;
 
-
-@property (nonatomic, copy, readonly) NSArray<UAComponent *> *components;
+/*
+ * @note For internal use only. :nodoc:
+ */
+@property (nonatomic, copy, readonly) NSArray<id<UAComponent>> *components;
 
 
 /**
@@ -280,15 +282,6 @@ extern NSString * const UAirshipDeepLinkScheme;
 + (null_unspecified UAAnalytics *)analytics;
 
 /**
- * Returns an UAComponent for a given class name.
- * @note For internal use only. :nodoc:
- *
- * @param className The classname of the component.
- * @return The component, or nil if the component is not available.
- */
-- (nullable UAComponent *)componentForClassName:(NSString *)className;
-
-/**
  * Handles deep links.
  * `uairship://` deep links will be handled internally. All other deep links
  * will be forwarded to the the deep link delegate.
@@ -296,6 +289,15 @@ extern NSString * const UAirshipDeepLinkScheme;
  * @param completionHandler The result. `YES` if the link was able to be procesed, otherwise `NO`.
  */
 - (void)deepLink:(NSURL *)deepLink completionHandler:(void (^)(BOOL result))completionHandler;
+
+/**
+ * Returns an UAComponent for a given class name.
+ * @note For internal use only. :nodoc:
+ *
+ * @param className The classname of the component.
+ * @return The component or nil.
+ */
++ (null_unspecified id<UAComponent>)componentForClassName:(NSString *)className;
 
 @end
 

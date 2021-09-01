@@ -241,7 +241,7 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
         self.components = components;
 
         NSMutableDictionary *componentClassMap = [NSMutableDictionary dictionary];
-        for (UAComponent *component in self.components) {
+        for (id<UAComponent> component in self.components) {
             componentClassMap[NSStringFromClass([component class])] = component;
         }
 
@@ -357,8 +357,10 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     }
 
     // Notify all the components that airship is ready
-    for (UAComponent *component in sharedAirship_.components) {
-        [component airshipReady:sharedAirship_];
+    for (id<UAComponent> component in sharedAirship_.components) {
+        if ([component respondsToSelector:@selector(airshipReady)]) {
+            [component airshipReady];
+        }
     }
 }
 
@@ -527,10 +529,9 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 }
 
 
-- (UAComponent *)componentForClassName:(NSString *)className {
-    return self.componentClassMap[className];
++ (id<UAComponent>)componentForClassName:(NSString *)className {
+    return sharedAirship_.componentClassMap[className];;
 }
-
 
 + (nullable id<UAModuleLoader>)messageCenterLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
                                                          config:(UARuntimeConfig *)config
@@ -649,9 +650,12 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
 
 - (void)deepLink:(NSURL *)deepLink completionHandler:(void (^)(BOOL result))completionHandler {
     if ([deepLink.scheme isEqualToString:UAirshipDeepLinkScheme]) {
-        for (UAComponent *component in self.components) {
-            if ([component deepLink:deepLink]) {
-                break;
+        for (id<UAComponent> component in self.components) {
+            
+            if ([component respondsToSelector:@selector(deepLink:)]) {
+                if ([component deepLink:deepLink]) {
+                    break;
+                }
             }
         }
         completionHandler(YES);

@@ -1,16 +1,13 @@
 /* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-#import "UAirship.h"
-
-@class UAPreferenceDataStore;
 
 NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Base class for main SDK components.
  */
-@interface UAComponent : NSObject
+@protocol UAComponent <NSObject>
 
 /**
  * Flag indicating whether the component is enabled. Clear to disable. Set to enable.
@@ -18,32 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (assign, getter=isComponentEnabled) BOOL componentEnabled;
 
-/**
-* `init` is not available. Use the `initWithDataStore:` initializer method.
-* :nodoc:
-*/
-- (instancetype)init NS_UNAVAILABLE;
-
-/**
- * Shared instance.
- *
- * @return The shared instance.
- */
-+ (null_unspecified instancetype)shared;
-
-/**
- * Init method.
- * @note For internal use only. :nodoc:
- *
- * @param dataStore The preference data store in which to store the component's enable / disable state.
- */
-- (instancetype)initWithDataStore:(nullable UAPreferenceDataStore *)dataStore NS_DESIGNATED_INITIALIZER;
-
-/**
- * Called when the component's componentEnabled flag has changed value.
- * @note For internal use only. :nodoc:
- */
-- (void)onComponentEnableChange;
+@optional
 
 /**
  * Called when remote config is loaded. If no config is available for the component, config will be nil.
@@ -57,11 +29,8 @@ NS_ASSUME_NONNULL_BEGIN
  * Called when the shared UAirship instance is ready.
  * Subclasses can override this method to perform additional setup after initialization.
  * @note For internal use only. :nodoc:
- *
- * @note This method should not be used externally.
- * @param airship The shared UAirship instance.
  */
-- (void)airshipReady:(UAirship *)airship;
+- (void)airshipReady;
 
 /**
  * Called to handle `uairship://` deep links. The first component that

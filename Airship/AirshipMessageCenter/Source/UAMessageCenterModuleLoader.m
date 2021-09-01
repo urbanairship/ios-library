@@ -36,7 +36,7 @@
     return [[self alloc] initWithMessageCenter:messageCenter];
 }
 
-- (NSArray<UAComponent *> *)components {
+- (NSArray<id<UAComponent>> *)components {
     return @[self.messageCenter];
 }
 

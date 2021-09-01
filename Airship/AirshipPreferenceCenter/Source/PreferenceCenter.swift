@@ -25,11 +25,18 @@ public protocol PreferenceCenterOpenDelegate {
 /**
  * Airship PreferenceCenter module.
  */
-@objc(UAirshipPreferenceCenter)
-public class PreferenceCenter : UAComponent {
+@objc(UAPreferenceCenter)
+public class PreferenceCenter : NSObject, UAComponent {
+    
+    /// - Returns The shared PreferenceCenter instance.
+    @objc
+    public static func shared() -> PreferenceCenter! {
+        return UAirship.component(forClassName: "UAPreferenceCenter") as? PreferenceCenter
+    }
     
     private static let payloadType = "preference_forms"
     private static let preferenceFormsKey = "preference_forms"
+    
     /**
      * Open delegate.
      *
@@ -50,12 +57,25 @@ public class PreferenceCenter : UAComponent {
     @objc
     public var style: PreferenceCenterStyle?
     
+    private let disableHelper: ComponentDisableHelper
+        
+    // NOTE: For internal use only. :nodoc:
+    public var isComponentEnabled: Bool {
+        get {
+            return disableHelper.enabled
+        }
+        set {
+            disableHelper.enabled = newValue
+        }
+    }
+    
     init(dataStore: UAPreferenceDataStore, privacyManager: UAPrivacyManager, remoteDataProvider: RemoteDataProvider) {
         self.dataStore = dataStore
         self.privacyManager = privacyManager
         self.remoteDataProvider = remoteDataProvider
         self.style = PreferenceCenterStyle(file: "AirshipPreferenceCenterStyle")
-        super.init(dataStore: dataStore)
+        self.disableHelper = ComponentDisableHelper(dataStore: dataStore, className: "PreferenceCenter")
+        super.init()
         AirshipLogger.info("PreferenceCenter initialized")
     }
     
@@ -147,7 +167,7 @@ public class PreferenceCenter : UAComponent {
     }
     
     // NOTE: For internal use only. :nodoc:
-    public override func deepLink(_ deepLink: URL) -> Bool {
+    public func deepLink(_ deepLink: URL) -> Bool {
         guard deepLink.scheme == UAirshipDeepLinkScheme,
               deepLink.host == "preferences",
               deepLink.pathComponents.count == 2 else {

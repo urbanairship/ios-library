@@ -6,12 +6,8 @@ import Foundation
  * This singleton provides an interface to the channel functionality.
  */
 @objc(UAChannel)
-public class Channel : UAComponent, ChannelProtocol {
-    
-    // NOTE: For internal use only. :nodoc:
-    static let supplier : () -> (ChannelProtocol) = {
-        return Channel.shared()
-    }
+public class Channel : NSObject, UAComponent, ChannelProtocol {
+
 
     private static let tagsDataStoreKey = "com.urbanairship.channel.tags";
     
@@ -130,6 +126,29 @@ public class Channel : UAComponent, ChannelProtocol {
     
     public var isChannelTagRegistrationEnabled = true
     
+    private let disableHelper: ComponentDisableHelper
+    
+    // NOTE: For internal use only. :nodoc:
+    public var isComponentEnabled: Bool {
+        get {
+            return disableHelper.enabled
+        }
+        set {
+            disableHelper.enabled = newValue
+        }
+    }
+    
+    // NOTE: For internal use only. :nodoc:
+    static let supplier : () -> (ChannelProtocol) = {
+        return Channel.shared()
+    }
+    
+    /// - Returns The shared Channel instance.
+    @objc
+    public static func shared() -> Channel! {
+        return UAirship.component(forClassName: "UAChannel") as? Channel
+    }
+    
     // NOTE: For internal use only. :nodoc:
     @objc
     public init(dataStore: UAPreferenceDataStore,
@@ -156,8 +175,15 @@ public class Channel : UAComponent, ChannelProtocol {
             AirshipLogger.debug("Channelc creation disabled.")
             self.isChannelCreationEnabled = false
         }
+        
+        self.disableHelper = ComponentDisableHelper(dataStore: dataStore,
+                                                    className: "UAChannel")
 
-        super.init(dataStore: dataStore)
+        super.init()
+        
+        self.disableHelper.onChange = { [weak self] in
+            self?.onComponentEnableChange()
+        }
     
         self.channelRegistrar.delegate = self
         self.audienceManager.channelID = self.channelRegistrar.channelID
@@ -228,7 +254,7 @@ public class Channel : UAComponent, ChannelProtocol {
     }
     
     // NOTE: For internal use only. :nodoc:
-    public override func onComponentEnableChange() {
+    private func onComponentEnableChange() {
         if (self.isComponentEnabled) {
             self.updateRegistration()
         }

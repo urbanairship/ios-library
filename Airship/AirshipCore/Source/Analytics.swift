@@ -22,7 +22,7 @@ public enum SDKExtension : Int {
 
 /// The UAAnalytics object provides an interface to the Airship Analytics API.
 @objc(UAAnalytics)
-public class Analytics: UAComponent, AnalyticsProtocol, UAExtendableAnalyticsHeaders, EventManagerDelegate {
+public class Analytics: NSObject, UAComponent, AnalyticsProtocol, UAExtendableAnalyticsHeaders, EventManagerDelegate {
     private static let associatedIdentifiers = "UAAssociatedIdentifiers"
     private static let missingSendID = "MISSING_SEND_ID"
     private static let pushMetadata = "com.urbanairship.metadata"
@@ -96,6 +96,17 @@ public class Analytics: UAComponent, AnalyticsProtocol, UAExtendableAnalyticsHea
     @objc
     public var eventConsumer: UAAnalyticsEventConsumerProtocol?
 
+    private let disableHelper: ComponentDisableHelper
+        
+    // NOTE: For internal use only. :nodoc:
+    public var isComponentEnabled: Bool {
+        get {
+            return disableHelper.enabled
+        }
+        set {
+            disableHelper.enabled = newValue
+        }
+    }
 
     /// Factory method to create an analytics instance.
     /// - Parameters:
@@ -167,8 +178,14 @@ public class Analytics: UAComponent, AnalyticsProtocol, UAExtendableAnalyticsHea
         self.sdkExtensions = []
         self.headerBlocks = []
 
-        super.init(dataStore: dataStore)
+        self.disableHelper = ComponentDisableHelper(dataStore: dataStore, className: "UAAnalytics")
 
+        super.init()
+        
+        self.disableHelper.onChange = { [weak self] in
+            self?.onComponentEnableChange()
+        }
+        
         self.eventManager.delegate = self
 
         updateEventManagerUploadsEnabled()
@@ -469,8 +486,7 @@ public class Analytics: UAComponent, AnalyticsProtocol, UAExtendableAnalyticsHea
         }
     }
 
-    @objc
-    public override func onComponentEnableChange() {
+    private func onComponentEnableChange() {
         self.updateEventManagerUploadsEnabled()
     }
 

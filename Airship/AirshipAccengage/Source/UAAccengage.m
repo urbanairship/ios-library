@@ -58,6 +58,7 @@ NSString *const UAAccengageSettingsMigrated = @"UAAccengageSettingsMigrated";
 @end
 
 @interface UAAccengage() <NSKeyedUnarchiverDelegate, UAPushableComponent>
+@property (nonatomic, strong) UAComponentDisableHelper *disableHelper;
 @end
 
 @implementation UAAccengage
@@ -67,9 +68,9 @@ NSString *const UAAccengageSettingsMigrated = @"UAAccengageSettingsMigrated";
                              push:(UAPush *)push
                    privacyManager:(UAPrivacyManager *)privacyManager
                 accengageSettings:(NSDictionary *)settings {
-    self = [super initWithDataStore:dataStore];
+    self = [super init];
     if (self) {
-
+        self.disableHelper = [[UAComponentDisableHelper alloc] initWithDataStore:dataStore className:@"UAAccengage"];
         NSString *accengageDeviceID = [self parseAccengageDeviceIDFromSettings:settings];
         if (accengageDeviceID) {
             NSSet *accengageCategories = [UANotificationCategories createCategoriesFromFile:[[UAAccengageResources bundle] pathForResource:@"UAAccengageNotificationCategories" ofType:@"plist"]];
@@ -246,6 +247,14 @@ NSString *const UAAccengageSettingsMigrated = @"UAAccengageSettingsMigrated";
 
 - (BOOL)isValidDeviceID:(NSString *)deviceID {
     return deviceID && deviceID.length && ![deviceID isEqualToString:@"00000000-0000-0000-0000-000000000000"];
+}
+
+- (BOOL)isComponentEnabled {
+    return self.disableHelper.enabled;
+}
+
+- (void)setComponentEnabled:(BOOL)componentEnabled {
+    self.disableHelper.enabled = componentEnabled;
 }
 
 @end

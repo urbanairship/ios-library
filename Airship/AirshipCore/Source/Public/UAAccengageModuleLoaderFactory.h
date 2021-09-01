@@ -3,6 +3,9 @@
 #import <Foundation/Foundation.h>
 #import "UAModuleLoader.h"
 
+@class UAChannel;
+@class UAPush;
+@class UAPrivacyManager;
 @class UAPreferenceDataStore;
 
 NS_ASSUME_NONNULL_BEGIN

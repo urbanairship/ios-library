@@ -2,11 +2,14 @@
 
 #import <Foundation/Foundation.h>
 #import "UAModuleLoader.h"
-#import "UAExtendableAnalyticsHeaders.h"
 #import "UALocationProvider.h"
 
 @class UAPreferenceDataStore;
+@class UAPrivacyManager;
+@class UAAnalytics;
 @protocol UAChannelProtocol;
+@protocol UAExtendableAnalyticsHeaders;
+
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -27,7 +30,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (id<UAModuleLoader, UALocationProviderLoader>)locationModuleLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
                                                                           channel:(id<UAChannelProtocol>)channel
-                                                                        analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics privacyManager:(UAPrivacyManager *)privacyManager;
+                                                                        analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics
+                                                                   privacyManager:(UAPrivacyManager *)privacyManager;
 
 @end
 

@@ -183,7 +183,7 @@ class AudienceDetailViewController: UAStaticTableViewController {
                 tableView.deselectRow(at: indexPath, animated: true)
                 return
             }
-            self.inAppAutomation?.check(audience, completionHandler: { (inAudience, error) in
+            self.inAppAutomation.check(audience, completionHandler: { (inAudience, error) in
                 DispatchQueue.main.async {
                     self.inAudience = inAudience && (error == nil)
                     tableView.deselectRow(at: indexPath, animated: true)

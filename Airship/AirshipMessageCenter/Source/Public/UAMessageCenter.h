@@ -45,7 +45,7 @@
  * The UAMessageCenter class provides a default implementation of a
  * message center, as well as a high-level interface for its configuration and display.
  */
-@interface UAMessageCenter : UAComponent
+@interface UAMessageCenter : NSObject <UAComponent>
 
 /**
  * The message scheme
@@ -81,6 +81,12 @@ extern NSString *const UAMessageDataScheme;
 ///---------------------------------------------------------------------------------------
 /// @name Message Center Methods
 ///---------------------------------------------------------------------------------------
+
+/**
+ * The shared message center instance.
+ * @returns The shared message center instance.
+ */
++(UAMessageCenter *)shared;
 
 /**
  * Display the message center.

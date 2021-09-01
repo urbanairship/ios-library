@@ -35,9 +35,9 @@
 
 - (void)testUAirshipDeepLinks {
     NSURL *deepLink = [NSURL URLWithString:@"uairship://some-deep-link"];
-    id component1 = [self mockForClass:[UAComponent class]];
-    id component2 = [self mockForClass:[UAComponent class]];
-    id component3 = [self mockForClass:[UAComponent class]];
+    id component1 = [self mockForProtocol:@protocol(UAComponent)];
+    id component2 = [self mockForProtocol:@protocol(UAComponent)];
+    id component3 = [self mockForProtocol:@protocol(UAComponent)];
     
     [[[component1 expect] andReturnValue:@(NO)] deepLink:deepLink];
     [[[component2 expect] andReturnValue:@(YES)] deepLink:deepLink];
@@ -62,8 +62,8 @@
 
 - (void)testUAirshipDeepLinksAlwaysReturnsTrue {
     NSURL *deepLink = [NSURL URLWithString:@"uairship://some-deep-link"];
-    id component1 = [self mockForClass:[UAComponent class]];
-    id component2 = [self mockForClass:[UAComponent class]];
+    id component1 = [self mockForProtocol:@protocol(UAComponent)];
+    id component2 = [self mockForProtocol:@protocol(UAComponent)];
     
     [[[component1 expect] andReturnValue:@(NO)] deepLink:deepLink];
     [[[component2 expect] andReturnValue:@(NO)] deepLink:deepLink];
@@ -86,7 +86,7 @@
 
 - (void)testDeepLinkDelegate {
     NSURL *deepLink = [NSURL URLWithString:@"some-other://some-deep-link"];
-    id component1 = [self mockForClass:[UAComponent class]];
+    id component1 = [self mockForProtocol:@protocol(UAComponent)];
     [[component1 reject] deepLink:deepLink];
 
     id mockDelegate = [self mockForProtocol:@protocol(UADeepLinkDelegate)];

@@ -16,7 +16,6 @@
 #import "UAJSONPredicate.h"
 #import "UAJSONValueMatcher.h"
 #import "UAModuleLoader.h"
-#import "UAPush.h"
 #import "UATagGroups.h"
 #import "UAirship.h"
 #import "UAJavaScriptCommand.h"

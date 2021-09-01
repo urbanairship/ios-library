@@ -59,7 +59,13 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Manager class for in-app messaging.
  */
-@interface UALegacyInAppMessaging : UAComponent <UALegacyInAppMessageFactoryDelegate>
+@interface UALegacyInAppMessaging : NSObject<UAComponent, UALegacyInAppMessageFactoryDelegate>
+
+/**
+ * The shared InAppAutomation instance.
+ * @returns The shared InAppAutomation instance.
+ */
++(UALegacyInAppMessaging *)shared;
 
 /**
  * Sets whether legacy messages will display immediately upon arrival, instead of waiting

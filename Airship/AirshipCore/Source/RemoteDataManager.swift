@@ -2,7 +2,7 @@
 
 // NOTE: For internal use only. :nodoc:
 @objc(UARemoteDataManager)
-public class RemoteDataManager : UAComponent, RemoteDataProvider {
+public class RemoteDataManager : NSObject, UAComponent, RemoteDataProvider {
     
     static let refreshTaskID = "RemoteDataManager.refresh"
     static let defaultRefreshInterval: TimeInterval = 10
@@ -75,6 +75,19 @@ public class RemoteDataManager : UAComponent, RemoteDataProvider {
         }
     }
     
+    private let disableHelper: ComponentDisableHelper
+        
+    // NOTE: For internal use only. :nodoc:
+    public var isComponentEnabled: Bool {
+        get {
+            return disableHelper.enabled
+        }
+        set {
+            disableHelper.enabled = newValue
+        }
+    }
+
+    
     @objc
     public convenience init(config: RuntimeConfig,
                             dataStore: UAPreferenceDataStore,
@@ -117,7 +130,10 @@ public class RemoteDataManager : UAComponent, RemoteDataProvider {
         self.notificationCenter = notificationCenter
         self.appStateTracker = appStateTracker
         
-        super.init(dataStore: dataStore)
+        self.disableHelper = ComponentDisableHelper(dataStore: dataStore,
+                                                    className: "UARemoteDataManager")
+
+        super.init()
         
         self.notificationCenter.addObserver(self,
                                             selector: #selector(checkRefresh),

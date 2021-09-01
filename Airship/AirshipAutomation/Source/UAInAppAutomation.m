@@ -42,9 +42,15 @@ static NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerP
 @property(nonatomic, strong) NSMutableDictionary<NSString *, UAFrequencyChecker *> *frequencyCheckers;
 @property(nonatomic, strong) UAPrivacyManager *privacyManager;
 @property(nonatomic, assign) dispatch_once_t engineStarted;
+@property(nonatomic, strong) UAComponentDisableHelper *disableHelper;
+
 @end
 
 @implementation UAInAppAutomation
+
++ (UAInAppAutomation *)shared {
+    return (UAInAppAutomation *)[UAirship componentForClassName:NSStringFromClass([self class])];
+}
 
 + (instancetype)automationWithEngine:(UAAutomationEngine *)automationEngine
                      audienceManager:(UAInAppAudienceManager *)audienceManager
@@ -117,7 +123,7 @@ static NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerP
                    frequencyLimitManager:(UAFrequencyLimitManager *)frequencyLimitManager
                           privacyManager:(UAPrivacyManager *)privacyManager {
 
-    self = [super initWithDataStore:dataStore];
+    self = [super init];
 
     if (self) {
         self.automationEngine = automationEngine;
@@ -135,12 +141,20 @@ static NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerP
         self.audienceManager.delegate = self;
         self.remoteDataClient.delegate = self;
         self.inAppMessageManager.executionDelegate = self;
+        self.disableHelper = [[UAComponentDisableHelper alloc] initWithDataStore:dataStore
+                                                                       className:@"UAInAppAutomation"];
+        
+        UA_WEAKIFY(self)
+        self.disableHelper.onChange = ^{
+            UA_STRONGIFY(self)
+            [self onComponentEnableChange];
+        };
     }
 
     return self;
 }
 
-- (void)airshipReady:(UAirship *)airship {
+- (void)airshipReady {
     // Update in-app automation when enabled features change
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(onEnabledFeaturesChanged)
@@ -551,6 +565,14 @@ static NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerP
     }
 }
 
+- (BOOL)isComponentEnabled {
+    return self.disableHelper.enabled;
+}
+
+- (void)setComponentEnabled:(BOOL)componentEnabled {
+    self.disableHelper.enabled = componentEnabled;
+}
+
 - (void)onComponentEnableChange {
     [self updateEnginePauseState];
 }
@@ -637,18 +659,6 @@ static NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerP
 - (void)onEnabledFeaturesChanged {
     [self updateSubscription];
     [self updateEnginePauseState];
-}
-
-- (void)setEnabled:(BOOL)enabled {
-    if (enabled) {
-        return [self.privacyManager enableFeatures:UAFeaturesInAppAutomation];
-    } else {
-        return [self.privacyManager disableFeatures:UAFeaturesInAppAutomation];
-    }
-}
-
-- (BOOL)isEnabled {
-    return [self.privacyManager isEnabled:UAFeaturesInAppAutomation];
 }
 
 - (void)updateEnginePauseState {

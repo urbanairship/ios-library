@@ -9,8 +9,8 @@ import Foundation
  * to the device.
  */
 @available(*, deprecated, message: "Use contact instead.")
-@objc
-public class UANamedUser : UAComponent {
+@objc(UANamedUser)
+public class UANamedUser : NSObject, UAComponent {
     
     private let contact : ContactProtocol
     
@@ -32,10 +32,32 @@ public class UANamedUser : UAComponent {
         }
     }
     
+    
+    private let disableHelper: ComponentDisableHelper
+        
+    // NOTE: For internal use only. :nodoc:
+    public var isComponentEnabled: Bool {
+        get {
+            return disableHelper.enabled
+        }
+        set {
+            disableHelper.enabled = newValue
+        }
+    }
+    
+    /// - Returns The shared  named user  instance.
+    @objc
+    public static func shared() -> UANamedUser! {
+        return UAirship.component(forClassName: "UANamedUser") as? UANamedUser
+    }
+
     @objc
     public init(dataStore: UAPreferenceDataStore, contact: ContactProtocol) {
         self.contact = contact
-        super.init(dataStore: dataStore)
+        self.disableHelper = ComponentDisableHelper(dataStore: dataStore,
+                                                    className: "UANamedUser")
+
+        super.init()
     }
     
     /**

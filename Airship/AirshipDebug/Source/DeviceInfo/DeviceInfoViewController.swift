@@ -60,7 +60,7 @@ var isInAppAutomationEnabled: Bool {
 
 var inAppAutomationDisplayInterval: Int {
     get {
-        return Int(UAInAppAutomation.shared()!.inAppMessageManager.displayInterval)
+        return Int(UAInAppAutomation.shared().inAppMessageManager.displayInterval)
     }
     set (value) {
         UAInAppAutomation.shared().inAppMessageManager.displayInterval = TimeInterval(value)

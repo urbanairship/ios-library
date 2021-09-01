@@ -43,7 +43,15 @@ NS_ASSUME_NONNULL_BEGIN
  * Main class for interacting with Airship location. Used to send location
  * updates for the user to Airship.
  */
-@interface UALocation : UAComponent <UALocationProvider>
+@interface UALocation : NSObject<UAComponent, UALocationProvider>
+
+
+/**
+ * The shared location instance.
+ * @returns The shared location instance.
+ */
++(UALocation *)shared;
+
 
 ///---------------------------------------------------------------------------------------
 /// @name Location Properties

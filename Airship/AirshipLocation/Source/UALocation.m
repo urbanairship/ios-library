@@ -15,6 +15,8 @@ NSString *const UALocationUpdatesEnabled = @"UALocationUpdatesEnabled";
 @interface UALocation()
 @property (nonatomic, strong) UAAnalytics<UAExtendableAnalyticsHeaders> *analytics;
 @property (nonatomic, strong) UAPrivacyManager *privacyManager;
+@property (nonatomic, strong) UAComponentDisableHelper *disableHelper;
+
 @end
 
 @interface UAPrivacyManager()
@@ -23,13 +25,17 @@ NSString *const UALocationUpdatesEnabled = @"UALocationUpdatesEnabled";
 
 @implementation UALocation
 
++ (UALocation *)shared {
+    return (UALocation *)[UAirship componentForClassName:NSStringFromClass([self class])];
+}
+
 
 - (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore
                           channel:(id<UAChannelProtocol>)channel
                         analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics
                    privacyManager:(UAPrivacyManager *)privacyManager {
 
-    self = [super initWithDataStore:dataStore];
+    self = [super init];
 
     if (self) {
         self.locationManager = [[CLLocationManager alloc] init];
@@ -39,6 +45,15 @@ NSString *const UALocationUpdatesEnabled = @"UALocationUpdatesEnabled";
         self.systemVersion = [[UASystemVersion alloc] init];
         self.locationManager.delegate = self;
 
+        self.disableHelper = [[UAComponentDisableHelper alloc] initWithDataStore:dataStore
+                                                                       className:@"UALocation"];
+
+        UA_WEAKIFY(self)
+        self.disableHelper.onChange = ^{
+            UA_STRONGIFY(self);
+            [self onComponentEnableChange];
+        };
+        
         NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
 
         // Update the location service on app background
@@ -63,7 +78,6 @@ NSString *const UALocationUpdatesEnabled = @"UALocationUpdatesEnabled";
             [self updateLocationService];
         }
 
-        UA_WEAKIFY(self)
         [self.analytics addAnalyticsHeadersBlock:^NSDictionary<NSString *,NSString *> *{
             UA_STRONGIFY(self)
             return [self analyticsHeaders];
@@ -148,6 +162,13 @@ NSString *const UALocationUpdatesEnabled = @"UALocationUpdatesEnabled";
     [self updateLocationService];
 }
 
+- (BOOL)isComponentEnabled {
+    return self.disableHelper.enabled;
+}
+
+- (void)setComponentEnabled:(BOOL)componentEnabled {
+    self.disableHelper.enabled = componentEnabled;
+}
 
 - (BOOL)isBackgroundLocationUpdatesAllowed {
     return [self.dataStore boolForKey:UALocationBackgroundUpdatesAllowed];

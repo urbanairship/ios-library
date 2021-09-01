@@ -1584,7 +1584,7 @@
 }
 
 - (void)testPrivacyManager {
-    [self.inAppAutomation airshipReady:self.mockAirship];
+    [self.inAppAutomation airshipReady];
 
     // test disable
     [[self.mockAutomationEngine expect] pause];

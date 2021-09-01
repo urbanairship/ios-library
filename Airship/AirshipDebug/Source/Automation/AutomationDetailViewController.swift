@@ -155,7 +155,7 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
             if let schedule = schedule {
                 let alert = UIAlertController(title: nil, message: "ua_cancelSchedule_alert_message".localized(), preferredStyle: UIAlertController.Style.alert)
                 let cancelScheduleAction = UIAlertAction(title: "ua_cancelSchedule_alert_button".localized(), style: UIAlertAction.Style.default, handler: { (action: UIAlertAction) in
-                    self.inAppAutomation?.cancelSchedule(withID: schedule.identifier)
+                    self.inAppAutomation.cancelSchedule(withID: schedule.identifier)
                     self.navigationController?.popViewController(animated: true)
                 })
                 alert.addAction(cancelScheduleAction)

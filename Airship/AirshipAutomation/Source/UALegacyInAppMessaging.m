@@ -34,15 +34,21 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 @property(nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property(nonatomic, strong) UAAnalytics *analytics;
 @property(nonatomic, weak) UAInAppAutomation *inAppAutomation;
+@property(nonatomic, strong) UAComponentDisableHelper *disableHelper;
+
 @end
 
 @implementation UALegacyInAppMessaging
+
++ (UALegacyInAppMessaging *)shared {
+    return (UALegacyInAppMessaging *)[UAirship componentForClassName:NSStringFromClass([self class])];
+}
 
 - (instancetype)initWithAnalytics:(UAAnalytics *)analytics
                         dataStore:(UAPreferenceDataStore *)dataStore
                   inAppAutomation:(UAInAppAutomation *)inAppAutomation {
 
-    self = [super initWithDataStore:dataStore];
+    self = [super init];
     if (self) {
         // Clean up the old datastore
         [self.dataStore removeObjectForKey:kUAPendingInAppMessageDataStoreKey];
@@ -52,9 +58,9 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
         self.dataStore = dataStore;
         self.analytics = analytics;
         self.inAppAutomation = inAppAutomation;
-
         self.factoryDelegate = self;
         self.displayASAPEnabled = YES;
+        self.disableHelper = [[UAComponentDisableHelper alloc] initWithDataStore:dataStore className:@"UALegacyInAppMessaging"];
     }
 
     return self;
@@ -247,5 +253,14 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
         }
     }];
 }
+
+- (BOOL)isComponentEnabled {
+    return self.disableHelper.enabled;
+}
+
+- (void)setComponentEnabled:(BOOL)componentEnabled {
+    self.disableHelper.enabled = componentEnabled;
+}
+
 
 @end

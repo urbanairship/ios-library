@@ -26,7 +26,7 @@
     return [[self alloc] initWithLocation:location];
 }
 
-- (NSArray<UAComponent *> *)components {
+- (NSArray<id<UAComponent>> *)components {
     return @[self.location];
 }
 

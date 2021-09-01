@@ -5,6 +5,8 @@
 
 @class UAPreferenceDataStore;
 @class UAChannel;
+@class UARuntimeConfig;
+@class UAPrivacyManager;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -24,7 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @return A module loader.
  */
 + (id<UAModuleLoader>)moduleLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
-                                        config:(UARuntimeConfig *)config
+                                         config:(UARuntimeConfig *)config
                                         channel:(UAChannel *)channel
                                  privacyManager:(UAPrivacyManager *)privacyManager;
 

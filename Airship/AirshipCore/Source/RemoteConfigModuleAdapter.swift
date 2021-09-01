@@ -21,7 +21,7 @@ class RemoteConfigModuleAdapter : RemoteConfigModuleAdapterProtocol {
     
     private func components(_ classes: [String]) -> [UAComponent] {
         return classes.compactMap {
-            return UAirship.shared().component(forClassName: $0)
+            return UAirship.component(forClassName: $0)
         }
     }
     
@@ -51,6 +51,6 @@ class RemoteConfigModuleAdapter : RemoteConfigModuleAdapterProtocol {
     }
 
     func applyConfig(_ config: Any?, module: RemoteConfigModule) {
-        self.components(module).forEach { $0.applyRemoteConfig(config) }
+        self.components(module).forEach { $0.applyRemoteConfig?(config) }
     }
 }

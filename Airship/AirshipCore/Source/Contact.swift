@@ -75,7 +75,7 @@ public protocol ContactProtocol {
  * within Airship. Contacts may be named and have channels associated with it.
  */
 @objc(UAContact)
-public class Contact : UAComponent, ContactProtocol {
+public class Contact : NSObject, UAComponent, ContactProtocol {
 
     // NOTE: For internal use only. :nodoc:
     static let supplier : () -> (ContactProtocol) = {
@@ -225,6 +225,24 @@ public class Contact : UAComponent, ContactProtocol {
     private var isContactIDRefreshed = false
     private var operationLock = Lock()
  
+    private let disableHelper: ComponentDisableHelper
+        
+    // NOTE: For internal use only. :nodoc:
+    public var isComponentEnabled: Bool {
+        get {
+            return disableHelper.enabled
+        }
+        set {
+            disableHelper.enabled = newValue
+        }
+    }
+
+    /// - Returns The shared Contact instance.
+    @objc
+    public static func shared() -> Contact! {
+        return UAirship.component(forClassName: "UAContact") as? Contact
+    }
+
     /**
      * Internal only
      * :nodoc:
@@ -247,9 +265,15 @@ public class Contact : UAComponent, ContactProtocol {
         self.date = date
         self.notificationCenter = notificationCenter
         
-        super.init(dataStore: dataStore)
+        self.disableHelper = ComponentDisableHelper(dataStore: dataStore,
+                                                    className: "Contact")
+
+        super.init()
         
-        
+        self.disableHelper.onChange = { [weak self] in
+            self?.onComponentEnableChange()
+        }
+                
         self.taskManager.register(taskID: Contact.updateTaskID, dispatcher: self.dispatcher) { [weak self] task in
             self?.handleUpdateTask(task: task)
         }
@@ -379,7 +403,7 @@ public class Contact : UAComponent, ContactProtocol {
     /**
      * :nodoc:
      */
-    public override func onComponentEnableChange() {
+    private func onComponentEnableChange() {
         if (self.isComponentEnabled) {
             self.enqueueTask()
         }

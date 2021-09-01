@@ -26,8 +26,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) UAURLAllowList *URLAllowList;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property (nonatomic, strong) UAChannelCapture *channelCapture;
-@property (nonatomic, copy) NSArray<UAComponent *> *components;
-@property (nonatomic, copy) NSDictionary<NSString *, UAComponent *> *componentClassMap;
+@property (nonatomic, copy) NSArray<id<UAComponent>> *components;
+@property (nonatomic, copy) NSDictionary<NSString *, id<UAComponent>> *componentClassMap;
 @property (nonatomic, strong) id<UALocationProvider> locationProvider;
 @property (nonatomic, strong) UARemoteConfigURLManager *remoteConfigURLManager;
 /**

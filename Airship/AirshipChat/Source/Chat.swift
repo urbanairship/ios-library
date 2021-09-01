@@ -25,9 +25,15 @@ public protocol ChatOpenDelegate {
  * Airship chat module.
  */
 @available(iOS 13.0, *)
-@objc(UAirshipChat)
-public class Chat : UAComponent, UAPushableComponent {
+@objc(UAChat)
+public class Chat : NSObject, UAComponent, UAPushableComponent {
 
+    /// - Returns The shared Chat instance.
+    @objc
+    public static func shared() -> Chat! {
+        return UAirship.component(forClassName: "Chat") as? Chat
+    }
+    
     static let routingKey = "routing"
     static let prepopulatedMessagesKey = "prepopulated_messages"
     static let inputKey = "chat_input"
@@ -41,27 +47,6 @@ public class Chat : UAComponent, UAPushableComponent {
      */
     @objc
     public weak var openChatDelegate: ChatOpenDelegate?
-
-
-    private static let enableKey = "AirshipChat.enabled"
-
-    /**
-     * Enables or disables chat.
-     */
-    @objc
-    @available(*, deprecated, message: "Deprecated – to be removed in SDK version 15.0. Please use the Privacy Manager.")
-    public var enabled: Bool {
-        get {
-            return self.privacyManager.isEnabled(UAFeatures.chat)
-        }
-        set {
-            if (newValue) {
-                self.privacyManager.enableFeatures(UAFeatures.chat)
-            } else {
-                self.privacyManager.disableFeatures(UAFeatures.chat)
-            }
-        }
-    }
 
     /**
      * Chat style
@@ -87,6 +72,18 @@ public class Chat : UAComponent, UAPushableComponent {
 
     private var viewController : UIViewController?
 
+    private let disableHelper: ComponentDisableHelper
+        
+    // NOTE: For internal use only. :nodoc:
+    public var isComponentEnabled: Bool {
+        get {
+            return disableHelper.enabled
+        }
+        set {
+            disableHelper.enabled = newValue
+        }
+    }
+    
     internal convenience init(dataStore: UAPreferenceDataStore, config: RuntimeConfig, channel: Channel, privacyManager: UAPrivacyManager) {
 
         let conversation = Conversation(dataStore: dataStore,
@@ -105,7 +102,12 @@ public class Chat : UAComponent, UAPushableComponent {
         self.privacyManager = privacyManager
         self.style = ChatStyle(file: "AirshipChatStyle")
         
-        super.init(dataStore: dataStore)
+        self.disableHelper = ComponentDisableHelper(dataStore: dataStore, className: "Chat")
+        super.init()
+        
+        self.disableHelper.onChange = { [weak self] in
+            self?.onComponentEnableChange()
+        }
 
         NotificationCenter.default.addObserver(
             self,
@@ -116,7 +118,7 @@ public class Chat : UAComponent, UAPushableComponent {
         AirshipLogger.info("AirshipChat initialized")
     }
 
-    public override func onComponentEnableChange() {
+    private func onComponentEnableChange() {
         self.updateConversationEnablement()
     }
 
@@ -219,7 +221,7 @@ public class Chat : UAComponent, UAPushableComponent {
     }
     
     // NOTE: For internal use only. :nodoc:
-    public override func deepLink(_ deepLink: URL) -> Bool {
+    public func deepLink(_ deepLink: URL) -> Bool {
         guard deepLink.scheme == UAirshipDeepLinkScheme,
               deepLink.host == Chat.deepLinkHost,
               deepLink.path.isEmpty || deepLink.path == "/" else {

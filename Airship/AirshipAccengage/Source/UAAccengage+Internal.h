@@ -6,17 +6,20 @@
 @import AirshipCore;
 #else
 #import "UAComponent.h"
-#import "UAPush.h"
 #endif
 
 @class UANotificationCategories;
+@class UAPreferenceDataStore;
+@class UAChannel;
+@class UAPush;
+@class UAPrivacyManager;
 
 NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Accengage transition component.
  */
-@interface UAAccengage : UAComponent
+@interface UAAccengage : NSObject<UAComponent>
 
 /**
  * Factory method.

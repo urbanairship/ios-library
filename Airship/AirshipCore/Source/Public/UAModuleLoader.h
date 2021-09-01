@@ -23,7 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Returns the components defined by the module.
  */
-- (NSArray<UAComponent *> *)components;
+- (NSArray<id<UAComponent>> *)components;
 
 @end
 

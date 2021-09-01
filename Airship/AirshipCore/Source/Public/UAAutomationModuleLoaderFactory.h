@@ -5,8 +5,12 @@
 
 @class UAPreferenceDataStore;
 @class UAChannel;
+@class UAAnalytics;
+@class UARuntimeConfig;
+@class UAPrivacyManager;
 @protocol UAContactProtocol;
 @protocol UARemoteDataProvider;
+
 
 NS_ASSUME_NONNULL_BEGIN
 

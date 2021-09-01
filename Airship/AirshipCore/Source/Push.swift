@@ -106,7 +106,13 @@ public protocol PushNotificationDelegate: NSObjectProtocol {
 
 /// This singleton provides an interface to the functionality provided by the Airship iOS Push API.
 @objc(UAPush)
-public class Push: UAComponent, PushProtocol {
+public class Push: NSObject, UAComponent, PushProtocol {
+    
+    /// - Returns The shared Push instance.
+    @objc
+    public static func shared() -> Push! {
+        return UAirship.component(forClassName: "UAPush") as? Push
+    }
 
     // MARK: - Constants
 
@@ -228,6 +234,18 @@ public class Push: UAComponent, PushProtocol {
             return available;
         }
     }
+    
+    private let disableHelper: ComponentDisableHelper
+        
+    // NOTE: For internal use only. :nodoc:
+    public var isComponentEnabled: Bool {
+        get {
+            return disableHelper.enabled
+        }
+        set {
+            disableHelper.enabled = newValue
+        }
+    }
 
     @objc
     public convenience init(config: RuntimeConfig, dataStore: UAPreferenceDataStore, channel:  ChannelProtocol, analytics: AnalyticsProtocol & UAExtendableAnalyticsHeaders, privacyManager: UAPrivacyManager) {
@@ -251,8 +269,14 @@ public class Push: UAComponent, PushProtocol {
         self.shouldUpdateAPNSRegistration = true;
         self.defaultPresentationOptions = []
 
-        super.init(dataStore: dataStore)
+        self.disableHelper = ComponentDisableHelper(dataStore: dataStore,
+                                                    className: "UAPush")
 
+        super.init()
+        
+        self.disableHelper.onChange = { [weak self] in
+            self?.onComponentEnableChange()
+        }
         self.observeNotificationCenterEvents()
 
         // Migrate push tags to channel tags
@@ -945,8 +969,7 @@ public class Push: UAComponent, PushProtocol {
     // MARK: - FeatureEnablement
 
     // For internal use only. :nodoc:
-    @objc
-    public override func onComponentEnableChange() {
+    private func onComponentEnableChange() {
         self.updatePushEnablement()
     }
 
