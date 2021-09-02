@@ -12,6 +12,11 @@
 #import "UADeferredScheduleAPIClient+Internal.h"
 #import "UAFrequencyLimitManager+Internal.h"
 
+@class UAPreferenceDataStore;
+@class UAChannel;
+@class UAAnalytics;
+@class UAPrivacyManager;
+
 NS_ASSUME_NONNULL_BEGIN
 
 /**

@@ -3,22 +3,28 @@
 #import <Foundation/Foundation.h>
 #import "UAComponent.h"
 
-@class UAActionRegistry;
-
 NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Internal protocol to load optional modules.
  * @note For internal use only. :nodoc:
  */
-@protocol UAModuleLoader <NSObject>
+NS_SWIFT_NAME(SDKModule)
+@protocol UASDKModule <NSObject>
+
+/**
+ * Called to create the module.
+ * @param dependencies Module dependencies.
+ * @return The UASDKModule.
+ */
++ (nullable id<UASDKModule>)loadWithDependencies:(NSDictionary *)dependencies;
 
 @optional
 
 /**
- * Called to register actions during takeOff.
+ * Optional actions plist path.
  */
-- (void)registerActions:(UAActionRegistry *)registry;
+- (nullable NSString *)actionsPlist;
 
 /**
  * Returns the components defined by the module.
@@ -26,6 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSArray<id<UAComponent>> *)components;
 
 @end
+
 
 NS_ASSUME_NONNULL_END
 

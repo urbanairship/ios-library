@@ -9,6 +9,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol UAChannelProtocol;
 @class UATaskManager;
+@class UAPreferenceDataStore;
+@class UARuntimeConfig;
+@class UATaskManager;
 
 /*
  * SDK-private extensions to UAUser

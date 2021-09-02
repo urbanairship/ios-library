@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import "UAMessageCenterModuleLoader.h"
+#import "UAMessageCenterSDKModule.h"
 #import "UAMessageCenter+Internal.h"
 #import "UAMessageCenterResources.h"
 
@@ -10,11 +10,11 @@
 #import <Airship/Airship-Swift.h>
 #endif
 
-@interface UAMessageCenterModuleLoader()
+@interface UAMessageCenterSDKModule()
 @property (nonatomic, strong) UAMessageCenter *messageCenter;
 @end
 
-@implementation UAMessageCenterModuleLoader
+@implementation UAMessageCenterSDKModule
 
 - (instancetype)initWithMessageCenter:(UAMessageCenter *)messageCenter {
     self = [super init];
@@ -24,11 +24,16 @@
     return self;
 }
 
-+ (id<UAModuleLoader>)messageCenterModuleLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
-                                                      config:(UARuntimeConfig *)config
-                                                     channel:(UAChannel *)channel
-                                              privacyManager:(UAPrivacyManager *)privacyManager {
+- (NSArray<id<UAComponent>> *)components {
+    return @[self.messageCenter];
+}
 
++ (id<UASDKModule>)loadWithDependencies:(nonnull NSDictionary *)dependencies {
+    UAPreferenceDataStore *dataStore = dependencies[UASDKDependencyKeys.dataStore];
+    UARuntimeConfig *config = dependencies[UASDKDependencyKeys.config];
+    UAChannel *channel = dependencies[UASDKDependencyKeys.channel];
+    UAPrivacyManager *privacyManager = dependencies[UASDKDependencyKeys.privacyManager];
+    
     UAMessageCenter *messageCenter = [UAMessageCenter messageCenterWithDataStore:dataStore
                                                                           config:config
                                                                          channel:channel
@@ -36,14 +41,8 @@
     return [[self alloc] initWithMessageCenter:messageCenter];
 }
 
-- (NSArray<id<UAComponent>> *)components {
-    return @[self.messageCenter];
+- (NSString *)actionsPlist {
+    return [[UAMessageCenterResources bundle] pathForResource:@"UAMessageCenterActions" ofType:@"plist"];
 }
 
-- (void)registerActions:(UAActionRegistry *)registry {
-    NSString *path = [[UAMessageCenterResources bundle] pathForResource:@"UAMessageCenterActions" ofType:@"plist"];
-    if (path) {
-        [registry registerActionsFromFile:path];
-    }
-}
 @end

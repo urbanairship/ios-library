@@ -5,8 +5,7 @@
 #elif UA_USE_MODULE_IMPORT
 #import <AirshipCore/AirshipCore.h>
 #else
-#import "UALocationModuleLoaderFactory.h"
-#import "UAModuleLoader.h"
+#import "UASDKModule.h"
 #import "UALocationProvider.h"
 #import "UAEvent.h"
 #import "UAComponent.h"

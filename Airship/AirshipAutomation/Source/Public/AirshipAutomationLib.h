@@ -1,7 +1,7 @@
 #import "UAActionSchedule.h"
 #import "UAAirshipAutomationCoreImport.h"
-#import "UAAutomationModuleLoader.h"
 #import "UAAutomationResources.h"
+#import "UAAutomationSDKModule.h"
 #import "UACancelSchedulesAction.h"
 #import "UADeferredSchedule.h"
 #import "UAInAppAutomation.h"

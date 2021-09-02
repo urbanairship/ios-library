@@ -13,4 +13,4 @@ FOUNDATION_EXPORT double AirshipLocationVersionNumber;
 FOUNDATION_EXPORT const unsigned char AirshipLocationVersionString[];
 
 #import "UALocation.h"
-#import "UALocationModuleLoader.h"
+#import "UALocationSDKModule.h"

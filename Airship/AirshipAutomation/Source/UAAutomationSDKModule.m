@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import "UAAutomationModuleLoader.h"
+#import "UAAutomationSDKModule.h"
 #import "UALegacyInAppMessaging+Internal.h"
 #import "UAInAppAutomation+Internal.h"
 #import "UAAutomationResources.h"
@@ -11,11 +11,11 @@
 #import <Airship/Airship-Swift.h>
 #endif
 
-@interface UAAutomationModuleLoader()
+@interface UAAutomationSDKModule()
 @property (nonatomic, copy) NSArray<id<UAComponent>> *automationComponents;
 @end
 
-@implementation UAAutomationModuleLoader
+@implementation UAAutomationSDKModule
 
 - (instancetype)initWithComponents:(NSArray<id<UAComponent>> *)components {
     self = [super init];
@@ -25,16 +25,19 @@
     return self;
 }
 
-+ (id<UAModuleLoader>)inAppModuleLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
-                                              config:(UARuntimeConfig *)config
-                                             channel:(UAChannel *)channel
-                                             contact:(id<UAContactProtocol>)contact
-                                           analytics:(UAAnalytics *)analytics
-                                  remoteDataProvider:(id<UARemoteDataProvider>)remoteDataProvider
-                                      privacyManager:(UAPrivacyManager *)privacyManager {
+- (NSArray<id<UAComponent>> *)components {
+    return self.automationComponents;
+}
 
-    NSMutableArray *components = [NSMutableArray array];
-
++ (id<UASDKModule>)loadWithDependencies:(nonnull NSDictionary *)dependencies {
+    UAPreferenceDataStore *dataStore = dependencies[UASDKDependencyKeys.dataStore];
+    UARuntimeConfig *config = dependencies[UASDKDependencyKeys.config];
+    UAChannel *channel = dependencies[UASDKDependencyKeys.channel];
+    UAContact *contact = dependencies[UASDKDependencyKeys.contact];
+    id<UARemoteDataProvider> remoteDataProvider = dependencies[UASDKDependencyKeys.remoteData];
+    UAAnalytics *analytics = dependencies[UASDKDependencyKeys.analytics];
+    UAPrivacyManager *privacyManager = dependencies[UASDKDependencyKeys.privacyManager];
+    
     UAInAppAudienceManager *audienceManager = [UAInAppAudienceManager managerWithConfig:config
                                                                               dataStore:dataStore
                                                                                 channel:channel
@@ -47,29 +50,16 @@
                                                                          channel:channel
                                                                        analytics:analytics
                                                                   privacyManager:privacyManager];
-    [components addObject:inAppAutomation];
-
 
     UALegacyInAppMessaging *legacyIAM = [UALegacyInAppMessaging inAppMessagingWithAnalytics:analytics
                                                                                   dataStore:dataStore
                                                                             inAppAutomation:inAppAutomation];
-    [components addObject:legacyIAM];
-
-    return [[self alloc] initWithComponents:components];
+    return [[self alloc] initWithComponents:@[inAppAutomation, legacyIAM]];
 }
 
-- (NSArray<id<UAComponent>> *)components {
-    return self.automationComponents;
+- (NSString *)actionsPlist {
+    return [[UAAutomationResources bundle] pathForResource:@"UAAutomationActions" ofType:@"plist"];
 }
-
-- (void)registerActions:(UAActionRegistry *)registry {
-    NSBundle *bundle = [UAAutomationResources bundle];
-    NSString *path = [bundle pathForResource:@"UAAutomationActions" ofType:@"plist"];
-    if (path) {
-        [registry registerActionsFromFile:path];
-    }
-}
-
 
 @end
 

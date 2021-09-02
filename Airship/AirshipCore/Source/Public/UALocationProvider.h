@@ -37,17 +37,5 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-/**
- * Protocol for loading a location provider.
- * @note For internal use only. :nodoc:
- */
-@protocol UALocationProviderLoader <NSObject>
-
-/**
- * Gets the location provider.
- */
-- (id<UALocationProvider>)locationProvider;
-
-@end
 
 NS_ASSUME_NONNULL_END

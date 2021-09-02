@@ -3,6 +3,8 @@
 #import "UATagGroupsLookupResponse+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
 
+@class UAPreferenceDataStore;
+
 NS_ASSUME_NONNULL_BEGIN
 
 /**

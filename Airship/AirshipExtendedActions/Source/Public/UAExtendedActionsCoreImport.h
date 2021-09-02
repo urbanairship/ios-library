@@ -9,10 +9,8 @@
 #else
 #import "UAAction.h"
 #import "UAirship.h"
-#import "UAModuleLoader.h"
-#import "UAExtendedActionsModuleLoaderFactory.h"
+#import "UASDKModule.h"
 #import "UAAction.h"
 #import "UAActionPredicateProtocol.h"
-#import "NSString+UALocalizationAdditions.h"
 #import "NSDictionary+UAAdditions.h"
 #endif

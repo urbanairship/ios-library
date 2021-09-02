@@ -357,11 +357,13 @@ public class ActionRegistry : NSObject {
      */
     @objc(registerActionsFromFile:)
     public func registerActions(_ path: String) {
+        AirshipLogger.debug("Loading actions from \(path)")
         guard let actions = NSArray(contentsOfFile: path) as? [[AnyHashable : Any]] else {
             AirshipLogger.error("Unable to load actions from: \(path)")
             return
         }
-
+        
+        
         for actionEntry in actions {
             guard let names = actionEntry[ActionRegistry.namesKey] as? [String], !names.isEmpty else {
                 AirshipLogger.error("Missing action names for entry \(actionEntry)")

@@ -8,9 +8,9 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * Message Center module loader.
+ * Message Center SDK module.
  */
-@interface UAMessageCenterModuleLoader : NSObject<UAModuleLoader, UAMessageCenterModuleLoaderFactory>
+@interface UAMessageCenterSDKModule : NSObject<UASDKModule>
 
 @end
 

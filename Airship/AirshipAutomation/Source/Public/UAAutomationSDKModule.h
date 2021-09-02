@@ -1,17 +1,16 @@
 /* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-#import "UALocationCoreImport.h"
+#import "UAAirshipAutomationCoreImport.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * Location module loader.
  * @note For internal use only. :nodoc:
  */
-@interface UALocationModuleLoader : NSObject<UAModuleLoader, UALocationModuleLoaderFactory, UALocationProviderLoader>
+@interface UAAutomationSDKModule : NSObject<UASDKModule>
 
 @end
 
-
 NS_ASSUME_NONNULL_END
+

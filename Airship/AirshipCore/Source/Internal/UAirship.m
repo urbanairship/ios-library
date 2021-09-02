@@ -5,15 +5,8 @@
 #import "UAGlobal.h"
 #import "UAAutoIntegration.h"
 #import "NSJSONSerialization+UAAdditions.h"
-#import "UALocationModuleLoaderFactory.h"
-#import "UAAutomationModuleLoaderFactory.h"
-#import "UAExtendedActionsModuleLoaderFactory.h"
-#import "UAMessageCenterModuleLoaderFactory.h"
-#import "UAAccengageModuleLoaderFactory.h"
-#import "UADebugLibraryModuleLoaderFactory.h"
-#import "UAAirshipChatModuleLoaderFactory.h"
 #import "UAFeature.h"
-#import "UAPreferenceCenterModuleLoaderFactory.h"
+#import "UALocationProvider.h"
 
 #if __has_include("AirshipCore/AirshipCore-Swift.h")
 #import <AirshipCore/AirshipCore-Swift.h>
@@ -30,17 +23,6 @@ static NSString *const UAResetKeychainKey = @"com.urbanairship.reset_keychain";
 
 // Exceptions
 NSString * const UAirshipTakeOffBackgroundThreadException = @"UAirshipTakeOffBackgroundThreadException";
-
-// Optional components
-NSString * const UALocationModuleLoaderClassName = @"UALocationModuleLoader";
-NSString * const UAAutomationModuleLoaderClassName = @"UAAutomationModuleLoader";
-NSString * const UAMessageCenterModuleLoaderClassName = @"UAMessageCenterModuleLoader";
-NSString * const UAExtendedActionsModuleLoaderClassName = @"UAExtendedActionsModuleLoader";
-NSString * const UAAccengageModuleLoaderClassName = @"UAAccengageModuleLoader";
-NSString * const UADebugLibraryModuleLoaderClassName = @"AirshipDebug.UADebugLibraryModuleLoader";
-
-NSString * const UAAirshipChatModuleLoaderClassName = @"UAirshipChatModuleLoader";
-NSString * const UAPrenferenceCenterModuleLoaderClassName = @"UAirshipPreferenceCenterModuleLoader";
 
 // AirshipReady payload
 NSString * const UAAirshipReadyChannelIdentifier = @"channel_id";
@@ -168,81 +150,28 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
                                                                channel:self.sharedChannel];
 #endif
 
-        NSMutableArray<id<UAModuleLoader>> *loaders = [NSMutableArray array];
-
-        id<UAModuleLoader, UALocationProviderLoader> locationLoader = [UAirship locationLoaderWithDataStore:self.dataStore
-                                                                                                    channel:self.sharedChannel
-                                                                                                  analytics:self.sharedAnalytics privacyManager:self.sharedPrivacyManager];
-        if (locationLoader) {
-            [loaders addObject:locationLoader];
-            self.locationProvider = locationLoader.locationProvider;
-        }
-
-        id<UAModuleLoader> automationLoader = [UAirship automationModuleLoaderWithDataStore:self.dataStore
-                                                                                     config:self.config
-                                                                                    channel:self.sharedChannel
-                                                                                    contact:self.sharedContact
-                                                                                  analytics:self.sharedAnalytics
-                                                                          remoteDataManager:self.sharedRemoteDataManager
-                                                                             privacyManager:self.sharedPrivacyManager];
-        if (automationLoader) {
-            [loaders addObject:automationLoader];
-        }
-
-        id<UAModuleLoader> messageCenterLoader = [UAirship messageCenterLoaderWithDataStore:self.dataStore
-                                                                                     config:self.config
-                                                                                    channel:self.sharedChannel
-                                                                             privacyManager:self.sharedPrivacyManager];
-        if (messageCenterLoader) {
-            [loaders addObject:messageCenterLoader];
-        }
-
-        id<UAModuleLoader> accengageLoader = [UAirship accengageModuleLoaderWithDataStore:self.dataStore
-                                                                                  channel:self.sharedChannel
-                                                                                     push:self.sharedPush
-                                                                           privacyManager:self.sharedPrivacyManager];
-        if (accengageLoader) {
-            [loaders addObject:accengageLoader];
-        }
-
-        id<UAModuleLoader> extendedActionsLoader = [UAirship extendedActionsModuleLoader];
-        if (extendedActionsLoader) {
-            [loaders addObject:extendedActionsLoader];
-        }
-
-        id<UAModuleLoader> airshipChatLoader = [UAirship airshipChatModuleLoaderWithDataStore:self.dataStore config:self.config channel:self.sharedChannel privacyManager:self.sharedPrivacyManager];
-
-        if (airshipChatLoader) {
-            [loaders addObject:airshipChatLoader];
-        }
-        
-        id<UAModuleLoader> preferenceCenterLoader = [UAirship preferenceCenterModuleLoaderWithDataStore:self.dataStore
-                                                                                         privacyManager:self.sharedPrivacyManager
-                                                                                     remoteDataProvider:self.sharedRemoteDataManager];
-        if (preferenceCenterLoader) {
-            [loaders addObject:preferenceCenterLoader];
-        }
-
-        id<UAModuleLoader> debugLibraryLoader = [UAirship debugLibraryModuleLoaderWithAnalytics:self.sharedAnalytics];
-        if (debugLibraryLoader) {
-            [loaders addObject:debugLibraryLoader];
-        }
-
-        for (id<UAModuleLoader> loader in loaders) {
-            if ([loader respondsToSelector:@selector(components)]) {
-                [components addObjectsFromArray:[loader components]];
-            }
-
-            if ([loader respondsToSelector:@selector(registerActions:)]) {
-                [loader registerActions:self.actionRegistry];
-            }
-        }
-
+        UAModuleLoader *moduleLoader = [[UAModuleLoader alloc] initWithConfig:self.config
+                                                                    dataStore:self.dataStore
+                                                                      channel:self.sharedChannel
+                                                                      contact:self.sharedContact
+                                                                         push:self.sharedPush
+                                                                   remoteData:self.sharedRemoteDataManager
+                                                                    analytics:self.sharedAnalytics
+                                                               privacyManager:self.sharedPrivacyManager];
+        [components addObjectsFromArray:moduleLoader.components];
         self.components = components;
+
+        for (NSString *plist in moduleLoader.actionPlists) {
+            [self.actionRegistry registerActionsFromFile:plist];
+        }
 
         NSMutableDictionary *componentClassMap = [NSMutableDictionary dictionary];
         for (id<UAComponent> component in self.components) {
             componentClassMap[NSStringFromClass([component class])] = component;
+            
+            if ([component conformsToProtocol:@protocol(UALocationProvider)]) {
+                self.locationProvider = (id<UALocationProvider>) component;
+            }
         }
 
         self.componentClassMap = componentClassMap;
@@ -528,112 +457,8 @@ BOOL uaLoudImpErrorLoggingEnabled = YES;
     }
 }
 
-
 + (id<UAComponent>)componentForClassName:(NSString *)className {
     return sharedAirship_.componentClassMap[className];;
-}
-
-+ (nullable id<UAModuleLoader>)messageCenterLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
-                                                         config:(UARuntimeConfig *)config
-                                                        channel:(UAChannel *)channel
-                                                 privacyManager:(UAPrivacyManager *)privacyManager {
-    Class cls = NSClassFromString(UAMessageCenterModuleLoaderClassName);
-    if ([cls conformsToProtocol:@protocol(UAMessageCenterModuleLoaderFactory)]) {
-        return [cls messageCenterModuleLoaderWithDataStore:dataStore config:config channel:channel privacyManager:privacyManager];
-    }
-    return nil;
-}
-
-+ (nullable id<UAModuleLoader>)extendedActionsModuleLoader {
-    Class cls = NSClassFromString(UAExtendedActionsModuleLoaderClassName);
-    if ([cls conformsToProtocol:@protocol(UAExtendedActionsModuleLoaderFactory)]) {
-        return [cls extendedActionsModuleLoader];
-    }
-    return nil;
-}
-
-+ (nullable id<UAModuleLoader, UALocationProviderLoader>)locationLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
-                                                                             channel:(UAChannel *)channel
-                                                                           analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics privacyManager:(UAPrivacyManager *)privacyManager {
-    Class cls = NSClassFromString(UALocationModuleLoaderClassName);
-    if ([cls conformsToProtocol:@protocol(UALocationModuleLoaderFactory)]) {
-        return [cls locationModuleLoaderWithDataStore:dataStore channel:channel analytics:analytics privacyManager:privacyManager];
-    }
-    return nil;
-}
-
-+ (nullable id<UAModuleLoader>)automationModuleLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
-                                                            config:(UARuntimeConfig *)config
-                                                           channel:(UAChannel *)channel
-                                                           contact:(id<UAContactProtocol>)contact
-                                                         analytics:(UAAnalytics *)analytics
-                                                 remoteDataManager:(UARemoteDataManager *)remoteDataManager
-                                                    privacyManager:(UAPrivacyManager *)privacyManager {
-
-    Class cls = NSClassFromString(UAAutomationModuleLoaderClassName);
-    if ([cls conformsToProtocol:@protocol(UAAutomationModuleLoaderFactory)]) {
-        return [cls inAppModuleLoaderWithDataStore:dataStore
-                                            config:config
-                                           channel:channel
-                                           contact:contact
-                                         analytics:analytics
-                                remoteDataProvider:remoteDataManager
-                                    privacyManager:privacyManager];
-    }
-    return nil;
-}
-
-+ (nullable id<UAModuleLoader>)accengageModuleLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
-                                                          channel:(UAChannel *)channel
-                                                             push:(UAPush *)push
-                                                   privacyManager:(UAPrivacyManager *)privacyManager{
-
-    Class cls = NSClassFromString(UAAccengageModuleLoaderClassName);
-    if ([cls conformsToProtocol:@protocol(UAAccengageModuleLoaderFactory)]) {
-        return [cls moduleLoaderWithDataStore:dataStore
-                                      channel:channel
-                                         push:push
-                               privacyManager:privacyManager];
-    }
-    return nil;
-}
-
-+ (nullable id<UAModuleLoader>)airshipChatModuleLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
-                                                             config:(UARuntimeConfig *)config
-                                                            channel:(UAChannel *)channel
-                                                     privacyManager:(UAPrivacyManager *)privacyManager {
-
-    if (@available(iOS 13.0, *)) {
-        Class cls = NSClassFromString(UAAirshipChatModuleLoaderClassName);
-        if ([cls conformsToProtocol:@protocol(UAAirshipChatModuleLoaderFactory)]) {
-            return [cls moduleLoaderWithDataStore:dataStore
-                                           config:config
-                                          channel:channel
-                                   privacyManager:privacyManager];
-        }
-    }
-    return nil;
-}
-
-+ (nullable id<UAModuleLoader>)preferenceCenterModuleLoaderWithDataStore:(UAPreferenceDataStore *)dataStore
-                                                          privacyManager:(UAPrivacyManager *)privacyManager
-                                                      remoteDataProvider:(id<UARemoteDataProvider>)remoteDataProvider {
-    
-    Class cls = NSClassFromString(UAPrenferenceCenterModuleLoaderClassName);
-    if ([cls conformsToProtocol:@protocol(UAPreferenceCenterModuleLoaderFactory)]) {
-        return [cls moduleLoaderWithDataStore:dataStore
-                               privacyManager:privacyManager
-                           remoteDataProvider:remoteDataProvider];
-    }
-    return nil;
-}
-
-+ (nullable id<UAModuleLoader>)debugLibraryModuleLoaderWithAnalytics:(UAAnalytics *)analytics {
-    Class cls = NSClassFromString(UADebugLibraryModuleLoaderClassName);
-    if ([cls conformsToProtocol:@protocol(UADebugLibraryModuleLoaderFactory)]) {
-        return [cls debugLibraryModuleLoaderWithAnalytics:analytics];
-    }
-    return nil;
 }
 
 - (void)setDataCollectionEnabled:(BOOL)enabled {

@@ -1,13 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "ACCUserProfile.h"
-
-#if UA_USE_MODULE_AIRSHIP_IMPORTS
-@import AirshipCore;
-#else
-#import "UAAccengageModuleLoaderFactory.h"
 #import "ACCDeviceInformationSet+Internal.h"
-#endif
 
 @implementation ACCUserProfile
 

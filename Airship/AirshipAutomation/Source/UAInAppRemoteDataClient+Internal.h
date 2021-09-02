@@ -6,6 +6,10 @@
 #import "UAScheduleEdits.h"
 #import "UAFrequencyConstraint+Internal.h"
 
+@protocol UARemoteDataProvider;
+@class UAPreferenceDataStore;
+@class UAChannel;
+
 NS_ASSUME_NONNULL_BEGIN
 
 /**

@@ -9,6 +9,10 @@
 #import "UAAirshipAutomationCoreImport.h"
 #import "UAAutomationEngine+Internal.h"
 
+@class UAAnalytics;
+@class UAPreferenceDataStore;
+@class UADispatcher;
+
 NS_ASSUME_NONNULL_BEGIN
 
 /**
