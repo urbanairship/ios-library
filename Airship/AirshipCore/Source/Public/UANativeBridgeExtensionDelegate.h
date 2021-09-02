@@ -5,8 +5,8 @@
 #if !TARGET_OS_TV
 
 #import <WebKit/WebKit.h>
-#import "UAJavaScriptEnvironment.h"
-#import "UAJavaScriptCommand.h"
+
+@protocol UAJavaScriptEnvironmentProtocol;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -30,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param js The JavaScript environment.
  * @param webView The web view.
  */
-- (void)extendJavaScriptEnvironment:(UAJavaScriptEnvironment *)js webView:(WKWebView *)webView;
+- (void)extendJavaScriptEnvironment:(id<UAJavaScriptEnvironmentProtocol>)js webView:(WKWebView *)webView;
 
 @end
 

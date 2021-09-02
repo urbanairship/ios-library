@@ -27,7 +27,7 @@ NSString * const UAMessageCenterMessageLoadErrorHTTPStatusKey = @"status";
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface UADefaultMessageCenterMessageViewController () <UANativeBridgeDelegate, WKNavigationDelegate>
+@interface UADefaultMessageCenterMessageViewController () <UANativeBridgeDelegate, UANavigationDelegate>
 
 /**
  * The WebView used to display the message content.
@@ -119,7 +119,7 @@ typedef enum MessageState {
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    self.nativeBridge = [UANativeBridge nativeBridge];
+    self.nativeBridge = [[UANativeBridge alloc] init];
     self.nativeBridgeExtension = [[UAMessageCenterNativeBridgeExtension alloc] init];
 
     self.nativeBridge.nativeBridgeExtensionDelegate = self.nativeBridgeExtension;

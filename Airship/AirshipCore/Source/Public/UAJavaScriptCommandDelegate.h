@@ -2,11 +2,12 @@
 
 #import <Foundation/Foundation.h>
 
+@class UAJavaScriptEnvironment;
+@class UAJavaScriptCommand;
+
 #if !TARGET_OS_TV
 
-#import "UAJavaScriptCommand.h"
 #import <WebKit/WebKit.h>
-
 
 NS_ASSUME_NONNULL_BEGIN
 

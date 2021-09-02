@@ -1,14 +1,12 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UANativeBridgeActionHandler+Internal.h"
-#import "UAJavaScriptCommand.h"
 #import "UAirship+Internal.h"
 
 @import AirshipCore;
 
 @interface UANativeBridgeActionHandlerTest : UABaseTest
-@property (nonatomic, strong) UANativeBridgeActionHandler *actionHandler;
+@property (nonatomic, strong) NativeBridgeActionHandler *actionHandler;
 @property (nonatomic, strong) UAActionRegistry *registry;
 @property (nonatomic, strong) id mockAirship;
 @property (nonatomic, copy) NSString *nativeBridge;
@@ -18,7 +16,7 @@
 
 - (void)setUp {
     [super setUp];
-    self.actionHandler = [[UANativeBridgeActionHandler alloc] init];
+    self.actionHandler = [[NativeBridgeActionHandler alloc] init];
     self.registry = [UAActionRegistry defaultRegistry];
 
     // Mock Airship
@@ -90,7 +88,7 @@
  */
 - (void)testRunActionCBEmptyArgs {
     UABlockAction *test = [[UABlockAction alloc] initWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler) {
-        XCTAssertNil(args.value);
+        XCTAssertEqual(args.value, [NSNull null]);
         handler([UAActionResult resultWithValue:@"howdy"]);
     }];
 
@@ -241,7 +239,7 @@
     id ran = [self expectationWithDescription:@"Performing command"];
 
     __block NSString *result;
-    UAJavaScriptCommand *command = [UAJavaScriptCommand commandForURL:URL];
+    UAJavaScriptCommand *command = [[UAJavaScriptCommand alloc] initWithUrl:URL];
     [self.actionHandler runActionsForCommand:command metadata:@{} completionHandler:^(NSString *script) {
         result = script;
         [ran fulfill];

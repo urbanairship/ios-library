@@ -2,7 +2,6 @@
 
 #import <JavaScriptCore/JavaScriptCore.h>
 #import "UAAirshipBaseTest.h"
-#import "UAJavaScriptEnvironment.h"
 #import "UAirship+Internal.h"
 
 @import AirshipCore;
@@ -22,8 +21,8 @@
     self.jsc = [[JSContext alloc] initWithVirtualMachine:[[JSVirtualMachine alloc] init]];
     [self.jsc evaluateScript:@"window = {}"];
 
-    self.mockChannel = [self mockForClass:[UAChannel class]];
-    self.mockContact = [self mockForClass:[UAContact class]];
+    self.mockChannel = [self mockForProtocol:@protocol(UAChannelProtocol)];
+    self.mockContact = [self mockForProtocol:@protocol(UAContactProtocol)];
     self.mockUIDevice = [self mockForClass:[UIDevice class]];
     [[[self.mockUIDevice stub] andReturn:self.mockUIDevice] currentDevice];
 
@@ -44,7 +43,7 @@
     [[[self.mockContact stub] andReturn:@"named user"] namedUserID];
 
     // Inject the default JavaScript environment
-    [self.jsc evaluateScript:[[UAJavaScriptEnvironment defaultEnvironment] build]];
+    [self.jsc evaluateScript:[[[UAJavaScriptEnvironment alloc] init] build]];
 
     // Verify the default getters
     XCTAssertEqualObjects(@"device model", [self.jsc evaluateScript:@"UAirship.getDeviceModel()"].toString);

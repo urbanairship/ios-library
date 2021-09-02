@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 NSString *const UAInAppNativeBridgeDismissCommand = @"dismiss";
 
-@interface UAInAppMessageHTMLViewController () <WKNavigationDelegate, UANativeBridgeDelegate, UAJavaScriptCommandDelegate>
+@interface UAInAppMessageHTMLViewController () <UANavigationDelegate, UANativeBridgeDelegate, UAJavaScriptCommandDelegate>
 
 /**
  * The container view.
@@ -107,7 +107,7 @@ NSString *const UAInAppNativeBridgeDismissCommand = @"dismiss";
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    self.nativeBridge = [UANativeBridge nativeBridge];
+    self.nativeBridge = [[UANativeBridge alloc] init];
     self.nativeBridge.nativeBridgeExtensionDelegate = self.nativeBridgeExtension;
     self.nativeBridge.forwardNavigationDelegate = self;
     self.nativeBridge.javaScriptCommandDelegate = self;

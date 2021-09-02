@@ -5,7 +5,6 @@
 #import "UAirship.h"
 #import "UAKeychainUtils.h"
 #import "UANativeBridgeExtensionDelegate.h"
-#import "UANativeBridge.h"
 #import "UAModuleLoader.h"
 #import "UAMessageCenterModuleLoaderFactory.h"
 #import "UAJSONSerialization.h"

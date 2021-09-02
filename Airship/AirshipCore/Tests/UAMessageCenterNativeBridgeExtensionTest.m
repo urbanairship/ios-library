@@ -99,7 +99,7 @@
     [[[self.mockMessageList stub] andReturn:mockMessage] messageForBodyURL:URL];
 
     // Extend the environment
-    NSDictionary *metadata = [self.extension actionsMetadataForCommand:[UAJavaScriptCommand commandForURL:URL]
+    NSDictionary *metadata = [self.extension actionsMetadataForCommand:[[UAJavaScriptCommand alloc] initWithUrl:URL]
                                                                webView:self.mockWKWebView];
 
     NSDictionary *expected = @{ UAActionMetadataInboxMessageIDKey : mockMessage.messageID };
@@ -113,7 +113,7 @@
     NSURL *URL = [NSURL URLWithString:@"https://foo.urbanairship.com/whatever.html"];
     [[[self.mockWKWebView stub] andReturn:URL] URL];
     // Extend the environment
-    NSDictionary *metadata = [self.extension actionsMetadataForCommand:[UAJavaScriptCommand commandForURL:URL]
+    NSDictionary *metadata = [self.extension actionsMetadataForCommand:[[UAJavaScriptCommand alloc] initWithUrl:URL]
                                                                webView:self.mockWKWebView];
 
     NSDictionary *expected = @{};
