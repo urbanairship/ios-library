@@ -31,7 +31,7 @@ public class Chat : NSObject, UAComponent, UAPushableComponent {
     /// - Returns The shared Chat instance.
     @objc
     public static func shared() -> Chat! {
-        return UAirship.component(forClassName: "Chat") as? Chat
+        return UAirship.component(forClassName: "UAChat") as? Chat
     }
     
     static let routingKey = "routing"

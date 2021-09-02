@@ -100,9 +100,7 @@ public class DefaultAppIntegrationDelegate : NSObject, AppIntegrationDelegate {
         
         // Actions -> Push
         dispatchGroup.enter()
-        ActionRunner.run(actionValues: actionsPayload, situation: situation, metadata: metadata) { _ in
-            dispatchGroup.leave()
-            
+        ActionRunner.run(actionValues: actionsPayload, situation: situation, metadata: metadata) { _ in            
             self.push.didReceiveNotificationResponse(response) {
                 dispatchGroup.leave()
             }
