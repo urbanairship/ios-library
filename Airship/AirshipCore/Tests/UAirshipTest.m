@@ -17,7 +17,7 @@
  */
 - (void)testExceptionForTakeOffOnNotTheMainThread {
     __block id config = [self mockForClass:[UAConfig class]];
-    [[[config stub] andReturn:@YES] validate];
+    [(UAConfig*)[[config stub] andReturn:@YES] validate];
 
     XCTestExpectation *takeOffCalled = [self expectationWithDescription:@"Takeoff called"];
 

@@ -28,6 +28,6 @@
 #import "UAPush.h"
 #import "UASDKModule.h"
 #import "UATagGroups.h"
-#import "UAURLAllowList.h"
+#import "UAURLAllowListScope.h"
 #import "UAVersionMatcher.h"
 #import "UAirship.h"

@@ -2,7 +2,6 @@
 
 #import <UIKit/UIKit.h>
 #import "UAAirshipBaseTest.h"
-#import "UAURLAllowList.h"
 
 @import AirshipCore;
 
@@ -32,7 +31,7 @@
  */
 - (void)testEmptyURLAllowList {
     for (NSNumber *number in self.scopes) {
-        UAURLAllowListScope scope = (UAURLAllowListScope)number.unsignedIntegerValue;
+        UInt8 scope = number.intValue;
         XCTAssertFalse([self.URLAllowList isAllowed:[NSURL URLWithString:@"urbanairship.com"] scope:scope]);
         XCTAssertFalse([self.URLAllowList isAllowed:[NSURL URLWithString:@"www.urbanairship.com"] scope:scope]);
         XCTAssertFalse([self.URLAllowList isAllowed:[NSURL URLWithString:@"http://www.urbanairship.com"] scope:scope]);
@@ -48,7 +47,7 @@
     UAURLAllowList *URLAllowList = [UAURLAllowList allowListWithConfig:self.config];
 
     for (NSNumber *number in self.scopes) {
-        UAURLAllowListScope scope = (UAURLAllowListScope)number.unsignedIntegerValue;
+        UInt8 scope = number.intValue;
 
         XCTAssertTrue([URLAllowList isAllowed:[NSURL URLWithString:@"https://device-api.urbanairship.com/api/user/"] scope:scope]);
 
@@ -389,7 +388,7 @@
     NSURL *matchingURLToAccept = [NSURL URLWithString:@"https://device-api.urbanairship.com/api/user"];
     NSURL *nonMatchingURL = [NSURL URLWithString:@"https://maps.google.com"];
 
-    UAURLAllowListScope scope = UAURLAllowListScopeOpenURL;
+    UInt8 scope = UAURLAllowListScopeOpenURL;
 
     // Allow listing when delegate is off
     XCTAssertTrue([self.URLAllowList isAllowed:matchingURLToReject scope:scope]);

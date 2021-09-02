@@ -9,6 +9,7 @@
 
 @interface UADeepLinkActionTest : UABaseTest
 @property (nonatomic, strong) id mockAirship;
+@property (nonatomic, strong) id stubURLAllowList;
 @property (nonatomic, strong) UADeepLinkAction *action;
 @end
 
@@ -18,6 +19,10 @@
     [super setUp];
 
     self.mockAirship = [self mockForClass:[UAirship class]];
+
+    self.stubURLAllowList = [[UAURLAllowList alloc] init];
+    [[[self.mockAirship stub] andReturn:self.stubURLAllowList] URLAllowList];
+
     [UAirship setSharedAirship:self.mockAirship];
 
     self.action = [[UADeepLinkAction alloc] init];
@@ -50,7 +55,6 @@
  */
 - (void)testURLAllowListFallback {
     NSURL *url = [NSURL URLWithString:@"http://some-deep-link"];
-
     id arg = [UAActionArguments argumentsWithValue:url withSituation:UASituationManualInvocation];
 
     [[[self.mockAirship expect] andDo:^(NSInvocation *invocation) {

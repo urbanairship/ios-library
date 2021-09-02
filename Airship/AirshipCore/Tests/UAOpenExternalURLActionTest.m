@@ -2,7 +2,6 @@
 
 #import "UABaseTest.h"
 #import "UAActionArguments+Internal.h"
-#import "UAURLAllowList.h"
 #import "UAirship+Internal.h"
 #import "AirshipTests-Swift.h"
 
@@ -13,7 +12,7 @@
 @property (nonatomic, strong) UAActionArguments *emptyArgs;
 @property (nonatomic, strong) UAActionArguments *arguments;
 @property (nonatomic, strong) id mockApplication;
-@property (nonatomic, assign) id mockURLAllowList;
+@property (nonatomic, strong) UATestURLAllowList *URLAllowList;
 @property (nonatomic, assign) id mockAirship;
 
 @end
@@ -31,15 +30,15 @@
     self.mockAirship = [self mockForClass:[UAirship class]];
     [UAirship setSharedAirship:self.mockAirship];
 
-    self.mockURLAllowList =  [self mockForClass:[UAURLAllowList class]];
-    [[[self.mockAirship stub] andReturn:self.mockURLAllowList] URLAllowList];
+    self.URLAllowList = [[UATestURLAllowList alloc] init];
+    [[[self.mockAirship stub] andReturn:self.URLAllowList] URLAllowList];
 }
 
 /**
  * Test accepts valid arguments
  */
 - (void)testAcceptsArguments {
-    [[[[self.mockURLAllowList stub] andReturnValue:OCMOCK_VALUE(YES)] ignoringNonObjectArgs] isAllowed:OCMOCK_ANY scope:UAURLAllowListScopeOpenURL];
+    self.URLAllowList.isAllowedReturnValue = YES;
 
     UAOpenExternalURLAction *action = [[UAOpenExternalURLAction alloc] init];
 
@@ -70,7 +69,7 @@
  * Test rejects arguments with URLs that are not allowed.
  */
 - (void)testURLAllowList {
-    [[[[self.mockURLAllowList stub] andReturnValue:OCMOCK_VALUE(NO)] ignoringNonObjectArgs] isAllowed:OCMOCK_ANY scope:UAURLAllowListScopeOpenURL];
+    self.URLAllowList.isAllowedReturnValue = NO;
 
     UAOpenExternalURLAction *action = [[UAOpenExternalURLAction alloc] init];
 
@@ -88,7 +87,7 @@
  * Test perform with a string URL
  */
 - (void)testPerformWithStringURL {
-    [[[[self.mockURLAllowList stub] andReturnValue:OCMOCK_VALUE(YES)] ignoringNonObjectArgs] isAllowed:OCMOCK_ANY scope:UAURLAllowListScopeOpenURL];
+    self.URLAllowList.isAllowedReturnValue = YES;
 
     XCTestExpectation *openURLExpectation = [self expectationWithDescription:@"openURL finished"];
 
@@ -118,7 +117,7 @@
  * Test perform with a NSURL
  */
 - (void)testPerformWithNSURL {
-    [[[[self.mockURLAllowList stub] andReturnValue:OCMOCK_VALUE(YES)] ignoringNonObjectArgs] isAllowed:OCMOCK_ANY scope:UAURLAllowListScopeOpenURL];
+    self.URLAllowList.isAllowedReturnValue = YES;
 
     XCTestExpectation *openURLExpectation = [self expectationWithDescription:@"openURL finished"];
 
@@ -148,7 +147,7 @@
  * Test perform when the application is unable to open the URL it returns an error
  */
 - (void)testPerformError {
-    [[[[self.mockURLAllowList stub] andReturnValue:OCMOCK_VALUE(YES)] ignoringNonObjectArgs] isAllowed:OCMOCK_ANY scope:UAURLAllowListScopeOpenURL];
+    self.URLAllowList.isAllowedReturnValue = YES;
 
     XCTestExpectation *openURLExpectation = [self expectationWithDescription:@"openURL finished"];
 

@@ -2,7 +2,6 @@
 
 #import "UAGlobal.h"
 #import "UALocationProvider.h"
-#import "UAURLAllowList.h"
 
 // Frameworks
 #import <SystemConfiguration/SystemConfiguration.h>
@@ -34,6 +33,7 @@
 @class UAPrivacyManager;
 @class UAContact;
 @class UARuntimeConfig;
+@class UAURLAllowList;
 
 //---------------------------------------------------------------------------------------
 // UADeepLinkDelegate Protocol

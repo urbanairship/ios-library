@@ -8,6 +8,7 @@
 #import "UASchedule+Internal.h"
 #import "UAActionResult.h"
 #import "UAActionArguments.h"
+#import "AirshipTests-Swift.h"
 
 #if __has_include("AirshipCore/AirshipCore-Swift.h")
 #import <AirshipCore/AirshipCore-Swift.h>
@@ -20,7 +21,7 @@
 @property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) id mockConfig;
 @property (nonatomic, strong) UALandingPageAction *action;
-@property (nonatomic, assign) id mockURLAllowList;
+@property (nonatomic, strong) UATestURLAllowList *URLAllowList;
 @property (nonatomic, strong) id mockInAppAutomation;
 
 @end
@@ -33,18 +34,14 @@
 
     self.mockConfig = [self mockForClass:[UARuntimeConfig class]];
     self.mockAirship = [self mockForClass:[UAirship class]];
-    self.mockURLAllowList =  [self mockForClass:[UAURLAllowList class]];
+    self.URLAllowList = [[UATestURLAllowList alloc] init];
 
     [[[self.mockAirship stub] andReturn:self.mockConfig] config];
-    [[[self.mockAirship stub] andReturn:self.mockURLAllowList] URLAllowList];
+    [[[self.mockAirship stub] andReturn:self.URLAllowList] URLAllowList];
     [UAirship setSharedAirship:self.mockAirship];
 
     [[[self.mockConfig stub] andReturn:@"app-key"] appKey];
     [[[self.mockConfig stub] andReturn:@"app-secret"] appSecret];
-
-    // Set an actual URL allow list
-    UAURLAllowList *URLAllowList = [UAURLAllowList allowListWithConfig:self.mockConfig];
-    [[[self.mockAirship stub] andReturn:URLAllowList] URLAllowList];
 
     self.mockInAppAutomation = [self mockForClass:[UAInAppAutomation class]];
     [[[self.mockAirship stub] andReturn:self.mockConfig] config];
@@ -56,7 +53,7 @@
  * Test accepts arguments
  */
 - (void)testAcceptsArguments {
-    [[[[self.mockURLAllowList stub] andReturnValue:OCMOCK_VALUE(YES)] ignoringNonObjectArgs] isAllowed:OCMOCK_ANY scope:UAURLAllowListScopeOpenURL];
+    self.URLAllowList.isAllowedReturnValue = YES;
 
     [self verifyAcceptsArgumentsWithValue:@"foo.urbanairship.com" shouldAccept:YES];
     [self verifyAcceptsArgumentsWithValue:@"https://foo.urbanairship.com" shouldAccept:YES];
@@ -70,7 +67,7 @@
  * as a URL
  */
 - (void)testAcceptsArgumentsNo {
-    [[[[self.mockURLAllowList stub] andReturnValue:OCMOCK_VALUE(YES)] ignoringNonObjectArgs] isAllowed:OCMOCK_ANY scope:UAURLAllowListScopeOpenURL];
+    self.URLAllowList.isAllowedReturnValue = YES;
 
     [self verifyAcceptsArgumentsWithValue:nil shouldAccept:NO];
     [self verifyAcceptsArgumentsWithValue:[[NSObject alloc] init] shouldAccept:NO];
@@ -81,7 +78,7 @@
  * Test rejects arguments with URLs that are not allowed.
  */
 - (void)testURLAllowList {
-    [[[[self.mockURLAllowList stub] andReturnValue:OCMOCK_VALUE(NO)] ignoringNonObjectArgs] isAllowed:OCMOCK_ANY scope:UAURLAllowListScopeOpenURL];
+    self.URLAllowList.isAllowedReturnValue = NO;
 
     [self verifyAcceptsArgumentsWithValue:@"foo.urbanairship.com" shouldAccept:NO];
     [self verifyAcceptsArgumentsWithValue:@"https://foo.urbanairship.com" shouldAccept:NO];
@@ -94,7 +91,7 @@
  * Test perform in foreground situations
  */
 - (void)testPerformInForeground {
-    [[[[self.mockURLAllowList stub] andReturnValue:OCMOCK_VALUE(YES)] ignoringNonObjectArgs] isAllowed:OCMOCK_ANY scope:UAURLAllowListScopeOpenURL];
+    self.URLAllowList.isAllowedReturnValue = YES;
 
     NSString *urlString = @"www.airship.com";
     // Expected URL String should be message ID with prepended message scheme.
