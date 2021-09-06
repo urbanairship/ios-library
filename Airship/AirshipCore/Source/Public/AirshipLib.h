@@ -9,7 +9,6 @@
 #import "UAAnalyticsEventConsumerProtocol.h"
 #import "UAAppIntegrationDelegate.h"
 #import "UAAsyncOperation.h"
-#import "UAAttributes.h"
 #import "UAComponent.h"
 #import "UACompression.h"
 #import "UAEvent.h"
