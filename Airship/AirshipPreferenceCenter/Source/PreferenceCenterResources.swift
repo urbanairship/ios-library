@@ -29,6 +29,6 @@ public class PreferenceCenterResources : NSObject {
     }
 
     public static func localizedString(key: String) -> String? {
-        return key.localizedString(withTable:"UrbanAirship", moduleBundle:bundle())
+        return LocalizationUtils.localizedString(key ,withTable:"UrbanAirship", moduleBundle:bundle())
     }
 }

@@ -163,14 +163,16 @@ public class UANotificationCategories : NSObject {
             return nil
         }
         if let titleResource = actionDefinition["title_resource"] as? String {
-            let localizedTitle = titleResource.localizedString(withTable: "UrbanAirship",
+            let localizedTitle = LocalizationUtils.localizedString(titleResource,
+                                                                         withTable: "UrbanAirship",
+                                                                         moduleBundle: UAirshipCoreResources.bundle,
+                                                                         defaultValue: title)
+            
+            if localizedTitle == title {
+                return LocalizationUtils.localizedString(titleResource,
+                                                               withTable: "AirshipAccengage",
                                                                moduleBundle: UAirshipCoreResources.bundle,
                                                                defaultValue: title)
-
-            if localizedTitle == title {
-                return titleResource.localizedString(withTable: "AirshipAccengage",
-                                                     moduleBundle: UAirshipCoreResources.bundle,
-                                                     defaultValue: title)
             }
         }
 

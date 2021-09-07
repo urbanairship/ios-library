@@ -3,7 +3,6 @@
 #else
 #import "NSObject+UAAdditions.h"
 #import "NSJSONSerialization+UAAdditions.h"
-#import "NSString+UALocalizationAdditions.h"
 #import "UAAction.h"
 #import "UAActionArguments.h"
 #import "UAActionResult.h"

@@ -1,7 +1,6 @@
 #import "NSDictionary+UAAdditions.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "NSObject+UAAdditions.h"
-#import "NSString+UALocalizationAdditions.h"
 #import "UAAction.h"
 #import "UAActionArguments.h"
 #import "UAActionPredicateProtocol.h"
