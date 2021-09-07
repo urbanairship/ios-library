@@ -37,7 +37,7 @@ public class OpenChatAction : NSObject, UAAction {
     @objc
     public override convenience init() {
         self.init {
-            return Chat.shared()
+            return Chat.shared
         }
     }
 

@@ -1,16 +1,24 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
+#import "AirshipTests-Swift.h"
 
 @import AirshipCore;
 
 @interface UASearchEventTemplateTest : UABaseTest
+@property(nonatomic, strong) UATestAnalytics *analytics;
+@property(nonatomic, strong) UATestAirshipInstance *airship;
+
 @end
 
 @implementation UASearchEventTemplateTest
 
 - (void)setUp {
     [super setUp];
+    self.analytics = [[UATestAnalytics alloc] init];
+    self.airship = [[UATestAirshipInstance alloc] init];
+    self.airship.components = @[self.analytics];
+    [self.airship makeShared];
 }
 
 /**

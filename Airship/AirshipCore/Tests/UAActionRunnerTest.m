@@ -2,13 +2,13 @@
 
 #import "UABaseTest.h"
 #import "UAAction.h"
-#import "UAirship+Internal.h"
+#import "AirshipTests-Swift.h"
 
 @import AirshipCore;
 
 @interface UAActionRunnerTest : UABaseTest
 @property (nonatomic, strong) UAActionRegistry *registry;
-@property (nonatomic, strong) id mockAirship;
+@property (nonatomic, strong) UATestAirshipInstance *airship;
 @end
 
 @implementation UAActionRunnerTest
@@ -18,13 +18,12 @@ NSString *anotherActionName = @"AnotherActionName";
 
 - (void)setUp {
     [super setUp];
+    
     self.registry = [UAActionRegistry defaultRegistry];
 
-
-    // Mock Airship
-    self.mockAirship = [self mockForClass:[UAirship class]];
-    [UAirship setSharedAirship:self.mockAirship];
-    [[[self.mockAirship stub] andReturn:self.registry] actionRegistry];
+    self.airship = [[UATestAirshipInstance alloc] init];
+    self.airship.actionRegistry = self.registry;
+    [self.airship makeShared];
 }
 
 /**

@@ -2,7 +2,6 @@
 
 #import "UAAirshipBaseTest.h"
 
-#import "UAirship+Internal.h"
 #import "UAInAppMessageAdapterProtocol.h"
 #import "UAInAppMessageManager+Internal.h"
 #import "UAInAppMessageBannerDisplayContent+Internal.h"
@@ -31,7 +30,8 @@ NSString * const UAInAppMessageManagerTestScheduleID = @"schedule ID";
 @property(nonatomic, strong) id mockAssetManager;
 @property(nonatomic, strong) id mockAssetCache;
 @property(nonatomic, strong) id mockAssets;
-@property(nonatomic, strong) id mockAnalytics;
+@property(nonatomic, strong) UATestAnalytics *analytics;
+@property(nonatomic, strong) UATestAirshipInstance *airship;
 
 @end
 
@@ -58,10 +58,14 @@ NSString * const UAInAppMessageManagerTestScheduleID = @"schedule ID";
     self.mockAssetManager = [self mockForClass:[UAInAppMessageAssetManager class]];
     self.mockAssetCache = [self mockForClass:[UAInAppMessageAssetCache class]];
     self.mockAssets = [self mockForClass:[UAInAppMessageAssets class]];
-    self.mockAnalytics = [self mockForClass:[UAAnalytics class]];
-
+    
+    self.analytics = [[UATestAnalytics alloc] init];
+    self.airship = [[UATestAirshipInstance alloc] init];
+    self.airship.components = @[self.analytics];
+    [self.airship makeShared];
+    
     self.manager = [UAInAppMessageManager managerWithDataStore:self.dataStore
-                                                     analytics:self.mockAnalytics
+                                                     analytics:self.analytics
                                                     dispatcher:self.testDispatcher
                                             displayCoordinator:self.mockDefaultDisplayCoordinator
                                                   assetManager:self.mockAssetManager];
@@ -235,7 +239,6 @@ NSString * const UAInAppMessageManagerTestScheduleID = @"schedule ID";
     // Execute
     [[[self.mockDefaultDisplayCoordinator stub] andReturnValue:@(YES)] isReady];
     [[[self.mockAdapter stub] andReturnValue:@(YES)] isReadyToDisplay];
-    [[self.mockAnalytics expect] addEvent:OCMOCK_ANY];
 
     // Display
     XCTestExpectation *displayBlockCalled = [self expectationWithDescription:@"display block should be called"];
@@ -260,8 +263,11 @@ NSString * const UAInAppMessageManagerTestScheduleID = @"schedule ID";
     }];
 
     [self waitForTestExpectations];
+    XCTAssertEqual(2, self.analytics.events.count);
+    XCTAssertEqualObjects(@"in_app_display", self.analytics.events[0].eventType);
+    XCTAssertEqualObjects(@"in_app_resolution", self.analytics.events[1].eventType);
+
     [self.mockAdapter verify];
-    [self.mockAnalytics verify];
     [self.mockDelegate verify];
     [self.mockActionRunner verify];
 }

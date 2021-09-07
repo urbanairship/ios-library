@@ -7,7 +7,6 @@
 #import "UAPush.h"
 #import "UAAccengagePayload.h"
 #import "UAAccengageUtils.h"
-#import "UAirship+Internal.h"
 
 @import AirshipCore;
 
@@ -154,8 +153,7 @@
 
 - (void)testReceivedNotificationResponseButtonActionsBrowser {
     UAAccengage *accengage = [self createAccengageWithSettings:@{}];
-    UAActionRunner *runner = [[UAActionRunner alloc] init];
-    id runnerMock = [OCMockObject partialMockForObject:runner];
+    id runnerMock = OCMClassMock([UAActionRunner class]);
 
     NSDictionary *notificationInfo = @{
         @"aps": @{
@@ -196,7 +194,9 @@
     [[[mockContent stub] andReturn:notificationInfo] userInfo];
     [[[mockResponse stub] andReturn:@"2"] actionIdentifier];
 
-    [[runnerMock expect] runActionWithName:@"open_external_url_action" value:@"someotherurl.com"     situation:UASituationForegroundInteractiveButton];
+    [[runnerMock expect] runActionWithName:@"open_external_url_action"
+                                     value:@"someotherurl.com"
+                                 situation:UASituationForegroundInteractiveButton];
     [((NSObject<UAPushableComponent> *)accengage) receivedNotificationResponse:mockResponse completionHandler:^{}];
     [runnerMock verify];
 }
@@ -320,7 +320,7 @@
                 @"category": @"test_category"
         },
         @"a4sid": @"7675",
-        @"a4sd": @1,
+        @"a4sd": @"1",
         @"a4surl": @"someurl.com",
         @"a4sb": @[@{
                        @"action": @"webView",
@@ -347,7 +347,8 @@
 
     options = [((NSObject<UAPushableComponent> *)accengage) presentationOptionsForNotification:mockNotification defaultPresentationOptions:defaultOptions];
 
-    XCTAssertEqual(options, [UAPush shared].defaultPresentationOptions, @"Incorrect notification presentation options");
+    UNNotificationPresentationOptions expected = (UANotificationOptionAlert | UANotificationOptionBadge | UANotificationOptionSound);
+    XCTAssertEqual(expected, options, @"Incorrect notification presentation options");
 
     notificationInfo = @{
         @"aps": @{

@@ -25,14 +25,16 @@ NSString *const UAInAppMessageEventAppDefinedSourceValue = @"app-defined";
                                           source:(UAInAppMessageSource)source
                                        campaigns:(NSDictionary *)campaigns {
 
+
+    id<UAAnalyticsProtocol> analytics = UAAnalytics.supplier();
     id identifier = [UAInAppMessageEventUtils createIDMapWithMessageID:messageID
                                                                 source:source
                                                              campaigns:campaigns];
 
     NSMutableDictionary *data = [NSMutableDictionary dictionary];
     [data setValue:identifier forKey:UAInAppMessageEventIDKey];
-    [data setValue:[UAirship analytics].conversionSendID forKey:UAInAppMessageEventConversionSendIDKey];
-    [data setValue:[UAirship analytics].conversionPushMetadata forKey:UAInAppMessageEventConversionMetadataKey];
+    [data setValue:analytics.conversionSendID forKey:UAInAppMessageEventConversionSendIDKey];
+    [data setValue:analytics.conversionPushMetadata forKey:UAInAppMessageEventConversionMetadataKey];
 
     if (source == UAInAppMessageSourceAppDefined) {
         [data setValue:UAInAppMessageEventAppDefinedSourceValue forKey:UAInAppMessageEventSourceKey];

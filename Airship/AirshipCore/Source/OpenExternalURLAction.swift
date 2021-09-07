@@ -34,7 +34,7 @@ public class OpenExternalURLAction : NSObject, UAAction {
                 return false
             }
             
-            guard UAirship.shared().urlAllowList.isAllowed(url, scope: .openURL) else {
+            guard Airship.shared.urlAllowList.isAllowed(url, scope: .openURL) else {
                 AirshipLogger.error("URL \(url) not allowed. Unable to open URL.")
                 return false
             }

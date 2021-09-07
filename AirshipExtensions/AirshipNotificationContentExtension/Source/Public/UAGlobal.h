@@ -99,14 +99,6 @@ extern BOOL uaLoudImpErrorLoggingEnabled; // Default is YES
 
 #define UALOG UA_LDEBUG
 
-#define UA_SUPPRESS_PERFORM_SELECTOR_LEAK_WARNING(THE_CODE) \
-do { \
-_Pragma("clang diagnostic push") \
-_Pragma("clang diagnostic ignored \"-Warc-performSelector-leaks\"") \
-THE_CODE; \
-_Pragma("clang diagnostic pop") \
-} while (0)
-
 #define UA_PREVIEW_WARNING \
 NSLog(@"\n\n" \
       "\t                       AIRSHIP PREVIEW RELEASE                       \n"\

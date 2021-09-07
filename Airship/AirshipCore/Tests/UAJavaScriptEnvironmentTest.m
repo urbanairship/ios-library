@@ -2,16 +2,16 @@
 
 #import <JavaScriptCore/JavaScriptCore.h>
 #import "UAAirshipBaseTest.h"
-#import "UAirship+Internal.h"
+#import "AirshipTests-Swift.h"
 
 @import AirshipCore;
 
 @interface UAJavaScriptEnvironmentTest : UAAirshipBaseTest
 @property (nonatomic, strong) JSContext *jsc;
 @property (nonatomic, strong) id mockUIDevice;
-@property (nonatomic, strong) id mockAirship;
-@property (nonatomic, strong) id mockChannel;
-@property (nonatomic, strong) id mockContact;
+@property(nonatomic, strong) UATestAirshipInstance *airship;
+@property (nonatomic, strong) UATestContact *contact;
+@property (nonatomic, strong) UATestChannel *channel;
 @end
 
 @implementation UAJavaScriptEnvironmentTest
@@ -21,17 +21,15 @@
     self.jsc = [[JSContext alloc] initWithVirtualMachine:[[JSVirtualMachine alloc] init]];
     [self.jsc evaluateScript:@"window = {}"];
 
-    self.mockChannel = [self mockForProtocol:@protocol(UAChannelProtocol)];
-    self.mockContact = [self mockForProtocol:@protocol(UAContactProtocol)];
+    self.channel = [[UATestChannel alloc] init];
+    self.contact = [[UATestContact alloc] init];
     self.mockUIDevice = [self mockForClass:[UIDevice class]];
     [[[self.mockUIDevice stub] andReturn:self.mockUIDevice] currentDevice];
 
-    self.mockAirship = [self mockForClass:[UAirship class]];
-    [[[self.mockAirship stub] andReturn:self.mockChannel] channel];
-    [[[self.mockAirship stub] andReturn:self.mockContact] contact];
-    [[[self.mockAirship stub] andReturn:self.config] config];
-
-    [UAirship setSharedAirship:self.mockAirship];
+    self.airship = [[UATestAirshipInstance alloc] init];
+    self.airship.components = @[self.channel, self.contact];
+    self.airship.config = self.config;
+    [self.airship makeShared];
 }
 
 /**
@@ -39,9 +37,9 @@
  */
 - (void)testDefaultEnvironment {
     [[[self.mockUIDevice stub] andReturn:@"device model"] model];
-    [[[self.mockChannel stub] andReturn:@"channel ID"] identifier];
-    [[[self.mockContact stub] andReturn:@"named user"] namedUserID];
-
+    self.channel.identifier = @"channel ID";
+    self.contact.namedUserID = @"named user";
+    
     // Inject the default JavaScript environment
     [self.jsc evaluateScript:[[[UAJavaScriptEnvironment alloc] init] build]];
 

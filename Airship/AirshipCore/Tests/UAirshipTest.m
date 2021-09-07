@@ -1,36 +1,21 @@
 
 #import <UIKit/UIKit.h>
 #import "UABaseTest.h"
-#import "UAirship+Internal.h"
 #import "UAComponent.h"
+#import "AirshipTests-Swift.h"
 
 @import AirshipCore;
 
 @interface UAirshipTest : UABaseTest
+@property(nonatomic, strong) UATestAirshipInstance *airshipInstance;
 @end
 
 @implementation UAirshipTest
 
-
-/**
- * Test that if takeOff is called on a background thread that an exception is thrown.
- */
-- (void)testExceptionForTakeOffOnNotTheMainThread {
-    __block id config = [self mockForClass:[UAConfig class]];
-    [(UAConfig*)[[config stub] andReturn:@YES] validate];
-
-    XCTestExpectation *takeOffCalled = [self expectationWithDescription:@"Takeoff called"];
-
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-        XCTAssertThrowsSpecificNamed([UAirship takeOff:config],
-                                     NSException, UAirshipTakeOffBackgroundThreadException,
-                                     @"Calling takeOff on a background thread should throw a UAirshipTakeOffBackgroundThreadException");
-        [takeOffCalled fulfill];
-    });
-
-
-    // Wait for the test expectations
-    [self waitForTestExpectations];
+- (void)setUp {
+    [super setUp];
+    self.airshipInstance = [[UATestAirshipInstance alloc] init];
+    [self.airshipInstance makeShared];
 }
 
 - (void)testUAirshipDeepLinks {
@@ -43,11 +28,10 @@
     [[[component2 expect] andReturnValue:@(YES)] deepLink:deepLink];
     [[component3 reject] deepLink:deepLink];
 
-    UAirship *airship = [[UAirship alloc] init];
-    airship.components = @[component1, component2, component3];
+    self.airshipInstance.components = @[component1, component2, component3];
     
     XCTestExpectation *deepLinked = [self expectationWithDescription:@"Deep linked"];
-    [airship deepLink:deepLink completionHandler:^(BOOL result) {
+    [[UAirship shared] deepLink:deepLink completionHandler:^(BOOL result) {
         XCTAssertTrue(result);
         [deepLinked fulfill];
     }];
@@ -68,11 +52,10 @@
     [[[component1 expect] andReturnValue:@(NO)] deepLink:deepLink];
     [[[component2 expect] andReturnValue:@(NO)] deepLink:deepLink];
 
-    UAirship *airship = [[UAirship alloc] init];
-    airship.components = @[component1, component2];
-    
+    self.airshipInstance.components = @[component1, component2];
+
     XCTestExpectation *deepLinked = [self expectationWithDescription:@"Deep linked"];
-    [airship deepLink:deepLink completionHandler:^(BOOL result) {
+    [[UAirship shared] deepLink:deepLink completionHandler:^(BOOL result) {
         XCTAssertTrue(result);
         [deepLinked fulfill];
     }];
@@ -96,12 +79,11 @@
         completionHandler();
     }] receivedDeepLink:deepLink completionHandler:OCMOCK_ANY];
     
-    UAirship *airship = [[UAirship alloc] init];
-    airship.components = @[component1];
-    airship.deepLinkDelegate = mockDelegate;
+    self.airshipInstance.components = @[component1];
+    [UAirship shared].deepLinkDelegate = mockDelegate;
     
     XCTestExpectation *deepLinked = [self expectationWithDescription:@"Deep linked"];
-    [airship deepLink:deepLink completionHandler:^(BOOL result) {
+    [[UAirship shared] deepLink:deepLink completionHandler:^(BOOL result) {
         XCTAssertTrue(result);
         [deepLinked fulfill];
     }];
@@ -115,10 +97,9 @@
 
 - (void)testDeepLinkDelegateNotSet {
     NSURL *deepLink = [NSURL URLWithString:@"some-other://some-deep-link"];
-    UAirship *airship = [[UAirship alloc] init];
     
     XCTestExpectation *deepLinked = [self expectationWithDescription:@"Deep linked"];
-    [airship deepLink:deepLink completionHandler:^(BOOL result) {
+    [[UAirship shared] deepLink:deepLink completionHandler:^(BOOL result) {
         XCTAssertFalse(result);
         [deepLinked fulfill];
     }];

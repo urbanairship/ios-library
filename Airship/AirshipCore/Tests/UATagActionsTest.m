@@ -2,7 +2,7 @@
 
 #import "UABaseTest.h"
 #import "UAActionArguments+Internal.h"
-#import "UAirship+Internal.h"
+
 #import "AirshipTests-Swift.h"
 
 @import AirshipCore;

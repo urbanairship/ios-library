@@ -10,6 +10,8 @@
 @class UAMessageCenterStyle;
 @class UAUser;
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * Delegate protocol for receiving callbacks related to message center.
  */
@@ -84,9 +86,8 @@ extern NSString *const UAMessageDataScheme;
 
 /**
  * The shared message center instance.
- * @returns The shared message center instance.
  */
-+(UAMessageCenter *)shared;
+@property (class, nonatomic, readonly, null_unspecified) UAMessageCenter *shared;
 
 /**
  * Display the message center.
@@ -128,3 +129,5 @@ extern NSString *const UAMessageDataScheme;
 - (void)dismiss;
 
 @end
+
+NS_ASSUME_NONNULL_END

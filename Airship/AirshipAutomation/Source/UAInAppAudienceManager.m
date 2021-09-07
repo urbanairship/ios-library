@@ -187,7 +187,7 @@ NSString * const UAInAppAudienceManagerErrorDomain = @"com.urbanairship.in_app_a
 
     [self.delegate gatherTagGroupsWithCompletionHandler:^(UATagGroups *tagGroups) {
         tagGroups = [requestedTagGroups merge:tagGroups];
-        [self.lookupAPIClient lookupTagGroupsWithChannelID:[UAirship channel].identifier
+        [self.lookupAPIClient lookupTagGroupsWithChannelID:self.channel.identifier
                                         requestedTagGroups:tagGroups
                                             cachedResponse:self.cache.response
                                          completionHandler:^(UATagGroupsLookupResponse *response) {
@@ -212,13 +212,13 @@ NSString * const UAInAppAudienceManagerErrorDomain = @"com.urbanairship.in_app_a
     }
 
     // Requesting only device tag groups when channel tag registration is enabled
-    if ([requestedTagGroups containsOnlyDeviceTags] && [UAirship channel].isChannelTagRegistrationEnabled) {
+    if ([requestedTagGroups containsOnlyDeviceTags] && self.channel.isChannelTagRegistrationEnabled) {
         NSMutableDictionary *tags = [NSMutableDictionary dictionary];
         [tags setValue:self.channel.tags forKey:@"device"];
         return completionHandler([UATagGroups tagGroupsWithTags:tags], error);
     }
 
-    if (![UAirship channel].identifier) {
+    if (!self.channel.identifier) {
         error = [self errorWithCode:UAInAppAudienceManagerErrorCodeChannelRequired message:@"Channel ID is required"];
         return completionHandler(nil, error);
     }

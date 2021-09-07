@@ -38,7 +38,7 @@ public class DeepLinkAction : NSObject, UAAction {
             return
         }
         
-        UAirship.shared().deepLink(url) { result in
+        Airship.shared.deepLink(url) { result in
             if (result) {
                 completionHandler(UAActionResult.empty())
             } else {
@@ -49,7 +49,7 @@ public class DeepLinkAction : NSObject, UAAction {
     
     private func openURL(_ url: URL, completionHandler: @escaping UAActionCompletionHandler) {
         UADispatcher.main.dispatchAsync {
-            guard UAirship.shared().urlAllowList.isAllowed(url, scope: .openURL) else {
+            guard Airship.shared.urlAllowList.isAllowed(url, scope: .openURL) else {
                 AirshipLogger.error("URL \(url) not allowed. Unable to open url.")
                 completionHandler(UAActionResult(error: AirshipErrors.error("URL \(url) not allowed")))
                 return

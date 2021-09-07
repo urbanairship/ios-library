@@ -2,7 +2,6 @@
 
 #import "UAAirshipBaseTest.h"
 #import "UAAutomationNativeBridgeExtension+Internal.h"
-#import "UAirship+Internal.h"
 #import "UAInAppMessage.h"
 #import "UAInAppMessageCustomDisplayContent.h"
 

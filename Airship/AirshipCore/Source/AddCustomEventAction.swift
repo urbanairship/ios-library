@@ -25,21 +25,10 @@
  */
 @objc(UAAddCustomEventAction)
 public class AddCustomEventAction : NSObject, UAAction {
-    private var analytics: AnalyticsProtocol
     
     @objc
     public static let name = "add_custom_event_action"
 
-    @objc
-    public override init() {
-        self.analytics = UAirship.analytics()
-    }
-
-    @objc
-    public init(analytics: AnalyticsProtocol) {
-        self.analytics = analytics
-        super.init()
-    }
     
     public func acceptsArguments(_ arguments: UAActionArguments) -> Bool {
         guard let dict = arguments.value as? [AnyHashable : Any] else {
@@ -66,9 +55,6 @@ public class AddCustomEventAction : NSObject, UAAction {
 
         let event = UACustomEvent(name: eventName, stringValue: eventValue)
         
-        event.analyticsSupplier = {
-            return self.analytics
-        }
         event.transactionID = transactionID
         event.properties = properties ?? [:]
         

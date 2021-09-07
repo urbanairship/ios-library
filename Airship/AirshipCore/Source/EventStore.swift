@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+import CoreData
 
 /// Event data store. For internal use only.
 /// :nodoc:

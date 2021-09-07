@@ -78,15 +78,15 @@ class AddTagGroupsTableViewController: UITableViewController, UITextFieldDelegat
         
         if (isRemove) {
             if (isNamedUser) {
-                UAirship.namedUser()?.removeTags([tagText], group: tagGroupText)
+                Airship.namedUser.removeTags([tagText], group: tagGroupText)
             } else {
-                UAirship.channel()?.removeTags([tagText], group: tagGroupText)
+                Airship.channel.removeTags([tagText], group: tagGroupText)
             }
         } else {
             if (isNamedUser) {
-                UAirship.namedUser()?.addTags([tagText], group: tagGroupText)
+                Airship.namedUser.addTags([tagText], group: tagGroupText)
             } else {
-                UAirship.channel()?.addTags([tagText], group: tagGroupText)
+                Airship.channel.addTags([tagText], group: tagGroupText)
             }
         }
         

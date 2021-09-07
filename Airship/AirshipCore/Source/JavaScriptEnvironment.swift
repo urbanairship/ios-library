@@ -26,15 +26,15 @@ public class JavaScriptEnvironment : NSObject, JavaScriptEnvironmentProtocol {
     private class func defaultExtensions() -> Set<String> {
         var defaults: Set<String> = []
         defaults.insert(JavaScriptEnvironment.stringGetter("getDeviceModel", UIDevice.current.model))
-        let contact : ContactProtocol = UAirship.contact()
+        let contact : ContactProtocol = Airship.requireComponent(ofType: ContactProtocol.self)
         if (contact.namedUserID != nil) {
             defaults.insert(JavaScriptEnvironment.stringGetter("getNamedUser", contact.namedUserID!))
         }
-        let channel: ChannelProtocol = UAirship.channel()
+        let channel: ChannelProtocol =  Airship.requireComponent(ofType: ChannelProtocol.self)
         if (channel.identifier != nil) {
             defaults.insert(JavaScriptEnvironment.stringGetter("getChannelId", channel.identifier!))
         }       
-        defaults.insert(JavaScriptEnvironment.stringGetter("getAppKey", UAirship.shared().config.appKey))
+        defaults.insert(JavaScriptEnvironment.stringGetter("getAppKey", Airship.shared.config.appKey))
         return defaults
     }
     

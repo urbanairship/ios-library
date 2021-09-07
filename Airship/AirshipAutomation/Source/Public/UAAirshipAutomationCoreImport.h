@@ -16,7 +16,6 @@
 #import "UAJSONPredicate.h"
 #import "UAJSONValueMatcher.h"
 #import "UATagGroups.h"
-#import "UAirship.h"
 #import "UAJavaScriptCommandDelegate.h"
 #import "UANativeBridgeDelegate.h"
 #import "UANativeBridgeExtensionDelegate.h"

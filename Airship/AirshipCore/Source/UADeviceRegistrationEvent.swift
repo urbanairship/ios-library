@@ -23,7 +23,7 @@ public class UADeviceRegistrationEvent : NSObject, UAEvent {
     
     @objc
     public override convenience init() {
-        self.init(channel: UAirship.channel(), push: UAirship.push(), privacyManager: UAirship.shared().privacyManager)
+        self.init(channel: Airship.channel, push: Airship.push, privacyManager: Airship.shared.privacyManager)
     }
     
     @objc

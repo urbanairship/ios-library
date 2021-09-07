@@ -2,7 +2,6 @@
 
 #import "UABaseTest.h"
 #import "UAActionArguments+Internal.h"
-#import "UAirship+Internal.h"
 #import "AirshipTests-Swift.h"
 
 @import AirshipCore;
@@ -13,8 +12,7 @@
 @property (nonatomic, strong) UAActionArguments *arguments;
 @property (nonatomic, strong) id mockApplication;
 @property (nonatomic, strong) UATestURLAllowList *URLAllowList;
-@property (nonatomic, assign) id mockAirship;
-
+@property(nonatomic, strong) UATestAirshipInstance *airship;
 @end
 
 
@@ -27,11 +25,11 @@
     self.mockApplication = [self mockForClass:[UIApplication class]];
     [[[self.mockApplication stub] andReturn:self.mockApplication] sharedApplication];
 
-    self.mockAirship = [self mockForClass:[UAirship class]];
-    [UAirship setSharedAirship:self.mockAirship];
-
     self.URLAllowList = [[UATestURLAllowList alloc] init];
-    [[[self.mockAirship stub] andReturn:self.URLAllowList] URLAllowList];
+    
+    self.airship = [[UATestAirshipInstance alloc] init];
+    self.airship.urlAllowList = self.URLAllowList;
+    [self.airship makeShared];
 }
 
 /**

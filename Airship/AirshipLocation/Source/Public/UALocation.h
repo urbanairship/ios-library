@@ -48,9 +48,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * The shared location instance.
- * @returns The shared location instance.
  */
-+(UALocation *)shared;
+@property(class, nonatomic, readonly) UALocation *shared;
 
 
 ///---------------------------------------------------------------------------------------

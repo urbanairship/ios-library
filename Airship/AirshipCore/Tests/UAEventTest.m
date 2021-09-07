@@ -5,15 +5,12 @@
 #import <CoreTelephony/CTCarrier.h>
 
 #import "UAEvent.h"
-#import "UAirship+Internal.h"
 #import "AirshipTests-Swift.h"
 @import AirshipCore;
 
 @interface UAEventTest : UAAirshipBaseTest
 
 // stubs
-@property (nonatomic, strong) id analytics;
-@property (nonatomic, strong) id airship;
 @property (nonatomic, strong) id reachability;
 @property (nonatomic, strong) id timeZone;
 @property (nonatomic, strong) id application;
@@ -22,6 +19,8 @@
 @property (nonatomic, strong) id currentDevice;
 @property (nonatomic, strong) id utils;
 @property (nonatomic, strong) UAPrivacyManager *privacyManager;
+@property(nonatomic, strong) UATestAnalytics *analytics;
+@property(nonatomic, strong) UATestAirshipInstance *airship;
 @end
 
 @implementation UAEventTest
@@ -31,17 +30,14 @@
 
     self.testChannel = [[UATestChannel alloc] init];
     self.privacyManager = [[UAPrivacyManager alloc] initWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesNone];
-    self.analytics = [self mockForProtocol:@protocol(UAAnalyticsProtocol)];
     self.push = [self mockForClass:[UAPush class]];
+    self.analytics = [[UATestAnalytics alloc] init];
 
-    self.airship = [self mockForClass:[UAirship class]];
-
-    [[[self.airship stub] andReturn:self.analytics] sharedAnalytics];
-    [[[self.airship stub] andReturn:self.push] push];
-    [[[self.airship stub] andReturn:self.privacyManager] privacyManager];
-
-    [UAirship setSharedAirship:self.airship];
-
+    self.airship = [[UATestAirshipInstance alloc] init];
+    self.airship.components = @[self.analytics, self.push, self.testChannel];
+    self.airship.privacyManager = self.privacyManager;
+    [self.airship makeShared];
+    
     self.utils = [self strictMockForClass:[UAUtils class]];
 
     self.timeZone = [self mockForClass:[NSTimeZone class]];
@@ -63,8 +59,8 @@
  * Test app init event
  */
 - (void)testAppInitEvent {
-    [[[self.analytics stub] andReturn:@"push ID"] conversionSendID];
-    [[[self.analytics stub] andReturn:@"base64metadataString"] conversionPushMetadata];
+    self.analytics.conversionSendID = @"push ID";
+    self.analytics.conversionPushMetadata = @"base64metadataString";
 
     [[[self.timeZone stub] andReturnValue:OCMOCK_VALUE((NSInteger)2000)] secondsFromGMT];
 
@@ -99,8 +95,8 @@
  * Test app foreground event
  */
 - (void)testAppForegroundEvent {
-    [[[self.analytics stub] andReturn:@"push ID"] conversionSendID];
-    [[[self.analytics stub] andReturn:@"base64metadataString"] conversionPushMetadata];
+    self.analytics.conversionSendID = @"push ID";
+    self.analytics.conversionPushMetadata = @"base64metadataString";
 
     [[[self.timeZone stub] andReturnValue:OCMOCK_VALUE((NSInteger)2000)] secondsFromGMT];
     [[[self.timeZone stub] andReturnValue:OCMOCK_VALUE(YES)] isDaylightSavingTime];
@@ -123,32 +119,24 @@
 
 
     UAAppForegroundEvent *event = [[UAAppForegroundEvent alloc] init];
-    event.analyticsSupplier = ^{
-        return self.analytics;
-    };
 
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"app_foreground", @"Event type is unexpected.");
-
 }
 
 /**
  * Test app exit event
  */
 - (void)testAppExitEvent {
+    self.analytics.conversionSendID = @"push ID";
+    self.analytics.conversionPushMetadata = @"base64metadataString";
 
-    [[[self.analytics stub] andReturn:@"push ID"] conversionSendID];
-    [[[self.analytics stub] andReturn:@"base64metadataString"] conversionPushMetadata];
     
     NSDictionary *expectedData = @{@"connection_type": @"wifi",
                                    @"push_id": @"push ID",
                                    @"metadata": @"base64metadataString"};
 
     UAAppExitEvent *event = [[UAAppExitEvent alloc] init];
-    event.analyticsSupplier = ^{
-        return self.analytics;
-    };
-
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"app_exit", @"Event type is unexpected.");
 }
@@ -220,8 +208,6 @@
  */
 - (void)testPushReceivedEventNoPushID {
     id notification = @{ @"_uamid": @"rich push ID" };
-
-
     NSDictionary *expectedData = @{@"push_id": @"MISSING_SEND_ID"};
 
     UAPushReceivedEvent *event = [[UAPushReceivedEvent alloc] initWithNotification:notification];

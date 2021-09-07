@@ -41,8 +41,8 @@
     
     return [UAStateOverrides stateOverridesWithAppVersion:[UAUtils bundleShortVersionString]
                                                sdkVersion:[UAirshipVersion get]
-                                           localeLanguage:[UAirship shared].locale.currentLocale.languageCode
-                                            localeCountry:[UAirship shared].locale.currentLocale.countryCode
+                                           localeLanguage:[UAirship shared].localeManager.currentLocale.languageCode
+                                            localeCountry:[UAirship shared].localeManager.currentLocale.countryCode
                                         notificationOptIn:optIn];
 }
 

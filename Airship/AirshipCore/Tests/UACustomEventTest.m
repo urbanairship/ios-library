@@ -1,14 +1,14 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAirship+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
+#import "AirshipTests-Swift.h"
 
 @import AirshipCore;
 
 @interface UACustomEventTest : UABaseTest
-@property (nonatomic, strong) id analytics;
-@property (nonatomic, strong) id airship;
+@property(nonatomic, strong) UATestAnalytics *analytics;
+@property(nonatomic, strong) UATestAirshipInstance *airship;
 @end
 
 @implementation UACustomEventTest
@@ -16,10 +16,10 @@
 - (void)setUp {
     [super setUp];
 
-    self.analytics = [self mockForClass:[UAAnalytics class]];
-    self.airship = [self mockForClass:[UAirship class]];
-    [[[self.airship stub] andReturn:self.analytics] sharedAnalytics];
-    [UAirship setSharedAirship:self.airship];
+    self.analytics = [[UATestAnalytics alloc] init];
+    self.airship = [[UATestAirshipInstance alloc] init];
+    self.airship.components = @[self.analytics];
+    [self.airship makeShared];
 }
 
 /**
@@ -224,7 +224,7 @@
  * Test event includes conversion send ID if available.
  */
 - (void)testConversionSendID {
-    [[[self.analytics stub] andReturn:@"send ID"] conversionSendID];
+    self.analytics.conversionSendID = @"send ID";
     UACustomEvent *event = [UACustomEvent eventWithName:@"event name"];
 
     XCTAssertEqualObjects(@"send ID", [event.data objectForKey:@"conversion_send_id"], @"Send ID should be set.");
@@ -244,7 +244,8 @@
  * Test event includes conversion push metadata if available.
  */
 - (void)testConversionPushMetadata {
-    [[[self.analytics stub] andReturn:@"send metadata"] conversionPushMetadata];
+    self.analytics.conversionPushMetadata = @"send metadata";
+    
     UACustomEvent *event = [UACustomEvent eventWithName:@"event name"];
 
     XCTAssertEqualObjects(@"send metadata", [event.data objectForKey:@"conversion_metadata"], @"Send Metadata should be set.");
@@ -265,9 +266,10 @@
  */
 - (void)testTrack {
     UACustomEvent *event = [UACustomEvent eventWithName:@"event name"];
-    [[self.analytics expect] addEvent:event];
     [event track];
-    [self.analytics verify];
+    
+    XCTAssertEqual(1, self.analytics.events.count);
+    XCTAssertEqual(event, self.analytics.events.firstObject);
 }
 
 /**

@@ -51,7 +51,7 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
     /* The UASchedule to be displayed */
     public var schedule : UASchedule?
 
-    private let inAppAutomation = UAInAppAutomation.shared()
+    private let inAppAutomation = UAInAppAutomation.shared!
 
 
     /* Section

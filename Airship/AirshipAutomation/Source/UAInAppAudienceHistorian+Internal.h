@@ -9,6 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol UAContactProtocol;
 @class UATagGroupUpdate;
 @class UAAttributeUpdate;
+@class UAChannel;
 
 @interface UAInAppAudienceHistorian : NSObject
 

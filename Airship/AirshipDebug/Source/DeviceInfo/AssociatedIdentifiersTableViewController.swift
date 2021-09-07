@@ -60,7 +60,7 @@ class AssociatedIdentifiersTableViewController: UITableViewController, Associate
         associateIdentifiers.vendorID = UIDevice.current.identifierForVendor?.uuidString
 
         // Associate the identifiers
-        UAirship.shared().analytics.associateDeviceIdentifiers(associateIdentifiers)
+        Airship.analytics.associateDeviceIdentifiers(associateIdentifiers)
 
         // Update the tableview with current associated identifiers
         let numberOfRowsInCurrentTable = self.tableView.numberOfRows(inSection: 0)

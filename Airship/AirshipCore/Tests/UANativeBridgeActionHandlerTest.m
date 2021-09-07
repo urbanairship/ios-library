@@ -1,14 +1,14 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAirship+Internal.h"
+#import "AirshipTests-Swift.h"
 
 @import AirshipCore;
 
 @interface UANativeBridgeActionHandlerTest : UABaseTest
 @property (nonatomic, strong) NativeBridgeActionHandler *actionHandler;
 @property (nonatomic, strong) UAActionRegistry *registry;
-@property (nonatomic, strong) id mockAirship;
+@property(nonatomic, strong) UATestAirshipInstance *airship;
 @property (nonatomic, copy) NSString *nativeBridge;
 @end
 
@@ -19,10 +19,9 @@
     self.actionHandler = [[NativeBridgeActionHandler alloc] init];
     self.registry = [UAActionRegistry defaultRegistry];
 
-    // Mock Airship
-    self.mockAirship = [self mockForClass:[UAirship class]];
-    [UAirship setSharedAirship:self.mockAirship];
-    [[[self.mockAirship stub] andReturn:self.registry] actionRegistry];
+    self.airship = [[UATestAirshipInstance alloc] init];
+    self.airship.actionRegistry = self.registry;
+    [self.airship makeShared];
 }
 
 /**

@@ -4,7 +4,7 @@
 import AirshipCore
 #endif
 
-
+import CoreData
 import Foundation
 
 /**

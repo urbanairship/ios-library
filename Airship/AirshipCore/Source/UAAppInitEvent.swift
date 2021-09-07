@@ -6,10 +6,7 @@
 @objc
 public class UAAppInitEvent : NSObject, UAEvent {
 
-    @objc
-    public var analyticsSupplier: () -> AnalyticsProtocol? = {
-        return UAirship.analytics()
-    }
+    private lazy var analytics = Airship.requireComponent(ofType: AnalyticsProtocol.self)
 
     @objc
     public var priority: UAEventPriority {
@@ -17,7 +14,6 @@ public class UAAppInitEvent : NSObject, UAEvent {
             return .normal
         }
     }
-
     
     @objc
     public var eventType : String {
@@ -32,12 +28,11 @@ public class UAAppInitEvent : NSObject, UAEvent {
             return self.gatherData()
         }
     }
-
     open func gatherData() -> [AnyHashable : Any] {
         var data: [AnyHashable : Any] = [:]
 
-        data["push_id"] = self.analyticsSupplier()?.conversionSendID
-        data["metadata"] = self.analyticsSupplier()?.conversionPushMetadata
+        data["push_id"] = self.analytics.conversionSendID
+        data["metadata"] = self.analytics.conversionPushMetadata
         data["carrier"] = UAUtils.carrierName()
         data["connection_type"] = UAUtils.connectionType()
 

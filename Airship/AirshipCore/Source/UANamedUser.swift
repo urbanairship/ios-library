@@ -45,10 +45,10 @@ public class UANamedUser : NSObject, UAComponent {
         }
     }
     
-    /// - Returns The shared  named user  instance.
+    /// The shared  named user  instance.
     @objc
-    public static func shared() -> UANamedUser! {
-        return UAirship.component(forClassName: "UANamedUser") as? UANamedUser
+    public static var shared: UANamedUser! {
+        return Airship.namedUser
     }
 
     @objc

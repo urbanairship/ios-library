@@ -1,5 +1,5 @@
 
-XCODE ?= 12.4
+XCODE ?= 12.5.1
 
 export TEST_DESTINATION ?= platform=iOS Simulator,OS=latest,name=iPhone 11
 export TEST_DESTINATION_TVOS ?= platform=tvOS Simulator,OS=latest,name=Apple TV
@@ -94,7 +94,7 @@ pod-publish: setup
 
 .PHONY: pod-lint
 pod-lint: setup
-	bundle exec pod lib lint Airship.podspec --verbose
+	bundle exec pod lib lint Airship.podspec --verbose --allow-warnings
 	bundle exec pod lib lint AirshipExtensions.podspec
 
 .PHONY: clean

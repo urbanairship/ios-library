@@ -23,8 +23,6 @@
 		1BFF18D42385520500013FB9 /* UAContentExtensionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BFF18D12385520500013FB9 /* UAContentExtensionViewController.m */; };
 		5872C23EAB3330171E1EBDC3 /* Pods_AirshipNotificationServiceExtensionTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 32B945B8885FAC3BD0955B04 /* Pods_AirshipNotificationServiceExtensionTests.framework */; };
 		DF0C1B19244E483C0011ACCA /* AirshipNotificationServiceExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49AA00FC1D65158C0081989A /* AirshipNotificationServiceExtension.framework */; };
-		DF0C1B22244E50770011ACCA /* UABaseTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DF0C1B21244E50770011ACCA /* UABaseTest.m */; };
-		DFA6F6D22450E8BB0087AA85 /* UABaseTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DF0C1B21244E50770011ACCA /* UABaseTest.m */; };
 		DFE03CF9244E6C1400622F11 /* UAMediaAttachmentPayloadTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 49AA010A1D65158C0081989A /* UAMediaAttachmentPayloadTests.m */; };
 		DFE03CFB2450A97900622F11 /* UANotificationServiceExtensionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = DFE03CFA2450A97900622F11 /* UANotificationServiceExtensionTests.m */; };
 		DFE03CFE2450E2AD00622F11 /* airship.jpg in Resources */ = {isa = PBXBuildFile; fileRef = DFE03CFC2450E27300622F11 /* airship.jpg */; };
@@ -78,8 +76,6 @@
 		BC129D3B0D219A96DD91E832 /* Pods-AirshipNotificationServiceExtensionTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipNotificationServiceExtensionTests.debug.xcconfig"; path = "Target Support Files/Pods-AirshipNotificationServiceExtensionTests/Pods-AirshipNotificationServiceExtensionTests.debug.xcconfig"; sourceTree = "<group>"; };
 		D5918B71FA79BCBD43EF2E05 /* Pods-AirshipNotificationContentExtensionTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipNotificationContentExtensionTests.debug.xcconfig"; path = "Target Support Files/Pods-AirshipNotificationContentExtensionTests/Pods-AirshipNotificationContentExtensionTests.debug.xcconfig"; sourceTree = "<group>"; };
 		DF0C1B14244E483C0011ACCA /* AirshipNotificationServiceExtensionTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipNotificationServiceExtensionTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		DF0C1B20244E50770011ACCA /* UABaseTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UABaseTest.h; path = ../../../Airship/AirshipCore/Tests/UABaseTest.h; sourceTree = "<group>"; };
-		DF0C1B21244E50770011ACCA /* UABaseTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UABaseTest.m; path = ../../../Airship/AirshipCore/Tests/UABaseTest.m; sourceTree = "<group>"; };
 		DFE03CFA2450A97900622F11 /* UANotificationServiceExtensionTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UANotificationServiceExtensionTests.m; sourceTree = "<group>"; };
 		DFE03CFC2450E27300622F11 /* airship.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = airship.jpg; path = ../../../Airship/AirshipCore/Tests/airship.jpg; sourceTree = "<group>"; };
 		DFE03D032450E73400622F11 /* AirshipNotificationContentExtensionTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipNotificationContentExtensionTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -225,8 +221,6 @@
 			isa = PBXGroup;
 			children = (
 				DFE03CFC2450E27300622F11 /* airship.jpg */,
-				DF0C1B20244E50770011ACCA /* UABaseTest.h */,
-				DF0C1B21244E50770011ACCA /* UABaseTest.m */,
 				49AA010A1D65158C0081989A /* UAMediaAttachmentPayloadTests.m */,
 				DFE03CFA2450A97900622F11 /* UANotificationServiceExtensionTests.m */,
 				49AA010C1D65158C0081989A /* Info.plist */,
@@ -551,7 +545,6 @@
 			files = (
 				DFE03CFB2450A97900622F11 /* UANotificationServiceExtensionTests.m in Sources */,
 				DFE03CF9244E6C1400622F11 /* UAMediaAttachmentPayloadTests.m in Sources */,
-				DF0C1B22244E50770011ACCA /* UABaseTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -559,7 +552,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DFA6F6D22450E8BB0087AA85 /* UABaseTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

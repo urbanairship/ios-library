@@ -9,9 +9,9 @@
 #import "UAAirshipAutomationCoreImport.h"
 #import "UAAutomationEngine+Internal.h"
 
-@class UAAnalytics;
 @class UAPreferenceDataStore;
 @class UADispatcher;
+@protocol UAAnalyticsProtocol;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -52,7 +52,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @return A in-app message manager instance.
  */
 + (instancetype)managerWithDataStore:(UAPreferenceDataStore *)dataStore
-                           analytics:(UAAnalytics *)analytics
+                           analytics:(id<UAAnalyticsProtocol>)analytics
                           dispatcher:(UADispatcher *)dispatcher
                   displayCoordinator:(UAInAppMessageDefaultDisplayCoordinator *)displayCoordinator
                         assetManager:(UAInAppMessageAssetManager *)assetManager;
@@ -65,7 +65,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @return A in-app message manager instance.
  */
 + (instancetype)managerWithDataStore:(UAPreferenceDataStore *)dataStore
-                           analytics:(UAAnalytics *)analytics;
+                           analytics:(id<UAAnalyticsProtocol>)analytics;
 
 
 /**

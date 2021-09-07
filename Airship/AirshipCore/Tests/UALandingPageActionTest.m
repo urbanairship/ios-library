@@ -2,7 +2,6 @@
 
 #import "UABaseTest.h"
 #import "UALandingPageAction.h"
-#import "UAirship+Internal.h"
 #import "UAInAppAutomation.h"
 #import "UAInAppMessageHTMLDisplayContent+Internal.h"
 #import "UASchedule+Internal.h"
@@ -10,15 +9,11 @@
 #import "UAActionArguments.h"
 #import "AirshipTests-Swift.h"
 
-#if __has_include("AirshipCore/AirshipCore-Swift.h")
-#import <AirshipCore/AirshipCore-Swift.h>
-#elif __has_include("Airship/Airship-Swift.h")
-#import <Airship/Airship-Swift.h>
-#endif
+@import AirshipCore;
 
 @interface UALandingPageActionTest : UABaseTest
 
-@property (nonatomic, strong) id mockAirship;
+@property (nonatomic, strong) UATestAirshipInstance *airship;
 @property (nonatomic, strong) id mockConfig;
 @property (nonatomic, strong) UALandingPageAction *action;
 @property (nonatomic, strong) UATestURLAllowList *URLAllowList;
@@ -33,20 +28,19 @@
     self.action = [[UALandingPageAction alloc] init];
 
     self.mockConfig = [self mockForClass:[UARuntimeConfig class]];
-    self.mockAirship = [self mockForClass:[UAirship class]];
     self.URLAllowList = [[UATestURLAllowList alloc] init];
-
-    [[[self.mockAirship stub] andReturn:self.mockConfig] config];
-    [[[self.mockAirship stub] andReturn:self.URLAllowList] URLAllowList];
-    [UAirship setSharedAirship:self.mockAirship];
 
     [[[self.mockConfig stub] andReturn:@"app-key"] appKey];
     [[[self.mockConfig stub] andReturn:@"app-secret"] appSecret];
 
     self.mockInAppAutomation = [self mockForClass:[UAInAppAutomation class]];
-    [[[self.mockAirship stub] andReturn:self.mockConfig] config];
-
     [[[self.mockInAppAutomation stub] andReturn:self.mockInAppAutomation] shared];
+    
+    self.airship = [[UATestAirshipInstance alloc] init];
+    self.airship.components = @[self.mockInAppAutomation];
+    self.airship.config = self.mockConfig;
+    self.airship.urlAllowList = self.URLAllowList;
+    [self.airship makeShared];
 }
 
 /**

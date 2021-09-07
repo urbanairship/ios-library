@@ -18,7 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Populate AirshipConfig.plist with your app's info from https://go.urbanairship.com
         // or set runtime properties here.
         let config = Config.default()
-        config.developmentLogLevel = UALogLevel.trace
+        config.developmentLogLevel = LogLevel.trace
 
         if (config.validate() != true) {
             showInvalidConfigAlert()
@@ -27,7 +27,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         // Set log level for debugging config loading (optional)
         // It will be set to the value in the loaded config upon takeOff
-        UAirship.setLogLevel(UALogLevel.trace)
+        Airship.logLevel = LogLevel.trace
 
         // Print out the application configuration for debugging (optional)
         print("Config:\n \(config)")
@@ -39,13 +39,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // etc.
 
         // Call takeOff (which creates the UAirship singleton)
-        UAirship.takeOff(config)
+        Airship.takeOff(config, launchOptions: launchOptions)
 
         // Print out the application configuration for debugging (optional)
         print("Config:\n \(config)")
 
         // Set the icon badge to zero on startup (optional)
-        UAirship.push()?.resetBadge()
+        Airship.push.resetBadge()
 
         // User notifications will not be enabled until userPushNotificationsEnabled is
         // enabled on UAPush. Once enabled, the setting will be persisted and the user
@@ -54,7 +54,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // notifications.
 
         // Badge only on tvOS
-        UAirship.push()?.notificationOptions = [.badge]
+        Airship.push.notificationOptions = [.badge]
 
         return true
     }

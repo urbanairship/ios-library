@@ -17,7 +17,7 @@
 #define kUAPendingInAppMessageIDDataStoreKey @"UAPendingInAppMessageID"
 
 @class UAPreferenceDataStore;
-@class UAAnalytics;
+@protocol UAAnalyticsProtocol;
 @class UAPush;
 @class UNNotificationResponse;
 @class UNNotificationContent;
@@ -46,7 +46,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param inAppAutomation The in-app automation instance.
  * @return An instance of UALegacyInAppMessaging.
  */
-+ (instancetype)inAppMessagingWithAnalytics:(UAAnalytics *)analytics
++ (instancetype)inAppMessagingWithAnalytics:(id<UAAnalyticsProtocol>)analytics
                                   dataStore:(UAPreferenceDataStore *)dataStore
                             inAppAutomation:(UAInAppAutomation *)inAppAutomation;
 

@@ -3,7 +3,7 @@
 #import "UAAirshipBaseTest.h"
 
 #import "UAEvent.h"
-#import "UAirship+Internal.h"
+#
 
 #import "AirshipTests-Swift.h"
 
@@ -20,6 +20,7 @@
 @interface UAAnalyticsTest: UAAirshipBaseTest
 @property (nonatomic, strong) UAAnalytics *analytics;
 @property (nonatomic, strong) UAPrivacyManager *privacyManager;
+@property (nonatomic, strong) UATestAirshipInstance *airship;
 @property (nonatomic, strong) id mockEventManager;
 @property (nonatomic, strong) id mockChannel;
 @property (nonatomic, strong) id mockLocaleClass;
@@ -34,7 +35,6 @@
 
 - (void)setUp {
     [super setUp];
-
 
     self.notificationCenter = [[NSNotificationCenter alloc] init];
     self.testDate = [[UATestDate alloc] init];
@@ -65,6 +65,10 @@
     self.mockTimeZoneClass = [self strictMockForClass:[NSTimeZone class]];
     NSTimeZone *timeZone = [[NSTimeZone alloc] initWithName:@"America/New_York"];
     [[[self.mockTimeZoneClass stub] andReturn:timeZone] defaultTimeZone];
+    
+    self.airship = [[UATestAirshipInstance alloc] init];
+    self.airship.components = @[self.analytics, self.mockChannel];
+    [self.airship makeShared];
 }
 
 - (void)tearDown {

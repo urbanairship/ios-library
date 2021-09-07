@@ -24,8 +24,6 @@
 #endif
 
 
-NS_ASSUME_NONNULL_BEGIN
-
 static NSTimeInterval const MaxSchedules = 1000;
 static NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 
@@ -688,4 +686,3 @@ static NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerP
 
 @end
 
-NS_ASSUME_NONNULL_END

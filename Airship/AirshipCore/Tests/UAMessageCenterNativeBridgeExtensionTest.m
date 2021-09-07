@@ -2,7 +2,6 @@
 
 #import "UABaseTest.h"
 #import "UAMessageCenterNativeBridgeExtension.h"
-#import "UAirship+Internal.h"
 #import "UAInboxMessageList.h"
 #import "UAUser.h"
 #import "UAInboxMessage.h"

@@ -41,8 +41,8 @@ public class EnableFeatureAction : NSObject, UAAction {
 
     @objc
     public override convenience init() {
-        self.init(push: { return UAirship.push() },
-                  location: { return UAirship.shared().locationProvider })
+        self.init(push: { return Airship.push },
+                  location: { return Airship.shared.locationProvider })
     }
 
     @objc
@@ -98,7 +98,7 @@ public class EnableFeatureAction : NSObject, UAAction {
     }
 
     func enableUserNotifications(_ completionHandler: @escaping UAActionCompletionHandler) {
-        UAirship.shared().privacyManager.enableFeatures(.push)
+        Airship.shared.privacyManager.enableFeatures(.push)
 
         push().userPushNotificationsEnabled = true
 
@@ -119,7 +119,7 @@ public class EnableFeatureAction : NSObject, UAAction {
     }
 
     func enableLocation(_ completionHandler: @escaping UAActionCompletionHandler) {
-        UAirship.shared().privacyManager.enableFeatures(.location)
+        Airship.shared.privacyManager.enableFeatures(.location)
 
         if let locationProvider = location() {
             locationProvider.isLocationUpdatesEnabled = true

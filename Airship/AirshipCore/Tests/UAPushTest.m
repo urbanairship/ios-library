@@ -2,7 +2,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UAAirshipBaseTest.h"
-#import "UAirship+Internal.h"
 #import "UAEvent.h"
 #import "AirshipTests-Swift.h"
 
@@ -103,11 +102,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
     // Set up a mocked application
     self.mockApplication = [self mockForClass:[UIApplication class]];
-
-    self.mockAirship = [self mockForClass:[UAirship class]];
-
-    [UAirship setSharedAirship:self.mockAirship];
-
     self.mockPushDelegate = [self mockForProtocol:@protocol(UAPushNotificationDelegate)];
     self.mockRegistrationDelegate = [self mockForProtocol:@protocol(UARegistrationDelegate)];
 
@@ -1129,8 +1123,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
     self.push.pushNotificationDelegate = nil;
 
-    [[[self.mockAirship stub] andReturn:self.push] push];
-
     UNNotificationPresentationOptions result = [LegacyPushTestUtils presentationOptionsWithPush:self.push notification:self.mockUNNotification];
     
     XCTAssertEqual(result, self.push.defaultPresentationOptions);
@@ -1140,8 +1132,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
  * Test presentationOptionsForNotification when delegate method is implemented.
  */
 - (void)testPresentationOptionsForNotification {
-    [[[self.mockAirship stub] andReturn:self.push] push];
-
     if (@available(iOS 14.0, *)) {
         [[[self.mockPushDelegate stub] andReturnValue:OCMOCK_VALUE(UNNotificationPresentationOptionList | UNNotificationPresentationOptionBanner)] extendPresentationOptions:UNNotificationPresentationOptionNone notification:self.mockUNNotification];
     } else {

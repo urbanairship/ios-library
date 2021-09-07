@@ -4,7 +4,6 @@
 #import "UAScheduleAudienceChecks+Internal.h"
 #import "UAScheduleAudience+Internal.h"
 #import "UAVersionMatcher.h"
-#import "UAirship+Internal.h"
 #import "UATagSelector.h"
 #import "UAJSONPredicate.h"
 #import "AirshipTests-Swift.h"
@@ -13,10 +12,11 @@
 
 @interface UAScheduleAudienceChecksTest : UAAirshipBaseTest
 
-@property (nonatomic, strong) id mockAirship;
+@property(nonatomic, strong) UATestAirshipInstance *airship;
 @property (nonatomic, strong) id mockLocationProvider;
 @property (nonatomic, strong) id mockPush;
 @property (nonatomic, strong) id mockChannel;
+@property (nonatomic, strong) id mockApplicationMetrics;
 @property (nonatomic, strong) UAPrivacyManager *privacyManager;
 @end
 
@@ -25,20 +25,20 @@
 - (void)setUp {
     [super setUp];
 
-    self.mockAirship = [self mockForClass:[UAirship class]];
     self.mockPush = [self mockForClass:[UAPush class]];
     self.mockChannel = [self mockForClass:[UAChannel class]];
-
+    self.mockLocationProvider = [self mockForProtocol:@protocol(UALocationProvider)];
+    self.mockApplicationMetrics = [self mockForClass:[UAApplicationMetrics class]];
+    
     self.privacyManager = [[UAPrivacyManager alloc] initWithDataStore:self.dataStore
                                                defaultEnabledFeatures:UAFeaturesAll];
 
-    self.mockLocationProvider = [self mockForProtocol:@protocol(UALocationProvider)];
-
-    [[[self.mockAirship stub] andReturn:self.mockPush] sharedPush];
-    [[[self.mockAirship stub] andReturn:self.mockChannel] sharedChannel];
-    [[[self.mockAirship stub] andReturn:self.privacyManager] privacyManager];
-    [[[self.mockAirship stub] andReturn:self.mockLocationProvider] locationProvider];
-    [UAirship setSharedAirship:self.mockAirship];
+    self.airship = [[UATestAirshipInstance alloc] init];
+    self.airship.components = @[self.mockPush, self.mockChannel];
+    self.airship.privacyManager = self.privacyManager;
+    self.airship.locationProvider = self.mockLocationProvider;
+    self.airship.applicationMetrics = self.mockApplicationMetrics;
+    [self.airship makeShared];
 }
 
 - (void)testEmptyAudience {
@@ -201,11 +201,9 @@
 - (void)testLanguageAndVersion {
     // setup
     __block NSString *mockVersion;
-    id mockApplicationMetrics = [self mockForClass:[UAApplicationMetrics class]];
-    [[[mockApplicationMetrics stub] andDo:^(NSInvocation *invocation) {
+    [[[self.mockApplicationMetrics stub] andDo:^(NSInvocation *invocation) {
         [invocation setReturnValue:(void *)&mockVersion];
     }] currentAppVersion];
-    [[[self.mockAirship stub] andReturn:mockApplicationMetrics] applicationMetrics];
 
     UAScheduleAudience *requiresLangAndVersion = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
         builder.languageTags = @[@"en-US"];
@@ -244,14 +242,11 @@
 }
 
 - (void)testAppVersion {
-    // setup
     __block NSString *mockVersion;
-    id mockApplicationMetrics = [self mockForClass:[UAApplicationMetrics class]];
-    [[[mockApplicationMetrics stub] andDo:^(NSInvocation *invocation) {
+    [[[self.mockApplicationMetrics stub] andDo:^(NSInvocation *invocation) {
         [invocation setReturnValue:(void *)&mockVersion];
     }] currentAppVersion];
-    [[[self.mockAirship stub] andReturn:mockApplicationMetrics] applicationMetrics];
-    
+
     UAScheduleAudience *audience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
         UAJSONMatcher *matcher = [UAJSONMatcher matcherWithValueMatcher:[UAJSONValueMatcher matcherWithVersionConstraint:@"[1.0, 2.0]"] scope:@[@"ios",@"version"]];
         builder.versionPredicate = [UAJSONPredicate predicateWithJSONMatcher:matcher];

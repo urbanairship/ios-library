@@ -2,10 +2,8 @@
 
 #import "UABaseTest.h"
 #import "UAAirshipBaseTest.h"
-
 #import "UAActionArguments+Internal.h"
-#import "UAirship+Internal.h"
-#import "UAPush.h"
+#import "AirshipTests-Swift.h"
 
 @import AirshipCore;
 
@@ -16,7 +14,7 @@
 
 @property(nonatomic, strong) id mockPush;
 @property(nonatomic, strong) id mockLocationProvider;
-@property(nonatomic, strong) id mockAirship;
+@property(nonatomic, strong) UATestAirshipInstance *airship;
 @property(nonatomic, strong) id mockApplication;
 @property(nonatomic, strong) UAPrivacyManager *privacyManager;
 
@@ -33,22 +31,20 @@
 
     self.mockLocationProvider = [self mockForProtocol:@protocol(UALocationProvider)];
 
-    self.mockAirship = [self strictMockForClass:[UAirship class]];
+
     self.mockApplication = [self mockForClass:[UIApplication class]];
+    [[[self.mockApplication stub] andReturn:self.mockApplication] sharedApplication];
+
     self.privacyManager = [[UAPrivacyManager alloc] initWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesNone];
 
-    [UAirship setSharedAirship:self.mockAirship];
-    [[[self.mockAirship stub] andReturn:self.mockPush] sharedPush];
-
-    [[[self.mockAirship stub] andReturn:self.mockLocationProvider] locationProvider];
-    [[[self.mockAirship stub] andReturn:self.privacyManager] privacyManager];
-
-    [[[self.mockApplication stub] andReturn:self.mockApplication] sharedApplication];
-}
-
-- (void)tearDown {
-    [UAirship setSharedAirship:nil];
-    [super tearDown];
+    self.airship = [[UATestAirshipInstance alloc] init];
+    self.airship.components = @[self.mockPush];
+    self.airship.locationProvider = self.mockLocationProvider;
+    self.airship.privacyManager = self.privacyManager;
+    
+    [self.airship makeShared];
+    
+    
 }
 
 - (void)testAcceptsArguments {

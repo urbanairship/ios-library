@@ -2,7 +2,6 @@
 
 #import "UAKeychainUtils+Internal.h"
 #import "UAGlobal.h"
-#import "UAirship.h"
 
 #import <Security/Security.h>
 

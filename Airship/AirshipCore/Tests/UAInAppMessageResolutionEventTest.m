@@ -1,20 +1,17 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAirship+Internal.h"
 #import "UAInAppMessageResolutionEvent+Internal.h"
 #import "UAInAppMessage+Internal.h"
 #import "UAInAppMessageFullScreenDisplayContent.h"
+#import "AirshipTests-Swift.h"
 
-#if __has_include("AirshipCore/AirshipCore-Swift.h")
-#import <AirshipCore/AirshipCore-Swift.h>
-#elif __has_include("Airship/Airship-Swift.h")
-#import <Airship/Airship-Swift.h>
-#endif
+@import AirshipCore;
+
 
 @interface UAInAppMessageResolutionEventTest : UABaseTest
-@property (nonatomic, strong) id analytics;
-@property (nonatomic, strong) id airship;
+@property(nonatomic, strong) UATestAnalytics *analytics;
+@property(nonatomic, strong) UATestAirshipInstance *airship;
 @property (nonatomic, strong) UAInAppMessageFullScreenDisplayContent *displayContent;
 @property (nonatomic, copy) NSDictionary *renderedLocale;
 @end
@@ -24,14 +21,13 @@
 - (void)setUp {
     [super setUp];
 
-    self.analytics = [self mockForClass:[UAAnalytics class]];
-    [[[self.analytics stub] andReturn:[NSUUID UUID].UUIDString] conversionSendID];
-    [[[self.analytics stub] andReturn:[NSUUID UUID].UUIDString] conversionPushMetadata];
-
-    self.airship = [self mockForClass:[UAirship class]];
-    [[[self.airship stub] andReturn:self.analytics] sharedAnalytics];
-    [UAirship setSharedAirship:self.airship];
-
+    self.analytics = [[UATestAnalytics alloc] init];
+    self.analytics.conversionSendID = [NSUUID UUID].UUIDString;
+    self.analytics.conversionPushMetadata = [NSUUID UUID].UUIDString;
+    self.airship = [[UATestAirshipInstance alloc] init];
+    self.airship.components = @[self.analytics];
+    [self.airship makeShared];
+    
     self.displayContent = [UAInAppMessageFullScreenDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageFullScreenDisplayContentBuilder *builder) {
         builder.buttonLayout = UAInAppMessageButtonLayoutTypeJoined;
 

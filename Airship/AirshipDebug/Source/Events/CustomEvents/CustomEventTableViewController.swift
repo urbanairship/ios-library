@@ -114,7 +114,7 @@ class CustomEventTableViewController: UITableViewController, UITextFieldDelegate
         customEvent.interactionType = interactionType
         customEvent.transactionID = transactionID
 
-        UAirship.shared().analytics.addEvent(customEvent)
+        Airship.analytics.addEvent(customEvent)
 
         displayMessage("ua_custom_event_added".localized())
 

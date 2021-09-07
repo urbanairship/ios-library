@@ -8,6 +8,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class UARuntimeConfig;
+
 /**
  * Datastore for frequency constraints and occurrences.
  * All data access methods are blocking.

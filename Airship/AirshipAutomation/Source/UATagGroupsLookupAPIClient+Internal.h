@@ -6,6 +6,7 @@
 #import "UAAirshipAutomationCoreImport.h"
 
 @class UARequestSession;
+@class UARuntimeConfig;
 
 NS_ASSUME_NONNULL_BEGIN
 

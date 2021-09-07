@@ -2,7 +2,6 @@
 
 #import "UABaseTest.h"
 
-#import "UAirship.h"
 #import "UAInAppMessageManager.h"
 #import "UAInAppMessageFullScreenAdapter.h"
 #import "UAInAppMessageFullScreenStyle.h"

@@ -3,9 +3,8 @@
 #import "UAAirshipBaseTest.h"
 #import "AirshipTests-Swift.h"
 
-#import "UAirship+Internal.h"
-
 @import AirshipCore;
+@import CoreData;
 
 static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
 

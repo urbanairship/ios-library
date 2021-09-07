@@ -91,7 +91,7 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
 @property(nonatomic, strong) UARetriablePipeline *prepareSchedulePipeline;
 @property(nonatomic, strong) UAInAppMessageDefaultDisplayCoordinator *defaultDisplayCoordinator;
 @property(nonatomic, strong) UAInAppMessageImmediateDisplayCoordinator *immediateDisplayCoordinator;
-@property(nonatomic, strong) UAAnalytics *analytics;
+@property(nonatomic, strong) id<UAAnalyticsProtocol> analytics;
 @property(nonatomic, strong) UAInAppMessageAssetManager *assetManager;
 @property(nonatomic, strong) NSMapTable *displayCoordinatorReadyListeners;
 
@@ -100,7 +100,7 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
 @implementation UAInAppMessageManager
 
 + (instancetype)managerWithDataStore:(UAPreferenceDataStore *)dataStore
-                           analytics:(UAAnalytics *)analytics
+                           analytics:(id<UAAnalyticsProtocol>) analytics
                           dispatcher:(UADispatcher *)dispatcher
                   displayCoordinator:(UAInAppMessageDefaultDisplayCoordinator *)displayCoordinator
                         assetManager:(UAInAppMessageAssetManager *)assetManager {
@@ -113,7 +113,7 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
 }
 
 + (instancetype)managerWithDataStore:(UAPreferenceDataStore *)dataStore
-                           analytics:(UAAnalytics *)analytics {
+                           analytics:(id<UAAnalyticsProtocol>)analytics {
 
     return [[UAInAppMessageManager alloc] initWithDataStore:dataStore
                                                   analytics:analytics
@@ -124,7 +124,7 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
 }
 
 - (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore
-                        analytics:(UAAnalytics *)analytics
+                        analytics:(id<UAAnalyticsProtocol>)analytics
                        dispatcher:(UADispatcher *)dispatcher
                displayCoordinator:(UAInAppMessageDefaultDisplayCoordinator *)displayCoordinator
                      assetManager:(UAInAppMessageAssetManager *)assetManager {

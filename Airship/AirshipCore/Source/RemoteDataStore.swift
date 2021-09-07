@@ -1,4 +1,5 @@
 /* Copyright Airship and Contributors */
+import CoreData
 
 // NOTE: For internal use only. :nodoc:
 @objc(UARemoteDataStore)

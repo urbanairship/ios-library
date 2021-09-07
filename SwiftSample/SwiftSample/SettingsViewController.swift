@@ -215,22 +215,22 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
             cell.title.text = "ua_device_info_push_settings".localized(comment: "Push Settings")
             cell.subtitle.text = "ua_device_info_enable_push".localized(comment: "Enable Push")
             cell.cellSwitch.isHidden = false
-            cell.cellSwitch.isOn = UAirship.push()?.userPushNotificationsEnabled ?? false
+            cell.cellSwitch.isOn = Airship.push.userPushNotificationsEnabled
             cell.subtitle?.text = pushTypeString()
             cell.subtitle?.adjustsFontSizeToFitWidth = true;
             cell.subtitle?.minimumScaleFactor = 0.25;
             cell.subtitle?.numberOfLines = 1;
         case channelID:
             cell.title.text = "ua_device_info_channel_id".localized(comment: "Channel ID")
-            cell.subtitle.text = UAirship.channel().identifier
+            cell.subtitle.text = Airship.channel.identifier
         case namedUser:
             cell.title.text = "ua_device_info_named_user".localized(comment: "Named User")
-            cell.subtitle?.text = UAirship.namedUser().identifier == nil ? localizedNone : UAirship.namedUser().identifier
+            cell.subtitle?.text = Airship.namedUser.identifier == nil ? localizedNone : Airship.namedUser.identifier
             cell.accessoryType = .disclosureIndicator
         case tags:
             cell.title.text = "ua_device_info_tags".localized(comment: "Tags")
-            if (UAirship.channel().tags.count > 0) {
-                cell.subtitle?.text = UAirship.channel().tags.joined(separator: ", ")
+            if (Airship.channel.tags.count > 0) {
+                cell.subtitle?.text = Airship.channel.tags.joined(separator: ", ")
             } else {
                 cell.subtitle?.text = localizedNone
             }
@@ -241,16 +241,16 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
             cell.subtitle?.text = "ua_device_info_enable_analytics_tracking".localized(comment: "Enable analytics tracking")
 
             cell.cellSwitch.isHidden = false
-            cell.cellSwitch.isOn = UAirship.shared().privacyManager.isEnabled(UAFeatures.analytics)
+            cell.cellSwitch.isOn = Airship.shared.privacyManager.isEnabled(UAFeatures.analytics)
         case locationEnabled:
             cell.title.text = "ua_device_info_location_settings".localized(comment: "Location Settings")
 
             cell.cellSwitch.isHidden = false
-            cell.cellSwitch.isOn = UAirship.shared().privacyManager.isEnabled(UAFeatures.location)
+            cell.cellSwitch.isOn = Airship.shared.privacyManager.isEnabled(UAFeatures.location)
 
-            let optedInToLocation = UALocation.shared().isLocationOptedIn()
+            let optedInToLocation = UALocation.shared.isLocationOptedIn()
 
-            if (UAirship.shared().privacyManager.isEnabled(UAFeatures.location) && !optedInToLocation) {
+            if (Airship.shared.privacyManager.isEnabled(UAFeatures.location) && !optedInToLocation) {
                 cell.subtitle?.text = "ua_location_enabled_detail".localized(comment: "Enable GPS and WIFI Based Location detail label") + " - NOT OPTED IN"
             } else {
                 cell.subtitle?.text = localizedNone
@@ -269,15 +269,15 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
         case pushEnabled:
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
             if (cell.cellSwitch.isOn) {
-                UAirship.push().userPushNotificationsEnabled = true
-                UAirship.shared().privacyManager.enableFeatures(.push)
+                Airship.push.userPushNotificationsEnabled = true
+                Airship.shared.privacyManager.enableFeatures(.push)
             } else {
-                UAirship.push().userPushNotificationsEnabled = false
-                UAirship.shared().privacyManager.disableFeatures(.push)
+                Airship.push.userPushNotificationsEnabled = false
+                Airship.shared.privacyManager.disableFeatures(.push)
             }
 
         case channelID:
-            if (UAirship.channel().identifier != nil) {
+            if (Airship.channel.identifier != nil) {
                 UIPasteboard.general.string = cell.subtitle?.text
                 showCopiedAlert()
             }
@@ -288,18 +288,18 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
         case analyticsEnabled:
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
             if (cell.cellSwitch.isOn) {
-                UAirship.shared().privacyManager.enableFeatures(UAFeatures.analytics)
+                Airship.shared.privacyManager.enableFeatures(UAFeatures.analytics)
             } else {
-                UAirship.shared().privacyManager.disableFeatures(UAFeatures.analytics)
+                Airship.shared.privacyManager.disableFeatures(UAFeatures.analytics)
             }
         case locationEnabled:
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
             if (cell.cellSwitch.isOn) {
-                UAirship.shared().privacyManager.enableFeatures(UAFeatures.location)
-                UALocation.shared().isLocationUpdatesEnabled = true
+                Airship.shared.privacyManager.enableFeatures(UAFeatures.location)
+                UALocation.shared.isLocationUpdatesEnabled = true
             } else {
-                UAirship.shared().privacyManager.disableFeatures(UAFeatures.location)
-                UALocation.shared().isLocationUpdatesEnabled = false
+                Airship.shared.privacyManager.disableFeatures(UAFeatures.location)
+                UALocation.shared.isLocationUpdatesEnabled = false
             }
         default:
             break
@@ -327,7 +327,7 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
 
     func pushTypeString () -> String {
 
-        let authorizedSettings = UAirship.push().authorizedNotificationSettings;
+        let authorizedSettings = Airship.push.authorizedNotificationSettings;
 
         var settingsArray: [String] = []
 

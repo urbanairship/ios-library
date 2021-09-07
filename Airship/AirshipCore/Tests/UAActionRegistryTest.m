@@ -1,15 +1,11 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAirship+Internal.h"
-#import "UALandingPageAction+Internal.h"
 
 @import AirshipCore;
 
 @interface UAActionRegistryTest : UABaseTest
 @property (nonatomic, strong) UAActionRegistry *registry;
-@property (nonatomic, strong) id mockMetrics;
-@property (nonatomic, strong) id mockAirship;
 @end
 
 @implementation UAActionRegistryTest
@@ -19,12 +15,6 @@
     [super setUp];
 
     self.registry = [[UAActionRegistry alloc] init];
-
-    self.mockAirship = [self mockForClass:[UAirship class]];
-    [UAirship setSharedAirship:self.mockAirship];
-
-    self.mockMetrics = [self mockForClass:[UAApplicationMetrics class]];
-    [[[self.mockAirship stub] andReturn:self.mockMetrics] applicationMetrics];
 }
 
 /**

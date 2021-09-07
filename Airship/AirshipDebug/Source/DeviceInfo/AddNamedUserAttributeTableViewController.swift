@@ -9,6 +9,6 @@ import Airship
 class AddNamedUserAttributeTableViewController: AddAttributeTableViewController {
 
     override internal func applyMutations(_ mutations : AttributeMutations) {
-        UAirship.namedUser().apply(mutations)
+        Airship.namedUser.apply(mutations)
     }
 }

@@ -2,7 +2,6 @@
 
 #import "UAAirshipBaseTest.h"
 
-#import "UAirship+Internal.h"
 #import "UAInAppMessageManager+Internal.h"
 #import "UASchedule+Internal.h"
 #import "UAScheduleAudience.h"
@@ -15,6 +14,7 @@
 #import "UAInAppMessageCustomDisplayContent+Internal.h"
 #import "UADeferredSchedule+Internal.h"
 #import "UAFrequencyLimitManager+Internal.h"
+#import "AirshipTests-Swift.h"
 
 @import AirshipCore;
 
@@ -26,7 +26,7 @@
 @property(nonatomic, strong) id mockInAppMessageManager;
 @property(nonatomic, strong) id mockDeferredClient;
 @property(nonatomic, strong) id mockChannel;
-@property(nonatomic, strong) id mockAirship;
+@property(nonatomic, strong) UATestAirshipInstance *airship;
 @property(nonatomic, strong) id mockFrequencyLimitManager;
 @property(nonatomic, strong) UAPrivacyManager *privacyManager;
 
@@ -39,10 +39,6 @@
     [super setUp];
 
     self.privacyManager = [[UAPrivacyManager alloc] initWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
-    
-    self.mockAirship = [self mockForClass:[UAirship class]];
-    [[[self.mockAirship stub] andReturn:self.privacyManager] privacyManager];
-    [UAirship setSharedAirship:self.mockAirship];
 
     self.mockAutomationEngine = [self mockForClass:[UAAutomationEngine class]];
     self.mockAudienceManager = [self mockForClass:[UAInAppAudienceManager class]];
@@ -57,6 +53,11 @@
         [invocation getArgument:&arg atIndex:2];
         self.engineDelegate =  (__bridge id<UAAutomationEngineDelegate>)arg;
     }] setDelegate:OCMOCK_ANY];
+    
+    self.airship = [[UATestAirshipInstance alloc] init];
+    self.airship.components = @[self.mockChannel];
+    self.airship.privacyManager = self.privacyManager;
+    [self.airship makeShared];
 
     self.inAppAutomation = [UAInAppAutomation automationWithEngine:self.mockAutomationEngine
                                                    audienceManager:self.mockAudienceManager

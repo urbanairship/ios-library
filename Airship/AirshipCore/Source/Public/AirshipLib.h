@@ -9,6 +9,7 @@
 #import "UAAnalyticsEventConsumerProtocol.h"
 #import "UAAppIntegrationDelegate.h"
 #import "UAAsyncOperation.h"
+#import "UAAutoIntegration.h"
 #import "UAComponent.h"
 #import "UACompression.h"
 #import "UAEvent.h"
@@ -29,4 +30,3 @@
 #import "UATagGroups.h"
 #import "UAURLAllowListScope.h"
 #import "UAVersionMatcher.h"
-#import "UAirship.h"

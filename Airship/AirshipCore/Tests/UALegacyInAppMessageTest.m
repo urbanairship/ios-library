@@ -3,12 +3,11 @@
 #import "UAAirshipBaseTest.h"
 
 #import "UALegacyInAppMessage.h"
-#import "UAirship+Internal.h"
+#import "AirshipTests-Swift.h"
 
 @import AirshipCore;
 
 @interface UALegacyInAppMessageTest : UAAirshipBaseTest
-@property(nonatomic, strong) id mockAirship;
 @property(nonatomic, copy) NSDictionary *payload;
 @end
 
@@ -16,10 +15,6 @@
 
 - (void)setUp {
     [super setUp];
-
-    self.mockAirship = [self mockForClass:[UAirship class]];
-    [[[self.mockAirship stub] andReturn:self.dataStore] dataStore];
-    [UAirship setSharedAirship:self.mockAirship];
 
     id expiry = @"2020-12-15T11:45:22";
     id extra = @{@"foo":@"bar", @"baz":@12345};

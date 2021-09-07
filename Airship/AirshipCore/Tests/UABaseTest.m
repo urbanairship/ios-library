@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
+#import "AirshipTests-Swift.h"
 
 @interface UABaseTest()
 @property (nonatomic, strong) NSPointerArray *mocks;
@@ -12,6 +13,8 @@ NSTimeInterval const UATestExpectationTimeOut = 10;
 
 - (void)tearDown {
     self.mocks = nil;
+    
+    [UATestAirshipInstance clearShared];
     [super tearDown];
 }
 

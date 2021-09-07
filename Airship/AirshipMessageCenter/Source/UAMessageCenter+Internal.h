@@ -8,6 +8,7 @@
 @class UARuntimeConfig;
 @class UAPreferenceDataStore;
 @class UAPrivacyManager;
+@class UAChannel;
 
 NS_ASSUME_NONNULL_BEGIN
 

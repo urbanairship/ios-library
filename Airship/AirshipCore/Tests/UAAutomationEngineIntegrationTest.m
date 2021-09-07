@@ -2,7 +2,6 @@
 
 #import "UAAirshipBaseTest.h"
 #import "UAAutomationEngine+Internal.h"
-#import "UAirship+Internal.h"
 #import "UAAutomationStore+Internal.h"
 #import "UAJSONPredicate.h"
 #import "UAScheduleDelay.h"
@@ -23,7 +22,7 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
 @property (nonatomic, strong) id mockAppStateTracker;
 @property (nonatomic, strong) id mockDelegate;
 @property (nonatomic, strong) id mockMetrics;
-@property (nonatomic, strong) id mockAirship;
+@property (nonatomic, strong) UATestAirshipInstance *airship;
 @property (nonatomic, strong) id mockTaskManager;
 @property (nonatomic, strong) UATestNetworkMonitor *testNetworkMonitor;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
@@ -51,8 +50,6 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
                                                          inMemory:YES
                                                              date:self.testDate];
 
-    self.mockAirship = [self mockForClass:[UAirship class]];
-    [UAirship setSharedAirship:self.mockAirship];
 
     self.mockTaskManager = [self mockForClass:[UATaskManager class]];
 
@@ -64,7 +61,10 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
     }] registerForTaskWithIDs:@[UAAutomationEngineDelayTaskID, UAAutomationEngineIntervalTaskID] dispatcher:OCMOCK_ANY launchHandler:OCMOCK_ANY];
 
     self.mockMetrics = [self mockForClass:[UAApplicationMetrics class]];
-    [[[self.mockAirship stub] andReturn:self.mockMetrics] applicationMetrics];
+
+    self.airship = [[UATestAirshipInstance alloc] init];
+    self.airship.applicationMetrics = self.mockMetrics;
+    [self.airship makeShared];
 
 
     self.notificationCenter = [[NSNotificationCenter alloc] init];

@@ -1,17 +1,11 @@
 /* Copyright Airship and Contributors */
 
-#import "UAirship+Internal.h"
 #import "UAAirshipBaseTest.h"
 
-#if __has_include("AirshipCore/AirshipCore-Swift.h")
-#import <AirshipCore/AirshipCore-Swift.h>
-#elif __has_include("Airship/Airship-Swift.h")
-#import <Airship/Airship-Swift.h>
-#endif
+@import AirshipCore;
 
 @interface UAUtilsTest : UAAirshipBaseTest
 @property(nonatomic, strong) NSCalendar *gregorianUTC;
-@property(nonatomic, strong) id mockAirship;
 @end
 
 @implementation UAUtilsTest
@@ -22,9 +16,6 @@
                              initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
 
     self.gregorianUTC.timeZone = [NSTimeZone timeZoneForSecondsFromGMT:0];
-
-    self.mockAirship = [self mockForClass:[UAirship class]];
-    [UAirship setSharedAirship:self.mockAirship];
 }
 
 - (void)testConnectionType {

@@ -3,7 +3,6 @@
 #import "UABaseTest.h"
 #import "UACancelSchedulesAction.h"
 #import "UAActionArguments+Internal.h"
-#import "UAirship+Internal.h"
 #import "UAInAppAutomation+Internal.h"
 
 @interface UACancelSchedulesActionTests : UABaseTest

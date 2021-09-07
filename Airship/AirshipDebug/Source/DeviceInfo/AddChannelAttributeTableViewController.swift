@@ -9,7 +9,7 @@ import Airship
 class AddChannelAttributeTableViewController: AddAttributeTableViewController {
 
     override internal func applyMutations(_ mutations : AttributeMutations) {
-        UAirship.channel()?.apply(mutations)
+        Airship.channel.apply(mutations)
     }
 
 }

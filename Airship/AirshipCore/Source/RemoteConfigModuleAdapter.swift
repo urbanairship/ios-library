@@ -21,24 +21,24 @@ class RemoteConfigModuleAdapter : RemoteConfigModuleAdapterProtocol {
     
     private func components(_ classes: [String]) -> [UAComponent] {
         return classes.compactMap {
-            return UAirship.component(forClassName: $0)
+            return Airship.component(forClassName: $0)
         }
     }
     
     private func components(_ module: RemoteConfigModule) -> [UAComponent] {
         switch module {
         case .push:
-            return [UAirship.push()]
+            return [Airship.push]
         case .channel:
-            return [UAirship.channel()]
+            return [Airship.channel]
         case .analytics:
-            return [UAirship.analytics()]
+            return [Airship.analytics]
         case .messageCenter:
             return components(["UAMessageCenter"])
         case .inAppAutomation:
             return components(["UAInAppAutomation", "UALegacyInAppMessaging"])
         case .contact:
-            return [UAirship.contact()]
+            return [Airship.contact]
         case .location:
             return components(["UALocation"])
         case .chat:

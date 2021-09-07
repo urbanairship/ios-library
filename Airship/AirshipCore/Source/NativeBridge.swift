@@ -185,7 +185,7 @@ public class NativeBridge : NSObject, WKNavigationDelegate {
     }
 
     private func isAllowed(url: URL) -> Bool {
-        return UAirship.shared().urlAllowList.isAllowed(url, scope: .javaScriptInterface)
+        return Airship.shared.urlAllowList.isAllowed(url, scope: .javaScriptInterface)
     }
     
     private func isAllowedAirshipRequest(request: NSURLRequest, originatingURL: URL) -> Bool {
@@ -223,7 +223,7 @@ public class NativeBridge : NSObject, WKNavigationDelegate {
             if argument == nil {
                 AirshipLogger.error("Malformed Named User command")
             } else {
-                let contact : ContactProtocol = UAirship.contact()
+                let contact : ContactProtocol = Airship.contact
                 if (argument!.count != 0) {
                     contact.identify(argument!)
                 } else {
@@ -259,7 +259,7 @@ public class NativeBridge : NSObject, WKNavigationDelegate {
             return
         }
         
-        result = UAirship.shared().javaScriptCommandDelegate?.perform(command, webView: webView) ?? false
+        result = Airship.shared.javaScriptCommandDelegate?.perform(command, webView: webView) ?? false
         /// App defined JavaScript command delegate
         if (result) {
             return
@@ -302,7 +302,7 @@ public class NativeBridge : NSObject, WKNavigationDelegate {
         guard let url = webview.url else {
             return
         }
-        if (!UAirship.shared().urlAllowList.isAllowed(url, scope: .javaScriptInterface)) {
+        if (!Airship.shared.urlAllowList.isAllowed(url, scope: .javaScriptInterface)) {
             /// Don't log in the special case of about:blank URLs
             if (url.absoluteString != "blank") {
                 AirshipLogger.debug(String(format:"URL %@ is not allowed, not populating JS interface", url.absoluteString))

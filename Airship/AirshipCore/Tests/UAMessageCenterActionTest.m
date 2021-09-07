@@ -5,7 +5,6 @@
 
 #import "UAMessageCenterAction.h"
 #import "UAActionArguments+Internal.h"
-#import "UAirship+Internal.h"
 #import "UAInboxMessage.h"
 #import "UAMessageCenter.h"
 

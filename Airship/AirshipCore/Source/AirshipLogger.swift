@@ -7,17 +7,9 @@ import os
  * Airship logger.
  * @note For internal use only. :nodoc:
  */
-@objc(UAirshipLogger)
 public class AirshipLogger : NSObject {
 
-    @objc
-    public static var loggingEnabled = true
-
-    @objc
-    public static var implementationErrorLoggingEnabled = true
-
-    @objc
-    public static var logLevel: UALogLevel = .error
+    static var logLevel: LogLevel = .error
 
     @available(macOS 11.0, iOS 14.0, watchOS 7.0, tvOS 14.0, *)
     static let LOGGER = Logger(subsystem: Bundle.main.bundleIdentifier ?? "", category: "Airship")
@@ -27,7 +19,7 @@ public class AirshipLogger : NSObject {
                              line: Int = #line,
                              function: String = #function) {
 
-        log(logLevel: UALogLevel.trace,
+        log(logLevel: LogLevel.trace,
             message: message,
             fileID: fileID,
             line: line,
@@ -39,7 +31,7 @@ public class AirshipLogger : NSObject {
                              line: Int = #line,
                              function: String = #function) {
 
-        log(logLevel: UALogLevel.debug,
+        log(logLevel: LogLevel.debug,
             message: message,
             fileID: fileID,
             line: line,
@@ -51,7 +43,7 @@ public class AirshipLogger : NSObject {
                             fileID: String = #fileID,
                             line: Int = #line,
                             function: String = #function) {
-        log(logLevel: UALogLevel.info,
+        log(logLevel: LogLevel.info,
             message: message,
             fileID: fileID,
             line: line,
@@ -62,7 +54,7 @@ public class AirshipLogger : NSObject {
                             fileID: String = #fileID,
                             line: Int = #line,
                             function: String = #function) {
-        log(logLevel: UALogLevel.info,
+        log(logLevel: LogLevel.info,
             message: message,
             fileID: fileID,
             line: line,
@@ -74,7 +66,7 @@ public class AirshipLogger : NSObject {
                             fileID: String = #fileID,
                             line: Int = #line,
                             function: String = #function) {
-        log(logLevel: UALogLevel.warn,
+        log(logLevel: LogLevel.warn,
             message: message,
             fileID: fileID,
             line: line,
@@ -86,7 +78,7 @@ public class AirshipLogger : NSObject {
                              line: Int = #line,
                              function: String = #function) {
 
-        log(logLevel: UALogLevel.error,
+        log(logLevel: LogLevel.error,
             message: message,
             fileID: fileID,
             line: line,
@@ -98,33 +90,22 @@ public class AirshipLogger : NSObject {
                                 line: Int = #line,
                                 function: String = #function) {
 
-        if (self.implementationErrorLoggingEnabled) {
-            log(logLevel: UALogLevel.error,
-                message: "🚨Airship Implementation Error🚨: \(message)",
-                fileID: fileID,
-                line: line,
-                function: function)
-        } else {
-            log(logLevel: UALogLevel.error,
-                message: "Airship Implementation Error: \(message)",
-                fileID: fileID,
-                line: line,
-                function: function)
-        }
+        log(logLevel: LogLevel.error,
+            message: "🚨Airship Implementation Error🚨: \(message)",
+            fileID: fileID,
+            line: line,
+            function: function)
     }
 
-    private static func log(logLevel: UALogLevel,
+    private static func log(logLevel: LogLevel,
                             message: String,
                             fileID: String,
                             line: Int,
                             function: String,
                             skipLogLevelCheck: Bool = false) {
         
-        guard loggingEnabled else {
-            return
-        }
-        
-        guard self.logLevel.rawValue > UALogLevel.none.rawValue else {
+        guard self.logLevel != .none,
+              self.logLevel != .undefined else {
             return
         }
 
@@ -137,7 +118,7 @@ public class AirshipLogger : NSObject {
         }
     }
 
-    private static func logInitial(_ logLevel: UALogLevel) -> String {
+    private static func logInitial(_ logLevel: LogLevel) -> String {
         switch logLevel {
         case .trace: return "T"
         case .debug: return "D"
@@ -148,7 +129,7 @@ public class AirshipLogger : NSObject {
         }
     }
 
-    private static func logType(_ logLevel: UALogLevel) -> OSLogType {
+    private static func logType(_ logLevel: LogLevel) -> OSLogType {
         switch logLevel {
         case .trace: return OSLogType.debug
         case .debug: return OSLogType.debug

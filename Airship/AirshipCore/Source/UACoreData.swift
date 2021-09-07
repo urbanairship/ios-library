@@ -1,5 +1,7 @@
 /* Copyright Airship and Contributors */
 
+import CoreData
+
 /**
  * @note For internal use only. :nodoc:
  */

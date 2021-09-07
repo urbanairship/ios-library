@@ -44,7 +44,7 @@ NSUInteger const DebugTab = 3;
 
     // Set log level for debugging config loading (optional)
     // It will be set to the value in the loaded config upon takeOff
-    [UAirship setLogLevel:UALogLevelTrace];
+    UAirship.logLevel = UALogLevelTrace;
 
     // Populate AirshipConfig.plist with your app's info from https://go.urbanairship.com
     // or set runtime properties here.
@@ -62,7 +62,7 @@ NSUInteger const DebugTab = 3;
     // etc.
 
     // Call takeOff (which creates the UAirship singleton)
-    [UAirship takeOff:config];
+    [UAirship takeOff:config launchOptions:launchOptions];
 
     // Print out the application configuration for debugging (optional)
     NSLog(@"Config:\n%@", [config description]);

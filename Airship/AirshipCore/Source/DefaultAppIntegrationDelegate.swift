@@ -3,8 +3,7 @@
 import Foundation
 
 /// NOTE: For internal use only. :nodoc:
-@objc(UADefaultAppIntegrationDelegate)
-public class DefaultAppIntegrationDelegate : NSObject, AppIntegrationDelegate {
+class DefaultAppIntegrationDelegate : NSObject, AppIntegrationDelegate {
     
     let push: InternalPushProtocol
     let analytics: InternalAnalyticsProtocol
@@ -18,9 +17,9 @@ public class DefaultAppIntegrationDelegate : NSObject, AppIntegrationDelegate {
     
     @objc
     public override convenience init() {
-        self.init(push: UAirship.push(),
-                  analytics: UAirship.analytics(),
-                  pushableComponents: UAirship.shared().components.compactMap { return $0 as? UAPushableComponent })
+        self.init(push: Airship.push,
+                  analytics: Airship.analytics,
+                  pushableComponents: Airship.shared.components.compactMap { return $0 as? UAPushableComponent })
     }
     
     public func onBackgroundAppRefresh() {

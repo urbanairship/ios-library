@@ -128,7 +128,7 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
         }
         
         cell.callback = { isOn in
-            let editor = UAirship.channel().editSubscriptionLists()
+            let editor = Airship.channel.editSubscriptionLists()
             if (isOn) {
                 self.activeSubscriptions.append(item.subscriptionID)
                 editor.subscribe(item.subscriptionID)
@@ -180,7 +180,7 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
             onComplete = nil
         }
         
-        UAirship.channel().fetchSubscriptionLists() { [weak self] subscribedIDs, error in
+        Airship.channel.fetchSubscriptionLists() { [weak self] subscribedIDs, error in
             
             guard error == nil, let subscribedIDs = subscribedIDs else {
                 UADispatcher.main.dispatch(after: 30, block: {
@@ -191,7 +191,7 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
                 return
             }
             
-            PreferenceCenter.shared().config(preferenceCenterID: preferenceCenterID) { config in
+            PreferenceCenter.shared.config(preferenceCenterID: preferenceCenterID) { config in
                 guard let config = config else {
                     UADispatcher.main.dispatch(after: 30, block: {
                         if (!cancelled) {

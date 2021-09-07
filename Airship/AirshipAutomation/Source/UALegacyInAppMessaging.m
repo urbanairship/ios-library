@@ -32,7 +32,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
 
 @interface UALegacyInAppMessaging () <UAPushableComponent>
 @property(nonatomic, strong) UAPreferenceDataStore *dataStore;
-@property(nonatomic, strong) UAAnalytics *analytics;
+@property(nonatomic, strong) id<UAAnalyticsProtocol> analytics;
 @property(nonatomic, weak) UAInAppAutomation *inAppAutomation;
 @property(nonatomic, strong) UAComponentDisableHelper *disableHelper;
 
@@ -44,7 +44,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
     return (UALegacyInAppMessaging *)[UAirship componentForClassName:NSStringFromClass([self class])];
 }
 
-- (instancetype)initWithAnalytics:(UAAnalytics *)analytics
+- (instancetype)initWithAnalytics:(id<UAAnalyticsProtocol>)analytics
                         dataStore:(UAPreferenceDataStore *)dataStore
                   inAppAutomation:(UAInAppAutomation *)inAppAutomation {
 
@@ -66,7 +66,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
     return self;
 }
 
-+ (instancetype)inAppMessagingWithAnalytics:(UAAnalytics *)analytics
++ (instancetype)inAppMessagingWithAnalytics:(id<UAAnalyticsProtocol>)analytics
                                   dataStore:(UAPreferenceDataStore *)dataStore
                             inAppAutomation:(UAInAppAutomation *)inAppAutomation {
 

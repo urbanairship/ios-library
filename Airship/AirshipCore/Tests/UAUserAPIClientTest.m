@@ -3,7 +3,6 @@
 #import "UAAirshipBaseTest.h"
 #import "UAUserAPIClient+Internal.h"
 #import "NSJSONSerialization+UAAdditions.h"
-#import "UAirship+Internal.h"
 #import "UAUserAPIClient+Internal.h"
 #import "UAUser+Internal.h"
 #import "UAUserData+Internal.h"

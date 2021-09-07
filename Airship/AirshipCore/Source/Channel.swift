@@ -140,13 +140,13 @@ public class Channel : NSObject, UAComponent, ChannelProtocol {
     
     // NOTE: For internal use only. :nodoc:
     static let supplier : () -> (ChannelProtocol) = {
-        return Channel.shared()
+        return Airship.requireComponent(ofType: ChannelProtocol.self)
     }
     
     /// - Returns The shared Channel instance.
     @objc
-    public static func shared() -> Channel! {
-        return UAirship.component(forClassName: "UAChannel") as? Channel
+    public static var shared: Channel {
+        return Airship.channel
     }
     
     // NOTE: For internal use only. :nodoc:

@@ -40,8 +40,6 @@ class AutomationCell: UITableViewCell {
 class AutomationTableViewController: UITableViewController {
     var launchPathComponents : [String]?
     var launchCompletionHandler : (() -> Void)?
-
-    private let inAppAutomation = UAInAppAutomation.shared()
     private var schedules : Array<UASchedule>?
 
     func setTableViewTheme() {
@@ -67,7 +65,7 @@ class AutomationTableViewController: UITableViewController {
     }
 
     @objc private func refreshInAppAutomation() {
-        self.inAppAutomation.getSchedules({ (schedulesFromAutomation) in
+        UAInAppAutomation.shared.getSchedules({ (schedulesFromAutomation) in
             self.schedules = schedulesFromAutomation
             self.tableView.reloadData()
             self.refreshControl?.endRefreshing()

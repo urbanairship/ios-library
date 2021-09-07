@@ -2,7 +2,6 @@
 
 #import "UABaseTest.h"
 #import <CoreData/CoreData.h>
-#import "UAirship.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAScheduleDataMigrator+Internal.h"
 #import "UAScheduleData+Internal.h"

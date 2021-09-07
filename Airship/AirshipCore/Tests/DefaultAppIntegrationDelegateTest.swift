@@ -9,10 +9,14 @@ class DefaultAppIntegrationdelegateTest: XCTestCase {
 
     private var delegate: DefaultAppIntegrationDelegate!
     private let push = TestPush()
-    private let analytics = TestAnalytics()
+    private let analytics = InternalTestAnalytics()
     private let pushableComponent = TestPushableComponent()
+    private let airshipInstance = TestAirshipInstance()
     
     override func setUpWithError() throws {
+        self.airshipInstance.actionRegistry = ActionRegistry()
+        self.airshipInstance.makeShared()
+        
         self.delegate = DefaultAppIntegrationDelegate(push: self.push,
                                                       analytics: self.analytics,
                                                       pushableComponents: [pushableComponent])
@@ -108,7 +112,7 @@ class TestPushableComponent : UAPushableComponent {
     }
 }
 
-class TestAnalytics : InternalAnalyticsProtocol {
+class InternalTestAnalytics : InternalAnalyticsProtocol {
     
     var onDeviceRegistrationCalled = false
 

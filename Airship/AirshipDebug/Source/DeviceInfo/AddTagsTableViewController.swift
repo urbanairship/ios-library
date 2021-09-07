@@ -49,9 +49,9 @@ class AddTagsTableViewController: UITableViewController, UITextFieldDelegate {
         
         self.view.endEditing(true)
         
-        UAirship.channel().addTag(textField.text!)
+        Airship.channel.addTag(textField.text!)
         
-        UAirship.push().updateRegistration()
+        Airship.push.updateRegistration()
 
         return navigationController?.popViewController(animated: true) != nil
     }

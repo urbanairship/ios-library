@@ -47,23 +47,25 @@ class DeviceInfoCell: UITableViewCell {
 
 var isInAppAutomationEnabled: Bool {
     get {
-        return UAirship.shared().privacyManager.isEnabled(UAFeatures.inAppAutomation)
+        return Airship.shared.privacyManager.isEnabled(UAFeatures.inAppAutomation)
     }
     set (value) {
         if (value) {
-            UAirship.shared().privacyManager.enableFeatures(UAFeatures.inAppAutomation)
+            Airship.shared.privacyManager.enableFeatures(UAFeatures.inAppAutomation)
         } else {
-            UAirship.shared().privacyManager.disableFeatures(UAFeatures.inAppAutomation)
+            Airship.shared.privacyManager.disableFeatures(UAFeatures.inAppAutomation)
         }
     }
 }
 
 var inAppAutomationDisplayInterval: Int {
+    
+    
     get {
-        return Int(UAInAppAutomation.shared().inAppMessageManager.displayInterval)
+        return Int(UAInAppAutomation.shared.inAppMessageManager.displayInterval)
     }
     set (value) {
-        UAInAppAutomation.shared().inAppMessageManager.displayInterval = TimeInterval(value)
+        UAInAppAutomation.shared.inAppMessageManager.displayInterval = TimeInterval(value)
     }
 }
 
@@ -275,7 +277,7 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
         case notificationsEnabled:
             cell.title.text = "ua_device_info_enable_notifications".localized()
             cell.cellSwitch.isHidden = false
-            cell.cellSwitch.isOn = UAirship.push()?.userPushNotificationsEnabled ?? false
+            cell.cellSwitch.isOn = Airship.push.userPushNotificationsEnabled
             cell.subtitle?.text = pushTypeString()
             cell.subtitle?.adjustsFontSizeToFitWidth = true;
             cell.subtitle?.minimumScaleFactor = 0.25;
@@ -292,64 +294,64 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
         case inAppAutomationFeatureEnabled:
             cell.title.text = "ua_device_info_in_app_automation_feature_enabled".localized()
             cell.cellSwitch.isHidden = false
-            cell.cellSwitch.isOn = UAirship.shared().privacyManager.isEnabled(UAFeatures.inAppAutomation)
+            cell.cellSwitch.isOn = Airship.shared.privacyManager.isEnabled(UAFeatures.inAppAutomation)
             cell.subtitle?.adjustsFontSizeToFitWidth = true
             cell.subtitle?.minimumScaleFactor = 0.25
             cell.subtitle?.numberOfLines = 2
         case messageCenterFeatureEnabled:
             cell.title.text = "ua_device_info_message_center_feature_enabled".localized()
             cell.cellSwitch.isHidden = false
-            cell.cellSwitch.isOn = UAirship.shared().privacyManager.isEnabled(UAFeatures.messageCenter)
+            cell.cellSwitch.isOn = Airship.shared.privacyManager.isEnabled(UAFeatures.messageCenter)
             cell.subtitle?.adjustsFontSizeToFitWidth = true
             cell.subtitle?.minimumScaleFactor = 0.25
             cell.subtitle?.numberOfLines = 2
         case pushFeatureEnabled:
             cell.title.text = "ua_device_info_push_feature_enabled".localized()
             cell.cellSwitch.isHidden = false
-            cell.cellSwitch.isOn = UAirship.shared().privacyManager.isEnabled(UAFeatures.push)
+            cell.cellSwitch.isOn = Airship.shared.privacyManager.isEnabled(UAFeatures.push)
             cell.subtitle?.adjustsFontSizeToFitWidth = true
             cell.subtitle?.minimumScaleFactor = 0.25
             cell.subtitle?.numberOfLines = 2
         case chatFeatureEnabled:
             cell.title.text = "ua_device_info_chat_feature_enabled".localized()
             cell.cellSwitch.isHidden = false
-            cell.cellSwitch.isOn = UAirship.shared().privacyManager.isEnabled(UAFeatures.chat)
+            cell.cellSwitch.isOn = Airship.shared.privacyManager.isEnabled(UAFeatures.chat)
             cell.subtitle?.adjustsFontSizeToFitWidth = true
             cell.subtitle?.minimumScaleFactor = 0.25
             cell.subtitle?.numberOfLines = 2
         case analyticsFeatureEnabled:
             cell.title.text = "ua_device_info_analytics_feature_enabled".localized()
             cell.cellSwitch.isHidden = false
-            cell.cellSwitch.isOn = UAirship.shared().privacyManager.isEnabled(UAFeatures.analytics)
+            cell.cellSwitch.isOn = Airship.shared.privacyManager.isEnabled(UAFeatures.analytics)
             cell.subtitle?.adjustsFontSizeToFitWidth = true
             cell.subtitle?.minimumScaleFactor = 0.25
             cell.subtitle?.numberOfLines = 2
         case tagsAndAttributesFeatureEnabled:
             cell.title.text = "ua_device_info_tags_and_attributes_feature_enabled".localized()
             cell.cellSwitch.isHidden = false
-            cell.cellSwitch.isOn = UAirship.shared().privacyManager.isEnabled(UAFeatures.tagsAndAttributes)
+            cell.cellSwitch.isOn = Airship.shared.privacyManager.isEnabled(UAFeatures.tagsAndAttributes)
             cell.subtitle?.adjustsFontSizeToFitWidth = true
             cell.subtitle?.minimumScaleFactor = 0.25
             cell.subtitle?.numberOfLines = 2
         case contactsFeatureEnabled:
             cell.title.text = "ua_device_info_contacts_feature_enabled".localized()
             cell.cellSwitch.isHidden = false
-            cell.cellSwitch.isOn = UAirship.shared().privacyManager.isEnabled(UAFeatures.contacts)
+            cell.cellSwitch.isOn = Airship.shared.privacyManager.isEnabled(UAFeatures.contacts)
             cell.subtitle?.adjustsFontSizeToFitWidth = true
             cell.subtitle?.minimumScaleFactor = 0.25
             cell.subtitle?.numberOfLines = 2
         case locationFeatureEnabled:
             cell.title.text = "ua_device_info_location_feature_enabled".localized()
             cell.cellSwitch.isHidden = false
-            cell.cellSwitch.isOn = UAirship.shared().privacyManager.isEnabled(UAFeatures.location)
+            cell.cellSwitch.isOn = Airship.shared.privacyManager.isEnabled(UAFeatures.location)
             cell.subtitle?.adjustsFontSizeToFitWidth = true
             cell.subtitle?.minimumScaleFactor = 0.25
             cell.subtitle?.numberOfLines = 2
         case channelID:
             cell.title.text = "ua_device_info_channel_id".localized()
-            cell.subtitle.text = UAirship.channel().identifier
+            cell.subtitle.text = Airship.channel.identifier
         case username:
-            UAMessageCenter.shared().user.getData({ (userData) in
+            UAMessageCenter.shared.user.getData({ (userData) in
                 DispatchQueue.main.async {
                     cell.title.text = "ua_device_info_username".localized()
                     cell.subtitle.text = userData.username
@@ -357,12 +359,12 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             })
         case namedUser:
             cell.title.text = "ua_device_info_named_user".localized()
-            cell.subtitle?.text = UAirship.namedUser().identifier == nil ? localizedNone : UAirship.namedUser().identifier
+            cell.subtitle?.text = Airship.namedUser.identifier == nil ? localizedNone : Airship.namedUser.identifier
             cell.accessoryType = .disclosureIndicator
         case tags:
             cell.title.text = "ua_device_info_tags".localized()
-            if (UAirship.channel().tags.count > 0) {
-                cell.subtitle?.text = UAirship.channel().tags.joined(separator: ", ")
+            if (Airship.channel.tags.count > 0) {
+                cell.subtitle?.text = Airship.channel.tags.joined(separator: ", ")
             } else {
                 cell.subtitle?.text = localizedNone
             }
@@ -390,11 +392,11 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             cell.title.text = "ua_device_info_enable_location_enabled".localized()
 
             cell.cellSwitch.isHidden = false
-            cell.cellSwitch.isOn = UAirship.shared().privacyManager.isEnabled(UAFeatures.location)
+            cell.cellSwitch.isOn = Airship.shared.privacyManager.isEnabled(UAFeatures.location)
 
-            let optedInToLocation = UALocation.shared().isLocationOptedIn()
+            let optedInToLocation = UALocation.shared.isLocationOptedIn()
 
-            if (UAirship.shared().privacyManager.isEnabled(UAFeatures.location) && !optedInToLocation) {
+            if (Airship.shared.privacyManager.isEnabled(UAFeatures.location) && !optedInToLocation) {
                 cell.subtitle?.text = "ua_location_enabled_detail".localized(comment: "Enable GPS and WIFI Based Location detail label") + " - NOT OPTED IN"
             } else {
                 cell.subtitle?.text = localizedNone
@@ -425,14 +427,14 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
         switch indexPath {
         case notificationsEnabled:
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
-            UAirship.push().userPushNotificationsEnabled = cell.cellSwitch.isOn
+            Airship.push.userPushNotificationsEnabled = cell.cellSwitch.isOn
         case channelID:
-            if (UAirship.channel().identifier != nil) {
+            if (Airship.channel.identifier != nil) {
                 UIPasteboard.general.string = cell.subtitle?.text
                 showCopiedAlert()
             }
         case username:
-            UAMessageCenter.shared().user.getData({ (userData) in
+            UAMessageCenter.shared.user.getData({ (userData) in
                 UIPasteboard.general.string = userData.username
                 self.showCopiedAlert()
             })
@@ -454,65 +456,65 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
         case inAppAutomationFeatureEnabled:
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
             if (cell.cellSwitch.isOn) {
-                UAirship.shared().privacyManager.enableFeatures(UAFeatures.inAppAutomation)
+                Airship.shared.privacyManager.enableFeatures(UAFeatures.inAppAutomation)
             } else {
-                UAirship.shared().privacyManager.disableFeatures(UAFeatures.inAppAutomation)
+                Airship.shared.privacyManager.disableFeatures(UAFeatures.inAppAutomation)
             }
         case messageCenterFeatureEnabled:
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
             if (cell.cellSwitch.isOn) {
-                UAirship.shared().privacyManager.enableFeatures(UAFeatures.messageCenter)
+                Airship.shared.privacyManager.enableFeatures(UAFeatures.messageCenter)
             } else {
-                UAirship.shared().privacyManager.disableFeatures(UAFeatures.messageCenter)
+                Airship.shared.privacyManager.disableFeatures(UAFeatures.messageCenter)
             }
         case pushFeatureEnabled:
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
             if (cell.cellSwitch.isOn) {
-                UAirship.shared().privacyManager.enableFeatures(UAFeatures.push)
+                Airship.shared.privacyManager.enableFeatures(UAFeatures.push)
             } else {
-                UAirship.shared().privacyManager.disableFeatures(UAFeatures.push)
+                Airship.shared.privacyManager.disableFeatures(UAFeatures.push)
             }
         case chatFeatureEnabled:
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
             if (cell.cellSwitch.isOn) {
-                UAirship.shared().privacyManager.enableFeatures(UAFeatures.chat)
+                Airship.shared.privacyManager.enableFeatures(UAFeatures.chat)
             } else {
-                UAirship.shared().privacyManager.disableFeatures(UAFeatures.chat)
+                Airship.shared.privacyManager.disableFeatures(UAFeatures.chat)
             }
         case analyticsFeatureEnabled:
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
             if (cell.cellSwitch.isOn) {
-                UAirship.shared().privacyManager.enableFeatures(UAFeatures.analytics)
+                Airship.shared.privacyManager.enableFeatures(UAFeatures.analytics)
             } else {
-                UAirship.shared().privacyManager.disableFeatures(UAFeatures.analytics)
+                Airship.shared.privacyManager.disableFeatures(UAFeatures.analytics)
             }
         case tagsAndAttributesFeatureEnabled:
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
             if (cell.cellSwitch.isOn) {
-                UAirship.shared().privacyManager.enableFeatures(UAFeatures.tagsAndAttributes)
+                Airship.shared.privacyManager.enableFeatures(UAFeatures.tagsAndAttributes)
             } else {
-                UAirship.shared().privacyManager.disableFeatures(UAFeatures.tagsAndAttributes)
+                Airship.shared.privacyManager.disableFeatures(UAFeatures.tagsAndAttributes)
             }
         case contactsFeatureEnabled:
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
             if (cell.cellSwitch.isOn) {
-                UAirship.shared().privacyManager.enableFeatures(UAFeatures.contacts)
+                Airship.shared.privacyManager.enableFeatures(UAFeatures.contacts)
             } else {
-                UAirship.shared().privacyManager.disableFeatures(UAFeatures.contacts)
+                Airship.shared.privacyManager.disableFeatures(UAFeatures.contacts)
             }
         case locationFeatureEnabled:
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
             if (cell.cellSwitch.isOn) {
-                UAirship.shared().privacyManager.enableFeatures(UAFeatures.location)
+                Airship.shared.privacyManager.enableFeatures(UAFeatures.location)
             } else {
-                UAirship.shared().privacyManager.disableFeatures(UAFeatures.location)
+                Airship.shared.privacyManager.disableFeatures(UAFeatures.location)
             }
         case locationEnabled:
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
             if (cell.cellSwitch.isOn) {
-                UAirship.shared().privacyManager.enableFeatures(UAFeatures.location)
+                Airship.shared.privacyManager.enableFeatures(UAFeatures.location)
             } else {
-                UAirship.shared().privacyManager.disableFeatures(UAFeatures.location)
+                Airship.shared.privacyManager.disableFeatures(UAFeatures.location)
             }
         default:
             break
@@ -540,7 +542,7 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
 
     func pushTypeString () -> String {
 
-        let authorizedSettings = UAirship.push().authorizedNotificationSettings;
+        let authorizedSettings = Airship.push.authorizedNotificationSettings;
 
         var settingsArray: [String] = []
 

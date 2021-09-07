@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UAAirshipBaseTest.h"
-#import "UAirship+Internal.h"
 
 @import AirshipCore;
 

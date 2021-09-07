@@ -63,9 +63,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * The shared InAppAutomation instance.
- * @returns The shared InAppAutomation instance.
  */
-+(UALegacyInAppMessaging *)shared;
+@property (class, nonatomic, readonly, null_unspecified) UALegacyInAppMessaging *shared;
 
 /**
  * Sets whether legacy messages will display immediately upon arrival, instead of waiting

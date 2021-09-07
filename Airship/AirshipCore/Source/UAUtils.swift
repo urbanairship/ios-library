@@ -2,9 +2,9 @@
 
 import Foundation
 import CommonCrypto
+import SystemConfiguration
 
-// CoreTelephony not supported in tvOS
-#if canImport(CoreTelephony)
+#if os(iOS) && !targetEnvironment(macCatalyst)
 import CoreTelephony
 #endif
 
@@ -84,7 +84,7 @@ public class UAUtils : NSObject {
     /// - Returns: The current carrier name.
     @objc
     public class func carrierName() -> String? {
-        #if !os(tvOS)  // Core Telephony not supported on tvOS
+        #if os(iOS) && !targetEnvironment(macCatalyst)
             let info = CTTelephonyNetworkInfo()
             return info.subscriberCellularProvider?.carrierName
         #else

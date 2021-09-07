@@ -1,13 +1,13 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAirship+Internal.h"
+#import "AirshipTests-Swift.h"
 
 @import AirshipCore;
 
 @interface UAAddCustomEventActionTest : UABaseTest
-@property (nonatomic, strong) id analytics;
-@property (nonatomic, strong) id airship;
+@property(nonatomic, strong) UATestAnalytics *analytics;
+@property(nonatomic, strong) UATestAirshipInstance *airship;
 @property (nonatomic, strong) UAAddCustomEventAction *action;
 @end
 
@@ -16,11 +16,10 @@
 - (void)setUp {
     [super setUp];
 
-    self.analytics = [self mockForProtocol:@protocol(UAAnalyticsProtocol)];
-    self.airship = [self strictMockForClass:[UAirship class]];
-    [[[self.airship stub] andReturn:self.analytics] sharedAnalytics];
-
-    [UAirship setSharedAirship:self.airship];
+    self.analytics = [[UATestAnalytics alloc] init];
+    self.airship = [[UATestAirshipInstance alloc] init];
+    self.airship.components = @[self.analytics];
+    [self.airship makeShared];
     self.action = [[UAAddCustomEventAction alloc] init];
 }
 
@@ -62,20 +61,15 @@
 
     UAActionResult *expectedResult = [UAActionResult emptyResult];
 
-    [[self.analytics expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
-        UACustomEvent *event = obj;
-        return [event.eventName isEqualToString:@"event name"] &&
-               [event.transactionID isEqualToString:@"transaction ID"] &&
-               [event.eventValue isEqualToNumber:@(123.45)] &&
-               [event.interactionType isEqualToString:@"interaction type"] &&
-               [event.interactionID isEqualToString:@"interaction ID"];
-
-    }]];
-
     [self verifyPerformWithArgs:args withExpectedResult:expectedResult];
 
-    // Verify the event was added
-    XCTAssertNoThrow([self.analytics verify], @"Custom event should have been added.");
+    XCTAssertEqual(1, self.analytics.events.count);
+    UACustomEvent *event = self.analytics.events.firstObject;
+    XCTAssertEqualObjects(@"event name", event.eventName);
+    XCTAssertEqualObjects(@"transaction ID", event.transactionID);
+    XCTAssertEqualObjects(@"interaction type", event.interactionType);
+    XCTAssertEqualObjects(@"interaction ID", event.interactionID);
+    XCTAssertEqualObjects(@(123.45), event.eventValue);
 }
 
 /**
@@ -94,20 +88,15 @@
 
     UAActionResult *expectedResult = [UAActionResult emptyResult];
 
-    [[self.analytics expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
-        UACustomEvent *event = obj;
-        return [event.eventName isEqualToString:@"event name"] &&
-        [event.transactionID isEqualToString:@"transaction ID"] &&
-        [event.eventValue isEqualToNumber:@(123.45)] &&
-        [event.interactionType isEqualToString:@"interaction type"] &&
-        [event.interactionID isEqualToString:@"interaction ID"];
-
-    }]];
-
     [self verifyPerformWithArgs:args withExpectedResult:expectedResult];
 
-    // Verify the event was added
-    XCTAssertNoThrow([self.analytics verify], @"Custom event should have been added.");
+    XCTAssertEqual(1, self.analytics.events.count);
+    UACustomEvent *event = self.analytics.events.firstObject;
+    XCTAssertEqualObjects(@"event name", event.eventName);
+    XCTAssertEqualObjects(@"transaction ID", event.transactionID);
+    XCTAssertEqualObjects(@"interaction type", event.interactionType);
+    XCTAssertEqualObjects(@"interaction ID", event.interactionID);
+    XCTAssertEqualObjects(@(123.45), event.eventValue);
 }
 
 /**
@@ -128,7 +117,6 @@
     [self verifyPerformWithArgs:args withExpectedResult:expectedResult];
 }
 
-
 /**
  * Test auto filling in the interaction ID and type from an mcrap when left
  * empty.
@@ -144,20 +132,15 @@
                                                            metadata:@{UAActionMetadataInboxMessageIDKey: @"message ID"}];
 
     UAActionResult *expectedResult = [UAActionResult emptyResult];
-
-    [[self.analytics expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
-        UACustomEvent *event = obj;
-        return [event.eventName isEqualToString:@"event name"] &&
-        [event.transactionID isEqualToString:@"transaction ID"] &&
-        [event.eventValue isEqualToNumber:@(123.45)] &&
-        [event.interactionID isEqualToString:@"message ID"] &&
-        [event.interactionType isEqualToString:@"ua_mcrap"];
-    }]];
-
     [self verifyPerformWithArgs:args withExpectedResult:expectedResult];
 
-    // Verify the event was added
-    XCTAssertNoThrow([self.analytics verify], @"Custom event should have been added.");
+    XCTAssertEqual(1, self.analytics.events.count);
+    UACustomEvent *event = self.analytics.events.firstObject;
+    XCTAssertEqualObjects(@"event name", event.eventName);
+    XCTAssertEqualObjects(@"transaction ID", event.transactionID);
+    XCTAssertEqualObjects(@"ua_mcrap", event.interactionType);
+    XCTAssertEqualObjects(@"message ID", event.interactionID);
+    XCTAssertEqualObjects(@(123.45), event.eventValue);
 }
 
 /**
@@ -178,19 +161,15 @@
 
     UAActionResult *expectedResult = [UAActionResult emptyResult];
 
-    [[self.analytics expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
-        UACustomEvent *event = obj;
-        return [event.eventName isEqualToString:@"event name"] &&
-        [event.transactionID isEqualToString:@"transaction ID"] &&
-        [event.eventValue isEqualToNumber:@(123.45)] &&
-        [event.interactionID isEqualToString:@"interaction ID"] &&
-        [event.interactionType isEqualToString:@"interaction type"];
-    }]];
-
     [self verifyPerformWithArgs:args withExpectedResult:expectedResult];
 
-    // Verify the event was added
-    XCTAssertNoThrow([self.analytics verify], @"Custom event should have been added.");
+    XCTAssertEqual(1, self.analytics.events.count);
+    UACustomEvent *event = self.analytics.events.firstObject;
+    XCTAssertEqualObjects(@"event name", event.eventName);
+    XCTAssertEqualObjects(@"transaction ID", event.transactionID);
+    XCTAssertEqualObjects(@"interaction type", event.interactionType);
+    XCTAssertEqualObjects(@"interaction ID", event.interactionID);
+    XCTAssertEqualObjects(@(123.45), event.eventValue);
 }
 
 
@@ -215,21 +194,17 @@
 
     UAActionResult *expectedResult = [UAActionResult emptyResult];
 
-    [[self.analytics expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
-        UACustomEvent *event = obj;
-        return [event.eventName isEqualToString:@"event name"] &&
-        [event.transactionID isEqualToString:@"transaction ID"] &&
-        [event.eventValue isEqualToNumber:@(123.45)] &&
-        [event.interactionType isEqualToString:@"interaction type"] &&
-        [event.interactionID isEqualToString:@"interaction ID"] &&
-        [event.data[@"conversion_send_id"] isEqualToString:@"send ID"] &&
-        [event.data[@"conversion_metadata"] isEqualToString:@"send metadata"];
-    }]];
-
     [self verifyPerformWithArgs:args withExpectedResult:expectedResult];
 
-    // Verify the event was added
-    XCTAssertNoThrow([self.analytics verify], @"Custom event should have been added.");
+    XCTAssertEqual(1, self.analytics.events.count);
+    UACustomEvent *event = self.analytics.events.firstObject;
+    XCTAssertEqualObjects(@"event name", event.eventName);
+    XCTAssertEqualObjects(@"transaction ID", event.transactionID);
+    XCTAssertEqualObjects(@"interaction type", event.interactionType);
+    XCTAssertEqualObjects(@"interaction ID", event.interactionID);
+    XCTAssertEqualObjects(@"send ID", event.data[@"conversion_send_id"]);
+    XCTAssertEqualObjects(@"send metadata", event.data[@"conversion_metadata"]);
+    XCTAssertEqualObjects(@(123.45), event.eventValue);
 }
 
 
@@ -249,22 +224,13 @@
                                                       withSituation:UASituationManualInvocation];
 
     UAActionResult *expectedResult = [UAActionResult emptyResult];
-
-    [[self.analytics expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
-        UACustomEvent *event = obj;
-        return [event.eventName isEqualToString:@"event name"] &&
-        [event.data[@"properties"][@"bool"] isEqual: @YES] &&
-        [event.data[@"properties"][@"number"] isEqual:@123] &&
-        [event.data[@"properties"][@"array"] isEqualToArray:dict[@"properties"][@"array"]] &&
-        [event.data[@"properties"][@"string"] isEqualToString:@"string value"];
-    }]];
-
     [self verifyPerformWithArgs:args withExpectedResult:expectedResult];
 
-    // Verify the event was added
-    XCTAssertNoThrow([self.analytics verify], @"Custom event should have been added.");
+    XCTAssertEqual(1, self.analytics.events.count);
+    UACustomEvent *event = self.analytics.events.firstObject;
+    XCTAssertEqualObjects(@"event name", event.eventName);
+    XCTAssertEqualObjects(dict[@"properties"], event.properties);
 }
-
 
 /**
  * Helper method to verify perform.
@@ -289,15 +255,15 @@
 - (void)verifyPerformWithArgs:(UAActionArguments *)args
                    actionName:(NSString *)actionName
            withExpectedResult:(UAActionResult *)expectedResult {
-    
+
     __block BOOL finished = NO;
-    
+
     [self.action performWithArguments:args completionHandler:^(UAActionResult *result) {
         finished = YES;
         XCTAssertEqual(result.status, expectedResult.status, @"Result status should match expected result status.");
         XCTAssertEqual(result.fetchResult, expectedResult.fetchResult, @"FetchResult should match expected fetchresult.");
     }];
-    
+
     XCTAssertTrue(finished, @"Action should have completed.");
 }
 

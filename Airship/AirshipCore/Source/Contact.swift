@@ -79,9 +79,8 @@ public class Contact : NSObject, UAComponent, ContactProtocol {
 
     // NOTE: For internal use only. :nodoc:
     static let supplier : () -> (ContactProtocol) = {
-        return Contact.shared()
+        return Airship.requireComponent(ofType: ContactProtocol.self)
     }
-    
     
     static let updateTaskID = "Contact.update"
     static let operationsKey = "Contact.operations"
@@ -237,10 +236,10 @@ public class Contact : NSObject, UAComponent, ContactProtocol {
         }
     }
 
-    /// - Returns The shared Contact instance.
+    /// The shared Contact instance.
     @objc
-    public static func shared() -> Contact! {
-        return UAirship.component(forClassName: "UAContact") as? Contact
+    public static var shared: Contact! {
+        return Airship.contact
     }
 
     /**

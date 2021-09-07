@@ -108,10 +108,10 @@ public protocol PushNotificationDelegate: NSObjectProtocol {
 @objc(UAPush)
 public class Push: NSObject, UAComponent, PushProtocol {
     
-    /// - Returns The shared Push instance.
+    /// The shared Push instance.
     @objc
-    public static func shared() -> Push! {
-        return UAirship.component(forClassName: "UAPush") as? Push
+    public static var shared: Push! {
+        return Airship.push
     }
 
     // MARK: - Constants
@@ -292,6 +292,10 @@ public class Push: NSObject, UAComponent, PushProtocol {
         }
 
         self.updatePushEnablement()
+        
+        if (!self.remoteNotificationBackgroundModeEnabled) {
+            AirshipLogger.impError("Application is not configured for background notifications. Please enable remote notifications in the application's background modes.")
+        }
     }
 
     /// Migrates legacy push tags to channel tags. For internal use only. :nodoc:
@@ -709,11 +713,17 @@ public class Push: NSObject, UAComponent, PushProtocol {
 
         return allowed;
     }
+    
+    private lazy var remoteNotificationBackgroundModeEnabled: Bool = {
+        let backgroundModes = Bundle.main.object(forInfoDictionaryKey: "UIBackgroundModes") as? [Any]
+        
+        return backgroundModes?.contains(where: { ($0 as? String) == "remote-notification" }) == true
+    }()
 
     private func backgroundPushNotificationsAllowed() -> Bool {
         guard self.deviceToken != nil &&
                 self.backgroundPushNotificationsEnabled &&
-                UAirship.shared().remoteNotificationBackgroundModeEnabled &&
+                self.remoteNotificationBackgroundModeEnabled &&
                 self.privacyManager.isEnabled(.push) else {
             return false
         }

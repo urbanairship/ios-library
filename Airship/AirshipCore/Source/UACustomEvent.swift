@@ -34,13 +34,6 @@ public class UACustomEvent : NSObject, UAEvent {
     static let eventConversionSendIDKey = "conversion_send_id"
     static let eventTemplateTypeKey = "template_type"
 
-    /**
-     * Analytics supplier, for testing purposes. :nodoc:
-     */
-    @objc
-    public var analyticsSupplier: () -> AnalyticsProtocol? = {
-        return UAirship.analytics()
-    }
 
     /**
      * The send ID that triggered the event.
@@ -89,6 +82,9 @@ public class UACustomEvent : NSObject, UAEvent {
         }
     }
 
+    private lazy var analytics = Airship.requireComponent(ofType: AnalyticsProtocol.self)
+
+    
     /**
      * The event's name. The name's length must not exceed 255 characters or it will
      * invalidate the event.
@@ -274,8 +270,8 @@ public class UACustomEvent : NSObject, UAEvent {
     @objc
     public var data : [AnyHashable : Any] {
         get {
-            let sendID = conversionSendID ?? self.analyticsSupplier()?.conversionSendID
-            let sendMetadata = conversionPushMetadata ?? self.analyticsSupplier()?.conversionPushMetadata
+            let sendID = conversionSendID ?? self.analytics.conversionSendID
+            let sendMetadata = conversionPushMetadata ?? self.analytics.conversionPushMetadata
 
             var dictionary: [AnyHashable : Any] = [:]
             dictionary[UACustomEvent.eventNameKey] = eventName
@@ -324,7 +320,7 @@ public class UACustomEvent : NSObject, UAEvent {
      */
     @objc
     public func track() {
-        self.analyticsSupplier()?.addEvent(self)
+        self.analytics.addEvent(self)
     }
 
     private func isValid(string: String?, name: String, required: Bool = false) -> Bool {

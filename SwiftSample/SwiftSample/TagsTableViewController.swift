@@ -39,7 +39,7 @@ class TagsTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return UAirship.channel().tags.count
+        return Airship.channel.tags.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -48,7 +48,7 @@ class TagsTableViewController: UITableViewController {
         if cell.isEqual(nil) {
             cell = UITableViewCell.init(style: UITableViewCell.CellStyle.default, reuseIdentifier:"tagCell")
         }
-        cell.textLabel!.text = UAirship.channel().tags[indexPath.row]
+        cell.textLabel!.text = Airship.channel.tags[indexPath.row]
         cell.textLabel?.textColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
         cell.detailTextLabel?.textColor = #colorLiteral(red: 0.513617754, green: 0.5134617686, blue: 0.529979229, alpha: 1)
         cell.backgroundColor = #colorLiteral(red: 0.999904573, green: 1, blue: 0.9998808503, alpha: 1)
@@ -60,10 +60,10 @@ class TagsTableViewController: UITableViewController {
         if (editingStyle == .delete &&
             tableView.cellForRow(at: indexPath)?.textLabel?.text?.isEmpty == false) {
 
-            UAirship.channel().removeTag((tableView.cellForRow(at: indexPath)?.textLabel?.text)!)
+            Airship.channel.removeTag((tableView.cellForRow(at: indexPath)?.textLabel?.text)!)
             tableView.deleteRows(at: [indexPath], with: .fade)
 
-            UAirship.push().updateRegistration()
+            Airship.push.updateRegistration()
         }
     }
 }

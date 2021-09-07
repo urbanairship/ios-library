@@ -4,7 +4,7 @@ import Foundation
 
 class UAEventUtils {
 
-    private static let push: () -> PushProtocol = { UAirship.push() }
+    private static let push: () -> PushProtocol = { Airship.push }
 
     class func isValid(latitude: Double) -> Bool {
         guard latitude >= -90 && latitude <= 90 else {

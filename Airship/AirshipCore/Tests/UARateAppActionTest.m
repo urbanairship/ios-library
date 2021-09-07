@@ -2,7 +2,6 @@
 
 #import "UABaseTest.h"
 #import <StoreKit/StoreKit.h>
-#import "UAirship+Internal.h"
 #import "UARateAppAction.h"
 #import "AirshipTests-Swift.h"
 
@@ -11,9 +10,8 @@
 @interface UARateAppActionTest : UABaseTest
 
 @property (nonatomic, strong) id mockApplication;
-@property (nonatomic, strong) id mockAirship;
 @property (nonatomic, strong) id mockConfig;
-
+@property (nonatomic, strong) UATestAirshipInstance *airship;
 @property (nonatomic, retain) UARateAppAction *action;
 @end
 
@@ -25,14 +23,15 @@
     self.mockConfig = [self mockForClass:[UARuntimeConfig class]];
     [[[self.mockConfig stub] andReturn:[NSUUID UUID].UUIDString] appKey];
 
-    self.mockAirship = [self mockForClass:[UAirship class]];
-    [UAirship setSharedAirship:self.mockAirship];
-    [[[self.mockAirship stub] andReturn:self.mockConfig] config];
-
+    
     self.mockApplication = [self mockForClass:[UIApplication class]];
     [[[self.mockApplication stub] andReturn:self.mockApplication] sharedApplication];
 
     self.action = [[UARateAppAction alloc] init];
+    
+    self.airship = [[UATestAirshipInstance alloc] init];
+    self.airship.config = self.mockConfig;
+    [self.airship makeShared];
 }
 
 -(void)testDirectAppStoreLink {

@@ -3,13 +3,13 @@
 #import "UABaseTest.h"
 #import "UAInAppMessageDisplayEvent+Internal.h"
 #import "UABaseTest.h"
-#import "UAirship+Internal.h"
 #import "UAInAppMessage+Internal.h"
 #import "UAInAppMessageBannerDisplayContent.h"
+#import "AirshipTests-Swift.h"
 
 @interface UAInAppMessageDisplayEventTest : UABaseTest
-@property (nonatomic, strong) id analytics;
-@property (nonatomic, strong) id airship;
+@property(nonatomic, strong) UATestAnalytics *analytics;
+@property(nonatomic, strong) UATestAirshipInstance *airship;
 @property (nonatomic, strong) UAInAppMessageBannerDisplayContent *displayContent;
 @property (nonatomic, copy) NSDictionary<NSString*, NSString*> *renderedLocale;
 @end
@@ -20,6 +20,13 @@
 - (void)setUp {
     [super setUp];
 
+    self.analytics = [[UATestAnalytics alloc] init];
+    self.analytics.conversionSendID = [NSUUID UUID].UUIDString;
+    self.analytics.conversionPushMetadata = [NSUUID UUID].UUIDString;
+    self.airship = [[UATestAirshipInstance alloc] init];
+    self.airship.components = @[self.analytics];
+    [self.airship makeShared];
+    
     self.displayContent = [UAInAppMessageBannerDisplayContent displayContentWithBuilderBlock:^(UAInAppMessageBannerDisplayContentBuilder *builder) {
         builder.placement = UAInAppMessageBannerPlacementTop;
         builder.buttonLayout = UAInAppMessageButtonLayoutTypeJoined;
@@ -40,15 +47,6 @@
 
         builder.buttons = @[button];
     }];
-
-    self.analytics = [self mockForClass:[UAAnalytics class]];
-    [[[self.analytics stub] andReturn:[NSUUID UUID].UUIDString] conversionSendID];
-    [[[self.analytics stub] andReturn:[NSUUID UUID].UUIDString] conversionPushMetadata];
-
-    self.airship = [self mockForClass:[UAirship class]];
-    [[[self.airship stub] andReturn:self.analytics] sharedAnalytics];
-
-    [UAirship setSharedAirship:self.airship];
 
     self.renderedLocale = @{@"language" : @"en", @"country" : @"US"};
 }

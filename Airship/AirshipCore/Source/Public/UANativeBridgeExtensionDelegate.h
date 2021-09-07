@@ -6,6 +6,7 @@
 
 #import <WebKit/WebKit.h>
 
+@class UAJavaScriptCommand;
 @protocol UAJavaScriptEnvironmentProtocol;
 
 NS_ASSUME_NONNULL_BEGIN

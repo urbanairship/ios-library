@@ -63,8 +63,8 @@ public class FetchDeviceInfoAction : NSObject, UAAction {
     public override convenience init() {
         self.init(channel: Channel.supplier,
                   contact: Contact.supplier,
-                  push: { return UAirship.push() },
-                  location: { return UAirship.shared().locationProvider })
+                  push: { return Airship.push },
+                  location: { return Airship.shared.locationProvider })
     }
     
     @objc

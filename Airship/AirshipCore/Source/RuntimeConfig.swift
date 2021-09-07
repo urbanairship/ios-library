@@ -32,7 +32,7 @@ open class RuntimeConfig: NSObject {
     
     /// The current default Airship log level.
     @objc
-    public let logLevel: UALogLevel
+    public let logLevel: LogLevel
     
     /// The production status of this application.
     @objc

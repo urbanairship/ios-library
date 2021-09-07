@@ -156,20 +156,21 @@ NSString *const UAAccengageSettingsMigrated = @"UAAccengageSettingsMigrated";
         return;
     }
 
-    if (payload.url) {
-        if (payload.hasExternalURLAction) {
-            [UAActionRunner runActionWithName:@"open_external_url_action"
-                                        value:payload.url
-                                    situation:UASituationLaunchedFromPush];
-        } else {
-            [UAActionRunner runActionWithName:@"landing_page_action"
-                                        value:payload.url
-                                    situation:UASituationLaunchedFromPush];
+   
+    
+    if ([response.actionIdentifier isEqualToString:UNNotificationDefaultActionIdentifier]) {
+        if (payload.url) {
+            if (payload.hasExternalURLAction) {
+                [UAActionRunner runActionWithName:@"open_external_url_action"
+                                            value:payload.url
+                                        situation:UASituationLaunchedFromPush];
+            } else {
+                [UAActionRunner runActionWithName:@"landing_page_action"
+                                            value:payload.url
+                                        situation:UASituationLaunchedFromPush];
+            }
         }
-    }
-
-    if (![response.actionIdentifier isEqualToString:UNNotificationDismissActionIdentifier] && ![response.actionIdentifier isEqualToString:UNNotificationDefaultActionIdentifier] &&
-        payload.buttons) {
+    } else if (![response.actionIdentifier isEqualToString:UNNotificationDismissActionIdentifier] && payload.buttons) {
         for (UAAccengageButton *button in payload.buttons) {
             if ([button.identifier isEqualToString:response.actionIdentifier]) {
                 if ([button.actionType isEqualToString:UAAccengageButtonBrowserAction]) {
@@ -184,7 +185,7 @@ NSString *const UAAccengageSettingsMigrated = @"UAAccengageSettingsMigrated";
             }
         }
     }
-
+    
     completionHandler();
 }
 

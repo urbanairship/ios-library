@@ -81,7 +81,7 @@ public class ActionRunner : NSObject {
                           situation: UASituation,
                           metadata: [AnyHashable : Any]?,
                           completionHandler: UAActionCompletionHandler?) {
-        guard let entry = UAirship.shared()?.actionRegistry.registryEntry(actionName) else {
+        guard let entry = Airship.shared.actionRegistry.registryEntry(actionName) else {
             AirshipLogger.debug("No action found with name \(actionName), skipping action.")
             completionHandler?(UAActionResult.actionNotFound())
             return
@@ -182,7 +182,7 @@ public class ActionRunner : NSObject {
 
         actionValues.forEach { name, value in
             if let actionName = name as? String {
-                if let entry = UAirship.shared()?.actionRegistry.registryEntry(actionName) {
+                if let entry = Airship.shared.actionRegistry.registryEntry(actionName) {
                     if (!entries.contains(entry)) {
                         entries.insert(entry)
                         dispatchGroup.enter()

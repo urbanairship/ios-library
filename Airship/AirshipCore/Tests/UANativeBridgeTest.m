@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UAAirshipBaseTest.h"
-#import "UAirship+Internal.h"
+#import "AirshipTests-Swift.h"
 
 @import AirshipCore;
 
@@ -14,7 +14,7 @@
 @property (nonatomic, strong) id mockNativeBridgeExtensionDelegate;
 @property (nonatomic, strong) id mockJavaScriptCommandDelegate;
 @property (nonatomic, strong) id mockAirshipJavaScriptCommandDelegate;
-@property (nonatomic, strong) id mockAirship;
+@property (nonatomic, strong) UATestAirshipInstance *airship;
 @property (nonatomic, strong) id mockContact;
 @property (nonatomic, strong) id mockActionHandler;
 @property (nonatomic, strong) id mockJavaScriptEnvironment;
@@ -29,19 +29,13 @@
     // Mock WKWebView
     self.mockWKWebView = [self mockForClass:[WKWebView class]];
 
-    // Mock Airship
-    self.mockAirship = [self mockForClass:[UAirship class]];
-    [UAirship setSharedAirship:self.mockAirship];
-
     // Setup a URL allow list
     UAURLAllowList *URLAllowList = [UAURLAllowList allowListWithConfig:self.config];
-    [[[self.mockAirship stub] andReturn:URLAllowList] URLAllowList];
 
     self.mockActionHandler = [self mockForProtocol:@protocol(UANativeBridgeActionHandlerProtocol)];
     
     // Airship JavaScript command delegate
     self.mockAirshipJavaScriptCommandDelegate = [self mockForProtocol:@protocol(UAJavaScriptCommandDelegate)];
-    [[[self.mockAirship stub] andReturn:self.mockAirshipJavaScriptCommandDelegate] javaScriptCommandDelegate];
 
     // JavaScript environment
     self.mockJavaScriptEnvironment = [self mockForProtocol:@protocol(UAJavaScriptEnvironmentProtocol)];
@@ -67,11 +61,16 @@
     self.nativeBridge.nativeBridgeDelegate = self.mockNativeBridgeDelegate;
     
     self.mockContact = [self mockForClass:[UAContact class]];
-    [[[self.mockAirship stub] andReturn:self.mockContact] sharedContact];
 
     // Mock application
     self.mockApplication = [self mockForClass:[UIApplication class]];
     [[[self.mockApplication stub] andReturn:self.mockApplication] sharedApplication];
+    
+    self.airship = [[UATestAirshipInstance alloc] init];
+    self.airship.components = @[self.mockContact];
+    self.airship.urlAllowList = URLAllowList;
+    self.airship.javaScriptCommandDelegate = self.mockAirshipJavaScriptCommandDelegate;
+    [self.airship makeShared];
 }
 
 /**

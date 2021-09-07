@@ -23,7 +23,7 @@ class PushSettingsViewController: UITableViewController, RegistrationDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        UAirship.push().registrationDelegate = self
+        Airship.push.registrationDelegate = self
 
         NotificationCenter.default.addObserver(
             self,
@@ -37,8 +37,8 @@ class PushSettingsViewController: UITableViewController, RegistrationDelegate {
             name: NSNotification.Name("refreshView"),
             object: nil);
 
-        pushEnabled = UAirship.push().userPushNotificationsEnabled
-        analytics = UAirship.shared().privacyManager.isEnabled(.analytics)
+        pushEnabled = Airship.push.userPushNotificationsEnabled
+        analytics = Airship.shared.privacyManager.isEnabled(.analytics)
 
         refreshView()
 
@@ -53,13 +53,13 @@ class PushSettingsViewController: UITableViewController, RegistrationDelegate {
     }
 
     @objc func refreshView() {
-        channelIDCell?.detailTextLabel?.text = UAirship.channel().identifier ?? "Not Set"
+        channelIDCell?.detailTextLabel?.text = Airship.channel.identifier ?? "Not Set"
 
         analyticsEnabledCell.accessoryType = analytics ? .checkmark : .none
 
-        namedUserCell.detailTextLabel?.text = UAirship.namedUser().identifier ?? "Not Set"
-        tagsCell.detailTextLabel?.text = (UAirship.channel().tags.count > 0) ?
-            UAirship.channel().tags.joined(separator: ", ") : "Not Set"
+        namedUserCell.detailTextLabel?.text = Airship.namedUser.identifier ?? "Not Set"
+        tagsCell.detailTextLabel?.text = (Airship.channel.tags.count > 0) ?
+            Airship.channel.tags.joined(separator: ", ") : "Not Set"
     }
 
     override func tableView(_ tableView: UITableView, didUpdateFocusIn context: UITableViewFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
@@ -94,16 +94,16 @@ class PushSettingsViewController: UITableViewController, RegistrationDelegate {
 
         switch (indexPath.section, indexPath.row) {
         case (pushEnabledIndexPath!.section, pushEnabledIndexPath!.row) :
-            if (!UAirship.push().userPromptedForNotifications) {
-                UAirship.push().userPushNotificationsEnabled = true
+            if (!Airship.push.userPromptedForNotifications) {
+                Airship.push.userPushNotificationsEnabled = true
             }
             break
         case (analyticsEnabledIndexPath!.section, analyticsEnabledIndexPath!.row) :
             analytics = !analytics;
             if analytics {
-                UAirship.shared().privacyManager.enableFeatures(.analytics)
+                Airship.shared.privacyManager.enableFeatures(.analytics)
             } else {
-                UAirship.shared().privacyManager.disableFeatures(.analytics)
+                Airship.shared.privacyManager.disableFeatures(.analytics)
             }
             refreshView()
             break
@@ -113,7 +113,7 @@ class PushSettingsViewController: UITableViewController, RegistrationDelegate {
     }
 
     func notificationAuthorizedSettingsDidChange(_ options: UAAuthorizedNotificationSettings = []) {
-        if (UAirship.push()?.authorizedNotificationSettings.rawValue == 0) {
+        if (Airship.push.authorizedNotificationSettings.rawValue == 0) {
             pushEnabledCell.detailTextLabel?.text = "Enable In System Settings"
             pushEnabledCell.accessoryType = .none
         } else {

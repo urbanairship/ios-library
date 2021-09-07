@@ -2,7 +2,6 @@
 
 #import "UABaseTest.h"
 
-#import "UAirship.h"
 #import "UAMessageCenter.h"
 #import "UAMessageCenterStyle.h"
 

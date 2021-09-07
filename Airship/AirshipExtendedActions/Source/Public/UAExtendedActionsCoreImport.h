@@ -8,7 +8,6 @@
 #import <AirshipCore/AirshipCore.h>
 #else
 #import "UAAction.h"
-#import "UAirship.h"
 #import "UASDKModule.h"
 #import "UAAction.h"
 #import "UAActionPredicateProtocol.h"

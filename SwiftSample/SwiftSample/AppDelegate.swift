@@ -10,7 +10,7 @@ import AirshipDebug
 #endif
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, RegistrationDelegate, UADeepLinkDelegate, UAInAppMessageCachePolicyDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, RegistrationDelegate, DeepLinkDelegate, UAInAppMessageCachePolicyDelegate {
     let simulatorWarningDisabledKey = "ua-simulator-warning-disabled"
     let pushHandler = PushHandler()
 
@@ -42,7 +42,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, RegistrationDelegate, UAD
 
         // Set log level for debugging config loading (optional)
         // It will be set to the value in the loaded config upon takeOff
-        UAirship.setLogLevel(UALogLevel.trace)
+        Airship.logLevel = .trace
 
         config.messageCenterStyleConfig = "UAMessageCenterDefaultStyle"
 
@@ -51,28 +51,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate, RegistrationDelegate, UAD
         // etc.
 
         // Call takeOff (which creates the UAirship singleton)
-        UAirship.takeOff(config)
+        Airship.takeOff(config, launchOptions: launchOptions)
 
         // Print out the application configuration for debugging (optional)
         print("Config:\n \(config)")
 
         // Set the icon badge to zero on startup (optional)
-        UAirship.push()?.resetBadge()
+        Airship.push.resetBadge()
 
         // User notifications will not be enabled until userPushNotificationsEnabled is
         // enabled on UAPush. Once enabled, the setting will be persisted and the user
         // will be prompted to allow notifications. You should wait for a more appropriate
         // time to enable push to increase the likelihood that the user will accept
         // notifications.
-        // UAirship.push()?.userPushNotificationsEnabled = true
+        // Airship.push?.userPushNotificationsEnabled = true
 
         // Set a custom delegate for handling message center events
         self.messageCenterDelegate = MessageCenterDelegate(tabBarController: window!.rootViewController as! UITabBarController)
-        UAMessageCenter.shared().displayDelegate = self.messageCenterDelegate
-        UAirship.push().pushNotificationDelegate = pushHandler
-        UAirship.push().registrationDelegate = self
-        UAirship.shared().deepLinkDelegate = self
-        UAInAppAutomation.shared().inAppMessageManager.assetManager.cachePolicyDelegate = self;
+        UAMessageCenter.shared.displayDelegate = self.messageCenterDelegate
+        Airship.push.pushNotificationDelegate = pushHandler
+        Airship.push.registrationDelegate = self
+        Airship.shared.deepLinkDelegate = self
+        UAInAppAutomation.shared.inAppMessageManager.assetManager.cachePolicyDelegate = self;
 
         NotificationCenter.default.addObserver(self, selector:#selector(AppDelegate.refreshMessageCenterBadge), name: NSNotification.Name.UAInboxMessageListUpdated, object: nil)
 
@@ -141,8 +141,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, RegistrationDelegate, UAD
             if self.window?.rootViewController is UITabBarController {
                 let messageCenterTab: UITabBarItem = (self.window!.rootViewController! as! UITabBarController).tabBar.items![self.MessageCenterTab]
 
-                if (UAMessageCenter.shared().messageList.unreadCount > 0) {
-                    messageCenterTab.badgeValue = String(UAMessageCenter.shared().messageList.unreadCount)
+                if (UAMessageCenter.shared.messageList.unreadCount > 0) {
+                    messageCenterTab.badgeValue = String(UAMessageCenter.shared.messageList.unreadCount)
                 } else {
                     messageCenterTab.badgeValue = nil
                 }
@@ -215,7 +215,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, RegistrationDelegate, UAD
             pathComponents.remove(at: 0)
             
             if ((pathComponents.count == 0) || (pathComponents[0] != "message")) {
-                UAMessageCenter.shared().display()
+                UAMessageCenter.shared.display()
             } else {
                 // remove "message" from front of url
                 pathComponents.remove(at: 0)
@@ -223,7 +223,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, RegistrationDelegate, UAD
                 if (pathComponents.count > 0) {
                     messageID = pathComponents[0]
                 }
-                UAMessageCenter.shared().displayMessage(forID: messageID)
+                UAMessageCenter.shared.displayMessage(forID: messageID)
             }
         case SettingsStoryboardID:
             // get rest of deep link

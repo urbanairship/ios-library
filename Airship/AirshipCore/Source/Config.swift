@@ -32,11 +32,11 @@ public class Config: NSObject, NSCopying {
     
     /// The log level used for development apps. Defaults to `debug`.
     @objc
-    public var developmentLogLevel: UALogLevel = .debug
+    public var developmentLogLevel: LogLevel = .debug
     
     /// The log level used for production apps. Defaults to `error`.
     @objc
-    public var productionLogLevel: UALogLevel = .error
+    public var productionLogLevel: LogLevel = .error
     
 
     /// The airship cloud site. Defaults to `us`.
@@ -283,7 +283,7 @@ public class Config: NSObject, NSCopying {
     /// Returns the resolved log level.
     /// - Returns: The resolved log level.
     @objc
-    public var logLevel: UALogLevel  {
+    public var logLevel: LogLevel {
         get {
             return inProduction ? productionLogLevel : developmentLogLevel
         }
@@ -481,6 +481,10 @@ public class Config: NSObject, NSCopying {
             AirshipLogger.warn("Production App Secret matches Development App Secret.")
         }
         
+        
+        if (!self.suppressAllowListError && self.urlAllowList.isEmpty && self.urlAllowListScopeOpenURL.isEmpty) {
+            AirshipLogger.impError("The airship config options is missing URL allow list rules for SCOPE_OPEN. By default only Airship, YouTube, mailto, sms, and tel URLs will be allowed. To suppress this error, specify allow list rules by providing rules for URLAllowListScopeOpenURL or URLAllowList. Alternatively you can suppress this error and keep the default rules by using the flag suppressAllowListError. For more information, see https://docs.airship.com/platform/ios/getting-started/#url-allow-list.");
+        }
 
         return valid
     }
@@ -554,7 +558,7 @@ public class Config: NSObject, NSCopying {
                 if (propertyType == CloudSite.self || propertyType == CloudSite?.self) {
                     // we do all the work to parse it to a log level, but setValue(forKey:) does not work for enums
                     normalizedValue = Config.coerceSite(value)?.rawValue
-                } else if (propertyType == UALogLevel.self || propertyType == UALogLevel?.self) {
+                } else if (propertyType == LogLevel.self || propertyType == LogLevel?.self) {
                     // we do all the work to parse it to a log level, but setValue(forKey:) does not work for enums
                     normalizedValue =  Config.coerceLogLevel(value)?.rawValue
                 } else if (propertyType == String.self || propertyType == String?.self) {
@@ -633,26 +637,26 @@ public class Config: NSObject, NSCopying {
         return nil
     }
     
-    private class func coerceLogLevel(_ value: Any) -> UALogLevel? {
-        if let logLevel = value as? UALogLevel {
+    private class func coerceLogLevel(_ value: Any) -> LogLevel? {
+        if let logLevel = value as? LogLevel {
             return logLevel
         }
         
         if let rawValue = value as? Int {
-            return UALogLevel(rawValue: rawValue)
+            return LogLevel(rawValue: rawValue)
         }
         
         if let rawValue = value as? UInt {
-            return UALogLevel(rawValue: Int(rawValue))
+            return LogLevel(rawValue: Int(rawValue))
         }
         
         if let number = value as? NSNumber {
-            return UALogLevel(rawValue: number.intValue)
+            return LogLevel(rawValue: number.intValue)
         }
         
         if let string = value as? String {
             if let int = Int(string) {
-                return UALogLevel(rawValue: int)
+                return LogLevel(rawValue: int)
             } else {
                 return LogLevelNames(rawValue: string.lowercased())?.toLogLevel()
             }
@@ -764,22 +768,22 @@ private enum LogLevelNames : String {
     case debug
     case trace
     
-    func toLogLevel() -> UALogLevel {
+    func toLogLevel() -> LogLevel {
         switch(self) {
         case .undefined:
-            return UALogLevel.undefined
+            return LogLevel.undefined
         case .debug:
-            return UALogLevel.debug
+            return LogLevel.debug
         case .none:
-            return UALogLevel.none
+            return LogLevel.none
         case .error:
-            return UALogLevel.error
+            return LogLevel.error
         case .warn:
-            return UALogLevel.warn
+            return LogLevel.warn
         case .info:
-            return UALogLevel.info
+            return LogLevel.info
         case .trace:
-            return UALogLevel.trace
+            return LogLevel.trace
         }
     }
 }

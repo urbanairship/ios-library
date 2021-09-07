@@ -179,7 +179,7 @@ NSString *const UAMessageDataScheme = @"message";
 }
 
 - (BOOL)deepLink:(NSURL *)deepLink {
-    if (![deepLink.scheme isEqualToString:UAirshipDeepLinkScheme]) {
+    if (![deepLink.scheme isEqualToString:UAirship.deepLinkScheme]) {
         return NO;
     }
     

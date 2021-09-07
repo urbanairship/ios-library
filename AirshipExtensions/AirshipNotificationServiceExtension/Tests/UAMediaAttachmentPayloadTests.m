@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import "UABaseTest.h"
+#import <XCTest/XCTest.h>
 #import "UAMediaAttachmentPayload.h"
 #import <UserNotifications/UserNotifications.h>
 
@@ -22,7 +22,7 @@
 #define kUANotificationAttachmentServiceTitleKey @"title"
 #define kUANotificationAttachmentServiceSubtitleKey @"subtitle"
 
-@interface UAMediaAttachmentPayloadTests : UABaseTest
+@interface UAMediaAttachmentPayloadTests : XCTestCase
 @end
 
 @implementation UAMediaAttachmentPayloadTests

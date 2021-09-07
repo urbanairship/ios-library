@@ -28,10 +28,10 @@ public protocol PreferenceCenterOpenDelegate {
 @objc(UAPreferenceCenter)
 public class PreferenceCenter : NSObject, UAComponent {
     
-    /// - Returns The shared PreferenceCenter instance.
+    /// The shared PreferenceCenter instance.
     @objc
-    public static func shared() -> PreferenceCenter! {
-        return UAirship.component(forClassName: "UAPreferenceCenter") as? PreferenceCenter
+    public static var shared: PreferenceCenter {
+        return Airship.requireComponent(ofType: PreferenceCenter.self)
     }
     
     private static let payloadType = "preference_forms"
@@ -168,7 +168,7 @@ public class PreferenceCenter : NSObject, UAComponent {
     
     // NOTE: For internal use only. :nodoc:
     public func deepLink(_ deepLink: URL) -> Bool {
-        guard deepLink.scheme == UAirshipDeepLinkScheme,
+        guard deepLink.scheme == Airship.deepLinkScheme,
               deepLink.host == "preferences",
               deepLink.pathComponents.count == 2 else {
             return false

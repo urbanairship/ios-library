@@ -2,7 +2,6 @@
 #if UA_USE_MODULE_IMPORT
 #import <AirshipCore/AirshipCore.h>
 #else
-#import "UAirship.h"
 #import "UAKeychainUtils.h"
 #import "UANativeBridgeExtensionDelegate.h"
 #import "UASDKModule.h"

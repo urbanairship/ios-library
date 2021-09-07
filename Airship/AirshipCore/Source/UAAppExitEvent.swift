@@ -8,11 +8,6 @@ public class UAAppExitEvent : NSObject, UAEvent {
     private let _data : [AnyHashable : Any]
 
     @objc
-    public var analyticsSupplier: () -> AnalyticsProtocol? = {
-        return UAirship.analytics()
-    }
-
-    @objc
     public var priority: UAEventPriority {
         get {
             return .normal
@@ -35,9 +30,10 @@ public class UAAppExitEvent : NSObject, UAEvent {
 
     @objc
     public override init() {
+        let analytics = Airship.requireComponent(ofType: AnalyticsProtocol.self)
         var data: [AnyHashable : Any] = [:]
-        data["push_id"] = self.analyticsSupplier()?.conversionSendID
-        data["metadata"] = self.analyticsSupplier()?.conversionPushMetadata
+        data["push_id"] = analytics.conversionSendID
+        data["metadata"] = analytics.conversionPushMetadata
         data["connection_type"] = UAUtils.connectionType()
         self._data = data
 

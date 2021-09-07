@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UAAirshipBaseTest.h"
-#import "UAirship+Internal.h"
 #import "UAUser+Internal.h"
 #import "UAInboxAPIClient+Internal.h"
 #import "UAUserData+Internal.h"
@@ -15,7 +14,7 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
 
 @property (nonatomic, strong) UAInboxAPIClient *inboxAPIClient;
 @property (nonatomic, strong) id mockUser;
-@property (nonatomic, strong) id mockAirship;
+@property(nonatomic, strong) UATestAirshipInstance *airship;
 @property (nonatomic, strong) id mockChannel;
 @property (nonatomic, strong) UATestRequestSession *testSession;
 @end
@@ -25,16 +24,11 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
 - (void)setUp {
     [super setUp];
     self.mockChannel = [self mockForClass:[UAChannel class]];
-       [[[self.mockChannel stub] andReturn:@"mockChannelID"] identifier];
-
-
-    self.mockAirship = [self mockForClass:[UAirship class]];
-    [UAirship setSharedAirship:self.mockAirship];
-    [[[self.mockAirship stub] andReturn:self.mockChannel] channel];
-
-
-    self.mockChannel = [self mockForClass:[UAChannel class]];
     [[[self.mockChannel stub] andReturn:@"mockChannelID"] identifier];
+
+    self.airship = [[UATestAirshipInstance alloc] init];
+    self.airship.components = @[self.mockChannel];
+    [self.airship makeShared];
 
     self.mockUser = [self mockForClass:[UAUser class]];
     UAUserData *userData = [UAUserData dataWithUsername:@"username" password:@"password"];

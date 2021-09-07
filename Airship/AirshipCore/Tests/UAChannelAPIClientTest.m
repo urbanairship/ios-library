@@ -2,7 +2,6 @@
 
 #import "UAAirshipBaseTest.h"
 #import <Foundation/Foundation.h>
-#import "UAirship.h"
 #import "AirshipTests-Swift.h"
 
 @import AirshipCore;

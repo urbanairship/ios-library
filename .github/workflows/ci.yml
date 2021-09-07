@@ -5,7 +5,7 @@ env:
   BUNDLE_PATH: vendor/bundle
 jobs:
   build-sdk:
-    runs-on: macOS-latest
+    runs-on: macOS-11
     steps:
       - name: Set env variable
         run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
@@ -19,7 +19,7 @@ jobs:
         run: make build-xcframeworks
 
   build-docs:
-    runs-on: macOS-latest
+    runs-on: macOS-11
     steps:
       - name: Set env variable
         run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
@@ -33,7 +33,7 @@ jobs:
         run: make build-docs
 
   build-samples:
-    runs-on: macOS-latest
+    runs-on: macOS-11
     steps:
       - name: Set env variable
         run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
@@ -47,7 +47,7 @@ jobs:
         run: make build-samples
 
   run-tests:
-    runs-on: macOS-latest
+    runs-on: macOS-11
     steps:
       - name: Set env variable
         run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
@@ -63,7 +63,7 @@ jobs:
         run: make test
 
   pod-lib-lint:
-    runs-on: macOS-latest
+    runs-on: macOS-11
     steps:
       - name: Set env variable
         run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV

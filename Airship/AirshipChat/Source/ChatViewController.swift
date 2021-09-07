@@ -42,14 +42,14 @@ open class ChatViewController: UIViewController, UITableViewDataSource, UITableV
     public var chatStyle: ChatStyle?
 
     public func onMessagesUpdated() {
-        Chat.shared().conversation.fetchMessages(completionHandler: { (messages) in
+        Chat.shared.conversation.fetchMessages(completionHandler: { (messages) in
             self.messages = messages
             self.reload()
         })
     }
 
     public func onConnectionStatusChanged() {
-        AirshipLogger.debug("Connection status changed: \(Chat.shared().conversation.isConnected)")
+        AirshipLogger.debug("Connection status changed: \(Chat.shared.conversation.isConnected)")
     }
 
     public override var nibBundle: Bundle? {
@@ -85,14 +85,14 @@ open class ChatViewController: UIViewController, UITableViewDataSource, UITableV
         tableView.delegate = self
         tableView.dataSource = self
 
-        Chat.shared().conversation.delegate = self
+        Chat.shared.conversation.delegate = self
 
         onMessagesUpdated()
     }
 
     public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(false)
-        Chat.shared().conversation.connect()
+        Chat.shared.conversation.connect()
     }
 
     public override func viewDidLayoutSubviews() {
@@ -133,7 +133,7 @@ open class ChatViewController: UIViewController, UITableViewDataSource, UITableV
             let formatter = DateFormatter()
             formatter.dateStyle = .short
             formatter.timeStyle = .short
-            formatter.locale = UAirship.shared().locale.currentLocale
+            formatter.locale = Airship.shared.localeManager.currentLocale
             cell.messageDateLabel?.text = formatter.string(from: message.timestamp)
         } else {
             // TODO: localization
@@ -228,7 +228,7 @@ open class ChatViewController: UIViewController, UITableViewDataSource, UITableV
 
         if let message = inputText {
             if (!message.isEmpty) {
-                Chat.shared().conversation.sendMessage(message)
+                Chat.shared.conversation.sendMessage(message)
                 self.textView.text = ""
             }
         }

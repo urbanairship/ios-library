@@ -21,10 +21,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * The shared InAppAutomation instance.
- * @returns The shared InAppAutomation instance.
  */
-+(UAInAppAutomation *)shared;
-
+@property (class, nonatomic, readonly, null_unspecified) UAInAppAutomation *shared;
 
 /**
  * In-app automation pause flag.

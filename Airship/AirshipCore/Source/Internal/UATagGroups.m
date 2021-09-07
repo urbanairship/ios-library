@@ -3,8 +3,6 @@
 #define kUATagGroupsTagsKey @"tags"
 
 #import "UATagGroups.h"
-#import "UAirship.h"
-#import "UAPush.h"
 
 @interface UATagGroups ()
 @property(nonatomic, copy) NSDictionary *tags;

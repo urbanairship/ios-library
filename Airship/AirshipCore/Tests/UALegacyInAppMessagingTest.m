@@ -2,17 +2,20 @@
 
 #import "UAAirshipBaseTest.h"
 #import "UALegacyInAppMessaging+Internal.h"
-#import "UAirship+Internal.h"
 #import "UAInAppMessageBannerDisplayContent.h"
 #import "UASchedule+Internal.h"
 #import "UAInAppMessage+Internal.h"
 #import "UAInAppAutomation.h"
 #import "UALegacyInAppMessage.h"
+#import "AirshipTests-Swift.h"
+
 
 @import AirshipCore;
 
 @interface UALegacyInAppMessagingTest : UAAirshipBaseTest
-@property(nonatomic, strong) id mockAnalytics;
+@property(nonatomic, strong) UATestAnalytics *analytics;
+@property(nonatomic, strong) UATestAirshipInstance *airship;
+
 @property(nonatomic, strong) id mockInAppAutomation;
 
 @property(nonatomic, strong) UALegacyInAppMessage *bannerMessage;
@@ -27,11 +30,15 @@
 
 - (void)setUp {
     [super setUp];
+    
+    self.analytics = [[UATestAnalytics alloc] init];
+    self.airship = [[UATestAirshipInstance alloc] init];
+    self.airship.components = @[self.analytics];
+    [self.airship makeShared];
 
-    self.mockAnalytics = [self mockForClass:[UAAnalytics class]];
     self.mockInAppAutomation = [self mockForClass:[UAInAppAutomation class]];
 
-    self.inAppMessaging = [UALegacyInAppMessaging inAppMessagingWithAnalytics:self.mockAnalytics
+    self.inAppMessaging = [UALegacyInAppMessaging inAppMessagingWithAnalytics:self.analytics
                                                                     dataStore:self.dataStore
                                                               inAppAutomation:self.mockInAppAutomation];
 
@@ -60,6 +67,8 @@
                    @"badge": @2,
                    @"sound": @"cat"
                 };
+    
+   
 }
 
 
@@ -106,8 +115,6 @@
     [[[request stub] andReturn:content] content];
     [[[content stub] andReturn:notification] userInfo];
 
-    [[self.mockAnalytics expect] addEvent:[OCMArg any]];
-
     [[[self.mockInAppAutomation expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
@@ -121,7 +128,7 @@
     }];
 
     [self waitForTestExpectations];
-    [self. mockAnalytics verify];
+    XCTAssertEqual(1, self.analytics.events.count);
     XCTAssertNil(self.inAppMessaging.pendingMessageID);
 }
 
@@ -149,7 +156,6 @@
     [[[request stub] andReturn:content] content];
     [[[content stub] andReturn:notification] userInfo];
 
-    [[self.mockAnalytics reject] addEvent:[OCMArg any]];
     [[self.mockInAppAutomation reject] cancelScheduleWithID:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *testExpectation = [self expectationWithDescription:@"completion handler called"];
@@ -158,7 +164,7 @@
     }];
 
     [self waitForTestExpectations];
-    [self.mockAnalytics verify];
+    XCTAssertEqual(0, self.analytics.events.count);
     XCTAssertNotNil(self.inAppMessaging.pendingMessageID);
 }
 
@@ -199,7 +205,6 @@
     [[[content stub] andReturn:notification] userInfo];
 
 
-    [[self.mockAnalytics reject] addEvent:[OCMArg any]];
     [[self.mockInAppAutomation reject] cancelScheduleWithID:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *testExpectation = [self expectationWithDescription:@"completion handler called"];
@@ -208,7 +213,6 @@
     }];
     [self waitForTestExpectations];
 
-    [self.mockAnalytics verify];
     XCTAssertNotNil(self.inAppMessaging.pendingMessageID);
 }
 

@@ -28,7 +28,7 @@ NSString *const UARateAppItunesURLFormat = @"itms-apps://itunes.apple.com/app/id
                                             defaultValue:@(NO)] boolValue];
 
     NSString *itunesID = [arguments.value stringForKey:UARateAppItunesIDKey
-                                          defaultValue:[UAirship shared].config.itunesID];
+                                          defaultValue:UAirship.shared.config.itunesID];
 
     if (showLinkPrompt) {
         [SKStoreReviewController requestReview];

@@ -1,9 +1,9 @@
 ///* Copyright Airship and Contributors */
 
-#import "UABaseTest.h"
+#import <XCTest/XCTest.h>
 #import "UANotificationServiceExtension.h"
 
-@interface UANotificationServiceExtensionTests : UABaseTest
+@interface UANotificationServiceExtensionTests : XCTestCase
 
 @property(nonatomic, strong) UANotificationServiceExtension *serviceExtension;
 
@@ -49,7 +49,7 @@
         [contentDelivered fulfill];
     }];
     
-    [self waitForTestExpectations];
+    [self waitForExpectations:@[contentDelivered] timeout:10];
 }
 
 - (void)testSampleContent {
@@ -127,7 +127,7 @@
         [contentDelivered fulfill];
     }];
     
-    [self waitForTestExpectations];
+    [self waitForExpectations:@[contentDelivered] timeout:10];
 }
 
 @end

@@ -25,7 +25,7 @@ class HomeViewController: UIViewController {
 
     @objc func refreshView () {
         if (checkNotificationsEnabled()) {
-            channelIDButton.setTitle(UAirship.channel().identifier, for: [])
+            channelIDButton.setTitle(Airship.channel.identifier, for: [])
             channelIDButton.isHidden = false
             enablePushButton.isHidden = true
             return
@@ -37,14 +37,14 @@ class HomeViewController: UIViewController {
     @IBAction func buttonTapped(_ sender: UIButton) {
 
         if (sender == enablePushButton) {
-            UAirship.push().userPushNotificationsEnabled = true
-            UAirship.shared().privacyManager.enableFeatures(.push)
+            Airship.push.userPushNotificationsEnabled = true
+            Airship.shared.privacyManager.enableFeatures(.push)
         }
 
         //The channel ID will need to wait for push registration to return the channel ID
         if (sender == channelIDButton) {
-            if ((UAirship.channel().identifier) != nil) {
-                UIPasteboard.general.string = UAirship.channel().identifier
+            if ((Airship.channel.identifier) != nil) {
+                UIPasteboard.general.string = Airship.channel.identifier
 
                 let message = NSLocalizedString("UA_Copied_To_Clipboard", tableName: "UAPushUI", comment: "Copied to clipboard string")
 
@@ -65,15 +65,15 @@ class HomeViewController: UIViewController {
     }
 
     func checkNotificationsEnabled() -> Bool {
-        if (UAirship.shared() == nil) {
+        if (Airship.shared == nil) {
             return false
         }
 
-        if (!UAirship.push().userPushNotificationsEnabled) {
+        if (!Airship.push.userPushNotificationsEnabled) {
             return false
         }
 
-        return UAirship.shared().privacyManager.isEnabled(.push)
+        return Airship.shared.privacyManager.isEnabled(.push)
     }
 }
 

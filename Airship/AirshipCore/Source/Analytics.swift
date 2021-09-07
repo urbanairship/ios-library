@@ -23,6 +23,15 @@ public enum SDKExtension : Int {
 /// The UAAnalytics object provides an interface to the Airship Analytics API.
 @objc(UAAnalytics)
 public class Analytics: NSObject, UAComponent, AnalyticsProtocol, UAExtendableAnalyticsHeaders, EventManagerDelegate {
+    
+    /**
+     * Analytics supplier, for testing purposes. :nodoc:
+     */
+    @objc
+    public static let supplier: () -> AnalyticsProtocol = {
+        return Airship.requireComponent(ofType: AnalyticsProtocol.self)
+    }
+    
     private static let associatedIdentifiers = "UAAssociatedIdentifiers"
     private static let missingSendID = "MISSING_SEND_ID"
     private static let pushMetadata = "com.urbanairship.metadata"

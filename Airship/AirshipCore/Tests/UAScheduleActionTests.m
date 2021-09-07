@@ -6,7 +6,6 @@
 #import "UAScheduleAction.h"
 #import "UAActionArguments+Internal.h"
 #import "UAInAppAutomation.h"
-#import "UAirship+Internal.h"
 #import "UASchedule+Internal.h"
 
 #if __has_include("AirshipCore/AirshipCore-Swift.h")

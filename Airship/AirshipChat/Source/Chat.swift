@@ -28,10 +28,10 @@ public protocol ChatOpenDelegate {
 @objc(UAChat)
 public class Chat : NSObject, UAComponent, UAPushableComponent {
 
-    /// - Returns The shared Chat instance.
+    /// The shared Chat instance.
     @objc
-    public static func shared() -> Chat! {
-        return UAirship.component(forClassName: "UAChat") as? Chat
+    public static var shared: Chat! {
+        return Airship.requireComponent(ofType: Chat.self)
     }
     
     static let routingKey = "routing"
@@ -222,7 +222,7 @@ public class Chat : NSObject, UAComponent, UAPushableComponent {
     
     // NOTE: For internal use only. :nodoc:
     public func deepLink(_ deepLink: URL) -> Bool {
-        guard deepLink.scheme == UAirshipDeepLinkScheme,
+        guard deepLink.scheme == Airship.deepLinkScheme,
               deepLink.host == Chat.deepLinkHost,
               deepLink.path.isEmpty || deepLink.path == "/" else {
             return false
