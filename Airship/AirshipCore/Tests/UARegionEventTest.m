@@ -2,7 +2,6 @@
 
 #import "UABaseTest.h"
 #import "UAEvent.h"
-#import "NSJSONSerialization+UAAdditions.h"
 
 @import AirshipCore;
 

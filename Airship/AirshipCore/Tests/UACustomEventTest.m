@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "NSJSONSerialization+UAAdditions.h"
 #import "AirshipTests-Swift.h"
 
 @import AirshipCore;

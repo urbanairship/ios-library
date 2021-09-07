@@ -89,7 +89,7 @@
         [builder setValue:@"application/json" header:@"Content-Type"];
         [builder setValue:@"application/vnd.urbanairship+json; version=3;" header:@"Accept"];
 
-        builder.body = [UAJSONSerialization dataWithJSONObject:requestBody
+        builder.body = [UAJSONUtils dataWithObject:requestBody
                                                        options:0
                                                          error:nil];
     }];
@@ -130,7 +130,7 @@
         [builder setValue:@"application/json" header:@"Content-Type"];
         [builder setValue:@"application/vnd.urbanairship+json; version=3;" header:@"Accept"];
 
-        builder.body = [UAJSONSerialization dataWithJSONObject:requestBody
+        builder.body = [UAJSONUtils dataWithObject:requestBody
                                                        options:0
                                                          error:nil];
     }];

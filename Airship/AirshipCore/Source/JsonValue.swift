@@ -8,7 +8,7 @@ struct JsonValue : Codable {
     
     func value() -> Any? {
         if let jsonEncodedValue = jsonEncodedValue {
-            return JSONSerialization.object(with: jsonEncodedValue, options: .allowFragments)
+            return try? JSONUtils.object(jsonEncodedValue, options: .allowFragments)
         } else {
             return nil
         }
@@ -16,7 +16,7 @@ struct JsonValue : Codable {
     
     init(value: Any?) {
         if let value = value {
-            self.jsonEncodedValue = JSONSerialization.string(with: value, acceptingFragments: true)
+            self.jsonEncodedValue = try? JSONUtils.string(value, options: .fragmentsAllowed)
         } else {
             self.jsonEncodedValue = nil
         }

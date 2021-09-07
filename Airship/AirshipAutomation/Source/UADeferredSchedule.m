@@ -2,7 +2,13 @@
 
 #import "UADeferredSchedule+Internal.h"
 #import "UASchedule+Internal.h"
-#import "NSJSONSerialization+UAAdditions.h"
+
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+@import AirshipCore;
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
 
 @implementation UADeferredSchedule
 
@@ -21,7 +27,7 @@
 }
 
 - (NSString *)dataJSONString {
-    return [NSJSONSerialization stringWithObject:[self.deferredData toJSON]];
+    return [UAJSONUtils stringWithObject:[self.deferredData toJSON]];
 }
 
 @end

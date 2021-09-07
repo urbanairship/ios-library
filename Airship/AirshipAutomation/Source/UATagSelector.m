@@ -3,6 +3,12 @@
 #import "UATagSelector+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
 
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+@import AirshipCore;
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
+
 /**
  * Represents the type of the tag selector.
  */
@@ -319,7 +325,7 @@ NSString * const UATagSelectorErrorDomain = @"com.urbanairship.in_app_message_ta
 }
 
 - (NSString *)debugDescription {
-    return [NSJSONSerialization stringWithObject:[self toJSON]];
+    return [UAJSONUtils stringWithObject:[self toJSON]];
 }
 
 @end

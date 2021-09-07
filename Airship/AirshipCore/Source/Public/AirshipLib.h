@@ -1,5 +1,4 @@
 #import "NSDictionary+UAAdditions.h"
-#import "NSJSONSerialization+UAAdditions.h"
 #import "NSObject+UAAdditions.h"
 #import "UAAction.h"
 #import "UAActionArguments.h"

@@ -280,7 +280,7 @@ attributeOverrides:(NSArray<UAAttributeUpdate *> *)attributeOverrides
 
     payload[kUADeferredScheduleAPIClientStateOverridesKey] = stateOverridesPayload;
 
-    return [UAJSONSerialization dataWithJSONObject:payload
+    return [UAJSONUtils dataWithObject:payload
                                            options:0
                                              error:nil];
 }

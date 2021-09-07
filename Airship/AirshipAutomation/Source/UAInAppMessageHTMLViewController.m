@@ -222,8 +222,9 @@ NSString *const UAInAppNativeBridgeDismissCommand = @"dismiss";
     id args = [command.arguments firstObject];
 
     // allow the reading of fragments so we can parse lower level JSON values
-    id jsonDecodedArgs = [NSJSONSerialization objectWithString:args
-                                                       options:NSJSONReadingMutableContainers | NSJSONReadingAllowFragments];
+    id jsonDecodedArgs = [UAJSONUtils objectWithString:args
+                                                       options:NSJSONReadingMutableContainers | NSJSONReadingAllowFragments
+                                                 error:nil];
     if (!jsonDecodedArgs) {
         UA_LERR(@"Unable to json decode resolution: %@", args);
     } else {
@@ -268,3 +269,4 @@ NSString *const UAInAppNativeBridgeDismissCommand = @"dismiss";
 @end
 
 NS_ASSUME_NONNULL_END
+

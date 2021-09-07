@@ -2,8 +2,6 @@
 
 #import "UAAirshipBaseTest.h"
 #import "UAUserAPIClient+Internal.h"
-#import "NSJSONSerialization+UAAdditions.h"
-#import "UAUserAPIClient+Internal.h"
 #import "UAUser+Internal.h"
 #import "UAUserData+Internal.h"
 
@@ -35,7 +33,7 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
 
     NSDictionary *responseDict = @{@"user_id": @"someUserName", @"password": @"somePassword", @"user_url": @"http://url.com"};
 
-    NSData *responseData =  [UAJSONSerialization dataWithJSONObject:responseDict
+    NSData *responseData =  [UAJSONUtils dataWithObject:responseDict
                                                             options:0
                                                               error:nil];
 
@@ -62,7 +60,7 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
             return NO;
         }
 
-        if (![request.body isEqualToData:[UAJSONSerialization dataWithJSONObject:@{@"ios_channels": @[@"channelID"]} options:0 error:nil]]) {
+        if (![request.body isEqualToData:[UAJSONUtils dataWithObject:@{@"ios_channels": @[@"channelID"]} options:0 error:nil]]) {
             return NO;
         }
 
@@ -150,7 +148,7 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
 
     NSDictionary *responseDict = @{};
 
-    NSData *responseData =  [UAJSONSerialization dataWithJSONObject:responseDict
+    NSData *responseData =  [UAJSONUtils dataWithObject:responseDict
                                                             options:0
                                                               error:nil];
 
@@ -223,7 +221,7 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
             return NO;
         }
 
-        if (![request.body isEqualToData:[UAJSONSerialization dataWithJSONObject:@{@"ios_channels": @{@"add" : @[@"channelID"]}} options:0 error:nil]]) {
+        if (![request.body isEqualToData:[UAJSONUtils dataWithObject:@{@"ios_channels": @{@"add" : @[@"channelID"]}} options:0 error:nil]]) {
             return NO;
         }
 
@@ -325,5 +323,6 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
 }
 
 @end
+
 
 

@@ -4,6 +4,12 @@
 #import "UAAirshipAutomationCoreImport.h"
 #import "UASchedule+Internal.h"
 
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+@import AirshipCore;
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
+
 // These constants are re-defined here to keep them isolated from
 // any changes in the IAM payload definitions.
 NSString *const UAInAppMessageV2DisplayTypeKey = @"display_type";
@@ -49,7 +55,7 @@ NSString *const UAScheduleMetadataOriginalMessageIDKey = @"com.urbanairship.orig
 // migrate duration from milliseconds to seconds
 + (void)perform0To1MigrationForScheduleData:(UAScheduleData *)scheduleData {
     // convert schedule data to a JSON dictionary
-    NSMutableDictionary *json = [[NSJSONSerialization objectWithString:scheduleData.data] mutableCopy];
+    NSMutableDictionary *json = [UAJSONUtils objectWithString:scheduleData.data options:NSJSONReadingMutableContainers error:nil];
     NSString *displayType = json[UAInAppMessageV2DisplayTypeKey];
     if (!displayType || ![displayType isEqualToString:UAInAppMessageV2DisplayTypeBannerValue]) {
         // Not a UAInAppMessage or not a banner IAM. No migration needed.
@@ -67,14 +73,16 @@ NSString *const UAScheduleMetadataOriginalMessageIDKey = @"com.urbanairship.orig
     json[UAInAppMessageV2DisplayContentKey][UAInAppMessageV2DurationKey] = duration;
 
     // serialize the migrated data
-    scheduleData.data = [NSJSONSerialization stringWithObject:json];
+    scheduleData.data = [UAJSONUtils stringWithObject:json];
 }
 
 // some remote-data schedules had their source field set incorrectly to app-defined by faulty edit code
 // this code migrates all app-defined sources to remote-data
 + (void)perform1To2MigrationForScheduleData:(UAScheduleData *)scheduleData {
     // convert schedule data to a JSON dictionary
-    NSMutableDictionary *json = [[NSJSONSerialization objectWithString:scheduleData.data] mutableCopy];
+    NSMutableDictionary *json = [UAJSONUtils objectWithString:scheduleData.data
+                                                      options:NSJSONReadingMutableContainers
+                                                        error:nil];
     
     // only change if source is app-defined
     NSString *source = json[UAInAppMessageV2SourceKey];
@@ -87,7 +95,7 @@ NSString *const UAScheduleMetadataOriginalMessageIDKey = @"com.urbanairship.orig
     json[UAInAppMessageV2SourceKey] = UAInAppMessageV2SourceRemoteDataValue;
 
     // serialize the migrated data
-    scheduleData.data = [NSJSONSerialization stringWithObject:json];
+    scheduleData.data = [UAJSONUtils stringWithObject:json];
 }
 
 // move scheduleData.message.audience to scheduleData.audience
@@ -96,15 +104,16 @@ NSString *const UAScheduleMetadataOriginalMessageIDKey = @"com.urbanairship.orig
 + (void)perform2To3MigrationForScheduleData:(UAScheduleData *)scheduleData
                         migratedScheduleIDs:(NSMutableArray<NSString *> *)migratedScheduleIDs  {
 
-    NSMutableDictionary *json = [[NSJSONSerialization objectWithString:scheduleData.data] mutableCopy];
-
+    NSMutableDictionary *json = [UAJSONUtils objectWithString:scheduleData.data
+                                                      options:NSJSONReadingMutableContainers
+                                                        error:nil];
     if (json[@"display_type"] && json[@"display"]) {
         scheduleData.type = @(UAScheduleTypeInAppMessage);
 
         // Move audience to schedule
         id audience = json[@"audience"];
         if (audience) {
-            scheduleData.audience = [NSJSONSerialization stringWithObject:audience];
+            scheduleData.audience = [UAJSONUtils stringWithObject:audience];
             [json removeObjectForKey:@"audience"];
         }
 
@@ -119,17 +128,17 @@ NSString *const UAScheduleMetadataOriginalMessageIDKey = @"com.urbanairship.orig
                 NSMutableDictionary *metadata = [NSMutableDictionary dictionary];
 
                 if (scheduleData.metadata) {
-                    [metadata addEntriesFromDictionary:[NSJSONSerialization objectWithString:scheduleData.metadata]];
+                    [metadata addEntriesFromDictionary:[UAJSONUtils objectWithString:scheduleData.metadata]];
                 }
 
                 [metadata setValue:originalScheduleID forKey:UAScheduleMetadataOriginalScheduleIDKey];
                 [metadata setValue:originalMessageID forKey:UAScheduleMetadataOriginalMessageIDKey];
-                scheduleData.metadata = [NSJSONSerialization stringWithObject:metadata];
+                scheduleData.metadata = [UAJSONUtils stringWithObject:metadata];
             } else {
                 scheduleData.identifier = originalMessageID;
             }
         }
-        scheduleData.data = [NSJSONSerialization stringWithObject:json];
+        scheduleData.data = [UAJSONUtils stringWithObject:json];
     } else {
         scheduleData.type = @(UAScheduleTypeActions);
     }

@@ -20,7 +20,7 @@
 }
 
 - (id)transformedValue:(NSDictionary *)value {
-    return [UAJSONSerialization dataWithJSONObject:value
+    return [UAJSONUtils dataWithObject:value
                                            options:NSJSONWritingPrettyPrinted
                                              error:nil];
 }

@@ -222,7 +222,7 @@
 		4568A6902446E0C100021E02 /* MultilineTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4568A68F2446E0C100021E02 /* MultilineTextField.swift */; };
 		4568A6932446E11500021E02 /* CustomPropertyAdderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4568A6922446E11500021E02 /* CustomPropertyAdderTableViewCell.swift */; };
 		4569E2ED2444E11100F2FB5C /* CustomPropertyAdderTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4569E2EC2444E11000F2FB5C /* CustomPropertyAdderTableViewController.swift */; };
-		457366432137084B00C5993A /* UAJSONSerializationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 457366422137084B00C5993A /* UAJSONSerializationTest.m */; };
+		457366432137084B00C5993A /* UAJSONUtilsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 457366422137084B00C5993A /* UAJSONUtilsTest.m */; };
 		459D404A208FE64D00C40E2D /* Valid-UAInAppMessageFullScreenStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 459D4049208FE64D00C40E2D /* Valid-UAInAppMessageFullScreenStyle.plist */; };
 		459D404C208FE6BB00C40E2D /* Invalid-UAInAppMessageFullScreenStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 459D404B208FE6BA00C40E2D /* Invalid-UAInAppMessageFullScreenStyle.plist */; };
 		459D4051209245E500C40E2D /* UAInAppMessageBannerStyleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 459D4050209245E500C40E2D /* UAInAppMessageBannerStyleTest.m */; };
@@ -331,8 +331,6 @@
 		6E4115382538C0AB00FEE4E8 /* UANativeBridgeExtensionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114582538C0A000FEE4E8 /* UANativeBridgeExtensionDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E4115572538C0AC00FEE4E8 /* UAActionResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E41146C2538C0A100FEE4E8 /* UAActionResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E4115582538C0AC00FEE4E8 /* UAActionResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E41146C2538C0A100FEE4E8 /* UAActionResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E4115632538C0AC00FEE4E8 /* NSJSONSerialization+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E41146F2538C0A100FEE4E8 /* NSJSONSerialization+UAAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E4115642538C0AC00FEE4E8 /* NSJSONSerialization+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E41146F2538C0A100FEE4E8 /* NSJSONSerialization+UAAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E41156B2538C0AD00FEE4E8 /* UAActionPredicateProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114712538C0A200FEE4E8 /* UAActionPredicateProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E41156C2538C0AD00FEE4E8 /* UAActionPredicateProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114712538C0A200FEE4E8 /* UAActionPredicateProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E4115872538C0AD00FEE4E8 /* UAActionArguments.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114782538C0A200FEE4E8 /* UAActionArguments.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -356,8 +354,6 @@
 		6E4117E02538C1FB00FEE4E8 /* NSDictionary+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4116D62538C1E500FEE4E8 /* NSDictionary+UAAdditions.m */; };
 		6E4117EB2538C1FB00FEE4E8 /* UASwizzler.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4116D92538C1E600FEE4E8 /* UASwizzler.m */; };
 		6E4117EC2538C1FB00FEE4E8 /* UASwizzler.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4116D92538C1E600FEE4E8 /* UASwizzler.m */; };
-		6E4118CF2538C1FE00FEE4E8 /* NSJSONSerialization+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4117122538C1EC00FEE4E8 /* NSJSONSerialization+UAAdditions.m */; };
-		6E4118D02538C1FE00FEE4E8 /* NSJSONSerialization+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4117122538C1EC00FEE4E8 /* NSJSONSerialization+UAAdditions.m */; };
 		6E41192B2538C1FF00FEE4E8 /* UAAutoIntegration.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4117292538C1EE00FEE4E8 /* UAAutoIntegration.m */; };
 		6E41192C2538C20000FEE4E8 /* UAAutoIntegration.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4117292538C1EE00FEE4E8 /* UAAutoIntegration.m */; };
 		6E4119AF2538C20200FEE4E8 /* UATagGroups.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E41174A2538C1F100FEE4E8 /* UATagGroups.m */; };
@@ -969,7 +965,7 @@
 		8401769426C5671100373AF7 /* UAJSONMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401769326C5671100373AF7 /* UAJSONMatcher.swift */; };
 		8401769626C5715E00373AF7 /* UAVersionMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401769526C5715E00373AF7 /* UAVersionMatcher.swift */; };
 		8401769826C5722400373AF7 /* UAJSONPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401769726C5722400373AF7 /* UAJSONPredicate.swift */; };
-		8401769A26C5725800373AF7 /* UAJSONSerialization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401769926C5725800373AF7 /* UAJSONSerialization.swift */; };
+		8401769A26C5725800373AF7 /* JSONUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401769926C5725800373AF7 /* JSONUtils.swift */; };
 		8401769C26C5729E00373AF7 /* UAJSONValueMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401769B26C5729E00373AF7 /* UAJSONValueMatcher.swift */; };
 		841E7D12268617C800EA0317 /* PreferenceCenterResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841E7D11268617C800EA0317 /* PreferenceCenterResponse.swift */; };
 		842EE1BE268128DD00F2BEF4 /* empty in Resources */ = {isa = PBXBuildFile; fileRef = 842EE1BD268128DD00F2BEF4 /* empty */; };
@@ -1042,7 +1038,7 @@
 		A6F6726126E1162F008C69C3 /* UAJSONMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401769326C5671100373AF7 /* UAJSONMatcher.swift */; };
 		A6F6726226E11633008C69C3 /* UAVersionMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401769526C5715E00373AF7 /* UAVersionMatcher.swift */; };
 		A6F6726326E11637008C69C3 /* UAJSONPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401769726C5722400373AF7 /* UAJSONPredicate.swift */; };
-		A6F6726426E1163A008C69C3 /* UAJSONSerialization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401769926C5725800373AF7 /* UAJSONSerialization.swift */; };
+		A6F6726426E1163A008C69C3 /* JSONUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401769926C5725800373AF7 /* JSONUtils.swift */; };
 		A6F6726526E1163C008C69C3 /* UAJSONValueMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401769B26C5729E00373AF7 /* UAJSONValueMatcher.swift */; };
 		C00ED4CF26C729390040C5D0 /* URLAllowList.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00ED4CE26C729390040C5D0 /* URLAllowList.swift */; };
 		C00ED4D026C729390040C5D0 /* URLAllowList.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00ED4CE26C729390040C5D0 /* URLAllowList.swift */; };
@@ -1055,7 +1051,6 @@
 		CC64F0591D8B77E3009CEF27 /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; };
 		CC64F0CE1D8B781C009CEF27 /* CustomNotificationCategories.plist in Resources */ = {isa = PBXBuildFile; fileRef = CC64F0611D8B781C009CEF27 /* CustomNotificationCategories.plist */; };
 		CC64F0D01D8B781C009CEF27 /* Invalid-UAMessageCenterDefaultStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = CC64F0631D8B781C009CEF27 /* Invalid-UAMessageCenterDefaultStyle.plist */; };
-		CC64F0D21D8B781C009CEF27 /* NSJSONSerialization_UAAdditionsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0651D8B781C009CEF27 /* NSJSONSerialization_UAAdditionsTests.m */; };
 		CC64F0D71D8B781C009CEF27 /* UAAccountEventTemplateTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F06C1D8B781C009CEF27 /* UAAccountEventTemplateTest.m */; };
 		CC64F0D91D8B781C009CEF27 /* UAActionArgumentsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F06E1D8B781C009CEF27 /* UAActionArgumentsTest.m */; };
 		CC64F0DB1D8B781C009CEF27 /* UANativeBridgeActionHandlerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0701D8B781C009CEF27 /* UANativeBridgeActionHandlerTest.m */; };
@@ -1553,7 +1548,7 @@
 		4568A68F2446E0C100021E02 /* MultilineTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultilineTextField.swift; sourceTree = "<group>"; };
 		4568A6922446E11500021E02 /* CustomPropertyAdderTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomPropertyAdderTableViewCell.swift; sourceTree = "<group>"; };
 		4569E2EC2444E11000F2FB5C /* CustomPropertyAdderTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomPropertyAdderTableViewController.swift; sourceTree = "<group>"; };
-		457366422137084B00C5993A /* UAJSONSerializationTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAJSONSerializationTest.m; sourceTree = "<group>"; };
+		457366422137084B00C5993A /* UAJSONUtilsTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAJSONUtilsTest.m; sourceTree = "<group>"; };
 		459D4049208FE64D00C40E2D /* Valid-UAInAppMessageFullScreenStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Valid-UAInAppMessageFullScreenStyle.plist"; sourceTree = "<group>"; };
 		459D404B208FE6BA00C40E2D /* Invalid-UAInAppMessageFullScreenStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Invalid-UAInAppMessageFullScreenStyle.plist"; sourceTree = "<group>"; };
 		459D4050209245E500C40E2D /* UAInAppMessageBannerStyleTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageBannerStyleTest.m; sourceTree = "<group>"; };
@@ -1659,7 +1654,6 @@
 		6E4114562538C0A000FEE4E8 /* UAPush.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAPush.h; path = Public/UAPush.h; sourceTree = "<group>"; };
 		6E4114582538C0A000FEE4E8 /* UANativeBridgeExtensionDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UANativeBridgeExtensionDelegate.h; path = Public/UANativeBridgeExtensionDelegate.h; sourceTree = "<group>"; };
 		6E41146C2538C0A100FEE4E8 /* UAActionResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAActionResult.h; path = Public/UAActionResult.h; sourceTree = "<group>"; };
-		6E41146F2538C0A100FEE4E8 /* NSJSONSerialization+UAAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSJSONSerialization+UAAdditions.h"; path = "Public/NSJSONSerialization+UAAdditions.h"; sourceTree = "<group>"; };
 		6E4114712538C0A200FEE4E8 /* UAActionPredicateProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAActionPredicateProtocol.h; path = Public/UAActionPredicateProtocol.h; sourceTree = "<group>"; };
 		6E4114782538C0A200FEE4E8 /* UAActionArguments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAActionArguments.h; path = Public/UAActionArguments.h; sourceTree = "<group>"; };
 		6E41147B2538C0A300FEE4E8 /* UAKeychainUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAKeychainUtils.h; path = Public/UAKeychainUtils.h; sourceTree = "<group>"; };
@@ -1672,7 +1666,6 @@
 		6E4116862135C4E4005CC871 /* UARetriablePipelineTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UARetriablePipelineTest.m; sourceTree = "<group>"; };
 		6E4116D62538C1E500FEE4E8 /* NSDictionary+UAAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSDictionary+UAAdditions.m"; path = "Internal/NSDictionary+UAAdditions.m"; sourceTree = "<group>"; };
 		6E4116D92538C1E600FEE4E8 /* UASwizzler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UASwizzler.m; path = Internal/UASwizzler.m; sourceTree = "<group>"; };
-		6E4117122538C1EC00FEE4E8 /* NSJSONSerialization+UAAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSJSONSerialization+UAAdditions.m"; path = "Internal/NSJSONSerialization+UAAdditions.m"; sourceTree = "<group>"; };
 		6E4117292538C1EE00FEE4E8 /* UAAutoIntegration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAAutoIntegration.m; path = Internal/UAAutoIntegration.m; sourceTree = "<group>"; };
 		6E41174A2538C1F100FEE4E8 /* UATagGroups.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UATagGroups.m; path = Internal/UATagGroups.m; sourceTree = "<group>"; };
 		6E4117552538C1F200FEE4E8 /* UAKeychainUtils+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAKeychainUtils+Internal.h"; path = "Internal/UAKeychainUtils+Internal.h"; sourceTree = "<group>"; };
@@ -2033,7 +2026,7 @@
 		8401769326C5671100373AF7 /* UAJSONMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAJSONMatcher.swift; sourceTree = "<group>"; };
 		8401769526C5715E00373AF7 /* UAVersionMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAVersionMatcher.swift; sourceTree = "<group>"; };
 		8401769726C5722400373AF7 /* UAJSONPredicate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAJSONPredicate.swift; sourceTree = "<group>"; };
-		8401769926C5725800373AF7 /* UAJSONSerialization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAJSONSerialization.swift; sourceTree = "<group>"; };
+		8401769926C5725800373AF7 /* JSONUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONUtils.swift; sourceTree = "<group>"; };
 		8401769B26C5729E00373AF7 /* UAJSONValueMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAJSONValueMatcher.swift; sourceTree = "<group>"; };
 		841E7D11268617C800EA0317 /* PreferenceCenterResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterResponse.swift; sourceTree = "<group>"; };
 		842EE1BD268128DD00F2BEF4 /* empty */ = {isa = PBXFileReference; lastKnownFileType = text; path = empty; sourceTree = "<group>"; };
@@ -2180,7 +2173,6 @@
 		CC64F0611D8B781C009CEF27 /* CustomNotificationCategories.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = CustomNotificationCategories.plist; path = ../CustomNotificationCategories.plist; sourceTree = "<group>"; };
 		CC64F0621D8B781C009CEF27 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../Info.plist; sourceTree = "<group>"; };
 		CC64F0631D8B781C009CEF27 /* Invalid-UAMessageCenterDefaultStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "Invalid-UAMessageCenterDefaultStyle.plist"; path = "../Invalid-UAMessageCenterDefaultStyle.plist"; sourceTree = "<group>"; };
-		CC64F0651D8B781C009CEF27 /* NSJSONSerialization_UAAdditionsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSJSONSerialization_UAAdditionsTests.m; sourceTree = "<group>"; };
 		CC64F06C1D8B781C009CEF27 /* UAAccountEventTemplateTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAccountEventTemplateTest.m; sourceTree = "<group>"; };
 		CC64F06E1D8B781C009CEF27 /* UAActionArgumentsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAActionArgumentsTest.m; sourceTree = "<group>"; };
 		CC64F0701D8B781C009CEF27 /* UANativeBridgeActionHandlerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UANativeBridgeActionHandlerTest.m; sourceTree = "<group>"; };
@@ -3173,12 +3165,10 @@
 		6E411CE22538CBB200FEE4E8 /* JSON */ = {
 			isa = PBXGroup;
 			children = (
-				6E41146F2538C0A100FEE4E8 /* NSJSONSerialization+UAAdditions.h */,
-				6E4117122538C1EC00FEE4E8 /* NSJSONSerialization+UAAdditions.m */,
 				8401769326C5671100373AF7 /* UAJSONMatcher.swift */,
 				8401769526C5715E00373AF7 /* UAVersionMatcher.swift */,
 				8401769726C5722400373AF7 /* UAJSONPredicate.swift */,
-				8401769926C5725800373AF7 /* UAJSONSerialization.swift */,
+				8401769926C5725800373AF7 /* JSONUtils.swift */,
 				8401769B26C5729E00373AF7 /* UAJSONValueMatcher.swift */,
 			);
 			name = JSON;
@@ -4505,8 +4495,7 @@
 				6E4E5B4126E8043A00198175 /* LocalizationUtilsTest.m */,
 				A615E214264EAFB9004FA211 /* UAPrivacyManagerTest.m */,
 				CCB902221DCBBCDA009A66D7 /* UAAsyncOperationTest.m */,
-				457366422137084B00C5993A /* UAJSONSerializationTest.m */,
-				CC64F0651D8B781C009CEF27 /* NSJSONSerialization_UAAdditionsTests.m */,
+				457366422137084B00C5993A /* UAJSONUtilsTest.m */,
 				CC64F0811D8B781C009CEF27 /* UABase64Test.m */,
 				CC64F0891D8B781C009CEF27 /* UAColorUtilsTest.m */,
 				CC64F0A71D8B781C009CEF27 /* UAKeyChainUtilTest.m */,
@@ -4774,7 +4763,6 @@
 				6E4115572538C0AC00FEE4E8 /* UAActionResult.h in Headers */,
 				6E4115872538C0AD00FEE4E8 /* UAActionArguments.h in Headers */,
 				6E4119DB2538C20200FEE4E8 /* UAKeychainUtils+Internal.h in Headers */,
-				6E4115632538C0AC00FEE4E8 /* NSJSONSerialization+UAAdditions.h in Headers */,
 				6E41162F2538C0B100FEE4E8 /* UAAnalyticsEventConsumerProtocol.h in Headers */,
 				6E411EE32538F8E300FEE4E8 /* AirshipCore.h in Headers */,
 				6E4115F32538C0B000FEE4E8 /* UATagGroups.h in Headers */,
@@ -4999,7 +4987,6 @@
 				6E4115582538C0AC00FEE4E8 /* UAActionResult.h in Headers */,
 				6E4115882538C0AD00FEE4E8 /* UAActionArguments.h in Headers */,
 				6E4119DC2538C20200FEE4E8 /* UAKeychainUtils+Internal.h in Headers */,
-				6E4115642538C0AC00FEE4E8 /* NSJSONSerialization+UAAdditions.h in Headers */,
 				6E411EB02538F4D100FEE4E8 /* UAActionResult+Internal.h in Headers */,
 				6E4116302538C0B200FEE4E8 /* UAAnalyticsEventConsumerProtocol.h in Headers */,
 				6E411EE42538F8E300FEE4E8 /* AirshipCore.h in Headers */,
@@ -5956,7 +5943,6 @@
 				3CA84AAA26DE255200A59685 /* EventManager.swift in Sources */,
 				6E15B6DB26CC749F0099C92D /* RemoteConfigManager.swift in Sources */,
 				6E1D8AD826CC66BE0049DACB /* RemoteConfigCache.swift in Sources */,
-				6E4118CF2538C1FE00FEE4E8 /* NSJSONSerialization+UAAdditions.m in Sources */,
 				6E664BDB26C4CD8700A2C8E5 /* EnableFeatureAction.swift in Sources */,
 				6E87BD6726D6A39A0005D20D /* Config.swift in Sources */,
 				6E664BBD26C46BC600A2C8E5 /* TagsActionPredicate.swift in Sources */,
@@ -6014,7 +6000,7 @@
 				6EB11C872697ACBF00DC698F /* ContactOperation.swift in Sources */,
 				3CA84AB026DE255200A59685 /* EventData.swift in Sources */,
 				6E664BA526C4417400A2C8E5 /* ShareActionPredicate.swift in Sources */,
-				8401769A26C5725800373AF7 /* UAJSONSerialization.swift in Sources */,
+				8401769A26C5725800373AF7 /* JSONUtils.swift in Sources */,
 				6E6ED16D2683DBC300A2CBD0 /* UABespokeCloseView.swift in Sources */,
 				6E87BDB526DEE61F0005D20D /* ComponentDisableHelper.swift in Sources */,
 				3CA84ABA26DE257200A59685 /* AnalyticsProtocol.swift in Sources */,
@@ -6305,7 +6291,6 @@
 				3C927F8423A97CDA003C5FC8 /* UADefaultValueTransformerTest.m in Sources */,
 				6E87BE1B26E2C59D0005D20D /* TestAnalytics.swift in Sources */,
 				6E739D8226BB33A200BC6F6D /* ChannelBulkUpdateAPIClientTest.swift in Sources */,
-				CC64F0D21D8B781C009CEF27 /* NSJSONSerialization_UAAdditionsTests.m in Sources */,
 				DF17A1101F57617200DC39E0 /* UARemoteDataAPIClientTest.m in Sources */,
 				6E3673E01E8AF9D8005B5DFF /* UAEnableFeatureActionTest.m in Sources */,
 				6ED3C04520081013002A746B /* UAInAppMessageCustomDisplayContentTest.m in Sources */,
@@ -6400,7 +6385,7 @@
 				997AC8221FE5ACE000260440 /* UAInAppMessageFullScreenDisplayContentTest.m in Sources */,
 				DF8D7366200006850092FDEA /* UAInAppMessageModalDisplayContentTest.m in Sources */,
 				6E5062B024E23E1C00689C6D /* UAActionScheduleTests.m in Sources */,
-				457366432137084B00C5993A /* UAJSONSerializationTest.m in Sources */,
+				457366432137084B00C5993A /* UAJSONUtilsTest.m in Sources */,
 				6E739D7F26BAFCB800BC6F6D /* TestChannelBulkUpdateAPIClient.swift in Sources */,
 				CC64F0E41D8B781C009CEF27 /* UAAPNSRegistrationTest.m in Sources */,
 				3C5649CF2127746C007E82D2 /* UAInAppMessagingRemoteConfigTest.m in Sources */,
@@ -6517,7 +6502,7 @@
 				6E4117E02538C1FB00FEE4E8 /* NSDictionary+UAAdditions.m in Sources */,
 				6EC32273254FC64C00EA5B38 /* NSObject+UAAdditions.m in Sources */,
 				6E664BD426C4917000A2C8E5 /* RemoveTagsAction.swift in Sources */,
-				A6F6726426E1163A008C69C3 /* UAJSONSerialization.swift in Sources */,
+				A6F6726426E1163A008C69C3 /* JSONUtils.swift in Sources */,
 				6E87BD8E26D815780005D20D /* AppIntegration.swift in Sources */,
 				6E91B4642689093000DDB1A8 /* UAInteractiveNotificationEvent.swift in Sources */,
 				6E8BF45926852E8D009A8BD4 /* UATaskManager.swift in Sources */,
@@ -6565,7 +6550,6 @@
 				3CA84AB326DE255200A59685 /* EventStoreProtocol.swift in Sources */,
 				6E8BF45B26852E92009A8BD4 /* UATaskRequestOptions.swift in Sources */,
 				6E698E0D267A88D600654DB2 /* UAEventAPIClient.swift in Sources */,
-				6E4118D02538C1FE00FEE4E8 /* NSJSONSerialization+UAAdditions.m in Sources */,
 				6E2D6AEF26B096B600B7C226 /* ChannelAudienceManager.swift in Sources */,
 				6E87BE1426E28F570005D20D /* AirshipInstance.swift in Sources */,
 				6E6ED16C2683DBC300A2CBD0 /* UASystemVersion.swift in Sources */,

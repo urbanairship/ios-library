@@ -4,8 +4,9 @@
 #import "UABaseTest.h"
 #import "UAInAppMessageSchedule.h"
 #import "UASchedule+Internal.h"
-#import "NSJSONSerialization+UAAdditions.h"
 #import "UAInAppMessageCustomDisplayContent.h"
+
+@import AirshipCore;
 
 @interface UAInAppMessageScheduleTests : UABaseTest
 
@@ -34,7 +35,7 @@
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
     }];
 
-    XCTAssertEqualObjects([NSJSONSerialization stringWithObject:[message toJSON]], schedule.dataJSONString);
+    XCTAssertEqualObjects([UAJSONUtils stringWithObject:[message toJSON]], schedule.dataJSONString);
 }
 
 @end

@@ -4,7 +4,6 @@
 #import "UAInAppRemoteDataClient+Internal.h"
 #import "UASchedule+Internal.h"
 #import "UAScheduleEdits+Internal.h"
-#import "NSJSONSerialization+UAAdditions.h"
 #import "UAInAppMessage+Internal.h"
 #import "UAActionSchedule.h"
 #import "UAInappMessageSchedule.h"

@@ -4,7 +4,8 @@
 #import "UABaseTest.h"
 #import "UADeferredSchedule+Internal.h"
 #import "UASchedule+Internal.h"
-#import "NSJSONSerialization+UAAdditions.h"
+
+@import AirshipCore;
 
 @interface UADeferredScheduleTests : UABaseTest
 
@@ -29,7 +30,7 @@
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
     }];
 
-    XCTAssertEqualObjects([NSJSONSerialization stringWithObject:[deferred toJSON]], schedule.dataJSONString);
+    XCTAssertEqualObjects([UAJSONUtils stringWithObject:[deferred toJSON]], schedule.dataJSONString);
 }
 
 @end

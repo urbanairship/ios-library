@@ -76,7 +76,7 @@
         builder.username = self.config.appKey;
         builder.password = self.config.appSecret;
 
-        builder.body = [NSJSONSerialization dataWithJSONObject:payloadDictionary options:NSJSONWritingPrettyPrinted error:nil];
+        builder.body = [UAJSONUtils dataWithObject:payloadDictionary options:NSJSONWritingPrettyPrinted error:nil];
 
         [builder setValue:@"application/vnd.urbanairship+json; version=3;" header:@"Accept"];
         [builder setValue:@"application/json" header:@"Content-Type"];

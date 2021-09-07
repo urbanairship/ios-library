@@ -26,7 +26,7 @@ public class UAEventAPIClient : NSObject, EventAPIClientProtocol {
 
         var body : Data?
         do {
-            body = try UAJSONSerialization.data(events, options: [])
+            body = try JSONUtils.data(events, options: [])
         } catch {
             completionHandler(nil, error)
             return UADisposable()

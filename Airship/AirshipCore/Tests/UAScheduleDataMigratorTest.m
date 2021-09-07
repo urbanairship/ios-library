@@ -2,10 +2,11 @@
 
 #import "UABaseTest.h"
 #import <CoreData/CoreData.h>
-#import "NSJSONSerialization+UAAdditions.h"
 #import "UAScheduleDataMigrator+Internal.h"
 #import "UAScheduleData+Internal.h"
 #import "UAAutomationStore+Internal.h"
+
+@import AirshipCore;
 
 @interface UAScheduleDataMigratorTest : UABaseTest
 @property (nonatomic, strong) NSManagedObjectContext *managedContext;
@@ -61,11 +62,11 @@
 
     UAScheduleData *scheduleData = [NSEntityDescription insertNewObjectForEntityForName:@"UAScheduleData"
                                                                  inManagedObjectContext:self.managedContext];
-    scheduleData.data = [NSJSONSerialization stringWithObject:old];
+    scheduleData.data = [UAJSONUtils stringWithObject:old];
     scheduleData.dataVersion = @(0);
     [UAScheduleDataMigrator migrateSchedules:@[scheduleData]];
 
-    NSDictionary *migratedData = [NSJSONSerialization objectWithString:scheduleData.data];
+    NSDictionary *migratedData = [UAJSONUtils objectWithString:scheduleData.data];
     XCTAssertEqualObjects(expectedData, migratedData);
     XCTAssertEqual(UAScheduleDataVersion, [scheduleData.dataVersion intValue]);
 }
@@ -88,11 +89,11 @@
 
     UAScheduleData *scheduleData = [NSEntityDescription insertNewObjectForEntityForName:@"UAScheduleData"
                                                                  inManagedObjectContext:self.managedContext];
-    scheduleData.data = [NSJSONSerialization stringWithObject:old];
+    scheduleData.data = [UAJSONUtils stringWithObject:old];
     scheduleData.dataVersion = @(0);
     [UAScheduleDataMigrator migrateSchedules:@[scheduleData]];
 
-    NSDictionary *migratedData = [NSJSONSerialization objectWithString:scheduleData.data];
+    NSDictionary *migratedData = [UAJSONUtils objectWithString:scheduleData.data];
     XCTAssertEqualObjects(expectedData, migratedData);
     XCTAssertEqual(UAScheduleDataVersion, [scheduleData.dataVersion intValue]);
 }
@@ -107,11 +108,11 @@
 
     UAScheduleData *scheduleData = [NSEntityDescription insertNewObjectForEntityForName:@"UAScheduleData"
                                                                  inManagedObjectContext:self.managedContext];
-    scheduleData.data = [NSJSONSerialization stringWithObject:actions];
+    scheduleData.data = [UAJSONUtils stringWithObject:actions];
     scheduleData.dataVersion = @(0);
     [UAScheduleDataMigrator migrateSchedules:@[scheduleData]];
 
-    XCTAssertEqualObjects(actions, [NSJSONSerialization objectWithString:scheduleData.data]);
+    XCTAssertEqualObjects(actions, [UAJSONUtils objectWithString:scheduleData.data]);
     XCTAssertNotNil(scheduleData.type);
     XCTAssertEqual(UAScheduleTypeActions, [scheduleData.type intValue]);
     XCTAssertEqual(UAScheduleDataVersion, [scheduleData.dataVersion intValue]);
@@ -128,11 +129,11 @@
 
     UAScheduleData *scheduleData = [NSEntityDescription insertNewObjectForEntityForName:@"UAScheduleData"
                                                                  inManagedObjectContext:self.managedContext];
-    scheduleData.data = [NSJSONSerialization stringWithObject:message];
+    scheduleData.data = [UAJSONUtils stringWithObject:message];
     scheduleData.dataVersion = @(0);
     [UAScheduleDataMigrator migrateSchedules:@[scheduleData]];
 
-    XCTAssertEqualObjects(message, [NSJSONSerialization objectWithString:scheduleData.data]);
+    XCTAssertEqualObjects(message, [UAJSONUtils objectWithString:scheduleData.data]);
     XCTAssertEqual(UAScheduleTypeInAppMessage, [scheduleData.type intValue]);
     XCTAssertEqual(UAScheduleDataVersion, [scheduleData.dataVersion intValue]);
 }
@@ -156,12 +157,12 @@
     // Add the old version of the data
     UAScheduleData *scheduleData = [NSEntityDescription insertNewObjectForEntityForName:@"UAScheduleData"
                                                                  inManagedObjectContext:self.managedContext];
-    scheduleData.data = [NSJSONSerialization stringWithObject:old];
+    scheduleData.data = [UAJSONUtils stringWithObject:old];
     scheduleData.dataVersion = @(0);
     [UAScheduleDataMigrator migrateSchedules:@[scheduleData]];
 
-    XCTAssertEqualObjects(expected, [NSJSONSerialization objectWithString:scheduleData.data]);
-    XCTAssertEqualObjects(old[@"audience"], [NSJSONSerialization objectWithString:scheduleData.audience]);
+    XCTAssertEqualObjects(expected, [UAJSONUtils objectWithString:scheduleData.data]);
+    XCTAssertEqualObjects(old[@"audience"], [UAJSONUtils objectWithString:scheduleData.audience]);
     XCTAssertEqual(UAScheduleTypeInAppMessage, [scheduleData.type intValue]);
     XCTAssertEqual(UAScheduleDataVersion, [scheduleData.dataVersion intValue]);
 }
@@ -179,13 +180,13 @@
     // Add the old version of the data
     UAScheduleData *scheduleData = [NSEntityDescription insertNewObjectForEntityForName:@"UAScheduleData"
                                                                  inManagedObjectContext:self.managedContext];
-    scheduleData.data = [NSJSONSerialization stringWithObject:message];
+    scheduleData.data = [UAJSONUtils stringWithObject:message];
     scheduleData.dataVersion = @(0);
     scheduleData.identifier = @"some ID";
     scheduleData.group = @"some Group";
     [UAScheduleDataMigrator migrateSchedules:@[scheduleData]];
 
-    XCTAssertEqualObjects(message, [NSJSONSerialization objectWithString:scheduleData.data]);
+    XCTAssertEqualObjects(message, [UAJSONUtils objectWithString:scheduleData.data]);
     XCTAssertEqualObjects(@"some Group", scheduleData.group);
     XCTAssertEqualObjects(@"some Group", scheduleData.identifier);
     XCTAssertEqual(UAScheduleTypeInAppMessage, [scheduleData.type intValue]);
@@ -205,13 +206,13 @@
     // Add the old version of the data
     UAScheduleData *scheduleData = [NSEntityDescription insertNewObjectForEntityForName:@"UAScheduleData"
                                                                  inManagedObjectContext:self.managedContext];
-    scheduleData.data = [NSJSONSerialization stringWithObject:message];
+    scheduleData.data = [UAJSONUtils stringWithObject:message];
     scheduleData.dataVersion = @(0);
     scheduleData.identifier = @"some ID";
     scheduleData.group = @"some Group";
     [UAScheduleDataMigrator migrateSchedules:@[scheduleData]];
 
-    XCTAssertEqualObjects(message, [NSJSONSerialization objectWithString:scheduleData.data]);
+    XCTAssertEqualObjects(message, [UAJSONUtils objectWithString:scheduleData.data]);
     XCTAssertEqualObjects(@"some Group", scheduleData.group);
     XCTAssertEqualObjects(@"some Group", scheduleData.identifier);
     XCTAssertEqual(UAScheduleTypeInAppMessage, [scheduleData.type intValue]);
@@ -237,7 +238,7 @@
     // Add the old version of the data
     UAScheduleData *foo = [NSEntityDescription insertNewObjectForEntityForName:@"UAScheduleData"
                                                                  inManagedObjectContext:self.managedContext];
-    foo.data = [NSJSONSerialization stringWithObject:messageFoo];
+    foo.data = [UAJSONUtils stringWithObject:messageFoo];
     foo.dataVersion = @(2);
     foo.identifier = @"some ID";
     foo.group = @"foo";
@@ -245,11 +246,11 @@
     // Add the old version of the data
     UAScheduleData *fooTwo = [NSEntityDescription insertNewObjectForEntityForName:@"UAScheduleData"
                                                           inManagedObjectContext:self.managedContext];
-    fooTwo.data = [NSJSONSerialization stringWithObject:messageFooTwo];
+    fooTwo.data = [UAJSONUtils stringWithObject:messageFooTwo];
     fooTwo.dataVersion = @(2);
     fooTwo.identifier = @"some other ID";
     fooTwo.group = @"foo";
-    fooTwo.metadata = [NSJSONSerialization stringWithObject:@{@"neat": @"story"}];
+    fooTwo.metadata = [UAJSONUtils stringWithObject:@{@"neat": @"story"}];
 
     [UAScheduleDataMigrator migrateSchedules:@[foo, fooTwo]];
 
@@ -258,8 +259,8 @@
         @"com.urbanairship.original_message_id": @"foo"
     };
 
-    XCTAssertEqualObjects(expectedFooMetadata, [NSJSONSerialization objectWithString:foo.metadata]);
-    XCTAssertEqualObjects(messageFoo, [NSJSONSerialization objectWithString:foo.data]);
+    XCTAssertEqualObjects(expectedFooMetadata, [UAJSONUtils objectWithString:foo.metadata]);
+    XCTAssertEqualObjects(messageFoo, [UAJSONUtils objectWithString:foo.data]);
     XCTAssertEqualObjects(@"foo", foo.identifier);
 
     id expectedFooTwoMetadata = @{
@@ -268,8 +269,8 @@
         @"neat": @"story"
     };
 
-    XCTAssertEqualObjects(expectedFooTwoMetadata, [NSJSONSerialization objectWithString:fooTwo.metadata]);
-    XCTAssertEqualObjects(messageFooTwo, [NSJSONSerialization objectWithString:fooTwo.data]);
+    XCTAssertEqualObjects(expectedFooTwoMetadata, [UAJSONUtils objectWithString:fooTwo.metadata]);
+    XCTAssertEqualObjects(messageFooTwo, [UAJSONUtils objectWithString:fooTwo.data]);
     XCTAssertEqualObjects(@"foo#1", fooTwo.identifier);
 }
 

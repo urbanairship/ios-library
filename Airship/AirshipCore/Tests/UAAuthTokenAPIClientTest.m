@@ -5,6 +5,8 @@
 #import "UAAirshipBaseTest.h"
 #import "UAAuthTokenAPIClient+Internal.h"
 
+@import AirshipCore;
+
 typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response, NSError * _Nullable error);
 
 @interface UAAuthTokenAPIClientTest : UAAirshipBaseTest
@@ -21,7 +23,7 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
 
 - (void)testTokenWithChannelID {
     NSDictionary *responseBody = @{@"token": @"abc123", @"expires_in" : @(12345)};
-    NSData *responseData = [NSJSONSerialization dataWithJSONObject:responseBody options:0 error:nil];
+    NSData *responseData = [UAJSONUtils dataWithObject:responseBody options:0 error:nil];
 
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:nil];
 
@@ -62,7 +64,7 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
 
 - (void)testTokenWithChannelIDMalformedPayload {
     NSDictionary *responseBody = @{@"not a token": @"abc123", @"expires_in_3_2_1" : @(12345)};
-    NSData *responseData = [NSJSONSerialization dataWithJSONObject:responseBody options:0 error:nil];
+    NSData *responseData = [UAJSONUtils dataWithObject:responseBody options:0 error:nil];
 
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:nil];
 
@@ -86,7 +88,7 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
 
 - (void)testTokenWithChannelIDClientError {
     NSDictionary *responseBody = @{@"too": @"bad"};
-    NSData *responseData = [NSJSONSerialization dataWithJSONObject:responseBody options:0 error:nil];
+    NSData *responseData = [UAJSONUtils dataWithObject:responseBody options:0 error:nil];
 
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:400 HTTPVersion:nil headerFields:nil];
 

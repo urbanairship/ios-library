@@ -2,7 +2,6 @@
 #import <AirshipCore/AirshipCore.h>
 #else
 #import "NSObject+UAAdditions.h"
-#import "NSJSONSerialization+UAAdditions.h"
 #import "UAAction.h"
 #import "UAActionArguments.h"
 #import "UAActionResult.h"

@@ -208,7 +208,7 @@
     };
 
     NSError *error;
-    NSData *remoteData = [NSJSONSerialization dataWithJSONObject:responseDict options:NSJSONWritingPrettyPrinted error:&error];
+    NSData *remoteData = [UAJSONUtils dataWithObject:responseDict options:NSJSONWritingPrettyPrinted error:&error];
 
     XCTAssertNil(error ,@"Error creating remote data of from array %@: %@", payloads, error.localizedDescription);
 

@@ -67,7 +67,7 @@ class ChatConnectionTests: XCTestCase {
         self.connection.requestConversation()
 
         XCTAssertNotNil(self.mockWebSocket.lastMessage)
-        let object = JSONSerialization.object(with: self.mockWebSocket.lastMessage!) as! [String: String]
+        let object = JSONUtils.object(self.mockWebSocket.lastMessage!) as! [String: String]
 
         let expected = [
             "action": "fetch_conversation",
@@ -85,7 +85,7 @@ class ChatConnectionTests: XCTestCase {
 
         XCTAssertNotNil(self.mockWebSocket.lastMessage)
 
-        let object = JSONSerialization.object(with: self.mockWebSocket.lastMessage!) as! [String: Any]
+        let object = JSONUtils.object(self.mockWebSocket.lastMessage!) as! [String: Any]
         let payload = object["payload"] as! [String : Any]
         let routing = payload["routing"] as! [String : Any]
 
@@ -105,7 +105,7 @@ class ChatConnectionTests: XCTestCase {
 
         XCTAssertNotNil(self.mockWebSocket.lastMessage)
 
-        let object = JSONSerialization.object(with: self.mockWebSocket.lastMessage!) as! [String: Any]
+        let object = JSONUtils.object(self.mockWebSocket.lastMessage!) as! [String: Any]
         let payload = object["payload"] as! [String : Any]
 
         XCTAssertEqual("some-uvp", object["uvp"] as! String)
@@ -263,13 +263,13 @@ class ChatConnectionTests: XCTestCase {
             "uvp": "some-uvp"
         ]
 
-        var object = JSONSerialization.object(with: self.mockWebSocket.lastMessage!) as! [String: String]
+        var object = JSONUtils.object(self.mockWebSocket.lastMessage!) as! [String: String]
         XCTAssertEqual(expected, object)
 
         self.mockWebSocket.lastMessage = nil
 
         self.mockDispatcher.advanceTime(60)
-        object = JSONSerialization.object(with: self.mockWebSocket.lastMessage!) as! [String: String]
+        object = JSONUtils.object(self.mockWebSocket.lastMessage!) as! [String: String]
         XCTAssertEqual(expected, object)
 
         self.mockWebSocket.lastMessage = nil

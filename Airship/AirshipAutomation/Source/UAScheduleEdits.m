@@ -6,6 +6,12 @@
 #import "UAScheduleAudience.h"
 #import "UASchedule+Internal.h"
 
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+@import AirshipCore;
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
+
 @implementation UAScheduleEditsBuilder
 
 @end
@@ -57,7 +63,7 @@
         builderBlock(builder);
     }
 
-    return [[UAScheduleEdits alloc] initWithData:[NSJSONSerialization stringWithObject:[message toJSON]]
+    return [[UAScheduleEdits alloc] initWithData:[UAJSONUtils stringWithObject:[message toJSON]]
                                  type:@(UAScheduleTypeInAppMessage)
                               builder:builder];
 }
@@ -69,7 +75,7 @@
         builderBlock(builder);
     }
 
-    return [[UAScheduleEdits alloc] initWithData:[NSJSONSerialization stringWithObject:actions]
+    return [[UAScheduleEdits alloc] initWithData:[UAJSONUtils stringWithObject:actions]
                                  type:@(UAScheduleTypeActions)
                               builder:builder];
 }
@@ -81,7 +87,7 @@
         builderBlock(builder);
     }
 
-    return [[UAScheduleEdits alloc] initWithData:[NSJSONSerialization stringWithObject:[deferred toJSON]]
+    return [[UAScheduleEdits alloc] initWithData:[UAJSONUtils stringWithObject:[deferred toJSON]]
                                  type:@(UAScheduleTypeDeferred)
                               builder:builder];
 }

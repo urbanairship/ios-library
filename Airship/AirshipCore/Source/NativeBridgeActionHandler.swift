@@ -116,7 +116,7 @@ public class NativeBridgeActionHandler : NSObject, NativeBridgeActionHandlerProt
      *  - completionHandler The completion handler passed in the JS delegate call.
      */
     private func run(_ action: String, _ actionValue: Any?, _ metadata: [AnyHashable : Any]?, _ callbackID: String, _ completionHandler: @escaping (String?) -> Void) {
-        let callbackID = JSONSerialization.string(with: callbackID, acceptingFragments: true)
+        let callbackID = try? JSONUtils.string(callbackID, options: .fragmentsAllowed)
         
         let actionCompletionHandler: (UAActionResult) -> Void = { result in
             AirshipLogger.debug(String(format:"Action %@ finished executing with status %ld", action, result.status.rawValue))
@@ -135,12 +135,12 @@ public class NativeBridgeActionHandler : NSObject, NativeBridgeActionHandlerProt
                     ///if the action completed with a result value, serialize into JSON
                     ///accepting fragments so we can write lower level JSON values
                     do {
-                        resultString = try JSONSerialization.string(with: result.value!, acceptingFragments: true, error: ())
+                        resultString = try JSONUtils.string(result.value!, options: .fragmentsAllowed)
                     }
                     catch {
                         AirshipLogger.error("Unable to serialize result value, falling back to string description")
                         /// JSONify the result string
-                        resultString = JSONSerialization.string(with: String(describing: result.value!), acceptingFragments:true)
+                        resultString = try? JSONUtils.string(String(describing: result.value!), options: .fragmentsAllowed)
                     }
                 }
                 ///in the case where there is no result value, pass null
@@ -161,7 +161,7 @@ public class NativeBridgeActionHandler : NSObject, NativeBridgeActionHandlerProt
             
             if (errorMessage != nil) {
                 /// JSONify the error message
-                errorMessage = JSONSerialization.string(with: errorMessage!, acceptingFragments: true)
+                errorMessage = try? JSONUtils.string(errorMessage!, options: .fragmentsAllowed)
                 script = String(format:"var error = new Error(); error.message = %@; UAirship.finishAction(error, null, %@);", errorMessage!, callbackID)
             } else if (resultString != nil) {
                 script = String(format:"UAirship.finishAction(null, %@, %@);", resultString!, callbackID)
@@ -175,7 +175,7 @@ public class NativeBridgeActionHandler : NSObject, NativeBridgeActionHandlerProt
     
     private class func parse(_ arguments: String) -> Any? {
         /// allow the reading of fragments so we can parse lower level JSON values
-        let jsonDecodedArgs = JSONSerialization.object(with: arguments, options: [.mutableContainers, .allowFragments])
+        let jsonDecodedArgs = try? JSONUtils.object(arguments, options: [.mutableContainers, .allowFragments])
         if (jsonDecodedArgs == nil){
             AirshipLogger.debug("unable to json decode action args")
         }

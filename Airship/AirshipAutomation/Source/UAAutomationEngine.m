@@ -1320,7 +1320,7 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
 }
 
 - (nullable UASchedule *)scheduleFromData:(UAScheduleData *)scheduleData {
-    id dataJSON = [NSJSONSerialization objectWithString:scheduleData.data];
+    id dataJSON = [UAJSONUtils objectWithString:scheduleData.data];
     if (!dataJSON) {
         UA_LERR(@"Invalid schedule. Deleting %@", scheduleData.identifier);
         [scheduleData.managedObjectContext deleteObject:scheduleData];
@@ -1330,7 +1330,7 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
     UAScheduleAudience *audience;
     if (scheduleData.audience) {
         NSError *audienceError;
-        id audienceJSON = [NSJSONSerialization objectWithString:scheduleData.audience];
+        id audienceJSON = [UAJSONUtils objectWithString:scheduleData.audience];
         audience = [UAScheduleAudience audienceWithJSON:audienceJSON error:&audienceError];
         if (!audience || audienceError) {
             UA_LERR(@"Invalid schedule. Deleting %@ - %@", scheduleData.identifier, audienceError);
@@ -1351,7 +1351,7 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
         builder.limit = [scheduleData.limit unsignedIntegerValue];
         builder.interval = [scheduleData.interval doubleValue];
         builder.editGracePeriod = [scheduleData.editGracePeriod doubleValue];
-        builder.metadata = [NSJSONSerialization objectWithString:scheduleData.metadata];
+        builder.metadata = [UAJSONUtils objectWithString:scheduleData.metadata];
         builder.identifier = scheduleData.identifier;
         builder.audience = audience;
         builder.campaigns= scheduleData.campaigns;
@@ -1490,11 +1490,11 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
     }
 
     if (edits.metadata) {
-        scheduleData.metadata = [NSJSONSerialization stringWithObject:edits.metadata];
+        scheduleData.metadata = [UAJSONUtils stringWithObject:edits.metadata];
     }
 
     if (edits.audience) {
-        scheduleData.audience = [NSJSONSerialization stringWithObject:[edits.audience toJSON]];
+        scheduleData.audience = [UAJSONUtils stringWithObject:[edits.audience toJSON]];
     }
 
     if (edits.campaigns) {

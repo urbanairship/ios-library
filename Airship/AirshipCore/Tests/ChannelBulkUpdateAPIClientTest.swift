@@ -77,7 +77,7 @@ class ChannelBulkUpdateAPIClientTest: XCTestCase {
         ] as NSDictionary
 
         let lastRequest = self.session.lastRequest!
-        let body = JSONSerialization.object(with: String(data: lastRequest.body!, encoding: .utf8)!) as? NSDictionary
+        let body = JSONUtils.object(String(data: lastRequest.body!, encoding: .utf8)!) as? NSDictionary
         XCTAssertEqual("PUT", lastRequest.method)
         XCTAssertEqual(expectedBody, body)
         

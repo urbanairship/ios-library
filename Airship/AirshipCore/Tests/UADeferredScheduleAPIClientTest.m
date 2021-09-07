@@ -54,7 +54,7 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
 
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:nil];
     NSDictionary *responseBody = @{@"audience_match": @(YES), @"type" : @"in_app_message", @"message": messageJSON};
-    NSData *responseData = [NSJSONSerialization dataWithJSONObject:responseBody options:0 error:nil];
+    NSData *responseData = [UAJSONUtils dataWithObject:responseBody options:0 error:nil];
 
     NSString *token = @"token";
 
@@ -166,7 +166,7 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
 
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:nil];
     NSDictionary *responseBody = @{@"audience_match": @(YES), @"type" : @"in_app_message", @"message": messageJSON};
-    NSData *responseData = [NSJSONSerialization dataWithJSONObject:responseBody options:0 error:nil];
+    NSData *responseData = [UAJSONUtils dataWithObject:responseBody options:0 error:nil];
 
     NSString *token = @"token";
 
@@ -244,7 +244,7 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
 
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:nil];
     NSDictionary *responseBody = @{@"audience_match": @(YES), @"type" : @"in_app_message", @"message": messageJSON};
-    NSData *responseData = [NSJSONSerialization dataWithJSONObject:responseBody options:0 error:nil];
+    NSData *responseData = [UAJSONUtils dataWithObject:responseBody options:0 error:nil];
 
     NSString *token = @"token";
 
@@ -323,7 +323,7 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
 
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:nil];
     NSDictionary *responseBody = @{@"audience_match": @(YES), @"type" : @"in_app_message", @"message": messageJSON};
-    NSData *responseData = [NSJSONSerialization dataWithJSONObject:responseBody options:0 error:nil];
+    NSData *responseData = [UAJSONUtils dataWithObject:responseBody options:0 error:nil];
 
     NSString *token = @"token";
 
@@ -488,7 +488,7 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
 
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:401 HTTPVersion:nil headerFields:nil];
     NSDictionary *responseBody = @{@"audience_match": @(YES), @"type" : @"whatever"};
-    NSData *responseData = [NSJSONSerialization dataWithJSONObject:responseBody options:0 error:nil];
+    NSData *responseData = [UAJSONUtils dataWithObject:responseBody options:0 error:nil];
 
     NSString *token = @"token";
     NSString *newToken = @"newToken";
@@ -567,7 +567,7 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
 
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:nil];
     NSDictionary *responseBody = @{};
-    NSData *responseData = [NSJSONSerialization dataWithJSONObject:responseBody options:0 error:nil];
+    NSData *responseData = [UAJSONUtils dataWithObject:responseBody options:0 error:nil];
 
     NSString *token = @"token";
 

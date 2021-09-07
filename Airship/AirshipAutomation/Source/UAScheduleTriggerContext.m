@@ -2,7 +2,13 @@
 
 #import "UAScheduleTriggerContext+Internal.h"
 #import "UAScheduleTrigger+Internal.h"
-#import "NSJSONSerialization+UAAdditions.h"
+
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+@import AirshipCore;
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
+
 
 static NSString *const UAScheduleTriggerContextTriggerKey = @"trigger";
 static NSString *const UAScheduleTriggerContextEventKey = @"event";
@@ -68,7 +74,7 @@ static NSString *const UAScheduleTriggerContextEventKey = @"event";
 
 - (void)encodeWithCoder:(NSCoder *)coder {
     if (self.event) {
-        NSString *eventJSON = [NSJSONSerialization stringWithObject:self.event acceptingFragments:YES];
+        NSString *eventJSON = [UAJSONUtils stringWithObject:self.event options: NSJSONWritingFragmentsAllowed error:nil];
         [coder encodeObject:eventJSON forKey:UAScheduleTriggerContextEventKey];
     }
     [coder encodeObject:self.trigger forKey:UAScheduleTriggerContextTriggerKey];
@@ -81,8 +87,9 @@ static NSString *const UAScheduleTriggerContextEventKey = @"event";
 
         id eventJSON = [coder decodeObjectOfClass:[NSString class] forKey:UAScheduleTriggerContextEventKey];
         if (eventJSON) {
-            self.event = [NSJSONSerialization objectWithString:eventJSON
-                                                       options:NSJSONReadingMutableContainers | NSJSONReadingAllowFragments];
+            self.event = [UAJSONUtils objectWithString:eventJSON
+                                               options:NSJSONReadingMutableContainers | NSJSONReadingAllowFragments
+                                                 error:nil];
         }
 
         self.trigger = [coder decodeObjectOfClass:[UAScheduleTrigger class]

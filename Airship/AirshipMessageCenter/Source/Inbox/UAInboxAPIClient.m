@@ -171,7 +171,7 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
     UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder * _Nonnull builder) {
         NSDictionary *body = @{@"messages" : messageReporting };
 
-        NSData* bodyData = [UAJSONSerialization dataWithJSONObject:body
+        NSData* bodyData = [UAJSONUtils dataWithObject:body
                                                            options:0
                                                              error:nil];
 
@@ -234,7 +234,7 @@ NSString *const UALastMessageListModifiedTime = @"UALastMessageListModifiedTime.
     UARequest *request = [UARequest requestWithBuilderBlock:^(UARequestBuilder * _Nonnull builder) {
         NSDictionary *body = @{@"messages" : messageReporting };
 
-        NSData* bodyData = [UAJSONSerialization dataWithJSONObject:body
+        NSData* bodyData = [UAJSONUtils dataWithObject:body
                                                            options:0
                                                              error:nil];
 

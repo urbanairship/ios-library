@@ -4,7 +4,8 @@
 #import "UABaseTest.h"
 #import "UAActionSchedule.h"
 #import "UASchedule+Internal.h"
-#import "NSJSONSerialization+UAAdditions.h"
+
+@import AirshipCore;
 
 @interface UAActionScheduleTests : UABaseTest
 
@@ -27,7 +28,7 @@
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
     }];
 
-    XCTAssertEqualObjects([NSJSONSerialization stringWithObject:actions], schedule.dataJSONString);
+    XCTAssertEqualObjects([UAJSONUtils stringWithObject:actions], schedule.dataJSONString);
 }
 
 - (void)testInvalidJSON {

@@ -196,7 +196,7 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
     eventData.time = @"100";
     eventData.identifier = @"mock_event_id";
     eventData.sessionID = @"mock_event_session";
-    eventData.data = [NSJSONSerialization dataWithJSONObject:@{@"cool": @"story"} options:0 error:nil];
+    eventData.data = [UAJSONUtils dataWithObject:@{@"cool": @"story"} options:0 error:nil];
 
     // Stub the event store to return the data
     [[[[self.mockStore expect] andDo:^(NSInvocation *invocation) {
@@ -272,7 +272,7 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
         eventData.time = @"100";
         eventData.identifier = [NSString stringWithFormat:@"event: %d", i];
         eventData.sessionID = @"mock_event_session";
-        eventData.data = [NSJSONSerialization dataWithJSONObject:@{@"cool": @"story"} options:0 error:nil];
+        eventData.data = [UAJSONUtils dataWithObject:@{@"cool": @"story"} options:0 error:nil];
         eventData.bytes = @(2048);
         [events addObject:eventData];
     }
@@ -360,7 +360,7 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
     eventData.time = @"100";
     eventData.identifier = @"mock_event_id";
     eventData.sessionID = @"mock_event_session";
-    eventData.data = [NSJSONSerialization dataWithJSONObject:@{@"cool": @"story"} options:0 error:nil];
+    eventData.data = [UAJSONUtils dataWithObject:@{@"cool": @"story"} options:0 error:nil];
 
     // Stub the event store to return the data
     [[[[self.mockStore expect] andDo:^(NSInvocation *invocation) {

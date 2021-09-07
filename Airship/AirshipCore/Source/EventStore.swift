@@ -187,7 +187,7 @@ public class EventStore : NSObject, EventStoreProtocol {
     private func storeEvent(withID eventID: String, eventType: String, eventTime: String,
                             eventBody: Any, sessionID: String, context: NSManagedObjectContext) {
         do {
-            let json = try UAJSONSerialization.data(eventBody, options: [])
+            let json = try JSONUtils.data(eventBody, options: [])
 
             if let eventData = NSEntityDescription.insertNewObject(forEntityName: EventStore.eventDataEntityName, into: context) as? EventData {
                 eventData.sessionID = sessionID

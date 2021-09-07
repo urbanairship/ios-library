@@ -2,7 +2,6 @@
 
 #import "UAScheduleTrigger+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
-#import "NSJSONSerialization+UAAdditions.h"
 
 #if __has_include("AirshipCore/AirshipCore-Swift.h")
 @import AirshipCore;
@@ -244,7 +243,7 @@ NSString * const UAScheduleTriggerErrorDomain = @"com.urbanairship.schedule_trig
     [coder encodeObject:@(self.type) forKey:UAScheduleTriggerTypeKey];
     [coder encodeObject:self.goal forKey:UAScheduleTriggerGoalKey];
     if (self.predicate.payload) {
-        [coder encodeObject:[NSJSONSerialization stringWithObject:self.predicate.payload] forKey:UAScheduleTriggerPredicateKey];
+        [coder encodeObject:[UAJSONUtils stringWithObject:self.predicate.payload] forKey:UAScheduleTriggerPredicateKey];
     }
 }
 
@@ -257,7 +256,7 @@ NSString * const UAScheduleTriggerErrorDomain = @"com.urbanairship.schedule_trig
 
         id predicateJSON = [coder decodeObjectOfClass:[NSString class] forKey:UAScheduleTriggerPredicateKey];
         if (predicateJSON) {
-            self.predicate = [[UAJSONPredicate alloc] initWithJSON:[NSJSONSerialization objectWithString:predicateJSON]
+            self.predicate = [[UAJSONPredicate alloc] initWithJSON:[UAJSONUtils objectWithString:predicateJSON]
                                                           error:nil];
         }
     }
