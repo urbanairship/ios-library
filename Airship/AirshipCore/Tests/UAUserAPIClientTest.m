@@ -6,13 +6,9 @@
 #import "UAUserAPIClient+Internal.h"
 #import "UAUser+Internal.h"
 #import "UAUserData+Internal.h"
-#import "UAJSONSerialization.h"
 
-#if __has_include("AirshipCore/AirshipCore-Swift.h")
-#import <AirshipCore/AirshipCore-Swift.h>
-#elif __has_include("Airship/Airship-Swift.h")
-#import <Airship/Airship-Swift.h>
-#endif
+@import AirshipCore;
+
 
 typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response, NSError * _Nullable error);
 

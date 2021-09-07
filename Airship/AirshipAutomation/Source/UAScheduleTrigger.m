@@ -64,8 +64,8 @@ NSString * const UAScheduleTriggerErrorDomain = @"com.urbanairship.schedule_trig
 
 + (instancetype)regionEnterTriggerForRegionID:(NSString *)regionID count:(NSUInteger)count {
     UAJSONValueMatcher *valueMatcher = [UAJSONValueMatcher matcherWhereStringEquals:regionID];
-    UAJSONMatcher *jsonMatcher = [UAJSONMatcher matcherWithValueMatcher:valueMatcher scope:@[UARegionEvent.regionIDKey]];
-    UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSONMatcher:jsonMatcher];
+    UAJSONMatcher *jsonMatcher = [[UAJSONMatcher alloc] initWithValueMatcher:valueMatcher scope:@[UARegionEvent.regionIDKey]];
+    UAJSONPredicate *predicate = [[UAJSONPredicate alloc] initWithJSONMatcher:jsonMatcher];
 
     return [UAScheduleTrigger triggerWithType:UAScheduleTriggerRegionEnter
                                          goal:@(count)
@@ -74,8 +74,8 @@ NSString * const UAScheduleTriggerErrorDomain = @"com.urbanairship.schedule_trig
 
 + (instancetype)regionExitTriggerForRegionID:(NSString *)regionID count:(NSUInteger)count {
     UAJSONValueMatcher *valueMatcher = [UAJSONValueMatcher matcherWhereStringEquals:regionID];
-    UAJSONMatcher *jsonMatcher = [UAJSONMatcher matcherWithValueMatcher:valueMatcher scope:@[UARegionEvent.regionIDKey]];
-    UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSONMatcher:jsonMatcher];
+    UAJSONMatcher *jsonMatcher = [[UAJSONMatcher alloc] initWithValueMatcher:valueMatcher scope:@[UARegionEvent.regionIDKey]];
+    UAJSONPredicate *predicate = [[UAJSONPredicate alloc] initWithJSONMatcher:jsonMatcher];
 
     return [UAScheduleTrigger triggerWithType:UAScheduleTriggerRegionExit
                                          goal:@(count)
@@ -84,8 +84,8 @@ NSString * const UAScheduleTriggerErrorDomain = @"com.urbanairship.schedule_trig
 
 + (instancetype)screenTriggerForScreenName:(NSString *)screenName count:(NSUInteger)count {
     UAJSONValueMatcher *valueMatcher = [UAJSONValueMatcher matcherWhereStringEquals:screenName];
-    UAJSONMatcher *jsonMatcher = [UAJSONMatcher matcherWithValueMatcher:valueMatcher];
-    UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSONMatcher:jsonMatcher];
+    UAJSONMatcher *jsonMatcher = [[UAJSONMatcher alloc] initWithValueMatcher:valueMatcher];
+    UAJSONPredicate *predicate = [[UAJSONPredicate alloc] initWithJSONMatcher:jsonMatcher];
 
     return [UAScheduleTrigger triggerWithType:UAScheduleTriggerScreen
                                          goal:@(count)
@@ -105,8 +105,9 @@ NSString * const UAScheduleTriggerErrorDomain = @"com.urbanairship.schedule_trig
 }
 
 + (instancetype)versionTriggerWithConstraint:(NSString *)versionConstraint count:(NSUInteger)count {
-    UAJSONMatcher *matcher = [UAJSONMatcher matcherWithValueMatcher:[UAJSONValueMatcher matcherWithVersionConstraint:versionConstraint] scope:@[@"ios", @"version"]];
-    UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSONMatcher:matcher];
+    UAJSONValueMatcher *valueMatcher = [UAJSONValueMatcher matcherWithVersionConstraint:versionConstraint];
+    UAJSONMatcher *matcher = [[UAJSONMatcher alloc] initWithValueMatcher:valueMatcher scope:@[@"ios", @"version"]];
+    UAJSONPredicate *predicate = [[UAJSONPredicate alloc] initWithJSONMatcher:matcher];
     return [UAScheduleTrigger triggerWithType:UAScheduleTriggerVersion goal:@(count) predicate:predicate];
 }
 
@@ -187,7 +188,7 @@ NSString * const UAScheduleTriggerErrorDomain = @"com.urbanairship.schedule_trig
 
     UAJSONPredicate *predicate;
     if (json[UAScheduleTriggerPredicateKey]) {
-        predicate = [UAJSONPredicate predicateWithJSON:json[UAScheduleTriggerPredicateKey] error:error];
+        predicate = [[UAJSONPredicate alloc] initWithJSON:json[UAScheduleTriggerPredicateKey] error:error];
         if (!predicate) {
             return nil;
         }
@@ -256,7 +257,7 @@ NSString * const UAScheduleTriggerErrorDomain = @"com.urbanairship.schedule_trig
 
         id predicateJSON = [coder decodeObjectOfClass:[NSString class] forKey:UAScheduleTriggerPredicateKey];
         if (predicateJSON) {
-            self.predicate = [UAJSONPredicate predicateWithJSON:[NSJSONSerialization objectWithString:predicateJSON]
+            self.predicate = [[UAJSONPredicate alloc] initWithJSON:[NSJSONSerialization objectWithString:predicateJSON]
                                                           error:nil];
         }
     }

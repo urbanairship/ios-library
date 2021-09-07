@@ -3,9 +3,7 @@
 #import "UAAirshipBaseTest.h"
 #import "UAScheduleAudienceChecks+Internal.h"
 #import "UAScheduleAudience+Internal.h"
-#import "UAVersionMatcher.h"
 #import "UATagSelector.h"
-#import "UAJSONPredicate.h"
 #import "AirshipTests-Swift.h"
 
 @import AirshipCore;
@@ -207,8 +205,8 @@
 
     UAScheduleAudience *requiresLangAndVersion = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
         builder.languageTags = @[@"en-US"];
-        UAJSONMatcher *matcher = [UAJSONMatcher matcherWithValueMatcher:[UAJSONValueMatcher matcherWithVersionConstraint:@"1.0"] scope:@[@"ios",@"version"]];
-        builder.versionPredicate = [UAJSONPredicate predicateWithJSONMatcher:matcher];
+        UAJSONMatcher *matcher = [[UAJSONMatcher alloc] initWithValueMatcher:[UAJSONValueMatcher matcherWithVersionConstraint:@"1.0"] scope:@[@"ios",@"version"]];
+        builder.versionPredicate = [[UAJSONPredicate alloc] initWithJSONMatcher:matcher];
     }];
 
     // Unset mocked version
@@ -248,8 +246,8 @@
     }] currentAppVersion];
 
     UAScheduleAudience *audience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
-        UAJSONMatcher *matcher = [UAJSONMatcher matcherWithValueMatcher:[UAJSONValueMatcher matcherWithVersionConstraint:@"[1.0, 2.0]"] scope:@[@"ios",@"version"]];
-        builder.versionPredicate = [UAJSONPredicate predicateWithJSONMatcher:matcher];
+        UAJSONMatcher *matcher = [[UAJSONMatcher alloc] initWithValueMatcher:[UAJSONValueMatcher matcherWithVersionConstraint:@"[1.0, 2.0]"] scope:@[@"ios",@"version"]];
+        builder.versionPredicate = [[UAJSONPredicate alloc] initWithJSONMatcher:matcher];
     }];
     
     // test

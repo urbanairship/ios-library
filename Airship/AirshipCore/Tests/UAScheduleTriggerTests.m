@@ -2,7 +2,8 @@
 
 #import "UABaseTest.h"
 #import "UAScheduleTrigger+Internal.h"
-#import "UAJSONPredicate.h"
+
+@import AirshipCore;
 
 @interface UAScheduleTriggerTests : UABaseTest
 

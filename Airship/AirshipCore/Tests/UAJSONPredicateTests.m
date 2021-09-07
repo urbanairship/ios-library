@@ -1,9 +1,8 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAJSONMatcher.h"
-#import "UAJSONValueMatcher.h"
-#import "UAJSONPredicate.h"
+
+@import AirshipCore;
 
 @interface UAJSONPredicateTests : UABaseTest
 @property (nonatomic, strong) UAJSONMatcher *fooMatcher;
@@ -18,13 +17,13 @@
 - (void)setUp {
     [super setUp];
 
-    self.fooMatcher = [UAJSONMatcher matcherWithValueMatcher:[UAJSONValueMatcher matcherWhereStringEquals:@"bar"] scope:@[@"foo"]];
-    self.storyMatcher = [UAJSONMatcher matcherWithValueMatcher:[UAJSONValueMatcher matcherWhereStringEquals:@"story"] scope:@[@"cool"]];
-    self.stringMatcher = [UAJSONMatcher matcherWithValueMatcher:[UAJSONValueMatcher matcherWhereStringEquals:@"cool"]];
+    self.fooMatcher = [[UAJSONMatcher alloc] initWithValueMatcher:[UAJSONValueMatcher matcherWhereStringEquals:@"bar"] scope:@[@"foo"]];
+    self.storyMatcher = [[UAJSONMatcher alloc] initWithValueMatcher:[UAJSONValueMatcher matcherWhereStringEquals:@"story"] scope:@[@"cool"]];
+    self.stringMatcher = [[UAJSONMatcher alloc] initWithValueMatcher:[UAJSONValueMatcher matcherWhereStringEquals:@"cool"]];
 }
 
 - (void)testJSONMatcherPredicate {
-    UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSONMatcher:self.stringMatcher];
+    UAJSONPredicate *predicate = [[UAJSONPredicate alloc] initWithJSONMatcher:self.stringMatcher];
     XCTAssertTrue([predicate evaluateObject:@"cool"]);
 
     XCTAssertFalse([predicate evaluateObject:nil]);
@@ -36,18 +35,18 @@
 
 - (void)testJSONMatcherPredicatePayload {
     NSDictionary *json = @{ @"value": @{ @"equals": @"cool" } };
-    UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSONMatcher:self.stringMatcher];
+    UAJSONPredicate *predicate = [[UAJSONPredicate alloc] initWithJSONMatcher:self.stringMatcher];
 
     XCTAssertEqualObjects(json, predicate.payload);
 
     // Verify the JSONValue recreates the expected payload
     NSError *error = nil;
-    XCTAssertEqualObjects(json, [UAJSONPredicate predicateWithJSON:json error:&error].payload);
+    XCTAssertEqualObjects(json, [[UAJSONPredicate alloc] initWithJSON:json error:&error].payload);
     XCTAssertNil(error);
 }
 
 - (void)testNotPredicate {
-    UAJSONPredicate *predicate = [UAJSONPredicate notPredicateWithSubpredicate:[UAJSONPredicate predicateWithJSONMatcher:self.stringMatcher]];
+    UAJSONPredicate *predicate = [UAJSONPredicate notPredicateWithSubpredicate:[[UAJSONPredicate alloc] initWithJSONMatcher:self.stringMatcher]];
     XCTAssertFalse([predicate evaluateObject:@"cool"]);
 
     XCTAssertTrue([predicate evaluateObject:nil]);
@@ -58,19 +57,19 @@
 
 - (void)testNotPredicatePayload {
     NSDictionary *json = @{ @"not": @[ @{ @"value": @{ @"equals": @"cool" }} ] };
-    UAJSONPredicate *predicate = [UAJSONPredicate notPredicateWithSubpredicate:[UAJSONPredicate predicateWithJSONMatcher:self.stringMatcher]];
+    UAJSONPredicate *predicate = [UAJSONPredicate notPredicateWithSubpredicate:[[UAJSONPredicate alloc] initWithJSONMatcher:self.stringMatcher]];
 
     XCTAssertEqualObjects(json, predicate.payload);
 
     // Verify the JSONValue recreates the expected payload
     NSError *error = nil;
-    XCTAssertEqualObjects(json, [UAJSONPredicate predicateWithJSON:json error:&error].payload);
+    XCTAssertEqualObjects(json, [[UAJSONPredicate alloc] initWithJSON:json error:&error].payload);
     XCTAssertNil(error);
 }
 
 - (void)testAndPredicate {
-    UAJSONPredicate *fooPredicate = [UAJSONPredicate predicateWithJSONMatcher:self.fooMatcher];
-    UAJSONPredicate *storyPredicate = [UAJSONPredicate predicateWithJSONMatcher:self.storyMatcher];
+    UAJSONPredicate *fooPredicate = [[UAJSONPredicate alloc] initWithJSONMatcher:self.fooMatcher];
+    UAJSONPredicate *storyPredicate = [[UAJSONPredicate alloc] initWithJSONMatcher:self.storyMatcher];
 
     UAJSONPredicate *predicate = [UAJSONPredicate andPredicateWithSubpredicates:@[fooPredicate, storyPredicate]];
 
@@ -101,21 +100,21 @@
     NSDictionary *json = @{ @"and": @[ @{ @"value": @{ @"equals": @"bar" }, @"scope": @[@"foo"] },
                                        @{ @"value": @{ @"equals": @"story" }, @"scope": @[@"cool"] } ]};
 
-    UAJSONPredicate *fooPredicate = [UAJSONPredicate predicateWithJSONMatcher:self.fooMatcher];
-    UAJSONPredicate *storyPredicate = [UAJSONPredicate predicateWithJSONMatcher:self.storyMatcher];
+    UAJSONPredicate *fooPredicate = [[UAJSONPredicate alloc] initWithJSONMatcher:self.fooMatcher];
+    UAJSONPredicate *storyPredicate = [[UAJSONPredicate alloc] initWithJSONMatcher:self.storyMatcher];
     UAJSONPredicate *predicate = [UAJSONPredicate andPredicateWithSubpredicates:@[fooPredicate, storyPredicate]];
 
     XCTAssertEqualObjects(json, predicate.payload);
 
     // Verify the JSONValue recreates the expected payload
     NSError *error = nil;
-    XCTAssertEqualObjects(json, [UAJSONPredicate predicateWithJSON:json error:&error].payload);
+    XCTAssertEqualObjects(json, [[UAJSONPredicate alloc] initWithJSON:json error:&error].payload);
     XCTAssertNil(error);
 }
 
 - (void)testOrPredicate {
-    UAJSONPredicate *fooPredicate = [UAJSONPredicate predicateWithJSONMatcher:self.fooMatcher];
-    UAJSONPredicate *storyPredicate = [UAJSONPredicate predicateWithJSONMatcher:self.storyMatcher];
+    UAJSONPredicate *fooPredicate = [[UAJSONPredicate alloc] initWithJSONMatcher:self.fooMatcher];
+    UAJSONPredicate *storyPredicate = [[UAJSONPredicate alloc] initWithJSONMatcher:self.storyMatcher];
 
     UAJSONPredicate *predicate = [UAJSONPredicate orPredicateWithSubpredicates:@[fooPredicate, storyPredicate]];
 
@@ -145,15 +144,15 @@
     NSDictionary *json = @{ @"or": @[ @{ @"value": @{ @"equals": @"bar" }, @"scope": @[@"foo"] },
                                        @{ @"value": @{ @"equals": @"story" }, @"scope": @[@"cool"] } ]};
 
-    UAJSONPredicate *fooPredicate = [UAJSONPredicate predicateWithJSONMatcher:self.fooMatcher];
-    UAJSONPredicate *storyPredicate = [UAJSONPredicate predicateWithJSONMatcher:self.storyMatcher];
+    UAJSONPredicate *fooPredicate = [[UAJSONPredicate alloc] initWithJSONMatcher:self.fooMatcher];
+    UAJSONPredicate *storyPredicate = [[UAJSONPredicate alloc] initWithJSONMatcher:self.storyMatcher];
     UAJSONPredicate *predicate = [UAJSONPredicate orPredicateWithSubpredicates:@[fooPredicate, storyPredicate]];
 
     XCTAssertEqualObjects(json, predicate.payload);
 
     // Verify the JSONValue recreates the expected payload
     NSError *error = nil;
-    XCTAssertEqualObjects(json, [UAJSONPredicate predicateWithJSON:json error:&error].payload);
+    XCTAssertEqualObjects(json, [[UAJSONPredicate alloc] initWithJSON:json error:&error].payload);
     XCTAssertNil(error);
 }
 
@@ -161,7 +160,7 @@
     NSDictionary *json = @{ @"value": @{ @"equals": @[@"cool", @"story"]} };
 
     NSError *error = nil;
-    UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSON:json error:&error];
+    UAJSONPredicate *predicate = [[UAJSONPredicate alloc] initWithJSON:json error:&error];
 
     XCTAssertNil(error);
     XCTAssertNotNil(predicate);
@@ -187,7 +186,7 @@
     NSDictionary *json = @{ @"value": @{ @"equals": @{ @"cool": @"story" } } };
 
     NSError *error = nil;
-    UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSON:json error:&error];
+    UAJSONPredicate *predicate = [[UAJSONPredicate alloc] initWithJSON:json error:&error];
 
     XCTAssertNil(error);
     XCTAssertNotNil(predicate);
@@ -216,19 +215,19 @@
     // Invalid type
     NSDictionary *json = @{ @"what": @[ @{ @"value": @{ @"equals": @"bar" }, @"key": @"foo" },
                                       @{ @"value": @{ @"equals": @"story" }, @"key": @"cool" } ]};
-    XCTAssertNil([UAJSONMatcher matcherWithJSON:json error:&error]);
+    XCTAssertNil([[UAJSONPredicate alloc] initWithJSON:json error:&error]);
     XCTAssertNotNil(error);
 
     // Invalid key value
     error = nil;
     json = @{ @"or": @[ @"not cool",
                         @{ @"value": @{ @"equals": @"story" }, @"key": @"cool" } ]};
-    XCTAssertNil([UAJSONMatcher matcherWithJSON:json error:&error]);
+    XCTAssertNil([[UAJSONPredicate alloc] initWithJSON:json error:&error]);
     XCTAssertNotNil(error);
 
     // Invalid object
     error = nil;
-    XCTAssertNil([UAJSONMatcher matcherWithJSON:@"not cool" error:&error]);
+    XCTAssertNil([[UAJSONPredicate alloc] initWithJSON:@"not cool" error:&error]);
     XCTAssertNotNil(error);
 
 }

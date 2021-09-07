@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UAScheduleData+Internal.h"
-#import "UAJSONSerialization.h"
 #import "UAScheduleTriggerData+Internal.h"
 #import "UAGlobal.h"
 

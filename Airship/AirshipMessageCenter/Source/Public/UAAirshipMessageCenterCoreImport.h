@@ -5,7 +5,6 @@
 #import "UAKeychainUtils.h"
 #import "UANativeBridgeExtensionDelegate.h"
 #import "UASDKModule.h"
-#import "UAJSONSerialization.h"
 #import "UAGlobal.h"
 #import "UAActionArguments.h"
 #import "NSString+UALocalizationAdditions.h"

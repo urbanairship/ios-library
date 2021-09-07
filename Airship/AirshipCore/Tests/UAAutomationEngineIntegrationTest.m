@@ -3,12 +3,13 @@
 #import "UAAirshipBaseTest.h"
 #import "UAAutomationEngine+Internal.h"
 #import "UAAutomationStore+Internal.h"
-#import "UAJSONPredicate.h"
 #import "UAScheduleDelay.h"
 #import "UAScheduleData+Internal.h"
 #import "UAActionSchedule.h"
 #import "UAScheduleEdits+Internal.h"
 #import "AirshipTests-Swift.h"
+
+@class UAJSONPredicate;
 
 @import AirshipCore;
 
@@ -623,8 +624,8 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
     UACustomEvent *view = [UACustomEvent eventWithName:@"view" value:@(100)];
 
     UAJSONValueMatcher *valueMatcher = [UAJSONValueMatcher matcherWhereStringEquals:@"purchase"];
-    UAJSONMatcher *jsonMatcher = [UAJSONMatcher matcherWithValueMatcher:valueMatcher scope:@[UACustomEvent.eventNameKey]];
-    UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSONMatcher:jsonMatcher];
+    UAJSONMatcher *jsonMatcher = [[UAJSONMatcher alloc] initWithValueMatcher:valueMatcher scope:@[UACustomEvent.eventNameKey]];
+    UAJSONPredicate *predicate = [[UAJSONPredicate alloc] initWithJSONMatcher:jsonMatcher];
 
     UAScheduleTrigger *trigger = [UAScheduleTrigger customEventTriggerWithPredicate:predicate count:1];
 
@@ -643,8 +644,8 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
 
 
     UAJSONValueMatcher *valueMatcher = [UAJSONValueMatcher matcherWhereStringEquals:@"purchase"];
-    UAJSONMatcher *jsonMatcher = [UAJSONMatcher matcherWithValueMatcher:valueMatcher scope:@[UACustomEvent.eventNameKey]];
-    UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSONMatcher:jsonMatcher];
+    UAJSONMatcher *jsonMatcher = [[UAJSONMatcher alloc] initWithValueMatcher:valueMatcher scope:@[UACustomEvent.eventNameKey]];
+    UAJSONPredicate *predicate = [[UAJSONPredicate alloc] initWithJSONMatcher:jsonMatcher];
 
     UAScheduleTrigger *trigger = [UAScheduleTrigger customEventTriggerWithPredicate:predicate value:@(111.1)];
 
@@ -734,8 +735,8 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
     // Schedule the action
     UASchedule *schedule = [UAActionSchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
         UAJSONValueMatcher *valueMatcher = [UAJSONValueMatcher matcherWhereStringEquals:@"purchase"];
-        UAJSONMatcher *jsonMatcher = [UAJSONMatcher matcherWithValueMatcher:valueMatcher scope:@[UACustomEvent.eventNameKey]];
-        UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSONMatcher:jsonMatcher];
+        UAJSONMatcher *jsonMatcher = [[UAJSONMatcher alloc] initWithValueMatcher:valueMatcher scope:@[UACustomEvent.eventNameKey]];
+        UAJSONPredicate *predicate = [[UAJSONPredicate alloc] initWithJSONMatcher:jsonMatcher];
         builder.triggers = @[[UAScheduleTrigger customEventTriggerWithPredicate:predicate count:1]];
 
         // Add a delay for "test screen" that cancels on foreground
@@ -783,8 +784,8 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
     // Schedule the action
     UASchedule *schedule = [UAActionSchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
         UAJSONValueMatcher *valueMatcher = [UAJSONValueMatcher matcherWhereStringEquals:@"purchase"];
-        UAJSONMatcher *jsonMatcher = [UAJSONMatcher matcherWithValueMatcher:valueMatcher scope:@[UACustomEvent.eventNameKey]];
-        UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSONMatcher:jsonMatcher];
+        UAJSONMatcher *jsonMatcher = [[UAJSONMatcher alloc] initWithValueMatcher:valueMatcher scope:@[UACustomEvent.eventNameKey]];
+        UAJSONPredicate *predicate = [[UAJSONPredicate alloc] initWithJSONMatcher:jsonMatcher];
         builder.triggers = @[[UAScheduleTrigger customEventTriggerWithPredicate:predicate count:1]];
     }];
 
@@ -849,8 +850,8 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
         builder.end = [NSDate dateWithTimeInterval:60 * 60  sinceDate:self.testDate.now];
 
         UAJSONValueMatcher *valueMatcher = [UAJSONValueMatcher matcherWhereStringEquals:@"purchase"];
-        UAJSONMatcher *jsonMatcher = [UAJSONMatcher matcherWithValueMatcher:valueMatcher scope:@[UACustomEvent.eventNameKey]];
-        UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSONMatcher:jsonMatcher];
+        UAJSONMatcher *jsonMatcher = [[UAJSONMatcher alloc] initWithValueMatcher:valueMatcher scope:@[UACustomEvent.eventNameKey]];
+        UAJSONPredicate *predicate = [[UAJSONPredicate alloc] initWithJSONMatcher:jsonMatcher];
         builder.triggers = @[[UAScheduleTrigger customEventTriggerWithPredicate:predicate count:1]];
     }];
 
@@ -945,8 +946,8 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
         builder.end = [NSDate dateWithTimeInterval:60 * 60  sinceDate:self.testDate.now];
 
         UAJSONValueMatcher *valueMatcher = [UAJSONValueMatcher matcherWhereStringEquals:@"purchase"];
-        UAJSONMatcher *jsonMatcher = [UAJSONMatcher matcherWithValueMatcher:valueMatcher scope:@[UACustomEvent.eventNameKey]];
-        UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSONMatcher:jsonMatcher];
+        UAJSONMatcher *jsonMatcher = [[UAJSONMatcher alloc] initWithValueMatcher:valueMatcher scope:@[UACustomEvent.eventNameKey]];
+        UAJSONPredicate *predicate = [[UAJSONPredicate alloc] initWithJSONMatcher:jsonMatcher];
         builder.triggers = @[[UAScheduleTrigger customEventTriggerWithPredicate:predicate count:1]];
     }];
 
@@ -1019,8 +1020,8 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
     // Schedule the action
     UASchedule *schedule = [UAActionSchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
         UAJSONValueMatcher *valueMatcher = [UAJSONValueMatcher matcherWhereStringEquals:@"purchase"];
-        UAJSONMatcher *jsonMatcher = [UAJSONMatcher matcherWithValueMatcher:valueMatcher scope:@[UACustomEvent.eventNameKey]];
-        UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSONMatcher:jsonMatcher];
+        UAJSONMatcher *jsonMatcher = [[UAJSONMatcher alloc] initWithValueMatcher:valueMatcher scope:@[UACustomEvent.eventNameKey]];
+        UAJSONPredicate *predicate = [[UAJSONPredicate alloc] initWithJSONMatcher:jsonMatcher];
         builder.triggers = @[[UAScheduleTrigger customEventTriggerWithPredicate:predicate count:1]];
         builder.limit = 2;
     }];
@@ -1116,8 +1117,8 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
         builder.interval = 100000;
         builder.limit = 2;
         UAJSONValueMatcher *valueMatcher = [UAJSONValueMatcher matcherWhereStringEquals:@"purchase"];
-        UAJSONMatcher *jsonMatcher = [UAJSONMatcher matcherWithValueMatcher:valueMatcher scope:@[UACustomEvent.eventNameKey]];
-        UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSONMatcher:jsonMatcher];
+        UAJSONMatcher *jsonMatcher = [[UAJSONMatcher alloc] initWithValueMatcher:valueMatcher scope:@[UACustomEvent.eventNameKey]];
+        UAJSONPredicate *predicate = [[UAJSONPredicate alloc] initWithJSONMatcher:jsonMatcher];
         builder.triggers = @[[UAScheduleTrigger customEventTriggerWithPredicate:predicate count:1]];
     }];
 
@@ -1157,8 +1158,8 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
     // Schedule the action
     UASchedule *schedule = [UAActionSchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
         UAJSONValueMatcher *valueMatcher = [UAJSONValueMatcher matcherWhereStringEquals:@"purchase"];
-        UAJSONMatcher *jsonMatcher = [UAJSONMatcher matcherWithValueMatcher:valueMatcher scope:@[UACustomEvent.eventNameKey]];
-        UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSONMatcher:jsonMatcher];
+        UAJSONMatcher *jsonMatcher = [[UAJSONMatcher alloc] initWithValueMatcher:valueMatcher scope:@[UACustomEvent.eventNameKey]];
+        UAJSONPredicate *predicate = [[UAJSONPredicate alloc] initWithJSONMatcher:jsonMatcher];
         builder.triggers = @[[UAScheduleTrigger customEventTriggerWithPredicate:predicate count:1]];
         builder.interval = 100;
         builder.limit = 2;
@@ -1329,8 +1330,8 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
     // Schedule the action
     UASchedule *schedule = [UAActionSchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
         UAJSONValueMatcher *valueMatcher = [UAJSONValueMatcher matcherWhereStringEquals:@"purchase"];
-        UAJSONMatcher *jsonMatcher = [UAJSONMatcher matcherWithValueMatcher:valueMatcher scope:@[UACustomEvent.eventNameKey]];
-        UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSONMatcher:jsonMatcher];
+        UAJSONMatcher *jsonMatcher = [[UAJSONMatcher alloc] initWithValueMatcher:valueMatcher scope:@[UACustomEvent.eventNameKey]];
+        UAJSONPredicate *predicate = [[UAJSONPredicate alloc] initWithJSONMatcher:jsonMatcher];
         builder.triggers = @[[UAScheduleTrigger customEventTriggerWithPredicate:predicate count:1]];
 
         builder.delay = delay;

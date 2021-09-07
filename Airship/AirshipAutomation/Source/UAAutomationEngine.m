@@ -1456,7 +1456,7 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
     }
 
     id json = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
-    return [UAJSONPredicate predicateWithJSON:json error:nil];
+    return [[UAJSONPredicate alloc] initWithJSON:json error:nil];
 }
 
 + (void)applyEdits:(UAScheduleEdits *)edits toData:(UAScheduleData *)scheduleData {

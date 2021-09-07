@@ -1,9 +1,8 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAJSONValueMatcher+Internal.h"
-#import "UAJSONMatcher+Internal.h"
-#import "UAJSONPredicate.h"
+
+@import AirshipCore;
 
 @interface UAJSONValueMatcherTests : UABaseTest
 
@@ -263,8 +262,8 @@
 
 - (void)testArrayContains {
     UAJSONValueMatcher *valueMatcher = [UAJSONValueMatcher matcherWhereStringEquals:@"bingo"];
-    UAJSONMatcher *jsonMatcher = [UAJSONMatcher matcherWithValueMatcher:valueMatcher];
-    UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSONMatcher:jsonMatcher];
+    UAJSONMatcher *jsonMatcher = [[UAJSONMatcher alloc] initWithValueMatcher:valueMatcher];
+    UAJSONPredicate *predicate = [[UAJSONPredicate alloc] initWithJSONMatcher:jsonMatcher];
     UAJSONValueMatcher *matcher = [UAJSONValueMatcher matcherWithArrayContainsPredicate:predicate];
 
     XCTAssertNotNil(matcher);
@@ -294,8 +293,8 @@
     XCTAssertTrue([matcher evaluateObject:value ignoreCase:YES]);
     
     // ignore case
-    jsonMatcher = [UAJSONMatcher matcherWithValueMatcher:valueMatcher ignoreCase:YES];
-    predicate = [UAJSONPredicate predicateWithJSONMatcher:jsonMatcher];
+    jsonMatcher = [[UAJSONMatcher alloc] initWithValueMatcher:valueMatcher ignoreCase:YES];
+    predicate = [[UAJSONPredicate alloc] initWithJSONMatcher:jsonMatcher];
     matcher = [UAJSONValueMatcher matcherWithArrayContainsPredicate:predicate];
     
     value = @[@"thats", @"a", @"BINGO"];
@@ -306,8 +305,8 @@
 
 - (void)testArrayContainsAtIndex {
     UAJSONValueMatcher *valueMatcher = [UAJSONValueMatcher matcherWhereStringEquals:@"bingo"];
-    UAJSONMatcher *jsonMatcher = [UAJSONMatcher matcherWithValueMatcher:valueMatcher];
-    UAJSONPredicate *predicate = [UAJSONPredicate predicateWithJSONMatcher:jsonMatcher];
+    UAJSONMatcher *jsonMatcher = [[UAJSONMatcher alloc] initWithValueMatcher:valueMatcher];
+    UAJSONPredicate *predicate = [[UAJSONPredicate alloc] initWithJSONMatcher:jsonMatcher];
     UAJSONValueMatcher *matcher = [UAJSONValueMatcher matcherWithArrayContainsPredicate:predicate atIndex:1];
 
     XCTAssertNotNil(matcher);
@@ -340,8 +339,8 @@
     XCTAssertTrue([matcher evaluateObject:value]);
 
     // ignore case
-    jsonMatcher = [UAJSONMatcher matcherWithValueMatcher:valueMatcher ignoreCase:YES];
-    predicate = [UAJSONPredicate predicateWithJSONMatcher:jsonMatcher];
+    jsonMatcher = [[UAJSONMatcher alloc] initWithValueMatcher:valueMatcher ignoreCase:YES];
+    predicate = [[UAJSONPredicate alloc] initWithJSONMatcher:jsonMatcher];
     matcher = [UAJSONValueMatcher matcherWithArrayContainsPredicate:predicate atIndex:1];
     
     value = @[@"thats", @"a", @"BINGO"];
@@ -539,11 +538,6 @@
     XCTAssertFalse([matcher value:dictionary2 isEqualToValue:dictionary3 ignoreCase:NO]);
     XCTAssertFalse([matcher value:dictionary2 isEqualToValue:dictionary3 ignoreCase:YES]);
     
-    // nils
-    XCTAssertTrue([matcher value:nil isEqualToValue:nil ignoreCase:nil]);
-    XCTAssertTrue([matcher value:nil isEqualToValue:nil ignoreCase:NO]);
-    XCTAssertTrue([matcher value:nil isEqualToValue:nil ignoreCase:YES]);
-
     XCTAssertFalse([matcher value:nil isEqualToValue:@(1) ignoreCase:nil]);
     XCTAssertFalse([matcher value:nil isEqualToValue:@(1) ignoreCase:NO]);
     XCTAssertFalse([matcher value:nil isEqualToValue:@(1) ignoreCase:YES]);

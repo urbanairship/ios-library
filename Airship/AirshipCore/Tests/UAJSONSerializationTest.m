@@ -1,9 +1,9 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAJSONSerialization.h"
 
 @import AirshipCore;
+
 @interface UAJSONSerializationTest : UABaseTest
 
 @end
@@ -13,9 +13,8 @@
 - (void)testInvalidJSON {
     NSError *error = nil;
 
-    
-    XCTAssertNil([UAJSONSerialization dataWithJSONObject:[[UADate alloc] init] options:NSJSONWritingPrettyPrinted error:&error], @"Attempting to serialize an invalid JSON object should result in a nil output");
-    XCTAssertNotNil(error, @"Attempting to serialize an invalid JSON object should generate an error");
+    XCTAssertThrows([UAJSONSerialization dataWithJSONObject:[[NSObject alloc] init] options:NSJSONWritingPrettyPrinted error:&error], @"Attempting to serialize an invalid JSON object should result in a nil output");
+
 }
 
 - (void)testValidJSON {

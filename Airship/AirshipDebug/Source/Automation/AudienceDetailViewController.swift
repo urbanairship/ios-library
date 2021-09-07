@@ -133,7 +133,7 @@ class AudienceDetailViewController: UAStaticTableViewController {
         // versionPredicate
         var versionPredicateDescription : String?
         if let versionPredicate = audience.versionPredicate {
-            versionPredicateDescription = versionPredicate.payload.description
+            versionPredicateDescription = versionPredicate.payload().description
         }
         updateOrHideCell(versionPredicateCell, label: versionPredicateLabel, newText: versionPredicateDescription)
 

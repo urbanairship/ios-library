@@ -44,7 +44,7 @@ class ChannelBulkUpdateAPIClient : ChannelBulkUpdateAPIClientProtocol {
             builder.password = config.appSecret
             builder.setValue("application/vnd.urbanairship+json; version=3;", header: "Accept")
             builder.setValue("application/json", header: "Content-Type")
-            builder.body = try? UAJSONSerialization.data(withJSONObject: payload, options: [])
+            builder.body = try? UAJSONSerialization.data(payload, options: [])
         })
         
         return session.performHTTPRequest(request, completionHandler: { (data, response, error) in

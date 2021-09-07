@@ -4,6 +4,12 @@
 #import "UATagSelector+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
 
+#if __has_include("AirshipCore/AirshipCore-Swift.h")
+@import AirshipCore;
+#elif __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#endif
+
 NSString * const UAScheduleAudienceNewUserKey = @"new_user";
 NSString * const UAScheduleAudienceNotificationOptInKey = @"notification_opt_in";
 NSString * const UAScheduleAudienceLocationOptInKey = @"location_opt_in";
@@ -116,7 +122,8 @@ NSString * const UAScheduleAudienceErrorDomain = @"com.urbanairship.in_app_messa
 
     id versionPredicate = json[UAScheduleAudienceAppVersionKey];
     if (versionPredicate) {
-        builder.versionPredicate = [UAJSONPredicate predicateWithJSON:versionPredicate error:error];
+        UAJSONPredicate *predicate = [[UAJSONPredicate alloc] initWithJSON:versionPredicate error:error];
+        builder.versionPredicate = predicate;
         if (!builder.versionPredicate) {
             return nil;
         }

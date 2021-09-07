@@ -2,9 +2,9 @@
 
 #import "UABaseTest.h"
 #import "UAScheduleAudience+Internal.h"
-#import "UAVersionMatcher.h"
 #import "UATagSelector+Internal.h"
-#import "UAJSONPredicate.h"
+
+@import AirshipCore;
 
 @interface UAScheduleAudienceTest : UABaseTest
 
@@ -26,8 +26,8 @@
                                         }
                                 } error:&error];
 
-        UAJSONMatcher *matcher = [UAJSONMatcher matcherWithValueMatcher:[UAJSONValueMatcher matcherWithVersionConstraint:@"[1.0, 2.0]"] scope:@[@"ios",@"version"]];
-        builder.versionPredicate = [UAJSONPredicate predicateWithJSONMatcher:matcher];
+        UAJSONMatcher *matcher = [[UAJSONMatcher alloc] initWithValueMatcher:[UAJSONValueMatcher matcherWithVersionConstraint:@"[1.0, 2.0]"] scope:@[@"ios",@"version"]];
+        builder.versionPredicate = [[UAJSONPredicate alloc] initWithJSONMatcher:matcher];
         builder.testDevices = @[@"test-device"];
         builder.missBehavior = UAScheduleAudienceMissBehaviorSkip;
     }];
@@ -55,8 +55,8 @@
                                                                                     }
                                                                             } error:&error];
         
-        UAJSONMatcher *matcher = [UAJSONMatcher matcherWithValueMatcher:[UAJSONValueMatcher matcherWithVersionConstraint:@"[1.0, 2.0]"] scope:@[@"ios",@"version"]];
-        builder.versionPredicate = [UAJSONPredicate predicateWithJSONMatcher:matcher];
+        UAJSONMatcher *matcher = [[UAJSONMatcher alloc] initWithValueMatcher:[UAJSONValueMatcher matcherWithVersionConstraint:@"[1.0, 2.0]"] scope:@[@"ios",@"version"]];
+        builder.versionPredicate = [[UAJSONPredicate alloc] initWithJSONMatcher:matcher];
         builder.testDevices = @[@"test-device"];
         builder.missBehavior = UAScheduleAudienceMissBehaviorSkip;
     }];

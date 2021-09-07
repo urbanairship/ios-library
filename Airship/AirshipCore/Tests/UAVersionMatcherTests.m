@@ -1,7 +1,8 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAVersionMatcher.h"
+
+@import AirshipCore;
 
 @interface UAVersionMatcherTests : UABaseTest
 

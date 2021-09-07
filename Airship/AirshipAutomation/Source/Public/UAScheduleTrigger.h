@@ -4,6 +4,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class UAJSONPredicate;
 
 /**
  * Represents the possible error conditions when deserializing triggers from JSON.
@@ -142,7 +143,6 @@ extern NSString *const UAScheduleTriggerActiveSessionName;
  */
 extern NSString *const UAScheduleTriggerVersionName;
 
-@class UAJSONPredicate;
 
 /**
  * Trigger defines a condition to execute actions or cancel a delayed execution of actions.

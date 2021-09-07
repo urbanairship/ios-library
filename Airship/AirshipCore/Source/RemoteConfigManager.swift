@@ -80,12 +80,12 @@ public class RemoteConfigManager : NSObject {
         let disableInfos = disableJSONArray?
             .compactMap { return RemoteConfigDisableInfo(json: $0) }
             .filter { info in
-                if (info.appVersionConstraint?.evaluateObject(versionObject) == false) {
+                if (info.appVersionConstraint?.evaluate(versionObject) == false) {
                     return false
                 }
                 
                 if (!info.sdkVersionConstraints.isEmpty) {
-                    let matches = info.sdkVersionConstraints.contains(where: { return $0.evaluateObject(UAirshipVersion.get()) })
+                    let matches = info.sdkVersionConstraints.contains(where: { return $0.evaluate(UAirshipVersion.get()) })
                     if (!matches) {
                         return false
                     }
