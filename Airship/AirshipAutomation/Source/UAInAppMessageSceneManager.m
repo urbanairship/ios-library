@@ -64,7 +64,7 @@ static UAInAppMessageSceneManager *shared_;
         }
 
         messageScene = (UIWindowScene *)scene;
-        if (messageScene.activationState == UISceneActivationStateForegroundActive) {
+        if (messageScene.activationState == UISceneActivationStateForegroundActive && [messageScene.session.role isEqualToString: UIWindowSceneSessionRoleApplication]) {
             activeMessageScene = messageScene;
         }
     }
