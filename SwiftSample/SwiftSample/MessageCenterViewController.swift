@@ -5,11 +5,11 @@ import UIKit
 import AirshipCore
 import AirshipMessageCenter
 
-class MessageCenterViewController : UADefaultMessageCenterSplitViewController {
+class MessageCenterViewController : DefaultMessageCenterSplitViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.messageCenterStyle = UAMessageCenterStyle(contentsOfFile: "MessageCenterStyle")
+        self.messageCenterStyle = MessageCenterStyle(contentsOfFile: "MessageCenterStyle")
     }
     
     func showInbox() {

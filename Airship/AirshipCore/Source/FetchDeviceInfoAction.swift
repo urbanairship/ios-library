@@ -26,7 +26,7 @@
  * Default Registration Predicate: Only accepts UASituationManualInvocation and UASituationWebViewInvocation
  */
 @objc(UAFetchDeviceInfoAction)
-public class FetchDeviceInfoAction : NSObject, UAAction {
+public class FetchDeviceInfoAction : NSObject, Action {
     
     @objc
     public static let name = "fetch_device_info"
@@ -78,11 +78,11 @@ public class FetchDeviceInfoAction : NSObject, UAAction {
         self.location = location
     }
     
-    public func acceptsArguments(_ arguments: UAActionArguments) -> Bool {
+    public func acceptsArguments(_ arguments: ActionArguments) -> Bool {
         return true
     }
     
-    public func perform(with arguments: UAActionArguments, completionHandler: UAActionCompletionHandler) {
+    public func perform(with arguments: ActionArguments, completionHandler: UAActionCompletionHandler) {
         var dict: [String : Any] = [:]
         let channel = self.channel()
         let contact = self.contact()
@@ -99,6 +99,6 @@ public class FetchDeviceInfoAction : NSObject, UAAction {
         
         dict[FetchDeviceInfoAction.pushOptIn] = push.authorizedNotificationSettings != []
         dict[FetchDeviceInfoAction.locationEnabled] = location?.isLocationUpdatesEnabled
-        completionHandler(UAActionResult(value: dict))
+        completionHandler(ActionResult(value: dict))
     }
 }

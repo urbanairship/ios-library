@@ -8,6 +8,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Rich Push helper methods.
  */
+NS_SWIFT_NAME(InboxUtils)
 @interface UAInboxUtils : NSObject
 
 ///---------------------------------------------------------------------------------------

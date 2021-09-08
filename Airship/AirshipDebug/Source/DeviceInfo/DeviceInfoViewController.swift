@@ -62,10 +62,10 @@ var inAppAutomationDisplayInterval: Int {
     
     
     get {
-        return Int(UAInAppAutomation.shared.inAppMessageManager.displayInterval)
+        return Int(InAppAutomation.shared.inAppMessageManager.displayInterval)
     }
     set (value) {
-        UAInAppAutomation.shared.inAppMessageManager.displayInterval = TimeInterval(value)
+        InAppAutomation.shared.inAppMessageManager.displayInterval = TimeInterval(value)
     }
 }
 
@@ -351,7 +351,7 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             cell.title.text = "ua_device_info_channel_id".localized()
             cell.subtitle.text = Airship.channel.identifier
         case username:
-            UAMessageCenter.shared.user.getData({ (userData) in
+            MessageCenter.shared.user.getData({ (userData) in
                 DispatchQueue.main.async {
                     cell.title.text = "ua_device_info_username".localized()
                     cell.subtitle.text = userData.username
@@ -434,7 +434,7 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
                 showCopiedAlert()
             }
         case username:
-            UAMessageCenter.shared.user.getData({ (userData) in
+            MessageCenter.shared.user.getData({ (userData) in
                 UIPasteboard.general.string = userData.username
                 self.showCopiedAlert()
             })

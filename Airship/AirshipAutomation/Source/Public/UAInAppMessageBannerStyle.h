@@ -48,6 +48,7 @@ extern NSString *const UABannerMaxWidthKey;
  * Model object representing a custom style to be applied
  * to banner in-app message.
  */
+NS_SWIFT_NAME(InAppMessageBannerStyle)
 @interface UAInAppMessageBannerStyle : NSObject<UAInAppMessageStyleProtocol>
 
 ///---------------------------------------------------------------------------------------

@@ -17,6 +17,7 @@ typedef void (^UAInboxMessageCallbackBlock)(UAInboxMessage *message);
  * the available information about a message, including the URLs where
  * the message can be retrieved.
  */
+NS_SWIFT_NAME(InboxMessage)
 @interface UAInboxMessage : NSObject
 
 ///---------------------------------------------------------------------------------------

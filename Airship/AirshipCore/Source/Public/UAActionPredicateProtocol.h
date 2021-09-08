@@ -7,6 +7,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * An protocol that defines the minimal functionality of a valid action predicate when loading a actions from a plist.
  */
+NS_SWIFT_NAME(ActionPredicateProtocol)
 @protocol UAActionPredicateProtocol <NSObject>
 
 ///---------------------------------------------------------------------------------------

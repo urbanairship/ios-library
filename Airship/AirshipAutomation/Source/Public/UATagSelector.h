@@ -7,6 +7,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Model object for an audience tag selector.
  */
+NS_SWIFT_NAME(TagSelector)
 @interface UATagSelector : NSObject
 
 /**

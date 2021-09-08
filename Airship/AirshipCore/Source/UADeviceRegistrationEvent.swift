@@ -4,7 +4,7 @@
  * @note For Interrnal use only :nodoc:
  */
 @objc
-public class UADeviceRegistrationEvent : NSObject, UAEvent {
+public class UADeviceRegistrationEvent : NSObject, Event {
     
     @objc
     public init(channel: ChannelProtocol?,

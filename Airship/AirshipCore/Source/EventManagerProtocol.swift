@@ -22,7 +22,7 @@ public protocol EventManagerProtocol {
     ///   - eventDate: The event date.
     ///   - sessionID: The analytics session ID.
     @objc
-    func add(_ event: UAEvent, eventID: String, eventDate: Date, sessionID: String)
+    func add(_ event: Event, eventID: String, eventDate: Date, sessionID: String)
 
     /// Deletes all events and cancels any uploads in progress. :nodoc:
     @objc

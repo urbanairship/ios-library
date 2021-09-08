@@ -7,7 +7,7 @@ import Foundation
 @objc(UAEventStoreProtocol)
 public protocol EventStoreProtocol {
     @objc
-    func save(_ event: UAEvent, eventID: String, eventDate: Date, sessionID: String)
+    func save(_ event: Event, eventID: String, eventDate: Date, sessionID: String)
 
     @objc
     func fetchEvents(

@@ -19,7 +19,7 @@
  * Result value: Empty.
  */
 @objc(UAEnableFeatureAction)
-public class EnableFeatureAction : NSObject, UAAction {
+public class EnableFeatureAction : NSObject, Action {
     
     @objc
     public static let name = "enable_feature"
@@ -52,7 +52,7 @@ public class EnableFeatureAction : NSObject, UAAction {
         self.location = location
     }
     
-    public func acceptsArguments(_ arguments: UAActionArguments) -> Bool {
+    public func acceptsArguments(_ arguments: ActionArguments) -> Bool {
         guard arguments.situation != .backgroundPush,
               arguments.situation != .backgroundInteractiveButton else {
             return false
@@ -72,7 +72,7 @@ public class EnableFeatureAction : NSObject, UAAction {
         return true
     }
 
-    public func perform(with arguments: UAActionArguments, completionHandler: @escaping UAActionCompletionHandler) {
+    public func perform(with arguments: ActionArguments, completionHandler: @escaping UAActionCompletionHandler) {
         
         switch (arguments.value as? String ?? "") {
         case EnableFeatureAction.userNotificationsActionValue:
@@ -82,18 +82,18 @@ public class EnableFeatureAction : NSObject, UAAction {
         case EnableFeatureAction.backgroundLocationActionValue:
             enableBackgroundLocation(completionHandler)
         default:
-            completionHandler(UAActionResult.empty())
+            completionHandler(ActionResult.empty())
         }
     }
 
     private func navigateToSystemSettings(_ completionHandler: @escaping UAActionCompletionHandler) {
         if let url = URL(string: UIApplication.openSettingsURLString) {
             UIApplication.shared.open(url, options: [:]) { _ in
-                completionHandler(UAActionResult.empty())
+                completionHandler(ActionResult.empty())
             }
         } else {
             AirshipLogger.error("Unable to navigate to system settings.")
-            completionHandler(UAActionResult.empty())
+            completionHandler(ActionResult.empty())
         }
     }
 
@@ -106,10 +106,10 @@ public class EnableFeatureAction : NSObject, UAAction {
             if (push().authorizedNotificationSettings == []) {
                 navigateToSystemSettings(completionHandler)
             } else {
-                completionHandler(UAActionResult.empty())
+                completionHandler(ActionResult.empty())
             }
         } else {
-            completionHandler(UAActionResult.empty())
+            completionHandler(ActionResult.empty())
         }
     }
 
@@ -129,6 +129,6 @@ public class EnableFeatureAction : NSObject, UAAction {
             }
         }
         
-        completionHandler(UAActionResult.empty())
+        completionHandler(ActionResult.empty())
     }
 }

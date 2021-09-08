@@ -36,6 +36,7 @@ extern NSString * const UAInboxMessageListUpdatedNotification;
  * delete or mark messages as read, retrieve individual messages from the
  * list.
  */
+NS_SWIFT_NAME(InboxMessageList)
 @interface UAInboxMessageList : NSObject
 
 ///---------------------------------------------------------------------------------------

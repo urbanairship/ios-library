@@ -4,9 +4,9 @@
  * Convenience class for aggregating and merging multiple UAActionResults.
  */
 @objc(UAAggregateActionResult)
-public class AggregateActionResult : UAActionResult {
+public class AggregateActionResult : ActionResult {
     
-    private var _value : [String : UAActionResult] = [:]
+    private var _value : [String : ActionResult] = [:]
     public override var value: Any? {
         get {
             return self._value
@@ -36,7 +36,7 @@ public class AggregateActionResult : UAActionResult {
      *  - actionName: The action name.
      */
     @objc(addResult:forAction:)
-    public func add(_ result: UAActionResult, actionName: String) {
+    public func add(_ result: ActionResult, actionName: String) {
         self.mergeFetch(result.fetchResult)
         self._value[actionName] = result
     }
@@ -49,7 +49,7 @@ public class AggregateActionResult : UAActionResult {
      * - Returns: The action result for the name.
      */
     @objc(resultForAction:)
-    public func result(actionName: String) -> UAActionResult? {
+    public func result(actionName: String) -> ActionResult? {
         return self._value[actionName]
     }
 

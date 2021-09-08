@@ -15,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
  * A standard protocol for handling commands from the native brige.
  */
 API_UNAVAILABLE(tvos)
+NS_SWIFT_NAME(JavaScriptCommandDelegate)
 @protocol UAJavaScriptCommandDelegate <NSObject>
 
 @required

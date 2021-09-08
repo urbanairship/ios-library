@@ -8,6 +8,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Interface for accessing AirshipAutomation resources.
  */
+NS_SWIFT_NAME(AutomationResources)
 @interface UAAutomationResources : NSObject
 
 /**

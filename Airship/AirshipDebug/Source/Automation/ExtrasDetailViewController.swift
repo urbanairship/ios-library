@@ -36,7 +36,7 @@ class ExtrasDetailViewController: UITableViewController {
     public static let segueID = "ExtrasSegue"
     
     /* The message containing the extras to be displayed. */
-    public var message : UAInAppMessage?
+    public var message : InAppMessage?
 
     func setTableViewTheme() {
         tableView.backgroundColor = ThemeManager.shared.currentTheme.Background;

@@ -4,7 +4,7 @@
  * @note For Interrnal use only :nodoc:
  */
 @objc
-public class UAAssociateIdentifiersEvent : NSObject, UAEvent {
+public class UAAssociateIdentifiersEvent : NSObject, Event {
 
     @objc
     public var priority: UAEventPriority {

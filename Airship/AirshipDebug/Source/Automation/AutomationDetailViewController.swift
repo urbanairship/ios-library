@@ -51,7 +51,7 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
     /* The UASchedule to be displayed */
     public var schedule : UASchedule?
 
-    private let inAppAutomation = UAInAppAutomation.shared!
+    private let inAppAutomation = InAppAutomation.shared!
 
 
     /* Section
@@ -338,7 +338,7 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
 
             switch (selectedIdx) {
             case scheduleDataIdx:
-                inAppMessageDetailViewController.schedule = schedule as? UAInAppMessageSchedule
+                inAppMessageDetailViewController.schedule = schedule as? InAppMessageSchedule
             default:
                 print("ERROR: unexpected schedule data info cell selected")
             }
@@ -349,7 +349,7 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
 
             switch (selectedIdx) {
             case scheduleDataIdx:
-                actionDetailViewController.schedule = schedule as? UAActionSchedule
+                actionDetailViewController.schedule = schedule as? ActionSchedule
             default:
                 print("ERROR: unexpected schedule data info cell selected")
             }
@@ -360,7 +360,7 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
 
             switch (selectedIdx) {
             case scheduleDataIdx:
-                deferredDetailViewController.schedule = schedule as? UADeferredSchedule
+                deferredDetailViewController.schedule = schedule as? DeferredSchedule
             default:
                 print("ERROR: unexpected schedule data info cell selected")
             }

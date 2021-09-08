@@ -29,6 +29,7 @@ extern NSUInteger const UAInAppMessageButtonInfoIDLimit;
 /**
  * Builder class for UAInAppMessageButtonInfo.
  */
+NS_SWIFT_NAME(InAppMessageButtonInfoBuilder)
 @interface UAInAppMessageButtonInfoBuilder : NSObject
 
 /**
@@ -95,6 +96,7 @@ extern NSUInteger const UAInAppMessageButtonInfoIDLimit;
  *
  * @note This object is built using `UAInAppMessageButtonInfoBuilder`.
  */
+NS_SWIFT_NAME(InAppMessageButtonInfo)
 @interface UAInAppMessageButtonInfo : NSObject
 
 /**

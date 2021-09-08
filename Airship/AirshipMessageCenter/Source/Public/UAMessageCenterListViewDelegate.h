@@ -5,6 +5,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Protocol for delegating message list behavior.
  */
+NS_SWIFT_NAME(MessageCenterListViewDelegate)
 @protocol UAMessageCenterListViewDelegate <NSObject>
 
 /**

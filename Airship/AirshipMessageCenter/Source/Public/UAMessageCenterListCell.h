@@ -8,6 +8,7 @@
 /**
  * The UITableViewCell subclass used by the default message center.
  */
+NS_SWIFT_NAME(MessageCenterListCell)
 @interface UAMessageCenterListCell : UITableViewCell
 
 ///---------------------------------------------------------------------------------------

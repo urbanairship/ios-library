@@ -19,7 +19,7 @@ class ButtonDetailViewController: UAStaticTableViewController {
     public static let segueID = "ButtonDetailSegue"
     
     /* The UAInAppMessageButtonInfo to be displayed. */
-    public var button : UAInAppMessageButtonInfo?
+    public var button : InAppMessageButtonInfo?
 
     @IBOutlet private weak var buttonIDCell: UITableViewCell!
     @IBOutlet private weak var buttonIDTitle: UILabel!

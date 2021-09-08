@@ -13,7 +13,7 @@ class InAppMessageDetailViewController: UIViewController, UITableViewDelegate, U
     public static let segueID = "InAppMessageDetailSegue"
     
     /* The UASchedule to be displayed */
-    public var schedule : UAInAppMessageSchedule?
+    public var schedule : InAppMessageSchedule?
     
     var collapsedCellPaths:[IndexPath] = []
     
@@ -175,19 +175,19 @@ class InAppMessageDetailViewController: UIViewController, UITableViewDelegate, U
 
         switch (message.displayType) {
         case .banner:
-            let displayContent = message.displayContent as! UAInAppMessageBannerDisplayContent
+            let displayContent = message.displayContent as! InAppMessageBannerDisplayContent
             return createBannerContentCell(indexPath, displayContent: displayContent)
         case .fullScreen:
-            let displayContent = message.displayContent as! UAInAppMessageFullScreenDisplayContent
+            let displayContent = message.displayContent as! InAppMessageFullScreenDisplayContent
             return createFullScreenContentCell(indexPath, displayContent: displayContent)
         case .modal:
-            let displayContent = message.displayContent as! UAInAppMessageModalDisplayContent
+            let displayContent = message.displayContent as! InAppMessageModalDisplayContent
             return createModalContentCell(indexPath, displayContent: displayContent)
         case .HTML:
-            let displayContent = message.displayContent as! UAInAppMessageHTMLDisplayContent
+            let displayContent = message.displayContent as! InAppMessageHTMLDisplayContent
             return createHTMLContentCell(indexPath, displayContent: displayContent)
         case .custom:  // TODO - IMPLEMENT
-            let _ = message.displayContent as! UAInAppMessageCustomDisplayContent
+            let _ = message.displayContent as! InAppMessageCustomDisplayContent
         @unknown default:
             let cell = defaultInAppMessageDetailCell(indexPath)
             cell.title.text = "ua_displaycontent_unknown".localized()
@@ -267,7 +267,7 @@ class InAppMessageDetailViewController: UIViewController, UITableViewDelegate, U
         }
     }
 
-    private func generatedMediaSubtitle(_ mediaInfo: UAInAppMessageMediaInfo?) -> String? {
+    private func generatedMediaSubtitle(_ mediaInfo: InAppMessageMediaInfo?) -> String? {
         var subtitle:String?
         if let mediaInfo = mediaInfo {
             switch mediaInfo.type {
@@ -303,7 +303,7 @@ class InAppMessageDetailViewController: UIViewController, UITableViewDelegate, U
         }
     }
     
-    private func createBannerContentCell(_ indexPath:IndexPath, displayContent:UAInAppMessageBannerDisplayContent) -> UITableViewCell {
+    private func createBannerContentCell(_ indexPath:IndexPath, displayContent:InAppMessageBannerDisplayContent) -> UITableViewCell {
         let cell = defaultInAppMessageDetailCell(indexPath)
 
         switch indexPath {
@@ -383,7 +383,7 @@ class InAppMessageDetailViewController: UIViewController, UITableViewDelegate, U
         return cell
     }
 
-    private func createFullScreenContentCell(_ indexPath:IndexPath, displayContent:UAInAppMessageFullScreenDisplayContent) -> UITableViewCell {
+    private func createFullScreenContentCell(_ indexPath:IndexPath, displayContent:InAppMessageFullScreenDisplayContent) -> UITableViewCell {
         let cell = defaultInAppMessageDetailCell(indexPath)
 
         switch indexPath {
@@ -467,7 +467,7 @@ class InAppMessageDetailViewController: UIViewController, UITableViewDelegate, U
         return cell
     }
 
-    private func createModalContentCell(_ indexPath:IndexPath, displayContent:UAInAppMessageModalDisplayContent) -> UITableViewCell {
+    private func createModalContentCell(_ indexPath:IndexPath, displayContent:InAppMessageModalDisplayContent) -> UITableViewCell {
         let cell = defaultInAppMessageDetailCell(indexPath)
 
         switch indexPath {
@@ -558,7 +558,7 @@ class InAppMessageDetailViewController: UIViewController, UITableViewDelegate, U
         return cell
     }
 
-    private func createHTMLContentCell(_ indexPath:IndexPath, displayContent:UAInAppMessageHTMLDisplayContent) -> UITableViewCell {
+    private func createHTMLContentCell(_ indexPath:IndexPath, displayContent:InAppMessageHTMLDisplayContent) -> UITableViewCell {
         let cell = defaultInAppMessageDetailCell(indexPath)
 
         switch indexPath {
@@ -611,35 +611,35 @@ class InAppMessageDetailViewController: UIViewController, UITableViewDelegate, U
         
         let message = schedule!.message
 
-        var heading : UAInAppMessageTextInfo?
-        var body : UAInAppMessageTextInfo?
-        var mediaInfo : UAInAppMessageMediaInfo?
-        var buttons : [ UAInAppMessageButtonInfo ]?
+        var heading : InAppMessageTextInfo?
+        var body : InAppMessageTextInfo?
+        var mediaInfo : InAppMessageMediaInfo?
+        var buttons : [ InAppMessageButtonInfo ]?
 
         switch (message.displayType) {
         case .banner:
-            let displayContent = message.displayContent as! UAInAppMessageBannerDisplayContent
+            let displayContent = message.displayContent as! InAppMessageBannerDisplayContent
             heading = displayContent.heading
             body = displayContent.body
             mediaInfo = displayContent.media
             buttons = displayContent.buttons
         case .fullScreen:
-            let displayContent = message.displayContent as! UAInAppMessageFullScreenDisplayContent
+            let displayContent = message.displayContent as! InAppMessageFullScreenDisplayContent
             heading = displayContent.heading
             body = displayContent.body
             mediaInfo = displayContent.media
             buttons = displayContent.buttons
         case .modal:
-            let displayContent = message.displayContent as! UAInAppMessageModalDisplayContent
+            let displayContent = message.displayContent as! InAppMessageModalDisplayContent
             heading = displayContent.heading
             body = displayContent.body
             mediaInfo = displayContent.media
             buttons = displayContent.buttons
         case .HTML:
-            let _ = message.displayContent as! UAInAppMessageHTMLDisplayContent
+            let _ = message.displayContent as! InAppMessageHTMLDisplayContent
         // TODO - Implement HTML detail view
         case .custom:
-            let _ = message.displayContent as! UAInAppMessageCustomDisplayContent
+            let _ = message.displayContent as! InAppMessageCustomDisplayContent
             // TODO - Implement custom detail view
         @unknown default:
             break
@@ -699,7 +699,7 @@ class InAppMessageDetailViewController: UIViewController, UITableViewDelegate, U
         }
     }
     
-    private func descriptionForMedia(_ mediaInfo: UAInAppMessageMediaInfo?) -> String? {
+    private func descriptionForMedia(_ mediaInfo: InAppMessageMediaInfo?) -> String? {
         var mediaDescription : String?
         if let mediaInfo = mediaInfo {
             switch mediaInfo.type {
@@ -717,7 +717,7 @@ class InAppMessageDetailViewController: UIViewController, UITableViewDelegate, U
         return mediaDescription
     }
 
-    private func descriptionForButtons(_ buttons : [UAInAppMessageButtonInfo]?, _ buttonLayout: UAInAppMessageButtonLayoutType) -> String? {
+    private func descriptionForButtons(_ buttons : [InAppMessageButtonInfo]?, _ buttonLayout: UAInAppMessageButtonLayoutType) -> String? {
         var buttonsDescription : String?
         if let buttons = buttons {
             if (buttons.count > 0) {

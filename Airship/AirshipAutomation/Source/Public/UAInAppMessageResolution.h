@@ -33,6 +33,7 @@ typedef NS_ENUM(NSInteger, UAInAppMessageResolutionType) {
 /**
  * In-app message resolution info.
  */
+NS_SWIFT_NAME(InAppMessageResolution)
 @interface UAInAppMessageResolution : NSObject
 
 /**

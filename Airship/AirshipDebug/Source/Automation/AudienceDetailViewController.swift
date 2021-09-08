@@ -17,7 +17,7 @@ class AudienceDetailViewController: UAStaticTableViewController {
     public static let segueID = "AudienceSegue"
 
     /* The UAScheduleAudience to be displayed. */
-    public var audience : UAScheduleAudience?
+    public var audience : ScheduleAudience?
 
     @IBOutlet private weak var notificationsOptInCell: UITableViewCell!
     @IBOutlet private weak var notificationsOptInTitle: UILabel!
@@ -50,7 +50,7 @@ class AudienceDetailViewController: UAStaticTableViewController {
     @IBOutlet private weak var checkAudienceTitle: UILabel!
     @IBOutlet private weak var checkAudienceCell: UITableViewCell!
     
-    private let inAppAutomation = UAInAppAutomation.shared!
+    private let inAppAutomation = InAppAutomation.shared!
     private var inAudience : Bool?
 
     override func viewWillAppear(_ animated: Bool) {

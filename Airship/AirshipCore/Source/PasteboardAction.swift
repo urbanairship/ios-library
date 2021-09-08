@@ -17,7 +17,7 @@
  */
 @available(tvOS, unavailable)
 @objc(UAPasteboardAction)
-public class PasteboardAction : NSObject, UAAction {
+public class PasteboardAction : NSObject, Action {
     
     @objc
     public static let name = "clipboard_action"
@@ -25,7 +25,7 @@ public class PasteboardAction : NSObject, UAAction {
     @objc
     public static let shortname = "^c"
     
-    public func acceptsArguments(_ arguments: UAActionArguments) -> Bool {
+    public func acceptsArguments(_ arguments: ActionArguments) -> Bool {
         
         switch arguments.situation {
         case .manualInvocation, .webViewInvocation, .launchedFromPush, .backgroundInteractiveButton, .foregroundInteractiveButton, .automation:
@@ -37,12 +37,12 @@ public class PasteboardAction : NSObject, UAAction {
         }
     }
 
-    public func perform(with arguments: UAActionArguments, completionHandler: UAActionCompletionHandler) {
+    public func perform(with arguments: ActionArguments, completionHandler: UAActionCompletionHandler) {
         UIPasteboard.general.string = pasteboardString(arguments)
-        completionHandler(UAActionResult(value: arguments.value))
+        completionHandler(ActionResult(value: arguments.value))
     }
 
-    func pasteboardString(_ arguments: UAActionArguments) -> String? {
+    func pasteboardString(_ arguments: ActionArguments) -> String? {
         if let value = arguments.value as? String {
             return value
         }

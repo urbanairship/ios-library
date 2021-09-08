@@ -58,6 +58,7 @@ typedef NS_ENUM(NSUInteger, UAInAppMessageTextInfoAlignmentType) {
 /**
  * Builder class for UAInAppMessageTextInfo.
  */
+NS_SWIFT_NAME(InAppMessageTextInfoBuilder)
 @interface UAInAppMessageTextInfoBuilder : NSObject
 
 /**
@@ -115,6 +116,7 @@ typedef NS_ENUM(NSUInteger, UAInAppMessageTextInfoAlignmentType) {
  *
  * @note This object is built using `UAInAppMessageTextInfoBuilder`.
  */
+NS_SWIFT_NAME(InAppMessageTextInfo)
 @interface UAInAppMessageTextInfo : NSObject
 
 /**

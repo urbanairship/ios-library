@@ -4,7 +4,7 @@
  * @note For Interrnal use only :nodoc:
  */
 @objc
-public class UAScreenTrackingEvent : NSObject, UAEvent {
+public class UAScreenTrackingEvent : NSObject, Event {
 
     private let _data : [String : Any]
 

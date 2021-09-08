@@ -19,7 +19,7 @@ class MediaInfoDetailViewController: UAStaticTableViewController {
     public static let segueID = "MediaSegue"
     
     /* The UAInAppMessageMediaInfo to be displayed. */
-    public var mediaInfo : UAInAppMessageMediaInfo?
+    public var mediaInfo : InAppMessageMediaInfo?
     
     @IBOutlet private weak var contentDescriptionCell: UITableViewCell!
     @IBOutlet private weak var contentDescriptionTitle: UILabel!

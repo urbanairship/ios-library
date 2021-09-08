@@ -8,6 +8,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The in-app message style protocol.
  */
+NS_SWIFT_NAME(InAppMessageStyleProtocol)
 @protocol UAInAppMessageStyleProtocol <NSObject>
 
 @required

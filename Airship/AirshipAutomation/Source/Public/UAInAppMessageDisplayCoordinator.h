@@ -13,6 +13,7 @@ extern NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey;
  * putting time or count-based back pressure on message display, or for overriding the default coordination behavior for
  * particular message types.
  */
+NS_SWIFT_NAME(InAppMessageDisplayCoordinator)
 @protocol UAInAppMessageDisplayCoordinator <NSObject>
 
 /**

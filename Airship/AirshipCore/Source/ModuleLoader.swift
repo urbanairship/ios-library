@@ -40,7 +40,7 @@ enum SDKModuleNames: String, CaseIterable {
 public class ModuleLoader : NSObject {
     
     @objc
-    public let components: [UAComponent]
+    public let components: [Component]
     
     @objc
     public let actionPlists: [String]

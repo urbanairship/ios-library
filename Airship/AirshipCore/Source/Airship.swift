@@ -61,7 +61,7 @@ public class Airship : NSObject {
     /// A user configurable UAJavaScriptCommandDelegate
     /// - NOTE: this delegate is not retained.
     @objc
-    public weak var javaScriptCommandDelegate: UAJavaScriptCommandDelegate? {
+    public weak var javaScriptCommandDelegate: JavaScriptCommandDelegate? {
         get {
             return airshipInstance.javaScriptCommandDelegate
         }
@@ -104,7 +104,7 @@ public class Airship : NSObject {
     
     /// - NOTE: For internal use only. :nodoc:
     @objc
-    public var components: [UAComponent] { return airshipInstance.components }
+    public var components: [Component] { return airshipInstance.components }
 
     static var _shared: Airship?
     
@@ -226,7 +226,7 @@ public class Airship : NSObject {
     
     /// - NOTE: For internal use only. :nodoc:
     @objc
-    public class func component(forClassName className: String) -> UAComponent? {
+    public class func component(forClassName className: String) -> Component? {
         return shared.airshipInstance.component(forClassName: className)
     }
     

@@ -57,6 +57,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Contains the arguments passed into an action during execution.
  */
+NS_SWIFT_NAME(ActionArguments)
 @interface UAActionArguments : NSObject
 
 /**

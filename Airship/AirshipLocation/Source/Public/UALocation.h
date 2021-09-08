@@ -8,6 +8,7 @@
 /**
  * Location delegate protocol to receive callbacks for location updates.
  */
+NS_SWIFT_NAME(LocationDelegate)
 @protocol UALocationDelegate <NSObject>
 
 NS_ASSUME_NONNULL_BEGIN

@@ -10,6 +10,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Default implementation of UISplitViewControllerDelegate for use with UAMessageCenterSplitViewController.
  */
+NS_SWIFT_NAME(DefaultMessageCenterSplitViewDelegate)
 @interface UADefaultMessageCenterSplitViewDelegate : NSObject <UISplitViewControllerDelegate>
 
 - (instancetype)initWithListViewController:(UADefaultMessageCenterListViewController *)listViewController;

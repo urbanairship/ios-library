@@ -11,6 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Default implementation of a list-style Message Center UI.
  */
+NS_SWIFT_NAME(DefaultMessageCenterListViewController)
 @interface UADefaultMessageCenterListViewController : UIViewController <UITableViewDelegate, UITableViewDataSource,
     UIScrollViewDelegate>
 

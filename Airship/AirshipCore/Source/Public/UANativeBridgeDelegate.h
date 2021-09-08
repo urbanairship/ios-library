@@ -8,6 +8,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Delegate methods to support the Airship native bridge.
  */
+NS_SWIFT_NAME(NativeBridgeDelegate)
 @protocol UANativeBridgeDelegate <NSObject>
 
 @required

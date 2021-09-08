@@ -48,6 +48,7 @@ extern NSUInteger const UAInAppMessageBannerMaxButtons;
 /**
  * Builder class for UAInAppMessageBannerDisplayContent.
  */
+NS_SWIFT_NAME(InAppMessageBannerDisplayContentBuilder)
 @interface UAInAppMessageBannerDisplayContentBuilder : NSObject
 
 /**
@@ -148,6 +149,7 @@ extern NSUInteger const UAInAppMessageBannerMaxButtons;
  *
  * @note This object is built using `UAInAppMessageBannerDisplayContentBuilder`.
  */
+NS_SWIFT_NAME(InAppMessageBannerDisplayContent)
 @interface UAInAppMessageBannerDisplayContent : UAInAppMessageDisplayContent
 
 /**

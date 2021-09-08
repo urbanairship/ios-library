@@ -5,7 +5,7 @@
  * UAAnalytics.
  */
 @objc
-public class UACustomEvent : NSObject, UAEvent {
+public class UACustomEvent : NSObject, Event {
 
     private static let interactionMCRAP = "ua_mcrap"
 

@@ -7,6 +7,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Interface for accessing AirshipMessageCenter resources.
  */
+NS_SWIFT_NAME(MessageCenterResources)
 @interface UAMessageCenterResources : NSObject
 
 /**

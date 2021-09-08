@@ -26,6 +26,7 @@ typedef NS_ENUM(NSUInteger, UANavigationBarStyle) {
  * properties will be overridden by the default message
  * center at display time.
  */
+NS_SWIFT_NAME(MessageCenterStyle)
 @interface UAMessageCenterStyle : NSObject
 
 ///---------------------------------------------------------------------------------------

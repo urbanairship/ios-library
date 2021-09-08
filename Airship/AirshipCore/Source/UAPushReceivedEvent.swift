@@ -4,7 +4,7 @@
  * @note For Interrnal use only :nodoc:
  */
 @objc
-public class UAPushReceivedEvent : NSObject, UAEvent {
+public class UAPushReceivedEvent : NSObject, Event {
 
     @objc
     public var priority: UAEventPriority {

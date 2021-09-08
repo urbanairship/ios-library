@@ -5,6 +5,7 @@
 /**
  * Display content for an in-app message.
  */
+NS_SWIFT_NAME(InAppMessageDisplayContent)
 @interface UAInAppMessageDisplayContent : NSObject
 
 /**

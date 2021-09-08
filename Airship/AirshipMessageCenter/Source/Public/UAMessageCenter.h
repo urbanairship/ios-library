@@ -15,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Delegate protocol for receiving callbacks related to message center.
  */
+NS_SWIFT_NAME(MessageCenterDisplayDelegate)
 @protocol UAMessageCenterDisplayDelegate <NSObject>
 
 @required
@@ -47,6 +48,7 @@ NS_ASSUME_NONNULL_BEGIN
  * The UAMessageCenter class provides a default implementation of a
  * message center, as well as a high-level interface for its configuration and display.
  */
+NS_SWIFT_NAME(MessageCenter)
 @interface UAMessageCenter : NSObject <UAComponent>
 
 /**

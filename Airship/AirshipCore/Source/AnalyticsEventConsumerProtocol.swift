@@ -11,6 +11,6 @@ public protocol AnalyticsEventConsumerProtocol {
     ///     - event: The event
     ///     - eventID: The event 's ID
     ///     - eventDate: The event's date
-    func eventAdded(event: UAEvent, eventID: String, eventDate: Date)
+    func eventAdded(event: Event, eventID: String, eventDate: Date)
         
 }

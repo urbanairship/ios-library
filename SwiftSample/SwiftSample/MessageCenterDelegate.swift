@@ -4,7 +4,7 @@ import Foundation
 import AirshipCore
 import AirshipMessageCenter
 
-class MessageCenterDelegate : NSObject, UAMessageCenterDisplayDelegate {
+class MessageCenterDelegate : NSObject, MessageCenterDisplayDelegate {
     var tabBarController : UITabBarController;
     var messageCenterViewController : MessageCenterViewController;
 

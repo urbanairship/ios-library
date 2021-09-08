@@ -5,7 +5,7 @@
  */
 @objc
 @available(tvOS, unavailable)
-public class UAInteractiveNotificationEvent : NSObject, UAEvent {
+public class UAInteractiveNotificationEvent : NSObject, Event {
     private static let notificationEventCharacterLimit = 255
 
     @objc

@@ -37,6 +37,7 @@ extern NSString *const UAHTMLHideDismissIconKey;
  * Model object representing a custom style to be applied
  * to HTML in-app messages.
  */
+NS_SWIFT_NAME(InAppMessageHTMLStyle)
 @interface UAInAppMessageHTMLStyle : NSObject<UAInAppMessageStyleProtocol>
 
 ///---------------------------------------------------------------------------------------

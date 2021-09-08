@@ -40,6 +40,7 @@ extern NSString * const UAMessageCenterMessageLoadErrorHTTPStatusKey;
 /**
  * Default implementation of a view controller for reading Message Center messages.
  */
+NS_SWIFT_NAME(DefaultMessageCenterMessageViewController)
 @interface UADefaultMessageCenterMessageViewController : UIViewController
 
 /**

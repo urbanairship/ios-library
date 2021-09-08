@@ -6,7 +6,7 @@ import Foundation
  * This singleton provides an interface to the channel functionality.
  */
 @objc(UAChannel)
-public class Channel : NSObject, UAComponent, ChannelProtocol {
+public class Channel : NSObject, Component, ChannelProtocol {
 
 
     private static let tagsDataStoreKey = "com.urbanairship.channel.tags";

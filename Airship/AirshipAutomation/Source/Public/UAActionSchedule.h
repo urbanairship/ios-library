@@ -8,6 +8,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * An actions schedule.
  */
+NS_SWIFT_NAME(ActionSchedule)
 @interface UAActionSchedule : UASchedule
 
 /**

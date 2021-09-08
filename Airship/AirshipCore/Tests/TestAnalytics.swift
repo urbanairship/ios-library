@@ -4,13 +4,13 @@ import Foundation
 import AirshipCore
 
 @objc(UATestAnalytics)
-public class TestAnalytics : NSObject, AnalyticsProtocol, UAComponent {
+public class TestAnalytics : NSObject, AnalyticsProtocol, Component {
  
     
     public var isComponentEnabled: Bool = true
 
     @objc
-    public var events: [UAEvent] = []
+    public var events: [Event] = []
     
     @objc
     public var conversionSendID: String?
@@ -23,7 +23,7 @@ public class TestAnalytics : NSObject, AnalyticsProtocol, UAComponent {
     
     public var eventConsumer: AnalyticsEventConsumerProtocol?
     
-    public func addEvent(_ event: UAEvent) {
+    public func addEvent(_ event: Event) {
         events.append(event)
     }
     

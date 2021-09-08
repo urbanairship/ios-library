@@ -9,6 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * An in-app message schedule.
  */
+NS_SWIFT_NAME(InAppMessageSchedule)
 @interface UAInAppMessageSchedule : UASchedule
 
 /**

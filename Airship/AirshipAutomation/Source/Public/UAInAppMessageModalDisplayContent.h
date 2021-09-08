@@ -38,6 +38,7 @@ extern NSUInteger const UAInAppMessageModalMaxButtons;
 /**
  * Builder class for UAInAppMessageModalDisplayContent.
  */
+NS_SWIFT_NAME(InAppMessageModalDisplayContentBuilder)
 @interface UAInAppMessageModalDisplayContentBuilder : NSObject
 
 /**
@@ -131,6 +132,7 @@ extern NSUInteger const UAInAppMessageModalMaxButtons;
  *
  * @note This object is built using `UAInAppMessageModalDisplayContentBuilder`.
  */
+NS_SWIFT_NAME(InAppMessageModalDisplayContent)
 @interface UAInAppMessageModalDisplayContent : UAInAppMessageDisplayContent
 
 /**

@@ -16,6 +16,7 @@
  *
  * Result value: nil.
  */
+NS_SWIFT_NAME(CancelSchedulesAction)
 @interface UACancelSchedulesAction : NSObject<UAAction>
 
 /**

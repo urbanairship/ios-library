@@ -118,7 +118,7 @@ public class NativeBridgeActionHandler : NSObject, NativeBridgeActionHandlerProt
     private func run(_ action: String, _ actionValue: Any?, _ metadata: [AnyHashable : Any]?, _ callbackID: String, _ completionHandler: @escaping (String?) -> Void) {
         let callbackID = try? JSONUtils.string(callbackID, options: .fragmentsAllowed)
         
-        let actionCompletionHandler: (UAActionResult) -> Void = { result in
+        let actionCompletionHandler: (ActionResult) -> Void = { result in
             AirshipLogger.debug(String(format:"Action %@ finished executing with status %ld", action, result.status.rawValue))
             guard let callbackID = callbackID else {
                 completionHandler(nil)

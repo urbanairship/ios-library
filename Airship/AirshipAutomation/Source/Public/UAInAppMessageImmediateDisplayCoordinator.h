@@ -8,6 +8,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  An implementation of the UAInAppMessageDisplayCoordinator protocol that allows immediate display.
  */
+NS_SWIFT_NAME(InAppMessageImmediateDisplayCoordinator)
 @interface UAInAppMessageImmediateDisplayCoordinator : NSObject <UAInAppMessageDisplayCoordinator>
 
 /**

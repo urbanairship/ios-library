@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Default implementation of an adaptive message center controller.
  */
+NS_SWIFT_NAME(DefaultMessageCenterSplitViewController)
 @interface UADefaultMessageCenterSplitViewController : UISplitViewController <UAMessageCenterListViewDelegate, UAMessageCenterMessageViewDelegate>
 
 ///---------------------------------------------------------------------------------------

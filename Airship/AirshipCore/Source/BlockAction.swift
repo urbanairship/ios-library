@@ -6,7 +6,7 @@ import Foundation
  * Action that runs a block.
  */
 @objc(UABlockAction)
-public class BlockAction : NSObject, UAAction {
+public class BlockAction : NSObject, Action {
     private let block: UAActionBlock;
     private let predicate: UAActionPredicate?;
     
@@ -33,11 +33,11 @@ public class BlockAction : NSObject, UAAction {
         self.init(predicate: nil, block: block)
     }
 
-    public func acceptsArguments(_ arguments: UAActionArguments) -> Bool {
+    public func acceptsArguments(_ arguments: ActionArguments) -> Bool {
         return self.predicate?(arguments) ?? true
     }
     
-    public func perform(with arguments: UAActionArguments, completionHandler: @escaping UAActionCompletionHandler) {
+    public func perform(with arguments: ActionArguments, completionHandler: @escaping UAActionCompletionHandler) {
         self.block(arguments, completionHandler)
     }
 }

@@ -65,7 +65,7 @@ class AutomationTableViewController: UITableViewController {
     }
 
     @objc private func refreshInAppAutomation() {
-        UAInAppAutomation.shared.getSchedules({ (schedulesFromAutomation) in
+        InAppAutomation.shared.getSchedules({ (schedulesFromAutomation) in
             self.schedules = schedulesFromAutomation
             self.tableView.reloadData()
             self.refreshControl?.endRefreshing()
@@ -100,7 +100,7 @@ class AutomationTableViewController: UITableViewController {
 
         if let schedule = self.schedules?[indexPath.row] {
             cell.schedule = schedule
-            if let inAppMessage = schedule as? UAInAppMessageSchedule {
+            if let inAppMessage = schedule as? InAppMessageSchedule {
                 let message = inAppMessage.message
                 
                 switch (message.displayContent.displayType) {
@@ -118,10 +118,10 @@ class AutomationTableViewController: UITableViewController {
                     break
                 }
                 cell.messageName.text = message.name
-            } else if schedule is UAActionSchedule {
+            } else if schedule is ActionSchedule {
                 cell.messageType.text = "A"
                 cell.messageName.text = "Action"
-            } else if schedule is UADeferredSchedule {
+            } else if schedule is DeferredSchedule {
                 cell.messageType.text = "D"
                 cell.messageName.text = "Deferred"
             }

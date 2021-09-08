@@ -25,6 +25,7 @@ typedef void (^UAActionBlock)(UAActionArguments *, UAActionCompletionHandler com
 /**
  * Action protocol, which defines a modular unit of work.
  */
+NS_SWIFT_NAME(Action)
 @protocol UAAction <NSObject>
 
 /**

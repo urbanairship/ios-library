@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Delegate to extend the native bridge.
  */
+NS_SWIFT_NAME(NativeBridgeExtensionDelegate)
 @protocol UANativeBridgeExtensionDelegate <NSObject>
 
 @optional

@@ -5,8 +5,8 @@
  */
 @available(tvOS, unavailable)
 @objc(UATagsActionPredicate)
-public class TagsActionPredicate : NSObject, UAActionPredicateProtocol {
-    public func apply(_ args: UAActionArguments) -> Bool {
+public class TagsActionPredicate : NSObject, ActionPredicateProtocol {
+    public func apply(_ args: ActionArguments) -> Bool {
         return args.metadata?[UAActionMetadataForegroundPresentationKey] == nil
     }
 }

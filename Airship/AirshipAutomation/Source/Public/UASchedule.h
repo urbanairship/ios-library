@@ -18,6 +18,7 @@ extern NSUInteger const UAScheduleMaxTriggers;
 /**
  * Builder class for UASchedule.
  */
+NS_SWIFT_NAME(ScheduleBuilder)
 @interface UAScheduleBuilder : NSObject
 
 ///---------------------------------------------------------------------------------------

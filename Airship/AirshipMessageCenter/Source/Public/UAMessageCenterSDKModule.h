@@ -10,6 +10,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Message Center SDK module.
  */
+NS_SWIFT_NAME(MessageCenterSDKModule)
 @interface UAMessageCenterSDKModule : NSObject<UASDKModule>
 
 @end

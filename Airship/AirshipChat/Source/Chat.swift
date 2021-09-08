@@ -26,7 +26,7 @@ public protocol ChatOpenDelegate {
  */
 @available(iOS 13.0, *)
 @objc(UAChat)
-public class Chat : NSObject, UAComponent, UAPushableComponent {
+public class Chat : NSObject, Component, UAPushableComponent {
 
     /// The shared Chat instance.
     @objc

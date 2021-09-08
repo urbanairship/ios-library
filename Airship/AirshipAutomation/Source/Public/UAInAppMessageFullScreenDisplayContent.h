@@ -38,6 +38,7 @@ extern NSUInteger const UAInAppMessageFullScreenMaxButtons;
 /**
  * Builder class for UAInAppMessageFullScreenDisplayContent.
  */
+NS_SWIFT_NAME(InAppMessageFullScreenDisplayContentBuilder)
 @interface UAInAppMessageFullScreenDisplayContentBuilder : NSObject
 
 /**
@@ -117,6 +118,7 @@ extern NSUInteger const UAInAppMessageFullScreenMaxButtons;
  *
  * @note This object is built using `UAInAppMessageFullScreenDisplayContentBuilder`.
  */
+NS_SWIFT_NAME(InAppMessageFullScreenDisplayContent)
 @interface UAInAppMessageFullScreenDisplayContent : UAInAppMessageDisplayContent
 
 /**

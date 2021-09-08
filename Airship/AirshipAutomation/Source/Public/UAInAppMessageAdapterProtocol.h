@@ -38,6 +38,7 @@ typedef NS_ENUM(NSUInteger, UAInAppMessagePrepareResult) {
 /**
  * In-app message adapter protocol. An adapter is responsible for displaying a particular type of in-app message.
  */
+NS_SWIFT_NAME(InAppMessageAdapterProtocol)
 @protocol UAInAppMessageAdapterProtocol <NSObject>
 
 /**

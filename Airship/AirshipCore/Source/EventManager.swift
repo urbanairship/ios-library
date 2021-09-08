@@ -185,7 +185,7 @@ public class EventManager: NSObject, EventManagerProtocol {
     ///   - eventDate: The event date.
     ///   - sessionID: The analytics session ID.
     @objc
-    public func add(_ event: UAEvent, eventID: String, eventDate: Date, sessionID: String) {
+    public func add(_ event: Event, eventID: String, eventDate: Date, sessionID: String) {
         self.eventStore.save(event, eventID: eventID, eventDate: eventDate, sessionID: sessionID)
         self.scheduleUpload(priority:event.priority)
     }

@@ -4,7 +4,7 @@
  * @note For Interrnal use only :nodoc:
  */
 @objc
-public class UAAppExitEvent : NSObject, UAEvent {
+public class UAAppExitEvent : NSObject, Event {
     private let _data : [AnyHashable : Any]
 
     @objc

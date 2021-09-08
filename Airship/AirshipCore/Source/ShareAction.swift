@@ -19,7 +19,7 @@
  */
 #if os(iOS)
 @objc(UAShareAction)
-public class ShareAction : NSObject, UAAction {
+public class ShareAction : NSObject, Action {
     
     @objc
     public static let name = "share_action"
@@ -29,7 +29,7 @@ public class ShareAction : NSObject, UAAction {
 
     private var lastActivityViewController: ActivityViewController?
 
-    public func acceptsArguments(_ arguments: UAActionArguments) -> Bool {
+    public func acceptsArguments(_ arguments: ActionArguments) -> Bool {
         guard arguments.situation != .backgroundPush,
               arguments.situation != .backgroundInteractiveButton,
               arguments.value as? String != nil else{
@@ -38,7 +38,7 @@ public class ShareAction : NSObject, UAAction {
         return true
     }
 
-    public func perform(with arguments: UAActionArguments, completionHandler: UAActionCompletionHandler) {
+    public func perform(with arguments: ActionArguments, completionHandler: UAActionCompletionHandler) {
         AirshipLogger.debug("Running share action: \(arguments)")
 
         let activityItems = [arguments.value as Any]
@@ -84,7 +84,7 @@ public class ShareAction : NSObject, UAAction {
             displayShareBlock()
         }
         
-        completionHandler(UAActionResult.empty())
+        completionHandler(ActionResult.empty())
     }
 }
 #endif

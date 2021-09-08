@@ -106,7 +106,7 @@ public protocol PushNotificationDelegate: NSObjectProtocol {
 
 /// This singleton provides an interface to the functionality provided by the Airship iOS Push API.
 @objc(UAPush)
-public class Push: NSObject, UAComponent, PushProtocol {
+public class Push: NSObject, Component, PushProtocol {
     
     /// The shared Push instance.
     @objc

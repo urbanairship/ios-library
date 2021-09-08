@@ -6,7 +6,7 @@ import Foundation
  * Action that produces an empty result.
  */
 @objc(UAEmptyAction)
-public class EmptyAction : NSObject, UAAction {
+public class EmptyAction : NSObject, Action {
     
     /**
      * Default constructor.
@@ -17,11 +17,11 @@ public class EmptyAction : NSObject, UAAction {
     }
     
 
-    public func acceptsArguments(_ arguments: UAActionArguments) -> Bool {
+    public func acceptsArguments(_ arguments: ActionArguments) -> Bool {
         return true
     }
     
-    public func perform(with arguments: UAActionArguments, completionHandler: @escaping UAActionCompletionHandler) {
-        completionHandler(UAActionResult.empty())
+    public func perform(with arguments: ActionArguments, completionHandler: @escaping UAActionCompletionHandler) {
+        completionHandler(ActionResult.empty())
     }
 }

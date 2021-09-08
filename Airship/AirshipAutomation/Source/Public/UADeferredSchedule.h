@@ -9,6 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * A deferred schedule.
  */
+NS_SWIFT_NAME(DeferredSchedule)
 @interface UADeferredSchedule : UASchedule
 
 /**

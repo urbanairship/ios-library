@@ -67,9 +67,9 @@ class EventDataManager: NSObject, AnalyticsEventConsumerProtocol {
         batchDeleteEventsOlderThanStorageDays()
     }
 
-    @objc func eventAdded(event: UAEvent, eventID: String, eventDate: Date) {
-        let event = Event(event: event, identifier:eventID, date:eventDate)
-        EventDataManager.shared.saveEvent(event)
+    @objc func eventAdded(event: Event, eventID: String, eventDate: Date) {
+        let airshipEvent = AirshipEvent(event: event, identifier:eventID, date:eventDate)
+        EventDataManager.shared.saveEvent(airshipEvent)
 
         delegate?.eventAdded()
     }
@@ -109,7 +109,7 @@ class EventDataManager: NSObject, AnalyticsEventConsumerProtocol {
         }
     }
 
-    private func saveEvent(_ event:Event) {
+    private func saveEvent(_ event:AirshipEvent) {
         let context = persistentContainer.viewContext
 
         let persistedEvent = EventData(entity: EventData.entity(), insertInto:context)
@@ -121,13 +121,13 @@ class EventDataManager: NSObject, AnalyticsEventConsumerProtocol {
         saveContext(context)
     }
 
-    func fetchAllEvents() -> [Event] {
+    func fetchAllEvents() -> [AirshipEvent] {
         return fetchEventsContaining(searchString: nil, timeWindow:nil)
     }
 
-    func fetchEventsContaining(searchString:String?, timeWindow:DateInterval?) -> [Event] {
+    func fetchEventsContaining(searchString:String?, timeWindow:DateInterval?) -> [AirshipEvent] {
         var eventDatas:[Any] = []
-        var events:[Event] = []
+        var events:[AirshipEvent] = []
 
         let context = persistentContainer.viewContext
         let fetchRequest:NSFetchRequest = EventData.fetchRequest()
@@ -162,7 +162,7 @@ class EventDataManager: NSObject, AnalyticsEventConsumerProtocol {
                 continue
             }
 
-            let event = Event(eventData:data)
+            let event = AirshipEvent(eventData:data)
             events.append(event)
         }
 

@@ -2,7 +2,7 @@
 
 // NOTE: For internal use only. :nodoc:
 @objc(UARemoteDataManager)
-public class RemoteDataManager : NSObject, UAComponent, RemoteDataProvider {
+public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
     
     static let refreshTaskID = "RemoteDataManager.refresh"
     static let defaultRefreshInterval: TimeInterval = 10

@@ -9,6 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Banner in-app message display adapter.
  */
+NS_SWIFT_NAME(InAppMessageBannerAdapter)
 @interface UAInAppMessageBannerAdapter : NSObject <UAInAppMessageAdapterProtocol>
 
 /**

@@ -10,7 +10,7 @@ import Foundation
  */
 @available(*, deprecated, message: "Use contact instead.")
 @objc(UANamedUser)
-public class UANamedUser : NSObject, UAComponent {
+public class UANamedUser : NSObject, Component {
     
     private let contact : ContactProtocol
     

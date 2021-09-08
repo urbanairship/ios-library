@@ -14,6 +14,7 @@
  *
  * Result value: Schedule ID or nil if the schedule failed.
  */
+NS_SWIFT_NAME(ScheduleAction)
 @interface UAScheduleAction : NSObject<UAAction>
 
 /**

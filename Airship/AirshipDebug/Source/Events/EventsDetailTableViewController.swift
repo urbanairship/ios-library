@@ -56,7 +56,7 @@ class EventsDetailTableViewController: UITableViewController {
         setTableViewTheme()
     }
 
-    var event: Event? {
+    var event: AirshipEvent? {
         didSet {
             refresh()
         }

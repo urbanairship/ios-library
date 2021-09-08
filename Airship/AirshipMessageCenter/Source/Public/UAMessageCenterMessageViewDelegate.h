@@ -8,6 +8,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Protocol for delegating the handling of message view loading and native bridge events.
  */
+NS_SWIFT_NAME(MessageCenterMessageViewDelegate)
 @protocol UAMessageCenterMessageViewDelegate <NSObject>
 
 /**

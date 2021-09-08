@@ -43,6 +43,7 @@ extern NSString *const UAFullScreenMediaStyleKey;
  * Model object representing a custom style to be applied
  * to full screen in-app message.
  */
+NS_SWIFT_NAME(InAppMessageFullScreenStyle)
 @interface UAInAppMessageFullScreenStyle : NSObject<UAInAppMessageStyleProtocol>
 
 ///---------------------------------------------------------------------------------------

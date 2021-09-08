@@ -5,8 +5,8 @@
  */
 @available(tvOS, unavailable)
 @objc(UAShareActionPredicate)
-public class ShareActionPredicate : NSObject, UAActionPredicateProtocol {
-    public func apply(_ args: UAActionArguments) -> Bool {
+public class ShareActionPredicate : NSObject, ActionPredicateProtocol {
+    public func apply(_ args: ActionArguments) -> Bool {
         return args.situation != .foregroundPush
     }
 }

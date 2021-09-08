@@ -78,6 +78,7 @@ extern NSString *const UAInAppMessageDisplayBehaviorImmediate;
  *
  * @note This object is built using `UAInAppMessageBuilder`.
  */
+NS_SWIFT_NAME(InAppMessage)
 @interface UAInAppMessage : NSObject
 
 ///---------------------------------------------------------------------------------------

@@ -19,13 +19,13 @@ enum RemoteConfigModule : String, CaseIterable {
 /// Expected module names used in remote config.
 class RemoteConfigModuleAdapter : RemoteConfigModuleAdapterProtocol {
     
-    private func components(_ classes: [String]) -> [UAComponent] {
+    private func components(_ classes: [String]) -> [Component] {
         return classes.compactMap {
             return Airship.component(forClassName: $0)
         }
     }
     
-    private func components(_ module: RemoteConfigModule) -> [UAComponent] {
+    private func components(_ module: RemoteConfigModule) -> [Component] {
         switch module {
         case .push:
             return [Airship.push]

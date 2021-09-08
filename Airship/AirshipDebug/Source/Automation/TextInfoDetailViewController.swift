@@ -18,7 +18,7 @@ class TextInfoDetailViewController: UAStaticTableViewController {
     public static let segueID = "TextInfoSegue"
     
     /* The UAInAppMessageTextInfo to be displayed. */
-    public var textInfo : UAInAppMessageTextInfo?
+    public var textInfo : InAppMessageTextInfo?
 
     @IBOutlet private weak var textCell: UITableViewCell!
     @IBOutlet private weak var textTitle: UILabel!

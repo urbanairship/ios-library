@@ -4,8 +4,8 @@
  * Default predicate for the modify attributes action.
  */
 @objc(UAAttributesActionPredicate)
-public class AttributesActionPredicate : NSObject, UAActionPredicateProtocol {
-    public func apply(_ args: UAActionArguments) -> Bool {
+public class AttributesActionPredicate : NSObject, ActionPredicateProtocol {
+    public func apply(_ args: ActionArguments) -> Bool {
         return args.metadata?[UAActionMetadataForegroundPresentationKey] == nil
     }
 }

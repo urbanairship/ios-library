@@ -84,6 +84,7 @@ typedef NS_ENUM(NSInteger, UAScheduleDelayAppState) {
 /**
  * Builder class for UAScheduleDelay.
  */
+NS_SWIFT_NAME(ScheduleDelayBuilder)
 @interface UAScheduleDelayBuilder : NSObject
 
 ///---------------------------------------------------------------------------------------
@@ -138,6 +139,7 @@ typedef NS_ENUM(NSInteger, UAScheduleDelayAppState) {
  *
  * @note This object is built using `UAScheduleDelayBuilder`.
  */
+NS_SWIFT_NAME(ScheduleDelay)
 @interface UAScheduleDelay: NSObject
 
 ///---------------------------------------------------------------------------------------

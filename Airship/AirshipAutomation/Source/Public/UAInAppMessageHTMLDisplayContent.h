@@ -10,6 +10,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Builder class for UAInAppMessageHTMLDisplayContent.
  */
+NS_SWIFT_NAME(InAppMessageHTMLDisplayContentBuilder)
 @interface UAInAppMessageHTMLDisplayContentBuilder : NSObject
 
 /**
@@ -85,6 +86,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @note This object is built using `UAInAppMessageHTMLDisplayContentBuilder`.
  */
+NS_SWIFT_NAME(InAppMessageHTMLDisplayContent)
 @interface UAInAppMessageHTMLDisplayContent : UAInAppMessageDisplayContent
 
 /**

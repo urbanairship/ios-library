@@ -35,6 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Model object representing in-app message data.
  */
+NS_SWIFT_NAME(LegacyInAppMessage)
 @interface UALegacyInAppMessage : NSObject
 
 ///---------------------------------------------------------------------------------------

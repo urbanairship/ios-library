@@ -23,7 +23,7 @@ import AirshipCore
  */
 @available(iOS 13.0, *)
 @objc(UAOpenChatAction)
-public class OpenChatAction : NSObject, UAAction {
+public class OpenChatAction : NSObject, Action {
 
     public static let name = "open_chat_action"
     static let routingKey = "chat_routing"
@@ -46,7 +46,7 @@ public class OpenChatAction : NSObject, UAAction {
         super.init()
     }
 
-    public func acceptsArguments(_ arguments: UAActionArguments) -> Bool {
+    public func acceptsArguments(_ arguments: ActionArguments) -> Bool {
         switch(arguments.situation) {
         case .automation, .manualInvocation, .webViewInvocation, .launchedFromPush, .foregroundInteractiveButton:
             return true
@@ -55,7 +55,7 @@ public class OpenChatAction : NSObject, UAAction {
         }
     }
 
-    public func perform(with arguments: UAActionArguments, completionHandler: @escaping UAActionCompletionHandler) {
+    public func perform(with arguments: ActionArguments, completionHandler: @escaping UAActionCompletionHandler) {
         let chat = self.chatProvider()
         let args = arguments.value as? [String: Any]
         let message = args?[OpenChatAction.inputKey] as? String
@@ -78,6 +78,6 @@ public class OpenChatAction : NSObject, UAAction {
         
         chat.openChat(message: message)
 
-        completionHandler(UAActionResult.empty())
+        completionHandler(ActionResult.empty())
     }
 }

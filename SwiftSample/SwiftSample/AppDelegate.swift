@@ -10,7 +10,7 @@ import AirshipDebug
 #endif
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, RegistrationDelegate, DeepLinkDelegate, UAInAppMessageCachePolicyDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, RegistrationDelegate, DeepLinkDelegate, InAppMessageCachePolicyDelegate {
     let simulatorWarningDisabledKey = "ua-simulator-warning-disabled"
     let pushHandler = PushHandler()
 
@@ -68,11 +68,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, RegistrationDelegate, Dee
 
         // Set a custom delegate for handling message center events
         self.messageCenterDelegate = MessageCenterDelegate(tabBarController: window!.rootViewController as! UITabBarController)
-        UAMessageCenter.shared.displayDelegate = self.messageCenterDelegate
+        MessageCenter.shared.displayDelegate = self.messageCenterDelegate
         Airship.push.pushNotificationDelegate = pushHandler
         Airship.push.registrationDelegate = self
         Airship.shared.deepLinkDelegate = self
-        UAInAppAutomation.shared.inAppMessageManager.assetManager.cachePolicyDelegate = self;
+        InAppAutomation.shared.inAppMessageManager.assetManager.cachePolicyDelegate = self;
 
         NotificationCenter.default.addObserver(self, selector:#selector(AppDelegate.refreshMessageCenterBadge), name: NSNotification.Name.UAInboxMessageListUpdated, object: nil)
 
@@ -141,8 +141,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, RegistrationDelegate, Dee
             if self.window?.rootViewController is UITabBarController {
                 let messageCenterTab: UITabBarItem = (self.window!.rootViewController! as! UITabBarController).tabBar.items![self.MessageCenterTab]
 
-                if (UAMessageCenter.shared.messageList.unreadCount > 0) {
-                    messageCenterTab.badgeValue = String(UAMessageCenter.shared.messageList.unreadCount)
+                if (MessageCenter.shared.messageList.unreadCount > 0) {
+                    messageCenterTab.badgeValue = String(MessageCenter.shared.messageList.unreadCount)
                 } else {
                     messageCenterTab.badgeValue = nil
                 }
@@ -215,7 +215,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, RegistrationDelegate, Dee
             pathComponents.remove(at: 0)
             
             if ((pathComponents.count == 0) || (pathComponents[0] != "message")) {
-                UAMessageCenter.shared.display()
+                MessageCenter.shared.display()
             } else {
                 // remove "message" from front of url
                 pathComponents.remove(at: 0)
@@ -223,7 +223,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, RegistrationDelegate, Dee
                 if (pathComponents.count > 0) {
                     messageID = pathComponents[0]
                 }
-                UAMessageCenter.shared.displayMessage(forID: messageID)
+                MessageCenter.shared.displayMessage(forID: messageID)
             }
         case SettingsStoryboardID:
             // get rest of deep link
@@ -255,11 +255,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, RegistrationDelegate, Dee
     }
 
     // MARK: UAInAppMessageCachePolicyDelegate
-    func shouldCache(onSchedule message: UAInAppMessage) -> Bool {
+    func shouldCache(onSchedule message: InAppMessage) -> Bool {
         return true
     }
     
-    func shouldPersistCache(afterDisplay message: UAInAppMessage) -> Bool {
+    func shouldPersistCache(afterDisplay message: InAppMessage) -> Bool {
         return true
     }
 }

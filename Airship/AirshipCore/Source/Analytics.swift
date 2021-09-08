@@ -22,7 +22,7 @@ public enum SDKExtension : Int {
 
 /// The UAAnalytics object provides an interface to the Airship Analytics API.
 @objc(UAAnalytics)
-public class Analytics: NSObject, UAComponent, AnalyticsProtocol, EventManagerDelegate {
+public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDelegate {
     
     /**
      * Analytics supplier, for testing purposes. :nodoc:
@@ -350,7 +350,7 @@ public class Analytics: NSObject, UAComponent, AnalyticsProtocol, EventManagerDe
     /// Triggers an analytics event.
     /// - Parameter event: The event to be triggered
     @objc
-    public func addEvent(_ event: UAEvent) {
+    public func addEvent(_ event: Event) {
         guard event.isValid?() != false else {
             AirshipLogger.error("Dropping invalid event: \(event)")
             return

@@ -15,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
  * to an in-app message media component. Nil parameters are given
  * default styling.
  */
+NS_SWIFT_NAME(InAppMessageMediaStyle)
 @interface UAInAppMessageMediaStyle : NSObject
 
 /**

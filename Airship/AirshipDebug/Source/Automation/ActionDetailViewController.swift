@@ -13,7 +13,7 @@ class ActionDetailViewController: UIViewController, UITableViewDelegate, UITable
     public static let segueID = "ActionDetailSegue"
     
     /* The UASchedule to be displayed */
-    public var schedule : UAActionSchedule?
+    public var schedule : ActionSchedule?
     
     var collapsedCellPaths:[IndexPath] = []
     

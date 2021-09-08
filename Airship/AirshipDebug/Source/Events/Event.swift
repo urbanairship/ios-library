@@ -12,7 +12,7 @@ import Airship
 /**
  * A wrapper for representing an Airship event in the Debug UI
  */
-struct Event {
+struct AirshipEvent {
     let prettyTypes:[String:String] = [
         "app_init" : "App Initialization",
         "location" : "Location",
@@ -50,7 +50,7 @@ struct Event {
     var data:String
 
 
-    init(event: UAEvent, identifier: String, date: Date) {
+    init(event: Event, identifier: String, date: Date) {
         self.data = String(data: try! JSONSerialization.data(withJSONObject:event.data, options:.prettyPrinted), encoding:.utf8) ?? event.data.description
         self.time = date.timeIntervalSince1970
         self.eventType = prettyTypes[event.eventType] ?? event.eventType

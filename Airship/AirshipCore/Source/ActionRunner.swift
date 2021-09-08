@@ -83,7 +83,7 @@ public class ActionRunner : NSObject {
                           completionHandler: UAActionCompletionHandler?) {
         guard let entry = Airship.shared.actionRegistry.registryEntry(actionName) else {
             AirshipLogger.debug("No action found with name \(actionName), skipping action.")
-            completionHandler?(UAActionResult.actionNotFound())
+            completionHandler?(ActionResult.actionNotFound())
             return
         }
         
@@ -104,7 +104,7 @@ public class ActionRunner : NSObject {
      *  - situation: The action argument's situation.
      */
     @objc(runAction:value:situation:)
-    public class func run(_ action: UAAction, value: Any?, situation: UASituation) {
+    public class func run(_ action: Action, value: Any?, situation: UASituation) {
         self.run(action, value: value, situation: situation, metadata: nil, completionHandler: nil)
     }
 
@@ -118,7 +118,7 @@ public class ActionRunner : NSObject {
      *  - metadata: The action argument's metadata.
      */
     @objc(runAction:value:situation:metadata:)
-    public class func run(_ action: UAAction, value: Any?, situation: UASituation, metadata: [AnyHashable : Any]?) {
+    public class func run(_ action: Action, value: Any?, situation: UASituation, metadata: [AnyHashable : Any]?) {
         self.run(action, value: value, situation: situation, metadata: metadata, completionHandler: nil)
     }
 
@@ -132,7 +132,7 @@ public class ActionRunner : NSObject {
      *  - completionHandler: The completion handler.
      */
     @objc(runAction:value:situation:completionHandler:)
-    public class func run(_ action: UAAction, value: Any?, situation: UASituation, completionHandler: UAActionCompletionHandler?) {
+    public class func run(_ action: Action, value: Any?, situation: UASituation, completionHandler: UAActionCompletionHandler?) {
         self.run(action, value: value, situation: situation, metadata: nil, completionHandler: completionHandler)
     }
 
@@ -147,12 +147,12 @@ public class ActionRunner : NSObject {
      *  - completionHandler: The completion handler.
      */
     @objc(runAction:value:situation:metadata:completionHandler:)
-    public class func run(_ action: UAAction,
+    public class func run(_ action: Action,
                           value: Any?,
                           situation: UASituation,
                           metadata: [AnyHashable : Any]?,
                           completionHandler: UAActionCompletionHandler?) {
-        let arguments = UAActionArguments(value: value, with: situation, metadata: metadata)
+        let arguments = ActionArguments(value: value, with: situation, metadata: metadata)
         self.run(action, args: arguments, completionHandler: completionHandler)
     }
 
@@ -209,22 +209,22 @@ public class ActionRunner : NSObject {
         // Add the action name to the metadata
         var fullMetadata: [AnyHashable : Any] = metadata ?? [:]
         fullMetadata[UAActionMetadataRegisteredName] = actionName
-        let args = UAActionArguments(value: value, with: situation, metadata: fullMetadata)
+        let args = ActionArguments(value: value, with: situation, metadata: fullMetadata)
         if (entry.predicate?(args) == false) {
             AirshipLogger.debug("Predicate for action \(actionName) rejected args \(args).")
-            completionHandler?(UAActionResult.rejectedArguments())
+            completionHandler?(ActionResult.rejectedArguments())
         } else {
             self.run(entry.action(situation: situation), args: args, completionHandler: completionHandler)
         }
     }
     
-    private class func run(_ action: UAAction, args: UAActionArguments, completionHandler: UAActionCompletionHandler?) {
+    private class func run(_ action: Action, args: ActionArguments, completionHandler: UAActionCompletionHandler?) {
         
         var completed = false
         UADispatcher.main .dispatchAsyncIfNecessary {
             guard action.acceptsArguments(args) else {
                 AirshipLogger.debug("Action \(action) rejected arguments \(args).")
-                completionHandler?(UAActionResult.rejectedArguments())
+                completionHandler?(ActionResult.rejectedArguments())
                 return
             }
             

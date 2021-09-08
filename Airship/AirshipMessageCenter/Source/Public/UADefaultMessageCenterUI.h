@@ -8,6 +8,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Default message center UI.
  */
+NS_SWIFT_NAME(DefaultMessageCenterUI)
 @interface UADefaultMessageCenterUI : NSObject<UAMessageCenterDisplayDelegate>
 
 ///---------------------------------------------------------------------------------------

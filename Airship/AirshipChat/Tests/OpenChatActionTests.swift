@@ -46,16 +46,16 @@ class OpenChatActionTests: XCTestCase {
         ]
 
         validSituations.forEach { (situation) in
-            let args = UAActionArguments(value: nil, with: situation)
-            let messageArgs = UAActionArguments(value: ["chat_input": "neat"], with: situation)
+            let args = ActionArguments(value: nil, with: situation)
+            let messageArgs = ActionArguments(value: ["chat_input": "neat"], with: situation)
 
             XCTAssertTrue(self.action.acceptsArguments(args))
             XCTAssertTrue(self.action.acceptsArguments(messageArgs))
         }
 
         rejectedSituations.forEach { (situation) in
-            let args = UAActionArguments(value: nil, with: situation)
-            let messageArgs = UAActionArguments(value: ["chat_input": "neat"], with: situation)
+            let args = ActionArguments(value: nil, with: situation)
+            let messageArgs = ActionArguments(value: ["chat_input": "neat"], with: situation)
 
             XCTAssertFalse(self.action.acceptsArguments(args))
             XCTAssertFalse(self.action.acceptsArguments(messageArgs))
@@ -64,7 +64,7 @@ class OpenChatActionTests: XCTestCase {
 
     func testPerform() throws {
         let expectation = XCTestExpectation(description: "Completed")
-        let args = UAActionArguments(value: nil, with: .manualInvocation)
+        let args = ActionArguments(value: nil, with: .manualInvocation)
         action.perform(with: args) { (result) in
             XCTAssertNil(result.value)
             XCTAssertNil(result.error)
@@ -80,7 +80,7 @@ class OpenChatActionTests: XCTestCase {
 
     func testPerformWithMessage() throws {
         let expectation = XCTestExpectation(description: "Completed")
-        let args = UAActionArguments(value: ["chat_input": "neat"], with: .manualInvocation)
+        let args = ActionArguments(value: ["chat_input": "neat"], with: .manualInvocation)
         action.perform(with: args) { (result) in
             XCTAssertNil(result.value)
             XCTAssertNil(result.error)
@@ -111,7 +111,7 @@ class OpenChatActionTests: XCTestCase {
         ]
         
         let expectation = XCTestExpectation(description: "Completed")
-        let args = UAActionArguments(value: argsData, with: .manualInvocation)
+        let args = ActionArguments(value: argsData, with: .manualInvocation)
         action.perform(with: args) { (result) in
             XCTAssertNil(result.value)
             XCTAssertNil(result.error)

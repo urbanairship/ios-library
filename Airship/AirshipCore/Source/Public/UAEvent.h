@@ -32,6 +32,7 @@ typedef NS_ENUM(NSInteger, UAEventPriority) {
 /**
  * Defines an Airship event.
  */
+NS_SWIFT_NAME(Event)
 @protocol UAEvent <NSObject>
 
 @required

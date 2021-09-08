@@ -4,7 +4,7 @@
  * Event to track install attributions.
  */
 @objc
-public class UAInstallAttributionEvent : NSObject, UAEvent {
+public class UAInstallAttributionEvent : NSObject, Event {
 
     @objc
     public var eventType : String {

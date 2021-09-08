@@ -31,6 +31,7 @@ typedef NS_ENUM(NSInteger, UAScheduleAudienceMissBehaviorType) {
 /**
  * Builder class for UAScheduleAudience.
  */
+NS_SWIFT_NAME(ScheduleAudienceBuilder)
 @interface UAScheduleAudienceBuilder : NSObject
 
 /**
@@ -88,6 +89,7 @@ typedef NS_ENUM(NSInteger, UAScheduleAudienceMissBehaviorType) {
  *
  * @note This object is built using `UAScheduleAudienceBuilder`.
  */
+NS_SWIFT_NAME(ScheduleAudience)
 @interface UAScheduleAudience : NSObject
 
 /**

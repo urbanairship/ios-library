@@ -28,6 +28,7 @@ typedef NS_ENUM(NSUInteger, UAScheduleDataDeferredType) {
 /**
  * Deferred schedule data.
  */
+NS_SWIFT_NAME(ScheduleDeferredData)
 @interface UAScheduleDeferredData : NSObject
 
 /**

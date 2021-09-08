@@ -10,7 +10,7 @@ import AirshipCore
  */
 @objc(UAChatSDKModule)
 public class ChatSDKModule : NSObject, SDKModule {
-    private let chatComponents: [UAComponent]
+    private let chatComponents: [Component]
 
     @available(iOS 13, *)
     private init(_ chat: Chat) {
@@ -34,7 +34,7 @@ public class ChatSDKModule : NSObject, SDKModule {
         return ChatSDKModule(airshipChat)
     }
     
-    public func components() -> [UAComponent] {
+    public func components() -> [Component] {
         return self.chatComponents
     }
     

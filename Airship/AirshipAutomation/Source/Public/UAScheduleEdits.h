@@ -10,6 +10,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Builder class for UAScheduleEdits.
  */
+NS_SWIFT_NAME(ScheduleEditsBuilder)
 @interface UAScheduleEditsBuilder : NSObject
 
 ///---------------------------------------------------------------------------------------
@@ -67,6 +68,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Schedule edits.
  */
+NS_SWIFT_NAME(ScheduleEdits)
 @interface UAScheduleEdits : NSObject
 
 ///---------------------------------------------------------------------------------------

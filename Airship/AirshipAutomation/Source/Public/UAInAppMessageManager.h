@@ -13,6 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Delegate protocol for receiving in-app messaging related
  * callbacks.
  */
+NS_SWIFT_NAME(InAppMessagingDelegate)
 @protocol UAInAppMessagingDelegate <NSObject>
 
 @optional
@@ -67,6 +68,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Provides a control interface for creating, canceling and executing in-app message schedules.
  */
+NS_SWIFT_NAME(InAppMessageManager)
 @interface UAInAppMessageManager : NSObject
 
 /**

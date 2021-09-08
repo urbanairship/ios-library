@@ -17,6 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Provides a control interface for creating, canceling and executing in-app automations.
  */
+NS_SWIFT_NAME(InAppAutomation)
 @interface UAInAppAutomation : NSObject<UAComponent>
 
 /**

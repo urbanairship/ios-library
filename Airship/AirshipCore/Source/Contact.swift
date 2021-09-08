@@ -75,7 +75,7 @@ public protocol ContactProtocol {
  * within Airship. Contacts may be named and have channels associated with it.
  */
 @objc(UAContact)
-public class Contact : NSObject, UAComponent, ContactProtocol {
+public class Contact : NSObject, Component, ContactProtocol {
 
     // NOTE: For internal use only. :nodoc:
     static let supplier : () -> (ContactProtocol) = {

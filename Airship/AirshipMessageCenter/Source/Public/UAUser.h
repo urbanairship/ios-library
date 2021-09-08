@@ -11,6 +11,7 @@ extern NSString * const UAUserCreatedNotification;
 /**
  * Primary interface for working with the application's associated Airship user.
  */
+NS_SWIFT_NAME(User)
 @interface UAUser : NSObject
 
 ///---------------------------------------------------------------------------------------

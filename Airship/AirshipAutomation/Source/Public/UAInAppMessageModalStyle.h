@@ -58,6 +58,7 @@ extern NSString *const UAModalMaxHeightKey;
  * Model object representing a custom style to be applied
  * to modal in-app messages.
  */
+NS_SWIFT_NAME(InAppMessageModalStyle)
 @interface UAInAppMessageModalStyle : NSObject<UAInAppMessageStyleProtocol>
 
 ///---------------------------------------------------------------------------------------

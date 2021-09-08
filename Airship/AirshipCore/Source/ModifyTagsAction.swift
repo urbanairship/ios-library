@@ -4,7 +4,7 @@
  * This is the base class for AddTagsAction and RemoveTagsAction.
  */
 @objc(UAModifyTagsAction)
-public class ModifyTagsAction : NSObject, UAAction {
+public class ModifyTagsAction : NSObject, Action {
     static let namedUserKey = "named_user"
     static let channelKey = "channel"
     static let deviceKey = "device"
@@ -25,7 +25,7 @@ public class ModifyTagsAction : NSObject, UAAction {
         self.contact = contact
     }
     
-    public func acceptsArguments(_ arguments: UAActionArguments) -> Bool {
+    public func acceptsArguments(_ arguments: ActionArguments) -> Bool {
         guard arguments.situation != .backgroundPush else {
             return false
         }
@@ -56,7 +56,7 @@ public class ModifyTagsAction : NSObject, UAAction {
         return false
     }
 
-    public func perform(with arguments: UAActionArguments, completionHandler: UAActionCompletionHandler) {
+    public func perform(with arguments: ActionArguments, completionHandler: UAActionCompletionHandler) {
         let channel = self.channel()
         let contact = self.contact()
         
@@ -96,7 +96,7 @@ public class ModifyTagsAction : NSObject, UAAction {
             }
         }
             
-        completionHandler(UAActionResult.empty())
+        completionHandler(ActionResult.empty())
     }
     
     open func onChannelTags(_ tags: [String], editor: TagEditor) {}

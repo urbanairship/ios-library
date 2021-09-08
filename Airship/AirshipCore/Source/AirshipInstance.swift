@@ -9,7 +9,7 @@ protocol AirshipInstanceProtocol  {
     var locationProvider: UALocationProvider? { get }
     
     #if !os(tvOS)
-    var javaScriptCommandDelegate: UAJavaScriptCommandDelegate? { get set }
+    var javaScriptCommandDelegate: JavaScriptCommandDelegate? { get set }
     var channelCapture: ChannelCapture { get }
     #endif
     
@@ -17,9 +17,9 @@ protocol AirshipInstanceProtocol  {
     var urlAllowList : URLAllowList { get }
     var localeManager: LocaleManager { get }
     var privacyManager: UAPrivacyManager { get }
-    var components: [UAComponent] { get }
+    var components: [Component] { get }
     
-    func component(forClassName className: String) -> UAComponent?
+    func component(forClassName className: String) -> Component?
     func component<E>(ofType componentType: E.Type) -> E?
 }
 
@@ -30,7 +30,7 @@ class AirshipInstance : AirshipInstanceProtocol {
     public let locationProvider: UALocationProvider?
     
     #if !os(tvOS)
-    public weak var javaScriptCommandDelegate: UAJavaScriptCommandDelegate?
+    public weak var javaScriptCommandDelegate: JavaScriptCommandDelegate?
     public let channelCapture: ChannelCapture
     #endif
     
@@ -38,9 +38,9 @@ class AirshipInstance : AirshipInstanceProtocol {
     public let urlAllowList : URLAllowList
     public let localeManager: LocaleManager
     public let privacyManager: UAPrivacyManager
-    public let components: [UAComponent]
+    public let components: [Component]
     private let remoteConfigManager: RemoteConfigManager;
-    private var componentMap: [String : UAComponent]  = [:]
+    private var componentMap: [String : Component]  = [:]
 
     init(config: Config) {
         let dataStore = UAPreferenceDataStore(keyPrefix: config.appKey)
@@ -99,7 +99,7 @@ class AirshipInstance : AirshipInstanceProtocol {
                                         analytics: analytics,
                                         privacyManager: self.privacyManager)
         
-        var components: [UAComponent] = [contact, channel, analytics, namedUser, remoteDataManager, push]
+        var components: [Component] = [contact, channel, analytics, namedUser, remoteDataManager, push]
         components.append(contentsOf: moduleLoader.components)
         
         self.locationProvider = components.compactMap {
@@ -114,7 +114,7 @@ class AirshipInstance : AirshipInstanceProtocol {
     }
     
     
-    public func component(forClassName className: String) -> UAComponent? {
+    public func component(forClassName className: String) -> Component? {
         let key = "Class:\(className)"
         if componentMap[key] == nil {
             self.componentMap[key] = self.components.first { NSStringFromClass(type(of: $0)) == className }

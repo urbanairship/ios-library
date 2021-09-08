@@ -27,6 +27,7 @@ typedef NS_ENUM(NSInteger, UAInAppMessageMediaInfoType) {
 /**
  * Defines in-app message media content.
  */
+NS_SWIFT_NAME(InAppMessageMediaInfo)
 @interface UAInAppMessageMediaInfo : NSObject
 
 /**

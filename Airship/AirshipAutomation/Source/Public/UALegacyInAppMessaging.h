@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * A delegate protocol for bridging legacy in-app messages with the v2 infrastructure.
  */
+NS_SWIFT_NAME(LegacyInAppMessageFactoryDelegate)
 @protocol UALegacyInAppMessageFactoryDelegate <NSObject>
 
 @required
@@ -32,6 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * A protocol for extending the default conversion between legacy in-app messages and v2 scheduled messages.
  */
+NS_SWIFT_NAME(LegacyInAppMessageBuilderExtender)
 @protocol UALegacyInAppMessageBuilderExtender <NSObject>
 
 @optional
@@ -59,6 +61,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Manager class for in-app messaging.
  */
+NS_SWIFT_NAME(LegacyInAppMessaging)
 @interface UALegacyInAppMessaging : NSObject<UAComponent, UALegacyInAppMessageFactoryDelegate>
 
 /**

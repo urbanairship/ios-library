@@ -9,6 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * A protocol for extending the default conversion between legacy landing pages and scheduled HTML message landing pages.
  */
+NS_SWIFT_NAME(LandingPageBuilderExtender)
 @protocol UALandingPageBuilderExtender <NSObject>
 
 @optional
@@ -55,6 +56,7 @@ NS_ASSUME_NONNULL_BEGIN
 * Fetch result: UAActionFetchResultNewData, or UAActionFetchResultFailed if the data could not be fetched.
 *
 */
+NS_SWIFT_NAME(LandingPageAction)
 @interface UALandingPageAction : NSObject<UAAction>
 
 /**

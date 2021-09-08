@@ -26,7 +26,7 @@ public class EventStore : NSObject, EventStoreProtocol {
 
 
     @objc
-    public func save(_ event: UAEvent, eventID: String, eventDate: Date, sessionID: String) {
+    public func save(_ event: Event, eventID: String, eventDate: Date, sessionID: String) {
         self.coreData.safePerform { [weak self] isSafe, context in
             guard isSafe else {
                 AirshipLogger.error("Unable to save event: \(event). Persistent store unavailable")

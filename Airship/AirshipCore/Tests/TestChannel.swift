@@ -4,7 +4,7 @@ import Foundation
 import AirshipCore
 
 @objc(UATestChannel)
-public class TestChannel : NSObject, ChannelProtocol, UAComponent {
+public class TestChannel : NSObject, ChannelProtocol, Component {
     public var isComponentEnabled: Bool = true
     
     public var extenders: [((ChannelRegistrationPayload, @escaping (ChannelRegistrationPayload) -> Void) -> Void)] = []

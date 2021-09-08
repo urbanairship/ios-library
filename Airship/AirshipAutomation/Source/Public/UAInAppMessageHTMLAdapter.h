@@ -9,6 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * HTML in-app message display adapter.
  */
+NS_SWIFT_NAME(InAppMessageHTMLAdapter)
 @interface UAInAppMessageHTMLAdapter : NSObject <UAInAppMessageAdapterProtocol>
 
 /**

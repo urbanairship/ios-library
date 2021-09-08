@@ -38,7 +38,7 @@ class TriggerTableViewController: UITableViewController {
     public static let segueID = "TriggersSegue"
 
     /* The UAScheduleTriggers to be displayed. */
-    public var triggers : [UAScheduleTrigger]?
+    public var triggers : [ScheduleTrigger]?
 
     func setTableViewTheme() {
         tableView.backgroundColor = ThemeManager.shared.currentTheme.Background;

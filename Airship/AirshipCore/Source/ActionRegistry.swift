@@ -48,7 +48,7 @@ public class ActionRegistry : NSObject {
      */
     @objc(registerAction:names:)
     @discardableResult
-    public func register(_ action: UAAction, names: [String]) -> Bool {
+    public func register(_ action: Action, names: [String]) -> Bool {
         return register(action, names: names, predicate: nil)
     }
 
@@ -65,7 +65,7 @@ public class ActionRegistry : NSObject {
      */
     @objc(registerAction:name:)
     @discardableResult
-    public func register(_ action: UAAction, name: String) -> Bool {
+    public func register(_ action: Action, name: String) -> Bool {
         return register(action, name: name, predicate: nil)
     }
 
@@ -83,7 +83,7 @@ public class ActionRegistry : NSObject {
      */
     @objc(registerAction:name:predicate:)
     @discardableResult
-    public func register(_ action: UAAction, name: String, predicate: UAActionPredicate?) -> Bool {
+    public func register(_ action: Action, name: String, predicate: UAActionPredicate?) -> Bool {
         return register(action, names: [name], predicate: predicate)
     }
     
@@ -101,7 +101,7 @@ public class ActionRegistry : NSObject {
      */
     @objc(registerAction:names:predicate:)
     @discardableResult
-    public func register(_ action: UAAction, names: [String], predicate: UAActionPredicate?) -> Bool {
+    public func register(_ action: Action, names: [String], predicate: UAActionPredicate?) -> Bool {
         let entry = ActionRegistryEntry(action: action)
         return register(entry, names: names, predicate: predicate)
     }
@@ -173,7 +173,7 @@ public class ActionRegistry : NSObject {
     @objc(registerActionClass:names:predicate:)
     @discardableResult
     public func register(_ actionClass: AnyClass, names: [String], predicate: UAActionPredicate?) -> Bool {
-        guard actionClass is UAAction.Type else {
+        guard actionClass is Action.Type else {
             AirshipLogger.error("Unable to register an action class that isn't a subclass of UAAction.")
             return false
         }
@@ -253,7 +253,7 @@ public class ActionRegistry : NSObject {
     @discardableResult
     public func addSituationOverride(_ situation: UASituation,
                               forEntryWithName name: String,
-                              action: UAAction?) -> Bool {
+                              action: Action?) -> Bool {
         var result = false
         lock.sync {
             if let entry = registryEntry(name) {
@@ -308,7 +308,7 @@ public class ActionRegistry : NSObject {
      */
     @objc(updateAction:forEntryWithName:)
     @discardableResult
-    public func update(_ action: UAAction, forEntryWithName name: String) -> Bool {
+    public func update(_ action: Action, forEntryWithName name: String) -> Bool {
         var result = false
         lock.sync {
             if let entry = registryEntry(name) {
@@ -329,7 +329,7 @@ public class ActionRegistry : NSObject {
     @objc(updateActionClass:forEntryWithName:)
     @discardableResult
     public func update(_ actionClass: AnyClass, forEntryWithName name: String) -> Bool {
-        guard actionClass is UAAction.Type else {
+        guard actionClass is Action.Type else {
             AirshipLogger.error("Unable to register an action class that isn't a subclass of UAAction.")
             return false
         }
@@ -380,19 +380,19 @@ public class ActionRegistry : NSObject {
                 continue
             }
             
-            var predicateBlock: ((UAActionArguments) -> Bool)? = nil
+            var predicateBlock: ((ActionArguments) -> Bool)? = nil
             if let predicateClassName = actionEntry[ActionRegistry.predicateKey] as? String {
                 guard let predicateClass = NSClassFromString(predicateClassName) as? NSObject.Type else {
                     AirshipLogger.error("Unable to find class for name \(predicateClassName)")
                     continue
                 }
                 
-                guard predicateClass is UAActionPredicateProtocol.Type else {
+                guard predicateClass is ActionPredicateProtocol.Type else {
                     AirshipLogger.error("Invalid predicate for class \(predicateClassName)")
                     continue
                 }
 
-                if let predicate = predicateClass.init() as? UAActionPredicateProtocol {
+                if let predicate = predicateClass.init() as? ActionPredicateProtocol {
                     predicateBlock = { args in
                         return predicate.apply(args)
                     }
@@ -439,8 +439,8 @@ public class ActionRegistry : NSObject {
 @objc(UAActionRegistryEntry)
 public class ActionRegistryEntry : NSObject {
     internal var _actionClass: NSObject.Type?
-    internal var _situationOverrides: [UASituation : UAAction] = [:]
-    internal var _action : UAAction?
+    internal var _situationOverrides: [UASituation : Action] = [:]
+    internal var _action : Action?
 
     internal var _names: [String] = []
 
@@ -470,10 +470,10 @@ public class ActionRegistryEntry : NSObject {
      * The entry's default action..
      */
     @objc
-    public var action: UAAction {
+    public var action: Action {
         get {
             if (self._action == nil) {
-                self._action = self._actionClass?.init() as? UAAction ?? EmptyAction()
+                self._action = self._actionClass?.init() as? Action ?? EmptyAction()
             }
             return self._action!
         }
@@ -483,7 +483,7 @@ public class ActionRegistryEntry : NSObject {
         self._actionClass = actionClass
     }
     
-    init(action: UAAction) {
+    init(action: Action) {
         self._action = action
     }
     
@@ -494,7 +494,7 @@ public class ActionRegistryEntry : NSObject {
      * - Returns: The action.
      */
     @objc(actionForSituation:)
-    public func action(situation: UASituation) -> UAAction {
+    public func action(situation: UASituation) -> Action {
         return self._situationOverrides[situation] ?? self.action
     }
 }

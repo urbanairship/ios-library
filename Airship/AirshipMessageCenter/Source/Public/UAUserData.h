@@ -7,6 +7,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Model object for holding user data.
  */
+NS_SWIFT_NAME(UserData)
 @interface UAUserData : NSObject
 
 /**

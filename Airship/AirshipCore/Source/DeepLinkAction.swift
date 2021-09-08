@@ -17,9 +17,9 @@
  * Fetch result: UAActionFetchResultNoData
  */
 @objc(UADeepLinkAction)
-public class DeepLinkAction : NSObject, UAAction {
+public class DeepLinkAction : NSObject, Action {
 
-    public func acceptsArguments(_ arguments: UAActionArguments) -> Bool {
+    public func acceptsArguments(_ arguments: ActionArguments) -> Bool {
         switch (arguments.situation) {
         case .backgroundPush:
             return false
@@ -30,17 +30,17 @@ public class DeepLinkAction : NSObject, UAAction {
         }
     }
 
-    public func perform(with arguments: UAActionArguments,
+    public func perform(with arguments: ActionArguments,
                         completionHandler: @escaping UAActionCompletionHandler) {
         
         guard let url = parseURL(arguments) else {
-            completionHandler(UAActionResult.empty())
+            completionHandler(ActionResult.empty())
             return
         }
         
         Airship.shared.deepLink(url) { result in
             if (result) {
-                completionHandler(UAActionResult.empty())
+                completionHandler(ActionResult.empty())
             } else {
                 self.openURL(url, completionHandler: completionHandler)
             }
@@ -51,20 +51,20 @@ public class DeepLinkAction : NSObject, UAAction {
         UADispatcher.main.dispatchAsync {
             guard Airship.shared.urlAllowList.isAllowed(url, scope: .openURL) else {
                 AirshipLogger.error("URL \(url) not allowed. Unable to open url.")
-                completionHandler(UAActionResult(error: AirshipErrors.error("URL \(url) not allowed")))
+                completionHandler(ActionResult(error: AirshipErrors.error("URL \(url) not allowed")))
                 return
             }
             UIApplication.shared.open(url, options: [:]) { success in
                 if (success) {
-                    completionHandler(UAActionResult.empty())
+                    completionHandler(ActionResult.empty())
                 } else {
-                    completionHandler(UAActionResult(error: AirshipErrors.error("Failed to open url \(url)")))
+                    completionHandler(ActionResult(error: AirshipErrors.error("Failed to open url \(url)")))
                 }
             }
         }
     }
     
-    private func parseURL(_ arguments: UAActionArguments) -> URL? {
+    private func parseURL(_ arguments: ActionArguments) -> URL? {
         if let value = arguments.value as? String {
             return URL(string: value)
         }

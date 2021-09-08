@@ -4,7 +4,7 @@ import Foundation
 import AirshipCore
 
 @objc(UATestContact)
-public class TestContact : NSObject, ContactProtocol, UAComponent {
+public class TestContact : NSObject, ContactProtocol, Component {
     public var isComponentEnabled: Bool = true
     
     public var namedUserID: String?

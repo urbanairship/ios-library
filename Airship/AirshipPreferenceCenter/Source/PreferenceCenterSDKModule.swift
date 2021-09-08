@@ -18,7 +18,7 @@ public class PreferenceCenterSDKModule : NSObject, SDKModule {
         self.preferenceCenter = preferenceCenter
     }
    
-    public func components() -> [UAComponent] {
+    public func components() -> [Component] {
         return [self.preferenceCenter]
     }
     

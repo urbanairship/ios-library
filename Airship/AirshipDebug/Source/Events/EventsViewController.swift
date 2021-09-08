@@ -35,7 +35,7 @@ class EventsViewController:UIViewController, UITableViewDataSource, UITableViewD
 
     var detailViewController:EventsDetailTableViewController? = nil
     var totalEventsCount = 0;
-    var displayEvents = [Event]()
+    var displayEvents = [AirshipEvent]()
     let searchController = UISearchController(searchResultsController:nil)
 
     let currentSearchString:String? = nil
@@ -150,7 +150,7 @@ class EventsViewController:UIViewController, UITableViewDataSource, UITableViewD
 
     func tableView(_ tableView:UITableView, cellForRowAt indexPath:IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier:"EventCell", for:indexPath) as! EventCell
-        let event:Event
+        let event:AirshipEvent
 
         event = displayEvents[indexPath.row]
 
@@ -172,7 +172,7 @@ class EventsViewController:UIViewController, UITableViewDataSource, UITableViewD
     override func prepare(for segue:UIStoryboardSegue, sender:Any?) {
         if segue.identifier == "eventDetailSegue" {
             if let indexPath = tableView.indexPathForSelectedRow {
-                let event:Event
+                let event:AirshipEvent
                 event = displayEvents[indexPath.row]
                 let controller = segue.destination as! EventsDetailTableViewController
                 controller.event = event

@@ -56,6 +56,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * A class that holds the results of running an action, with optional metadata.
  */
+NS_SWIFT_NAME(ActionResult)
 @interface UAActionResult : NSObject
 
 ///---------------------------------------------------------------------------------------

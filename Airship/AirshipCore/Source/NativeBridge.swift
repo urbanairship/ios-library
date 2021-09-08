@@ -17,16 +17,16 @@ public class NativeBridge : NSObject, WKNavigationDelegate {
     private static let UANativeBridgeMultiCommand = "multi"
     
     @objc
-    public weak var nativeBridgeDelegate: UANativeBridgeDelegate?
+    public weak var nativeBridgeDelegate: NativeBridgeDelegate?
     
     @objc
     public weak var forwardNavigationDelegate: UANavigationDelegate?
     
     @objc
-    public weak var javaScriptCommandDelegate: UAJavaScriptCommandDelegate?
+    public weak var javaScriptCommandDelegate: JavaScriptCommandDelegate?
     
     @objc
-    public weak var nativeBridgeExtensionDelegate: UANativeBridgeExtensionDelegate?
+    public weak var nativeBridgeExtensionDelegate: NativeBridgeExtensionDelegate?
     
     private var actionHandler: NativeBridgeActionHandlerProtocol
     private var javaScriptEnvironmentFactoryBlock: () -> JavaScriptEnvironmentProtocol

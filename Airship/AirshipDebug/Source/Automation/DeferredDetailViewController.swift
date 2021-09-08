@@ -13,7 +13,7 @@ class DeferredDetailViewController: UIViewController, UITableViewDelegate, UITab
     public static let segueID = "DeferredDetailSegue"
     
     /* The UASchedule to be displayed */
-    public var schedule : UADeferredSchedule?
+    public var schedule : DeferredSchedule?
     
     var collapsedCellPaths:[IndexPath] = []
     

@@ -30,7 +30,7 @@ public protocol AnalyticsProtocol {
     /// Triggers an analytics event.
     /// - Parameter event: The event to be triggered
     @objc
-    func addEvent(_ event: UAEvent)
+    func addEvent(_ event: Event)
 
     /// Associates identifiers with the device. This call will add a special event
     /// that will be batched and sent up with our other analytics events. Previous

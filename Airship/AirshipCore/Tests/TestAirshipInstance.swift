@@ -90,17 +90,17 @@ public class TestAirshipInstance : NSObject, AirshipInstanceProtocol {
     public var locationProvider: UALocationProvider?
     
     @objc
-    public var javaScriptCommandDelegate: UAJavaScriptCommandDelegate?
+    public var javaScriptCommandDelegate: JavaScriptCommandDelegate?
     
     @objc
     public var deepLinkDelegate: DeepLinkDelegate?
     
     @objc
-    public var components: [UAComponent] = []
+    public var components: [Component] = []
     
-    private var componentMap: [String : UAComponent]  = [:]
+    private var componentMap: [String : Component]  = [:]
     
-    public func component(forClassName className: String) -> UAComponent? {
+    public func component(forClassName className: String) -> Component? {
         let key = "Class:\(className)"
         if componentMap[key] == nil {
             self.componentMap[key] = self.components.first { NSStringFromClass(type(of: $0)) == className }

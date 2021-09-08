@@ -5,6 +5,7 @@
 /**
  * Utility for getting relative date within the message center.
  */
+NS_SWIFT_NAME(MessageCenterDateUtils)
 @interface UAMessageCenterDateUtils : NSObject
 
 ///---------------------------------------------------------------------------------------

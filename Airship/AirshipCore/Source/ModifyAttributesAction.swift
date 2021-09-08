@@ -33,7 +33,7 @@
  * Fetch result: UAActionFetchResultNoData
  */
 @objc(UAModifyAttributesAction)
-public class ModifyAttributesAction : NSObject, UAAction {
+public class ModifyAttributesAction : NSObject, Action {
     
     private static let namedUserKey = "named_user"
     private static let channelsKey = "channel"
@@ -62,7 +62,7 @@ public class ModifyAttributesAction : NSObject, UAAction {
         self.contact = contact
     }
     
-    public func acceptsArguments(_ arguments: UAActionArguments) -> Bool {
+    public func acceptsArguments(_ arguments: ActionArguments) -> Bool {
         guard arguments.situation != .backgroundPush,
               let dict = arguments.value as? [String : [String : Any]] else {
             return false
@@ -81,7 +81,7 @@ public class ModifyAttributesAction : NSObject, UAAction {
         return namedUserAttributes != nil || channelAttributes != nil
     }
 
-    public func perform(with arguments: UAActionArguments, completionHandler: UAActionCompletionHandler) {
+    public func perform(with arguments: ActionArguments, completionHandler: UAActionCompletionHandler) {
         let dict = arguments.value as? [String : [String : Any]]
         if let channelAttributes = dict?[ModifyAttributesAction.channelsKey] {
             applyEdits(channelAttributes, editor: channel().editAttributes())

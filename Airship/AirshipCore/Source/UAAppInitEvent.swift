@@ -4,7 +4,7 @@
  * @note For Interrnal use only :nodoc:
  */
 @objc
-public class UAAppInitEvent : NSObject, UAEvent {
+public class UAAppInitEvent : NSObject, Event {
 
     private lazy var analytics = Airship.requireComponent(ofType: AnalyticsProtocol.self)
 

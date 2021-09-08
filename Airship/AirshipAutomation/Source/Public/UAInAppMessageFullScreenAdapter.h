@@ -8,6 +8,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Full screen in-app message display adapter.
  */
+NS_SWIFT_NAME(InAppMessageFullScreenAdapter)
 @interface UAInAppMessageFullScreenAdapter : NSObject <UAInAppMessageAdapterProtocol>
 
 /**

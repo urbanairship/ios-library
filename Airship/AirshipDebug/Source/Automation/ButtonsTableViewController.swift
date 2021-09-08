@@ -18,7 +18,7 @@ class ButtonCell: UITableViewCell {
     @IBOutlet weak var buttonID: UILabel!
     @IBOutlet weak var buttonBehavior: UILabel!
     
-    var button : UAInAppMessageButtonInfo?
+    var button : InAppMessageButtonInfo?
 
     func setCellTheme() {
         backgroundColor = ThemeManager.shared.currentTheme.Background
@@ -39,7 +39,7 @@ class ButtonsTableViewController: UITableViewController {
     public static let segueID = "ButtonsSegue"
 
     /* The UAInAppMessageButtonInfos to be displayed. */
-    public var buttons : [ UAInAppMessageButtonInfo ]?
+    public var buttons : [ InAppMessageButtonInfo ]?
 
     func setTableViewTheme() {
         tableView.backgroundColor = ThemeManager.shared.currentTheme.Background;

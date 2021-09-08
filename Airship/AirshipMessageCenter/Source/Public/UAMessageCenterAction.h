@@ -20,6 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * Result value: nil
  */
+NS_SWIFT_NAME(MessageCenterAction)
 @interface UAMessageCenterAction : NSObject<UAAction>
 
 @end

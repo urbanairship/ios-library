@@ -9,6 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  A default implementation of the UAInAppMessageDisplayCoordinator protocol. Use this class as a reference
  *  implementation, or subclass for custom implementations or coordination behavior overrides.
  */
+NS_SWIFT_NAME(InAppMessageDefaultDisplayCoordinator)
 @interface UAInAppMessageDefaultDisplayCoordinator : NSObject <UAInAppMessageDisplayCoordinator>
 
 /**

@@ -9,6 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Delegate protocol for receiving in-app scene related callbacks.
  */
+NS_SWIFT_NAME(InAppMessageSceneDelegate)
 @protocol UAInAppMessageSceneDelegate <NSObject>
 
 @optional
@@ -26,6 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  Scene manager for in-app messages.
  */
+NS_SWIFT_NAME(InAppMessageSceneManager)
 @interface UAInAppMessageSceneManager : NSObject
 
 /**

@@ -24,6 +24,7 @@ extern NSString *const UALineSpacingKey;
  * to an in-app message text component. Nil parameters are given
  * default styling.
  */
+NS_SWIFT_NAME(InAppMessageTextStyle)
 @interface UAInAppMessageTextStyle : NSObject
 
 /**

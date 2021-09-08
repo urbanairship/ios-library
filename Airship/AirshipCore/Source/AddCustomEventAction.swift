@@ -24,13 +24,13 @@
  *
  */
 @objc(UAAddCustomEventAction)
-public class AddCustomEventAction : NSObject, UAAction {
+public class AddCustomEventAction : NSObject, Action {
     
     @objc
     public static let name = "add_custom_event_action"
 
     
-    public func acceptsArguments(_ arguments: UAActionArguments) -> Bool {
+    public func acceptsArguments(_ arguments: ActionArguments) -> Bool {
         guard let dict = arguments.value as? [AnyHashable : Any] else {
             AirshipLogger.error("UAAddCustomEventAction requires a dictionary of event data.")
             return false
@@ -44,7 +44,7 @@ public class AddCustomEventAction : NSObject, UAAction {
         return true
     }
 
-    public func perform(with arguments: UAActionArguments, completionHandler: UAActionCompletionHandler) {
+    public func perform(with arguments: ActionArguments, completionHandler: UAActionCompletionHandler) {
         let dict = arguments.value as? [AnyHashable : Any]
         let eventName = parseString(dict, key: UACustomEvent.eventNameKey) ?? ""
         let eventValue = parseString(dict, key: UACustomEvent.eventValueKey)
@@ -72,10 +72,10 @@ public class AddCustomEventAction : NSObject, UAAction {
         
         if event.isValid() {
             event.track()
-            completionHandler(UAActionResult.empty())
+            completionHandler(ActionResult.empty())
         } else {
             let error = AirshipErrors.error("Invalid custom event \(arguments.value ?? "")")
-            completionHandler(UAActionResult(error: error))
+            completionHandler(ActionResult(error: error))
         }
     }
 

@@ -15,7 +15,7 @@
  * Fetch result: UAActionFetchResultNoData
  */
 @objc(UAOpenExternalURLAction)
-public class OpenExternalURLAction : NSObject, UAAction {
+public class OpenExternalURLAction : NSObject, Action {
     
     @objc
     public static let name = "open_external_url_action"
@@ -23,7 +23,7 @@ public class OpenExternalURLAction : NSObject, UAAction {
     @objc
     public static let shortName = "^u"
 
-    public func acceptsArguments(_ arguments: UAActionArguments) -> Bool {
+    public func acceptsArguments(_ arguments: ActionArguments) -> Bool {
         switch (arguments.situation) {
         case .backgroundPush:
             return false
@@ -43,23 +43,23 @@ public class OpenExternalURLAction : NSObject, UAAction {
         }
     }
     
-    public func perform(with arguments: UAActionArguments, completionHandler: @escaping UAActionCompletionHandler) {
+    public func perform(with arguments: ActionArguments, completionHandler: @escaping UAActionCompletionHandler) {
         guard let url = parseURL(arguments) else {
-            completionHandler(UAActionResult.empty())
+            completionHandler(ActionResult.empty())
             return
         }
         
         UIApplication.shared.open(url, options: [:]) { success in
             if success {
-                completionHandler(UAActionResult(value: url.absoluteString))
+                completionHandler(ActionResult(value: url.absoluteString))
             } else {
                 let error = AirshipErrors.error("Unable to open url \(url).")
-                completionHandler(UAActionResult(error: error))
+                completionHandler(ActionResult(error: error))
             }
         }
     }
 
-    func parseURL(_ arguments: UAActionArguments) -> URL? {
+    func parseURL(_ arguments: ActionArguments) -> URL? {
         if let string = arguments.value as? String {
             return URL(string: string)
         }

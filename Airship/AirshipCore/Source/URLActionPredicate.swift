@@ -4,8 +4,8 @@
  * Default predicate for URL actions.
  */
 @objc(UAURLActionPredicate)
-public class URLActionPredicate : NSObject, UAActionPredicateProtocol {
-    public func apply(_ args: UAActionArguments) -> Bool {
+public class URLActionPredicate : NSObject, ActionPredicateProtocol {
+    public func apply(_ args: ActionArguments) -> Bool {
         return args.situation != .foregroundPush
     }
 }
