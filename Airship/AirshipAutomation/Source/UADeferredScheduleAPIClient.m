@@ -4,6 +4,7 @@
 #import "UAScheduleTrigger+Internal.h"
 #import "UAInAppMessage+Internal.h"
 #import "UAStateOverrides+Internal.h"
+#import "NSDictionary+UAAdditions+Internal.h"
 
 #if __has_include("AirshipCore/AirshipCore-Swift.h")
 @import AirshipCore;

@@ -25,7 +25,7 @@ public protocol AnalyticsProtocol {
     ///
     /// For internal use only. :nodoc:
     @objc
-    var eventConsumer: UAAnalyticsEventConsumerProtocol? { get set}
+    var eventConsumer: AnalyticsEventConsumerProtocol? { get set}
 
     /// Triggers an analytics event.
     /// - Parameter event: The event to be triggered
@@ -70,6 +70,10 @@ public protocol AnalyticsProtocol {
     /// - Parameter notification: The push notification.
     @objc
     func launched(fromNotification notification: [AnyHashable : Any])
+    
+    /// For internal use only. :nodoc:
+    @objc(addAnalyticsHeadersBlock:)
+    func add(_ headerBlock: @escaping () -> [String : String]?)
 }
 
 

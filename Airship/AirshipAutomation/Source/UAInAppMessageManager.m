@@ -17,6 +17,7 @@
 #import "UARetriablePipeline+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
 #import "UAAutomationEngine+Internal.h"
+#import "NSObject+UAAdditions+Internal.h"
 
 #if __has_include("AirshipCore/AirshipCore-Swift.h")
 @import AirshipCore;

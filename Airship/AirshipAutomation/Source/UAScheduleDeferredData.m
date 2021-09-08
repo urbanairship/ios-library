@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UAScheduleDeferredData.h"
-#import "NSDictionary+UAAdditions.h"
+#import "NSDictionary+UAAdditions+Internal.h"
 
 NSString *const UAScheduleDeferredDataErrorDomain = @"com.urbanairship.deferred_schedule_data";
 static NSString *const UAScheduleDeferredDataURLKey = @"url";

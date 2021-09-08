@@ -8,9 +8,10 @@
 #import "UAInAppMessage+Internal.h"
 #import "UAScheduleEdits+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
-#import "NSDictionary+UAAdditions.h"
+#import "NSDictionary+UAAdditions+Internal.h"
 #import "UAActionSchedule.h"
 #import "UADeferredSchedule+Internal.h"
+#import "NSObject+UAAdditions+Internal.h"
 
 #if __has_include("AirshipCore/AirshipCore-Swift.h")
 @import AirshipCore;

@@ -11,5 +11,4 @@
 #import "UASDKModule.h"
 #import "UAAction.h"
 #import "UAActionPredicateProtocol.h"
-#import "NSDictionary+UAAdditions.h"
 #endif

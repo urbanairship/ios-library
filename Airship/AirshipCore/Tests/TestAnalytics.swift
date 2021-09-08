@@ -5,8 +5,10 @@ import AirshipCore
 
 @objc(UATestAnalytics)
 public class TestAnalytics : NSObject, AnalyticsProtocol, UAComponent {
-    public var isComponentEnabled: Bool = true
+ 
     
+    public var isComponentEnabled: Bool = true
+
     @objc
     public var events: [UAEvent] = []
     
@@ -19,7 +21,7 @@ public class TestAnalytics : NSObject, AnalyticsProtocol, UAComponent {
     @objc
     public var sessionID: String?
     
-    public var eventConsumer: UAAnalyticsEventConsumerProtocol?
+    public var eventConsumer: AnalyticsEventConsumerProtocol?
     
     public func addEvent(_ event: UAEvent) {
         events.append(event)
@@ -45,6 +47,6 @@ public class TestAnalytics : NSObject, AnalyticsProtocol, UAComponent {
     public func launched(fromNotification notification: [AnyHashable : Any]) {
     }
     
-    
-    
+    public func add(_ headerBlock: @escaping () -> [String : String]?) {
+    }
 }

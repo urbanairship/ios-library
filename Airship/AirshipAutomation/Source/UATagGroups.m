@@ -2,7 +2,7 @@
 
 #define kUATagGroupsTagsKey @"tags"
 
-#import "UATagGroups.h"
+#import "UATagGroups+Internal.h"
 
 @interface UATagGroups ()
 @property(nonatomic, copy) NSDictionary *tags;

@@ -2,6 +2,7 @@
 
 #import <Foundation/Foundation.h>
 #import "UAAirshipAutomationCoreImport.h"
+#import "UATagGroups+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

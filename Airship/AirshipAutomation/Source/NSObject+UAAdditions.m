@@ -1,9 +1,8 @@
 /* Copyright Airship and Contributors */
 
-#import "NSObject+UAAdditions.h"
-#import "UAGlobal.h"
+#import "NSObject+UAAdditions+Internal.h"
 #import <objc/runtime.h>
-
+#import "UAAirshipAutomationCoreImport.h"
 #if __has_include("AirshipCore/AirshipCore-Swift.h")
 #import <AirshipCore/AirshipCore-Swift.h>
 #elif __has_include("Airship/Airship-Swift.h")

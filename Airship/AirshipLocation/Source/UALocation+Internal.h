@@ -7,8 +7,8 @@
 @class UAPrivacyManager;
 @class UASystemVersion;
 @protocol UAChannelProtocol;
+@protocol UAAnalyticsProtocol;
 @class UAAnalytics;
-@protocol UAExtendableAnalyticsHeaders;
 
 
 /*
@@ -51,7 +51,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (instancetype)locationWithDataStore:(UAPreferenceDataStore *)dataStore
                               channel:(id<UAChannelProtocol>)channel
-                            analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics
+                            analytics:(id<UAAnalyticsProtocol>)analytics
                        privacyManager:(UAPrivacyManager *)privacyManager;
 
 NS_ASSUME_NONNULL_END

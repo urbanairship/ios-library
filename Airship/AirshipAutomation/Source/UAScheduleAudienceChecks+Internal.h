@@ -3,6 +3,7 @@
 #import <Foundation/Foundation.h>
 #import "UAScheduleAudience+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
+#import "UATagGroups+Internal.h"
 
 /**
  * Class for checking if the current user is a member of an in-app automation audience.

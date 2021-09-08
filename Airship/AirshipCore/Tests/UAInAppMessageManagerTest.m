@@ -10,7 +10,7 @@
 #import "UAInAppMessageAssetManager+Internal.h"
 #import "UAInAppMessageAssetCache+Internal.h"
 #import "UAInAppMessage+Internal.h"
-#import "NSObject+UAAdditions.h"
+#import "NSObject+UAAdditions+Internal.h"
 #import "AirshipTests-Swift.h"
 
 @import AirshipCore;

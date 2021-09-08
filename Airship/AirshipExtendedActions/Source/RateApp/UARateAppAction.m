@@ -24,11 +24,13 @@ NSString *const UARateAppItunesURLFormat = @"itms-apps://itunes.apple.com/app/id
 - (void)performWithArguments:(UAActionArguments *)arguments
            completionHandler:(UAActionCompletionHandler)completionHandler {
 
-    BOOL showLinkPrompt = [[arguments.value numberForKey:UARateAppShowLinkPromptKey
-                                            defaultValue:@(NO)] boolValue];
+    BOOL showLinkPrompt = [[UARateAppAction numberForKey:UARateAppShowLinkPromptKey
+                                            defaultValue:@(NO)
+                                              dictionary:arguments.value] boolValue];
 
-    NSString *itunesID = [arguments.value stringForKey:UARateAppItunesIDKey
-                                          defaultValue:UAirship.shared.config.itunesID];
+    NSString *itunesID = [UARateAppAction stringForKey:UARateAppItunesIDKey
+                                          defaultValue:UAirship.shared.config.itunesID
+                                            dictionary:arguments.value];
 
     if (showLinkPrompt) {
         [SKStoreReviewController requestReview];
@@ -80,6 +82,27 @@ NSString *const UARateAppItunesURLFormat = @"itms-apps://itunes.apple.com/app/id
         default:
             return NO;
     }
+}
+
+
++ (nullable NSNumber *)numberForKey:(NSString *)key
+                       defaultValue:(nullable NSNumber *)defaultValue
+                         dictionary:(NSDictionary *)dictionary {
+    id value = [dictionary valueForKey:key];
+    if ([value isKindOfClass:[NSNumber class]]) {
+        return value;
+    }
+    return defaultValue;
+}
+
++ (nullable NSString *)stringForKey:(NSString *)key
+                       defaultValue:(nullable NSString *)defaultValue
+                         dictionary:(NSDictionary *)dictionary {
+    id value = [dictionary valueForKey:key];
+    if ([value isKindOfClass:[NSString class]]) {
+        return value;
+    }
+    return defaultValue;
 }
 
 @end

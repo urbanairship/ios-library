@@ -2,6 +2,7 @@
 
 #import <CommonCrypto/CommonHMAC.h>
 #import "UAAuthTokenAPIClient+Internal.h"
+#import "NSDictionary+UAAdditions+Internal.h"
 
 #if __has_include("AirshipCore/AirshipCore-Swift.h")
 @import AirshipCore;

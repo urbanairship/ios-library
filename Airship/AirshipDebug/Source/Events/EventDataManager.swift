@@ -13,7 +13,7 @@ protocol EventDataManagerDelegate {
     func eventAdded()
 }
 
-class EventDataManager: NSObject, UAAnalyticsEventConsumerProtocol {
+class EventDataManager: NSObject, AnalyticsEventConsumerProtocol {
     private let eventsKey = "events"
     private let eventsNotificationName = "UAEventAdded"
 
@@ -67,8 +67,8 @@ class EventDataManager: NSObject, UAAnalyticsEventConsumerProtocol {
         batchDeleteEventsOlderThanStorageDays()
     }
 
-    @objc func eventAdded(_ event:UAEvent, identifier: String, date: Date) {
-        let event = Event(event: event, identifier:identifier, date:date)
+    @objc func eventAdded(event: UAEvent, eventID: String, eventDate: Date) {
+        let event = Event(event: event, identifier:eventID, date:eventDate)
         EventDataManager.shared.saveEvent(event)
 
         delegate?.eventAdded()

@@ -2,7 +2,7 @@
 
 #import <Foundation/Foundation.h>
 #import "UARetriable+Internal.h"
-#import "UAAsyncOperation.h"
+#import "UAAsyncOperation+Internal.h"
 
 @class UADispatcher;
 

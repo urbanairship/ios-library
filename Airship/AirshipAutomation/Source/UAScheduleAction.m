@@ -4,7 +4,7 @@
 #import "UAActionSchedule.h"
 #import "UAAirshipAutomationCoreImport.h"
 #import "UAInAppAutomation+Internal.h"
-#import "NSDictionary+UAAdditions.h"
+#import "NSDictionary+UAAdditions+Internal.h"
 
 #if __has_include("AirshipCore/AirshipCore-Swift.h")
 @import AirshipCore;

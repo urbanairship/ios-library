@@ -13,7 +13,7 @@ NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdat
 NSString *const UALocationUpdatesEnabled = @"UALocationUpdatesEnabled";
 
 @interface UALocation()
-@property (nonatomic, strong) UAAnalytics<UAExtendableAnalyticsHeaders> *analytics;
+@property (nonatomic, strong) id<UAAnalyticsProtocol> analytics;
 @property (nonatomic, strong) UAPrivacyManager *privacyManager;
 @property (nonatomic, strong) UAComponentDisableHelper *disableHelper;
 
@@ -32,7 +32,7 @@ NSString *const UALocationUpdatesEnabled = @"UALocationUpdatesEnabled";
 
 - (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore
                           channel:(id<UAChannelProtocol>)channel
-                        analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics
+                        analytics:(id<UAAnalyticsProtocol>)analytics
                    privacyManager:(UAPrivacyManager *)privacyManager {
 
     self = [super init];
@@ -98,7 +98,7 @@ NSString *const UALocationUpdatesEnabled = @"UALocationUpdatesEnabled";
 
 + (instancetype)locationWithDataStore:(UAPreferenceDataStore *)dataStore
                               channel:(id<UAChannelProtocol>)channel
-                            analytics:(UAAnalytics<UAExtendableAnalyticsHeaders> *)analytics
+                            analytics:(id<UAAnalyticsProtocol>)analytics
                        privacyManager:(UAPrivacyManager *)privacyManager{
     return [[self alloc] initWithDataStore:dataStore channel:channel analytics:analytics privacyManager:privacyManager];
 }

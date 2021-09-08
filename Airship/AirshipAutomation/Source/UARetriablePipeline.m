@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UARetriablePipeline+Internal.h"
-#import "UAAsyncOperation.h"
+#import "UAAsyncOperation+Internal.h"
 
 #if __has_include("AirshipCore/AirshipCore-Swift.h")
 @import AirshipCore;

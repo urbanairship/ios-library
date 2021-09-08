@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import "NSDictionary+UAAdditions.h"
+#import "NSDictionary+UAAdditions+Internal.h"
 
 @implementation NSDictionary (UAAdditions)
 

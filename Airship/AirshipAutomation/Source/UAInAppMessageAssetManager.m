@@ -4,7 +4,7 @@
 #import "UAInAppMessageAssetCache+Internal.h"
 #import "UAInAppMessageDefaultPrepareAssetsDelegate.h"
 #import "UAAirshipAutomationCoreImport.h"
-
+#import "UAAsyncOperation+Internal.h"
 
 @interface UAInAppMessageAssetManager()
 

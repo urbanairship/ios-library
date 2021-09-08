@@ -2,7 +2,7 @@
 
 #import "UATagSelector+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
-
+#import "UATagGroups+Internal.h"
 #if __has_include("AirshipCore/AirshipCore-Swift.h")
 @import AirshipCore;
 #elif __has_include("Airship/Airship-Swift.h")

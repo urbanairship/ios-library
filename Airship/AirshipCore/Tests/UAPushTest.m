@@ -7,7 +7,7 @@
 
 @import AirshipCore;
 
-@protocol UAPushTestAnalyticsProtocol <UAAnalyticsProtocol, UAExtendableAnalyticsHeaders>
+@protocol UAPushTestAnalyticsProtocol <UAAnalyticsProtocol>
 @end
 
 @interface UAPushTest : UABaseTest
@@ -31,7 +31,7 @@
 @property (nonatomic, copy) NSData *validAPNSDeviceToken;
 @property (nonatomic, assign) UAAuthorizationStatus authorizationStatus;
 @property (nonatomic, assign) UAAuthorizedNotificationSettings authorizedNotificationSettings;
-@property (nonatomic, copy) UAAnalyticsHeadersBlock analyticHeadersBlock;
+@property (nonatomic, copy) NSDictionary<NSString *, NSString *> * _Nullable (^analyticHeadersBlock)(void);
 @property (nonatomic, strong) UAConfig *config;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 
@@ -114,7 +114,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     [[[self.mockAnalytics stub] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:2];
-        self.analyticHeadersBlock =  (__bridge UAAnalyticsHeadersBlock)arg;
+        self.analyticHeadersBlock =  (__bridge NSDictionary<NSString *, NSString *> * _Nullable (^)(void))arg;
     }] addAnalyticsHeadersBlock:OCMOCK_ANY];
 
     self.testAppStateTracker = [[UATestAppStateTracker alloc] init];

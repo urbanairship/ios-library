@@ -22,7 +22,7 @@ public enum SDKExtension : Int {
 
 /// The UAAnalytics object provides an interface to the Airship Analytics API.
 @objc(UAAnalytics)
-public class Analytics: NSObject, UAComponent, AnalyticsProtocol, UAExtendableAnalyticsHeaders, EventManagerDelegate {
+public class Analytics: NSObject, UAComponent, AnalyticsProtocol, EventManagerDelegate {
     
     /**
      * Analytics supplier, for testing purposes. :nodoc:
@@ -65,7 +65,7 @@ public class Analytics: NSObject, UAComponent, AnalyticsProtocol, UAExtendableAn
     private var date: UADate
     private var dispatcher: UADispatcher
     private var sdkExtensions: [String]
-    private var headerBlocks: [UAAnalyticsHeadersBlock]
+    private var headerBlocks: [(() -> [String : String]?)]
     private var localeManager: LocaleManagerProtocol
     private var appStateTracker: UAAppStateTracker
     private var handledFirstForegroundTransition = false
@@ -103,7 +103,7 @@ public class Analytics: NSObject, UAComponent, AnalyticsProtocol, UAExtendableAn
     ///
     /// For internal use only. :nodoc:
     @objc
-    public var eventConsumer: UAAnalyticsEventConsumerProtocol?
+    public var eventConsumer: AnalyticsEventConsumerProtocol?
 
     private let disableHelper: ComponentDisableHelper
         
@@ -294,7 +294,7 @@ public class Analytics: NSObject, UAComponent, AnalyticsProtocol, UAExtendableAn
     // MARK: Analytics Headers
 
     @objc(addAnalyticsHeadersBlock:)
-    public func add(_ headerBlock: @escaping UAAnalyticsHeadersBlock) {
+    public func add(_ headerBlock: @escaping () -> [String : String]?) {
         self.headerBlocks.append(headerBlock)
     }
 
@@ -379,7 +379,7 @@ public class Analytics: NSObject, UAComponent, AnalyticsProtocol, UAExtendableAn
             AirshipLogger.trace("Event added: \(event)")
 
             if let eventConsumer = self.eventConsumer {
-                eventConsumer.eventAdded(event, identifier:identifier, date: date)
+                eventConsumer.eventAdded(event: event, eventID: identifier, eventDate: date)
             }
 
             if let customEvent = event as? UACustomEvent {

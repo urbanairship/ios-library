@@ -248,14 +248,14 @@ public class Push: NSObject, UAComponent, PushProtocol {
     }
 
     @objc
-    public convenience init(config: RuntimeConfig, dataStore: UAPreferenceDataStore, channel:  ChannelProtocol, analytics: AnalyticsProtocol & UAExtendableAnalyticsHeaders, privacyManager: UAPrivacyManager) {
+    public convenience init(config: RuntimeConfig, dataStore: UAPreferenceDataStore, channel:  ChannelProtocol, analytics: AnalyticsProtocol, privacyManager: UAPrivacyManager) {
         self.init(config: config, dataStore: dataStore, channel: channel, analytics: analytics, appStateTracker: UAAppStateTracker.shared, notificationCenter: NotificationCenter.default, pushRegistration: UAAPNSRegistration(), application: UIApplication.shared, dispatcher: UADispatcher.main, privacyManager: privacyManager)
     }
 
     // MARK: - Initialization
 
     @objc
-    public init(config: RuntimeConfig, dataStore: UAPreferenceDataStore, channel:  ChannelProtocol, analytics: AnalyticsProtocol & UAExtendableAnalyticsHeaders, appStateTracker: UAAppStateTracker, notificationCenter: NotificationCenter, pushRegistration: APNSRegistrationProtocol,  application: UIApplication, dispatcher: UADispatcher, privacyManager: UAPrivacyManager) {
+    public init(config: RuntimeConfig, dataStore: UAPreferenceDataStore, channel:  ChannelProtocol, analytics: AnalyticsProtocol, appStateTracker: UAAppStateTracker, notificationCenter: NotificationCenter, pushRegistration: APNSRegistrationProtocol,  application: UIApplication, dispatcher: UADispatcher, privacyManager: UAPrivacyManager) {
         self.config = config
         self.application = application
         self.dispatcher = dispatcher
