@@ -45,8 +45,8 @@ public class PreferenceCenter : NSObject, Component {
     @objc
     public weak var openDelegate: PreferenceCenterOpenDelegate?
     
-    private let dataStore: UAPreferenceDataStore
-    private let privacyManager: UAPrivacyManager
+    private let dataStore: PreferenceDataStore
+    private let privacyManager: PrivacyManager
     private let remoteDataProvider: RemoteDataProvider
     
     private var viewController : UIViewController?
@@ -69,7 +69,7 @@ public class PreferenceCenter : NSObject, Component {
         }
     }
     
-    init(dataStore: UAPreferenceDataStore, privacyManager: UAPrivacyManager, remoteDataProvider: RemoteDataProvider) {
+    init(dataStore: PreferenceDataStore, privacyManager: PrivacyManager, remoteDataProvider: RemoteDataProvider) {
         self.dataStore = dataStore
         self.privacyManager = privacyManager
         self.remoteDataProvider = remoteDataProvider
@@ -119,7 +119,7 @@ public class PreferenceCenter : NSObject, Component {
         
         navController.pushViewController(preferenceCenterVC, animated: false)
         
-        UAUtils.topController()?.present(navController, animated: true, completion: {
+        Utils.topController()?.present(navController, animated: true, completion: {
             AirshipLogger.trace("Presented preference center view controller: \(preferenceCenterVC.description)")
         })
     }
@@ -144,7 +144,7 @@ public class PreferenceCenter : NSObject, Component {
      */
     @objc(configForPreferenceCenterID:completionHandler:)
     @discardableResult
-    public func config(preferenceCenterID: String, completionHandler: @escaping (PreferenceCenterConfig?) -> ()) -> UADisposable {
+    public func config(preferenceCenterID: String, completionHandler: @escaping (PreferenceCenterConfig?) -> ()) -> Disposable {
         return self.remoteDataProvider.subscribe(types: [PreferenceCenter.payloadType]) { payloads in
             
             guard let preferences = payloads.first?.data[PreferenceCenter.preferenceFormsKey] as? [[AnyHashable : Any]] else {

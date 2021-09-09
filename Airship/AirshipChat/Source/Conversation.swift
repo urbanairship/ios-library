@@ -100,11 +100,11 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
     private static let uvpRetryDelay : Double = 30
     private static let chatReconnectionDelay : Double = 10
 
-    private let dataStore : UAPreferenceDataStore
+    private let dataStore : PreferenceDataStore
     private let chatConfig: ChatConfig
 
     private let channel: AirshipChannel
-    private let appStateTracker: UAAppStateTracker
+    private let appStateTracker: AppStateTracker
     private let client: ChatAPIClientProtocol
     private let dispatcher: UADispatcher
     private var chatConnection: ChatConnectionProtocol
@@ -137,7 +137,7 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
     @objc
     weak var delegate: ConversationDelegate?
 
-    convenience init(dataStore: UAPreferenceDataStore,
+    convenience init(dataStore: PreferenceDataStore,
                      chatConfig: ChatConfig,
                      channel: AirshipChannel) {
         self.init(dataStore: dataStore,
@@ -148,13 +148,13 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
                   chatDAO: ChatDAO(config: chatConfig))
     }
 
-    init(dataStore: UAPreferenceDataStore,
+    init(dataStore: PreferenceDataStore,
          chatConfig: ChatConfig,
          channel: AirshipChannel,
          client: ChatAPIClientProtocol,
          chatConnection: ChatConnectionProtocol,
          chatDAO: ChatDAOProtocol,
-         appStateTracker: UAAppStateTracker = UAAppStateTracker.shared,
+         appStateTracker: AppStateTracker = AppStateTracker.shared,
          dispatcher: UADispatcher = UADispatcher.serial(),
          notificationCenter: NotificationCenter = NotificationCenter.default) {
 
@@ -172,13 +172,13 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
         notificationCenter.addObserver(
             self,
             selector: #selector(self.onBackground),
-            name: UAAppStateTracker.didTransitionToBackground,
+            name: AppStateTracker.didTransitionToBackground,
             object: nil)
 
         notificationCenter.addObserver(
             self,
             selector: #selector(self.onForeground),
-            name: UAAppStateTracker.didTransitionToForeground,
+            name: AppStateTracker.didTransitionToForeground,
             object: nil)
         
         notificationCenter.addObserver(
@@ -315,10 +315,10 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
                 return
             }
             var shouldOpen = false
-            if (open || !self.isPendingSent || (self.shouldConnect && self.appStateTracker.state == UAApplicationState.active)) {
+            if (open || !self.isPendingSent || (self.shouldConnect && self.appStateTracker.state == ApplicationState.active)) {
                 shouldOpen = true
             } else {
-                let semaphore = UASemaphore()
+                let semaphore = Semaphore()
                 self.chatDAO.hasPendingMessages { (result) in
                     shouldOpen = result
                     semaphore.signal()
@@ -396,7 +396,7 @@ class Conversation : InternalConversationProtocol, ChatConnectionDelegate {
 
     private func syncPending() {
         self.dispatcher.dispatchAsync {
-            let semaphore = UASemaphore()
+            let semaphore = Semaphore()
             var pendingCopy: [(String, String?, URL?, UInt, Date?)]? = nil
 
             self.chatDAO.fetchPending { pending in

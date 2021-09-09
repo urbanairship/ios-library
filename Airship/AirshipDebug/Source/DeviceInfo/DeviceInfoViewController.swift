@@ -403,7 +403,7 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             }
         case sdkVersion:
             cell.title.text = "ua_device_info_sdk_version".localized()
-            cell.subtitle?.text = UAirshipVersion.get()
+            cell.subtitle?.text = AirshipVersion.get()
         case localeInfo:
             cell.title.text = "ua_device_info_locale".localized()
             cell.subtitle?.text = NSLocale.autoupdatingCurrent.identifier

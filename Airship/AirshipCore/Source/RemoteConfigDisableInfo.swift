@@ -4,13 +4,13 @@
 class RemoteConfigDisableInfo {
     
     let disableModules: [RemoteConfigModule]
-    let appVersionConstraint: UAJSONPredicate?
-    let sdkVersionConstraints: [UAVersionMatcher]
+    let appVersionConstraint: JSONPredicate?
+    let sdkVersionConstraints: [VersionMatcher]
     let remoteDataRefreshInterval: TimeInterval?
 
     init(disableModules: [RemoteConfigModule],
-         sdkVersionConstraints: [UAVersionMatcher],
-         appVersionConstraint: UAJSONPredicate?,
+         sdkVersionConstraints: [VersionMatcher],
+         appVersionConstraint: JSONPredicate?,
          remoteDataRefreshInterval: TimeInterval?) {
         self.disableModules = disableModules
         self.sdkVersionConstraints = sdkVersionConstraints
@@ -33,24 +33,24 @@ class RemoteConfigDisableInfo {
         }
         
         // App version constraint predicate
-        var appVersionConstraint: UAJSONPredicate?
+        var appVersionConstraint: JSONPredicate?
         if let versionConstraintJSON = json["app_versions"] {
             do {
-                appVersionConstraint = try UAJSONPredicate(json: versionConstraintJSON)
+                appVersionConstraint = try JSONPredicate(json: versionConstraintJSON)
             } catch {
                 AirshipLogger.error("Invalid disableInfo: \(json) error: \(error)")
             }
         }
         
         // SDK version constraint predicate
-        var sdkVersionConstraints: [UAVersionMatcher]?
+        var sdkVersionConstraints: [VersionMatcher]?
         if let sdkVersionConstraintsJSON = json["sdk_versions"] {
             guard let array = sdkVersionConstraintsJSON as? [String] else {
                 AirshipLogger.error("Invalid disableInfo: \(json)")
                 return nil
             }
             
-            sdkVersionConstraints = array.compactMap { UAVersionMatcher(versionConstraint: $0)}
+            sdkVersionConstraints = array.compactMap { VersionMatcher(versionConstraint: $0)}
         }
  
         var remoteDataRefreshInterval: TimeInterval?

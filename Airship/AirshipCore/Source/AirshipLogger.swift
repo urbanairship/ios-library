@@ -7,6 +7,7 @@ import os
  * Airship logger.
  * @note For internal use only. :nodoc:
  */
+@objc(UAAirshipLogger)
 public class AirshipLogger : NSObject {
 
     static var logLevel: LogLevel = .error

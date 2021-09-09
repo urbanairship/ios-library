@@ -42,15 +42,15 @@ class MockDispatcher: UADispatcher {
         block()
     }
 
-    override func dispatch(after delay: TimeInterval, block: @escaping () -> Void) -> UADisposable {
+    override func dispatch(after delay: TimeInterval, block: @escaping () -> Void) -> Disposable {
         guard delay > 0 else {
             block()
-            return UADisposable()
+            return Disposable()
         }
 
         let entry = Entry(time: currentTime + delay, block: block)
         self.pending.append(entry)
-        return UADisposable() {
+        return Disposable() {
             self.pending = self.pending.filter { $0 !== entry }
         }
     }

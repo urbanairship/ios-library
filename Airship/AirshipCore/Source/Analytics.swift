@@ -57,17 +57,17 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
     public static let screenTracked = NSNotification.Name("UAScreenTracked")
 
     private var config: RuntimeConfig
-    private var dataStore: UAPreferenceDataStore
+    private var dataStore: PreferenceDataStore
     private var channel: ChannelProtocol
     private var eventManager: EventManagerProtocol
-    private var privacyManager: UAPrivacyManager
+    private var privacyManager: PrivacyManager
     private var notificationCenter: NotificationCenter
-    private var date: UADate
+    private var date: DateUtils
     private var dispatcher: UADispatcher
     private var sdkExtensions: [String]
     private var headerBlocks: [(() -> [String : String]?)]
     private var localeManager: LocaleManagerProtocol
-    private var appStateTracker: UAAppStateTracker
+    private var appStateTracker: AppStateTracker
     private var handledFirstForegroundTransition = false
 
     // Screen tracking state
@@ -123,15 +123,15 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
     ///   - dataStore: The shared preference data store.
     ///   - channel: The channel instance.
     ///   - localeManager: A UALocaleManager.
-    ///   - privacyManager: A UAPrivacyManager.
+    ///   - privacyManager: A PrivacyManager.
     /// - Returns: A new analytics instance.
     @objc
     public convenience init(
         config: RuntimeConfig,
-        dataStore: UAPreferenceDataStore,
+        dataStore: PreferenceDataStore,
         channel: ChannelProtocol,
         localeManager: LocaleManagerProtocol,
-        privacyManager: UAPrivacyManager
+        privacyManager: PrivacyManager
     ) {
         self.init(
                     config: config,
@@ -139,10 +139,10 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
                     channel: channel,
                     eventManager: EventManager(config: config, dataStore: dataStore, channel: channel),
                     notificationCenter: NotificationCenter.default,
-                    date: UADate(),
+                    date: DateUtils(),
                     dispatcher: UADispatcher.main,
                     localeManager: localeManager,
-                    appStateTracker: UAAppStateTracker.shared,
+                    appStateTracker: AppStateTracker.shared,
                     privacyManager: privacyManager)
     }
 
@@ -154,7 +154,7 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
     ///   - channel: The channel instance.
     ///   - eventManager: The event manager.
     ///   - notificationCenter: The notification center.
-    ///   - date: A UADate instance.
+    ///   - date: A DateUtils instance.
     ///   - dispatcher: The dispatcher.
     ///   - localeManager: The locale manager.
     ///   - appStateTracker: The app state tracker.
@@ -163,15 +163,15 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
     @objc
     public init(
         config: RuntimeConfig,
-        dataStore: UAPreferenceDataStore,
+        dataStore: PreferenceDataStore,
         channel: ChannelProtocol,
         eventManager: EventManagerProtocol,
         notificationCenter: NotificationCenter,
-        date: UADate,
+        date: DateUtils,
         dispatcher: UADispatcher,
         localeManager: LocaleManagerProtocol,
-        appStateTracker: UAAppStateTracker,
-        privacyManager: UAPrivacyManager
+        appStateTracker: AppStateTracker,
+        privacyManager: PrivacyManager
     ) {
         self.config = config
         self.dataStore = dataStore
@@ -203,31 +203,31 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
         self.notificationCenter.addObserver(
             self,
             selector: #selector(applicationDidTransitionToForeground),
-            name: UAAppStateTracker.didTransitionToForeground,
+            name: AppStateTracker.didTransitionToForeground,
             object: nil)
 
         self.notificationCenter.addObserver(
             self,
             selector: #selector(applicationWillEnterForeground),
-            name: UAAppStateTracker.willEnterForegroundNotification,
+            name: AppStateTracker.willEnterForegroundNotification,
             object: nil)
 
         self.notificationCenter.addObserver(
             self,
             selector: #selector(applicationDidEnterBackground),
-            name: UAAppStateTracker.didEnterBackgroundNotification,
+            name: AppStateTracker.didEnterBackgroundNotification,
             object: nil)
 
         self.notificationCenter.addObserver(
             self,
             selector: #selector(applicationWillTerminate),
-            name: UAAppStateTracker.willTerminateNotification,
+            name: AppStateTracker.willTerminateNotification,
             object: nil)
 
         self.notificationCenter.addObserver(
             self,
             selector: #selector(onEnabledFeaturesChanged),
-            name: UAPrivacyManager.changeEvent,
+            name: PrivacyManager.changeEvent,
             object: nil)
 
 
@@ -256,7 +256,7 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
         startSession()
 
         // Add app_foreground event
-        self.addEvent(UAAppForegroundEvent())
+        self.addEvent(AppForegroundEvent())
     }
 
     @objc
@@ -277,7 +277,7 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
         ensureInit()
 
         // Add app_background event
-        self.addEvent(UAAppBackgroundEvent())
+        self.addEvent(AppBackgroundEvent())
 
         startSession()
         conversionSendID = nil
@@ -305,14 +305,14 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
         // Device info
         headers["X-UA-Device-Family"] = UIDevice.current.systemName
         headers["X-UA-OS-Version"] = UIDevice.current.systemVersion
-        headers["X-UA-Device-Model"] = UAUtils.deviceModelName()
+        headers["X-UA-Device-Model"] = Utils.deviceModelName()
 
         // App info
         if let infoDictionary  = Bundle.main.infoDictionary {
             headers["X-UA-Package-Name"] = infoDictionary[kCFBundleIdentifierKey as String] as? String
         }
 
-        headers["X-UA-Package-Version"] = UAUtils.bundleShortVersionString() ?? ""
+        headers["X-UA-Package-Version"] = Utils.bundleShortVersionString() ?? ""
 
         // Time zone
         let currentLocale = self.localeManager.currentLocale
@@ -326,7 +326,7 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
         headers["X-UA-App-Key"] = self.config.appKey
 
         // SDK Version
-        headers["X-UA-Lib-Version"] = UAirshipVersion.get()
+        headers["X-UA-Lib-Version"] = AirshipVersion.get()
 
         // SDK Extensions
         if self.sdkExtensions.count > 0 {
@@ -382,11 +382,11 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
                 eventConsumer.eventAdded(event: event, eventID: identifier, eventDate: date)
             }
 
-            if let customEvent = event as? UACustomEvent {
+            if let customEvent = event as? CustomEvent {
                 self.notificationCenter.post(name: Analytics.customEventAdded, object: self, userInfo: [Analytics.eventKey : customEvent])
             }
 
-            if let regionEvent = event as? UARegionEvent {
+            if let regionEvent = event as? RegionEvent {
                 self.notificationCenter.post(name: Analytics.regionEventAdded, object: self, userInfo: [Analytics.eventKey : regionEvent])
             }
         }
@@ -400,7 +400,7 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
     ///
     /// - Parameter associatedIdentifiers: The associated identifiers.
     @objc
-    public func associateDeviceIdentifiers(_ associatedIdentifiers: UAAssociatedIdentifiers) {
+    public func associateDeviceIdentifiers(_ associatedIdentifiers: AssociatedIdentifiers) {
         guard self.isAnalyticsEnabled else {
             AirshipLogger.warn("Unable to associate identifiers \(associatedIdentifiers.allIDs) when analytics is disabled")
             return
@@ -415,7 +415,7 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
 
         self.dataStore.setObject(associatedIdentifiers.allIDs, forKey: Analytics.associatedIdentifiers)
 
-        if let event = UAAssociateIdentifiersEvent(identifiers: associatedIdentifiers) {
+        if let event = AssociateIdentifiersEvent(identifiers: associatedIdentifiers) {
             self.addEvent(event)
         }
     }
@@ -423,9 +423,9 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
     /// The device's current associated identifiers.
     /// - Returns: The device's current associated identifiers.
     @objc
-    public func currentAssociatedDeviceIdentifiers() -> UAAssociatedIdentifiers {
+    public func currentAssociatedDeviceIdentifiers() -> AssociatedIdentifiers {
         let storedIDs = self.dataStore.object(forKey: Analytics.associatedIdentifiers) as? [String : String]
-        return UAAssociatedIdentifiers(dictionary: storedIDs != nil ? storedIDs : [:])
+        return AssociatedIdentifiers(dictionary: storedIDs != nil ? storedIDs : [:])
     }
 
     /// Initiates screen tracking for a specific app screen, must be called once per tracked screen.
@@ -442,7 +442,7 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
 
             // If there's a screen currently being tracked set it's stop time and add it to analytics
             if let currentScreen = self.currentScreen {
-                guard let ste = UAScreenTrackingEvent(screen: currentScreen, previousScreen: self.previousScreen, startTime: self.startTime, stopTime: self.date.now.timeIntervalSince1970) else {
+                guard let ste = ScreenTrackingEvent(screen: currentScreen, previousScreen: self.previousScreen, startTime: self.startTime, stopTime: self.date.now.timeIntervalSince1970) else {
                     AirshipLogger.error("Unable to create screen tracking event")
                     return
                 }
@@ -483,7 +483,7 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
     /// - Parameter notification: The push notification.
     @objc
     public func launched(fromNotification notification: [AnyHashable : Any]) {
-        if  UAUtils.isAlertingPush(notification) {
+        if  Utils.isAlertingPush(notification) {
             let sendID = notification["_"] as? String
             self.conversionSendID = sendID != nil ? sendID : Analytics.missingSendID
             self.conversionPushMetadata = notification[Analytics.pushMetadata] as? String
@@ -545,7 +545,7 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
     private func ensureInit() {
         lock.sync {
             if !self.initialized {
-                self.addEvent(UAAppInitEvent())
+                self.addEvent(AppInitEvent())
                 self.initialized = true
             }
         }
@@ -554,7 +554,7 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
 
 extension Analytics : InternalAnalyticsProtocol {
     func onDeviceRegistration() {
-        addEvent(UADeviceRegistrationEvent())
+        addEvent(DeviceRegistrationEvent())
     }
     
     @available(tvOS, unavailable)
@@ -571,7 +571,7 @@ extension Analytics : InternalAnalyticsProtocol {
                 self.launched(fromNotification: userInfo)
             }
             
-            let event = UAInteractiveNotificationEvent(action: action,
+            let event = InteractiveNotificationEvent(action: action,
                                                        category: categoryID,
                                                        notification: userInfo,
                                                        responseText: responseText)

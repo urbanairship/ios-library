@@ -36,7 +36,7 @@ public class AddCustomEventAction : NSObject, Action {
             return false
         }
         
-        guard dict[UACustomEvent.eventNameKey] is String else {
+        guard dict[CustomEvent.eventNameKey] is String else {
             AirshipLogger.error("UAAddCustomEventAction requires an event name in the event data.")
             return false
         }
@@ -46,14 +46,14 @@ public class AddCustomEventAction : NSObject, Action {
 
     public func perform(with arguments: ActionArguments, completionHandler: UAActionCompletionHandler) {
         let dict = arguments.value as? [AnyHashable : Any]
-        let eventName = parseString(dict, key: UACustomEvent.eventNameKey) ?? ""
-        let eventValue = parseString(dict, key: UACustomEvent.eventValueKey)
-        let interactionID = parseString(dict, key: UACustomEvent.eventInteractionIDKey)
-        let interactionType = parseString(dict, key: UACustomEvent.eventInteractionTypeKey)
-        let transactionID = parseString(dict, key: UACustomEvent.eventTransactionIDKey)
-        let properties = dict?[UACustomEvent.eventPropertiesKey] as? [String : Any]
+        let eventName = parseString(dict, key: CustomEvent.eventNameKey) ?? ""
+        let eventValue = parseString(dict, key: CustomEvent.eventValueKey)
+        let interactionID = parseString(dict, key: CustomEvent.eventInteractionIDKey)
+        let interactionType = parseString(dict, key: CustomEvent.eventInteractionTypeKey)
+        let transactionID = parseString(dict, key: CustomEvent.eventTransactionIDKey)
+        let properties = dict?[CustomEvent.eventPropertiesKey] as? [String : Any]
 
-        let event = UACustomEvent(name: eventName, stringValue: eventValue)
+        let event = CustomEvent(name: eventName, stringValue: eventValue)
         
         event.transactionID = transactionID
         event.properties = properties ?? [:]

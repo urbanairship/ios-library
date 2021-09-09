@@ -93,7 +93,7 @@ public class JavaScriptEnvironment : NSObject, JavaScriptEnvironmentProtocol {
             js = js.appending(ext)
         }
         
-        guard let path =  UAirshipCoreResources.bundle.path(forResource: "UANativeBridge", ofType: "") else {
+        guard let path =  AirshipCoreResources.bundle.path(forResource: "UANativeBridge", ofType: "") else {
             AirshipLogger.impError("UANativeBridge resource file is missing.")
             return js
         }

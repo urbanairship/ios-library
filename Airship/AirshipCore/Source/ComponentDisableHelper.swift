@@ -7,7 +7,7 @@ import Foundation
 public class ComponentDisableHelper : NSObject {
     @objc
     public var onChange: (() -> Void)?
-    private let dataStore: UAPreferenceDataStore
+    private let dataStore: PreferenceDataStore
     private let key: String
     
     @objc
@@ -25,7 +25,7 @@ public class ComponentDisableHelper : NSObject {
     }
     
     @objc
-    public init(dataStore: UAPreferenceDataStore, className: String) {
+    public init(dataStore: PreferenceDataStore, className: String) {
         self.dataStore = dataStore
         self.key = "UAComponent.\(className).enabled"
     }

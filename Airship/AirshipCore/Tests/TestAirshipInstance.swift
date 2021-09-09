@@ -31,9 +31,9 @@ public class TestAirshipInstance : NSObject, AirshipInstanceProtocol {
         }
     }
     
-    private var _applicationMetrics: UAApplicationMetrics?
+    private var _applicationMetrics: ApplicationMetrics?
     @objc
-    public var applicationMetrics: UAApplicationMetrics  {
+    public var applicationMetrics: ApplicationMetrics  {
         get {
             return _applicationMetrics!
         }
@@ -75,9 +75,9 @@ public class TestAirshipInstance : NSObject, AirshipInstanceProtocol {
         }
     }
 
-    private var _privacyManager: UAPrivacyManager?
+    private var _privacyManager: PrivacyManager?
     @objc
-    public var privacyManager: UAPrivacyManager  {
+    public var privacyManager: PrivacyManager  {
         get {
             return _privacyManager!
         }

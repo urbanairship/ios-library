@@ -11,7 +11,7 @@ class ContactAPIClientTest: XCTestCase {
     var contactAPIClient: ContactAPIClient!
 
     override func setUpWithError() throws {
-        self.config = RuntimeConfig(config: Config(), dataStore: UAPreferenceDataStore(keyPrefix: UUID().uuidString))
+        self.config = RuntimeConfig(config: Config(), dataStore: PreferenceDataStore(keyPrefix: UUID().uuidString))
         self.session = TestRequestSession.init()
         self.session.response = HTTPURLResponse(url: URL(string: "https://contacts_test")!,
                                            statusCode: 200,
@@ -108,7 +108,7 @@ class ContactAPIClientTest: XCTestCase {
         XCTAssertEqual("https://device-api.urbanairship.com/api/contacts/some-contact-id", request.url!.absoluteString)
         
         let body = try JSONSerialization.jsonObject(with: request.body!, options: [])
-        let formattedDate = UAUtils.isoDateFormatterUTCWithDelimiter().string(from: date)
+        let formattedDate = Utils.isoDateFormatterUTCWithDelimiter().string(from: date)
         let expectedBody : Any = [
             "attributes" : [
                 [

@@ -109,16 +109,16 @@ public class Contact : NSObject, Component, ContactProtocol {
     @objc
     public static let maxNamedUserIDLength = 128
 
-    private let dataStore: UAPreferenceDataStore
+    private let dataStore: PreferenceDataStore
     private let config: RuntimeConfig
-    private let privacyManager: UAPrivacyManager
+    private let privacyManager: PrivacyManager
     private let channel: ChannelProtocol
     private let contactAPIClient: ContactsAPIClientProtocol
     private let taskManager: TaskManagerProtocol
     private let dispatcher = UADispatcher.serial()
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
-    private let date : UADate
+    private let date : DateUtils
     private let notificationCenter: NotificationCenter
 
     @objc
@@ -246,14 +246,14 @@ public class Contact : NSObject, Component, ContactProtocol {
      * Internal only
      * :nodoc:
      */
-    init(dataStore: UAPreferenceDataStore,
+    init(dataStore: PreferenceDataStore,
          config: RuntimeConfig,
          channel: ChannelProtocol,
-         privacyManager: UAPrivacyManager,
+         privacyManager: PrivacyManager,
          contactAPIClient: ContactsAPIClientProtocol,
          taskManager: TaskManagerProtocol,
          notificationCenter: NotificationCenter = NotificationCenter.default,
-         date: UADate = UADate()) {
+         date: DateUtils = DateUtils()) {
         
         self.dataStore = dataStore
         self.config = config
@@ -287,7 +287,7 @@ public class Contact : NSObject, Component, ContactProtocol {
         self.notificationCenter.addObserver(
             self,
             selector: #selector(didBecomeActive),
-            name: UAAppStateTracker.didBecomeActiveNotification,
+            name: AppStateTracker.didBecomeActiveNotification,
             object: nil)
 
         self.notificationCenter.addObserver(
@@ -299,7 +299,7 @@ public class Contact : NSObject, Component, ContactProtocol {
         self.notificationCenter.addObserver(
             self,
             selector: #selector(checkPrivacyManager),
-            name: UAPrivacyManager.changeEvent,
+            name: PrivacyManager.changeEvent,
             object: nil)
         
         self.checkPrivacyManager()
@@ -311,16 +311,16 @@ public class Contact : NSObject, Component, ContactProtocol {
      * :nodoc:
      */
     @objc
-    public convenience init(dataStore: UAPreferenceDataStore,
+    public convenience init(dataStore: PreferenceDataStore,
                             config: RuntimeConfig,
                             channel: Channel,
-                            privacyManager: UAPrivacyManager) {
+                            privacyManager: PrivacyManager) {
         self.init(dataStore: dataStore,
                   config: config,
                   channel: channel,
                   privacyManager: privacyManager,
                   contactAPIClient: ContactAPIClient(config: config),
-                  taskManager: UATaskManager.shared)
+                  taskManager: TaskManager.shared)
     }
 
     @objc
@@ -453,10 +453,10 @@ public class Contact : NSObject, Component, ContactProtocol {
     }
 
     private func enqueueTask() {
-        self.taskManager.enqueueRequest(taskID: Contact.updateTaskID, options: UATaskRequestOptions.defaultOptions)
+        self.taskManager.enqueueRequest(taskID: Contact.updateTaskID, options: TaskRequestOptions.defaultOptions)
     }
     
-    private func handleUpdateTask(task: UATask) {
+    private func handleUpdateTask(task: Task) {
         guard let channelID = self.channel.identifier else {
             task.taskCompleted()
             return
@@ -467,7 +467,7 @@ public class Contact : NSObject, Component, ContactProtocol {
             return
         }
         
-        let semaphore = UASemaphore()
+        let semaphore = Semaphore()
         
         let disposable = self.performOperation(operation: operation, channelID: channelID) { response in
             if let response = response {
@@ -494,7 +494,7 @@ public class Contact : NSObject, Component, ContactProtocol {
         semaphore.wait()
     }
     
-    private func performOperation(operation: ContactOperation, channelID: String, completionHandler: @escaping (UAHTTPResponse?) -> Void) -> UADisposable? {
+    private func performOperation(operation: ContactOperation, channelID: String, completionHandler: @escaping (HTTPResponse?) -> Void) -> Disposable? {
         switch(operation.type) {
         case .update:
             guard let contactInfo = self.lastContactInfo else {
@@ -627,7 +627,7 @@ public class Contact : NSObject, Component, ContactProtocol {
         }
     }
     
-    private class func logOperationResult(operation: ContactOperation, response: UAHTTPResponse?, error: Error?) {
+    private class func logOperationResult(operation: ContactOperation, response: HTTPResponse?, error: Error?) {
         if let error = error {
             AirshipLogger.debug("Contact update for operation: \(operation) failed with error: \(error)")
         } else if let response = response {

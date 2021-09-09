@@ -15,7 +15,7 @@ import Airship
  * media info block. It is used to display the details of headings,
  * bodies and button labels.
  */
-class MediaInfoDetailViewController: UAStaticTableViewController {
+class MediaInfoDetailViewController: StaticTableViewController {
     public static let segueID = "MediaSegue"
     
     /* The UAInAppMessageMediaInfo to be displayed. */

@@ -2,7 +2,7 @@ import Foundation
 import AirshipCore
 
 @objc(UATestSystemVersion)
-public class TestSystemVersion : UASystemVersion {
+public class TestSystemVersion : SystemVersion {
 
     @objc
     public var systemVersionOverride : String = "999.999.999"

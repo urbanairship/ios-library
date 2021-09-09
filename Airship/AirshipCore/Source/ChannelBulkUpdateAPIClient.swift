@@ -7,7 +7,7 @@ protocol ChannelBulkUpdateAPIClientProtocol {
                 subscriptionListUpdates: [SubscriptionListUpdate]?,
                 tagGroupUpdates: [TagGroupUpdate]?,
                 attributeUpdates: [AttributeUpdate]?,
-                completionHandler: @escaping (UAHTTPResponse?, Error?) -> Void) -> UADisposable;
+                completionHandler: @escaping (HTTPResponse?, Error?) -> Void) -> Disposable;
 }
 
 // NOTE: For internal use only. :nodoc:
@@ -15,29 +15,29 @@ class ChannelBulkUpdateAPIClient : ChannelBulkUpdateAPIClientProtocol {
     private static let path = "/api/channels/sdk/batch/"
 
     private var config: RuntimeConfig
-    private var session: UARequestSession
+    private var session: RequestSession
 
-    init(config: RuntimeConfig, session: UARequestSession) {
+    init(config: RuntimeConfig, session: RequestSession) {
         self.config = config
         self.session = session
     }
     
     convenience init(config: RuntimeConfig) {
-        self.init(config: config, session: UARequestSession(config: config))
+        self.init(config: config, session: RequestSession(config: config))
     }
 
     @discardableResult
     func update(channelID: String, subscriptionListUpdates: [SubscriptionListUpdate]?,
                 tagGroupUpdates: [TagGroupUpdate]?,
                 attributeUpdates: [AttributeUpdate]?,
-                completionHandler: @escaping (UAHTTPResponse?, Error?) -> Void) -> UADisposable {
+                completionHandler: @escaping (HTTPResponse?, Error?) -> Void) -> Disposable {
         
         let url = buildURL(channelID: channelID)
         let payload = buildPayload(subscriptionListUpdates: subscriptionListUpdates, tagGroupUpdates: tagGroupUpdates, attributeUpdates: attributeUpdates)
         
         AirshipLogger.debug("Updating channel with url \(url?.absoluteString ?? "") payload \(payload)")
 
-        let request = UARequest(builderBlock: { [self] builder in
+        let request = Request(builderBlock: { [self] builder in
             builder.method = "PUT"
             builder.url = url
             builder.username = config.appKey
@@ -55,7 +55,7 @@ class ChannelBulkUpdateAPIClient : ChannelBulkUpdateAPIClientProtocol {
             }
 
             AirshipLogger.debug("Update finished with response: \(response)")
-            completionHandler(UAHTTPResponse(status: response.statusCode), nil)
+            completionHandler(HTTPResponse(status: response.statusCode), nil)
         })
     }
     
@@ -111,7 +111,7 @@ class ChannelBulkUpdateAPIClient : ChannelBulkUpdateAPIClientProtocol {
             var payload: [AnyHashable : Any] = [
                 "action": action,
                 "key": attribute.attribute,
-                "timestamp": UAUtils.isoDateFormatterUTCWithDelimiter().string(from: attribute.date)
+                "timestamp": Utils.isoDateFormatterUTCWithDelimiter().string(from: attribute.date)
             ]
             
             if let value = attribute.value() {

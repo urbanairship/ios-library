@@ -7,9 +7,9 @@ class DefaultAppIntegrationDelegate : NSObject, AppIntegrationDelegate {
     
     let push: InternalPushProtocol
     let analytics: InternalAnalyticsProtocol
-    let pushableComponents: [UAPushableComponent]
+    let pushableComponents: [PushableComponent]
     
-    init(push: InternalPushProtocol, analytics: InternalAnalyticsProtocol, pushableComponents: [UAPushableComponent]) {
+    init(push: InternalPushProtocol, analytics: InternalAnalyticsProtocol, pushableComponents: [PushableComponent]) {
         self.push = push
         self.analytics = analytics
         self.pushableComponents = pushableComponents
@@ -19,7 +19,7 @@ class DefaultAppIntegrationDelegate : NSObject, AppIntegrationDelegate {
     public override convenience init() {
         self.init(push: Airship.push,
                   analytics: Airship.analytics,
-                  pushableComponents: Airship.shared.components.compactMap { return $0 as? UAPushableComponent })
+                  pushableComponents: Airship.shared.components.compactMap { return $0 as? PushableComponent })
     }
     
     public func onBackgroundAppRefresh() {
@@ -42,7 +42,7 @@ class DefaultAppIntegrationDelegate : NSObject, AppIntegrationDelegate {
                                              isForeground: Bool,
                                              completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         
-        guard !isForeground || UAUtils.isSilentPush(userInfo) else {
+        guard !isForeground || Utils.isSilentPush(userInfo) else {
             // will be handled by willPresentNotification(userInfo:presentationOptions:completionHandler:)
             completionHandler(.noData)
             return
@@ -169,7 +169,7 @@ class DefaultAppIntegrationDelegate : NSObject, AppIntegrationDelegate {
         }
         
         dispatchGroup.notify(queue: .main) {
-            completionHandler(UAUtils.mergeFetchResults(fetchResults))
+            completionHandler(Utils.mergeFetchResults(fetchResults))
         }
     }
     

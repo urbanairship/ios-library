@@ -100,7 +100,7 @@ class TestPush : InternalPushProtocol {
     }
 }
 
-class TestPushableComponent : UAPushableComponent {
+class TestPushableComponent : PushableComponent {
     var didReceiveRemoteNotificationCallback: (([AnyHashable : Any], @escaping (UIBackgroundFetchResult) -> Void) -> Void)?
 
     public func receivedRemoteNotification(_ notification: [AnyHashable: Any], completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {

@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 // NOTE: For internal use only. :nodoc:
-class ContactAPIResponse : UAHTTPResponse {
+class ContactAPIResponse : HTTPResponse {
     let contactID: String?
 
     let isAnonymous: Bool?

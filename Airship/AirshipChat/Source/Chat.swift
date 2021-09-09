@@ -26,7 +26,7 @@ public protocol ChatOpenDelegate {
  */
 @available(iOS 13.0, *)
 @objc(UAChat)
-public class Chat : NSObject, Component, UAPushableComponent {
+public class Chat : NSObject, Component, PushableComponent {
 
     /// The shared Chat instance.
     @objc
@@ -66,9 +66,9 @@ public class Chat : NSObject, Component, UAPushableComponent {
 
     private let internalConversation : InternalConversationProtocol
 
-    private let dataStore: UAPreferenceDataStore
+    private let dataStore: PreferenceDataStore
     
-    private let privacyManager: UAPrivacyManager
+    private let privacyManager: PrivacyManager
 
     private var viewController : UIViewController?
 
@@ -84,7 +84,7 @@ public class Chat : NSObject, Component, UAPushableComponent {
         }
     }
     
-    internal convenience init(dataStore: UAPreferenceDataStore, config: RuntimeConfig, channel: Channel, privacyManager: UAPrivacyManager) {
+    internal convenience init(dataStore: PreferenceDataStore, config: RuntimeConfig, channel: Channel, privacyManager: PrivacyManager) {
 
         let conversation = Conversation(dataStore: dataStore,
                                          chatConfig: config,
@@ -93,9 +93,9 @@ public class Chat : NSObject, Component, UAPushableComponent {
         self.init(dataStore: dataStore, conversation: conversation, privacyManager: privacyManager)
     }
 
-    internal init(dataStore: UAPreferenceDataStore,
+    internal init(dataStore: PreferenceDataStore,
                   conversation: InternalConversationProtocol,
-                  privacyManager: UAPrivacyManager) {
+                  privacyManager: PrivacyManager) {
         
         self.dataStore = dataStore
         self.internalConversation = conversation
@@ -112,7 +112,7 @@ public class Chat : NSObject, Component, UAPushableComponent {
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(self.onEnabledFeaturesChange),
-            name: UAPrivacyManager.changeEvent,
+            name: PrivacyManager.changeEvent,
             object: nil)
 
         AirshipLogger.info("AirshipChat initialized")
@@ -176,7 +176,7 @@ public class Chat : NSObject, Component, UAPushableComponent {
         let vc = chatViewController(message: message)
         viewController = vc
 
-        UAUtils.topController()?.present(vc, animated: true, completion: {
+        Utils.topController()?.present(vc, animated: true, completion: {
             AirshipLogger.trace("Presented chat view controller: \(vc.description)")
         })
     }

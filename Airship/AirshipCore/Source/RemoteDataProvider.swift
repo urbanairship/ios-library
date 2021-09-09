@@ -9,7 +9,7 @@ public protocol RemoteDataProvider {
     
     @discardableResult
     @objc
-    func subscribe(types: [String], block:@escaping ([RemoteDataPayload]) -> Void) -> UADisposable
+    func subscribe(types: [String], block:@escaping ([RemoteDataPayload]) -> Void) -> Disposable
     
     @objc
     func isMetadataCurrent(_ metadata: [AnyHashable : Any]) -> Bool

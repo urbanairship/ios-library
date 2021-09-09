@@ -2,7 +2,7 @@
 
 // NOTE: For internal use only. :nodoc:
 @objc(UARemoteDataResponse)
-public class RemoteDataResponse : UAHTTPResponse {
+public class RemoteDataResponse : HTTPResponse {
 
     @objc
     public let payloads: [RemoteDataPayload]?

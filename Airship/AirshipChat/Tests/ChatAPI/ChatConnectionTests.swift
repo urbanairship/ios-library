@@ -78,7 +78,7 @@ class ChatConnectionTests: XCTestCase {
     }
 
     func testSend() throws {
-        let date = UAUtils.parseISO8601Date(from: "2021-08-24T18:15:01Z")
+        let date = Utils.parseISO8601Date(from: "2021-08-24T18:15:01Z")
         let url = URL(string: "https://neat")
         self.connection.open(uvp: "some-uvp")
         self.connection.sendMessage(requestID: "request!", text: "neat!", attachment: url, direction: ChatMessageDirection.outgoing, date: date, routing: ChatRouting(agent: "agent!"))
@@ -145,7 +145,7 @@ class ChatConnectionTests: XCTestCase {
 
         let payload = self.mockDelegate.lastResponse?.payload as! ChatResponse.NewMessageResponsePayload
         XCTAssertEqual(1617819415247, payload.message.messageID)
-        XCTAssertEqual(UAUtils.parseISO8601Date(from: "2021-04-07T18:16:55Z"), payload.message.createdOn)
+        XCTAssertEqual(Utils.parseISO8601Date(from: "2021-04-07T18:16:55Z"), payload.message.createdOn)
         XCTAssertEqual("D9DD85A9-F5A1-4E56-9060-4DB4462CFF32", payload.message.requestID)
         XCTAssertEqual(0, payload.message.direction)
         XCTAssertEqual("Sup", payload.message.text)
@@ -179,7 +179,7 @@ class ChatConnectionTests: XCTestCase {
 
         let payload = self.mockDelegate.lastResponse?.payload as! ChatResponse.SentMessageResponsePayload
         XCTAssertEqual(1617819415247, payload.message.messageID)
-        XCTAssertEqual(UAUtils.parseISO8601Date(from: "2021-04-07T18:16:55Z"), payload.message.createdOn)
+        XCTAssertEqual(Utils.parseISO8601Date(from: "2021-04-07T18:16:55Z"), payload.message.createdOn)
         XCTAssertEqual("D9DD85A9-F5A1-4E56-9060-4DB4462CFF32", payload.message.requestID)
         XCTAssertEqual(0, payload.message.direction)
         XCTAssertEqual("Sup", payload.message.text)
@@ -220,13 +220,13 @@ class ChatConnectionTests: XCTestCase {
 
         let payload = self.mockDelegate.lastResponse?.payload as! ChatResponse.ConversationLoadedResponsePayload
         XCTAssertEqual(1617642327507, payload.messages![0].messageID)
-        XCTAssertEqual(UAUtils.parseISO8601Date(from: "2021-04-05T17:05:27Z"), payload.messages![0].createdOn)
+        XCTAssertEqual(Utils.parseISO8601Date(from: "2021-04-05T17:05:27Z"), payload.messages![0].createdOn)
         XCTAssertEqual("D9DD85A9-F5A1-4E56-9060-4DB4462CFF32", payload.messages![0].requestID)
         XCTAssertEqual(0, payload.messages![0].direction)
         XCTAssertEqual("Hello", payload.messages![0].text)
 
         XCTAssertEqual(1617642338659, payload.messages![1].messageID)
-        XCTAssertEqual(UAUtils.parseISO8601Date(from: "2021-04-05T17:05:38Z"), payload.messages![1].createdOn)
+        XCTAssertEqual(Utils.parseISO8601Date(from: "2021-04-05T17:05:38Z"), payload.messages![1].createdOn)
         XCTAssertNil(payload.messages![1].requestID)
         XCTAssertEqual(1, payload.messages![1].direction)
         XCTAssertEqual("Hi!", payload.messages![1].text)

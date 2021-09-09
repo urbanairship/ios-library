@@ -39,12 +39,12 @@ public class EventManager: NSObject, EventManagerProtocol {
     private static let minBatchIntervalUserDefaultsKey = "X-UA-Min-Batch-Interval"
 
     private var config: RuntimeConfig
-    private var dataStore: UAPreferenceDataStore
+    private var dataStore: PreferenceDataStore
     private var channel: ChannelProtocol
     private var eventStore: EventStoreProtocol
     private var client: EventAPIClientProtocol
     private var notificationCenter: NotificationCenter
-    private var appStateTracker: UAAppStateTracker
+    private var appStateTracker: AppStateTracker
     private var taskManager: TaskManagerProtocol
     private var delayProvider: (TimeInterval) -> DelayProtocol
 
@@ -116,17 +116,17 @@ public class EventManager: NSObject, EventManagerProtocol {
     @objc
     public convenience init(
         config: RuntimeConfig,
-        dataStore: UAPreferenceDataStore,
+        dataStore: PreferenceDataStore,
         channel: ChannelProtocol) {
         let eventStore = EventStore(config: config)
-        let client = UAEventAPIClient(config: config)
+        let client = EventAPIClient(config: config)
         let delayProvider =  { (delay: TimeInterval) in
-            return UADelay(delay)
+            return Delay(delay)
         }
 
         self.init(config: config, dataStore: dataStore, channel: channel, eventStore: eventStore,
-                  client: client, notificationCenter: NotificationCenter.default, appStateTracker: UAAppStateTracker.shared,
-                  taskManager: UATaskManager.shared, delayProvider: delayProvider)
+                  client: client, notificationCenter: NotificationCenter.default, appStateTracker: AppStateTracker.shared,
+                  taskManager: TaskManager.shared, delayProvider: delayProvider)
 
 
     }
@@ -148,12 +148,12 @@ public class EventManager: NSObject, EventManagerProtocol {
     @objc
     public init(
         config: RuntimeConfig,
-        dataStore: UAPreferenceDataStore,
+        dataStore: PreferenceDataStore,
         channel: ChannelProtocol,
         eventStore: EventStoreProtocol,
         client: EventAPIClientProtocol,
         notificationCenter: NotificationCenter,
-        appStateTracker: UAAppStateTracker,
+        appStateTracker: AppStateTracker,
         taskManager: TaskManagerProtocol,
         delayProvider: @escaping (TimeInterval) -> DelayProtocol) {
 
@@ -170,7 +170,7 @@ public class EventManager: NSObject, EventManagerProtocol {
         super.init()
 
         self.notificationCenter.addObserver(self, selector: #selector(scheduleUpload as () -> Void), name: Channel.channelCreatedEvent, object: nil)
-        self.notificationCenter.addObserver(self, selector: #selector(applicationDidEnterBackground), name: UAAppStateTracker.didEnterBackgroundNotification, object: nil)
+        self.notificationCenter.addObserver(self, selector: #selector(applicationDidEnterBackground), name: AppStateTracker.didEnterBackgroundNotification, object: nil)
 
         self.taskManager.register(taskID: EventManager.uploadTask, dispatcher: UADispatcher.serial()) { [weak self] task in
             self?.uploadEventsTask(task)
@@ -246,11 +246,11 @@ public class EventManager: NSObject, EventManagerProtocol {
 
             AirshipLogger.trace("Scheduling upload in \(delay) seconds.")
 
-            self.taskManager.enqueueRequest(taskID: EventManager.uploadTask, options: UATaskRequestOptions.defaultOptions, initialDelay: delay)
+            self.taskManager.enqueueRequest(taskID: EventManager.uploadTask, options: TaskRequestOptions.defaultOptions, initialDelay: delay)
         }
     }
 
-    private func uploadEventsTask(_ task: UATask) {
+    private func uploadEventsTask(_ task: Task) {
 
         guard  self.uploadsEnabled else {
             self.lock.sync {
@@ -294,7 +294,7 @@ public class EventManager: NSObject, EventManagerProtocol {
 
         let headers = self.prepareHeaders()
 
-        let semaphore = UASemaphore()
+        let semaphore = Semaphore()
         let request = self.client.uploadEvents(events, headers: headers) { [weak self] response, error in
             guard let self = self else {
                 return
@@ -335,7 +335,7 @@ public class EventManager: NSObject, EventManagerProtocol {
         semaphore.wait()
     }
 
-    private func updateAnalyticsParameters(response: UAEventAPIResponse) {
+    private func updateAnalyticsParameters(response: EventAPIResponse) {
         if let maxTotalDBSizeNumber = response.maxTotalDBSize {
             self.maxTotalDBSize = maxTotalDBSizeNumber.uintValue * 1024
         }
@@ -373,7 +373,7 @@ public class EventManager: NSObject, EventManagerProtocol {
 
     private func prepareEvents() -> [[String : AnyHashable]] {
         var preparedEvents: [[String: AnyHashable]] = []
-        let semaphore = UASemaphore()
+        let semaphore = Semaphore()
 
         let maxBatchSize = self.maxBatchSize
 

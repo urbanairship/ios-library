@@ -111,7 +111,7 @@ public protocol ChannelProtocol {
      */
     @objc
     @discardableResult
-    func fetchSubscriptionLists(completionHandler: @escaping ([String]?, Error?) -> Void) -> UADisposable
+    func fetchSubscriptionLists(completionHandler: @escaping ([String]?, Error?) -> Void) -> Disposable
     
     /**
      * Edits channel attributes.

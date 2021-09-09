@@ -11,26 +11,26 @@ public class RemoteConfigManager : NSObject {
     public static let remoteConfigKey = "remote_config"
     
     private let decoder = JSONDecoder()
-    private var remoteDataSubscription: UADisposable?
+    private var remoteDataSubscription: Disposable?
     private let moduleAdapter: RemoteConfigModuleAdapterProtocol
     private let remoteDataManager: RemoteDataProvider
-    private let privacyManager: UAPrivacyManager
+    private let privacyManager: PrivacyManager
     private let versionBlock: (() -> String)
     private let notificationCenter: NotificationCenter
 
     @objc
     public convenience init(remoteDataManager: RemoteDataProvider,
-                            privacyManager: UAPrivacyManager) {
+                            privacyManager: PrivacyManager) {
 
         self.init(remoteDataManager: remoteDataManager,
                   privacyManager: privacyManager,
                   moduleAdapter: RemoteConfigModuleAdapter(),
                   notificationCenter: NotificationCenter.default,
-                  versionBlock: { return UAUtils.bundleShortVersionString() ?? "" })
+                  versionBlock: { return Utils.bundleShortVersionString() ?? "" })
     }
     
     init(remoteDataManager: RemoteDataProvider,
-         privacyManager: UAPrivacyManager,
+         privacyManager: PrivacyManager,
          moduleAdapter: RemoteConfigModuleAdapterProtocol,
          notificationCenter: NotificationCenter,
          versionBlock: @escaping () -> String) {
@@ -48,7 +48,7 @@ public class RemoteConfigManager : NSObject {
         self.notificationCenter.addObserver(
             self,
             selector: #selector(updateRemoteConfigSubscription),
-            name: UAPrivacyManager.changeEvent,
+            name: PrivacyManager.changeEvent,
             object: nil)
     }
     
@@ -85,7 +85,7 @@ public class RemoteConfigManager : NSObject {
                 }
                 
                 if (!info.sdkVersionConstraints.isEmpty) {
-                    let matches = info.sdkVersionConstraints.contains(where: { return $0.evaluate(UAirshipVersion.get()) })
+                    let matches = info.sdkVersionConstraints.contains(where: { return $0.evaluate(AirshipVersion.get()) })
                     if (!matches) {
                         return false
                     }

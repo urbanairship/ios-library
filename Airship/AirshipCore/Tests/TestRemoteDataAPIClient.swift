@@ -16,14 +16,14 @@ public class TestRemoteDataAPIClient : NSObject, RemoteDataAPIClientProtocol {
     public var defaultCallback: ((String) -> Void)?
 
     
-    public func fetchRemoteData(locale: Locale, lastModified: String?, completionHandler: @escaping (RemoteDataResponse?, Error?) -> Void) -> UADisposable {
+    public func fetchRemoteData(locale: Locale, lastModified: String?, completionHandler: @escaping (RemoteDataResponse?, Error?) -> Void) -> Disposable {
         if let callback = fetchCallback {
             callback(locale, lastModified, completionHandler)
         } else {
             defaultCallback?("fetchRemoteData")
         }
         
-        return UADisposable()
+        return Disposable()
     }
     
     public func metadata(locale: Locale) -> [AnyHashable : Any] {

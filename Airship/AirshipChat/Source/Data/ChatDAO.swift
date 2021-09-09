@@ -16,12 +16,12 @@ class ChatDAO: ChatDAOProtocol {
     private static let pendingChatMessageDataEntityName = "PendingChatMessageData"
     private static let fetchLimit = 50
 
-    private let coreData: UACoreData
+    private let coreData: CoreData
 
     init(config: ChatConfig) {
         let bundle = ChatResources.bundle()
         let modelURL = bundle?.url(forResource: "ChatMessageDataModel", withExtension: "momd")
-        self.coreData = UACoreData(modelURL: modelURL!,
+        self.coreData = CoreData(modelURL: modelURL!,
                                    inMemory: false,
                                    stores: ["Chat-message-data-\(config.appKey).sqlite"],
                                    mergePolicy: NSMergeByPropertyStoreTrumpMergePolicy)
@@ -103,7 +103,7 @@ class ChatDAO: ChatDAOProtocol {
         self.coreData.safePerform { safe, context in
             if (safe) {
                 block(context)
-                UACoreData.safeSave(context)
+                CoreData.safeSave(context)
             }
         }
     }

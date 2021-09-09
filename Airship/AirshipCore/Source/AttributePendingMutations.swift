@@ -17,7 +17,7 @@ class AttributePendingMutations : NSObject, NSSecureCoding {
     
     public var attributeUpdates : [AttributeUpdate] {
         get {
-            let dateFormatter = UAUtils.isoDateFormatterUTCWithDelimiter()
+            let dateFormatter = Utils.isoDateFormatterUTCWithDelimiter()
             return self.mutationsPayload.compactMap {
                 guard let attribute = $0["key"] as? String,
                       let action = $0["action"] as? String,

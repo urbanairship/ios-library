@@ -17,8 +17,8 @@ import Foundation;
  * - SDK version
  * - Accengage Device ID (Accengage module for migration)
  */
-@objc
-public class UAPrivacyManager : NSObject {
+@objc(UAPrivacyManager)
+public class PrivacyManager : NSObject {
 
 
     /**
@@ -35,7 +35,7 @@ public class UAPrivacyManager : NSObject {
     private let LegacyPushTokenRegistrationEnableFlag = "UAPushTokenRegistrationEnabled"
     private let LegacyDataCollectionEnableEnableFlag = "com.urbanairship.data_collection_enabled"
 
-    private let dataStore: UAPreferenceDataStore
+    private let dataStore: PreferenceDataStore
     private let notificationCenter: NotificationCenter
 
     private var _enabledFeatures: UAFeatures
@@ -54,7 +54,7 @@ public class UAPrivacyManager : NSObject {
                 _enabledFeatures = newValue
                 dataStore.setObject(NSNumber(value: enabledFeatures.rawValue), forKey: UAPrivacyManagerEnabledFeaturesKey)
                 UADispatcher.main.dispatchAsyncIfNecessary({ [self] in
-                    notificationCenter.post(name: UAPrivacyManager.changeEvent, object: nil)
+                    notificationCenter.post(name: PrivacyManager.changeEvent, object: nil)
                 })
             }
         }
@@ -64,7 +64,7 @@ public class UAPrivacyManager : NSObject {
      * @note For internal use only. :nodoc:
      */
     @objc
-    public convenience init(dataStore: UAPreferenceDataStore, defaultEnabledFeatures: UAFeatures) {
+    public convenience init(dataStore: PreferenceDataStore, defaultEnabledFeatures: UAFeatures) {
         self.init(
             dataStore: dataStore,
             defaultEnabledFeatures: defaultEnabledFeatures,
@@ -75,7 +75,7 @@ public class UAPrivacyManager : NSObject {
      * @note For internal use only. :nodoc:
      */
     @objc
-    public init(dataStore: UAPreferenceDataStore, defaultEnabledFeatures: UAFeatures, notificationCenter: NotificationCenter) {
+    public init(dataStore: PreferenceDataStore, defaultEnabledFeatures: UAFeatures, notificationCenter: NotificationCenter) {
 
         self.dataStore = dataStore
         self.notificationCenter = notificationCenter

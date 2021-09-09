@@ -2,7 +2,7 @@ import Foundation
 import AirshipCore
 
 @objc(UATestNetworkMonitor)
-public class TestNetworkMonitor : UANetworkMonitor {
+public class TestNetworkMonitor : NetworkMonitor {
 
     @objc
     public var isConnectedOverride: Bool {

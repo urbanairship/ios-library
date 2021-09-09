@@ -15,7 +15,7 @@ class ChatAPIClient : ChatAPIClientProtocol {
     private let chatConfig: ChatConfig
     private let session: HTTPRequestSession
 
-    init(chatConfig: ChatConfig, session: HTTPRequestSession = UARequestSession.sharedURLSession) {
+    init(chatConfig: ChatConfig, session: HTTPRequestSession = RequestSession.sharedURLSession) {
         self.chatConfig = chatConfig
         self.session = session
     }

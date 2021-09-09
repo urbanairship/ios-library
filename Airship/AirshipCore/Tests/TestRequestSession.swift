@@ -2,10 +2,10 @@ import Foundation
 import AirshipCore
 
 @objc(UATestRequestSession)
-public class TestRequestSession : UARequestSession {
+public class TestRequestSession : RequestSession {
 
     @objc
-    public var lastRequest: UARequest?
+    public var lastRequest: Request?
 
     @objc
     public var response: HTTPURLResponse?
@@ -18,14 +18,14 @@ public class TestRequestSession : UARequestSession {
 
     @objc
     public init() {
-        let config = RuntimeConfig(config: Config(), dataStore: UAPreferenceDataStore(keyPrefix: UUID().uuidString))
-        super.init(config: config, session: UARequestSession.sharedURLSession)
+        let config = RuntimeConfig(config: Config(), dataStore: PreferenceDataStore(keyPrefix: UUID().uuidString))
+        super.init(config: config, session: RequestSession.sharedURLSession)
     }
 
-    public override func performHTTPRequest(_ request: UARequest, completionHandler: @escaping (Data?, HTTPURLResponse?, Error?) -> Void) -> UADisposable {
+    public override func performHTTPRequest(_ request: Request, completionHandler: @escaping (Data?, HTTPURLResponse?, Error?) -> Void) -> Disposable {
         self.lastRequest = request
         completionHandler(data, response, error)
-        return UADisposable()
+        return Disposable()
     }
 
 }

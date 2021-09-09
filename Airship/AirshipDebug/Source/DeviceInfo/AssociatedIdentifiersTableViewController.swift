@@ -54,7 +54,7 @@ class AssociatedIdentifiersTableViewController: UITableViewController, Associate
 
     func associateIdentifiers(_ identifiers: Dictionary<String, String>) {
         // Set the advertising and vendor ID
-        let associateIdentifiers = UAAssociatedIdentifiers.init(dictionary: identifiers)
+        let associateIdentifiers = AssociatedIdentifiers.init(dictionary: identifiers)
         associateIdentifiers.advertisingID = ASIdentifierManager.shared().advertisingIdentifier.uuidString
         associateIdentifiers.advertisingTrackingEnabled = !ASIdentifierManager.shared().isAdvertisingTrackingEnabled
         associateIdentifiers.vendorID = UIDevice.current.identifierForVendor?.uuidString

@@ -244,13 +244,13 @@ open class RuntimeConfig: NSObject {
     }
     
     @objc
-    public convenience init(config: Config, dataStore: UAPreferenceDataStore) {
+    public convenience init(config: Config, dataStore: PreferenceDataStore) {
         self.init(config: config,
                   dataStore: dataStore,
                   notificationCenter: NotificationCenter.default)
     }
     
-    init(config: Config, dataStore: UAPreferenceDataStore, notificationCenter: NotificationCenter) {
+    init(config: Config, dataStore: PreferenceDataStore, notificationCenter: NotificationCenter) {
         self.logLevel = config.logLevel
         self.appKey = config.appKey
         self.appSecret = config.appSecret

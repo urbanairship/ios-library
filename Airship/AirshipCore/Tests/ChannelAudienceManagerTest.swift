@@ -10,8 +10,8 @@ class ChannelAudienceManagerTest: XCTestCase {
     var taskManager: TestTaskManager!
     var notificationCenter: NotificationCenter!
     var date: UATestDate!
-    var privacyManager: UAPrivacyManager!
-    var dataStore: UAPreferenceDataStore!
+    var privacyManager: PrivacyManager!
+    var dataStore: PreferenceDataStore!
     var subscriptionListClient: TestSubscriptionListAPIClient!
     var updateClient: TestChannelBulkUpdateAPIClient!
 
@@ -32,8 +32,8 @@ class ChannelAudienceManagerTest: XCTestCase {
 
     
         self.date = UATestDate()
-        self.dataStore = UAPreferenceDataStore(keyPrefix: UUID().uuidString)
-        self.privacyManager = UAPrivacyManager(dataStore: self.dataStore, defaultEnabledFeatures: .all, notificationCenter: self.notificationCenter)
+        self.dataStore = PreferenceDataStore(keyPrefix: UUID().uuidString)
+        self.privacyManager = PrivacyManager(dataStore: self.dataStore, defaultEnabledFeatures: .all, notificationCenter: self.notificationCenter)
         
         self.audienceManager = ChannelAudienceManager(dataStore: self.dataStore,
                                                       taskManager: self.taskManager,
@@ -76,7 +76,7 @@ class ChannelAudienceManagerTest: XCTestCase {
             XCTAssertEqual(3, subscriptionUpdates!.count)
             XCTAssertEqual(1, tagUpdates!.count)
             XCTAssertEqual(1, attributeUpdates!.count)
-            callback(UAHTTPResponse(status: 200), nil)
+            callback(HTTPResponse(status: 200), nil)
         }
         
         XCTAssertTrue(self.taskManager.launchSync(taskID: ChannelAudienceManager.updateTaskID).completed)
@@ -177,7 +177,7 @@ class ChannelAudienceManagerTest: XCTestCase {
         expectation = XCTestExpectation(description: "callback called")
         self.updateClient.updateCallback = { identifier, subscriptions, tags, attributes, callback in
             expectation.fulfill()
-            callback(UAHTTPResponse(status: 200), nil)
+            callback(HTTPResponse(status: 200), nil)
         }
         
         XCTAssertTrue(self.taskManager.launchSync(taskID: ChannelAudienceManager.updateTaskID).completed)
@@ -236,7 +236,7 @@ class ChannelAudienceManagerTest: XCTestCase {
         let attributePayload = [
             "action": "remove",
             "key": "some-attribute",
-            "timestamp": UAUtils.isoDateFormatterUTCWithDelimiter().string(from: testDate.now)
+            "timestamp": Utils.isoDateFormatterUTCWithDelimiter().string(from: testDate.now)
         ]
         
         let attributeMutation = AttributePendingMutations(mutationsPayload: [attributePayload])

@@ -20,8 +20,8 @@ class ContactTest: XCTestCase {
     var apiClient: TestContactAPIClient!
     var notificationCenter: NotificationCenter!
     var date: UATestDate!
-    var privacyManager: UAPrivacyManager!
-    var dataStore: UAPreferenceDataStore!
+    var privacyManager: PrivacyManager!
+    var dataStore: PreferenceDataStore!
         
     override func setUpWithError() throws {
 
@@ -35,8 +35,8 @@ class ContactTest: XCTestCase {
     
         self.date = UATestDate()
         
-        self.dataStore = UAPreferenceDataStore(keyPrefix: UUID().uuidString)
-        self.privacyManager = UAPrivacyManager(dataStore: self.dataStore, defaultEnabledFeatures: .all, notificationCenter: self.notificationCenter)
+        self.dataStore = PreferenceDataStore(keyPrefix: UUID().uuidString)
+        self.privacyManager = PrivacyManager(dataStore: self.dataStore, defaultEnabledFeatures: .all, notificationCenter: self.notificationCenter)
         
         
         let config = RuntimeConfig(config: Config(), dataStore: dataStore)
@@ -64,7 +64,7 @@ class ContactTest: XCTestCase {
         let attributePayload = [
             "action": "remove",
             "key": "some-attribute",
-            "timestamp": UAUtils.isoDateFormatterUTCWithDelimiter().string(from: testDate.now)
+            "timestamp": Utils.isoDateFormatterUTCWithDelimiter().string(from: testDate.now)
         ]
         
         let attributeMutation = AttributePendingMutations(mutationsPayload: [attributePayload])
@@ -95,7 +95,7 @@ class ContactTest: XCTestCase {
     }
     
     func testChannelCreatedEnqueuesUpdateTask() throws {
-        notificationCenter.post(Notification(name: UAAppStateTracker.didBecomeActiveNotification))
+        notificationCenter.post(Notification(name: AppStateTracker.didBecomeActiveNotification))
     
         XCTAssertEqual(1, self.taskManager.enqueuedRequests.count)
         self.taskManager.enqueuedRequests.removeAll()
@@ -127,7 +127,7 @@ class ContactTest: XCTestCase {
     }
     
     func testExtendRegistrationPaylaod() throws {
-        notificationCenter.post(Notification(name: UAAppStateTracker.didBecomeActiveNotification))
+        notificationCenter.post(Notification(name: AppStateTracker.didBecomeActiveNotification))
     
         XCTAssertEqual(1, self.taskManager.enqueuedRequests.count)
         
@@ -154,7 +154,7 @@ class ContactTest: XCTestCase {
     }
 
     func testForegroundResolves() throws {
-        notificationCenter.post(Notification(name: UAAppStateTracker.didBecomeActiveNotification))
+        notificationCenter.post(Notification(name: AppStateTracker.didBecomeActiveNotification))
     
         XCTAssertEqual(1, self.taskManager.enqueuedRequests.count)
         
@@ -174,7 +174,7 @@ class ContactTest: XCTestCase {
     func testForegroundSkipsResolvesLessThan24Hours() throws {
         self.date.dateOverride = Date()
         
-        notificationCenter.post(Notification(name: UAAppStateTracker.didBecomeActiveNotification))
+        notificationCenter.post(Notification(name: AppStateTracker.didBecomeActiveNotification))
         XCTAssertEqual(1, self.taskManager.enqueuedRequests.count)
         let expectation = XCTestExpectation(description: "callback called")
         self.apiClient.resolveCallback = { channelID, callback in
@@ -189,7 +189,7 @@ class ContactTest: XCTestCase {
         self.taskManager.enqueuedRequests.removeAll()
         self.apiClient.resetCallback = nil
         
-        notificationCenter.post(Notification(name: UAAppStateTracker.didBecomeActiveNotification))
+        notificationCenter.post(Notification(name: AppStateTracker.didBecomeActiveNotification))
         XCTAssertEqual(0, self.taskManager.enqueuedRequests.count)
         XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).completed)
     }
@@ -313,7 +313,7 @@ class ContactTest: XCTestCase {
             XCTAssertEqual("some-contact-id", contactID)
             XCTAssertEqual(1, tagUpdates?.count ?? 0)
             XCTAssertEqual(1, attributeUpdates?.count ?? 0)
-            callback(UAHTTPResponse(status: 200), nil)
+            callback(HTTPResponse(status: 200), nil)
             update.fulfill()
         }
         
@@ -359,7 +359,7 @@ class ContactTest: XCTestCase {
         }
         
         self.apiClient.updateCallback = { contactID, tagUpdates, attributeUpdates, callback in
-            callback(UAHTTPResponse(status: 200), nil)
+            callback(HTTPResponse(status: 200), nil)
         }
         
         self.apiClient.identifyCallback = { channelID, namedUserID, contactID, callback in
@@ -412,7 +412,7 @@ class ContactTest: XCTestCase {
         }
         
         self.apiClient.updateCallback = { contactID, tagUpdates, attributeUpdates, callback in
-            callback(UAHTTPResponse(status: 200), nil)
+            callback(HTTPResponse(status: 200), nil)
         }
         
         let delegate = TestDelegate()
@@ -553,7 +553,7 @@ class ContactTest: XCTestCase {
         let expectation = XCTestExpectation(description: "callback called")
         expectation.expectedFulfillmentCount = 2
         self.apiClient.updateCallback = { contactID, tagUpdates, attributeUpdates, callback in
-            callback(UAHTTPResponse(status: 500), nil)
+            callback(HTTPResponse(status: 500), nil)
             expectation.fulfill()
         }
 
@@ -564,7 +564,7 @@ class ContactTest: XCTestCase {
     }
     
     func testResolveFailed() throws {
-        notificationCenter.post(Notification(name: UAAppStateTracker.didBecomeActiveNotification))
+        notificationCenter.post(Notification(name: AppStateTracker.didBecomeActiveNotification))
 
     
         let expectation = XCTestExpectation(description: "resolve contact")

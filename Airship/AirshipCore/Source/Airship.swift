@@ -49,7 +49,7 @@ public class Airship : NSObject {
     
     /// Stores common application metrics such as last open.
     @objc
-    public var applicationMetrics: UAApplicationMetrics  { return airshipInstance.applicationMetrics }
+    public var applicationMetrics: ApplicationMetrics  { return airshipInstance.applicationMetrics }
     
     /// The Airship location provider. Requires the `AirshipLocation`
     /// module, otherwise nil.
@@ -99,7 +99,7 @@ public class Airship : NSObject {
     
     /// The privacy manager
     @objc
-    public var privacyManager: UAPrivacyManager { return airshipInstance.privacyManager }
+    public var privacyManager: PrivacyManager { return airshipInstance.privacyManager }
     
     
     /// - NOTE: For internal use only. :nodoc:
@@ -133,9 +133,9 @@ public class Airship : NSObject {
     @objc
     public static var channel: Channel { return requireComponent(ofType: Channel.self) }
     
-    /// Shared UANamedUser instance.
+    /// Shared NamedUser instance.
     @objc
-    public static var namedUser: UANamedUser { return requireComponent(ofType: UANamedUser.self) }
+    public static var namedUser: NamedUser { return requireComponent(ofType: NamedUser.self) }
 
     init(instance: AirshipInstanceProtocol) {
         self.airshipInstance = instance
@@ -182,7 +182,7 @@ public class Airship : NSObject {
         
         self.logLevel = resolvedConfig.logLevel
         
-        AirshipLogger.info("Airship TakeOff! SDK Version \(UAirshipVersion.get()), App Key: \(resolvedConfig.appKey), inProduction: \(resolvedConfig.inProduction)")
+        AirshipLogger.info("Airship TakeOff! SDK Version \(AirshipVersion.get()), App Key: \(resolvedConfig.appKey), inProduction: \(resolvedConfig.inProduction)")
         
         // Clearing the key chain
         if (UserDefaults.standard.bool(forKey: resetKeyChainKey) == true) {
@@ -202,7 +202,7 @@ public class Airship : NSObject {
         }
 
         if let launchOptions = launchOptions {
-            if (UAAppStateTracker.shared.state != .background) {
+            if (AppStateTracker.shared.state != .background) {
                 analytics.launched(fromNotification: launchOptions)
             }
         }

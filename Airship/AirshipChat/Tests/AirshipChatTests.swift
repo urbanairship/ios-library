@@ -8,14 +8,14 @@ import AirshipCore
 
 class AirshipChatTests: XCTestCase {
     var airshipChat: Chat!
-    var dataStore: UAPreferenceDataStore!
+    var dataStore: PreferenceDataStore!
     var mockConversation: MockConversation!
-    var privacyManager : UAPrivacyManager!
+    var privacyManager : PrivacyManager!
 
     override func setUp() {
         self.mockConversation = MockConversation()
-        self.dataStore = UAPreferenceDataStore(keyPrefix: UUID().uuidString)
-        self.privacyManager = UAPrivacyManager(dataStore: self.dataStore, defaultEnabledFeatures: .all)
+        self.dataStore = PreferenceDataStore(keyPrefix: UUID().uuidString)
+        self.privacyManager = PrivacyManager(dataStore: self.dataStore, defaultEnabledFeatures: .all)
 
         self.airshipChat = Chat(dataStore: dataStore,
                                 conversation: self.mockConversation,
@@ -95,11 +95,11 @@ class AirshipChatTests: XCTestCase {
         let expectedIncoming = [
             ChatIncomingMessage(message: "msg1",
                                 url: "https://fakeu.rl",
-                                date: UAUtils.parseISO8601Date(from:"2021-01-01T00:00:00"),
+                                date: Utils.parseISO8601Date(from:"2021-01-01T00:00:00"),
                                 messageID: "asdfasdf"),
             ChatIncomingMessage(message: "msg2",
                                 url: "https://fakeu.rl",
-                                date: UAUtils.parseISO8601Date(from:"2021-01-02T00:00:00"),
+                                date: Utils.parseISO8601Date(from:"2021-01-02T00:00:00"),
                                 messageID: "fdsafdsa"),
                        ]
         

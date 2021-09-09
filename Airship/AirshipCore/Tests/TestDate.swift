@@ -3,7 +3,7 @@
 import AirshipCore
 
 @objc(UATestDate)
-public class UATestDate : UADate {
+public class UATestDate : DateUtils {
 
     @objc
     public init(offset : TimeInterval, dateOverride: Date?) {

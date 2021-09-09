@@ -60,11 +60,11 @@ public class ShareAction : NSObject, Action {
                 // Set the delegate, center the popover on the screen
                 popoverPresentationController.delegate = activityViewController
                 popoverPresentationController.sourceRect = activityViewController.sourceRect()
-                popoverPresentationController.sourceView = UAUtils.topController()?.view
+                popoverPresentationController.sourceView = Utils.topController()?.view
 
-                UAUtils.topController()?.present(activityViewController, animated: true)
+                Utils.topController()?.present(activityViewController, animated: true)
             } else {
-                UAUtils.topController()?.present(activityViewController, animated: true)
+                Utils.topController()?.present(activityViewController, animated: true)
             }
         }
 

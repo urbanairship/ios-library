@@ -15,7 +15,7 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
     @IBOutlet private var activityIndicator: UIActivityIndicatorView!
     private var config: PreferenceCenterConfig?
     private var activeSubscriptions: [String] = []
-    private var disposable: UADisposable?
+    private var disposable: Disposable?
     public var preferenceCenterID: String?
     
     /**
@@ -175,7 +175,7 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
         
         var cancelled = false
     
-        self.disposable = UADisposable {
+        self.disposable = Disposable {
             cancelled = true
             onComplete = nil
         }

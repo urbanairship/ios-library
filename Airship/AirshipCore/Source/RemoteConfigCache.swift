@@ -3,7 +3,7 @@
 // NOTE: For internal use only. :nodoc:
 class RemoteConfigCache  {
     private static let dataStoreKey = "com.urbanairship.config.remote_config_cache"
-    private let dataStore: UAPreferenceDataStore
+    private let dataStore: PreferenceDataStore
     
     private var _remoteConfig: RemoteConfig?
     
@@ -21,7 +21,7 @@ class RemoteConfigCache  {
         }
     }
     
-    init(dataStore: UAPreferenceDataStore) {
+    init(dataStore: PreferenceDataStore) {
         self.dataStore = dataStore
     
         if let data = self.dataStore.data(forKey: RemoteConfigCache.dataStoreKey) {

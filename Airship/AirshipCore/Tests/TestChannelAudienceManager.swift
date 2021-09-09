@@ -23,7 +23,7 @@ public class TestChannelAudienceManager : NSObject, ChannelAudienceManagerProtoc
     public var subcriptionListEditor : SubscriptionListEditor?
     
     @objc
-    public var fetchSubscriptionListCallback: ((([String]?, Error?) -> Void) -> UADisposable)?
+    public var fetchSubscriptionListCallback: ((([String]?, Error?) -> Void) -> Disposable)?
 
     
     public func editSubscriptionLists() -> SubscriptionListEditor {
@@ -38,7 +38,7 @@ public class TestChannelAudienceManager : NSObject, ChannelAudienceManagerProtoc
         return attributeEditor!
     }
     
-    public func fetchSubscriptionLists(completionHandler: @escaping ([String]?, Error?) -> Void) -> UADisposable {
+    public func fetchSubscriptionLists(completionHandler: @escaping ([String]?, Error?) -> Void) -> Disposable {
         return fetchSubscriptionListCallback!(completionHandler)
     }
 }

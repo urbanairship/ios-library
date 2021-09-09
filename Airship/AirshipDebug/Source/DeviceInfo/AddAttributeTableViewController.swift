@@ -122,7 +122,7 @@ class AddAttributeTableViewController: UITableViewController, UITextFieldDelegat
             mutations.setNumber(number, forAttribute: keyText)
         case .date:
             mutations.setDate(addAttributeValueDatePicker.date, forAttribute: keyText)
-            let isoDateFormatter = UAUtils.isoDateFormatterUTCWithDelimiter()
+            let isoDateFormatter = Utils.isoDateFormatterUTCWithDelimiter()
             message = message + isoDateFormatter.string(from: addAttributeValueDatePicker.date)
         }
 

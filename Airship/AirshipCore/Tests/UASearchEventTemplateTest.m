@@ -5,13 +5,13 @@
 
 @import AirshipCore;
 
-@interface UASearchEventTemplateTest : UABaseTest
+@interface SearchEventTemplateTest : UABaseTest
 @property(nonatomic, strong) UATestAnalytics *analytics;
 @property(nonatomic, strong) UATestAirshipInstance *airship;
 
 @end
 
-@implementation UASearchEventTemplateTest
+@implementation SearchEventTemplateTest
 
 - (void)setUp {
     [super setUp];
@@ -25,7 +25,7 @@
  * Test basic search event.
  */
 - (void)testBasicSearchEvent {
-    UASearchEventTemplate *event = [UASearchEventTemplate template];
+    SearchEventTemplate *event = [SearchEventTemplate template];
     UACustomEvent *customEvent = [event createEvent];
 
     XCTAssertEqualObjects(@"search", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
@@ -37,7 +37,7 @@
  * Test search event with optional value.
  */
 - (void)testSearchEventWithValue {
-    UASearchEventTemplate *event = [UASearchEventTemplate templateWithValue: @(INT32_MIN)];
+    SearchEventTemplate *event = [SearchEventTemplate templateWithValue: @(INT32_MIN)];
     UACustomEvent *customEvent = [event createEvent];
 
     XCTAssertEqualObjects(@"search", [customEvent.data objectForKey:@"event_name"], @"Unexpected event name.");
@@ -50,7 +50,7 @@
  * Test search event with optional value and properties.
  */
 - (void)testSearchEventWithValueProperties {
-    UASearchEventTemplate *eventTemplate = [UASearchEventTemplate template];
+    SearchEventTemplate *eventTemplate = [SearchEventTemplate template];
     eventTemplate.eventValue = [NSDecimalNumber decimalNumberWithString:@"12345.00"];
     eventTemplate.category = @"search-category";
     eventTemplate.query = @"Sneakers";

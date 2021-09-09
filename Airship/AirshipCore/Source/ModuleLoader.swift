@@ -47,13 +47,13 @@ public class ModuleLoader : NSObject {
     
     @objc
     public init(config: RuntimeConfig,
-                dataStore: UAPreferenceDataStore,
+                dataStore: PreferenceDataStore,
                 channel: Channel,
                 contact: Contact,
                 push: Push,
                 remoteData: RemoteDataManager,
                 analytics: Analytics,
-                privacyManager: UAPrivacyManager) {
+                privacyManager: PrivacyManager) {
 
         let dependencies: [String : Any] = [
             SDKDependencyKeys.config: config,

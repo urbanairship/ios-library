@@ -3,7 +3,7 @@
 // NOTE: For internal use only. :nodoc:
 protocol SubscriptionListAPIClientProtocol {
     @discardableResult
-    func get(channelID: String, completionHandler: @escaping (SubscriptionListFetchResponse?, Error?) -> Void) -> UADisposable;
+    func get(channelID: String, completionHandler: @escaping (SubscriptionListFetchResponse?, Error?) -> Void) -> Disposable;
 }
 
 // NOTE: For internal use only. :nodoc:
@@ -12,24 +12,24 @@ class SubscriptionListAPIClient : SubscriptionListAPIClientProtocol {
     private static let getPath = "/api/subscription_lists/channels/"
     
     private var config: RuntimeConfig
-    private var session: UARequestSession
+    private var session: RequestSession
 
-    init(config: RuntimeConfig, session: UARequestSession) {
+    init(config: RuntimeConfig, session: RequestSession) {
         self.config = config
         self.session = session
     }
     
     convenience init(config: RuntimeConfig) {
-        self.init(config: config, session: UARequestSession(config: config))
+        self.init(config: config, session: RequestSession(config: config))
     }
 
     
     @discardableResult
-    func get(channelID: String, completionHandler: @escaping (SubscriptionListFetchResponse?, Error?) -> Void) -> UADisposable {
+    func get(channelID: String, completionHandler: @escaping (SubscriptionListFetchResponse?, Error?) -> Void) -> Disposable {
 
         AirshipLogger.debug("Retrieving subscription lists")
 
-        let request = UARequest(builderBlock: { [self] builder in
+        let request = Request(builderBlock: { [self] builder in
             builder.method = "GET"
             builder.url = URL(string: "\(config.deviceAPIURL ?? "")\(SubscriptionListAPIClient.getPath)\(channelID)")
             builder.username = config.appKey

@@ -15,16 +15,16 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
     private static let lastRefreshAppVersionKey = "remotedata.LAST_REFRESH_APP_VERSION"
     private static let lastRemoteDataModifiedTime = "UALastRemoteDataModifiedTime"
 
-    private let dataStore: UAPreferenceDataStore
+    private let dataStore: PreferenceDataStore
     private let apiClient: RemoteDataAPIClientProtocol
     private let remoteDataStore: RemoteDataStore
     private let dispatcher: UADispatcher
-    private let date: UADate
+    private let date: DateUtils
     private let notificationCenter: NotificationCenter
-    private let appStateTracker: UAAppStateTracker
+    private let appStateTracker: AppStateTracker
     private let localeManager: LocaleManagerProtocol
     private let taskManager: TaskManagerProtocol
-    private let privacyManager: UAPrivacyManager
+    private let privacyManager: PrivacyManager
     
     private var subscriptions: [UUID : RemoteDataSubscription] = [:]
     private var updatedSinceLastForeground = false
@@ -90,34 +90,34 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
     
     @objc
     public convenience init(config: RuntimeConfig,
-                            dataStore: UAPreferenceDataStore,
+                            dataStore: PreferenceDataStore,
                             localeManager: LocaleManagerProtocol,
-                            privacyManager: UAPrivacyManager) {
+                            privacyManager: PrivacyManager) {
 
         self.init(dataStore: dataStore,
                   localeManager: localeManager,
                   privacyManager: privacyManager,
                   apiClient: RemoteDataAPIClient(config: config),
                   remoteDataStore: RemoteDataStore(storeName: "RemoteData-\(config.appKey).sqlite"),
-                  taskManager: UATaskManager.shared,
+                  taskManager: TaskManager.shared,
                   dispatcher: UADispatcher.main,
-                  date: UADate(),
+                  date: DateUtils(),
                   notificationCenter: NotificationCenter.default,
-                  appStateTracker: UAAppStateTracker.shared)
+                  appStateTracker: AppStateTracker.shared)
                      
     }
     
     @objc
-    public init(dataStore: UAPreferenceDataStore,
+    public init(dataStore: PreferenceDataStore,
                 localeManager: LocaleManagerProtocol,
-                privacyManager: UAPrivacyManager,
+                privacyManager: PrivacyManager,
                 apiClient: RemoteDataAPIClientProtocol,
                 remoteDataStore: RemoteDataStore,
                 taskManager: TaskManagerProtocol,
                 dispatcher: UADispatcher,
-                date: UADate,
+                date: DateUtils,
                 notificationCenter: NotificationCenter,
-                appStateTracker: UAAppStateTracker) {
+                appStateTracker: AppStateTracker) {
         
         self.dataStore = dataStore
         self.localeManager = localeManager
@@ -142,7 +142,7 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
         
         self.notificationCenter.addObserver(self,
                                             selector: #selector(applicationDidForeground),
-                                            name: UAAppStateTracker.didTransitionToForeground,
+                                            name: AppStateTracker.didTransitionToForeground,
                                             object: nil)
         
         self.notificationCenter.addObserver(self,
@@ -152,7 +152,7 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
         
         self.notificationCenter.addObserver(self,
                                             selector: #selector(checkRefresh),
-                                            name: UAPrivacyManager.changeEvent,
+                                            name: PrivacyManager.changeEvent,
                                             object: nil)
         
         self.taskManager.register(taskID: RemoteDataManager.refreshTaskID, dispatcher: UADispatcher.serial()) { [weak self] task in
@@ -185,15 +185,15 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
     @objc
     private func enqueueRefreshTask() {
         if (self.privacyManager.isAnyFeatureEnabled()) {
-            self.taskManager.enqueueRequest(taskID: RemoteDataManager.refreshTaskID, options: UATaskRequestOptions.defaultOptions)
+            self.taskManager.enqueueRequest(taskID: RemoteDataManager.refreshTaskID, options: TaskRequestOptions.defaultOptions)
         }
     }
     
-    private func handleRefreshTask(_ task: UATask) {
+    private func handleRefreshTask(_ task: Task) {
         let lastModified = self.isLastMetadataCurrent() ? self.lastModified : nil
         let locale = self.localeManager.currentLocale
         
-        let semaphore = UASemaphore()
+        let semaphore = Semaphore()
         
         let request = self.apiClient.fetchRemoteData(locale: locale, lastModified: lastModified) { response, error in
             guard let response = response else {
@@ -214,7 +214,7 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
             if (response.status == 304) {
                 self.updatedSinceLastForeground = true
                 self.lastRefreshTime = self.date.now
-                self.lastAppVersion = UAUtils.bundleShortVersionString()
+                self.lastAppVersion = Utils.bundleShortVersionString()
                 task.taskCompleted()
                 semaphore.signal()
             } else if (response.isSuccess) {
@@ -226,7 +226,7 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
                         self.lastMetadata = response.metadata
                         self.lastModified = response.lastModified
                         self.lastRefreshTime = self.date.now
-                        self.lastAppVersion = UAUtils.bundleShortVersionString()
+                        self.lastAppVersion = Utils.bundleShortVersionString()
                         self.notifySubscribers(payloads) {
                             self.updatedSinceLastForeground = true
                             task.taskCompleted()
@@ -288,7 +288,7 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
 
     private func isLastAppVersionCurrent() -> Bool {
         let lastAppRefreshVersion = self.dataStore.string(forKey: RemoteDataManager.lastRefreshAppVersionKey)
-        let currentAppVersion = UAUtils.bundleShortVersionString()
+        let currentAppVersion = Utils.bundleShortVersionString()
         return lastAppRefreshVersion == currentAppVersion
     }
     
@@ -319,12 +319,12 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
     }
     
     @discardableResult
-    public func subscribe(types: [String], block:@escaping ([RemoteDataPayload]) -> Void) -> UADisposable {
+    public func subscribe(types: [String], block:@escaping ([RemoteDataPayload]) -> Void) -> Disposable {
         let subscriptionID = UUID()
         let subscription = RemoteDataSubscription(payloadTypes: types, publishBlock: block)
         self.subscriptions[subscriptionID] = subscription
         
-        let disposable = UADisposable() {
+        let disposable = Disposable() {
             subscription.cancel()
             self.subscriptions[subscriptionID] = nil
         }
@@ -343,7 +343,7 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
     }
 }
 
-extension RemoteDataManager : UAPushableComponent {
+extension RemoteDataManager : PushableComponent {
     public func receivedRemoteNotification(_ notification: [AnyHashable : Any], completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         if (notification[RemoteDataManager.refreshRemoteDataPushPayloadKey] == nil) {
             completionHandler(.noData)

@@ -8,12 +8,12 @@ import Foundation
 @objc(UAAttributesEditor)
 public class AttributesEditor: NSObject {
     
-    private let date : UADate
+    private let date : DateUtils
     private var sets : [String : Any] = [:]
     private var removes : [String] = []
     private let completionHandler : ([AttributeUpdate]) -> Void
     
-    init(date: UADate, completionHandler : @escaping ([AttributeUpdate]) -> Void) {
+    init(date: DateUtils, completionHandler : @escaping ([AttributeUpdate]) -> Void) {
         self.completionHandler = completionHandler
         self.date = date
         super.init()
@@ -21,7 +21,7 @@ public class AttributesEditor: NSObject {
     
     @objc
     public convenience init(completionHandler : @escaping ([AttributeUpdate]) -> Void) {
-        self.init(date: UADate(), completionHandler: completionHandler)
+        self.init(date: DateUtils(), completionHandler: completionHandler)
     }
     
     /**

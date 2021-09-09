@@ -4,10 +4,10 @@
 import AirshipChat
 import AirshipCore
 
-class MockAppStateTracker : UAAppStateTracker {
-    var mockState: UAApplicationState = UAApplicationState.background
+class MockAppStateTracker : AppStateTracker {
+    var mockState: ApplicationState = ApplicationState.background
 
-    override var state: UAApplicationState {
+    override var state: ApplicationState {
         get {
             return self.mockState
         }

@@ -189,7 +189,7 @@ public class Push: NSObject, Component, PushProtocol {
     /// Indicates whether APNS registration is out of date or not.
     private var shouldUpdateAPNSRegistration: Bool
     /// The preference data store.
-    private var dataStore: UAPreferenceDataStore
+    private var dataStore: PreferenceDataStore
 
     /// The push registration instance.
     private let pushRegistration: APNSRegistrationProtocol
@@ -199,9 +199,9 @@ public class Push: NSObject, Component, PushProtocol {
     private var notificationCenter: NotificationCenter
     private var config: RuntimeConfig
     private var channel: ChannelProtocol
-    private var appStateTracker: UAAppStateTracker
+    private var appStateTracker: AppStateTracker
     private var waitForDeviceToken = false
-    private var privacyManager: UAPrivacyManager
+    private var privacyManager: PrivacyManager
     private var pushEnabled = false
     private var deviceTokenAvailableBlock: (() -> Void)?
 
@@ -248,14 +248,14 @@ public class Push: NSObject, Component, PushProtocol {
     }
 
     @objc
-    public convenience init(config: RuntimeConfig, dataStore: UAPreferenceDataStore, channel:  ChannelProtocol, analytics: AnalyticsProtocol, privacyManager: UAPrivacyManager) {
-        self.init(config: config, dataStore: dataStore, channel: channel, analytics: analytics, appStateTracker: UAAppStateTracker.shared, notificationCenter: NotificationCenter.default, pushRegistration: UAAPNSRegistration(), application: UIApplication.shared, dispatcher: UADispatcher.main, privacyManager: privacyManager)
+    public convenience init(config: RuntimeConfig, dataStore: PreferenceDataStore, channel:  ChannelProtocol, analytics: AnalyticsProtocol, privacyManager: PrivacyManager) {
+        self.init(config: config, dataStore: dataStore, channel: channel, analytics: analytics, appStateTracker: AppStateTracker.shared, notificationCenter: NotificationCenter.default, pushRegistration: APNSRegistration(), application: UIApplication.shared, dispatcher: UADispatcher.main, privacyManager: privacyManager)
     }
 
     // MARK: - Initialization
 
     @objc
-    public init(config: RuntimeConfig, dataStore: UAPreferenceDataStore, channel:  ChannelProtocol, analytics: AnalyticsProtocol, appStateTracker: UAAppStateTracker, notificationCenter: NotificationCenter, pushRegistration: APNSRegistrationProtocol,  application: UIApplication, dispatcher: UADispatcher, privacyManager: UAPrivacyManager) {
+    public init(config: RuntimeConfig, dataStore: PreferenceDataStore, channel:  ChannelProtocol, analytics: AnalyticsProtocol, appStateTracker: AppStateTracker, notificationCenter: NotificationCenter, pushRegistration: APNSRegistrationProtocol,  application: UIApplication, dispatcher: UADispatcher, privacyManager: PrivacyManager) {
         self.config = config
         self.application = application
         self.dispatcher = dispatcher
@@ -333,17 +333,17 @@ public class Push: NSObject, Component, PushProtocol {
                                             object: nil)
         self.notificationCenter.addObserver(self,
                                             selector: #selector(applicationDidTransitionToForeground),
-                                            name: UAAppStateTracker.didTransitionToForeground,
+                                            name: AppStateTracker.didTransitionToForeground,
                                             object: nil)
 
         self.notificationCenter.addObserver(self,
                                             selector: #selector(applicationDidEnterBackground),
-                                            name: UAAppStateTracker.didEnterBackgroundNotification,
+                                            name: AppStateTracker.didEnterBackgroundNotification,
                                             object: nil)
 
         self.notificationCenter.addObserver(self,
                                             selector: #selector(onEnabledFeaturesChanged),
-                                            name: UAPrivacyManager.changeEvent,
+                                            name: PrivacyManager.changeEvent,
                                             object: nil)
     }
 
@@ -504,7 +504,7 @@ public class Push: NSObject, Component, PushProtocol {
     @objc
     public var combinedCategories: Set<UNNotificationCategory> {
         get {
-            let defaultCategories = UANotificationCategories.defaultCategories(withRequireAuth: requireAuthorizationForDefaultCategories)
+            let defaultCategories = NotificationCategories.defaultCategories(withRequireAuth: requireAuthorizationForDefaultCategories)
             return defaultCategories.union(self.customCategories.union(self.accengageCategories))
         }
     }
@@ -661,7 +661,7 @@ public class Push: NSObject, Component, PushProtocol {
             }
 
             if self.waitForDeviceToken && self.privacyManager.isEnabled(.push) && self.deviceToken == nil && self.application.isRegisteredForRemoteNotifications {
-                let semaphore = UASemaphore()
+                let semaphore = Semaphore()
                 self.waitForDeviceToken = false
 
                 self.deviceTokenAvailableBlock = {
@@ -1088,7 +1088,7 @@ extension Push : InternalPushProtocol {
             return
         }
         
-        let tokenString = UAUtils.deviceTokenStringFromDeviceToken(deviceToken)
+        let tokenString = Utils.deviceTokenStringFromDeviceToken(deviceToken)
         AirshipLogger.info("Device token string: \(tokenString)")
         self.deviceToken = tokenString
 

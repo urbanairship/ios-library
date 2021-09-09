@@ -118,19 +118,19 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
         }
     }
     
-    private let dataStore: UAPreferenceDataStore
+    private let dataStore: PreferenceDataStore
     private let channelAPIClient: ChannelAPIClient
-    private let date: UADate
+    private let date: DateUtils
     private let dispatcher: UADispatcher
-    private let taskManager: UATaskManager
+    private let taskManager: TaskManager
 
     @objc
     public init(config: RuntimeConfig,
-                dataStore: UAPreferenceDataStore,
+                dataStore: PreferenceDataStore,
                 channelAPIClient: ChannelAPIClient,
-                date: UADate,
+                date: DateUtils,
                 dispatcher: UADispatcher,
-                taskManager: UATaskManager) {
+                taskManager: TaskManager) {
         
         self.dataStore = dataStore
         self.channelAPIClient = channelAPIClient
@@ -158,13 +158,13 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
     
     @objc
     public convenience init(config: RuntimeConfig,
-                            dataStore: UAPreferenceDataStore) {
+                            dataStore: PreferenceDataStore) {
         self.init(config: config,
                   dataStore:dataStore,
                   channelAPIClient: ChannelAPIClient(config: config),
-                  date: UADate(),
+                  date: DateUtils(),
                   dispatcher: UADispatcher.serial(),
-                  taskManager: UATaskManager.shared)
+                  taskManager: TaskManager.shared)
     }
     
     /**
@@ -177,7 +177,7 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
     public func register(forcefully: Bool) {
         let extras = [ChannelRegistrar.forcefullyKey: forcefully]
         let policy = forcefully ? UATaskConflictPolicy.replace : UATaskConflictPolicy.keep
-        let options = UATaskRequestOptions(conflictPolicy: policy, requiresNetwork: true, extras: extras)
+        let options = TaskRequestOptions(conflictPolicy: policy, requiresNetwork: true, extras: extras)
         
         self.taskManager.enqueueRequest(taskID: ChannelRegistrar.taskID, options: options)
     }
@@ -209,7 +209,7 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
         }
     }
     
-    private func handleRegistrationTask(_ task: UATask) {
+    private func handleRegistrationTask(_ task: Task) {
         AirshipLogger.trace("Handling registration task: \(task)")
         
         guard let payload = self.createPayload() else {
@@ -236,8 +236,8 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
         }
     }
     
-    private func updateChannel(_ channelID: String, payload: ChannelRegistrationPayload, lastPayload: ChannelRegistrationPayload?,  task: UATask) {
-        let semaphore = UASemaphore()
+    private func updateChannel(_ channelID: String, payload: ChannelRegistrationPayload, lastPayload: ChannelRegistrationPayload?,  task: Task) {
+        let semaphore = Semaphore()
         let disposable = self.channelAPIClient.updateChannel(withID: channelID, withPayload: payload) { response, error in
             guard let response = response else {
                 if let error = error {
@@ -278,8 +278,8 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
         semaphore.wait()
     }
     
-    private func createChannel(payload: ChannelRegistrationPayload, task: UATask) {
-        let semaphore = UASemaphore()
+    private func createChannel(payload: ChannelRegistrationPayload, task: Task) {
+        let semaphore = Semaphore()
         let disposable = self.channelAPIClient.createChannel(withPayload: payload) { response, error in
             
             guard let response = response else {
@@ -368,7 +368,7 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
     
     private func createPayload() -> ChannelRegistrationPayload? {
         var result: ChannelRegistrationPayload?
-        let semaphore = UASemaphore()
+        let semaphore = Semaphore()
         
         guard let strongDelegate = delegate else {
             return nil

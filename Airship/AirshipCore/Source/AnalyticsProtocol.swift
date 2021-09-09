@@ -40,12 +40,12 @@ public protocol AnalyticsProtocol {
     ///
     /// - Parameter associatedIdentifiers: The associated identifiers.
     @objc
-    func associateDeviceIdentifiers(_ associatedIdentifiers: UAAssociatedIdentifiers)
+    func associateDeviceIdentifiers(_ associatedIdentifiers: AssociatedIdentifiers)
 
     /// The device's current associated identifiers.
     /// - Returns: The device's current associated identifiers.
     @objc
-    func currentAssociatedDeviceIdentifiers() -> UAAssociatedIdentifiers
+    func currentAssociatedDeviceIdentifiers() -> AssociatedIdentifiers
 
     /// Initiates screen tracking for a specific app screen, must be called once per tracked screen.
     /// - Parameter screen: The screen's identifier.

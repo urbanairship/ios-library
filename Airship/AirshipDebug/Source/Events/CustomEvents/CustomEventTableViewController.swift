@@ -26,7 +26,7 @@ class CustomEventTableViewController: UITableViewController, UITextFieldDelegate
     @IBOutlet var cancelButton: UIBarButtonItem!
     @IBOutlet var doneButton: UIBarButtonItem!
 
-    var customEvent:UACustomEvent?
+    var customEvent:CustomEvent?
 
     var eventName:String?
     var eventValue:String?
@@ -127,7 +127,7 @@ class CustomEventTableViewController: UITableViewController, UITextFieldDelegate
 
     func lazyLoadCustomEvent() {
         if (customEvent == nil) {
-            customEvent = UACustomEvent(name: eventName!, value: NSDecimalNumber(string: eventValue!))
+            customEvent = CustomEvent(name: eventName!, value: NSDecimalNumber(string: eventValue!))
         }
 
         self.doneButton.isEnabled = (customEvent != nil)

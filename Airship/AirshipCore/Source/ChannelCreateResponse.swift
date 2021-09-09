@@ -3,8 +3,8 @@
 /**
  * @note For internal use only. :nodoc:
  */
-@objc
-public class UAChannelCreateResponse : UAHTTPResponse {
+@objc(UAChannelCreateResponse)
+public class ChannelCreateResponse : HTTPResponse {
 
     @objc
     public let channelID: String?

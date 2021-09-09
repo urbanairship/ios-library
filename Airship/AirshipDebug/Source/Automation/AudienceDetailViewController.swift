@@ -13,7 +13,7 @@ import Airship
  * The AudienceDetailViewController displays the details of an IAA
  * audience.
  */
-class AudienceDetailViewController: UAStaticTableViewController {
+class AudienceDetailViewController: StaticTableViewController {
     public static let segueID = "AudienceSegue"
 
     /* The UAScheduleAudience to be displayed. */

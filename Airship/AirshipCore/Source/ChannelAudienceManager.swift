@@ -27,7 +27,7 @@ public protocol ChannelAudienceManagerProtocol {
     
     @objc
     @discardableResult
-    func fetchSubscriptionLists(completionHandler: @escaping ([String]?, Error?) -> Void) -> UADisposable
+    func fetchSubscriptionLists(completionHandler: @escaping ([String]?, Error?) -> Void) -> Disposable
 }
 
 
@@ -42,14 +42,14 @@ public class ChannelAudienceManager : NSObject, ChannelAudienceManagerProtocol {
     
     static let maxCacheTime : TimeInterval = 600 // 10 minutes
 
-    private let dataStore: UAPreferenceDataStore
-    private let privacyManager: UAPrivacyManager
+    private let dataStore: PreferenceDataStore
+    private let privacyManager: PrivacyManager
     private let taskManager: TaskManagerProtocol
     private let subscriptionListClient: SubscriptionListAPIClientProtocol
     private let updateClient: ChannelBulkUpdateAPIClientProtocol
     private let notificationCenter: NotificationCenter
 
-    private let date: UADate
+    private let date: DateUtils
     private let dispatcher = UADispatcher.serial()
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
@@ -93,13 +93,13 @@ public class ChannelAudienceManager : NSObject, ChannelAudienceManagerProtocol {
         }
     }
     
-    init(dataStore: UAPreferenceDataStore,
+    init(dataStore: PreferenceDataStore,
         taskManager: TaskManagerProtocol,
         subscriptionListClient: SubscriptionListAPIClientProtocol,
         updateClient: ChannelBulkUpdateAPIClientProtocol,
-        privacyManager: UAPrivacyManager,
+        privacyManager: PrivacyManager,
         notificationCenter: NotificationCenter,
-        date: UADate) {
+        date: DateUtils) {
         
         self.dataStore = dataStore;
         self.taskManager = taskManager;
@@ -120,7 +120,7 @@ public class ChannelAudienceManager : NSObject, ChannelAudienceManagerProtocol {
         notificationCenter.addObserver(
             self,
             selector: #selector(checkPrivacyManager),
-            name: UAPrivacyManager.changeEvent,
+            name: PrivacyManager.changeEvent,
             object: nil)
         
         notificationCenter.addObserver(
@@ -134,17 +134,17 @@ public class ChannelAudienceManager : NSObject, ChannelAudienceManagerProtocol {
     }
     
     @objc
-    public convenience init(dataStore: UAPreferenceDataStore,
+    public convenience init(dataStore: PreferenceDataStore,
                             config: RuntimeConfig,
-                            privacyManager: UAPrivacyManager) {
+                            privacyManager: PrivacyManager) {
         
         self.init(dataStore: dataStore,
-                  taskManager: UATaskManager.shared,
+                  taskManager: TaskManager.shared,
                   subscriptionListClient: SubscriptionListAPIClient(config: config),
                   updateClient: ChannelBulkUpdateAPIClient(config: config),
                   privacyManager: privacyManager,
                   notificationCenter: NotificationCenter.default,
-                  date: UADate())
+                  date: DateUtils())
     }
     
     @objc
@@ -203,10 +203,10 @@ public class ChannelAudienceManager : NSObject, ChannelAudienceManagerProtocol {
     
     @objc
     @discardableResult
-    public func fetchSubscriptionLists(completionHandler: @escaping ([String]?, Error?) -> Void) -> UADisposable {
+    public func fetchSubscriptionLists(completionHandler: @escaping ([String]?, Error?) -> Void) -> Disposable {
         
         var callback: (([String]?, Error?) -> Void)? = completionHandler
-        let disposable = UADisposable() {
+        let disposable = Disposable() {
             callback = nil
         }
         
@@ -236,7 +236,7 @@ public class ChannelAudienceManager : NSObject, ChannelAudienceManagerProtocol {
                 }
             }
             
-            let semaphore = UASemaphore()
+            let semaphore = Semaphore()
             self.subscriptionListClient.get(channelID: channelID) { response, error in
                 if let response = response {
                     AirshipLogger.debug("Fetched lists finished with response: \(response)")
@@ -277,11 +277,11 @@ public class ChannelAudienceManager : NSObject, ChannelAudienceManagerProtocol {
     private func enqueueTask() {
         if (self.enabled && self.channelID != nil) {
             self.taskManager.enqueueRequest(taskID: ChannelAudienceManager.updateTaskID,
-                                            options: UATaskRequestOptions.defaultOptions)
+                                            options: TaskRequestOptions.defaultOptions)
         }
     }
     
-    private func handleUpdateTask(_ task: UATask)  {
+    private func handleUpdateTask(_ task: Task)  {
         guard self.enabled && self.privacyManager.isEnabled(.tagsAndAttributes) else {
             task.taskCompleted()
             return
@@ -292,7 +292,7 @@ public class ChannelAudienceManager : NSObject, ChannelAudienceManagerProtocol {
             return
         }
         
-        let semaphore = UASemaphore()
+        let semaphore = Semaphore()
         
         let disposable = self.updateClient.update(channelID: channelID,
                                                   subscriptionListUpdates: update.subscriptionListUpdates,

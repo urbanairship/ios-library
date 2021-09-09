@@ -22,10 +22,10 @@ public class ChatSDKModule : NSObject, SDKModule {
             return nil
         }
         
-        let dataStore = dependencies[SDKDependencyKeys.dataStore] as! UAPreferenceDataStore
+        let dataStore = dependencies[SDKDependencyKeys.dataStore] as! PreferenceDataStore
         let config = dependencies[SDKDependencyKeys.config] as! RuntimeConfig
         let channel = dependencies[SDKDependencyKeys.channel] as! Channel
-        let privacyManager = dependencies[SDKDependencyKeys.privacyManager] as! UAPrivacyManager
+        let privacyManager = dependencies[SDKDependencyKeys.privacyManager] as! PrivacyManager
         
         let airshipChat = Chat(dataStore: dataStore,
                                config: config,

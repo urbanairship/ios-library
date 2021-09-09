@@ -8,10 +8,10 @@ public class ChannelAPIClient : NSObject {
     private let path = "/api/channels/"
 
     private let config: RuntimeConfig
-    private let session: UARequestSession
+    private let session: RequestSession
 
     @objc
-    public init(config: RuntimeConfig, session: UARequestSession) {
+    public init(config: RuntimeConfig, session: RequestSession) {
         self.config = config
         self.session = session
         super.init()
@@ -19,22 +19,22 @@ public class ChannelAPIClient : NSObject {
 
     @objc
     public convenience init(config: RuntimeConfig) {
-        self.init(config: config, session: UARequestSession(config: config))
+        self.init(config: config, session: RequestSession(config: config))
     }
 
     @objc
     @discardableResult
-    public func createChannel(withPayload payload: ChannelRegistrationPayload, completionHandler: @escaping (UAChannelCreateResponse?, Error?) -> Void) -> UADisposable {
+    public func createChannel(withPayload payload: ChannelRegistrationPayload, completionHandler: @escaping (ChannelCreateResponse?, Error?) -> Void) -> Disposable {
         
         guard let data = try? payload.encode() else {
             completionHandler(nil, AirshipErrors.error("Unable to encode data."))
-            return UADisposable()
+            return Disposable()
         }
         
         AirshipLogger.debug("Creating channel with: \(String(data:data, encoding: .utf8) ?? "")")
 
         let url = URL(string: "\(self.config.deviceAPIURL ?? "")\(self.path)")
-        let request = UARequest(builderBlock: { [self] builder in
+        let request = Request(builderBlock: { [self] builder in
             builder.url = url
             builder.method = "POST"
             builder.username = config.appKey
@@ -67,13 +67,13 @@ public class ChannelAPIClient : NSObject {
                         return
                     }
 
-                    let response = UAChannelCreateResponse(status: status, channelID: channelID)
+                    let response = ChannelCreateResponse(status: status, channelID: channelID)
                     completionHandler(response, nil)
                 } catch {
                     completionHandler(nil, error)
                 }
             } else {
-                let response = UAChannelCreateResponse(status: status, channelID: nil)
+                let response = ChannelCreateResponse(status: status, channelID: nil)
                 completionHandler(response, nil)
             }
         })
@@ -81,12 +81,12 @@ public class ChannelAPIClient : NSObject {
 
     @objc
     @discardableResult
-    public func updateChannel(withID channelID: String, withPayload payload: ChannelRegistrationPayload, completionHandler: @escaping (UAHTTPResponse?, Error?) -> Void) -> UADisposable {
+    public func updateChannel(withID channelID: String, withPayload payload: ChannelRegistrationPayload, completionHandler: @escaping (HTTPResponse?, Error?) -> Void) -> Disposable {
         AirshipLogger.debug("Updating channel with: \(payload)")
 
         let channelLocation = "\(config.deviceAPIURL ?? "")\(self.path)\(channelID)"
 
-        let request = UARequest(builderBlock: { [self] builder in
+        let request = Request(builderBlock: { [self] builder in
             builder.url = URL(string: channelLocation)
             builder.method = "PUT"
             builder.username = config.appKey
@@ -104,7 +104,7 @@ public class ChannelAPIClient : NSObject {
             }
 
             AirshipLogger.debug("Channel update finished with response: \(response!)")
-            completionHandler(UAHTTPResponse(status: response!.statusCode), nil)
+            completionHandler(HTTPResponse(status: response!.statusCode), nil)
         })
     }
 }

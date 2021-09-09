@@ -9,13 +9,13 @@ public class TestSubscriptionListAPIClient : SubscriptionListAPIClientProtocol {
     
     init() {}
     
-    public func get(channelID: String, completionHandler: @escaping (SubscriptionListFetchResponse?, Error?) -> Void) -> UADisposable {
+    public func get(channelID: String, completionHandler: @escaping (SubscriptionListFetchResponse?, Error?) -> Void) -> Disposable {
         if let callback = getCallback {
             callback(channelID, completionHandler)
         } else {
             defaultCallback?("get")
         }
         
-        return UADisposable()
+        return Disposable()
     }
 }

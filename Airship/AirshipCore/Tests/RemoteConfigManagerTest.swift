@@ -5,18 +5,18 @@ import AirshipCore
 
 class RemoteConfigManagerTest: XCTestCase {
 
-    let dataStore = UAPreferenceDataStore(keyPrefix: UUID().uuidString)
+    let dataStore = PreferenceDataStore(keyPrefix: UUID().uuidString)
     let testRemoteDataProvider = TestRemoteDataProvider()
     let testModuleAdapter = TestRemoteConfigModuleAdapter()
     let notificationCenter = NotificationCenter.default
     
-    var privacyManager: UAPrivacyManager!
+    var privacyManager: PrivacyManager!
     var remoteConfigManager: RemoteConfigManager!
     
     var appVersion = ""
     
     override func setUpWithError() throws {
-        self.privacyManager = UAPrivacyManager(dataStore: self.dataStore,
+        self.privacyManager = PrivacyManager(dataStore: self.dataStore,
                                                defaultEnabledFeatures: .all,
                                                notificationCenter: self.notificationCenter)
         
@@ -155,7 +155,7 @@ class RemoteConfigManagerTest: XCTestCase {
                 ],
                 [
                     "modules": ["message_center"],
-                    "sdk_versions": [UAirshipVersion.get()]
+                    "sdk_versions": [AirshipVersion.get()]
                 ],
                 [
                     "modules": ["contact"],

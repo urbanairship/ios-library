@@ -6,7 +6,7 @@ import XCTest
 import AirshipCore
 
 class RuntimeConfigTest: XCTestCase {
-    let dataStore = UAPreferenceDataStore(keyPrefix: UUID().uuidString)
+    let dataStore = PreferenceDataStore(keyPrefix: UUID().uuidString)
     let notificationCenter = NotificationCenter()
 
     func testUSSiteURLS() throws {

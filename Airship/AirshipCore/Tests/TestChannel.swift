@@ -72,7 +72,7 @@ public class TestChannel : NSObject, ChannelProtocol, Component {
         editor.apply()
     }
     
-    public func fetchSubscriptionLists(completionHandler: @escaping ([String]?, Error?) -> Void) -> UADisposable {
+    public func fetchSubscriptionLists(completionHandler: @escaping ([String]?, Error?) -> Void) -> Disposable {
         fatalError("Not implemented")
     }
     

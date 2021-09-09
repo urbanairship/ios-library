@@ -23,8 +23,8 @@ public class PreferenceCenterSDKModule : NSObject, SDKModule {
     }
     
     public static func load(withDependencies dependencies: [AnyHashable : Any]) -> SDKModule? {
-        let dataStore = dependencies[SDKDependencyKeys.dataStore] as! UAPreferenceDataStore
-        let privacyManager = dependencies[SDKDependencyKeys.privacyManager] as! UAPrivacyManager
+        let dataStore = dependencies[SDKDependencyKeys.dataStore] as! PreferenceDataStore
+        let privacyManager = dependencies[SDKDependencyKeys.privacyManager] as! PrivacyManager
         let remoteDataProvider = dependencies[SDKDependencyKeys.remoteData] as! RemoteDataProvider
 
         let preferenceCenter = PreferenceCenter(dataStore: dataStore,

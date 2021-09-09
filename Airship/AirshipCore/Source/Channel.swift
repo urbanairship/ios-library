@@ -62,9 +62,9 @@ public class Channel : NSObject, Component, ChannelProtocol {
     @objc
     public static let audienceAttributesKey = "attributes"
 
-    private let dataStore: UAPreferenceDataStore
+    private let dataStore: PreferenceDataStore
     private let config: RuntimeConfig
-    private let privacyManager: UAPrivacyManager
+    private let privacyManager: PrivacyManager
     private let localeManager: LocaleManagerProtocol
     private let audienceManager: ChannelAudienceManagerProtocol
     private let channelRegistrar: ChannelRegistrarProtocol
@@ -151,9 +151,9 @@ public class Channel : NSObject, Component, ChannelProtocol {
     
     // NOTE: For internal use only. :nodoc:
     @objc
-    public init(dataStore: UAPreferenceDataStore,
+    public init(dataStore: PreferenceDataStore,
          config: RuntimeConfig,
-         privacyManager: UAPrivacyManager,
+         privacyManager: PrivacyManager,
          localeManager: LocaleManagerProtocol,
          audienceManager: ChannelAudienceManagerProtocol,
          channelRegistrar: ChannelRegistrarProtocol,
@@ -200,9 +200,9 @@ public class Channel : NSObject, Component, ChannelProtocol {
     
     // NOTE: For internal use only. :nodoc:
     @objc
-    convenience public init(dataStore: UAPreferenceDataStore,
+    convenience public init(dataStore: PreferenceDataStore,
                             config: RuntimeConfig,
-                            privacyManager: UAPrivacyManager,
+                            privacyManager: PrivacyManager,
                             localeManager: LocaleManagerProtocol) {
         self.init(dataStore:dataStore,
                   config: config,
@@ -216,7 +216,7 @@ public class Channel : NSObject, Component, ChannelProtocol {
     private func observeNotificationCenterEvents() {
         notificationCenter.addObserver(self,
                                        selector: #selector(applicationDidTransitionToForeground),
-                                       name: UAAppStateTracker.didTransitionToForeground,
+                                       name: AppStateTracker.didTransitionToForeground,
                                        object: nil)
         
         notificationCenter.addObserver(self,
@@ -231,7 +231,7 @@ public class Channel : NSObject, Component, ChannelProtocol {
 
         notificationCenter.addObserver(self,
                                        selector: #selector(onEnableFeaturesChanged),
-                                       name: UAPrivacyManager.changeEvent,
+                                       name: PrivacyManager.changeEvent,
                                        object: nil)
         
         
@@ -319,7 +319,7 @@ public class Channel : NSObject, Component, ChannelProtocol {
     }
     
     @discardableResult
-    public func fetchSubscriptionLists(completionHandler: @escaping ([String]?, Error?) -> Void) -> UADisposable {
+    public func fetchSubscriptionLists(completionHandler: @escaping ([String]?, Error?) -> Void) -> Disposable {
         return audienceManager.fetchSubscriptionLists(completionHandler: completionHandler)
     }
     
@@ -475,7 +475,7 @@ public class Channel : NSObject, Component, ChannelProtocol {
     }
 }
 
-extension Channel : UAPushableComponent {
+extension Channel : PushableComponent {
     
     public func receivedRemoteNotification(_ notification: [AnyHashable : Any], completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         if (self.identifier == nil) {
@@ -498,9 +498,9 @@ extension Channel : ChannelRegistrarDelegate {
         }
         
         if (self.privacyManager.isEnabled(.analytics)) {
-            payload.channel.deviceModel = UAUtils.deviceModelName()
-            payload.channel.carrier = UAUtils.carrierName()
-            payload.channel.appVersion = UAUtils.bundleShortVersionString()
+            payload.channel.deviceModel = Utils.deviceModelName()
+            payload.channel.carrier = Utils.carrierName()
+            payload.channel.appVersion = Utils.bundleShortVersionString()
             payload.channel.deviceOS = UIDevice.current.systemVersion
         }
         
@@ -510,7 +510,7 @@ extension Channel : ChannelRegistrarDelegate {
             payload.channel.language = currentLocale.languageCode
             payload.channel.country = currentLocale.regionCode
             payload.channel.timeZone = TimeZone.current.identifier
-            payload.channel.sdkVersion = UAirshipVersion.get()
+            payload.channel.sdkVersion = AirshipVersion.get()
             
             Channel.extendPayload(payload,
                                   extenders: self.extensionBlocks,

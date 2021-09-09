@@ -166,11 +166,11 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
         case audienceIdx:
             performSegue(withIdentifier: AudienceDetailViewController.segueID, sender: indexPath)
         case scheduleDataIdx:
-            if schedule is UAInAppMessageSchedule {
+            if schedule is InAppMessageSchedule {
                 performSegue(withIdentifier: InAppMessageDetailViewController.segueID, sender: indexPath)
-            } else if schedule is UAActionSchedule {
+            } else if schedule is ActionSchedule {
                 performSegue(withIdentifier: ActionDetailViewController.segueID, sender: indexPath)
-            } else if schedule is UADeferredSchedule {
+            } else if schedule is DeferredSchedule {
                 performSegue(withIdentifier: DeferredDetailViewController.segueID, sender: indexPath)
             }
         default:

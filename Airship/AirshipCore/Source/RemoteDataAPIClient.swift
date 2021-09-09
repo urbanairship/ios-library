@@ -7,7 +7,7 @@ public protocol RemoteDataAPIClientProtocol {
     @discardableResult
     func fetchRemoteData(locale: Locale,
                          lastModified: String?,
-                         completionHandler: @escaping (RemoteDataResponse?, Error?) -> Void) -> UADisposable
+                         completionHandler: @escaping (RemoteDataResponse?, Error?) -> Void) -> Disposable
     
     @objc
     func metadata(locale: Locale) -> [AnyHashable : Any]
@@ -19,11 +19,11 @@ public class RemoteDataAPIClient : NSObject, RemoteDataAPIClientProtocol {
     private static let urlMetadataKey = "url"
 
     private let path = "api/remote-data/app"
-    private let session: UARequestSession
+    private let session: RequestSession
     private let config: RuntimeConfig
 
     @objc
-    public init(config: RuntimeConfig, session: UARequestSession) {
+    public init(config: RuntimeConfig, session: RequestSession) {
         self.config = config
         self.session = session
         super.init()
@@ -31,17 +31,17 @@ public class RemoteDataAPIClient : NSObject, RemoteDataAPIClientProtocol {
 
     @objc
     public convenience init(config: RuntimeConfig) {
-        self.init(config: config, session: UARequestSession(config: config))
+        self.init(config: config, session: RequestSession(config: config))
     }
 
     @objc
     @discardableResult
     public func fetchRemoteData(locale: Locale,
                                 lastModified: String?,
-                                completionHandler: @escaping (RemoteDataResponse?, Error?) -> Void) -> UADisposable {
+                                completionHandler: @escaping (RemoteDataResponse?, Error?) -> Void) -> Disposable {
         
         let url = remoteDataURL(locale: locale)
-        let request = UARequest() { builder in
+        let request = Request() { builder in
             builder.url = url
             builder.method = "GET"
             builder.setValue(lastModified, header: "If-Modified-Since")
@@ -87,7 +87,7 @@ public class RemoteDataAPIClient : NSObject, RemoteDataAPIClientProtocol {
     private func remoteDataURL(locale: Locale) -> URL? {
         let languageItem = URLQueryItem(name: "language", value: locale.languageCode)
         let countryItem = URLQueryItem(name: "country", value: locale.regionCode)
-        let versionItem = URLQueryItem(name: "sdk_version", value: UAirshipVersion.get())
+        let versionItem = URLQueryItem(name: "sdk_version", value: AirshipVersion.get())
 
         var components = URLComponents(string: config.remoteDataAPIURL ?? "")
 
@@ -145,7 +145,7 @@ public class RemoteDataAPIClient : NSObject, RemoteDataAPIClientProtocol {
         }
         
         guard let timestampString = payload["timestamp"] as? String,
-              let timestamp = UAUtils.parseISO8601Date(from: timestampString) else {
+              let timestamp = Utils.parseISO8601Date(from: timestampString) else {
             AirshipLogger.error("Invalid payload: \(payload). Missing or invalid timestamp.")
             return nil
         }

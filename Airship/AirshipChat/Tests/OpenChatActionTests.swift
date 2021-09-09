@@ -11,12 +11,12 @@ class OpenChatActionTests: XCTestCase {
     var airshipChat: Chat!
     var mockConversation: MockConversation!
     var mockOpenDelegate: MockChatOpenDelegate!
-    var privacyManager : UAPrivacyManager!
+    var privacyManager : PrivacyManager!
 
     override func setUp() {
         self.mockConversation = MockConversation()
-        let dataStore = UAPreferenceDataStore(keyPrefix: UUID().uuidString)
-        self.privacyManager = UAPrivacyManager(dataStore: dataStore, defaultEnabledFeatures: .all)
+        let dataStore = PreferenceDataStore(keyPrefix: UUID().uuidString)
+        self.privacyManager = PrivacyManager(dataStore: dataStore, defaultEnabledFeatures: .all)
 
         self.airshipChat = Chat(dataStore: dataStore,
                                 conversation: self.mockConversation,
@@ -94,7 +94,7 @@ class OpenChatActionTests: XCTestCase {
     }
     
     func testPerformPrepopulated() throws {
-        let date = UAUtils.parseISO8601Date(from: "2021-01-01T00:00:00Z")
+        let date = Utils.parseISO8601Date(from: "2021-01-01T00:00:00Z")
         let argsData = [
             "prepopulated_messages": [
                 [

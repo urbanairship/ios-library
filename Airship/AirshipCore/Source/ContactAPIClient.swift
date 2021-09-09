@@ -5,19 +5,19 @@ import Foundation
 // NOTE: For internal use only. :nodoc:
 protocol ContactsAPIClientProtocol {
     @discardableResult
-    func resolve(channelID: String, completionHandler: @escaping (ContactAPIResponse?, Error?) -> Void) -> UADisposable
+    func resolve(channelID: String, completionHandler: @escaping (ContactAPIResponse?, Error?) -> Void) -> Disposable
 
     @discardableResult
-    func identify(channelID: String, namedUserID: String, contactID: String?, completionHandler: @escaping (ContactAPIResponse?, Error?) -> Void) -> UADisposable
+    func identify(channelID: String, namedUserID: String, contactID: String?, completionHandler: @escaping (ContactAPIResponse?, Error?) -> Void) -> Disposable
     
     @discardableResult
-    func reset(channelID: String, completionHandler: @escaping (ContactAPIResponse?, Error?) -> Void) -> UADisposable
+    func reset(channelID: String, completionHandler: @escaping (ContactAPIResponse?, Error?) -> Void) -> Disposable
     
     @discardableResult
     func update(identifier: String,
                 tagGroupUpdates: [TagGroupUpdate]?,
                 attributeUpdates: [AttributeUpdate]?,
-                completionHandler: @escaping (UAHTTPResponse?, Error?) -> Void) -> UADisposable
+                completionHandler: @escaping (HTTPResponse?, Error?) -> Void) -> Disposable
 }
 
 // NOTE: For internal use only. :nodoc:
@@ -30,19 +30,19 @@ class ContactAPIClient : ContactsAPIClientProtocol {
     private static let deviceTypeKey = "device_type"
 
     private let config: RuntimeConfig
-    private let session: UARequestSession
+    private let session: RequestSession
 
-    init(config: RuntimeConfig, session: UARequestSession) {
+    init(config: RuntimeConfig, session: RequestSession) {
         self.config = config
         self.session = session
     }
 
     convenience init(config: RuntimeConfig) {
-        self.init(config: config, session: UARequestSession(config: config))
+        self.init(config: config, session: RequestSession(config: config))
     }
     
     @discardableResult
-    func resolve(channelID: String, completionHandler: @escaping (ContactAPIResponse?, Error?) -> Void) -> UADisposable {
+    func resolve(channelID: String, completionHandler: @escaping (ContactAPIResponse?, Error?) -> Void) -> Disposable {
 
         AirshipLogger.debug("Resolving contact with channel ID \(channelID)")
 
@@ -91,7 +91,7 @@ class ContactAPIClient : ContactsAPIClientProtocol {
     }
 
     @discardableResult
-    func identify(channelID: String, namedUserID: String, contactID: String?, completionHandler: @escaping (ContactAPIResponse?, Error?) -> Void) -> UADisposable {
+    func identify(channelID: String, namedUserID: String, contactID: String?, completionHandler: @escaping (ContactAPIResponse?, Error?) -> Void) -> Disposable {
 
         AirshipLogger.debug("Identifying contact with channel ID \(channelID)")
 
@@ -142,7 +142,7 @@ class ContactAPIClient : ContactsAPIClientProtocol {
     }
     
     @discardableResult
-    func reset(channelID: String, completionHandler: @escaping (ContactAPIResponse?, Error?) -> Void) -> UADisposable {
+    func reset(channelID: String, completionHandler: @escaping (ContactAPIResponse?, Error?) -> Void) -> Disposable {
 
         AirshipLogger.debug("Resetting contact with channel ID \(channelID)")
 
@@ -190,7 +190,7 @@ class ContactAPIClient : ContactsAPIClientProtocol {
     func update(identifier: String,
                 tagGroupUpdates: [TagGroupUpdate]?,
                 attributeUpdates: [AttributeUpdate]?,
-                completionHandler: @escaping (UAHTTPResponse?, Error?) -> Void) -> UADisposable {
+                completionHandler: @escaping (HTTPResponse?, Error?) -> Void) -> Disposable {
 
         AirshipLogger.debug("Updating contact with identifier \(identifier)")
 
@@ -218,12 +218,12 @@ class ContactAPIClient : ContactsAPIClientProtocol {
             }
 
             AirshipLogger.debug("Update finished with response: \(response)")
-            completionHandler(UAHTTPResponse(status: response.statusCode), nil)
+            completionHandler(HTTPResponse(status: response.statusCode), nil)
         })
     }
     
-    private func request(_ payload: [AnyHashable : Any], _ urlString: String) -> UARequest {
-        return UARequest(builderBlock: { [self] builder in
+    private func request(_ payload: [AnyHashable : Any], _ urlString: String) -> Request {
+        return Request(builderBlock: { [self] builder in
             builder.method = "POST"
             builder.url = URL(string: urlString)
             builder.username = config.appKey
@@ -243,13 +243,13 @@ class ContactAPIClient : ContactsAPIClientProtocol {
                     "action": "set",
                     "key": attribute.attribute,
                     "value": attribute.jsonValue!.value()!,
-                    "timestamp": UAUtils.isoDateFormatterUTCWithDelimiter().string(from: attribute.date)
+                    "timestamp": Utils.isoDateFormatterUTCWithDelimiter().string(from: attribute.date)
                 ]
             case .remove:
                 return [
                     "action": "remove",
                     "key": attribute.attribute,
-                    "timestamp": UAUtils.isoDateFormatterUTCWithDelimiter().string(from: attribute.date)
+                    "timestamp": Utils.isoDateFormatterUTCWithDelimiter().string(from: attribute.date)
                 ]
             }
         }

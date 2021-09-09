@@ -14,7 +14,7 @@ import Airship
  * text info block. It is used to display the details of headings,
  * bodies and button labels.
  */
-class TextInfoDetailViewController: UAStaticTableViewController {
+class TextInfoDetailViewController: StaticTableViewController {
     public static let segueID = "TextInfoSegue"
     
     /* The UAInAppMessageTextInfo to be displayed. */

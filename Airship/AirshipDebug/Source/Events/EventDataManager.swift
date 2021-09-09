@@ -41,7 +41,7 @@ class EventDataManager: NSObject, AnalyticsEventConsumerProtocol {
     private lazy var persistentContainer:NSPersistentContainer = {
         let momdName = "AirshipEventData"
 
-        guard let modelURL = UADebugResources.bundle().url(forResource: momdName, withExtension:"momd") else {
+        guard let modelURL = DebugResources.bundle().url(forResource: momdName, withExtension:"momd") else {
             fatalError("Error loading model from bundle")
         }
 

@@ -27,11 +27,11 @@ public class TestAnalytics : NSObject, AnalyticsProtocol, Component {
         events.append(event)
     }
     
-    public func associateDeviceIdentifiers(_ associatedIdentifiers: UAAssociatedIdentifiers) {
+    public func associateDeviceIdentifiers(_ associatedIdentifiers: AssociatedIdentifiers) {
     }
     
-    public func currentAssociatedDeviceIdentifiers() -> UAAssociatedIdentifiers {
-        return UAAssociatedIdentifiers()
+    public func currentAssociatedDeviceIdentifiers() -> AssociatedIdentifiers {
+        return AssociatedIdentifiers()
     }
     
     public func trackScreen(_ screen: String?) {

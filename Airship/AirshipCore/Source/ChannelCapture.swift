@@ -14,11 +14,11 @@ public class ChannelCapture : NSObject {
     private static let knocksMaxTimeSeconds : TimeInterval = 30
     private static let pasteboardExpirationSeconds: TimeInterval = 60
     
-    private let dataStore: UAPreferenceDataStore
+    private let dataStore: PreferenceDataStore
     private let config: RuntimeConfig
     private let channel: ChannelProtocol
     private let notificationCenter: NotificationCenter
-    private let date: UADate
+    private let date: DateUtils
     private let pasteboardProvider: () -> UIPasteboard
     
     private var knockTimes: [Date] = []
@@ -32,10 +32,10 @@ public class ChannelCapture : NSObject {
     
     @objc
     public init(config: RuntimeConfig,
-                dataStore: UAPreferenceDataStore,
+                dataStore: PreferenceDataStore,
                 channel: ChannelProtocol,
                 notificationCenter: NotificationCenter,
-                date: UADate,
+                date: DateUtils,
                 pasteboardProvider: @escaping () -> UIPasteboard) {
         
         self.config = config
@@ -51,20 +51,20 @@ public class ChannelCapture : NSObject {
         
         notificationCenter.addObserver(self,
                                        selector: #selector(applicationDidTransitionToForeground),
-                                       name: UAAppStateTracker.didTransitionToForeground,
+                                       name: AppStateTracker.didTransitionToForeground,
                                        object: nil)
     }
     
     @objc
     public convenience init(config: RuntimeConfig,
-                            dataStore: UAPreferenceDataStore,
+                            dataStore: PreferenceDataStore,
                             channel: Channel) {
         
         self.init(config: config,
                   dataStore: dataStore,
                   channel: channel,
                   notificationCenter: NotificationCenter.default,
-                  date: UADate(),
+                  date: DateUtils(),
                   pasteboardProvider: { UIPasteboard.general })
     }
     

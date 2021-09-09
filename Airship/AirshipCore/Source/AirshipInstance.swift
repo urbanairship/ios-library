@@ -5,7 +5,7 @@ import Foundation
 protocol AirshipInstanceProtocol  {
     var config: RuntimeConfig { get }
     var actionRegistry: ActionRegistry { get }
-    var applicationMetrics: UAApplicationMetrics { get }
+    var applicationMetrics: ApplicationMetrics { get }
     var locationProvider: UALocationProvider? { get }
     
     #if !os(tvOS)
@@ -16,7 +16,7 @@ protocol AirshipInstanceProtocol  {
     var deepLinkDelegate: DeepLinkDelegate? { get set }
     var urlAllowList : URLAllowList { get }
     var localeManager: LocaleManager { get }
-    var privacyManager: UAPrivacyManager { get }
+    var privacyManager: PrivacyManager { get }
     var components: [Component] { get }
     
     func component(forClassName className: String) -> Component?
@@ -26,7 +26,7 @@ protocol AirshipInstanceProtocol  {
 class AirshipInstance : AirshipInstanceProtocol {
     public let config: RuntimeConfig
     public let actionRegistry: ActionRegistry
-    public let applicationMetrics: UAApplicationMetrics
+    public let applicationMetrics: ApplicationMetrics
     public let locationProvider: UALocationProvider?
     
     #if !os(tvOS)
@@ -37,18 +37,18 @@ class AirshipInstance : AirshipInstanceProtocol {
     public weak var deepLinkDelegate: DeepLinkDelegate?
     public let urlAllowList : URLAllowList
     public let localeManager: LocaleManager
-    public let privacyManager: UAPrivacyManager
+    public let privacyManager: PrivacyManager
     public let components: [Component]
     private let remoteConfigManager: RemoteConfigManager;
     private var componentMap: [String : Component]  = [:]
 
     init(config: Config) {
-        let dataStore = UAPreferenceDataStore(keyPrefix: config.appKey)
+        let dataStore = PreferenceDataStore(keyPrefix: config.appKey)
         self.config = RuntimeConfig(config: config, dataStore: dataStore)
-        self.privacyManager = UAPrivacyManager(dataStore: dataStore, defaultEnabledFeatures: config.enabledFeatures)
+        self.privacyManager = PrivacyManager(dataStore: dataStore, defaultEnabledFeatures: config.enabledFeatures)
         self.actionRegistry = ActionRegistry.defaultRegistry()
         self.urlAllowList = URLAllowList.allowListWithConfig(self.config)
-        self.applicationMetrics = UAApplicationMetrics(dataStore: dataStore, privacyManager: privacyManager)
+        self.applicationMetrics = ApplicationMetrics(dataStore: dataStore, privacyManager: privacyManager)
         self.localeManager = LocaleManager(dataStore: dataStore)
         
         let channel = Channel(dataStore: dataStore,
@@ -73,7 +73,7 @@ class AirshipInstance : AirshipInstanceProtocol {
                                 channel: channel,
                                 privacyManager: self.privacyManager)
         
-        let namedUser = UANamedUser(dataStore: dataStore, contact: contact)
+        let namedUser = NamedUser(dataStore: dataStore, contact: contact)
         
         let remoteDataManager = RemoteDataManager(config: self.config,
                                                     dataStore: dataStore,

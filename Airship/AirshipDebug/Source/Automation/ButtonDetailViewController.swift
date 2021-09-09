@@ -15,7 +15,7 @@ import Airship
  * message buttons. It is used to display the details of buttons and
  * footers.
  */
-class ButtonDetailViewController: UAStaticTableViewController {
+class ButtonDetailViewController: StaticTableViewController {
     public static let segueID = "ButtonDetailSegue"
     
     /* The UAInAppMessageButtonInfo to be displayed. */

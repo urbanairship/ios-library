@@ -38,7 +38,7 @@ class TestRemoteDataProvider : NSObject, RemoteDataProvider {
     }
     
     
-    public func subscribe(types: [String], block publishBlock: @escaping ([RemoteDataPayload]) -> Void) -> UADisposable {
+    public func subscribe(types: [String], block publishBlock: @escaping ([RemoteDataPayload]) -> Void) -> Disposable {
         let blockID = UUID()
         self.blocks[blockID] = publishBlock
         
@@ -48,7 +48,7 @@ class TestRemoteDataProvider : NSObject, RemoteDataProvider {
             self.subscribers[type] = blocks
         }
         
-        return UADisposable {
+        return Disposable {
             self.blocks[blockID] = nil
             types.forEach { type in
                 var blocks = self.subscribers[type] ?? []

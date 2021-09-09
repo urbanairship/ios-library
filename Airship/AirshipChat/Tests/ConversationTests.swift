@@ -24,7 +24,7 @@ class ConversationTests: XCTestCase {
         self.mockAPIClient = MockChatAPIClient()
 
         self.notificationCenter = NotificationCenter()
-        let dataStore = UAPreferenceDataStore(keyPrefix: UUID().uuidString)
+        let dataStore = PreferenceDataStore(keyPrefix: UUID().uuidString)
 
         self.mockConfig = MockChatConfig(appKey: "someAppKey",
                                          chatURL: "https://test",
@@ -89,7 +89,7 @@ class ConversationTests: XCTestCase {
     func testSendMessageAfterSync() throws {
         self.conversation.routing = ChatRouting(agent: "person")
 
-        self.mockStateTracker.mockState = UAApplicationState.active
+        self.mockStateTracker.mockState = ApplicationState.active
         self.connect()
 
         let fetchConvoPayload = ChatResponse.ConversationLoadedResponsePayload(messages: nil)
@@ -156,7 +156,7 @@ class ConversationTests: XCTestCase {
     func testSendIncomingAfterSync() throws {
         self.conversation.routing = ChatRouting(agent: "person")
 
-        self.mockStateTracker.mockState = UAApplicationState.active
+        self.mockStateTracker.mockState = ApplicationState.active
         self.connect()
 
         let fetchConvoPayload = ChatResponse.ConversationLoadedResponsePayload(messages: nil)
@@ -383,12 +383,12 @@ class ConversationTests: XCTestCase {
     }
 
     func background() {
-        self.mockStateTracker.mockState = UAApplicationState.background
-        self.notificationCenter.post(name: UAAppStateTracker.didTransitionToBackground, object: nil)
+        self.mockStateTracker.mockState = ApplicationState.background
+        self.notificationCenter.post(name: AppStateTracker.didTransitionToBackground, object: nil)
     }
     
     func foreground() {
-        self.mockStateTracker.mockState = UAApplicationState.active
-        self.notificationCenter.post(name: UAAppStateTracker.didTransitionToForeground, object: nil)
+        self.mockStateTracker.mockState = ApplicationState.active
+        self.notificationCenter.post(name: AppStateTracker.didTransitionToForeground, object: nil)
     }
 }

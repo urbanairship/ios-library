@@ -4,7 +4,7 @@
 * Predefined attributes.
 */
 @objc(UAAttributes)
-public class UAAttributes: NSObject {
+public class Attributes: NSObject {
     
     /**
     * Title attribute.

@@ -8,15 +8,15 @@ import AirshipCore
 
 class PreferenceCenterTest: XCTestCase {
     
-    private var dataStore: UAPreferenceDataStore!
-    private var privacyManager: UAPrivacyManager!
+    private var dataStore: PreferenceDataStore!
+    private var privacyManager: PrivacyManager!
     private var preferenceCenter: PreferenceCenter!
     private var remoteDataProvider: MockRemoteDataProvider!
     
     override func setUp() {
         self.remoteDataProvider = MockRemoteDataProvider()
-        self.dataStore = UAPreferenceDataStore(keyPrefix: UUID().uuidString)
-        self.privacyManager = UAPrivacyManager(dataStore: self.dataStore, defaultEnabledFeatures: .all)
+        self.dataStore = PreferenceDataStore(keyPrefix: UUID().uuidString)
+        self.privacyManager = PrivacyManager(dataStore: self.dataStore, defaultEnabledFeatures: .all)
         
 
         self.preferenceCenter = PreferenceCenter(dataStore: self.dataStore,
