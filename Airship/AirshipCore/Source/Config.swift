@@ -343,7 +343,7 @@ public class Config: NSObject, NSCopying {
     /// - Returns: A UAConfig with empty values.
     @objc
     public override init() {
-        #if targetEnvironment(macCatalyst)
+        #if !targetEnvironment(macCatalyst)
         self.profilePath = Bundle.main.path(forResource: "embedded", ofType: "mobileprovision")
         #else
         self.profilePath = URL(fileURLWithPath: URL(fileURLWithPath: Bundle.main.resourcePath ?? "").deletingLastPathComponent().path).appendingPathComponent("embedded.provisionprofile").path
