@@ -1,8 +1,9 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-@import UserNotifications;
+#import "UAEvent.h"
 
+@import UserNotifications;
 @import AirshipCore;
 
 @interface UAInteractiveNotificationEventTest : UABaseTest

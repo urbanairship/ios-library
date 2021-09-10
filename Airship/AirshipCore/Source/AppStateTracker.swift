@@ -1,5 +1,6 @@
 /* Copyright Airship and Contributors */
 
+import Foundation
 
 @objc(UAAppStateTracker)
 open class AppStateTracker: NSObject, AppStateTrackerDelegate {

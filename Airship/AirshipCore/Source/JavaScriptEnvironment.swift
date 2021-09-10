@@ -4,14 +4,7 @@
 
 import Foundation
 
-@objc (UAJavaScriptEnvironmentProtocol)
-public protocol JavaScriptEnvironmentProtocol {
-    
-    /// Builds the script that can be injected into a web view.
-    @objc
-    func build() -> String
-    
-}
+
 
 /**
  * The JavaScript environment builder that is used by the native bridge.
@@ -39,26 +32,26 @@ public class JavaScriptEnvironment : NSObject, JavaScriptEnvironmentProtocol {
     }
     
     @objc(addStringGetter:value:)
-    public func add(_ stringGetter: String, _ value: String?) {
-        guard let value = value else {
-            let ext = String(format: "_UAirship.%@ = function() {return null;};", stringGetter)
+    public func add(_ getter: String, string: String?) {
+        guard let value = string else {
+            let ext = String(format: "_UAirship.%@ = function() {return null;};", getter)
             self.extensions.insert(ext)
             return
         }
-        self.extensions.insert(JavaScriptEnvironment.stringGetter(stringGetter, value))
+        self.extensions.insert(JavaScriptEnvironment.stringGetter(getter, value))
     }
     
     @objc(addNumberGetter:value:)
-    public func add(_ numberGetter: String, _ value: NSNumber?) {
-        let ext = String(format: "_UAirship.%@ = function() {return %@;};", numberGetter, value ?? -1)
+    public func add(_ getter: String, number: NSNumber?) {
+        let ext = String(format: "_UAirship.%@ = function() {return %@;};", getter, number ?? -1)
         self.extensions.insert(ext)
     }
     
     @objc(addDictionaryGetter:value:)
-    public func add(_ dictionaryGetter: String, _ value: NSDictionary?) {
+    public func add(_ getter: String, dictionary: [AnyHashable : Any]?) {
         let ext: String
-        guard let value = value, JSONSerialization.isValidJSONObject(value) else {
-            ext = String(format: "_UAirship.%@ = function() {return null;};", dictionaryGetter)
+        guard let value = dictionary, JSONSerialization.isValidJSONObject(value) else {
+            ext = String(format: "_UAirship.%@ = function() {return null;};", getter)
             self.extensions.insert(ext)
             return
         }
@@ -69,7 +62,7 @@ public class JavaScriptEnvironment : NSObject, JavaScriptEnvironmentProtocol {
             jsonData = try JSONSerialization.data(withJSONObject: value, options: .prettyPrinted)
         }
         catch {
-            ext = String(format: "_UAirship.%@ = function() {return null;};", dictionaryGetter)
+            ext = String(format: "_UAirship.%@ = function() {return null;};", getter)
             self.extensions.insert(ext)
             return
         }
@@ -78,7 +71,7 @@ public class JavaScriptEnvironment : NSObject, JavaScriptEnvironmentProtocol {
             return
         }
         
-        ext = String(format: "_UAirship.%@ = function() {return %@;};", dictionaryGetter, jsonString)
+        ext = String(format: "_UAirship.%@ = function() {return %@;};", getter, jsonString)
         self.extensions.insert(ext)
     }
     

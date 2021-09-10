@@ -2,7 +2,6 @@
 
 #import <Foundation/Foundation.h>
 
-@class UAJavaScriptEnvironment;
 @class UAJavaScriptCommand;
 
 #if !TARGET_OS_TV

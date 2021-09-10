@@ -18,7 +18,8 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Exercise various SDK integration entry points
     UAConfig *cfg = [UAConfig defaultConfig];
-    [UAirship takeOff:cfg];
+    [UAirship takeOff:cfg launchOptions:launchOptions];
+    
     [UALocation shared].backgroundLocationUpdatesAllowed = NO;
     [[UAMessageCenter shared] display];
     [UAInAppAutomation shared].inAppMessageManager.displayInterval = 12345;

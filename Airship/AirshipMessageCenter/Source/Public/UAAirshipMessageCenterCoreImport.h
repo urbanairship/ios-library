@@ -1,11 +1,6 @@
 /* Copyright Airship and Contributors */
-#if UA_USE_MODULE_IMPORT
-#import <AirshipCore/AirshipCore.h>
+#if __has_include("AirshipBasement/AirshipBasement.h")
+#import <AirshipBasement/AirshipBasement.h>
 #else
-#import "UAKeychainUtils.h"
-#import "UANativeBridgeExtensionDelegate.h"
-#import "UASDKModule.h"
-#import "UAGlobal.h"
-#import "UAActionArguments.h"
-#import "UAAction.h"
+#import "AirshipBasementLib.h"
 #endif

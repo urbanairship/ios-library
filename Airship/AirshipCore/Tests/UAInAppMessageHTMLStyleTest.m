@@ -1,8 +1,8 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-
 #import "UAInAppMessageHTMLStyle.h"
+@import AirshipCore;
 
 @interface UAInAppMessageHTTMLStyleTest : UABaseTest
 @property (nonatomic, strong) id mockBundle;

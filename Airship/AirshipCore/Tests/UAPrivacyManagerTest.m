@@ -2,6 +2,7 @@
 
 #import <XCTest/XCTest.h>
 #import "UAAirshipBaseTest.h"
+#import "UAFeature.h"
 
 @import AirshipCore;
 

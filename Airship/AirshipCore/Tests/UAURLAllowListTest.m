@@ -2,6 +2,7 @@
 
 #import <UIKit/UIKit.h>
 #import "UAAirshipBaseTest.h"
+#import "UAURLAllowListScope.h"
 
 @import AirshipCore;
 

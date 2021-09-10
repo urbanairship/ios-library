@@ -2,10 +2,10 @@
 
 #import <Foundation/Foundation.h>
 
-#if UA_USE_MODULE_IMPORT
-#import <AirshipCore/AirshipCore.h>
+#if __has_include("AirshipBasement/AirshipBasement.h")
+#import <AirshipBasement/AirshipBasement.h>
 #else
-#import "UASDKModule.h"
+#import "AirshipBasementLib.h"
 #endif
 
 NS_ASSUME_NONNULL_BEGIN

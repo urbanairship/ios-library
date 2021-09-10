@@ -311,47 +311,7 @@
 		6E2E9152238DA39E008488D3 /* AirshipLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E9375602376164600AA9C2A /* AirshipLocation.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		6E3673E01E8AF9D8005B5DFF /* UAEnableFeatureActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E3673DF1E8AF9D8005B5DFF /* UAEnableFeatureActionTest.m */; };
 		6E3942281F33DA52003D1C50 /* UAInboxStoreTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E3942271F33DA52003D1C50 /* UAInboxStoreTest.m */; };
-		6E4114D32538C0A900FEE4E8 /* UANativeBridgeDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E41143F2538C09E00FEE4E8 /* UANativeBridgeDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E4114D42538C0A900FEE4E8 /* UANativeBridgeDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E41143F2538C09E00FEE4E8 /* UANativeBridgeDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E4114F32538C0AA00FEE4E8 /* UAComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114472538C09F00FEE4E8 /* UAComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E4114F42538C0AA00FEE4E8 /* UAComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114472538C09F00FEE4E8 /* UAComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E4114F72538C0AA00FEE4E8 /* UAEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114482538C09F00FEE4E8 /* UAEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E4114F82538C0AA00FEE4E8 /* UAEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114482538C09F00FEE4E8 /* UAEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E41150F2538C0AB00FEE4E8 /* UAGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E41144E2538C09F00FEE4E8 /* UAGlobal.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E4115102538C0AB00FEE4E8 /* UAGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E41144E2538C09F00FEE4E8 /* UAGlobal.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E41152B2538C0AB00FEE4E8 /* UAJavaScriptCommandDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114552538C0A000FEE4E8 /* UAJavaScriptCommandDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E41152C2538C0AB00FEE4E8 /* UAJavaScriptCommandDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114552538C0A000FEE4E8 /* UAJavaScriptCommandDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E41152F2538C0AB00FEE4E8 /* UAPush.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114562538C0A000FEE4E8 /* UAPush.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E4115302538C0AB00FEE4E8 /* UAPush.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114562538C0A000FEE4E8 /* UAPush.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E4115372538C0AB00FEE4E8 /* UANativeBridgeExtensionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114582538C0A000FEE4E8 /* UANativeBridgeExtensionDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E4115382538C0AB00FEE4E8 /* UANativeBridgeExtensionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114582538C0A000FEE4E8 /* UANativeBridgeExtensionDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E4115572538C0AC00FEE4E8 /* UAActionResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E41146C2538C0A100FEE4E8 /* UAActionResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E4115582538C0AC00FEE4E8 /* UAActionResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E41146C2538C0A100FEE4E8 /* UAActionResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E41156B2538C0AD00FEE4E8 /* UAActionPredicateProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114712538C0A200FEE4E8 /* UAActionPredicateProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E41156C2538C0AD00FEE4E8 /* UAActionPredicateProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114712538C0A200FEE4E8 /* UAActionPredicateProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E4115872538C0AD00FEE4E8 /* UAActionArguments.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114782538C0A200FEE4E8 /* UAActionArguments.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E4115882538C0AD00FEE4E8 /* UAActionArguments.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114782538C0A200FEE4E8 /* UAActionArguments.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E4115932538C0AE00FEE4E8 /* UAKeychainUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E41147B2538C0A300FEE4E8 /* UAKeychainUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E4115942538C0AE00FEE4E8 /* UAKeychainUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E41147B2538C0A300FEE4E8 /* UAKeychainUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E4115A32538C0AE00FEE4E8 /* UASDKModule.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E41147F2538C0A300FEE4E8 /* UASDKModule.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E4115A42538C0AE00FEE4E8 /* UASDKModule.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E41147F2538C0A300FEE4E8 /* UASDKModule.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E4115DF2538C0AF00FEE4E8 /* UAAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E41149A2538C0A500FEE4E8 /* UAAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E4115E02538C0B000FEE4E8 /* UAAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E41149A2538C0A500FEE4E8 /* UAAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E4116672538C0B300FEE4E8 /* UALocationProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114BC2538C0A800FEE4E8 /* UALocationProvider.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E4116682538C0B300FEE4E8 /* UALocationProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4114BC2538C0A800FEE4E8 /* UALocationProvider.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E4116872135C4E4005CC871 /* UARetriablePipelineTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4116862135C4E4005CC871 /* UARetriablePipelineTest.m */; };
-		6E4117EB2538C1FB00FEE4E8 /* UASwizzler.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4116D92538C1E600FEE4E8 /* UASwizzler.m */; };
-		6E4117EC2538C1FB00FEE4E8 /* UASwizzler.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4116D92538C1E600FEE4E8 /* UASwizzler.m */; };
-		6E41192B2538C1FF00FEE4E8 /* UAAutoIntegration.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4117292538C1EE00FEE4E8 /* UAAutoIntegration.m */; };
-		6E41192C2538C20000FEE4E8 /* UAAutoIntegration.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4117292538C1EE00FEE4E8 /* UAAutoIntegration.m */; };
-		6E4119DB2538C20200FEE4E8 /* UAKeychainUtils+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4117552538C1F200FEE4E8 /* UAKeychainUtils+Internal.h */; };
-		6E4119DC2538C20200FEE4E8 /* UAKeychainUtils+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4117552538C1F200FEE4E8 /* UAKeychainUtils+Internal.h */; };
-		6E411A6F2538C20400FEE4E8 /* UAKeychainUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E41177A2538C1F500FEE4E8 /* UAKeychainUtils.m */; };
-		6E411A702538C20400FEE4E8 /* UAKeychainUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E41177A2538C1F500FEE4E8 /* UAKeychainUtils.m */; };
-		6E411B232538C20700FEE4E8 /* UASwizzler+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4117A72538C1FA00FEE4E8 /* UASwizzler+Internal.h */; };
-		6E411B242538C20700FEE4E8 /* UASwizzler+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4117A72538C1FA00FEE4E8 /* UASwizzler+Internal.h */; };
-		6E411B382538C44300FEE4E8 /* AirshipLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E411B352538C44300FEE4E8 /* AirshipLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E411B392538C44300FEE4E8 /* AirshipLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E411B352538C44300FEE4E8 /* AirshipLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E411B702538C4E600FEE4E8 /* UADefaultActions.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6E411B6A2538C4E500FEE4E8 /* UADefaultActions.plist */; };
 		6E411B712538C4E600FEE4E8 /* UADefaultActions.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6E411B6A2538C4E500FEE4E8 /* UADefaultActions.plist */; };
 		6E411B742538C4E600FEE4E8 /* UADefaultActionsTvOS.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6E411B6B2538C4E500FEE4E8 /* UADefaultActionsTvOS.plist */; };
@@ -366,20 +326,83 @@
 		6E411CAC2538C6A600FEE4E8 /* UARemoteData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E411CA42538C6A500FEE4E8 /* UARemoteData.xcdatamodeld */; };
 		6E411CAF2538C6A600FEE4E8 /* UAEvents.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E411CA72538C6A500FEE4E8 /* UAEvents.xcdatamodeld */; };
 		6E411CB02538C6A600FEE4E8 /* UAEvents.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E411CA72538C6A500FEE4E8 /* UAEvents.xcdatamodeld */; };
-		6E411E6C2538F4C700FEE4E8 /* UAActionArguments.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E411E602538F4C500FEE4E8 /* UAActionArguments.m */; };
-		6E411E702538F4C700FEE4E8 /* UAActionResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E411E642538F4C600FEE4E8 /* UAActionResult.m */; };
-		6E411E712538F4C700FEE4E8 /* UAActionArguments+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E411E652538F4C600FEE4E8 /* UAActionArguments+Internal.h */; };
-		6E411E722538F4C700FEE4E8 /* UAActionResult+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E411E662538F4C600FEE4E8 /* UAActionResult+Internal.h */; };
-		6E411EA72538F4D100FEE4E8 /* UAActionArguments.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E411E602538F4C500FEE4E8 /* UAActionArguments.m */; };
-		6E411EAB2538F4D100FEE4E8 /* UAActionResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E411E642538F4C600FEE4E8 /* UAActionResult.m */; };
-		6E411EAF2538F4D100FEE4E8 /* UAActionArguments+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E411E652538F4C600FEE4E8 /* UAActionArguments+Internal.h */; };
-		6E411EB02538F4D100FEE4E8 /* UAActionResult+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E411E662538F4C600FEE4E8 /* UAActionResult+Internal.h */; };
-		6E411EE32538F8E300FEE4E8 /* AirshipCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E411EE22538F8E300FEE4E8 /* AirshipCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E411EE42538F8E300FEE4E8 /* AirshipCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E411EE22538F8E300FEE4E8 /* AirshipCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43202126EA814F009228AB /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CC04F1C41DC27E6C00B4842D /* libsqlite3.tbd */; };
+		6E43202226EA814F009228AB /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3261A7F4243CD73100ADBF6B /* CoreTelephony.framework */; platformFilter = maccatalyst; };
+		6E43202326EA814F009228AB /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CC944EC71DB161AE00C42269 /* libz.tbd */; };
+		6E43202426EA814F009228AB /* Network.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EB4E4A32549F95200E3FFD0 /* Network.framework */; };
+		6E43210026EA8199009228AB /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 99666E901EDF2E6500BAE46B /* libsqlite3.tbd */; };
+		6E43210126EA8199009228AB /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 99666E8E1EDF2E5900BAE46B /* libz.tbd */; };
+		6E43210226EA8199009228AB /* Network.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EB4E4BE2549F9B900E3FFD0 /* Network.framework */; };
+		6E43214026EA84A5009228AB /* UAFeature.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43212A26EA84A4009228AB /* UAFeature.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43214126EA84A5009228AB /* UAFeature.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43212A26EA84A4009228AB /* UAFeature.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43214226EA84A5009228AB /* UAActionArguments.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43212B26EA84A4009228AB /* UAActionArguments.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43214326EA84A5009228AB /* UAActionArguments.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43212B26EA84A4009228AB /* UAActionArguments.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43214426EA84A5009228AB /* UAJavaScriptCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43212C26EA84A4009228AB /* UAJavaScriptCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43214526EA84A5009228AB /* UAJavaScriptCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43212C26EA84A4009228AB /* UAJavaScriptCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43214626EA84A5009228AB /* UAJavaScriptEnvironmentProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43212D26EA84A4009228AB /* UAJavaScriptEnvironmentProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43214726EA84A5009228AB /* UAJavaScriptEnvironmentProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43212D26EA84A4009228AB /* UAJavaScriptEnvironmentProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43214826EA84A5009228AB /* UAPush.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43212E26EA84A4009228AB /* UAPush.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43214926EA84A5009228AB /* UAPush.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43212E26EA84A4009228AB /* UAPush.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43214A26EA84A5009228AB /* UAAppIntegrationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43212F26EA84A4009228AB /* UAAppIntegrationDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43214B26EA84A5009228AB /* UAAppIntegrationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43212F26EA84A4009228AB /* UAAppIntegrationDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43214C26EA84A5009228AB /* UAAutoIntegration.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213026EA84A4009228AB /* UAAutoIntegration.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43214D26EA84A5009228AB /* UAAutoIntegration.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213026EA84A4009228AB /* UAAutoIntegration.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43214E26EA84A5009228AB /* UALocationProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213126EA84A4009228AB /* UALocationProvider.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43214F26EA84A5009228AB /* UALocationProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213126EA84A4009228AB /* UALocationProvider.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43215026EA84A5009228AB /* UAJavaScriptCommandDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213226EA84A4009228AB /* UAJavaScriptCommandDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43215126EA84A5009228AB /* UAJavaScriptCommandDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213226EA84A4009228AB /* UAJavaScriptCommandDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43215226EA84A5009228AB /* AirshipBasementLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213326EA84A4009228AB /* AirshipBasementLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43215326EA84A5009228AB /* AirshipBasementLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213326EA84A4009228AB /* AirshipBasementLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43215426EA84A5009228AB /* UAKeychainUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213426EA84A4009228AB /* UAKeychainUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43215526EA84A5009228AB /* UAKeychainUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213426EA84A4009228AB /* UAKeychainUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43215626EA84A5009228AB /* UAActionPredicateProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213526EA84A4009228AB /* UAActionPredicateProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43215726EA84A5009228AB /* UAActionPredicateProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213526EA84A4009228AB /* UAActionPredicateProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43215826EA84A5009228AB /* UACompression.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213626EA84A4009228AB /* UACompression.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43215926EA84A5009228AB /* UACompression.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213626EA84A4009228AB /* UACompression.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43215A26EA84A5009228AB /* UANativeBridgeExtensionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213726EA84A4009228AB /* UANativeBridgeExtensionDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43215B26EA84A5009228AB /* UANativeBridgeExtensionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213726EA84A4009228AB /* UANativeBridgeExtensionDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43215C26EA84A5009228AB /* UAEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213826EA84A4009228AB /* UAEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43215D26EA84A5009228AB /* UAEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213826EA84A4009228AB /* UAEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43215E26EA84A5009228AB /* UAURLAllowListScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213926EA84A4009228AB /* UAURLAllowListScope.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43215F26EA84A5009228AB /* UAURLAllowListScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213926EA84A4009228AB /* UAURLAllowListScope.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43216026EA84A5009228AB /* UAActionResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213A26EA84A5009228AB /* UAActionResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43216126EA84A5009228AB /* UAActionResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213A26EA84A5009228AB /* UAActionResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43216226EA84A5009228AB /* UASDKModule.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213B26EA84A5009228AB /* UASDKModule.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43216326EA84A5009228AB /* UASDKModule.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213B26EA84A5009228AB /* UASDKModule.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43216426EA84A5009228AB /* UAAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213C26EA84A5009228AB /* UAAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43216526EA84A5009228AB /* UAAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213C26EA84A5009228AB /* UAAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43216626EA84A5009228AB /* UAComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213D26EA84A5009228AB /* UAComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43216726EA84A5009228AB /* UAComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213D26EA84A5009228AB /* UAComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43216826EA84A5009228AB /* UAGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213E26EA84A5009228AB /* UAGlobal.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43216926EA84A5009228AB /* UAGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213E26EA84A5009228AB /* UAGlobal.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43216A26EA84A5009228AB /* AirshipBasement.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213F26EA84A5009228AB /* AirshipBasement.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43216B26EA84A5009228AB /* AirshipBasement.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213F26EA84A5009228AB /* AirshipBasement.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43217626EA84BE009228AB /* UAKeychainUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E43216C26EA84BE009228AB /* UAKeychainUtils.m */; };
+		6E43217726EA84BE009228AB /* UAKeychainUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E43216C26EA84BE009228AB /* UAKeychainUtils.m */; };
+		6E43217826EA84BE009228AB /* UASwizzler.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E43216D26EA84BE009228AB /* UASwizzler.m */; };
+		6E43217926EA84BE009228AB /* UASwizzler.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E43216D26EA84BE009228AB /* UASwizzler.m */; };
+		6E43217A26EA84BE009228AB /* UAAutoIntegration.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E43216E26EA84BE009228AB /* UAAutoIntegration.m */; };
+		6E43217B26EA84BE009228AB /* UAAutoIntegration.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E43216E26EA84BE009228AB /* UAAutoIntegration.m */; };
+		6E43217C26EA84BE009228AB /* UAActionArguments.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E43216F26EA84BE009228AB /* UAActionArguments.m */; };
+		6E43217D26EA84BE009228AB /* UAActionArguments.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E43216F26EA84BE009228AB /* UAActionArguments.m */; };
+		6E43217E26EA84BE009228AB /* UACompression.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E43217026EA84BE009228AB /* UACompression.m */; };
+		6E43217F26EA84BE009228AB /* UACompression.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E43217026EA84BE009228AB /* UACompression.m */; };
+		6E43218026EA84BE009228AB /* UAActionArguments+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43217126EA84BE009228AB /* UAActionArguments+Internal.h */; };
+		6E43218126EA84BE009228AB /* UAActionArguments+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43217126EA84BE009228AB /* UAActionArguments+Internal.h */; };
+		6E43218226EA84BE009228AB /* UAGlobal.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E43217226EA84BE009228AB /* UAGlobal.m */; };
+		6E43218326EA84BE009228AB /* UAGlobal.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E43217226EA84BE009228AB /* UAGlobal.m */; };
+		6E43218426EA84BE009228AB /* UAJavaScriptCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E43217326EA84BE009228AB /* UAJavaScriptCommand.m */; };
+		6E43218526EA84BE009228AB /* UAJavaScriptCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E43217326EA84BE009228AB /* UAJavaScriptCommand.m */; };
+		6E43218626EA84BE009228AB /* UAActionResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E43217426EA84BE009228AB /* UAActionResult.m */; };
+		6E43218726EA84BE009228AB /* UAActionResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E43217426EA84BE009228AB /* UAActionResult.m */; };
+		6E43218826EA84BE009228AB /* UASwizzler+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43217526EA84BE009228AB /* UASwizzler+Internal.h */; };
+		6E43218926EA84BE009228AB /* UASwizzler+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43217526EA84BE009228AB /* UASwizzler+Internal.h */; };
+		6E43219026EA89B6009228AB /* AirshipCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43218E26EA89B5009228AB /* AirshipCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43219126EA89B6009228AB /* AirshipCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43218E26EA89B5009228AB /* AirshipCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E43219226EA89B6009228AB /* NativeBridgeDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E43218F26EA89B6009228AB /* NativeBridgeDelegate.swift */; };
+		6E43219326EA89B6009228AB /* NativeBridgeDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E43218F26EA89B6009228AB /* NativeBridgeDelegate.swift */; };
 		6E4627CC1E64E0C300A5BF3B /* UAScheduleDelayTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4627CB1E64E0C300A5BF3B /* UAScheduleDelayTests.m */; };
 		6E4E5B2926E53EE700198175 /* UABaseTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4E5B2826E53EE700198175 /* UABaseTest.m */; };
-		6E4E5B3126E7DFEB00198175 /* UAAutoIntegration.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4E5B3026E7DFEB00198175 /* UAAutoIntegration.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E4E5B3226E7DFEB00198175 /* UAAutoIntegration.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4E5B3026E7DFEB00198175 /* UAAutoIntegration.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E4E5B3B26E7F91600198175 /* LocalizationUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4E5B3926E7F91600198175 /* LocalizationUtils.swift */; };
 		6E4E5B3C26E7F91600198175 /* LocalizationUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4E5B3926E7F91600198175 /* LocalizationUtils.swift */; };
 		6E4E5B3D26E7F91600198175 /* Attributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4E5B3A26E7F91600198175 /* Attributes.swift */; };
@@ -457,8 +480,6 @@
 		6E664BED26C6EF3300A2C8E5 /* PreferenceCenterHeaderLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E664BEC26C6EF3300A2C8E5 /* PreferenceCenterHeaderLabel.swift */; };
 		6E698DEC26790AC300654DB2 /* PreferenceDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698DE826790AC300654DB2 /* PreferenceDataStore.swift */; };
 		6E698DED26790AC300654DB2 /* PreferenceDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698DE826790AC300654DB2 /* PreferenceDataStore.swift */; };
-		6E698DEE26790AC300654DB2 /* UAFeature.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E698DE926790AC300654DB2 /* UAFeature.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E698DEF26790AC300654DB2 /* UAFeature.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E698DE926790AC300654DB2 /* UAFeature.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E698DF026790AC300654DB2 /* AirshipLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698DEA26790AC300654DB2 /* AirshipLogger.swift */; };
 		6E698DF126790AC300654DB2 /* AirshipLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698DEA26790AC300654DB2 /* AirshipLogger.swift */; };
 		6E698DF226790AC300654DB2 /* UAPrivacyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698DEB26790AC300654DB2 /* UAPrivacyManager.swift */; };
@@ -472,22 +493,16 @@
 		6E698E03267A799500654DB2 /* AirshipErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E02267A799500654DB2 /* AirshipErrors.swift */; };
 		6E698E04267A799500654DB2 /* AirshipErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E02267A799500654DB2 /* AirshipErrors.swift */; };
 		6E698E06267A7D5300654DB2 /* RemoteDataResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E05267A7D5300654DB2 /* RemoteDataResponse.swift */; };
-		6E698E07267A7D5300654DB2 /* RemoteDataResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E05267A7D5300654DB2 /* RemoteDataResponse.swift */; };
 		6E698E09267A7DD900654DB2 /* RemoteDataAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E08267A7DD900654DB2 /* RemoteDataAPIClient.swift */; };
 		6E698E0A267A7DD900654DB2 /* RemoteDataAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E08267A7DD900654DB2 /* RemoteDataAPIClient.swift */; };
 		6E698E0C267A88D600654DB2 /* EventAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E0B267A88D600654DB2 /* EventAPIClient.swift */; };
 		6E698E0D267A88D600654DB2 /* EventAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E0B267A88D600654DB2 /* EventAPIClient.swift */; };
 		6E698E0F267A88E800654DB2 /* EventAPIResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E0E267A88E800654DB2 /* EventAPIResponse.swift */; };
 		6E698E10267A88E800654DB2 /* EventAPIResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E0E267A88E800654DB2 /* EventAPIResponse.swift */; };
-		6E698E12267A98AB00654DB2 /* ChannelAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E11267A98AB00654DB2 /* ChannelAPIClient.swift */; };
 		6E698E13267A98AB00654DB2 /* ChannelAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E11267A98AB00654DB2 /* ChannelAPIClient.swift */; };
 		6E698E15267A98BE00654DB2 /* ChannelCreateResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E14267A98BE00654DB2 /* ChannelCreateResponse.swift */; };
 		6E698E16267A98BE00654DB2 /* ChannelCreateResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E14267A98BE00654DB2 /* ChannelCreateResponse.swift */; };
 		6E698E22267ABAB600654DB2 /* TestRequestSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E21267ABAB600654DB2 /* TestRequestSession.swift */; };
-		6E698E2A267BAFCC00654DB2 /* UACompression.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E698E29267BAFCC00654DB2 /* UACompression.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E698E2B267BAFCC00654DB2 /* UACompression.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E698E29267BAFCC00654DB2 /* UACompression.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E698E36267BEC4500654DB2 /* UACompression.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E35267BEC4500654DB2 /* UACompression.m */; };
-		6E698E37267BEC4500654DB2 /* UACompression.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E35267BEC4500654DB2 /* UACompression.m */; };
 		6E698E3D267BEDC300654DB2 /* Contact.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E3A267BEDC300654DB2 /* Contact.swift */; };
 		6E698E3E267BEDC300654DB2 /* Contact.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E3A267BEDC300654DB2 /* Contact.swift */; };
 		6E698E3F267BEDC300654DB2 /* AttributesEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E3B267BEDC300654DB2 /* AttributesEditor.swift */; };
@@ -778,8 +793,6 @@
 		6E87BD8D26D815780005D20D /* AppIntegration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BD8C26D815780005D20D /* AppIntegration.swift */; };
 		6E87BD8E26D815780005D20D /* AppIntegration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BD8C26D815780005D20D /* AppIntegration.swift */; };
 		6E87BD9226D963B60005D20D /* DefaultAppIntegrationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BD9126D963B60005D20D /* DefaultAppIntegrationDelegate.swift */; };
-		6E87BD9426D98E510005D20D /* UAAppIntegrationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E87BD9326D98E510005D20D /* UAAppIntegrationDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E87BD9526D98E510005D20D /* UAAppIntegrationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E87BD9326D98E510005D20D /* UAAppIntegrationDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E87BD9926DD3FE90005D20D /* LegacyPushTestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BD9826DD3FE90005D20D /* LegacyPushTestUtils.swift */; };
 		6E87BD9A26DD78180005D20D /* DefaultAppIntegrationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BD9126D963B60005D20D /* DefaultAppIntegrationDelegate.swift */; };
 		6E87BD9D26DD78CC0005D20D /* DefaultAppIntegrationDelegateTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BD9C26DD78CC0005D20D /* DefaultAppIntegrationDelegateTest.swift */; };
@@ -795,8 +808,6 @@
 		6E87BE0426E283850005D20D /* LogLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BDFE26E283840005D20D /* LogLevel.swift */; };
 		6E87BE0726E283850005D20D /* DeepLinkDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BE0026E283850005D20D /* DeepLinkDelegate.swift */; };
 		6E87BE0826E283850005D20D /* DeepLinkDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BE0026E283850005D20D /* DeepLinkDelegate.swift */; };
-		6E87BE0D26E284870005D20D /* UAGlobal.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BE0C26E284870005D20D /* UAGlobal.m */; };
-		6E87BE0E26E284870005D20D /* UAGlobal.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BE0C26E284870005D20D /* UAGlobal.m */; };
 		6E87BE1326E28F570005D20D /* AirshipInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BE1226E28F570005D20D /* AirshipInstance.swift */; };
 		6E87BE1426E28F570005D20D /* AirshipInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BE1226E28F570005D20D /* AirshipInstance.swift */; };
 		6E87BE1626E29BC90005D20D /* TestAirshipInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BE1526E29BC90005D20D /* TestAirshipInstance.swift */; };
@@ -900,6 +911,8 @@
 		6EB11C892697AF5600DC698F /* TagGroupUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB11C882697AF5600DC698F /* TagGroupUpdate.swift */; };
 		6EB11C8B2697AFC700DC698F /* AttributeUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB11C8A2697AFC700DC698F /* AttributeUpdate.swift */; };
 		6EB11C8D2698C50F00DC698F /* AudienceUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB11C8C2698C50F00DC698F /* AudienceUtils.swift */; };
+		6EB1B3F326EAA4D6000421B9 /* ChannelAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E11267A98AB00654DB2 /* ChannelAPIClient.swift */; };
+		6EB1B42626EAA6E2000421B9 /* RemoteDataResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E05267A7D5300654DB2 /* RemoteDataResponse.swift */; };
 		6EB4E4C02549F9BF00E3FFD0 /* Network.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EB4E4A32549F95200E3FFD0 /* Network.framework */; };
 		6EB4E4C12549F9C500E3FFD0 /* Network.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EB4E4BE2549F9B900E3FFD0 /* Network.framework */; };
 		6EB4E656254C890900E3FFD0 /* UATaskManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB4E655254C890800E3FFD0 /* UATaskManagerTest.m */; };
@@ -1012,8 +1025,6 @@
 		A68E347026B2AD160024BE1D /* PreferenceCenterStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A68E346F26B2AD160024BE1D /* PreferenceCenterStyle.swift */; };
 		A6A5530A26D548AF002B20F6 /* NativeBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6A5530926D548AF002B20F6 /* NativeBridge.swift */; };
 		A6A5530B26D548AF002B20F6 /* NativeBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6A5530926D548AF002B20F6 /* NativeBridge.swift */; };
-		A6A5530D26D548BD002B20F6 /* JavaScriptCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6A5530C26D548BD002B20F6 /* JavaScriptCommand.swift */; };
-		A6A5530E26D548BD002B20F6 /* JavaScriptCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6A5530C26D548BD002B20F6 /* JavaScriptCommand.swift */; };
 		A6A5531026D548D6002B20F6 /* JavaScriptEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6A5530F26D548D6002B20F6 /* JavaScriptEnvironment.swift */; };
 		A6A5531126D548D6002B20F6 /* JavaScriptEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6A5530F26D548D6002B20F6 /* JavaScriptEnvironment.swift */; };
 		A6A5531326D548FF002B20F6 /* NativeBridgeActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6A5531226D548FF002B20F6 /* NativeBridgeActionHandler.swift */; };
@@ -1034,8 +1045,6 @@
 		C00ED4D026C729390040C5D0 /* URLAllowList.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00ED4CE26C729390040C5D0 /* URLAllowList.swift */; };
 		C02D0B6626C1A3E200F673E6 /* ChannelCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02D0B6526C1A3E200F673E6 /* ChannelCapture.swift */; };
 		C088383726E0244C00D40838 /* TestURLAllowList.swift in Sources */ = {isa = PBXBuildFile; fileRef = C088383526E0244C00D40838 /* TestURLAllowList.swift */; };
-		C0BA473626E12E9F00DB7A04 /* UAURLAllowListScope.h in Headers */ = {isa = PBXBuildFile; fileRef = C0BA473526E12E9F00DB7A04 /* UAURLAllowListScope.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		C0BA473726E12E9F00DB7A04 /* UAURLAllowListScope.h in Headers */ = {isa = PBXBuildFile; fileRef = C0BA473526E12E9F00DB7A04 /* UAURLAllowListScope.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C0EE8CE526C1B3410006F003 /* ChannelCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02D0B6526C1A3E200F673E6 /* ChannelCapture.swift */; };
 		CC04F1C51DC27E6C00B4842D /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CC04F1C41DC27E6C00B4842D /* libsqlite3.tbd */; };
 		CC64F0591D8B77E3009CEF27 /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; };
@@ -1205,6 +1214,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = 6E9373032376164600AA9C2A;
 			remoteInfo = AirshipLocation;
+		};
+		6E43218A26EA891F009228AB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6E431F6B26EA814F009228AB;
+			remoteInfo = AirshipBasement;
+		};
+		6E43219B26EAA1A8009228AB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6E43204A26EA8199009228AB;
+			remoteInfo = "AirshipBasement tvOS";
 		};
 		6E65D5042396079800AF2D1A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1634,27 +1657,7 @@
 		6E356F9B2579513D004CCCC8 /* UAAutomation 7.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAAutomation 7.xcdatamodel"; sourceTree = "<group>"; };
 		6E3673DF1E8AF9D8005B5DFF /* UAEnableFeatureActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAEnableFeatureActionTest.m; sourceTree = "<group>"; };
 		6E3942271F33DA52003D1C50 /* UAInboxStoreTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxStoreTest.m; sourceTree = "<group>"; };
-		6E41143F2538C09E00FEE4E8 /* UANativeBridgeDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UANativeBridgeDelegate.h; path = Public/UANativeBridgeDelegate.h; sourceTree = "<group>"; };
-		6E4114472538C09F00FEE4E8 /* UAComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAComponent.h; path = Public/UAComponent.h; sourceTree = "<group>"; };
-		6E4114482538C09F00FEE4E8 /* UAEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAEvent.h; path = Public/UAEvent.h; sourceTree = "<group>"; };
-		6E41144E2538C09F00FEE4E8 /* UAGlobal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAGlobal.h; path = Public/UAGlobal.h; sourceTree = "<group>"; };
-		6E4114552538C0A000FEE4E8 /* UAJavaScriptCommandDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAJavaScriptCommandDelegate.h; path = Public/UAJavaScriptCommandDelegate.h; sourceTree = "<group>"; };
-		6E4114562538C0A000FEE4E8 /* UAPush.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAPush.h; path = Public/UAPush.h; sourceTree = "<group>"; };
-		6E4114582538C0A000FEE4E8 /* UANativeBridgeExtensionDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UANativeBridgeExtensionDelegate.h; path = Public/UANativeBridgeExtensionDelegate.h; sourceTree = "<group>"; };
-		6E41146C2538C0A100FEE4E8 /* UAActionResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAActionResult.h; path = Public/UAActionResult.h; sourceTree = "<group>"; };
-		6E4114712538C0A200FEE4E8 /* UAActionPredicateProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAActionPredicateProtocol.h; path = Public/UAActionPredicateProtocol.h; sourceTree = "<group>"; };
-		6E4114782538C0A200FEE4E8 /* UAActionArguments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAActionArguments.h; path = Public/UAActionArguments.h; sourceTree = "<group>"; };
-		6E41147B2538C0A300FEE4E8 /* UAKeychainUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAKeychainUtils.h; path = Public/UAKeychainUtils.h; sourceTree = "<group>"; };
-		6E41147F2538C0A300FEE4E8 /* UASDKModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UASDKModule.h; path = Public/UASDKModule.h; sourceTree = "<group>"; };
-		6E41149A2538C0A500FEE4E8 /* UAAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAAction.h; path = Public/UAAction.h; sourceTree = "<group>"; };
-		6E4114BC2538C0A800FEE4E8 /* UALocationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UALocationProvider.h; path = Public/UALocationProvider.h; sourceTree = "<group>"; };
 		6E4116862135C4E4005CC871 /* UARetriablePipelineTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UARetriablePipelineTest.m; sourceTree = "<group>"; };
-		6E4116D92538C1E600FEE4E8 /* UASwizzler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UASwizzler.m; path = Internal/UASwizzler.m; sourceTree = "<group>"; };
-		6E4117292538C1EE00FEE4E8 /* UAAutoIntegration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAAutoIntegration.m; path = Internal/UAAutoIntegration.m; sourceTree = "<group>"; };
-		6E4117552538C1F200FEE4E8 /* UAKeychainUtils+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAKeychainUtils+Internal.h"; path = "Internal/UAKeychainUtils+Internal.h"; sourceTree = "<group>"; };
-		6E41177A2538C1F500FEE4E8 /* UAKeychainUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAKeychainUtils.m; path = Internal/UAKeychainUtils.m; sourceTree = "<group>"; };
-		6E4117A72538C1FA00FEE4E8 /* UASwizzler+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UASwizzler+Internal.h"; path = "Internal/UASwizzler+Internal.h"; sourceTree = "<group>"; };
-		6E411B352538C44300FEE4E8 /* AirshipLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirshipLib.h; path = Public/AirshipLib.h; sourceTree = "<group>"; };
 		6E411B6A2538C4E500FEE4E8 /* UADefaultActions.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UADefaultActions.plist; sourceTree = "<group>"; };
 		6E411B6B2538C4E500FEE4E8 /* UADefaultActionsTvOS.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UADefaultActionsTvOS.plist; sourceTree = "<group>"; };
 		6E411B6C2538C4E500FEE4E8 /* UANativeBridge */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UANativeBridge; sourceTree = "<group>"; };
@@ -1693,16 +1696,46 @@
 		6E411CA52538C6A500FEE4E8 /* UARemoteData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UARemoteData.xcdatamodel; sourceTree = "<group>"; };
 		6E411CA62538C6A500FEE4E8 /* UARemoteData 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UARemoteData 2.xcdatamodel"; sourceTree = "<group>"; };
 		6E411CA82538C6A500FEE4E8 /* UAEvents.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UAEvents.xcdatamodel; sourceTree = "<group>"; };
-		6E411E602538F4C500FEE4E8 /* UAActionArguments.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAActionArguments.m; path = Internal/UAActionArguments.m; sourceTree = "<group>"; };
-		6E411E642538F4C600FEE4E8 /* UAActionResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAActionResult.m; path = Internal/UAActionResult.m; sourceTree = "<group>"; };
-		6E411E652538F4C600FEE4E8 /* UAActionArguments+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAActionArguments+Internal.h"; path = "Internal/UAActionArguments+Internal.h"; sourceTree = "<group>"; };
-		6E411E662538F4C600FEE4E8 /* UAActionResult+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAActionResult+Internal.h"; path = "Internal/UAActionResult+Internal.h"; sourceTree = "<group>"; };
-		6E411EE22538F8E300FEE4E8 /* AirshipCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirshipCore.h; path = Public/AirshipCore.h; sourceTree = "<group>"; };
+		6E43204826EA814F009228AB /* AirshipBasement.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipBasement.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6E43212626EA819A009228AB /* AirshipBasement.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipBasement.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6E43212A26EA84A4009228AB /* UAFeature.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAFeature.h; path = Public/UAFeature.h; sourceTree = "<group>"; };
+		6E43212B26EA84A4009228AB /* UAActionArguments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAActionArguments.h; path = Public/UAActionArguments.h; sourceTree = "<group>"; };
+		6E43212C26EA84A4009228AB /* UAJavaScriptCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAJavaScriptCommand.h; path = Public/UAJavaScriptCommand.h; sourceTree = "<group>"; };
+		6E43212D26EA84A4009228AB /* UAJavaScriptEnvironmentProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAJavaScriptEnvironmentProtocol.h; path = Public/UAJavaScriptEnvironmentProtocol.h; sourceTree = "<group>"; };
+		6E43212E26EA84A4009228AB /* UAPush.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAPush.h; path = Public/UAPush.h; sourceTree = "<group>"; };
+		6E43212F26EA84A4009228AB /* UAAppIntegrationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAAppIntegrationDelegate.h; path = Public/UAAppIntegrationDelegate.h; sourceTree = "<group>"; };
+		6E43213026EA84A4009228AB /* UAAutoIntegration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAAutoIntegration.h; path = Public/UAAutoIntegration.h; sourceTree = "<group>"; };
+		6E43213126EA84A4009228AB /* UALocationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UALocationProvider.h; path = Public/UALocationProvider.h; sourceTree = "<group>"; };
+		6E43213226EA84A4009228AB /* UAJavaScriptCommandDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAJavaScriptCommandDelegate.h; path = Public/UAJavaScriptCommandDelegate.h; sourceTree = "<group>"; };
+		6E43213326EA84A4009228AB /* AirshipBasementLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirshipBasementLib.h; path = Public/AirshipBasementLib.h; sourceTree = "<group>"; };
+		6E43213426EA84A4009228AB /* UAKeychainUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAKeychainUtils.h; path = Public/UAKeychainUtils.h; sourceTree = "<group>"; };
+		6E43213526EA84A4009228AB /* UAActionPredicateProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAActionPredicateProtocol.h; path = Public/UAActionPredicateProtocol.h; sourceTree = "<group>"; };
+		6E43213626EA84A4009228AB /* UACompression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UACompression.h; path = Public/UACompression.h; sourceTree = "<group>"; };
+		6E43213726EA84A4009228AB /* UANativeBridgeExtensionDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UANativeBridgeExtensionDelegate.h; path = Public/UANativeBridgeExtensionDelegate.h; sourceTree = "<group>"; };
+		6E43213826EA84A4009228AB /* UAEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAEvent.h; path = Public/UAEvent.h; sourceTree = "<group>"; };
+		6E43213926EA84A4009228AB /* UAURLAllowListScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAURLAllowListScope.h; path = Public/UAURLAllowListScope.h; sourceTree = "<group>"; };
+		6E43213A26EA84A5009228AB /* UAActionResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAActionResult.h; path = Public/UAActionResult.h; sourceTree = "<group>"; };
+		6E43213B26EA84A5009228AB /* UASDKModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UASDKModule.h; path = Public/UASDKModule.h; sourceTree = "<group>"; };
+		6E43213C26EA84A5009228AB /* UAAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAAction.h; path = Public/UAAction.h; sourceTree = "<group>"; };
+		6E43213D26EA84A5009228AB /* UAComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAComponent.h; path = Public/UAComponent.h; sourceTree = "<group>"; };
+		6E43213E26EA84A5009228AB /* UAGlobal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAGlobal.h; path = Public/UAGlobal.h; sourceTree = "<group>"; };
+		6E43213F26EA84A5009228AB /* AirshipBasement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirshipBasement.h; path = Public/AirshipBasement.h; sourceTree = "<group>"; };
+		6E43216C26EA84BE009228AB /* UAKeychainUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAKeychainUtils.m; path = Internal/UAKeychainUtils.m; sourceTree = "<group>"; };
+		6E43216D26EA84BE009228AB /* UASwizzler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UASwizzler.m; path = Internal/UASwizzler.m; sourceTree = "<group>"; };
+		6E43216E26EA84BE009228AB /* UAAutoIntegration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAAutoIntegration.m; path = Internal/UAAutoIntegration.m; sourceTree = "<group>"; };
+		6E43216F26EA84BE009228AB /* UAActionArguments.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAActionArguments.m; path = Internal/UAActionArguments.m; sourceTree = "<group>"; };
+		6E43217026EA84BE009228AB /* UACompression.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UACompression.m; path = Internal/UACompression.m; sourceTree = "<group>"; };
+		6E43217126EA84BE009228AB /* UAActionArguments+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAActionArguments+Internal.h"; path = "Internal/UAActionArguments+Internal.h"; sourceTree = "<group>"; };
+		6E43217226EA84BE009228AB /* UAGlobal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAGlobal.m; path = Internal/UAGlobal.m; sourceTree = "<group>"; };
+		6E43217326EA84BE009228AB /* UAJavaScriptCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAJavaScriptCommand.m; path = Internal/UAJavaScriptCommand.m; sourceTree = "<group>"; };
+		6E43217426EA84BE009228AB /* UAActionResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAActionResult.m; path = Internal/UAActionResult.m; sourceTree = "<group>"; };
+		6E43217526EA84BE009228AB /* UASwizzler+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UASwizzler+Internal.h"; path = "Internal/UASwizzler+Internal.h"; sourceTree = "<group>"; };
+		6E43218E26EA89B5009228AB /* AirshipCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AirshipCore.h; sourceTree = "<group>"; };
+		6E43218F26EA89B6009228AB /* NativeBridgeDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NativeBridgeDelegate.swift; sourceTree = "<group>"; };
 		6E4627CB1E64E0C300A5BF3B /* UAScheduleDelayTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAScheduleDelayTests.m; sourceTree = "<group>"; };
 		6E4A00781F2A4A4A0069D8A0 /* UABaseTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UABaseTest.m; sourceTree = "<group>"; };
 		6E4E5B2726E53EE700198175 /* UABaseTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UABaseTest.h; sourceTree = "<group>"; };
 		6E4E5B2826E53EE700198175 /* UABaseTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UABaseTest.m; sourceTree = "<group>"; };
-		6E4E5B3026E7DFEB00198175 /* UAAutoIntegration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAAutoIntegration.h; path = Public/UAAutoIntegration.h; sourceTree = "<group>"; };
 		6E4E5B3926E7F91600198175 /* LocalizationUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalizationUtils.swift; sourceTree = "<group>"; };
 		6E4E5B3A26E7F91600198175 /* Attributes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Attributes.swift; sourceTree = "<group>"; };
 		6E4E5B4126E8043A00198175 /* LocalizationUtilsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocalizationUtilsTest.m; sourceTree = "<group>"; };
@@ -1767,7 +1800,6 @@
 		6E664BE926C6DB7500A2C8E5 /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		6E664BEC26C6EF3300A2C8E5 /* PreferenceCenterHeaderLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferenceCenterHeaderLabel.swift; sourceTree = "<group>"; };
 		6E698DE826790AC300654DB2 /* PreferenceDataStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferenceDataStore.swift; sourceTree = "<group>"; };
-		6E698DE926790AC300654DB2 /* UAFeature.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAFeature.h; path = Public/UAFeature.h; sourceTree = "<group>"; };
 		6E698DEA26790AC300654DB2 /* AirshipLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirshipLogger.swift; sourceTree = "<group>"; };
 		6E698DEB26790AC300654DB2 /* UAPrivacyManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UAPrivacyManager.swift; sourceTree = "<group>"; };
 		6E698DF9267A78CA00654DB2 /* HTTPResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPResponse.swift; sourceTree = "<group>"; };
@@ -1781,8 +1813,6 @@
 		6E698E11267A98AB00654DB2 /* ChannelAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelAPIClient.swift; sourceTree = "<group>"; };
 		6E698E14267A98BE00654DB2 /* ChannelCreateResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelCreateResponse.swift; sourceTree = "<group>"; };
 		6E698E21267ABAB600654DB2 /* TestRequestSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestRequestSession.swift; sourceTree = "<group>"; };
-		6E698E29267BAFCC00654DB2 /* UACompression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UACompression.h; path = Public/UACompression.h; sourceTree = "<group>"; };
-		6E698E35267BEC4500654DB2 /* UACompression.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UACompression.m; path = Internal/UACompression.m; sourceTree = "<group>"; };
 		6E698E3A267BEDC300654DB2 /* Contact.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Contact.swift; sourceTree = "<group>"; };
 		6E698E3B267BEDC300654DB2 /* AttributesEditor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttributesEditor.swift; sourceTree = "<group>"; };
 		6E698E3C267BEDC300654DB2 /* TagGroupsEditor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TagGroupsEditor.swift; sourceTree = "<group>"; };
@@ -1863,7 +1893,6 @@
 		6E87BD8226D757CA0005D20D /* CloudSite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudSite.swift; sourceTree = "<group>"; };
 		6E87BD8C26D815780005D20D /* AppIntegration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIntegration.swift; sourceTree = "<group>"; };
 		6E87BD9126D963B60005D20D /* DefaultAppIntegrationDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultAppIntegrationDelegate.swift; sourceTree = "<group>"; };
-		6E87BD9326D98E510005D20D /* UAAppIntegrationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAAppIntegrationDelegate.h; path = Public/UAAppIntegrationDelegate.h; sourceTree = "<group>"; };
 		6E87BD9826DD3FE90005D20D /* LegacyPushTestUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyPushTestUtils.swift; sourceTree = "<group>"; };
 		6E87BD9C26DD78CC0005D20D /* DefaultAppIntegrationDelegateTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultAppIntegrationDelegateTest.swift; sourceTree = "<group>"; };
 		6E87BD9E26DDDB250005D20D /* AppIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIntegrationTests.swift; sourceTree = "<group>"; };
@@ -1873,7 +1902,6 @@
 		6E87BDFD26E283840005D20D /* Airship.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Airship.swift; sourceTree = "<group>"; };
 		6E87BDFE26E283840005D20D /* LogLevel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogLevel.swift; sourceTree = "<group>"; };
 		6E87BE0026E283850005D20D /* DeepLinkDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeepLinkDelegate.swift; sourceTree = "<group>"; };
-		6E87BE0C26E284870005D20D /* UAGlobal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAGlobal.m; path = Internal/UAGlobal.m; sourceTree = "<group>"; };
 		6E87BE1226E28F570005D20D /* AirshipInstance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipInstance.swift; sourceTree = "<group>"; };
 		6E87BE1526E29BC90005D20D /* TestAirshipInstance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAirshipInstance.swift; sourceTree = "<group>"; };
 		6E87BE1726E2C5940005D20D /* TestAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAnalytics.swift; sourceTree = "<group>"; };
@@ -2118,7 +2146,6 @@
 		A68E345A26B154220024BE1D /* PreferenceCenterSectionHeader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PreferenceCenterSectionHeader.xib; sourceTree = "<group>"; };
 		A68E346F26B2AD160024BE1D /* PreferenceCenterStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferenceCenterStyle.swift; sourceTree = "<group>"; };
 		A6A5530926D548AF002B20F6 /* NativeBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeBridge.swift; sourceTree = "<group>"; };
-		A6A5530C26D548BD002B20F6 /* JavaScriptCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JavaScriptCommand.swift; sourceTree = "<group>"; };
 		A6A5530F26D548D6002B20F6 /* JavaScriptEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JavaScriptEnvironment.swift; sourceTree = "<group>"; };
 		A6A5531226D548FF002B20F6 /* NativeBridgeActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeBridgeActionHandler.swift; sourceTree = "<group>"; };
 		A6A8077B26C1566E00CB266E /* ColorUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorUtils.swift; sourceTree = "<group>"; };
@@ -2129,7 +2156,6 @@
 		C00ED4CE26C729390040C5D0 /* URLAllowList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLAllowList.swift; sourceTree = "<group>"; };
 		C02D0B6526C1A3E200F673E6 /* ChannelCapture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelCapture.swift; sourceTree = "<group>"; };
 		C088383526E0244C00D40838 /* TestURLAllowList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestURLAllowList.swift; sourceTree = "<group>"; };
-		C0BA473526E12E9F00DB7A04 /* UAURLAllowListScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAURLAllowListScope.h; path = Public/UAURLAllowListScope.h; sourceTree = "<group>"; };
 		C3AEC8D23AA7835AC1E74C9A /* Pods-AirshipAccengageTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipAccengageTests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipAccengageTests/Pods-AirshipAccengageTests.debug.xcconfig"; sourceTree = "<group>"; };
 		CC04F1C41DC27E6C00B4842D /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 		CC40D87B1D8C703E00BABD4F /* libOCMock.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libOCMock.a; path = ../TestCommon/OCMockLibrary/libOCMock.a; sourceTree = "<group>"; };
@@ -2346,6 +2372,27 @@
 				3261A7F6243CD7F900ADBF6B /* CoreTelephony.framework in Frameworks */,
 				CC944EC81DB161AE00C42269 /* libz.tbd in Frameworks */,
 				6EB4E4C02549F9BF00E3FFD0 /* Network.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6E43202026EA814F009228AB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6E43202126EA814F009228AB /* libsqlite3.tbd in Frameworks */,
+				6E43202226EA814F009228AB /* CoreTelephony.framework in Frameworks */,
+				6E43202326EA814F009228AB /* libz.tbd in Frameworks */,
+				6E43202426EA814F009228AB /* Network.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6E4320FF26EA8199009228AB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6E43210026EA8199009228AB /* libsqlite3.tbd in Frameworks */,
+				6E43210126EA8199009228AB /* libz.tbd in Frameworks */,
+				6E43210226EA8199009228AB /* Network.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3014,17 +3061,18 @@
 		494DD94D1B0EB677009C134E = {
 			isa = PBXGroup;
 			children = (
-				6E6CC2FE239A2E5F003D583C /* AirshipAccengage */,
-				CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */,
-				45C6912C238DC7B300A03C94 /* AirshipExtendedActions */,
+				6E43212826EA844E009228AB /* AirshipBasement */,
 				6E93769E23761FFA00AA9C2A /* AirshipCore */,
+				6E6CC2FE239A2E5F003D583C /* AirshipAccengage */,
+				6E7C067C26127557006D0E84 /* AirshipChat */,
+				847BFFF5267CD73A007CD249 /* AirshipPreferenceCenter */,
+				45C6912C238DC7B300A03C94 /* AirshipExtendedActions */,
 				6E9373012376160C00AA9C2A /* AirshipLocation */,
 				3CA0E21A237CCBA600EE76CF /* AirshipDebug */,
 				6E84509C237DFE89007D3B1E /* AirshipAutomation */,
 				3CA0E302237E396100EE76CF /* AirshipMessageCenter */,
+				CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */,
 				0A550D587E2599A4BD33CDF4 /* Pods */,
-				6E7C067C26127557006D0E84 /* AirshipChat */,
-				847BFFF5267CD73A007CD249 /* AirshipPreferenceCenter */,
 				E3E85E514DBE69D4C8BF51CE /* Frameworks */,
 				1B8DCF452507B9380006E595 /* Recovered References */,
 			);
@@ -3047,6 +3095,8 @@
 				6E8776A7261BC1E100B03FC0 /* AirshipChatTests.xctest */,
 				847BFFF4267CD739007CD249 /* AirshipPreferenceCenter.framework */,
 				847BFFFC267CD73A007CD249 /* AirshipPreferenceCenterTests.xctest */,
+				6E43204826EA814F009228AB /* AirshipBasement.framework */,
+				6E43212626EA819A009228AB /* AirshipBasement.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3131,14 +3181,6 @@
 				6E664BAF26C46BC600A2C8E5 /* TagsActionPredicate.swift */,
 				6E664BAA26C46BC500A2C8E5 /* URLActionPredicate.swift */,
 				6E664BE126C4D6B600A2C8E5 /* WalletAction.swift */,
-				6E41149A2538C0A500FEE4E8 /* UAAction.h */,
-				6E4114782538C0A200FEE4E8 /* UAActionArguments.h */,
-				6E411E602538F4C500FEE4E8 /* UAActionArguments.m */,
-				6E411E652538F4C600FEE4E8 /* UAActionArguments+Internal.h */,
-				6E4114712538C0A200FEE4E8 /* UAActionPredicateProtocol.h */,
-				6E41146C2538C0A100FEE4E8 /* UAActionResult.h */,
-				6E411E642538F4C600FEE4E8 /* UAActionResult.m */,
-				6E411E662538F4C600FEE4E8 /* UAActionResult+Internal.h */,
 			);
 			name = Actions;
 			sourceTree = "<group>";
@@ -3166,15 +3208,11 @@
 		6E411CEF2538CC2900FEE4E8 /* Airship */ = {
 			isa = PBXGroup;
 			children = (
-				6E87BE0C26E284870005D20D /* UAGlobal.m */,
 				6E87BDFD26E283840005D20D /* Airship.swift */,
 				6E87BE0026E283850005D20D /* DeepLinkDelegate.swift */,
 				6E87BDFE26E283840005D20D /* LogLevel.swift */,
-				6E41147F2538C0A300FEE4E8 /* UASDKModule.h */,
 				6E6ED14F2683DBC200A2CBD0 /* AirshipCoreResources.swift */,
 				6E6ED1502683DBC300A2CBD0 /* AirshipVersion.swift */,
-				6E4114472538C09F00FEE4E8 /* UAComponent.h */,
-				6E4114BC2538C0A800FEE4E8 /* UALocationProvider.h */,
 				6E87BDB426DEE61F0005D20D /* ComponentDisableHelper.swift */,
 				6E87BDBC26E01FF40005D20D /* ModuleLoader.swift */,
 				6E87BE1226E28F570005D20D /* AirshipInstance.swift */,
@@ -3185,11 +3223,6 @@
 		6E411CFC2538CC7A00FEE4E8 /* Integration */ = {
 			isa = PBXGroup;
 			children = (
-				6E4E5B3026E7DFEB00198175 /* UAAutoIntegration.h */,
-				6E87BD9326D98E510005D20D /* UAAppIntegrationDelegate.h */,
-				6E4117292538C1EE00FEE4E8 /* UAAutoIntegration.m */,
-				6E4116D92538C1E600FEE4E8 /* UASwizzler.m */,
-				6E4117A72538C1FA00FEE4E8 /* UASwizzler+Internal.h */,
 				6E87BD8C26D815780005D20D /* AppIntegration.swift */,
 				6E87BD9126D963B60005D20D /* DefaultAppIntegrationDelegate.swift */,
 			);
@@ -3204,7 +3237,6 @@
 				6E1D8AD726CC66BE0049DACB /* RemoteConfigCache.swift */,
 				6E87BD6626D6A39A0005D20D /* Config.swift */,
 				6E87BD8226D757CA0005D20D /* CloudSite.swift */,
-				C0BA473526E12E9F00DB7A04 /* UAURLAllowListScope.h */,
 			);
 			name = Config;
 			sourceTree = "<group>";
@@ -3288,11 +3320,8 @@
 		6E411D292538CF1000FEE4E8 /* Native Bridge */ = {
 			isa = PBXGroup;
 			children = (
-				6E4114552538C0A000FEE4E8 /* UAJavaScriptCommandDelegate.h */,
-				6E41143F2538C09E00FEE4E8 /* UANativeBridgeDelegate.h */,
-				6E4114582538C0A000FEE4E8 /* UANativeBridgeExtensionDelegate.h */,
+				6E43218F26EA89B6009228AB /* NativeBridgeDelegate.swift */,
 				A6A5530926D548AF002B20F6 /* NativeBridge.swift */,
-				A6A5530C26D548BD002B20F6 /* JavaScriptCommand.swift */,
 				A6A5530F26D548D6002B20F6 /* JavaScriptEnvironment.swift */,
 				A6A5531226D548FF002B20F6 /* NativeBridgeActionHandler.swift */,
 			);
@@ -3302,7 +3331,6 @@
 		6E411D362538CF3900FEE4E8 /* Push */ = {
 			isa = PBXGroup;
 			children = (
-				6E4114562538C0A000FEE4E8 /* UAPush.h */,
 				3CC95B1E268E785900FE2ACD /* NotificationCategories.swift */,
 				3CC95B2A2696549B00FE2ACD /* PushableComponent.swift */,
 				3C18679426B20C1700C2BC79 /* APNSRegistration.swift */,
@@ -3354,7 +3382,6 @@
 				6E91B458268904D900DDB1A8 /* AssociateIdentifiersEvent.swift */,
 				6E91B43B26868A6300DDB1A8 /* CircularRegion.swift */,
 				6E91B456268904D800DDB1A8 /* DeviceRegistrationEvent.swift */,
-				6E4114482538C09F00FEE4E8 /* UAEvent.h */,
 				6E698E0B267A88D600654DB2 /* EventAPIClient.swift */,
 				6E698E0E267A88E800654DB2 /* EventAPIResponse.swift */,
 				6E91B4442686911B00DDB1A8 /* EventUtils.swift */,
@@ -3403,12 +3430,7 @@
 				6E6ED1352683A58D00A2CBD0 /* Dispatcher.swift */,
 				6E6ED1362683A58D00A2CBD0 /* Disposable.swift */,
 				6E6ED1342683A58D00A2CBD0 /* Semaphore.swift */,
-				6E698E35267BEC4500654DB2 /* UACompression.m */,
-				6E698E29267BAFCC00654DB2 /* UACompression.h */,
 				6E411D842538D2F600FEE4E8 /* Value Transformers */,
-				6E41147B2538C0A300FEE4E8 /* UAKeychainUtils.h */,
-				6E41177A2538C1F500FEE4E8 /* UAKeychainUtils.m */,
-				6E4117552538C1F200FEE4E8 /* UAKeychainUtils+Internal.h */,
 				A6A8077B26C1566E00CB266E /* ColorUtils.swift */,
 				A6A8078326C2B8DE00CB266E /* Padding.swift */,
 			);
@@ -3425,10 +3447,56 @@
 			name = "Value Transformers";
 			sourceTree = "<group>";
 		};
+		6E43212826EA844E009228AB /* AirshipBasement */ = {
+			isa = PBXGroup;
+			children = (
+				6E43212926EA847D009228AB /* Source */,
+			);
+			path = AirshipBasement;
+			sourceTree = "<group>";
+		};
+		6E43212926EA847D009228AB /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				6E43216F26EA84BE009228AB /* UAActionArguments.m */,
+				6E43217126EA84BE009228AB /* UAActionArguments+Internal.h */,
+				6E43217426EA84BE009228AB /* UAActionResult.m */,
+				6E43216E26EA84BE009228AB /* UAAutoIntegration.m */,
+				6E43217026EA84BE009228AB /* UACompression.m */,
+				6E43217226EA84BE009228AB /* UAGlobal.m */,
+				6E43217326EA84BE009228AB /* UAJavaScriptCommand.m */,
+				6E43216C26EA84BE009228AB /* UAKeychainUtils.m */,
+				6E43216D26EA84BE009228AB /* UASwizzler.m */,
+				6E43217526EA84BE009228AB /* UASwizzler+Internal.h */,
+				6E43213F26EA84A5009228AB /* AirshipBasement.h */,
+				6E43213326EA84A4009228AB /* AirshipBasementLib.h */,
+				6E43213C26EA84A5009228AB /* UAAction.h */,
+				6E43212B26EA84A4009228AB /* UAActionArguments.h */,
+				6E43213526EA84A4009228AB /* UAActionPredicateProtocol.h */,
+				6E43213A26EA84A5009228AB /* UAActionResult.h */,
+				6E43212F26EA84A4009228AB /* UAAppIntegrationDelegate.h */,
+				6E43213026EA84A4009228AB /* UAAutoIntegration.h */,
+				6E43213D26EA84A5009228AB /* UAComponent.h */,
+				6E43213626EA84A4009228AB /* UACompression.h */,
+				6E43213826EA84A4009228AB /* UAEvent.h */,
+				6E43212A26EA84A4009228AB /* UAFeature.h */,
+				6E43213E26EA84A5009228AB /* UAGlobal.h */,
+				6E43212C26EA84A4009228AB /* UAJavaScriptCommand.h */,
+				6E43213226EA84A4009228AB /* UAJavaScriptCommandDelegate.h */,
+				6E43213426EA84A4009228AB /* UAKeychainUtils.h */,
+				6E43212D26EA84A4009228AB /* UAJavaScriptEnvironmentProtocol.h */,
+				6E43213126EA84A4009228AB /* UALocationProvider.h */,
+				6E43213726EA84A4009228AB /* UANativeBridgeExtensionDelegate.h */,
+				6E43212E26EA84A4009228AB /* UAPush.h */,
+				6E43213B26EA84A5009228AB /* UASDKModule.h */,
+				6E43213926EA84A4009228AB /* UAURLAllowListScope.h */,
+			);
+			path = Source;
+			sourceTree = "<group>";
+		};
 		6E698DE726790A9C00654DB2 /* PrivacyManager */ = {
 			isa = PBXGroup;
 			children = (
-				6E698DE926790AC300654DB2 /* UAFeature.h */,
 				6E698DEB26790AC300654DB2 /* UAPrivacyManager.swift */,
 			);
 			name = PrivacyManager;
@@ -3904,16 +3972,14 @@
 		6E937300237615B400AA9C2A /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				6E43218E26EA89B5009228AB /* AirshipCore.h */,
 				A61517AD26A97419008A41C4 /* Subscription Lists */,
 				6E698E02267A799500654DB2 /* AirshipErrors.swift */,
 				6E8E1C9A26447B3800B11791 /* Lock.swift */,
 				6E698DEA26790AC300654DB2 /* AirshipLogger.swift */,
 				6E698DE826790AC300654DB2 /* PreferenceDataStore.swift */,
 				6E698DE726790A9C00654DB2 /* PrivacyManager */,
-				6E411B352538C44300FEE4E8 /* AirshipLib.h */,
 				6EA57DEC25433C57005998C7 /* Tasks */,
-				6E411EE22538F8E300FEE4E8 /* AirshipCore.h */,
-				6E41144E2538C09F00FEE4E8 /* UAGlobal.h */,
 				6E411CBD2538CA4100FEE4E8 /* Actions */,
 				6E411CEF2538CC2900FEE4E8 /* Airship */,
 				6E411D512538D00300FEE4E8 /* Analytics */,
@@ -4726,33 +4792,69 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E4114D32538C0A900FEE4E8 /* UANativeBridgeDelegate.h in Headers */,
-				6E41150F2538C0AB00FEE4E8 /* UAGlobal.h in Headers */,
-				6E4115372538C0AB00FEE4E8 /* UANativeBridgeExtensionDelegate.h in Headers */,
-				6E41150F2538C0AB00FEE4E8 /* UAGlobal.h in Headers */,
-				6E4115372538C0AB00FEE4E8 /* UANativeBridgeExtensionDelegate.h in Headers */,
-				6E4115DF2538C0AF00FEE4E8 /* UAAction.h in Headers */,
-				6E411E722538F4C700FEE4E8 /* UAActionResult+Internal.h in Headers */,
-				6E4114F32538C0AA00FEE4E8 /* UAComponent.h in Headers */,
-				6E4116672538C0B300FEE4E8 /* UALocationProvider.h in Headers */,
-				6E4115A32538C0AE00FEE4E8 /* UASDKModule.h in Headers */,
-				6E87BD9426D98E510005D20D /* UAAppIntegrationDelegate.h in Headers */,
-				6E4E5B3126E7DFEB00198175 /* UAAutoIntegration.h in Headers */,
-				6E41156B2538C0AD00FEE4E8 /* UAActionPredicateProtocol.h in Headers */,
-				C0BA473626E12E9F00DB7A04 /* UAURLAllowListScope.h in Headers */,
-				6E411E712538F4C700FEE4E8 /* UAActionArguments+Internal.h in Headers */,
-				6E4115932538C0AE00FEE4E8 /* UAKeychainUtils.h in Headers */,
-				6E698DEE26790AC300654DB2 /* UAFeature.h in Headers */,
-				6E411B232538C20700FEE4E8 /* UASwizzler+Internal.h in Headers */,
-				6E4115572538C0AC00FEE4E8 /* UAActionResult.h in Headers */,
-				6E4115872538C0AD00FEE4E8 /* UAActionArguments.h in Headers */,
-				6E4119DB2538C20200FEE4E8 /* UAKeychainUtils+Internal.h in Headers */,
-				6E411EE32538F8E300FEE4E8 /* AirshipCore.h in Headers */,
-				6E411B382538C44300FEE4E8 /* AirshipLib.h in Headers */,
-				6E41152F2538C0AB00FEE4E8 /* UAPush.h in Headers */,
-				6E41152B2538C0AB00FEE4E8 /* UAJavaScriptCommandDelegate.h in Headers */,
-				6E4114F72538C0AA00FEE4E8 /* UAEvent.h in Headers */,
-				6E698E2A267BAFCC00654DB2 /* UACompression.h in Headers */,
+				6E43219026EA89B6009228AB /* AirshipCore.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6E43202526EA814F009228AB /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6E43214026EA84A5009228AB /* UAFeature.h in Headers */,
+				6E43216826EA84A5009228AB /* UAGlobal.h in Headers */,
+				6E43216A26EA84A5009228AB /* AirshipBasement.h in Headers */,
+				6E43214C26EA84A5009228AB /* UAAutoIntegration.h in Headers */,
+				6E43215C26EA84A5009228AB /* UAEvent.h in Headers */,
+				6E43214626EA84A5009228AB /* UAJavaScriptEnvironmentProtocol.h in Headers */,
+				6E43215A26EA84A5009228AB /* UANativeBridgeExtensionDelegate.h in Headers */,
+				6E43215826EA84A5009228AB /* UACompression.h in Headers */,
+				6E43216026EA84A5009228AB /* UAActionResult.h in Headers */,
+				6E43215426EA84A5009228AB /* UAKeychainUtils.h in Headers */,
+				6E43216626EA84A5009228AB /* UAComponent.h in Headers */,
+				6E43218826EA84BE009228AB /* UASwizzler+Internal.h in Headers */,
+				6E43214A26EA84A5009228AB /* UAAppIntegrationDelegate.h in Headers */,
+				6E43216426EA84A5009228AB /* UAAction.h in Headers */,
+				6E43215226EA84A5009228AB /* AirshipBasementLib.h in Headers */,
+				6E43215E26EA84A5009228AB /* UAURLAllowListScope.h in Headers */,
+				6E43214E26EA84A5009228AB /* UALocationProvider.h in Headers */,
+				6E43215026EA84A5009228AB /* UAJavaScriptCommandDelegate.h in Headers */,
+				6E43216226EA84A5009228AB /* UASDKModule.h in Headers */,
+				6E43215626EA84A5009228AB /* UAActionPredicateProtocol.h in Headers */,
+				6E43218026EA84BE009228AB /* UAActionArguments+Internal.h in Headers */,
+				6E43214226EA84A5009228AB /* UAActionArguments.h in Headers */,
+				6E43214826EA84A5009228AB /* UAPush.h in Headers */,
+				6E43214426EA84A5009228AB /* UAJavaScriptCommand.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6E43210326EA8199009228AB /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6E43214126EA84A5009228AB /* UAFeature.h in Headers */,
+				6E43216926EA84A5009228AB /* UAGlobal.h in Headers */,
+				6E43216B26EA84A5009228AB /* AirshipBasement.h in Headers */,
+				6E43214D26EA84A5009228AB /* UAAutoIntegration.h in Headers */,
+				6E43215D26EA84A5009228AB /* UAEvent.h in Headers */,
+				6E43214726EA84A5009228AB /* UAJavaScriptEnvironmentProtocol.h in Headers */,
+				6E43215B26EA84A5009228AB /* UANativeBridgeExtensionDelegate.h in Headers */,
+				6E43215926EA84A5009228AB /* UACompression.h in Headers */,
+				6E43216126EA84A5009228AB /* UAActionResult.h in Headers */,
+				6E43215526EA84A5009228AB /* UAKeychainUtils.h in Headers */,
+				6E43216726EA84A5009228AB /* UAComponent.h in Headers */,
+				6E43218926EA84BE009228AB /* UASwizzler+Internal.h in Headers */,
+				6E43214B26EA84A5009228AB /* UAAppIntegrationDelegate.h in Headers */,
+				6E43216526EA84A5009228AB /* UAAction.h in Headers */,
+				6E43215326EA84A5009228AB /* AirshipBasementLib.h in Headers */,
+				6E43215F26EA84A5009228AB /* UAURLAllowListScope.h in Headers */,
+				6E43214F26EA84A5009228AB /* UALocationProvider.h in Headers */,
+				6E43215126EA84A5009228AB /* UAJavaScriptCommandDelegate.h in Headers */,
+				6E43216326EA84A5009228AB /* UASDKModule.h in Headers */,
+				6E43215726EA84A5009228AB /* UAActionPredicateProtocol.h in Headers */,
+				6E43218126EA84BE009228AB /* UAActionArguments+Internal.h in Headers */,
+				6E43214326EA84A5009228AB /* UAActionArguments.h in Headers */,
+				6E43214926EA84A5009228AB /* UAPush.h in Headers */,
+				6E43214526EA84A5009228AB /* UAJavaScriptCommand.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4948,34 +5050,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E4114D42538C0A900FEE4E8 /* UANativeBridgeDelegate.h in Headers */,
-				6E411EAF2538F4D100FEE4E8 /* UAActionArguments+Internal.h in Headers */,
-				6E4115102538C0AB00FEE4E8 /* UAGlobal.h in Headers */,
-				6E4115382538C0AB00FEE4E8 /* UANativeBridgeExtensionDelegate.h in Headers */,
-				6E411EAF2538F4D100FEE4E8 /* UAActionArguments+Internal.h in Headers */,
-				6E4115102538C0AB00FEE4E8 /* UAGlobal.h in Headers */,
-				6E4115382538C0AB00FEE4E8 /* UANativeBridgeExtensionDelegate.h in Headers */,
-				6E4115E02538C0B000FEE4E8 /* UAAction.h in Headers */,
-				6E4114F42538C0AA00FEE4E8 /* UAComponent.h in Headers */,
-				6E4116682538C0B300FEE4E8 /* UALocationProvider.h in Headers */,
-				6E4115A42538C0AE00FEE4E8 /* UASDKModule.h in Headers */,
-				6E87BD9526D98E510005D20D /* UAAppIntegrationDelegate.h in Headers */,
-				6E4E5B3226E7DFEB00198175 /* UAAutoIntegration.h in Headers */,
-				6E41156C2538C0AD00FEE4E8 /* UAActionPredicateProtocol.h in Headers */,
-				C0BA473726E12E9F00DB7A04 /* UAURLAllowListScope.h in Headers */,
-				6E4115942538C0AE00FEE4E8 /* UAKeychainUtils.h in Headers */,
-				6E698DEF26790AC300654DB2 /* UAFeature.h in Headers */,
-				6E411B242538C20700FEE4E8 /* UASwizzler+Internal.h in Headers */,
-				6E4115582538C0AC00FEE4E8 /* UAActionResult.h in Headers */,
-				6E4115882538C0AD00FEE4E8 /* UAActionArguments.h in Headers */,
-				6E4119DC2538C20200FEE4E8 /* UAKeychainUtils+Internal.h in Headers */,
-				6E411EB02538F4D100FEE4E8 /* UAActionResult+Internal.h in Headers */,
-				6E411EE42538F8E300FEE4E8 /* AirshipCore.h in Headers */,
-				6E411B392538C44300FEE4E8 /* AirshipLib.h in Headers */,
-				6E4115302538C0AB00FEE4E8 /* UAPush.h in Headers */,
-				6E41152C2538C0AB00FEE4E8 /* UAJavaScriptCommandDelegate.h in Headers */,
-				6E4114F82538C0AA00FEE4E8 /* UAEvent.h in Headers */,
-				6E698E2B267BAFCC00654DB2 /* UACompression.h in Headers */,
+				6E43219126EA89B6009228AB /* AirshipCore.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5069,7 +5144,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 494DD96D1B0EB677009C134E /* Build configuration list for PBXNativeTarget "AirshipCore" */;
 			buildPhases = (
-				4997FA371B55D96D002D4E05 /* Generate AirshipLib.h */,
 				494DD9521B0EB677009C134E /* Sources */,
 				494DD9531B0EB677009C134E /* Frameworks */,
 				494DD9541B0EB677009C134E /* Headers */,
@@ -5078,10 +5152,49 @@
 			buildRules = (
 			);
 			dependencies = (
+				6E43218B26EA891F009228AB /* PBXTargetDependency */,
 			);
 			name = AirshipCore;
 			productName = AirshipCore;
 			productReference = 494DD9571B0EB677009C134E /* AirshipCore.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		6E431F6B26EA814F009228AB /* AirshipBasement */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6E43204526EA814F009228AB /* Build configuration list for PBXNativeTarget "AirshipBasement" */;
+			buildPhases = (
+				6E431F6C26EA814F009228AB /* Generate AirshipBasementLib.h */,
+				6E431F6D26EA814F009228AB /* Sources */,
+				6E43202026EA814F009228AB /* Frameworks */,
+				6E43202526EA814F009228AB /* Headers */,
+				6E43203F26EA814F009228AB /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AirshipBasement;
+			productName = AirshipCore;
+			productReference = 6E43204826EA814F009228AB /* AirshipBasement.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		6E43204A26EA8199009228AB /* AirshipBasement tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6E43212326EA8199009228AB /* Build configuration list for PBXNativeTarget "AirshipBasement tvOS" */;
+			buildPhases = (
+				6E43204B26EA8199009228AB /* Generate AirshipBasementLib.h */,
+				6E43204C26EA8199009228AB /* Sources */,
+				6E4320FF26EA8199009228AB /* Frameworks */,
+				6E43210326EA8199009228AB /* Headers */,
+				6E43211D26EA8199009228AB /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "AirshipBasement tvOS";
+			productName = AirshipCore;
+			productReference = 6E43212626EA819A009228AB /* AirshipBasement.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		6E6CC310239A2EA9003D583C /* AirshipAccengage */ = {
@@ -5245,7 +5358,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = DF6DD6531E7A1EB8000C281A /* Build configuration list for PBXNativeTarget "AirshipCore tvOS" */;
 			buildPhases = (
-				6E4114072538BEAB00FEE4E8 /* Generate AirshipLib.h */,
 				DF6DD5031E7A1EB8000C281A /* Sources */,
 				DF6DD5941E7A1EB8000C281A /* Frameworks */,
 				DF6DD5971E7A1EB8000C281A /* Headers */,
@@ -5254,6 +5366,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				6E43219C26EAA1A8009228AB /* PBXTargetDependency */,
 			);
 			name = "AirshipCore tvOS";
 			productName = AirshipCore;
@@ -5267,7 +5380,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1250;
-				LastUpgradeCheck = 1110;
+				LastUpgradeCheck = 1250;
 				ORGANIZATIONNAME = "Urban Airship";
 				TargetAttributes = {
 					1BB4C029239FE5E50000559B = {
@@ -5356,6 +5469,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
+				6E431F6B26EA814F009228AB /* AirshipBasement */,
+				6E43204A26EA8199009228AB /* AirshipBasement tvOS */,
 				494DD9561B0EB677009C134E /* AirshipCore */,
 				DF6DD4FE1E7A1EB8000C281A /* AirshipCore tvOS */,
 				CC64F0531D8B77E3009CEF27 /* AirshipTests */,
@@ -5427,6 +5542,20 @@
 				6E411C782538C60900FEE4E8 /* UrbanAirship.strings in Resources */,
 				6E411B782538C4E600FEE4E8 /* UANativeBridge in Resources */,
 				6E411B7C2538C4E600FEE4E8 /* UANotificationCategories.plist in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6E43203F26EA814F009228AB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6E43211D26EA8199009228AB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5581,21 +5710,21 @@
 			shellPath = /bin/sh;
 			shellScript = "\"$SRCROOT\"/AirshipMessageCenter/generate_header_imports.sh\n";
 		};
-		4997FA371B55D96D002D4E05 /* Generate AirshipLib.h */ = {
+		6E431F6C26EA814F009228AB /* Generate AirshipBasementLib.h */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Generate AirshipLib.h";
+			name = "Generate AirshipBasementLib.h";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"$SRCROOT\"/AirshipCore/generate_header_imports.sh Public \n";
+			shellScript = "\"$SRCROOT\"/AirshipBasement/generate_header_imports.sh Public \n";
 		};
-		6E4114072538BEAB00FEE4E8 /* Generate AirshipLib.h */ = {
+		6E43204B26EA8199009228AB /* Generate AirshipBasementLib.h */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -5604,14 +5733,14 @@
 			);
 			inputPaths = (
 			);
-			name = "Generate AirshipLib.h";
+			name = "Generate AirshipBasementLib.h";
 			outputFileListPaths = (
 			);
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"$SRCROOT\"/AirshipCore/generate_header_imports.sh Public \n";
+			shellScript = "\"$SRCROOT\"/AirshipBasement/generate_header_imports.sh Public \n";
 		};
 		6E845450237E072F007D3B1E /* Generate AirshipAutomationLib.h */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -5821,8 +5950,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6EB1B3F326EAA4D6000421B9 /* ChannelAPIClient.swift in Sources */,
 				6E6ED15F2683DBC300A2CBD0 /* AirshipCoreResources.swift in Sources */,
-				6E87BE0D26E284870005D20D /* UAGlobal.m in Sources */,
 				6E87BE0126E283850005D20D /* Airship.swift in Sources */,
 				6E698E06267A7D5300654DB2 /* RemoteDataResponse.swift in Sources */,
 				6EC7E48226A60C060038CFDD /* ChannelProtocol.swift in Sources */,
@@ -5847,11 +5976,8 @@
 				6E6ED1632683DBC300A2CBD0 /* ApplicationMetrics.swift in Sources */,
 				A6A5531026D548D6002B20F6 /* JavaScriptEnvironment.swift in Sources */,
 				6E15B6EA26CC81040099C92D /* RemoteConfigDisableInfo.swift in Sources */,
-				6E698E12267A98AB00654DB2 /* ChannelAPIClient.swift in Sources */,
-				6E698E12267A98AB00654DB2 /* ChannelAPIClient.swift in Sources */,
 				6E8BF44F26852E4B009A8BD4 /* ExpirableTask.swift in Sources */,
 				6E664BE726C5B21600A2C8E5 /* ModifyAttributesAction.swift in Sources */,
-				A6A5530D26D548BD002B20F6 /* JavaScriptCommand.swift in Sources */,
 				6E664BD926C4CD8700A2C8E5 /* PasteboardAction.swift in Sources */,
 				6E15B71426CEB4190099C92D /* RemoteDataStorePayload.swift in Sources */,
 				6E91B43C26868A6300DDB1A8 /* CircularRegion.swift in Sources */,
@@ -5859,7 +5985,6 @@
 				3CA84AAC26DE255200A59685 /* EventAPIClientProtocol.swift in Sources */,
 				6E91B459268904D900DDB1A8 /* DeviceRegistrationEvent.swift in Sources */,
 				6E698DEC26790AC300654DB2 /* PreferenceDataStore.swift in Sources */,
-				6E41192B2538C1FF00FEE4E8 /* UAAutoIntegration.m in Sources */,
 				6E91B45D268904D900DDB1A8 /* AssociateIdentifiersEvent.swift in Sources */,
 				6E698E0F267A88E800654DB2 /* EventAPIResponse.swift in Sources */,
 				6E9D529B26C1A77C004EA16B /* ActionRegistry.swift in Sources */,
@@ -5877,7 +6002,6 @@
 				6E8BF45226852E4B009A8BD4 /* TaskManager.swift in Sources */,
 				C02D0B6626C1A3E200F673E6 /* ChannelCapture.swift in Sources */,
 				6E15B74126D43F120099C92D /* NSDictionaryValueTransformer.swift in Sources */,
-				6E411A6F2538C20400FEE4E8 /* UAKeychainUtils.m in Sources */,
 				6E698E5F267BF63B00654DB2 /* ApplicationState.swift in Sources */,
 				8401769826C5722400373AF7 /* JSONPredicate.swift in Sources */,
 				6E698DF026790AC300654DB2 /* AirshipLogger.swift in Sources */,
@@ -5904,7 +6028,6 @@
 				6E698E59267BF63B00654DB2 /* AppStateTracker.swift in Sources */,
 				6E91B45426883B6E00DDB1A8 /* AppForegroundEvent.swift in Sources */,
 				6E698E09267A7DD900654DB2 /* RemoteDataAPIClient.swift in Sources */,
-				6E698E36267BEC4500654DB2 /* UACompression.m in Sources */,
 				A61517C426B009D6008A41C4 /* SubscriptionListAPIClient.swift in Sources */,
 				8401769426C5671100373AF7 /* JSONMatcher.swift in Sources */,
 				6E739D6626B9BDC100BC6F6D /* ChannelBulkUpdateAPIClient.swift in Sources */,
@@ -5938,7 +6061,6 @@
 				6E664BB326C46BC600A2C8E5 /* URLActionPredicate.swift in Sources */,
 				6E698E15267A98BE00654DB2 /* ChannelCreateResponse.swift in Sources */,
 				6E6ED1372683A58D00A2CBD0 /* Delay.swift in Sources */,
-				6E411E6C2538F4C700FEE4E8 /* UAActionArguments.m in Sources */,
 				3CA84AB826DE257200A59685 /* Analytics.swift in Sources */,
 				3C63556326CF11D5006E9916 /* APNSRegistrationProtocol.swift in Sources */,
 				8401769626C5715E00373AF7 /* VersionMatcher.swift in Sources */,
@@ -5955,6 +6077,7 @@
 				6E664B9E26C21B6F00A2C8E5 /* AggregateActionResult.swift in Sources */,
 				6E6ED1692683DBC300A2CBD0 /* NetworkMonitor.swift in Sources */,
 				6E4E5B3D26E7F91600198175 /* Attributes.swift in Sources */,
+				6E43219226EA89B6009228AB /* NativeBridgeDelegate.swift in Sources */,
 				6E411CAB2538C6A600FEE4E8 /* UARemoteData.xcdatamodeld in Sources */,
 				6E698E00267A78CA00654DB2 /* RequestSession.swift in Sources */,
 				A6A8077C26C1566E00CB266E /* ColorUtils.swift in Sources */,
@@ -5983,7 +6106,6 @@
 				3CA84ABA26DE257200A59685 /* AnalyticsProtocol.swift in Sources */,
 				6ED735DD26C7401D003B0A7D /* TagEditor.swift in Sources */,
 				6E698E41267BEDC300654DB2 /* TagGroupsEditor.swift in Sources */,
-				6E4117EB2538C1FB00FEE4E8 /* UASwizzler.m in Sources */,
 				6E91B44E26883B6E00DDB1A8 /* AppBackgroundEvent.swift in Sources */,
 				6EC7E48A26A738670038CFDD /* ContactConflictDelegate.swift in Sources */,
 				6E739D6B26B9DFFB00BC6F6D /* AttributePendingMutations.swift in Sources */,
@@ -5995,11 +6117,40 @@
 				6E664BDF26C4CD8700A2C8E5 /* FetchDeviceInfoAction.swift in Sources */,
 				3C63556026CDD4F8006E9916 /* PushProtocol.swift in Sources */,
 				6E91B45026883B6E00DDB1A8 /* AppInitEvent.swift in Sources */,
-				6E411E702538F4C700FEE4E8 /* UAActionResult.m in Sources */,
 				A6A5531326D548FF002B20F6 /* NativeBridgeActionHandler.swift in Sources */,
 				6E15B73D26D43F120099C92D /* NSURLValueTransformer.swift in Sources */,
 				6E698E57267BF63B00654DB2 /* AppStateTrackerAdapter.swift in Sources */,
 				6E9D529826C195F7004EA16B /* ActionRunner.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6E431F6D26EA814F009228AB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6E43217C26EA84BE009228AB /* UAActionArguments.m in Sources */,
+				6E43217626EA84BE009228AB /* UAKeychainUtils.m in Sources */,
+				6E43218226EA84BE009228AB /* UAGlobal.m in Sources */,
+				6E43217E26EA84BE009228AB /* UACompression.m in Sources */,
+				6E43218426EA84BE009228AB /* UAJavaScriptCommand.m in Sources */,
+				6E43217A26EA84BE009228AB /* UAAutoIntegration.m in Sources */,
+				6E43218626EA84BE009228AB /* UAActionResult.m in Sources */,
+				6E43217826EA84BE009228AB /* UASwizzler.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6E43204C26EA8199009228AB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6E43217D26EA84BE009228AB /* UAActionArguments.m in Sources */,
+				6E43217726EA84BE009228AB /* UAKeychainUtils.m in Sources */,
+				6E43218326EA84BE009228AB /* UAGlobal.m in Sources */,
+				6E43217F26EA84BE009228AB /* UACompression.m in Sources */,
+				6E43218526EA84BE009228AB /* UAJavaScriptCommand.m in Sources */,
+				6E43217B26EA84BE009228AB /* UAAutoIntegration.m in Sources */,
+				6E43218726EA84BE009228AB /* UAActionResult.m in Sources */,
+				6E43217926EA84BE009228AB /* UASwizzler.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6418,16 +6569,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6EB1B42626EAA6E2000421B9 /* RemoteDataResponse.swift in Sources */,
 				C0EE8CE526C1B3410006F003 /* ChannelCapture.swift in Sources */,
 				A6A8078226C171F900CB266E /* ColorUtils.swift in Sources */,
-				6E87BE0E26E284870005D20D /* UAGlobal.m in Sources */,
 				6E87BE0226E283850005D20D /* Airship.swift in Sources */,
 				3C8F915C26B881430097E9B9 /* APNSRegistration.swift in Sources */,
 				6E6ED1602683DBC300A2CBD0 /* AirshipCoreResources.swift in Sources */,
 				6E664BDE26C4CD8700A2C8E5 /* OpenExternalURLAction.swift in Sources */,
-				6E698E07267A7D5300654DB2 /* RemoteDataResponse.swift in Sources */,
 				6E15B71926CEB4190099C92D /* RemoteDataStore.swift in Sources */,
-				6E698E07267A7D5300654DB2 /* RemoteDataResponse.swift in Sources */,
 				6E739D6C26B9DFFB00BC6F6D /* AttributePendingMutations.swift in Sources */,
 				6E87BDBE26E01FF40005D20D /* ModuleLoader.swift in Sources */,
 				6EC7E48326A60C060038CFDD /* ChannelProtocol.swift in Sources */,
@@ -6448,8 +6597,6 @@
 				6ED6ECA526ADCA6F00973364 /* BlockAction.swift in Sources */,
 				A6A8078526C2B8DE00CB266E /* Padding.swift in Sources */,
 				6E6ED1642683DBC300A2CBD0 /* ApplicationMetrics.swift in Sources */,
-				6E411EA72538F4D100FEE4E8 /* UAActionArguments.m in Sources */,
-				A6A5530E26D548BD002B20F6 /* JavaScriptCommand.swift in Sources */,
 				6E698E13267A98AB00654DB2 /* ChannelAPIClient.swift in Sources */,
 				6E15B71526CEB4190099C92D /* RemoteDataStorePayload.swift in Sources */,
 				6E664BE826C5B21600A2C8E5 /* ModifyAttributesAction.swift in Sources */,
@@ -6461,7 +6608,6 @@
 				6E91B45A268904D900DDB1A8 /* DeviceRegistrationEvent.swift in Sources */,
 				6E698DED26790AC300654DB2 /* PreferenceDataStore.swift in Sources */,
 				6E87BE0826E283850005D20D /* DeepLinkDelegate.swift in Sources */,
-				6E41192C2538C20000FEE4E8 /* UAAutoIntegration.m in Sources */,
 				6E91B45E268904D900DDB1A8 /* AssociateIdentifiersEvent.swift in Sources */,
 				6E9D529C26C1A77C004EA16B /* ActionRegistry.swift in Sources */,
 				6E739D8026BB01C500BC6F6D /* ChannelBulkUpdateAPIClient.swift in Sources */,
@@ -6484,7 +6630,6 @@
 				6E87BD8E26D815780005D20D /* AppIntegration.swift in Sources */,
 				6E91B4642689093000DDB1A8 /* InteractiveNotificationEvent.swift in Sources */,
 				6E8BF45926852E8D009A8BD4 /* TaskManager.swift in Sources */,
-				6E411A702538C20400FEE4E8 /* UAKeychainUtils.m in Sources */,
 				6E739D6F26B9F58700BC6F6D /* TagGroupMutations.swift in Sources */,
 				6E698E60267BF63B00654DB2 /* ApplicationState.swift in Sources */,
 				6EAD7CE626B216DB00B88EA7 /* DeepLinkAction.swift in Sources */,
@@ -6514,7 +6659,6 @@
 				6E91B45526883B6E00DDB1A8 /* AppForegroundEvent.swift in Sources */,
 				6E698E0A267A7DD900654DB2 /* RemoteDataAPIClient.swift in Sources */,
 				6E9D529926C1A502004EA16B /* ActionRunner.swift in Sources */,
-				6E698E37267BEC4500654DB2 /* UACompression.m in Sources */,
 				3CA84AAB26DE255200A59685 /* EventManager.swift in Sources */,
 				A61517C526B009D6008A41C4 /* SubscriptionListAPIClient.swift in Sources */,
 				6ED6ECA826AE05B700973364 /* EmptyAction.swift in Sources */,
@@ -6552,8 +6696,8 @@
 				A6F6726226E11633008C69C3 /* VersionMatcher.swift in Sources */,
 				6E4E5B3E26E7F91600198175 /* Attributes.swift in Sources */,
 				6E664B9F26C21B6F00A2C8E5 /* AggregateActionResult.swift in Sources */,
+				6E43219326EA89B6009228AB /* NativeBridgeDelegate.swift in Sources */,
 				3CC8AA0726BB3C7900405614 /* Push.swift in Sources */,
-				6E411EAB2538F4D100FEE4E8 /* UAActionResult.m in Sources */,
 				6E6ED1682683DBC300A2CBD0 /* CoreData.swift in Sources */,
 				6EC7E46C269E0E3E0038CFDD /* ContactOperation.swift in Sources */,
 				6E664BA226C43F5400A2C8E5 /* ActivityViewController.swift in Sources */,
@@ -6585,7 +6729,6 @@
 				6E698E42267BEDC300654DB2 /* TagGroupsEditor.swift in Sources */,
 				6E91B44F26883B6E00DDB1A8 /* AppBackgroundEvent.swift in Sources */,
 				6EC7E48B26A738670038CFDD /* ContactConflictDelegate.swift in Sources */,
-				6E4117EC2538C1FB00FEE4E8 /* UASwizzler.m in Sources */,
 				6E15B72426CEC7030099C92D /* RemoteDataPayload.swift in Sources */,
 				A67F87D3268DECCE00EF5F43 /* ContactAPIClient.swift in Sources */,
 				6E664BB226C46BC600A2C8E5 /* FetchDeviceInfoActionPredicate.swift in Sources */,
@@ -6642,6 +6785,16 @@
 			isa = PBXTargetDependency;
 			target = 6E9373032376164600AA9C2A /* AirshipLocation */;
 			targetProxy = 6E2E914D238D98BE008488D3 /* PBXContainerItemProxy */;
+		};
+		6E43218B26EA891F009228AB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6E431F6B26EA814F009228AB /* AirshipBasement */;
+			targetProxy = 6E43218A26EA891F009228AB /* PBXContainerItemProxy */;
+		};
+		6E43219C26EAA1A8009228AB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6E43204A26EA8199009228AB /* AirshipBasement tvOS */;
+			targetProxy = 6E43219B26EAA1A8009228AB /* PBXContainerItemProxy */;
 		};
 		6E65D5052396079800AF2D1A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -7238,6 +7391,142 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				VALID_ARCHS = "$(inherited) x86_64";
+			};
+			name = Release;
+		};
+		6E43204626EA814F009228AB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_TESTABILITY = YES;
+				INFOPLIST_FILE = "$(SRCROOT)/AirshipBasement/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				"OTHER_CFLAGS[arch=*]" = (
+					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
+					"$(inherited)",
+				);
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-weak_framework",
+					PassKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.urbanairship.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				VALID_ARCHS = "$(inherited) x86_64";
+			};
+			name = Debug;
+		};
+		6E43204726EA814F009228AB /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "$(SRCROOT)/AirshipBasement/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				"OTHER_CFLAGS[arch=*]" = (
+					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
+					"$(inherited)",
+				);
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-weak_framework",
+					PassKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.urbanairship.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				VALID_ARCHS = "$(inherited) x86_64";
+			};
+			name = Release;
+		};
+		6E43212426EA8199009228AB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_TESTABILITY = YES;
+				INFOPLIST_FILE = "$(SRCROOT)/AirshipBasement/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				"OTHER_CFLAGS[arch=*]" = (
+					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
+					"$(inherited)",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipBasement;
+				PRODUCT_NAME = AirshipBasement;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = 3;
+			};
+			name = Debug;
+		};
+		6E43212526EA8199009228AB /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "$(SRCROOT)/AirshipBasement/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				"OTHER_CFLAGS[arch=*]" = (
+					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
+					"$(inherited)",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipBasement;
+				PRODUCT_NAME = AirshipBasement;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 3;
 			};
 			name = Release;
 		};
@@ -7877,6 +8166,24 @@
 			buildConfigurations = (
 				494DD96E1B0EB677009C134E /* Debug */,
 				494DD96F1B0EB677009C134E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6E43204526EA814F009228AB /* Build configuration list for PBXNativeTarget "AirshipBasement" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6E43204626EA814F009228AB /* Debug */,
+				6E43204726EA814F009228AB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6E43212326EA8199009228AB /* Build configuration list for PBXNativeTarget "AirshipBasement tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6E43212426EA8199009228AB /* Debug */,
+				6E43212526EA8199009228AB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

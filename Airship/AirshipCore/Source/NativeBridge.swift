@@ -1,9 +1,14 @@
 /* Copyright Airship and Contributors */
 
+#if canImport(AirshipBasement)
+import AirshipBasement
+#endif
+
 #if !os(tvOS)
 
 import Foundation
 import WebKit
+
 
 /**
  * The native bridge will automatically load the Airship JavaScript environment into whitlelisted sites. The native
@@ -63,7 +68,7 @@ public class NativeBridge : NSObject, WKNavigationDelegate {
                 guard let url = request.url else {
                     return
                 }
-                let command = JavaScriptCommand.init(url:url)
+                let command = JavaScriptCommand(for: url)
                 self.handleAirshipCommand(command: command , webView: webView)
             }
             decisionHandler(WKNavigationActionPolicy.cancel)
@@ -234,7 +239,7 @@ public class NativeBridge : NSObject, WKNavigationDelegate {
         
         /// Multi command
         if (command.name == NativeBridge.UANativeBridgeMultiCommand) {
-            let URLs = command.URL.query?.components(separatedBy: "&")
+            let URLs = command.url.query?.components(separatedBy: "&")
             guard URLs != nil else {
                 return
             }
@@ -246,7 +251,7 @@ public class NativeBridge : NSObject, WKNavigationDelegate {
                 }
                 
                 if (theURL!.scheme == NativeBridge.UANativeBridgeUAirshipScheme) {
-                    let command = JavaScriptCommand.init(url: theURL!)
+                    let command = JavaScriptCommand(for: theURL!)
                     self.handleAirshipCommand(command: command, webView: webView)
                 }
             }

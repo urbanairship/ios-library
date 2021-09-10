@@ -6,6 +6,14 @@
 #import "UAMessageCenterStyle.h"
 #import "UAMessageCenterLocalization.h"
 
+#if __has_include("Airship/Airship-Swift.h")
+#import <Airship/Airship-Swift.h>
+#elif __has_include("Airship-Swift.h")
+#import "Airship-Swift.h"
+#else
+@import AirshipCore;
+#endif
+
 @implementation UAMessageCenterListCell
 
 - (void)setData:(UAInboxMessage *)message {

@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
+#import "UAJavaScriptCommand.h"
 
 @import AirshipCore;
 
@@ -11,7 +12,7 @@
 
 - (void)testCommandForURL {
     NSURL *URL = [NSURL URLWithString:@"uairship://whatever/argument-one/argument-two?foo=bar&foo=barbar&foo"];
-    UAJavaScriptCommand *command = [[UAJavaScriptCommand alloc] initWithUrl:URL];
+    UAJavaScriptCommand *command = [[UAJavaScriptCommand alloc] initWithURL:URL];
 
     XCTAssertNotNil(command, @"data should be non-nil");
     XCTAssertEqual(command.arguments.count, (NSUInteger)2, @"data should have two arguments");
@@ -24,7 +25,7 @@
 
 - (void)testCommandForURLSlashBeforeArgs {
     NSURL *URL = [NSURL URLWithString:@"uairship://whatever/?foo=bar"];
-    UAJavaScriptCommand *command = [[UAJavaScriptCommand alloc] initWithUrl:URL];
+    UAJavaScriptCommand *command = [[UAJavaScriptCommand alloc] initWithURL:URL];
     XCTAssertNotNil(command, @"data should be non-nil");
     XCTAssertEqual(command.arguments.count, (NSUInteger)0, @"data should have no arguments");
     XCTAssertEqualObjects([command.options objectForKey:@"foo"], @[@"bar"], @"key 'foo' should have values 'bar'");
@@ -32,7 +33,7 @@
 
 - (void)testCallDataForURLEncodedArguments {
     NSURL *URL = [NSURL URLWithString:@"uairship://run-action-cb/%5Eu/%22https%3A%2F%2Fdocs.urbanairship.com%2Fengage%2Frich-content-editor%2F%23rich-content-image%22/ua-cb-2?query%20argument=%5E"];
-    UAJavaScriptCommand *command = [[UAJavaScriptCommand alloc] initWithUrl:URL];
+    UAJavaScriptCommand *command = [[UAJavaScriptCommand alloc] initWithURL:URL];
 
     XCTAssertEqual(command.arguments.count, 3);
     XCTAssertEqualObjects([command.arguments objectAtIndex:0], @"^u");

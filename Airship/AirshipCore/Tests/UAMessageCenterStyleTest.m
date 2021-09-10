@@ -5,6 +5,8 @@
 #import "UAMessageCenter.h"
 #import "UAMessageCenterStyle.h"
 
+@import AirshipCore;
+
 @interface UAMessageCenterStyleTest : UABaseTest
 
 @property (nonatomic, strong) id mockBundle;

@@ -4,13 +4,21 @@
 #import "UAAccengagePayload.h"
 #import "UAAccengageUtils.h"
 #import "UAAccengageResources.h"
-#import "UAPush.h"
 #import "ACCStubData+Internal.h"
 
-#if __has_include("AirshipCore/AirshipCore-Swift.h")
-@import AirshipCore;
-#elif __has_include("Airship/Airship-Swift.h")
+#if __has_include("AirshipBasement/AirshipBasement.h")
+#import <AirshipBasement/AirshipBasement.h>
+#else
+#import "AirshipBasementLib.h"
+#endif
+
+
+#if __has_include("Airship/Airship-Swift.h")
 #import <Airship/Airship-Swift.h>
+#elif __has_include("Airship-Swift.h")
+#import "Airship-Swift.h"
+#else
+@import AirshipCore;
 #endif
 
 static NSString * const UAAccengageIDKey = @"a4sid";

@@ -336,6 +336,20 @@
 			remoteGlobalIDString = 6E7C067B26127557006D0E84;
 			remoteInfo = AirshipChat;
 		};
+		6EB1B41F26EAA539000421B9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6E43204826EA814F009228AB;
+			remoteInfo = AirshipBasement;
+		};
+		6EB1B42126EAA539000421B9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6E43212626EA819A009228AB;
+			remoteInfo = "AirshipBasement tvOS";
+		};
 		DFC3839F243EA31300EA78FE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6E75B2622395D1B300425530 /* AirshipExtensions.xcodeproj */;
@@ -574,6 +588,8 @@
 		6E75B2422395D1B100425530 /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				6EB1B42026EAA539000421B9 /* AirshipBasement.framework */,
+				6EB1B42226EAA539000421B9 /* AirshipBasement tvOS.framework */,
 				6E75B2532395D1B100425530 /* AirshipCore.framework */,
 				6E75B2552395D1B100425530 /* AirshipCore.framework */,
 				6E75B2572395D1B100425530 /* AirshipTests.xctest */,
@@ -802,7 +818,7 @@
 		7646939A1C237B630090FE40 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0930;
+				LastUpgradeCheck = 1250;
 				ORGANIZATIONNAME = "Urban Airship";
 				TargetAttributes = {
 					1BEF5FEC24CB3D870039091F = {
@@ -992,6 +1008,20 @@
 			fileType = wrapper.framework;
 			path = AirshipChat.framework;
 			remoteRef = 6E7C071C2612821C006D0E84 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6EB1B42026EAA539000421B9 /* AirshipBasement.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipBasement.framework;
+			remoteRef = 6EB1B41F26EAA539000421B9 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6EB1B42226EAA539000421B9 /* AirshipBasement tvOS.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = "AirshipBasement tvOS.framework";
+			remoteRef = 6EB1B42126EAA539000421B9 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */

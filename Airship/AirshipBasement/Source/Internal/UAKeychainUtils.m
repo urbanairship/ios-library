@@ -1,17 +1,12 @@
 /* Copyright Airship and Contributors */
 
-#import "UAKeychainUtils+Internal.h"
+#import "UAKeychainUtils.h"
 #import "UAGlobal.h"
 
 #import <Security/Security.h>
+#include <sys/utsname.h>
 
-#if __has_include("AirshipCore/AirshipCore-Swift.h")
-#import <AirshipCore/AirshipCore-Swift.h>
-#elif __has_include("Airship/Airship-Swift.h")
-#import <Airship/Airship-Swift.h>
-#endif
-
-NSString * const UAKeychainDeviceIDKey = @"com.urbanairship.deviceID";
+static NSString * const UAKeychainDeviceIDKey = @"com.urbanairship.deviceID";
 
 static NSString *cachedDeviceID_ = nil;
 
@@ -178,7 +173,7 @@ static NSString *cachedDeviceID_ = nil;
     [keychainValues setObject:(__bridge id)kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly forKey:(__bridge id)kSecAttrAccessible];
 
     //set model name (username) data
-    [keychainValues setObject:[UAUtils deviceModelName] forKey:(__bridge id)kSecAttrAccount];
+    [keychainValues setObject:[UAKeychainUtils deviceModelName] forKey:(__bridge id)kSecAttrAccount];
 
     //set device ID (password) data
     NSData *deviceIDData = [deviceID dataUsingEncoding:NSUTF8StringEncoding];
@@ -262,4 +257,16 @@ static NSString *cachedDeviceID_ = nil;
     return deviceID;
 }
 
+
++ (NSString *)deviceModelName {
+#if TARGET_OS_MACCATALYST
+    return @"mac";
+#else
+    struct utsname systemInfo;
+    uname(&systemInfo);
+
+    return [NSString stringWithCString:systemInfo.machine
+                              encoding:NSUTF8StringEncoding];
+#endif
+}
 @end

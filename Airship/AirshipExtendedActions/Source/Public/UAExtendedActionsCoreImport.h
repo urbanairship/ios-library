@@ -4,11 +4,8 @@
  * @note For internal use only. :nodoc:
  */
 
-#if UA_USE_MODULE_IMPORT
-#import <AirshipCore/AirshipCore.h>
+#if __has_include("AirshipBasement/AirshipBasement.h")
+#import <AirshipBasement/AirshipBasement.h>
 #else
-#import "UAAction.h"
-#import "UASDKModule.h"
-#import "UAAction.h"
-#import "UAActionPredicateProtocol.h"
+#import "AirshipBasementLib.h"
 #endif

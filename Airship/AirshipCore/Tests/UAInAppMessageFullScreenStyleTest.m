@@ -5,6 +5,7 @@
 #import "UAInAppMessageManager.h"
 #import "UAInAppMessageFullScreenAdapter.h"
 #import "UAInAppMessageFullScreenStyle.h"
+@import AirshipCore;
 
 @interface UAInAppMessageFullScreenStyleTest : UABaseTest
 

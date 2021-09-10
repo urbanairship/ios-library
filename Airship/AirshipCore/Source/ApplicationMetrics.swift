@@ -1,5 +1,7 @@
 /* Copyright Airship and Contributors */
 
+import Foundation
+
 /**
  * The ApplicationMetrics class keeps track of application-related metrics.
  */

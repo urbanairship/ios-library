@@ -5,6 +5,7 @@
 #import "UAInAppMessageManager.h"
 #import "UAInAppMessageBannerAdapter.h"
 #import "UAInAppMessageBannerStyle.h"
+@import AirshipCore;
 
 @interface UAInAppMessageBannerStyleTest : UABaseTest
 

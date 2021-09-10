@@ -48,12 +48,14 @@ function build_docs {
 
 echo -ne "\n\n *********** BUILDING DOCS *********** \n\n"
 
-build_docs "Airship" "AirshipCore" "Source/Public/AirshipCore.h"
+build_docs_swift "Airship" "AirshipCore"
+build_docs "Airship" "AirshipBasement"  "Source/Public/AirshipBasement.h"
 build_docs "Airship" "AirshipLocation"  "Source/AirshipLocation.h"
 build_docs "Airship" "AirshipAutomation"  "Source/AirshipAutomation.h"
 build_docs "Airship" "AirshipMessageCenter"  "Source/AirshipMessageCenter.h"
 build_docs "Airship" "AirshipExtendedActions"  "Source/AirshipExtendedActions.h"
 build_docs "Airship" "AirshipAccengage"  "Source/AirshipAccengage.h"
 build_docs_swift "Airship" "AirshipChat"
+build_docs_swift "Airship" "AirshipPreferenceCenter"
 build_docs "AirshipExtensions" "AirshipNotificationServiceExtension" "Source/AirshipNotificationServiceExtension.h"
 build_docs "AirshipExtensions" "AirshipNotificationContentExtension" "Source/AirshipNotificationContentExtension.h"

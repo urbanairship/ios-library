@@ -1,6 +1,7 @@
 // Copyright Airship and Contributors
 
 import Foundation
+import UIKit
 
 /**
  * @note For internal use only. :nodoc:

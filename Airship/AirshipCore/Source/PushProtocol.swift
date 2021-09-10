@@ -2,6 +2,9 @@
 
 import Foundation
 
+import UserNotifications
+import UIKit
+
 /**
  * Airship Push protocol.
  */

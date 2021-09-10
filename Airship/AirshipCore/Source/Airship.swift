@@ -2,6 +2,10 @@
 
 import Foundation
 
+#if canImport(AirshipBasement)
+@_exported import AirshipBasement
+#endif
+
 /**
  * UAirship manages the shared state for all Airship services. [UAirship takeOff:] should be
  * called from within your application delegate's `application:didFinishLaunchingWithOptions:` method

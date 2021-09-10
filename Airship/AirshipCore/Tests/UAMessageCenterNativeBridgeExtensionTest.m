@@ -9,10 +9,12 @@
 #import "UAUserData+Internal.h"
 #import "UAMessageCenter.h"
 
-#if __has_include("AirshipCore/AirshipCore-Swift.h")
-#import <AirshipCore/AirshipCore-Swift.h>
-#elif __has_include("Airship/Airship-Swift.h")
+#if __has_include("Airship/Airship-Swift.h")
 #import <Airship/Airship-Swift.h>
+#elif __has_include("Airship-Swift.h")
+#import "Airship-Swift.h"
+#else
+@import AirshipCore;
 #endif
 
 @interface UAMessageCenterNativeBridgeExtensionTest : UABaseTest
@@ -98,7 +100,7 @@
     [[[self.mockMessageList stub] andReturn:mockMessage] messageForBodyURL:URL];
 
     // Extend the environment
-    NSDictionary *metadata = [self.extension actionsMetadataForCommand:[[UAJavaScriptCommand alloc] initWithUrl:URL]
+    NSDictionary *metadata = [self.extension actionsMetadataForCommand:[[UAJavaScriptCommand alloc] initWithURL:URL]
                                                                webView:self.mockWKWebView];
 
     NSDictionary *expected = @{ UAActionMetadataInboxMessageIDKey : mockMessage.messageID };
@@ -112,7 +114,7 @@
     NSURL *URL = [NSURL URLWithString:@"https://foo.urbanairship.com/whatever.html"];
     [[[self.mockWKWebView stub] andReturn:URL] URL];
     // Extend the environment
-    NSDictionary *metadata = [self.extension actionsMetadataForCommand:[[UAJavaScriptCommand alloc] initWithUrl:URL]
+    NSDictionary *metadata = [self.extension actionsMetadataForCommand:[[UAJavaScriptCommand alloc] initWithURL:URL]
                                                                webView:self.mockWKWebView];
 
     NSDictionary *expected = @{};

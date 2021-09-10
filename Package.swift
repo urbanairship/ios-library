@@ -10,9 +10,6 @@ let package = Package(
     platforms: [.macOS(.v10_15), .iOS(.v11), .tvOS(.v11)],
     products: [
         .library(
-            name: "Airship",
-            targets: ["AirshipCore", "AirshipAutomation", "AirshipMessageCenter", "AirshipExtendedActions"]),
-        .library(
             name: "AirshipCore",
             targets: ["AirshipCore"]),
         .library(
@@ -44,15 +41,12 @@ let package = Package(
             targets: ["AirshipPreferenceCenter"]),
     ],
     targets: [
-        .target(name: "AirshipCore",
-                path: "Airship/AirshipCore",
-                exclude: ["Source/Public/AirshipCore.h",
+        .target(name: "AirshipBasement",
+                path: "Airship/AirshipBasement",
+                exclude: ["Source/Public/AirshipBasement.h",
                           "generate_header_imports.sh",
-                          "Info.plist",
-                          "Tests"],
+                          "Info.plist"],
                 sources : ["Source"],
-                resources: [
-                    .process("Resources")],
                 publicHeadersPath: "Source/Public",
                 cSettings: [
                     .headerSearchPath("Source/Internal")],
@@ -72,6 +66,31 @@ let package = Package(
                     .linkedFramework("CoreTelephony", .when(platforms: [.iOS])),
                     //Libraries
                     .linkedLibrary("z"),
+                    .linkedLibrary("sqlite3")
+                ]
+        ),
+        .target(name: "AirshipCore",
+                dependencies: [.target(name: "AirshipBasement")],
+                path: "Airship/AirshipCore",
+                exclude: ["Info.plist",
+                          "Tests"],
+                sources : ["Source"],
+                resources: [
+                    .process("Resources")],
+                linkerSettings: [
+                    //Frameworks
+                    .linkedFramework("Network"),
+                    .linkedFramework("UserNotifications"),
+                    .linkedFramework("CFNetwork"),
+                    .linkedFramework("CoreGraphics"),
+                    .linkedFramework("Foundation"),
+                    .linkedFramework("Security"),
+                    .linkedFramework("SystemConfiguration"),
+                    .linkedFramework("UIKit"),
+                    .linkedFramework("CoreData"),
+                    .linkedFramework("WebKit", .when(platforms: [.iOS])),
+                    .linkedFramework("CoreTelephony", .when(platforms: [.iOS])),
+                    //Libraries
                     .linkedLibrary("sqlite3")
                 ]
         ),

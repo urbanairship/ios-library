@@ -84,6 +84,9 @@ echo -ne "\n\n *********** BUILDING XCFRAMEWORKS *********** \n\n"
 build_archive "Airship" "AirshipCore" "iOS"
 build_archive "Airship" "AirshipCore" "maccatalyst"
 build_archive "Airship" "AirshipCore tvOS" "tvOS"
+build_archive "Airship" "AirshipBasement" "iOS"
+build_archive "Airship" "AirshipBasement" "maccatalyst"
+build_archive "Airship" "AirshipBasement tvOS" "tvOS"
 build_archive "Airship" "AirshipLocation" "iOS"
 build_archive "Airship" "AirshipLocation" "maccatalyst"
 build_archive "Airship" "AirshipDebug" "iOS"
@@ -102,6 +105,15 @@ build_archive "AirshipExtensions" "AirshipNotificationServiceExtension" "iOS"
 build_archive "AirshipExtensions" "AirshipNotificationServiceExtension" "maccatalyst"
 build_archive "AirshipExtensions" "AirshipNotificationContentExtension" "iOS"
 build_archive "AirshipExtensions" "AirshipNotificationContentExtension" "maccatalyst"
+
+# Package AirshipBasement
+xcodebuild -create-xcframework \
+-framework "$ARCHIVE_PATH/xcarchive/Airship/AirshipBasement/iphoneos.xcarchive/Products/Library/Frameworks/AirshipBasement.framework" \
+-framework "$ARCHIVE_PATH/xcarchive/Airship/AirshipBasement/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipBasement.framework" \
+-framework "$ARCHIVE_PATH/xcarchive/Airship/AirshipBasement/mac.xcarchive/Products/Library/Frameworks/AirshipBasement.framework" \
+-framework "$ARCHIVE_PATH/xcarchive/Airship/AirshipBasement tvOS/appletvos.xcarchive/Products/Library/Frameworks/AirshipBasement.framework" \
+-framework "$ARCHIVE_PATH/xcarchive/Airship/AirshipBasement tvOS/appletvsimulator.xcarchive/Products/Library/Frameworks/AirshipBasement.framework" \
+-output "$OUTPUT/AirshipBasement.xcframework"
 
 # Package AirshipCore
 xcodebuild -create-xcframework \

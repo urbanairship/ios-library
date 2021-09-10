@@ -14,17 +14,26 @@ Pod::Spec.new do |s|
    s.tvos.deployment_target  = "11.0"
    s.swift_versions          = "5.0"
    s.requires_arc            = true
-   s.default_subspecs        = ["Core", "Automation", "MessageCenter", "ExtendedActions"]
+   s.default_subspecs        = ["Basement", "Core", "Automation", "MessageCenter", "ExtendedActions"]
+
+   s.subspec "Basement" do |basement|
+      basement.public_header_files        = "Airship/AirshipBasement/Source/Public/*.h", "Cocoapods/Airship.h"
+      basement.source_files               = "Airship/AirshipBasement/Source/Public/*.h", "Airship/AirshipBasement/Source/Internal/*.{h,m}", "Cocoapods/Airship.h"
+      basement.private_header_files       = "Airship/AirshipBasement/Source/Internal/*.h"
+      basement.exclude_files              = "Airship/AirshipBasement/Source/Public/AirshipBasement.h"
+      basement.libraries                  = "z", "sqlite3"
+      basement.frameworks                 = "UserNotifications", "CFNetwork", "CoreGraphics", "Foundation", "Security", "SystemConfiguration", "UIKit", "CoreData", "Network"
+      basement.ios.frameworks             = "WebKit", "CoreTelephony"
+   end
 
    s.subspec "Core" do |core|
-      core.public_header_files        = "Airship/AirshipCore/Source/Public/*.h", "Cocoapods/Airship.h"
-      core.source_files               = "Airship/AirshipCore/Source/Public/*.h", "Airship/AirshipCore/Source/Internal/*.{h,m}", "Cocoapods/Airship.h", "Airship/AirshipCore/Source/*.{swift}"
-      core.private_header_files       = "Airship/AirshipCore/Source/Internal/*.h"
+      core.source_files               = "Airship/AirshipCore/Source/*.{swift}"
       core.resource_bundle            = { 'AirshipCoreResources' => "Airship/AirshipCore/Resources/*" }
-      core.exclude_files              = "Airship/AirshipCore/Resources/Info.plist", "Airship/AirshipCore/Source/Public/AirshipCore.h"
+      core.exclude_files              = "Airship/AirshipCore/Resources/Info.plist", "Airship/AirshipCore/Source/AirshipCore.h"
       core.libraries                  = "z", "sqlite3"
       core.frameworks                 = "UserNotifications", "CFNetwork", "CoreGraphics", "Foundation", "Security", "SystemConfiguration", "UIKit", "CoreData", "Network"
       core.ios.frameworks             = "WebKit", "CoreTelephony"
+      core.dependency                 "Airship/Basement"
    end
    s.subspec "ExtendedActions" do |actions|
       actions.ios.public_header_files    = "Airship/AirshipExtendedActions/Source/Public/*.h"

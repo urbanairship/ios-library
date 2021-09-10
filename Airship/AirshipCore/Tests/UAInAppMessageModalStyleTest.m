@@ -6,6 +6,8 @@
 #import "UAInAppMessageModalAdapter.h"
 #import "UAInAppMessageModalStyle.h"
 
+@import AirshipCore;
+
 @interface UAInAppMessageModalStyleTest : UABaseTest
 
 @property (nonatomic, strong) id mockBundle;

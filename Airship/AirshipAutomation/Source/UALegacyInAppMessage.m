@@ -3,24 +3,26 @@
 #import "UALegacyInAppMessage.h"
 #import "UAAirshipAutomationCoreImport.h"
 
-#if __has_include("AirshipCore/AirshipCore-Swift.h")
-@import AirshipCore;
-#elif __has_include("Airship/Airship-Swift.h")
+#if __has_include("Airship/Airship-Swift.h")
 #import <Airship/Airship-Swift.h>
+#elif __has_include("Airship-Swift.h")
+#import "Airship-Swift.h"
+#else
+@import AirshipCore;
 #endif
-
 // 30 days in seconds
 #define kUADefaultInAppMessageExpiryInterval 60 * 60 * 24 * 30
 
 // 15 seconds
 #define kUADefaultInAppMessageDurationInterval 15
 
-#if __has_include("AirshipCore/AirshipCore-Swift.h")
-@import AirshipCore;
-#elif __has_include("Airship/Airship-Swift.h")
+#if __has_include("Airship/Airship-Swift.h")
 #import <Airship/Airship-Swift.h>
+#elif __has_include("Airship-Swift.h")
+#import "Airship-Swift.h"
+#else
+@import AirshipCore;
 #endif
-
 @implementation UALegacyInAppMessage
 
 + (instancetype)message {

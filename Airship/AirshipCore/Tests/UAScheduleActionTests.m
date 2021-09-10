@@ -8,10 +8,12 @@
 #import "UAInAppAutomation.h"
 #import "UASchedule+Internal.h"
 
-#if __has_include("AirshipCore/AirshipCore-Swift.h")
-#import <AirshipCore/AirshipCore-Swift.h>
-#elif __has_include("Airship/Airship-Swift.h")
+#if __has_include("Airship/Airship-Swift.h")
 #import <Airship/Airship-Swift.h>
+#elif __has_include("Airship-Swift.h")
+#import "Airship-Swift.h"
+#else
+@import AirshipCore;
 #endif
 
 @interface UAScheduleActionTests : UABaseTest

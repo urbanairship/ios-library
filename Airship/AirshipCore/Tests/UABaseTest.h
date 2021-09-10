@@ -2,6 +2,7 @@
 
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
+#import "AirshipBasementLib.h"
 
 extern NSTimeInterval const UATestExpectationTimeOut;
 

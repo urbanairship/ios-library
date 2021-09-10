@@ -61,7 +61,7 @@ build-sample-swift: setup
 	bash ./scripts/build_sample.sh "SwiftSample" "${derived_data_path}"
 
 .PHONY: test
-test: setup test-core test-accengage test-chat test-content-extension test-service-extension
+test: setup test-core test-accengage test-chat test-content-extension test-service-extension test-packages
 
 .PHONY: test-core
 test-core: setup

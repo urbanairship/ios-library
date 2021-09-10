@@ -1,12 +1,7 @@
 /* Copyright Airship and Contributors */
 
-#if UA_USE_AIRSHIP_IMPORT
-#import <Airship/Airship.h>
-#elif UA_USE_MODULE_IMPORT
-#import <AirshipCore/AirshipCore.h>
+#if __has_include("AirshipBasement/AirshipBasement.h")
+#import <AirshipBasement/AirshipBasement.h>
 #else
-#import "UASDKModule.h"
-#import "UALocationProvider.h"
-#import "UAEvent.h"
-#import "UAComponent.h"
+#import "AirshipBasementLib.h"
 #endif

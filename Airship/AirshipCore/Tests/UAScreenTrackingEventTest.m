@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
+#import "UAEvent.h"
 
 @import AirshipCore;
 

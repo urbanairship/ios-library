@@ -359,6 +359,20 @@
 			remoteGlobalIDString = 847BFFFC267CD73A007CD249;
 			remoteInfo = AirshipPreferenceCenterTests;
 		};
+		6EB1B41226EAA531000421B9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6E43204826EA814F009228AB;
+			remoteInfo = AirshipBasement;
+		};
+		6EB1B41426EAA531000421B9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6E43212626EA819A009228AB;
+			remoteInfo = "AirshipBasement tvOS";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -611,6 +625,8 @@
 		6E65D56B2396E99D00AF2D1A /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				6EB1B41326EAA531000421B9 /* AirshipBasement.framework */,
+				6EB1B41526EAA531000421B9 /* AirshipBasement tvOS.framework */,
 				6E65D57C2396E99D00AF2D1A /* AirshipCore.framework */,
 				6E65D57E2396E99D00AF2D1A /* AirshipCore.framework */,
 				6E65D5802396E99D00AF2D1A /* AirshipTests.xctest */,
@@ -833,7 +849,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1200;
-				LastUpgradeCheck = 0930;
+				LastUpgradeCheck = 1250;
 				ORGANIZATIONNAME = "Urban Airship";
 				TargetAttributes = {
 					1B94297723883234002051B3 = {
@@ -1035,6 +1051,20 @@
 			fileType = wrapper.cfbundle;
 			path = AirshipPreferenceCenterTests.xctest;
 			remoteRef = 6EAD7CE026B2003700B88EA7 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6EB1B41326EAA531000421B9 /* AirshipBasement.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipBasement.framework;
+			remoteRef = 6EB1B41226EAA531000421B9 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6EB1B41526EAA531000421B9 /* AirshipBasement tvOS.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = "AirshipBasement tvOS.framework";
+			remoteRef = 6EB1B41426EAA531000421B9 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */

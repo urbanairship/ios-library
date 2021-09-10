@@ -2,18 +2,21 @@
 
 #import "PushHandler.h"
 
+@import UserNotifications;
+@import UIKit;
+
 @implementation PushHandler
 
 -(void)receivedBackgroundNotification:(UNNotificationContent *)notificationContent completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
     // Application received a background notification
-    UA_LDEBUG(@"The application received a background notification");
+    NSLog(@"The application received a background notification");
 
     // Call the completion handler
     completionHandler(UIBackgroundFetchResultNoData);
 }
 
 -(void)receivedForegroundNotification:(UNNotificationContent *)notificationContent completionHandler:(void (^)(void))completionHandler {
-    UA_LDEBUG(@"The application received a foreground notification");
+    NSLog(@"The application received a foreground notification");
     completionHandler();
 }
 

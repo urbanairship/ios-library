@@ -1,6 +1,13 @@
 /* Copyright Airship and Contributors */
 
-#import "UAActionResult+Internal.h"
+#import "UAActionResult.h"
+
+@interface UAActionResult()
+@property (nonatomic, strong, nullable) id value;
+@property (nonatomic, assign) UAActionFetchResult fetchResult;
+@property (nonatomic, strong, nullable) NSError *error;
+@property (nonatomic, assign) UAActionStatus status;
+@end
 
 @implementation UAActionResult
 

@@ -1,7 +1,8 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-
+import UserNotifications
+import UIKit
 /**
  * Internal protocol to fan out push handling to UAComponents.
  *  - Note: For internal use only. :nodoc:

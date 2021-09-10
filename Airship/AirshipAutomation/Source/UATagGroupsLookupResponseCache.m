@@ -1,12 +1,13 @@
 
 #import "UATagGroupsLookupResponseCache+Internal.h"
 
-#if __has_include("AirshipCore/AirshipCore-Swift.h")
-@import AirshipCore;
-#elif __has_include("Airship/Airship-Swift.h")
+#if __has_include("Airship/Airship-Swift.h")
 #import <Airship/Airship-Swift.h>
+#elif __has_include("Airship-Swift.h")
+#import "Airship-Swift.h"
+#else
+@import AirshipCore;
 #endif
-
 #define kUATagGroupsLookupResponseCacheResponseKey @"com.urbanairship.tag_groups.CACHED_RESPONSE"
 #define kUATagGroupsLookupResponseCacheRefreshDateKey @"com.urbanairship.tag_groups.CACHE_REFRESH_DATE"
 #define kUATagGroupsLookupResponseCacheRequestTagGroupsKey @"com.urbanairship.tag_groups.CACHED_REQUEST_TAG_GROUPS"
