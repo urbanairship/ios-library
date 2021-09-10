@@ -3,6 +3,13 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Vesion 14.6.2 September 10, 2021
+Patch release fixing In-App Automation messages not displaying when the keyboard is visible on iOS 15 devices.
+
+### Changes
+- Fixed IAA conflict with iOS 15 keyboard
+
+
 ## Vesion 14.6.1 August 6, 2021
 Patch release fixing KVO-related crashes in NSUserDefaults. Apps experiencing related crashes or having problems with SDK user defaults behavior are recommended to upgrade.
 
