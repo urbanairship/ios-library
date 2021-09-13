@@ -4,8 +4,6 @@
 #import "UAInAppMessageEventUtils+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
 
-static NSUInteger const MaxButtonDescriptionLength = 30;
-
 NSString *const UAInAppMessageResolutionEventType = @"in_app_resolution";
 
 // Keys
@@ -103,9 +101,6 @@ NSString *const UAInAppMessageResolutionEventTimedOut = @"timed_out";
             [resolutionData setValue:resolution.buttonInfo.identifier forKey:UAInAppMessageResolutionEventButtonIDKey];
 
             NSString *description = resolution.buttonInfo.label.text;
-            if (description.length > MaxButtonDescriptionLength) {
-                description = [description substringToIndex:MaxButtonDescriptionLength];
-            }
 
             [resolutionData setValue:description forKey:UAInAppMessageResolutionEventButtonDescriptionKey];
             break;

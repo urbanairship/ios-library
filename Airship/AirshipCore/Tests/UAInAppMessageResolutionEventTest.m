@@ -125,7 +125,7 @@
 - (void)testButtonClickedResolutionLongLabel {
     NSDictionary *expectedResolutionData = @{ @"type": @"button_click",
                                               @"button_id": self.displayContent.buttons[1].identifier,
-                                              @"button_description": [self.displayContent.buttons[1].label.text substringToIndex:30],
+                                              @"button_description": self.displayContent.buttons[1].label.text,
                                               @"display_time": @"3.141"};
 
     UAInAppMessageResolution *resolution = [UAInAppMessageResolution buttonClickResolutionWithButtonInfo:self.displayContent.buttons[1]];
