@@ -15,7 +15,7 @@ class NamedUserDetailViewController: UIViewController, UITextFieldDelegate {
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         guard let text = textField.text else { return false }
-        Airship.namedUser.identifier = text;
+        Airship.contact.identify(text);
         Airship.push.updateRegistration()
 
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: "refreshView"), object: nil);

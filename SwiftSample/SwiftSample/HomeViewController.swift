@@ -65,10 +65,6 @@ class HomeViewController: UIViewController {
     }
 
     func checkNotificationsEnabled() -> Bool {
-        if (Airship.shared == nil) {
-            return false
-        }
-
         if (!Airship.push.userPushNotificationsEnabled) {
             return false
         }

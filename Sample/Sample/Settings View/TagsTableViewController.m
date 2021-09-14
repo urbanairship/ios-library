@@ -58,7 +58,9 @@ NSString *addTagsSegue = @"addTagsSegue";
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     if (editingStyle == UITableViewCellEditingStyleDelete && [tableView cellForRowAtIndexPath:indexPath].textLabel.text != nil) {
-        [UAirship.channel removeTag:[tableView cellForRowAtIndexPath:indexPath].textLabel.text];
+        UATagEditor *tagEditor = [UAirship.channel editTags];
+        [tagEditor removeTag:[tableView cellForRowAtIndexPath:indexPath].textLabel.text];
+        [tagEditor apply];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation: UITableViewRowAnimationFade];
     }
 }

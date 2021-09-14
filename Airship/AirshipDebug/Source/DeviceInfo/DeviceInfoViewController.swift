@@ -359,7 +359,7 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             })
         case namedUser:
             cell.title.text = "ua_device_info_named_user".localized()
-            cell.subtitle?.text = Airship.namedUser.identifier == nil ? localizedNone : Airship.namedUser.identifier
+            cell.subtitle?.text = Airship.contact.namedUserID ?? localizedNone
             cell.accessoryType = .disclosureIndicator
         case tags:
             cell.title.text = "ua_device_info_tags".localized()

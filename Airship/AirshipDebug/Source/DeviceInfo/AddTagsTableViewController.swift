@@ -49,7 +49,9 @@ class AddTagsTableViewController: UITableViewController, UITextFieldDelegate {
         
         self.view.endEditing(true)
         
-        Airship.channel.addTag(textField.text!)
+        Airship.channel.editTags { editor in
+            editor.add(textField.text!)
+        }
         
         Airship.push.updateRegistration()
 

@@ -39,8 +39,8 @@ class AddNamedUserTableViewController: UITableViewController, UITextFieldDelegat
         setCellTheme()
         setTableViewTheme()
 
-        if ((Airship.namedUser.identifier) != nil) {
-            addNamedUserTextField.text = Airship.namedUser.identifier
+        if ((Airship.contact.namedUserID) != nil) {
+            addNamedUserTextField.text = Airship.contact.namedUserID
         }
     }
 
@@ -50,9 +50,9 @@ class AddNamedUserTableViewController: UITableViewController, UITextFieldDelegat
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if (textField.text != nil) && (textField.text!.count > 0) {
-            Airship.namedUser.identifier = textField.text
+            Airship.contact.identify(textField.text!)
         } else {
-            Airship.namedUser.identifier = nil
+            Airship.contact.reset()
         }
 
         self.view.endEditing(true)

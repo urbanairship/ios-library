@@ -63,7 +63,9 @@ class AddTagsTableViewController: UITableViewController, UITextFieldDelegate {
     }
 
     func updateTagsWithTag(tag:String) {
-        Airship.channel.addTag(tag)
+        Airship.channel.editTags { editor in
+            editor.add(tag)
+        }
         Airship.channel.updateRegistration()
     }
 }

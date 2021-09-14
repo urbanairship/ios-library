@@ -23,11 +23,9 @@ class AddAttributeTableViewController: UITableViewController, UITextFieldDelegat
 
     var applyButton:UIBarButtonItem = UIBarButtonItem(title: "ua_attributes_action_set".localized(comment: "Set"), style: .plain, target: self, action: #selector(AddAttributeTableViewController.addAttributeMutation))
 
-    let mutations = AttributeMutations()
-
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         addAttributeKeyTextField.delegate = self
         addAttributeKeyTextField.addTarget(self, action: #selector(textFieldDidChange(textField:)), for: .editingChanged)
         addAttributeValueTextField.delegate = self
@@ -98,14 +96,13 @@ class AddAttributeTableViewController: UITableViewController, UITextFieldDelegat
         }
 
         displayAlert(title: title, message:message)
-
-        applyMutations(mutations)
         
         clearFields()
     }
-
-    internal func applyMutations(_ mutations : AttributeMutations) {
-        // override for channel, named user, etc.
+    
+    // override for channel or contact.
+    open func editAttributes(editorBlock: (AttributesEditor) -> Void) {
+        
     }
 
     private func updateTitleAndMessageForAdd(_ title:inout String, _ message:inout String) {
@@ -116,12 +113,18 @@ class AddAttributeTableViewController: UITableViewController, UITextFieldDelegat
         message  = "\("ua_attributes_key".localized(comment: "Key")): \(keyText) \n \("ua_attributes_value".localized(comment: "Value")): \(valueText)"
         switch (attributeTypeControl.attributeTypeControlState()) {
         case .string:
-            mutations.setString(valueText, forAttribute: keyText)
+            editAttributes { editor in
+                editor.set(string: valueText, attribute: keyText)
+            }
         case .number:
             guard let number = NumberFormatter().number(from:valueText) else { return }
-            mutations.setNumber(number, forAttribute: keyText)
+            editAttributes { editor in
+                editor.set(number: number, attribute: keyText)
+            }
         case .date:
-            mutations.setDate(addAttributeValueDatePicker.date, forAttribute: keyText)
+            editAttributes { editor in
+                editor.set(date: addAttributeValueDatePicker.date, attribute: keyText)
+            }
             let isoDateFormatter = Utils.isoDateFormatterUTCWithDelimiter()
             message = message + isoDateFormatter.string(from: addAttributeValueDatePicker.date)
         }
@@ -133,7 +136,9 @@ class AddAttributeTableViewController: UITableViewController, UITextFieldDelegat
         guard let keyText = addAttributeKeyTextField.text else { return }
         let action = "ua_attributes_action_removed".localized(comment: "Removed")
            message = "\("ua_attributes_key".localized(comment: "Key")): \(keyText)"
-           mutations.removeAttribute(keyText)
+        editAttributes { editor in
+            editor.remove(keyText)
+        }
         title = "\(action) Attribute"
     }
 

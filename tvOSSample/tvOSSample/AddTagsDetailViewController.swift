@@ -18,7 +18,9 @@ class AddTagsDetailViewController: UIViewController, UITextFieldDelegate, UITabl
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         guard let text = textField.text else { return false }
-        Airship.channel.addTag(text)
+        Airship.channel.editTags { editor in
+            editor.add(text)
+        }
         Airship.channel.updateRegistration()
 
         tagsTableView.reloadData()
@@ -46,7 +48,9 @@ class AddTagsDetailViewController: UIViewController, UITextFieldDelegate, UITabl
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        Airship.channel.removeTag(Airship.channel.tags[indexPath.row])
+        Airship.channel.editTags { editor in
+            editor.remove(Airship.channel.tags[indexPath.row])
+        }
         tagsTableView.reloadData()
         refreshMasterView()
     }

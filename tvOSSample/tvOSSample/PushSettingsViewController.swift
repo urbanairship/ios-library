@@ -57,7 +57,7 @@ class PushSettingsViewController: UITableViewController, RegistrationDelegate {
 
         analyticsEnabledCell.accessoryType = analytics ? .checkmark : .none
 
-        namedUserCell.detailTextLabel?.text = Airship.namedUser.identifier ?? "Not Set"
+        namedUserCell.detailTextLabel?.text = Airship.contact.namedUserID ?? "Not Set"
         tagsCell.detailTextLabel?.text = (Airship.channel.tags.count > 0) ?
             Airship.channel.tags.joined(separator: ", ") : "Not Set"
     }

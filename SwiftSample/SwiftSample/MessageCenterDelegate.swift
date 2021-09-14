@@ -14,7 +14,7 @@ class MessageCenterDelegate : NSObject, MessageCenterDisplayDelegate {
         self.messageCenterViewController = self.tabBarController.viewControllers![appDelegate.MessageCenterTab] as! MessageCenterViewController;
     }
 
-    func displayMessageCenter(forMessageID messageID: String!, animated: Bool) {
+    func displayMessageCenter(forMessageID messageID: String, animated: Bool) {
         self.displayMessageCenter(animated: animated)
         DispatchQueue.main.async {
             self.messageCenterViewController.displayMessage(forID: messageID)

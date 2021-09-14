@@ -285,12 +285,14 @@ public class Channel : NSObject, Component, ChannelProtocol {
     }
     
     // NOTE: For internal use only. :nodoc:
+    @objc
     public func addRegistrationExtender(_ extender: @escaping(ChannelRegistrationPayload, (@escaping (ChannelRegistrationPayload) -> Void)) -> Void) {
         self.extensionBlocks.append(extender)
     }
-
+    
     /// Begins a tag editing session
     /// - Returns: A TagEditor
+    @objc
     public func editTags() -> TagEditor {
         return TagEditor() { tagApplicator in
             self.tagsLock.sync {
@@ -302,6 +304,7 @@ public class Channel : NSObject, Component, ChannelProtocol {
     /// Begins a tag editing session
     /// - Parameter editorBlock: A tag editor block.
     /// - Returns: A TagEditor
+    @objc
     public func editTags(_ editorBlock: (TagEditor) -> Void) {
         let editor = editTags()
         editorBlock(editor)
@@ -310,6 +313,7 @@ public class Channel : NSObject, Component, ChannelProtocol {
 
     /// Begins a tag group editing session
     /// - Returns: A TagGroupsEditor
+    @objc
     public func editTagGroups() -> TagGroupsEditor {
         let allowDeviceTags = !self.isChannelTagRegistrationEnabled
         return self.audienceManager.editTagGroups(allowDeviceGroup: allowDeviceTags)
@@ -318,6 +322,7 @@ public class Channel : NSObject, Component, ChannelProtocol {
     /// Begins a tag group editing session
     /// - Parameter editorBlock: A tag group editor block.
     /// - Returns: A TagGroupsEditor
+    @objc
     public func editTagGroups(_ editorBlock: (TagGroupsEditor) -> Void) {
         let editor = editTagGroups()
         editorBlock(editor)
@@ -326,6 +331,7 @@ public class Channel : NSObject, Component, ChannelProtocol {
 
     /// Begins a subscription list editing session
     /// - Returns: A SubscriptionListEditor
+    @objc
     public func editSubscriptionLists() -> SubscriptionListEditor {
         return self.audienceManager.editSubscriptionLists()
     }
@@ -333,6 +339,7 @@ public class Channel : NSObject, Component, ChannelProtocol {
     /// Begins a subscription list editing session
     /// - Parameter editorBlock: A subscription list editor block.
     /// - Returns: A SubscriptionListEditor
+    @objc
     public func editSubscriptionLists(_ editorBlock: (SubscriptionListEditor) -> Void) {
         let editor = editSubscriptionLists()
         editorBlock(editor)
@@ -343,12 +350,14 @@ public class Channel : NSObject, Component, ChannelProtocol {
     /// - Parameter completionHandler: A completion handler.
     /// - Returns: A Disposable.
     @discardableResult
+    @objc
     public func fetchSubscriptionLists(completionHandler: @escaping ([String]?, Error?) -> Void) -> Disposable {
         return audienceManager.fetchSubscriptionLists(completionHandler: completionHandler)
     }
 
     /// Begins an attributes editing session
     /// - Returns: An AttributesEditor
+    @objc
     public func editAttributes() -> AttributesEditor {
         return self.audienceManager.editAttributes()
     }
@@ -356,6 +365,7 @@ public class Channel : NSObject, Component, ChannelProtocol {
     /// Begins an attributes editing session
     /// - Parameter editorBlock An attributes editor block.
     /// - Returns: An AttributesEditor
+    @objc
     public func editAttributes(_ editorBlock: (AttributesEditor) -> Void) {
         let editor = editAttributes()
         editorBlock(editor)

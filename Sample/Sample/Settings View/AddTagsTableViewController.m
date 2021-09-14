@@ -70,7 +70,9 @@
 }
 
 - (void)updateTagsWithTag:(NSString *)tagString {
-    [UAirship.channel addTag:tagString];
+    UATagEditor *tagEditor = [UAirship.channel editTags];
+    [tagEditor addTag:tagString];
+    [tagEditor apply];
     [UAirship.channel updateRegistration];
 }
 

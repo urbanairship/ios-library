@@ -81,6 +81,7 @@
 		DEDB898324192F9D000D5241 /* AddTagsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DEDB897F24192F9D000D5241 /* AddTagsTableViewController.m */; };
 		DEDB898424192F9D000D5241 /* TagsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DEDB898024192F9D000D5241 /* TagsTableViewController.m */; };
 		DF0127E3243813CC0011F7C7 /* TabBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = DF0127E2243813CC0011F7C7 /* TabBarController.m */; };
+		E9F15EE726EA534F007E07E9 /* AirshipPreferenceCenter.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6E1892BE268CEC9600417887 /* AirshipPreferenceCenter.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -426,6 +427,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				E9F15EE726EA534F007E07E9 /* AirshipPreferenceCenter.framework in CopyFiles */,
 				3CF3DDF824E75CFB000CF516 /* AirshipExtendedActions.framework in CopyFiles */,
 				3CF3DDF424E75CF8000CF516 /* AirshipAutomation.framework in CopyFiles */,
 				6E7C072F261285AA006D0E84 /* AirshipChat.framework in CopyFiles */,

@@ -7,9 +7,9 @@ import Airship
 #endif
 
 class AddChannelAttributeTableViewController: AddAttributeTableViewController {
-
-    override internal func applyMutations(_ mutations : AttributeMutations) {
-        Airship.channel.apply(mutations)
+    
+    override open func editAttributes(editorBlock: (AttributesEditor) -> Void) {
+        Airship.channel.editAttributes(editorBlock)
     }
 
 }

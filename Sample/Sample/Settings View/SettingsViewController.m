@@ -200,8 +200,8 @@ typedef NS_ENUM(NSUInteger, UASettingsViewControllerSection) {
     }
     if (indexPath.row == self.namedUser.row) {
         cell.title.text = NSLocalizedStringFromTable(@"ua_device_info_named_user", @"UAPushUI", @"Named User");
-         cell.subtitle.text = (UAirship.namedUser.identifier == nil) ? self.localizedNone : UAirship.namedUser.identifier;
-         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        cell.subtitle.text = (UAirship.contact.namedUserID == nil) ? self.localizedNone : UAirship.contact.namedUserID;
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
     if (indexPath.row == self.tags.row) {
          cell.title.text = NSLocalizedStringFromTable(@"ua_device_info_tags", @"UAPushUI", @"Tags");

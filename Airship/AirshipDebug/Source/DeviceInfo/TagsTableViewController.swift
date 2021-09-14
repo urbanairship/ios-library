@@ -60,7 +60,9 @@ class TagsTableViewController: UITableViewController {
         if (editingStyle == .delete &&
             tableView.cellForRow(at: indexPath)?.textLabel?.text?.isEmpty == false) {
 
-            Airship.channel.removeTag((tableView.cellForRow(at: indexPath)?.textLabel?.text)!)
+            Airship.channel.editTags { editor in
+                editor.remove((tableView.cellForRow(at: indexPath)?.textLabel?.text)!)
+            }
             tableView.deleteRows(at: [indexPath], with: .fade)
 
             Airship.push.updateRegistration()

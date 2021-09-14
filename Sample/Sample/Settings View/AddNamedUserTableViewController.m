@@ -30,8 +30,8 @@
     [self setCellTheme];
     [self setTableViewTheme];
     
-    if (UAirship.namedUser.identifier != nil) {
-        self.addNamedUserTextField.text = UAirship.namedUser.identifier;
+    if (UAirship.contact.namedUserID != nil) {
+        self.addNamedUserTextField.text = UAirship.contact.namedUserID;
     }
 }
 
@@ -41,9 +41,9 @@
 
 - (BOOL)textFieldShouldReturn: (UITextField *)textField {
     if (textField.text != nil && textField.text.length > 0) {
-        UAirship.namedUser.identifier = textField.text;
+        [UAirship.contact identify:textField.text];
     } else {
-        UAirship.namedUser.identifier = nil;
+        [UAirship.contact reset];
     }
     
     [self.view endEditing:YES];

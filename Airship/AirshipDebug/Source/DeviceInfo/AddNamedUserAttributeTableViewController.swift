@@ -7,8 +7,9 @@ import Airship
 #endif
 
 class AddNamedUserAttributeTableViewController: AddAttributeTableViewController {
-
-    override internal func applyMutations(_ mutations : AttributeMutations) {
-        Airship.namedUser.apply(mutations)
+    
+    override open func editAttributes(editorBlock: (AttributesEditor) -> Void) {
+        Airship.contact.editAttributes(editorBlock)
     }
+    
 }
