@@ -41,7 +41,15 @@ public class Airship : NSObject {
     /// User defualts key to clear the keychain of Airship values for one app run. Used for testing. :nodoc:
     @objc
     public static let resetKeyChainKey = "com.urbanairship.reset_keychain"
-
+    
+    /// A flag that checks if the Airship instance is available. `true` if available, otherwise `false`.
+    @objc
+    public static var isFlying : Bool {
+        get {
+            return Airship._shared != nil
+        }
+    }
+    
     private (set) var airshipInstance: AirshipInstanceProtocol
     
     /// Airship config.
@@ -116,7 +124,7 @@ public class Airship : NSObject {
     /// Shared Airship instance.
     @objc
     public static var shared: Airship {
-        if (_shared == nil) {
+        if (!Airship.isFlying) {
             assertionFailure("TakeOff must be called before accessing Airship.")
         }
         return _shared!
@@ -165,7 +173,7 @@ public class Airship : NSObject {
             fatalError("TakeOff must be called on the main thread.")
         }
         
-        guard _shared == nil else {
+        guard !Airship.isFlying else {
             AirshipLogger.impError("TakeOff can only be called once.")
             return
         }
