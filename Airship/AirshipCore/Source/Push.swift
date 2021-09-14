@@ -683,35 +683,39 @@ public class Push: NSObject, Component, PushProtocol {
         }
     }
 
-    private func userPushNotificationsAllowed() -> Bool {
-        var allowed = true
+    /// Indicates whether the user is opted in for push notifications or not.
+    @objc
+    public var isPushNotificationsOptedIn: Bool {
+        get {
+            var optedIn = true
 
-        if self.deviceToken == nil {
-            AirshipLogger.trace("Opted out: missing device token")
-            allowed = false
+            if self.deviceToken == nil {
+                AirshipLogger.trace("Opted out: missing device token")
+                optedIn = false
+            }
+
+            if !self.userPushNotificationsEnabled {
+                AirshipLogger.trace("Opted out: user push notifications disabled");
+                optedIn = false;
+            }
+
+            if self.authorizedNotificationSettings == [] {
+                AirshipLogger.trace("Opted out: no authorized notification settings")
+                optedIn = false;
+            }
+
+            if !self.isRegisteredForRemoteNotifications {
+                AirshipLogger.trace("Opted out: not registered for remote notifications")
+                optedIn = false;
+            }
+
+            if !self.privacyManager.isEnabled(.push) {
+                AirshipLogger.trace("Opted out: push is disabled");
+                optedIn = false;
+            }
+
+            return optedIn;
         }
-
-        if !self.userPushNotificationsEnabled {
-            AirshipLogger.trace("Opted out: user push notifications disabled");
-            allowed = false;
-        }
-
-        if self.authorizedNotificationSettings == [] {
-            AirshipLogger.trace("Opted out: no authorized notification settings")
-            allowed = false;
-        }
-
-        if !self.isRegisteredForRemoteNotifications {
-            AirshipLogger.trace("Opted out: not registered for remote notifications")
-            allowed = false;
-        }
-
-        if !self.privacyManager.isEnabled(.push) {
-            AirshipLogger.trace("Opted out: push is disabled");
-            allowed = false;
-        }
-
-        return allowed;
     }
     
     private lazy var remoteNotificationBackgroundModeEnabled: Bool = {
@@ -1040,7 +1044,7 @@ public class Push: NSObject, Component, PushProtocol {
             }
             
             payload.channel.pushAddress = self.deviceToken
-            payload.channel.isOptedIn = self.userPushNotificationsAllowed()
+            payload.channel.isOptedIn = self.isPushNotificationsOptedIn
             payload.channel.isBackgroundEnabled = self.backgroundPushNotificationsAllowed()
 
             if (self.autobadgeEnabled) {
@@ -1069,7 +1073,7 @@ public class Push: NSObject, Component, PushProtocol {
     private func analyticsHeaders() -> [String : String] {
         if self.privacyManager.isEnabled(.push) {
             var headers:[String : String] = [:]
-            headers["X-UA-Channel-Opted-In"] = self.userPushNotificationsAllowed() ? "true" : "false"
+            headers["X-UA-Channel-Opted-In"] = self.isPushNotificationsOptedIn ? "true" : "false"
             headers["X-UA-Notification-Prompted"] = self.userPromptedForNotifications ? "true" : "false"
             headers["X-UA-Channel-Background-Enabled"] = self.backgroundPushNotificationsAllowed() ? "true" : "false"
             headers["X-UA-Push-Address"] = self.deviceToken
