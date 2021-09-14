@@ -48,13 +48,17 @@ public class APNSRegistration : NSObject, APNSRegistrationProtocol {
                     authorizedSettings.insert(.announcement)
                 }
             }
+            
+            #endif
+
+            
+            #if !os(tvOS) && !targetEnvironment(macCatalyst)
 
             if #available(iOS 15.0, *) {
                 if notificationSettings.timeSensitiveSetting == .enabled {
                     authorizedSettings.insert(.timeSensitive)
                 }
-            }
-            if #available(iOS 15.0, *) {
+                
                 if notificationSettings.scheduledDeliverySetting == .enabled {
                     authorizedSettings.insert(.scheduledDelivery)
                 }
