@@ -189,5 +189,61 @@
     }
 }
 
+-(void)testGetTimeSensitiveAuthorization {
+    // Announcement setting is only on iOS 13 and above
+    if (@available(iOS 15.0, *)) {
+        // These expected options must match mocked UNNotificationSettings object below for the test to be valid
+        UAAuthorizedNotificationSettings expectedSettings =  UAAuthorizedNotificationSettingsTimeSensitive;
+
+        // Mock UNNotificationSettings object to match expected options since we can't initialize one
+        id mockNotificationSettings = [self mockForClass:[UNNotificationSettings class]];
+        [[[mockNotificationSettings stub] andReturnValue:OCMOCK_VALUE(UNAuthorizationStatusAuthorized)] authorizationStatus];
+        [[[mockNotificationSettings stub] andReturnValue:OCMOCK_VALUE(UNNotificationSettingEnabled)] timeSensitiveSetting];
+
+        typedef void (^NotificationSettingsReturnBlock)(UNNotificationSettings * _Nonnull settings);
+
+        [[[self.mockedUserNotificationCenter stub] andDo:^(NSInvocation *invocation) {
+            void *arg;
+            [invocation getArgument:&arg atIndex:2];
+            NotificationSettingsReturnBlock returnBlock = (__bridge NotificationSettingsReturnBlock)arg;
+            returnBlock(mockNotificationSettings);
+
+        }] getNotificationSettingsWithCompletionHandler:OCMOCK_ANY];
+
+        [self.pushRegistration getAuthorizedSettingsWithCompletionHandler:^(UAAuthorizedNotificationSettings authorizedSettings, UAAuthorizationStatus status) {
+            XCTAssertTrue(authorizedSettings == expectedSettings);
+            XCTAssertTrue(status == UAAuthorizationStatusAuthorized);
+        }];
+    }
+}
+
+-(void)testGetScheduledDeliveryAuthorization {
+    // Announcement setting is only on iOS 13 and above
+    if (@available(iOS 15.0, *)) {
+        // These expected options must match mocked UNNotificationSettings object below for the test to be valid
+        UAAuthorizedNotificationSettings expectedSettings =  UAAuthorizedNotificationSettingsScheduledDelivery;
+
+        // Mock UNNotificationSettings object to match expected options since we can't initialize one
+        id mockNotificationSettings = [self mockForClass:[UNNotificationSettings class]];
+        [[[mockNotificationSettings stub] andReturnValue:OCMOCK_VALUE(UNAuthorizationStatusAuthorized)] authorizationStatus];
+        [[[mockNotificationSettings stub] andReturnValue:OCMOCK_VALUE(UNNotificationSettingEnabled)] scheduledDeliverySetting];
+
+        typedef void (^NotificationSettingsReturnBlock)(UNNotificationSettings * _Nonnull settings);
+
+        [[[self.mockedUserNotificationCenter stub] andDo:^(NSInvocation *invocation) {
+            void *arg;
+            [invocation getArgument:&arg atIndex:2];
+            NotificationSettingsReturnBlock returnBlock = (__bridge NotificationSettingsReturnBlock)arg;
+            returnBlock(mockNotificationSettings);
+
+        }] getNotificationSettingsWithCompletionHandler:OCMOCK_ANY];
+
+        [self.pushRegistration getAuthorizedSettingsWithCompletionHandler:^(UAAuthorizedNotificationSettings authorizedSettings, UAAuthorizationStatus status) {
+            XCTAssertTrue(authorizedSettings == expectedSettings);
+            XCTAssertTrue(status == UAAuthorizationStatusAuthorized);
+        }];
+    }
+}
+
 @end
 
