@@ -7,12 +7,12 @@ public class RemoteDataStore : NSObject {
     
     private static let remoteDataEntity = "UARemoteDataStorePayload"
 
-    private let coreData: CoreData
+    private let coreData: UACoreData
 
     @objc
     public init(storeName: String, inMemory: Bool) {
         let modelURL = AirshipCoreResources.bundle.url(forResource: "UARemoteData", withExtension: "momd")
-        self.coreData = CoreData(modelURL: modelURL!, inMemory: inMemory, stores: [storeName])
+        self.coreData = UACoreData(modelURL: modelURL!, inMemory: inMemory, stores: [storeName])
     }
 
     @objc
@@ -55,11 +55,11 @@ public class RemoteDataStore : NSObject {
         
             do {
                 try self.deleteAll(context: context)
-                CoreData.safeSave(context)
+                UACoreData.safeSave(context)
                 payloads.forEach {
                     self.addPayload($0, context: context)
                 }
-                completionHandler(CoreData.safeSave(context))
+                completionHandler(UACoreData.safeSave(context))
             } catch {
                 AirshipLogger.error("Failed to overwrite payloads \(error).")
                 completionHandler(false)

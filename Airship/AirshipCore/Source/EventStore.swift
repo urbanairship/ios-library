@@ -10,7 +10,7 @@ public class EventStore : NSObject, EventStoreProtocol {
     private static let fileFormat = "Events-%@.sqlite"
     private static let eventDataEntityName = "UAEventData"
 
-    private var coreData: CoreData
+    private var coreData: UACoreData
     private var storeName: String?
 
     @objc
@@ -19,7 +19,7 @@ public class EventStore : NSObject, EventStoreProtocol {
         print(gordon)
         let storeName = String(format: EventStore.fileFormat, config?.appKey ?? "")
         let modelURL = AirshipCoreResources.bundle.url(forResource: "UAEvents", withExtension: "momd")
-        self.coreData = CoreData(modelURL: modelURL!, inMemory: false, stores: [storeName])
+        self.coreData = UACoreData(modelURL: modelURL!, inMemory: false, stores: [storeName])
 
         super.init()
     }
@@ -43,7 +43,7 @@ public class EventStore : NSObject, EventStoreProtocol {
                 sessionID: sessionID,
                 context: context)
 
-            CoreData.safeSave(context)
+            UACoreData.safeSave(context)
         }
     }
 
@@ -65,7 +65,7 @@ public class EventStore : NSObject, EventStoreProtocol {
             do {
                 let result = try context.fetch(request) as? [EventData] ?? []
                 completionHandler(result)
-                CoreData.safeSave(context)
+                UACoreData.safeSave(context)
             } catch {
                 AirshipLogger.error("Error fetching events: \(error)")
                 completionHandler([])
@@ -88,7 +88,7 @@ public class EventStore : NSObject, EventStoreProtocol {
             do {
                 let deleteRequest = NSBatchDeleteRequest(fetchRequest: request)
                 try context.execute(deleteRequest)
-                CoreData.safeSave(context)
+                UACoreData.safeSave(context)
             } catch {
                 AirshipLogger.error("Error deleting analytics events: \(error)")
             }
@@ -107,7 +107,7 @@ public class EventStore : NSObject, EventStoreProtocol {
             do {
                 let deleteRequest = NSBatchDeleteRequest(fetchRequest: request)
                 try context.execute(deleteRequest)
-                CoreData.safeSave(context)
+                UACoreData.safeSave(context)
             } catch {
                 AirshipLogger.error("Error deleting analytics events: \(error)")
             }
@@ -128,7 +128,7 @@ public class EventStore : NSObject, EventStoreProtocol {
                 }
             }
 
-            CoreData.safeSave(context)
+            UACoreData.safeSave(context)
         })
     }
 

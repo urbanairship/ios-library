@@ -557,8 +557,8 @@
 		6E6ED1622683DBC300A2CBD0 /* AirshipVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1502683DBC300A2CBD0 /* AirshipVersion.swift */; };
 		6E6ED1632683DBC300A2CBD0 /* ApplicationMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1512683DBC300A2CBD0 /* ApplicationMetrics.swift */; };
 		6E6ED1642683DBC300A2CBD0 /* ApplicationMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1512683DBC300A2CBD0 /* ApplicationMetrics.swift */; };
-		6E6ED1672683DBC300A2CBD0 /* CoreData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1532683DBC300A2CBD0 /* CoreData.swift */; };
-		6E6ED1682683DBC300A2CBD0 /* CoreData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1532683DBC300A2CBD0 /* CoreData.swift */; };
+		6E6ED1672683DBC300A2CBD0 /* UACoreData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1532683DBC300A2CBD0 /* UACoreData.swift */; };
+		6E6ED1682683DBC300A2CBD0 /* UACoreData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1532683DBC300A2CBD0 /* UACoreData.swift */; };
 		6E6ED1692683DBC300A2CBD0 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1542683DBC300A2CBD0 /* NetworkMonitor.swift */; };
 		6E6ED16A2683DBC300A2CBD0 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1542683DBC300A2CBD0 /* NetworkMonitor.swift */; };
 		6E6ED16B2683DBC300A2CBD0 /* SystemVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1552683DBC300A2CBD0 /* SystemVersion.swift */; };
@@ -1847,7 +1847,7 @@
 		6E6ED14F2683DBC200A2CBD0 /* AirshipCoreResources.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirshipCoreResources.swift; sourceTree = "<group>"; };
 		6E6ED1502683DBC300A2CBD0 /* AirshipVersion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirshipVersion.swift; sourceTree = "<group>"; };
 		6E6ED1512683DBC300A2CBD0 /* ApplicationMetrics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationMetrics.swift; sourceTree = "<group>"; };
-		6E6ED1532683DBC300A2CBD0 /* CoreData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreData.swift; sourceTree = "<group>"; };
+		6E6ED1532683DBC300A2CBD0 /* UACoreData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UACoreData.swift; sourceTree = "<group>"; };
 		6E6ED1542683DBC300A2CBD0 /* NetworkMonitor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
 		6E6ED1552683DBC300A2CBD0 /* SystemVersion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SystemVersion.swift; sourceTree = "<group>"; };
 		6E6ED1562683DBC300A2CBD0 /* BespokeCloseView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BespokeCloseView.swift; sourceTree = "<group>"; };
@@ -3420,7 +3420,7 @@
 				6E6ED14D2683DBC200A2CBD0 /* Base64.swift */,
 				6E6ED1562683DBC300A2CBD0 /* BespokeCloseView.swift */,
 				6E6ED14E2683DBC200A2CBD0 /* BeveledLoadingIndicator.swift */,
-				6E6ED1532683DBC300A2CBD0 /* CoreData.swift */,
+				6E6ED1532683DBC300A2CBD0 /* UACoreData.swift */,
 				6E6ED1542683DBC300A2CBD0 /* NetworkMonitor.swift */,
 				6E6ED1552683DBC300A2CBD0 /* SystemVersion.swift */,
 				6E6ED14B2683DBC200A2CBD0 /* ViewUtils.swift */,
@@ -6069,7 +6069,7 @@
 				6E664BCD26C48CBF00A2C8E5 /* ModifyTagsAction.swift in Sources */,
 				3CA84AAE26DE255200A59685 /* EventStore.swift in Sources */,
 				3CC8AA0626BB3C7900405614 /* Push.swift in Sources */,
-				6E6ED1672683DBC300A2CBD0 /* CoreData.swift in Sources */,
+				6E6ED1672683DBC300A2CBD0 /* UACoreData.swift in Sources */,
 				6E87BD8326D757CA0005D20D /* CloudSite.swift in Sources */,
 				6ED735DA26C73DC5003B0A7D /* Channel.swift in Sources */,
 				C00ED4CF26C729390040C5D0 /* URLAllowList.swift in Sources */,
@@ -6698,7 +6698,7 @@
 				6E664B9F26C21B6F00A2C8E5 /* AggregateActionResult.swift in Sources */,
 				6E43219326EA89B6009228AB /* NativeBridgeDelegate.swift in Sources */,
 				3CC8AA0726BB3C7900405614 /* Push.swift in Sources */,
-				6E6ED1682683DBC300A2CBD0 /* CoreData.swift in Sources */,
+				6E6ED1682683DBC300A2CBD0 /* UACoreData.swift in Sources */,
 				6EC7E46C269E0E3E0038CFDD /* ContactOperation.swift in Sources */,
 				6E664BA226C43F5400A2C8E5 /* ActivityViewController.swift in Sources */,
 				6E6ED14A2683D8E200A2CBD0 /* LocaleManager.swift in Sources */,

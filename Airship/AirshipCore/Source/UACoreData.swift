@@ -15,7 +15,7 @@ public protocol CoreDataDelegate: AnyObject {
  * - Note: For internal use only. :nodoc:
  */
 @objc(UACoreData)
-public class CoreData : NSObject {
+public class UACoreData : NSObject {
     private let UAManagedContextStoreDirectory = "com.urbanairship.no-backup"
 
     private let context: NSManagedObjectContext
