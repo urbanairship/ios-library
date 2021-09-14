@@ -3,6 +3,22 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 15.0.0 September 14, 2021
+
+Major SDK release with several breaking changes, especially for Swift users. This release adds support for preference center, Contacts, iOS 15, and subscription lists.
+
+## Changes
+- Core module has been rewritten in Swift. During the rewrite, many of the method signatures, nullability, and classes have been updated to be more inline with Swift.
+- Dropped the `UA` prefix for Swift.
+- Added new module `AirshipPreferenceCenter`.
+- Added subscription lists APIs for Channel.
+- Added new editor APIs on Channel to modify tags and attributes to help batch updates.
+- NamedUser component has been replaced by Contact, which allows setting data on a user without an external ID (Named User ID).
+- Removed use of class load methods. Airship now requires passing in the launch options during takeOff.
+- Removed `Airship.xcframework` and `Airship` SPM target. Apps should use the modular frameworks instead.
+- Carthage and xcframework users will need to include a new module `AirshipBasement`.
+
+
 ## Vesion 14.6.2 September 10, 2021
 Patch release fixing In-App Automation messages not displaying when the keyboard is visible on iOS 15 devices.
 
