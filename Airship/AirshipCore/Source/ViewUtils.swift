@@ -3,7 +3,7 @@
 import UIKit
 
 /**
- * @note For internal use only. :nodoc:
+ * - Note: For internal use only. :nodoc:
  */
 @objc(UAViewUtils)
 public class ViewUtils : NSObject {

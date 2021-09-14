@@ -2,7 +2,7 @@
 
 /**
  * Preference data store.
- * @note For internal use only. :nodoc:
+ * - Note: For internal use only. :nodoc:
  */
 @objc(UAPreferenceDataStore)
 public class PreferenceDataStore : NSObject {

@@ -14,11 +14,11 @@ public class CircularRegion : NSObject {
     /**
      * Default constructor.
      *
-     * @param radius The radius of the circular region in meters.
-     * @param latitude The latitude of the circular region's center point in degress.
-     * @param longitude The longitude of the circular region's center point in degrees.
+     * - Parameter radius: The radius of the circular region in meters.
+     * - Parameter latitude: The latitude of the circular region's center point in degress.
+     * - Parameter longitude: The longitude of the circular region's center point in degrees.
      *
-     * @return Circular region object or `nil` if error occurs
+     * - Returns: Circular region object or `nil` if error occurs
      */
     @objc
     public init?(radius: Double, latitude: Double, longitude: Double) {
@@ -43,11 +43,11 @@ public class CircularRegion : NSObject {
     /**
      * Factory method for creating a circular region.
      *
-     * @param radius The radius of the circular region in meters.
-     * @param latitude The latitude of the circular region's center point in degress.
-     * @param longitude The longitude of the circular region's center point in degrees.
+     * - Parameter radius: The radius of the circular region in meters.
+     * - Parameter latitude: The latitude of the circular region's center point in degress.
+     * - Parameter longitude: The longitude of the circular region's center point in degrees.
      *
-     * @return Circular region object or `nil` if error occurs
+     * - Returns: Circular region object or `nil` if error occurs
      */
     @objc(circularRegionWithRadius:latitude:longitude:)
     public class func circularRegion(radius: Double, latitude: Double, longitude: Double) -> CircularRegion? {

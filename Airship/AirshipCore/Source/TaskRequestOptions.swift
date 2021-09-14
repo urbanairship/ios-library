@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 /// Conflict policy if a task with the same ID is already scheduled.
-/// @note For internal use only. :nodoc:
+/// - Note: For internal use only. :nodoc:
 @objc
 public enum UATaskConflictPolicy : Int {
     /// Keep previously scheduled task.
@@ -15,7 +15,7 @@ public enum UATaskConflictPolicy : Int {
 }
 
 /**
- * @note For internal use only. :nodoc:
+ * - Note: For internal use only. :nodoc:
  */
 @objc(UATaskRequestOptions)
 public class TaskRequestOptions : NSObject {

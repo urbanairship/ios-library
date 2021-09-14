@@ -5,7 +5,7 @@ import Foundation
 
 /**
  * Task passed to the launcher when ready to execute.
- * @note For internal use only. :nodoc:
+ * - Note: For internal use only. :nodoc:
  */
 @objc(UATask)
 public protocol Task {

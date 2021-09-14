@@ -18,7 +18,7 @@ public class ApplicationMetrics : NSObject {
 
     /**
      * Determines whether the application's short version string has been updated.
-     * Only tracked if UAFeatureInAppAutomation or UAFeatureAnalytics are enabled in the privacy manager.
+     * Only tracked if Feature.inAppAutomation or Feature.analytics are enabled in the privacy manager.
      */
     @objc
     public var isAppVersionUpdated : Bool {
@@ -29,7 +29,7 @@ public class ApplicationMetrics : NSObject {
 
     /**
      * The date of the last time the application was active.
-     * Only tracked if UAFeatureInAppAutomation or UAFeatureAnalytics are enabled in the privacy manager.
+     * Only tracked if Feature.inAppAutomation or Feature.analytics are enabled in the privacy manager.
      */
     @objc
     public var lastApplicationOpenDate : Date? {

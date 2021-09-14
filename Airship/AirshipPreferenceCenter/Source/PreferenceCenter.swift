@@ -15,8 +15,8 @@ public protocol PreferenceCenterOpenDelegate {
     /**
      * Opens the Preference Center with the given ID.
      * - Parameters:
-     *  - preferenceCenterID: The preference center ID.
-     *  - Returns: `true` if the preference center was opened, otherwise `false` to fallback to OOTB UI.
+     *   - preferenceCenterID: The preference center ID.
+     *   - Returns: `true` if the preference center was opened, otherwise `false` to fallback to OOTB UI.
      */
     @objc
     func openPreferenceCenter(_ preferenceCenterID: String) -> Bool
@@ -82,7 +82,7 @@ public class PreferenceCenter : NSObject, Component {
     /**
      * Opens the Preference Center with the given ID.
      * - Parameters:
-     *  - preferenceCenterID: The preference center ID.
+     *   - preferenceCenterID: The preference center ID.
      */
     @objc(openPreferenceCenter:)
     public func open(_ preferenceCenterID: String) {
@@ -139,8 +139,8 @@ public class PreferenceCenter : NSObject, Component {
     /**
      * Returns the configuration of the Preference Center with the given ID trough a callback method.
      * - Parameters:
-     *  - preferenceCenterID: The preference center ID.
-     *  - completionHandlerThe completion handler that will receive the requested PreferenceCenterConfig
+     *   - preferenceCenterID: The preference center ID.
+     *   - completionHandlerThe completion handler that will receive the requested PreferenceCenterConfig
      */
     @objc(configForPreferenceCenterID:completionHandler:)
     @discardableResult

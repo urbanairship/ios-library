@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 /**
- * @note For internal use only. :nodoc:
+ * - Note: For internal use only. :nodoc:
  */
 @objc(UADispatcherTimeBase)
 public enum DispatcherTimeBase : Int {
@@ -13,7 +13,7 @@ public enum DispatcherTimeBase : Int {
 }
 
 /**
- * @note For internal use only. :nodoc:
+ * - Note: For internal use only. :nodoc:
  */
 @objc(UADispatcher)
 open class UADispatcher : NSObject {

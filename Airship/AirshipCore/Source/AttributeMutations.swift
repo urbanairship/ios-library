@@ -15,8 +15,8 @@ public class AttributeMutations : NSObject {
     /**
      * Sets an attribute.
      * - Parameters:
-     *  - string: The value.
-     *  - forAttribute: The attribute
+     *   - string: The value.
+     *   - forAttribute: The attribute
      */
     @objc(setString:forAttribute:)
     public func setString(_ string: String, forAttribute: String) {
@@ -28,8 +28,8 @@ public class AttributeMutations : NSObject {
     /**
      * Sets an attribute.
      * - Parameters:
-     *  - number: The value.
-     *  - forAttribute: The attribute
+     *   - number: The value.
+     *   - forAttribute: The attribute
      */
     @objc(setNumber:forAttribute:)
     public func setNumber(_ number: NSNumber, forAttribute: String) {
@@ -41,8 +41,8 @@ public class AttributeMutations : NSObject {
     /**
      * Sets an attribute.
      * - Parameters:
-     *  - string: The value.
-     *  - forAttribute: The attribute
+     *   - string: The value.
+     *   - forAttribute: The attribute
      */
     @objc(setDate:forAttribute:)
     public func setDate(_ date: Date, forAttribute: String) {
@@ -54,7 +54,7 @@ public class AttributeMutations : NSObject {
     /**
      * Removes an attribute.
      * - Parameters:
-     *  - attribute: The attribute
+     *   - attribute: The attribute
      */
     @objc(removeAttribute:)
     public func removeAttribute(_ attribute: String) {
@@ -65,7 +65,7 @@ public class AttributeMutations : NSObject {
     
     /**
      * Generates an empty mutation.
-     * - Returns An empty mutation object.
+     * - Returns: An empty mutation object.
      */
     @objc
     public class func mutations() -> AttributeMutations {

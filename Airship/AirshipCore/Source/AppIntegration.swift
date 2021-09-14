@@ -9,7 +9,7 @@
 @objc(UAAppIntegration)
 public class AppIntegration : NSObject {
     
-    /// NOTE: For internal use only. :nodoc:
+    /// - Note: For internal use only. :nodoc:
     @objc
     public static var integrationDelegate: AppIntegrationDelegate?
     
@@ -22,8 +22,8 @@ public class AppIntegration : NSObject {
      * application:performFetchWithCompletionHandler:.
      *
      * - Parameters:
-     *  - application: The application
-     *  - completionHandler: The completion handler.
+     *   - application: The application
+     *   - completionHandler: The completion handler.
      */
     @objc(applicatin:performFetchWithCompletionHandler:)
     public class func application(_ application: UIApplication,
@@ -43,8 +43,8 @@ public class AppIntegration : NSObject {
      * application:didRegisterForRemoteNotificationsWithDeviceToken:.
      *
      * - Parameters:
-     *  - application: The application
-     *  - deviceToken: The device token.
+     *   - application: The application
+     *   - deviceToken: The device token.
      */
     @objc(application:didRegisterForRemoteNotificationsWithDeviceToken:)
     public class func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
@@ -61,8 +61,8 @@ public class AppIntegration : NSObject {
      * application:didFailToRegisterForRemoteNotificationsWithError:.
      *
      * - Parameters:
-     *  - application: The application
-     *  - error: The error.
+     *   - application: The application
+     *   - error: The error.
      */
     @objc
     public class func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
@@ -79,9 +79,9 @@ public class AppIntegration : NSObject {
      * application:didReceiveRemoteNotification:fetchCompletionHandler:.
      *
      * - Parameters:
-     *  - application: The application
-     *  - userInfo: The remote notification.
-     *  - completionHandler: The completion handler.
+     *   - application: The application
+     *   - userInfo: The remote notification.
+     *   - completionHandler: The completion handler.
      */
     @objc
     public class func application(_ application: UIApplication,
@@ -103,9 +103,9 @@ public class AppIntegration : NSObject {
      * userNotificationCenter:willPresentNotification:withCompletionHandler.
      *
      * - Parameters:
-     *  - center: The notification center.
-     *  - notification: The notification.
-     *  - completionHandler: The completion handler.
+     *   - center: The notification center.
+     *   - notification: The notification.
+     *   - completionHandler: The completion handler.
      */
     @objc
     public class func userNotificationCenter(center: UNUserNotificationCenter,
@@ -131,9 +131,9 @@ public class AppIntegration : NSObject {
      * userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler.
      *
      * - Parameters:
-     *  - center: The notification center.
-     *  - response: The notification response.
-     *  - completionHandler: The completion handler.
+     *   - center: The notification center.
+     *   - response: The notification response.
+     *   - completionHandler: The completion handler.
      */
     @objc
     public class func userNotificationCenter(center: UNUserNotificationCenter,

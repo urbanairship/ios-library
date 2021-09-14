@@ -78,7 +78,7 @@ public class TagGroupsEditor: NSObject {
     }
 
     /**
-     * Applys tag changes.
+     * Applies tag changes.
      */
     @objc
     public func apply() {

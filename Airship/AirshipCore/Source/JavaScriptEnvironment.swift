@@ -4,8 +4,6 @@
 
 import Foundation
 
-
-
 /**
  * The JavaScript environment builder that is used by the native bridge.
  */
@@ -30,7 +28,9 @@ public class JavaScriptEnvironment : NSObject, JavaScriptEnvironmentProtocol {
         defaults.insert(JavaScriptEnvironment.stringGetter("getAppKey", Airship.shared.config.appKey))
         return defaults
     }
-    
+    /// Adds a string getter to the Airship JavaScript environment.
+    /// - Parameter getter: The getter's name.
+    /// - Parameter string: The getter's value.
     @objc(addStringGetter:value:)
     public func add(_ getter: String, string: String?) {
         guard let value = string else {
@@ -40,13 +40,19 @@ public class JavaScriptEnvironment : NSObject, JavaScriptEnvironmentProtocol {
         }
         self.extensions.insert(JavaScriptEnvironment.stringGetter(getter, value))
     }
-    
+
+    /// Adds a number getter to the Airship JavaScript environment.
+    /// - Parameter getter: The getter's name.
+    /// - Parameter number: The getter's value.
     @objc(addNumberGetter:value:)
     public func add(_ getter: String, number: NSNumber?) {
         let ext = String(format: "_UAirship.%@ = function() {return %@;};", getter, number ?? -1)
         self.extensions.insert(ext)
     }
-    
+
+    /// Adds a dictionary getter to the Airship JavaScript environment.
+    /// - Parameter getter: The getter's name.
+    /// - Parameter dictionary: The getter's value.
     @objc(addDictionaryGetter:value:)
     public func add(_ getter: String, dictionary: [AnyHashable : Any]?) {
         let ext: String
@@ -77,7 +83,7 @@ public class JavaScriptEnvironment : NSObject, JavaScriptEnvironmentProtocol {
     
     /**
      * Builds the script that can be injected into a web view.
-     * - returns: The  script.
+     * - Returns: The script.
      */
     @objc(build)
     public func build() -> String {

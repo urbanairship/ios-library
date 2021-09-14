@@ -48,7 +48,7 @@ public protocol ContactProtocol {
     /**
      * Edits tags.
      * - Parameters:
-     *  - editorBlock: The editor block with the editor. The editor will `apply` will be called after the block is executed.
+     *   - editorBlock: The editor block with the editor. The editor will `apply` will be called after the block is executed.
      */
     @objc
     func editTagGroups(_ editorBlock: (TagGroupsEditor) -> Void)
@@ -63,7 +63,7 @@ public protocol ContactProtocol {
     /**
      * Edits  attributes.
      * - Parameters:
-     *  - editorBlock: The editor block with the editor. The editor will `apply` will be called after the block is executed.
+     *   - editorBlock: The editor block with the editor. The editor will `apply` will be called after the block is executed.
      */
     @objc
     func editAttributes(_ editorBlock: (AttributesEditor) -> Void)
@@ -121,9 +121,11 @@ public class Contact : NSObject, Component, ContactProtocol {
     private let date : DateUtils
     private let notificationCenter: NotificationCenter
 
+    /// A delegate to receive callbacks where there is a contact conflict.
     @objc
     public weak var conflictDelegate: ContactConflictDelegate?
 
+    /// The current named user ID.
     @objc
     public var namedUserID : String? {
         get {
@@ -323,6 +325,8 @@ public class Contact : NSObject, Component, ContactProtocol {
                   taskManager: TaskManager.shared)
     }
 
+    /// Identifies the contact.
+    /// - Parameter namedUserID: The named user ID.
     @objc
     public func identify(_ namedUserID: String) {
         guard self.privacyManager.isEnabled(.contacts) else {
@@ -340,7 +344,8 @@ public class Contact : NSObject, Component, ContactProtocol {
         self.addOperation(ContactOperation.identify(identifier: namedUserID))
         self.enqueueTask()
     }
-    
+
+    /// Resets the contact.
     @objc
     public func reset() {
         guard self.privacyManager.isEnabled(.contacts) else {
@@ -351,6 +356,8 @@ public class Contact : NSObject, Component, ContactProtocol {
         self.enqueueTask()
     }
 
+    /// Begins a tag groups editing session.
+    /// - Returns: A TagGroupsEditor
     @objc
     public func editTagGroups() -> TagGroupsEditor {
         return TagGroupsEditor { updates in
@@ -368,13 +375,18 @@ public class Contact : NSObject, Component, ContactProtocol {
             self.enqueueTask()
         }
     }
-    
+
+    /// Begins a tag groups editing session.
+    /// - Parameter editorBlock: A tag groups editor block.
+    /// - Returns: A TagGroupsEditor
     public func editTagGroups(_ editorBlock: (TagGroupsEditor) -> Void) {
         let editor = editTagGroups()
         editorBlock(editor)
         editor.apply()
     }
 
+    /// Begins an attribute editing session.
+    /// - Returns: An AttributesEditor
     @objc
     public func editAttributes() -> AttributesEditor {
         return AttributesEditor { updates in
@@ -393,6 +405,9 @@ public class Contact : NSObject, Component, ContactProtocol {
         }
     }
 
+    /// Begins an attribute editing session.
+    /// - Parameter editorBlock: An attributes editor block.
+    /// - Returns: An AttributesEditor
     public func editAttributes(_ editorBlock: (AttributesEditor) -> Void) {
         let editor = editAttributes()
         editorBlock(editor)

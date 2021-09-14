@@ -1,6 +1,6 @@
 
 /**
- * @note For internal use only. :nodoc:
+ * - Note: For internal use only. :nodoc:
  */
 @objc(UAEventAPIResponse)
 public class EventAPIResponse : HTTPResponse {

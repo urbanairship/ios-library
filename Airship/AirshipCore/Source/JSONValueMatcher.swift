@@ -46,7 +46,7 @@ public class JSONValueMatcher : NSObject {
      * Evaluates the object with the matcher.
      *
      * - Parameters:
-     *  - value: The object to evaluate.
+     *   - value: The object to evaluate.
      * - Returns: true  if the matcher matches the object, otherwise false.
      */
     @objc(evaluateObject:)
@@ -58,8 +58,8 @@ public class JSONValueMatcher : NSObject {
      * Evaluates the object with the matcher.
      *
      * - Parameters:
-     *  - value: The object to evaluate.
-     *  - ignoreCase: YES to ignore case when checking String values, NO to check case.
+     *   - value: The object to evaluate.
+     *   - ignoreCase: YES to ignore case when checking String values, NO to check case.
      *  Strings contained in arrays and dictionaries also follow this rule.
      * - Returns: true if the matcher matches the object, otherwise false.
      */
@@ -120,7 +120,7 @@ public class JSONValueMatcher : NSObject {
         return true
     }
 
-    /// NOTE: For internal use only. :nodoc:
+    /// - Note: For internal use only. :nodoc:
     @objc(value:isEqualToValue:ignoreCase:)
     public func value(_ valueOne: Any?, isEqualToValue valueTwo: Any?, ignoreCase: Bool) -> Bool {
         
@@ -184,7 +184,7 @@ public class JSONValueMatcher : NSObject {
      * at least the specified number.
      *
      * - Parameters:
-     *  -  number: The lower bound for the number.
+     *   -  number: The lower bound for the number.
      * - Returns: A value matcher.
      */
     @objc(matcherWhereNumberAtLeast:)
@@ -199,8 +199,8 @@ public class JSONValueMatcher : NSObject {
      * the lowerNumber and higherNumber.
      *
      * - Parameters:
-     *  - lowerNumber: The lower bound for the number.
-     *  - higherNumber: The upper bound for the number.
+     *   - lowerNumber: The lower bound for the number.
+     *   - higherNumber: The upper bound for the number.
      * - Returns: A value matcher.
      */
     @objc(matcherWhereNumberAtLeast:atMost:)
@@ -216,7 +216,7 @@ public class JSONValueMatcher : NSObject {
      * at most the specified number.
      *
      * - Parameters:
-     *  - number: The upper bound for the number.
+     *   - number: The upper bound for the number.
      * - Returns: A value matcher.
      */
     @objc(matcherWhereNumberAtMost:)
@@ -230,7 +230,7 @@ public class JSONValueMatcher : NSObject {
      * Factory method to create a matcher for an exact number.
      *
      * - Parameters:
-     *  - number: The expected number value.
+     *   - number: The expected number value.
      * - Returns: A value matcher.
      */
     @objc(matcherWhereNumberEquals:)
@@ -244,7 +244,7 @@ public class JSONValueMatcher : NSObject {
      * Factory method to create a matcher for an exact boolean.
      *
      * - Parameters:
-     *  - boolean: The expected boolean value.
+     *   - boolean: The expected boolean value.
      * - Returns: A value matcher.
      */
     @objc(matcherWhereBooleanEquals:)
@@ -258,7 +258,7 @@ public class JSONValueMatcher : NSObject {
      * Factory method to create a matcher for an exact string.
      *
      * - Parameters:
-     *  - string: The expected string value.
+     *   - string: The expected string value.
      * - Returns: A value matcher.
      */
     @objc(matcherWhereStringEquals:)
@@ -272,7 +272,7 @@ public class JSONValueMatcher : NSObject {
      * Factory method to create a matcher for the presence of a value.
      *
      * - Parameters:
-     *  - present: true if the value must be present, otherwise false.
+     *   - present: true if the value must be present, otherwise false.
      * - Returns: A value matcher.
      */
     @objc(matcherWhereValueIsPresent:)
@@ -286,7 +286,7 @@ public class JSONValueMatcher : NSObject {
      * Factory method to create a matcher for a version constraint.
      *
      * - Parameters:
-     *  - versionConstraint The version constraint to be matched against.
+     *   - versionConstraint The version constraint to be matched against.
      * - Returns: A value matcher.
      */
     @objc(matcherWithVersionConstraint:)
@@ -305,7 +305,7 @@ public class JSONValueMatcher : NSObject {
      * Factory method to create a matcher for an array value.
      *
      * - Parameters:
-     *  - predicate A predicate to be used to evaluate each value in the array for a match.
+     *   - predicate A predicate to be used to evaluate each value in the array for a match.
      * - Returns:  A value matcher.
      */
     @objc(matcherWithArrayContainsPredicate:)
@@ -320,8 +320,8 @@ public class JSONValueMatcher : NSObject {
      * Factory method to create a matcher for a value in an array.
      *
      * - Parameters:
-     *  - predicate A predicate to be used to evaluate the value at the index.
-     *  -  index The array index.
+     *   - predicate A predicate to be used to evaluate the value at the index.
+     *   -  index The array index.
      * - Returns: A value matcher.
      */
     @objc(matcherWithArrayContainsPredicate:atIndex:)
@@ -336,8 +336,8 @@ public class JSONValueMatcher : NSObject {
      * Factory method to create a matcher from a JSON payload.
      *
      * - Parameters:
-     *  - json The JSON payload.
-     *  - error An NSError pointer for storing errors, if applicable.
+     *   - json The JSON payload.
+     *   - error An NSError pointer for storing errors, if applicable.
      * - Returns: A value matcher, or `nil` if the JSON is invalid.
      */
     @objc(matcherWithJSON:error:)
@@ -441,7 +441,7 @@ public class JSONValueMatcher : NSObject {
         return (expression[JSONValueMatcher.arrayContainsKey] is [AnyHashable : Any]) && (expression[JSONValueMatcher.arrayIndexKey] is NSNumber)
     }
 
-    /// NOTE: For internal use only. :nodoc:
+    /// - Note: For internal use only. :nodoc:
     public override func isEqual(_ other: Any?) -> Bool {
         guard let matcher = other as? JSONValueMatcher? else {
             return false

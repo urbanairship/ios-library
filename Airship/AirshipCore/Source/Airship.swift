@@ -7,7 +7,7 @@ import Foundation
 #endif
 
 /**
- * UAirship manages the shared state for all Airship services. [UAirship takeOff:] should be
+ * Airship manages the shared state for all Airship services. Airship.takeOff should be
  * called from within your application delegate's `application:didFinishLaunchingWithOptions:` method
  * to initialize the shared instance.
  */
@@ -18,6 +18,7 @@ import Foundation
 public class Airship : NSObject {
     
     /// Airship deep link scheme
+    /// - Note: For internal use only. :nodoc:
     @objc
     public static let deepLinkScheme = "uairship"
     
@@ -37,7 +38,7 @@ public class Airship : NSObject {
     @objc
     public static let airshipReadyPayloadVersion = "payload_version"
     
-    /// User defualts key to clear the keychain of Airship values for one app run. Used for testing.
+    /// User defualts key to clear the keychain of Airship values for one app run. Used for testing. :nodoc:
     @objc
     public static let resetKeyChainKey = "com.urbanairship.reset_keychain"
 
@@ -250,6 +251,7 @@ public class Airship : NSObject {
     }
 
     /// Processes a deep link.
+    /// - Note: For internal use only. :nodoc:
     /// `uairship://` deep links will be handled internally. All other deep links will be forwaded to the deep link delegate.
     /// - Parameters:
     ///     - deepLink: The deep link.

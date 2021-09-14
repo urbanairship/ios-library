@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 /// Platform independent representation of application state.
-/// @note For internal use only. :nodoc:
+/// - Note: For internal use only. :nodoc:
 @objc(UAApplicationState)
 public enum ApplicationState : Int {
     /// The active state.

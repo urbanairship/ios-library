@@ -12,7 +12,7 @@ public protocol DelayProtocol {
 }
 
 /**
- * @note For internal use only. :nodoc:
+ * - Note: For internal use only. :nodoc:
  */
 @objc(UADelay)
 public class Delay : NSObject, DelayProtocol {

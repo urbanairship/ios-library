@@ -4,7 +4,7 @@ import Foundation
 
 #if !os(tvOS)
 /**
- * Utility methods to create categories from plist files or NSDictionaries.
+ * Utility methods to create categories from plist files or dictionaries.
  */
 @objc(UANotificationCategories)
 public class NotificationCategories : NSObject {
@@ -39,7 +39,7 @@ public class NotificationCategories : NSObject {
      * Creates a set of categories from the specified `.plist` file.
      *
      * Categories are defined in a plist dictionary with the category ID
-     * followed by an NSArray of user notification action definitions. The
+     * followed by an array of user notification action definitions. The
      * action definitions use the same keys as the properties on the action,
      * with the exception of "foreground" mapping to either UIUserNotificationActivationModeForeground
      * or UIUserNotificationActivationModeBackground. The required action definition
@@ -56,9 +56,9 @@ public class NotificationCategories : NSObject {
      *              "identifier" : "action ID",
      *              "title_resource" : "action title resource",
      *              "title" : "action title",
-     *              "foreground" : @YES,
-     *              "authenticationRequired" : @NO,
-     *              "destructive" : @NO
+     *              "foreground" : true,
+     *              "authenticationRequired" : false,
+     *              "destructive" : false
      *          }]
      *  }
      *

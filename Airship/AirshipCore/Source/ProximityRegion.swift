@@ -16,14 +16,14 @@ public class ProximityRegion : NSObject {
     /**
      * Default constructor.
      *
-     * @param proximityID The ID of the proximity region.
-     * @param major The major.
-     * @param minor The minor.
-     * @param rssi The rssi.
-     * @param latitude The latitude of the circular region's center point in degress.
-     * @param longitude The longitude of the circular region's center point in degrees.
+     * - Parameter proximityID: The ID of the proximity region.
+     * - Parameter major: The major.
+     * - Parameter minor: The minor.
+     * - Parameter rssi: The rssi.
+     * - Parameter latitude: The latitude of the circular region's center point in degress.
+     * - Parameter longitude: The longitude of the circular region's center point in degrees.
      *
-     * @return Proximity region object or `nil` if error occurs.
+     * - Returns: Proximity region object or `nil` if error occurs.
      */
     public init?(proximityID: String,
           major:Double,
@@ -79,11 +79,11 @@ public class ProximityRegion : NSObject {
     /**
      * Factory method for creating a proximity region.
      *
-     * @param proximityID The ID of the proximity region.
-     * @param major The major.
-     * @param minor The minor.
+     * - Parameter proximityID: The ID of the proximity region.
+     * - Parameter major: The major.
+     * - Parameter minor: The minor.
      *
-     * @return Proximity region object or `nil` if error occurs.
+     * - Returns: Proximity region object or `nil` if error occurs.
      */
     @objc(proximityRegionWithID:major:minor:)
     public class func proximityRegion(proximityID: String,
@@ -95,12 +95,12 @@ public class ProximityRegion : NSObject {
     /**
      * Factory method for creating a proximity region.
      *
-     * @param proximityID The ID of the proximity region.
-     * @param major The major.
-     * @param minor The minor.
-     * @param rssi The rssi.
+     * - Parameter proximityID: The ID of the proximity region.
+     * - Parameter major: The major.
+     * - Parameter minor: The minor.
+     * - Parameter rssi: The rssi.
      *
-     * @return Proximity region object or `nil` if error occurs.
+     * - Returns: Proximity region object or `nil` if error occurs.
      */
     @objc(proximityRegionWithID:major:minor:rssi:)
     public class func proximityRegion(proximityID: String,
@@ -114,13 +114,13 @@ public class ProximityRegion : NSObject {
     /**
      * Factory method for creating a proximity region.
      *
-     * @param proximityID The ID of the proximity region.
-     * @param major The major.
-     * @param minor The minor.
-     * @param latitude The latitude of the circular region's center point in degress.
-     * @param longitude The longitude of the circular region's center point in degrees.
+     * - Parameter proximityID: The ID of the proximity region.
+     * - Parameter major: The major.
+     * - Parameter minor: The minor.
+     * - Parameter latitude: The latitude of the circular region's center point in degress.
+     * - Parameter longitude: The longitude of the circular region's center point in degrees.
      *
-     * @return Proximity region object or `nil` if error occurs.
+     * - Returns: Proximity region object or `nil` if error occurs.
      */
     @objc(proximityRegionWithID:major:minor:latitude:longitude:)
     public class func proximityRegion(proximityID: String,
@@ -134,14 +134,14 @@ public class ProximityRegion : NSObject {
     /**
      * Factory method for creating a proximity region.
      *
-     * @param proximityID The ID of the proximity region.
-     * @param major The major.
-     * @param minor The minor.
-     * @param rssi The rssi.
-     * @param latitude The latitude of the circular region's center point in degress.
-     * @param longitude The longitude of the circular region's center point in degrees.
+     * - Parameter proximityID: The ID of the proximity region.
+     * - Parameter major: The major.
+     * - Parameter minor: The minor.
+     * - Parameter rssi: The rssi.
+     * - Parameter latitude: The latitude of the circular region's center point in degress.
+     * - Parameter longitude: The longitude of the circular region's center point in degrees.
      *
-     * @return Proximity region object or `nil` if error occurs.
+     * - Returns: Proximity region object or `nil` if error occurs.
      */
     @objc(proximityRegionWithID:major:minor:rssi:latitude:longitude:)
     public class func proximityRegion(proximityID: String,

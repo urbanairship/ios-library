@@ -17,7 +17,7 @@ public class SubscriptionListEditor: NSObject {
     }
     
     /**
-     *  Subscribes to a list.
+     * Subscribes to a list.
      * - Parameters:
      *   - subscriptionListID: The subscription list identifier.
      */
@@ -28,7 +28,7 @@ public class SubscriptionListEditor: NSObject {
     }
 
     /**
-     *  Unsubscribes from a list.
+     * Unsubscribes from a list.
      * - Parameters:
      *   - subscriptionListID: The subscription list identifier.
      */

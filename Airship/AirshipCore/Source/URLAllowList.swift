@@ -8,11 +8,11 @@ public protocol URLAllowListDelegate {
     /**
      * Called when a URL has been allowed by the SDK, but before the URL is fetched.
      *
-     * - parameters:
+     * - Parameters:
      *   - url: The URL allowed by the SDK.
      *   - scope: The scope of the desired match.
      *
-     * - returns `true` to accept this URL, `false`  to reject this URL.
+     * - Returns: `true` to accept this URL, `false`  to reject this URL.
      */
     @objc
     func allowURL(_ url: URL, scope: UAURLAllowListScope) -> Bool
@@ -80,11 +80,11 @@ open class URLAllowList : NSObject, URLAllowListProtocol {
     
     /// Create a default URL allow list with entries specified in a config object.
     ///
-    /// - note The entry "*.urbanairship.com" is added by default.
+    /// - Note: The entry "*.urbanairship.com" is added by default.
     ///
-    /// - parameter config An instance of UARuntimeConfig.
+    /// - Parameter config: An instance of UARuntimeConfig.
     ///
-    /// - returns An instance of UAURLAllowList
+    /// - Returns: An instance of UAURLAllowList
     @objc
     public static func allowListWithConfig(_ config: RuntimeConfig) -> URLAllowList {
         let allowList = URLAllowList()
@@ -122,9 +122,9 @@ open class URLAllowList : NSObject, URLAllowListProtocol {
     
     /// Add an entry to the URL allow list, with the implicit scope `URLAllowListScope.all`.
     ///
-    /// - parameter patternString A URL allow list pattern string.
+    /// - Parameter patternString: A URL allow list pattern string.
     ///
-    /// - returns `true` if the URL allow list pattern was validated and added, `false` otherwise.
+    /// - Returns: `true` if the URL allow list pattern was validated and added, `false` otherwise.
     @objc
     @discardableResult
     open func addEntry(_ patternString: String) -> Bool {
@@ -133,11 +133,11 @@ open class URLAllowList : NSObject, URLAllowListProtocol {
     
     /// Add an entry to the URL allow list.
     ///
-    /// - parameters:
+    /// - Parameters:
     ///   - patternString: A URL allow list pattern string.
     ///   - scope: The scope of the pattern.
     ///
-    /// - returns `true` if the URL allow list pattern was validated and added, `false` otherwise.
+    /// - Returns: `true` if the URL allow list pattern was validated and added, `false` otherwise.
     @objc
     @discardableResult
     open func addEntry(_ patternString: String, scope: UAURLAllowListScope) -> Bool {
@@ -186,10 +186,10 @@ open class URLAllowList : NSObject, URLAllowListProtocol {
     
     /// Determines whether a given URL is allowed, with the implicit scope `URLAllowListScope.all`.
     ///
-    /// - parameters:
+    /// - Parameters:
     ///   - url: The URL under consideration.
     ///
-    /// - returns: `true` if the URL is allowed, `false` otherwise.
+    /// - Returns: `true` if the URL is allowed, `false` otherwise.
     @objc
     open func isAllowed(_ url: URL?) -> Bool {
         return isAllowed(url, scope: .all)
@@ -197,11 +197,11 @@ open class URLAllowList : NSObject, URLAllowListProtocol {
     
     /// Determines whether a given URL is allowed.
     ///
-    /// - parameters:
+    /// - Parameters:
     ///   - url: The URL under consideration.
     ///   - scope: The scope of the desired match.
     ///
-    /// - returns: `true` if the URL is allowed, `false` otherwise.
+    /// - Returns: `true` if the URL is allowed, `false` otherwise.
     @objc
     open func isAllowed(_ url: URL?, scope: UAURLAllowListScope) -> Bool {
         guard let url = url else {

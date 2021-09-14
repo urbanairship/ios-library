@@ -55,7 +55,7 @@ public class LocaleManager : NSObject, LocaleManagerProtocol {
     }
 
     /**
-     * @note For internal use only. :nodoc:
+     * - Note: For internal use only. :nodoc:
      */
     @objc
     public convenience init(dataStore: PreferenceDataStore) {
@@ -63,7 +63,7 @@ public class LocaleManager : NSObject, LocaleManagerProtocol {
     }
 
     /**
-     * @note For internal use only. :nodoc:
+     * - Note: For internal use only. :nodoc:
      */ 
     @objc
     public init(dataStore: PreferenceDataStore, notificationCenter: NotificationCenter) {

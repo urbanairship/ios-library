@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 /**
- * A AccountEventTemplate represents a custom account event template for the
+ * AccountEventTemplate represents a custom account event template for the
  * application.
  */
 @objc(UAAccountEventTemplate)
@@ -50,7 +50,7 @@ public class AccountEventTemplate : NSObject {
 
     /**
      * Factory method for creating a registered account event template.
-     * @returns An Account event template instance
+     * - Returns: An Account event template instance
      */
     @objc
     public class func registeredTemplate() -> AccountEventTemplate {
@@ -60,9 +60,9 @@ public class AccountEventTemplate : NSObject {
     /**
      * Factory method for creating a registered account event template with a value from a string.
      *
-     * @param valueString The value of the event as a string. The value must be a valid
+     * - Parameter valueString: The value of the event as a string. The value must be a valid
      * number between -2^31 and 2^31 - 1 or it will invalidate the event.
-     * @returns An Account event template instance
+     * - Returns: An Account event template instance
      */
     @objc(registeredTemplateWithValueFromString:)
     public class func registeredTemplate(valueString: String?) -> AccountEventTemplate {
@@ -73,9 +73,9 @@ public class AccountEventTemplate : NSObject {
     /**
      * Factory method for creating a registered account event template with a value.
      *
-     * @param value The value of the event. The value must be between -2^31 and
+     * - Parameter value: The value of the event. The value must be between -2^31 and
      * 2^31 - 1 or it will invalidate the event.
-     * @returns An Account event template instance
+     * - Returns: An Account event template instance
      */
     @objc(registeredTemplateWithValue:)
     public class func registeredTemplate(value: NSNumber?) -> AccountEventTemplate {
@@ -84,7 +84,7 @@ public class AccountEventTemplate : NSObject {
 
     /**
      * Factory method for creating a logged in account event template.
-     * @returns An Account event template instance
+     * - Returns: An Account event template instance
      */
     @objc
     public class func loggedInTemplate() -> AccountEventTemplate {
@@ -94,9 +94,9 @@ public class AccountEventTemplate : NSObject {
     /**
      * Factory method for creating a logged in account event template with a value from a string.
      *
-     * @param valueString The value of the event as a string. The value must be a valid
+     * - Parameter valueString: The value of the event as a string. The value must be a valid
      * number between -2^31 and 2^31 - 1 or it will invalidate the event.
-     * @returns An Account event template instance
+     * - Returns: An Account event template instance
      */
     @objc(loggedInTemplateWithValueFromString:)
     public class func loggedInTemplate(valueString: String?) -> AccountEventTemplate {
@@ -107,9 +107,9 @@ public class AccountEventTemplate : NSObject {
     /**
      * Factory method for creating a logged in account event template with a value.
      *
-     * @param value The value of the event. The value must be between -2^31 and
+     * - Parameter value: The value of the event. The value must be between -2^31 and
      * 2^31 - 1 or it will invalidate the event.
-     * @returns An Account event template instance
+     * - Returns: An Account event template instance
      */
     @objc(loggedInTemplateWithValue:)
     public class func loggedInTemplate(value: NSNumber?) -> AccountEventTemplate {
@@ -119,7 +119,7 @@ public class AccountEventTemplate : NSObject {
 
     /**
      * Factory method for creating a logged out account event template.
-     * @returns An Account event template instance
+     * - Returns: An Account event template instance
      */
     @objc
     public class func loggedOutTemplate() -> AccountEventTemplate {
@@ -129,9 +129,9 @@ public class AccountEventTemplate : NSObject {
     /**
      * Factory method for creating a logged out account event template with a value from a string.
      *
-     * @param valueString The value of the event as a string. The value must be a valid
+     * - Parameter valueString: The value of the event as a string. The value must be a valid
      * number between -2^31 and 2^31 - 1 or it will invalidate the event.
-     * @returns An Account event template instance
+     * - Returns: An Account event template instance
      */
     @objc(loggedOutTemplateWithValueFromString:)
     public class func loggedOutTemplate(valueString: String?) -> AccountEventTemplate {
@@ -142,9 +142,9 @@ public class AccountEventTemplate : NSObject {
     /**
      * Factory method for creating a logged out account event template with a value.
      *
-     * @param value The value of the event. The value must be between -2^31 and
+     * - Parameter value: The value of the event. The value must be between -2^31 and
      * 2^31 - 1 or it will invalidate the event.
-     * @returns An Account event template instance
+     * - Returns: An Account event template instance
      */
     @objc(loggedOutTemplateWithValue:)
     public class func loggedOutTemplate(value: NSNumber?) -> AccountEventTemplate {

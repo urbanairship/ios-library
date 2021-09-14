@@ -74,10 +74,11 @@ public class Channel : NSObject, Component, ChannelProtocol {
     private var shouldPerformChannelRegistrationOnForeground = false
     private var extensionBlocks: [((ChannelRegistrationPayload, @escaping (ChannelRegistrationPayload) -> Void) -> Void)] = []
 
-
+    /// - Note: For internal use only. :nodoc:
     @objc
     public private(set) var isChannelCreationEnabled: Bool
-    
+
+    /// The channel identifier.
     public var identifier: String? {
         get {
             return self.channelRegistrar.channelID
@@ -97,7 +98,8 @@ public class Channel : NSObject, Component, ChannelProtocol {
             return self.audienceManager.pendingTagGroupUpdates
         }
     }
-    
+
+    /// The channel tags.
     public var tags: [String] {
         get {
             guard (self.privacyManager.isEnabled(.tagsAndAttributes)) else {
@@ -123,9 +125,12 @@ public class Channel : NSObject, Component, ChannelProtocol {
             }
         }
     }
-    
+
+    /// Allows setting tags from the device. Tags can be set from either the server or the device, but not both (without synchronizing the data),
+    /// so use this flag to explicitly enable or disable the device-side flags.
+    /// Set this to `false` to prevent the device from sending any tag information to the server when using server-side tagging. Defaults to `true`.
     public var isChannelTagRegistrationEnabled = true
-    
+
     private let disableHelper: ComponentDisableHelper
     
     // NOTE: For internal use only. :nodoc:
@@ -143,6 +148,7 @@ public class Channel : NSObject, Component, ChannelProtocol {
         return Airship.requireComponent(ofType: ChannelProtocol.self)
     }
     
+    /// The shared Channel instance.
     /// - Returns The shared Channel instance.
     @objc
     public static var shared: Channel {
@@ -282,7 +288,9 @@ public class Channel : NSObject, Component, ChannelProtocol {
     public func addRegistrationExtender(_ extender: @escaping(ChannelRegistrationPayload, (@escaping (ChannelRegistrationPayload) -> Void)) -> Void) {
         self.extensionBlocks.append(extender)
     }
-    
+
+    /// Begins a tag editing session
+    /// - Returns: A TagEditor
     public func editTags() -> TagEditor {
         return TagEditor() { tagApplicator in
             self.tagsLock.sync {
@@ -290,43 +298,64 @@ public class Channel : NSObject, Component, ChannelProtocol {
             }
         }
     }
-    
+
+    /// Begins a tag editing session
+    /// - Parameter editorBlock: A tag editor block.
+    /// - Returns: A TagEditor
     public func editTags(_ editorBlock: (TagEditor) -> Void) {
         let editor = editTags()
         editorBlock(editor)
         editor.apply()
     }
-    
+
+    /// Begins a tag group editing session
+    /// - Returns: A TagGroupsEditor
     public func editTagGroups() -> TagGroupsEditor {
         let allowDeviceTags = !self.isChannelTagRegistrationEnabled
         return self.audienceManager.editTagGroups(allowDeviceGroup: allowDeviceTags)
     }
-    
+
+    /// Begins a tag group editing session
+    /// - Parameter editorBlock: A tag group editor block.
+    /// - Returns: A TagGroupsEditor
     public func editTagGroups(_ editorBlock: (TagGroupsEditor) -> Void) {
         let editor = editTagGroups()
         editorBlock(editor)
         editor.apply()
     }
-    
+
+    /// Begins a subscription list editing session
+    /// - Returns: A SubscriptionListEditor
     public func editSubscriptionLists() -> SubscriptionListEditor {
         return self.audienceManager.editSubscriptionLists()
     }
-    
+
+    /// Begins a subscription list editing session
+    /// - Parameter editorBlock: A subscription list editor block.
+    /// - Returns: A SubscriptionListEditor
     public func editSubscriptionLists(_ editorBlock: (SubscriptionListEditor) -> Void) {
         let editor = editSubscriptionLists()
         editorBlock(editor)
         editor.apply()
     }
-    
+
+    /// Fetches subscription lists.
+    /// - Parameter completionHandler: A completion handler.
+    /// - Returns: A Disposable.
     @discardableResult
     public func fetchSubscriptionLists(completionHandler: @escaping ([String]?, Error?) -> Void) -> Disposable {
         return audienceManager.fetchSubscriptionLists(completionHandler: completionHandler)
     }
-    
+
+    /// Begins an attributes editing session
+    /// - Returns: An AttributesEditor
     public func editAttributes() -> AttributesEditor {
         return self.audienceManager.editAttributes()
     }
-    
+
+    /// Begins an attributes editing session
+    /// - Parameter editorBlock An attributes editor block.
+    /// - Returns: An AttributesEditor
     public func editAttributes(_ editorBlock: (AttributesEditor) -> Void) {
         let editor = editAttributes()
         editorBlock(editor)
@@ -455,7 +484,7 @@ public class Channel : NSObject, Component, ChannelProtocol {
         updateRegistration(forcefully: false)
     }
     
-    // NOTE: For internal use only. :nodoc:
+    /// - Note: For internal use only. :nodoc:
     public func updateRegistration(forcefully: Bool) {
         guard self.isComponentEnabled else {
             return
@@ -475,6 +504,7 @@ public class Channel : NSObject, Component, ChannelProtocol {
     }
 }
 
+/// - Note: for internal use only.  :nodoc:
 extension Channel : PushableComponent {
     
     public func receivedRemoteNotification(_ notification: [AnyHashable : Any], completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
@@ -485,6 +515,7 @@ extension Channel : PushableComponent {
     }
 }
 
+/// - Note: for internal use only.  :nodoc:
 extension Channel : ChannelRegistrarDelegate {
     
     public func createChannelPayload(completionHandler: @escaping (ChannelRegistrationPayload) -> ()) {

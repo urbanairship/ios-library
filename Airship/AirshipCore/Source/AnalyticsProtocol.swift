@@ -59,7 +59,7 @@ public protocol AnalyticsProtocol {
     /// Registers an SDK extension with the analytics module.
     /// For internal use only. :nodoc:
     ///
-    ///  - Parameters:
+    /// - Parameters:
     ///   - ext: The SDK extension.
     ///   - version: The version.
     @objc

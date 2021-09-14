@@ -32,7 +32,7 @@ public class JSONPredicate : NSObject {
      * Factory method to create a predicate from a JSON payload.
      *
      * - Parameters:
-     *  - json The JSON payload.
+     *   - json The JSON payload.
      * - Returns: A predicate or `nil` if the JSON is invalid.
      */
     @objc(initWithJSON:error:)
@@ -112,7 +112,7 @@ public class JSONPredicate : NSObject {
      * Evaluates the object with the predicate.
      *
      * - Parameters:
-     *  -  object: The object to evaluate.
+     *   -  object: The object to evaluate.
      * - Returns: true if the predicate matches the object, otherwise false.
      */
     @objc(evaluateObject:)
@@ -151,7 +151,7 @@ public class JSONPredicate : NSObject {
      * Creates a JSON predicate from a JSONMatcher.
      *
      * - Parameters:
-     *  -  matcher: A JSON matcher.
+     *   -  matcher: A JSON matcher.
      * - Returns: A JSON predicate.
      */
     @objc(initWithJSONMatcher:)
@@ -163,7 +163,7 @@ public class JSONPredicate : NSObject {
      * Factory method to create a JSON predicate formed by AND-ing an array of predicates.
      *
      * - Parameters:
-     *  - subpredicates: An array of predicates.
+     *   - subpredicates: An array of predicates.
      * - Returns: A JSON predicate.
      */
     @objc(andPredicateWithSubpredicates:)
@@ -175,7 +175,7 @@ public class JSONPredicate : NSObject {
      * Factory method to create a JSON predicate formed by OR-ing an array of predicates.
      *
      * - Parameters:
-     *  - subpredicates: An array of predicates.
+     *   - subpredicates: An array of predicates.
      * - Returns: A JSON predicate.
      */
     @objc(orPredicateWithSubpredicates:)
@@ -188,7 +188,7 @@ public class JSONPredicate : NSObject {
      * Factory method to create a JSON predicate by NOT-ing a predicate.
      *
      * - Parameters:
-     *  -  subpredicate: A predicate.
+     *   -  subpredicate: A predicate.
      * - Returns:A JSON predicate.
      */
     @objc(notPredicateWithSubpredicate:)
@@ -200,7 +200,7 @@ public class JSONPredicate : NSObject {
      * Factory method to create a predicate from a JSON payload.
      *
      * - Parameters:
-     *  - json: The JSON payload.
+     *   - json: The JSON payload.
      * - Returns: A predicate or `nil` if the JSON is invalid.
      */
     @objc(predicateWithJSON:error:)

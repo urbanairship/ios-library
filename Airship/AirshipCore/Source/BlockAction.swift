@@ -4,6 +4,7 @@ import Foundation
 
 /**
  * Action that runs a block.
+ * - Note: For internal use only. :nodoc:
  */
 @objc(UABlockAction)
 public class BlockAction : NSObject, Action {
@@ -13,8 +14,8 @@ public class BlockAction : NSObject, Action {
     /**
      * Block action constructor.
      *  - Parameters:
-     *      - predicate: Optional predicate.
-     *      - block: The action block.
+     *    - predicate: Optional predicate.
+     *    - block: The action block.
      */
     @objc
     public init(predicate: UAActionPredicate?, block: @escaping UAActionBlock) {
@@ -26,7 +27,7 @@ public class BlockAction : NSObject, Action {
     /**
      * Block action constructor.
      *  - Parameters:
-     *      - block: The action block.
+     *    - block: The action block.
      */
     @objc(initWithBlock:)
     public convenience init(_ block: @escaping UAActionBlock) {

@@ -79,8 +79,8 @@ public class NamedUser : NSObject, Component {
     /**
      * Add tags on the contact.
      * - Parameters:
-     *  - tags: Array of tags.
-     *  - group  Tag group..
+     *   - tags: Array of tags.
+     *   - group  Tag group..
      */
     @available(*, deprecated, message: "Use Contact#editTagGroups instead.")
     @objc(addTags:group:)
@@ -93,8 +93,8 @@ public class NamedUser : NSObject, Component {
     /**
      * Sets tags on the contact.
      * - Parameters:
-     *  - tags: Array of tags.
-     *  - group  Tag group.
+     *   - tags: Array of tags.
+     *   - group  Tag group.
      */
     @available(*, deprecated, message: "Use Contact#editTagGroups instead.")
     @objc(setTags:group:)
@@ -107,8 +107,8 @@ public class NamedUser : NSObject, Component {
     /**
      * Removes tags on the contact.
      * - Parameters:
-     *  - tags: Array of tags.
-     *  - group  Tag group.
+     *   - tags: Array of tags.
+     *   - group  Tag group.
      */
     @available(*, deprecated, message: "Use Contact#editTagGroups instead.")
     @objc(removeTags:group:)
@@ -122,7 +122,7 @@ public class NamedUser : NSObject, Component {
      * Applies attribute mutations to the contact.
      *
      * - Parameters:
-     *  -  mutations: Attribute mutations.
+     *   -  mutations: Attribute mutations.
      */
     @available(*, deprecated, message: "Use Contact#editAttributes instead.")
     @objc(applyAttributeMutations:)

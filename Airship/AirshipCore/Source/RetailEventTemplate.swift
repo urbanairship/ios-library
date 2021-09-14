@@ -69,7 +69,7 @@ public class RetailEventTemplate: NSObject {
 
     /**
      * Factory method for creating a browsed event template.
-     * @returns A Retail event template instance
+     * - Returns: A Retail event template instance
      */
     @objc(browsedTemplate)
     public class func browsedTemplate() -> RetailEventTemplate {
@@ -79,9 +79,9 @@ public class RetailEventTemplate: NSObject {
     /**
      * Factory method for creating a browsed event template with a value.
      *
-     * @param valueString The value of the event as as string. The value must be between
+     * - Parameter valueString: The value of the event as as string. The value must be between
      * -2^31 and 2^31 - 1 or it will invalidate the event.
-     * @returns A Retail event template instance
+     * - Returns: A Retail event template instance
      */
     @objc(browsedTemplateWithValueFromString:)
     public class func browsedTemplate(valueString: String?) -> RetailEventTemplate {
@@ -92,9 +92,9 @@ public class RetailEventTemplate: NSObject {
     /**
      * Factory method for creating a browsed event template with a value.
      *
-     * @param value The value of the event. The value must be between -2^31 and
+     * - Parameter value: The value of the event. The value must be between -2^31 and
      * 2^31 - 1 or it will invalidate the event.
-     * @returns A Retail event template instance
+     * - Returns: A Retail event template instance
      */
     @objc(browsedTemplateWithValue:)
     public class func browsedTemplate(value: NSNumber?) -> RetailEventTemplate {
@@ -103,7 +103,7 @@ public class RetailEventTemplate: NSObject {
 
     /**
      * Factory method for creating an addedToCart event template.
-     * @returns A Retail event template instance
+     * - Returns: A Retail event template instance
      */
     @objc(addedToCartTemplate)
     public class func addedToCartTemplate() -> RetailEventTemplate {
@@ -113,9 +113,9 @@ public class RetailEventTemplate: NSObject {
     /**
      * Factory method for creating an addedToCart event template with a value.
      *
-     * @param valueString The value of the event as as string. The value must be between
+     * - Parameter valueString: The value of the event as as string. The value must be between
      * -2^31 and 2^31 - 1 or it will invalidate the event.
-     * @returns A Retail event template instance
+     * - Returns: A Retail event template instance
      */
     @objc(addedToCartTemplateWithValueFromString:)
     public class func addedToCartTemplate(valueString: String?) -> RetailEventTemplate {
@@ -126,9 +126,9 @@ public class RetailEventTemplate: NSObject {
     /**
      * Factory method for creating an addedToCart event template with a value.
      *
-     * @param value The value of the event. The value must be between -2^31 and
+     * - Parameter value: The value of the event. The value must be between -2^31 and
      * 2^31 - 1 or it will invalidate the event.
-     * @returns A Retail event template instance
+     * - Returns: A Retail event template instance
      */
     @objc(addedToCartTemplateWithValue:)
     public class func addedToCartTemplate(value: NSNumber?) -> RetailEventTemplate {
@@ -137,7 +137,7 @@ public class RetailEventTemplate: NSObject {
 
     /**
      * Factory method for creating a starredProduct event template
-     * @returns A Retail event template instance
+     * - Returns: A Retail event template instance
      */
     @objc(starredProductTemplate)
     public class func starredProductTemplate() -> RetailEventTemplate {
@@ -147,9 +147,9 @@ public class RetailEventTemplate: NSObject {
     /**
      * Factory method for creating a starredProduct event template with a value.
      *
-     * @param valueString The value of the event as as string. The value must be between
+     * - Parameter valueString: The value of the event as as string. The value must be between
      * -2^31 and 2^31 - 1 or it will invalidate the event.
-     * @returns A Retail event template instance
+     * - Returns: A Retail event template instance
      */
     @objc(starredProductTemplateWithValueFromString:)
     public class func starredProductTemplate(valueString: String?) -> RetailEventTemplate {
@@ -160,9 +160,9 @@ public class RetailEventTemplate: NSObject {
     /**
      * Factory method for creating a starredProduct event template with a value.
      *
-     * @param value The value of the event. The value must be between -2^31 and
+     * - Parameter value: The value of the event. The value must be between -2^31 and
      * 2^31 - 1 or it will invalidate the event.
-     * @returns A Retail event template instance
+     * - Returns: A Retail event template instance
      */
     @objc(starredProductTemplateWithValue:)
     public class func starredProductTemplate(value: NSNumber?) -> RetailEventTemplate {
@@ -171,7 +171,7 @@ public class RetailEventTemplate: NSObject {
 
     /**
      * Factory method for creating a purchased event template.
-     * @returns A Retail event template instance
+     * - Returns: A Retail event template instance
      */
     @objc(purchasedTemplate)
     public class func purchasedTemplate() -> RetailEventTemplate {
@@ -181,9 +181,9 @@ public class RetailEventTemplate: NSObject {
     /**
      * Factory method for creating a purchased event template with a value.
      *
-     * @param valueString The value of the event as as string. The value must be between
+     * - Parameter valueString: The value of the event as as string. The value must be between
      * -2^31 and 2^31 - 1 or it will invalidate the event.
-     * @returns A Retail event template instance
+     * - Returns: A Retail event template instance
      */
     @objc(purchasedTemplateWithValueFromString:)
     public class func purchasedTemplate(valueString: String?) -> RetailEventTemplate {
@@ -194,9 +194,9 @@ public class RetailEventTemplate: NSObject {
     /**
      * Factory method for creating a purchased event template with a value.
      *
-     * @param value The value of the event. The value must be between -2^31 and
+     * - Parameter value: The value of the event. The value must be between -2^31 and
      * 2^31 - 1 or it will invalidate the event.
-     * @returns A Retail event template instance
+     * - Returns: A Retail event template instance
      */
     @objc(purchasedTemplateWithValue:)
     public class func purchasedTemplate(value: NSNumber?) -> RetailEventTemplate {
@@ -205,7 +205,7 @@ public class RetailEventTemplate: NSObject {
 
     /**
      * Factory method for creating a sharedProduct template event.
-     * @returns A Retail event template instance
+     * - Returns: A Retail event template instance
      */
     @objc(sharedProductTemplate)
     public class func sharedProductTemplate() -> RetailEventTemplate {
@@ -215,9 +215,9 @@ public class RetailEventTemplate: NSObject {
     /**
      * Factory method for creating a sharedProduct event template with a value.
      *
-     * @param valueString The value of the event as as string. The value must be between
+     * - Parameter valueString: The value of the event as as string. The value must be between
      * -2^31 and 2^31 - 1 or it will invalidate the event.
-     * @returns A Retail event template instance
+     * - Returns: A Retail event template instance
      */
     @objc(sharedProductTemplateWithValueFromString:)
     public class func sharedProductTemplate(valueString: String?) -> RetailEventTemplate {
@@ -228,9 +228,9 @@ public class RetailEventTemplate: NSObject {
     /**
      * Factory method for creating a sharedProduct event template with a value.
      *
-     * @param value The value of the event. The value must be between -2^31 and
+     * - Parameter value: The value of the event. The value must be between -2^31 and
      * 2^31 - 1 or it will invalidate the event.
-     * @returns A Retail event template instance
+     * - Returns: A Retail event template instance
      */
     @objc(sharedProductTemplateWithValue:)
     public class func sharedProductTemplate(value: NSNumber?) -> RetailEventTemplate {
@@ -239,9 +239,9 @@ public class RetailEventTemplate: NSObject {
 
     /**
      * Factory method for creating a sharedProduct event template.
-     * @param source The source as an NSString.
-     * @param medium The medium as an NSString
-     * @returns A Retail event template instance.
+     * - Parameter source: The source as an NSString.
+     * - Parameter medium: The medium as an NSString
+     * - Returns: A Retail event template instance.
      */
     @objc(sharedProductTemplateWithSource:withMedium:)
     public class func sharedProductTemplate(source: String?, medium: String?) -> RetailEventTemplate {
@@ -251,11 +251,11 @@ public class RetailEventTemplate: NSObject {
     /**
      * Factory method for creating a sharedProduct event template with a value.
      *
-     * @param valueString The value of the event as as string. The value must be between
+     * - Parameter valueString: The value of the event as as string. The value must be between
      * -2^31 and 2^31 - 1 or it will invalidate the event.
-     * @param source The source as an NSString.
-     * @param medium The medium as an NSString.
-     * @returns A Retail event template instance
+     * - Parameter source: The source as an NSString.
+     * - Parameter medium: The medium as an NSString.
+     * - Returns: A Retail event template instance
      */
     @objc(sharedProductTemplateWithValueFromString:withSource:withMedium:)
     public class func sharedProductTemplate(valueString: String?, source: String?, medium: String?) -> RetailEventTemplate {
@@ -266,11 +266,11 @@ public class RetailEventTemplate: NSObject {
     /**
      * Factory method for creating a sharedProduct event template with a value.
      *
-     * @param value The value of the event. The value must be between -2^31 and
+     * - Parameter value: The value of the event. The value must be between -2^31 and
      * 2^31 - 1 or it will invalidate the event.
-     * @param source The source as an NSString.
-     * @param medium The medium as an NSString.
-     * @returns A Retail event template instance
+     * - Parameter source: The source as an NSString.
+     * - Parameter medium: The medium as an NSString.
+     * - Returns: A Retail event template instance
      */
     @objc(sharedProductTemplateWithValue:withSource:withMedium:)
     public class func sharedProductTemplate(value: NSNumber?, source: String?, medium: String?) -> RetailEventTemplate {
@@ -279,7 +279,7 @@ public class RetailEventTemplate: NSObject {
 
     /**
      * Factory method for creating a wishlist event template.
-     * @returns A Retail event template instance
+     * - Returns: A Retail event template instance
      */
     @objc(wishlistTemplate)
     public class func wishlistTemplate() -> RetailEventTemplate {
@@ -290,9 +290,9 @@ public class RetailEventTemplate: NSObject {
     /**
      * Factory method for creating a wishlist event template with a wishlist name and ID.
      *
-     * @param name The name of the wishlist as as string.
-     * @param wishlistID The ID of the wishlist as as string.
-     * @returns A Retail event template instance
+     * - Parameter name: The name of the wishlist as as string.
+     * - Parameter wishlistID: The ID of the wishlist as as string.
+     * - Returns: A Retail event template instance
      */
     @objc(wishlistTemplateWithName:wishlistID:)
     public class func wishlistTemplate(name: String?, wishlistID: String?) -> RetailEventTemplate {

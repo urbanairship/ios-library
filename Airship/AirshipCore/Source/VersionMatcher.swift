@@ -69,7 +69,7 @@ public class VersionMatcher : NSObject {
      * Create a matcher for the supplied version contraint
      *
      * - Parameters:
-     *  - versionConstraint: constraint that matches one of our supported patterns
+     *   - versionConstraint: constraint that matches one of our supported patterns
      * - Returns: matcher or nil if versionConstraint does not match any of the expected patterns
      */
     @objc(matcherWithVersionConstraint:)
@@ -83,7 +83,7 @@ public class VersionMatcher : NSObject {
      * Evaluates the object with the matcher.
      *
      * - Parameters:
-     *  - value: The object to evaluate.
+     *   - value: The object to evaluate.
      * - Returns: true if the matcher matches the object, otherwise false.
      */
     @objc(evaluateObject:)
@@ -109,7 +109,7 @@ public class VersionMatcher : NSObject {
      * Check if versionConstraint matches the "exact version" pattern
      *
      * - Parameters:
-     *  - versionConstraint: constraint string
+     *   - versionConstraint: constraint string
      * - Returns: true if versionConstraint matches the "exact version" pattern
      */
     @objc
@@ -148,7 +148,7 @@ public class VersionMatcher : NSObject {
      * Check if versionConstraint matches the "sub version" pattern
      *
      * - Parameters:
-     *  - versionConstraint: constraint string
+     *   - versionConstraint: constraint string
      * - Returns: true if versionConstraint matches the "sub version" pattern
      */
     @objc
@@ -208,7 +208,7 @@ public class VersionMatcher : NSObject {
      * Check if versionConstraint matches the "version range" pattern
      *
      * - Parameters:
-     *  - versionConstraint: constraint string
+     *   - versionConstraint: constraint string
      * - Returns: true if versionConstraint matches the "version range" pattern
      */
     @objc
@@ -406,7 +406,7 @@ public class VersionMatcher : NSObject {
     }
 
     
-    /// NOTE: For internal use only. :nodoc:
+    /// - Note: For internal use only. :nodoc:
     @objc(isEqual:)
     public override func isEqual(_ other: Any?) -> Bool {
         guard let other = other as? VersionMatcher else {

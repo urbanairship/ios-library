@@ -84,7 +84,7 @@ protocol InternalConversationProtocol: ConversationProtocol  {
     /**
      * Adds incoming messages.
      * - Parameters:
-     *  - messages The messages to add.
+     *   - messages The messages to add.
      */
     func addIncoming(_ messages: [ChatIncomingMessage])
 }

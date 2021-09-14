@@ -79,12 +79,12 @@ protocol ChatConnectionProtocol  {
     /**
      * Sends a message.
      * - Parameters:
-     *  - requestID The request ID.
-     *  - text The message's text.
-     *  - attachment The attachment.
-     *  - direction The message direction.
-     *  - date The date.
-     *  - routing The routing object
+     *   - requestID The request ID.
+     *   - text The message's text.
+     *   - attachment The attachment.
+     *   - direction The message direction.
+     *   - date The date.
+     *   - routing The routing object
      */
     @available(iOS 13.0, *)
     func sendMessage(requestID: String, text: String?, attachment: URL?, direction: ChatMessageDirection, date: Date?, routing: ChatRouting?)

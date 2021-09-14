@@ -3,7 +3,7 @@
 import Network
 
 /**
- * @note For internal use only. :nodoc:
+ * - Note: For internal use only. :nodoc:
  */
 @objc(UANetworkMonitor)
 open class NetworkMonitor : NSObject {

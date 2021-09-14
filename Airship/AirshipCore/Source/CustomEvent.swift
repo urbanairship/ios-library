@@ -1,8 +1,8 @@
 /* Copyright Airship and Contributors */
 
 /**
- * A UACustomEvent captures information regarding a custom event for
- * UAAnalytics.
+ * CustomEvent captures information regarding a custom event for
+ * Analytics.
  */
 @objc(UACustomEvent)
 public class CustomEvent : NSObject, Event {
@@ -37,14 +37,14 @@ public class CustomEvent : NSObject, Event {
 
     /**
      * The send ID that triggered the event.
-     * @note For internal use only. :nodoc:
+     * - Note: For internal use only. :nodoc:
      */
     @objc
     public var conversionSendID: String?
 
     /**
      * The conversion push metadata.
-     * @note For internal use only. :nodoc:
+     * - Note: For internal use only. :nodoc:
      */
     @objc
     public var conversionPushMetadata: String?
@@ -52,7 +52,7 @@ public class CustomEvent : NSObject, Event {
     /**
      * The event's template type. The template type's length must not exceed 255 characters or it will
      * invalidate the event.
-     * @note For internal use only. :nodoc:
+     * - Note: For internal use only. :nodoc:
      */
     @objc
     public var templateType: String?
@@ -151,11 +151,11 @@ public class CustomEvent : NSObject, Event {
     /**
      * Constructor
      *
-     * @param name The name of the event. The event's name must not exceed
+     * - Parameter name: The name of the event. The event's name must not exceed
      * 255 characters or it will invalidate the event.
-     * @param stringValue The value of the event as a string. The value must be a valid
+     * - Parameter stringValue: The value of the event as a string. The value must be a valid
      * number between -2^31 and 2^31 - 1 or it will invalidate the event.
-     * @returns A Custom event instance
+     * - Returns: A Custom event instance
      */
     @objc
     public convenience init(name: String, stringValue: String?) {
@@ -166,7 +166,7 @@ public class CustomEvent : NSObject, Event {
     /**
      * Constructor.
      *
-     * @param name The name of the event. The event's name must not exceed
+     * - Parameter name: The name of the event. The event's name must not exceed
      * 255 characters or it will invalidate the event.
      */
     public convenience init(name:  String) {
@@ -176,9 +176,9 @@ public class CustomEvent : NSObject, Event {
     /**
      * Factory method for creating a custom event.
      *
-     * @param name The name of the event. The event's name must not exceed
+     * - Parameter name: The name of the event. The event's name must not exceed
      * 255 characters or it will invalidate the event.
-     * @returns A Custom event instance
+     * - Returns: A Custom event instance
      */
     @objc(eventWithName:)
     public class func event(name: String) -> CustomEvent {
@@ -188,11 +188,11 @@ public class CustomEvent : NSObject, Event {
     /**
      * Factory method for creating a custom event with a value from a string.
      *
-     * @param name The name of the event. The event's name must not exceed
+     * - Parameter name: The name of the event. The event's name must not exceed
      * 255 characters or it will invalidate the event.
-     * @param string The value of the event as a string. The value must be a valid
+     * - Parameter string: The value of the event as a string. The value must be a valid
      * number between -2^31 and 2^31 - 1 or it will invalidate the event.
-     * @returns A Custom event instance
+     * - Returns: A Custom event instance
      */
     @objc(eventWithName:valueFromString:)
     public class func event(name: String, string: String?) -> CustomEvent {
@@ -202,11 +202,11 @@ public class CustomEvent : NSObject, Event {
     /**
      * Factory method for creating a custom event with a value.
      *
-     * @param name The name of the event. The event's name must not exceed
+     * - Parameter name: The name of the event. The event's name must not exceed
      * 255 characters or it will invalidate the event.
-     * @param value The value of the event. The value must be between -2^31 and
+     * - Parameter value: The value of the event. The value must be between -2^31 and
      * 2^31 - 1 or it will invalidate the event.
-     * @returns A Custom event instance
+     * - Returns: A Custom event instance
      */
     @objc(eventWithName:value:)
     public class func event(name: String, value: NSNumber?) -> CustomEvent {
@@ -258,8 +258,8 @@ public class CustomEvent : NSObject, Event {
 
     /**
      * Sets the custom event's interaction type and identifier as coming from a Message Center message.
-     * @param messageID The message ID.
-     * @note For internal use only. :nodoc:
+     * - Parameter messageID: The message ID.
+     * - Note: For internal use only. :nodoc:
      */
     @objc
     public func setInteractionFromMessageCenterMessage(_ messageID: String?) {
@@ -293,7 +293,7 @@ public class CustomEvent : NSObject, Event {
     }
 
     /**
-     * @note For internal use only. :nodoc:
+     * - Note: For internal use only. :nodoc:
      */
     @objc
     public var payload : [AnyHashable : Any] {

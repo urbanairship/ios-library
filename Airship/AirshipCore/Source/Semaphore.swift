@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 /**
- * @note For internal use only. :nodoc:
+ * - Note: For internal use only. :nodoc:
  */
 @objc(UASemaphore)
 public class Semaphore : NSObject {

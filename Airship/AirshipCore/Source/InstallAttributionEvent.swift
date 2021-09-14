@@ -46,9 +46,9 @@ public class InstallAttributionEvent : NSObject, Event {
 
     /**
      * Factory method to create a InstallAttributionEvent.
-     * @param appPurchaseDate The app purchase date.
-     * @param iAdImpressionDate The iAD impression date.
-     * @return InstallAttributionEvent instance.
+     * - Parameter appPurchaseDate: The app purchase date.
+     * - Parameter iAdImpressionDate: The iAD impression date.
+     * - Returns: InstallAttributionEvent instance.
      */
     @objc(eventWithAppPurchaseDate:iAdImpressionDate:)
     public class func event(appPurchaseDate: Date, iAdImpressionDate: Date) -> InstallAttributionEvent {
@@ -57,7 +57,7 @@ public class InstallAttributionEvent : NSObject, Event {
 
     /**
      * Factory method to create an InstallAttributionEvent.
-     * @return InstallAttributionEvent instance.
+     * - Returns: InstallAttributionEvent instance.
      */
     @objc
     public class func event() -> InstallAttributionEvent {

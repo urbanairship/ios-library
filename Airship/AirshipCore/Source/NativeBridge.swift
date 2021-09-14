@@ -20,22 +20,30 @@ public class NativeBridge : NSObject, WKNavigationDelegate {
     private static let UANativeBridgeCloseCommand = "close"
     private static let UANativeBridgeSetNamedUserCommand = "named_user"
     private static let UANativeBridgeMultiCommand = "multi"
-    
+
+    /// Delegate to support additional native bridge features such as `close`.
     @objc
     public weak var nativeBridgeDelegate: NativeBridgeDelegate?
-    
+
+    /// Optional delegate to forward any WKNavigationDelegate calls.
     @objc
     public weak var forwardNavigationDelegate: UANavigationDelegate?
-    
+
+    /// Optional delegate to support custom JavaScript commands.
     @objc
     public weak var javaScriptCommandDelegate: JavaScriptCommandDelegate?
-    
+
+    /// Optional delegate to extend the native bridge.
     @objc
     public weak var nativeBridgeExtensionDelegate: NativeBridgeExtensionDelegate?
     
     private var actionHandler: NativeBridgeActionHandlerProtocol
     private var javaScriptEnvironmentFactoryBlock: () -> JavaScriptEnvironmentProtocol
 
+    /// NativeBridge initializer.
+    /// - Note: For internal use only. :nodoc:
+    /// - Parameter actionHandler: An action handler.
+    /// - Parameter javaScriptEnvironmentFactoryBlock: A factory block producing a JavaScript environment.
     @objc(initWithActionHandler:javaScriptEnvironmentFactoryBlock:)
     public init(actionHandler: NativeBridgeActionHandlerProtocol, javaScriptEnvironmentFactoryBlock: @escaping () -> JavaScriptEnvironmentProtocol) {
         self.actionHandler = actionHandler
@@ -43,6 +51,7 @@ public class NativeBridge : NSObject, WKNavigationDelegate {
         super.init()
     }
 
+    /// NativeBridge initializer.
     @objc
     public convenience override init() {
         let actionHandler: NativeBridgeActionHandlerProtocol = NativeBridgeActionHandler.init()
@@ -51,7 +60,7 @@ public class NativeBridge : NSObject, WKNavigationDelegate {
     }
 
     /**
-     * Decide whether to allow or cancel a navigation.
+     * Decide whether to allow or cancel a navigation. :nodoc:
      *
      * If a uairship:// URL, process it ourselves
      */
@@ -115,7 +124,7 @@ public class NativeBridge : NSObject, WKNavigationDelegate {
     }
     
     /**
-     * Decide whether to allow or cancel a navigation after its response is known.
+     * Decide whether to allow or cancel a navigation after its response is known. :nodoc:
      */
     public func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
         guard (self.forwardNavigationDelegate?.webView?(webView, decidePolicyFor: navigationResponse, decisionHandler: decisionHandler)) != nil else {
@@ -125,7 +134,7 @@ public class NativeBridge : NSObject, WKNavigationDelegate {
     }
     
     /**
-     * Called when the navigation is complete.
+     * Called when the navigation is complete. :nodoc:
      */
     public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         self.populateJavascriptEnvironmentIfAllowed(webview: webView)
@@ -133,42 +142,42 @@ public class NativeBridge : NSObject, WKNavigationDelegate {
     }
     
     /**
-     * Called when the web view begins to receive web content.
+     * Called when the web view begins to receive web content. :nodoc:
      */
     public func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
         self.forwardNavigationDelegate?.webView?(webView, didCommit: navigation)
     }
     
     /**
-     * Called when the web view’s web content process is terminated.
+     * Called when the web view’s web content process is terminated. :nodoc:
      */
     public func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
         self.forwardNavigationDelegate?.webViewWebContentProcessDidTerminate?(webView)
     }
     
     /**
-     * Called when web content begins to load in a web view.
+     * Called when web content begins to load in a web view. :nodoc:
      */
     public func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
         self.forwardNavigationDelegate?.webView?(webView, didStartProvisionalNavigation: navigation)
     }
     
     /**
-     * Called when a web view receives a server redirect.
+     * Called when a web view receives a server redirect. :nodoc:
      */
     public func webView(_ webView: WKWebView, didReceiveServerRedirectForProvisionalNavigation navigation: WKNavigation!) {
         self.forwardNavigationDelegate?.webView?(webView, didReceiveServerRedirectForProvisionalNavigation: navigation)
     }
     
     /**
-     * Called when an error occurs during navigation.
+     * Called when an error occurs during navigation. :nodoc:
      */
     public func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
         self.forwardNavigationDelegate?.webView?(webView, didFail: navigation, withError: error)
     }
     
     /**
-     * Called when an error occurs while the web view is loading content.
+     * Called when an error occurs while the web view is loading content. :nodoc:
      */
     public func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
         self.forwardNavigationDelegate?.webView?(webView, didFailProvisionalNavigation: navigation, withError: error)
@@ -176,7 +185,7 @@ public class NativeBridge : NSObject, WKNavigationDelegate {
     
     
     /**
-     * Called when the web view needs to respond to an authentication challenge.
+     * Called when the web view needs to respond to an authentication challenge. :nodoc:
      */
     public func webView(_ webView: WKWebView, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
         guard self.forwardNavigationDelegate?.webView?(webView, didReceive: challenge, completionHandler: completionHandler) != nil else {
@@ -277,8 +286,8 @@ public class NativeBridge : NSObject, WKNavigationDelegate {
      * Handles a link click.
      *
      * - Parameters:
-     *  - url The link's URL.
-     *  - completionHandler  The completion handler to execute when openURL processing is complete.
+     *   - url The link's URL.
+     *   - completionHandler  The completion handler to execute when openURL processing is complete.
      * -
      */
     @available(iOSApplicationExtension, unavailable)

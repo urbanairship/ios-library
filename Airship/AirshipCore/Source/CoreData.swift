@@ -3,7 +3,7 @@
 import CoreData
 
 /**
- * @note For internal use only. :nodoc:
+ * - Note: For internal use only. :nodoc:
  */
 @objc(UACoreDataDelegate)
 public protocol CoreDataDelegate: AnyObject {
@@ -12,7 +12,7 @@ public protocol CoreDataDelegate: AnyObject {
 }
 
 /**
- * @note For internal use only. :nodoc:
+ * - Note: For internal use only. :nodoc:
  */
 @objc(UACoreData)
 public class CoreData : NSObject {

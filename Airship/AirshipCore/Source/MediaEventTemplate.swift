@@ -66,7 +66,7 @@ public class MediaEventTemplate : NSObject {
 
     /**
      * Factory method for creating a browsed content event template.
-     * @returns A Media event template instance
+     * - Returns: A Media event template instance
      */
     @objc
     public class func browsedTemplate() -> MediaEventTemplate {
@@ -76,7 +76,7 @@ public class MediaEventTemplate : NSObject {
 
     /**
      * Factory method for creating a starred content event template.
-     * @returns A Media event template instance
+     * - Returns: A Media event template instance
      */
     @objc
     public class func starredTemplate() -> MediaEventTemplate {
@@ -87,7 +87,7 @@ public class MediaEventTemplate : NSObject {
 
     /**
      * Factory method for creating a shared content event template.
-     * @returns A Media event template instance
+     * - Returns: A Media event template instance
      */
     @objc
     public class func sharedTemplate() -> MediaEventTemplate {
@@ -99,9 +99,9 @@ public class MediaEventTemplate : NSObject {
      * Factory method for creating a shared content event template.
      * If the source or medium exceeds 255 characters it will cause the event to be invalid.
      *
-     * @param source The source as an NSString.
-     * @param medium The medium as an NSString.
-     * @returns A Media event template instance
+     * - Parameter source: The source as an NSString.
+     * - Parameter medium: The medium as an NSString.
+     * - Returns: A Media event template instance
      */
     @objc(sharedTemplateWithSource:withMedium:)
     public class func sharedTemplate(source: String?, medium: String?) -> MediaEventTemplate {
@@ -111,7 +111,7 @@ public class MediaEventTemplate : NSObject {
 
     /**
      * Factory method for creating a consumed content event template.
-     * @returns A Media event template instance
+     * - Returns: A Media event template instance
      */
     @objc
     public class func consumedTemplate() -> MediaEventTemplate {
@@ -122,9 +122,9 @@ public class MediaEventTemplate : NSObject {
     /**
      * Factory method for creating a consumed content event template with a value.
      *
-     * @param valueString The value of the event as as string. The value must be between
+     * - Parameter valueString: The value of the event as as string. The value must be between
      * -2^31 and 2^31 - 1 or it will invalidate the event.
-     * @returns A Media event template instance
+     * - Returns: A Media event template instance
      */
     @objc(consumedTemplateWithValueFromString:)
     public class func consumedTemplate(valueString: String?) -> MediaEventTemplate {
@@ -136,9 +136,9 @@ public class MediaEventTemplate : NSObject {
     /**
      * Factory method for creating a consumed content event template with a value.
      *
-     * @param value The value of the event. The value must be between -2^31 and
+     * - Parameter value: The value of the event. The value must be between -2^31 and
      * 2^31 - 1 or it will invalidate the event.
-     * @returns A Media event template instance
+     * - Returns: A Media event template instance
      */
     @objc(consumedTemplateWithValue:)
     public class func consumedTemplate(value: NSNumber?) -> MediaEventTemplate {

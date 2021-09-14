@@ -2,8 +2,8 @@
 
 import Foundation
 
-/// Allowed SDK extension types. For internal use only.
-/// For internal use only. :nodoc:
+/// Allowed SDK extension types.
+/// - Note: For internal use only. :nodoc:
 @objc(UASDKExtension)
 public enum SDKExtension : Int {
     /// The Cordova SDK extension.
@@ -20,7 +20,7 @@ public enum SDKExtension : Int {
     case titanium = 5
 }
 
-/// The UAAnalytics object provides an interface to the Airship Analytics API.
+/// The Analytics object provides an interface to the Airship Analytics API.
 @objc(UAAnalytics)
 public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDelegate {
     
@@ -118,6 +118,7 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
     }
 
     /// Factory method to create an analytics instance.
+    /// - Note: For internal use only. :nodoc:
     /// - Parameters:
     ///   - config: The runtime config.
     ///   - dataStore: The shared preference data store.
@@ -147,7 +148,7 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
     }
 
     /// Factory method to create an analytics instance. Used for testing.
-    ///
+    /// - Note: For internal use only. :nodoc:
     /// - Parameters:
     ///   - config: The runtime config.
     ///   - dataStore: The shared preference data store.
@@ -293,11 +294,13 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
     // MARK: -
     // MARK: Analytics Headers
 
+    /// :nodoc:
     @objc(addAnalyticsHeadersBlock:)
     public func add(_ headerBlock: @escaping () -> [String : String]?) {
         self.headerBlocks.append(headerBlock)
     }
 
+    /// :nodoc:
     @objc
     public func analyticsHeaders() -> [String : String]? {
         var headers: [String : String] = [:]

@@ -30,7 +30,7 @@ public class JSONMatcher : NSObject {
      * Factory method to create a JSON matcher.
      *
      * - Parameters:
-     *  -  valueMatcher Matcher to apply to the value.
+     *   -  valueMatcher Matcher to apply to the value.
      * - Returns: A JSONMatcher instance.
      */
     @objc
@@ -42,8 +42,8 @@ public class JSONMatcher : NSObject {
      * Factory method to create a JSON matcher.
      *
      * - Parameters:
-     *  - valueMatcher Matcher to apply to the value.
-     *  - scope Used to path into the object before evaluating the value.
+     *   - valueMatcher Matcher to apply to the value.
+     *   - scope Used to path into the object before evaluating the value.
      * - Returns: A JSONMatcher instance.
      */
     @objc
@@ -51,25 +51,25 @@ public class JSONMatcher : NSObject {
         self.init(valueMatcher: valueMatcher, key: nil, scope: scope, ignoreCase: nil)
     }
 
-    /// NOTE: For internal use only. :nodoc:
+    /// - Note: For internal use only. :nodoc:
     @objc
     public convenience init(valueMatcher: JSONValueMatcher, ignoreCase: Bool) {
         self.init(valueMatcher: valueMatcher, key: nil, scope: nil, ignoreCase: ignoreCase)
     }
 
-    /// NOTE: For internal use only. :nodoc:
+    /// - Note: For internal use only. :nodoc:
     @objc
     public convenience init(valueMatcher: JSONValueMatcher, key: String) {
         self.init(valueMatcher: valueMatcher, key: key, scope: nil, ignoreCase: nil)
     }
 
-    /// NOTE: For internal use only. :nodoc:
+    /// - Note: For internal use only. :nodoc:
     @objc
     public convenience init(valueMatcher: JSONValueMatcher, key: String, scope: [String]) {
         self.init(valueMatcher: valueMatcher, key: key, scope: scope, ignoreCase: nil)
     }
 
-    /// NOTE: For internal use only. :nodoc:
+    /// - Note: For internal use only. :nodoc:
     @objc
     public convenience init(valueMatcher: JSONValueMatcher, scope: [String], ignoreCase: Bool) {
         self.init(valueMatcher: valueMatcher, key: nil, scope: scope, ignoreCase: ignoreCase)
@@ -79,8 +79,8 @@ public class JSONMatcher : NSObject {
      * Factory method to create a matcher from a JSON payload.
      *
      * - Parameters:
-     *  - json The JSON payload.
-     *  - error An NSError pointer for storing errors, if applicable.
+     *   - json The JSON payload.
+     *   - error An NSError pointer for storing errors, if applicable.
      * - Returns: A JSONMatcher instance or `nil` if the JSON is invalid.
      */
     @objc(initWithJSON:error:)
@@ -145,7 +145,7 @@ public class JSONMatcher : NSObject {
      * Evaluates the object with the matcher.
      *
      * - Parameters:
-     *  - value: The object to evaluate.
+     *   - value: The object to evaluate.
      * - Returns: true if the matcher matches the object, otherwise false.
      */
     @objc(evaluateObject:)
@@ -153,7 +153,7 @@ public class JSONMatcher : NSObject {
         return evaluate(value, ignoreCase:self.ignoreCase ?? false)
     }
 
-    /// NOTE: For internal use only. :nodoc:
+    /// - Note: For internal use only. :nodoc:
     @objc(evaluateObject:ignoreCase:)
     public func evaluate(_ value: Any?, ignoreCase: Bool) -> Bool {
         var object = value
@@ -179,7 +179,7 @@ public class JSONMatcher : NSObject {
         return valueMatcher.evaluate(object, ignoreCase: ignoreCase)
     }
   
-    /// NOTE: For internal use only. :nodoc:
+    /// - Note: For internal use only. :nodoc:
     public override func isEqual(_ other: Any?) -> Bool {
         guard let matcher = other as? JSONMatcher else {
             return false
@@ -192,7 +192,7 @@ public class JSONMatcher : NSObject {
         return isEqual(to: matcher)
     }
 
-    /// NOTE: For internal use only. :nodoc:
+    /// - Note: For internal use only. :nodoc:
     @objc(isEqualToJSONMatcher:)
     public func isEqual(to matcher: JSONMatcher) -> Bool {
         guard self.valueMatcher == matcher.valueMatcher,

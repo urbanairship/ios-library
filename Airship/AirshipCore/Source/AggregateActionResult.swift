@@ -19,21 +19,13 @@ public class AggregateActionResult : ActionResult {
             return self._fetchResult
         }
     }
-    
-    /**
-     * Default constructor.
-     */
-    @objc
-    public override init() {
-        super.init()
-    }
 
     /**
      * Adds a new result, merging with the existing result.
      *
      * - Parameters:
-     *  - result: The result.
-     *  - actionName: The action name.
+     *   - result: The result.
+     *   - actionName: The action name.
      */
     @objc(addResult:forAction:)
     public func add(_ result: ActionResult, actionName: String) {
@@ -45,7 +37,7 @@ public class AggregateActionResult : ActionResult {
      * Gets the results for an action
      *
      * - Parameters:
-     *  - actionName: The action name.
+     *   - actionName: The action name.
      * - Returns: The action result for the name.
      */
     @objc(resultForAction:)

@@ -92,7 +92,7 @@ public class TagEditor: NSObject {
     }
 
     /**
-     * Applys tag changes.
+     * Applies tag changes.
      */
     @objc
     public func apply() {

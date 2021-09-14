@@ -7,7 +7,7 @@ import Foundation;
  * The privacy manager allow enabling/disabling features in the SDK.
  * The SDK will not make any network requests or collect data if all features our disabled, with
  * a few exceptions when going from enabled -> disabled. To have the SDK opt-out of all features on startup,
- * set the default enabled features in the AirshipConfig to UAFeaturesNone, or in the
+ * set the default enabled features in the Config to an empty option set, or in the
  * airshipconfig.plist file with `enabledFeatures = none`.
  * If any feature is enabled, the SDK will collect and send the following data:
  * - Channel ID
@@ -20,8 +20,6 @@ import Foundation;
  */
 @objc(UAPrivacyManager)
 public class PrivacyManager : NSObject {
-
-
     /**
     * NSNotification event when enabled feature list is updated.
      */
@@ -44,7 +42,7 @@ public class PrivacyManager : NSObject {
     /**
     * Gets the current enabled features.
     *
-    * @return The enabled features.
+    * - Returns: The enabled features.
     */
     @objc
     public var enabledFeatures: UAFeatures {
@@ -62,7 +60,7 @@ public class PrivacyManager : NSObject {
     }
 
     /*
-     * @note For internal use only. :nodoc:
+     * - Note: For internal use only. :nodoc:
      */
     @objc
     public convenience init(dataStore: PreferenceDataStore, defaultEnabledFeatures: UAFeatures) {
@@ -73,7 +71,7 @@ public class PrivacyManager : NSObject {
     }
 
     /*
-     * @note For internal use only. :nodoc:
+     * - Note: For internal use only. :nodoc:
      */
     @objc
     public init(dataStore: PreferenceDataStore, defaultEnabledFeatures: UAFeatures, notificationCenter: NotificationCenter) {
@@ -91,31 +89,31 @@ public class PrivacyManager : NSObject {
         self.migrateData()
     }
 
-    /**
+   /**
     * Enables features.
     *
-    * @param features The features to enable.
+    * - Parameter features: The features to enable.
     */
     @objc
     public func enableFeatures(_ features: UAFeatures) {
         enabledFeatures.insert(features)
     }
 
-    /**
+   /**
     * Disables features.
     *
-    * @param features The features to disable.
+    * - Parameter features: The features to disable.
     */
     @objc
     public func disableFeatures(_ features: UAFeatures) {
         enabledFeatures.remove(features)
     }
 
-    /**
+   /**
     * Checks if a given feature is enabled.
     *
-    * @param feature The features to check.
-    * @return True if the provided features are enabled, otherwise false.
+    * - Parameter feature: The features to check.
+    * - Returns: True if the provided features are enabled, otherwise false.
     */
     @objc
     public func isEnabled(_ feature: UAFeatures) -> Bool {
@@ -126,10 +124,10 @@ public class PrivacyManager : NSObject {
         }
     }
 
-    /**
+   /**
     * Checks if any feature is enabled.
     *
-    * @return True if any feature is enabled, otherwise false.
+    * - Returns: True if any feature is enabled, otherwise false.
     */
     @objc
     public func isAnyFeatureEnabled() -> Bool {

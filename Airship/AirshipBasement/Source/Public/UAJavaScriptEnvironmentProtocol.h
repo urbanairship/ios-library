@@ -32,7 +32,7 @@ NS_SWIFT_NAME(add(_:number:));
 
 /**
  * Builds the script that can be injected into a web view.
- * @return The  script.
+ * @return The script.
  */
 - (NSString *)build;
 @end

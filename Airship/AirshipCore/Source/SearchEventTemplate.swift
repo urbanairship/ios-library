@@ -48,7 +48,7 @@ public class SearchEventTemplate : NSObject {
     /**
      * Default constructor.
      *
-     * @param value The value of the event. The value must be between -2^31 and
+     * - Parameter value: The value of the event. The value must be between -2^31 and
      * 2^31 - 1 or it will invalidate the event.
      */
     public init(value: NSNumber? = nil) {
@@ -59,9 +59,9 @@ public class SearchEventTemplate : NSObject {
     /**
      * Factory method for creating a search event template with a value.
      *
-     * @param value The value of the event. The value must be between -2^31 and
+     * - Parameter value: The value of the event. The value must be between -2^31 and
      * 2^31 - 1 or it will invalidate the event.
-     * @return SearchEventTemplate instance.
+     * - Returns: SearchEventTemplate instance.
      */
     @objc(templateWithValue:)
     public class func template(value: NSNumber) -> SearchEventTemplate {
@@ -70,7 +70,7 @@ public class SearchEventTemplate : NSObject {
 
     /**
      * Factory method for creating a search event template.
-     * @return SearchEventTemplate instance.
+     * - Returns: SearchEventTemplate instance.
      */
     @objc(template)
     public class func template() -> SearchEventTemplate {
@@ -79,7 +79,7 @@ public class SearchEventTemplate : NSObject {
 
     /**
      * Creates the custom search event.
-     * @return Created UACustomEvent instance.
+     * - Returns: Created UACustomEvent instance.
      */
     @objc
     public func createEvent() -> CustomEvent {

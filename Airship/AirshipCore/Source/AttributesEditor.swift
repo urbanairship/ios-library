@@ -39,8 +39,8 @@ public class AttributesEditor: NSObject {
     /**
      * Sets the attribute.
      * - Parameters:
-     *  - date: The value
-     *  - attribute: The attribute
+     *   - date: The value
+     *   - attribute: The attribute
      */
     @objc(setDate:attribute:)
     public func set(date: Date, attribute: String) {
@@ -115,7 +115,7 @@ public class AttributesEditor: NSObject {
     }
  
     /**
-     * Applys the attribute changes.
+     * Applies the attribute changes.
      */
     @objc
     public func apply() {

@@ -68,7 +68,7 @@ public protocol ChannelProtocol {
     /**
      * Edits channel tags.
      * - Parameters:
-     *  - editorBlock: The editor block with the editor. The editor will `apply` will be called after the block is executed.
+     *   - editorBlock: The editor block with the editor. The editor will `apply` will be called after the block is executed.
      */
     @objc
     func editTags(_ editorBlock: (TagEditor) -> Void)
@@ -83,7 +83,7 @@ public protocol ChannelProtocol {
     /**
      * Edits channel tag groups tags.
      * - Parameters:
-     *  - editorBlock: The editor block with the editor. The editor will `apply` will be called after the block is executed.
+     *   - editorBlock: The editor block with the editor. The editor will `apply` will be called after the block is executed.
      */
     @objc
     func editTagGroups(_ editorBlock: (TagGroupsEditor) -> Void)
@@ -98,7 +98,7 @@ public protocol ChannelProtocol {
     /**
      * Edits channel subcription lists.
      * - Parameters:
-     *  - editorBlock: The editor block with the editor. The editor will `apply` will be called after the block is executed.
+     *   - editorBlock: The editor block with the editor. The editor will `apply` will be called after the block is executed.
      */
     @objc
     func editSubscriptionLists(_ editorBlock: (SubscriptionListEditor) -> Void)
@@ -106,7 +106,7 @@ public protocol ChannelProtocol {
     /**
      * Fetches current subscription lists.
      * - Parameters:
-     *  - completionHandler: The completion handler with the result.
+     *   - completionHandler: The completion handler with the result.
      * - Returns: A disposable to cancel the callback.
      */
     @objc
@@ -123,7 +123,7 @@ public protocol ChannelProtocol {
     /**
      * Edits channel attributes.
      * - Parameters:
-     *  - editorBlock: The editor block with the editor. The editor will `apply` will be called after the block is executed.
+     *   - editorBlock: The editor block with the editor. The editor will `apply` will be called after the block is executed.
      */
     @objc
     func editAttributes(_ editorBlock: (AttributesEditor) -> Void)

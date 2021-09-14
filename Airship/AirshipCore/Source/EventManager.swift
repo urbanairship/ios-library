@@ -105,7 +105,7 @@ public class EventManager: NSObject, EventManagerProtocol {
     @objc
     public weak var delegate: EventManagerDelegate?
 
-    /// Default factory method. :nodocl:
+    /// Default factory method. :nodoc:
     ///
     /// - Parameters:
     ///   - config: The airship config.

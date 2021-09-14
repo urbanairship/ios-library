@@ -3,7 +3,7 @@
 import Foundation
 
 /**
- * @note For internal use only. :nodoc:
+ * - Note: For internal use only. :nodoc:
  */
 @objc(UADate)
 open class DateUtils : NSObject {

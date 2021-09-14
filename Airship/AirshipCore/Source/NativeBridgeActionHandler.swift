@@ -10,9 +10,9 @@ public protocol NativeBridgeActionHandlerProtocol {
     /**
      * Runs actions for a command.
      *  - Parameters:
-     *   - command The action command.
-     *   - metadata The action metadata.
-     *   - completionHandler The completion handler with optional script to evaluate in the web view..
+     *    - command The action command.
+     *    - metadata The action metadata.
+     *    - completionHandler The completion handler with optional script to evaluate in the web view..
      */
     @objc(runActionsForCommand:metadata:completionHandler:)
     func runActionsForCommand(command: JavaScriptCommand, metadata: [AnyHashable : Any]?, completionHandler: @escaping (String?) -> Void)
@@ -88,8 +88,8 @@ public class NativeBridgeActionHandler : NSObject, NativeBridgeActionHandlerProt
      * Runs a dictionary of action names to an array of action values.
      *
      * - Parameters:
-     *  - actionValues A map of action name to an array of action values.
-     *  - metadata Optional metadata to pass to the action arguments.
+     *   - actionValues A map of action name to an array of action values.
+     *   - metadata Optional metadata to pass to the action arguments.
      */
     private func run(_ actionValues: [String: Array <Any?>], metadata: [AnyHashable : Any]?) {
         for (actionName, values) in actionValues {
@@ -109,11 +109,11 @@ public class NativeBridgeActionHandler : NSObject, NativeBridgeActionHandlerProt
      * Runs an action with a given value and performs a callback on completion.
      *
      * - Parameters:
-     *  - actionName The name of the action to perform
-     *  - actionValue The action argument's value
-     *  - metadata Optional metadata to pass to the action arguments.
-     *  - callbackID A callback identifier generated in the JS layer. This can be `nil`.
-     *  - completionHandler The completion handler passed in the JS delegate call.
+     *   - actionName The name of the action to perform
+     *   - actionValue The action argument's value
+     *   - metadata Optional metadata to pass to the action arguments.
+     *   - callbackID A callback identifier generated in the JS layer. This can be `nil`.
+     *   - completionHandler The completion handler passed in the JS delegate call.
      */
     private func run(_ action: String, _ actionValue: Any?, _ metadata: [AnyHashable : Any]?, _ callbackID: String, _ completionHandler: @escaping (String?) -> Void) {
         let callbackID = try? JSONUtils.string(callbackID, options: .fragmentsAllowed)
@@ -198,8 +198,8 @@ public class NativeBridgeActionHandler : NSObject, NativeBridgeActionHandlerProt
      * Decodes options with basic URL or URL+json encoding
      *
      * - Parameters:
-     *  - command The JavaScript command.
-     *  - basicEncoding Boolean to select for basic encoding
+     *   - command The JavaScript command.
+     *   - basicEncoding Boolean to select for basic encoding
      * - Returns: A dictionary of action name to an array of action values.
      */
     private func decodeActionValues(_ command: JavaScriptCommand, _ basicEncoding: Bool) -> [String : Array <Any?>] {

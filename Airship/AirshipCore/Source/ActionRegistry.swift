@@ -42,8 +42,8 @@ public class ActionRegistry : NSObject {
      * entry and used for the new action.
      *
      * - Parameters:
-     *  - action: The action.
-     *  - names: The action's names.
+     *   - action: The action.
+     *   - names: The action's names.
      * - Returns: true if the action was able to be registered, otherwise false.
      */
     @objc(registerAction:names:)
@@ -59,8 +59,8 @@ public class ActionRegistry : NSObject {
      * entry and used for the new action.
      *
      * - Parameters:
-     *  - action: The action.
-     *  - name: The action's name.
+     *   - action: The action.
+     *   - name: The action's name.
      * - Returns: true if the action was able to be registered, otherwise false.
      */
     @objc(registerAction:name:)
@@ -76,9 +76,9 @@ public class ActionRegistry : NSObject {
      * entry and used for the new action.
      *
      * - Parameters:
-     *  - action: The action.
-     *  - names: The action's name.
-     *  - predicate; The action's predicate.
+     *   - action: The action.
+     *   - names: The action's name.
+     *   - predicate: The action's predicate.
      * - Returns: true if the action was able to be registered, otherwise false.
      */
     @objc(registerAction:name:predicate:)
@@ -94,9 +94,9 @@ public class ActionRegistry : NSObject {
      * entry and used for the new action.
      *
      * - Parameters:
-     *  - action: The action.
-     *  - names: The action's names.
-     *  - predicate; The action's predicate.
+     *   - action: The action.
+     *   - names: The action's names.
+     *   - predicate; The action's predicate.
      * - Returns: true if the action was able to be registered, otherwise false.
      */
     @objc(registerAction:names:predicate:)
@@ -113,8 +113,8 @@ public class ActionRegistry : NSObject {
      * entry and used for the new action.
      *
      * - Parameters:
-     *  - actionClass: The action's class.
-     *  - names: The action's names.
+     *   - actionClass: The action's class.
+     *   - names: The action's names.
      * - Returns: true if the action was able to be registered, otherwise false.
      */
     @objc(registerActionClass:names:)
@@ -130,8 +130,8 @@ public class ActionRegistry : NSObject {
      * entry and used for the new action.
      *
      * - Parameters:
-     *  - actionClass: The action's class.
-     *  - names: The action's name.
+     *   - actionClass: The action's class.
+     *   - names: The action's name.
      * - Returns: true if the action was able to be registered, otherwise false.
      */
     @objc(registerActionClass:name:)
@@ -147,9 +147,9 @@ public class ActionRegistry : NSObject {
      * entry and used for the new action.
      *
      * - Parameters:
-     *  - actionClass: The action's class.
-     *  - names: The action's name.
-     *  - predicate; The action's predicate.
+     *   - actionClass: The action's class.
+     *   - names: The action's name.
+     *   - predicate; The action's predicate.
      * - Returns: true if the action was able to be registered, otherwise false.
      */
     @objc(registerActionClass:name:predicate:)
@@ -165,9 +165,9 @@ public class ActionRegistry : NSObject {
      * entry and used for the new action.
      *
      * - Parameters:
-     *  - actionClass: The action's class.
-     *  - names: The action's names.
-     *  - predicate; The action's predicate.
+     *   - actionClass: The action's class.
+     *   - names: The action's names.
+     *   - predicate; The action's predicate.
      * - Returns: true if the action was able to be registered, otherwise false.
      */
     @objc(registerActionClass:names:predicate:)
@@ -190,7 +190,7 @@ public class ActionRegistry : NSObject {
     /**
      * Removes an entry by name.
      * - Parameters:
-     *  - name: The name of the entry to remove.
+     *   - name: The name of the entry to remove.
      */
     @objc(removeEntryWithName:)
     public func removeEntry(_ name: String)  {
@@ -202,7 +202,7 @@ public class ActionRegistry : NSObject {
     /**
      * Removes a name for a registered entry.
      * - Parameters:
-     *  - name: The name to remove.
+     *   - name: The name to remove.
      */
     @objc(removeName:)
     public func removeName(_ name: String) {
@@ -224,9 +224,9 @@ public class ActionRegistry : NSObject {
     /**
      * Adds a name to a registered entry.
      * - Parameters:
-     *  - name: The name to add
-     *  - entryName; The name of the entry.
-     *  - Returns: true if the entry was found, othewrise false..
+     *   - name: The name to add
+     *   - entryName; The name of the entry.
+     * - Returns: true if the entry was found, othewrise false..
      */
     @objc
     @discardableResult
@@ -245,9 +245,9 @@ public class ActionRegistry : NSObject {
     /**
      * Adds a situation override for the entry.
      * - Parameters:
-     *  - siutation: The situation to override.
-     *  - name; The name of the entry.
-     *  - action: The action.
+     *   - siutation: The situation to override.
+     *   - name; The name of the entry.
+     *   - action: The action.
      */
     @objc
     @discardableResult
@@ -267,7 +267,7 @@ public class ActionRegistry : NSObject {
     /**
      * Gets an entry by name.
      * - Parameters:
-     *  - name: The name of the entry.
+     *   - name: The name of the entry.
      * - Returns: The entry if found, otherwise null.
      */
     @objc(registryEntryWithName:)
@@ -282,8 +282,8 @@ public class ActionRegistry : NSObject {
     /**
      * Updates an entry's predicate.
      * - Parameters:
-     *  - predicate: The predicate.
-     *  - name: The name of the entry.
+     *   - predicate: The predicate.
+     *   - name: The name of the entry.
      * - Returns: The entry if found, otherwise null.
      */
     @objc(updatePredicate:forEntryWithName:)
@@ -302,8 +302,8 @@ public class ActionRegistry : NSObject {
     /**
      * Updates an entry's action.
      * - Parameters:
-     *  - action: The action.
-     *  - name: The name of the entry.
+     *   - action: The action.
+     *   - name: The name of the entry.
      * - Returns: The entry if found, otherwise null.
      */
     @objc(updateAction:forEntryWithName:)
@@ -322,8 +322,8 @@ public class ActionRegistry : NSObject {
     /**
      * Updates an entry's action.
      * - Parameters:
-     *  - actionClass: The action class.
-     *  - name: The name of the entry.
+     *   - actionClass: The action class.
+     *   - name: The name of the entry.
      * - Returns: The entry if found, otherwise null.
      */
     @objc(updateActionClass:forEntryWithName:)
@@ -353,7 +353,7 @@ public class ActionRegistry : NSObject {
     /**
      * Registers actions from a plist file.
      * - Parameters:
-     *  - path: The path to the plist.
+     *   - path: The path to the plist.
      */
     @objc(registerActionsFromFile:)
     public func registerActions(_ path: String) {
@@ -482,7 +482,8 @@ public class ActionRegistryEntry : NSObject {
     init(actionClass: NSObject.Type) {
         self._actionClass = actionClass
     }
-    
+
+
     init(action: Action) {
         self._action = action
     }
@@ -490,7 +491,7 @@ public class ActionRegistryEntry : NSObject {
     /**
      * Gets the action for the situation.
      * - Parameters:
-     *  - situation: The situation.
+     *   - situation: The situation.
      * - Returns: The action.
      */
     @objc(actionForSituation:)

@@ -74,10 +74,10 @@ public class LocalizationUtils : NSObject {
      * finally the provided module bundle, allowing for developers to override or supplement any officially bundled localizations.
      *
      * - Parameters:
-     *  - string The string.
-     *  - table The table.
-     *  - moduleBundle The module bundle.
-     *  - defaultValue The default value.
+     *   - string The string.
+     *   - table The table.
+     *   - moduleBundle The module bundle.
+     *   - defaultValue The default value.
      * - Returns: The localized string corresponding to the key and table, or the default value if it cannot be found.
      */
 
@@ -92,9 +92,9 @@ public class LocalizationUtils : NSObject {
      * finally the provided module bundle, allowing for developers to override or supplement any officially bundled localizations.
      *
      * - Parameters:
-     *  - string The string.
-     *  - table The table.
-     *  - moduleBundle The module bundle.
+     *   - string The string.
+     *   - table The table.
+     *   - moduleBundle The module bundle.
      * - Returns: The localized string corresponding to the key and table, or the key if it cannot be found.
      */
 
@@ -110,10 +110,10 @@ public class LocalizationUtils : NSObject {
      * or supplement any officially bundled localizations.
      *
      * - Parameters:
-     *  - string The string.
-     *  - table The table.
-     *  - moduleBundle The module bundle.
-     *  - fallbackLocale The locale to use in case a localized string for the current locale cannot be found.
+     *   - string The string.
+     *   - table The table.
+     *   - moduleBundle The module bundle.
+     *   - fallbackLocale The locale to use in case a localized string for the current locale cannot be found.
      * - Returns: The localized string corresponding to the key and table, or the key if it cannot be found.
      */
     @objc
@@ -127,9 +127,9 @@ public class LocalizationUtils : NSObject {
      * to override or supplement any officially bundled localizations.
      *
      * - Parameters:
-     *  - string The string.
-     *  - table The table.
-     *  - moduleBundle The module bundle.
+     *   - string The string.
+     *   - table The table.
+     *   - moduleBundle The module bundle.
      * - Returns: YES if a localized string corresponding to the key and table was found, or NO if it cannot be found.
      */
     @objc
@@ -143,10 +143,10 @@ public class LocalizationUtils : NSObject {
      * allowing for developers to override or supplement any officially bundled localizations.
      *
      * - Parameters:
-     *  - string The string.
-     *  - table The table.
-     *  - moduleBundle The module bundle.
-     *  - fallbackLocale The locale to use in case a localized string for the current locale cannot be found.
+     *   - string The string.
+     *   - table The table.
+     *   - moduleBundle The module bundle.
+     *   - fallbackLocale The locale to use in case a localized string for the current locale cannot be found.
      * - Returns: YES if a localized string corresponding to the key and table was found, or NO if it cannot be found.
      */
     @objc

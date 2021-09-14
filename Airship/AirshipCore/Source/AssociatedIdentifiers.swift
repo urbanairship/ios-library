@@ -89,7 +89,7 @@ public class AssociatedIdentifiers : NSObject{
 
     /**
      * Factory method to create an empty identifiers object.
-     * @return The created associated identifiers.
+     * - Returns: The created associated identifiers.
      */
     @objc
     public class func identifiers() -> AssociatedIdentifiers {
@@ -99,7 +99,7 @@ public class AssociatedIdentifiers : NSObject{
     /**
      * Factory method to create an associated identifiers instance with a dictionary
      * of custom identifiers (containing strings only).
-     * @return The created associated identifiers.
+     * - Returns: The created associated identifiers.
      */
     @objc(identifiersWithDictionary:)
     public class func identifiers(identifiers: [String : String]?) -> AssociatedIdentifiers {
@@ -108,7 +108,7 @@ public class AssociatedIdentifiers : NSObject{
 
     /**
      * Sets an identifier mapping.
-     * @param identifier The value of the identifier, or `nil` to remove the identifier.
+     * - Parameter identifier: The value of the identifier, or `nil` to remove the identifier.
      * @parm key The key for the identifier
      */
     @objc(setIdentifier:forKey:)

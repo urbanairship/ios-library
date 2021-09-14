@@ -13,9 +13,9 @@ public class ActionRunner : NSObject {
      * will be called immediately with emptyResult.
      *
      * - Parameters:
-     *  - actionName: The name of the action.
-     *  - value: The action argument's value.
-     *  - situation: The action argument's situation
+     *   - actionName: The name of the action.
+     *   - value: The action argument's value.
+     *   - situation: The action argument's situation
      */
     @objc(runActionWithName:value:situation:)
     public class func run(_ actionName: String, value: Any?, situation: UASituation) {
@@ -29,10 +29,10 @@ public class ActionRunner : NSObject {
      * will be called immediately with emptyResult.
      *
      * - Parameters:
-     *  - actionName: The name of the action.
-     *  - value: The action argument's value.
-     *  - situation: The action argument's situation.
-     *  - metadata: The action argument's metadata.
+     *   - actionName: The name of the action.
+     *   - value: The action argument's value.
+     *   - situation: The action argument's situation.
+     *   - metadata: The action argument's metadata.
      */
     @objc(runActionWithName:value:situation:metadata:)
     public class func run(_ actionName: String,
@@ -49,10 +49,10 @@ public class ActionRunner : NSObject {
      * will be called immediately with emptyResult.
      *
      * - Parameters:
-     *  - actionName: The name of the action.
-     *  - value: The action argument's value.
-     *  - situation: The action argument's situation.
-     *  - completionHandler: The completion handler.
+     *   - actionName: The name of the action.
+     *   - value: The action argument's value.
+     *   - situation: The action argument's situation.
+     *   - completionHandler: The completion handler.
      */
     @objc(runActionWithName:value:situation:completionHandler:)
     public class func run(_ actionName: String,
@@ -69,11 +69,11 @@ public class ActionRunner : NSObject {
      * will be called immediately with emptyResult.
      *
      * - Parameters:
-     *  - actionName: The name of the action.
-     *  - value: The action argument's value.
-     *  - situation: The action argument's situation.
-     *  - metadata: The action argument's metadata.
-     *  - completionHandler: The completion handler.
+     *   - actionName: The name of the action.
+     *   - value: The action argument's value.
+     *   - situation: The action argument's situation.
+     *   - metadata: The action argument's metadata.
+     *   - completionHandler: The completion handler.
      */
     @objc(runActionWithName:value:situation:metadata:completionHandler:)
     public class func run(_ actionName: String,
@@ -99,9 +99,9 @@ public class ActionRunner : NSObject {
      * Runs an action.
      *
      * - Parameters:
-     *  - action: The action.
-     *  - value: The action argument's value.
-     *  - situation: The action argument's situation.
+     *   - action: The action.
+     *   - value: The action argument's value.
+     *   - situation: The action argument's situation.
      */
     @objc(runAction:value:situation:)
     public class func run(_ action: Action, value: Any?, situation: UASituation) {
@@ -112,10 +112,10 @@ public class ActionRunner : NSObject {
      * Runs an action.
      *
      * - Parameters:
-     *  - action: The action.
-     *  - value: The action argument's value.
-     *  - situation: The action argument's situation.
-     *  - metadata: The action argument's metadata.
+     *   - action: The action.
+     *   - value: The action argument's value.
+     *   - situation: The action argument's situation.
+     *   - metadata: The action argument's metadata.
      */
     @objc(runAction:value:situation:metadata:)
     public class func run(_ action: Action, value: Any?, situation: UASituation, metadata: [AnyHashable : Any]?) {
@@ -126,10 +126,10 @@ public class ActionRunner : NSObject {
      * Runs an action.
      *
      * - Parameters:
-     *  - action: The action.
-     *  - value: The action argument's value.
-     *  - situation: The action argument's situation.
-     *  - completionHandler: The completion handler.
+     *   - action: The action.
+     *   - value: The action argument's value.
+     *   - situation: The action argument's situation.
+     *   - completionHandler: The completion handler.
      */
     @objc(runAction:value:situation:completionHandler:)
     public class func run(_ action: Action, value: Any?, situation: UASituation, completionHandler: UAActionCompletionHandler?) {
@@ -140,11 +140,11 @@ public class ActionRunner : NSObject {
      * Runs an action.
      *
      * - Parameters:
-     *  - action: The action.
-     *  - value: The action argument's value.
-     *  - situation: The action argument's situation.
-     *  - metadata: The action argument's metadata.
-     *  - completionHandler: The completion handler.
+     *   - action: The action.
+     *   - value: The action argument's value.
+     *   - situation: The action argument's situation.
+     *   - metadata: The action argument's metadata.
+     *   - completionHandler: The completion handler.
      */
     @objc(runAction:value:situation:metadata:completionHandler:)
     public class func run(_ action: Action,
@@ -164,11 +164,11 @@ public class ActionRunner : NSObject {
      * single UAAggregateActionResult.
      *
      * - Parameters:
-     *  - action: The map of action names to action values.
-     *  - value: The action argument's value.
-     *  - situation: The action argument's situation.
-     *  - metadata: The action argument's metadata.
-     *  - completionHandler: The completion handler.
+     *   - action: The map of action names to action values.
+     *   - value: The action argument's value.
+     *   - situation: The action argument's situation.
+     *   - metadata: The action argument's metadata.
+     *   - completionHandler: The completion handler.
      */
     @objc(runActionsWithActionValues:situation:metadata:completionHandler:)
     public class func run(actionValues: [AnyHashable : Any],

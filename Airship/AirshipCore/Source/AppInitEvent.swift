@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 /**
- * @note For Interrnal use only :nodoc:
+ * - Note: For Internal use only :nodoc:
  */
 @objc(UAAppInitEvent)
 public class AppInitEvent : NSObject, Event {

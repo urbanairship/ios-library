@@ -236,19 +236,19 @@ public class Config: NSObject, NSCopying {
 
     /// The Airship device API url.
     ///
-    /// @note This option is reserved for internal debugging. :nodoc:
+    /// - Note: This option is reserved for internal debugging. :nodoc:
     @objc
     public var deviceAPIURL: String?
     
     /// The Airship analytics API url.
     ///
-    /// @note This option is reserved for internal debugging. :nodoc:
+    /// - Note: This option is reserved for internal debugging. :nodoc:
     @objc
     public var analyticsURL: String?
     
     /// The Airship remote data API url.
     ///
-    /// @note This option is reserved for internal debugging. :nodoc:
+    /// - Note: This option is reserved for internal debugging. :nodoc:
     @objc
     public var remoteDataAPIURL: String?
     
@@ -340,7 +340,7 @@ public class Config: NSObject, NSCopying {
     }
 
     /// Creates an instance with empty values.
-    /// - Returns: A UAConfig with empty values.
+    /// - Returns: A Config with empty values.
     @objc
     public override init() {
         #if !targetEnvironment(macCatalyst)
@@ -755,7 +755,7 @@ public class Config: NSObject, NSCopying {
             break
         }
         
-        AirshipLogger.debug("Ignoring invalid UAConfig key: \(key)")
+        AirshipLogger.debug("Ignoring invalid Config key: \(key)")
     }
 }
 

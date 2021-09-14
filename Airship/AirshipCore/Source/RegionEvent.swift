@@ -91,7 +91,7 @@ public class RegionEvent : NSObject, Event {
     }
 
     /**
-     * @note For internal use only. :nodoc:
+     * - Note: For internal use only. :nodoc:
      */
     @objc
     public var payload : [AnyHashable : Any] {
@@ -103,13 +103,13 @@ public class RegionEvent : NSObject, Event {
     /**
      * Default constructor.
      *
-     * @param regionID The ID of the region.
-     * @param source The source of the event.
-     * @param boundaryEvent The type of boundary crossing event.
-     * @param circularRegion The circular region info.
-     * @param proximityRegion The proximiity region info.
+     * - Parameter regionID: The ID of the region.
+     * - Parameter source: The source of the event.
+     * - Parameter boundaryEvent: The type of boundary crossing event.
+     * - Parameter circularRegion: The circular region info.
+     * - Parameter proximityRegion: The proximiity region info.
      *
-     * @return Region event object or `nil` if error occurs.
+     * - Returns: Region event object or `nil` if error occurs.
      */
     public init?(regionID: String,
                  source: String,
@@ -136,11 +136,11 @@ public class RegionEvent : NSObject, Event {
     /**
      * Factory method for creating a region event.
      *
-     * @param regionID The ID of the region.
-     * @param source The source of the event.
-     * @param boundaryEvent The type of boundary crossing event.
+     * - Parameter regionID: The ID of the region.
+     * - Parameter source: The source of the event.
+     * - Parameter boundaryEvent: The type of boundary crossing event.
      *
-     * @return Region event object or `nil` if error occurs.
+     * - Returns: Region event object or `nil` if error occurs.
      */
     @objc(regionEventWithRegionID:source:boundaryEvent:)
     public class func regionEvent(regionID: String, source: String, boundaryEvent: UABoundaryEvent) -> RegionEvent? {
@@ -150,13 +150,13 @@ public class RegionEvent : NSObject, Event {
     /**
      * Factory method for creating a region event.
      *
-     * @param regionID The ID of the region.
-     * @param source The source of the event.
-     * @param boundaryEvent The type of boundary crossing event.
-     * @param circularRegion The circular region info.
-     * @param proximityRegion The proximiity region info.
+     * - Parameter regionID: The ID of the region.
+     * - Parameter source: The source of the event.
+     * - Parameter boundaryEvent: The type of boundary crossing event.
+     * - Parameter circularRegion: The circular region info.
+     * - Parameter proximityRegion: The proximiity region info.
      *
-     * @return Region event object or `nil` if error occurs.
+     * - Returns: Region event object or `nil` if error occurs.
      */
     @objc(regionEventWithRegionID:source:boundaryEvent:circularRegion:proximityRegion:)
     public class func regionEvent(regionID: String, source: String, boundaryEvent: UABoundaryEvent, circularRegion: CircularRegion?, proximityRegion: ProximityRegion?) -> RegionEvent? {
