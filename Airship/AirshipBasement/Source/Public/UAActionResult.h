@@ -21,7 +21,7 @@ typedef NS_OPTIONS(NSInteger, UAActionFetchResult) {
      * The action failed.
      */
     UAActionFetchResultFailed = UIBackgroundFetchResultFailed
-};
+} NS_SWIFT_NAME(ActionFetchResult);
 
 /**
  * Represents the action status.
@@ -49,7 +49,7 @@ typedef NS_ENUM(NSInteger, UAActionStatus) {
      * The action encountered an error during execution.
      */
     UAActionStatusError
-};
+} NS_SWIFT_NAME(ActionStatus);
 
 NS_ASSUME_NONNULL_BEGIN
 

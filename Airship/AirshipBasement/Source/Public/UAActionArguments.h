@@ -49,7 +49,7 @@ typedef NS_ENUM(NSInteger, UASituation) {
      * automation trigger.
      */
     UASituationAutomation,
-};
+} NS_SWIFT_NAME(Situation);
 
 
 NS_ASSUME_NONNULL_BEGIN

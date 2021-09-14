@@ -123,9 +123,9 @@ public class Chat : NSObject, Component, PushableComponent {
     }
 
     private func updateConversationEnablement() {
-        self.internalConversation.enabled = self.isComponentEnabled && self.privacyManager.isEnabled(UAFeatures.chat)
+        self.internalConversation.enabled = self.isComponentEnabled && self.privacyManager.isEnabled(Features.chat)
 
-        if (!self.privacyManager.isEnabled(UAFeatures.chat)) {
+        if (!self.privacyManager.isEnabled(Features.chat)) {
             self.internalConversation.clearData()
         }
     }

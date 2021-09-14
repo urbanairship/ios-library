@@ -23,7 +23,7 @@ typedef NS_ENUM(NSUInteger, UAScheduleDataDeferredType) {
 
     // In-App message type.
     UAScheduleDataDeferredTypeInAppMessage,
-};
+} NS_SWIFT_NAME(ScheduleDataDeferredType);
 
 /**
  * Deferred schedule data.

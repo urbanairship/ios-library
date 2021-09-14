@@ -169,17 +169,17 @@ public class AirshipDebug : NSObject {
     static func observePayloadEvents() {
         NotificationCenter.default.addObserver(self,
                                                selector:#selector(receivedForegroundNotification(notification:)),
-                                               name: Push.ReceivedForegroundNotificationEvent,
+                                               name: Push.receivedForegroundNotificationEvent,
                                                object: nil)
 
         NotificationCenter.default.addObserver(self,
                                                selector:#selector(receivedBackgroundNotification(notification:)),
-                                               name: Push.ReceivedBackgroundNotificationEvent,
+                                               name: Push.receivedBackgroundNotificationEvent,
                                                object: nil)
 
         NotificationCenter.default.addObserver(self,
                                                selector:#selector(receivedNotificationResponse(notification:)),
-                                               name: Push.ReceivedNotificationResponseEvent,
+                                               name: Push.receivedNotificationResponseEvent,
                                                object: nil)
     }
 
@@ -199,7 +199,7 @@ public class AirshipDebug : NSObject {
     }
 
     @objc static func receivedNotificationResponse(notification: NSNotification) {
-        guard let response = notification.userInfo?[Push.ReceivedNotificationResponseEventResponseKey] as? UNNotificationResponse else {
+        guard let response = notification.userInfo?[Push.receivedNotificationResponseEventResponseKey] as? UNNotificationResponse else {
             return
         }
         

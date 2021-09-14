@@ -8,7 +8,7 @@ public class AppExitEvent : NSObject, Event {
     private let _data : [AnyHashable : Any]
 
     @objc
-    public var priority: UAEventPriority {
+    public var priority: EventPriority {
         get {
             return .normal
         }

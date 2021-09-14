@@ -13,8 +13,8 @@ public class AggregateActionResult : ActionResult {
         }
     }
     
-    private var _fetchResult : UAActionFetchResult = .noData
-    public override var fetchResult: UAActionFetchResult {
+    private var _fetchResult : ActionFetchResult = .noData
+    public override var fetchResult: ActionFetchResult {
         get {
             return self._fetchResult
         }
@@ -45,11 +45,11 @@ public class AggregateActionResult : ActionResult {
         return self._value[actionName]
     }
 
-    private func mergeFetch(_ result: UAActionFetchResult) {
+    private func mergeFetch(_ result: ActionFetchResult) {
         if self._fetchResult == [] || result == [] {
             self._fetchResult = []
-        } else if fetchResult == UAActionFetchResult.failed || result == UAActionFetchResult.failed {
-            self._fetchResult = UAActionFetchResult.failed
+        } else if fetchResult == ActionFetchResult.failed || result == ActionFetchResult.failed {
+            self._fetchResult = ActionFetchResult.failed
         }
     }
 }

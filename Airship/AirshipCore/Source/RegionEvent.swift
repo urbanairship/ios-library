@@ -77,7 +77,7 @@ public class RegionEvent : NSObject, Event {
     }
 
     @objc
-    public var priority : UAEventPriority {
+    public var priority : EventPriority {
         get {
             return .high
         }

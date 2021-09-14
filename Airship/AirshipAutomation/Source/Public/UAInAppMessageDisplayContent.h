@@ -36,7 +36,7 @@ typedef NS_ENUM(NSInteger, UAInAppMessageDisplayType) {
      * Custom display
      */
     UAInAppMessageDisplayTypeCustom
-};
+} NS_SWIFT_NAME(InAppMessageDisplayType);
 
 /**
  * Button layout.
@@ -56,7 +56,7 @@ typedef NS_ENUM(NSInteger, UAInAppMessageButtonLayoutType) {
      * Joined button layout
      */
     UAInAppMessageButtonLayoutTypeJoined,
-};
+} NS_SWIFT_NAME(InAppMessageButtonLayoutType);
 
 /**
  * JSON keys and values.

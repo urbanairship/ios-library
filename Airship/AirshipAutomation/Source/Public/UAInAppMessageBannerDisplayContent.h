@@ -23,7 +23,7 @@ typedef NS_ENUM(NSInteger, UAInAppMessageBannerPlacementType) {
      * Banner placement bottom
      */
     UAInAppMessageBannerPlacementBottom,
-};
+} NS_SWIFT_NAME(InAppMessageBannerPlacementType);
 
 /**
  * Content layout.
@@ -38,7 +38,7 @@ typedef NS_ENUM(NSInteger, UAInAppMessageBannerContentLayoutType) {
      * Media on the right
      */
     UAInAppMessageBannerContentLayoutTypeMediaRight,
-};
+} NS_SWIFT_NAME(InAppMessageBannerContentLayoutType);
 
 /**
  * Maximum number of button supported by a banner.

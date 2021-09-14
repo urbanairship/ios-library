@@ -46,7 +46,7 @@ public class Config: NSObject, NSCopying {
     /// Default enabled Airship features for the app. For more details, see `PrivacyManager`.
     /// Defaults to `all`.
     @objc
-    public var enabledFeatures: UAFeatures = .all
+    public var enabledFeatures: Features = .all
     
     /// The default app key. Depending on the `inProduction` status,
     /// `developmentAppKey` or `productionAppKey` will take priority.
@@ -665,8 +665,8 @@ public class Config: NSObject, NSCopying {
         return nil
     }
     
-    private class func coerceFeatures(_ value: Any) -> UAFeatures? {
-        if let features = value as? UAFeatures {
+    private class func coerceFeatures(_ value: Any) -> Features? {
+        if let features = value as? Features {
             return features
         }
         
@@ -680,7 +680,7 @@ public class Config: NSObject, NSCopying {
         }
         
         if let names = names {
-            var features : UAFeatures = []
+            var features : Features = []
             for name in names {
                 guard let parsedFeatures = FeatureNames(rawValue: name.lowercased())?.toFeatures() else {
                     return nil
@@ -800,28 +800,28 @@ private enum FeatureNames : String {
     case none
     case all
     
-    func toFeatures() -> UAFeatures {
+    func toFeatures() -> Features {
         switch self {
         case .push:
-            return UAFeatures.push
+            return Features.push
         case .chat:
-            return UAFeatures.chat
+            return Features.chat
         case .contacts:
-            return UAFeatures.contacts
+            return Features.contacts
         case .location:
-            return UAFeatures.location
+            return Features.location
         case .messageCenter:
-            return UAFeatures.messageCenter
+            return Features.messageCenter
         case .analytics:
-            return UAFeatures.analytics
+            return Features.analytics
         case .tagsAndAttributes:
-            return UAFeatures.tagsAndAttributes
+            return Features.tagsAndAttributes
         case .inAppAutomation:
-            return UAFeatures.inAppAutomation
+            return Features.inAppAutomation
         case .none:
             return []
         case .all:
-            return UAFeatures.all
+            return Features.all
         }
     }
 }

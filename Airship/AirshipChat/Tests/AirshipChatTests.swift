@@ -21,7 +21,7 @@ class AirshipChatTests: XCTestCase {
                                 conversation: self.mockConversation,
                                 privacyManager: self.privacyManager)
 
-        self.privacyManager.enabledFeatures = UAFeatures.all
+        self.privacyManager.enabledFeatures = Features.all
     }
 
     func testOpenDelegate() throws {

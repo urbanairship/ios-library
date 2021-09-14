@@ -7,7 +7,7 @@
 public class PushReceivedEvent : NSObject, Event {
 
     @objc
-    public var priority: UAEventPriority {
+    public var priority: EventPriority {
         get {
             return .normal
         }

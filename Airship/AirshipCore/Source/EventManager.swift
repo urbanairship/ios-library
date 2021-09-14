@@ -207,7 +207,7 @@ public class EventManager: NSObject, EventManagerProtocol {
         self.scheduleUpload(delay: 0)
     }
 
-    private func scheduleUpload(priority: UAEventPriority) {
+    private func scheduleUpload(priority: EventPriority) {
         switch (priority) {
         case .high:
             self.scheduleUpload(delay: 0)

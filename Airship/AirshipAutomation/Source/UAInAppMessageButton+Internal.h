@@ -31,7 +31,7 @@ typedef NS_OPTIONS(NSUInteger, UAInAppMessageButtonRounding) {
      * All corners.
      */
     UAInAppMessageButtonRoundingOptionAllCorners  = ~0UL
-};
+} NS_SWIFT_NAME(InAppMessageButtonRounding);
 
 @interface UAInAppMessageButton : UIButton
 

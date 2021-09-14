@@ -241,16 +241,16 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
             cell.subtitle?.text = "ua_device_info_enable_analytics_tracking".localized(comment: "Enable analytics tracking")
 
             cell.cellSwitch.isHidden = false
-            cell.cellSwitch.isOn = Airship.shared.privacyManager.isEnabled(UAFeatures.analytics)
+            cell.cellSwitch.isOn = Airship.shared.privacyManager.isEnabled(Features.analytics)
         case locationEnabled:
             cell.title.text = "ua_device_info_location_settings".localized(comment: "Location Settings")
 
             cell.cellSwitch.isHidden = false
-            cell.cellSwitch.isOn = Airship.shared.privacyManager.isEnabled(UAFeatures.location)
+            cell.cellSwitch.isOn = Airship.shared.privacyManager.isEnabled(Features.location)
 
             let optedInToLocation = UALocation.shared.isLocationOptedIn()
 
-            if (Airship.shared.privacyManager.isEnabled(UAFeatures.location) && !optedInToLocation) {
+            if (Airship.shared.privacyManager.isEnabled(Features.location) && !optedInToLocation) {
                 cell.subtitle?.text = "ua_location_enabled_detail".localized(comment: "Enable GPS and WIFI Based Location detail label") + " - NOT OPTED IN"
             } else {
                 cell.subtitle?.text = localizedNone
@@ -288,17 +288,17 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
         case analyticsEnabled:
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
             if (cell.cellSwitch.isOn) {
-                Airship.shared.privacyManager.enableFeatures(UAFeatures.analytics)
+                Airship.shared.privacyManager.enableFeatures(Features.analytics)
             } else {
-                Airship.shared.privacyManager.disableFeatures(UAFeatures.analytics)
+                Airship.shared.privacyManager.disableFeatures(Features.analytics)
             }
         case locationEnabled:
             cell.cellSwitch.setOn(!cell.cellSwitch.isOn, animated: true)
             if (cell.cellSwitch.isOn) {
-                Airship.shared.privacyManager.enableFeatures(UAFeatures.location)
+                Airship.shared.privacyManager.enableFeatures(Features.location)
                 UALocation.shared.isLocationUpdatesEnabled = true
             } else {
-                Airship.shared.privacyManager.disableFeatures(UAFeatures.location)
+                Airship.shared.privacyManager.disableFeatures(Features.location)
                 UALocation.shared.isLocationUpdatesEnabled = false
             }
         default:

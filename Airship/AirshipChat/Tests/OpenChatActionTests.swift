@@ -32,17 +32,17 @@ class OpenChatActionTests: XCTestCase {
 
     func testAcceptsArguments() throws {
         let validSituations = [
-            UASituation.foregroundInteractiveButton,
-            UASituation.launchedFromPush,
-            UASituation.manualInvocation,
-            UASituation.webViewInvocation,
-            UASituation.automation
+            Situation.foregroundInteractiveButton,
+            Situation.launchedFromPush,
+            Situation.manualInvocation,
+            Situation.webViewInvocation,
+            Situation.automation
         ]
 
         let rejectedSituations = [
-            UASituation.backgroundPush,
-            UASituation.foregroundPush,
-            UASituation.backgroundInteractiveButton
+            Situation.backgroundPush,
+            Situation.foregroundPush,
+            Situation.backgroundInteractiveButton
         ]
 
         validSituations.forEach { (situation) in

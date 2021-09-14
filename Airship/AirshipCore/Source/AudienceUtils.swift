@@ -107,14 +107,21 @@ public class AudienceUtils : NSObject {
     
     @objc
     public class func normalizeTags(_ tags: [String]) -> [String] {
-        return tags.compactMap { tag in
+        var normalized: [String] = []
+        
+        for tag in tags {
             let trimmed = tag.trimmingCharacters(in: .whitespacesAndNewlines)
             if (trimmed.isEmpty || trimmed.count > 128) {
                 AirshipLogger.error("Tag \(trimmed) must be between 1-128 characters. Ignoring")
-                return nil
+                continue
             }
-            return trimmed
+            
+            if (!normalized.contains(trimmed)) {
+                normalized.append(trimmed)
+            }
         }
+        
+        return normalized
     }
     
     @objc

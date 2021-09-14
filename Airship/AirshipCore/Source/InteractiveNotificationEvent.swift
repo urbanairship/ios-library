@@ -25,7 +25,7 @@ public class InteractiveNotificationEvent : NSObject, Event {
     }
 
     @objc
-    public var priority : UAEventPriority {
+    public var priority : EventPriority {
         get {
             return .high
         }

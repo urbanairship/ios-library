@@ -32,7 +32,7 @@ typedef NS_ENUM(NSUInteger, UAInAppMessagePrepareResult) {
      * preparation step should be retried.
      */
     UAInAppMessagePrepareResultInvalidate = 3
-};
+} NS_SWIFT_NAME(InAppMessagePrepareResult);
 
 
 /**

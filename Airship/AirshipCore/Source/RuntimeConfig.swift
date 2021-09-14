@@ -143,9 +143,9 @@ open class RuntimeConfig: NSObject {
     public let requireInitialRemoteConfigEnabled: Bool
     
     /// Default enabled Airship features for the app. For more details, see PrivacyManager.
-    /// Defaults to UAFeaturesAll.
+    /// Defaults to FeaturesAll.
     @objc
-    public let enabledFeatures: UAFeatures
+    public let enabledFeatures: Features
     
     private let site: CloudSite
     private let remoteConfigCache: RemoteConfigCache

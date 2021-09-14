@@ -240,7 +240,7 @@ public class Contact : NSObject, Component, ContactProtocol {
 
     /// The shared Contact instance.
     @objc
-    public static var shared: Contact! {
+    public static var shared: Contact {
         return Airship.contact
     }
 

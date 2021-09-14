@@ -22,7 +22,7 @@ typedef NS_ENUM(NSInteger, UAInAppMessageMediaInfoType) {
      * YouTube video
      */
     UAInAppMessageMediaInfoTypeYouTube,
-};
+} NS_SWIFT_NAME(InAppMessageMediaInfoType);
 
 /**
  * Defines in-app message media content.

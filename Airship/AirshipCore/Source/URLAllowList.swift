@@ -15,7 +15,7 @@ public protocol URLAllowListDelegate {
      * - Returns: `true` to accept this URL, `false`  to reject this URL.
      */
     @objc
-    func allowURL(_ url: URL, scope: UAURLAllowListScope) -> Bool
+    func allowURL(_ url: URL, scope: URLAllowListScope) -> Bool
 }
 
 /// NOTE: For internal use only. :nodoc:
@@ -25,10 +25,10 @@ public protocol URLAllowListProtocol {
     func isAllowed(_ url: URL?) -> Bool
     
     @objc
-    func isAllowed(_ url: URL?, scope: UAURLAllowListScope) -> Bool
+    func isAllowed(_ url: URL?, scope: URLAllowListScope) -> Bool
     
     @objc
-    func addEntry(_ patternString: String, scope: UAURLAllowListScope) -> Bool
+    func addEntry(_ patternString: String, scope: URLAllowListScope) -> Bool
     
     @objc
     func addEntry(_ patternString: String) -> Bool
@@ -140,7 +140,7 @@ open class URLAllowList : NSObject, URLAllowListProtocol {
     /// - Returns: `true` if the URL allow list pattern was validated and added, `false` otherwise.
     @objc
     @discardableResult
-    open func addEntry(_ patternString: String, scope: UAURLAllowListScope) -> Bool {
+    open func addEntry(_ patternString: String, scope: URLAllowListScope) -> Bool {
         if (patternString.isEmpty) {
             AirshipLogger.error("Invalid URL allow list pattern: \(patternString)")
             return false
@@ -203,14 +203,14 @@ open class URLAllowList : NSObject, URLAllowListProtocol {
     ///
     /// - Returns: `true` if the URL is allowed, `false` otherwise.
     @objc
-    open func isAllowed(_ url: URL?, scope: UAURLAllowListScope) -> Bool {
+    open func isAllowed(_ url: URL?, scope: URLAllowListScope) -> Bool {
         guard let url = url else {
             return false
         }
         
         var match = false
         
-        var matchedScope: UAURLAllowListScope = []
+        var matchedScope: URLAllowListScope = []
         
         for entry in entries {
             if (entry.matcher(url)) {
@@ -346,11 +346,11 @@ open class URLAllowList : NSObject, URLAllowListProtocol {
     
     private struct AllowListEntry : Hashable {
         let matcher: AllowListMatcher
-        let scope: UAURLAllowListScope
+        let scope: URLAllowListScope
         // Pattern is only used for hashing
         private let pattern: String
         
-        static func entryWithMatcher(_ matcher: @escaping AllowListMatcher, scope: UAURLAllowListScope, pattern: String) -> AllowListEntry {
+        static func entryWithMatcher(_ matcher: @escaping AllowListMatcher, scope: URLAllowListScope, pattern: String) -> AllowListEntry {
             return AllowListEntry(matcher: matcher, scope: scope, pattern: pattern)
         }
         

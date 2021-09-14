@@ -62,7 +62,7 @@ typedef NS_OPTIONS(NSUInteger, UAFeatures) {
     
     // Sets enabled features to all.
     UAFeaturesAll = (UAFeaturesInAppAutomation | UAFeaturesMessageCenter | UAFeaturesPush | UAFeaturesChat | UAFeaturesAnalytics | UAFeaturesTagsAndAttributes | UAFeaturesContacts | UAFeaturesLocation)
-};
+} NS_SWIFT_NAME(Features);
 
 // Sets enabled features to none.
 static const UAFeatures UAFeaturesNone NS_SWIFT_UNAVAILABLE("Use [] instead.") = 0;

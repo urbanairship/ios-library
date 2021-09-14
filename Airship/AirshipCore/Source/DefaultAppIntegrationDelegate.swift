@@ -130,7 +130,7 @@ class DefaultAppIntegrationDelegate : NSObject, AppIntegrationDelegate {
                              completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         AirshipLogger.info("Application received remote notification: \(userInfo)");
         
-        let situation = isForeground ? UASituation.foregroundPush : UASituation.backgroundPush
+        let situation = isForeground ? Situation.foregroundPush : Situation.backgroundPush
         let dispatchGroup = DispatchGroup()
         var fetchResults: [UInt] = []
         let lock = Lock()
@@ -174,7 +174,7 @@ class DefaultAppIntegrationDelegate : NSObject, AppIntegrationDelegate {
     }
     
     @available(tvOS, unavailable)
-    private func situationFromAction(_ action: UNNotificationAction?) -> UASituation? {
+    private func situationFromAction(_ action: UNNotificationAction?) -> Situation? {
         if let options = action?.options {
             if (options.contains(.foreground)) {
                 return .foregroundInteractiveButton

@@ -18,7 +18,7 @@ typedef NS_ENUM(NSInteger, UAInAppMessageButtonInfoBehaviorType) {
      * Cancel behavior
      */
     UAInAppMessageButtonInfoBehaviorCancel,
-};
+} NS_SWIFT_NAME(InAppMessageButtonInfoBehaviorType);
 
 /**
  * Button identifier limit (100 characters).

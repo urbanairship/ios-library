@@ -251,7 +251,7 @@ public class ActionRegistry : NSObject {
      */
     @objc
     @discardableResult
-    public func addSituationOverride(_ situation: UASituation,
+    public func addSituationOverride(_ situation: Situation,
                               forEntryWithName name: String,
                               action: Action?) -> Bool {
         var result = false
@@ -439,7 +439,7 @@ public class ActionRegistry : NSObject {
 @objc(UAActionRegistryEntry)
 public class ActionRegistryEntry : NSObject {
     internal var _actionClass: NSObject.Type?
-    internal var _situationOverrides: [UASituation : Action] = [:]
+    internal var _situationOverrides: [Situation : Action] = [:]
     internal var _action : Action?
 
     internal var _names: [String] = []
@@ -495,7 +495,7 @@ public class ActionRegistryEntry : NSObject {
      * - Returns: The action.
      */
     @objc(actionForSituation:)
-    public func action(situation: UASituation) -> Action {
+    public func action(situation: Situation) -> Action {
         return self._situationOverrides[situation] ?? self.action
     }
 }

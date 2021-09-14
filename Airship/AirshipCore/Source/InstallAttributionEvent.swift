@@ -22,7 +22,7 @@ public class InstallAttributionEvent : NSObject, Event {
     }
 
     @objc
-    public var priority: UAEventPriority {
+    public var priority: EventPriority {
         get {
             return .normal
         }

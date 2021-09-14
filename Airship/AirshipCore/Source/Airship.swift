@@ -214,11 +214,13 @@ public class Airship : NSObject {
             AppIntegration.integrationDelegate = integrationDelegate
         }
 
-        if let launchOptions = launchOptions {
+        #if !os(tvOS)
+        if let remoteNotification = launchOptions?[UIApplication.LaunchOptionsKey.remoteNotification] as? [AnyHashable : Any] {
             if (AppStateTracker.shared.state != .background) {
-                analytics.launched(fromNotification: launchOptions)
+                analytics.launched(fromNotification: remoteNotification)
             }
         }
+        #endif
         
         self.shared.components.forEach { $0.airshipReady?() }
     }

@@ -9,7 +9,7 @@ public class AppInitEvent : NSObject, Event {
     private lazy var analytics = Airship.requireComponent(ofType: AnalyticsProtocol.self)
 
     @objc
-    public var priority: UAEventPriority {
+    public var priority: EventPriority {
         get {
             return .normal
         }

@@ -26,7 +26,7 @@ typedef NS_ENUM(NSInteger, UAScheduleAudienceMissBehaviorType) {
      * Skip and penalize the message's schedule when the audience check fails.
      */
     UAScheduleAudienceMissBehaviorPenalize,
-};
+} NS_SWIFT_NAME(ScheduleAudienceMissBehaviorType);
 
 /**
  * Builder class for UAScheduleAudience.

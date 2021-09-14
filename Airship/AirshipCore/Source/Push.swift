@@ -110,7 +110,7 @@ public class Push: NSObject, Component, PushProtocol {
     
     /// The shared Push instance.
     @objc
-    public static var shared: Push! {
+    public static var shared: Push {
         return Airship.push
     }
 
@@ -119,37 +119,37 @@ public class Push: NSObject, Component, PushProtocol {
     /// NSNotification event when a notification response is received.
     /// The event will contain the notification response object.
     @objc
-    public static let ReceivedNotificationResponseEvent = NSNotification.Name("com.urbanairship.push.received_notification_response")
+    public static let receivedNotificationResponseEvent = NSNotification.Name("com.urbanairship.push.received_notification_response")
 
     /// Response key for ReceivedNotificationResponseEvent
     @objc
-    public static let ReceivedNotificationResponseEventResponseKey = "response"
+    public static let receivedNotificationResponseEventResponseKey = "response"
 
     /// NSNotification event when a foreground notification is received.
     /// The event will contain the payload dictionary as user info.
     @objc
-    public static let ReceivedForegroundNotificationEvent = NSNotification.Name("com.urbanairship.push.received_foreground_notification")
+    public static let receivedForegroundNotificationEvent = NSNotification.Name("com.urbanairship.push.received_foreground_notification")
 
     /// NSNotification event when a background notification is received.
     /// The event will contain the payload dictionary as user info.
     @objc
-    public static let ReceivedBackgroundNotificationEvent = NSNotification.Name("com.urbanairship.push.received_background_notification")
+    public static let receivedBackgroundNotificationEvent = NSNotification.Name("com.urbanairship.push.received_background_notification")
 
-    // Quiet Time dictionary start key
+    // Quiet Time dictionary start key. For internal use only :nodoc:
     @objc
-    public static let QuietTimeStartKey = "start"
+    public static let quietTimeStartKey = "start"
 
-    // Quiet Time dictionary end key
+    // Quiet Time dictionary end key. For internal use only :nodoc:
     @objc
-    public static let QuietTimeEndKey = "end"
+    public static let quietTimeEndKey = "end"
 
     // Legacy tag settings key. For internal use only :nodoc:
     @objc
-    public static let LegacyTagsSettingsKey = "UAPushTags"
+    public static let legacyTagsSettingsKey = "UAPushTags"
 
     // Push tags migrated settings key. For internal use only. :nodoc:
     @objc
-    public static let TagsMigratedToChannelTagsKey = "UAPushTagsMigrated"
+    public static let tagsMigratedToChannelTagsKey = "UAPushTagsMigrated"
 
     private static let PushNotificationsOptionsKey = "UAUserPushNotificationsOptions";
     private static let UserPushNotificationsEnabledKey = "UAUserPushNotificationsEnabled"
@@ -301,18 +301,18 @@ public class Push: NSObject, Component, PushProtocol {
     /// Migrates legacy push tags to channel tags. For internal use only. :nodoc:
     @objc
     public func migratePushTagsToChannelTags() {
-        guard self.dataStore.keyExists(Push.LegacyTagsSettingsKey) else {
+        guard self.dataStore.keyExists(Push.legacyTagsSettingsKey) else {
             // Nothing to migrate
             return
         }
 
-        guard !self.dataStore.bool(forKey: Push.TagsMigratedToChannelTagsKey) else {
+        guard !self.dataStore.bool(forKey: Push.tagsMigratedToChannelTagsKey) else {
             // Already migrated tags
             return
         }
 
         // Normalize tags for older SDK versions, and migrate to UAChannel as necessary
-        if let existingPushTags = self.dataStore.object(forKey: Push.LegacyTagsSettingsKey) as? [String] {
+        if let existingPushTags = self.dataStore.object(forKey: Push.legacyTagsSettingsKey) as? [String] {
             let existingChannelTags = self.channel.tags
             if existingChannelTags.count > 0 {
                 let combinedTagsSet = Set(existingPushTags).union(Set(existingChannelTags))
@@ -322,8 +322,8 @@ public class Push: NSObject, Component, PushProtocol {
             }
         }
 
-        self.dataStore.setBool(true, forKey: Push.TagsMigratedToChannelTagsKey)
-        self.dataStore.removeObject(forKey: Push.LegacyTagsSettingsKey)
+        self.dataStore.setBool(true, forKey: Push.tagsMigratedToChannelTagsKey)
+        self.dataStore.removeObject(forKey: Push.legacyTagsSettingsKey)
     }
 
     private func observeNotificationCenterEvents() {
@@ -954,8 +954,8 @@ public class Push: NSObject, Component, PushProtocol {
 
         AirshipLogger.debug("Setting quiet time: \(startTimeString) to \(endTimeString)")
 
-        self.quietTime = [Push.QuietTimeStartKey : startTimeString,
-                          Push.QuietTimeEndKey : endTimeString];
+        self.quietTime = [Push.quietTimeStartKey : startTimeString,
+                          Push.quietTimeEndKey : endTimeString];
     }
 
     // MARK: - Registration
@@ -966,7 +966,7 @@ public class Push: NSObject, Component, PushProtocol {
     /// Add a `UARegistrationDelegate` to `UAPush` to receive success and failure callbacks.
     @objc
     public func updateRegistration() {
-        if !self.privacyManager.isEnabled(UAFeatures.push) {
+        if !self.privacyManager.isEnabled(Features.push) {
             return
         }
 
@@ -1054,8 +1054,8 @@ public class Push: NSObject, Component, PushProtocol {
             }
             
             if let timeZoneName = self.timeZone?.name,
-               let quietTimeStart = self.quietTime?[Push.QuietTimeStartKey] as? String,
-               let quietTimeEnd = self.quietTime?[Push.QuietTimeEndKey] as? String,
+               let quietTimeStart = self.quietTime?[Push.quietTimeStartKey] as? String,
+               let quietTimeEnd = self.quietTime?[Push.quietTimeEndKey] as? String,
                self.quietTimeEnabled {
                 
                 
@@ -1173,7 +1173,7 @@ extension Push : InternalPushProtocol {
             self.launchNotificationResponse = response
         }
 
-        self.notificationCenter.post(name: Push.ReceivedNotificationResponseEvent, object: self, userInfo:[Push.ReceivedNotificationResponseEventResponseKey : response]);
+        self.notificationCenter.post(name: Push.receivedNotificationResponseEvent, object: self, userInfo:[Push.receivedNotificationResponseEventResponseKey : response]);
 
         if let callback = self.pushNotificationDelegate?.receivedNotificationResponse {
             callback(response, completionHandler)
@@ -1201,7 +1201,7 @@ extension Push : InternalPushProtocol {
                 }
             }
 
-            self.notificationCenter.post(name: Push.ReceivedForegroundNotificationEvent, object: self, userInfo: notification)
+            self.notificationCenter.post(name: Push.receivedForegroundNotificationEvent, object: self, userInfo: notification)
 
             if let callback = delegate?.receivedForegroundNotification {
                 callback(notification, {
@@ -1211,7 +1211,7 @@ extension Push : InternalPushProtocol {
                 handler(.noData)
             }
         } else {
-            self.notificationCenter.post(name: Push.ReceivedBackgroundNotificationEvent, object: self, userInfo: notification)
+            self.notificationCenter.post(name: Push.receivedBackgroundNotificationEvent, object: self, userInfo: notification)
 
             if let callback = delegate?.receivedBackgroundNotification {
                 callback(notification, { result in

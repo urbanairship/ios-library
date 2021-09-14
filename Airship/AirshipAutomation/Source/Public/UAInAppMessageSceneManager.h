@@ -38,7 +38,7 @@ NS_SWIFT_NAME(InAppMessageSceneManager)
 /**
  * Shared instance.
  */
-+ (instancetype)shared;
+@property (nonatomic, readonly, class) UAInAppMessageSceneManager *shared;
 
 /**
  *  Called to get the scene for an in-app message.

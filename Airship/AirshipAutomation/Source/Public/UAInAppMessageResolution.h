@@ -28,7 +28,7 @@ typedef NS_ENUM(NSInteger, UAInAppMessageResolutionType) {
      * Timed out resolution.
      */
     UAInAppMessageResolutionTypeTimedOut = 3
-};
+} NS_SWIFT_NAME(InAppMessageResolutionType);
 
 /**
  * In-app message resolution info.

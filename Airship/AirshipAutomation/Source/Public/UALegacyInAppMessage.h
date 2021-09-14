@@ -16,7 +16,8 @@ typedef NS_ENUM(NSInteger, UALegacyInAppMessagePosition) {
      * The bottom of the screen.
      */
     UALegacyInAppMessagePositionBottom
-};
+} NS_SWIFT_NAME(LegacyInAppMessagePosition);
+
 
 /**
  * Enumeration of in-app message display types.
@@ -26,7 +27,7 @@ typedef NS_ENUM(NSInteger, UALegacyInAppMessageDisplayType) {
      * Banner display type.
      */
     UALegacyInAppMessageDisplayTypeBanner
-};
+} NS_SWIFT_NAME(LegacyInAppMessageDisplayType);
 
 @class UALegacyInAppMessageButtonActionBinding;
 

@@ -250,7 +250,7 @@ class InAppMessageDetailViewController: UIViewController, UITableViewDelegate, U
         return cell
     }
     
-    private func generateDisplayTypeSubtitle(_ type:UAInAppMessageDisplayType) -> String {
+    private func generateDisplayTypeSubtitle(_ type: InAppMessageDisplayType) -> String {
         switch (type) {
         case .banner:
             return "ua_message_displaytype_banner".localized()
@@ -717,7 +717,7 @@ class InAppMessageDetailViewController: UIViewController, UITableViewDelegate, U
         return mediaDescription
     }
 
-    private func descriptionForButtons(_ buttons : [InAppMessageButtonInfo]?, _ buttonLayout: UAInAppMessageButtonLayoutType) -> String? {
+    private func descriptionForButtons(_ buttons : [InAppMessageButtonInfo]?, _ buttonLayout: InAppMessageButtonLayoutType) -> String? {
         var buttonsDescription : String?
         if let buttons = buttons {
             if (buttons.count > 0) {

@@ -32,6 +32,12 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
         return Airship.requireComponent(ofType: AnalyticsProtocol.self)
     }
     
+    /// The shared Analytics instance.
+    @objc
+    public static var shared: Analytics {
+        return Airship.analytics
+    }
+    
     private static let associatedIdentifiers = "UAAssociatedIdentifiers"
     private static let missingSendID = "MISSING_SEND_ID"
     private static let pushMetadata = "com.urbanairship.metadata"

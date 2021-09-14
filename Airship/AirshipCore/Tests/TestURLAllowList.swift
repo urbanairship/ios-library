@@ -14,7 +14,7 @@ public class TestURLAllowList : URLAllowList {
         return isAllowedReturnValue
     }
 
-    public override func isAllowed(_ url: URL?, scope: UAURLAllowListScope) -> Bool {
+    public override func isAllowed(_ url: URL?, scope: URLAllowListScope) -> Bool {
         return isAllowedReturnValue
     }
 
@@ -22,7 +22,7 @@ public class TestURLAllowList : URLAllowList {
         return addEntryReturnValue
     }
 
-    public override func addEntry(_ patternString: String, scope: UAURLAllowListScope) -> Bool {
+    public override func addEntry(_ patternString: String, scope: URLAllowListScope) -> Bool {
         return addEntryReturnValue
     }
 }

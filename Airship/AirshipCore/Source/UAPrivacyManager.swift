@@ -37,7 +37,7 @@ public class PrivacyManager : NSObject {
     private let dataStore: PreferenceDataStore
     private let notificationCenter: NotificationCenter
 
-    private var _enabledFeatures: UAFeatures
+    private var _enabledFeatures: Features
 
     /**
     * Gets the current enabled features.
@@ -45,7 +45,7 @@ public class PrivacyManager : NSObject {
     * - Returns: The enabled features.
     */
     @objc
-    public var enabledFeatures: UAFeatures {
+    public var enabledFeatures: Features {
         get {
             _enabledFeatures
         } set {
@@ -63,7 +63,7 @@ public class PrivacyManager : NSObject {
      * - Note: For internal use only. :nodoc:
      */
     @objc
-    public convenience init(dataStore: PreferenceDataStore, defaultEnabledFeatures: UAFeatures) {
+    public convenience init(dataStore: PreferenceDataStore, defaultEnabledFeatures: Features) {
         self.init(
             dataStore: dataStore,
             defaultEnabledFeatures: defaultEnabledFeatures,
@@ -74,13 +74,13 @@ public class PrivacyManager : NSObject {
      * - Note: For internal use only. :nodoc:
      */
     @objc
-    public init(dataStore: PreferenceDataStore, defaultEnabledFeatures: UAFeatures, notificationCenter: NotificationCenter) {
+    public init(dataStore: PreferenceDataStore, defaultEnabledFeatures: Features, notificationCenter: NotificationCenter) {
 
         self.dataStore = dataStore
         self.notificationCenter = notificationCenter
 
         if self.dataStore.keyExists(UAPrivacyManagerEnabledFeaturesKey) {
-            self._enabledFeatures = UAFeatures(rawValue: UInt(self.dataStore.integer(forKey: UAPrivacyManagerEnabledFeaturesKey)))
+            self._enabledFeatures = Features(rawValue: UInt(self.dataStore.integer(forKey: UAPrivacyManagerEnabledFeaturesKey)))
         } else {
             self._enabledFeatures = defaultEnabledFeatures
         }
@@ -95,7 +95,7 @@ public class PrivacyManager : NSObject {
     * - Parameter features: The features to enable.
     */
     @objc
-    public func enableFeatures(_ features: UAFeatures) {
+    public func enableFeatures(_ features: Features) {
         enabledFeatures.insert(features)
     }
 
@@ -105,7 +105,7 @@ public class PrivacyManager : NSObject {
     * - Parameter features: The features to disable.
     */
     @objc
-    public func disableFeatures(_ features: UAFeatures) {
+    public func disableFeatures(_ features: Features) {
         enabledFeatures.remove(features)
     }
 
@@ -116,7 +116,7 @@ public class PrivacyManager : NSObject {
     * - Returns: True if the provided features are enabled, otherwise false.
     */
     @objc
-    public func isEnabled(_ feature: UAFeatures) -> Bool {
+    public func isEnabled(_ feature: Features) -> Bool {
         if feature == .none {
             return enabledFeatures == .none
         } else {

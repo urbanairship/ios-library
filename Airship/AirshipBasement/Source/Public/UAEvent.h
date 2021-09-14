@@ -26,7 +26,7 @@ typedef NS_ENUM(NSInteger, UAEventPriority) {
      * High priority event. A send will be scheduled immediately.
      */
     UAEventPriorityHigh
-};
+} NS_SWIFT_NAME(EventPriority);
 
 
 /**

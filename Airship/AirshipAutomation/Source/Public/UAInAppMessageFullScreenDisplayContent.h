@@ -28,7 +28,7 @@ typedef NS_ENUM(NSInteger, UAInAppMessageFullScreenContentLayoutType) {
      * Header, Body, Media
      */
     UAInAppMessageFullScreenContentLayoutHeaderBodyMedia,
-};
+} NS_SWIFT_NAME(InAppMessageFullScreenContentLayoutType);
 
 /**
  * Maximum number of button supported by a full screen.

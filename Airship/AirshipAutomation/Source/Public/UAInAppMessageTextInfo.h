@@ -27,7 +27,7 @@ typedef NS_OPTIONS(NSUInteger, UAInAppMessageTextInfoStyleType) {
      * Underline style
      */
     UAInAppMessageTextInfoStyleUnderline = 1 << 2
-};
+} NS_SWIFT_NAME(InAppMessageTextInfoStyleType);
 
 /**
  * Represents the possible text alignment options.
@@ -52,7 +52,7 @@ typedef NS_ENUM(NSUInteger, UAInAppMessageTextInfoAlignmentType) {
      * Right Alignment
      */
     UAInAppMessageTextInfoAlignmentRight = 3
-};
+} NS_SWIFT_NAME(InAppMessageTextInfoAlignmentType);
 
 
 /**

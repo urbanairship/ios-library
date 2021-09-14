@@ -18,7 +18,7 @@ public class ActionRunner : NSObject {
      *   - situation: The action argument's situation
      */
     @objc(runActionWithName:value:situation:)
-    public class func run(_ actionName: String, value: Any?, situation: UASituation) {
+    public class func run(_ actionName: String, value: Any?, situation: Situation) {
         self.run(actionName, value: value, situation: situation, metadata: nil, completionHandler: nil)
     }
 
@@ -37,7 +37,7 @@ public class ActionRunner : NSObject {
     @objc(runActionWithName:value:situation:metadata:)
     public class func run(_ actionName: String,
                           value: Any?,
-                          situation: UASituation,
+                          situation: Situation,
                           metadata: [AnyHashable : Any]?) {
         self.run(actionName, value: value, situation: situation, metadata: metadata, completionHandler: nil)
     }
@@ -57,7 +57,7 @@ public class ActionRunner : NSObject {
     @objc(runActionWithName:value:situation:completionHandler:)
     public class func run(_ actionName: String,
                           value: Any?,
-                          situation: UASituation,
+                          situation: Situation,
                           completionHandler: UAActionCompletionHandler?) {
         self.run( actionName, value: value, situation: situation, metadata: nil, completionHandler: completionHandler)
     }
@@ -78,7 +78,7 @@ public class ActionRunner : NSObject {
     @objc(runActionWithName:value:situation:metadata:completionHandler:)
     public class func run(_ actionName: String,
                           value: Any?,
-                          situation: UASituation,
+                          situation: Situation,
                           metadata: [AnyHashable : Any]?,
                           completionHandler: UAActionCompletionHandler?) {
         guard let entry = Airship.shared.actionRegistry.registryEntry(actionName) else {
@@ -104,7 +104,7 @@ public class ActionRunner : NSObject {
      *   - situation: The action argument's situation.
      */
     @objc(runAction:value:situation:)
-    public class func run(_ action: Action, value: Any?, situation: UASituation) {
+    public class func run(_ action: Action, value: Any?, situation: Situation) {
         self.run(action, value: value, situation: situation, metadata: nil, completionHandler: nil)
     }
 
@@ -118,7 +118,7 @@ public class ActionRunner : NSObject {
      *   - metadata: The action argument's metadata.
      */
     @objc(runAction:value:situation:metadata:)
-    public class func run(_ action: Action, value: Any?, situation: UASituation, metadata: [AnyHashable : Any]?) {
+    public class func run(_ action: Action, value: Any?, situation: Situation, metadata: [AnyHashable : Any]?) {
         self.run(action, value: value, situation: situation, metadata: metadata, completionHandler: nil)
     }
 
@@ -132,7 +132,7 @@ public class ActionRunner : NSObject {
      *   - completionHandler: The completion handler.
      */
     @objc(runAction:value:situation:completionHandler:)
-    public class func run(_ action: Action, value: Any?, situation: UASituation, completionHandler: UAActionCompletionHandler?) {
+    public class func run(_ action: Action, value: Any?, situation: Situation, completionHandler: UAActionCompletionHandler?) {
         self.run(action, value: value, situation: situation, metadata: nil, completionHandler: completionHandler)
     }
 
@@ -149,7 +149,7 @@ public class ActionRunner : NSObject {
     @objc(runAction:value:situation:metadata:completionHandler:)
     public class func run(_ action: Action,
                           value: Any?,
-                          situation: UASituation,
+                          situation: Situation,
                           metadata: [AnyHashable : Any]?,
                           completionHandler: UAActionCompletionHandler?) {
         let arguments = ActionArguments(value: value, with: situation, metadata: metadata)
@@ -172,7 +172,7 @@ public class ActionRunner : NSObject {
      */
     @objc(runActionsWithActionValues:situation:metadata:completionHandler:)
     public class func run(actionValues: [AnyHashable : Any],
-                          situation: UASituation,
+                          situation: Situation,
                           metadata: [AnyHashable : Any]?,
                           completionHandler: UAActionCompletionHandler?) {
         let aggregateResult = AggregateActionResult()
@@ -202,7 +202,7 @@ public class ActionRunner : NSObject {
     private class func run(_ actionName: String,
                            entry: ActionRegistryEntry,
                            value: Any?,
-                           situation: UASituation,
+                           situation: Situation,
                            metadata: [AnyHashable : Any]?,
                            completionHandler: UAActionCompletionHandler?) {
         

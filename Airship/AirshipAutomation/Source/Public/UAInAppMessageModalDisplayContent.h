@@ -28,7 +28,8 @@ typedef NS_ENUM(NSInteger, UAInAppMessageModalContentLayoutType) {
      * Header, Body, Media
      */
     UAInAppMessageModalContentLayoutHeaderBodyMedia,
-};
+} NS_SWIFT_NAME(InAppMessageModalContentLayoutType);
+
 
 /**
  * Maximum number of button supported by a modal message.

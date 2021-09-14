@@ -347,10 +347,10 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     [self.push setQuietTimeStartHour:12 startMinute:30 endHour:14 endMinute:58];
 
     NSDictionary *quietTime = self.push.quietTime;
-    XCTAssertEqualObjects(@"12:30", [quietTime valueForKey:UAPush.QuietTimeStartKey],
+    XCTAssertEqualObjects(@"12:30", [quietTime valueForKey:UAPush.quietTimeStartKey],
                           @"Quiet time start is not set correctly");
 
-    XCTAssertEqualObjects(@"14:58", [quietTime valueForKey:UAPush.QuietTimeEndKey],
+    XCTAssertEqualObjects(@"14:58", [quietTime valueForKey:UAPush.quietTimeEndKey],
                           @"Quiet time end is not set correctly");
 
     // Change the time zone
@@ -358,10 +358,10 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
     // Make sure the hour and minutes are still the same
     quietTime = self.push.quietTime;
-    XCTAssertEqualObjects(@"12:30", [quietTime valueForKey:UAPush.QuietTimeStartKey],
+    XCTAssertEqualObjects(@"12:30", [quietTime valueForKey:UAPush.quietTimeStartKey],
                           @"Quiet time start is not set correctly");
 
-    XCTAssertEqualObjects(@"14:58", [quietTime valueForKey:UAPush.QuietTimeEndKey],
+    XCTAssertEqualObjects(@"14:58", [quietTime valueForKey:UAPush.quietTimeEndKey],
                           @"Quiet time end is not set correctly");
 
 
@@ -370,10 +370,10 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
     // Make sure the hour and minutes are still the same
     quietTime = self.push.quietTime;
-    XCTAssertEqualObjects(@"12:30", [quietTime valueForKey:UAPush.QuietTimeStartKey],
+    XCTAssertEqualObjects(@"12:30", [quietTime valueForKey:UAPush.quietTimeStartKey],
                           @"Quiet time start is not set correctly");
 
-    XCTAssertEqualObjects(@"14:58", [quietTime valueForKey:UAPush.QuietTimeEndKey],
+    XCTAssertEqualObjects(@"14:58", [quietTime valueForKey:UAPush.quietTimeEndKey],
                           @"Quiet time end is not set correctly");
 
     // Try to set it to an invalid end minute
@@ -381,10 +381,10 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
     // Make sure the hour and minutes are still the same
     quietTime = self.push.quietTime;
-    XCTAssertEqualObjects(@"12:30", [quietTime valueForKey:UAPush.QuietTimeStartKey],
+    XCTAssertEqualObjects(@"12:30", [quietTime valueForKey:UAPush.quietTimeStartKey],
                           @"Quiet time start is not set correctly");
 
-    XCTAssertEqualObjects(@"14:58", [quietTime valueForKey:UAPush.QuietTimeEndKey],
+    XCTAssertEqualObjects(@"14:58", [quietTime valueForKey:UAPush.quietTimeEndKey],
                           @"Quiet time end is not set correctly");
 }
 
@@ -755,32 +755,32 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 }
 
 - (void)testmigratePushTagsToChannelTags {
-    [self.dataStore setObject:@[@"cool", @"rad"] forKey:UAPush.LegacyTagsSettingsKey];
+    [self.dataStore setObject:@[@"cool", @"rad"] forKey:UAPush.legacyTagsSettingsKey];
 
     NSArray *expectedTags = @[@"cool", @"rad"];
 
     // Force a migration
-    [self.dataStore removeObjectForKey:UAPush.TagsMigratedToChannelTagsKey];
+    [self.dataStore removeObjectForKey:UAPush.tagsMigratedToChannelTagsKey];
 
     [self.push migratePushTagsToChannelTags];
 
     XCTAssertEqualObjects(self.testChannel.tags, expectedTags);
-    XCTAssertTrue([self.dataStore boolForKey:UAPush.TagsMigratedToChannelTagsKey]);
-    XCTAssertNil([self.dataStore objectForKey:UAPush.LegacyTagsSettingsKey]);
+    XCTAssertTrue([self.dataStore boolForKey:UAPush.tagsMigratedToChannelTagsKey]);
+    XCTAssertNil([self.dataStore objectForKey:UAPush.legacyTagsSettingsKey]);
 }
 
 - (void)testMigratePushTagsToChannelTagsCombined {
-    [self.dataStore setObject:@[@"cool", @"rad"] forKey:UAPush.LegacyTagsSettingsKey];
+    [self.dataStore setObject:@[@"cool", @"rad"] forKey:UAPush.legacyTagsSettingsKey];
 
     self.testChannel.tags = @[@"not cool", @"not rad"];
 
     // Force a migration
-    [self.dataStore removeObjectForKey:UAPush.TagsMigratedToChannelTagsKey];
+    [self.dataStore removeObjectForKey:UAPush.tagsMigratedToChannelTagsKey];
 
     [self.push migratePushTagsToChannelTags];
 
-    XCTAssertTrue([self.dataStore boolForKey:UAPush.TagsMigratedToChannelTagsKey]);
-    XCTAssertNil([self.dataStore objectForKey:UAPush.LegacyTagsSettingsKey]);
+    XCTAssertTrue([self.dataStore boolForKey:UAPush.tagsMigratedToChannelTagsKey]);
+    XCTAssertNil([self.dataStore objectForKey:UAPush.legacyTagsSettingsKey]);
 
     NSArray *expected = @[@"cool", @"rad", @"not cool", @"not rad"];
     XCTAssertEqualObjects([NSSet setWithArray:self.testChannel.tags], [NSSet setWithArray:expected]);
@@ -788,7 +788,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
 - (void)testMigratePushTagsToChannelTagsAlreadyMigrated {
     self.testChannel.tags = @[@"some-random-value"];
-    [self.dataStore setBool:YES forKey:UAPush.TagsMigratedToChannelTagsKey];
+    [self.dataStore setBool:YES forKey:UAPush.tagsMigratedToChannelTagsKey];
     [self.push migratePushTagsToChannelTags];
 
     XCTAssertEqualObjects(self.testChannel.tags, @[@"some-random-value"]);
@@ -869,7 +869,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     __block NSNotification *notification;
 
     XCTestExpectation *notificationFired = [self expectationWithDescription:@"Notification event fired"];
-    [self.notificationCenter addObserverForName:UAPush.ReceivedForegroundNotificationEvent object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
+    [self.notificationCenter addObserverForName:UAPush.receivedForegroundNotificationEvent object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
         notification = note;
         [notificationFired fulfill];
     }];
@@ -914,7 +914,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     __block NSNotification *notification;
 
     XCTestExpectation *notificationFired = [self expectationWithDescription:@"Notification event fired"];
-    [self.notificationCenter addObserverForName:UAPush.ReceivedForegroundNotificationEvent object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
+    [self.notificationCenter addObserverForName:UAPush.receivedForegroundNotificationEvent object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
         notification = note;
         [notificationFired fulfill];
     }];
@@ -954,7 +954,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     __block NSNotification *notification;
 
     XCTestExpectation *notificationFired = [self expectationWithDescription:@"Notification event fired"];
-    [self.notificationCenter addObserverForName:UAPush.ReceivedBackgroundNotificationEvent object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
+    [self.notificationCenter addObserverForName:UAPush.receivedBackgroundNotificationEvent object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
         notification = note;
         [notificationFired fulfill];
     }];
@@ -995,7 +995,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     __block NSNotification *notification;
 
     XCTestExpectation *notificationFired = [self expectationWithDescription:@"Notification event fired"];
-    [self.notificationCenter addObserverForName:UAPush.ReceivedForegroundNotificationEvent object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
+    [self.notificationCenter addObserverForName:UAPush.receivedForegroundNotificationEvent object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
         notification = note;
         [notificationFired fulfill];
     }];
@@ -1030,7 +1030,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     __block NSNotification *notification;
 
     XCTestExpectation *notificationFired = [self expectationWithDescription:@"Notification event fired"];
-    [self.notificationCenter addObserverForName:UAPush.ReceivedNotificationResponseEvent object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
+    [self.notificationCenter addObserverForName:UAPush.receivedNotificationResponseEvent object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
         notification = note;
         [notificationFired fulfill];
     }];
@@ -1066,7 +1066,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     __block NSNotification *notification;
 
     XCTestExpectation *notificationFired = [self expectationWithDescription:@"Notification event fired"];
-    [self.notificationCenter addObserverForName:UAPush.ReceivedNotificationResponseEvent object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
+    [self.notificationCenter addObserverForName:UAPush.receivedNotificationResponseEvent object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
         notification = note;
         [notificationFired fulfill];
     }];
@@ -1082,7 +1082,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     [self waitForTestExpectations];
     XCTAssertNil(self.push.launchNotificationResponse);
     XCTAssertNoThrow([self.mockPushDelegate verify], @"push delegate should be called");
-    XCTAssertEqualObjects(response, notification.userInfo[UAPush.ReceivedNotificationResponseEventResponseKey]);
+    XCTAssertEqualObjects(response, notification.userInfo[UAPush.receivedNotificationResponseEventResponseKey]);
 }
 
 /**
