@@ -31,7 +31,7 @@ public class NSDictionaryValueTransformer: ValueTransformer {
         }
         
         do {
-            let classes = [NSDictionary.self, NSArray.self, NSSet.self, NSData.self,
+            let classes = [NSString.self, NSDictionary.self, NSArray.self, NSSet.self, NSData.self,
                            NSNumber.self, NSDate.self, NSURL.self, NSUUID.self, NSNull.self]
             return try NSKeyedUnarchiver.unarchivedObject(ofClasses: classes, from: value)
         } catch {

@@ -55,6 +55,15 @@ class EventUtils {
             if (UAAuthorizedNotificationSettings.criticalAlert.rawValue & authorizedSettings.rawValue) > 0 {
                 notificationTypes.append("critical_alert")
             }
+
+            if (UAAuthorizedNotificationSettings.scheduledDelivery.rawValue & authorizedSettings.rawValue) > 0 {
+                notificationTypes.append("scheduled_delivery")
+            }
+
+            if (UAAuthorizedNotificationSettings.timeSensitive.rawValue & authorizedSettings.rawValue) > 0 {
+                notificationTypes.append("time_sensitive")
+            }
+
         #endif
 
         return notificationTypes
