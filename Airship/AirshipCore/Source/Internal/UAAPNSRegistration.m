@@ -47,6 +47,19 @@
                 authorizedSettings |= UAAuthorizedNotificationSettingsAnnouncement;
             }
         }
+#if !TARGET_OS_MACCATALYST
+        if (@available(iOS 15.0, *)) {
+            if (notificationSettings.scheduledDeliverySetting == UNNotificationSettingEnabled) {
+                authorizedSettings |= UAAuthorizedNotificationSettingsScheduledDelivery;
+            }
+        }
+
+        if (@available(iOS 15.0, *)) {
+            if (notificationSettings.timeSensitiveSetting == UNNotificationSettingEnabled) {
+                authorizedSettings |= UAAuthorizedNotificationSettingsTimeSensitive;
+            }
+        }
+#endif
 #endif
 
         completionHandler(authorizedSettings, authorizationStatus);
@@ -115,10 +128,13 @@
     // These authorization options and settings are iOS 13+
 #if !TARGET_OS_TV   // UNAuthorizationOptionAnnouncement not supported on tvOS
     if (@available(iOS 13.0, *)) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         if ((uaOptions & UANotificationOptionAnnouncement) == UANotificationOptionAnnouncement) {
             unOptions |= UNAuthorizationOptionAnnouncement;
         }
     }
+#pragma clang diagnostic pop
 #endif
 
     return unOptions;

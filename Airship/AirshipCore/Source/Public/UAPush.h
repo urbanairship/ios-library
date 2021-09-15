@@ -41,7 +41,7 @@ typedef NS_OPTIONS(NSUInteger, UANotificationOptions) {
     UANotificationOptionCriticalAlert = (1 << 4),
     UANotificationOptionProvidesAppNotificationSettings = (1 << 5),
     UANotificationOptionProvisional = (1 << 6),
-    UANotificationOptionAnnouncement = (1 << 7),
+    UANotificationOptionAnnouncement DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 16.0.") = (1 << 7),
 };
 
 /**
@@ -57,6 +57,8 @@ typedef NS_OPTIONS(NSUInteger, UAAuthorizedNotificationSettings) {
     UAAuthorizedNotificationSettingsNotificationCenter = (1 << 5),
     UAAuthorizedNotificationSettingsCriticalAlert = (1 << 6),
     UAAuthorizedNotificationSettingsAnnouncement = (1 << 7),
+    UAAuthorizedNotificationSettingsScheduledDelivery = (1 << 8),
+    UAAuthorizedNotificationSettingsTimeSensitive = (1 << 9),
 };
 
 /**

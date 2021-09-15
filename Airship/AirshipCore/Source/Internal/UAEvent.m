@@ -67,6 +67,15 @@
     if ((UAAuthorizedNotificationSettingsCriticalAlert & authorizedSettings) > 0) {
         [notificationTypes addObject:@"critical_alert"];
     }
+
+    if ((UAAuthorizedNotificationSettingsScheduledDelivery & authorizedSettings) > 0) {
+        [notificationTypes addObject:@"scheduled_delivery"];
+    }
+
+    if ((UAAuthorizedNotificationSettingsTimeSensitive & authorizedSettings) > 0) {
+        [notificationTypes addObject:@"time_sensitive"];
+    }
+    
 #endif
 
     return notificationTypes;

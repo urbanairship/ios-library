@@ -1,5 +1,5 @@
 
-XCODE ?= 12.4
+XCODE ?= 13.0
 
 export TEST_DESTINATION ?= platform=iOS Simulator,OS=latest,name=iPhone 11
 export TEST_DESTINATION_TVOS ?= platform=tvOS Simulator,OS=latest,name=Apple TV

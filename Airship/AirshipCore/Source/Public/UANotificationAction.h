@@ -29,6 +29,32 @@ typedef NS_OPTIONS(NSUInteger, UANotificationActionOptions) {
 
 static const UANotificationActionOptions UANotificationActionOptionNone NS_SWIFT_UNAVAILABLE("Use [] instead.") = 0;
 
+@interface UANotificationActionIcon : NSObject
+
+/**
+ * Creates an action icon based on an image in your app’s bundle, preferably in an asset catalog.
+ * @param templateImageName The name of a custom image in the app’s asset catalog.
+ */
++ (instancetype)iconWithTemplateImageName:(NSString *)templateImageName;
+
+/**
+ * Creates an action icon by using a system symbol image.
+ * @param systemImageName The name of the system symbol image.
+ */
++ (instancetype)iconWithSystemImageName:(NSString *)systemImageName;
+
+/**
+ * The name of a custom image in the app’s asset catalog.
+ */
+@property(nonatomic, readonly, nullable) NSString *templateImageName;
+
+/**
+ * The name of the system symbol image.
+ */
+@property(nonatomic, readonly, nullable) NSString *systemImageName;
+
+@end
+
 /**
  * iOS version-independent wrapper for UNNotificationAction.
  */
@@ -53,6 +79,11 @@ static const UANotificationActionOptions UANotificationActionOptionNone NS_SWIFT
  */
 @property(assign, readonly, nonatomic) UANotificationActionOptions options;
 
+/**
+ * The icon that the system displays to the user.
+ */
+@property(nonatomic, readonly, nullable) UANotificationActionIcon *icon;
+
 ///---------------------------------------------------------------------------------------
 /// @name Notification Action Initialization
 ///---------------------------------------------------------------------------------------
@@ -67,11 +98,42 @@ static const UANotificationActionOptions UANotificationActionOptionNone NS_SWIFT
 - (instancetype)initWithIdentifier:(NSString *)identifier
                              title:(NSString *)title
                            options:(UANotificationActionOptions)options;
+/**
+ * Init method.
+ *
+ * @param identifier The action's identifier.
+ * @param title The action's title.
+ * @param options The action's options.
+ * @param icon The icon that the system displays to the user.
+ */
+- (instancetype)initWithIdentifier:(NSString *)identifier
+                             title:(NSString *)title
+                           options:(UANotificationActionOptions)options
+                              icon:(nullable UANotificationActionIcon *)icon;
 
 /**
  * Creates an action with the specified title and options.
  * 
  * @param identifier The unique string that you use internally to identify the action. 
+ *        When the user selects the action, the system passes this string to your
+ *        app and asks you to perform the related task. This parameter must not be nil.
+ * @param title The localized string to display to the user.
+ *        This string is displayed in interface elements such as buttons that are
+ *        used to represent actions. This parameter must not be nil.
+ * @param options Additional options for how the action should be performed. Add options
+ *        sparingly and only when you require the related behavior. For a list of
+ *        possible values, see UANotificationActionOptions.
+ * @param icon The icon that the system displays to the user.
+ */
++ (instancetype)actionWithIdentifier:(NSString *)identifier
+                               title:(NSString *)title
+                             options:(UANotificationActionOptions)options
+                                icon:(nullable UANotificationActionIcon *)icon;
+
+/**
+ * Creates an action with the specified title and options.
+ *
+ * @param identifier The unique string that you use internally to identify the action.
  *        When the user selects the action, the system passes this string to your
  *        app and asks you to perform the related task. This parameter must not be nil.
  * @param title The localized string to display to the user.

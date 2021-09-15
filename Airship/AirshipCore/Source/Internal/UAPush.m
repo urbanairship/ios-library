@@ -783,7 +783,10 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
     }
 
     if (authorizedSettings & UAAuthorizedNotificationSettingsAnnouncement) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         options |= UANotificationOptionAnnouncement;
+#pragma clang diagnostic pop
     }
 #endif
 

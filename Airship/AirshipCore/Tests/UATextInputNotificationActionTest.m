@@ -62,6 +62,56 @@ static NSString *kTestIdentifier2  = @"TESTID2";
     XCTAssertTrue([convertedToUNTextInputNotificationAction.textInputPlaceholder isEqual:unTextInputNotificationAction.textInputPlaceholder]);
 }
 
+- (void)testAsUNNotificationActionForegroundSystemIcon {
+    if (@available(iOS 15.0, *)) {
+        UANotificationActionIcon *icon = [UANotificationActionIcon iconWithSystemImageName:@"foo"];
+        UNNotificationActionIcon *unIcon = [UNNotificationActionIcon iconWithSystemImageName:@"foo"];
+
+        UATextInputNotificationAction *uaTextInputNotificationAction = [UATextInputNotificationAction actionWithIdentifier:kTestIdentifier title:kTestTitle textInputButtonTitle:kTestTextInputButtonTitle textInputPlaceholder:kTestTextInputPlaceholder options:UANotificationActionOptionForeground icon:icon];
+        UNNotificationAction *convertedToUNNotificationAction = [uaTextInputNotificationAction asUNNotificationAction];
+        XCTAssertTrue([convertedToUNNotificationAction isKindOfClass:[UNTextInputNotificationAction class]]);
+        UNTextInputNotificationAction *convertedToUNTextInputNotificationAction = (UNTextInputNotificationAction *)convertedToUNNotificationAction;
+
+        UNTextInputNotificationAction *unTextInputNotificationAction = [UNTextInputNotificationAction actionWithIdentifier:kTestIdentifier title:kTestTitle options:UNNotificationActionOptionForeground icon:unIcon textInputButtonTitle:kTestTextInputButtonTitle textInputPlaceholder:kTestTextInputPlaceholder];
+
+        // check isEqual
+        XCTAssertTrue([uaTextInputNotificationAction isEqualToUNNotificationAction:unTextInputNotificationAction]);
+
+        // manually check each property
+        XCTAssertTrue([convertedToUNTextInputNotificationAction.identifier isEqual:unTextInputNotificationAction.identifier]);
+        XCTAssertTrue([convertedToUNTextInputNotificationAction.title isEqual:unTextInputNotificationAction.title]);
+        XCTAssertTrue(convertedToUNTextInputNotificationAction.options == unTextInputNotificationAction.options);
+        XCTAssertTrue([convertedToUNTextInputNotificationAction.textInputButtonTitle isEqual:unTextInputNotificationAction.textInputButtonTitle]);
+        XCTAssertTrue([convertedToUNTextInputNotificationAction.textInputPlaceholder isEqual:unTextInputNotificationAction.textInputPlaceholder]);
+        XCTAssertNotNil(convertedToUNTextInputNotificationAction.icon);
+    }
+}
+
+- (void)testAsUNNotificationActionForegroundTemplateIcon {
+    if (@available(iOS 15.0, *)) {
+        UANotificationActionIcon *icon = [UANotificationActionIcon iconWithTemplateImageName:@"foo"];
+        UNNotificationActionIcon *unIcon = [UNNotificationActionIcon iconWithTemplateImageName:@"foo"];
+
+        UATextInputNotificationAction *uaTextInputNotificationAction = [UATextInputNotificationAction actionWithIdentifier:kTestIdentifier title:kTestTitle textInputButtonTitle:kTestTextInputButtonTitle textInputPlaceholder:kTestTextInputPlaceholder options:UANotificationActionOptionForeground icon:icon];
+        UNNotificationAction *convertedToUNNotificationAction = [uaTextInputNotificationAction asUNNotificationAction];
+        XCTAssertTrue([convertedToUNNotificationAction isKindOfClass:[UNTextInputNotificationAction class]]);
+        UNTextInputNotificationAction *convertedToUNTextInputNotificationAction = (UNTextInputNotificationAction *)convertedToUNNotificationAction;
+
+        UNTextInputNotificationAction *unTextInputNotificationAction = [UNTextInputNotificationAction actionWithIdentifier:kTestIdentifier title:kTestTitle options:UNNotificationActionOptionForeground icon:unIcon textInputButtonTitle:kTestTextInputButtonTitle textInputPlaceholder:kTestTextInputPlaceholder];
+
+        // check isEqual
+        XCTAssertTrue([uaTextInputNotificationAction isEqualToUNNotificationAction:unTextInputNotificationAction]);
+
+        // manually check each property
+        XCTAssertTrue([convertedToUNTextInputNotificationAction.identifier isEqual:unTextInputNotificationAction.identifier]);
+        XCTAssertTrue([convertedToUNTextInputNotificationAction.title isEqual:unTextInputNotificationAction.title]);
+        XCTAssertTrue(convertedToUNTextInputNotificationAction.options == unTextInputNotificationAction.options);
+        XCTAssertTrue([convertedToUNTextInputNotificationAction.textInputButtonTitle isEqual:unTextInputNotificationAction.textInputButtonTitle]);
+        XCTAssertTrue([convertedToUNTextInputNotificationAction.textInputPlaceholder isEqual:unTextInputNotificationAction.textInputPlaceholder]);
+        XCTAssertNotNil(convertedToUNTextInputNotificationAction.icon);
+    }
+}
+
 - (void)testAsUNNotificationActionForegroundNotEqual {
     UATextInputNotificationAction *uaTextInputNotificationAction = [UATextInputNotificationAction actionWithIdentifier:kTestIdentifier title:kTestTitle textInputButtonTitle:kTestTextInputButtonTitle textInputPlaceholder:kTestTextInputPlaceholder options:UANotificationActionOptionForeground];
     UNNotificationAction *convertedToUNNotificationAction = [uaTextInputNotificationAction asUNNotificationAction];
