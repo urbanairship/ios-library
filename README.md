@@ -22,7 +22,7 @@ services into your iOS applications.
 
 ## Installation
 
-Xcode 12.0+ is required for all projects and the static library. Projects must target >= iOS 11.
+Xcode 13.0+ is required to use the Airship SDK.
 
 ### CocoaPods
 
@@ -39,14 +39,9 @@ In-App Automation, and Message Center
 Example podfile:
 
 ```txt
-use_frameworks!
-
 # Airship SDK
 target "<Your Target Name>" do
   pod 'Airship'
-
-  # Optional: uncomment to install the location subspec
-  # pod 'Airship/Location'
 end
 ```
 
@@ -59,27 +54,20 @@ selection of functionality is desired:
 - `Airship/Automation` : Automation and in-app messaging
 - `Airship/Location` : Location including geofencing and beacons
 - `Airship/ExtendedActions` : Extended actions
+- `Airship/PreferenceCenter` : Preference center
+- `Airship/Chat` : Live chat
 
 Example podfile:
 
 ```txt
-use_frameworks!
-
 target "<Your Target Name>" do
   pod 'Airship/Core'
   pod 'Airship/MessageCenter'
   pod 'Airship/Automation'
-
-  # Optional: uncomment to install the location subspec
-  # pod 'Airship/Location'
 end
-{{< /highlight >}}
-Specify Airship, and optionally, Airship/Location pods in your `podfile`
-with the use_frameworks! option:
 ```
 
 Install using the following command:
-
 ```sh
 $ pod install
 ```
@@ -90,8 +78,6 @@ are a few additional steps. First create a new "Notification Service Extension" 
 to the new target:
 
 ```txt
-use_frameworks!
-
 # Airship SDK
 target "<Your Service Extension Target Name>" do
   pod 'AirshipExtensions/NotificationService'
@@ -113,37 +99,6 @@ class NotificationService: UANotificationServiceExtension {
 
 }
 ```
-
-### Carthage
-
-Make sure you have [Carthage](https://github.com/Carthage/Carthage) installed. Carthage can be installed using Homebrew with the following commands:
-```sh
-$ brew update
-$ brew install carthage
-```
-
-Specify the Airship iOS SDK in your cartfile:
-
-```txt
-github "urbanairship/ios-library"
-```
-
-Execute the following command in the same directory as the cartfile:
-
-```sh
-$ carthage update
-```
-
-In order to take advantage of notification attachments, you will need to create a notification service extension
-alongside your main application. Most of the work is already done for you, but since this involves creating a new target there
-are a few additional steps:
-
-* Create a new iOS target in Xcode and select the "Notification Service Extension" type
-* Drag the new AirshipNotificationServiceExtension.framework into your app project
-* Link against AirshipNotificationServiceExtension.framework in your extension's Build Phases
-* Add a Copy Files phase for AirshipExtensions.framework and select "Frameworks" as the destination
-* Delete all dummy source code for your new extension
-* Inherit from `UANotificationServiceEntension` in `NotificationService`
 
 ### Other Installation Methods
 
@@ -210,50 +165,22 @@ development to production keys based on the build type.
 
 To enable push notifications, you will need to make several additions to your application delegate.
 
-```obj-c
-    - (BOOL)application:(UIApplication *)application
-            didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+```
+   func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+    ...
 
-        // Your other application code.....
+    Airship.takeOff(launchOptions: launchOptions)
 
-        // Set log level for debugging config loading (optional)
-        // It will be set to the value in the loaded config upon takeOff
-        [UAirship setLogLevel:UALogLevelTrace];
-
-        // Populate AirshipConfig.plist with your app's info from https://go.urbanairship.com
-        // or set runtime properties here.
-        UAConfig *config = [UAConfig defaultConfig];
-
-        // You can then programmatically override the plist values:
-        // config.developmentAppKey = @"YourKey";
-        // etc.
-
-        // Call takeOff (which creates the UAirship singleton)
-        [UAirship takeOff:config];
-
-        // Print out the application configuration for debugging (optional)
-        UA_LDEBUG(@"Config:\n%@", [config description]);
-
-        // Set the icon badge to zero on startup (optional)
-        [[UAirship push] resetBadge];
-
-        // User notifications will not be enabled until userPushNotificationsEnabled is
-        // set YES on UAPush. Once enabled, the setting will be persisted and the user
-        // will be prompted to allow notifications. You should wait for a more appropriate
-        // time to enable push to increase the likelihood that the user will accept
-        // notifications.
-        // [UAirship push].userPushNotificationsEnabled = YES;
-
-        return YES;
-    }
+    return true
+}
 ```
 
 To enable push later on in your application:
 
-```obj-c
+```
     // Somewhere in the app, this will enable push (setting it to NO will disable push,
     // which will trigger the proper registration or de-registration code in the library).
-    [UAirship push].userPushNotificationsEnabled = YES;
+    Airship.push.userPushNotificationsEnabled = true
 ```
 
 ## SDK Development
