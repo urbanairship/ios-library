@@ -5,7 +5,7 @@ import Foundation
 /**
  * Chat conversation routing data.
  */
-@objc
+@objc(UAChatRouting)
 public class ChatRouting : NSObject, Codable {
     /**
      * Value for routing a conversation to a specific agent.

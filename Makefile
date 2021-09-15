@@ -89,7 +89,7 @@ test-packages: setup
 	bash ./scripts/test_package.sh spm11.4
 .PHONY: pod-publish
 pod-publish: setup
-	bundle exec pod trunk push Airship.podspec
+	bundle exec pod trunk push Airship.podspec  --allow-warnings
 	bundle exec pod trunk push AirshipExtensions.podspec
 
 .PHONY: pod-lint
