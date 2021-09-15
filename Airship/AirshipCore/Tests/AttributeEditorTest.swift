@@ -43,6 +43,25 @@ class AttributeEditorTest: XCTestCase {
         XCTAssertEqual("neat", bar?.jsonValue?.value() as? String)
         XCTAssertEqual(applyDate, foo?.date)
     }
+    
+    func testDateAttribute() throws {
+        var out : [AttributeUpdate]?
+        
+        let editor = AttributesEditor(date: self.date) { updates in
+            out = updates
+        }
+        
+        editor.set(date: Date(timeIntervalSince1970: 10000), attribute: "date")
+        let applyDate = Date(timeIntervalSince1970: 1)
+        self.date.dateOverride = applyDate
+        editor.apply()
+        
+        let attribute = out?.first
+        
+        XCTAssertEqual(AttributeUpdateType.set, attribute?.type)
+        XCTAssertEqual(applyDate, attribute?.date)
+        XCTAssertEqual("1970-01-01T02:46:40", attribute?.jsonValue?.value() as! String)
+    }
 
     func testEditorNoAttributes() throws {
         var out : [AttributeUpdate]?

@@ -194,18 +194,26 @@ class ContactAPIClient : ContactsAPIClientProtocol {
 
         AirshipLogger.debug("Updating contact with identifier \(identifier)")
 
-        if (tagGroupUpdates?.isEmpty ?? true && attributeUpdates?.isEmpty ?? true) {
-            completionHandler(nil, AirshipErrors.error("Both tags & attributes are empty"))
-        }
-        
+
         var payload: [String: Any] = [:]
         
         if let attributes = attributeUpdates {
-            payload["attributes"] = map(attributeUpdates: AudienceUtils.collapse(attributes))
+            let attributeUpdates = map(attributeUpdates: AudienceUtils.collapse(attributes))
+            if (!attributeUpdates.isEmpty) {
+                payload["attributes"] = attributeUpdates
+            }
         }
         
-        if let tags = tagGroupUpdates {
-            payload["tags"] = map(tagUpdates: AudienceUtils.collapse(tags))            
+        if let tags = tagGroupUpdates, !tags.isEmpty {
+            let tagUpdates = map(tagUpdates: AudienceUtils.collapse(tags))
+            if (!tagUpdates.isEmpty) {
+                payload["tags"] = tagUpdates
+            }
+        }
+        
+        guard !payload.isEmpty else {
+            completionHandler(nil, AirshipErrors.error("Both tags & attributes are empty"))
+            return Disposable()
         }
         
         let request = self.request(payload, "\(config.deviceAPIURL ?? "")/api/contacts/\(identifier)")
@@ -236,13 +244,17 @@ class ContactAPIClient : ContactsAPIClientProtocol {
     
     
     private func map(attributeUpdates: [AttributeUpdate]) -> [[AnyHashable : Any]] {
-        return attributeUpdates.map { (attribute) -> ([AnyHashable : Any]) in
+        return attributeUpdates.compactMap { (attribute) -> ([AnyHashable : Any]?) in
             switch(attribute.type) {
             case .set:
+                guard let value = attribute.jsonValue?.value() else {
+                    return nil
+                }
+                
                 return [
                     "action": "set",
                     "key": attribute.attribute,
-                    "value": attribute.jsonValue!.value()!,
+                    "value": value,
                     "timestamp": Utils.isoDateFormatterUTCWithDelimiter().string(from: attribute.date)
                 ]
             case .remove:

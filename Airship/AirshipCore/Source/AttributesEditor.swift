@@ -44,7 +44,7 @@ public class AttributesEditor: NSObject {
      */
     @objc(setDate:attribute:)
     public func set(date: Date, attribute: String) {
-        add(attribute: attribute, value: date)
+        add(attribute: attribute, value: Utils.isoDateFormatterUTCWithDelimiter().string(from: date))
     }
 
     /**
