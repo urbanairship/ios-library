@@ -166,7 +166,7 @@ development to production keys based on the build type.
 To enable push notifications, you will need to make several additions to your application delegate.
 
 ```
-   func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
     ...
 
     Airship.takeOff(launchOptions: launchOptions)
