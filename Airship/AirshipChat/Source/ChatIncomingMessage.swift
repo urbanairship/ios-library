@@ -30,6 +30,13 @@ struct ChatIncomingMessage:  Codable, Equatable {
         case messageID = "id"
     }
     
+    init(message: String?, url: String?, date: Date?, messageID: String?) {
+        self.message = message
+        self.url = url
+        self.date = date
+        self.messageID = messageID
+    }
+    
     static func == (lh: ChatIncomingMessage, rh: ChatIncomingMessage) -> Bool {
             return
                 lh.message == rh.message &&
