@@ -164,8 +164,7 @@ public class ActionRunner : NSObject {
      * single UAAggregateActionResult.
      *
      * - Parameters:
-     *   - action: The map of action names to action values.
-     *   - value: The action argument's value.
+     *   - actionValues: The map of action names to action values.
      *   - situation: The action argument's situation.
      *   - metadata: The action argument's metadata.
      *   - completionHandler: The completion handler.

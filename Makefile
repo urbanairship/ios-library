@@ -94,7 +94,7 @@ pod-publish: setup
 
 .PHONY: pod-lint
 pod-lint: setup
-	bundle exec pod lib lint Airship.podspec --verbose --allow-warnings
+	bundle exec pod lib lint Airship.podspec --verbose
 	bundle exec pod lib lint AirshipExtensions.podspec
 
 .PHONY: clean

@@ -41,7 +41,7 @@ public class AttributeMutations : NSObject {
     /**
      * Sets an attribute.
      * - Parameters:
-     *   - string: The value.
+     *   - date: The value.
      *   - forAttribute: The attribute
      */
     @objc(setDate:forAttribute:)

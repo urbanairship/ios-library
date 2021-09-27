@@ -77,7 +77,7 @@ public class ActionRegistry : NSObject {
      *
      * - Parameters:
      *   - action: The action.
-     *   - names: The action's name.
+     *   - name: The action's name.
      *   - predicate: The action's predicate.
      * - Returns: true if the action was able to be registered, otherwise false.
      */
@@ -96,7 +96,7 @@ public class ActionRegistry : NSObject {
      * - Parameters:
      *   - action: The action.
      *   - names: The action's names.
-     *   - predicate; The action's predicate.
+     *   - predicate: The action's predicate.
      * - Returns: true if the action was able to be registered, otherwise false.
      */
     @objc(registerAction:names:predicate:)
@@ -131,7 +131,7 @@ public class ActionRegistry : NSObject {
      *
      * - Parameters:
      *   - actionClass: The action's class.
-     *   - names: The action's name.
+     *   - name: The action's name.
      * - Returns: true if the action was able to be registered, otherwise false.
      */
     @objc(registerActionClass:name:)
@@ -148,8 +148,8 @@ public class ActionRegistry : NSObject {
      *
      * - Parameters:
      *   - actionClass: The action's class.
-     *   - names: The action's name.
-     *   - predicate; The action's predicate.
+     *   - name: The action's name.
+     *   - predicate: The action's predicate.
      * - Returns: true if the action was able to be registered, otherwise false.
      */
     @objc(registerActionClass:name:predicate:)
@@ -167,7 +167,7 @@ public class ActionRegistry : NSObject {
      * - Parameters:
      *   - actionClass: The action's class.
      *   - names: The action's names.
-     *   - predicate; The action's predicate.
+     *   - predicate:The action's predicate.
      * - Returns: true if the action was able to be registered, otherwise false.
      */
     @objc(registerActionClass:names:predicate:)
@@ -225,7 +225,7 @@ public class ActionRegistry : NSObject {
      * Adds a name to a registered entry.
      * - Parameters:
      *   - name: The name to add
-     *   - entryName; The name of the entry.
+     *   - entryName:The name of the entry.
      * - Returns: true if the entry was found, othewrise false..
      */
     @objc
@@ -245,8 +245,8 @@ public class ActionRegistry : NSObject {
     /**
      * Adds a situation override for the entry.
      * - Parameters:
-     *   - siutation: The situation to override.
-     *   - name; The name of the entry.
+     *   - situation: The situation to override.
+     *   - name: The name of the entry.
      *   - action: The action.
      */
     @objc

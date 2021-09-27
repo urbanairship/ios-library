@@ -83,7 +83,7 @@ public class APNSRegistration : NSObject, APNSRegistrationProtocol {
 
     @objc
     public func updateRegistration(options: UANotificationOptions, completionHandler: @escaping (Bool, UAAuthorizedNotificationSettings, UAAuthorizationStatus) -> Void) {
-        let normalizedOptions = self.normalizedOptions(options)
+        let normalizedOptions = (APNSRegistration() as APNSRegistrationInternalProtocol).normalizedOptions(options)
         let center = UNUserNotificationCenter.current()
 
         center.requestAuthorization(options: normalizedOptions) { granted, error in
@@ -97,8 +97,8 @@ public class APNSRegistration : NSObject, APNSRegistrationProtocol {
         }
     }
 
-
-    private func normalizedOptions(_ uaOptions:UANotificationOptions) -> UNAuthorizationOptions {
+    @available(*, deprecated)
+    internal func normalizedOptions(_ uaOptions:UANotificationOptions) -> UNAuthorizationOptions {
         var unOptions:UNAuthorizationOptions = []
 
         if uaOptions.contains(.badge) {
@@ -173,3 +173,8 @@ public class APNSRegistration : NSObject, APNSRegistrationProtocol {
         return .notDetermined
     }
 }
+
+protocol APNSRegistrationInternalProtocol {
+    func normalizedOptions(_ uaOptions:UANotificationOptions) -> UNAuthorizationOptions
+}
+extension APNSRegistration: APNSRegistrationInternalProtocol {}

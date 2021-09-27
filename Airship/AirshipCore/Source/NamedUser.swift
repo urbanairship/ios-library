@@ -4,11 +4,11 @@ import Foundation
 
 
 /**
+ * DEPRECATED.  Use contact instead.
  * The named user is an alternate method of identifying the device. Once a named
  * user is associated to the device, it can be used to send push notifications
  * to the device.
  */
-@available(*, deprecated, message: "Use contact instead.")
 @objc(UANamedUser)
 public class NamedUser : NSObject, Component {
     
@@ -47,6 +47,7 @@ public class NamedUser : NSObject, Component {
     
     /// The shared  named user  instance.
     @objc
+    @available(*, deprecated, message: "Use contact instead.")
     public static var shared: NamedUser! {
         return Airship.namedUser
     }
