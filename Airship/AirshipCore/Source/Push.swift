@@ -556,6 +556,7 @@ public class Push: NSObject, Component, PushProtocol {
                 self.dataStore.setInteger(Int(newValue.rawValue), forKey: Push.TypesAuthorizedKey)
                 self.updateRegistration()
                 
+                
                 self.registrationDelegate?.notificationAuthorizedSettingsDidChange?(newValue)
             }
         }
