@@ -1,4 +1,4 @@
-AIRSHIP_VERSION="15.0.1"
+AIRSHIP_VERSION="16.0.0"
 
 Pod::Spec.new do |s|
    s.version                 = AIRSHIP_VERSION
@@ -10,6 +10,7 @@ Pod::Spec.new do |s|
    s.license                 = { :type => "Apache License, Version 2.0", :file => "LICENSE" }
    s.source                  = { :git => "https://github.com/urbanairship/ios-library.git", :tag => s.version.to_s }
    s.module_name             = "AirshipKit"
+   s.header_dir              = "AirshipKit"
    s.ios.deployment_target   = "11.0"
    s.tvos.deployment_target  = "11.0"
    s.swift_versions          = "5.0"

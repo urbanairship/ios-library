@@ -2,7 +2,6 @@
 
 import Foundation;
 
-
 /**
  * The privacy manager allow enabling/disabling features in the SDK.
  * The SDK will not make any network requests or collect data if all features our disabled, with
@@ -20,6 +19,7 @@ import Foundation;
  */
 @objc(UAPrivacyManager)
 public class PrivacyManager : NSObject {
+
     /**
     * NSNotification event when enabled feature list is updated.
      */
@@ -39,11 +39,7 @@ public class PrivacyManager : NSObject {
 
     private var _enabledFeatures: Features
 
-    /**
-    * Gets the current enabled features.
-    *
-    * - Returns: The enabled features.
-    */
+    /// The current set of enabled features.
     @objc
     public var enabledFeatures: Features {
         get {
@@ -89,21 +85,17 @@ public class PrivacyManager : NSObject {
         self.migrateData()
     }
 
-   /**
-    * Enables features.
-    *
-    * - Parameter features: The features to enable.
-    */
+    /// Enables features.
+    /// This will append any features to the `enabledFeatures` property.
+    /// - Parameter features: The features to enable.
     @objc
     public func enableFeatures(_ features: Features) {
         enabledFeatures.insert(features)
     }
 
-   /**
-    * Disables features.
-    *
-    * - Parameter features: The features to disable.
-    */
+    /// Disables features.
+    /// This will remove any features to the `enabledFeatures` property.
+    /// - Parameter features: The features to disable.
     @objc
     public func disableFeatures(_ features: Features) {
         enabledFeatures.remove(features)
