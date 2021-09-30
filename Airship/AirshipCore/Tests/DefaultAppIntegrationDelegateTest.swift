@@ -30,7 +30,7 @@ class DefaultAppIntegrationdelegateTest: XCTestCase {
     func testDidRegisterForRemoteNotifications() throws {
         let data = Data()
         delegate.didRegisterForRemoteNotifications(deviceToken: data)
-        XCTAssertEqual(data, push.deviceToken)
+        XCTAssertEqual(data, push.deviceToken?.data(using: .utf8))
         XCTAssertTrue(self.analytics.onDeviceRegistrationCalled)
     }
     
@@ -66,8 +66,8 @@ class DefaultAppIntegrationdelegateTest: XCTestCase {
 
 
 class TestPush : InternalPushProtocol {
+    var deviceToken: String?
     var updateAuthorizedNotificationTypesCalled = false
-    var deviceToken: Data?
     var registrationError: Error?
     var didReceiveRemoteNotificationCallback: (([AnyHashable : Any], Bool, @escaping (UIBackgroundFetchResult) -> Void) -> Void)?
     var combinedCategories: Set<UNNotificationCategory> = Set()
@@ -77,7 +77,7 @@ class TestPush : InternalPushProtocol {
     }
     
     func didRegisterForRemoteNotifications(_ deviceToken: Data) {
-        self.deviceToken = deviceToken
+        self.deviceToken = String(data: deviceToken, encoding: .utf8)
     }
     
     func didFailToRegisterForRemoteNotifications(_ error: Error) {

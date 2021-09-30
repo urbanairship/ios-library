@@ -111,6 +111,7 @@ public protocol PushProtocol {
 }
 
 protocol InternalPushProtocol {
+    var deviceToken: String? { get }
     func updateAuthorizedNotificationTypes()
     func didRegisterForRemoteNotifications(_ deviceToken: Data)
     func didFailToRegisterForRemoteNotifications(_ error: Error)

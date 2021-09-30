@@ -4,7 +4,7 @@
  * - Note: For Internal use only :nodoc:
  */
 @objc(UAPushReceivedEvent)
-public class PushReceivedEvent : NSObject, Event {
+class PushReceivedEvent : NSObject, Event {
 
     @objc
     public var priority: EventPriority {

@@ -76,16 +76,6 @@
     [super tearDown];
 }
 
-- (void)testBackgroundInitEmitsAppInitEvent {
-    self.testAppStateTracker.currentState = UAApplicationStateBackground;
-
-    [[self.mockEventManager expect] add:[OCMArg checkWithBlock:^BOOL(id obj) {
-        return [obj isMemberOfClass:[UAAppInitEvent class]];
-    }] eventID:OCMOCK_ANY eventDate:OCMOCK_ANY sessionID:OCMOCK_ANY];
-
-    [self createAnalytics];
-    [self.mockEventManager verify];
-}
 
 - (void)testInactiveInitDoesNotEmitEvents {
     self.testAppStateTracker.currentState = UAApplicationStateInactive;
@@ -93,72 +83,6 @@
     [[self.mockEventManager reject] add:OCMOCK_ANY eventID:OCMOCK_ANY eventDate:OCMOCK_ANY sessionID:OCMOCK_ANY];
 
     [self createAnalytics];
-    [self.mockEventManager verify];
-}
-
-- (void)testFirstTransitionToForegroundEmitsAppInit {
-    // Create analytics in inactive state so that init is deferred
-    self.testAppStateTracker.currentState = UAApplicationStateInactive;
-
-    [self createAnalytics];
-
-    [[self.mockEventManager expect] add:[OCMArg checkWithBlock:^BOOL(id obj) {
-        return [obj isMemberOfClass:[UAAppInitEvent class]];
-    }] eventID:OCMOCK_ANY eventDate:OCMOCK_ANY sessionID:OCMOCK_ANY];
-
-    [[self.mockEventManager reject] add:[OCMArg checkWithBlock:^BOOL(id obj) {
-        return [obj isMemberOfClass:[UAAppForegroundEvent class]];
-    }] eventID:OCMOCK_ANY eventDate:OCMOCK_ANY sessionID:OCMOCK_ANY];
-
-    [self.notificationCenter postNotificationName:UAAppStateTracker.didTransitionToForeground object:nil];
-
-    [self.mockEventManager verify];
-}
-
-- (void)testSubsequentTransitionToForegroundEmitsForegroundEvent {
-    [[self.mockEventManager expect] add:[OCMArg checkWithBlock:^BOOL(id obj) {
-        return [obj isMemberOfClass:[UAAppForegroundEvent class]];
-    }] eventID:OCMOCK_ANY eventDate:OCMOCK_ANY sessionID:OCMOCK_ANY];
-
-    [self.notificationCenter postNotificationName:UAAppStateTracker.didTransitionToForeground object:nil];
-    [self.notificationCenter postNotificationName:UAAppStateTracker.didTransitionToForeground object:nil];
-
-
-    [self.mockEventManager verify];
-}
-
-- (void)testBackgroundBeforeForegroundEmitsAppInit {
-    // Create analytics in inactive state so that init is deferred
-    self.testAppStateTracker.currentState = UAApplicationStateInactive;
-
-    [self createAnalytics];
-
-    [[self.mockEventManager expect] add:[OCMArg checkWithBlock:^BOOL(id obj) {
-        return [obj isMemberOfClass:[UAAppInitEvent class]];
-    }] eventID:OCMOCK_ANY eventDate:OCMOCK_ANY sessionID:OCMOCK_ANY];
-
-    [[self.mockEventManager expect] add:[OCMArg checkWithBlock:^BOOL(id obj) {
-        return [obj isMemberOfClass:[UAAppBackgroundEvent class]];
-    }] eventID:OCMOCK_ANY eventDate:OCMOCK_ANY sessionID:OCMOCK_ANY];
-
-    [self.notificationCenter postNotificationName:UAAppStateTracker.didEnterBackgroundNotification object:nil];
-
-    [self.mockEventManager verify];
-}
-
-- (void)testBackgroundAfterForegroundDoesNotEmitAppInit {
-    [self.notificationCenter postNotificationName:UAAppStateTracker.didTransitionToForeground object:nil];
-
-    [[self.mockEventManager reject] add:[OCMArg checkWithBlock:^BOOL(id obj) {
-        return [obj isMemberOfClass:[UAAppInitEvent class]];
-    }] eventID:OCMOCK_ANY eventDate:OCMOCK_ANY sessionID:OCMOCK_ANY];
-
-    [[self.mockEventManager expect] add:[OCMArg checkWithBlock:^BOOL(id obj) {
-        return [obj isMemberOfClass:[UAAppBackgroundEvent class]];
-    }] eventID:OCMOCK_ANY eventDate:OCMOCK_ANY sessionID:OCMOCK_ANY];
-
-    [self.notificationCenter postNotificationName:UAAppStateTracker.didEnterBackgroundNotification object:nil];
-
     [self.mockEventManager verify];
 }
 
@@ -377,95 +301,7 @@
     XCTAssertNil(self.analytics.conversionPushMetadata);
 }
 
-/**
- * Test that tracking event adds itself on background
- */
-- (void)testTrackingEventBackground{
-    [self.analytics trackScreen:@"test_screen"];
 
-    // Expect that the event is added to the mock DB Manager upon background
-    XCTestExpectation *eventAdded = [self expectationWithDescription:@"Notification event added"];
-    [[[self.mockEventManager expect] andDo:^(NSInvocation *invocation) {
-        [eventAdded fulfill];
-    }] add:[OCMArg checkWithBlock:^BOOL(id obj) {
-        if (![obj isKindOfClass:[UAScreenTrackingEvent class]]) {
-            return NO;
-        }
-
-        UAScreenTrackingEvent *event = obj;
-
-        return [event.screen isEqualToString:@"test_screen"];
-    }] eventID:OCMOCK_ANY eventDate:OCMOCK_ANY sessionID:OCMOCK_ANY];
-
-    // Background
-    [self.notificationCenter postNotificationName:UAAppStateTracker.didEnterBackgroundNotification
-                                           object:nil];
-
-    [self waitForTestExpectations];
-
-    [self.mockEventManager verify];
-}
-
-/**
- * Test tracking event adds itself and is set to nil on terminate event.
- */
-- (void)testTrackingEventTerminate {
-
-    [self.analytics trackScreen:@"test_screen"];
-
-    // Expect that the event is added to the mock DB Manager upon terminate
-    XCTestExpectation *eventAdded = [self expectationWithDescription:@"Notification event added"];
-    [[[self.mockEventManager expect] andDo:^(NSInvocation *invocation) {
-        [eventAdded fulfill];
-    }] add:[OCMArg checkWithBlock:^BOOL(id obj) {
-        if (![obj isKindOfClass:[UAScreenTrackingEvent class]]) {
-            return NO;
-        }
-
-        UAScreenTrackingEvent *event = obj;
-
-        return [event.screen isEqualToString:@"test_screen"];
-    }] eventID:OCMOCK_ANY eventDate:OCMOCK_ANY sessionID:OCMOCK_ANY];
-
-    // Terminate
-    [self.notificationCenter postNotificationName:UAAppStateTracker.willTerminateNotification object:nil];
-
-    [self waitForTestExpectations];
-
-    [self.mockEventManager verify];
-}
-
-// Tests that starting a screen tracking event when one is already started adds the event with the correct start and stop times
-- (void)testStartTrackScreenAddEvent {
-
-    self.testDate.dateOverride = [NSDate dateWithTimeIntervalSince1970:0];
-    [self.analytics trackScreen:@"first_screen"];
-
-    // Expect that the mock event is added to the mock DB Manager
-    XCTestExpectation *eventAdded = [self expectationWithDescription:@"Notification event added"];
-    [[[self.mockEventManager expect] andDo:^(NSInvocation *invocation) {
-        [eventAdded fulfill];
-    }] add:[OCMArg checkWithBlock:^BOOL(id obj) {
-        if (![obj isKindOfClass:[UAScreenTrackingEvent class]]) {
-            return NO;
-        }
-
-        UAScreenTrackingEvent *event = obj;
-
-        XCTAssertEqualWithAccuracy(event.startTime, 0, 1);
-        XCTAssertEqualWithAccuracy(event.stopTime, 20, 1);
-
-        return [event.screen isEqualToString:@"first_screen"];
-    }] eventID:OCMOCK_ANY eventDate:OCMOCK_ANY sessionID:OCMOCK_ANY];
-
-    self.testDate.offset = 20;
-
-    [self.analytics trackScreen:@"second_screen"];
-
-    [self waitForTestExpectations];
-
-    [self.mockEventManager verify];
-}
 
 // Tests forwarding screens to the analytics delegate.
 - (void)testForwardScreenTracks {

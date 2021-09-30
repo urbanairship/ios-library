@@ -3,8 +3,8 @@
 import Foundation
 
 @objc(UAAppStateTracker)
-open class AppStateTracker: NSObject, AppStateTrackerDelegate {
-
+open class AppStateTracker: NSObject, AppStateTrackerDelegate, AppStateTrackerProtocol {
+    
     @objc
     public static let didBecomeActiveNotification = NSNotification.Name("com.urbanairship.application_did_become_active")
 
@@ -87,4 +87,9 @@ open class AppStateTracker: NSObject, AppStateTrackerDelegate {
     public func applicationWillTerminate() {
         notificationCenter.post(name: AppStateTracker.willTerminateNotification, object: nil)
     }
+}
+
+@objc
+public protocol AppStateTrackerProtocol {
+    var state: ApplicationState { get }
 }

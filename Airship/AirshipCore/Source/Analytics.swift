@@ -73,7 +73,7 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
     private var sdkExtensions: [String]
     private var headerBlocks: [(() -> [String : String]?)]
     private var localeManager: LocaleManagerProtocol
-    private var appStateTracker: AppStateTracker
+    private var appStateTracker: AppStateTrackerProtocol
     private var handledFirstForegroundTransition = false
 
     // Screen tracking state
@@ -177,7 +177,7 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
         date: DateUtils,
         dispatcher: UADispatcher,
         localeManager: LocaleManagerProtocol,
-        appStateTracker: AppStateTracker,
+        appStateTracker: AppStateTrackerProtocol,
         privacyManager: PrivacyManager
     ) {
         self.config = config

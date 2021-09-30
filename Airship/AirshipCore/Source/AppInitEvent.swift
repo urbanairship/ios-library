@@ -4,10 +4,17 @@
  * - Note: For Internal use only :nodoc:
  */
 @objc(UAAppInitEvent)
-public class AppInitEvent : NSObject, Event {
+class AppInitEvent : NSObject, Event {
 
     private lazy var analytics = Airship.requireComponent(ofType: AnalyticsProtocol.self)
-
+    private lazy var push: () -> PushProtocol = { Airship.push }
+    
+    convenience init(analytics: AnalyticsProtocol, push: @escaping () -> PushProtocol) {
+        self.init()
+        self.analytics = analytics
+        self.push = push
+    }
+    
     @objc
     public var priority: EventPriority {
         get {
@@ -36,8 +43,8 @@ public class AppInitEvent : NSObject, Event {
         data["carrier"] = Utils.carrierName()
         data["connection_type"] = Utils.connectionType()
 
-        data["notification_types"] = EventUtils.notificationTypes()
-        data["notification_authorization"] = EventUtils.notificationAuthorization()
+        data["notification_types"] = EventUtils.notificationTypes(authorizedSettings: push().authorizedNotificationSettings)
+        data["notification_authorization"] = EventUtils.notificationAuthorization(authorizationStatus: push().authorizationStatus)
 
         let localtz = NSTimeZone.default as NSTimeZone
         data["time_zone"] = NSNumber(value: Double(localtz.secondsFromGMT))
