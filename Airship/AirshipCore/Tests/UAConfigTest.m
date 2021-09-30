@@ -190,6 +190,8 @@
     //special case this one since we have to disable detectProvisioningMode
     config.detectProvisioningMode = NO;
     XCTAssertTrue(config.inProduction, @"inProduction was improperly loaded.");
+    
+    XCTAssertEqual(UAFeaturesPush | UAFeaturesInAppAutomation, config.enabledFeatures);
 }
 
 - (void)testNeXTStepPlistParsing {
@@ -283,6 +285,8 @@
     XCTAssertTrue(copy.itunesID == config.itunesID);
     XCTAssertTrue(copy.requestAuthorizationToUseNotifications == config.requestAuthorizationToUseNotifications);
     XCTAssertTrue(copy.requireInitialRemoteConfigEnabled == config.requireInitialRemoteConfigEnabled);
+    XCTAssertEqual(copy.enabledFeatures, config.enabledFeatures);
+
 }
 
 - (void)testInitialConfig {

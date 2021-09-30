@@ -561,6 +561,8 @@ public class Config: NSObject, NSCopying {
                 } else if (propertyType == LogLevel.self || propertyType == LogLevel?.self) {
                     // we do all the work to parse it to a log level, but setValue(forKey:) does not work for enums
                     normalizedValue =  Config.coerceLogLevel(value)?.rawValue
+                } else if (propertyType == Features.self || propertyType == Features?.self) {
+                    normalizedValue = Config.coerceFeatures(value)?.rawValue
                 } else if (propertyType == String.self || propertyType == String?.self) {
                     normalizedValue = Config.coerceString(value)
                 } else if (propertyType == Bool.self || propertyType == Bool?.self) {
