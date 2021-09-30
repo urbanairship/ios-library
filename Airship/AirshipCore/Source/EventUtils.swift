@@ -4,8 +4,6 @@ import Foundation
 
 class EventUtils {
 
-    private static let push: () -> PushProtocol = { Airship.push }
-
     class func isValid(latitude: Double) -> Bool {
         guard latitude >= -90 && latitude <= 90 else {
             AirshipLogger.error("Invalid latitude \(latitude). Must be between -90 and 90")
@@ -22,10 +20,8 @@ class EventUtils {
         return true
     }
 
-    class func notificationTypes() -> [AnyHashable]? {
+    class func notificationTypes(authorizedSettings: UAAuthorizedNotificationSettings) -> [AnyHashable]? {
         var notificationTypes: [AnyHashable] = []
-
-        let authorizedSettings = push().authorizedNotificationSettings
 
         if (UAAuthorizedNotificationSettings.badge.rawValue & authorizedSettings.rawValue) > 0 {
             notificationTypes.append("badge")
@@ -69,9 +65,7 @@ class EventUtils {
         return notificationTypes
     }
 
-    class func notificationAuthorization() -> String? {
-        let authorizationStatus = push().authorizationStatus
-
+    class func notificationAuthorization(authorizationStatus: UAAuthorizationStatus) -> String? {
         switch authorizationStatus {
         case .notDetermined:
             return "not_determined"

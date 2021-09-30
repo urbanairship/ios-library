@@ -221,6 +221,7 @@
 "ua_scheduleinfo_interval" = "Interval";
 "ua_scheduleinfo_isvalid" = "Schedule Is Valid";
 "ua_scheduleinfo_schedule_data" = "Schedule Data";
+"ua_scheduleinfo_schedule_payload" = "Schedule Payload";
 
 "ua_cancel_schedule" = "Cancel Schedule";
 

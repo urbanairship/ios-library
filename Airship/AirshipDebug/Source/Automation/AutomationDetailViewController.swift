@@ -73,7 +73,8 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
     isValidIdx = IndexPath(row: 9, section: 0),
     audienceIdx = IndexPath(row: 10, section: 0),
     scheduleDataIdx =  IndexPath(row: 11, section: 0),
-    cancelScheduleIdx =  IndexPath(row: 12, section: 0)
+    payloadIdx =  IndexPath(row: 12, section: 0),
+    cancelScheduleIdx =  IndexPath(row: 13, section: 0)
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -93,7 +94,7 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case scheduleSection:
-            return 13
+            return 14
         default:
             return 0
         }
@@ -184,10 +185,9 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
         // Remove storyboard placeholders
         cell.title.text = nil
         cell.subtitle.text = nil
-
+        cell.subtitle.textColor = ThemeManager.shared.currentTheme.SecondaryText
         cell.backgroundColor = ThemeManager.shared.currentTheme.Background
         cell.title.textColor = ThemeManager.shared.currentTheme.PrimaryText
-        cell.subtitle.textColor = ThemeManager.shared.currentTheme.SecondaryText
         // hide accessory by default
         cell.accessoryType = .none
 
@@ -195,19 +195,21 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
     }
 
     func createScheduleCell(_ indexPath:IndexPath) -> UITableViewCell {
-        // Handle button cell separately
-        if indexPath == cancelScheduleIdx {
+        // Handle button and payload cells separately
+        
+        guard let schedule = schedule else { return UITableViewCell() }
+        
+        switch indexPath {
+        case cancelScheduleIdx:
             let cell = tableView.dequeueReusableCell(withIdentifier: "AutomationDetailButtonCell", for: indexPath) as! AutomationDetailButtonCell
-
             cell.title.text = "ua_cancel_schedule".localized()
             cell.title.textColor = ThemeManager.shared.currentTheme.PrimaryText
             cell.backgroundColor = ThemeManager.shared.currentTheme.ButtonBackground
-
             return cell
+        default:
+            break
         }
-
-        guard let schedule = schedule else { return UITableViewCell() }
-
+        
         let cell = defaultAutomationDetailCell(indexPath)
 
         let dateFormatter = ISO8601DateFormatter()
@@ -264,6 +266,16 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
         case scheduleDataIdx:
             cell.title.text = "ua_scheduleinfo_schedule_data".localized()
             cell.accessoryType = .disclosureIndicator
+        case payloadIdx:
+            cell.title.text = "ua_scheduleinfo_schedule_payload".localized()
+            do {
+                let jsonData = try JSONSerialization.data(withJSONObject: schedule.metadata)
+                cell.subtitle.text = String(data: jsonData, encoding: .utf8)?.prettyJSONFormat()
+                cell.subtitle.sizeToFit()
+                cell.subtitle.lineBreakMode = NSLineBreakMode.byWordWrapping
+            } catch {
+                AirshipLogger.error("JSON parsing failed \(error)")
+            }
         default:
             break
         }
@@ -275,7 +287,11 @@ class AutomationDetailViewController: UIViewController, UITableViewDelegate, UIT
         if collapsedCellPaths.contains(indexPath) {
             return 0
         }
-
+        
+        if indexPath == payloadIdx {
+            return UITableView.automaticDimension
+        }
+        
         return 44
     }
 

@@ -4,8 +4,8 @@
  * - Note: For Internal use only :nodoc:
  */
 @objc(UAAppForegroundEvent)
-public class AppForegroundEvent : AppInitEvent {
-    public override func gatherData() -> [AnyHashable : Any] {
+class AppForegroundEvent : AppInitEvent {
+    open override func gatherData() -> [AnyHashable : Any] {
         var data = super.gatherData()
         data.removeValue(forKey: "foreground")
         return data

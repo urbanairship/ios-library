@@ -4,11 +4,10 @@
  * - Note: For Internal use only :nodoc:
  */
 @objc(UADeviceRegistrationEvent)
-public class DeviceRegistrationEvent : NSObject, Event {
+class DeviceRegistrationEvent : NSObject, Event {
     
-    @objc
-    public init(channel: ChannelProtocol?,
-                push: PushProtocol?,
+    init(channel: ChannelProtocol?,
+                push: InternalPushProtocol?,
                 privacyManager: PrivacyManager?) {
          
         var data: [AnyHashable : Any] = [:]

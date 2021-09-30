@@ -4,7 +4,7 @@
  * - Note: For Internal use only :nodoc:
  */
 @objc(UAScreenTrackingEvent)
-public class ScreenTrackingEvent : NSObject, Event {
+class ScreenTrackingEvent : NSObject, Event {
 
     private let _data : [String : Any]
 

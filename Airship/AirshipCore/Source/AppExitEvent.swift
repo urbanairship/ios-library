@@ -4,9 +4,14 @@
  * - Note: For Internal use only :nodoc:
  */
 @objc(UAAppExitEvent)
-public class AppExitEvent : NSObject, Event {
-    private let _data : [AnyHashable : Any]
-
+class AppExitEvent : NSObject, Event {
+    private lazy var analytics = Airship.requireComponent(ofType: AnalyticsProtocol.self)
+    
+    convenience init(analytics: AnalyticsProtocol) {
+        self.init()
+        self.analytics = analytics
+    }
+    
     @objc
     public var priority: EventPriority {
         get {
@@ -24,19 +29,18 @@ public class AppExitEvent : NSObject, Event {
     @objc
     public var data: [AnyHashable : Any] {
         get {
-            return self._data
+            return self.gatherData()
         }
     }
-
-    @objc
-    public override init() {
-        let analytics = Airship.requireComponent(ofType: AnalyticsProtocol.self)
+    
+    open func gatherData() -> [AnyHashable : Any] {
         var data: [AnyHashable : Any] = [:]
-        data["push_id"] = analytics.conversionSendID
-        data["metadata"] = analytics.conversionPushMetadata
-        data["connection_type"] = Utils.connectionType()
-        self._data = data
 
-        super.init()
+        data["push_id"] = self.analytics.conversionSendID
+        data["metadata"] = self.analytics.conversionPushMetadata
+        data["connection_type"] = Utils.connectionType()
+
+        return data
     }
+    
 }

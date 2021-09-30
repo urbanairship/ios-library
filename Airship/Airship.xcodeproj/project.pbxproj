@@ -1037,6 +1037,7 @@
 		A6A5531426D548FF002B20F6 /* NativeBridgeActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6A5531226D548FF002B20F6 /* NativeBridgeActionHandler.swift */; };
 		A6A8077C26C1566E00CB266E /* ColorUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6A8077B26C1566E00CB266E /* ColorUtils.swift */; };
 		A6A8078226C171F900CB266E /* ColorUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6A8077B26C1566E00CB266E /* ColorUtils.swift */; };
+		A6B31C5026EB855F00BA3A3D /* EventTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6B31C4F26EB855F00BA3A3D /* EventTest.swift */; };
 		A6CDD8D0269491BE0040A673 /* ContactAPIClientTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6CDD8CF269491BE0040A673 /* ContactAPIClientTest.swift */; };
 		A6CF89312593910300006C83 /* AddTagGroupsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6CF89302593910300006C83 /* AddTagGroupsTableViewController.swift */; };
 		A6F6726026E10C7A008C69C3 /* ChatIncomingMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F6725F26E10C7A008C69C3 /* ChatIncomingMessage.swift */; };
@@ -1081,7 +1082,6 @@
 		CC64F0F51D8B781C009CEF27 /* UACustomEventTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F08C1D8B781C009CEF27 /* UACustomEventTest.m */; };
 		CC64F0F61D8B781C009CEF27 /* UAMessageCenterStyleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F08D1D8B781C009CEF27 /* UAMessageCenterStyleTest.m */; };
 		CC64F0F81D8B781C009CEF27 /* UAMessageCenterActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0901D8B781C009CEF27 /* UAMessageCenterActionTest.m */; };
-		CC64F0F91D8B781C009CEF27 /* UAEventTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0911D8B781C009CEF27 /* UAEventTest.m */; };
 		CC64F0FF1D8B781C009CEF27 /* UALegacyInAppMessageTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F09A1D8B781C009CEF27 /* UALegacyInAppMessageTest.m */; };
 		CC64F1001D8B781C009CEF27 /* UALegacyInAppMessagingTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F09B1D8B781C009CEF27 /* UALegacyInAppMessagingTest.m */; };
 		CC64F1021D8B781C009CEF27 /* UAInboxAPIClientTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F09D1D8B781C009CEF27 /* UAInboxAPIClientTest.m */; };
@@ -1107,7 +1107,6 @@
 		CC64F11F1D8B781C009CEF27 /* UARetailEventTemplateTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0BA1D8B781C009CEF27 /* UARetailEventTemplateTest.m */; };
 		CC64F1201D8B781C009CEF27 /* UAScheduleActionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0BB1D8B781C009CEF27 /* UAScheduleActionTests.m */; };
 		CC64F1211D8B781C009CEF27 /* UAScheduleTriggerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0BC1D8B781C009CEF27 /* UAScheduleTriggerTests.m */; };
-		CC64F1221D8B781C009CEF27 /* UAScreenTrackingEventTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0BD1D8B781C009CEF27 /* UAScreenTrackingEventTest.m */; };
 		CC64F1231D8B781C009CEF27 /* UAShareActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0BE1D8B781C009CEF27 /* UAShareActionTest.m */; };
 		CC64F1241D8B781C009CEF27 /* UATagActionsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0BF1D8B781C009CEF27 /* UATagActionsTest.m */; };
 		CC64F1281D8B781C009CEF27 /* UAUserAPIClientTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0C31D8B781C009CEF27 /* UAUserAPIClientTest.m */; };
@@ -2222,7 +2221,6 @@
 		CC64F08C1D8B781C009CEF27 /* UACustomEventTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UACustomEventTest.m; sourceTree = "<group>"; };
 		CC64F08D1D8B781C009CEF27 /* UAMessageCenterStyleTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAMessageCenterStyleTest.m; sourceTree = "<group>"; };
 		CC64F0901D8B781C009CEF27 /* UAMessageCenterActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAMessageCenterActionTest.m; sourceTree = "<group>"; };
-		CC64F0911D8B781C009CEF27 /* UAEventTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAEventTest.m; sourceTree = "<group>"; };
 		CC64F09A1D8B781C009CEF27 /* UALegacyInAppMessageTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALegacyInAppMessageTest.m; sourceTree = "<group>"; };
 		CC64F09B1D8B781C009CEF27 /* UALegacyInAppMessagingTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALegacyInAppMessagingTest.m; sourceTree = "<group>"; };
 		CC64F09D1D8B781C009CEF27 /* UAInboxAPIClientTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxAPIClientTest.m; sourceTree = "<group>"; };
@@ -2248,7 +2246,6 @@
 		CC64F0BA1D8B781C009CEF27 /* UARetailEventTemplateTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UARetailEventTemplateTest.m; sourceTree = "<group>"; };
 		CC64F0BB1D8B781C009CEF27 /* UAScheduleActionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAScheduleActionTests.m; sourceTree = "<group>"; };
 		CC64F0BC1D8B781C009CEF27 /* UAScheduleTriggerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAScheduleTriggerTests.m; sourceTree = "<group>"; };
-		CC64F0BD1D8B781C009CEF27 /* UAScreenTrackingEventTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAScreenTrackingEventTest.m; sourceTree = "<group>"; };
 		CC64F0BE1D8B781C009CEF27 /* UAShareActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAShareActionTest.m; sourceTree = "<group>"; };
 		CC64F0BF1D8B781C009CEF27 /* UATagActionsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UATagActionsTest.m; sourceTree = "<group>"; };
 		CC64F0C31D8B781C009CEF27 /* UAUserAPIClientTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAUserAPIClientTest.m; sourceTree = "<group>"; };
@@ -4220,6 +4217,14 @@
 			name = "Subscription Lists";
 			sourceTree = "<group>";
 		};
+		A6B31C4E26EB853000BA3A3D /* Events */ = {
+			isa = PBXGroup;
+			children = (
+				A6B31C4F26EB855F00BA3A3D /* EventTest.swift */,
+			);
+			path = Events;
+			sourceTree = "<group>";
+		};
 		A6CDD8CE269491850040A673 /* Contacts */ = {
 			isa = PBXGroup;
 			children = (
@@ -4532,8 +4537,6 @@
 				CC04F2181DCAB78500B4842D /* Custom Events */,
 				CC64F0A21D8B781C009CEF27 /* UAInteractiveNotificationEventTest.m */,
 				CC64F07E1D8B781C009CEF27 /* UAAssociateIdentifiersEventTest.m */,
-				CC64F0911D8B781C009CEF27 /* UAEventTest.m */,
-				CC64F0BD1D8B781C009CEF27 /* UAScreenTrackingEventTest.m */,
 				CC64F0A11D8B781C009CEF27 /* UAInstallAttributionEventTest.m */,
 			);
 			name = Events;
@@ -4604,6 +4607,7 @@
 			children = (
 				6E4E5B2726E53EE700198175 /* UABaseTest.h */,
 				6E4E5B2826E53EE700198175 /* UABaseTest.m */,
+				A6B31C4E26EB853000BA3A3D /* Events */,
 				6E87BD9B26DD78B40005D20D /* Integration */,
 				6E2D6AF026B0B62900B7C226 /* Subscription Lists */,
 				A6CDD8CE269491850040A673 /* Contacts */,
@@ -6399,7 +6403,6 @@
 			files = (
 				CC64F0E11D8B781C009CEF27 /* UAAddCustomEventActionTest.m in Sources */,
 				CC64F0DF1D8B781C009CEF27 /* UAActionRunnerTest.m in Sources */,
-				CC64F0F91D8B781C009CEF27 /* UAEventTest.m in Sources */,
 				6E6ED1432683B8FA00A2CBD0 /* TestDate.swift in Sources */,
 				991A94671FCF2C7F00B57D24 /* UAInAppMessageButtonInfoTest.m in Sources */,
 				3C89DD3E211E4D4900864358 /* UAInAppAudienceManagerTest.m in Sources */,
@@ -6421,6 +6424,7 @@
 				DF9FED0A1F75D64900C79417 /* UARemoteDataStoreTest.m in Sources */,
 				E29D35EF1DB9751F003C292F /* UAFetchDeviceInfoActionTest.m in Sources */,
 				6E664BE526C5817B00A2C8E5 /* TestContact.swift in Sources */,
+				A6B31C5026EB855F00BA3A3D /* EventTest.swift in Sources */,
 				6E4E5B4326E8043A00198175 /* LocalizationUtilsTest.m in Sources */,
 				CC64F0ED1D8B781C009CEF27 /* UAChannelAPIClientTest.m in Sources */,
 				6E15B70126CDD1A40099C92D /* RemoteConfigDisableInfoTest.swift in Sources */,
@@ -6486,7 +6490,6 @@
 				DF7E22BC1ED63E9200C79C46 /* ProjectValidationTest.swift in Sources */,
 				CC64F0F51D8B781C009CEF27 /* UACustomEventTest.m in Sources */,
 				6EA734B924BE5E920012B737 /* UAInAppAutomationTest.m in Sources */,
-				CC64F1221D8B781C009CEF27 /* UAScreenTrackingEventTest.m in Sources */,
 				3C3BCBA820E16C8300D86E60 /* UAAutomationEngineIntegrationTest.m in Sources */,
 				CC64F11C1D8B781C009CEF27 /* UAProximityRegionTest.m in Sources */,
 				6E2D6AF226B0B64E00B7C226 /* SubscriptionListAPIClientTest.swift in Sources */,
