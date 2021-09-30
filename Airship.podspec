@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
    s.author                  = { "Airship" => "support@airship.com" }
    s.license                 = { :type => "Apache License, Version 2.0", :file => "LICENSE" }
    s.source                  = { :git => "https://github.com/urbanairship/ios-library.git", :tag => s.version.to_s }
-   s.module_name             = "Airship"
+   s.module_name             = "AirshipKit"
    s.ios.deployment_target   = "11.0"
    s.tvos.deployment_target  = "11.0"
    s.swift_versions          = "5.0"
@@ -17,8 +17,8 @@ Pod::Spec.new do |s|
    s.default_subspecs        = ["Basement", "Core", "Automation", "MessageCenter", "ExtendedActions"]
 
    s.subspec "Basement" do |basement|
-      basement.public_header_files        = "Airship/AirshipBasement/Source/Public/*.h", "Cocoapods/Airship.h"
-      basement.source_files               = "Airship/AirshipBasement/Source/Public/*.h", "Airship/AirshipBasement/Source/Internal/*.{h,m}", "Cocoapods/Airship.h"
+      basement.public_header_files        = "Airship/AirshipBasement/Source/Public/*.h", "Cocoapods/AirshipKit.h"
+      basement.source_files               = "Airship/AirshipBasement/Source/Public/*.h", "Airship/AirshipBasement/Source/Internal/*.{h,m}", "Cocoapods/AirshipKit.h"
       basement.private_header_files       = "Airship/AirshipBasement/Source/Internal/*.h"
       basement.exclude_files              = "Airship/AirshipBasement/Source/Public/AirshipBasement.h"
       basement.libraries                  = "z", "sqlite3"

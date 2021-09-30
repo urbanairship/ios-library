@@ -3,8 +3,8 @@ import Foundation
 
 #if canImport(AirshipCore)
 import AirshipCore
-#elseif canImport(Airship)
-import Airship
+#elseif canImport(AirshipKit)
+import AirshipKit
 #endif
 
 @objc(UADebugSDKModule)
