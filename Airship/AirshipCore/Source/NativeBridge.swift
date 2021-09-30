@@ -20,6 +20,10 @@ public class NativeBridge : NSObject, WKNavigationDelegate {
     private static let UANativeBridgeCloseCommand = "close"
     private static let UANativeBridgeSetNamedUserCommand = "named_user"
     private static let UANativeBridgeMultiCommand = "multi"
+    
+    private static let forwardSchemes = ["itms-apps", "maps", "sms", "tel", "mailto"]
+    private static let forwardHosts = ["maps.google.com", "www.youtube.com", "phobos.apple.com", "itunes.apple.com"]
+    
 
     /// Delegate to support additional native bridge features such as `close`.
     @objc
@@ -71,8 +75,8 @@ public class NativeBridge : NSObject, WKNavigationDelegate {
         
         let originatingURL = webView.url
         
-        /// Always handle uairship urls
-        if (originatingURL != nil && self.isAllowedAirshipRequest(request: request as NSURLRequest, originatingURL: originatingURL!)) {
+        if (self.isAllowedAirshipRequest(request: request, originatingURL: originatingURL)) {
+            // Always handle uairship urls
             if (navigationType == WKNavigationType.linkActivated || navigationType == WKNavigationType.other) {
                 guard let url = request.url else {
                     return
@@ -84,15 +88,22 @@ public class NativeBridge : NSObject, WKNavigationDelegate {
             return
         }
         
-        /// If the forward delegate responds to the selector, let it decide
-        self.forwardNavigationDelegate?.webView?(webView, decidePolicyFor: navigationAction, decisionHandler: { policyForThisURL in
-            // Override any special link actions
-            if (policyForThisURL == WKNavigationActionPolicy.allow && navigationType == WKNavigationType.linkActivated) {
-                return
+        if let forward = self.forwardNavigationDelegate?.webView as ((WKWebView, WKNavigationAction, @escaping (WKNavigationActionPolicy) -> Void) -> Void)? {
+            
+            forward(webView, navigationAction) { policyForThisURL in
+                // Override any special link actions
+                if (policyForThisURL == WKNavigationActionPolicy.allow && navigationType == WKNavigationType.linkActivated) {
+                    self.handle(request.url) { success in
+                        decisionHandler(success ? .cancel : .allow)
+                    }
+                    return
+                }
+                
+                decisionHandler(policyForThisURL)
             }
-            decisionHandler(policyForThisURL)
-        })
-        
+            return
+        }
+
         let handleLink: () -> Void = {
             /// If target frame is a new window navigation, have OS handle it
             guard navigationAction.request.url != nil else {
@@ -127,10 +138,13 @@ public class NativeBridge : NSObject, WKNavigationDelegate {
      * Decide whether to allow or cancel a navigation after its response is known. :nodoc:
      */
     public func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
-        guard (self.forwardNavigationDelegate?.webView?(webView, decidePolicyFor: navigationResponse, decisionHandler: decisionHandler)) != nil else {
+        
+        guard let forward = self.forwardNavigationDelegate?.webView as ((WKWebView, WKNavigationResponse, @escaping (WKNavigationResponsePolicy) -> Void) -> Void)? else {
             decisionHandler(.allow)
             return
         }
+        
+        forward(webView, navigationResponse, decisionHandler)
     }
     
     /**
@@ -188,13 +202,16 @@ public class NativeBridge : NSObject, WKNavigationDelegate {
      * Called when the web view needs to respond to an authentication challenge. :nodoc:
      */
     public func webView(_ webView: WKWebView, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
-        guard self.forwardNavigationDelegate?.webView?(webView, didReceive: challenge, completionHandler: completionHandler) != nil else {
+        
+        guard let forward = self.forwardNavigationDelegate?.webView as ((WKWebView, URLAuthenticationChallenge, @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) -> Void)? else {
             completionHandler(.performDefaultHandling, nil)
             return
         }
+        
+        forward(webView, challenge, completionHandler)
     }
     
-    private func isAirshipRequest(request: NSURLRequest) -> Bool {
+    private func isAirshipRequest(request: URLRequest) -> Bool {
         return (request.url?.scheme == NativeBridge.UANativeBridgeUAirshipScheme)
     }
 
@@ -202,9 +219,12 @@ public class NativeBridge : NSObject, WKNavigationDelegate {
         return Airship.shared.urlAllowList.isAllowed(url, scope: .javaScriptInterface)
     }
     
-    private func isAllowedAirshipRequest(request: NSURLRequest, originatingURL: URL) -> Bool {
+    private func isAllowedAirshipRequest(request: URLRequest, originatingURL: URL?) -> Bool {
+        guard let url = originatingURL else {
+            return false
+        }
         /// uairship://command/[<arguments>][?<options>]
-        return self.isAirshipRequest(request: request) && self.isAllowed(url: originatingURL)
+        return self.isAirshipRequest(request: request) && self.isAllowed(url: url)
     }
 
     private func handleAirshipCommand(command: JavaScriptCommand, webView: WKWebView) {
@@ -291,24 +311,20 @@ public class NativeBridge : NSObject, WKNavigationDelegate {
      * -
      */
     @available(iOSApplicationExtension, unavailable)
-    private func handle(_ url: URL, _ completionHandler: @escaping (Bool) -> Void ) {
-        let forwardSchemes = ["itms-apps", "maps", "sms", "tel", "mailto"]
-        let forwardHosts = ["maps.google.com", "www.youtube.com", "phobos.apple.com", "itunes.apple.com"]
-        
-        if (url.scheme == nil && url.host == nil) {
-          completionHandler(false)
+    private func handle(_ url: URL?, _ completionHandler: @escaping (Bool) -> Void ) {
+        guard let url = url,
+              let scheme = url.scheme,
+              let host = url.host,
+              NativeBridge.forwardSchemes.contains(scheme.lowercased()) || NativeBridge.forwardHosts.contains(host.lowercased()) else {
+            completionHandler(false)
+            return
         }
         
-        if (url.scheme != nil && forwardSchemes.contains(url.scheme!.lowercased()) ||
-            url.host != nil && forwardHosts.contains(url.host!.lowercased())) {
-            UIApplication.shared.open(url, options: [:]) { success in
-                /// Its better to return YES here and no-op on these links instead of reporting an unhandled URL
-                /// to avoid the message thinking it failed to load. The only time a NO will happen is on a simulator
-                /// without access to the app store.
-                completionHandler(true)
-            }
-        } else {
-            completionHandler(false)
+        UIApplication.shared.open(url, options: [:]) { success in
+            /// Its better to return YES here and no-op on these links instead of reporting an unhandled URL
+            /// to avoid the message thinking it failed to load. The only time a NO will happen is on a simulator
+            /// without access to the app store.
+            completionHandler(true)
         }
     }
     
