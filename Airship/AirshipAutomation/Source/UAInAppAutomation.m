@@ -595,6 +595,9 @@ static NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerP
 - (void)setPaused:(BOOL)paused {
     [self.dataStore setBool:paused forKey:UAInAppMessageManagerPausedKey];
     [self updateEnginePauseState];
+    if (!paused) {
+        [self.automationEngine scheduleConditionsChanged];
+    }
 }
 
 - (BOOL)isPaused{
