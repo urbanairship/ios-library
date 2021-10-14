@@ -90,6 +90,16 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, nullable) NSNumber *badge;
 
 /**
+ * This flag indicates if the scheduled summary option is enabled or not.
+ */
+@property (nonatomic, assign, getter=isScheduledSummary) BOOL scheduledSummary;
+
+/**
+ * This flag indicates if the time sensitive option is enabled or not.
+ */
+@property (nonatomic, assign, getter=isTimeSensitive) BOOL timeSensitive;
+
+/**
  * The location setting for the device.
  */
 @property (nonatomic, strong, nullable) NSNumber *locationSettings;

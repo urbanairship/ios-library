@@ -69,7 +69,7 @@
     }
 
     if ((UAAuthorizedNotificationSettingsScheduledDelivery & authorizedSettings) > 0) {
-        [notificationTypes addObject:@"scheduled_delivery"];
+        [notificationTypes addObject:@"scheduled_summary"];
     }
 
     if ((UAAuthorizedNotificationSettingsTimeSensitive & authorizedSettings) > 0) {
