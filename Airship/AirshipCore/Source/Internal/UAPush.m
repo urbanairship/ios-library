@@ -872,6 +872,11 @@ NSTimeInterval const UADeviceTokenRegistrationWaitTime = 10;
                 payload.quietTime = self.quietTime;
                 payload.quietTimeTimeZone = self.timeZone.name;
             }
+            
+            payload.scheduledSummary = (self.authorizedNotificationSettings & UAAuthorizedNotificationSettingsScheduledDelivery) > 0;
+            
+            payload.timeSensitive = (self.authorizedNotificationSettings & UAAuthorizedNotificationSettingsTimeSensitive) > 0;
+            
         }
         completionHandler(payload);
     }];

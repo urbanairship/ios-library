@@ -31,6 +31,8 @@ NSString *const UAChannelIOSKey = @"ios";
 NSString *const UAChannelBadgeJSONKey = @"badge";
 NSString *const UAChannelQuietTimeJSONKey = @"quiettime";
 NSString *const UAChannelTimeZoneJSONKey = @"tz";
+NSString *const UAChannelScheduledSummary = @"scheduled_summary";
+NSString *const UAChannelTimeSensitive = @"time_sensitive";
 
 NSString *const UAChannelAliasJSONKey = @"alias";
 NSString *const UAChannelSetTagsKey = @"set_tags";
@@ -68,6 +70,8 @@ NSString *const UABackgroundEnabledJSONKey = @"background";
                 self.badge = platform[UAChannelBadgeJSONKey];
                 self.quietTime = platform[UAChannelQuietTimeJSONKey];
                 self.quietTimeTimeZone = platform[UAChannelTimeZoneJSONKey];
+                self.scheduledSummary = [platform[UAChannelScheduledSummary] boolValue];
+                self.timeSensitive = [platform[UAChannelTimeSensitive] boolValue];
             }
 
             self.deviceID = topLevel[UAChannelDeviceIDKey];
@@ -186,6 +190,8 @@ NSString *const UABackgroundEnabledJSONKey = @"background";
         copy.deviceModel = self.deviceModel;
         copy.deviceOS = self.deviceOS;
         copy.carrier = self.carrier;
+        copy.scheduledSummary = self.scheduledSummary;
+        copy.timeSensitive = self.timeSensitive;
     }
 
     return copy;
@@ -274,6 +280,14 @@ NSString *const UABackgroundEnabledJSONKey = @"background";
         
         if ([self.carrier isEqual:lastPayload.carrier]) {
             minPayload.carrier = nil;
+        }
+        
+        if (self.isScheduledSummary == lastPayload.isScheduledSummary) {
+            minPayload.scheduledSummary = nil;
+        }
+        
+        if (self.isTimeSensitive == lastPayload.isTimeSensitive) {
+            minPayload.timeSensitive = nil;
         }
     }
 
