@@ -3,11 +3,12 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
-## Version 14.7.1 Octobre 4, 2021
-Minor release that adds the support of new iOS 15 notification types.
+## Version 14.8.0 Octobre 14, 2021
+Minor release that adds the support of new iOS 15 notification types and fixing an IAA bug.
 
 ### Changes
 - Added the new notification types: time sensitive and scheduled delivery to the channel registration payload.
+- Fixed a bug with IAA not displayed after setting the isPaused to false.
 
 ## Version 14.7.0 September 14, 2021
 Minor release that adds iOS 15 support. This build requires Xcode 13.
