@@ -5,8 +5,8 @@ import AdSupport.ASIdentifierManager
 
 #if canImport(AirshipCore)
 import AirshipCore
-#elseif canImport(Airship)
-import Airship
+#elseif canImport(AirshipKit)
+import AirshipKit
 #endif
 
 

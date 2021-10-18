@@ -106,4 +106,27 @@ class AirshipChatTests: XCTestCase {
         XCTAssertEqual(expectedIncoming, mockConversation.incoming)
 
     }
+    
+    func testSimpleDeepLinkEncodedOptions() throws {
+        let mockOpenDelegate = MockChatOpenDelegate()
+        self.airshipChat.openChatDelegate = mockOpenDelegate
+
+        // uairship://chat?route_agent=smith&prepopulated_message=msg1
+        
+        let encodedWithOptions = URL(string: "uairship://chat?route_agent=smith&prepopulated_message=msg1")!
+        XCTAssertTrue(self.airshipChat.deepLink(encodedWithOptions))
+        XCTAssertTrue(mockOpenDelegate.openCalled)
+        
+        XCTAssertEqual("smith", mockConversation.routing?.agent)
+        
+        let expectedIncoming = [
+            ChatIncomingMessage(message: "msg1",
+                                url: nil,
+                                date: nil,
+                                messageID: nil)
+                       ]
+        
+        XCTAssertEqual(expectedIncoming, mockConversation.incoming)
+
+    }
 }

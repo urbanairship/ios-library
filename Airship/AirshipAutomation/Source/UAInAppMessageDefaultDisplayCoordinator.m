@@ -3,10 +3,10 @@
 #import "UAInAppMessageDefaultDisplayCoordinator+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
 
-#if __has_include("Airship/Airship-Swift.h")
-#import <Airship/Airship-Swift.h>
-#elif __has_include("Airship-Swift.h")
-#import "Airship-Swift.h"
+#if __has_include("AirshipKit/AirshipKit-Swift.h")
+#import <AirshipKit/AirshipKit-Swift.h>
+#elif __has_include("AirshipKit-Swift.h")
+#import "AirshipKit-Swift.h"
 #else
 @import AirshipCore;
 #endif

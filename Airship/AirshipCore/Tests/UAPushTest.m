@@ -1326,20 +1326,72 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     [self waitForTestExpectations];
 }
 
-
-- (void)testRegistrationPayloadQuietTimeDisabled {
-    self.push.quietTimeEnabled = NO;
-    self.push.timeZone = [NSTimeZone timeZoneWithName:@"Pacific/Auckland"];
-    [self.push setQuietTimeStartHour:12 startMinute:30 endHour:14 endMinute:58];
-
+- (void)testRegistrationPayloadTimeSensitiveEnabled {
+    
+    //TimeSensitive Enabled
+    self.authorizedNotificationSettings = UAAuthorizedNotificationSettingsTimeSensitive;
+    [LegacyPushTestUtils updateAuthorizedNotificationTypesWithPush:self.push];
+    
     UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
     XCTestExpectation *extendedPayload = [self expectationWithDescription:@"extended payload"];
     [self.testChannel extendPayload:payload completionHandler:^(UAChannelRegistrationPayload * payload) {
-        XCTAssertNil(payload.channel.iOSChannelSettings);
+        XCTAssertTrue(payload.channel.iOSChannelSettings.timeSensitive.boolValue);
         [extendedPayload fulfill];
     }];
 
     [self waitForTestExpectations];
+    
+}
+
+- (void)testRegistrationPayloadTimeSensitiveDisabled {
+    
+    //TimeSensitive Disabled
+    self.authorizedNotificationSettings = UAAuthorizedNotificationSettingsNone;
+    [LegacyPushTestUtils updateAuthorizedNotificationTypesWithPush:self.push];
+    
+    UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
+    XCTestExpectation *extendedPayload = [self expectationWithDescription:@"extended payload"];
+    [self.testChannel extendPayload:payload completionHandler:^(UAChannelRegistrationPayload * payload) {
+        XCTAssertFalse(payload.channel.iOSChannelSettings.timeSensitive.boolValue);
+        [extendedPayload fulfill];
+    }];
+    
+    [self waitForTestExpectations];
+    
+}
+
+- (void)testRegistrationPayloadScheduledDeliveryEnabled {
+
+    //ScheduledDelivery Enabled
+    self.authorizedNotificationSettings = UAAuthorizedNotificationSettingsScheduledDelivery;
+    [LegacyPushTestUtils updateAuthorizedNotificationTypesWithPush:self.push];
+    
+    UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
+    XCTestExpectation *extendedPayload = [self expectationWithDescription:@"extended payload"];
+    [self.testChannel extendPayload:payload completionHandler:^(UAChannelRegistrationPayload * payload) {
+        XCTAssertTrue(payload.channel.iOSChannelSettings.scheduledSummary.boolValue);
+        [extendedPayload fulfill];
+    }];
+
+    [self waitForTestExpectations];
+
+}
+
+- (void)testRegistrationPayloadScheduledDeliveryDisabled {
+
+    //ScheduledDelivery Disabled
+    self.authorizedNotificationSettings = UAAuthorizedNotificationSettingsNone;
+    [LegacyPushTestUtils updateAuthorizedNotificationTypesWithPush:self.push];
+    
+    UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
+    XCTestExpectation *extendedPayload = [self expectationWithDescription:@"extended payload"];
+    [self.testChannel extendPayload:payload completionHandler:^(UAChannelRegistrationPayload * payload) {
+        XCTAssertFalse(payload.channel.iOSChannelSettings.scheduledSummary.boolValue);
+        [extendedPayload fulfill];
+    }];
+
+    [self waitForTestExpectations];
+
 }
 
 /**

@@ -8,8 +8,8 @@ import AirshipCore
 import AirshipAutomation
 import AirshipMessageCenter
 import AirshipLocation
-#elseif canImport(Airship)
-import Airship
+#elseif canImport(AirshipKit)
+import AirshipKit
 #endif
 
 

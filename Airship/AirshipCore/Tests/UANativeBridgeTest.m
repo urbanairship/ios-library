@@ -260,6 +260,34 @@
     
 }
 
+- (void)testDecisionHandlerMultipleCalls  {
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://www.youtube.com"]];
+    NSURL *originatingURL = [NSURL URLWithString:@"https://foo.urbanairship.com/whatever.html"];;
+
+    id mockWKNavigationAction = [self mockForClass:[WKNavigationAction class]];
+    [[[mockWKNavigationAction stub] andReturn:request] request];
+    [[[mockWKNavigationAction stub] andReturnValue:OCMOCK_VALUE(WKNavigationTypeOther)] navigationType];
+    id mockWKFrameInfo = [self mockForClass:[WKFrameInfo class]];
+    [[[mockWKNavigationAction stub] andReturn:mockWKFrameInfo] targetFrame];
+    [[[self.mockWKWebView stub] andReturn:originatingURL] URL];
+
+    // Stub the navigation delegate to return the response
+    [[[self.mockNavigationDelegate expect] andDo:^(NSInvocation *invocation) {
+        void (^decisionHandler)(WKNavigationActionPolicy policy) = nil;
+        [invocation getArgument:&decisionHandler atIndex:4];
+        decisionHandler(WKNavigationActionPolicyAllow);
+    }] webView:OCMOCK_ANY decidePolicyForNavigationAction:OCMOCK_ANY decisionHandler:OCMOCK_ANY];
+
+    
+
+    XCTestExpectation *finished = [self expectationWithDescription:@"Fetched frequency checker"];
+    [self.nativeBridge webView:self.mockWKWebView decidePolicyForNavigationAction:mockWKNavigationAction decisionHandler:^(WKNavigationActionPolicy delegatePolicy) {
+        [finished fulfill];
+    }];
+    
+    [self waitForTestExpectations];
+}
+
 /**
  * Test webView:decidePolicyForNavigationAction:decisionHandler: handles click to new target window when navigation is embedded. No delegate.
  */

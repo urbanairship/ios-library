@@ -35,6 +35,8 @@ public class Chat : NSObject, Component, PushableComponent {
     }
     
     static let routingKey = "routing"
+    static let routeAgentKey = "route_agent"
+    static let singlePrepopulatedMessageKey = "prepopulated_message"
     static let prepopulatedMessagesKey = "prepopulated_messages"
     static let inputKey = "chat_input"
     static let deepLinkHost = "chat"
@@ -233,24 +235,43 @@ public class Chat : NSObject, Component, PushableComponent {
             $0[$1.name] = $1.value
         } ?? [:]
         
-        
-        if let routing = queryMap[Chat.routingKey] as? String {
+        if (queryMap.keys.contains(Chat.routingKey) || queryMap.keys.contains(Chat.routeAgentKey)) {
             do {
-                let parsedRouting = try JSONDecoder().decode(ChatRouting.self, from: Data(routing.utf8))
+                var parsedRouting: ChatRouting? = nil
+                
+                if let routing = queryMap[Chat.routingKey] as? String {
+                    parsedRouting = try JSONDecoder().decode(ChatRouting.self, from: Data(routing.utf8))
+                }
+                
+                if parsedRouting == nil, let agent = queryMap[Chat.routeAgentKey] as? String {
+                    parsedRouting = ChatRouting(agent: agent)
+                }
+                
                 self.conversation.routing = parsedRouting
-            } catch {
+            }
+            catch {
                 AirshipLogger.error("Failed to parse routing \(error)")
             }
         }
         
-        if let incoming = queryMap[Chat.prepopulatedMessagesKey] as? String {
+        if (queryMap.keys.contains(Chat.prepopulatedMessagesKey) || queryMap.keys.contains(Chat.singlePrepopulatedMessageKey)) {
             do {
-                let decoder = JSONDecoder()
-                decoder.dateDecodingStrategy = .iso8601
+                var incomingMessages: [ChatIncomingMessage] = []
+                if let incoming = queryMap[Chat.prepopulatedMessagesKey] as? String {
+                    let decoder = JSONDecoder()
+                    decoder.dateDecodingStrategy = .iso8601
+                        
+                    incomingMessages = try decoder.decode([ChatIncomingMessage].self, from: Data(incoming.utf8))
+                }
                 
-                let parsedIncoming = try decoder.decode([ChatIncomingMessage].self, from: Data(incoming.utf8))
-                self.internalConversation.addIncoming(parsedIncoming)
-            } catch {
+                if incomingMessages.count == 0, let singlePrepop = queryMap[Chat.singlePrepopulatedMessageKey] as? String {
+                    let newMessage = ChatIncomingMessage(message: singlePrepop, url: nil, date: nil, messageID: nil)
+                    incomingMessages.append(newMessage)
+                }
+                
+                self.internalConversation.addIncoming(incomingMessages)
+            }
+            catch {
                 AirshipLogger.error("Failed to parse prepopulated messages \(error)")
             }
         }

@@ -53,7 +53,7 @@ class EventUtils {
             }
 
             if (UAAuthorizedNotificationSettings.scheduledDelivery.rawValue & authorizedSettings.rawValue) > 0 {
-                notificationTypes.append("scheduled_delivery")
+                notificationTypes.append("scheduled_summary")
             }
 
             if (UAAuthorizedNotificationSettings.timeSensitive.rawValue & authorizedSettings.rawValue) > 0 {

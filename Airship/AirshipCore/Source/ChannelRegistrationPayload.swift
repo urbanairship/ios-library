@@ -80,6 +80,17 @@ public class ChannelRegistrationPayload : NSObject, Codable, NSCopying {
             if (channel.carrier == previousChannel.carrier) { channel.carrier = nil }
         }
         
+        if let iOSChannelSetting = channel.iOSChannelSettings, let previousiOSChannelSetting = previous.channel.iOSChannelSettings {
+            
+            if (iOSChannelSetting.isScheduledSummary == previousiOSChannelSetting.isScheduledSummary) {
+                iOSChannelSetting.isScheduledSummary = nil;
+            }
+            
+            if(iOSChannelSetting.isTimeSensitive == previousiOSChannelSetting.isTimeSensitive){
+                iOSChannelSetting.isTimeSensitive = nil;
+            }
+        }
+        
         return minPayload
     }
     
@@ -313,6 +324,28 @@ public class ChannelRegistrationPayload : NSObject, Codable, NSCopying {
             }
         }
         
+        var isScheduledSummary: Bool?
+        @objc
+        public var scheduledSummary : NSNumber? {
+            get {
+                return isScheduledSummary as NSNumber?
+            }
+            set {
+                isScheduledSummary = newValue?.boolValue
+            }
+        }
+        
+        var isTimeSensitive: Bool?
+        @objc
+        public var timeSensitive : NSNumber? {
+            get {
+                return isTimeSensitive as NSNumber?
+            }
+            set {
+                isTimeSensitive = newValue?.boolValue
+            }
+        }
+        
         
         @objc
         public override init() {}
@@ -321,6 +354,8 @@ public class ChannelRegistrationPayload : NSObject, Codable, NSCopying {
             self.badge = settings.badge
             self.quietTime = settings.quietTime
             self.quietTimeTimeZone = settings.quietTimeTimeZone
+            self.isScheduledSummary = settings.isScheduledSummary
+            self.isTimeSensitive = settings.isTimeSensitive
         }
         
         public func copy(with zone: NSZone? = nil) -> Any {
@@ -331,6 +366,8 @@ public class ChannelRegistrationPayload : NSObject, Codable, NSCopying {
             case quietTime = "quiettime"
             case quietTimeTimeZone = "tz"
             case badge = "badge"
+            case isScheduledSummary = "scheduled_summary"
+            case isTimeSensitive = "time_sensitive"
         }
         
         public override func isEqual(_ object: Any?) -> Bool {
@@ -345,7 +382,9 @@ public class ChannelRegistrationPayload : NSObject, Codable, NSCopying {
             return
                 lh.quietTime == rh.quietTime &&
                 lh.quietTimeTimeZone == rh.quietTimeTimeZone &&
-                lh.badge == rh.badge
+                lh.badge == rh.badge &&
+                lh.isScheduledSummary == rh.isScheduledSummary &&
+                lh.isTimeSensitive == rh.isTimeSensitive
         }
         
     }

@@ -101,11 +101,11 @@ open class UADispatcher : NSObject {
             }
         }
 
-        return Disposable({
+        return Disposable {
             if (!workItem.isCancelled) {
                 workItem.cancel()
             }
-        })
+        }
     }
 
     @objc

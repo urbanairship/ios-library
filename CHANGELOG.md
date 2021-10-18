@@ -3,11 +3,30 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 16.0.0 September 30, 2021
+
+Major SDK release to address a conflict with the class and package `Airship` on CocoaPods. The import for Cocoapods has been changed from `Airship` to `AirshipKit`. No other breaking API changes have been introduced in this release.
+
+### Changes
+- Changed CocoaPods import to `AirshipKit`
+- Added support for simple deep links for AirshipChat module
+- Fixed parsing `enabledFeatures` in `AirshipConfig.plist`
+- Fixed forward delegate on native bridge calling the decision handler multiple times
+- Fixed missing message center and automation methods if they referenced `Disposable` or `Padding` when using Swift and SPM
+- Fixed deprecation warnings for NamedUser.
+
+## Version 15.0.1 September 15, 2021
+
+Patch release fixing a crash when setting date attributes. Apps using 15.0.0 should update. 14.x remains unaffected.
+
+### Changes
+- Fixed a crash when setting date attributes.
+
 ## Version 15.0.0 September 14, 2021
 
 Major SDK release with several breaking changes, especially for Swift users. This release adds support for preference center, Contacts, iOS 15, and subscription lists.
 
-## Changes
+### Changes
 - Core module has been rewritten in Swift. During the rewrite, many of the method signatures, nullability, and classes have been updated to be more inline with Swift.
 - Dropped the `UA` prefix for Swift.
 - Added new module `AirshipPreferenceCenter`.

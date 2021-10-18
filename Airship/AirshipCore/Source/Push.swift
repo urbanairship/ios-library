@@ -556,6 +556,7 @@ public class Push: NSObject, Component, PushProtocol {
                 self.dataStore.setInteger(Int(newValue.rawValue), forKey: Push.TypesAuthorizedKey)
                 self.updateRegistration()
                 
+                
                 self.registrationDelegate?.notificationAuthorizedSettingsDidChange?(newValue)
             }
         }
@@ -1046,10 +1047,10 @@ public class Push: NSObject, Component, PushProtocol {
             payload.channel.pushAddress = self.deviceToken
             payload.channel.isOptedIn = self.isPushNotificationsOptedIn
             payload.channel.isBackgroundEnabled = self.backgroundPushNotificationsAllowed()
-
+            
+            payload.channel.iOSChannelSettings = payload.channel.iOSChannelSettings ?? ChannelRegistrationPayload.iOSChannelSettings()
+            
             if (self.autobadgeEnabled) {
-                payload.channel.iOSChannelSettings = payload.channel.iOSChannelSettings ?? ChannelRegistrationPayload.iOSChannelSettings()
-                
                 payload.channel.iOSChannelSettings?.badge = self.badgeNumber
             }
             
@@ -1058,13 +1059,13 @@ public class Push: NSObject, Component, PushProtocol {
                let quietTimeEnd = self.quietTime?[Push.quietTimeEndKey] as? String,
                self.quietTimeEnabled {
                 
-                
-                payload.channel.iOSChannelSettings = payload.channel.iOSChannelSettings ?? ChannelRegistrationPayload.iOSChannelSettings()
-                
                 let quietTime = ChannelRegistrationPayload.QuietTime(start: quietTimeStart, end: quietTimeEnd)
                 payload.channel.iOSChannelSettings?.quietTimeTimeZone = timeZoneName
                 payload.channel.iOSChannelSettings?.quietTime = quietTime
             }
+            
+            payload.channel.iOSChannelSettings?.isScheduledSummary = (self.authorizedNotificationSettings.rawValue & UAAuthorizedNotificationSettings.scheduledDelivery.rawValue > 0)
+            payload.channel.iOSChannelSettings?.isTimeSensitive = (self.authorizedNotificationSettings.rawValue & UAAuthorizedNotificationSettings.timeSensitive.rawValue > 0)
 
             completionHandler(payload)
         };

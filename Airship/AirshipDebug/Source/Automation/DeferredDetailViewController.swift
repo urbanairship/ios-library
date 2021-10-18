@@ -3,8 +3,8 @@
 #if canImport(AirshipCore)
 import AirshipCore
 import AirshipAutomation
-#elseif canImport(Airship)
-import Airship
+#elseif canImport(AirshipKit)
+import AirshipKit
 #endif
 
 class DeferredDetailViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
