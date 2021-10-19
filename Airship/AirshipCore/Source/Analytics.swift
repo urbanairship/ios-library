@@ -83,6 +83,7 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
 
     private let lock = Lock()
     private var initialized = false
+    private var isAirshipReady = false
 
     private var isAnalyticsEnabled: Bool {
         get {
@@ -236,14 +237,6 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
             selector: #selector(onEnabledFeaturesChanged),
             name: PrivacyManager.changeEvent,
             object: nil)
-
-
-        // If analytics is initialized in the background state, we are responding to a
-        // content-available push. If it's initialized in the foreground state takeOff
-        // was probably called late. We should ensure an init event in either case.
-        if self.appStateTracker.state != .inactive {
-            ensureInit()
-        }
     }
 
     // MARK: -
@@ -258,7 +251,7 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
             ensureInit()
             return
         }
-
+        
         // Otherwise start a new session and emit a foreground event.
         startSession()
 
@@ -282,7 +275,7 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
 
         // Ensure an app init event
         ensureInit()
-
+        
         // Add app_background event
         self.addEvent(AppBackgroundEvent())
 
@@ -492,11 +485,10 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
     /// - Parameter notification: The push notification.
     @objc
     public func launched(fromNotification notification: [AnyHashable : Any]) {
-        if  Utils.isAlertingPush(notification) {
+        if Utils.isAlertingPush(notification) {
             let sendID = notification["_"] as? String
             self.conversionSendID = sendID != nil ? sendID : Analytics.missingSendID
             self.conversionPushMetadata = notification[Analytics.pushMetadata] as? String
-
             self.ensureInit()
         } else {
             self.conversionSendID = nil
@@ -550,20 +542,35 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
     private func startSession() {
         self.sessionID = NSUUID().uuidString
     }
-
+    
+    /// needed to ensure AppInit event gets added
+    /// since App Clips get launched via Push Notification delegate
     private func ensureInit() {
         lock.sync {
-            if !self.initialized {
+            if (!self.initialized && self.isAirshipReady) {
                 self.addEvent(AppInitEvent())
                 self.initialized = true
             }
+        }
+    }
+    
+    public func airshipReady() {
+        self.isAirshipReady = true
+        
+        // If analytics is initialized in the background state, we are responding to a
+        // content-available push. If it's initialized in the foreground state takeOff
+        // was probably called late. We should ensure an init event in either case.
+        if self.appStateTracker.state != .inactive {
+            ensureInit()
         }
     }
 }
 
 extension Analytics : InternalAnalyticsProtocol {
     func onDeviceRegistration() {
-        addEvent(DeviceRegistrationEvent())
+        if (self.isAirshipReady) {
+            addEvent(DeviceRegistrationEvent())
+        }
     }
     
     @available(tvOS, unavailable)
