@@ -41,6 +41,7 @@ class AirshipInstance : AirshipInstanceProtocol {
     public let components: [Component]
     private let remoteConfigManager: RemoteConfigManager;
     private var componentMap: [String : Component]  = [:]
+    private var lock = Lock()
 
     init(config: Config) {
         let dataStore = PreferenceDataStore(keyPrefix: config.appKey)
@@ -115,20 +116,28 @@ class AirshipInstance : AirshipInstanceProtocol {
     
     
     public func component(forClassName className: String) -> Component? {
-        let key = "Class:\(className)"
-        if componentMap[key] == nil {
-            self.componentMap[key] = self.components.first { NSStringFromClass(type(of: $0)) == className }
+        var component: Component?
+        lock.sync {
+            let key = "Class:\(className)"
+            if componentMap[key] == nil {
+                self.componentMap[key] = self.components.first { NSStringFromClass(type(of: $0)) == className }
+            }
+          
+            component = componentMap[key]
         }
-
-        return componentMap[key]
+        return component
     }
     
     public func component<E>(ofType componentType: E.Type) -> E? {
-        let key = "Type:\(componentType)"
-        if componentMap[key] == nil {
-            self.componentMap[key] = self.components.first { ($0 as? E) != nil }
-        }
+        var component: E?
+        lock.sync {
+            let key = "Type:\(componentType)"
+            if componentMap[key] == nil {
+                self.componentMap[key] = self.components.first { ($0 as? E) != nil }
+            }
 
-        return componentMap[key] as? E
+            component =  componentMap[key] as? E
+        }
+        return component
     }
 }

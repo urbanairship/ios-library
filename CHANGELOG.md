@@ -3,6 +3,14 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 16.0.1 October 19, 2021
+Minor release that fixes an IAA bug.
+
+### Changes
+- Fixed a bug with IAA not displayed after setting the isPaused to false.
+- Fixed a rare crash at the application launch. 
+- Remove some log.
+
 ## Version 16.0.0 September 30, 2021
 
 Major SDK release to address a conflict with the class and package `Airship` on CocoaPods. The import for Cocoapods has been changed from `Airship` to `AirshipKit`. No other breaking API changes have been introduced in this release.
@@ -37,6 +45,12 @@ Major SDK release with several breaking changes, especially for Swift users. Thi
 - Removed `Airship.xcframework` and `Airship` SPM target. Apps should use the modular frameworks instead.
 - Carthage and xcframework users will need to include a new module `AirshipBasement`.
 
+## Version 14.8.0 October 14, 2021
+Minor release that adds the support of new iOS 15 notification types and fixing an IAA bug.
+
+### Changes
+- Added the new notification types: time sensitive and scheduled delivery to the channel registration payload.
+- Fixed a bug with IAA not displayed after setting the isPaused to false.
 
 ## Version 14.7.0 September 14, 2021
 Minor release that adds iOS 15 support. This build requires Xcode 13.

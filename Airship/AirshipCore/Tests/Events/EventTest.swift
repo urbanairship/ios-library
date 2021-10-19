@@ -166,50 +166,30 @@ class EventTest: XCTestCase {
         XCTAssertNotNil(event)
      }
     
-    func testBackgroundInitEmitsAppInitEvent() throws {
-        let testAppState = InternalAppStateTracker()
-        testAppState.state = .background
-      
-        let testEventManager = InternalEventManager()
-        let dataStore = PreferenceDataStore(keyPrefix: UUID().uuidString)
-        let config = RuntimeConfig(config: Config(), dataStore: dataStore)
-        let channel = TestChannel()
-        let locale = TestLocaleManager()
-        let privacyManager = PrivacyManager(dataStore: dataStore, defaultEnabledFeatures: .all)
-        let dispatcher = TestDispatcher()
-        
-        let analytics = Analytics(config: config, dataStore: dataStore, channel: channel, eventManager: testEventManager, notificationCenter: NotificationCenter(), date: DateUtils(), dispatcher: dispatcher, localeManager: locale, appStateTracker: testAppState, privacyManager: privacyManager)
-        
-        let event = testEventManager.events.first
-        let eventType = event?.eventType
-        XCTAssertEqual(eventType, "app_init")
-        XCTAssertTrue(testEventManager.addEventCalled)
-        
-    }
-    
-    func testFirstTransitionToForegroundEmitsAppInit() throws {
-        let testAppState = InternalAppStateTracker()
-        testAppState.state = .inactive
-      
-        let testEventManager = InternalEventManager()
-        let dataStore = PreferenceDataStore(keyPrefix: UUID().uuidString)
-        let config = RuntimeConfig(config: Config(), dataStore: dataStore)
-        let channel = TestChannel()
-        let locale = TestLocaleManager()
-        let privacyManager = PrivacyManager(dataStore: dataStore, defaultEnabledFeatures: .all)
-        let dispatcher = TestDispatcher()
-        let notificationCenter = NotificationCenter.default
-        
-        let analytics = Analytics(config: config, dataStore: dataStore, channel: channel, eventManager: testEventManager, notificationCenter: notificationCenter, date: DateUtils(), dispatcher: dispatcher, localeManager: locale, appStateTracker: testAppState, privacyManager: privacyManager)
-        
-        notificationCenter.post(name: AppStateTracker.didTransitionToForeground, object: nil)
-       
-        let event = testEventManager.events.first
-        let eventType = event?.eventType
-        XCTAssertEqual(eventType, "app_init")
-        XCTAssertTrue(testEventManager.addEventCalled)
-    }
-    
+       func testFirstTransitionToForegroundEmitsAppInit() throws {
+           let testAppState = InternalAppStateTracker()
+           testAppState.state = .inactive
+
+           let testEventManager = InternalEventManager()
+           let dataStore = PreferenceDataStore(keyPrefix: UUID().uuidString)
+           let config = RuntimeConfig(config: Config(), dataStore: dataStore)
+           let channel = TestChannel()
+           let locale = TestLocaleManager()
+           let privacyManager = PrivacyManager(dataStore: dataStore, defaultEnabledFeatures: .all)
+           let dispatcher = TestDispatcher()
+           let notificationCenter = NotificationCenter.default
+
+           let analytics = Analytics(config: config, dataStore: dataStore, channel: channel, eventManager: testEventManager, notificationCenter: notificationCenter, date: DateUtils(), dispatcher: dispatcher, localeManager: locale, appStateTracker: testAppState, privacyManager: privacyManager)
+           analytics.airshipReady()
+           
+           notificationCenter.post(name: AppStateTracker.didTransitionToForeground, object: nil)
+
+           let event = testEventManager.events.first
+           let eventType = event?.eventType
+           XCTAssertEqual(eventType, "app_init")
+           XCTAssertTrue(testEventManager.addEventCalled)
+       }
+
     func testSubsequentTransitionToForegroundEmitsForegroundEvent() throws {
         let testAppState = InternalAppStateTracker()
         testAppState.state = .inactive
