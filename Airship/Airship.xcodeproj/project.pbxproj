@@ -287,6 +287,10 @@
 		6E1892DE2694F1C100417887 /* ChannelRegistrar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1892DD2694F1C100417887 /* ChannelRegistrar.swift */; };
 		6E1892DF2694F1C100417887 /* ChannelRegistrar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1892DD2694F1C100417887 /* ChannelRegistrar.swift */; };
 		6E18E6EF23207B57004E09DF /* UAInAppMessageSceneManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E18E6EE23207B57004E09DF /* UAInAppMessageSceneManagerTest.m */; };
+		6E1BACE7271E1B6E0038399E /* ViewModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1BACE6271E1B6E0038399E /* ViewModels.swift */; };
+		6E1C9C35271E901A009EF9EF /* BannerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1C9C34271E901A009EF9EF /* BannerModel.swift */; };
+		6E1C9C37271E902A009EF9EF /* ModalModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1C9C36271E902A009EF9EF /* ModalModel.swift */; };
+		6E1C9C3A271E90EB009EF9EF /* LayoutModelsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1C9C39271E90EB009EF9EF /* LayoutModelsTest.swift */; };
 		6E1D8AD126CC5D490049DACB /* RemoteConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1D8AB226CC5D490049DACB /* RemoteConfig.swift */; };
 		6E1D8AD226CC5D490049DACB /* RemoteConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1D8AB226CC5D490049DACB /* RemoteConfig.swift */; };
 		6E1D8AD826CC66BE0049DACB /* RemoteConfigCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1D8AD726CC66BE0049DACB /* RemoteConfigCache.swift */; };
@@ -1038,6 +1042,9 @@
 		A6A5531426D548FF002B20F6 /* NativeBridgeActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6A5531226D548FF002B20F6 /* NativeBridgeActionHandler.swift */; };
 		A6A8077C26C1566E00CB266E /* ColorUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6A8077B26C1566E00CB266E /* ColorUtils.swift */; };
 		A6A8078226C171F900CB266E /* ColorUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6A8077B26C1566E00CB266E /* ColorUtils.swift */; };
+		A6AF655C271EF4330031410F /* BannerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1C9C34271E901A009EF9EF /* BannerModel.swift */; };
+		A6AF655D271EF4360031410F /* ViewModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1BACE6271E1B6E0038399E /* ViewModels.swift */; };
+		A6AF655E271EF4390031410F /* ModalModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1C9C36271E902A009EF9EF /* ModalModel.swift */; };
 		A6CDD8D0269491BE0040A673 /* ContactAPIClientTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6CDD8CF269491BE0040A673 /* ContactAPIClientTest.swift */; };
 		A6CF89312593910300006C83 /* AddTagGroupsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6CF89302593910300006C83 /* AddTagGroupsTableViewController.swift */; };
 		A6F6726026E10C7A008C69C3 /* ChatIncomingMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F6725F26E10C7A008C69C3 /* ChatIncomingMessage.swift */; };
@@ -1638,6 +1645,10 @@
 		6E18E6DC23204F71004E09DF /* UAInAppMessageSceneManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageSceneManager.m; sourceTree = "<group>"; };
 		6E18E6E1232055A0004E09DF /* UAInAppMessageSceneManager+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageSceneManager+Internal.h"; sourceTree = "<group>"; };
 		6E18E6EE23207B57004E09DF /* UAInAppMessageSceneManagerTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageSceneManagerTest.m; sourceTree = "<group>"; };
+		6E1BACE6271E1B6E0038399E /* ViewModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModels.swift; sourceTree = "<group>"; };
+		6E1C9C34271E901A009EF9EF /* BannerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerModel.swift; sourceTree = "<group>"; };
+		6E1C9C36271E902A009EF9EF /* ModalModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalModel.swift; sourceTree = "<group>"; };
+		6E1C9C39271E90EB009EF9EF /* LayoutModelsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutModelsTest.swift; sourceTree = "<group>"; };
 		6E1D8AB226CC5D490049DACB /* RemoteConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteConfig.swift; sourceTree = "<group>"; };
 		6E1D8AD726CC66BE0049DACB /* RemoteConfigCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteConfigCache.swift; sourceTree = "<group>"; };
 		6E20BF6624F5C21D005347EC /* UAScheduleTriggerContextTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAScheduleTriggerContextTest.m; sourceTree = "<group>"; };
@@ -3133,6 +3144,24 @@
 			name = Scene;
 			sourceTree = "<group>";
 		};
+		6E1BACE2271E199E0038399E /* Thomas */ = {
+			isa = PBXGroup;
+			children = (
+				6E1BACE6271E1B6E0038399E /* ViewModels.swift */,
+				6E1C9C34271E901A009EF9EF /* BannerModel.swift */,
+				6E1C9C36271E902A009EF9EF /* ModalModel.swift */,
+			);
+			name = Thomas;
+			sourceTree = "<group>";
+		};
+		6E1C9C38271E90D1009EF9EF /* Thomas */ = {
+			isa = PBXGroup;
+			children = (
+				6E1C9C39271E90EB009EF9EF /* LayoutModelsTest.swift */,
+			);
+			name = Thomas;
+			sourceTree = "<group>";
+		};
 		6E2D6AF026B0B62900B7C226 /* Subscription Lists */ = {
 			isa = PBXGroup;
 			children = (
@@ -3978,6 +4007,7 @@
 		6E937300237615B400AA9C2A /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				6E1BACE2271E199E0038399E /* Thomas */,
 				6E43218E26EA89B5009228AB /* AirshipCore.h */,
 				A61517AD26A97419008A41C4 /* Subscription Lists */,
 				6E698E02267A799500654DB2 /* AirshipErrors.swift */,
@@ -4606,6 +4636,7 @@
 		CC64F0551D8B77E3009CEF27 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				6E1C9C38271E90D1009EF9EF /* Thomas */,
 				6E4E5B2726E53EE700198175 /* UABaseTest.h */,
 				6E4E5B2826E53EE700198175 /* UABaseTest.m */,
 				A6B31C4E26EB853000BA3A3D /* Events */,
@@ -6064,6 +6095,7 @@
 				6E664BBD26C46BC600A2C8E5 /* TagsActionPredicate.swift in Sources */,
 				6E6ED16B2683DBC300A2CBD0 /* SystemVersion.swift in Sources */,
 				6E6ED15D2683DBC300A2CBD0 /* BeveledLoadingIndicator.swift in Sources */,
+				6E1C9C37271E902A009EF9EF /* ModalModel.swift in Sources */,
 				6E698E03267A799500654DB2 /* AirshipErrors.swift in Sources */,
 				3CA84AB226DE255200A59685 /* EventStoreProtocol.swift in Sources */,
 				6E2D6AEE26B083DB00B7C226 /* ChannelAudienceManager.swift in Sources */,
@@ -6076,6 +6108,7 @@
 				6E664BB326C46BC600A2C8E5 /* URLActionPredicate.swift in Sources */,
 				6E698E15267A98BE00654DB2 /* ChannelCreateResponse.swift in Sources */,
 				6E6ED1372683A58D00A2CBD0 /* Delay.swift in Sources */,
+				6E1BACE7271E1B6E0038399E /* ViewModels.swift in Sources */,
 				3CA84AB826DE257200A59685 /* Analytics.swift in Sources */,
 				3C63556326CF11D5006E9916 /* APNSRegistrationProtocol.swift in Sources */,
 				8401769626C5715E00373AF7 /* VersionMatcher.swift in Sources */,
@@ -6104,6 +6137,7 @@
 				6E664BEA26C6DB7600A2C8E5 /* Utils.swift in Sources */,
 				6E15B73F26D43F120099C92D /* NSArrayValueTransformer.swift in Sources */,
 				6E6ED1612683DBC300A2CBD0 /* AirshipVersion.swift in Sources */,
+				6E1C9C35271E901A009EF9EF /* BannerModel.swift in Sources */,
 				6E6ED1392683A58D00A2CBD0 /* Semaphore.swift in Sources */,
 				6E6ED1592683DBC300A2CBD0 /* WebView.swift in Sources */,
 				3CC95B1F268E785900FE2ACD /* NotificationCategories.swift in Sources */,
@@ -6470,6 +6504,7 @@
 				6E598D862003F014005B234B /* UAInAppMessageResolutionEventTest.m in Sources */,
 				6EE6529122A7E2DA00F7D54D /* UAInAppMessageHTMLStyleTest.m in Sources */,
 				A604DB7E25597F85001ADCA8 /* UASearchEventTemplateTest.m in Sources */,
+				6E1C9C3A271E90EB009EF9EF /* LayoutModelsTest.swift in Sources */,
 				6EC7E470269E33290038CFDD /* TagGroupsEditorTest.swift in Sources */,
 				CC64F1031D8B781C009CEF27 /* UAInboxMessageListTest.m in Sources */,
 				CC64F1201D8B781C009CEF27 /* UAScheduleActionTests.m in Sources */,
@@ -6646,6 +6681,7 @@
 				6E87BD8E26D815780005D20D /* AppIntegration.swift in Sources */,
 				6E91B4642689093000DDB1A8 /* InteractiveNotificationEvent.swift in Sources */,
 				6E8BF45926852E8D009A8BD4 /* TaskManager.swift in Sources */,
+				A6AF655C271EF4330031410F /* BannerModel.swift in Sources */,
 				6E739D6F26B9F58700BC6F6D /* TagGroupMutations.swift in Sources */,
 				6E698E60267BF63B00654DB2 /* ApplicationState.swift in Sources */,
 				6EAD7CE626B216DB00B88EA7 /* DeepLinkAction.swift in Sources */,
@@ -6679,9 +6715,11 @@
 				A61517C526B009D6008A41C4 /* SubscriptionListAPIClient.swift in Sources */,
 				6ED6ECA826AE05B700973364 /* EmptyAction.swift in Sources */,
 				6E15B6DC26CC749F0099C92D /* RemoteConfigManager.swift in Sources */,
+				A6AF655D271EF4360031410F /* ViewModels.swift in Sources */,
 				6E1D8AD926CC66BE0049DACB /* RemoteConfigCache.swift in Sources */,
 				6E87BD6826D6A39A0005D20D /* Config.swift in Sources */,
 				6E664BDC26C4CD8700A2C8E5 /* EnableFeatureAction.swift in Sources */,
+				A6AF655E271EF4390031410F /* ModalModel.swift in Sources */,
 				6E664BBE26C46BC600A2C8E5 /* TagsActionPredicate.swift in Sources */,
 				6E952930268BBD7D00398B54 /* RetailEventTemplate.swift in Sources */,
 				6E1892B2268CE8FE00417887 /* Lock.swift in Sources */,
