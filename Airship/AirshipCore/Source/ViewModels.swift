@@ -215,8 +215,8 @@ struct LabelModel: BaseViewModel {
     let border: Border?
     let background: HexColor?
     let text: String
-    let fontSize: Int?
-    let color: HexColor?
+    let fontSize: Int
+    let color: HexColor
     let alignment: TextAlignement?
     let textStyles: [TextStyles]?
     let fontFamilies: [String]?

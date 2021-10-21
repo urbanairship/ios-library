@@ -120,7 +120,7 @@ class LayoutModelsTest: XCTestCase {
                           "color": { "hex": "#FF00FF" },
                           "label": {
                             "type": "label",
-                            "font_Size": 24,
+                            "font_size": 24,
                             "alignment": "center",
                             "text_Styles": [
                               "bold",
