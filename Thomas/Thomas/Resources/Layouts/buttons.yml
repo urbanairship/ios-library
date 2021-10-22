@@ -1,0 +1,300 @@
+---
+layout:
+  type: "scroll_layout"
+  direction: "vertical"
+  border:
+    stroke_color:
+      hex: "#FF00FF"
+    stroke_width: 1
+    radius: 10
+  background:
+    hex: "#FFFFFF"
+  view:
+    type: container
+    items:
+    - position:
+        horizontal: center
+        vertical: center
+      size:
+        height: 100%
+        width: 100%
+      view:
+        type: linear_layout
+        direction: vertical
+        items:
+        - margin:
+            top: 24
+            bottom: 16
+            start: 16
+            end: 16
+          size:
+            width: 100%
+            height: auto
+          view:
+            type: label
+            text: Position
+            alignment: start
+            text_styles:
+            - bold
+            - underline
+            font_size: 16
+            color:
+              hex: "#FFFFFF"
+        - size:
+            width: 100%
+            height: auto
+          view:
+            type: container
+            position:
+              horizontal: center
+              vertical: center
+            items:
+            - position:
+                horizontal: start
+                vertical: top
+              margin:
+                bottom: 8
+                start: 16
+                end: 16
+              size:
+                width: auto
+                height: auto
+              view:
+                type: button
+                identifier: button1
+                background:
+                  hex: "#D32F2F"
+                label:
+                  type: label
+                  font_size: 10
+                  alignment: center
+                  text: start|top
+                  color:
+                    hex: "#FFFFFF"
+        - size:
+            width: 100%
+            height: auto
+          view:
+            type: container
+            position:
+              horizontal: center
+              vertical: center
+            items:
+            - position:
+                horizontal: center
+                vertical: center
+              margin:
+                bottom: 8
+                start: 16
+                end: 16
+              size:
+                width: auto
+                height: auto
+              view:
+                type: button
+                identifier: button2
+                background:
+                  hex: "#E65100"
+                label:
+                  type: label
+                  font_size: 10
+                  alignment: center
+                  text: center|center
+                  color:
+                    hex: "#FFFFFF"
+        - size:
+            width: 100%
+            height: auto
+          view:
+            type: container
+            position:
+              horizontal: center
+              vertical: center
+            items:
+            - position:
+                horizontal: end
+                vertical: bottom
+              margin:
+                bottom: 8
+                start: 16
+                end: 16
+              size:
+                width: auto
+                height: auto
+              view:
+                type: button
+                identifier: button3
+                background:
+                  hex: "#FFD600"
+                label:
+                  type: label
+                  font_size: 10
+                  color:
+                    hex: "#333333"
+                  alignment: center
+                  text: end|bottom
+        - margin:
+            top: 24
+            bottom: 16
+            start: 16
+            end: 16
+          size:
+            width: 100%
+            height: auto
+          view:
+            type: label
+            text: Border
+            alignment: start
+            text_styles:
+            - bold
+            - underline
+            font_size: 16
+            color:
+                hex: "#FFFFFF"
+        - margin:
+            top: 8
+            start: 16
+            end: 16
+          size:
+            width: 100%
+            height: auto
+          view:
+            type: button
+            identifier: button4
+            background:
+              hex: "#558B2F"
+            border:
+              radius: 0
+              stroke_width: 3
+              stroke_color:
+                hex: "#AED581"
+            label:
+              type: label
+              font_size: 12
+              alignment: center
+              text: 3dp stroke
+              color:
+                hex: "#FFFFFF"
+        - margin:
+            top: 8
+            start: 16
+            end: 16
+          size:
+            width: 100%
+            height: auto
+          view:
+            type: button
+            identifier: button5
+            background:
+              hex: "#1976D2"
+            border:
+              radius: 15
+              stroke_width: 5
+              stroke_color:
+                hex: "#64B5F6"
+            label:
+              type: label
+              font_size: 12
+              alignment: center
+              text: 5dp stroke, 15dp radius
+              color:
+                hex: "#FFFFFF"
+        - margin:
+            top: 8
+            start: 16
+            end: 16
+          size:
+            width: 100%
+            height: auto
+          view:
+            type: button
+            identifier: button6
+            background:
+              hex: "#283593"
+            border:
+              radius: 25
+              stroke_width: 0
+            label:
+              type: label
+              font_size: 12
+              alignment: center
+              text: no stroke, 20dp radius
+              color:
+                hex: "#FFFFFF"
+        - margin:
+            top: 24
+            bottom: 16
+            start: 16
+            end: 16
+          size:
+            width: 100%
+            height: auto
+          view:
+            type: label
+            text: Size
+            alignment: start
+            text_styles:
+            - bold
+            - underline
+            font_size: 16
+            color:
+              hex: "#FFFFFF"
+        - margin:
+            top: 8
+            start: 16
+            end: 16
+          size:
+            width: auto
+            height: auto
+          view:
+            type: button
+            identifier: button7
+            background:
+              hex: "#AED581"
+            label:
+              type: label
+              font_size: 12
+              color:
+                hex: "#333333"
+              alignment: center
+              text: auto x auto
+              color:
+                hex: "#FFFFFF"
+        - margin:
+            top: 8
+            start: 16
+            end: 16
+          size:
+            width: 66%
+            height: auto
+          view:
+            type: button
+            identifier: button8
+            background:
+              hex: "#64B5F6"
+            label:
+              type: label
+              font_size: 12
+              alignment: center
+              color:
+                hex: "#333333"
+              text: 66% x auto
+        - margin:
+            top: 8
+            start: 16
+            end: 16
+          size:
+            width: auto
+            height: 64
+          view:
+            type: button
+            identifier: button9
+            background:
+              hex: "#283593"
+            label:
+              type: label
+              font_size: 12
+              alignment: center
+              text: auto x 64dp
+              color:
+                hex: "#FFFFFF"
