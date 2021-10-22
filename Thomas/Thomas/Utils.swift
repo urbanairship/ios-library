@@ -2,56 +2,28 @@
 
 import Foundation
 import Yams
+import AirshipCore
 
 let directoryName = "/Layouts"
 
 // Returns the list of layouts file from Layouts folder
-func getLayoutsList() -> [String] {
-    
+func getLayoutsList() throws -> [String] {
     let docsPath = Bundle.main.resourcePath! + directoryName
-    
-    var layoutsList:[String] = [];
-    do {
-        let contentOfFile = try FileManager.default.contentsOfDirectory(atPath: docsPath)
-        layoutsList = contentOfFile
-    } catch {
-        print("An error occurred while retrieving the list of YAML files", error);
-    }
-    return layoutsList;
+    return try FileManager.default.contentsOfDirectory(atPath: docsPath).sorted()
 }
 
 // Returns the YML file contents
-func getContentOfFile(fileName:String) -> String {
-    
+func getContentOfFile(fileName: String) throws -> String {
     let filePath = Bundle.main.resourcePath! + directoryName + "/" + fileName
-    
-    var content:String = "";
-    do {
-        let contentOfFile = try String(contentsOfFile: filePath, encoding: String.Encoding.utf8)
-        content = contentOfFile;
-    } catch {
-        print("An error occurred while retrieving the content of the YAML file", error);
-    }
-    return content;
+    return try String(contentsOfFile: filePath, encoding: String.Encoding.utf8)
 }
 
-//Convert YML content to json content using Yams
-func getJsonContentFromYmlContent(ymlContent:String) -> Data! {
-    
-    var jsonContent:Data?;
-    
-    do {
-        let jsonContentOfFile = try Yams.load(yaml:ymlContent) as? NSDictionary;
-        if (jsonContentOfFile != nil) {
-            do {
-                let jsonData = try JSONSerialization.data(withJSONObject: jsonContentOfFile!, options: .prettyPrinted) ;
-                jsonContent = jsonData;
-            } catch {
-                print(error.localizedDescription)
-            }
-        }
-    } catch {
-        print(error);
+/// Convert YML content to json content using Yams
+func getJsonContentFromYmlContent(ymlContent: String) throws -> Data {
+    if let jsonContentOfFile = try Yams.load(yaml:ymlContent) as? NSDictionary {
+        return try JSONSerialization.data(withJSONObject: jsonContentOfFile,
+                                          options: .prettyPrinted)
+    } else {
+        throw AirshipErrors.error("Invalid content: \(ymlContent)")
     }
-    return jsonContent;
 }

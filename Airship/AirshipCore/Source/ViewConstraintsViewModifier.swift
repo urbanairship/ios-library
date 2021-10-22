@@ -9,9 +9,9 @@ struct ViewConstraintsViewModifier: ViewModifier {
     
     func body(content: Content) -> some View {
         content.frame(minWidth: viewConstraints.minWidth,
-                      idealWidth: viewConstraints.width ?? 0,
+                      idealWidth: viewConstraints.width,
                       minHeight: viewConstraints.minHeight,
-                      idealHeight: viewConstraints.height ?? 0)
+                      idealHeight: viewConstraints.height)
     }
 }
 

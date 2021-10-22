@@ -20,10 +20,10 @@ struct Container : View {
             }
         }
         .frame(minWidth: constraints.minWidth,
-               idealWidth: constraints.width ?? 0,
+               idealWidth: constraints.width,
                maxWidth: constraints.width,
                minHeight: constraints.minHeight,
-               idealHeight: constraints.height ?? 0,
+               idealHeight: constraints.height,
                maxHeight: constraints.height)
         .background(model.background)
         .border(model.border)
@@ -42,9 +42,9 @@ struct Container : View {
                                    constraints: childConstraints)
                 .margin(item.margin)
         }
-        .frame(idealWidth: constraints.width ?? 0,
+        .frame(idealWidth: constraints.width,
                maxWidth: constraints.width,
-               idealHeight: constraints.height ?? 0,
+               idealHeight: constraints.height,
                maxHeight: constraints.height,
                alignment: alignment)
     }

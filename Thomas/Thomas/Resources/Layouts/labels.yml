@@ -1,0 +1,290 @@
+---
+modal:
+  default_placement:
+    size:
+      width: 90%
+      height: 90%
+    position:
+      horizontal: center
+      vertical: center
+layout:
+  type: container
+  items:
+  - position:
+      horizontal: center
+      vertical: center
+    size:
+      width: 100%
+      height: auto
+    view:
+      type: linear_layout
+      direction: vertical
+      items:
+      #
+      # Size
+      #
+      - margin:
+          top: 16
+          bottom: 16
+          start: 16
+          end: 16
+        size:
+          width: 100%
+          height: auto
+        view:
+          type: label
+          text: Size
+          alignment: start
+          text_styles:
+            - bold
+            - underline
+          font_size: 16
+          color:
+            hex: "#000000"
+      - margin:
+          top: 48
+          bottom: 8
+          start: 8
+          end: 8
+        size:
+          width: auto
+          height: auto
+        view:
+          type: label
+          text: Tiny (8sp)
+          alignment: start
+          font_size: 8
+          color:
+            hex: "#000000"
+      - margin:
+          top: 0
+          bottom: 8
+          start: 8
+          end: 8
+        size:
+          width: auto
+          height: auto
+        view:
+          type: label
+          text: Small (10sp)
+          alignment: start
+          font_size: 10
+          color:
+            hex: "#000000"
+      - margin:
+          top: 0
+          bottom: 8
+          start: 8
+          end: 8
+        size:
+          width: auto
+          height: auto
+        view:
+          type: label
+          text: Normal (12sp)
+          alignment: start
+          font_size: 12
+          color:
+            hex: "#000000"
+      - margin:
+          top: 0
+          bottom: 8
+          start: 8
+          end: 8
+        size:
+          width: auto
+          height: auto
+        view:
+          type: label
+          text: Larger (16sp)
+          alignment: start
+          font_size: 16
+          color:
+            hex: "#000000"
+      - margin:
+          top: 0
+          bottom: 8
+          start: 8
+          end: 8
+        size:
+          width: auto
+          height: auto
+        view:
+          type: label
+          text: Huge (24sp)
+          alignment: start
+          font_size: 24
+          color:
+            hex: "#000000"
+      #
+      # Alignment
+      #
+      - margin:
+          top: 8
+          bottom: 8
+          start: 8
+          end: 8
+        size:
+          width: 100%
+          height: auto
+        view:
+          type: label
+          text: Alignment
+          alignment: start
+          text_styles:
+            - bold
+            - underline
+          font_size: 16
+          color:
+            hex: "#000000"
+      - margin:
+          top: 0
+          bottom: 8
+          start: 8
+          end: 8
+        size:
+          width: 100%
+          height: auto
+        view:
+          type: label
+          text: Start
+          alignment: start
+          font_size: 12
+          color:
+            hex: "#000000"
+      - margin:
+          top: 0
+          bottom: 8
+          start: 8
+          end: 8
+        size:
+          width: 100%
+          height: auto
+        view:
+          type: label
+          text: Center
+          alignment: center
+          font_size: 12
+          color:
+            hex: "#000000"
+      - margin:
+          top: 0
+          bottom: 8
+          start: 8
+          end: 8
+        size:
+          width: 100%
+          height: auto
+        view:
+          type: label
+          text: End
+          alignment: end
+          font_size: 12
+          color:
+            hex: "#000000"
+      #
+      # Style
+      #
+      - margin:
+          top: 8
+          bottom: 8
+          start: 8
+          end: 8
+        size:
+          width: 100%
+          height: auto
+        view:
+          type: label
+          text: Style
+          alignment: start
+          text_styles:
+            - bold
+            - underline
+          font_size: 16
+          color:
+            hex: "#000000"
+      - margin:
+          top: 0
+          bottom: 8
+          start: 8
+          end: 8
+        size:
+          width: auto
+          height: auto
+        view:
+          type: label
+          text: Normal
+          alignment: start
+          font_size: 12
+          color:
+            hex: "#000000"
+      - margin:
+          top: 0
+          bottom: 8
+          start: 8
+          end: 8
+        size:
+          width: auto
+          height: auto
+        view:
+          type: label
+          text: Bold
+          text_styles:
+            - bold
+          alignment: start
+          font_size: 12
+          color:
+            hex: "#000000"
+      - margin:
+          top: 0
+          bottom: 8
+          start: 8
+          end: 8
+        size:
+          width: auto
+          height: auto
+        view:
+          type: label
+          text: Underline
+          text_styles:
+            - underline
+          alignment: start
+          font_size: 12
+          color:
+            hex: "#000000"
+      - margin:
+          top: 0
+          bottom: 8
+          start: 8
+          end: 8
+        size:
+          width: auto
+          height: auto
+        view:
+          type: label
+          text: Italic
+          text_styles:
+            - italic
+          alignment: start
+          font_size: 12
+          color:
+            hex: "#000000"
+      - margin:
+          top: 0
+          bottom: 8
+          start: 8
+          end: 8
+        size:
+          width: auto
+          height: auto
+        view:
+          type: label
+          text: Bold + Italic + Underline
+          text_styles:
+            - bold
+            - underline
+            - italic
+          alignment: start
+          font_size: 12
+          color:
+            hex: "#000000"

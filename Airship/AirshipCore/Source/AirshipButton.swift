@@ -19,10 +19,7 @@ struct AirshipButton : View {
         }) {
             Label(model: self.model.label, constraints: constraints)
                 .padding()
-                .frame(idealWidth: constraints.width ?? 0,
-                       maxWidth: constraints.width,
-                       idealHeight: constraints.height ?? 0,
-                       maxHeight: constraints.height)
+                .frame(width: constraints.width, height: constraints.height)
                 .background(self.model.background)
                 .border(self.model.border)
 

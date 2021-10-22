@@ -14,8 +14,13 @@ struct ScrollLayout : View {
     let constraints: ViewConstraints
     
     var body: some View {
-        ScrollView {
-            ViewFactory.createView(model: self.model.view, constraints: constraints)
+        let childConstraints = ViewConstraints(minWidth: self.constraints.minWidth,
+                                               width: self.model.direction == .vertical ? self.constraints.width : nil,
+                                               minHeight: self.constraints.minHeight,
+                                               height: self.model.direction == .vertical ? nil :  self.constraints.height)
+        
+        ScrollView(self.model.direction == .vertical ? .vertical : .horizontal) {
+            ViewFactory.createView(model: self.model.view, constraints: childConstraints)
         }
         .background(self.model.background)
         .border(self.model.border)

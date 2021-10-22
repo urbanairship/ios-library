@@ -15,7 +15,7 @@ public class Thomas : NSObject {
         viewController.modalPresentationStyle = .overCurrentContext;
         return viewController
     }
-    
+
     @available(iOS 13.0.0, tvOS 13.0, *)
     private struct RootView : View {
         let model: BaseViewModel

@@ -30,12 +30,12 @@ struct Label : View {
             }
         }
         
-        return text.foregroundColor(Color.black)
+        return text
             .multilineTextAlignment(self.model.alignment?.toSwiftTextAlignment() ?? .center)
-            .foreground(model.color)
             .frame(maxWidth: constraints.width,
                    maxHeight: constraints.height,
                    alignment: self.model.alignment?.toFrameAlignment() ?? Alignment.center)
+            .foreground(model.color)
             .background(model.background)
     }
     

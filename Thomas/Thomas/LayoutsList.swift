@@ -5,7 +5,7 @@ import SwiftUI
 struct LayoutsList: View {
     
     //Retrieve the list of layouts template names from the 'Layouts' folder
-    let layoutsArray = getLayoutsList();
+    let layoutsArray: [String] = (try? getLayoutsList()) ?? []
     
     var body: some View {
         NavigationView {

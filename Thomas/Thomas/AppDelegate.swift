@@ -5,13 +5,10 @@ import AirshipCore
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     
-    let simulatorWarningDisabledKey = "ua-simulator-warning-disabled"
     var window: UIWindow?
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         
-        self.failIfSimulator()
-
         // Populate AirshipConfig.plist with your app's info from https://go.urbanairship.com
         // or set runtime properties here.
         let config = Config.default()
@@ -58,35 +55,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             alertController.popoverPresentationController?.sourceView = self.window?.rootViewController?.view
 
             self.window?.rootViewController?.present(alertController, animated:true, completion: nil)
-        }
-    }
-    
-    func failIfSimulator() {
-        // If it's not a simulator return early
-        if (TARGET_OS_SIMULATOR == 0 && TARGET_IPHONE_SIMULATOR == 0) {
-            return
-        }
-
-        if (UserDefaults.standard.bool(forKey: self.simulatorWarningDisabledKey)) {
-            return
-        }
-
-        let alertController = UIAlertController(title: "Notice", message: "You will not be able to receive push notifications in the simulator.", preferredStyle: .alert)
-
-        let disableAction = UIAlertAction(title: "Disable Warning", style: UIAlertAction.Style.default){ (UIAlertAction) -> Void in
-            UserDefaults.standard.set(true, forKey:self.simulatorWarningDisabledKey)
-        }
-        alertController.addAction(disableAction)
-
-        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: nil)
-        alertController.addAction(cancelAction)
-
-        // Let the UI finish launching first so it doesn't complain about the lack of a root view controller
-        // Delay execution of the block for 1/2 second.
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(0.5 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)) {
-            alertController.popoverPresentationController?.sourceView = self.window?.rootViewController?.view
-
-            self.window?.rootViewController?.present(alertController, animated: true, completion: nil)
         }
     }
 }

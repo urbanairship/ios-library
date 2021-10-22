@@ -1,0 +1,77 @@
+---
+layout:
+  type: container
+  border:
+    stroke_color:
+      hex: "#00FF00"
+    stroke_width: 5
+    radius: 15
+  items:
+  - position:
+      horizontal: center
+      vertical: top
+    size:
+      height: auto
+      width: 100%
+    view:
+      type: linear_layout
+      direction: vertical
+      items:
+      - size:
+          width: 100%
+          height: auto
+        weight: 1
+        view:
+          type: container
+          items:
+          - position:
+              horizontal: center
+              vertical: center
+            margin:
+              top: 50
+              bottom: 50
+              start: 50
+              end: 50
+            size:
+              width: 100%
+              height: auto
+            view:
+              type: label
+              font_size: 14
+              text: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua. In arcu
+                cursus euismod quis viverra nibh. Lobortis feugiat vivamus at augue
+                eget arcu dictum. Imperdiet dui accumsan sit amet nulla. Ultrices
+                neque ornare aenean euismod elementum. Tincidunt id aliquet risus
+                feugiat in ante metus dictum.
+              color: 
+                hex: "#333333"
+              alignment: start
+              text_styles:
+              - italic
+              font_families:
+              - permanent_marker
+              - casual
+      - size:
+          width: 100%
+          height: auto
+        margin:
+          top: 50
+          bottom: 50
+          start: 50
+          end: 50
+        view:
+          type: button
+          identifier: BUTTON
+          background:
+            hex: "#FF0000"
+          label:
+            type: label
+            font_size: 24
+            alignment: center
+            text_styles:
+            - bold
+            font_families:
+            color: 
+                hex: "#333333"
+            text: Push me!

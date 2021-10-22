@@ -32,9 +32,9 @@ struct LinearLayout : View {
                         
     var body: some View {
         createStack()
-            .frame(idealWidth: constraints.width ?? 0,
+            .frame(idealWidth: constraints.width,
                    maxWidth: constraints.width,
-                   idealHeight: constraints.height ?? 0,
+                   idealHeight: constraints.height,
                    maxHeight: constraints.height,
                    alignment: .topLeading)
             .background(self.model.background)
