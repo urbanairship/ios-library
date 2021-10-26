@@ -19,6 +19,8 @@ struct ViewFactory {
             Label(model: labelModel, constraints: constraints)
         case let buttonModel as ButtonModel:
             AirshipButton(model: buttonModel, constraints: constraints)
+        case let emptyViewModel as EmptyViewModel:
+            EmptyView(model: emptyViewModel, constraints: constraints)
         default:
             Text("\(model.type.rawValue) not supported")
         }

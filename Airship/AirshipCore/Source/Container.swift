@@ -19,10 +19,8 @@ struct Container : View {
                 childItem(item: self.model.items[index])
             }
         }
-        .frame(minWidth: constraints.minWidth,
-               idealWidth: constraints.width,
+        .frame(idealWidth: constraints.width,
                maxWidth: constraints.width,
-               minHeight: constraints.minHeight,
                idealHeight: constraints.height,
                maxHeight: constraints.height)
         .background(model.background)

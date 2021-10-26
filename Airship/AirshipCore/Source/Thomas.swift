@@ -22,11 +22,8 @@ public class Thomas : NSObject {
         
         var body: some View {
             GeometryReader { metrics in
-                let constraints = ViewConstraints(minWidth: 0,
-                                                  width: metrics.size.width,
-                                                  minHeight: 0,
-                                                  height: metrics.size.height)
-                
+                let constraints = ViewConstraints(width: metrics.size.width,
+                                                  height: metrics.size.height)                
                 ViewFactory.createView(model: model, constraints: constraints)
             }
         }

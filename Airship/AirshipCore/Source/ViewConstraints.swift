@@ -4,15 +4,9 @@ import Foundation
 
 struct ViewConstraints {
 
-    /// Min width
-    let minWidth: CGFloat?
-    
     /// Ideal width. Nil if the view should size to fit content.
     let width: CGFloat?
-    
-    /// Min height
-    let minHeight: CGFloat?
-    
+
     /// Ideal height. Nil if the view should size to fit content.
     let height: CGFloat?
     
@@ -45,15 +39,10 @@ struct ViewConstraints {
         let parentWidth = parentConstraints.width
         let parentHeight = parentConstraints.height
     
-        let minWidth = calculateSize(childSize.minWidth, parentSize: parentWidth, margins: horizontalMargins)
         let width = calculateSize(childSize.width, parentSize: parentWidth, margins: horizontalMargins)
-        let minHeight = calculateSize(childSize.minHeight, parentSize: parentHeight, margins: verticalMargins)
         let height = calculateSize(childSize.height, parentSize: parentHeight, margins: verticalMargins)
         
-        return ViewConstraints(minWidth: minWidth,
-                               width: width,
-                               minHeight: minHeight,
-                               height: height)
+        return ViewConstraints(width: width, height: height)
         
     }
 }

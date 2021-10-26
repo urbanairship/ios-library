@@ -19,12 +19,10 @@ class LayoutModelsTest: XCTestCase {
                   },
                   "size": {
                     "height": "auto",
-                    "width": "75%",
-                    "min_width": 50,
-                    "min_height": 100
+                    "width": "75%"
                   },
                   "view": {
-                    "type": "view"
+                    "type": "empty_view"
                   }
                 }
               ]
@@ -38,8 +36,6 @@ class LayoutModelsTest: XCTestCase {
             
         XCTAssertEqual(SizeConstraint.auto, size?.height)
         XCTAssertEqual(SizeConstraint.percent(75), size?.width)
-        XCTAssertEqual(SizeConstraint.points(50), size?.minWidth)
-        XCTAssertEqual(SizeConstraint.points(100), size?.minHeight)
     }
     
     func testComplexExample() throws {

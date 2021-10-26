@@ -58,6 +58,7 @@
     CGImageSourceRef source = CGImageSourceCreateWithData((CFDataRef) data, NULL);
 
     UIImage *image;
+    
     if (source && CGImageSourceGetCount(source) > 1) {
         image = [self animatedImageWithImageSource:source];
     } else {

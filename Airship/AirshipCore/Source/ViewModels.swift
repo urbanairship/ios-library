@@ -26,7 +26,6 @@ struct LayoutDecoder  {
         
     }
 }
-
 enum ViewType: String, Decodable {
     case container = "container"
     case linearLayout = "linear_layout"
@@ -36,7 +35,7 @@ enum ViewType: String, Decodable {
     case label = "label"
     case button = "button"
     case imageButton = "image_button"
-    case view = "view"
+    case emptyView = "empty_view"
     case carousel = "carousel"
     case carouselIndicator = "carousel_indicator"
     case carouselController = "carousel_controller"
@@ -78,8 +77,8 @@ private struct BaseViewModelWrapper : Decodable {
             self.view = try singleValueContainer.decode(ButtonModel.self)
         case .imageButton:
             self.view = try singleValueContainer.decode(ImageButtonModel.self)
-        case .view:
-            self.view = try singleValueContainer.decode(ViewModel.self)
+        case .emptyView:
+            self.view = try singleValueContainer.decode(EmptyViewModel.self)
         case .carousel:
             self.view = try singleValueContainer.decode(CarouselModel.self)
         case .carouselIndicator:
@@ -272,8 +271,8 @@ struct ImageButtonModel: BaseViewModel {
     }
 }
 
-struct ViewModel: BaseViewModel {
-    let type = ViewType.view
+struct EmptyViewModel: BaseViewModel {
+    let type = ViewType.emptyView
     let identifier: String?
     let border: Border?
     let background: HexColor?
@@ -338,14 +337,10 @@ struct CarouselControllerModel: BaseViewModel {
 struct Size: Decodable {
     let width: SizeConstraint
     let height: SizeConstraint
-    let minWidth: SizeConstraint?
-    let minHeight: SizeConstraint?
     
     enum CodingKeys: String, CodingKey {
         case width = "width"
         case height = "height"
-        case minWidth = "min_width"
-        case minHeight = "min_height"
     }
 }
 
