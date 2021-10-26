@@ -20,7 +20,7 @@ struct ScrollLayout : View {
         ScrollView(self.model.direction == .vertical ? .vertical : .horizontal) {
             ViewFactory.createView(model: self.model.view, constraints: childConstraints)
         }
-        .background(self.model.background)
+        .background(self.model.backgroundColor)
         .border(self.model.border)
     }
 }

@@ -17,8 +17,8 @@ struct ViewFactory {
             ScrollLayout(model: scrollLayoutModel, constraints: constraints)
         case let labelModel as LabelModel:
             Label(model: labelModel, constraints: constraints)
-        case let buttonModel as ButtonModel:
-            AirshipButton(model: buttonModel, constraints: constraints)
+        case let buttonModel as LabelButtonModel:
+            LabelButton(model: buttonModel, constraints: constraints)
         case let emptyViewModel as EmptyViewModel:
             EmptyView(model: emptyViewModel, constraints: constraints)
         default:

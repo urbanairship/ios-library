@@ -74,9 +74,9 @@ class LayoutModelsTest: XCTestCase {
                         },
                         "weight": 0,
                         "view": {
-                          "type": "button",
+                          "type": "label_button",
                           "identifier": "BUTTON",
-                          "color": { "hex": "#FF00FF" },
+                          "background_color": { "hex": "#FF00FF" },
                           "label": {
                             "type": "label",
                             "font_size": 24,
@@ -89,7 +89,7 @@ class LayoutModelsTest: XCTestCase {
                             "font_families": [
                               "permanent_marker"
                             ],
-                            "color": { "hex": "#FF00FF" },
+                            "foreground_color": { "hex": "#FF00FF" },
                             "text": "NO"
                           }
                         }
@@ -111,7 +111,7 @@ class LayoutModelsTest: XCTestCase {
                         },
                         "weight": 0,
                         "view": {
-                          "type": "button",
+                          "type": "label_button",
                           "identifier": "BUTTON",
                           "color": { "hex": "#FF00FF" },
                           "label": {
@@ -126,7 +126,7 @@ class LayoutModelsTest: XCTestCase {
                             "font_families": [
                               "permanent_marker"
                             ],
-                            "color": { "hex": "#FF00FF" },
+                            "foreground_color": { "hex": "#FF00FF" },
                             "text": "YES"
                           }
                         }

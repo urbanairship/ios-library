@@ -52,7 +52,7 @@ layout:
                       at augue eget arcu dictum. Imperdiet dui accumsan sit amet nulla.
                       Ultrices neque ornare aenean euismod elementum. Tincidunt id aliquet
                       risus feugiat in ante metus dictum.
-                    color:
+                    foreground_color:
                       hex: "#333333"
                     alignment: start
                     text_styles:
@@ -70,9 +70,9 @@ layout:
               start: 16
               end: 16
             view:
-              type: button
+              type: label_button
               identifier: BUTTON
-              background:
+              background_color:
                 hex: "#FF0000"
               label:
                 type: label
@@ -83,5 +83,5 @@ layout:
                 font_families:
                   - casual
                 text: 'Push me!'
-                color:
+                foreground_color:
                   hex: "#FFFFFF"

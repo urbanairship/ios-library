@@ -18,12 +18,13 @@ public class Thomas : NSObject {
 
     @available(iOS 13.0.0, tvOS 13.0, *)
     private struct RootView : View {
+
         let model: BaseViewModel
         
         var body: some View {
             GeometryReader { metrics in
                 let constraints = ViewConstraints(width: metrics.size.width,
-                                                  height: metrics.size.height)                
+                                                  height: metrics.size.height)
                 ViewFactory.createView(model: model, constraints: constraints)
             }
         }

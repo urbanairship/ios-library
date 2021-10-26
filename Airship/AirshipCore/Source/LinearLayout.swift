@@ -37,7 +37,7 @@ struct LinearLayout : View {
                    idealHeight: constraints.height,
                    maxHeight: constraints.height,
                    alignment: .topLeading)
-            .background(self.model.background)
+            .background(self.model.backgroundColor)
             .border(self.model.border)
     }
     

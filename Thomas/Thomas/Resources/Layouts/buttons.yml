@@ -7,7 +7,7 @@ layout:
       hex: "#FF00FF"
     stroke_width: 1
     radius: 10
-  background:
+  background_color:
     hex: "#FFFFFF"
   view:
     type: linear_layout
@@ -29,7 +29,7 @@ layout:
           - bold
           - underline
           font_size: 16
-          color:
+          foreground_color:
             hex: "#000000"
       - size:
           width: 100%
@@ -40,7 +40,7 @@ layout:
           end: 16
         view:
           type: empty_view
-          background:
+          background_color:
             hex: "#ff0000"
           border:
             radius: 2
@@ -64,16 +64,16 @@ layout:
                 width: auto
                 height: auto
               view:
-                type: button
+                type: label_button
                 identifier: button1
-                background:
+                background_color:
                   hex: "#D32F2F"
                 label:
                   type: label
                   font_size: 10
                   alignment: center
                   text: start|top
-                  color:
+                  foreground_color:
                     hex: "#FFFFFF"
       - size:
           width: 100%
@@ -95,16 +95,16 @@ layout:
                 width: auto
                 height: auto
               view:
-                type: button
+                type: label_button
                 identifier: button2
-                background:
+                background_color:
                   hex: "#E65100"
                 label:
                   type: label
                   font_size: 10
                   alignment: center
                   text: center|center
-                  color:
+                  foreground_color:
                     hex: "#FFFFFF"
       - size:
           width: 100%
@@ -126,14 +126,14 @@ layout:
                 width: auto
                 height: auto
               view:
-                type: button
+                type: label_button
                 identifier: button3
-                background:
+                background_color:
                   hex: "#FFD600"
                 label:
                   type: label
                   font_size: 10
-                  color:
+                  foreground_color:
                     hex: "#333333"
                   alignment: center
                   text: end|bottom
@@ -153,7 +153,7 @@ layout:
             - bold
             - underline
           font_size: 16
-          color:
+          foreground_color:
               hex: "#000000"
       - size:
           width: 100%
@@ -164,7 +164,7 @@ layout:
           end: 16
         view:
           type: empty_view
-          background:
+          background_color:
             hex: "#ff0000"
           border:
             radius: 2
@@ -176,9 +176,9 @@ layout:
           width: 100%
           height: auto
         view:
-          type: button
+          type: label_button
           identifier: button4
-          background:
+          background_color:
             hex: "#558B2F"
           border:
             radius: 0
@@ -190,7 +190,7 @@ layout:
             font_size: 12
             alignment: center
             text: 3dp stroke
-            color:
+            foreground_color:
               hex: "#FFFFFF"
       - margin:
           top: 8
@@ -200,9 +200,9 @@ layout:
           width: 100%
           height: auto
         view:
-          type: button
+          type: label_button
           identifier: button5
-          background:
+          background_color:
             hex: "#1976D2"
           border:
             radius: 15
@@ -214,7 +214,7 @@ layout:
             font_size: 12
             alignment: center
             text: 5dp stroke, 15dp radius
-            color:
+            foreground_color:
               hex: "#FFFFFF"
       - margin:
           top: 8
@@ -224,9 +224,9 @@ layout:
           width: 100%
           height: auto
         view:
-          type: button
+          type: label_button
           identifier: button6
-          background:
+          background_color:
             hex: "#283593"
           border:
             radius: 25
@@ -236,7 +236,7 @@ layout:
             font_size: 12
             alignment: center
             text: no stroke, 20dp radius
-            color:
+            foreground_color:
               hex: "#FFFFFF"
       - margin:
           top: 24
@@ -254,7 +254,7 @@ layout:
             - bold
             - underline
           font_size: 16
-          color:
+          foreground_color:
             hex: "#000000"
       - size:
           width: 100%
@@ -265,7 +265,7 @@ layout:
           end: 16
         view:
           type: empty_view
-          background:
+          background_color:
             hex: "#ff0000"
           border:
             radius: 2
@@ -277,18 +277,18 @@ layout:
           width: auto
           height: auto
         view:
-          type: button
+          type: label_button
           identifier: button7
-          background:
+          background_color:
             hex: "#AED581"
           label:
             type: label
             font_size: 12
-            color:
+            foreground_color:
               hex: "#333333"
             alignment: center
             text: auto x auto
-            color:
+            foreground_color:
               hex: "#FFFFFF"
       - margin:
           top: 8
@@ -298,15 +298,15 @@ layout:
           width: 66%
           height: auto
         view:
-          type: button
+          type: label_button
           identifier: button8
-          background:
+          background_color:
             hex: "#64B5F6"
           label:
             type: label
             font_size: 12
             alignment: center
-            color:
+            foreground_color:
               hex: "#333333"
             text: 66% x auto
       - margin:
@@ -318,14 +318,14 @@ layout:
           width: auto
           height: 64
         view:
-          type: button
+          type: label_button
           identifier: button9
-          background:
+          background_color:
             hex: "#283593"
           label:
             type: label
             font_size: 12
             alignment: center
             text: auto x 64dp
-            color:
+            foreground_color:
               hex: "#FFFFFF"

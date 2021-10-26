@@ -23,9 +23,14 @@ struct LayoutDecoder  {
             print(error)
             throw error
         }
-        
     }
 }
+
+enum ShapeType: String, Decodable {
+    case rectangle = "rectangle"
+    case circle = "circle"
+}
+
 enum ViewType: String, Decodable {
     case container = "container"
     case linearLayout = "linear_layout"
@@ -33,19 +38,32 @@ enum ViewType: String, Decodable {
     case scrollLayout = "scroll_layout"
     case media = "media"
     case label = "label"
-    case button = "button"
+    case labelButton = "label_button"
     case imageButton = "image_button"
     case emptyView = "empty_view"
-    case carousel = "carousel"
-    case carouselIndicator = "carousel_indicator"
-    case carouselController = "carousel_controller"
+    case pager = "pager"
+    case pagerIndicator = "pager_indicator"
+    case pagerController = "pager_controller"
+    case formController = "form_controller"
+    case checkbox = "checkbox"
+    case checkboxController = "checkbox_controller"
+    case radioInput = "radio_input"
+    case radioInputController = "radio_input_controller"
+    case textInput = "text_input"
+    case score = "score"
+    case npsController = "nps_controller"
 }
 
-protocol BaseViewModel : Decodable {
+protocol BaseViewModel: Decodable {
     var type: ViewType { get }
-    var identifier: String? { get }
     var border: Border? { get }
-    var background: HexColor? { get }
+    var backgroundColor: HexColor? { get }
+}
+
+protocol ButtonModel: BaseViewModel {
+    var clickBehaviors: [ButtonClickBehaviors]? { get }
+    var enableBehaviors: [ButtonEnableBehaviors]? { get }
+    var actions: [String]? { get }
 }
 
 private struct BaseViewModelWrapper : Decodable {
@@ -73,33 +91,48 @@ private struct BaseViewModelWrapper : Decodable {
             self.view = try singleValueContainer.decode(MediaModel.self)
         case .label:
             self.view = try singleValueContainer.decode(LabelModel.self)
-        case .button:
-            self.view = try singleValueContainer.decode(ButtonModel.self)
+        case .labelButton:
+            self.view = try singleValueContainer.decode(LabelButtonModel.self)
         case .imageButton:
             self.view = try singleValueContainer.decode(ImageButtonModel.self)
         case .emptyView:
             self.view = try singleValueContainer.decode(EmptyViewModel.self)
-        case .carousel:
-            self.view = try singleValueContainer.decode(CarouselModel.self)
-        case .carouselIndicator:
-            self.view = try singleValueContainer.decode(CarouselIndicatorModel.self)
-        case .carouselController:
-            self.view = try singleValueContainer.decode(CarouselControllerModel.self)
+        case .pager:
+            self.view = try singleValueContainer.decode(PagerModel.self)
+        case .pagerIndicator:
+            self.view = try singleValueContainer.decode(PagerIndicatorModel.self)
+        case .pagerController:
+            self.view = try singleValueContainer.decode(PagerControllerModel.self)
+        case .formController:
+            self.view = try singleValueContainer.decode(FormControllerModel.self)
+        case .checkbox:
+            self.view = try singleValueContainer.decode(CheckboxModel.self)
+        case .checkboxController:
+            self.view = try singleValueContainer.decode(CheckboxControllerModel.self)
+        case .radioInput:
+            self.view = try singleValueContainer.decode(RadioInputModel.self)
+        case .radioInputController:
+            self.view = try singleValueContainer.decode(RadioInputControllerModel.self)
+        case .textInput:
+            self.view = try singleValueContainer.decode(TextInputModel.self)
+        case .score:
+            self.view = try singleValueContainer.decode(ScoreModel.self)
+        case .npsController:
+            self.view = try singleValueContainer.decode(NpsControllerModel.self)
         }
     }
+    
 }
 
 struct ContainerModel : BaseViewModel {
     let type = ViewType.container
-    let identifier: String?
     let border: Border?
-    let background: HexColor?
+    let backgroundColor: HexColor?
     let items: [ContainerItem]
     
     enum CodingKeys : String, CodingKey {
-        case identifier = "identifier"
         case border = "border"
-        case background = "background"
+        case backgroundColor = "background_color"
         case items = "items"
     }
 }
@@ -126,7 +159,7 @@ struct LinearLayoutModel: BaseViewModel {
     let type = ViewType.linearLayout
     let identifier: String?
     let border: Border?
-    let background: HexColor?
+    let backgroundColor: HexColor?
     let direction: Direction
     let items: [LinearLayoutItem]
     
@@ -134,7 +167,7 @@ struct LinearLayoutModel: BaseViewModel {
         case items = "items"
         case identifier = "identifier"
         case border = "border"
-        case background = "background"
+        case backgroundColor = "background_color"
         case direction = "direction"
     }
 }
@@ -157,10 +190,253 @@ class LinearLayoutItem: Decodable {
 
 class ScrollLayoutModel: BaseViewModel {
     let type = ViewType.scrollLayout
-    let identifier: String?
     let border: Border?
-    let background: HexColor?
+    let backgroundColor: HexColor?
     let direction: Direction
+    
+    private let _view: BaseViewModelWrapper
+    lazy var view: BaseViewModel = {
+        return _view.view
+    }()
+    
+    enum CodingKeys: String, CodingKey {
+        case border = "border"
+        case backgroundColor = "background_color"
+        case direction = "direction"
+        case _view = "view"
+    }
+}
+
+struct WebViewModel: BaseViewModel {
+    let type = ViewType.webView
+    let border: Border?
+    let backgroundColor: HexColor?
+    let url: String
+    
+    enum CodingKeys: String, CodingKey {
+        case border = "border"
+        case backgroundColor = "background_color"
+        case url = "url"
+    }
+}
+
+struct MediaModel: BaseViewModel {
+    let type = ViewType.media
+    let border: Border?
+    let backgroundColor: HexColor?
+    let url: String
+    let mediaType: MediaType
+    
+    enum CodingKeys: String, CodingKey {
+        case mediaType = "media_type"
+        case url = "url"
+        case border = "border"
+        case backgroundColor = "background_color"
+    }
+}
+
+struct LabelModel: BaseViewModel {
+    let type = ViewType.label
+    let border: Border?
+    let backgroundColor: HexColor?
+    let text: String
+    let fontSize: Int
+    let foregroundColor: HexColor
+    let alignment: TextAlignement?
+    let textStyles: [TextStyles]?
+    let fontFamilies: [String]?
+    
+    enum CodingKeys: String, CodingKey {
+        case text = "text"
+        case fontSize = "font_size"
+        case foregroundColor = "foreground_color"
+        case alignment = "alignment"
+        case textStyles = "text_styles"
+        case fontFamilies = "font_families"
+        case border = "border"
+        case backgroundColor = "background_color"
+    }
+}
+
+struct LabelButtonModel: ButtonModel {
+    let type = ViewType.labelButton
+    let identifier: String
+    let border: Border?
+    let backgroundColor: HexColor?
+    let clickBehaviors: [ButtonClickBehaviors]?
+    let enableBehaviors: [ButtonEnableBehaviors]?
+    let actions: [String]?
+    let label: LabelModel
+    let contentDescription: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case identifier = "identifier"
+        case border = "border"
+        case enableBehaviors = "enable_behaviors"
+        case clickBehaviors = "click_behaviors"
+        case backgroundColor = "background_color"
+        case actions = "actions"
+        case label = "label"
+        case contentDescription = "content_description"
+    }
+}
+
+struct ImageButtonModel: ButtonModel {
+    let type = ViewType.imageButton
+    let identifier: String
+    let border: Border?
+    let backgroundColor: HexColor?
+    let url: String
+    let clickBehaviors: [ButtonClickBehaviors]?
+    let enableBehaviors: [ButtonEnableBehaviors]?
+    let actions: [String]?
+    let contentDescription: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case identifier = "identifier"
+        case border = "border"
+        case backgroundColor = "background_color"
+        case url = "url"
+        case enableBehaviors = "enable_behaviors"
+        case clickBehaviors = "click_behaviors"
+        case actions = "actions"
+        case contentDescription = "content_description"
+
+    }
+}
+
+struct EmptyViewModel: BaseViewModel {
+    let type = ViewType.emptyView
+    let border: Border?
+    let backgroundColor: HexColor?
+    
+    enum CodingKeys: String, CodingKey {
+        case border = "border"
+        case backgroundColor = "background_color"
+    }
+}
+
+class PagerModel: BaseViewModel {
+    let type = ViewType.pager
+    let border: Border?
+    let backgroundColor: HexColor?
+    let disableSwipe: Bool?
+    
+    private let _items: [BaseViewModelWrapper]
+    lazy var items: [BaseViewModel] = {
+        return _items.map { $0.view }
+    }()
+    
+    
+    enum CodingKeys: String, CodingKey {
+        case border = "border"
+        case backgroundColor = "background_color"
+        case _items = "items"
+        case disableSwipe = "disable_swipe"
+    }
+}
+
+class PagerIndicatorModel: BaseViewModel {
+    let type = ViewType.pagerIndicator
+    let border: Border?
+    let backgroundColor: HexColor?
+    let bindings: Bindings
+    
+    enum CodingKeys: String, CodingKey {
+        case border = "border"
+        case backgroundColor = "background_color"
+        case bindings = "indicator_bindings"
+    }
+    
+    class Bindings: Decodable {
+        private let _selected: BaseShapeModelWrapper
+        lazy var selected: BaseShapeModel = {
+            return _selected.shape
+        }()
+        
+        private let _deselected: BaseShapeModelWrapper
+        lazy var deselected: BaseShapeModel = {
+            return _deselected.shape
+        }()
+        
+        enum CodingKeys: String, CodingKey {
+            case _selected = "selected"
+            case _deselected = "deselected"
+        }
+    }
+}
+
+struct PagerControllerModel: BaseViewModel {
+    let type = ViewType.pagerController
+    let border: Border?
+    let backgroundColor: HexColor?
+    let items: [ContainerItem]
+    
+    enum CodingKeys: String, CodingKey {
+        case border = "border"
+        case backgroundColor = "background_color"
+        case items = "items"
+    }
+}
+
+struct FormControllerModel: BaseViewModel {
+    let type = ViewType.formController
+    let identifier: String
+    let submit: FormBehaviors?
+    let border: Border?
+    let backgroundColor: HexColor?
+    let isRequired: Bool
+    
+    private let _view: BaseViewModelWrapper
+    lazy var view: BaseViewModel = {
+        return _view.view
+    }()
+    
+    enum CodingKeys: String, CodingKey {
+        case identifier = "identifier"
+        case submit = "submit"
+        case border = "border"
+        case backgroundColor = "background_color"
+        case _view = "view"
+        case isRequired = "required"
+    }
+}
+
+struct NpsControllerModel: BaseViewModel {
+    let type = ViewType.formController
+    let identifier: String
+    let submit: FormBehaviors?
+    let border: Border?
+    let backgroundColor: HexColor?
+    let isRequired: Bool
+    let npsIdentifier: String
+
+    
+    private let _view: BaseViewModelWrapper
+    lazy var view: BaseViewModel = {
+        return _view.view
+    }()
+    
+    enum CodingKeys: String, CodingKey {
+        case identifier = "identifier"
+        case submit = "submit"
+        case border = "border"
+        case backgroundColor = "background_color"
+        case _view = "view"
+        case isRequired = "required"
+        case npsIdentifier = "nps_identifier"
+    }
+}
+
+
+struct CheckboxControllerModel: BaseViewModel {
+    let type = ViewType.checkboxController
+    let identifier: String
+    let border: Border?
+    let backgroundColor: HexColor?
+    let isRequired: Bool
+    let minSelection: Int?
+    let maxSelection: Int?
     
     private let _view: BaseViewModelWrapper
     lazy var view: BaseViewModel = {
@@ -170,167 +446,173 @@ class ScrollLayoutModel: BaseViewModel {
     enum CodingKeys: String, CodingKey {
         case identifier = "identifier"
         case border = "border"
-        case background = "background"
-        case direction = "direction"
+        case backgroundColor = "background_color"
         case _view = "view"
+        case isRequired = "required"
+        case minSelection = "minSelection"
+        case maxSelection = "maxSelection"
     }
 }
 
-struct WebViewModel: BaseViewModel {
-    let type = ViewType.webView
-    let identifier: String?
+struct RadioInputControllerModel: BaseViewModel {
+    let type = ViewType.radioInputController
+    let identifier: String
+    let submit: FormBehaviors?
     let border: Border?
-    let background: HexColor?
-    let url: String
+    let backgroundColor: HexColor?
+    let isRequired: Bool
     
-    enum CodingKeys: String, CodingKey {
-        case identifier = "identifier"
-        case border = "border"
-        case background = "background"
-        case url = "url"
-    }
-}
-
-struct MediaModel: BaseViewModel {
-    let type = ViewType.media
-    let identifier: String?
-    let border: Border?
-    let background: HexColor?
-    let url: String
-    let mediaType: MediaType
-    
-    enum CodingKeys: String, CodingKey {
-        case mediaType = "media_type"
-        case url = "url"
-        case identifier = "identifier"
-        case border = "border"
-        case background = "background"
-    }
-}
-
-struct LabelModel: BaseViewModel {
-    let type = ViewType.label
-    let identifier: String?
-    let border: Border?
-    let background: HexColor?
-    let text: String
-    let fontSize: Int
-    let color: HexColor
-    let alignment: TextAlignement?
-    let textStyles: [TextStyles]?
-    let fontFamilies: [String]?
-    
-    enum CodingKeys: String, CodingKey {
-        case text = "text"
-        case fontSize = "font_size"
-        case color = "color"
-        case alignment = "alignment"
-        case textStyles = "text_styles"
-        case fontFamilies = "font_families"
-        case identifier = "identifier"
-        case border = "border"
-        case background = "background"
-    }
-}
-
-struct ButtonModel: BaseViewModel {
-    let type = ViewType.button
-    let identifier: String?
-    let border: Border?
-    let background: HexColor?
-    let behavior: Behavior?
-    let actions: Array<String>?
-    let label: LabelModel
-    
-    enum CodingKeys: String, CodingKey {
-        case identifier = "identifier"
-        case border = "border"
-        case behavior = "behavior"
-        case background = "background"
-        case actions = "actions"
-        case label = "label"
-    }
-}
-
-struct ImageButtonModel: BaseViewModel {
-    let type = ViewType.imageButton
-    let identifier: String?
-    let border: Border?
-    let background: HexColor?
-    let url: String
-    let behavior: Behavior?
-    let actions: Array<String>?
-    
-    enum CodingKeys: String, CodingKey {
-        case identifier = "identifier"
-        case border = "border"
-        case background = "background"
-        case url = "url"
-        case behavior = "behavior"
-        case actions = "actions"
-    }
-}
-
-struct EmptyViewModel: BaseViewModel {
-    let type = ViewType.emptyView
-    let identifier: String?
-    let border: Border?
-    let background: HexColor?
-    
-    enum CodingKeys: String, CodingKey {
-        case identifier = "identifier"
-        case border = "border"
-        case background = "background"
-    }
-}
-
-struct CarouselModel: BaseViewModel {
-    let type = ViewType.carousel
-    let identifier: String?
-    let border: Border?
-    let background: HexColor?
-    
-    private let _items: [BaseViewModelWrapper]
-    lazy var items: [BaseViewModel] = {
-        return _items.map { $0.view }
+    private let _view: BaseViewModelWrapper
+    lazy var view: BaseViewModel = {
+        return _view.view
     }()
     
     enum CodingKeys: String, CodingKey {
         case identifier = "identifier"
+        case submit = "submit"
         case border = "border"
-        case background = "background"
-        case _items = "items"
+        case backgroundColor = "background_color"
+        case _view = "view"
+        case isRequired = "required"
     }
 }
 
-struct CarouselIndicatorModel: BaseViewModel {
-    let type = ViewType.carouselIndicator
-    let identifier: String?
+struct TextInputModel: BaseViewModel {
+    let type = ViewType.textInput
     let border: Border?
-    let background: HexColor?
-    let carouselIdentifier: String
+    let backgroundColor: HexColor?
+    let fontSize: Int
+    let foregroundColor: HexColor
+    let textStyles: [TextStyles]?
+    let fontFamilies: [String]?
+    let identifier: String
+    let contentDescription: String?
+    let isRequired: Bool
     
     enum CodingKeys: String, CodingKey {
-        case identifier = "identifier"
+        case fontSize = "font_size"
+        case foregroundColor = "foreground_color"
+        case textStyles = "text_styles"
+        case fontFamilies = "font_families"
         case border = "border"
-        case background = "background"
-        case carouselIdentifier = "carousel_identifier"
+        case backgroundColor = "background_color"
+        case identifier = "identifier"
+        case contentDescription = "content_description"
+        case isRequired = "required"
     }
 }
 
-
-struct CarouselControllerModel: BaseViewModel {
-    let type = ViewType.carouselController
-    let identifier: String?
+struct CheckboxModel: BaseViewModel {
+    let type = ViewType.checkbox
     let border: Border?
-    let background: HexColor?
-    let items: [ContainerItem]
+    let backgroundColor: HexColor?
+    let foregroundColor: HexColor
+    let identifier: String
+    let contentDescription: String?
+    let isRequired: Bool
     
     enum CodingKeys: String, CodingKey {
-        case identifier = "identifier"
+        case foregroundColor = "foreground_color"
         case border = "border"
-        case background = "background"
-        case items = "items"
+        case backgroundColor = "background_color"
+        case identifier = "identifier"
+        case contentDescription = "content_description"
+        case isRequired = "required"
+    }
+}
+
+struct RadioInputModel: BaseViewModel {
+    let type = ViewType.radioInput
+    let border: Border?
+    let backgroundColor: HexColor?
+    let foregroundColor: HexColor
+    let identifier: String
+    let contentDescription: String?
+    let isRequired: Bool
+    
+    enum CodingKeys: String, CodingKey {
+        case foregroundColor = "foreground_color"
+        case border = "border"
+        case backgroundColor = "background_color"
+        case identifier = "identifier"
+        case contentDescription = "content_description"
+        case isRequired = "required"
+    }
+}
+
+struct ScoreModel: BaseViewModel {
+    let type = ViewType.score
+    let border: Border?
+    let backgroundColor: HexColor?
+    let foregroundColor: HexColor
+    let identifier: String
+    let contentDescription: String?
+    let isRequired: Bool
+    
+    enum CodingKeys: String, CodingKey {
+        case foregroundColor = "foreground_color"
+        case border = "border"
+        case backgroundColor = "background_color"
+        case identifier = "identifier"
+        case contentDescription = "content_description"
+        case isRequired = "required"
+    }
+}
+
+protocol BaseShapeModel: Decodable {
+    var type: ShapeType { get }
+    var border: Border? { get }
+    var color: HexColor { get }
+}
+
+private struct BaseShapeModelWrapper : Decodable {
+    let shape: BaseShapeModel
+
+    private enum CodingKeys: String, CodingKey {
+        case type
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let type = try container.decode(ShapeType.self, forKey: .type)
+        let singleValueContainer = try decoder.singleValueContainer()
+
+        switch type {
+        case .rectangle:
+            self.shape = try singleValueContainer.decode(RectangleShapeModel.self)
+        case .circle:
+            self.shape = try singleValueContainer.decode(CircleShapeModel.self)
+        }
+    }
+    
+}
+
+
+struct CircleShapeModel: BaseShapeModel {
+    let type = ShapeType.circle
+    let border: Border?
+    let radius: Double
+    let color: HexColor
+    
+    enum CodingKeys: String, CodingKey {
+        case border = "border"
+        case color = "color"
+        case radius = "radius"
+    }
+}
+
+struct RectangleShapeModel: BaseShapeModel {
+    let type = ShapeType.rectangle
+    let border: Border?
+    let width: Double
+    let height: Double
+    let color: HexColor
+    
+    enum CodingKeys: String, CodingKey {
+        case border = "border"
+        case color = "color"
+        case width = "width"
+        case height = "height"
     }
 }
 
@@ -447,15 +729,34 @@ enum TextAlignement: String, Decodable {
     case center = "center"
 }
 
+enum TextInputTypes: String, Decodable {
+    case email = "email"
+    case number = "number"
+    case text = "text"
+    case textMultiline = "text_multiline"
+}
+
 enum TextStyles: String, Decodable {
     case bold = "bold"
     case italic = "italic"
     case underline = "underline"
 }
 
-enum Behavior: String, Decodable {
+enum ButtonEnableBehaviors: String, Decodable {
+    case formValidation = "form_validation"
+    case pagerNext = "pager_next"
+    case pagerPrevious = "pager_previous"
+}
+
+enum ButtonClickBehaviors: String, Decodable {
     case dismiss = "dismiss"
     case cancel = "cancel"
+    case pagerNext = "pager_next"
+    case pagerPrevious = "pager_previous"
+}
+
+enum FormBehaviors: String, Decodable {
+    case submitEvent = "submit_event"
 }
 
 struct HexColor : Decodable {

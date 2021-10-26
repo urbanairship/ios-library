@@ -35,8 +35,8 @@ struct Label : View {
             .frame(maxWidth: constraints.width,
                    maxHeight: constraints.height,
                    alignment: self.model.alignment?.toFrameAlignment() ?? Alignment.center)
-            .foreground(model.color)
-            .background(model.background)
+            .foreground(model.foregroundColor)
+            .background(model.backgroundColor)
     }
     
     private static func resolveFont(families: [String]?, fontSize: Int) -> Font {

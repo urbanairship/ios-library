@@ -13,7 +13,7 @@ layout:
     stroke_color:
       hex: "#00FF00"
     stroke_width: 3
-  background:
+  background_color:
     hex: "#000000"
   items:
   # TOP-LEVEL LINEAR LAYOUT
@@ -60,7 +60,7 @@ layout:
                 text: <h2>World Wide Web</h2>
                   <p>The <b>World Wide Web (WWW)</b>, commonly known as the <b>Web</b>, is an information system where documents and other web resources are identified by Uniform Resource Locators (URLs), which may be interlinked by hyperlinks, and are accessible over the Internet. The resources of the Web are transferred via the Hypertext Transfer Protocol (HTTP), may be accessed by users by a software application called a <i>web browser</i>, and are published by a software application called a <i>web server</i>. The World Wide Web is not synonymous with the Internet, which pre-dated the Web in some form by over two decades and upon the technologies of which the Web is built.</p>
                   <p>English scientist Tim Berners-Lee invented the World Wide Web in 1989. He wrote the first web browser in 1990 while employed at CERN near Geneva, Switzerland. The browser was released outside CERN to other research institutions starting in January 1991, and then to the general public in August 1991. The Web began to enter everyday use in 1993–4, when websites for general use started to become available. The World Wide Web has been central to the development of the Information Age, and is the primary tool billions of people use to interact on the Internet.</p>
-                color:
+                foreground_color:
                   hex: "#00FF00"
                 alignment: start
                 font_size: 16
@@ -80,16 +80,16 @@ layout:
           width: 100%
           height: auto
         view:
-          type: button
+          type: label_button
           identifier: BUTTON
           behavior: dismiss
-          background:
+          background_color:
             hex: "#00FF00"
           label:
             type: label
             font_size: 24
             alignment: center
-            color:
+            foreground_color:
               hex: "#000000"
             text_styles:
               - bold

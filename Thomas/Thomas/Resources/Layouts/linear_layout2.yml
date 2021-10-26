@@ -24,7 +24,7 @@ layout:
     view:
       type: linear_layout
       direction: vertical
-      background:
+      background_color:
         hex: "#ffffff"
         alpha: .5
       items:
@@ -36,7 +36,7 @@ layout:
           height: auto
         view:
           type: label
-          color:
+          foreground_color:
             hex: "#FF0000"
             alpha: .5
           alignment: center
@@ -50,12 +50,12 @@ layout:
           height: 60%
         view:
           type: label
-          background:
+          background_color:
             hex: "#00FF00"
             alpha: .5
           text: h = 60%
           font_size: 14
-          color:
+          foreground_color:
             hex: "#000000"
           alignment: center
       - position:
@@ -65,14 +65,14 @@ layout:
           width: 100%
           height: 30%
         view:
-          background:
+          background_color:
             hex: "#0000FF"
             alpha: .5
           type: label
           alignment: center
           text: h = 30%
           font_size: 14
-          color:
+          foreground_color:
             hex: "#000000"
       - position:
           horizontal: center
@@ -81,12 +81,12 @@ layout:
           width: 100%
           height: 100
         view:
-          color:
+          foreground_color:
             hex: "#FF00FF"
             alpha: .5
           type: label
           font_size: 14
           alignment: center
           text: h = 100dp
-          color:
+          foreground_color:
             hex: "#000000"

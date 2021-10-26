@@ -23,7 +23,7 @@ struct Container : View {
                maxWidth: constraints.width,
                idealHeight: constraints.height,
                maxHeight: constraints.height)
-        .background(model.background)
+        .background(model.backgroundColor)
         .border(model.border)
     }
     

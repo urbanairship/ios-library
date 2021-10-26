@@ -12,7 +12,7 @@ struct EmptyView : View {
     let constraints: ViewConstraints
 
     var body: some View {
-        Shapes.rectangle(color: self.model.background, border: self.model.border)
+        Shapes.rectangle(color: self.model.backgroundColor, border: self.model.border)
             .constraints(constraints)
     }
 }
