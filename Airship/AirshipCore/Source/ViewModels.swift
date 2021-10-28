@@ -366,26 +366,28 @@ class PagerIndicatorModel: BaseViewModel {
     }
 }
 
-struct PagerControllerModel: BaseViewModel {
+class PagerControllerModel: BaseViewModel {
     let type = ViewType.pagerController
     let border: Border?
     let backgroundColor: HexColor?
-    let items: [ContainerItem]
+    private let _view: BaseViewModelWrapper
+    lazy var view: BaseViewModel = {
+        return _view.view
+    }()
     
     enum CodingKeys: String, CodingKey {
         case border = "border"
         case backgroundColor = "background_color"
-        case items = "items"
+        case _view = "view"
     }
 }
 
-struct FormControllerModel: BaseViewModel {
+class FormControllerModel: BaseViewModel {
     let type = ViewType.formController
     let identifier: String
     let submit: FormBehaviors?
     let border: Border?
     let backgroundColor: HexColor?
-    let isRequired: Bool
     
     private let _view: BaseViewModelWrapper
     lazy var view: BaseViewModel = {
@@ -398,17 +400,15 @@ struct FormControllerModel: BaseViewModel {
         case border = "border"
         case backgroundColor = "background_color"
         case _view = "view"
-        case isRequired = "required"
     }
 }
 
-struct NpsControllerModel: BaseViewModel {
+class NpsControllerModel: BaseViewModel {
     let type = ViewType.formController
     let identifier: String
     let submit: FormBehaviors?
     let border: Border?
     let backgroundColor: HexColor?
-    let isRequired: Bool
     let npsIdentifier: String
 
     
@@ -423,7 +423,6 @@ struct NpsControllerModel: BaseViewModel {
         case border = "border"
         case backgroundColor = "background_color"
         case _view = "view"
-        case isRequired = "required"
         case npsIdentifier = "nps_identifier"
     }
 }
@@ -434,7 +433,7 @@ struct CheckboxControllerModel: BaseViewModel {
     let identifier: String
     let border: Border?
     let backgroundColor: HexColor?
-    let isRequired: Bool
+    let isRequired: Bool?
     let minSelection: Int?
     let maxSelection: Int?
     
@@ -460,8 +459,8 @@ struct RadioInputControllerModel: BaseViewModel {
     let submit: FormBehaviors?
     let border: Border?
     let backgroundColor: HexColor?
-    let isRequired: Bool
-    
+    let isRequired: Bool?
+
     private let _view: BaseViewModelWrapper
     lazy var view: BaseViewModel = {
         return _view.view
@@ -487,8 +486,8 @@ struct TextInputModel: BaseViewModel {
     let fontFamilies: [String]?
     let identifier: String
     let contentDescription: String?
-    let isRequired: Bool
-    
+    let isRequired: Bool?
+
     enum CodingKeys: String, CodingKey {
         case fontSize = "font_size"
         case foregroundColor = "foreground_color"
@@ -509,8 +508,8 @@ struct CheckboxModel: BaseViewModel {
     let foregroundColor: HexColor
     let identifier: String
     let contentDescription: String?
-    let isRequired: Bool
-    
+    let isRequired: Bool?
+
     enum CodingKeys: String, CodingKey {
         case foregroundColor = "foreground_color"
         case border = "border"

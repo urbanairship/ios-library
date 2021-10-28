@@ -1,0 +1,49 @@
+---
+layout:
+  type: form_controller
+  identifier: "top-form"
+  submit: submit_event
+  border:
+    stroke_color:
+      hex: "#00FF00"
+    stroke_width: 5
+    radius: 15
+  view:
+    type: linear_layout
+    direction: vertical
+    items:
+      - size:
+          width: 100%
+          height: auto
+        view:
+          identifier: "bar"
+          type: text_input  
+          foreground_color:
+            hex: "#333333"
+          alignment: start
+          text_styles:
+            - italic
+          font_families:
+            - permanent_marker
+            - casual
+          font_size: 14
+          required: false
+      - size:
+          width: 100%
+          height: auto
+        view:
+          identifier: "child_form"
+          type: "form_controller"
+          view:
+            identifier: "foo"
+            type: text_input  
+            foreground_color:
+              hex: "#333333"
+            alignment: start
+            text_styles:
+              - italic
+            font_families:
+              - permanent_marker
+              - casual
+            font_size: 14
+            required: true

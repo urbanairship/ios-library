@@ -21,6 +21,12 @@ struct ViewFactory {
             LabelButton(model: buttonModel, constraints: constraints)
         case let emptyViewModel as EmptyViewModel:
             EmptyView(model: emptyViewModel, constraints: constraints)
+        case let formControllerModel as FormControllerModel:
+            FormController(model: formControllerModel, constraints: constraints)
+        case let npsControllerModel as NpsControllerModel:
+            NpsController(model: npsControllerModel, constraints: constraints)
+        case let textInputModel as TextInputModel:
+            TextInput(model: textInputModel, constraints: constraints)
         default:
             Text("\(model.type.rawValue) not supported")
         }
