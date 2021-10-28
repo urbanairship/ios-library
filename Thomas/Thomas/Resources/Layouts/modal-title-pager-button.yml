@@ -1,0 +1,151 @@
+---
+modal:
+  defaultPlacement:
+    size:
+      height: auto
+      width: 95%
+    position:
+      horizontal: center
+      vertical: center
+layout:
+  type: pager_controller
+  view:
+    type: container
+    items:
+    - position:
+        horizontal: center
+        vertical: center
+      size:
+        height: auto
+        width: 100%
+      view:
+        type: linear_layout
+        direction: vertical
+        items:
+        - size:
+            height: auto
+            width: 100%
+          margin:
+            top: 16
+            bottom: 16
+            start: 16
+            end: 16
+          view:
+            type: label
+            text: Take a spin
+            alignment: center
+            text_styles:
+              - bold
+            font_size: 18
+            foreground_color:
+              hex: "#000000"
+        - size:
+            height: 450
+            width: 100%
+          margin:
+            start: 16
+            end: 16
+            top: 16
+            bottom: 16
+          view:
+            type: pager
+            items:
+            - type: container
+              background_color: 
+                hex: "#88FF0000"
+              items:
+              - position:
+                  vertical: center
+                  horizontal: center
+                size:
+                  height: auto
+                  width: auto
+                view:
+                  type: label
+                  text: This is the first page about stuff.
+                  alignment: center
+                  font_size: 14
+                  foreground_color: 
+                    hex: "#000000"
+            - type: container
+              background_color: 
+                hex: "#00FF00"
+              items:
+              - position:
+                  vertical: center
+                  horizontal: center
+                size:
+                  height: auto
+                  width: auto
+                view:
+                  type: label
+                  text: More stuff is here on the second page.
+                  alignment: center
+                  foreground_color: 
+                    hex: "#000000"
+                  font_size: 14
+            - type: container
+              background_color: 
+                hex: "#880000FF"
+              items:
+              - position:
+                  vertical: center
+                  horizontal: center
+                size:
+                  height: auto
+                  width: auto
+                view:
+                  type: label
+                  text: That's not all! There's a third page, too!
+                  alignment: center
+                  foreground_color: 
+                    hex: "#000000"
+                  font_size: 14
+        - size:
+            height: auto
+            width: auto
+          margin:
+            start: 16
+            end: 16
+            top: 16
+            bottom: 16
+          view:
+            type: label_button
+            identifier: button1
+            background_color: 
+              hex: "#FFD600"
+            label:
+              type: label
+              font_size: 10
+              foreground_color: 
+                hex: "#333333"
+              alignment: center
+              text: 'Impressive!'
+        - size:
+            height: auto
+            width: auto
+          margin:
+            start: 16
+            end: 16
+            top: 16
+            bottom: 16
+          view:
+            type: pager_indicator
+            indicator_spacing: 16
+            indicator_bindings:
+              selected:
+                type: circle
+                radius: 20
+                color:
+                  hex: "#0000FF"
+              deselected:
+                type: rectangle
+                border:
+                  stroke_color:
+                    hex: "#000000"
+                  stroke_width: 3
+                  radius: 4
+                height: 30
+                width: 30
+                color:
+                  hex: "#FF0000"

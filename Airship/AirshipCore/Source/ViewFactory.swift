@@ -27,6 +27,12 @@ struct ViewFactory {
             NpsController(model: npsControllerModel, constraints: constraints)
         case let textInputModel as TextInputModel:
             TextInput(model: textInputModel, constraints: constraints)
+        case let pagerControllerModel as PagerControllerModel:
+            PagerController(model: pagerControllerModel, constraints: constraints)
+        case let pagerIndicatorModel as PagerIndicatorModel:
+            PagerIndicator(model: pagerIndicatorModel, constraints: constraints)
+        case let pagerModel as PagerModel:
+            Pager(model: pagerModel, constraints: constraints)
         default:
             Text("\(model.type.rawValue) not supported")
         }

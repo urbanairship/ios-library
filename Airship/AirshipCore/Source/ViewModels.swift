@@ -341,11 +341,13 @@ class PagerIndicatorModel: BaseViewModel {
     let border: Border?
     let backgroundColor: HexColor?
     let bindings: Bindings
-    
+    let spacing: Double
+
     enum CodingKeys: String, CodingKey {
         case border = "border"
         case backgroundColor = "background_color"
         case bindings = "indicator_bindings"
+        case spacing = "indicator_spacing"
     }
     
     class Bindings: Decodable {
@@ -561,7 +563,7 @@ struct ScoreModel: BaseViewModel {
 protocol BaseShapeModel: Decodable {
     var type: ShapeType { get }
     var border: Border? { get }
-    var color: HexColor { get }
+    var color: HexColor? { get }
 }
 
 private struct BaseShapeModelWrapper : Decodable {
@@ -591,7 +593,7 @@ struct CircleShapeModel: BaseShapeModel {
     let type = ShapeType.circle
     let border: Border?
     let radius: Double
-    let color: HexColor
+    let color: HexColor?
     
     enum CodingKeys: String, CodingKey {
         case border = "border"
@@ -605,7 +607,7 @@ struct RectangleShapeModel: BaseShapeModel {
     let border: Border?
     let width: Double
     let height: Double
-    let color: HexColor
+    let color: HexColor?
     
     enum CodingKeys: String, CodingKey {
         case border = "border"
