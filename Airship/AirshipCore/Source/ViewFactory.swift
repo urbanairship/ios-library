@@ -33,6 +33,10 @@ struct ViewFactory {
             PagerIndicator(model: pagerIndicatorModel, constraints: constraints)
         case let pagerModel as PagerModel:
             Pager(model: pagerModel, constraints: constraints)
+        #if !os(tvOS)
+        case let webViewModel as WebViewModel:
+            AirshipWebView(model: webViewModel, constraints: constraints)
+        #endif
         default:
             Text("\(model.type.rawValue) not supported")
         }
