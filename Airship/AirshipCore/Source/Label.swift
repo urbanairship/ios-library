@@ -24,7 +24,7 @@ struct Label : View {
             if (textStyles.contains(.italic)) {
                 text = text.italic()
             }
-            if (textStyles.contains(.underline)) {
+            if (textStyles.contains(.underlined)) {
                 text = text.underline()
             }
         }

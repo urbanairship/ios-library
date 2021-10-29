@@ -61,8 +61,8 @@ protocol BaseViewModel: Decodable {
 }
 
 protocol ButtonModel: BaseViewModel {
-    var clickBehaviors: [ButtonClickBehaviors]? { get }
-    var enableBehaviors: [ButtonEnableBehaviors]? { get }
+    var clickBehaviors: [ButtonClickBehavior]? { get }
+    var enableBehaviors: [ButtonEnableBehavior]? { get }
     var actions: [String]? { get }
 }
 
@@ -243,7 +243,7 @@ struct LabelModel: BaseViewModel {
     let fontSize: Int
     let foregroundColor: HexColor
     let alignment: TextAlignement?
-    let textStyles: [TextStyles]?
+    let textStyles: [TextStyle]?
     let fontFamilies: [String]?
     
     enum CodingKeys: String, CodingKey {
@@ -263,8 +263,8 @@ struct LabelButtonModel: ButtonModel {
     let identifier: String
     let border: Border?
     let backgroundColor: HexColor?
-    let clickBehaviors: [ButtonClickBehaviors]?
-    let enableBehaviors: [ButtonEnableBehaviors]?
+    let clickBehaviors: [ButtonClickBehavior]?
+    let enableBehaviors: [ButtonEnableBehavior]?
     let actions: [String]?
     let label: LabelModel
     let contentDescription: String?
@@ -287,8 +287,8 @@ struct ImageButtonModel: ButtonModel {
     let border: Border?
     let backgroundColor: HexColor?
     let url: String
-    let clickBehaviors: [ButtonClickBehaviors]?
-    let enableBehaviors: [ButtonEnableBehaviors]?
+    let clickBehaviors: [ButtonClickBehavior]?
+    let enableBehaviors: [ButtonEnableBehavior]?
     let actions: [String]?
     let contentDescription: String?
     
@@ -321,6 +321,7 @@ class PagerModel: BaseViewModel {
     let border: Border?
     let backgroundColor: HexColor?
     let disableSwipe: Bool?
+    let identifier: String
     
     private let _items: [BaseViewModelWrapper]
     lazy var items: [BaseViewModel] = {
@@ -333,6 +334,7 @@ class PagerModel: BaseViewModel {
         case backgroundColor = "background_color"
         case _items = "items"
         case disableSwipe = "disable_swipe"
+        case identifier = "identifier"
     }
 }
 
@@ -387,7 +389,7 @@ class PagerControllerModel: BaseViewModel {
 class FormControllerModel: BaseViewModel {
     let type = ViewType.formController
     let identifier: String
-    let submit: FormBehaviors?
+    let submit: FormSubmitBehavior?
     let border: Border?
     let backgroundColor: HexColor?
     
@@ -408,7 +410,7 @@ class FormControllerModel: BaseViewModel {
 class NpsControllerModel: BaseViewModel {
     let type = ViewType.formController
     let identifier: String
-    let submit: FormBehaviors?
+    let submit: FormSubmitBehavior?
     let border: Border?
     let backgroundColor: HexColor?
     let npsIdentifier: String
@@ -458,7 +460,7 @@ struct CheckboxControllerModel: BaseViewModel {
 struct RadioInputControllerModel: BaseViewModel {
     let type = ViewType.radioInputController
     let identifier: String
-    let submit: FormBehaviors?
+    let submit: FormSubmitBehavior?
     let border: Border?
     let backgroundColor: HexColor?
     let isRequired: Bool?
@@ -484,7 +486,7 @@ struct TextInputModel: BaseViewModel {
     let backgroundColor: HexColor?
     let fontSize: Int
     let foregroundColor: HexColor
-    let textStyles: [TextStyles]?
+    let textStyles: [TextStyle]?
     let fontFamilies: [String]?
     let identifier: String
     let contentDescription: String?
@@ -585,7 +587,6 @@ private struct BaseShapeModelWrapper : Decodable {
             self.shape = try singleValueContainer.decode(CircleShapeModel.self)
         }
     }
-    
 }
 
 
@@ -730,33 +731,34 @@ enum TextAlignement: String, Decodable {
     case center = "center"
 }
 
-enum TextInputTypes: String, Decodable {
+enum TextInputType: String, Decodable {
     case email = "email"
     case number = "number"
     case text = "text"
     case textMultiline = "text_multiline"
 }
 
-enum TextStyles: String, Decodable {
+enum TextStyle: String, Decodable {
     case bold = "bold"
     case italic = "italic"
-    case underline = "underline"
+    case underlined = "underlined"
 }
 
-enum ButtonEnableBehaviors: String, Decodable {
+enum ButtonEnableBehavior: String, Decodable {
     case formValidation = "form_validation"
     case pagerNext = "pager_next"
     case pagerPrevious = "pager_previous"
 }
 
-enum ButtonClickBehaviors: String, Decodable {
+enum ButtonClickBehavior: String, Decodable {
     case dismiss = "dismiss"
     case cancel = "cancel"
     case pagerNext = "pager_next"
     case pagerPrevious = "pager_previous"
+    case formSubmit = "form_submit"
 }
 
-enum FormBehaviors: String, Decodable {
+enum FormSubmitBehavior: String, Decodable {
     case submitEvent = "submit_event"
 }
 

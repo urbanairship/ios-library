@@ -5,9 +5,12 @@ import SwiftUI
 struct Pager : View {
     private static let minDragWidth: CGFloat = 10
     @EnvironmentObject var pagerState: PagerState
+    @EnvironmentObject var context: ThomasContext
 
     let model: PagerModel
     let constraints: ViewConstraints
+    
+    @State var lastIndex = -1
 
     @ViewBuilder
     var body: some View {
@@ -23,6 +26,9 @@ struct Pager : View {
                     ViewFactory.createView(model: items[index.wrappedValue],
                                            constraints: self.constraints)
                         .tag(i)
+                        .onAppear {
+                            reportPage(i)
+                        }
                 }
             }
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
@@ -32,8 +38,12 @@ struct Pager : View {
             }
         } else {
             VStack {
-                ViewFactory.createView(model: items[index.wrappedValue],
+                let index = index.wrappedValue
+                ViewFactory.createView(model: items[index],
                                        constraints: self.constraints)
+                    .onAppear {
+                        reportPage(index)
+                    }
             }
             .applyIf(self.model.disableSwipe != false) { view in
                 #if !os(tvOS)
@@ -53,6 +63,15 @@ struct Pager : View {
             .onAppear {
                 pagerState.pages = self.model.items.count
             }
+        }
+    }
+    
+    private func reportPage(_ index: Int) {
+        if (self.lastIndex != index) {
+            self.context.eventHandler.onPageView(pagerIdentifier: self.model.identifier,
+                                                 pageIndex: index,
+                                                 pageCount: self.model.items.count)
+            self.lastIndex = index
         }
     }
 }

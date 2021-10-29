@@ -49,6 +49,7 @@ layout:
             bottom: 16
           view:
             type: pager
+            identifier: "some-pager"
             items:
             - type: container
               background_color: 
@@ -120,7 +121,31 @@ layout:
               foreground_color: 
                 hex: "#333333"
               alignment: center
-              text: 'Impressive!'
+              text: 'Next!'
+            click_behaviors: ["pager_next"]
+            enable_behaviors: ["pager_next"]
+        - size:
+            height: auto
+            width: auto
+          margin:
+            start: 16
+            end: 16
+            top: 16
+            bottom: 16
+          view:
+            type: label_button
+            identifier: button1
+            background_color: 
+              hex: "#FFD600"
+            label:
+              type: label
+              font_size: 10
+              foreground_color: 
+                hex: "#333333"
+              alignment: center
+              text: 'Previous!'
+            click_behaviors: ["pager_previous"]
+            enable_behaviors: ["pager_previous"]
         - size:
             height: auto
             width: auto

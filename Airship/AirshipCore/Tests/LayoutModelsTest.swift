@@ -84,7 +84,7 @@ class LayoutModelsTest: XCTestCase {
                             "text_styles": [
                               "bold",
                               "italic",
-                              "underline"
+                              "underlined"
                             ],
                             "font_families": [
                               "permanent_marker"
@@ -121,7 +121,7 @@ class LayoutModelsTest: XCTestCase {
                             "text_Styles": [
                               "bold",
                               "italic",
-                              "underline"
+                              "underlined"
                             ],
                             "font_families": [
                               "permanent_marker"

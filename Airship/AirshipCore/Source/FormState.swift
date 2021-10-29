@@ -5,6 +5,7 @@ import Foundation
 @available(iOS 13.0.0, tvOS 13.0, *)
 class FormState: ObservableObject {
     @Published var data: FormInputData
+    let formIdentifier: String
     
     private var children: [String: FormInputData] = [:]
     private let reducer: ([String: FormInputData]) -> FormInputData
@@ -12,7 +13,8 @@ class FormState: ObservableObject {
         data.toDictionary()
     }
 
-    init(reducer: @escaping ([String: FormInputData]) -> FormInputData) {
+    init(_ identifier: String, reducer: @escaping ([String: FormInputData]) -> FormInputData) {
+        self.formIdentifier = identifier
         self.reducer = reducer
         self.data = reducer(children)
     }
@@ -61,7 +63,7 @@ private extension FormValue {
     }
 }
 
-private extension FormInputData {
+extension FormInputData {
     private static let typeKey = "type"
     private static let valueKey = "value"
     private static let childrenKey = "children"

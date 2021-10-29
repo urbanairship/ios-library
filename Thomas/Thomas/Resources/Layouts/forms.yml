@@ -47,3 +47,21 @@ layout:
               - casual
             font_size: 14
             required: true
+
+      - size:
+          width: 100%
+          height: auto
+        view:
+          type: label_button
+          identifier: button1
+          background_color: 
+            hex: "#FFD600"
+          label:
+            type: label
+            font_size: 10
+            foreground_color: 
+              hex: "#333333"
+            alignment: center
+            text: 'Submit!'
+          click_behaviors: ["form_submit", "cancel"]
+          enable_behaviors: ["form_validation"]

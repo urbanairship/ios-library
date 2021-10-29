@@ -9,10 +9,16 @@ struct FormController : View {
     
     let model: FormControllerModel
     let constraints: ViewConstraints
-    @State var formState: FormState =  FormState() { children in
-        let isValid = children.values.contains(where: { $0.isValid == false }) == false
-        return FormInputData(isValid: isValid,
-                             value: .form(children))
+    @State var formState: FormState
+    
+    init(model: FormControllerModel, constraints: ViewConstraints) {
+        self.model = model
+        self.constraints = constraints
+        self.formState = FormState(model.identifier) { children in
+            let isValid = children.values.contains(where: { $0.isValid == false }) == false
+            return FormInputData(isValid: isValid,
+                                 value: .form(children))
+        }
     }
     
     var body: some View {

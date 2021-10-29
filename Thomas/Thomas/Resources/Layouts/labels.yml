@@ -37,7 +37,7 @@ layout:
           alignment: start
           text_styles:
             - bold
-            - underline
+            - underlined
           font_size: 16
           foreground_color:
             hex: "#000000"
@@ -133,7 +133,7 @@ layout:
           alignment: start
           text_styles:
             - bold
-            - underline
+            - underlined
           font_size: 16
           foreground_color:
             hex: "#000000"
@@ -199,7 +199,7 @@ layout:
           alignment: start
           text_styles:
             - bold
-            - underline
+            - underlined
           font_size: 16
           foreground_color:
             hex: "#000000"
@@ -245,9 +245,9 @@ layout:
           height: auto
         view:
           type: label
-          text: Underline
+          text: Underlined
           text_styles:
-            - underline
+            - underlined
           alignment: start
           font_size: 12
           foreground_color:
@@ -279,10 +279,10 @@ layout:
           height: auto
         view:
           type: label
-          text: Bold + Italic + Underline
+          text: Bold + Italic + Underlined
           text_styles:
             - bold
-            - underline
+            - underlined
             - italic
           alignment: start
           font_size: 12
