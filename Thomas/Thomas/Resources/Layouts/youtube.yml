@@ -1,0 +1,78 @@
+---
+modal:
+  defaultPlacement:
+    size:
+      width: 90%
+      height: 75%
+    position:
+      horizontal: center
+      vertical: center
+layout:
+  type: container
+  items:
+  - position:
+      horizontal: center
+      vertical: center
+    size:
+      width: 100%
+      height: auto
+    view:
+      type: linear_layout
+      direction: vertical
+      items:
+      #
+      # Header
+      #
+      - margin:
+          top: 16
+          bottom: 16
+          start: 16
+          end: 16
+        size:
+          width: 100%
+          height: auto
+        view:
+          type: label
+          text: Media type Youtube
+          alignment: start
+          text_styles:
+            - bold
+            - underline
+          font_size: 16
+          foreground_color:
+            hex: "#000000"
+      - margin:
+          top: 48
+          bottom: 8
+          start: 8
+          end: 8
+        size:
+          width: auto
+          height: auto
+        view:
+          type: media
+          url: https://www.youtube.com/embed/aA3QiR_WBJw
+          media_type: youtube
+          background:
+            hex: "#000000"
+      #
+      # Footer
+      #
+      - margin:
+          top: 16
+          bottom: 16
+          start: 16
+          end: 16
+        size:
+          width: 100%
+          height: auto
+        view:
+          type: label
+          text: Footer
+          alignment: start
+          text_styles:
+            - bold
+            - underline
+          font_size: 16
+          foreground_color:
+            hex: "#000000"

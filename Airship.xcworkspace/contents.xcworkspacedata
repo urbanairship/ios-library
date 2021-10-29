@@ -14,10 +14,10 @@
       location = "group:SwiftSample/SwiftSample.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:Thomas/Thomas.xcodeproj">
+      location = "group:SwiftSample/../tvOSSample/tvOSSample.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:SwiftSample/../tvOSSample/tvOSSample.xcodeproj">
+      location = "group:Thomas/Thomas.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Pods/Pods.xcodeproj">

@@ -3,7 +3,6 @@
 import Foundation
 import SwiftUI
 
-
 /// Text/Label view
 @available(iOS 13.0.0, tvOS 13.0, *)
 struct Label : View {

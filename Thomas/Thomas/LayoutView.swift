@@ -5,7 +5,6 @@ import AirshipCore
 
 struct LayoutView: UIViewControllerRepresentable {
     
-    
     typealias UIViewControllerType = UIViewController
     let fileName: String
     func makeUIViewController(context: UIViewControllerRepresentableContext<LayoutView>) -> UIViewController {

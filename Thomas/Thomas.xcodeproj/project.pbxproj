@@ -19,6 +19,8 @@
 		3244495427219A2E00D108B5 /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3244495327219A2E00D108B5 /* AirshipConfig.plist */; };
 		3244495E2721A63400D108B5 /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3244495D2721A63400D108B5 /* AirshipCore.framework */; };
 		3244495F2721A63400D108B5 /* AirshipCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3244495D2721A63400D108B5 /* AirshipCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		32FC34EC2729AF10002D3F2C /* AirshipBasement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 32FC34EB2729AF10002D3F2C /* AirshipBasement.framework */; };
+		32FC34ED2729AF10002D3F2C /* AirshipBasement.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 32FC34EB2729AF10002D3F2C /* AirshipBasement.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -28,6 +30,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				32FC34ED2729AF10002D3F2C /* AirshipBasement.framework in Embed Frameworks */,
 				3244495F2721A63400D108B5 /* AirshipCore.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -49,6 +52,7 @@
 		3244495527219D0300D108B5 /* Thomas.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Thomas.entitlements; sourceTree = "<group>"; };
 		3244495627219D1800D108B5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		3244495D2721A63400D108B5 /* AirshipCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = AirshipCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		32FC34EB2729AF10002D3F2C /* AirshipBasement.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = AirshipBasement.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +60,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				32FC34EC2729AF10002D3F2C /* AirshipBasement.framework in Frameworks */,
 				3244495E2721A63400D108B5 /* AirshipCore.framework in Frameworks */,
 				3244494C2721784900D108B5 /* Yams in Frameworks */,
 			);
@@ -118,6 +123,7 @@
 		3244495C2721A63400D108B5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				32FC34EB2729AF10002D3F2C /* AirshipBasement.framework */,
 				3244495D2721A63400D108B5 /* AirshipCore.framework */,
 			);
 			name = Frameworks;
@@ -346,6 +352,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationLandscapeRight;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -380,6 +387,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationLandscapeRight;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;

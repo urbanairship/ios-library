@@ -38,7 +38,15 @@
 		1BCDE30B23A12C430006A319 /* UAAccengageResources.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCDE30923A12C430006A319 /* UAAccengageResources.m */; };
 		1BCDE30E23A12CBA0006A319 /* AirshipAccengage.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1BCDE30C23A12CBA0006A319 /* AirshipAccengage.strings */; };
 		3230E60B24D04C75002C344D /* UAInAppAudienceHistorianTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3230E60A24D04C75002C344D /* UAInAppAudienceHistorianTest.m */; };
+		32515869272AFB2E00DF8B44 /* Media.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32515866272AFB2E00DF8B44 /* Media.swift */; };
+		3251586A272AFB2E00DF8B44 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32515867272AFB2E00DF8B44 /* ImageView.swift */; };
+		3251586B272AFB2E00DF8B44 /* MediaWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32515868272AFB2E00DF8B44 /* MediaWebView.swift */; };
+		32515871272B007C00DF8B44 /* MediaWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32515868272AFB2E00DF8B44 /* MediaWebView.swift */; };
+		32515872272B007F00DF8B44 /* Media.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32515866272AFB2E00DF8B44 /* Media.swift */; };
+		32515873272B008400DF8B44 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32515867272AFB2E00DF8B44 /* ImageView.swift */; };
+		32515874272B038300DF8B44 /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32D6E87A2727F7060077C784 /* Image.swift */; };
 		3261A7F6243CD7F900ADBF6B /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3261A7F4243CD73100ADBF6B /* CoreTelephony.framework */; platformFilter = maccatalyst; };
+		32D6E87B2727F7060077C784 /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32D6E87A2727F7060077C784 /* Image.swift */; };
 		3C07645825EDEDEE007F425C /* UAStateOverridesTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C07644A25EDEDE4007F425C /* UAStateOverridesTest.m */; };
 		3C0D066A2624EB6C002337B0 /* ChatMessageCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C0D06642624EB6C002337B0 /* ChatMessageCell.xib */; };
 		3C0D067E2624EBD3002337B0 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C0D06792624EBD2002337B0 /* ChatViewController.swift */; };
@@ -244,8 +252,6 @@
 		45C69142238DCC4600A03C94 /* UAExtendedActionsSDKModule.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E27A7D52367AC3200F46B69 /* UAExtendedActionsSDKModule.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		45CCE9BB2445412F00D264D4 /* PropertyCells.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45CCE9BA2445412F00D264D4 /* PropertyCells.swift */; };
 		45DCD83E2087C57C00BCF10F /* UAInAppMessageFullScreenStyleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 45DCD83D2087C57C00BCF10F /* UAInAppMessageFullScreenStyleTest.m */; };
-		45E08F4724CA045E00041803 /* UIImage+UAAdditions+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 45E08F4424CA045E00041803 /* UIImage+UAAdditions+Internal.h */; };
-		45E08F4924CA045E00041803 /* UIImage+UAAdditions+Internal.m in Sources */ = {isa = PBXBuildFile; fileRef = 45E08F4524CA045E00041803 /* UIImage+UAAdditions+Internal.m */; };
 		54DE2901247B2AF059E46862 /* Pods_AirshipTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EBF83042659DAF0D42AD7A9E /* Pods_AirshipTests.framework */; };
 		6E062D03271656DE001A74A1 /* Container.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E062D02271656DE001A74A1 /* Container.swift */; };
 		6E062D05271656F8001A74A1 /* LinearLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E062D04271656F8001A74A1 /* LinearLayout.swift */; };
@@ -1438,7 +1444,11 @@
 		3226E11424C1DF54000106CC /* UAInAppAudienceHistorian.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInAppAudienceHistorian.m; sourceTree = "<group>"; };
 		3226E11524C1DF54000106CC /* UAInAppAudienceHistorian+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAInAppAudienceHistorian+Internal.h"; sourceTree = "<group>"; };
 		3230E60A24D04C75002C344D /* UAInAppAudienceHistorianTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppAudienceHistorianTest.m; sourceTree = "<group>"; };
+		32515866272AFB2E00DF8B44 /* Media.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Media.swift; sourceTree = "<group>"; };
+		32515867272AFB2E00DF8B44 /* ImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
+		32515868272AFB2E00DF8B44 /* MediaWebView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaWebView.swift; sourceTree = "<group>"; };
 		3261A7F4243CD73100ADBF6B /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/CoreTelephony.framework; sourceTree = DEVELOPER_DIR; };
+		32D6E87A2727F7060077C784 /* Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
 		3C07644A25EDEDE4007F425C /* UAStateOverridesTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAStateOverridesTest.m; sourceTree = "<group>"; };
 		3C0D06642624EB6C002337B0 /* ChatMessageCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ChatMessageCell.xib; sourceTree = "<group>"; };
 		3C0D06792624EBD2002337B0 /* ChatViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
@@ -1660,8 +1670,6 @@
 		45DCD8372086AB0D00BCF10F /* UAInAppMessageMediaStyle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAInAppMessageMediaStyle.h; sourceTree = "<group>"; };
 		45DCD8382086AB0D00BCF10F /* UAInAppMessageMediaStyle.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageMediaStyle.m; sourceTree = "<group>"; };
 		45DCD83D2087C57C00BCF10F /* UAInAppMessageFullScreenStyleTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageFullScreenStyleTest.m; sourceTree = "<group>"; };
-		45E08F4424CA045E00041803 /* UIImage+UAAdditions+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+UAAdditions+Internal.h"; sourceTree = "<group>"; };
-		45E08F4524CA045E00041803 /* UIImage+UAAdditions+Internal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+UAAdditions+Internal.m"; sourceTree = "<group>"; };
 		45E5FA1B226BA417007BD334 /* UAInAppMessageImmediateDisplayCoordinator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageImmediateDisplayCoordinator.m; sourceTree = "<group>"; };
 		45E5FA1C226BA418007BD334 /* UAInAppMessageImmediateDisplayCoordinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInAppMessageImmediateDisplayCoordinator.h; sourceTree = "<group>"; };
 		45F0CD402124E58000EED496 /* UAInAppMessageHTMLViewController+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageHTMLViewController+Internal.h"; sourceTree = "<group>"; };
@@ -3271,6 +3279,9 @@
 				6E062D0C2718B505001A74A1 /* ViewConstraints.swift */,
 				6E1BACDA2719ED7D0038399E /* ScrollLayout.swift */,
 				6E1BACDC2719FC0A0038399E /* ViewFactory.swift */,
+				32515867272AFB2E00DF8B44 /* ImageView.swift */,
+				32515866272AFB2E00DF8B44 /* Media.swift */,
+				32515868272AFB2E00DF8B44 /* MediaWebView.swift */,
 				6EFD6D4A27272333005B26F1 /* EmptyView.swift */,
 				6EFD6D6D27290C0B005B26F1 /* FormController.swift */,
 				6EFD6D7027290C16005B26F1 /* TextInput.swift */,
@@ -3594,6 +3605,7 @@
 				6E6ED1342683A58D00A2CBD0 /* Semaphore.swift */,
 				6E411D842538D2F600FEE4E8 /* Value Transformers */,
 				A6A8077B26C1566E00CB266E /* ColorUtils.swift */,
+				32D6E87A2727F7060077C784 /* Image.swift */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -3806,8 +3818,6 @@
 				6E8450BD237E0012007D3B1E /* Actions */,
 				6E8450C1237E0049007D3B1E /* AutomationEngine */,
 				6E8450DB237E00D9007D3B1E /* InAppMessaging */,
-				45E08F4424CA045E00041803 /* UIImage+UAAdditions+Internal.h */,
-				45E08F4524CA045E00041803 /* UIImage+UAAdditions+Internal.m */,
 				6E598D7E2003EB76005B234B /* UAActiveTimer.m */,
 				6E598D7D2003EB76005B234B /* UAActiveTimer+Internal.h */,
 				6E8A54B9236243A3004AE2A0 /* UAAutomationSDKModule.m */,
@@ -5153,7 +5163,6 @@
 				6E845392237E0523007D3B1E /* UAInAppMessageModalViewController+Internal.h in Headers */,
 				6E845393237E0523007D3B1E /* UAInAppMessageFullScreenDisplayContent+Internal.h in Headers */,
 				6E845394237E0523007D3B1E /* UAInAppMessageFullScreenViewController+Internal.h in Headers */,
-				45E08F4724CA045E00041803 /* UIImage+UAAdditions+Internal.h in Headers */,
 				6E845395237E0523007D3B1E /* UALegacyInAppMessaging+Internal.h in Headers */,
 				6E845396237E0523007D3B1E /* UAInAppMessageAssetManager+Internal.h in Headers */,
 				3CFB564424E3491A008F9CCE /* UAAuthTokenAPIClient+Internal.h in Headers */,
@@ -6143,6 +6152,7 @@
 				6E698E06267A7D5300654DB2 /* RemoteDataResponse.swift in Sources */,
 				6EC7E48226A60C060038CFDD /* ChannelProtocol.swift in Sources */,
 				6E664BDD26C4CD8700A2C8E5 /* OpenExternalURLAction.swift in Sources */,
+				3251586B272AFB2E00DF8B44 /* MediaWebView.swift in Sources */,
 				6EB11C8D2698C50F00DC698F /* AudienceUtils.swift in Sources */,
 				6E1C9C47271F76E9009EF9EF /* ViewConstraintsViewModifier.swift in Sources */,
 				6E15B71826CEB4190099C92D /* RemoteDataStore.swift in Sources */,
@@ -6259,6 +6269,7 @@
 				6E698DFC267A78CA00654DB2 /* HTTPResponse.swift in Sources */,
 				6EB11C892697AF5600DC698F /* TagGroupUpdate.swift in Sources */,
 				6E87BE1326E28F570005D20D /* AirshipInstance.swift in Sources */,
+				32515869272AFB2E00DF8B44 /* Media.swift in Sources */,
 				6E91B4452686911B00DDB1A8 /* EventUtils.swift in Sources */,
 				6E1892DE2694F1C100417887 /* ChannelRegistrar.swift in Sources */,
 				6E664BB326C46BC600A2C8E5 /* URLActionPredicate.swift in Sources */,
@@ -6302,6 +6313,7 @@
 				6E6ED1612683DBC300A2CBD0 /* AirshipVersion.swift in Sources */,
 				6E1C9C35271E901A009EF9EF /* BannerModel.swift in Sources */,
 				6E6ED1392683A58D00A2CBD0 /* Semaphore.swift in Sources */,
+				3251586A272AFB2E00DF8B44 /* ImageView.swift in Sources */,
 				6E6ED1592683DBC300A2CBD0 /* WebView.swift in Sources */,
 				3CC95B1F268E785900FE2ACD /* NotificationCategories.swift in Sources */,
 				A61517B526AEEAAB008A41C4 /* SubscriptionListUpdate.swift in Sources */,
@@ -6327,6 +6339,7 @@
 				6EFD6D752729D862005B26F1 /* FormState.swift in Sources */,
 				6E739D6826B9DB9000BC6F6D /* AttributeMutations.swift in Sources */,
 				6E6ED13B2683A58D00A2CBD0 /* Dispatcher.swift in Sources */,
+				32D6E87B2727F7060077C784 /* Image.swift in Sources */,
 				6E062D05271656F8001A74A1 /* LinearLayout.swift in Sources */,
 				6E15B72326CEC7030099C92D /* RemoteDataPayload.swift in Sources */,
 				6E664BB126C46BC600A2C8E5 /* FetchDeviceInfoActionPredicate.swift in Sources */,
@@ -6485,7 +6498,6 @@
 				6E84541B237E0575007D3B1E /* UAInAppMessage.m in Sources */,
 				3CA6C3452554ED8B00F71ABF /* UAFrequencyChecker.m in Sources */,
 				6E9F74D324E6F414001F9B05 /* UADeferredScheduleAPIClient.m in Sources */,
-				45E08F4924CA045E00041803 /* UIImage+UAAdditions+Internal.m in Sources */,
 				6E84541C237E0575007D3B1E /* UAInAppMessageDisplayContent.m in Sources */,
 				6E84541D237E0575007D3B1E /* UAInAppMessageTextInfo.m in Sources */,
 				6E84541E237E0575007D3B1E /* UAInAppMessageTextStyle.m in Sources */,
@@ -6869,6 +6881,7 @@
 				6E91B44126868C3400DDB1A8 /* RegionEvent.swift in Sources */,
 				A6F6726126E1162F008C69C3 /* JSONMatcher.swift in Sources */,
 				6E698DF126790AC300654DB2 /* AirshipLogger.swift in Sources */,
+				32515874272B038300DF8B44 /* Image.swift in Sources */,
 				6E510C262721DA86006D9126 /* ForegroundColorViewModifier.swift in Sources */,
 				6EFD6D88272A53FB005B26F1 /* Pager.swift in Sources */,
 				6E91B46A2689327D00DDB1A8 /* CustomEvent.swift in Sources */,
@@ -6878,6 +6891,7 @@
 				6E664BE326C4D6B600A2C8E5 /* WalletAction.swift in Sources */,
 				6E6ED15C2683DBC300A2CBD0 /* Base64.swift in Sources */,
 				A61517B326A9C4C3008A41C4 /* SubscriptionListEditor.swift in Sources */,
+				32515871272B007C00DF8B44 /* MediaWebView.swift in Sources */,
 				6E952921268A6C1500398B54 /* SearchEventTemplate.swift in Sources */,
 				A67F87D6268E07E800EF5F43 /* ContactAPIResponse.swift in Sources */,
 				6E510C1C2721DA6A006D9126 /* ViewFactory.swift in Sources */,
@@ -6910,6 +6924,7 @@
 				6E8BF45B26852E92009A8BD4 /* TaskRequestOptions.swift in Sources */,
 				6E510C252721DA86006D9126 /* MarginViewModifier.swift in Sources */,
 				6E698E0D267A88D600654DB2 /* EventAPIClient.swift in Sources */,
+				32515872272B007F00DF8B44 /* Media.swift in Sources */,
 				6E2D6AEF26B096B600B7C226 /* ChannelAudienceManager.swift in Sources */,
 				6E87BE1426E28F570005D20D /* AirshipInstance.swift in Sources */,
 				6E6ED16C2683DBC300A2CBD0 /* SystemVersion.swift in Sources */,
@@ -6952,6 +6967,7 @@
 				6E698E01267A78CA00654DB2 /* RequestSession.swift in Sources */,
 				6E510C272721DA86006D9126 /* BackgroundColorViewModifier.swift in Sources */,
 				6E15B74026D43F120099C92D /* NSArrayValueTransformer.swift in Sources */,
+				32515873272B008400DF8B44 /* ImageView.swift in Sources */,
 				6E664BEB26C6DB7600A2C8E5 /* Utils.swift in Sources */,
 				6E91B45326883B6E00DDB1A8 /* AppExitEvent.swift in Sources */,
 				A6F6726326E11637008C69C3 /* JSONPredicate.swift in Sources */,

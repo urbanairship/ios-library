@@ -4,7 +4,6 @@
 #import "AVFoundation/AVFoundation.h"
 #import "UAInAppMessageUtils+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
-#import "UIImage+UAAdditions+Internal.h"
 
 #if __has_include("AirshipKit/AirshipKit-Swift.h")
 #import <AirshipKit/AirshipKit-Swift.h>
