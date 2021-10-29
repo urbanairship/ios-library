@@ -37,6 +37,8 @@ struct ViewFactory {
         case let webViewModel as WebViewModel:
             AirshipWebView(model: webViewModel, constraints: constraints)
         #endif
+        case let imageButtonModel as ImageButtonModel:
+            ImageButton(model: imageButtonModel, constraints: constraints)
         default:
             Text("\(model.type.rawValue) not supported")
         }

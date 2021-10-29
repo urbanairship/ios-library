@@ -1079,6 +1079,12 @@
 		A615E215264EAFB9004FA211 /* UAPrivacyManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A615E214264EAFB9004FA211 /* UAPrivacyManagerTest.m */; };
 		A658DE192728498900007672 /* AirshipWebview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE182728498900007672 /* AirshipWebview.swift */; };
 		A658DE1A2728498900007672 /* AirshipWebview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE182728498900007672 /* AirshipWebview.swift */; };
+		A658DE0C2727020200007672 /* AirshipImageButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE0A2727020100007672 /* AirshipImageButton.swift */; };
+		A658DE1227280B3400007672 /* AirshipImageButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE0A2727020100007672 /* AirshipImageButton.swift */; };
+		A658DE0C2727020200007672 /* ImageButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE0A2727020100007672 /* ImageButton.swift */; };
+		A658DE1227280B3400007672 /* ImageButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE0A2727020100007672 /* ImageButton.swift */; };
+		A658DE2B272AFB0400007672 /* AssetLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE2A272AFB0400007672 /* AssetLoader.swift */; };
+		A658DE2C272AFB0400007672 /* AssetLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE2A272AFB0400007672 /* AssetLoader.swift */; };
 		A67F87D2268DECCE00EF5F43 /* ContactAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67F87D1268DECCE00EF5F43 /* ContactAPIClient.swift */; };
 		A67F87D3268DECCE00EF5F43 /* ContactAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67F87D1268DECCE00EF5F43 /* ContactAPIClient.swift */; };
 		A67F87D5268E07E800EF5F43 /* ContactAPIResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67F87D4268E07E800EF5F43 /* ContactAPIResponse.swift */; };
@@ -2236,6 +2242,9 @@
 		A615E214264EAFB9004FA211 /* UAPrivacyManagerTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAPrivacyManagerTest.m; sourceTree = "<group>"; };
 		A649F50A252F4F39005453CB /* UAInbox 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAInbox 2.xcdatamodel"; sourceTree = "<group>"; };
 		A658DE182728498900007672 /* AirshipWebview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipWebview.swift; sourceTree = "<group>"; };
+		A658DE0A2727020100007672 /* AirshipImageButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirshipImageButton.swift; sourceTree = "<group>"; };
+		A658DE0A2727020100007672 /* ImageButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageButton.swift; sourceTree = "<group>"; };
+		A658DE2A272AFB0400007672 /* AssetLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetLoader.swift; sourceTree = "<group>"; };
 		A67F87D1268DECCE00EF5F43 /* ContactAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactAPIClient.swift; sourceTree = "<group>"; };
 		A67F87D4268E07E800EF5F43 /* ContactAPIResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactAPIResponse.swift; sourceTree = "<group>"; };
 		A68E345826B153EC0024BE1D /* PreferenceCenterSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterSectionHeader.swift; sourceTree = "<group>"; };
@@ -3206,6 +3215,7 @@
 				6E1BACE6271E1B6E0038399E /* ViewModels.swift */,
 				6E1C9C34271E901A009EF9EF /* BannerModel.swift */,
 				6E1C9C36271E902A009EF9EF /* ModalModel.swift */,
+				A658DE2A272AFB0400007672 /* AssetLoader.swift */,
 			);
 			name = Thomas;
 			sourceTree = "<group>";
@@ -3253,6 +3263,7 @@
 				6EFD6D86272A53FB005B26F1 /* PagerController.swift */,
 				6EFD6D85272A53FA005B26F1 /* PagerIndicator.swift */,
 				6EFD6D5B27273257005B26F1 /* Shapes.swift */,
+				A658DE0A2727020100007672 /* ImageButton.swift */,
 				6E062D02271656DE001A74A1 /* Container.swift */,
 				6E062D04271656F8001A74A1 /* LinearLayout.swift */,
 				6E062D0627165709001A74A1 /* Label.swift */,
@@ -6172,6 +6183,7 @@
 				6E9D529B26C1A77C004EA16B /* ActionRegistry.swift in Sources */,
 				6E87BE0726E283850005D20D /* DeepLinkDelegate.swift in Sources */,
 				6E952923268B812000398B54 /* AccountEventTemplate.swift in Sources */,
+				A658DE2B272AFB0400007672 /* AssetLoader.swift in Sources */,
 				6E91B45B268904D900DDB1A8 /* PushReceivedEvent.swift in Sources */,
 				6E062D0D2718B505001A74A1 /* ViewConstraints.swift in Sources */,
 				6EC7E49626A8995F0038CFDD /* NamedUser.swift in Sources */,
@@ -6272,6 +6284,7 @@
 				6E1C9C4D271F78AE009EF9EF /* MarginViewModifier.swift in Sources */,
 				6E6ED1692683DBC300A2CBD0 /* NetworkMonitor.swift in Sources */,
 				6E4E5B3D26E7F91600198175 /* Attributes.swift in Sources */,
+				A658DE0C2727020200007672 /* ImageButton.swift in Sources */,
 				6E43219226EA89B6009228AB /* NativeBridgeDelegate.swift in Sources */,
 				6E411CAB2538C6A600FEE4E8 /* UARemoteData.xcdatamodeld in Sources */,
 				6E062D092716571F001A74A1 /* LabelButton.swift in Sources */,
@@ -6822,6 +6835,7 @@
 				6E91B45E268904D900DDB1A8 /* AssociateIdentifiersEvent.swift in Sources */,
 				6E9D529C26C1A77C004EA16B /* ActionRegistry.swift in Sources */,
 				6E739D8026BB01C500BC6F6D /* ChannelBulkUpdateAPIClient.swift in Sources */,
+				A658DE2C272AFB0400007672 /* AssetLoader.swift in Sources */,
 				6E15B72E26CF13BC0099C92D /* RemoteDataProvider.swift in Sources */,
 				6E698E10267A88E800654DB2 /* EventAPIResponse.swift in Sources */,
 				6E8BF45726852E88009A8BD4 /* ExpirableTask.swift in Sources */,
@@ -6941,6 +6955,7 @@
 				6E664BEB26C6DB7600A2C8E5 /* Utils.swift in Sources */,
 				6E91B45326883B6E00DDB1A8 /* AppExitEvent.swift in Sources */,
 				A6F6726326E11637008C69C3 /* JSONPredicate.swift in Sources */,
+				A658DE1227280B3400007672 /* ImageButton.swift in Sources */,
 				6E698E5C267BF63B00654DB2 /* UIKitStateTrackerAdapter.swift in Sources */,
 				6E6ED1622683DBC300A2CBD0 /* AirshipVersion.swift in Sources */,
 				6E664BB626C46BC600A2C8E5 /* AddCustomEventActionPredicate.swift in Sources */,
