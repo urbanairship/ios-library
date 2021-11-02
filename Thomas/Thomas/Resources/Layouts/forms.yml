@@ -363,6 +363,106 @@ layout:
                   end: 8
                 view:
                   type: label
+                  text: Occupation (Required)
+                  alignment: start
+                  text_styles:
+                    - bold
+                    - underlined
+                  font_size: 24
+                  foreground_color:
+                    hex: "#000000"
+
+              - size:
+                  width: 100%
+                  height: auto
+                margin:
+                  top: 8
+                  bottom: 8
+                  start: 16
+                  end: 8
+                view:
+                  type: radio_input_controller
+                  identifier: "occupation"
+                  required: true
+                  view:
+                    type: linear_layout
+                    direction: vertical
+                    items:
+                      - size:
+                          width: 100%
+                          height: auto
+                        margin:
+                          top: 8
+                        view:
+                          type: linear_layout
+                          direction: horizontal
+                          items:
+                            - size:
+                                width: auto
+                                height: auto
+                              margin:
+                                end: 8
+                                start: 8
+                              view:
+                                type: radio_input
+                                value: "person"
+                                foreground_color:
+                                  hex: "#00ff00"
+                            - size:
+                                width: 100%
+                                height: auto
+                              view:
+                                type: label
+                                text: Person
+                                alignment: start
+                                font_size: 16
+                                foreground_color:
+                                  hex: "#ff0ff0"
+                      - size:
+                          width: 100%
+                          height: auto
+                        margin:
+                          top: 8
+                        view:
+                          type: linear_layout
+                          direction: horizontal
+                          items:
+                            - size:
+                                width: auto
+                                height: auto
+                              margin:
+                                end: 8
+                                start: 8
+                              view:
+                                type: radio_input
+                                value: "robot"
+                                foreground_color:
+                                  hex: "#ff0ff0"
+                                border: 
+                                  stroke_width: 2
+                                  stroke_color:
+                                    hex: "#0000ff"
+                                  radius: 32
+                            - size:
+                                width: 100%
+                                height: auto
+                              view:
+                                type: label
+                                text: Robot
+                                alignment: start
+                                font_size: 16
+                                foreground_color:
+                                  hex: "#ff0ff0"
+              - size:
+                  width: 100%
+                  height: auto
+                margin:
+                  top: 24
+                  bottom: 8
+                  start: 16
+                  end: 8
+                view:
+                  type: label
                   text: Feedback!
                   alignment: start
                   text_styles:

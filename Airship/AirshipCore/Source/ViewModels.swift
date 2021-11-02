@@ -466,7 +466,7 @@ class CheckboxControllerModel: BaseViewModel {
     }
 }
 
-struct RadioInputControllerModel: BaseViewModel {
+class RadioInputControllerModel: BaseViewModel {
     let type = ViewType.radioInputController
     let identifier: String
     let submit: FormSubmitBehavior?
@@ -566,12 +566,14 @@ struct RadioInputModel: BaseViewModel {
     let backgroundColor: HexColor?
     let foregroundColor: HexColor
     let contentDescription: String?
+    let value: String
     
     enum CodingKeys: String, CodingKey {
         case foregroundColor = "foreground_color"
         case border = "border"
         case backgroundColor = "background_color"
         case contentDescription = "content_description"
+        case value = "value"
     }
 }
 

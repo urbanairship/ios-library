@@ -47,6 +47,10 @@ struct ViewFactory {
             CheckboxController(model: checkboxControllerModel, constraints: constraints)
         case let toggleModel as ToggleModel:
             AirshipToggle(model: toggleModel, constraints: constraints)
+        case let radioInputControlleModel as RadioInputControllerModel:
+            RadioInputController(model: radioInputControlleModel, constraints: constraints)
+        case let radioInputModel as RadioInputModel:
+            RadioInput(model: radioInputModel, constraints: constraints)
         default:
             Text("\(model.type.rawValue) not supported")
         }
