@@ -41,6 +41,12 @@ struct ViewFactory {
         #endif
         case let imageButtonModel as ImageButtonModel:
             ImageButton(model: imageButtonModel, constraints: constraints)
+        case let checkboxModel as CheckboxModel:
+            Checkbox(model: checkboxModel, constraints: constraints)
+        case let checkboxControllerModel as CheckboxControllerModel:
+            CheckboxController(model: checkboxControllerModel, constraints: constraints)
+        case let toggleModel as ToggleModel:
+            AirshipToggle(model: toggleModel, constraints: constraints)
         default:
             Text("\(model.type.rawValue) not supported")
         }

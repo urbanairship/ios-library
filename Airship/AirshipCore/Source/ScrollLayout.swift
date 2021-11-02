@@ -22,5 +22,9 @@ struct ScrollLayout : View {
         }
         .background(self.model.backgroundColor)
         .border(self.model.border)
+        .frame(idealWidth: constraints.width,
+               maxWidth: constraints.width,
+               idealHeight: constraints.height,
+               maxHeight: constraints.height)
     }
 }

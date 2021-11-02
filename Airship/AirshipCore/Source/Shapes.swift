@@ -43,15 +43,13 @@ struct Shapes {
         
     @ViewBuilder
     static func rectangle(color: HexColor?, border: Border?) -> some View {
-        if let color = color?.toColor() {
-            if let border = border {
-                rectangle(border: border)
-                    .background(rectangleBackground(border: border, color: color))
-            } else {
-                Rectangle().fill(color)
-            }
-        } else {
+        let color = color?.toColor() ?? Color.clear
+        
+        if let border = border {
             rectangle(border: border)
+                .background(rectangleBackground(border: border, color: color))
+        } else {
+            Rectangle().fill(color)
         }
     }
     
@@ -69,15 +67,12 @@ struct Shapes {
     
     @ViewBuilder
     static func circle(color: HexColor?, border: Border?) -> some View {
-        if let color = color?.toColor() {
-            if let border = border {
-                circle(border: border)
-                    .background(Circle().fill(color))
-            } else {
-                Circle().fill(color)
-            }
-        } else {
+        let color = color?.toColor() ?? Color.clear
+        if let border = border {
             circle(border: border)
+                .background(Circle().fill(color))
+        } else {
+            Circle().fill(color)
         }
     }
 }

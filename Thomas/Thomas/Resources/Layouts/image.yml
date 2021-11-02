@@ -37,7 +37,7 @@ layout:
           alignment: start
           text_styles:
             - bold
-            - underline
+            - underlined
           font_size: 16
           foreground_color:
             hex: "#000000"
@@ -72,7 +72,7 @@ layout:
           alignment: start
           text_styles:
             - bold
-            - underline
+            - underlined
           font_size: 16
           foreground_color:
             hex: "#000000"

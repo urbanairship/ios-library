@@ -10,47 +10,443 @@ layout:
     radius: 15
   view:
     type: linear_layout
+    background_color:
+      hex: "#ffffff"
     direction: vertical
     items:
       - size:
           width: 100%
-          height: auto
+          height: 100%
+        margin:
+          top: 16
+          bottom: 16
+          start: 16
+          end: 16
         view:
-          identifier: "bar"
-          type: text_input  
-          foreground_color:
-            hex: "#333333"
-          alignment: start
-          text_styles:
-            - italic
-          font_families:
-            - permanent_marker
-            - casual
-          font_size: 14
-          required: false
-      - size:
-          width: 100%
-          height: auto
-        view:
-          identifier: "child_form"
-          type: "form_controller"
+          type: scroll_layout
+          direction: vertical
+          border:
+            stroke_color:
+              hex: "#00FF00"
+            stroke_width: 3
           view:
-            identifier: "foo"
-            type: text_input  
-            foreground_color:
-              hex: "#333333"
-            alignment: start
-            text_styles:
-              - italic
-            font_families:
-              - permanent_marker
-              - casual
-            font_size: 14
-            required: true
+            type: linear_layout
+            direction: vertical
+            items:
+              - size:
+                  width: 100%
+                  height: auto
+                margin:
+                  top: 8
+                  bottom: 8
+                  start: 16
+                  end: 8
+                view:
+                  type: label
+                  text: Favorite colors (select 1-2)
+                  alignment: start
+                  text_styles:
+                    - bold
+                    - underlined
+                  font_size: 24
+                  foreground_color:
+                    hex: "#000000"
+              - size:
+                  width: 100%
+                  height: auto
+                margin:
+                  top: 8
+                  bottom: 8
+                  start: 16
+                  end: 8
+                view:
+                  type: checkbox_controller
+                  identifier: "favorite_colors"
+                  max_selection: 2
+                  min_selection: 1
+                  required: true
+                  view:
+                    type: linear_layout
+                    direction: vertical
+                    items:
 
+                      - size:
+                          width: 100%
+                          height: auto
+                        margin:
+                          top: 8
+                        view:
+                          type: linear_layout
+                          direction: horizontal
+                          items:
+                            - size:
+                                width: auto
+                                height: auto
+                              margin:
+                                end: 8
+                                start: 8
+                              view:
+                                type: checkbox
+                                identifier: "purple_id"
+                                value: "purple"
+                                style:
+                                  type: checkbox
+                                  checked_colors:
+                                    check_mark: 
+                                      hex: "#FFFFFF"
+                                    border: 
+                                      hex: "#9400D3"
+                                    background: 
+                                      hex: "#9400D3"
+                                border: 
+                                  stroke_width: 2
+                                  stroke_color:
+                                    hex: "#000000"
+                                  radius: 8 
+                            - size:
+                                width: 100%
+                                height: auto
+                              view:
+                                type: label
+                                text: Purple
+                                alignment: start
+                                font_size: 16
+                                foreground_color:
+                                  hex: "#9400D3"
+                      - size:
+                          width: 100%
+                          height: auto
+                        margin:
+                          top: 8
+                        view:
+                          type: linear_layout
+                          direction: horizontal
+                          items:
+                            - size:
+                                width: auto
+                                height: auto
+                              margin:
+                                end: 8
+                                start: 8
+                              view:
+                                type: checkbox
+                                identifier: "blue-id"
+                                value: "blue"
+                                style:
+                                  type: checkbox
+                                  checked_colors:
+                                    check_mark: 
+                                      hex: "#FFFFFF"
+                                    border: 
+                                      hex: "#0000ff"
+                                    background: 
+                                      hex: "#0000ff"
+                                border: 
+                                  stroke_width: 2
+                                  stroke_color:
+                                    hex: "#000000"
+                                  radius: 8 
+                            - size:
+                                width: 100%
+                                height: auto
+                              view:
+                                type: label
+                                text: Blue
+                                alignment: start
+                                font_size: 16
+                                foreground_color:
+                                  hex: "#0000ff"
+
+                      - size:
+                          width: 100%
+                          height: auto
+                        margin:
+                          top: 8
+                        view:
+                          type: linear_layout
+                          direction: horizontal
+                          items:
+                            - size:
+                                width: auto
+                                height: auto
+                              margin:
+                                end: 8
+                                start: 8
+                              view:
+                                type: checkbox
+                                identifier: "pea_green_id"
+                                value: "pea_green"
+                                style:
+                                  type: checkbox
+                                  checked_colors:
+                                    check_mark: 
+                                      hex: "#FFFFFF"
+                                    border: 
+                                      hex: "#739122"
+                                    background: 
+                                      hex: "#739122"
+                                border: 
+                                  stroke_width: 2
+                                  stroke_color:
+                                    hex: "#000000"
+                                  radius: 8 
+                            - size:
+                                width: 100%
+                                height: auto
+                              view:
+                                type: label
+                                text: Pea Green
+                                alignment: start
+                                font_size: 16
+                                foreground_color:
+                                  hex: "#739122"
+
+
+                      - size:
+                          width: 100%
+                          height: auto
+                        margin:
+                          top: 8
+                        view:
+                          type: linear_layout
+                          direction: horizontal
+                          items:
+                            - size:
+                                width: auto
+                                height: auto
+                              margin:
+                                end: 8
+                                start: 8
+                              view:
+                                type: checkbox
+                                identifier: "vomit-id"
+                                value: "vomit"
+                                style:
+                                  type: checkbox
+                                  checked_colors:
+                                    check_mark: 
+                                      hex: "#FFFFFF"
+                                    border: 
+                                      hex: "#a2a415"
+                                    background: 
+                                      hex: "#a2a415"
+                                border: 
+                                  stroke_width: 2
+                                  stroke_color:
+                                    hex: "#000000"
+                                  radius: 8 
+                            - size:
+                                width: 100%
+                                height: auto
+                              view:
+                                type: label
+                                text: Vomit Yellow
+                                alignment: start
+                                font_size: 16
+                                foreground_color:
+                                  hex: "#a2a415"
+
+              - size:
+                  width: 100%
+                  height: auto
+                margin:
+                  top: 24
+                  bottom: 8
+                  start: 16
+                  end: 8
+                view:
+                  type: label
+                  text: Fruit
+                  alignment: start
+                  text_styles:
+                    - bold
+                    - underlined
+                  font_size: 24
+                  foreground_color:
+                    hex: "#000000"
+              - size:
+                  width: 100%
+                  height: auto
+                margin:
+                  top: 8
+                  bottom: 8
+                  start: 16
+                  end: 8
+                view:
+                  type: checkbox_controller
+                  identifier: "fruit_preferences"
+                  view:
+                    type: linear_layout
+                    direction: vertical
+                    items:
+
+                      - size:
+                          width: 100%
+                          height: auto
+                        margin:
+                          top: 8
+                        view:
+                          type: linear_layout
+                          direction: horizontal
+                          items:
+                            - size:
+                                width: 100%
+                                height: auto
+                              view:
+                                type: label
+                                text: Apples 🍎
+                                alignment: start
+                                font_size: 16
+                                foreground_color:
+                                  hex: "#ff0000"
+                            - size:
+                                width: auto
+                                height: auto
+                              margin:
+                                end: 8
+                                start: 8
+                              view:
+                                type: checkbox
+                                identifier: "apples_id"
+                                value: "apples"
+                                style:
+                                  type: switch
+                                  toggle_colors:
+                                    on: 
+                                      hex: "#ff0000"
+                                    off:
+                                      hex: "#D3D3D3"
+
+                      - size:
+                          width: 100%
+                          height: auto
+                        margin:
+                          top: 8
+                        view:
+                          type: linear_layout
+                          direction: horizontal
+                          items:
+                            - size:
+                                width: 100%
+                                height: auto
+                              view:
+                                type: label
+                                text: Kiwi 🥝
+                                alignment: start
+                                font_size: 16
+                                foreground_color:
+                                  hex: "#8ee53f"
+                            - size:
+                                width: auto
+                                height: auto
+                              margin:
+                                end: 8
+                                start: 8
+                              view:
+                                type: checkbox
+                                identifier: "apples_id"
+                                value: "kiwi"
+                                style:
+                                  type: switch
+                                  toggle_colors:
+                                    on: 
+                                      hex: "#8ee53f"
+                                    off:
+                                      hex: "#D3D3D3"
+              - size:
+                  width: 100%
+                  height: auto
+                margin:
+                  top: 24
+                  bottom: 8
+                  start: 16
+                  end: 8
+                view:
+                  type: label
+                  text: Feedback!
+                  alignment: start
+                  text_styles:
+                    - bold
+                    - underlined
+                  font_size: 24
+                  foreground_color:
+                    hex: "#000000"
+
+              - size:
+                  width: 100%
+                  height: 300
+                margin:
+                  top: 24
+                  bottom: 8
+                  start: 16
+                  end: 8
+                view:
+                  type: text_input
+                  text: Feedback?
+                  alignment: start
+                  background_color:
+                      hex: "#D3D3D3"
+                      alpha: .5
+                  identifier: "more"
+                  text_styles:
+                    - bold
+                    - underlined
+                  font_size: 24
+                  foreground_color:
+                    hex: "#000000"
+                  
+
+                    
       - size:
           width: 100%
           height: auto
+        margin:
+          top: 4
+          bottom: 8
+          start: 16
+          end: 8
+        view:
+          type: linear_layout
+          direction: horizontal
+          items:
+            - size:
+                width: auto
+                height: auto
+              view:
+                type: label
+                text: Do you agree to things? (Required)
+                alignment: start
+                font_size: 16
+                foreground_color:
+                  hex: "#000000"
+            - size:
+                width: auto
+                height: auto
+              margin:
+                end: 8
+                start: 8
+              view:
+                type: toggle
+                identifier: "agree-things"
+                required: true
+                style:
+                  type: checkbox
+                  checked_colors:
+                    check_mark: 
+                      hex: "#0000ff"
+                border: 
+                  stroke_width: 2
+                  stroke_color:
+                    hex: "#0000ff"
+                  radius: 8 
+      - size:
+          width: 100%
+          height: auto
+        margin:
+          top: 16
+          start: 32
+          end: 32
+          bottom: 16
         view:
           type: label_button
           identifier: button1

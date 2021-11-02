@@ -15,7 +15,9 @@ struct TextInput : View {
             set: { self.input = $0; self.updateValue($0) }
         )
 
-        TextField("", text: binding)
+        TextField(self.model.placeHolder ?? "", text: binding)
+            .foreground(model.foregroundColor)
+            .background(model.backgroundColor)
             .constraints(constraints)
             .onAppear {
                 updateValue(input)

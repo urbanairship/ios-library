@@ -31,6 +31,12 @@ enum ShapeType: String, Decodable {
     case circle = "circle"
 }
 
+
+enum ToggleStyleType: String, Decodable {
+    case switchStyle = "switch"
+    case checkboxStyle = "checkbox"
+}
+
 enum ViewType: String, Decodable {
     case container = "container"
     case linearLayout = "linear_layout"
@@ -52,6 +58,7 @@ enum ViewType: String, Decodable {
     case textInput = "text_input"
     case score = "score"
     case npsController = "nps_controller"
+    case toggle = "toggle"
 }
 
 protocol BaseViewModel: Decodable {
@@ -119,6 +126,8 @@ private struct BaseViewModelWrapper : Decodable {
             self.view = try singleValueContainer.decode(ScoreModel.self)
         case .npsController:
             self.view = try singleValueContainer.decode(NpsControllerModel.self)
+        case .toggle:
+            self.view = try singleValueContainer.decode(ToggleModel.self)
         }
     }
     
@@ -432,7 +441,7 @@ class NpsControllerModel: BaseViewModel {
 }
 
 
-struct CheckboxControllerModel: BaseViewModel {
+class CheckboxControllerModel: BaseViewModel {
     let type = ViewType.checkboxController
     let identifier: String
     let border: Border?
@@ -452,8 +461,8 @@ struct CheckboxControllerModel: BaseViewModel {
         case backgroundColor = "background_color"
         case _view = "view"
         case isRequired = "required"
-        case minSelection = "minSelection"
-        case maxSelection = "maxSelection"
+        case minSelection = "min_selection"
+        case maxSelection = "max_selection"
     }
 }
 
@@ -491,6 +500,7 @@ struct TextInputModel: BaseViewModel {
     let identifier: String
     let contentDescription: String?
     let isRequired: Bool?
+    let placeHolder: String?
 
     enum CodingKeys: String, CodingKey {
         case fontSize = "font_size"
@@ -502,25 +512,51 @@ struct TextInputModel: BaseViewModel {
         case identifier = "identifier"
         case contentDescription = "content_description"
         case isRequired = "required"
+        case placeHolder = "place_holder"
     }
 }
 
-struct CheckboxModel: BaseViewModel {
-    let type = ViewType.checkbox
+class ToggleModel: BaseViewModel {
+    let type = ViewType.toggle
     let border: Border?
     let backgroundColor: HexColor?
-    let foregroundColor: HexColor
     let identifier: String
     let contentDescription: String?
     let isRequired: Bool?
+    
+    private let _style: BaseToggleStyleModelWrapper
+    lazy var style: BaseToggleStyleModel = {
+        return _style.style
+    }()
 
     enum CodingKeys: String, CodingKey {
-        case foregroundColor = "foreground_color"
         case border = "border"
         case backgroundColor = "background_color"
         case identifier = "identifier"
         case contentDescription = "content_description"
         case isRequired = "required"
+        case _style = "style"
+    }
+}
+
+class CheckboxModel: BaseViewModel {
+    let type = ViewType.checkbox
+    let border: Border?
+    let backgroundColor: HexColor?
+    let contentDescription: String?
+    let value: String
+    
+    private let _style: BaseToggleStyleModelWrapper
+    lazy var style: BaseToggleStyleModel = {
+        return _style.style
+    }()
+    
+    enum CodingKeys: String, CodingKey {
+        case border = "border"
+        case backgroundColor = "background_color"
+        case contentDescription = "content_description"
+        case value = "value"
+        case _style = "style"
     }
 }
 
@@ -529,17 +565,13 @@ struct RadioInputModel: BaseViewModel {
     let border: Border?
     let backgroundColor: HexColor?
     let foregroundColor: HexColor
-    let identifier: String
     let contentDescription: String?
-    let isRequired: Bool
     
     enum CodingKeys: String, CodingKey {
         case foregroundColor = "foreground_color"
         case border = "border"
         case backgroundColor = "background_color"
-        case identifier = "identifier"
         case contentDescription = "content_description"
-        case isRequired = "required"
     }
 }
 
@@ -559,6 +591,71 @@ struct ScoreModel: BaseViewModel {
         case identifier = "identifier"
         case contentDescription = "content_description"
         case isRequired = "required"
+    }
+}
+
+protocol BaseToggleStyleModel: Decodable {
+    var type: ToggleStyleType { get }
+}
+
+private struct BaseToggleStyleModelWrapper : Decodable {
+    let style: BaseToggleStyleModel
+
+    private enum CodingKeys: String, CodingKey {
+        case type
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let type = try container.decode(ToggleStyleType.self, forKey: .type)
+        let singleValueContainer = try decoder.singleValueContainer()
+
+        switch type {
+        case .switchStyle:
+            self.style = try singleValueContainer.decode(SwitchToggleStyleModel.self)
+        case .checkboxStyle:
+            self.style = try singleValueContainer.decode(CheckboxToggleStyleModel.self)
+        }
+    }
+}
+
+struct SwitchToggleStyleModel: BaseToggleStyleModel {
+    let type = ToggleStyleType.switchStyle
+    let colors: ToggleColors
+    
+    enum CodingKeys: String, CodingKey {
+        case colors = "toggle_colors"
+    }
+    
+    struct ToggleColors: Decodable {
+        var on: HexColor
+        var off: HexColor
+
+        enum CodingKeys: String, CodingKey {
+            case on = "on"
+            case off = "off"
+        }
+    }
+}
+
+struct CheckboxToggleStyleModel: BaseToggleStyleModel {
+    let type = ToggleStyleType.checkboxStyle
+    let checkedColors: CheckedColors
+    
+    enum CodingKeys: String, CodingKey {
+        case checkedColors = "checked_colors"
+    }
+    
+    struct CheckedColors: Decodable {
+        var checkMark: HexColor
+        var border: HexColor?
+        var background: HexColor?
+
+        enum CodingKeys: String, CodingKey {
+            case checkMark = "check_mark"
+            case border = "border"
+            case background = "background"
+        }
     }
 }
 
@@ -667,9 +764,9 @@ enum SizeConstraint: Decodable, Equatable {
 }
 
 struct Border: Decodable {
-    let radius: Double?
-    let strokeWidth: Double?
-    let strokeColor: HexColor?
+    var radius: Double?
+    var strokeWidth: Double?
+    var strokeColor: HexColor?
     
     enum CodingKeys: String, CodingKey {
         case radius = "radius"

@@ -19,4 +19,12 @@ extension View {
         }
     }
 
+    func addTapGesture(action: @escaping () -> Void) -> some View {
+        #if os(tvOS)
+        // broken on tvOS for now
+        self
+        #else
+        self.simultaneousGesture(TapGesture().onEnded(action))
+        #endif
+    }
 }

@@ -57,9 +57,9 @@ private struct ChildFormController : View {
         return ViewFactory.createView(model: self.model.view, constraints: constraints)
             .environmentObject(formState)
             .onAppear {
-                self.cancellable = self.formState.$data.sink { _ in
+                self.cancellable = self.formState.$data.sink { incoming in
                     self.parentFormState.updateFormInput(self.model.identifier,
-                                                         data: self.formState.data)
+                                                         data: incoming)
                 }
             }
     }

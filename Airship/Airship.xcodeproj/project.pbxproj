@@ -858,6 +858,11 @@
 		6E87BE1426E28F570005D20D /* AirshipInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BE1226E28F570005D20D /* AirshipInstance.swift */; };
 		6E87BE1626E29BC90005D20D /* TestAirshipInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BE1526E29BC90005D20D /* TestAirshipInstance.swift */; };
 		6E87BE1B26E2C59D0005D20D /* TestAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BE1726E2C5940005D20D /* TestAnalytics.swift */; };
+		6E887CD1272C5E8400E83363 /* CheckboxState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E887CD0272C5E8400E83363 /* CheckboxState.swift */; };
+		6E887CD3272C5F5000E83363 /* Checkbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E887CD2272C5F5000E83363 /* Checkbox.swift */; };
+		6E887CD5272C5F5A00E83363 /* CheckboxController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E887CD4272C5F5A00E83363 /* CheckboxController.swift */; };
+		6E887CD6272C5FEF00E83363 /* CheckboxState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E887CD0272C5E8400E83363 /* CheckboxState.swift */; };
+		6E887CD7272C602B00E83363 /* CheckboxController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E887CD4272C5F5A00E83363 /* CheckboxController.swift */; };
 		6E88ECC4262E92FF00C46A23 /* UAChatViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E88ECC3262E92FF00C46A23 /* UAChatViewController.xib */; };
 		6E88EDB2262F7C0B00C46A23 /* MockChatDAO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E88EDB1262F7C0B00C46A23 /* MockChatDAO.swift */; };
 		6E88EF042703D9B100469E2A /* UADisposable.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E88EF022703D9B100469E2A /* UADisposable.m */; };
@@ -1018,6 +1023,13 @@
 		6EEAE81624CF93150046E311 /* UAScheduleDeferredData.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EEAE81224CF93140046E311 /* UAScheduleDeferredData.m */; };
 		6EEAE81824CF9FBF0046E311 /* UAScheduleDeferredDataTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EEAE81724CF9FBF0046E311 /* UAScheduleDeferredDataTest.m */; };
 		6EF02DF02714EB500008B6C9 /* Thomas.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF02DEF2714EB500008B6C9 /* Thomas.swift */; };
+		6EF27DD927306C9100548DA3 /* AirshipToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF27DD827306C9100548DA3 /* AirshipToggle.swift */; };
+		6EF27DDB27306CA600548DA3 /* AirshipCheckboxToggleStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF27DDA27306CA600548DA3 /* AirshipCheckboxToggleStyle.swift */; };
+		6EF27DDC27306CA600548DA3 /* AirshipCheckboxToggleStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF27DDA27306CA600548DA3 /* AirshipCheckboxToggleStyle.swift */; };
+		6EF27DDE27306CB300548DA3 /* AirshipSwitchToggleStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF27DDD27306CB300548DA3 /* AirshipSwitchToggleStyle.swift */; };
+		6EF27DDF27306CB300548DA3 /* AirshipSwitchToggleStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF27DDD27306CB300548DA3 /* AirshipSwitchToggleStyle.swift */; };
+		6EF27DE027308CAD00548DA3 /* AirshipToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF27DD827306C9100548DA3 /* AirshipToggle.swift */; };
+		6EF27DE127308CAD00548DA3 /* Checkbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E887CD2272C5F5000E83363 /* Checkbox.swift */; };
 		6EFB377D234595C9005E4E44 /* UAMessageCenterNativeBridgeExtensionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EFB377C234595C9005E4E44 /* UAMessageCenterNativeBridgeExtensionTest.m */; };
 		6EFBDEE1262DF71C008380AC /* MockDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFBDEE0262DF71C008380AC /* MockDispatcher.swift */; };
 		6EFD6D4B27272333005B26F1 /* EmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFD6D4A27272333005B26F1 /* EmptyView.swift */; };
@@ -1091,12 +1103,10 @@
 		A61517C626B009D6008A41C4 /* SubscriptionListFetchResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61517C126B009D6008A41C4 /* SubscriptionListFetchResponse.swift */; };
 		A61517C726B009D6008A41C4 /* SubscriptionListFetchResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61517C126B009D6008A41C4 /* SubscriptionListFetchResponse.swift */; };
 		A615E215264EAFB9004FA211 /* UAPrivacyManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A615E214264EAFB9004FA211 /* UAPrivacyManagerTest.m */; };
-		A658DE192728498900007672 /* AirshipWebview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE182728498900007672 /* AirshipWebview.swift */; };
-		A658DE1A2728498900007672 /* AirshipWebview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE182728498900007672 /* AirshipWebview.swift */; };
-		A658DE0C2727020200007672 /* AirshipImageButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE0A2727020100007672 /* AirshipImageButton.swift */; };
-		A658DE1227280B3400007672 /* AirshipImageButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE0A2727020100007672 /* AirshipImageButton.swift */; };
 		A658DE0C2727020200007672 /* ImageButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE0A2727020100007672 /* ImageButton.swift */; };
 		A658DE1227280B3400007672 /* ImageButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE0A2727020100007672 /* ImageButton.swift */; };
+		A658DE192728498900007672 /* AirshipWebview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE182728498900007672 /* AirshipWebview.swift */; };
+		A658DE1A2728498900007672 /* AirshipWebview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE182728498900007672 /* AirshipWebview.swift */; };
 		A658DE2B272AFB0400007672 /* AssetLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE2A272AFB0400007672 /* AssetLoader.swift */; };
 		A658DE2C272AFB0400007672 /* AssetLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE2A272AFB0400007672 /* AssetLoader.swift */; };
 		A67F87D2268DECCE00EF5F43 /* ContactAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67F87D1268DECCE00EF5F43 /* ContactAPIClient.swift */; };
@@ -2011,6 +2021,9 @@
 		6E87BE1226E28F570005D20D /* AirshipInstance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipInstance.swift; sourceTree = "<group>"; };
 		6E87BE1526E29BC90005D20D /* TestAirshipInstance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAirshipInstance.swift; sourceTree = "<group>"; };
 		6E87BE1726E2C5940005D20D /* TestAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAnalytics.swift; sourceTree = "<group>"; };
+		6E887CD0272C5E8400E83363 /* CheckboxState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckboxState.swift; sourceTree = "<group>"; };
+		6E887CD2272C5F5000E83363 /* Checkbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Checkbox.swift; sourceTree = "<group>"; };
+		6E887CD4272C5F5A00E83363 /* CheckboxController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckboxController.swift; sourceTree = "<group>"; };
 		6E88ECC3262E92FF00C46A23 /* UAChatViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAChatViewController.xib; sourceTree = "<group>"; };
 		6E88EDB1262F7C0B00C46A23 /* MockChatDAO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockChatDAO.swift; sourceTree = "<group>"; };
 		6E88EF022703D9B100469E2A /* UADisposable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UADisposable.m; path = Internal/UADisposable.m; sourceTree = "<group>"; };
@@ -2146,6 +2159,9 @@
 		6EEAE81224CF93140046E311 /* UAScheduleDeferredData.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAScheduleDeferredData.m; sourceTree = "<group>"; };
 		6EEAE81724CF9FBF0046E311 /* UAScheduleDeferredDataTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAScheduleDeferredDataTest.m; sourceTree = "<group>"; };
 		6EF02DEF2714EB500008B6C9 /* Thomas.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Thomas.swift; sourceTree = "<group>"; };
+		6EF27DD827306C9100548DA3 /* AirshipToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipToggle.swift; sourceTree = "<group>"; };
+		6EF27DDA27306CA600548DA3 /* AirshipCheckboxToggleStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipCheckboxToggleStyle.swift; sourceTree = "<group>"; };
+		6EF27DDD27306CB300548DA3 /* AirshipSwitchToggleStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipSwitchToggleStyle.swift; sourceTree = "<group>"; };
 		6EF2DF0D1E5CBAE30062099A /* UAScheduleDelayData+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAScheduleDelayData+Internal.h"; sourceTree = "<group>"; };
 		6EF2DF0E1E5CBAE30062099A /* UAScheduleDelayData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAScheduleDelayData.m; sourceTree = "<group>"; };
 		6EFB377C234595C9005E4E44 /* UAMessageCenterNativeBridgeExtensionTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAMessageCenterNativeBridgeExtensionTest.m; sourceTree = "<group>"; };
@@ -2261,9 +2277,8 @@
 		A61517C126B009D6008A41C4 /* SubscriptionListFetchResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubscriptionListFetchResponse.swift; sourceTree = "<group>"; };
 		A615E214264EAFB9004FA211 /* UAPrivacyManagerTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAPrivacyManagerTest.m; sourceTree = "<group>"; };
 		A649F50A252F4F39005453CB /* UAInbox 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAInbox 2.xcdatamodel"; sourceTree = "<group>"; };
-		A658DE182728498900007672 /* AirshipWebview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipWebview.swift; sourceTree = "<group>"; };
-		A658DE0A2727020100007672 /* AirshipImageButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirshipImageButton.swift; sourceTree = "<group>"; };
 		A658DE0A2727020100007672 /* ImageButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageButton.swift; sourceTree = "<group>"; };
+		A658DE182728498900007672 /* AirshipWebview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipWebview.swift; sourceTree = "<group>"; };
 		A658DE2A272AFB0400007672 /* AssetLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetLoader.swift; sourceTree = "<group>"; };
 		A67F87D1268DECCE00EF5F43 /* ContactAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactAPIClient.swift; sourceTree = "<group>"; };
 		A67F87D4268E07E800EF5F43 /* ContactAPIResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactAPIResponse.swift; sourceTree = "<group>"; };
@@ -3280,6 +3295,7 @@
 		6E1C9C42271F744E009EF9EF /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				6EF27DD627306C6900548DA3 /* Forms */,
 				6EFD6D84272A53FA005B26F1 /* Pager.swift */,
 				6EFD6D86272A53FB005B26F1 /* PagerController.swift */,
 				6EFD6D85272A53FA005B26F1 /* PagerIndicator.swift */,
@@ -3296,9 +3312,6 @@
 				32515866272AFB2E00DF8B44 /* Media.swift */,
 				32515868272AFB2E00DF8B44 /* MediaWebView.swift */,
 				6EFD6D4A27272333005B26F1 /* EmptyView.swift */,
-				6EFD6D6D27290C0B005B26F1 /* FormController.swift */,
-				6EFD6D7027290C16005B26F1 /* TextInput.swift */,
-				6EFD6D77272A1F26005B26F1 /* NpsController.swift */,
 				A658DE182728498900007672 /* AirshipWebview.swift */,
 			);
 			name = Views;
@@ -4344,6 +4357,21 @@
 			name = Custom;
 			sourceTree = "<group>";
 		};
+		6EF27DD627306C6900548DA3 /* Forms */ = {
+			isa = PBXGroup;
+			children = (
+				6EFD6D7027290C16005B26F1 /* TextInput.swift */,
+				6E887CD2272C5F5000E83363 /* Checkbox.swift */,
+				6E887CD4272C5F5A00E83363 /* CheckboxController.swift */,
+				6EF27DD827306C9100548DA3 /* AirshipToggle.swift */,
+				6EF27DDA27306CA600548DA3 /* AirshipCheckboxToggleStyle.swift */,
+				6EF27DDD27306CB300548DA3 /* AirshipSwitchToggleStyle.swift */,
+				6EFD6D6D27290C0B005B26F1 /* FormController.swift */,
+				6EFD6D77272A1F26005B26F1 /* NpsController.swift */,
+			);
+			name = Forms;
+			sourceTree = "<group>";
+		};
 		6EFB377B2345959C005E4E44 /* NativeBridge */ = {
 			isa = PBXGroup;
 			children = (
@@ -4358,6 +4386,7 @@
 				6EFD6D742729D862005B26F1 /* FormState.swift */,
 				6EFD6D81272A53AE005B26F1 /* PagerState.swift */,
 				6E46A27B272B63680089CDE3 /* ThomasContext.swift */,
+				6E887CD0272C5E8400E83363 /* CheckboxState.swift */,
 			);
 			name = Environment;
 			sourceTree = "<group>";
@@ -6236,6 +6265,8 @@
 				6E8BF45326852E4B009A8BD4 /* TaskRequest.swift in Sources */,
 				6E91B44026868C3400DDB1A8 /* RegionEvent.swift in Sources */,
 				6E87BD8D26D815780005D20D /* AppIntegration.swift in Sources */,
+				6E887CD3272C5F5000E83363 /* Checkbox.swift in Sources */,
+				6EF27DDB27306CA600548DA3 /* AirshipCheckboxToggleStyle.swift in Sources */,
 				6EB11C8B2697AFC700DC698F /* AttributeUpdate.swift in Sources */,
 				6E91B4692689327D00DDB1A8 /* CustomEvent.swift in Sources */,
 				6E664BB926C46BC600A2C8E5 /* AttributesActionPredicate.swift in Sources */,
@@ -6278,6 +6309,7 @@
 				6E87BD6726D6A39A0005D20D /* Config.swift in Sources */,
 				6E664BBD26C46BC600A2C8E5 /* TagsActionPredicate.swift in Sources */,
 				6E6ED16B2683DBC300A2CBD0 /* SystemVersion.swift in Sources */,
+				6EF27DD927306C9100548DA3 /* AirshipToggle.swift in Sources */,
 				6E6ED15D2683DBC300A2CBD0 /* BeveledLoadingIndicator.swift in Sources */,
 				6E1C9C37271E902A009EF9EF /* ModalModel.swift in Sources */,
 				6E698E03267A799500654DB2 /* AirshipErrors.swift in Sources */,
@@ -6299,7 +6331,9 @@
 				8401769626C5715E00373AF7 /* VersionMatcher.swift in Sources */,
 				6E91B44226868C3400DDB1A8 /* ProximityRegion.swift in Sources */,
 				6EC7E47C26A6060E0038CFDD /* TaskManagerProtocol.swift in Sources */,
+				6E887CD5272C5F5A00E83363 /* CheckboxController.swift in Sources */,
 				6E664BCD26C48CBF00A2C8E5 /* ModifyTagsAction.swift in Sources */,
+				6EF27DDE27306CB300548DA3 /* AirshipSwitchToggleStyle.swift in Sources */,
 				6E46A279272B53CD0089CDE3 /* ButtonClickModifiers.swift in Sources */,
 				3CA84AAE26DE255200A59685 /* EventStore.swift in Sources */,
 				3CC8AA0626BB3C7900405614 /* Push.swift in Sources */,
@@ -6345,6 +6379,7 @@
 				6E664BA526C4417400A2C8E5 /* ShareActionPredicate.swift in Sources */,
 				8401769A26C5725800373AF7 /* JSONUtils.swift in Sources */,
 				6E6ED16D2683DBC300A2CBD0 /* BespokeCloseView.swift in Sources */,
+				6E887CD1272C5E8400E83363 /* CheckboxState.swift in Sources */,
 				6E87BDB526DEE61F0005D20D /* ComponentDisableHelper.swift in Sources */,
 				3CA84ABA26DE257200A59685 /* AnalyticsProtocol.swift in Sources */,
 				6ED735DD26C7401D003B0A7D /* TagEditor.swift in Sources */,
@@ -6828,6 +6863,7 @@
 				6E46A280272B68660089CDE3 /* ThomasEventHandler.swift in Sources */,
 				6E510C1B2721DA67006D9126 /* Thomas.swift in Sources */,
 				3C8F915C26B881430097E9B9 /* APNSRegistration.swift in Sources */,
+				6EF27DDC27306CA600548DA3 /* AirshipCheckboxToggleStyle.swift in Sources */,
 				6E6ED1602683DBC300A2CBD0 /* AirshipCoreResources.swift in Sources */,
 				6E664BDE26C4CD8700A2C8E5 /* OpenExternalURLAction.swift in Sources */,
 				6E15B71926CEB4190099C92D /* RemoteDataStore.swift in Sources */,
@@ -6941,6 +6977,7 @@
 				A6AF655E271EF4390031410F /* ModalModel.swift in Sources */,
 				6E664BBE26C46BC600A2C8E5 /* TagsActionPredicate.swift in Sources */,
 				6E952930268BBD7D00398B54 /* RetailEventTemplate.swift in Sources */,
+				6E887CD7272C602B00E83363 /* CheckboxController.swift in Sources */,
 				6E1892B2268CE8FE00417887 /* Lock.swift in Sources */,
 				3CA84AB326DE255200A59685 /* EventStoreProtocol.swift in Sources */,
 				6E8BF45B26852E92009A8BD4 /* TaskRequestOptions.swift in Sources */,
@@ -6987,6 +7024,7 @@
 				6E411CAC2538C6A600FEE4E8 /* UARemoteData.xcdatamodeld in Sources */,
 				6E46A274272B19760089CDE3 /* ViewExtensions.swift in Sources */,
 				6EC7E48E26A738C80038CFDD /* ContactData.swift in Sources */,
+				6EF27DE027308CAD00548DA3 /* AirshipToggle.swift in Sources */,
 				6E698E01267A78CA00654DB2 /* RequestSession.swift in Sources */,
 				6E510C272721DA86006D9126 /* BackgroundColorViewModifier.swift in Sources */,
 				6E15B74026D43F120099C92D /* NSArrayValueTransformer.swift in Sources */,
@@ -6994,6 +7032,7 @@
 				6E664BEB26C6DB7600A2C8E5 /* Utils.swift in Sources */,
 				6E91B45326883B6E00DDB1A8 /* AppExitEvent.swift in Sources */,
 				A6F6726326E11637008C69C3 /* JSONPredicate.swift in Sources */,
+				6EF27DE127308CAD00548DA3 /* Checkbox.swift in Sources */,
 				A658DE1227280B3400007672 /* ImageButton.swift in Sources */,
 				6E698E5C267BF63B00654DB2 /* UIKitStateTrackerAdapter.swift in Sources */,
 				6E6ED1622683DBC300A2CBD0 /* AirshipVersion.swift in Sources */,
@@ -7004,6 +7043,7 @@
 				3CA84AB526DE255200A59685 /* EventManagerProtocol.swift in Sources */,
 				3CC95B20268E785900FE2ACD /* NotificationCategories.swift in Sources */,
 				6E510C1D2721DA6D006D9126 /* ScrollLayout.swift in Sources */,
+				6E887CD6272C5FEF00E83363 /* CheckboxState.swift in Sources */,
 				3CA84AB126DE255200A59685 /* EventData.swift in Sources */,
 				6E952927268B8F6600398B54 /* AssociatedIdentifiers.swift in Sources */,
 				6E87BDB626DEE61F0005D20D /* ComponentDisableHelper.swift in Sources */,
@@ -7028,6 +7068,7 @@
 				6E4E5B5726E8236E00198175 /* AnalyticsEventConsumerProtocol.swift in Sources */,
 				A6A5531426D548FF002B20F6 /* NativeBridgeActionHandler.swift in Sources */,
 				6E15B73E26D43F120099C92D /* NSURLValueTransformer.swift in Sources */,
+				6EF27DDF27306CB300548DA3 /* AirshipSwitchToggleStyle.swift in Sources */,
 				6E698E58267BF63B00654DB2 /* AppStateTrackerAdapter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
