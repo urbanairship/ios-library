@@ -35,5 +35,6 @@ struct PagerIndicator : View {
                 }
             }
         }
+        .animation(nil)
     }
 }

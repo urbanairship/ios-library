@@ -24,7 +24,9 @@ struct PagerNextPageButtonClickBehavior: ViewModifier {
     @ViewBuilder
     func body(content: Content) -> some View {
         content.addTapGesture {
-            pagerState.index = min(pagerState.index + 1, pagerState.pages - 1)
+            withAnimation {
+                pagerState.index = min(pagerState.index + 1, pagerState.pages - 1)
+            }
         }
     }
 }
@@ -36,7 +38,9 @@ struct PagerPreviousPageButtonClickBehavior: ViewModifier {
     @ViewBuilder
     func body(content: Content) -> some View {
         content.addTapGesture {
-            pagerState.index = max(pagerState.index - 1, 0)
+            withAnimation {
+                pagerState.index = max(pagerState.index - 1, 0)
+            }
         }
     }
 }
