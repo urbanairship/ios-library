@@ -223,6 +223,16 @@ public class Airship : NSObject {
         #endif
         
         self.shared.components.forEach { $0.airshipReady?() }
+
+        if (self.shared.config.isExtendedBroadcastsEnabled) {
+            var userInfo: [String: Any] = [:]
+            userInfo[airshipReadyChannelIdentifier] = self.channel.identifier
+            userInfo[airshipReadyAppKey] = self.shared.config.appKey
+            userInfo[airshipReadyPayloadVersion] = 1
+            NotificationCenter.default.post(name: airshipReadyNotification, object: userInfo)
+        } else {
+            NotificationCenter.default.post(name: airshipReadyNotification, object: nil)
+        }
     }
     
     /// Sets the Airship log level. The log level defaults to `.debug` in developer mode,
