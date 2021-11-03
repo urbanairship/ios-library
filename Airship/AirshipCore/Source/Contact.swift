@@ -782,11 +782,9 @@ public class Contact : NSObject, Component, ContactProtocol {
             return
         }
   
-        guard self.lastContactInfo == nil else {
-            return
+        if self.lastContactInfo == nil {
+            self.identify(legacyNamedUserID)
         }
-        
-        self.identify(legacyNamedUserID)
         
         if (self.privacyManager.isEnabled([.contacts, .tagsAndAttributes])) {
             var pendingTagUpdates : [TagGroupUpdate]?

@@ -11,7 +11,7 @@ class ContactAPIClientTest: XCTestCase {
     var contactAPIClient: ContactAPIClient!
 
     override func setUpWithError() throws {
-        self.config = RuntimeConfig(config: Config(), dataStore: PreferenceDataStore(keyPrefix: UUID().uuidString))
+        self.config = RuntimeConfig(config: Config(), dataStore: PreferenceDataStore(appKey: UUID().uuidString))
         self.session = TestRequestSession.init()
         self.session.response = HTTPURLResponse(url: URL(string: "https://contacts_test")!,
                                            statusCode: 200,

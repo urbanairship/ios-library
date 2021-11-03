@@ -23,7 +23,7 @@
 - (void)setUp {
     [super setUp];
     self.config = [[UAConfig alloc] init];
-    self.dataStore = [[UAPreferenceDataStore alloc] initWithKeyPrefix:NSUUID.UUID.UUIDString];
+    self.dataStore = [[UAPreferenceDataStore alloc] initWithAppKey:NSUUID.UUID.UUIDString];
 
     self.notificationCenter = [[NSNotificationCenter alloc] init];
     self.testAudienceManager = [[UATestChannelAudienceManager alloc] init];

@@ -44,7 +44,7 @@ class AirshipInstance : AirshipInstanceProtocol {
     private var lock = Lock()
 
     init(config: Config) {
-        let dataStore = PreferenceDataStore(keyPrefix: config.appKey)
+        let dataStore = PreferenceDataStore(appKey: config.appKey)
         self.config = RuntimeConfig(config: config, dataStore: dataStore)
         self.privacyManager = PrivacyManager(dataStore: dataStore, defaultEnabledFeatures: config.enabledFeatures)
         self.actionRegistry = ActionRegistry.defaultRegistry()

@@ -15,7 +15,7 @@ class OpenChatActionTests: XCTestCase {
 
     override func setUp() {
         self.mockConversation = MockConversation()
-        let dataStore = PreferenceDataStore(keyPrefix: UUID().uuidString)
+        let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
         self.privacyManager = PrivacyManager(dataStore: dataStore, defaultEnabledFeatures: .all)
 
         self.airshipChat = Chat(dataStore: dataStore,

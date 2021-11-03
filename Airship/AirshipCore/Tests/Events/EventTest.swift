@@ -82,7 +82,7 @@ class EventTest: XCTestCase {
         testChannel.identifier = "someChannelID"
         let testPush = InternalPush()
         
-        let dataStore = PreferenceDataStore(keyPrefix: UUID().uuidString)
+        let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
         let privacyManager = PrivacyManager(dataStore: dataStore, defaultEnabledFeatures: .all)
       
         let event = DeviceRegistrationEvent.init(channel: testChannel, push: testPush, privacyManager: privacyManager)
@@ -98,7 +98,7 @@ class EventTest: XCTestCase {
         testChannel.identifier = "someChannelID"
         let testPush = InternalPush()
         
-        let dataStore = PreferenceDataStore(keyPrefix: UUID().uuidString)
+        let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
         let privacyManager = PrivacyManager(dataStore: dataStore, defaultEnabledFeatures: .all)
         privacyManager.disableFeatures(.push)
       
@@ -171,7 +171,7 @@ class EventTest: XCTestCase {
            testAppState.state = .inactive
 
            let testEventManager = InternalEventManager()
-           let dataStore = PreferenceDataStore(keyPrefix: UUID().uuidString)
+           let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
            let config = RuntimeConfig(config: Config(), dataStore: dataStore)
            let channel = TestChannel()
            let locale = TestLocaleManager()
@@ -195,7 +195,7 @@ class EventTest: XCTestCase {
         testAppState.state = .inactive
       
         let testEventManager = InternalEventManager()
-        let dataStore = PreferenceDataStore(keyPrefix: UUID().uuidString)
+        let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
         let config = RuntimeConfig(config: Config(), dataStore: dataStore)
         let channel = TestChannel()
         let locale = TestLocaleManager()
@@ -223,7 +223,7 @@ class EventTest: XCTestCase {
         testAppState.state = .inactive
       
         let testEventManager = InternalEventManager()
-        let dataStore = PreferenceDataStore(keyPrefix: UUID().uuidString)
+        let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
         let config = RuntimeConfig(config: Config(), dataStore: dataStore)
         let channel = TestChannel()
         let locale = TestLocaleManager()
@@ -265,7 +265,7 @@ class EventTest: XCTestCase {
         testAppState.state = .active
         
         let testEventManager = InternalEventManager()
-        let dataStore = PreferenceDataStore(keyPrefix: UUID().uuidString)
+        let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
         let config = RuntimeConfig(config: Config(), dataStore: dataStore)
         let channel = TestChannel()
         let locale = TestLocaleManager()
@@ -296,7 +296,7 @@ class EventTest: XCTestCase {
         testAppState.state = .active
         
         let testEventManager = InternalEventManager()
-        let dataStore = PreferenceDataStore(keyPrefix: UUID().uuidString)
+        let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
         let config = RuntimeConfig(config: Config(), dataStore: dataStore)
         let channel = TestChannel()
         let locale = TestLocaleManager()
@@ -327,7 +327,7 @@ class EventTest: XCTestCase {
         testAppState.state = .active
         
         let testEventManager = InternalEventManager()
-        let dataStore = PreferenceDataStore(keyPrefix: UUID().uuidString)
+        let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
         let config = RuntimeConfig(config: Config(), dataStore: dataStore)
         let channel = TestChannel()
         let locale = TestLocaleManager()

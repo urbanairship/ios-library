@@ -15,7 +15,7 @@ class PreferenceCenterTest: XCTestCase {
     
     override func setUp() {
         self.remoteDataProvider = MockRemoteDataProvider()
-        self.dataStore = PreferenceDataStore(keyPrefix: UUID().uuidString)
+        self.dataStore = PreferenceDataStore(appKey: UUID().uuidString)
         self.privacyManager = PrivacyManager(dataStore: self.dataStore, defaultEnabledFeatures: .all)
         
 

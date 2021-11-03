@@ -14,7 +14,7 @@ class AirshipChatTests: XCTestCase {
 
     override func setUp() {
         self.mockConversation = MockConversation()
-        self.dataStore = PreferenceDataStore(keyPrefix: UUID().uuidString)
+        self.dataStore = PreferenceDataStore(appKey: UUID().uuidString)
         self.privacyManager = PrivacyManager(dataStore: self.dataStore, defaultEnabledFeatures: .all)
 
         self.airshipChat = Chat(dataStore: dataStore,

@@ -431,6 +431,7 @@
 		6E598D862003F014005B234B /* UAInAppMessageResolutionEventTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E598D852003F014005B234B /* UAInAppMessageResolutionEventTest.m */; };
 		6E598D8820040E7F005B234B /* UAInAppMessageDisplayEventTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E598D8720040E7F005B234B /* UAInAppMessageDisplayEventTest.m */; };
 		6E5F723620169A6600D684B7 /* UADeepLinkActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E5F723520169A6600D684B7 /* UADeepLinkActionTest.m */; };
+		6E64C88027331ABA000EB887 /* PreferenceDataStoreTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E64C87F27331ABA000EB887 /* PreferenceDataStoreTest.swift */; };
 		6E65D537239632EF00AF2D1A /* UALocationCoreImport.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E65D536239632EA00AF2D1A /* UALocationCoreImport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E65D53B2396DBF800AF2D1A /* UAExtendedActionsCoreImport.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E65D53A2396DB3F00AF2D1A /* UAExtendedActionsCoreImport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E65D53C2396DED400AF2D1A /* UARateAppActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 996A03B91EF08EBF003424E0 /* UARateAppActionTest.m */; };
@@ -1777,6 +1778,7 @@
 		6E598D852003F014005B234B /* UAInAppMessageResolutionEventTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageResolutionEventTest.m; sourceTree = "<group>"; };
 		6E598D8720040E7F005B234B /* UAInAppMessageDisplayEventTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageDisplayEventTest.m; sourceTree = "<group>"; };
 		6E5F723520169A6600D684B7 /* UADeepLinkActionTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UADeepLinkActionTest.m; sourceTree = "<group>"; };
+		6E64C87F27331ABA000EB887 /* PreferenceDataStoreTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferenceDataStoreTest.swift; sourceTree = "<group>"; };
 		6E65D536239632EA00AF2D1A /* UALocationCoreImport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UALocationCoreImport.h; sourceTree = "<group>"; };
 		6E65D53A2396DB3F00AF2D1A /* UAExtendedActionsCoreImport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAExtendedActionsCoreImport.h; sourceTree = "<group>"; };
 		6E664B9D26C21B6F00A2C8E5 /* AggregateActionResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AggregateActionResult.swift; sourceTree = "<group>"; };
@@ -4606,6 +4608,7 @@
 		CC64F0551D8B77E3009CEF27 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				6E64C87F27331ABA000EB887 /* PreferenceDataStoreTest.swift */,
 				6E4E5B2726E53EE700198175 /* UABaseTest.h */,
 				6E4E5B2826E53EE700198175 /* UABaseTest.m */,
 				A6B31C4E26EB853000BA3A3D /* Events */,
@@ -6514,6 +6517,7 @@
 				6EC7E48526A60CDF0038CFDD /* TestChannel.swift in Sources */,
 				CC64F12D1D8B781C009CEF27 /* UAURLAllowListTest.m in Sources */,
 				A6CDD8D0269491BE0040A673 /* ContactAPIClientTest.swift in Sources */,
+				6E64C88027331ABA000EB887 /* PreferenceDataStoreTest.swift in Sources */,
 				6E18E6EF23207B57004E09DF /* UAInAppMessageSceneManagerTest.m in Sources */,
 				6EC7E48726A60DD60038CFDD /* TestContactAPIClient.swift in Sources */,
 				CC64F10D1D8B781C009CEF27 /* UALandingPageActionTest.m in Sources */,

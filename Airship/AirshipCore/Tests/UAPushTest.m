@@ -45,7 +45,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
     [super setUp];
 
     self.config = [[UAConfig alloc] init];
-    self.dataStore = [[UAPreferenceDataStore alloc] initWithKeyPrefix:NSUUID.UUID.UUIDString];
+    self.dataStore = [[UAPreferenceDataStore alloc] initWithAppKey:NSUUID.UUID.UUIDString];
 
     self.validAPNSDeviceToken = [self dataFromHexString:validDeviceToken];
     assert([self.validAPNSDeviceToken length] <= 32);
@@ -759,13 +759,9 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
     NSArray *expectedTags = @[@"cool", @"rad"];
 
-    // Force a migration
-    [self.dataStore removeObjectForKey:UAPush.tagsMigratedToChannelTagsKey];
-
     [self.push migratePushTagsToChannelTags];
 
     XCTAssertEqualObjects(self.testChannel.tags, expectedTags);
-    XCTAssertTrue([self.dataStore boolForKey:UAPush.tagsMigratedToChannelTagsKey]);
     XCTAssertNil([self.dataStore objectForKey:UAPush.legacyTagsSettingsKey]);
 }
 
@@ -774,12 +770,8 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
     self.testChannel.tags = @[@"not cool", @"not rad"];
 
-    // Force a migration
-    [self.dataStore removeObjectForKey:UAPush.tagsMigratedToChannelTagsKey];
-
     [self.push migratePushTagsToChannelTags];
 
-    XCTAssertTrue([self.dataStore boolForKey:UAPush.tagsMigratedToChannelTagsKey]);
     XCTAssertNil([self.dataStore objectForKey:UAPush.legacyTagsSettingsKey]);
 
     NSArray *expected = @[@"cool", @"rad", @"not cool", @"not rad"];
@@ -788,7 +780,6 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
 - (void)testMigratePushTagsToChannelTagsAlreadyMigrated {
     self.testChannel.tags = @[@"some-random-value"];
-    [self.dataStore setBool:YES forKey:UAPush.tagsMigratedToChannelTagsKey];
     [self.push migratePushTagsToChannelTags];
 
     XCTAssertEqualObjects(self.testChannel.tags, @[@"some-random-value"]);

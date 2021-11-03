@@ -15,7 +15,7 @@
     if (_dataStore) {
         return _dataStore;
     }
-    _dataStore = [[UAPreferenceDataStore alloc] initWithKeyPrefix:NSUUID.UUID.UUIDString];
+    _dataStore = [[UAPreferenceDataStore alloc] initWithAppKey:NSUUID.UUID.UUIDString];
     return _dataStore;
 }
 

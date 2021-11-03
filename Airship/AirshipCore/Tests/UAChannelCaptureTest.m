@@ -25,7 +25,7 @@
 
     self.config = [[UAConfig alloc] init];
     self.config.isChannelCaptureEnabled = YES;
-    self.dataStore = [[UAPreferenceDataStore alloc] initWithKeyPrefix:NSUUID.UUID.UUIDString];
+    self.dataStore = [[UAPreferenceDataStore alloc] initWithAppKey:NSUUID.UUID.UUIDString];
 
     self.testChannel = [[UATestChannel alloc] init];
     self.testChannel.identifier = @"pushChannelID";

@@ -7,24 +7,26 @@
 @objc(UAPreferenceDataStore)
 public class PreferenceDataStore : NSObject {
     private let defaults: UserDefaults
-    private let keyPrefix: String
+    private let appKey: String
 
     @objc
-    public init(keyPrefix: String) {
-        self.defaults = PreferenceDataStore.createDefaults(keyPrefix: keyPrefix)
-        self.keyPrefix = keyPrefix
+    public init(appKey: String) {
+        self.defaults = PreferenceDataStore.createDefaults(appKey: appKey)
+        self.appKey = appKey
         super.init()
+        mergeKeys()
     }
     
-    class func createDefaults(keyPrefix: String) -> UserDefaults {
+    class func createDefaults(appKey: String) -> UserDefaults {
         let suiteName = "\(Bundle.main.bundleIdentifier ?? "").airship.settings"
         guard let defaults = UserDefaults(suiteName: suiteName) else {
             AirshipLogger.error("Failed to create defaults \(suiteName)")
             return UserDefaults.standard
         }
         
+        let legacyPrefix = legacyKeyPrefix(appKey: appKey)
         for (key, value) in UserDefaults.standard.dictionaryRepresentation() {
-            if key.hasPrefix(keyPrefix) {
+            if key.hasPrefix(appKey) || key.hasPrefix(legacyPrefix) {
                 defaults.setValue(value, forKey: key)
                 UserDefaults.standard.removeObject(forKey: key)
             }
@@ -34,7 +36,7 @@ public class PreferenceDataStore : NSObject {
     }
     
     func prefixKey(_ key: String) -> String {
-        return (keyPrefix) + key
+        return (appKey) + key
     }
 
     @objc
@@ -159,13 +161,40 @@ public class PreferenceDataStore : NSObject {
     public func setObject(_ object: Any?, forKey key: String) {
         defaults.set(object, forKey: prefixKey(key))
     }
+    
+    /// Merges old key formats `com.urbanairship.<APP_KEY>.<PREFERENCE>` to
+    /// the new key formats `<APP_KEY><PREFERENCE>`. Fixes a bug in SDK 15.x-16.0.1
+    /// where the key changed but we didnt migrate the data.
+    private func mergeKeys() {
+        let legacyKeyPrefix = PreferenceDataStore.legacyKeyPrefix(appKey: self.appKey)
+        
+        for (key, value) in self.defaults.dictionaryRepresentation() {
+            
+            // Check for old key
+            if key.hasPrefix(legacyKeyPrefix) {
 
-    @objc
-    func removeAll() {
-        for key in defaults.dictionaryRepresentation().keys {
-            if key.hasPrefix(keyPrefix) {
-                defaults.removeObject(forKey: key)
+                let preference = String(key.dropFirst(legacyKeyPrefix.count))
+                let newValue = object(forKey: preference)
+                
+                if (newValue == nil) {
+                    // Value not updated on new key, restore value
+                    setObject(value, forKey: preference)
+                } else if (preference == "com.urbanairship.channel.tags") {
+                    
+                    // Both old and new tag keys have data, merge
+                    if let old = value as? [String], let new = newValue as? [String] {
+                        let combined = AudienceUtils.normalizeTags(old + new)
+                        setObject(combined, forKey: preference)
+                    }
+                }
+                
+                // Delete the old key
+                self.defaults.removeObject(forKey: key)
             }
         }
+    }
+    
+    private class func legacyKeyPrefix(appKey: String) -> String {
+        return "com.urbanairship.\(appKey)."
     }
 }
