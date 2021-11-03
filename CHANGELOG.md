@@ -3,8 +3,16 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 16.0.2 November 3, 2021
+Patch release that fixes preferences resetting when upgrading to SDK 15/16. Apps that have migrated to SDK 15.0.0 - 16.0.1
+should update. This update will restore old preferences that have not been modified in the new SDK version.
+
+### Changes
+- Restore preferences from SDK 14.x and older
+- Added back missing Airship ready notification
+
 ## Version 16.0.1 October 19, 2021
-Minor release that fixes an IAA bug.
+Patch release that fixes an IAA bug.
 
 ### Changes
 - Fixed a bug with IAA not displayed after setting the isPaused to false.
