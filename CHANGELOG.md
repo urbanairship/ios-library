@@ -4,14 +4,18 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
 ## Version 16.0.2 November 3, 2021
-Patch release that fixes preferences resetting when upgrading to SDK 15/16. Apps that have migrated to SDK 15.0.0 - 16.0.1
-should update. This update will restore old preferences that have not been modified in the new SDK version.
+Patch release that fixes preferences resetting when upgrading to SDK 15/16. This update will restore old preferences that have not been modified in the new SDK version.
+
+Apps that have migrated to SDK 15.0.0-16.0.1 should update. Apps currently on version 14.8.0 and below should only migrate to 16.0.2 to avoid a bug in versions1 5.0.0-16.0.1. 
 
 ### Changes
 - Restore preferences from SDK 14.x and older
 - Added back missing Airship ready notification
 
 ## Version 16.0.1 October 19, 2021
+
+**Due to a bug that mishandles persisted SDK settings, apps that are migrating from SDK 14.8.0 or older should avoid this version and instead use SDK 16.0.2 or newer.**
+
 Patch release that fixes an IAA bug.
 
 ### Changes
@@ -20,6 +24,8 @@ Patch release that fixes an IAA bug.
 - Remove some log.
 
 ## Version 16.0.0 September 30, 2021
+
+**Due to a bug that mishandles persisted SDK settings, apps that are migrating from SDK 14.8.0 or older should avoid this version and instead use SDK 16.0.2 or newer.**
 
 Major SDK release to address a conflict with the class and package `Airship` on CocoaPods. The import for Cocoapods has been changed from `Airship` to `AirshipKit`. No other breaking API changes have been introduced in this release.
 
@@ -33,12 +39,16 @@ Major SDK release to address a conflict with the class and package `Airship` on 
 
 ## Version 15.0.1 September 15, 2021
 
+**Due to a bug that mishandles persisted SDK settings, apps that are migrating from SDK 14.8.0 or older should avoid this version and instead use SDK 16.0.2 or newer.**
+
 Patch release fixing a crash when setting date attributes. Apps using 15.0.0 should update. 14.x remains unaffected.
 
 ### Changes
 - Fixed a crash when setting date attributes.
 
 ## Version 15.0.0 September 14, 2021
+
+**Due to a bug that mishandles persisted SDK settings, apps that are migrating from SDK 14.8.0 or older should avoid this version and instead use SDK 16.0.2 or newer.**
 
 Major SDK release with several breaking changes, especially for Swift users. This release adds support for preference center, Contacts, iOS 15, and subscription lists.
 
