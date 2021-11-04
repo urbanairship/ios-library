@@ -6,7 +6,7 @@
 ## Version 16.0.2 November 3, 2021
 Patch release that fixes preferences resetting when upgrading to SDK 15/16. This update will restore old preferences that have not been modified in the new SDK version.
 
-Apps that have migrated to SDK 15.0.0-16.0.1 should update. Apps currently on version 14.8.0 and below should only migrate to 16.0.2 to avoid a bug in versions 15.0.0-16.0.1. 
+**Apps that have migrated to SDK 15.0.0-16.0.1 should update. Apps currently on version 14.8.0 and below should only migrate to 16.0.2 to avoid a bug in versions 15.0.0-16.0.1.**
 
 ### Changes
 - Restore preferences from SDK 14.x and older

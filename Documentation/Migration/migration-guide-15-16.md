@@ -1,6 +1,8 @@
 # Airship iOS SDK Migration Guide
 
-# Airship SDK 15.x to 16.0
+**Due to a bug that mishandles persisted SDK settings, apps should migrate to 16.0.2 or newer**
+
+# Airship SDK 15.x to 16.0.2
 
 The only breaking change in SDK 16.0 is the CocoaPods import has been updated from `Airship` to `AirshipKit`
 
