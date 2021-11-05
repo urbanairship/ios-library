@@ -9,7 +9,21 @@ class LayoutModelsTest: XCTestCase {
     func testSize() throws {
         let json = """
         {
-            "layout": {
+            "presentation": {
+                "type": "modal",
+                "default_placement": {
+                    "size": {
+                        "width": "60%",
+                        "height": "60%"
+                    },
+                    "placement": {
+                        "horizontal": "center",
+                        "vertical": "center"
+                    }
+                }
+            },
+            "version": 1,
+            "view": {
               "type": "container",
               "items": [
                 {
@@ -30,8 +44,12 @@ class LayoutModelsTest: XCTestCase {
         }
         """
         
-        let layout = try! LayoutDecoder.decode(json.data(using: .utf8)!)
-        let container = layout.layout as! ContainerModel
+        let layout = try! Thomas.decode(json.data(using: .utf8)!)
+        guard case .container(let container) = layout.view else {
+            XCTFail()
+            return
+        }
+        
         let size = container.items.first?.size
             
         XCTAssertEqual(SizeConstraint.auto, size?.height)
@@ -41,7 +59,21 @@ class LayoutModelsTest: XCTestCase {
     func testComplexExample() throws {
         let json = """
         {
-          "layout": {
+            "presentation": {
+                "type": "modal",
+                "default_placement": {
+                    "size": {
+                        "width": "60%",
+                        "height": "60%"
+                    },
+                    "placement": {
+                        "horizontal": "center",
+                        "vertical": "center"
+                    }
+                }
+            },
+            "version": 1,
+            "view": {
               "type": "container",
               "items": [
                 {
@@ -72,7 +104,6 @@ class LayoutModelsTest: XCTestCase {
                           "width": "100%",
                           "height": "auto"
                         },
-                        "weight": 0,
                         "view": {
                           "type": "label_button",
                           "identifier": "BUTTON",
@@ -133,28 +164,13 @@ class LayoutModelsTest: XCTestCase {
                       }
                     ]
                   }
-                },
-                {
-                  "position": {
-                    "horizontal": "end",
-                    "vertical": "top"
-                  },
-                  "size": {
-                    "width": 48,
-                    "height": 48
-                  },
-                  "view": {
-                    "type": "image_button",
-                    "url": "https://testing-library.com/img/octopus-64x64.png",
-                    "identifier": "myid"
-                  }
                 }
               ]
             }
         }
         """
         
-        let layout = try LayoutDecoder.decode(json.data(using: .utf8)!)
+        let layout = try Thomas.decode(json.data(using: .utf8)!)
         XCTAssertNotNil(layout)
     }
 

@@ -1,13 +1,18 @@
 ---
-modal:
-  defaultPlacement:
+version: 1
+presentation:
+  type: modal
+  default_placement:
     size:
-      height: auto
-      width: 95%
+      width: 80%
+      height: 80%
     position:
       horizontal: center
       vertical: center
-layout:
+    shade_color:
+      hex: "#444444"
+      alpha: .3
+view:
   type: pager_controller
   view:
     type: container

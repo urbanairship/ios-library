@@ -1,5 +1,18 @@
 ---
-layout:
+version: 1
+presentation:
+  type: modal
+  default_placement:
+    size:
+      width: 80%
+      height: 80%
+    position:
+      horizontal: center
+      vertical: center
+    shade_color:
+      hex: "#444444"
+      alpha: .3
+view:
   type: "scroll_layout"
   direction: "vertical"
   border:

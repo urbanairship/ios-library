@@ -7,53 +7,54 @@ import SwiftUI
 @available(iOS 13.0.0, tvOS 13.0, *)
 struct ViewFactory {
     @ViewBuilder
-    static func createView(model: BaseViewModel, constraints: ViewConstraints) -> some View {
+    static func createView(model: ViewModel, constraints: ViewConstraints) -> some View {
         switch (model) {
-        case let containerModel as ContainerModel:
-            Container(model: containerModel, constraints: constraints)
-        case let linearLayoutModel as LinearLayoutModel:
-            LinearLayout(model: linearLayoutModel, constraints: constraints)
-        case let scrollLayoutModel as ScrollLayoutModel:
-            ScrollLayout(model: scrollLayoutModel, constraints: constraints)
-        case let labelModel as LabelModel:
-            Label(model: labelModel, constraints: constraints)
-        case let mediaModel as MediaModel:
-            Media(model: mediaModel, constraints: constraints)
-        case let buttonModel as LabelButtonModel:
-            LabelButton(model: buttonModel, constraints: constraints)
-        case let emptyViewModel as EmptyViewModel:
-            EmptyView(model: emptyViewModel, constraints: constraints)
-        case let formControllerModel as FormControllerModel:
-            FormController(model: formControllerModel, constraints: constraints)
-        case let npsControllerModel as NpsControllerModel:
-            NpsController(model: npsControllerModel, constraints: constraints)
-        case let textInputModel as TextInputModel:
-            TextInput(model: textInputModel, constraints: constraints)
-        case let pagerControllerModel as PagerControllerModel:
-            PagerController(model: pagerControllerModel, constraints: constraints)
-        case let pagerIndicatorModel as PagerIndicatorModel:
-            PagerIndicator(model: pagerIndicatorModel, constraints: constraints)
-        case let pagerModel as PagerModel:
-            Pager(model: pagerModel, constraints: constraints)
+        case .container(let model):
+            Container(model: model, constraints: constraints)
+        case .linearLayout(let model):
+            LinearLayout(model: model, constraints: constraints)
+        case .scrollLayout(let model):
+            ScrollLayout(model: model, constraints: constraints)
+        case .label(let model):
+            Label(model: model, constraints: constraints)
+        case .media(let model):
+            Media(model: model, constraints: constraints)
+        case .labelButton(let model):
+            LabelButton(model: model, constraints: constraints)
+        case .emptyView(let model):
+            EmptyView(model: model, constraints: constraints)
+        case .formController(let model):
+            FormController(model: model, constraints: constraints)
+        case .npsController(let model):
+            NpsController(model: model, constraints: constraints)
+        case .textInput(let model):
+            TextInput(model: model, constraints: constraints)
+        case .pagerController(let model):
+            PagerController(model: model, constraints: constraints)
+        case .pagerIndicator(let model):
+            PagerIndicator(model: model, constraints: constraints)
+        case .pager(let model):
+            Pager(model: model, constraints: constraints)
         #if !os(tvOS)
-        case let webViewModel as WebViewModel:
-            AirshipWebView(model: webViewModel, constraints: constraints)
+        case .webView(let model):
+            AirshipWebView(model: model, constraints: constraints)
         #endif
-        case let imageButtonModel as ImageButtonModel:
-            ImageButton(model: imageButtonModel, constraints: constraints)
-        case let checkboxModel as CheckboxModel:
-            Checkbox(model: checkboxModel, constraints: constraints)
-        case let checkboxControllerModel as CheckboxControllerModel:
-            CheckboxController(model: checkboxControllerModel, constraints: constraints)
-        case let toggleModel as ToggleModel:
-            AirshipToggle(model: toggleModel, constraints: constraints)
-        case let radioInputControlleModel as RadioInputControllerModel:
-            RadioInputController(model: radioInputControlleModel, constraints: constraints)
-        case let radioInputModel as RadioInputModel:
-            RadioInput(model: radioInputModel, constraints: constraints)
-        default:
-            Text("\(model.type.rawValue) not supported")
+        case .imageButton(let model):
+            ImageButton(model: model, constraints: constraints)
+        case .checkbox(let model):
+            Checkbox(model: model, constraints: constraints)
+        case .checkboxController(let model):
+            CheckboxController(model: model, constraints: constraints)
+        case .toggle(let model):
+            AirshipToggle(model: model, constraints: constraints)
+        case .radioInputController(let model):
+            RadioInputController(model: model, constraints: constraints)
+        case .radioInput(let model):
+            RadioInput(model: model, constraints: constraints)
+        case .score(let model):
+            Text("Score placeholder: \(model.identifier)")
         }
     }
+    
 }
 

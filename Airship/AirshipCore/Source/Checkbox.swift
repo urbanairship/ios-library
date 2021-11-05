@@ -25,15 +25,13 @@ struct Checkbox : View {
         let toggle = Toggle(isOn: isOn.animation()) {}
         
         switch (self.model.style) {
-        case let checkboxStyle as CheckboxToggleStyleModel:
+        case .checkboxStyle(let style):
             toggle.toggleStyle(AirshipCheckboxToggleStyle(backgroundColor: self.model.backgroundColor,
                                                           border: self.model.border,
                                                           viewConstraints: self.constraints,
-                                                          model: checkboxStyle))
-        case let switchStyle as SwitchToggleStyleModel:
-            toggle.toggleStyle(AirshipSwitchToggleStyle(model: switchStyle))
-        default:
-            toggle
+                                                          model: style))
+        case .switchStyle(let style):
+            toggle.toggleStyle(AirshipSwitchToggleStyle(model: style))
         }
     }
         

@@ -12,16 +12,14 @@ struct PagerIndicator : View {
     let constraints: ViewConstraints
     
     @ViewBuilder
-    func createShape(shapeModel: BaseShapeModel) -> some View {
+    func createShape(shapeModel: ShapeModel) -> some View {
         switch (shapeModel) {
-        case let shape as CircleShapeModel:
-            Shapes.circle(color: shape.color, border: shape.border)
-                .frame(width: shape.radius * 2, height: shape.radius * 2)
-        case let shape as RectangleShapeModel:
-            Shapes.rectangle(color: shape.color, border: shape.border)
-                .frame(width: shape.width, height: shape.height)
-        default:
-            Shapes.rectangle(color: shapeModel.color, border: shapeModel.border)
+        case .circle(let model):
+            Shapes.circle(color: model.color, border: model.border)
+                .frame(width: model.radius * 2, height: model.radius * 2)
+        case .rectangle(let model):
+            Shapes.rectangle(color: model.color, border: model.border)
+                .frame(width: model.width, height: model.height)
         }
     }
     

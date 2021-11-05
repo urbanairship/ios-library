@@ -1,15 +1,35 @@
 ---
-modal:
-  defaultPlacement:
+version: 1
+presentation:
+  type: modal
+  default_placement:
     size:
-      width: 90%
-      height: 75%
+      width: 80%
+      height: 80%
     position:
       horizontal: center
       vertical: center
-layout:
+    shade_color:
+      hex: "#444444"
+      alpha: .3
+view:
   type: container
   items:
+  - position:
+      horizontal: end
+      vertical: top
+    size:
+      width: 48
+      height: 48
+    view:
+      type: image_button
+      identifier: "close-button"
+      image:
+        type: icon
+        icon: close
+        tint:
+          hex: "#ff0000"
+          alpha: .5
   - position:
       horizontal: center
       vertical: center
