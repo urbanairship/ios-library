@@ -8,7 +8,10 @@ struct ViewConstraintsViewModifier: ViewModifier {
     let viewConstraints: ViewConstraints
     
     func body(content: Content) -> some View {
-        content.frame(width: viewConstraints.width, height: viewConstraints.height)
+        content.frame(idealWidth: viewConstraints.width,
+                      maxWidth: viewConstraints.width,
+                      idealHeight: viewConstraints.height,
+                      maxHeight: viewConstraints.height)
     }
 }
 

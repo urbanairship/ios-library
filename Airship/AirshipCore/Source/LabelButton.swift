@@ -17,7 +17,6 @@ struct LabelButton : View {
         Button(action: {}) {
             Label(model: self.model.label, constraints: constraints)
                 .padding()
-                .frame(width: constraints.width, height: constraints.height)
                 .background(self.model.backgroundColor)
                 .border(self.model.border)
         }

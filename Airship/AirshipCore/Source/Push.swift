@@ -363,7 +363,7 @@ public class Push: NSObject, Component, PushProtocol {
         }
 
         get {
-            return self.dataStore.bool(forKey: Push.BackgroundPushNotificationsEnabledKey)
+            return self.dataStore.bool(forKey: Push.BackgroundPushNotificationsEnabledKey, defaultValue: true)
         }
     }
 

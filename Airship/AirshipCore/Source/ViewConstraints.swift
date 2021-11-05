@@ -10,6 +10,7 @@ struct ViewConstraints {
     /// Ideal height. Nil if the view should size to fit content.
     let height: CGFloat?
     
+    
     private static func calculateSize(_ sizeContraints: SizeConstraint?,
                                       parentSize: CGFloat?,
                                       margins: CGFloat) -> CGFloat? {

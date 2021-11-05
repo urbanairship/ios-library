@@ -18,44 +18,39 @@ struct Pager : View {
     }
 
     @ViewBuilder
-    func createPager() -> some View {
+    func createPager(metrics: GeometryProxy) -> some View {
         let index = Binding<Int>(
             get: { self.pagerState.index },
             set: { self.pagerState.index = $0 }
         )
         
+        let childConstraints = ViewConstraints(width: metrics.size.width,
+                                               height: metrics.size.height)
+        
         let items = self.model.items
-        if #available(iOS 14.0.0, tvOS 14.0, *), self.model.disableSwipe != false {
+        if #available(iOS 14.0.0, tvOS 14.0, *), self.model.disableSwipe != true {
             TabView(selection: index) {
                 ForEach(0..<items.count, id: \.self) { i in
                     ViewFactory.createView(model: items[i],
-                                           constraints: self.constraints)
+                                           constraints: childConstraints)
                         .tag(i)
-                        .onAppear {
-                            reportPage(i)
-                        }
                 }
             }
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
         } else {
-            GeometryReader { reader in
-                VStack {
-                    HStack(spacing: 0) {
-                        ForEach(0..<items.count, id: \.self) { i in
-                            VStack {
-                                ViewFactory.createView(model: items[i], constraints: self.constraints)
-                                    .onAppear {
-                                        reportPage(i)
-                                    }
-                            }
-                            .frame(width: reader.size.width, height: reader.size.height)
+            VStack {
+                HStack(spacing: 0) {
+                    ForEach(0..<items.count, id: \.self) { i in
+                        VStack {
+                            ViewFactory.createView(model: items[i], constraints: childConstraints)
                         }
+                        .frame(width: metrics.size.width, height: metrics.size.height)
                     }
-                    .offset(x: -(reader.size.width * CGFloat(index.wrappedValue)))
                 }
-                .frame(width: reader.size.width, height: reader.size.height, alignment: .leading)
-                .clipped()
+                .offset(x: -(metrics.size.width * CGFloat(index.wrappedValue)))
             }
+            .frame(width: metrics.size.width, height: metrics.size.height, alignment: .leading)
+            .clipped()
             .applyIf(self.model.disableSwipe != false) { view in
                 #if !os(tvOS)
                 view.highPriorityGesture(DragGesture().onEnded { drag in
@@ -80,13 +75,15 @@ struct Pager : View {
 
     @ViewBuilder
     var body: some View {
-        createPager()
-            .constraints(self.constraints)
-            .onAppear {
-                pagerState.pages = self.model.items.count
-            }.onReceive(pagerState.$index) { value in
-                reportPage(value)
-            }
+        GeometryReader { metrics in
+            createPager(metrics: metrics)
+                .onAppear {
+                    pagerState.pages = self.model.items.count
+                }.onReceive(pagerState.$index) { value in
+                    reportPage(value)
+                }
+        }.constraints(constraints)
+       
     }
     
     private func reportPage(_ index: Int) {

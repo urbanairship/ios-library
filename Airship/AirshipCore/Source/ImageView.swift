@@ -20,13 +20,17 @@ struct ImageView: UIViewRepresentable {
     
     func createImageView() -> UIImageView {
         let imageView = UIImageView()
-        
+        imageView.contentMode = .scaleAspectFit
+        imageView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        imageView.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
+
+
         guard let mediaUrl = URL(string:url) else { return imageView}
         ///Fetch Image Data
         if let data = try? Data(contentsOf:mediaUrl) {
             imageView.image = UIImage.fancyImage(with:data)
-            imageView.contentMode = .scaleAspectFit
         }
         return imageView
+        
     }
 }
