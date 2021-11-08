@@ -1117,6 +1117,10 @@
 		A67F87D3268DECCE00EF5F43 /* ContactAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67F87D1268DECCE00EF5F43 /* ContactAPIClient.swift */; };
 		A67F87D5268E07E800EF5F43 /* ContactAPIResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67F87D4268E07E800EF5F43 /* ContactAPIResponse.swift */; };
 		A67F87D6268E07E800EF5F43 /* ContactAPIResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67F87D4268E07E800EF5F43 /* ContactAPIResponse.swift */; };
+		A6849387273290520021675E /* Score.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6849386273290520021675E /* Score.swift */; };
+		A6849388273290520021675E /* Score.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6849386273290520021675E /* Score.swift */; };
+		A684939D273436370021675E /* FontViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = A684939C273436370021675E /* FontViewModifier.swift */; };
+		A684939E273436370021675E /* FontViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = A684939C273436370021675E /* FontViewModifier.swift */; };
 		A68E345926B153EC0024BE1D /* PreferenceCenterSectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A68E345826B153EC0024BE1D /* PreferenceCenterSectionHeader.swift */; };
 		A68E345B26B154220024BE1D /* PreferenceCenterSectionHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = A68E345A26B154220024BE1D /* PreferenceCenterSectionHeader.xib */; };
 		A68E347026B2AD160024BE1D /* PreferenceCenterStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A68E346F26B2AD160024BE1D /* PreferenceCenterStyle.swift */; };
@@ -2285,6 +2289,8 @@
 		A658DE2A272AFB0400007672 /* AssetLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetLoader.swift; sourceTree = "<group>"; };
 		A67F87D1268DECCE00EF5F43 /* ContactAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactAPIClient.swift; sourceTree = "<group>"; };
 		A67F87D4268E07E800EF5F43 /* ContactAPIResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactAPIResponse.swift; sourceTree = "<group>"; };
+		A6849386273290520021675E /* Score.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Score.swift; sourceTree = "<group>"; };
+		A684939C273436370021675E /* FontViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontViewModifier.swift; sourceTree = "<group>"; };
 		A68E345826B153EC0024BE1D /* PreferenceCenterSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterSectionHeader.swift; sourceTree = "<group>"; };
 		A68E345A26B154220024BE1D /* PreferenceCenterSectionHeader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PreferenceCenterSectionHeader.xib; sourceTree = "<group>"; };
 		A68E346F26B2AD160024BE1D /* PreferenceCenterStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferenceCenterStyle.swift; sourceTree = "<group>"; };
@@ -3322,6 +3328,7 @@
 			isa = PBXGroup;
 			children = (
 				6E1C9C44271F74E7009EF9EF /* BorderViewModifier.swift */,
+				A684939C273436370021675E /* FontViewModifier.swift */,
 				6E1C9C46271F76E9009EF9EF /* ViewConstraintsViewModifier.swift */,
 				6E1C9C48271F77F2009EF9EF /* ForegroundColorViewModifier.swift */,
 				6E1C9C4A271F7878009EF9EF /* BackgroundColorViewModifier.swift */,
@@ -4371,6 +4378,7 @@
 				6EFD6D77272A1F26005B26F1 /* NpsController.swift */,
 				6EF27DE22730E6F900548DA3 /* RadioInputController.swift */,
 				6EF27DE82730E85700548DA3 /* RadioInput.swift */,
+				A6849386273290520021675E /* Score.swift */,
 			);
 			name = Forms;
 			sourceTree = "<group>";
@@ -6255,6 +6263,7 @@
 				6E91B4632689092F00DDB1A8 /* InteractiveNotificationEvent.swift in Sources */,
 				6E664BBB26C46BC600A2C8E5 /* EnableFeatureActionPredicate.swift in Sources */,
 				6E8BF45226852E4B009A8BD4 /* TaskManager.swift in Sources */,
+				A6849387273290520021675E /* Score.swift in Sources */,
 				6E062D03271656DE001A74A1 /* Container.swift in Sources */,
 				C02D0B6626C1A3E200F673E6 /* ChannelCapture.swift in Sources */,
 				6E15B74126D43F120099C92D /* NSDictionaryValueTransformer.swift in Sources */,
@@ -6357,6 +6366,7 @@
 				A658DE0C2727020200007672 /* ImageButton.swift in Sources */,
 				6E43219226EA89B6009228AB /* NativeBridgeDelegate.swift in Sources */,
 				6E411CAB2538C6A600FEE4E8 /* UARemoteData.xcdatamodeld in Sources */,
+				A684939D273436370021675E /* FontViewModifier.swift in Sources */,
 				6E062D092716571F001A74A1 /* LabelButton.swift in Sources */,
 				6E698E00267A78CA00654DB2 /* RequestSession.swift in Sources */,
 				A6A8077C26C1566E00CB266E /* ColorUtils.swift in Sources */,
@@ -6921,6 +6931,7 @@
 				6EC7E469269E0E340038CFDD /* TagGroupUpdate.swift in Sources */,
 				6E15B74226D43F120099C92D /* NSDictionaryValueTransformer.swift in Sources */,
 				6E664BBC26C46BC600A2C8E5 /* EnableFeatureActionPredicate.swift in Sources */,
+				A6849388273290520021675E /* Score.swift in Sources */,
 				6E698E3E267BEDC300654DB2 /* Contact.swift in Sources */,
 				6E411CB02538C6A600FEE4E8 /* UAEvents.xcdatamodeld in Sources */,
 				6E6ED1412683A9F200A2CBD0 /* DateUtils.swift in Sources */,
@@ -7022,6 +7033,7 @@
 				6E43219326EA89B6009228AB /* NativeBridgeDelegate.swift in Sources */,
 				6E510C242721DA86006D9126 /* ViewConstraintsViewModifier.swift in Sources */,
 				3CC8AA0726BB3C7900405614 /* Push.swift in Sources */,
+				A684939E273436370021675E /* FontViewModifier.swift in Sources */,
 				6E6ED1682683DBC300A2CBD0 /* UACoreData.swift in Sources */,
 				6EC7E46C269E0E3E0038CFDD /* ContactOperation.swift in Sources */,
 				6E664BA226C43F5400A2C8E5 /* ActivityViewController.swift in Sources */,

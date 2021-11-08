@@ -28,3 +28,22 @@ extension View {
         #endif
     }
 }
+
+@available(iOS 13.0.0, tvOS 13.0, *)
+extension Text {
+    func textStyles(_ textStyles: [TextStyle]?) -> Text {
+        var text = self
+        if let textStyles = textStyles {
+            if (textStyles.contains(.bold)) {
+                text = text.bold()
+            }
+            if (textStyles.contains(.italic)) {
+                text = text.italic()
+            }
+            if (textStyles.contains(.underlined)) {
+                text = text.underline()
+            }
+        }
+        return text
+    }
+}

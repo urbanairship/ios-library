@@ -37,7 +37,7 @@ enum FormValue {
     case form([String: FormInputData])
     case nps(String, [String: FormInputData])
     case text(String?)
-    case score([String: FormInputData]?)
+    case score(Int?)
 }
 
 

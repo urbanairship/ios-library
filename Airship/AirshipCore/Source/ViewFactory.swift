@@ -52,7 +52,7 @@ struct ViewFactory {
         case .radioInput(let model):
             RadioInput(model: model, constraints: constraints)
         case .score(let model):
-            Text("Score placeholder: \(model.identifier)")
+            Score(model: model, constraints: constraints)
         }
     }
     

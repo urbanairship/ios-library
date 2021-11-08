@@ -13,59 +13,15 @@ struct Label : View {
     let constraints: ViewConstraints
 
     var body: some View {
-        var text = Text(self.model.text)
-            .font(Label.resolveFont(families: self.model.fontFamilies,
-                                    fontSize: self.model.fontSize))
-        
-        if let textStyles = self.model.textStyles {
-            if (textStyles.contains(.bold)) {
-                text = text.bold()
-            }
-            if (textStyles.contains(.italic)) {
-                text = text.italic()
-            }
-            if (textStyles.contains(.underlined)) {
-                text = text.underline()
-            }
-        }
-        
-        return text
+        Text(self.model.text)
+            .textStyles(self.model.textStyles)
+            .airshipFont(self.model.fontSize, self.model.fontFamilies)
             .multilineTextAlignment(self.model.alignment?.toSwiftTextAlignment() ?? .center)
             .frame(maxWidth: constraints.width,
                    maxHeight: constraints.height,
                    alignment: self.model.alignment?.toFrameAlignment() ?? Alignment.center)
             .foreground(model.foregroundColor)
             .background(model.backgroundColor)
-    }
-    
-    private static func resolveFont(families: [String]?, fontSize: Int) -> Font {
-        
-        if let fontFamily = resolveFontFamily(families: families) {
-            return Font.custom(fontFamily, size: CGFloat(fontSize))
-        } else {
-            return Font.system(size: CGFloat(fontSize))
-        }
-    }
-    
-    private static func resolveFontFamily(families: [String]?) -> String? {
-        if let families = families {
-            for family in families {
-                let lowerCased = family.lowercased()
-                
-                switch (lowerCased) {
-                case "serif":
-                    return "Times New Roman"
-                case "sans-serif":
-                    return nil
-                default:
-                    if (!UIFont.fontNames(forFamilyName: lowerCased).isEmpty) {
-                        return family
-                    }
-                }
-            }
-        }
-        
-        return nil
     }
 }
 

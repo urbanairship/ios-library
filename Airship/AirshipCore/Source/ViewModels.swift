@@ -720,22 +720,89 @@ struct RadioInputModel: Decodable {
     }
 }
 
+
+enum ScoreStyleModelType: String, Decodable {
+    case npsStyle = "nps"
+}
+
+enum ScoreStyleModel: Decodable {
+    case nps(ScoreNPSStyleModel)
+    
+    enum CodingKeys: String, CodingKey {
+        case type = "type"
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let type = try container.decode(ScoreStyleModelType.self, forKey: .type)
+        let singleValueContainer = try decoder.singleValueContainer()
+
+        switch type {
+        case .npsStyle:
+            self = .nps(try singleValueContainer.decode(ScoreNPSStyleModel.self))
+        }
+    }
+    
+}
+
+struct ScoreNPSStyleModel: Decodable {
+    let type = ScoreStyleModelType.npsStyle
+    
+    let fontSize: Int
+    let textStyles: [TextStyle]?
+    let fontFamilies: [String]?
+    let outlineBorder: Border
+    let spacing: Double?
+    let selectedColors: SelectedColors
+    let deselectedColors: DeselctedColors
+    
+    struct SelectedColors: Decodable {
+        let number: HexColor
+        let fill: HexColor
+        
+        enum CodingKeys: String, CodingKey {
+            case number = "number"
+            case fill = "fill"
+        }
+    }
+    
+    struct DeselctedColors: Decodable {
+        let number: HexColor
+        let fill: HexColor?
+        
+        enum CodingKeys: String, CodingKey {
+            case number = "number"
+            case fill = "fill"
+        }
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case fontSize = "font_size"
+        case textStyles = "text_styles"
+        case fontFamilies = "font_families"
+        case outlineBorder = "outline_border"
+        case spacing = "spacing"
+        case selectedColors = "selected_colors"
+        case deselectedColors = "deselected_colors"
+    }
+}
+
 struct ScoreModel: Decodable {
     let type = ViewModelType.score
     let border: Border?
     let backgroundColor: HexColor?
-    let foregroundColor: HexColor
     let identifier: String
     let contentDescription: String?
-    let isRequired: Bool
+    let isRequired: Bool?
+    let style: ScoreStyleModel
     
     enum CodingKeys: String, CodingKey {
-        case foregroundColor = "foreground_color"
         case border = "border"
         case backgroundColor = "background_color"
         case identifier = "identifier"
         case contentDescription = "content_description"
         case isRequired = "required"
+        case style = "style"
     }
 }
 

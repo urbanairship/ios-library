@@ -487,6 +487,43 @@ view:
 
               - size:
                   width: 100%
+                  height: auto
+                margin:
+                  top: 8
+                  bottom: 8
+                  start: 8
+                  end: 8
+                view:
+                  type: score
+                  identifier: "more"
+                  required: true
+                  background_color:
+                    hex: "#ff0000"
+                  style:
+                    type: nps
+                    spacing: 3 
+                    text_styles:
+                      - bold
+                      - underlined
+                    font_size: 14
+                    outline_border: 
+                      stroke_width: 2
+                      stroke_color:
+                        hex: "#ff0000"
+                      radius: 8 
+                    selected_colors:
+                      number:
+                        hex: "#0000ff"
+                      fill: 
+                        hex: "#00ff00"
+                    deselected_colors:
+                      number:
+                        hex: "#00ff00"
+                      fill: 
+                        hex: "#0000ff"
+
+              - size:
+                  width: 100%
                   height: 300
                 margin:
                   top: 24
