@@ -3,6 +3,12 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 16.0.3 November 8, 2021
+Patch release to fix background push not being enabled by default in SDk 15/16. Apps can either update to this version or enable background with `Airship.push.backgroundPushEnabled = true`.
+
+### 
+- Enable background push by default
+
 ## Version 16.0.2 November 3, 2021
 Patch release that fixes preferences resetting when upgrading to SDK 15/16. This update will restore old preferences that have not been modified in the new SDK version.
 

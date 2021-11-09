@@ -174,6 +174,13 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 }
 
 /**
+ * Test that background push is enabled by default
+ */
+- (void)testBackgroundPushEnabledByDefault {
+    XCTAssertTrue(self.push.backgroundPushNotificationsEnabled);
+}
+
+/**
  * Test enabling userPushNotificationsEnabled saves its settings
  * to NSUserDefaults and updates apns registration.
  */
