@@ -3,7 +3,9 @@ import SwiftUI
 
 @available(iOS 13.0.0, tvOS 13.0, *)
 struct Pager : View {
-    private static let minDragWidth: CGFloat = 10
+    private static let flingSpeed: CGFloat = 300.0
+    private static let offsetPercent: CGFloat = 0.50
+
     @EnvironmentObject var pagerState: PagerState
     @EnvironmentObject var context: ThomasContext
 
@@ -12,11 +14,26 @@ struct Pager : View {
     
     @State var lastIndex = -1
 
+    @GestureState private var translation: CGFloat = 0
+
     init(model: PagerModel, constraints: ViewConstraints) {
         self.model = model
         self.constraints = constraints
     }
 
+    @ViewBuilder
+    func createStack<Content: View>(@ViewBuilder content: () -> Content) -> some View {
+        if #available(iOS 14.0, tvOS 14.0, *) {
+            LazyHStack(spacing: 0) {
+                content()
+            }
+        } else {
+            HStack(spacing: 0) {
+                content()
+            }
+        }
+    }
+    
     @ViewBuilder
     func createPager(metrics: GeometryProxy) -> some View {
         let index = Binding<Int>(
@@ -24,53 +41,67 @@ struct Pager : View {
             set: { self.pagerState.index = $0 }
         )
         
-        let childConstraints = ViewConstraints(width: metrics.size.width,
-                                               height: metrics.size.height)
+        let childConstraints = ViewConstraints(contentWidth: metrics.size.width,
+                                               contentHeight: metrics.size.height,
+                                               frameWidth: metrics.size.width,
+                                               frameHeight: metrics.size.height)
         
         let items = self.model.items
-        if #available(iOS 14.0.0, tvOS 14.0, *), self.model.disableSwipe != true {
-            TabView(selection: index) {
+        
+        VStack {
+            createStack {
                 ForEach(0..<items.count, id: \.self) { i in
-                    ViewFactory.createView(model: items[i],
-                                           constraints: childConstraints)
-                        .tag(i)
+                    VStack {
+                        ViewFactory.createView(model: items[i], constraints: childConstraints)
+                    }
+                    .frame(width: metrics.size.width, height: metrics.size.height)
                 }
             }
-            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-        } else {
-            VStack {
-                HStack(spacing: 0) {
-                    ForEach(0..<items.count, id: \.self) { i in
-                        VStack {
-                            ViewFactory.createView(model: items[i], constraints: childConstraints)
-                        }
-                        .frame(width: metrics.size.width, height: metrics.size.height)
-                    }
-                }
-                .offset(x: -(metrics.size.width * CGFloat(index.wrappedValue)))
-            }
-            .frame(width: metrics.size.width, height: metrics.size.height, alignment: .leading)
-            .clipped()
-            .applyIf(self.model.disableSwipe != false) { view in
-                #if !os(tvOS)
-                view.highPriorityGesture(DragGesture().onEnded { drag in
-                    let dragWidth = drag.translation.width
-                    
-                    if (dragWidth > Pager.minDragWidth) {
-                        withAnimation {
-                            index.wrappedValue = max(index.wrappedValue - 1, 0)
-                        }
-                    } else if (dragWidth < Pager.minDragWidth) {
-                        withAnimation {
-                            index.wrappedValue = min(index.wrappedValue + 1, items.count - 1)
-                        }
-                    }
-                })
-                #else
-                view
-                #endif
-            }
+            .offset(x: -(metrics.size.width * CGFloat(index.wrappedValue)))
+            .offset(x: calcDragOffset(index: index.wrappedValue))
+            .animation(.interactiveSpring())
         }
+        .frame(width: metrics.size.width, height: metrics.size.height, alignment: .leading)
+        .clipped()
+        .applyIf(self.model.disableSwipe != true) { view in
+            #if !os(tvOS)
+            view.highPriorityGesture(
+                DragGesture()
+                    .updating(self.$translation) { value, state, _ in
+                        state = value.translation.width
+                    }
+                    .onEnded { value in
+                        let velocity = value.predictedEndLocation.x - value.location.x
+                        let offset = value.translation.width / metrics.size.width
+                        if (abs(velocity) >= Pager.flingSpeed) {
+                            let newIndex = velocity > 0 ? index.wrappedValue - 1 : index.wrappedValue + 1
+                            withAnimation {
+                                index.wrappedValue = min(items.count - 1, max(0, newIndex))
+                            }
+                        } else if (abs(offset) >= Pager.offsetPercent) {
+                            let newIndex = offset > 0 ? index.wrappedValue - 1 : index.wrappedValue + 1
+                            withAnimation {
+                                index.wrappedValue = min(items.count - 1, max(0, newIndex))
+                            }
+                        }
+                }
+            )
+            #else
+            view
+            #endif
+        }
+    }
+    
+    private func calcDragOffset(index: Int) -> CGFloat {
+        var dragOffSet = self.translation
+        
+        if (index <= 0) {
+            dragOffSet = min(dragOffSet, 0)
+        } else if (index >= self.model.items.count - 1) {
+            dragOffSet = max(dragOffSet, 0)
+        }
+        
+        return dragOffSet
     }
 
     @ViewBuilder
@@ -83,7 +114,6 @@ struct Pager : View {
                     reportPage(value)
                 }
         }.constraints(constraints)
-       
     }
     
     private func reportPage(_ index: Int) {

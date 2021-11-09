@@ -59,10 +59,10 @@ private struct AirshipScoreToggleStyle: ToggleStyle {
     func makeBody(configuration: Self.Configuration) -> some View {
         let isOn = configuration.isOn
         
-        let totalWidth = (self.viewConstraints.width ?? 320)
+        let totalWidth = (self.viewConstraints.contentWidth ?? 320)
         let totalSpacing = (10 * (self.style.spacing ?? 0))
         let width = (totalWidth - totalSpacing)/11
-        let size = min(width, self.viewConstraints.height ?? width)
+        let size = min(width, self.viewConstraints.contentHeight ?? width)
         
         return Button(action: { configuration.isOn.toggle() } ) {
             Text(String(self.value))

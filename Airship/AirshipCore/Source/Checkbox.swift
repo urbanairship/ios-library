@@ -37,10 +37,8 @@ struct Checkbox : View {
         
     var body: some View {
         let enabled = self.checkboxState.selectedItems.contains(self.model.value) || self.checkboxState.selectedItems.count < self.checkboxState.maxSelection
-        ZStack {
-            createToggle()
-                .constraints(constraints)
-                .disabled(!enabled)
-        }
+        createToggle()
+            .constraints(constraints)
+            .disabled(!enabled)
     }
 }

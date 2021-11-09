@@ -37,10 +37,6 @@ struct Container : View {
                                    constraints: childConstraints)
                 .margin(item.margin)
         }
-        .frame(idealWidth: constraints.width,
-               maxWidth: constraints.width,
-               idealHeight: constraints.height,
-               maxHeight: constraints.height,
-               alignment: alignment)
+        .constraints(constraints, alignment: alignment)
     }
 }

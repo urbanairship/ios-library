@@ -15,8 +15,19 @@ struct LabelButton : View {
         
     var body: some View {
         Button(action: {}) {
-            Label(model: self.model.label, constraints: constraints)
-                .padding()
+            
+            let labelConstraints = ViewConstraints(contentWidth: self.constraints.contentWidth,
+                                                   contentHeight: self.constraints.contentHeight,
+                                                   frameWidth: self.constraints.contentWidth,
+                                                   frameHeight: self.constraints.contentHeight)
+            
+            Label(model: self.model.label, constraints: labelConstraints)
+                .applyIf(self.constraints.contentHeight == nil) { view in
+                    view.padding([.bottom, .top])
+                }
+                .applyIf(self.constraints.contentWidth == nil) { view in
+                    view.padding([.leading, .trailing])
+                }
                 .background(self.model.backgroundColor)
                 .border(self.model.border)
         }

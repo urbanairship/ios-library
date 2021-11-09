@@ -7,11 +7,21 @@ import SwiftUI
 struct ViewConstraintsViewModifier: ViewModifier {
     let viewConstraints: ViewConstraints
     
+    let alignment: Alignment?
     func body(content: Content) -> some View {
-        content.frame(idealWidth: viewConstraints.width,
-                      maxWidth: viewConstraints.width,
-                      idealHeight: viewConstraints.height,
-                      maxHeight: viewConstraints.height)
+        if let alignment = alignment {
+            content.frame(idealWidth: viewConstraints.frameWidth,
+                          maxWidth: viewConstraints.frameWidth,
+                          idealHeight: viewConstraints.frameHeight,
+                          maxHeight: viewConstraints.frameHeight,
+                          alignment: alignment)
+        } else {
+            content.frame(idealWidth: viewConstraints.frameWidth,
+                          maxWidth: viewConstraints.frameWidth,
+                          idealHeight: viewConstraints.frameHeight,
+                          maxHeight: viewConstraints.frameHeight)
+        }
+        
     }
 }
 
@@ -19,7 +29,12 @@ struct ViewConstraintsViewModifier: ViewModifier {
 extension View {
     @ViewBuilder
     func constraints(_ constraints: ViewConstraints) -> some View {
-        self.modifier(ViewConstraintsViewModifier(viewConstraints: constraints))
+        self.modifier(ViewConstraintsViewModifier(viewConstraints: constraints, alignment: nil))
+    }
+    
+    @ViewBuilder
+    func constraints(_ constraints: ViewConstraints, alignment: Alignment?) -> some View {
+        self.modifier(ViewConstraintsViewModifier(viewConstraints: constraints, alignment: alignment))
     }
 }
 

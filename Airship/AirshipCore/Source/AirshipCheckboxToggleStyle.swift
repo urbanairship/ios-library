@@ -35,8 +35,8 @@ struct AirshipCheckboxToggleStyle: ToggleStyle {
                     }
                 }
             }
-        }.frame(width: viewConstraints.width ?? 32,
-                height: viewConstraints.height ?? 32,
+        }.frame(width: viewConstraints.contentWidth ?? 32,
+                height: viewConstraints.contentHeight ?? 32,
                 alignment: .center)
             .animation(Animation.easeInOut(duration: 0.05))
     }

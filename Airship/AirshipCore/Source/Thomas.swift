@@ -31,8 +31,10 @@ public class Thomas : NSObject {
 
         var body: some View {
             GeometryReader { metrics in
-                let constraints = ViewConstraints(width: metrics.size.width,
-                                                  height: metrics.size.height)
+                let constraints = ViewConstraints(contentWidth: metrics.size.width,
+                                                  contentHeight: metrics.size.height,
+                                                  frameWidth: metrics.size.width,
+                                                  frameHeight: metrics.size.height)
                 ViewFactory.createView(model: model, constraints: constraints)
                     .environmentObject(context)
             }

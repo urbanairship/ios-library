@@ -17,9 +17,7 @@ struct Label : View {
             .textStyles(self.model.textStyles)
             .airshipFont(self.model.fontSize, self.model.fontFamilies)
             .multilineTextAlignment(self.model.alignment?.toSwiftTextAlignment() ?? .center)
-            .frame(maxWidth: constraints.width,
-                   maxHeight: constraints.height,
-                   alignment: self.model.alignment?.toFrameAlignment() ?? Alignment.center)
+            .constraints(constraints, alignment: self.model.alignment?.toFrameAlignment() ?? Alignment.center)
             .foreground(model.foregroundColor)
             .background(model.backgroundColor)
     }

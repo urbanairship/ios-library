@@ -32,11 +32,7 @@ struct LinearLayout : View {
                         
     var body: some View {
         createStack()
-            .frame(idealWidth: constraints.width,
-                   maxWidth: constraints.width,
-                   idealHeight: constraints.height,
-                   maxHeight: constraints.height,
-                   alignment: .topLeading)
+            .constraints(constraints, alignment: .top)
             .background(self.model.backgroundColor)
             .border(self.model.border)
     }
@@ -46,6 +42,7 @@ struct LinearLayout : View {
         let childConstraints = ViewConstraints.calculateChildConstraints(childSize: item.size,
                                                                          childMargins: item.margin,
                                                                          parentConstraints: constraints)
+        
         ViewFactory.createView(model: item.view, constraints: childConstraints)
             .margin(item.margin)
     }

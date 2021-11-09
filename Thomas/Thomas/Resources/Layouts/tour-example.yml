@@ -1,0 +1,865 @@
+---
+version: 1
+context:
+  content_types:
+  - tours
+presentation:
+  type: modal
+  default_placement:
+    size:
+      max_width: 100%
+      max_height: 100%
+      width: 100%
+      min_width: 100%
+      height: 100%
+      min_height: 100%
+    position:
+      horizontal: center
+      vertical: center
+    shade_color:
+      hex: "#000000"
+      alpha: 0.2
+view:
+  type: pager_controller
+  view:
+    type: container
+    items:
+    - position:
+        horizontal: center
+        vertical: center
+      size:
+        width: 100%
+        height: 95%
+      view:
+        type: pager
+        identifier: 33c4b6b0-fedd-4f1a-bad4-5d7a139c18e4
+        disable_swipe: false
+        items:
+        - type: linear_layout
+          direction: vertical
+          items:
+          - size:
+              height: 100%
+              width: 100%
+            view:
+              type: container
+              items:
+              - margin:
+                  top: 0
+                  bottom: 0
+                  start: 0
+                  end: 0
+                position:
+                  horizontal: center
+                  vertical: center
+                size:
+                  width: 100%
+                  height: 100%
+                view:
+                  type: linear_layout
+                  direction: vertical
+                  items:
+                  - size:
+                      height: auto
+                      width: 100%
+                    view:
+                      type: media
+                      media_fit: center
+                      url: https://unroll-images-production.s3.amazonaws.com/projects/2487/1565801064410-banner-500x500-no-words.jpg
+                      media_type: image
+                    margin:
+                      top: 25
+                  - size:
+                      width: 90%
+                      height: 40
+                    margin:
+                      top: 10
+                      bottom: 0
+                      start: 0
+                      end: 0
+                    view:
+                      type: label
+                      text: Welcome to 23 Grandef
+                      font_size: 24
+                      foreground_color:
+                        hex: "#222222"
+                        alpha: 1
+                      alignment: center
+                      text_styles:
+                      - bold
+                      font_families:
+                      - sans-serif
+                  - size:
+                      height: 100%
+                      width: 90%
+                    margin:
+                      top: 10
+                      bottom: 10
+                      start: 0
+                      end: 0
+                    view:
+                      type: scroll_layout
+                      direction: vertical
+                      view:
+                        type: label
+                        text: Fashion and quality at the best price in a more sustainable
+                          way
+                        font_size: 18
+                        foreground_color:
+                          hex: "#222222"
+                          alpha: 1
+                        alignment: center
+                        font_families:
+                        - sans-serif
+                  - size:
+                      width: 0
+                      height: 0
+                    view:
+                      type: label
+                      text: ''
+                      font_size: 14
+                      foreground_color:
+                        hex: "#000000"
+                        alpha: 1
+              - position:
+                  horizontal: end
+                  vertical: top
+                margin:
+                  top: 17
+                  bottom: 0
+                  start: 0
+                  end: 17
+                size:
+                  width: 20
+                  height: 20
+                view:
+                  type: image_button
+                  image:
+                    type: icon
+                    icon: close
+                    tint:
+                      alpha: 1
+                      hex: "#000000"
+                  identifier: dismiss_button
+                  button_click:
+                  - dismiss
+          background_color:
+            hex: "#FFFFFF"
+            alpha: 1
+        - type: linear_layout
+          direction: vertical
+          items:
+          - size:
+              height: 100%
+              width: 100%
+            view:
+              type: container
+              items:
+              - margin:
+                  top: 0
+                  bottom: 0
+                  start: 0
+                  end: 0
+                position:
+                  horizontal: center
+                  vertical: center
+                size:
+                  width: 100%
+                  height: 100%
+                view:
+                  type: linear_layout
+                  direction: vertical
+                  items:
+                  - size:
+                      height: auto
+                      width: 100%
+                    view:
+                      type: media
+                      media_fit: center
+                      url: https://i.imgur.com/IlweEFM.gif
+                      media_type: image
+                    margin:
+                      top: 25
+                  - size:
+                      width: 0
+                      height: 0
+                    view:
+                      type: label
+                      text: ''
+                      font_size: 18
+                      foreground_color:
+                        hex: "#222222"
+                        alpha: 1
+                      alignment: start
+                      font_families:
+                      - sans-serif
+                  - size:
+                      height: 100%
+                      width: 90%
+                    margin:
+                      top: 10
+                      bottom: 10
+                      start: 0
+                      end: 0
+                    view:
+                      type: scroll_layout
+                      direction: vertical
+                      view:
+                        type: label
+                        text: Find your style and add to card in seconds
+                        font_size: 24
+                        foreground_color:
+                          hex: "#222222"
+                          alpha: 1
+                        alignment: center
+                        text_styles:
+                        - bold
+                        font_families:
+                        - sans-serif
+                  - size:
+                      width: 0
+                      height: 0
+                    view:
+                      type: label
+                      text: ''
+                      font_size: 14
+                      foreground_color:
+                        hex: "#000000"
+                        alpha: 1
+                      alignment: center
+                      font_families:
+                      - sans-serif
+              - position:
+                  horizontal: end
+                  vertical: top
+                margin:
+                  top: 17
+                  bottom: 0
+                  start: 0
+                  end: 17
+                size:
+                  width: 20
+                  height: 20
+                view:
+                  type: image_button
+                  image:
+                    type: icon
+                    icon: close
+                    tint:
+                      alpha: 1
+                      hex: "#000000"
+                  identifier: dismiss_button
+                  button_click:
+                  - dismiss
+          background_color:
+            hex: "#FFFFFF"
+            alpha: 1
+        - type: linear_layout
+          direction: vertical
+          items:
+          - size:
+              height: 100%
+              width: 100%
+            view:
+              type: container
+              items:
+              - margin:
+                  top: 0
+                  bottom: 0
+                  start: 0
+                  end: 0
+                position:
+                  horizontal: center
+                  vertical: center
+                size:
+                  width: 100%
+                  height: 100%
+                view:
+                  type: linear_layout
+                  direction: vertical
+                  items:
+                  - size:
+                      width: 90%
+                      height: 40
+                    margin:
+                      top: 25
+                      bottom: 0
+                      start: 0
+                      end: 0
+                    view:
+                      type: label
+                      text: Feature 2 BOPISsdf
+                      font_size: 24
+                      foreground_color:
+                        hex: "#222222"
+                        alpha: 1
+                      alignment: center
+                      text_styles:
+                      - bold
+                      font_families:
+                      - sans-serif
+                  - size:
+                      height: 100%
+                      width: 90%
+                    margin:
+                      top: 10
+                      bottom: 10
+                      start: 0
+                      end: 0
+                    view:
+                      type: scroll_layout
+                      direction: vertical
+                      view:
+                        type: label
+                        text: Buy online, pick up in store
+                        font_size: 18
+                        foreground_color:
+                          hex: "#222222"
+                          alpha: 1
+                        alignment: start
+                        font_families:
+                        - sans-serif
+                  - size:
+                      width: 0
+                      height: 0
+                    view:
+                      type: label
+                      text: ''
+                      font_size: 14
+                      foreground_color:
+                        hex: "#000000"
+                        alpha: 1
+                      alignment: center
+                      font_families:
+                      - sans-serif
+              - position:
+                  horizontal: end
+                  vertical: top
+                margin:
+                  top: 17
+                  bottom: 0
+                  start: 0
+                  end: 17
+                size:
+                  width: 20
+                  height: 20
+                view:
+                  type: image_button
+                  image:
+                    type: icon
+                    icon: close
+                    tint:
+                      alpha: 1
+                      hex: "#000000"
+                  identifier: dismiss_button
+                  button_click:
+                  - dismiss
+          background_color:
+            hex: "#FFFFFF"
+            alpha: 1
+        - type: linear_layout
+          direction: vertical
+          items:
+          - size:
+              height: 100%
+              width: 100%
+            view:
+              type: container
+              items:
+              - margin:
+                  top: 0
+                  bottom: 0
+                  start: 0
+                  end: 0
+                position:
+                  horizontal: center
+                  vertical: center
+                size:
+                  width: 100%
+                  height: 100%
+                view:
+                  type: linear_layout
+                  direction: vertical
+                  items:
+                  - size:
+                      height: 100%
+                      width: 100%
+                    margin:
+                      top: 0
+                      bottom: 0
+                      start: 20
+                      end: 20
+                    view:
+                      type: linear_layout
+                      direction: vertical
+                      items:
+                      - size:
+                          width: 90%
+                          height: 40
+                        margin:
+                          top: 25
+                          bottom: 0
+                          start: 0
+                          end: 0
+                        view:
+                          type: label
+                          text: Do you mind if we stay in touch?f
+                          font_size: 24
+                          foreground_color:
+                            hex: "#222222"
+                            alpha: 1
+                          alignment: center
+                          text_styles:
+                          - bold
+                          font_families:
+                          - sans-serif
+                      - size:
+                          height: 100%
+                          width: 90%
+                        margin:
+                          top: 10
+                          bottom: 10
+                          start: 0
+                          end: 0
+                        view:
+                          type: label
+                          text: 'Enable push notifications so you can:'
+                          font_size: 18
+                          foreground_color:
+                            hex: "#222222"
+                            alpha: 1
+                          alignment: start
+                          font_families:
+                          - sans-serif
+                      - margin:
+                          top: 10
+                          bottom: 10
+                          start: 0
+                          end: 0
+                        size:
+                          width: 100%
+                          height: 100%
+                        view:
+                          type: linear_layout
+                          direction: horizontal
+                          items:
+                          - size:
+                              height: 60
+                              width: 60
+                            margin:
+                              top: 0
+                              bottom: 0
+                              start: 20
+                              end: 20
+                            view:
+                              type: media
+                              media_fit: center
+                              url: https://unroll-images-production.s3.amazonaws.com/projects/2487/1565801064410-banner-500x500-no-words.jpg
+                              media_type: image
+                          - size:
+                              width: 100%
+                              height: 100%
+                            margin:
+                              top: 0
+                              bottom: 0
+                              start: 0
+                              end: 0
+                            view:
+                              type: label
+                              text: Track your Orders
+                              font_size: 18
+                              foreground_color:
+                                hex: "#222222"
+                                alpha: 1
+                              alignment: start
+                              font_families:
+                              - sans-serif
+                      - margin:
+                          top: 10
+                          bottom: 10
+                          start: 0
+                          end: 0
+                        size:
+                          width: 100%
+                          height: 100%
+                        view:
+                          type: linear_layout
+                          direction: horizontal
+                          items:
+                          - size:
+                              height: 60
+                              width: 60
+                            margin:
+                              top: 0
+                              bottom: 0
+                              start: 20
+                              end: 20
+                            view:
+                              type: media
+                              media_fit: center
+                              url: https://unroll-images-production.s3.amazonaws.com/projects/2487/1565801064410-banner-500x500-no-words.jpg
+                              media_type: image
+                          - size:
+                              width: 100%
+                              height: 100%
+                            margin:
+                              top: 0
+                              bottom: 0
+                              start: 0
+                              end: 0
+                            view:
+                              type: label
+                              text: Informed of the latest releases
+                              font_size: 18
+                              foreground_color:
+                                hex: "#222222"
+                                alpha: 1
+                              alignment: start
+                              font_families:
+                              - sans-serif
+                      - margin:
+                          top: 10
+                          bottom: 10
+                          start: 0
+                          end: 0
+                        size:
+                          width: 100%
+                          height: 100%
+                        view:
+                          type: linear_layout
+                          direction: horizontal
+                          items:
+                          - size:
+                              height: 60
+                              width: 60
+                            margin:
+                              top: 0
+                              bottom: 0
+                              start: 20
+                              end: 20
+                            view:
+                              type: media
+                              media_fit: center
+                              url: https://unroll-images-production.s3.amazonaws.com/projects/2487/1565801064410-banner-500x500-no-words.jpg
+                              media_type: image
+                          - size:
+                              width: 100%
+                              height: 100%
+                            margin:
+                              top: 0
+                              bottom: 0
+                              start: 0
+                              end: 0
+                            view:
+                              type: label
+                              text: In store experiences
+                              font_size: 18
+                              foreground_color:
+                                hex: "#222222"
+                                alpha: 1
+                              alignment: start
+                              font_families:
+                              - sans-serif
+                  - margin:
+                      top: 10
+                      bottom: 30
+                    size:
+                      height: auto
+                      width: 100%
+                    view:
+                      type: linear_layout
+                      direction: vertical
+                      items:
+                      - margin:
+                          top: 4
+                          bottom: 4
+                          start: 2
+                          end: 2
+                        size:
+                          width: 85%
+                          height: 40
+                        view:
+                          type: label_button
+                          identifier: 1ec0dfa6-60da-4493-a980-4d5e62012053
+                          label:
+                            type: label
+                            font_size: 18
+                            font_families:
+                            - sans-serif
+                            foreground_color:
+                              hex: "#ffffff"
+                              alpha: 1
+                            alignment: center
+                            text: Yes please
+                          button_click: []
+                          background_color:
+                            hex: "#fe1049"
+                            alpha: 1
+                          border:
+                            radius: 100
+                            stroke_width: 1
+                            stroke_color:
+                              hex: "#fe1049"
+                              alpha: 1
+                      - margin:
+                          top: 4
+                          bottom: 30
+                          start: 2
+                          end: 2
+                        size:
+                          width: 85%
+                          height: 40
+                        view:
+                          type: label_button
+                          identifier: 791da83d-4209-49a9-96b7-8af60c1b6d66
+                          label:
+                            type: label
+                            font_size: 18
+                            font_families:
+                            - sans-serif
+                            foreground_color:
+                              hex: "#222222"
+                              alpha: 1
+                            alignment: center
+                            text: Maybe later
+                          button_click: []
+                          background_color:
+                            hex: "#ffffff"
+                            alpha: 1
+                          border:
+                            radius: 0
+                            stroke_width: 1
+                            stroke_color:
+                              hex: "#ffffff"
+                              alpha: 1
+              - position:
+                  horizontal: end
+                  vertical: top
+                margin:
+                  top: 17
+                  bottom: 0
+                  start: 0
+                  end: 17
+                size:
+                  width: 20
+                  height: 20
+                view:
+                  type: image_button
+                  image:
+                    type: icon
+                    icon: close
+                    tint:
+                      alpha: 1
+                      hex: "#000000"
+                  identifier: dismiss_button
+                  button_click:
+                  - dismiss
+          background_color:
+            hex: "#FFFFFF"
+            alpha: 1
+        - type: linear_layout
+          direction: vertical
+          items:
+          - size:
+              height: 100%
+              width: 100%
+            view:
+              type: container
+              items:
+              - margin:
+                  top: 0
+                  bottom: 0
+                  start: 0
+                  end: 0
+                position:
+                  horizontal: center
+                  vertical: center
+                size:
+                  width: 100%
+                  height: 100%
+                view:
+                  type: linear_layout
+                  direction: vertical
+                  items:
+                  - size:
+                      width: 90%
+                      height: 40
+                    margin:
+                      top: 25
+                      bottom: 0
+                      start: 0
+                      end: 0
+                    view:
+                      type: label
+                      text: Thank youf
+                      font_size: 24
+                      foreground_color:
+                        hex: "#222222"
+                        alpha: 1
+                      alignment: center
+                      text_styles:
+                      - bold
+                      font_families:
+                      - sans-serif
+                  - size:
+                      height: auto
+                      width: 100%
+                    view:
+                      type: media
+                      media_fit: center
+                      url: https://unroll-images-production.s3.amazonaws.com/projects/2487/1565801064410-banner-500x500-no-words.jpg
+                      media_type: image
+                  - size:
+                      height: 100%
+                      width: 90%
+                    margin:
+                      top: 10
+                      bottom: 10
+                      start: 0
+                      end: 0
+                    view:
+                      type: scroll_layout
+                      direction: vertical
+                      view:
+                        type: label
+                        text: One last thing, you can manage your notification preferences
+                          if you want.
+                        font_size: 18
+                        foreground_color:
+                          hex: "#222222"
+                          alpha: 1
+                        alignment: center
+                        font_families:
+                        - sans-serif
+                  - size:
+                      width: 0
+                      height: 0
+                    view:
+                      type: label
+                      text: ''
+                      font_size: 14
+                      foreground_color:
+                        hex: "#000000"
+                        alpha: 1
+                      alignment: center
+                      font_families:
+                      - sans-serif
+                  - margin:
+                      top: 10
+                      bottom: 30
+                    size:
+                      height: auto
+                      width: 100%
+                    view:
+                      type: linear_layout
+                      direction: vertical
+                      items:
+                      - margin:
+                          top: 4
+                          bottom: 4
+                          start: 2
+                          end: 2
+                        size:
+                          width: 85%
+                          height: 40
+                        view:
+                          type: label_button
+                          identifier: 3283f365-ceca-4a53-bee7-607209748fc8
+                          label:
+                            type: label
+                            font_size: 18
+                            font_families:
+                            - sans-serif
+                            foreground_color:
+                              hex: "#ffffff"
+                              alpha: 1
+                            alignment: center
+                            text: Set my preferernes
+                          button_click: []
+                          background_color:
+                            hex: "#fe1049"
+                            alpha: 1
+                          border:
+                            radius: 100
+                            stroke_width: 1
+                            stroke_color:
+                              hex: "#fe1049"
+                              alpha: 1
+                      - margin:
+                          top: 4
+                          bottom: 30
+                          start: 2
+                          end: 2
+                        size:
+                          width: 85%
+                          height: 40
+                        view:
+                          type: label_button
+                          identifier: fd81d012-9a19-45b6-892a-344228c02c66
+                          label:
+                            type: label
+                            font_size: 18
+                            font_families:
+                            - sans-serif
+                            foreground_color:
+                              hex: "#fe1049"
+                              alpha: 1
+                            alignment: center
+                            text: Shop now
+                          button_click: []
+                          background_color:
+                            hex: "#ffffff"
+                            alpha: 1
+                          border:
+                            radius: 100
+                            stroke_width: 1
+                            stroke_color:
+                              hex: "#fe1049"
+                              alpha: 1
+              - position:
+                  horizontal: end
+                  vertical: top
+                margin:
+                  top: 17
+                  bottom: 0
+                  start: 0
+                  end: 17
+                size:
+                  width: 20
+                  height: 20
+                view:
+                  type: image_button
+                  image:
+                    type: icon
+                    icon: close
+                    tint:
+                      alpha: 1
+                      hex: "#000000"
+                  identifier: dismiss_button
+                  button_click:
+                  - dismiss
+          background_color:
+            hex: "#FFFFFF"
+            alpha: 1
+    - position:
+        horizontal: center
+        vertical: bottom
+      size:
+        width: 100%
+        height: auto
+      view:
+        type: pager_indicator
+        indicator_spacing: 2
+        indicator_bindings:
+          selected:
+            type: circle
+            radius: 7
+            color:
+              hex: "#fe1049"
+              alpha: 1
+          deselected:
+            type: circle
+            radius: 7
+            color:
+              hex: "#CCCCCC"
+              alpha: .8

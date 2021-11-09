@@ -9,7 +9,8 @@ struct MarginViewModifier: ViewModifier {
     
     @ViewBuilder
     func body(content: Content) -> some View {
-        content.applyMargin(edge: .leading, margin: margin.start)
+        content
+            .applyMargin(edge: .leading, margin: margin.start)
             .applyMargin(edge: .top, margin: margin.top)
             .applyMargin(edge: .trailing, margin: margin.end)
             .applyMargin(edge: .bottom, margin: margin.bottom)

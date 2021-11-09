@@ -36,8 +36,9 @@ private struct AirshipRadioToggleStyle: ToggleStyle {
     
     func makeBody(configuration: Self.Configuration) -> some View {
         let isOn = configuration.isOn
-        let width = self.viewConstraints.width ?? self.viewConstraints.height ?? 32
-        let height = self.viewConstraints.height ?? self.viewConstraints.height ?? 32
+        
+        let width = self.viewConstraints.contentWidth ?? self.viewConstraints.contentWidth ?? 32
+        let height = self.viewConstraints.contentHeight ?? self.viewConstraints.contentHeight ?? 32
         
         let outerBorder: Border = self.border ?? Border(radius: max(width, height),
                                                    strokeWidth: 2,
