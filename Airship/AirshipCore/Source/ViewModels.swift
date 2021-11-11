@@ -53,8 +53,8 @@ enum PresentationModel : Decodable {
 
 struct BannerPresentationModel : Decodable {
     let duration: Int
-    let placementSelectors: [ModalPlacementSelector]?
-    let defaultPlacement: ModalPlacement
+    let placementSelectors: [BannerPlacementSelector]?
+    let defaultPlacement: BannerPlacement
 
     enum CodingKeys : String, CodingKey {
         case duration = "duration_milliseconds"
@@ -65,22 +65,20 @@ struct BannerPresentationModel : Decodable {
 
 struct BannerPlacement : Decodable {
     let margin: Margin?
-    let size: Size?
+    let size: Size
     let position: Position?
-    let shade: HexColor?
     
     enum CodingKeys: String, CodingKey {
         case margin = "margin"
         case size = "size"
         case position = "position"
-        case shade = "shade"
     }
 }
 
 struct BannerPlacementSelector : Decodable {
     let placement: BannerPlacement
-    let windowSize: WindowSize
-    let orientation: Orientation
+    let windowSize: WindowSize?
+    let orientation: Orientation?
     
     enum CodingKeys : String, CodingKey {
         case placement = "placement"
@@ -92,16 +90,18 @@ struct BannerPlacementSelector : Decodable {
 struct ModalPresentationModel: Decodable {
     let placementSelectors: [ModalPlacementSelector]?
     let defaultPlacement: ModalPlacement
+    let dismissOnTouchOutside: Bool?
 
     enum CodingKeys: String, CodingKey {
         case placementSelectors = "placement_selectors"
         case defaultPlacement = "default_placement"
+        case dismissOnTouchOutside = "dismiss_on_touch_outside"
     }
 }
 
 struct ModalPlacement : Decodable {
     let margin: Margin?
-    let size: Size?
+    let size: Size
     let position: Position?
     let shade: HexColor?
     
@@ -109,14 +109,14 @@ struct ModalPlacement : Decodable {
         case margin = "margin"
         case size = "size"
         case position = "position"
-        case shade = "shade"
+        case shade = "shade_color"
     }
 }
 
 struct ModalPlacementSelector : Decodable {
     let placement: ModalPlacement
-    let windowSize: WindowSize
-    let orientation: Orientation
+    let windowSize: WindowSize?
+    let orientation: Orientation?
     
     enum CodingKeys : String, CodingKey {
         case placement = "placement"

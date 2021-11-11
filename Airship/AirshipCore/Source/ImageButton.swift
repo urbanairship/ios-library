@@ -21,9 +21,7 @@ struct ImageButton : View {
     
     @ViewBuilder
     var body: some View {
-        Button(action: {
-            print("Button action")
-        }) {
+        Button(action: {}) {
             switch(model.image) {
             case .url(let model):
                 createImage(model)
@@ -32,6 +30,8 @@ struct ImageButton : View {
                 createIcon(model)
             }
         }
+        .buttonClick(self.model.identifier, behaviors: self.model.clickBehaviors, actions: nil)
+        .enableButton(self.model.enableBehaviors)
         .background(self.model.backgroundColor)
         .border(self.model.border)
         .constraints(constraints)
@@ -57,6 +57,7 @@ struct ImageButton : View {
             Image(systemName: "xmark")
                 .aspectRatio(contentMode: .fit)
                 .foregroundColor(model.tint.toColor())
+                .contentShape(Circle())
         }
     }
 }

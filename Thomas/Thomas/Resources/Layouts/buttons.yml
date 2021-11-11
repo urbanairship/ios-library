@@ -2,6 +2,7 @@
 version: 1
 presentation:
   type: modal
+  dismiss_on_touch_outside: true
   default_placement:
     size:
       width: 80%
@@ -10,8 +11,20 @@ presentation:
       horizontal: center
       vertical: center
     shade_color:
-      hex: "#444444"
+      hex: "#ff0000"
       alpha: .3
+  placement_selectors:
+    - orientation: landscape
+      placement: 
+        size:
+          width: 50%
+          height: 50%
+        position:
+          horizontal: center
+          vertical: center
+        shade_color:
+          hex: "#ff0000"
+          alpha: .3
 view:
   type: "scroll_layout"
   direction: "vertical"

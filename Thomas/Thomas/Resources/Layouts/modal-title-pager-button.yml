@@ -2,6 +2,7 @@
 version: 1
 presentation:
   type: modal
+  dismiss_on_touch_outside: true
   default_placement:
     size:
       width: 80%
@@ -14,6 +15,8 @@ presentation:
       alpha: .3
 view:
   type: pager_controller
+  background_color:
+    hex: "#FFFFFF"
   view:
     type: container
     items:

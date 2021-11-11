@@ -5,13 +5,14 @@ context:
   - tours
 presentation:
   type: modal
+  dismiss_on_touch_outside: true
   default_placement:
     size:
       max_width: 100%
       max_height: 100%
-      width: 100%
+      width: 80%
       min_width: 100%
-      height: 100%
+      height: 80%
       min_height: 100%
     position:
       horizontal: center
@@ -141,7 +142,7 @@ view:
                       alpha: 1
                       hex: "#000000"
                   identifier: dismiss_button
-                  button_click:
+                  click_behaviors:
                   - dismiss
           background_color:
             hex: "#FFFFFF"
@@ -249,7 +250,7 @@ view:
                       alpha: 1
                       hex: "#000000"
                   identifier: dismiss_button
-                  button_click:
+                  click_behaviors:
                   - dismiss
           background_color:
             hex: "#FFFFFF"
@@ -352,7 +353,7 @@ view:
                       alpha: 1
                       hex: "#000000"
                   identifier: dismiss_button
-                  button_click:
+                  click_behaviors:
                   - dismiss
           background_color:
             hex: "#FFFFFF"
@@ -652,7 +653,7 @@ view:
                       alpha: 1
                       hex: "#000000"
                   identifier: dismiss_button
-                  button_click:
+                  click_behaviors:
                   - dismiss
           background_color:
             hex: "#FFFFFF"
@@ -836,7 +837,7 @@ view:
                       alpha: 1
                       hex: "#000000"
                   identifier: dismiss_button
-                  button_click:
+                  click_behaviors:
                   - dismiss
           background_color:
             hex: "#FFFFFF"

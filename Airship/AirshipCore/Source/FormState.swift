@@ -25,12 +25,12 @@ class FormState: ObservableObject {
     }
 }
 
-struct FormInputData {
+public struct FormInputData {
     let isValid: Bool
     let value: FormValue
 }
 
-enum FormValue {
+public enum FormValue {
     case checkbox(Bool?)
     case radio(String?)
     case multipleCheckbox([String]?)

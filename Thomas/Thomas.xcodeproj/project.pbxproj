@@ -13,7 +13,6 @@
 		324449362721668100D108B5 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 324449352721668100D108B5 /* Preview Assets.xcassets */; };
 		3244494527216CDE00D108B5 /* Layouts in Resources */ = {isa = PBXBuildFile; fileRef = 3244494427216CDE00D108B5 /* Layouts */; };
 		3244494C2721784900D108B5 /* Yams in Frameworks */ = {isa = PBXBuildFile; productRef = 3244494B2721784900D108B5 /* Yams */; };
-		3244494E2721957500D108B5 /* LayoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3244494D2721957500D108B5 /* LayoutView.swift */; };
 		32444950272195E700D108B5 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3244494F272195E700D108B5 /* Utils.swift */; };
 		32444952272199CD00D108B5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32444951272199CD00D108B5 /* AppDelegate.swift */; };
 		3244495427219A2E00D108B5 /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3244495327219A2E00D108B5 /* AirshipConfig.plist */; };
@@ -45,7 +44,6 @@
 		324449322721668100D108B5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		324449352721668100D108B5 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		3244494427216CDE00D108B5 /* Layouts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Layouts; sourceTree = "<group>"; };
-		3244494D2721957500D108B5 /* LayoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutView.swift; sourceTree = "<group>"; };
 		3244494F272195E700D108B5 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		32444951272199CD00D108B5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3244495327219A2E00D108B5 /* AirshipConfig.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = AirshipConfig.plist; sourceTree = SOURCE_ROOT; };
@@ -95,7 +93,6 @@
 				32444951272199CD00D108B5 /* AppDelegate.swift */,
 				3244492E2721667D00D108B5 /* ThomasApp.swift */,
 				324449302721667D00D108B5 /* LayoutsList.swift */,
-				3244494D2721957500D108B5 /* LayoutView.swift */,
 				3244494F272195E700D108B5 /* Utils.swift */,
 				324449322721668100D108B5 /* Assets.xcassets */,
 				3244495B2721A5CB00D108B5 /* Resources */,
@@ -210,7 +207,6 @@
 			files = (
 				324449312721667D00D108B5 /* LayoutsList.swift in Sources */,
 				3244492F2721667D00D108B5 /* ThomasApp.swift in Sources */,
-				3244494E2721957500D108B5 /* LayoutView.swift in Sources */,
 				32444952272199CD00D108B5 /* AppDelegate.swift in Sources */,
 				32444950272195E700D108B5 /* Utils.swift in Sources */,
 			);

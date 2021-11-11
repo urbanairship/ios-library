@@ -12,7 +12,9 @@ struct SubmitFormButtonClickBehavior: ViewModifier {
     @ViewBuilder
     func body(content: Content) -> some View {
         content.addTapGesture {
-            context.eventHandler.onFormResult(formIdentifier: formState.formIdentifier, formData: formState.data) 
+            if let data = formState.data.toDictionary() {
+                context.eventHandler.onFormResult(formIdentifier: formState.formIdentifier, formData: data)
+            }
         }
     }
 }

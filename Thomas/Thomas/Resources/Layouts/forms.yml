@@ -2,6 +2,7 @@
 version: 1
 presentation:
   type: modal
+  dismiss_on_touch_outside: true
   default_placement:
     size:
       width: 80%
@@ -11,11 +12,13 @@ presentation:
       vertical: center
     shade_color:
       hex: "#444444"
-      alpha: .3
+      alpha: .8
 view:
   type: form_controller
   identifier: "top-form"
   submit: submit_event
+  background_color:
+    hex: "#FFFFFF"
   border:
     stroke_color:
       hex: "#00FF00"

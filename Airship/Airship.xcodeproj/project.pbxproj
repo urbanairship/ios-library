@@ -37,6 +37,8 @@
 		1BCDE30A23A12C430006A319 /* UAAccengageResources.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BCDE30823A12C430006A319 /* UAAccengageResources.h */; };
 		1BCDE30B23A12C430006A319 /* UAAccengageResources.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCDE30923A12C430006A319 /* UAAccengageResources.m */; };
 		1BCDE30E23A12CBA0006A319 /* AirshipAccengage.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1BCDE30C23A12CBA0006A319 /* AirshipAccengage.strings */; };
+		3215CA9D2739349800B7D97E /* ModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3215CA9C2739349700B7D97E /* ModalView.swift */; };
+		3215CA9E2739349800B7D97E /* ModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3215CA9C2739349700B7D97E /* ModalView.swift */; };
 		3230E60B24D04C75002C344D /* UAInAppAudienceHistorianTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3230E60A24D04C75002C344D /* UAInAppAudienceHistorianTest.m */; };
 		32515869272AFB2E00DF8B44 /* Media.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32515866272AFB2E00DF8B44 /* Media.swift */; };
 		3251586A272AFB2E00DF8B44 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32515867272AFB2E00DF8B44 /* ImageView.swift */; };
@@ -1012,6 +1014,8 @@
 		6ED735E226CAE2D7003B0A7D /* TestChannelRegistrar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED735E126CAE2D7003B0A7D /* TestChannelRegistrar.swift */; };
 		6ED735E426CAE8AA003B0A7D /* TestChannelAudienceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED735E326CAE8AA003B0A7D /* TestChannelAudienceManager.swift */; };
 		6ED735E626CAEABC003B0A7D /* TestLocaleManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED735E526CAEABC003B0A7D /* TestLocaleManager.swift */; };
+		6ED80793273CA0C800D1F455 /* OrientationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED80792273CA0C800D1F455 /* OrientationState.swift */; };
+		6ED80794273CA0C800D1F455 /* OrientationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED80792273CA0C800D1F455 /* OrientationState.swift */; };
 		6EE6529122A7E2DA00F7D54D /* UAInAppMessageHTMLStyleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EE6529022A7E2DA00F7D54D /* UAInAppMessageHTMLStyleTest.m */; };
 		6EE6529322A7E3B800F7D54D /* Valid-UAInAppMessageHTMLStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6EE6529222A7E3B800F7D54D /* Valid-UAInAppMessageHTMLStyle.plist */; };
 		6EE7725B238F179300E79944 /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; settings = {ATTRIBUTES = (Required, ); }; };
@@ -1465,6 +1469,7 @@
 		1BCDE31123A12CD30006A319 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = Resources/common/ru.lproj/AirshipAccengage.strings; sourceTree = "<group>"; };
 		1BCDE31223A12CD30006A319 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = Resources/common/it.lproj/AirshipAccengage.strings; sourceTree = "<group>"; };
 		1BCDE31323A12CD30006A319 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = Resources/common/fr.lproj/AirshipAccengage.strings; sourceTree = "<group>"; };
+		3215CA9C2739349700B7D97E /* ModalView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModalView.swift; sourceTree = "<group>"; };
 		3226E11424C1DF54000106CC /* UAInAppAudienceHistorian.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInAppAudienceHistorian.m; sourceTree = "<group>"; };
 		3226E11524C1DF54000106CC /* UAInAppAudienceHistorian+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAInAppAudienceHistorian+Internal.h"; sourceTree = "<group>"; };
 		3230E60A24D04C75002C344D /* UAInAppAudienceHistorianTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppAudienceHistorianTest.m; sourceTree = "<group>"; };
@@ -2152,6 +2157,7 @@
 		6ED735E126CAE2D7003B0A7D /* TestChannelRegistrar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestChannelRegistrar.swift; sourceTree = "<group>"; };
 		6ED735E326CAE8AA003B0A7D /* TestChannelAudienceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestChannelAudienceManager.swift; sourceTree = "<group>"; };
 		6ED735E526CAEABC003B0A7D /* TestLocaleManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestLocaleManager.swift; sourceTree = "<group>"; };
+		6ED80792273CA0C800D1F455 /* OrientationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrientationState.swift; sourceTree = "<group>"; };
 		6ED87F9A1FEB18DD003B652A /* UAInAppMessageMediaInfo+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageMediaInfo+Internal.h"; sourceTree = "<group>"; };
 		6ED87FA01FEB315B003B652A /* UAInAppMessageTextInfo+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageTextInfo+Internal.h"; sourceTree = "<group>"; };
 		6ED87FA91FEB3A47003B652A /* UAInAppMessageButtonInfo+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageButtonInfo+Internal.h"; sourceTree = "<group>"; };
@@ -3319,6 +3325,7 @@
 				32515866272AFB2E00DF8B44 /* Media.swift */,
 				32515868272AFB2E00DF8B44 /* MediaWebView.swift */,
 				6EFD6D4A27272333005B26F1 /* EmptyView.swift */,
+				3215CA9C2739349700B7D97E /* ModalView.swift */,
 				A658DE182728498900007672 /* AirshipWebview.swift */,
 			);
 			name = Views;
@@ -4399,6 +4406,7 @@
 				6E46A27B272B63680089CDE3 /* ThomasContext.swift */,
 				6E887CD0272C5E8400E83363 /* CheckboxState.swift */,
 				6EF27DE52730E77300548DA3 /* RadioInputState.swift */,
+				6ED80792273CA0C800D1F455 /* OrientationState.swift */,
 			);
 			name = Environment;
 			sourceTree = "<group>";
@@ -6286,6 +6294,7 @@
 				6E91B4612689092F00DDB1A8 /* InstallAttributionEvent.swift in Sources */,
 				6EF27DE62730E77300548DA3 /* RadioInputState.swift in Sources */,
 				6E1BACDD2719FC0A0038399E /* ViewFactory.swift in Sources */,
+				6ED80793273CA0C800D1F455 /* OrientationState.swift in Sources */,
 				A61517C626B009D6008A41C4 /* SubscriptionListFetchResponse.swift in Sources */,
 				6E6ED15B2683DBC300A2CBD0 /* Base64.swift in Sources */,
 				A61517B226A9C4C3008A41C4 /* SubscriptionListEditor.swift in Sources */,
@@ -6381,6 +6390,7 @@
 				6E15B73F26D43F120099C92D /* NSArrayValueTransformer.swift in Sources */,
 				6E6ED1612683DBC300A2CBD0 /* AirshipVersion.swift in Sources */,
 				6E6ED1392683A58D00A2CBD0 /* Semaphore.swift in Sources */,
+				3215CA9D2739349800B7D97E /* ModalView.swift in Sources */,
 				3251586A272AFB2E00DF8B44 /* ImageView.swift in Sources */,
 				6E6ED1592683DBC300A2CBD0 /* WebView.swift in Sources */,
 				3CC95B1F268E785900FE2ACD /* NotificationCategories.swift in Sources */,
@@ -6954,6 +6964,7 @@
 				6EF27DE72730E77300548DA3 /* RadioInputState.swift in Sources */,
 				A6F6726126E1162F008C69C3 /* JSONMatcher.swift in Sources */,
 				6E698DF126790AC300654DB2 /* AirshipLogger.swift in Sources */,
+				6ED80794273CA0C800D1F455 /* OrientationState.swift in Sources */,
 				32515874272B038300DF8B44 /* Image.swift in Sources */,
 				6E510C262721DA86006D9126 /* ForegroundColorViewModifier.swift in Sources */,
 				6EFD6D88272A53FB005B26F1 /* Pager.swift in Sources */,
@@ -7049,6 +7060,7 @@
 				32515873272B008400DF8B44 /* ImageView.swift in Sources */,
 				6E664BEB26C6DB7600A2C8E5 /* Utils.swift in Sources */,
 				6E91B45326883B6E00DDB1A8 /* AppExitEvent.swift in Sources */,
+				3215CA9E2739349800B7D97E /* ModalView.swift in Sources */,
 				A6F6726326E11637008C69C3 /* JSONPredicate.swift in Sources */,
 				6EF27DE127308CAD00548DA3 /* Checkbox.swift in Sources */,
 				A658DE1227280B3400007672 /* ImageButton.swift in Sources */,
