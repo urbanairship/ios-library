@@ -42,9 +42,9 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
         tableView.backgroundColor = style?.backgroundColor
         
         let headerView = PreferenceCenterHeaderLabel(frame: CGRect(x: 0,
-                                              y: 0,
-                                              width: self.tableView.frame.width,
-                                              height: 50))
+                                                                   y: 0,
+                                                                   width: 0,
+                                                                   height: 0))
         headerView.numberOfLines = 0
         headerView.lineBreakMode = .byWordWrapping
         self.tableView.tableHeaderView = headerView
@@ -121,6 +121,14 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
         cell.detailTextLabel?.numberOfLines = 0
         
         let cellSwitch = cell.accessoryView as! UISwitch
+        if let tintColor = style?.switchTintColor {
+            cellSwitch.onTintColor = tintColor
+        }
+        
+        if let tintColor = style?.switchThumbTintColor {
+            cellSwitch.thumbTintColor = tintColor
+        }
+        
         if (activeSubscriptions.contains(item.subscriptionID)) {
             cellSwitch.setOn(true, animated: false)
         } else {
@@ -148,11 +156,32 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
         self.config = config
         self.navigationItem.title = style?.title ?? config.display?.title ?? PreferenceCenterResources.localizedString(key: "ua_preference_center_title")
        
-        let description = style?.subtitle ?? config.display?.subtitle
-        let headerView = self.tableView.tableHeaderView as! UILabel
-        headerView.text = description
-        headerView.sizeToFit()
-        
+        let headerView = self.tableView.tableHeaderView as! PreferenceCenterHeaderLabel
+
+        if let description = style?.subtitle ?? config.display?.subtitle {
+            headerView.isHidden = false
+            headerView.text = description
+            if let font = style?.subtitleFont {
+                headerView.font = font
+            }
+            
+            if let color = style?.subtitleColor {
+                headerView.textColor = color
+            }
+            headerView.leadingPadding = 15
+            headerView.trailingPadding = 10
+            headerView.topPadding = 10
+            if #available(iOS 15.0, *) {
+                headerView.bottomPadding = 0
+            } else {
+                headerView.bottomPadding = 10
+            }
+            
+            headerView.resize()
+        } else {
+            headerView.isHidden = true
+        }
+    
         self.overlayView.alpha = 0;
         self.activityIndicator.stopAnimating()
         self.activeSubscriptions = lists
