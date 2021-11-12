@@ -12,7 +12,7 @@ class ChannelBulkUpdateAPIClientTest: XCTestCase {
     var client: ChannelBulkUpdateAPIClient!
 
     override func setUpWithError() throws {
-        self.config = RuntimeConfig(config: Config(), dataStore: PreferenceDataStore(keyPrefix: UUID().uuidString))
+        self.config = RuntimeConfig(config: Config(), dataStore: PreferenceDataStore(appKey: UUID().uuidString))
         self.session = TestRequestSession.init()
         self.client = ChannelBulkUpdateAPIClient(config: self.config, session: self.session)
     }

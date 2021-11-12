@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19455" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19454"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -19,15 +19,15 @@
                     <rect key="frame" x="0.0" y="0.0" width="375" height="150"/>
                     <subviews>
                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" spacing="2" translatesAutoresizingMaskIntoConstraints="NO" id="efw-Xv-lDU">
-                            <rect key="frame" x="5" y="8" width="370" height="132"/>
+                            <rect key="frame" x="15" y="10" width="360" height="135"/>
                             <subviews>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="S8b-JH-DbO">
-                                    <rect key="frame" x="0.0" y="0.0" width="0.0" height="130"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="0.0" height="133"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                     <nil key="highlightedColor"/>
                                 </label>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="e5F-bY-bY0">
-                                    <rect key="frame" x="0.0" y="132" width="0.0" height="0.0"/>
+                                    <rect key="frame" x="0.0" y="135" width="0.0" height="0.0"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                     <nil key="textColor"/>
                                     <nil key="highlightedColor"/>
@@ -38,9 +38,9 @@
                     <viewLayoutGuide key="safeArea" id="hzT-W6-Ui8"/>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
-                        <constraint firstAttribute="bottom" secondItem="efw-Xv-lDU" secondAttribute="bottom" constant="10" id="CBJ-hL-jEU"/>
-                        <constraint firstItem="efw-Xv-lDU" firstAttribute="top" secondItem="4dc-7e-mdx" secondAttribute="top" constant="8" id="NQG-y5-eK0"/>
-                        <constraint firstItem="efw-Xv-lDU" firstAttribute="leading" secondItem="4dc-7e-mdx" secondAttribute="leading" constant="5" id="nfS-uf-1WS"/>
+                        <constraint firstAttribute="bottom" secondItem="efw-Xv-lDU" secondAttribute="bottom" constant="5" id="CBJ-hL-jEU"/>
+                        <constraint firstItem="efw-Xv-lDU" firstAttribute="top" secondItem="4dc-7e-mdx" secondAttribute="top" constant="10" id="NQG-y5-eK0"/>
+                        <constraint firstItem="efw-Xv-lDU" firstAttribute="leading" secondItem="4dc-7e-mdx" secondAttribute="leading" constant="15" id="nfS-uf-1WS"/>
                         <constraint firstAttribute="trailing" secondItem="efw-Xv-lDU" secondAttribute="trailing" id="vJe-w8-fEc"/>
                     </constraints>
                 </view>

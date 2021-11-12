@@ -35,7 +35,7 @@ class ContactTest: XCTestCase {
     
         self.date = UATestDate()
         
-        self.dataStore = PreferenceDataStore(keyPrefix: UUID().uuidString)
+        self.dataStore = PreferenceDataStore(appKey: UUID().uuidString)
         self.privacyManager = PrivacyManager(dataStore: self.dataStore, defaultEnabledFeatures: .all, notificationCenter: self.notificationCenter)
         
         
@@ -86,6 +86,30 @@ class ContactTest: XCTestCase {
 
         let pendingAttributeUpdates = [AttributeUpdate.remove(attribute: "some-attribute")]
         XCTAssertEqual(pendingAttributeUpdates, self.contact.pendingAttributeUpdates)
+    }
+    
+    /// Test skip calling identify on the legacy named user if we already have contact data
+    func testSkipMigrateLegacyNamedUser() throws {
+        notificationCenter.post(Notification(name: AppStateTracker.didBecomeActiveNotification))
+    
+        XCTAssertEqual(1, self.taskManager.enqueuedRequests.count)
+        
+        let expectation = XCTestExpectation(description: "callback called")
+        self.apiClient.resolveCallback = { channelID, callback in
+            XCTAssertEqual("channel id", channelID)
+            callback(ContactAPIResponse(status: 200, contactID: "some-contact-id", isAnonymous: true), nil)
+            expectation.fulfill()
+        }
+        
+        let task = self.taskManager.launchSync(taskID: Contact.updateTaskID)
+        XCTAssertTrue(task.completed)
+        
+        wait(for: [expectation], timeout: 10.0)
+        
+        self.dataStore.setObject("named-user", forKey: Contact.legacyNamedUserKey)
+        self.contact.migrateNamedUser()
+        
+        XCTAssertNil(self.contact.namedUserID)
     }
     
     func testNoPendingOperations() throws {

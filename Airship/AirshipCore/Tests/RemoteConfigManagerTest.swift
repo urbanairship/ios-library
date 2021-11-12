@@ -5,7 +5,7 @@ import AirshipCore
 
 class RemoteConfigManagerTest: XCTestCase {
 
-    let dataStore = PreferenceDataStore(keyPrefix: UUID().uuidString)
+    let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
     let testRemoteDataProvider = TestRemoteDataProvider()
     let testModuleAdapter = TestRemoteConfigModuleAdapter()
     let notificationCenter = NotificationCenter.default

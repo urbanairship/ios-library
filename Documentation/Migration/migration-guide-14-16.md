@@ -1,8 +1,11 @@
 # Airship iOS SDK Migration Guide
 
-# Airship SDK 14.x to 15.0
+**Due to a bug that mishandles persisted SDK settings, apps that are migrating from SDK 14.8.0 or older should update to 16.0.2 or newer**
 
-SDK 15.0 brings significant API changes to better support Swift. The core module has been completely rewritten in Swift, and some method signatures will have changed.
+# Airship SDK 14.x to 16.0.2
+
+
+SDK 16.0 brings significant API changes to better support Swift. The core module has been completely rewritten in Swift, and some method signatures will have changed.
 
 The prefix `UA` has been removed on the majority of classes, protocols, and enums. Most changes in code will just need the the `UA` prefix dropped in Swift. Objective-C will still have the `UA` prefix.
 
@@ -12,6 +15,18 @@ The prefix `UA` has been removed on the majority of classes, protocols, and enum
 
 When using xcframeworks or Carthage, you will need to add `AirshipBasement` with `AirshipCore` as bare minimum integration. The framework will be exported when you import AirshipCore, so there is no need to include an additional import just for AirshipBasement.
 
+
+## Cocoapods import
+The CocoaPods import has been updated from `Airship` to `AirshipKit`
+```
+// 14.x
+import Airship
+
+// 16.x
+import AirshipKit
+```
+
+This is to avoid the class `Airship` from conflicting with the framework `Airship` to make it possible to use resolve any name conflicts with other frameworks.
 
 ## Shared Accessors
 
@@ -173,7 +188,7 @@ func receivedNotificationResponse(_ notificationResponse: UANotificationResponse
 func extend(_ options: UNNotificationPresentationOptions = [], notification: UNNotification) -> UNNotificationPresentationOptions
 ```
 
-SDK 15:
+SDK 16:
 
 ```    
 func receivedBackgroundNotification(_ userInfo: [AnyHashable : Any], completionHandler: @escaping (UIBackgroundFetchResult) -> Void)
@@ -217,7 +232,7 @@ The locale manager no longer allows resetting the locale by setting the value to
 UAirship.shared().locale.currentLocale = nil
 ```
 
-15.x:
+16.x:
 ```
 Airship.shared.localeManager.clearLocale()
 ```

@@ -26,7 +26,7 @@
 @implementation AirshipAccengageTests
 
 - (void)setUp {
-    self.dataStore = [[UAPreferenceDataStore alloc ] initWithKeyPrefix:NSUUID.UUID.UUIDString];
+    self.dataStore = [[UAPreferenceDataStore alloc ] initWithAppKey:NSUUID.UUID.UUIDString];
     self.privacyManager = [[UAPrivacyManager alloc] initWithDataStore:self.dataStore
                                                defaultEnabledFeatures:UAFeaturesNone];
     

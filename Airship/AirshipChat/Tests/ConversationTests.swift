@@ -24,7 +24,7 @@ class ConversationTests: XCTestCase {
         self.mockAPIClient = MockChatAPIClient()
 
         self.notificationCenter = NotificationCenter()
-        let dataStore = PreferenceDataStore(keyPrefix: UUID().uuidString)
+        let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
 
         self.mockConfig = MockChatConfig(appKey: "someAppKey",
                                          chatURL: "https://test",

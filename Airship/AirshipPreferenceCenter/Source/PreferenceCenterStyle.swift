@@ -74,9 +74,19 @@ public class PreferenceCenterStyle : NSObject {
     @objc public var navigationBarColor: UIColor?
 
     /**
-     * The tint color.
+     * The navigation bar tint color.
      */
     @objc public var tintColor: UIColor?
+
+    /**
+     * The switch tint color when on
+     */
+    @objc public var switchTintColor: UIColor?
+
+    /**
+     * The switch thumb tint color
+     */
+    @objc public var switchThumbTintColor: UIColor?
 
     /**
      * Preference center style initializer

@@ -32,7 +32,7 @@ class ChannelAudienceManagerTest: XCTestCase {
 
     
         self.date = UATestDate()
-        self.dataStore = PreferenceDataStore(keyPrefix: UUID().uuidString)
+        self.dataStore = PreferenceDataStore(appKey: UUID().uuidString)
         self.privacyManager = PrivacyManager(dataStore: self.dataStore, defaultEnabledFeatures: .all, notificationCenter: self.notificationCenter)
         
         self.audienceManager = ChannelAudienceManager(dataStore: self.dataStore,

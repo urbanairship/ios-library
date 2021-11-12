@@ -31,7 +31,7 @@
 - (void)testMigration {
     NSString *prefix = NSUUID.UUID.UUIDString;
     [NSUserDefaults.standardUserDefaults setBool:YES forKey:[NSString stringWithFormat:@"%@some-key", prefix]];
-    UAPreferenceDataStore *dataStore = [[UAPreferenceDataStore alloc] initWithKeyPrefix:prefix];
+    UAPreferenceDataStore *dataStore = [[UAPreferenceDataStore alloc] initWithAppKey:prefix];
     XCTAssertTrue([dataStore boolForKey:@"some-key"]);
 }
 

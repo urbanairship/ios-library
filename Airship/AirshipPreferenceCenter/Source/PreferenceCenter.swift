@@ -114,9 +114,29 @@ public class PreferenceCenter : NSObject, Component {
         navController.modalTransitionStyle = UIModalTransitionStyle.crossDissolve
         navController.modalPresentationStyle = UIModalPresentationStyle.fullScreen
         
+        var titleTextAttributes: [NSAttributedString.Key : Any] = [:]
+        titleTextAttributes[.font] = style?.titleFont
+        titleTextAttributes[.foregroundColor] = style?.titleColor
+
         navController.navigationBar.tintColor = style?.tintColor
         navController.navigationBar.barTintColor = style?.navigationBarColor
+        if (!titleTextAttributes.isEmpty) {
+            navController.navigationBar.titleTextAttributes = titleTextAttributes
+        }
         
+        // Customizing our navigation bar
+        if #available(iOS 13.0, *) {
+            let appearance = UINavigationBarAppearance()
+            appearance.configureWithOpaqueBackground()
+            appearance.backgroundColor = style?.navigationBarColor
+            if (!titleTextAttributes.isEmpty) {
+                appearance.titleTextAttributes = titleTextAttributes
+            }
+            navController.navigationBar.standardAppearance = appearance
+            navController.navigationBar.scrollEdgeAppearance = appearance
+        }
+
+
         navController.pushViewController(preferenceCenterVC, animated: false)
         
         Utils.topController()?.present(navController, animated: true, completion: {

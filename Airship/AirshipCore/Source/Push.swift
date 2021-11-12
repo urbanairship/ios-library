@@ -147,10 +147,6 @@ public class Push: NSObject, Component, PushProtocol {
     @objc
     public static let legacyTagsSettingsKey = "UAPushTags"
 
-    // Push tags migrated settings key. For internal use only. :nodoc:
-    @objc
-    public static let tagsMigratedToChannelTagsKey = "UAPushTagsMigrated"
-
     private static let PushNotificationsOptionsKey = "UAUserPushNotificationsOptions";
     private static let UserPushNotificationsEnabledKey = "UAUserPushNotificationsEnabled"
     private static let BackgroundPushNotificationsEnabledKey = "UABackgroundPushNotificationsEnabled"
@@ -305,12 +301,7 @@ public class Push: NSObject, Component, PushProtocol {
             // Nothing to migrate
             return
         }
-
-        guard !self.dataStore.bool(forKey: Push.tagsMigratedToChannelTagsKey) else {
-            // Already migrated tags
-            return
-        }
-
+        
         // Normalize tags for older SDK versions, and migrate to UAChannel as necessary
         if let existingPushTags = self.dataStore.object(forKey: Push.legacyTagsSettingsKey) as? [String] {
             let existingChannelTags = self.channel.tags
@@ -322,7 +313,6 @@ public class Push: NSObject, Component, PushProtocol {
             }
         }
 
-        self.dataStore.setBool(true, forKey: Push.tagsMigratedToChannelTagsKey)
         self.dataStore.removeObject(forKey: Push.legacyTagsSettingsKey)
     }
 
