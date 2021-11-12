@@ -7,10 +7,11 @@ import SwiftUI
 struct FontViewModifier: ViewModifier {
     let fontSize: Int?
     let fontFamilies: [String]?
+    let textStyles: [TextStyle]?
     
     @ViewBuilder
     func body(content: Content) -> some View {
-        content.applyFont(fontSize, fontFamilies)
+        content.applyFont(fontSize, fontFamilies, textStyles)
     }
 }
 
@@ -18,20 +19,30 @@ struct FontViewModifier: ViewModifier {
 extension View {
     
     @ViewBuilder
-    internal func applyFont(_ fontSize: Int?, _ fontFamilies: [String]?) -> some View {
-        if let fontSize = fontSize, let fontFamilies = fontFamilies {
-            self.font(resolveFont(families: fontFamilies, fontSize: fontSize))
+    internal func applyFont(_ fontSize: Int?, _ fontFamilies: [String]?, _ textStyles: [TextStyle]?) -> some View {
+        if let fontSize = fontSize, let fontFamilies = fontFamilies, let textStyles = textStyles {
+            self.font(resolveFont(families: fontFamilies, fontSize: fontSize, textStyles: textStyles))
         } else {
             self
         }
     }
     
-    internal func resolveFont(families: [String]?, fontSize: Int) -> Font {
+    internal func resolveFont(families: [String]?, fontSize: Int, textStyles: [TextStyle]) -> Font {
+        var font: Font
         if let fontFamily = resolveFontFamily(families: families) {
-            return Font.custom(fontFamily, size: CGFloat(fontSize))
+            font = Font.custom(fontFamily, size: CGFloat(fontSize))
         } else {
-            return Font.system(size: CGFloat(fontSize))
+            font = Font.system(size: CGFloat(fontSize))
         }
+    
+        if (textStyles.contains(.bold)) {
+            return font.bold()
+        }
+        else if (textStyles.contains(.italic)) {
+            return font.italic()
+        }
+        
+        return font
     }
     
     internal func resolveFontFamily(families: [String]?) -> String? {
@@ -55,9 +66,9 @@ extension View {
     }
     
     @ViewBuilder
-    func airshipFont(_ fontSize: Int?, _ fontFamilies: [String]?) -> some View {
+    func airshipFont(_ fontSize: Int?, _ fontFamilies: [String]?, _ textStyles: [TextStyle]?) -> some View {
         if let fontSize = fontSize, let fontFamilies = fontFamilies {
-            self.modifier(FontViewModifier(fontSize: fontSize, fontFamilies: fontFamilies))
+            self.modifier(FontViewModifier(fontSize: fontSize, fontFamilies: fontFamilies, textStyles: textStyles))
         } else {
             self
         }

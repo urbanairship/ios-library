@@ -67,7 +67,7 @@ private struct AirshipScoreToggleStyle: ToggleStyle {
         return Button(action: { configuration.isOn.toggle() } ) {
             Text(String(self.value))
                 .textStyles(self.style.textStyles)
-                .airshipFont(self.style.fontSize, self.style.fontFamilies)
+                .airshipFont(self.style.fontSize, self.style.fontFamilies, self.style.textStyles)
                 .foreground(isOn ? self.style.selectedColors.number : self.style.deselectedColors.number)
                 .frame(idealWidth: size, maxWidth: size, idealHeight: size, maxHeight: size)
         }

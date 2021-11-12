@@ -14,14 +14,37 @@ struct TextInput : View {
             get: { self.input },
             set: { self.input = $0; self.updateValue($0) }
         )
-
-        TextField(self.model.placeHolder ?? "", text: binding)
-            .foreground(model.foregroundColor)
-            .background(model.backgroundColor)
-            .constraints(constraints)
-            .onAppear {
-                updateValue(input)
-            }
+        
+        if #available(iOS 14.0.0,  tvOS 14.0, *) {
+            #if !os(tvOS)
+            TextEditor(text: binding)
+                .foreground(model.foregroundColor)
+                .background(model.backgroundColor)
+                .airshipFont(model.fontSize, model.fontFamilies, model.textStyles)
+                .constraints(constraints)
+                .onAppear {
+                    updateValue(input)
+                }
+            #else
+            TextField(self.model.placeHolder ?? "", text: binding)
+                .foreground(model.foregroundColor)
+                .background(model.backgroundColor)
+                .airshipFont(model.fontSize, model.fontFamilies, model.textStyles)
+                .constraints(constraints)
+                .onAppear {
+                    updateValue(input)
+                }
+            #endif
+        } else {
+            TextField(self.model.placeHolder ?? "", text: binding)
+                .foreground(model.foregroundColor)
+                .background(model.backgroundColor)
+                .airshipFont(model.fontSize, model.fontFamilies, model.textStyles)
+                .constraints(constraints)
+                .onAppear {
+                    updateValue(input)
+                }
+        }
     }
     
     private func updateValue(_ text: String) {
