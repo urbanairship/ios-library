@@ -1159,6 +1159,8 @@
 		DFFCF5AF1FCF53100014DE2E /* UAInAppRemoteDataClientTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DFFCF5AE1FCF53100014DE2E /* UAInAppRemoteDataClientTest.m */; };
 		E29D35EF1DB9751F003C292F /* UAFetchDeviceInfoActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = E29D35EE1DB9751F003C292F /* UAFetchDeviceInfoActionTest.m */; };
 		E39D6A22D2DD999CD2FA0A4F /* Pods_AirshipAccengageTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 45F651ACE8833830E1D2333D /* Pods_AirshipAccengageTests.framework */; };
+		E8A47CD22735D26D001B8717 /* SendChatAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8A47CD12735D26D001B8717 /* SendChatAction.swift */; };
+		E8A47CD52739E105001B8717 /* SendChatActionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8A47CD32739DEBA001B8717 /* SendChatActionTests.swift */; };
 		E8A58B38268FDF12005079F3 /* ChatRouting.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8A58B37268FDF12005079F3 /* ChatRouting.swift */; };
 /* End PBXBuildFile section */
 
@@ -2328,6 +2330,8 @@
 		DFFCF5AE1FCF53100014DE2E /* UAInAppRemoteDataClientTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppRemoteDataClientTest.m; sourceTree = "<group>"; };
 		DFFCF5B91FD1E65F0014DE2E /* UAInAppRemoteDataClient+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInAppRemoteDataClient+Internal.h"; sourceTree = "<group>"; };
 		E29D35EE1DB9751F003C292F /* UAFetchDeviceInfoActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAFetchDeviceInfoActionTest.m; sourceTree = "<group>"; };
+		E8A47CD12735D26D001B8717 /* SendChatAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendChatAction.swift; sourceTree = "<group>"; };
+		E8A47CD32739DEBA001B8717 /* SendChatActionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendChatActionTests.swift; sourceTree = "<group>"; };
 		E8A58B37268FDF12005079F3 /* ChatRouting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatRouting.swift; sourceTree = "<group>"; };
 		EBF83042659DAF0D42AD7A9E /* Pods_AirshipTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AirshipTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -3595,6 +3599,7 @@
 				6E9D55C2261E3A92009BD6EB /* AirshipChannel.swift */,
 				6E9D57C0261F99BF009BD6EB /* ChatConfig.swift */,
 				6E9D580A261FC344009BD6EB /* OpenChatAction.swift */,
+				E8A47CD12735D26D001B8717 /* SendChatAction.swift */,
 				E8A58B37268FDF12005079F3 /* ChatRouting.swift */,
 				3C9AC93F262F9AC300D6E346 /* ChatStyle.swift */,
 			);
@@ -3932,6 +3937,7 @@
 				6E9D553A261E3182009BD6EB /* ConversationTests.swift */,
 				6E9D58522620A291009BD6EB /* OpenChatActionTests.swift */,
 				6E9D587F2620A2B5009BD6EB /* AirshipChatTests.swift */,
+				E8A47CD32739DEBA001B8717 /* SendChatActionTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -6198,6 +6204,7 @@
 			files = (
 				6E9D5453261E0C7E009BD6EB /* WebSocket.swift in Sources */,
 				6E9D53CA261D2ED6009BD6EB /* HTTPRequestSession.swift in Sources */,
+				E8A47CD22735D26D001B8717 /* SendChatAction.swift in Sources */,
 				6E9D5463261E0CD6009BD6EB /* WebSocketFactory.swift in Sources */,
 				6E7C06AF26127606006D0E84 /* Chat.swift in Sources */,
 				3C9AC940262F9AC300D6E346 /* ChatStyle.swift in Sources */,
@@ -6351,6 +6358,7 @@
 				6E9D55A5261E39BE009BD6EB /* MockChatAPIClient.swift in Sources */,
 				6EFBDEE1262DF71C008380AC /* MockDispatcher.swift in Sources */,
 				6E9D54CD261E14BC009BD6EB /* MockWebSocket.swift in Sources */,
+				E8A47CD52739E105001B8717 /* SendChatActionTests.swift in Sources */,
 				6E8776F9261BC55100B03FC0 /* ChatAPIClientTests.swift in Sources */,
 				6E9D55E1261E3B21009BD6EB /* MockChannel.swift in Sources */,
 				6E88EDB2262F7C0B00C46A23 /* MockChatDAO.swift in Sources */,
