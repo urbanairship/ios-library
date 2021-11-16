@@ -49,9 +49,8 @@
             UAInAppMessageModalDisplayContent *modalDisplayContent = (UAInAppMessageModalDisplayContent *)message.displayContent;
             return (modalDisplayContent) ? modalDisplayContent.media : nil;
         }
-        case UAInAppMessageDisplayTypeHTML: {
-            break;
-        }
+        case UAInAppMessageDisplayTypeAirshipLayout:
+        case UAInAppMessageDisplayTypeHTML:
         case UAInAppMessageDisplayTypeCustom:
             break;
     }

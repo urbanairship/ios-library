@@ -246,11 +246,6 @@ public class Utils : NSObject {
     ///
     /// - Returns: The main window, or `nil` if the window cannot be found.
     @objc
-    @available(iOSApplicationExtension, unavailable, message: "Method not available in app extensions")
-    @available(watchOSApplicationExtension, unavailable, message: "Method not available in app extensions")
-    @available(tvOSApplicationExtension, unavailable, message: "Method not available in app extensions")
-    @available(macCatalystApplicationExtension, unavailable, message: "Method not available in app extensions")
-    @available(OSXApplicationExtension, unavailable, message: "Method not available in app extensions")
     public class func mainWindow() -> UIWindow? {
         let sharedApp: UIApplication = UIApplication.shared
         if let window = sharedApp.windows.first(where: { !$0.isHidden }) {
@@ -269,11 +264,9 @@ public class Utils : NSObject {
     ///
     /// - Returns: The main window, or `nil` if the window cannot be found.
     @objc(mainWindow:)
-    @available(iOS 13, *)
-    @available(tvOS 13.0, *)
-    @available(tvOSApplicationExtension, unavailable, message: "Method not available in app extensions")
+    @available(iOS 13.0, tvOS 13.0, *)
     public class func mainWindow(scene: UIWindowScene) -> UIWindow? {
-        for w in UIApplication.shared.windows {
+        for w in scene.windows {
             if !w.isHidden {
                 return w
             }

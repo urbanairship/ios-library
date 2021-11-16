@@ -2,12 +2,11 @@
 
 import Foundation
 
-public protocol ThomasEventHandler : AnyObject {
+@objc(UAThomasDelegate)
+public protocol ThomasDelegate {
     func onFormResult(formIdentifier: String, formData: [String : Any])
-    func onRunActions(actions: [String: Any])
     func onButtonTap(buttonIdentifier: String)
-    func onDismiss(buttonIdentifier: String)
-    func onCancel(buttonIdentifier: String)
-    func onDismiss()
+    func onDismiss(buttonIdentifier: String?, cancel: Bool)
+    func onTimedOut()
     func onPageView(pagerIdentifier: String, pageIndex: Int, pageCount: Int)
 }

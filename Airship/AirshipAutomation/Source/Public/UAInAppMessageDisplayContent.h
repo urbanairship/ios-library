@@ -35,7 +35,12 @@ typedef NS_ENUM(NSInteger, UAInAppMessageDisplayType) {
     /**
      * Custom display
      */
-    UAInAppMessageDisplayTypeCustom
+    UAInAppMessageDisplayTypeCustom,
+    
+    /**
+     * Airship layout
+     */
+    UAInAppMessageDisplayTypeAirshipLayout
 } NS_SWIFT_NAME(InAppMessageDisplayType);
 
 /**

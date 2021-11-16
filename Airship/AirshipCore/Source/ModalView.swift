@@ -38,7 +38,7 @@ struct ModalView: View {
                 .applyIf(self.model.dismissOnTouchOutside == true) { view in
                     // Add tap gesture outside of view to dismiss
                     view.addTapGesture {
-                        context.eventHandler.onDismiss()
+                        context.delegate.onDismiss(buttonIdentifier: nil, cancel: false)
                     }
                 }
         )

@@ -6,6 +6,7 @@
 #import "UAInAppMessageFullScreenAdapter.h"
 #import "UAInAppMessageModalAdapter.h"
 #import "UAInAppMessageHTMLAdapter.h"
+#import "UAInAppMessageAirshipLayoutAdapter+Internal.h"
 #import "UAInAppMessage+Internal.h"
 #import "UAInAppMessageResolutionEvent+Internal.h"
 #import "UAInAppMessageDisplayEvent+Internal.h"
@@ -183,9 +184,17 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
         return [UAInAppMessageModalAdapter adapterForMessage:message];
     } forDisplayType:UAInAppMessageDisplayTypeModal];
 
+    // HTML
     [self setFactoryBlock:^id<UAInAppMessageAdapterProtocol> _Nonnull(UAInAppMessage * _Nonnull message) {
         return [UAInAppMessageHTMLAdapter adapterForMessage:message];
     } forDisplayType:UAInAppMessageDisplayTypeHTML];
+    
+    // Airship Layout
+    if (@available(iOS 13.0, *)) {
+        [self setFactoryBlock:^id<UAInAppMessageAdapterProtocol> _Nonnull(UAInAppMessage * _Nonnull message) {
+            return [UAInAppMessageAirshipLayoutAdapter adapterForMessage:message];
+        } forDisplayType:UAInAppMessageDisplayTypeAirshipLayout];
+    }
 }
 
 - (void)setFactoryBlock:(id<UAInAppMessageAdapterProtocol> (^)(UAInAppMessage* message))factory

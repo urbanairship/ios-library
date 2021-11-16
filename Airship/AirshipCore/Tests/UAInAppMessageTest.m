@@ -5,6 +5,7 @@
 #import "UAInAppMessage+Internal.h"
 #import "UAInAppMessageBannerDisplayContent+Internal.h"
 #import "UAInAppMessageCustomDisplayContent.h"
+#import "UAInAppMessageAirshipLayoutDisplayContent+Internal.h"
 
 @import AirshipCore;
 
@@ -151,6 +152,55 @@
     }];
 
     XCTAssertNotNil(message);
+}
+
+- (void)testThomasLayout {
+    id payload = @{
+        @"display_type": UAInAppMessageDisplayTypeAirshipLayoutValue,
+        @"display": @{
+            @"layout": @{
+                @"version": @(1),
+                @"view": @{
+                    @"type": @"empty_view",
+                },
+                @"presentation": @{
+                    @"type": @"modal",
+                    @"default_placement": @{
+                        @"size": @{
+                            @"width": @"100%",
+                            @"height": @"100%",
+                        }
+                    }
+                }
+            }
+        }
+    };
+    
+    NSError *error;
+    UAInAppMessage *message = [UAInAppMessage messageWithJSON:payload error:&error];
+    XCTAssertNotNil(message);
+    XCTAssertNil(error);
+    
+
+    XCTAssertTrue([message.displayContent isKindOfClass:[UAInAppMessageAirshipLayoutDisplayContent class]]);
+    XCTAssertEqual(message.displayContent.displayType, UAInAppMessageDisplayTypeAirshipLayout);
+    
+    UAInAppMessageAirshipLayoutDisplayContent *content = (UAInAppMessageAirshipLayoutDisplayContent *)message.displayContent;
+    XCTAssertEqual(payload[@"display"][@"layout"], content.layout);
+}
+
+- (void)testInvalidThomasLayout {
+    id payload = @{
+        @"display_type": UAInAppMessageDisplayTypeAirshipLayoutValue,
+        @"display": @{
+            @"layout": @{}
+        }
+    };
+    
+    NSError *error;
+    UAInAppMessage *message = [UAInAppMessage messageWithJSON:payload error:&error];
+    XCTAssertNil(message);
+    XCTAssertNotNil(error);
 }
 
 - (void)testExtend {

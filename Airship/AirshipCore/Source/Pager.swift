@@ -118,7 +118,7 @@ struct Pager : View {
     
     private func reportPage(_ index: Int) {
         if (self.lastIndex != index) {
-            self.context.eventHandler.onPageView(pagerIdentifier: self.model.identifier,
+            self.context.delegate.onPageView(pagerIdentifier: self.model.identifier,
                                                  pageIndex: index,
                                                  pageCount: self.model.items.count)
             self.lastIndex = index

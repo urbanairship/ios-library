@@ -51,6 +51,7 @@
 		3244495627219D1800D108B5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		3244495D2721A63400D108B5 /* AirshipCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = AirshipCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		32FC34EB2729AF10002D3F2C /* AirshipBasement.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = AirshipBasement.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6ED807A5273DEA1800D1F455 /* AirshipAutomation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = AirshipAutomation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,6 +121,7 @@
 		3244495C2721A63400D108B5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				6ED807A5273DEA1800D1F455 /* AirshipAutomation.framework */,
 				32FC34EB2729AF10002D3F2C /* AirshipBasement.framework */,
 				3244495D2721A63400D108B5 /* AirshipCore.framework */,
 			);

@@ -5,16 +5,15 @@ import AirshipCore
 
 struct LayoutsList: View {
     
-    //Retrieve the list of layouts template names from the 'Layouts' folder
-    let layoutsArray: [String] = (try? getLayoutsList()) ?? []
+    // Retrieve the list of layouts template names from the 'Layouts' folder
+    @State var layoutsArray: [String] = []
+    @State var errorMessage: String?
+    @State var showError: Bool = false
     
-    @State
-    private var window : UIWindow?
-    
-    @State
-    private var previousWindow: UIWindow?
-    
+    let delegate = Delegate()
+
     var body: some View {
+    
         GeometryReader { metrics in
             NavigationView {
                 List {
@@ -25,58 +24,52 @@ struct LayoutsList: View {
                     }
                 }
                 .navigationTitle("Airship Layouts")
+            }.alert(isPresented: $showError) {
+                Alert(title: Text("Error"), message: Text(self.errorMessage ?? "error"), dismissButton: .default(Text("OK")))
             }
             .navigationViewStyle(StackNavigationViewStyle())
-        }
-    }
-    
-    func dismissLayout() {
-        self.window?.rootViewController?.dismiss(animated: false) {
-            self.window?.windowLevel = .normal
-            self.window = nil
-            self.previousWindow?.makeKeyAndVisible()
-            self.previousWindow = nil
+        }.onAppear {
+            do {
+                self.layoutsArray = try getLayoutsList()
+            } catch {
+                errorMessage = "Failed with error \(error)"
+                showError = true
+            }
         }
     }
     
     func openLayout(_ fileName: String, metrics: GeometryProxy) {
-        let scene = UIApplication.shared.connectedScenes.first(where: { $0.isKind(of: UIWindowScene.self) }) as? UIWindowScene
-        
-        if let scene = scene  {
-            self.previousWindow = scene.windows.first(where: { $0.isKeyWindow })
-            let window = UIWindow(windowScene: scene)
-            window.windowLevel = .alert
-            window.rootViewController = crateViewController(fileName: fileName)
-            window.makeKeyAndVisible()
-            self.window = window
+        do {
+            let data = try loadData(fileName: fileName)
+            guard let scene = UIApplication.shared.connectedScenes.first(where: { $0.isKind(of: UIWindowScene.self) }) as? UIWindowScene else {
+                throw AirshipErrors.error("Unable to find a window!")
+            }
+
+            try Thomas.display(data, scene: scene, delegate: self.delegate)
+        } catch {
+            errorMessage = "Failed with error \(error)"
+            showError = true
         }
     }
     
-    func crateViewController(fileName: String) -> UIViewController {
-        do {
-            //Retrieve the YML content
-            let ymlContent = try getContentOfFile(fileName: fileName)
-            
-            //Convert YML file to json
-            let jsonContent = try getJsonContentFromYmlContent(ymlContent:ymlContent)
-            
-            // Create view controller
-            return try Thomas.viewController(payload: jsonContent, eventHandler: Eventhandler {
-                dismissLayout()
-            })
-        } catch {
-            return UIAlertController(title: "Error loading view", message: "Error: \(error)", preferredStyle: .alert)
-        }
+    func loadData(fileName: String) throws -> Data {
+        //Retrieve the YML content
+        let ymlContent = try getContentOfFile(fileName: fileName)
+        
+        // Convert YML file to json
+        return try getJsonContentFromYmlContent(ymlContent:ymlContent)
+    }
+    
+   
+}
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        LayoutsList()
     }
 }
 
-class Eventhandler: ThomasEventHandler {
-    let dismiss: () -> Void
-    
-    init(onDismiss: @escaping () -> Void) {
-        self.dismiss = onDismiss
-    }
-    
+class Delegate : ThomasDelegate {
     func onPageView(pagerIdentifier: String, pageIndex: Int, pageCount: Int) {
         AirshipLogger.info("onPageView: \(pagerIdentifier) index: \(pageIndex) count: \(pageCount)")
     }
@@ -94,25 +87,12 @@ class Eventhandler: ThomasEventHandler {
         AirshipLogger.info("onRunActions: \(actions)")
     }
     
-    func onDismiss(buttonIdentifier: String) {
-        AirshipLogger.info("onDismiss: \(buttonIdentifier)")
-        dismiss()
+    func onDismiss(buttonIdentifier: String?, cancel: Bool) {
+        AirshipLogger.info("onDismiss: \(buttonIdentifier ?? "") \(cancel)")
     }
     
-    func onDismiss() {
-        AirshipLogger.info("onDismiss")
-        dismiss()
-    }
-    
-    func onCancel(buttonIdentifier: String) {
-        AirshipLogger.info("onCancel: \(buttonIdentifier)")
-        dismiss()
-    }
-}
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        LayoutsList()
+    func onTimedOut() {
+        AirshipLogger.info("onTimedOut")
     }
 }
 

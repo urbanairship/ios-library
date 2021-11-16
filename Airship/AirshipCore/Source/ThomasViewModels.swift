@@ -416,8 +416,8 @@ struct LabelButtonModel: Decodable {
     enum CodingKeys: String, CodingKey {
         case identifier = "identifier"
         case border = "border"
-        case enableBehaviors = "enable_behaviors"
-        case clickBehaviors = "click_behaviors"
+        case enableBehaviors = "enabled"
+        case clickBehaviors = "button_click"
         case backgroundColor = "background_color"
         case actions = "actions"
         case label = "label"
@@ -490,8 +490,8 @@ struct ImageButtonModel: Decodable {
         case border = "border"
         case backgroundColor = "background_color"
         case image = "image"
-        case enableBehaviors = "enable_behaviors"
-        case clickBehaviors = "click_behaviors"
+        case enableBehaviors = "enabled"
+        case clickBehaviors = "button_click"
         case actions = "actions"
         case contentDescription = "content_description"
     }

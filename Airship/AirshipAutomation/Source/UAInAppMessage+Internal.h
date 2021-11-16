@@ -71,6 +71,7 @@ extern NSString *const UAInAppMessageDisplayTypeFullScreenValue;
 extern NSString *const UAInAppMessageDisplayTypeModalValue;
 extern NSString *const UAInAppMessageDisplayTypeHTMLValue;
 extern NSString *const UAInAppMessageDisplayTypeCustomValue;
+extern NSString *const UAInAppMessageDisplayTypeAirshipLayoutValue;
 
 
 /**

@@ -558,7 +558,7 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
         }
     }
 
-    UA_LERR(@"Invalid schedule: %@ error: %@", JSON, error);
+    UA_LINFO(@"Invalid schedule: %@ error: %@", JSON, error);
     return nil;
 }
 

@@ -7,6 +7,7 @@
 #import "UAInAppMessageCustomDisplayContent+Internal.h"
 #import "UAInAppMessageHTMLDisplayContent+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
+#import "UAInAppMessageAirshipLayoutDisplayContent+Internal.h"
 
 NSUInteger const UAInAppMessageIDLimit = 100;
 NSUInteger const UAInAppMessageNameLimit = 100;
@@ -94,6 +95,7 @@ NSString *const UAInAppMessageDisplayTypeFullScreenValue = @"fullscreen";
 NSString *const UAInAppMessageDisplayTypeModalValue = @"modal";
 NSString *const UAInAppMessageDisplayTypeHTMLValue = @"html";
 NSString *const UAInAppMessageDisplayTypeCustomValue = @"custom";
+NSString *const UAInAppMessageDisplayTypeAirshipLayoutValue = @"layout";
 
 NSString *const UAInAppMessageDisplayBehaviorDefault = @"default";
 NSString *const UAInAppMessageDisplayBehaviorImmediate = @"immediate";
@@ -163,6 +165,18 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
                 builder.displayContent = [UAInAppMessageHTMLDisplayContent displayContentWithJSON:displayContentDict error:error];
             } else if ([UAInAppMessageDisplayTypeCustomValue isEqualToString:displayTypeStr]) {
                 builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithJSON:displayContentDict error:error];
+            } else if ([UAInAppMessageDisplayTypeAirshipLayoutValue isEqualToString:displayTypeStr]) {
+                if (@available(iOS 13.0, *)) {
+                    builder.displayContent = [UAInAppMessageAirshipLayoutDisplayContent displayContentWithJSON:displayContentDict error:error];
+                } else {
+                    if (error) {
+                        NSString *msg = [NSString stringWithFormat:@"Layout type is only available on iOS 13+"];
+                        *error =  [NSError errorWithDomain:UAInAppMessageErrorDomain
+                                                      code:UAInAppMessageErrorCodeInvalidJSON
+                                                  userInfo:@{NSLocalizedDescriptionKey:msg}];
+                    }
+                    return nil;
+                }
             } else {
                 if (error) {
                     NSString *msg = [NSString stringWithFormat:@"Message display type must be a string represening a valid display type. Invalid value: %@", displayTypeStr];
@@ -405,6 +419,9 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
             break;
         case UAInAppMessageDisplayTypeCustom:
             [data setValue:UAInAppMessageDisplayTypeCustomValue forKey:UAInAppMessageDisplayTypeKey];
+            break;
+        case UAInAppMessageDisplayTypeAirshipLayout:
+            [data setValue:UAInAppMessageDisplayTypeAirshipLayoutValue forKey:UAInAppMessageDisplayTypeKey];
             break;
     }
 

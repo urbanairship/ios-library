@@ -13,7 +13,7 @@ struct SubmitFormButtonClickBehavior: ViewModifier {
     func body(content: Content) -> some View {
         content.addTapGesture {
             if let data = formState.data.toDictionary() {
-                context.eventHandler.onFormResult(formIdentifier: formState.formIdentifier, formData: data)
+                context.delegate.onFormResult(formIdentifier: formState.formIdentifier, formData: data)
             }
         }
     }
@@ -55,7 +55,7 @@ struct DismissButtonClickBehavior: ViewModifier {
     @ViewBuilder
     func body(content: Content) -> some View {
         content.addTapGesture {
-            context.eventHandler.onDismiss(buttonIdentifier: buttonIdentifier)
+            context.delegate.onDismiss(buttonIdentifier: buttonIdentifier, cancel: false)
         }
     }
 }
@@ -68,7 +68,7 @@ struct CancelButtonClickBehavior: ViewModifier {
     @ViewBuilder
     func body(content: Content) -> some View {
         content.addTapGesture {
-            context.eventHandler.onCancel(buttonIdentifier: buttonIdentifier)
+            context.delegate.onDismiss(buttonIdentifier: buttonIdentifier, cancel: true)
         }
     }
 }
@@ -81,7 +81,7 @@ struct ReportButtonModifier: ViewModifier {
     @ViewBuilder
     func body(content: Content) -> some View {
         content.addTapGesture {
-            context.eventHandler.onButtonTap(buttonIdentifier: buttonIdentifier)
+            context.delegate.onButtonTap(buttonIdentifier: buttonIdentifier)
         }
     }
 }
@@ -96,7 +96,7 @@ struct RunActionsButtonModifier: ViewModifier {
     @ViewBuilder
     func body(content: Content) -> some View {
         content.addTapGesture {
-            context.eventHandler.onRunActions(actions: actions)
+            context.actionRunner.run(actions)
         }
     }
 }

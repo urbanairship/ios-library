@@ -3,6 +3,11 @@
 import Foundation
 import SwiftUI
 
+/**
+ * Airship rendering engine.
+ * @note For internal use only. :nodoc:
+ */
+@available(iOS 13.0.0, tvOS 13.0, *)
 @objc(UAThomas)
 public class Thomas : NSObject {
     private static let decoder = JSONDecoder()
@@ -11,65 +16,134 @@ public class Thomas : NSObject {
         return try self.decoder.decode(Layout.self, from: json)
     }
     
-    @available(iOS 13.0.0, tvOS 13.0, *)
-    public class func viewController(payload: Data, eventHandler: ThomasEventHandler) throws -> UIViewController {
-        let context = ThomasContext(eventHandler: eventHandler)
-        let layout = try decode(payload)
-        let viewController = UIHostingController(rootView: RootView(model: layout.view, presentation: layout.presentation, context: context))
-        viewController.view.backgroundColor = .clear
-        viewController.modalPresentationStyle = .overCurrentContext;
-        return viewController
+    
+    @objc
+    public class func validate(data: Data) throws {
+        let _ = try decode(data)
     }
     
-    @available(iOS 13.0.0, tvOS 13.0, *)
-    private struct RootView : View {
-        let model: ViewModel
-        let presentation: PresentationModel
-        let context: ThomasContext
-        @State var orientationState: OrientationState = OrientationState(orientation: RootView.resolveOrientation())
+    @objc
+    public class func validate(json: Any) throws {
+        let data = try JSONSerialization.data(withJSONObject: json, options: [])
+        try validate(data: data)
+    }
 
-        var body: some View {
-            GeometryReader { metrics in
-                let constraints = ViewConstraints(contentWidth: metrics.size.width,
-                                                  contentHeight: metrics.size.height,
-                                                  frameWidth: metrics.size.width,
-                                                  frameHeight: metrics.size.height)
-                
-                switch presentation {
-                case .banner(_):
-                    //TODO: Add banner view modifier and use it
-                    ViewFactory.createView(model: model, constraints: constraints)
-                        .environmentObject(context)
-                        .environmentObject(orientationState)
-                case .modal(let modalModel):
-                    ModalView(model: modalModel, constraints: constraints, rootViewModel: model)
-                        .environmentObject(context)
-                        .environmentObject(orientationState)
+    
+    @objc
+    public class func deferredDisplay(json: Any,
+                                      scene: UIWindowScene,
+                                      delegate: ThomasDelegate) throws -> () -> Void {
+        let data = try JSONSerialization.data(withJSONObject: json, options: [])
+        return try deferredDisplay(data: data, scene: scene, delegate: delegate)
+    }
+    
+    @objc
+    public class func deferredDisplay(data: Data,
+                                      scene: UIWindowScene,
+                                      delegate: ThomasDelegate) throws -> () -> Void {
+        let layout = try decode(data)
+        var dismiss: ((ThomasViewController?) -> Void)?
+        var display: ((ThomasViewController) -> Void)?
+
+        switch (layout.presentation) {
+        case .banner(_):
+            guard let window = Utils.mainWindow(scene: scene) else {
+                throw AirshipErrors.error("Failed to find window")
+            }
+            
+            dismiss = { viewController in
+                viewController?.dismiss(animated: true) {
+                    viewController?.view.removeFromSuperview()
                 }
             }
-            .onAppear {
-                self.orientationState.orientation = RootView.resolveOrientation()
+            
+            display = { viewController in
+                viewController.autoResizeFrame = true
+                window.addSubview(viewController.view)
+                window.layoutIfNeeded()
             }
-            #if !os(tvOS)
-            .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
-                self.orientationState.orientation = RootView.resolveOrientation()
+            
+        case .modal(_):
+            var window: UIWindow? = UIWindow(windowScene: scene)
+        
+            dismiss = { _ in
+                window?.windowLevel = .normal
+                window?.isHidden = true
+                window = nil
             }
-            #endif
+            
+            display = { viewController in
+                window?.windowLevel = .alert
+                window?.rootViewController = viewController
+                window?.makeKeyAndVisible()
+            }
         }
         
-        private static func resolveOrientation() -> Orientation? {
-            guard let scene = UIApplication.shared.windows.first?.windowScene else { return nil }
-            #if os(tvOS)
-            return .landscape
-            #else
-            if (scene.interfaceOrientation.isLandscape) {
-                return .landscape
-            } else if (scene.interfaceOrientation.isPortrait) {
-                return .portrait
+        guard let display = display, let dismiss = dismiss else {
+            throw AirshipErrors.error("Invalid setup")
+        }
+        
+        var viewController: ThomasViewController?
+
+        let delegate = ThomasDelegateWrapper(delegate) {
+            dismiss(viewController)
+            viewController = nil
+        }
+        
+        let context = ThomasContext(delegate: delegate)
+        viewController = ThomasViewController(rootView: RootView(model: layout.view,
+                                                                     presentation: layout.presentation,
+                                                                     context: context))
+        
+        return {
+            if let viewController = viewController {
+                display(viewController)
             }
-            return nil
-            #endif
         }
     }
     
+    public class func display(_ data: Data,
+                              scene: UIWindowScene,
+                              delegate: ThomasDelegate) throws {
+        try deferredDisplay(data: data, scene: scene, delegate: delegate)()
+    }
+}
+
+private class ThomasDelegateWrapper : ThomasDelegate {
+    let forwardDelegate: ThomasDelegate
+    var isDismissed = false
+    var dismiss: (() -> Void)
+    
+    init(_ forwardDelegate: ThomasDelegate, dismiss: @escaping (() -> Void)) {
+        self.forwardDelegate = forwardDelegate
+        self.dismiss = dismiss
+    }
+    
+    func onFormResult(formIdentifier: String, formData: [String : Any]) {
+        self.forwardDelegate.onFormResult(formIdentifier: formIdentifier, formData: formData)
+    }
+        
+    func onButtonTap(buttonIdentifier: String) {
+        self.forwardDelegate.onButtonTap(buttonIdentifier: buttonIdentifier)
+    }
+    
+    func onDismiss(buttonIdentifier: String?, cancel: Bool) {
+        if (!self.isDismissed) {
+            self.isDismissed = true
+            self.forwardDelegate.onDismiss(buttonIdentifier: buttonIdentifier, cancel: cancel)
+            dismiss()
+        }
+    }
+    
+    func onTimedOut() {
+        if (!self.isDismissed) {
+            self.isDismissed = true
+            self.forwardDelegate.onTimedOut()
+            dismiss()
+        }
+    }
+    
+    func onPageView(pagerIdentifier: String, pageIndex: Int, pageCount: Int) {
+        self.forwardDelegate.onPageView(pagerIdentifier: pagerIdentifier, pageIndex: pageIndex, pageCount: pageCount)
+    }
 }
