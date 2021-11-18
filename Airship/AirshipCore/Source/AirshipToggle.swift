@@ -10,11 +10,14 @@ struct AirshipToggle : View {
     
     @EnvironmentObject var formState: FormState
     @State private var isOn: Bool = false
+    @Environment(\.colorScheme) var colorScheme
+
     
     var body: some View {
-        HStack {
-            createToggle().constraints(self.constraints)
-        }
+        createToggle()
+            .constraints(self.constraints)
+            .background(model.backgroundColor)
+            .border(model.border)
     }
     
     @ViewBuilder
@@ -28,12 +31,11 @@ struct AirshipToggle : View {
 
         switch (self.model.style) {
         case .checkboxStyle(let style):
-            toggle.toggleStyle(AirshipCheckboxToggleStyle(backgroundColor: self.model.backgroundColor,
-                                                          border: self.model.border,
-                                                          viewConstraints: self.constraints,
-                                                          model: style))
+            toggle.toggleStyle(AirshipCheckboxToggleStyle(viewConstraints: self.constraints,
+                                                          model: style,
+                                                          colorScheme: colorScheme))
         case .switchStyle(let style):
-            toggle.toggleStyle(AirshipSwitchToggleStyle(model: style))
+            toggle.toggleStyle(AirshipSwitchToggleStyle(model: style, colorScheme: colorScheme))
         }
     }
     

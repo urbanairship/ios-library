@@ -7,8 +7,8 @@ import SwiftUI
 struct Shapes {
     
     @ViewBuilder
-    private static func rectangle(border: Border?) -> some View {
-        let strokeColor = border?.strokeColor?.toColor()
+    private static func rectangle(colorScheme: ColorScheme, border: Border?) -> some View {
+        let strokeColor = border?.strokeColor?.toColor(colorScheme) ?? Color.clear
         let strokeWidth = border?.strokeWidth ?? 0
         let cornerRadius = border?.radius ?? 0
         
@@ -18,13 +18,14 @@ struct Shapes {
                     .strokeBorder(strokeColor, lineWidth: strokeWidth)
             } else {
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                    .fill(Color.clear)
             }
         } else {
             if let strokeColor = strokeColor, strokeWidth > 0 {
                 Rectangle()
                     .strokeBorder(strokeColor, lineWidth: strokeWidth)
             } else {
-                Rectangle()
+                Rectangle().fill(Color.clear)
             }
         }
     }
@@ -42,37 +43,90 @@ struct Shapes {
     }
         
     @ViewBuilder
-    static func rectangle(color: HexColor?, border: Border?) -> some View {
-        let color = color?.toColor() ?? Color.clear
+    static func rectangle(colorScheme: ColorScheme,
+                          color: ThomasColor? = nil,
+                          aspectRatio: Double? = nil,
+                          scale: Double? = nil,
+                          border: Border? = nil) -> some View {
+        let resolvedColor = color?.toColor(colorScheme) ?? Color.clear
         
         if let border = border {
-            rectangle(border: border)
-                .background(rectangleBackground(border: border, color: color))
+            rectangle(colorScheme: colorScheme, border: border)
+                .background(rectangleBackground(border: border, color: resolvedColor))
+                .applyIf(aspectRatio != nil) { view in
+                    view.aspectRatio(aspectRatio ?? 1, contentMode: .fit)
+                }
+                .applyIf(scale != nil) { view in
+                    view.scaleEffect(scale ?? 1)
+                }
         } else {
-            Rectangle().fill(color)
+            Rectangle()
+                .fill(resolvedColor)
+                .applyIf(aspectRatio != nil) { view in
+                    view.aspectRatio(aspectRatio ?? 1, contentMode: .fit)
+                }
+                .applyIf(scale != nil) { view in
+                    view.scaleEffect(scale ?? 1)
+                }
         }
     }
     
+  
     @ViewBuilder
-    private static func circle(border: Border?) -> some View {
-        let strokeColor = border?.strokeColor?.toColor()
+    private static func ellipse(colorScheme: ColorScheme, border: Border?) -> some View {
+        let strokeColor = border?.strokeColor?.toColor(colorScheme)
         let strokeWidth = border?.strokeWidth ?? 0
         
         if let strokeColor = strokeColor, strokeWidth > 0 {
-            Circle().strokeBorder(strokeColor, lineWidth: strokeWidth)
+            Ellipse().strokeBorder(strokeColor, lineWidth: strokeWidth)
         } else {
-            Circle()
+            Ellipse()
         }
     }
     
     @ViewBuilder
-    static func circle(color: HexColor?, border: Border?) -> some View {
-        let color = color?.toColor() ?? Color.clear
+    static func ellipse(colorScheme: ColorScheme,
+                        color: ThomasColor? = nil,
+                        aspectRatio: Double? = nil,
+                        scale: Double? = nil,
+                        border: Border? = nil) -> some View {
+        let color = color?.toColor(colorScheme) ?? Color.clear
         if let border = border {
-            circle(border: border)
-                .background(Circle().fill(color))
+            ellipse(colorScheme: colorScheme, border: border)
+                .applyIf(aspectRatio != nil) { view in
+                    view.aspectRatio(aspectRatio ?? 1, contentMode: .fit)
+                }
+                .applyIf(scale != nil) { view in
+                    view.scaleEffect(scale ?? 1)
+                }
+                .background(Ellipse().fill(color))
         } else {
-            Circle().fill(color)
+            Ellipse()
+                .fill(color)
+                .applyIf(aspectRatio != nil) { view in
+                    view.aspectRatio(aspectRatio ?? 1, contentMode: .fit)
+                }
+                .applyIf(scale != nil) { view in
+                    view.scaleEffect(scale ?? 1)
+                }
+        }
+    }
+    
+    @ViewBuilder
+    static func shape(model: ShapeModel, colorScheme: ColorScheme) -> some View {
+        switch(model) {
+        case .ellipse(let ellipseModel):
+            ellipse(colorScheme: colorScheme,
+                    color: ellipseModel.color,
+                    aspectRatio: ellipseModel.aspectRatio,
+                    scale: ellipseModel.scale,
+                    border: ellipseModel.border)
+        case .rectangle(let rectangleModel):
+            rectangle(colorScheme: colorScheme,
+                      color: rectangleModel.color,
+                      aspectRatio: rectangleModel.aspectRatio,
+                      scale: rectangleModel.scale,
+                      border: rectangleModel.border)
         }
     }
 }

@@ -52,7 +52,7 @@ enum PresentationModel : Decodable {
 }
 
 struct BannerPresentationModel : Decodable {
-    let duration: Int
+    let duration: Int?
     let placementSelectors: [BannerPlacementSelector]?
     let defaultPlacement: BannerPlacement
 
@@ -66,7 +66,7 @@ struct BannerPresentationModel : Decodable {
 struct BannerPlacement : Decodable {
     let margin: Margin?
     let size: Size
-    let position: Position?
+    let position: BannerPosition
     
     enum CodingKeys: String, CodingKey {
         case margin = "margin"
@@ -103,7 +103,7 @@ struct ModalPlacement : Decodable {
     let margin: Margin?
     let size: Size
     let position: Position?
-    let shade: HexColor?
+    let shade: ThomasColor?
     
     enum CodingKeys: String, CodingKey {
         case margin = "margin"
@@ -138,7 +138,7 @@ enum Orientation : String, Decodable {
 
 enum ShapeModelType: String, Decodable {
     case rectangle = "rectangle"
-    case circle = "circle"
+    case ellipse = "ellipse"
 }
 
 enum ToggleStyleModelType: String, Decodable {
@@ -188,7 +188,7 @@ enum ViewModelType: String, Decodable {
     case radioInputController = "radio_input_controller"
     case textInput = "text_input"
     case score = "score"
-    case npsController = "nps_controller"
+    case npsController = "nps_form_controller"
     case toggle = "toggle"
 }
 
@@ -279,10 +279,26 @@ indirect enum ViewModel: Decodable {
     }
 }
 
+struct TextAppearanceModel : Decodable {
+    let color: ThomasColor
+    let fontSize: Double
+    let alignment: TextAlignement?
+    let styles: [TextStyle]?
+    let fontFamilies: [String]?
+    
+    enum CodingKeys : String, CodingKey {
+        case color = "color"
+        case fontSize = "font_size"
+        case alignment = "alignment"
+        case styles = "styles"
+        case fontFamilies = "font_families"
+    }
+}
+
 struct ContainerModel : Decodable {
     let type = ViewModelType.container
     let border: Border?
-    let backgroundColor: HexColor?
+    let backgroundColor: ThomasColor?
     let items: [ContainerItem]
     
     enum CodingKeys : String, CodingKey {
@@ -310,7 +326,7 @@ struct LinearLayoutModel: Decodable {
     let type = ViewModelType.linearLayout
     let identifier: String?
     let border: Border?
-    let backgroundColor: HexColor?
+    let backgroundColor: ThomasColor?
     let direction: Direction
     let items: [LinearLayoutItem]
     
@@ -339,7 +355,7 @@ class LinearLayoutItem: Decodable {
 class ScrollLayoutModel: Decodable {
     let type = ViewModelType.scrollLayout
     let border: Border?
-    let backgroundColor: HexColor?
+    let backgroundColor: ThomasColor?
     let direction: Direction
     let view: ViewModel
 
@@ -354,7 +370,7 @@ class ScrollLayoutModel: Decodable {
 struct WebViewModel: Decodable {
     let type = ViewModelType.webView
     let border: Border?
-    let backgroundColor: HexColor?
+    let backgroundColor: ThomasColor?
     let url: String
     
     enum CodingKeys: String, CodingKey {
@@ -367,7 +383,7 @@ struct WebViewModel: Decodable {
 struct MediaModel: Decodable {
     let type = ViewModelType.media
     let border: Border?
-    let backgroundColor: HexColor?
+    let backgroundColor: ThomasColor?
     let url: String
     let mediaType: MediaType
     
@@ -382,21 +398,13 @@ struct MediaModel: Decodable {
 struct LabelModel: Decodable {
     let type = ViewModelType.label
     let border: Border?
-    let backgroundColor: HexColor?
+    let backgroundColor: ThomasColor?
     let text: String
-    let fontSize: Int
-    let foregroundColor: HexColor
-    let alignment: TextAlignement?
-    let textStyles: [TextStyle]?
-    let fontFamilies: [String]?
+    let textAppearance: TextAppearanceModel
     
     enum CodingKeys: String, CodingKey {
         case text = "text"
-        case fontSize = "font_size"
-        case foregroundColor = "foreground_color"
-        case alignment = "alignment"
-        case textStyles = "text_styles"
-        case fontFamilies = "font_families"
+        case textAppearance = "text_appearance"
         case border = "border"
         case backgroundColor = "background_color"
     }
@@ -406,7 +414,7 @@ struct LabelButtonModel: Decodable {
     let type = ViewModelType.labelButton
     let identifier: String
     let border: Border?
-    let backgroundColor: HexColor?
+    let backgroundColor: ThomasColor?
     let clickBehaviors: [ButtonClickBehavior]?
     let enableBehaviors: [ButtonEnableBehavior]?
     let actions: [String]?
@@ -431,8 +439,8 @@ enum ButtonImageModelType: String, Decodable {
 }
 
 enum ButtomImageModel: Decodable {
-    case url(UrlButtonImageModel)
-    case icon(IconButtonImageModel)
+    case url(ImageURLModel)
+    case icon(IconModel)
     
     enum CodingKeys: String, CodingKey {
         case type = "type"
@@ -445,14 +453,14 @@ enum ButtomImageModel: Decodable {
 
         switch type {
         case .url:
-            self = .url(try singleValueContainer.decode(UrlButtonImageModel.self))
+            self = .url(try singleValueContainer.decode(ImageURLModel.self))
         case .icon:
-            self = .icon(try singleValueContainer.decode(IconButtonImageModel.self))
+            self = .icon(try singleValueContainer.decode(IconModel.self))
         }
     }
 }
 
-struct UrlButtonImageModel:  Decodable {
+struct ImageURLModel:  Decodable {
     let url: String
     
     enum CodingKeys: String, CodingKey {
@@ -462,23 +470,29 @@ struct UrlButtonImageModel:  Decodable {
 
 enum Icon: String, Decodable {
     case close
+    case checkmark
+    case leftArrow
+    case rightArrow
 }
 
-struct IconButtonImageModel: Decodable {
+struct IconModel: Decodable {
     let icon: Icon
-    let tint: HexColor
+    let color: ThomasColor
+    let scale: Double?
     
     enum CodingKeys: String, CodingKey {
         case icon = "icon"
-        case tint = "tint"
+        case color = "color"
+        case scale = "scale"
     }
 }
+
 
 struct ImageButtonModel: Decodable {
     let type = ViewModelType.imageButton
     let identifier: String
     let border: Border?
-    let backgroundColor: HexColor?
+    let backgroundColor: ThomasColor?
     let image: ButtomImageModel
     let clickBehaviors: [ButtonClickBehavior]?
     let enableBehaviors: [ButtonEnableBehavior]?
@@ -500,7 +514,7 @@ struct ImageButtonModel: Decodable {
 struct EmptyViewModel: Decodable {
     let type = ViewModelType.emptyView
     let border: Border?
-    let backgroundColor: HexColor?
+    let backgroundColor: ThomasColor?
     
     enum CodingKeys: String, CodingKey {
         case border = "border"
@@ -511,7 +525,7 @@ struct EmptyViewModel: Decodable {
 class PagerModel: Decodable {
     let type = ViewModelType.pager
     let border: Border?
-    let backgroundColor: HexColor?
+    let backgroundColor: ThomasColor?
     let disableSwipe: Bool?
     let identifier: String
     let items: [ViewModel]
@@ -528,24 +542,34 @@ class PagerModel: Decodable {
 struct PagerIndicatorModel: Decodable {
     let type = ViewModelType.pagerIndicator
     let border: Border?
-    let backgroundColor: HexColor?
+    let backgroundColor: ThomasColor?
     let bindings: Bindings
     let spacing: Double
 
     enum CodingKeys: String, CodingKey {
         case border = "border"
         case backgroundColor = "background_color"
-        case bindings = "indicator_bindings"
-        case spacing = "indicator_spacing"
+        case bindings = "bindings"
+        case spacing = "spacing"
     }
     
     struct Bindings: Decodable {
-        let selected: ShapeModel
-        let deselected: ShapeModel
+        let selected: Binding
+        let unselected: Binding
 
         enum CodingKeys: String, CodingKey {
             case selected = "selected"
-            case deselected = "deselected"
+            case unselected = "unselected"
+        }
+    }
+    
+    struct Binding: Decodable {
+        let shapes: [ShapeModel]?
+        let icon: IconModel?
+
+        enum CodingKeys: String, CodingKey {
+            case shapes = "shapes"
+            case icon = "icon"
         }
     }
 }
@@ -553,7 +577,7 @@ struct PagerIndicatorModel: Decodable {
 struct PagerControllerModel: Decodable {
     let type = ViewModelType.pagerController
     let border: Border?
-    let backgroundColor: HexColor?
+    let backgroundColor: ThomasColor?
     let view: ViewModel
 
     enum CodingKeys: String, CodingKey {
@@ -568,7 +592,7 @@ struct FormControllerModel: Decodable {
     let identifier: String
     let submit: FormSubmitBehavior?
     let border: Border?
-    let backgroundColor: HexColor?
+    let backgroundColor: ThomasColor?
     
     let view: ViewModel
 
@@ -586,7 +610,7 @@ struct NpsControllerModel: Decodable {
     let identifier: String
     let submit: FormSubmitBehavior?
     let border: Border?
-    let backgroundColor: HexColor?
+    let backgroundColor: ThomasColor?
     let npsIdentifier: String
     let view: ViewModel
 
@@ -604,7 +628,7 @@ struct CheckboxControllerModel: Decodable {
     let type = ViewModelType.checkboxController
     let identifier: String
     let border: Border?
-    let backgroundColor: HexColor?
+    let backgroundColor: ThomasColor?
     let isRequired: Bool?
     let minSelection: Int?
     let maxSelection: Int?
@@ -626,7 +650,7 @@ struct RadioInputControllerModel: Decodable {
     let identifier: String
     let submit: FormSubmitBehavior?
     let border: Border?
-    let backgroundColor: HexColor?
+    let backgroundColor: ThomasColor?
     let isRequired: Bool?
     let view: ViewModel
 
@@ -643,21 +667,15 @@ struct RadioInputControllerModel: Decodable {
 struct TextInputModel: Decodable {
     let type = ViewModelType.textInput
     let border: Border?
-    let backgroundColor: HexColor?
-    let fontSize: Int
-    let foregroundColor: HexColor
-    let textStyles: [TextStyle]?
-    let fontFamilies: [String]?
+    let backgroundColor: ThomasColor?
     let identifier: String
     let contentDescription: String?
     let isRequired: Bool?
     let placeHolder: String?
+    let textAppearance: TextAppearanceModel
 
     enum CodingKeys: String, CodingKey {
-        case fontSize = "font_size"
-        case foregroundColor = "foreground_color"
-        case textStyles = "text_styles"
-        case fontFamilies = "font_families"
+        case textAppearance = "text_appearance"
         case border = "border"
         case backgroundColor = "background_color"
         case identifier = "identifier"
@@ -670,7 +688,7 @@ struct TextInputModel: Decodable {
 struct ToggleModel: Decodable {
     let type = ViewModelType.toggle
     let border: Border?
-    let backgroundColor: HexColor?
+    let backgroundColor: ThomasColor?
     let identifier: String
     let contentDescription: String?
     let isRequired: Bool?
@@ -689,7 +707,7 @@ struct ToggleModel: Decodable {
 struct CheckboxModel: Decodable {
     let type = ViewModelType.checkbox
     let border: Border?
-    let backgroundColor: HexColor?
+    let backgroundColor: ThomasColor?
     let contentDescription: String?
     let value: String
     let style: ToggleStyleModel
@@ -706,13 +724,13 @@ struct CheckboxModel: Decodable {
 struct RadioInputModel: Decodable {
     let type = ViewModelType.radioInput
     let border: Border?
-    let backgroundColor: HexColor?
-    let foregroundColor: HexColor
+    let backgroundColor: ThomasColor?
     let contentDescription: String?
     let value: String
+    let style: ToggleStyleModel
     
     enum CodingKeys: String, CodingKey {
-        case foregroundColor = "foreground_color"
+        case style = "style"
         case border = "border"
         case backgroundColor = "background_color"
         case contentDescription = "content_description"
@@ -747,50 +765,39 @@ enum ScoreStyleModel: Decodable {
 
 struct ScoreNPSStyleModel: Decodable {
     let type = ScoreStyleModelType.npsStyle
-    
-    let fontSize: Int
-    let textStyles: [TextStyle]?
-    let fontFamilies: [String]?
-    let outlineBorder: Border
     let spacing: Double?
-    let selectedColors: SelectedColors
-    let deselectedColors: DeselctedColors
-    
-    struct SelectedColors: Decodable {
-        let number: HexColor
-        let fill: HexColor
-        
-        enum CodingKeys: String, CodingKey {
-            case number = "number"
-            case fill = "fill"
-        }
-    }
-    
-    struct DeselctedColors: Decodable {
-        let number: HexColor
-        let fill: HexColor?
-        
-        enum CodingKeys: String, CodingKey {
-            case number = "number"
-            case fill = "fill"
-        }
-    }
+    let bindings: Bindings
     
     enum CodingKeys: String, CodingKey {
-        case fontSize = "font_size"
-        case textStyles = "text_styles"
-        case fontFamilies = "font_families"
-        case outlineBorder = "outline_border"
         case spacing = "spacing"
-        case selectedColors = "selected_colors"
-        case deselectedColors = "deselected_colors"
+        case bindings = "bindings"
+    }
+    
+    struct Bindings: Decodable {
+        let selected: Binding
+        let unselected: Binding
+
+        enum CodingKeys: String, CodingKey {
+            case selected = "selected"
+            case unselected = "unselected"
+        }
+    }
+    
+    struct Binding: Decodable {
+        let shapes: [ShapeModel]?
+        let textAppearance: TextAppearanceModel?
+
+        enum CodingKeys: String, CodingKey {
+            case shapes = "shapes"
+            case textAppearance = "text_appearance"
+        }
     }
 }
 
 struct ScoreModel: Decodable {
     let type = ViewModelType.score
     let border: Border?
-    let backgroundColor: HexColor?
+    let backgroundColor: ThomasColor?
     let identifier: String
     let contentDescription: String?
     let isRequired: Bool?
@@ -814,8 +821,8 @@ struct SwitchToggleStyleModel: Decodable {
     }
     
     struct ToggleColors: Decodable {
-        var on: HexColor
-        var off: HexColor
+        var on: ThomasColor
+        var off: ThomasColor
 
         enum CodingKeys: String, CodingKey {
             case on = "on"
@@ -825,28 +832,36 @@ struct SwitchToggleStyleModel: Decodable {
 }
 
 struct CheckboxToggleStyleModel: Decodable {
-    let checkedColors: CheckedColors
+    let bindings: Bindings
     
     enum CodingKeys: String, CodingKey {
-        case checkedColors = "checked_colors"
+        case bindings = "bindings"
     }
-    
-    struct CheckedColors: Decodable {
-        var checkMark: HexColor
-        var border: HexColor?
-        var background: HexColor?
+
+    struct Bindings: Decodable {
+        let selected: Binding
+        let unselected: Binding
 
         enum CodingKeys: String, CodingKey {
-            case checkMark = "check_mark"
-            case border = "border"
-            case background = "background"
+            case selected = "selected"
+            case unselected = "unselected"
+        }
+    }
+    
+    struct Binding: Decodable {
+        let shapes: [ShapeModel]?
+        let icon: IconModel?
+
+        enum CodingKeys: String, CodingKey {
+            case shapes = "shapes"
+            case icon = "icon"
         }
     }
 }
 
 enum ShapeModel : Decodable {
     case rectangle(RectangleShapeModel)
-    case circle(CircleShapeModel)
+    case ellipse(EllipseShapeModel)
     
     enum CodingKeys: String, CodingKey {
         case type = "type"
@@ -858,39 +873,42 @@ enum ShapeModel : Decodable {
         let singleValueContainer = try decoder.singleValueContainer()
 
         switch type {
-        case .circle:
-            self = .circle(try singleValueContainer.decode(CircleShapeModel.self))
+        case .ellipse:
+            self = .ellipse(try singleValueContainer.decode(EllipseShapeModel.self))
         case .rectangle:
             self = .rectangle(try singleValueContainer.decode(RectangleShapeModel.self))
         }
     }
 }
 
-struct CircleShapeModel: Decodable {
-    let type = ShapeModelType.circle
+
+struct EllipseShapeModel: Decodable {
+    let type = ShapeModelType.ellipse
     let border: Border?
-    let radius: Double
-    let color: HexColor?
-    
+    let scale: Double?
+    let color: ThomasColor?
+    let aspectRatio: Double?
+
     enum CodingKeys: String, CodingKey {
         case border = "border"
         case color = "color"
-        case radius = "radius"
+        case scale = "scale"
+        case aspectRatio = "aspect_ratio"
     }
 }
 
 struct RectangleShapeModel: Decodable {
     let type = ShapeModelType.rectangle
     let border: Border?
-    let width: Double
-    let height: Double
-    let color: HexColor?
-    
+    let scale: Double?
+    let color: ThomasColor?
+    let aspectRatio: Double?
+
     enum CodingKeys: String, CodingKey {
         case border = "border"
         case color = "color"
-        case width = "width"
-        case height = "height"
+        case scale = "scale"
+        case aspectRatio = "aspect_ratio"
     }
 }
 
@@ -945,7 +963,7 @@ enum SizeConstraint: Decodable, Equatable {
 struct Border: Decodable {
     var radius: Double?
     var strokeWidth: Double?
-    var strokeColor: HexColor?
+    var strokeColor: ThomasColor?
     
     enum CodingKeys: String, CodingKey {
         case radius = "radius"
@@ -966,6 +984,11 @@ struct Margin: Decodable {
         case start = "start"
         case end = "end"
     }
+}
+
+enum BannerPosition: String, Decodable {
+    case top
+    case bottom
 }
 
 struct Position: Decodable {
@@ -1038,12 +1061,40 @@ enum FormSubmitBehavior: String, Decodable {
     case submitEvent = "submit_event"
 }
 
-struct HexColor : Decodable {
-    let hexColor: String
+enum ThomasPlatform: String, Decodable {
+    case android
+    case ios
+    case web
+}
+
+struct ColorSelector: Decodable {
+    let darkMode: Bool?
+    let platform: ThomasPlatform?
+    let color: HexColor
+    
+    enum CodingKeys: String, CodingKey {
+        case platform = "platform"
+        case darkMode = "dark_mode"
+        case color = "color"
+    }
+}
+
+struct ThomasColor: Decodable {
+    let defaultColor: HexColor
+    let selectors: [ColorSelector]?
+    
+    enum CodingKeys: String, CodingKey {
+        case defaultColor = "default"
+        case selectors = "selectors"
+    }
+}
+
+struct HexColor: Decodable {
+    let hex: String
     let alpha: Double?
     
     enum CodingKeys: String, CodingKey {
-        case hexColor = "hex"
+        case hex = "hex"
         case alpha = "alpha"
     }
 }

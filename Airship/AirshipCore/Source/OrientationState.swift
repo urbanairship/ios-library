@@ -10,4 +10,3 @@ class OrientationState: ObservableObject {
         self.orientation = orientation
     }
 }
-

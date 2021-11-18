@@ -39,6 +39,9 @@ private struct ParentNpsController : View {
     
     var body: some View {
         ViewFactory.createView(model: self.model.view, constraints: constraints)
+            .constraints(constraints)
+            .background(model.backgroundColor)
+            .border(model.border)
             .environmentObject(formState)
     }
 }
@@ -54,6 +57,9 @@ private struct ChildNpsController : View {
 
     var body: some View {
         return ViewFactory.createView(model: self.model.view, constraints: constraints)
+            .constraints(constraints)
+            .background(model.backgroundColor)
+            .border(model.border)
             .environmentObject(formState)
             .onAppear {
                 self.cancellable = self.formState.$data.sink { incoming in

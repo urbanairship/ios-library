@@ -14,12 +14,10 @@ struct Label : View {
 
     var body: some View {
         Text(self.model.text)
-            .textStyles(self.model.textStyles)
-            .airshipFont(self.model.fontSize, self.model.fontFamilies, self.model.textStyles)
-            .multilineTextAlignment(self.model.alignment?.toSwiftTextAlignment() ?? .center)
-            .constraints(constraints, alignment: self.model.alignment?.toFrameAlignment() ?? Alignment.center)
-            .foreground(model.foregroundColor)
-            .background(model.backgroundColor)
+            .textAppearance(self.model.textAppearance)
+            .constraints(constraints, alignment: self.model.textAppearance.alignment?.toFrameAlignment() ?? Alignment.center)
+            .background(self.model.backgroundColor)
+            .border(self.model.border)
     }
 }
 

@@ -11,23 +11,27 @@ presentation:
       horizontal: center
       vertical: center
     shade_color:
-      hex: "#444444"
-      alpha: .8
+      default:
+        hex: "#444444"
+        alpha: .8
 view:
   type: form_controller
   identifier: "top-form"
   submit: submit_event
   background_color:
-    hex: "#FFFFFF"
+    default:
+      hex: "#FFFFFF"
   border:
     stroke_color:
-      hex: "#00FF00"
+      default:
+        hex: "#00FF00"
     stroke_width: 5
     radius: 15
   view:
     type: linear_layout
     background_color:
-      hex: "#ffffff"
+      default:
+        hex: "#ffffff"
     direction: vertical
     items:
       - size:
@@ -43,7 +47,8 @@ view:
           direction: vertical
           border:
             stroke_color:
-              hex: "#00FF00"
+              default:
+                hex: "#00FF00"
             stroke_width: 3
           view:
             type: linear_layout
@@ -60,13 +65,15 @@ view:
                 view:
                   type: label
                   text: Favorite colors (select 1-2)
-                  alignment: start
-                  text_styles:
-                    - bold
-                    - underlined
-                  font_size: 24
-                  foreground_color:
-                    hex: "#000000"
+                  text_appearance:
+                    alignment: start
+                    styles:
+                      - bold
+                      - underlined
+                    font_size: 24
+                    color:
+                      default:
+                        hex: "#000000"
               - size:
                   width: 100%
                   height: auto
@@ -107,28 +114,46 @@ view:
                                 value: "purple"
                                 style:
                                   type: checkbox
-                                  checked_colors:
-                                    check_mark: 
-                                      hex: "#FFFFFF"
-                                    border: 
-                                      hex: "#9400D3"
-                                    background: 
-                                      hex: "#9400D3"
-                                border: 
-                                  stroke_width: 2
-                                  stroke_color:
-                                    hex: "#000000"
-                                  radius: 8 
+                                  bindings:
+                                    selected:
+                                      shapes:
+                                        - type: rectangle
+                                          aspect_ratio: 1
+                                          border: 
+                                            stroke_width: 2
+                                            stroke_color:
+                                              default:
+                                                hex: "#9400D3"
+                                          color:
+                                            default:
+                                              hex: "#9400D3"
+                                      icon:
+                                        icon: "checkmark"
+                                        scale: .8
+                                        color:
+                                          default:
+                                            hex: "#FFFFFF"
+                                    unselected:
+                                      shapes:
+                                        - type: ellipse
+                                          aspect_ratio: 1
+                                          border: 
+                                            stroke_width: 2
+                                            stroke_color:
+                                              default:
+                                                hex: "#0000ff"
                             - size:
                                 width: 100%
                                 height: auto
                               view:
                                 type: label
                                 text: Purple
-                                alignment: start
-                                font_size: 16
-                                foreground_color:
-                                  hex: "#9400D3"
+                                text_appearance:
+                                  alignment: start
+                                  font_size: 16
+                                  color:
+                                    default:
+                                      hex: "#9400D3"
                       - size:
                           width: 100%
                           height: auto
@@ -150,28 +175,46 @@ view:
                                 value: "blue"
                                 style:
                                   type: checkbox
-                                  checked_colors:
-                                    check_mark: 
-                                      hex: "#FFFFFF"
-                                    border: 
-                                      hex: "#0000ff"
-                                    background: 
-                                      hex: "#0000ff"
-                                border: 
-                                  stroke_width: 2
-                                  stroke_color:
-                                    hex: "#000000"
-                                  radius: 8 
+                                  bindings:
+                                    selected:
+                                      shapes:
+                                        - type: rectangle
+                                          aspect_ratio: 1
+                                          border: 
+                                            stroke_width: 2
+                                            stroke_color:
+                                              default:
+                                                hex: "#9400D3"
+                                          color:
+                                            default:
+                                              hex: "#9400D3"
+                                      icon:
+                                        icon: "checkmark"
+                                        scale: .55
+                                        color:
+                                          default:
+                                            hex: "#FFFFFF"
+                                    unselected:
+                                      shapes:
+                                        - type: rectangle
+                                          aspect_ratio: 1
+                                          border: 
+                                            stroke_width: 2
+                                            stroke_color:
+                                              default:
+                                                hex: "#0000ff"
                             - size:
                                 width: 100%
                                 height: auto
                               view:
                                 type: label
                                 text: Blue
-                                alignment: start
-                                font_size: 16
-                                foreground_color:
-                                  hex: "#0000ff"
+                                text_appearance:
+                                  alignment: start
+                                  font_size: 16
+                                  color:
+                                    default:
+                                      hex: "#0000ff"
 
                       - size:
                           width: 100%
@@ -194,28 +237,47 @@ view:
                                 value: "pea_green"
                                 style:
                                   type: checkbox
-                                  checked_colors:
-                                    check_mark: 
-                                      hex: "#FFFFFF"
-                                    border: 
-                                      hex: "#739122"
-                                    background: 
-                                      hex: "#739122"
-                                border: 
-                                  stroke_width: 2
-                                  stroke_color:
-                                    hex: "#000000"
-                                  radius: 8 
+                                  bindings:
+                                    selected:
+                                      shapes:
+                                        - type: rectangle
+                                          aspect_ratio: 1
+                                          border: 
+                                            stroke_width: 2
+                                            stroke_color:
+                                              default:
+                                                hex: "#739122"
+                                          color:
+                                            default:
+                                              hex: "#739122"
+                                      icon:
+                                        icon: "checkmark"
+                                        scale: .8
+                                        color:
+                                          default:
+                                            hex: "#FFFFFF"
+                                    unselected:
+                                      shapes:
+                                        - type: rectangle
+                                          aspect_ratio: 1
+                                          border: 
+                                            stroke_width: 2
+                                            stroke_color:
+                                              default:
+                                                hex: "#739122"
+
                             - size:
                                 width: 100%
                                 height: auto
                               view:
                                 type: label
                                 text: Pea Green
-                                alignment: start
-                                font_size: 16
-                                foreground_color:
-                                  hex: "#739122"
+                                text_appearance:
+                                  alignment: start
+                                  font_size: 16
+                                  color:
+                                    default:
+                                      hex: "#739122"
 
 
                       - size:
@@ -239,28 +301,47 @@ view:
                                 value: "vomit"
                                 style:
                                   type: checkbox
-                                  checked_colors:
-                                    check_mark: 
-                                      hex: "#FFFFFF"
-                                    border: 
-                                      hex: "#a2a415"
-                                    background: 
-                                      hex: "#a2a415"
-                                border: 
-                                  stroke_width: 2
-                                  stroke_color:
-                                    hex: "#000000"
-                                  radius: 8 
+                                  bindings:
+                                    selected:
+                                      shapes:
+                                        - type: rectangle
+                                          aspect_ratio: 1
+                                          border: 
+                                            stroke_width: 2
+                                            stroke_color:
+                                              default:
+                                                hex: "#a2a415"
+                                          color:
+                                            default:
+                                              hex: "#a2a415"
+                                      icon:
+                                        icon: "checkmark"
+                                        scale: .8
+                                        color:
+                                          default:
+                                            hex: "#FFFFFF"
+                                    unselected:
+                                      shapes:
+                                        - type: rectangle
+                                          aspect_ratio: 1
+                                          border: 
+                                            stroke_width: 2
+                                            stroke_color:
+                                              default:
+                                                hex: "#a2a415"
+
                             - size:
                                 width: 100%
                                 height: auto
                               view:
                                 type: label
                                 text: Vomit Yellow
-                                alignment: start
-                                font_size: 16
-                                foreground_color:
-                                  hex: "#a2a415"
+                                text_appearance:
+                                  alignment: start
+                                  font_size: 16
+                                  color:
+                                    default:
+                                      hex: "#a2a415"
 
               - size:
                   width: 100%
@@ -273,13 +354,15 @@ view:
                 view:
                   type: label
                   text: Fruit
-                  alignment: start
-                  text_styles:
-                    - bold
-                    - underlined
-                  font_size: 24
-                  foreground_color:
-                    hex: "#000000"
+                  text_appearance:
+                    alignment: start
+                    styles:
+                      - bold
+                      - underlined
+                    font_size: 24
+                    color:
+                      default:
+                        hex: "#000000"
               - size:
                   width: 100%
                   height: auto
@@ -311,10 +394,12 @@ view:
                               view:
                                 type: label
                                 text: Apples 🍎
-                                alignment: start
-                                font_size: 16
-                                foreground_color:
-                                  hex: "#ff0000"
+                                text_appearance:
+                                  alignment: start
+                                  font_size: 16
+                                  color:
+                                    default:
+                                      hex: "#ff0000"
                             - size:
                                 width: auto
                                 height: auto
@@ -329,9 +414,13 @@ view:
                                   type: switch
                                   toggle_colors:
                                     on: 
-                                      hex: "#ff0000"
+                                      default:
+                                        hex: "#ff0000"
                                     off:
-                                      hex: "#D3D3D3"
+                                      default:
+                                        hex: "#D3D3D3"
+
+
 
                       - size:
                           width: 100%
@@ -348,10 +437,12 @@ view:
                               view:
                                 type: label
                                 text: Kiwi 🥝
-                                alignment: start
-                                font_size: 16
-                                foreground_color:
-                                  hex: "#8ee53f"
+                                text_appearance:
+                                  alignment: start
+                                  font_size: 16
+                                  color:
+                                    default:
+                                      hex: "#8ee53f"
                             - size:
                                 width: auto
                                 height: auto
@@ -366,9 +457,11 @@ view:
                                   type: switch
                                   toggle_colors:
                                     on: 
-                                      hex: "#8ee53f"
+                                      default:
+                                        hex: "#8ee53f"
                                     off:
-                                      hex: "#D3D3D3"
+                                      default:
+                                        hex: "#D3D3D3"
               - size:
                   width: 100%
                   height: auto
@@ -380,13 +473,15 @@ view:
                 view:
                   type: label
                   text: Occupation (Required)
-                  alignment: start
-                  text_styles:
-                    - bold
-                    - underlined
-                  font_size: 24
-                  foreground_color:
-                    hex: "#000000"
+                  text_appearance:
+                    alignment: start
+                    styles:
+                      - bold
+                      - underlined
+                    font_size: 24
+                    color:
+                      default:
+                        hex: "#000000"
 
               - size:
                   width: 100%
@@ -422,18 +517,45 @@ view:
                               view:
                                 type: radio_input
                                 value: "person"
-                                foreground_color:
-                                  hex: "#00ff00"
+                                style:
+                                  type: checkbox
+                                  bindings:
+                                    selected:
+                                      shapes:
+                                        - type: ellipse
+                                          aspect_ratio: 1
+                                          border: 
+                                            stroke_width: 2
+                                            stroke_color:
+                                              default:
+                                                hex: "#0000ff"
+                                        - type: ellipse
+                                          aspect_ratio: 1
+                                          color:
+                                            default:
+                                              hex: "#0000ff"
+                                          scale: .8
+                                    unselected:
+                                      shapes:
+                                        - type: ellipse
+                                          aspect_ratio: 1
+                                          border: 
+                                            stroke_width: 2
+                                            stroke_color:
+                                              default:
+                                                hex: "#0000ff"
                             - size:
                                 width: 100%
                                 height: auto
                               view:
                                 type: label
                                 text: Person
-                                alignment: start
-                                font_size: 16
-                                foreground_color:
-                                  hex: "#ff0ff0"
+                                text_appearance:
+                                  alignment: start
+                                  font_size: 16
+                                  color:
+                                    default:
+                                      hex: "#ff0ff0"
                       - size:
                           width: 100%
                           height: auto
@@ -452,23 +574,45 @@ view:
                               view:
                                 type: radio_input
                                 value: "robot"
-                                foreground_color:
-                                  hex: "#ff0ff0"
-                                border: 
-                                  stroke_width: 2
-                                  stroke_color:
-                                    hex: "#0000ff"
-                                  radius: 32
+                                style:
+                                  type: checkbox
+                                  bindings:
+                                    selected:
+                                      shapes:
+                                        - type: ellipse
+                                          aspect_ratio: 1
+                                          border: 
+                                            stroke_width: 2
+                                            stroke_color:
+                                              default:
+                                                hex: "#0000ff"
+                                        - type: ellipse
+                                          aspect_ratio: 1
+                                          color:
+                                            default:
+                                              hex: "#0000ff"
+                                          scale: .6
+                                    unselected:
+                                      shapes:
+                                        - type: ellipse
+                                          aspect_ratio: 1
+                                          border: 
+                                            stroke_width: 2
+                                            stroke_color:
+                                              default:
+                                                hex: "#0000ff"
                             - size:
                                 width: 100%
                                 height: auto
                               view:
                                 type: label
                                 text: Robot
-                                alignment: start
-                                font_size: 16
-                                foreground_color:
-                                  hex: "#ff0ff0"
+                                text_appearance:
+                                  alignment: start
+                                  font_size: 16
+                                  color:
+                                    default:
+                                      hex: "#ff0ff0"
               - size:
                   width: 100%
                   height: auto
@@ -480,13 +624,15 @@ view:
                 view:
                   type: label
                   text: Feedback!
-                  alignment: start
-                  text_styles:
-                    - bold
-                    - underlined
-                  font_size: 24
-                  foreground_color:
-                    hex: "#000000"
+                  text_appearance:
+                    alignment: start
+                    styles:
+                      - bold
+                      - underlined
+                    font_size: 24
+                    color:
+                      default:
+                        hex: "#000000"
 
               - size:
                   width: 100%
@@ -501,55 +647,81 @@ view:
                   identifier: "more"
                   required: true
                   background_color:
-                    hex: "#ff0000"
+                    default:
+                      hex: "#ff0000"
                   style:
                     type: nps
-                    spacing: 3 
-                    text_styles:
-                      - bold
-                      - underlined
-                    font_size: 14
-                    outline_border: 
-                      stroke_width: 2
-                      stroke_color:
-                        hex: "#ff0000"
-                      radius: 8 
-                    selected_colors:
-                      number:
-                        hex: "#0000ff"
-                      fill: 
-                        hex: "#00ff00"
-                    deselected_colors:
-                      number:
-                        hex: "#00ff00"
-                      fill: 
-                        hex: "#0000ff"
-
+                    spacing: 3
+                    bindings:
+                      selected:
+                        shapes:
+                          - type: rectangle
+                            aspect_ratio: 1
+                            border: 
+                              stroke_width: 2
+                              stroke_color:
+                                default:
+                                  hex: "#000000"
+                          - type: rectangle
+                            aspect_ratio: 1
+                            color: 
+                              default:
+                                hex: "#000FF0"                                  
+                        text_appearance:
+                          styles:
+                            - bold
+                            - underlined
+                          font_size: 14
+                          color:
+                            default:
+                               hex: "#000000"
+                      unselected:
+                        shapes:
+                          - type: rectangle
+                            aspect_ratio: 1
+                            border: 
+                              stroke_width: 2
+                              stroke_color:
+                                default:
+                                  hex: "#000000"
+                        text_appearance:
+                          styles:
+                            - bold
+                            - underlined
+                          font_size: 14
+                          color:
+                            default:
+                               hex: "#000000"
+                    
               - size:
                   width: 100%
                   height: 300
                 margin:
                   top: 24
                   bottom: 8
-                  start: 16
+                  start: 8
                   end: 8
                 view:
                   type: text_input
-                  text: Feedback?
-                  alignment: start
-                  background_color:
-                      hex: "#D3D3D3"
-                      alpha: .5
                   identifier: "more"
-                  text_styles:
-                    - bold
-                    - underlined
-                  font_size: 24
-                  foreground_color:
-                    hex: "#000000"
-                  
-
-                    
+                  text: Feedback?
+                  background_color:
+                    default:
+                      hex: "#00FF00"
+                  border: 
+                    stroke_width: 2
+                    stroke_color:
+                      default:
+                        hex: "#0000ff"
+                  text_appearance:
+                    alignment: start
+                    styles:
+                      - bold
+                      - underlined
+                    font_size: 24
+                    color:
+                      default:
+                        hex: "#000000"  
       - size:
           width: 100%
           height: auto
@@ -568,10 +740,12 @@ view:
               view:
                 type: label
                 text: Do you agree to things? (Required)
-                alignment: start
-                font_size: 16
-                foreground_color:
-                  hex: "#000000"
+                text_appearance:
+                  alignment: start
+                  font_size: 16
+                  color:
+                    default:
+                      hex: "#000000"
             - size:
                 width: auto
                 height: auto
@@ -584,14 +758,31 @@ view:
                 required: true
                 style:
                   type: checkbox
-                  checked_colors:
-                    check_mark: 
-                      hex: "#0000ff"
-                border: 
-                  stroke_width: 2
-                  stroke_color:
-                    hex: "#0000ff"
-                  radius: 8 
+                  bindings:
+                    selected:
+                      shapes:
+                        - type: rectangle
+                          aspect_ratio: 1
+                          border: 
+                            stroke_width: 2
+                            stroke_color:
+                              default:
+                                hex: "#0000ff"
+                      icon:
+                        icon: "checkmark"
+                        scale: .8
+                        color:
+                          default:
+                            hex: "#0000ff"
+                    unselected:
+                      shapes:
+                        - type: ellipse
+                          aspect_ratio: 1
+                          border: 
+                            stroke_width: 2
+                            stroke_color:
+                              default:
+                                hex: "#0000ff"
       - size:
           width: 100%
           height: auto
@@ -604,13 +795,16 @@ view:
           type: label_button
           identifier: button1
           background_color: 
-            hex: "#FFD600"
+            default:
+              hex: "#FFD600"
           label:
             type: label
-            font_size: 10
-            foreground_color: 
-              hex: "#333333"
-            alignment: center
             text: 'Submit!'
+            text_appearance:
+              font_size: 10
+              color: 
+                default:
+                  hex: "#333333"
+              alignment: center
           click_behaviors: ["form_submit", "cancel"]
           enable_behaviors: ["form_validation"]

@@ -15,7 +15,7 @@
 @interface UAInAppMessageAirshipLayoutAdapter() <UAThomasDelegate>
 @property (nonatomic, strong) UAInAppMessage *message;
 @property (nonatomic, strong) UAInAppMessageAirshipLayoutDisplayContent *displayContent;
-@property (nonatomic, copy, nullable) void (^deferredDisplay)(void);
+@property (nonatomic, copy, nullable) UADisposable *(^deferredDisplay)(void);
 @property (nonatomic, copy, nullable) void (^completionHandler)(UAInAppMessageResolution*);
 
 @end

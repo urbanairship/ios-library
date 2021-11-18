@@ -11,15 +11,18 @@ presentation:
       horizontal: center
       vertical: center
     shade_color:
-      hex: "#444444"
-      alpha: .3
+      default:
+        hex: "#444444"
+        alpha: .3
 view:
   type: container
   background_color:
-    hex: "#FFFFFF"
+    default:
+      hex: "#FFFFFF"
   border:
     stroke_color:
-      hex: "#00FF00"
+      default:
+        hex: "#00FF00"
     stroke_width: 5
     radius: 15
   items:
@@ -53,21 +56,23 @@ view:
                     height: 100%
                   view:
                     type: label
-                    font_size: 16
                     text: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
                       do eiusmod tempor incididunt ut labore et dolore magna aliqua. In
                       arcu cursus euismod quis viverra nibh. Lobortis feugiat vivamus
                       at augue eget arcu dictum. Imperdiet dui accumsan sit amet nulla.
                       Ultrices neque ornare aenean euismod elementum. Tincidunt id aliquet
                       risus feugiat in ante metus dictum.
-                    foreground_color:
-                      hex: "#333333"
-                    alignment: start
-                    text_styles:
-                      - italic
-                    font_families:
-                      - permanent_marker
-                      - casual
+                    text_appearance:
+                      font_size: 16
+                      color:
+                        default:
+                          hex: "#333333"
+                      alignment: start
+                      styles:
+                        - italic
+                      font_families:
+                        - permanent_marker
+                        - casual
           # BOTTOM-PINNED BUTTON #1
           - size:
               width: 100%
@@ -81,15 +86,18 @@ view:
               type: label_button
               identifier: BUTTON
               background_color:
-                hex: "#FF0000"
+                default:
+                  hex: "#FF0000"
               label:
                 type: label
-                font_size: 24
-                alignment: center
-                text_styles:
-                  - bold
-                font_families:
-                  - casual
                 text: 'Push me!'
-                foreground_color:
-                  hex: "#FFFFFF"
+                text_appearance:
+                  font_size: 24
+                  alignment: center
+                  styles:
+                    - bold
+                  font_families:
+                    - casual
+                  color:
+                    default:
+                      hex: "#FFFFFF"

@@ -8,14 +8,11 @@ struct RootView : View {
 
     var body: some View {
         GeometryReader { metrics in
-            let constraints = ViewConstraints(contentWidth: metrics.size.width,
-                                              contentHeight: metrics.size.height,
-                                              frameWidth: metrics.size.width,
-                                              frameHeight: metrics.size.height)
-            
+            let constraints = ViewConstraints(width: metrics.size.width,
+                                              height: metrics.size.height)
             switch presentation {
             case .banner(let bannerModel):
-                BannerView(model: bannerModel, constraints: constraints, rootViewModel: model, offset: constraints.frameHeight ?? 0.0)
+                BannerView(model: bannerModel, constraints: constraints, rootViewModel: model)
                     .environmentObject(context)
                     .environmentObject(orientationState)
             case .modal(let modalModel):

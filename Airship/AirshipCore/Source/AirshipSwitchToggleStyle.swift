@@ -6,10 +6,11 @@ import SwiftUI
 @available(iOS 13.0.0, tvOS 13.0, *)
 struct AirshipSwitchToggleStyle: ToggleStyle {
     let model: SwitchToggleStyleModel
+    let colorScheme: ColorScheme
 
     func makeBody(configuration: Self.Configuration) -> some View {
         let colors = self.model.colors
-        let fill = configuration.isOn ? colors.on.toColor() : colors.off.toColor()
+        let fill = configuration.isOn ? colors.on.toColor(colorScheme) : colors.off.toColor(colorScheme)
         Button(action: { configuration.isOn.toggle() } ) {}
         .buttonStyle(AirshipSwitchButtonStyle(fillColor: fill,
                                               isOn: configuration.isOn))

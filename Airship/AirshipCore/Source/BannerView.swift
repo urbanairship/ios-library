@@ -5,10 +5,13 @@ import SwiftUI
 @available(iOS 13.0.0, tvOS 13.0, *)
 struct BannerView: View {
     
+    private static let animationInDuration = 0.2
+    private static let animationOutDuration = 0.2
+    
     let model: BannerPresentationModel
     let constraints: ViewConstraints
     let rootViewModel: ViewModel
-    @State var offset: CGFloat
+    @State private var offsetPercent: CGFloat = 1.0
     
 #if !os(tvOS)
     @Environment(\.verticalSizeClass) private var verticalSizeClass
@@ -20,42 +23,41 @@ struct BannerView: View {
     
     var body: some View {
         let placement = resolvePlacement()
-        let alignment = Alignment(horizontal: placement.position?.horizontal.toAlignment() ?? .center, vertical: placement.position?.vertical.toAlignment() ?? .center)
+        let verticalAlignment = placement.position == .top ? VerticalAlignment.top : VerticalAlignment.bottom
+        let alignment = Alignment(horizontal: .center, vertical: verticalAlignment)
+        let height = constraints.height ?? 0.0
+        let offset = placement.position == .top ? -height : height
         
-        let contentConstraints =  ViewConstraints.calculateChildConstraints(childSize: placement.size, childMargins: placement.margin,
+        let contentConstraints =  ViewConstraints.calculateChildConstraints(childSize: placement.size,
                                                                             parentConstraints: constraints)
+        
+        let contentFrameConstraints = ViewConstraints.calculateChildConstraints(childSize: placement.size,
+                                                                              parentConstraints: constraints,
+                                                                              childMargins: placement.margin)
         VStack {
             ViewFactory.createView(model: rootViewModel, constraints: contentConstraints)
+                .constraints(contentFrameConstraints)
                 .margin(placement.margin)
         }
         .constraints(constraints, alignment: alignment)
-        .background(
-            Rectangle()
-                .foreground(HexColor.clear)
-            /// Add tap gesture outside of view to dismiss
-                .addTapGesture {
-                    dismissBanner()
-                }
-        )
-        .offset(x: 0.0, y: offset)
+        .offset(x: 0.0, y: offset * self.offsetPercent)
         .onAppear {
             displayBanner()
         }
     }
     
     private func displayBanner () {
-        withAnimation(.linear(duration:Double(model.duration))) {
-            self.offset = 0.0
+        withAnimation(.linear(duration:BannerView.animationInDuration)) {
+            self.offsetPercent = 0.0
         }
     }
     
-    private func dismissBanner () {
-        DispatchQueue.main.asyncAfter(deadline: .now() + Double(model.duration)) {
+    private func dismissBanner() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + BannerView.animationOutDuration) {
             context.delegate.onDismiss(buttonIdentifier: nil, cancel: false)
         }
-        withAnimation(.linear(duration:Double(model.duration))) {
-            self.offset = constraints.frameHeight ?? 0.0
-            
+        withAnimation(.linear(duration:BannerView.animationOutDuration)) {
+            self.offsetPercent = 1.0
         }
     }
     

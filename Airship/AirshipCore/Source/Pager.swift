@@ -41,10 +41,8 @@ struct Pager : View {
             set: { self.pagerState.index = $0 }
         )
         
-        let childConstraints = ViewConstraints(contentWidth: metrics.size.width,
-                                               contentHeight: metrics.size.height,
-                                               frameWidth: metrics.size.width,
-                                               frameHeight: metrics.size.height)
+        let childConstraints = ViewConstraints(width: metrics.size.width,
+                                               height: metrics.size.height)
         
         let items = self.model.items
         
@@ -113,7 +111,10 @@ struct Pager : View {
                 }.onReceive(pagerState.$index) { value in
                     reportPage(value)
                 }
-        }.constraints(constraints)
+        }
+        .constraints(constraints)
+        .background(self.model.backgroundColor)
+        .border(self.model.border)
     }
     
     private func reportPage(_ index: Int) {

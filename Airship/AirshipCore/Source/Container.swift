@@ -12,7 +12,8 @@ struct Container : View {
     
     /// View constriants.
     let constraints: ViewConstraints
-    
+    @State private var size: CGSize?
+
     var body: some View {
         ZStack {
             ForEach(0..<self.model.items.count, id: \.self) { index in
@@ -22,21 +23,38 @@ struct Container : View {
         .constraints(constraints)
         .background(model.backgroundColor)
         .border(model.border)
+        .background(
+            GeometryReader { contentGeometry in
+                Color.clear.onAppear {
+                    self.size = contentGeometry.size
+                }
+            }
+        )
     }
     
     @ViewBuilder
     private func childItem(item: ContainerItem) -> some View {
+        // In order to place the children properly we need to know the content size
+        // fallback to the measured width/height when not set by the constraints
+        let contentConstraint = ViewConstraints(width: constraints.width ?? size?.width,
+                                                height: constraints.height ?? size?.height)
+        
         let alignment = Alignment(horizontal: item.position.horizontal.toAlignment(),
                                   vertical: item.position.vertical.toAlignment())
         
         let childConstraints = ViewConstraints.calculateChildConstraints(childSize: item.size,
-                                                                         childMargins: item.margin,
-                                                                         parentConstraints: constraints)
+                                                                         parentConstraints: contentConstraint)
+
+        
+        let childFrameConstraints = ViewConstraints.calculateChildConstraints(childSize: item.size,
+                                                                              parentConstraints: contentConstraint,
+                                                                              childMargins: item.margin)
+        
         ZStack {
-            ViewFactory.createView(model: item.view,
-                                   constraints: childConstraints)
+            ViewFactory.createView(model: item.view, constraints: childConstraints)
+                .constraints(childFrameConstraints)
                 .margin(item.margin)
         }
-        .constraints(constraints, alignment: alignment)
+        .constraints(contentConstraint, alignment: alignment)
     }
 }

@@ -11,12 +11,14 @@ presentation:
       horizontal: center
       vertical: center
     shade_color:
-      hex: "#444444"
-      alpha: .3
+      default:
+        hex: "#444444"
+        alpha: .3
 view:
   type: pager_controller
   background_color:
-    hex: "#FFFFFF"
+    default:
+      hex: "#FFFFFF"
   view:
     type: container
     items:
@@ -41,12 +43,14 @@ view:
           view:
             type: label
             text: Take a spin
-            alignment: center
-            text_styles:
-              - bold
-            font_size: 18
-            foreground_color:
-              hex: "#000000"
+            text_appearance:
+              alignment: center
+              styles:
+                - bold
+              font_size: 18
+              color:
+                default:
+                  hex: "#000000"
         - size:
             height: 450
             width: 100%
@@ -61,7 +65,8 @@ view:
             items:
             - type: container
               background_color: 
-                hex: "#88FF0000"
+                default:
+                  hex: "#88FF0000"
               items:
               - position:
                   vertical: center
@@ -72,13 +77,16 @@ view:
                 view:
                   type: label
                   text: This is the first page about stuff.
-                  alignment: center
-                  font_size: 14
-                  foreground_color: 
-                    hex: "#000000"
+                  text_appearance:
+                    alignment: center
+                    font_size: 14
+                    color: 
+                      default:
+                        hex: "#000000"
             - type: container
               background_color: 
-                hex: "#00FF00"
+                default:
+                  hex: "#00FF00"
               items:
               - position:
                   vertical: center
@@ -89,13 +97,17 @@ view:
                 view:
                   type: label
                   text: More stuff is here on the second page.
-                  alignment: center
-                  foreground_color: 
-                    hex: "#000000"
-                  font_size: 14
+                  text_appearance:
+                    alignment: center
+                    color:
+                      default: 
+                        hex: "#000000"
+                    font_size: 14
             - type: container
               background_color: 
-                hex: "#880000FF"
+                default:
+                  hex: "#0000FF"
+                  alpha: .8
               items:
               - position:
                   vertical: center
@@ -106,10 +118,12 @@ view:
                 view:
                   type: label
                   text: That's not all! There's a third page, too!
-                  alignment: center
-                  foreground_color: 
-                    hex: "#000000"
-                  font_size: 14
+                  text_appearance:
+                    alignment: center
+                    color: 
+                      default:
+                        hex: "#000000"
+                    font_size: 14
         - size:
             height: auto
             width: auto
@@ -122,16 +136,19 @@ view:
             type: label_button
             identifier: button1
             background_color: 
-              hex: "#FFD600"
+              default:
+                hex: "#FFD600"
             label:
               type: label
-              font_size: 10
-              foreground_color: 
-                hex: "#333333"
-              alignment: center
+              text_appearance:
+                font_size: 10
+                color: 
+                  default:
+                    hex: "#333333"
+                alignment: center
               text: 'Next!'
-            click_behaviors: ["pager_next"]
-            enable_behaviors: ["pager_next"]
+            button_click: ["pager_next"]
+            enabled: ["pager_next"]
         - size:
             height: auto
             width: auto
@@ -144,18 +161,21 @@ view:
             type: label_button
             identifier: button1
             background_color: 
-              hex: "#FFD600"
+              default:
+                hex: "#FFD600"
             label:
               type: label
-              font_size: 10
-              foreground_color: 
-                hex: "#333333"
-              alignment: center
+              text_appearance:
+                font_size: 10
+                color: 
+                  default:
+                    hex: "#333333"
+                alignment: center
               text: 'Previous!'
-            click_behaviors: ["pager_previous"]
-            enable_behaviors: ["pager_previous"]
+            button_click: ["pager_previous"]
+            enabled: ["pager_previous"]
         - size:
-            height: auto
+            height: 30
             width: auto
           margin:
             start: 16
@@ -164,21 +184,25 @@ view:
             bottom: 16
           view:
             type: pager_indicator
-            indicator_spacing: 16
-            indicator_bindings:
+            spacing: 16
+            bindings:
               selected:
-                type: circle
-                radius: 20
-                color:
-                  hex: "#0000FF"
-              deselected:
-                type: rectangle
-                border:
-                  stroke_color:
-                    hex: "#000000"
-                  stroke_width: 3
-                  radius: 4
-                height: 30
-                width: 30
-                color:
-                  hex: "#FF0000"
+                shapes:
+                  - type: ellipse
+                    aspect_ratio: 1
+                    color:
+                      default:
+                        hex: "#0000FF"
+              unselected:
+                shapes:
+                  - type: rectangle
+                    aspect_ratio: 1
+                    border:
+                      stroke_color:
+                        default:
+                          hex: "#000000"
+                      stroke_width: 3
+                      radius: 4
+                    color:
+                      default:
+                        hex: "#FF0000"

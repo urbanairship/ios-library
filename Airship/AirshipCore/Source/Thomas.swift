@@ -15,8 +15,7 @@ public class Thomas : NSObject {
     class func decode(_ json: Data) throws -> Layout {
         return try self.decoder.decode(Layout.self, from: json)
     }
-    
-    
+
     @objc
     public class func validate(data: Data) throws {
         let _ = try decode(data)
@@ -28,11 +27,10 @@ public class Thomas : NSObject {
         try validate(data: data)
     }
 
-    
     @objc
     public class func deferredDisplay(json: Any,
                                       scene: UIWindowScene,
-                                      delegate: ThomasDelegate) throws -> () -> Void {
+                                      delegate: ThomasDelegate) throws -> () -> Disposable {
         let data = try JSONSerialization.data(withJSONObject: json, options: [])
         return try deferredDisplay(data: data, scene: scene, delegate: delegate)
     }
@@ -40,7 +38,7 @@ public class Thomas : NSObject {
     @objc
     public class func deferredDisplay(data: Data,
                                       scene: UIWindowScene,
-                                      delegate: ThomasDelegate) throws -> () -> Void {
+                                      delegate: ThomasDelegate) throws -> () -> Disposable {
         let layout = try decode(data)
         var dismiss: ((ThomasViewController?) -> Void)?
         var display: ((ThomasViewController) -> Void)?
@@ -99,13 +97,17 @@ public class Thomas : NSObject {
             if let viewController = viewController {
                 display(viewController)
             }
+            
+            return Disposable {
+                delegate.onDismiss(buttonIdentifier: nil, cancel: false)
+            }
         }
     }
     
     public class func display(_ data: Data,
                               scene: UIWindowScene,
-                              delegate: ThomasDelegate) throws {
-        try deferredDisplay(data: data, scene: scene, delegate: delegate)()
+                              delegate: ThomasDelegate) throws -> Disposable {
+        return try deferredDisplay(data: data, scene: scene, delegate: delegate)()
     }
 }
 
@@ -142,8 +144,9 @@ private class ThomasDelegateWrapper : ThomasDelegate {
             dismiss()
         }
     }
-    
+
     func onPageView(pagerIdentifier: String, pageIndex: Int, pageCount: Int) {
         self.forwardDelegate.onPageView(pagerIdentifier: pagerIdentifier, pageIndex: pageIndex, pageCount: pageCount)
     }
+    
 }

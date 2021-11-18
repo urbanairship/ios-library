@@ -14,6 +14,9 @@ struct RadioInputController : View {
 
     var body: some View {
         ViewFactory.createView(model: self.model.view, constraints: constraints)
+            .constraints(constraints)
+            .background(model.backgroundColor)
+            .border(model.border)
             .environmentObject(radioInputState)
             .onAppear {
                 self.cancellable = self.radioInputState.$selectedItem.sink { incoming in

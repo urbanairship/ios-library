@@ -21,6 +21,9 @@ struct CheckboxController : View {
     var body: some View {
         ViewFactory.createView(model: self.model.view, constraints: constraints)
             .environmentObject(checkboxState)
+            .constraints(constraints)
+            .background(model.backgroundColor)
+            .border(model.border)
             .onAppear {
                 self.cancellable = self.checkboxState.$selectedItems.sink { incoming in
                     let selected = Array(incoming)

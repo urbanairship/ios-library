@@ -16,31 +16,35 @@ struct ImageButton : View {
   
     @ObservedObject var imageLoader: AssetLoader = AssetLoader()
     @State var image: UIImage = UIImage()
-
     @State var imageLoaderCancellable: AnyCancellable?
-    
+    @Environment(\.colorScheme) var colorScheme
+
     @ViewBuilder
     var body: some View {
         Button(action: {}) {
-            switch(model.image) {
-            case .url(let model):
-                createImage(model)
-                
-            case .icon(let model):
-                createIcon(model)
-            }
+            createInnerButton()
+                .constraints(constraints)
+                .background(self.model.backgroundColor)
+                .border(self.model.border)
         }
         .buttonClick(self.model.identifier, behaviors: self.model.clickBehaviors, actions: nil)
         .enableButton(self.model.enableBehaviors)
-        .background(self.model.backgroundColor)
-        .border(self.model.border)
-        .constraints(constraints)
     }
     
     @ViewBuilder
-    private func createImage(_ model: UrlButtonImageModel) -> some View {
+    private func createInnerButton() -> some View {
+        switch(model.image) {
+        case .url(let model):
+            createImage(model)
+        case .icon(let model):
+            createIcon(model)
+        }
+    }
+    @ViewBuilder
+    private func createImage(_ model: ImageURLModel) -> some View {
         Image(uiImage: image)
             .renderingMode(.original)
+            .resizable()
             .aspectRatio(contentMode: .fit)
             .onReceive(imageLoader.loaded) { data in
                 self.image = UIImage(data: data) ?? UIImage()
@@ -51,13 +55,7 @@ struct ImageButton : View {
     }
     
     @ViewBuilder
-    private func createIcon(_ model: IconButtonImageModel) -> some View {
-        switch(model.icon) {
-        case .close:
-            Image(systemName: "xmark")
-                .aspectRatio(contentMode: .fit)
-                .foregroundColor(model.tint.toColor())
-                .contentShape(Circle())
-        }
+    private func createIcon(_ model: IconModel) -> some View {
+        Icons.icon(model: model, colorScheme: colorScheme)
     }
 }

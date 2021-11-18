@@ -6,20 +6,23 @@ import SwiftUI
 @available(iOS 13.0.0, tvOS 13.0, *)
 struct ViewConstraintsViewModifier: ViewModifier {
     let viewConstraints: ViewConstraints
-    
     let alignment: Alignment?
     func body(content: Content) -> some View {
+        
+        let width = viewConstraints.width
+        let height = viewConstraints.height
+        
         if let alignment = alignment {
-            content.frame(idealWidth: viewConstraints.frameWidth,
-                          maxWidth: viewConstraints.frameWidth,
-                          idealHeight: viewConstraints.frameHeight,
-                          maxHeight: viewConstraints.frameHeight,
+            content.frame(idealWidth: width,
+                          maxWidth: width,
+                          idealHeight: height,
+                          maxHeight: height,
                           alignment: alignment)
         } else {
-            content.frame(idealWidth: viewConstraints.frameWidth,
-                          maxWidth: viewConstraints.frameWidth,
-                          idealHeight: viewConstraints.frameHeight,
-                          maxHeight: viewConstraints.frameHeight)
+            content.frame(idealWidth: width,
+                          maxWidth: width,
+                          idealHeight: height,
+                          maxHeight: height)
         }
         
     }
@@ -28,13 +31,9 @@ struct ViewConstraintsViewModifier: ViewModifier {
 @available(iOS 13.0.0, tvOS 13.0, *)
 extension View {
     @ViewBuilder
-    func constraints(_ constraints: ViewConstraints) -> some View {
-        self.modifier(ViewConstraintsViewModifier(viewConstraints: constraints, alignment: nil))
-    }
-    
-    @ViewBuilder
-    func constraints(_ constraints: ViewConstraints, alignment: Alignment?) -> some View {
-        self.modifier(ViewConstraintsViewModifier(viewConstraints: constraints, alignment: alignment))
+    func constraints(_ constraints: ViewConstraints, alignment: Alignment? = nil) -> some View {
+        self.modifier(ViewConstraintsViewModifier(viewConstraints: constraints,
+                                                  alignment: alignment))
     }
 }
 

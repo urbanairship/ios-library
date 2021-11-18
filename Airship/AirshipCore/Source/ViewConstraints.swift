@@ -5,17 +5,11 @@ import Foundation
 struct ViewConstraints {
 
     /// Ideal width. Nil if the view should size to fit content.
-    let contentWidth: CGFloat?
+    let width: CGFloat?
 
     /// Ideal height. Nil if the view should size to fit content.
-    let contentHeight: CGFloat?
-    
-    /// The frame width. Frame width is the contentWidth + horiztonal margins.
-    let frameWidth: CGFloat?
-    
-    /// The frame height. Frame height is the contentWidth + vertical margins.
-    let frameHeight: CGFloat?
-    
+    let height: CGFloat?
+        
     
     private static func calculateSize(_ sizeContraints: SizeConstraint?,
                                       parentSize: CGFloat?,
@@ -40,22 +34,16 @@ struct ViewConstraints {
     
     
     static func calculateChildConstraints(childSize: Size,
-                                          childMargins: Margin?,
-                                          parentConstraints: ViewConstraints) -> ViewConstraints {
+                                          parentConstraints: ViewConstraints,
+                                          childMargins: Margin? = nil) -> ViewConstraints {
         let horizontalMargins = (childMargins?.start ?? 0) + (childMargins?.end ?? 0)
         let verticalMargins = (childMargins?.bottom ?? 0) + (childMargins?.top ?? 0)
-        let parentWidth = parentConstraints.contentWidth
-        let parentHeight = parentConstraints.contentHeight
+        let parentWidth = parentConstraints.width
+        let parentHeight = parentConstraints.height
     
-        let contentWidth = calculateSize(childSize.width, parentSize: parentWidth, margins: 0)
-        let contentHeight = calculateSize(childSize.height, parentSize: parentHeight, margins: 0)
-        let frameWidth = calculateSize(childSize.width, parentSize: parentWidth, margins: horizontalMargins)
-        let frameHeight = calculateSize(childSize.height, parentSize: parentHeight, margins: verticalMargins)
+        let width = calculateSize(childSize.width, parentSize: parentWidth, margins: horizontalMargins)
+        let height = calculateSize(childSize.height, parentSize: parentHeight, margins: verticalMargins)
         
-        return ViewConstraints(contentWidth: contentWidth,
-                               contentHeight: contentHeight,
-                               frameWidth: frameWidth,
-                               frameHeight: frameHeight)
-        
+        return ViewConstraints(width: width, height: height)
     }
 }

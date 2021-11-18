@@ -7,4 +7,3 @@ class PagerState: ObservableObject {
     @Published var index: Int = 0
     @Published var pages: Int = 0
 }
-

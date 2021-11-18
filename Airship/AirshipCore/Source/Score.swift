@@ -11,7 +11,8 @@ struct Score : View {
     
     @State var score: Int?
     @EnvironmentObject var formState: FormState
-            
+    @Environment(\.colorScheme) var colorScheme
+
     @ViewBuilder
     private func createScore() -> some View {
         switch(self.model.style) {
@@ -24,7 +25,10 @@ struct Score : View {
                     )
                     
                     Toggle(isOn: isOn.animation()) {}
-                    .toggleStyle(AirshipScoreToggleStyle(style: style, viewConstraints: constraints, value: index))
+                    .toggleStyle(AirshipScoreToggleStyle(style: style,
+                                                         viewConstraints: constraints,
+                                                         value: index,
+                                                         colorScheme: colorScheme))
                     .scaledToFit()
                 }
             }
@@ -55,25 +59,32 @@ private struct AirshipScoreToggleStyle: ToggleStyle {
     let style: ScoreNPSStyleModel
     let viewConstraints: ViewConstraints
     let value: Int
+    let colorScheme: ColorScheme
     
     func makeBody(configuration: Self.Configuration) -> some View {
         let isOn = configuration.isOn
+        let binding = isOn ? style.bindings.selected : style.bindings.unselected
         
-        let totalWidth = (self.viewConstraints.contentWidth ?? 320)
+        let totalWidth = (self.viewConstraints.width ?? 320)
         let totalSpacing = (10 * (self.style.spacing ?? 0))
         let width = (totalWidth - totalSpacing)/11
-        let size = min(width, self.viewConstraints.contentHeight ?? width)
+        let size = min(width, self.viewConstraints.height ?? width)
         
         return Button(action: { configuration.isOn.toggle() } ) {
-            Text(String(self.value))
-                .textStyles(self.style.textStyles)
-                .airshipFont(self.style.fontSize, self.style.fontFamilies, self.style.textStyles)
-                .foreground(isOn ? self.style.selectedColors.number : self.style.deselectedColors.number)
-                .frame(idealWidth: size, maxWidth: size, idealHeight: size, maxHeight: size)
+            ZStack {
+                if let shapes = binding.shapes {
+                    ForEach(0..<shapes.count, id: \.self) { index in
+                        Shapes.shape(model: shapes[index], colorScheme: colorScheme)
+                    }
+                }
+            
+                Text(String(self.value))
+                    .textAppearance(binding.textAppearance)
+            }
+            .frame(idealWidth: size, maxWidth: size, idealHeight: size, maxHeight: size)
+
         }
         .animation(Animation.easeInOut(duration: 0.05))
-        .background(isOn ? self.style.selectedColors.fill : self.style.deselectedColors.fill)
-        .border(style.outlineBorder)
     }
 }
 

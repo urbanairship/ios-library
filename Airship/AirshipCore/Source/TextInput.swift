@@ -9,7 +9,8 @@ struct TextInput : View {
     @EnvironmentObject var formState: FormState
     @State private var input: String = ""
     
-    var body: some View {
+    @ViewBuilder
+    private func createTextEditor() -> some View {
         let binding = Binding<String>(
             get: { self.input },
             set: { self.input = $0; self.updateValue($0) }
@@ -18,33 +19,25 @@ struct TextInput : View {
         if #available(iOS 14.0.0,  tvOS 14.0, *) {
             #if !os(tvOS)
             TextEditor(text: binding)
-                .foreground(model.foregroundColor)
-                .background(model.backgroundColor)
-                .airshipFont(model.fontSize, model.fontFamilies, model.textStyles)
-                .constraints(constraints)
-                .onAppear {
-                    updateValue(input)
-                }
+                .textAppearance(model.textAppearance)
             #else
             TextField(self.model.placeHolder ?? "", text: binding)
-                .foreground(model.foregroundColor)
-                .background(model.backgroundColor)
-                .airshipFont(model.fontSize, model.fontFamilies, model.textStyles)
-                .constraints(constraints)
-                .onAppear {
-                    updateValue(input)
-                }
+                .textAppearance(model.textAppearance)
             #endif
         } else {
             TextField(self.model.placeHolder ?? "", text: binding)
-                .foreground(model.foregroundColor)
-                .background(model.backgroundColor)
-                .airshipFont(model.fontSize, model.fontFamilies, model.textStyles)
-                .constraints(constraints)
-                .onAppear {
-                    updateValue(input)
-                }
+                .textAppearance(model.textAppearance)
         }
+    }
+
+    var body: some View {
+        createTextEditor()
+            .constraints(constraints, alignment: .topLeading)
+            .background(self.model.backgroundColor)
+            .border(self.model.border)
+            .onAppear {
+                updateValue(input)
+            }
     }
     
     private func updateValue(_ text: String) {

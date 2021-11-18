@@ -11,28 +11,31 @@ presentation:
       horizontal: center
       vertical: center
     shade_color:
-      hex: "#444444"
-      alpha: .3
+      default:
+        hex: "#444444"
+        alpha: .3
 view:
   type: container
   background_color:
-    hex: "#587F51"
+    default:
+      hex: "#587F51"
   items:
   - position:
       horizontal: end
       vertical: top
     size:
-      width: 48
-      height: 48
+      width: 16
+      height: 16
     view:
       type: image_button
       identifier: "close-button"
       image:
         type: icon
         icon: close
-        tint:
-          hex: "#ff0000"
-          alpha: .5
+        color:
+          default:
+            hex: "#ff0000"
+            alpha: .5
   - position:
       horizontal: center
       vertical: center
@@ -57,13 +60,15 @@ view:
         view:
           type: label
           text: Media type Image
-          alignment: start
-          text_styles:
-            - bold
-            - underlined
-          font_size: 16
-          foreground_color:
-            hex: "#000000"
+          text_appearance:
+            alignment: start
+            styles:
+              - bold
+              - underlined
+            font_size: 16
+            color:
+              default:
+                hex: "#000000"
       - margin:
           top: 48
           bottom: 8
@@ -77,7 +82,8 @@ view:
           url: https://media.giphy.com/media/6y70TnZ4ug9zetb5Oq/giphy.gif
           media_type: image
           background:
-            hex: "#000000"
+            default:
+              hex: "#000000"
       #
       # Footer
       #
@@ -92,12 +98,14 @@ view:
         view:
           type: label
           text: Footer
-          alignment: start
-          text_styles:
-            - bold
-            - underlined
-          font_size: 16
-          foreground_color:
-            hex: "#000000"
+          text_appearance:
+            alignment: start
+            styles:
+              - bold
+              - underlined
+            font_size: 16
+            color:
+              default:
+                hex: "#000000"
 
       

@@ -2,24 +2,26 @@
 version: 1
 presentation:
   type: banner
-  dismiss_on_touch_outside: true
-  duration_milliseconds: 1
   default_placement:
     size:
-      width: 90%
-      height: 10%
-    position:
-      horizontal: center
-      vertical: bottom
+      width: 80%
+      height: auto
+    position: bottom
+    shade_color:
+      default:
+        hex: "#444444"
+        alpha: .3
 view:
   type: container
   background_color:
-    hex: "#000000"
+    default:
+      hex: "#FFFFFF"
   border:
     stroke_color:
-      hex: "#FF56FF"
+      default:
+        hex: "#00FF00"
     stroke_width: 3
-    radius: 5
+    radius: 15
   items:
   - position:
       horizontal: end
@@ -35,20 +37,22 @@ view:
     view:
       type: label
       text: Sup Buddy
-      font_size: 14
-      foreground_color:
-        hex: "#FFFFFF"
-      alignment: start
-      text_styles:
-      - italic
-      font_families:
-      - permanent_marker
-      - casual
+      text_appearance:
+        font_size: 14
+        color:
+          default:
+            hex: "#333333"
+        alignment: start
+        styles:
+          - italic
+        font_families:
+          - permanent_marker
+          - casual
   - position:
       horizontal: center
       vertical: center
     size:
-      height: 100%
+      height: auto
       width: 100%
     view:
       type: linear_layout
@@ -56,7 +60,7 @@ view:
       items:
       - size:
           width: 100%
-          height: 100%
+          height: auto
         weight: 1
         view:
           type: container
@@ -68,23 +72,29 @@ view:
               width: 100%
               height: auto
             margin:
-              top: 50
+              top: 75
               bottom: 50
               start: 50
               end: 50
             view:
               type: label
-              font_size: 14
               text: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua.
-              foreground_color:
-                hex: "#FFFFFF"
-              alignment: start
-              text_styles:
-              - italic
-              font_families:
-              - permanent_marker
-              - casual
+                eiusmod tempor incididunt ut labore et dolore magna aliqua. In arcu
+                cursus euismod quis viverra nibh. Lobortis feugiat vivamus at augue
+                eget arcu dictum. Imperdiet dui accumsan sit amet nulla. Ultrices
+                neque ornare aenean euismod elementum. Tincidunt id aliquet risus
+                feugiat in ante metus dictum.
+              text_appearance:
+                font_size: 14
+                color:
+                  default:
+                    hex: "#333333"
+                alignment: start
+                styles:
+                  - italic
+                font_families:
+                  - permanent_marker
+                  - casual
       - size:
           width: 100%
           height: auto
@@ -97,15 +107,20 @@ view:
           type: label_button
           identifier: BUTTON
           background_color:
-            hex: "#FF0000"
+            default:
+              hex: "#FF0000"
+          button_click:
+            - dismiss
           label:
             type: label
-            font_size: 24
-            alignment: center
-            foreground_color:
-              hex: "#FFFFFF"
-            text_Styles:
-              - bold
-            font_families:
-              - casual
-            text: Push me!
+            text_appearance:
+              font_size: 24
+              alignment: center
+              color:
+                default:
+                  hex: "#ffffff"
+              styles:
+                - bold
+              font_families:
+                - casual
+            text: Close

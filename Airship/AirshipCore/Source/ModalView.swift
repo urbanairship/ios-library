@@ -23,10 +23,14 @@ struct ModalView: View {
                                   vertical: placement.position?.vertical.toAlignment() ?? .center)
         
         let contentConstraints =  ViewConstraints.calculateChildConstraints(childSize: placement.size,
-                                                                            childMargins: placement.margin,
                                                                             parentConstraints: constraints)
+        
+        let contentFrameConstraints = ViewConstraints.calculateChildConstraints(childSize: placement.size,
+                                                                              parentConstraints: constraints,
+                                                                              childMargins: placement.margin)
         VStack {
             ViewFactory.createView(model: rootViewModel, constraints: contentConstraints)
+                .constraints(contentFrameConstraints)
                 .margin(placement.margin)
         }
         .constraints(constraints, alignment: alignment)

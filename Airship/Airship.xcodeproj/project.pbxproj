@@ -263,6 +263,8 @@
 		6E062D092716571F001A74A1 /* LabelButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E062D082716571F001A74A1 /* LabelButton.swift */; };
 		6E062D0B271657BB001A74A1 /* ThomasViewModelExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E062D0A271657BB001A74A1 /* ThomasViewModelExtensions.swift */; };
 		6E062D0D2718B505001A74A1 /* ViewConstraints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E062D0C2718B505001A74A1 /* ViewConstraints.swift */; };
+		6E152BCA2743235800788402 /* Icons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E152BC92743235800788402 /* Icons.swift */; };
+		6E152BCB2743235800788402 /* Icons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E152BC92743235800788402 /* Icons.swift */; };
 		6E15B6DB26CC749F0099C92D /* RemoteConfigManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15B6D826CC749F0099C92D /* RemoteConfigManager.swift */; };
 		6E15B6DC26CC749F0099C92D /* RemoteConfigManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15B6D826CC749F0099C92D /* RemoteConfigManager.swift */; };
 		6E15B6E426CC779A0099C92D /* RemoteConfigModuleAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15B6DF26CC779A0099C92D /* RemoteConfigModuleAdapter.swift */; };
@@ -1732,6 +1734,7 @@
 		6E062D0C2718B505001A74A1 /* ViewConstraints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewConstraints.swift; sourceTree = "<group>"; };
 		6E12138C1E5D1B95006738FD /* UAScheduleDelay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAScheduleDelay.h; sourceTree = "<group>"; };
 		6E12138D1E5D1B95006738FD /* UAScheduleDelay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAScheduleDelay.m; sourceTree = "<group>"; };
+		6E152BC92743235800788402 /* Icons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Icons.swift; sourceTree = "<group>"; };
 		6E15B6D826CC749F0099C92D /* RemoteConfigManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteConfigManager.swift; sourceTree = "<group>"; };
 		6E15B6DF26CC779A0099C92D /* RemoteConfigModuleAdapter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteConfigModuleAdapter.swift; sourceTree = "<group>"; };
 		6E15B6E726CC81040099C92D /* RemoteConfigDisableInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteConfigDisableInfo.swift; sourceTree = "<group>"; };
@@ -3356,6 +3359,7 @@
 				3215CA9C2739349700B7D97E /* ModalView.swift */,
 				324D3BFE273E6B4500058EE4 /* BannerView.swift */,
 				A658DE182728498900007672 /* AirshipWebview.swift */,
+				6E152BC92743235800788402 /* Icons.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -6355,6 +6359,7 @@
 				6E8BF45026852E4B009A8BD4 /* TaskLauncher.swift in Sources */,
 				6EF02DF02714EB500008B6C9 /* Thomas.swift in Sources */,
 				6E6ED1572683DBC300A2CBD0 /* ViewUtils.swift in Sources */,
+				6E152BCA2743235800788402 /* Icons.swift in Sources */,
 				6E698E59267BF63B00654DB2 /* AppStateTracker.swift in Sources */,
 				6E91B45426883B6E00DDB1A8 /* AppForegroundEvent.swift in Sources */,
 				6EF27DE32730E6F900548DA3 /* RadioInputController.swift in Sources */,
@@ -7033,6 +7038,7 @@
 				32515871272B007C00DF8B44 /* MediaWebView.swift in Sources */,
 				6E952921268A6C1500398B54 /* SearchEventTemplate.swift in Sources */,
 				A67F87D6268E07E800EF5F43 /* ContactAPIResponse.swift in Sources */,
+				6E152BCB2743235800788402 /* Icons.swift in Sources */,
 				6E510C1C2721DA6A006D9126 /* ViewFactory.swift in Sources */,
 				6EF27DE42730E6F900548DA3 /* RadioInputController.swift in Sources */,
 				6E6ED1582683DBC300A2CBD0 /* ViewUtils.swift in Sources */,

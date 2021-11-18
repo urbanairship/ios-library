@@ -11,15 +11,18 @@ presentation:
       horizontal: center
       vertical: center
     shade_color:
-      hex: "#444444"
-      alpha: .3
+      default:
+        hex: "#444444"
+        alpha: .3
 view:
   type: container
   background_color:
-    hex: "#FFFFFF"
+    default:
+      hex: "#FFFFFF"
   border:
     stroke_color:
-      hex: "#00FF00"
+      default:
+        hex: "#00FF00"
     stroke_width: 3
     radius: 15
   items:
@@ -37,15 +40,17 @@ view:
     view:
       type: label
       text: Sup Buddy
-      font_size: 14
-      foreground_color:
-        hex: "#333333"
-      alignment: start
-      text_styles:
-      - italic
-      font_families:
-      - permanent_marker
-      - casual
+      text_appearance:
+        font_size: 14
+        color:
+          default:
+            hex: "#333333"
+        alignment: start
+        styles:
+          - italic
+        font_families:
+          - permanent_marker
+          - casual
   - position:
       horizontal: center
       vertical: center
@@ -76,21 +81,23 @@ view:
               end: 50
             view:
               type: label
-              font_size: 14
               text: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
                 eiusmod tempor incididunt ut labore et dolore magna aliqua. In arcu
                 cursus euismod quis viverra nibh. Lobortis feugiat vivamus at augue
                 eget arcu dictum. Imperdiet dui accumsan sit amet nulla. Ultrices
                 neque ornare aenean euismod elementum. Tincidunt id aliquet risus
                 feugiat in ante metus dictum.
-              foreground_color:
-                hex: "#333333"
-              alignment: start
-              text_styles:
-              - italic
-              font_families:
-              - permanent_marker
-              - casual
+              text_appearance:
+                font_size: 14
+                color:
+                  default:
+                    hex: "#333333"
+                alignment: start
+                styles:
+                  - italic
+                font_families:
+                  - permanent_marker
+                  - casual
       - size:
           width: 100%
           height: auto
@@ -103,15 +110,18 @@ view:
           type: label_button
           identifier: BUTTON
           background_color:
-            hex: "#FF0000"
+            default:
+              hex: "#FF0000"
           label:
             type: label
-            font_size: 24
-            alignment: center
-            foreground_color:
-              hex: "#ffffff"
-            text_Styles:
-              - bold
-            font_families:
-              - casual
+            text_appearance:
+              font_size: 24
+              alignment: center
+              color:
+                default:
+                  hex: "#ffffff"
+              styles:
+                - bold
+              font_families:
+                - casual
             text: Push me!

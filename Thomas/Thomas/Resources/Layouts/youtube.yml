@@ -11,12 +11,14 @@ presentation:
       horizontal: center
       vertical: center
     shade_color:
-      hex: "#444444"
-      alpha: .3
+      default:
+        hex: "#444444"
+        alpha: .3
 view:
   type: container
   background_color:
-    hex: "#000000"
+    default:
+      hex: "#000000"
   items:
   - position:
       horizontal: center
@@ -42,13 +44,15 @@ view:
         view:
           type: label
           text: Media type Youtube
-          alignment: start
-          text_styles:
-            - bold
-            - underlined
-          font_size: 16
-          foreground_color:
-            hex: "#000000"
+          text_appearance:
+            alignment: start
+            styles:
+              - bold
+              - underlined
+            font_size: 16
+            color:
+              default:
+                hex: "#000000"
       - margin:
           top: 48
           bottom: 8
@@ -62,7 +66,8 @@ view:
           url: https://www.youtube.com/embed/aA3QiR_WBJw
           media_type: youtube
           background:
-            hex: "#000000"
+            default:
+              hex: "#000000"
       #
       # Footer
       #
@@ -77,10 +82,12 @@ view:
         view:
           type: label
           text: Footer
-          alignment: start
-          text_styles:
-            - bold
-            - underlined
-          font_size: 16
-          foreground_color:
-            hex: "#000000"
+          text_appearance:
+            alignment: start
+            styles:
+              - bold
+              - underlined
+            font_size: 16
+            color:
+              default:
+                hex: "#000000"

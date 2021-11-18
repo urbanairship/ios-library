@@ -40,10 +40,14 @@ struct LinearLayout : View {
     @ViewBuilder
     private func childItem(item: LinearLayoutItem) -> some View {
         let childConstraints = ViewConstraints.calculateChildConstraints(childSize: item.size,
-                                                                         childMargins: item.margin,
                                                                          parentConstraints: constraints)
         
+        let childFrameConstraints = ViewConstraints.calculateChildConstraints(childSize: item.size,
+                                                                         parentConstraints: constraints,
+                                                                              childMargins: item.margin)
+ 
         ViewFactory.createView(model: item.view, constraints: childConstraints)
+            .constraints(childFrameConstraints)
             .margin(item.margin)
     }
 }

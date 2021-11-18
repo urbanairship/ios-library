@@ -107,58 +107,23 @@ class LayoutModelsTest: XCTestCase {
                         "view": {
                           "type": "label_button",
                           "identifier": "BUTTON",
-                          "background_color": { "hex": "#FF00FF" },
+                          "background_color": { "default": { "hex": "#FF00FF" } },
                           "label": {
                             "type": "label",
-                            "font_size": 24,
-                            "alignment": "center",
-                            "text_styles": [
-                              "bold",
-                              "italic",
-                              "underlined"
-                            ],
-                            "font_families": [
-                              "permanent_marker"
-                            ],
-                            "foreground_color": { "hex": "#FF00FF" },
+                            "text_appearance": {
+                                "font_size": 24,
+                                "alignment": "center",
+                                "text_styles": [
+                                  "bold",
+                                  "italic",
+                                  "underlined"
+                                ],
+                                "font_families": [
+                                  "permanent_marker"
+                                ],
+                                "color": { "default": { "hex": "#FF00FF"} }
+                            },
                             "text": "NO"
-                          }
-                        }
-                      },
-                      {
-                        "position": {
-                          "horizontal": "center",
-                          "vertical": "center"
-                        },
-                        "margin": {
-                          "top": 0,
-                          "bottom": 0,
-                          "start": 16,
-                          "end": 16
-                        },
-                        "size": {
-                          "width": "100%",
-                          "height": "auto"
-                        },
-                        "weight": 0,
-                        "view": {
-                          "type": "label_button",
-                          "identifier": "BUTTON",
-                          "color": { "hex": "#FF00FF" },
-                          "label": {
-                            "type": "label",
-                            "font_size": 24,
-                            "alignment": "center",
-                            "text_Styles": [
-                              "bold",
-                              "italic",
-                              "underlined"
-                            ],
-                            "font_families": [
-                              "permanent_marker"
-                            ],
-                            "foreground_color": { "hex": "#FF00FF" },
-                            "text": "YES"
                           }
                         }
                       }

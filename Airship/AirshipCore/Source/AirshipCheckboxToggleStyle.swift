@@ -5,39 +5,30 @@ import SwiftUI
 
 @available(iOS 13.0.0, tvOS 13.0, *)
 struct AirshipCheckboxToggleStyle: ToggleStyle {
-    let backgroundColor: HexColor?
-    let border: Border?
     let viewConstraints: ViewConstraints
     let model: CheckboxToggleStyleModel
+    let colorScheme: ColorScheme
     
     func makeBody(configuration: Self.Configuration) -> some View {
         let isOn = configuration.isOn
-        let checkedColors = self.model.checkedColors
-        
-        let backgroundColor = isOn ? (checkedColors.background ??  self.backgroundColor) : self.backgroundColor
-        let checkMarkColor = checkedColors.checkMark
-        
-        var border: Border? = self.border
-        border?.strokeColor = isOn ? (checkedColors.border ??  self.border?.strokeColor) : self.border?.strokeColor
+        let binding = isOn ? model.bindings.selected : model.bindings.unselected
         
         return Button(action: { configuration.isOn.toggle() } ) {
             ZStack {
-                Shapes.rectangle(color: backgroundColor, border: border)
-                GeometryReader { reader in
-                    if (configuration.isOn) {
-                        Image(systemName: "checkmark")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .foregroundColor(checkMarkColor.toColor())
-                            .padding(self.border?.strokeWidth ?? 0)
-                            .frame(width: reader.size.width * 0.55, height: reader.size.height * 0.55)
-                            .position(x: reader.size.width / 2, y: reader.size.height / 2)
+                if let shapes = binding.shapes {
+                    ForEach(0..<shapes.count, id: \.self) { index in
+                        Shapes.shape(model: shapes[index], colorScheme: colorScheme)
                     }
                 }
+                
+                if let iconModel = binding.icon {
+                    Icons.icon(model: iconModel, colorScheme: colorScheme)
+                }
             }
-        }.frame(width: viewConstraints.contentWidth ?? 32,
-                height: viewConstraints.contentHeight ?? 32,
-                alignment: .center)
-            .animation(Animation.easeInOut(duration: 0.05))
+            .frame(width: viewConstraints.width ?? 32,
+                    height: viewConstraints.height ?? 32,
+                    alignment: .center)
+                .animation(Animation.easeInOut(duration: 0.05))
+        }
     }
 }
