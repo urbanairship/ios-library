@@ -40,6 +40,8 @@
 		3215CA9D2739349800B7D97E /* ModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3215CA9C2739349700B7D97E /* ModalView.swift */; };
 		3215CA9E2739349800B7D97E /* ModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3215CA9C2739349700B7D97E /* ModalView.swift */; };
 		3230E60B24D04C75002C344D /* UAInAppAudienceHistorianTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3230E60A24D04C75002C344D /* UAInAppAudienceHistorianTest.m */; };
+		324D3BFF273E6B4500058EE4 /* BannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 324D3BFE273E6B4500058EE4 /* BannerView.swift */; };
+		324D3C00273E6B4500058EE4 /* BannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 324D3BFE273E6B4500058EE4 /* BannerView.swift */; };
 		32515869272AFB2E00DF8B44 /* Media.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32515866272AFB2E00DF8B44 /* Media.swift */; };
 		3251586A272AFB2E00DF8B44 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32515867272AFB2E00DF8B44 /* ImageView.swift */; };
 		3251586B272AFB2E00DF8B44 /* MediaWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32515868272AFB2E00DF8B44 /* MediaWebView.swift */; };
@@ -1486,6 +1488,7 @@
 		3226E11424C1DF54000106CC /* UAInAppAudienceHistorian.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInAppAudienceHistorian.m; sourceTree = "<group>"; };
 		3226E11524C1DF54000106CC /* UAInAppAudienceHistorian+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAInAppAudienceHistorian+Internal.h"; sourceTree = "<group>"; };
 		3230E60A24D04C75002C344D /* UAInAppAudienceHistorianTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppAudienceHistorianTest.m; sourceTree = "<group>"; };
+		324D3BFE273E6B4500058EE4 /* BannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerView.swift; sourceTree = "<group>"; };
 		32515866272AFB2E00DF8B44 /* Media.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Media.swift; sourceTree = "<group>"; };
 		32515867272AFB2E00DF8B44 /* ImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
 		32515868272AFB2E00DF8B44 /* MediaWebView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaWebView.swift; sourceTree = "<group>"; };
@@ -3351,6 +3354,7 @@
 				32515868272AFB2E00DF8B44 /* MediaWebView.swift */,
 				6EFD6D4A27272333005B26F1 /* EmptyView.swift */,
 				3215CA9C2739349700B7D97E /* ModalView.swift */,
+				324D3BFE273E6B4500058EE4 /* BannerView.swift */,
 				A658DE182728498900007672 /* AirshipWebview.swift */,
 			);
 			name = Views;
@@ -6280,6 +6284,7 @@
 				3CC95B2B2696549B00FE2ACD /* PushableComponent.swift in Sources */,
 				6EFD6D4B27272333005B26F1 /* EmptyView.swift in Sources */,
 				6E6ED1632683DBC300A2CBD0 /* ApplicationMetrics.swift in Sources */,
+				324D3BFF273E6B4500058EE4 /* BannerView.swift in Sources */,
 				A6A5531026D548D6002B20F6 /* JavaScriptEnvironment.swift in Sources */,
 				6E15B6EA26CC81040099C92D /* RemoteConfigDisableInfo.swift in Sources */,
 				6E8BF44F26852E4B009A8BD4 /* ExpirableTask.swift in Sources */,
@@ -6957,6 +6962,7 @@
 				A6A5531126D548D6002B20F6 /* JavaScriptEnvironment.swift in Sources */,
 				6EFD6D4C27272333005B26F1 /* EmptyView.swift in Sources */,
 				6E15B6EB26CC81040099C92D /* RemoteConfigDisableInfo.swift in Sources */,
+				324D3C00273E6B4500058EE4 /* BannerView.swift in Sources */,
 				3CC95B2C2696549B00FE2ACD /* PushableComponent.swift in Sources */,
 				6ED6ECA526ADCA6F00973364 /* BlockAction.swift in Sources */,
 				6E6ED1642683DBC300A2CBD0 /* ApplicationMetrics.swift in Sources */,

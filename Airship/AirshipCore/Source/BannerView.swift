@@ -3,11 +3,12 @@
 import SwiftUI
 
 @available(iOS 13.0.0, tvOS 13.0, *)
-struct ModalView: View {
-
-    let model: ModalPresentationModel
+struct BannerView: View {
+    
+    let model: BannerPresentationModel
     let constraints: ViewConstraints
     let rootViewModel: ViewModel
+    @State var offset: CGFloat
     
 #if !os(tvOS)
     @Environment(\.verticalSizeClass) private var verticalSizeClass
@@ -19,11 +20,9 @@ struct ModalView: View {
     
     var body: some View {
         let placement = resolvePlacement()
-        let alignment = Alignment(horizontal: placement.position?.horizontal.toAlignment() ?? .center,
-                                  vertical: placement.position?.vertical.toAlignment() ?? .center)
+        let alignment = Alignment(horizontal: placement.position?.horizontal.toAlignment() ?? .center, vertical: placement.position?.vertical.toAlignment() ?? .center)
         
-        let contentConstraints =  ViewConstraints.calculateChildConstraints(childSize: placement.size,
-                                                                            childMargins: placement.margin,
+        let contentConstraints =  ViewConstraints.calculateChildConstraints(childSize: placement.size, childMargins: placement.margin,
                                                                             parentConstraints: constraints)
         VStack {
             ViewFactory.createView(model: rootViewModel, constraints: contentConstraints)
@@ -32,18 +31,35 @@ struct ModalView: View {
         .constraints(constraints, alignment: alignment)
         .background(
             Rectangle()
-                .foreground(placement.shade)
-                .edgesIgnoringSafeArea(.all)
-                .applyIf(self.model.dismissOnTouchOutside == true) { view in
-                    // Add tap gesture outside of view to dismiss
-                    view.addTapGesture {
-                        context.delegate.onDismiss(buttonIdentifier: nil, cancel: false)
-                    }
+                .foreground(HexColor.clear)
+            /// Add tap gesture outside of view to dismiss
+                .addTapGesture {
+                    dismissBanner()
                 }
         )
+        .offset(x: 0.0, y: offset)
+        .onAppear {
+            displayBanner()
+        }
     }
     
-    private func resolvePlacement() ->  ModalPlacement {
+    private func displayBanner () {
+        withAnimation(.linear(duration:Double(model.duration))) {
+            self.offset = 0.0
+        }
+    }
+    
+    private func dismissBanner () {
+        DispatchQueue.main.asyncAfter(deadline: .now() + Double(model.duration)) {
+            context.delegate.onDismiss(buttonIdentifier: nil, cancel: false)
+        }
+        withAnimation(.linear(duration:Double(model.duration))) {
+            self.offset = constraints.frameHeight ?? 0.0
+            
+        }
+    }
+    
+    private func resolvePlacement() ->  BannerPlacement {
         for placementSelector in self.model.placementSelectors ?? [] {
             if (placementSelector.windowSize != nil && placementSelector.windowSize != resolveWindowSize()) {
                 continue

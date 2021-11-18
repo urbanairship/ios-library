@@ -36,3 +36,9 @@ extension HorizontalPosition {
         }
     }
 }
+
+@available(iOS 13.0.0, tvOS 13.0, *)
+extension HexColor {
+    static let clear = HexColor(hexColor: "#000000", alpha: 0.00001)
+}
+

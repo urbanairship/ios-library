@@ -14,9 +14,8 @@ struct RootView : View {
                                               frameHeight: metrics.size.height)
             
             switch presentation {
-            case .banner(_):
-                //TODO: Add banner view modifier and use it
-                ViewFactory.createView(model: model, constraints: constraints)
+            case .banner(let bannerModel):
+                BannerView(model: bannerModel, constraints: constraints, rootViewModel: model, offset: constraints.frameHeight ?? 0.0)
                     .environmentObject(context)
                     .environmentObject(orientationState)
             case .modal(let modalModel):
