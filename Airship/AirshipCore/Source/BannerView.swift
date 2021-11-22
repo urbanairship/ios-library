@@ -5,23 +5,30 @@ import SwiftUI
 @available(iOS 13.0.0, tvOS 13.0, *)
 struct BannerView: View {
     
-    private static let animationInDuration = 0.2
-    private static let animationOutDuration = 0.2
+    static let animationInDuration = 0.2
+    static let animationOutDuration = 0.2
     
-    let model: BannerPresentationModel
-    let constraints: ViewConstraints
-    let rootViewModel: ViewModel
-    @State private var offsetPercent: CGFloat = 1.0
+    let presentation: BannerPresentationModel
+    let view: ViewModel
+    let context: ThomasContext
     
-#if !os(tvOS)
-    @Environment(\.verticalSizeClass) private var verticalSizeClass
-    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-#endif
-    
-    @EnvironmentObject private var context: ThomasContext
-    @EnvironmentObject private var orientationState: OrientationState
-    
+    @ObservedObject private var offsetPercentWrapper = OffsetPercentWrapper()
+
+    @Environment(\.windowSize) private var windowSize
+    @Environment(\.orientation) private var orientation
+
     var body: some View {
+        GeometryReader { metrics in
+            let constraints = ViewConstraints(width: metrics.size.width,
+                                              height: metrics.size.height)
+            
+            createBanner(constraints: constraints)
+                .root(context: context)
+        }
+    }
+    
+    @ViewBuilder
+    private func createBanner(constraints: ViewConstraints) -> some View {
         let placement = resolvePlacement()
         let verticalAlignment = placement.position == .top ? VerticalAlignment.top : VerticalAlignment.bottom
         let alignment = Alignment(horizontal: .center, vertical: verticalAlignment)
@@ -35,39 +42,41 @@ struct BannerView: View {
                                                                               parentConstraints: constraints,
                                                                               childMargins: placement.margin)
         VStack {
-            ViewFactory.createView(model: rootViewModel, constraints: contentConstraints)
+            ViewFactory.createView(model: view, constraints: contentConstraints)
                 .constraints(contentFrameConstraints)
                 .margin(placement.margin)
+                .shadow(radius: 5)
         }
         .constraints(constraints, alignment: alignment)
-        .offset(x: 0.0, y: offset * self.offsetPercent)
+        .offset(x: 0.0, y: offset * self.offsetPercentWrapper.offsetPercent)
         .onAppear {
             displayBanner()
         }
     }
     
     private func displayBanner () {
-        withAnimation(.linear(duration:BannerView.animationInDuration)) {
-            self.offsetPercent = 0.0
+        withAnimation(.linear(duration: BannerView.animationInDuration)) {
+            self.offsetPercentWrapper.offsetPercent = 0.0
         }
     }
     
-    private func dismissBanner() {
+    func dismiss(onComplete: @escaping () -> Void) {
+        withAnimation(.linear(duration: BannerView.animationOutDuration)) {
+            self.offsetPercentWrapper.offsetPercent = 1.0
+        }
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + BannerView.animationOutDuration) {
-            context.delegate.onDismiss(buttonIdentifier: nil, cancel: false)
-        }
-        withAnimation(.linear(duration:BannerView.animationOutDuration)) {
-            self.offsetPercent = 1.0
+            onComplete()
         }
     }
-    
+
     private func resolvePlacement() ->  BannerPlacement {
-        for placementSelector in self.model.placementSelectors ?? [] {
-            if (placementSelector.windowSize != nil && placementSelector.windowSize != resolveWindowSize()) {
+        for placementSelector in self.presentation.placementSelectors ?? [] {
+            if (placementSelector.windowSize != nil && placementSelector.windowSize != windowSize) {
                 continue
             }
             
-            if (placementSelector.orientation != nil && placementSelector.orientation != orientationState.orientation) {
+            if (placementSelector.orientation != nil && placementSelector.orientation != orientation) {
                 continue
             }
             
@@ -75,25 +84,13 @@ struct BannerView: View {
             return placementSelector.placement
         }
         
-        return self.model.defaultPlacement
+        return self.presentation.defaultPlacement
     }
     
-    /// Uses the vertical and horizontal class size to determine small, medium, large window size:
-    /// - large: regular x regular = large
-    /// - medium: regular x compact or compact x regular
-    /// - small: compact x compact
-    func resolveWindowSize() -> WindowSize {
-#if os(tvOS)
-        return .large
-#else
-        switch(verticalSizeClass, horizontalSizeClass) {
-        case (.regular, .regular):
-            return .large
-        case (.compact, .compact):
-            return .small
-        default:
-            return .medium
-        }
-#endif
+    @available(iOS 13.0.0, tvOS 13.0, *)
+    private class OffsetPercentWrapper: ObservableObject {
+        @Published var offsetPercent: Double = 1.0
     }
+        
 }
+

@@ -1,3 +1,5 @@
+/* Copyright Airship and Contributors */
+
 import Foundation
 
 struct ThomasActionRunner : ActionRunnerProtocol {

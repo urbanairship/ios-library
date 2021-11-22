@@ -9,7 +9,7 @@ import SwiftUI
  */
 @available(iOS 13.0.0, tvOS 13.0, *)
 @objc(UAThomas)
-public class Thomas : NSObject {
+public class Thomas: NSObject {
     private static let decoder = JSONDecoder()
     
     class func decode(_ json: Data) throws -> Layout {
@@ -36,66 +36,66 @@ public class Thomas : NSObject {
     }
     
     @objc
+    @discardableResult
     public class func deferredDisplay(data: Data,
                                       scene: UIWindowScene,
                                       delegate: ThomasDelegate) throws -> () -> Disposable {
         let layout = try decode(data)
-        var dismiss: ((ThomasViewController?) -> Void)?
-        var display: ((ThomasViewController) -> Void)?
-
         switch (layout.presentation) {
-        case .banner(_):
-            guard let window = Utils.mainWindow(scene: scene) else {
-                throw AirshipErrors.error("Failed to find window")
-            }
-            
-            dismiss = { viewController in
-                viewController?.dismiss(animated: true) {
-                    viewController?.view.removeFromSuperview()
-                }
-            }
-            
-            display = { viewController in
-                viewController.autoResizeFrame = true
-                window.addSubview(viewController.view)
-                window.layoutIfNeeded()
-            }
-            
-        case .modal(_):
-            var window: UIWindow? = UIWindow(windowScene: scene)
+        case .banner(let presentation):
+            return try bannerDisplay(presentation, scene: scene, view: layout.view, delegate: delegate)
+        case .modal(let presentation):
+            return try modalDisplay(presentation, scene: scene, view: layout.view, delegate: delegate)
+        }
+    }
+    
+    @discardableResult
+    public class func display(_ data: Data,
+                              scene: UIWindowScene,
+                              delegate: ThomasDelegate) throws -> Disposable {
+        return try deferredDisplay(data: data, scene: scene, delegate: delegate)()
+    }
+    
+    private class func bannerDisplay(_ presentation: BannerPresentationModel,
+                                     scene: UIWindowScene,
+                                     view: ViewModel,
+                                     delegate: ThomasDelegate) throws -> () -> Disposable {
         
-            dismiss = { _ in
-                window?.windowLevel = .normal
-                window?.isHidden = true
-                window = nil
-            }
-            
-            display = { viewController in
-                window?.windowLevel = .alert
-                window?.rootViewController = viewController
-                window?.makeKeyAndVisible()
-            }
+        guard let window = Utils.mainWindow(scene: scene), window.rootViewController != nil else {
+            throw AirshipErrors.error("Failed to find window")
         }
         
-        guard let display = display, let dismiss = dismiss else {
-            throw AirshipErrors.error("Invalid setup")
-        }
-        
-        var viewController: ThomasViewController?
+        var viewController: ThomasViewController<BannerView>?
 
-        let delegate = ThomasDelegateWrapper(delegate) {
-            dismiss(viewController)
+        let dismissController = {
+            viewController?.view.removeFromSuperview()
             viewController = nil
         }
-        
+    
+        let delegate = ThomasDelegateWrapper(delegate) {
+            if let dismissable = viewController?.rootView.dismiss {
+                dismissable(dismissController)
+            } else {
+                dismissController()
+            }
+        }
+
         let context = ThomasContext(delegate: delegate)
-        viewController = ThomasViewController(rootView: RootView(model: layout.view,
-                                                                     presentation: layout.presentation,
-                                                                     context: context))
+        let rootView = BannerView(presentation: presentation, view: view, context: context)
+        viewController = ThomasViewController<BannerView>(rootView: rootView)
         
         return {
-            if let viewController = viewController {
-                display(viewController)
+            if let viewController = viewController, let rootController = window.rootViewController {
+                rootController.addChild(viewController)
+                viewController.didMove(toParent: rootController)
+                rootController.view.addSubview(viewController.view)
+                viewController.view.translatesAutoresizingMaskIntoConstraints = false
+                NSLayoutConstraint.activate([
+                    viewController.view.topAnchor.constraint(equalTo: rootController.view.topAnchor),
+                    viewController.view.leadingAnchor.constraint(equalTo: rootController.view.leadingAnchor),
+                    viewController.view.trailingAnchor.constraint(equalTo: rootController.view.trailingAnchor),
+                    viewController.view.bottomAnchor.constraint(equalTo: rootController.view.bottomAnchor),
+                ])
             }
             
             return Disposable {
@@ -104,10 +104,34 @@ public class Thomas : NSObject {
         }
     }
     
-    public class func display(_ data: Data,
-                              scene: UIWindowScene,
-                              delegate: ThomasDelegate) throws -> Disposable {
-        return try deferredDisplay(data: data, scene: scene, delegate: delegate)()
+    private class func modalDisplay(_ presentation: ModalPresentationModel,
+                                    scene: UIWindowScene,
+                                    view: ViewModel,
+                                    delegate: ThomasDelegate) throws -> () -> Disposable {
+        
+        var window: UIWindow? = UIWindow(windowScene: scene)
+        var viewController: ThomasViewController<ModalView>?
+        viewController?.modalPresentationStyle = .currentContext
+    
+        let delegate = ThomasDelegateWrapper(delegate) {
+            window?.windowLevel = .normal
+            window?.isHidden = true
+            window = nil
+        }
+        
+        let context = ThomasContext(delegate: delegate)
+        let rootView = ModalView(presentation: presentation, view: view, context: context)
+        viewController = ThomasViewController<ModalView>(rootView: rootView)
+        window?.rootViewController = viewController
+
+        return {
+            window?.windowLevel = .alert
+            window?.makeKeyAndVisible()
+            
+            return Disposable {
+                delegate.onDismiss(buttonIdentifier: nil, cancel: false)
+            }
+        }
     }
 }
 
