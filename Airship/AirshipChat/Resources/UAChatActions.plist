@@ -10,5 +10,13 @@
 		<key>action</key>
 		<string>UAOpenChatAction</string>
 	</dict>
+	<dict>
+		<key>names</key>
+		<array>
+			<string>send_chat_action</string>
+		</array>
+		<key>action</key>
+		<string>UASendChatAction</string>
+	</dict>
 </array>
 </plist>

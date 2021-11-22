@@ -6,26 +6,53 @@ import XCTest
 import AirshipChat
 import AirshipCore
 
-class OpenChatActionTests: XCTestCase {
-    var action: OpenChatAction!
+class SendChatActionTests: XCTestCase {
+    var action: SendChatAction!
     var airshipChat: Chat!
-    var mockConversation: MockConversation!
-    var mockOpenDelegate: MockChatOpenDelegate!
+
+    var mockChatConnection : MockChatConnection!
+    var mockAPIClient : MockChatAPIClient!
+    var mockChannel: MockChannel!
+    var mockStateTracker: MockAppStateTracker!
+    var mockConfig: MockChatConfig!
+    var notificationCenter: NotificationCenter!
+    var mockChatDAO: MockChatDAO!
+
+    var conversation : Conversation!
     var privacyManager : PrivacyManager!
 
     override func setUp() {
-        self.mockConversation = MockConversation()
+        self.mockChatConnection = MockChatConnection()
+        self.mockChannel = MockChannel()
+        self.mockStateTracker = MockAppStateTracker()
+        self.mockAPIClient = MockChatAPIClient()
+
+        self.notificationCenter = NotificationCenter()
         let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
+
+        self.mockConfig = MockChatConfig(appKey: "someAppKey",
+                                         chatURL: "https://test",
+                                         chatWebSocketURL: "wss:test")
+        self.mockChatDAO = MockChatDAO()
+
         self.privacyManager = PrivacyManager(dataStore: dataStore, defaultEnabledFeatures: .all)
+        
+        self.conversation = Conversation(dataStore: dataStore,
+                                         chatConfig: self.mockConfig,
+                                         channel: self.mockChannel,
+                                         client: self.mockAPIClient,
+                                         chatConnection: self.mockChatConnection,
+                                         chatDAO: self.mockChatDAO,
+                                         appStateTracker: self.mockStateTracker,
+                                         dispatcher: MockDispatcher(),
+                                         notificationCenter: self.notificationCenter)
 
         self.airshipChat = Chat(dataStore: dataStore,
-                                conversation: self.mockConversation,
+                                conversation: conversation,
                                 privacyManager:self.privacyManager)
 
-        self.mockOpenDelegate = MockChatOpenDelegate()
-        self.airshipChat.openChatDelegate = self.mockOpenDelegate
 
-        self.action = OpenChatAction() {
+        self.action = SendChatAction() {
             return self.airshipChat
         }
     }
@@ -47,22 +74,28 @@ class OpenChatActionTests: XCTestCase {
 
         validSituations.forEach { (situation) in
             let args = ActionArguments(value: nil, with: situation)
-            let messageArgs = ActionArguments(value: ["chat_input": "neat"], with: situation)
+            let messageArgs = ActionArguments(value: ["message": "neat"], with: situation)
+            let routingArgs = ActionArguments(value: ["chat_routing": ChatRouting(agent: "fakeagent")], with: situation)
+
 
             XCTAssertTrue(self.action.acceptsArguments(args))
             XCTAssertTrue(self.action.acceptsArguments(messageArgs))
+            XCTAssertTrue(self.action.acceptsArguments(routingArgs))
         }
 
         rejectedSituations.forEach { (situation) in
             let args = ActionArguments(value: nil, with: situation)
-            let messageArgs = ActionArguments(value: ["chat_input": "neat"], with: situation)
+            let messageArgs = ActionArguments(value: ["message": "neat"], with: situation)
+            let routingArgs = ActionArguments(value: ["chat_routing": ChatRouting(agent: "fakeagent")], with: situation)
+
 
             XCTAssertFalse(self.action.acceptsArguments(args))
             XCTAssertFalse(self.action.acceptsArguments(messageArgs))
+            XCTAssertFalse(self.action.acceptsArguments(routingArgs))
         }
     }
 
-    func testPerform() throws {
+    func testPerformWithoutArgs() throws {
         let expectation = XCTestExpectation(description: "Completed")
         let args = ActionArguments(value: nil, with: .manualInvocation)
         action.perform(with: args) { (result) in
@@ -72,15 +105,11 @@ class OpenChatActionTests: XCTestCase {
         }
 
         wait(for: [expectation], timeout: 10.0)
-
-        XCTAssertTrue(self.mockOpenDelegate.openCalled)
-        XCTAssertNil(self.mockOpenDelegate.lastOpenMessage)
-
     }
 
     func testPerformWithMessage() throws {
         let expectation = XCTestExpectation(description: "Completed")
-        let args = ActionArguments(value: ["chat_input": "neat"], with: .manualInvocation)
+        let args = ActionArguments(value: ["message": "neat"], with: .manualInvocation)
         action.perform(with: args) { (result) in
             XCTAssertNil(result.value)
             XCTAssertNil(result.error)
@@ -88,44 +117,7 @@ class OpenChatActionTests: XCTestCase {
         }
 
         wait(for: [expectation], timeout: 10.0)
-
-        XCTAssertTrue(self.mockOpenDelegate.openCalled)
-        XCTAssertEqual("neat", self.mockOpenDelegate.lastOpenMessage)
     }
-    
-    func testPerformPrepopulated() throws {
-        let date = Utils.parseISO8601Date(from: "2021-01-01T00:00:00Z")
-        let argsData = [
-            "prepopulated_messages": [
-                [
-                    "msg": "hi",
-                    "id": "msg-1",
-                    "date": "2021-01-01T00:00:00Z"
-                ],
-                [
-                    "msg": "sup",
-                    "id": "msg-2",
-                    "date": "2021-01-01T00:00:00Z"
-                ]
-            ]
-        ]
-        
-        let expectation = XCTestExpectation(description: "Completed")
-        let args = ActionArguments(value: argsData, with: .manualInvocation)
-        action.perform(with: args) { (result) in
-            XCTAssertNil(result.value)
-            XCTAssertNil(result.error)
-            expectation.fulfill()
-        }
-
-        wait(for: [expectation], timeout: 10.0)
-
-        XCTAssertTrue(self.mockOpenDelegate.openCalled)
-        let expected = [ ChatIncomingMessage(message: "hi", url: nil, date: date, messageID: "msg-1"),
-                         ChatIncomingMessage(message: "sup", url: nil, date: date, messageID: "msg-2") ]
-        XCTAssertEqual(expected, self.mockConversation.incoming)
-    }
-    
     
     func testPerformWithRouting() throws {
         let expectation = XCTestExpectation(description: "Completed")
@@ -138,7 +130,7 @@ class OpenChatActionTests: XCTestCase {
 
         wait(for: [expectation], timeout: 10.0)
         
-        XCTAssertEqual("fakeagent", self.mockConversation.routing?.agent)
+        XCTAssertEqual("fakeagent", self.conversation.routing?.agent)
     }
     
     func testPerformWithRoutingJson() throws {
@@ -152,6 +144,6 @@ class OpenChatActionTests: XCTestCase {
 
         wait(for: [expectation], timeout: 10.0)
         
-        XCTAssertEqual("smith", self.mockConversation.routing?.agent)
+        XCTAssertEqual("smith", self.conversation.routing?.agent)
     }
 }

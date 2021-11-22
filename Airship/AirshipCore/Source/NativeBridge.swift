@@ -236,10 +236,7 @@ public class NativeBridge : NSObject, WKNavigationDelegate {
         
         /// Actions
         if (NativeBridgeActionHandler.isActionCommand(command: command)) {
-            guard let metadata = self.nativeBridgeExtensionDelegate?.actionsMetadata?(for: command, webView: webView) else {
-                return
-            }
-            
+            let metadata = self.nativeBridgeExtensionDelegate?.actionsMetadata?(for: command, webView: webView)
             self.actionHandler.runActionsForCommand(command: command, metadata: metadata, completionHandler: { script in
                 guard let script = script else {
                     return

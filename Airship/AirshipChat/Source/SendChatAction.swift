@@ -8,13 +8,13 @@ import AirshipCore
 
 
 /**
- * Action to open chat.
+ * Action to send a chat message.
  *
- * The action will call `openChat` on the `AirshipChat` instance.
+ * The action will call `sendMessage` on the `AirshipChat` instance.
  *
- * This action is registered under the name `open_chat_action`.
+ * This action is registered under the name `send_chat_action`.
  *
- * Expected argument value is nil, or a dictionary with `chat_input` key with the prefilled message as a String.
+ * Expected argument value a dictionary with `message` key with the prefilled message as a String and optional `chat_routing` key with ChatRouting object
  *
  * Valid situations:  UASituationLaunchedFromPush, UASituationWebViewInvocation, UASituationManualInvocation,
  * UASituationForegroundInteractiveButton, and UASituationAutomation
@@ -22,13 +22,12 @@ import AirshipCore
  * Result value: empty
  */
 @available(iOS 13.0, *)
-@objc(UAOpenChatAction)
-public class OpenChatAction : NSObject, Action {
+@objc(UASendChatAction)
+public class SendChatAction : NSObject, Action {
 
-    public static let name = "open_chat_action"
+    public static let name = "send_chat_action"
     static let routingKey = "chat_routing"
-    static let prepopulatedMessagesKey = "prepopulated_messages"
-    static let inputKey = "chat_input"
+    static let messageKey = "message"
 
     public typealias AirshipChatProvider = () -> Chat
 
@@ -47,6 +46,13 @@ public class OpenChatAction : NSObject, Action {
     }
 
     public func acceptsArguments(_ arguments: ActionArguments) -> Bool {
+        if let dict = arguments.value as? [String : Any] {
+            guard dict[SendChatAction.messageKey] != nil || dict[SendChatAction.routingKey] != nil else {
+                AirshipLogger.error("Both message and routing should not be nil")
+                return false
+            }
+        }
+        
         switch(arguments.situation) {
         case .automation, .manualInvocation, .webViewInvocation, .launchedFromPush, .foregroundInteractiveButton:
             return true
@@ -58,14 +64,13 @@ public class OpenChatAction : NSObject, Action {
     public func perform(with arguments: ActionArguments, completionHandler: @escaping UAActionCompletionHandler) {
         let chat = self.chatProvider()
         let args = arguments.value as? [String: Any]
-        let message = args?[OpenChatAction.inputKey] as? String
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
 
         
         if let routing = args?[OpenChatAction.routingKey] as? ChatRouting {
             chat.conversation.routing = routing
-        } else if let routing = args?[OpenChatAction.routingKey] as? [String : AnyHashable] {
+        } else if let routing = args?[SendChatAction.routingKey] as? [String : AnyHashable] {
             do {
                 let jsonData = try JSONSerialization.data(withJSONObject: routing, options:[])
                 let parsed = try decoder.decode(ChatRouting.self, from: jsonData)
@@ -75,20 +80,11 @@ public class OpenChatAction : NSObject, Action {
                 AirshipLogger.error("Failed to parse routing \(error)")
             }
         }
-            
-        if let incoming = args?[OpenChatAction.prepopulatedMessagesKey] as? [Any] {
-            do {
-                let jsonData = try JSONSerialization.data(withJSONObject: incoming, options: .fragmentsAllowed)
-                let parsed = try decoder.decode([ChatIncomingMessage].self, from: jsonData)
-                chat.addIncoming(parsed)
-            }
-            catch {
-                AirshipLogger.error("Failed to parse outgoing messages \(error)")
-            }
+
+        if let message = args?[SendChatAction.messageKey] as? String {
+            chat.conversation.sendMessage(message)
         }
         
-        chat.openChat(message: message)
-
         completionHandler(ActionResult.empty())
     }
 }

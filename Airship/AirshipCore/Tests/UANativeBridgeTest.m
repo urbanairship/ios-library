@@ -430,6 +430,33 @@
 }
 
 /**
+ * Test providing no action metadata.
+ */
+- (void)testRunActionsNoMetadataForCommand {
+    // Action request
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"uairship://run-basic-actions?test_action=hi"]];
+    NSURL *originatingURL = [NSURL URLWithString:@"https://foo.urbanairship.com/whatever.html"];;
+
+    id mockWKNavigationAction = [self mockForClass:[WKNavigationAction class]];
+    [[[mockWKNavigationAction stub] andReturn:request] request];
+    id mockWKFrameInfo = [self mockForClass:[WKFrameInfo class]];
+    [[[mockWKNavigationAction stub] andReturn:mockWKFrameInfo] targetFrame];
+    [[[self.mockWKWebView stub] andReturn:originatingURL] URL];
+    self.nativeBridge.nativeBridgeExtensionDelegate = nil;
+
+    // Expect the js delegate to be called with the correct command
+    [[self.mockActionHandler expect] runActionsForCommand:[OCMArg checkWithBlock:^BOOL(id obj) { return [((UAJavaScriptCommand *)obj).URL isEqual:request.URL]; }]
+                                                 metadata:nil
+                                        completionHandler:OCMOCK_ANY];
+
+    [self.nativeBridge webView:self.mockWKWebView decidePolicyForNavigationAction:mockWKNavigationAction decisionHandler:^(WKNavigationActionPolicy delegatePolicy) {
+        XCTAssertEqual(delegatePolicy, WKNavigationActionPolicyCancel);
+    }];
+
+    [self.mockActionHandler verify];
+}
+
+/**
  * Test webView:shouldStartLoadWithRequest:navigationType: does not forward action commands if the URL is not allowed.
  */
 - (void)testShouldStartLoadRejectsActionRunsNotAllowed {

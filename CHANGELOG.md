@@ -3,10 +3,19 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 16.1.0 November 15, 2021
+Minor release that fixes styling preference center, adds a new chat action, and fixes running actions in a HTML In-App Automation (including landing pages). Apps that are on SDK 15.0 - 16.0.3 that use actions in HTML In-App Automations should update.
+
+### Changes
+- Fixed native bridge actions for IAA and Landing Pages
+- Fixed styling issues with preference center
+- Added tint color for preference center switches
+- Added send chat action
+
 ## Version 16.0.3 November 8, 2021
 Patch release to fix background push not being enabled by default in SDk 15/16. Apps can either update to this version or enable background with `Airship.push.backgroundPushEnabled = true`.
 
-### 
+### Changes
 - Enable background push by default
 
 ## Version 16.0.2 November 3, 2021
