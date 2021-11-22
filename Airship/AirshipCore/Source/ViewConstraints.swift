@@ -2,14 +2,13 @@
 
 import Foundation
 
-struct ViewConstraints {
+struct ViewConstraints: Equatable {
 
     /// Ideal width. Nil if the view should size to fit content.
     let width: CGFloat?
 
     /// Ideal height. Nil if the view should size to fit content.
     let height: CGFloat?
-        
     
     private static func calculateSize(_ sizeContraints: SizeConstraint?,
                                       parentSize: CGFloat?,

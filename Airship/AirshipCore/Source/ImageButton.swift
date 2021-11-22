@@ -27,7 +27,9 @@ struct ImageButton : View {
                 .background(self.model.backgroundColor)
                 .border(self.model.border)
         }
-        .buttonClick(self.model.identifier, behaviors: self.model.clickBehaviors, actions: nil)
+        .buttonClick(self.model.identifier,
+                     behaviors: self.model.clickBehaviors,
+                     actions: self.model.actions)
         .enableButton(self.model.enableBehaviors)
     }
     

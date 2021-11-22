@@ -89,14 +89,14 @@ struct ReportButtonModifier: ViewModifier {
 
 @available(iOS 13.0.0, tvOS 13.0, *)
 struct RunActionsButtonModifier: ViewModifier {
-    let actions: [String : Any]
+    let actions: ActionsPayload?
     
     @EnvironmentObject var context: ThomasContext
     
     @ViewBuilder
     func body(content: Content) -> some View {
         content.addTapGesture {
-            context.actionRunner.run(actions)
+            context.actionRunner.run(actions?.value ?? [:])
         }
     }
 }
@@ -106,10 +106,9 @@ extension View {
     @ViewBuilder
     func buttonClick(_ buttonIdentifier: String,
                      behaviors: [ButtonClickBehavior]?,
-                     actions: [String : Any]? = nil) -> some View {
+                     actions: ActionsPayload? = nil) -> some View {
         
         let behaviors = behaviors ?? []
-        let actions = actions ?? [:]
 
         self.applyIf(behaviors.contains(.dismiss)) { view in
             view.modifier(DismissButtonClickBehavior(buttonIdentifier: buttonIdentifier))
@@ -126,7 +125,7 @@ extension View {
         .applyIf(behaviors.contains(.pagerPrevious)) { view in
             view.modifier(PagerPreviousPageButtonClickBehavior())
         }
-        .applyIf(!actions.isEmpty) { view in
+        .applyIf(actions != nil) { view in
             view.modifier(RunActionsButtonModifier(actions: actions))
         }
         .modifier(ReportButtonModifier(buttonIdentifier: buttonIdentifier))

@@ -25,7 +25,9 @@ struct LabelButton : View {
                 .background(self.model.backgroundColor)
                 .border(self.model.border)
         }
-        .buttonClick(self.model.identifier, behaviors: self.model.clickBehaviors) // TODO: pass actions
+        .buttonClick(self.model.identifier,
+                     behaviors: self.model.clickBehaviors,
+                     actions: self.model.actions)
         .enableButton(self.model.enableBehaviors)
         .buttonStyle(PlainButtonStyle())
 

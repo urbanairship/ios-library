@@ -22,7 +22,7 @@ struct LinearLayout : View {
                 }
             }
         } else {
-            HStack() {
+            HStack(spacing: 0) {
                 ForEach(0..<self.model.items.count, id: \.self) { index in
                     childItem(item: self.model.items[index])
                 }
