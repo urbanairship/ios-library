@@ -172,6 +172,23 @@ NS_ASSUME_NONNULL_BEGIN
         self.view.tintColor = self.messageCenterStyle.tintColor;
         self.messageNavigationController.navigationBar.tintColor = self.messageCenterStyle.tintColor;
     }
+        
+    if (@available(iOS 13, *)) {
+        UINavigationBarAppearance *appearance = [[UINavigationBarAppearance alloc] init];
+        if (self.messageCenterStyle && self.messageCenterStyle.navigationBarOpaque) {
+            [appearance configureWithOpaqueBackground];
+        }
+        if (self.messageCenterStyle.navigationBarColor) {
+            appearance.backgroundColor = self.messageCenterStyle.navigationBarColor;
+        }
+        if (titleAttributes.count) {
+            appearance.titleTextAttributes = titleAttributes;
+        }
+        self.messageNavigationController.navigationBar.standardAppearance = appearance;
+        self.messageNavigationController.navigationBar.scrollEdgeAppearance = appearance;
+        self.listNavigationController.navigationBar.standardAppearance = appearance;
+        self.listNavigationController.navigationBar.scrollEdgeAppearance = appearance;
+    }
 
     [self setNavigationBarStyle];
 }
