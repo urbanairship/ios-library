@@ -19,7 +19,8 @@ struct ScrollLayout : View {
         let width = self.model.direction == .vertical ? self.constraints.width : nil
         let height = self.model.direction == .vertical ? nil : self.constraints.height
         
-        let childConstraints = ViewConstraints(width: width, height: height)
+        
+        let childConstraints = self.constraints.overrideConstraint(width: width, height: height)
         
         GeometryReader { parentMetrics in
             if (isScrollable) {
@@ -57,7 +58,6 @@ struct ScrollLayout : View {
             isScrollable =  content.size.width >= parent.size.width
         }
         
-        print(isScrollable)
         return isScrollable
     }
 }

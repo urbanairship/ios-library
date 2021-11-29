@@ -12,35 +12,36 @@ struct BannerView: View {
     let view: ViewModel
     let context: ThomasContext
     
-    @ObservedObject private var offsetPercentWrapper = OffsetPercentWrapper()
+    @State private var offsetPercentWrapper = OffsetPercentWrapper()
 
     @Environment(\.windowSize) private var windowSize
     @Environment(\.orientation) private var orientation
 
     var body: some View {
         GeometryReader { metrics in
-            let constraints = ViewConstraints(width: metrics.size.width,
-                                              height: metrics.size.height)
+            let placement = resolvePlacement()
+            let ignoreSafeArea = placement.ignoreSafeArea == true
+
+            let constraints = ViewConstraints.containerConstraints(metrics.size,
+                                                                   safeAreaInsets: metrics.safeAreaInsets,
+                                                                   ignoreSafeArea: ignoreSafeArea)
             
-            createBanner(constraints: constraints)
+            createBanner(constraints: constraints, placement: placement)
                 .root(context: context)
+                .applyIf(ignoreSafeArea) { $0.edgesIgnoringSafeArea(.all) }
         }
     }
     
     @ViewBuilder
-    private func createBanner(constraints: ViewConstraints) -> some View {
-        let placement = resolvePlacement()
+    private func createBanner(constraints: ViewConstraints, placement: BannerPlacement) -> some View {
         let verticalAlignment = placement.position == .top ? VerticalAlignment.top : VerticalAlignment.bottom
         let alignment = Alignment(horizontal: .center, vertical: verticalAlignment)
         let height = constraints.height ?? 0.0
         let offset = placement.position == .top ? -height : height
         
-        let contentConstraints =  ViewConstraints.calculateChildConstraints(childSize: placement.size,
-                                                                            parentConstraints: constraints)
-        
-        let contentFrameConstraints = ViewConstraints.calculateChildConstraints(childSize: placement.size,
-                                                                              parentConstraints: constraints,
-                                                                              childMargins: placement.margin)
+        let contentConstraints = constraints.calculateChild(placement.size)
+        let contentFrameConstraints = constraints.calculateChild(placement.size, margin: placement.margin)
+
         VStack {
             ViewFactory.createView(model: view, constraints: contentConstraints)
                 .constraints(contentFrameConstraints)

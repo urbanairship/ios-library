@@ -25,8 +25,8 @@ struct AirshipCheckboxToggleStyle: ToggleStyle {
                     Icons.icon(model: iconModel, colorScheme: colorScheme)
                 }
             }
-            .frame(width: viewConstraints.width ?? 32,
-                    height: viewConstraints.height ?? 32,
+            .frame(width: viewConstraints.width ?? 24,
+                    height: viewConstraints.height ?? 24,
                     alignment: .center)
                 .animation(Animation.easeInOut(duration: 0.05))
         }

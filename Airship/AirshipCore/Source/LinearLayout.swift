@@ -39,13 +39,9 @@ struct LinearLayout : View {
     
     @ViewBuilder
     private func childItem(item: LinearLayoutItem) -> some View {
-        let childConstraints = ViewConstraints.calculateChildConstraints(childSize: item.size,
-                                                                         parentConstraints: constraints)
-        
-        let childFrameConstraints = ViewConstraints.calculateChildConstraints(childSize: item.size,
-                                                                         parentConstraints: constraints,
-                                                                              childMargins: item.margin)
- 
+        let childConstraints = self.constraints.calculateChild(item.size)
+        let childFrameConstraints = self.constraints.calculateChild(item.size, margin: item.margin)
+
         ViewFactory.createView(model: item.view, constraints: childConstraints)
             .constraints(childFrameConstraints)
             .margin(item.margin)

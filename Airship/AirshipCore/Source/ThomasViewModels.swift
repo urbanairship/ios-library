@@ -14,8 +14,6 @@ struct Layout: Decodable, Equatable {
         case presentation = "presentation"
         case context = "context"
     }
-    
-    
 }
 
 struct LayoutContext: Decodable, Equatable {
@@ -69,11 +67,14 @@ struct BannerPlacement : Decodable, Equatable {
     let margin: Margin?
     let size: Size
     let position: BannerPosition
+    let ignoreSafeArea: Bool?
+
     
     enum CodingKeys: String, CodingKey {
         case margin = "margin"
         case size = "size"
         case position = "position"
+        case ignoreSafeArea = "ignore_safe_area"
     }
 }
 
@@ -106,12 +107,14 @@ struct ModalPlacement : Decodable, Equatable {
     let size: Size
     let position: Position?
     let shade: ThomasColor?
+    let ignoreSafeArea: Bool?
     
     enum CodingKeys: String, CodingKey {
         case margin = "margin"
         case size = "size"
         case position = "position"
         case shade = "shade_color"
+        case ignoreSafeArea = "ignore_safe_area"
     }
 }
 
@@ -315,12 +318,14 @@ struct ContainerItem : Decodable, Equatable {
     let margin: Margin?
     let size: Size
     let view: ViewModel
+    let ignoreSafeArea: Bool?
     
     enum CodingKeys: String, CodingKey {
         case position = "position"
         case margin = "margin"
         case size = "size"
         case view = "view"
+        case ignoreSafeArea = "ignore_safe_area"
     }
 }
 
@@ -331,6 +336,7 @@ struct LinearLayoutModel: Decodable, Equatable {
     let backgroundColor: ThomasColor?
     let direction: Direction
     let items: [LinearLayoutItem]
+    let ignoreSafeArea: Bool?
     
     enum CodingKeys: String, CodingKey {
         case items = "items"
@@ -338,6 +344,7 @@ struct LinearLayoutModel: Decodable, Equatable {
         case border = "border"
         case backgroundColor = "background_color"
         case direction = "direction"
+        case ignoreSafeArea = "ignore_safe_area"
     }
 }
 

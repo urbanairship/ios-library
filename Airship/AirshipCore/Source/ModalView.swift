@@ -14,26 +14,29 @@ struct ModalView: View {
 
     var body: some View {
         GeometryReader { metrics in
-            let constraints = ViewConstraints(width: metrics.size.width,
-                                              height: metrics.size.height)
-            
-            createBanner(constraints: constraints)
+            let placement = resolvePlacement()
+            let ignoreSafeArea = placement.ignoreSafeArea == true
+
+            let constraints = ViewConstraints.containerConstraints(metrics.size,
+                                                                   safeAreaInsets: metrics.safeAreaInsets,
+                                                                   ignoreSafeArea: ignoreSafeArea)
+            createBanner(constraints: constraints, placement: placement)
                 .root(context: context)
+                .applyIf(ignoreSafeArea) { $0.edgesIgnoringSafeArea(.all) }
         }
     }
     
     @ViewBuilder
-    private func createBanner(constraints: ViewConstraints) -> some View {
-        let placement = resolvePlacement()
+    private func createBanner(constraints: ViewConstraints, placement: ModalPlacement) -> some View {
         let alignment = Alignment(horizontal: placement.position?.horizontal.toAlignment() ?? .center,
                                   vertical: placement.position?.vertical.toAlignment() ?? .center)
         
-        let contentConstraints =  ViewConstraints.calculateChildConstraints(childSize: placement.size,
-                                                                            parentConstraints: constraints)
-        
-        let contentFrameConstraints = ViewConstraints.calculateChildConstraints(childSize: placement.size,
-                                                                              parentConstraints: constraints,
-                                                                              childMargins: placement.margin)
+        let contentConstraints = constraints.calculateChild(placement.size,
+                                                            ignoreSafeArea: placement.ignoreSafeArea)
+        let contentFrameConstraints = constraints.calculateChild(placement.size,
+                                                                 margin: placement.margin,
+                                                                 ignoreSafeArea: placement.ignoreSafeArea)
+
         VStack {
             ViewFactory.createView(model: self.view, constraints: contentConstraints)
                 .constraints(contentFrameConstraints)

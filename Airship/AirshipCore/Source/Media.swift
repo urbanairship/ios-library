@@ -24,6 +24,9 @@ struct Media : View {
                 .background(model.backgroundColor)
                 .border(model.border)
                 .constraints(constraints)
+                .applyIf(self.constraints.width != nil || self.constraints.height != nil) {
+                    $0.aspectRatio(16.0/9.0, contentMode: .fit)
+                }
 #endif
         }
     }

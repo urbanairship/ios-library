@@ -13,6 +13,9 @@ struct Container : View {
     /// View constriants.
     let constraints: ViewConstraints
 
+    @State private var contentWidth: CGFloat? = nil
+    @State private var contentHeight: CGFloat? = nil
+
     var body: some View {
         ZStack {
             ForEach(0..<self.model.items.count, id: \.self) { index in
@@ -22,6 +25,15 @@ struct Container : View {
         .constraints(constraints)
         .background(model.backgroundColor)
         .border(model.border)
+        .background(
+            GeometryReader { geometryProxy in
+                Color.clear.preference(key: ContainerSizePreferenceKey.self, value: geometryProxy.size)
+            }
+        )
+        .onPreferenceChange(ContainerSizePreferenceKey.self) { newSize in
+            contentWidth = newSize.width == 0 ? nil : newSize.width
+            contentHeight = newSize.height == 0 ? nil : newSize.height
+        }
     }
     
     @ViewBuilder
@@ -29,20 +41,29 @@ struct Container : View {
         let alignment = Alignment(horizontal: item.position.horizontal.toAlignment(),
                                   vertical: item.position.vertical.toAlignment())
         
-        let childConstraints = ViewConstraints.calculateChildConstraints(childSize: item.size,
-                                                                         parentConstraints: constraints)
-
+        let childConstraints = self.constraints.calculateChild(item.size,
+                                                               ignoreSafeArea: item.ignoreSafeArea)
         
-        let childFrameConstraints = ViewConstraints.calculateChildConstraints(childSize: item.size,
-                                                                              parentConstraints: constraints,
-                                                                              childMargins: item.margin)
+        let childFrameConstraints = self.constraints.calculateChild(item.size,
+                                                                    margin: item.margin,
+                                                                    ignoreSafeArea: item.ignoreSafeArea)
         
         ZStack {
             ViewFactory.createView(model: item.view, constraints: childConstraints)
                 .constraints(childFrameConstraints)
                 .margin(item.margin)
-        }.frame(maxWidth: alignment.horizontal == .center ? nil : .infinity,
-                maxHeight: alignment.vertical == .center ? nil : .infinity,
+        }
+        .applyIf(item.ignoreSafeArea != true) {
+            $0.padding(self.constraints.safeAreaInsets)
+        }
+        .frame(width: self.constraints.width ?? contentWidth,
+                height: self.constraints.height ?? contentHeight,
                 alignment: alignment)
+            
     }
+}
+
+struct ContainerSizePreferenceKey: PreferenceKey {
+  static var defaultValue: CGSize = .zero
+  static func reduce(value: inout CGSize, nextValue: () -> CGSize) {}
 }
