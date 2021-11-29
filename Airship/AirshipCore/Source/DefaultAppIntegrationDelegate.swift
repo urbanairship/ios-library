@@ -201,7 +201,7 @@ class DefaultAppIntegrationDelegate : NSObject, AppIntegrationDelegate {
     
     @available(tvOS, unavailable)
     private func actionsPayloadForNotification(userInfo: [AnyHashable : Any], actionID: String?) -> [AnyHashable : Any] {
-        if (actionID == nil || actionID == UNNotificationDefaultActionIdentifier) {
+        guard let actionID = actionID, actionID != UNNotificationDefaultActionIdentifier else {
             return userInfo
         }
         let actions = userInfo["com.urbanairship.interactive_actions"] as? [AnyHashable : Any]
