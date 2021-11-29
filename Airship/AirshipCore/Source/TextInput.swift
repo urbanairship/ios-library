@@ -1,3 +1,5 @@
+/* Copyright Airship and Contributors */
+
 import Foundation
 import SwiftUI
 
@@ -16,18 +18,7 @@ struct TextInput : View {
             set: { self.input = $0; self.updateValue($0) }
         )
         
-        if #available(iOS 14.0.0,  tvOS 14.0, *) {
-            #if !os(tvOS)
-            TextEditor(text: binding)
-                .textAppearance(model.textAppearance)
-            #else
-            TextField(self.model.placeHolder ?? "", text: binding)
-                .textAppearance(model.textAppearance)
-            #endif
-        } else {
-            TextField(self.model.placeHolder ?? "", text: binding)
-                .textAppearance(model.textAppearance)
-        }
+        AirshipTextInput(model: self.model, text: binding)
     }
 
     var body: some View {

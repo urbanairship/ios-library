@@ -50,6 +50,8 @@
 		32515873272B008400DF8B44 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32515867272AFB2E00DF8B44 /* ImageView.swift */; };
 		32515874272B038300DF8B44 /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32D6E87A2727F7060077C784 /* Image.swift */; };
 		3261A7F6243CD7F900ADBF6B /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3261A7F4243CD73100ADBF6B /* CoreTelephony.framework */; platformFilter = maccatalyst; };
+		32CF81C6274FCD06003009D1 /* AirshipTextInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32CF81C5274FCD06003009D1 /* AirshipTextInput.swift */; };
+		32CF81C7274FCD06003009D1 /* AirshipTextInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32CF81C5274FCD06003009D1 /* AirshipTextInput.swift */; };
 		32D6E87B2727F7060077C784 /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32D6E87A2727F7060077C784 /* Image.swift */; };
 		3C07645825EDEDEE007F425C /* UAStateOverridesTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C07644A25EDEDE4007F425C /* UAStateOverridesTest.m */; };
 		3C0D066A2624EB6C002337B0 /* ChatMessageCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C0D06642624EB6C002337B0 /* ChatMessageCell.xib */; };
@@ -1497,6 +1499,7 @@
 		32515867272AFB2E00DF8B44 /* ImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
 		32515868272AFB2E00DF8B44 /* MediaWebView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaWebView.swift; sourceTree = "<group>"; };
 		3261A7F4243CD73100ADBF6B /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/CoreTelephony.framework; sourceTree = DEVELOPER_DIR; };
+		32CF81C5274FCD06003009D1 /* AirshipTextInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipTextInput.swift; sourceTree = "<group>"; };
 		32D6E87A2727F7060077C784 /* Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
 		3C07644A25EDEDE4007F425C /* UAStateOverridesTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAStateOverridesTest.m; sourceTree = "<group>"; };
 		3C0D06642624EB6C002337B0 /* ChatMessageCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ChatMessageCell.xib; sourceTree = "<group>"; };
@@ -4438,6 +4441,7 @@
 				6EF27DE22730E6F900548DA3 /* RadioInputController.swift */,
 				6EF27DE82730E85700548DA3 /* RadioInput.swift */,
 				A6849386273290520021675E /* Score.swift */,
+				32CF81C5274FCD06003009D1 /* AirshipTextInput.swift */,
 			);
 			name = Forms;
 			sourceTree = "<group>";
@@ -6419,6 +6423,7 @@
 				6E887CD5272C5F5A00E83363 /* CheckboxController.swift in Sources */,
 				6E664BCD26C48CBF00A2C8E5 /* ModifyTagsAction.swift in Sources */,
 				6EF27DDE27306CB300548DA3 /* AirshipSwitchToggleStyle.swift in Sources */,
+				32CF81C6274FCD06003009D1 /* AirshipTextInput.swift in Sources */,
 				6E46A279272B53CD0089CDE3 /* ButtonClickModifiers.swift in Sources */,
 				3CA84AAE26DE255200A59685 /* EventStore.swift in Sources */,
 				3CC8AA0626BB3C7900405614 /* Push.swift in Sources */,
@@ -7100,6 +7105,7 @@
 				6E46A27A272B53CD0089CDE3 /* ButtonClickModifiers.swift in Sources */,
 				6E698E16267A98BE00654DB2 /* ChannelCreateResponse.swift in Sources */,
 				6E510C212721DA7E006D9126 /* LinearLayout.swift in Sources */,
+				32CF81C7274FCD06003009D1 /* AirshipTextInput.swift in Sources */,
 				6EC7E48026A60BF30038CFDD /* TaskManagerProtocol.swift in Sources */,
 				6E664BCE26C48CBF00A2C8E5 /* ModifyTagsAction.swift in Sources */,
 				3CA84AAF26DE255200A59685 /* EventStore.swift in Sources */,

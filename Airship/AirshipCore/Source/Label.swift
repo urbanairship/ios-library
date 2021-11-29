@@ -45,4 +45,15 @@ internal extension TextAlignement {
             return SwiftUI.TextAlignment.center
         }
     }
+    
+    func toNSTextAlignment() -> NSTextAlignment {
+        switch(self) {
+        case .start:
+            return .left
+        case .end:
+            return .right
+        case .center:
+            return .center
+        }
+    }
 }
