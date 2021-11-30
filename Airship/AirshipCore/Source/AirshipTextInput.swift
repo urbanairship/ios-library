@@ -10,6 +10,7 @@ struct AirshipTextInput : View {
     @Binding var text: String
     var body: some View {
         TextView(model: model, text: $text)
+            .formInput()
     }
 }
 

@@ -5,10 +5,18 @@ import SwiftUI
 struct PagerController : View {
     let model: PagerControllerModel
     let constraints: ViewConstraints
-    @State var pagerState = PagerState()
+    @State var pagerState: PagerState
+    @Environment(\.reportingContext) var reportingContext
 
+    init(model: PagerControllerModel, constraints: ViewConstraints) {
+        self.model = model
+        self.constraints = constraints
+        self.pagerState = PagerState(identifier: model.identifier)
+    }
+    
     var body: some View {
         ViewFactory.createView(model: self.model.view, constraints: constraints)
+            .environment(\.reportingContext, reportingContext.override(pagerState: pagerState))
             .constraints(constraints)
             .background(self.model.backgroundColor)
             .border(self.model.border)

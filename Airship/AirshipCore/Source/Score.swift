@@ -43,6 +43,7 @@ struct Score : View {
             .onAppear {
                 self.updateScore(self.score)
             }
+            .formInput()
     }
     
     private func updateScore(_ value: Int?) {

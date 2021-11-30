@@ -7,7 +7,9 @@ struct Pager : View {
     private static let offsetPercent: CGFloat = 0.50
 
     @EnvironmentObject var pagerState: PagerState
-    @EnvironmentObject var context: ThomasContext
+    @EnvironmentObject var thomasEnvironment: ThomasEnvironment
+    @Environment(\.isVisible) var isVisible
+    @Environment(\.reportingContext) var reportingContext
 
     let model: PagerModel
     let constraints: ViewConstraints
@@ -51,6 +53,7 @@ struct Pager : View {
                 ForEach(0..<items.count, id: \.self) { i in
                     VStack {
                         ViewFactory.createView(model: items[i], constraints: childConstraints)
+                            .environment(\.isVisible, self.isVisible && i == index.wrappedValue)
                     }
                     .frame(width: metrics.size.width, height: metrics.size.height)
                 }
@@ -106,9 +109,8 @@ struct Pager : View {
     var body: some View {
         GeometryReader { metrics in
             createPager(metrics: metrics)
-                .onAppear {
+                .onReceive(pagerState.$index) { value in
                     pagerState.pages = self.model.items.count
-                }.onReceive(pagerState.$index) { value in
                     reportPage(value)
                 }
         }
@@ -119,9 +121,10 @@ struct Pager : View {
     
     private func reportPage(_ index: Int) {
         if (self.lastIndex != index) {
-            self.context.delegate.onPageView(pagerIdentifier: self.model.identifier,
-                                                 pageIndex: index,
-                                                 pageCount: self.model.items.count)
+            if (index == self.model.items.count - 1) {
+                self.pagerState.completed = true
+            }
+            self.thomasEnvironment.pageViewed(pageState: self.pagerState, reportingContext: reportingContext)
             self.lastIndex = index
         }
     }

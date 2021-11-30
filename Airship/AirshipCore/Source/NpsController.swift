@@ -34,15 +34,26 @@ struct NpsController : View {
 private struct ParentNpsController : View {
     let model: NpsControllerModel
     let constraints: ViewConstraints
-    
+
     @ObservedObject var formState: FormState
-    
+    @EnvironmentObject var thomasEnvironment: ThomasEnvironment
+    @Environment(\.reportingContext) var reportingContext
+    @State private var visibleCancellable: AnyCancellable?
+
     var body: some View {
         ViewFactory.createView(model: self.model.view, constraints: constraints)
             .constraints(constraints)
             .background(model.backgroundColor)
             .border(model.border)
             .environmentObject(formState)
+            .environment(\.reportingContext, reportingContext.override(formState: formState))
+            .onAppear {
+                self.visibleCancellable = self.formState.$isVisible.sink { incoming in
+                    if (incoming) {
+                        self.thomasEnvironment.formDisplayed(self.formState.identifier, reportingContext: reportingContext.override(formState: formState))
+                    }
+                }
+            }
     }
 }
 
@@ -53,8 +64,9 @@ private struct ChildNpsController : View {
     
     @EnvironmentObject var parentFormState: FormState
     @ObservedObject var formState: FormState
-    @State private var cancellable: AnyCancellable?
-
+    @State private var dataCancellable: AnyCancellable?
+    @State private var visibleCancellable: AnyCancellable?
+    
     var body: some View {
         return ViewFactory.createView(model: self.model.view, constraints: constraints)
             .constraints(constraints)
@@ -62,9 +74,15 @@ private struct ChildNpsController : View {
             .border(model.border)
             .environmentObject(formState)
             .onAppear {
-                self.cancellable = self.formState.$data.sink { incoming in
+                self.dataCancellable = self.formState.$data.sink { incoming in
                     self.parentFormState.updateFormInput(self.model.identifier,
                                                          data: incoming)
+                }
+                
+                self.visibleCancellable = self.formState.$isVisible.sink { incoming in
+                    if (incoming) {
+                        formState.makeVisible()
+                    }
                 }
             }
     }

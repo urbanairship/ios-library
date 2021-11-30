@@ -6,21 +6,13 @@ struct Layout: Decodable, Equatable {
     let view: ViewModel
     let version: Int
     let presentation: PresentationModel
-    let context: LayoutContext?
+    let reportingContext: JSON?
 
     enum CodingKeys: String, CodingKey {
         case view = "view"
         case version = "version"
         case presentation = "presentation"
-        case context = "context"
-    }
-}
-
-struct LayoutContext: Decodable, Equatable {
-    let contentTypes: [String]
-    
-    enum CodingKeys: String, CodingKey {
-        case contentTypes = "content_types"
+        case reportingContext = "context"
     }
 }
 
@@ -547,7 +539,6 @@ struct PagerModel: Decodable, Equatable {
     let border: Border?
     let backgroundColor: ThomasColor?
     let disableSwipe: Bool?
-    let identifier: String
     let items: [ViewModel]
     
     enum CodingKeys: String, CodingKey {
@@ -555,7 +546,6 @@ struct PagerModel: Decodable, Equatable {
         case backgroundColor = "background_color"
         case items = "items"
         case disableSwipe = "disable_swipe"
-        case identifier = "identifier"
     }
 }
 
@@ -599,11 +589,14 @@ struct PagerControllerModel: Decodable, Equatable {
     let border: Border?
     let backgroundColor: ThomasColor?
     let view: ViewModel
+    let identifier: String
+
 
     enum CodingKeys: String, CodingKey {
         case border = "border"
         case backgroundColor = "background_color"
         case view = "view"
+        case identifier = "identifier"
     }
     
     static func == (lhs: PagerControllerModel, rhs: PagerControllerModel) -> Bool {
@@ -1123,7 +1116,7 @@ struct HexColor: Decodable, Equatable {
     }
 }
 
-enum JSON: Decodable {
+enum JSON: Decodable, Equatable {
     case string(String)
     case number(Double)
     case object([String:JSON])

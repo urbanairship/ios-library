@@ -18,6 +18,7 @@ struct AirshipToggle : View {
             .constraints(self.constraints)
             .background(model.backgroundColor)
             .border(model.border)
+            .formInput()
     }
     
     @ViewBuilder

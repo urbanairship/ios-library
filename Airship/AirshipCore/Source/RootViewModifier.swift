@@ -12,17 +12,23 @@ struct RootViewModifier: ViewModifier {
 #endif
     
     @State private var currentOrientation: Orientation = RootViewModifier.resolveOrientation()
-    
-    let context: ThomasContext
-    
+    @State private var isVisible: Bool = false
+
+    @ObservedObject var thomasEnvironment: ThomasEnvironment
+
     @ViewBuilder
     func body(content: Content) -> some View {
         content
-            .environmentObject(context)
+            .environmentObject(thomasEnvironment)
             .environment(\.orientation, currentOrientation)
             .environment(\.windowSize, resolveWindowSize())
+            .environment(\.isVisible, isVisible)
             .onAppear {
                 self.currentOrientation = RootViewModifier.resolveOrientation()
+                self.isVisible = true
+            }
+            .onDisappear {
+                self.isVisible = false
             }
             #if !os(tvOS)
             .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
@@ -70,8 +76,8 @@ struct RootViewModifier: ViewModifier {
 @available(iOS 13.0.0, tvOS 13.0, *)
 extension View {
     @ViewBuilder
-    func root(context: ThomasContext) -> some View {
-        self.modifier(RootViewModifier(context: context))
+    func root(_ thomasEnvironment: ThomasEnvironment) -> some View {
+        self.modifier(RootViewModifier(thomasEnvironment: thomasEnvironment))
     }
 }
 

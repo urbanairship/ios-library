@@ -70,30 +70,38 @@
     self.deferredDisplay();
 }
 
-- (void)onButtonTapWithButtonIdentifier:(NSString * _Nonnull)buttonIdentifier {
-    
-}
-
-- (void)onDismissWithButtonIdentifier:(NSString * _Nullable)buttonIdentifier cancel:(BOOL)cancel {
+- (void)onDismissedWithButtonIdentifier:(NSString * _Nullable)buttonIdentifier cancel:(BOOL)cancel reportingContext:(NSDictionary<NSString *,id> * _Nonnull)reportingContext {
     if (self.completionHandler != nil) {
         self.completionHandler([UAInAppMessageResolution userDismissedResolution]);
         self.completionHandler = nil;
     }
 }
 
-- (void)onTimedOut {
+
+- (void)onTimedOutWithReportingContext:(NSDictionary<NSString *,id> * _Nonnull)reportingContext {
     if (self.completionHandler != nil) {
         self.completionHandler([UAInAppMessageResolution timedOutResolution]);
         self.completionHandler = nil;
     }
 }
 
-- (void)onFormResultWithFormIdentifier:(NSString * _Nonnull)formIdentifier formData:(NSDictionary<NSString *,id> * _Nonnull)formData {
+
+
+- (void)onButtonTappedWithButtonIdentifier:(NSString * _Nonnull)buttonIdentifier reportingContext:(NSDictionary<NSString *,id> * _Nonnull)reportingContext {
     
 }
 
-- (void)onPageViewWithPagerIdentifier:(NSString * _Nonnull)pagerIdentifier pageIndex:(NSInteger)pageIndex pageCount:(NSInteger)pageCount {
+
+- (void)onFormDisplayedWithFormIdentifier:(NSString * _Nonnull)formIdentifier reportingContext:(NSDictionary<NSString *,id> * _Nonnull)reportingContext {
+    
 }
 
+- (void)onFormSubmittedWithFormIdentifier:(NSString * _Nonnull)formIdentifier formData:(NSDictionary<NSString *,id> * _Nonnull)formData reportingContext:(NSDictionary<NSString *,id> * _Nonnull)reportingContext {
+    
+}
+
+- (void)onPageViewedWithPagerIdentifier:(NSString * _Nonnull)pagerIdentifier pageIndex:(NSInteger)pageIndex pageCount:(NSInteger)pageCount completed:(BOOL)completed reportingContext:(NSDictionary<NSString *,id> * _Nonnull)reportingContext {
+    
+}
 @end
 

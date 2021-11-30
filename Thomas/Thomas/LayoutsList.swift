@@ -70,29 +70,28 @@ struct ContentView_Previews: PreviewProvider {
 }
 
 class Delegate : ThomasDelegate {
-    func onPageView(pagerIdentifier: String, pageIndex: Int, pageCount: Int) {
-        AirshipLogger.info("onPageView: \(pagerIdentifier) index: \(pageIndex) count: \(pageCount)")
+    func onFormSubmitted(formIdentifier: String, formData: [String : Any], reportingContext: [String : Any]) {
+        
     }
     
-    func onFormResult(formIdentifier: String, formData: [String : Any]) {
-        let json = try? JSONUtils.string(formData, options: .prettyPrinted)
-        AirshipLogger.info("onFormResult: \(formIdentifier): \(json ?? "")")
+    func onFormDisplayed(formIdentifier: String, reportingContext: [String : Any]) {
+        
     }
     
-    func onButtonTap(buttonIdentifier: String) {
-        AirshipLogger.info("onButtonTap: \(buttonIdentifier)")
+    func onButtonTapped(buttonIdentifier: String, reportingContext: [String : Any]) {
+        
     }
     
-    func onRunActions(actions: [String : Any]) {
-        AirshipLogger.info("onRunActions: \(actions)")
+    func onDismissed(buttonIdentifier: String?, cancel: Bool, reportingContext: [String : Any]) {
+        
     }
     
-    func onDismiss(buttonIdentifier: String?, cancel: Bool) {
-        AirshipLogger.info("onDismiss: \(buttonIdentifier ?? "") \(cancel)")
+    func onTimedOut(reportingContext: [String : Any]) {
+        
     }
     
-    func onTimedOut() {
-        AirshipLogger.info("onTimedOut")
+    func onPageViewed(pagerIdentifier: String, pageIndex: Int, pageCount: Int, completed: Bool, reportingContext: [String : Any]) {
+        
     }
 }
 

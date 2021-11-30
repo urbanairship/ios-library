@@ -6,8 +6,8 @@ import SwiftUI
 struct ModalView: View {
 
     let presentation: ModalPresentationModel
-    let view: ViewModel
-    let context: ThomasContext
+    let layout: Layout
+    @ObservedObject var thomasEnvironment: ThomasEnvironment
     
     @Environment(\.windowSize) private var windowSize
     @Environment(\.orientation) private var orientation
@@ -20,8 +20,9 @@ struct ModalView: View {
             let constraints = ViewConstraints.containerConstraints(metrics.size,
                                                                    safeAreaInsets: metrics.safeAreaInsets,
                                                                    ignoreSafeArea: ignoreSafeArea)
+            
             createBanner(constraints: constraints, placement: placement)
-                .root(context: context)
+                .root(thomasEnvironment)
                 .applyIf(ignoreSafeArea) { $0.edgesIgnoringSafeArea(.all) }
         }
     }
@@ -36,9 +37,13 @@ struct ModalView: View {
         let contentFrameConstraints = constraints.calculateChild(placement.size,
                                                                  margin: placement.margin,
                                                                  ignoreSafeArea: placement.ignoreSafeArea)
+        
+        let reportingContext = ReportingContext(layoutContext: layout.reportingContext)
+
 
         VStack {
-            ViewFactory.createView(model: self.view, constraints: contentConstraints)
+            ViewFactory.createView(model: self.layout.view, constraints: contentConstraints)
+                .environment(\.reportingContext, reportingContext)
                 .constraints(contentFrameConstraints)
                 .margin(placement.margin)
         }
@@ -50,7 +55,7 @@ struct ModalView: View {
                 .applyIf(self.presentation.dismissOnTouchOutside == true) { view in
                     // Add tap gesture outside of view to dismiss
                     view.addTapGesture {
-                        context.delegate.onDismiss(buttonIdentifier: nil, cancel: false)
+                        self.thomasEnvironment.dismiss(reportingContext: reportingContext)
                     }
                 }
         )

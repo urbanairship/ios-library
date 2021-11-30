@@ -9,9 +9,10 @@ struct BannerView: View {
     static let animationOutDuration = 0.2
     
     let presentation: BannerPresentationModel
-    let view: ViewModel
-    let context: ThomasContext
+    let layout: Layout
     
+    @ObservedObject var thomasEnvironment: ThomasEnvironment
+    @Environment(\.reportingContext) var reportingContext
     @State private var offsetPercentWrapper = OffsetPercentWrapper()
 
     @Environment(\.windowSize) private var windowSize
@@ -27,7 +28,7 @@ struct BannerView: View {
                                                                    ignoreSafeArea: ignoreSafeArea)
             
             createBanner(constraints: constraints, placement: placement)
-                .root(context: context)
+                .root(thomasEnvironment)
                 .applyIf(ignoreSafeArea) { $0.edgesIgnoringSafeArea(.all) }
         }
     }
@@ -42,8 +43,11 @@ struct BannerView: View {
         let contentConstraints = constraints.calculateChild(placement.size)
         let contentFrameConstraints = constraints.calculateChild(placement.size, margin: placement.margin)
 
+        let reportingContext = ReportingContext(layoutContext: layout.reportingContext)
+        
         VStack {
-            ViewFactory.createView(model: view, constraints: contentConstraints)
+            ViewFactory.createView(model: layout.view, constraints: contentConstraints)
+                .environment(\.reportingContext, reportingContext)
                 .constraints(contentFrameConstraints)
                 .margin(placement.margin)
                 .shadow(radius: 5)

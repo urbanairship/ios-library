@@ -7,14 +7,13 @@ import SwiftUI
 @available(iOS 13.0.0, tvOS 13.0, *)
 struct SubmitFormButtonClickBehavior: ViewModifier {
     @EnvironmentObject var formState: FormState
-    @EnvironmentObject var context: ThomasContext
+    @EnvironmentObject var thomasEnvironment: ThomasEnvironment
+    @Environment(\.reportingContext) var reportingContext
 
     @ViewBuilder
     func body(content: Content) -> some View {
         content.addTapGesture {
-            if let data = formState.data.toDictionary() {
-                context.delegate.onFormResult(formIdentifier: formState.formIdentifier, formData: data)
-            }
+            thomasEnvironment.submitForm(formState, reportingContext: reportingContext)
         }
     }
 }
@@ -50,12 +49,13 @@ struct PagerPreviousPageButtonClickBehavior: ViewModifier {
 @available(iOS 13.0.0, tvOS 13.0, *)
 struct DismissButtonClickBehavior: ViewModifier {
     let buttonIdentifier: String
-    @EnvironmentObject var context: ThomasContext
+    @EnvironmentObject var thomasEnvironment: ThomasEnvironment
+    @Environment(\.reportingContext) var reportingContext
 
     @ViewBuilder
     func body(content: Content) -> some View {
         content.addTapGesture {
-            context.delegate.onDismiss(buttonIdentifier: buttonIdentifier, cancel: false)
+            thomasEnvironment.dismiss(reason: .button(buttonIdentifier, false), reportingContext: reportingContext)
         }
     }
 }
@@ -63,12 +63,13 @@ struct DismissButtonClickBehavior: ViewModifier {
 @available(iOS 13.0.0, tvOS 13.0, *)
 struct CancelButtonClickBehavior: ViewModifier {
     let buttonIdentifier: String
-    @EnvironmentObject var context: ThomasContext
-    
+    @EnvironmentObject var thomasEnvironment: ThomasEnvironment
+    @Environment(\.reportingContext) var reportingContext
+
     @ViewBuilder
     func body(content: Content) -> some View {
         content.addTapGesture {
-            context.delegate.onDismiss(buttonIdentifier: buttonIdentifier, cancel: true)
+            thomasEnvironment.dismiss(reason: .button(buttonIdentifier, true), reportingContext: reportingContext)
         }
     }
 }
@@ -76,12 +77,13 @@ struct CancelButtonClickBehavior: ViewModifier {
 @available(iOS 13.0.0, tvOS 13.0, *)
 struct ReportButtonModifier: ViewModifier {
     let buttonIdentifier: String
-    @EnvironmentObject var context: ThomasContext
-    
+    @EnvironmentObject var thomasEnvironment: ThomasEnvironment
+    @Environment(\.reportingContext) var reportingContext
+
     @ViewBuilder
     func body(content: Content) -> some View {
         content.addTapGesture {
-            context.delegate.onButtonTap(buttonIdentifier: buttonIdentifier)
+            thomasEnvironment.buttonTapped(buttonIdentifier: buttonIdentifier, reportingContext: reportingContext)
         }
     }
 }
@@ -91,12 +93,12 @@ struct ReportButtonModifier: ViewModifier {
 struct RunActionsButtonModifier: ViewModifier {
     let actions: ActionsPayload?
     
-    @EnvironmentObject var context: ThomasContext
-    
+    @EnvironmentObject var thomasEnvironment: ThomasEnvironment
+
     @ViewBuilder
     func body(content: Content) -> some View {
         content.addTapGesture {
-            context.actionRunner.run(actions?.value ?? [:])
+            thomasEnvironment.actionRunner.run(actions?.value ?? [:])
         }
     }
 }
