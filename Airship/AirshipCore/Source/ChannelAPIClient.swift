@@ -1,5 +1,6 @@
 /* Copyright Airship and Contributors */
 
+
 /**
  * - Note: For internal use only. :nodoc:
  */ 
@@ -82,8 +83,14 @@ public class ChannelAPIClient : NSObject {
     @objc
     @discardableResult
     public func updateChannel(withID channelID: String, withPayload payload: ChannelRegistrationPayload, completionHandler: @escaping (HTTPResponse?, Error?) -> Void) -> Disposable {
-        AirshipLogger.debug("Updating channel with: \(payload)")
+        guard let data = try? payload.encode() else {
+            completionHandler(nil, AirshipErrors.error("Unable to encode data."))
+            return Disposable()
+        }
+        
+        AirshipLogger.debug("Updating channel with: \(String(data:data, encoding: .utf8) ?? "")")
 
+        
         let channelLocation = "\(config.deviceAPIURL ?? "")\(self.path)\(channelID)"
 
         let request = Request(builderBlock: { [self] builder in
@@ -91,7 +98,7 @@ public class ChannelAPIClient : NSObject {
             builder.method = "PUT"
             builder.username = config.appKey
             builder.password = config.appSecret
-            builder.body = try? payload.encode()
+            builder.body = data
             builder.setValue("application/vnd.urbanairship+json; version=3;", header: "Accept")
             builder.setValue("application/json", header: "Content-Type")
         })
@@ -107,4 +114,19 @@ public class ChannelAPIClient : NSObject {
             completionHandler(HTTPResponse(status: response!.statusCode), nil)
         })
     }
+}
+
+
+/**
+ * - Note: For internal use only. :nodoc:
+ */
+protocol ChannelAPIClientProtocol {
+    @discardableResult
+    func createChannel(withPayload payload: ChannelRegistrationPayload, completionHandler: @escaping (ChannelCreateResponse?, Error?) -> Void) -> Disposable
+    @discardableResult
+    func updateChannel(withID channelID: String, withPayload payload: ChannelRegistrationPayload, completionHandler: @escaping (HTTPResponse?, Error?) -> Void) -> Disposable
+}
+
+extension ChannelAPIClient : ChannelAPIClientProtocol {
+    
 }

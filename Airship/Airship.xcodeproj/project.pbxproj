@@ -976,6 +976,7 @@
 		6EA734B424B7AA600012B737 /* UAInAppAutomation.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EA734AF24B7AA600012B737 /* UAInAppAutomation.m */; };
 		6EA734B624B7AA600012B737 /* UAInAppAutomation.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EA734B024B7AA600012B737 /* UAInAppAutomation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6EA734B924BE5E920012B737 /* UAInAppAutomationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EA734B824BE5E920012B737 /* UAInAppAutomationTest.m */; };
+		6EAC295A27580063006DFA63 /* ChannelRegistrarTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAC295927580063006DFA63 /* ChannelRegistrarTest.swift */; };
 		6EAD7CE526B216DB00B88EA7 /* DeepLinkAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAD7CE426B216DB00B88EA7 /* DeepLinkAction.swift */; };
 		6EAD7CE626B216DB00B88EA7 /* DeepLinkAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAD7CE426B216DB00B88EA7 /* DeepLinkAction.swift */; };
 		6EB11C872697ACBF00DC698F /* ContactOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB11C862697ACBF00DC698F /* ContactOperation.swift */; };
@@ -1196,7 +1197,6 @@
 		CC64F0EC1D8B781C009CEF27 /* UACancelSchedulesActionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0821D8B781C009CEF27 /* UACancelSchedulesActionTests.m */; };
 		CC64F0ED1D8B781C009CEF27 /* UAChannelAPIClientTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0831D8B781C009CEF27 /* UAChannelAPIClientTest.m */; };
 		CC64F0EE1D8B781C009CEF27 /* UAChannelCaptureTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0841D8B781C009CEF27 /* UAChannelCaptureTest.m */; };
-		CC64F0EF1D8B781C009CEF27 /* UAChannelRegistrarTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0851D8B781C009CEF27 /* UAChannelRegistrarTest.m */; };
 		CC64F0F01D8B781C009CEF27 /* UAChannelRegistrationPayloadTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0861D8B781C009CEF27 /* UAChannelRegistrationPayloadTest.m */; };
 		CC64F0F11D8B781C009CEF27 /* UACircularRegionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0871D8B781C009CEF27 /* UACircularRegionTest.m */; };
 		CC64F0F31D8B781C009CEF27 /* UAColorUtilsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0891D8B781C009CEF27 /* UAColorUtilsTest.m */; };
@@ -2147,6 +2147,7 @@
 		6EA734AF24B7AA600012B737 /* UAInAppAutomation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInAppAutomation.m; sourceTree = "<group>"; };
 		6EA734B024B7AA600012B737 /* UAInAppAutomation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInAppAutomation.h; sourceTree = "<group>"; };
 		6EA734B824BE5E920012B737 /* UAInAppAutomationTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppAutomationTest.m; sourceTree = "<group>"; };
+		6EAC295927580063006DFA63 /* ChannelRegistrarTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelRegistrarTest.swift; sourceTree = "<group>"; };
 		6EAD7CE426B216DB00B88EA7 /* DeepLinkAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkAction.swift; sourceTree = "<group>"; };
 		6EADE7001FA8FA0D0007F924 /* UAAutomationEngine+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAAutomationEngine+Internal.h"; sourceTree = "<group>"; };
 		6EADE7011FA8FA0E0007F924 /* UAAutomationEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAutomationEngine.m; sourceTree = "<group>"; };
@@ -2400,7 +2401,6 @@
 		CC64F0821D8B781C009CEF27 /* UACancelSchedulesActionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UACancelSchedulesActionTests.m; sourceTree = "<group>"; };
 		CC64F0831D8B781C009CEF27 /* UAChannelAPIClientTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAChannelAPIClientTest.m; sourceTree = "<group>"; };
 		CC64F0841D8B781C009CEF27 /* UAChannelCaptureTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAChannelCaptureTest.m; sourceTree = "<group>"; };
-		CC64F0851D8B781C009CEF27 /* UAChannelRegistrarTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAChannelRegistrarTest.m; sourceTree = "<group>"; };
 		CC64F0861D8B781C009CEF27 /* UAChannelRegistrationPayloadTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAChannelRegistrationPayloadTest.m; sourceTree = "<group>"; };
 		CC64F0871D8B781C009CEF27 /* UACircularRegionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UACircularRegionTest.m; sourceTree = "<group>"; };
 		CC64F0891D8B781C009CEF27 /* UAColorUtilsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAColorUtilsTest.m; sourceTree = "<group>"; };
@@ -4673,12 +4673,12 @@
 			children = (
 				CC64F0831D8B781C009CEF27 /* UAChannelAPIClientTest.m */,
 				CC64F0841D8B781C009CEF27 /* UAChannelCaptureTest.m */,
-				CC64F0851D8B781C009CEF27 /* UAChannelRegistrarTest.m */,
 				CC64F0861D8B781C009CEF27 /* UAChannelRegistrationPayloadTest.m */,
 				3C3DAA0B22EF9ABC00202570 /* UAChannelTest.m */,
 				6E2D6AF326B0C3C500B7C226 /* ChannelAudienceManagerTest.swift */,
 				6E739D8126BB33A200BC6F6D /* ChannelBulkUpdateAPIClientTest.swift */,
 				6ED735DF26C74321003B0A7D /* TagEditorTest.swift */,
+				6EAC295927580063006DFA63 /* ChannelRegistrarTest.swift */,
 			);
 			name = Channel;
 			sourceTree = "<group>";
@@ -6845,6 +6845,7 @@
 				A604DB7E25597F85001ADCA8 /* UASearchEventTemplateTest.m in Sources */,
 				6E1C9C3A271E90EB009EF9EF /* LayoutModelsTest.swift in Sources */,
 				6EC7E470269E33290038CFDD /* TagGroupsEditorTest.swift in Sources */,
+				6EAC295A27580063006DFA63 /* ChannelRegistrarTest.swift in Sources */,
 				CC64F1031D8B781C009CEF27 /* UAInboxMessageListTest.m in Sources */,
 				CC64F1201D8B781C009CEF27 /* UAScheduleActionTests.m in Sources */,
 				DFB1EA2022275AF100CDBD7E /* UAInAppMessageAssetsTest.m in Sources */,
@@ -6870,7 +6871,6 @@
 				6E2D6AF226B0B64E00B7C226 /* SubscriptionListAPIClientTest.swift in Sources */,
 				CCB902261DCBBCDA009A66D7 /* UAEventAPIClientTest.m in Sources */,
 				DFB1EA1E22274F2700CDBD7E /* UAInAppMessageDefaultPrepareAssetsDelegateTest.m in Sources */,
-				CC64F0EF1D8B781C009CEF27 /* UAChannelRegistrarTest.m in Sources */,
 				CC64F0EE1D8B781C009CEF27 /* UAChannelCaptureTest.m in Sources */,
 				6E6ED1702683F14C00A2CBD0 /* TestSystemVersion.swift in Sources */,
 				CC64F11B1D8B781C009CEF27 /* UAPreferenceDataStoreTest.m in Sources */,

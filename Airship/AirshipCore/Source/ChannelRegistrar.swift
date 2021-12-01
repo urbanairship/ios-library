@@ -56,7 +56,7 @@ public protocol ChannelRegistrarDelegate {
 @objc
 public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
     private static let forcefullyKey = "forcefully";
-    private static let taskID = "UAChannelRegistrar.registration";
+    static let taskID = "UAChannelRegistrar.registration";
     private static let channelIDKey = "UAChannelID";
     private static let lastPayloadKey = "ChannelRegistrar.payload";
     private static let lastUpdateKey = "payload-update-key";
@@ -119,18 +119,17 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
     }
     
     private let dataStore: PreferenceDataStore
-    private let channelAPIClient: ChannelAPIClient
+    private let channelAPIClient: ChannelAPIClientProtocol
     private let date: DateUtils
     private let dispatcher: UADispatcher
-    private let taskManager: TaskManager
+    private let taskManager: TaskManagerProtocol
 
-    @objc
-    public init(config: RuntimeConfig,
-                dataStore: PreferenceDataStore,
-                channelAPIClient: ChannelAPIClient,
-                date: DateUtils,
-                dispatcher: UADispatcher,
-                taskManager: TaskManager) {
+    
+    init(dataStore: PreferenceDataStore,
+         channelAPIClient: ChannelAPIClientProtocol,
+         date: DateUtils,
+         dispatcher: UADispatcher,
+         taskManager: TaskManagerProtocol) {
         
         self.dataStore = dataStore
         self.channelAPIClient = channelAPIClient
@@ -159,8 +158,7 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
     @objc
     public convenience init(config: RuntimeConfig,
                             dataStore: PreferenceDataStore) {
-        self.init(config: config,
-                  dataStore:dataStore,
+        self.init(dataStore:dataStore,
                   channelAPIClient: ChannelAPIClient(config: config),
                   date: DateUtils(),
                   dispatcher: UADispatcher.serial(),
@@ -230,7 +228,7 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
         }
         
         if let channelID = channelID {
-            self.updateChannel(channelID, payload: payload, lastPayload: payload, task: task)
+            self.updateChannel(channelID, payload: payload, lastPayload: lastPayload, task: task)
         } else {
             self.createChannel(payload: payload, task: task)
         }
@@ -238,12 +236,15 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
     
     private func updateChannel(_ channelID: String, payload: ChannelRegistrationPayload, lastPayload: ChannelRegistrationPayload?,  task: Task) {
         let semaphore = Semaphore()
-        let disposable = self.channelAPIClient.updateChannel(withID: channelID, withPayload: payload) { response, error in
+        
+        let minimizedPayload = payload.minimizePayload(previous: lastPayload)
+        let disposable = self.channelAPIClient.updateChannel(withID: channelID, withPayload: minimizedPayload) { response, error in
             guard let response = response else {
                 if let error = error {
                     AirshipLogger.error("Failed request with error: \(error)")
                 }
                 
+                self.registrationFinished(payload, success: false)
                 task.taskFailed()
                 semaphore.signal()
                 return
@@ -287,6 +288,7 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
                     AirshipLogger.error("Failed request with error: \(error)")
                 }
                 
+                self.registrationFinished(payload, success: false)
                 task.taskFailed()
                 semaphore.signal()
                 return
