@@ -99,6 +99,8 @@ build_archive "Airship" "AirshipMessageCenter" "iOS"
 build_archive "Airship" "AirshipMessageCenter" "maccatalyst"
 build_archive "Airship" "AirshipChat" "iOS"
 build_archive "Airship" "AirshipChat" "maccatalyst"
+build_archive "Airship" "AirshipPreferenceCenter" "iOS"
+build_archive "Airship" "AirshipPreferenceCenter" "maccatalyst"
 build_archive "Airship" "AirshipExtendedActions" "iOS"
 build_archive "Airship" "AirshipExtendedActions" "maccatalyst"
 build_archive "AirshipExtensions" "AirshipNotificationServiceExtension" "iOS"
@@ -151,6 +153,13 @@ xcodebuild -create-xcframework \
 -framework "$ARCHIVE_PATH/xcarchive/Airship/AirshipChat/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipChat.framework" \
 -framework "$ARCHIVE_PATH/xcarchive/Airship/AirshipChat/mac.xcarchive/Products/Library/Frameworks/AirshipChat.framework" \
 -output "$OUTPUT/AirshipChat.xcframework"
+
+# Package AirshipPreferenceCenter
+xcodebuild -create-xcframework \
+-framework "$ARCHIVE_PATH/xcarchive/Airship/AirshipPreferenceCenter/iphoneos.xcarchive/Products/Library/Frameworks/AirshipPreferenceCenter.framework" \
+-framework "$ARCHIVE_PATH/xcarchive/Airship/AirshipPreferenceCenter/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipPreferenceCenter.framework" \
+-framework "$ARCHIVE_PATH/xcarchive/Airship/AirshipPreferenceCenter/mac.xcarchive/Products/Library/Frameworks/AirshipPreferenceCenter.framework" \
+-output "$OUTPUT/AirshipPreferenceCenter.xcframework"
 
 # Package AirshipExtendedActions
 xcodebuild -create-xcframework \
