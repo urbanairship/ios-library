@@ -105,7 +105,7 @@ public class ChannelRegistrationPayload : NSObject, Codable, NSCopying {
     static func == (lh: ChannelRegistrationPayload, rh: ChannelRegistrationPayload) -> Bool {
         return lh.channel == rh.channel && lh.identityHints == rh.identityHints
     }
-
+    
     // NOTE: For internal use only. :nodoc:
     @objc(UAChannelInfo)
     public class ChannelInfo : NSObject, Codable, NSCopying {
