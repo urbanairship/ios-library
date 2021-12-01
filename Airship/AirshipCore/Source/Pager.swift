@@ -43,8 +43,9 @@ struct Pager : View {
             set: { self.pagerState.index = $0 }
         )
         
-        let childConstraints = self.constraints.overrideConstraint(width: metrics.size.width,
-                                                                   height: metrics.size.height)
+        let childConstraints = ViewConstraints(width: metrics.size.width,
+                                               height: metrics.size.height,
+                                               safeAreaInsets: self.constraints.safeAreaInsets)
         
         let items = self.model.items
         

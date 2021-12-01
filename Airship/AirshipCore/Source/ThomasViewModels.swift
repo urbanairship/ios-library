@@ -930,12 +930,20 @@ struct RectangleShapeModel: Decodable, Equatable {
 }
 
 struct Size: Decodable, Equatable {
+    let minWidth: SizeConstraint?
     let width: SizeConstraint
+    let maxWidth: SizeConstraint?
+    let minHeight: SizeConstraint?
     let height: SizeConstraint
+    let maxHeight: SizeConstraint?
     
     enum CodingKeys: String, CodingKey {
+        case minWidth = "min_width"
         case width = "width"
+        case maxWidth = "max_width"
+        case minHeight = "min_height"
         case height = "height"
+        case maxHeight = "max_height"
     }
 }
 

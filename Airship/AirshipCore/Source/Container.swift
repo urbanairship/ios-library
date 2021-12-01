@@ -13,8 +13,7 @@ struct Container : View {
     /// View constriants.
     let constraints: ViewConstraints
 
-    @State private var contentWidth: CGFloat? = nil
-    @State private var contentHeight: CGFloat? = nil
+    @State private var contentSize: (ViewConstraints, CGSize)? = nil
 
     var body: some View {
         ZStack {
@@ -31,8 +30,7 @@ struct Container : View {
             }
         )
         .onPreferenceChange(ContainerSizePreferenceKey.self) { newSize in
-            contentWidth = newSize.width == 0 ? nil : newSize.width
-            contentHeight = newSize.height == 0 ? nil : newSize.height
+            contentSize = (constraints, newSize)
         }
     }
     
@@ -47,7 +45,7 @@ struct Container : View {
         let childFrameConstraints = self.constraints.calculateChild(item.size,
                                                                     margin: item.margin,
                                                                     ignoreSafeArea: item.ignoreSafeArea)
-        
+  
         ZStack {
             ViewFactory.createView(model: item.view, constraints: childConstraints)
                 .constraints(childFrameConstraints)
@@ -56,10 +54,34 @@ struct Container : View {
         .applyIf(item.ignoreSafeArea != true) {
             $0.padding(self.constraints.safeAreaInsets)
         }
-        .frame(width: self.constraints.width ?? contentWidth,
-                height: self.constraints.height ?? contentHeight,
+        .frame(width: placementWidth(),
+                height: placementHeight(),
                 alignment: alignment)
             
+    }
+    
+    private func placementWidth() -> CGFloat? {
+        guard self.constraints.width == nil else {
+            return self.constraints.width
+        }
+        
+        if let contentSize = contentSize, contentSize.0 == self.constraints {
+            return contentSize.1.width > 0 ? contentSize.1.width : nil
+        }
+        
+        return nil
+    }
+    
+    private func placementHeight() -> CGFloat? {
+        guard self.constraints.height == nil else {
+            return self.constraints.height
+        }
+        
+        if let contentSize = contentSize, contentSize.0 == self.constraints {
+            return contentSize.1.height > 0 ? contentSize.1.height : nil
+        }
+        
+        return nil
     }
 }
 

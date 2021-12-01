@@ -18,9 +18,9 @@ struct ScrollLayout : View {
     var body: some View {
         let width = self.model.direction == .vertical ? self.constraints.width : nil
         let height = self.model.direction == .vertical ? nil : self.constraints.height
-        
-        
-        let childConstraints = self.constraints.overrideConstraint(width: width, height: height)
+        let childConstraints = ViewConstraints(width: width,
+                                               height: height,
+                                               safeAreaInsets: self.constraints.safeAreaInsets)
         
         GeometryReader { parentMetrics in
             if (isScrollable) {
@@ -34,6 +34,7 @@ struct ScrollLayout : View {
                             self.isScrollable = $0
                         }
                 }
+                .clipped()
             } else {
                 ViewFactory.createView(model: self.model.view, constraints: childConstraints)
                     .background(GeometryReader { contentMetrics in
