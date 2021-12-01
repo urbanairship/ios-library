@@ -160,7 +160,7 @@ public class PreferenceCenter : NSObject, Component {
      * Returns the configuration of the Preference Center with the given ID trough a callback method.
      * - Parameters:
      *   - preferenceCenterID: The preference center ID.
-     *   - completionHandlerThe completion handler that will receive the requested PreferenceCenterConfig
+     *   - completionHandler: The completion handler that will receive the requested PreferenceCenterConfig
      */
     @objc(configForPreferenceCenterID:completionHandler:)
     @discardableResult

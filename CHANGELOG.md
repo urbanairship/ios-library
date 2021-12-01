@@ -3,6 +3,16 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 16.1.1 December 1, 2021
+Patch release that fixes a styling issue with message center on iOS 15, running actions from a notification action button, and adds
+the AirshipPreferenceCenter.xcframework.
+
+### Changes
+- Fixed Message Center navigation style on iOS 15
+- Fixed running actions from a notification action button
+- Fixed channel registration causing extra attribute operations in the RTDS stream
+- Added AirshipPreferenceCenter.xcframework to the zip distribution
+
 ## Version 16.1.0 November 15, 2021
 Minor release that fixes styling preference center, adds a new chat action, and fixes running actions in a HTML In-App Automation (including landing pages). Apps that are on SDK 15.0 - 16.0.3 that use actions in HTML In-App Automations should update.
 
