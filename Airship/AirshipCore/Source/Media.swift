@@ -13,11 +13,16 @@ struct Media : View {
     var body: some View {
         switch model.mediaType {
         case .image:
-            ImageView(url: model.url)
-                .background(model.backgroundColor)
-                .border(model.border)
-                .constraints(constraints)
-
+            AirshipAsyncImage(url: self.model.url) { image in
+                image
+                    .resizable()
+                    .scaledToFit()
+            } placeholder: {
+                AirshipProgressView()
+            }
+            .background(model.backgroundColor)
+            .border(model.border)
+            .constraints(constraints)
         case .video, .youtube:
 #if !os(tvOS)
             MediaWebView(url: model.url, type: model.mediaType)

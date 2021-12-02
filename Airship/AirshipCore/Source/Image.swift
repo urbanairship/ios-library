@@ -23,7 +23,7 @@ extension UIImage {
     }
     
     
-    class func animatedImage(with source: CGImageSource?) -> UIImage? {
+    class func animatedImage(with source: CGImageSource?, fillIn: Bool) -> UIImage? {
         var images: [AnyHashable] = []
         var fullDuration: TimeInterval = 0
         
@@ -45,12 +45,16 @@ extension UIImage {
                 if image != nil && duration != 0.0 {
                     fullDuration += duration
                     
-                    // Fill in frames for every centisecond
-                    let centiseconds = Int(duration * 100)
-                    for _ in 0..<centiseconds {
-                        if let image = image {
-                            images.append(image)
+                    if (fillIn) {
+                        // Fill in frames for every centisecond
+                        let centiseconds = Int(duration * 100)
+                        for _ in 0..<centiseconds {
+                            if let image = image {
+                                images.append(image)
+                            }
                         }
+                    } else {
+                        images.append(image)
                     }
                 }
             }
@@ -66,10 +70,10 @@ extension UIImage {
      * Image factory method that supports animated data.
      * - Parameters:
      *   - data The data.
+     *   - fillIn: If the images should be expanded to fill in the frames for smoother animations in UIKit.
      * - Returns: The animated image if it is a gif, otherwise the still frame will be loaded.
      */
-    @objc(fancyImageWithData:)
-    public class func fancyImage(with data: Data?) -> UIImage? {
+    public class func fancyImage(with data: Data?, fillIn: Bool) -> UIImage? {
         var source: CGImageSource? = nil
         if let data = data {
             source = CGImageSourceCreateWithData(data as CFData, nil)
@@ -78,7 +82,7 @@ extension UIImage {
         var image: UIImage?
         if let source = source {
             if (CGImageSourceGetCount(source) > 1) {
-                image = self.animatedImage(with: source)
+                image = self.animatedImage(with: source, fillIn: fillIn)
             } else {
                 if let data = data {
                     image = self.init(data: data)
@@ -87,6 +91,17 @@ extension UIImage {
         }
         
         return image
+    }
+    
+    /**
+     * Image factory method that supports animated data.
+     * - Parameters:
+     *   - data The data.
+     * - Returns: The animated image if it is a gif, otherwise the still frame will be loaded.
+     */
+    @objc(fancyImageWithData:)
+    public class func fancyImage(with data: Data?) -> UIImage? {
+        return fancyImage(with: data, fillIn: true)
     }
 }
 

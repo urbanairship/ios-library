@@ -14,9 +14,6 @@ struct ImageButton : View {
     /// View constriants.
     let constraints: ViewConstraints
   
-    @ObservedObject var imageLoader: AssetLoader = AssetLoader()
-    @State var image: UIImage = UIImage()
-    @State var imageLoaderCancellable: AnyCancellable?
     @Environment(\.colorScheme) var colorScheme
 
     @ViewBuilder
@@ -38,27 +35,16 @@ struct ImageButton : View {
     private func createInnerButton() -> some View {
         switch(model.image) {
         case .url(let model):
-            createImage(model)
+            AirshipAsyncImage(url: model.url) { image in
+                image
+                    .renderingMode(.original)
+                    .resizable()
+                    .scaledToFit()
+            } placeholder: {
+                AirshipProgressView()
+            }
         case .icon(let model):
-            createIcon(model)
+            Icons.icon(model: model, colorScheme: colorScheme)
         }
-    }
-    @ViewBuilder
-    private func createImage(_ model: ImageURLModel) -> some View {
-        Image(uiImage: image)
-            .renderingMode(.original)
-            .resizable()
-            .aspectRatio(contentMode: .fit)
-            .onReceive(imageLoader.loaded) { data in
-                self.image = UIImage(data: data) ?? UIImage()
-            }
-            .onAppear {
-                self.imageLoaderCancellable = imageLoader.load(url: model.url)
-            }
-    }
-    
-    @ViewBuilder
-    private func createIcon(_ model: IconModel) -> some View {
-        Icons.icon(model: model, colorScheme: colorScheme)
     }
 }

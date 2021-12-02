@@ -43,15 +43,15 @@
 		324D3BFF273E6B4500058EE4 /* BannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 324D3BFE273E6B4500058EE4 /* BannerView.swift */; };
 		324D3C00273E6B4500058EE4 /* BannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 324D3BFE273E6B4500058EE4 /* BannerView.swift */; };
 		32515869272AFB2E00DF8B44 /* Media.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32515866272AFB2E00DF8B44 /* Media.swift */; };
-		3251586A272AFB2E00DF8B44 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32515867272AFB2E00DF8B44 /* ImageView.swift */; };
 		3251586B272AFB2E00DF8B44 /* MediaWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32515868272AFB2E00DF8B44 /* MediaWebView.swift */; };
 		32515871272B007C00DF8B44 /* MediaWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32515868272AFB2E00DF8B44 /* MediaWebView.swift */; };
 		32515872272B007F00DF8B44 /* Media.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32515866272AFB2E00DF8B44 /* Media.swift */; };
-		32515873272B008400DF8B44 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32515867272AFB2E00DF8B44 /* ImageView.swift */; };
 		32515874272B038300DF8B44 /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32D6E87A2727F7060077C784 /* Image.swift */; };
 		3261A7F6243CD7F900ADBF6B /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3261A7F4243CD73100ADBF6B /* CoreTelephony.framework */; platformFilter = maccatalyst; };
 		32CF81C6274FCD06003009D1 /* AirshipTextInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32CF81C5274FCD06003009D1 /* AirshipTextInput.swift */; };
 		32CF81C7274FCD06003009D1 /* AirshipTextInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32CF81C5274FCD06003009D1 /* AirshipTextInput.swift */; };
+		32CF81E2275627F4003009D1 /* AirshipAsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32CF81E1275627F4003009D1 /* AirshipAsyncImage.swift */; };
+		32CF81E3275627F4003009D1 /* AirshipAsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32CF81E1275627F4003009D1 /* AirshipAsyncImage.swift */; };
 		32D6E87B2727F7060077C784 /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32D6E87A2727F7060077C784 /* Image.swift */; };
 		3C07645825EDEDEE007F425C /* UAStateOverridesTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C07644A25EDEDE4007F425C /* UAStateOverridesTest.m */; };
 		3C0D066A2624EB6C002337B0 /* ChatMessageCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C0D06642624EB6C002337B0 /* ChatMessageCell.xib */; };
@@ -1503,10 +1503,10 @@
 		3230E60A24D04C75002C344D /* UAInAppAudienceHistorianTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppAudienceHistorianTest.m; sourceTree = "<group>"; };
 		324D3BFE273E6B4500058EE4 /* BannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerView.swift; sourceTree = "<group>"; };
 		32515866272AFB2E00DF8B44 /* Media.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Media.swift; sourceTree = "<group>"; };
-		32515867272AFB2E00DF8B44 /* ImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
 		32515868272AFB2E00DF8B44 /* MediaWebView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaWebView.swift; sourceTree = "<group>"; };
 		3261A7F4243CD73100ADBF6B /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/CoreTelephony.framework; sourceTree = DEVELOPER_DIR; };
 		32CF81C5274FCD06003009D1 /* AirshipTextInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipTextInput.swift; sourceTree = "<group>"; };
+		32CF81E1275627F4003009D1 /* AirshipAsyncImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipAsyncImage.swift; sourceTree = "<group>"; };
 		32D6E87A2727F7060077C784 /* Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
 		3C07644A25EDEDE4007F425C /* UAStateOverridesTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAStateOverridesTest.m; sourceTree = "<group>"; };
 		3C0D06642624EB6C002337B0 /* ChatMessageCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ChatMessageCell.xib; sourceTree = "<group>"; };
@@ -3370,7 +3370,6 @@
 				6E062D0C2718B505001A74A1 /* ViewConstraints.swift */,
 				6E1BACDA2719ED7D0038399E /* ScrollLayout.swift */,
 				6E1BACDC2719FC0A0038399E /* ViewFactory.swift */,
-				32515867272AFB2E00DF8B44 /* ImageView.swift */,
 				32515866272AFB2E00DF8B44 /* Media.swift */,
 				32515868272AFB2E00DF8B44 /* MediaWebView.swift */,
 				6EFD6D4A27272333005B26F1 /* EmptyView.swift */,
@@ -3379,6 +3378,7 @@
 				A658DE182728498900007672 /* AirshipWebview.swift */,
 				6E152BC92743235800788402 /* Icons.swift */,
 				6E6541DF2758976D009676CA /* AirshipProgressView.swift */,
+				32CF81E1275627F4003009D1 /* AirshipAsyncImage.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -6307,6 +6307,7 @@
 				6E062D0B271657BB001A74A1 /* ThomasViewModelExtensions.swift in Sources */,
 				6E95292C268B98A200398B54 /* MediaEventTemplate.swift in Sources */,
 				A6A5530A26D548AF002B20F6 /* NativeBridge.swift in Sources */,
+				32CF81E2275627F4003009D1 /* AirshipAsyncImage.swift in Sources */,
 				6E664BD026C4916600A2C8E5 /* AddTagsAction.swift in Sources */,
 				6E664BA726C4417400A2C8E5 /* ShareAction.swift in Sources */,
 				6ED6ECA426ADCA6F00973364 /* BlockAction.swift in Sources */,
@@ -6476,7 +6477,6 @@
 				6E6ED1612683DBC300A2CBD0 /* AirshipVersion.swift in Sources */,
 				6E6ED1392683A58D00A2CBD0 /* Semaphore.swift in Sources */,
 				3215CA9D2739349800B7D97E /* ModalView.swift in Sources */,
-				3251586A272AFB2E00DF8B44 /* ImageView.swift in Sources */,
 				6E6ED1592683DBC300A2CBD0 /* WebView.swift in Sources */,
 				3CC95B1F268E785900FE2ACD /* NotificationCategories.swift in Sources */,
 				A61517B526AEEAAB008A41C4 /* SubscriptionListUpdate.swift in Sources */,
@@ -6992,6 +6992,7 @@
 				A6A5530B26D548AF002B20F6 /* NativeBridge.swift in Sources */,
 				6E8BF45826852E8B009A8BD4 /* TaskLauncher.swift in Sources */,
 				6E91B4492688335000DDB1A8 /* ScreenTrackingEvent.swift in Sources */,
+				32CF81E3275627F4003009D1 /* AirshipAsyncImage.swift in Sources */,
 				6E664BD126C4916600A2C8E5 /* AddTagsAction.swift in Sources */,
 				6E698DF326790AC300654DB2 /* UAPrivacyManager.swift in Sources */,
 				6E664BA826C4417400A2C8E5 /* ShareAction.swift in Sources */,
@@ -7157,7 +7158,6 @@
 				6E698E01267A78CA00654DB2 /* RequestSession.swift in Sources */,
 				6E510C272721DA86006D9126 /* BackgroundColorViewModifier.swift in Sources */,
 				6E15B74026D43F120099C92D /* NSArrayValueTransformer.swift in Sources */,
-				32515873272B008400DF8B44 /* ImageView.swift in Sources */,
 				6E664BEB26C6DB7600A2C8E5 /* Utils.swift in Sources */,
 				6E91B45326883B6E00DDB1A8 /* AppExitEvent.swift in Sources */,
 				3215CA9E2739349800B7D97E /* ModalView.swift in Sources */,

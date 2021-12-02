@@ -7,10 +7,10 @@ import Combine
 @available(iOS 13.0.0, tvOS 13.0, *)
 class AssetLoader: ObservableObject {
     let retries = 10
-    var loaded: PassthroughSubject<Data, Never> = PassthroughSubject()
-    var data = Data() {
+    var loaded: PassthroughSubject<UIImage?, Never> = PassthroughSubject()
+    var image: UIImage? {
         didSet {
-            loaded.send(data)
+            loaded.send(image)
         }
     }
 
@@ -19,9 +19,10 @@ class AssetLoader: ObservableObject {
             .retry(retries)
         var cancellable: AnyCancellable? = nil
         cancellable = pub
+            .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { (completion) in
                         }) { (value) in
-                            self.data = value.data
+                            self.image = UIImage.fancyImage(with: value.data, fillIn: false)
                         }
         return cancellable
     }

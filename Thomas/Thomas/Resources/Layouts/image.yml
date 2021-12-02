@@ -75,13 +75,13 @@ view:
           start: 8
           end: 8
         size:
-          width: auto
+          width: 100%
           height: auto
         view:
           type: media
           url: https://media.giphy.com/media/6y70TnZ4ug9zetb5Oq/giphy.gif
           media_type: image
-          background:
+          background_color:
             default:
               hex: "#000000"
       #
