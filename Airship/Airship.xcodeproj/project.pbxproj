@@ -977,6 +977,7 @@
 		6EA734B624B7AA600012B737 /* UAInAppAutomation.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EA734B024B7AA600012B737 /* UAInAppAutomation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6EA734B924BE5E920012B737 /* UAInAppAutomationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EA734B824BE5E920012B737 /* UAInAppAutomationTest.m */; };
 		6EAC295A27580063006DFA63 /* ChannelRegistrarTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAC295927580063006DFA63 /* ChannelRegistrarTest.swift */; };
+		6EAC2968275845E3006DFA63 /* UAInAppMessageAdvancedAdapterProtocol+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EAC2967275845E3006DFA63 /* UAInAppMessageAdvancedAdapterProtocol+Internal.h */; };
 		6EAD7CE526B216DB00B88EA7 /* DeepLinkAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAD7CE426B216DB00B88EA7 /* DeepLinkAction.swift */; };
 		6EAD7CE626B216DB00B88EA7 /* DeepLinkAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAD7CE426B216DB00B88EA7 /* DeepLinkAction.swift */; };
 		6EB11C872697ACBF00DC698F /* ContactOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB11C862697ACBF00DC698F /* ContactOperation.swift */; };
@@ -2148,6 +2149,7 @@
 		6EA734B024B7AA600012B737 /* UAInAppAutomation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInAppAutomation.h; sourceTree = "<group>"; };
 		6EA734B824BE5E920012B737 /* UAInAppAutomationTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppAutomationTest.m; sourceTree = "<group>"; };
 		6EAC295927580063006DFA63 /* ChannelRegistrarTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelRegistrarTest.swift; sourceTree = "<group>"; };
+		6EAC2967275845E3006DFA63 /* UAInAppMessageAdvancedAdapterProtocol+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageAdvancedAdapterProtocol+Internal.h"; sourceTree = "<group>"; };
 		6EAD7CE426B216DB00B88EA7 /* DeepLinkAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkAction.swift; sourceTree = "<group>"; };
 		6EADE7001FA8FA0D0007F924 /* UAAutomationEngine+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAAutomationEngine+Internal.h"; sourceTree = "<group>"; };
 		6EADE7011FA8FA0E0007F924 /* UAAutomationEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAutomationEngine.m; sourceTree = "<group>"; };
@@ -4047,6 +4049,7 @@
 				45E5FA1B226BA417007BD334 /* UAInAppMessageImmediateDisplayCoordinator.m */,
 				3CADDEB621B8C54F00C482F4 /* UAInAppMessageDefaultDisplayCoordinator+Internal.h */,
 				3CADDEAB21B89AB000C482F4 /* UAInAppMessageDefaultDisplayCoordinator.m */,
+				6EAC2967275845E3006DFA63 /* UAInAppMessageAdvancedAdapterProtocol+Internal.h */,
 			);
 			name = InAppMessaging;
 			sourceTree = "<group>";
@@ -5228,6 +5231,7 @@
 				6E8453C9237E0540007D3B1E /* UAInAppMessageBannerDisplayContent.h in Headers */,
 				6E8453CA237E0540007D3B1E /* UAInAppMessageBannerStyle.h in Headers */,
 				6E8453CB237E0540007D3B1E /* UAInAppMessageModalAdapter.h in Headers */,
+				6EAC2968275845E3006DFA63 /* UAInAppMessageAdvancedAdapterProtocol+Internal.h in Headers */,
 				6E8453CC237E0540007D3B1E /* UAInAppMessageModalDisplayContent.h in Headers */,
 				6E8453CD237E0540007D3B1E /* UAInAppMessageModalStyle.h in Headers */,
 				6E845464237E1C26007D3B1E /* UAActiveTimer+Internal.h in Headers */,

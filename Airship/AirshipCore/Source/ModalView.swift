@@ -22,7 +22,7 @@ struct ModalView: View {
                                                                    ignoreSafeArea: ignoreSafeArea)
             
             createBanner(constraints: constraints, placement: placement)
-                .root(thomasEnvironment)
+                .root(thomasEnvironment, layout: layout)
                 .applyIf(ignoreSafeArea) { $0.edgesIgnoringSafeArea(.all) }
         }
     }
@@ -37,13 +37,9 @@ struct ModalView: View {
         let contentFrameConstraints = constraints.calculateChild(placement.size,
                                                                  margin: placement.margin,
                                                                  ignoreSafeArea: placement.ignoreSafeArea)
-        
-        let reportingContext = ReportingContext(layoutContext: layout.reportingContext)
-
 
         VStack {
             ViewFactory.createView(model: self.layout.view, constraints: contentConstraints)
-                .environment(\.reportingContext, reportingContext)
                 .constraints(contentFrameConstraints)
                 .margin(placement.margin)
         }
@@ -55,6 +51,7 @@ struct ModalView: View {
                 .applyIf(self.presentation.dismissOnTouchOutside == true) { view in
                     // Add tap gesture outside of view to dismiss
                     view.addTapGesture {
+                        let reportingContext = ReportingContext(layoutContext: layout.reportingContext)
                         self.thomasEnvironment.dismiss(reportingContext: reportingContext)
                     }
                 }

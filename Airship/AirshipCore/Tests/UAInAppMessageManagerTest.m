@@ -12,6 +12,7 @@
 #import "UAInAppMessage+Internal.h"
 #import "NSObject+UAAdditions+Internal.h"
 #import "AirshipTests-Swift.h"
+#import "UAInAppMessageAdvancedAdapterProtocol+Internal.h"
 
 @import AirshipCore;
 
@@ -249,6 +250,53 @@ NSString * const UAInAppMessageManagerTestScheduleID = @"schedule ID";
         [displayBlockCalled fulfill];
     }] display:OCMOCK_ANY];
 
+    [[self.mockActionRunner expect] runActionsWithActionValues:self.message.actions
+                                                     situation:UASituationManualInvocation
+                                                      metadata:nil
+                                             completionHandler:OCMOCK_ANY];
+
+    [[self.mockDelegate expect] messageWillBeDisplayed:self.message scheduleID:UAInAppMessageManagerTestScheduleID];
+    [[self.mockDelegate expect] messageFinishedDisplaying:self.message scheduleID:UAInAppMessageManagerTestScheduleID resolution:OCMOCK_ANY];
+
+    XCTestExpectation *executeFinished = [self expectationWithDescription:@"execute finished"];
+    [self.manager displayMessageWithScheduleID:UAInAppMessageManagerTestScheduleID completionHandler:^{
+        [executeFinished fulfill];
+    }];
+
+    [self waitForTestExpectations];
+    XCTAssertEqual(2, self.analytics.events.count);
+    XCTAssertEqualObjects(@"in_app_display", self.analytics.events[0].eventType);
+    XCTAssertEqualObjects(@"in_app_resolution", self.analytics.events[1].eventType);
+
+    [self.mockAdapter verify];
+    [self.mockDelegate verify];
+    [self.mockActionRunner verify];
+}
+
+- (void)testDisplayAdvancedAdapter {
+    self.mockAdapter = [self mockForProtocol:@protocol(UAInAppMessageAdvancedAdapterProtocol)];
+
+    // Prepare first
+    [self testPrepare];
+
+    // Execute
+    [[[self.mockDefaultDisplayCoordinator stub] andReturnValue:@(YES)] isReady];
+    [[[self.mockAdapter stub] andReturnValue:@(YES)] isReadyToDisplay];
+
+    // Display
+    XCTestExpectation *displayCalled = [self expectationWithDescription:@"display should be called"];
+    [[[self.mockAdapter expect] andDo:^(NSInvocation *invocation) {
+        void (^displayBlock)(NSDictionary *);
+        [invocation getArgument:&displayBlock atIndex:2];
+        displayBlock(@{});
+
+        void (^dismissBlock)(UAInAppMessageResolution *, NSDictionary *);
+        [invocation getArgument:&dismissBlock atIndex:3];
+        dismissBlock([UAInAppMessageResolution userDismissedResolution], @{});
+        [displayCalled fulfill];
+    }] display:OCMOCK_ANY onDismiss:OCMOCK_ANY];
+
+    
     [[self.mockActionRunner expect] runActionsWithActionValues:self.message.actions
                                                      situation:UASituationManualInvocation
                                                       metadata:nil

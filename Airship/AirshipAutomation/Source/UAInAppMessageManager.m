@@ -2,6 +2,7 @@
 
 #import "UAInAppMessageManager+Internal.h"
 #import "UAInAppMessageAdapterProtocol.h"
+#import "UAInAppMessageAdvancedAdapterProtocol+Internal.h"
 #import "UAInAppMessageBannerAdapter.h"
 #import "UAInAppMessageFullScreenAdapter.h"
 #import "UAInAppMessageModalAdapter.h"
@@ -428,42 +429,44 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
         [delegate messageWillBeDisplayed:message scheduleID:scheduleID];
     }
 
-    if (message.isReportingEnabled) {
-        // Display event
-        UAInAppMessageDisplayEvent *event = [UAInAppMessageDisplayEvent eventWithMessageID:scheduleID message:message campaigns:scheduleData.campaigns];
-        [self.analytics addEvent:event];
-    }
-
-    // Display time timer
-    UAActiveTimer *timer = [[UAActiveTimer alloc] init];
-    [timer start];
-
     // Notify the coordinator that message display has begin
     if ([displayCoordinator respondsToSelector:@selector(didBeginDisplayingMessage:)]) {
         [displayCoordinator didBeginDisplayingMessage:message];
     }
 
-    // After display has finished, notify the coordinator as well
-    completionHandler = ^{
-
-        completionHandler();
-    };
-
     UA_WEAKIFY(self);
-    void (^displayCompletionHandler)(UAInAppMessageResolution *) = ^(UAInAppMessageResolution *resolution) {
+    UAActiveTimer *timer = [[UAActiveTimer alloc] init];
+    void (^onDisplay)(NSDictionary *) = ^(NSDictionary *reportingContext) {
+        // Display time timer
+        [timer start];
+        
+        if (message.isReportingEnabled) {
+            
+            // TODO add reporting context
+            
+            // Display event
+            UAInAppMessageDisplayEvent *event = [UAInAppMessageDisplayEvent eventWithMessageID:scheduleID
+                                                                                       message:message
+                                                                                     campaigns:scheduleData.campaigns];
+            [self.analytics addEvent:event];
+        }
+    };
+    
+    void (^onDismiss)(UAInAppMessageResolution *, NSDictionary *) = ^(UAInAppMessageResolution *resolution, NSDictionary *reportingContext) {
 
         UA_STRONGIFY(self);
         UA_LDEBUG(@"Schedule %@ finished displaying", scheduleID);
 
-        // Resolution event
+        
         [timer stop];
-        UAInAppMessageResolutionEvent *event = [UAInAppMessageResolutionEvent eventWithMessageID:scheduleID
-                                                                   source:message.source
-                                                                resolution:resolution
-                                                               displayTime:timer.time
-                                                                 campaigns:scheduleData.campaigns];
-
+        
+        // TODO add reporting context
         if (message.isReportingEnabled) {
+            UAInAppMessageResolutionEvent *event = [UAInAppMessageResolutionEvent eventWithMessageID:scheduleID
+                                                                       source:message.source
+                                                                    resolution:resolution
+                                                                   displayTime:timer.time
+                                                                     campaigns:scheduleData.campaigns];
             [self.analytics addEvent:event];
         }
 
@@ -499,7 +502,17 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
         completionHandler();
     };
 
-    [adapter display:displayCompletionHandler];
+    if ([adapter conformsToProtocol:@protocol(UAInAppMessageAdvancedAdapterProtocol)]) {
+        id<UAInAppMessageAdvancedAdapterProtocol> advancedAdapter = (id<UAInAppMessageAdvancedAdapterProtocol>) adapter;
+        [advancedAdapter display:onDisplay onDismiss:onDismiss];
+    } else if ([adapter respondsToSelector:@selector(display:)]) {
+        onDisplay(nil);
+        [adapter display:^(UAInAppMessageResolution *resolution) {
+            onDismiss(resolution, nil);
+        }];
+    } else {
+        UA_LWARN("Unable to display message, missing display method for schedule %@", scheduleID);
+    }
 }
 
 - (void)messageExecutionInterrupted:(nullable UAInAppMessage *)message

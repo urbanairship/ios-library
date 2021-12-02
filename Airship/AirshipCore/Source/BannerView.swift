@@ -28,7 +28,7 @@ struct BannerView: View {
                                                                    ignoreSafeArea: ignoreSafeArea)
             
             createBanner(constraints: constraints, placement: placement)
-                .root(thomasEnvironment)
+                .root(thomasEnvironment, layout: layout)
                 .applyIf(ignoreSafeArea) { $0.edgesIgnoringSafeArea(.all) }
         }
     }
@@ -43,11 +43,9 @@ struct BannerView: View {
         let contentConstraints = constraints.calculateChild(placement.size)
         let contentFrameConstraints = constraints.calculateChild(placement.size, margin: placement.margin)
 
-        let reportingContext = ReportingContext(layoutContext: layout.reportingContext)
         
         VStack {
             ViewFactory.createView(model: layout.view, constraints: contentConstraints)
-                .environment(\.reportingContext, reportingContext)
                 .constraints(contentFrameConstraints)
                 .margin(placement.margin)
                 .shadow(radius: 5)

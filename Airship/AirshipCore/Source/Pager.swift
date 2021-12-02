@@ -76,21 +76,31 @@ struct Pager : View {
                         let velocity = value.predictedEndLocation.x - value.location.x
                         let offset = value.translation.width / metrics.size.width
                         if (abs(velocity) >= Pager.flingSpeed) {
-                            let newIndex = velocity > 0 ? index.wrappedValue - 1 : index.wrappedValue + 1
-                            withAnimation {
-                                index.wrappedValue = min(items.count - 1, max(0, newIndex))
-                            }
+                            attemptSwipe(index, indexOffset: velocity > 0 ? -1 : 1)
                         } else if (abs(offset) >= Pager.offsetPercent) {
-                            let newIndex = offset > 0 ? index.wrappedValue - 1 : index.wrappedValue + 1
-                            withAnimation {
-                                index.wrappedValue = min(items.count - 1, max(0, newIndex))
-                            }
+                            attemptSwipe(index, indexOffset: offset > 0 ? -1 : 1)
                         }
                 }
             )
             #else
             view
             #endif
+        }
+    }
+    
+    private func attemptSwipe(_ index: Binding<Int>, indexOffset: Int) {
+        let nextIndex = index.wrappedValue + indexOffset
+        guard nextIndex < self.model.items.count else { return }
+        guard nextIndex >= 0 else { return }
+        guard nextIndex != index.wrappedValue else { return }
+            
+        thomasEnvironment.pageSwiped(self.pagerState.identifier,
+                                     fromIndex: index.wrappedValue,
+                                     toIndex: nextIndex,
+                                     reportingContext: reportingContext)
+        
+        withAnimation {
+            index.wrappedValue = nextIndex
         }
     }
     

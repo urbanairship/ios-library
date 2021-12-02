@@ -15,6 +15,12 @@ class ThomasEnvironment : ObservableObject {
         self.onDismiss = onDismiss
     }
     
+    func displayed(reportingContext: ReportingContext) {
+        let reportingContextPayload = reportingContext.toPayload()
+        AirshipLogger.debug("onDisplayed reportingContext: \(reportingContextPayload)")
+        self.delegate.onDisplayed(reportingContext: reportingContextPayload)
+    }
+    
     func submitForm(_ formState: FormState, reportingContext: ReportingContext) {
         if let data = formState.data.toPayload() {
             let reportingContextPayload = reportingContext.toPayload()
@@ -45,23 +51,45 @@ class ThomasEnvironment : ObservableObject {
                                    reportingContext: reportingContextPayload)
     }
     
-    func dismiss(reason: DismissReason = .other, reportingContext: ReportingContext) {
-        if (!self.isDismissed) {
-            self.isDismissed = true
-            let reportingContextPayload = reportingContext.toPayload()
-
-            switch reason {
-            case .button(let identifier, let cancel):
-                AirshipLogger.debug("onDismissed \(identifier) cancel: \(cancel) reportingContext: \(reportingContextPayload)")
-                self.delegate.onDismissed(buttonIdentifier: identifier, cancel: cancel, reportingContext: reportingContextPayload)
-            default:
-                AirshipLogger.debug("onDismissed reportingContext: \(reportingContextPayload)")
-                self.delegate.onDismissed(buttonIdentifier: nil, cancel: false, reportingContext: reportingContextPayload)
-            }
-            onDismiss()
+    
+    func dismiss(buttonIdentifier: String, buttonDescription: String?, cancel: Bool, reportingContext: ReportingContext? = nil) {
+        tryDismiss {
+            let reportingContextPayload = reportingContext?.toPayload() ?? [:]
+            AirshipLogger.debug("onDismissed buttonIdentifier: \(buttonIdentifier) buttonDescription: \(buttonDescription ?? "") reportingContext: \(reportingContextPayload)")
+            self.delegate.onDismissed(reportingContext: reportingContextPayload)
         }
     }
     
+    func dismiss(reportingContext: ReportingContext? = nil) {
+        tryDismiss {
+            let reportingContextPayload = reportingContext?.toPayload() ?? [:]
+            AirshipLogger.debug("onDismissed reportingContext: \(reportingContextPayload)")
+            self.delegate.onDismissed(reportingContext: reportingContextPayload)
+        }
+    }
+    
+    func timedOut(reportingContext: ReportingContext? = nil) {
+        tryDismiss {
+            let reportingContextPayload = reportingContext?.toPayload() ?? [:]
+            AirshipLogger.debug("onTimedOut reportingContext: \(reportingContextPayload)")
+            self.delegate.onTimedOut(reportingContext: reportingContextPayload)
+        }
+    }
+    
+    func pageSwiped(_ pagerIdentifier: String, fromIndex: Int, toIndex: Int, reportingContext: ReportingContext) {
+        let reportingContextPayload = reportingContext.toPayload()
+        AirshipLogger.debug("onPageSwiped \(pagerIdentifier) fromIndex: \(fromIndex) toIndex: \(toIndex) reportingContext: \(reportingContextPayload)")
+        self.delegate.onPageSwiped(pagerIdentifier: pagerIdentifier, fromIndex: fromIndex, toIndex: toIndex, reportingContext: reportingContextPayload)
+    }
+    
+    private func tryDismiss(callback: () -> Void) {
+        if (!self.isDismissed) {
+            self.isDismissed = true
+            callback()
+            onDismiss()
+        }
+    }
+        
 }
 
 enum DismissReason {

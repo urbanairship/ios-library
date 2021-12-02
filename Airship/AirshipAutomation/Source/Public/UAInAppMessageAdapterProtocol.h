@@ -41,6 +41,19 @@ typedef NS_ENUM(NSUInteger, UAInAppMessagePrepareResult) {
 NS_SWIFT_NAME(InAppMessageAdapterProtocol)
 @protocol UAInAppMessageAdapterProtocol <NSObject>
 
+@optional
+
+/**
+ * Displays the in-app message.
+ *
+ * @param completionHandler the completion handler to be called when adapter has finished
+ * displaying the in-app message.
+ */
+- (void)display:(void (^)(UAInAppMessageResolution *))completionHandler;
+
+
+@required
+
 /**
  * Factory method to create an in-app message adapter.
  *
@@ -48,7 +61,6 @@ NS_SWIFT_NAME(InAppMessageAdapterProtocol)
  */
 + (instancetype)adapterForMessage:(UAInAppMessage *)message;
 
-@required
 
 /**
  * Prepares in-app message to display.
@@ -67,14 +79,6 @@ NS_SWIFT_NAME(InAppMessageAdapterProtocol)
  */
 - (BOOL)isReadyToDisplay;
 
-/**
- * Displays the in-app message.
- *
- * @param completionHandler the completion handler to be called when adapter has finished
- * displaying the in-app message.
- * @note This method is only called when running on iOS 12 and below.
- */
-- (void)display:(void (^)(UAInAppMessageResolution *))completionHandler;
 
 @end
 

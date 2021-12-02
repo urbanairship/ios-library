@@ -26,6 +26,7 @@ struct LabelButton : View {
                 .border(self.model.border)
         }
         .buttonClick(self.model.identifier,
+                     buttonDescription: self.model.contentDescription ?? self.model.label.text,
                      behaviors: self.model.clickBehaviors,
                      actions: self.model.actions)
         .enableButton(self.model.enableBehaviors)

@@ -5,6 +5,11 @@ import Foundation
 @objc(UAThomasDelegate)
 public protocol ThomasDelegate {
     
+    /// Called when a view is displayed
+    /// - Parameters:
+    ///     - reportingContext: The reporting context.
+    func onDisplayed(reportingContext: [String : Any])
+    
     /// Called when a form is submitted
     /// - Parameters:
     ///     - formIdentifier: The form id
@@ -23,12 +28,21 @@ public protocol ThomasDelegate {
     ///     - buttonIdentifier: The button id
     func onButtonTapped(buttonIdentifier: String, reportingContext: [String : Any])
     
-    /// Called when the form is dismissed.
+    /// Called when the view is dismissed.
     /// - Parameters:
-    ///     - buttonIdentifier: The optional button id if the form was dismissed by a button
-    ///     - cancel: If the IAA should be cancelled
     ///     - reportingContext: The reporting context.
-    func onDismissed(buttonIdentifier: String?, cancel: Bool, reportingContext: [String : Any])
+    func onDismissed(reportingContext: [String : Any])
+    
+    /// Called when the view is dismissed from a button tap.
+    /// - Parameters:
+    ///     - buttonIdentifier: The  button id.
+    ///     - buttonDescription: The button description.
+    ///     - cancel: If the view should be cancelled.
+    ///     - reportingContext: The reporting context.
+    func onDismissed(buttonIdentifier: String,
+                     buttonDescription: String,
+                     cancel: Bool,
+                     reportingContext: [String : Any])
     
     /// Called when a form is dismissed beceuse it timed out.
     /// - Parameters:
@@ -47,4 +61,12 @@ public protocol ThomasDelegate {
                       pageCount: Int,
                       completed: Bool,
                       reportingContext: [String : Any])
+    
+    /// Called when a pager page changed due to a swipe.
+    /// - Parameters:
+    ///     - pagerIdentifier: The pager identifier
+    ///     - fromIndex: The originating index
+    ///     - toIndex: The resulting index
+    ///     - reportingContext: The reporting context.
+    func onPageSwiped(pagerIdentifier: String, fromIndex: Int, toIndex: Int, reportingContext: [String : Any])
 }

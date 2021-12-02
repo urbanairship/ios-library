@@ -13,19 +13,28 @@ struct RootViewModifier: ViewModifier {
     
     @State private var currentOrientation: Orientation = RootViewModifier.resolveOrientation()
     @State private var isVisible: Bool = false
+    @State private var displayedCalled: Bool = false
 
     @ObservedObject var thomasEnvironment: ThomasEnvironment
+    let layout: Layout
 
     @ViewBuilder
     func body(content: Content) -> some View {
+        let reportingContext = ReportingContext(layoutContext: self.layout.reportingContext)
         content
             .environmentObject(thomasEnvironment)
             .environment(\.orientation, currentOrientation)
             .environment(\.windowSize, resolveWindowSize())
             .environment(\.isVisible, isVisible)
+            .environment(\.reportingContext, ReportingContext(layoutContext: self.layout.reportingContext))
             .onAppear {
                 self.currentOrientation = RootViewModifier.resolveOrientation()
                 self.isVisible = true
+                
+                if (!displayedCalled) {
+                    displayedCalled = true
+                    thomasEnvironment.displayed(reportingContext: reportingContext)
+                }
             }
             .onDisappear {
                 self.isVisible = false
@@ -76,8 +85,8 @@ struct RootViewModifier: ViewModifier {
 @available(iOS 13.0.0, tvOS 13.0, *)
 extension View {
     @ViewBuilder
-    func root(_ thomasEnvironment: ThomasEnvironment) -> some View {
-        self.modifier(RootViewModifier(thomasEnvironment: thomasEnvironment))
+    func root(_ thomasEnvironment: ThomasEnvironment, layout: Layout) -> some View {
+        self.modifier(RootViewModifier(thomasEnvironment: thomasEnvironment, layout: layout))
     }
 }
 

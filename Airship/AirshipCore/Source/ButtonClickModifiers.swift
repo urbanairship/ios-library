@@ -49,13 +49,18 @@ struct PagerPreviousPageButtonClickBehavior: ViewModifier {
 @available(iOS 13.0.0, tvOS 13.0, *)
 struct DismissButtonClickBehavior: ViewModifier {
     let buttonIdentifier: String
+    let buttonDescription: String?
+
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
     @Environment(\.reportingContext) var reportingContext
 
     @ViewBuilder
     func body(content: Content) -> some View {
         content.addTapGesture {
-            thomasEnvironment.dismiss(reason: .button(buttonIdentifier, false), reportingContext: reportingContext)
+            thomasEnvironment.dismiss(buttonIdentifier: buttonIdentifier,
+                                      buttonDescription: buttonDescription,
+                                      cancel: false,
+                                      reportingContext: reportingContext)
         }
     }
 }
@@ -63,13 +68,17 @@ struct DismissButtonClickBehavior: ViewModifier {
 @available(iOS 13.0.0, tvOS 13.0, *)
 struct CancelButtonClickBehavior: ViewModifier {
     let buttonIdentifier: String
+    let buttonDescription: String?
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
     @Environment(\.reportingContext) var reportingContext
 
     @ViewBuilder
     func body(content: Content) -> some View {
         content.addTapGesture {
-            thomasEnvironment.dismiss(reason: .button(buttonIdentifier, true), reportingContext: reportingContext)
+            thomasEnvironment.dismiss(buttonIdentifier: buttonIdentifier,
+                                      buttonDescription: buttonDescription,
+                                      cancel: true,
+                                      reportingContext: reportingContext)
         }
     }
 }
@@ -107,16 +116,17 @@ struct RunActionsButtonModifier: ViewModifier {
 extension View {
     @ViewBuilder
     func buttonClick(_ buttonIdentifier: String,
+                     buttonDescription: String?,
                      behaviors: [ButtonClickBehavior]?,
                      actions: ActionsPayload? = nil) -> some View {
         
         let behaviors = behaviors ?? []
 
         self.applyIf(behaviors.contains(.dismiss)) { view in
-            view.modifier(DismissButtonClickBehavior(buttonIdentifier: buttonIdentifier))
+            view.modifier(DismissButtonClickBehavior(buttonIdentifier: buttonIdentifier, buttonDescription: buttonDescription))
         }
         .applyIf(behaviors.contains(.cancel)) { view in
-            view.modifier(CancelButtonClickBehavior(buttonIdentifier: buttonIdentifier))
+            view.modifier(CancelButtonClickBehavior(buttonIdentifier: buttonIdentifier, buttonDescription: buttonDescription))
         }
         .applyIf(behaviors.contains(.formSubmit)) { view in
             view.modifier(SubmitFormButtonClickBehavior())
