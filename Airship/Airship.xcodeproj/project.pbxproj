@@ -489,6 +489,8 @@
 		6E598D8820040E7F005B234B /* UAInAppMessageDisplayEventTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E598D8720040E7F005B234B /* UAInAppMessageDisplayEventTest.m */; };
 		6E5F723620169A6600D684B7 /* UADeepLinkActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E5F723520169A6600D684B7 /* UADeepLinkActionTest.m */; };
 		6E64C88027331ABA000EB887 /* PreferenceDataStoreTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E64C87F27331ABA000EB887 /* PreferenceDataStoreTest.swift */; };
+		6E6541E02758976D009676CA /* AirshipProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6541DF2758976D009676CA /* AirshipProgressView.swift */; };
+		6E6541E12758976D009676CA /* AirshipProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6541DF2758976D009676CA /* AirshipProgressView.swift */; };
 		6E65D537239632EF00AF2D1A /* UALocationCoreImport.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E65D536239632EA00AF2D1A /* UALocationCoreImport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E65D53B2396DBF800AF2D1A /* UAExtendedActionsCoreImport.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E65D53A2396DB3F00AF2D1A /* UAExtendedActionsCoreImport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E65D53C2396DED400AF2D1A /* UARateAppActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 996A03B91EF08EBF003424E0 /* UARateAppActionTest.m */; };
@@ -1931,6 +1933,7 @@
 		6E598D8720040E7F005B234B /* UAInAppMessageDisplayEventTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageDisplayEventTest.m; sourceTree = "<group>"; };
 		6E5F723520169A6600D684B7 /* UADeepLinkActionTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UADeepLinkActionTest.m; sourceTree = "<group>"; };
 		6E64C87F27331ABA000EB887 /* PreferenceDataStoreTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferenceDataStoreTest.swift; sourceTree = "<group>"; };
+		6E6541DF2758976D009676CA /* AirshipProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipProgressView.swift; sourceTree = "<group>"; };
 		6E65D536239632EA00AF2D1A /* UALocationCoreImport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UALocationCoreImport.h; sourceTree = "<group>"; };
 		6E65D53A2396DB3F00AF2D1A /* UAExtendedActionsCoreImport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAExtendedActionsCoreImport.h; sourceTree = "<group>"; };
 		6E664B9D26C21B6F00A2C8E5 /* AggregateActionResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AggregateActionResult.swift; sourceTree = "<group>"; };
@@ -3375,6 +3378,7 @@
 				324D3BFE273E6B4500058EE4 /* BannerView.swift */,
 				A658DE182728498900007672 /* AirshipWebview.swift */,
 				6E152BC92743235800788402 /* Icons.swift */,
+				6E6541DF2758976D009676CA /* AirshipProgressView.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -6298,6 +6302,7 @@
 				6E698DFE267A78CA00654DB2 /* Request.swift in Sources */,
 				6E87BDBD26E01FF40005D20D /* ModuleLoader.swift in Sources */,
 				6E91B4482688335000DDB1A8 /* ScreenTrackingEvent.swift in Sources */,
+				6E6541E02758976D009676CA /* AirshipProgressView.swift in Sources */,
 				6E698DF226790AC300654DB2 /* UAPrivacyManager.swift in Sources */,
 				6E062D0B271657BB001A74A1 /* ThomasViewModelExtensions.swift in Sources */,
 				6E95292C268B98A200398B54 /* MediaEventTemplate.swift in Sources */,
@@ -6982,6 +6987,7 @@
 				6E87BDBE26E01FF40005D20D /* ModuleLoader.swift in Sources */,
 				6EC7E48326A60C060038CFDD /* ChannelProtocol.swift in Sources */,
 				6E698DFF267A78CA00654DB2 /* Request.swift in Sources */,
+				6E6541E12758976D009676CA /* AirshipProgressView.swift in Sources */,
 				6EC7E49126A739890038CFDD /* JsonValue.swift in Sources */,
 				A6A5530B26D548AF002B20F6 /* NativeBridge.swift in Sources */,
 				6E8BF45826852E8B009A8BD4 /* TaskLauncher.swift in Sources */,

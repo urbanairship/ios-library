@@ -4,6 +4,7 @@
 #import "UAInAppMessageAirshipLayoutDisplayContent+Internal.h"
 #import "UAInAppMessageSceneManager.h"
 #import "UAInAppMessageAdvancedAdapterProtocol+Internal.h"
+#import "UAAutomationNativeBridgeExtension+Internal.h"
 
 #if __has_include("AirshipKit/AirshipKit-Swift.h")
 #import <AirshipKit/AirshipKit-Swift.h>
@@ -51,8 +52,13 @@
             return NO;
         }
         
+        UAAutomationNativeBridgeExtension *nativeBridgeExtension = [UAAutomationNativeBridgeExtension extensionWithMessage:self.message];
+        
+        UAThomasExtensions *extensions = [[UAThomasExtensions alloc] initWithNativeBridgeExtension:nativeBridgeExtension];
+
         self.deferredDisplay = [UAThomas deferredDisplayWithJson:self.displayContent.layout
                                                            scene:scene
+                                                      extensions:extensions
                                                         delegate:self
                                                            error:nil];
         if (!self.deferredDisplay) {

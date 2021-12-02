@@ -4,13 +4,7 @@
 
 import Foundation
 import SwiftUI
-import Combine
 import WebKit
-
-@available(iOS 13.0.0, *)
-class WebViewState: ObservableObject {
-    var isLoading = PassthroughSubject<Bool, Never>()
-}
 
 /// Airship Webview
 @available(iOS 13.0.0, *)
@@ -20,95 +14,105 @@ struct AirshipWebView : View {
 
     let constraints: ViewConstraints
     
-    @ObservedObject var webViewState = WebViewState()
-    @State var isLoading = false
-   
+    @State var isLoading: Bool = false
+    @EnvironmentObject var thomasEnvironment: ThomasEnvironment
+    @Environment(\.reportingContext) var reportingContext
+
     var body: some View {
+        
         ZStack {
-            WebViewView(request: URLRequest(url: URL(string: model.url)!), webViewState: webViewState)
-                .constraints(constraints)
-                .onReceive(self.webViewState.isLoading.receive(on: RunLoop.main)) { value in
-                    self.isLoading = value
-                }
-            if (self.isLoading) {
-                if #available(iOS 14.0.0,  *) {
-                    ProgressView()
-                } else {
-                    Loader(isAnimating: true)
-                }
+            WebViewView(url: self.model.url,
+                        nativeBridgeExtension: self.thomasEnvironment.extensions?.nativeBridgeExtension,
+                        isLoading: self.$isLoading) {
+                thomasEnvironment.dismiss(reportingContext: reportingContext)
             }
-        }        
+            .opacity(self.isLoading ? 0.0 : 1.0)
+            
+            if (self.isLoading) {
+                AirshipProgressView()
+            }
+        }.constraints(constraints)
     }
 }
 
 /// Webview
 @available(iOS 13.0.0, *)
-struct WebViewView : UIViewRepresentable {
-    
+struct WebViewView : UIViewRepresentable  {
     typealias UIViewType = WKWebView
     
-    let request: URLRequest
+    let url: String
+    let nativeBridgeExtension: NativeBridgeExtensionDelegate?
+    @Binding var isLoading: Bool
     
-    @ObservedObject var webViewState: WebViewState
+    let onDismiss: () -> Void
     
     func makeUIView(context: Context) -> WKWebView  {
         let webView = WKWebView()
-        context.coordinator.webView = webView
-        webView.navigationDelegate = context.coordinator
-        return webView
-    }
+        webView.navigationDelegate = context.coordinator.nativeBridge
         
-    func updateUIView(_ uiView: WKWebView, context: Context) {
-        uiView.load(request)
+        if let url = URL(string: self.url) {
+            updateLoading(true)
+            webView.load(URLRequest(url: url))
+        }
+
+        return webView
     }
     
     func makeCoordinator() -> Coordinator {
         Coordinator(self)
     }
-    
-    class Coordinator : NSObject, WKNavigationDelegate {
-           
-        var webViewView: WebViewView
-        var webView : WKWebView?
-            
-        init(_ uiWebView: WebViewView) {
-            self.webViewView = uiWebView
-        }
         
+    func updateUIView(_ uiView: WKWebView, context: Context) {
+        print(self.isLoading)
+    }
+    
+    func updateLoading(_ isLoading: Bool) {
+        DispatchQueue.main.async {
+            self.isLoading = isLoading
+        }
+    }
+    
+    class Coordinator : NSObject, UANavigationDelegate, JavaScriptCommandDelegate, NativeBridgeDelegate {
+        private let parent: WebViewView
+        let nativeBridge: NativeBridge
+
+        init(_ parent: WebViewView) {
+            self.parent = parent
+            self.nativeBridge = NativeBridge()
+            super.init()
+            self.nativeBridge.nativeBridgeExtensionDelegate = self.parent.nativeBridgeExtension
+            self.nativeBridge.forwardNavigationDelegate = self
+            self.nativeBridge.javaScriptCommandDelegate = self
+            self.nativeBridge.nativeBridgeDelegate = self
+        }
+
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-            self.webViewView.webViewState.isLoading.send(false)
+            parent.updateLoading(false)
         }
                 
         func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
-            self.webViewView.webViewState.isLoading.send(false)
+            parent.updateLoading(true)
+            DispatchQueue.main.async {
+                webView.reload()
+            }
         }
                 
         func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
-            self.webViewView.webViewState.isLoading.send(false)
-            self.webView!.reload()
+            parent.updateLoading(true)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) { [weak webView] in
+                webView?.reload()
+            }
         }
-                
-        func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
-            self.webViewView.webViewState.isLoading.send(true)
+        
+        func perform(_ command: JavaScriptCommand, webView: WKWebView) -> Bool {
+            return false
         }
-    }
-
-}
-
-/// Loader
-@available(iOS 13.0.0, *)
-struct Loader: UIViewRepresentable {
-    
-    typealias UIView = UIActivityIndicatorView
-    var isAnimating: Bool
- 
-    fileprivate var configuration = { (indicator: UIView) in }
-
-    func makeUIView(context: UIViewRepresentableContext<Self>) -> UIView { UIView() }
- 
-    func updateUIView(_ uiView: UIView, context: UIViewRepresentableContext<Self>) {
-        isAnimating ? uiView.startAnimating() : uiView.stopAnimating()
-        configuration(uiView)
+        
+        func close() {
+            DispatchQueue.main.async {
+                self.parent.onDismiss()
+            }
+        }
     }
 }
 

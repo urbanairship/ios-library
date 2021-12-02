@@ -6,12 +6,15 @@ import Foundation
 class ThomasEnvironment : ObservableObject {
     private let delegate: ThomasDelegate
     let actionRunner: ActionRunnerProtocol = ThomasActionRunner()
-    
+    let extensions: ThomasExtensions?
     var isDismissed = false
     private var onDismiss: (() -> Void)
 
-    init(delegate: ThomasDelegate, onDismiss: @escaping () -> Void) {
+    init(delegate: ThomasDelegate,
+         extensions: ThomasExtensions?,
+         onDismiss: @escaping () -> Void) {
         self.delegate = delegate
+        self.extensions = extensions
         self.onDismiss = onDismiss
     }
     

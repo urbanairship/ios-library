@@ -45,7 +45,11 @@ struct LayoutsList: View {
                 throw AirshipErrors.error("Unable to find a window!")
             }
 
-            try Thomas.display(data, scene: scene, delegate: self.delegate)
+            let extensions = ThomasExtensions(nativeBridgeExtension: ThomasNativeBridgeExtension())
+            try Thomas.display(data,
+                               scene: scene,
+                               extensions: extensions,
+                               delegate: self.delegate)
         } catch {
             errorMessage = "Failed with error \(error)"
             showError = true
@@ -59,8 +63,6 @@ struct LayoutsList: View {
         // Convert YML file to json
         return try getJsonContentFromYmlContent(ymlContent:ymlContent)
     }
-    
-   
 }
 
 struct ContentView_Previews: PreviewProvider {
@@ -97,5 +99,12 @@ class Delegate : ThomasDelegate {
     func onPageSwiped(pagerIdentifier: String, fromIndex: Int, toIndex: Int, reportingContext: [String : Any]) {
     }
 }
+
+class ThomasNativeBridgeExtension : NSObject, NativeBridgeExtensionDelegate  {
+    func extendJavaScriptEnvironment(_ js: JavaScriptEnvironmentProtocol, webView: WKWebView) {
+        js.add("chooChoo", string: "chooooo choooooo!")
+    }
+}
+
 
 
