@@ -17,6 +17,7 @@ struct Label : View {
             .textAppearance(self.model.textAppearance)
             .constraints(constraints, alignment: self.model.textAppearance.alignment?.toFrameAlignment() ?? Alignment.center)
             .truncationMode(.tail)
+            .fixedSize(horizontal: false, vertical: self.constraints.height == nil)
             .background(self.model.backgroundColor)
             .border(self.model.border)
     }
