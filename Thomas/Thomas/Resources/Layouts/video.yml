@@ -65,6 +65,7 @@ view:
           type: media
           url: https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_4x3/bipbop_4x3_variant.m3u8
           media_type: video
+          content_description: video media
           background_color:
             default:
               hex: "#000000"

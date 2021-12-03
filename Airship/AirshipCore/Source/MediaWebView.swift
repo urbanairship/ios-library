@@ -12,6 +12,7 @@ struct MediaWebView: UIViewRepresentable {
     
     let url: String
     let type: MediaType
+    let accessibilityLabel: String?
     
     @available(iOS 13.0.0, tvOS 13.0, *)
     func makeUIView(context: Context) -> WKWebView {
@@ -27,6 +28,8 @@ struct MediaWebView: UIViewRepresentable {
         config.allowsPictureInPictureMediaPlayback = true
         
         let webView = WKWebView(frame:.zero, configuration: config)
+        webView.isAccessibilityElement = true
+        webView.accessibilityLabel = accessibilityLabel
         webView.scrollView.isScrollEnabled = false
         webView.backgroundColor = UIColor.black
         webView.scrollView.backgroundColor = UIColor.black

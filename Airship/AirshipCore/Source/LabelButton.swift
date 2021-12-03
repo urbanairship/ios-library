@@ -24,6 +24,7 @@ struct LabelButton : View {
                 }
                 .background(self.model.backgroundColor)
                 .border(self.model.border)
+                .viewAccessibility(label: self.model.contentDescription)
         }
         .buttonClick(self.model.identifier,
                      buttonDescription: self.model.contentDescription ?? self.model.label.text,

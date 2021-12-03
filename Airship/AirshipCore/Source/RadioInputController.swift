@@ -17,6 +17,7 @@ struct RadioInputController : View {
             .constraints(constraints)
             .background(model.backgroundColor)
             .border(model.border)
+            .viewAccessibility(label: self.model.contentDescription)
             .environmentObject(radioInputState)
             .onAppear {
                 self.cancellable = self.radioInputState.$selectedItem.sink { incoming in

@@ -172,6 +172,7 @@ view:
                               end: 8
                             view:
                               type: checkbox_controller
+                              content_description: favorite colors
                               identifier: "favorite_colors"
                               max_selection: 2
                               min_selection: 1
@@ -200,6 +201,7 @@ view:
                                             type: checkbox
                                             identifier: "purple_id"
                                             value: "purple"
+                                            content_description: purple
                                             style:
                                               type: checkbox
                                               bindings:

@@ -624,6 +624,7 @@ view:
                 view:
                   type: label
                   text: Feedback!
+                  content_description: Feedback
                   text_appearance:
                     alignment: start
                     styles:
@@ -703,6 +704,7 @@ view:
                   end: 8
                 view:
                   type: text_input
+                  content_description: add your feedback
                   identifier: "more"
                   text: Feedback?
                   background_color:

@@ -41,6 +41,7 @@ struct Checkbox : View {
             .constraints(constraints)
             .background(model.backgroundColor)
             .border(model.border)
+            .viewAccessibility(label: self.model.contentDescription)
             .formInput()
             .disabled(!enabled)
     }

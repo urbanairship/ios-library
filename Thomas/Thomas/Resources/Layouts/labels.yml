@@ -43,6 +43,7 @@ view:
           height: auto
         view:
           type: label
+          content_description: Size
           text: Size
           text_appearance:
             alignment: start

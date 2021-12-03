@@ -16,6 +16,7 @@ struct Label : View {
         Text(self.model.text)
             .textAppearance(self.model.textAppearance)
             .constraints(constraints, alignment: self.model.textAppearance.alignment?.toFrameAlignment() ?? Alignment.center)
+            .viewAccessibility(label: self.model.contentDescription)
             .truncationMode(.tail)
             .fixedSize(horizontal: false, vertical: self.constraints.height == nil)
             .background(self.model.backgroundColor)

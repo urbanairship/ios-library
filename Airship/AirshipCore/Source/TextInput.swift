@@ -26,6 +26,7 @@ struct TextInput : View {
             .constraints(constraints, alignment: .topLeading)
             .background(self.model.backgroundColor)
             .border(self.model.border)
+            .viewAccessibility(label: self.model.contentDescription)
             .formInput()
             .onAppear {
                 updateValue(input)

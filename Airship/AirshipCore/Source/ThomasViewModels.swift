@@ -386,12 +386,14 @@ struct MediaModel: Decodable, Equatable {
     let backgroundColor: ThomasColor?
     let url: String
     let mediaType: MediaType
+    let contentDescription: String?
     
     enum CodingKeys: String, CodingKey {
         case mediaType = "media_type"
         case url = "url"
         case border = "border"
         case backgroundColor = "background_color"
+        case contentDescription = "content_description"
     }
 }
 
@@ -401,12 +403,14 @@ struct LabelModel: Decodable, Equatable {
     let backgroundColor: ThomasColor?
     let text: String
     let textAppearance: TextAppearanceModel
+    let contentDescription: String?
     
     enum CodingKeys: String, CodingKey {
         case text = "text"
         case textAppearance = "text_appearance"
         case border = "border"
         case backgroundColor = "background_color"
+        case contentDescription = "content_description"
     }
 }
 
@@ -650,6 +654,7 @@ struct CheckboxControllerModel: Decodable, Equatable {
     let minSelection: Int?
     let maxSelection: Int?
     let view: ViewModel
+    let contentDescription: String?
 
     enum CodingKeys: String, CodingKey {
         case identifier = "identifier"
@@ -659,6 +664,7 @@ struct CheckboxControllerModel: Decodable, Equatable {
         case isRequired = "required"
         case minSelection = "min_selection"
         case maxSelection = "max_selection"
+        case contentDescription = "content_description"
     }
 }
 
@@ -670,6 +676,7 @@ struct RadioInputControllerModel: Decodable, Equatable {
     let backgroundColor: ThomasColor?
     let isRequired: Bool?
     let view: ViewModel
+    let contentDescription: String?
 
     enum CodingKeys: String, CodingKey {
         case identifier = "identifier"
@@ -678,6 +685,7 @@ struct RadioInputControllerModel: Decodable, Equatable {
         case backgroundColor = "background_color"
         case view = "view"
         case isRequired = "required"
+        case contentDescription = "content_description"
     }
 }
 

@@ -65,6 +65,7 @@ view:
           type: media
           url: https://www.youtube.com/embed/aA3QiR_WBJw
           media_type: youtube
+          content_description: youtube media
           background:
             default:
               hex: "#000000"

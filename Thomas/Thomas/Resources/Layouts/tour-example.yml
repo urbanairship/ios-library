@@ -75,6 +75,8 @@ view:
                       type: label
                       text: "*How likely is it that you would recommend [Your Company,
                         Product, etc] to a friend or colleague?"
+                      content_description: "*How likely is it that you would recommend [Your Company,
+                        Product, etc] to a friend or colleague?"
                       text_appearance:
                         font_size: 24
                         color:
@@ -156,6 +158,7 @@ view:
                           end: 2
                         view:
                           type: score
+                          content_description: score
                           style:
                             type: nps
                             spacing: 2

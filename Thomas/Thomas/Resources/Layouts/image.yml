@@ -79,6 +79,7 @@ view:
           height: auto
         view:
           type: media
+          content_description: image media
           url: https://media.giphy.com/media/6y70TnZ4ug9zetb5Oq/giphy.gif
           media_type: image
           background_color:

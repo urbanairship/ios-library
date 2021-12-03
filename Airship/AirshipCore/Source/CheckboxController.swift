@@ -24,6 +24,7 @@ struct CheckboxController : View {
             .constraints(constraints)
             .background(model.backgroundColor)
             .border(model.border)
+            .viewAccessibility(label: self.model.contentDescription)
             .onAppear {
                 self.cancellable = self.checkboxState.$selectedItems.sink { incoming in
                     let selected = Array(incoming)

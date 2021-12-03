@@ -27,5 +27,10 @@ extension View {
         self.simultaneousGesture(TapGesture().onEnded(action))
         #endif
     }
+    
+    func viewAccessibility(label: String?) -> some View {
+        return self
+            .accessibility(label: Text(label ?? ""))
+    }
 }
 

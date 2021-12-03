@@ -40,6 +40,7 @@ struct Score : View {
             .constraints(self.constraints)
             .border(self.model.border)
             .background(self.model.backgroundColor)
+            .viewAccessibility(label: self.model.contentDescription)
             .onAppear {
                 self.updateScore(self.score)
             }

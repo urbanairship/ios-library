@@ -99,6 +99,7 @@ view:
               view:
                 type: label_button
                 identifier: button1
+                content_description: start|top
                 background_color:
                   default:
                     hex: "#D32F2F"
@@ -133,6 +134,7 @@ view:
               view:
                 type: label_button
                 identifier: button2
+                content_description: center|center
                 background_color:
                   default:
                     hex: "#E65100"
@@ -166,6 +168,7 @@ view:
                 height: auto
               view:
                 type: label_button
+                content_description: end|bottom
                 identifier: button3
                 background_color:
                   default:

@@ -23,9 +23,10 @@ struct Media : View {
             .background(model.backgroundColor)
             .border(model.border)
             .constraints(constraints)
+            .viewAccessibility(label: self.model.contentDescription)
         case .video, .youtube:
 #if !os(tvOS)
-            MediaWebView(url: model.url, type: model.mediaType)
+            MediaWebView(url: model.url, type: model.mediaType, accessibilityLabel: model.contentDescription)
                 .background(model.backgroundColor)
                 .border(model.border)
                 .constraints(constraints)
