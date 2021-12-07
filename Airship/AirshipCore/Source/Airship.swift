@@ -22,6 +22,12 @@ public class Airship : NSObject {
     @objc
     public static let deepLinkScheme = "uairship"
     
+    private static let appSettingsDeepLinkHost = "app_settings"
+
+    private static let appStoreDeepLinkHost = "app_store"
+    
+    private static let itunesIDKey = "itunesID"
+    
     /// Notification when Airship is ready.
     @objc
     public static let airshipReadyNotification = NSNotification.Name("com.urbanairship.airship_ready")
@@ -279,7 +285,11 @@ public class Airship : NSObject {
     @objc
     public func deepLink(_ deepLink: URL, completionHandler: @escaping (Bool) -> Void) {
         guard deepLink.scheme != Airship.deepLinkScheme else {
-            _ = self.airshipInstance.components.first(where: { return $0.deepLink?(deepLink) == true })
+            guard handleAirshipDeeplink(deepLink) else {
+                _ = self.airshipInstance.components.first(where: { return $0.deepLink?(deepLink) == true })
+                completionHandler(true)
+                return
+            }
             completionHandler(true)
             return
         }
@@ -292,5 +302,46 @@ public class Airship : NSObject {
         deepLinkDelegate.receivedDeepLink(deepLink) {
             completionHandler(true)
         }        
+    }
+    
+    /// Handle the Airship deep links for app_settings and app_store.
+    /// - Note: For internal use only. :nodoc:
+    /// `uairship://app_settings` and `uairship://app_store?itunesID=<ITUNES_ID>` deep links will be handled internally. If no itunesID provided, use the one in Airship Config.
+    /// - Parameters:
+    ///     - deepLink: The deep link.
+    /// - Returns: `true` if the deeplink is handled, `false` otherwise.
+    @objc
+    private func handleAirshipDeeplink(_ deeplink: URL) -> Bool {
+        switch(deeplink.host) {
+        case Airship.appSettingsDeepLinkHost:
+            if let url = URL(string:UIApplication.openSettingsURLString) {
+                UIApplication.shared.open(url)
+            }
+            return true
+        case Airship.appStoreDeepLinkHost:
+            let appStoreUrl = "itms-apps://itunes.apple.com/app/"
+            guard let itunesID = getItunesID(deeplink) else {
+                return true
+            }
+            if let url = URL(string:appStoreUrl + itunesID) {
+                UIApplication.shared.open(url)
+            }
+            return true
+        default:
+            return false
+        }
+    }
+    
+    /// Gets the iTunes ID.
+    /// - Note: For internal use only. :nodoc:
+    /// - Parameters:
+    ///     - deepLink: The deep link.
+    /// - Returns: The iTunes ID or `nil` if it's not set.
+    private func getItunesID(_ deeplink: URL) -> String? {
+        let urlComponents = URLComponents(url: deeplink, resolvingAgainstBaseURL: false)
+        let queryMap = urlComponents?.queryItems?.reduce(into: [String : String?]()) {
+            $0[$1.name] = $1.value
+        } ?? [:]
+        return queryMap[Airship.itunesIDKey] as? String ?? config.itunesID
     }
 }

@@ -10,6 +10,10 @@
 @property(nonatomic, strong) UATestAirshipInstance *airshipInstance;
 @end
 
+@interface UAirship()
+- (bool) handleAirshipDeeplink:(NSURL *)deeplink;
+@end
+
 @implementation UAirshipTest
 
 - (void)setUp {
@@ -19,6 +23,45 @@
 }
 
 - (void)testUAirshipDeepLinks {
+    // App Settings deeplink
+    NSURL *deepLink = [NSURL URLWithString:@"uairship://app_settings"];
+    
+    id component = [self mockForProtocol:@protocol(UAComponent)];
+    [[component reject] deepLink:deepLink];
+    
+    XCTestExpectation *deepLinked = [self expectationWithDescription:@"Deep linked"];
+    [[UAirship shared] deepLink:deepLink completionHandler:^(BOOL result) {
+        XCTAssertTrue(result);
+        [deepLinked fulfill];
+    }];
+    
+    // Wait for the test expectations
+    [self waitForTestExpectations];
+    
+    [component verify];
+    XCTAssertTrue([[UAirship shared] handleAirshipDeeplink:deepLink]);
+    
+    
+    // App Store deeplink
+    deepLink = [NSURL URLWithString:@"uairship://app_store?itunesID=0123456789"];
+    
+    component = [self mockForProtocol:@protocol(UAComponent)];
+    [[component reject] deepLink:deepLink];
+    
+    deepLinked = [self expectationWithDescription:@"Deep linked"];
+    [[UAirship shared] deepLink:deepLink completionHandler:^(BOOL result) {
+        XCTAssertTrue(result);
+        [deepLinked fulfill];
+    }];
+    
+    // Wait for the test expectations
+    [self waitForTestExpectations];
+    
+    [component verify];
+    XCTAssertTrue([[UAirship shared] handleAirshipDeeplink:deepLink]);
+}
+
+- (void)testUAirshipComponentsDeepLinks {
     NSURL *deepLink = [NSURL URLWithString:@"uairship://some-deep-link"];
     id component1 = [self mockForProtocol:@protocol(UAComponent)];
     id component2 = [self mockForProtocol:@protocol(UAComponent)];
@@ -44,7 +87,7 @@
     [component3 verify];
 }
 
-- (void)testUAirshipDeepLinksAlwaysReturnsTrue {
+- (void)testUAirshipComponentsDeepLinksAlwaysReturnsTrue {
     NSURL *deepLink = [NSURL URLWithString:@"uairship://some-deep-link"];
     id component1 = [self mockForProtocol:@protocol(UAComponent)];
     id component2 = [self mockForProtocol:@protocol(UAComponent)];
