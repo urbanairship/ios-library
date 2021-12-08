@@ -386,6 +386,7 @@ struct MediaModel: Decodable, Equatable {
     let backgroundColor: ThomasColor?
     let url: String
     let mediaType: MediaType
+    let mediaFit: MediaFit
     let contentDescription: String?
     
     enum CodingKeys: String, CodingKey {
@@ -393,6 +394,7 @@ struct MediaModel: Decodable, Equatable {
         case url = "url"
         case border = "border"
         case backgroundColor = "background_color"
+        case mediaFit = "media_fit"
         case contentDescription = "content_description"
     }
 }
@@ -1055,6 +1057,12 @@ enum MediaType: String, Decodable, Equatable {
     case image = "image"
     case video = "video"
     case youtube = "youtube"
+}
+
+enum MediaFit: String, Decodable, Equatable {
+    case center = "center"
+    case centerInside = "center_inside"
+    case centerCrop = "center_crop"
 }
 
 enum TextAlignement: String, Decodable, Equatable {

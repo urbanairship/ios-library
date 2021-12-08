@@ -73,3 +73,40 @@ struct AirshipAsyncImage<Placeholder: View, ImageView: View> : View {
         }
     }
 }
+
+@available(iOS 13.0.0, tvOS 13.0.0, *)
+extension Image {
+    
+    @ViewBuilder
+    func fitMedia(mediaFit:MediaFit, width: CGFloat?, height: CGFloat?) -> some View {
+        switch mediaFit {
+        case .center:
+            center(width: width, height: height)
+        case .centerCrop:
+            centerCrop(width: width, height: height)
+        case .centerInside:
+            centerInside(width: width, height: height)
+        }
+    }
+    
+    func center(width: CGFloat?, height: CGFloat?) -> some View {
+        self
+            .frame(width: width, height: height, alignment: .center)
+            .clipped()
+    }
+    
+    func centerCrop(width: CGFloat?, height: CGFloat?) -> some View {
+        self
+            .resizable()
+            .scaledToFill()
+            .frame(width: width, height: height, alignment: .center)
+            .clipped()
+    }
+    
+    func centerInside(width: CGFloat?, height: CGFloat?) -> some View {
+        self
+            .resizable()
+            .scaledToFit()
+            .frame(width: width, height: height, alignment: .center)
+    }
+}

@@ -15,8 +15,7 @@ struct Media : View {
         case .image:
             AirshipAsyncImage(url: self.model.url) { image in
                 image
-                    .resizable()
-                    .scaledToFit()
+                    .fitMedia(mediaFit: self.model.mediaFit, width: self.constraints.width, height: self.constraints.height)
             } placeholder: {
                 AirshipProgressView()
             }

@@ -29,6 +29,8 @@ view:
     view:
       type: image_button
       identifier: "close-button"
+      button_click:
+      - dismiss
       image:
         type: icon
         icon: close
@@ -76,7 +78,7 @@ view:
           end: 8
         size:
           width: 100%
-          height: auto
+          height: 200
         view:
           type: media
           content_description: image media
@@ -86,40 +88,6 @@ view:
           background_color:
             default:
               hex: "#0000ff"
-      - margin:
-          top: 48
-          bottom: 8
-          start: 8
-          end: 8
-        size:
-          width: 100%
-          height: auto
-        view:
-          type: media
-          content_description: image media
-          media_fit: center_inside
-          url: https://media.giphy.com/media/6y70TnZ4ug9zetb5Oq/giphy.gif
-          media_type: image
-          background_color:
-            default:
-              hex: "#00ff00"
-      - margin:
-          top: 48
-          bottom: 8
-          start: 8
-          end: 8
-        size:
-          width: 100%
-          height: auto
-        view:
-          type: media
-          content_description: image media
-          media_fit: center_crop
-          url: https://media.giphy.com/media/6y70TnZ4ug9zetb5Oq/giphy.gif
-          media_type: image
-          background_color:
-            default:
-              hex: "#ff0000"
       #
       # Footer
       #
