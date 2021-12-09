@@ -294,7 +294,7 @@ NSString * const UAInAppMessageManagerTestScheduleID = @"schedule ID";
         [invocation getArgument:&dismissBlock atIndex:3];
         dismissBlock([UAInAppMessageResolution userDismissedResolution], @{});
         [displayCalled fulfill];
-    }] display:OCMOCK_ANY onDismiss:OCMOCK_ANY];
+    }] display:OCMOCK_ANY onDismiss:OCMOCK_ANY scheduleID:OCMOCK_ANY campaigns:OCMOCK_ANY];
 
     
     [[self.mockActionRunner expect] runActionsWithActionValues:self.message.actions

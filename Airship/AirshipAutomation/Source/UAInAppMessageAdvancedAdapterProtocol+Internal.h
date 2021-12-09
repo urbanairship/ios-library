@@ -12,9 +12,13 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param onDisplay A callback when a view is displayed.
  * @param onDismiss A callback when a view is dismissed.
+ * @param scheduleID  The schedule ID.
+ * @param campaigns  The campaigns.
  */
 - (void)display:(void (^)(NSDictionary *))onDisplay
-      onDismiss:(void (^)(UAInAppMessageResolution *, NSDictionary *))onDismiss;
+      onDismiss:(void (^)(UAInAppMessageResolution *, NSDictionary *))onDismiss
+     scheduleID:(NSString *)scheduleID
+      campaigns:(NSDictionary *)campaigns;
 
 @end
 

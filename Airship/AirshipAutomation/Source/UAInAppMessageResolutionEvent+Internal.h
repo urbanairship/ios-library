@@ -37,13 +37,15 @@ NS_ASSUME_NONNULL_BEGIN
  * @param resolution The in-app message resolution.
  * @param displayTime The amount of time the message was displayed.
  * @param campaigns The campaigns info.
+ * @param reportingContext The reporting context.
  * @return The resolution event.
  */
 + (instancetype)eventWithMessageID:(NSString *)messageID
                             source:(UAInAppMessageSource)source
                         resolution:(UAInAppMessageResolution *)resolution
                        displayTime:(NSTimeInterval)displayTime
-                         campaigns:(nullable NSDictionary *)campaigns;
+                         campaigns:(nullable NSDictionary *)campaigns
+                  reportingContext:(nullable NSDictionary *)reportingContext;
 
 @end
 

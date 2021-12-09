@@ -13,12 +13,12 @@ NSString *const UAInAppMessageDisplayEventLocaleKey = @"locale";
 
 @implementation UAInAppMessageDisplayEvent
 
-- (instancetype)initWithMessageID:(NSString *)messageID message:(UAInAppMessage *)message campaigns:(NSDictionary *)campaigns {
+- (instancetype)initWithMessageID:(NSString *)messageID message:(UAInAppMessage *)message campaigns:(NSDictionary *)campaigns reportingContext:(NSDictionary *)reportingContext {
     self = [super init];
     if (self) {
         NSMutableDictionary *mutableEventData = [UAInAppMessageEventUtils createDataWithMessageID:messageID
                                                                                           source:message.source
-                                                                                        campaigns:campaigns];
+                                                                                        campaigns:campaigns context:reportingContext];
         [mutableEventData setValue:message.renderedLocale forKey:UAInAppMessageDisplayEventLocaleKey];
         self.eventData = mutableEventData;
         return self;
@@ -26,8 +26,11 @@ NSString *const UAInAppMessageDisplayEventLocaleKey = @"locale";
     return nil;
 }
 
-+ (instancetype)eventWithMessageID:(NSString *)messageID message:(UAInAppMessage *)message campaigns:(NSDictionary *)campaigns {
-    return [[self alloc] initWithMessageID:messageID message:message campaigns:campaigns];
++ (instancetype)eventWithMessageID:(NSString *)messageID
+                           message:(UAInAppMessage *)message
+                         campaigns:(NSDictionary *)campaigns
+                  reportingContext:(NSDictionary *)reportingContext {
+    return [[self alloc] initWithMessageID:messageID message:message campaigns:campaigns reportingContext:reportingContext];
 }
 
 - (NSString *)eventType {

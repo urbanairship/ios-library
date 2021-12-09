@@ -60,15 +60,17 @@
 
     UAInAppMessageDisplayEvent *event = [UAInAppMessageDisplayEvent eventWithMessageID:@"remote-data-message"
                                                                                message:remoteDataMessage
-                                                                             campaigns:@{@"some": @"campaigns object"}];
+                                                                             campaigns:@{@"some": @"campaigns object"} reportingContext:@{}];
 
     NSDictionary *expectedData = @{ @"id": @{  @"message_id": @"remote-data-message",
                                                @"campaigns": @{@"some": @"campaigns object"} },
                                     @"source": @"urban-airship",
                                     @"conversion_send_id": [self.analytics conversionSendID],
                                     @"conversion_metadata": [self.analytics conversionPushMetadata],
-                                    @"locale" : self.renderedLocale
-                                    };
+                                    @"locale" : self.renderedLocale,
+                                    @"context": @{}
+                                    }
+    ;
 
     XCTAssertEqualObjects(event.data, expectedData);
     XCTAssertEqualObjects(event.eventType, @"in_app_display");
@@ -81,12 +83,15 @@
 
     event = [UAInAppMessageDisplayEvent eventWithMessageID:@"legacy-message"
                                                    message:legacyMessage
-                                                 campaigns:nil];
+                                                 campaigns:nil
+                                          reportingContext:@{}];
 
     expectedData = @{ @"id": @"legacy-message",
                       @"source": @"urban-airship",
                       @"conversion_send_id": [self.analytics conversionSendID],
-                      @"conversion_metadata": [self.analytics conversionPushMetadata] };
+                      @"conversion_metadata": [self.analytics conversionPushMetadata],
+                      @"context": @{}
+    };
 
     XCTAssertEqualObjects(event.data, expectedData);
     XCTAssertEqualObjects(event.eventType, @"in_app_display");
@@ -96,12 +101,14 @@
         builder.displayContent = self.displayContent;
     }];
 
-    event = [UAInAppMessageDisplayEvent eventWithMessageID:@"app-defined-message" message:appDefined campaigns:@{@"some": @"campaigns object"}];
+    event = [UAInAppMessageDisplayEvent eventWithMessageID:@"app-defined-message" message:appDefined campaigns:@{@"some": @"campaigns object"} reportingContext:@{}];
 
     expectedData = @{ @"id": @{ @"message_id": @"app-defined-message" },
                       @"source": @"app-defined",
                       @"conversion_send_id": [self.analytics conversionSendID],
-                      @"conversion_metadata": [self.analytics conversionPushMetadata] };
+                      @"conversion_metadata": [self.analytics conversionPushMetadata],
+                      @"context": @{}
+    };
 
     XCTAssertEqualObjects(event.data, expectedData);
     XCTAssertEqualObjects(event.eventType, @"in_app_display");

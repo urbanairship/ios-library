@@ -38,7 +38,7 @@ NSString *const UAInAppMessageResolutionEventTimedOut = @"timed_out";
 
     NSMutableDictionary *data = [UAInAppMessageEventUtils createDataWithMessageID:messageID
                                                                            source:UAInAppMessageSourceLegacyPush
-                                                                        campaigns:nil];
+                                                                        campaigns:nil context:nil];
 
     [data setValue:resolutionData forKey:UAInAppMessageResolutionEventResolutionKey];
 
@@ -51,7 +51,7 @@ NSString *const UAInAppMessageResolutionEventTimedOut = @"timed_out";
 
     NSMutableDictionary *data = [UAInAppMessageEventUtils createDataWithMessageID:messageID
                                                                            source:UAInAppMessageSourceLegacyPush
-                                                                        campaigns:nil];
+                                                                        campaigns:nil context:nil];
 
     [data setValue:resolutionData forKey:UAInAppMessageResolutionEventResolutionKey];
 
@@ -62,11 +62,12 @@ NSString *const UAInAppMessageResolutionEventTimedOut = @"timed_out";
                             source:(UAInAppMessageSource)source
                         resolution:(UAInAppMessageResolution *)resolution
                        displayTime:(NSTimeInterval)displayTime
-                         campaigns:(nullable NSDictionary *)campaigns {
+                         campaigns:(nullable NSDictionary *)campaigns
+                  reportingContext:(NSDictionary *)reportingContext{
 
     NSDictionary *resolutionData = [UAInAppMessageResolutionEvent createResolutionDataWithResolution:resolution
                                                                                          displayTime:displayTime];
-    NSMutableDictionary *data = [UAInAppMessageEventUtils createDataWithMessageID:messageID source:source campaigns:campaigns];
+    NSMutableDictionary *data = [UAInAppMessageEventUtils createDataWithMessageID:messageID source:source campaigns:campaigns context:reportingContext];
     [data setValue:resolutionData forKey:UAInAppMessageResolutionEventResolutionKey];
     return [[self alloc] initWithData:data];
 }

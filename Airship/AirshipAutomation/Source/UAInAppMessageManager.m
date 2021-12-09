@@ -447,7 +447,7 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
             // Display event
             UAInAppMessageDisplayEvent *event = [UAInAppMessageDisplayEvent eventWithMessageID:scheduleID
                                                                                        message:message
-                                                                                     campaigns:scheduleData.campaigns];
+                                                                                     campaigns:scheduleData.campaigns reportingContext:reportingContext];
             [self.analytics addEvent:event];
         }
     };
@@ -466,7 +466,7 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
                                                                        source:message.source
                                                                     resolution:resolution
                                                                    displayTime:timer.time
-                                                                     campaigns:scheduleData.campaigns];
+                                                                     campaigns:scheduleData.campaigns reportingContext:reportingContext];
             [self.analytics addEvent:event];
         }
 
@@ -504,7 +504,7 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
 
     if ([adapter conformsToProtocol:@protocol(UAInAppMessageAdvancedAdapterProtocol)]) {
         id<UAInAppMessageAdvancedAdapterProtocol> advancedAdapter = (id<UAInAppMessageAdvancedAdapterProtocol>) adapter;
-        [advancedAdapter display:onDisplay onDismiss:onDismiss];
+        [advancedAdapter display:onDisplay onDismiss:onDismiss scheduleID:scheduleID campaigns:scheduleData.campaigns];
     } else if ([adapter respondsToSelector:@selector(display:)]) {
         onDisplay(nil);
         [adapter display:^(UAInAppMessageResolution *resolution) {
@@ -523,7 +523,7 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
                                                                                       source:source
                                                                                   resolution:[UAInAppMessageResolution userDismissedResolution]
                                                                                  displayTime:0
-                                                                                   campaigns:campaigns];
+                                                                                   campaigns:campaigns reportingContext:nil];
 
     [self.analytics addEvent:event];
 }

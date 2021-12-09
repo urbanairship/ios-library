@@ -115,7 +115,8 @@
                                                           source:message.source
                                                       resolution:resolution
                                                      displayTime:3.141
-                                                       campaigns:nil];
+                                                       campaigns:nil
+                                                reportingContext:nil];
     } expectedResolutionData:expectedResolutionData];
 }
 
@@ -134,7 +135,8 @@
                                                           source:message.source
                                                       resolution:resolution
                                                      displayTime:3.141
-                                                       campaigns:nil];
+                                                       campaigns:nil
+                                                reportingContext:nil];
     } expectedResolutionData:expectedResolutionData];
 }
 
@@ -156,7 +158,8 @@
                                                           source:message.source
                                                       resolution:resolution
                                                      displayTime:3.141
-                                                       campaigns:@{@"categories": @[@"neat"]}];
+                                                       campaigns:@{@"categories": @[@"neat"]}
+                                                reportingContext:nil];
     } expectedResolutionData:expectedResolutionData];
 }
 
@@ -175,7 +178,8 @@
                                                           source:message.source
                                                       resolution:resolution
                                                      displayTime:3.141
-                                                       campaigns:@{@"categories": @[@"neat"]}];
+                                                       campaigns:@{@"categories": @[@"neat"]}
+                                                reportingContext:nil];
     } expectedResolutionData:expectedResolutionData];
 }
 
@@ -194,7 +198,8 @@
                                                           source:message.source
                                                       resolution:resolution
                                                      displayTime:3.141
-                                                       campaigns:@{@"categories": @[@"neat"]}];
+                                                       campaigns:@{@"categories": @[@"neat"]}
+                                                reportingContext:nil];
     } expectedResolutionData:expectedResolutionData];}
 
 /**
@@ -212,7 +217,7 @@
                                                           source:message.source
                                                       resolution:resolution
                                                      displayTime:3.141
-                                                       campaigns:@{@"categories": @[@"neat"]}];
+                                                       campaigns:@{@"categories": @[@"neat"]} reportingContext:nil];
     } expectedResolutionData:expectedResolutionData];
 }
 

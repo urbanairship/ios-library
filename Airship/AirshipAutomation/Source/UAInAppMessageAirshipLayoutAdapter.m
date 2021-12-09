@@ -5,6 +5,11 @@
 #import "UAInAppMessageSceneManager.h"
 #import "UAInAppMessageAdvancedAdapterProtocol+Internal.h"
 #import "UAAutomationNativeBridgeExtension+Internal.h"
+#import "UAInAppMessageButtonTapEvent+Internal.h"
+#import "UAInAppMessagePageViewEvent+Internal.h"
+#import "UAInAppMessagePageSwipeEvent+Internal.h"
+#import "UAInAppMessageFormResultEvent+Internal.h"
+#import "UAInAppMessageFormDisplayEvent+Internal.h"
 
 #if __has_include("AirshipKit/AirshipKit-Swift.h")
 #import <AirshipKit/AirshipKit-Swift.h>
@@ -16,6 +21,8 @@
 
 @interface UAInAppMessageAirshipLayoutAdapter() <UAThomasDelegate>
 @property (nonatomic, strong) UAInAppMessage *message;
+@property (nonatomic, strong) NSString *messageID;
+@property (nonatomic, strong) NSDictionary *campaigns;
 @property (nonatomic, strong) UAInAppMessageAirshipLayoutDisplayContent *displayContent;
 @property (nonatomic, copy, nullable) UADisposable *(^deferredDisplay)(void);
 @property (nonatomic, copy, nullable) void (^onDismiss)(UAInAppMessageResolution *, NSDictionary *);
@@ -73,10 +80,14 @@
 
 
 - (void)display:(void (^)(NSDictionary *))onDisplay
-      onDismiss:(void (^)(UAInAppMessageResolution *, NSDictionary *))onDismiss {
+      onDismiss:(void (^)(UAInAppMessageResolution *, NSDictionary *))onDismiss
+     scheduleID:(nonnull NSString *)scheduleID
+      campaigns:(nonnull NSDictionary *)campaigns {
     
     self.onDisplay = onDisplay;
     self.onDismiss = onDismiss;
+    self.messageID = scheduleID;
+    self.campaigns = campaigns;
     self.deferredDisplay();
 }
 
@@ -117,23 +128,28 @@
 }
 
 - (void)onButtonTappedWithButtonIdentifier:(NSString * _Nonnull)buttonIdentifier reportingContext:(NSDictionary<NSString *,id> * _Nonnull)reportingContext {
-    // TODO - add new button tap event to analytics
+    UAInAppMessageButtonTapEvent *event = [UAInAppMessageButtonTapEvent eventWithMessage:self.message messageID:self.messageID buttonIdentifier:buttonIdentifier reportingContext:reportingContext campaigns:self.campaigns];
+    [[UAirship analytics] addEvent:event];
 }
 
 - (void)onFormDisplayedWithFormIdentifier:(NSString * _Nonnull)formIdentifier reportingContext:(NSDictionary<NSString *,id> * _Nonnull)reportingContext {
-    // TODO - add new form displayed event to analytics
+    UAInAppMessageFormDisplayEvent *event = [UAInAppMessageFormDisplayEvent eventWithMessage:self.message messageID:self.messageID formIdentifier:formIdentifier reportingContext:reportingContext campaigns:self.campaigns];
+    [[UAirship analytics] addEvent:event];
 }
 
 - (void)onFormSubmittedWithFormIdentifier:(NSString * _Nonnull)formIdentifier formData:(NSDictionary<NSString *,id> * _Nonnull)formData reportingContext:(NSDictionary<NSString *,id> * _Nonnull)reportingContext {
-    // TODO - add new form submit event to analytics
+    UAInAppMessageFormResultEvent *event = [UAInAppMessageFormResultEvent eventWithMessage:self.message messageID:self.messageID formIdentifier:formIdentifier formData:formData reportingContext:reportingContext campaigns:self.campaigns];
+    [[UAirship analytics] addEvent:event];
 }
 
 - (void)onPageViewedWithPagerIdentifier:(NSString * _Nonnull)pagerIdentifier pageIndex:(NSInteger)pageIndex pageCount:(NSInteger)pageCount completed:(BOOL)completed reportingContext:(NSDictionary<NSString *,id> * _Nonnull)reportingContext {
-    // TODO - add new page viewed event to analytics
+    UAInAppMessagePageViewEvent *event = [UAInAppMessagePageViewEvent eventWithMessage:self.message messageID:self.messageID pagerIdentifier:pagerIdentifier pageIndex:pageIndex pageCount:pageCount completed:completed reportingContext:reportingContext campaigns:self.campaigns];
+    [[UAirship analytics] addEvent:event];
 }
 
 - (void)onPageSwipedWithPagerIdentifier:(NSString * _Nonnull)pagerIdentifier fromIndex:(NSInteger)fromIndex toIndex:(NSInteger)toIndex reportingContext:(NSDictionary<NSString *,id> * _Nonnull)reportingContext {
-    
+    UAInAppMessagePageSwipeEvent *event = [UAInAppMessagePageSwipeEvent eventWithMessage:self.message messageID:self.messageID pagerIdentifier:pagerIdentifier fromIndex:fromIndex toIndex:toIndex reportingContext:reportingContext campaigns:self.campaigns];
+    [[UAirship analytics] addEvent:event];
 }
 
 

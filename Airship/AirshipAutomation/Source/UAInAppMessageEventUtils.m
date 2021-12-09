@@ -16,6 +16,8 @@ NSString *const UAInAppMessageEventSourceKey = @"source";
 
 NSString *const UAInAppMessageEventMessageIDKey = @"message_id";
 NSString *const UAInAppMessageEventCampaignsKey = @"campaigns";
+NSString *const UAInAppMessageEventLocaleKey = @"locale";
+NSString *const UAInAppMessageEventContextKey = @"context";
 
 NSString *const UAInAppMessageEventUrbanAirshipSourceValue = @"urban-airship";
 NSString *const UAInAppMessageEventAppDefinedSourceValue = @"app-defined";
@@ -24,7 +26,8 @@ NSString *const UAInAppMessageEventAppDefinedSourceValue = @"app-defined";
 
 + (NSMutableDictionary *)createDataWithMessageID:(NSString *)messageID
                                           source:(UAInAppMessageSource)source
-                                       campaigns:(NSDictionary *)campaigns {
+                                       campaigns:(NSDictionary *)campaigns
+                                         context:(nullable NSDictionary *)context {
 
 
     id<UAAnalyticsProtocol> analytics = UAAnalytics.supplier();
@@ -36,8 +39,34 @@ NSString *const UAInAppMessageEventAppDefinedSourceValue = @"app-defined";
     [data setValue:identifier forKey:UAInAppMessageEventIDKey];
     [data setValue:analytics.conversionSendID forKey:UAInAppMessageEventConversionSendIDKey];
     [data setValue:analytics.conversionPushMetadata forKey:UAInAppMessageEventConversionMetadataKey];
+    [data setValue:context forKey:UAInAppMessageEventContextKey];
 
     if (source == UAInAppMessageSourceAppDefined) {
+        [data setValue:UAInAppMessageEventAppDefinedSourceValue forKey:UAInAppMessageEventSourceKey];
+    } else {
+        [data setValue:UAInAppMessageEventUrbanAirshipSourceValue forKey:UAInAppMessageEventSourceKey];
+    }
+    return data;
+}
+
++ (NSMutableDictionary *)createDataWithMessage:(UAInAppMessage *)message
+                                     messageID:(NSString *)messageID
+                                       context:(NSDictionary *)context
+                                     campaigns:(NSDictionary *)campaigns {
+
+    id<UAAnalyticsProtocol> analytics = UAAnalytics.supplier();
+    id identifier = [UAInAppMessageEventUtils createIDMapWithMessageID:messageID
+                                                                source:message.source
+                                                             campaigns:campaigns];
+
+    NSMutableDictionary *data = [NSMutableDictionary dictionary];
+    [data setValue:identifier forKey:UAInAppMessageEventIDKey];
+    [data setValue:analytics.conversionSendID forKey:UAInAppMessageEventConversionSendIDKey];
+    [data setValue:analytics.conversionPushMetadata forKey:UAInAppMessageEventConversionMetadataKey];
+    [data setValue:message.renderedLocale forKey:UAInAppMessageEventLocaleKey];
+    [data setValue:context forKey:UAInAppMessageEventContextKey];
+
+    if (message.source == UAInAppMessageSourceAppDefined) {
         [data setValue:UAInAppMessageEventAppDefinedSourceValue forKey:UAInAppMessageEventSourceKey];
     } else {
         [data setValue:UAInAppMessageEventUrbanAirshipSourceValue forKey:UAInAppMessageEventSourceKey];

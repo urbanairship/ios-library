@@ -19,11 +19,13 @@ NS_ASSUME_NONNULL_BEGIN
  * @param messageID The message ID.
  * @param message The in-app message.
  * @param campaigns Optional campaigns info.
+ * @param reportingContext The reporting context.
  * @return An in-app display event.
  */
 + (instancetype)eventWithMessageID:(NSString *)messageID
                            message:(UAInAppMessage *)message
-                         campaigns:(nullable NSDictionary *)campaigns;
+                         campaigns:(nullable NSDictionary *)campaigns
+                  reportingContext:(NSDictionary *)reportingContext;
 
 @end
 
