@@ -6,7 +6,7 @@ struct PagerController : View {
     let model: PagerControllerModel
     let constraints: ViewConstraints
     @State var pagerState: PagerState
-    @Environment(\.reportingContext) var reportingContext
+    @Environment(\.layoutState) var layoutState
 
     init(model: PagerControllerModel, constraints: ViewConstraints) {
         self.model = model
@@ -16,7 +16,7 @@ struct PagerController : View {
     
     var body: some View {
         ViewFactory.createView(model: self.model.view, constraints: constraints)
-            .environment(\.reportingContext, reportingContext.override(pagerState: pagerState))
+            .environment(\.layoutState, layoutState.override(pagerState: pagerState))
             .constraints(constraints)
             .background(self.model.backgroundColor)
             .border(self.model.border)

@@ -176,6 +176,11 @@ extern NSUInteger const UAScheduleDataVersion;
 @property (nullable, nonatomic, copy) NSDictionary *campaigns;
 
 /**
+ * The reporting context.
+ */
+@property (nullable, nonatomic, copy) NSDictionary *reportingContext;
+
+/**
  * The frequency constraint IDs.
  */
 @property (nullable, nonatomic, copy) NSArray<NSString *> *frequencyConstraintIDs;

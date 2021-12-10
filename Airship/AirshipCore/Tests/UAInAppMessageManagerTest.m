@@ -117,6 +117,7 @@ NSString * const UAInAppMessageManagerTestScheduleID = @"schedule ID";
     [self.manager prepareMessage:self.message
                       scheduleID:UAInAppMessageManagerTestScheduleID
                        campaigns:@{@"categories": @[@"neat"]}
+                reportingContext:@{@"something": @"something"}
                completionHandler:^(UAAutomationSchedulePrepareResult result) {
         XCTAssertEqual(UAAutomationSchedulePrepareResultContinue, result);
         [prepareFinished fulfill];
@@ -142,6 +143,7 @@ NSString * const UAInAppMessageManagerTestScheduleID = @"schedule ID";
     [self.manager prepareMessage:self.message
                       scheduleID:UAInAppMessageManagerTestScheduleID
                        campaigns:@{@"categories": @[@"neat"]}
+                reportingContext:@{@"something": @"something"}
                completionHandler:^(UAAutomationSchedulePrepareResult result) {
         XCTAssertEqual(UAAutomationSchedulePrepareResultPenalize, result);
         [prepareFinished fulfill];
@@ -191,6 +193,7 @@ NSString * const UAInAppMessageManagerTestScheduleID = @"schedule ID";
     [self.manager prepareMessage:self.message
                       scheduleID:UAInAppMessageManagerTestScheduleID
                        campaigns:nil
+                reportingContext:@{@"something": @"something"}
                completionHandler:^(UAAutomationSchedulePrepareResult result) {
         XCTAssertEqual(UAAutomationSchedulePrepareResultCancel, result);
         [prepareFinished fulfill];
@@ -208,6 +211,7 @@ NSString * const UAInAppMessageManagerTestScheduleID = @"schedule ID";
     [self.manager prepareMessage:self.message
                       scheduleID:UAInAppMessageManagerTestScheduleID
                        campaigns:@{@"categories": @[@"neat"]}
+                reportingContext:@{@"something": @"something"}
                completionHandler:^(UAAutomationSchedulePrepareResult result) {
         XCTAssertEqual(UAAutomationSchedulePrepareResultPenalize, result);
         [prepareFinished fulfill];
@@ -225,6 +229,7 @@ NSString * const UAInAppMessageManagerTestScheduleID = @"schedule ID";
     [self.manager prepareMessage:self.message
                       scheduleID:UAInAppMessageManagerTestScheduleID
                        campaigns:@{@"categories": @[@"neat"]}
+                reportingContext:@{@"something": @"something"}
                completionHandler:^(UAAutomationSchedulePrepareResult result) {
         XCTAssertEqual(UAAutomationSchedulePrepareResultPenalize, result);
         [prepareFinished fulfill];
@@ -286,15 +291,11 @@ NSString * const UAInAppMessageManagerTestScheduleID = @"schedule ID";
     // Display
     XCTestExpectation *displayCalled = [self expectationWithDescription:@"display should be called"];
     [[[self.mockAdapter expect] andDo:^(NSInvocation *invocation) {
-        void (^displayBlock)(NSDictionary *);
-        [invocation getArgument:&displayBlock atIndex:2];
-        displayBlock(@{});
-
         void (^dismissBlock)(UAInAppMessageResolution *, NSDictionary *);
-        [invocation getArgument:&dismissBlock atIndex:3];
+        [invocation getArgument:&dismissBlock atIndex:4];
         dismissBlock([UAInAppMessageResolution userDismissedResolution], @{});
         [displayCalled fulfill];
-    }] display:OCMOCK_ANY onDismiss:OCMOCK_ANY scheduleID:OCMOCK_ANY campaigns:OCMOCK_ANY];
+    }] displayWithScheduleID:OCMOCK_ANY onEvent:OCMOCK_ANY onDismiss:OCMOCK_ANY];
 
     
     [[self.mockActionRunner expect] runActionsWithActionValues:self.message.actions

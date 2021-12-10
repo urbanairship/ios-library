@@ -20,8 +20,8 @@ private struct VisibleEnvironmentKey: EnvironmentKey {
 }
 
 @available(iOS 13.0.0, tvOS 13.0, *)
-private struct ReportingContextEnvironmentKey: EnvironmentKey {
-    static let defaultValue: ReportingContext = ReportingContext.empty
+private struct LayoutStateEnvironmentKey: EnvironmentKey {
+    static let defaultValue: LayoutState = LayoutState.empty
 }
 
 @available(iOS 13.0.0, tvOS 13.0, *)
@@ -41,9 +41,9 @@ extension EnvironmentValues {
         set { self[VisibleEnvironmentKey.self] = newValue }
     }
     
-    var reportingContext: ReportingContext {
-        get { self[ReportingContextEnvironmentKey.self] }
-        set { self[ReportingContextEnvironmentKey.self] = newValue }
+    var layoutState: LayoutState {
+        get { self[LayoutStateEnvironmentKey.self] }
+        set { self[LayoutStateEnvironmentKey.self] = newValue }
     }
 }
 

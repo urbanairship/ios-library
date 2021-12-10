@@ -18,71 +18,65 @@ class ThomasEnvironment : ObservableObject {
         self.onDismiss = onDismiss
     }
     
-    func displayed(reportingContext: ReportingContext) {
-        let reportingContextPayload = reportingContext.toPayload()
-        AirshipLogger.debug("onDisplayed reportingContext: \(reportingContextPayload)")
-        self.delegate.onDisplayed(reportingContext: reportingContextPayload)
-    }
-    
-    func submitForm(_ formState: FormState, reportingContext: ReportingContext) {
+    func submitForm(_ formState: FormState, layoutState: LayoutState) {
         if let data = formState.data.toPayload() {
-            let reportingContextPayload = reportingContext.toPayload()
-            AirshipLogger.debug("onFormSubmitted \(formState.identifier) formData: \(data) reportingContext: \(reportingContextPayload)")
-            self.delegate.onFormSubmitted(formIdentifier: formState.identifier, formData: data, reportingContext: reportingContextPayload)
+            let layoutStatePayload = layoutState.toPayload()
+            AirshipLogger.debug("onFormSubmitted \(formState.identifier) formData: \(data) layoutState: \(layoutStatePayload)")
+            self.delegate.onFormSubmitted(formIdentifier: formState.identifier, formData: data, layoutState: layoutStatePayload)
         }
     }
     
-    func formDisplayed(_ formIdentifier: String, reportingContext: ReportingContext) {
-        let reportingContextPayload = reportingContext.toPayload()
-        AirshipLogger.debug("onFormDisplayed \(formIdentifier) reportingContext: \(reportingContextPayload)")
-        self.delegate.onFormDisplayed(formIdentifier: formIdentifier, reportingContext: reportingContextPayload)
+    func formDisplayed(_ formIdentifier: String, layoutState: LayoutState) {
+        let layoutStatePayload = layoutState.toPayload()
+        AirshipLogger.debug("onFormDisplayed \(formIdentifier) layoutState: \(layoutStatePayload)")
+        self.delegate.onFormDisplayed(formIdentifier: formIdentifier, layoutState: layoutStatePayload)
     }
         
-    func buttonTapped(buttonIdentifier: String, reportingContext: ReportingContext) {
-        let reportingContextPayload = reportingContext.toPayload()
-        AirshipLogger.debug("onButtonTapped \(buttonIdentifier) reportingContext: \(reportingContextPayload)")
-        self.delegate.onButtonTapped(buttonIdentifier: buttonIdentifier, reportingContext: reportingContextPayload)
+    func buttonTapped(buttonIdentifier: String, layoutState: LayoutState) {
+        let layoutStatePayload = layoutState.toPayload()
+        AirshipLogger.debug("onButtonTapped \(buttonIdentifier) layoutState: \(layoutStatePayload)")
+        self.delegate.onButtonTapped(buttonIdentifier: buttonIdentifier, layoutState: layoutStatePayload)
     }
     
-    func pageViewed(pageState: PagerState, reportingContext: ReportingContext) {
-        let reportingContextPayload = reportingContext.toPayload()
-        AirshipLogger.debug("onPageViewed \(pageState.identifier) pageIndex: \(pageState.index) pageCount: \(pageState.pages) completed: \(pageState.completed) reportingContext: \(reportingContextPayload)")
+    func pageViewed(pageState: PagerState, layoutState: LayoutState) {
+        let layoutStatePayload = layoutState.toPayload()
+        AirshipLogger.debug("onPageViewed \(pageState.identifier) pageIndex: \(pageState.index) pageCount: \(pageState.pages) completed: \(pageState.completed) layoutState: \(layoutStatePayload)")
         self.delegate.onPageViewed(pagerIdentifier: pageState.identifier,
                                    pageIndex: pageState.index,
                                    pageCount: pageState.pages,
                                    completed: pageState.completed,
-                                   reportingContext: reportingContextPayload)
+                                   layoutState: layoutStatePayload)
     }
     
     
-    func dismiss(buttonIdentifier: String, buttonDescription: String?, cancel: Bool, reportingContext: ReportingContext? = nil) {
+    func dismiss(buttonIdentifier: String, buttonDescription: String?, cancel: Bool, layoutState: LayoutState) {
         tryDismiss {
-            let reportingContextPayload = reportingContext?.toPayload() ?? [:]
-            AirshipLogger.debug("onDismissed buttonIdentifier: \(buttonIdentifier) buttonDescription: \(buttonDescription ?? "") reportingContext: \(reportingContextPayload)")
-            self.delegate.onDismissed(reportingContext: reportingContextPayload)
+            let layoutStatePayload = layoutState.toPayload()
+            AirshipLogger.debug("onDismissed buttonIdentifier: \(buttonIdentifier) buttonDescription: \(buttonDescription ?? "") layoutState: \(layoutStatePayload)")
+            self.delegate.onDismissed(layoutState: layoutStatePayload)
         }
     }
     
-    func dismiss(reportingContext: ReportingContext? = nil) {
+    func dismiss(layoutState: LayoutState? = nil) {
         tryDismiss {
-            let reportingContextPayload = reportingContext?.toPayload() ?? [:]
-            AirshipLogger.debug("onDismissed reportingContext: \(reportingContextPayload)")
-            self.delegate.onDismissed(reportingContext: reportingContextPayload)
+            let layoutStatePayload = layoutState?.toPayload() ?? [:]
+            AirshipLogger.debug("onDismissed layoutState: \(layoutStatePayload)")
+            self.delegate.onDismissed(layoutState: layoutStatePayload)
         }
     }
     
-    func timedOut(reportingContext: ReportingContext? = nil) {
+    func timedOut(layoutState: LayoutState? = nil) {
         tryDismiss {
-            let reportingContextPayload = reportingContext?.toPayload() ?? [:]
-            AirshipLogger.debug("onTimedOut reportingContext: \(reportingContextPayload)")
-            self.delegate.onTimedOut(reportingContext: reportingContextPayload)
+            let layoutStatePayload = layoutState?.toPayload() ?? [:]
+            AirshipLogger.debug("onTimedOut layoutState: \(layoutStatePayload)")
+            self.delegate.onTimedOut(layoutState: layoutStatePayload)
         }
     }
     
-    func pageSwiped(_ pagerIdentifier: String, fromIndex: Int, toIndex: Int, reportingContext: ReportingContext) {
-        let reportingContextPayload = reportingContext.toPayload()
-        AirshipLogger.debug("onPageSwiped \(pagerIdentifier) fromIndex: \(fromIndex) toIndex: \(toIndex) reportingContext: \(reportingContextPayload)")
-        self.delegate.onPageSwiped(pagerIdentifier: pagerIdentifier, fromIndex: fromIndex, toIndex: toIndex, reportingContext: reportingContextPayload)
+    func pageSwiped(_ pagerIdentifier: String, fromIndex: Int, toIndex: Int, layoutState: LayoutState) {
+        let layoutStatePayload = layoutState.toPayload()
+        AirshipLogger.debug("onPageSwiped \(pagerIdentifier) fromIndex: \(fromIndex) toIndex: \(toIndex) layoutState: \(layoutStatePayload)")
+        self.delegate.onPageSwiped(pagerIdentifier: pagerIdentifier, fromIndex: fromIndex, toIndex: toIndex, layoutState: layoutStatePayload)
     }
     
     private func tryDismiss(callback: () -> Void) {
@@ -203,13 +197,9 @@ private extension FormInputData {
 }
 
 @available(iOS 13.0.0, tvOS 13.0, *)
-private extension ReportingContext {
+private extension LayoutState {
     func toPayload() -> [String: Any] {
         var payload: [String: Any] = [:]
-        if let layoutContext = layoutContext {
-            payload["reporting_context"] = layoutContext.unWrap()
-        }
-        
         if let pagerState = pagerState {
             payload["pager"] = [
                 "identifier": pagerState.identifier,

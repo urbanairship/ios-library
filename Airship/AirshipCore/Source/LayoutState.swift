@@ -3,14 +3,13 @@
 import Foundation
 
 @available(iOS 13.0.0, tvOS 13.0, *)
-struct ReportingContext {
-    static let empty = ReportingContext(layoutContext: nil, pagerState: nil, formState: nil)
+struct LayoutState {
+    static let empty = LayoutState(pagerState: nil, formState: nil)
     
-    let layoutContext: JSON?
     var pagerState: PagerState?
     var formState: FormState?
     
-    func override(pagerState: PagerState? = nil, formState: FormState? = nil) -> ReportingContext {
+    func override(pagerState: PagerState? = nil, formState: FormState? = nil) -> LayoutState {
         var context = self
         if (pagerState != nil) {
             context.pagerState = pagerState

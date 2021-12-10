@@ -106,7 +106,7 @@ public class Thomas: NSObject {
             }
             
             return Disposable {
-                environment.dismiss(reportingContext: ReportingContext(layoutContext: layout.reportingContext))
+                environment.dismiss()
             }
         }
     }
@@ -139,7 +139,7 @@ public class Thomas: NSObject {
             window?.makeKeyAndVisible()
             
             return Disposable {
-                environment.dismiss(reportingContext: ReportingContext(layoutContext: layout.reportingContext))
+                environment.dismiss()
             }
         }
     }

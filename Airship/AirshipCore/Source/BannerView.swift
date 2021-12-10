@@ -12,7 +12,7 @@ struct BannerView: View {
     let layout: Layout
     
     @ObservedObject var thomasEnvironment: ThomasEnvironment
-    @Environment(\.reportingContext) var reportingContext
+    @Environment(\.layoutState) var layoutState
     @State private var offsetPercentWrapper = OffsetPercentWrapper()
 
     @Environment(\.windowSize) private var windowSize

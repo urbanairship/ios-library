@@ -9,8 +9,7 @@
 #import "UAInAppMessageHTMLAdapter.h"
 #import "UAInAppMessageAirshipLayoutAdapter+Internal.h"
 #import "UAInAppMessage+Internal.h"
-#import "UAInAppMessageResolutionEvent+Internal.h"
-#import "UAInAppMessageDisplayEvent+Internal.h"
+#import "UAInAppReporting+Internal.h"
 #import "UAInAppMessageDefaultDisplayCoordinator.h"
 #import "UAInAppMessageAssetManager+Internal.h"
 #import "UAInAppMessageImmediateDisplayCoordinator.h"
@@ -39,12 +38,14 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
 @property(nonatomic, copy, nonnull) NSString *scheduleID;
 @property(nonatomic, strong, nonnull) UAInAppMessage *message;
 @property(nonatomic, strong, nonnull) id<UAInAppMessageDisplayCoordinator> displayCoordinator;
-@property(nonatomic, copy, nullable) NSDictionary *campaigns;
+@property(nonatomic, copy, nullable) id campaigns;
+@property(nonatomic, copy, nullable) id reportingContext;
 
 + (instancetype)dataWithAdapter:(id<UAInAppMessageAdapterProtocol>)adapter
                      scheduleID:(NSString *)scheduleID
                         message:(UAInAppMessage *)message
-                      campaigns:(nullable NSDictionary *)campaigns
+                      campaigns:(nullable id)campaigns
+               reportingContext:(nullable id)reportingContext
              displayCoordinator:(id<UAInAppMessageDisplayCoordinator>)displayCoordinator;
 
 
@@ -55,7 +56,8 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
 - (instancetype)initWithAdapter:(id<UAInAppMessageAdapterProtocol>)adapter
                      scheduleID:(NSString *)scheduleID
                         message:(UAInAppMessage *)message
-                      campaigns:(nullable NSDictionary *)campaigns
+                      campaigns:(nullable id)campaigns
+               reportingContext:(nullable id)reportingContext
              displayCoordinator:(id<UAInAppMessageDisplayCoordinator>)displayCoordinator {
 
     self = [super init];
@@ -65,6 +67,7 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
         self.scheduleID = scheduleID;
         self.message = message;
         self.campaigns = campaigns;
+        self.reportingContext = reportingContext;
         self.displayCoordinator = displayCoordinator;
     }
 
@@ -74,13 +77,15 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
 + (instancetype)dataWithAdapter:(id<UAInAppMessageAdapterProtocol>)adapter
                      scheduleID:(NSString *)scheduleID
                         message:(UAInAppMessage *)message
-                      campaigns:(nullable NSDictionary *)campaigns
+                      campaigns:(nullable id)campaigns
+               reportingContext:(nullable id)reportingContext
              displayCoordinator:(id<UAInAppMessageDisplayCoordinator>)displayCoordinator {
 
     return [[self alloc] initWithAdapter:adapter
                               scheduleID:scheduleID
                                  message:message
                                campaigns:campaigns
+                        reportingContext:reportingContext
                       displayCoordinator:displayCoordinator];
 }
 
@@ -282,7 +287,8 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
 
 - (void)prepareMessage:(UAInAppMessage *)message
             scheduleID:(NSString *)scheduleID
-             campaigns:(nullable NSDictionary *)campaigns
+             campaigns:(nullable id)campaigns
+      reportingContext:(nullable id)reportingContext
      completionHandler:(void (^)(UAAutomationSchedulePrepareResult))completionHandler {
     // Allow the delegate to extend the message if desired.
     id<UAInAppMessagingDelegate> delegate = self.delegate;
@@ -338,6 +344,7 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
                                                                                  scheduleID:scheduleID
                                                                                     message:message
                                                                                   campaigns:campaigns
+                                                                           reportingContext:reportingContext
                                                                          displayCoordinator:displayCoordinator];
                 break;
             case UARetriableResultRetry:
@@ -434,40 +441,37 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
         [displayCoordinator didBeginDisplayingMessage:message];
     }
 
-    UA_WEAKIFY(self);
     UAActiveTimer *timer = [[UAActiveTimer alloc] init];
-    void (^onDisplay)(NSDictionary *) = ^(NSDictionary *reportingContext) {
+    
+    UA_WEAKIFY(self);
+    void (^onDisplay)(void) = ^{
         // Display time timer
         [timer start];
         
         if (message.isReportingEnabled) {
-            
-            // TODO add reporting context
-            
             // Display event
-            UAInAppMessageDisplayEvent *event = [UAInAppMessageDisplayEvent eventWithMessageID:scheduleID
-                                                                                       message:message
-                                                                                     campaigns:scheduleData.campaigns reportingContext:reportingContext];
-            [self.analytics addEvent:event];
+            UAInAppReporting *reporting = [UAInAppReporting displayEventWithScheduleID:scheduleID message:message];
+            reporting.campaigns = scheduleData.campaigns;
+            reporting.reportingContext = scheduleData.reportingContext;
+            [reporting record:self.analytics];
         }
     };
     
-    void (^onDismiss)(UAInAppMessageResolution *, NSDictionary *) = ^(UAInAppMessageResolution *resolution, NSDictionary *reportingContext) {
+    void (^onDismiss)(UAInAppMessageResolution *, NSDictionary *) = ^(UAInAppMessageResolution *resolution, NSDictionary *layoutState) {
 
         UA_STRONGIFY(self);
         UA_LDEBUG(@"Schedule %@ finished displaying", scheduleID);
 
-        
         [timer stop];
         
-        // TODO add reporting context
         if (message.isReportingEnabled) {
-            UAInAppMessageResolutionEvent *event = [UAInAppMessageResolutionEvent eventWithMessageID:scheduleID
-                                                                       source:message.source
-                                                                    resolution:resolution
-                                                                   displayTime:timer.time
-                                                                     campaigns:scheduleData.campaigns reportingContext:reportingContext];
-            [self.analytics addEvent:event];
+            UAInAppReporting *reporting = [UAInAppReporting resolutionEventWithScheduleID:scheduleID
+                                                                                  message:message
+                                                                               resolution:resolution displayTime:timer.time];
+            reporting.layoutState = layoutState;
+            reporting.campaigns = scheduleData.campaigns;
+            reporting.reportingContext = scheduleData.reportingContext;
+            [reporting record:self.analytics];
         }
 
         // Cancel button
@@ -503,10 +507,19 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
     };
 
     if ([adapter conformsToProtocol:@protocol(UAInAppMessageAdvancedAdapterProtocol)]) {
+        onDisplay();
         id<UAInAppMessageAdvancedAdapterProtocol> advancedAdapter = (id<UAInAppMessageAdvancedAdapterProtocol>) adapter;
-        [advancedAdapter display:onDisplay onDismiss:onDismiss scheduleID:scheduleID campaigns:scheduleData.campaigns];
+        [advancedAdapter displayWithScheduleID:scheduleID
+                                       onEvent:^(UAInAppReporting *reporting) {
+            
+            if (message.isReportingEnabled) {
+                reporting.reportingContext = scheduleData.reportingContext;
+                reporting.campaigns = scheduleData.campaigns;
+                [reporting record:self.analytics];
+            }
+        } onDismiss:onDismiss];
     } else if ([adapter respondsToSelector:@selector(display:)]) {
-        onDisplay(nil);
+        onDisplay();
         [adapter display:^(UAInAppMessageResolution *resolution) {
             onDismiss(resolution, nil);
         }];
@@ -517,15 +530,15 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
 
 - (void)messageExecutionInterrupted:(nullable UAInAppMessage *)message
                          scheduleID:(NSString *)scheduleID
-                          campaigns:(nullable NSDictionary *)campaigns {
-    UAInAppMessageSource source = message == nil ? UAInAppMessageSourceRemoteData : message.source;
-    UAInAppMessageResolutionEvent *event = [UAInAppMessageResolutionEvent eventWithMessageID:scheduleID
-                                                                                      source:source
-                                                                                  resolution:[UAInAppMessageResolution userDismissedResolution]
-                                                                                 displayTime:0
-                                                                                   campaigns:campaigns reportingContext:nil];
+                          campaigns:(nullable NSDictionary *)campaigns
+                   reportingContext:(nullable NSDictionary *)reportingContext {
 
-    [self.analytics addEvent:event];
+    UAInAppMessageSource source = message == nil ? UAInAppMessageSourceRemoteData : message.source;
+    
+    UAInAppReporting *reporting = [UAInAppReporting interruptedEventWithScheduleID:scheduleID source:source];
+    reporting.campaigns = campaigns;
+    reporting.reportingContext = reportingContext;
+    [reporting record:self.analytics];
 }
 
 - (void)messageScheduled:(UAInAppMessage *)message
@@ -549,6 +562,7 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
                  scheduleID:(NSString *)scheduleID {
     [self.assetManager onScheduleFinished:scheduleID];
 }
+
 
 @end
 

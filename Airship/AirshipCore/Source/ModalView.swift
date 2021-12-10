@@ -51,8 +51,7 @@ struct ModalView: View {
                 .applyIf(self.presentation.dismissOnTouchOutside == true) { view in
                     // Add tap gesture outside of view to dismiss
                     view.addTapGesture {
-                        let reportingContext = ReportingContext(layoutContext: layout.reportingContext)
-                        self.thomasEnvironment.dismiss(reportingContext: reportingContext)
+                        self.thomasEnvironment.dismiss()
                     }
                 }
         )

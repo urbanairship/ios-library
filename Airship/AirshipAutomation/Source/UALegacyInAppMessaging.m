@@ -2,7 +2,7 @@
 
 #import "UALegacyInAppMessaging+Internal.h"
 #import "UALegacyInAppMessage.h"
-#import "UAInAppMessageResolutionEvent+Internal.h"
+#import "UAInAppReporting+Internal.h"
 #import "UAInAppMessage+Internal.h"
 #import "UAInAppMessageSchedule.h"
 #import "UAInAppAutomation.h"
@@ -102,8 +102,9 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
             if (result) {
                 UA_LTRACE(@"The in-app message delivery push was directly launched for message: %@", pendingMessageID);
 
-                UAInAppMessageResolutionEvent *event = [UAInAppMessageResolutionEvent legacyDirectOpenEventWithMessageID:pendingMessageID];
-                [self.analytics addEvent:event];
+                UAInAppReporting *reporting = [UAInAppReporting legacyDirectOpenEventWithScheduleID:pendingMessageID];
+                
+                [reporting record:self.analytics];
             }
 
             self.pendingMessageID = nil;
@@ -155,8 +156,10 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
             UA_STRONGIFY(self)
             if (result) {
                 UA_LDEBUG(@"LegacyInAppMessageManager - Pending in-app message replaced");
-                UAInAppMessageResolutionEvent *event = [UAInAppMessageResolutionEvent legacyReplacedEventWithMessageID:previousMessageID replacementID:schedule.identifier];
-                [self.analytics addEvent:event];
+                UAInAppReporting *reporting = [UAInAppReporting legacyReplacedEventWithScheduleID:previousMessageID
+                                                                                   replacementID:schedule.identifier];
+                
+                [reporting record:self.analytics];
             }
         }];
     }

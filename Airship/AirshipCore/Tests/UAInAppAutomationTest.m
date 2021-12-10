@@ -167,6 +167,8 @@
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         builder.identifier = @"schedule ID";
         builder.campaigns = @{@"some": @"campaigns object"};
+        builder.reportingContext = @{@"some": @"reporting context"};
+
         builder.frequencyConstraintIDs = @[@"barConstraint", @"fooConstraint"];
     }];
 
@@ -185,6 +187,7 @@
     [[self.mockInAppMessageManager expect] prepareMessage:message
                                                scheduleID:@"schedule ID"
                                                 campaigns:@{@"some": @"campaigns object"}
+                                         reportingContext:@{@"some": @"reporting context"}
                                         completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void(^completionBlock)(UAInAppMessagePrepareResult) = obj;
         completionBlock(UAInAppMessagePrepareResultSuccess);
@@ -229,6 +232,7 @@
     [[self.mockInAppMessageManager expect] prepareMessage:message
                                                scheduleID:@"schedule ID"
                                                 campaigns:@{@"some": @"campaigns object"}
+                                         reportingContext:@{}
                                         completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void(^completionBlock)(UAInAppMessagePrepareResult) = obj;
         completionBlock(UAInAppMessagePrepareResultSuccess);
@@ -275,6 +279,7 @@
     [[self.mockInAppMessageManager reject] prepareMessage:message
                                                scheduleID:@"schedule ID"
                                                 campaigns:@{@"some": @"campaigns object"}
+                                         reportingContext:nil
                                         completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void(^completionBlock)(UAInAppMessagePrepareResult) = obj;
         completionBlock(UAInAppMessagePrepareResultSuccess);
@@ -430,9 +435,12 @@
 
     [[[self.mockInAppMessageManager expect] andDo:^(NSInvocation *invocation) {
         void (^block)(UAInAppMessagePrepareResult);
-        [invocation getArgument:&block atIndex:5];
+        [invocation getArgument:&block atIndex:6];
         block(UAInAppMessagePrepareResultSuccess);
-    }] prepareMessage:message scheduleID:@"schedule ID" campaigns:@{@"some": @"campaigns object"} completionHandler:OCMOCK_ANY];
+    }] prepareMessage:message scheduleID:@"schedule ID"
+     campaigns:@{@"some": @"campaigns object"}
+     reportingContext:@{}
+     completionHandler:OCMOCK_ANY];
 
     [[[self.mockAudienceManager expect] andReturn:tagOverrides] tagOverrides];
     [[[self.mockAudienceManager expect] andReturn:attributeOverrides] attributeOverrides];
@@ -501,9 +509,9 @@
 
     [[[self.mockInAppMessageManager expect] andDo:^(NSInvocation *invocation) {
         void (^block)(UAInAppMessagePrepareResult);
-        [invocation getArgument:&block atIndex:5];
+        [invocation getArgument:&block atIndex:6];
         block(UAInAppMessagePrepareResultSuccess);
-    }] prepareMessage:message scheduleID:@"schedule ID" campaigns:@{@"some": @"campaigns object"} completionHandler:OCMOCK_ANY];
+    }] prepareMessage:message scheduleID:@"schedule ID" campaigns:@{@"some": @"campaigns object"} reportingContext:@{} completionHandler:OCMOCK_ANY];
 
     [[[self.mockAudienceManager expect] andReturn:tagOverrides] tagOverrides];
     [[[self.mockAudienceManager expect] andReturn:attributeOverrides] attributeOverrides];
@@ -559,7 +567,7 @@
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
 
-    [[self.mockInAppMessageManager reject] prepareMessage:OCMOCK_ANY scheduleID:OCMOCK_ANY campaigns:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    [[self.mockInAppMessageManager reject] prepareMessage:OCMOCK_ANY scheduleID:OCMOCK_ANY campaigns:OCMOCK_ANY reportingContext:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -1095,6 +1103,7 @@
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         builder.identifier = @"schedule ID";
         builder.campaigns = @{@"some": @"campaigns object"};
+        builder.reportingContext = @{@"something": @"something"};
     }];
 
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
@@ -1116,6 +1125,7 @@
     [[self.mockInAppMessageManager expect] prepareMessage:message
                                                scheduleID:@"schedule ID"
                                                 campaigns:@{@"some": @"campaigns object"}
+                                         reportingContext:@{@"something": @"something"}
                                         completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void(^completionBlock)(UAInAppMessagePrepareResult) = obj;
         completionBlock(UAInAppMessagePrepareResultSuccess);
@@ -1172,6 +1182,7 @@
     [[self.mockInAppMessageManager expect] prepareMessage:message
                                                scheduleID:@"schedule ID"
                                                 campaigns:@{@"some": @"campaigns object"}
+                                         reportingContext:@{}
                                         completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void(^completionBlock)(UAInAppMessagePrepareResult) = obj;
         completionBlock(UAInAppMessagePrepareResultSuccess);
@@ -1251,6 +1262,7 @@
     [[self.mockInAppMessageManager expect] prepareMessage:message
                                                scheduleID:@"schedule ID"
                                                 campaigns:@{@"some": @"campaigns object"}
+                                         reportingContext:@{}
                                         completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void(^completionBlock)(UAInAppMessagePrepareResult) = obj;
         completionBlock(UAInAppMessagePrepareResultSuccess);
@@ -1330,6 +1342,7 @@
     [[self.mockInAppMessageManager expect] prepareMessage:message
                                                scheduleID:@"schedule ID"
                                                 campaigns:@{@"some": @"campaigns object"}
+                                         reportingContext:@{}
                                         completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void(^completionBlock)(UAInAppMessagePrepareResult) = obj;
         completionBlock(UAInAppMessagePrepareResultSuccess);

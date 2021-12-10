@@ -38,6 +38,8 @@ NSUInteger const UAScheduleMaxTriggers = 10;
 @synthesize data = _data;
 @synthesize type = _type;
 @synthesize campaigns = _campaigns;
+@synthesize reportingContext = _reportingContext;
+
 @synthesize frequencyConstraintIDs = _frequencyConstraintIDs;
 
 - (BOOL)isValid {
@@ -77,6 +79,7 @@ NSUInteger const UAScheduleMaxTriggers = 10;
         self.metadata = builder.metadata ?: @{};
         self.audience = builder.audience;
         _campaigns = [builder.campaigns copy] ?: @{};
+        _reportingContext = [builder.reportingContext copy] ?: @{};
         _frequencyConstraintIDs = [builder.frequencyConstraintIDs copy] ?: @[];
     }
 
@@ -147,6 +150,10 @@ NSUInteger const UAScheduleMaxTriggers = 10;
     if (self.campaigns != schedule.campaigns && ![self.campaigns isEqual:schedule.campaigns]) {
         return NO;
     }
+    
+    if (self.reportingContext != schedule.reportingContext && ![self.reportingContext isEqual:schedule.reportingContext]) {
+        return NO;
+    }
 
     if (self.frequencyConstraintIDs != schedule.frequencyConstraintIDs && ![self.frequencyConstraintIDs isEqual:schedule.frequencyConstraintIDs]) {
         return NO;
@@ -182,6 +189,7 @@ NSUInteger const UAScheduleMaxTriggers = 10;
     result = 31 * result + [self.delay hash];
     result = 31 * result + [self.audience hash];
     result = 31 * result + [self.campaigns hash];
+    result = 31 * result + [self.reportingContext hash];
     result = 31 * result + [self.frequencyConstraintIDs hash];
     result = 31 * result + self.editGracePeriod;
     result = 31 * result + self.interval;

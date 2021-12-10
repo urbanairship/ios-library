@@ -17,6 +17,7 @@
         <attribute name="limit" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
         <attribute name="metadata" optional="YES" attributeType="String"/>
         <attribute name="priority" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="reportingContext" optional="YES" attributeType="Transformable" valueTransformerName="UANSDictionaryValueTransformer"/>
         <attribute name="start" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="triggerContext" optional="YES" attributeType="Transformable" valueTransformerName="UAScheduleTriggerContextTransformer"/>
         <attribute name="triggeredCount" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
@@ -47,7 +48,7 @@
         <relationship name="schedule" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UAScheduleData" inverseName="triggers" inverseEntity="UAScheduleData"/>
     </entity>
     <elements>
-        <element name="UAScheduleData" positionX="-540" positionY="-63" width="128" height="373"/>
+        <element name="UAScheduleData" positionX="-540" positionY="-63" width="128" height="374"/>
         <element name="UAScheduleDelayData" positionX="-234" positionY="-27" width="128" height="133"/>
         <element name="UAScheduleTriggerData" positionX="-191" positionY="378" width="128" height="148"/>
     </elements>

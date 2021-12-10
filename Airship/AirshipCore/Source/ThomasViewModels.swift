@@ -6,13 +6,13 @@ struct Layout: Decodable, Equatable {
     let view: ViewModel
     let version: Int
     let presentation: PresentationModel
-    let reportingContext: JSON?
+    let layoutState: JSON?
 
     enum CodingKeys: String, CodingKey {
         case view = "view"
         case version = "version"
         case presentation = "presentation"
-        case reportingContext = "context"
+        case layoutState = "context"
     }
 }
 

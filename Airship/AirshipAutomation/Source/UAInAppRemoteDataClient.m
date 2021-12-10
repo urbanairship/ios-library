@@ -59,6 +59,8 @@ static NSString *const UAScheduleInfoActionsKey = @"actions";
 static NSString *const UAScheduleInfoDeferredKey = @"deferred";
 
 static NSString *const UAScheduleInfoCampaignsKey = @"campaigns";
+static NSString *const UAScheduleInfoReportingContextKey = @"reporting_context";
+
 static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_constraint_ids";
 
 @interface UAInAppRemoteDataClient()
@@ -448,6 +450,8 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
         builder.editGracePeriod = [[JSON numberForKey:UAScheduleInfoEditGracePeriodKey defaultValue:nil] doubleValue] * 60 * 60 * 24;
         builder.interval = [[JSON numberForKey:UAScheduleInfoIntervalKey defaultValue:nil] doubleValue];
         builder.campaigns = [JSON dictionaryForKey:UAScheduleInfoCampaignsKey defaultValue:nil];
+        builder.reportingContext = [JSON dictionaryForKey:UAScheduleInfoReportingContextKey defaultValue:nil];
+
         builder.audience = audience;
         builder.frequencyConstraintIDs = [JSON arrayForKey:UAScheduleInfoFrequencyConstraintIDsKey defaultValue:nil];
 
@@ -476,6 +480,7 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
         builder.interval = [JSON numberForKey:UAScheduleInfoIntervalKey defaultValue:@(0)];
         builder.audience = audience;
         builder.campaigns = [JSON dictionaryForKey:UAScheduleInfoCampaignsKey defaultValue:@{}];
+        builder.reportingContext = [JSON dictionaryForKey:UAScheduleInfoReportingContextKey defaultValue:nil];
         builder.frequencyConstraintIDs = [JSON arrayForKey:UAScheduleInfoFrequencyConstraintIDsKey defaultValue:@[]];
 
         NSNumber *gracePeriodDays = [JSON numberForKey:UAScheduleInfoEditGracePeriodKey defaultValue:@(14)];

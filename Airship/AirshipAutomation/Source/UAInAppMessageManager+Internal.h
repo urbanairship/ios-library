@@ -73,11 +73,14 @@ NS_ASSUME_NONNULL_BEGIN
  * @param message The message.
  * @param scheduleID The schedule ID.
  * @param campaigns The campaign info.
+ * @param reportingContext The reporting context info.
+
  * @param completionHandler The completion handler with the prepare result.
  */
 - (void)prepareMessage:(UAInAppMessage *)message
             scheduleID:(NSString *)scheduleID
-             campaigns:(nullable NSDictionary *)campaigns
+             campaigns:(nullable id)campaigns
+      reportingContext:(nullable id)reportingContext
      completionHandler:(void (^)(UAAutomationSchedulePrepareResult))completionHandler;
 
 
@@ -140,11 +143,13 @@ NS_ASSUME_NONNULL_BEGIN
  * Called when a message display was interrupted.
  * @param message The message if available. If not available it indicates its a deferred message type.
  * @param scheduleID The schedule ID.
- * @param campaigns The campaign info.
+ * @param campaigns The campaign info
+ * @param reportingContext The reporting context.
  */
 - (void)messageExecutionInterrupted:(nullable UAInAppMessage *)message
                          scheduleID:(NSString *)scheduleID
-                          campaigns:(nullable NSDictionary *)campaigns;
+                          campaigns:(nullable id)campaigns
+                   reportingContext:(nullable id)reportingContext;
 
 @end
 

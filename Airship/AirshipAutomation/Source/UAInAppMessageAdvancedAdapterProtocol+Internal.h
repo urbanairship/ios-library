@@ -2,6 +2,7 @@
 
 #import <Foundation/Foundation.h>
 #import "UAInAppMessageAdapterProtocol.h"
+#import "UAInAppReporting+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -9,17 +10,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Displays the in-app message.
- *
- * @param onDisplay A callback when a view is displayed.
- * @param onDismiss A callback when a view is dismissed.
  * @param scheduleID  The schedule ID.
- * @param campaigns  The campaigns.
+ * @param onEvent A callback when an event is added.
+ * @param onDismiss A callback when a view is dismissed.
+ 
  */
-- (void)display:(void (^)(NSDictionary *))onDisplay
-      onDismiss:(void (^)(UAInAppMessageResolution *, NSDictionary *))onDismiss
-     scheduleID:(NSString *)scheduleID
-      campaigns:(NSDictionary *)campaigns;
-
+- (void)displayWithScheduleID:(NSString *)scheduleID
+                      onEvent:(void (^)(UAInAppReporting *))onEvent
+                    onDismiss:(void (^)(UAInAppMessageResolution *, NSDictionary *))onDismiss;
 @end
 
 NS_ASSUME_NONNULL_END

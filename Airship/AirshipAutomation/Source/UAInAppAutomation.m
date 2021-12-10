@@ -338,6 +338,7 @@ static NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerP
                 [self.inAppMessageManager prepareMessage:(UAInAppMessage *)schedule.data
                                               scheduleID:schedule.identifier
                                                campaigns:schedule.campaigns
+                                        reportingContext:schedule.reportingContext
                                        completionHandler:prepareCompletionHandlerWrapper];
                 retriableHandler(UARetriableResultSuccess);
                 break;
@@ -403,6 +404,7 @@ static NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerP
                 [self.inAppMessageManager prepareMessage:result.message
                                               scheduleID:schedule.identifier
                                                campaigns:schedule.campaigns
+                                        reportingContext:schedule.reportingContext
                                        completionHandler:completionHandler];
                 retriableHandler(UARetriableResultSuccess);
             } else {
@@ -506,7 +508,8 @@ static NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerP
         case UAScheduleTypeInAppMessage: {
             [self.inAppMessageManager messageExecutionInterrupted:schedule.data
                                                        scheduleID:schedule.identifier
-                                                        campaigns:schedule.campaigns];
+                                                        campaigns:schedule.campaigns
+                                                 reportingContext:schedule.reportingContext];
             break;
         }
 
@@ -515,7 +518,8 @@ static NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerP
             if (deferred.type == UAScheduleDataDeferredTypeInAppMessage) {
                 [self.inAppMessageManager messageExecutionInterrupted:nil
                                                            scheduleID:schedule.identifier
-                                                            campaigns:schedule.campaigns];
+                                                            campaigns:schedule.campaigns
+                                                     reportingContext:schedule.reportingContext];
             }
             break;
         }

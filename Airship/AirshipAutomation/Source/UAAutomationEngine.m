@@ -1356,6 +1356,7 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
         builder.identifier = scheduleData.identifier;
         builder.audience = audience;
         builder.campaigns= scheduleData.campaigns;
+        builder.reportingContext = scheduleData.reportingContext;
         builder.frequencyConstraintIDs = scheduleData.frequencyConstraintIDs;
     }];
 
@@ -1500,6 +1501,10 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
 
     if (edits.campaigns) {
         scheduleData.campaigns = edits.campaigns;
+    }
+    
+    if (edits.reportingContext) {
+        scheduleData.reportingContext = edits.reportingContext;
     }
 
     if (edits.frequencyConstraintIDs) {

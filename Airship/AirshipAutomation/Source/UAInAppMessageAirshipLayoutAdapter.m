@@ -5,11 +5,7 @@
 #import "UAInAppMessageSceneManager.h"
 #import "UAInAppMessageAdvancedAdapterProtocol+Internal.h"
 #import "UAAutomationNativeBridgeExtension+Internal.h"
-#import "UAInAppMessageButtonTapEvent+Internal.h"
-#import "UAInAppMessagePageViewEvent+Internal.h"
-#import "UAInAppMessagePageSwipeEvent+Internal.h"
-#import "UAInAppMessageFormResultEvent+Internal.h"
-#import "UAInAppMessageFormDisplayEvent+Internal.h"
+#import "UAInAppReporting+Internal.h"
 
 #if __has_include("AirshipKit/AirshipKit-Swift.h")
 #import <AirshipKit/AirshipKit-Swift.h>
@@ -21,12 +17,12 @@
 
 @interface UAInAppMessageAirshipLayoutAdapter() <UAThomasDelegate>
 @property (nonatomic, strong) UAInAppMessage *message;
-@property (nonatomic, strong) NSString *messageID;
-@property (nonatomic, strong) NSDictionary *campaigns;
 @property (nonatomic, strong) UAInAppMessageAirshipLayoutDisplayContent *displayContent;
 @property (nonatomic, copy, nullable) UADisposable *(^deferredDisplay)(void);
+@property (nullable, nonatomic, strong) NSString *scheduleID;
 @property (nonatomic, copy, nullable) void (^onDismiss)(UAInAppMessageResolution *, NSDictionary *);
-@property (nonatomic, copy, nullable) void (^onDisplay)(NSDictionary *);
+@property (nonatomic, copy, nullable) void (^onEvent)(UAInAppReporting *);
+@property (nonatomic, strong) NSMutableSet *viewedPages;
 @end
 
 @implementation UAInAppMessageAirshipLayoutAdapter
@@ -41,7 +37,7 @@
     if (self) {
         self.message = message;
         self.displayContent = (UAInAppMessageAirshipLayoutDisplayContent *)self.message.displayContent;
-
+        self.viewedPages = [NSMutableSet set];
     }
 
     return self;
@@ -79,30 +75,22 @@
 }
 
 
-- (void)display:(void (^)(NSDictionary *))onDisplay
-      onDismiss:(void (^)(UAInAppMessageResolution *, NSDictionary *))onDismiss
-     scheduleID:(nonnull NSString *)scheduleID
-      campaigns:(nonnull NSDictionary *)campaigns {
+- (void)displayWithScheduleID:(nonnull NSString *)scheduleID
+                      onEvent:(void (^)(UAInAppReporting *))onEvent
+                    onDismiss:(void (^)(UAInAppMessageResolution *, NSDictionary *))onDismiss {
+
     
-    self.onDisplay = onDisplay;
     self.onDismiss = onDismiss;
-    self.messageID = scheduleID;
-    self.campaigns = campaigns;
+    self.onEvent = onEvent;
+    self.scheduleID = scheduleID;
     self.deferredDisplay();
-}
-
-
-- (void)onDisplayedWithReportingContext:(NSDictionary<NSString *,id> *)reportingContext {
-    if (self.onDisplay != nil) {
-        self.onDisplay(reportingContext);
-        self.onDisplay = nil;
-    }
 }
 
 - (void)onDismissedWithButtonIdentifier:(NSString * _Nonnull)buttonIdentifier
                       buttonDescription:(NSString * _Nonnull)buttonDescription
                                  cancel:(BOOL)cancel
-                       reportingContext:(NSDictionary<NSString *,id> * _Nonnull)reportingContext {
+                            layoutState:(NSDictionary<NSString *,id> * _Nonnull)layoutState {
+    
     
     // Create a button info from callback data
     UAInAppMessageButtonInfo *buttonInfo = [UAInAppMessageButtonInfo buttonInfoWithBuilderBlock:^(UAInAppMessageButtonInfoBuilder *builder) {
@@ -114,54 +102,100 @@
     }];
     
     UAInAppMessageResolution *resolution = [UAInAppMessageResolution buttonClickResolutionWithButtonInfo:buttonInfo];
-    [self dimissWithResolution:resolution reportingContext:reportingContext];
+    [self dimissWithResolution:resolution layoutState:layoutState];
 }
 
-- (void)onDismissedWithReportingContext:(NSDictionary<NSString *,id> * _Nonnull)reportingContext {
+- (void)onDismissedWithLayoutState:(NSDictionary<NSString *,id> * _Nonnull)layoutState {
     UAInAppMessageResolution *resolution = [UAInAppMessageResolution userDismissedResolution];
-    [self dimissWithResolution:resolution reportingContext:reportingContext];
+    [self dimissWithResolution:resolution layoutState:layoutState];
 }
 
-- (void)onTimedOutWithReportingContext:(NSDictionary<NSString *,id> * _Nonnull)reportingContext {
+- (void)onTimedOutWithLayoutState:(NSDictionary<NSString *,id> * _Nonnull)layoutState {
     UAInAppMessageResolution *resolution = [UAInAppMessageResolution timedOutResolution];
-    [self dimissWithResolution:resolution reportingContext:reportingContext];
+    [self dimissWithResolution:resolution layoutState:layoutState];
 }
 
-- (void)onButtonTappedWithButtonIdentifier:(NSString * _Nonnull)buttonIdentifier reportingContext:(NSDictionary<NSString *,id> * _Nonnull)reportingContext {
-    UAInAppMessageButtonTapEvent *event = [UAInAppMessageButtonTapEvent eventWithMessage:self.message messageID:self.messageID buttonIdentifier:buttonIdentifier reportingContext:reportingContext campaigns:self.campaigns];
-    [[UAirship analytics] addEvent:event];
-}
-
-- (void)onFormDisplayedWithFormIdentifier:(NSString * _Nonnull)formIdentifier reportingContext:(NSDictionary<NSString *,id> * _Nonnull)reportingContext {
-    UAInAppMessageFormDisplayEvent *event = [UAInAppMessageFormDisplayEvent eventWithMessage:self.message messageID:self.messageID formIdentifier:formIdentifier reportingContext:reportingContext campaigns:self.campaigns];
-    [[UAirship analytics] addEvent:event];
-}
-
-- (void)onFormSubmittedWithFormIdentifier:(NSString * _Nonnull)formIdentifier formData:(NSDictionary<NSString *,id> * _Nonnull)formData reportingContext:(NSDictionary<NSString *,id> * _Nonnull)reportingContext {
-    UAInAppMessageFormResultEvent *event = [UAInAppMessageFormResultEvent eventWithMessage:self.message messageID:self.messageID formIdentifier:formIdentifier formData:formData reportingContext:reportingContext campaigns:self.campaigns];
-    [[UAirship analytics] addEvent:event];
-}
-
-- (void)onPageViewedWithPagerIdentifier:(NSString * _Nonnull)pagerIdentifier pageIndex:(NSInteger)pageIndex pageCount:(NSInteger)pageCount completed:(BOOL)completed reportingContext:(NSDictionary<NSString *,id> * _Nonnull)reportingContext {
-    UAInAppMessagePageViewEvent *event = [UAInAppMessagePageViewEvent eventWithMessage:self.message messageID:self.messageID pagerIdentifier:pagerIdentifier pageIndex:pageIndex pageCount:pageCount completed:completed reportingContext:reportingContext campaigns:self.campaigns];
-    [[UAirship analytics] addEvent:event];
-}
-
-- (void)onPageSwipedWithPagerIdentifier:(NSString * _Nonnull)pagerIdentifier fromIndex:(NSInteger)fromIndex toIndex:(NSInteger)toIndex reportingContext:(NSDictionary<NSString *,id> * _Nonnull)reportingContext {
-    UAInAppMessagePageSwipeEvent *event = [UAInAppMessagePageSwipeEvent eventWithMessage:self.message messageID:self.messageID pagerIdentifier:pagerIdentifier fromIndex:fromIndex toIndex:toIndex reportingContext:reportingContext campaigns:self.campaigns];
-    [[UAirship analytics] addEvent:event];
-}
-
-
-
-- (void)dimissWithResolution:(UAInAppMessageResolution *)resolution
-            reportingContext:(NSDictionary *)reportingContext {
+- (void)onButtonTappedWithButtonIdentifier:(NSString * _Nonnull)buttonIdentifier layoutState:(NSDictionary<NSString *,id> * _Nonnull)layoutState {
     
+    UAInAppReporting *reporting = [UAInAppReporting buttonTapEventWithScheduleID:self.scheduleID
+                                                                         message:self.message
+                                                                        buttonID:buttonIdentifier];
+    reporting.layoutState = layoutState;
+    
+    [self record:reporting];
+}
+
+- (void)onFormDisplayedWithFormIdentifier:(NSString * _Nonnull)formIdentifier
+                              layoutState:(NSDictionary<NSString *,id> * _Nonnull)layoutState {
+    
+    UAInAppReporting *reporting = [UAInAppReporting formDisplayEventWithScheduleID:self.scheduleID
+                                                                         message:self.message
+                                                                        formID:formIdentifier];
+    reporting.layoutState = layoutState;
+
+    [self record:reporting];
+}
+
+- (void)onFormSubmittedWithFormIdentifier:(NSString * _Nonnull)formIdentifier
+                                 formData:(NSDictionary<NSString *,id> * _Nonnull)formData
+                              layoutState:(NSDictionary<NSString *,id> * _Nonnull)layoutState {
+    
+    UAInAppReporting *reporting = [UAInAppReporting formResultEventWithScheduleID:self.scheduleID
+                                                                         message:self.message
+                                                                         formData:formData];
+    reporting.layoutState = layoutState;
+    [self record:reporting];
+}
+
+- (void)onPageViewedWithPagerIdentifier:(NSString * _Nonnull)pagerIdentifier
+                              pageIndex:(NSInteger)pageIndex
+                              pageCount:(NSInteger)pageCount
+                              completed:(BOOL)completed
+                            layoutState:(NSDictionary<NSString *,id> * _Nonnull)layoutState {
+    
+    // Only send one page event per pager index
+    NSString *pageKey = [NSString stringWithFormat:@"%@%ld", pagerIdentifier, pageIndex];
+    if ([self.viewedPages containsObject:pageKey]) {
+        return;
+    }
+    [self.viewedPages addObject:pageKey];
+    
+    UAInAppReporting *reporting = [UAInAppReporting pageViewEventWithScheduleID:self.scheduleID
+                                                                         message:self.message
+                                                                         pagerID:pagerIdentifier
+                                                                          index:pageIndex
+                                                                          count:pageCount
+                                                                      completed:completed];
+    reporting.layoutState = layoutState;
+    [self record:reporting];
+}
+
+- (void)onPageSwipedWithPagerIdentifier:(NSString * _Nonnull)pagerIdentifier
+                              fromIndex:(NSInteger)fromIndex
+                                toIndex:(NSInteger)toIndex
+                            layoutState:(NSDictionary<NSString *,id> * _Nonnull)layoutState {
+    
+    UAInAppReporting *reporting = [UAInAppReporting pageSwipeEventWithScheduleID:self.scheduleID
+                                                                         message:self.message
+                                                                         pagerID:pagerIdentifier
+                                                                       fromIndex:fromIndex
+                                                                         toIndex:toIndex];
+    reporting.layoutState = layoutState;
+    [self record:reporting];
+}
+
+- (void)dimissWithResolution:(UAInAppMessageResolution *)resolution layoutState:(NSDictionary *)layoutState {
     if (self.onDismiss != nil) {
-        self.onDismiss(resolution, reportingContext);
+        self.onDismiss(resolution, layoutState);
     }
     
     self.onDismiss = nil;
+}
+
+- (void)record:(UAInAppReporting *)reporting {
+    if (self.onEvent) {
+        self.onEvent(reporting);
+    }
 }
 
 @end

@@ -12,6 +12,13 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nullable, nonatomic, copy) NSDictionary *campaigns;
 
+
+/**
+ * The reporting context.
+ */
+@property (nullable, nonatomic, copy) NSDictionary *reportingContext;
+
+
 /**
  * The frequency constraint IDs.
  */
@@ -36,6 +43,12 @@ NS_ASSUME_NONNULL_BEGIN
  * Campaigns info.
  */
 @property(nonatomic, readonly, nullable) NSDictionary *campaigns;
+
+/**
+ * Reporting context.
+ */
+@property(nonatomic, readonly, nullable) NSDictionary *reportingContext;
+
 
 /**
  * Frequency constraint IDs.

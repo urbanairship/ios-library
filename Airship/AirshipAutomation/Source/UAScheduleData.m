@@ -33,6 +33,7 @@ NSUInteger const UAScheduleDataVersion = 3;
 @dynamic triggerContext;
 @dynamic audience;
 @dynamic campaigns;
+@dynamic reportingContext;
 @dynamic frequencyConstraintIDs;
 
 -(void)setExecutionState:(NSNumber *)executionState {

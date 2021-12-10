@@ -16,7 +16,7 @@ struct AirshipWebView : View {
     
     @State var isLoading: Bool = false
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
-    @Environment(\.reportingContext) var reportingContext
+    @Environment(\.layoutState) var layoutState
 
     var body: some View {
         
@@ -24,7 +24,7 @@ struct AirshipWebView : View {
             WebViewView(url: self.model.url,
                         nativeBridgeExtension: self.thomasEnvironment.extensions?.nativeBridgeExtension,
                         isLoading: self.$isLoading) {
-                thomasEnvironment.dismiss(reportingContext: reportingContext)
+                thomasEnvironment.dismiss(layoutState: layoutState)
             }
             .opacity(self.isLoading ? 0.0 : 1.0)
             

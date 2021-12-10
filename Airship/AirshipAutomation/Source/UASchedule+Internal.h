@@ -43,6 +43,12 @@ typedef NS_ENUM(NSUInteger, UAScheduleType) {
  */
 @property(nonatomic, readonly) NSDictionary *campaigns;
 
+/**
+ * Reporting context
+ */
+@property(nonatomic, readonly) NSDictionary *reportingContext;
+
+
 @property(nonatomic, readonly) NSString *dataJSONString;
 
 /**
@@ -67,6 +73,13 @@ typedef NS_ENUM(NSUInteger, UAScheduleType) {
  * Campaigns info.
  */
 @property(nonatomic, copy, nullable) NSDictionary *campaigns;
+
+
+/**
+ * Reporing context.
+ */
+@property(nonatomic, copy, nullable) NSDictionary *reportingContext;
+
 
 /**
  * Frequency constraint IDs.

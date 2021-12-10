@@ -71,32 +71,29 @@ struct ContentView_Previews: PreviewProvider {
     }
 }
 
-class Delegate : ThomasDelegate {
-    func onDisplayed(reportingContext: [String : Any]) {
-        
-    }
-    func onFormSubmitted(formIdentifier: String, formData: [String : Any], reportingContext: [String : Any]) {
+class Delegate : ThomasDelegate {nm
+    func onFormSubmitted(formIdentifier: String, formData: [String : Any], layoutState: [String : Any]) {
     }
     
-    func onFormDisplayed(formIdentifier: String, reportingContext: [String : Any]) {
+    func onFormDisplayed(formIdentifier: String, layoutState: [String : Any]) {
     }
     
-    func onButtonTapped(buttonIdentifier: String, reportingContext: [String : Any]) {
+    func onButtonTapped(buttonIdentifier: String, layoutState: [String : Any]) {
     }
     
-    func onDismissed(reportingContext: [String : Any]) {
+    func onDismissed(layoutState: [String : Any]) {
     }
     
-    func onDismissed(buttonIdentifier: String, buttonDescription: String, cancel: Bool, reportingContext: [String : Any]) {
+    func onDismissed(buttonIdentifier: String, buttonDescription: String, cancel: Bool, layoutState: [String : Any]) {
     }
     
-    func onTimedOut(reportingContext: [String : Any]) {
+    func onTimedOut(layoutState: [String : Any]) {
     }
     
-    func onPageViewed(pagerIdentifier: String, pageIndex: Int, pageCount: Int, completed: Bool, reportingContext: [String : Any]) {
+    func onPageViewed(pagerIdentifier: String, pageIndex: Int, pageCount: Int, completed: Bool, layoutState: [String : Any]) {
     }
     
-    func onPageSwiped(pagerIdentifier: String, fromIndex: Int, toIndex: Int, reportingContext: [String : Any]) {
+    func onPageSwiped(pagerIdentifier: String, fromIndex: Int, toIndex: Int, layoutState: [String : Any]) {
     }
 }
 

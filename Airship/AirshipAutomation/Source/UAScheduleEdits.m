@@ -33,6 +33,7 @@
 @synthesize data = _data;
 @synthesize type = _type;
 @synthesize campaigns = _campaigns;
+@synthesize reportingContext = _reportingContext;
 @synthesize frequencyConstraintIDs = _frequencyConstraintIDs;
 
 - (instancetype)initWithData:(NSString *)data
@@ -43,6 +44,7 @@
         _data = data;
         _type = type;
         _campaigns = builder.campaigns;
+        _reportingContext = builder.reportingContext;
         _frequencyConstraintIDs = builder.frequencyConstraintIDs;
         self.priority = builder.priority;
         self.limit = builder.limit;
@@ -115,6 +117,7 @@
             "Metadata: %@\n"
             "Audience: %@\n"
             "Campaigns: %@\n"
+            "Reporting Context: %@\n"
             "Frequency Constraint IDs: %@",
             self.data,
             self.type,
@@ -127,6 +130,7 @@
             self.metadata,
             self.audience,
             self.campaigns,
+            self.reportingContext,
             self.frequencyConstraintIDs];
 }
 

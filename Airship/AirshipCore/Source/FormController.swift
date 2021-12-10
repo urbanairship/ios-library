@@ -38,17 +38,17 @@ private struct ParentFormController : View {
     
     @ObservedObject var formState: FormState
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
-    @Environment(\.reportingContext) var reportingContext
+    @Environment(\.layoutState) var layoutState
     @State private var visibleCancellable: AnyCancellable?
 
     var body: some View {
         ViewFactory.createView(model: self.model.view, constraints: constraints)
-            .environment(\.reportingContext, reportingContext.override(formState: formState))
+            .environment(\.layoutState, layoutState.override(formState: formState))
             .environmentObject(formState)
             .onAppear {
                 self.visibleCancellable = self.formState.$isVisible.sink { incoming in
                     if (incoming) {
-                        self.thomasEnvironment.formDisplayed(self.formState.identifier, reportingContext: reportingContext.override(formState: formState))
+                        self.thomasEnvironment.formDisplayed(self.formState.identifier, layoutState: layoutState.override(formState: formState))
                     }
                 }
             }

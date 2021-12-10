@@ -20,21 +20,14 @@ struct RootViewModifier: ViewModifier {
 
     @ViewBuilder
     func body(content: Content) -> some View {
-        let reportingContext = ReportingContext(layoutContext: self.layout.reportingContext)
         content
             .environmentObject(thomasEnvironment)
             .environment(\.orientation, currentOrientation)
             .environment(\.windowSize, resolveWindowSize())
             .environment(\.isVisible, isVisible)
-            .environment(\.reportingContext, ReportingContext(layoutContext: self.layout.reportingContext))
             .onAppear {
                 self.currentOrientation = RootViewModifier.resolveOrientation()
                 self.isVisible = true
-                
-                if (!displayedCalled) {
-                    displayedCalled = true
-                    thomasEnvironment.displayed(reportingContext: reportingContext)
-                }
             }
             .onDisappear {
                 self.isVisible = false

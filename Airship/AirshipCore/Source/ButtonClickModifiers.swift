@@ -8,12 +8,12 @@ import SwiftUI
 struct SubmitFormButtonClickBehavior: ViewModifier {
     @EnvironmentObject var formState: FormState
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
-    @Environment(\.reportingContext) var reportingContext
+    @Environment(\.layoutState) var layoutState
 
     @ViewBuilder
     func body(content: Content) -> some View {
         content.addTapGesture {
-            thomasEnvironment.submitForm(formState, reportingContext: reportingContext)
+            thomasEnvironment.submitForm(formState, layoutState: layoutState)
         }
     }
 }
@@ -52,7 +52,7 @@ struct DismissButtonClickBehavior: ViewModifier {
     let buttonDescription: String?
 
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
-    @Environment(\.reportingContext) var reportingContext
+    @Environment(\.layoutState) var layoutState
 
     @ViewBuilder
     func body(content: Content) -> some View {
@@ -60,7 +60,7 @@ struct DismissButtonClickBehavior: ViewModifier {
             thomasEnvironment.dismiss(buttonIdentifier: buttonIdentifier,
                                       buttonDescription: buttonDescription,
                                       cancel: false,
-                                      reportingContext: reportingContext)
+                                      layoutState: layoutState)
         }
     }
 }
@@ -70,7 +70,7 @@ struct CancelButtonClickBehavior: ViewModifier {
     let buttonIdentifier: String
     let buttonDescription: String?
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
-    @Environment(\.reportingContext) var reportingContext
+    @Environment(\.layoutState) var layoutState
 
     @ViewBuilder
     func body(content: Content) -> some View {
@@ -78,7 +78,7 @@ struct CancelButtonClickBehavior: ViewModifier {
             thomasEnvironment.dismiss(buttonIdentifier: buttonIdentifier,
                                       buttonDescription: buttonDescription,
                                       cancel: true,
-                                      reportingContext: reportingContext)
+                                      layoutState: layoutState)
         }
     }
 }
@@ -87,12 +87,12 @@ struct CancelButtonClickBehavior: ViewModifier {
 struct ReportButtonModifier: ViewModifier {
     let buttonIdentifier: String
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
-    @Environment(\.reportingContext) var reportingContext
+    @Environment(\.layoutState) var layoutState
 
     @ViewBuilder
     func body(content: Content) -> some View {
         content.addTapGesture {
-            thomasEnvironment.buttonTapped(buttonIdentifier: buttonIdentifier, reportingContext: reportingContext)
+            thomasEnvironment.buttonTapped(buttonIdentifier: buttonIdentifier, layoutState: layoutState)
         }
     }
 }

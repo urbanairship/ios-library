@@ -9,7 +9,7 @@ struct Pager : View {
     @EnvironmentObject var pagerState: PagerState
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
     @Environment(\.isVisible) var isVisible
-    @Environment(\.reportingContext) var reportingContext
+    @Environment(\.layoutState) var layoutState
 
     let model: PagerModel
     let constraints: ViewConstraints
@@ -97,7 +97,7 @@ struct Pager : View {
         thomasEnvironment.pageSwiped(self.pagerState.identifier,
                                      fromIndex: index.wrappedValue,
                                      toIndex: nextIndex,
-                                     reportingContext: reportingContext)
+                                     layoutState: layoutState)
         
         withAnimation {
             index.wrappedValue = nextIndex
@@ -135,7 +135,7 @@ struct Pager : View {
             if (index == self.model.items.count - 1) {
                 self.pagerState.completed = true
             }
-            self.thomasEnvironment.pageViewed(pageState: self.pagerState, reportingContext: reportingContext)
+            self.thomasEnvironment.pageViewed(pageState: self.pagerState, layoutState: layoutState)
             self.lastIndex = index
         }
     }
