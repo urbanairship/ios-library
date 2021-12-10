@@ -89,6 +89,13 @@
             return NO;
         }
     }
+    
+    //requires analytics
+    if ([audience.requiresAnalytics boolValue]) {
+        if (![[UAirship shared].privacyManager isEnabled:UAFeaturesAnalytics]) {
+            return false;
+        }
+    }
 
     return YES;
 }

@@ -30,6 +30,7 @@
         builder.versionPredicate = [[UAJSONPredicate alloc] initWithJSONMatcher:matcher];
         builder.testDevices = @[@"test-device"];
         builder.missBehavior = UAScheduleAudienceMissBehaviorSkip;
+        builder.requiresAnalytics = @YES;
     }];
     
     // test

@@ -77,6 +77,13 @@ NS_SWIFT_NAME(ScheduleAudienceBuilder)
 @property(nonatomic, assign) UAScheduleAudienceMissBehaviorType missBehavior;
 
 /**
+ * The require analytics audience condition for the in-app message.
+ *
+ * Optional.
+ */
+@property(nonatomic, strong, nullable) NSNumber *requiresAnalytics;
+
+/**
  * Checks if the builder is valid and will produce a audience.
  * @return YES if the builder is valid, otherwise NO.
  */
@@ -121,6 +128,11 @@ NS_SWIFT_NAME(ScheduleAudience)
  * The audience check miss behavior.
  */
 @property(nonatomic, readonly) UAScheduleAudienceMissBehaviorType missBehavior;
+
+/**
+ * The require analytics audience condition for the in-app message.
+ */
+@property(nonatomic, readonly, nullable) NSNumber * requiresAnalytics;
 
 /**
  * Factory method for building audience model from a builder block.

@@ -261,5 +261,30 @@
     XCTAssertFalse([UAScheduleAudienceChecks checkDisplayAudienceConditions:audience]);
 }
 
+- (void)testRequiresAnalytics {
+    // setup
+    UAScheduleAudience *requiresAnalyticsEnabled = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
+        builder.requiresAnalytics = @YES;
+    }];
+    
+    UAScheduleAudience *requiresAnalyticsDisabled = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
+        builder.requiresAnalytics = @NO;
+    }];
+
+    //Enable privacy manager analytics
+    [[UAirship shared].privacyManager enableFeatures:UAFeaturesAnalytics];
+
+    // test
+    XCTAssertTrue([UAScheduleAudienceChecks checkDisplayAudienceConditions:requiresAnalyticsEnabled]);
+    XCTAssertTrue([UAScheduleAudienceChecks checkDisplayAudienceConditions:requiresAnalyticsDisabled]);
+    
+    //Disable privacy manager analytics
+    [[UAirship shared].privacyManager disableFeatures:UAFeaturesAnalytics];
+    
+    // test
+    XCTAssertFalse([UAScheduleAudienceChecks checkDisplayAudienceConditions:requiresAnalyticsEnabled]);
+    XCTAssertTrue([UAScheduleAudienceChecks checkDisplayAudienceConditions:requiresAnalyticsDisabled]);
+}
+
 
 @end

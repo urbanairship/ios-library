@@ -19,6 +19,7 @@ NSString * const UATagSelectorKey = @"tags";
 NSString * const UAScheduleAudienceAppVersionKey = @"app_version";
 NSString * const UAScheduleAudienceTestDevicesKey = @"test_devices";
 NSString * const UAScheduleAudienceMissBehaviorKey = @"miss_behavior";
+NSString * const UAScheduleAudienceRequiresAnalytics = @"requires_analytics";
 
 NSString * const UAScheduleAudienceMissBehaviorCancelValue   = @"cancel";
 NSString * const UAScheduleAudienceMissBehaviorSkipValue     = @"skip";
@@ -33,6 +34,7 @@ NSString * const UAScheduleAudienceErrorDomain = @"com.urbanairship.in_app_messa
 @property(nonatomic, strong, nullable) UATagSelector *tagSelector;
 @property(nonatomic, strong, nullable) UAJSONPredicate *versionPredicate;
 @property(nonatomic, assign) UAScheduleAudienceMissBehaviorType missBehavior;
+@property(nonatomic, strong, nullable) NSNumber *requiresAnalytics;
 @end
 
 @implementation UAScheduleAudienceBuilder
@@ -180,6 +182,21 @@ NSString * const UAScheduleAudienceErrorDomain = @"com.urbanairship.in_app_messa
         }
     }
     
+    id requiresAnalyticsValue = json[UAScheduleAudienceRequiresAnalytics];
+    if (requiresAnalyticsValue) {
+        if(![requiresAnalyticsValue isKindOfClass:[NSNumber class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Require analytics must be a boolean. Invalid value: %@", requiresAnalyticsValue];
+                *error =  [NSError errorWithDomain:UAScheduleAudienceErrorDomain
+                                              code:UAScheduleAudienceErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+            return nil;
+        } else {
+            builder.requiresAnalytics = requiresAnalyticsValue;
+        }
+    }
+    
     if (![builder isValid]) {
         if (error) {
             *error = [self invalidJSONErrorWithMsg:[NSString stringWithFormat:@"Invalid audience %@", json]];
@@ -222,6 +239,7 @@ NSString * const UAScheduleAudienceErrorDomain = @"com.urbanairship.in_app_messa
         self.tagSelector = builder.tagSelector;
         self.versionPredicate = builder.versionPredicate;
         self.missBehavior = builder.missBehavior;
+        self.requiresAnalytics = builder.requiresAnalytics;
 
     }
     return self;
@@ -247,6 +265,7 @@ NSString * const UAScheduleAudienceErrorDomain = @"com.urbanairship.in_app_messa
     [json setValue:[self.tagSelector toJSON] forKey:UATagSelectorKey];
     [json setValue:self.versionPredicate.payload forKey:UAScheduleAudienceAppVersionKey];
     [json setValue:self.testDevices forKey:UAScheduleAudienceTestDevicesKey];
+    [json setValue:self.requiresAnalytics forKey:UAScheduleAudienceRequiresAnalytics];
     
     switch (self.missBehavior) {
         case UAScheduleAudienceMissBehaviorCancel:
@@ -300,6 +319,9 @@ NSString * const UAScheduleAudienceErrorDomain = @"com.urbanairship.in_app_messa
     if (self.missBehavior != audience.missBehavior) {
         return NO;
     }
+    if (self.requiresAnalytics != audience.requiresAnalytics) {
+        return NO;
+    }
     return YES;
 }
 
@@ -313,6 +335,7 @@ NSString * const UAScheduleAudienceErrorDomain = @"com.urbanairship.in_app_messa
     result = 31 * result + [self.versionPredicate.payload hash];
     result = 31 * result + [self.testDevices hash];
     result = 31 * result + self.missBehavior;
+    result = 31 * result + [self.requiresAnalytics hash];
     return result;
 }
 
