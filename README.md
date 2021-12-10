@@ -5,13 +5,15 @@ services into your iOS applications.
 
 ## Resources
 
-- [Airship Docs](https://docs.airship.com/reference/libraries/ios/latest/Airship)
+- [AirshipCore Docs](https://docs.airship.com/reference/libraries/ios/latest/AirshipCore)
+- [AirshipBasement Docs](https://docs.airship.com/reference/libraries/ios/latest/AirshipBasement/)
 - [AirshipAccengage Docs](https://docs.airship.com/reference/libraries/ios/latest/AirshipAccengage)
 - [AirshipAutomation Docs](https://docs.airship.com/reference/libraries/ios/latest/AirshipAutomation)
 - [AirshipChat Docs](https://docs.airship.com/reference/libraries/ios/latest/AirshipChat)
 - [AirshipExtendedActions Docs](https://docs.airship.com/reference/libraries/ios/latest/AirshipExtendedActions)
 - [AirshipLocation Docs](https://docs.airship.com/reference/libraries/ios/latest/AirshipLocation)
 - [AirshipMessageCenter Docs](https://docs.airship.com/reference/libraries/ios/latest/AirshipMessageCenter)
+- [AirshipPreferenceCenter Docs](https://docs.airship.com/reference/libraries/ios/latest/AirshipPreferenceCenter)
 - [AirshipNotificationServiceExtension Docs](https://docs.airship.com/reference/libraries/ios/latest/AirshipNotificationServiceExtension)
 - [AirshipNotificationContentExtension Docs](https://docs.airship.com/reference/libraries/ios/latest/AirshipNotificationContentExtension)
 
@@ -133,7 +135,7 @@ the main application target.
 The library uses a .plist configuration file named `AirshipConfig.plist` to manage your production and development
 application profiles. Example copies of this file are available in all of the sample projects. Place this file
 in your project and set the following values to the ones in your application at http://go.urbanairship.com.  To
-view all the possible keys and values, see the [UAConfig class reference](http://docs.airship.com/reference/libraries/ios/latest/Classes/UAConfig.html)
+view all the possible keys and values, see the [Config class reference](https://docs.airship.com/reference/libraries/ios/latest/AirshipCore/Classes/Config.html)
 
 You can also edit the file as plain-text:
 
