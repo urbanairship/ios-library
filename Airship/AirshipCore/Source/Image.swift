@@ -73,6 +73,7 @@ extension UIImage {
      *   - fillIn: If the images should be expanded to fill in the frames for smoother animations in UIKit.
      * - Returns: The animated image if it is a gif, otherwise the still frame will be loaded.
      */
+    @objc(fancyImageWithData:fillIn:)
     public class func fancyImage(with data: Data?, fillIn: Bool) -> UIImage? {
         var source: CGImageSource? = nil
         if let data = data {

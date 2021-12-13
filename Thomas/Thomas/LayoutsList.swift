@@ -71,7 +71,7 @@ struct ContentView_Previews: PreviewProvider {
     }
 }
 
-class Delegate : ThomasDelegate {nm
+class Delegate : ThomasDelegate {
     func onFormSubmitted(formIdentifier: String, formData: [String : Any], layoutState: [String : Any]) {
     }
     

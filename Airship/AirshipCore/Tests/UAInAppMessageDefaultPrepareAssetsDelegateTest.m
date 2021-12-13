@@ -412,7 +412,7 @@
     // TEST
     XCTestExpectation *onPrepareComplete = [self expectationWithDescription:@"onPrepare completionHandler called"];
     [self.delegate onPrepare:self.messageWithMedia assets:self.mockAssets completionHandler:^(UAInAppMessagePrepareResult result) {
-        XCTAssertEqual(result, UAInAppMessagePrepareResultCancel);
+        XCTAssertEqual(result, UAInAppMessagePrepareResultSuccess);
         [onPrepareComplete fulfill];
     }];
 

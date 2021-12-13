@@ -15,6 +15,23 @@
 @import AirshipCore;
 #endif
 
+@interface UAAssetImageProvider : NSObject<UAImageProvider>
+@property (nonatomic, strong) UAInAppMessageAssets *assets;
+@end
+
+@implementation UAAssetImageProvider
+- (UIImage * _Nullable)getWithUrl:(NSURL * _Nonnull)url {
+    if ([self.assets isCached:url]) {
+        NSURL *cacheURL = [self.assets getCacheURL:url];
+        NSData *data =  [[NSFileManager defaultManager] contentsAtPath:[cacheURL path]];
+        return [UIImage fancyImageWithData:data fillIn:NO];
+    }
+    return nil;
+}
+
+@end
+
+
 @interface UAInAppMessageAirshipLayoutAdapter() <UAThomasDelegate>
 @property (nonatomic, strong) UAInAppMessage *message;
 @property (nonatomic, strong) UAInAppMessageAirshipLayoutDisplayContent *displayContent;
@@ -23,6 +40,8 @@
 @property (nonatomic, copy, nullable) void (^onDismiss)(UAInAppMessageResolution *, NSDictionary *);
 @property (nonatomic, copy, nullable) void (^onEvent)(UAInAppReporting *);
 @property (nonatomic, strong) NSMutableSet *viewedPages;
+@property (nonatomic, strong) NSArray *urlInfos;
+@property (nonatomic, strong) UAInAppMessageAssets *assets;
 @end
 
 @implementation UAInAppMessageAirshipLayoutAdapter
@@ -38,6 +57,7 @@
         self.message = message;
         self.displayContent = (UAInAppMessageAirshipLayoutDisplayContent *)self.message.displayContent;
         self.viewedPages = [NSMutableSet set];
+        self.urlInfos = [UAThomas urlsWithJson:self.displayContent.layout error:nil];
     }
 
     return self;
@@ -45,11 +65,34 @@
 
 - (void)prepareWithAssets:(nonnull UAInAppMessageAssets *)assets
         completionHandler:(nonnull void (^)(UAInAppMessagePrepareResult))completionHandler {
+    
+    for (UAURLInfo *info in self.urlInfos) {
+        NSURL *url = [NSURL URLWithString:info.url];
+        if (![[UAirship shared].URLAllowList isAllowed:url scope:UAURLAllowListScopeOpenURL]) {
+            UA_LERR(@"In-app message URL %@ is not allowed. Unable to display message.", url);
+            return completionHandler(UAInAppMessagePrepareResultCancel);
+        }
+    }
+    
+    self.assets = assets;
     completionHandler(UAInAppMessagePrepareResultSuccess);
 }
 
 - (BOOL)isReadyToDisplay {
     if (@available(iOS 13.0, *)) {
+        
+        BOOL isConnected = [self isNetworkConnected];
+        
+        for (UAURLInfo *info in self.urlInfos) {
+            if (info.urlType == UrlTypesImage && ![self.assets isCached:[NSURL URLWithString:info.url]]) {
+                continue;
+            }
+            
+            if (!isConnected) {
+                return false;
+            }
+        }
+        
         UIWindowScene *scene = [[UAInAppMessageSceneManager shared] sceneForMessage:self.message];
         if (!scene) {
             return NO;
@@ -57,7 +100,12 @@
         
         UAAutomationNativeBridgeExtension *nativeBridgeExtension = [UAAutomationNativeBridgeExtension extensionWithMessage:self.message];
         
-        UAThomasExtensions *extensions = [[UAThomasExtensions alloc] initWithNativeBridgeExtension:nativeBridgeExtension];
+        UAAssetImageProvider *assetImageProvider = [[UAAssetImageProvider alloc] init];
+        assetImageProvider.assets = self.assets;
+
+        UAThomasExtensions *extensions = [[UAThomasExtensions alloc]
+                                          initWithNativeBridgeExtension:nativeBridgeExtension
+                                          imageProvider:assetImageProvider];
 
         self.deferredDisplay = [UAThomas deferredDisplayWithJson:self.displayContent.layout
                                                            scene:scene
@@ -198,5 +246,8 @@
     }
 }
 
-@end
+- (BOOL)isNetworkConnected {
+    return ![[UAUtils connectionType] isEqualToString:UAConnectionType.none];
+}
 
+@end

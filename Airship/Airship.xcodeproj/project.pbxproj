@@ -865,6 +865,8 @@
 		6E87BE1426E28F570005D20D /* AirshipInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BE1226E28F570005D20D /* AirshipInstance.swift */; };
 		6E87BE1626E29BC90005D20D /* TestAirshipInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BE1526E29BC90005D20D /* TestAirshipInstance.swift */; };
 		6E87BE1B26E2C59D0005D20D /* TestAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BE1726E2C5940005D20D /* TestAnalytics.swift */; };
+		6E88739A2763D8AB00AC248A /* ImageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8873992763D8AB00AC248A /* ImageProvider.swift */; };
+		6E88739B2763D8B200AC248A /* ImageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8873992763D8AB00AC248A /* ImageProvider.swift */; };
 		6E887CD1272C5E8400E83363 /* CheckboxState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E887CD0272C5E8400E83363 /* CheckboxState.swift */; };
 		6E887CD3272C5F5000E83363 /* Checkbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E887CD2272C5F5000E83363 /* Checkbox.swift */; };
 		6E887CD5272C5F5A00E83363 /* CheckboxController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E887CD4272C5F5A00E83363 /* CheckboxController.swift */; };
@@ -1059,6 +1061,8 @@
 		6EF27DE72730E77300548DA3 /* RadioInputState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF27DE52730E77300548DA3 /* RadioInputState.swift */; };
 		6EF27DE92730E85700548DA3 /* RadioInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF27DE82730E85700548DA3 /* RadioInput.swift */; };
 		6EF27DEA2730E85700548DA3 /* RadioInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF27DE82730E85700548DA3 /* RadioInput.swift */; };
+		6EF66D8D276461DA00ABCB76 /* UrlInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF66D8C276461DA00ABCB76 /* UrlInfo.swift */; };
+		6EF66D8F27657B3A00ABCB76 /* UrlInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF66D8C276461DA00ABCB76 /* UrlInfo.swift */; };
 		6EFB377D234595C9005E4E44 /* UAMessageCenterNativeBridgeExtensionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EFB377C234595C9005E4E44 /* UAMessageCenterNativeBridgeExtensionTest.m */; };
 		6EFBDEE1262DF71C008380AC /* MockDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFBDEE0262DF71C008380AC /* MockDispatcher.swift */; };
 		6EFD6D4B27272333005B26F1 /* EmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFD6D4A27272333005B26F1 /* EmptyView.swift */; };
@@ -1137,8 +1141,8 @@
 		A658DE1227280B3400007672 /* ImageButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE0A2727020100007672 /* ImageButton.swift */; };
 		A658DE192728498900007672 /* AirshipWebview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE182728498900007672 /* AirshipWebview.swift */; };
 		A658DE1A2728498900007672 /* AirshipWebview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE182728498900007672 /* AirshipWebview.swift */; };
-		A658DE2B272AFB0400007672 /* AssetLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE2A272AFB0400007672 /* AssetLoader.swift */; };
-		A658DE2C272AFB0400007672 /* AssetLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE2A272AFB0400007672 /* AssetLoader.swift */; };
+		A658DE2B272AFB0400007672 /* ImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE2A272AFB0400007672 /* ImageLoader.swift */; };
+		A658DE2C272AFB0400007672 /* ImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE2A272AFB0400007672 /* ImageLoader.swift */; };
 		A67F87D2268DECCE00EF5F43 /* ContactAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67F87D1268DECCE00EF5F43 /* ContactAPIClient.swift */; };
 		A67F87D3268DECCE00EF5F43 /* ContactAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67F87D1268DECCE00EF5F43 /* ContactAPIClient.swift */; };
 		A67F87D5268E07E800EF5F43 /* ContactAPIResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67F87D4268E07E800EF5F43 /* ContactAPIResponse.swift */; };
@@ -2055,6 +2059,7 @@
 		6E87BE1526E29BC90005D20D /* TestAirshipInstance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAirshipInstance.swift; sourceTree = "<group>"; };
 		6E87BE1726E2C5940005D20D /* TestAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAnalytics.swift; sourceTree = "<group>"; };
 		6E8873952762A77400AC248A /* UAAutomation 9.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAAutomation 9.xcdatamodel"; sourceTree = "<group>"; };
+		6E8873992763D8AB00AC248A /* ImageProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageProvider.swift; sourceTree = "<group>"; };
 		6E887CD0272C5E8400E83363 /* CheckboxState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckboxState.swift; sourceTree = "<group>"; };
 		6E887CD2272C5F5000E83363 /* Checkbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Checkbox.swift; sourceTree = "<group>"; };
 		6E887CD4272C5F5A00E83363 /* CheckboxController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckboxController.swift; sourceTree = "<group>"; };
@@ -2212,6 +2217,7 @@
 		6EF27DE82730E85700548DA3 /* RadioInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioInput.swift; sourceTree = "<group>"; };
 		6EF2DF0D1E5CBAE30062099A /* UAScheduleDelayData+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAScheduleDelayData+Internal.h"; sourceTree = "<group>"; };
 		6EF2DF0E1E5CBAE30062099A /* UAScheduleDelayData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAScheduleDelayData.m; sourceTree = "<group>"; };
+		6EF66D8C276461DA00ABCB76 /* UrlInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UrlInfo.swift; sourceTree = "<group>"; };
 		6EFB377C234595C9005E4E44 /* UAMessageCenterNativeBridgeExtensionTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAMessageCenterNativeBridgeExtensionTest.m; sourceTree = "<group>"; };
 		6EFBDEE0262DF71C008380AC /* MockDispatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockDispatcher.swift; sourceTree = "<group>"; };
 		6EFD6D4A27272333005B26F1 /* EmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyView.swift; sourceTree = "<group>"; };
@@ -2328,7 +2334,7 @@
 		A65070DC275FC6FD00BA22E4 /* UAInAppMessageEventTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageEventTest.m; sourceTree = "<group>"; };
 		A658DE0A2727020100007672 /* ImageButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageButton.swift; sourceTree = "<group>"; };
 		A658DE182728498900007672 /* AirshipWebview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipWebview.swift; sourceTree = "<group>"; };
-		A658DE2A272AFB0400007672 /* AssetLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetLoader.swift; sourceTree = "<group>"; };
+		A658DE2A272AFB0400007672 /* ImageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLoader.swift; sourceTree = "<group>"; };
 		A67F87D1268DECCE00EF5F43 /* ContactAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactAPIClient.swift; sourceTree = "<group>"; };
 		A67F87D4268E07E800EF5F43 /* ContactAPIResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactAPIResponse.swift; sourceTree = "<group>"; };
 		A6849386273290520021675E /* Score.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Score.swift; sourceTree = "<group>"; };
@@ -3293,17 +3299,18 @@
 		6E062CFF27165642001A74A1 /* Thomas */ = {
 			isa = PBXGroup;
 			children = (
+				6E8873982763D80400AC248A /* Image Loading */,
 				6EF02DEF2714EB500008B6C9 /* Thomas.swift */,
 				6E46A27E272B68660089CDE3 /* ThomasDelegate.swift */,
 				6ED80799273DA56000D1F455 /* ThomasViewController.swift */,
 				6ED8079F273DBCFC00D1F455 /* ThomasActionRunner.swift */,
 				6E1BACE6271E1B6E0038399E /* ThomasViewModels.swift */,
 				6E062D0A271657BB001A74A1 /* ThomasViewModelExtensions.swift */,
-				A658DE2A272AFB0400007672 /* AssetLoader.swift */,
 				6E3B32CE2755D8C700B89C7B /* LayoutState.swift */,
 				6EFD6D732729D84D005B26F1 /* Environment */,
 				6E1C9C43271F74D9009EF9EF /* ViewModifiers */,
 				6E1C9C42271F744E009EF9EF /* Views */,
+				6EF66D8C276461DA00ABCB76 /* UrlInfo.swift */,
 			);
 			name = Thomas;
 			sourceTree = "<group>";
@@ -4222,6 +4229,15 @@
 				6E87BD9E26DDDB250005D20D /* AppIntegrationTests.swift */,
 			);
 			name = Integration;
+			sourceTree = "<group>";
+		};
+		6E8873982763D80400AC248A /* Image Loading */ = {
+			isa = PBXGroup;
+			children = (
+				A658DE2A272AFB0400007672 /* ImageLoader.swift */,
+				6E8873992763D8AB00AC248A /* ImageProvider.swift */,
+			);
+			name = "Image Loading";
 			sourceTree = "<group>";
 		};
 		6E90F0ED228F550900E1FCB0 /* Config */ = {
@@ -6323,7 +6339,7 @@
 				6E9D529B26C1A77C004EA16B /* ActionRegistry.swift in Sources */,
 				6E87BE0726E283850005D20D /* DeepLinkDelegate.swift in Sources */,
 				6E952923268B812000398B54 /* AccountEventTemplate.swift in Sources */,
-				A658DE2B272AFB0400007672 /* AssetLoader.swift in Sources */,
+				A658DE2B272AFB0400007672 /* ImageLoader.swift in Sources */,
 				6E91B45B268904D900DDB1A8 /* PushReceivedEvent.swift in Sources */,
 				6E062D0D2718B505001A74A1 /* ViewConstraints.swift in Sources */,
 				6EC7E49626A8995F0038CFDD /* NamedUser.swift in Sources */,
@@ -6346,6 +6362,7 @@
 				6E698DF026790AC300654DB2 /* AirshipLogger.swift in Sources */,
 				6EFD6D8B272A53FB005B26F1 /* PagerController.swift in Sources */,
 				6E664BD326C4917000A2C8E5 /* RemoveTagsAction.swift in Sources */,
+				6EF66D8D276461DA00ABCB76 /* UrlInfo.swift in Sources */,
 				6EAD7CE526B216DB00B88EA7 /* DeepLinkAction.swift in Sources */,
 				6E87BD9226D963B60005D20D /* DefaultAppIntegrationDelegate.swift in Sources */,
 				6E8BF45326852E4B009A8BD4 /* TaskRequest.swift in Sources */,
@@ -6400,6 +6417,7 @@
 				6E87BD6726D6A39A0005D20D /* Config.swift in Sources */,
 				6E664BBD26C46BC600A2C8E5 /* TagsActionPredicate.swift in Sources */,
 				6E6ED16B2683DBC300A2CBD0 /* SystemVersion.swift in Sources */,
+				6E88739A2763D8AB00AC248A /* ImageProvider.swift in Sources */,
 				6EF27DD927306C9100548DA3 /* AirshipToggle.swift in Sources */,
 				6E6ED15D2683DBC300A2CBD0 /* BeveledLoadingIndicator.swift in Sources */,
 				6E698E03267A799500654DB2 /* AirshipErrors.swift in Sources */,
@@ -7005,7 +7023,7 @@
 				6E91B45E268904D900DDB1A8 /* AssociateIdentifiersEvent.swift in Sources */,
 				6E9D529C26C1A77C004EA16B /* ActionRegistry.swift in Sources */,
 				6E739D8026BB01C500BC6F6D /* ChannelBulkUpdateAPIClient.swift in Sources */,
-				A658DE2C272AFB0400007672 /* AssetLoader.swift in Sources */,
+				A658DE2C272AFB0400007672 /* ImageLoader.swift in Sources */,
 				6E15B72E26CF13BC0099C92D /* RemoteDataProvider.swift in Sources */,
 				6E698E10267A88E800654DB2 /* EventAPIResponse.swift in Sources */,
 				6E8BF45726852E88009A8BD4 /* ExpirableTask.swift in Sources */,
@@ -7059,6 +7077,7 @@
 				6E510C1C2721DA6A006D9126 /* ViewFactory.swift in Sources */,
 				6EF27DE42730E6F900548DA3 /* RadioInputController.swift in Sources */,
 				6E6ED1582683DBC300A2CBD0 /* ViewUtils.swift in Sources */,
+				6EF66D8F27657B3A00ABCB76 /* UrlInfo.swift in Sources */,
 				6E698E5A267BF63B00654DB2 /* AppStateTracker.swift in Sources */,
 				6E15B6E526CC779A0099C92D /* RemoteConfigModuleAdapter.swift in Sources */,
 				6E15B72B26CEDBA50099C92D /* RemoteDataManager.swift in Sources */,
@@ -7082,6 +7101,7 @@
 				6E87BD6826D6A39A0005D20D /* Config.swift in Sources */,
 				6E664BDC26C4CD8700A2C8E5 /* EnableFeatureAction.swift in Sources */,
 				6E664BBE26C46BC600A2C8E5 /* TagsActionPredicate.swift in Sources */,
+				6E88739B2763D8B200AC248A /* ImageProvider.swift in Sources */,
 				6E952930268BBD7D00398B54 /* RetailEventTemplate.swift in Sources */,
 				6E887CD7272C602B00E83363 /* CheckboxController.swift in Sources */,
 				6E1892B2268CE8FE00417887 /* Lock.swift in Sources */,

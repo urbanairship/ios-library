@@ -7,6 +7,8 @@ class ThomasEnvironment : ObservableObject {
     private let delegate: ThomasDelegate
     let actionRunner: ActionRunnerProtocol = ThomasActionRunner()
     let extensions: ThomasExtensions?
+    let imageLoader: ImageLoader;
+    
     var isDismissed = false
     private var onDismiss: (() -> Void)
 
@@ -16,6 +18,7 @@ class ThomasEnvironment : ObservableObject {
         self.delegate = delegate
         self.extensions = extensions
         self.onDismiss = onDismiss
+        self.imageLoader = ImageLoader(imageProvider: extensions?.imageProvider)
     }
     
     func submitForm(_ formState: FormState, layoutState: LayoutState) {

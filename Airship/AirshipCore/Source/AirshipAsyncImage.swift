@@ -16,23 +16,25 @@ struct AirshipAsyncImage<Placeholder: View, ImageView: View> : View {
     @State private var currentImage: UIImage?
     @State private var imageIndex: Int = 0
     @State private var timer: Timer?
+    @State private var cancellable: AnyCancellable?
+    @EnvironmentObject var thomasEnvironment: ThomasEnvironment
 
-    @State private var imageLoader: AssetLoader = AssetLoader()
-    @State private var imageLoaderCancellable: AnyCancellable?
-    
     var body: some View {
         content
-            .onReceive(imageLoader.loaded) { image in
-                if let image = image {
-                    self.loadedImage = image
-                    animateImage()
-                }
-            }
             .onAppear {
-                if self.loadedImage != nil {
+                if (self.loadedImage != nil) {
                     animateImage()
                 } else {
-                    self.imageLoaderCancellable = imageLoader.load(url: self.url)
+                    self.cancellable = thomasEnvironment.imageLoader.load(url: self.url)
+                        .receive(on: DispatchQueue.main)
+                        .sink(receiveCompletion: { completion in
+                            if case let .failure(error) = completion {
+                                AirshipLogger.error("Unable to load image \(error)")
+                            }
+                        }, receiveValue: { image in
+                            self.loadedImage = image
+                            self.animateImage()
+                        })
                 }
             }
             .onDisappear {
@@ -51,7 +53,7 @@ struct AirshipAsyncImage<Placeholder: View, ImageView: View> : View {
     }
     
     private func animateImage() {
-        guard let loadedImage = loadedImage else {
+        guard let loadedImage = self.loadedImage else {
             return
         }
         

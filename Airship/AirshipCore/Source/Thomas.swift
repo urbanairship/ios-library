@@ -3,10 +3,8 @@
 import Foundation
 import SwiftUI
 
-/**
- * Airship rendering engine.
- * @note For internal use only. :nodoc:
- */
+/// Airship rendering engine.
+/// - Note: for internal use only.  :nodoc:
 @available(iOS 13.0.0, tvOS 13.0, *)
 @objc(UAThomas)
 public class Thomas: NSObject {
@@ -25,6 +23,12 @@ public class Thomas: NSObject {
     public class func validate(json: Any) throws {
         let data = try JSONSerialization.data(withJSONObject: json, options: [])
         try validate(data: data)
+    }
+    
+    @objc
+    public class func urls(json: Any) throws -> [URLInfo]  {
+        let data = try JSONSerialization.data(withJSONObject: json, options: [])
+        return try decode(data).urlInfos()
     }
 
     @objc
@@ -145,22 +149,38 @@ public class Thomas: NSObject {
     }
 }
 
-/**
- * Airship rendering engine extensions.
- * @note For internal use only. :nodoc:
- */
+
+/// Airship rendering engine extensions.
+/// - Note: for internal use only.  :nodoc:
 @available(iOS 13.0.0, tvOS 13.0, *)
 @objc(UAThomasExtensions)
 public class ThomasExtensions: NSObject {
+    
+    
     #if !os(tvOS)
     let nativeBridgeExtension: NativeBridgeExtensionDelegate?
     #endif
+    
+    let imageProvider: ImageProvider?
 
-    #if !os(tvOS)
+    #if os(tvOS)
     @objc
-    public init(nativeBridgeExtension: NativeBridgeExtensionDelegate?) {
+    public init(imageProvider: ImageProvider? = nil) {
+        self.imageProvider = imageProvider;
+    }
+    #else
+    @objc
+    public init(nativeBridgeExtension: NativeBridgeExtensionDelegate? = nil,
+                imageProvider: ImageProvider? = nil) {
         self.nativeBridgeExtension = nativeBridgeExtension
+        self.imageProvider = imageProvider;
     }
     #endif
-    
+}
+
+@objc
+public enum UrlTypes : Int {
+    case image
+    case video
+    case web
 }
