@@ -2,6 +2,7 @@
 
 #import <Foundation/Foundation.h>
 #import "UAInAppMessageAdapterProtocol.h"
+#import "UAInAppMessageAdvancedAdapterProtocol+Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -10,7 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 NS_SWIFT_NAME(InAppMessageAirshipLayoutAdapter)
 API_AVAILABLE(ios(13.0))
-@interface UAInAppMessageAirshipLayoutAdapter : NSObject <UAInAppMessageAdapterProtocol>
+@interface UAInAppMessageAirshipLayoutAdapter : NSObject <UAInAppMessageAdapterProtocol, UAInAppMessageAdvancedAdapterProtocol>
 
 @end
 
