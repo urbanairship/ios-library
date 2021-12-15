@@ -13,62 +13,65 @@ struct ScrollLayout : View {
     /// View constriants.
     let constraints: ViewConstraints
     
-    @State private var isScrollable: Bool = true
+    @State private var contentSize: (ViewConstraints, CGSize)? = nil
+    @State private var isScrollable = true
 
     var body: some View {
-        let width = self.model.direction == .vertical ? self.constraints.width : nil
-        let height = self.model.direction == .vertical ? nil : self.constraints.height
-        let childConstraints = ViewConstraints(width: width,
-                                               height: height,
-                                               safeAreaInsets: self.constraints.safeAreaInsets)
-        
         GeometryReader { parentMetrics in
-            if (isScrollable) {
-                ScrollView(self.model.direction == .vertical ? .vertical : .horizontal) {
-                    ViewFactory.createView(model: self.model.view, constraints: childConstraints)
-                        .background(GeometryReader { contentMetrics in
-                            Color.clear.preference(key: ScrollablePreferenceKey.self,
-                                                   value: scrollable(parent: parentMetrics, content: contentMetrics))
-                        })
-                        .onPreferenceChange(ScrollablePreferenceKey.self) {
-                            self.isScrollable = $0
-                        }
-                }
-                .clipped()
-            } else {
+            
+            let isVertical = self.model.direction == .vertical
+            let width = isVertical ? self.constraints.width : nil
+            let height = isVertical ? nil : self.constraints.height
+            
+            let childConstraints = ViewConstraints(width: width, height: height, safeAreaInsets: self.constraints.safeAreaInsets)
+            
+            let axis = isVertical ? Axis.Set.vertical : Axis.Set.horizontal
+            ScrollView(isScrollable ? axis : []) {
                 ViewFactory.createView(model: self.model.view, constraints: childConstraints)
-                    .background(GeometryReader { contentMetrics in
-                        Color.clear.preference(key: ScrollablePreferenceKey.self,
-                                               value: scrollable(parent: parentMetrics, content: contentMetrics))
-                    })
-                    .onPreferenceChange(ScrollablePreferenceKey.self) {
-                        self.isScrollable = $0
+                    .background(
+                        GeometryReader { geometryProxy in
+                            Color.clear.preference(key: ScrollViewContentSizePreferenceKey.self, value: geometryProxy.size)
+                        }
+                    )
+                    .onPreferenceChange(ScrollViewContentSizePreferenceKey.self) { newSize in
+                        contentSize = (constraints, newSize)
+                        self.isScrollable = true
                     }
             }
+            #if !os(tvOS)
+            .simultaneousGesture(
+                DragGesture(minimumDistance: 2, coordinateSpace: .global)
+                    .onChanged {_ in
+                        guard let contentSize = contentSize, contentSize.0 == self.constraints else {
+                            return
+                        }
+                        
+                       // self.isScrollable = scrollable(parent: parentMetrics.size, content: contentSize.1)
+                    }
+                    .onEnded { _ in self.isScrollable = true }
+                )
+            #endif
         }
+        
         .constraints(self.constraints)
         .background(self.model.backgroundColor)
         .border(self.model.border)
     }
     
-    private func scrollable(parent: GeometryProxy, content: GeometryProxy) -> Bool {
+    private func scrollable(parent: CGSize, content: CGSize) -> Bool {
         var isScrollable = false
         if (self.model.direction == .vertical) {
-            isScrollable =  content.size.height >= parent.size.height
+            isScrollable = content.height >= parent.height
         } else {
-            isScrollable =  content.size.width >= parent.size.width
+            isScrollable = content.width >= parent.width
         }
         
         return isScrollable
     }
 }
 
-private struct ScrollablePreferenceKey: PreferenceKey {
-    static var defaultValue: Bool = false
 
-    static func reduce(value: inout Bool, nextValue: () -> Bool) {
-        value = value || nextValue()
-    }
-
-    typealias Value = Bool
+struct ScrollViewContentSizePreferenceKey: PreferenceKey {
+  static var defaultValue: CGSize = .zero
+  static func reduce(value: inout CGSize, nextValue: () -> CGSize) {}
 }

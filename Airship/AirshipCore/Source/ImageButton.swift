@@ -20,10 +20,12 @@ struct ImageButton : View {
     var body: some View {
         Button(action: {}) {
             createInnerButton()
+                .padding(4)
                 .constraints(constraints)
                 .background(self.model.backgroundColor)
                 .border(self.model.border)
                 .viewAccessibility(label: self.model.contentDescription)
+
         }
         .buttonClick(self.model.identifier,
                      buttonDescription: self.model.contentDescription,

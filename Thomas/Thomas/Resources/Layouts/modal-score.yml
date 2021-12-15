@@ -1,0 +1,209 @@
+---
+version: 1
+presentation:
+  type: modal
+  default_placement:
+    size:
+      width: 90%
+      height: auto
+    shade_color:
+      default:
+        hex: "#000000"
+        alpha: 0.75
+view:
+  type: form_controller
+  identifier: parent_form
+  submit: submit_event
+  view:
+    type: linear_layout
+    direction: vertical
+    background_color:
+      default:
+        hex: "#ffffff"
+        alpha: 1
+    items:
+    # Score 1 (0 - 10)
+    - size:
+        width: 100%
+        height: auto
+      margin:
+        top: 8
+        bottom: 8
+        start: 16
+        end: 16
+      view:
+        type: nps_form_controller
+        identifier: nps_zero_to_ten_form
+        nps_identifier: nps_zero_to_ten
+        view:
+          type: score
+          identifier: "nps_zero_to_ten"
+          required: true
+          style:
+            type: number_range
+            spacing: 2
+            start: 0
+            end: 10
+            bindings:
+              selected:
+                shapes:
+                - type: rectangle
+                  color:
+                    default:
+                      hex: "#000000"
+                      alpha: 1
+                text_appearance:
+                  font_size: 12
+                  styles:
+                  - bold
+                  color:
+                    default:
+                      hex: "#ffffff"
+                      alpha: 1
+              unselected:
+                shapes:
+                - type: rectangle
+                  border:
+                    stroke_width: 1
+                    stroke_color:
+                      default:
+                        hex: "#999999"
+                        alpha: 1
+                  color:
+                    default:
+                      hex: "#dedede"
+                      alpha: 1
+                text_appearance:
+                  font_size: 12
+                  color:
+                    default:
+                      hex: "#666666"
+                      alpha: 1
+    # Score 2 (1 - 5)
+    - size:
+        width: auto
+        height: 24
+      margin:
+        top: 8
+        bottom: 8
+        start: 16
+        end: 16
+      view:
+        type: nps_form_controller
+        identifier: nps_zero_to_ten_form
+        nps_identifier: nps_zero_to_ten
+        view:
+          type: score
+          identifier: "nps_zero_to_ten"
+          required: true
+          style:
+            type: number_range
+            spacing: 8
+            start: 1
+            end: 5
+            bindings:
+              selected:
+                shapes:
+                - type: ellipse
+                  color:
+                    default:
+                      hex: "#FFDD33"
+                      alpha: 1
+                text_appearance:
+                  font_size: 14
+                  color:
+                    default:
+                      hex: "#000000"
+                      alpha: 1
+              unselected:
+                shapes:
+                - type: ellipse
+                  color:
+                    default:
+                      hex: "#3333ff"
+                      alpha: 1
+                text_appearance:
+                  font_size: 14
+                  color:
+                    default:
+                      hex: "#ffffff"
+                      alpha: 1
+
+    # Score 3 (97 - 105)
+    - size:
+        width: auto
+        height: 32
+      margin:
+        top: 8
+        bottom: 8
+        start: 16
+        end: 16
+      view:
+        type: nps_form_controller
+        identifier: nps_zero_to_ten_form
+        nps_identifier: nps_zero_to_ten
+        view:
+          type: score
+          identifier: "nps_zero_to_ten"
+          required: true
+          style:
+            type: number_range
+            spacing: 8
+            start: 97
+            end: 105
+            bindings:
+              selected:
+                shapes:
+                - type: ellipse
+                  color:
+                    default:
+                      hex: "#FF0000"
+                      alpha: 1
+                text_appearance:
+                  font_size: 14
+                  color:
+                    default:
+                      hex: "#000000"
+                      alpha: 1
+              unselected:
+                shapes:
+                - type: ellipse
+                  color:
+                    default:
+                      hex: "#0000FF"
+                      alpha: 1
+                text_appearance:
+                  font_size: 14
+                  color:
+                    default:
+                      hex: "#ffffff"
+                      alpha: 1
+
+    # BOTTOM-PINNED BUTTON
+    - size:
+        width: 100%
+        height: auto
+      margin:
+        top: 16
+        bottom: 16
+        start: 16
+        end: 16
+      view:
+        type: label_button
+        identifier: SUBMIT_BUTTON
+        background_color:
+          default:
+            hex: "#000000"
+            alpha: 1
+        button_click: ["form_submit", "cancel"]
+        enabled: ["form_validation"]
+        label:
+          type: label
+          text: 'SEND IT!'
+          text_appearance:
+            font_size: 14
+            alignment: center
+            color:
+              default:
+                hex: "#ffffff"
+                alpha: 1

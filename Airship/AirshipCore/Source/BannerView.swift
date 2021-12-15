@@ -20,16 +20,17 @@ struct BannerView: View {
 
     var body: some View {
         GeometryReader { metrics in
-            let placement = resolvePlacement()
-            let ignoreSafeArea = placement.ignoreSafeArea == true
+            RootView(thomasEnvironment: thomasEnvironment, layout: layout) { orientation, windowSize in
+                let placement = resolvePlacement(orientation: orientation, windowSize: windowSize)
+                let ignoreSafeArea = placement.ignoreSafeArea == true
 
-            let constraints = ViewConstraints.containerConstraints(metrics.size,
-                                                                   safeAreaInsets: metrics.safeAreaInsets,
-                                                                   ignoreSafeArea: ignoreSafeArea)
-            
-            createBanner(constraints: constraints, placement: placement)
-                .root(thomasEnvironment, layout: layout)
-                .applyIf(ignoreSafeArea) { $0.edgesIgnoringSafeArea(.all) }
+                let constraints = ViewConstraints.containerConstraints(metrics.size,
+                                                                       safeAreaInsets: metrics.safeAreaInsets,
+                                                                       ignoreSafeArea: ignoreSafeArea)
+                
+                createBanner(constraints: constraints, placement: placement)
+                    .applyIf(ignoreSafeArea) { $0.edgesIgnoringSafeArea(.all) }
+            }
         }
     }
     
@@ -41,12 +42,10 @@ struct BannerView: View {
         let offset = placement.position == .top ? -height : height
         
         let contentConstraints = constraints.calculateChild(placement.size)
-        let contentFrameConstraints = constraints.calculateChild(placement.size, margin: placement.margin)
 
         
         VStack {
             ViewFactory.createView(model: layout.view, constraints: contentConstraints)
-                .constraints(contentFrameConstraints)
                 .margin(placement.margin)
                 .shadow(radius: 5)
         }
@@ -73,7 +72,7 @@ struct BannerView: View {
         }
     }
 
-    private func resolvePlacement() ->  BannerPlacement {
+    private func resolvePlacement(orientation: Orientation, windowSize: WindowSize) ->  BannerPlacement {
         for placementSelector in self.presentation.placementSelectors ?? [] {
             if (placementSelector.windowSize != nil && placementSelector.windowSize != windowSize) {
                 continue

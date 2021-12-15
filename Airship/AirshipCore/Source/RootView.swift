@@ -1,32 +1,49 @@
-/* Copyright Airship and Contributors */
+//
+//  RootView.swift
+//  Airship
+//
+//  Created by Ryan Lepinski on 12/14/21.
+//  Copyright © 2021 Urban Airship. All rights reserved.
+//
 
 import Foundation
 import SwiftUI
 
-@available(iOS 13.0.0, tvOS 13.0, *)
-struct RootViewModifier: ViewModifier {
+@available(iOS 13.0.0, tvOS 13.0.0, *)
+struct RootView<Content: View> : View {
     
 #if !os(tvOS)
     @Environment(\.verticalSizeClass) private var verticalSizeClass
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 #endif
     
-    @State private var currentOrientation: Orientation = RootViewModifier.resolveOrientation()
+    @State private var currentOrientation: Orientation = RootView.resolveOrientation()
     @State private var isVisible: Bool = false
     @State private var displayedCalled: Bool = false
 
     @ObservedObject var thomasEnvironment: ThomasEnvironment
     let layout: Layout
+    let content: (Orientation, WindowSize) -> Content
+
+    
+    init(thomasEnvironment: ThomasEnvironment,
+         layout: Layout,
+         @ViewBuilder content: @escaping (Orientation, WindowSize) -> Content) {
+        self.thomasEnvironment = thomasEnvironment
+        self.layout = layout
+        self.content = content
+    }
+
 
     @ViewBuilder
-    func body(content: Content) -> some View {
-        content
+    var body: some View {
+        content(currentOrientation, resolveWindowSize())
             .environmentObject(thomasEnvironment)
             .environment(\.orientation, currentOrientation)
             .environment(\.windowSize, resolveWindowSize())
             .environment(\.isVisible, isVisible)
             .onAppear {
-                self.currentOrientation = RootViewModifier.resolveOrientation()
+                self.currentOrientation = RootView.resolveOrientation()
                 self.isVisible = true
             }
             .onDisappear {
@@ -34,7 +51,7 @@ struct RootViewModifier: ViewModifier {
             }
             #if !os(tvOS)
             .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
-                self.currentOrientation = RootViewModifier.resolveOrientation()
+                self.currentOrientation = RootView.resolveOrientation()
             }
             #endif
     }
@@ -73,13 +90,5 @@ struct RootViewModifier: ViewModifier {
         return .portrait
         #endif
     }
-}
 
-@available(iOS 13.0.0, tvOS 13.0, *)
-extension View {
-    @ViewBuilder
-    func root(_ thomasEnvironment: ThomasEnvironment, layout: Layout) -> some View {
-        self.modifier(RootViewModifier(thomasEnvironment: thomasEnvironment, layout: layout))
-    }
 }
-

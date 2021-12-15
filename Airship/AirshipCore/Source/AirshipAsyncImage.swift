@@ -64,7 +64,7 @@ struct AirshipAsyncImage<Placeholder: View, ImageView: View> : View {
             return
         }
         
-        self.timer = Timer.scheduledTimer(withTimeInterval: duration/Double(frames.count), repeats: true) { timer in
+        self.timer = Timer(timeInterval: duration/Double(frames.count), repeats: true) { timer in
             if (self.imageIndex >= (frames.count - 1)) {
                 self.imageIndex = 0
             } else {
@@ -73,6 +73,12 @@ struct AirshipAsyncImage<Placeholder: View, ImageView: View> : View {
             
             self.currentImage = frames[self.imageIndex];
         }
+        
+        
+        if let timer = timer {
+            RunLoop.main.add(timer, forMode: .common)
+        }
+        
     }
 }
 

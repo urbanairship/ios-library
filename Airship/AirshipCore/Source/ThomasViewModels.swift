@@ -743,7 +743,7 @@ struct CheckboxModel: Decodable, Equatable {
         case border = "border"
         case backgroundColor = "background_color"
         case contentDescription = "content_description"
-        case value = "value"
+        case value = "reporting_value"
         case style = "style"
     }
 }
@@ -761,17 +761,17 @@ struct RadioInputModel: Decodable, Equatable {
         case border = "border"
         case backgroundColor = "background_color"
         case contentDescription = "content_description"
-        case value = "value"
+        case value = "reporting_value"
     }
 }
 
 
 enum ScoreStyleModelType: String, Decodable, Equatable {
-    case npsStyle = "nps"
+    case numberRange = "number_range"
 }
 
 enum ScoreStyleModel: Decodable, Equatable {
-    case nps(ScoreNPSStyleModel)
+    case numberRange(ScoreNumberRangeStyle)
     
     enum CodingKeys: String, CodingKey {
         case type = "type"
@@ -783,21 +783,25 @@ enum ScoreStyleModel: Decodable, Equatable {
         let singleValueContainer = try decoder.singleValueContainer()
 
         switch type {
-        case .npsStyle:
-            self = .nps(try singleValueContainer.decode(ScoreNPSStyleModel.self))
+        case .numberRange:
+            self = .numberRange(try singleValueContainer.decode(ScoreNumberRangeStyle.self))
         }
     }
     
 }
 
-struct ScoreNPSStyleModel: Decodable, Equatable {
-    let type = ScoreStyleModelType.npsStyle
+struct ScoreNumberRangeStyle: Decodable, Equatable {
+    let type = ScoreStyleModelType.numberRange
     let spacing: Double?
     let bindings: Bindings
+    let start: Int
+    let end: Int
     
     enum CodingKeys: String, CodingKey {
         case spacing = "spacing"
         case bindings = "bindings"
+        case start = "start"
+        case end = "end"
     }
     
     struct Bindings: Decodable, Equatable {

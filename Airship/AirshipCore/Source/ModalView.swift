@@ -9,21 +9,20 @@ struct ModalView: View {
     let layout: Layout
     @ObservedObject var thomasEnvironment: ThomasEnvironment
     
-    @Environment(\.windowSize) private var windowSize
-    @Environment(\.orientation) private var orientation
-
     var body: some View {
         GeometryReader { metrics in
-            let placement = resolvePlacement()
-            let ignoreSafeArea = placement.ignoreSafeArea == true
-
-            let constraints = ViewConstraints.containerConstraints(metrics.size,
-                                                                   safeAreaInsets: metrics.safeAreaInsets,
-                                                                   ignoreSafeArea: ignoreSafeArea)
             
-            createBanner(constraints: constraints, placement: placement)
-                .root(thomasEnvironment, layout: layout)
-                .applyIf(ignoreSafeArea) { $0.edgesIgnoringSafeArea(.all) }
+            RootView(thomasEnvironment: thomasEnvironment, layout: layout) { orientation, windowSize in
+                
+                let placement = resolvePlacement(orientation: orientation, windowSize: windowSize)
+                let ignoreSafeArea = placement.ignoreSafeArea == true
+                let constraints = ViewConstraints.containerConstraints(metrics.size,
+                                                                       safeAreaInsets: metrics.safeAreaInsets,
+                                                                       ignoreSafeArea: ignoreSafeArea)
+                
+                createBanner(constraints: constraints, placement: placement)
+                    .applyIf(ignoreSafeArea) { $0.edgesIgnoringSafeArea(.all) }
+            }
         }
     }
     
@@ -34,13 +33,9 @@ struct ModalView: View {
         
         let contentConstraints = constraints.calculateChild(placement.size,
                                                             ignoreSafeArea: placement.ignoreSafeArea)
-        let contentFrameConstraints = constraints.calculateChild(placement.size,
-                                                                 margin: placement.margin,
-                                                                 ignoreSafeArea: placement.ignoreSafeArea)
 
         VStack {
             ViewFactory.createView(model: self.layout.view, constraints: contentConstraints)
-                .constraints(contentFrameConstraints)
                 .margin(placement.margin)
         }
         .constraints(constraints, alignment: alignment)
@@ -57,7 +52,7 @@ struct ModalView: View {
         )
     }
     
-    private func resolvePlacement() ->  ModalPlacement {
+    private func resolvePlacement(orientation: Orientation, windowSize: WindowSize) ->  ModalPlacement {
         for placementSelector in self.presentation.placementSelectors ?? [] {
             if (placementSelector.windowSize != nil && placementSelector.windowSize != windowSize) {
                 continue

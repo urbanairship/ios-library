@@ -16,20 +16,19 @@ struct Score : View {
     @ViewBuilder
     private func createScore() -> some View {
         switch(self.model.style) {
-        case .nps(let style):
+        case .numberRange(let style):
             HStack(spacing: style.spacing ?? 0) {
-                ForEach((0..<11), id: \.self) { index in
+                ForEach((style.start...style.end), id: \.self) { index in
                     let isOn = Binding<Bool>(
                         get: { self.score == index },
                         set: { if ($0) { updateScore(index) } }
                     )
                     
                     Toggle(isOn: isOn.animation()) {}
-                    .toggleStyle(AirshipScoreToggleStyle(style: style,
-                                                         viewConstraints: constraints,
-                                                         value: index,
-                                                         colorScheme: colorScheme))
-                    .scaledToFit()
+                    .toggleStyle(AirshipNumberRangeToggleStyle(style: style,
+                                                               viewConstraints: constraints,
+                                                               value: index,
+                                                               colorScheme: colorScheme))
                 }
             }
         }
@@ -37,7 +36,7 @@ struct Score : View {
  
     var body: some View {
         createScore()
-            .constraints(self.constraints)
+            .constraints(modifiedConstraints())
             .border(self.model.border)
             .background(self.model.backgroundColor)
             .viewAccessibility(label: self.model.contentDescription)
@@ -45,6 +44,15 @@ struct Score : View {
                 self.updateScore(self.score)
             }
             .formInput()
+    }
+    
+    private func modifiedConstraints() -> ViewConstraints {
+        var constraints = self.constraints
+        if (self.constraints.width == nil && self.constraints.height == nil) {
+            constraints.height = 32
+        }
+        
+        return constraints
     }
     
     private func updateScore(_ value: Int?) {
@@ -56,37 +64,47 @@ struct Score : View {
 }
 
 @available(iOS 13.0.0, tvOS 13.0, *)
-private struct AirshipScoreToggleStyle: ToggleStyle {
+private struct AirshipNumberRangeToggleStyle: ToggleStyle {
     
-    let style: ScoreNPSStyleModel
+    let style: ScoreNumberRangeStyle
     let viewConstraints: ViewConstraints
     let value: Int
     let colorScheme: ColorScheme
+   
     
     func makeBody(configuration: Self.Configuration) -> some View {
         let isOn = configuration.isOn
-        let binding = isOn ? style.bindings.selected : style.bindings.unselected
-        
-        let totalWidth = (self.viewConstraints.width ?? 320)
-        let totalSpacing = (10 * (self.style.spacing ?? 0))
-        let width = (totalWidth - totalSpacing)/11
-        let size = min(width, self.viewConstraints.height ?? width)
-        
         return Button(action: { configuration.isOn.toggle() } ) {
             ZStack {
-                if let shapes = binding.shapes {
-                    ForEach(0..<shapes.count, id: \.self) { index in
-                        Shapes.shape(model: shapes[index], colorScheme: colorScheme)
+                // Drwaing both with 1 hidden in case the content size changes between the two
+                // it will prevent the parent from resizing on toggle
+                Group {
+                    if let shapes = style.bindings.selected.shapes {
+                        ForEach(0..<shapes.count, id: \.self) { index in
+                            Shapes.shape(model: shapes[index], colorScheme: colorScheme)
+                        }
+                        .opacity(isOn ? 1 : 0)
                     }
+                    Text(String(self.value))
+                        .textAppearance(style.bindings.selected.textAppearance)
+                       
+                }.opacity(isOn ? 1 : 0)
+                
+                Group {
+                    if let shapes = style.bindings.unselected.shapes {
+                        ForEach(0..<shapes.count, id: \.self) { index in
+                            Shapes.shape(model: shapes[index], colorScheme: colorScheme)
+                        }
+                    }
+                    Text(String(self.value))
+                        .textAppearance(style.bindings.unselected.textAppearance)
                 }
-            
-                Text(String(self.value))
-                    .textAppearance(binding.textAppearance)
+                .opacity(isOn ? 0 : 1)
+               
             }
-            .frame(idealWidth: size, maxWidth: size, idealHeight: size, maxHeight: size)
-
+            .aspectRatio(1, contentMode: .fit)
         }
         .animation(Animation.easeInOut(duration: 0.05))
     }
-}
 
+}

@@ -17,10 +17,10 @@ struct LabelButton : View {
         Button(action: {}) {
             Label(model: self.model.label, constraints: constraints)
                 .applyIf(self.constraints.height == nil) { view in
-                    view.padding([.bottom, .top])
+                    view.padding([.bottom, .top], 12)
                 }
                 .applyIf(self.constraints.width == nil) { view in
-                    view.padding([.leading, .trailing])
+                    view.padding([.leading, .trailing], 12)
                 }
                 .background(self.model.backgroundColor)
                 .border(self.model.border)

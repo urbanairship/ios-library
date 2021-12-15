@@ -9,19 +9,21 @@ struct ViewConstraints: Equatable {
     static let emptyEdgeSet = EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
     
     // widths
-    let minWidth: CGFloat?
-    let width: CGFloat?
-    let maxWidth: CGFloat?
+    var minWidth: CGFloat?
+    var width: CGFloat?
+    var maxWidth: CGFloat?
 
     // heights
-    let minHeight: CGFloat?
-    let height: CGFloat?
-    let maxHeight: CGFloat?
+    var minHeight: CGFloat?
+    var height: CGFloat?
+    var maxHeight: CGFloat?
     
     // Safe area insets
-    let safeAreaInsets: EdgeInsets
-    
-    init(minWidth: CGFloat? = nil, width: CGFloat? = nil, maxWidth: CGFloat? = nil, minHeight: CGFloat? = nil, height: CGFloat? = nil, maxHeight: CGFloat? = nil, safeAreaInsets: EdgeInsets) {
+    var safeAreaInsets: EdgeInsets
+
+    init(minWidth: CGFloat? = nil, width: CGFloat? = nil, maxWidth: CGFloat? = nil,
+         minHeight: CGFloat? = nil, height: CGFloat? = nil, maxHeight: CGFloat? = nil,
+         safeAreaInsets: EdgeInsets) {
         self.minWidth = minWidth
         self.width = width
         self.maxWidth = maxWidth
@@ -51,12 +53,9 @@ struct ViewConstraints: Equatable {
     }
 
     
-    func calculateChild(_ childSize: Size, margin: Margin? = nil, ignoreSafeArea: Bool? = nil) -> ViewConstraints {
+    func calculateChild(_ childSize: Size, ignoreSafeArea: Bool? = nil) -> ViewConstraints {
         let horizontalInsets = self.safeAreaInsets.leading + self.safeAreaInsets.trailing
         let verticalInsets = self.safeAreaInsets.top + self.safeAreaInsets.bottom
-
-        let horizontalMargins = (margin?.start ?? 0) + (margin?.end ?? 0)
-        let verticalMargins = (margin?.bottom ?? 0) + (margin?.top ?? 0)
         
         var parentMinWidth = self.minWidth
         var parentWidth = self.width
@@ -78,14 +77,14 @@ struct ViewConstraints: Equatable {
             insets = ViewConstraints.emptyEdgeSet
         }
         
-        let childMinWidth = ViewConstraints.calculateSize(childSize.minWidth, parentSize: parentMinWidth ?? parentWidth, margins: horizontalMargins)
-        let childMaxWidth = ViewConstraints.calculateSize(childSize.maxWidth, parentSize: parentMaxWidth ?? parentWidth, margins: horizontalMargins)
-        var childWidth = ViewConstraints.calculateSize(childSize.width, parentSize: parentWidth, margins: horizontalMargins)
+        let childMinWidth = ViewConstraints.calculateSize(childSize.minWidth, parentSize: parentMinWidth ?? parentWidth)
+        let childMaxWidth = ViewConstraints.calculateSize(childSize.maxWidth, parentSize: parentMaxWidth ?? parentWidth)
+        var childWidth = ViewConstraints.calculateSize(childSize.width, parentSize: parentWidth)
         childWidth = boundConstraint(constraint: childWidth, minValue: childMinWidth, maxValue: childMaxWidth)
 
-        let childMinHeight = ViewConstraints.calculateSize(childSize.minHeight, parentSize: parentMinHeight ?? parentHeight, margins: verticalMargins)
-        let childMaxHeight = ViewConstraints.calculateSize(childSize.maxHeight, parentSize: parentMaxHeight ?? parentHeight, margins: verticalMargins)
-        var childHeight = ViewConstraints.calculateSize(childSize.height, parentSize: parentHeight, margins: verticalMargins)
+        let childMinHeight = ViewConstraints.calculateSize(childSize.minHeight, parentSize: parentMinHeight ?? parentHeight)
+        let childMaxHeight = ViewConstraints.calculateSize(childSize.maxHeight, parentSize: parentMaxHeight ?? parentHeight)
+        var childHeight = ViewConstraints.calculateSize(childSize.height, parentSize: parentHeight)
         childHeight = boundConstraint(constraint: childHeight, minValue: childMinHeight, maxValue: childMaxHeight)
         
         return ViewConstraints(minWidth: childMinWidth,
@@ -122,8 +121,7 @@ struct ViewConstraints: Equatable {
     }
     
     private static func calculateSize(_ sizeContraints: SizeConstraint?,
-                                      parentSize: CGFloat?,
-                                      margins: CGFloat) -> CGFloat? {
+                                      parentSize: CGFloat?) -> CGFloat? {
         
         guard let constraint = sizeContraints else {
             return nil
@@ -131,12 +129,12 @@ struct ViewConstraints: Equatable {
         
         switch (constraint) {
         case .points(let points):
-            return points + margins
+            return points
         case .percent(let percent):
             guard let parentSize = parentSize else {
                 return nil
             }
-            return min(percent/100.0 * parentSize + margins, parentSize)
+            return percent/100.0 * parentSize
         case.auto:
             return nil
         }

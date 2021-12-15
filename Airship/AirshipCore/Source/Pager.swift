@@ -67,7 +67,7 @@ struct Pager : View {
         .clipped()
         .applyIf(self.model.disableSwipe != true) { view in
             #if !os(tvOS)
-            view.highPriorityGesture(
+            view.simultaneousGesture(
                 DragGesture()
                     .updating(self.$translation) { value, state, _ in
                         state = value.translation.width

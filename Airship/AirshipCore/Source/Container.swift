@@ -41,14 +41,9 @@ struct Container : View {
         
         let childConstraints = self.constraints.calculateChild(item.size,
                                                                ignoreSafeArea: item.ignoreSafeArea)
-        
-        let childFrameConstraints = self.constraints.calculateChild(item.size,
-                                                                    margin: item.margin,
-                                                                    ignoreSafeArea: item.ignoreSafeArea)
   
         ZStack {
             ViewFactory.createView(model: item.view, constraints: childConstraints)
-                .constraints(childFrameConstraints)
                 .margin(item.margin)
         }
         .applyIf(item.ignoreSafeArea != true) {
@@ -61,10 +56,6 @@ struct Container : View {
     }
     
     private func placementWidth() -> CGFloat? {
-        guard self.constraints.width == nil else {
-            return self.constraints.width
-        }
-        
         if let contentSize = contentSize, contentSize.0 == self.constraints {
             return contentSize.1.width > 0 ? contentSize.1.width : nil
         }
@@ -73,10 +64,6 @@ struct Container : View {
     }
     
     private func placementHeight() -> CGFloat? {
-        guard self.constraints.height == nil else {
-            return self.constraints.height
-        }
-        
         if let contentSize = contentSize, contentSize.0 == self.constraints {
             return contentSize.1.height > 0 ? contentSize.1.height : nil
         }

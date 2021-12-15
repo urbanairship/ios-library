@@ -651,7 +651,9 @@ view:
                     default:
                       hex: "#ff0000"
                   style:
-                    type: nps
+                    type: number_range
+                    start: 0
+                    end: 10
                     spacing: 3
                     bindings:
                       selected:

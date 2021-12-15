@@ -79,7 +79,7 @@ private struct ChildFormController : View {
                 
                 self.visibleCancellable = self.formState.$isVisible.sink { incoming in
                     if (incoming) {
-                        formState.makeVisible()
+                        parentFormState.makeVisible()
                     }
                 }
             }
