@@ -20,7 +20,6 @@ struct ImageButton : View {
     var body: some View {
         Button(action: {}) {
             createInnerButton()
-                .padding(4)
                 .constraints(constraints)
                 .background(self.model.backgroundColor)
                 .border(self.model.border)

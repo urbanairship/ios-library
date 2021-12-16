@@ -104,6 +104,10 @@ extension Image {
     }
     
     func centerCrop(constraints: ViewConstraints) -> some View {
+        /*
+         .scaledToFill() breaks v/hstacks by taking up as much possible space as it can
+         instead of sharing it with other elements. Moving the image to an overlay prevents the image from expanding.
+         */
         Color.clear
             .overlay(
                 GeometryReader { proxy in
