@@ -86,35 +86,41 @@ struct AirshipAsyncImage<Placeholder: View, ImageView: View> : View {
 extension Image {
     
     @ViewBuilder
-    func fitMedia(mediaFit:MediaFit, width: CGFloat?, height: CGFloat?) -> some View {
+    func fitMedia(mediaFit:MediaFit, constraints: ViewConstraints) -> some View {
         switch mediaFit {
         case .center:
-            center(width: width, height: height)
+            center(constraints: constraints)
         case .centerCrop:
-            centerCrop(width: width, height: height)
+            centerCrop(constraints: constraints)
         case .centerInside:
-            centerInside(width: width, height: height)
+            centerInside(constraints: constraints)
         }
     }
     
-    func center(width: CGFloat?, height: CGFloat?) -> some View {
+    func center(constraints: ViewConstraints) -> some View {
         self
-            .frame(width: width, height: height, alignment: .center)
+            .constraints(constraints)
             .clipped()
     }
     
-    func centerCrop(width: CGFloat?, height: CGFloat?) -> some View {
-        self
-            .resizable()
-            .scaledToFill()
-            .frame(width: width, height: height, alignment: .center)
-            .clipped()
+    func centerCrop(constraints: ViewConstraints) -> some View {
+        Color.clear
+            .overlay(
+                GeometryReader { proxy in
+                    self.resizable()
+                        .scaledToFill()
+                        .frame(width: proxy.size.width, height: proxy.size.height)
+                        .clipped()
+                })
+            .constraints(constraints)
     }
     
-    func centerInside(width: CGFloat?, height: CGFloat?) -> some View {
+    func centerInside(constraints: ViewConstraints) -> some View {
         self
             .resizable()
             .scaledToFit()
-            .frame(width: width, height: height, alignment: .center)
+            .constraints(constraints)
+            .clipped()
+        
     }
 }

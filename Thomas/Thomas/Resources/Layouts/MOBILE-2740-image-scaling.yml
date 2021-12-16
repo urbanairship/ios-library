@@ -1,0 +1,158 @@
+---
+presentation:
+  default_placement:
+    ignore_safe_area: true
+    position:
+      horizontal: center
+      vertical: center
+    shade_color:
+      default:
+        alpha: 0.2
+        hex: "#000000"
+        type: hex
+    size:
+      height: 100%
+      max_height: 100%
+      max_width: 100%
+      min_height: 100%
+      min_width: 100%
+      width: 100%
+  type: modal
+version: 1
+view:
+  type: linear_layout
+  direction: vertical
+  items:
+  - margin:
+      top: 25
+    size:
+      height: auto
+      width: 100%
+    view:
+      media_fit: center_crop
+      media_type: image
+      type: media
+      url: https://dl-staging.urbanairship.com/binary/public/Vl0wyG8kSyCyOUW98Wj4xg/a0c60499-2a05-48c8-9002-9e68f322a25d
+  - margin:
+      bottom: 0
+      end: 0
+      start: 0
+      top: 10
+    size:
+      height: 80
+      width: 90%
+    view:
+      text: Je suis le titre
+      text_appearance:
+        alignment: end
+        color:
+          default:
+            alpha: 1
+            hex: "#111111"
+            type: hex
+        font_families:
+        - sans-serif
+        font_size: 18
+        styles:
+        - underlined
+        - bold
+        - italic
+      type: label
+  - margin:
+      bottom: 10
+      end: 0
+      start: 0
+      top: 10
+    size:
+      height: auto
+      width: 90%
+    view:
+      direction: vertical
+      type: scroll_layout
+      view:
+        text: Coucou test Antoine!
+        text_appearance:
+          alignment: end
+          color:
+            default:
+              alpha: 1
+              hex: "#111111"
+              type: hex
+          font_families:
+          - sans-serif
+          font_size: 18
+          styles:
+          - underlined
+          - bold
+          - italic
+        type: label
+  - size:
+      height: 0
+      width: 0
+    view:
+      text: ''
+      text_appearance:
+        alignment: end
+        color:
+          default:
+            alpha: 1
+            hex: "#37FF00"
+            type: hex
+        font_families:
+        - Test limit
+        font_size: 24
+        styles:
+        - bold
+        - italic
+        - underlined
+      type: label
+  - margin:
+      bottom: 0
+      top: 10
+    size:
+      height: 100
+      width: 100%
+    view:
+      direction: horizontal
+      items:
+      - margin:
+          bottom: 30
+          end: 20
+          start: 20
+          top: 4
+        size:
+          height: 40
+          width: 85%
+        view:
+          type: label_button
+          actions: {}
+          background_color:
+            default:
+              alpha: 1
+              hex: "#222222"
+              type: hex
+          border:
+            radius: 0
+            stroke_color:
+              default:
+                alpha: 1
+                hex: "#222222"
+                type: hex
+            stroke_width: 1
+          button_click: []
+          enabled: []
+          identifier: c0637c3e-4fb8-45a6-aa46-5443ad7e19f2
+          label:
+            text: NEXT
+            text_appearance:
+              alignment: center
+              color:
+                default:
+                  alpha: 1
+                  hex: "#FFFFFF"
+                  type: hex
+              font_families:
+              - sans-serif
+              font_size: 24
+            type: label
+      type: linear_layout

@@ -207,7 +207,8 @@ private extension LayoutState {
             payload["pager"] = [
                 "identifier": pagerState.identifier,
                 "index": pagerState.index,
-                "completed": pagerState.completed
+                "completed": pagerState.completed,
+                "count": pagerState.pages
             ]
         }
         

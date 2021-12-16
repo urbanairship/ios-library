@@ -1,0 +1,507 @@
+---
+presentation:
+  default_placement:
+    ignore_safe_area: true
+    position:
+      horizontal: center
+      vertical: center
+    shade_color:
+      default:
+        alpha: 0.2
+        hex: "#000000"
+        type: hex
+    size:
+      height: 100%
+      max_height: 100%
+      max_width: 100%
+      min_height: 100%
+      min_width: 100%
+      width: 100%
+  disable_back_button: false
+  dismiss_on_touch_outside: false
+  type: modal
+version: 1
+view:
+  identifier: b4016f4d-fc26-4e3e-b37e-097420da23c2
+  type: pager_controller
+  view:
+    items:
+    - ignore_safe_area: true
+      position:
+        horizontal: center
+        vertical: center
+      size:
+        height: 100%
+        width: 100%
+      view:
+        disable_swipe: false
+        items:
+        - background_color:
+            default:
+              alpha: 1
+              hex: "#FFFFFF"
+              type: hex
+          items:
+          - margin:
+              bottom: 28
+              end: 0
+              start: 0
+              top: 0
+            position:
+              horizontal: center
+              vertical: center
+            size:
+              height: 100%
+              width: 100%
+            view:
+              direction: vertical
+              items:
+              - margin:
+                  bottom: 0
+                  end: 20
+                  start: 20
+                  top: 0
+                size:
+                  height: 100%
+                  width: 100%
+                view:
+                  direction: vertical
+                  items:
+                  - margin:
+                      bottom: 0
+                      end: 0
+                      start: 0
+                      top: 25
+                    size:
+                      height: 80
+                      width: 90%
+                    view:
+                      text: Header
+                      text_appearance:
+                        alignment: end
+                        color:
+                          default:
+                            alpha: 1
+                            hex: "#111111"
+                            type: hex
+                        font_families:
+                        - sans-serif
+                        font_size: 18
+                        styles:
+                        - underlined
+                        - bold
+                        - italic
+                      type: label
+                  - size:
+                      height: 0
+                      width: 0
+                    view:
+                      text: ''
+                      text_appearance:
+                        alignment: end
+                        color:
+                          default:
+                            alpha: 1
+                            hex: "#111111"
+                            type: hex
+                        font_families:
+                        - sans-serif
+                        font_size: 18
+                        styles:
+                        - underlined
+                        - bold
+                        - italic
+                      type: label
+                  - margin:
+                      bottom: 10
+                      end: 0
+                      start: 0
+                      top: 10
+                    size:
+                      height: 100%
+                      width: 100%
+                    view:
+                      direction: horizontal
+                      items:
+                      - margin:
+                          bottom: 0
+                          end: 20
+                          start: 20
+                          top: 0
+                        size:
+                          height: 60
+                          width: 60
+                        view:
+                          media_fit: center_inside
+                          media_type: image
+                          type: media
+                          url: https://dl-staging.urbanairship.com/binary/public/Vl0wyG8kSyCyOUW98Wj4xg/4af59d16-c3b5-4741-b9d6-78d06c3f9cdc
+                      - margin:
+                          bottom: 0
+                          end: 0
+                          start: 0
+                          top: 0
+                        size:
+                          height: 100%
+                          width: 100%
+                        view:
+                          text: liste
+                          text_appearance:
+                            alignment: start
+                            color:
+                              default:
+                                alpha: 1
+                                hex: "#111111"
+                                type: hex
+                            font_families:
+                            - sans-serif
+                            font_size: 18
+                            styles:
+                            - underlined
+                            - bold
+                            - italic
+                          type: label
+                      type: linear_layout
+                  - margin:
+                      bottom: 10
+                      end: 0
+                      start: 0
+                      top: 10
+                    size:
+                      height: 100%
+                      width: 100%
+                    view:
+                      direction: horizontal
+                      items:
+                      - margin:
+                          bottom: 0
+                          end: 20
+                          start: 20
+                          top: 0
+                        size:
+                          height: 60
+                          width: 60
+                        view:
+                          media_fit: center
+                          media_type: image
+                          type: media
+                          url: https://dl-staging.urbanairship.com/binary/public/Vl0wyG8kSyCyOUW98Wj4xg/669c0534-94ee-4955-abfd-519d974a4970
+                      - margin:
+                          bottom: 0
+                          end: 0
+                          start: 0
+                          top: 0
+                        size:
+                          height: 100%
+                          width: 100%
+                        view:
+                          text: liste
+                          text_appearance:
+                            alignment: start
+                            color:
+                              default:
+                                alpha: 1
+                                hex: "#111111"
+                                type: hex
+                            font_families:
+                            - sans-serif
+                            font_size: 18
+                            styles:
+                            - underlined
+                            - bold
+                            - italic
+                          type: label
+                      type: linear_layout
+                  - margin:
+                      bottom: 10
+                      end: 0
+                      start: 0
+                      top: 10
+                    size:
+                      height: 100%
+                      width: 100%
+                    view:
+                      direction: horizontal
+                      items:
+                      - margin:
+                          bottom: 0
+                          end: 20
+                          start: 20
+                          top: 0
+                        size:
+                          height: 60
+                          width: 60
+                        view:
+                          media_fit: center
+                          media_type: image
+                          type: media
+                          url: https://dl-staging.urbanairship.com/binary/public/Vl0wyG8kSyCyOUW98Wj4xg/e55b7991-29d7-4b71-bc90-ddc6e493e396
+                      - margin:
+                          bottom: 0
+                          end: 0
+                          start: 0
+                          top: 0
+                        size:
+                          height: 100%
+                          width: 100%
+                        view:
+                          text: liste
+                          text_appearance:
+                            alignment: start
+                            color:
+                              default:
+                                alpha: 1
+                                hex: "#111111"
+                                type: hex
+                            font_families:
+                            - sans-serif
+                            font_size: 18
+                            styles:
+                            - underlined
+                            - bold
+                            - italic
+                          type: label
+                      type: linear_layout
+                  type: linear_layout
+              type: linear_layout
+          type: container
+        - background_color:
+            default:
+              alpha: 1
+              hex: "#FFFFFF"
+              type: hex
+          items:
+          - margin:
+              bottom: 28
+              end: 0
+              start: 0
+              top: 0
+            position:
+              horizontal: center
+              vertical: center
+            size:
+              height: 100%
+              width: 100%
+            view:
+              direction: vertical
+              items:
+              - margin:
+                  bottom: 0
+                  end: 20
+                  start: 20
+                  top: 0
+                size:
+                  height: 100%
+                  width: 100%
+                view:
+                  direction: vertical
+                  items:
+                  - margin:
+                      bottom: 0
+                      end: 0
+                      start: 0
+                      top: 25
+                    size:
+                      height: 80
+                      width: 90%
+                    view:
+                      text: header
+                      text_appearance:
+                        alignment: end
+                        color:
+                          default:
+                            alpha: 1
+                            hex: "#111111"
+                            type: hex
+                        font_families:
+                        - sans-serif
+                        font_size: 18
+                        styles:
+                        - underlined
+                        - bold
+                        - italic
+                      type: label
+                  - size:
+                      height: 0
+                      width: 0
+                    view:
+                      text: ''
+                      text_appearance:
+                        alignment: end
+                        color:
+                          default:
+                            alpha: 1
+                            hex: "#111111"
+                            type: hex
+                        font_families:
+                        - sans-serif
+                        font_size: 18
+                        styles:
+                        - underlined
+                        - bold
+                        - italic
+                      type: label
+                  - margin:
+                      bottom: 10
+                      end: 0
+                      start: 0
+                      top: 10
+                    size:
+                      height: 100%
+                      width: 100%
+                    view:
+                      direction: horizontal
+                      items:
+                      - margin:
+                          bottom: 0
+                          end: 20
+                          start: 20
+                          top: 0
+                        size:
+                          height: 60
+                          width: 60
+                        view:
+                          media_fit: center
+                          media_type: image
+                          type: media
+                          url: https://dl-staging.urbanairship.com/binary/public/Vl0wyG8kSyCyOUW98Wj4xg/bc692c5f-09ce-4ea4-bb55-108b1b5d28a8
+                      - margin:
+                          bottom: 0
+                          end: 0
+                          start: 0
+                          top: 0
+                        size:
+                          height: 100%
+                          width: 100%
+                        view:
+                          text: text
+                          text_appearance:
+                            alignment: start
+                            color:
+                              default:
+                                alpha: 1
+                                hex: "#111111"
+                                type: hex
+                            font_families:
+                            - sans-serif
+                            font_size: 18
+                            styles:
+                            - underlined
+                            - bold
+                            - italic
+                          type: label
+                      type: linear_layout
+                  - margin:
+                      bottom: 10
+                      end: 0
+                      start: 0
+                      top: 10
+                    size:
+                      height: 100%
+                      width: 100%
+                    view:
+                      direction: horizontal
+                      items:
+                      - margin:
+                          bottom: 0
+                          end: 20
+                          start: 20
+                          top: 0
+                        size:
+                          height: 60
+                          width: 60
+                        view:
+                          media_fit: center
+                          media_type: image
+                          type: media
+                          url: https://dl-staging.urbanairship.com/binary/public/Vl0wyG8kSyCyOUW98Wj4xg/7a6582cb-740c-483e-af10-e95e41807c54
+                      - margin:
+                          bottom: 0
+                          end: 0
+                          start: 0
+                          top: 0
+                        size:
+                          height: 100%
+                          width: 100%
+                        view:
+                          text: text
+                          text_appearance:
+                            alignment: start
+                            color:
+                              default:
+                                alpha: 1
+                                hex: "#111111"
+                                type: hex
+                            font_families:
+                            - sans-serif
+                            font_size: 18
+                            styles:
+                            - underlined
+                            - bold
+                            - italic
+                          type: label
+                      type: linear_layout
+                  type: linear_layout
+              type: linear_layout
+          type: container
+        type: pager
+    - margin:
+        bottom: 0
+        end: 10
+        start: 0
+        top: 10
+      position:
+        horizontal: end
+        vertical: top
+      size:
+        height: 24
+        width: 24
+      view:
+        button_click:
+        - dismiss
+        identifier: dismiss_button
+        image:
+          color:
+            default:
+              alpha: 1
+              hex: "#000000"
+              type: hex
+          icon: close
+          type: icon
+        type: image_button
+    - margin:
+        bottom: 4
+        end: 0
+        start: 0
+        top: 0
+      position:
+        horizontal: center
+        vertical: bottom
+      size:
+        height: 20
+        width: 100%
+      view:
+        bindings:
+          selected:
+            shapes:
+            - aspect_ratio: 1
+              color:
+                default:
+                  alpha: 1
+                  hex: "#AAAAAA"
+                  type: hex
+              scale: 1
+              type: ellipse
+          unselected:
+            shapes:
+            - aspect_ratio: 1
+              color:
+                default:
+                  alpha: 1
+                  hex: "#CCCCCC"
+                  type: hex
+              scale: 1
+              type: ellipse
+        spacing: 4
+        type: pager_indicator
+    type: container
