@@ -27,6 +27,34 @@ class ThomasEnvironment : ObservableObject {
             AirshipLogger.debug("onFormSubmitted \(formState.identifier) formData: \(data) layoutState: \(layoutStatePayload)")
             self.delegate.onFormSubmitted(formIdentifier: formState.identifier, formData: data, layoutState: layoutStatePayload)
         }
+        
+        Airship.channel.editAttributes { channelEditor in
+            Airship.contact.editAttributes { contactEditor in
+                for (attributeName, attributeValue) in formState.attributes {
+                    if let channelAttribute = attributeName.channel {
+                        switch (attributeValue) {
+                    
+                        case .string(let value):
+                            channelEditor.set(string: value, attribute: channelAttribute)
+                            
+                        case .number(let value):
+                            channelEditor.set(number: NSNumber(value:value), attribute: channelAttribute)
+                        }
+                    } else if let contactAttribute = attributeName.contact {
+                        switch (attributeValue) {
+                     
+                        case .string(let value):
+                            contactEditor.set(string: value, attribute: contactAttribute)
+                    
+                        case .number(let value):
+                            contactEditor.set(number: NSNumber(value:value), attribute: contactAttribute)
+                        }
+                    }
+                }
+                contactEditor.apply()
+            }
+            channelEditor.apply()
+        }
     }
     
     func formDisplayed(_ formIdentifier: String, layoutState: LayoutState) {

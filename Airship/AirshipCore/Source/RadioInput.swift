@@ -7,6 +7,7 @@ import SwiftUI
 struct RadioInput : View {
     let model: RadioInputModel
     let constraints: ViewConstraints
+    @EnvironmentObject var formState: FormState
     @EnvironmentObject var radioInputState: RadioInputState
     @Environment(\.colorScheme) var colorScheme
 
@@ -41,6 +42,9 @@ struct RadioInput : View {
             .background(model.backgroundColor)
             .border(model.border)
             .viewAccessibility(label: self.model.contentDescription)
+            .onAppear {
+                self.radioInputState.attributeValue = self.model.attributeValue
+            }
             .formInput()
     }
 }

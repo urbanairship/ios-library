@@ -6,7 +6,8 @@ import Foundation
 class FormState: ObservableObject {
     @Published var data: FormInputData
     @Published var isVisible: Bool = false
-    
+    @Published var attributes: [AttributeName: AttributeValue] = [:]
+   
     let identifier: String
     
     private var children: [String: FormInputData] = [:]
@@ -21,6 +22,18 @@ class FormState: ObservableObject {
     func updateFormInput(_ identifier: String, data: FormInputData) {
         self.children[identifier] = data
         self.data = self.reducer(self.children)
+    }
+    
+    func updateFormAttributes(name: AttributeName?, value: AttributeValue?) {
+        guard let attributeName = name else {
+            return
+        }
+        guard let attributeValue = value else {
+            self.attributes.removeValue(forKey: attributeName)
+            return
+        }
+      
+        self.attributes.updateValue(attributeValue, forKey: attributeName)
     }
     
     func makeVisible() {

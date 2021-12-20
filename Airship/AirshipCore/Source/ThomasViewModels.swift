@@ -679,6 +679,7 @@ struct RadioInputControllerModel: Decodable, Equatable {
     let isRequired: Bool?
     let view: ViewModel
     let contentDescription: String?
+    let attributeName: AttributeName?
 
     enum CodingKeys: String, CodingKey {
         case identifier = "identifier"
@@ -688,6 +689,7 @@ struct RadioInputControllerModel: Decodable, Equatable {
         case view = "view"
         case isRequired = "required"
         case contentDescription = "content_description"
+        case attributeName = "attribute_name"
     }
 }
 
@@ -720,6 +722,8 @@ struct ToggleModel: Decodable, Equatable {
     let contentDescription: String?
     let isRequired: Bool?
     let style: ToggleStyleModel
+    let attributeName: AttributeName?
+    let attributeValue: AttributeValue?
 
     enum CodingKeys: String, CodingKey {
         case border = "border"
@@ -728,6 +732,8 @@ struct ToggleModel: Decodable, Equatable {
         case contentDescription = "content_description"
         case isRequired = "required"
         case style = "style"
+        case attributeName = "attribute_name"
+        case attributeValue = "attribute_value"
     }
 }
 
@@ -755,6 +761,7 @@ struct RadioInputModel: Decodable, Equatable {
     let contentDescription: String?
     let value: String
     let style: ToggleStyleModel
+    let attributeValue: AttributeValue?
     
     enum CodingKeys: String, CodingKey {
         case style = "style"
@@ -762,6 +769,7 @@ struct RadioInputModel: Decodable, Equatable {
         case backgroundColor = "background_color"
         case contentDescription = "content_description"
         case value = "reporting_value"
+        case attributeValue = "attribute_value"
     }
 }
 
@@ -833,6 +841,7 @@ struct ScoreModel: Decodable, Equatable {
     let contentDescription: String?
     let isRequired: Bool?
     let style: ScoreStyleModel
+    let attributeName: AttributeName?
     
     enum CodingKeys: String, CodingKey {
         case border = "border"
@@ -841,6 +850,7 @@ struct ScoreModel: Decodable, Equatable {
         case contentDescription = "content_description"
         case isRequired = "required"
         case style = "style"
+        case attributeName = "attribute_name"
     }
 }
 
@@ -958,6 +968,16 @@ struct Size: Decodable, Equatable {
         case minHeight = "min_height"
         case height = "height"
         case maxHeight = "max_height"
+    }
+}
+
+struct AttributeName: Decodable, Equatable, Hashable {
+    let channel: String?
+    let contact: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case channel = "channel"
+        case contact = "contact"
     }
 }
 
@@ -1198,5 +1218,22 @@ enum JSON: Decodable, Equatable {
             return array
         }
        
+    }
+}
+
+enum AttributeValue: Decodable, Equatable, Hashable {
+    case string(String)
+    case number(Double)
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+
+        if let string = try? container.decode(String.self) {
+            self = .string(string)
+        } else if let number = try? container.decode(Double.self) {
+            self = .number(number)
+        } else {
+            throw AirshipErrors.error("Invalid attribute value")
+        }
     }
 }

@@ -6,4 +6,5 @@ import Foundation
 class RadioInputState: ObservableObject {
     @Published
     var selectedItem: String?
+    var attributeValue: AttributeValue?
 }

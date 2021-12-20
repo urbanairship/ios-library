@@ -60,6 +60,9 @@ struct Score : View {
         let isValid = value != nil || self.model.isRequired != true
         let data = FormInputData(isValid: isValid, value: .score(value))
         self.formState.updateFormInput(self.model.identifier, data: data)
+        if let value = value {
+            self.formState.updateFormAttributes(name: self.model.attributeName, value: AttributeValue.number(Double(value)))
+        }
     }
 }
 

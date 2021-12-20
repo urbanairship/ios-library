@@ -10,8 +10,7 @@ struct RadioInputController : View {
     @State private var cancellable: AnyCancellable?
     @EnvironmentObject var parentFormState: FormState
     @State var radioInputState: RadioInputState = RadioInputState()
-
-
+    
     var body: some View {
         ViewFactory.createView(model: self.model.view, constraints: constraints)
             .constraints(constraints)
@@ -24,6 +23,7 @@ struct RadioInputController : View {
                     let isValid = incoming != nil || self.model.isRequired == false
                     let data = FormInputData(isValid: isValid, value: .radio(incoming))
                     self.parentFormState.updateFormInput(self.model.identifier, data: data)
+                    self.parentFormState.updateFormAttributes(name: self.model.attributeName, value: radioInputState.attributeValue)
                 }
             }
     }
