@@ -3,6 +3,12 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 16.1.2 December 21, 2021
+Patch release that fixes a contact update issue resulting in subsequent update operations not being executed.
+
+### Changes
+- Fixes a contact update issue resulting in subsequent update operations not being executed.
+
 ## Version 16.1.1 December 1, 2021
 Patch release that fixes a styling issue with message center on iOS 15, running actions from a notification action button, and adds
 the AirshipPreferenceCenter.xcframework.
