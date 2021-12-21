@@ -111,7 +111,7 @@ view:
                               view:
                                 type: checkbox
                                 identifier: "purple_id"
-                                value: "purple"
+                                reporting_value: "purple"
                                 style:
                                   type: checkbox
                                   bindings:
@@ -172,7 +172,7 @@ view:
                               view:
                                 type: checkbox
                                 identifier: "blue-id"
-                                value: "blue"
+                                reporting_value: "blue"
                                 style:
                                   type: checkbox
                                   bindings:
@@ -234,7 +234,7 @@ view:
                               view:
                                 type: checkbox
                                 identifier: "pea_green_id"
-                                value: "pea_green"
+                                reporting_value: "pea_green"
                                 style:
                                   type: checkbox
                                   bindings:
@@ -298,7 +298,7 @@ view:
                               view:
                                 type: checkbox
                                 identifier: "vomit-id"
-                                value: "vomit"
+                                reporting_value: "vomit"
                                 style:
                                   type: checkbox
                                   bindings:
@@ -409,7 +409,7 @@ view:
                               view:
                                 type: checkbox
                                 identifier: "apples_id"
-                                value: "apples"
+                                reporting_value: "apples"
                                 style:
                                   type: switch
                                   toggle_colors:
@@ -452,7 +452,7 @@ view:
                               view:
                                 type: checkbox
                                 identifier: "apples_id"
-                                value: "kiwi"
+                                reporting_value: "kiwi"
                                 style:
                                   type: switch
                                   toggle_colors:
@@ -516,7 +516,7 @@ view:
                                 start: 8
                               view:
                                 type: radio_input
-                                value: "person"
+                                reporting_value: "person"
                                 style:
                                   type: checkbox
                                   bindings:
@@ -573,7 +573,7 @@ view:
                                 start: 8
                               view:
                                 type: radio_input
-                                value: "robot"
+                                reporting_value: "robot"
                                 style:
                                   type: checkbox
                                   bindings:

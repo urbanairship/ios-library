@@ -8,23 +8,27 @@ import SwiftUI
 @available(iOS 13.0.0, tvOS 13.0, *)
 @objc(UAThomas)
 public class Thomas: NSObject {
+    
     private static let decoder = JSONDecoder()
     
     class func decode(_ json: Data) throws -> Layout {
-        return try self.decoder.decode(Layout.self, from: json)
-    }
-
-    @objc
-    public class func validate(data: Data) throws {
-        let _ = try decode(data)
+        let layout = try self.decoder.decode(Layout.self, from: json)
+        return layout
     }
     
+    @objc
+    public class func validate(data: Data) throws {
+        let layout = try decode(data)
+        try layout.validate()
+    }
+
     @objc
     public class func validate(json: Any) throws {
         let data = try JSONSerialization.data(withJSONObject: json, options: [])
         try validate(data: data)
     }
     
+
     @objc
     public class func urls(json: Any) throws -> [URLInfo]  {
         let data = try JSONSerialization.data(withJSONObject: json, options: [])
@@ -47,6 +51,7 @@ public class Thomas: NSObject {
                                       extensions: ThomasExtensions? = nil,
                                       delegate: ThomasDelegate) throws -> () -> Disposable {
         let layout = try decode(data)
+        
         switch (layout.presentation) {
         case .banner(let presentation):
             return try bannerDisplay(presentation, scene: scene, layout: layout, extensions: extensions, delegate: delegate)
