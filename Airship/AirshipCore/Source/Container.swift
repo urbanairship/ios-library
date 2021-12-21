@@ -49,9 +49,11 @@ struct Container : View {
         .applyIf(item.ignoreSafeArea != true) {
             $0.padding(self.constraints.safeAreaInsets)
         }
-        .frame(width: placementWidth(),
-                height: placementHeight(),
-                alignment: alignment)
+        .frame(idealWidth: placementWidth(),
+               maxWidth: self.constraints.width,
+               idealHeight: placementHeight(),
+               maxHeight: self.constraints.height,
+               alignment: alignment)
             
     }
     
