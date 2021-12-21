@@ -6,6 +6,7 @@
 #import "UAInAppMessageAdvancedAdapterProtocol+Internal.h"
 #import "UAAutomationNativeBridgeExtension+Internal.h"
 #import "UAInAppReporting+Internal.h"
+#import "UAActiveTimer+Internal.h"
 
 #if __has_include("AirshipKit/AirshipKit-Swift.h")
 #import <AirshipKit/AirshipKit-Swift.h>
@@ -14,6 +15,43 @@
 #else
 @import AirshipCore;
 #endif
+
+@interface UAPagerSummary : NSObject
+@property (nonatomic, strong) NSMutableArray *viewedPages;
+@property (nonatomic, assign) NSInteger currentIndex;
+@property (nonatomic, assign) NSInteger count;
+@property (nonatomic, assign) BOOL completed;
+@property (nonatomic, strong) UAActiveTimer *timer;
+
+@end
+
+@implementation UAPagerSummary
+- (instancetype)initWithCount:(NSUInteger)count {
+    self = [super init];
+    if (self) {
+        self.count = count;
+        self.currentIndex = -1;
+        self.viewedPages = [NSMutableArray array];
+    }
+    return self;
+}
+
+- (void)setCurrentIndex:(NSInteger)currentIndex {
+    if (self.currentIndex != -1) {
+        [self.timer stop];
+        NSDictionary *viewedPage = @{
+            UAInAppPagerSummaryIndexKey: @(self.currentIndex),
+            UAInAppPagerSummaryDurationKey: [NSString stringWithFormat:@"%.3f", self.timer.time]
+        };
+        [self.viewedPages addObject:viewedPage];
+    }
+    
+    self.currentIndex = currentIndex;
+    self.timer = [[UAActiveTimer alloc] init];
+    [self.timer start];
+}
+
+@end
 
 @interface UAAssetImageProvider : NSObject<UAImageProvider>
 @property (nonatomic, strong) UAInAppMessageAssets *assets;
@@ -39,7 +77,8 @@
 @property (nullable, nonatomic, strong) NSString *scheduleID;
 @property (nonatomic, copy, nullable) void (^onDismiss)(UAInAppMessageResolution *, NSDictionary *);
 @property (nonatomic, copy, nullable) void (^onEvent)(UAInAppReporting *);
-@property (nonatomic, strong) NSMutableSet *viewedPages;
+@property (nonatomic, strong) NSMutableDictionary<NSString *, UAPagerSummary *> *pagerSummaries;
+@property (nonatomic, strong) NSMutableSet<NSString *> *completedPagers;
 @property (nonatomic, strong) NSArray *urlInfos;
 @property (nonatomic, strong) UAInAppMessageAssets *assets;
 @end
@@ -56,7 +95,8 @@
     if (self) {
         self.message = message;
         self.displayContent = (UAInAppMessageAirshipLayoutDisplayContent *)self.message.displayContent;
-        self.viewedPages = [NSMutableSet set];
+        self.pagerSummaries = [NSMutableDictionary dictionary];
+        self.completedPagers = [NSMutableSet set];
         self.urlInfos = [UAThomas urlsWithJson:self.displayContent.layout error:nil];
     }
 
@@ -201,21 +241,38 @@
                               completed:(BOOL)completed
                             layoutState:(NSDictionary<NSString *,id> * _Nonnull)layoutState {
     
-    // Only send one page event per pager index
-    NSString *pageKey = [NSString stringWithFormat:@"%@%ld", pagerIdentifier, pageIndex];
-    if ([self.viewedPages containsObject:pageKey]) {
-        return;
-    }
-    [self.viewedPages addObject:pageKey];
-    
-    UAInAppReporting *reporting = [UAInAppReporting pageViewEventWithScheduleID:self.scheduleID
+    // Page view
+    UAInAppReporting *pageView = [UAInAppReporting pageViewEventWithScheduleID:self.scheduleID
                                                                          message:self.message
                                                                          pagerID:pagerIdentifier
                                                                           index:pageIndex
                                                                           count:pageCount
                                                                       completed:completed];
-    reporting.layoutState = layoutState;
-    [self record:reporting];
+    pageView.layoutState = layoutState;
+    [self record:pageView];
+    
+    // Only send 1 completed per pager
+    if (completed && ![self.completedPagers containsObject:pagerIdentifier]) {
+        [self.completedPagers addObject:pagerIdentifier];
+        UAInAppReporting *completed = [UAInAppReporting pagerCompletedEventWithScheduleID:self.scheduleID
+                                                                                  message:self.message
+                                                                                  pagerID:pagerIdentifier
+                                                                                   index:pageIndex
+                                                                                   count:pageCount];
+        completed.layoutState = layoutState;
+        [self record:completed];
+    }
+  
+    // Update summary
+    UAPagerSummary *summary = self.pagerSummaries[pagerIdentifier];
+    if (!summary) {
+        summary = [[UAPagerSummary alloc] initWithCount:pageCount];
+        self.pagerSummaries[pagerIdentifier] = summary;
+    }
+    summary.currentIndex = pageIndex;
+    if (completed) {
+        summary.completed = YES;
+    }
 }
 
 - (void)onPageSwipedWithPagerIdentifier:(NSString * _Nonnull)pagerIdentifier
@@ -234,6 +291,22 @@
 
 - (void)dimissWithResolution:(UAInAppMessageResolution *)resolution layoutState:(NSDictionary *)layoutState {
     if (self.onDismiss != nil) {
+        
+        // Summary events
+        for (NSString *pagerID in self.pagerSummaries) {
+            UAPagerSummary *summary = self.pagerSummaries[pagerID];
+            [summary.timer stop];
+            
+            UAInAppReporting *reporting = [UAInAppReporting pagerSummaryEventWithScehduleID:self.scheduleID
+                                                                                    message:self.message
+                                                                                    pagerID:pagerID
+                                                                                viewedPages:summary.viewedPages
+                                                                                      count:summary.count
+                                                                                  completed:summary.completed];
+            reporting.layoutState = layoutState;
+            [self record:reporting];
+        }
+        
         self.onDismiss(resolution, layoutState);
     }
     
@@ -251,3 +324,5 @@
 }
 
 @end
+
+

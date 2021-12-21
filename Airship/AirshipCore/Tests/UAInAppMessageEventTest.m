@@ -61,6 +61,78 @@
     XCTAssertEqualObjects(event.eventType, @"in_app_page_swipe");
 }
 
+/**
+ * Test in-app pager summary event.
+ */
+- (void)testPagerSummaryEvent {
+    NSArray *pages = @[
+        @{
+            @"index": @0,
+            @"duration": @"10.1"
+        },
+        @{
+            @"index": @1,
+            @"duration": @"3.1"
+        },
+    ];
+    
+    NSDictionary *expectedData = @{
+        @"id": @{
+            @"message_id": self.scheduleID
+        },
+        @"conversion_send_id": self.analytics.conversionSendID,
+        @"conversion_metadata": self.analytics.conversionPushMetadata,
+        @"locale": self.message.renderedLocale,
+        @"source": @"urban-airship",
+        @"pager_identifier":@"pager_id",
+        @"viewed_pages": pages,
+        @"page_count": @5,
+        @"completed": @(NO)
+    };
+
+    UAInAppReporting *reporting = [UAInAppReporting pagerSummaryEventWithScehduleID:self.scheduleID
+                                                                            message:self.message
+                                                                            pagerID:@"pager_id"
+                                                                        viewedPages:pages
+                                                                              count:5
+                                                                          completed:NO];
+    
+    [reporting record:self.analytics];
+    id<UAEvent> event = self.analytics.events[0];
+    
+    XCTAssertEqualObjects(event.data, expectedData);
+    XCTAssertEqualObjects(event.eventType, @"in_app_pager_summary");
+}
+
+/**
+ * Test in-app pager completed event.
+ */
+- (void)testPagerCompletedEvent {
+    NSDictionary *expectedData = @{
+        @"id": @{
+            @"message_id": self.scheduleID
+        },
+        @"conversion_send_id": self.analytics.conversionSendID,
+        @"conversion_metadata": self.analytics.conversionPushMetadata,
+        @"locale": self.message.renderedLocale,
+        @"source": @"urban-airship",
+        @"pager_identifier":@"pager_id",
+        @"page_count": @5,
+        @"page_index": @4,
+    };
+
+    UAInAppReporting *reporting = [UAInAppReporting pagerCompletedEventWithScheduleID:self.scheduleID
+                                                                              message:self.message
+                                                                              pagerID:@"pager_id"
+                                                                                index:4
+                                                                                count:5];
+    
+    [reporting record:self.analytics];
+    id<UAEvent> event = self.analytics.events[0];
+    
+    XCTAssertEqualObjects(event.data, expectedData);
+    XCTAssertEqualObjects(event.eventType, @"in_app_pager_completed");
+}
 
 /**
  * Test in-app form result event.

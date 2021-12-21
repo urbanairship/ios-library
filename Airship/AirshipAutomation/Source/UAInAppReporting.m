@@ -48,6 +48,22 @@ NSString *const UAInAppMessageResolutionEventTimedOut = @"timed_out";
 NSString *const UAInAppMessageButtonTapEventType = @"in_app_button_tap";
 NSString *const UAInAppMessageButtonTapEventButtonIDKey = @"button_identifier";
 
+// Pager summary
+NSString *const UAInAppMessagePageSummaryEventType = @"in_app_pager_summary";
+NSString *const UAInAppMessagePageSummaryEventPagerIDKey = @"pager_identifier";
+NSString *const UAInAppMessagePageSummaryEventViewedPagesKey = @"viewed_pages";
+NSString *const UAInAppMessagePageSummaryEventPageCountKey = @"page_count";
+NSString *const UAInAppMessagePageSummaryEventCompletedKey = @"completed";
+
+NSString *const UAInAppPagerSummaryIndexKey = @"index";
+NSString *const UAInAppPagerSummaryDurationKey = @"display_time";
+
+// Pager complete
+NSString *const UAInAppMessagePageCompletedEventType = @"in_app_pager_completed";
+NSString *const UAInAppMessagePageCompletedEventPagerIDKey = @"pager_identifier";
+NSString *const UAInAppMessagePageCompletedEventPageIndexKey = @"page_index";
+NSString *const UAInAppMessagePageCompletedEventPageCountKey = @"page_count";
+
 // Pager view
 NSString *const UAInAppMessagePageViewEventType = @"in_app_page_view";
 NSString *const UAInAppMessagePageViewEventPagerIDKey = @"pager_identifier";
@@ -231,6 +247,48 @@ NSString *const UAInAppMessageFormDisplayEventFormIdentifierKey = @"form_identif
                                    message:message
                                   baseData:baseData];
     
+}
+
++ (instancetype)pagerCompletedEventWithScheduleID:(NSString *)scheduleID
+                                          message:(UAInAppMessage *)message
+                                          pagerID:(NSString *)pagerID
+                                            index:(NSInteger)pageIndex
+                                            count:(NSInteger)pageCount {
+    
+    NSString *const UAInAppMessagePageCompletedEventType = @"in_app_pager_completed";
+    NSString *const UAInAppMessagePageCompletedEventPagerIDKey = @"pager_identifier";
+    NSString *const UAInAppMessagePageCompletedEventPageIndexKey = @"page_index";
+    NSString *const UAInAppMessagePageCompletedEventPageCountKey = @"page_count";
+    
+    NSDictionary *baseData = @{
+        UAInAppMessagePageCompletedEventPagerIDKey : pagerID ?: @"",
+        UAInAppMessagePageCompletedEventPageIndexKey: @(pageIndex),
+        UAInAppMessagePageCompletedEventPageCountKey: @(pageCount)
+    };
+    
+    return [[self alloc] initWithEventType:UAInAppMessagePageCompletedEventType
+                                scheduleID:scheduleID
+                                   message:message
+                                  baseData:baseData];
+}
+
++ (instancetype)pagerSummaryEventWithScehduleID:(NSString *)scheduleID
+                                        message:(UAInAppMessage *)message
+                                        pagerID:(NSString *)pagerID
+                                    viewedPages:(NSArray *)viewedPages
+                                          count:(NSInteger)pageCount
+                                      completed:(BOOL)completed {
+    NSDictionary *baseData = @{
+        UAInAppMessagePageSummaryEventPagerIDKey : pagerID ?: @"",
+        UAInAppMessagePageSummaryEventViewedPagesKey: viewedPages ?: @[],
+        UAInAppMessagePageSummaryEventPageCountKey: @(pageCount),
+        UAInAppMessagePageSummaryEventCompletedKey: @(completed)
+    };
+    
+    return [[self alloc] initWithEventType:UAInAppMessagePageSummaryEventType
+                                scheduleID:scheduleID
+                                   message:message
+                                  baseData:baseData];
 }
 
 + (instancetype)pageSwipeEventWithScheduleID:(NSString *)scheduleID

@@ -6,6 +6,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+extern NSString *const UAInAppPagerSummaryIndexKey;
+extern NSString *const UAInAppPagerSummaryDurationKey;
+
+
 /**
  * In App reporting.
  */
@@ -47,6 +51,19 @@ NS_SWIFT_NAME(InAppReporting)
                                      pagerID:(NSString *)pagerID
                                    fromIndex:(NSInteger)fromIndex
                                      toIndex:(NSInteger)toIndex;
+
++ (instancetype)pagerCompletedEventWithScheduleID:(NSString *)scheduleID
+                                          message:(UAInAppMessage *)message
+                                          pagerID:(NSString *)pagerID
+                                            index:(NSInteger)pageIndex
+                                            count:(NSInteger)pageCount;
+
++ (instancetype)pagerSummaryEventWithScehduleID:(NSString *)scheduleID
+                                        message:(UAInAppMessage *)message
+                                        pagerID:(NSString *)pagerID
+                                    viewedPages:(NSArray *)viewedPages
+                                          count:(NSInteger)pageCount
+                                      completed:(BOOL)completed;
 
 + (instancetype)formDisplayEventWithScheduleID:(NSString *)scheduleID
                                        message:(UAInAppMessage *)message
