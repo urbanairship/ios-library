@@ -80,6 +80,174 @@ class ContactAPIClientTest: XCTestCase {
         wait(for: [expectation], timeout: 10.0)
     }
     
+    func testRegisterEmail() throws {
+        self.session.data = """
+        {
+            "channel_id": "56779",
+        }
+        """.data(using: .utf8)
+        
+        let expectation = XCTestExpectation(description: "callback called")
+        
+        contactAPIClient.registerEmail(emailOptIn: [EmailOptIn.commercial(true), EmailOptIn.transactional(true)], address: "ua@airship.com") { response, error in
+            XCTAssertEqual(response?.status, 200)
+            XCTAssertNil(error)
+            XCTAssertNotNil(response?.channelID)
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: 10.0)
+    }
+    
+    func testRegisterEmailEmptyEmailOptIn() throws {
+        self.session.data = """
+        {
+            "channel_id": "56779",
+        }
+        """.data(using: .utf8)
+        
+        let expectation = XCTestExpectation(description: "callback called")
+        
+        contactAPIClient.registerEmail(emailOptIn: [], address: "ua@airship.com") { response, error in
+            XCTAssertEqual(response?.status, 200)
+            XCTAssertNil(error)
+            XCTAssertNotNil(response?.channelID)
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: 10.0)
+    }
+    
+    func testRegisterSms() throws {
+        self.session.data = """
+        {
+            "channel_id": "56779",
+        }
+        """.data(using: .utf8)
+        
+        let expectation = XCTestExpectation(description: "callback called")
+        
+        contactAPIClient.registerSms(msisdn: "15035556789", sender: "28855", optedIn: true) { response, error in
+            XCTAssertEqual(response?.status, 200)
+            XCTAssertNil(error)
+            XCTAssertNotNil(response?.channelID)
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: 10.0)
+    }
+    
+    func testRegisterSmsOptedInFalse() throws {
+        self.session.data = """
+        {
+            "channel_id": "56779",
+        }
+        """.data(using: .utf8)
+        
+        let expectation = XCTestExpectation(description: "callback called")
+        
+        contactAPIClient.registerSms(msisdn: "15035556789", sender: "28855", optedIn: false) { response, error in
+            XCTAssertEqual(response?.status, 200)
+            XCTAssertNil(error)
+            XCTAssertNotNil(response?.channelID)
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: 10.0)
+    }
+    
+    func testUpdateEmail() throws {
+        self.session.data = """
+        {
+            "channel_id": "56779",
+        }
+        """.data(using: .utf8)
+        
+        let expectation = XCTestExpectation(description: "callback called")
+        
+        contactAPIClient.updateEmail(channelID: "1234", emailOptIn: [EmailOptIn.commercial(true), EmailOptIn.transactional(true)], address: "ua@airship.com") { response, error in
+            XCTAssertEqual(response?.status, 200)
+            XCTAssertNil(error)
+            XCTAssertNotNil(response?.channelID)
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: 10.0)
+    }
+    
+    func testUpdateEmailEmptyEmailOptIn() throws {
+        self.session.data = """
+        {
+            "channel_id": "56779",
+        }
+        """.data(using: .utf8)
+        
+        let expectation = XCTestExpectation(description: "callback called")
+        
+        contactAPIClient.updateEmail(channelID: "1234", emailOptIn: [], address: "ua@airship.com") { response, error in
+            XCTAssertEqual(response?.status, 200)
+            XCTAssertNil(error)
+            XCTAssertNotNil(response?.channelID)
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: 10.0)
+    }
+    
+    func testUpdateSms() throws {
+        self.session.data = """
+        {
+            "channel_id": "56779",
+        }
+        """.data(using: .utf8)
+        
+        let expectation = XCTestExpectation(description: "callback called")
+        
+        contactAPIClient.updateSms(channelID: "1234", msisdn: "15035556789", sender: "28855", optedIn: true) { response, error in
+            XCTAssertEqual(response?.status, 200)
+            XCTAssertNil(error)
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: 10.0)
+    }
+    
+    func testUpdateSmsOptedInFalse() throws {
+        self.session.data = """
+        {
+            "channel_id": "56779",
+        }
+        """.data(using: .utf8)
+        
+        let expectation = XCTestExpectation(description: "callback called")
+        
+        contactAPIClient.updateSms(channelID: "1234", msisdn: "15035556789", sender: "28855", optedIn: false) { response, error in
+            XCTAssertEqual(response?.status, 200)
+            XCTAssertNil(error)
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: 10.0)
+    }
+    
+    func testOptOutSms() throws {
+        self.session.data = """
+        {
+            "channel_id": "56779",
+        }
+        """.data(using: .utf8)
+        
+        let expectation = XCTestExpectation(description: "callback called")
+        
+        contactAPIClient.optOutSms(msisdn: "15035556789", sender: "28855") { response, error in
+            XCTAssertEqual(response?.status, 200)
+            XCTAssertNil(error)
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: 10.0)
+    }
+    
     func testUpdate() throws {
         let tagUpdates = [
             TagGroupUpdate(group: "tag-set", tags: [], type: .set),
