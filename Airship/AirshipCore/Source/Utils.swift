@@ -248,11 +248,12 @@ public class Utils : NSObject {
     @objc
     public class func mainWindow() -> UIWindow? {
         let sharedApp: UIApplication = UIApplication.shared
-        if let window = sharedApp.windows.first(where: { !$0.isHidden }) {
-            return window
-        } else {
-            return sharedApp.delegate?.window ?? nil
+        for window in sharedApp.windows {
+            if (window.isKeyWindow) {
+                return window
+            }
         }
+        return sharedApp.delegate?.window ?? nil
     }
   
     /// Returns the main window for the given `UIWindowScene`.
