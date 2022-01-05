@@ -3,7 +3,6 @@
 #import "UAAirshipBaseTest.h"
 
 #import "UAEvent.h"
-#
 
 #import "AirshipTests-Swift.h"
 

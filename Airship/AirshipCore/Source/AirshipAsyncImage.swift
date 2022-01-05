@@ -9,7 +9,7 @@ import Combine
 struct AirshipAsyncImage<Placeholder: View, ImageView: View> : View {
     
     let url: String
-    let image: (Image) -> ImageView
+    let image: (Image, CGSize) -> ImageView
     let placeholder: () -> Placeholder
     
     @State private var loadedImage: UIImage?
@@ -45,7 +45,7 @@ struct AirshipAsyncImage<Placeholder: View, ImageView: View> : View {
     private var content: some View {
         Group {
             if let image = currentImage {
-                self.image(Image(uiImage: image))
+                self.image(Image(uiImage: image), image.size)
             } else {
                 self.placeholder()
             }
@@ -78,53 +78,6 @@ struct AirshipAsyncImage<Placeholder: View, ImageView: View> : View {
         if let timer = timer {
             RunLoop.main.add(timer, forMode: .common)
         }
-        
-    }
-}
-
-@available(iOS 13.0.0, tvOS 13.0.0, *)
-extension Image {
-    
-    @ViewBuilder
-    func fitMedia(mediaFit:MediaFit, constraints: ViewConstraints) -> some View {
-        switch mediaFit {
-        case .center:
-            center(constraints: constraints)
-        case .centerCrop:
-            centerCrop(constraints: constraints)
-        case .centerInside:
-            centerInside(constraints: constraints)
-        }
-    }
-    
-    func center(constraints: ViewConstraints) -> some View {
-        self
-            .constraints(constraints)
-            .clipped()
-    }
-    
-    func centerCrop(constraints: ViewConstraints) -> some View {
-        /*
-         .scaledToFill() breaks v/hstacks by taking up as much possible space as it can
-         instead of sharing it with other elements. Moving the image to an overlay prevents the image from expanding.
-         */
-        Color.clear
-            .overlay(
-                GeometryReader { proxy in
-                    self.resizable()
-                        .scaledToFill()
-                        .frame(width: proxy.size.width, height: proxy.size.height)
-                        .clipped()
-                })
-            .constraints(constraints)
-    }
-    
-    func centerInside(constraints: ViewConstraints) -> some View {
-        self
-            .resizable()
-            .scaledToFit()
-            .constraints(constraints)
-            .clipped()
         
     }
 }

@@ -37,7 +37,7 @@ struct ImageButton : View {
     private func createInnerButton() -> some View {
         switch(model.image) {
         case .url(let model):
-            AirshipAsyncImage(url: model.url) { image in
+            AirshipAsyncImage(url: model.url) { image, _ in
                 image
                     .renderingMode(.original)
                     .resizable()

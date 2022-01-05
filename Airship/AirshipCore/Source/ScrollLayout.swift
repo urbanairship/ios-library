@@ -15,6 +15,7 @@ struct ScrollLayout : View {
     
     @State private var contentSize: (ViewConstraints, CGSize)? = nil
     @State private var isScrollable = true
+    @State private var isTouched = false
 
     @ViewBuilder
     func content(parentMetrics: GeometryProxy, constraints: ViewConstraints) -> some View {
@@ -25,23 +26,25 @@ struct ScrollLayout : View {
                 }
             )
             .onPreferenceChange(ScrollViewContentSizePreferenceKey.self) { newSize in
-                contentSize = (constraints, newSize)
-                let isScrollable = scrollable(parent: parentMetrics.size, content: newSize)
-                if (isScrollable != self.isScrollable) {
-                    self.isScrollable = isScrollable
-                    print("something - isScrollable: \(self.isScrollable)")
+                contentSize = (self.constraints, newSize)
+                if (isTouched) {
+                    let isScrollable = scrollable(parent: parentMetrics.size, content: newSize)
+                    if (isScrollable != self.isScrollable) {
+                        self.isScrollable = isScrollable
+                    }
                 }
             }
             .onScrollStart {
-                print ("on scroll start")
+                self.isTouched = true
                 guard let contentSize = contentSize, contentSize.0 == self.constraints else {
                     return
                 }
                 let isScrollable = scrollable(parent: parentMetrics.size, content: contentSize.1)
+
                 if (isScrollable != self.isScrollable) {
                     self.isScrollable = isScrollable
-                    print("start - isScrollable: \(self.isScrollable)")
                 }
+                
             }
     }
     var body: some View {
@@ -55,15 +58,10 @@ struct ScrollLayout : View {
                                                    safeAreaInsets: self.constraints.safeAreaInsets)
             
             let axis = isVertical ? Axis.Set.vertical : Axis.Set.horizontal
-
-            if (self.isScrollable) {
-                ScrollView(axis) {
-                    content(parentMetrics: parentMetrics, constraints: childConstraints)
-                }
-                .clipped()
-            } else {
+            ScrollView(self.isScrollable ? axis : []) {
                 content(parentMetrics: parentMetrics, constraints: childConstraints)
             }
+            .clipped()
         }
         .constraints(self.constraints)
         .background(self.model.backgroundColor)
