@@ -441,38 +441,13 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
         [displayCoordinator didBeginDisplayingMessage:message];
     }
 
-    UAActiveTimer *timer = [[UAActiveTimer alloc] init];
-    
+   
     UA_WEAKIFY(self);
-    void (^onDisplay)(void) = ^{
-        // Display time timer
-        [timer start];
-        
-        if (message.isReportingEnabled) {
-            // Display event
-            UAInAppReporting *reporting = [UAInAppReporting displayEventWithScheduleID:scheduleID message:message];
-            reporting.campaigns = scheduleData.campaigns;
-            reporting.reportingContext = scheduleData.reportingContext;
-            [reporting record:self.analytics];
-        }
-    };
-    
-    void (^onDismiss)(UAInAppMessageResolution *, NSDictionary *) = ^(UAInAppMessageResolution *resolution, NSDictionary *layoutState) {
+    void (^onDismiss)(UAInAppMessageResolution *) = ^(UAInAppMessageResolution *resolution) {
 
         UA_STRONGIFY(self);
         UA_LDEBUG(@"Schedule %@ finished displaying", scheduleID);
 
-        [timer stop];
-        
-        if (message.isReportingEnabled) {
-            UAInAppReporting *reporting = [UAInAppReporting resolutionEventWithScheduleID:scheduleID
-                                                                                  message:message
-                                                                               resolution:resolution displayTime:timer.time];
-            reporting.layoutState = layoutState;
-            reporting.campaigns = scheduleData.campaigns;
-            reporting.reportingContext = scheduleData.reportingContext;
-            [reporting record:self.analytics];
-        }
 
         // Cancel button
         if (resolution.type == UAInAppMessageResolutionTypeButtonClick && resolution.buttonInfo.behavior == UAInAppMessageButtonInfoBehaviorCancel) {
@@ -507,7 +482,6 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
     };
 
     if ([adapter conformsToProtocol:@protocol(UAInAppMessageAdvancedAdapterProtocol)]) {
-        onDisplay();
         id<UAInAppMessageAdvancedAdapterProtocol> advancedAdapter = (id<UAInAppMessageAdvancedAdapterProtocol>) adapter;
         [advancedAdapter displayWithScheduleID:scheduleID
                                        onEvent:^(UAInAppReporting *reporting) {
@@ -519,9 +493,27 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
             }
         } onDismiss:onDismiss];
     } else if ([adapter respondsToSelector:@selector(display:)]) {
-        onDisplay();
+        UAActiveTimer *timer = [[UAActiveTimer alloc] init];
+        [timer start];
+        
+        if (message.isReportingEnabled) {
+            // Display event
+            UAInAppReporting *reporting = [UAInAppReporting displayEventWithScheduleID:scheduleID message:message];
+            reporting.campaigns = scheduleData.campaigns;
+            reporting.reportingContext = scheduleData.reportingContext;
+            [reporting record:self.analytics];
+        }
+        
         [adapter display:^(UAInAppMessageResolution *resolution) {
-            onDismiss(resolution, nil);
+            if (message.isReportingEnabled) {
+                UAInAppReporting *reporting = [UAInAppReporting resolutionEventWithScheduleID:scheduleID
+                                                                                      message:message
+                                                                                   resolution:resolution displayTime:timer.time];
+                reporting.campaigns = scheduleData.campaigns;
+                reporting.reportingContext = scheduleData.reportingContext;
+                [reporting record:self.analytics];
+            }
+            onDismiss(resolution);
         }];
     } else {
         UA_LWARN("Unable to display message, missing display method for schedule %@", scheduleID);

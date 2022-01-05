@@ -7,7 +7,8 @@ class FormState: ObservableObject {
     @Published var data: FormInputData
     @Published var isVisible: Bool = false
     @Published var attributes: [AttributeName: AttributeValue] = [:]
-   
+    @Published var isSubmitted: Bool = false
+
     let identifier: String
     
     private var children: [String: FormInputData] = [:]
@@ -41,11 +42,95 @@ class FormState: ObservableObject {
             self.isVisible = true
         }
     }
+    
+    func markSubmitted() {
+        if (!self.isSubmitted) {
+            self.isSubmitted = true
+        }
+    }
 }
 
 public struct FormInputData {
+    private static let typeKey = "type"
+    private static let valueKey = "value"
+    private static let childrenKey = "children"
+    private static let scoreIdKey = "score_id"
+    
     let isValid: Bool
     let value: FormValue
+    
+    func toPayload() -> [String: Any]? {
+        switch(self.value) {
+        case .checkbox(let value):
+            guard let value = value else {
+                return nil
+            }
+            return [
+                FormInputData.typeKey: self.value.typeName,
+                FormInputData.valueKey: value
+            ]
+        case .radio(let value):
+            guard let value = value else {
+                return nil
+            }
+            
+            return [
+                FormInputData.typeKey: self.value.typeName,
+                FormInputData.valueKey: value
+            ]
+        case .multipleCheckbox(let value):
+            guard let value = value else {
+                return nil
+            }
+            return [
+                FormInputData.typeKey: self.value.typeName,
+                FormInputData.valueKey: value
+            ]
+        case .text(let value):
+            guard let value = value else {
+                return nil
+            }
+            return [
+                FormInputData.typeKey: self.value.typeName,
+                FormInputData.valueKey: value
+            ]
+        case .score(let value):
+            guard let value = value else {
+                return nil
+            }
+            return [
+                FormInputData.typeKey: self.value.typeName,
+                FormInputData.valueKey: value
+            ]
+        case .form(let value):
+            var childrenMap: [String: Any] = [:]
+            value.forEach { key, value in
+                childrenMap[key] = value.toPayload()
+            }
+            
+            guard !childrenMap.isEmpty else {
+                return nil
+            }
+            return [
+                FormInputData.valueKey: self.value.typeName,
+                FormInputData.childrenKey: childrenMap
+            ]
+        case .nps(let identifier, let value):
+            var childrenMap: [String: Any] = [:]
+            value.forEach { key, value in
+                childrenMap[key] = value.toPayload()
+            }
+            guard !childrenMap.isEmpty else {
+                return nil
+            }
+            return [
+                FormInputData.valueKey: self.value.typeName,
+                FormInputData.scoreIdKey: identifier,
+                FormInputData.childrenKey: childrenMap
+            ]
+        }
+        
+    }
 }
 
 public enum FormValue {
@@ -56,5 +141,26 @@ public enum FormValue {
     case nps(String, [String: FormInputData])
     case text(String?)
     case score(Int?)
+    
+    var typeName: String {
+        switch(self) {
+        case .checkbox(_):
+            return "checkbox"
+        case .radio(_):
+            return "single_choice"
+        case .multipleCheckbox(_):
+            return "multiple_choice"
+        case .form(_):
+            return "form"
+        case .nps(_, _):
+            return "nps"
+        case .text(_):
+            return "text"
+        case .score(_):
+            return "score"
+        }
+    }
 }
+
+
 

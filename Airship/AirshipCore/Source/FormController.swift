@@ -48,7 +48,7 @@ private struct ParentFormController : View {
             .onAppear {
                 self.visibleCancellable = self.formState.$isVisible.sink { incoming in
                     if (incoming) {
-                        self.thomasEnvironment.formDisplayed(self.formState.identifier, layoutState: layoutState.override(formState: formState))
+                        self.thomasEnvironment.formDisplayed(self.formState, layoutState: layoutState.override(formState: formState))
                     }
                 }
             }

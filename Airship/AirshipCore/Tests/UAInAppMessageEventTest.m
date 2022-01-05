@@ -5,6 +5,7 @@
 #import "UAInAppMessage+Internal.h"
 #import "UAInAppMessageCustomDisplayContent.h"
 #import "UAInAPpReporting+Internal.h"
+@import AirshipCore;
 
 @interface UAInAppMessageEventTest : XCTestCase
 @property(nonatomic, strong) UATestAnalytics *analytics;
@@ -45,15 +46,26 @@
         @"pager_identifier":@"pager_id",
         @"from_page_index": @0,
         @"to_page_index": @5,
+        @"from_page_identifier": @"page0",
+        @"to_page_identifier": @"page5"
     };
-
+    
+    UAThomasPagerInfo *from = [[UAThomasPagerInfo alloc] initWithIdentifier:@"pager_id"
+                                                                  pageIndex:0
+                                                             pageIdentifier:@"page0"
+                                                                  pageCount:5
+                                                                  completed:false];
+    
+    UAThomasPagerInfo *to = [[UAThomasPagerInfo alloc] initWithIdentifier:@"pager_id"
+                                                                  pageIndex:5
+                                                             pageIdentifier:@"page5"
+                                                                  pageCount:5
+                                                                  completed:true];
+    
     UAInAppReporting *reporting = [UAInAppReporting pageSwipeEventWithScheduleID:self.scheduleID
                                                                          message:self.message
-                                                                         pagerID:@"pager_id"
-                                                                       fromIndex:0
-                                                                         toIndex:5];
-
-    
+                                                                            from:from
+                                                                              to:to];
     [reporting record:self.analytics];
     id<UAEvent> event = self.analytics.events[0];
     
@@ -67,11 +79,13 @@
 - (void)testPagerSummaryEvent {
     NSArray *pages = @[
         @{
-            @"index": @0,
+            @"page_index": @0,
+            @"page_identifier": @"page0",
             @"duration": @"10.1"
         },
         @{
-            @"index": @1,
+            @"page_index": @1,
+            @"page_identifier": @"page1",
             @"duration": @"3.1"
         },
     ];
@@ -89,14 +103,20 @@
         @"page_count": @5,
         @"completed": @(NO)
     };
+    
+    UAThomasPagerInfo *pagerInfo = [[UAThomasPagerInfo alloc] initWithIdentifier:@"pager_id"
+                                                                  pageIndex:1
+                                                             pageIdentifier:@"page1"
+                                                                  pageCount:5
+                                                                  completed:NO];
+    
+
 
     UAInAppReporting *reporting = [UAInAppReporting pagerSummaryEventWithScehduleID:self.scheduleID
                                                                             message:self.message
-                                                                            pagerID:@"pager_id"
-                                                                        viewedPages:pages
-                                                                              count:5
-                                                                          completed:NO];
-    
+                                                                          pagerInfo:pagerInfo
+                                                                        viewedPages:pages];
+                                                                              
     [reporting record:self.analytics];
     id<UAEvent> event = self.analytics.events[0];
     
@@ -116,16 +136,23 @@
         @"conversion_metadata": self.analytics.conversionPushMetadata,
         @"locale": self.message.renderedLocale,
         @"source": @"urban-airship",
-        @"pager_identifier":@"pager_id",
+        @"pager_identifier": @"pager_id",
         @"page_count": @5,
         @"page_index": @4,
+        @"page_identifier": @"page4id"
     };
 
+    
+    UAThomasPagerInfo *pagerInfo = [[UAThomasPagerInfo alloc] initWithIdentifier:@"pager_id"
+                                                                  pageIndex:4
+                                                             pageIdentifier:@"page4id"
+                                                                  pageCount:5
+                                                                  completed:YES];
+    
+    
     UAInAppReporting *reporting = [UAInAppReporting pagerCompletedEventWithScheduleID:self.scheduleID
                                                                               message:self.message
-                                                                              pagerID:@"pager_id"
-                                                                                index:4
-                                                                                count:5];
+                                                                            pagerInfo:pagerInfo];
     
     [reporting record:self.analytics];
     id<UAEvent> event = self.analytics.events[0];
@@ -152,10 +179,12 @@
         @"source": @"urban-airship",
         @"forms": formData
     };
+    
+    UAThomasFormResult *formResult = [[UAThomasFormResult alloc] initWithIdentifier:@"form_id" formData:formData];
 
     UAInAppReporting *reporting = [UAInAppReporting formResultEventWithScheduleID:self.scheduleID
-                                                                         message:self.message
-                                                                         formData: formData];
+                                                                          message:self.message
+                                                                        formResult:formResult];
     
     [reporting record:self.analytics];
     id<UAEvent> event = self.analytics.events[0];
@@ -179,9 +208,12 @@
         @"form_identifier": @"some-form"
     };
 
+    UAThomasFormInfo *formInfo = [[UAThomasFormInfo alloc] initWithIdentifier:@"some-form" submitted:NO];
+
+    
     UAInAppReporting *reporting = [UAInAppReporting formDisplayEventWithScheduleID:self.scheduleID
                                                                            message:self.message
-                                                                            formID:@"some-form"];
+                                                                          formInfo:formInfo];
     
     [reporting record:self.analytics];
     id<UAEvent> event = self.analytics.events[0];
@@ -230,16 +262,22 @@
         @"source": @"urban-airship",
         @"pager_identifier":@"pager_id",
         @"page_index": @0,
+        @"page_identifier": @"page-0",
         @"page_count": @5,
         @"completed": @YES,
+        @"viewed_count": @4
     };
+    
+    UAThomasPagerInfo *pagerInfo = [[UAThomasPagerInfo alloc] initWithIdentifier:@"pager_id"
+                                                                  pageIndex:0
+                                                             pageIdentifier:@"page-0"
+                                                                  pageCount:5
+                                                                  completed:YES];
 
     UAInAppReporting *reporting = [UAInAppReporting pageViewEventWithScheduleID:self.scheduleID
                                                                         message:self.message
-                                                                        pagerID:@"pager_id"
-                                                                          index:0
-                                                                          count:5
-                                                                      completed:YES];
+                                                                      pagerInfo:pagerInfo
+                                                                      viewCount:4];
     
     [reporting record:self.analytics];
     id<UAEvent> event = self.analytics.events[0];
@@ -482,7 +520,6 @@
  */
 - (void)testContext {
     NSDictionary *reportingContext = @{ @"some reporting context": @"some reporting value" };
-    NSDictionary *layoutState = @{ @"some layout state": @"something" };
 
     NSDictionary *expectedData = @{
         @"id": @{
@@ -494,17 +531,39 @@
         @"source": @"urban-airship",
         @"context": @{
             @"reporting_context": reportingContext,
-            @"some layout state": @"something"
+            @"pager": @{
+                @"identifier": @"pager_id",
+                @"page_index": @1,
+                @"page_identifier": @"page1",
+                @"completed": @NO,
+                @"count": @5
+            },
+            @"form": @{
+                @"identifier": @"some-form",
+                @"submitted": @YES
+            }
         }
     };
 
+    UAThomasFormInfo *formInfo = [[UAThomasFormInfo alloc] initWithIdentifier:@"some-form" submitted:YES];
+
+    UAThomasPagerInfo *pagerInfo = [[UAThomasPagerInfo alloc] initWithIdentifier:@"pager_id"
+                                                                  pageIndex:1
+                                                             pageIdentifier:@"page1"
+                                                                  pageCount:5
+                                                                  completed:NO];
+    
+    
+    UAThomasLayoutContext *layoutContext = [[UAThomasLayoutContext alloc] initWithFormInfo:formInfo
+                                                                                 pagerInfo:pagerInfo];
+    
     UAInAppReporting *reporting = [UAInAppReporting displayEventWithScheduleID:self.scheduleID message:self.message];
     reporting.reportingContext = reportingContext;
-    reporting.layoutState = layoutState;
-    
+    reporting.layoutContext = layoutContext;
+
     [reporting record:self.analytics];
     id<UAEvent> event = self.analytics.events[0];
-    
+
     XCTAssertEqualObjects(event.data, expectedData);
 }
 

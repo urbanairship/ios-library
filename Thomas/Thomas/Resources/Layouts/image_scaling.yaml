@@ -69,41 +69,14 @@ view:
         view:
           border:
             stroke_width: 1
+            stroke_color:
+              default:
+                hex: "#000000"
+                alpha: 1
           media_fit: center_crop
           media_type: image
           type: media
           url: https://dl-staging.urbanairship.com/binary/public/Vl0wyG8kSyCyOUW98Wj4xg/a0c60499-2a05-48c8-9002-9e68f322a25d
-#
-#      - margin:
-#          top: 8
-#        size:
-#          width: auto
-#          height: auto
-#        view:
-#          type: label
-#          text: "center"
-#          text_appearance:
-#            font_size: 14
-#            color:
-#              default:
-#                hex: "#000000"
-#                alpha: 1
-#
-#      - margin:
-#          top: 8
-#          bottom: 8
-#          start: 8
-#          end: 8
-#        size:
-#          width: 250
-#          height: 150
-#        view:
-#          border:
-#            stroke_width: 1
-#          media_fit: center
-#          media_type: image
-#          type: media
-#          url: https://dl-staging.urbanairship.com/binary/public/Vl0wyG8kSyCyOUW98Wj4xg/a0c60499-2a05-48c8-9002-9e68f322a25d
 
       - margin:
           top: 8
@@ -131,6 +104,10 @@ view:
           media_fit: center_inside
           border:
             stroke_width: 1
+            stroke_color:
+              default:
+                hex: "#000000"
+                alpha: 1
           media_type: image
           type: media
           url: https://dl-staging.urbanairship.com/binary/public/Vl0wyG8kSyCyOUW98Wj4xg/a0c60499-2a05-48c8-9002-9e68f322a25d
@@ -178,41 +155,14 @@ view:
         view:
           border:
             stroke_width: 1
+            stroke_color:
+              default:
+                hex: "#000000"
+                alpha: 1
           media_fit: center_crop
           media_type: image
           type: media
           url: https://dl-staging.urbanairship.com/binary/public/Vl0wyG8kSyCyOUW98Wj4xg/a0c60499-2a05-48c8-9002-9e68f322a25d
-#
-#      - margin:
-#          top: 8
-#        size:
-#          width: auto
-#          height: auto
-#        view:
-#          type: label
-#          text: "center"
-#          text_appearance:
-#            font_size: 14
-#            color:
-#              default:
-#                hex: "#000000"
-#                alpha: 1
-#
-#      - margin:
-#          top: 8
-#          bottom: 8
-#          start: 8
-#          end: 8
-#        size:
-#          width: 150
-#          height: auto
-#        view:
-#          border:
-#            stroke_width: 1
-#          media_fit: center
-#          media_type: image
-#          type: media
-#          url: https://dl-staging.urbanairship.com/binary/public/Vl0wyG8kSyCyOUW98Wj4xg/a0c60499-2a05-48c8-9002-9e68f322a25d
 
       - margin:
           top: 8
@@ -240,6 +190,10 @@ view:
           media_fit: center_inside
           border:
             stroke_width: 1
+            stroke_color:
+              default:
+                hex: "#000000"
+                alpha: 1
           media_type: image
           type: media
           url: https://dl-staging.urbanairship.com/binary/public/Vl0wyG8kSyCyOUW98Wj4xg/a0c60499-2a05-48c8-9002-9e68f322a25d
@@ -287,41 +241,14 @@ view:
         view:
           border:
             stroke_width: 1
+            stroke_color:
+              default:
+                hex: "#000000"
+                alpha: 1
           media_fit: center_crop
           media_type: image
           type: media
           url: https://dl-staging.urbanairship.com/binary/public/Vl0wyG8kSyCyOUW98Wj4xg/a0c60499-2a05-48c8-9002-9e68f322a25d
-#
-#      - margin:
-#          top: 8
-#        size:
-#          width: auto
-#          height: auto
-#        view:
-#          type: label
-#          text: "center"
-#          text_appearance:
-#            font_size: 14
-#            color:
-#              default:
-#                hex: "#000000"
-#                alpha: 1
-#
-#      - margin:
-#          top: 8
-#          bottom: 8
-#          start: 8
-#          end: 8
-#        size:
-#          width: auto
-#          height: 150
-#        view:
-#          border:
-#            stroke_width: 1
-#          media_fit: center
-#          media_type: image
-#          type: media
-#          url: https://dl-staging.urbanairship.com/binary/public/Vl0wyG8kSyCyOUW98Wj4xg/a0c60499-2a05-48c8-9002-9e68f322a25d
 
       - margin:
           top: 8
@@ -349,6 +276,10 @@ view:
           media_fit: center_inside
           border:
             stroke_width: 1
+            stroke_color:
+              default:
+                hex: "#000000"
+                alpha: 1
           media_type: image
           type: media
           url: https://dl-staging.urbanairship.com/binary/public/Vl0wyG8kSyCyOUW98Wj4xg/a0c60499-2a05-48c8-9002-9e68f322a25d

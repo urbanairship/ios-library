@@ -10,7 +10,6 @@
 @import AirshipCore;
 #endif
 
-
 // Common
 NSString *const UAInAppMessageEventIDKey = @"id";
 NSString *const UAInAppMessageEventConversionSendIDKey = @"conversion_send_id";
@@ -19,11 +18,22 @@ NSString *const UAInAppMessageEventSourceKey = @"source";
 NSString *const UAInAppMessageEventMessageIDKey = @"message_id";
 NSString *const UAInAppMessageEventCampaignsKey = @"campaigns";
 NSString *const UAInAppMessageEventLocaleKey = @"locale";
-NSString *const UAInAppMessageEventContextKey = @"context";
-NSString *const UAInAppMessageEventReportingContextKey = @"reporting_context";
 NSString *const UAInAppMessageEventUrbanAirshipSourceValue = @"urban-airship";
 NSString *const UAInAppMessageEventAppDefinedSourceValue = @"app-defined";
 NSString *const UAInAppMessageDisplayEventLocaleKey = @"locale";
+
+// Context
+NSString *const UAInAppMessageEventContextKey = @"context";
+NSString *const UAInAppMessageEventReportingContextKey = @"reporting_context";
+NSString *const UAInAppMessagePagerContextKey = @"pager";
+NSString *const UAInAppMessagePagerContextIDKey = @"identifier";
+NSString *const UAInAppMessagePagerContextPageIDKey = @"page_identifier";
+NSString *const UAInAppMessagePagerContextPageIndexKey = @"page_index";
+NSString *const UAInAppMessagePagerContextCompletedKey = @"completed";
+NSString *const UAInAppMessagePagerContextCountKey = @"count";
+NSString *const UAInAppMessageFormContextKey = @"form";
+NSString *const UAInAppMessageFormContextIDKey = @"identifier";
+NSString *const UAInAppMessageFormContextSubmittedKey = @"submitted";
 
 // Display
 NSString *const UAInAppMessageDisplayEventType = @"in_app_display";
@@ -55,27 +65,36 @@ NSString *const UAInAppMessagePageSummaryEventViewedPagesKey = @"viewed_pages";
 NSString *const UAInAppMessagePageSummaryEventPageCountKey = @"page_count";
 NSString *const UAInAppMessagePageSummaryEventCompletedKey = @"completed";
 
-NSString *const UAInAppPagerSummaryIndexKey = @"index";
+NSString *const UAInAppPagerSummaryIndexKey = @"page_index";
 NSString *const UAInAppPagerSummaryDurationKey = @"display_time";
+NSString *const UAInAppPagerSummaryIDKey = @"page_identifier";
 
 // Pager complete
 NSString *const UAInAppMessagePageCompletedEventType = @"in_app_pager_completed";
 NSString *const UAInAppMessagePageCompletedEventPagerIDKey = @"pager_identifier";
 NSString *const UAInAppMessagePageCompletedEventPageIndexKey = @"page_index";
 NSString *const UAInAppMessagePageCompletedEventPageCountKey = @"page_count";
+NSString *const UAInAppMessagePageCompletedEventPageIDKey = @"page_identifier";
+
 
 // Pager view
+
 NSString *const UAInAppMessagePageViewEventType = @"in_app_page_view";
 NSString *const UAInAppMessagePageViewEventPagerIDKey = @"pager_identifier";
+NSString *const UAInAppMessagePageViewEventPageIDKey = @"page_identifier";
 NSString *const UAInAppMessagePageViewEventPageIndexKey = @"page_index";
 NSString *const UAInAppMessagePageViewEventPageCountKey = @"page_count";
 NSString *const UAInAppMessagePageViewEventCompletedKey = @"completed";
+NSString *const UAInAppMessagePageViewEventViewedCountKey = @"viewed_count";
 
 // Page swipe
 NSString *const UAInAppMessagePageSwipeEventType = @"in_app_page_swipe";
 NSString *const UAInAppMessagePageSwipeEventPagerIDKey = @"pager_identifier";
 NSString *const UAInAppMessagePageSwipeEventFromIndexKey = @"from_page_index";
 NSString *const UAInAppMessagePageSwipeEventToIndexKey = @"to_page_index";
+NSString *const UAInAppMessagePageSwipeEventFromPageIDKey = @"from_page_identifier";
+NSString *const UAInAppMessagePageSwipeEventToPageIDKey = @"to_page_identifier";
+
 
 // Form result
 NSString *const UAInAppMessageFormResultEventType = @"in_app_form_result";
@@ -230,16 +249,15 @@ NSString *const UAInAppMessageFormDisplayEventFormIdentifierKey = @"form_identif
 
 + (instancetype)pageViewEventWithScheduleID:(NSString *)scheduleID
                                     message:(UAInAppMessage *)message
-                                    pagerID:(NSString *)pagerID
-                                      index:(NSInteger)pageIndex
-                                      count:(NSInteger)pageCount
-                                  completed:(BOOL)completed {
-    
+                                  pagerInfo:(nonnull UAThomasPagerInfo *)pagerInfo
+                                  viewCount:(NSUInteger)viewCount {
     NSDictionary *baseData = @{
-        UAInAppMessagePageViewEventPagerIDKey : pagerID ?: @"",
-        UAInAppMessagePageViewEventPageCountKey: @(pageCount),
-        UAInAppMessagePageViewEventPageIndexKey: @(pageIndex),
-        UAInAppMessagePageViewEventCompletedKey: @(completed),
+        UAInAppMessagePageViewEventPagerIDKey : pagerInfo.identifier,
+        UAInAppMessagePageViewEventPageCountKey: @(pagerInfo.pageCount),
+        UAInAppMessagePageViewEventPageIndexKey: @(pagerInfo.pageIndex),
+        UAInAppMessagePageViewEventCompletedKey: @(pagerInfo.completed),
+        UAInAppMessagePageViewEventViewedCountKey: @(viewCount),
+        UAInAppMessagePageViewEventPageIDKey: pagerInfo.pageIdentifier
     };
     
     return [[self alloc] initWithEventType:UAInAppMessagePageViewEventType
@@ -251,19 +269,13 @@ NSString *const UAInAppMessageFormDisplayEventFormIdentifierKey = @"form_identif
 
 + (instancetype)pagerCompletedEventWithScheduleID:(NSString *)scheduleID
                                           message:(UAInAppMessage *)message
-                                          pagerID:(NSString *)pagerID
-                                            index:(NSInteger)pageIndex
-                                            count:(NSInteger)pageCount {
-    
-    NSString *const UAInAppMessagePageCompletedEventType = @"in_app_pager_completed";
-    NSString *const UAInAppMessagePageCompletedEventPagerIDKey = @"pager_identifier";
-    NSString *const UAInAppMessagePageCompletedEventPageIndexKey = @"page_index";
-    NSString *const UAInAppMessagePageCompletedEventPageCountKey = @"page_count";
+                                        pagerInfo:(nonnull UAThomasPagerInfo *)pagerInfo {
     
     NSDictionary *baseData = @{
-        UAInAppMessagePageCompletedEventPagerIDKey : pagerID ?: @"",
-        UAInAppMessagePageCompletedEventPageIndexKey: @(pageIndex),
-        UAInAppMessagePageCompletedEventPageCountKey: @(pageCount)
+        UAInAppMessagePageCompletedEventPagerIDKey : pagerInfo.identifier,
+        UAInAppMessagePageCompletedEventPageIndexKey: @(pagerInfo.pageIndex),
+        UAInAppMessagePageCompletedEventPageCountKey: @(pagerInfo.pageCount),
+        UAInAppMessagePageCompletedEventPageIDKey: pagerInfo.pageIdentifier
     };
     
     return [[self alloc] initWithEventType:UAInAppMessagePageCompletedEventType
@@ -274,15 +286,13 @@ NSString *const UAInAppMessageFormDisplayEventFormIdentifierKey = @"form_identif
 
 + (instancetype)pagerSummaryEventWithScehduleID:(NSString *)scheduleID
                                         message:(UAInAppMessage *)message
-                                        pagerID:(NSString *)pagerID
-                                    viewedPages:(NSArray *)viewedPages
-                                          count:(NSInteger)pageCount
-                                      completed:(BOOL)completed {
+                                      pagerInfo:(nonnull UAThomasPagerInfo *)pagerInfo
+                                    viewedPages:(nonnull NSArray *)viewedPages {
     NSDictionary *baseData = @{
-        UAInAppMessagePageSummaryEventPagerIDKey : pagerID ?: @"",
-        UAInAppMessagePageSummaryEventViewedPagesKey: viewedPages ?: @[],
-        UAInAppMessagePageSummaryEventPageCountKey: @(pageCount),
-        UAInAppMessagePageSummaryEventCompletedKey: @(completed)
+        UAInAppMessagePageSummaryEventPagerIDKey : pagerInfo.identifier,
+        UAInAppMessagePageSummaryEventViewedPagesKey: viewedPages,
+        UAInAppMessagePageSummaryEventPageCountKey: @(pagerInfo.pageCount),
+        UAInAppMessagePageSummaryEventCompletedKey: @(pagerInfo.completed)
     };
     
     return [[self alloc] initWithEventType:UAInAppMessagePageSummaryEventType
@@ -293,13 +303,15 @@ NSString *const UAInAppMessageFormDisplayEventFormIdentifierKey = @"form_identif
 
 + (instancetype)pageSwipeEventWithScheduleID:(NSString *)scheduleID
                                      message:(UAInAppMessage *)message
-                                     pagerID:(NSString *)pagerID
-                                   fromIndex:(NSInteger)fromIndex
-                                     toIndex:(NSInteger)toIndex {
+                                        from:(UAThomasPagerInfo *)from
+                                          to:(UAThomasPagerInfo *)to {
+    
     NSDictionary *baseData = @{
-        UAInAppMessagePageSwipeEventPagerIDKey : pagerID ?: @"",
-        UAInAppMessagePageSwipeEventToIndexKey: @(toIndex),
-        UAInAppMessagePageSwipeEventFromIndexKey: @(fromIndex)
+        UAInAppMessagePageSwipeEventPagerIDKey : from.identifier,
+        UAInAppMessagePageSwipeEventToIndexKey: @(to.pageIndex),
+        UAInAppMessagePageSwipeEventToPageIDKey: to.pageIdentifier,
+        UAInAppMessagePageSwipeEventFromIndexKey: @(from.pageIndex),
+        UAInAppMessagePageSwipeEventFromPageIDKey: from.pageIdentifier
     };
     
     return [[self alloc] initWithEventType:UAInAppMessagePageSwipeEventType
@@ -310,9 +322,9 @@ NSString *const UAInAppMessageFormDisplayEventFormIdentifierKey = @"form_identif
 
 + (instancetype)formDisplayEventWithScheduleID:(NSString *)scheduleID
                                        message:(UAInAppMessage *)message
-                                        formID:(NSString *)formID {
+                                      formInfo:(nonnull UAThomasFormInfo *)formInfo {
     NSDictionary *baseData = @{
-        UAInAppMessageFormDisplayEventFormIdentifierKey : formID ?: @"",
+        UAInAppMessageFormDisplayEventFormIdentifierKey : formInfo.identifier
     };
     
     return [[self alloc] initWithEventType:UAInAppMessageFormDisplayEventType
@@ -323,10 +335,10 @@ NSString *const UAInAppMessageFormDisplayEventFormIdentifierKey = @"form_identif
 
 + (instancetype)formResultEventWithScheduleID:(NSString *)scheduleID
                                        message:(UAInAppMessage *)message
-                                     formData:(NSDictionary *)formData {
+                                   formResult:(nonnull UAThomasFormResult *)formResult {
     
     NSDictionary *baseData = @{
-        UAInAppMessageFormResultEventFormsKey : formData ?: @{}
+        UAInAppMessageFormResultEventFormsKey : formResult.formData
     };
     
     return [[self alloc] initWithEventType:UAInAppMessageFormResultEventType
@@ -409,9 +421,23 @@ NSString *const UAInAppMessageFormDisplayEventFormIdentifierKey = @"form_identif
     [data setValue:self.renderedLocale forKey:UAInAppMessageEventLocaleKey];
     
     NSMutableDictionary *context = [NSMutableDictionary dictionary];
-    if (self.layoutState.count) {
-        [context addEntriesFromDictionary:self.layoutState];
+    if (self.layoutContext.pagerInfo) {
+        context[UAInAppMessagePagerContextKey] = @{
+            UAInAppMessagePagerContextIDKey: self.layoutContext.pagerInfo.identifier,
+            UAInAppMessagePagerContextPageIDKey: self.layoutContext.pagerInfo.pageIdentifier,
+            UAInAppMessagePagerContextPageIndexKey: @(self.layoutContext.pagerInfo.pageIndex),
+            UAInAppMessagePagerContextCompletedKey: @(self.layoutContext.pagerInfo.completed),
+            UAInAppMessagePagerContextCountKey: @(self.layoutContext.pagerInfo.pageCount)
+        };
     }
+    
+    if (self.layoutContext.formInfo) {
+        context[UAInAppMessageFormContextKey] = @{
+            UAInAppMessageFormContextIDKey: self.layoutContext.formInfo.identifier,
+            UAInAppMessageFormContextSubmittedKey: @(self.layoutContext.formInfo.submitted),
+        };
+    }
+    
     if (self.reportingContext.count) {
         [context setValue:self.reportingContext forKey:UAInAppMessageEventReportingContextKey];
     }

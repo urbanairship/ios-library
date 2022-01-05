@@ -14,6 +14,7 @@ struct SubmitFormButtonClickBehavior: ViewModifier {
     func body(content: Content) -> some View {
         content.addTapGesture {
             thomasEnvironment.submitForm(formState, layoutState: layoutState)
+            formState.markSubmitted()
         }
     }
 }
@@ -26,7 +27,7 @@ struct PagerNextPageButtonClickBehavior: ViewModifier {
     func body(content: Content) -> some View {
         content.addTapGesture {
             withAnimation {
-                pagerState.index = min(pagerState.index + 1, pagerState.pages - 1)
+                pagerState.pageIndex = min(pagerState.pageIndex + 1, pagerState.pages.count - 1)
             }
         }
     }
@@ -40,7 +41,7 @@ struct PagerPreviousPageButtonClickBehavior: ViewModifier {
     func body(content: Content) -> some View {
         content.addTapGesture {
             withAnimation {
-                pagerState.index = max(pagerState.index - 1, 0)
+                pagerState.pageIndex = max(pagerState.pageIndex - 1, 0)
             }
         }
     }

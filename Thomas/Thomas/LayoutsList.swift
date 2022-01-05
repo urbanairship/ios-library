@@ -72,29 +72,38 @@ struct ContentView_Previews: PreviewProvider {
 }
 
 class Delegate : ThomasDelegate {
-    func onFormSubmitted(formIdentifier: String, formData: [String : Any], layoutState: [String : Any]) {
+    func onFormSubmitted(formResult: ThomasFormResult, layoutContext: ThomasLayoutContext) {
+        
     }
     
-    func onFormDisplayed(formIdentifier: String, layoutState: [String : Any]) {
+    func onFormDisplayed(formInfo: ThomasFormInfo, layoutContext: ThomasLayoutContext) {
+        
     }
     
-    func onButtonTapped(buttonIdentifier: String, layoutState: [String : Any]) {
+    func onButtonTapped(buttonIdentifier: String, layoutContext: ThomasLayoutContext) {
+        
     }
     
-    func onDismissed(layoutState: [String : Any]) {
+    func onDismissed(layoutContext: ThomasLayoutContext?) {
+        
     }
     
-    func onDismissed(buttonIdentifier: String, buttonDescription: String, cancel: Bool, layoutState: [String : Any]) {
+    func onDismissed(buttonIdentifier: String, buttonDescription: String, cancel: Bool, layoutContext: ThomasLayoutContext) {
+    
     }
     
-    func onTimedOut(layoutState: [String : Any]) {
+    func onTimedOut(layoutContext: ThomasLayoutContext?) {
+    
     }
     
-    func onPageViewed(pagerIdentifier: String, pageIndex: Int, pageCount: Int, completed: Bool, layoutState: [String : Any]) {
+    func onPageViewed(pagerInfo: ThomasPagerInfo, layoutContext: ThomasLayoutContext) {
+    
     }
     
-    func onPageSwiped(pagerIdentifier: String, fromIndex: Int, toIndex: Int, layoutState: [String : Any]) {
+    func onPageSwiped(from: ThomasPagerInfo, to: ThomasPagerInfo, layoutContext: ThomasLayoutContext) {
     }
+    
+    
 }
 
 class ThomasNativeBridgeExtension : NSObject, NativeBridgeExtensionDelegate  {

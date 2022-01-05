@@ -97,7 +97,7 @@ private extension ViewModel {
             if (!parentControllers.contains(.pager)) {
                 throw AirshipErrors.error("Pager must be a descendent of a pager controller")
             }
-            try model.items.forEach { try $0.validate(controllers) }
+            try model.items.forEach { try $0.view.validate(controllers) }
         case .pagerIndicator(_):
             if (!parentControllers.contains(.pager)) {
                 throw AirshipErrors.error("Pager indicator must be a descendent of a pager controller")

@@ -312,9 +312,7 @@ NSString * const UAInAppMessageManagerTestScheduleID = @"schedule ID";
     }];
 
     [self waitForTestExpectations];
-    XCTAssertEqual(2, self.analytics.events.count);
-    XCTAssertEqualObjects(@"in_app_display", self.analytics.events[0].eventType);
-    XCTAssertEqualObjects(@"in_app_resolution", self.analytics.events[1].eventType);
+    XCTAssertEqual(0, self.analytics.events.count);
 
     [self.mockAdapter verify];
     [self.mockDelegate verify];

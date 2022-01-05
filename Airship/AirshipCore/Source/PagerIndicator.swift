@@ -32,8 +32,8 @@ struct PagerIndicator : View {
     var body: some View {
         let height = constraints.height ?? 32.0
         HStack(spacing: self.model.spacing) {
-            ForEach(0..<self.pagerState.pages, id: \.self) { index in
-                if (self.pagerState.index == index) {
+            ForEach(0..<self.pagerState.pages.count, id: \.self) { index in
+                if (self.pagerState.pageIndex == index) {
                     createChild(binding: self.model.bindings.selected, height: height)
                 } else {
                     createChild(binding: self.model.bindings.unselected, height: height)

@@ -22,10 +22,10 @@ class ThomasEnvironment : ObservableObject {
     }
     
     func submitForm(_ formState: FormState, layoutState: LayoutState) {
-        if let data = formState.data.toPayload() {
-            let layoutStatePayload = layoutState.toPayload()
-            AirshipLogger.debug("onFormSubmitted \(formState.identifier) formData: \(data) layoutState: \(layoutStatePayload)")
-            self.delegate.onFormSubmitted(formIdentifier: formState.identifier, formData: data, layoutState: layoutStatePayload)
+        
+        if let formResult = formState.toFormResult() {
+            self.delegate.onFormSubmitted(formResult: formResult,
+                                          layoutContext: layoutState.toLayoutContext())
         }
         
         Airship.channel.editAttributes { channelEditor in
@@ -57,57 +57,44 @@ class ThomasEnvironment : ObservableObject {
         }
     }
     
-    func formDisplayed(_ formIdentifier: String, layoutState: LayoutState) {
-        let layoutStatePayload = layoutState.toPayload()
-        AirshipLogger.debug("onFormDisplayed \(formIdentifier) layoutState: \(layoutStatePayload)")
-        self.delegate.onFormDisplayed(formIdentifier: formIdentifier, layoutState: layoutStatePayload)
+    func formDisplayed(_ formState: FormState, layoutState: LayoutState) {
+        self.delegate.onFormDisplayed(formInfo: formState.toFormInfo(),
+                                      layoutContext: layoutState.toLayoutContext())
     }
         
     func buttonTapped(buttonIdentifier: String, layoutState: LayoutState) {
-        let layoutStatePayload = layoutState.toPayload()
-        AirshipLogger.debug("onButtonTapped \(buttonIdentifier) layoutState: \(layoutStatePayload)")
-        self.delegate.onButtonTapped(buttonIdentifier: buttonIdentifier, layoutState: layoutStatePayload)
+        self.delegate.onButtonTapped(buttonIdentifier: buttonIdentifier,
+                                     layoutContext: layoutState.toLayoutContext())
     }
     
-    func pageViewed(pageState: PagerState, layoutState: LayoutState) {
-        let layoutStatePayload = layoutState.toPayload()
-        AirshipLogger.debug("onPageViewed \(pageState.identifier) pageIndex: \(pageState.index) pageCount: \(pageState.pages) completed: \(pageState.completed) layoutState: \(layoutStatePayload)")
-        self.delegate.onPageViewed(pagerIdentifier: pageState.identifier,
-                                   pageIndex: pageState.index,
-                                   pageCount: pageState.pages,
-                                   completed: pageState.completed,
-                                   layoutState: layoutStatePayload)
+    func pageViewed(_ pagerState: PagerState, layoutState: LayoutState) {
+        self.delegate.onPageViewed(pagerInfo: pagerState.toPagerInfo(),
+                                   layoutContext: layoutState.toLayoutContext())
     }
     
     
     func dismiss(buttonIdentifier: String, buttonDescription: String?, cancel: Bool, layoutState: LayoutState) {
         tryDismiss {
-            let layoutStatePayload = layoutState.toPayload()
-            AirshipLogger.debug("onDismissed buttonIdentifier: \(buttonIdentifier) buttonDescription: \(buttonDescription ?? "") layoutState: \(layoutStatePayload)")
-            self.delegate.onDismissed(layoutState: layoutStatePayload)
+            self.delegate.onDismissed(layoutContext: layoutState.toLayoutContext())
         }
     }
     
     func dismiss(layoutState: LayoutState? = nil) {
         tryDismiss {
-            let layoutStatePayload = layoutState?.toPayload() ?? [:]
-            AirshipLogger.debug("onDismissed layoutState: \(layoutStatePayload)")
-            self.delegate.onDismissed(layoutState: layoutStatePayload)
+            self.delegate.onDismissed(layoutContext: layoutState?.toLayoutContext())
         }
     }
     
     func timedOut(layoutState: LayoutState? = nil) {
         tryDismiss {
-            let layoutStatePayload = layoutState?.toPayload() ?? [:]
-            AirshipLogger.debug("onTimedOut layoutState: \(layoutStatePayload)")
-            self.delegate.onTimedOut(layoutState: layoutStatePayload)
+            self.delegate.onTimedOut(layoutContext: layoutState?.toLayoutContext())
         }
     }
     
-    func pageSwiped(_ pagerIdentifier: String, fromIndex: Int, toIndex: Int, layoutState: LayoutState) {
-        let layoutStatePayload = layoutState.toPayload()
-        AirshipLogger.debug("onPageSwiped \(pagerIdentifier) fromIndex: \(fromIndex) toIndex: \(toIndex) layoutState: \(layoutStatePayload)")
-        self.delegate.onPageSwiped(pagerIdentifier: pagerIdentifier, fromIndex: fromIndex, toIndex: toIndex, layoutState: layoutStatePayload)
+    func pageSwiped(_ pagerState: PagerState, fromIndex: Int, toIndex: Int, layoutState: LayoutState) {
+        self.delegate.onPageSwiped(from: pagerState.toPagerInfo(index: fromIndex),
+                                   to: pagerState.toPagerInfo(index: toIndex),
+                                   layoutContext: layoutState.toLayoutContext())
     }
     
     private func tryDismiss(callback: () -> Void) {
@@ -126,126 +113,43 @@ enum DismissReason {
     case other
 }
 
-private extension FormValue {
-    var typeName: String {
-        switch(self) {
-        case .checkbox(_):
-            return "checkbox"
-        case .radio(_):
-            return "single_choice"
-        case .multipleCheckbox(_):
-            return "multiple_choice"
-        case .form(_):
-            return "form"
-        case .nps(_, _):
-            return "nps"
-        case .text(_):
-            return "text"
-        case .score(_):
-            return "score"
+@available(iOS 13.0.0, tvOS 13.0, *)
+private extension FormState {
+    func toFormInfo() -> ThomasFormInfo {
+        ThomasFormInfo(identifier: self.identifier,
+                       submitted: self.isSubmitted)
+    }
+    
+    func toFormResult() -> ThomasFormResult? {
+        if let data = self.data.toPayload() {
+            return ThomasFormResult(identifier: self.identifier,
+                             formData: data)
         }
+        return nil
     }
 }
 
-private extension FormInputData {
-    private static let typeKey = "type"
-    private static let valueKey = "value"
-    private static let childrenKey = "children"
-    private static let scoreIdKey = "score_id"
-    
-    func toPayload() -> [String: Any]? {
-        switch(self.value) {
-        case .checkbox(let value):
-            guard let value = value else {
-                return nil
-            }
-            return [
-                FormInputData.typeKey: self.value.typeName,
-                FormInputData.valueKey: value
-            ]
-        case .radio(let value):
-            guard let value = value else {
-                return nil
-            }
-            
-            return [
-                FormInputData.typeKey: self.value.typeName,
-                FormInputData.valueKey: value
-            ]
-        case .multipleCheckbox(let value):
-            guard let value = value else {
-                return nil
-            }
-            return [
-                FormInputData.typeKey: self.value.typeName,
-                FormInputData.valueKey: value
-            ]
-        case .text(let value):
-            guard let value = value else {
-                return nil
-            }
-            return [
-                FormInputData.typeKey: self.value.typeName,
-                FormInputData.valueKey: value
-            ]
-        case .score(let value):
-            guard let value = value else {
-                return nil
-            }
-            return [
-                FormInputData.typeKey: self.value.typeName,
-                FormInputData.valueKey: value
-            ]
-        case .form(let value):
-            var childrenMap: [String: Any] = [:]
-            value.forEach { key, value in
-                childrenMap[key] = value.toPayload()
-            }
-            
-            guard !childrenMap.isEmpty else {
-                return nil
-            }
-            return [
-                FormInputData.valueKey: self.value.typeName,
-                FormInputData.childrenKey: childrenMap
-            ]
-        case .nps(let identifier, let value):
-            var childrenMap: [String: Any] = [:]
-            value.forEach { key, value in
-                childrenMap[key] = value.toPayload()
-            }
-            guard !childrenMap.isEmpty else {
-                return nil
-            }
-            return [
-                FormInputData.valueKey: self.value.typeName,
-                FormInputData.scoreIdKey: identifier,
-                FormInputData.childrenKey: childrenMap
-            ]
+@available(iOS 13.0.0, tvOS 13.0, *)
+private extension PagerState {
+    func toPagerInfo(index: Int? = nil) -> ThomasPagerInfo {
+        let index = index ?? self.pageIndex
+        var pageId: String = ""
+        if (index < self.pages.count) {
+            pageId = self.pages[index]
         }
         
+        return ThomasPagerInfo(identifier: self.identifier,
+                               pageIndex: index,
+                               pageIdentifier: pageId,
+                               pageCount: self.pages.count,
+                               completed: self.completed)
     }
 }
 
 @available(iOS 13.0.0, tvOS 13.0, *)
 private extension LayoutState {
-    func toPayload() -> [String: Any] {
-        var payload: [String: Any] = [:]
-        if let pagerState = pagerState {
-            payload["pager"] = [
-                "identifier": pagerState.identifier,
-                "index": pagerState.index,
-                "completed": pagerState.completed,
-                "count": pagerState.pages
-            ]
-        }
-        
-        if let formState = formState {
-            payload["form"] =  [
-                "identifier": formState.identifier
-            ]
-        }
-        
-        return payload
+    func toLayoutContext() -> ThomasLayoutContext {
+        ThomasLayoutContext(formInfo: self.formState?.toFormInfo(),
+                            pagerInfo: self.pagerState?.toPagerInfo())
     }
 }

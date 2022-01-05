@@ -39,8 +39,8 @@ struct Pager : View {
     @ViewBuilder
     func createPager(metrics: GeometryProxy) -> some View {
         let index = Binding<Int>(
-            get: { self.pagerState.index },
-            set: { self.pagerState.index = $0 }
+            get: { self.pagerState.pageIndex },
+            set: { self.pagerState.pageIndex = $0 }
         )
         
         let childConstraints = ViewConstraints(width: metrics.size.width,
@@ -53,7 +53,7 @@ struct Pager : View {
             createStack {
                 ForEach(0..<items.count, id: \.self) { i in
                     VStack {
-                        ViewFactory.createView(model: items[i], constraints: childConstraints)
+                        ViewFactory.createView(model: items[i].view, constraints: childConstraints)
                             .environment(\.isVisible, self.isVisible && i == index.wrappedValue)
                     }
                     .frame(width: metrics.size.width, height: metrics.size.height)
@@ -94,7 +94,7 @@ struct Pager : View {
         guard nextIndex >= 0 else { return }
         guard nextIndex != index.wrappedValue else { return }
             
-        thomasEnvironment.pageSwiped(self.pagerState.identifier,
+        thomasEnvironment.pageSwiped(self.pagerState,
                                      fromIndex: index.wrappedValue,
                                      toIndex: nextIndex,
                                      layoutState: layoutState)
@@ -120,8 +120,8 @@ struct Pager : View {
     var body: some View {
         GeometryReader { metrics in
             createPager(metrics: metrics)
-                .onReceive(pagerState.$index) { value in
-                    pagerState.pages = self.model.items.count
+                .onReceive(pagerState.$pageIndex) { value in
+                    pagerState.pages = self.model.items.map { $0.identifier }
                     reportPage(value)
                 }
         }
@@ -135,7 +135,7 @@ struct Pager : View {
             if (index == self.model.items.count - 1) {
                 self.pagerState.completed = true
             }
-            self.thomasEnvironment.pageViewed(pageState: self.pagerState, layoutState: layoutState)
+            self.thomasEnvironment.pageViewed(self.pagerState, layoutState: layoutState)
             self.lastIndex = index
         }
     }

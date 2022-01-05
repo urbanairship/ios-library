@@ -45,7 +45,7 @@ extension Layout {
                 .reduce([], +)
         case .pager(let model):
             return model.items
-                .compactMap { extractUrlInfos(model: $0) }
+                .compactMap { extractUrlInfos(model: $0.view) }
                 .reduce([], +)
         case .scrollLayout(let model):
             return extractUrlInfos(model: model.view)

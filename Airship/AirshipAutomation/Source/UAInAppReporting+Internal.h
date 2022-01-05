@@ -3,11 +3,16 @@
 #import "UAInAppMessageResolution+Internal.h"
 
 @protocol UAAnalyticsProtocol;
+@class UAThomasLayoutContext;
+@class UAThomasPagerInfo;
+@class UAThomasFormInfo;
+@class UAThomasFormResult;
 
 NS_ASSUME_NONNULL_BEGIN
 
 extern NSString *const UAInAppPagerSummaryIndexKey;
 extern NSString *const UAInAppPagerSummaryDurationKey;
+extern NSString *const UAInAppPagerSummaryIDKey;
 
 
 /**
@@ -26,7 +31,6 @@ NS_SWIFT_NAME(InAppReporting)
 + (instancetype)legacyDirectOpenEventWithScheduleID:(NSString *)scheduleID;
 
 
-
 + (instancetype)interruptedEventWithScheduleID:(NSString *)scheduleID
                                         source:(UAInAppMessageSource)source;
 
@@ -41,42 +45,35 @@ NS_SWIFT_NAME(InAppReporting)
 
 + (instancetype)pageViewEventWithScheduleID:(NSString *)scheduleID
                                     message:(UAInAppMessage *)message
-                                    pagerID:(NSString *)pagerID
-                                      index:(NSInteger)pageIndex
-                                      count:(NSInteger)pageCount
-                                  completed:(BOOL)completed;
+                                  pagerInfo:(UAThomasPagerInfo *)pagerInfo
+                                  viewCount:(NSUInteger)viewCount;
 
 + (instancetype)pageSwipeEventWithScheduleID:(NSString *)scheduleID
                                      message:(UAInAppMessage *)message
-                                     pagerID:(NSString *)pagerID
-                                   fromIndex:(NSInteger)fromIndex
-                                     toIndex:(NSInteger)toIndex;
+                                        from:(UAThomasPagerInfo *)from
+                                          to:(UAThomasPagerInfo *)to;
+                                    
 
 + (instancetype)pagerCompletedEventWithScheduleID:(NSString *)scheduleID
                                           message:(UAInAppMessage *)message
-                                          pagerID:(NSString *)pagerID
-                                            index:(NSInteger)pageIndex
-                                            count:(NSInteger)pageCount;
+                                        pagerInfo:(UAThomasPagerInfo *)pagerInfo;
 
 + (instancetype)pagerSummaryEventWithScehduleID:(NSString *)scheduleID
                                         message:(UAInAppMessage *)message
-                                        pagerID:(NSString *)pagerID
-                                    viewedPages:(NSArray *)viewedPages
-                                          count:(NSInteger)pageCount
-                                      completed:(BOOL)completed;
-
+                                      pagerInfo:(UAThomasPagerInfo *)pagerInfo
+                                    viewedPages:(NSArray *)viewedPages;
+                                    
 + (instancetype)formDisplayEventWithScheduleID:(NSString *)scheduleID
                                        message:(UAInAppMessage *)message
-                                        formID:(NSString *)formID;
+                                      formInfo:(UAThomasFormInfo *)formInfo;
 
 + (instancetype)formResultEventWithScheduleID:(NSString *)scheduleID
                                        message:(UAInAppMessage *)message
-                                     formData:(NSDictionary *)formData;
-
+                                       formResult:(UAThomasFormResult *)formResult;
 
 @property(nonatomic, copy, nullable) NSDictionary *campaigns;
 @property(nonatomic, copy, nullable) NSDictionary *reportingContext;
-@property(nonatomic, copy, nullable) NSDictionary *layoutState;
+@property(nonatomic, strong, nullable) UAThomasLayoutContext *layoutContext;
 
 - (void)record:(id<UAAnalyticsProtocol>)analytics;
 

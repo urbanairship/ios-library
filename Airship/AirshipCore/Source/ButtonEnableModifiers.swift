@@ -19,7 +19,7 @@ struct PagerNextButtonEnableBehavior: ViewModifier {
     
     @ViewBuilder
     func body(content: Content) -> some View {
-        content.disabled(pagerState.index >= (pagerState.pages - 1))
+        content.disabled(pagerState.pageIndex >= (pagerState.pages.count - 1))
     }
 }
 
@@ -29,7 +29,7 @@ struct PagerPreviousButtonEnableBehavior: ViewModifier {
     
     @ViewBuilder
     func body(content: Content) -> some View {
-        content.disabled(pagerState.index <= 0)
+        content.disabled(pagerState.pageIndex <= 0)
     }
 }
 

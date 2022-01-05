@@ -2,67 +2,136 @@
 
 import Foundation
 
+/// - Note: for internal use only.  :nodoc:
 @objc(UAThomasDelegate)
 public protocol ThomasDelegate {
     
     /// Called when a form is submitted
     /// - Parameters:
-    ///     - formIdentifier: The form id
-    ///     - formData: The form data.
-    ///     - layoutState: The layout state.
-    func onFormSubmitted(formIdentifier: String, formData: [String : Any], layoutState: [String : Any])
+    ///     - formResult: The form result.
+    ///     - layoutContext: The layout context.
+    func onFormSubmitted(formResult: ThomasFormResult, layoutContext: ThomasLayoutContext)
     
     /// Called when a form is displayed for the first time
     /// - Parameters:
-    ///     - formIdentifier: The form id
-    ///     - layoutState: The layout state.
-    func onFormDisplayed(formIdentifier: String, layoutState: [String : Any])
+    ///     - formInfo: The form info.
+    ///     - layoutContext: The layout context.
+    func onFormDisplayed(formInfo: ThomasFormInfo, layoutContext: ThomasLayoutContext)
     
     /// Called when a button is tapped.
     /// - Parameters:
-    ///     - buttonIdentifier: The button id
-    ///     - layoutState: The layout state.
-    func onButtonTapped(buttonIdentifier: String, layoutState: [String : Any])
+    ///     - buttonIdentifier: The button id.
+    ///     - layoutContext: The layout context.
+    func onButtonTapped(buttonIdentifier: String, layoutContext: ThomasLayoutContext)
     
     /// Called when the view is dismissed.
     /// - Parameters:
-    ///     - layoutState: The layout state.
-    func onDismissed(layoutState: [String : Any])
+    ///     - layoutContext: The layout context.
+    func onDismissed(layoutContext: ThomasLayoutContext?)
     
     /// Called when the view is dismissed from a button tap.
     /// - Parameters:
     ///     - buttonIdentifier: The  button id.
     ///     - buttonDescription: The button description.
     ///     - cancel: If the view should be cancelled.
-    ///     - layoutState: The layout state.
+    ///     - layoutContext: The layout context.
     func onDismissed(buttonIdentifier: String,
                      buttonDescription: String,
                      cancel: Bool,
-                     layoutState: [String : Any])
+                     layoutContext: ThomasLayoutContext)
     
     /// Called when a form is dismissed beceuse it timed out.
     /// - Parameters:
-    ///     - layoutState: The layout state.
-    func onTimedOut(layoutState: [String : Any])
+    ///     - layoutContext: The layout context.
+    func onTimedOut(layoutContext: ThomasLayoutContext?)
     
     /// Called when a pager page is viewed.
     /// - Parameters:
-    ///     - pagerIdentifier: The pager id.
-    ///     - pageIndex: The page index
-    ///     - pageCount: The page count
-    ///     - completed: True if the last page of the pager has been viewed.
-    ///     - layoutState: The layout state.
-    func onPageViewed(pagerIdentifier: String,
-                      pageIndex: Int,
-                      pageCount: Int,
-                      completed: Bool,
-                      layoutState: [String : Any])
+    ///     - pagerInfo: The pager info.
+    ///     - layoutContext: The layout context.
+    func onPageViewed(pagerInfo: ThomasPagerInfo, layoutContext: ThomasLayoutContext)
     
     /// Called when a pager page changed due to a swipe.
     /// - Parameters:
-    ///     - pagerIdentifier: The pager identifier
-    ///     - fromIndex: The originating index
-    ///     - toIndex: The resulting index
-    ///     - layoutState: The layout state.
-    func onPageSwiped(pagerIdentifier: String, fromIndex: Int, toIndex: Int, layoutState: [String : Any])
+    ///     - from: The originated pager info
+    ///     - to: The resulting pager info
+    ///     - layoutContext: The layout context.
+    func onPageSwiped(from: ThomasPagerInfo,
+                      to: ThomasPagerInfo,
+                      layoutContext: ThomasLayoutContext)
+}
+
+/// - Note: for internal use only.  :nodoc:
+@objc(UAThomasPagerInfo)
+public class ThomasPagerInfo : NSObject {
+    
+    @objc
+    public let identifier: String
+    @objc
+    public let pageIndex: Int
+    
+    @objc
+    public let pageIdentifier: String
+    
+    @objc
+    public let pageCount: Int
+    
+    @objc
+    public let completed: Bool
+    
+    @objc
+    public init(identifier: String, pageIndex: Int, pageIdentifier: String, pageCount: Int, completed: Bool) {
+        self.identifier = identifier
+        self.pageIndex = pageIndex
+        self.pageIdentifier = pageIdentifier
+        self.pageCount = pageCount
+        self.completed = completed
+    }
+}
+
+/// - Note: for internal use only.  :nodoc:
+@objc(UAThomasFormResult)
+public class ThomasFormResult : NSObject {
+    @objc
+    public let identifier: String
+    
+    @objc
+    public let formData: [String : Any]
+    
+    @objc
+    public init(identifier: String, formData: [String : Any]) {
+        self.identifier = identifier
+        self.formData = formData
+    }
+}
+
+/// - Note: for internal use only.  :nodoc:
+@objc(UAThomasFormInfo)
+public class ThomasFormInfo : NSObject {
+    @objc
+    public let identifier: String
+    @objc
+    public let submitted: Bool
+    
+    @objc
+    public init(identifier: String, submitted: Bool) {
+        self.identifier = identifier
+        self.submitted = submitted
+    }
+}
+
+/// - Note: for internal use only.  :nodoc:
+@objc(UAThomasLayoutContext)
+public class ThomasLayoutContext : NSObject {
+    @objc
+    public let formInfo: ThomasFormInfo?
+    
+    @objc
+    public let pagerInfo: ThomasPagerInfo?
+    
+    @objc
+    public init(formInfo: ThomasFormInfo?, pagerInfo: ThomasPagerInfo?) {
+        self.formInfo = formInfo
+        self.pagerInfo = pagerInfo
+    }
 }

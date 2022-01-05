@@ -545,13 +545,23 @@ struct PagerModel: Decodable, Equatable {
     let border: Border?
     let backgroundColor: ThomasColor?
     let disableSwipe: Bool?
-    let items: [ViewModel]
+    let items: [PagerItem]
     
     enum CodingKeys: String, CodingKey {
         case border = "border"
         case backgroundColor = "background_color"
         case items = "items"
         case disableSwipe = "disable_swipe"
+    }
+}
+
+struct PagerItem : Decodable, Equatable {
+    let identifier: String
+    let view: ViewModel
+    
+    enum CodingKeys: String, CodingKey {
+        case identifier = "identifier"
+        case view = "view"
     }
 }
 
