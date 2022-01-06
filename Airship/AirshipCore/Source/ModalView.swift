@@ -8,7 +8,8 @@ struct ModalView: View {
     let presentation: ModalPresentationModel
     let layout: Layout
     @ObservedObject var thomasEnvironment: ThomasEnvironment
-    
+    let viewControllerOptions: ThomasViewControllerOptions
+
     var body: some View {
         GeometryReader { metrics in
             
@@ -19,7 +20,7 @@ struct ModalView: View {
                 let constraints = ViewConstraints.containerConstraints(metrics.size,
                                                                        safeAreaInsets: metrics.safeAreaInsets,
                                                                        ignoreSafeArea: ignoreSafeArea)
-                
+            
                 createBanner(constraints: constraints, placement: placement)
                     .applyIf(ignoreSafeArea) { $0.edgesIgnoringSafeArea(.all) }
             }
@@ -52,20 +53,27 @@ struct ModalView: View {
         )
     }
     
-    private func resolvePlacement(orientation: Orientation, windowSize: WindowSize) ->  ModalPlacement {
+
+    
+    private func resolvePlacement(orientation: Orientation, windowSize: WindowSize) -> ModalPlacement {
+        var placement = self.presentation.defaultPlacement
+        
+        let resolvedOrientation = viewControllerOptions.orientation ?? orientation
         for placementSelector in self.presentation.placementSelectors ?? [] {
             if (placementSelector.windowSize != nil && placementSelector.windowSize != windowSize) {
                 continue
             }
             
-            if (placementSelector.orientation != nil && placementSelector.orientation != orientation) {
+            if (placementSelector.orientation != nil && placementSelector.orientation != resolvedOrientation) {
                 continue
             }
             
             // its a match!
-            return placementSelector.placement
+            placement = placementSelector.placement
+            break
         }
-        
-        return self.presentation.defaultPlacement
+    
+        self.viewControllerOptions.orientation = placement.device?.orientationLock
+        return placement
     }
 }

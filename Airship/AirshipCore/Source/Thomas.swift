@@ -128,9 +128,8 @@ public class Thomas: NSObject {
         
         var window: UIWindow? = UIWindow(windowScene: scene)
         var viewController: ThomasViewController<ModalView>?
-        viewController?.modalPresentationStyle = .currentContext
-    
-    
+        
+        let options = ThomasViewControllerOptions()
         let environment = ThomasEnvironment(delegate: delegate, extensions: extensions) {
             window?.windowLevel = .normal
             window?.isHidden = true
@@ -139,10 +138,12 @@ public class Thomas: NSObject {
         
         let rootView = ModalView(presentation: presentation,
                                  layout: layout,
-                                 thomasEnvironment: environment)
-        viewController = ThomasViewController<ModalView>(rootView: rootView)
+                                 thomasEnvironment: environment,
+                                 viewControllerOptions: options)
+        viewController = ThomasViewController<ModalView>(rootView: rootView, options: options)
+        viewController?.modalPresentationStyle = .currentContext
         window?.rootViewController = viewController
-
+        
         return {
             window?.windowLevel = .alert
             window?.makeKeyAndVisible()

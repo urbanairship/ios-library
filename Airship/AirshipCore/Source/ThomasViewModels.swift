@@ -60,7 +60,6 @@ struct BannerPlacement : Decodable, Equatable {
     let size: Size
     let position: BannerPosition
     let ignoreSafeArea: Bool?
-
     
     enum CodingKeys: String, CodingKey {
         case margin = "margin"
@@ -86,13 +85,23 @@ struct ModalPresentationModel: Decodable, Equatable {
     let placementSelectors: [ModalPlacementSelector]?
     let defaultPlacement: ModalPlacement
     let dismissOnTouchOutside: Bool?
+    let device: Device?
 
     enum CodingKeys: String, CodingKey {
         case placementSelectors = "placement_selectors"
         case defaultPlacement = "default_placement"
         case dismissOnTouchOutside = "dismiss_on_touch_outside"
+        case device = "device"
+    }
+    
+    struct Device : Decodable, Equatable {
+        let orientationLock: Orientation?
+        enum CodingKeys: String, CodingKey {
+            case orientationLock = "lock_orientation"
+        }
     }
 }
+
 
 struct ModalPlacement : Decodable, Equatable {
     let margin: Margin?
@@ -100,6 +109,7 @@ struct ModalPlacement : Decodable, Equatable {
     let position: Position?
     let shade: ThomasColor?
     let ignoreSafeArea: Bool?
+    let device: Device?
     
     enum CodingKeys: String, CodingKey {
         case margin = "margin"
@@ -107,7 +117,16 @@ struct ModalPlacement : Decodable, Equatable {
         case position = "position"
         case shade = "shade_color"
         case ignoreSafeArea = "ignore_safe_area"
+        case device = "device"
     }
+    
+    struct Device : Decodable, Equatable {
+        let orientationLock: Orientation?
+        enum CodingKeys: String, CodingKey {
+            case orientationLock = "lock_orientation"
+        }
+    }
+    
 }
 
 struct ModalPlacementSelector : Decodable, Equatable {
@@ -117,7 +136,7 @@ struct ModalPlacementSelector : Decodable, Equatable {
     
     enum CodingKeys : String, CodingKey {
         case placement = "placement"
-        case windowSize = "windowSize"
+        case windowSize = "window_size"
         case orientation = "orientation"
     }
 }
