@@ -73,9 +73,10 @@ extension Image {
                     self.resizable()
                         .scaledToFill()
                         .frame(width: proxy.size.width, height: proxy.size.height)
-                        .clipped()
+                        .allowsHitTesting(false)
                 })
             .constraints(centerCropConstraints(constraints: constraints, imageSize: imageSize))
+            .clipped()
     }
     
     private func centerInside(constraints: ViewConstraints) -> some View {

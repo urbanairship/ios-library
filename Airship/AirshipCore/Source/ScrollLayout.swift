@@ -2,6 +2,7 @@
 
 import Foundation
 import SwiftUI
+import MapKit
 
 /// Scroll view layout
 @available(iOS 13.0.0, tvOS 13.0, *)
@@ -15,37 +16,27 @@ struct ScrollLayout : View {
     
     @State private var contentSize: (ViewConstraints, CGSize)? = nil
     @State private var isScrollable = true
-    @State private var isTouched = false
+    
+    init(model: ScrollLayoutModel, constraints: ViewConstraints) {
+        self.model = model
+        self.constraints = constraints
+    }
 
     @ViewBuilder
     func content(parentMetrics: GeometryProxy, constraints: ViewConstraints) -> some View {
-        ViewFactory.createView(model: self.model.view, constraints: constraints)
-            .background(
-                GeometryReader { geometryProxy in
-                    Color.clear.preference(key: ScrollViewContentSizePreferenceKey.self, value: geometryProxy.size)
-                }
-            )
-            .onPreferenceChange(ScrollViewContentSizePreferenceKey.self) { newSize in
-                contentSize = (self.constraints, newSize)
-                if (isTouched) {
-                    let isScrollable = scrollable(parent: parentMetrics.size, content: newSize)
-                    if (isScrollable != self.isScrollable) {
-                        self.isScrollable = isScrollable
-                    }
-                }
-            }
-            .onScrollStart {
-                self.isTouched = true
-                guard let contentSize = contentSize, contentSize.0 == self.constraints else {
-                    return
-                }
-                let isScrollable = scrollable(parent: parentMetrics.size, content: contentSize.1)
-
-                if (isScrollable != self.isScrollable) {
-                    self.isScrollable = isScrollable
-                }
-                
-            }
+        ZStack {
+            ViewFactory.createView(model: self.model.view, constraints: constraints)
+                .background(
+                    GeometryReader(content: { contentMetrics -> Color in
+                        DispatchQueue.main.async {
+                            self.contentSize = (self.constraints, contentMetrics.size)
+                            updateScrollable(parentMetrics)
+                        }
+                        return Color.clear
+                    })
+                )
+                .fixedSize(horizontal: self.model.direction == .horizontal, vertical: self.model.direction == .vertical)
+        }.frame(alignment: .topLeading)
     }
     var body: some View {
         GeometryReader { parentMetrics in
@@ -68,39 +59,23 @@ struct ScrollLayout : View {
         .border(self.model.border)
     }
     
+    private func updateScrollable(_ parentMetrics: GeometryProxy) {
+        guard let contentSize = contentSize, contentSize.0 == self.constraints else {
+            return
+        }
+        let isScrollable = scrollable(parent: parentMetrics.size, content: contentSize.1)
+        if (isScrollable != self.isScrollable) {
+            self.isScrollable = isScrollable
+        }
+    }
+    
     private func scrollable(parent: CGSize, content: CGSize) -> Bool {
         var isScrollable = false
         if (self.model.direction == .vertical) {
-            isScrollable = content.height >= parent.height
+            isScrollable = content.height > parent.height
         } else {
-            isScrollable = content.width >= parent.width
+            isScrollable = content.width > parent.width
         }
-        
         return isScrollable
     }
 }
-
-
-struct ScrollViewContentSizePreferenceKey: PreferenceKey {
-  static var defaultValue: CGSize = .zero
-  static func reduce(value: inout CGSize, nextValue: () -> CGSize) {}
-}
-
-
-@available(iOS 13.0.0, tvOS 13.0, *)
-extension View {
-    @ViewBuilder
-    func onScrollStart(perform: @escaping () -> Void) -> some View {
-        #if !os(tvOS)
-        self.simultaneousGesture(
-            DragGesture()
-                .onChanged {_ in
-                    perform()
-                }
-            )
-        #else
-        self
-        #endif
-    }
-}
-

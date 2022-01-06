@@ -25,13 +25,13 @@ struct Container : View {
         .background(model.backgroundColor)
         .border(model.border)
         .background(
-            GeometryReader { geometryProxy in
-                Color.clear.preference(key: ContainerSizePreferenceKey.self, value: geometryProxy.size)
-            }
+            GeometryReader(content: { contentMetrics -> Color in
+                DispatchQueue.main.async {
+                    self.contentSize  = (self.constraints, contentMetrics.size)
+                }
+                return Color.clear
+            })
         )
-        .onPreferenceChange(ContainerSizePreferenceKey.self) { newSize in
-            contentSize = (constraints, newSize)
-        }
     }
     
     @ViewBuilder
@@ -49,15 +49,17 @@ struct Container : View {
         .applyIf(item.ignoreSafeArea != true) {
             $0.padding(self.constraints.safeAreaInsets)
         }
-        .frame(idealWidth: placementWidth(),
+        .frame(idealWidth: placementWidth(item.position.horizontal),
                maxWidth: self.constraints.width,
-               idealHeight: placementHeight(),
+               idealHeight: placementHeight(item.position.vertical),
                maxHeight: self.constraints.height,
                alignment: alignment)
             
     }
     
-    private func placementWidth() -> CGFloat? {
+    private func placementWidth(_ position: HorizontalPosition) -> CGFloat? {
+        guard position != .center else { return nil }
+
         if let contentSize = contentSize, contentSize.0 == self.constraints {
             return contentSize.1.width > 0 ? contentSize.1.width : nil
         }
@@ -65,16 +67,14 @@ struct Container : View {
         return nil
     }
     
-    private func placementHeight() -> CGFloat? {
+    private func placementHeight(_ position: VerticalPosition) -> CGFloat? {
+        guard position != .center else { return nil }
+        
         if let contentSize = contentSize, contentSize.0 == self.constraints {
+            print("placement height", contentSize.1.height)
             return contentSize.1.height > 0 ? contentSize.1.height : nil
         }
         
         return nil
     }
-}
-
-struct ContainerSizePreferenceKey: PreferenceKey {
-  static var defaultValue: CGSize = .zero
-  static func reduce(value: inout CGSize, nextValue: () -> CGSize) {}
 }
