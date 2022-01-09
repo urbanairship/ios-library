@@ -36,8 +36,9 @@ struct TextInput : View {
     private func updateValue(_ text: String) {
         let trimmed = text.trimmingCharacters(in: .whitespaces)
         let isValid = !trimmed.isEmpty || !(self.model.isRequired ?? false)
-        let data = FormInputData(isValid: isValid,
-                                 value: .text(trimmed.isEmpty ? nil : trimmed))
-        self.formState.updateFormInput(self.model.identifier, data: data)
+        let data = FormInputData(self.model.identifier,
+                                 value: .text(trimmed.isEmpty ? nil : trimmed),
+                                 isValid: isValid)
+        self.formState.updateFormInput(data)
     }
 }

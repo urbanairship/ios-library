@@ -14,13 +14,13 @@ struct FormInputViewModifier: ViewModifier {
         if #available(iOS 14.0, tvOS 14.0, *) {
             content.onChange(of: isVisible) { newValue in
                 if (newValue) {
-                    formState.makeVisible()
+                    formState.markVisible()
                 }
             }
         } else {
             content.onReceive(Just(isVisible)) { newValue in
                 if (newValue) {
-                    formState.makeVisible()
+                    formState.markVisible()
                 }
             }
         }

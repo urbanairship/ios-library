@@ -14,10 +14,11 @@ struct NpsController : View {
     init(model: NpsControllerModel, constraints: ViewConstraints) {
         self.model = model
         self.constraints = constraints
-        self.formState = FormState(model.identifier) { children in
-            let isValid = children.values.contains(where: { $0.isValid == false }) == false
-            return FormInputData(isValid: isValid,
-                                 value: .nps(model.npsIdentifier, children))
+        self.formState = FormState() { children in
+            let isValid = children.contains(where: { $0.isValid == false }) == false
+            return FormInputData(model.identifier,
+                                 value: .nps(model.npsIdentifier, children),
+                                 isValid: isValid)
         }
     }
     
@@ -76,13 +77,12 @@ private struct ChildNpsController : View {
             .environmentObject(formState)
             .onAppear {
                 self.dataCancellable = self.formState.$data.sink { incoming in
-                    self.parentFormState.updateFormInput(self.model.identifier,
-                                                         data: incoming)
+                    self.parentFormState.updateFormInput(incoming)
                 }
                 
                 self.visibleCancellable = self.formState.$isVisible.sink { incoming in
                     if (incoming) {
-                        parentFormState.makeVisible()
+                        parentFormState.markVisible()
                     }
                 }
             }

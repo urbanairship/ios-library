@@ -1014,6 +1014,7 @@
 		6EC7E49126A739890038CFDD /* JsonValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC7E48F26A739890038CFDD /* JsonValue.swift */; };
 		6EC7E49626A8995F0038CFDD /* NamedUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC7E49526A8995F0038CFDD /* NamedUser.swift */; };
 		6EC7E49726A8995F0038CFDD /* NamedUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC7E49526A8995F0038CFDD /* NamedUser.swift */; };
+		6ED040EB278B5D7C00FCF773 /* FormStateTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED040EA278B5D7C00FCF773 /* FormStateTest.swift */; };
 		6ED3C04520081013002A746B /* UAInAppMessageCustomDisplayContentTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ED3C04420081013002A746B /* UAInAppMessageCustomDisplayContentTest.m */; };
 		6ED6ECA426ADCA6F00973364 /* BlockAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED6ECA326ADCA6F00973364 /* BlockAction.swift */; };
 		6ED6ECA526ADCA6F00973364 /* BlockAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED6ECA326ADCA6F00973364 /* BlockAction.swift */; };
@@ -2180,6 +2181,7 @@
 		6EC7E49526A8995F0038CFDD /* NamedUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NamedUser.swift; sourceTree = "<group>"; };
 		6ECEBF5421C452A300FAAB08 /* UAScheduleDataMigrator+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAScheduleDataMigrator+Internal.h"; sourceTree = "<group>"; };
 		6ECEBF5521C452A300FAAB08 /* UAScheduleDataMigrator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAScheduleDataMigrator.m; sourceTree = "<group>"; };
+		6ED040EA278B5D7C00FCF773 /* FormStateTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormStateTest.swift; sourceTree = "<group>"; };
 		6ED3C03A200801C4002A746B /* UAInAppMessageCustomDisplayContent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAInAppMessageCustomDisplayContent.h; sourceTree = "<group>"; };
 		6ED3C03B200801C4002A746B /* UAInAppMessageCustomDisplayContent.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageCustomDisplayContent.m; sourceTree = "<group>"; };
 		6ED3C0402008038B002A746B /* UAInAppMessageCustomDisplayContent+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageCustomDisplayContent+Internal.h"; sourceTree = "<group>"; };
@@ -3350,6 +3352,7 @@
 			children = (
 				6E1C9C39271E90EB009EF9EF /* LayoutModelsTest.swift */,
 				6E382C20276D3E990091A351 /* ThomasValidationTests.swift */,
+				6ED040EA278B5D7C00FCF773 /* FormStateTest.swift */,
 			);
 			name = Thomas;
 			sourceTree = "<group>";
@@ -6811,6 +6814,7 @@
 				DF9FED0A1F75D64900C79417 /* UARemoteDataStoreTest.m in Sources */,
 				E29D35EF1DB9751F003C292F /* UAFetchDeviceInfoActionTest.m in Sources */,
 				6E664BE526C5817B00A2C8E5 /* TestContact.swift in Sources */,
+				6ED040EB278B5D7C00FCF773 /* FormStateTest.swift in Sources */,
 				6E4E5B4326E8043A00198175 /* LocalizationUtilsTest.m in Sources */,
 				CC64F0ED1D8B781C009CEF27 /* UAChannelAPIClientTest.m in Sources */,
 				6E15B70126CDD1A40099C92D /* RemoteConfigDisableInfoTest.swift in Sources */,

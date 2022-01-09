@@ -73,7 +73,7 @@ struct ContentView_Previews: PreviewProvider {
 
 class Delegate : ThomasDelegate {
     func onFormSubmitted(formResult: ThomasFormResult, layoutContext: ThomasLayoutContext) {
-        
+        print("result: \(formResult.formData)")
     }
     
     func onFormDisplayed(formInfo: ThomasFormInfo, layoutContext: ThomasLayoutContext) {

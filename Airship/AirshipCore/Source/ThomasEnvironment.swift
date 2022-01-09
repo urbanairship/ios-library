@@ -22,40 +22,31 @@ class ThomasEnvironment : ObservableObject {
     }
     
     func submitForm(_ formState: FormState, layoutState: LayoutState) {
-        
         if let formResult = formState.toFormResult() {
             self.delegate.onFormSubmitted(formResult: formResult,
                                           layoutContext: layoutState.toLayoutContext())
         }
         
-        Airship.channel.editAttributes { channelEditor in
-            Airship.contact.editAttributes { contactEditor in
-                for (attributeName, attributeValue) in formState.attributes {
-                    if let channelAttribute = attributeName.channel {
-                        switch (attributeValue) {
-                    
-                        case .string(let value):
-                            channelEditor.set(string: value, attribute: channelAttribute)
-                            
-                        case .number(let value):
-                            channelEditor.set(number: NSNumber(value:value), attribute: channelAttribute)
-                        }
-                    } else if let contactAttribute = attributeName.contact {
-                        switch (attributeValue) {
-                     
-                        case .string(let value):
-                            contactEditor.set(string: value, attribute: contactAttribute)
-                    
-                        case .number(let value):
-                            contactEditor.set(number: NSNumber(value:value), attribute: contactAttribute)
-                        }
-                    }
-                }
-                contactEditor.apply()
+        let channelEditor = Airship.channel.editAttributes()
+        let contactEditor = Airship.contact.editAttributes()
+        
+        formState.data.attributes().forEach {
+            let attributeName = $0.0
+            let attributeValue = $0.1
+            
+            if let attribute = attributeName.channel {
+                channelEditor.set(attributeValue: attributeValue, attribute: attribute)
             }
-            channelEditor.apply()
+            
+            if let attribute = attributeName.contact {
+                contactEditor.set(attributeValue: attributeValue, attribute: attribute)
+            }
         }
+        
+        channelEditor.apply()
+        contactEditor.apply()
     }
+    
     
     func formDisplayed(_ formState: FormState, layoutState: LayoutState) {
         self.delegate.onFormDisplayed(formInfo: formState.toFormInfo(),
@@ -71,7 +62,6 @@ class ThomasEnvironment : ObservableObject {
         self.delegate.onPageViewed(pagerInfo: pagerState.toPagerInfo(),
                                    layoutContext: layoutState.toLayoutContext())
     }
-    
     
     func dismiss(buttonIdentifier: String, buttonDescription: String?, cancel: Bool, layoutState: LayoutState) {
         tryDismiss {
@@ -116,14 +106,14 @@ enum DismissReason {
 @available(iOS 13.0.0, tvOS 13.0, *)
 private extension FormState {
     func toFormInfo() -> ThomasFormInfo {
-        ThomasFormInfo(identifier: self.identifier,
+        ThomasFormInfo(identifier: self.data.identifier,
                        submitted: self.isSubmitted)
     }
     
     func toFormResult() -> ThomasFormResult? {
         if let data = self.data.toPayload() {
-            return ThomasFormResult(identifier: self.identifier,
-                             formData: data)
+            return ThomasFormResult(identifier: self.data.identifier,
+                                    formData: data)
         }
         return nil
     }
@@ -151,5 +141,19 @@ private extension LayoutState {
     func toLayoutContext() -> ThomasLayoutContext {
         ThomasLayoutContext(formInfo: self.formState?.toFormInfo(),
                             pagerInfo: self.pagerState?.toPagerInfo())
+    }
+}
+
+
+@available(iOS 13.0.0, tvOS 13.0, *)
+private extension AttributesEditor {
+    func set(attributeValue: AttributeValue, attribute: String) {
+        switch (attributeValue) {
+        case .string(let value):
+            self.set(string: value, attribute: attribute)
+            
+        case .number(let value):
+            self.set(double: value, attribute: attribute)
+        }
     }
 }
