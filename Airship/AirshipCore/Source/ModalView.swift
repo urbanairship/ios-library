@@ -8,6 +8,7 @@ struct ModalView: View {
     let presentation: ModalPresentationModel
     let layout: Layout
     @ObservedObject var thomasEnvironment: ThomasEnvironment
+    @ObservedObject private var keyboardResponder = KeyboardResponder()
     let viewControllerOptions: ThomasViewControllerOptions
 
     var body: some View {
@@ -25,6 +26,9 @@ struct ModalView: View {
                     .applyIf(ignoreSafeArea) { $0.edgesIgnoringSafeArea(.all) }
             }
         }
+        .padding(.bottom, keyboardResponder.keyboardHeight)
+        .animation(.easeOut(duration: 0.16))
+        .edgesIgnoringSafeArea(.bottom)
     }
     
     @ViewBuilder
