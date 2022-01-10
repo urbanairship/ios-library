@@ -43,13 +43,12 @@ struct AirshipToggle : View {
     
     private func updateValue(_ isOn: Bool) {
         let isValid = isOn || !(self.model.isRequired ?? false)
-        let data = FormInputData(isValid: isValid,
-                                 value: .checkbox(isOn))
-        self.formState.updateFormInput(self.model.identifier, data: data)
-        if (isOn) {
-            self.formState.updateFormAttributes(name: self.model.attributeName, value: self.model.attributeValue)
-        } else {
-            self.formState.updateFormAttributes(name: self.model.attributeName, value: nil)
-        }
+        let data = FormInputData(self.model.identifier,
+                                 value: .toggle(isOn),
+                                 attributeName: self.model.attributeName,
+                                 attributeValue: isOn ? self.model.attributeValue : nil,
+                                 isValid: isValid)
+                                 
+        self.formState.updateFormInput(data)
     }
 }

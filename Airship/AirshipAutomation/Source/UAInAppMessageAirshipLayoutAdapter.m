@@ -268,7 +268,7 @@
     [self record:pageView];
     
     // Only send 1 completed per pager
-    if (![self.completedPagers containsObject:pagerInfo.identifier]) {
+    if (pagerInfo.completed && ![self.completedPagers containsObject:pagerInfo.identifier]) {
         [self.completedPagers addObject:pagerInfo.identifier];
         UAInAppReporting *completed = [UAInAppReporting pagerCompletedEventWithScheduleID:self.scheduleID
                                                                                   message:self.message

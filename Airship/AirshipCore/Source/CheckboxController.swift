@@ -32,8 +32,12 @@ struct CheckboxController : View {
                             && selected.count <= (self.model.maxSelection ?? Int.max)
                     
                     let isValid = isFilled || (selected.count == 0 && self.model.isRequired == false)
-                    let data = FormInputData(isValid: isValid, value: .multipleCheckbox(selected))
-                    self.parentFormState.updateFormInput(self.model.identifier, data: data)
+                    
+                    let data = FormInputData(self.model.identifier,
+                                             value: .multipleCheckbox(selected),
+                                             isValid: isValid)
+                
+                    self.parentFormState.updateFormInput(data)
                 }
             }
     }

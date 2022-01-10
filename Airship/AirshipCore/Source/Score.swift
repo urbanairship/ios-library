@@ -58,11 +58,19 @@ struct Score : View {
     private func updateScore(_ value: Int?) {
         self.score = value
         let isValid = value != nil || self.model.isRequired != true
-        let data = FormInputData(isValid: isValid, value: .score(value))
-        self.formState.updateFormInput(self.model.identifier, data: data)
+        
+        var attributeValue: AttributeValue?
         if let value = value {
-            self.formState.updateFormAttributes(name: self.model.attributeName, value: AttributeValue.number(Double(value)))
+          attributeValue = AttributeValue.number(Double(value))
         }
+        
+        let data = FormInputData(self.model.identifier,
+                                 value: .score(value),
+                                 attributeName: self.model.attributeName,
+                                 attributeValue: attributeValue,
+                                 isValid: isValid)
+        
+        self.formState.updateFormInput(data)
     }
 }
 

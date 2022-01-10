@@ -20,10 +20,13 @@ struct RadioInputController : View {
             .environmentObject(radioInputState)
             .onAppear {
                 self.cancellable = self.radioInputState.$selectedItem.sink { incoming in
-                    let isValid = incoming != nil || self.model.isRequired == false
-                    let data = FormInputData(isValid: isValid, value: .radio(incoming))
-                    self.parentFormState.updateFormInput(self.model.identifier, data: data)
-                    self.parentFormState.updateFormAttributes(name: self.model.attributeName, value: radioInputState.attributeValue)
+                    let data = FormInputData(self.model.identifier,
+                                             value: .radio(incoming),
+                                             attributeName: self.model.attributeName,
+                                             attributeValue: radioInputState.attributeValue,
+                                             isValid: incoming != nil || self.model.isRequired == false)
+                    
+                    self.parentFormState.updateFormInput(data)
                 }
             }
     }
