@@ -6,7 +6,8 @@ import Combine
 @available(iOS 13.0.0, tvOS 13.0, *)
 final class KeyboardResponder: ObservableObject {
     @Published private(set) var keyboardHeight: CGFloat = 0
-    
+
+#if !os(tvOS)
     private var cancellable: AnyCancellable?
     private let keyboardWillShow = NotificationCenter.default
         .publisher(for: UIResponder.keyboardWillShowNotification)
@@ -23,5 +24,6 @@ final class KeyboardResponder: ObservableObject {
             .subscribe(on: DispatchQueue.main)
             .assign(to: \.self.keyboardHeight, on:self)
     }
+#endif
 }
 
