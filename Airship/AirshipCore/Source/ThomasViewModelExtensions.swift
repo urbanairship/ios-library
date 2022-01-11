@@ -13,6 +13,23 @@ extension HexColor {
         let alpha = self.alpha ?? 1
         return Color(uiColor).opacity(alpha)
     }
+    
+    func toUIColor() -> UIColor {
+        let hexColor = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+        guard let int = Scanner(string: hexColor).scanInt32(representation: .hexadecimal) else { return UIColor.white }
+        
+        let r, g, b: Int32
+        switch hexColor.count {
+        case 3:
+            (r, g, b) = ((int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)  // RGB (12-bit)
+        case 6:
+            (r, g, b) = (int >> 16, int >> 8 & 0xFF, int & 0xFF)                    // RGB (24-bit)
+        default:
+            (r, g, b) = (0, 0, 0)
+        }
+        
+        return UIColor(red: CGFloat(r) / 255.0, green: CGFloat(g) / 255.0, blue: CGFloat(b) / 255.0, alpha: alpha ?? 0)
+    }
 }
 
 @available(iOS 13.0.0, tvOS 13.0, *)
@@ -32,6 +49,27 @@ extension ThomasColor {
         }
         
         return defaultColor.toColor()
+    }
+    
+    func toUIColor(_ colorScheme: ColorScheme) -> UIColor {
+        if #available(iOS 14.0.0, tvOS 14.0.0, *) {
+            return UIColor(toColor(colorScheme))
+        } else {
+            let darkMode = colorScheme == .dark
+            for selector in selectors ?? [] {
+                if let platform = selector.platform, platform != .ios {
+                    continue
+                }
+                
+                if let selectorDarkMode = selector.darkMode, darkMode != selectorDarkMode {
+                    continue
+                }
+                
+                return selector.color.toUIColor()
+            }
+            
+            return defaultColor.toUIColor()
+        }
     }
 }
 

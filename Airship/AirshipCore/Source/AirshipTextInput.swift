@@ -24,7 +24,7 @@ struct TextView: UIViewRepresentable {
     func makeUIView(context: Context) -> UITextView {
         let textView = UITextView()
         /// Set textView background color to clear to can set the parent background color instead
-        textView.backgroundColor = UIColor.clear
+        textView.backgroundColor = .clear
         textView.delegate = context.coordinator
         return textView.textAppearance(model.textAppearance, colorScheme)
     }
