@@ -181,7 +181,7 @@
 }
 
 - (void)onDismissedWithButtonIdentifier:(NSString * _Nonnull)buttonIdentifier
-                      buttonDescription:(NSString * _Nonnull)buttonDescription
+                      buttonDescription:(NSString *)buttonDescription
                                  cancel:(BOOL)cancel
                           layoutContext:(UAThomasLayoutContext * _Nonnull)layoutContext {
     

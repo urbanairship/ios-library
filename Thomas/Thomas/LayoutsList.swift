@@ -88,7 +88,7 @@ class Delegate : ThomasDelegate {
         
     }
     
-    func onDismissed(buttonIdentifier: String, buttonDescription: String, cancel: Bool, layoutContext: ThomasLayoutContext) {
+    func onDismissed(buttonIdentifier: String, buttonDescription: String?, cancel: Bool, layoutContext: ThomasLayoutContext) {
     
     }
     
