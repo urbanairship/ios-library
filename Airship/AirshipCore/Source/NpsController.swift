@@ -14,12 +14,9 @@ struct NpsController : View {
     init(model: NpsControllerModel, constraints: ViewConstraints) {
         self.model = model
         self.constraints = constraints
-        self.formState = FormState() { children in
-            let isValid = children.contains(where: { $0.isValid == false }) == false
-            return FormInputData(model.identifier,
-                                 value: .nps(model.npsIdentifier, children),
-                                 isValid: isValid)
-        }
+        self.formState = FormState(identifier: self.model.identifier,
+                                   formType: .nps(self.model.npsIdentifier),
+                                   formResponseType: self.model.responseType)
     }
     
     var body: some View {

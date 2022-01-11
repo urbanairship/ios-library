@@ -106,13 +106,24 @@ enum DismissReason {
 @available(iOS 13.0.0, tvOS 13.0, *)
 private extension FormState {
     func toFormInfo() -> ThomasFormInfo {
-        ThomasFormInfo(identifier: self.data.identifier,
-                       submitted: self.isSubmitted)
+        ThomasFormInfo(identifier: self.identifier,
+                       submitted: self.isSubmitted,
+                       formType: self.formTypeString,
+                       formResponseType: self.formResponseType)
+    }
+    
+    var formTypeString: String {
+        switch self.formType {
+        case .form:
+            return "form"
+        case .nps(_):
+            return "nps"
+        }
     }
     
     func toFormResult() -> ThomasFormResult? {
         if let data = self.data.toPayload() {
-            return ThomasFormResult(identifier: self.data.identifier,
+            return ThomasFormResult(identifier: self.identifier,
                                     formData: data)
         }
         return nil

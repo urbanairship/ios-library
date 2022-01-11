@@ -205,10 +205,15 @@
         @"conversion_metadata": self.analytics.conversionPushMetadata,
         @"locale": self.message.renderedLocale,
         @"source": @"urban-airship",
-        @"form_identifier": @"some-form"
+        @"form_identifier": @"some-form",
+        @"form_response_type": @"some form response type",
+        @"form_type": @"some form type"
     };
 
-    UAThomasFormInfo *formInfo = [[UAThomasFormInfo alloc] initWithIdentifier:@"some-form" submitted:NO];
+    UAThomasFormInfo *formInfo = [[UAThomasFormInfo alloc] initWithIdentifier:@"some-form"
+                                                                    submitted:NO
+                                                                     formType:@"some form type"
+                                                               formResponseType:@"some form response type"];
 
     
     UAInAppReporting *reporting = [UAInAppReporting formDisplayEventWithScheduleID:self.scheduleID
@@ -540,12 +545,18 @@
             },
             @"form": @{
                 @"identifier": @"some-form",
-                @"submitted": @YES
+                @"submitted": @YES,
+                @"type": @"some form type",
+                @"response_type": @"some form response type"
             }
         }
     };
 
-    UAThomasFormInfo *formInfo = [[UAThomasFormInfo alloc] initWithIdentifier:@"some-form" submitted:YES];
+
+    UAThomasFormInfo *formInfo = [[UAThomasFormInfo alloc] initWithIdentifier:@"some-form"
+                                                                    submitted:YES
+                                                                     formType:@"some form type"
+                                                               formResponseType:@"some form response type"];
 
     UAThomasPagerInfo *pagerInfo = [[UAThomasPagerInfo alloc] initWithIdentifier:@"pager_id"
                                                                   pageIndex:1

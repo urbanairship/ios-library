@@ -34,6 +34,8 @@ NSString *const UAInAppMessagePagerContextCountKey = @"count";
 NSString *const UAInAppMessageFormContextKey = @"form";
 NSString *const UAInAppMessageFormContextIDKey = @"identifier";
 NSString *const UAInAppMessageFormContextSubmittedKey = @"submitted";
+NSString *const UAInAppMessageFormContextTypeKey = @"type";
+NSString *const UAInAppMessageFormContextResponseTypeKey = @"response_type";
 
 // Display
 NSString *const UAInAppMessageDisplayEventType = @"in_app_display";
@@ -103,6 +105,8 @@ NSString *const UAInAppMessageFormResultEventFormsKey = @"forms";
 // Form display
 NSString *const UAInAppMessageFormDisplayEventType = @"in_app_form_display";
 NSString *const UAInAppMessageFormDisplayEventFormIdentifierKey = @"form_identifier";
+NSString *const UAInAppMessageFormDisplayEventFormTypeKey = @"form_type";
+NSString *const UAInAppMessageFormDisplayEventFormResponseTypeKey = @"form_response_type";
 
 
 @interface UAInAppAutomationEvent : NSObject<UAEvent>
@@ -323,9 +327,10 @@ NSString *const UAInAppMessageFormDisplayEventFormIdentifierKey = @"form_identif
 + (instancetype)formDisplayEventWithScheduleID:(NSString *)scheduleID
                                        message:(UAInAppMessage *)message
                                       formInfo:(nonnull UAThomasFormInfo *)formInfo {
-    NSDictionary *baseData = @{
-        UAInAppMessageFormDisplayEventFormIdentifierKey : formInfo.identifier
-    };
+    NSMutableDictionary *baseData = [NSMutableDictionary dictionary];
+    [baseData setValue:formInfo.identifier forKey:UAInAppMessageFormDisplayEventFormIdentifierKey];
+    [baseData setValue:formInfo.formResponseType forKey:UAInAppMessageFormDisplayEventFormResponseTypeKey];
+    [baseData setValue:formInfo.formType forKey:UAInAppMessageFormDisplayEventFormTypeKey];
     
     return [[self alloc] initWithEventType:UAInAppMessageFormDisplayEventType
                                 scheduleID:scheduleID
@@ -338,7 +343,7 @@ NSString *const UAInAppMessageFormDisplayEventFormIdentifierKey = @"form_identif
                                    formResult:(nonnull UAThomasFormResult *)formResult {
     
     NSDictionary *baseData = @{
-        UAInAppMessageFormResultEventFormsKey : formResult.formData
+        UAInAppMessageFormResultEventFormsKey : formResult.formData,
     };
     
     return [[self alloc] initWithEventType:UAInAppMessageFormResultEventType
@@ -432,10 +437,12 @@ NSString *const UAInAppMessageFormDisplayEventFormIdentifierKey = @"form_identif
     }
     
     if (self.layoutContext.formInfo) {
-        context[UAInAppMessageFormContextKey] = @{
-            UAInAppMessageFormContextIDKey: self.layoutContext.formInfo.identifier,
-            UAInAppMessageFormContextSubmittedKey: @(self.layoutContext.formInfo.submitted),
-        };
+        NSMutableDictionary *formInfo = [NSMutableDictionary dictionary];
+        [formInfo setValue:self.layoutContext.formInfo.identifier forKey:UAInAppMessageFormContextIDKey];
+        [formInfo setValue:@(self.layoutContext.formInfo.submitted) forKey:UAInAppMessageFormContextSubmittedKey];
+        [formInfo setValue:self.layoutContext.formInfo.formResponseType forKey:UAInAppMessageFormContextResponseTypeKey];
+        [formInfo setValue:self.layoutContext.formInfo.formType forKey:UAInAppMessageFormContextTypeKey];
+        context[UAInAppMessageFormContextKey] = formInfo;
     }
     
     if (self.reportingContext.count) {

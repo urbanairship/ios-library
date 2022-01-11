@@ -8,17 +8,28 @@ class FormState: ObservableObject {
     @Published var isVisible: Bool = false
     @Published var isSubmitted: Bool = false
     
+    public let identifier: String
+    public let formType: FormType
+    public let formResponseType: String?
     private var children: [String: FormInputData] = [:]
-    private let reducer: ([FormInputData]) -> FormInputData
-
-    init(reducer: @escaping ([FormInputData]) -> FormInputData) {
-        self.reducer = reducer
-        self.data = reducer([])
+    
+    init(identifier: String, formType: FormType, formResponseType: String?) {
+        self.identifier = identifier
+        self.formType = formType
+        self.formResponseType = formResponseType
+        
+        self.data = FormInputData(identifier,
+                                  value: .form(formResponseType, formType, []),
+                                  isValid: false)
     }
     
     func updateFormInput(_ data: FormInputData) {
         self.children[data.identifier] = data
-        self.data = self.reducer(Array(self.children.values))
+        
+        let isValid = self.children.values.contains(where: { $0.isValid == false }) == false
+        self.data = FormInputData(identifier,
+                                  value: .form(formResponseType, formType, Array(self.children.values)),
+                                  isValid: isValid)
     }
 
     func markVisible() {
@@ -39,6 +50,7 @@ public struct FormInputData {
     private static let valueKey = "value"
     private static let childrenKey = "children"
     private static let scoreIDKey = "score_id"
+    private static let responseTypeKey = "response_type"
     
     let identifier: String
     let value: FormValue
@@ -65,11 +77,7 @@ public struct FormInputData {
         }
         
         switch(self.value) {
-        case .form(let children):
-            children.forEach {
-                result.append(contentsOf: $0.attributes())
-            }
-        case .nps(_, let children):
+        case .form(_, _, let children):
             children.forEach {
                 result.append(contentsOf: $0.attributes())
             }
@@ -88,9 +96,6 @@ public struct FormInputData {
     private func getData() -> [String: Any]? {
         switch(self.value) {
         case .toggle(let value):
-            guard let value = value else {
-                return nil
-            }
             return [
                 FormInputData.typeKey: "toggle",
                 FormInputData.valueKey: value
@@ -128,7 +133,7 @@ public struct FormInputData {
                 FormInputData.typeKey: "score",
                 FormInputData.valueKey: value
             ]
-        case .form(let value):
+        case .form(let responseType, let formType, let value):
             var childrenMap: [String: Any] = [:]
             value.forEach { value in
                 childrenMap[value.identifier] = value.getData()
@@ -137,34 +142,36 @@ public struct FormInputData {
             guard !childrenMap.isEmpty else {
                 return nil
             }
-            return [
-                FormInputData.typeKey: "form",
-                FormInputData.childrenKey: childrenMap
-            ]
-        case .nps(let scoreID, let value):
-            var childrenMap: [String: Any] = [:]
-            value.forEach { value in
-                childrenMap[value.identifier] = value.getData()
+            
+            switch formType {
+            case .form:
+                return [
+                    FormInputData.typeKey: "form",
+                    FormInputData.childrenKey: childrenMap,
+                    FormInputData.responseTypeKey: responseType as Any
+                ]
+            case .nps(let scoreID):
+                return [
+                    FormInputData.typeKey: "nps",
+                    FormInputData.childrenKey: childrenMap,
+                    FormInputData.responseTypeKey: responseType as Any,
+                    FormInputData.scoreIDKey: scoreID
+                ]
             }
-            guard !childrenMap.isEmpty else {
-                return nil
-            }
-            return [
-                FormInputData.typeKey: "nps",
-                FormInputData.scoreIDKey: scoreID,
-                FormInputData.childrenKey: childrenMap
-            ]
         }
     }
-    
 }
 
 public enum FormValue {
-    case toggle(Any?)
+    case toggle(Bool)
     case radio(Any?)
     case multipleCheckbox([Any]?)
-    case form([FormInputData])
-    case nps(String, [FormInputData])
+    case form(String?, FormType, [FormInputData])
     case text(String?)
     case score(Int?)
+}
+
+public enum FormType {
+    case nps(String)
+    case form
 }

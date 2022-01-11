@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+import SwiftUI
 
 /// - Note: for internal use only.  :nodoc:
 @objc(UAThomasDelegate)
@@ -110,13 +111,22 @@ public class ThomasFormResult : NSObject {
 public class ThomasFormInfo : NSObject {
     @objc
     public let identifier: String
+    
     @objc
     public let submitted: Bool
     
     @objc
-    public init(identifier: String, submitted: Bool) {
+    public let formType: String
+    
+    @objc
+    public let formResponseType: String?
+    
+    @objc
+    public init(identifier: String, submitted: Bool, formType: String, formResponseType: String?) {
         self.identifier = identifier
         self.submitted = submitted
+        self.formType = formType
+        self.formResponseType = formResponseType
     }
 }
 

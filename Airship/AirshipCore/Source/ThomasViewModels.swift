@@ -6,13 +6,11 @@ struct Layout: Decodable, Equatable {
     let view: ViewModel
     let version: Int
     let presentation: PresentationModel
-    let layoutState: JSON?
 
     enum CodingKeys: String, CodingKey {
         case view = "view"
         case version = "version"
         case presentation = "presentation"
-        case layoutState = "context"
     }
 }
 
@@ -645,8 +643,8 @@ struct FormControllerModel: Decodable, Equatable {
     let submit: FormSubmitBehavior?
     let border: Border?
     let backgroundColor: ThomasColor?
-    
     let view: ViewModel
+    let responseType: String?
 
     enum CodingKeys: String, CodingKey {
         case identifier = "identifier"
@@ -654,6 +652,7 @@ struct FormControllerModel: Decodable, Equatable {
         case border = "border"
         case backgroundColor = "background_color"
         case view = "view"
+        case responseType = "response_type"
     }
 }
 
@@ -665,6 +664,8 @@ struct NpsControllerModel: Decodable, Equatable {
     let backgroundColor: ThomasColor?
     let npsIdentifier: String
     let view: ViewModel
+    let responseType: String?
+    
 
     enum CodingKeys: String, CodingKey {
         case identifier = "identifier"
@@ -673,6 +674,7 @@ struct NpsControllerModel: Decodable, Equatable {
         case backgroundColor = "background_color"
         case view = "view"
         case npsIdentifier = "nps_identifier"
+        case responseType = "response_type"
     }
 }
 

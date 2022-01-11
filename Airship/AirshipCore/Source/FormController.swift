@@ -14,12 +14,9 @@ struct FormController : View {
     init(model: FormControllerModel, constraints: ViewConstraints) {
         self.model = model
         self.constraints = constraints
-        self.formState = FormState() { children in
-            let isValid = children.contains(where: { $0.isValid == false }) == false
-            return FormInputData(model.identifier,
-                                 value: .form(children),
-                                 isValid: isValid)
-        }
+        self.formState = FormState(identifier: self.model.identifier,
+                                   formType: .form,
+                                   formResponseType: self.model.responseType)
     }
     
     var body: some View {

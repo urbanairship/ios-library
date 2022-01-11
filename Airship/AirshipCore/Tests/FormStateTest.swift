@@ -7,18 +7,17 @@ import AirshipCore
 class FormStateTest: XCTestCase {
 
     func testData() throws {
-        let formState = FormState(reducer: { children in
-            return FormInputData("some-form-id",
-                                 value: .form(children),
-                                 isValid: true)
-        })
+        let formState = FormState(identifier: "some-form-id",
+                                  formType: .form,
+                                  formResponseType: "user_feedback")
+    
         
         formState.updateFormInput(FormInputData("some-radio-input",
                                                 value: .radio("some-radio-input-value"),
                                                 isValid: true))
         
         formState.updateFormInput(FormInputData("some-toggle-input",
-                                                value: .toggle("some-toggle-input-value"),
+                                                value: .toggle(true),
                                                 isValid: true))
         
         formState.updateFormInput(FormInputData("some-score-input",
@@ -34,7 +33,7 @@ class FormStateTest: XCTestCase {
                                       value: .text("some child text"),
                                       isValid: true)
         formState.updateFormInput(FormInputData("some-child-form",
-                                                value: .form([childData]),
+                                                value: .form("app_rating", .form, [childData]),
                                                 isValid: true))
         
         // Child nps data
@@ -42,13 +41,14 @@ class FormStateTest: XCTestCase {
                                       value: .score(8),
                                       isValid: true)
         formState.updateFormInput(FormInputData("some-child-nps",
-                                                value: .nps("some-child-score", [childScore]),
+                                                value: .form("nps", .nps("some-child-score"), [childScore]),
                                                 isValid: true))
         
         
         let expected = [
             "some-form-id": [
                 "type": "form",
+                "response_type": "user_feedback",
                 "children": [
                     "some-radio-input": [
                         "type": "single_choice",
@@ -56,7 +56,7 @@ class FormStateTest: XCTestCase {
                     ],
                     "some-toggle-input": [
                         "type": "toggle",
-                        "value": "some-toggle-input-value",
+                        "value": true,
                     ],
                     "some-score-input": [
                         "type": "score",
@@ -68,6 +68,7 @@ class FormStateTest: XCTestCase {
                     ],
                     "some-child-form": [
                         "type": "form",
+                        "response_type": "app_rating",
                         "children": [
                             "some-child-text-input": [
                                 "type": "text_input",
@@ -78,6 +79,7 @@ class FormStateTest: XCTestCase {
                     "some-child-nps": [
                         "type": "nps",
                         "score_id": "some-child-score",
+                        "response_type": "nps",
                         "children": [
                             "some-child-score": [
                                 "type": "score",
@@ -93,11 +95,10 @@ class FormStateTest: XCTestCase {
     }
 
     func testAttributes() throws {
-        let formState = FormState(reducer: { children in
-            return FormInputData("some-form-id",
-                                 value: .form(children),
-                                 isValid: true)
-        })
+        let formState = FormState(identifier: "some-form-id",
+                                  formType: .form,
+                                  formResponseType: "user_feedback")
+    
         
         formState.updateFormInput(FormInputData("some-input",
                                                 value: .radio("some-radio-input-value"),
@@ -127,7 +128,7 @@ class FormStateTest: XCTestCase {
                                       isValid: true)
         
         formState.updateFormInput(FormInputData("some-child-form",
-                                                value: .form([childData]),
+                                                value: .form("user_feedback", .form, [childData]),
                                                 isValid: true))
         
         // Child nps data
@@ -137,7 +138,7 @@ class FormStateTest: XCTestCase {
                                        attributeValue: .string("hello nps"),
                                       isValid: true)
         formState.updateFormInput(FormInputData("some-child-nps",
-                                                value: .nps("some-child-score", [childScore]),
+                                                value: .form("nps", .nps("some-child-score"), [childScore]),
                                                 isValid: true))
      
         let expected: [(AttributeName, AttributeValue)] = [
@@ -156,7 +157,7 @@ class FormStateTest: XCTestCase {
         ]
         
         let actual = formState.data.attributes()
-        XCTAssertEqual(expected.count, actual.count)        
+        XCTAssertEqual(expected.count, actual.count)
         expected.forEach { expectedEntry in
             XCTAssertTrue(actual.contains(where: { $0.0 == expectedEntry.0 && $0.1 == expectedEntry.1 }))
         }
