@@ -137,6 +137,10 @@ struct Pager : View {
             }
             self.thomasEnvironment.pageViewed(self.pagerState, layoutState: layoutState)
             self.lastIndex = index
+
+            // Run any actions set on the current page
+            let page = self.model.items[index]
+            self.thomasEnvironment.actionRunner.run(page.actions?.value ?? [:])
         }
     }
 }

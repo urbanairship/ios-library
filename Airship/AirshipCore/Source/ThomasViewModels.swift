@@ -575,10 +575,12 @@ struct PagerModel: Decodable, Equatable {
 struct PagerItem : Decodable, Equatable {
     let identifier: String
     let view: ViewModel
+    let actions: ActionsPayload?
     
     enum CodingKeys: String, CodingKey {
         case identifier = "identifier"
         case view = "view"
+        case actions = "actions"
     }
 }
 
