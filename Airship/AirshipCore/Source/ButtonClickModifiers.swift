@@ -123,7 +123,10 @@ extension View {
         
         let behaviors = behaviors ?? []
 
-        self.applyIf(behaviors.contains(.dismiss)) { view in
+        self.applyIf(actions != nil) { view in
+            view.modifier(RunActionsButtonModifier(actions: actions))
+        }
+        .applyIf(behaviors.contains(.dismiss)) { view in
             view.modifier(DismissButtonClickBehavior(buttonIdentifier: buttonIdentifier, buttonDescription: buttonDescription))
         }
         .applyIf(behaviors.contains(.cancel)) { view in
@@ -137,9 +140,6 @@ extension View {
         }
         .applyIf(behaviors.contains(.pagerPrevious)) { view in
             view.modifier(PagerPreviousPageButtonClickBehavior())
-        }
-        .applyIf(actions != nil) { view in
-            view.modifier(RunActionsButtonModifier(actions: actions))
         }
         .modifier(ReportButtonModifier(buttonIdentifier: buttonIdentifier))
     }
