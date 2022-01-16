@@ -733,8 +733,11 @@ public class Contact : NSObject, Component, ContactProtocol {
                             next = ContactOperation.update(tagUpdates: combinedTags, attributeUpdates: combinedAttributes)
                             continue
                         }
-                        
                         break
+                    }
+                    
+                    if (next?.payload == nil) {
+                        next = nil
                     }
                     
                 case .identify:
@@ -755,6 +758,10 @@ public class Contact : NSObject, Component, ContactProtocol {
                             break
                         }
                     }
+                    
+                   if (next?.payload == nil) {
+                       next = nil
+                   }
                     
                 default:
                     break
