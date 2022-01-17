@@ -84,7 +84,8 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)clientWithRemoteDataProvider:(id<UARemoteDataProvider>)remoteDataProvider
                                    dataStore:(UAPreferenceDataStore *)dataStore
                                      channel:(UAChannel *)channel
-                              operationQueue:(NSOperationQueue *)operationQueue;
+                              operationQueue:(NSOperationQueue *)operationQueue
+                                  SDKVersion:(NSString *)SDKVersion;
 
 /**
  * Notifies when the schedules have been updated.

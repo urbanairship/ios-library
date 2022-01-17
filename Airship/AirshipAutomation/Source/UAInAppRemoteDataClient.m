@@ -22,6 +22,7 @@
 #endif
 static NSString * const UAInAppMessagesLastPayloadTimeStampKey = @"UAInAppRemoteDataClient.LastPayloadTimeStamp";
 static NSString * const UAInAppMessagesLastPayloadMetadataKey = @"UAInAppRemoteDataClient.LastPayloadMetadata";
+static NSString * const UAInAppMessagesLastSDKVersionKey = @"UAInAppRemoteDataClient.LastSDKVersion";
 
 static NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteDataClient.ScheduledNewUserCutoffTime";
 static NSString * const UAInAppRemoteDataClientMetadataKey = @"com.urbanairship.iaa.REMOTE_DATA_METADATA";
@@ -72,6 +73,8 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
 @property(nonatomic, copy) NSDate *scheduleNewUserCutOffTime;
 @property(nonatomic, copy) NSDictionary *lastPayloadMetadata;
 @property(nonatomic, strong) UAChannel *channel;
+@property(nonatomic, copy) NSString *SDKVersion;
+
 @end
 
 @implementation UAInAppRemoteDataClient
@@ -79,7 +82,8 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
 - (instancetype)initWithRemoteDataProvider:(id<UARemoteDataProvider>)remoteDataProvider
                                  dataStore:(UAPreferenceDataStore *)dataStore
                                    channel:(UAChannel *)channel
-                            operationQueue:(NSOperationQueue *)operationQueue {
+                            operationQueue:(NSOperationQueue *)operationQueue
+                                SDKVersion:(NSString *)SDKVersion {
 
     self = [super init];
 
@@ -88,6 +92,7 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
         self.remoteDataProvider = remoteDataProvider;
         self.dataStore = dataStore;
         self.channel = channel;
+        self.SDKVersion = SDKVersion;
     }
 
     return self;
@@ -103,18 +108,21 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
     return [[UAInAppRemoteDataClient alloc] initWithRemoteDataProvider:remoteDataProvider
                                                              dataStore:dataStore
                                                                channel:channel
-                                                        operationQueue:operationQueue];
+                                                        operationQueue:operationQueue
+                                                            SDKVersion:[UAirshipVersion get]];
 }
 
 + (instancetype)clientWithRemoteDataProvider:(id<UARemoteDataProvider>)remoteDataProvider
                                    dataStore:(UAPreferenceDataStore *)dataStore
                                      channel:(UAChannel *)channel
-                              operationQueue:(NSOperationQueue *)operationQueue {
+                              operationQueue:(NSOperationQueue *)operationQueue
+                                  SDKVersion:(NSString *)SDKVersion {
 
     return [[UAInAppRemoteDataClient alloc] initWithRemoteDataProvider:remoteDataProvider
-                                                             dataStore:dataStore
-                                                               channel:channel
-                                                        operationQueue:operationQueue];
+                                                              dataStore:dataStore
+                                                                channel:channel
+                                                         operationQueue:operationQueue
+                                                            SDKVersion:SDKVersion];
 }
 
 - (void)subscribe {
@@ -186,7 +194,9 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
     if ([payloadTimestamp isEqualToDate:lastPayloadTimestamp] && isMetadataCurrent) {
         return;
     }
-
+    
+    NSString *lastSDKVersion = [self.dataStore stringForKey:UAInAppMessagesLastSDKVersionKey];
+    
     NSArray *messageJSONList = [messagePayload.data arrayForKey:UAInAppMessages defaultValue:@[]];
     NSArray *constraintJSONList = [messagePayload.data arrayForKey:UAFrequencyConstraintsKey defaultValue:@[]];
 
@@ -229,20 +239,7 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
             continue;
         }
 
-        if ([createdTimeStamp compare:lastPayloadTimestamp] == NSOrderedDescending) {
-            // New in-app message
-            UASchedule *schedule = [UAInAppRemoteDataClient parseScheduleWithJSON:message
-                                                                         metadata:scheduleMetadata];
-            if (!schedule) {
-                UA_LERR(@"Failed to parse in-app automation: %@", message);
-                continue;
-            }
-
-            if ([self checkSchedule:schedule createdTimeStamp:createdTimeStamp]) {
-                [newSchedules addObject:schedule];
-            }
-
-        } else if ([currentScheduleIDs containsObject:scheduleID]) {
+        if ([currentScheduleIDs containsObject:scheduleID]) {
             UAScheduleEdits *edits = [UAInAppRemoteDataClient parseScheduleEditsWithJSON:message
                                                                                 metadata:scheduleMetadata];
 
@@ -260,6 +257,22 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
                     UA_LTRACE("Updated in-app automation: %@", scheduleID);
                 }
             }];
+        } else if ([self isNewSchedule:message
+                      createdTimeStamp:createdTimeStamp
+                  lastPayloadTimeStamp:lastPayloadTimestamp
+                        lastSDKVersion:lastSDKVersion]) {
+
+            // New in-app message
+            UASchedule *schedule = [UAInAppRemoteDataClient parseScheduleWithJSON:message
+                                                                         metadata:scheduleMetadata];
+            if (!schedule) {
+                UA_LERR(@"Failed to parse in-app automation: %@", message);
+                continue;
+            }
+
+            if ([self checkSchedule:schedule createdTimeStamp:createdTimeStamp]) {
+                [newSchedules addObject:schedule];
+            }
         }
     }
 
@@ -303,6 +316,7 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
     // Save state
     self.lastPayloadMetadata = payloadMetadata;
     [self.dataStore setObject:payloadTimestamp forKey:UAInAppMessagesLastPayloadTimeStampKey];
+    [self.dataStore setObject:self.SDKVersion forKey:UAInAppMessagesLastSDKVersionKey];
 }
 
 - (NSDictionary *)lastPayloadMetadata {
@@ -319,6 +333,38 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
     UAScheduleAudience *audience = schedule.audience;
     BOOL isNewUser = ([createdTimeStamp compare:self.scheduleNewUserCutOffTime] == NSOrderedAscending);
     return [UAScheduleAudienceChecks checkScheduleAudienceConditions:audience isNewUser:isNewUser];
+}
+
+- (BOOL)isNewSchedule:(NSDictionary *)messageJSON
+     createdTimeStamp:(NSDate *)createdTimeStamp
+ lastPayloadTimeStamp:(NSDate *)lastPayloadTimeStamp
+       lastSDKVersion:(NSString *)lastSDKVersion {
+    
+    if ([createdTimeStamp compare:lastPayloadTimeStamp] == NSOrderedDescending) {
+        return YES;
+    }
+    
+    NSString *minSDKVersion = messageJSON[@"min_sdk_version"];
+    if (!minSDKVersion.length) {
+        return NO;
+    }
+    
+    // We can skip checking if the min_sdk_version is newer than the current SDK version since
+    // remote-data will filter them out. This flag is only a hint to the SDK to treat a schedule with
+    // an older created timestamp as a new schedule.
+    
+    NSString *constraint;
+    if (!lastSDKVersion.length) {
+        // If we do not have a last SDK version, then we are coming from an SDK older than
+        // 16.2.0. Check for a min SDK version newer or equal to 16.2.0.
+        constraint = @"[16.2.0,)";
+    } else {
+        // Check that the min SDK is newer than the last SDK version
+        constraint = [NSString stringWithFormat:@"]%@,)", lastSDKVersion];
+    }
+    
+    UAVersionMatcher *matcher = [UAVersionMatcher matcherWithVersionConstraint:constraint];
+    return [matcher evaluateObject:minSDKVersion];
 }
 
 - (NSDate *)scheduleNewUserCutOffTime {

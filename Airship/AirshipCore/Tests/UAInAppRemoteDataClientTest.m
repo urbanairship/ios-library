@@ -66,7 +66,8 @@
     self.remoteDataClient = [UAInAppRemoteDataClient clientWithRemoteDataProvider:self.mockRemoteDataProvider
                                                                         dataStore:self.dataStore
                                                                           channel:self.mockChannel
-                                                                   operationQueue:self.queue];
+                                                                   operationQueue:self.queue
+                                                                       SDKVersion:@"0.0.0"];
     self.remoteDataClient.delegate = self.mockDelegate;
 
     [self.remoteDataClient subscribe];
@@ -1110,6 +1111,84 @@
     [self waitForTestExpectations];
     [self.mockDelegate verify];
 }
+
+- (void)testMinSDKVersion {
+    NSDate *date = [NSDate date];
+
+    UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
+                                                                                  timestamp:date
+                                                                                       data:@{@"in_app_messages":@[@{}]}
+                                                                                   metadata:@{@"metadata" : @"so meta"}];
+    
+    self.publishBlock(@[inAppRemoteDataPayload]);
+    XCTestExpectation *finished = [self expectationWithDescription:@"finished"];
+    [self.queue addOperationWithBlock:^{
+        [finished fulfill];
+    }];
+    
+    [self waitForTestExpectations];
+    
+    [self.remoteDataClient unsubscribe];
+    
+    self.remoteDataClient = [UAInAppRemoteDataClient clientWithRemoteDataProvider:self.mockRemoteDataProvider
+                                                                        dataStore:self.dataStore
+                                                                          channel:self.mockChannel
+                                                                   operationQueue:self.queue
+                                                                       SDKVersion:@"1.0.0"];
+    self.remoteDataClient.delegate = self.mockDelegate;
+
+    [self.remoteDataClient subscribe];
+    
+    id payload = @{
+        @"min_sdk_version": @"1.0.0",
+        @"message": @{
+                @"name": @"Simple Message",
+                @"display_type": @"custom",
+                @"display": @{
+                        @"custom": @{
+                                @"custom": @"stuff"
+                        }
+                }
+        },
+        @"campaigns": @{ @"categories": @[@"cool"] },
+        @"type": @"in_app_message",
+        @"created": @"2017-12-04T19:07:54.564",
+        @"last_updated": @"2017-12-04T19:07:54.564",
+        @"triggers": @[
+                @{
+                    @"type":@"app_init",
+                    @"goal":@1
+                }
+        ],
+        @"id": @"some id",
+        @"audience": @{
+                @"notification_opt_in": @(YES)
+        },
+        @"frequency_constraint_ids": @[@"constraint-one"],
+    };
+    
+    
+    
+    inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
+                                                             timestamp:[date dateByAddingTimeInterval:1000]
+                                                                  data:@{@"in_app_messages":@[payload]}
+                                                              metadata:@{@"metadata" : @"so very meta"}];
+
+    
+    XCTestExpectation *scheduled = [self expectationWithDescription:@"scheduled"];
+    [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(BOOL) = (__bridge void (^)(BOOL))arg;
+        completionHandler(YES);
+        [scheduled fulfill];
+    }] scheduleMultiple:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    
+    self.publishBlock(@[inAppRemoteDataPayload]);
+    [self waitForTestExpectations];
+    [self.mockDelegate verify];
+}
+
 
 - (void)testInAppMessageSchedule {
     id payload = @{
