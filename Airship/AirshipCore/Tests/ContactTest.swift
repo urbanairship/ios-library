@@ -88,6 +88,27 @@ class ContactTest: XCTestCase {
         XCTAssertEqual(pendingAttributeUpdates, self.contact.pendingAttributeUpdates)
     }
     
+    func testMigrateEmptyTagsAndAttributes() throws {
+        let testDate = UATestDate()
+        testDate.dateOverride = Date()
+        
+        let attributes: [AttributePendingMutations] = []
+        let attributeData = try! NSKeyedArchiver.archivedData(withRootObject:attributes, requiringSecureCoding:true)
+        dataStore.setObject(attributeData, forKey: Contact.legacyPendingAttributesKey)
+        
+        let tags: [TagGroupsMutation] = []
+        let tagData = try! NSKeyedArchiver.archivedData(withRootObject:tags, requiringSecureCoding:true)
+        dataStore.setObject([tagData], forKey: Contact.legacyPendingTagGroupsKey)
+            
+        self.dataStore.setObject("named-user", forKey: Contact.legacyNamedUserKey)
+        self.contact.migrateNamedUser()
+
+        XCTAssertEqual("named-user", contact.namedUserID)
+
+        XCTAssertEqual([], self.contact.pendingTagGroupUpdates)
+        XCTAssertEqual([], self.contact.pendingTagGroupUpdates)
+    }
+    
     /// Test skip calling identify on the legacy named user if we already have contact data
     func testSkipMigrateLegacyNamedUser() throws {
         notificationCenter.post(Notification(name: AppStateTracker.didBecomeActiveNotification))

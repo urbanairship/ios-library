@@ -486,16 +486,16 @@ public class Contact : NSObject, Component, ContactProtocol {
         
         let disposable = self.performOperation(operation: operation, channelID: channelID) { response in
             if let response = response {
-                if (response.isSuccess) {
+                if (response.isServerError) {
+                    // retry
+                    task.taskFailed()
+                } else {
                     self.removeFirstOperation()
                     task.taskCompleted()
                     self.enqueueTask()
-                } else if (response.isServerError) {
-                    task.taskFailed()
-                } else {
-                    task.taskCompleted()
                 }
             } else {
+                // retry
                 task.taskFailed()
             }
             
@@ -572,6 +572,10 @@ public class Contact : NSObject, Component, ContactProtocol {
     private func shouldSkipOperation(_ operation: ContactOperation) -> Bool {
         switch(operation.type) {
         case .update:
+            let payload = operation.payload as! UpdatePayload
+            if (payload.attrubuteUpdates?.isEmpty ?? true && payload.tagUpdates?.isEmpty ?? true) {
+                return true
+            }
             return false
             
         case .identify:
@@ -809,7 +813,7 @@ public class Contact : NSObject, Component, ContactProtocol {
                 }
             }
             
-            if (pendingTagUpdates != nil || pendingAttributeUpdates != nil) {
+            if (!(pendingTagUpdates?.isEmpty ?? true && pendingAttributeUpdates?.isEmpty ?? true)) {
                 let operation = ContactOperation.update(tagUpdates: pendingTagUpdates, attributeUpdates: pendingAttributeUpdates)
                 addOperation(operation)
             }

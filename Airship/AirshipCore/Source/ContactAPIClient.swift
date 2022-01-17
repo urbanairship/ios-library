@@ -244,11 +244,6 @@ class ContactAPIClient : ContactsAPIClientProtocol {
             }
         }
         
-        guard !payload.isEmpty else {
-            completionHandler(nil, AirshipErrors.error("Both tags & attributes are empty"))
-            return Disposable()
-        }
-        
         let request = self.request(payload, "\(config.deviceAPIURL ?? "")/api/contacts/\(identifier)")
 
         return session.performHTTPRequest(request, completionHandler: { (data, response, error) in

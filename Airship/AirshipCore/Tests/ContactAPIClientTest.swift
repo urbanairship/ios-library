@@ -321,21 +321,6 @@ class ContactAPIClientTest: XCTestCase {
         XCTAssertEqual(body as! NSDictionary, expectedBody as! NSDictionary)
     }
     
-    func testUpdateInvalidAttribute() throws {
-        let date = Date()
-        let attributeUpdates = [
-            AttributeUpdate(attribute: "some-string", type: .set, value: nil, date: date),
-        ]
-        
-        let expectation = XCTestExpectation(description: "callback called")
-        contactAPIClient.update(identifier: "some-contact-id", tagGroupUpdates: [], attributeUpdates: attributeUpdates) { response, error in
-            XCTAssertNotNil(error)
-            expectation.fulfill()
-        }
-        
-        wait(for: [expectation], timeout: 10.0)
-    }
-    
     func testUpdateMixValidInvalidAttributes() throws {
         let date = Date()
         let attributeUpdates = [
@@ -370,16 +355,4 @@ class ContactAPIClientTest: XCTestCase {
         
         XCTAssertEqual(body as! NSDictionary, expectedBody as! NSDictionary)
     }
-    
-    
-    func testEmptyUpdates() throws {
-        let expectation = XCTestExpectation(description: "callback called")
-        contactAPIClient.update(identifier: "some-contact-id", tagGroupUpdates: [], attributeUpdates: []) { response, error in
-            XCTAssertNotNil(error)
-            expectation.fulfill()
-        }
-        
-        wait(for: [expectation], timeout: 10.0)
-    }
-
 }
