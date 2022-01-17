@@ -71,7 +71,6 @@ struct Container : View {
         guard position != .center else { return nil }
         
         if let contentSize = contentSize, contentSize.0 == self.constraints {
-            print("placement height", contentSize.1.height)
             return contentSize.1.height > 0 ? contentSize.1.height : nil
         }
         

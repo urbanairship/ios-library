@@ -4,7 +4,16 @@ import Foundation
 import SwiftUI
 
 @available(iOS 13.0.0, tvOS 13.0, *)
-extension View {    
+extension View {
+    @ViewBuilder
+    func ignoreKeyboardSafeArea() -> some View {
+        if #available(iOS 14.0, tvOS 14.0, *) {
+            self.ignoresSafeArea(.keyboard)
+        } else {
+            self
+        }
+    }
+    
     @ViewBuilder
     func applyIf<Content: View>(_ predicate: () -> Bool, transform: (Self) -> Content) -> some View {
         applyIf(predicate(), transform: transform)

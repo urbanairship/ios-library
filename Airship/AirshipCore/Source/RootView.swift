@@ -1,10 +1,4 @@
-//
-//  RootView.swift
-//  Airship
-//
-//  Created by Ryan Lepinski on 12/14/21.
-//  Copyright © 2021 Urban Airship. All rights reserved.
-//
+/* Copyright Airship and Contributors */
 
 import Foundation
 import SwiftUI

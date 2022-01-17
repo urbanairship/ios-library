@@ -45,6 +45,7 @@ class ThomasViewController<Content> : UIHostingController<Content> where Content
     #endif
 }
 
+@available(iOS 13.0.0, tvOS 13.0, *)
 class ThomasViewControllerOptions {
     var orientation: Orientation?
 }

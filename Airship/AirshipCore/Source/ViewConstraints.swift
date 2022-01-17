@@ -87,12 +87,8 @@ struct ViewConstraints: Equatable {
         var childHeight = ViewConstraints.calculateSize(childSize.height, parentSize: parentHeight)
         childHeight = boundConstraint(constraint: childHeight, minValue: childMinHeight, maxValue: childMaxHeight)
         
-        return ViewConstraints(minWidth: childMinWidth,
-                               width: childWidth,
-                               maxWidth: childMaxWidth,
-                               minHeight: childMinHeight,
+        return ViewConstraints(width: childWidth,
                                height: childHeight,
-                               maxHeight: childMaxHeight,
                                safeAreaInsets: insets)
     }
     

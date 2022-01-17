@@ -4,6 +4,9 @@ import SwiftUI
 
 @available(iOS 13.0.0, tvOS 13.0, *)
 struct ModalView: View {
+    
+    static let keyboardPadding = 1.0
+    @Environment(\.colorScheme) var colorScheme
 
     let presentation: ModalPresentationModel
     let layout: Layout
@@ -13,38 +16,87 @@ struct ModalView: View {
 
     var body: some View {
         GeometryReader { metrics in
-            
             RootView(thomasEnvironment: thomasEnvironment, layout: layout) { orientation, windowSize in
-                
                 let placement = resolvePlacement(orientation: orientation, windowSize: windowSize)
-                let ignoreSafeArea = placement.ignoreSafeArea == true
-                let constraints = ViewConstraints.containerConstraints(metrics.size,
-                                                                       safeAreaInsets: metrics.safeAreaInsets,
-                                                                       ignoreSafeArea: ignoreSafeArea)
-            
-                createBanner(constraints: constraints, placement: placement)
-                    .applyIf(ignoreSafeArea) { $0.edgesIgnoringSafeArea(.all) }
+                createModal(placement: placement, metrics:metrics)
             }
         }
-        .padding(.bottom, keyboardResponder.keyboardHeight)
         .animation(.easeOut(duration: 0.16))
-        .edgesIgnoringSafeArea(.bottom)
+        .ignoreKeyboardSafeArea()
+    }
+    
+    private func calculateKeyboardHeight(metrics: GeometryProxy) -> Double {
+        guard self.keyboardResponder.keyboardHeight > 0 else { return 0.0 }
+        return self.keyboardResponder.keyboardHeight - metrics.safeAreaInsets.bottom + ModalView.keyboardPadding
+    }
+    
+    private func calculateKeyboardOverlap(placement: ModalPlacement,
+                                          keyboardHeight: Double,
+                                          containerHeight: Double,
+                                          contentHeight: Double) -> Double {
+        
+        guard keyboardHeight > 0 else { return 0.0 }
+        guard containerHeight > 0, contentHeight > 0 else { return keyboardHeight }
+        
+        switch (placement.position?.vertical ?? .center) {
+        case .center:
+            return max(0, keyboardHeight - ((containerHeight - contentHeight) / 2.0))
+        case .bottom:
+            return keyboardHeight
+        case .top:
+            return max(0, keyboardHeight - containerHeight + contentHeight)
+        }
+    }
+    
+    private func createModal(placement: ModalPlacement, metrics: GeometryProxy) -> some View {
+        let ignoreSafeArea = placement.ignoreSafeArea == true
+        var alignment = Alignment(horizontal: placement.position?.horizontal.toAlignment() ?? .center,
+                                  vertical: placement.position?.vertical.toAlignment() ?? .center)
+
+        let constraints = ViewConstraints.containerConstraints(metrics.size,
+                                                               safeAreaInsets: metrics.safeAreaInsets,
+                                                               ignoreSafeArea: ignoreSafeArea)
+            
+        var contentConstraints = constraints.calculateChild(placement.size,
+                                                            ignoreSafeArea: placement.ignoreSafeArea)
+        
+        let containerHeight = constraints.height ?? 0
+        let contentHeight = contentConstraints.height ?? 0
+        let keyboardHeight = calculateKeyboardHeight(metrics: metrics)
+        var keyboardOffset = calculateKeyboardOverlap(placement: placement,
+                                                      keyboardHeight: keyboardHeight,
+                                                      containerHeight: containerHeight,
+                                                      contentHeight: contentHeight)
+        
+        // If the keyboard will push the content outside the screen,
+        // resize it and position it at the top
+        if ((keyboardHeight + contentHeight) >= containerHeight) {
+            alignment = Alignment(horizontal: alignment.horizontal, vertical: .top)
+            keyboardOffset = 0
+            contentConstraints = ViewConstraints(width: contentConstraints.width,
+                                                 height: containerHeight - keyboardHeight,
+                                                 safeAreaInsets: contentConstraints.safeAreaInsets)
+        }
+     
+        return VStack {
+            ViewFactory.createView(model: self.layout.view, constraints: contentConstraints)
+                .margin(placement.margin)
+                .offset(y: -keyboardOffset)
+        }
+        .constraints(constraints, alignment: alignment)
+        .background(modalBackground(placement))
+        .applyIf(ignoreSafeArea) { $0.edgesIgnoringSafeArea(.all) }
     }
     
     @ViewBuilder
-    private func createBanner(constraints: ViewConstraints, placement: ModalPlacement) -> some View {
-        let alignment = Alignment(horizontal: placement.position?.horizontal.toAlignment() ?? .center,
-                                  vertical: placement.position?.vertical.toAlignment() ?? .center)
-        
-        let contentConstraints = constraints.calculateChild(placement.size,
-                                                            ignoreSafeArea: placement.ignoreSafeArea)
-
-        VStack {
-            ViewFactory.createView(model: self.layout.view, constraints: contentConstraints)
-                .margin(placement.margin)
-        }
-        .constraints(constraints, alignment: alignment)
-        .background(
+    private func modalBackground(_ placement: ModalPlacement) -> some View {
+        if case let .percent(height) = placement.size.height, height >= 1.0,
+           case let .percent(value) = placement.size.width, value >= 1.0,
+           placement.ignoreSafeArea == false {
+            Rectangle()
+                .foregroundColor(colorScheme == .light ? Color.white : Color.black)
+                .edgesIgnoringSafeArea(.all)
+        } else {
             Rectangle()
                 .foreground(placement.shade)
                 .edgesIgnoringSafeArea(.all)
@@ -54,9 +106,8 @@ struct ModalView: View {
                         self.thomasEnvironment.dismiss()
                     }
                 }
-        )
+            }
     }
-    
 
     
     private func resolvePlacement(orientation: Orientation, windowSize: WindowSize) -> ModalPlacement {

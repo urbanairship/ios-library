@@ -26,6 +26,23 @@ struct TextView: UIViewRepresentable {
         /// Set textView background color to clear to can set the parent background color instead
         textView.backgroundColor = .clear
         textView.delegate = context.coordinator
+        
+        #if !os(tvOS)
+        let toolbar = UIToolbar()
+        toolbar.sizeToFit()
+        let done = UIBarButtonItem(barButtonSystemItem: .done,
+                                   target: textView,
+                                   action: #selector(textView.resignFirstResponder))
+
+        let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace,
+                                        target: nil,
+                                        action: nil)
+
+
+        toolbar.items = [flexSpace, done]
+        textView.inputAccessoryView = toolbar
+        #endif
+
         return textView.textAppearance(model.textAppearance, colorScheme)
     }
     
