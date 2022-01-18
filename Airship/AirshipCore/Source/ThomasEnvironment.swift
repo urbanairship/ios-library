@@ -63,9 +63,13 @@ class ThomasEnvironment : ObservableObject {
                                    layoutContext: layoutState.toLayoutContext())
     }
     
+  
     func dismiss(buttonIdentifier: String, buttonDescription: String?, cancel: Bool, layoutState: LayoutState) {
         tryDismiss {
-            self.delegate.onDismissed(buttonIdentifier: buttonIdentifier, buttonDescription: buttonDescription, cancel: cancel, layoutContext: layoutState.toLayoutContext())
+            self.dismiss(buttonIdentifier: buttonIdentifier,
+                         buttonDescription: buttonDescription,
+                         cancel: cancel,
+                         layoutState: layoutState)
         }
     }
     

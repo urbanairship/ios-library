@@ -38,7 +38,7 @@
         NSDictionary *viewedPage = @{
             UAInAppPagerSummaryIndexKey: @(self.pagerInfo.pageIndex),
             UAInAppPagerSummaryDurationKey: [NSString stringWithFormat:@"%.3f", self.timer.time],
-            UAInAppPagerSummaryIDKey: self.pagerInfo.identifier
+            UAInAppPagerSummaryIDKey: self.pagerInfo.pageIdentifier
         };
         [self.viewedPages addObject:viewedPage];
     }
@@ -181,7 +181,7 @@
 }
 
 - (void)onDismissedWithButtonIdentifier:(NSString * _Nonnull)buttonIdentifier
-                      buttonDescription:(NSString *)buttonDescription
+                      buttonDescription:(NSString * _Nullable)buttonDescription
                                  cancel:(BOOL)cancel
                           layoutContext:(UAThomasLayoutContext * _Nonnull)layoutContext {
     
@@ -299,10 +299,9 @@
         // Summary events
         for (NSString *pagerID in self.pagerSummaries) {
             UAPagerSummary *summary = self.pagerSummaries[pagerID];
-            [summary.timer stop];
+            [summary pageFinished];
             
             if (summary.pagerInfo) {
-    
                 UAInAppReporting *reporting = [UAInAppReporting pagerSummaryEventWithScehduleID:self.scheduleID
                                                                                         message:self.message
                                                                                       pagerInfo:summary.pagerInfo
