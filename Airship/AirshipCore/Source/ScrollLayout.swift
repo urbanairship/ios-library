@@ -51,6 +51,9 @@ struct ScrollLayout : View {
             let axis = isVertical ? Axis.Set.vertical : Axis.Set.horizontal
             ScrollView(self.isScrollable ? axis : []) {
                 content(parentMetrics: parentMetrics, constraints: childConstraints)
+                if #available(iOS 14.0, tvOS 14.0, *) {} else {
+                    Spacer()
+                }
             }
             .clipped()
         }
