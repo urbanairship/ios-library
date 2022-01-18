@@ -550,6 +550,24 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
     }];
 }
 
+- (void)testActiveSessionPaused {
+    UAScheduleTrigger *trigger = [UAScheduleTrigger activeSessionTriggerWithCount:1];
+    [self verifyTrigger:trigger triggerFireBlock:^{
+        [self.automationEngine pause];
+        [self simulateForegroundTransition];
+        [self.automationEngine resume];
+    }];
+}
+
+- (void)testActiveSessionStopped {
+    UAScheduleTrigger *trigger = [UAScheduleTrigger activeSessionTriggerWithCount:1];
+    [self verifyTrigger:trigger triggerFireBlock:^{
+        [self.automationEngine stop];
+        [self simulateForegroundTransition];
+        [self.automationEngine start];
+    }];
+}
+
 - (void)testActiveSessionLateSubscription {
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
 

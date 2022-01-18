@@ -70,6 +70,7 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
 @property (nonnull, strong) NSMutableDictionary *stateConditions;
 @property (atomic, assign) BOOL paused;
 @property (nonatomic, readonly) BOOL isForegrounded;
+@property (atomic, assign) BOOL isAppSessionPending;
 
 @end
 
@@ -101,6 +102,7 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
         self.stateConditions = [NSMutableDictionary dictionary];
         self.networkMonitor = networkMonitor;
         self.paused = NO;
+        self.isAppSessionPending = NO;
 
         UA_WEAKIFY(self)
         [self.taskManager registerForTaskWithIDs:@[UAAutomationEngineDelayTaskID, UAAutomationEngineIntervalTaskID]
@@ -233,6 +235,10 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
 - (void)resume {
     if (self.paused) {
         self.paused = NO;
+        if (self.isAppSessionPending) {
+            [self updateTriggersWithType:UAScheduleTriggerActiveSession argument:nil incrementAmount:1.0];
+            self.isAppSessionPending = NO;
+        }
         [self scheduleConditionsChanged];
     }
 }
@@ -569,8 +575,13 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
     // Update any dependent foreground triggers
     [self updateTriggersWithType:UAScheduleTriggerAppForeground argument:nil incrementAmount:1.0];
 
-    // Active session triggers are also updated by foreground transitions
-    [self updateTriggersWithType:UAScheduleTriggerActiveSession argument:nil incrementAmount:1.0];
+    if (self.paused) {
+        self.isAppSessionPending = YES;
+    } else {
+        // Active session triggers are also updated by foreground transitions
+        [self updateTriggersWithType:UAScheduleTriggerActiveSession argument:nil incrementAmount:1.0];
+        self.isAppSessionPending = NO;
+    }
     UAAutomationStateCondition *condition = self.stateConditions[@(UAScheduleTriggerActiveSession)];
     condition.stateChangeDate = self.date.now;
 
@@ -580,6 +591,7 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
 - (void)applicationDidTransitionToBackground {
     [self updateTriggersWithType:UAScheduleTriggerAppBackground argument:nil incrementAmount:1.0];
     [self scheduleConditionsChanged];
+    self.isAppSessionPending = NO;
 }
 
 -(void)customEventAdded:(NSNotification *)notification {
