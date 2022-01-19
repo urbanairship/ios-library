@@ -28,7 +28,11 @@ public class ChannelCapture : NSObject {
      * Note: Does not persist through app launches.
      */
     @objc
-    public var enabled: Bool = false
+    public var enabled: Bool {
+        didSet {
+            AirshipLogger.trace("Channel capture enabled: \(enabled)")
+        }
+    }
     
     @objc
     public init(config: RuntimeConfig,
@@ -71,6 +75,7 @@ public class ChannelCapture : NSObject {
     @objc
     private func applicationDidTransitionToForeground() {
         guard enabled else {
+            AirshipLogger.trace("Channel Capture disabled, ignoring foreground.")
             return
         }
         
@@ -78,6 +83,8 @@ public class ChannelCapture : NSObject {
         if knockTimes.count >= ChannelCapture.knocksToTriggerChannelCapture {
             knockTimes.remove(at: 0)
         }
+        
+        AirshipLogger.trace("Channel Capture capturing foreground at time \(date.now)")
         knockTimes.append(date.now)
         
         if knockTimes.count < ChannelCapture.knocksToTriggerChannelCapture {
@@ -92,14 +99,10 @@ public class ChannelCapture : NSObject {
         
         knockTimes.removeAll()
         
-        if channel.identifier == nil {
-            AirshipLogger.debug("The channel ID does not exist.")
-        }
-        
         let identifier = "ua:\(channel.identifier ?? "")"
         let expirationDate = date.now.addingTimeInterval(ChannelCapture.pasteboardExpirationSeconds)
         
-        AirshipLogger.debug("Setting pasteboard with channel identifier = \(identifier)")
+        AirshipLogger.debug("Channel Capture setting channel ID:\(identifier) to pasteboard.")
         pasteboardProvider().setItems([[UIPasteboard.typeAutomatic: identifier]],
                                       options: [UIPasteboard.OptionsKey.expirationDate: expirationDate])
     }
