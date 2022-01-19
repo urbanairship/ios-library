@@ -13,6 +13,7 @@ Pod::Spec.new do |s|
     s.requires_arc            = true
     s.ios.deployment_target   = "11.0"
     s.default_subspecs        = ["NotificationService", "NotificationContent"]
+    s.deprecated_in_favor_of  = "AirshipServiceExtension"
 
     s.subspec "NotificationService" do |notificationService|
         notificationService.ios.source_files     = "AirshipExtensions/AirshipNotificationServiceExtension/Source/**/*.{h,m}"
