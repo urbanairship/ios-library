@@ -27,7 +27,7 @@ struct ImageButton : View {
 
         }
         .buttonClick(self.model.identifier,
-                     buttonDescription: self.model.contentDescription,
+                     buttonDescription: self.model.contentDescription ?? self.model.identifier,
                      behaviors: self.model.clickBehaviors,
                      actions: self.model.actions)
         .enableButton(self.model.enableBehaviors)

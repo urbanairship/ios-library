@@ -64,7 +64,7 @@ class ThomasEnvironment : ObservableObject {
     }
     
   
-    func dismiss(buttonIdentifier: String, buttonDescription: String?, cancel: Bool, layoutState: LayoutState) {
+    func dismiss(buttonIdentifier: String, buttonDescription: String, cancel: Bool, layoutState: LayoutState) {
         tryDismiss {
             self.dismiss(buttonIdentifier: buttonIdentifier,
                          buttonDescription: buttonDescription,

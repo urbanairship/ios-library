@@ -50,7 +50,7 @@ struct PagerPreviousPageButtonClickBehavior: ViewModifier {
 @available(iOS 13.0.0, tvOS 13.0, *)
 struct DismissButtonClickBehavior: ViewModifier {
     let buttonIdentifier: String
-    let buttonDescription: String?
+    let buttonDescription: String
 
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
     @Environment(\.layoutState) var layoutState
@@ -69,7 +69,7 @@ struct DismissButtonClickBehavior: ViewModifier {
 @available(iOS 13.0.0, tvOS 13.0, *)
 struct CancelButtonClickBehavior: ViewModifier {
     let buttonIdentifier: String
-    let buttonDescription: String?
+    let buttonDescription: String
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
     @Environment(\.layoutState) var layoutState
 
@@ -87,6 +87,7 @@ struct CancelButtonClickBehavior: ViewModifier {
 @available(iOS 13.0.0, tvOS 13.0, *)
 struct ReportButtonModifier: ViewModifier {
     let buttonIdentifier: String
+    
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
     @Environment(\.layoutState) var layoutState
 
@@ -117,7 +118,7 @@ struct RunActionsButtonModifier: ViewModifier {
 extension View {
     @ViewBuilder
     func buttonClick(_ buttonIdentifier: String,
-                     buttonDescription: String?,
+                     buttonDescription: String,
                      behaviors: [ButtonClickBehavior]?,
                      actions: ActionsPayload? = nil) -> some View {
         

@@ -37,7 +37,7 @@ public protocol ThomasDelegate {
     ///     - cancel: If the view should be cancelled.
     ///     - layoutContext: The layout context.
     func onDismissed(buttonIdentifier: String,
-                     buttonDescription: String?,
+                     buttonDescription: String,
                      cancel: Bool,
                      layoutContext: ThomasLayoutContext)
     

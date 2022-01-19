@@ -181,14 +181,14 @@
 }
 
 - (void)onDismissedWithButtonIdentifier:(NSString * _Nonnull)buttonIdentifier
-                      buttonDescription:(NSString * _Nullable)buttonDescription
+                      buttonDescription:(NSString * _Nonnull)buttonDescription
                                  cancel:(BOOL)cancel
                           layoutContext:(UAThomasLayoutContext * _Nonnull)layoutContext {
     
     // Create a button info from callback data
     UAInAppMessageButtonInfo *buttonInfo = [UAInAppMessageButtonInfo buttonInfoWithBuilderBlock:^(UAInAppMessageButtonInfoBuilder *builder) {
         builder.label = [UAInAppMessageTextInfo textInfoWithBuilderBlock:^(UAInAppMessageTextInfoBuilder *builder) {
-            builder.text = buttonDescription ?: buttonIdentifier;
+            builder.text = buttonDescription;
         }];
         builder.identifier = buttonIdentifier;
         builder.behavior = cancel ? UAInAppMessageButtonInfoBehaviorCancel : UAInAppMessageButtonInfoBehaviorDismiss;
