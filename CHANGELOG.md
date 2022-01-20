@@ -3,6 +3,15 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 16.2.0 January 24, 2021
+
+A minor release that adds support for two new features, Scenes and Surveys. Currently, these features are only available to customers in Airship's Special Access Program. Please reach out to your account manager for more details.
+
+## Changes
+- Added support for Scenes and Surveys
+- Fixed In-App Automation session trigger skipping sessions when automations are paused then resumed
+
+
 ## Version 16.1.2 December 21, 2021
 Patch release that fixes a contact update issue resulting in subsequent update operations not being executed.
 
