@@ -511,15 +511,16 @@ struct IconModel: Decodable, Equatable {
 }
 
 struct ActionsPayload: Decodable, Equatable {
-    let value: [String: AnyHashable]
+    let value: JSON
     
     init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
-        let json = try container.decode(JSON.self).unWrap()
-        guard let value = json as? [String: AnyHashable] else {
+        let json = try container.decode(JSON.self)
+        
+        guard case .object(_) = json else {
             throw AirshipErrors.error("Invalid actions payload.")
         }
-        self.value = value
+        self.value = json
     }
 }
 

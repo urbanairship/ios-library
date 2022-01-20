@@ -109,7 +109,7 @@ struct RunActionsButtonModifier: ViewModifier {
     @ViewBuilder
     func body(content: Content) -> some View {
         content.addTapGesture {
-            thomasEnvironment.actionRunner.run(actions?.value ?? [:])
+            thomasEnvironment.actionRunner.run(actions)
         }
     }
 }

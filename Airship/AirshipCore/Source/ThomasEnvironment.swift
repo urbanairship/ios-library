@@ -5,7 +5,7 @@ import Foundation
 @available(iOS 13.0.0, tvOS 13.0, *)
 class ThomasEnvironment : ObservableObject {
     private let delegate: ThomasDelegate
-    let actionRunner: ActionRunnerProtocol = ThomasActionRunner()
+    let actionRunner: ThomasActionRunner = ThomasActionRunner()
     let extensions: ThomasExtensions?
     let imageLoader: ImageLoader;
     
