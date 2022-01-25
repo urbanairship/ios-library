@@ -82,7 +82,7 @@ to the new target:
 ```txt
 # Airship SDK
 target "<Your Service Extension Target Name>" do
-  pod 'AirshipExtensions/NotificationService'
+  pod 'AirshipServiceExtension'
 end
 ```
 
@@ -95,7 +95,7 @@ $ pod install
 Then delete all the dummy source code for the new extension and have it inherit from UANotificationServiceExtension:
 
 ```
-import AirshipExtensions
+import AirshipServiceExtension
 
 class NotificationService: UANotificationServiceExtension {
 

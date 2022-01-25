@@ -10,7 +10,7 @@ A minor release that adds support for two new features, Scenes and Surveys. Curr
 ## Changes
 - Added support for Scenes and Surveys
 - Fixed In-App Automation session trigger skipping sessions when automations are paused then resumed
-
+- Split pod AirshipExtensions into AirshipServiceExtension and AirshipContentExtension
 
 ## Version 16.1.2 December 21, 2021
 Patch release that fixes a contact update issue resulting in subsequent update operations not being executed.

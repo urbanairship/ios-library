@@ -91,11 +91,15 @@ test-packages: setup
 pod-publish: setup
 	bundle exec pod trunk push Airship.podspec  --allow-warnings
 	bundle exec pod trunk push AirshipExtensions.podspec
+	bundle exec pod trunk push AirshipServiceExtension.podspec
+	bundle exec pod trunk push AirshipContentExtension.podspec
 
 .PHONY: pod-lint
 pod-lint: setup
 	bundle exec pod lib lint Airship.podspec --verbose
 	bundle exec pod lib lint AirshipExtensions.podspec
+	bundle exec pod lib lint AirshipServiceExtension.podspec
+	bundle exec pod lib lint AirshipContentExtension.podspec
 
 .PHONY: clean
 clean:
