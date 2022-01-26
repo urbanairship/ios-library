@@ -40,6 +40,8 @@
 		3215CA9D2739349800B7D97E /* ModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3215CA9C2739349700B7D97E /* ModalView.swift */; };
 		3215CA9E2739349800B7D97E /* ModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3215CA9C2739349700B7D97E /* ModalView.swift */; };
 		3230E60B24D04C75002C344D /* UAInAppAudienceHistorianTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3230E60A24D04C75002C344D /* UAInAppAudienceHistorianTest.m */; };
+		32333070278B99BC00CEB86B /* PreferenceCenterSectionBreakHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3233306F278B99BC00CEB86B /* PreferenceCenterSectionBreakHeader.xib */; };
+		32333072278B9A7F00CEB86B /* PreferenceCenterSectionBreakHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32333071278B9A7F00CEB86B /* PreferenceCenterSectionBreakHeader.swift */; };
 		3232B505278C99D9002BA556 /* KeyboardResponder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3232B504278C99D9002BA556 /* KeyboardResponder.swift */; };
 		3232B506278C99E0002BA556 /* KeyboardResponder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3232B504278C99D9002BA556 /* KeyboardResponder.swift */; };
 		324D3BFF273E6B4500058EE4 /* BannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 324D3BFE273E6B4500058EE4 /* BannerView.swift */; };
@@ -1504,6 +1506,8 @@
 		3226E11424C1DF54000106CC /* UAInAppAudienceHistorian.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInAppAudienceHistorian.m; sourceTree = "<group>"; };
 		3226E11524C1DF54000106CC /* UAInAppAudienceHistorian+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAInAppAudienceHistorian+Internal.h"; sourceTree = "<group>"; };
 		3230E60A24D04C75002C344D /* UAInAppAudienceHistorianTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppAudienceHistorianTest.m; sourceTree = "<group>"; };
+		3233306F278B99BC00CEB86B /* PreferenceCenterSectionBreakHeader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PreferenceCenterSectionBreakHeader.xib; sourceTree = "<group>"; };
+		32333071278B9A7F00CEB86B /* PreferenceCenterSectionBreakHeader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferenceCenterSectionBreakHeader.swift; sourceTree = "<group>"; };
 		3232B504278C99D9002BA556 /* KeyboardResponder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardResponder.swift; sourceTree = "<group>"; };
 		324D3BFE273E6B4500058EE4 /* BannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerView.swift; sourceTree = "<group>"; };
 		32515866272AFB2E00DF8B44 /* Media.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Media.swift; sourceTree = "<group>"; };
@@ -4502,6 +4506,7 @@
 				A615178E26A07A66008A41C4 /* PreferenceCenterViewController.xib */,
 				A61517AA26A6DC48008A41C4 /* PreferenceCenterCell.xib */,
 				A68E345A26B154220024BE1D /* PreferenceCenterSectionHeader.xib */,
+				3233306F278B99BC00CEB86B /* PreferenceCenterSectionBreakHeader.xib */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -4520,6 +4525,7 @@
 				A615179626A1C6DC008A41C4 /* PreferenceCenterCell.swift */,
 				A61517A826A1E447008A41C4 /* PreferenceCenterResources.swift */,
 				A68E345826B153EC0024BE1D /* PreferenceCenterSectionHeader.swift */,
+				32333071278B9A7F00CEB86B /* PreferenceCenterSectionBreakHeader.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -5961,6 +5967,7 @@
 				A68E345B26B154220024BE1D /* PreferenceCenterSectionHeader.xib in Resources */,
 				A615179126A07A66008A41C4 /* PreferenceCenterViewController.xib in Resources */,
 				842EE1BE268128DD00F2BEF4 /* empty in Resources */,
+				32333070278B99BC00CEB86B /* PreferenceCenterSectionBreakHeader.xib in Resources */,
 				A61517AB26A6DC48008A41C4 /* PreferenceCenterCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6769,6 +6776,7 @@
 			files = (
 				A615178D26A0436E008A41C4 /* PreferenceCenterViewController.swift in Sources */,
 				A68E347026B2AD160024BE1D /* PreferenceCenterStyle.swift in Sources */,
+				32333072278B9A7F00CEB86B /* PreferenceCenterSectionBreakHeader.swift in Sources */,
 				6E664BED26C6EF3300A2C8E5 /* PreferenceCenterHeaderLabel.swift in Sources */,
 				6E1892CD268D17D200417887 /* MockRemoteDataProvider.swift in Sources */,
 				A68E345926B153EC0024BE1D /* PreferenceCenterSectionHeader.swift in Sources */,

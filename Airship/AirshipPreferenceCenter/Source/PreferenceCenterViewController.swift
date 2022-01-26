@@ -40,17 +40,20 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
         tableView.delegate = self
         tableView.dataSource = self
         tableView.backgroundColor = style?.backgroundColor
+        if #available(iOS 15.0, macOS 15.0, *) {
+            tableView.sectionHeaderTopPadding = 0.0
+        }
         
-        let headerView = PreferenceCenterHeaderLabel(frame: CGRect(x: 0,
-                                                                   y: 0,
-                                                                   width: 0,
-                                                                   height: 0))
+        let headerView = PreferenceCenterHeaderLabel(frame: CGRect.zero)
         headerView.numberOfLines = 0
         headerView.lineBreakMode = .byWordWrapping
         self.tableView.tableHeaderView = headerView
        
-        let nib = UINib(nibName: "PreferenceCenterSectionHeader", bundle:PreferenceCenterResources.bundle())
-        tableView.register(nib, forHeaderFooterViewReuseIdentifier: "PreferenceCenterSectionHeader")
+        let sectionHeaderNib = UINib(nibName: "PreferenceCenterSectionHeader", bundle:PreferenceCenterResources.bundle())
+        tableView.register(sectionHeaderNib, forHeaderFooterViewReuseIdentifier: "PreferenceCenterSectionHeader")
+        
+        let sectionBreakHeaderNib = UINib(nibName: "PreferenceCenterSectionBreakHeader", bundle:PreferenceCenterResources.bundle())
+        tableView.register(sectionBreakHeaderNib, forHeaderFooterViewReuseIdentifier: "PreferenceCenterSectionBreakHeader")
         
         refreshConfig()
     }
@@ -80,19 +83,35 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
     }
     
     public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: "PreferenceCenterSectionHeader") as! PreferenceCenterSectionHeader
-        header.titleLabel.text = config?.sections[section].display?.title
-        header.subtitleLabel.text = config?.sections[section].display?.subtitle
-        if (style?.sectionTextFont != nil) {
-            header.titleLabel.font = style?.sectionTextFont
-            header.subtitleLabel.font = style?.sectionTextFont
+        if(config?.sections[section].type == SectionType.sectionBreak.rawValue) {
+            let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: "PreferenceCenterSectionBreakHeader") as! PreferenceCenterSectionBreakHeader
+            header.sectionBreakLabel.text = config?.sections[section].display?.title
+            if (style?.sectionBreakBackgroundColor != nil) {
+                header.sectionBreakView.backgroundColor = style?.sectionBreakBackgroundColor
+            } else {
+                header.sectionBreakView.backgroundColor = .darkGray
+            }
+            if (style?.sectionBreakTextFont != nil) {
+                header.sectionBreakLabel.font = style?.sectionBreakTextFont
+            }
+            if (style?.sectionBreakTextColor != nil) {
+                header.sectionBreakLabel.textColor = style?.sectionBreakTextColor
+            }
+            return header
+        } else {
+            let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: "PreferenceCenterSectionHeader") as! PreferenceCenterSectionHeader
+            header.titleLabel.text = config?.sections[section].display?.title
+            header.subtitleLabel.text = config?.sections[section].display?.subtitle
+            if (style?.sectionTextFont != nil) {
+                header.titleLabel.font = style?.sectionTextFont
+                header.subtitleLabel.font = style?.sectionTextFont
+            }
+            if (style?.sectionTextColor != nil) {
+                header.titleLabel.textColor = style?.sectionTextColor
+                header.subtitleLabel.textColor = style?.sectionTextColor
+            }
+            return header
         }
-        if (style?.sectionTextColor != nil) {
-            header.titleLabel.textColor = style?.sectionTextColor
-            header.subtitleLabel.textColor = style?.sectionTextColor
-        }
-        
-        return header
     }
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -171,11 +190,7 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
             headerView.leadingPadding = 15
             headerView.trailingPadding = 10
             headerView.topPadding = 10
-            if #available(iOS 15.0, *) {
-                headerView.bottomPadding = 0
-            } else {
-                headerView.bottomPadding = 10
-            }
+            headerView.bottomPadding = 10
             
             headerView.resize()
         } else {

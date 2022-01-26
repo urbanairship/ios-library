@@ -230,6 +230,7 @@ struct SectionWrapper : Decodable {
 
 enum SectionType: String {
     case common = "section"
+    case sectionBreak = "labeled_section_break"
     case unknown
 }
 

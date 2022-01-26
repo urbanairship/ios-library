@@ -52,6 +52,22 @@ public class PreferenceCenterStyle : NSObject {
      * The section text font.
      */
     @objc public var sectionTextFont: UIFont?
+    
+    /**
+     * The section break text color.
+     */
+    @objc public var sectionBreakTextColor: UIColor?
+    
+    /**
+     * The section break text font.
+     */
+    @objc public var sectionBreakTextFont: UIFont?
+    
+    /**
+     * The section break text color.
+     */
+    @objc public var sectionBreakBackgroundColor: UIColor?
+    
 
     /**
      * The preference text color.
