@@ -18,7 +18,9 @@ struct FormInputViewModifier: ViewModifier {
                 }
             }
         } else {
-            content.onReceive(Just(isVisible)) { newValue in
+            content
+                .onAppear()
+                .onReceive(Just(isVisible)) { newValue in
                 if (newValue) {
                     formState.markVisible()
                 }
