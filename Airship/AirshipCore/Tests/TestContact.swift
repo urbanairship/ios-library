@@ -5,6 +5,7 @@ import AirshipCore
 
 @objc(UATestContact)
 public class TestContact : NSObject, ContactProtocol, Component {
+   
     public var isComponentEnabled: Bool = true
     
     public var namedUserID: String?
@@ -18,6 +19,11 @@ public class TestContact : NSObject, ContactProtocol, Component {
     
     @objc
     public var attributeEditor : AttributesEditor?
+    
+    public var subscriptionListEditor : ScopedSubscriptionListEditor?
+    
+    
+    
     
     public func identify(_ namedUserID: String) {
         self.namedUserID = namedUserID
@@ -46,7 +52,18 @@ public class TestContact : NSObject, ContactProtocol, Component {
         editorBlock(editor)
         editor.apply()
     }
-
     
+    public func editSubscriptionLists() -> ScopedSubscriptionListEditor {
+        return subscriptionListEditor!
+    }
     
+    public func editSubscriptionLists(_ editorBlock: (ScopedSubscriptionListEditor) -> Void) {
+        let editor = editSubscriptionLists()
+        editorBlock(editor)
+        editor.apply()
+    }
+    
+    public func fetchSubscriptionLists(completionHandler: @escaping (ScopedSubscriptionLists?, Error?) -> Void) -> Disposable {
+        return Disposable()
+    }    
 }

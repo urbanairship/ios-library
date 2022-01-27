@@ -581,6 +581,11 @@
 		6E698E5F267BF63B00654DB2 /* ApplicationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E56267BF63B00654DB2 /* ApplicationState.swift */; };
 		6E698E60267BF63B00654DB2 /* ApplicationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E56267BF63B00654DB2 /* ApplicationState.swift */; };
 		6E698E62267C03C700654DB2 /* TestAppStateTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E61267C03C700654DB2 /* TestAppStateTracker.swift */; };
+		6E6C3F7F27A20C3C007F55C7 /* ChannelScope.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6C3F7E27A20C3C007F55C7 /* ChannelScope.swift */; };
+		6E6C3F8027A20EEC007F55C7 /* ChannelScope.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6C3F7E27A20C3C007F55C7 /* ChannelScope.swift */; };
+		6E6C3F8227A21240007F55C7 /* ScopedSubscriptionLists.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6C3F8127A21240007F55C7 /* ScopedSubscriptionLists.swift */; };
+		6E6C3F8327A214A5007F55C7 /* ScopedSubscriptionLists.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6C3F8127A21240007F55C7 /* ScopedSubscriptionLists.swift */; };
+		6E6C3F8527A21561007F55C7 /* ScopedSubscriptionListsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6C3F8427A21561007F55C7 /* ScopedSubscriptionListsTest.swift */; };
 		6E6CC31B239A2EA9003D583C /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		6E6CC32E239A2F18003D583C /* UAAccengage+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E6CC303239A2E8F003D583C /* UAAccengage+Internal.h */; };
 		6E6CC32F239A2F19003D583C /* UAAccengageSDKModule.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E6CC304239A2E8F003D583C /* UAAccengageSDKModule.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1149,6 +1154,10 @@
 		A658DE1A2728498900007672 /* AirshipWebview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE182728498900007672 /* AirshipWebview.swift */; };
 		A658DE2B272AFB0400007672 /* ImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE2A272AFB0400007672 /* ImageLoader.swift */; };
 		A658DE2C272AFB0400007672 /* ImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE2A272AFB0400007672 /* ImageLoader.swift */; };
+		A67EC249279B1A40009089E1 /* ScopedSubscriptionListEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67EC248279B1A40009089E1 /* ScopedSubscriptionListEditor.swift */; };
+		A67EC24B279B1C34009089E1 /* ScopedSubscriptionListUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67EC24A279B1C34009089E1 /* ScopedSubscriptionListUpdate.swift */; };
+		A67EC24C279ED8E3009089E1 /* ScopedSubscriptionListUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67EC24A279B1C34009089E1 /* ScopedSubscriptionListUpdate.swift */; };
+		A67EC24D279ED8E5009089E1 /* ScopedSubscriptionListEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67EC248279B1A40009089E1 /* ScopedSubscriptionListEditor.swift */; };
 		A67F87D2268DECCE00EF5F43 /* ContactAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67F87D1268DECCE00EF5F43 /* ContactAPIClient.swift */; };
 		A67F87D3268DECCE00EF5F43 /* ContactAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67F87D1268DECCE00EF5F43 /* ContactAPIClient.swift */; };
 		A67F87D5268E07E800EF5F43 /* ContactAPIResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67F87D4268E07E800EF5F43 /* ContactAPIResponse.swift */; };
@@ -1984,6 +1993,9 @@
 		6E698E54267BF63B00654DB2 /* UIKitStateTrackerAdapter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIKitStateTrackerAdapter.swift; sourceTree = "<group>"; };
 		6E698E56267BF63B00654DB2 /* ApplicationState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationState.swift; sourceTree = "<group>"; };
 		6E698E61267C03C700654DB2 /* TestAppStateTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TestAppStateTracker.swift; path = Support/TestAppStateTracker.swift; sourceTree = "<group>"; };
+		6E6C3F7E27A20C3C007F55C7 /* ChannelScope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelScope.swift; sourceTree = "<group>"; };
+		6E6C3F8127A21240007F55C7 /* ScopedSubscriptionLists.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScopedSubscriptionLists.swift; sourceTree = "<group>"; };
+		6E6C3F8427A21561007F55C7 /* ScopedSubscriptionListsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScopedSubscriptionListsTest.swift; sourceTree = "<group>"; };
 		6E6CC2FF239A2E8F003D583C /* info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = info.plist; sourceTree = "<group>"; };
 		6E6CC301239A2E8F003D583C /* UAAccengageSDKModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAAccengageSDKModule.m; sourceTree = "<group>"; };
 		6E6CC302239A2E8F003D583C /* UAAccengage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAAccengage.m; sourceTree = "<group>"; };
@@ -2346,6 +2358,8 @@
 		A658DE0A2727020100007672 /* ImageButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageButton.swift; sourceTree = "<group>"; };
 		A658DE182728498900007672 /* AirshipWebview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipWebview.swift; sourceTree = "<group>"; };
 		A658DE2A272AFB0400007672 /* ImageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLoader.swift; sourceTree = "<group>"; };
+		A67EC248279B1A40009089E1 /* ScopedSubscriptionListEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScopedSubscriptionListEditor.swift; sourceTree = "<group>"; };
+		A67EC24A279B1C34009089E1 /* ScopedSubscriptionListUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScopedSubscriptionListUpdate.swift; sourceTree = "<group>"; };
 		A67F87D1268DECCE00EF5F43 /* ContactAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactAPIClient.swift; sourceTree = "<group>"; };
 		A67F87D4268E07E800EF5F43 /* ContactAPIResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactAPIResponse.swift; sourceTree = "<group>"; };
 		A6849386273290520021675E /* Score.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Score.swift; sourceTree = "<group>"; };
@@ -3415,6 +3429,7 @@
 			isa = PBXGroup;
 			children = (
 				6E2D6AF126B0B64E00B7C226 /* SubscriptionListAPIClientTest.swift */,
+				6E6C3F8427A21561007F55C7 /* ScopedSubscriptionListsTest.swift */,
 			);
 			name = "Subscription Lists";
 			sourceTree = "<group>";
@@ -4548,6 +4563,10 @@
 				A61517C126B009D6008A41C4 /* SubscriptionListFetchResponse.swift */,
 				A61517B126A9C4C3008A41C4 /* SubscriptionListEditor.swift */,
 				A61517B426AEEAAB008A41C4 /* SubscriptionListUpdate.swift */,
+				A67EC24A279B1C34009089E1 /* ScopedSubscriptionListUpdate.swift */,
+				A67EC248279B1A40009089E1 /* ScopedSubscriptionListEditor.swift */,
+				6E6C3F7E27A20C3C007F55C7 /* ChannelScope.swift */,
+				6E6C3F8127A21240007F55C7 /* ScopedSubscriptionLists.swift */,
 			);
 			name = "Subscription Lists";
 			sourceTree = "<group>";
@@ -6304,6 +6323,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6EB1B3F326EAA4D6000421B9 /* ChannelAPIClient.swift in Sources */,
+				6E6C3F7F27A20C3C007F55C7 /* ChannelScope.swift in Sources */,
 				6E6ED15F2683DBC300A2CBD0 /* AirshipCoreResources.swift in Sources */,
 				6E87BE0126E283850005D20D /* Airship.swift in Sources */,
 				6E698E06267A7D5300654DB2 /* RemoteDataResponse.swift in Sources */,
@@ -6320,6 +6340,7 @@
 				6E87BDBD26E01FF40005D20D /* ModuleLoader.swift in Sources */,
 				6E91B4482688335000DDB1A8 /* ScreenTrackingEvent.swift in Sources */,
 				6E6541E02758976D009676CA /* AirshipProgressView.swift in Sources */,
+				A67EC249279B1A40009089E1 /* ScopedSubscriptionListEditor.swift in Sources */,
 				6E698DF226790AC300654DB2 /* UAPrivacyManager.swift in Sources */,
 				6E062D0B271657BB001A74A1 /* ThomasViewModelExtensions.swift in Sources */,
 				6E95292C268B98A200398B54 /* MediaEventTemplate.swift in Sources */,
@@ -6481,6 +6502,7 @@
 				A658DE0C2727020200007672 /* ImageButton.swift in Sources */,
 				6E43219226EA89B6009228AB /* NativeBridgeDelegate.swift in Sources */,
 				6E411CAB2538C6A600FEE4E8 /* UARemoteData.xcdatamodeld in Sources */,
+				A67EC24B279B1C34009089E1 /* ScopedSubscriptionListUpdate.swift in Sources */,
 				A684939D273436370021675E /* FontViewModifier.swift in Sources */,
 				6E062D092716571F001A74A1 /* LabelButton.swift in Sources */,
 				6E698E00267A78CA00654DB2 /* RequestSession.swift in Sources */,
@@ -6498,6 +6520,7 @@
 				6E6ED1392683A58D00A2CBD0 /* Semaphore.swift in Sources */,
 				3215CA9D2739349800B7D97E /* ModalView.swift in Sources */,
 				6E6ED1592683DBC300A2CBD0 /* WebView.swift in Sources */,
+				6E6C3F8227A21240007F55C7 /* ScopedSubscriptionLists.swift in Sources */,
 				3CC95B1F268E785900FE2ACD /* NotificationCategories.swift in Sources */,
 				A61517B526AEEAAB008A41C4 /* SubscriptionListUpdate.swift in Sources */,
 				6E664BB526C46BC600A2C8E5 /* AddCustomEventActionPredicate.swift in Sources */,
@@ -6965,6 +6988,7 @@
 				6EFB377D234595C9005E4E44 /* UAMessageCenterNativeBridgeExtensionTest.m in Sources */,
 				6E87BD9F26DDDB250005D20D /* AppIntegrationTests.swift in Sources */,
 				CC64F12B1D8B781C009CEF27 /* UAJavaScriptCommandTest.m in Sources */,
+				6E6C3F8527A21561007F55C7 /* ScopedSubscriptionListsTest.swift in Sources */,
 				CC64F1281D8B781C009CEF27 /* UAUserAPIClientTest.m in Sources */,
 				6E2D6AF626B0C6CA00B7C226 /* TestSubscriptionListAPIClient.swift in Sources */,
 				DFD442B61FD892AE002E4FA1 /* UAInAppMessageTagSelectorTest.m in Sources */,
@@ -7018,6 +7042,7 @@
 				6E664BA826C4417400A2C8E5 /* ShareAction.swift in Sources */,
 				6E87BD6526D594870005D20D /* ChannelRegistrationPayload.swift in Sources */,
 				6E95292D268B98A200398B54 /* MediaEventTemplate.swift in Sources */,
+				A67EC24D279ED8E5009089E1 /* ScopedSubscriptionListEditor.swift in Sources */,
 				6E739D6926B9DB9000BC6F6D /* AttributeMutations.swift in Sources */,
 				A6A5531126D548D6002B20F6 /* JavaScriptEnvironment.swift in Sources */,
 				6EFD6D4C27272333005B26F1 /* EmptyView.swift in Sources */,
@@ -7050,6 +7075,7 @@
 				6E8BF45726852E88009A8BD4 /* ExpirableTask.swift in Sources */,
 				6E952924268B812000398B54 /* AccountEventTemplate.swift in Sources */,
 				A658DE1A2728498900007672 /* AirshipWebview.swift in Sources */,
+				A67EC24C279ED8E3009089E1 /* ScopedSubscriptionListUpdate.swift in Sources */,
 				6E15B6F826CDB4160099C92D /* RuntimeConfig.swift in Sources */,
 				6E91B45C268904D900DDB1A8 /* PushReceivedEvent.swift in Sources */,
 				6EC7E49726A8995F0038CFDD /* NamedUser.swift in Sources */,
@@ -7158,6 +7184,7 @@
 				6E6ED1382683A58D00A2CBD0 /* Delay.swift in Sources */,
 				6E91B44326868C3400DDB1A8 /* ProximityRegion.swift in Sources */,
 				6E510C282721DA88006D9126 /* ThomasViewModelExtensions.swift in Sources */,
+				6E6C3F8027A20EEC007F55C7 /* ChannelScope.swift in Sources */,
 				6EFD6D7227290C16005B26F1 /* TextInput.swift in Sources */,
 				6ED735DB26C73DC9003B0A7D /* Channel.swift in Sources */,
 				6E87BD8726D7F6640005D20D /* CloudSite.swift in Sources */,
@@ -7186,6 +7213,7 @@
 				3215CA9E2739349800B7D97E /* ModalView.swift in Sources */,
 				A6F6726326E11637008C69C3 /* JSONPredicate.swift in Sources */,
 				6EF27DE127308CAD00548DA3 /* Checkbox.swift in Sources */,
+				6E6C3F8327A214A5007F55C7 /* ScopedSubscriptionLists.swift in Sources */,
 				A658DE1227280B3400007672 /* ImageButton.swift in Sources */,
 				6E698E5C267BF63B00654DB2 /* UIKitStateTrackerAdapter.swift in Sources */,
 				6E6ED1622683DBC300A2CBD0 /* AirshipVersion.swift in Sources */,

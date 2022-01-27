@@ -2,6 +2,7 @@
 
 import Foundation
 
+
 /**
  * Airship contact. A contact is distinct from a channel and  represents a "user"
  * within Airship. Contacts may be named and have channels associated with it.
@@ -67,7 +68,25 @@ public protocol ContactProtocol {
      */
     @objc
     func editAttributes(_ editorBlock: (AttributesEditor) -> Void)
+    
+    /// Begins a subscription list editing session
+    /// - Returns: A Scoped subscription list editor
+    @objc
+    func editSubscriptionLists() -> ScopedSubscriptionListEditor
+
+    /// Begins a subscription list editing session
+    /// - Parameter editorBlock: A scoped subscription list editor block.
+    @objc
+    func editSubscriptionLists(_ editorBlock: (ScopedSubscriptionListEditor) -> Void)
+
+    /// Fetches subscription lists.
+    /// - Parameter completionHandler: A completion handler.
+    /// - Returns: A Disposable.
+    @discardableResult
+    func fetchSubscriptionLists(completionHandler: @escaping (ScopedSubscriptionLists?, Error?) -> Void) -> Disposable
 }
+
+
 
 
 /**
@@ -412,6 +431,34 @@ public class Contact : NSObject, Component, ContactProtocol {
         let editor = editAttributes()
         editorBlock(editor)
         editor.apply()
+    }
+    
+    /// Begins a subscription list editing session
+    /// - Returns: A Scoped subscription list editor
+    @objc
+    public func editSubscriptionLists() -> ScopedSubscriptionListEditor {
+        return ScopedSubscriptionListEditor(date: self.date) { _ in
+            // TODO
+        }
+    }
+
+    /// Begins a subscription list editing session
+    /// - Parameter editorBlock: A scoped subscription list editor block.
+    /// - Returns: A ScopedSubscriptionListEditor
+    @objc
+    public func editSubscriptionLists(_ editorBlock: (ScopedSubscriptionListEditor) -> Void) {
+        let editor = editSubscriptionLists()
+        editorBlock(editor)
+        editor.apply()
+    }
+
+    /// Fetches subscription lists.
+    /// - Parameter completionHandler: A completion handler.
+    /// - Returns: A Disposable.
+    @discardableResult
+    public func fetchSubscriptionLists(completionHandler: @escaping (ScopedSubscriptionLists?, Error?) -> Void) -> Disposable {
+        // TODO
+        return Disposable()
     }
 
     /**
