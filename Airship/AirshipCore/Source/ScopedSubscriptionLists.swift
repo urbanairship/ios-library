@@ -2,7 +2,6 @@
 
 import Foundation
 
-
 /**
  * Scoped subscription lists.
  */
@@ -27,5 +26,13 @@ public class ScopedSubscriptionLists : NSObject {
     init(_ lists: [String: [ChannelScope]]) {
         self.lists = lists
         super.init()
+    }
+    
+    public override func isEqual(_ object: Any?) -> Bool {
+       return lists == (object as? ScopedSubscriptionLists)?.lists
+    }
+    
+    public override var hash: Int {
+        return lists.hashValue
     }
 }

@@ -83,12 +83,143 @@ class AudienceUtilsTest: XCTestCase {
             SubscriptionListUpdate(listId: "pizza", type: .unsubscribe)
         ]
         
+        let expected = [
+            SubscriptionListUpdate(listId: "coffee", type: .subscribe),
+            SubscriptionListUpdate(listId: "pizza", type: .unsubscribe)
+        ]
+        
         let collapsed = AudienceUtils.collapse(updates)
         
-        XCTAssertEqual(2, collapsed.count)
-        XCTAssertEqual("coffee", collapsed[0].listId)
-        XCTAssertEqual(SubscriptionListUpdateType.subscribe, collapsed[0].type)
-        XCTAssertEqual("pizza", collapsed[1].listId)
-        XCTAssertEqual(SubscriptionListUpdateType.unsubscribe, collapsed[1].type)
+        XCTAssertEqual(expected, collapsed)
+    }
+    
+    func testCollapseScopedSubscriptionListUpdates() throws {
+        let now = Date()
+        
+        let updates = [
+            ScopedSubscriptionListUpdate(listId: "foo",
+                                         type: .subscribe,
+                                         scope: .sms,
+                                         date: now.addingTimeInterval(1)),
+            ScopedSubscriptionListUpdate(listId: "foo",
+                                         type: .subscribe,
+                                         scope: .app,
+                                         date: now.addingTimeInterval(2)),
+            ScopedSubscriptionListUpdate(listId: "bar",
+                                         type: .subscribe,
+                                         scope: .web,
+                                         date: now.addingTimeInterval(3)),
+            ScopedSubscriptionListUpdate(listId: "foo",
+                                         type: .subscribe,
+                                         scope: .sms,
+                                         date: now.addingTimeInterval(4)),
+            ScopedSubscriptionListUpdate(listId: "foo",
+                                         type: .subscribe,
+                                         scope: .app,
+                                         date: now.addingTimeInterval(5)),
+
+            ScopedSubscriptionListUpdate(listId: "bar",
+                                         type: .subscribe,
+                                         scope: .app,
+                                         date: now.addingTimeInterval(6)),
+
+            ScopedSubscriptionListUpdate(listId: "bar",
+                                         type: .unsubscribe,
+                                         scope: .app,
+                                         date: now.addingTimeInterval(7))
+        ]
+        
+        let expected = [
+            ScopedSubscriptionListUpdate(listId: "bar",
+                                         type: .subscribe,
+                                         scope: .web,
+                                         date: now.addingTimeInterval(3)),
+            ScopedSubscriptionListUpdate(listId: "foo",
+                                         type: .subscribe,
+                                         scope: .sms,
+                                         date: now.addingTimeInterval(4)),
+            ScopedSubscriptionListUpdate(listId: "foo",
+                                         type: .subscribe,
+                                         scope: .app,
+                                         date: now.addingTimeInterval(5)),
+            ScopedSubscriptionListUpdate(listId: "bar",
+                                         type: .unsubscribe,
+                                         scope: .app,
+                                         date: now.addingTimeInterval(7))
+        ]
+        
+        let collapsed = AudienceUtils.collapse(updates)
+        
+        XCTAssertEqual(expected, collapsed)
+    }
+    
+    func testApplyScopedSubscriptionListsEmptyPayload() throws {
+        let now = Date()
+        
+        let updates = [
+            ScopedSubscriptionListUpdate(listId: "bar",
+                                         type: .subscribe,
+                                         scope: .web,
+                                         date: now.addingTimeInterval(3)),
+            ScopedSubscriptionListUpdate(listId: "foo",
+                                         type: .subscribe,
+                                         scope: .sms,
+                                         date: now.addingTimeInterval(4)),
+            ScopedSubscriptionListUpdate(listId: "foo",
+                                         type: .subscribe,
+                                         scope: .app,
+                                         date: now.addingTimeInterval(5)),
+            ScopedSubscriptionListUpdate(listId: "bar",
+                                         type: .unsubscribe,
+                                         scope: .app,
+                                         date: now.addingTimeInterval(7))
+        ]
+
+        
+        let expected: [String: [ChannelScope]] = [
+            "foo": [.sms, .app],
+            "bar": [.web]
+        ]
+        
+        XCTAssertEqual(expected, AudienceUtils.applySubscriptionListsUpdates(nil, updates: updates))
+        XCTAssertEqual(expected, AudienceUtils.applySubscriptionListsUpdates([:], updates: updates))
+    }
+    
+    func testApplyScopedSubscriptionLists() throws {
+        let now = Date()
+        
+        let updates = [
+            ScopedSubscriptionListUpdate(listId: "bar",
+                                         type: .subscribe,
+                                         scope: .web,
+                                         date: now.addingTimeInterval(3)),
+            ScopedSubscriptionListUpdate(listId: "foo",
+                                         type: .subscribe,
+                                         scope: .sms,
+                                         date: now.addingTimeInterval(4)),
+            ScopedSubscriptionListUpdate(listId: "foo",
+                                         type: .subscribe,
+                                         scope: .app,
+                                         date: now.addingTimeInterval(5)),
+            ScopedSubscriptionListUpdate(listId: "bar",
+                                         type: .unsubscribe,
+                                         scope: .app,
+                                         date: now.addingTimeInterval(7))
+        ]
+
+        
+        let expected: [String: [ChannelScope]] = [
+            "baz": [.email],
+            "foo": [.app, .web, .sms],
+            "bar": [.web]
+        ]
+        
+        let payload: [String: [ChannelScope]] = [
+            "baz": [.email],
+            "bar": [.app],
+            "foo": [.app, .web]
+        ]
+        
+        XCTAssertEqual(expected, AudienceUtils.applySubscriptionListsUpdates(payload, updates: updates))
     }
 }

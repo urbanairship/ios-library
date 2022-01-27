@@ -7,7 +7,7 @@ import Foundation
  * Channel scope.
  */
 @objc(UAChannelScope)
-public enum ChannelScope: Int, Codable {
+public enum ChannelScope: Int, Codable, CustomStringConvertible {
     /**
      * App channels - amazon, android, iOS
      */
@@ -55,5 +55,9 @@ public enum ChannelScope: Int, Codable {
         default:
             throw AirshipErrors.error("invalid scope \(scopeString)")
         }
+    }
+    
+    public var description: String {
+        return scopeString
     }
 }

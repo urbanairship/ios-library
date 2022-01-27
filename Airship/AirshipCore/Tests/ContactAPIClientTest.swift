@@ -263,8 +263,22 @@ class ContactAPIClientTest: XCTestCase {
             AttributeUpdate.remove(attribute: "some-remove", date: date)
         ]
         
+        let listUpdates = [
+            ScopedSubscriptionListUpdate(listId: "bar",
+                                         type: .subscribe,
+                                         scope: .web,
+                                         date: date),
+            ScopedSubscriptionListUpdate(listId: "foo",
+                                         type: .unsubscribe,
+                                         scope: .app,
+                                         date: date)
+        ]
+        
         let expectation = XCTestExpectation(description: "callback called")
-        contactAPIClient.update(identifier: "some-contact-id", tagGroupUpdates: tagUpdates, attributeUpdates: attributeUpdates) { response, error in
+        contactAPIClient.update(identifier: "some-contact-id",
+                                tagGroupUpdates: tagUpdates,
+                                attributeUpdates: attributeUpdates,
+                                subscriptionListUpdates: listUpdates) { response, error in
             XCTAssertEqual(response?.status, 200)
             XCTAssertNil(error)
             expectation.fulfill()
@@ -315,6 +329,20 @@ class ContactAPIClientTest: XCTestCase {
                     "tag-set": [
                     ]
                 ]
+            ],
+            "subscription_lists": [
+                [
+                    "action": "subscribe",
+                    "list_id": "bar",
+                    "scope": "web",
+                    "timestamp" : formattedDate,
+                ],
+                [
+                    "action": "unsubscribe",
+                    "list_id": "foo",
+                    "scope": "app",
+                    "timestamp" : formattedDate,
+                ]
             ]
         ]
         
@@ -329,7 +357,10 @@ class ContactAPIClientTest: XCTestCase {
         ]
         
         let expectation = XCTestExpectation(description: "callback called")
-        contactAPIClient.update(identifier: "some-contact-id", tagGroupUpdates: [], attributeUpdates: attributeUpdates) { response, error in
+        contactAPIClient.update(identifier: "some-contact-id",
+                                tagGroupUpdates: [],
+                                attributeUpdates: attributeUpdates,
+                                subscriptionListUpdates: nil) { response, error in
             XCTAssertEqual(response?.status, 200)
             XCTAssertNil(error)
             expectation.fulfill()

@@ -64,15 +64,21 @@ struct ContactOperation: Codable {
     }
     
     static func update(tagUpdates: [TagGroupUpdate]) -> ContactOperation {
-        return ContactOperation(type: .update, payload: UpdatePayload(tagUpdates: tagUpdates, attrubuteUpdates: nil))
+        return ContactOperation(type: .update, payload: UpdatePayload(tagUpdates: tagUpdates))
     }
     
     static func update(attributeUpdates: [AttributeUpdate]) -> ContactOperation {
-        return ContactOperation(type: .update, payload: UpdatePayload(tagUpdates: nil, attrubuteUpdates: attributeUpdates))
+        return ContactOperation(type: .update, payload: UpdatePayload(attrubuteUpdates: attributeUpdates))
     }
     
-    static func update(tagUpdates: [TagGroupUpdate]?, attributeUpdates: [AttributeUpdate]?) -> ContactOperation {
-        return ContactOperation(type: .update, payload: UpdatePayload(tagUpdates: tagUpdates, attrubuteUpdates: attributeUpdates))
+    static func update(subscriptionListsUpdates: [ScopedSubscriptionListUpdate]) -> ContactOperation {
+        return ContactOperation(type: .update, payload: UpdatePayload(subscriptionListsUpdates: subscriptionListsUpdates))
+    }
+    
+    static func update(tagUpdates: [TagGroupUpdate]?, attributeUpdates: [AttributeUpdate]?, subscriptionListUpdates: [ScopedSubscriptionListUpdate]? = nil) -> ContactOperation {
+        return ContactOperation(type: .update, payload: UpdatePayload(tagUpdates: tagUpdates,
+                                                                      attrubuteUpdates: attributeUpdates,
+                                                                     subscriptionListsUpdates: subscriptionListUpdates))
     }
     
     static func reset() -> ContactOperation {
@@ -87,6 +93,7 @@ struct ContactOperation: Codable {
 struct UpdatePayload : Codable {
     var tagUpdates: [TagGroupUpdate]?
     var attrubuteUpdates: [AttributeUpdate]?
+    var subscriptionListsUpdates: [ScopedSubscriptionListUpdate]?
 }
 
 struct IdentifyPayload : Codable {

@@ -3,15 +3,9 @@
 import Foundation
 
 // NOTE: For internal use only. :nodoc:
-enum ScopedSubscriptionListUpdateType : Int, Codable {
-    case subscribe
-    case unsubscribe
-}
-
-// NOTE: For internal use only. :nodoc:
-struct ScopedSubscriptionListUpdate : Codable {
+struct ScopedSubscriptionListUpdate : Codable, Equatable {
     let listId: String
     let type: SubscriptionListUpdateType
     let scope: ChannelScope
-    let timestamp: Date
+    let date: Date
 }

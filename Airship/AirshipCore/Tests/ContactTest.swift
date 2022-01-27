@@ -331,15 +331,20 @@ class ContactTest: XCTestCase {
     }
     
     func testCombineSequentialUpdates() throws {
-        let tagEdits = self.contact.editTagGroups()
-        tagEdits.add(["neat"], group: "cool")
-        tagEdits.apply()
+        self.contact.editTagGroups { editor in
+            editor.add(["neat"], group: "cool")
+        }
         XCTAssertEqual(1, self.taskManager.enqueuedRequests.count)
         
-        let attributeEdits = self.contact.editAttributes()
-        attributeEdits.set(int: 1, attribute: "one")
-        attributeEdits.apply()
+        self.contact.editAttributes { editor in
+            editor.set(int: 1, attribute: "one")
+        }
         XCTAssertEqual(2, self.taskManager.enqueuedRequests.count)
+        
+        self.contact.editSubscriptionLists { editor in
+            editor.subscribe("some list", scope: .app)
+        }
+        XCTAssertEqual(3, self.taskManager.enqueuedRequests.count)
         
         // Should resolve first
         let resolve = XCTestExpectation(description: "resolve contact")
@@ -354,10 +359,11 @@ class ContactTest: XCTestCase {
     
         // Then update
         let update = XCTestExpectation(description: "callback called")
-        self.apiClient.updateCallback = { contactID, tagUpdates, attributeUpdates, callback in
+        self.apiClient.updateCallback = { contactID, tagUpdates, attributeUpdates, subscriptionListUpdates, callback in
             XCTAssertEqual("some-contact-id", contactID)
             XCTAssertEqual(1, tagUpdates?.count ?? 0)
             XCTAssertEqual(1, attributeUpdates?.count ?? 0)
+            XCTAssertEqual(1, subscriptionListUpdates?.count ?? 0)
             callback(HTTPResponse(status: 200), nil)
             update.fulfill()
         }
@@ -403,7 +409,7 @@ class ContactTest: XCTestCase {
             callback(ContactAPIResponse(status: 200, contactID: "some-contact-id", isAnonymous: true), nil)
         }
         
-        self.apiClient.updateCallback = { contactID, tagUpdates, attributeUpdates, callback in
+        self.apiClient.updateCallback = { contactID, tagUpdates, attributeUpdates, subscriptionListsUpdates, callback in
             callback(HTTPResponse(status: 200), nil)
         }
         
@@ -418,6 +424,8 @@ class ContactTest: XCTestCase {
             XCTAssertEqual("some-user", namedUserID)
             XCTAssertEqual(["cool": ["neat"]]  as NSDictionary, data.tags  as NSDictionary)
             XCTAssertEqual(["one": 1] as NSDictionary, data.attributes as NSDictionary)
+            XCTAssertEqual(ScopedSubscriptionLists(["foo": [.app]]), data.subscriptionLists)
+
             conflictCalled.fulfill()
         }
         
@@ -430,6 +438,10 @@ class ContactTest: XCTestCase {
         let attributeEdits = self.contact.editAttributes()
         attributeEdits.set(int: 1, attribute: "one")
         attributeEdits.apply()
+        
+        self.contact.editSubscriptionLists { editor in
+            editor.subscribe("foo", scope: .app)
+        }
         
         contact.identify("some-user")
         
@@ -456,7 +468,7 @@ class ContactTest: XCTestCase {
             }
         }
         
-        self.apiClient.updateCallback = { contactID, tagUpdates, attributeUpdates, callback in
+        self.apiClient.updateCallback = { contactID, tagUpdates, attributeUpdates, subscriptionListsUpdates, callback in
             callback(HTTPResponse(status: 200), nil)
         }
         
@@ -597,7 +609,7 @@ class ContactTest: XCTestCase {
     
         let expectation = XCTestExpectation(description: "callback called")
         expectation.expectedFulfillmentCount = 2
-        self.apiClient.updateCallback = { contactID, tagUpdates, attributeUpdates, callback in
+        self.apiClient.updateCallback = { contactID, tagUpdates, attributeUpdates, subscriptionListsUpdates, callback in
             callback(HTTPResponse(status: 500), nil)
             expectation.fulfill()
         }
@@ -817,4 +829,35 @@ class ContactTest: XCTestCase {
         }
         wait(for: [expectation], timeout: 10.0)
     }
+    
+    func testFetchSubscriptionListsPendingApplied() throws {
+        // Resolve the contact ID
+        notificationCenter.post(Notification(name: AppStateTracker.didBecomeActiveNotification))
+        XCTAssertEqual(1, self.taskManager.enqueuedRequests.count)
+        self.apiClient.resolveCallback = { channelID, callback in
+            callback(ContactAPIResponse(status: 200, contactID: "some-contact-id", isAnonymous: true), nil)
+        }
+        XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).completed)
+
+        let apiResult = ScopedSubscriptionLists(["foo": [.web, .sms]])
+        self.apiClient.fetchSubscriptionListsCallback = { identifier, callback in
+            XCTAssertEqual("some-contact-id", identifier)
+            callback(ContactSubscriptionListFetchResponse(200, apiResult), nil)
+        }
+        
+        self.contact.editSubscriptionLists { editor in
+            editor.subscribe("bar", scope: .app)
+            editor.unsubscribe("foo", scope: .sms)
+        }
+
+        let expected = ScopedSubscriptionLists(["foo": [.web], "bar": [.app]])
+        let expectation = XCTestExpectation(description: "callback called")
+        self.contact.fetchSubscriptionLists { result, error in
+            XCTAssertEqual(expected, result)
+            expectation.fulfill()
+        }
+
+        wait(for: [expectation], timeout: 10.0)
+    }
+
 }

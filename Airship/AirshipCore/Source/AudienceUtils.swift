@@ -6,26 +6,33 @@ import Foundation
 @objc(UAAudienceUtils)
 public class AudienceUtils : NSObject {
     
-    class func collapse(_ updates: [SubscriptionListUpdate]) -> [SubscriptionListUpdate] {
-        var subscribes: [String]  = []
-        var unsubscribes: [String] = []
+    class func collapse(_ updates: [ScopedSubscriptionListUpdate]) -> [ScopedSubscriptionListUpdate] {
+        var handled = Set<String>()
+        var collapsed: [ScopedSubscriptionListUpdate] = []
         
-        updates.forEach { update in
-            switch(update.type) {
-            case .subscribe:
-                subscribes.append(update.listId)
-                unsubscribes.removeAll(where: { $0 == update.listId })
-            case .unsubscribe:
-                unsubscribes.append(update.listId)
-                subscribes.removeAll(where: { $0 == update.listId })
+        updates.reversed().forEach { update in
+            let key = "\(update.scope.rawValue):\(update.listId)"
+            if (!handled.contains(key)) {
+                collapsed.append(update)
+                handled.insert(key)
             }
         }
         
-        let subscribeUpdates = subscribes.map { SubscriptionListUpdate(listId: $0, type: .subscribe) }
+        return collapsed.reversed()
+    }
         
-        let unsubscribeUpdates = unsubscribes.map { SubscriptionListUpdate(listId: $0, type: .unsubscribe) }
+    class func collapse(_ updates: [SubscriptionListUpdate]) -> [SubscriptionListUpdate] {
+        var handled = Set<String>()
+        var collapsed: [SubscriptionListUpdate] = []
         
-        return subscribeUpdates + unsubscribeUpdates
+        updates.reversed().forEach { update in
+            if (!handled.contains(update.listId)) {
+                collapsed.append(update)
+                handled.insert(update.listId)
+            }
+        }
+        
+        return collapsed.reversed()
     }
     
     @objc(collapseTagGroupUpdates:)
@@ -85,10 +92,10 @@ public class AudienceUtils : NSObject {
     }
     
     @objc
-    public class func applyTagUpdates(tagGroups: [String : [String]]?, tagGroupUpdates: [TagGroupUpdate]?) -> [String : [String]] {
+    public class func applyTagUpdates(_ tagGroups: [String : [String]]?, updates: [TagGroupUpdate]?) -> [String : [String]] {
         var updated = tagGroups ?? [:]
         
-        tagGroupUpdates?.forEach { update in
+        updates?.forEach { update in
             switch(update.type) {
             case .add:
                 if (updated[update.group] == nil) {
@@ -129,15 +136,35 @@ public class AudienceUtils : NSObject {
         return group.trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
-    class func applyAttributeUpdates(attributes: [String : JsonValue]?, attributeUpdates: [AttributeUpdate]?) -> [String : JsonValue] {
+    class func applyAttributeUpdates(_ attributes: [String : JsonValue]?, updates: [AttributeUpdate]?) -> [String : JsonValue] {
         var updated = attributes ?? [:]
         
-        attributeUpdates?.forEach { update in
+        updates?.forEach { update in
             switch(update.type) {
             case .set:
                 updated[update.attribute] = update.jsonValue
             case .remove:
                 updated[update.attribute] = nil
+            }
+        }
+        
+        return updated
+    }
+    
+    class func applySubscriptionListsUpdates(_ subscriptionLists: [String: [ChannelScope]]?,
+                                             updates: [ScopedSubscriptionListUpdate]?) -> [String: [ChannelScope]] {
+        var updated = subscriptionLists ?? [:]
+        updates?.forEach { update in
+            var scopes = updated[update.listId] ?? []
+            switch(update.type) {
+            case .subscribe:
+                if (!scopes.contains(update.scope)) {
+                    scopes.append(update.scope)
+                    updated[update.listId] = scopes
+                }
+            case .unsubscribe:
+                scopes.removeAll(where: { $0 == update.scope })
+                updated[update.listId] = scopes.isEmpty ? nil : scopes
             }
         }
         

@@ -29,7 +29,7 @@ public class ScopedSubscriptionListEditor: NSObject {
         let subscriptionListUpdate = ScopedSubscriptionListUpdate(listId: subscriptionListID,
                                                                   type: .subscribe,
                                                                   scope: scope,
-                                                                  timestamp: self.date.now)
+                                                                  date: self.date.now)
         subscriptionListUpdates.append(subscriptionListUpdate)
     }
 
@@ -44,7 +44,7 @@ public class ScopedSubscriptionListEditor: NSObject {
         let subscriptionListUpdate = ScopedSubscriptionListUpdate(listId: subscriptionListID,
                                                                   type: .unsubscribe,
                                                                   scope: scope,
-                                                                  timestamp: date.now)
+                                                                  date: date.now)
         subscriptionListUpdates.append(subscriptionListUpdate)
     }
     

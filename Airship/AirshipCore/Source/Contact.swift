@@ -271,6 +271,24 @@ public class Contact : NSObject, Component, ContactProtocol {
         }
     }
     
+    // NOTE: For internal use only. :nodoc:
+    var pendingSubscriptionListUpdates : [ScopedSubscriptionListUpdate] {
+       get {
+           var updates : [ScopedSubscriptionListUpdate]!
+           operationLock.sync {
+               updates = getOperations().compactMap() { (operation: ContactOperation) -> [ScopedSubscriptionListUpdate]? in
+                   if (operation.type == .update) {
+                       let payload = operation.payload as? UpdatePayload
+                       return payload?.subscriptionListsUpdates
+                   } else {
+                       return nil
+                   }
+               }.reduce([], +)
+           }
+           return updates
+       }
+   }
+    
     private var isContactIDRefreshed = false
     private var operationLock = Lock()
  
@@ -469,8 +487,19 @@ public class Contact : NSObject, Component, ContactProtocol {
     /// - Returns: A Scoped subscription list editor
     @objc
     public func editSubscriptionLists() -> ScopedSubscriptionListEditor {
-        return ScopedSubscriptionListEditor(date: self.date) { _ in
-            // TODO
+        return ScopedSubscriptionListEditor(date: self.date) { updates in
+            guard !updates.isEmpty else {
+                return
+            }
+            
+            guard self.privacyManager.isEnabled([.contacts, .tagsAndAttributes]) else {
+                AirshipLogger.warn("Contacts or tags are disabled. Enable to apply subscription lists edits.")
+                return
+            }
+            
+            self.addOperation(ContactOperation.resolve())
+            self.addOperation(ContactOperation.update(subscriptionListsUpdates: updates))
+            self.enqueueTask()
         }
     }
 
@@ -502,9 +531,10 @@ public class Contact : NSObject, Component, ContactProtocol {
             }
            
             do {
-                let scopedLists = try self.resolveSubscriptionLists(contactID)
-                // TODO apply pending
-                callback?(scopedLists, nil)
+                let resolved = try self.resolveSubscriptionLists(contactID)
+                let combinedLists =  AudienceUtils.applySubscriptionListsUpdates(resolved.lists,
+                                                                                 updates: self.pendingSubscriptionListUpdates)
+                callback?(ScopedSubscriptionLists(combinedLists), nil)
             } catch {
                 callback?(nil, error)
             }
@@ -656,7 +686,8 @@ public class Contact : NSObject, Component, ContactProtocol {
             let updatePayload = operation.payload as! UpdatePayload
             return self.contactAPIClient.update(identifier: contactInfo.contactID,
                                                 tagGroupUpdates: updatePayload.tagUpdates,
-                                                attributeUpdates: updatePayload.attrubuteUpdates) { response, error in
+                                                attributeUpdates: updatePayload.attrubuteUpdates,
+                                                subscriptionListUpdates: updatePayload.subscriptionListsUpdates) { response, error in
                 Contact.logOperationResult(operation: operation, response: response, error: error)
                 if (response?.isSuccess == true) {
                     self.cachedSubscriptionLists.value = nil
@@ -711,7 +742,7 @@ public class Contact : NSObject, Component, ContactProtocol {
         switch(operation.type) {
         case .update:
             let payload = operation.payload as! UpdatePayload
-            if (payload.attrubuteUpdates?.isEmpty ?? true && payload.tagUpdates?.isEmpty ?? true) {
+            if (payload.attrubuteUpdates?.isEmpty ?? true && payload.tagUpdates?.isEmpty ?? true && payload.subscriptionListsUpdates?.isEmpty ?? true) {
                 return true
             }
             return false
@@ -734,7 +765,9 @@ public class Contact : NSObject, Component, ContactProtocol {
         }
         
         let attributes = data.attributes.compactMapValues { $0.value() }
-        let anonData = ContactData(tags: data.tags, attributes: attributes)
+        let anonData = ContactData(tags: data.tags,
+                                   attributes: attributes,
+                                   subscriptionLists: ScopedSubscriptionLists(data.subscriptionLists))
         
         UADispatcher.main.dispatchAsync {
             self.conflictDelegate?.onConflict(anonymousContactData: anonData, namedUserID: namedUserID)
@@ -743,13 +776,18 @@ public class Contact : NSObject, Component, ContactProtocol {
     
     private func updateAnonData(_ updates: UpdatePayload) {
         let data = self.anonContactData
-        let tags = AudienceUtils.applyTagUpdates(tagGroups: data?.tags, tagGroupUpdates: updates.tagUpdates)
-        let attributes = AudienceUtils.applyAttributeUpdates(attributes: data?.attributes, attributeUpdates: updates.attrubuteUpdates)
+        let tags = AudienceUtils.applyTagUpdates(data?.tags, updates: updates.tagUpdates)
+        let attributes = AudienceUtils.applyAttributeUpdates(data?.attributes, updates: updates.attrubuteUpdates)
+        let subscriptionLists = AudienceUtils.applySubscriptionListsUpdates(data?.subscriptionLists,
+                                                                            updates: updates.subscriptionListsUpdates)
         
-        if (tags.isEmpty && attributes.isEmpty) {
+        
+        if (tags.isEmpty && attributes.isEmpty && subscriptionLists.isEmpty) {
             self.anonContactData = nil
         } else {
-            self.anonContactData = InternalContactData(tags: tags, attributes: attributes)
+            self.anonContactData = InternalContactData(tags: tags,
+                                                       attributes: attributes,
+                                                       subscriptionLists: subscriptionLists)
         }
     }
     
@@ -870,9 +908,15 @@ public class Contact : NSObject, Component, ContactProtocol {
                             var combinedAttributes: [AttributeUpdate] = []
                             combinedAttributes.append(contentsOf: firstPayload.attrubuteUpdates ?? [])
                             combinedAttributes.append(contentsOf: nextPayload.attrubuteUpdates ?? [])
+                            
+                            var combinedSubscriptionLists: [ScopedSubscriptionListUpdate] = []
+                            combinedSubscriptionLists.append(contentsOf: firstPayload.subscriptionListsUpdates ?? [])
+                            combinedSubscriptionLists.append(contentsOf: nextPayload.subscriptionListsUpdates ?? [])
 
                             operations.removeFirst()
-                            next = ContactOperation.update(tagUpdates: combinedTags, attributeUpdates: combinedAttributes)
+                            next = ContactOperation.update(tagUpdates: combinedTags,
+                                                           attributeUpdates: combinedAttributes,
+                                                           subscriptionListUpdates: combinedSubscriptionLists)
                             continue
                         }
                         break
@@ -968,4 +1012,6 @@ internal struct ContactInfo : Codable {
 internal struct InternalContactData : Codable {
     var tags: [String : [String]]
     var attributes: [String : JsonValue]
+    var subscriptionLists: [String : [ChannelScope]]
 }
+

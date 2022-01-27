@@ -8,7 +8,7 @@ public class TestContactAPIClient : ContactsAPIClientProtocol {
     var resolveCallback: ((String, ((ContactAPIResponse?, Error?) -> Void)) -> Void)?
     var identifyCallback: ((String, String, String?, ((ContactAPIResponse?, Error?) -> Void)) -> Void)?
     var resetCallback: ((String, ((ContactAPIResponse?, Error?) -> Void)) -> Void)?
-    var updateCallback: ((String, [TagGroupUpdate]?, [AttributeUpdate]?, ((HTTPResponse?, Error?) -> Void)) -> Void)?
+    var updateCallback: ((String, [TagGroupUpdate]?, [AttributeUpdate]?, [ScopedSubscriptionListUpdate]?, ((HTTPResponse?, Error?) -> Void)) -> Void)?
     
     var fetchSubscriptionListsCallback: ((String, ((ContactSubscriptionListFetchResponse?, Error?) -> Void)) -> Void)?
 
@@ -50,9 +50,13 @@ public class TestContactAPIClient : ContactsAPIClientProtocol {
         return Disposable()
     }
     
-    public func update(identifier: String, tagGroupUpdates: [TagGroupUpdate]?, attributeUpdates: [AttributeUpdate]?, completionHandler: @escaping (HTTPResponse?, Error?) -> Void) -> Disposable {
+    public func update(identifier: String,
+                       tagGroupUpdates: [TagGroupUpdate]?,
+                       attributeUpdates: [AttributeUpdate]?,
+                       subscriptionListUpdates: [ScopedSubscriptionListUpdate]?,
+                       completionHandler: @escaping (HTTPResponse?, Error?) -> Void) -> Disposable {
         if let callback = updateCallback {
-            callback(identifier, tagGroupUpdates, attributeUpdates, completionHandler)
+            callback(identifier, tagGroupUpdates, attributeUpdates, subscriptionListUpdates, completionHandler)
         } else {
             defaultCallback?("update")
         }

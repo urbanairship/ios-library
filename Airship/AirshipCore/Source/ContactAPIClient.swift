@@ -17,6 +17,7 @@ protocol ContactsAPIClientProtocol {
     func update(identifier: String,
                 tagGroupUpdates: [TagGroupUpdate]?,
                 attributeUpdates: [AttributeUpdate]?,
+                subscriptionListUpdates: [ScopedSubscriptionListUpdate]?,
                 completionHandler: @escaping (HTTPResponse?, Error?) -> Void) -> Disposable
     
     @discardableResult
@@ -236,6 +237,7 @@ class ContactAPIClient : ContactsAPIClientProtocol {
     func update(identifier: String,
                 tagGroupUpdates: [TagGroupUpdate]?,
                 attributeUpdates: [AttributeUpdate]?,
+                subscriptionListUpdates: [ScopedSubscriptionListUpdate]?,
                 completionHandler: @escaping (HTTPResponse?, Error?) -> Void) -> Disposable {
 
         AirshipLogger.debug("Updating contact with identifier \(identifier)")
@@ -243,18 +245,16 @@ class ContactAPIClient : ContactsAPIClientProtocol {
 
         var payload: [String: Any] = [:]
         
-        if let attributes = attributeUpdates {
-            let attributeUpdates = map(attributeUpdates: AudienceUtils.collapse(attributes))
-            if (!attributeUpdates.isEmpty) {
-                payload["attributes"] = attributeUpdates
-            }
+        if let attributeUpdates = attributeUpdates, !attributeUpdates.isEmpty {
+            payload["attributes"] = map(attributeUpdates: attributeUpdates)
         }
         
-        if let tags = tagGroupUpdates, !tags.isEmpty {
-            let tagUpdates = map(tagUpdates: AudienceUtils.collapse(tags))
-            if (!tagUpdates.isEmpty) {
-                payload["tags"] = tagUpdates
-            }
+        if let tagGroupUpdates = tagGroupUpdates, !tagGroupUpdates.isEmpty {
+            payload["tags"] = map(tagUpdates: tagGroupUpdates)
+        }
+        
+        if let subscriptionListUpdates = subscriptionListUpdates, !subscriptionListUpdates.isEmpty {
+            payload["subscription_lists"] = map(subscriptionListUpdates: subscriptionListUpdates)
         }
         
         let request = self.request(payload, "\(config.deviceAPIURL ?? "")/api/contacts/\(identifier)")
@@ -530,9 +530,26 @@ class ContactAPIClient : ContactsAPIClientProtocol {
         })
     }
     
+    private func map(subscriptionListUpdates: [ScopedSubscriptionListUpdate]) -> [[AnyHashable : Any]] {
+        return AudienceUtils.collapse(subscriptionListUpdates).map { (list) -> ([AnyHashable : Any]) in
+            var action : String
+            switch(list.type) {
+            case .subscribe:
+                action = "subscribe"
+            case .unsubscribe:
+                action = "unsubscribe"
+            }
+            return [
+                "action": action,
+                "list_id": list.listId,
+                "scope": list.scope.scopeString,
+                "timestamp": Utils.isoDateFormatterUTCWithDelimiter().string(from: list.date)
+            ]
+        }
+    }
     
     private func map(attributeUpdates: [AttributeUpdate]) -> [[AnyHashable : Any]] {
-        return attributeUpdates.compactMap { (attribute) -> ([AnyHashable : Any]?) in
+        return AudienceUtils.collapse(attributeUpdates).compactMap { (attribute) -> ([AnyHashable : Any]?) in
             switch(attribute.type) {
             case .set:
                 guard let value = attribute.jsonValue?.value() else {
@@ -664,8 +681,10 @@ internal struct SubscriptionResponseBody : Decodable {
             let scope = try ChannelScope.fromString(entry.scope)
             entry.lists.forEach { listID in
                 var scopes = parsed[listID] ?? []
-                scopes.append(scope)
-                parsed[listID] = scopes
+                if (!scopes.contains(scope)) {
+                    scopes.append(scope)
+                    parsed[listID] = scopes
+                }
             }
         }
         return ScopedSubscriptionLists(parsed)

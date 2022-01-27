@@ -50,12 +50,12 @@ class ChannelBulkUpdateAPIClientTest: XCTestCase {
         let expectedBody = [
             "subscription_lists": [
                 [
-                    "action": "subscribe",
-                    "list_id": "pizza",
-                ],
-                [
                     "action": "unsubscribe",
                     "list_id": "coffee",
+                ],
+                [
+                    "action": "subscribe",
+                    "list_id": "pizza",
                 ]
             ],
             "tags": [

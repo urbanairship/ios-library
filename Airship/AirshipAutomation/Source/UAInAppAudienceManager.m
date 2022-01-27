@@ -177,7 +177,7 @@ NSString * const UAInAppAudienceManagerErrorDomain = @"com.urbanairship.in_app_a
     // Apply local history
     NSDate *date = [refreshDate dateByAddingTimeInterval:-self.preferLocalTagDataTime];
     NSArray<UATagGroupUpdate *> *updates = [self tagOverridesNewerThan:date];
-    tags = [UAAudienceUtils applyTagUpdatesWithTagGroups:tags tagGroupUpdates:updates];
+    tags = [UAAudienceUtils applyTagUpdates:tags updates:updates];
     
     // Only return the requested tags if available
     return [requestedTagGroups intersect:[UATagGroups tagGroupsWithTags:tags]];
