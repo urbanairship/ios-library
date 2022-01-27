@@ -4,6 +4,7 @@ import XCTest
 
 @testable
 import AirshipCore
+import SwiftUI
 
 class SubscriptionListAPIClientTest: XCTestCase {
 
@@ -80,5 +81,4 @@ class SubscriptionListAPIClientTest: XCTestCase {
         
         wait(for: [expectation], timeout: 10.0)
     }
-   
 }

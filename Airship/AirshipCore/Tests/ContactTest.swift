@@ -610,7 +610,6 @@ class ContactTest: XCTestCase {
     
     func testResolveFailed() throws {
         notificationCenter.post(Notification(name: AppStateTracker.didBecomeActiveNotification))
-
     
         let expectation = XCTestExpectation(description: "resolve contact")
         expectation.expectedFulfillmentCount = 2
@@ -626,4 +625,196 @@ class ContactTest: XCTestCase {
         wait(for: [expectation], timeout: 10.0)
     }
     
+    func testFetchSubscriptionLists() throws {
+        // Resolve the contact ID
+        notificationCenter.post(Notification(name: AppStateTracker.didBecomeActiveNotification))
+        XCTAssertEqual(1, self.taskManager.enqueuedRequests.count)
+        self.apiClient.resolveCallback = { channelID, callback in
+            callback(ContactAPIResponse(status: 200, contactID: "some-contact-id", isAnonymous: true), nil)
+        }
+        XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).completed)
+
+        let expected = ScopedSubscriptionLists(["neat": [.web]])
+        self.apiClient.fetchSubscriptionListsCallback = { identifier, callback in
+            XCTAssertEqual("some-contact-id", identifier)
+            callback(ContactSubscriptionListFetchResponse(200, expected), nil)
+        }
+
+        let expectation = XCTestExpectation(description: "callback called")
+        self.contact.fetchSubscriptionLists { result, error in
+            XCTAssertEqual(expected, result)
+            expectation.fulfill()
+        }
+
+        wait(for: [expectation], timeout: 10.0)
+    }
+    
+    func testFetchSubscriptionListsPendingReset() throws {
+        // Resolve the contact ID
+        notificationCenter.post(Notification(name: AppStateTracker.didBecomeActiveNotification))
+        XCTAssertEqual(1, self.taskManager.enqueuedRequests.count)
+        self.apiClient.resolveCallback = { channelID, callback in
+            callback(ContactAPIResponse(status: 200, contactID: "some-contact-id", isAnonymous: true), nil)
+        }
+        XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).completed)
+
+        // Reset the contact
+        self.contact.reset()
+        
+        let expectation = XCTestExpectation(description: "callback called")
+        self.contact.fetchSubscriptionLists { result, error in
+            XCTAssertNil(result)
+            XCTAssertNotNil(error)
+            expectation.fulfill()
+        }
+
+        wait(for: [expectation], timeout: 10.0)
+    }
+    
+    func testFetchSubscriptionListsPendingIdentify() throws {
+        // Resolve the contact ID
+        notificationCenter.post(Notification(name: AppStateTracker.didBecomeActiveNotification))
+        XCTAssertEqual(1, self.taskManager.enqueuedRequests.count)
+        self.apiClient.resolveCallback = { channelID, callback in
+            callback(ContactAPIResponse(status: 200, contactID: "some-contact-id", isAnonymous: true), nil)
+        }
+        XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).completed)
+
+        // Reset the contact
+        self.contact.identify("some user")
+        
+        let expectation = XCTestExpectation(description: "callback called")
+        self.contact.fetchSubscriptionLists { result, error in
+            XCTAssertNil(result)
+            XCTAssertNotNil(error)
+            expectation.fulfill()
+        }
+
+        wait(for: [expectation], timeout: 10.0)
+    }
+    
+    func testFetchSubscriptionListsNoContact() throws {
+        let expectation = XCTestExpectation(description: "callback called")
+        self.contact.fetchSubscriptionLists { result, error in
+            XCTAssertNil(result)
+            XCTAssertNotNil(error)
+            expectation.fulfill()
+        }
+
+        wait(for: [expectation], timeout: 10.0)
+    }
+    
+    func testFetchSubscriptionListsCached() throws {
+        self.date.dateOverride = Date()
+
+        // Resolve the contact ID
+        notificationCenter.post(Notification(name: AppStateTracker.didBecomeActiveNotification))
+        XCTAssertEqual(1, self.taskManager.enqueuedRequests.count)
+        self.apiClient.resolveCallback = { channelID, callback in
+            callback(ContactAPIResponse(status: 200, contactID: "some-contact-id", isAnonymous: true), nil)
+        }
+        XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).completed)
+        
+        
+        var apiResult = ScopedSubscriptionLists(["neat": [.web]])
+        var expected = apiResult
+        self.apiClient.fetchSubscriptionListsCallback = { identifier, callback in
+            XCTAssertEqual("some-contact-id", identifier)
+            callback(ContactSubscriptionListFetchResponse(200, apiResult), nil)
+        }
+        
+        // Populate cache
+        var expectation = XCTestExpectation(description: "callback called")
+        self.contact.fetchSubscriptionLists() { result, error in
+            XCTAssertEqual(expected, result)
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: 10.0)
+
+        
+        apiResult = ScopedSubscriptionLists(["something else": [.web]])
+
+        // From cache
+        expectation = XCTestExpectation(description: "callback called")
+        self.contact.fetchSubscriptionLists { result, error in
+            XCTAssertEqual(expected, result)
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 10.0)
+
+        self.date.offset += 599 // 1 second before cache should invalidate
+
+        // From cache
+        expectation = XCTestExpectation(description: "callback called")
+        self.contact.fetchSubscriptionLists { result, error in
+            XCTAssertEqual(expected, result)
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 10.0)
+
+        self.date.offset += 1
+
+        // From api
+        expected = apiResult
+        expectation = XCTestExpectation(description: "callback called")
+        self.contact.fetchSubscriptionLists { result, error in
+            XCTAssertEqual(expected, result)
+            expectation.fulfill()        }
+        wait(for: [expectation], timeout: 10.0)
+    }
+    
+    func testFetchSubscriptionListsCachedDifferentContactID() throws {
+        self.date.dateOverride = Date()
+
+        // Resolve the contact ID
+        notificationCenter.post(Notification(name: AppStateTracker.didBecomeActiveNotification))
+        XCTAssertEqual(1, self.taskManager.enqueuedRequests.count)
+        self.apiClient.resolveCallback = { channelID, callback in
+            callback(ContactAPIResponse(status: 200, contactID: "some-contact-id", isAnonymous: true), nil)
+        }
+        XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).completed)
+        
+        var apiResult = ScopedSubscriptionLists(["neat": [.web]])
+        var expected = apiResult
+        self.apiClient.fetchSubscriptionListsCallback = { identifier, callback in
+            callback(ContactSubscriptionListFetchResponse(200, apiResult), nil)
+        }
+        
+        // Populate cache
+        var expectation = XCTestExpectation(description: "callback called")
+        self.contact.fetchSubscriptionLists() { result, error in
+            XCTAssertEqual(expected, result)
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: 10.0)
+
+        apiResult = ScopedSubscriptionLists(["something else": [.web]])
+
+        // From cache
+        expectation = XCTestExpectation(description: "callback called")
+        self.contact.fetchSubscriptionLists { result, error in
+            XCTAssertEqual(expected, result)
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 10.0)
+
+        // Resolve a new contact ID
+        contact.identify("some user")
+        self.apiClient.identifyCallback = { channelID, namedUserID, contactID, callback in
+            callback(ContactAPIResponse(status: 200, contactID: "some-other-contact-id", isAnonymous: false), nil)
+            expectation.fulfill()
+        }
+        XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).completed)
+
+        // From api
+        expected = apiResult
+        expectation = XCTestExpectation(description: "callback called")
+        self.contact.fetchSubscriptionLists { result, error in
+            XCTAssertEqual(expected, result)
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 10.0)
+    }
 }

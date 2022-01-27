@@ -4,7 +4,6 @@
 import AirshipCore
 #endif
 
-
 protocol AirshipChannel {
     var identifier: String? { get }
 }

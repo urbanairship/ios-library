@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 // NOTE: For internal use only. :nodoc:
-@objc(UASubscriptionListFetchResponse)
 class SubscriptionListFetchResponse : HTTPResponse {
     let listIDs: [String]?
 
@@ -10,3 +9,5 @@ class SubscriptionListFetchResponse : HTTPResponse {
         super.init(status: status)
     }
 }
+
+

@@ -355,4 +355,89 @@ class ContactAPIClientTest: XCTestCase {
         
         XCTAssertEqual(body as! NSDictionary, expectedBody as! NSDictionary)
     }
+    
+    func testGetContactLists() throws {
+        let responseBody = """
+        {
+           "ok" : true,
+           "subscription_lists": [
+              {
+                 "list_ids": ["example_listId-1", "example_listId-3"],
+                  "scope": "email"
+              },
+              {
+                 "list_ids": ["example_listId-2", "example_listId-4"],
+                 "scope": "app"
+              },
+              {
+                 "list_ids": ["example_listId-2"],
+                 "scope": "web"
+              }
+           ],
+        }
+        """
+        
+        self.session.response = HTTPURLResponse(url: URL(string: "https://neat")!,
+                                                  statusCode: 200,
+                                                  httpVersion: "",
+                                                  headerFields: [String: String]())
+        self.session.data = responseBody.data(using: .utf8)
+        
+        let expectation = XCTestExpectation(description: "callback called")
+
+        let expected: [String: [ChannelScope]] = [
+            "example_listId-1": [.email],
+            "example_listId-2": [.app, .web],
+            "example_listId-3": [.email],
+            "example_listId-4": [.app],
+        ]
+        
+        self.contactAPIClient.fetchSubscriptionLists("some-contact") { response, error in
+            XCTAssertEqual(response?.status, 200)
+            XCTAssertNil(error)
+            
+            XCTAssertEqual(expected, response?.result?.lists)
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: 10.0)
+    
+        XCTAssertEqual("GET", self.session.lastRequest?.method)
+        XCTAssertEqual("https://device-api.urbanairship.com/api/subscription_lists/contacts/some-contact", self.session.lastRequest?.url?.absoluteString)
+    }
+    
+    func testGetContactListParseError() throws {
+        let responseBody = "What?"
+        
+        self.session.response = HTTPURLResponse(url: URL(string: "https://neat")!,
+                                                  statusCode: 200,
+                                                  httpVersion: "",
+                                                  headerFields: [String: String]())
+        self.session.data = responseBody.data(using: .utf8)
+        
+        let expectation = XCTestExpectation(description: "callback called")
+
+        self.contactAPIClient.fetchSubscriptionLists("some-contact") { response, error in
+            XCTAssertNotNil(error)
+            XCTAssertNil(response)
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: 10.0)
+    }
+    
+    func testGetContactListError() throws {
+        let sessionError = AirshipErrors.error("error!")
+        self.session.error = sessionError
+        
+        let expectation = XCTestExpectation(description: "callback called")
+
+        self.contactAPIClient.fetchSubscriptionLists("some-contact") { response, error in
+            XCTAssertNotNil(error)
+            XCTAssertNil(response)
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: 10.0)
+    }
 }

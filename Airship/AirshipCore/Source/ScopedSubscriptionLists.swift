@@ -24,7 +24,7 @@ public class ScopedSubscriptionLists : NSObject {
         }
     }
     
-    init(lists: [String: [ChannelScope]]) {
+    init(_ lists: [String: [ChannelScope]]) {
         self.lists = lists
         super.init()
     }

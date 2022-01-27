@@ -33,12 +33,18 @@ protocol ContactsAPIClientProtocol {
     
     @discardableResult
     func optOutSms(msisdn: String, sender: String, completionHandler: @escaping (ChannelCreateResponse?, Error?) -> Void) -> Disposable
+    
+    
+    @discardableResult
+    func fetchSubscriptionLists(_ identifier: String, completionHandler: @escaping (ContactSubscriptionListFetchResponse?, Error?) -> Void) -> Disposable;
 }
 
 // NOTE: For internal use only. :nodoc:
 class ContactAPIClient : ContactsAPIClientProtocol {
     private static let path = "/api/contacts"
     private static let channelsPath = "/api/channels"
+    
+    private static let subscriptionListPath = "/api/subscription_lists/contacts/"
 
     private static let channelIDKey = "channel_id"
     private static let namedUserIDKey = "named_user_id"
@@ -62,12 +68,19 @@ class ContactAPIClient : ContactsAPIClientProtocol {
     private let config: RuntimeConfig
     private let session: RequestSession
     private let localeManager: LocaleManager
+    
+    private lazy var decoder: JSONDecoder = {
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        return decoder
+    }()
 
     init(config: RuntimeConfig, session: RequestSession) {
         self.config = config
         self.session = session
         
         self.localeManager = LocaleManager(dataStore: PreferenceDataStore(appKey: config.appKey))
+        
     }
 
     convenience init(config: RuntimeConfig) {
@@ -570,5 +583,96 @@ class ContactAPIClient : ContactsAPIClientProtocol {
         
         return tagsPayload
     }
+    
+
+    @discardableResult
+    func fetchSubscriptionLists(_ identifier: String,
+                                completionHandler: @escaping (ContactSubscriptionListFetchResponse?, Error?) -> Void) -> Disposable {
+
+        AirshipLogger.debug("Retrieving subscription lists associated with a contact")
+
+        let request = Request(builderBlock: { [self] builder in
+            builder.method = "GET"
+            builder.url = URL(string: "\(config.deviceAPIURL ?? "")\(ContactAPIClient.subscriptionListPath)\(identifier)")
+            builder.username = config.appKey
+            builder.password = config.appSecret
+            builder.setValue("application/vnd.urbanairship+json; version=3;", header: "Accept")
+        })
+
+        return session.performHTTPRequest(request, completionHandler: { (data, response, error) in
+            guard let response = response else {
+                AirshipLogger.debug("Retrieving subscription lists associated with a contact finished with error: \(error.debugDescription)")
+                completionHandler(nil, error)
+                return
+            }
+
+            if (response.statusCode == 200) {
+                AirshipLogger.debug("Retrieved lists with response: \(response)")
+
+                do {
+                    guard let data = data else {
+                        completionHandler(nil, AirshipErrors.parseError("Missing body"))
+                        return
+                    }
+                    
+                    let parsedBody = try self.decoder.decode(SubscriptionResponseBody.self,
+                                                             from: data)
+                    let scopedLists = try parsedBody.toScopedSubscriptionLists()
+                    let clientResponse = ContactSubscriptionListFetchResponse(response.statusCode, scopedLists)
+                    completionHandler(clientResponse, nil)
+                } catch {
+                    completionHandler(nil, error)
+                }
+            } else {
+                let clientResponse = ContactSubscriptionListFetchResponse(response.statusCode)
+                completionHandler(clientResponse, nil)
+            }
+        })
+    }
 }
+
+
+class ContactSubscriptionListFetchResponse : HTTPResponse {
+    let result: ScopedSubscriptionLists?
+
+    init(_ status: Int, _ result: ScopedSubscriptionLists? = nil) {
+        self.result = result
+        super.init(status: status)
+    }
+}
+
+internal struct SubscriptionResponseBody : Decodable {
+    let subscriptionLists: [Entry]
+    
+    enum CodingKeys: String, CodingKey {
+        case subscriptionLists = "subscription_lists"
+    }
+    
+    struct Entry : Decodable, Equatable {
+        let lists: [String]
+        let scope: String
+        
+        enum CodingKeys: String, CodingKey {
+            case lists = "list_ids"
+            case scope = "scope"
+        }
+    }
+    
+    func toScopedSubscriptionLists() throws -> ScopedSubscriptionLists {
+        var parsed: [String: [ChannelScope]] = [:]
+        try self.subscriptionLists.forEach { entry in
+            let scope = try ChannelScope.fromString(entry.scope)
+            entry.lists.forEach { listID in
+                var scopes = parsed[listID] ?? []
+                scopes.append(scope)
+                parsed[listID] = scopes
+            }
+        }
+        return ScopedSubscriptionLists(parsed)
+    }
+}
+
+
+
+
 

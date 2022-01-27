@@ -23,7 +23,7 @@ public protocol ContactProtocol {
     // NOTE: For internal use only. :nodoc:
     @objc
     var pendingTagGroupUpdates : [TagGroupUpdate] { get }
-    
+        
     /**
      * Associates the contact with the given named user identifier.
      * - Parameters:
@@ -87,8 +87,6 @@ public protocol ContactProtocol {
 }
 
 
-
-
 /**
  * Airship contact. A contact is distinct from a channel and  represents a "user"
  * within Airship. Contacts may be named and have channels associated with it.
@@ -139,6 +137,7 @@ public class Contact : NSObject, Component, ContactProtocol {
     private let decoder = JSONDecoder()
     private let date : DateUtils
     private let notificationCenter: NotificationCenter
+    private let cachedSubscriptionLists: CachedValue<(String, ScopedSubscriptionLists)>
 
     /// A delegate to receive callbacks where there is a contact conflict.
     @objc
@@ -177,6 +176,36 @@ public class Contact : NSObject, Component, ContactProtocol {
                 self.dataStore.setValue(data, forKey: Contact.contactInfoKey)
             }
         }
+    }
+    
+    private var currentContactID: String? {
+        guard let lastContactInfo = lastContactInfo else {
+            return nil
+        }
+        
+        var contactID : String? = lastContactInfo.contactID
+        operationLock.sync {
+            let containsIdentifyOperation = self.getOperations()
+                .contains(where: {
+                    if ($0.type == .reset) {
+                        return true
+                    }
+                    
+                    if ($0.type == .identify && lastContactInfo.namedUserID != ($0.payload as? IdentifyPayload)?.identifier) {
+                        return true
+                    }
+
+                    return false
+                })
+            
+            if (containsIdentifyOperation) {
+                contactID = nil
+            }
+            
+        }
+        
+        return contactID
+        
     }
     
     private var anonContactData: InternalContactData? {
@@ -287,6 +316,9 @@ public class Contact : NSObject, Component, ContactProtocol {
         
         self.disableHelper = ComponentDisableHelper(dataStore: dataStore,
                                                     className: "Contact")
+        
+        self.cachedSubscriptionLists = CachedValue<(String, ScopedSubscriptionLists)>(date: date,
+                                                                            maxCacheAge: 600)
 
         super.init()
         
@@ -457,10 +489,64 @@ public class Contact : NSObject, Component, ContactProtocol {
     /// - Returns: A Disposable.
     @discardableResult
     public func fetchSubscriptionLists(completionHandler: @escaping (ScopedSubscriptionLists?, Error?) -> Void) -> Disposable {
-        // TODO
-        return Disposable()
+        
+        var callback: ((ScopedSubscriptionLists?, Error?) -> Void)? = completionHandler
+        let disposable = Disposable() {
+            callback = nil
+        }
+        
+        self.dispatcher.dispatchAsync {
+            guard let contactID = self.currentContactID else {
+                callback?(nil, AirshipErrors.error("Contact not resolved"))
+                return
+            }
+           
+            do {
+                let scopedLists = try self.resolveSubscriptionLists(contactID)
+                // TODO apply pending
+                callback?(scopedLists, nil)
+            } catch {
+                callback?(nil, error)
+            }
+        }
+        
+        return disposable
     }
+    
+    
+    private func resolveSubscriptionLists(_ contactID: String) throws -> ScopedSubscriptionLists {
+        if let cached = self.cachedSubscriptionLists.value, cached.0 == contactID {
+            return cached.1
+        }
+        
+        var fetchResponse: (ContactSubscriptionListFetchResponse?, Error?)
+        let semaphore = Semaphore()
+        self.contactAPIClient.fetchSubscriptionLists(contactID) { response, error in
+            fetchResponse = (response, error)
+            semaphore.signal()
+        }
+        
+        semaphore.wait()
+        
+        guard let response = fetchResponse.0 else {
+            if let error = fetchResponse.1 {
+                AirshipLogger.debug("Fetched lists failed with error: \(error)")
+            } else {
+                AirshipLogger.debug("Fetched lists failed")
+            }
 
+            throw AirshipErrors.error("Failed to fetch subscriptoin lists failed")
+        }
+        
+        guard response.isSuccess, let scopedLists = response.result else {
+            throw AirshipErrors.error("Failed to fetch subscriptoin lists with status: \(response.status)")
+        }
+        
+        AirshipLogger.debug("Fetched lists finished with response: \(response)")
+        self.cachedSubscriptionLists.value = (contactID, scopedLists)
+        return scopedLists
+    }
+    
     /**
      * :nodoc:
      */
@@ -479,6 +565,8 @@ public class Contact : NSObject, Component, ContactProtocol {
         guard let contactInfo = self.lastContactInfo else {
             return
         }
+        
+        self.cachedSubscriptionLists.value = nil
         
         if (contactInfo.isAnonymous == false || self.anonContactData != nil) {
             self.addOperation(ContactOperation.reset())
@@ -566,9 +654,12 @@ public class Contact : NSObject, Component, ContactProtocol {
             }
             
             let updatePayload = operation.payload as! UpdatePayload
-            return self.contactAPIClient.update(identifier: contactInfo.contactID, tagGroupUpdates: updatePayload.tagUpdates, attributeUpdates: updatePayload.attrubuteUpdates) { response, error in
+            return self.contactAPIClient.update(identifier: contactInfo.contactID,
+                                                tagGroupUpdates: updatePayload.tagUpdates,
+                                                attributeUpdates: updatePayload.attrubuteUpdates) { response, error in
                 Contact.logOperationResult(operation: operation, response: response, error: error)
                 if (response?.isSuccess == true) {
+                    self.cachedSubscriptionLists.value = nil
                     if (contactInfo.isAnonymous) {
                         self.updateAnonData(updatePayload)
                     }

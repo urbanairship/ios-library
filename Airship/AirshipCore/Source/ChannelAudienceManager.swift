@@ -77,7 +77,7 @@ public class ChannelAudienceManager : NSObject, ChannelAudienceManagerProtocol {
         }
     }
     
-    private var cachedSubscriptionListResponse : CachedSubscriptionListResponse?
+    private let cachedSubscriptionLists : CachedValue<[String]>
     
     @objc
     public var channelID: String? {
@@ -108,7 +108,8 @@ public class ChannelAudienceManager : NSObject, ChannelAudienceManagerProtocol {
         self.updateClient = updateClient
         self.notificationCenter = notificationCenter
         self.date = date
-        
+        self.cachedSubscriptionLists = CachedValue<[String]>(date: date,
+                                                             maxCacheAge: ChannelAudienceManager.maxCacheTime)
         super.init()
         
         self.taskManager.register(taskID: ChannelAudienceManager.updateTaskID, dispatcher: self.dispatcher) { [weak self] task in
@@ -204,7 +205,6 @@ public class ChannelAudienceManager : NSObject, ChannelAudienceManagerProtocol {
     @objc
     @discardableResult
     public func fetchSubscriptionLists(completionHandler: @escaping ([String]?, Error?) -> Void) -> Disposable {
-        
         var callback: (([String]?, Error?) -> Void)? = completionHandler
         let disposable = Disposable() {
             callback = nil
@@ -212,58 +212,69 @@ public class ChannelAudienceManager : NSObject, ChannelAudienceManagerProtocol {
         
         self.dispatcher.dispatchAsync {
             guard let channelID = self.channelID else {
-                completionHandler(nil, AirshipErrors.error("Channel not created yet"))
+                callback?(nil, AirshipErrors.error("Channel not created yet"))
                 return
             }
             
-            if let cached = self.cachedSubscriptionListResponse {
-                if (self.date.now.timeIntervalSince(cached.date) < ChannelAudienceManager.maxCacheTime) {
-                    var ids = cached.listIDs
-                    
-                    if let pending = ChannelAudienceManager.collapse(self.getUpdates()) {
-                        pending.subscriptionListUpdates.forEach { update in
-                            switch(update.type) {
-                            case .subscribe:
-                                ids.append(update.listId)
-                            case .unsubscribe:
-                                ids.removeAll(where: { $0 == update.listId })
-                            }
-                        }
-                    }
-                    
-                    completionHandler(ids, nil)
-                    return
-                }
+            do {
+                let listIDs = try self.resolveSubscriptionLists(channelID)
+                callback?(self.applyPendingSubscriptionLists(listIDs), nil)
+            } catch {
+                callback?(nil, error)
             }
-            
-            let semaphore = Semaphore()
-            self.subscriptionListClient.get(channelID: channelID) { response, error in
-                if let response = response {
-                    AirshipLogger.debug("Fetched lists finished with response: \(response)")
-                    if (response.isSuccess == true) {
-                        AirshipLogger.debug("Fetched lists finished with response: \(response)")
-                        let listIDs = response.listIDs ?? []
-                        self.cachedSubscriptionListResponse = CachedSubscriptionListResponse(listIDs: listIDs, date: self.date.now)
-                        callback?(listIDs, nil)
-                    } else {
-                        callback?(nil, AirshipErrors.error("Failed to fetch subscriptoin lists with status: \(response.status)"))
-                    }
-                } else {
-                    if let error = error {
-                        callback?(nil, AirshipErrors.error("Failed to fetch subscriptoin lists with error: \(error)"))
-                    } else {
-                        callback?(nil, AirshipErrors.error("Failed to fetch subscriptoin lists"))
-                    }
-                }
-                semaphore.signal()
-            }
-            
-            semaphore.wait()
         }
         
         return disposable
     }
     
+    private func resolveSubscriptionLists(_ channelID: String) throws -> [String] {
+        if let cached = self.cachedSubscriptionLists.value {
+            return cached
+        }
+        
+        var fetchResponse: (SubscriptionListFetchResponse?, Error?)
+        let semaphore = Semaphore()
+        self.subscriptionListClient.get(channelID: channelID) { response, error in
+            fetchResponse = (response, error)
+            semaphore.signal()
+        }
+        
+        semaphore.wait()
+        
+        guard let response = fetchResponse.0 else {
+            if let error = fetchResponse.1 {
+                AirshipLogger.debug("Fetched lists failed with error: \(error)")
+            } else {
+                AirshipLogger.debug("Fetched lists failed")
+            }
+
+            throw AirshipErrors.error("Failed to fetch subscriptoin lists failed")
+        }
+        
+        guard response.isSuccess, let listIDs = response.listIDs else {
+            throw AirshipErrors.error("Failed to fetch subscriptoin lists with status: \(response.status)")
+        }
+        
+        AirshipLogger.debug("Fetched lists finished with response: \(response)")
+        self.cachedSubscriptionLists.value = listIDs
+        return listIDs
+    }
+    
+    private func applyPendingSubscriptionLists(_ ids: [String]) -> [String] {
+        var result = ids
+        if let pending = ChannelAudienceManager.collapse(self.getUpdates()) {
+            pending.subscriptionListUpdates.forEach { update in
+                switch(update.type) {
+                case .subscribe:
+                    result.append(update.listId)
+                case .unsubscribe:
+                    result.removeAll(where: { $0 == update.listId })
+                }
+            }
+        }
+        
+        return result
+    }
     @objc
     private func checkPrivacyManager() {
         if (!self.privacyManager.isEnabled(.tagsAndAttributes)) {
@@ -303,7 +314,7 @@ public class ChannelAudienceManager : NSObject, ChannelAudienceManagerProtocol {
                 AirshipLogger.debug("Update finished with response: \(response)")
                 if (response.isSuccess) {
                     self.popFirstUpdate()
-                    self.cachedSubscriptionListResponse = nil
+                    self.cachedSubscriptionLists.value = nil
                     task.taskCompleted()
                     self.enqueueTask()
                     
@@ -453,7 +464,3 @@ internal struct AudienceUpdate : Codable {
     let attributeUpdates : [AttributeUpdate]
 }
 
-internal struct CachedSubscriptionListResponse {
-    let listIDs: [String]
-    let date: Date
-}

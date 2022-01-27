@@ -10,6 +10,7 @@ protocol SubscriptionListAPIClientProtocol {
 class SubscriptionListAPIClient : SubscriptionListAPIClientProtocol {
 
     private static let getPath = "/api/subscription_lists/channels/"
+
     
     private var config: RuntimeConfig
     private var session: RequestSession
@@ -23,7 +24,6 @@ class SubscriptionListAPIClient : SubscriptionListAPIClientProtocol {
         self.init(config: config, session: RequestSession(config: config))
     }
 
-    
     @discardableResult
     func get(channelID: String, completionHandler: @escaping (SubscriptionListFetchResponse?, Error?) -> Void) -> Disposable {
 
@@ -46,14 +46,14 @@ class SubscriptionListAPIClient : SubscriptionListAPIClientProtocol {
 
             if (response.statusCode == 200) {
                 AirshipLogger.debug("Retrieved lists with response: \(response)")
-
+                
                 do {
-                    guard data != nil else {
+                    guard let data = data else {
                         completionHandler(nil, AirshipErrors.parseError("Missing body"))
                         return
                     }
 
-                    guard let jsonResponse = try JSONSerialization.jsonObject(with: data!, options: .allowFragments) as? [AnyHashable : Any] else {
+                    guard let jsonResponse = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [AnyHashable : Any] else {
                         completionHandler(nil, AirshipErrors.parseError("Invalid response."))
                         return
                     }
@@ -73,7 +73,7 @@ class SubscriptionListAPIClient : SubscriptionListAPIClientProtocol {
             }
         })
     }
-
+    
     private func map(subscriptionListsUpdates: [SubscriptionListUpdate]) -> [[AnyHashable : Any]] {
         return subscriptionListsUpdates.map { (list) -> ([AnyHashable : Any]) in
             switch(list.type) {

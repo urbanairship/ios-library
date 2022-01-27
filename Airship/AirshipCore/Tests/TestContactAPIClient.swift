@@ -9,6 +9,9 @@ public class TestContactAPIClient : ContactsAPIClientProtocol {
     var identifyCallback: ((String, String, String?, ((ContactAPIResponse?, Error?) -> Void)) -> Void)?
     var resetCallback: ((String, ((ContactAPIResponse?, Error?) -> Void)) -> Void)?
     var updateCallback: ((String, [TagGroupUpdate]?, [AttributeUpdate]?, ((HTTPResponse?, Error?) -> Void)) -> Void)?
+    
+    var fetchSubscriptionListsCallback: ((String, ((ContactSubscriptionListFetchResponse?, Error?) -> Void)) -> Void)?
+
     var registerEmailCallback: (([EmailOptIn], String, ((ChannelCreateResponse?, Error?) -> Void)) -> Void)?
     var registerSmsCallback: ((String, String, Bool, ((ChannelCreateResponse?, Error?) -> Void)) -> Void)?
     var updateEmailCallback: ((String, [EmailOptIn], String, ((ChannelCreateResponse?, Error?) -> Void)) -> Void)?
@@ -106,4 +109,16 @@ public class TestContactAPIClient : ContactsAPIClientProtocol {
         
         return Disposable()
     }
+    
+    public func fetchSubscriptionLists(_ identifier: String,
+                                       completionHandler: @escaping (ContactSubscriptionListFetchResponse?, Error?) -> Void) -> Disposable {
+        if let callback = fetchSubscriptionListsCallback {
+            callback(identifier, completionHandler)
+        } else {
+            defaultCallback?("fetchSubscriptionLists")
+        }
+        
+        return Disposable()
+    }
+    
 }
