@@ -542,7 +542,7 @@ class ContactAPIClient : ContactsAPIClientProtocol {
             return [
                 "action": action,
                 "list_id": list.listId,
-                "scope": list.scope.scopeString,
+                "scope": list.scope.stringValue,
                 "timestamp": Utils.isoDateFormatterUTCWithDelimiter().string(from: list.date)
             ]
         }
@@ -650,9 +650,9 @@ class ContactAPIClient : ContactsAPIClientProtocol {
 
 
 class ContactSubscriptionListFetchResponse : HTTPResponse {
-    let result: ScopedSubscriptionLists?
+    let result: [String: [ChannelScope]]?
 
-    init(_ status: Int, _ result: ScopedSubscriptionLists? = nil) {
+    init(_ status: Int, _ result: [String: [ChannelScope]]? = nil) {
         self.result = result
         super.init(status: status)
     }
@@ -675,7 +675,7 @@ internal struct SubscriptionResponseBody : Decodable {
         }
     }
     
-    func toScopedSubscriptionLists() throws -> ScopedSubscriptionLists {
+    func toScopedSubscriptionLists() throws -> [String: [ChannelScope]] {
         var parsed: [String: [ChannelScope]] = [:]
         try self.subscriptionLists.forEach { entry in
             let scope = try ChannelScope.fromString(entry.scope)
@@ -687,7 +687,7 @@ internal struct SubscriptionResponseBody : Decodable {
                 }
             }
         }
-        return ScopedSubscriptionLists(parsed)
+        return parsed
     }
 }
 

@@ -427,7 +427,7 @@ class ContactAPIClientTest: XCTestCase {
             XCTAssertEqual(response?.status, 200)
             XCTAssertNil(error)
             
-            XCTAssertEqual(expected, response?.result?.lists)
+            XCTAssertEqual(expected, response?.result)
             expectation.fulfill()
         }
         

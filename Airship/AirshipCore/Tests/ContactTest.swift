@@ -424,7 +424,7 @@ class ContactTest: XCTestCase {
             XCTAssertEqual("some-user", namedUserID)
             XCTAssertEqual(["cool": ["neat"]]  as NSDictionary, data.tags  as NSDictionary)
             XCTAssertEqual(["one": 1] as NSDictionary, data.attributes as NSDictionary)
-            XCTAssertEqual(ScopedSubscriptionLists(["foo": [.app]]), data.subscriptionLists)
+            XCTAssertEqual(["foo": ChannelScopes([.app])], data.subscriptionLists)
 
             conflictCalled.fulfill()
         }
@@ -646,10 +646,11 @@ class ContactTest: XCTestCase {
         }
         XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).completed)
 
-        let expected = ScopedSubscriptionLists(["neat": [.web]])
+        let apiResult: [String: [ChannelScope]] = ["neat": [.web]]
+        let expected = AudienceUtils.wrap(apiResult)
         self.apiClient.fetchSubscriptionListsCallback = { identifier, callback in
             XCTAssertEqual("some-contact-id", identifier)
-            callback(ContactSubscriptionListFetchResponse(200, expected), nil)
+            callback(ContactSubscriptionListFetchResponse(200, apiResult), nil)
         }
 
         let expectation = XCTestExpectation(description: "callback called")
@@ -728,7 +729,7 @@ class ContactTest: XCTestCase {
         XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).completed)
         
         
-        var apiResult = ScopedSubscriptionLists(["neat": [.web]])
+        var apiResult: [String: [ChannelScope]] = ["neat": [.web]]
         var expected = apiResult
         self.apiClient.fetchSubscriptionListsCallback = { identifier, callback in
             XCTAssertEqual("some-contact-id", identifier)
@@ -738,19 +739,19 @@ class ContactTest: XCTestCase {
         // Populate cache
         var expectation = XCTestExpectation(description: "callback called")
         self.contact.fetchSubscriptionLists() { result, error in
-            XCTAssertEqual(expected, result)
+            XCTAssertEqual(AudienceUtils.wrap(expected), result)
             expectation.fulfill()
         }
         
         wait(for: [expectation], timeout: 10.0)
 
         
-        apiResult = ScopedSubscriptionLists(["something else": [.web]])
+        apiResult = ["something else": [.web]]
 
         // From cache
         expectation = XCTestExpectation(description: "callback called")
         self.contact.fetchSubscriptionLists { result, error in
-            XCTAssertEqual(expected, result)
+            XCTAssertEqual(AudienceUtils.wrap(expected), result)
             expectation.fulfill()
         }
         wait(for: [expectation], timeout: 10.0)
@@ -760,7 +761,7 @@ class ContactTest: XCTestCase {
         // From cache
         expectation = XCTestExpectation(description: "callback called")
         self.contact.fetchSubscriptionLists { result, error in
-            XCTAssertEqual(expected, result)
+            XCTAssertEqual(AudienceUtils.wrap(expected), result)
             expectation.fulfill()
         }
         wait(for: [expectation], timeout: 10.0)
@@ -771,7 +772,7 @@ class ContactTest: XCTestCase {
         expected = apiResult
         expectation = XCTestExpectation(description: "callback called")
         self.contact.fetchSubscriptionLists { result, error in
-            XCTAssertEqual(expected, result)
+            XCTAssertEqual(AudienceUtils.wrap(expected), result)
             expectation.fulfill()        }
         wait(for: [expectation], timeout: 10.0)
     }
@@ -787,7 +788,7 @@ class ContactTest: XCTestCase {
         }
         XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).completed)
         
-        var apiResult = ScopedSubscriptionLists(["neat": [.web]])
+        var apiResult: [String: [ChannelScope]] = ["neat": [ChannelScope.web]]
         var expected = apiResult
         self.apiClient.fetchSubscriptionListsCallback = { identifier, callback in
             callback(ContactSubscriptionListFetchResponse(200, apiResult), nil)
@@ -796,18 +797,18 @@ class ContactTest: XCTestCase {
         // Populate cache
         var expectation = XCTestExpectation(description: "callback called")
         self.contact.fetchSubscriptionLists() { result, error in
-            XCTAssertEqual(expected, result)
+            XCTAssertEqual(AudienceUtils.wrap(expected), result)
             expectation.fulfill()
         }
         
         wait(for: [expectation], timeout: 10.0)
 
-        apiResult = ScopedSubscriptionLists(["something else": [.web]])
+        apiResult = ["something else": [.web]]
 
         // From cache
         expectation = XCTestExpectation(description: "callback called")
         self.contact.fetchSubscriptionLists { result, error in
-            XCTAssertEqual(expected, result)
+            XCTAssertEqual(AudienceUtils.wrap(expected), result)
             expectation.fulfill()
         }
         wait(for: [expectation], timeout: 10.0)
@@ -824,7 +825,7 @@ class ContactTest: XCTestCase {
         expected = apiResult
         expectation = XCTestExpectation(description: "callback called")
         self.contact.fetchSubscriptionLists { result, error in
-            XCTAssertEqual(expected, result)
+            XCTAssertEqual(AudienceUtils.wrap(expected), result)
             expectation.fulfill()
         }
         wait(for: [expectation], timeout: 10.0)
@@ -839,7 +840,7 @@ class ContactTest: XCTestCase {
         }
         XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).completed)
 
-        let apiResult = ScopedSubscriptionLists(["foo": [.web, .sms]])
+        let apiResult: [String: [ChannelScope]] = ["foo": [.web, .sms]]
         self.apiClient.fetchSubscriptionListsCallback = { identifier, callback in
             XCTAssertEqual("some-contact-id", identifier)
             callback(ContactSubscriptionListFetchResponse(200, apiResult), nil)
@@ -850,10 +851,10 @@ class ContactTest: XCTestCase {
             editor.unsubscribe("foo", scope: .sms)
         }
 
-        let expected = ScopedSubscriptionLists(["foo": [.web], "bar": [.app]])
+        let expected: [String: [ChannelScope]] = ["foo": [.web], "bar": [.app]]
         let expectation = XCTestExpectation(description: "callback called")
         self.contact.fetchSubscriptionLists { result, error in
-            XCTAssertEqual(expected, result)
+            XCTAssertEqual(AudienceUtils.wrap(expected), result)
             expectation.fulfill()
         }
 

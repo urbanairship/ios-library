@@ -83,7 +83,7 @@ public protocol ContactProtocol {
     /// - Parameter completionHandler: A completion handler.
     /// - Returns: A Disposable.
     @discardableResult
-    func fetchSubscriptionLists(completionHandler: @escaping (ScopedSubscriptionLists?, Error?) -> Void) -> Disposable
+    func fetchSubscriptionLists(completionHandler: @escaping ([String: ChannelScopes]?, Error?) -> Void) -> Disposable
 }
 
 
@@ -137,7 +137,7 @@ public class Contact : NSObject, Component, ContactProtocol {
     private let decoder = JSONDecoder()
     private let date : DateUtils
     private let notificationCenter: NotificationCenter
-    private let cachedSubscriptionLists: CachedValue<(String, ScopedSubscriptionLists)>
+    private let cachedSubscriptionLists: CachedValue<(String, [String: [ChannelScope]])>
 
     /// A delegate to receive callbacks where there is a contact conflict.
     @objc
@@ -335,7 +335,7 @@ public class Contact : NSObject, Component, ContactProtocol {
         self.disableHelper = ComponentDisableHelper(dataStore: dataStore,
                                                     className: "Contact")
         
-        self.cachedSubscriptionLists = CachedValue<(String, ScopedSubscriptionLists)>(date: date,
+        self.cachedSubscriptionLists = CachedValue<(String, [String: [ChannelScope]])>(date: date,
                                                                             maxCacheAge: 600)
 
         super.init()
@@ -517,9 +517,9 @@ public class Contact : NSObject, Component, ContactProtocol {
     /// - Parameter completionHandler: A completion handler.
     /// - Returns: A Disposable.
     @discardableResult
-    public func fetchSubscriptionLists(completionHandler: @escaping (ScopedSubscriptionLists?, Error?) -> Void) -> Disposable {
+    public func fetchSubscriptionLists(completionHandler: @escaping ([String: ChannelScopes]?, Error?) -> Void) -> Disposable {
         
-        var callback: ((ScopedSubscriptionLists?, Error?) -> Void)? = completionHandler
+        var callback: (([String: ChannelScopes]?, Error?) -> Void)? = completionHandler
         let disposable = Disposable() {
             callback = nil
         }
@@ -532,9 +532,9 @@ public class Contact : NSObject, Component, ContactProtocol {
            
             do {
                 let resolved = try self.resolveSubscriptionLists(contactID)
-                let combinedLists =  AudienceUtils.applySubscriptionListsUpdates(resolved.lists,
+                let combinedLists =  AudienceUtils.applySubscriptionListsUpdates(resolved,
                                                                                  updates: self.pendingSubscriptionListUpdates)
-                callback?(ScopedSubscriptionLists(combinedLists), nil)
+                callback?(AudienceUtils.wrap(combinedLists), nil)
             } catch {
                 callback?(nil, error)
             }
@@ -544,7 +544,7 @@ public class Contact : NSObject, Component, ContactProtocol {
     }
     
     
-    private func resolveSubscriptionLists(_ contactID: String) throws -> ScopedSubscriptionLists {
+    private func resolveSubscriptionLists(_ contactID: String) throws -> [String: [ChannelScope]] {
         if let cached = self.cachedSubscriptionLists.value, cached.0 == contactID {
             return cached.1
         }
@@ -767,7 +767,7 @@ public class Contact : NSObject, Component, ContactProtocol {
         let attributes = data.attributes.compactMapValues { $0.value() }
         let anonData = ContactData(tags: data.tags,
                                    attributes: attributes,
-                                   subscriptionLists: ScopedSubscriptionLists(data.subscriptionLists))
+                                   subscriptionLists: AudienceUtils.wrap(data.subscriptionLists))
         
         UADispatcher.main.dispatchAsync {
             self.conflictDelegate?.onConflict(anonymousContactData: anonData, namedUserID: namedUserID)

@@ -83,69 +83,107 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
     }
     
     public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        if(config?.sections[section].type == SectionType.sectionBreak.rawValue) {
-            let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: "PreferenceCenterSectionBreakHeader") as! PreferenceCenterSectionBreakHeader
-            header.sectionBreakLabel.text = config?.sections[section].display?.title
-            if (style?.sectionBreakBackgroundColor != nil) {
-                header.sectionBreakView.backgroundColor = style?.sectionBreakBackgroundColor
-            } else {
-                header.sectionBreakView.backgroundColor = .darkGray
+        
+        guard let sectionConfig = config?.sections[section] else {
+            return nil
+        }
+        
+        switch(sectionConfig.sectionType) {
+        case .labeledSectionBreak:
+            guard let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: "PreferenceCenterSectionBreakHeader") as? PreferenceCenterSectionBreakHeader else {
+                return nil
             }
-            if (style?.sectionBreakTextFont != nil) {
-                header.sectionBreakLabel.font = style?.sectionBreakTextFont
+            
+            header.sectionBreakLabel.text = sectionConfig.display?.title
+            header.sectionBreakView.backgroundColor = style?.sectionBreakBackgroundColor ?? .darkGray
+            if let font = style?.sectionBreakTextFont {
+                header.sectionBreakLabel.font = font
             }
-            if (style?.sectionBreakTextColor != nil) {
-                header.sectionBreakLabel.textColor = style?.sectionBreakTextColor
+            
+            if let font = style?.sectionBreakTextFont {
+                header.sectionBreakLabel.font = font
+            }
+            
+            if let color = style?.sectionBreakTextColor {
+                header.sectionBreakLabel.textColor = color
             }
             return header
-        } else {
-            let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: "PreferenceCenterSectionHeader") as! PreferenceCenterSectionHeader
-            header.titleLabel.text = config?.sections[section].display?.title
-            header.subtitleLabel.text = config?.sections[section].display?.subtitle
-            if (style?.sectionTextFont != nil) {
-                header.titleLabel.font = style?.sectionTextFont
-                header.subtitleLabel.font = style?.sectionTextFont
+            
+        case .common:
+            guard let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: "PreferenceCenterSectionHeader") as? PreferenceCenterSectionHeader else {
+                return nil
             }
-            if (style?.sectionTextColor != nil) {
-                header.titleLabel.textColor = style?.sectionTextColor
-                header.subtitleLabel.textColor = style?.sectionTextColor
+            
+            header.titleLabel.text = sectionConfig.display?.title
+            header.subtitleLabel.text = sectionConfig.display?.subtitle
+            if let font = style?.sectionTextFont {
+                header.titleLabel.font = font
+                header.subtitleLabel.font = font
+            }
+            
+            if let color = style?.sectionTextColor {
+                header.titleLabel.textColor = color
+                header.subtitleLabel.textColor = color
+
             }
             return header
         }
     }
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-       
-        let cell = tableView.dequeueReusableCell(withIdentifier: "PreferenceCenterCell", for: indexPath) as!
-                PreferenceCenterCell
-        
-        guard let item = config?.sections[indexPath.section].items[indexPath.row] as? ChannelSubscriptionItem else {
-            return cell
+        let defaultResult: () -> UITableViewCell =  {
+            return tableView.dequeueReusableCell(withIdentifier: "PreferenceCenterCell", for: indexPath)
         }
         
+        guard let item = config?.sections[indexPath.section].items[indexPath.row] else {
+            return defaultResult()
+        }
+                                                                   
+        switch(item.itemType) {
+        case .channelSubscription:
+            guard let item = item as? ChannelSubscriptionItem,
+                  let cell = tableView.dequeueReusableCell(withIdentifier: "PreferenceCenterCell", for: indexPath) as? PreferenceCenterCell else {
+                return defaultResult()
+            }
+            self.bindChannelSubscriptionItem(item, tableView: tableView, cell: cell)
+            return cell
+        default:
+            return defaultResult()
+        }
+    }
+        
+    
+    private func bindChannelSubscriptionItem(_ item: ChannelSubscriptionItem,
+                                             tableView: UITableView,
+                                             cell: PreferenceCenterCell) {
         cell.textLabel?.text = item.display?.title
         cell.detailTextLabel?.text = item.display?.subtitle
-        if (style?.preferenceTextFont != nil) {
-            cell.textLabel?.font = style?.preferenceTextFont
-            cell.detailTextLabel?.font = style?.preferenceTextFont
-        }
-        if (style?.preferenceTextColor != nil) {
-            cell.textLabel?.textColor = style?.preferenceTextColor
-            cell.detailTextLabel?.textColor = style?.preferenceTextColor
-        }
-        if (style?.backgroundColor != nil) {
-            cell.backgroundColor = style?.backgroundColor
-        }
-            
         cell.detailTextLabel?.numberOfLines = 0
         
-        let cellSwitch = cell.accessoryView as! UISwitch
+        if let font = style?.preferenceTextFont {
+            cell.textLabel?.font = font
+            cell.detailTextLabel?.font = font
+        }
+        
+        if let fontColor = style?.preferenceTextColor {
+            cell.textLabel?.textColor = fontColor
+            cell.detailTextLabel?.textColor = fontColor
+        }
+        
+        if let backgroundColor = style?.backgroundColor {
+            cell.backgroundColor = backgroundColor
+        }
+            
+        guard let cellSwitch = cell.accessoryView as? UISwitch else {
+            return
+        }
+        
         if let tintColor = style?.switchTintColor {
             cellSwitch.onTintColor = tintColor
         }
         
-        if let tintColor = style?.switchThumbTintColor {
-            cellSwitch.thumbTintColor = tintColor
+        if let thumbTintColor = style?.switchThumbTintColor {
+            cellSwitch.thumbTintColor = thumbTintColor
         }
         
         if (activeSubscriptions.contains(item.subscriptionID)) {
@@ -167,8 +205,6 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
             editor.apply()
             tableView.reloadData()
         }
-        
-        return cell
     }
 
     func onConfigLoaded(config: PreferenceCenterConfig, lists: [String]) {

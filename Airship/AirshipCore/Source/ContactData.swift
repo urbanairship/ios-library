@@ -12,7 +12,7 @@ public class ContactData : NSObject {
      * Subscription lists
      */
     @objc
-    public let subscriptionLists: ScopedSubscriptionLists
+    public let subscriptionLists: [String: ChannelScopes]
     
     /**
      * Tag groups.
@@ -36,7 +36,7 @@ public class ContactData : NSObject {
     @objc
     public init(tags: [String: [String]],
                 attributes: [String: Any],
-                subscriptionLists: ScopedSubscriptionLists) {
+                subscriptionLists: [String: ChannelScopes]) {
         self.tags = tags
         self.attributes = attributes
         self.subscriptionLists = subscriptionLists

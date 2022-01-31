@@ -151,6 +151,10 @@ public class AudienceUtils : NSObject {
         return updated
     }
     
+    class func wrap(_ scopedSubscriptionLists: [String: [ChannelScope]]) -> [String : ChannelScopes] {
+        scopedSubscriptionLists.mapValues { ChannelScopes($0) }
+    }
+    
     class func applySubscriptionListsUpdates(_ subscriptionLists: [String: [ChannelScope]]?,
                                              updates: [ScopedSubscriptionListUpdate]?) -> [String: [ChannelScope]] {
         var updated = subscriptionLists ?? [:]
