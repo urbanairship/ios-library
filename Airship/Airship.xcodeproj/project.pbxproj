@@ -37,6 +37,8 @@
 		1BCDE30A23A12C430006A319 /* UAAccengageResources.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BCDE30823A12C430006A319 /* UAAccengageResources.h */; };
 		1BCDE30B23A12C430006A319 /* UAAccengageResources.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCDE30923A12C430006A319 /* UAAccengageResources.m */; };
 		1BCDE30E23A12CBA0006A319 /* AirshipAccengage.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1BCDE30C23A12CBA0006A319 /* AirshipAccengage.strings */; };
+		320AAE7427A84B0000BAD3CE /* PreferenceCenterAlertCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 320AAE7327A84B0000BAD3CE /* PreferenceCenterAlertCell.xib */; };
+		320AAE7627A84B3200BAD3CE /* PreferenceCenterAlertCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 320AAE7527A84B3200BAD3CE /* PreferenceCenterAlertCell.swift */; };
 		3215CA9D2739349800B7D97E /* ModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3215CA9C2739349700B7D97E /* ModalView.swift */; };
 		3215CA9E2739349800B7D97E /* ModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3215CA9C2739349700B7D97E /* ModalView.swift */; };
 		3230E60B24D04C75002C344D /* UAInAppAudienceHistorianTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3230E60A24D04C75002C344D /* UAInAppAudienceHistorianTest.m */; };
@@ -1518,6 +1520,8 @@
 		1BCDE31123A12CD30006A319 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = Resources/common/ru.lproj/AirshipAccengage.strings; sourceTree = "<group>"; };
 		1BCDE31223A12CD30006A319 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = Resources/common/it.lproj/AirshipAccengage.strings; sourceTree = "<group>"; };
 		1BCDE31323A12CD30006A319 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = Resources/common/fr.lproj/AirshipAccengage.strings; sourceTree = "<group>"; };
+		320AAE7327A84B0000BAD3CE /* PreferenceCenterAlertCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PreferenceCenterAlertCell.xib; sourceTree = "<group>"; };
+		320AAE7527A84B3200BAD3CE /* PreferenceCenterAlertCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterAlertCell.swift; sourceTree = "<group>"; };
 		3215CA9C2739349700B7D97E /* ModalView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModalView.swift; sourceTree = "<group>"; };
 		3226E11424C1DF54000106CC /* UAInAppAudienceHistorian.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInAppAudienceHistorian.m; sourceTree = "<group>"; };
 		3226E11524C1DF54000106CC /* UAInAppAudienceHistorian+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAInAppAudienceHistorian+Internal.h"; sourceTree = "<group>"; };
@@ -4550,6 +4554,7 @@
 				A61517AA26A6DC48008A41C4 /* PreferenceCenterCell.xib */,
 				A68E345A26B154220024BE1D /* PreferenceCenterSectionHeader.xib */,
 				3233306F278B99BC00CEB86B /* PreferenceCenterSectionBreakHeader.xib */,
+				320AAE7327A84B0000BAD3CE /* PreferenceCenterAlertCell.xib */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -4568,6 +4573,7 @@
 				A61517A826A1E447008A41C4 /* PreferenceCenterResources.swift */,
 				A68E345826B153EC0024BE1D /* PreferenceCenterSectionHeader.swift */,
 				32333071278B9A7F00CEB86B /* PreferenceCenterSectionBreakHeader.swift */,
+				320AAE7527A84B3200BAD3CE /* PreferenceCenterAlertCell.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -6012,6 +6018,7 @@
 			files = (
 				A68E345B26B154220024BE1D /* PreferenceCenterSectionHeader.xib in Resources */,
 				A615179126A07A66008A41C4 /* PreferenceCenterViewController.xib in Resources */,
+				320AAE7427A84B0000BAD3CE /* PreferenceCenterAlertCell.xib in Resources */,
 				842EE1BE268128DD00F2BEF4 /* empty in Resources */,
 				32333070278B99BC00CEB86B /* PreferenceCenterSectionBreakHeader.xib in Resources */,
 				A61517AB26A6DC48008A41C4 /* PreferenceCenterCell.xib in Resources */,
@@ -6841,6 +6848,7 @@
 				A61517A926A1E447008A41C4 /* PreferenceCenterResources.swift in Sources */,
 				6E6C3F9A27A47DB4007F55C7 /* PreferenceCenterConfig.swift in Sources */,
 				847B0013267CE558007CD249 /* PreferenceCenterSDKModule.swift in Sources */,
+				320AAE7627A84B3200BAD3CE /* PreferenceCenterAlertCell.swift in Sources */,
 				84483A68267CF0C000D0DA7D /* PreferenceCenter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

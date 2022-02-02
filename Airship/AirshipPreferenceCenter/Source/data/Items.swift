@@ -256,7 +256,7 @@ public class AlertItem : NSObject, Decodable, Item {
     public let display: CommonDisplay?
 
     @objc
-    public let button: Button
+    public let button: Button?
     
     @objc
     public lazy var conditions: [Condition]? = {

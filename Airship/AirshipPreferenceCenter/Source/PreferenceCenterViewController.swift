@@ -37,6 +37,8 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
         super.viewDidLoad()
         
         tableView.register(PreferenceCenterCell.self, forCellReuseIdentifier: "PreferenceCenterCell")
+        let preferenceCenterAlertNib = UINib(nibName: "PreferenceCenterAlertCell", bundle:PreferenceCenterResources.bundle())
+        tableView.register(preferenceCenterAlertNib, forCellReuseIdentifier: "PreferenceCenterAlertCell")
         tableView.delegate = self
         tableView.dataSource = self
         tableView.backgroundColor = style?.backgroundColor
@@ -72,14 +74,11 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
         self.disposable?.dispose()
     }
     
-    public func numberOfSections(in tableView: UITableView) -> Int {
-        guard let sections = config?.sections.count else { return 0 }
-        return sections
-    }
+    // MARK: -
+    // MARK: UITableViewDelegate
     
-    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let rows = config?.sections[section].items.count else { return 0 }
-        return rows
+    public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return UITableView.automaticDimension
     }
     
     public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -130,6 +129,19 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
         }
     }
     
+    // MARK: -
+    // MARK: UITableViewDataSource
+    
+    public func numberOfSections(in tableView: UITableView) -> Int {
+        guard let sections = config?.sections.count else { return 0 }
+        return sections
+    }
+    
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        guard let rows = config?.sections[section].items.count else { return 0 }
+        return rows
+    }
+    
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let defaultResult: () -> UITableViewCell =  {
             return tableView.dequeueReusableCell(withIdentifier: "PreferenceCenterCell", for: indexPath)
@@ -147,11 +159,61 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
             }
             self.bindChannelSubscriptionItem(item, tableView: tableView, cell: cell)
             return cell
+        case .alert:
+            guard let item = item as? AlertItem,
+                  let cell = tableView.dequeueReusableCell(withIdentifier: "PreferenceCenterAlertCell", for: indexPath) as? PreferenceCenterAlertCell else {
+                return defaultResult()
+            }
+            self.bindAlertItem(item, tableView: tableView, cell: cell)
+            return cell
         default:
             return defaultResult()
         }
     }
         
+    private func bindAlertItem(_ item: AlertItem,
+                               tableView: UITableView,
+                               cell: PreferenceCenterAlertCell) {
+        
+        if let display = item.display {
+            cell.alertTitle.text = display.title
+            cell.alertDescription.text = display.subtitle ?? ""
+            
+            if let iconUrl = display.iconURL {
+                if let url = URL(string: iconUrl) {
+                    cell.alertIconIndicator.isHidden = false
+                    cell.alertIconIndicator.startAnimating()
+                    DispatchQueue.global().async {
+                        let image = UIImage().loadImage(url: url, attempts: 3)
+                        DispatchQueue.main.async {
+                            cell.alertIconIndicator.stopAnimating()
+                            cell.alertIconIndicator.isHidden = true
+                            if (image != nil) {
+                                cell.alertIcon.image = image
+                                tableView.reloadData()
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        if let button = item.button {
+            cell.alertButton.isHidden = false
+            cell.alertButton.backgroundColor = .systemBlue
+            cell.alertButton.layer.cornerRadius = 5
+            cell.alertButton.setTitle(button.text, for: .normal)
+            cell.alertButton.setTitleColor(.white, for: .normal)
+            cell.alertButton.actions = button.actions
+            cell.alertButton.addTarget(self, action: #selector(buttonAction(_:)), for: .touchUpInside)
+            if button.contentDescription != nil {
+                cell.alertButton.accessibilityLabel = button.contentDescription
+            }
+        } else {
+            cell.alertButton.isHidden = true
+        }
+    }
+
     
     private func bindChannelSubscriptionItem(_ item: ChannelSubscriptionItem,
                                              tableView: UITableView,
@@ -207,6 +269,9 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
         }
     }
 
+    // MARK: -
+    // MARK:
+    
     func onConfigLoaded(config: PreferenceCenterConfig, lists: [String]) {
         self.config = config
         self.navigationItem.title = style?.title ?? config.display?.title ?? PreferenceCenterResources.localizedString(key: "ua_preference_center_title")
@@ -295,6 +360,18 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
         // Recompute layout so that sizes are correct
         tableView.invalidateIntrinsicContentSize()
         tableView.layoutIfNeeded()
+    }
+    
+    @objc func buttonAction(_ sender: AlertButton) {
+        let actions = sender.actions as! Dictionary<String, Any>
+        if (!actions.isEmpty) {
+            for (name,value) in actions {
+                ActionRunner.run(name, value: value, situation: .manualInvocation) { result in
+                    print("Action finished!")
+                    self.tableView.reloadData()
+                }
+            }
+        }
     }
 }
 
