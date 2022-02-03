@@ -14,7 +14,8 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
     @IBOutlet private var overlayView: UIView!
     @IBOutlet private var activityIndicator: UIActivityIndicatorView!
     private var config: PreferenceCenterConfig?
-    private var activeSubscriptions: [String] = []
+    private var activeChannelSubscriptions: [String] = []
+    private var activeContactSubscriptions: [String : [String]] = [:]
     private var disposable: Disposable?
     public var preferenceCenterID: String?
     
@@ -26,7 +27,7 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
     
     init(identifier: String, nibName: String?, bundle:Bundle?) {
         self.preferenceCenterID = identifier
-        super.init(nibName: nibName, bundle: bundle)        
+        super.init(nibName: nibName, bundle: bundle)
     }
     
     required public init?(coder aDecoder: NSCoder) {
@@ -39,6 +40,7 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
         tableView.register(PreferenceCenterCell.self, forCellReuseIdentifier: "PreferenceCenterCell")
         let preferenceCenterAlertNib = UINib(nibName: "PreferenceCenterAlertCell", bundle:PreferenceCenterResources.bundle())
         tableView.register(preferenceCenterAlertNib, forCellReuseIdentifier: "PreferenceCenterAlertCell")
+        tableView.register(PreferenceCenterCheckboxCell.self, forCellReuseIdentifier: "PreferenceCenterCheckboxCell")
         tableView.delegate = self
         tableView.dataSource = self
         tableView.backgroundColor = style?.backgroundColor
@@ -166,6 +168,21 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
             }
             self.bindAlertItem(item, tableView: tableView, cell: cell)
             return cell
+        case .contactSubscription:
+            guard let item = item as? ContactSubscriptionItem,
+                  let cell = tableView.dequeueReusableCell(withIdentifier: "PreferenceCenterCell", for: indexPath) as? PreferenceCenterCell else {
+                return defaultResult()
+            }
+            self.bindContactSubscriptionItem(item, tableView: tableView, cell: cell)
+            return cell
+        case .contactSubscriptionGroup:
+            guard let item = item as? ContactSubscriptionGroupItem,
+                  let cell = tableView.dequeueReusableCell(withIdentifier: "PreferenceCenterCheckboxCell", for: indexPath) as? PreferenceCenterCheckboxCell else {
+                return defaultResult()
+            }
+           
+            self.bindContactGroupSubscriptionItem(item, tableView: tableView, cell: cell)
+            return cell
         default:
             return defaultResult()
         }
@@ -248,7 +265,7 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
             cellSwitch.thumbTintColor = thumbTintColor
         }
         
-        if (activeSubscriptions.contains(item.subscriptionID)) {
+        if (activeChannelSubscriptions.contains(item.subscriptionID)) {
             cellSwitch.setOn(true, animated: false)
         } else {
             cellSwitch.setOn(false, animated: false)
@@ -257,10 +274,10 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
         cell.callback = { isOn in
             let editor = Airship.channel.editSubscriptionLists()
             if (isOn) {
-                self.activeSubscriptions.append(item.subscriptionID)
+                self.activeChannelSubscriptions.append(item.subscriptionID)
                 editor.subscribe(item.subscriptionID)
             } else {
-                self.activeSubscriptions.removeAll(where: { $0 == item.subscriptionID })
+                self.activeChannelSubscriptions.removeAll(where: { $0 == item.subscriptionID })
                 editor.unsubscribe(item.subscriptionID)
             }
             
@@ -268,11 +285,115 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
             tableView.reloadData()
         }
     }
-
-    // MARK: -
-    // MARK:
     
-    func onConfigLoaded(config: PreferenceCenterConfig, lists: [String]) {
+    private func bindContactSubscriptionItem(_ item: ContactSubscriptionItem,
+                                             tableView: UITableView,
+                                             cell: PreferenceCenterCell) {
+        cell.textLabel?.text = item.display?.title
+        cell.detailTextLabel?.text = item.display?.subtitle
+        cell.detailTextLabel?.numberOfLines = 0
+        
+        if let font = style?.preferenceTextFont {
+            cell.textLabel?.font = font
+            cell.detailTextLabel?.font = font
+        }
+        
+        if let fontColor = style?.preferenceTextColor {
+            cell.textLabel?.textColor = fontColor
+            cell.detailTextLabel?.textColor = fontColor
+        }
+        
+        if let backgroundColor = style?.backgroundColor {
+            cell.backgroundColor = backgroundColor
+        }
+            
+        guard let cellSwitch = cell.accessoryView as? UISwitch else {
+            return
+        }
+        
+        if let tintColor = style?.switchTintColor {
+            cellSwitch.onTintColor = tintColor
+        }
+        
+        if let thumbTintColor = style?.switchThumbTintColor {
+            cellSwitch.thumbTintColor = thumbTintColor
+        }
+        
+        if activeContactSubscriptions[item.subscriptionID] != nil {
+            cellSwitch.setOn(true, animated: false)
+        } else {
+            cellSwitch.setOn(false, animated: false)
+        }
+        
+        cell.callback = { isOn in
+            let editor = Airship.contact.editSubscriptionLists()
+            if (isOn) {
+                let scopes = item.scopes.values.reduce(into: []) { list, scope in
+                    list.append(scope.stringValue)
+                }
+                    
+                self.activeContactSubscriptions.updateValue(scopes, forKey: item.subscriptionID)
+                for scope in item.scopes.values {
+                    editor.subscribe(item.subscriptionID, scope: scope)
+                }
+            } else {
+                self.activeContactSubscriptions.removeValue(forKey: item.subscriptionID)
+                for scope in item.scopes.values {
+                    editor.unsubscribe(item.subscriptionID, scope: scope)
+                }
+            }
+            
+            editor.apply()
+            tableView.reloadData()
+        }
+    }
+
+    private func bindContactGroupSubscriptionItem(_ item: ContactSubscriptionGroupItem,
+                                             tableView: UITableView,
+                                             cell: PreferenceCenterCheckboxCell) {
+        if let activeScopes = self.activeContactSubscriptions[item.subscriptionID] {
+            cell.activeScopes = activeScopes
+        } else {
+            cell.activeScopes = []
+        }
+        
+        cell.callback = { isChecked, scopes in
+            let editor = Airship.contact.editSubscriptionLists()
+            if (isChecked) {
+                if var activeScopes = self.activeContactSubscriptions[item.subscriptionID] {
+                    activeScopes += scopes
+                    self.activeContactSubscriptions.updateValue(activeScopes, forKey: item.subscriptionID)
+                } else {
+                    self.activeContactSubscriptions.updateValue(scopes, forKey: item.subscriptionID)
+                }
+              
+                for scope in scopes {
+                    editor.subscribe(item.subscriptionID, scope: try! ChannelScope.fromString(scope))
+                }
+            } else {
+                if var activeScopes = self.activeContactSubscriptions[item.subscriptionID] {
+                    activeScopes = activeScopes.filter { !scopes.contains($0) }
+                    self.activeContactSubscriptions.updateValue(activeScopes, forKey: item.subscriptionID)
+                }
+                for scope in scopes {
+                    editor.unsubscribe(item.subscriptionID, scope: try! ChannelScope.fromString(scope))
+                }
+            }
+            
+            editor.apply()
+            tableView.reloadData()
+        }
+        
+        cell.draw(item: item, style: style)
+
+        if (style?.backgroundColor != nil) {
+            cell.backgroundColor = style?.backgroundColor
+        }
+
+        cell.detailTextLabel?.numberOfLines = 0
+    }
+    
+    func onConfigLoaded(config: PreferenceCenterConfig, channelLists: [String]?, contactLists: [String : [String]]?) {
         self.config = config
         self.navigationItem.title = style?.title ?? config.display?.title ?? PreferenceCenterResources.localizedString(key: "ua_preference_center_title")
        
@@ -300,7 +421,6 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
     
         self.overlayView.alpha = 0;
         self.activityIndicator.stopAnimating()
-        self.activeSubscriptions = lists
         self.refreshTable()
     }
     
@@ -310,8 +430,20 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
         
         self.disposable?.dispose()
         
-        var onComplete : ((PreferenceCenterConfig, [String]) -> Void)? = { config, lists in
-            self.onConfigLoaded(config: config, lists: lists)
+        var onComplete : ((PreferenceCenterConfig, [String]?, [String : ChannelScopes]?) -> Void)? = { config, channelLists, contactLists in
+            let mappedContactLists = contactLists.map { (contactList) -> ([String: [String]]) in
+                var list: [String] = []
+                var dict: [String: [String]] = [:]
+                contactList.forEach {
+                    let channelScopes = $0.value.values
+                    channelScopes.forEach {
+                        list.append($0.stringValue)
+                    }
+                    dict[$0.key] = list
+                }
+                return dict
+            }
+            self.onConfigLoaded(config: config, channelLists: channelLists, contactLists: mappedContactLists)
         }
         
         guard let preferenceCenterID = self.preferenceCenterID else {
@@ -325,9 +457,8 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
             onComplete = nil
         }
         
-        Airship.channel.fetchSubscriptionLists() { [weak self] subscribedIDs, error in
-            
-            guard error == nil, let subscribedIDs = subscribedIDs else {
+        PreferenceCenter.shared.config(preferenceCenterID: preferenceCenterID) { [weak self] config in
+            guard let config = config else {
                 UADispatcher.main.dispatch(after: 30, block: {
                     if (!cancelled) {
                         self?.refreshConfig()
@@ -336,8 +467,26 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
                 return
             }
             
-            PreferenceCenter.shared.config(preferenceCenterID: preferenceCenterID) { config in
-                guard let config = config else {
+            let containsChannelSubscriptions = config.sections.contains(where: {
+                let items = $0.items
+                return items.contains(where: {
+                    return ($0.itemType == .channelSubscription)
+                })
+            })
+            let containsContactSubscriptions = config.sections.contains(where: {
+                let items = $0.items
+                return items.contains(where: {
+                    return ($0.itemType == .contactSubscription || $0.itemType == .contactSubscriptionGroup)
+                })
+            })
+            
+            var subscribedChannelIDs: [String] = []
+            var subscribedContactIDs: [String : ChannelScopes] = [:]
+            
+            if (containsChannelSubscriptions) {
+                Airship.channel.fetchSubscriptionLists() { subscribedIDs, error in
+                
+                guard error == nil, let subscribedIDs = subscribedIDs else {
                     UADispatcher.main.dispatch(after: 30, block: {
                         if (!cancelled) {
                             self?.refreshConfig()
@@ -345,11 +494,26 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
                     })
                     return
                 }
-                
-                UADispatcher.main.dispatchAsync {
-                    onComplete?(config, subscribedIDs)
+                    subscribedChannelIDs = subscribedIDs
                 }
+            }
+            if (containsContactSubscriptions) {
+                Airship.contact.fetchSubscriptionLists() { subscribedIDs, error in
                 
+                guard error == nil, let subscribedIDs = subscribedIDs else {
+                    UADispatcher.main.dispatch(after: 30, block: {
+                        if (!cancelled) {
+                            self?.refreshConfig()
+                        }
+                    })
+                    return
+                }
+                    subscribedContactIDs = subscribedIDs
+                }
+            }
+            
+            UADispatcher.main.dispatchAsync {
+                onComplete?(config, subscribedChannelIDs, subscribedContactIDs)
             }
         }
     }
