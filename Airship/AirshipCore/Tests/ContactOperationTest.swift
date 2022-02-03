@@ -12,7 +12,7 @@ class ContactOperationTests: XCTestCase {
         let resolve = ContactOperation.resolve()
         let identify = ContactOperation.identify(identifier: "some-user")
         let reset = ContactOperation.reset()
-        let registerEmail = ContactOperation.registerEmail("ua@airship.com", options: EmailRegistrationOptions.optIn(transactionalOptedIn: true, properties: ["interests" : "newsletter"], doubleOptIn: true))
+        let registerEmail = ContactOperation.registerEmail("ua@airship.com", options: EmailRegistrationOptions.options(transactionalOptedIn: Date(), properties: ["interests" : "newsletter"], doubleOptIn: true))
         let registerSMS = ContactOperation.registerSMS("15035556789", options: SMSRegistrationOptions.optIn(senderID: "28855"))
         let registerOpen = ContactOperation.registerOpen("open_address", options: OpenRegistrationOptions.optIn(platformName: "my_platform", identifiers: ["model":"4"]))
         

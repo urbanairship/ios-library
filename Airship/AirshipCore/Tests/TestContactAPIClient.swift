@@ -9,10 +9,10 @@ public class TestContactAPIClient : ContactsAPIClientProtocol {
     var identifyCallback: ((String, String, String?, ((ContactAPIResponse?, Error?) -> Void)) -> Void)?
     var resetCallback: ((String, ((ContactAPIResponse?, Error?) -> Void)) -> Void)?
     var updateCallback: ((String, [TagGroupUpdate]?, [AttributeUpdate]?, [ScopedSubscriptionListUpdate]?, ((HTTPResponse?, Error?) -> Void)) -> Void)?
-    var updateChannelCallback: ((String, [AssociatedChannel]?, ((HTTPResponse?, Error?) -> Void)) -> Void)?
-    var registerEmailCallback: ((String, String, EmailRegistrationOptions, ((ContactChannelRegistrationResponse?, Error?) -> Void)) -> Void)?
-    var registerSMSCallback: ((String, String, SMSRegistrationOptions, ((ContactChannelRegistrationResponse?, Error?) -> Void)) -> Void)?
-    var registerOpenCallback: ((String, String, OpenRegistrationOptions, ((ContactChannelRegistrationResponse?, Error?) -> Void)) -> Void)?
+    var associateChannelCallback: ((String, String, ChannelType, ((ContactAssociatedChannelResponse?, Error?) -> Void)) -> Void)?
+    var registerEmailCallback: ((String, String, EmailRegistrationOptions, ((ContactAssociatedChannelResponse?, Error?) -> Void)) -> Void)?
+    var registerSMSCallback: ((String, String, SMSRegistrationOptions, ((ContactAssociatedChannelResponse?, Error?) -> Void)) -> Void)?
+    var registerOpenCallback: ((String, String, OpenRegistrationOptions, ((ContactAssociatedChannelResponse?, Error?) -> Void)) -> Void)?
     var fetchSubscriptionListsCallback: ((String, ((ContactSubscriptionListFetchResponse?, Error?) -> Void)) -> Void)?
     var defaultCallback: ((String) -> Void)?
     init() {}
@@ -61,17 +61,17 @@ public class TestContactAPIClient : ContactsAPIClientProtocol {
         return Disposable()
     }
     
-    public func update(identifier: String, channels: [AssociatedChannel]?, completionHandler: @escaping (HTTPResponse?, Error?) -> Void) -> Disposable {
-        if let callback = updateChannelCallback {
-            callback(identifier, channels, completionHandler)
+    public func associateChannel(identifier: String, channelID: String, channelType: ChannelType, completionHandler: @escaping (ContactAssociatedChannelResponse?, Error?) -> Void) -> Disposable {
+        if let callback = associateChannelCallback {
+            callback(identifier, channelID, channelType, completionHandler)
         } else {
-            defaultCallback?("update")
+            defaultCallback?("associateChannel")
         }
         
         return Disposable()
     }
     
-    public func registerEmail(identifier: String, address: String, options: EmailRegistrationOptions, completionHandler: @escaping (ContactChannelRegistrationResponse?, Error?) -> Void) -> Disposable {
+    public func registerEmail(identifier: String, address: String, options: EmailRegistrationOptions, completionHandler: @escaping (ContactAssociatedChannelResponse?, Error?) -> Void) -> Disposable {
         if let callback = registerEmailCallback {
             callback(identifier, address, options, completionHandler)
         } else {
@@ -81,7 +81,7 @@ public class TestContactAPIClient : ContactsAPIClientProtocol {
         return Disposable()
     }
     
-    public func registerSMS(identifier: String, msisdn: String, options: SMSRegistrationOptions, completionHandler: @escaping (ContactChannelRegistrationResponse?, Error?) -> Void) -> Disposable {
+    public func registerSMS(identifier: String, msisdn: String, options: SMSRegistrationOptions, completionHandler: @escaping (ContactAssociatedChannelResponse?, Error?) -> Void) -> Disposable {
         if let callback = registerSMSCallback {
             callback(identifier, msisdn, options, completionHandler)
         } else {
@@ -91,7 +91,7 @@ public class TestContactAPIClient : ContactsAPIClientProtocol {
         return Disposable()
     }
     
-    public func registerOpen(identifier: String, address: String, options: OpenRegistrationOptions, completionHandler: @escaping (ContactChannelRegistrationResponse?, Error?) -> Void) -> Disposable {
+    public func registerOpen(identifier: String, address: String, options: OpenRegistrationOptions, completionHandler: @escaping (ContactAssociatedChannelResponse?, Error?) -> Void) -> Disposable {
         if let callback = registerOpenCallback {
             callback(identifier, address, options, completionHandler)
         } else {

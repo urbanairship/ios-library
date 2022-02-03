@@ -21,18 +21,19 @@ protocol ContactsAPIClientProtocol {
                 completionHandler: @escaping (HTTPResponse?, Error?) -> Void) -> Disposable
     
     @discardableResult
-    func update(identifier: String,
-                channels: [AssociatedChannel]?,
-                completionHandler: @escaping (HTTPResponse?, Error?) -> Void) -> Disposable
+    func associateChannel(identifier: String,
+                          channelID: String,
+                          channelType: ChannelType,
+                          completionHandler: @escaping (ContactAssociatedChannelResponse?, Error?) -> Void) -> Disposable
     
     @discardableResult
-    func registerEmail(identifier:String, address: String, options: EmailRegistrationOptions, completionHandler: @escaping (ContactChannelRegistrationResponse?, Error?) -> Void) -> Disposable
+    func registerEmail(identifier:String, address: String, options: EmailRegistrationOptions, completionHandler: @escaping (ContactAssociatedChannelResponse?, Error?) -> Void) -> Disposable
     
     @discardableResult
-    func registerSMS(identifier:String, msisdn: String, options: SMSRegistrationOptions, completionHandler: @escaping (ContactChannelRegistrationResponse?, Error?) -> Void) -> Disposable
+    func registerSMS(identifier:String, msisdn: String, options: SMSRegistrationOptions, completionHandler: @escaping (ContactAssociatedChannelResponse?, Error?) -> Void) -> Disposable
     
     @discardableResult
-    func registerOpen(identifier:String, address: String, options: OpenRegistrationOptions, completionHandler: @escaping (ContactChannelRegistrationResponse?, Error?) -> Void) -> Disposable
+    func registerOpen(identifier:String, address: String, options: OpenRegistrationOptions, completionHandler: @escaping (ContactAssociatedChannelResponse?, Error?) -> Void) -> Disposable
 
     @discardableResult
     func fetchSubscriptionLists(_ identifier: String, completionHandler: @escaping (ContactSubscriptionListFetchResponse?, Error?) -> Void) -> Disposable;
@@ -274,47 +275,47 @@ class ContactAPIClient : ContactsAPIClientProtocol {
     }
     
     @discardableResult
-    func update(identifier: String,
-                channels: [AssociatedChannel]?,
-                completionHandler: @escaping (HTTPResponse?, Error?) -> Void) -> Disposable {
+    func associateChannel(identifier: String,
+                          channelID: String,
+                          channelType: ChannelType,
+                          completionHandler: @escaping (ContactAssociatedChannelResponse?, Error?) -> Void) -> Disposable {
 
-        AirshipLogger.debug("Updating contact with identifier \(identifier)")
-        
-        var associatesPayload: [Any] = []
-        
-        if let channels = channels {
-            for channel in channels {
-                let channelPayload: [String : Any] = [
-                    ContactAPIClient.deviceTypeKey: channel.channelType.stringValue,
-                    ContactAPIClient.channelIDKey: channel.channelID
-                ]
-                associatesPayload.append(channelPayload)
-            }
-        }
+        AirshipLogger.debug("Associtiate channel \(channelID) with contact \(identifier)")
             
         let payload: [String: Any] = [
-            ContactAPIClient.associateKey: associatesPayload
+            ContactAPIClient.associateKey: [
+                [
+                    ContactAPIClient.deviceTypeKey: channelType.stringValue,
+                    ContactAPIClient.channelIDKey: channelID
+                ]
+            ]
         ]
         
         let request = self.request(payload, "\(config.deviceAPIURL ?? "")/api/contacts/\(identifier)")
 
-        return session.performHTTPRequest(request, completionHandler: { (data, response, error) in
+        return session.performHTTPRequest(request) { data, response, error in
             guard let response = response else {
-                AirshipLogger.debug("Update finished with error: \(error.debugDescription)")
+                AirshipLogger.debug("Associtate channel finished with error: \(error.debugDescription)")
                 completionHandler(nil, error)
                 return
             }
-
-            AirshipLogger.debug("Update finished with response: \(response)")
-            completionHandler(HTTPResponse(status: response.statusCode), nil)
-        })
+            AirshipLogger.debug("Associtate channel finished with response: \(response)")
+            if (response.statusCode == 200) {
+                let channel = AssociatedChannel(channelType: channelType, channelID: channelID)
+                let regResponse = ContactAssociatedChannelResponse(status: response.statusCode, channel: channel)
+                completionHandler(regResponse, nil)
+            } else {
+                let regResponse = ContactAssociatedChannelResponse(status: response.statusCode)
+                completionHandler(regResponse, nil)
+            }
+        }
     }
     
     @discardableResult
     func registerEmail(identifier: String,
                        address: String,
                        options: EmailRegistrationOptions,
-                       completionHandler: @escaping (ContactChannelRegistrationResponse?, Error?) -> Void) -> Disposable {
+                       completionHandler: @escaping (ContactAssociatedChannelResponse?, Error?) -> Void) -> Disposable {
         
         let currentLocale = self.localeManager.currentLocale
         
@@ -326,19 +327,15 @@ class ContactAPIClient : ContactsAPIClientProtocol {
             ContactAPIClient.localeLanguageKey: currentLocale.languageCode ?? ""
         ]
         
-        let actualDate = Utils.isoDateFormatterUTCWithDelimiter().string(from:Date())
-        if (options.transactionalOptedIn) {
-            channelPayload[ContactAPIClient.transactionalOptedInKey] = actualDate
-        } else {
-            channelPayload[ContactAPIClient.transactionalOptedOutKey] = actualDate
+        let formatter = Utils.isoDateFormatterUTCWithDelimiter()
+        if let transactionalOptedIn = options.transactionalOptedIn {
+            channelPayload[ContactAPIClient.transactionalOptedInKey] = formatter.string(from:transactionalOptedIn)
         }
         
-        if (options.commercialOptedIn) {
-            channelPayload[ContactAPIClient.commercialOptedInKey] = actualDate
-        } else {
-            channelPayload[ContactAPIClient.commercialOptedOutKey] = actualDate
+        if let commercialOptedIn = options.commercialOptedIn {
+            channelPayload[ContactAPIClient.commercialOptedInKey] = formatter.string(from:commercialOptedIn)
         }
-        
+                
         var payload: [String : Any] = [
             ContactAPIClient.channelKey: channelPayload,
             ContactAPIClient.optInModeKey: options.doubleOptIn ? "double" : "classic"
@@ -362,7 +359,7 @@ class ContactAPIClient : ContactsAPIClientProtocol {
     func registerSMS(identifier: String,
                      msisdn: String,
                      options: SMSRegistrationOptions,
-                     completionHandler: @escaping (ContactChannelRegistrationResponse?, Error?) -> Void) -> Disposable {
+                     completionHandler: @escaping (ContactAssociatedChannelResponse?, Error?) -> Void) -> Disposable {
         
         let currentLocale = self.localeManager.currentLocale
         let payload: [String : Any] = [
@@ -371,7 +368,6 @@ class ContactAPIClient : ContactsAPIClientProtocol {
             ContactAPIClient.timezoneKey: TimeZone.current.identifier,
             ContactAPIClient.localeCountryKey: currentLocale.regionCode ?? "",
             ContactAPIClient.localeLanguageKey: currentLocale.languageCode ?? "",
-            ContactAPIClient.optedInKey: Utils.isoDateFormatterUTCWithDelimiter().string(from:Date())
         ]
         
         let request = self.request(payload, "\(config.deviceAPIURL ?? "")\(ContactAPIClient.channelsPath)/restricted/sms")
@@ -384,33 +380,21 @@ class ContactAPIClient : ContactsAPIClientProtocol {
     }
     
     @discardableResult
-    func registerOpen(identifier: String, address: String, options: OpenRegistrationOptions, completionHandler: @escaping (ContactChannelRegistrationResponse?, Error?) -> Void) -> Disposable {
+    func registerOpen(identifier: String, address: String, options: OpenRegistrationOptions, completionHandler: @escaping (ContactAssociatedChannelResponse?, Error?) -> Void) -> Disposable {
         let currentLocale = self.localeManager.currentLocale
-        var channelPayload: [String : Any] = [
-            ContactAPIClient.typeKey: "open",
-            ContactAPIClient.addressKey: address,
-            ContactAPIClient.timezoneKey: TimeZone.current.identifier,
-            ContactAPIClient.localeCountryKey: currentLocale.regionCode ?? "",
-            ContactAPIClient.localeLanguageKey: currentLocale.languageCode ?? "",
-            ContactAPIClient.optInKey: true
-        ]
-        
-        var openPayload: [String : Any] = [
-            ContactAPIClient.openPlatformName: options.platformName
-        ]
-        
-        if let identifiers = options.identifiers {
-            var identifiersPayload: [String : Any] = [:]
-            for (key, value) in identifiers {
-                identifiersPayload[key] = value
-            }
-            openPayload[ContactAPIClient.identifiersKey] = identifiersPayload
-        }
-        
-        channelPayload[ContactAPIClient.openKey] = openPayload
-        
         let payload: [String : Any] = [
-            ContactAPIClient.channelKey: channelPayload
+            ContactAPIClient.channelKey: [
+                ContactAPIClient.typeKey: "open",
+                ContactAPIClient.addressKey: address,
+                ContactAPIClient.timezoneKey: TimeZone.current.identifier,
+                ContactAPIClient.localeCountryKey: currentLocale.regionCode ?? "",
+                ContactAPIClient.localeLanguageKey: currentLocale.languageCode ?? "",
+                ContactAPIClient.optInKey: true,
+                ContactAPIClient.openKey: [
+                    ContactAPIClient.openPlatformName: options.platformName,
+                    ContactAPIClient.identifiersKey: identifier
+                ]
+            ]
         ]
         
         let request = self.request(payload, "\(config.deviceAPIURL ?? "")\(ContactAPIClient.channelsPath)/restricted/open")
@@ -425,7 +409,7 @@ class ContactAPIClient : ContactsAPIClientProtocol {
     private func registerChannel(_ identifier: String,
                                  request: Request,
                                  channelType: ChannelType,
-                                 completionHandler: @escaping (ContactChannelRegistrationResponse?, Error?) -> Void) -> Disposable {
+                                 completionHandler: @escaping (ContactAssociatedChannelResponse?, Error?) -> Void) -> Disposable {
         
         let lock = Lock()
         var requestDisposable: Disposable? = nil
@@ -447,7 +431,7 @@ class ContactAPIClient : ContactsAPIClientProtocol {
 
             AirshipLogger.debug("Contact channel \(channelType) created with response: \(response)")
             guard response.statusCode == 200 else {
-                let regResponse = ContactChannelRegistrationResponse(status: response.statusCode)
+                let regResponse = ContactAssociatedChannelResponse(status: response.statusCode)
                 completionHandler(regResponse, nil)
                 return
             }
@@ -462,19 +446,10 @@ class ContactAPIClient : ContactsAPIClientProtocol {
                     if (isDisposed) {
                         completionHandler(nil, AirshipErrors.error("cancelled"))
                     } else {
-                        let channel = AssociatedChannel(channelType: channelType, channelID: channelID)
-                        
-                        requestDisposable = self.update(identifier: identifier,
-                                                        channels: [channel]) { response, error in
-                            guard let response = response else {
-                                completionHandler(nil, error)
-                                return
-                            }
-                            
-                            let regResponse = ContactChannelRegistrationResponse(status: response.status,
-                                                                                 channel: response.isSuccess ? channel : nil)
-                            completionHandler(regResponse, nil)
-                        }
+                        requestDisposable = self.associateChannel(identifier: identifier,
+                                                                  channelID: channelID,
+                                                                  channelType: channelType,
+                                                                  completionHandler: completionHandler)
                     }
                 }
             } catch {
@@ -626,7 +601,7 @@ class ContactAPIClient : ContactsAPIClientProtocol {
 }
 
 
-class ContactChannelRegistrationResponse : HTTPResponse {
+class ContactAssociatedChannelResponse : HTTPResponse {
 
     public let channel: AssociatedChannel?
 

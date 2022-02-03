@@ -11,12 +11,12 @@ public class EmailRegistrationOptions : NSObject, Codable {
     /**
      * Transactional opted-in value
      */
-    let transactionalOptedIn: Bool
+    let transactionalOptedIn: Date?
     
     /**
      * Commercial opted-in value
      */
-    let commercialOptedIn: Bool
+    let commercialOptedIn: Date?
     
     /**
      * Properties
@@ -28,7 +28,7 @@ public class EmailRegistrationOptions : NSObject, Codable {
      */
     let doubleOptIn: Bool
     
-    private init(transactionalOptedIn: Bool, commercialOptedIn: Bool, properties: Any?, doubleOptIn: Bool) {
+    private init(transactionalOptedIn: Date?, commercialOptedIn: Date? = nil, properties: [String: Any]?, doubleOptIn: Bool = false) {
         self.transactionalOptedIn = transactionalOptedIn
         self.commercialOptedIn = commercialOptedIn
         self.properties = JsonValue(value: properties)
@@ -38,20 +38,26 @@ public class EmailRegistrationOptions : NSObject, Codable {
     /// Returns an Email registration options with double opt-in value to false
     /// - Parameter transactionalOptedIn: The transactional opted-in value
     /// - Parameter commercialOptedIn: The commercial opted-in value
-    /// - Parameter properties: The properties
+    /// - Parameter properties: The properties. They must be JSON serializable.
     /// - Returns: An Email registration options.
     @objc
-    public static func commercialOptIn(transactionalOptedIn: Bool, commercialOptedIn: Bool, properties: Any?) -> EmailRegistrationOptions {
-        return EmailRegistrationOptions(transactionalOptedIn: transactionalOptedIn, commercialOptedIn: commercialOptedIn, properties: properties, doubleOptIn: false)
+    public static func commercialOptions(transactionalOptedIn: Date?,
+                                         commercialOptedIn: Date?,
+                                         properties: [String: Any]?) -> EmailRegistrationOptions {
+        return EmailRegistrationOptions(transactionalOptedIn: transactionalOptedIn,
+                                        commercialOptedIn: commercialOptedIn,
+                                        properties: properties)
     }
     
     /// Returns an Email registration options with commercial opted-in value to false
     /// - Parameter transactionalOptedIn: The transactional opted-in value
-    /// - Parameter properties: The properties
+    /// - Parameter properties: The properties. They must be JSON serializable.
     /// - Parameter doubleOptIn: The double opt-in value
     /// - Returns: An Email registration options.
     @objc
-    public static func optIn(transactionalOptedIn: Bool, properties: Any?, doubleOptIn: Bool) -> EmailRegistrationOptions {
-        return EmailRegistrationOptions(transactionalOptedIn: transactionalOptedIn, commercialOptedIn: false, properties: properties, doubleOptIn: doubleOptIn)
+    public static func options(transactionalOptedIn: Date?, properties: [String: Any]?, doubleOptIn: Bool) -> EmailRegistrationOptions {
+        return EmailRegistrationOptions(transactionalOptedIn: transactionalOptedIn,
+                                        properties: properties,
+                                        doubleOptIn: doubleOptIn)
     }
 }

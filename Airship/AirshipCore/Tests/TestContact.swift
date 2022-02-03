@@ -23,8 +23,6 @@ public class TestContact : NSObject, ContactProtocol, Component {
     public var subscriptionListEditor : ScopedSubscriptionListEditor?
     
     
-    
-    
     public func identify(_ namedUserID: String) {
         self.namedUserID = namedUserID
     }
@@ -62,6 +60,10 @@ public class TestContact : NSObject, ContactProtocol, Component {
     }
     
     public func registerOpen(_ address: String, options: OpenRegistrationOptions) {
+        // TODO
+    }
+    
+    public func associateChannel(_ channelID: String, type: ChannelType) {
         // TODO
     }
     

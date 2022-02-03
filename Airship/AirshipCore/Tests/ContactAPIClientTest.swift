@@ -88,8 +88,7 @@ class ContactAPIClientTest: XCTestCase {
         """.data(using: .utf8)
         
         let expectation = XCTestExpectation(description: "callback called")
-        
-        contactAPIClient.registerEmail(identifier: "some-contact-id", address: "ua@airship.com", options: EmailRegistrationOptions.optIn(transactionalOptedIn: true, properties: ["interests" : "newsletter"], doubleOptIn: true)) { response, error in
+        contactAPIClient.registerEmail(identifier: "some-contact-id", address: "ua@airship.com", options: EmailRegistrationOptions.options(transactionalOptedIn: Date(), properties: ["interests" : "newsletter"], doubleOptIn: true)) { response, error in
             XCTAssertEqual(response?.status, 200)
             XCTAssertNil(error)
             XCTAssertEqual("56779", response?.channel?.channelID)
@@ -134,6 +133,19 @@ class ContactAPIClientTest: XCTestCase {
             XCTAssertNil(error)
             XCTAssertEqual("56779", response?.channel?.channelID)
             XCTAssertEqual(.open, response?.channel?.channelType)
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: 10.0)
+    }
+    
+    func testAssociateChannel() throws {
+        let expectation = XCTestExpectation(description: "callback called")
+        contactAPIClient.associateChannel(identifier: "some-contact-id", channelID: "some-channel", channelType: .sms) { response, error in
+            XCTAssertEqual(response?.status, 200)
+            XCTAssertNil(error)
+            XCTAssertEqual("some-channel", response?.channel?.channelID)
+            XCTAssertEqual(.sms, response?.channel?.channelType)
             expectation.fulfill()
         }
         

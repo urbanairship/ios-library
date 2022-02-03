@@ -95,6 +95,15 @@ public protocol ContactProtocol {
      */
     @objc
     func registerOpen(_ address: String, options: OpenRegistrationOptions)
+    
+    /**
+     * Associates a channel to the contact.
+     * - Parameters:
+     *   - channelID: The channel ID.
+     *   - type: The channel type.
+     */
+    @objc
+    func associateChannel(_ channelID: String, type: ChannelType)
 
     /// Begins a subscription list editing session
     /// - Returns: A Scoped subscription list editor
@@ -509,7 +518,13 @@ public class Contact : NSObject, Component, ContactProtocol {
         editorBlock(editor)
         editor.apply()
     }
-    
+
+    /**
+     * Associates an Email channel to the contact.
+     * - Parameters:
+     *   - address: The email address.
+     *   - options: The email channel registration options.
+     */
     public func registerEmail(_ address: String, options: EmailRegistrationOptions) {
         guard self.privacyManager.isEnabled(.contacts) else {
             AirshipLogger.warn("Contacts disabled. Enable to associate Email channel.")
@@ -521,6 +536,12 @@ public class Contact : NSObject, Component, ContactProtocol {
         self.enqueueTask()
     }
     
+    /**
+     * Associates a SMS channel to the contact.
+     * - Parameters:
+     *   - msisdn: The SMS msisdn.
+     *   - options: The SMS channel registration options.
+     */
     public func registerSMS(_ msisdn: String, options: SMSRegistrationOptions) {
         guard self.privacyManager.isEnabled(.contacts) else {
             AirshipLogger.warn("Contacts disabled. Enable to associate SMS channel.")
@@ -532,6 +553,9 @@ public class Contact : NSObject, Component, ContactProtocol {
         self.enqueueTask()
     }
     
+    /// Associates an open channel to the contact.
+    /// - Parameter address: The open channel address.
+    /// - Parameter options: The open channel registration options.
     public func registerOpen(_ address: String, options: OpenRegistrationOptions) {
         guard self.privacyManager.isEnabled(.contacts) else {
             AirshipLogger.warn("Contacts disabled. Enable to associate Open channel.")
@@ -540,6 +564,24 @@ public class Contact : NSObject, Component, ContactProtocol {
         
         self.addOperation(ContactOperation.resolve())
         self.addOperation(ContactOperation.registerOpen(address, options: options))
+        self.enqueueTask()
+    }
+
+    /**
+     * Associates a channel to the contact.
+     * - Parameters:
+     *   - channelID: The channel ID.
+     *   - type: The channel type.
+     */
+    @objc
+    public func associateChannel(_ channelID: String, type: ChannelType) {
+        guard self.privacyManager.isEnabled(.contacts) else {
+            AirshipLogger.warn("Contacts disabled. Enable to associate channel.")
+            return
+        }
+        
+        self.addOperation(ContactOperation.resolve())
+        self.addOperation(ContactOperation.associateChannel(channelID, type: type))
         self.enqueueTask()
     }
 
@@ -838,6 +880,21 @@ public class Contact : NSObject, Component, ContactProtocol {
                 completionHandler(response)
             }
             
+        case .associateChannel:
+            guard let contactInfo = self.lastContactInfo, let payload = operation.payload as? AssociateChannelPayload else {
+                self.removeFirstOperation()
+                completionHandler(nil)
+                return nil
+            }
+            
+            return self.contactAPIClient.associateChannel(identifier: contactInfo.contactID,
+                                                          channelID: payload.channelID,
+                                                          channelType: payload.channelType) { response, error in
+                Contact.logOperationResult(operation: operation, response: response, error: error)
+                self.processChannelRegistration(response)
+                completionHandler(response)
+            }
+            
         }
     }
     
@@ -868,7 +925,9 @@ public class Contact : NSObject, Component, ContactProtocol {
             
         case .registerOpen:
             return false
-            
+
+        case .associateChannel:
+            return false
         }
         
     }
@@ -948,10 +1007,11 @@ public class Contact : NSObject, Component, ContactProtocol {
         }
     }
         
-    private func processChannelRegistration(_ response: ContactChannelRegistrationResponse?) {
-        guard response?.isSuccess == true, let channel = response?.channel else {
+    private func processChannelRegistration(_ response: ContactAssociatedChannelResponse?) {
+        guard response?.isSuccess == true, let channel = response?.channel, lastContactInfo?.isAnonymous == true else {
             return
         }
+        
         updateAnonData(channel: channel)
     }
     

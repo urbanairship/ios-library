@@ -11,6 +11,7 @@ enum OperationType : String, Codable {
     case registerEmail
     case registerSMS
     case registerOpen
+    case associateChannel
 }
 
 // NOTE: For internal use only. :nodoc:
@@ -45,6 +46,8 @@ struct ContactOperation: Codable {
             try container.encode(payload as! RegisterSMSPayload, forKey: .payload)
         case .registerOpen:
             try container.encode(payload as! RegisterOpenPayload, forKey: .payload)
+        case .associateChannel:
+            try container.encode(payload as! AssociateChannelPayload, forKey: .payload)
         case .reset:
             try container.encodeNil(forKey: .payload)
         case .resolve:
@@ -67,6 +70,8 @@ struct ContactOperation: Codable {
             self.payload = try container.decode(RegisterSMSPayload.self, forKey: .payload)
         case .registerOpen:
             self.payload = try container.decode(RegisterOpenPayload.self, forKey: .payload)
+        case .associateChannel:
+            self.payload = try container.decode(AssociateChannelPayload.self, forKey: .payload)
         case .resolve:
             self.payload = nil
         case .reset:
@@ -115,6 +120,10 @@ struct ContactOperation: Codable {
     static func registerOpen(_ address: String, options: OpenRegistrationOptions) -> ContactOperation {
         return ContactOperation(type: .registerOpen, payload: RegisterOpenPayload(address: address, options: options))
     }
+    
+    static func associateChannel(_ channelID: String, type: ChannelType) -> ContactOperation {
+        return ContactOperation(type: .associateChannel, payload: AssociateChannelPayload(channelID: channelID, channelType: type))
+    }
 }
 
 struct UpdatePayload : Codable {
@@ -140,5 +149,10 @@ struct RegisterOpenPayload : Codable {
 
 struct IdentifyPayload : Codable {
     var identifier: String
+}
+
+struct AssociateChannelPayload : Codable {
+    var channelID: String
+    var channelType: ChannelType
 }
 

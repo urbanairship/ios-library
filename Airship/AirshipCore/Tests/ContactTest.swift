@@ -296,7 +296,7 @@ class ContactTest: XCTestCase {
     }
     
     func testRegisterEmail() throws {
-        self.contact.registerEmail("ua@airship.com", options: EmailRegistrationOptions.optIn(transactionalOptedIn: true, properties: ["interests" : "newsletter"], doubleOptIn: true))
+        self.contact.registerEmail("ua@airship.com", options: EmailRegistrationOptions.options(transactionalOptedIn: Date(), properties: ["interests" : "newsletter"], doubleOptIn: true))
         
         // Should resolve first
         let resolve = XCTestExpectation(description: "resolve contact")
@@ -318,7 +318,7 @@ class ContactTest: XCTestCase {
             XCTAssertEqual("ua@airship.com", address)
             XCTAssertNotNil(options)
             let channel = AssociatedChannel(channelType: .email, channelID: "some-channel-id")
-            callback(ContactChannelRegistrationResponse(status: 200, channel: channel), nil)
+            callback(ContactAssociatedChannelResponse(status: 200, channel: channel), nil)
             expectation.fulfill()
         }
         
@@ -327,7 +327,7 @@ class ContactTest: XCTestCase {
     }
     
     func testRegisterEmailFailed() throws {
-        self.contact.registerEmail("ua@airship.com", options: EmailRegistrationOptions.optIn(transactionalOptedIn: true, properties: ["interests" : "newsletter"], doubleOptIn: true))
+        self.contact.registerEmail("ua@airship.com", options: EmailRegistrationOptions.options(transactionalOptedIn: Date(), properties: ["interests" : "newsletter"], doubleOptIn: true))
         
         // Should resolve first
         let resolve = XCTestExpectation(description: "resolve contact")
@@ -345,7 +345,7 @@ class ContactTest: XCTestCase {
         // Then register email
         let expectation = XCTestExpectation(description: "callback called")
         self.apiClient.registerEmailCallback = { identifier, address, options, callback in
-            callback(ContactChannelRegistrationResponse(status: 500), nil)
+            callback(ContactAssociatedChannelResponse(status: 500), nil)
             expectation.fulfill()
         }
         
@@ -376,7 +376,7 @@ class ContactTest: XCTestCase {
             XCTAssertEqual("15035556789", msisdn)
             XCTAssertNotNil(options)
             let channel = AssociatedChannel(channelType: .sms, channelID: "some-channel-id")
-            callback(ContactChannelRegistrationResponse(status: 200, channel: channel), nil)
+            callback(ContactAssociatedChannelResponse(status: 200, channel: channel), nil)
             expectation.fulfill()
         }
         
@@ -403,7 +403,7 @@ class ContactTest: XCTestCase {
         // Then register sms
         let expectation = XCTestExpectation(description: "callback called")
         self.apiClient.registerSMSCallback = { identifier, msisdn, options, callback in
-            callback(ContactChannelRegistrationResponse(status: 500), nil)
+            callback(ContactAssociatedChannelResponse(status: 500), nil)
             expectation.fulfill()
         }
         
@@ -434,7 +434,7 @@ class ContactTest: XCTestCase {
             XCTAssertEqual("open_address", address)
             XCTAssertNotNil(options)
             let channel = AssociatedChannel(channelType: .email, channelID: "some-channel-id")
-            callback(ContactChannelRegistrationResponse(status: 200, channel: channel), nil)
+            callback(ContactAssociatedChannelResponse(status: 200, channel: channel), nil)
             expectation.fulfill()
         }
         
@@ -461,10 +461,68 @@ class ContactTest: XCTestCase {
         // Then register email
         let expectation = XCTestExpectation(description: "callback called")
         self.apiClient.registerOpenCallback = { identifier, address, options, callback in
-            callback(ContactChannelRegistrationResponse(status: 500), nil)
+            callback(ContactAssociatedChannelResponse(status: 500), nil)
             expectation.fulfill()
         }
         
+        XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).failed)
+        wait(for: [expectation], timeout: 10.0)
+    }
+    
+    func testAssociateChannel() throws {
+        self.contact.associateChannel("some-channel-id", type: .email)
+        
+        // Should resolve first
+        let resolve = XCTestExpectation(description: "resolve contact")
+        self.apiClient.resolveCallback = { channelID, callback in
+            XCTAssertEqual("channel id", channelID)
+            callback(ContactAPIResponse(status: 200, contactID: "some-contact-id", isAnonymous: true), nil)
+            resolve.fulfill()
+        }
+
+        XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).completed)
+        wait(for: [resolve], timeout: 10.0)
+        
+        XCTAssertEqual(2, self.taskManager.enqueuedRequests.count)
+        
+        // Then associate
+        let expectation = XCTestExpectation(description: "callback called")
+        self.apiClient.associateChannelCallback = { identifier, channelID, channelType, callback in
+            XCTAssertEqual("some-contact-id", identifier)
+            XCTAssertEqual("some-channel-id", channelID)
+            XCTAssertEqual(.email, channelType)
+            let channel = AssociatedChannel(channelType: .email, channelID: "some-channel-id")
+            callback(ContactAssociatedChannelResponse(status: 200, channel: channel), nil)
+            expectation.fulfill()
+        }
+        
+        XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).completed)
+        wait(for: [expectation], timeout: 10.0)
+    }
+    
+    func testAssociateChannelFailed() throws {
+        self.contact.associateChannel("some-channel-id", type: .email)
+        
+        // Should resolve first
+        let resolve = XCTestExpectation(description: "resolve contact")
+        self.apiClient.resolveCallback = { channelID, callback in
+            XCTAssertEqual("channel id", channelID)
+            callback(ContactAPIResponse(status: 200, contactID: "some-contact-id", isAnonymous: true), nil)
+            resolve.fulfill()
+        }
+
+        XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).completed)
+        wait(for: [resolve], timeout: 10.0)
+        
+        XCTAssertEqual(2, self.taskManager.enqueuedRequests.count)
+        
+        // Then associate
+        let expectation = XCTestExpectation(description: "callback called")
+        self.apiClient.associateChannelCallback = { identifier, channelID, channelType, callback in
+            callback(ContactAssociatedChannelResponse(status: 500), nil)
+            expectation.fulfill()
+        }
+
         XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).failed)
         wait(for: [expectation], timeout: 10.0)
     }
