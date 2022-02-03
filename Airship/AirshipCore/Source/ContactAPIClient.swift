@@ -21,21 +21,19 @@ protocol ContactsAPIClientProtocol {
                 completionHandler: @escaping (HTTPResponse?, Error?) -> Void) -> Disposable
     
     @discardableResult
-    func registerEmail(emailOptIn: [EmailOptIn], address: String, completionHandler: @escaping (ChannelCreateResponse?, Error?) -> Void) -> Disposable
+    func update(identifier: String,
+                channels: [AssociatedChannel]?,
+                completionHandler: @escaping (HTTPResponse?, Error?) -> Void) -> Disposable
     
     @discardableResult
-    func registerSms(msisdn: String, sender: String, optedIn: Bool, completionHandler: @escaping (ChannelCreateResponse?, Error?) -> Void) -> Disposable
+    func registerEmail(identifier:String, address: String, options: EmailRegistrationOptions, completionHandler: @escaping (ContactChannelRegistrationResponse?, Error?) -> Void) -> Disposable
     
     @discardableResult
-    func updateEmail(channelID: String, emailOptIn: [EmailOptIn], address: String, completionHandler: @escaping (ChannelCreateResponse?, Error?) -> Void) -> Disposable
+    func registerSMS(identifier:String, msisdn: String, options: SMSRegistrationOptions, completionHandler: @escaping (ContactChannelRegistrationResponse?, Error?) -> Void) -> Disposable
     
     @discardableResult
-    func updateSms(channelID: String, msisdn: String, sender: String, optedIn: Bool, completionHandler: @escaping (ChannelCreateResponse?, Error?) -> Void) -> Disposable
-    
-    @discardableResult
-    func optOutSms(msisdn: String, sender: String, completionHandler: @escaping (ChannelCreateResponse?, Error?) -> Void) -> Disposable
-    
-    
+    func registerOpen(identifier:String, address: String, options: OpenRegistrationOptions, completionHandler: @escaping (ContactChannelRegistrationResponse?, Error?) -> Void) -> Disposable
+
     @discardableResult
     func fetchSubscriptionLists(_ identifier: String, completionHandler: @escaping (ContactSubscriptionListFetchResponse?, Error?) -> Void) -> Disposable;
 }
@@ -53,10 +51,12 @@ class ContactAPIClient : ContactsAPIClientProtocol {
     private static let deviceTypeKey = "device_type"
     private static let channelKey = "channel"
     private static let typeKey = "type"
-    private static let commercialOptInKey = "commercial_opted_in"
-    private static let commercialOptOutKey = "commercial_opted_out"
-    private static let transactionalOptInKey = "transactional_opted_in"
-    private static let transactionalOptOutKey = "transactional_opted_out"
+    private static let commercialOptedInKey = "commercial_opted_in"
+    private static let commercialOptedOutKey = "commercial_opted_out"
+    private static let transactionalOptedInKey = "transactional_opted_in"
+    private static let transactionalOptedOutKey = "transactional_opted_out"
+    private static let optInModeKey = "opt_in_mode"
+    private static let propertiesKey = "properties"
     private static let addressKey = "address"
     private static let msisdnKey = "msisdn"
     private static let senderKey = "sender"
@@ -64,8 +64,12 @@ class ContactAPIClient : ContactsAPIClientProtocol {
     private static let timezoneKey = "timezone"
     private static let localeCountryKey = "locale_country"
     private static let localeLanguageKey = "locale_language"
+    private static let identifiersKey = "identifiers"
+    private static let openKey = "open"
+    private static let openPlatformName = "open_platform_name"
+    private static let optInKey = "opt_in"
+    private static let associateKey = "associate"
     
-
     private let config: RuntimeConfig
     private let session: RequestSession
     private let localeManager: LocaleManager
@@ -79,9 +83,7 @@ class ContactAPIClient : ContactsAPIClientProtocol {
     init(config: RuntimeConfig, session: RequestSession) {
         self.config = config
         self.session = session
-        
         self.localeManager = LocaleManager(dataStore: PreferenceDataStore(appKey: config.appKey))
-        
     }
 
     convenience init(config: RuntimeConfig) {
@@ -272,13 +274,51 @@ class ContactAPIClient : ContactsAPIClientProtocol {
     }
     
     @discardableResult
-    func registerEmail(emailOptIn: [EmailOptIn], address: String, completionHandler: @escaping (ChannelCreateResponse?, Error?) -> Void) -> Disposable {
-        
-        AirshipLogger.debug("Creating an Email channel with address \(address)")
+    func update(identifier: String,
+                channels: [AssociatedChannel]?,
+                completionHandler: @escaping (HTTPResponse?, Error?) -> Void) -> Disposable {
 
+        AirshipLogger.debug("Updating contact with identifier \(identifier)")
+        
+        var associatesPayload: [Any] = []
+        
+        if let channels = channels {
+            for channel in channels {
+                let channelPayload: [String : Any] = [
+                    ContactAPIClient.deviceTypeKey: channel.channelType.stringValue,
+                    ContactAPIClient.channelIDKey: channel.channelID
+                ]
+                associatesPayload.append(channelPayload)
+            }
+        }
+            
+        let payload: [String: Any] = [
+            ContactAPIClient.associateKey: associatesPayload
+        ]
+        
+        let request = self.request(payload, "\(config.deviceAPIURL ?? "")/api/contacts/\(identifier)")
+
+        return session.performHTTPRequest(request, completionHandler: { (data, response, error) in
+            guard let response = response else {
+                AirshipLogger.debug("Update finished with error: \(error.debugDescription)")
+                completionHandler(nil, error)
+                return
+            }
+
+            AirshipLogger.debug("Update finished with response: \(response)")
+            completionHandler(HTTPResponse(status: response.statusCode), nil)
+        })
+    }
+    
+    @discardableResult
+    func registerEmail(identifier: String,
+                       address: String,
+                       options: EmailRegistrationOptions,
+                       completionHandler: @escaping (ContactChannelRegistrationResponse?, Error?) -> Void) -> Disposable {
+        
         let currentLocale = self.localeManager.currentLocale
         
-        var channel: [String : String] = [
+        var channelPayload: [String : Any] = [
             ContactAPIClient.typeKey: "email",
             ContactAPIClient.addressKey: address,
             ContactAPIClient.timezoneKey: TimeZone.current.identifier,
@@ -286,236 +326,173 @@ class ContactAPIClient : ContactsAPIClientProtocol {
             ContactAPIClient.localeLanguageKey: currentLocale.languageCode ?? ""
         ]
         
-        for optIn in emailOptIn {
-            channel[optIn.getEmailType()] = Utils.isoDateFormatterUTCWithDelimiter().string(from:Date())
+        let actualDate = Utils.isoDateFormatterUTCWithDelimiter().string(from:Date())
+        if (options.transactionalOptedIn) {
+            channelPayload[ContactAPIClient.transactionalOptedInKey] = actualDate
+        } else {
+            channelPayload[ContactAPIClient.transactionalOptedOutKey] = actualDate
         }
         
-        let payload: [String : [String : String]] = [
-            ContactAPIClient.channelKey: channel
+        if (options.commercialOptedIn) {
+            channelPayload[ContactAPIClient.commercialOptedInKey] = actualDate
+        } else {
+            channelPayload[ContactAPIClient.commercialOptedOutKey] = actualDate
+        }
+        
+        var payload: [String : Any] = [
+            ContactAPIClient.channelKey: channelPayload,
+            ContactAPIClient.optInModeKey: options.doubleOptIn ? "double" : "classic"
         ]
         
-        let request = self.request(payload, "\(config.deviceAPIURL ?? "")\(ContactAPIClient.channelsPath)/email")
+        if let properties = options.properties {
+            payload[ContactAPIClient.propertiesKey] = properties.value()
+        }
+        
+        let request = self.request(payload, "\(config.deviceAPIURL ?? "")\(ContactAPIClient.channelsPath)/restricted/email")
+        
+        AirshipLogger.debug("Creating an Email channel with address \(address)")
+        return registerChannel(identifier,
+                               request: request,
+                               channelType: .email,
+                               completionHandler: completionHandler)
 
-        return session.performHTTPRequest(request, completionHandler: { (data, response, error) in
-            
-            guard let response = response else {
-                AirshipLogger.debug("Creating Email channel finished with error: \(error.debugDescription)")
-                completionHandler(nil, error)
-                return
-            }
-
-            if (response.statusCode == 200) {
-                do {
-                    guard data != nil else {
-                        completionHandler(nil, AirshipErrors.parseError("Missing body"))
-                        return
-                    }
-
-                    let jsonResponse = try JSONSerialization.jsonObject(with: data!, options: .allowFragments) as? [AnyHashable : Any]
-                    guard let channelID = jsonResponse?["channel_id"] as? String else {
-                        completionHandler(nil, AirshipErrors.parseError("Missing channel_id"))
-                        return
-                    }
-
-                    AirshipLogger.debug("Email channel created with response: \(response)")
-                    let channelCreateResponse = ChannelCreateResponse(status: response.statusCode, channelID: channelID)
-                    completionHandler(channelCreateResponse, nil)
-                } catch {
-                    completionHandler(nil, error)
-                }
-            } else {
-                let channelCreateResponse = ChannelCreateResponse(status: response.statusCode, channelID: nil)
-                completionHandler(channelCreateResponse, nil)
-            }
-        })
     }
     
     @discardableResult
-    func registerSms(msisdn: String, sender: String, optedIn: Bool, completionHandler: @escaping (ChannelCreateResponse?, Error?) -> Void) -> Disposable {
+    func registerSMS(identifier: String,
+                     msisdn: String,
+                     options: SMSRegistrationOptions,
+                     completionHandler: @escaping (ContactChannelRegistrationResponse?, Error?) -> Void) -> Disposable {
         
-        AirshipLogger.debug("Creating a SMS channel with msisdn \(msisdn) and sender \(sender)")
-
         let currentLocale = self.localeManager.currentLocale
-        var payload: [String : String] = [
+        let payload: [String : Any] = [
             ContactAPIClient.msisdnKey: msisdn,
-            ContactAPIClient.senderKey: sender,
+            ContactAPIClient.senderKey: options.senderID,
             ContactAPIClient.timezoneKey: TimeZone.current.identifier,
             ContactAPIClient.localeCountryKey: currentLocale.regionCode ?? "",
-            ContactAPIClient.localeLanguageKey: currentLocale.languageCode ?? ""
+            ContactAPIClient.localeLanguageKey: currentLocale.languageCode ?? "",
+            ContactAPIClient.optedInKey: Utils.isoDateFormatterUTCWithDelimiter().string(from:Date())
         ]
         
-        if optedIn {
-            payload[ContactAPIClient.optedInKey] = Utils.isoDateFormatterUTCWithDelimiter().string(from:Date())
-        }
-        
-        let request = self.request(payload, "\(config.deviceAPIURL ?? "")\(ContactAPIClient.channelsPath)/sms")
+        let request = self.request(payload, "\(config.deviceAPIURL ?? "")\(ContactAPIClient.channelsPath)/restricted/sms")
 
-        return session.performHTTPRequest(request, completionHandler: { (data, response, error) in
-            
-            guard let response = response else {
-                AirshipLogger.debug("Creating SMS channel finished with error: \(error.debugDescription)")
-                completionHandler(nil, error)
-                return
-            }
-
-            if (response.statusCode == 200) {
-                do {
-                    guard data != nil else {
-                        completionHandler(nil, AirshipErrors.parseError("Missing body"))
-                        return
-                    }
-
-                    let jsonResponse = try JSONSerialization.jsonObject(with: data!, options: .allowFragments) as? [AnyHashable : Any]
-                    guard let channelID = jsonResponse?["channel_id"] as? String else {
-                        completionHandler(nil, AirshipErrors.parseError("Missing channel_id"))
-                        return
-                    }
-
-                    AirshipLogger.debug("SMS channel created with response: \(response)")
-                    let channelCreateResponse = ChannelCreateResponse(status: response.statusCode, channelID: channelID)
-                    completionHandler(channelCreateResponse, nil)
-                } catch {
-                    completionHandler(nil, error)
-                }
-            } else {
-                let channelCreateResponse = ChannelCreateResponse(status: response.statusCode, channelID: nil)
-                completionHandler(channelCreateResponse, nil)
-            }
-        })
+        AirshipLogger.debug("Registering an SMS channel with msisdn \(msisdn) and sender \(options.senderID)")
+        return registerChannel(identifier,
+                               request: request,
+                               channelType: .sms,
+                               completionHandler: completionHandler)
     }
     
     @discardableResult
-    func updateEmail(channelID: String, emailOptIn: [EmailOptIn], address: String, completionHandler: @escaping (ChannelCreateResponse?, Error?) -> Void) -> Disposable {
-        
-        AirshipLogger.debug("Associating Email to contact with channel ID \(channelID)")
-
-        var channel: [String : String] = [
-            ContactAPIClient.deviceTypeKey: "email",
-            ContactAPIClient.addressKey: address
-        ]
-        
-        for optIn in emailOptIn {
-            channel[optIn.getEmailType()] = Utils.isoDateFormatterUTCWithDelimiter().string(from:Date())
-        }
-        
-        let payload: [String : [String : String]] = [
-            ContactAPIClient.channelKey: channel
-        ]
-        
-        let request = self.request(payload, "\(config.deviceAPIURL ?? "")\(ContactAPIClient.channelsPath)/email/\(channelID)")
-
-        return session.performHTTPRequest(request, completionHandler: { (data, response, error) in
-            
-            guard let response = response else {
-                AirshipLogger.debug("Associating Email to contact finished with error: \(error.debugDescription)")
-                completionHandler(nil, error)
-                return
-            }
-
-            if (response.statusCode == 200) {
-                do {
-                    guard data != nil else {
-                        completionHandler(nil, AirshipErrors.parseError("Missing body"))
-                        return
-                    }
-
-                    let jsonResponse = try JSONSerialization.jsonObject(with: data!, options: .allowFragments) as? [AnyHashable : Any]
-                    guard let channelID = jsonResponse?["channel_id"] as? String else {
-                        completionHandler(nil, AirshipErrors.parseError("Missing channel_id"))
-                        return
-                    }
-
-                    AirshipLogger.debug("Email associated to contact with response: \(response)")
-                    let channelCreateResponse = ChannelCreateResponse(status: response.statusCode, channelID: channelID)
-                    completionHandler(channelCreateResponse, nil)
-                } catch {
-                    completionHandler(nil, error)
-                }
-            } else {
-                let channelCreateResponse = ChannelCreateResponse(status: response.statusCode, channelID: nil)
-                completionHandler(channelCreateResponse, nil)
-            }
-        })
-    }
-    
-    @discardableResult
-    func updateSms(channelID: String, msisdn: String, sender: String, optedIn: Bool, completionHandler: @escaping (ChannelCreateResponse?, Error?) -> Void) -> Disposable {
-        
-        AirshipLogger.debug("Associating SMS to contact with channel ID \(channelID)")
-
+    func registerOpen(identifier: String, address: String, options: OpenRegistrationOptions, completionHandler: @escaping (ContactChannelRegistrationResponse?, Error?) -> Void) -> Disposable {
         let currentLocale = self.localeManager.currentLocale
-        var payload: [String : String] = [
-            ContactAPIClient.msisdnKey: msisdn,
-            ContactAPIClient.senderKey: sender,
+        var channelPayload: [String : Any] = [
+            ContactAPIClient.typeKey: "open",
+            ContactAPIClient.addressKey: address,
             ContactAPIClient.timezoneKey: TimeZone.current.identifier,
             ContactAPIClient.localeCountryKey: currentLocale.regionCode ?? "",
-            ContactAPIClient.localeLanguageKey: currentLocale.languageCode ?? ""
+            ContactAPIClient.localeLanguageKey: currentLocale.languageCode ?? "",
+            ContactAPIClient.optInKey: true
         ]
         
-        if optedIn {
-            payload[ContactAPIClient.optedInKey] = Utils.isoDateFormatterUTCWithDelimiter().string(from:Date())
+        var openPayload: [String : Any] = [
+            ContactAPIClient.openPlatformName: options.platformName
+        ]
+        
+        if let identifiers = options.identifiers {
+            var identifiersPayload: [String : Any] = [:]
+            for (key, value) in identifiers {
+                identifiersPayload[key] = value
+            }
+            openPayload[ContactAPIClient.identifiersKey] = identifiersPayload
         }
         
-        let request = self.request(payload, "\(config.deviceAPIURL ?? "")\(ContactAPIClient.channelsPath)/sms/\(channelID)")
-
-        return session.performHTTPRequest(request, completionHandler: { (data, response, error) in
-            
-            guard let response = response else {
-                AirshipLogger.debug("Associating SMS to contact finished with error: \(error.debugDescription)")
-                completionHandler(nil, error)
-                return
-            }
-
-            if (response.statusCode == 200) {
-                guard data != nil else {
-                    completionHandler(nil, AirshipErrors.parseError("Missing body"))
-                    return
-                }
-
-                AirshipLogger.debug("SMS associated with response: \(response)")
-                let channelCreateResponse = ChannelCreateResponse(status: response.statusCode, channelID: nil)
-                completionHandler(channelCreateResponse, nil)
-            } else {
-                let channelCreateResponse = ChannelCreateResponse(status: response.statusCode, channelID: nil)
-                completionHandler(channelCreateResponse, nil)
-            }
-        })
-    }
-    
-    @discardableResult
-    func optOutSms(msisdn: String, sender: String, completionHandler: @escaping (ChannelCreateResponse?, Error?) -> Void) -> Disposable {
+        channelPayload[ContactAPIClient.openKey] = openPayload
         
-        AirshipLogger.debug("Optout SMS channel for msisdn \(msisdn) and sender \(sender)")
-
-        let payload: [String : String] = [
-            ContactAPIClient.msisdnKey: msisdn,
-            ContactAPIClient.senderKey: sender
+        let payload: [String : Any] = [
+            ContactAPIClient.channelKey: channelPayload
         ]
         
-        let request = self.request(payload, "\(config.deviceAPIURL ?? "")\(ContactAPIClient.channelsPath)/sms/optout")
+        let request = self.request(payload, "\(config.deviceAPIURL ?? "")\(ContactAPIClient.channelsPath)/restricted/open")
 
-        return session.performHTTPRequest(request, completionHandler: { (data, response, error) in
-            
+        AirshipLogger.debug("Registering an open channel with address \(address)")
+        return registerChannel(identifier,
+                               request: request,
+                               channelType: .open,
+                               completionHandler: completionHandler)
+    }
+    
+    private func registerChannel(_ identifier: String,
+                                 request: Request,
+                                 channelType: ChannelType,
+                                 completionHandler: @escaping (ContactChannelRegistrationResponse?, Error?) -> Void) -> Disposable {
+        
+        let lock = Lock()
+        var requestDisposable: Disposable? = nil
+        var isDisposed = false
+        
+        let disposable = Disposable {
+            lock.sync {
+                requestDisposable?.dispose()
+                isDisposed = true
+            }
+        }
+        
+        requestDisposable = session.performHTTPRequest(request, completionHandler: { (data, response, error) in
             guard let response = response else {
-                AirshipLogger.debug("Optout SMS channel finished with error: \(error.debugDescription)")
+                AirshipLogger.debug("Creating \(channelType) channel finished with error: \(error.debugDescription)")
                 completionHandler(nil, error)
                 return
             }
 
-            if (response.statusCode == 200) {
-                guard data != nil else {
-                    completionHandler(nil, AirshipErrors.parseError("Missing body"))
+            AirshipLogger.debug("Contact channel \(channelType) created with response: \(response)")
+            guard response.statusCode == 200 else {
+                let regResponse = ContactChannelRegistrationResponse(status: response.statusCode)
+                completionHandler(regResponse, nil)
+                return
+            }
+            
+            do {
+                guard let channelID = try self.parseChannelID(data: data) else {
+                    completionHandler(nil, AirshipErrors.error("Missing channel ID"))
                     return
                 }
-
-                AirshipLogger.debug("Optout SMS channnel with response: \(response)")
-                let channelCreateResponse = ChannelCreateResponse(status: response.statusCode, channelID: nil)
-                completionHandler(channelCreateResponse, nil)
-            } else {
-                let channelCreateResponse = ChannelCreateResponse(status: response.statusCode, channelID: nil)
-                completionHandler(channelCreateResponse, nil)
+                
+                lock.sync {
+                    if (isDisposed) {
+                        completionHandler(nil, AirshipErrors.error("cancelled"))
+                    } else {
+                        let channel = AssociatedChannel(channelType: channelType, channelID: channelID)
+                        
+                        requestDisposable = self.update(identifier: identifier,
+                                                        channels: [channel]) { response, error in
+                            guard let response = response else {
+                                completionHandler(nil, error)
+                                return
+                            }
+                            
+                            let regResponse = ContactChannelRegistrationResponse(status: response.status,
+                                                                                 channel: response.isSuccess ? channel : nil)
+                            completionHandler(regResponse, nil)
+                        }
+                    }
+                }
+            } catch {
+                completionHandler(nil, error)
             }
         })
+        
+        return disposable
+    }
+    
+    private func parseChannelID(data: Data?) throws -> String? {
+        guard let data = data else {
+            return nil
+        }
+        
+        let jsonResponse = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [AnyHashable : Any]
+
+        return jsonResponse?["channel_id"] as? String
     }
     
     private func request(_ payload: [AnyHashable : Any], _ urlString: String) -> Request {
@@ -645,6 +622,17 @@ class ContactAPIClient : ContactsAPIClientProtocol {
                 completionHandler(clientResponse, nil)
             }
         })
+    }
+}
+
+
+class ContactChannelRegistrationResponse : HTTPResponse {
+
+    public let channel: AssociatedChannel?
+
+    public init(status: Int, channel: AssociatedChannel? = nil) {
+        self.channel = channel
+        super.init(status: status)
     }
 }
 

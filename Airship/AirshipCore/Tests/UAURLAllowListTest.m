@@ -429,7 +429,7 @@
     XCTAssertFalse([self.URLAllowList isAllowed:nonMatchingURL scope:scope]);
 }
 
-- (void)testSmsPath {
+- (void)testSMSPath {
     XCTAssertTrue([self.URLAllowList addEntry:@"sms:86753*9*"]);
 
     XCTAssertFalse([self.URLAllowList isAllowed:[NSURL URLWithString:@"sms:86753"]]);

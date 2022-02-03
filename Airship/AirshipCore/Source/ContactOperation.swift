@@ -8,6 +8,9 @@ enum OperationType : String, Codable {
     case identify
     case resolve
     case reset
+    case registerEmail
+    case registerSMS
+    case registerOpen
 }
 
 // NOTE: For internal use only. :nodoc:
@@ -36,6 +39,12 @@ struct ContactOperation: Codable {
             try container.encode(payload as! UpdatePayload, forKey: .payload)
         case .identify:
             try container.encode(payload as! IdentifyPayload, forKey: .payload)
+        case .registerEmail:
+            try container.encode(payload as! RegisterEmailPayload, forKey: .payload)
+        case .registerSMS:
+            try container.encode(payload as! RegisterSMSPayload, forKey: .payload)
+        case .registerOpen:
+            try container.encode(payload as! RegisterOpenPayload, forKey: .payload)
         case .reset:
             try container.encodeNil(forKey: .payload)
         case .resolve:
@@ -52,6 +61,12 @@ struct ContactOperation: Codable {
             self.payload = try container.decode(UpdatePayload.self, forKey: .payload)
         case .identify:
             self.payload = try container.decode(IdentifyPayload.self, forKey: .payload)
+        case .registerEmail:
+            self.payload = try container.decode(RegisterEmailPayload.self, forKey: .payload)
+        case .registerSMS:
+            self.payload = try container.decode(RegisterSMSPayload.self, forKey: .payload)
+        case .registerOpen:
+            self.payload = try container.decode(RegisterOpenPayload.self, forKey: .payload)
         case .resolve:
             self.payload = nil
         case .reset:
@@ -88,12 +103,39 @@ struct ContactOperation: Codable {
     static func resolve() -> ContactOperation {
         return ContactOperation(type: .resolve, payload: nil)
     }
+        
+    static func registerEmail(_ address: String, options: EmailRegistrationOptions) -> ContactOperation {
+            return ContactOperation(type: .registerEmail, payload: RegisterEmailPayload(address: address, options: options))
+    }
+    
+    static func registerSMS(_ msisdn: String, options: SMSRegistrationOptions) -> ContactOperation {
+        return ContactOperation(type: .registerSMS, payload: RegisterSMSPayload(msisdn: msisdn, options: options))
+    }
+    
+    static func registerOpen(_ address: String, options: OpenRegistrationOptions) -> ContactOperation {
+        return ContactOperation(type: .registerOpen, payload: RegisterOpenPayload(address: address, options: options))
+    }
 }
 
 struct UpdatePayload : Codable {
     var tagUpdates: [TagGroupUpdate]?
     var attrubuteUpdates: [AttributeUpdate]?
     var subscriptionListsUpdates: [ScopedSubscriptionListUpdate]?
+}
+
+struct RegisterEmailPayload : Codable {
+    var address: String
+    var options: EmailRegistrationOptions
+}
+
+struct RegisterSMSPayload : Codable {
+    var msisdn: String
+    var options: SMSRegistrationOptions
+}
+
+struct RegisterOpenPayload : Codable {
+    var address: String
+    var options: OpenRegistrationOptions
 }
 
 struct IdentifyPayload : Codable {

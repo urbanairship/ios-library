@@ -52,6 +52,18 @@ public class TestContact : NSObject, ContactProtocol, Component {
         editorBlock(editor)
         editor.apply()
     }
+
+    public func registerEmail(_ address: String, options: EmailRegistrationOptions) {
+        // TODO
+    }
+    
+    public func registerSMS(_ msisdn: String, options: SMSRegistrationOptions) {
+        // TODO
+    }
+    
+    public func registerOpen(_ address: String, options: OpenRegistrationOptions) {
+        // TODO
+    }
     
     public func editSubscriptionLists() -> ScopedSubscriptionListEditor {
         return subscriptionListEditor!

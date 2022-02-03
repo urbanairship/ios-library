@@ -69,6 +69,33 @@ public protocol ContactProtocol {
     @objc
     func editAttributes(_ editorBlock: (AttributesEditor) -> Void)
     
+    /**
+     * Associates an Email channel to the contact.
+     * - Parameters:
+     *   - address: The email address.
+     *   - options: The email channel registration options.
+     */
+    @objc
+    func registerEmail(_ address: String, options: EmailRegistrationOptions)
+    
+    /**
+     * Associates a SMS channel to the contact.
+     * - Parameters:
+     *   - msisdn: The SMS msisdn.
+     *   - options: The SMS channel registration options.
+     */
+    @objc
+    func registerSMS(_ msisdn: String, options: SMSRegistrationOptions)
+    
+    /**
+     * Associates an Open channel to the contact.
+     * - Parameters:
+     *   - address: The open channel address.
+     *   - options: The open channel registration options.
+     */
+    @objc
+    func registerOpen(_ address: String, options: OpenRegistrationOptions)
+
     /// Begins a subscription list editing session
     /// - Returns: A Scoped subscription list editor
     @objc
@@ -483,6 +510,39 @@ public class Contact : NSObject, Component, ContactProtocol {
         editor.apply()
     }
     
+    public func registerEmail(_ address: String, options: EmailRegistrationOptions) {
+        guard self.privacyManager.isEnabled(.contacts) else {
+            AirshipLogger.warn("Contacts disabled. Enable to associate Email channel.")
+            return
+        }
+        
+        self.addOperation(ContactOperation.resolve())
+        self.addOperation(ContactOperation.registerEmail(address, options: options))
+        self.enqueueTask()
+    }
+    
+    public func registerSMS(_ msisdn: String, options: SMSRegistrationOptions) {
+        guard self.privacyManager.isEnabled(.contacts) else {
+            AirshipLogger.warn("Contacts disabled. Enable to associate SMS channel.")
+            return
+        }
+        
+        self.addOperation(ContactOperation.resolve())
+        self.addOperation(ContactOperation.registerSMS(msisdn, options: options))
+        self.enqueueTask()
+    }
+    
+    public func registerOpen(_ address: String, options: OpenRegistrationOptions) {
+        guard self.privacyManager.isEnabled(.contacts) else {
+            AirshipLogger.warn("Contacts disabled. Enable to associate Open channel.")
+            return
+        }
+        
+        self.addOperation(ContactOperation.resolve())
+        self.addOperation(ContactOperation.registerOpen(address, options: options))
+        self.enqueueTask()
+    }
+
     /// Begins a subscription list editing session
     /// - Returns: A Scoped subscription list editor
     @objc
@@ -543,7 +603,7 @@ public class Contact : NSObject, Component, ContactProtocol {
         return disposable
     }
     
-    
+
     private func resolveSubscriptionLists(_ contactID: String) throws -> [String: [ChannelScope]] {
         if let cached = self.cachedSubscriptionLists.value, cached.0 == contactID {
             return cached.1
@@ -677,13 +737,12 @@ public class Contact : NSObject, Component, ContactProtocol {
     private func performOperation(operation: ContactOperation, channelID: String, completionHandler: @escaping (HTTPResponse?) -> Void) -> Disposable? {
         switch(operation.type) {
         case .update:
-            guard let contactInfo = self.lastContactInfo else {
+            guard let contactInfo = self.lastContactInfo, let updatePayload = operation.payload as? UpdatePayload else {
                 self.removeFirstOperation()
                 completionHandler(nil)
                 return nil
             }
             
-            let updatePayload = operation.payload as! UpdatePayload
             return self.contactAPIClient.update(identifier: contactInfo.contactID,
                                                 tagGroupUpdates: updatePayload.tagUpdates,
                                                 attributeUpdates: updatePayload.attrubuteUpdates,
@@ -692,7 +751,7 @@ public class Contact : NSObject, Component, ContactProtocol {
                 if (response?.isSuccess == true) {
                     self.cachedSubscriptionLists.value = nil
                     if (contactInfo.isAnonymous) {
-                        self.updateAnonData(updatePayload)
+                        self.updateAnonData(updates: updatePayload)
                     }
                     
                     let payload : [String : Any] = [
@@ -705,7 +764,11 @@ public class Contact : NSObject, Component, ContactProtocol {
             }
             
         case .identify:
-            let identifyPayload = operation.payload as! IdentifyPayload
+            guard let identifyPayload = operation.payload as? IdentifyPayload else {
+                self.removeFirstOperation()
+                completionHandler(nil)
+                return nil
+            }
             var contactID: String? = nil
             if (self.lastContactInfo?.isAnonymous ?? false) {
                 contactID = self.lastContactInfo?.contactID
@@ -735,6 +798,46 @@ public class Contact : NSObject, Component, ContactProtocol {
                 
                 completionHandler(response)
             }
+            
+        case .registerEmail:
+            guard let contactInfo = self.lastContactInfo, let registerPayload = operation.payload as? RegisterEmailPayload else {
+                self.removeFirstOperation()
+                completionHandler(nil)
+                return nil
+            }
+            
+            return self.contactAPIClient.registerEmail(identifier: contactInfo.contactID, address: registerPayload.address, options: registerPayload.options) { response, error in
+                Contact.logOperationResult(operation: operation, response: response, error: error)
+                self.processChannelRegistration(response)
+                completionHandler(response)
+            }
+            
+        case .registerSMS:
+            guard let contactInfo = self.lastContactInfo, let registerPayload = operation.payload as? RegisterSMSPayload else {
+                self.removeFirstOperation()
+                completionHandler(nil)
+                return nil
+            }
+            
+            return self.contactAPIClient.registerSMS(identifier: contactInfo.contactID, msisdn: registerPayload.msisdn, options: registerPayload.options) { response, error in
+                Contact.logOperationResult(operation: operation, response: response, error: error)
+                self.processChannelRegistration(response)
+                completionHandler(response)
+            }
+            
+        case .registerOpen:
+            guard let contactInfo = self.lastContactInfo, let registerPayload = operation.payload as? RegisterOpenPayload else {
+                self.removeFirstOperation()
+                completionHandler(nil)
+                return nil
+            }
+            
+            return self.contactAPIClient.registerOpen(identifier: contactInfo.contactID, address: registerPayload.address, options: registerPayload.options) { response, error in
+                Contact.logOperationResult(operation: operation, response: response, error: error)
+                self.processChannelRegistration(response)
+                completionHandler(response)
+            }
+            
         }
     }
     
@@ -756,7 +859,18 @@ public class Contact : NSObject, Component, ContactProtocol {
             
         case .resolve:
             return self.isContactIDRefreshed
+        
+        case .registerEmail:
+            return false
+            
+        case .registerSMS:
+            return false
+            
+        case .registerOpen:
+            return false
+            
         }
+        
     }
     
     private func onConflict(_ namedUserID: String?) {
@@ -767,6 +881,7 @@ public class Contact : NSObject, Component, ContactProtocol {
         let attributes = data.attributes.compactMapValues { $0.value() }
         let anonData = ContactData(tags: data.tags,
                                    attributes: attributes,
+                                   channels: data.channels,
                                    subscriptionLists: AudienceUtils.wrap(data.subscriptionLists))
         
         UADispatcher.main.dispatchAsync {
@@ -774,19 +889,30 @@ public class Contact : NSObject, Component, ContactProtocol {
         }
     }
     
-    private func updateAnonData(_ updates: UpdatePayload) {
+    private func updateAnonData(updates: UpdatePayload? = nil, channel: AssociatedChannel? = nil) {
         let data = self.anonContactData
-        let tags = AudienceUtils.applyTagUpdates(data?.tags, updates: updates.tagUpdates)
-        let attributes = AudienceUtils.applyAttributeUpdates(data?.attributes, updates: updates.attrubuteUpdates)
-        let subscriptionLists = AudienceUtils.applySubscriptionListsUpdates(data?.subscriptionLists,
+        var tags = data?.tags ?? [:]
+        var attributes = data?.attributes ?? [:]
+        var channels = data?.channels ?? []
+        var subscriptionLists = data?.subscriptionLists ?? [:]
+        
+        if let updates = updates {
+            tags = AudienceUtils.applyTagUpdates(data?.tags, updates: updates.tagUpdates)
+            attributes = AudienceUtils.applyAttributeUpdates(data?.attributes, updates: updates.attrubuteUpdates)
+            subscriptionLists = AudienceUtils.applySubscriptionListsUpdates(data?.subscriptionLists,
                                                                             updates: updates.subscriptionListsUpdates)
+        }
         
+        if let channel = channel {
+            channels.append(channel)
+        }
         
-        if (tags.isEmpty && attributes.isEmpty && subscriptionLists.isEmpty) {
+        if (tags.isEmpty && attributes.isEmpty && channels.isEmpty && subscriptionLists.isEmpty) {
             self.anonContactData = nil
         } else {
             self.anonContactData = InternalContactData(tags: tags,
                                                        attributes: attributes,
+                                                       channels: channels,
                                                        subscriptionLists: subscriptionLists)
         }
     }
@@ -820,6 +946,13 @@ public class Contact : NSObject, Component, ContactProtocol {
                 self.isContactIDRefreshed = true
             }
         }
+    }
+        
+    private func processChannelRegistration(_ response: ContactChannelRegistrationResponse?) {
+        guard response?.isSuccess == true, let channel = response?.channel else {
+            return
+        }
+        updateAnonData(channel: channel)
     }
     
     private class func logOperationResult(operation: ContactOperation, response: HTTPResponse?, error: Error?) {
@@ -1012,6 +1145,7 @@ internal struct ContactInfo : Codable {
 internal struct InternalContactData : Codable {
     var tags: [String : [String]]
     var attributes: [String : JsonValue]
+    var channels: [AssociatedChannel]
     var subscriptionLists: [String : [ChannelScope]]
 }
 

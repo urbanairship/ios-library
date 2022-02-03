@@ -295,6 +295,180 @@ class ContactTest: XCTestCase {
         wait(for: [expectation], timeout: 10.0)
     }
     
+    func testRegisterEmail() throws {
+        self.contact.registerEmail("ua@airship.com", options: EmailRegistrationOptions.optIn(transactionalOptedIn: true, properties: ["interests" : "newsletter"], doubleOptIn: true))
+        
+        // Should resolve first
+        let resolve = XCTestExpectation(description: "resolve contact")
+        self.apiClient.resolveCallback = { channelID, callback in
+            XCTAssertEqual("channel id", channelID)
+            callback(ContactAPIResponse(status: 200, contactID: "some-contact-id", isAnonymous: true), nil)
+            resolve.fulfill()
+        }
+
+        XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).completed)
+        wait(for: [resolve], timeout: 10.0)
+        
+        XCTAssertEqual(2, self.taskManager.enqueuedRequests.count)
+        
+        // Then register email
+        let expectation = XCTestExpectation(description: "callback called")
+        self.apiClient.registerEmailCallback = { identifier, address, options, callback in
+            XCTAssertEqual("some-contact-id", identifier)
+            XCTAssertEqual("ua@airship.com", address)
+            XCTAssertNotNil(options)
+            let channel = AssociatedChannel(channelType: .email, channelID: "some-channel-id")
+            callback(ContactChannelRegistrationResponse(status: 200, channel: channel), nil)
+            expectation.fulfill()
+        }
+        
+        XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).completed)
+        wait(for: [expectation], timeout: 10.0)
+    }
+    
+    func testRegisterEmailFailed() throws {
+        self.contact.registerEmail("ua@airship.com", options: EmailRegistrationOptions.optIn(transactionalOptedIn: true, properties: ["interests" : "newsletter"], doubleOptIn: true))
+        
+        // Should resolve first
+        let resolve = XCTestExpectation(description: "resolve contact")
+        self.apiClient.resolveCallback = { channelID, callback in
+            XCTAssertEqual("channel id", channelID)
+            callback(ContactAPIResponse(status: 200, contactID: "some-contact-id", isAnonymous: true), nil)
+            resolve.fulfill()
+        }
+
+        XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).completed)
+        wait(for: [resolve], timeout: 10.0)
+        
+        XCTAssertEqual(2, self.taskManager.enqueuedRequests.count)
+        
+        // Then register email
+        let expectation = XCTestExpectation(description: "callback called")
+        self.apiClient.registerEmailCallback = { identifier, address, options, callback in
+            callback(ContactChannelRegistrationResponse(status: 500), nil)
+            expectation.fulfill()
+        }
+        
+        XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).failed)
+        wait(for: [expectation], timeout: 10.0)
+    }
+    
+    func testRegisterSMS() throws {
+        self.contact.registerSMS("15035556789", options: SMSRegistrationOptions.optIn(senderID: "28855"))
+        
+        // Should resolve first
+        let resolve = XCTestExpectation(description: "resolve contact")
+        self.apiClient.resolveCallback = { channelID, callback in
+            XCTAssertEqual("channel id", channelID)
+            callback(ContactAPIResponse(status: 200, contactID: "some-contact-id", isAnonymous: true), nil)
+            resolve.fulfill()
+        }
+
+        XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).completed)
+        wait(for: [resolve], timeout: 10.0)
+        
+        XCTAssertEqual(2, self.taskManager.enqueuedRequests.count)
+        
+        // Then register sms
+        let expectation = XCTestExpectation(description: "callback called")
+        self.apiClient.registerSMSCallback = { identifier, msisdn, options, callback in
+            XCTAssertEqual("some-contact-id", identifier)
+            XCTAssertEqual("15035556789", msisdn)
+            XCTAssertNotNil(options)
+            let channel = AssociatedChannel(channelType: .sms, channelID: "some-channel-id")
+            callback(ContactChannelRegistrationResponse(status: 200, channel: channel), nil)
+            expectation.fulfill()
+        }
+        
+        XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).completed)
+        wait(for: [expectation], timeout: 10.0)
+    }
+    
+    func testRegisterSMSFailed() throws {
+        self.contact.registerSMS("15035556789", options: SMSRegistrationOptions.optIn(senderID: "28855"))
+        
+        // Should resolve first
+        let resolve = XCTestExpectation(description: "resolve contact")
+        self.apiClient.resolveCallback = { channelID, callback in
+            XCTAssertEqual("channel id", channelID)
+            callback(ContactAPIResponse(status: 200, contactID: "some-contact-id", isAnonymous: true), nil)
+            resolve.fulfill()
+        }
+
+        XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).completed)
+        wait(for: [resolve], timeout: 10.0)
+        
+        XCTAssertEqual(2, self.taskManager.enqueuedRequests.count)
+        
+        // Then register sms
+        let expectation = XCTestExpectation(description: "callback called")
+        self.apiClient.registerSMSCallback = { identifier, msisdn, options, callback in
+            callback(ContactChannelRegistrationResponse(status: 500), nil)
+            expectation.fulfill()
+        }
+        
+        XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).failed)
+        wait(for: [expectation], timeout: 10.0)
+    }
+    
+    func testRegisterOpen() throws {
+        self.contact.registerOpen("open_address", options: OpenRegistrationOptions.optIn(platformName: "my_platform", identifiers: ["model":"4"]))
+        
+        // Should resolve first
+        let resolve = XCTestExpectation(description: "resolve contact")
+        self.apiClient.resolveCallback = { channelID, callback in
+            XCTAssertEqual("channel id", channelID)
+            callback(ContactAPIResponse(status: 200, contactID: "some-contact-id", isAnonymous: true), nil)
+            resolve.fulfill()
+        }
+
+        XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).completed)
+        wait(for: [resolve], timeout: 10.0)
+        
+        XCTAssertEqual(2, self.taskManager.enqueuedRequests.count)
+        
+        // Then register email
+        let expectation = XCTestExpectation(description: "callback called")
+        self.apiClient.registerOpenCallback = { identifier, address, options, callback in
+            XCTAssertEqual("some-contact-id", identifier)
+            XCTAssertEqual("open_address", address)
+            XCTAssertNotNil(options)
+            let channel = AssociatedChannel(channelType: .email, channelID: "some-channel-id")
+            callback(ContactChannelRegistrationResponse(status: 200, channel: channel), nil)
+            expectation.fulfill()
+        }
+        
+        XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).completed)
+        wait(for: [expectation], timeout: 10.0)
+    }
+    
+    func testRegisterOpenFailed() throws {
+        self.contact.registerOpen("open_address", options: OpenRegistrationOptions.optIn(platformName: "my_platform", identifiers: ["model":"4"]))
+        
+        // Should resolve first
+        let resolve = XCTestExpectation(description: "resolve contact")
+        self.apiClient.resolveCallback = { channelID, callback in
+            XCTAssertEqual("channel id", channelID)
+            callback(ContactAPIResponse(status: 200, contactID: "some-contact-id", isAnonymous: true), nil)
+            resolve.fulfill()
+        }
+
+        XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).completed)
+        wait(for: [resolve], timeout: 10.0)
+        
+        XCTAssertEqual(2, self.taskManager.enqueuedRequests.count)
+        
+        // Then register email
+        let expectation = XCTestExpectation(description: "callback called")
+        self.apiClient.registerOpenCallback = { identifier, address, options, callback in
+            callback(ContactChannelRegistrationResponse(status: 500), nil)
+            expectation.fulfill()
+        }
+        
+        XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).failed)
+        wait(for: [expectation], timeout: 10.0)
+    }
+    
     func testSkipSandwichedIdentifyCalls() throws {
         self.contact.identify("one")
         self.contact.identify("two")

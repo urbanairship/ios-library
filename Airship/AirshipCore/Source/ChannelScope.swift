@@ -90,7 +90,7 @@ public enum ChannelScope: Int, Codable, CustomStringConvertible {
     /// - Parameter value: The string value
     /// - Returns: A channel scope.
     public static func fromString(_ value: String) throws -> ChannelScope {
-        switch value {
+        switch value.lowercased() {
         case "sms":
             return .sms
         case "email":

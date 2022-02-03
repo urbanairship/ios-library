@@ -175,25 +175,3 @@ public class PrivacyManager : NSObject {
         _enabledFeatures = features
     }
 }
-
-enum EmailOptIn {
-    case commercial(Bool)
-    case transactional(Bool)
-    
-    func getEmailType() -> String {
-        switch self {
-        case .commercial(let bool):
-            if bool {
-                return "commercial_opted_in"
-            } else {
-                return "commercial_opted_out"
-            }
-        case .transactional(let bool):
-            if bool {
-                return "transactional_opted_in"
-            } else {
-                return "transactional_opted_out"
-            }
-        }
-    }
-}

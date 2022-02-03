@@ -21,10 +21,16 @@ public class ContactData : NSObject {
     public let tags: [String: [String]]
     
     /**
-     * Attributes
+     * Attributes.
      */
     @objc
     public let attributes: [String: Any]
+    
+    /**
+     * Associated channels.
+     */
+    @objc
+    public let channels: [AssociatedChannel]
     
     /**
      * Default constructor.
@@ -32,13 +38,17 @@ public class ContactData : NSObject {
      *   - tags: The tags.
      *   - attributes: The attributes.
      *   - subscriptionLists: The subscription lists.
+     *   - channels: The associated channels.
      */
     @objc
-    public init(tags: [String: [String]],
-                attributes: [String: Any],
-                subscriptionLists: [String: ChannelScopes]) {
+    public init(tags: [String : [String]],
+                attributes: [String : Any],
+                channels: [AssociatedChannel],
+                subscriptionLists: [String : ChannelScopes]) {
+
         self.tags = tags
         self.attributes = attributes
+        self.channels = channels
         self.subscriptionLists = subscriptionLists
         super.init()
     }
