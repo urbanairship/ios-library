@@ -1,10 +1,16 @@
+/* Copyright Airship and Contributors */
+
 import UIKit
 import QuartzCore
 
+#if canImport(AirshipCore)
+import AirshipCore
+#endif
+
 @objc(UAPreferenceCenterCheckboxCell)
 open class PreferenceCenterCheckboxCell: UITableViewCell {
-    var callback : ((Bool, [String])->())?
-    var activeScopes : [String] = []
+    var callback : ((Bool, [ChannelScope])->())?
+    var activeScopes : [ChannelScope] = []
     var contentStackView = UIStackView()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -37,7 +43,7 @@ open class PreferenceCenterCheckboxCell: UITableViewCell {
             checkBoxLabel.font = style?.preferenceTextFont
                 
             let scopes = component.scopes.values.reduce(into: []) { list, scope in
-                list.append(scope.stringValue)
+                list.append(scope)
             }
                 
             if scopes.allSatisfy(activeScopes.contains) {

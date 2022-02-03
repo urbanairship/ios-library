@@ -52,14 +52,14 @@ public class ScopedSubscriptionListEditor: NSObject {
      * Internal helper that uses a boolean flag to indicate whether to subscribe or unsubscribe.
      * - Parameters:
      *   - subscriptionListID: The subscription list identifier.
-     *   - scope: Defines the channel types that the change applies to.
+     *   - scopes: The scopes.
      *   - subscribe:`true` to subscribe, `false`to unsubscribe
      */
-    public func mutate(_ subscriptionListID: String, scope: ChannelScope, subscribe: Bool) {
+    public func mutate(_ subscriptionListID: String, scopes: [ChannelScope], subscribe: Bool) {
         if (subscribe) {
-            self.subscribe(subscriptionListID, scope: scope)
+            scopes.forEach { self.subscribe(subscriptionListID, scope: $0) }
         } else {
-            self.unsubscribe(subscriptionListID, scope: scope)
+            scopes.forEach { self.unsubscribe(subscriptionListID, scope: $0) }
         }
     }
 

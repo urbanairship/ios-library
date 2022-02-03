@@ -1,8 +1,12 @@
 import UIKit
 
+#if canImport(AirshipCore)
+import AirshipCore
+#endif
+
 class PreferenceCenterCheckBox: UIButton {
-    var callback : ((Bool, [String])->())?
-    var scopes: [String] = []
+    var callback : ((Bool, [ChannelScope])->())?
+    var scopes: [ChannelScope] = []
     let boxCheckedImage = UIImage(named: "green_checked_circle.png", in:Bundle(identifier: "com.urbanairship.AirshipPreferenceCenter"), compatibleWith: nil)
     let boxUncheckedImage = UIImage(named: "empty_circle.png", in:Bundle(identifier: "com.urbanairship.AirshipPreferenceCenter"), compatibleWith: nil)
 

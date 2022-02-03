@@ -54,6 +54,7 @@
 		32515872272B007F00DF8B44 /* Media.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32515866272AFB2E00DF8B44 /* Media.swift */; };
 		32515874272B038300DF8B44 /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32D6E87A2727F7060077C784 /* Image.swift */; };
 		3261A7F6243CD7F900ADBF6B /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3261A7F4243CD73100ADBF6B /* CoreTelephony.framework */; platformFilter = maccatalyst; };
+		32A941B327AAD14900241BC3 /* ConditionStateMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32A941B227AAD14900241BC3 /* ConditionStateMonitor.swift */; };
 		32CF81C6274FCD06003009D1 /* AirshipTextInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32CF81C5274FCD06003009D1 /* AirshipTextInput.swift */; };
 		32CF81C7274FCD06003009D1 /* AirshipTextInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32CF81C5274FCD06003009D1 /* AirshipTextInput.swift */; };
 		32CF81E2275627F4003009D1 /* AirshipAsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32CF81E1275627F4003009D1 /* AirshipAsyncImage.swift */; };
@@ -1008,6 +1009,7 @@
 		6EB4E656254C890900E3FFD0 /* UATaskManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB4E655254C890800E3FFD0 /* UATaskManagerTest.m */; };
 		6EB56C7C27AC4BBB00A7392F /* AssociatedChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9343E1B27AC413700A49AAF /* AssociatedChannel.swift */; };
 		6EB56C7D27AC4BBC00A7392F /* AssociatedChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9343E1B27AC413700A49AAF /* AssociatedChannel.swift */; };
+		6EB56C7F27AC612400A7392F /* FilteredSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB56C7E27AC612400A7392F /* FilteredSection.swift */; };
 		6EC32234254CC95A00EA5B38 /* UAExpirableTaskTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EC32233254CC95A00EA5B38 /* UAExpirableTaskTest.m */; };
 		6EC7E469269E0E340038CFDD /* TagGroupUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB11C882697AF5600DC698F /* TagGroupUpdate.swift */; };
 		6EC7E46A269E0E370038CFDD /* AttributeUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB11C8A2697AFC700DC698F /* AttributeUpdate.swift */; };
@@ -1546,6 +1548,7 @@
 		32515866272AFB2E00DF8B44 /* Media.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Media.swift; sourceTree = "<group>"; };
 		32515868272AFB2E00DF8B44 /* MediaWebView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaWebView.swift; sourceTree = "<group>"; };
 		3261A7F4243CD73100ADBF6B /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/CoreTelephony.framework; sourceTree = DEVELOPER_DIR; };
+		32A941B227AAD14900241BC3 /* ConditionStateMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConditionStateMonitor.swift; sourceTree = "<group>"; };
 		32CF81C5274FCD06003009D1 /* AirshipTextInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipTextInput.swift; sourceTree = "<group>"; };
 		32CF81E1275627F4003009D1 /* AirshipAsyncImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipAsyncImage.swift; sourceTree = "<group>"; };
 		32D6E87A2727F7060077C784 /* Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
@@ -2210,6 +2213,7 @@
 		6EB4E4A32549F95200E3FFD0 /* Network.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Network.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/Network.framework; sourceTree = DEVELOPER_DIR; };
 		6EB4E4BE2549F9B900E3FFD0 /* Network.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Network.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS14.0.sdk/System/Library/Frameworks/Network.framework; sourceTree = DEVELOPER_DIR; };
 		6EB4E655254C890800E3FFD0 /* UATaskManagerTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UATaskManagerTest.m; sourceTree = "<group>"; };
+		6EB56C7E27AC612400A7392F /* FilteredSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilteredSection.swift; sourceTree = "<group>"; };
 		6EC32233254CC95A00EA5B38 /* UAExpirableTaskTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAExpirableTaskTest.m; sourceTree = "<group>"; };
 		6EC74C25234BD10D003AF4C6 /* UAInAppMessagingTagGroupsConfig+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessagingTagGroupsConfig+Internal.h"; sourceTree = "<group>"; };
 		6EC74C26234BD10D003AF4C6 /* UAInAppMessagingTagGroupsConfig.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessagingTagGroupsConfig.m; sourceTree = "<group>"; };
@@ -4600,9 +4604,11 @@
 				A61517A826A1E447008A41C4 /* PreferenceCenterResources.swift */,
 				A68E345826B153EC0024BE1D /* PreferenceCenterSectionHeader.swift */,
 				32333071278B9A7F00CEB86B /* PreferenceCenterSectionBreakHeader.swift */,
+				32A941B227AAD14900241BC3 /* ConditionStateMonitor.swift */,
 				320AAE7527A84B3200BAD3CE /* PreferenceCenterAlertCell.swift */,
 				A67EC26727A94411009089E1 /* PreferenceCenterCheckboxCell.swift */,
 				A67EC26927A94423009089E1 /* PreferenceCenterCheckBox.swift */,
+				6EB56C7E27AC612400A7392F /* FilteredSection.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -6880,12 +6886,14 @@
 				A68E345926B153EC0024BE1D /* PreferenceCenterSectionHeader.swift in Sources */,
 				841E7D12268617C800EA0317 /* PreferenceCenterResponse.swift in Sources */,
 				6E1892D5268E3D8500417887 /* PreferenceCenterDecoder.swift in Sources */,
+				32A941B327AAD14900241BC3 /* ConditionStateMonitor.swift in Sources */,
 				A67EC26A27A94423009089E1 /* PreferenceCenterCheckBox.swift in Sources */,
 				A615179726A1C6DC008A41C4 /* PreferenceCenterCell.swift in Sources */,
 				A61517A926A1E447008A41C4 /* PreferenceCenterResources.swift in Sources */,
 				6E6C3F9A27A47DB4007F55C7 /* PreferenceCenterConfig.swift in Sources */,
 				847B0013267CE558007CD249 /* PreferenceCenterSDKModule.swift in Sources */,
 				320AAE7627A84B3200BAD3CE /* PreferenceCenterAlertCell.swift in Sources */,
+				6EB56C7F27AC612400A7392F /* FilteredSection.swift in Sources */,
 				84483A68267CF0C000D0DA7D /* PreferenceCenter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

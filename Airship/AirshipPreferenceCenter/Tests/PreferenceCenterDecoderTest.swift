@@ -198,9 +198,9 @@ class PreferenceCenterDecoderTest: XCTestCase {
         XCTAssertEqual("Oh dang", alertItem.display?.title)
         XCTAssertEqual("You need push notifications to be enabled.", alertItem.display?.subtitle)
         XCTAssertEqual("https://whatever.example/icon.png", alertItem.display?.iconURL)
-        XCTAssertEqual("Opt In", alertItem.button.text)
-        XCTAssertEqual("Opt in to push notifications", alertItem.button.contentDescription)
-        XCTAssertEqual(["cool": "story"] as! NSDictionary, alertItem.button.actions as! NSDictionary)
+        XCTAssertEqual("Opt In", alertItem.button?.text)
+        XCTAssertEqual("Opt in to push notifications", alertItem.button?.contentDescription)
+        XCTAssertEqual(["cool": "story"] as! NSDictionary, alertItem.button?.actions as! NSDictionary)
 
         let contactSubscriptionGroupItem = thirdSection.items[4] as! ContactSubscriptionGroupItem
         XCTAssertEqual(.contactSubscriptionGroup, contactSubscriptionGroupItem.itemType)
