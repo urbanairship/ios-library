@@ -461,37 +461,45 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
             var subscribedChannelIDs: [String] = []
             var subscribedContactIDs: [String : ChannelScopes] = [:]
             
+            let dispatchGroup = DispatchGroup()
+            
             if (containsChannelSubscriptions) {
+                dispatchGroup.enter()
                 Airship.channel.fetchSubscriptionLists() { subscribedIDs, error in
                 
-                guard error == nil, let subscribedIDs = subscribedIDs else {
-                    UADispatcher.main.dispatch(after: 30, block: {
-                        if (!cancelled) {
-                            self?.refreshConfig()
-                        }
-                    })
-                    return
-                }
+                    guard error == nil, let subscribedIDs = subscribedIDs else {
+                        UADispatcher.main.dispatch(after: 30, block: {
+                            if (!cancelled) {
+                                self?.refreshConfig()
+                            }
+                        })
+                        dispatchGroup.leave()
+                        return
+                    }
                     subscribedChannelIDs = subscribedIDs
+                    dispatchGroup.leave()
                 }
             }
             
             if (containsContactSubscriptions) {
+                dispatchGroup.enter()
                 Airship.contact.fetchSubscriptionLists() { subscribedIDs, error in
                 
-                guard error == nil, let subscribedIDs = subscribedIDs else {
-                    UADispatcher.main.dispatch(after: 30, block: {
-                        if (!cancelled) {
-                            self?.refreshConfig()
-                        }
-                    })
-                    return
-                }
+                    guard error == nil, let subscribedIDs = subscribedIDs else {
+                        UADispatcher.main.dispatch(after: 30, block: {
+                            if (!cancelled) {
+                                self?.refreshConfig()
+                            }
+                        })
+                        dispatchGroup.leave()
+                        return
+                    }
                     subscribedContactIDs = subscribedIDs
+                    dispatchGroup.leave()
                 }
             }
             
-            UADispatcher.main.dispatchAsync {
+            dispatchGroup.notify(queue: .main) {
                 onComplete?(config, subscribedChannelIDs, subscribedContactIDs)
             }
         }
