@@ -6,12 +6,12 @@ import Foundation
 import AirshipCore
 #endif
 
-struct FilteredSection {
+struct PreferenceCenterFilteredSection {
     let section: Section
     let items: [Item]
     
     
-    static func filterConfig(_ config: PreferenceCenterConfig) -> [FilteredSection] {
+    static func filterConfig(_ config: PreferenceCenterConfig) -> [PreferenceCenterFilteredSection] {
          return config.sections.compactMap{ section in
              if let conditions = section.conditions, !checkConditions(conditions) {
                  return nil
@@ -25,7 +25,7 @@ struct FilteredSection {
                  }
              }
              
-             return FilteredSection(section: section, items: items)
+             return PreferenceCenterFilteredSection(section: section, items: items)
          }
     }
     

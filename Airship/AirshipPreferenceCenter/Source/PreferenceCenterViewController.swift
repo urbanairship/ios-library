@@ -14,12 +14,12 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
     @IBOutlet private var overlayView: UIView!
     @IBOutlet private var activityIndicator: UIActivityIndicatorView!
     private var config: PreferenceCenterConfig?
-    private var filteredSections: [FilteredSection]?
+    private var filteredSections: [PreferenceCenterFilteredSection]?
     private var activeChannelSubscriptions: [String] = []
     private var activeContactSubscriptions: [String : [ChannelScope]] = [:]
     private var disposable: Disposable?
     public var preferenceCenterID: String?
-    private var conditionStateMonitor: ConditionStateMonitor?
+    private var conditionStateMonitor: PreferenceCenterConditionMonitor?
     
     /**
      * Preference center style
@@ -39,7 +39,7 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
     public override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.conditionStateMonitor = ConditionStateMonitor { [weak self] in
+        self.conditionStateMonitor = PreferenceCenterConditionMonitor { [weak self] in
             self?.updatePreferenceCenter()
         }
         
@@ -499,7 +499,7 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
     
     func updatePreferenceCenter() {
         if let config = config {
-            self.filteredSections = FilteredSection.filterConfig(config)
+            self.filteredSections = PreferenceCenterFilteredSection.filterConfig(config)
         } else {
             self.filteredSections = []
         }
@@ -520,7 +520,7 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
             for (name,value) in actions {
                 ActionRunner.run(name, value: value, situation: .manualInvocation) { result in
                     print("Action finished!")
-                    self.tableView.reloadData()
+                    self.updatePreferenceCenter()
                 }
             }
         }

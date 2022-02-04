@@ -6,7 +6,7 @@ import Foundation
 import AirshipCore
 #endif
 
-class ConditionStateMonitor {
+class PreferenceCenterConditionMonitor {
     private let onChange: () -> Void
     init(onChange: @escaping () -> Void) {
         self.onChange = onChange
