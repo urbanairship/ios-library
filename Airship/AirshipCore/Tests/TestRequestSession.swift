@@ -5,6 +5,9 @@ import AirshipCore
 public class TestRequestSession : RequestSession {
 
     @objc
+    public var previousRequest: Request?
+    
+    @objc
     public var lastRequest: Request?
 
     @objc
@@ -23,6 +26,7 @@ public class TestRequestSession : RequestSession {
     }
 
     public override func performHTTPRequest(_ request: Request, completionHandler: @escaping (Data?, HTTPURLResponse?, Error?) -> Void) -> Disposable {
+        self.previousRequest = self.lastRequest
         self.lastRequest = request
         completionHandler(data, response, error)
         return Disposable()

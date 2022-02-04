@@ -367,7 +367,7 @@ class ContactAPIClient : ContactsAPIClientProtocol {
             ContactAPIClient.senderKey: options.senderID,
             ContactAPIClient.timezoneKey: TimeZone.current.identifier,
             ContactAPIClient.localeCountryKey: currentLocale.regionCode ?? "",
-            ContactAPIClient.localeLanguageKey: currentLocale.languageCode ?? "",
+            ContactAPIClient.localeLanguageKey: currentLocale.languageCode ?? ""
         ]
         
         let request = self.request(payload, "\(config.deviceAPIURL ?? "")\(ContactAPIClient.channelsPath)/restricted/sms")
