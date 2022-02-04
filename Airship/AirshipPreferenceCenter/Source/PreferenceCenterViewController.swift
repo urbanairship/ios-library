@@ -20,7 +20,9 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
     private var disposable: Disposable?
     public var preferenceCenterID: String?
     private var conditionStateMonitor: PreferenceCenterConditionMonitor?
-    
+    private var imageCache: [URL: UIImage] = [:]
+    private var imageCompletionHandlers: [URL: [(UIImage?) -> Void]] = [:]
+
     /**
      * Preference center style
      */
@@ -157,66 +159,58 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
         guard let item = self.filteredSections?[indexPath.section].items[indexPath.row] else {
             return defaultResult()
         }
-                                                                   
+                               
+        var cell: UITableViewCell?
         switch(item.itemType) {
         case .channelSubscription:
-            guard let item = item as? ChannelSubscriptionItem,
-                  let cell = tableView.dequeueReusableCell(withIdentifier: "PreferenceCenterCell", for: indexPath) as? PreferenceCenterCell else {
-                return defaultResult()
-            }
-            self.bindChannelSubscriptionItem(item, tableView: tableView, cell: cell)
-            return cell
+            cell = self.bindChannelSubscriptionItem(item,
+                                                    tableView: tableView,
+                                                    indexPath: indexPath)
         case .alert:
-            guard let item = item as? AlertItem,
-                  let cell = tableView.dequeueReusableCell(withIdentifier: "PreferenceCenterAlertCell", for: indexPath) as? PreferenceCenterAlertCell else {
-                return defaultResult()
-            }
-            self.bindAlertItem(item, tableView: tableView, cell: cell)
-            return cell
+            cell = self.bindAlertItem(item,
+                                      tableView: tableView,
+                                      indexPath: indexPath)
+            
         case .contactSubscription:
-            guard let item = item as? ContactSubscriptionItem,
-                  let cell = tableView.dequeueReusableCell(withIdentifier: "PreferenceCenterCell", for: indexPath) as? PreferenceCenterCell else {
-                return defaultResult()
-            }
-            self.bindContactSubscriptionItem(item, tableView: tableView, cell: cell)
-            return cell
+            cell = self.bindContactSubscriptionItem(item,
+                                                    tableView: tableView,
+                                                    indexPath: indexPath)
         case .contactSubscriptionGroup:
-            guard let item = item as? ContactSubscriptionGroupItem,
-                  let cell = tableView.dequeueReusableCell(withIdentifier: "PreferenceCenterCheckboxCell", for: indexPath) as? PreferenceCenterCheckboxCell else {
-                return defaultResult()
-            }
-           
-            self.bindContactGroupSubscriptionItem(item, tableView: tableView, cell: cell)
-            return cell
-        default:
-            return defaultResult()
+            cell = self.bindContactGroupSubscriptionItem(item,
+                                                    tableView: tableView,
+                                                    indexPath: indexPath)
         }
+
+        return cell ?? defaultResult()
     }
         
-    private func bindAlertItem(_ item: AlertItem,
+    private func bindAlertItem(_ item: Item,
                                tableView: UITableView,
-                               cell: PreferenceCenterAlertCell) {
+                               indexPath: IndexPath) -> UITableViewCell? {
         
+        guard let item = item as? AlertItem, let cell = tableView.dequeueReusableCell(withIdentifier: "PreferenceCenterAlertCell", for: indexPath) as? PreferenceCenterAlertCell else {
+            return nil
+        }
+            
         if let display = item.display {
             cell.alertTitle.text = display.title
             cell.alertDescription.text = display.subtitle ?? ""
             
-            if let iconUrl = display.iconURL {
-                if let url = URL(string: iconUrl) {
-                    cell.alertIconIndicator.isHidden = false
-                    cell.alertIconIndicator.startAnimating()
-                    DispatchQueue.global().async {
-                        let image = UIImage().loadImage(url: url, attempts: 3)
-                        DispatchQueue.main.async {
-                            cell.alertIconIndicator.stopAnimating()
-                            cell.alertIconIndicator.isHidden = true
-                            if (image != nil) {
-                                cell.alertIcon.image = image
-                                tableView.reloadData()
-                            }
-                        }
+            if let iconUrl = display.iconURL, let url = URL(string: iconUrl) {
+                cell.alertIconIndicator.isHidden = false
+                cell.alertIconIndicator.startAnimating()
+                
+                self.fetchImage(url: url) { image in
+                    cell.alertIconIndicator.stopAnimating()
+                    cell.alertIconIndicator.isHidden = true
+                    if (image != nil) {
+                        cell.alertIcon.image = image
                     }
                 }
+                
+            } else {
+                cell.alertIconIndicator.stopAnimating()
+                cell.alertIconIndicator.isHidden = true
             }
         }
         
@@ -234,12 +228,20 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
         } else {
             cell.alertButton.isHidden = true
         }
+        
+        return cell
     }
 
     
-    private func bindChannelSubscriptionItem(_ item: ChannelSubscriptionItem,
+    private func bindChannelSubscriptionItem(_ item: Item,
                                              tableView: UITableView,
-                                             cell: PreferenceCenterCell) {
+                                             indexPath: IndexPath) -> UITableViewCell? {
+        guard let item = item as? ChannelSubscriptionItem,
+              let cell = tableView.dequeueReusableCell(withIdentifier: "PreferenceCenterCell", for: indexPath) as? PreferenceCenterCell
+        else {
+            return nil
+        }
+        
         cell.textLabel?.text = item.display?.title
         cell.detailTextLabel?.text = item.display?.subtitle
         cell.detailTextLabel?.numberOfLines = 0
@@ -258,22 +260,20 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
             cell.backgroundColor = backgroundColor
         }
             
-        guard let cellSwitch = cell.accessoryView as? UISwitch else {
-            return
-        }
-        
-        if let tintColor = style?.switchTintColor {
-            cellSwitch.onTintColor = tintColor
-        }
-        
-        if let thumbTintColor = style?.switchThumbTintColor {
-            cellSwitch.thumbTintColor = thumbTintColor
-        }
-        
-        if (activeChannelSubscriptions.contains(item.subscriptionID)) {
-            cellSwitch.setOn(true, animated: false)
-        } else {
-            cellSwitch.setOn(false, animated: false)
+        if let cellSwitch = cell.accessoryView as? UISwitch {
+            if let tintColor = style?.switchTintColor {
+                cellSwitch.onTintColor = tintColor
+            }
+            
+            if let thumbTintColor = style?.switchThumbTintColor {
+                cellSwitch.thumbTintColor = thumbTintColor
+            }
+            
+            if (activeChannelSubscriptions.contains(item.subscriptionID)) {
+                cellSwitch.setOn(true, animated: false)
+            } else {
+                cellSwitch.setOn(false, animated: false)
+            }
         }
         
         cell.callback = { isOn in
@@ -289,11 +289,19 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
             editor.apply()
             tableView.reloadData()
         }
+        
+        return cell
     }
     
-    private func bindContactSubscriptionItem(_ item: ContactSubscriptionItem,
+    private func bindContactSubscriptionItem(_ item: Item,
                                              tableView: UITableView,
-                                             cell: PreferenceCenterCell) {
+                                             indexPath: IndexPath) -> UITableViewCell? {
+        guard let item = item as? ContactSubscriptionItem,
+              let cell = tableView.dequeueReusableCell(withIdentifier: "PreferenceCenterCell", for: indexPath) as? PreferenceCenterCell
+        else {
+            return nil
+        }
+        
         cell.textLabel?.text = item.display?.title
         cell.detailTextLabel?.text = item.display?.subtitle
         cell.detailTextLabel?.numberOfLines = 0
@@ -312,20 +320,18 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
             cell.backgroundColor = backgroundColor
         }
             
-        guard let cellSwitch = cell.accessoryView as? UISwitch else {
-            return
+        if let cellSwitch = cell.accessoryView as? UISwitch {
+            if let tintColor = style?.switchTintColor {
+                cellSwitch.onTintColor = tintColor
+            }
+            
+            if let thumbTintColor = style?.switchThumbTintColor {
+                cellSwitch.thumbTintColor = thumbTintColor
+            }
+            
+            let isSubscribed = isSubscribedContactSubscription(item.subscriptionID)
+            cellSwitch.setOn(isSubscribed, animated: false)
         }
-        
-        if let tintColor = style?.switchTintColor {
-            cellSwitch.onTintColor = tintColor
-        }
-        
-        if let thumbTintColor = style?.switchThumbTintColor {
-            cellSwitch.thumbTintColor = thumbTintColor
-        }
-        
-        let isSubscribed = isSubscribedContactSubscription(item.subscriptionID)
-        cellSwitch.setOn(isSubscribed, animated: false)
         
         cell.callback = { isOn in
             self.applyContactSubscription(item.subscriptionID,
@@ -333,12 +339,17 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
                                           subscribe: isOn)
             tableView.reloadData()
         }
+        return cell
     }
 
-    private func bindContactGroupSubscriptionItem(_ item: ContactSubscriptionGroupItem,
-                                             tableView: UITableView,
-                                             cell: PreferenceCenterCheckboxCell) {
-       
+    private func bindContactGroupSubscriptionItem(_ item: Item,
+                                                  tableView: UITableView,
+                                                  indexPath: IndexPath) -> UITableViewCell?  {
+            
+        guard let item = item as? ContactSubscriptionGroupItem, let cell = tableView.dequeueReusableCell(withIdentifier: "PreferenceCenterCheckboxCell", for: indexPath) as? PreferenceCenterCheckboxCell else {
+            return nil
+        }
+        
         cell.activeScopes = self.activeContactSubscriptions[item.subscriptionID] ?? []
         cell.callback = { subscribe, scopes in
             self.applyContactSubscription(item.subscriptionID,
@@ -354,6 +365,8 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
         }
 
         cell.detailTextLabel?.numberOfLines = 0
+        
+        return cell
     }
     
     private func isSubscribedContactSubscription(_ subscriptionID: String) -> Bool {
@@ -527,9 +540,38 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
         if (!actions.isEmpty) {
             for (name,value) in actions {
                 ActionRunner.run(name, value: value, situation: .manualInvocation) { result in
-                    print("Action finished!")
                     self.updatePreferenceCenter()
                 }
+            }
+        }
+    }
+    
+    private func fetchImage(url: URL,
+                            completion: @escaping (UIImage?) -> Void) {
+        
+        // Check for a cached image.
+        if let cachedImage = imageCache[url] {
+            DispatchQueue.main.async {
+                completion(cachedImage)
+            }
+            return
+        }
+    
+        guard imageCompletionHandlers[url] == nil else {
+            imageCompletionHandlers[url]?.append(completion)
+            return
+        }
+        
+        imageCompletionHandlers[url] = [completion]
+    
+        DispatchQueue.global().async {
+            let image = UIImage().loadImage(url: url, attempts: 3)
+            DispatchQueue.main.async {
+                self.imageCache[url] = image
+                self.imageCompletionHandlers[url]?.forEach { completionHandler in
+                    completionHandler(image)
+                }
+                self.imageCompletionHandlers[url] = nil
             }
         }
     }
