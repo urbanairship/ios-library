@@ -309,10 +309,7 @@ public class NativeBridge : NSObject, WKNavigationDelegate {
      */
     @available(iOSApplicationExtension, unavailable)
     private func handle(_ url: URL?, _ completionHandler: @escaping (Bool) -> Void ) {
-        guard let url = url,
-              let scheme = url.scheme,
-              let host = url.host,
-              NativeBridge.forwardSchemes.contains(scheme.lowercased()) || NativeBridge.forwardHosts.contains(host.lowercased()) else {
+        guard let url = url, shouldForwardURL(url) else {
             completionHandler(false)
             return
         }
@@ -324,6 +321,13 @@ public class NativeBridge : NSObject, WKNavigationDelegate {
             completionHandler(true)
         }
     }
+
+    private func shouldForwardURL(_ url: URL) -> Bool {
+        let scheme = url.scheme?.lowercased() ?? ""
+        let host = url.host?.lowercased() ?? ""
+        return NativeBridge.forwardSchemes.contains(scheme) ||  NativeBridge.forwardHosts.contains(host)
+    }
+    
     
     private func populateJavascriptEnvironmentIfAllowed(webview: WKWebView) {
         guard let url = webview.url else {
