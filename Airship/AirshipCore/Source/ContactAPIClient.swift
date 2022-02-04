@@ -280,7 +280,7 @@ class ContactAPIClient : ContactsAPIClientProtocol {
                           channelType: ChannelType,
                           completionHandler: @escaping (ContactAssociatedChannelResponse?, Error?) -> Void) -> Disposable {
 
-        AirshipLogger.debug("Associtiate channel \(channelID) with contact \(identifier)")
+        AirshipLogger.debug("Associate channel \(channelID) with contact \(identifier)")
             
         let payload: [String: Any] = [
             ContactAPIClient.associateKey: [
@@ -295,11 +295,11 @@ class ContactAPIClient : ContactsAPIClientProtocol {
 
         return session.performHTTPRequest(request) { data, response, error in
             guard let response = response else {
-                AirshipLogger.debug("Associtate channel finished with error: \(error.debugDescription)")
+                AirshipLogger.debug("Associate channel finished with error: \(error.debugDescription)")
                 completionHandler(nil, error)
                 return
             }
-            AirshipLogger.debug("Associtate channel finished with response: \(response)")
+            AirshipLogger.debug("Associate channel finished with response: \(response)")
             if (response.statusCode == 200) {
                 let channel = AssociatedChannel(channelType: channelType, channelID: channelID)
                 let regResponse = ContactAssociatedChannelResponse(status: response.statusCode, channel: channel)
@@ -382,6 +382,19 @@ class ContactAPIClient : ContactsAPIClientProtocol {
     @discardableResult
     func registerOpen(identifier: String, address: String, options: OpenRegistrationOptions, completionHandler: @escaping (ContactAssociatedChannelResponse?, Error?) -> Void) -> Disposable {
         let currentLocale = self.localeManager.currentLocale
+        
+        var openPayload: [String : Any] = [
+            ContactAPIClient.openPlatformName: options.platformName
+        ]
+        
+        if let identifiers = options.identifiers {
+            var identifiersPayload: [String : Any] = [:]
+            for (key, value) in identifiers {
+                identifiersPayload[key] = value
+            }
+            openPayload[ContactAPIClient.identifiersKey] = identifiersPayload
+        }
+        
         let payload: [String : Any] = [
             ContactAPIClient.channelKey: [
                 ContactAPIClient.typeKey: "open",
@@ -390,10 +403,7 @@ class ContactAPIClient : ContactsAPIClientProtocol {
                 ContactAPIClient.localeCountryKey: currentLocale.regionCode ?? "",
                 ContactAPIClient.localeLanguageKey: currentLocale.languageCode ?? "",
                 ContactAPIClient.optInKey: true,
-                ContactAPIClient.openKey: [
-                    ContactAPIClient.openPlatformName: options.platformName,
-                    ContactAPIClient.identifiersKey: identifier
-                ]
+                ContactAPIClient.openKey: openPayload
             ]
         ]
         
@@ -430,7 +440,7 @@ class ContactAPIClient : ContactsAPIClientProtocol {
             }
 
             AirshipLogger.debug("Contact channel \(channelType) created with response: \(response)")
-            guard response.statusCode == 200 else {
+            guard response.statusCode == 200 || response.statusCode == 201 else {
                 let regResponse = ContactAssociatedChannelResponse(status: response.statusCode)
                 completionHandler(regResponse, nil)
                 return
