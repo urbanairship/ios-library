@@ -522,7 +522,7 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
         tableView.layoutIfNeeded()
     }
     
-    @objc func buttonAction(_ sender: AlertButton) {
+    @objc func buttonAction(_ sender: PreferenceAlertButton) {
         let actions = sender.actions as! Dictionary<String, Any>
         if (!actions.isEmpty) {
             for (name,value) in actions {

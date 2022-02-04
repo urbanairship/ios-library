@@ -19,7 +19,8 @@ extension UIImage {
     
 }
 
-class AlertButton: UIButton {
+@objc(UAPreferenceAlertButton)
+class PreferenceAlertButton: UIButton {
     var actions: Any?
 }
 
@@ -30,6 +31,6 @@ open class PreferenceCenterAlertCell: UITableViewCell {
     @IBOutlet weak var alertTitle: UILabel!
     @IBOutlet weak var alertDescription: UILabel!
     @IBOutlet weak var alertIcon: UIImageView!
-    @IBOutlet weak var alertButton: AlertButton!
+    @IBOutlet weak var alertButton: PreferenceAlertButton!
     
 }
