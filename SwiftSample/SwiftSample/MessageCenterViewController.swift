@@ -10,6 +10,9 @@ class MessageCenterViewController : DefaultMessageCenterSplitViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.messageCenterStyle = MessageCenterStyle(contentsOfFile: "MessageCenterStyle")
+        
+        self.messageViewController.extendedLayoutIncludesOpaqueBars = true
+        self.listViewController.extendedLayoutIncludesOpaqueBars = true
     }
     
     func showInbox() {
