@@ -9,7 +9,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="PreferenceCenterViewController" customModule="AirshipPreferenceCenter" customModuleProvider="target">
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="PreferenceCenterViewController" customModule="AirshipPreferenceCenterResources" customModuleProvider="target">
             <connections>
                 <outlet property="activityIndicator" destination="Gad-xH-2IM" id="l9z-Bo-mmS"/>
                 <outlet property="overlayView" destination="qdm-Qi-Cox" id="7vd-fJ-P9M"/>

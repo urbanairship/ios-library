@@ -12,15 +12,40 @@ open class PreferenceCenterCheckboxCell: UITableViewCell {
     var callback : ((Bool, [ChannelScope])->())?
     var activeScopes : [ChannelScope] = []
     var contentStackView = UIStackView()
-    var contentWidth = 0.0
+
+    private var isDarkMode: Bool {
+        var isDarkMode = false
+        if #available(iOS 12.0, *) {
+            isDarkMode = self.traitCollection.userInterfaceStyle == .dark
+        }
+        return isDarkMode
+    }
+    
+    private var borderColor: UIColor {
+        if #available(iOS 13.0, *) {
+            return UIColor.separator
+        } else {
+            return .systemGray
+        }
+    }
+    
+    private static let imageSize = 24.0
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
-        contentWidth = contentView.frame.size.width
     }
+    
 
     func draw(item : ContactSubscriptionGroupItem, style: PreferenceCenterStyle?) {
         clear()
+        
+    
+        let checkedImage =  PreferenceCenterCheckboxCell.checkedImage(border: borderColor,
+                                                                      fill: isDarkMode ? .black : .white)
+        
+        let uncheckedImage = PreferenceCenterCheckboxCell.uncheckedImage(border: borderColor,
+                                                                         fill: .systemBlue,
+                                                                         checkMarkColor: .white)
         
         let spacing = 5
         
@@ -46,45 +71,23 @@ open class PreferenceCenterCheckboxCell: UITableViewCell {
 
         for i in 0...count-1 {
             
-            let checkBox = PreferenceCenterCheckBox()
-            checkBox.callback = callback
-            let checkBoxLabel = UILabel()
-
-            let component = item.components[i]
-            checkBoxLabel.text = component.display.title
-            checkBoxLabel.font = style?.preferenceTextFont
-            let itemSize = (Int(checkBoxLabel.intrinsicContentSize.width) + Int(checkBox.intrinsicContentSize.width) + spacing * 4)
+            let scopes = item.components[i].scopes.values
+            let checkbox = PreferenceCenterCheckbox(component: item.components[i],
+                                                    checkedImage: checkedImage,
+                                                    uncheckedImage: uncheckedImage) { checked in
+                self.callback?(checked, scopes)
+            }
+        
+            applyStyle(style, button: checkbox)
+            let itemSize = Int(checkbox.intrinsicContentSize.width)
             contentSize += itemSize
-                
-            let scopes = component.scopes.values.reduce(into: []) { list, scope in
-                list.append(scope)
-            }
-                
             if scopes.allSatisfy(activeScopes.contains) {
-                checkBox.isChecked = true
+                checkbox.isChecked = true
             } else {
-                checkBox.isChecked = false
+                checkbox.isChecked = false
             }
-                
-            checkBox.scopes = scopes
 
-            let stackView = UIStackView(arrangedSubviews: [checkBox, checkBoxLabel])
-            stackView.axis = .horizontal
-            stackView.distribution = .fill
-            stackView.alignment = .fill
-            stackView.layer.cornerRadius = 18
-            stackView.spacing = CGFloat(spacing)
-            if #available(iOS 13.0, *) {
-                stackView.layer.borderColor = UIColor.opaqueSeparator.cgColor
-            } else {
-                stackView.layer.borderColor = UIColor.black.cgColor
-            }
-            stackView.layer.borderWidth = 1
-            stackView.layer.masksToBounds = true
-            stackView.isLayoutMarginsRelativeArrangement = true
-            stackView.directionalLayoutMargins = NSDirectionalEdgeInsets(top: CGFloat(spacing), leading: CGFloat(spacing * 2), bottom: CGFloat(spacing), trailing: CGFloat(spacing * 2))
-
-            if (contentSize >= Int(contentWidth)) {
+            if (contentSize >= Int(self.frame.width)) {
                 let rowStackView = UIStackView()
                 rowStackView.axis = .horizontal
                 rowStackView.distribution = .fill
@@ -97,7 +100,7 @@ open class PreferenceCenterCheckboxCell: UITableViewCell {
                        
             let currentStackView = stackViewArray.last
             if let currentStackView = currentStackView {
-                currentStackView.addArrangedSubview(stackView)
+                currentStackView.addArrangedSubview(checkbox)
             }
         }
 
@@ -157,5 +160,62 @@ open class PreferenceCenterCheckboxCell: UITableViewCell {
     
     required public init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    private class func checkedImage(border: UIColor,
+                                    fill: UIColor) -> UIImage {
+        
+        let renderer = UIGraphicsImageRenderer(size: CGSize(width: imageSize, height: imageSize))
+        return renderer.image { ctx in
+            drawCircle(context: ctx, border: border, fill: fill)
+        }
+    }
+    
+    
+    private func applyStyle(_ style: PreferenceCenterStyle?, button: UIButton) {
+        button.titleLabel?.font = style?.preferenceTextFont ?? .systemFont(ofSize: 12)
+        button.backgroundColor = isDarkMode ? ColorUtils.color("#333333") : ColorUtils.color("#f3f3f3")
+        button.layer.borderColor = self.borderColor.cgColor
+        
+        if #available(iOS 13.0, *) {
+            button.setTitleColor(style?.preferenceTextColor ?? UIColor.label, for: .normal)
+        } else {
+            let defaultFontColor = isDarkMode ? UIColor.white : UIColor.black
+            button.setTitleColor(style?.preferenceTextColor ?? defaultFontColor, for: .normal)
+        }
+    }
+    
+    private class func uncheckedImage(border: UIColor,
+                                      fill: UIColor,
+                                      checkMarkColor: UIColor) -> UIImage {
+        
+        let size = CGSize(width: imageSize, height: imageSize)
+        let renderer = UIGraphicsImageRenderer(size: size)
+        return renderer.image { ctx in
+            drawCircle(context: ctx, border: border, fill: fill)
+            
+            ctx.cgContext.setStrokeColor(checkMarkColor.cgColor)
+            let bezierPath = UIBezierPath()
+            bezierPath.move(to: CGPoint(x: 0.2857 * imageSize, y: 0.5714 * imageSize))
+            bezierPath.addLine(to: CGPoint(x: 0.4000 * imageSize, y: 0.6857 * imageSize))
+            bezierPath.addLine(to: CGPoint(x: 0.6715 * imageSize, y: 0.3142 * imageSize))
+            bezierPath.lineWidth = 2
+            bezierPath.lineCapStyle = CGLineCap.round
+            bezierPath.stroke()
+        }
+    }
+    
+    private class func drawCircle(context: UIGraphicsImageRendererContext,
+                                  border: UIColor,
+                                  fill: UIColor) {
+        context.cgContext.setFillColor(border.cgColor)
+        let outerRect = CGRect(x: 0, y: 0, width: imageSize, height: imageSize)
+        context.cgContext.addEllipse(in: outerRect)
+        context.cgContext.drawPath(using: .fill)
+        
+        context.cgContext.setFillColor(fill.cgColor)
+        let innerRect = CGRect(x: 0.5, y: 0.5, width: imageSize - 1, height: imageSize - 1)
+        context.cgContext.addEllipse(in: innerRect)
+        context.cgContext.drawPath(using: .fill)
     }
 }

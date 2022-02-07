@@ -573,5 +573,9 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
             }
         }
     }
+    
+    open override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        self.tableView.reloadData()
+    }
 }
 
