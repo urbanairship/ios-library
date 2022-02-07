@@ -197,20 +197,18 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
             cell.alertDescription.text = display.subtitle ?? ""
             
             if let iconUrl = display.iconURL, let url = URL(string: iconUrl) {
-                cell.alertIconIndicator.isHidden = false
                 cell.alertIconIndicator.startAnimating()
                 
                 self.fetchImage(url: url) { image in
                     cell.alertIconIndicator.stopAnimating()
-                    cell.alertIconIndicator.isHidden = true
                     if (image != nil) {
                         cell.alertIcon.image = image
+                        self.refreshTable()
                     }
                 }
                 
             } else {
                 cell.alertIconIndicator.stopAnimating()
-                cell.alertIconIndicator.isHidden = true
             }
         }
         
