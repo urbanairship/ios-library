@@ -49,14 +49,25 @@ public class EmailRegistrationOptions : NSObject, Codable {
                                         properties: properties)
     }
     
-    /// Returns an Email registration options with commercial opted-in value to false
-    /// - Parameter transactionalOptedIn: The transactional opted-in value
+    /// Returns an Email registration options.
+    /// - Parameter transactionalOptedIn: The transactional opted-in date.
     /// - Parameter properties: The properties. They must be JSON serializable.
     /// - Parameter doubleOptIn: The double opt-in value
     /// - Returns: An Email registration options.
     @objc
     public static func options(transactionalOptedIn: Date?, properties: [String: Any]?, doubleOptIn: Bool) -> EmailRegistrationOptions {
         return EmailRegistrationOptions(transactionalOptedIn: transactionalOptedIn,
+                                        properties: properties,
+                                        doubleOptIn: doubleOptIn)
+    }
+    
+    /// Returns an Email registration options.
+    /// - Parameter properties: The properties. They must be JSON serializable.
+    /// - Parameter doubleOptIn: The double opt-in value
+    /// - Returns: An Email registration options.
+    @objc
+    public static func options(properties: [String: Any]?, doubleOptIn: Bool) -> EmailRegistrationOptions {
+        return EmailRegistrationOptions(transactionalOptedIn: nil,
                                         properties: properties,
                                         doubleOptIn: doubleOptIn)
     }
