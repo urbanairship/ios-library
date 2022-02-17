@@ -218,6 +218,7 @@ public class ContactSubscriptionItem : NSObject, Decodable, Item {
     /**
      * Scopes.
      */
+    @objc
     public let scopes: ChannelScopes
     
     @objc
