@@ -123,6 +123,8 @@ public class Channel : NSObject, Component, ChannelProtocol {
                 let normalized = AudienceUtils.normalizeTags(newValue)
                 self.dataStore.setValue(normalized, forKey: Channel.tagsDataStoreKey)
             }
+
+            self.updateRegistration()
         }
     }
 

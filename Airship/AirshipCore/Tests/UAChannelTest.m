@@ -40,7 +40,7 @@
     self.channel = [self createChannel];
 }
 
-- (UAChannel *) createChannel {
+- (UAChannel *)createChannel {
     UARuntimeConfig *config = [[UARuntimeConfig alloc] initWithConfig:self.config dataStore:self.dataStore];
     return [[UAChannel alloc] initWithDataStore:self.dataStore
                                          config:config
@@ -60,6 +60,13 @@
 
     self.channel.tags = @[];
     XCTAssertEqual((NSUInteger)0, self.channel.tags.count, @"tags should return an empty array even when set to nil");
+}
+
+- (void)testTagsUpdatesRegistration {
+    self.testRegistrar.registerCalled = NO;
+    NSArray *tags = @[@"tag-one", @"tag-two"];
+    self.channel.tags = tags;
+    XCTAssertTrue(self.testRegistrar.registerCalled);
 }
 
 /**

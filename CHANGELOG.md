@@ -3,6 +3,16 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 16.3.1 February 17, 2022
+
+A patch release that fixes channel tags not updating til next app init without calling updateRegistration.
+
+## Changes
+- Made ContactSubscriptionItem.scopes accessible to objective-c
+- PreferenceCenterViewController init method is now public
+- Modifying channel tags will now queue up a channel registration update
+
+
 ## Version 16.3.0 February 8, 2022
 
 A minor release that adds support for multi-channel Preference Center. Currently, these features are only available to customers in Airship's Special Access Program. Please reach out to your account manager for more details.

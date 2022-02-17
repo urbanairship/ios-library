@@ -78,7 +78,7 @@ public class PreferenceCenter : NSObject, Component {
         super.init()
         AirshipLogger.info("PreferenceCenter initialized")
     }
-    
+
     /**
      * Opens the Preference Center with the given ID.
      * - Parameters:
@@ -102,7 +102,7 @@ public class PreferenceCenter : NSObject, Component {
 
         AirshipLogger.debug("Opening default preference center UI")
     
-        let preferenceCenterVC = PreferenceCenterViewController.init(identifier:preferenceCenterID, nibName: "PreferenceCenterViewController", bundle: PreferenceCenterResources.bundle())
+        let preferenceCenterVC = PreferenceCenterViewController(identifier: preferenceCenterID)
 
         preferenceCenterVC.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismiss))
        

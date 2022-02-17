@@ -29,9 +29,10 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
     @objc
     public var style: PreferenceCenterStyle?
     
-    init(identifier: String, nibName: String?, bundle:Bundle?) {
+    @objc
+    public init(identifier: String) {
         self.preferenceCenterID = identifier
-        super.init(nibName: nibName, bundle: bundle)
+        super.init(nibName: "PreferenceCenterViewController", bundle: PreferenceCenterResources.bundle())
     }
     
     required public init?(coder aDecoder: NSCoder) {
