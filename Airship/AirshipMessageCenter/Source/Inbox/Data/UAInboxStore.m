@@ -58,8 +58,12 @@
 
 - (void)fetchMessagesWithPredicate:(nullable NSPredicate *)predicate completionHandler:(void (^)(NSArray<UAInboxMessage *> *))completionHandler {
     [self.coreData safePerformBlock:^(BOOL isSafe, NSManagedObjectContext *context) {
-        NSArray<UAInboxMessageData *> *result = [self fetchMessageDataWithPredicate:predicate];
+        if (!isSafe) {
+            completionHandler(@[]);
+            return;
+        }
 
+        NSArray<UAInboxMessageData *> *result = [self fetchMessageDataWithPredicate:predicate];
         NSMutableArray *messages = [NSMutableArray array];
 
         for (UAInboxMessageData *data in result) {
@@ -74,6 +78,10 @@
 - (NSArray<UAInboxMessageData *> *)fetchMessageDataWithPredicate:(NSPredicate *)predicate {
     __block NSArray<UAInboxMessageData *> *data = @[];
     [self.coreData safePerformBlockAndWait:^(BOOL isSafe, NSManagedObjectContext *context) {
+        if (!isSafe) {
+            return;
+        }
+
         NSError *error = nil;
 
         NSFetchRequest *request = [[NSFetchRequest alloc] init];
@@ -99,6 +107,11 @@
 
 - (void)markMessagesLocallyReadWithIDs:(NSArray<NSString *> *)messageIDs completionHandler:(void (^)(void))completionHandler {
     [self.coreData safePerformBlock:^(BOOL isSafe, NSManagedObjectContext *context) {
+        if (!isSafe) {
+            completionHandler();
+            return;
+        }
+
         NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kUAInboxDBEntityName];
         request.predicate = [NSPredicate predicateWithFormat:@"messageID IN %@", messageIDs];
 
@@ -107,6 +120,7 @@
 
         if (error) {
             UA_LERR(@"Error marking messages read %@", error);
+            completionHandler();
             return;
         }
 
@@ -122,6 +136,10 @@
 
 - (void)markMessagesLocallyDeletedWithIDs:(NSArray<NSString *> *)messageIDs completionHandler:(void (^)(void))completionHandler {
     [self.coreData safePerformBlock:^(BOOL isSafe, NSManagedObjectContext *context) {
+        if (!isSafe) {
+            return;
+        }
+
         NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kUAInboxDBEntityName];
         request.predicate = [NSPredicate predicateWithFormat:@"messageID IN %@", messageIDs];
 
@@ -145,6 +163,10 @@
 
 - (void)markMessagesGloballyReadWithIDs:(NSArray<NSString *> *)messageIDs {
     [self.coreData safePerformBlockAndWait:^(BOOL isSafe, NSManagedObjectContext *context) {
+        if (!isSafe) {
+            return;
+        }
+
         NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kUAInboxDBEntityName];
         request.predicate = [NSPredicate predicateWithFormat:@"messageID IN %@", messageIDs];
 
@@ -166,6 +188,10 @@
 
 - (void)deleteMessagesWithIDs:(NSArray<NSString *> *)messageIDs {
     [self.coreData safePerformBlockAndWait:^(BOOL isSafe, NSManagedObjectContext *context) {
+        if (!isSafe) {
+            return;
+        }
+
         NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:kUAInboxDBEntityName];
         request.predicate = [NSPredicate predicateWithFormat:@"messageID IN %@", messageIDs];
 
@@ -186,6 +212,11 @@
     __block BOOL result;
 
     [self.coreData safePerformBlockAndWait:^(BOOL isSafe, NSManagedObjectContext *context) {
+        if (!isSafe) {
+            result = NO;
+            return;
+        }
+
         // Track the response messageIDs so we can remove any messages that are
         // no longer in the response.
         NSMutableSet *newMessageIDs = [NSMutableSet set];
@@ -231,6 +262,10 @@
     __block NSMutableDictionary<NSString *, NSDictionary *> *result = [NSMutableDictionary dictionary];
 
     [self.coreData safePerformBlockAndWait:^(BOOL isSafe, NSManagedObjectContext *context) {
+        if (!isSafe) {
+            return;
+        }
+
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"unreadClient == NO && unread == YES"];
         NSArray<UAInboxMessageData *> *messages = [self fetchMessageDataWithPredicate:predicate];
 
@@ -248,6 +283,10 @@
     __block NSMutableDictionary<NSString *, NSDictionary *> *result = [NSMutableDictionary dictionary];
 
     [self.coreData safePerformBlockAndWait:^(BOOL isSafe, NSManagedObjectContext *context) {
+        if (!isSafe) {
+            return;
+        }
+
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"deletedClient == YES"];
         NSArray<UAInboxMessageData *> *messages = [self fetchMessageDataWithPredicate:predicate];
 
@@ -320,7 +359,6 @@
 - (void)addMessageFromDictionary:(NSDictionary *)dictionary context:(NSManagedObjectContext *)context {
     UAInboxMessageData *data = (UAInboxMessageData *)[NSEntityDescription insertNewObjectForEntityForName:kUAInboxDBEntityName
                                                                                    inManagedObjectContext:context];
-
     [self updateMessageData:data withDictionary:dictionary];
 }
 

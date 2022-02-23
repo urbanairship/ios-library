@@ -50,6 +50,11 @@ static NSString *const OccurrenceEntityName = @"UAOccurrenceData";
     __block NSArray<UAFrequencyConstraint *> *constraints;
 
     [self.coreData safePerformBlockAndWait:^(BOOL isSafe, NSManagedObjectContext *context) {
+        if (!isSafe) {
+            constraints = @[];
+            return;
+        }
+
         constraints = [self constraintsFromData:[self getConstraintsDataForIDs:constraintIDs context:context]];
     }];
 
@@ -60,6 +65,11 @@ static NSString *const OccurrenceEntityName = @"UAOccurrenceData";
     __block NSArray<UAFrequencyConstraint *> *constraints;
 
     [self.coreData safePerformBlockAndWait:^(BOOL isSafe, NSManagedObjectContext *context) {
+        if (!isSafe) {
+            constraints = @[];
+            return;
+        }
+
         constraints = [self constraintsFromData:[self getConstraintsDataWithContext:context]];
     }];
 
@@ -70,6 +80,11 @@ static NSString *const OccurrenceEntityName = @"UAOccurrenceData";
     __block BOOL success;
 
     [self.coreData safePerformBlockAndWait:^(BOOL isSafe, NSManagedObjectContext *context) {
+        if (!isSafe) {
+            success = NO;
+            return;
+        }
+
         NSArray<UAFrequencyConstraintData *> *result = [self getConstraintsDataForIDs:@[constraint.identifier] context:context];
 
         if (result.count) {
@@ -88,6 +103,11 @@ static NSString *const OccurrenceEntityName = @"UAOccurrenceData";
     __block BOOL success;
 
     [self.coreData safePerformBlockAndWait:^(BOOL isSafe, NSManagedObjectContext *context) {
+        if (!isSafe) {
+            success = NO;
+            return;
+        }
+
         NSArray<UAFrequencyConstraintData *> *result = [self getConstraintsDataForIDs:constraintIDs context:context];
 
         for (UAFrequencyConstraintData * data in result) {
@@ -118,6 +138,7 @@ static NSString *const OccurrenceEntityName = @"UAOccurrenceData";
 
     [self.coreData safePerformBlockAndWait:^(BOOL isSafe, NSManagedObjectContext *context) {
         if (!isSafe) {
+            success = NO;
             return;
         }
 
@@ -226,3 +247,4 @@ static NSString *const OccurrenceEntityName = @"UAOccurrenceData";
 }
 
 @end
+
