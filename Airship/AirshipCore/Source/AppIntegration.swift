@@ -25,7 +25,22 @@ public class AppIntegration : NSObject {
      *   - application: The application
      *   - completionHandler: The completion handler.
      */
+    @available(*, deprecated, message: "Use application(_:performFetchWithCompletionHandler:) instead")
     @objc(applicatin:performFetchWithCompletionHandler:)
+    public class func applicatin(_ application: UIApplication,
+                                  performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        self.application(application, performFetchWithCompletionHandler: completionHandler)
+    }
+    
+    /**
+     * Must be called by the UIApplicationDelegate's
+     * application:performFetchWithCompletionHandler:.
+     *
+     * - Parameters:
+     *   - application: The application
+     *   - completionHandler: The completion handler.
+     */
+    @objc(application:performFetchWithCompletionHandler:)
     public class func application(_ application: UIApplication,
                                   performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         guard let delegate = integrationDelegate else {
@@ -107,11 +122,27 @@ public class AppIntegration : NSObject {
      *   - notification: The notification.
      *   - completionHandler: The completion handler.
      */
+    @available(*, deprecated, message: "Use userNotificationCenter(_:willPresent:withCompletionHandler:) instead")
     @objc
     public class func userNotificationCenter(center: UNUserNotificationCenter,
                                              willPresentNotification notification: UNNotification,
                                              withCompletionHandler completionHandler: @escaping (_ options: UNNotificationPresentationOptions) -> Void) {
-        
+        self.userNotificationCenter(center, willPresent: notification, withCompletionHandler: completionHandler)
+    }
+    
+    /**
+     * Must be called by the UNUserNotificationDelegate's
+     * userNotificationCenter:willPresentNotification:withCompletionHandler.
+     *
+     * - Parameters:
+     *   - center: The notification center.
+     *   - notification: The notification.
+     *   - completionHandler: The completion handler.
+     */
+    @objc(userNotificationCenter:willPresentNotification:withCompletionHandler:)
+    public class func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                             willPresent notification: UNNotification,
+                                             withCompletionHandler completionHandler: @escaping (_ options: UNNotificationPresentationOptions) -> Void) {
         guard let delegate = integrationDelegate else {
             logIgnoringCall()
             completionHandler([])
@@ -135,9 +166,25 @@ public class AppIntegration : NSObject {
      *   - response: The notification response.
      *   - completionHandler: The completion handler.
      */
+    @available(*, deprecated, message: "Use userNotificationCenter(_:didReceive:withCompletionHandler:) instead")
     @objc
     public class func userNotificationCenter(center: UNUserNotificationCenter,
                                              didReceiveNotificationResponse response: UNNotificationResponse,
+                                             withCompletionHandler completionHandler: @escaping () -> Void) {
+        self.userNotificationCenter(center, didReceive: response, withCompletionHandler: completionHandler)
+    }
+    /**
+     * Must be called by the UNUserNotificationDelegate's
+     * userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler.
+     *
+     * - Parameters:
+     *   - center: The notification center.
+     *   - response: The notification response.
+     *   - completionHandler: The completion handler.
+     */
+    @objc(userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:)
+    public class func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                             didReceive response: UNNotificationResponse,
                                              withCompletionHandler completionHandler: @escaping () -> Void) {
         guard let delegate = integrationDelegate else {
             logIgnoringCall()
