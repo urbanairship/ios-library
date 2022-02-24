@@ -3,6 +3,18 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 16.4.0 February 24, 2022
+
+A minor release that fixes a potential crash with message center, marks methods on PreferenceCenterViewController as open, and includes new styles for PreferenceCenterViewController. Apps that are experiencing crashes due to message center should update.
+
+## Changes
+- Added new styles for PreferenceCenterViewController.
+- Mark methods as open on PreferenceCenterViewController to make overriding possible.
+- Automatically refresh PreferenceCenterViewController if the preference center ID changes.
+- Fixes notification options if migrating from a 14.x SDK when provision auth is used.
+- Fixed typos and awkward objective-c names for manual App integration methods.
+- Removed duplicate framework linker for UserNotifications in Swift.package
+
 ## Version 16.3.1 February 17, 2022
 
 A patch release that fixes channel tags not updating til next app init without calling updateRegistration.
