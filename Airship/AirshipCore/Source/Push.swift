@@ -455,7 +455,11 @@ public class Push: NSObject, Component, PushProtocol {
                 #if os(tvOS)
                 return .badge
                 #else
-                return [.badge, .sound, .alert]
+                if (self.authorizationStatus == .provisional) {
+                    return [.badge, .sound, .alert, .provisional]
+                } else {
+                    return [.badge, .sound, .alert]
+                }
                 #endif
             }
 

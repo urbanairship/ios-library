@@ -10,6 +10,10 @@
 @protocol UAPushTestAnalyticsProtocol <UAAnalyticsProtocol>
 @end
 
+@interface UAPush()
+@property (nonatomic) UAAuthorizationStatus authorizationStatus;
+@end
+
 @interface UAPushTest : UABaseTest
 @property (nonatomic, strong) id mockApplication;
 @property (nonatomic, strong) UATestChannel *testChannel;
@@ -1524,6 +1528,21 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef";
 
 - (void)rejectUpdatePushRegistrationWithOptions {
     [[[self.mockPushRegistration reject] ignoringNonObjectArgs] updateRegistrationWithOptions:0 categories:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+}
+
+// Tests that notification options are properly set following a migration from an older SDK
+- (void)testProvisionalPushAfterMigration {
+    // SETUP
+    self.push.userPushNotificationsEnabled = NO;
+
+    // TEST
+    self.push.authorizationStatus = UAAuthorizationStatusProvisional;
+    
+    
+    self.push.userPushNotificationsEnabled = YES;
+
+    // VERIFY
+    XCTAssertEqual(self.push.notificationOptions, UANotificationOptionAlert | UANotificationOptionBadge | UANotificationOptionSound | UANotificationOptionProvisional);
 }
 
 @end
