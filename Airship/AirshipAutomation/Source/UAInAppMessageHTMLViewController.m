@@ -115,6 +115,7 @@ NSString *const UAInAppNativeBridgeDismissCommand = @"dismiss";
     self.nativeBridge.javaScriptCommandDelegate = self;
     self.nativeBridge.nativeBridgeDelegate = self;
     self.webView.navigationDelegate = self.nativeBridge;
+    self.webView.scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
 
     if (self.style.hideDismissIcon) {
         [self.closeButtonContainerView setHidden:YES];
