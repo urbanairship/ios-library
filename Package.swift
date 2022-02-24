@@ -54,7 +54,6 @@ let package = Package(
                     //Frameworks
                     .linkedFramework("Network"),
                     .linkedFramework("UserNotifications"),
-                    .linkedFramework("UserNotifications"),
                     .linkedFramework("CFNetwork"),
                     .linkedFramework("CoreGraphics"),
                     .linkedFramework("Foundation"),
