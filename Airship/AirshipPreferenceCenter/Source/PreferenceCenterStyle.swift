@@ -44,14 +44,34 @@ public class PreferenceCenterStyle : NSObject {
     @objc public var subtitleColor: UIColor?
     
     /**
-     * The section text color.
+     * The section text color. Applies to both title and subtitle.
      */
     @objc public var sectionTextColor: UIColor?
     
     /**
-     * The section text font.
+     * The section title text font. Applies to both title and subtitle.
      */
     @objc public var sectionTextFont: UIFont?
+    
+    /**
+     * The section title text color.
+     */
+    @objc public var sectionTitleTextColor: UIColor?
+    
+    /**
+     * The section title text font.
+     */
+    @objc public var sectionTitleTextFont: UIFont?
+    
+    /**
+     * The section subtitle text color.
+     */
+    @objc public var sectionSubtitleTextColor: UIColor?
+    
+    /**
+     * The section subtitle text font.
+     */
+    @objc public var sectionSubtitleTextFont: UIFont?
     
     /**
      * The section break text color.
@@ -68,16 +88,35 @@ public class PreferenceCenterStyle : NSObject {
      */
     @objc public var sectionBreakBackgroundColor: UIColor?
     
-
     /**
-     * The preference text color.
+     * The preference text color. Applies to both title, subtitle, and chips.
      */
     @objc public var preferenceTextColor: UIColor?
 
     /**
-     * The preference text font.
+     * The preference text font. Applies to both title, subtitle, and chips.
      */
     @objc public var preferenceTextFont: UIFont?
+    
+    /**
+     * The preference title text color.
+     */
+    @objc public var preferenceTitleTextColor: UIColor?
+
+    /**
+     * The preference title text font.
+     */
+    @objc public var preferenceTitleTextFont: UIFont?
+    
+    /**
+     * The preference subtitle text color.
+     */
+    @objc public var preferenceSubtitleTextColor: UIColor?
+
+    /**
+     * The preference subtitle text font.
+     */
+    @objc public var preferenceSubtitleTextFont: UIFont?
 
     /**
      * The background color.
@@ -103,6 +142,71 @@ public class PreferenceCenterStyle : NSObject {
      * The switch thumb tint color
      */
     @objc public var switchThumbTintColor: UIColor?
+    
+    /**
+     * The preference chip text color.
+     */
+    @objc public var preferenceChipTextColor: UIColor?
+
+    /**
+     * The preference chip text font.
+     */
+    @objc public var preferenceChipTextFont: UIFont?
+    
+    /**
+     * The preference chip check mark color.
+     */
+    @objc public var preferenceChipCheckmarkColor: UIColor?
+    
+    /**
+     * The preference chip check mark background color when unchecked.
+     */
+    @objc public var preferenceChipCheckmarkBackgroundColor: UIColor?
+    
+    /**
+     * The preference chip check mark background color when checked.
+     */
+    @objc public var preferenceChipCheckmarkCheckedBackgroundColor: UIColor?
+    
+    /**
+     * The preference chip border color.
+     */
+    @objc public var preferenceChipBorderColor: UIColor?
+    
+    /**
+     * The alert title color
+     */
+    @objc public var alertTitleColor: UIColor?
+    
+    /**
+     * The alert title font.
+     */
+    @objc public var alertTitleFont: UIFont?
+    
+    /**
+     * The alert subtitle color.
+     */
+    @objc public var alertSubtitleColor: UIColor?
+    
+    /**
+     * The alert subtitle font.
+     */
+    @objc public var alertSubtitleFont: UIFont?
+    
+    /**
+     * The alert button background color.
+     */
+    @objc public var alertButtonBackgroundColor: UIColor?
+    
+    /**
+     * The alert button label color.
+     */
+    @objc public var alertButtonLabelColor: UIColor?
+    
+    /**
+     * The alert button label font.
+     */
+    @objc public var alertButtonLabelFont: UIFont?
 
     /**
      * Preference center style initializer

@@ -137,16 +137,23 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
             
             header.titleLabel.text = sectionConfig.display?.title
             header.subtitleLabel.text = sectionConfig.display?.subtitle
-            if let font = style?.sectionTextFont {
+
+            if let font = style?.sectionTitleTextFont ?? style?.sectionTextFont {
                 header.titleLabel.font = font
+            }
+            
+            if let color = style?.sectionTitleTextColor ?? style?.sectionTextColor {
+                header.titleLabel.textColor = color
+            }
+
+            if let font = style?.sectionSubtitleTextFont ?? style?.sectionTextFont {
                 header.subtitleLabel.font = font
             }
             
-            if let color = style?.sectionTextColor {
-                header.titleLabel.textColor = color
+            if let color = style?.sectionSubtitleTextColor ?? style?.sectionTextColor {
                 header.subtitleLabel.textColor = color
-
             }
+            
             return header
         }
     }
@@ -209,6 +216,22 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
             cell.alertTitle.text = display.title
             cell.alertDescription.text = display.subtitle ?? ""
             
+            if let font = style?.alertTitleFont {
+                cell.alertTitle?.font = font
+            }
+            
+            if let fontColor = style?.alertTitleColor {
+                cell.alertTitle?.textColor = fontColor
+            }
+            
+            if let font = style?.alertSubtitleFont {
+                cell.alertDescription?.font = font
+            }
+            
+            if let fontColor = style?.alertSubtitleColor {
+                cell.alertDescription?.textColor = fontColor
+            }
+            
             if let iconUrl = display.iconURL, let url = URL(string: iconUrl) {
                 cell.alertIconIndicator.startAnimating()
                 
@@ -227,10 +250,13 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
         
         if let button = item.button {
             cell.alertButton.isHidden = false
-            cell.alertButton.backgroundColor = .systemBlue
+            cell.alertButton.backgroundColor = self.style?.alertButtonBackgroundColor ?? .systemBlue
             cell.alertButton.layer.cornerRadius = 5
+            if let font = style?.alertButtonLabelFont {
+                cell.alertButton.titleLabel?.font = font
+            }
             cell.alertButton.setTitle(button.text, for: .normal)
-            cell.alertButton.setTitleColor(.white, for: .normal)
+            cell.alertButton.setTitleColor(self.style?.alertButtonLabelColor ?? .white, for: .normal)
             cell.alertButton.actions = button.actions
             cell.alertButton.addTarget(self, action: #selector(buttonAction(_:)), for: .touchUpInside)
             if button.contentDescription != nil {
@@ -257,13 +283,19 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
         cell.detailTextLabel?.text = item.display?.subtitle
         cell.detailTextLabel?.numberOfLines = 0
         
-        if let font = style?.preferenceTextFont {
+        if let font = style?.preferenceTitleTextFont ?? style?.preferenceTextFont {
             cell.textLabel?.font = font
+        }
+        
+        if let fontColor = style?.preferenceTitleTextColor ?? style?.preferenceTextColor {
+            cell.textLabel?.textColor = fontColor
+        }
+        
+        if let font = style?.preferenceSubtitleTextFont ?? style?.preferenceTextFont {
             cell.detailTextLabel?.font = font
         }
         
-        if let fontColor = style?.preferenceTextColor {
-            cell.textLabel?.textColor = fontColor
+        if let fontColor = style?.preferenceSubtitleTextColor ?? style?.preferenceTextColor {
             cell.detailTextLabel?.textColor = fontColor
         }
         
@@ -317,13 +349,19 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
         cell.detailTextLabel?.text = item.display?.subtitle
         cell.detailTextLabel?.numberOfLines = 0
         
-        if let font = style?.preferenceTextFont {
+        if let font = style?.preferenceTitleTextFont ?? style?.preferenceTextFont {
             cell.textLabel?.font = font
+        }
+        
+        if let fontColor = style?.preferenceTitleTextColor ?? style?.preferenceTextColor {
+            cell.textLabel?.textColor = fontColor
+        }
+        
+        if let font = style?.preferenceSubtitleTextFont ?? style?.preferenceTextFont {
             cell.detailTextLabel?.font = font
         }
         
-        if let fontColor = style?.preferenceTextColor {
-            cell.textLabel?.textColor = fontColor
+        if let fontColor = style?.preferenceSubtitleTextColor ?? style?.preferenceTextColor {
             cell.detailTextLabel?.textColor = fontColor
         }
         

@@ -21,7 +21,7 @@ open class PreferenceCenterCheckboxCell: UITableViewCell {
         return isDarkMode
     }
     
-    private var borderColor: UIColor {
+    private var defaultBorderColor: UIColor {
         if #available(iOS 13.0, *) {
             return UIColor.separator
         } else {
@@ -39,13 +39,18 @@ open class PreferenceCenterCheckboxCell: UITableViewCell {
     func draw(item : ContactSubscriptionGroupItem, style: PreferenceCenterStyle?) {
         clear()
         
-    
-        let checkedImage =  PreferenceCenterCheckboxCell.checkedImage(border: borderColor,
-                                                                      fill: isDarkMode ? .black : .white)
-        
+        let borderColor = style?.preferenceChipBorderColor ?? self.defaultBorderColor
+        let defaultFillColor = isDarkMode ? UIColor.black : UIColor.white
+        let fillColor = style?.preferenceChipCheckmarkBackgroundColor ?? defaultFillColor
+        let checkedFillColor = style?.preferenceChipCheckmarkCheckedBackgroundColor ?? .systemBlue
+        let checkMarkColor = style?.preferenceChipCheckmarkColor ?? .white
+
         let uncheckedImage = PreferenceCenterCheckboxCell.uncheckedImage(border: borderColor,
-                                                                         fill: .systemBlue,
-                                                                         checkMarkColor: .white)
+                                                                         fill: fillColor)
+
+        let checkedImage = PreferenceCenterCheckboxCell.checkedImage(border: borderColor,
+                                                                     fill: checkedFillColor,
+                                                                     checkMarkColor: checkMarkColor)
         
         let spacing = 5
         
@@ -120,14 +125,21 @@ open class PreferenceCenterCheckboxCell: UITableViewCell {
 
         titleLabel.text = item.display?.title
         subtitleLabel.text = item.display?.subtitle
-
-        if (style?.preferenceTextFont != nil) {
-            titleLabel.font = style?.preferenceTextFont
-            subtitleLabel.font = style?.preferenceTextFont
+        
+        if let font = style?.preferenceTitleTextFont ?? style?.preferenceTextFont {
+            titleLabel.font = font
         }
-        if (style?.preferenceTextColor != nil) {
-            titleLabel.textColor = style?.preferenceTextColor
-            subtitleLabel.textColor = style?.preferenceTextColor
+        
+        if let fontColor = style?.preferenceTitleTextColor ?? style?.preferenceTextColor {
+            titleLabel.textColor = fontColor
+        }
+        
+        if let font = style?.preferenceSubtitleTextFont ?? style?.preferenceTextFont {
+            subtitleLabel.font = font
+        }
+        
+        if let fontColor = style?.preferenceSubtitleTextColor ?? style?.preferenceTextColor {
+            subtitleLabel.textColor = fontColor
         }
 
         if (item.display?.subtitle != nil && item.display?.subtitle != "") {
@@ -162,8 +174,8 @@ open class PreferenceCenterCheckboxCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private class func checkedImage(border: UIColor,
-                                    fill: UIColor) -> UIImage {
+    private class func uncheckedImage(border: UIColor,
+                                      fill: UIColor) -> UIImage {
         
         let renderer = UIGraphicsImageRenderer(size: CGSize(width: imageSize, height: imageSize))
         return renderer.image { ctx in
@@ -171,23 +183,25 @@ open class PreferenceCenterCheckboxCell: UITableViewCell {
         }
     }
     
-    
     private func applyStyle(_ style: PreferenceCenterStyle?, button: UIButton) {
-        button.titleLabel?.font = style?.preferenceTextFont ?? .systemFont(ofSize: 12)
+        button.titleLabel?.font = style?.preferenceChipTextFont ?? style?.preferenceTextFont ?? .systemFont(ofSize: 12)
+        
         button.backgroundColor = isDarkMode ? ColorUtils.color("#333333") : ColorUtils.color("#f3f3f3")
-        button.layer.borderColor = self.borderColor.cgColor
+        button.layer.borderColor = style?.preferenceChipBorderColor?.cgColor ?? self.defaultBorderColor.cgColor
         
         if #available(iOS 13.0, *) {
-            button.setTitleColor(style?.preferenceTextColor ?? UIColor.label, for: .normal)
+            let color = style?.preferenceChipTextColor ?? style?.preferenceTextColor ?? UIColor.label
+            button.setTitleColor(color, for: .normal)
         } else {
             let defaultFontColor = isDarkMode ? UIColor.white : UIColor.black
-            button.setTitleColor(style?.preferenceTextColor ?? defaultFontColor, for: .normal)
+            let color = style?.preferenceChipTextColor ?? style?.preferenceTextColor ?? defaultFontColor
+            button.setTitleColor(color, for: .normal)
         }
     }
     
-    private class func uncheckedImage(border: UIColor,
-                                      fill: UIColor,
-                                      checkMarkColor: UIColor) -> UIImage {
+    private class func checkedImage(border: UIColor,
+                                    fill: UIColor,
+                                    checkMarkColor: UIColor) -> UIImage {
         
         let size = CGSize(width: imageSize, height: imageSize)
         let renderer = UIGraphicsImageRenderer(size: size)

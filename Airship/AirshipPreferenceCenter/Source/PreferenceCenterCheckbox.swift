@@ -31,9 +31,9 @@ class PreferenceCenterCheckbox: UIButton {
          callback: @escaping (Bool)->()) {
         self.component = component
         self.callback = callback
-        self.uncheckedImage = checkedImage
-        self.checkedImage = uncheckedImage
-        
+        self.checkedImage = checkedImage
+        self.uncheckedImage = uncheckedImage
+
         super.init(frame: .zero)
         self.addTarget(self, action:#selector(buttonClicked(sender:)), for: UIControl.Event.touchUpInside)
         self.setTitle(component.display.title, for: .normal)
