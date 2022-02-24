@@ -18,7 +18,16 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
     private var activeChannelSubscriptions: [String] = []
     private var activeContactSubscriptions: [String : [ChannelScope]] = [:]
     private var disposable: Disposable?
-    public var preferenceCenterID: String?
+    public var preferenceCenterID: String? {
+        didSet {
+            shouldRefresh = true
+            if (self.isViewLoaded) {
+                refreshConfig()
+            }
+        }
+    }
+    
+    private var shouldRefresh = true
     private var conditionStateMonitor: PreferenceCenterConditionMonitor?
     private var imageCache: [URL: UIImage] = [:]
     private var imageCompletionHandlers: [URL: [(UIImage?) -> Void]] = [:]
@@ -39,7 +48,7 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
         super.init(nibName: "PreferenceCenterViewController", bundle: PreferenceCenterResources.bundle())
     }
     
-    public override func viewDidLoad() {
+    open override func viewDidLoad() {
         super.viewDidLoad()
         
         self.conditionStateMonitor = PreferenceCenterConditionMonitor { [weak self] in
@@ -71,15 +80,19 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
         refreshConfig()
     }
 
-    public override func viewDidAppear(_ animated: Bool) {
+    open override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(false)
+        
+        if (self.shouldRefresh) {
+            refreshConfig()
+        }
     }
 
-    public override func viewDidLayoutSubviews() {
+    open override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
     }
     
-    public override func viewDidDisappear(_ animated: Bool) {
+    open override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         self.disposable?.dispose()
     }
@@ -87,12 +100,11 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
     // MARK: -
     // MARK: UITableViewDelegate
     
-    public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    open func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableView.automaticDimension
     }
     
-    public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        
+    open func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         guard let sectionConfig = self.filteredSections?[section].section else {
             return nil
         }
@@ -142,17 +154,17 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
     // MARK: -
     // MARK: UITableViewDataSource
     
-    public func numberOfSections(in tableView: UITableView) -> Int {
+    open func numberOfSections(in tableView: UITableView) -> Int {
         guard let sections = filteredSections?.count else { return 0 }
         return sections
     }
     
-    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard let rows = filteredSections?[section].items.count else { return 0 }
         return rows
     }
     
-    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let defaultResult: () -> UITableViewCell =  {
             return tableView.dequeueReusableCell(withIdentifier: "PreferenceCenterCell", for: indexPath)
         }
@@ -425,13 +437,14 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
         self.refreshTable()
     }
     
-    func refreshConfig() {
+    public func refreshConfig() {
         overlayView.alpha = 1;
         activityIndicator.startAnimating()
         
         self.disposable?.dispose()
         
         var onComplete : ((PreferenceCenterConfig, [String]?, [String : ChannelScopes]?) -> Void)? = { config, channelLists, contactLists in
+            self.shouldRefresh = false
             let mappedContactLists = contactLists?.mapValues { $0.values }
             self.onConfigLoaded(config: config, channelLists: channelLists, contactLists: mappedContactLists)
         }
@@ -478,7 +491,6 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
             if (containsChannelSubscriptions) {
                 dispatchGroup.enter()
                 Airship.channel.fetchSubscriptionLists() { subscribedIDs, error in
-                
                     guard error == nil, let subscribedIDs = subscribedIDs else {
                         UADispatcher.main.dispatch(after: 30, block: {
                             if (!cancelled) {
@@ -496,7 +508,6 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
             if (containsContactSubscriptions) {
                 dispatchGroup.enter()
                 Airship.contact.fetchSubscriptionLists() { subscribedIDs, error in
-                
                     guard error == nil, let subscribedIDs = subscribedIDs else {
                         UADispatcher.main.dispatch(after: 30, block: {
                             if (!cancelled) {
