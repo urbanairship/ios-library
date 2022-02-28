@@ -81,22 +81,9 @@ jobs:
       - name: Test
         run: make test
 
-  pod-lib-lint:
-    needs: check-version
-    runs-on: macOS-11
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v1
-        with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: ${{ runner.os }}-gems-
-      - name: Pod lint
-        run: make pod-lint
-
   deploy:
     runs-on: macOS-11
-    needs: [pod-lib-lint, run-tests, build-package, build-samples]
+    needs: [run-tests, build-package, build-samples]
     steps:
       - uses: actions/checkout@v2
       - name: Get the version

@@ -5,7 +5,7 @@
 #  - ARCHIVE_PATH: The archive path
 
 set -o pipefail
-set -e
+set -ex
 
 ROOT_PATH=`dirname "${0}"`/..
 OUTPUT="$1"
@@ -20,59 +20,57 @@ mkdir -p "$OUTPUT"
 
 function build_archive {
   # $1 Project
-  # $2 Scheme
-  # $3 iOS or tvOS
+  # $2 iOS or tvOS
 
-  local project=$1
-  local scheme=$2
+  local scheme=$1
   local sdk=""
   local simulatorSdk=""
   local destination=""
   local simulatorDestination=""
 
-  if [ $3 == "iOS" ]
+  if [ $2 == "iOS" ]
   then
     sdk="iphoneos"
+    destination="generic/platform=iOS"
     simulatorSdk="iphonesimulator"
-    destination="iOS"
-    simulatorDestination="iOS Simulator"
-  elif [ $3 == "maccatalyst" ]
+    simulatorDestination="generic/platform=iOS Simulator"
+  elif [ $2 == "maccatalyst" ]
   then
-    destination="platform=macOS, arch=x86_64, variant=Mac Catalyst"
+    destination="generic/platform=macOS,variant=Mac Catalyst,name=Any Mac"
   else
     sdk="appletvos"
     simulatorSdk="appletvsimulator"
-    destination="tvOS"
-    simulatorDestination="tvOS Simulator"
+    destination="generic/platform=tvOS"
+    simulatorDestination="generic/platform=tvOS Simulator"
   fi
 
-  if [ $3 == "maccatalyst" ]
+  if [ $2 == "maccatalyst" ]
   then
     xcrun xcodebuild archive -quiet \
-    -project "$ROOT_PATH/$project/$project.xcodeproj" \
+    -workspace "$ROOT_PATH/Airship.xcworkspace" \
     -scheme "$scheme" \
-    -destination="$destination" \
-    -archivePath "$ARCHIVE_PATH/xcarchive/$project/$scheme/mac.xcarchive" \
+    -destination "$destination" \
+    -archivePath "$ARCHIVE_PATH/xcarchive/$scheme/mac.xcarchive" \
     -derivedDataPath "$DERIVED_DATA" \
     SKIP_INSTALL=NO \
     BUILD_LIBRARIES_FOR_DISTRIBUTION=YES
   else
     xcrun xcodebuild archive -quiet \
-    -project "$ROOT_PATH/$project/$project.xcodeproj" \
+    -workspace "$ROOT_PATH/Airship.xcworkspace" \
     -scheme "$scheme" \
     -sdk "$sdk" \
-    -destination="$destination" \
-    -archivePath "$ARCHIVE_PATH/xcarchive/$project/$scheme/$sdk.xcarchive" \
+    -destination "$destination" \
+    -archivePath "$ARCHIVE_PATH/xcarchive/$scheme/$sdk.xcarchive" \
     -derivedDataPath "$DERIVED_DATA" \
     SKIP_INSTALL=NO \
     BUILD_LIBRARIES_FOR_DISTRIBUTION=YES
 
     xcrun xcodebuild archive -quiet \
-    -project "$ROOT_PATH/$project/$project.xcodeproj" \
+    -workspace "$ROOT_PATH/Airship.xcworkspace" \
     -scheme "$scheme" \
     -sdk "$simulatorSdk" \
-    -destination="$simulatorDestination" \
-    -archivePath "$ARCHIVE_PATH/xcarchive/$project/$scheme/$simulatorSdk.xcarchive" \
+    -destination "$simulatorDestination" \
+    -archivePath "$ARCHIVE_PATH/xcarchive/$scheme/$simulatorSdk.xcarchive" \
     -derivedDataPath "$DERIVED_DATA" \
     SKIP_INSTALL=NO \
     BUILD_LIBRARIES_FOR_DISTRIBUTION=YES
@@ -81,110 +79,96 @@ function build_archive {
 
 echo -ne "\n\n *********** BUILDING XCFRAMEWORKS *********** \n\n"
 
-build_archive "Airship" "AirshipCore" "iOS"
-build_archive "Airship" "AirshipCore" "maccatalyst"
-build_archive "Airship" "AirshipCore tvOS" "tvOS"
-build_archive "Airship" "AirshipBasement" "iOS"
-build_archive "Airship" "AirshipBasement" "maccatalyst"
-build_archive "Airship" "AirshipBasement tvOS" "tvOS"
-build_archive "Airship" "AirshipLocation" "iOS"
-build_archive "Airship" "AirshipLocation" "maccatalyst"
-build_archive "Airship" "AirshipDebug" "iOS"
-build_archive "Airship" "AirshipDebug" "maccatalyst"
-build_archive "Airship" "AirshipAutomation" "iOS"
-build_archive "Airship" "AirshipAutomation" "maccatalyst"
-build_archive "Airship" "AirshipAccengage" "iOS"
-build_archive "Airship" "AirshipAccengage" "maccatalyst"
-build_archive "Airship" "AirshipMessageCenter" "iOS"
-build_archive "Airship" "AirshipMessageCenter" "maccatalyst"
-build_archive "Airship" "AirshipChat" "iOS"
-build_archive "Airship" "AirshipChat" "maccatalyst"
-build_archive "Airship" "AirshipPreferenceCenter" "iOS"
-build_archive "Airship" "AirshipPreferenceCenter" "maccatalyst"
-build_archive "Airship" "AirshipExtendedActions" "iOS"
-build_archive "Airship" "AirshipExtendedActions" "maccatalyst"
-build_archive "AirshipExtensions" "AirshipNotificationServiceExtension" "iOS"
-build_archive "AirshipExtensions" "AirshipNotificationServiceExtension" "maccatalyst"
-build_archive "AirshipExtensions" "AirshipNotificationContentExtension" "iOS"
-build_archive "AirshipExtensions" "AirshipNotificationContentExtension" "maccatalyst"
+# tvOS
+build_archive "AirshipRelease tvOS" "tvOS"
+
+# iOS
+build_archive "AirshipRelease" "iOS"
+build_archive "AirshipNotificationServiceExtension" "iOS"
+build_archive "AirshipNotificationContentExtension" "iOS"
+
+# Catalyst
+build_archive "AirshipRelease" "maccatalyst"
+build_archive "AirshipNotificationServiceExtension" "maccatalyst"
+build_archive "AirshipNotificationContentExtension" "maccatalyst"
 
 # Package AirshipBasement
 xcodebuild -create-xcframework \
--framework "$ARCHIVE_PATH/xcarchive/Airship/AirshipBasement/iphoneos.xcarchive/Products/Library/Frameworks/AirshipBasement.framework" \
--framework "$ARCHIVE_PATH/xcarchive/Airship/AirshipBasement/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipBasement.framework" \
--framework "$ARCHIVE_PATH/xcarchive/Airship/AirshipBasement/mac.xcarchive/Products/Library/Frameworks/AirshipBasement.framework" \
--framework "$ARCHIVE_PATH/xcarchive/Airship/AirshipBasement tvOS/appletvos.xcarchive/Products/Library/Frameworks/AirshipBasement.framework" \
--framework "$ARCHIVE_PATH/xcarchive/Airship/AirshipBasement tvOS/appletvsimulator.xcarchive/Products/Library/Frameworks/AirshipBasement.framework" \
--output "$OUTPUT/AirshipBasement.xcframework"
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/iphoneos.xcarchive/Products/Library/Frameworks/AirshipBasement.framework" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipBasement.framework" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/mac.xcarchive/Products/Library/Frameworks/AirshipBasement.framework" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease tvOS/appletvos.xcarchive/Products/Library/Frameworks/AirshipBasement.framework" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease tvOS/appletvsimulator.xcarchive/Products/Library/Frameworks/AirshipBasement.framework" \
+  -output "$OUTPUT/AirshipBasement.xcframework"
 
 # Package AirshipCore
 xcodebuild -create-xcframework \
--framework "$ARCHIVE_PATH/xcarchive/Airship/AirshipCore/iphoneos.xcarchive/Products/Library/Frameworks/AirshipCore.framework" \
--framework "$ARCHIVE_PATH/xcarchive/Airship/AirshipCore/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipCore.framework" \
--framework "$ARCHIVE_PATH/xcarchive/Airship/AirshipCore/mac.xcarchive/Products/Library/Frameworks/AirshipCore.framework" \
--framework "$ARCHIVE_PATH/xcarchive/Airship/AirshipCore tvOS/appletvos.xcarchive/Products/Library/Frameworks/AirshipCore.framework" \
--framework "$ARCHIVE_PATH/xcarchive/Airship/AirshipCore tvOS/appletvsimulator.xcarchive/Products/Library/Frameworks/AirshipCore.framework" \
--output "$OUTPUT/AirshipCore.xcframework"
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/iphoneos.xcarchive/Products/Library/Frameworks/AirshipCore.framework" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipCore.framework" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/mac.xcarchive/Products/Library/Frameworks/AirshipCore.framework" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease tvOS/appletvos.xcarchive/Products/Library/Frameworks/AirshipCore.framework" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease tvOS/appletvsimulator.xcarchive/Products/Library/Frameworks/AirshipCore.framework" \
+  -output "$OUTPUT/AirshipCore.xcframework"
 
 # Package AirshipLocation
 xcodebuild -create-xcframework \
--framework "$ARCHIVE_PATH/xcarchive/Airship/AirshipLocation/iphoneos.xcarchive/Products/Library/Frameworks/AirshipLocation.framework" \
--framework "$ARCHIVE_PATH/xcarchive/Airship/AirshipLocation/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipLocation.framework" \
--framework "$ARCHIVE_PATH/xcarchive/Airship/AirshipLocation/mac.xcarchive/Products/Library/Frameworks/AirshipLocation.framework" \
--output "$OUTPUT/AirshipLocation.xcframework"
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/iphoneos.xcarchive/Products/Library/Frameworks/AirshipLocation.framework" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipLocation.framework" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/mac.xcarchive/Products/Library/Frameworks/AirshipLocation.framework" \
+  -output "$OUTPUT/AirshipLocation.xcframework"
 
 # Package AirshipAutomation
 xcodebuild -create-xcframework \
--framework "$ARCHIVE_PATH/xcarchive/Airship/AirshipAutomation/iphoneos.xcarchive/Products/Library/Frameworks/AirshipAutomation.framework" \
--framework "$ARCHIVE_PATH/xcarchive/Airship/AirshipAutomation/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipAutomation.framework" \
--framework "$ARCHIVE_PATH/xcarchive/Airship/AirshipAutomation/mac.xcarchive/Products/Library/Frameworks/AirshipAutomation.framework" \
--output "$OUTPUT/AirshipAutomation.xcframework"
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/iphoneos.xcarchive/Products/Library/Frameworks/AirshipAutomation.framework" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipAutomation.framework" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/mac.xcarchive/Products/Library/Frameworks/AirshipAutomation.framework" \
+  -output "$OUTPUT/AirshipAutomation.xcframework"
 
 # Package AirshipMessageCenter
 xcodebuild -create-xcframework \
--framework "$ARCHIVE_PATH/xcarchive/Airship/AirshipMessageCenter/iphoneos.xcarchive/Products/Library/Frameworks/AirshipMessageCenter.framework" \
--framework "$ARCHIVE_PATH/xcarchive/Airship/AirshipMessageCenter/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipMessageCenter.framework" \
--framework "$ARCHIVE_PATH/xcarchive/Airship/AirshipMessageCenter/mac.xcarchive/Products/Library/Frameworks/AirshipMessageCenter.framework" \
--output "$OUTPUT/AirshipMessageCenter.xcframework"
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/iphoneos.xcarchive/Products/Library/Frameworks/AirshipMessageCenter.framework" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipMessageCenter.framework" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/mac.xcarchive/Products/Library/Frameworks/AirshipMessageCenter.framework" \
+  -output "$OUTPUT/AirshipMessageCenter.xcframework"
 
 # Package AirshipChat
 xcodebuild -create-xcframework \
--framework "$ARCHIVE_PATH/xcarchive/Airship/AirshipChat/iphoneos.xcarchive/Products/Library/Frameworks/AirshipChat.framework" \
--framework "$ARCHIVE_PATH/xcarchive/Airship/AirshipChat/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipChat.framework" \
--framework "$ARCHIVE_PATH/xcarchive/Airship/AirshipChat/mac.xcarchive/Products/Library/Frameworks/AirshipChat.framework" \
--output "$OUTPUT/AirshipChat.xcframework"
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/iphoneos.xcarchive/Products/Library/Frameworks/AirshipChat.framework" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipChat.framework" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/mac.xcarchive/Products/Library/Frameworks/AirshipChat.framework" \
+  -output "$OUTPUT/AirshipChat.xcframework"
 
 # Package AirshipPreferenceCenter
 xcodebuild -create-xcframework \
--framework "$ARCHIVE_PATH/xcarchive/Airship/AirshipPreferenceCenter/iphoneos.xcarchive/Products/Library/Frameworks/AirshipPreferenceCenter.framework" \
--framework "$ARCHIVE_PATH/xcarchive/Airship/AirshipPreferenceCenter/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipPreferenceCenter.framework" \
--framework "$ARCHIVE_PATH/xcarchive/Airship/AirshipPreferenceCenter/mac.xcarchive/Products/Library/Frameworks/AirshipPreferenceCenter.framework" \
--output "$OUTPUT/AirshipPreferenceCenter.xcframework"
-
-# Package AirshipExtendedActions
-xcodebuild -create-xcframework \
--framework "$ARCHIVE_PATH/xcarchive/Airship/AirshipExtendedActions/iphoneos.xcarchive/Products/Library/Frameworks/AirshipExtendedActions.framework" \
--framework "$ARCHIVE_PATH/xcarchive/Airship/AirshipExtendedActions/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipExtendedActions.framework" \
--framework "$ARCHIVE_PATH/xcarchive/Airship/AirshipExtendedActions/mac.xcarchive/Products/Library/Frameworks/AirshipExtendedActions.framework" \
--output "$OUTPUT/AirshipExtendedActions.xcframework"
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/iphoneos.xcarchive/Products/Library/Frameworks/AirshipPreferenceCenter.framework" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipPreferenceCenter.framework" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/mac.xcarchive/Products/Library/Frameworks/AirshipPreferenceCenter.framework" \
+  -output "$OUTPUT/AirshipPreferenceCenter.xcframework"
 
 # Package AirshipAccengage
 xcodebuild -create-xcframework \
--framework "$ARCHIVE_PATH/xcarchive/Airship/AirshipAccengage/iphoneos.xcarchive/Products/Library/Frameworks/AirshipAccengage.framework" \
--framework "$ARCHIVE_PATH/xcarchive/Airship/AirshipAccengage/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipAccengage.framework" \
--framework "$ARCHIVE_PATH/xcarchive/Airship/AirshipAccengage/mac.xcarchive/Products/Library/Frameworks/AirshipAccengage.framework" \
--output "$OUTPUT/AirshipAccengage.xcframework"
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/iphoneos.xcarchive/Products/Library/Frameworks/AirshipAccengage.framework" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipAccengage.framework" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/mac.xcarchive/Products/Library/Frameworks/AirshipAccengage.framework" \
+  -output "$OUTPUT/AirshipAccengage.xcframework"
+
+# Package AirshipExtendedActions
+xcodebuild -create-xcframework \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/iphoneos.xcarchive/Products/Library/Frameworks/AirshipExtendedActions.framework" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipExtendedActions.framework" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/mac.xcarchive/Products/Library/Frameworks/AirshipExtendedActions.framework" \
+  -output "$OUTPUT/AirshipExtendedActions.xcframework"
 
 # Package AirshipNotificationServiceExtension
 xcodebuild -create-xcframework \
--framework "$ARCHIVE_PATH/xcarchive/AirshipExtensions/AirshipNotificationServiceExtension/iphoneos.xcarchive/Products/Library/Frameworks/AirshipNotificationServiceExtension.framework" \
--framework "$ARCHIVE_PATH/xcarchive/AirshipExtensions/AirshipNotificationServiceExtension/mac.xcarchive/Products/Library/Frameworks/AirshipNotificationServiceExtension.framework" \
--framework "$ARCHIVE_PATH/xcarchive/AirshipExtensions/AirshipNotificationServiceExtension/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipNotificationServiceExtension.framework" \
--output "$OUTPUT/AirshipNotificationServiceExtension.xcframework"
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipNotificationServiceExtension/iphoneos.xcarchive/Products/Library/Frameworks/AirshipNotificationServiceExtension.framework" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipNotificationServiceExtension/mac.xcarchive/Products/Library/Frameworks/AirshipNotificationServiceExtension.framework" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipNotificationServiceExtension/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipNotificationServiceExtension.framework" \
+  -output "$OUTPUT/AirshipNotificationServiceExtension.xcframework"
 
 # Package AirshipNotificationContentExtension
 xcodebuild -create-xcframework \
--framework "$ARCHIVE_PATH/xcarchive/AirshipExtensions/AirshipNotificationContentExtension/iphoneos.xcarchive/Products/Library/Frameworks/AirshipNotificationContentExtension.framework" \
--framework "$ARCHIVE_PATH/xcarchive/AirshipExtensions/AirshipNotificationContentExtension/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipNotificationContentExtension.framework" \
--framework "$ARCHIVE_PATH/xcarchive/AirshipExtensions/AirshipNotificationContentExtension/mac.xcarchive/Products/Library/Frameworks/AirshipNotificationContentExtension.framework" \
--output "$OUTPUT/AirshipNotificationContentExtension.xcframework"
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipNotificationContentExtension/iphoneos.xcarchive/Products/Library/Frameworks/AirshipNotificationContentExtension.framework" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipNotificationContentExtension/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipNotificationContentExtension.framework" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipNotificationContentExtension/mac.xcarchive/Products/Library/Frameworks/AirshipNotificationContentExtension.framework" \
+  -output "$OUTPUT/AirshipNotificationContentExtension.xcframework"

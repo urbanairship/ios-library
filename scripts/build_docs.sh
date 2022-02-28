@@ -9,13 +9,13 @@ set -e
 ROOT_PATH=`dirname "${0}"`/..
 OUTPUT="$1"
 
+
 function build_docs_swift {
   # $1 Project
   # $2 Module
   # $3 Umbrella header path
 
    bundle exec jazzy \
-  --clean \
   --module $2  \
   --module-version $AIRSHIP_VERSION \
   --build-tool-arguments -scheme,$2 \
@@ -27,6 +27,7 @@ function build_docs_swift {
   --config "$ROOT_PATH/Documentation/.jazzy.json"
 }
 
+
 function build_docs {
   # $1 Project
   # $2 Module
@@ -34,7 +35,6 @@ function build_docs {
 
    bundle exec jazzy \
   --objc \
-  --clean \
   --module $2  \
   --module-version $AIRSHIP_VERSION \
   --framework-root "$ROOT_PATH/$1" \
@@ -48,14 +48,16 @@ function build_docs {
 
 echo -ne "\n\n *********** BUILDING DOCS *********** \n\n"
 
-build_docs_swift "Airship" "AirshipCore"
 build_docs "Airship" "AirshipBasement"  "Source/Public/AirshipBasement.h"
+
+build_docs_swift "Airship" "AirshipCore"
+build_docs_swift "Airship" "AirshipChat"
+build_docs_swift "Airship" "AirshipPreferenceCenter"
+
 build_docs "Airship" "AirshipLocation"  "Source/AirshipLocation.h"
 build_docs "Airship" "AirshipAutomation"  "Source/AirshipAutomation.h"
 build_docs "Airship" "AirshipMessageCenter"  "Source/AirshipMessageCenter.h"
 build_docs "Airship" "AirshipExtendedActions"  "Source/AirshipExtendedActions.h"
 build_docs "Airship" "AirshipAccengage"  "Source/AirshipAccengage.h"
-build_docs_swift "Airship" "AirshipChat"
-build_docs_swift "Airship" "AirshipPreferenceCenter"
 build_docs "AirshipExtensions" "AirshipNotificationServiceExtension" "Source/AirshipNotificationServiceExtension.h"
 build_docs "AirshipExtensions" "AirshipNotificationContentExtension" "Source/AirshipNotificationContentExtension.h"
