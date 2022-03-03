@@ -171,7 +171,7 @@ public class Contact : NSObject, Component, ContactProtocol {
     private let dispatcher = UADispatcher.serial()
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
-    private let date : DateUtils
+    private let date : AirshipDate
     private let notificationCenter: NotificationCenter
     private let cachedSubscriptionLists: CachedValue<(String, [String: [ChannelScope]])>
 
@@ -357,7 +357,7 @@ public class Contact : NSObject, Component, ContactProtocol {
          contactAPIClient: ContactsAPIClientProtocol,
          taskManager: TaskManagerProtocol,
          notificationCenter: NotificationCenter = NotificationCenter.default,
-         date: DateUtils = DateUtils()) {
+         date: AirshipDate = AirshipDate()) {
         
         self.dataStore = dataStore
         self.config = config

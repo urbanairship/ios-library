@@ -210,31 +210,7 @@ public class Utils : NSObject {
     /// - Returns: A parsed NSDate object, or nil if the timestamp is not a valid format.
     @objc(parseISO8601DateFromString:)
     public class func parseISO8601Date(from: String) -> Date? {
-        let formatter = DateFormatter()
-        formatter.locale = Locale.init(identifier: "en_US_POSIX")
-        formatter.timeZone = TimeZone.init(secondsFromGMT: 0)
-
-        // All the various formats
-        let formats = ["yyyy-MM-dd'T'HH:mm:ss.SSS",
-                       "yyyy-MM-dd'T'HH:mm:ss",
-                       "yyyy-MM-dd'T'HH:mm:ss'Z'",
-                       "yyyy-MM-dd HH:mm:ss",
-                       "yyyy-MM-dd'T'HH:mm",
-                       "yyyy-MM-dd HH:mm",
-                       "yyyy-MM-dd'T'HH",
-                       "yyyy-MM-dd HH",
-                       "yyyy-MM-dd",
-                       "yyyy-MM",
-                       "yyyy"];
-        
-        for format in formats {
-            formatter.dateFormat = format
-            if let date = formatter.date(from: from) {
-                return date
-            }
-        }
-        
-        return nil;
+        return AirshipDateFormatter.date(fromISOString: from)
     }
     
     // MARK: UI Utilities

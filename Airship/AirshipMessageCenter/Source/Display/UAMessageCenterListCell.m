@@ -17,10 +17,29 @@
 @implementation UAMessageCenterListCell
 
 - (void)setData:(UAInboxMessage *)message {
-    self.date.text = [UAMessageCenterDateUtils formattedDateRelativeToNow:message.messageSent];
+    if ([self isDateToday:message.messageSent]) {
+        self.date.text = [UADateFormatter stringFromDate:message.messageSent
+                                                  format:UADateFormatterFormatRelativeShort];
+    } else {
+        self.date.text = [UADateFormatter stringFromDate:message.messageSent
+                                                  format:UADateFormatterFormatRelativeShortDate];
+    }
+
     self.title.text = message.title;
     self.unreadIndicator.hidden = !message.unread;
-    self.accessibilityHint = UAMessageCenterLocalizedString(@"ua_shows_full_message");
+    self.unreadIndicator.accessibilityHint = UAMessageCenterLocalizedString(@"ua_unread_description");
+
+
+    NSString *accessibilityStringFormat;
+    if (message.unread) {
+        accessibilityStringFormat = UAMessageCenterLocalizedString(@"ua_message_unread_description");
+    } else {
+        accessibilityStringFormat = UAMessageCenterLocalizedString(@"ua_message_description");
+    }
+
+    NSString *fullDate = [UADateFormatter stringFromDate:message.messageSent
+                                                  format:UADateFormatterFormatRelativeFull];
+    self.accessibilityLabel = [NSString stringWithFormat:accessibilityStringFormat, message.title, fullDate];
 }
 
 - (void)setMessageCenterStyle:(UAMessageCenterStyle *)style {
@@ -72,11 +91,11 @@
     if (style.cellDateFont) {
         self.date.font = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleBody] scaledFontForFont:style.cellDateFont];
     }
-    
+
     if (style.cellDateColor) {
         self.date.textColor = style.cellDateColor;
     } else if (@available(iOS 13.0, *)) {
-        self.date.textColor = [UIColor secondaryLabelColor];
+        self.date.textColor = [UIColor labelColor];
     }
 
     if (style.cellDateHighlightedColor) {
@@ -96,7 +115,7 @@
     } else if (style.tintColor) {
         self.unreadIndicator.backgroundColor = self.messageCenterStyle.tintColor;
     }
-    
+
     // needed for retina displays because the unreadIndicator is configured to rasterize in
     // UAMessageCenterListCell.xib via user-defined runtime attributes (layer.shouldRasterize)
     self.unreadIndicator.layer.rasterizationScale = [[UIScreen mainScreen] scale];
@@ -134,4 +153,20 @@
     }
 }
 
+- (BOOL)isDateToday:(NSDate *)date {
+    NSDate *now = [NSDate date];
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+
+    NSUInteger components = (NSCalendarUnitYear |
+                             NSCalendarUnitMonth |
+                             NSCalendarUnitDay);
+
+    NSDateComponents *dateComponents = [calendar components:components fromDate:date];
+    NSDateComponents *todayComponents = [calendar components:components fromDate:now];
+
+    return (dateComponents.day == todayComponents.day &&
+            dateComponents.month == todayComponents.month &&
+            dateComponents.year == todayComponents.year);
+}
 @end
+

@@ -68,7 +68,7 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
     private var eventManager: EventManagerProtocol
     private var privacyManager: PrivacyManager
     private var notificationCenter: NotificationCenter
-    private var date: DateUtils
+    private var date: AirshipDate
     private var dispatcher: UADispatcher
     private var sdkExtensions: [String]
     private var headerBlocks: [(() -> [String : String]?)]
@@ -147,7 +147,7 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
                     channel: channel,
                     eventManager: EventManager(config: config, dataStore: dataStore, channel: channel),
                     notificationCenter: NotificationCenter.default,
-                    date: DateUtils(),
+                    date: AirshipDate(),
                     dispatcher: UADispatcher.main,
                     localeManager: localeManager,
                     appStateTracker: AppStateTracker.shared,
@@ -175,7 +175,7 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
         channel: ChannelProtocol,
         eventManager: EventManagerProtocol,
         notificationCenter: NotificationCenter,
-        date: DateUtils,
+        date: AirshipDate,
         dispatcher: UADispatcher,
         localeManager: LocaleManagerProtocol,
         appStateTracker: AppStateTrackerProtocol,

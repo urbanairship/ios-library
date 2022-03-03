@@ -1,18 +1,42 @@
-"ua_cancel" = "Cancel";
-"ua_channel_copy_toast" = "Channel copied to clipboard!";
-"ua_channel_id" = "Channel ID";
-"ua_channel_notification_ticker" = "Airship Channel";
 "ua_connection_error" = "Connection Error";
 "ua_content_error" = "Content Error";
-"ua_default_channel_description" = "General app updates";
-"ua_default_channel_name" = "Notifications";
-"ua_delete" = "Delete";
+
+"ua_delete_message" = "Delete";
+"ua_delete_message_description" = "Delete message";
+
+"ua_delete_messages" = "Delete";
+"ua_delete_messages_description" = "Delete selected messages";
+
+"ua_message_cell_editing_description" = "Toggles selection";
+"ua_message_cell_description" = "Displays full message";
+
 "ua_empty_message_list" = "No messages";
-"ua_mark_read" = "Mark Read";
+"ua_mark_messages_read" = "Mark Read";
+"ua_mark_messages_read_description" = "Mark selected messages read";
+
+"ua_cancel_edit_messages" = "Cancel";
+"ua_cancel_edit_messages_description" = "Cancel message edits";
+
+"ua_select_all_messages" = "Select All";
+"ua_select_all_messages_description" = "Selects all messages";
+
+"ua_select_none_messages" = "Select None";
+"ua_select_none_messages_description" = "Reset message selection";
+
+"ua_edit_messages" = "Edit";
+"ua_edit_messages_description" = "Edit messsages";
+"ua_unread_message_description" = "Message unread";
+
+// Message <TITLE>, sent at <DATE>
+"ua_message_description" = "Message %@, sent at %@";
+// Unread message <TITLE>, sent at <DATE>
+"ua_message_unread_description" = "Unread message %@, sent at %@";
+
 "ua_mc_failed_to_load" = "Unable to load message. Please try again later.";
 "ua_mc_no_longer_available" = "The selected message is no longer available.";
 "ua_message_center_title" = "Message Center";
 "ua_message_not_selected" = "No messages selected";
+
 "ua_notification_button_accept" = "Accept";
 "ua_notification_button_add" = "Add";
 "ua_notification_button_add_to_calendar" = "Add to Calendar";
@@ -40,18 +64,11 @@
 "ua_notification_button_unfollow" = "Unfollow";
 "ua_notification_button_yes" = "Yes";
 "ua_ok" = "OK";
-"ua_open" = "Open";
-"ua_rate_app_action_default_body" = "Tap %@ to rate it on the app store.";
-"ua_rate_app_action_default_rate_negative_button" = "No Thanks";
-"ua_rate_app_action_default_rate_positive_button" = "Rate";
-"ua_rate_app_action_default_title" = "Enjoying %@?";
-"ua_rate_app_action_generic_display_name" = "This App";
-"ua_refresh" = "Refresh";
 "ua_retry_button" = "Retry";
-"ua_select_all" = "Select All";
-"ua_select_none" = "Select None";
-"ua_share_dialog_title" = "Share";
-"ua_shows_full_message" = "Shows full message";
+
 "ua_chat_title" = "Chat";
-"ua_preference_center_title" = "Preference Center";
 "ua_chat_send_button" = "Send";
+
+"ua_preference_center_title" = "Preference Center";
+
+

@@ -119,22 +119,18 @@ NS_ASSUME_NONNULL_BEGIN
     [super viewDidLoad];
     
     // if "Edit" has been localized, use it, otherwise use iOS's UIBarButtonSystemItemEdit
-    if (UAMessageCenterLocalizedStringExists(@"ua_edit")) {
-        self.editItem = [[UIBarButtonItem alloc] initWithTitle:UAMessageCenterLocalizedString(@"ua_edit")
-                                                         style:UIBarButtonItemStylePlain
-                                                        target:self
-                                                        action:@selector(editButtonPressed:)];
-    } else {
-        self.editItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit
-                                                                      target:self
-                                                                      action:@selector(editButtonPressed:)];
-    }
+    self.editItem = [[UIBarButtonItem alloc] initWithTitle:UAMessageCenterLocalizedString(@"ua_edit_messages")
+                                                     style:UIBarButtonItemStylePlain
+                                                    target:self
+                                                    action:@selector(editButtonPressed:)];
+    self.editItem.accessibilityHint = UAMessageCenterLocalizedString(@"ua_edit_messages_description");
     
     self.cancelItem = [[UIBarButtonItem alloc]
-                       initWithTitle:UAMessageCenterLocalizedString(@"ua_cancel")
+                       initWithTitle:UAMessageCenterLocalizedString(@"ua_cancel_edit_messages")
                        style:UIBarButtonItemStyleDone
                        target:self
                        action:@selector(cancelButtonPressed:)];
+    self.cancelItem.accessibilityHint = UAMessageCenterLocalizedString(@"ua_cancel_edit_messages_description");
 
     self.navigationItem.rightBarButtonItem = self.editItem;
 
@@ -296,19 +292,22 @@ NS_ASSUME_NONNULL_BEGIN
                                                                                    target:nil
                                                                                    action:nil];
 
-    self.selectAllButtonItem = [[UIBarButtonItem alloc] initWithTitle:UAMessageCenterLocalizedString(@"ua_select_all")
+    self.selectAllButtonItem = [[UIBarButtonItem alloc] initWithTitle:UAMessageCenterLocalizedString(@"ua_select_all_messages")
                                                                 style:UIBarButtonItemStylePlain
                                                                target:self
                                                                action:@selector(selectAllButtonPressed:)];
+    self.selectAllButtonItem.accessibilityHint = UAMessageCenterLocalizedString(@"ua_select_all_messages_description");
 
-    self.deleteItem = [[UIBarButtonItem alloc] initWithTitle:UAMessageCenterLocalizedString(@"ua_delete")
+    self.deleteItem = [[UIBarButtonItem alloc] initWithTitle:UAMessageCenterLocalizedString(@"ua_delete_messages")
                                                        style:UIBarButtonItemStylePlain
                                                       target:self
                                                       action:@selector(batchUpdateButtonPressed:)];
+    self.deleteItem.accessibilityHint = UAMessageCenterLocalizedString(@"ua_delete_messages_description");
 
-    self.markAsReadButtonItem = [[UIBarButtonItem alloc] initWithTitle:UAMessageCenterLocalizedString(@"ua_mark_read")
+    self.markAsReadButtonItem = [[UIBarButtonItem alloc] initWithTitle:UAMessageCenterLocalizedString(@"ua_mark_messages_read")
                                                                  style:UIBarButtonItemStylePlain
                                                                 target:self action:@selector(batchUpdateButtonPressed:)];
+    self.markAsReadButtonItem.accessibilityHint = UAMessageCenterLocalizedString(@"ua_mark_messages_read_description");
 
     [self applyToolbarItemStyles];
     
@@ -415,6 +414,8 @@ NS_ASSUME_NONNULL_BEGIN
     } else {
         self.selectedMessageIDs = nil;
     }
+
+    [self.messageTable reloadData];
 
     // Set allowsMultipleSelectionDuringEditing to YES only while
     // editing. This allows multi-select AND swipe to delete.
@@ -553,8 +554,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)refreshBatchUpdateButtons {
     if (self.editing) {
-        NSString *deleteStr = UAMessageCenterLocalizedString(@"ua_delete");
-        NSString *markReadStr = UAMessageCenterLocalizedString(@"ua_mark_read");
+        NSString *deleteStr = UAMessageCenterLocalizedString(@"ua_delete_messages");
+        NSString *markReadStr = UAMessageCenterLocalizedString(@"ua_mark_messages_read");
 
         UITableView *strongMessageTable = self.messageTable;
         NSUInteger count = strongMessageTable.indexPathsForSelectedRows.count;
@@ -584,9 +585,12 @@ NS_ASSUME_NONNULL_BEGIN
         }
 
         if (strongMessageTable.indexPathsForSelectedRows.count < [strongMessageTable numberOfRowsInSection:0]) {
-            self.selectAllButtonItem.title = UAMessageCenterLocalizedString(@"ua_select_all");
+            self.selectAllButtonItem.title = UAMessageCenterLocalizedString(@"ua_select_all_messages");
+            self.selectAllButtonItem.accessibilityHint = UAMessageCenterLocalizedString(@"ua_select_all_messages_description");
+
         } else {
-            self.selectAllButtonItem.title = UAMessageCenterLocalizedString(@"ua_select_none");
+            self.selectAllButtonItem.title = UAMessageCenterLocalizedString(@"ua_select_none_messages");
+            self.selectAllButtonItem.accessibilityHint = UAMessageCenterLocalizedString(@"ua_select_none_messages_description");
         }
     }
 }
@@ -682,7 +686,14 @@ NS_ASSUME_NONNULL_BEGIN
 
     cell.messageCenterStyle = self.messageCenterStyle;
     UAInboxMessage *message = [self messageAtIndex:indexPath.row];
+
     [cell setData:message];
+
+    if (self.editing) {
+        cell.accessibilityHint = UAMessageCenterLocalizedString(@"ua_message_cell_editing_description");
+    } else {
+        cell.accessibilityHint = UAMessageCenterLocalizedString(@"ua_message_cell_description");
+    }
 
     UIImageView *localImageView = cell.listIconView;
 

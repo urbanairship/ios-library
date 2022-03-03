@@ -179,7 +179,7 @@ class EventTest: XCTestCase {
            let dispatcher = TestDispatcher()
            let notificationCenter = NotificationCenter.default
 
-           let analytics = Analytics(config: config, dataStore: dataStore, channel: channel, eventManager: testEventManager, notificationCenter: notificationCenter, date: DateUtils(), dispatcher: dispatcher, localeManager: locale, appStateTracker: testAppState, privacyManager: privacyManager)
+           let analytics = Analytics(config: config, dataStore: dataStore, channel: channel, eventManager: testEventManager, notificationCenter: notificationCenter, date: AirshipDate(), dispatcher: dispatcher, localeManager: locale, appStateTracker: testAppState, privacyManager: privacyManager)
            analytics.airshipReady()
            
            notificationCenter.post(name: AppStateTracker.didTransitionToForeground, object: nil)
@@ -203,7 +203,7 @@ class EventTest: XCTestCase {
         let dispatcher = TestDispatcher()
         let notificationCenter = NotificationCenter.default
         
-        let analytics = Analytics(config: config, dataStore: dataStore, channel: channel, eventManager: testEventManager, notificationCenter: notificationCenter, date: DateUtils(), dispatcher: dispatcher, localeManager: locale, appStateTracker: testAppState, privacyManager: privacyManager)
+        let analytics = Analytics(config: config, dataStore: dataStore, channel: channel, eventManager: testEventManager, notificationCenter: notificationCenter, date: AirshipDate(), dispatcher: dispatcher, localeManager: locale, appStateTracker: testAppState, privacyManager: privacyManager)
         
         notificationCenter.post(name: AppStateTracker.didTransitionToForeground, object: nil)
         notificationCenter.post(name: AppStateTracker.didTransitionToForeground, object: nil)
@@ -231,7 +231,7 @@ class EventTest: XCTestCase {
         let dispatcher = TestDispatcher()
         let notificationCenter = NotificationCenter.default
         
-        let analytics = Analytics(config: config, dataStore: dataStore, channel: channel, eventManager: testEventManager, notificationCenter: notificationCenter, date: DateUtils(), dispatcher: dispatcher, localeManager: locale, appStateTracker: testAppState, privacyManager: privacyManager)
+        let analytics = Analytics(config: config, dataStore: dataStore, channel: channel, eventManager: testEventManager, notificationCenter: notificationCenter, date: AirshipDate(), dispatcher: dispatcher, localeManager: locale, appStateTracker: testAppState, privacyManager: privacyManager)
         
         notificationCenter.post(name: AppStateTracker.didEnterBackgroundNotification, object: nil)
         
@@ -273,7 +273,7 @@ class EventTest: XCTestCase {
         let dispatcher = TestDispatcher()
         let notificationCenter = NotificationCenter.default
         
-        let analytics = Analytics(config: config, dataStore: dataStore, channel: channel, eventManager: testEventManager, notificationCenter: notificationCenter, date: DateUtils(), dispatcher: dispatcher, localeManager: locale, appStateTracker: testAppState, privacyManager: privacyManager)
+        let analytics = Analytics(config: config, dataStore: dataStore, channel: channel, eventManager: testEventManager, notificationCenter: notificationCenter, date: AirshipDate(), dispatcher: dispatcher, localeManager: locale, appStateTracker: testAppState, privacyManager: privacyManager)
         analytics.trackScreen("test_screen")
         
         notificationCenter.post(name: AppStateTracker.didEnterBackgroundNotification, object: nil)
@@ -304,7 +304,7 @@ class EventTest: XCTestCase {
         let dispatcher = TestDispatcher()
         let notificationCenter = NotificationCenter.default
         
-        let analytics = Analytics(config: config, dataStore: dataStore, channel: channel, eventManager: testEventManager, notificationCenter: notificationCenter, date: DateUtils(), dispatcher: dispatcher, localeManager: locale, appStateTracker: testAppState, privacyManager: privacyManager)
+        let analytics = Analytics(config: config, dataStore: dataStore, channel: channel, eventManager: testEventManager, notificationCenter: notificationCenter, date: AirshipDate(), dispatcher: dispatcher, localeManager: locale, appStateTracker: testAppState, privacyManager: privacyManager)
         analytics.trackScreen("test_screen")
         
         notificationCenter.post(name: AppStateTracker.willTerminateNotification, object: nil)

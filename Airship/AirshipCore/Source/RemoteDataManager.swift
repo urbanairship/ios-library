@@ -19,7 +19,7 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
     private let apiClient: RemoteDataAPIClientProtocol
     private let remoteDataStore: RemoteDataStore
     private let dispatcher: UADispatcher
-    private let date: DateUtils
+    private let date: AirshipDate
     private let notificationCenter: NotificationCenter
     private let appStateTracker: AppStateTracker
     private let localeManager: LocaleManagerProtocol
@@ -101,7 +101,7 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
                   remoteDataStore: RemoteDataStore(storeName: "RemoteData-\(config.appKey).sqlite"),
                   taskManager: TaskManager.shared,
                   dispatcher: UADispatcher.main,
-                  date: DateUtils(),
+                  date: AirshipDate(),
                   notificationCenter: NotificationCenter.default,
                   appStateTracker: AppStateTracker.shared)
                      
@@ -115,7 +115,7 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
                 remoteDataStore: RemoteDataStore,
                 taskManager: TaskManagerProtocol,
                 dispatcher: UADispatcher,
-                date: DateUtils,
+                date: AirshipDate,
                 notificationCenter: NotificationCenter,
                 appStateTracker: AppStateTracker) {
         

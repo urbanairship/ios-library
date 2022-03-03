@@ -6,7 +6,7 @@ import Foundation
  * - Note: For internal use only. :nodoc:
  */
 @objc(UADate)
-open class DateUtils : NSObject {
+open class AirshipDate : NSObject {
 
     @objc
     public override init() {

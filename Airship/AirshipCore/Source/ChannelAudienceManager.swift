@@ -49,7 +49,7 @@ public class ChannelAudienceManager : NSObject, ChannelAudienceManagerProtocol {
     private let updateClient: ChannelBulkUpdateAPIClientProtocol
     private let notificationCenter: NotificationCenter
 
-    private let date: DateUtils
+    private let date: AirshipDate
     private let dispatcher = UADispatcher.serial()
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
@@ -99,7 +99,7 @@ public class ChannelAudienceManager : NSObject, ChannelAudienceManagerProtocol {
         updateClient: ChannelBulkUpdateAPIClientProtocol,
         privacyManager: PrivacyManager,
         notificationCenter: NotificationCenter,
-        date: DateUtils) {
+        date: AirshipDate) {
         
         self.dataStore = dataStore;
         self.taskManager = taskManager;
@@ -145,7 +145,7 @@ public class ChannelAudienceManager : NSObject, ChannelAudienceManagerProtocol {
                   updateClient: ChannelBulkUpdateAPIClient(config: config),
                   privacyManager: privacyManager,
                   notificationCenter: NotificationCenter.default,
-                  date: DateUtils())
+                  date: AirshipDate())
     }
     
     @objc

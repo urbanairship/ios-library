@@ -9,10 +9,10 @@ import Foundation
 public class ScopedSubscriptionListEditor: NSObject {
     
     private var subscriptionListUpdates : [ScopedSubscriptionListUpdate] = []
-    private let date : DateUtils
+    private let date : AirshipDate
     private let completionHandler : ([ScopedSubscriptionListUpdate]) -> Void
 
-    init(date: DateUtils, completionHandler: @escaping ([ScopedSubscriptionListUpdate]) -> Void) {
+    init(date: AirshipDate, completionHandler: @escaping ([ScopedSubscriptionListUpdate]) -> Void) {
         self.date = date
         self.completionHandler = completionHandler
         super.init()

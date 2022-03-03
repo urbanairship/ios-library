@@ -3,7 +3,7 @@
 import Foundation
 
 class CachedValue<Value> where Value : Any {
-    private let date: DateUtils
+    private let date: AirshipDate
     private let maxCacheAge: TimeInterval
     private let lock = Lock()
     private var expiration: Date?
@@ -33,7 +33,7 @@ class CachedValue<Value> where Value : Any {
         }
     }
     
-    init(date: DateUtils, maxCacheAge: TimeInterval) {
+    init(date: AirshipDate, maxCacheAge: TimeInterval) {
         self.date = date
         self.maxCacheAge = maxCacheAge
     }

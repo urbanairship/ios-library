@@ -120,14 +120,14 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
     
     private let dataStore: PreferenceDataStore
     private let channelAPIClient: ChannelAPIClientProtocol
-    private let date: DateUtils
+    private let date: AirshipDate
     private let dispatcher: UADispatcher
     private let taskManager: TaskManagerProtocol
 
     
     init(dataStore: PreferenceDataStore,
          channelAPIClient: ChannelAPIClientProtocol,
-         date: DateUtils,
+         date: AirshipDate,
          dispatcher: UADispatcher,
          taskManager: TaskManagerProtocol) {
         
@@ -160,7 +160,7 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
                             dataStore: PreferenceDataStore) {
         self.init(dataStore:dataStore,
                   channelAPIClient: ChannelAPIClient(config: config),
-                  date: DateUtils(),
+                  date: AirshipDate(),
                   dispatcher: UADispatcher.serial(),
                   taskManager: TaskManager.shared)
     }

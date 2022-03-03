@@ -133,10 +133,11 @@ typedef enum MessageState {
     // Allow the webView to detect data types (e.g. phone numbers, addresses) at will
     [self.webView.configuration setDataDetectorTypes:WKDataDetectorTypeAll];
 
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:UAMessageCenterLocalizedString(@"ua_delete")
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:UAMessageCenterLocalizedString(@"ua_delete_message")
                                                                                style:UIBarButtonItemStylePlain
                                                                              target:self
                                                                              action:@selector(delete:)];
+    self.navigationItem.rightBarButtonItem.accessibilityHint = UAMessageCenterLocalizedString(@"ua_delete_message_description");
 
     // load message or cover view if no message waiting to load
     switch (self.messageState) {

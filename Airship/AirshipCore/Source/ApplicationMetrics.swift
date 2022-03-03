@@ -11,7 +11,7 @@ public class ApplicationMetrics : NSObject {
     private static let lastAppVersionKey = "UAApplicationMetricsLastAppVersion"
 
     private let dataStore: PreferenceDataStore
-    private let date: DateUtils
+    private let date: AirshipDate
     private let privacyManager: PrivacyManager
 
     private var _isAppVersionUpdated = false
@@ -53,7 +53,7 @@ public class ApplicationMetrics : NSObject {
         dataStore: PreferenceDataStore,
         privacyManager: PrivacyManager,
         notificationCenter: NotificationCenter,
-        date: DateUtils) {
+        date: AirshipDate) {
         self.dataStore = dataStore
         self.privacyManager = privacyManager
         self.date = date
@@ -81,7 +81,7 @@ public class ApplicationMetrics : NSObject {
             dataStore: dataStore,
             privacyManager: privacyManager,
             notificationCenter: NotificationCenter.default,
-            date: DateUtils())
+            date: AirshipDate())
     }
 
     @objc

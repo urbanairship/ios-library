@@ -616,8 +616,8 @@
 		6E6ED13A2683A58D00A2CBD0 /* Semaphore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1342683A58D00A2CBD0 /* Semaphore.swift */; };
 		6E6ED13B2683A58D00A2CBD0 /* Dispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1352683A58D00A2CBD0 /* Dispatcher.swift */; };
 		6E6ED13C2683A58D00A2CBD0 /* Dispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1352683A58D00A2CBD0 /* Dispatcher.swift */; };
-		6E6ED1402683A9F200A2CBD0 /* DateUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED13F2683A9F200A2CBD0 /* DateUtils.swift */; };
-		6E6ED1412683A9F200A2CBD0 /* DateUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED13F2683A9F200A2CBD0 /* DateUtils.swift */; };
+		6E6ED1402683A9F200A2CBD0 /* AirshipDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED13F2683A9F200A2CBD0 /* AirshipDate.swift */; };
+		6E6ED1412683A9F200A2CBD0 /* AirshipDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED13F2683A9F200A2CBD0 /* AirshipDate.swift */; };
 		6E6ED1432683B8FA00A2CBD0 /* TestDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1422683B8FA00A2CBD0 /* TestDate.swift */; };
 		6E6ED1452683BC7F00A2CBD0 /* TestDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1442683BC7F00A2CBD0 /* TestDispatcher.swift */; };
 		6E6ED1492683D8E200A2CBD0 /* LocaleManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1482683D8E200A2CBD0 /* LocaleManager.swift */; };
@@ -993,6 +993,8 @@
 		6E9F74D724E6F68D001F9B05 /* UADeferredScheduleResult+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E9F74D424E6F68D001F9B05 /* UADeferredScheduleResult+Internal.h */; };
 		6E9F74D924E6F68D001F9B05 /* UADeferredScheduleResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E9F74D524E6F68D001F9B05 /* UADeferredScheduleResult.m */; };
 		6EA42DA02735FA1700B2A532 /* UAInAppMessageAirshipLayoutDisplayContent.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EA42D9E2735FA1700B2A532 /* UAInAppMessageAirshipLayoutDisplayContent.m */; };
+		6EA5202327D1364E003011CA /* AirshipDateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA5202227D1364E003011CA /* AirshipDateFormatter.swift */; };
+		6EA5202427D1364E003011CA /* AirshipDateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA5202227D1364E003011CA /* AirshipDateFormatter.swift */; };
 		6EA734B224B7AA600012B737 /* UAInAppAutomation+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EA734AE24B7AA600012B737 /* UAInAppAutomation+Internal.h */; };
 		6EA734B424B7AA600012B737 /* UAInAppAutomation.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EA734AF24B7AA600012B737 /* UAInAppAutomation.m */; };
 		6EA734B624B7AA600012B737 /* UAInAppAutomation.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EA734B024B7AA600012B737 /* UAInAppAutomation.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -2133,7 +2135,7 @@
 		6E6ED1332683A58D00A2CBD0 /* Delay.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Delay.swift; sourceTree = "<group>"; };
 		6E6ED1342683A58D00A2CBD0 /* Semaphore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Semaphore.swift; sourceTree = "<group>"; };
 		6E6ED1352683A58D00A2CBD0 /* Dispatcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dispatcher.swift; sourceTree = "<group>"; };
-		6E6ED13F2683A9F200A2CBD0 /* DateUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateUtils.swift; sourceTree = "<group>"; };
+		6E6ED13F2683A9F200A2CBD0 /* AirshipDate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirshipDate.swift; sourceTree = "<group>"; };
 		6E6ED1422683B8FA00A2CBD0 /* TestDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestDate.swift; sourceTree = "<group>"; };
 		6E6ED1442683BC7F00A2CBD0 /* TestDispatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestDispatcher.swift; sourceTree = "<group>"; };
 		6E6ED1482683D8E200A2CBD0 /* LocaleManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocaleManager.swift; sourceTree = "<group>"; };
@@ -2287,6 +2289,7 @@
 		6E9F74D424E6F68D001F9B05 /* UADeferredScheduleResult+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UADeferredScheduleResult+Internal.h"; sourceTree = "<group>"; };
 		6E9F74D524E6F68D001F9B05 /* UADeferredScheduleResult.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UADeferredScheduleResult.m; sourceTree = "<group>"; };
 		6EA42D9E2735FA1700B2A532 /* UAInAppMessageAirshipLayoutDisplayContent.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageAirshipLayoutDisplayContent.m; sourceTree = "<group>"; };
+		6EA5202227D1364E003011CA /* AirshipDateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipDateFormatter.swift; sourceTree = "<group>"; };
 		6EA734AE24B7AA600012B737 /* UAInAppAutomation+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAInAppAutomation+Internal.h"; sourceTree = "<group>"; };
 		6EA734AF24B7AA600012B737 /* UAInAppAutomation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInAppAutomation.m; sourceTree = "<group>"; };
 		6EA734B024B7AA600012B737 /* UAInAppAutomation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInAppAutomation.h; sourceTree = "<group>"; };
@@ -3877,7 +3880,7 @@
 				6E6ED1552683DBC300A2CBD0 /* SystemVersion.swift */,
 				6E6ED14B2683DBC200A2CBD0 /* ViewUtils.swift */,
 				6E6ED14C2683DBC200A2CBD0 /* WebView.swift */,
-				6E6ED13F2683A9F200A2CBD0 /* DateUtils.swift */,
+				6E6ED13F2683A9F200A2CBD0 /* AirshipDate.swift */,
 				6E6ED1332683A58D00A2CBD0 /* Delay.swift */,
 				6E6ED1352683A58D00A2CBD0 /* Dispatcher.swift */,
 				6E6ED1342683A58D00A2CBD0 /* Semaphore.swift */,
@@ -3885,6 +3888,7 @@
 				A6A8077B26C1566E00CB266E /* ColorUtils.swift */,
 				32D6E87A2727F7060077C784 /* Image.swift */,
 				6E6C3F8927A266C0007F55C7 /* CachedValue.swift */,
+				6EA5202227D1364E003011CA /* AirshipDateFormatter.swift */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -6655,13 +6659,14 @@
 				6E87BE0726E283850005D20D /* DeepLinkDelegate.swift in Sources */,
 				6E952923268B812000398B54 /* AccountEventTemplate.swift in Sources */,
 				A658DE2B272AFB0400007672 /* ImageLoader.swift in Sources */,
+				6EA5202327D1364E003011CA /* AirshipDateFormatter.swift in Sources */,
 				6E91B45B268904D900DDB1A8 /* PushReceivedEvent.swift in Sources */,
 				6E062D0D2718B505001A74A1 /* ViewConstraints.swift in Sources */,
 				6EC7E49626A8995F0038CFDD /* NamedUser.swift in Sources */,
 				6E698E3D267BEDC300654DB2 /* Contact.swift in Sources */,
 				A658DE192728498900007672 /* AirshipWebview.swift in Sources */,
 				6E15B72D26CF13BC0099C92D /* RemoteDataProvider.swift in Sources */,
-				6E6ED1402683A9F200A2CBD0 /* DateUtils.swift in Sources */,
+				6E6ED1402683A9F200A2CBD0 /* AirshipDate.swift in Sources */,
 				6E411CAF2538C6A600FEE4E8 /* UAEvents.xcdatamodeld in Sources */,
 				6E91B4632689092F00DDB1A8 /* InteractiveNotificationEvent.swift in Sources */,
 				6E664BBB26C46BC600A2C8E5 /* EnableFeatureActionPredicate.swift in Sources */,
@@ -7379,6 +7384,7 @@
 				6E739D8026BB01C500BC6F6D /* ChannelBulkUpdateAPIClient.swift in Sources */,
 				A658DE2C272AFB0400007672 /* ImageLoader.swift in Sources */,
 				6E15B72E26CF13BC0099C92D /* RemoteDataProvider.swift in Sources */,
+				6EA5202427D1364E003011CA /* AirshipDateFormatter.swift in Sources */,
 				6E698E10267A88E800654DB2 /* EventAPIResponse.swift in Sources */,
 				6E8BF45726852E88009A8BD4 /* ExpirableTask.swift in Sources */,
 				6E952924268B812000398B54 /* AccountEventTemplate.swift in Sources */,
@@ -7394,7 +7400,7 @@
 				A6849388273290520021675E /* Score.swift in Sources */,
 				6E698E3E267BEDC300654DB2 /* Contact.swift in Sources */,
 				6E411CB02538C6A600FEE4E8 /* UAEvents.xcdatamodeld in Sources */,
-				6E6ED1412683A9F200A2CBD0 /* DateUtils.swift in Sources */,
+				6E6ED1412683A9F200A2CBD0 /* AirshipDate.swift in Sources */,
 				6EFD6D79272A1F26005B26F1 /* NpsController.swift in Sources */,
 				6E664BD426C4917000A2C8E5 /* RemoveTagsAction.swift in Sources */,
 				A6F6726426E1163A008C69C3 /* JSONUtils.swift in Sources */,

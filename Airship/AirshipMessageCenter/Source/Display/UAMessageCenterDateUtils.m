@@ -2,10 +2,15 @@
 
 #import "UAMessageCenterDateUtils.h"
 
-@implementation UAMessageCenterDateUtils
+#if __has_include("AirshipKit/AirshipKit-Swift.h")
+#import <AirshipKit/AirshipKit-Swift.h>
+#elif __has_include("AirshipKit-Swift.h")
+#import "AirshipKit-Swift.h"
+#else
+@import AirshipCore;
+#endif
 
-static NSDateFormatter *dateFormatter;
-static NSDateFormatter *sameDayFormatter;
+@implementation UAMessageCenterDateUtils
 
 /**
  * Formats the provided date into a string relative to the current date.
@@ -17,23 +22,9 @@ static NSDateFormatter *sameDayFormatter;
 + (NSString *)formattedDateRelativeToNow:(NSDate *)date {
 
     if ([self isDate:date inSameCalendarDayAsDate:[NSDate date]]) {
-        if (!sameDayFormatter) {
-            sameDayFormatter = [[NSDateFormatter alloc] init];
-            sameDayFormatter.timeStyle = NSDateFormatterShortStyle;
-            sameDayFormatter.dateStyle = NSDateFormatterShortStyle;
-            sameDayFormatter.doesRelativeDateFormatting = YES;
-        }
-
-        return [sameDayFormatter stringFromDate:date];
+        return [UADateFormatter stringFromDate:date format:UADateFormatterFormatRelativeShort];
     } else {
-        if (!dateFormatter) {
-            dateFormatter = [[NSDateFormatter alloc] init];
-            dateFormatter.timeStyle = NSDateFormatterNoStyle;
-            dateFormatter.dateStyle = NSDateFormatterShortStyle;
-            dateFormatter.doesRelativeDateFormatting = YES;
-        }
-
-        return [dateFormatter stringFromDate:date];
+        return [UADateFormatter stringFromDate:date format:UADateFormatterFormatRelativeShortDate];
     }
 }
 

@@ -18,7 +18,7 @@ public class ChannelCapture : NSObject {
     private let config: RuntimeConfig
     private let channel: ChannelProtocol
     private let notificationCenter: NotificationCenter
-    private let date: DateUtils
+    private let date: AirshipDate
     private let pasteboardProvider: () -> UIPasteboard
     
     private var knockTimes: [Date] = []
@@ -39,7 +39,7 @@ public class ChannelCapture : NSObject {
                 dataStore: PreferenceDataStore,
                 channel: ChannelProtocol,
                 notificationCenter: NotificationCenter,
-                date: DateUtils,
+                date: AirshipDate,
                 pasteboardProvider: @escaping () -> UIPasteboard) {
         
         self.config = config
@@ -68,7 +68,7 @@ public class ChannelCapture : NSObject {
                   dataStore: dataStore,
                   channel: channel,
                   notificationCenter: NotificationCenter.default,
-                  date: DateUtils(),
+                  date: AirshipDate(),
                   pasteboardProvider: { UIPasteboard.general })
     }
     
