@@ -58,7 +58,7 @@ NSString *const UABannerMaxWidthKey = @"maxWidth";
         style.headerStyle = [UAInAppMessageTextStyle styleWithDictionary:normalizedBannerStyleDict[UABannerHeaderStyleKey]];
         style.bodyStyle = [UAInAppMessageTextStyle styleWithDictionary:normalizedBannerStyleDict[UABannerBodyStyleKey]];
         style.buttonStyle = [UAInAppMessageButtonStyle styleWithDictionary:normalizedBannerStyleDict[UABannerButtonStyleKey]];
-        style.mediaStyle = [UAInAppMessageMediaStyle styleWithDictionary:normalizedBannerStyleDict[UABannerMediaStyleKey]];;
+        style.mediaStyle = [UAInAppMessageMediaStyle styleWithDictionary:normalizedBannerStyleDict[UABannerMediaStyleKey]];
 
         UA_LTRACE(@"In-app banner style options: %@", [normalizedBannerStyleDict description]);
     }

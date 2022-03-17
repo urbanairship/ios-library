@@ -19,6 +19,8 @@ NSString *const UAModalBodyStyleKey = @"bodyStyle";
 NSString *const UAModalMediaStyleKey = @"mediaStyle";
 NSString *const UAModalMaxWidthKey = @"maxWidth";
 NSString *const UAModalMaxHeightKey = @"maxHeight";
+NSString *const UAModalExtendFullScreenLargeDeviceKey = @"extendFullscreenLargeDevices";
+
 
 @implementation UAInAppMessageModalStyle
 
@@ -73,9 +75,16 @@ NSString *const UAModalMaxHeightKey = @"maxHeight";
         style.additionalPadding = [UAPadding paddingWithDictionary:normalizedModalStyleDict[UAModalAdditionalPaddingKey]];
         style.headerStyle = [UAInAppMessageTextStyle styleWithDictionary:normalizedModalStyleDict[UAModalHeaderStyleKey]];
         style.bodyStyle = [UAInAppMessageTextStyle styleWithDictionary:normalizedModalStyleDict[UAModalBodyStyleKey]];
-        style.buttonStyle = [UAInAppMessageButtonStyle styleWithDictionary:normalizedModalStyleDict[UAModalButtonStyleKey]];;
-        style.mediaStyle = [UAInAppMessageMediaStyle styleWithDictionary:normalizedModalStyleDict[UAModalMediaStyleKey]];;
+        style.buttonStyle = [UAInAppMessageButtonStyle styleWithDictionary:normalizedModalStyleDict[UAModalButtonStyleKey]];
+        style.mediaStyle = [UAInAppMessageMediaStyle styleWithDictionary:normalizedModalStyleDict[UAModalMediaStyleKey]];
 
+        id extendFullScreenLargeDeviceObj = normalizedModalStyleDict[UAModalExtendFullScreenLargeDeviceKey];
+        if (extendFullScreenLargeDeviceObj) {
+            if ([extendFullScreenLargeDeviceObj isKindOfClass:[NSNumber class]]) {
+                style.extendFullScreenLargeDevice = [extendFullScreenLargeDeviceObj boolValue];
+            }
+        }
+        
         UA_LTRACE(@"In-app modal style options: %@", [normalizedModalStyleDict description]);
     }
 

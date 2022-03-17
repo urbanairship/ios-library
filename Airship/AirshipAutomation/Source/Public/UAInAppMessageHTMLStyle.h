@@ -69,6 +69,11 @@ NS_SWIFT_NAME(InAppMessageHTMLStyle)
  */
 @property(nonatomic, assign) BOOL hideDismissIcon;
 
+/**
+ *  Extend full screen on large device.
+ */
+@property(nonatomic, assign) BOOL extendFullScreenLargeDevice;
+
 @end
 
 NS_ASSUME_NONNULL_END

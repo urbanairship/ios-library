@@ -88,6 +88,7 @@ NSString *const UAHTMLStyleFileName = @"UAInAppMessageHTMLStyle";
 
     self.resizableContainerViewController.backgroundColor = self.htmlViewController.displayContent.backgroundColor;
     self.resizableContainerViewController.allowFullScreenDisplay = self.htmlViewController.displayContent.allowFullScreenDisplay;
+    self.resizableContainerViewController.extendFullScreenLargeDevice = self.htmlViewController.style.extendFullScreenLargeDevice;
     self.resizableContainerViewController.additionalPadding = self.htmlViewController.style.additionalPadding;
     self.resizableContainerViewController.borderRadius = self.htmlViewController.displayContent.borderRadiusPoints;
     self.resizableContainerViewController.maxWidth = self.htmlViewController.style.maxWidth;

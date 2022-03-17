@@ -234,7 +234,16 @@ static double const DefaultResizableViewAnimationDuration = 0.2;
     self.resizingContainerView.backgroundColor = self.backgroundColor;
     self.resizingContainerView.borderRadius = self.borderRadius;
 
-    self.displayFullScreen = self.allowFullScreenDisplay && (UI_USER_INTERFACE_IDIOM() != UIUserInterfaceIdiomPad);
+    self.displayFullScreen = false;
+    if (self.allowFullScreenDisplay) {
+        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+            if (self.extendFullScreenLargeDevice) {
+                self.displayFullScreen = true;
+            }
+        } else {
+            self.displayFullScreen = true;
+        }
+    }
 
     self.resizingContainerView.allowBorderRounding = !(self.displayFullScreen);
 

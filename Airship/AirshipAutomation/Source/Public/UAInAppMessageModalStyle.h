@@ -105,6 +105,12 @@ NS_SWIFT_NAME(InAppMessageModalStyle)
  */
 @property(nonatomic, strong, nullable) UAInAppMessageMediaStyle *mediaStyle;
 
+
+/**
+ *  Extend full screen on large device.
+ */
+@property(nonatomic, assign) BOOL extendFullScreenLargeDevice;
+
 @end
 
 NS_ASSUME_NONNULL_END
