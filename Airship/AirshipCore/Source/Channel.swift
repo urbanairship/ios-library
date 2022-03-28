@@ -585,6 +585,13 @@ extension Channel : ChannelRegistrarDelegate {
         AirshipLogger.importantInfo("Channel ID: \(channelID)")
         self.audienceManager.channelID = channelID
         
+        // Save the deviceID
+        let deviceID = UAKeychainUtils.getDeviceID()
+        let previousDeviceID = self.dataStore.string(forKey: ChannelRegistrar.deviceIDKey)
+        if (previousDeviceID == nil) {
+            self.dataStore.setObject(deviceID, forKey:ChannelRegistrar.deviceIDKey)
+        }
+        
         UADispatcher.main.dispatchAsync {
             self.notificationCenter.post(name: Channel.channelCreatedEvent,
                                          object: self,

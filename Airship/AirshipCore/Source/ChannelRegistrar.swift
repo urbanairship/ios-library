@@ -60,7 +60,7 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
     private static let channelIDKey = "UAChannelID";
     private static let lastPayloadKey = "ChannelRegistrar.payload";
     private static let lastUpdateKey = "payload-update-key";
-    private static let deviceIDKey = "deviceID";
+    static let deviceIDKey = "deviceID";
 
     @objc
     public weak var delegate : ChannelRegistrarDelegate?
@@ -195,14 +195,12 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
     private func checkAppRestore() {
         let deviceID = UAKeychainUtils.getDeviceID()
         
-        guard let previousDeviceID = self.dataStore.string(forKey: ChannelRegistrar.deviceIDKey) else {
-            self.dataStore.setObject(deviceID, forKey:ChannelRegistrar.deviceIDKey)
-            return
-        }
+        let previousDeviceID = self.dataStore.string(forKey: ChannelRegistrar.deviceIDKey)
 
         if (deviceID != previousDeviceID) {
             AirshipLogger.debug("Device ID changed.")
             self.clearChannelData()
+            Airship.push.resetDeviceToken()
             self.dataStore.setObject(deviceID, forKey:ChannelRegistrar.deviceIDKey)
         }
     }
