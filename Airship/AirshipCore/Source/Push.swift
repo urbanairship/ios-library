@@ -1234,6 +1234,9 @@ extension Push : InternalPushProtocol {
     // NOTE: For internal use only. :nodoc:
     func resetDeviceToken() {
         self.deviceToken = nil
-        self.application.registerForRemoteNotifications()
+
+        UADispatcher.main.dispatchAsync {
+            self.application.registerForRemoteNotifications()
+        }
     }
 }
