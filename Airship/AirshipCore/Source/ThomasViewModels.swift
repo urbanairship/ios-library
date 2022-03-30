@@ -346,7 +346,8 @@ struct LinearLayoutModel: Decodable, Equatable {
     let direction: Direction
     let items: [LinearLayoutItem]
     let ignoreSafeArea: Bool?
-    
+    let randomizeChildren: Bool?
+
     enum CodingKeys: String, CodingKey {
         case items = "items"
         case identifier = "identifier"
@@ -354,6 +355,7 @@ struct LinearLayoutModel: Decodable, Equatable {
         case backgroundColor = "background_color"
         case direction = "direction"
         case ignoreSafeArea = "ignore_safe_area"
+        case randomizeChildren = "randomize_children"
     }
 }
 
