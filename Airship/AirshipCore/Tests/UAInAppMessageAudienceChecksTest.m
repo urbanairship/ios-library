@@ -184,6 +184,7 @@
     }];
 
     XCTAssertTrue([UAScheduleAudienceChecks checkScheduleAudienceConditions:audience isNewUser:YES]);
+    XCTAssertTrue([UAScheduleAudienceChecks checkDisplayAudienceConditions:audience]);
 }
 
 - (void)testNotTestDevice {
@@ -194,6 +195,7 @@
     }];
 
     XCTAssertFalse([UAScheduleAudienceChecks checkScheduleAudienceConditions:audience isNewUser:YES]);
+    XCTAssertFalse([UAScheduleAudienceChecks checkDisplayAudienceConditions:audience]);
 }
 
 - (void)testLanguageAndVersion {
