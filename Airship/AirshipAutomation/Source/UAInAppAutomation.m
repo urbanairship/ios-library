@@ -5,7 +5,6 @@
 #import "UASchedule+Internal.h"
 #import "UAScheduleTriggerContext+Internal.h"
 #import "UAInAppMessage+Internal.h"
-#import "UAInAppMessagingRemoteConfig+Internal.h"
 #import "UAInAppAudienceManager+Internal.h"
 #import "UATagSelector+Internal.h"
 #import "UARetriable+Internal.h"
@@ -579,19 +578,6 @@ static NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerP
     [self updateEnginePauseState];
 }
 
-- (void)applyRemoteConfig:(nullable id)config {
-    UAInAppMessagingRemoteConfig *inAppConfig = nil;
-    if (config) {
-        inAppConfig = [UAInAppMessagingRemoteConfig configWithJSON:config];
-    }
-    inAppConfig = inAppConfig ?: [UAInAppMessagingRemoteConfig defaultConfig];
-
-    self.audienceManager.enabled = inAppConfig.tagGroupsConfig.enabled;
-    self.audienceManager.cacheMaxAgeTime = inAppConfig.tagGroupsConfig.cacheMaxAgeTime;
-    self.audienceManager.cacheStaleReadTime = inAppConfig.tagGroupsConfig.cacheStaleReadTime;
-    self.audienceManager.preferLocalTagDataTime = inAppConfig.tagGroupsConfig.cachePreferLocalUntil;
-}
-
 - (void)updateConstraints:(NSArray<UAFrequencyConstraint *> *)constraints {
      [self.frequencyLimitManager updateConstraints:constraints];
 }
@@ -614,41 +600,12 @@ static NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerP
     self.automationEngine.delegate = nil;
 }
 
-- (void)gatherTagGroupsWithCompletionHandler:(void(^)(UATagGroups *tagGroups))completionHandler {
-    __block UATagGroups *tagGroups = [UATagGroups tagGroupsWithTags:@{}];
-
-    [self.automationEngine getSchedules:^(NSArray<UASchedule *> *schedules) {
-        for (UASchedule *schedule in schedules) {
-            if ([schedule.audience.tagSelector containsTagGroups]) {
-                tagGroups = [tagGroups merge:schedule.audience.tagSelector.tagGroups];
-            }
-        }
-
-        completionHandler(tagGroups);
-    }];
-}
-
 - (void)checkAudience:(UAScheduleAudience *)audience completionHandler:(void (^)(BOOL, NSError * _Nullable))completionHandler {
-    void (^performAudienceCheck)(UATagGroups *) = ^(UATagGroups *tagGroups) {
-        if ([UAScheduleAudienceChecks checkDisplayAudienceConditions:audience tagGroups:tagGroups]) {
-            completionHandler(YES, nil);
-        } else {
-            completionHandler(NO, nil);
-        }
-    };
-
-    UATagGroups *requestedTagGroups = audience.tagSelector.tagGroups;
-
-    if (requestedTagGroups.tags.count) {
-        [self.audienceManager getTagGroups:requestedTagGroups completionHandler:^(UATagGroups * _Nullable tagGroups, NSError * _Nonnull error) {
-            if (error) {
-                completionHandler(NO, error);
-            } else {
-                performAudienceCheck(tagGroups);
-            }
-        }];
+    
+    if ([UAScheduleAudienceChecks checkDisplayAudienceConditions:audience]) {
+        completionHandler(YES, nil);
     } else {
-        performAudienceCheck(nil);
+        completionHandler(NO, nil);
     }
 }
 

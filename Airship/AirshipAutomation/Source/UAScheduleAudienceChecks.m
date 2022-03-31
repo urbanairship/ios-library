@@ -45,61 +45,6 @@
     return YES;
 }
 
-+ (BOOL)checkDisplayAudienceConditions:(UAScheduleAudience *)audience tagGroups:(UATagGroups *)tagGroups {
-    if (!audience) {
-        return YES;
-    }
-
-    // Location opt-in
-    if (audience.locationOptIn) {
-        if ([audience.locationOptIn boolValue] != [UAirship shared].locationProvider.isLocationOptedIn) {
-            return NO;
-        }
-    }
-
-    // Notification opt-in
-    if (audience.notificationsOptIn) {
-        if ([audience.notificationsOptIn boolValue] != [self isNotificationsOptedIn]) {
-            return NO;
-        }
-    }
-
-    // Tag Selector
-    if (audience.tagSelector) {
-        if (![[UAirship shared].privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
-            return NO;
-        }
-
-        if (![audience.tagSelector apply:[UAirship channel].tags tagGroups:tagGroups]) {
-            return NO;
-        }
-    }
-
-    // Locales
-    if (![self areLocationConditionsMet:audience]) {
-        return NO;
-    }
-
-
-    // Version
-    if (audience.versionPredicate) {
-        NSString *currentVersion = [UAirship shared].applicationMetrics.currentAppVersion;
-        id versionObject = currentVersion ? @{@"ios" : @{@"version": currentVersion}} : nil;
-        if (!versionObject || ![audience.versionPredicate evaluateObject:versionObject]) {
-            return NO;
-        }
-    }
-    
-    //requires analytics
-    if ([audience.requiresAnalytics boolValue]) {
-        if (![[UAirship shared].privacyManager isEnabled:UAFeaturesAnalytics]) {
-            return false;
-        }
-    }
-
-    return YES;
-}
-
 + (BOOL)areLocationConditionsMet:(UAScheduleAudience *)audience {
     if (!audience.languageIDs.count) {
         return YES;
@@ -127,7 +72,58 @@
 }
 
 + (BOOL)checkDisplayAudienceConditions:(UAScheduleAudience *)audience {
-    return [self checkDisplayAudienceConditions:audience tagGroups:[UATagGroups tagGroupsWithTags:@{}]];
+    if (!audience) {
+        return YES;
+    }
+
+    // Location opt-in
+    if (audience.locationOptIn) {
+        if ([audience.locationOptIn boolValue] != [UAirship shared].locationProvider.isLocationOptedIn) {
+            return NO;
+        }
+    }
+
+    // Notification opt-in
+    if (audience.notificationsOptIn) {
+        if ([audience.notificationsOptIn boolValue] != [self isNotificationsOptedIn]) {
+            return NO;
+        }
+    }
+
+    // Tag Selector
+    if (audience.tagSelector) {
+        if (![[UAirship shared].privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
+            return NO;
+        }
+
+        if (![audience.tagSelector apply:[UAirship channel].tags]) {
+            return NO;
+        }
+    }
+
+    // Locales
+    if (![self areLocationConditionsMet:audience]) {
+        return NO;
+    }
+
+
+    // Version
+    if (audience.versionPredicate) {
+        NSString *currentVersion = [UAirship shared].applicationMetrics.currentAppVersion;
+        id versionObject = currentVersion ? @{@"ios" : @{@"version": currentVersion}} : nil;
+        if (!versionObject || ![audience.versionPredicate evaluateObject:versionObject]) {
+            return NO;
+        }
+    }
+    
+    //requires analytics
+    if ([audience.requiresAnalytics boolValue]) {
+        if (![[UAirship shared].privacyManager isEnabled:UAFeaturesAnalytics]) {
+            return false;
+        }
+    }
+
+    return YES;
 }
 
 

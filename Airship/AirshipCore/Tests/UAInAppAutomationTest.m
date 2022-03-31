@@ -85,79 +85,6 @@
     [self waitForTestExpectations];
 }
 
-- (void)testCheckTagGroupAudience {
-    UAScheduleAudience *audience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder *builder) {
-        builder.tagSelector = [UATagSelector tag:@"neat" group:@"group"];
-    }];
-
-    UATagGroups *tagResponse = [UATagGroups tagGroupsWithTags:@{@"group" : @[@"neat"]}];
-    [[[self.mockAudienceManager expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        void(^completionHandler)(UATagGroups * _Nullable tagGroups, NSError *error);
-        completionHandler = (__bridge void(^)(UATagGroups * _Nullable tagGroups, NSError *error))arg;
-        completionHandler(tagResponse, nil);
-    }] getTagGroups:OCMOCK_ANY completionHandler:OCMOCK_ANY];
-
-
-    XCTestExpectation *checkFinished = [self expectationWithDescription:@"check audience finished"];
-    [self.inAppAutomation checkAudience:audience completionHandler:^(BOOL inAudience, NSError * _Nullable error) {
-        XCTAssertTrue(inAudience);
-        XCTAssertNil(error);
-        [checkFinished fulfill];
-    }];
-
-    [self waitForTestExpectations];
-}
-
-- (void)testCheckTagGroupAudienceError {
-    UAScheduleAudience *audience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder *builder) {
-        builder.tagSelector = [UATagSelector tag:@"neat" group:@"group"];
-    }];
-
-    NSError *error = [NSError errorWithDomain:@"com.urbanairship.test" code:1 userInfo:nil];
-    [[[self.mockAudienceManager expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        void(^completionHandler)(UATagGroups * _Nullable tagGroups, NSError *error);
-        completionHandler = (__bridge void(^)(UATagGroups * _Nullable tagGroups, NSError *error))arg;
-        completionHandler(nil, error);    }] getTagGroups:OCMOCK_ANY completionHandler:OCMOCK_ANY];
-
-
-    XCTestExpectation *checkFinished = [self expectationWithDescription:@"check audience finished"];
-    [self.inAppAutomation checkAudience:audience completionHandler:^(BOOL inAudience, NSError * _Nullable error) {
-        XCTAssertFalse(inAudience);
-        XCTAssertNotNil(error);
-        [checkFinished fulfill];
-    }];
-
-    [self waitForTestExpectations];
-}
-
-- (void)testCheckTagGroupAudienceNotInAudience {
-    UAScheduleAudience *audience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder *builder) {
-        builder.tagSelector = [UATagSelector tag:@"neat" group:@"group"];
-    }];
-
-    UATagGroups *tagResponse = [UATagGroups tagGroupsWithTags:@{@"group" : @[]}];
-    [[[self.mockAudienceManager expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        void(^completionHandler)(UATagGroups * _Nullable tagGroups, NSError *error);
-        completionHandler = (__bridge void(^)(UATagGroups * _Nullable tagGroups, NSError *error))arg;
-        completionHandler(tagResponse, nil);
-    }] getTagGroups:OCMOCK_ANY completionHandler:OCMOCK_ANY];
-
-    XCTestExpectation *checkFinished = [self expectationWithDescription:@"check audience finished"];
-    [self.inAppAutomation checkAudience:audience completionHandler:^(BOOL inAudience, NSError * _Nullable error) {
-        XCTAssertFalse(inAudience);
-        XCTAssertNil(error);
-        [checkFinished fulfill];
-    }];
-
-    [self waitForTestExpectations];
-}
-
 - (void)testPrepareMessage {
     UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder *builder) {
         builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithValue:@{}];
@@ -786,7 +713,7 @@
 
     // Mock the checks to reject the audience
     id checks = [self mockForClass:[UAScheduleAudienceChecks class]];
-    [[[checks expect] andReturnValue:@(NO)] checkDisplayAudienceConditions:schedule.audience tagGroups:nil];
+    [[[checks expect] andReturnValue:@(NO)] checkDisplayAudienceConditions:schedule.audience];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
 
@@ -819,7 +746,7 @@
 
     // Mock the checks to reject the audience
     id checks = [self mockForClass:[UAScheduleAudienceChecks class]];
-    [[[checks expect] andReturnValue:@(NO)] checkDisplayAudienceConditions:schedule.audience tagGroups:nil];
+    [[[checks expect] andReturnValue:@(NO)] checkDisplayAudienceConditions:schedule.audience];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
 
@@ -852,7 +779,7 @@
 
     // Mock the checks to reject the audience
     id checks = [self mockForClass:[UAScheduleAudienceChecks class]];
-    [[[checks expect] andReturnValue:@(NO)] checkDisplayAudienceConditions:schedule.audience tagGroups:nil];
+    [[[checks expect] andReturnValue:@(NO)] checkDisplayAudienceConditions:schedule.audience];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
 
@@ -885,7 +812,7 @@
 
     // Mock the checks to reject the audience
     id checks = [self mockForClass:[UAScheduleAudienceChecks class]];
-    [[[checks expect] andReturnValue:@(NO)] checkDisplayAudienceConditions:schedule.audience tagGroups:nil];
+    [[[checks expect] andReturnValue:@(NO)] checkDisplayAudienceConditions:schedule.audience];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
 

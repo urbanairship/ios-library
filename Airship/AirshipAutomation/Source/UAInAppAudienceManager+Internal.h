@@ -1,13 +1,13 @@
 /* Copyright Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-#import "UATagGroupsLookupResponseCache+Internal.h"
-#import "UATagGroupsLookupAPIClient+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
 #import "UAInAppAudienceHistorian+Internal.h"
 
 @class UATagGroupUpdate;
 @class UAAttributeUpdate;
+@class UARuntimeConfig;
+@class UAPreferenceDataStore;
 @protocol UAContactProtocol;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -33,11 +33,6 @@ typedef NS_ENUM(NSInteger, UAInAppAudienceManagerErrorCode) {
 };
 
 /**
- * The domain for NSErrors generated when using the UAInAppAudienceManager component.
- */
-extern NSString * const UAInAppAudienceManagerErrorDomain;
-
-/**
  * The default time interval to prefer local audience data over API responses.
  */
 extern NSTimeInterval const UAInAppAudienceManagerDefaultPreferLocalAudienceDataTimeSeconds;
@@ -48,13 +43,7 @@ extern NSTimeInterval const UAInAppAudienceManagerDefaultPreferLocalAudienceData
 @protocol UAInAppAudienceManagerDelegate <NSObject>
 @required
 
-/**
- * Called to gather all the tags to request from the look-up API.
- * @param completionHandler Completion handler that must be called with the tag groups.
- */
-- (void)gatherTagGroupsWithCompletionHandler:(void(^)(UATagGroups *tagGroups))completionHandler;
 @end
-
 
 /**
  * Manages tag and attributes for in-app automation.
@@ -62,38 +51,9 @@ extern NSTimeInterval const UAInAppAudienceManagerDefaultPreferLocalAudienceData
 @interface UAInAppAudienceManager : NSObject
 
 /**
- * Enables/disables tag lookups.
- */
-@property (nonatomic, assign) BOOL enabled;
-
-/**
- * The time interval to prefer local tag data over API responses. Defaults to 10 minutes.
- */
-@property (nonatomic, assign) NSTimeInterval preferLocalTagDataTime;
-
-/**
- * The maximum age before the cache should be refreshed.
- */
-@property (nonatomic, assign) NSTimeInterval cacheMaxAgeTime;
-
-/**
- * The amount of time that can pass before cache reads are considered stale.
- */
-@property (nonatomic, assign) NSTimeInterval cacheStaleReadTime;
-
-/**
  * The manager delegate.
  */
 @property (nonatomic, weak) NSObject<UAInAppAudienceManagerDelegate> *delegate;
-
-/**
- * Performs a tag groups lookup.
- *
- * @param requestedTagGroups The requested tag groups.
- * @param completionHandler A completion handler taking the resulting tag groups, or an error indicating a failed lookup.
- */
-- (void)getTagGroups:(UATagGroups *)requestedTagGroups
-   completionHandler:(void(^)(UATagGroups * _Nullable tagGroups, NSError *error)) completionHandler;
 
 /**
  * Tag overrides.
@@ -125,20 +85,16 @@ extern NSTimeInterval const UAInAppAudienceManagerDefaultPreferLocalAudienceData
 /**
  * UAInAppAudienceManager class factory method. Used for testing.
  *
- * @param client A tag groups lookup API client.
  * @param dataStore A data store.
  * @param channel The channel.
  * @param contact The contact.
- * @param cache A lookup response cache.
  * @param historian The historian.
  * @param currentTime A UADate to be used for getting the current time.
  * @return A manager instance.
  */
-+ (instancetype)managerWithAPIClient:(UATagGroupsLookupAPIClient *)client
-                           dataStore:(UAPreferenceDataStore *)dataStore
++ (instancetype)managerWithDataStore:(UAPreferenceDataStore *)dataStore
                              channel:(UAChannel *)channel
                              contact:(id<UAContactProtocol>)contact
-                               cache:(UATagGroupsLookupResponseCache *)cache
                            historian:(UAInAppAudienceHistorian *)historian
                          currentTime:(UADate *)currentTime;
 @end

@@ -24,7 +24,6 @@ NSString * const UATagSelectorTagJSONKey = @"tag";
 NSString * const UATagSelectorANDJSONKey = @"and";
 NSString * const UATagSelectorORJSONKey = @"or";
 NSString * const UATagSelectorNOTJSONKey = @"not";
-NSString * const UATagSelectorGroupKey = @"group";
 
 NSString * const UATagSelectorErrorDomain = @"com.urbanairship.in_app_message_tag_selector";
 
@@ -33,7 +32,6 @@ NSString * const UATagSelectorErrorDomain = @"com.urbanairship.in_app_message_ta
 @property (nonatomic, assign) UATagSelectorType type;
 @property (nonatomic, copy) NSString *tag;
 @property (nonatomic, copy) NSArray<UATagSelector *> *selectors;
-@property (nonatomic, copy) NSString *group;
 
 @end
 
@@ -41,8 +39,7 @@ NSString * const UATagSelectorErrorDomain = @"com.urbanairship.in_app_message_ta
 
 - (instancetype)initWithType:(UATagSelectorType)type
                    selectors:(NSArray<UATagSelector *> *)selectors
-                         tag:(NSString *)tag
-                       group:(NSString *)group {
+                         tag:(NSString *)tag {
 
     if (self = [super init]) {
         self.type = type;
@@ -54,30 +51,25 @@ NSString * const UATagSelectorErrorDomain = @"com.urbanairship.in_app_message_ta
         }
 
         self.tag = tag;
-        self.group = group;
     }
 
     return self;
 }
 
 + (instancetype)and:(NSArray<UATagSelector *> *)selectors {
-    return [[self alloc] initWithType:UATagSelectorTypeAND selectors:selectors tag:nil group:nil];
+    return [[self alloc] initWithType:UATagSelectorTypeAND selectors:selectors tag:nil];
 }
 
 + (instancetype)or:(NSArray<UATagSelector *> *)selectors {
-    return [[self alloc] initWithType:UATagSelectorTypeOR selectors:selectors tag:nil group:nil];
+    return [[self alloc] initWithType:UATagSelectorTypeOR selectors:selectors tag:nil];
 }
 
 + (instancetype)not:(UATagSelector *)selector {
-    return [[self alloc] initWithType:UATagSelectorTypeNOT selectors:@[selector] tag:nil group:nil];
+    return [[self alloc] initWithType:UATagSelectorTypeNOT selectors:@[selector] tag:nil];
 }
 
 + (instancetype)tag:(NSString *)tag {
-    return [[self alloc] initWithType:UATagSelectorTypeTag selectors:nil tag:tag group:nil];
-}
-
-+ (instancetype)tag:(NSString *)tag group:(NSString *)group {
-    return [[self alloc] initWithType:UATagSelectorTypeTag selectors:nil tag:tag group:group];
+    return [[self alloc] initWithType:UATagSelectorTypeTag selectors:nil tag:tag];
 }
 
 + (instancetype)selectorWithJSON:(NSDictionary *)json error:(NSError **)error {
@@ -89,22 +81,10 @@ NSString * const UATagSelectorErrorDomain = @"com.urbanairship.in_app_message_ta
     }
     
     id tag = json[UATagSelectorTagJSONKey];
-    id group = json[UATagSelectorGroupKey];
 
     if (tag) {
         if ([tag isKindOfClass:[NSString class]]) {
-            if (group) {
-                if ([group isKindOfClass:[NSString class]]) {
-                    return [self tag:tag group:group];
-                } else {
-                    if (error) {
-                        *error = [self invalidJSONErrorWithMsg:[NSString stringWithFormat:@"Value for the \"group\" type must be a string. Invalid value: %@", group]];
-                    }
-                    return nil;
-                }
-            } else {
-                return [self tag:tag];
-            }
+            return [self tag:tag];
         } else {
             if (error) {
                 *error = [self invalidJSONErrorWithMsg:[NSString stringWithFormat:@"Value for the \"tag\" type must be a string. Invalid value: %@", tag]];
@@ -185,7 +165,6 @@ NSString * const UATagSelectorErrorDomain = @"com.urbanairship.in_app_message_ta
     switch (self.type) {
         case UATagSelectorTypeTag:
             [json setValue:self.tag forKey:UATagSelectorTagJSONKey];
-            [json setValue:self.group forKey:UATagSelectorGroupKey];
             break;
             
         case UATagSelectorTypeNOT:
@@ -215,22 +194,17 @@ NSString * const UATagSelectorErrorDomain = @"com.urbanairship.in_app_message_ta
     return selectorsAsJson;
 }
 
-- (BOOL)apply:(NSArray<NSString *> *)tags tagGroups:(UATagGroups *)tagGroups  {
+- (BOOL)apply:(NSArray<NSString *> *)tags {
     switch (self.type) {
         case UATagSelectorTypeTag:
-            if (self.group) {
-                NSSet *groupTags = tagGroups.tags[self.group];
-                return [groupTags containsObject:self.tag];
-            }
-
             return [tags containsObject:self.tag];
             
         case UATagSelectorTypeNOT:
-            return ![self.selectors[0] apply:tags tagGroups:tagGroups];
+            return ![self.selectors[0] apply:tags];
             
         case UATagSelectorTypeAND:
             for (UATagSelector *selector in self.selectors) {
-                if (![selector apply:tags tagGroups:tagGroups]) {
+                if (![selector apply:tags]) {
                     return NO;
                 }
             }
@@ -238,7 +212,7 @@ NSString * const UATagSelectorErrorDomain = @"com.urbanairship.in_app_message_ta
             
         case UATagSelectorTypeOR:
             for (UATagSelector *selector in self.selectors) {
-                if ([selector apply:tags tagGroups:tagGroups]) {
+                if ([selector apply:tags]) {
                     return YES;
                 }
             }
@@ -249,38 +223,6 @@ NSString * const UATagSelectorErrorDomain = @"com.urbanairship.in_app_message_ta
     }
 
     return NO;
-}
-
-- (BOOL)apply:(NSArray<NSString *> *)tags {
-    return [self apply:tags tagGroups:nil];
-}
-
-- (BOOL)containsTagGroups {
-    if (self.tag && self.group) {
-        return YES;
-    }
-
-    for (UATagSelector *selector in self.selectors) {
-        if ([selector containsTagGroups]) {
-            return YES;
-        }
-    }
-
-    return NO;
-}
-
-- (UATagGroups *)tagGroups {
-    if (self.group && self.tag) {
-        return [UATagGroups tagGroupsWithTags:@{self.group : @[self.tag]}];
-    } else {
-        UATagGroups *tagGroups = [UATagGroups tagGroupsWithTags:@{}];
-
-        for (UATagSelector *selector in self.selectors) {
-            tagGroups = [tagGroups merge:selector.tagGroups];
-        }
-
-        return tagGroups;
-    }
 }
 
 - (BOOL)isEqual:(id)other {
@@ -304,10 +246,6 @@ NSString * const UATagSelectorErrorDomain = @"com.urbanairship.in_app_message_ta
         return NO;
     }
 
-    if ((self.group != tagSelector.group) && ![self.group isEqualToString:tagSelector.group]) {
-        return NO;
-    }
-
     if ((self.selectors != tagSelector.selectors) && ![self.selectors isEqual:tagSelector.selectors]) {
         return NO;
     }
@@ -319,7 +257,6 @@ NSString * const UATagSelectorErrorDomain = @"com.urbanairship.in_app_message_ta
 
     result = 31 * result + self.type;
     result = 31 * result + [self.tag hash];
-    result = 31 * result + [self.group hash];
     result = 31 * result + [self.selectors hash];
 
     return result;

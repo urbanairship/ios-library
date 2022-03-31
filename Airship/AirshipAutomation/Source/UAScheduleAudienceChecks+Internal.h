@@ -27,13 +27,4 @@
  */
 + (BOOL)checkDisplayAudienceConditions:(UAScheduleAudience *)audience;
 
-/**
- * Check display audience conditions.
- *
- * @param audience The specified audience
- * @param tagGroups An instance of UATagGroups to match against.
- * @return YES if the current user is a member of the specified audience
- */
-+ (BOOL)checkDisplayAudienceConditions:(UAScheduleAudience *)audience tagGroups:(UATagGroups *)tagGroups;
-
 @end

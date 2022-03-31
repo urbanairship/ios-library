@@ -121,7 +121,7 @@
                             @"tags": @{
                                     @"and": @[@{
                                         @"not" : @{ @"tag": @"not-tag"}
-                                        }, @{ @"tag": @"cool", @"group": @"what" }
+                                        }, @{ @"tag": @"cool"}
                                         ]
                                     },
                             @"test_devices": @[@"test_device_one", @"test_device_two"],
