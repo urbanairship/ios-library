@@ -25,20 +25,7 @@
         return NO;
     }
 
-    if (audience.testDevices.count) {
-        NSString *channel = [UAirship channel].identifier;
-        if (!channel) {
-            return NO;
-        }
-
-        NSData *digest = [[UAUtils sha256DigestWithString:channel] subdataWithRange:NSMakeRange(0, 16)];
-        for (NSString *testDevice in audience.testDevices) {
-            NSData *decoded = [UABase64 dataFromString:testDevice];
-            if ([decoded isEqual:digest]) {
-                return YES;
-            }
-        }
-
+    if (![self checkTestDeviceCondition:audience]) {
         return NO;
     }
 
@@ -74,6 +61,11 @@
 + (BOOL)checkDisplayAudienceConditions:(UAScheduleAudience *)audience {
     if (!audience) {
         return YES;
+    }
+
+    // Test devices
+    if (![self checkTestDeviceCondition:audience]) {
+        return NO;
     }
 
     // Location opt-in
@@ -129,6 +121,27 @@
 
 + (BOOL)isNotificationsOptedIn {
     return [UAirship push].userPushNotificationsEnabled && [UAirship push].authorizedNotificationSettings != UAAuthorizedNotificationSettingsNone;
+}
+
++ (BOOL)checkTestDeviceCondition:(UAScheduleAudience *)audience {
+    if (audience.testDevices.count) {
+        NSString *channel = [UAirship channel].identifier;
+        if (!channel) {
+            return NO;
+        }
+
+        NSData *digest = [[UAUtils sha256DigestWithString:channel] subdataWithRange:NSMakeRange(0, 16)];
+        for (NSString *testDevice in audience.testDevices) {
+            NSData *decoded = [UABase64 dataFromString:testDevice];
+            if ([decoded isEqual:digest]) {
+                return YES;
+            }
+        }
+
+        return NO;
+    }
+
+    return YES;
 }
 
 @end

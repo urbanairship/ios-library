@@ -174,6 +174,7 @@ public class NotificationCategories : NSObject {
                                                                moduleBundle: AirshipCoreResources.bundle,
                                                                defaultValue: title)
             }
+            return localizedTitle
         }
 
         return title

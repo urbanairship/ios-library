@@ -3,11 +3,22 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 16.5.0 March 29, 2022
+
+A minor release that adds a style option to allow In-App Automation messages to be full screen on large devices, fixes an issue with iCloud backups recovering the same channel ID, and includes several In-App message fixes.
+
+### Changes
+- Added `extendFullScreenLargeDevice` to HTML and Modal styles sheets to allow displaying an In-App Automation as full screen on large devices.
+- Fixed In-App Message localization.
+- Fixed In-App Automation video inline playback.
+- Fixed channel ID being restored from an iCloud backup.
+
+
 ## Version 16.4.0 February 24, 2022
 
 A minor release that fixes a potential crash with message center, marks methods on PreferenceCenterViewController as open, and includes new styles for PreferenceCenterViewController. Apps that are experiencing crashes due to message center should update.
 
-## Changes
+### Changes
 - Added new styles for PreferenceCenterViewController.
 - Mark methods as open on PreferenceCenterViewController to make overriding possible.
 - Automatically refresh PreferenceCenterViewController if the preference center ID changes.
@@ -19,7 +30,7 @@ A minor release that fixes a potential crash with message center, marks methods 
 
 A patch release that fixes channel tags not updating til next app init without calling updateRegistration.
 
-## Changes
+### Changes
 - Made ContactSubscriptionItem.scopes accessible to objective-c
 - PreferenceCenterViewController init method is now public
 - Modifying channel tags will now queue up a channel registration update
@@ -38,7 +49,7 @@ A minor release that adds support for multi-channel Preference Center. Currently
 
 A minor release that adds support for two new features, Scenes and Surveys. Currently, these features are only available to customers in Airship's Special Access Program. Please reach out to your account manager for more details.
 
-## Changes
+### Changes
 - Added support for Scenes and Surveys
 - Fixed In-App Automation session trigger skipping sessions when automations are paused then resumed
 - Split pod AirshipExtensions into AirshipServiceExtension and AirshipContentExtension

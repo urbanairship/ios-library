@@ -16,6 +16,8 @@ NSString *const UAHTMLAdditionalPaddingKey = @"additionalPadding";
 NSString *const UAHTMLMaxWidthKey = @"maxWidth";
 NSString *const UAHTMLMaxHeightKey = @"maxHeight";
 NSString *const UAHTMLHideDismissIconKey = @"hideDismissIcon";
+NSString *const UAHTMLExtendFullScreenLargeDeviceKey = @"extendFullscreenLargeDevices";
+
 
 @implementation UAInAppMessageHTMLStyle
 
@@ -74,6 +76,13 @@ NSString *const UAHTMLHideDismissIconKey = @"hideDismissIcon";
 
         style.additionalPadding = [UAPadding paddingWithDictionary:normalizedHTMLStyleDict[UAHTMLAdditionalPaddingKey]];
 
+        id extendFullScreenLargeDeviceObj = normalizedHTMLStyleDict[UAHTMLExtendFullScreenLargeDeviceKey];
+        if (extendFullScreenLargeDeviceObj) {
+            if ([extendFullScreenLargeDeviceObj isKindOfClass:[NSNumber class]]) {
+                style.extendFullScreenLargeDevice = [extendFullScreenLargeDeviceObj boolValue];
+            }
+        }
+        
         UA_LTRACE(@"In-app HTML style options: %@", [normalizedHTMLStyleDict description]);
     }
 

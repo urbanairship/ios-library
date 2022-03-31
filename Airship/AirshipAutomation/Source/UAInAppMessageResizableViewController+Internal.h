@@ -70,6 +70,12 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, assign) BOOL allowFullScreenDisplay;
 
 /**
+ * Flag indicating the resizable view should extend display as full screen on large devices.
+ * Defaults to `NO`.
+ */
+@property(nonatomic, assign) BOOL extendFullScreenLargeDevice;
+
+/**
  * The resizing container view's border radius.
  */
 @property (nonatomic, assign) CGFloat borderRadius;

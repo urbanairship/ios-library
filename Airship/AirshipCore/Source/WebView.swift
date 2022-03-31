@@ -12,9 +12,13 @@ public class WebView : WKWebView {
         // An initial frame for initialization must be set, but it will be overridden
         // below by the autolayout constraints set in interface builder.
         let frame = UIScreen.main.bounds
-        let myConfiguration = WKWebViewConfiguration()
+        let config = WKWebViewConfiguration()
+        config.allowsInlineMediaPlayback = true
+        config.allowsPictureInPictureMediaPlayback = true
+        config.mediaTypesRequiringUserActionForPlayback = .all
 
-        super.init(frame: frame, configuration: myConfiguration)
+
+        super.init(frame: frame, configuration: config)
 
         // Apply constraints from interface builder.
         translatesAutoresizingMaskIntoConstraints = false
