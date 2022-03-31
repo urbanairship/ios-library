@@ -1152,6 +1152,8 @@
 		A61517C626B009D6008A41C4 /* SubscriptionListFetchResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61517C126B009D6008A41C4 /* SubscriptionListFetchResponse.swift */; };
 		A61517C726B009D6008A41C4 /* SubscriptionListFetchResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61517C126B009D6008A41C4 /* SubscriptionListFetchResponse.swift */; };
 		A615E215264EAFB9004FA211 /* UAPrivacyManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A615E214264EAFB9004FA211 /* UAPrivacyManagerTest.m */; };
+		A64D2F4127D1137900E034A6 /* UADeferredAPIClientResponse+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = A64D2F3F27D1137900E034A6 /* UADeferredAPIClientResponse+Internal.h */; };
+		A64D2F4227D1137900E034A6 /* UADeferredAPIClientResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = A64D2F4027D1137900E034A6 /* UADeferredAPIClientResponse.m */; };
 		A65070DD275FC6FD00BA22E4 /* UAInAppMessageEventTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A65070DC275FC6FD00BA22E4 /* UAInAppMessageEventTest.m */; };
 		A658DE0C2727020200007672 /* ImageButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE0A2727020100007672 /* ImageButton.swift */; };
 		A658DE1227280B3400007672 /* ImageButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE0A2727020100007672 /* ImageButton.swift */; };
@@ -1159,6 +1161,8 @@
 		A658DE1A2728498900007672 /* AirshipWebview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE182728498900007672 /* AirshipWebview.swift */; };
 		A658DE2B272AFB0400007672 /* ImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE2A272AFB0400007672 /* ImageLoader.swift */; };
 		A658DE2C272AFB0400007672 /* ImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE2A272AFB0400007672 /* ImageLoader.swift */; };
+		A66C656427C93777006B7F2B /* UADeferredScheduleRetryRules+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = A66C656227C93777006B7F2B /* UADeferredScheduleRetryRules+Internal.h */; };
+		A66C656527C93777006B7F2B /* UADeferredScheduleRetryRules.m in Sources */ = {isa = PBXBuildFile; fileRef = A66C656327C93777006B7F2B /* UADeferredScheduleRetryRules.m */; };
 		A67EC249279B1A40009089E1 /* ScopedSubscriptionListEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67EC248279B1A40009089E1 /* ScopedSubscriptionListEditor.swift */; };
 		A67EC24B279B1C34009089E1 /* ScopedSubscriptionListUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67EC24A279B1C34009089E1 /* ScopedSubscriptionListUpdate.swift */; };
 		A67EC24C279ED8E3009089E1 /* ScopedSubscriptionListUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67EC24A279B1C34009089E1 /* ScopedSubscriptionListUpdate.swift */; };
@@ -2456,10 +2460,14 @@
 		A61517C126B009D6008A41C4 /* SubscriptionListFetchResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubscriptionListFetchResponse.swift; sourceTree = "<group>"; };
 		A615E214264EAFB9004FA211 /* UAPrivacyManagerTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAPrivacyManagerTest.m; sourceTree = "<group>"; };
 		A649F50A252F4F39005453CB /* UAInbox 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAInbox 2.xcdatamodel"; sourceTree = "<group>"; };
+		A64D2F3F27D1137900E034A6 /* UADeferredAPIClientResponse+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UADeferredAPIClientResponse+Internal.h"; sourceTree = "<group>"; };
+		A64D2F4027D1137900E034A6 /* UADeferredAPIClientResponse.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UADeferredAPIClientResponse.m; sourceTree = "<group>"; };
 		A65070DC275FC6FD00BA22E4 /* UAInAppMessageEventTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageEventTest.m; sourceTree = "<group>"; };
 		A658DE0A2727020100007672 /* ImageButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageButton.swift; sourceTree = "<group>"; };
 		A658DE182728498900007672 /* AirshipWebview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipWebview.swift; sourceTree = "<group>"; };
 		A658DE2A272AFB0400007672 /* ImageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLoader.swift; sourceTree = "<group>"; };
+		A66C656227C93777006B7F2B /* UADeferredScheduleRetryRules+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UADeferredScheduleRetryRules+Internal.h"; sourceTree = "<group>"; };
+		A66C656327C93777006B7F2B /* UADeferredScheduleRetryRules.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UADeferredScheduleRetryRules.m; sourceTree = "<group>"; };
 		A67EC248279B1A40009089E1 /* ScopedSubscriptionListEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScopedSubscriptionListEditor.swift; sourceTree = "<group>"; };
 		A67EC24A279B1C34009089E1 /* ScopedSubscriptionListUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScopedSubscriptionListUpdate.swift; sourceTree = "<group>"; };
 		A67EC26727A94411009089E1 /* PreferenceCenterCheckboxCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterCheckboxCell.swift; sourceTree = "<group>"; };
@@ -4171,6 +4179,8 @@
 				DFD442A11FD77248002E4FA1 /* UAScheduleAudience.m */,
 				DF0221F51FDB05B600EF8C9D /* UAScheduleAudienceChecks+Internal.h */,
 				DF0221F61FDB05B600EF8C9D /* UAScheduleAudienceChecks.m */,
+				A66C656227C93777006B7F2B /* UADeferredScheduleRetryRules+Internal.h */,
+				A66C656327C93777006B7F2B /* UADeferredScheduleRetryRules.m */,
 			);
 			name = AutomationEngine;
 			sourceTree = "<group>";
@@ -4578,6 +4588,8 @@
 				6E9F74D524E6F68D001F9B05 /* UADeferredScheduleResult.m */,
 				3CF62ECF257997850007502B /* UAStateOverrides+Internal.h */,
 				3CF62ED0257997850007502B /* UAStateOverrides.m */,
+				A64D2F3F27D1137900E034A6 /* UADeferredAPIClientResponse+Internal.h */,
+				A64D2F4027D1137900E034A6 /* UADeferredAPIClientResponse.m */,
 			);
 			name = InAppAutomation;
 			sourceTree = "<group>";
@@ -5486,6 +5498,7 @@
 				6E8453F2237E0540007D3B1E /* UALandingPageAction.h in Headers */,
 				6E4E5B5426E81EF700198175 /* NSObject+UAAdditions+Internal.h in Headers */,
 				6E8453F3237E0540007D3B1E /* UACancelSchedulesAction.h in Headers */,
+				A64D2F4127D1137900E034A6 /* UADeferredAPIClientResponse+Internal.h in Headers */,
 				6E8453F4237E0540007D3B1E /* UAScheduleAction.h in Headers */,
 				6E8453F5237E0540007D3B1E /* UAAutomationSDKModule.h in Headers */,
 				6E84538A237E0523007D3B1E /* UAInAppMessageHTMLDisplayContent+Internal.h in Headers */,
@@ -5532,6 +5545,7 @@
 				6ED807AA273DEA7D00D1F455 /* UAInAppMessageAirshipLayoutAdapter+Internal.h in Headers */,
 				6E8453AF237E0524007D3B1E /* UAInAppMessageUtils+Internal.h in Headers */,
 				6E8453B0237E0524007D3B1E /* UAInAppRemoteDataClient+Internal.h in Headers */,
+				A66C656427C93777006B7F2B /* UADeferredScheduleRetryRules+Internal.h in Headers */,
 				3CF5E809255619DC0074B2A0 /* UAFrequencyLimitManager+Internal.h in Headers */,
 				6E50629824E1ABDB00689C6D /* UAActionSchedule.h in Headers */,
 				6E8453B1237E0524007D3B1E /* UAScheduleAudience+Internal.h in Headers */,
@@ -6914,6 +6928,7 @@
 				6E8453FD237E0575007D3B1E /* UAInAppMessageBannerDisplayContent.m in Sources */,
 				3CF5E89F255A2AF10074B2A0 /* UAFrequencyLimitStore.m in Sources */,
 				6E8453FE237E0575007D3B1E /* UAInAppMessageBannerStyle.m in Sources */,
+				A66C656527C93777006B7F2B /* UADeferredScheduleRetryRules.m in Sources */,
 				6E8453FF237E0575007D3B1E /* UAInAppMessageBannerController.m in Sources */,
 				6E845400237E0575007D3B1E /* UAInAppMessageBannerView.m in Sources */,
 				6E845401237E0575007D3B1E /* UAInAppMessageBannerContentView.m in Sources */,
@@ -6960,6 +6975,7 @@
 				3CF5E80B255619DC0074B2A0 /* UAFrequencyLimitManager.m in Sources */,
 				6E845420237E0575007D3B1E /* UAInAppMessageMediaStyle.m in Sources */,
 				6E845421237E0575007D3B1E /* UAInAppMessageButtonInfo.m in Sources */,
+				A64D2F4227D1137900E034A6 /* UADeferredAPIClientResponse.m in Sources */,
 				6E845422237E0575007D3B1E /* UAInAppMessageMediaInfo.m in Sources */,
 				3C13BFB72384AC0E0071E80C /* UAAutomationResources.m in Sources */,
 				6E4E5B5326E81EF700198175 /* UATagGroups.m in Sources */,

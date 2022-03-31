@@ -15,6 +15,7 @@
 #import "UADeferredSchedule+Internal.h"
 #import "UAFrequencyLimitManager+Internal.h"
 #import "AirshipTests-Swift.h"
+#import "UARetriable+Internal.h"
 
 @import AirshipCore;
 
@@ -31,6 +32,13 @@
 @property(nonatomic, strong) UAPrivacyManager *privacyManager;
 
 @property(nonatomic, strong) id<UAAutomationEngineDelegate> engineDelegate;
+@end
+
+@interface UAInAppAutomation()
+- (void)prepareDeferredSchedule:(UASchedule *)schedule
+                 triggerContext:(nullable UAScheduleTriggerContext *)triggerContext
+               retriableHandler:(UARetriableCompletionHandler) retriableHandler
+              completionHandler:(void (^)(UAAutomationSchedulePrepareResult))completionHandler;
 @end
 
 @implementation UAInAppAutomationTest
@@ -320,6 +328,8 @@
     }];
 
     UADeferredScheduleResult *deferredResult = [UADeferredScheduleResult resultWithMessage:message audienceMatch:YES];
+    
+    UADeferredAPIClientResponse *deferredResponse = [UADeferredAPIClientResponse responseWithStatus:200 result:deferredResult rules:nil];
 
     UAScheduleTrigger *trigger = [UAScheduleTrigger foregroundTriggerWithCount:1];
 
@@ -373,9 +383,9 @@
     [[[self.mockAudienceManager expect] andReturn:attributeOverrides] attributeOverrides];
 
     [[[self.mockDeferredClient expect] andDo:^(NSInvocation *invocation) {
-        void (^block)(UADeferredScheduleResult *, NSError *);
+        void (^block)(UADeferredAPIClientResponse *, NSError *);
         [invocation getArgument:&block atIndex:7];
-        block(deferredResult, nil);
+        block(deferredResponse, nil);
     }] resolveURL:deferred.URL
      channelID:@"channel ID" triggerContext:triggerContext
      tagOverrides:tagOverrides attributeOverrides:attributeOverrides completionHandler:OCMOCK_ANY];
@@ -401,6 +411,8 @@
     }];
 
     UADeferredScheduleResult *deferredResult = [UADeferredScheduleResult resultWithMessage:message audienceMatch:YES];
+    
+    UADeferredAPIClientResponse *deferredResponse = [UADeferredAPIClientResponse responseWithStatus:200 result:deferredResult rules:nil];
 
     UAScheduleTrigger *trigger = [UAScheduleTrigger foregroundTriggerWithCount:1];
 
@@ -455,9 +467,9 @@
     }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockDeferredClient expect] andDo:^(NSInvocation *invocation) {
-        void (^block)(UADeferredScheduleResult *, NSError *);
+        void (^block)(UADeferredAPIClientResponse *, NSError *);
         [invocation getArgument:&block atIndex:7];
-        block(deferredResult, nil);
+        block(deferredResponse, nil);
     }] resolveURL:deferred.URL
      channelID:@"channel ID" triggerContext:triggerContext
      tagOverrides:tagOverrides attributeOverrides:attributeOverrides completionHandler:OCMOCK_ANY];
@@ -527,8 +539,10 @@
 - (void)testPrepareDeferredTimedOut {
     [[[self.mockChannel stub] andReturn:@"channel ID"] identifier];
 
-    NSError *deferredResult = [NSError errorWithDomain:UADeferredScheduleAPIClientErrorDomain
-                                                  code:UADeferredScheduleAPIClientErrorTimedOut
+    UADeferredAPIClientResponse *deferredResponse = [UADeferredAPIClientResponse responseWithStatus:401 result:nil rules:nil];
+
+    NSError *deferredError = [NSError errorWithDomain:UADeferredScheduleAPIClientErrorDomain
+                                                  code:100
                                               userInfo:nil];
 
     UAScheduleDeferredData *deferred = [UAScheduleDeferredData deferredDataWithURL:[NSURL URLWithString:@"https://airship.com"]
@@ -557,9 +571,9 @@
     }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockDeferredClient expect] andDo:^(NSInvocation *invocation) {
-        void (^block)(UADeferredScheduleResult *, NSError *);
+        void (^block)(UADeferredAPIClientResponse *, NSError *);
         [invocation getArgument:&block atIndex:7];
-        block(nil, deferredResult);
+        block(deferredResponse, deferredError);
     }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:nil
      tagOverrides:@[] attributeOverrides:@[] completionHandler:OCMOCK_ANY];
 
@@ -575,10 +589,255 @@
     [self.mockDeferredClient verify];
 }
 
+- (void)testPrepareDeferredCode409 {
+    [[[self.mockChannel stub] andReturn:@"channel ID"] identifier];
+
+    UADeferredAPIClientResponse *deferredResponse = [UADeferredAPIClientResponse responseWithStatus:409 result:nil rules:nil];
+
+    UAScheduleDeferredData *deferred = [UAScheduleDeferredData deferredDataWithURL:[NSURL URLWithString:@"https://airship.com"]
+                                                                retriableOnTimeout:NO];
+
+    UASchedule *schedule = [UADeferredSchedule scheduleWithDeferredData:deferred builderBlock:^(UAScheduleBuilder *builder) {
+        builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
+        builder.identifier = @"schedule ID";
+    }];
+    
+    [[[self.mockAudienceManager expect] andReturn:@[]] tagOverrides];
+    [[[self.mockAudienceManager expect] andReturn:@[]] attributeOverrides];
+
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
+
+    [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
+        callback([UAFrequencyChecker frequencyCheckerWithIsOverLimit:^BOOL{
+            return NO;
+        } checkAndIncrement:^BOOL{
+            return YES;
+        }]);
+    }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    [[[self.mockDeferredClient expect] andDo:^(NSInvocation *invocation) {
+        void (^block)(UADeferredAPIClientResponse *, NSError *);
+        [invocation getArgument:&block atIndex:7];
+        block(deferredResponse, nil);
+    }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:nil
+     tagOverrides:@[] attributeOverrides:@[] completionHandler:OCMOCK_ANY];
+
+    XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
+    [self.engineDelegate prepareSchedule:schedule
+                          triggerContext:nil
+                       completionHandler:^(UAAutomationSchedulePrepareResult result) {
+        XCTAssertEqual(UAAutomationSchedulePrepareResultInvalidate, result);
+        [prepareFinished fulfill];
+    }];
+
+    [self waitForTestExpectations];
+    [self.mockDeferredClient verify];
+}
+
+- (void)testPrepareDeferredCode429WithRetry {
+    [[[self.mockChannel stub] andReturn:@"channel ID"] identifier];
+
+    UADeferredScheduleRetryRules *rules = [UADeferredScheduleRetryRules rulesWithLocation:nil retryTime:5];
+    UADeferredAPIClientResponse *deferredResponse = [UADeferredAPIClientResponse responseWithStatus:429 result:nil rules:rules];
+
+    UAScheduleDeferredData *deferred = [UAScheduleDeferredData deferredDataWithURL:[NSURL URLWithString:@"https://airship.com"]
+                                                                retriableOnTimeout:NO];
+
+    UASchedule *schedule = [UADeferredSchedule scheduleWithDeferredData:deferred builderBlock:^(UAScheduleBuilder *builder) {
+        builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
+        builder.identifier = @"schedule ID";
+    }];
+    
+    [[[self.mockAudienceManager expect] andReturn:@[]] tagOverrides];
+    [[[self.mockAudienceManager expect] andReturn:@[]] attributeOverrides];
+
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
+
+    [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
+        callback([UAFrequencyChecker frequencyCheckerWithIsOverLimit:^BOOL{
+            return NO;
+        } checkAndIncrement:^BOOL{
+            return YES;
+        }]);
+    }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    [[[self.mockDeferredClient expect] andDo:^(NSInvocation *invocation) {
+        void (^block)(UADeferredAPIClientResponse *, NSError *);
+        [invocation getArgument:&block atIndex:7];
+        block(deferredResponse, nil);
+    }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:nil
+     tagOverrides:@[] attributeOverrides:@[] completionHandler:OCMOCK_ANY];
+
+    XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
+    [self.inAppAutomation prepareDeferredSchedule:schedule triggerContext:nil retriableHandler:^(UARetriableResult result, NSTimeInterval time) {
+        XCTAssertEqual(result, UARetriableResultRetryAfter);
+        XCTAssertEqual(time, 5);
+        [prepareFinished fulfill];
+    } completionHandler:^(UAAutomationSchedulePrepareResult result) {}];
+    
+    [self waitForTestExpectations];
+    [self.mockDeferredClient verify];
+}
+
+- (void)testPrepareDeferredCode429NoRetry {
+    [[[self.mockChannel stub] andReturn:@"channel ID"] identifier];
+
+    UADeferredAPIClientResponse *deferredResponse = [UADeferredAPIClientResponse responseWithStatus:429 result:nil rules:nil];
+
+    UAScheduleDeferredData *deferred = [UAScheduleDeferredData deferredDataWithURL:[NSURL URLWithString:@"https://airship.com"]
+                                                                retriableOnTimeout:NO];
+
+    UASchedule *schedule = [UADeferredSchedule scheduleWithDeferredData:deferred builderBlock:^(UAScheduleBuilder *builder) {
+        builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
+        builder.identifier = @"schedule ID";
+    }];
+    
+    [[[self.mockAudienceManager expect] andReturn:@[]] tagOverrides];
+    [[[self.mockAudienceManager expect] andReturn:@[]] attributeOverrides];
+
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
+
+    [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
+        callback([UAFrequencyChecker frequencyCheckerWithIsOverLimit:^BOOL{
+            return NO;
+        } checkAndIncrement:^BOOL{
+            return YES;
+        }]);
+    }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    [[[self.mockDeferredClient expect] andDo:^(NSInvocation *invocation) {
+        void (^block)(UADeferredAPIClientResponse *, NSError *);
+        [invocation getArgument:&block atIndex:7];
+        block(deferredResponse, nil);
+    }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:nil
+     tagOverrides:@[] attributeOverrides:@[] completionHandler:OCMOCK_ANY];
+
+    XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
+    [self.inAppAutomation prepareDeferredSchedule:schedule triggerContext:nil retriableHandler:^(UARetriableResult result, NSTimeInterval time) {
+        XCTAssertEqual(result, UARetriableResultRetry);
+        XCTAssertEqual(time, 0);
+        [prepareFinished fulfill];
+    } completionHandler:^(UAAutomationSchedulePrepareResult result) {}];
+    
+    [self waitForTestExpectations];
+    [self.mockDeferredClient verify];
+}
+
+- (void)testPrepareDeferredCode307WithRetry {
+    [[[self.mockChannel stub] andReturn:@"channel ID"] identifier];
+
+    UADeferredScheduleRetryRules *rules = [UADeferredScheduleRetryRules rulesWithLocation:nil retryTime:5];
+    UADeferredAPIClientResponse *deferredResponse = [UADeferredAPIClientResponse responseWithStatus:307 result:nil rules:rules];
+
+    UAScheduleDeferredData *deferred = [UAScheduleDeferredData deferredDataWithURL:[NSURL URLWithString:@"https://airship.com"]
+                                                                retriableOnTimeout:NO];
+
+    UASchedule *schedule = [UADeferredSchedule scheduleWithDeferredData:deferred builderBlock:^(UAScheduleBuilder *builder) {
+        builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
+        builder.identifier = @"schedule ID";
+    }];
+    
+    [[[self.mockAudienceManager expect] andReturn:@[]] tagOverrides];
+    [[[self.mockAudienceManager expect] andReturn:@[]] attributeOverrides];
+
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
+
+    [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
+        callback([UAFrequencyChecker frequencyCheckerWithIsOverLimit:^BOOL{
+            return NO;
+        } checkAndIncrement:^BOOL{
+            return YES;
+        }]);
+    }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    [[[self.mockDeferredClient expect] andDo:^(NSInvocation *invocation) {
+        void (^block)(UADeferredAPIClientResponse *, NSError *);
+        [invocation getArgument:&block atIndex:7];
+        block(deferredResponse, nil);
+    }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:nil
+     tagOverrides:@[] attributeOverrides:@[] completionHandler:OCMOCK_ANY];
+
+    XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
+    [self.inAppAutomation prepareDeferredSchedule:schedule triggerContext:nil retriableHandler:^(UARetriableResult result, NSTimeInterval time) {
+        XCTAssertEqual(result, UARetriableResultRetryAfter);
+        XCTAssertEqual(time, 5);
+        [prepareFinished fulfill];
+    } completionHandler:^(UAAutomationSchedulePrepareResult result) {}];
+    
+    [self waitForTestExpectations];
+    [self.mockDeferredClient verify];
+}
+
+- (void)testPrepareDeferredCode307NoRetry {
+    [[[self.mockChannel stub] andReturn:@"channel ID"] identifier];
+
+    UADeferredAPIClientResponse *deferredResponse = [UADeferredAPIClientResponse responseWithStatus:307 result:nil rules:nil];
+
+    UAScheduleDeferredData *deferred = [UAScheduleDeferredData deferredDataWithURL:[NSURL URLWithString:@"https://airship.com"]
+                                                                retriableOnTimeout:NO];
+
+    UASchedule *schedule = [UADeferredSchedule scheduleWithDeferredData:deferred builderBlock:^(UAScheduleBuilder *builder) {
+        builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
+        builder.identifier = @"schedule ID";
+    }];
+    
+    [[[self.mockAudienceManager expect] andReturn:@[]] tagOverrides];
+    [[[self.mockAudienceManager expect] andReturn:@[]] attributeOverrides];
+
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
+    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
+
+    [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
+        callback([UAFrequencyChecker frequencyCheckerWithIsOverLimit:^BOOL{
+            return NO;
+        } checkAndIncrement:^BOOL{
+            return YES;
+        }]);
+    }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    [[[self.mockDeferredClient expect] andDo:^(NSInvocation *invocation) {
+        void (^block)(UADeferredAPIClientResponse *, NSError *);
+        [invocation getArgument:&block atIndex:7];
+        block(deferredResponse, nil);
+    }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:nil
+     tagOverrides:@[] attributeOverrides:@[] completionHandler:OCMOCK_ANY];
+
+    XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
+    [self.inAppAutomation prepareDeferredSchedule:schedule triggerContext:nil retriableHandler:^(UARetriableResult result, NSTimeInterval time) {
+        XCTAssertEqual(result, UARetriableResultRetryWithBackoffReset);
+        XCTAssertEqual(time, 0);
+        [prepareFinished fulfill];
+    } completionHandler:^(UAAutomationSchedulePrepareResult result) {}];
+    
+    [self waitForTestExpectations];
+    [self.mockDeferredClient verify];
+}
+
 - (void)testPrepareDeferredAudienceMiss {
     [[[self.mockChannel stub] andReturn:@"channel ID"] identifier];
 
     UADeferredScheduleResult *deferredResult = [UADeferredScheduleResult resultWithMessage:nil audienceMatch:NO];
+    
+    UADeferredAPIClientResponse *deferredResponse = [UADeferredAPIClientResponse responseWithStatus:200 result:deferredResult rules:nil];
 
     UAScheduleDeferredData *deferred = [UAScheduleDeferredData deferredDataWithURL:[NSURL URLWithString:@"https://airship.com"]
                                                                 retriableOnTimeout:NO];
@@ -605,9 +864,9 @@
     }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockDeferredClient expect] andDo:^(NSInvocation *invocation) {
-        void (^block)(UADeferredScheduleResult *, NSError *);
+        void (^block)(UADeferredAPIClientResponse *, NSError *);
         [invocation getArgument:&block atIndex:7];
-        block(deferredResult, nil);
+        block(deferredResponse, nil);
     }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:nil
      tagOverrides:@[] attributeOverrides:@[] completionHandler:OCMOCK_ANY];
 
@@ -628,6 +887,8 @@
     [[[self.mockChannel stub] andReturn:@"channel ID"] identifier];
 
     UADeferredScheduleResult *deferredResult = [UADeferredScheduleResult resultWithMessage:nil audienceMatch:YES];
+    
+    UADeferredAPIClientResponse *deferredResponse = [UADeferredAPIClientResponse responseWithStatus:200 result:deferredResult rules:nil];
 
     UAScheduleDeferredData *deferred = [UAScheduleDeferredData deferredDataWithURL:[NSURL URLWithString:@"https://airship.com"]
                                                                 retriableOnTimeout:NO];
@@ -654,9 +915,9 @@
     }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockDeferredClient expect] andDo:^(NSInvocation *invocation) {
-        void (^block)(UADeferredScheduleResult *, NSError *);
+        void (^block)(UADeferredAPIClientResponse *, NSError *);
         [invocation getArgument:&block atIndex:7];
-        block(deferredResult, nil);
+        block(deferredResponse, nil);
     }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:nil
      tagOverrides:@[] attributeOverrides:@[] completionHandler:OCMOCK_ANY];
 
@@ -1156,6 +1417,8 @@
     }];
 
     UADeferredScheduleResult *deferredResult = [UADeferredScheduleResult resultWithMessage:message audienceMatch:YES];
+    
+    UADeferredAPIClientResponse *deferredResponse = [UADeferredAPIClientResponse responseWithStatus:200 result:deferredResult rules:nil];
 
     UAScheduleTrigger *trigger = [UAScheduleTrigger foregroundTriggerWithCount:1];
     UAScheduleTriggerContext *triggerContext = [UAScheduleTriggerContext triggerContextWithTrigger:trigger
@@ -1165,9 +1428,9 @@
     [[[self.mockAudienceManager expect] andReturn:@[]] attributeOverrides];
 
     [[[self.mockDeferredClient expect] andDo:^(NSInvocation *invocation) {
-        void (^block)(UADeferredScheduleResult *, NSError *);
+        void (^block)(UADeferredAPIClientResponse *, NSError *);
         [invocation getArgument:&block atIndex:7];
-        block(deferredResult, nil);
+        block(deferredResponse, nil);
     }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:triggerContext tagOverrides:@[] attributeOverrides:@[] completionHandler:OCMOCK_ANY];
 
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
@@ -1233,6 +1496,8 @@
     }];
 
     UADeferredScheduleResult *deferredResult = [UADeferredScheduleResult resultWithMessage:message audienceMatch:YES];
+    
+    UADeferredAPIClientResponse *deferredResponse = [UADeferredAPIClientResponse responseWithStatus:200 result:deferredResult rules:nil];
 
     UAScheduleTrigger *trigger = [UAScheduleTrigger foregroundTriggerWithCount:1];
     UAScheduleTriggerContext *triggerContext = [UAScheduleTriggerContext triggerContextWithTrigger:trigger
@@ -1242,9 +1507,9 @@
     [[[self.mockAudienceManager expect] andReturn:@[]] attributeOverrides];
 
     [[[self.mockDeferredClient expect] andDo:^(NSInvocation *invocation) {
-        void (^block)(UADeferredScheduleResult *, NSError *);
+        void (^block)(UADeferredAPIClientResponse *, NSError *);
         [invocation getArgument:&block atIndex:7];
-        block(deferredResult, nil);
+        block(deferredResponse, nil);
     }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:triggerContext tagOverrides:@[] attributeOverrides:@[] completionHandler:OCMOCK_ANY];
 
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];

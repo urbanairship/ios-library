@@ -28,14 +28,14 @@
     XCTestExpectation *firstExecuted = [self expectationWithDescription:@"first executed"];
     UARetriable *first = [UARetriable retriableWithRunBlock:^(UARetriableCompletionHandler completionHandler) {
         [order addObject:@"first"];
-        completionHandler(UARetriableResultSuccess);
+        completionHandler(UARetriableResultSuccess, 0);
         [firstExecuted fulfill];
     }];
 
     XCTestExpectation *secondExecuted = [self expectationWithDescription:@"second executed"];
     UARetriable *second = [UARetriable retriableWithRunBlock:^(UARetriableCompletionHandler completionHandler) {
         [order addObject:@"second"];
-        completionHandler(UARetriableResultSuccess);
+        completionHandler(UARetriableResultSuccess, 0);
         [secondExecuted fulfill];
     }];
 
@@ -51,13 +51,13 @@
     __block NSUInteger firstRunCount = 0;
     UARetriable *first = [UARetriable retriableWithRunBlock:^(UARetriableCompletionHandler completionHandler) {
         firstRunCount++;
-        completionHandler(UARetriableResultSuccess);
+        completionHandler(UARetriableResultSuccess, 0);
     }];
 
     __block NSUInteger secondRunCount = 0;
     UARetriable *second = [UARetriable retriableWithRunBlock:^(UARetriableCompletionHandler completionHandler) {
         secondRunCount++;
-        completionHandler(UARetriableResultRetry);
+        completionHandler(UARetriableResultRetry, 0);
     }];
 
     [self.pipeline addChainedRetriables:@[first, second]];
@@ -82,13 +82,13 @@
 - (void)testCancel {
     XCTestExpectation *firstExecuted = [self expectationWithDescription:@"first executed"];
     UARetriable *first = [UARetriable retriableWithRunBlock:^(UARetriableCompletionHandler completionHandler) {
-        completionHandler(UARetriableResultCancel);
+        completionHandler(UARetriableResultCancel, 0);
         [firstExecuted fulfill];
     }];
 
     UARetriable *second = [UARetriable retriableWithRunBlock:^(UARetriableCompletionHandler completionHandler) {
         XCTFail(@"Should be cancelled");
-        completionHandler(UARetriableResultCancel);
+        completionHandler(UARetriableResultCancel, 0);
     }];
 
     [self.pipeline addChainedRetriables:@[first, second]];

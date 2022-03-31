@@ -5,6 +5,8 @@
 #import "UAInAppMessage+Internal.h"
 #import "UAStateOverrides+Internal.h"
 #import "NSDictionary+UAAdditions+Internal.h"
+#import "UADeferredScheduleRetryRules+Internal.h"
+#import "UADeferredAPIClientResponse+Internal.h"
 
 #if __has_include("AirshipKit/AirshipKit-Swift.h")
 #import <AirshipKit/AirshipKit-Swift.h>
@@ -37,6 +39,7 @@ NSString * const UADeferredScheduleAPIClientErrorDomain = @"com.urbanairship.def
 
 @interface UADeferredScheduleAPIClientResponse : NSObject
 @property (nonatomic, copy, nullable) NSDictionary *body;
+@property (nonatomic, copy, nullable) NSDictionary *headers;
 @property (nonatomic, strong, nullable) NSError *error;
 @property (nonatomic, assign) NSUInteger status;
 @end
@@ -105,66 +108,102 @@ NSString * const UADeferredScheduleAPIClientErrorDomain = @"com.urbanairship.def
     triggerContext:(nullable UAScheduleTriggerContext *)triggerContext
       tagOverrides:(NSArray<UATagGroupUpdate *> *)tagOverrides
 attributeOverrides:(NSArray<UAAttributeUpdate *> *)attributeOverrides
- completionHandler:(void (^)(UADeferredScheduleResult * _Nullable, NSError * _Nullable))completionHandler {
+ completionHandler:(void (^)(UADeferredAPIClientResponse * _Nullable, NSError * _Nullable))completionHandler {
 
     UA_WEAKIFY(self)
     [self.requestDispatcher dispatchAsync:^{
         UA_STRONGIFY(self)
-        NSString *token = [self authToken];
+        __block NSString *token = [self authToken];
 
         if (!token) {
             return completionHandler(nil, [self missingAuthTokenError]);
         }
 
-        UADeferredScheduleAPIClientResponse *response = [self performRequest:token
-                                                                         URL:URL
-                                                                   channelID:channelID
-                                                              triggerContext:triggerContext
-                                                                tagOverrides:tagOverrides
-                                                          attributeOverrides:attributeOverrides];
+        UARequest *request = [self requestWithAuthToken:token
+                                                    URL:URL
+                                              channelID:channelID
+                                         triggerContext:triggerContext
+                                           tagOverrides:tagOverrides
+                                     attributeOverrides:attributeOverrides];
 
-        if (response.error) {
-            UA_LTRACE(@"Deferred schedule request failed with error %@", response.error);
-            return completionHandler(nil, [self timeoutError]);
-        }
+        [self.session performHTTPRequest:request completionHandler:^(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response, NSError * _Nullable error) {
 
-        // If unauthorized, manually expire the token and try again.
-        if (response.status == 401){
-            [self.authManager expireToken:token];
-
-            token = [self authToken];
-
-            if (!token) {
-                return completionHandler(nil, [self missingAuthTokenError]);
+            UADeferredAPIClientResponse *clientResponse = [UADeferredAPIClientResponse responseWithStatus:response.statusCode result:nil rules:nil];
+            
+            if (error) {
+                UA_LTRACE(@"Deferred schedule request failed with error %@", error);
+                return completionHandler(clientResponse, error);
             }
+            
+            // If unauthorized, manually expire the token and try again.
+            if (response.statusCode == 401) {
+                [self.authManager expireToken:token];
 
-            response = [self performRequest:token
-                                        URL:URL
-                                  channelID:channelID
-                             triggerContext:triggerContext
-                               tagOverrides:tagOverrides
-                         attributeOverrides:attributeOverrides];
+                token = [self authToken];
+                
+                clientResponse = [UADeferredAPIClientResponse responseWithStatus:response.statusCode result:nil rules:nil];
 
-            if (response.error) {
-                UA_LTRACE(@"Deferred schedule request failed with error %@", response.error);
-                return completionHandler(nil, [self timeoutError]);
+                if (!token) {
+                    return completionHandler(clientResponse, [self missingAuthTokenError]);
+                }
+
+                [self.session performHTTPRequest:request completionHandler:^(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response, NSError * _Nullable error) {
+                    if (error) {
+                        UA_LTRACE(@"Deferred schedule request failed with error %@", error);
+                        return completionHandler(clientResponse, error);
+                    }
+                    [self handleResponse:response data:data completionHandler:completionHandler];
+                }];
+                
+                return;
             }
-        }
-
-        // Unsuccessful HTTP response
-        if (!(response.status >= 200 && response.status <= 299)) {
-            UA_LTRACE(@"Deferred schedule request failed with status: %lu", (unsigned long)response.status);
-            return completionHandler(nil, [self unsuccessfulStatusError]);
-        }
-
-        // Successful HTTP response
-        UA_LTRACE(@"Deferred schedule request succeeded with status: %lu", (unsigned long)response.status);
-
-        UADeferredScheduleResult *result = [self parseResponseBody:response.body];
-
-        // Successful deferred schedule request
-        completionHandler(result, nil);
+            
+            [self handleResponse:response data:data completionHandler:completionHandler];
+        }];
     }];
+}
+
+- (void)handleResponse:(NSHTTPURLResponse * _Nullable)response data:(NSData * _Nullable)data completionHandler:(void (^)(UADeferredAPIClientResponse * _Nullable, NSError * _Nullable))completionHandler {
+    
+    if (response.statusCode == 409) {
+        UA_LTRACE(@"Deferred schedule request failed with status: %lu", (unsigned long)response.statusCode);
+        UADeferredAPIClientResponse *clientResponse = [UADeferredAPIClientResponse responseWithStatus:response.statusCode result:nil rules:nil];
+        return completionHandler(clientResponse, nil);
+    }
+    
+    if (response.statusCode == 307 || response.statusCode == 429) {
+        UA_LTRACE(@"Deferred schedule request failed with status: %lu", (unsigned long)response.statusCode);
+        if (response.allHeaderFields) {
+            NSString *location = response.allHeaderFields[@"Location"] ?: nil;
+            NSTimeInterval retryTime = response.allHeaderFields[@"Retry-After"] ? [response.allHeaderFields[@"Retry-After"] doubleValue] : 0;
+            
+            UADeferredScheduleRetryRules *rules = [UADeferredScheduleRetryRules rulesWithLocation:location retryTime:retryTime];
+            
+            UADeferredAPIClientResponse *clientResponse = [UADeferredAPIClientResponse responseWithStatus:response.statusCode result:nil rules:rules];
+            return completionHandler(clientResponse, nil);
+        } else {
+            UADeferredAPIClientResponse *clientResponse = [UADeferredAPIClientResponse responseWithStatus:response.statusCode result:nil rules:nil];
+            return completionHandler(clientResponse, nil);
+        }
+    }
+
+    // Unsuccessful HTTP response
+    if (!(response.statusCode >= 200 && response.statusCode <= 299)) {
+        UA_LTRACE(@"Deferred schedule request failed with status: %lu", (unsigned long)response.statusCode);
+        UADeferredAPIClientResponse *clientResponse = [UADeferredAPIClientResponse responseWithStatus:response.statusCode result:nil rules:nil];
+        return completionHandler(clientResponse, nil);
+    }
+
+    // Successful HTTP response
+    UA_LTRACE(@"Deferred schedule request succeeded with status: %lu", (unsigned long)response.statusCode);
+
+    UADeferredScheduleResult *result = [self parseResponseBody:[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil]];
+    
+    UADeferredAPIClientResponse *clientResponse = [UADeferredAPIClientResponse responseWithStatus:response.statusCode result:result rules:nil];
+    
+    // Successful deferred schedule request
+    completionHandler(clientResponse, nil);
+    
 }
 
 - (NSError *)missingAuthTokenError {
@@ -172,26 +211,6 @@ attributeOverrides:(NSArray<UAAttributeUpdate *> *)attributeOverrides
 
     NSError *error = [NSError errorWithDomain:UADeferredScheduleAPIClientErrorDomain
                                          code:UADeferredScheduleAPIClientErrorMissingAuthToken
-                                     userInfo:@{NSLocalizedDescriptionKey:msg}];
-
-    return error;
-}
-
-- (NSError *)timeoutError {
-    NSString *msg = [NSString stringWithFormat:@"Deferred schedule client timed out"];
-
-    NSError *error = [NSError errorWithDomain:UADeferredScheduleAPIClientErrorDomain
-                                         code:UADeferredScheduleAPIClientErrorTimedOut
-                                     userInfo:@{NSLocalizedDescriptionKey:msg}];
-
-    return error;
-}
-
-- (NSError *)unsuccessfulStatusError {
-    NSString *msg = [NSString stringWithFormat:@"Deferred schedule client encountered an unsuccessful status"];
-
-    NSError *error = [NSError errorWithDomain:UADeferredScheduleAPIClientErrorDomain
-                                         code:UADeferredScheduleAPIClientErrorUnsuccessfulStatus
                                      userInfo:@{NSLocalizedDescriptionKey:msg}];
 
     return error;
@@ -210,42 +229,6 @@ attributeOverrides:(NSArray<UAAttributeUpdate *> *)attributeOverrides
 
     return authToken;
 }
-
-- (UADeferredScheduleAPIClientResponse *)performRequest:(NSString *)authToken
-                                                    URL:(NSURL *)URL
-                                              channelID:(NSString *)channelID
-                                         triggerContext:(UAScheduleTriggerContext *)triggerContext
-                                           tagOverrides:(NSArray<UATagGroupUpdate *> *)tagOverrides
-                                     attributeOverrides:(NSArray<UAAttributeUpdate *> *)attributeOverrides {
-
-    UARequest *request = [self requestWithAuthToken:authToken
-                                                URL:URL
-                                          channelID:channelID
-                                     triggerContext:triggerContext
-                                       tagOverrides:tagOverrides
-                                 attributeOverrides:attributeOverrides];
-
-    __block UADeferredScheduleAPIClientResponse *clientResponse;
-    __block UASemaphore *semaphore = [[UASemaphore alloc] init];
-
-    [self.session performHTTPRequest:request completionHandler:^(NSData * _Nullable data, NSHTTPURLResponse * _Nullable response, NSError * _Nullable error) {
-        clientResponse = [[UADeferredScheduleAPIClientResponse alloc] init];
-
-        if (response) {
-            clientResponse.status = response.statusCode;
-            clientResponse.body = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
-        }
-
-        clientResponse.error = error;
-
-        [semaphore signal];
-    }];
-
-    [semaphore wait];
-
-    return clientResponse;
-}
-
 
 - (NSData *)requestBodyWithChannelID:(NSString *)channelID
                       triggerContext:(nullable UAScheduleTriggerContext *)triggerContext

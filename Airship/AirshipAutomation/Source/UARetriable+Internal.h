@@ -17,19 +17,29 @@ typedef NS_ENUM(NSUInteger, UARetriableResult) {
      */
     UARetriableResultRetry = 1,
     /**
+     * Represents a retry condition with specified retry time.
+     */
+    UARetriableResultRetryAfter = 2,
+    
+    /**
+     * Represents a retry condition with specified retry time.
+     */
+    UARetriableResultRetryWithBackoffReset = 3,
+    
+    /**
      * Represents a cancel condition.
      */
-    UARetriableResultCancel = 2,
+    UARetriableResultCancel = 4,
     /**
      * Represents an invalidation of the retriable chain.
      */
-    UARetriableResultInvalidate = 3
+    UARetriableResultInvalidate = 5
 };
 
 /**
  * A block used for signaling and handling retriable results.
  */
-typedef void (^UARetriableCompletionHandler)(UARetriableResult);
+typedef void (^UARetriableCompletionHandler)(UARetriableResult, NSTimeInterval);
 
 /**
  * A block comprising the work performed by the retriable.

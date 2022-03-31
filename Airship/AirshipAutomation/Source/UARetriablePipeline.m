@@ -67,11 +67,17 @@
     NSTimeInterval nextBackoff = backoff == 0 ? next.minBackoffInterval : MIN(backoff * 2, next.maxBackoffInterval);
 
     UAAsyncOperation *operation = [UAAsyncOperation operationWithBlock:^(UAAsyncOperation *operation) {
-        UARetriableCompletionHandler handler = ^(UARetriableResult result) {
+        UARetriableCompletionHandler handler = ^(UARetriableResult result, NSTimeInterval newBackoff) {
             UA_STRONGIFY(self)
             switch(result) {
                 case UARetriableResultRetry:
                     [self scheduleRetryWithBackoff:nextBackoff chain:chain];
+                    break;
+                case UARetriableResultRetryAfter:
+                    [self scheduleRetryWithBackoff:newBackoff nextBackoffBase:nextBackoff chain:chain];
+                    break;
+                case UARetriableResultRetryWithBackoffReset:
+                    [self scheduleRetryWithBackoff:newBackoff chain:chain];
                     break;
                 case UARetriableResultSuccess:
                     [chain.retriables removeObjectAtIndex:0];
@@ -84,7 +90,7 @@
             }
 
             if (next.resultHandler) {
-                next.resultHandler(result);
+                next.resultHandler(result, 0);
             }
 
             [operation finish];
@@ -101,6 +107,14 @@
     [self.dispatcher dispatchAfter:backoff block:^{
         UA_STRONGIFY(self)
         [self executeChain:chain backoff:backoff];
+    }];
+}
+
+- (void)scheduleRetryWithBackoff:(NSTimeInterval)backoff nextBackoffBase:(NSTimeInterval)backoffBase chain:(UARetriableChain *)chain {
+    UA_WEAKIFY(self)
+    [self.dispatcher dispatchAfter:backoff block:^{
+        UA_STRONGIFY(self)
+        [self executeChain:chain backoff:backoffBase];
     }];
 }
 

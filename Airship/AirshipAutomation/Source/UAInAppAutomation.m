@@ -13,7 +13,7 @@
 #import "UAScheduleAudience.h"
 #import "UAScheduleAudienceChecks+Internal.h"
 #import "UAInAppMessageSchedule.h"
-#import "UADeferredScheduleAPIClient+Internal.h"
+#import "UADeferredScheduleRetryRules+Internal.h"
 
 #if __has_include("AirshipKit/AirshipKit-Swift.h")
 #import <AirshipKit/AirshipKit-Swift.h>
@@ -25,6 +25,7 @@
 
 static NSTimeInterval const MaxSchedules = 1000;
 static NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
+static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairship.automation.prepare_schedule";
 
 @interface UAInAppAutomation () <UAAutomationEngineDelegate, UAInAppAudienceManagerDelegate, UAInAppRemoteDataClientDelegate, UAInAppMessagingExecutionDelegate>
 @property(nonatomic, strong) UAAutomationEngine *automationEngine;
@@ -40,6 +41,7 @@ static NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerP
 @property(nonatomic, strong) UAPrivacyManager *privacyManager;
 @property(nonatomic, assign) dispatch_once_t engineStarted;
 @property(nonatomic, strong) UAComponentDisableHelper *disableHelper;
+@property(nonatomic, strong) NSMutableDictionary<NSString *, NSURL *> *redirectURLs;
 
 @end
 
@@ -140,6 +142,7 @@ static NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerP
         self.inAppMessageManager.executionDelegate = self;
         self.disableHelper = [[UAComponentDisableHelper alloc] initWithDataStore:dataStore
                                                                        className:@"UAInAppAutomation"];
+        self.redirectURLs = [NSMutableDictionary dictionary];
         
         UA_WEAKIFY(self)
         self.disableHelper.onChange = ^{
@@ -273,7 +276,7 @@ static NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerP
 
     UA_LDEBUG(@"Trigger Context trigger: %@ event: %@", triggerContext.trigger, triggerContext.event);
     UA_LDEBUG(@"Preparing schedule: %@", schedule.identifier);
-
+    
     if ([self isScheduleInvalid:schedule]) {
         [self.remoteDataClient notifyOnUpdate:^{
             completionHandler(UAAutomationSchedulePrepareResultInvalidate);
@@ -291,9 +294,9 @@ static NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerP
             if (checker.isOverLimit) {
                 // If we're over the limit, skip the rest of the prepare steps and invalidate the pipeline
                 completionHandler(UAAutomationSchedulePrepareResultSkip);
-                retriableHandler(UARetriableResultInvalidate);
+                retriableHandler(UARetriableResultInvalidate, 0);
             } else {
-                retriableHandler(UARetriableResultSuccess);
+                retriableHandler(UARetriableResultSuccess, 0);
             }
         }];
     }];
@@ -303,13 +306,13 @@ static NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerP
         UAScheduleAudience *audience = schedule.audience;
         [self checkAudience:audience completionHandler:^(BOOL success, NSError *error) {
             if (error) {
-                retriableHandler(UARetriableResultRetry);
+                retriableHandler(UARetriableResultRetry, 0);
             } else if (success) {
-                retriableHandler(UARetriableResultSuccess);
+                retriableHandler(UARetriableResultSuccess, 0);
             } else {
                 UA_LDEBUG(@"Message audience conditions not met, skipping display for schedule: %@, missBehavior: %ld", scheduleID, (long)audience.missBehavior);
                 completionHandler([UAInAppAutomation prepareResultForMissedAudience:schedule.audience]);
-                retriableHandler(UARetriableResultCancel);
+                retriableHandler(UARetriableResultCancel, 0);
             }
         }];
     }];
@@ -330,7 +333,7 @@ static NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerP
         switch (schedule.type) {
             case UAScheduleTypeActions:
                 prepareCompletionHandlerWrapper(UAAutomationSchedulePrepareResultContinue);
-                retriableHandler(UARetriableResultSuccess);
+                retriableHandler(UARetriableResultSuccess, 0);
                 break;
 
             case UAScheduleTypeInAppMessage:
@@ -339,7 +342,7 @@ static NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerP
                                                campaigns:schedule.campaigns
                                         reportingContext:schedule.reportingContext
                                        completionHandler:prepareCompletionHandlerWrapper];
-                retriableHandler(UARetriableResultSuccess);
+                retriableHandler(UARetriableResultSuccess, 0);
                 break;
 
             case UAScheduleTypeDeferred:
@@ -352,7 +355,7 @@ static NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerP
 
             default:
                 UA_LERR(@"Unexpected schedule type: %ld", schedule.type);
-                retriableHandler(UARetriableResultSuccess);
+                retriableHandler(UARetriableResultSuccess, 0);
         }
     }];
 
@@ -367,48 +370,81 @@ static NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerP
     UAScheduleDeferredData *deferred =  (UAScheduleDeferredData *)schedule.data;
     NSString *channelID = self.channel.identifier;
     if (!channelID) {
-        retriableHandler(UARetriableResultRetry);
+        retriableHandler(UARetriableResultRetry, 0);
         return;
     }
+    
+    NSURL *url = [self.redirectURLs valueForKey:schedule.identifier] ?: deferred.URL;
 
-    [self.deferredScheduleAPIClient resolveURL:deferred.URL
+    [self.deferredScheduleAPIClient resolveURL:url
                                      channelID:channelID
                                 triggerContext:triggerContext
                                   tagOverrides:[self.audienceManager tagOverrides]
                             attributeOverrides:[self.audienceManager attributeOverrides]
-                             completionHandler:^(UADeferredScheduleResult *result, NSError *error) {
+                             completionHandler:^(UADeferredAPIClientResponse *response, NSError *error) {
         if (error) {
-            switch (error.code) {
-                case UADeferredScheduleAPIClientErrorTimedOut:
-                    if (deferred.retriableOnTimeout) {
-                        retriableHandler(UARetriableResultRetry);
-                    } else {
-                        retriableHandler(UARetriableResultSuccess);
-                        completionHandler(UAAutomationSchedulePrepareResultPenalize);
-                    }
-                    break;
-
-                case UADeferredScheduleAPIClientErrorMissingAuthToken:
-                case UADeferredScheduleAPIClientErrorUnsuccessfulStatus:
-                default:
-                    retriableHandler(UARetriableResultRetry);
-                    break;
+            if (error.code == UADeferredScheduleAPIClientErrorMissingAuthToken) {
+                retriableHandler(UARetriableResultRetry, 0);
+            } else {
+                if (deferred.retriableOnTimeout) {
+                    retriableHandler(UARetriableResultRetry, 0);
+                } else {
+                    retriableHandler(UARetriableResultSuccess, 0);
+                    completionHandler(UAAutomationSchedulePrepareResultPenalize);
+                }
             }
-        } else {
-            if (!result.isAudienceMatch) {
+        } else if (response.result) {
+            if (!response.result.isAudienceMatch) {
                 UA_LDEBUG(@"Audience conditions not met, skipping display for schedule: %@, missBehavior: %ld", schedule.identifier, (long)schedule.audience.missBehavior);
                 completionHandler([UAInAppAutomation prepareResultForMissedAudience:schedule.audience]);
-                retriableHandler(UARetriableResultCancel);
-            } else if (result.message) {
-                [self.inAppMessageManager prepareMessage:result.message
+                retriableHandler(UARetriableResultCancel, 0);
+            } else if (response.result.message) {
+                [self.inAppMessageManager prepareMessage:response.result.message
                                               scheduleID:schedule.identifier
                                                campaigns:schedule.campaigns
                                         reportingContext:schedule.reportingContext
                                        completionHandler:completionHandler];
-                retriableHandler(UARetriableResultSuccess);
+                retriableHandler(UARetriableResultSuccess, 0);
             } else {
                 completionHandler(UAAutomationSchedulePrepareResultPenalize);
-                retriableHandler(UARetriableResultSuccess);
+                retriableHandler(UARetriableResultSuccess, 0);
+            }
+        } else {
+            switch (response.status) {
+                case 307: {
+                    if (response.rules.location) {
+                        [self.redirectURLs setValue:[NSURL URLWithString:response.rules.location] forKey:schedule.identifier];
+                    }
+                    if (response.rules.retryTime) {
+                        NSTimeInterval backoff = response.rules.retryTime;
+                        retriableHandler(UARetriableResultRetryAfter, backoff);
+                    } else {
+                        retriableHandler(UARetriableResultRetryWithBackoffReset, 0);
+                    }
+                    break;
+                }
+                case 409: {
+                    retriableHandler(UARetriableResultRetry, 0);
+                    completionHandler(UAAutomationSchedulePrepareResultInvalidate);
+                    break;
+                }
+                case 429: {
+                    if (response.rules.location) {
+                        [self.redirectURLs setValue:[NSURL URLWithString:response.rules.location] forKey:schedule.identifier];
+                       
+                    }
+                    if (response.rules.retryTime) {
+                        NSTimeInterval backoff = response.rules.retryTime;
+                        retriableHandler(UARetriableResultRetryAfter, backoff);
+                    } else {
+                        retriableHandler(UARetriableResultRetry, 0);
+                    }
+                    
+                    break;
+                }
+                default:
+                    retriableHandler(UARetriableResultRetry, 0);
+                    break;
             }
         }
     }];

@@ -6,6 +6,7 @@
 #import "UAAuthTokenManager+Internal.h"
 #import "UAStateOverrides+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
+#import "UADeferredAPIClientResponse+Internal.h"
 
 @class UATagGroupUpdate;
 @class UAAttributeUpdate;
@@ -20,16 +21,21 @@ typedef NS_ENUM(NSInteger, UADeferredScheduleAPIClientError) {
      * Indicates auth token unavailable.
      */
     UADeferredScheduleAPIClientErrorMissingAuthToken,
-
+    
     /**
-     * Indicates connection timeout.
+     * Indicates a temporary redirect.
      */
-    UADeferredScheduleAPIClientErrorTimedOut,
-
+    UADeferredScheduleAPIClientErrorTemporaryRedirect,
+    
     /**
-     * Indicates an unsuccessful client status.
+     * Indicates a too many requests error.
      */
-    UADeferredScheduleAPIClientErrorUnsuccessfulStatus
+    UADeferredScheduleAPIClientErrorTooManyRequests,
+    
+    /**
+     * Indicates a request conflict.
+     */
+    UADeferredScheduleAPIClientErrorRequestConflict
 };
 
 /**
@@ -79,7 +85,7 @@ extern NSString * const UADeferredScheduleAPIClientErrorDomain;
     triggerContext:(nullable UAScheduleTriggerContext *)triggerContext
       tagOverrides:(NSArray<UATagGroupUpdate *> *)tagOverrides
 attributeOverrides:(NSArray<UAAttributeUpdate *> *)attributeOverrides
- completionHandler:(void (^)(UADeferredScheduleResult * _Nullable, NSError * _Nullable))completionHandler;
+ completionHandler:(void (^)(UADeferredAPIClientResponse * _Nullable, NSError * _Nullable))completionHandler;
 
 @end
 

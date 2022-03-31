@@ -3,7 +3,7 @@
 #import "UARetriable+Internal.h"
 
 #define kUARetriableDefaultMinBackoffInterval 30 // 30 seconds
-#define kUARetriableDefaultMaxBackoffInterval 60 * 5 // 5 minutes
+#define kUARetriableDefaultMaxBackoffInterval 60 * 2 // 2 minutes
 
 @interface UARetriable ()
 @property (nonatomic, copy) UARetriableRunBlock runBlock;

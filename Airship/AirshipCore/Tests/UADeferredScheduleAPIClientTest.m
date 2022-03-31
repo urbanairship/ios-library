@@ -4,6 +4,7 @@
 #import "UADeferredScheduleAPIClient+Internal.h"
 #import "UAScheduleTrigger+Internal.h"
 #import "UAInAppMessage+Internal.h"
+#import "UADeferredAPIClientResponse+Internal.h"
 
 #import "AirshipTests-Swift.h"
 
@@ -12,6 +13,7 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
 @interface UADeferredScheduleAPIClientTest : UAAirshipBaseTest
 @property (nonatomic, strong) UADeferredScheduleAPIClient *client;
 @property (nonatomic, strong) id mockSession;
+@property (nonatomic, strong) id mockResponse;
 @property (nonatomic, strong) id mockAuthManager;
 @end
 
@@ -19,6 +21,7 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
 
 - (void)setUp {
     self.mockSession = [self mockForClass:[UARequestSession class]];
+    self.mockResponse = [self mockForClass:[NSHTTPURLResponse class]];
     self.mockAuthManager = [self mockForClass:[UAAuthTokenManager class]];
     self.client = [UADeferredScheduleAPIClient clientWithConfig:self.config
                                                         session:self.mockSession
@@ -136,12 +139,12 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
              triggerContext:triggerContext
                tagOverrides:tagUpdates
          attributeOverrides:attributeUpdates
-          completionHandler:^(UADeferredScheduleResult * _Nullable result, NSError * _Nullable error) {
+          completionHandler:^(UADeferredAPIClientResponse * _Nullable response, NSError * _Nullable error) {
 
-        XCTAssertNotNil(result);
-        XCTAssertTrue(result.isAudienceMatch);
-        XCTAssertNotNil(result.message);
-        XCTAssertEqualObjects(result.message, [UAInAppMessage messageWithJSON:messageJSON defaultSource:UAInAppMessageSourceRemoteData error:nil]);
+        XCTAssertNotNil(response.result);
+        XCTAssertTrue(response.result.isAudienceMatch);
+        XCTAssertNotNil(response.result.message);
+        XCTAssertEqualObjects(response.result.message, [UAInAppMessage messageWithJSON:messageJSON defaultSource:UAInAppMessageSourceRemoteData error:nil]);
 
         [resultResolved fulfill];
     }];
@@ -218,12 +221,12 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
              triggerContext:triggerContext
                tagOverrides:@[]
          attributeOverrides:@[]
-          completionHandler:^(UADeferredScheduleResult * _Nullable result, NSError * _Nullable error) {
+          completionHandler:^(UADeferredAPIClientResponse * _Nullable response, NSError * _Nullable error) {
 
-        XCTAssertNotNil(result);
-        XCTAssertTrue(result.isAudienceMatch);
-        XCTAssertNotNil(result.message);
-        XCTAssertEqualObjects(result.message, [UAInAppMessage messageWithJSON:messageJSON defaultSource:UAInAppMessageSourceRemoteData error:nil]);
+        XCTAssertNotNil(response.result);
+        XCTAssertTrue(response.result.isAudienceMatch);
+        XCTAssertNotNil(response.result.message);
+        XCTAssertEqualObjects(response.result.message, [UAInAppMessage messageWithJSON:messageJSON defaultSource:UAInAppMessageSourceRemoteData error:nil]);
         [resultResolved fulfill];
     }];
 
@@ -293,13 +296,13 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
              triggerContext:nil
                tagOverrides:@[]
          attributeOverrides:@[]
-          completionHandler:^(UADeferredScheduleResult * _Nullable result, NSError * _Nullable error) {
+          completionHandler:^(UADeferredAPIClientResponse * _Nullable response, NSError * _Nullable error) {
 
-        XCTAssertNotNil(result);
+        XCTAssertNotNil(response.result);
         XCTAssertNil(error);
-        XCTAssertTrue(result.isAudienceMatch);
-        XCTAssertNotNil(result.message);
-        XCTAssertEqualObjects(result.message, [UAInAppMessage messageWithJSON:messageJSON defaultSource:UAInAppMessageSourceRemoteData error:nil]);
+        XCTAssertTrue(response.result.isAudienceMatch);
+        XCTAssertNotNil(response.result.message);
+        XCTAssertEqualObjects(response.result.message, [UAInAppMessage messageWithJSON:messageJSON defaultSource:UAInAppMessageSourceRemoteData error:nil]);
 
         [resultResolved fulfill];
     }];
@@ -375,12 +378,12 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
              triggerContext:triggerContext
                tagOverrides:@[]
          attributeOverrides:@[]
-          completionHandler:^(UADeferredScheduleResult * _Nullable result, NSError * _Nullable error) {
+          completionHandler:^(UADeferredAPIClientResponse * _Nullable response, NSError * _Nullable error) {
 
-        XCTAssertNotNil(result);
-        XCTAssertTrue(result.isAudienceMatch);
-        XCTAssertNotNil(result.message);
-        XCTAssertEqualObjects(result.message, [UAInAppMessage messageWithJSON:messageJSON defaultSource:UAInAppMessageSourceRemoteData error:nil]);
+        XCTAssertNotNil(response.result);
+        XCTAssertTrue(response.result.isAudienceMatch);
+        XCTAssertNotNil(response.result.message);
+        XCTAssertEqualObjects(response.result.message, [UAInAppMessage messageWithJSON:messageJSON defaultSource:UAInAppMessageSourceRemoteData error:nil]);
         
         [resultResolved fulfill];
     }];
@@ -415,9 +418,9 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
              triggerContext:triggerContext
                tagOverrides:@[]
          attributeOverrides:@[]
-          completionHandler:^(UADeferredScheduleResult * _Nullable result, NSError * _Nullable error) {
+          completionHandler:^(UADeferredAPIClientResponse * _Nullable response, NSError * _Nullable error) {
 
-        XCTAssertNil(result);
+        XCTAssertNil(response.result);
         XCTAssertNotNil(error);
         XCTAssertEqualObjects(error.domain, UADeferredScheduleAPIClientErrorDomain);
         XCTAssertEqual(error.code, UADeferredScheduleAPIClientErrorMissingAuthToken);
@@ -434,6 +437,7 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
     NSString *event = @"event";
     UAScheduleTrigger *trigger = [UAScheduleTrigger foregroundTriggerWithCount:1];
     UAScheduleTriggerContext *triggerContext = [UAScheduleTriggerContext triggerContextWithTrigger:trigger event:event];
+    [[[self.mockResponse stub] andReturnValue:@401] statusCode];
 
     NSString *token = @"token";
 
@@ -454,8 +458,9 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
-        NSError *error = [NSError errorWithDomain:@"domain" code:0 userInfo:@{}];
-        completionHandler(nil, nil, error);
+                
+        NSError *error = [NSError errorWithDomain:@"error_domain" code:100 userInfo:nil];
+        completionHandler(nil, self.mockResponse, error);
         [sessionFinished fulfill];
     }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
@@ -466,12 +471,11 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
              triggerContext:triggerContext
                tagOverrides:@[]
          attributeOverrides:@[]
-          completionHandler:^(UADeferredScheduleResult * _Nullable result, NSError * _Nullable error) {
+          completionHandler:^(UADeferredAPIClientResponse * _Nullable response, NSError * _Nullable error) {
 
-        XCTAssertNil(result);
+        XCTAssertNil(response.result);
+        XCTAssertEqual(response.status, 401);
         XCTAssertNotNil(error);
-        XCTAssertEqualObjects(error.domain, UADeferredScheduleAPIClientErrorDomain);
-        XCTAssertEqual(error.code, UADeferredScheduleAPIClientErrorTimedOut);
 
         [resultResolved fulfill];
     }];
@@ -546,10 +550,10 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
              triggerContext:triggerContext
                tagOverrides:@[]
          attributeOverrides:@[]
-          completionHandler:^(UADeferredScheduleResult * _Nullable result, NSError * _Nullable error) {
+          completionHandler:^(UADeferredAPIClientResponse * _Nullable response, NSError * _Nullable error) {
 
-        XCTAssertNotNil(result);
-        XCTAssertTrue(result.isAudienceMatch);
+        XCTAssertNotNil(response.result);
+        XCTAssertTrue(response.result.isAudienceMatch);
 
         [resultResolved fulfill];
     }];
@@ -599,16 +603,178 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
              triggerContext:triggerContext
                tagOverrides:@[]
          attributeOverrides:@[]
-          completionHandler:^(UADeferredScheduleResult * _Nullable result, NSError * _Nullable error) {
+          completionHandler:^(UADeferredAPIClientResponse * _Nullable response, NSError * _Nullable error) {
 
-        XCTAssertNotNil(result);
-        XCTAssertFalse(result.isAudienceMatch);
+        XCTAssertNotNil(response.result);
+        XCTAssertFalse(response.result.isAudienceMatch);
 
         [resultResolved fulfill];
     }];
 
     [self waitForTestExpectations];
 }
+
+- (void)testResolve409StatusCode {
+    NSURL *URL = [NSURL URLWithString:@"https://cool.story/neat"];
+    NSString *channelID = @"channelID";
+    NSString *event = @"event";
+    UAScheduleTrigger *trigger = [UAScheduleTrigger foregroundTriggerWithCount:1];
+    UAScheduleTriggerContext *triggerContext = [UAScheduleTriggerContext triggerContextWithTrigger:trigger event:event];
+    [[[self.mockResponse stub] andReturnValue:@409] statusCode];
+
+    NSString *token = @"token";
+
+    XCTestExpectation *authTokenRetrieved = [self expectationWithDescription:@"Auth token retrieved"];
+
+    [[[self.mockAuthManager expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:2];
+
+        void (^handler)(NSString * _NullablemeterTypes) = (__bridge void (^_Nonnull)(NSString * _Nullable))arg;
+        handler(token);
+        [authTokenRetrieved fulfill];
+    }] tokenWithCompletionHandler:OCMOCK_ANY];
+
+    XCTestExpectation *sessionFinished = [self expectationWithDescription:@"Session finished"];
+
+    [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
+        
+        completionHandler(nil, self.mockResponse, nil);
+        [sessionFinished fulfill];
+    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    XCTestExpectation *resultResolved = [self expectationWithDescription:@"Result resolved"];
+
+    [self.client resolveURL:URL
+                  channelID:channelID
+             triggerContext:triggerContext
+               tagOverrides:@[]
+         attributeOverrides:@[]
+          completionHandler:^(UADeferredAPIClientResponse * _Nullable response, NSError * _Nullable error) {
+
+        XCTAssertNil(response.result);
+        XCTAssertEqual(response.status, 409);
+        XCTAssertNil(response.rules);
+
+        [resultResolved fulfill];
+    }];
+
+    [self waitForTestExpectations];
+}
+
+- (void)testResolve429StatusCode {
+    NSURL *URL = [NSURL URLWithString:@"https://cool.story/neat"];
+    NSString *channelID = @"channelID";
+    NSString *event = @"event";
+    UAScheduleTrigger *trigger = [UAScheduleTrigger foregroundTriggerWithCount:1];
+    UAScheduleTriggerContext *triggerContext = [UAScheduleTriggerContext triggerContextWithTrigger:trigger event:event];
+    [[[self.mockResponse stub] andReturn:@{@"Location":@"location",
+                                                @"Retry-After":@5
+                                              }] allHeaderFields];
+    [[[self.mockResponse stub] andReturnValue:@429] statusCode];
+
+    NSString *token = @"token";
+
+    XCTestExpectation *authTokenRetrieved = [self expectationWithDescription:@"Auth token retrieved"];
+
+    [[[self.mockAuthManager expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:2];
+
+        void (^handler)(NSString * _NullablemeterTypes) = (__bridge void (^_Nonnull)(NSString * _Nullable))arg;
+        handler(token);
+        [authTokenRetrieved fulfill];
+    }] tokenWithCompletionHandler:OCMOCK_ANY];
+
+    XCTestExpectation *sessionFinished = [self expectationWithDescription:@"Session finished"];
+
+    [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
+        
+        completionHandler(nil, self.mockResponse, nil);
+        [sessionFinished fulfill];
+    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    XCTestExpectation *resultResolved = [self expectationWithDescription:@"Result resolved"];
+
+    [self.client resolveURL:URL
+                  channelID:channelID
+             triggerContext:triggerContext
+               tagOverrides:@[]
+         attributeOverrides:@[]
+          completionHandler:^(UADeferredAPIClientResponse * _Nullable response, NSError * _Nullable error) {
+
+        XCTAssertNil(response.result);
+        XCTAssertEqual(response.status, 429);
+        XCTAssertEqual(response.rules.location, @"location");
+        XCTAssertEqual(response.rules.retryTime, 5);
+
+        [resultResolved fulfill];
+    }];
+
+    [self waitForTestExpectations];
+}
+
+- (void)testResolve307StatusCode {
+    NSURL *URL = [NSURL URLWithString:@"https://cool.story/neat"];
+    NSString *channelID = @"channelID";
+    NSString *event = @"event";
+    UAScheduleTrigger *trigger = [UAScheduleTrigger foregroundTriggerWithCount:1];
+    UAScheduleTriggerContext *triggerContext = [UAScheduleTriggerContext triggerContextWithTrigger:trigger event:event];
+    [[[self.mockResponse stub] andReturn:@{@"Location":@"location",
+                                                @"Retry-After":@5
+                                              }] allHeaderFields];
+    [[[self.mockResponse stub] andReturnValue:@307] statusCode];
+
+    NSString *token = @"token";
+
+    XCTestExpectation *authTokenRetrieved = [self expectationWithDescription:@"Auth token retrieved"];
+
+    [[[self.mockAuthManager expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:2];
+
+        void (^handler)(NSString * _NullablemeterTypes) = (__bridge void (^_Nonnull)(NSString * _Nullable))arg;
+        handler(token);
+        [authTokenRetrieved fulfill];
+    }] tokenWithCompletionHandler:OCMOCK_ANY];
+
+    XCTestExpectation *sessionFinished = [self expectationWithDescription:@"Session finished"];
+
+    [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
+        
+        completionHandler(nil, self.mockResponse, nil);
+        [sessionFinished fulfill];
+    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    XCTestExpectation *resultResolved = [self expectationWithDescription:@"Result resolved"];
+
+    [self.client resolveURL:URL
+                  channelID:channelID
+             triggerContext:triggerContext
+               tagOverrides:@[]
+         attributeOverrides:@[]
+          completionHandler:^(UADeferredAPIClientResponse * _Nullable response, NSError * _Nullable error) {
+
+        XCTAssertNil(response.result);
+        XCTAssertEqual(response.status, 307);
+        XCTAssertEqual(response.rules.location, @"location");
+        XCTAssertEqual(response.rules.retryTime, 5);
+
+        [resultResolved fulfill];
+    }];
+
+    [self waitForTestExpectations];
+}
+
 
 @end
 

@@ -238,17 +238,17 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
         [self.assetManager onPrepareMessage:message scheduleID:scheduleID completionHandler:^(UAInAppMessagePrepareResult result) {
             switch (result) {
                 case UAInAppMessagePrepareResultSuccess:
-                    handler(UARetriableResultSuccess);
+                    handler(UARetriableResultSuccess, 0);
                     break;
                 case UAInAppMessagePrepareResultRetry:
-                    handler(UARetriableResultRetry);
+                    handler(UARetriableResultRetry, 0);
                     break;
                 case UAInAppMessagePrepareResultCancel:
                     [self.assetManager onDisplayFinished:message scheduleID:scheduleID];
-                    handler(UARetriableResultCancel);
+                    handler(UARetriableResultCancel, 0);
                     break;
                 case UAInAppMessagePrepareResultInvalidate:
-                    handler(UARetriableResultInvalidate);
+                    handler(UARetriableResultInvalidate, 0);
             }
         }];
     } resultHandler:resultHandler];
@@ -267,16 +267,16 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
                     UA_LDEBUG(@"Prepare result: %ld schedule: %@", (unsigned long)prepareResult, scheduleID);
                     switch (prepareResult) {
                         case UAInAppMessagePrepareResultSuccess:
-                            handler(UARetriableResultSuccess);
+                            handler(UARetriableResultSuccess, 0);
                             break;
                         case UAInAppMessagePrepareResultRetry:
-                            handler(UARetriableResultRetry);
+                            handler(UARetriableResultRetry, 0);
                             break;
                         case UAInAppMessagePrepareResultCancel:
-                            handler(UARetriableResultCancel);
+                            handler(UARetriableResultCancel, 0);
                             break;
                         case UAInAppMessagePrepareResultInvalidate:
-                            handler(UARetriableResultInvalidate);
+                            handler(UARetriableResultInvalidate, 0);
                             break;
                     }
                 }];
@@ -314,13 +314,17 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
     id<UAInAppMessageDisplayCoordinator> displayCoordinator = [self displayCoordinatorForMessage:message];
 
     // Prepare the assets
-    UARetriable *prepareAssets = [self prepareMessageAssetsWithMessage:message scheduleID:scheduleID resultHandler:^(UARetriableResult result) {
+    UARetriable *prepareAssets = [self prepareMessageAssetsWithMessage:message scheduleID:scheduleID resultHandler:^(UARetriableResult result, NSTimeInterval backoff) {
         UAAutomationSchedulePrepareResult prepareResult = UAAutomationSchedulePrepareResultInvalidate;
         switch (result) {
             case UARetriableResultSuccess:
                 return;
             case UARetriableResultRetry:
                 // Allow the pipeline to retry with backoff
+                return;
+            case UARetriableResultRetryAfter:
+                return;
+            case UARetriableResultRetryWithBackoffReset:
                 return;
             case UARetriableResultCancel:
                 prepareResult = UAAutomationSchedulePrepareResultCancel;
@@ -334,7 +338,7 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
 
     // Prepare adapter
     UA_WEAKIFY(self)
-    UARetriable *prepareAdapter = [self prepareAdapter:adapter scheduleID:scheduleID resultHandler:^(UARetriableResult result) {
+    UARetriable *prepareAdapter = [self prepareAdapter:adapter scheduleID:scheduleID resultHandler:^(UARetriableResult result, NSTimeInterval backOff) {
         UA_STRONGIFY(self)
         UAAutomationSchedulePrepareResult prepareResult = UAAutomationSchedulePrepareResultInvalidate;
         switch (result) {
@@ -349,6 +353,10 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
                 break;
             case UARetriableResultRetry:
                 // Allow the pipeline to retry with backoff
+                return;
+            case UARetriableResultRetryAfter:
+                return;
+            case UARetriableResultRetryWithBackoffReset:
                 return;
             case UARetriableResultCancel:
                 prepareResult = UAAutomationSchedulePrepareResultCancel;
