@@ -3,6 +3,12 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 16.5.1 April 4, 2022
+Patch release to fix a crash introduced in 16.5.0 on app restore on different devices. Apps running 16.5.0 should update.
+
+### Changes
+- Fixed crash with app restores.
+
 ## Version 16.5.0 March 29, 2022
 
 A minor release that adds a style option to allow In-App Automation messages to be full screen on large devices, fixes an issue with iCloud backups recovering the same channel ID, and includes several In-App message fixes.

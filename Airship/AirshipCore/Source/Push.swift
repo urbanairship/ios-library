@@ -4,7 +4,6 @@ import Foundation
 import UserNotifications
 
 
-
 //---------------------------------------------------------------------------------------
 // RegistrationDelegate
 //---------------------------------------------------------------------------------------
@@ -279,7 +278,12 @@ public class Push: NSObject, Component, PushProtocol {
         self.migratePushTagsToChannelTags()
         self.waitForDeviceToken = self.channel.identifier == nil;
 
+        var checkedAppRestore = false
         self.channel.addRegistrationExtender { payload, completionHandler in
+            if (!checkedAppRestore && self.dataStore.isAppRestore) {
+                self.resetDeviceToken()
+            }
+            checkedAppRestore = true
             self.extendChannelRegistrationPayload(payload, completionHandler: completionHandler)
         }
 

@@ -8,6 +8,23 @@
 public class PreferenceDataStore : NSObject {
     private let defaults: UserDefaults
     private let appKey: String
+    static let deviceIDKey = "deviceID"
+
+    lazy var isAppRestore: Bool = {
+        let deviceID = UAKeychainUtils.getDeviceID()
+        let previousDeviceID = self.string(forKey: PreferenceDataStore.deviceIDKey)
+        if (deviceID == previousDeviceID) {
+            return false
+        }
+
+        var restored = previousDeviceID != nil
+        if (restored)  {
+            AirshipLogger.info("App restored")
+        }
+
+        self.setObject(deviceID, forKey:PreferenceDataStore.deviceIDKey)
+        return restored
+    }()
 
     @objc
     public init(appKey: String) {
