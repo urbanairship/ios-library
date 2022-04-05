@@ -724,6 +724,11 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    if (self.messages.count == 0) {
+        [self displayEmptyMessage];
+    } else {
+        [self hideEmptyMessage];
+    }
     return (NSInteger)self.messages.count;
 }
 
@@ -946,6 +951,24 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSString *)iconURLStringForMessage:(UAInboxMessage *) message {
     NSDictionary *icons = [message.rawMessageObject objectForKey:@"icons"];
     return [icons objectForKey:@"list_icon"];
+}
+
+#pragma mark -
+
+-(void)displayEmptyMessage {
+    UILabel *emptyMessage = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height)];
+    [emptyMessage setText:UAMessageCenterLocalizedString(@"ua_empty_message_list")];
+    [emptyMessage setTextColor:[UIColor blackColor]];
+    emptyMessage.numberOfLines = 0;
+    [emptyMessage setTextAlignment:NSTextAlignmentCenter];
+    [emptyMessage sizeToFit];
+    [self.messageTable setBackgroundView:emptyMessage];
+    [self.messageTable setSeparatorStyle:UITableViewCellSeparatorStyleNone];
+}
+
+-(void)hideEmptyMessage {
+    [self.messageTable setBackgroundView:nil];
+    [self.messageTable setSeparatorStyle:UITableViewCellSeparatorStyleSingleLine];
 }
 
 @end
