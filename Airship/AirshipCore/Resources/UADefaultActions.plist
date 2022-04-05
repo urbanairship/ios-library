@@ -118,5 +118,16 @@
 		<key>predicate</key>
 		<string>UAAttributesActionPredicate</string>
 	</dict>
+	<dict>
+		<key>names</key>
+		<array>
+			<string>subscription_list_action</string>
+			<string>^sla</string>
+		</array>
+		<key>action</key>
+		<string>UASubscriptionListAction</string>
+		<key>predicate</key>
+		<string>UASubscriptionListActionPredicate</string>
+	</dict>
 </array>
 </plist>
