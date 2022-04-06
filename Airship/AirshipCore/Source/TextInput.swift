@@ -22,15 +22,22 @@ struct TextInput : View {
     }
 
     var body: some View {
-        createTextEditor()
-            .constraints(constraints, alignment: .topLeading)
-            .background(self.model.backgroundColor)
-            .border(self.model.border)
-            .viewAccessibility(label: self.model.contentDescription)
-            .formInput()
-            .onAppear {
-                updateValue(input)
+        ZStack(alignment: .topLeading) {
+            if input.isEmpty {
+                Text(self.model.placeHolder ?? "")
+                    .textAppearance(self.model.placeHolderTextApperance ?? self.model.textAppearance)
+                    .padding(EdgeInsets(top: 7, leading: 5, bottom: 0, trailing: 0 ))
             }
+            createTextEditor()
+        }
+        .constraints(constraints, alignment: .topLeading)
+        .background(self.model.backgroundColor)
+        .border(self.model.border)
+        .viewAccessibility(label: self.model.contentDescription)
+        .formInput()
+        .onAppear {
+            updateValue(input)
+        }
     }
     
     private func updateValue(_ text: String) {

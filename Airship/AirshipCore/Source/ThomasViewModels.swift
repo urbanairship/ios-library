@@ -738,6 +738,7 @@ struct TextInputModel: Decodable, Equatable {
     let isRequired: Bool?
     let placeHolder: String?
     let textAppearance: TextAppearanceModel
+    let placeHolderTextApperance: TextAppearanceModel?
 
     enum CodingKeys: String, CodingKey {
         case textAppearance = "text_appearance"
@@ -747,6 +748,7 @@ struct TextInputModel: Decodable, Equatable {
         case contentDescription = "content_description"
         case isRequired = "required"
         case placeHolder = "place_holder"
+        case placeHolderTextApperance = "placeholder_text_appearance"
     }
 }
 
