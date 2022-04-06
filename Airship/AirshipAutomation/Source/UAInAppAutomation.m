@@ -143,7 +143,7 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
         self.disableHelper = [[UAComponentDisableHelper alloc] initWithDataStore:dataStore
                                                                        className:@"UAInAppAutomation"];
         self.redirectURLs = [NSMutableDictionary dictionary];
-        
+
         UA_WEAKIFY(self)
         self.disableHelper.onChange = ^{
             UA_STRONGIFY(self)
@@ -276,16 +276,8 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
 
     UA_LDEBUG(@"Trigger Context trigger: %@ event: %@", triggerContext.trigger, triggerContext.event);
     UA_LDEBUG(@"Preparing schedule: %@", schedule.identifier);
-    
-    if ([self isScheduleInvalid:schedule]) {
-        [self.remoteDataClient notifyOnUpdate:^{
-            completionHandler(UAAutomationSchedulePrepareResultInvalidate);
-        }];
-        return;
-    }
 
     NSString *scheduleID = schedule.identifier;
-
     __block UAFrequencyChecker *checker;
 
     UARetriable *checkFrequencyLimits = [UARetriable retriableWithRunBlock:^(UARetriableCompletionHandler retriableHandler) {
@@ -359,7 +351,23 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
         }
     }];
 
-    [self.prepareSchedulePipeline addChainedRetriables:@[checkFrequencyLimits, checkAudience, prepare]];
+
+    NSArray *operations = @[checkFrequencyLimits, checkAudience, prepare];
+
+    if ([self.remoteDataClient isRemoteSchedule:schedule]) {
+        [self.remoteDataClient attemptRemoteDataRefreshWithCompletionHandler:^{
+            if ([self isScheduleInvalid:schedule]) {
+                [self.remoteDataClient notifyOnUpdate:^{
+                    completionHandler(UAAutomationSchedulePrepareResultInvalidate);
+                }];
+                return;
+            }
+
+            [self.prepareSchedulePipeline addChainedRetriables:operations];
+        }];
+    } else {
+        [self.prepareSchedulePipeline addChainedRetriables:operations];
+    }
 }
 
 - (void)prepareDeferredSchedule:(UASchedule *)schedule
@@ -373,7 +381,7 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
         retriableHandler(UARetriableResultRetry, 0);
         return;
     }
-    
+
     NSURL *url = [self.redirectURLs valueForKey:schedule.identifier] ?: deferred.URL;
 
     [self.deferredScheduleAPIClient resolveURL:url
@@ -431,7 +439,7 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
                 case 429: {
                     if (response.rules.location) {
                         [self.redirectURLs setValue:[NSURL URLWithString:response.rules.location] forKey:schedule.identifier];
-                       
+
                     }
                     if (response.rules.retryTime) {
                         NSTimeInterval backoff = response.rules.retryTime;
@@ -439,7 +447,7 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
                     } else {
                         retriableHandler(UARetriableResultRetry, 0);
                     }
-                    
+
                     break;
                 }
                 default:
@@ -637,7 +645,7 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
 }
 
 - (void)checkAudience:(UAScheduleAudience *)audience completionHandler:(void (^)(BOOL, NSError * _Nullable))completionHandler {
-    
+
     if ([UAScheduleAudienceChecks checkDisplayAudienceConditions:audience]) {
         completionHandler(YES, nil);
     } else {
@@ -685,4 +693,3 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
 }
 
 @end
-

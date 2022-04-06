@@ -37,9 +37,15 @@ static NSString * const RefreshTask = @"RemoteDataManager.refresh";
     self.requestURL = [NSURL URLWithString:@"some-url"];
     
     UA_WEAKIFY(self)
-    self.testAPIClient.metdataCallback = ^(NSLocale * locale) {
+    self.testAPIClient.metdataCallback = ^(NSLocale * locale, NSString * lastModified) {
         UA_STRONGIFY(self)
-        return @{ @"url": self.requestURL.absoluteString };
+        if (lastModified) {
+            return @{ @"url": self.requestURL.absoluteString,
+                      @"lastModified": lastModified
+            };
+        }
+        return @{ @"url": self.requestURL.absoluteString,
+        };
     };
     
     self.testStore = [[UARemoteDataStore alloc] initWithStoreName:[NSUUID UUID].UUIDString inMemory:YES];
@@ -94,9 +100,10 @@ static NSString * const RefreshTask = @"RemoteDataManager.refresh";
 
 - (void)testCheckRefresh {
     XCTAssertEqual(0, self.testTaskManager.enqueuedRequestsCount);
-
+    self.remoteDataManager.lastModified = @"lastMod";
+    
     // Set initial metadata
-    NSArray *payloads =  @[@{ @"type": @"test", @"timestamp":@"2017-01-01T12:00:00", @"data": @{ @"foo": @"bar" }}];
+    NSArray *payloads =  @[@{ @"type": @"test", @"timestamp":@"2017-01-01T12:00:00", @"data": @{ @"foo": @"bar" }, @"lastModified": @"lastMod"}];
     [self updatePayloads:payloads];
 
     self.remoteDataManager.remoteDataRefreshInterval = 100;
@@ -251,7 +258,8 @@ static NSString * const RefreshTask = @"RemoteDataManager.refresh";
 
 - (void)testMetadata {
     id expectedMetadata = @{
-        @"url": self.requestURL.absoluteString
+        @"url": self.requestURL.absoluteString,
+        @"lastModified": @"2018-01-01T12:00:00"
     };
 
     NSArray *payloads =  @[@{ @"type": @"test", @"timestamp":@"2017-01-01T12:00:00", @"data": @{ @"foo": @"bar" }}];
@@ -408,7 +416,7 @@ static NSString * const RefreshTask = @"RemoteDataManager.refresh";
         
         UA_STRONGIFY(self)
         
-        NSDictionary *metadata = self.testAPIClient.metdataCallback(locale);
+        NSDictionary *metadata = self.testAPIClient.metdataCallback(locale, @"2018-01-01T12:00:00");
         NSMutableArray *parsed = [NSMutableArray array];
         for (id payload in payloads) {
             NSString *type = payload[@"type"];

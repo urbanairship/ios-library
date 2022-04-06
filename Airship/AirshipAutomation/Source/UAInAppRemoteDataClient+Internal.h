@@ -118,6 +118,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (BOOL)isScheduleUpToDate:(UASchedule *)schedule;
 
+/**
+ * Attempts to refresh remote data.
+ * @param completionHandler The completion handler.
+ */
+- (void)attemptRemoteDataRefreshWithCompletionHandler:(void (^)(void))completionHandler;
 
 @end
 

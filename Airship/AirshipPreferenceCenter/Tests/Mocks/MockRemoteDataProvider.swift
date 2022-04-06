@@ -2,6 +2,7 @@ import Foundation
 import AirshipCore
 
 class MockRemoteDataProvider : NSObject, RemoteDataProvider {
+    
     public var remoteDataRefreshInterval: TimeInterval = 0
     var isMetadataCurrent = true
     var subscribers: [String : [UUID]] = [:]
@@ -57,4 +58,6 @@ class MockRemoteDataProvider : NSObject, RemoteDataProvider {
     func isMetadataCurrent(_ metadata: [AnyHashable : Any]) -> Bool {
         return true
     }
+    
+    func attemptRemoteDataRefresh(completionHandler: @escaping () -> Void) {}
 }

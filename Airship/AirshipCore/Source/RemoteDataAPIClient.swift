@@ -10,13 +10,14 @@ public protocol RemoteDataAPIClientProtocol {
                          completionHandler: @escaping (RemoteDataResponse?, Error?) -> Void) -> Disposable
     
     @objc
-    func metadata(locale: Locale) -> [AnyHashable : Any]
+    func metadata(locale: Locale, lastModified:String?) -> [AnyHashable : Any]
 }
 
 // NOTE: For internal use only. :nodoc:
 @objc(UARemoteDataAPIClient)
 public class RemoteDataAPIClient : NSObject, RemoteDataAPIClientProtocol {
     private static let urlMetadataKey = "url"
+    private static let lastModifiedMetadataKey = "last_modified"
 
     private let path = "api/remote-data/app"
     private let session: RequestSession
@@ -59,9 +60,9 @@ public class RemoteDataAPIClient : NSObject, RemoteDataAPIClientProtocol {
 
             if response.statusCode == 200 {
                 do {
-                    let metadata = self.metadata(url: url!)
-                    let payloads = try self.parseResponse(data: data, metadata: metadata)
                     let lastModified = response.allHeaderFields["Last-Modified"] as? String
+                    let metadata = self.metadata(url: url, lastModified: lastModified)
+                    let payloads = try self.parseResponse(data: data, metadata: metadata)
                     let remoteDataResponse = RemoteDataResponse(
                         status: 200,
                         metadata: metadata,
@@ -108,16 +109,19 @@ public class RemoteDataAPIClient : NSObject, RemoteDataAPIClientProtocol {
         return components?.url
     }
     
-    public func metadata(locale: Locale) -> [AnyHashable : Any] {
+    public func metadata(locale: Locale, lastModified: String?) -> [AnyHashable : Any] {
         guard let url = remoteDataURL(locale: locale) else {
             return [:]
         }
-        
-        return metadata(url: url)
+
+        return self.metadata(url: url, lastModified: lastModified)
     }
     
-    private func metadata(url: URL) -> [AnyHashable : Any] {
-        return [ RemoteDataAPIClient.urlMetadataKey : url.absoluteString ]
+    private func metadata(url: URL?, lastModified: String?) -> [AnyHashable : Any] {
+        return [
+            RemoteDataAPIClient.urlMetadataKey: url?.absoluteString ?? "",
+            RemoteDataAPIClient.lastModifiedMetadataKey: lastModified ?? ""
+        ]
     }
     
     private func parseResponse(data: Data?, metadata: [AnyHashable : Any]) throws -> [RemoteDataPayload] {

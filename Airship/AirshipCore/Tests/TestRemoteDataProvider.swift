@@ -61,4 +61,6 @@ class TestRemoteDataProvider : NSObject, RemoteDataProvider {
     func isMetadataCurrent(_ metadata: [AnyHashable : Any]) -> Bool {
         return true
     }
+    
+    func attemptRemoteDataRefresh(completionHandler: @escaping () -> Void) {}
 }

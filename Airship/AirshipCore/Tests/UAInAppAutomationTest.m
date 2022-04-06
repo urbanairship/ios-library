@@ -56,6 +56,13 @@
     self.mockChannel = [self mockForClass:[UAChannel class]];
     self.mockFrequencyLimitManager = [self mockForClass:[UAFrequencyLimitManager class]];
 
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:2];
+        void(^callback)(void) =  (__bridge void (^)(void))arg;
+        callback();
+    }] attemptRemoteDataRefreshWithCompletionHandler:OCMOCK_ANY];
+    
     [[[self.mockAutomationEngine stub] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:2];

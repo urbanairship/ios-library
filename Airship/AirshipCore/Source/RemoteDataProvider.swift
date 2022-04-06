@@ -13,4 +13,7 @@ public protocol RemoteDataProvider {
     
     @objc
     func isMetadataCurrent(_ metadata: [AnyHashable : Any]) -> Bool
+    
+    @objc
+    func attemptRemoteDataRefresh(completionHandler: @escaping () -> Void)
 }

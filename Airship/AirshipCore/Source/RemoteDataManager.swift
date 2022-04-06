@@ -7,7 +7,7 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
     static let refreshTaskID = "RemoteDataManager.refresh"
     static let defaultRefreshInterval: TimeInterval = 10
     static let refreshRemoteDataPushPayloadKey = "com.urbanairship.remote-data.update";
-
+    
     // Datastore keys
     private static let refreshIntervalKey = "remotedata.REFRESH_INTERVAL"
     private static let lastRefreshMetadataKey = "remotedata.LAST_REFRESH_METADATA"
@@ -29,6 +29,10 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
     private var subscriptions: [UUID : RemoteDataSubscription] = [:]
     private var updatedSinceLastForeground = false
     
+    private var refreshAttemptCompletionHandlers: [(() -> Void)?] = []
+    private let refreshLock = Lock()
+    private var isRefreshing = false
+    
     public var remoteDataRefreshInterval: TimeInterval {
         get {
             let fromStore = self.dataStore.object(forKey: RemoteDataManager.refreshIntervalKey ) as? TimeInterval
@@ -39,21 +43,22 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
         }
     }
     
+    @objc
+    public var lastModified : String? {
+        get {
+            return self.dataStore.string(forKey: RemoteDataManager.lastRemoteDataModifiedTime)
+        }
+        set {
+            self.dataStore.setObject(newValue, forKey: RemoteDataManager.lastRemoteDataModifiedTime)
+        }
+    }
+    
     private var lastMetadata: [AnyHashable : Any]? {
         get {
             return self.dataStore.object(forKey: RemoteDataManager.lastRefreshMetadataKey) as? [AnyHashable : Any]
         }
         set {
             self.dataStore.setObject(newValue, forKey: RemoteDataManager.lastRefreshMetadataKey)
-        }
-    }
-    
-    private var lastModified : String? {
-        get {
-            return self.dataStore.string(forKey: RemoteDataManager.lastRemoteDataModifiedTime)
-        }
-        set {
-            self.dataStore.setObject(newValue, forKey: RemoteDataManager.lastRemoteDataModifiedTime)
         }
     }
     
@@ -185,6 +190,7 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
     @objc
     private func enqueueRefreshTask() {
         if (self.privacyManager.isAnyFeatureEnabled()) {
+            isRefreshing = true
             self.taskManager.enqueueRequest(taskID: RemoteDataManager.refreshTaskID, options: TaskRequestOptions.defaultOptions)
         }
     }
@@ -222,7 +228,6 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
 
                 self.remoteDataStore.overwriteCachedRemoteData(payloads) { success in
                     if (success) {
-                        
                         self.lastMetadata = response.metadata
                         self.lastModified = response.lastModified
                         self.lastRefreshTime = self.date.now
@@ -254,6 +259,16 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
         }
         
         semaphore.wait()
+        
+        refreshLock.sync {
+            for completionHandler in self.refreshAttemptCompletionHandlers {
+                if let handler = completionHandler {
+                    handler()
+                }
+            }
+            self.refreshAttemptCompletionHandlers.removeAll()
+            isRefreshing = false
+        }
     }
     
     private func notifySubscribers(_ payloads: [RemoteDataPayload], completionHandler: @escaping () -> Void) {
@@ -276,14 +291,28 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
         }
     }
 
-    private func createMetadata(locale: Locale) -> [AnyHashable : Any] {
-        return self.apiClient.metadata(locale: locale)
+    private func createMetadata(locale: Locale, lastModified: String?) -> [AnyHashable : Any] {
+        return self.apiClient.metadata(locale: locale, lastModified: lastModified)
     }
 
     public func isMetadataCurrent(_ metadata: [AnyHashable : Any]) -> Bool {
         let last = (self.lastMetadata ?? [:]) as NSDictionary
         let metadata = metadata as NSDictionary
+        
         return metadata.isEqual(last)
+    }
+    
+    public func attemptRemoteDataRefresh(completionHandler: @escaping () -> Void) {
+        refreshLock.sync {
+            if (shouldRefresh()) {
+                self.refreshAttemptCompletionHandlers.append(completionHandler)
+                if (!isRefreshing) {
+                    enqueueRefreshTask()
+                }
+            } else {
+                completionHandler()
+            }
+        }
     }
 
     private func isLastAppVersionCurrent() -> Bool {
@@ -293,7 +322,8 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
     }
     
     private func isLastMetadataCurrent() -> Bool {
-        let current = self.createMetadata(locale: self.localeManager.currentLocale)
+        let current = self.createMetadata(locale: self.localeManager.currentLocale,
+                                          lastModified: self.lastModified)
         return isMetadataCurrent(current)
     }
     

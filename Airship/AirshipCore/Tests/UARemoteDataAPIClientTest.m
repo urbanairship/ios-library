@@ -56,7 +56,9 @@
 
         XCTAssertEqualObjects(responseLastModified, response.lastModified);
         
-        id expectedMetadata = @{ @"url": self.testSession.lastRequest.url.absoluteString };
+        id expectedMetadata = @{ @"url": self.testSession.lastRequest.url.absoluteString,
+                                 @"last_modified": responseLastModified };
+
         XCTAssertEqualObjects(expectedMetadata, response.metadata);
         XCTAssertEqualObjects(expectedMetadata, remoteData.metadata);
 

@@ -418,6 +418,10 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
     return [self.remoteDataProvider isMetadataCurrent:schedule.metadata[UAInAppRemoteDataClientMetadataKey]];
 }
 
+- (void)attemptRemoteDataRefreshWithCompletionHandler:(void (^)(void))completionHandler {
+    [self.remoteDataProvider attemptRemoteDataRefreshWithCompletionHandler:completionHandler];
+}
+
 + (UAFrequencyConstraint *)parseConstraintWithJSON:(id)JSON {
     NSString *ID = [JSON stringForKey:UAFrequencyConstraintIDKey defaultValue:nil];
     NSNumber *range = [JSON numberForKey:UAFrequencyConstraintRangeKey defaultValue:nil];

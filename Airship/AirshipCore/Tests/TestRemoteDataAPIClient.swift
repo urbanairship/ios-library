@@ -7,7 +7,7 @@ import AirshipCore
 public class TestRemoteDataAPIClient : NSObject, RemoteDataAPIClientProtocol {
  
     @objc
-    public var metdataCallback: ((Locale) -> [AnyHashable : String])?
+    public var metdataCallback: ((Locale, String?) -> [AnyHashable : String])?
     
     @objc
     public var fetchCallback: ((Locale, String?, (@escaping (RemoteDataResponse?, Error?) -> Void)) -> Void)?
@@ -26,7 +26,7 @@ public class TestRemoteDataAPIClient : NSObject, RemoteDataAPIClientProtocol {
         return Disposable()
     }
     
-    public func metadata(locale: Locale) -> [AnyHashable : Any] {
-        return self.metdataCallback?(locale) ?? [:]
+    public func metadata(locale: Locale, lastModified: String?) -> [AnyHashable : Any] {
+        return self.metdataCallback?(locale, lastModified) ?? [:]
     }
 }
