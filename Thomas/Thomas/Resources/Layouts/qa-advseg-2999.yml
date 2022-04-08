@@ -1,0 +1,377 @@
+---
+presentation:
+  default_placement:
+    ignore_safe_area: false
+    position:
+      horizontal: center
+      vertical: center
+    shade_color:
+      default:
+        alpha: 0.2
+        hex: "#000000"
+        type: hex
+    size:
+      height: 100%
+      max_height: 100%
+      max_width: 100%
+      min_height: 100%
+      min_width: 100%
+      width: 100%
+  disable_back_button: false
+  dismiss_on_touch_outside: false
+  type: modal
+version: 1
+view:
+  identifier: fa241604-ce7c-45a3-94a9-1951caec74a4
+  nps_identifier: 24574490-64c5-476d-8ecb-7390ea42fe02
+  submit: submit_event
+  type: nps_form_controller
+  view:
+    items:
+    - position:
+        horizontal: center
+        vertical: center
+      size:
+        height: 100%
+        width: 100%
+      view:
+        background_color:
+          default:
+            alpha: 1
+            hex: "#FEF5E7"
+            type: hex
+        direction: vertical
+        type: scroll_layout
+        view:
+          direction: vertical
+          items:
+          - margin:
+              bottom: 10
+              end: 0
+              start: 0
+              top: 0
+            size:
+              height: 100%
+              width: 100%
+            view:
+              media_fit: center_crop
+              media_type: image
+              type: media
+              url: https://dl-staging.urbanairship.com/binary/public/Vl0wyG8kSyCyOUW98Wj4xg/bc692c5f-09ce-4ea4-bb55-108b1b5d28a8
+          - margin:
+              bottom: 10
+              end: 0
+              start: 0
+              top: 10
+            size:
+              height: auto
+              width: 92%
+            view:
+              direction: vertical
+              items:
+              - size:
+                  height: 140
+                  width: 100%
+                view:
+                  direction: vertical
+                  items:
+                  - margin:
+                      bottom: 4
+                      end: 0
+                      start: 0
+                      top: 20
+                    size:
+                      height: 120
+                      width: 100%
+                    view:
+                      text: How likely is it that you would recommend 23 Grande to
+                        a friend or colleague?
+                      text_appearance:
+                        alignment: end
+                        color:
+                          default:
+                            alpha: 1
+                            hex: "#111111"
+                            type: hex
+                        font_families:
+                        - sans-serif
+                        font_size: 18
+                        styles:
+                        - bold
+                      type: label
+                  type: linear_layout
+              - margin:
+                  bottom: 0
+                  end: 10
+                  start: 10
+                  top: 0
+                size:
+                  height: 90
+                  width: 100%
+                view:
+                  direction: vertical
+                  items:
+                  - margin:
+                      bottom: 8
+                      top: 10
+                    size:
+                      height: 25
+                      width: 100%
+                    view:
+                      direction: horizontal
+                      items:
+                      - size:
+                          height: 25
+                          width: 50%
+                        view:
+                          text: Not Likely
+                          text_appearance:
+                            alignment: start
+                            color:
+                              default:
+                                alpha: 1
+                                hex: "#111111"
+                                type: hex
+                            font_families:
+                            - sans-serif
+                            font_size: 18
+                            styles: []
+                          type: label
+                      - size:
+                          height: 25
+                          width: 50%
+                        view:
+                          text: Very Likely
+                          text_appearance:
+                            alignment: end
+                            color:
+                              default:
+                                alpha: 1
+                                hex: "#111111"
+                                type: hex
+                            font_families:
+                            - sans-serif
+                            font_size: 18
+                            styles: []
+                          type: label
+                      type: linear_layout
+                  - size:
+                      height: 40
+                      width: 100%
+                    view:
+                      direction: horizontal
+                      items:
+                      - margin:
+                          bottom: 0
+                          end: 2
+                          start: 2
+                          top: 0
+                        size:
+                          height: 40
+                          width: 100%
+                        view:
+                          identifier: 24574490-64c5-476d-8ecb-7390ea42fe02
+                          required: true
+                          style:
+                            bindings:
+                              selected:
+                                shapes:
+                                - border:
+                                    radius: 2
+                                    stroke_color:
+                                      default:
+                                        alpha: 1
+                                        hex: "#000000"
+                                        type: hex
+                                    stroke_width: 1
+                                  color:
+                                    default:
+                                      alpha: 1
+                                      hex: "#DDDDDD"
+                                      type: hex
+                                  scale: 1
+                                  type: rectangle
+                                text_appearance:
+                                  alignment: center
+                                  color:
+                                    default:
+                                      alpha: 1
+                                      hex: "#000000"
+                                      type: hex
+                                  font_size: 12
+                              unselected:
+                                shapes:
+                                - border:
+                                    radius: 2
+                                    stroke_color:
+                                      default:
+                                        alpha: 1
+                                        hex: "#000000"
+                                        type: hex
+                                    stroke_width: 1
+                                  color:
+                                    default:
+                                      alpha: 1
+                                      hex: "#FFFFFF"
+                                      type: hex
+                                  scale: 1
+                                  type: rectangle
+                                text_appearance:
+                                  color:
+                                    default:
+                                      alpha: 1
+                                      hex: "#000000"
+                                      type: hex
+                                  font_size: 12
+                            end: 10
+                            spacing: 2
+                            start: 0
+                            type: number_range
+                          type: score
+                      type: linear_layout
+                  type: linear_layout
+              type: linear_layout
+          - margin:
+              bottom: 10
+              end: 0
+              start: 0
+              top: 10
+            size:
+              height: auto
+              width: 92%
+            view:
+              direction: vertical
+              items:
+              - margin:
+                  bottom: 10
+                  end: 0
+                  start: 0
+                  top: 0
+                size:
+                  height: auto
+                  width: 100%
+                view:
+                  text: What is the primary reason for your score?
+                  text_appearance:
+                    alignment: end
+                    color:
+                      default:
+                        alpha: 1
+                        hex: "#111111"
+                        type: hex
+                    font_families:
+                    - sans-serif
+                    font_size: 18
+                    styles:
+                    - bold
+                  type: label
+              - size:
+                  height: 70
+                  width: 100%
+                view:
+                  background_color:
+                    default:
+                      alpha: 1
+                      hex: "#eae9e9"
+                      type: hex
+                  border:
+                    radius: 2
+                    stroke_color:
+                      default:
+                        alpha: 1
+                        hex: "#63656b"
+                        type: hex
+                    stroke_width: 1
+                  identifier: e7427c26-64c2-48c6-99b6-13de49a83c7f
+                  input_type: text
+                  required: false
+                  text_appearance:
+                    alignment: start
+                    color:
+                      default:
+                        alpha: 1
+                        hex: "#000000"
+                        type: hex
+                    font_size: 14
+                  type: text_input
+              type: linear_layout
+          - margin:
+              bottom: 30
+              top: 10
+            size:
+              height: 100%
+              width: 100%
+            view:
+              direction: horizontal
+              items:
+              - margin:
+                  bottom: 30
+                  end: 20
+                  start: 20
+                  top: 4
+                size:
+                  height: 40
+                  width: 85%
+                view:
+                  actions: {}
+                  background_color:
+                    default:
+                      alpha: 1
+                      hex: "#222222"
+                      type: hex
+                  border:
+                    radius: 0
+                    stroke_color:
+                      default:
+                        alpha: 1
+                        hex: "#222222"
+                        type: hex
+                    stroke_width: 1
+                  button_click:
+                  - form_submit
+                  - dismiss
+                  enabled:
+                  - form_validation
+                  identifier: 9e1d0085-ed68-41f9-bd4e-2741d7d79b66
+                  label:
+                    text: Submit
+                    text_appearance:
+                      alignment: center
+                      color:
+                        default:
+                          alpha: 1
+                          hex: "#FFFFFF"
+                          type: hex
+                      font_families:
+                      - sans-serif
+                      font_size: 24
+                    type: label
+                  type: label_button
+              type: linear_layout
+          type: linear_layout
+    - margin:
+        bottom: 0
+        end: 10
+        start: 0
+        top: 10
+      position:
+        horizontal: end
+        vertical: top
+      size:
+        height: 48
+        width: 48
+      view:
+        button_click:
+        - dismiss
+        identifier: dismiss_button
+        image:
+          color:
+            default:
+              alpha: 1
+              hex: "#000000"
+              type: hex
+          icon: close
+          scale: 0.4
+          type: icon
+        type: image_button
+    type: container

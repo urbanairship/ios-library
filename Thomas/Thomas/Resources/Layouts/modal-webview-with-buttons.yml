@@ -1,0 +1,80 @@
+---
+version: 1
+presentation:
+  type: modal
+  dismiss_on_touch_outside: true
+  default_placement:
+    size:
+      width: 95%
+      height: 90%
+    shade_color:
+      default:
+        hex: '#000000'
+        alpha: 0.6
+view:
+  type: container
+  background_color:
+    default:
+      hex: "#000000"
+      alpha: 1
+  items:
+  - position:
+      horizontal: center
+      vertical: top
+    size:
+      height: 90%
+      width: 100%
+    view:
+      type: web_view
+      url: "https://docs.airship.com"
+      background_color:
+        default:
+          hex: "#000000"
+          alpha: 1
+  - position:
+      horizontal: start
+      vertical: bottom
+    size:
+      height: 10%
+      width: 50%
+    view:
+      type: label_button
+      identifier: button1
+      button_click: [ dismiss ]
+      label:
+        type: label
+        text: cool
+        text_appearance:
+          font_size: 14
+          color:
+            default:
+              hex: "#000000"
+              alpha: 1
+      background_color:
+        default:
+          hex: "#AED581" # green
+          alpha: 1
+  - position:
+      horizontal: end
+      vertical: bottom
+    size:
+      height: 10%
+      width: 50%
+    view:
+      type: label_button
+      button_click: [ cancel ]
+      identifier: button2
+      background_color:
+        default:
+          hex: "#D32F2F" # red
+          alpha: 1
+      label:
+        type: label
+        text: beans
+        text_appearance:
+          font_size: 14
+          color:
+            default:
+              hex: "#000000"
+              alpha: 1
+

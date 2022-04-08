@@ -1,28 +1,27 @@
 ---
 version: 1
 presentation:
-  type: modal
   dismiss_on_touch_outside: true
+  type: modal
   default_placement:
     size:
-      width: 80%
-      height: 80%
-    position:
-      horizontal: center
-      vertical: center
+      width: 30%
+      height: 364
     shade_color:
       default:
-        hex: "#444444"
-        alpha: .3
+        hex: '#000000'
+        alpha: 0.7
 view:
   type: container
   background_color:
     default:
-      hex: "#FFFFFF"
+      hex: "#ffffff"
+      alpha: 1
   border:
     stroke_color:
       default:
         hex: "#000000"
+        alpha: 1
     stroke_width: 3
   items:
   # TOP-LEVEL LINEAR LAYOUT
@@ -38,7 +37,7 @@ view:
       background_color:
         default:
           hex: "#ffffff"
-          alpha: .5
+          alpha: 0.35
       items:
       - position:
           horizontal: center
@@ -48,65 +47,76 @@ view:
           height: auto
         view:
           type: label
-          text: h = auto
+          text: auto
+          background_color:
+            default:
+              hex: "#FF0000"
+              alpha: 0.35
           text_appearance:
             color:
               default:
-                hex: "#FF0000"
-                alpha: .5
+                hex: "#000000"
+                alpha: 1
             alignment: center
-            font_size: 14
+            font_size: 12
       - position:
           horizontal: center
           vertical: center
         size:
           width: 100%
-          height: 60%
+          height: 75%
         view:
           type: label
+          text: 75%
           background_color:
             default:
               hex: "#00FF00"
-              alpha: .5
-          text: h = 60%
+              alpha: 0.35
           text_appearance:
-            font_size: 14
             color:
               default:
                 hex: "#000000"
+                alpha: 1
             alignment: center
+            font_size: 12
       - position:
           horizontal: center
           vertical: center
         size:
           width: 100%
-          height: 30%
+          height: 20%
         view:
+          type: label
+          text: 20%
           background_color:
             default:
               hex: "#0000FF"
-              alpha: .5
-          type: label
-          text: h = 30%
+              alpha: 0.35
           text_appearance:
-            alignment: center
-            font_size: 14
             color:
               default:
                 hex: "#000000"
+                alpha: 1
+            alignment: center
+            font_size: 12
       - position:
           horizontal: center
           vertical: center
         size:
           width: 100%
-          height: 100
+          height: 40
         view:
           type: label
-          text: h = 100dp
+          text: 40dp
+          background_color:
+            default:
+              hex: "#FF00FF"
+              alpha: 0.35
           text_appearance:
             color:
               default:
-                hex: "#FF00FF"
-                alpha: .5 
-            font_size: 14
+                hex: "#000000"
+                alpha: 1
             alignment: center
+            font_size: 12
+

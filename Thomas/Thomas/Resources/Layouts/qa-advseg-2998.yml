@@ -1,0 +1,708 @@
+---
+presentation:
+  default_placement:
+    ignore_safe_area: false
+    position:
+      horizontal: center
+      vertical: center
+    shade_color:
+      default:
+        alpha: 0.2
+        hex: "#000000"
+        type: hex
+    size:
+      height: 100%
+      max_height: 100%
+      max_width: 100%
+      min_height: 100%
+      min_width: 100%
+      width: 100%
+  disable_back_button: false
+  dismiss_on_touch_outside: false
+  type: modal
+version: 1
+view:
+  identifier: 962920d0-ee64-48ad-baec-16777779f1a9
+  submit: submit_event
+  type: form_controller
+  view:
+    items:
+    - position:
+        horizontal: center
+        vertical: center
+      size:
+        height: 100%
+        width: 100%
+      view:
+        background_color:
+          default:
+            alpha: 1
+            hex: "#e8e4dc"
+            type: hex
+        direction: vertical
+        type: scroll_layout
+        view:
+          direction: vertical
+          items:
+          - margin:
+              bottom: 10
+              end: 0
+              start: 0
+              top: 0
+            size:
+              height: auto
+              width: 100%
+            view:
+              media_fit: center_crop
+              media_type: image
+              type: media
+              url: https://dl-staging.urbanairship.com/binary/public/Vl0wyG8kSyCyOUW98Wj4xg/bc692c5f-09ce-4ea4-bb55-108b1b5d28a8
+          - margin:
+              bottom: 10
+              end: 0
+              start: 0
+              top: 10
+            size:
+              height: auto
+              width: 92%
+            view:
+              direction: vertical
+              items:
+              - margin:
+                  bottom: 10
+                size:
+                  height: 100%
+                  width: 100%
+                view:
+                  text: How satisfied are you with our product?
+                  text_appearance:
+                    alignment: start
+                    color:
+                      default:
+                        alpha: 1
+                        hex: "#111111"
+                        type: hex
+                    font_families:
+                    - sans-serif
+                    font_size: 18
+                    styles:
+                    - bold
+                  type: label
+              - size:
+                  height: 100%
+                  width: 100%
+                view:
+                  identifier: bdd3abc0-c6ae-40a9-8962-135ee9e822c0
+                  type: radio_input_controller
+                  view:
+                    direction: vertical
+                    items:
+                    - size:
+                        height: 100%
+                        width: 100%
+                      view:
+                        direction: horizontal
+                        items:
+                        - size:
+                            height: 20
+                            width: 20
+                          view:
+                            reporting_value: da0695bd-d2c9-412a-aeb7-9f8ac2ff820b
+                            style:
+                              bindings:
+                                selected:
+                                  shapes:
+                                  - border:
+                                      radius: 20
+                                      stroke_color:
+                                        default:
+                                          alpha: 1
+                                          hex: "#000000"
+                                          type: hex
+                                      stroke_width: 1
+                                    color:
+                                      default:
+                                        alpha: 1
+                                        hex: "#DDDDDD"
+                                        type: hex
+                                    scale: 1
+                                    type: ellipse
+                                unselected:
+                                  shapes:
+                                  - border:
+                                      radius: 20
+                                      stroke_color:
+                                        default:
+                                          alpha: 1
+                                          hex: "#000000"
+                                          type: hex
+                                      stroke_width: 1
+                                    color:
+                                      default:
+                                        alpha: 1
+                                        hex: "#FFFFFF"
+                                        type: hex
+                                    scale: 1
+                                    type: ellipse
+                              type: checkbox
+                            type: radio_input
+                        - size:
+                            height: 100%
+                            width: 100%
+                          view:
+                            text: Very satisfied
+                            text_appearance:
+                              alignment: start
+                              color:
+                                default:
+                                  alpha: 1
+                                  hex: "#111111"
+                                  type: hex
+                              font_families:
+                              - sans-serif
+                              font_size: 18
+                              styles: []
+                            type: label
+                        type: linear_layout
+                    - size:
+                        height: 100%
+                        width: 100%
+                      view:
+                        direction: horizontal
+                        items:
+                        - size:
+                            height: 20
+                            width: 20
+                          view:
+                            reporting_value: 941e41b1-aa1a-477d-abfd-3866e84c8732
+                            style:
+                              bindings:
+                                selected:
+                                  shapes:
+                                  - border:
+                                      radius: 20
+                                      stroke_color:
+                                        default:
+                                          alpha: 1
+                                          hex: "#000000"
+                                          type: hex
+                                      stroke_width: 1
+                                    color:
+                                      default:
+                                        alpha: 1
+                                        hex: "#DDDDDD"
+                                        type: hex
+                                    scale: 1
+                                    type: ellipse
+                                unselected:
+                                  shapes:
+                                  - border:
+                                      radius: 20
+                                      stroke_color:
+                                        default:
+                                          alpha: 1
+                                          hex: "#000000"
+                                          type: hex
+                                      stroke_width: 1
+                                    color:
+                                      default:
+                                        alpha: 1
+                                        hex: "#FFFFFF"
+                                        type: hex
+                                    scale: 1
+                                    type: ellipse
+                              type: checkbox
+                            type: radio_input
+                        - size:
+                            height: 100%
+                            width: 100%
+                          view:
+                            text: Dissatisfied
+                            text_appearance:
+                              alignment: start
+                              color:
+                                default:
+                                  alpha: 1
+                                  hex: "#111111"
+                                  type: hex
+                              font_families:
+                              - sans-serif
+                              font_size: 18
+                              styles: []
+                            type: label
+                        type: linear_layout
+                    - size:
+                        height: 100%
+                        width: 100%
+                      view:
+                        direction: horizontal
+                        items:
+                        - size:
+                            height: 20
+                            width: 20
+                          view:
+                            reporting_value: 3365a895-22d5-4a6a-bd20-1b4374cf6146
+                            style:
+                              bindings:
+                                selected:
+                                  shapes:
+                                  - border:
+                                      radius: 20
+                                      stroke_color:
+                                        default:
+                                          alpha: 1
+                                          hex: "#000000"
+                                          type: hex
+                                      stroke_width: 1
+                                    color:
+                                      default:
+                                        alpha: 1
+                                        hex: "#DDDDDD"
+                                        type: hex
+                                    scale: 1
+                                    type: ellipse
+                                unselected:
+                                  shapes:
+                                  - border:
+                                      radius: 20
+                                      stroke_color:
+                                        default:
+                                          alpha: 1
+                                          hex: "#000000"
+                                          type: hex
+                                      stroke_width: 1
+                                    color:
+                                      default:
+                                        alpha: 1
+                                        hex: "#FFFFFF"
+                                        type: hex
+                                    scale: 1
+                                    type: ellipse
+                              type: checkbox
+                            type: radio_input
+                        - size:
+                            height: 100%
+                            width: 100%
+                          view:
+                            text: Satisfied
+                            text_appearance:
+                              alignment: start
+                              color:
+                                default:
+                                  alpha: 1
+                                  hex: "#111111"
+                                  type: hex
+                              font_families:
+                              - sans-serif
+                              font_size: 18
+                              styles: []
+                            type: label
+                        type: linear_layout
+                    - size:
+                        height: 100%
+                        width: 100%
+                      view:
+                        direction: horizontal
+                        items:
+                        - size:
+                            height: 20
+                            width: 20
+                          view:
+                            reporting_value: aac3415a-43f7-44a8-9c1d-ac9d482dc72d
+                            style:
+                              bindings:
+                                selected:
+                                  shapes:
+                                  - border:
+                                      radius: 20
+                                      stroke_color:
+                                        default:
+                                          alpha: 1
+                                          hex: "#000000"
+                                          type: hex
+                                      stroke_width: 1
+                                    color:
+                                      default:
+                                        alpha: 1
+                                        hex: "#DDDDDD"
+                                        type: hex
+                                    scale: 1
+                                    type: ellipse
+                                unselected:
+                                  shapes:
+                                  - border:
+                                      radius: 20
+                                      stroke_color:
+                                        default:
+                                          alpha: 1
+                                          hex: "#000000"
+                                          type: hex
+                                      stroke_width: 1
+                                    color:
+                                      default:
+                                        alpha: 1
+                                        hex: "#FFFFFF"
+                                        type: hex
+                                    scale: 1
+                                    type: ellipse
+                              type: checkbox
+                            type: radio_input
+                        - size:
+                            height: 100%
+                            width: 100%
+                          view:
+                            text: Very dissatisfied
+                            text_appearance:
+                              alignment: start
+                              color:
+                                default:
+                                  alpha: 1
+                                  hex: "#111111"
+                                  type: hex
+                              font_families:
+                              - sans-serif
+                              font_size: 18
+                              styles: []
+                            type: label
+                        type: linear_layout
+                    - size:
+                        height: 100%
+                        width: 100%
+                      view:
+                        direction: horizontal
+                        items:
+                        - size:
+                            height: 20
+                            width: 20
+                          view:
+                            reporting_value: 30a71f98-d60d-4e38-bdbc-047d6ef1b9f2
+                            style:
+                              bindings:
+                                selected:
+                                  shapes:
+                                  - border:
+                                      radius: 20
+                                      stroke_color:
+                                        default:
+                                          alpha: 1
+                                          hex: "#000000"
+                                          type: hex
+                                      stroke_width: 1
+                                    color:
+                                      default:
+                                        alpha: 1
+                                        hex: "#DDDDDD"
+                                        type: hex
+                                    scale: 1
+                                    type: ellipse
+                                unselected:
+                                  shapes:
+                                  - border:
+                                      radius: 20
+                                      stroke_color:
+                                        default:
+                                          alpha: 1
+                                          hex: "#000000"
+                                          type: hex
+                                      stroke_width: 1
+                                    color:
+                                      default:
+                                        alpha: 1
+                                        hex: "#FFFFFF"
+                                        type: hex
+                                    scale: 1
+                                    type: ellipse
+                              type: checkbox
+                            type: radio_input
+                        - size:
+                            height: 100%
+                            width: 100%
+                          view:
+                            text: Neither satisfied nor dissatisfied
+                            text_appearance:
+                              alignment: start
+                              color:
+                                default:
+                                  alpha: 1
+                                  hex: "#111111"
+                                  type: hex
+                              font_families:
+                              - sans-serif
+                              font_size: 18
+                              styles: []
+                            type: label
+                        type: linear_layout
+                    type: linear_layout
+              type: linear_layout
+          - margin:
+              bottom: 10
+              end: 0
+              start: 0
+              top: 10
+            size:
+              height: auto
+              width: 92%
+            view:
+              direction: vertical
+              items:
+              - margin:
+                  bottom: 10
+                  end: 0
+                  start: 0
+                  top: 0
+                size:
+                  height: auto
+                  width: 100%
+                view:
+                  text: What did you like most about your experience?
+                  text_appearance:
+                    alignment: start
+                    color:
+                      default:
+                        alpha: 1
+                        hex: "#111111"
+                        type: hex
+                    font_families:
+                    - sans-serif
+                    font_size: 18
+                    styles:
+                    - bold
+                  type: label
+              - size:
+                  height: 70
+                  width: 100%
+                view:
+                  background_color:
+                    default:
+                      alpha: 1
+                      hex: "#eae9e9"
+                      type: hex
+                  border:
+                    radius: 2
+                    stroke_color:
+                      default:
+                        alpha: 1
+                        hex: "#63656b"
+                        type: hex
+                    stroke_width: 1
+                  identifier: 7c7f0793-188f-4f60-aec2-0b35d9a4d005
+                  input_type: text
+                  required: false
+                  text_appearance:
+                    alignment: start
+                    color:
+                      default:
+                        alpha: 1
+                        hex: "#000000"
+                        type: hex
+                    font_size: 14
+                  type: text_input
+              type: linear_layout
+          - margin:
+              bottom: 10
+              end: 0
+              start: 0
+              top: 10
+            size:
+              height: auto
+              width: 92%
+            view:
+              direction: vertical
+              items:
+              - margin:
+                  bottom: 10
+                  end: 0
+                  start: 0
+                  top: 0
+                size:
+                  height: auto
+                  width: 100%
+                view:
+                  text: What areas do we need to improve?
+                  text_appearance:
+                    alignment: start
+                    color:
+                      default:
+                        alpha: 1
+                        hex: "#111111"
+                        type: hex
+                    font_families:
+                    - sans-serif
+                    font_size: 18
+                    styles:
+                    - bold
+                  type: label
+              - size:
+                  height: 70
+                  width: 100%
+                view:
+                  background_color:
+                    default:
+                      alpha: 1
+                      hex: "#eae9e9"
+                      type: hex
+                  border:
+                    radius: 2
+                    stroke_color:
+                      default:
+                        alpha: 1
+                        hex: "#63656b"
+                        type: hex
+                    stroke_width: 1
+                  identifier: 9fb8ef64-2fbc-4439-b450-87b20fda5c43
+                  input_type: text
+                  required: false
+                  text_appearance:
+                    alignment: start
+                    color:
+                      default:
+                        alpha: 1
+                        hex: "#000000"
+                        type: hex
+                    font_size: 14
+                  type: text_input
+              type: linear_layout
+          - margin:
+              bottom: 10
+              end: 0
+              start: 0
+              top: 10
+            size:
+              height: auto
+              width: 92%
+            view:
+              direction: vertical
+              items:
+              - margin:
+                  bottom: 10
+                  end: 0
+                  start: 0
+                  top: 0
+                size:
+                  height: auto
+                  width: 100%
+                view:
+                  text: Do you have any other feedback, concern or question?
+                  text_appearance:
+                    alignment: start
+                    color:
+                      default:
+                        alpha: 1
+                        hex: "#111111"
+                        type: hex
+                    font_families:
+                    - sans-serif
+                    font_size: 18
+                    styles:
+                    - bold
+                  type: label
+              - size:
+                  height: 70
+                  width: 100%
+                view:
+                  background_color:
+                    default:
+                      alpha: 1
+                      hex: "#eae9e9"
+                      type: hex
+                  border:
+                    radius: 2
+                    stroke_color:
+                      default:
+                        alpha: 1
+                        hex: "#63656b"
+                        type: hex
+                    stroke_width: 1
+                  identifier: 4a2e9284-9321-4176-9173-7f10b648e2e3
+                  input_type: text
+                  required: false
+                  text_appearance:
+                    alignment: start
+                    color:
+                      default:
+                        alpha: 1
+                        hex: "#000000"
+                        type: hex
+                    font_size: 14
+                  type: text_input
+              type: linear_layout
+          - margin:
+              bottom: 30
+              top: 10
+            size:
+              height: 100%
+              width: 100%
+            view:
+              direction: horizontal
+              items:
+              - margin:
+                  bottom: 30
+                  end: 20
+                  start: 20
+                  top: 4
+                size:
+                  height: 40
+                  width: 85%
+                view:
+                  actions: {}
+                  background_color:
+                    default:
+                      alpha: 1
+                      hex: "#222222"
+                      type: hex
+                  border:
+                    radius: 0
+                    stroke_color:
+                      default:
+                        alpha: 1
+                        hex: "#222222"
+                        type: hex
+                    stroke_width: 1
+                  button_click:
+                  - form_submit
+                  - dismiss
+                  enabled:
+                  - form_validation
+                  identifier: e49c1d9a-1118-4a7b-8ae8-2e1ce42b0f1a
+                  label:
+                    text: Submit
+                    text_appearance:
+                      alignment: center
+                      color:
+                        default:
+                          alpha: 1
+                          hex: "#FFFFFF"
+                          type: hex
+                      font_families:
+                      - sans-serif
+                      font_size: 24
+                    type: label
+                  type: label_button
+              type: linear_layout
+          type: linear_layout
+    - margin:
+        bottom: 0
+        end: 10
+        start: 0
+        top: 10
+      position:
+        horizontal: end
+        vertical: top
+      size:
+        height: 48
+        width: 48
+      view:
+        type: image_button
+        button_click:
+        - dismiss
+        identifier: dismiss_button
+        image:
+          color:
+            default:
+              alpha: 1
+              hex: "#000000"
+              type: hex
+          icon: close
+          scale: 0.4
+          type: icon
+    type: container

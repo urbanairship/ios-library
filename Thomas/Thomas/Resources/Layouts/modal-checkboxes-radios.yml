@@ -1,0 +1,790 @@
+---
+version: 1
+presentation:
+  type: modal
+  dismiss_on_touch_outside: true
+  default_placement:
+    size:
+      width: 100%
+      height: auto
+    shade_color:
+      default:
+        hex: "#000000"
+        alpha: 0.75
+view:
+  type: form_controller
+  identifier: neat_form
+  submit: submit_event
+  view:
+    type: container
+    background_color:
+      default:
+        hex: "#ffffff"
+        alpha: 1
+    border:
+      stroke_color:
+        default:
+          hex: "#000000"
+          alpha: 1
+      stroke_width: 2
+      radius: 0
+    items:
+    # TOP-LEVEL LINEAR LAYOUT
+    - position:
+        horizontal: center
+        vertical: center
+      size:
+        height: auto
+        width: 100%
+      view:
+        type: linear_layout
+        direction: vertical
+        items:
+        - size:
+            width: 100%
+            height: 48
+          margin:
+            start: 16
+            end: 16
+          view:
+            type: label
+            text: Check some boxes!
+            text_appearance:
+              color:
+                default:
+                  hex: "#000000"
+                  alpha: 1
+              alignment: start
+              font_size: 18
+        - size:
+            width: 100%
+            height: auto
+          view:
+            type: checkbox_controller
+            identifier: box_types
+            required: true
+            min_selection: 1
+            max_selection: 2
+            view:
+              type: linear_layout
+              direction: vertical
+              items:
+              - size:
+                  width: 100%
+                  height: 48
+                margin:
+                  start: 16
+                  end: 16
+                view:
+                  type: linear_layout
+                  direction: horizontal
+                  items:
+                    - size:
+                        width: 100%
+                        height: 100%
+                      margin:
+                        start: 16
+                        end: 16
+                      view:
+                        type: label
+                        text: Moving boxes
+                        text_appearance:
+                          color:
+                            default:
+                              hex: "#000000"
+                              alpha: 1
+                          font_size: 14
+                          alignment: start
+                    - size:
+                        width: 48
+                        height: 48
+                      view:
+                        type: checkbox
+                        reporting_value: moving boxes
+                        style:
+                          type: checkbox
+                          bindings:
+                            selected:
+                              shapes:
+                              - type: rectangle
+                                scale: .5
+                                aspect_ratio: 1
+                                color:
+                                  default:
+                                    hex: "#66FF66"
+                                    alpha: 1
+                                border:
+                                  stroke_width: 2
+                                  radius: 5
+                                  stroke_color:
+                                    default:
+                                      hex: "#333333"
+                                      alpha: 1
+                              icon:
+                                icon: checkmark
+                                color:
+                                  default:
+                                    hex: "#333333"
+                                    alpha: 1
+                                scale: .4
+                            unselected:
+                              shapes:
+                              - type: rectangle
+                                scale: .5
+                                aspect_ratio: 1
+                                color:
+                                  default:
+                                    hex: "#FF6666"
+                                    alpha: 1
+                                border:
+                                  stroke_width: 2
+                                  radius: 5
+                                  stroke_color:
+                                    default:
+                                      hex: "#333333"
+                                      alpha: 1
+                              icon:
+                                icon: close
+                                color:
+                                  default:
+                                    hex: "#333333"
+                                    alpha: 1
+                                scale: .4
+              - size:
+                  width: 100%
+                  height: 48
+                margin:
+                  start: 16
+                  end: 16
+                view:
+                  type: linear_layout
+                  direction: horizontal
+                  items:
+                  - size:
+                      width: 100%
+                      height: 100%
+                    margin:
+                      start: 16
+                      end: 16
+                    view:
+                      type: label
+                      text_appearance:
+                        color:
+                          default:
+                            hex: "#000000"
+                            alpha: 1
+                        font_size: 14
+                        alignment: start
+                      text: Bread boxes
+                  - size:
+                      width: 48
+                      height: 48
+                    view:
+                      type: checkbox
+                      reporting_value: bread boxes
+                      style:
+                        type: checkbox
+                        bindings:
+                          selected:
+                            shapes:
+                            - type: rectangle
+                              scale: .5
+                              aspect_ratio: 1
+                              color:
+                                default:
+                                  hex: "#66FF66"
+                                  alpha: 1
+                              border:
+                                stroke_width: 2
+                                radius: 5
+                                stroke_color:
+                                  default:
+                                    hex: "#333333"
+                                    alpha: 1
+                            icon:
+                              icon: checkmark
+                              color:
+                                default:
+                                  hex: "#333333"
+                                  alpha: 1
+                              scale: .4
+                          unselected:
+                            shapes:
+                            - type: rectangle
+                              scale: .5
+                              aspect_ratio: 1
+                              color:
+                                default:
+                                  hex: "#FF6666"
+                                  alpha: 1
+                              border:
+                                stroke_width: 2
+                                radius: 5
+                                stroke_color:
+                                  default:
+                                    hex: "#333333"
+                                    alpha: 1
+                            icon:
+                              icon: close
+                              color:
+                                default:
+                                  hex: "#333333"
+                                  alpha: 1
+                              scale: .4
+              - size:
+                  width: 100%
+                  height: 48
+                margin:
+                  start: 16
+                  end: 16
+                view:
+                  type: linear_layout
+                  direction: horizontal
+                  items:
+                  - size:
+                      width: 100%
+                      height: 100%
+                    margin:
+                      start: 16
+                      end: 16
+                    view:
+                      type: label
+                      text_appearance:
+                        color:
+                          default:
+                            hex: "#000000"
+                            alpha: 1
+                        font_size: 14
+                        alignment: start
+                      text: Hat boxes
+                  - size:
+                      width: 48
+                      height: 48
+                    view:
+                      type: checkbox
+                      reporting_value: hat boxes
+                      style:
+                        type: checkbox
+                        bindings:
+                          selected:
+                            shapes:
+                            - type: rectangle
+                              scale: .5
+                              aspect_ratio: 1
+                              color:
+                                default:
+                                  hex: "#66FF66"
+                                  alpha: 1
+                              border:
+                                stroke_width: 2
+                                radius: 5
+                                stroke_color:
+                                  default:
+                                    hex: "#333333"
+                                    alpha: 1
+                            icon:
+                              icon: checkmark
+                              color:
+                                default:
+                                  hex: "#333333"
+                                  alpha: 1
+                              scale: .4
+                          unselected:
+                            shapes:
+                            - type: rectangle
+                              scale: .5
+                              aspect_ratio: 1
+                              color:
+                                default:
+                                  hex: "#FF6666"
+                                  alpha: 1
+                              border:
+                                stroke_width: 2
+                                radius: 5
+                                stroke_color:
+                                  default:
+                                    hex: "#333333"
+                                    alpha: 1
+                            icon:
+                              icon: close
+                              color:
+                                default:
+                                  hex: "#333333"
+                                  alpha: 1
+                              scale: .4
+        - size:
+            width: 100%
+            height: auto
+          view:
+            type: radio_input_controller
+            identifier: radio_types
+            required: true
+            attribute_name:
+              channel: "radio-attribute-name-channel"
+            view:
+              type: linear_layout
+              direction: vertical
+              items:
+              - size:
+                  width: 100%
+                  height: 48
+                margin:
+                  start: 16
+                  end: 16
+                view:
+                  type: label
+                  text: Choose a radio!
+                  text_appearance:
+                    color:
+                      default:
+                        hex: "#000000"
+                        alpha: 1
+                    alignment: start
+                    font_size: 18
+              - size:
+                  width: 100%
+                  height: 48
+                margin:
+                  start: 16
+                  end: 16
+                view:
+                  type: linear_layout
+                  direction: horizontal
+                  items:
+                  - size:
+                      width: 100%
+                      height: 100%
+                    margin:
+                      start: 16
+                      end: 16
+                    view:
+                      type: label
+                      text_appearance:
+                        color:
+                          default:
+                            hex: "#000000"
+                            alpha: 1
+                        font_size: 14
+                        alignment: start
+                      text: AM Radio
+                  - size:
+                      width: 48
+                      height: 48
+                    view:
+                      type: radio_input
+                      reporting_value: am
+                      style:
+                        type: checkbox
+                        bindings:
+                          selected:
+                            shapes:
+                            - type: ellipse
+                              scale: .5
+                              aspect_ratio: 1
+                              border:
+                                stroke_width: 2
+                                stroke_color:
+                                  default:
+                                    hex: "#000000"
+                                    alpha: 1
+                              color:
+                                default:
+                                  type: hex
+                                  hex: "#FFFFFF"
+                                  alpha: 1
+                            - type: ellipse
+                              scale: .3
+                              aspect_ratio: 1
+                              color:
+                                default:
+                                  type: hex
+                                  hex: "#000000"
+                                  alpha: 1
+                          unselected:
+                            shapes:
+                            - type: ellipse
+                              scale: .5
+                              aspect_ratio: 1
+                              border:
+                                stroke_width: 2
+                                stroke_color:
+                                  default:
+                                    hex: "#000000"
+                                    alpha: 1
+                              color:
+                                default:
+                                  type: hex
+                                  hex: "#FFFFFF"
+                                  alpha: 1
+
+              - size:
+                  width: 100%
+                  height: 48
+                margin:
+                  start: 16
+                  end: 16
+                view:
+                  type: linear_layout
+                  direction: horizontal
+                  items:
+                  - size:
+                      width: 100%
+                      height: 100%
+                    margin:
+                      start: 16
+                      end: 16
+                    view:
+                      type: label
+                      text: FM Radio
+                      text_appearance:
+                        color:
+                          default:
+                            hex: "#000000"
+                            alpha: 1
+                        font_size: 14
+                        alignment: start
+                  - size:
+                      width: 48
+                      height: 48
+                    view:
+                      type: radio_input
+                      reporting_value: fm
+                      style:
+                        type: checkbox
+                        bindings:
+                          selected:
+                            shapes:
+                            - type: ellipse
+                              scale: .5
+                              aspect_ratio: 1
+                              border:
+                                stroke_width: 2
+                                stroke_color:
+                                  default:
+                                    hex: "#000000"
+                                    alpha: 1
+                              color:
+                                default:
+                                  type: hex
+                                  hex: "#FFFFFF"
+                                  alpha: 1
+                            - type: ellipse
+                              scale: .3
+                              aspect_ratio: 1
+                              color:
+                                default:
+                                  type: hex
+                                  hex: "#000000"
+                                  alpha: 1
+                          unselected:
+                            shapes:
+                            - type: ellipse
+                              scale: .5
+                              aspect_ratio: 1
+                              border:
+                                stroke_width: 2
+                                stroke_color:
+                                  default:
+                                    hex: "#000000"
+                                    alpha: 1
+                              color:
+                                default:
+                                  type: hex
+                                  hex: "#FFFFFF"
+                                  alpha: 1
+
+              - size:
+                  width: 100%
+                  height: 48
+                margin:
+                  start: 16
+                  end: 16
+                view:
+                  type: linear_layout
+                  direction: horizontal
+                  items:
+                  - size:
+                      width: 100%
+                      height: 100%
+                    margin:
+                      start: 16
+                      end: 16
+                    view:
+                      type: label
+                      text: HAM Radio
+                      text_appearance:
+                        color:
+                          default:
+                            hex: "#000000"
+                            alpha: 1
+                        font_size: 14
+                        alignment: start
+                  - size:
+                      width: 48
+                      height: 48
+                    view:
+                      type: radio_input
+                      reporting_value: ham
+                      style:
+                        type: checkbox
+                        bindings:
+                          selected:
+                            shapes:
+                            - type: ellipse
+                              scale: .5
+                              aspect_ratio: 1
+                              border:
+                                stroke_width: 2
+                                stroke_color:
+                                  default:
+                                    hex: "#000000"
+                                    alpha: 1
+                              color:
+                                default:
+                                  type: hex
+                                  hex: "#FFFFFF"
+                                  alpha: 1
+                            - type: ellipse
+                              scale: .3
+                              aspect_ratio: 1
+                              color:
+                                default:
+                                  type: hex
+                                  hex: "#000000"
+                                  alpha: 1
+                          unselected:
+                            shapes:
+                            - type: ellipse
+                              scale: .5
+                              aspect_ratio: 1
+                              border:
+                                stroke_width: 2
+                                stroke_color:
+                                  default:
+                                    hex: "#000000"
+                                    alpha: 1
+                              color:
+                                default:
+                                  type: hex
+                                  hex: "#FFFFFF"
+                                  alpha: 1
+
+        - size:
+            width: 100%
+            height: 48
+          margin:
+            start: 16
+            end: 16
+          view:
+            type: linear_layout
+            direction: horizontal
+            items:
+            - size:
+                width: 100%
+                height: 100%
+              margin:
+                end: 16
+              view:
+                type: label
+                text: Toggle the switch!
+                text_appearance:
+                  color:
+                    default:
+                      hex: "#000000"
+                      alpha: 1
+                  font_size: 18
+                  alignment: start
+            - size:
+                width: auto
+                height: auto
+              view:
+                type: toggle
+                identifier: toggle-switch
+                required: true
+                attribute_name:
+                  contact: "toggle-attribute-name-contact"
+                attribute_value: "attribute-value-toggle-switch"
+                style:
+                  type: switch
+                  toggle_colors:
+                    on:
+                      default:
+                        hex: "#00FF00"
+                        alpha: 1
+                    off:
+                      default:
+                        hex: "#FF0000"
+                        alpha: 1
+        # Nested NPS form
+        - size:
+            width: 100%
+            height: auto
+          view:
+            type: nps_form_controller
+            identifier: cool_nps_form
+            nps_identifier: "nps_rating"
+            view:
+              type: linear_layout
+              direction: vertical
+              items:
+              - size:
+                  width: 100%
+                  height: 48
+                margin:
+                  start: 16
+                  end: 16
+                view:
+                  type: label
+                  text: Choose a score!
+                  text_appearance:
+                    color:
+                      default:
+                        hex: "#000000"
+                        alpha: 1
+                    alignment: start
+                    font_size: 18
+              - size:
+                  width: 100%
+                  height: auto
+                margin:
+                  start: 16
+                  end: 16
+                view:
+                  type: score
+                  identifier: "nps_rating"
+                  required: true
+                  attribute_name:
+                    channel: "nps-feedback-attribute-name-channel"
+                  style:
+                    type: number_range
+                    start: 0
+                    end: 10
+                    spacing: 4
+                    bindings:
+                      selected:
+                        shapes:
+                        - type: rectangle
+                          aspect_ratio: 1
+                          scale: 1
+                          color:
+                            default:
+                              hex: "#000000"
+                              alpha: 1
+                        - type: ellipse
+                          aspect_ratio: 1.5
+                          scale: 1
+                          border:
+                            stroke_width: 2
+                            stroke_color:
+                              default:
+                                hex: "#999999"
+                                alpha: 1
+                          color:
+                            default:
+                              hex: "#FFFFFF"
+                              alpha: 0
+                        text_appearance:
+                          font_size: 14
+                          color:
+                            default:
+                              hex: "#FFFFFF"
+                              alpha: 1
+                          font_families:
+                          - permanent_marker
+                      unselected:
+                        shapes:
+                        - type: ellipse
+                          aspect_ratio: 1.5
+                          scale: 1
+                          border:
+                            stroke_width: 2
+                            stroke_color:
+                              default:
+                                hex: "#999999"
+                                alpha: 1
+                          color:
+                            default:
+                              hex: "#FFFFFF"
+                              alpha: 1
+                        text_appearance:
+                          font_size: 14
+                          styles:
+                          - bold
+                          color:
+                            default:
+                              hex: "#333333"
+                              alpha: 1
+              - size:
+                  width: 100%
+                  height: 48
+                margin:
+                  start: 16
+                  end: 16
+                view:
+                  type: label
+                  text: Type stuff!
+                  text_appearance:
+                    color:
+                      default:
+                        hex: "#000000"
+                        alpha: 1
+                    alignment: start
+                    font_size: 18
+              - size:
+                  width: 100%
+                  height: 48
+                margin:
+                  start: 16
+                  end: 16
+                view:
+                  type: text_input
+                  identifier: nps_feedback
+                  input_type: text_multiline
+                  place_holder: blah blah blah...
+                  required: true
+                  border:
+                    stroke_width: 2
+                    stroke_color:
+                      default:
+                        hex: "#666666"
+                        alpha: 1
+                  background_color:
+                    default:
+                      hex: "#ffffff"
+                      alpha: 1
+                  text_appearance:
+                    color:
+                      default:
+                        hex: "#000000"
+                        alpha: 1
+                    alignment: start
+                    font_size: 12
+
+        # BOTTOM-PINNED BUTTON
+        - size:
+            width: 100%
+            height: auto
+          margin:
+            top: 16
+            bottom: 16
+            start: 16
+            end: 16
+          view:
+            type: label_button
+            identifier: SUBMIT_BUTTON
+            background_color:
+              default:
+                hex: "#000000"
+                alpha: 1
+            button_click: ["form_submit", "cancel"]
+            enabled: ["form_validation"]
+            label:
+              type: label
+              text: 'SEND IT!'
+              text_appearance:
+                font_size: 14
+                alignment: center
+                color:
+                  default:
+                    hex: "#ffffff"
+                    alpha: 1

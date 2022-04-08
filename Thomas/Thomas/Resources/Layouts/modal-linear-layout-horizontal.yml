@@ -1,0 +1,122 @@
+---
+version: 1
+presentation:
+  dismiss_on_touch_outside: true
+  type: modal
+  default_placement:
+    size:
+      width: 364
+      height: 30%
+    shade_color:
+      default:
+        hex: '#000000'
+        alpha: 0.7
+view:
+  type: container
+  background_color:
+    default:
+      hex: "#ffffff"
+      alpha: 1
+  border:
+    stroke_color:
+      default:
+        hex: "#000000"
+        alpha: 1
+    stroke_width: 3
+  items:
+  # TOP-LEVEL LINEAR LAYOUT
+  - position:
+      horizontal: center
+      vertical: center
+    size:
+      height: 100%
+      width: 100%
+    view:
+      type: linear_layout
+      direction: horizontal
+      background_color:
+        default:
+          hex: "#ffffff"
+          alpha: 0.35
+      items:
+      - position:
+          horizontal: center
+          vertical: center
+        size:
+          width: auto
+          height: 100%
+        view:
+          type: label
+          text: auto
+          background_color:
+            default:
+              hex: "#FF0000"
+              alpha: 0.35
+          text_appearance:
+            color:
+              default:
+                hex: "#000000"
+                alpha: 1
+            alignment: center
+            font_size: 12
+      - position:
+          horizontal: center
+          vertical: center
+        size:
+          width: 75%
+          height: 100%
+        view:
+          type: label
+          text: 75%
+          background_color:
+            default:
+              hex: "#00FF00"
+              alpha: 0.35
+          text_appearance:
+            color:
+              default:
+                hex: "#000000"
+                alpha: 1
+            alignment: center
+            font_size: 12
+      - position:
+          horizontal: center
+          vertical: center
+        size:
+          width: 20%
+          height: 100%
+        view:
+          type: label
+          text: 20%
+          background_color:
+            default:
+              hex: "#0000FF"
+              alpha: 0.35
+          text_appearance:
+            color:
+              default:
+                hex: "#000000"
+                alpha: 1
+            alignment: center
+            font_size: 12
+      - position:
+          horizontal: center
+          vertical: center
+        size:
+          width: 40
+          height: 100%
+        view:
+          type: label
+          text: 40dp
+          background_color:
+            default:
+              hex: "#FF00FF"
+              alpha: 0.35
+          text_appearance:
+            color:
+              default:
+                hex: "#000000"
+                alpha: 1
+            alignment: center
+            font_size: 12
+

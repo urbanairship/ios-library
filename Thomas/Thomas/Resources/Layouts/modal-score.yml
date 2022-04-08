@@ -2,6 +2,7 @@
 version: 1
 presentation:
   type: modal
+  dismiss_on_touch_outside: true
   default_placement:
     size:
       width: 90%
@@ -24,8 +25,8 @@ view:
     items:
     # Score 1 (0 - 10)
     - size:
-        width: 100%
-        height: auto
+        width: auto
+        height: 40
       margin:
         top: 8
         bottom: 8

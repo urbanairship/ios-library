@@ -1,0 +1,212 @@
+---
+version: 1
+presentation:
+  dismiss_on_touch_outside: true
+  type: modal
+  default_placement:
+    size:
+      width: 90%
+      height: 75%
+    shade_color:
+      default:
+        hex: '#000000'
+        alpha: 0.6
+view:
+  type: container
+  background_color:
+    default:
+      hex: "#ffffff"
+      alpha: 1
+  items:
+  # TOP-LEVEL LINEAR LAYOUT
+  - position:
+      horizontal: center
+      vertical: center
+    size:
+      height: 100%
+      width: 100%
+    view:
+      type: linear_layout
+      direction: vertical
+      items:
+      # SCROLL LAYOUT
+      - position:
+          horizontal: center
+          vertical: center
+        size:
+          width: 100%
+          height: 100%
+        view:
+          type: scroll_layout
+          direction: vertical
+          view:
+            # SCROLL CONTENT (LINEAR LAYOUT)
+            type: linear_layout
+            direction: vertical
+            size:
+              width: 100%
+              height: 100%
+            items:
+            # MEDIA
+            - size:
+                width: 100%
+                height: auto
+              view:
+                type: media
+                url: https://media.giphy.com/media/6y70TnZ4ug9zetb5Oq/giphy.gif
+                media_type: image
+                media_fit: center_inside
+            # HEADER
+            - margin:
+                top: 8
+                bottom: 8
+                start: 8
+                end: 8
+              size:
+                width: 100%
+                height: auto
+              view:
+                type: label
+                text: Lorem ipsum dolor sit amet
+                text_appearance:
+                  color:
+                    default:
+                      hex: "#FF00FF"
+                      alpha: 1
+                  alignment: start
+                  styles:
+                  - bold
+                  - underlined
+                  - italic
+                  font_families:
+                  - permanent_marker
+                  - casual
+                  font_size: 24
+            # BODY
+            - size:
+                width: 100%
+                height: auto
+              margin:
+                top: 8
+                bottom: 8
+                start: 8
+                end: 8
+              view:
+                type: label
+                text: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                  do eiusmod tempor incididunt ut labore et dolore magna aliqua. In
+                  arcu cursus euismod quis viverra nibh. Lobortis feugiat vivamus
+                  at augue eget arcu dictum. Imperdiet dui accumsan sit amet nulla.
+                  Ultrices neque ornare aenean euismod elementum. Tincidunt id aliquet
+                  risus feugiat in ante metus dictum.
+                text_appearance:
+                  color:
+                    default:
+                      hex: "#333333"
+                      alpha: 1
+                  alignment: start
+                  styles: [ italic ]
+                  font_families: [ permanent_marker ]
+                  font_size: 14
+      # BOTTOM-PINNED BUTTON #1
+      - position:
+          horizontal: center
+          vertical: center
+        margin:
+          top: 0
+          bottom: 0
+          start: 8
+          end: 8
+        size:
+          width: 100%
+          height: auto
+        view:
+          type: label_button
+          identifier: BUTTON
+          background_color:
+            default:
+              hex: "#FF0000"
+              alpha: 1
+          label:
+            type: label
+            text_appearance:
+              font_size: 24
+              alignment: center
+              styles:
+              - bold
+              - italic
+              - underlined
+              font_families:
+              - permanent_marker
+              color:
+                default:
+                  hex: "#00FF00"
+                  alpha: 1
+            text: 'NO'
+      # BOTTOM-PINNED BUTTON #2
+      - position:
+          horizontal: center
+          vertical: center
+        margin:
+          top: 0
+          bottom: 0
+          start: 8
+          end: 8
+        size:
+          width: 100%
+          height: auto
+        view:
+          type: label_button
+          identifier: BUTTON
+          background_color:
+            default:
+              hex: "#00FF00"
+              alpha: 1
+          label:
+            type: label
+            text_appearance:
+              font_size: 24
+              alignment: center
+              styles:
+              - bold
+              - italic
+              - underlined
+              font_families:
+              - permanent_marker
+              color:
+                default:
+                  hex: "#FF0000"
+                  alpha: 1
+            text: 'YES'
+  # TOP-LEFT IMAGE BUTTON
+  - position:
+      horizontal: start
+      vertical: top
+    size:
+      width: 48
+      height: 48
+    view:
+      type: image_button
+      identifier: octopus_button
+      button_click: [ cancel ]
+      image:
+        type: url
+        url: https://testing-library.com/img/octopus-64x64.png
+  # TOP-RIGHT ICON BUTTON
+  - position:
+      horizontal: end
+      vertical: top
+    size:
+      width: 48
+      height: 48
+    view:
+      type: image_button
+      identifier: close_button
+      button_click: [ dismiss ]
+      image:
+        type: icon
+        icon: close
+        color:
+          default:
+            hex: "#FF00FF"
+            alpha: 1

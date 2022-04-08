@@ -26,471 +26,46 @@ view:
   type: pager_controller
   view:
     items:
-    - ignore_safe_area: false
-      position:
-        horizontal: center
-        vertical: center
-      size:
-        height: 100%
-        width: 100%
-      view:
-        disable_swipe: false
-        items:
-        - identifier: 8f219146-8624-49b4-9de9-a05dd939e7d9
-          type: pager_item
-          view:
-            background_color:
-              default:
-                alpha: 1
-                hex: "#FFFFFF"
-                type: hex
-            items:
-            - margin:
-                bottom: 28
-                end: 0
-                start: 0
-                top: 0
-              position:
-                horizontal: center
-                vertical: center
-              size:
-                height: 100%
-                width: 100%
+      - ignore_safe_area: false
+        position:
+          horizontal: center
+          vertical: center
+        size:
+          height: 100%
+          width: 100%
+        view:
+          disable_swipe: false
+          items:
+            - identifier: 8f219146-8624-49b4-9de9-a05dd939e7d9
+              type: pager_item
               view:
-                direction: vertical
+                background_color:
+                  default:
+                    alpha: 1
+                    hex: "#FFFFFF"
+                    type: hex
                 items:
-                - margin:
-                    top: 25
-                  size:
-                    height: auto
-                    width: 100%
-                  view:
-                    media_fit: center_crop
-                    media_type: image
-                    type: media
-                    url: https://unroll-images-production.s3.amazonaws.com/projects/2487/1565801064410-banner-500x500-no-words.jpg
-                - margin:
-                    bottom: 0
-                    end: 0
-                    start: 0
-                    top: 10
-                  size:
-                    height: 80
-                    width: 90%
-                  view:
-                    text: Welcome to the app
-                    text_appearance:
-                      alignment: center
-                      color:
-                        default:
-                          alpha: 1
-                          hex: "#020202"
-                          type: hex
-                      font_families:
-                      - sans-serif
-                      font_size: 24
-                      styles:
-                      - bold
-                    type: label
-                - margin:
-                    bottom: 10
-                    end: 0
-                    start: 0
-                    top: 10
-                  size:
-                    height: 100%
-                    width: 90%
-                  view:
-                    direction: vertical
-                    type: scroll_layout
+                  - margin:
+                      bottom: 28
+                      end: 0
+                      start: 0
+                      top: 0
+                    position:
+                      horizontal: center
+                      vertical: center
+                    size:
+                      height: 100%
+                      width: 100%
                     view:
-                      text: This is the app
-                      text_appearance:
-                        alignment: center
-                        color:
-                          default:
-                            alpha: 1
-                            hex: "#222222"
-                            type: hex
-                        font_families:
-                        - sans-serif
-                        font_size: 18
-                        styles: []
-                      type: label
-                - size:
-                    height: 0
-                    width: 0
-                  view:
-                    text: ''
-                    text_appearance:
-                      alignment: center
-                      color:
-                        default:
-                          alpha: 1
-                          hex: "#333333"
-                          type: hex
-                      font_families:
-                      - serif
-                      font_size: 14
-                      styles:
-                      - underlined
-                    type: label
-                - margin:
-                    bottom: 0
-                    top: 10
-                  size:
-                    height: 100
-                    width: 100%
-                  view:
-                    direction: horizontal
-                    items:
-                    - margin:
-                        bottom: 30
-                        end: 20
-                        start: 20
-                        top: 4
-                      size:
-                        height: 40
-                        width: 85%
-                      view:
-                        actions: {}
-                        background_color:
-                          default:
-                            alpha: 1
-                            hex: "#222222"
-                            type: hex
-                        border:
-                          radius: 0
-                          stroke_color:
-                            default:
-                              alpha: 1
-                              hex: "#222222"
-                              type: hex
-                          stroke_width: 1
-                        button_click:
-                        - pager_next
-                        enabled:
-                        - pager_next
-                        identifier: a9b96212-98ab-4695-ad90-1e37cbacc3e3
-                        label:
-                          text: Coool
-                          text_appearance:
-                            alignment: center
-                            color:
-                              default:
-                                alpha: 1
-                                hex: "#FFFFFF"
-                                type: hex
-                            font_families:
-                            - sans-serif
-                            font_size: 24
-                          type: label
-                        type: label_button
-                    type: linear_layout
-                type: linear_layout
-            type: container
-        - identifier: b7a62f09-218b-4fc5-8672-fedd0eb68223
-          type: pager_item
-          view:
-            background_color:
-              default:
-                alpha: 1
-                hex: "#FFFFFF"
-                type: hex
-            items:
-            - margin:
-                bottom: 28
-                end: 0
-                start: 0
-                top: 0
-              position:
-                horizontal: center
-                vertical: center
-              size:
-                height: 100%
-                width: 100%
-              view:
-                direction: vertical
-                items:
-                - margin:
-                    top: 25
-                  size:
-                    height: auto
-                    width: 100%
-                  view:
-                    media_fit: center_crop
-                    media_type: image
-                    type: media
-                    url: https://unroll-images-production.s3.amazonaws.com/projects/2487/1565801064410-banner-500x500-no-words.jpg
-                - margin:
-                    bottom: 0
-                    end: 0
-                    start: 0
-                    top: 10
-                  size:
-                    height: 80
-                    width: 90%
-                  view:
-                    text: 'Highlight of feature #1'
-                    text_appearance:
-                      alignment: center
-                      color:
-                        default:
-                          alpha: 1
-                          hex: "#020202"
-                          type: hex
-                      font_families:
-                      - sans-serif
-                      font_size: 24
-                      styles:
-                      - bold
-                    type: label
-                - margin:
-                    bottom: 10
-                    end: 0
-                    start: 0
-                    top: 10
-                  size:
-                    height: 100%
-                    width: 90%
-                  view:
-                    direction: vertical
-                    type: scroll_layout
-                    view:
-                      text: 'Description about feature #1'
-                      text_appearance:
-                        alignment: center
-                        color:
-                          default:
-                            alpha: 1
-                            hex: "#222222"
-                            type: hex
-                        font_families:
-                        - sans-serif
-                        font_size: 18
-                        styles: []
-                      type: label
-                - size:
-                    height: 0
-                    width: 0
-                  view:
-                    text: ''
-                    text_appearance:
-                      alignment: center
-                      color:
-                        default:
-                          alpha: 1
-                          hex: "#333333"
-                          type: hex
-                      font_families:
-                      - serif
-                      font_size: 14
-                      styles:
-                      - underlined
-                    type: label
-                type: linear_layout
-            type: container
-        - identifier: '0235975e-a30c-4e0b-91ef-284ace180968'
-          type: pager_item
-          view:
-            background_color:
-              default:
-                alpha: 1
-                hex: "#FFFFFF"
-                type: hex
-            items:
-            - margin:
-                bottom: 28
-                end: 0
-                start: 0
-                top: 0
-              position:
-                horizontal: center
-                vertical: center
-              size:
-                height: 100%
-                width: 100%
-              view:
-                direction: vertical
-                items:
-                - margin:
-                    top: 25
-                  size:
-                    height: auto
-                    width: 100%
-                  view:
-                    media_fit: center_crop
-                    media_type: image
-                    type: media
-                    url: https://unroll-images-production.s3.amazonaws.com/projects/2487/1565801064410-banner-500x500-no-words.jpg
-                - margin:
-                    bottom: 0
-                    end: 0
-                    start: 0
-                    top: 10
-                  size:
-                    height: 80
-                    width: 90%
-                  view:
-                    text: 'Highlight of feature #2'
-                    text_appearance:
-                      alignment: center
-                      color:
-                        default:
-                          alpha: 1
-                          hex: "#020202"
-                          type: hex
-                      font_families:
-                      - sans-serif
-                      font_size: 24
-                      styles:
-                      - bold
-                    type: label
-                - margin:
-                    bottom: 10
-                    end: 0
-                    start: 0
-                    top: 10
-                  size:
-                    height: 100%
-                    width: 90%
-                  view:
-                    direction: vertical
-                    type: scroll_layout
-                    view:
-                      text: 'Description about feature #2'
-                      text_appearance:
-                        alignment: center
-                        color:
-                          default:
-                            alpha: 1
-                            hex: "#222222"
-                            type: hex
-                        font_families:
-                        - sans-serif
-                        font_size: 18
-                        styles: []
-                      type: label
-                - size:
-                    height: 0
-                    width: 0
-                  view:
-                    text: ''
-                    text_appearance:
-                      alignment: center
-                      color:
-                        default:
-                          alpha: 1
-                          hex: "#333333"
-                          type: hex
-                      font_families:
-                      - serif
-                      font_size: 14
-                      styles:
-                      - underlined
-                    type: label
-                type: linear_layout
-            type: container
-        - identifier: d780b32a-434a-4f77-87e7-15b46af39373
-          type: pager_item
-          view:
-            background_color:
-              default:
-                alpha: 1
-                hex: "#FFFFFF"
-                type: hex
-            items:
-            - margin:
-                bottom: 28
-                end: 0
-                start: 0
-                top: 0
-              position:
-                horizontal: center
-                vertical: center
-              size:
-                height: 100%
-                width: 100%
-              view:
-                direction: vertical
-                items:
-                - margin:
-                    bottom: 0
-                    end: 20
-                    start: 20
-                    top: 0
-                  size:
-                    height: 100%
-                    width: 100%
-                  view:
-                    direction: vertical
-                    items:
-                    - margin:
-                        bottom: 0
-                        end: 0
-                        start: 0
-                        top: 25
-                      size:
-                        height: 80
-                        width: 90%
-                      view:
-                        text: Do you mind if we stay in touch?
-                        text_appearance:
-                          alignment: center
-                          color:
-                            default:
-                              alpha: 1
-                              hex: "#020202"
-                              type: hex
-                          font_families:
-                          - sans-serif
-                          font_size: 24
-                          styles:
-                          - bold
-                        type: label
-                    - margin:
-                        bottom: 10
-                        end: 0
-                        start: 0
-                        top: 10
-                      size:
-                        height: 100%
-                        width: 90%
-                      view:
-                        text: 'Enable push notifications so you can:'
-                        text_appearance:
-                          alignment: start
-                          color:
-                            default:
-                              alpha: 1
-                              hex: "#222222"
-                              type: hex
-                          font_families:
-                          - sans-serif
-                          font_size: 18
-                          styles: []
-                        type: label
-                    - margin:
-                        bottom: 10
-                        end: 0
-                        start: 0
-                        top: 10
-                      size:
-                        height: 100%
-                        width: 100%
-                      view:
-                        direction: horizontal
-                        items:
+                      direction: vertical
+                      items:
                         - margin:
-                            bottom: 0
-                            end: 20
-                            start: 20
-                            top: 0
+                            top: 25
                           size:
-                            height: 60
-                            width: 60
+                            height: auto
+                            width: 100%
                           view:
-                            media_fit: center_inside
+                            media_fit: center_crop
                             media_type: image
                             type: media
                             url: https://unroll-images-production.s3.amazonaws.com/projects/2487/1565801064410-banner-500x500-no-words.jpg
@@ -498,465 +73,890 @@ view:
                             bottom: 0
                             end: 0
                             start: 0
-                            top: 0
+                            top: 10
                           size:
-                            height: 100%
-                            width: 100%
+                            height: 80
+                            width: 90%
                           view:
-                            text: 'Value proposition #1'
+                            text: Welcome to the app
                             text_appearance:
-                              alignment: start
+                              alignment: center
                               color:
                                 default:
                                   alpha: 1
-                                  hex: "#222222"
+                                  hex: "#020202"
                                   type: hex
                               font_families:
-                              - sans-serif
-                              font_size: 18
-                              styles: []
+                                - sans-serif
+                              font_size: 24
+                              styles:
+                                - bold
                             type: label
-                        type: linear_layout
-                    - margin:
-                        bottom: 10
-                        end: 0
-                        start: 0
-                        top: 10
-                      size:
-                        height: 100%
-                        width: 100%
-                      view:
-                        direction: horizontal
-                        items:
                         - margin:
-                            bottom: 0
-                            end: 20
-                            start: 20
-                            top: 0
-                          size:
-                            height: 60
-                            width: 60
-                          view:
-                            media_fit: center_inside
-                            media_type: image
-                            type: media
-                            url: https://unroll-images-production.s3.amazonaws.com/projects/2487/1565801064410-banner-500x500-no-words.jpg
-                        - margin:
-                            bottom: 0
+                            bottom: 10
                             end: 0
                             start: 0
-                            top: 0
+                            top: 10
                           size:
                             height: 100%
-                            width: 100%
+                            width: 90%
                           view:
-                            text: 'Value proposition #2'
+                            direction: vertical
+                            type: scroll_layout
+                            view:
+                              text: This is the app
+                              text_appearance:
+                                alignment: center
+                                color:
+                                  default:
+                                    alpha: 1
+                                    hex: "#222222"
+                                    type: hex
+                                font_families:
+                                  - sans-serif
+                                font_size: 18
+                                styles: []
+                              type: label
+                        - size:
+                            height: 0
+                            width: 0
+                          view:
+                            text: ''
                             text_appearance:
-                              alignment: start
+                              alignment: center
                               color:
                                 default:
                                   alpha: 1
-                                  hex: "#222222"
+                                  hex: "#333333"
                                   type: hex
                               font_families:
-                              - sans-serif
-                              font_size: 18
-                              styles: []
+                                - serif
+                              font_size: 14
+                              styles:
+                                - underlined
                             type: label
-                        type: linear_layout
-                    - margin:
-                        bottom: 10
-                        end: 0
-                        start: 0
-                        top: 10
-                      size:
-                        height: 100%
-                        width: 100%
-                      view:
-                        direction: horizontal
-                        items:
                         - margin:
                             bottom: 0
-                            end: 20
-                            start: 20
-                            top: 0
+                            top: 10
                           size:
-                            height: 60
-                            width: 60
-                          view:
-                            media_fit: center_inside
-                            media_type: image
-                            type: media
-                            url: https://unroll-images-production.s3.amazonaws.com/projects/2487/1565801064410-banner-500x500-no-words.jpg
-                        - margin:
-                            bottom: 0
-                            end: 0
-                            start: 0
-                            top: 0
-                          size:
-                            height: 100%
+                            height: 100
                             width: 100%
                           view:
-                            text: 'Value proposition #3'
-                            text_appearance:
-                              alignment: start
-                              color:
-                                default:
-                                  alpha: 1
-                                  hex: "#222222"
-                                  type: hex
-                              font_families:
-                              - sans-serif
-                              font_size: 18
-                              styles: []
-                            type: label
-                        type: linear_layout
-                    type: linear_layout
-                - margin:
-                    bottom: 0
-                    top: 10
-                  size:
-                    height: 100
-                    width: 100%
-                  view:
-                    direction: vertical
-                    items:
-                    - margin:
-                        bottom: 4
-                        end: 2
-                        start: 2
-                        top: 4
-                      size:
-                        height: 40
-                        width: 85%
-                      view:
-                        actions:
-                          enable_feature: user_notifications
-                        background_color:
-                          default:
-                            alpha: 1
-                            hex: "#e2e2e2"
-                            type: hex
-                        border:
-                          radius: 3
-                          stroke_color:
-                            default:
-                              alpha: 1
-                              hex: "#e2e2e2"
-                              type: hex
-                          stroke_width: 1
-                        button_click: []
-                        enabled: []
-                        identifier: 0b0c6e37-dfaf-4021-b345-79fe46d48865
-                        label:
-                          text: Yes please
-                          text_appearance:
-                            alignment: center
-                            color:
-                              default:
-                                alpha: 1
-                                hex: "#666666"
-                                type: hex
-                            font_families:
-                            - sans-serif
-                            font_size: 18
-                          type: label
-                        type: label_button
-                    - margin:
-                        bottom: 30
-                        end: 2
-                        start: 2
-                        top: 4
-                      size:
-                        height: 40
-                        width: 85%
-                      view:
-                        actions: {}
-                        background_color:
-                          default:
-                            alpha: 1
-                            hex: "#ffffff"
-                            type: hex
-                        border:
-                          radius: 0
-                          stroke_color:
-                            default:
-                              alpha: 1
-                              hex: "#ffffff"
-                              type: hex
-                          stroke_width: 1
-                        button_click: []
-                        enabled: []
-                        identifier: ea7010f3-a471-4335-86a9-a61a7066de12
-                        label:
-                          text: Maybe later
-                          text_appearance:
-                            alignment: center
-                            color:
-                              default:
-                                alpha: 1
-                                hex: "#666666"
-                                type: hex
-                            font_families:
-                            - sans-serif
-                            font_size: 18
-                          type: label
-                        type: label_button
-                    type: linear_layout
-                type: linear_layout
-            type: container
-        - identifier: 5a5b6768-e9f2-4453-aa78-5893b75a9948
-          type: pager_item
-          view:
-            background_color:
-              default:
-                alpha: 1
-                hex: "#FFFFFF"
-                type: hex
-            items:
-            - margin:
-                bottom: 28
-                end: 0
-                start: 0
-                top: 0
-              position:
-                horizontal: center
-                vertical: center
-              size:
-                height: 100%
-                width: 100%
+                            direction: horizontal
+                            items:
+                              - margin:
+                                  bottom: 30
+                                  end: 20
+                                  start: 20
+                                  top: 4
+                                size:
+                                  height: 40
+                                  width: 85%
+                                view:
+                                  actions: {}
+                                  background_color:
+                                    default:
+                                      alpha: 1
+                                      hex: "#222222"
+                                      type: hex
+                                  border:
+                                    radius: 0
+                                    stroke_color:
+                                      default:
+                                        alpha: 1
+                                        hex: "#222222"
+                                        type: hex
+                                    stroke_width: 1
+                                  button_click:
+                                    - pager_next
+                                  enabled:
+                                    - pager_next
+                                  identifier: a9b96212-98ab-4695-ad90-1e37cbacc3e3
+                                  label:
+                                    text: Coool
+                                    text_appearance:
+                                      alignment: center
+                                      color:
+                                        default:
+                                          alpha: 1
+                                          hex: "#FFFFFF"
+                                          type: hex
+                                      font_families:
+                                        - sans-serif
+                                      font_size: 24
+                                    type: label
+                                  type: label_button
+                            type: linear_layout
+                      type: linear_layout
+                type: container
+            - identifier: b7a62f09-218b-4fc5-8672-fedd0eb68223
+              type: pager_item
               view:
-                direction: vertical
+                background_color:
+                  default:
+                    alpha: 1
+                    hex: "#FFFFFF"
+                    type: hex
                 items:
-                - margin:
-                    bottom: 0
-                    end: 0
-                    start: 0
-                    top: 25
-                  size:
-                    height: 80
-                    width: 90%
-                  view:
-                    text: Thank you
-                    text_appearance:
-                      alignment: center
-                      color:
-                        default:
-                          alpha: 1
-                          hex: "#020202"
-                          type: hex
-                      font_families:
-                      - sans-serif
-                      font_size: 24
-                      styles:
-                      - bold
-                    type: label
-                - margin:
-                    top: 10
-                  size:
-                    height: auto
-                    width: 100%
-                  view:
-                    media_fit: center_crop
-                    media_type: image
-                    type: media
-                    url: https://unroll-images-production.s3.amazonaws.com/projects/2487/1565801064410-banner-500x500-no-words.jpg
-                - margin:
-                    bottom: 10
-                    end: 0
-                    start: 0
-                    top: 10
-                  size:
-                    height: 100%
-                    width: 90%
-                  view:
-                    direction: vertical
-                    type: scroll_layout
+                  - margin:
+                      bottom: 28
+                      end: 0
+                      start: 0
+                      top: 0
+                    position:
+                      horizontal: center
+                      vertical: center
+                    size:
+                      height: 100%
+                      width: 100%
                     view:
-                      text: "Weâ\x80\x99re so glad youâ\x80\x99re here. Customize
+                      direction: vertical
+                      items:
+                        - margin:
+                            top: 25
+                          size:
+                            height: auto
+                            width: 100%
+                          view:
+                            media_fit: center_crop
+                            media_type: image
+                            type: media
+                            url: https://unroll-images-production.s3.amazonaws.com/projects/2487/1565801064410-banner-500x500-no-words.jpg
+                        - margin:
+                            bottom: 0
+                            end: 0
+                            start: 0
+                            top: 10
+                          size:
+                            height: 80
+                            width: 90%
+                          view:
+                            text: 'Highlight of feature #1'
+                            text_appearance:
+                              alignment: center
+                              color:
+                                default:
+                                  alpha: 1
+                                  hex: "#020202"
+                                  type: hex
+                              font_families:
+                                - sans-serif
+                              font_size: 24
+                              styles:
+                                - bold
+                            type: label
+                        - margin:
+                            bottom: 10
+                            end: 0
+                            start: 0
+                            top: 10
+                          size:
+                            height: 100%
+                            width: 90%
+                          view:
+                            direction: vertical
+                            type: scroll_layout
+                            view:
+                              text: 'Description about feature #1'
+                              text_appearance:
+                                alignment: center
+                                color:
+                                  default:
+                                    alpha: 1
+                                    hex: "#222222"
+                                    type: hex
+                                font_families:
+                                  - sans-serif
+                                font_size: 18
+                                styles: []
+                              type: label
+                        - size:
+                            height: 0
+                            width: 0
+                          view:
+                            text: ''
+                            text_appearance:
+                              alignment: center
+                              color:
+                                default:
+                                  alpha: 1
+                                  hex: "#333333"
+                                  type: hex
+                              font_families:
+                                - serif
+                              font_size: 14
+                              styles:
+                                - underlined
+                            type: label
+                      type: linear_layout
+                type: container
+            - identifier: '0235975e-a30c-4e0b-91ef-284ace180968'
+              type: pager_item
+              view:
+                background_color:
+                  default:
+                    alpha: 1
+                    hex: "#FFFFFF"
+                    type: hex
+                items:
+                  - margin:
+                      bottom: 28
+                      end: 0
+                      start: 0
+                      top: 0
+                    position:
+                      horizontal: center
+                      vertical: center
+                    size:
+                      height: 100%
+                      width: 100%
+                    view:
+                      direction: vertical
+                      items:
+                        - margin:
+                            top: 25
+                          size:
+                            height: auto
+                            width: 100%
+                          view:
+                            media_fit: center_crop
+                            media_type: image
+                            type: media
+                            url: https://unroll-images-production.s3.amazonaws.com/projects/2487/1565801064410-banner-500x500-no-words.jpg
+                        - margin:
+                            bottom: 0
+                            end: 0
+                            start: 0
+                            top: 10
+                          size:
+                            height: 80
+                            width: 90%
+                          view:
+                            text: 'Highlight of feature #2'
+                            text_appearance:
+                              alignment: center
+                              color:
+                                default:
+                                  alpha: 1
+                                  hex: "#020202"
+                                  type: hex
+                              font_families:
+                                - sans-serif
+                              font_size: 24
+                              styles:
+                                - bold
+                            type: label
+                        - margin:
+                            bottom: 10
+                            end: 0
+                            start: 0
+                            top: 10
+                          size:
+                            height: 100%
+                            width: 90%
+                          view:
+                            direction: vertical
+                            type: scroll_layout
+                            view:
+                              text: 'Description about feature #2'
+                              text_appearance:
+                                alignment: center
+                                color:
+                                  default:
+                                    alpha: 1
+                                    hex: "#222222"
+                                    type: hex
+                                font_families:
+                                  - sans-serif
+                                font_size: 18
+                                styles: []
+                              type: label
+                        - size:
+                            height: 0
+                            width: 0
+                          view:
+                            text: ''
+                            text_appearance:
+                              alignment: center
+                              color:
+                                default:
+                                  alpha: 1
+                                  hex: "#333333"
+                                  type: hex
+                              font_families:
+                                - serif
+                              font_size: 14
+                              styles:
+                                - underlined
+                            type: label
+                      type: linear_layout
+                type: container
+            - identifier: d780b32a-434a-4f77-87e7-15b46af39373
+              type: pager_item
+              view:
+                background_color:
+                  default:
+                    alpha: 1
+                    hex: "#FFFFFF"
+                    type: hex
+                items:
+                  - margin:
+                      bottom: 28
+                      end: 0
+                      start: 0
+                      top: 0
+                    position:
+                      horizontal: center
+                      vertical: center
+                    size:
+                      height: 100%
+                      width: 100%
+                    view:
+                      direction: vertical
+                      items:
+                        - margin:
+                            bottom: 0
+                            end: 20
+                            start: 20
+                            top: 0
+                          size:
+                            height: 100%
+                            width: 100%
+                          view:
+                            direction: vertical
+                            items:
+                              - margin:
+                                  bottom: 0
+                                  end: 0
+                                  start: 0
+                                  top: 25
+                                size:
+                                  height: 80
+                                  width: 90%
+                                view:
+                                  text: Do you mind if we stay in touch?
+                                  text_appearance:
+                                    alignment: center
+                                    color:
+                                      default:
+                                        alpha: 1
+                                        hex: "#020202"
+                                        type: hex
+                                    font_families:
+                                      - sans-serif
+                                    font_size: 24
+                                    styles:
+                                      - bold
+                                  type: label
+                              - margin:
+                                  bottom: 10
+                                  end: 0
+                                  start: 0
+                                  top: 10
+                                size:
+                                  height: 100%
+                                  width: 90%
+                                view:
+                                  text: 'Enable push notifications so you can:'
+                                  text_appearance:
+                                    alignment: start
+                                    color:
+                                      default:
+                                        alpha: 1
+                                        hex: "#222222"
+                                        type: hex
+                                    font_families:
+                                      - sans-serif
+                                    font_size: 18
+                                    styles: []
+                                  type: label
+                              - margin:
+                                  bottom: 10
+                                  end: 0
+                                  start: 0
+                                  top: 10
+                                size:
+                                  height: 100%
+                                  width: 100%
+                                view:
+                                  direction: horizontal
+                                  items:
+                                    - margin:
+                                        bottom: 0
+                                        end: 20
+                                        start: 20
+                                        top: 0
+                                      size:
+                                        height: 60
+                                        width: 60
+                                      view:
+                                        media_fit: center_inside
+                                        media_type: image
+                                        type: media
+                                        url: https://unroll-images-production.s3.amazonaws.com/projects/2487/1565801064410-banner-500x500-no-words.jpg
+                                    - margin:
+                                        bottom: 0
+                                        end: 0
+                                        start: 0
+                                        top: 0
+                                      size:
+                                        height: 100%
+                                        width: 100%
+                                      view:
+                                        text: 'Value proposition #1'
+                                        text_appearance:
+                                          alignment: start
+                                          color:
+                                            default:
+                                              alpha: 1
+                                              hex: "#222222"
+                                              type: hex
+                                          font_families:
+                                            - sans-serif
+                                          font_size: 18
+                                          styles: []
+                                        type: label
+                                  type: linear_layout
+                              - margin:
+                                  bottom: 10
+                                  end: 0
+                                  start: 0
+                                  top: 10
+                                size:
+                                  height: 100%
+                                  width: 100%
+                                view:
+                                  direction: horizontal
+                                  items:
+                                    - margin:
+                                        bottom: 0
+                                        end: 20
+                                        start: 20
+                                        top: 0
+                                      size:
+                                        height: 60
+                                        width: 60
+                                      view:
+                                        media_fit: center_inside
+                                        media_type: image
+                                        type: media
+                                        url: https://unroll-images-production.s3.amazonaws.com/projects/2487/1565801064410-banner-500x500-no-words.jpg
+                                    - margin:
+                                        bottom: 0
+                                        end: 0
+                                        start: 0
+                                        top: 0
+                                      size:
+                                        height: 100%
+                                        width: 100%
+                                      view:
+                                        text: 'Value proposition #2'
+                                        text_appearance:
+                                          alignment: start
+                                          color:
+                                            default:
+                                              alpha: 1
+                                              hex: "#222222"
+                                              type: hex
+                                          font_families:
+                                            - sans-serif
+                                          font_size: 18
+                                          styles: []
+                                        type: label
+                                  type: linear_layout
+                              - margin:
+                                  bottom: 10
+                                  end: 0
+                                  start: 0
+                                  top: 10
+                                size:
+                                  height: 100%
+                                  width: 100%
+                                view:
+                                  direction: horizontal
+                                  items:
+                                    - margin:
+                                        bottom: 0
+                                        end: 20
+                                        start: 20
+                                        top: 0
+                                      size:
+                                        height: 60
+                                        width: 60
+                                      view:
+                                        media_fit: center_inside
+                                        media_type: image
+                                        type: media
+                                        url: https://unroll-images-production.s3.amazonaws.com/projects/2487/1565801064410-banner-500x500-no-words.jpg
+                                    - margin:
+                                        bottom: 0
+                                        end: 0
+                                        start: 0
+                                        top: 0
+                                      size:
+                                        height: 100%
+                                        width: 100%
+                                      view:
+                                        text: 'Value proposition #3'
+                                        text_appearance:
+                                          alignment: start
+                                          color:
+                                            default:
+                                              alpha: 1
+                                              hex: "#222222"
+                                              type: hex
+                                          font_families:
+                                            - sans-serif
+                                          font_size: 18
+                                          styles: []
+                                        type: label
+                                  type: linear_layout
+                            type: linear_layout
+                        - margin:
+                            bottom: 0
+                            top: 10
+                          size:
+                            height: 100
+                            width: 100%
+                          view:
+                            direction: vertical
+                            items:
+                              - margin:
+                                  bottom: 4
+                                  end: 2
+                                  start: 2
+                                  top: 4
+                                size:
+                                  height: 40
+                                  width: 85%
+                                view:
+                                  actions:
+                                    enable_feature: user_notifications
+                                  background_color:
+                                    default:
+                                      alpha: 1
+                                      hex: "#e2e2e2"
+                                      type: hex
+                                  border:
+                                    radius: 3
+                                    stroke_color:
+                                      default:
+                                        alpha: 1
+                                        hex: "#e2e2e2"
+                                        type: hex
+                                    stroke_width: 1
+                                  button_click: []
+                                  enabled: []
+                                  identifier: 0b0c6e37-dfaf-4021-b345-79fe46d48865
+                                  label:
+                                    text: Yes please
+                                    text_appearance:
+                                      alignment: center
+                                      color:
+                                        default:
+                                          alpha: 1
+                                          hex: "#666666"
+                                          type: hex
+                                      font_families:
+                                        - sans-serif
+                                      font_size: 18
+                                    type: label
+                                  type: label_button
+                              - margin:
+                                  bottom: 30
+                                  end: 2
+                                  start: 2
+                                  top: 4
+                                size:
+                                  height: 40
+                                  width: 85%
+                                view:
+                                  actions: {}
+                                  background_color:
+                                    default:
+                                      alpha: 1
+                                      hex: "#ffffff"
+                                      type: hex
+                                  border:
+                                    radius: 0
+                                    stroke_color:
+                                      default:
+                                        alpha: 1
+                                        hex: "#ffffff"
+                                        type: hex
+                                    stroke_width: 1
+                                  button_click: []
+                                  enabled: []
+                                  identifier: ea7010f3-a471-4335-86a9-a61a7066de12
+                                  label:
+                                    text: Maybe later
+                                    text_appearance:
+                                      alignment: center
+                                      color:
+                                        default:
+                                          alpha: 1
+                                          hex: "#666666"
+                                          type: hex
+                                      font_families:
+                                        - sans-serif
+                                      font_size: 18
+                                    type: label
+                                  type: label_button
+                            type: linear_layout
+                      type: linear_layout
+                type: container
+            - identifier: 5a5b6768-e9f2-4453-aa78-5893b75a9948
+              type: pager_item
+              view:
+                background_color:
+                  default:
+                    alpha: 1
+                    hex: "#FFFFFF"
+                    type: hex
+                items:
+                  - margin:
+                      bottom: 28
+                      end: 0
+                      start: 0
+                      top: 0
+                    position:
+                      horizontal: center
+                      vertical: center
+                    size:
+                      height: 100%
+                      width: 100%
+                    view:
+                      direction: vertical
+                      items:
+                        - margin:
+                            bottom: 0
+                            end: 0
+                            start: 0
+                            top: 25
+                          size:
+                            height: 80
+                            width: 90%
+                          view:
+                            text: Thank you
+                            text_appearance:
+                              alignment: center
+                              color:
+                                default:
+                                  alpha: 1
+                                  hex: "#020202"
+                                  type: hex
+                              font_families:
+                                - sans-serif
+                              font_size: 24
+                              styles:
+                                - bold
+                            type: label
+                        - margin:
+                            top: 10
+                          size:
+                            height: auto
+                            width: 100%
+                          view:
+                            media_fit: center_crop
+                            media_type: image
+                            type: media
+                            url: https://unroll-images-production.s3.amazonaws.com/projects/2487/1565801064410-banner-500x500-no-words.jpg
+                        - margin:
+                            bottom: 10
+                            end: 0
+                            start: 0
+                            top: 10
+                          size:
+                            height: 100%
+                            width: 90%
+                          view:
+                            direction: vertical
+                            type: scroll_layout
+                            view:
+                              text: "Weâ\x80\x99re so glad youâ\x80\x99re here. Customize
                         your experience by setting your notification preferences today!"
-                      text_appearance:
-                        alignment: center
-                        color:
-                          default:
-                            alpha: 1
-                            hex: "#222222"
-                            type: hex
-                        font_families:
-                        - sans-serif
-                        font_size: 18
-                        styles: []
-                      type: label
-                - size:
-                    height: 0
-                    width: 0
-                  view:
-                    text: ''
-                    text_appearance:
-                      alignment: center
-                      color:
-                        default:
-                          alpha: 1
-                          hex: "#333333"
-                          type: hex
-                      font_families:
-                      - serif
-                      font_size: 14
-                      styles:
-                      - underlined
-                    type: label
-                - margin:
-                    bottom: 0
-                    top: 10
-                  size:
-                    height: 100
-                    width: 100%
-                  view:
-                    direction: vertical
-                    items:
-                    - margin:
-                        bottom: 4
-                        end: 2
-                        start: 2
-                        top: 4
-                      size:
-                        height: 40
-                        width: 85%
-                      view:
-                        actions:
-                          deep_link_action: ''
-                        background_color:
-                          default:
-                            alpha: 1
-                            hex: "#e2e2e2"
-                            type: hex
-                        border:
-                          radius: 4
-                          stroke_color:
-                            default:
-                              alpha: 1
-                              hex: "#e2e2e2"
-                              type: hex
-                          stroke_width: 1
-                        button_click: []
-                        enabled: []
-                        identifier: 6205af07-1c6b-4668-9f2e-01418006d09a
-                        label:
-                          text: Set my preferences
-                          text_appearance:
-                            alignment: center
-                            color:
-                              default:
-                                alpha: 1
-                                hex: "#666666"
-                                type: hex
-                            font_families:
-                            - sans-serif
-                            font_size: 18
-                          type: label
-                        type: label_button
-                    - margin:
-                        bottom: 30
-                        end: 2
-                        start: 2
-                        top: 4
-                      size:
-                        height: 40
-                        width: 85%
-                      view:
-                        actions: {}
-                        background_color:
-                          default:
-                            alpha: 1
-                            hex: "#ffffff"
-                            type: hex
-                        border:
-                          radius: 0
-                          stroke_color:
-                            default:
-                              alpha: 1
-                              hex: "#ffffff"
-                              type: hex
-                          stroke_width: 1
-                        button_click: []
-                        enabled: []
-                        identifier: c19e0cba-bb93-4fd5-97cf-85800bfdaf05
-                        label:
-                          text: Maybe later
-                          text_appearance:
-                            alignment: center
-                            color:
-                              default:
-                                alpha: 1
-                                hex: "#666666"
-                                type: hex
-                            font_families:
-                            - sans-serif
-                            font_size: 18
-                          type: label
-                        type: label_button
-                    type: linear_layout
-                type: linear_layout
-            type: container
-        type: pager
-    - margin:
-        bottom: 0
-        end: 10
-        start: 0
-        top: 10
-      position:
-        horizontal: end
-        vertical: top
-      size:
-        height: 48
-        width: 48
-      view:
-        button_click:
-        - dismiss
-        identifier: dismiss_button
-        image:
-          color:
-            default:
-              alpha: 1
-              hex: "#000000"
-              type: hex
-          icon: close
-          scale: 0.4
-          type: icon
-        type: image_button
-    - margin:
-        bottom: 4
-        end: 0
-        start: 0
-        top: 0
-      position:
-        horizontal: center
-        vertical: bottom
-      size:
-        height: 20
-        width: 100%
-      view:
-        bindings:
-          selected:
-            shapes:
-            - aspect_ratio: 1
-              color:
-                default:
-                  alpha: 1
-                  hex: "#AAAAAA"
-                  type: hex
-              scale: 1
-              type: ellipse
-          unselected:
-            shapes:
-            - aspect_ratio: 1
-              color:
-                default:
-                  alpha: 1
-                  hex: "#CCCCCC"
-                  type: hex
-              scale: 1
-              type: ellipse
-        spacing: 4
-        type: pager_indicator
+                              text_appearance:
+                                alignment: center
+                                color:
+                                  default:
+                                    alpha: 1
+                                    hex: "#222222"
+                                    type: hex
+                                font_families:
+                                  - sans-serif
+                                font_size: 18
+                                styles: []
+                              type: label
+                        - size:
+                            height: 0
+                            width: 0
+                          view:
+                            text: ''
+                            text_appearance:
+                              alignment: center
+                              color:
+                                default:
+                                  alpha: 1
+                                  hex: "#333333"
+                                  type: hex
+                              font_families:
+                                - serif
+                              font_size: 14
+                              styles:
+                                - underlined
+                            type: label
+                        - margin:
+                            bottom: 0
+                            top: 10
+                          size:
+                            height: 100
+                            width: 100%
+                          view:
+                            direction: vertical
+                            items:
+                              - margin:
+                                  bottom: 4
+                                  end: 2
+                                  start: 2
+                                  top: 4
+                                size:
+                                  height: 40
+                                  width: 85%
+                                view:
+                                  actions:
+                                    deep_link_action: ''
+                                  background_color:
+                                    default:
+                                      alpha: 1
+                                      hex: "#e2e2e2"
+                                      type: hex
+                                  border:
+                                    radius: 4
+                                    stroke_color:
+                                      default:
+                                        alpha: 1
+                                        hex: "#e2e2e2"
+                                        type: hex
+                                    stroke_width: 1
+                                  button_click: []
+                                  enabled: []
+                                  identifier: 6205af07-1c6b-4668-9f2e-01418006d09a
+                                  label:
+                                    text: Set my preferences
+                                    text_appearance:
+                                      alignment: center
+                                      color:
+                                        default:
+                                          alpha: 1
+                                          hex: "#666666"
+                                          type: hex
+                                      font_families:
+                                        - sans-serif
+                                      font_size: 18
+                                    type: label
+                                  type: label_button
+                              - margin:
+                                  bottom: 30
+                                  end: 2
+                                  start: 2
+                                  top: 4
+                                size:
+                                  height: 40
+                                  width: 85%
+                                view:
+                                  actions: {}
+                                  background_color:
+                                    default:
+                                      alpha: 1
+                                      hex: "#ffffff"
+                                      type: hex
+                                  border:
+                                    radius: 0
+                                    stroke_color:
+                                      default:
+                                        alpha: 1
+                                        hex: "#ffffff"
+                                        type: hex
+                                    stroke_width: 1
+                                  button_click: []
+                                  enabled: []
+                                  identifier: c19e0cba-bb93-4fd5-97cf-85800bfdaf05
+                                  label:
+                                    text: Maybe later
+                                    text_appearance:
+                                      alignment: center
+                                      color:
+                                        default:
+                                          alpha: 1
+                                          hex: "#666666"
+                                          type: hex
+                                      font_families:
+                                        - sans-serif
+                                      font_size: 18
+                                    type: label
+                                  type: label_button
+                            type: linear_layout
+                      type: linear_layout
+                type: container
+          type: pager
+      - margin:
+          bottom: 0
+          end: 10
+          start: 0
+          top: 10
+        position:
+          horizontal: end
+          vertical: top
+        size:
+          height: 48
+          width: 48
+        view:
+          button_click:
+            - dismiss
+          identifier: dismiss_button
+          image:
+            color:
+              default:
+                alpha: 1
+                hex: "#000000"
+                type: hex
+            icon: close
+            scale: 0.4
+            type: icon
+          type: image_button
+      - margin:
+          bottom: 4
+          end: 0
+          start: 0
+          top: 0
+        position:
+          horizontal: center
+          vertical: bottom
+        size:
+          height: 20
+          width: 100%
+        view:
+          bindings:
+            selected:
+              shapes:
+                - aspect_ratio: 1
+                  color:
+                    default:
+                      alpha: 1
+                      hex: "#AAAAAA"
+                      type: hex
+                  scale: 1
+                  type: ellipse
+            unselected:
+              shapes:
+                - aspect_ratio: 1
+                  color:
+                    default:
+                      alpha: 1
+                      hex: "#CCCCCC"
+                      type: hex
+                  scale: 1
+                  type: ellipse
+          spacing: 4
+          type: pager_indicator
     type: container

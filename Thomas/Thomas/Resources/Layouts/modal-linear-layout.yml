@@ -1,36 +1,36 @@
 ---
 version: 1
 presentation:
-  type: modal
   dismiss_on_touch_outside: true
+  type: modal
   default_placement:
     size:
-      width: 80%
-      height: 80%
-    position:
-      horizontal: center
-      vertical: center
+      width: 75%
+      height: 60%
     shade_color:
       default:
-        hex: "#444444"
-        alpha: .3
+        hex: "#000000"
+        alpha: 0
 view:
   type: container
   background_color:
     default:
-      hex: "#FFFFFF"
+      hex: "#ffffff"
+      alpha: 1
   border:
     stroke_color:
       default:
         hex: "#00FF00"
+        alpha: 1
     stroke_width: 5
     radius: 15
   items:
+  # TOP-LEVEL LINEAR LAYOUT
   - position:
       horizontal: center
-      vertical: top
+      vertical: center
     size:
-      height: auto
+      height: 100%
       width: 100%
     view:
       type: linear_layout
@@ -38,64 +38,71 @@ view:
       items:
       - size:
           width: 100%
-          height: auto
-        weight: 1
+          height: 100%
         view:
+          # SCROLL CONTENT (CONTAINER)
           type: container
           items:
           - position:
               horizontal: center
               vertical: center
             margin:
-              top: 50
-              bottom: 50
-              start: 50
-              end: 50
+              top: 16
+              bottom: 16
+              start: 16
+              end: 16
             size:
               width: 100%
-              height: auto
+              height: 100%
             view:
               type: label
-              text: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua. In arcu
-                cursus euismod quis viverra nibh. Lobortis feugiat vivamus at augue
-                eget arcu dictum. Imperdiet dui accumsan sit amet nulla. Ultrices
-                neque ornare aenean euismod elementum. Tincidunt id aliquet risus
-                feugiat in ante metus dictum.
+              text: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                do eiusmod tempor incididunt ut labore et dolore magna aliqua. In
+                arcu cursus euismod quis viverra nibh. Lobortis feugiat vivamus
+                at augue eget arcu dictum. Imperdiet dui accumsan sit amet nulla.
+                Ultrices neque ornare aenean euismod elementum. Tincidunt id aliquet
+                risus feugiat in ante metus dictum
               text_appearance:
-                font_size: 14
                 color:
                   default:
                     hex: "#333333"
+                    alpha: 1
                 alignment: start
                 styles:
-                  - italic
+                - italic
                 font_families:
-                  - permanent_marker
-                  - casual
+                - permanent_marker
+                - casual
+                font_size: 14
+      # BOTTOM-PINNED BUTTON #1
       - size:
           width: 100%
           height: auto
         margin:
-          top: 50
-          bottom: 50
-          start: 50
-          end: 50
+          top: 16
+          bottom: 16
+          start: 16
+          end: 16
         view:
           type: label_button
           identifier: BUTTON
           background_color:
             default:
               hex: "#FF0000"
+              alpha: 1
+          button_click:
+          - cancel
           label:
             type: label
+            text: 'Push me!'
             text_appearance:
               font_size: 24
               alignment: center
-              styles:
-              - bold
-              font_families:
               color:
                 default:
                   hex: "#333333"
-            text: Push me!
+                  alpha: 1
+              styles:
+              - bold
+              font_families:
+              - casual

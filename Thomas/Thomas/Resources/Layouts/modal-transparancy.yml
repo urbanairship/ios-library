@@ -1,0 +1,96 @@
+#100% — FF
+#95% — F2
+#90% — E6
+#85% — D9
+#80% — CC
+#75% — BF
+#70% — B3
+#65% — A6
+#60% — 99
+#55% — 8C
+#50% — 80
+#45% — 73
+#40% — 66
+#35% — 59
+#30% — 4D
+#25% — 40
+#20% — 33
+#15% — 26
+#10% — 1A
+#5% — 0D
+#0% — 00
+---
+version: 1
+presentation:
+  dismiss_on_touch_outside: true
+  type: modal
+  default_placement:
+    size:
+      width: 75%
+      height: 50%
+    shade_color:
+      default:
+        hex: '#000000'
+        alpha: 0.75
+view:
+  type: container
+  background_color:
+    default:
+      hex: "#FFFFFF"
+      alpha: .25
+  border:
+    stroke_color:
+      default:
+        hex: "#FF0000"
+        alpha: 0.5
+    stroke_width: 2
+    radius: 0
+  items:
+  - position:
+      horizontal: center
+      vertical: center
+    size:
+      height: 100%
+      width: 100%
+    margin:
+      top: 16
+      bottom: 16
+      start: 16
+      end: 16
+    view:
+      type: container
+      background_color:
+        default:
+          hex: "#FFFFFF"
+          alpha: 0.25
+      border:
+        stroke_color:
+          default:
+            hex: "#0000FF"
+            alpha: 0.5
+        stroke_width: 2
+        radius: 0
+      items:
+      - position:
+          horizontal: center
+          vertical: center
+        margin:
+          top: 16
+          bottom: 16
+          start: 16
+          end: 16
+        size:
+          width: auto
+          height: auto
+        view:
+          type: label
+          text: Lorem ipsum dolor sit amet
+          text_appearance:
+            color:
+              default:
+                hex: "#333333"
+                alpha: 1
+            alignment: center
+            font_size: 14
+            font_families:
+            - permanent_marker

@@ -2,23 +2,21 @@
 version: 1
 presentation:
   type: modal
-  dismiss_on_touch_outside: true
   default_placement:
     size:
-      width: 80%
-      height: 80%
-    position:
-      horizontal: center
-      vertical: center
+      width: 90%
+      height: auto
     shade_color:
       default:
-        hex: "#444444"
-        alpha: .3
+        hex: '#000000'
+        alpha: 0.75
+  dismiss_on_touch_outside: true
 view:
   type: container
   background_color:
     default:
-      hex: "#FFFFFF"
+      hex: "#ffffff"
+      alpha: 1
   items:
   - position:
       horizontal: center
@@ -34,33 +32,33 @@ view:
       # Size
       #
       - margin:
-          top: 16
-          bottom: 16
-          start: 16
-          end: 16
+          top: 8
+          bottom: 8
+          start: 8
+          end: 8
         size:
           width: 100%
           height: auto
         view:
           type: label
-          content_description: Size
           text: Size
           text_appearance:
             alignment: start
-            styles:
-              - bold
-              - underlined
-            font_size: 16
             color:
               default:
                 hex: "#000000"
+                alpha: 1
+            styles:
+            - bold
+            - underlined
+            font_size: 16
       - margin:
-          top: 48
+          top: 0
           bottom: 8
           start: 8
           end: 8
         size:
-          width: auto
+          width: 100%
           height: auto
         view:
           type: label
@@ -71,13 +69,14 @@ view:
             color:
               default:
                 hex: "#000000"
+                alpha: 1
       - margin:
           top: 0
           bottom: 8
           start: 8
           end: 8
         size:
-          width: auto
+          width: 100%
           height: auto
         view:
           type: label
@@ -88,13 +87,14 @@ view:
             color:
               default:
                 hex: "#000000"
+                alpha: 1
       - margin:
           top: 0
           bottom: 8
           start: 8
           end: 8
         size:
-          width: auto
+          width: 100%
           height: auto
         view:
           type: label
@@ -105,13 +105,14 @@ view:
             color:
               default:
                 hex: "#000000"
+                alpha: 1
       - margin:
           top: 0
           bottom: 8
           start: 8
           end: 8
         size:
-          width: auto
+          width: 100%
           height: auto
         view:
           type: label
@@ -122,13 +123,14 @@ view:
             color:
               default:
                 hex: "#000000"
+                alpha: 1
       - margin:
           top: 0
           bottom: 8
           start: 8
           end: 8
         size:
-          width: auto
+          width: 100%
           height: auto
         view:
           type: label
@@ -139,6 +141,7 @@ view:
             color:
               default:
                 hex: "#000000"
+                alpha: 1
       #
       # Alignment
       #
@@ -156,12 +159,13 @@ view:
           text_appearance:
             alignment: start
             styles:
-              - bold
-              - underlined
+            - bold
+            - underlined
             font_size: 16
             color:
               default:
                 hex: "#000000"
+                alpha: 1
       - margin:
           top: 0
           bottom: 8
@@ -179,6 +183,7 @@ view:
             color:
               default:
                 hex: "#000000"
+                alpha: 1
       - margin:
           top: 0
           bottom: 8
@@ -196,6 +201,7 @@ view:
             color:
               default:
                 hex: "#000000"
+                alpha: 1
       - margin:
           top: 0
           bottom: 8
@@ -213,6 +219,7 @@ view:
             color:
               default:
                 hex: "#000000"
+                alpha: 1
       #
       # Style
       #
@@ -230,19 +237,20 @@ view:
           text_appearance:
             alignment: start
             styles:
-              - bold
-              - underlined
+            - bold
+            - underlined
             font_size: 16
             color:
               default:
                 hex: "#000000"
+                alpha: 1
       - margin:
           top: 0
           bottom: 8
           start: 8
           end: 8
         size:
-          width: auto
+          width: 100%
           height: auto
         view:
           type: label
@@ -253,81 +261,86 @@ view:
             color:
               default:
                 hex: "#000000"
+                alpha: 1
       - margin:
           top: 0
           bottom: 8
           start: 8
           end: 8
         size:
-          width: auto
+          width: 100%
           height: auto
         view:
           type: label
           text: Bold
           text_appearance:
             styles:
-              - bold
+            - bold
             alignment: start
             font_size: 12
             color:
               default:
                 hex: "#000000"
+                alpha: 1
       - margin:
           top: 0
           bottom: 8
           start: 8
           end: 8
         size:
-          width: auto
+          width: 100%
           height: auto
         view:
           type: label
-          text: Underlined
+          text: Underline
           text_appearance:
             styles:
-              - underlined
+            - underlined
             alignment: start
             font_size: 12
             color:
               default:
                 hex: "#000000"
+                alpha: 1
       - margin:
           top: 0
           bottom: 8
           start: 8
           end: 8
         size:
-          width: auto
+          width: 100%
           height: auto
         view:
           type: label
           text: Italic
           text_appearance:
             styles:
-              - italic
+            - italic
             alignment: start
             font_size: 12
             color:
               default:
                 hex: "#000000"
+                alpha: 1
       - margin:
           top: 0
           bottom: 8
           start: 8
           end: 8
         size:
-          width: auto
+          width: 100%
           height: auto
         view:
           type: label
-          text: Bold + Italic + Underlined
+          text: Bold + Italic + Underline
           text_appearance:
             styles:
-              - bold
-              - underlined
-              - italic
+            - bold
+            - underlined
+            - italic
             alignment: start
             font_size: 12
             color:
               default:
                 hex: "#000000"
+                alpha: 1

@@ -1,0 +1,174 @@
+---
+version: 1
+presentation:
+  type: modal
+  default_placement:
+    ignore_safe_area: true
+    size:
+      width: 100%
+      height: 100%
+    position:
+      horizontal: center
+      vertical: center
+    shade_color:
+      default:
+        type: hex
+        hex: "#000000"
+        alpha: 0 # no shade
+view:
+  type: pager_controller
+  identifier: pager-id
+  view:
+    type: container
+    items:
+    - position:
+        horizontal: center
+        vertical: center
+      size:
+        width: 100%
+        height: 100%
+      ignore_safe_area: true
+      view:
+        type: pager
+        disable_swipe: false
+        items:
+        - identifier: "page-1"
+          view:
+            type: container
+            background_color:
+              default:
+                hex: "#FF0000"
+                alpha: 1
+            items:
+            - size:
+                width: 100%
+                height: 100%
+              position:
+                horizontal: center
+                vertical: center
+              margin:
+                top: 36
+                bottom: 36
+                start: 8
+                end: 8
+              view:
+                type: empty_view
+                border:
+                  stroke_width: 2
+                  stroke_color:
+                    default:
+                      hex: "#FFFFFF"
+                      alpha: 1
+                  radius: 5
+        - idenfier: "page-2"
+          view:
+            type: container
+            background_color:
+              default:
+                hex: "#00FF00"
+                alpha: 1
+            items:
+            - size:
+                width: 100%
+                height: 100%
+              position:
+                horizontal: center
+                vertical: center
+              margin:
+                top: 36
+                bottom: 36
+                start: 8
+                end: 8
+              view:
+                type: empty_view
+                border:
+                  stroke_width: 2
+                  stroke_color:
+                    default:
+                      hex: "#FFFFFF"
+                      alpha: 1
+                  radius: 5
+        - identifier: "page-3"
+          view:
+            type: container
+            background_color:
+              default:
+                hex: "#0000FF"
+                alpha: 1
+            items:
+            - size:
+                width: 100%
+                height: 100%
+              position:
+                horizontal: center
+                vertical: center
+              margin:
+                top: 36
+                bottom: 36
+                start: 8
+                end: 8
+              view:
+                type: empty_view
+                border:
+                  stroke_width: 2
+                  stroke_color:
+                    default:
+                      hex: "#FFFFFF"
+                      alpha: 1
+                  radius: 5
+    - position:
+        horizontal: end
+        vertical: top
+      ignore_safe_area: false
+      margin:
+        top: 8
+        end: 8
+      size:
+        width: 24
+        height: 24
+      view:
+        type: image_button
+        image:
+          type: icon
+          icon: close
+          color:
+            default:
+              type: hex
+              alpha: 1
+              hex: "#FFFFFF"
+        identifier: dismiss_button
+        button_click:
+        - dismiss
+    - margin:
+        bottom: 8
+      position:
+        horizontal: center
+        vertical: bottom
+      size:
+        height: 20
+        width: 100%
+      ignore_safe_area: false
+      view:
+        type: pager_indicator
+        spacing: 4
+        bindings:
+          selected:
+            shapes:
+            - type: ellipse
+              scale: 1
+              aspect_ratio: 1
+              color:
+                default:
+                  type: hex
+                  hex: "#FFFFFF"
+                  alpha: 1
+          unselected:
+            shapes:
+            - type: ellipse
+              aspect_ratio: 1
+              scale: 1
+              color:
+                default:
+                  type: hex
+                  hex: "#FFFFFF"
+                  alpha: 0.5

@@ -1,0 +1,79 @@
+---
+version: 1
+presentation:
+  type: modal
+  dismiss_on_touch_outside: true
+  placement_selectors:
+  - orientation: portrait
+    placement:
+      size:
+        width: 66%
+        height: auto
+        max_height: 10%
+      position:
+        horizontal: center
+        vertical: center
+      shade_color:
+        default:
+          hex: "#000000"
+          alpha: 0.6
+  - orientation: landscape
+    placement:
+      size:
+        width: 33%
+        height: auto
+      position:
+        horizontal: center
+        vertical: center
+      shade_color:
+        default:
+          hex: "#000000"
+          alpha: 0.6
+  default_placement:
+    size:
+      width: 100%
+      height: auto
+    position:
+      horizontal: center
+      vertical: center
+    shade_color:
+      default:
+        hex: "#000000"
+        alpha: 1
+view:
+  type: container
+  border:
+    stroke_color:
+      default:
+        hex: "#CED8F7"
+        alpha: 1
+    stroke_width: 2
+    radius: 15
+  background_color:
+    default:
+      hex: "#002082"
+      alpha: 1
+  items:
+  - position:
+      horizontal: center
+      vertical: center
+    margin:
+      top: 16
+      bottom: 16
+      start: 16
+      end: 16
+    size:
+      width: 100%
+      height: auto
+    view:
+      type: label
+      text: If the Placement Selectors for this modal are working correctly, the container should fill ~2/3 of the screen width in portrait orientation or ~1/3 of the width in landscape orientation.\n\nIf this modal is touching any edges of the screen, something ain't right and it was rendered with default placement!.
+      text_appearance:
+        color:
+          default:
+            hex: "#CED8F7"
+            alpha: 1
+        alignment: center
+        font_families:
+        - walter_turncoat
+        font_size: 14

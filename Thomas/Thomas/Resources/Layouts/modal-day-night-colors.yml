@@ -1,0 +1,192 @@
+---
+version: 1
+presentation:
+  type: modal
+  dismiss_on_touch_outside: true
+  default_placement:
+    size:
+      width: 80%
+      height: 30%
+    position:
+      horizontal: center
+      vertical: center
+    shade_color:
+      selectors:
+      - platform: ios
+        dark_mode: true
+        color:
+          hex: "#FFFFFF"
+          alpha: 0.5
+      - platform: ios
+        dark_mode: false
+        color:
+          hex: "#000000"
+          alpha: 0.5
+      default:
+        hex: "#FF00FF"
+        alpha: 1
+view:
+  type: container
+  border:
+    stroke_color:
+      selectors:
+      - platform: ios
+        dark_mode: false
+        color:
+          hex: "#f5e253"
+          alpha: 1
+      - platform: ios
+        dark_mode: true
+        color:
+          hex: "#7329c2"
+          alpha: 1
+      default:
+        hex: "#FF00FF"
+        alpha: 1
+    stroke_width: 2
+    radius: 15
+  background_color:
+    selectors:
+    - platform: ios
+      dark_mode: false
+      color:
+        hex: "#FFFFFF"
+        alpha: 1
+    - platform: ios
+      dark_mode: true
+      color:
+        hex: "#000000"
+        alpha: 1
+    default:
+      hex: "#FF00FF"
+      alpha: 1
+  items:
+  - position:
+      horizontal: center
+      vertical: top
+    margin:
+      top: 64
+      bottom: 16
+      start: 16
+      end: 16
+    size:
+      width: 100%
+      height: auto
+    view:
+      type: label
+      text: "The Earth orbits the sun once every 365 days and rotates about its axis once every 24 hours. Day and night are due to the Earth rotating on its axis, not its orbiting around the sun."
+      text_appearance:
+        font_size: 14
+        color:
+          selectors:
+          - platform: ios
+            dark_mode: true
+            color:
+              hex: "#FFFFFF"
+              alpha: 1
+          - platform: ios
+            dark_mode: false
+            color:
+              hex: "#000000"
+              alpha: 1
+          default:
+            hex: "#FF00FF"
+            alpha: 1
+
+  - position:
+      horizontal: center
+      vertical: bottom
+    margin:
+      bottom: 16
+    size:
+      width: auto
+      height: auto
+    view:
+      type: label_button
+      identifier: cool_button
+      button_click: [ cancel ]
+      border:
+        stroke_width: 1
+        radius: 3
+        stroke_color:
+          selectors:
+          - platform: ios
+            dark_mode: true
+            color:
+              hex: "#7329c2"
+              alpha: 1
+          - platform: ios
+            dark_mode: false
+            color:
+              hex: "#f5e253"
+              alpha: 1
+          default:
+            hex: "#FF00FF"
+            alpha: 1
+      background_color:
+        selectors:
+        - platform: ios
+          dark_mode: true
+          color:
+            hex: "#7329c2"
+            alpha: 1
+        - platform: ios
+          dark_mode: false
+          color:
+            hex: "#f5e253"
+            alpha: 1
+        default:
+          hex: "#FF00FF"
+          alpha: 1
+      label:
+        type: label
+        text: Cool story, bro!
+        text_appearance:
+          font_size: 14
+          color:
+            selectors:
+            - platform: ios
+              dark_mode: true
+              color:
+                hex: "#FFFFFF"
+                alpha: 1
+            - platform: ios
+              dark_mode: false
+              color:
+                hex: "#000000"
+                alpha: 1
+            default:
+              hex: "#FF00FF"
+              alpha: 1
+
+  - position:
+      horizontal: end
+      vertical: top
+    margin:
+      top: 8
+      end: 8
+    size:
+      width: 24
+      height: 24
+    view:
+      type: image_button
+      identifier: close_button
+      button_click: [ cancel ]
+      image:
+        type: icon
+        icon: close
+        color:
+          selectors:
+          - platform: ios
+            dark_mode: false
+            color:
+              hex: "#000000"
+              alpha: 1
+          - platform: ios
+            dark_mode: true
+            color:
+              hex: "#ffffff"
+              alpha: 1
+          default:
+            hex: "#FF00FF"
+            alpha: 1

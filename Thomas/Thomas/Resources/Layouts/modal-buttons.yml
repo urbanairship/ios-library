@@ -1,0 +1,403 @@
+---
+version: 1
+presentation:
+  type: modal
+  dismiss_on_touch_outside: true
+  default_placement:
+    size:
+      width: 95%
+      height: 85%
+    shade_color:
+      default:
+        hex: '#000000'
+        alpha: 0.75
+view:
+  type: container
+  border:
+    stroke_color:
+      default:
+        hex: "#FF00FF"
+        alpha: 1
+    stroke_width: 1
+    radius: 10
+  background_color:
+    default:
+      hex: "#ffffff"
+      alpha: 1
+  items:
+  - position:
+      horizontal: center
+      vertical: center
+    size:
+      height: 100%
+      width: 100%
+    view:
+      type: linear_layout
+      direction: vertical
+      items:
+        #
+        # Positions
+        #
+      - margin:
+          top: 8
+          bottom: 8
+          start: 8
+          end: 8
+        size:
+          width: 100%
+          height: auto
+        view:
+          type: label
+          text: "Position"
+          text_appearance:
+            alignment: start
+            color:
+              default:
+                hex: "#000000"
+                alpha: 1
+            styles:
+            - bold
+            - underlined
+            font_size: 16
+      # Button: start|top
+      - size:
+          width: 100%
+          height: auto
+        view:
+          type: container
+          position:
+            horizontal: center
+            vertical: center
+          items:
+          - position:
+              horizontal: start
+              vertical: top
+            margin:
+              top: 0
+              bottom: 0
+              start: 8
+              end: 8
+            size:
+              width: auto
+              height: auto
+            view:
+              type: label_button
+              identifier: button1
+              background_color:
+                default:
+                  hex: "#D32F2F" # red
+                  alpha: 1
+              label:
+                type: label
+                text: 'start|top'
+                text_appearance:
+                  font_size: 10
+                  alignment: center
+                  color:
+                    default:
+                      hex: "#000000"
+                      alpha: 1
+      # Button: center|center
+      - size:
+          width: 100%
+          height: auto
+        view:
+          type: container
+          position:
+            horizontal: center
+            vertical: center
+          items:
+          - position:
+              horizontal: center
+              vertical: center
+            margin:
+              top: 0
+              bottom: 0
+              start: 8
+              end: 8
+            size:
+              width: auto
+              height: auto
+            view:
+              type: label_button
+              identifier: button2
+              background_color:
+                default:
+                  hex: "#E65100" # orange
+                  alpha: 1
+              label:
+                type: label
+                text: 'center|center'
+                text_appearance:
+                  font_size: 10
+                  alignment: center
+                  color:
+                    default:
+                      hex: "#000000"
+                      alpha: 1
+      # Button: end|bottom
+      - size:
+          width: 100%
+          height: auto
+        view:
+          type: container
+          position:
+            horizontal: center
+            vertical: center
+          items:
+          - position:
+              horizontal: end
+              vertical: bottom
+            margin:
+              top: 0
+              bottom: 0
+              start: 8
+              end: 8
+            size:
+              width: auto
+              height: auto
+            view:
+              type: label_button
+              identifier: button3
+              background_color:
+                default:
+                  hex: "#FFD600" # yellow
+                  alpha: 1
+              label:
+                type: label
+                text: 'end|bottom'
+                text_appearance:
+                  font_size: 10
+                  alignment: center
+                  color:
+                    default:
+                      hex: "#000000"
+                      alpha: 1
+        #
+        # Borders
+        #
+      - margin:
+          top: 8
+          bottom: 8
+          start: 8
+          end: 8
+        size:
+          width: 100%
+          height: auto
+        view:
+          type: label
+          text: "Border"
+          text_appearance:
+            alignment: start
+            styles:
+            - bold
+            - underlined
+            font_size: 16
+            color:
+              default:
+                hex: "#000000"
+                alpha: 1
+
+      # Button w/ 2dp border and no radius
+      - margin:
+          top: 0
+          bottom: 0
+          start: 8
+          end: 8
+        size:
+          width: 100%
+          height: auto
+        view:
+          type: label_button
+          identifier: button4
+          background_color:
+            default:
+              hex: "#558B2F" # green
+              alpha: 1
+          border:
+            radius: 0
+            stroke_width: 3
+            stroke_color:
+              default:
+                hex: "#AED581" # light green
+                alpha: 1
+          label:
+            type: label
+            text: '3dp stroke'
+            text_appearance:
+              font_size: 12
+              alignment: center
+              color:
+                default:
+                  hex: "#000000"
+                  alpha: 1
+
+        # Button w/ 5dp border and 10dp radius
+      - margin:
+          top: 4
+          bottom: 4
+          start: 8
+          end: 8
+        size:
+          width: 100%
+          height: auto
+        view:
+          type: label_button
+          identifier: button5
+          background_color:
+            default:
+              hex: "#1976D2" # blue
+              alpha: 1
+          border:
+            radius: 15
+            stroke_width: 5
+            stroke_color:
+              default:
+                hex: "#64B5F6" # light blue
+                alpha: 1
+          label:
+            type: label
+            text: '5dp stroke, 15dp radius'
+            text_appearance:
+              font_size: 12
+              alignment: center
+              color:
+                default:
+                  hex: "#000000"
+                  alpha: 1
+
+        # Button w/ no border and 20dp radius
+      - margin:
+          top: 0
+          bottom: 0
+          start: 8
+          end: 8
+        size:
+          width: 100%
+          height: auto
+        view:
+          type: label_button
+          identifier: button6
+          background_color:
+            default:
+              hex: "#283593" # purple
+              alpha: 1
+          border:
+            radius: 25
+            stroke_width: 0
+          label:
+            type: label
+            text: 'no stroke, 20dp radius'
+            text_appearance:
+              font_size: 12
+              alignment: center
+              color:
+                default:
+                  hex: "#ffffff"
+                  alpha: 1
+
+        #
+        # Sizes
+        #
+      - margin:
+          top: 4
+          bottom: 4
+          start: 8
+          end: 8
+        size:
+          width: 100%
+          height: auto
+        view:
+          type: label
+          text: "Size"
+          text_appearance:
+            alignment: start
+            styles:
+            - bold
+            - underlined
+            font_size: 16
+            color:
+              default:
+                hex: "#000000"
+                alpha: 1
+
+      # Button: auto x auto
+      - margin:
+          top: 0
+          bottom: 0
+          start: 8
+          end: 8
+        size:
+          width: auto
+          height: auto
+        view:
+          type: label_button
+          identifier: button7
+          background_color:
+            default:
+              hex: "#AED581" # light green
+              alpha: 1
+          label:
+            type: label
+            text: 'auto x auto'
+            text_appearance:
+              font_size: 12
+              color:
+                default:
+                  hex: "#333333"
+                  alpha: 1
+              alignment: center
+
+        # auto x 56dp
+      - margin:
+          top: 0
+          bottom: 0
+          start: 8
+          end: 8
+        size:
+          width: auto
+          height: 64
+        view:
+          type: label_button
+          identifier: button9
+          background_color:
+            default:
+              hex: "#283593" # purple
+              alpha: 1
+          label:
+            type: label
+            text: 'auto x 64dp'
+            text_appearance:
+              font_size: 12
+              alignment: center
+              color:
+                default:
+                  hex: "#ffffff"
+                  alpha: 1
+
+        # 66% x auto
+      - margin:
+          top: 0
+          bottom: 0
+          start: 8
+          end: 8
+        size:
+          width: 66%
+          height: auto
+        view:
+          type: label_button
+          identifier: button8
+          background_color:
+            default:
+              hex: "#64B5F6" # light blue
+              alpha: 1
+          label:
+            type: label
+            text: '66% x auto'
+            text_appearance:
+              font_size: 12
+              alignment: center
+              color:
+                default:
+                  hex: "#333333"
+                  alpha: 1

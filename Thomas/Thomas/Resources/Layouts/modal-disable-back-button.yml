@@ -1,0 +1,101 @@
+---
+version: 1
+presentation:
+  type: modal
+  dismiss_on_touch_outside: true
+  android:
+    disable_back_button: true
+  ignore_safe_area: true
+  default_placement:
+    size:
+      width: 100%
+      height: 100%
+    position:
+      horizontal: center
+      vertical: center
+    shade_color:
+      default:
+        hex: "#000000"
+        alpha: 1
+view:
+  type: container
+  background_color:
+    default:
+      hex: "#ffffff"
+      alpha: 1
+  items:
+  - position:
+      horizontal: center
+      vertical: center
+    size:
+      width: 100%
+      height: auto
+    margin:
+      top: 16
+      bottom: 16
+      start: 16
+      end: 16
+    view:
+      type: linear_layout
+      direction: vertical
+      items:
+      - margin:
+          bottom: 16
+        size:
+          width: 100%
+          height: auto
+        view:
+          type: label
+          text: "Playground App needs an update"
+          text_appearance:
+            font_size: 24
+            styles:
+            - bold
+            color:
+              default:
+                hex: "#000000"
+                alpha: 1
+
+      - margin:
+          bottom: 32
+        size:
+          width: 100%
+          height: auto
+        view:
+          type: label
+          text: "To continue using this app, download the latest version."
+          text_appearance:
+            font_size: 14
+            color:
+              default:
+                hex: "#000000"
+                alpha: 1
+
+      - position:
+          horizontal: center
+          vertical: bottom
+        margin:
+          bottom: 16
+        size:
+          width: auto
+          height: auto
+        view:
+          type: label_button
+          identifier: update_button
+          actions:
+            deep_link_action: "uairship://app_store"
+          background_color:
+            default:
+              hex: "#33dd33"
+              alpha: 1
+          label:
+            type: label
+            text: UPDATE
+            text_appearance:
+              font_size: 14
+              styles:
+              - bold
+              color:
+                default:
+                  hex: "#ffffff"
+                  alpha: 1
