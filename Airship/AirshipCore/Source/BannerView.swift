@@ -18,6 +18,8 @@ struct BannerView: View {
     @Environment(\.windowSize) private var windowSize
     @Environment(\.orientation) private var orientation
 
+    @State private var contentSize: (ViewConstraints, CGSize)? = nil
+
     var body: some View {
         GeometryReader { metrics in
             RootView(thomasEnvironment: thomasEnvironment, layout: layout) { orientation, windowSize in
@@ -33,21 +35,35 @@ struct BannerView: View {
             }
         }
     }
-    
-    @ViewBuilder
+
     private func createBanner(constraints: ViewConstraints, placement: BannerPlacement) -> some View {
         let verticalAlignment = placement.position == .top ? VerticalAlignment.top : VerticalAlignment.bottom
         let alignment = Alignment(horizontal: .center, vertical: verticalAlignment)
         let height = constraints.height ?? 0.0
         let offset = placement.position == .top ? -height : height
-        
-        let contentConstraints = constraints.calculateChild(placement.size)
+
+        var contentSize: CGSize?
+        if (constraints == self.contentSize?.0) {
+            contentSize = self.contentSize?.1
+        }
+
+        let contentConstraints = constraints.calculateSize(placement.size,
+                                                           contentSize: contentSize,
+                                                           ignoreSafeArea: placement.ignoreSafeArea)
 
         
-        VStack {
+        return VStack {
             ViewFactory.createView(model: layout.view, constraints: contentConstraints)
                 .margin(placement.margin)
                 .shadow(radius: 5)
+                .background(
+                    GeometryReader(content: { contentMetrics -> Color in
+                        DispatchQueue.main.async {
+                            self.contentSize = (constraints, contentMetrics.size)
+                        }
+                        return Color.clear
+                    })
+                )
         }
         .constraints(constraints, alignment: alignment)
         .offset(x: 0.0, y: offset * self.offsetPercentWrapper.offsetPercent)

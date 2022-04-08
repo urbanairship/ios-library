@@ -14,7 +14,7 @@ struct Score : View {
     @Environment(\.colorScheme) var colorScheme
 
     @ViewBuilder
-    private func createScore() -> some View {
+    private func createScore(_ constraints: ViewConstraints) -> some View {
         switch(self.model.style) {
         case .numberRange(let style):
             HStack(spacing: style.spacing ?? 0) {
@@ -35,8 +35,9 @@ struct Score : View {
     }
  
     var body: some View {
-        createScore()
-            .constraints(modifiedConstraints())
+        let constraints = modifiedConstraints()
+        createScore(constraints)
+            .constraints(constraints)
             .border(self.model.border)
             .background(self.model.backgroundColor)
             .viewAccessibility(label: self.model.contentDescription)
@@ -114,6 +115,7 @@ private struct AirshipNumberRangeToggleStyle: ToggleStyle {
                
             }
             .aspectRatio(1, contentMode: .fit)
+            .frame(height: viewConstraints.height)
         }
         .animation(Animation.easeInOut(duration: 0.05))
     }

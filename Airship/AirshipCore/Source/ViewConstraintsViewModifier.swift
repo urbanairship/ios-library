@@ -8,12 +8,10 @@ struct ViewConstraintsViewModifier: ViewModifier {
     let viewConstraints: ViewConstraints
     let alignment: Alignment?
     func body(content: Content) -> some View {
-        content.frame(minWidth: viewConstraints.minWidth,
-                      idealWidth: viewConstraints.width,
-                      maxWidth: viewConstraints.maxWidth ?? viewConstraints.width,
-                      minHeight: viewConstraints.minHeight,
+        content.frame(idealWidth: viewConstraints.width,
+                      maxWidth: viewConstraints.width,
                       idealHeight: viewConstraints.height,
-                      maxHeight: viewConstraints.maxHeight ?? viewConstraints.height,
+                      maxHeight: viewConstraints.height,
                       alignment: alignment ?? .center)
     }
 }

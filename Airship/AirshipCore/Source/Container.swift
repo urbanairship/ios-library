@@ -36,6 +36,9 @@ struct Container : View {
     
     @ViewBuilder
     private func childItem(item: ContainerItem) -> some View {
+        let placementWidth =  placementWidth(item.position.horizontal)
+        let placementHeight = placementHeight(item.position.vertical)
+
         let alignment = Alignment(horizontal: item.position.horizontal.toAlignment(),
                                   vertical: item.position.vertical.toAlignment())
         
@@ -49,15 +52,15 @@ struct Container : View {
         .applyIf(item.ignoreSafeArea != true) {
             $0.padding(self.constraints.safeAreaInsets)
         }
-        .frame(idealWidth: placementWidth(item.position.horizontal),
-               maxWidth: self.constraints.width,
-               idealHeight: placementHeight(item.position.vertical),
-               maxHeight: self.constraints.height,
+        .frame(idealWidth: placementWidth,
+               maxWidth: placementWidth,
+               idealHeight: placementHeight,
+               maxHeight: placementHeight,
                alignment: alignment)
-            
     }
     
     private func placementWidth(_ position: HorizontalPosition) -> CGFloat? {
+        guard (constraints.width == nil) else { return constraints.width }
         guard position != .center else { return nil }
 
         if let contentSize = contentSize, contentSize.0 == self.constraints {
@@ -68,8 +71,9 @@ struct Container : View {
     }
     
     private func placementHeight(_ position: VerticalPosition) -> CGFloat? {
+        guard (constraints.height == nil) else { return constraints.height }
         guard position != .center else { return nil }
-        
+
         if let contentSize = contentSize, contentSize.0 == self.constraints {
             return contentSize.1.height > 0 ? contentSize.1.height : nil
         }

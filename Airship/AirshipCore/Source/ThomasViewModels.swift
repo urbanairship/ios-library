@@ -55,7 +55,7 @@ struct BannerPresentationModel : Decodable, Equatable {
 
 struct BannerPlacement : Decodable, Equatable {
     let margin: Margin?
-    let size: Size
+    let size: ConstrainedSize
     let position: BannerPosition
     let ignoreSafeArea: Bool?
     
@@ -103,7 +103,7 @@ struct ModalPresentationModel: Decodable, Equatable {
 
 struct ModalPlacement : Decodable, Equatable {
     let margin: Margin?
-    let size: Size
+    let size: ConstrainedSize
     let position: Position?
     let shade: ThomasColor?
     let ignoreSafeArea: Bool?
@@ -992,13 +992,24 @@ struct RectangleShapeModel: Decodable, Equatable {
 }
 
 struct Size: Decodable, Equatable {
+    let width: SizeConstraint
+    let height: SizeConstraint
+    
+    enum CodingKeys: String, CodingKey {
+        case width = "width"
+        case height = "height"
+    }
+}
+
+
+struct ConstrainedSize: Decodable, Equatable {
     let minWidth: SizeConstraint?
     let width: SizeConstraint
     let maxWidth: SizeConstraint?
     let minHeight: SizeConstraint?
     let height: SizeConstraint
     let maxHeight: SizeConstraint?
-    
+
     enum CodingKeys: String, CodingKey {
         case minWidth = "min_width"
         case width = "width"
