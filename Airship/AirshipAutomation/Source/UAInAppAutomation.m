@@ -432,7 +432,7 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
                     break;
                 }
                 case 409: {
-                    retriableHandler(UARetriableResultRetry, 0);
+                    retriableHandler(UARetriableResultCancel, 0);
                     completionHandler(UAAutomationSchedulePrepareResultInvalidate);
                     break;
                 }
