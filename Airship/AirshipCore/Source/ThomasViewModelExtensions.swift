@@ -119,22 +119,6 @@ extension Layout {
     }
 }
 
-extension SizeConstraint {
-    func calculateSize(_ parentSize: CGFloat?) -> CGFloat? {
-        switch (self) {
-        case .points(let points):
-            return points
-        case .percent(let percent):
-            guard let parentSize = parentSize else {
-                return nil
-            }
-            return percent/100.0 * parentSize
-        case.auto:
-            return nil
-        }
-    }
-}
-
 private extension ViewModel {
 
     func validate(_ parentControllers: Set<ParentController>) throws {

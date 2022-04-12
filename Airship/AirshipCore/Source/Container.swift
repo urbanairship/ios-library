@@ -43,6 +43,7 @@ struct Container : View {
                                   vertical: item.position.vertical.toAlignment())
         
         let childConstraints = self.constraints.calculateChild(item.size,
+                                                               margin: item.margin,
                                                                ignoreSafeArea: item.ignoreSafeArea)
   
         ZStack {

@@ -45,24 +45,26 @@ extension Image {
     func fitMedia(mediaFit: MediaFit,
                   constraints: ViewConstraints,
                   imageSize: CGSize) -> some View {
-        
+
+        let filledInConstraints = filledInConstraints(constraints: constraints, imageSize: imageSize)
+
         switch mediaFit {
         case .center:
-            center(constraints: constraints)
+            center(constraints: filledInConstraints)
         case .centerCrop:
-            centerCrop(constraints: constraints, imageSize: imageSize)
+            centerCrop(constraints: filledInConstraints)
         case .centerInside:
-            centerInside(constraints: constraints)
+            centerInside(constraints: filledInConstraints)
         }
     }
     
     private func center(constraints: ViewConstraints) -> some View {
-        self
-            .constraints(constraints)
+        self.constraints(constraints, fixedSize: true)
             .clipped()
     }
     
-    private func centerCrop(constraints: ViewConstraints, imageSize: CGSize) -> some View {
+    private func centerCrop(constraints: ViewConstraints) -> some View {
+
         /*
          .scaledToFill() breaks v/hstacks by taking up as much possible space as it can
          instead of sharing it with other elements. Moving the image to an overlay prevents the image from expanding.
@@ -75,19 +77,18 @@ extension Image {
                         .frame(width: proxy.size.width, height: proxy.size.height)
                         .allowsHitTesting(false)
                 })
-            .constraints(centerCropConstraints(constraints: constraints, imageSize: imageSize))
+            .constraints(constraints, fixedSize: true)
             .clipped()
     }
     
     private func centerInside(constraints: ViewConstraints) -> some View {
-        self
-            .resizable()
+        self.resizable()
             .scaledToFit()
-            .constraints(constraints)
+            .constraints(constraints, fixedSize: true)
             .clipped()
     }
-    
-    private func centerCropConstraints(constraints: ViewConstraints, imageSize: CGSize) -> ViewConstraints {
+
+    private func filledInConstraints(constraints: ViewConstraints, imageSize: CGSize) -> ViewConstraints {
         guard imageSize.width != 0, imageSize.height != 0, constraints.width == nil || constraints.height == nil else {
             return constraints
         }

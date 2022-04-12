@@ -1081,10 +1081,10 @@ struct Border: Decodable, Equatable {
 }
 
 struct Margin: Decodable, Equatable {
-    let top: Double?
-    let bottom: Double?
-    let start: Double?
-    let end: Double?
+    let top: CGFloat?
+    let bottom: CGFloat?
+    let start: CGFloat?
+    let end: CGFloat?
     
     enum CodingKeys: String, CodingKey {
         case top = "top"

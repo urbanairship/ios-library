@@ -38,30 +38,40 @@ struct ViewConstraints: Equatable {
     }
 
 
-    func calculateSize(_ constrainedSize: ConstrainedSize, contentSize: CGSize?, ignoreSafeArea: Bool? = nil) -> ViewConstraints {
+    func calculateChild(_ constrainedSize: ConstrainedSize,
+                       contentSize: CGSize?,
+                       margin: Margin?,
+                       ignoreSafeArea: Bool? = nil) -> ViewConstraints {
+
         let horizontalInsets = self.safeAreaInsets.leading + self.safeAreaInsets.trailing
         let verticalInsets = self.safeAreaInsets.top + self.safeAreaInsets.bottom
+
+        let verticalMargins = (margin?.top ?? 0) + (margin?.bottom ?? 0) as CGFloat
+        let horizontalMargins = (margin?.start ?? 0) + (margin?.end ?? 0) as CGFloat
 
         var parentWidth = self.width
         var parentHeight = self.height
 
+        parentWidth = parentWidth?.subtract(horizontalMargins)
+        parentHeight = parentHeight?.subtract(verticalMargins)
+
         var insets = self.safeAreaInsets
 
         if (ignoreSafeArea != true) {
-            parentWidth = optionalSubtract(value: horizontalInsets, from: parentWidth)
-            parentHeight = optionalSubtract(value: verticalInsets, from: parentHeight)
+            parentWidth = parentWidth?.subtract(horizontalInsets)
+            parentHeight = parentHeight?.subtract(verticalInsets)
             insets = ViewConstraints.emptyEdgeSet
         }
 
         let childMinWidth = constrainedSize.minWidth?.calculateSize(parentWidth)
         let childMaxWidth = constrainedSize.maxWidth?.calculateSize(parentWidth)
         var childWidth = constrainedSize.width.calculateSize(parentWidth)
-        childWidth = boundConstraint(constraint: childWidth, minValue: childMinWidth, maxValue: childMaxWidth)
+        childWidth = childWidth?.bound(minValue: childMinWidth, maxValue: childMaxWidth)
 
         let childMinHeight = constrainedSize.minHeight?.calculateSize(parentHeight)
         let childMaxHeight = constrainedSize.maxHeight?.calculateSize(parentHeight)
         var childHeight = constrainedSize.height.calculateSize(parentHeight)
-        childHeight = boundConstraint(constraint: childHeight, minValue: childMinHeight, maxValue: childMaxHeight)
+        childHeight = childHeight?.bound(minValue: childMinHeight, maxValue: childMaxHeight)
 
         if let contentSize = contentSize {
             if let maxWidth = childMaxWidth, contentSize.width >= maxWidth {
@@ -80,60 +90,43 @@ struct ViewConstraints: Equatable {
         return ViewConstraints(width: childWidth, height: childHeight, safeAreaInsets: insets)
     }
 
-    private func boundConstraint(constraint: CGFloat?, minValue: CGFloat?, maxValue: CGFloat?) -> CGFloat? {
-        guard var constraint = constraint else {
-            return nil
-        }
-
-        if let minValue = minValue {
-            constraint = max(constraint, minValue)
-        }
-
-        if let maxValue = maxValue {
-            constraint = min(constraint, maxValue)
-        }
-
-        return constraint
-    }
-
-    func calculateChild(_ childSize: Size, ignoreSafeArea: Bool? = nil) -> ViewConstraints {
+    func calculateChild(_ childSize: Size,
+                        margin: Margin? = nil,
+                        ignoreSafeArea: Bool? = nil) -> ViewConstraints {
         let horizontalInsets = self.safeAreaInsets.leading + self.safeAreaInsets.trailing
         let verticalInsets = self.safeAreaInsets.top + self.safeAreaInsets.bottom
-        
+
         var parentWidth = self.width
         var parentHeight = self.height
+
+        if (margin != nil) {
+            let verticalMargins = (margin?.top ?? 0) + (margin?.bottom ?? 0)
+            let horizontalMargins = (margin?.start ?? 0) + (margin?.end ?? 0)
+
+            parentWidth = parentWidth?.subtract(horizontalMargins)
+            parentHeight = parentHeight?.subtract(verticalMargins)
+        }
+        
         var insets = self.safeAreaInsets
         
         if (ignoreSafeArea != true) {
-            parentWidth = optionalSubtract(value: horizontalInsets, from: parentWidth)
-            parentHeight = optionalSubtract(value: verticalInsets, from: parentHeight)
+            parentWidth = parentWidth?.subtract(horizontalInsets)
+            parentHeight = parentHeight?.subtract(verticalInsets)
             insets = ViewConstraints.emptyEdgeSet
         }
 
-        let childWidth = ViewConstraints.calculateSize(childSize.width, parentSize: parentWidth)
-        let childHeight = ViewConstraints.calculateSize(childSize.height, parentSize: parentHeight)
+        let childWidth = childSize.width.calculateSize(parentWidth)
+        let childHeight = childSize.height.calculateSize(parentHeight)
 
         return ViewConstraints(width: childWidth,
                                height: childHeight,
                                safeAreaInsets: insets)
     }
-    
-    private func optionalSubtract(value: CGFloat, from: CGFloat?) -> CGFloat? {
-        guard let from = from else {
-            return nil
-        }
-        
-        return from - value
-    }
+}
 
-    private static func calculateSize(_ sizeContraints: SizeConstraint?,
-                                      parentSize: CGFloat?) -> CGFloat? {
-        
-        guard let constraint = sizeContraints else {
-            return nil
-        }
-        
-        switch (constraint) {
+extension SizeConstraint {
+    func calculateSize(_ parentSize: CGFloat?) -> CGFloat? {
+        switch (self) {
         case .points(let points):
             return points
         case .percent(let percent):
@@ -146,3 +139,23 @@ struct ViewConstraints: Equatable {
         }
     }
 }
+
+private extension CGFloat {
+    func subtract(_ value: CGFloat) -> CGFloat {
+        return self - value
+    }
+
+    func bound(minValue: CGFloat?, maxValue: CGFloat?) -> CGFloat {
+        var value = self
+        if let minValue = minValue {
+            value = CGFloat.maximum(value, minValue)
+        }
+
+        if let maxValue = maxValue {
+            value = CGFloat.minimum(value, maxValue)
+        }
+
+        return value
+    }
+}
+

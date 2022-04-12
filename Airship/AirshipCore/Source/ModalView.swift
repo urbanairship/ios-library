@@ -66,9 +66,10 @@ struct ModalView: View {
             contentSize = self.contentSize?.1
         }
 
-        var contentConstraints = windowConstraints.calculateSize(placement.size,
-                                                                 contentSize: contentSize,
-                                                                 ignoreSafeArea: placement.ignoreSafeArea)
+        var contentConstraints = windowConstraints.calculateChild(placement.size,
+                                                                  contentSize: contentSize,
+                                                                  margin: placement.margin,
+                                                                  ignoreSafeArea: placement.ignoreSafeArea)
 
         let windowHeight = windowConstraints.height ?? 0
         let contentHeight = contentConstraints.height ?? 0

@@ -21,7 +21,7 @@ struct MarginViewModifier: ViewModifier {
 extension View {
     
     @ViewBuilder
-    internal func applyMargin(edge: Edge.Set, margin: Double?) -> some View {
+    internal func applyMargin(edge: Edge.Set, margin: CGFloat?) -> some View {
         if let margin = margin {
             self.padding(edge, margin)
         } else {

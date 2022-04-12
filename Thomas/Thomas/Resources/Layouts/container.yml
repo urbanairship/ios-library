@@ -1,4 +1,3 @@
----
 version: 1
 presentation:
   type: modal
@@ -62,7 +61,7 @@ view:
         direction: vertical
         items:
           - size:
-              width: auto
+              width: 100%
               height: auto
             weight: 1
             view:
@@ -125,3 +124,15 @@ view:
                   font_families:
                     - casual
                 text: Push me!
+
+
+
+
+
+
+
+
+
+
+
+

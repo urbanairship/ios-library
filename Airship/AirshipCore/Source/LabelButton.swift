@@ -16,6 +16,7 @@ struct LabelButton : View {
     var body: some View {
         Button(action: {}) {
             Label(model: self.model.label, constraints: constraints)
+                .constraints(constraints, fixedSize: true)
                 .applyIf(self.constraints.height == nil) { view in
                     view.padding([.bottom, .top], 12)
                 }

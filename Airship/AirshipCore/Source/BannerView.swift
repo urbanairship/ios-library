@@ -47,9 +47,10 @@ struct BannerView: View {
             contentSize = self.contentSize?.1
         }
 
-        let contentConstraints = constraints.calculateSize(placement.size,
-                                                           contentSize: contentSize,
-                                                           ignoreSafeArea: placement.ignoreSafeArea)
+        let contentConstraints = constraints.calculateChild(placement.size,
+                                                            contentSize: contentSize,
+                                                            margin: placement.margin,
+                                                            ignoreSafeArea: placement.ignoreSafeArea)
 
         
         return VStack {

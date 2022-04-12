@@ -92,6 +92,8 @@ struct Shapes {
                         border: Border? = nil) -> some View {
         let color = color?.toColor(colorScheme) ?? Color.clear
         if let border = border {
+
+            
             ellipse(colorScheme: colorScheme, border: border)
                 .applyIf(aspectRatio != nil) { view in
                     view.aspectRatio(aspectRatio ?? 1, contentMode: .fit)
