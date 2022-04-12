@@ -92,12 +92,13 @@ struct ViewConstraints: Equatable {
 
     func calculateChild(_ childSize: Size,
                         margin: Margin? = nil,
+                        additionalPadding: CGFloat = 0,
                         ignoreSafeArea: Bool? = nil) -> ViewConstraints {
         let horizontalInsets = self.safeAreaInsets.leading + self.safeAreaInsets.trailing
         let verticalInsets = self.safeAreaInsets.top + self.safeAreaInsets.bottom
 
-        var parentWidth = self.width
-        var parentHeight = self.height
+        var parentWidth = self.width?.subtract(additionalPadding * 2)
+        var parentHeight = self.height?.subtract(additionalPadding * 2)
 
         if (margin != nil) {
             let verticalMargins = (margin?.top ?? 0) + (margin?.bottom ?? 0)

@@ -43,10 +43,13 @@ struct LinearLayout : View {
     
     @ViewBuilder
     private func childItem(item: LinearLayoutItem) -> some View {
-        let childConstraints = self.constraints.calculateChild(item.size, margin: item.margin)
-
+        let borderPadding = self.model.border?.strokeWidth ?? 0
+        let childConstraints = self.constraints.calculateChild(item.size,
+                                                               margin: item.margin,
+                                                               additionalPadding: borderPadding)
         ViewFactory.createView(model: item.view, constraints: childConstraints)
             .margin(item.margin)
+            .padding(borderPadding)
     }
 
     private func orderedItems() -> [LinearLayoutItem] {
