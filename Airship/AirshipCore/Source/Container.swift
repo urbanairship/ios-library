@@ -13,12 +13,14 @@ struct Container : View {
     /// View constriants.
     let constraints: ViewConstraints
 
+    @State private var initUUID: UUID = UUID()
+
     @State private var contentSize: (ViewConstraints, CGSize)? = nil
 
     var body: some View {
         ZStack {
             ForEach(0..<self.model.items.count, id: \.self) { index in
-                childItem(item: self.model.items[index])
+                childItem(index, item: self.model.items[index])
             }
         }
         .constraints(constraints)
@@ -32,10 +34,11 @@ struct Container : View {
                 return Color.clear
             })
         )
+        .applyIf(self.contentSize == nil) { $0.id(initUUID) }
     }
     
     @ViewBuilder
-    private func childItem(item: ContainerItem) -> some View {
+    private func childItem(_ index: Int, item: ContainerItem) -> some View {
         let placementWidth =  placementWidth(item.position.horizontal)
         let placementHeight = placementHeight(item.position.vertical)
 

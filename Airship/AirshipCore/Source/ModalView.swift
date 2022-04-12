@@ -14,6 +14,8 @@ struct ModalView: View {
     @ObservedObject private var keyboardResponder = KeyboardResponder()
     let viewControllerOptions: ThomasViewControllerOptions
 
+    @State private var initUUID: UUID = UUID()
+
     @State private var contentSize: (ViewConstraints, CGSize)? = nil
 
     var body: some View {
@@ -108,6 +110,7 @@ struct ModalView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: alignment)
         .background(modalBackground(placement))
         .applyIf(ignoreSafeArea) { $0.edgesIgnoringSafeArea(.all) }
+        .applyIf(self.contentSize == nil) { $0.id(initUUID) }
     }
 
     
