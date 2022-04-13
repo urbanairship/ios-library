@@ -93,7 +93,7 @@ private struct AirshipNumberRangeToggleStyle: ToggleStyle {
                 Group {
                     if let shapes = style.bindings.selected.shapes {
                         ForEach(0..<shapes.count, id: \.self) { index in
-                            Shapes.shape(model: shapes[index], colorScheme: colorScheme)
+                            Shapes.shape(model: shapes[index], constraints: viewConstraints, colorScheme: colorScheme)
                         }
                         .opacity(isOn ? 1 : 0)
                     }
@@ -105,7 +105,7 @@ private struct AirshipNumberRangeToggleStyle: ToggleStyle {
                 Group {
                     if let shapes = style.bindings.unselected.shapes {
                         ForEach(0..<shapes.count, id: \.self) { index in
-                            Shapes.shape(model: shapes[index], colorScheme: colorScheme)
+                            Shapes.shape(model: shapes[index], constraints: viewConstraints, colorScheme: colorScheme)
                         }
                     }
                     Text(String(self.value))

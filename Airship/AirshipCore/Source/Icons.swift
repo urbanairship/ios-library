@@ -20,7 +20,8 @@ struct Icons {
     }
     
     @ViewBuilder
-    static func icon(model: IconModel, colorScheme: ColorScheme) -> some View {
+    static func icon(model: IconModel,
+                     colorScheme: ColorScheme) -> some View {
         createImage(icon: model.icon)
             .resizable()
             .aspectRatio(contentMode: .fit)

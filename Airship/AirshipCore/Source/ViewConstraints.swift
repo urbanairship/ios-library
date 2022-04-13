@@ -12,7 +12,7 @@ struct ViewConstraints: Equatable {
     var height: CGFloat?
     var safeAreaInsets: EdgeInsets
 
-    init(width: CGFloat? = nil, height: CGFloat? = nil, safeAreaInsets: EdgeInsets) {
+    init(width: CGFloat? = nil, height: CGFloat? = nil, safeAreaInsets: EdgeInsets = emptyEdgeSet) {
         self.width = width
         self.height = height
         self.safeAreaInsets = safeAreaInsets

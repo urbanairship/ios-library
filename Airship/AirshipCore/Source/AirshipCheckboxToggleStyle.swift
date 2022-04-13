@@ -12,12 +12,19 @@ struct AirshipCheckboxToggleStyle: ToggleStyle {
     func makeBody(configuration: Self.Configuration) -> some View {
         let isOn = configuration.isOn
         let binding = isOn ? model.bindings.selected : model.bindings.unselected
-        
+
+        var constraints = self.viewConstraints
+        constraints.width = constraints.width ?? 24
+        constraints.height = constraints.height ?? 24
+
+
         return Button(action: { configuration.isOn.toggle() } ) {
             ZStack {
                 if let shapes = binding.shapes {
                     ForEach(0..<shapes.count, id: \.self) { index in
-                        Shapes.shape(model: shapes[index], colorScheme: colorScheme)
+                        Shapes.shape(model: shapes[index],
+                                     constraints: constraints,
+                                     colorScheme: colorScheme)
                     }
                 }
                 
@@ -25,10 +32,8 @@ struct AirshipCheckboxToggleStyle: ToggleStyle {
                     Icons.icon(model: iconModel, colorScheme: colorScheme)
                 }
             }
-            .frame(width: viewConstraints.width ?? 24,
-                    height: viewConstraints.height ?? 24,
-                    alignment: .center)
-                .animation(Animation.easeInOut(duration: 0.05))
+            .constraints(constraints, fixedSize: true)
+            .animation(Animation.easeInOut(duration: 0.05))
         }
     }
 }

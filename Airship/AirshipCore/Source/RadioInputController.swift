@@ -24,7 +24,7 @@ struct RadioInputController : View {
                                              value: .radio(incoming),
                                              attributeName: self.model.attributeName,
                                              attributeValue: radioInputState.attributeValue,
-                                             isValid: incoming != nil || self.model.isRequired == false)
+                                             isValid: incoming != nil || self.model.isRequired != true)
                     
                     self.parentFormState.updateFormInput(data)
                 }
