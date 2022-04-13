@@ -10,7 +10,8 @@ struct TextInput : View {
     
     @EnvironmentObject var formState: FormState
     @State private var input: String = ""
-    
+    @State private var isEditing: Bool = false
+
     @ViewBuilder
     private func createTextEditor() -> some View {
         let binding = Binding<String>(
@@ -18,15 +19,18 @@ struct TextInput : View {
             set: { self.input = $0; self.updateValue($0) }
         )
         
-        AirshipTextInput(model: self.model, text: binding)
+        AirshipTextInput(model: self.model, text: binding, isEditing:  $isEditing)
     }
 
     var body: some View {
-        ZStack(alignment: .topLeading) {
-            if input.isEmpty {
-                Text(self.model.placeHolder ?? "")
-                    .textAppearance(self.model.placeHolderTextApperance ?? self.model.textAppearance)
-                    .padding(EdgeInsets(top: 7, leading: 5, bottom: 0, trailing: 0 ))
+        ZStack {
+            if let hint = self.model.placeHolder {
+                Text(hint)
+                    .textAppearance(placeHolderTextApperance())
+                    .padding(EdgeInsets(top: 8, leading: 5, bottom: 0, trailing: 0 ))
+                    .constraints(constraints, alignment:.topLeading)
+                    .opacity(input.isEmpty && !isEditing ? 1 : 0)
+                    .animation(.linear(duration: 0.1))
             }
             createTextEditor()
         }
@@ -47,5 +51,13 @@ struct TextInput : View {
                                  value: .text(trimmed.isEmpty ? nil : trimmed),
                                  isValid: isValid)
         self.formState.updateFormInput(data)
+    }
+
+    private func placeHolderTextApperance() -> TextAppearanceModel {
+        var placeHolderTextAppearance = self.model.textAppearance
+        if let color = self.model.placeHolderTextColor {
+            placeHolderTextAppearance.color = color
+        }
+        return placeHolderTextAppearance
     }
 }

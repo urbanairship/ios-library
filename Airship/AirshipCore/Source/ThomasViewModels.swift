@@ -294,11 +294,11 @@ indirect enum ViewModel: Decodable, Equatable {
 }
 
 struct TextAppearanceModel : Decodable, Equatable {
-    let color: ThomasColor
-    let fontSize: Double
-    let alignment: TextAlignement?
-    let styles: [TextStyle]?
-    let fontFamilies: [String]?
+    var color: ThomasColor
+    var fontSize: Double
+    var alignment: TextAlignement?
+    var styles: [TextStyle]?
+    var fontFamilies: [String]?
     
     enum CodingKeys : String, CodingKey {
         case color = "color"
@@ -738,7 +738,7 @@ struct TextInputModel: Decodable, Equatable {
     let isRequired: Bool?
     let placeHolder: String?
     let textAppearance: TextAppearanceModel
-    let placeHolderTextApperance: TextAppearanceModel?
+    let placeHolderTextColor: ThomasColor?
 
     enum CodingKeys: String, CodingKey {
         case textAppearance = "text_appearance"
@@ -748,7 +748,7 @@ struct TextInputModel: Decodable, Equatable {
         case contentDescription = "content_description"
         case isRequired = "required"
         case placeHolder = "place_holder"
-        case placeHolderTextApperance = "placeholder_text_appearance"
+        case placeHolderTextColor = "place_holder_text_color"
     }
 }
 

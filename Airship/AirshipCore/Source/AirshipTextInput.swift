@@ -8,8 +8,9 @@ import SwiftUI
 struct AirshipTextInput : View {
     let model: TextInputModel
     @Binding var text: String
+    @Binding var isEditing: Bool
     var body: some View {
-        TextView(model: model, text: $text)
+        TextView(model: model, text: $text, isEditing: $isEditing)
             .formInput()
     }
 }
@@ -19,6 +20,7 @@ struct AirshipTextInput : View {
 struct TextView: UIViewRepresentable {
     let model: TextInputModel
     @Binding var text: String
+    @Binding var isEditing: Bool
 
     @Environment(\.colorScheme) var colorScheme
     func makeUIView(context: Context) -> UITextView {
@@ -51,18 +53,29 @@ struct TextView: UIViewRepresentable {
     }
     
     func makeCoordinator() -> Coordinator {
-        Coordinator($text)
+        Coordinator($text, isEditing: $isEditing)
     }
     
     class Coordinator: NSObject, UITextViewDelegate {
         var text: Binding<String>
+        var isEditing: Binding<Bool>
         
-        init(_ text: Binding<String>) {
+        init(_ text: Binding<String>, isEditing: Binding<Bool>) {
             self.text = text
+            self.isEditing = isEditing
         }
         
         func textViewDidChange(_ textView: UITextView) {
             self.text.wrappedValue = textView.text
+        }
+
+        func textViewDidBeginEditing(_ textView: UITextView) {
+            self.isEditing.wrappedValue = true
+        }
+
+        func textViewShouldEndEditing(_ textView: UITextView) -> Bool {
+            self.isEditing.wrappedValue = false
+            return true
         }
     }
 }
