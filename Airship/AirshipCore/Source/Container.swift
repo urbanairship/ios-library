@@ -24,6 +24,7 @@ struct Container : View {
             }
         }
         .constraints(constraints)
+        .clipped()
         .background(model.backgroundColor)
         .border(model.border)
         .background(

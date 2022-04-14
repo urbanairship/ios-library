@@ -52,7 +52,13 @@ extension Image {
         case .center:
             center(constraints: filledInConstraints)
         case .centerCrop:
-            centerCrop(constraints: filledInConstraints)
+            // If we do not have a fixed size in any direction then we should
+            // use centerInside instead to match Android
+            if isUnbounded(constraints) {
+                centerInside(constraints: filledInConstraints)
+            } else {
+                centerCrop(constraints: filledInConstraints)
+            }
         case .centerInside:
             centerInside(constraints: filledInConstraints)
         }
@@ -97,9 +103,27 @@ extension Image {
         var modifiedConstraints = constraints
         if let height = constraints.height {
             modifiedConstraints.width = modifiedConstraints.width ?? ((imageSize.width / imageSize.height) * height)
+            modifiedConstraints.isHorizontalFixedSize = true
         } else if let width = constraints.width {
             modifiedConstraints.height = modifiedConstraints.height ?? ((imageSize.height / imageSize.width) * width)
+            modifiedConstraints.isVerticalFixedSize = true
         }
         return modifiedConstraints
+    }
+
+    private func isUnbounded(_ constraints: ViewConstraints)  -> Bool {
+        if (constraints.width != nil && constraints.height != nil) {
+            return false
+        }
+
+        if (constraints.width == nil && constraints.height == nil) {
+            return false
+        }
+
+        if (constraints.width == nil) {
+            return !constraints.isVerticalFixedSize
+        } else {
+            return !constraints.isHorizontalFixedSize
+        }
     }
 }

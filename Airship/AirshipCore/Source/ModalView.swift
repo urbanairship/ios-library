@@ -86,11 +86,8 @@ struct ModalView: View {
         if ((keyboardHeight + contentHeight) >= windowHeight) {
             alignment = Alignment(horizontal: alignment.horizontal, vertical: .top)
             keyboardOffset = 0
-            contentConstraints = ViewConstraints(width: contentConstraints.width,
-                                                 height: windowHeight - keyboardHeight,
-                                                 safeAreaInsets: contentConstraints.safeAreaInsets)
+            contentConstraints.height = windowHeight - keyboardHeight
         }
-
 
         return VStack {
             ViewFactory.createView(model: self.layout.view,
@@ -120,7 +117,10 @@ struct ModalView: View {
            case let .percent(value) = placement.size.width, value >= 1.0,
            placement.ignoreSafeArea == false {
             Rectangle()
-                .foregroundColor(colorScheme == .light ? Color.white : Color.black)
+                #if !os(tvOS)
+                .foregroundColor(UIApplication.shared.statusBarStyle == .darkContent
+                                 ? Color.white : Color.black)
+                #endif
                 .edgesIgnoringSafeArea(.all)
         } else {
             Rectangle()

@@ -16,7 +16,8 @@ struct AirshipCheckboxToggleStyle: ToggleStyle {
         var constraints = self.viewConstraints
         constraints.width = constraints.width ?? 24
         constraints.height = constraints.height ?? 24
-
+        constraints.isVerticalFixedSize = true
+        constraints.isHorizontalFixedSize = true
 
         return Button(action: { configuration.isOn.toggle() } ) {
             ZStack {

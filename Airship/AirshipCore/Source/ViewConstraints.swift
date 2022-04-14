@@ -11,28 +11,41 @@ struct ViewConstraints: Equatable {
     var width: CGFloat?
     var height: CGFloat?
     var safeAreaInsets: EdgeInsets
+    var isHorizontalFixedSize: Bool
+    var isVerticalFixedSize: Bool
 
-    init(width: CGFloat? = nil, height: CGFloat? = nil, safeAreaInsets: EdgeInsets = emptyEdgeSet) {
+    init(width: CGFloat? = nil,
+         height: CGFloat? = nil,
+         isHorizontalFixedSize: Bool = false,
+         isVerticalFixedSize: Bool = false,
+         safeAreaInsets: EdgeInsets = emptyEdgeSet) {
+
         self.width = width
         self.height = height
         self.safeAreaInsets = safeAreaInsets
+        self.isHorizontalFixedSize = isHorizontalFixedSize
+        self.isVerticalFixedSize = isVerticalFixedSize
     }
-    
+
     static func containerConstraints(_ size: CGSize,
                                      safeAreaInsets: EdgeInsets,
                                      ignoreSafeArea: Bool) -> ViewConstraints {
         var width = size.width
         var height = size.height
-        
+
         if (ignoreSafeArea) {
             width += safeAreaInsets.trailing + safeAreaInsets.leading
             height += safeAreaInsets.top + safeAreaInsets.bottom
             return ViewConstraints(width: width,
                                    height: height,
+                                   isHorizontalFixedSize: true,
+                                   isVerticalFixedSize: true,
                                    safeAreaInsets: safeAreaInsets)
         } else {
             return ViewConstraints(width: width,
                                    height: height,
+                                   isHorizontalFixedSize: true,
+                                   isVerticalFixedSize: true,
                                    safeAreaInsets: emptyEdgeSet)
         }
     }
@@ -73,6 +86,9 @@ struct ViewConstraints: Equatable {
         var childHeight = constrainedSize.height.calculateSize(parentHeight)
         childHeight = childHeight?.bound(minValue: childMinHeight, maxValue: childMaxHeight)
 
+        let isVerticalFixedSize = constrainedSize.height.isFixedSize(self.isVerticalFixedSize)
+        let isHorizontalFixedSize = constrainedSize.width.isFixedSize(self.isHorizontalFixedSize)
+
         if let contentSize = contentSize {
             if let maxWidth = childMaxWidth, contentSize.width >= maxWidth {
                 childWidth = maxWidth
@@ -87,7 +103,11 @@ struct ViewConstraints: Equatable {
             }
         }
 
-        return ViewConstraints(width: childWidth, height: childHeight, safeAreaInsets: insets)
+        return ViewConstraints(width: childWidth,
+                               height: childHeight,
+                               isHorizontalFixedSize: isHorizontalFixedSize,
+                               isVerticalFixedSize: isVerticalFixedSize,
+                               safeAreaInsets: insets)
     }
 
     func calculateChild(_ childSize: Size,
@@ -107,9 +127,9 @@ struct ViewConstraints: Equatable {
             parentWidth = parentWidth?.subtract(horizontalMargins)
             parentHeight = parentHeight?.subtract(verticalMargins)
         }
-        
+
         var insets = self.safeAreaInsets
-        
+
         if (ignoreSafeArea != true) {
             parentWidth = parentWidth?.subtract(horizontalInsets)
             parentHeight = parentHeight?.subtract(verticalInsets)
@@ -119,8 +139,13 @@ struct ViewConstraints: Equatable {
         let childWidth = childSize.width.calculateSize(parentWidth)
         let childHeight = childSize.height.calculateSize(parentHeight)
 
+        let isVerticalFixedSize = childSize.height.isFixedSize(self.isVerticalFixedSize)
+        let isHorizontalFixedSize = childSize.width.isFixedSize(self.isHorizontalFixedSize)
+
         return ViewConstraints(width: childWidth,
                                height: childHeight,
+                               isHorizontalFixedSize: isHorizontalFixedSize,
+                               isVerticalFixedSize: isVerticalFixedSize,
                                safeAreaInsets: insets)
     }
 }
@@ -137,6 +162,17 @@ extension SizeConstraint {
             return percent/100.0 * parentSize
         case.auto:
             return nil
+        }
+    }
+
+    func isFixedSize(_ isParentFixed: Bool) -> Bool {
+        switch (self) {
+        case .points(_):
+            return true
+        case .percent(_):
+            return isParentFixed
+        case.auto:
+            return false
         }
     }
 }
@@ -159,4 +195,5 @@ private extension CGFloat {
         return value
     }
 }
+
 

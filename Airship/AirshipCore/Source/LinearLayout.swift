@@ -19,37 +19,61 @@ struct LinearLayout : View {
     @ViewBuilder
     func createStack() -> some View {
         let items = orderedItems()
+        let parentConstraints = parentConstraints()
         if (self.model.direction == .vertical) {
             VStack(alignment: .center, spacing: 0) {
                 ForEach(0..<items.count, id: \.self) { index in
-                    childItem(item: items[index])
+                    childItem(items[index], parentConstraints: parentConstraints)
                 }
             }
+            .constraints(constraints, alignment: .top)
         } else {
             HStack(spacing: 0) {
                 ForEach(0..<items.count, id: \.self) { index in
-                    childItem(item: items[index])
+                    childItem(items[index], parentConstraints: parentConstraints)
                 }
             }
+            .constraints(constraints)
         }
     }
                         
     var body: some View {
         createStack()
-            .constraints(constraints, alignment: .top)
+            .clipped()
             .background(self.model.backgroundColor)
             .border(self.model.border)
     }
     
     @ViewBuilder
-    private func childItem(item: LinearLayoutItem) -> some View {
+    private func childItem(_ item: LinearLayoutItem, parentConstraints: ViewConstraints) -> some View {
         let borderPadding = self.model.border?.strokeWidth ?? 0
-        let childConstraints = self.constraints.calculateChild(item.size,
-                                                               margin: item.margin,
-                                                               additionalPadding: borderPadding)
-        ViewFactory.createView(model: item.view, constraints: childConstraints)
+        let constraints = childConstraints(item, parentConstraints: parentConstraints, borderPadding: borderPadding)
+
+        ViewFactory.createView(model: item.view, constraints: constraints)
             .margin(item.margin)
             .padding(borderPadding)
+    }
+
+
+    private func parentConstraints() -> ViewConstraints {
+        var constraints = self.constraints
+
+        if (self.model.direction == .vertical) {
+            constraints.isVerticalFixedSize = false
+        } else {
+            constraints.isHorizontalFixedSize = false
+        }
+
+        return constraints
+    }
+
+    private func childConstraints(_ item: LinearLayoutItem,
+                                  parentConstraints: ViewConstraints,
+                                  borderPadding: Double) -> ViewConstraints {
+
+        return parentConstraints.calculateChild(item.size,
+                                          margin: item.margin,
+                                          additionalPadding: borderPadding)
     }
 
     private func orderedItems() -> [LinearLayoutItem] {

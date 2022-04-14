@@ -45,6 +45,8 @@ struct Pager : View {
         
         let childConstraints = ViewConstraints(width: metrics.size.width,
                                                height: metrics.size.height,
+                                               isHorizontalFixedSize: self.constraints.isHorizontalFixedSize,
+                                               isVerticalFixedSize: self.constraints.isVerticalFixedSize,
                                                safeAreaInsets: self.constraints.safeAreaInsets)
         
         let items = self.model.items

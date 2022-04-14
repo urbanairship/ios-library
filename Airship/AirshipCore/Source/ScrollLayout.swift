@@ -38,17 +38,13 @@ struct ScrollLayout : View {
                 .fixedSize(horizontal: self.model.direction == .horizontal, vertical: self.model.direction == .vertical)
         }.frame(alignment: .topLeading)
     }
+
     var body: some View {
         GeometryReader { parentMetrics in
             let isVertical = self.model.direction == .vertical
-            let width = isVertical ? self.constraints.width : nil
-            let height = isVertical ? nil : self.constraints.height
-            
-            let childConstraints = ViewConstraints(width: width,
-                                                   height: height,
-                                                   safeAreaInsets: self.constraints.safeAreaInsets)
-            
+            let childConstraints = childConstraints()
             let axis = isVertical ? Axis.Set.vertical : Axis.Set.horizontal
+            
             ScrollView(self.isScrollable ? axis : []) {
                 content(parentMetrics: parentMetrics, constraints: childConstraints)
                 if #available(iOS 14.0, tvOS 14.0, *) {} else {
@@ -60,6 +56,19 @@ struct ScrollLayout : View {
         .constraints(self.constraints)
         .background(self.model.backgroundColor)
         .border(self.model.border)
+    }
+
+    private func childConstraints() -> ViewConstraints {
+        var childConstraints = constraints
+        if (self.model.direction == .vertical) {
+            childConstraints.height = nil
+            childConstraints.isVerticalFixedSize = false
+        } else {
+            childConstraints.width = nil
+            childConstraints.isHorizontalFixedSize = false
+        }
+
+        return childConstraints
     }
     
     private func updateScrollable(_ parentMetrics: GeometryProxy) {
