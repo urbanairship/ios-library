@@ -95,8 +95,9 @@ struct ModalView: View {
             .margin(placement.margin)
             .background(
                 GeometryReader(content: { contentMetrics -> Color in
+                    let size = contentMetrics.size
                     DispatchQueue.main.async {
-                        self.contentSize = (windowConstraints, contentMetrics.size)
+                        self.contentSize = (windowConstraints, size)
                     }
                     return Color.clear
                 })
@@ -113,15 +114,11 @@ struct ModalView: View {
     
     @ViewBuilder
     private func modalBackground(_ placement: ModalPlacement) -> some View {
-        if case let .percent(height) = placement.size.height, height >= 1.0,
-           case let .percent(value) = placement.size.width, value >= 1.0,
-           placement.ignoreSafeArea == false {
+        if (placement.isFullScreen() && placement.ignoreSafeArea != true) {
             Rectangle()
-                #if !os(tvOS)
-                .foregroundColor(UIApplication.shared.statusBarStyle == .darkContent
-                                 ? Color.white : Color.black)
-                #endif
+                .foregroundColor(statusBarShimColor())
                 .edgesIgnoringSafeArea(.all)
+
         } else {
             Rectangle()
                 .foreground(placement.shade)
@@ -157,4 +154,40 @@ struct ModalView: View {
         self.viewControllerOptions.orientation = placement.device?.orientationLock
         return placement
     }
+
+    private func statusBarShimColor() -> Color {
+        #if os(tvOS)
+        return Color.clear
+        #else
+
+        var statusBarStyle = UIStatusBarStyle.default
+        if let sceneStyle = UIApplication.shared.windows.first?.windowScene?.statusBarManager?.statusBarStyle {
+            statusBarStyle = sceneStyle
+        } else {
+            statusBarStyle = UIApplication.shared.statusBarStyle
+        }
+
+        switch (statusBarStyle) {
+        case .darkContent:
+            return Color.white
+        case .lightContent:
+            return Color.black
+        case .default:
+            return self.colorScheme == .dark ? Color.black : Color.white
+        @unknown default:
+            return Color.black
+        }
+        #endif
+    }
 }
+
+private extension ModalPlacement {
+    func isFullScreen() -> Bool {
+        if case let .percent(height) = self.size.height, height >= 100.0,
+           case let .percent(width) = self.size.width, width >= 100.0 {
+            return true
+        }
+        return false
+    }
+}
+

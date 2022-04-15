@@ -29,8 +29,9 @@ struct Container : View {
         .border(model.border)
         .background(
             GeometryReader(content: { contentMetrics -> Color in
+                let size = contentMetrics.size
                 DispatchQueue.main.async {
-                    self.contentSize  = (self.constraints, contentMetrics.size)
+                    self.contentSize  = (self.constraints, size)
                 }
                 return Color.clear
             })

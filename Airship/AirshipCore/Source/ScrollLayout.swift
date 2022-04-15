@@ -24,13 +24,15 @@ struct ScrollLayout : View {
 
     @ViewBuilder
     func content(parentMetrics: GeometryProxy, constraints: ViewConstraints) -> some View {
+        let parentSize = parentMetrics.size
         ZStack {
             ViewFactory.createView(model: self.model.view, constraints: constraints)
                 .background(
                     GeometryReader(content: { contentMetrics -> Color in
+                        let size = contentMetrics.size
                         DispatchQueue.main.async {
-                            self.contentSize = (self.constraints, contentMetrics.size)
-                            updateScrollable(parentMetrics)
+                            self.contentSize = (self.constraints, size)
+                            updateScrollable(parentSize)
                         }
                         return Color.clear
                     })
@@ -71,11 +73,11 @@ struct ScrollLayout : View {
         return childConstraints
     }
     
-    private func updateScrollable(_ parentMetrics: GeometryProxy) {
+    private func updateScrollable(_ parentSize: CGSize) {
         guard let contentSize = contentSize, contentSize.0 == self.constraints else {
             return
         }
-        let isScrollable = scrollable(parent: parentMetrics.size, content: contentSize.1)
+        let isScrollable = scrollable(parent: parentSize, content: contentSize.1)
         if (isScrollable != self.isScrollable) {
             self.isScrollable = isScrollable
         }

@@ -1,8 +1,14 @@
 name: CI
 
 on: [pull_request]
+
 env:
   BUNDLE_PATH: vendor/bundle
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-sdk:
     runs-on: macOS-11

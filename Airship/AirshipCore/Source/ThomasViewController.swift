@@ -19,7 +19,7 @@ class ThomasViewController<Content> : UIHostingController<Content> where Content
     required dynamic init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.onDismiss?()
@@ -49,6 +49,3 @@ class ThomasViewController<Content> : UIHostingController<Content> where Content
 class ThomasViewControllerOptions {
     var orientation: Orientation?
 }
-
-
-    

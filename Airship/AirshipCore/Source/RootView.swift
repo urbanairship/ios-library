@@ -84,5 +84,4 @@ struct RootView<Content: View> : View {
         return .portrait
         #endif
     }
-
 }

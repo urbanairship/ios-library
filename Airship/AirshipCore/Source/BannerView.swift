@@ -59,8 +59,9 @@ struct BannerView: View {
                 .shadow(radius: 5)
                 .background(
                     GeometryReader(content: { contentMetrics -> Color in
+                        let size = contentMetrics.size
                         DispatchQueue.main.async {
-                            self.contentSize = (constraints, contentMetrics.size)
+                            self.contentSize = (constraints, size)
                         }
                         return Color.clear
                     })
