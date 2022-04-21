@@ -72,6 +72,8 @@ public class Chat : NSObject, Component, PushableComponent {
     
     private let privacyManager: PrivacyManager
 
+    private var chatWindow: UIWindow?
+    
     private var viewController : UIViewController?
 
     private let disableHelper: ComponentDisableHelper
@@ -178,9 +180,10 @@ public class Chat : NSObject, Component, PushableComponent {
         let vc = chatViewController(message: message)
         viewController = vc
 
-        Utils.topController()?.present(vc, animated: true, completion: {
+        if let window = Utils.presentInNewWindow(vc) {
             AirshipLogger.trace("Presented chat view controller: \(vc.description)")
-        })
+            self.chatWindow = window
+        }
     }
 
     private func chatViewController(message: String?) -> UIViewController {
@@ -220,6 +223,7 @@ public class Chat : NSObject, Component, PushableComponent {
         } else {
             AirshipLogger.debug("Chat already dismissed")
         }
+        chatWindow = nil
     }
     
     // NOTE: For internal use only. :nodoc:
