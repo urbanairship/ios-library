@@ -898,7 +898,7 @@ public class Contact : NSObject, Component, ContactProtocol {
         }
     }
     
-    private func shouldSkipOperation(_ operation: ContactOperation) -> Bool {
+    private func shouldSkipOperation(_ operation: ContactOperation, isNext: Bool) -> Bool {
         switch(operation.type) {
         case .update:
             let payload = operation.payload as! UpdatePayload
@@ -912,7 +912,7 @@ public class Contact : NSObject, Component, ContactProtocol {
             return self.isContactIDRefreshed && self.lastContactInfo?.namedUserID == payload.identifier
             
         case .reset:
-            return (self.lastContactInfo?.isAnonymous ?? false) && self.anonContactData != nil
+            return isNext && (self.lastContactInfo?.isAnonymous ?? false) && self.anonContactData == nil
             
         case .resolve:
             return self.isContactIDRefreshed
@@ -1073,7 +1073,7 @@ public class Contact : NSObject, Component, ContactProtocol {
             
             while (!operations.isEmpty) {
                 let first = operations.removeFirst()
-                if (!self.shouldSkipOperation(first)) {
+                if (!self.shouldSkipOperation(first, isNext: true)) {
                     next = first
                     break
                 }
@@ -1085,7 +1085,7 @@ public class Contact : NSObject, Component, ContactProtocol {
                     // Collapse any sequential updates (ignoring anything that can be skipped inbetween)
                     while (!operations.isEmpty) {
                         let first = operations.first!
-                        if (self.shouldSkipOperation(first)) {
+                        if (self.shouldSkipOperation(first, isNext: false)) {
                             operations.removeFirst()
                             continue
                         }
@@ -1124,7 +1124,7 @@ public class Contact : NSObject, Component, ContactProtocol {
                     if (self.isContactIDRefreshed && !(self.lastContactInfo?.isAnonymous ?? false)) {
                         while (!operations.isEmpty) {
                             let first = operations.first!
-                            if (self.shouldSkipOperation(first)) {
+                            if (self.shouldSkipOperation(first, isNext: false)) {
                                 operations.removeFirst()
                                 continue
                             }

@@ -526,7 +526,98 @@ class ContactTest: XCTestCase {
         XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).failed)
         wait(for: [expectation], timeout: 10.0)
     }
-    
+
+    func testResetsNotSkippedDuringIdentify() throws {
+        self.contact.identify("one")
+        self.contact.reset()
+        self.contact.reset()
+        self.contact.identify("one")
+        self.contact.reset()
+
+        let identify = XCTestExpectation(description: "identify")
+        identify.expectedFulfillmentCount = 2
+        identify.assertForOverFulfill = true
+        self.apiClient.identifyCallback = { channelID, namedUserID, contactID, callback in
+            callback(ContactAPIResponse(status: 200, contactID: "some-contact-id", isAnonymous: false), nil)
+            identify.fulfill()
+        }
+
+        let reset = XCTestExpectation(description: "reset")
+        reset.expectedFulfillmentCount = 2
+        reset.assertForOverFulfill = true
+        self.apiClient.resetCallback = { channelID, callback in
+            callback(ContactAPIResponse(status: 200, contactID: "some-other-id", isAnonymous: true), nil)
+            reset.fulfill()
+        }
+
+        // identify
+        XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).completed)
+        // reset
+        XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).completed)
+        // identify
+        XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).completed)
+        // reset
+        XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).completed)
+        // no-op
+        XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).completed)
+        wait(for: [reset, identify], timeout: 10.0)
+    }
+
+    func testResetsNotSkippDuringUpdate() throws {
+        self.contact.editTagGroups { editor in
+            editor.add(["neat"], group: "cool")
+        }
+
+        self.contact.reset()
+        self.contact.reset()
+
+        self.contact.editTagGroups { editor in
+            editor.add(["neat"], group: "cool")
+        }
+
+        self.contact.reset()
+
+        // Should resolve first
+        let resolve = XCTestExpectation(description: "resolve")
+        self.apiClient.resolveCallback = { channelID, callback in
+            XCTAssertEqual("channel id", channelID)
+            callback(ContactAPIResponse(status: 200, contactID: "some-contact-id", isAnonymous: true), nil)
+            resolve.fulfill()
+        }
+
+        let update = XCTestExpectation(description: "update")
+        update.expectedFulfillmentCount = 2
+        update.assertForOverFulfill = true
+        self.apiClient.updateCallback = { contactID, tagUpdates, attributeUpdates, subscriptionListUpdates, callback in
+            callback(HTTPResponse(status: 200), nil)
+            update.fulfill()
+        }
+
+        let reset = XCTestExpectation(description: "reset")
+        reset.expectedFulfillmentCount = 2
+        reset.assertForOverFulfill = true
+        self.apiClient.resetCallback = { channelID, callback in
+            callback(ContactAPIResponse(status: 200, contactID: "some-other-id", isAnonymous: true), nil)
+            reset.fulfill()
+        }
+
+        // resolve
+        XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).completed)
+        // update
+        XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).completed)
+        // reset
+        XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).completed)
+        // update
+        XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).completed)
+        // reset
+        XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).completed)
+        // no-op
+        XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).completed)
+
+        wait(for: [resolve, reset, update], timeout: 10.0)
+    }
+
+
     func testSkipSandwichedIdentifyCalls() throws {
         self.contact.identify("one")
         self.contact.identify("two")
