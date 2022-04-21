@@ -111,10 +111,11 @@ public class PreferenceCenter : NSObject, Component {
         preferenceCenterVC.style = style
         
         viewController = preferenceCenterVC
-        
-        display(completion: {
+    
+        if let window =  Utils.presentInNewWindow(createNavigationViewController()) {
+            self.preferenceCenterWindow = window
             AirshipLogger.trace("Presented preference center view controller: \(preferenceCenterVC.description)")
-        })
+        }
     }
     
     private func createNavigationViewController() -> UINavigationController {
@@ -149,41 +150,7 @@ public class PreferenceCenter : NSObject, Component {
         }
         return navController
     }
-    
-    private func display(completion completionHandler: ()->Void) {
-        createWindow()
-        if #available(iOS 13.0, *) {
-            do {
-                let scene = try findScene()
-                preferenceCenterWindow?.windowScene = scene
-            } catch {
-                AirshipLogger.error("\(error)")
-                return
-            }
-        }
-        showWindow()
-        completionHandler()
-    }
-    
-    private func createWindow() {
-        preferenceCenterWindow = UIWindow(frame: UIScreen.main.bounds)
-        viewController?.modalPresentationStyle = .currentContext
-        preferenceCenterWindow?.windowLevel = .alert
-    }
-    
-    @available(iOS 13.0.0, tvOS 13.0.0, *)
-    private func findScene() throws -> UIWindowScene? {
-        guard let scene = UIApplication.shared.connectedScenes.first(where: { $0.isKind(of: UIWindowScene.self) }) as? UIWindowScene else {
-            throw AirshipErrors.error("Unable to find a window!")
-        }
-        return scene
-    }
-    
-    private func showWindow() {
-        preferenceCenterWindow?.makeKeyAndVisible()
-        preferenceCenterWindow?.rootViewController = createNavigationViewController()
-    }
-    
+
     @objc
     private func dismiss(sender: Any) {
         if let vc = viewController {

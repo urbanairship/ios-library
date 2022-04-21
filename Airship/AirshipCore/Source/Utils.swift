@@ -316,6 +316,41 @@ public class Utils : NSObject {
         return topController
     }
     
+    @objc (presentInNewWindow:)
+    public class func presentInNewWindow(_ rootViewController: UIViewController) -> UIWindow? {
+        let window = createWindow()
+        if #available(iOS 13.0, tvOS 13.0, *) {
+            do {
+                let scene = try findScene()
+                window.windowScene = scene
+            } catch {
+                AirshipLogger.error("\(error)")
+                return nil
+            }
+        }
+        showWindow(window)
+        window.rootViewController = rootViewController
+        return window
+    }
+    
+    private class func createWindow() -> UIWindow {
+        let window = UIWindow(frame: UIScreen.main.bounds)
+        window.windowLevel = .alert
+        return window
+    }
+    
+    @available(iOS 13.0.0, tvOS 13.0, *)
+    private class func findScene() throws -> UIWindowScene? {
+        guard let scene = UIApplication.shared.connectedScenes.first(where: { $0.isKind(of: UIWindowScene.self) }) as? UIWindowScene else {
+            throw AirshipErrors.error("Unable to find a window!")
+        }
+        return scene
+    }
+    
+    private class func showWindow(_ window: UIWindow) {
+        window.makeKeyAndVisible()
+    }
+    
     // MARK: Fetch Results
     
 

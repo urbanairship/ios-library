@@ -18,6 +18,7 @@
 
 @interface UADefaultMessageCenterUI()
 @property(nonatomic, strong) UADefaultMessageCenterSplitViewController *splitViewController;
+@property(nonatomic, strong) UIWindow *messageCenterWindow;
 @end
 
 @implementation UADefaultMessageCenterUI
@@ -90,7 +91,8 @@
                           completion:(void(^)(void))completionHandler {
     if (!self.splitViewController) {
         [self createSplitViewController];
-        [[UAUtils topController] presentViewController:self.splitViewController animated:animated completion:completionHandler];
+        
+        self.messageCenterWindow = [UAUtils presentInNewWindow:self.splitViewController];
     } else {
         if (completionHandler) {
             completionHandler();
@@ -113,6 +115,7 @@
 - (void)dismissMessageCenterAnimated:(BOOL)animated {
     [self.splitViewController.presentingViewController dismissViewControllerAnimated:animated completion:nil];
     self.splitViewController = nil;
+    self.messageCenterWindow = nil;
 }
 
 - (void)dismiss {
