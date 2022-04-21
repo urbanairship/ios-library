@@ -51,11 +51,29 @@ struct Score : View {
         var constraints = self.constraints
         if (self.constraints.width == nil && self.constraints.height == nil) {
             constraints.height = 32
+        } else {
+            switch(self.model.style) {
+            case .numberRange(let style):
+                constraints.height = self.calculateHeight(style: style, width: constraints.width)
+            }
         }
-        
         return constraints
     }
-    
+
+    func calculateHeight(style: ScoreNumberRangeStyle, width: CGFloat?) -> CGFloat? {
+        guard let width = width else {
+            return nil
+        }
+
+        let count = Double((style.start...style.end).count)
+        let spacing = (count - 1.0) * (style.spacing ?? 0.0)
+        let remainingSpace = width - spacing
+        if (remainingSpace <= 0) {
+            return nil
+        }
+        return remainingSpace / count
+    }
+
     private func updateScore(_ value: Int?) {
         self.score = value
         let isValid = value != nil || self.model.isRequired != true
@@ -82,8 +100,7 @@ private struct AirshipNumberRangeToggleStyle: ToggleStyle {
     let viewConstraints: ViewConstraints
     let value: Int
     let colorScheme: ColorScheme
-   
-    
+
     func makeBody(configuration: Self.Configuration) -> some View {
         let isOn = configuration.isOn
         return Button(action: { configuration.isOn.toggle() } ) {
@@ -115,9 +132,8 @@ private struct AirshipNumberRangeToggleStyle: ToggleStyle {
                
             }
             .aspectRatio(1, contentMode: .fit)
-            .frame(height: viewConstraints.height)
+            .frame(height: self.viewConstraints.height)
         }
         .animation(Animation.easeInOut(duration: 0.05))
     }
-
 }
