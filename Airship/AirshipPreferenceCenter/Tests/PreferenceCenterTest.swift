@@ -77,6 +77,56 @@ class PreferenceCenterTest: XCTestCase {
         self.wait(for: [form1Expectation, form2Expectation, missingFormExpectation], timeout: 5)
     }
     
+    func testJSONConfig() throws {
+        let payloadData = """
+        {
+           "preference_forms":[
+              {
+                 "created":"2017-10-10T12:13:14.023",
+                 "last_updated":"2017-10-10T12:13:14.023",
+                 "form_id":"031de218-9fff-44d4-b348-de4b724bb924",
+                 "form":{
+                    "id":"form-1"
+                 }
+              },
+              {
+                 "created":"2018-10-10T12:13:14.023",
+                 "last_updated":"2018-10-10T12:13:14.023",
+                 "form_id":"031de218-9fff-44d4-b348-de4b724bb931",
+                 "form":{
+                    "id":"form-2"
+                 }
+              }
+           ]
+        }
+        """
+        
+        
+        let remoteData = createPayload(payloadData)
+        var expectedConfig: [String : Any] = [:]
+        expectedConfig.updateValue("form-1", forKey: "id")
+        
+        let form1Expectation = XCTestExpectation(description: "form-1")
+        self.preferenceCenter.jsonConfig(preferenceCenterID: "form-1") { config in
+            XCTAssertNotNil(config)
+            XCTAssertTrue(NSDictionary(dictionary: config).isEqual(to: expectedConfig))
+            form1Expectation.fulfill()
+        }
+        
+        var expectedConfig2: [String : Any] = [:]
+        expectedConfig2.updateValue("form-2", forKey: "id")
+        
+        let form2Expectation = XCTestExpectation(description: "form-2")
+        self.preferenceCenter.jsonConfig(preferenceCenterID: "form-2") { config in
+            XCTAssertNotNil(config)
+            XCTAssertTrue(NSDictionary(dictionary: config).isEqual(to: expectedConfig2))
+            form2Expectation.fulfill()
+        }
+        
+        self.remoteDataProvider.dispatchPayload(remoteData)
+        self.wait(for: [form1Expectation, form2Expectation], timeout: 5)
+    }
+    
     func testOpenDelegate() {
         let delegate = MockPreferenceCenterOpenDelegate()
         self.preferenceCenter.openDelegate = delegate

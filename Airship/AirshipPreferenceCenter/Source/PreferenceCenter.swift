@@ -186,6 +186,25 @@ public class PreferenceCenter : NSObject, Component {
         }
     }
     
+    /**
+     * Returns the raw json of the Preference Center configuration with the given ID through a callback method.
+     * - Parameters:
+     *   - preferenceCenterID: The preference center ID.
+     *   - completionHandler: The completion handler that will receive the requested PreferenceCenterConfig
+     */
+    @objc(jsonConfigForPreferenceCenterID:completionHandler:)
+    @discardableResult
+    public func jsonConfig(preferenceCenterID: String, completionHandler: @escaping ([String : Any]) -> ()) -> Disposable {
+        return self.remoteDataProvider.subscribe(types: [PreferenceCenter.payloadType]) { payloads in
+            let data = payloads.first?.data["preference_forms"] as? [[String : Any]]
+            let config = data?
+                .compactMap { $0["form"] as? [String : Any] }
+                .first(where: { $0["id"] as? String == preferenceCenterID})
+            
+            completionHandler(config ?? [:])
+        }
+    }
+    
     // NOTE: For internal use only. :nodoc:
     public func deepLink(_ deepLink: URL) -> Bool {
         guard deepLink.scheme == Airship.deepLinkScheme,
