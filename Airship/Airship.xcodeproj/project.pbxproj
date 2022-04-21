@@ -1575,6 +1575,23 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		03525B87280DE48100320AA9 /* af */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = af; path = af.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		03525B88280DE49B00320AA9 /* am */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = am; path = am.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		03525B89280DE4E200320AA9 /* bg */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = bg; path = bg.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		03525B8A280DE4ED00320AA9 /* ca */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ca; path = ca.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		03525B8B280DE4F800320AA9 /* el */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = el; path = el.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		03525B8C280DE50D00320AA9 /* et */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = et; path = et.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		03525B8D280DE54900320AA9 /* fa */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fa; path = fa.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		03525B8E280DE55900320AA9 /* fr-CA */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "fr-CA"; path = "fr-CA.lproj/UrbanAirship.strings"; sourceTree = "<group>"; };
+		03525B8F280DE58800320AA9 /* hr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hr; path = hr.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		03525B90280DE5A200320AA9 /* lt */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = lt; path = lt.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		03525B91280DE5B800320AA9 /* lv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = lv; path = lv.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		03525B92280DE5CE00320AA9 /* sl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sl; path = sl.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		03525B93280DE5DD00320AA9 /* sr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sr; path = sr.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		03525B94280DE5EA00320AA9 /* sw */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sw; path = sw.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		03525B95280DE5F400320AA9 /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		03525B96280DE60200320AA9 /* zh-HK */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-HK"; path = "zh-HK.lproj/UrbanAirship.strings"; sourceTree = "<group>"; };
+		03525B97280DE61200320AA9 /* zu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = zu; path = zu.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
 		07A9F5B3D35A6078949E4EAA /* Pods-AirshipKitTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipKitTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipKitTests/Pods-AirshipKitTests.release.xcconfig"; sourceTree = "<group>"; };
 		0F55D47F540C142B0F469570 /* Pods-AirshipTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipTests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipTests/Pods-AirshipTests.debug.xcconfig"; sourceTree = "<group>"; };
 		1B05132724AE103D00F5051F /* UALocaleManagerTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UALocaleManagerTest.m; sourceTree = "<group>"; };
@@ -6073,6 +6090,23 @@
 				he,
 				nb,
 				Base,
+				af,
+				am,
+				bg,
+				ca,
+				el,
+				et,
+				fa,
+				"fr-CA",
+				hr,
+				lt,
+				lv,
+				sl,
+				sr,
+				sw,
+				uk,
+				"zh-HK",
+				zu,
 			);
 			mainGroup = 494DD94D1B0EB677009C134E;
 			productRefGroup = 494DD9581B0EB677009C134E /* Products */;
@@ -7792,6 +7826,23 @@
 				6E411CA12538C65C00FEE4E8 /* ko */,
 				6E411CA22538C65F00FEE4E8 /* ms */,
 				6E411CA32538C66100FEE4E8 /* sk */,
+				03525B87280DE48100320AA9 /* af */,
+				03525B88280DE49B00320AA9 /* am */,
+				03525B89280DE4E200320AA9 /* bg */,
+				03525B8A280DE4ED00320AA9 /* ca */,
+				03525B8B280DE4F800320AA9 /* el */,
+				03525B8C280DE50D00320AA9 /* et */,
+				03525B8D280DE54900320AA9 /* fa */,
+				03525B8E280DE55900320AA9 /* fr-CA */,
+				03525B8F280DE58800320AA9 /* hr */,
+				03525B90280DE5A200320AA9 /* lt */,
+				03525B91280DE5B800320AA9 /* lv */,
+				03525B92280DE5CE00320AA9 /* sl */,
+				03525B93280DE5DD00320AA9 /* sr */,
+				03525B94280DE5EA00320AA9 /* sw */,
+				03525B95280DE5F400320AA9 /* uk */,
+				03525B96280DE60200320AA9 /* zh-HK */,
+				03525B97280DE61200320AA9 /* zu */,
 			);
 			name = UrbanAirship.strings;
 			sourceTree = "<group>";
