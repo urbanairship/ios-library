@@ -46,12 +46,12 @@ struct LinearLayout : View {
     
     @ViewBuilder
     private func childItem(_ item: LinearLayoutItem, parentConstraints: ViewConstraints) -> some View {
-        let borderPadding = self.model.border?.strokeWidth ?? 0
-        let constraints = childConstraints(item, parentConstraints: parentConstraints, borderPadding: borderPadding)
+        let constraints = childConstraints(item,
+                                           parentConstraints: parentConstraints,
+                                           borderPadding: self.model.border?.strokeWidth ?? 0)
 
         ViewFactory.createView(model: item.view, constraints: constraints)
             .margin(item.margin)
-            .padding(borderPadding)
     }
 
 
@@ -63,6 +63,9 @@ struct LinearLayout : View {
         } else {
             constraints.isHorizontalFixedSize = false
         }
+
+        // Linear layout just consumes insets
+        constraints.safeAreaInsets = ViewConstraints.emptyEdgeSet
 
         return constraints
     }
