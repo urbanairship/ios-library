@@ -497,5 +497,31 @@ public class Utils : NSObject {
         AirshipLogger.trace(logMessage)
     }
     
-
+    // MARK: URL
+    
+    /// Parse url for the input string.
+    ///
+    /// - Parameter value: Input string for which to create the URL.
+    ///
+    /// - Returns: returns the created URL otherwise return nil.
+    @objc(parseURL:)
+    public class func parseURL(_ value:String) -> URL? {
+        if let url = URL(string: value)  {
+            return url
+        }
+        
+        /* Caracters reserved for url  */
+        let reserved = "!*'();:@&=+$,/?%#[]"
+        /* Caracters are not reserved for url but should not be encoded */
+        let unreserved = ":-._~/?"
+        let allowed = NSMutableCharacterSet.alphanumeric()
+        allowed.addCharacters(in: reserved)
+        allowed.addCharacters(in: unreserved)
+        if let encoded = value.addingPercentEncoding(withAllowedCharacters: allowed as CharacterSet) {
+            return URL(string: encoded)
+            
+        }
+        return nil
+    }
+    
 }

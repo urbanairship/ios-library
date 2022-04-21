@@ -66,8 +66,9 @@ public class DeepLinkAction : NSObject, Action {
     
     private func parseURL(_ arguments: ActionArguments) -> URL? {
         if let value = arguments.value as? String {
-            if let encoded = value.addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed) {
-                return URL(string: encoded)
+
+            if let url = Utils.parseURL(value) {
+                return url
             }
                
         }

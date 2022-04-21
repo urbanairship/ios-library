@@ -437,4 +437,26 @@
     XCTAssertTrue([UAUtils float:1000000 isEqualToFloat:999999 withAccuracy:1]);
 }
 
+/**
+ * Test parse urls.
+ */
+- (void)testParseURL {
+    NSString *originalUrl = @"https://advswift.com/api/v1?page=url+components";
+    NSURL *url = [UAUtils parseURL:originalUrl];
+    XCTAssertNotNil(url);
+    XCTAssertEqualObjects(originalUrl, url.absoluteString);
+    
+    originalUrl = @"rtlmost://szakaszó.com/main/típus/v1?page=azonosító";
+    NSString *encodedUrl = @"rtlmost://szakasz%C3%B3.com/main/t%C3%ADpus/v1?page=azonos%C3%ADt%C3%B3";
+    url = [UAUtils parseURL:originalUrl];
+    XCTAssertNotNil(url);
+    XCTAssertEqualObjects(encodedUrl, url.absoluteString);
+    
+    
+    //Decode the url
+    NSString *decodedUrl = url.absoluteString.stringByRemovingPercentEncoding;
+    XCTAssertNotNil(decodedUrl);
+    XCTAssertEqualObjects(originalUrl, decodedUrl);
+}
+
 @end
