@@ -10,6 +10,8 @@ import SwiftUI
 public class Thomas: NSObject {
     
     private static let decoder = JSONDecoder()
+    static let minLayoutVersion = 1
+    static let maxLayoutVersion = 2
     
     class func decode(_ json: Data) throws -> Layout {
         let layout = try self.decoder.decode(Layout.self, from: json)
@@ -19,6 +21,11 @@ public class Thomas: NSObject {
     @objc
     public class func validate(data: Data) throws {
         let layout = try decode(data)
+
+        guard layout.version >= minLayoutVersion && layout.version <= maxLayoutVersion else {
+            throw AirshipErrors.error("Unable to process layout with version \(layout.version)")
+        }
+
         try layout.validate()
     }
 

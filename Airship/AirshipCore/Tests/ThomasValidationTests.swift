@@ -5,18 +5,25 @@ import XCTest
 import AirshipCore
 
 class ThomasValidationTests: XCTestCase {
-    func testValid() throws {
-        let validPayloads = [ validVersion ]
-        
-        try validPayloads
-            .map { $0.data(using: .utf8)! }
-            .forEach {  XCTAssertNoThrow(try Thomas.validate(data: $0), String(data: $0, encoding: .utf8)!) }
+
+    func testValidVersions() throws {
+        try (Thomas.minLayoutVersion...Thomas.maxLayoutVersion)
+            .map { self.layout(version: $0).data(using: .utf8)! }
+            .forEach {
+                XCTAssertNoThrow(try Thomas.validate(data: $0), String(data: $0, encoding: .utf8)!)
+            }
     }
-    
-    func testInvalid() throws {
-        let invalidPayloads = [ invalidVersionTwo,
-                                invalidVersionZero,
-                                invalidPagerOutsidePagerController,
+
+    func testInvalidVersions() throws {
+        try ([Thomas.minLayoutVersion - 1, Thomas.maxLayoutVersion + 1])
+            .map { self.layout(version: $0).data(using: .utf8)! }
+            .forEach {
+                XCTAssertThrowsError(try Thomas.validate(data: $0), String(data: $0, encoding: .utf8)!)
+            }
+    }
+
+    func testInvalidPayloads() throws {
+        let invalidPayloads = [ invalidPagerOutsidePagerController,
                                 invalidToggleOutsideFormController,
                                 invalidTextInputOutsideFormController,
                                 invalidCheckboxControllerOutsideFormController,
@@ -29,73 +36,33 @@ class ThomasValidationTests: XCTestCase {
                 XCTAssertThrowsError(try Thomas.validate(data: $0), String(data: $0, encoding: .utf8)!)
             }
     }
-    
-    let validVersion = """
-        {
-            "presentation": {
-                "type": "modal",
-                "default_placement": {
-                    "size": {
-                        "width": "60%",
-                        "height": "60%"
-                    },
-                    "placement": {
-                        "horizontal": "center",
-                        "vertical": "center"
-                    }
-                }
-            },
-            "version": 1,
-            "view": {
-              "type": "empty_view",
-            }
-        }
+
+
+
+    func layout(version: Int) -> String {
         """
-    
-    let invalidVersionZero = """
-    {
-        "presentation": {
-            "type": "modal",
-            "default_placement": {
-                "size": {
-                    "width": "60%",
-                    "height": "60%"
+            {
+                "presentation": {
+                    "type": "modal",
+                    "default_placement": {
+                        "size": {
+                            "width": "60%",
+                            "height": "60%"
+                        },
+                        "placement": {
+                            "horizontal": "center",
+                            "vertical": "center"
+                        }
+                    }
                 },
-                "placement": {
-                    "horizontal": "center",
-                    "vertical": "center"
+                "version": \(version),
+                "view": {
+                  "type": "empty_view",
                 }
             }
-        },
-        "version": 0,
-        "view": {
-          "type": "empty_view",
-        }
+            """
     }
-    """
-    
-    let invalidVersionTwo = """
-    {
-        "presentation": {
-            "type": "modal",
-            "default_placement": {
-                "size": {
-                    "width": "60%",
-                    "height": "60%"
-                },
-                "placement": {
-                    "horizontal": "center",
-                    "vertical": "center"
-                }
-            }
-        },
-        "version": 2,
-        "view": {
-          "type": "empty_view",
-        }
-    }
-    """
-    
+
     let invalidPagerOutsidePagerController = """
     {
         "presentation": {

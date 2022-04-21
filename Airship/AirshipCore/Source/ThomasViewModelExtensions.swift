@@ -110,10 +110,6 @@ private enum ParentController {
 
 extension Layout {
     func validate() throws {
-        guard self.version == 1 else {
-            throw AirshipErrors.error("Unable to process layout with version \(self.version)")
-        }
-        
         /// We only need to validate that the layout wont produce runtime exceptions due to expected environments
         try self.view.validate(Set<ParentController>())
     }
