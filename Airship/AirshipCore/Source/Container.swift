@@ -56,11 +56,11 @@ struct Container : View {
         ZStack {
             ViewFactory.createView(model: item.view, constraints: childConstraints)
                 .margin(item.margin)
-                .padding(borderPadding)
         }
         .applyIf(item.ignoreSafeArea != true) {
             $0.padding(self.constraints.safeAreaInsets)
         }
+        .padding(borderPadding)
         .frame(idealWidth: placementWidth,
                maxWidth: placementWidth,
                idealHeight: placementHeight,

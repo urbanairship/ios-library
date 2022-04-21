@@ -14,7 +14,7 @@ struct BorderViewModifier: ViewModifier {
             if let cornerRadius = border.radius, cornerRadius > 0 {
                 content.overlay(
                     RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                        .stroke(color, lineWidth: width)
+                        .strokeBorder(color, lineWidth: width)
                 ).clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
             } else {
                 content.border(color, width: width)

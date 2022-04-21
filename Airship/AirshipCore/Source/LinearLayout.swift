@@ -26,6 +26,7 @@ struct LinearLayout : View {
                     childItem(items[index], parentConstraints: parentConstraints)
                 }
             }
+            .padding(self.model.border?.strokeWidth ?? 0)
             .constraints(constraints, alignment: .top)
         } else {
             HStack(spacing: 0) {
@@ -33,6 +34,7 @@ struct LinearLayout : View {
                     childItem(items[index], parentConstraints: parentConstraints)
                 }
             }
+            .padding(self.model.border?.strokeWidth ?? 0)
             .constraints(constraints)
         }
     }
