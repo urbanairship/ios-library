@@ -11,7 +11,7 @@ import AirshipCore
  */
 @objc(UAPreferenceCenterOpenDelegate)
 public protocol PreferenceCenterOpenDelegate {
-
+    
     /**
      * Opens the Preference Center with the given ID.
      * - Parameters:
@@ -37,6 +37,8 @@ public class PreferenceCenter : NSObject, Component {
     private static let payloadType = "preference_forms"
     private static let preferenceFormsKey = "preference_forms"
     
+    var preferenceCenterWindow: UIWindow?
+    
     /**
      * Open delegate.
      *
@@ -58,7 +60,7 @@ public class PreferenceCenter : NSObject, Component {
     public var style: PreferenceCenterStyle?
     
     private let disableHelper: ComponentDisableHelper
-        
+    
     // NOTE: For internal use only. :nodoc:
     public var isComponentEnabled: Bool {
         get {
@@ -78,7 +80,7 @@ public class PreferenceCenter : NSObject, Component {
         super.init()
         AirshipLogger.info("PreferenceCenter initialized")
     }
-
+    
     /**
      * Opens the Preference Center with the given ID.
      * - Parameters:
@@ -99,17 +101,24 @@ public class PreferenceCenter : NSObject, Component {
             AirshipLogger.debug("Already displaying preference center: \(self.viewController!.description)")
             return
         }
-
+        
         AirshipLogger.debug("Opening default preference center UI")
-    
+        
         let preferenceCenterVC = PreferenceCenterViewController(identifier: preferenceCenterID)
-
+        
         preferenceCenterVC.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismiss))
-       
+        
         preferenceCenterVC.style = style
         
         viewController = preferenceCenterVC
-        
+    
+        if let window =  Utils.presentInNewWindow(createNavigationViewController()) {
+            self.preferenceCenterWindow = window
+            AirshipLogger.trace("Presented preference center view controller: \(preferenceCenterVC.description)")
+        }
+    }
+    
+    private func createNavigationViewController() -> UINavigationController {
         let navController = UINavigationController(nibName: nil, bundle: nil)
         navController.modalTransitionStyle = UIModalTransitionStyle.crossDissolve
         navController.modalPresentationStyle = UIModalPresentationStyle.fullScreen
@@ -117,7 +126,7 @@ public class PreferenceCenter : NSObject, Component {
         var titleTextAttributes: [NSAttributedString.Key : Any] = [:]
         titleTextAttributes[.font] = style?.titleFont
         titleTextAttributes[.foregroundColor] = style?.titleColor
-
+        
         navController.navigationBar.tintColor = style?.tintColor
         navController.navigationBar.barTintColor = style?.navigationBarColor
         if (!titleTextAttributes.isEmpty) {
@@ -135,13 +144,11 @@ public class PreferenceCenter : NSObject, Component {
             navController.navigationBar.standardAppearance = appearance
             navController.navigationBar.scrollEdgeAppearance = appearance
         }
-
-
-        navController.pushViewController(preferenceCenterVC, animated: false)
         
-        Utils.topController()?.present(navController, animated: true, completion: {
-            AirshipLogger.trace("Presented preference center view controller: \(preferenceCenterVC.description)")
-        })
+        if let vc = viewController {
+            navController.pushViewController(vc, animated: false)
+        }
+        return navController
     }
 
     @objc
@@ -154,6 +161,7 @@ public class PreferenceCenter : NSObject, Component {
         } else {
             AirshipLogger.debug("Preference center already dismissed")
         }
+        preferenceCenterWindow = nil
     }
     
     /**

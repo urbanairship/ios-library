@@ -292,6 +292,41 @@ public class Utils : NSObject {
         return topController
     }
     
+    @objc (presentInNewWindow:)
+    public class func presentInNewWindow(_ rootViewController: UIViewController) -> UIWindow? {
+        let window = createWindow()
+        if #available(iOS 13.0, tvOS 13.0, *) {
+            do {
+                let scene = try findScene()
+                window.windowScene = scene
+            } catch {
+                AirshipLogger.error("\(error)")
+                return nil
+            }
+        }
+        showWindow(window)
+        window.rootViewController = rootViewController
+        return window
+    }
+    
+    private class func createWindow() -> UIWindow {
+        let window = UIWindow(frame: UIScreen.main.bounds)
+        window.windowLevel = .alert
+        return window
+    }
+    
+    @available(iOS 13.0.0, tvOS 13.0, *)
+    private class func findScene() throws -> UIWindowScene? {
+        guard let scene = UIApplication.shared.connectedScenes.first(where: { $0.isKind(of: UIWindowScene.self) }) as? UIWindowScene else {
+            throw AirshipErrors.error("Unable to find a window!")
+        }
+        return scene
+    }
+    
+    private class func showWindow(_ window: UIWindow) {
+        window.makeKeyAndVisible()
+    }
+    
     // MARK: Fetch Results
     
 
@@ -473,5 +508,31 @@ public class Utils : NSObject {
         AirshipLogger.trace(logMessage)
     }
     
-
+    // MARK: URL
+    
+    /// Parse url for the input string.
+    ///
+    /// - Parameter value: Input string for which to create the URL.
+    ///
+    /// - Returns: returns the created URL otherwise return nil.
+    @objc(parseURL:)
+    public class func parseURL(_ value:String) -> URL? {
+        if let url = URL(string: value)  {
+            return url
+        }
+        
+        /* Caracters reserved for url  */
+        let reserved = "!*'();:@&=+$,/?%#[]"
+        /* Caracters are not reserved for url but should not be encoded */
+        let unreserved = ":-._~/?"
+        let allowed = NSMutableCharacterSet.alphanumeric()
+        allowed.addCharacters(in: reserved)
+        allowed.addCharacters(in: unreserved)
+        if let encoded = value.addingPercentEncoding(withAllowedCharacters: allowed as CharacterSet) {
+            return URL(string: encoded)
+            
+        }
+        return nil
+    }
+    
 }

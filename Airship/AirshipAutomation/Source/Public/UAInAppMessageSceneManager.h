@@ -14,7 +14,7 @@ NS_SWIFT_NAME(InAppMessageSceneDelegate)
 
 @optional
 /**
- * Allows the delegate to override the the choice of window scene for displaying the message.
+ * Allows the delegate to override the choice of window scene for displaying the message.
  *
  * @param message The message.
  * @param defaultScene The window scene that will be used if the delegate does not override, or nil if a default scene could not be found.
