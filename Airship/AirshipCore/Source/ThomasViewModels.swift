@@ -293,13 +293,21 @@ indirect enum ViewModel: Decodable, Equatable {
     }
 }
 
-struct TextAppearanceModel : Decodable, Equatable {
+protocol BaseTextAppearance : Decodable, Equatable {
+    var color: ThomasColor  { get }
+    var fontSize: Double  { get }
+    var alignment: TextAlignement?  { get }
+    var styles: [TextStyle]?  { get }
+    var fontFamilies: [String]?  { get }
+}
+
+struct TextAppearance : BaseTextAppearance {
     var color: ThomasColor
     var fontSize: Double
     var alignment: TextAlignement?
     var styles: [TextStyle]?
     var fontFamilies: [String]?
-    
+
     enum CodingKeys : String, CodingKey {
         case color = "color"
         case fontSize = "font_size"
@@ -308,6 +316,25 @@ struct TextAppearanceModel : Decodable, Equatable {
         case fontFamilies = "font_families"
     }
 }
+
+struct TextInputTextAppearance : BaseTextAppearance {
+    var color: ThomasColor
+    var fontSize: Double
+    var alignment: TextAlignement?
+    var styles: [TextStyle]?
+    var fontFamilies: [String]?
+    var placeHolderColor: ThomasColor?
+
+    enum CodingKeys : String, CodingKey {
+        case color = "color"
+        case fontSize = "font_size"
+        case alignment = "alignment"
+        case styles = "styles"
+        case fontFamilies = "font_families"
+        case placeHolderColor = "place_holder_color"
+    }
+}
+
 
 struct ContainerModel : Decodable, Equatable {
     let type = ViewModelType.container
@@ -423,7 +450,7 @@ struct LabelModel: Decodable, Equatable {
     let border: Border?
     let backgroundColor: ThomasColor?
     let text: String
-    let textAppearance: TextAppearanceModel
+    let textAppearance: TextAppearance
     let contentDescription: String?
     
     enum CodingKeys: String, CodingKey {
@@ -737,8 +764,7 @@ struct TextInputModel: Decodable, Equatable {
     let contentDescription: String?
     let isRequired: Bool?
     let placeHolder: String?
-    let textAppearance: TextAppearanceModel
-    let placeHolderTextColor: ThomasColor?
+    let textAppearance: TextInputTextAppearance
 
     enum CodingKeys: String, CodingKey {
         case textAppearance = "text_appearance"
@@ -748,7 +774,6 @@ struct TextInputModel: Decodable, Equatable {
         case contentDescription = "content_description"
         case isRequired = "required"
         case placeHolder = "place_holder"
-        case placeHolderTextColor = "place_holder_text_color"
     }
 }
 
@@ -862,7 +887,7 @@ struct ScoreNumberRangeStyle: Decodable, Equatable {
     
     struct Binding: Decodable, Equatable {
         let shapes: [ShapeModel]?
-        let textAppearance: TextAppearanceModel?
+        let textAppearance: TextAppearance?
 
         enum CodingKeys: String, CodingKey {
             case shapes = "shapes"

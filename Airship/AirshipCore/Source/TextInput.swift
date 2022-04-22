@@ -53,11 +53,13 @@ struct TextInput : View {
         self.formState.updateFormInput(data)
     }
 
-    private func placeHolderTextApperance() -> TextAppearanceModel {
-        var placeHolderTextAppearance = self.model.textAppearance
-        if let color = self.model.placeHolderTextColor {
-            placeHolderTextAppearance.color = color
+    private func placeHolderTextApperance() -> some BaseTextAppearance {
+        guard let color = self.model.textAppearance.placeHolderColor else {
+            return self.model.textAppearance
         }
-        return placeHolderTextAppearance
+
+        var appearance = self.model.textAppearance
+        appearance.color = color
+        return appearance
     }
 }

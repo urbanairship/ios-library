@@ -4,8 +4,9 @@ import Foundation
 import SwiftUI
 
 @available(iOS 13.0.0, tvOS 13.0, *)
-struct TextAppearanceViewModifier: ViewModifier {
-    let textAppearance: TextAppearanceModel
+struct TextAppearanceViewModifier<Appearance: BaseTextAppearance>: ViewModifier {
+    let textAppearance: Appearance
+
     @ViewBuilder
     func body(content: Content) -> some View {
         content.font(resolveFont())
@@ -72,9 +73,10 @@ extension Text {
         }
         return text
     }
-    
+
+
     @ViewBuilder
-    func textAppearance(_ textAppearance: TextAppearanceModel?) -> some View {
+    func textAppearance<Appearance: BaseTextAppearance>(_ textAppearance: Appearance?) -> some View {
         if let textAppearance = textAppearance {
             self.applyTextStyles(styles: textAppearance.styles)
                 .multilineTextAlignment(textAppearance.alignment?.toSwiftTextAlignment() ?? .center)
@@ -88,7 +90,8 @@ extension Text {
 
 @available(iOS 13.0.0, tvOS 13.0, *)
 extension UITextView {
-    func textAppearance(_ textAppearance: TextAppearanceModel?, _ colorScheme: ColorScheme) -> UITextView {
+    func textAppearance<Appearance: BaseTextAppearance>(_ textAppearance: Appearance?,
+                                                        _ colorScheme: ColorScheme) -> UITextView {
         if let textAppearance = textAppearance {
             self.textAlignment = textAppearance.alignment?.toNSTextAlignment() ?? .center
                 self.textColor =
@@ -98,11 +101,11 @@ extension UITextView {
         return self
     }
     
-    func textModifyAppearance(_ textAppearance: TextAppearanceModel?) {
+    func textModifyAppearance<Appearance: BaseTextAppearance>(_ textAppearance: Appearance?) {
         underlineText(textAppearance)
     }
     
-    func underlineText(_ textAppearance: TextAppearanceModel?) {
+    func underlineText<Appearance: BaseTextAppearance>(_ textAppearance: Appearance?) {
         if let textAppearance = textAppearance {
             if let styles = textAppearance.styles {
                 if (styles.contains(.underlined)) {
@@ -116,7 +119,7 @@ extension UITextView {
         }
     }
     
-    private func resolveUIFont(_ textAppearance: TextAppearanceModel) -> UIFont {
+    private func resolveUIFont<Appearance: BaseTextAppearance>(_ textAppearance: Appearance) -> UIFont {
         var font = UIFont()
         if let fontFamily = resolveFontFamily(families: textAppearance.fontFamilies) {
             font = UIFont(name: fontFamily, size: CGFloat(textAppearance.fontSize)) ?? UIFont()

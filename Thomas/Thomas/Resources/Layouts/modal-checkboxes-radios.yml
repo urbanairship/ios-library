@@ -741,10 +741,6 @@ view:
                   identifier: nps_feedback
                   input_type: text_multiline
                   place_holder: blah blah blah...
-                  place_holder_text_color:
-                    default:
-                      hex: "#ff0000"
-                      alpha: 1
                   required: true
                   border:
                     stroke_width: 2
@@ -763,6 +759,10 @@ view:
                         alpha: 1
                     alignment: start
                     font_size: 12
+                    place_holder_color:
+                        default:
+                          hex: "#ff0000"
+                          alpha: 1
 
         # BOTTOM-PINNED BUTTON
         - size:
