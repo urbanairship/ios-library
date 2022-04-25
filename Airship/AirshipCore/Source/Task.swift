@@ -17,6 +17,12 @@ public protocol Task {
     var expirationHandler: (() -> Void)? { get set }
 
     /**
+     * Completion handler. Will be called once task is completed.
+     */
+    @objc
+    var completionHandler: (() -> Void)? { get set }
+
+    /**
      * The task ID.
      */
     @objc

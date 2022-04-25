@@ -31,6 +31,7 @@ public class TaskRequestOptions : NSObject {
     @objc
     public static let defaultOptions = TaskRequestOptions(conflictPolicy: .replace, requiresNetwork: true)
 
+
     @objc
     public init(conflictPolicy: UATaskConflictPolicy = .replace,
                 requiresNetwork: Bool = false,

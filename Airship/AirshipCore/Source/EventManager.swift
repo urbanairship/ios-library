@@ -251,14 +251,12 @@ public class EventManager: NSObject, EventManagerProtocol {
     }
 
     private func uploadEventsTask(_ task: Task) {
-
-        guard  self.uploadsEnabled else {
+        guard self.uploadsEnabled else {
             self.lock.sync {
                 self.nextUploadDate = nil;
             }
 
             task.taskCompleted()
-
             return
         }
 
@@ -294,7 +292,6 @@ public class EventManager: NSObject, EventManagerProtocol {
 
         let headers = self.prepareHeaders()
 
-        let semaphore = Semaphore()
         let request = self.client.uploadEvents(events, headers: headers) { [weak self] response, error in
             guard let self = self else {
                 return
@@ -324,15 +321,11 @@ public class EventManager: NSObject, EventManagerProtocol {
                     task.taskFailed()
                 }
             }
-
-            semaphore.signal()
         }
 
         task.expirationHandler = {
             request.dispose()
         }
-
-        semaphore.wait()
     }
 
     private func updateAnalyticsParameters(response: EventAPIResponse) {

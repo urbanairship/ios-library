@@ -41,9 +41,9 @@ class ChannelRegistrarTest: XCTestCase {
         let options = TaskRequestOptions(conflictPolicy:  UATaskConflictPolicy.keep, requiresNetwork: true, extras: extras)
         
         let task = self.taskManager.enqueuedRequests[0]
-        XCTAssertEqual("UAChannelRegistrar.registration", task.0)
-        XCTAssertEqual(options, task.1)
-        XCTAssertEqual(0, task.2)
+        XCTAssertEqual("UAChannelRegistrar.registration", task.taskID)
+        XCTAssertEqual(options, task.options)
+        XCTAssertEqual(0, task.minDelay)
     }
 
     func testRegisterForcefully() throws {
@@ -56,9 +56,9 @@ class ChannelRegistrarTest: XCTestCase {
         let options = TaskRequestOptions(conflictPolicy:  UATaskConflictPolicy.replace, requiresNetwork: true, extras: ["forcefully": true])
         
         let task = self.taskManager.enqueuedRequests[0]
-        XCTAssertEqual(ChannelRegistrar.taskID, task.0)
-        XCTAssertEqual(options, task.1)
-        XCTAssertEqual(0, task.2)
+        XCTAssertEqual(ChannelRegistrar.taskID, task.taskID)
+        XCTAssertEqual(options, task.options)
+        XCTAssertEqual(0, task.minDelay)
     }
 
     func testCreateChannel() throws {

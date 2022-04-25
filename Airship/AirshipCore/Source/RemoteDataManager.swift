@@ -199,8 +199,7 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
         let lastModified = self.isLastMetadataCurrent() ? self.lastModified : nil
         let locale = self.localeManager.currentLocale
         
-        let semaphore = Semaphore()
-        
+
         let request = self.apiClient.fetchRemoteData(locale: locale, lastModified: lastModified) { response, error in
             guard let response = response else {
                 if let error = error {
@@ -210,7 +209,6 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
                 }
                 
                 task.taskFailed()
-                semaphore.signal()
                 return
             }
             
@@ -222,7 +220,6 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
                 self.lastRefreshTime = self.date.now
                 self.lastAppVersion = Utils.bundleShortVersionString()
                 task.taskCompleted()
-                semaphore.signal()
             } else if (response.isSuccess) {
                 let payloads = response.payloads ?? []
 
@@ -235,12 +232,10 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
                         self.notifySubscribers(payloads) {
                             self.updatedSinceLastForeground = true
                             task.taskCompleted()
-                            semaphore.signal()
                         }
                     } else {
                         AirshipLogger.error("Failed to save remote-data.")
                         task.taskFailed()
-                        semaphore.signal()
                     }
                 }
             } else {
@@ -250,24 +245,23 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
                 } else {
                     task.taskCompleted()
                 }
-                semaphore.signal()
             }
         }
         
         task.expirationHandler = {
             request.dispose()
         }
-        
-        semaphore.wait()
-        
-        refreshLock.sync {
-            for completionHandler in self.refreshAttemptCompletionHandlers {
-                if let handler = completionHandler {
-                    handler()
+
+        task.completionHandler = {
+            self.refreshLock.sync {
+                for completionHandler in self.refreshAttemptCompletionHandlers {
+                    if let handler = completionHandler {
+                        handler()
+                    }
                 }
+                self.refreshAttemptCompletionHandlers.removeAll()
+                self.isRefreshing = false
             }
-            self.refreshAttemptCompletionHandlers.removeAll()
-            isRefreshing = false
         }
     }
     

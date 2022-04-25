@@ -141,6 +141,9 @@ public class Contact : NSObject, Component, ContactProtocol {
     static let anonContactDataKey = "Contact.anonContactData"
     static let resolveDateKey = "Contact.resolveDate"
 
+    static let identityRateLimitID = "Contact.identityRateLimitID"
+    static let updateRateLimitID = "Contact.updateRateLimitID"
+
     static let legacyPendingTagGroupsKey = "com.urbanairship.tag_groups.pending_channel_tag_groups_mutations"
     static let legacyPendingAttributesKey = "com.urbanairship.named_user_attributes.registrar_persistent_queue_key"
     static let legacyNamedUserKey = "UANamedUserID"
@@ -174,6 +177,7 @@ public class Contact : NSObject, Component, ContactProtocol {
     private let date : AirshipDate
     private let notificationCenter: NotificationCenter
     private let cachedSubscriptionLists: CachedValue<(String, [String: [ChannelScope]])>
+    private let rateLimiter = RateLimiter()
 
     /// A delegate to receive callbacks where there is a contact conflict.
     @objc
@@ -383,7 +387,14 @@ public class Contact : NSObject, Component, ContactProtocol {
         self.taskManager.register(taskID: Contact.updateTaskID, dispatcher: self.dispatcher) { [weak self] task in
             self?.handleUpdateTask(task: task)
         }
-        
+
+        do {
+            try self.taskManager.setRateLimit(Contact.identityRateLimitID, rate: 1, timeInterval: 2.0)
+            try self.taskManager.setRateLimit(Contact.updateRateLimitID, rate: 1, timeInterval: 0.5)
+        } catch {
+            AirshipLogger.error("Failed to create rate limits")
+        }
+
         self.channel.addRegistrationExtender { [weak self] payload, completionHandler in
             payload.channel.contactID = self?.lastContactInfo?.contactID
             completionHandler(payload)
@@ -683,9 +694,7 @@ public class Contact : NSObject, Component, ContactProtocol {
      * :nodoc:
      */
     private func onComponentEnableChange() {
-        if (self.isComponentEnabled) {
-            self.enqueueTask()
-        }
+        self.enqueueTask()
     }
     
     @objc
@@ -735,7 +744,31 @@ public class Contact : NSObject, Component, ContactProtocol {
     }
 
     private func enqueueTask() {
-        self.taskManager.enqueueRequest(taskID: Contact.updateTaskID, options: TaskRequestOptions.defaultOptions)
+        guard self.channel.identifier != nil,
+              self.isComponentEnabled,
+              let next = self.prepareNextOperation() else {
+            return
+        }
+
+        var rateLimitID: String?
+
+        switch(next.type) {
+        case .associateChannel: fallthrough
+        case .registerEmail: fallthrough
+        case .registerSMS: fallthrough
+        case .registerOpen: fallthrough
+        case .update:
+            rateLimitID = Contact.updateRateLimitID
+
+        case .resolve: fallthrough
+        case .identify: fallthrough
+        case .reset:
+            rateLimitID = Contact.identityRateLimitID
+        }
+
+        self.taskManager.enqueueRequest(taskID: Contact.updateTaskID,
+                                        rateLimitID: rateLimitID,
+                                        options: .defaultOptions)
     }
     
     private func handleUpdateTask(task: Task) {
@@ -748,9 +781,7 @@ public class Contact : NSObject, Component, ContactProtocol {
             task.taskCompleted()
             return
         }
-        
-        let semaphore = Semaphore()
-        
+
         let disposable = self.performOperation(operation: operation, channelID: channelID) { response in
             if let response = response {
                 if (response.isServerError) {
@@ -765,15 +796,11 @@ public class Contact : NSObject, Component, ContactProtocol {
                 // retry
                 task.taskFailed()
             }
-            
-            semaphore.signal()
         }
         
         task.expirationHandler = {
             disposable?.dispose()
         }
-        
-        semaphore.wait()
     }
     
     private func performOperation(operation: ContactOperation, channelID: String, completionHandler: @escaping (HTTPResponse?) -> Void) -> Disposable? {

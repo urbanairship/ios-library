@@ -302,9 +302,7 @@ public class ChannelAudienceManager : NSObject, ChannelAudienceManagerProtocol {
             task.taskCompleted()
             return
         }
-        
-        let semaphore = Semaphore()
-        
+
         let disposable = self.updateClient.update(channelID: channelID,
                                                   subscriptionListUpdates: update.subscriptionListUpdates,
                                                   tagGroupUpdates: update.tagGroupUpdates,
@@ -340,15 +338,11 @@ public class ChannelAudienceManager : NSObject, ChannelAudienceManagerProtocol {
                 }
                 task.taskFailed()
             }
-            
-            semaphore.signal()
         }
         
         task.expirationHandler = {
             disposable.dispose()
         }
-        
-        semaphore.wait()
     }
     
     private func addUpdate(_ update: AudienceUpdate) {

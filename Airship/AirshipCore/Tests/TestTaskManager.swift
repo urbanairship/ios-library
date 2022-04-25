@@ -2,13 +2,28 @@ import Foundation
 
 @testable
 import AirshipCore
+import SwiftUI
 
 @objc(UATestTaskManager)
 public class TestTaskManager : NSObject, TaskManagerProtocol {
+
+    public struct Pending {
+        let taskID: String
+        let rateLimitID: String?
+        let options: TaskRequestOptions
+        let minDelay: TimeInterval
+    }
+
+    public struct RateLimit {
+        let rate: Int
+        let timeInterval: TimeInterval
+    }
+
     private var launchHandlers: [String : (UADispatcher, (Task) -> Void)] = [:]
     
-    public var enqueuedRequests: [(String, TaskRequestOptions, TimeInterval)] = []
-    
+    public var enqueuedRequests: [Pending] = []
+    public var rateLimits: [String: RateLimit] = [:]
+
     @objc
     public var enqueuedRequestsCount : Int {
         get {
@@ -16,7 +31,10 @@ public class TestTaskManager : NSObject, TaskManagerProtocol {
         }
     }
     
-    
+    public func setRateLimit(_ rateLimitID: String, rate: Int, timeInterval: TimeInterval) throws {
+        rateLimits[rateLimitID] = RateLimit(rate: rate, timeInterval: timeInterval)
+    }
+
     @objc
     public func clearEnqueuedRequests() {
         self.enqueuedRequests.removeAll()
@@ -35,40 +53,62 @@ public class TestTaskManager : NSObject, TaskManagerProtocol {
     }
     
     public func enqueueRequest(taskID: String, options: TaskRequestOptions, initialDelay: TimeInterval) {
-        enqueuedRequests.append((taskID, options, initialDelay))
+        enqueueRequest(taskID: taskID, rateLimitID: nil, options: options, minDelay: initialDelay)
     }
+
+    public func enqueueRequest(taskID: String,
+                               rateLimitID: String?,
+                               options: TaskRequestOptions) {
+        enqueueRequest(taskID: taskID, rateLimitID: rateLimitID, options: options, minDelay: 0)
+    }
+
+    public func enqueueRequest(taskID: String,
+                               rateLimitID: String?,
+                               options: TaskRequestOptions,
+                               minDelay: TimeInterval) {
+
+        let pending = Pending(taskID: taskID,
+                              rateLimitID: rateLimitID,
+                              options: options,
+                              minDelay: minDelay)
+
+        enqueuedRequests.append(pending)
+    }
+
     
     @objc
     public func launchSync(taskID: String, options: TaskRequestOptions = TaskRequestOptions.defaultOptions) -> TestTask {
-        let testTask = TestTask(taskID, options, 0)
-        let dispatcher = self.launchHandlers[taskID]!.0
-        let launcher = self.launchHandlers[taskID]!.1
-        
-        dispatcher.dispatchSync {
-            launcher(testTask)
-        }
-        
-        return testTask
+
+        let pending = Pending(taskID: taskID, rateLimitID: nil, options: options, minDelay: 0)
+        return self.launchTask(pending)
     }
 
     @objc
     public func runEnqueuedRequests(taskID: String) -> TestTask? {
-        var task: TestTask?
-        for (identifier, options, initialDelay) in enqueuedRequests {
-            let testTask = TestTask(identifier, options, initialDelay)
-            let dispatcher = self.launchHandlers[identifier]!.0
-            let launcher = self.launchHandlers[identifier]!.1
-
-            dispatcher.dispatchSync {
-                launcher(testTask)
-                if (identifier == taskID) {
-                    task = testTask
-                }
+        for pending in enqueuedRequests {
+            if (pending.taskID == taskID) {
+                return self.launchTask(pending)
             }
         }
 
-        return task;
+        return nil
 
+    }
+
+    private func launchTask(_ pending: Pending) -> TestTask {
+        let semaphore = Semaphore()
+        let testTask = TestTask(pending) {
+            semaphore.signal()
+        }
+        let dispatcher = self.launchHandlers[pending.taskID]!.0
+        let launcher = self.launchHandlers[pending.taskID]!.1
+
+        dispatcher.dispatchSync {
+            launcher(testTask)
+            semaphore.wait()
+        }
+
+        return testTask;
     }
 }
 
@@ -76,6 +116,9 @@ public class TestTaskManager : NSObject, TaskManagerProtocol {
 public class TestTask : NSObject, Task {
     @objc
     public var expirationHandler: (() -> Void)?
+
+    @objc
+    public var completionHandler: (() -> Void)?
     
     @objc
     public var taskID: String
@@ -90,21 +133,32 @@ public class TestTask : NSObject, Task {
     public var failed = false;
 
     @objc
-    public var initialDelay: TimeInterval
-    
-    init(_ taskID: String, _ options: TaskRequestOptions, _ initialDelay: TimeInterval) {
-        self.taskID = taskID
-        self.requestOptions = options
-        self.initialDelay = initialDelay
+    public var minDelay: TimeInterval
+
+    @objc
+    public var rateLimitID: String?
+
+    private let onFinish: () -> Void
+
+    init(_ pending: TestTaskManager.Pending, onFinish: @escaping () -> Void) {
+        self.taskID = pending.taskID
+        self.requestOptions = pending.options
+        self.minDelay = pending.minDelay
+        self.rateLimitID = pending.rateLimitID
+        self.onFinish = onFinish
     }
     
     @objc
     public func taskCompleted() {
         completed = true
+        completionHandler?()
+        onFinish()
     }
     
     @objc
     public func taskFailed() {
         failed = true
+        completionHandler?()
+        onFinish()
     }
 }

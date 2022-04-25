@@ -224,9 +224,11 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
         }
     }
     
-    private func updateChannel(_ channelID: String, payload: ChannelRegistrationPayload, lastPayload: ChannelRegistrationPayload?,  task: Task) {
-        let semaphore = Semaphore()
-        
+    private func updateChannel(_ channelID: String,
+                               payload: ChannelRegistrationPayload,
+                               lastPayload: ChannelRegistrationPayload?,
+                               task: Task) {
+
         let minimizedPayload = payload.minimizePayload(previous: lastPayload)
         let disposable = self.channelAPIClient.updateChannel(withID: channelID, withPayload: minimizedPayload) { response, error in
             guard let response = response else {
@@ -236,7 +238,6 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
                 
                 self.registrationFinished(payload, success: false)
                 task.taskFailed()
-                semaphore.signal()
                 return
             }
             
@@ -258,19 +259,14 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
                     task.taskCompleted()
                 }
             }
-            
-            semaphore.signal()
         }
         
         task.expirationHandler = {
             disposable.dispose()
         }
-        
-        semaphore.wait()
     }
     
     private func createChannel(payload: ChannelRegistrationPayload, task: Task) {
-        let semaphore = Semaphore()
         let disposable = self.channelAPIClient.createChannel(withPayload: payload) { response, error in
             
             guard let response = response else {
@@ -280,7 +276,6 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
                 
                 self.registrationFinished(payload, success: false)
                 task.taskFailed()
-                semaphore.signal()
                 return
             }
             
@@ -300,15 +295,11 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
                     task.taskCompleted()
                 }
             }
-            
-            semaphore.signal()
         }
         
         task.expirationHandler = {
             disposable.dispose()
         }
-        
-        semaphore.wait()
     }
     
     private func clearChannelData() {

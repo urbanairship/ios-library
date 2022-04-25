@@ -2,7 +2,6 @@
 
 import UIKit
 
-
 // NOTE: For internal use only. :nodoc:
 @objc(UATaskManager)
 @available(iOSApplicationExtension, unavailable)
@@ -13,31 +12,35 @@ public class TaskManager : NSObject, TaskManagerProtocol {
     private static let minBackgroundTime = 30.0
 
     private var launcherMap: [String : [TaskLauncher]] = [:]
-    private var currentRequests: [String : [UATaskRequest]] = [:]
-    private var waitingConditionsRequests: [UATaskRequest] = []
-    private var retryingRequests: [UATaskRequest] = []
-    
+    private var currentRequests: [String : [TaskRequest]] = [:]
+    private var waitingConditionsRequests: [TaskRequest] = []
+    private var retryingRequests: [TaskRequest] = []
+
     private let requestsLock = Lock()
 
-    private let application: UIApplication
+    private let backgroundTasks: BackgroundTasksProtocol
     private let dispatcher: UADispatcher
     private let networkMonitor: NetworkMonitor
+    private let rateLimiter: RateLimiter
 
     @objc
-    public static let shared = TaskManager(application: UIApplication.shared,
-                                             notificationCenter: NotificationCenter.default,
-                                             dispatcher: UADispatcher.global,
-                                             networkMonitor: NetworkMonitor())
+    public static let shared = TaskManager(backgroundTasks: BackgroundTasks(),
+                                           notificationCenter: NotificationCenter.default,
+                                           dispatcher: UADispatcher.global,
+                                           networkMonitor: NetworkMonitor(),
+                                           rateLimiter: RateLimiter())
 
-    @objc
-    public init(application: UIApplication,
-                notificationCenter: NotificationCenter,
-                dispatcher: UADispatcher,
-                networkMonitor: NetworkMonitor) {
 
-        self.application = application
+    init(backgroundTasks: BackgroundTasksProtocol,
+         notificationCenter: NotificationCenter,
+         dispatcher: UADispatcher,
+         networkMonitor: NetworkMonitor,
+         rateLimiter: RateLimiter) {
+
+        self.backgroundTasks = backgroundTasks
         self.dispatcher = dispatcher
         self.networkMonitor = networkMonitor
+        self.rateLimiter = rateLimiter
 
         super.init()
 
@@ -59,15 +62,16 @@ public class TaskManager : NSObject, TaskManagerProtocol {
     }
 
     @objc(registerForTaskWithIDs:dispatcher:launchHandler:)
-    public func register(taskIDs: [String], dispatcher: UADispatcher?, launchHandler: @escaping (Task) -> Void) {
+    public func register(taskIDs: [String], dispatcher: UADispatcher? = nil, launchHandler: @escaping (Task) -> Void) {
         taskIDs.forEach({ taskID in
             register(taskID: taskID, dispatcher: dispatcher, launchHandler: launchHandler)
         })
     }
 
     @objc(registerForTaskWithID:dispatcher:launchHandler:)
-    public func register(taskID: String, dispatcher: UADispatcher?, launchHandler: @escaping (Task) -> Void) {
-        let taskLauncher = TaskLauncher(dispatcher: dispatcher, launchHandler: launchHandler)
+    public func register(taskID: String, dispatcher: UADispatcher? = nil, launchHandler: @escaping (Task) -> Void) {
+        let taskLauncher = TaskLauncher(dispatcher: dispatcher ?? UADispatcher.global,
+                                        launchHandler: launchHandler)
 
         requestsLock.sync {
             if (self.launcherMap[taskID] == nil) {
@@ -77,6 +81,10 @@ public class TaskManager : NSObject, TaskManagerProtocol {
         }
     }
 
+    @objc(setRateLimitForID:rate:timeInterval:error:)
+    public func setRateLimit(_ rateLimitID: String, rate: Int, timeInterval: TimeInterval) throws {
+        try self.rateLimiter.set(rateLimitID, rate: rate, timeInterval: timeInterval)
+    }
 
     @objc(enqueueRequestWithID:options:)
     public func enqueueRequest(taskID: String, options: TaskRequestOptions) {
@@ -85,12 +93,34 @@ public class TaskManager : NSObject, TaskManagerProtocol {
 
     @objc(enqueueRequestWithID:options:initialDelay:)
     public func enqueueRequest(taskID: String, options: TaskRequestOptions, initialDelay: TimeInterval) {
+        self.enqueueRequest(taskID: taskID, rateLimitID: nil, options: options, minDelay: initialDelay)
+    }
+
+    @objc(enqueueRequestWithID:rateLimitID:options:)
+    public func enqueueRequest(taskID: String, rateLimitID: String?, options: TaskRequestOptions) {
+        self.enqueueRequest(taskID: taskID, rateLimitID: rateLimitID, options: options, minDelay: 0)
+    }
+
+    @objc(enqueueRequestWithID:rateLimitID:options:minDelay:)
+    public func enqueueRequest(taskID: String,
+                               rateLimitID: String?,
+                               options: TaskRequestOptions,
+                               minDelay: TimeInterval) {
+        
         let launchers = self.launchers(for: taskID)
         guard launchers.count > 0 else {
             return
         }
 
-        let requests = launchers.map { UATaskRequest(taskID: taskID, options: options, launcher: $0) }
+        let requests = launchers.map {
+            TaskRequest(taskID: taskID,
+                        rateLimitID: rateLimitID,
+                        options: options,
+                        launcher: $0)
+        }
+
+        var skip = false
+        var rateLimitDelay: TimeInterval = 0
 
         requestsLock.sync {
             let currentRequestsForID = self.currentRequests[taskID]
@@ -99,6 +129,8 @@ public class TaskManager : NSObject, TaskManagerProtocol {
             case .keep:
                 if (currentRequestsForID?.count ?? 0 > 0) {
                     AirshipLogger.trace("Request already scheduled, ignoring new request \(taskID)")
+                    skip = true
+                    return
                 } else {
                     self.currentRequests[taskID] = requests
                 }
@@ -114,9 +146,15 @@ public class TaskManager : NSObject, TaskManagerProtocol {
                 }
                 self.currentRequests[taskID] = requests
             }
+
+            if let delay = taskRateLimitDelay(rateLimitID) {
+                rateLimitDelay = delay
+            }
         }
 
-        self.initiateRequests(requests, initialDelay: initialDelay)
+        if (!skip) {
+            self.initiateRequests(requests, initialDelay: max(minDelay, rateLimitDelay))
+        }
     }
 
     private func launchers(for taskID: String) -> [TaskLauncher] {
@@ -127,7 +165,7 @@ public class TaskManager : NSObject, TaskManagerProtocol {
         return launchers ?? []
     }
 
-    private func initiateRequests(_ requests: [UATaskRequest], initialDelay: TimeInterval) {
+    private func initiateRequests(_ requests: [TaskRequest], initialDelay: TimeInterval) {
         requests.forEach({ request in
             if (initialDelay > 0) {
                 self.dispatcher.dispatch(after: initialDelay, block: { [weak self] in
@@ -139,7 +177,7 @@ public class TaskManager : NSObject, TaskManagerProtocol {
         })
     }
 
-    private func retryRequest(_ request: UATaskRequest, delay: TimeInterval) {
+    private func retryRequest(_ request: TaskRequest, delay: TimeInterval, nextBackOff: TimeInterval) {
         requestsLock.sync {
             self.retryingRequests.append(request)
         }
@@ -158,12 +196,12 @@ public class TaskManager : NSObject, TaskManagerProtocol {
             }
 
             if (launch) {
-                strongSelf.attemptRequest(request, nextBackOff: Swift.min(TaskManager.maxBackOff, delay * 2))
+                strongSelf.attemptRequest(request, nextBackOff: Swift.min(TaskManager.maxBackOff, nextBackOff))
             }
         }
     }
 
-    private func attemptRequest(_ request: UATaskRequest, nextBackOff: TimeInterval) {
+    private func attemptRequest(_ request: TaskRequest, nextBackOff: TimeInterval) {
         guard self.isRequestCurrent(request) else {
             return
         }
@@ -175,10 +213,19 @@ public class TaskManager : NSObject, TaskManagerProtocol {
             return
         }
 
-        var backgroundTask = UIBackgroundTaskIdentifier.invalid
+        let semaphore = Semaphore()
+        var backgroundTask: Disposable?
         let task = ExpirableTask(taskID: request.taskID, requestOptions: request.options) { [weak self] result in
+            defer {
+                semaphore.signal()
+            }
+
             guard let strongSelf = self else {
                 return
+            }
+
+            if let rateLimitID = request.rateLimitID {
+                strongSelf.rateLimiter.track(rateLimitID)
             }
 
             if (strongSelf.isRequestCurrent(request)) {
@@ -187,34 +234,53 @@ public class TaskManager : NSObject, TaskManagerProtocol {
                     strongSelf.requestFinished(request)
                 } else {
                     AirshipLogger.trace("Task \(request.taskID) failed, will retry in \(nextBackOff) seconds")
-                    strongSelf.retryRequest(request, delay: nextBackOff)
+                    strongSelf.retryRequest(request, delay: nextBackOff, nextBackOff: nextBackOff * 2)
                 }
             }
 
-            if (backgroundTask != UIBackgroundTaskIdentifier.invalid) {
-                strongSelf.application.endBackgroundTask(backgroundTask)
-                backgroundTask = UIBackgroundTaskIdentifier.invalid
+            backgroundTask?.dispose()
+        }
+
+        do {
+            backgroundTask = try self.backgroundTasks.beginTask("UATaskManager \(request.taskID)") {
+                task.expire()
             }
-        }
 
-        backgroundTask = self.application.beginBackgroundTask(withName: "UATaskManager \(request.taskID)") {
-            task.expire()
-        }
+            request.launcher.dispatcher.dispatchAsync { [weak self] in
+                guard let strongSelf = self, strongSelf.isRequestCurrent(request) else { return }
 
-        guard backgroundTask != UIBackgroundTaskIdentifier.invalid else {
+                guard strongSelf.checkRequestRequirements(request) else {
+                    strongSelf.requestsLock.sync {
+                        strongSelf.waitingConditionsRequests.append(request)
+                    }
+                    return
+                }
+
+                var launch = true
+                strongSelf.requestsLock.sync {
+                    if let rateLimitDelay = strongSelf.taskRateLimitDelay(request) {
+                        strongSelf.retryRequest(request, delay: rateLimitDelay, nextBackOff: nextBackOff)
+                        launch = false
+                    }
+                }
+
+                if (launch) {
+                    request.launcher.launchHandler(task)
+                    semaphore.wait()
+                }
+            }
+        } catch {
             requestsLock.sync {
                 self.waitingConditionsRequests.append(request)
             }
-            return
+            backgroundTask?.dispose()
         }
-
-        request.launcher.launch(task)
     }
 
-    private func checkRequestRequirements(_ request: UATaskRequest) -> Bool {
+    private func checkRequestRequirements(_ request: TaskRequest) -> Bool {
         var backgroundTime : TimeInterval = 0.0
         UADispatcher.main.doSync {
-            backgroundTime = self.application.backgroundTimeRemaining
+            backgroundTime = self.backgroundTasks.timeRemaining
         }
 
         guard backgroundTime >= TaskManager.minBackgroundTime else {
@@ -230,14 +296,14 @@ public class TaskManager : NSObject, TaskManagerProtocol {
         return true
     }
 
-    private func requestFinished(_ request: UATaskRequest) {
+    private func requestFinished(_ request: TaskRequest) {
         requestsLock.sync {
             self.currentRequests[request.taskID]?.removeAll(where: { $0 === request })
         }
     }
 
     private func retryWaitingConditions() {
-        var copyWaitinigCondiitions : [UATaskRequest]? = nil
+        var copyWaitinigCondiitions : [TaskRequest]? = nil
 
         requestsLock.sync {
             copyWaitinigCondiitions = self.waitingConditionsRequests
@@ -256,7 +322,7 @@ public class TaskManager : NSObject, TaskManagerProtocol {
     func didEnterBackground() {
         self.retryWaitingConditions()
 
-        var copyRetryingRequests : [UATaskRequest]? = nil
+        var copyRetryingRequests : [TaskRequest]? = nil
 
         requestsLock.sync {
             copyRetryingRequests = self.retryingRequests
@@ -266,14 +332,46 @@ public class TaskManager : NSObject, TaskManagerProtocol {
         copyRetryingRequests?.forEach { self.attemptRequest($0, nextBackOff: TaskManager.initialBackOff) }
     }
 
-    private func isRequestCurrent(_ request: UATaskRequest) -> Bool {
+    private func isRequestCurrent(_ request: TaskRequest) -> Bool {
         var current = false
         requestsLock.sync {
             current = self.currentRequests[request.taskID]?.contains(where: { $0 === request }) ?? false
         }
         return current
     }
+
+    private func taskRateLimitDelay(_ taskRequest: TaskRequest) -> TimeInterval? {
+        return taskRateLimitDelay(taskRequest.rateLimitID)
+    }
+
+    private func taskRateLimitDelay(_ rateLimitID: String?) -> TimeInterval? {
+        guard let rateLimitID = rateLimitID else {
+            return nil
+        }
+
+        if case .overLimit(let delay) = self.rateLimiter.status(rateLimitID) {
+            return delay
+        }
+
+        return nil
+    }
+
+    private class TaskRequest {
+        let taskID: String
+        let rateLimitID: String?
+        let options: TaskRequestOptions
+        let launcher: TaskLauncher
+
+        init(taskID: String, rateLimitID: String?, options: TaskRequestOptions, launcher: TaskLauncher) {
+            self.taskID = taskID
+            self.rateLimitID = rateLimitID
+            self.options = options
+            self.launcher = launcher
+        }
+    }
+
+    private struct TaskLauncher {
+        let dispatcher: UADispatcher
+        let launchHandler: (Task) -> Void
+    }
 }
-
-
-

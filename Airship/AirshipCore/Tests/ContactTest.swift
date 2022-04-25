@@ -49,14 +49,22 @@ class ContactTest: XCTestCase {
                                taskManager: self.taskManager,
                                notificationCenter: self.notificationCenter,
                                date: self.date)
-        
-        // Verify init enqueues an update task
-        XCTAssertEqual(1, self.taskManager.enqueuedRequests.count)
-        self.taskManager.enqueuedRequests.removeAll()
-        
+
         self.channel.identifier = "channel id"
     }
-    
+
+    func testRateLimits() throws {
+        XCTAssertEqual(2, self.taskManager.rateLimits.count)
+
+        let updateRule = self.taskManager.rateLimits[Contact.updateRateLimitID]!
+        XCTAssertEqual(1, updateRule.rate)
+        XCTAssertEqual(0.5, updateRule.timeInterval, accuracy: 0.01)
+
+        let identityRule = self.taskManager.rateLimits[Contact.identityRateLimitID]!
+        XCTAssertEqual(1, identityRule.rate)
+        XCTAssertEqual(2.0, identityRule.timeInterval, accuracy: 0.01)
+    }
+
     func testMigrateNamedUser() throws {
         let testDate = UATestDate()
         testDate.dateOverride = Date()
@@ -650,7 +658,7 @@ class ContactTest: XCTestCase {
         
         XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).completed)
         wait(for: [secondCallback], timeout: 10.0)
-        XCTAssertEqual(6, self.taskManager.enqueuedRequests.count)
+        XCTAssertEqual(5, self.taskManager.enqueuedRequests.count)
     }
     
     func testCombineSequentialUpdates() throws {
@@ -994,7 +1002,10 @@ class ContactTest: XCTestCase {
         }
         XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).completed)
 
-        // Reset the contact
+        // Apply an update to current contact, to avoid skipping reset
+        self.contact.editSubscriptionLists() { editor in
+            editor.subscribe("neat", scope: .email)
+        }
         self.contact.reset()
         
         let expectation = XCTestExpectation(description: "callback called")
@@ -1004,7 +1015,7 @@ class ContactTest: XCTestCase {
             expectation.fulfill()
         }
 
-        wait(for: [expectation], timeout: 10.0)
+        wait(for: [expectation], timeout: 10)
     }
     
     func testFetchSubscriptionListsPendingIdentify() throws {

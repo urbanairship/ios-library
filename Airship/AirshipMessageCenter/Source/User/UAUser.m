@@ -193,9 +193,7 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
         return;
     }
 
-    UASemaphore *semaphore = [[UASemaphore alloc] init];
     void (^completionHandler)(BOOL) = ^(BOOL completed) {
-        [semaphore signal];
         if (completed) {
             [task taskCompleted];
             self.requireUserUpdate = false;
@@ -210,8 +208,6 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
     } else {
         request = [self performUserCreateWithChannelID:channelID completionHandler:completionHandler];
     }
-
-    [semaphore wait];
 
     task.expirationHandler = ^{
         [request dispose];

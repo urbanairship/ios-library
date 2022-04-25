@@ -1,10 +1,6 @@
 /* Copyright Airship and Contributors */
 
-/**
- * - Note: For internal use only. :nodoc:
- */
-@objc(UAExpirableTask)
-public class ExpirableTask : NSObject, Task {
+class ExpirableTask : Task {
     private let _taskID : String
     @objc
     public var taskID: String {
@@ -38,40 +34,45 @@ public class ExpirableTask : NSObject, Task {
         }
     }
 
-    private let completionHandler: ((Bool) -> Void)
+    private var _completionHandler: (() -> Void)? = nil
+
+    @objc
+    public var completionHandler: (() -> Void)? {
+        get {
+            return _completionHandler
+        }
+        set {
+            if (isCompleted) {
+                newValue?()
+                self._completionHandler = nil
+            } else {
+                self._completionHandler = newValue
+            }
+        }
+    }
+
     private var isExpired = false
     private var isCompleted = false
+    private var onTaskFinshed: (Bool) -> Void
 
     @objc
     public init(taskID: String,
-         requestOptions: TaskRequestOptions,
-         completionHandler: @escaping (Bool) -> Void) {
+                requestOptions: TaskRequestOptions,
+                onTaskFinshed: @escaping (Bool) -> Void) {
 
         self._taskID = taskID
         self._requestOptions = requestOptions
-        self.completionHandler = completionHandler
+        self.onTaskFinshed = onTaskFinshed
     }
 
     @objc
     public func taskCompleted() {
-        guard !isCompleted else {
-            return
-        }
-
-        self.isCompleted = true
-        self.expirationHandler = nil
-        completionHandler(true)
+        finishTask(true)
     }
 
     @objc
     public func taskFailed() {
-        guard !isCompleted else {
-            return
-        }
-
-        self.isCompleted = true
-        self._expirationHandler = nil
-        completionHandler(false)
+        finishTask(false)
     }
 
     @objc
@@ -89,5 +90,17 @@ public class ExpirableTask : NSObject, Task {
             AirshipLogger.debug("Expiration handler not set, marking task as failed.")
             taskFailed()
         }
+    }
+
+    private func finishTask(_ result: Bool) {
+        guard !isCompleted else {
+            return
+        }
+
+        self.isCompleted = true
+        self.expirationHandler = nil
+        self.completionHandler?()
+        self.completionHandler = nil
+        self.onTaskFinshed(result)
     }
 }

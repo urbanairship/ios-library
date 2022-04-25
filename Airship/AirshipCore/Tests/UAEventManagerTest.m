@@ -100,7 +100,7 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
 
     UATestTask *task = [self.testTaskManager runEnqueuedRequestsWithTaskID:UAEventManagerUploadTask];
     XCTAssertTrue(task.completed);
-    XCTAssertEqual(task.initialDelay, 15);
+    XCTAssertEqual(task.minDelay, 15);
 
     [self.mockStore verify];
 }
@@ -121,7 +121,7 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
 
     UATestTask *task = [self.testTaskManager runEnqueuedRequestsWithTaskID:UAEventManagerUploadTask];
     XCTAssertTrue(task.completed);
-    XCTAssertEqual(task.initialDelay, 0);
+    XCTAssertEqual(task.minDelay, 0);
 
     [self.mockStore verify];
 }
@@ -141,7 +141,7 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
 
     UATestTask *task = [self.testTaskManager runEnqueuedRequestsWithTaskID:UAEventManagerUploadTask];
     XCTAssertFalse(task.completed);
-    XCTAssertEqual(task.initialDelay, 0);
+    XCTAssertEqual(task.minDelay, 0);
 
     [self.mockStore verify];
 }
@@ -158,7 +158,7 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
     [self.eventManager add:event eventID:@"neat" eventDate:date sessionID:@"story"];
     UATestTask *task = [self.testTaskManager runEnqueuedRequestsWithTaskID:UAEventManagerUploadTask];
     XCTAssertTrue(task.completed);
-    XCTAssertEqual(task.initialDelay, 0);
+    XCTAssertEqual(task.minDelay, 0);
 
     [self.mockStore verify];
 }
@@ -171,7 +171,7 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
     [self.notificationCenter postNotificationName:UAAppStateTracker.didEnterBackgroundNotification object:nil];
     UATestTask *task = [self.testTaskManager runEnqueuedRequestsWithTaskID:UAEventManagerUploadTask];
     XCTAssertTrue(task.completed);
-    XCTAssertEqual(task.initialDelay, 0);
+    XCTAssertEqual(task.minDelay, 0);
 }
 
 /**
@@ -182,7 +182,7 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
                                            object:nil];
     UATestTask *task = [self.testTaskManager runEnqueuedRequestsWithTaskID:UAEventManagerUploadTask];
     XCTAssertTrue(task.completed);
-    XCTAssertEqual(task.initialDelay, 15);
+    XCTAssertEqual(task.minDelay, 15);
 }
 
 /**
