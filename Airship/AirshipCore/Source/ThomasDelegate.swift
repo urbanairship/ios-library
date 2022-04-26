@@ -88,6 +88,10 @@ public class ThomasPagerInfo : NSObject {
         self.pageCount = pageCount
         self.completed = completed
     }
+
+    public override var description: String {
+        "ThomasPagerInfo{identifier=\(identifier), pageIndex=\(pageIndex)}, pageIdentifier=\(pageIdentifier), pageCount=\(pageCount), completed=\(completed)}"
+    }
 }
 
 /// - Note: for internal use only.  :nodoc:
@@ -103,6 +107,10 @@ public class ThomasFormResult : NSObject {
     public init(identifier: String, formData: [String : Any]) {
         self.identifier = identifier
         self.formData = formData
+    }
+
+    public override var description: String {
+        "ThomasFormResult{identifier=\(identifier), formData=\(formData)}"
     }
 }
 
@@ -128,6 +136,10 @@ public class ThomasFormInfo : NSObject {
         self.formType = formType
         self.formResponseType = formResponseType
     }
+
+    public override var description: String {
+        "ThomasFormInfo{identifier=\(identifier), submitted=\(submitted), formType=\(formType), formResponseType=\(formResponseType ?? "")}"
+    }
 }
 
 /// - Note: for internal use only.  :nodoc:
@@ -143,5 +155,9 @@ public class ThomasLayoutContext : NSObject {
     public init(formInfo: ThomasFormInfo?, pagerInfo: ThomasPagerInfo?) {
         self.formInfo = formInfo
         self.pagerInfo = pagerInfo
+    }
+
+    public override var description: String {
+        "ThomasLayoutContext{formInfo=\(String(describing: formInfo)), pagerInfo=\(String(describing: pagerInfo))}"
     }
 }

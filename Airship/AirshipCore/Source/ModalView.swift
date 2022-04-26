@@ -14,8 +14,6 @@ struct ModalView: View {
     @ObservedObject private var keyboardResponder = KeyboardResponder()
     let viewControllerOptions: ThomasViewControllerOptions
 
-    @State private var initUUID: UUID = UUID()
-
     @State private var contentSize: (ViewConstraints, CGSize)? = nil
 
     var body: some View {
@@ -60,7 +58,6 @@ struct ModalView: View {
         var alignment = Alignment(horizontal: placement.position?.horizontal.toAlignment() ?? .center,
                                   vertical: placement.position?.vertical.toAlignment() ?? .center)
 
-        
         let windowConstraints = ViewConstraints(size: metrics.size, safeAreaInsets: safeAreaInsets)
 
         var contentSize: CGSize?
@@ -103,11 +100,13 @@ struct ModalView: View {
             )
             .offset(y: -keyboardOffset)
         }
-        .opacity(contentSize == nil ? 0 : 1)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: alignment)
-        .background(modalBackground(placement))
+        .background(modalBackground(placement)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .transaction { $0.animation = nil })
         .applyIf(ignoreSafeArea) { $0.edgesIgnoringSafeArea(.all) }
-        .applyIf(self.contentSize == nil) { $0.id(initUUID) }
+        .opacity(self.contentSize == nil ? 0 : 1)
+        .animation(nil, value: self.contentSize?.1 ?? CGSize.zero)
     }
 
     @ViewBuilder

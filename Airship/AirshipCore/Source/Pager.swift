@@ -50,7 +50,8 @@ struct Pager : View {
                                                safeAreaInsets: self.constraints.safeAreaInsets)
         
         let items = self.model.items
-        
+        let allowSwipe = self.model.disableSwipe != true && items.count > 1
+
         VStack {
             createStack {
                 ForEach(0..<items.count, id: \.self) { i in
@@ -67,7 +68,7 @@ struct Pager : View {
         }
         .frame(width: metrics.size.width, height: metrics.size.height, alignment: .leading)
         .clipped()
-        .applyIf(self.model.disableSwipe != true) { view in
+        .applyIf(allowSwipe) { view in
             #if !os(tvOS)
             view.simultaneousGesture(
                 DragGesture()

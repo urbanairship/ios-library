@@ -13,8 +13,6 @@ struct Container : View {
     /// View constriants.
     let constraints: ViewConstraints
 
-    @State private var initUUID: UUID = UUID()
-
     @State private var contentSize: (ViewConstraints, CGSize)? = nil
 
     var body: some View {
@@ -36,7 +34,6 @@ struct Container : View {
                 return Color.clear
             })
         )
-        .applyIf(self.contentSize == nil) { $0.id(initUUID) }
     }
     
     @ViewBuilder

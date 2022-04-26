@@ -73,37 +73,36 @@ struct ContentView_Previews: PreviewProvider {
 
 class Delegate : ThomasDelegate {
     func onFormSubmitted(formResult: ThomasFormResult, layoutContext: ThomasLayoutContext) {
-        print("result: \(formResult.formData)")
+        print("Thomas.onFormSubmitted{formResult=\(formResult), context=\(layoutContext)}")
     }
     
     func onFormDisplayed(formInfo: ThomasFormInfo, layoutContext: ThomasLayoutContext) {
-        
+        print("Thomas.onFormDisplayed{formInfo=\(formInfo), context=\(layoutContext)}")
     }
     
     func onButtonTapped(buttonIdentifier: String, layoutContext: ThomasLayoutContext) {
-        
+        print("Thomas.onButtonTapped{buttonIdentifier=\(buttonIdentifier), context=\(layoutContext)")
     }
     
     func onDismissed(layoutContext: ThomasLayoutContext?) {
-        
+        print("Thomas.onDismissed{context=\(String(describing: layoutContext))}")
     }
     
-    func onDismissed(buttonIdentifier: String, buttonDescription: String?, cancel: Bool, layoutContext: ThomasLayoutContext) {
-    
+    func onDismissed(buttonIdentifier: String, buttonDescription: String, cancel: Bool, layoutContext: ThomasLayoutContext) {
+        print("Thomas.onDismissed{buttonIdentifier=\(buttonIdentifier), buttonDescription=\(buttonDescription), cancel=\(cancel), context=\(layoutContext)}")
     }
     
     func onTimedOut(layoutContext: ThomasLayoutContext?) {
-    
+        print("Thomas.onTimedOut{context=\(String(describing: layoutContext))}")
     }
     
     func onPageViewed(pagerInfo: ThomasPagerInfo, layoutContext: ThomasLayoutContext) {
-    
+        print("Thomas.onPageViewed{pagerInfo=\(pagerInfo), context=\(layoutContext)}")
     }
     
     func onPageSwiped(from: ThomasPagerInfo, to: ThomasPagerInfo, layoutContext: ThomasLayoutContext) {
+        print("Thomas.onPageSwiped{from=\(from), to=\(to), context=\(layoutContext)}")
     }
-    
-    
 }
 
 class ThomasNativeBridgeExtension : NSObject, NativeBridgeExtensionDelegate  {
