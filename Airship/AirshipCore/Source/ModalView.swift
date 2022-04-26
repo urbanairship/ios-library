@@ -55,23 +55,22 @@ struct ModalView: View {
   
     private func createModal(placement: ModalPlacement, metrics: GeometryProxy) -> some View {
         let ignoreSafeArea = placement.ignoreSafeArea == true
+        let safeAreaInsets = ignoreSafeArea ? metrics.safeAreaInsets : ViewConstraints.emptyEdgeSet
 
         var alignment = Alignment(horizontal: placement.position?.horizontal.toAlignment() ?? .center,
                                   vertical: placement.position?.vertical.toAlignment() ?? .center)
 
-        let windowConstraints = ViewConstraints.containerConstraints(metrics.size,
-                                                               safeAreaInsets: metrics.safeAreaInsets,
-                                                               ignoreSafeArea: ignoreSafeArea)
+        
+        let windowConstraints = ViewConstraints(size: metrics.size, safeAreaInsets: safeAreaInsets)
 
         var contentSize: CGSize?
         if (windowConstraints == self.contentSize?.0) {
             contentSize = self.contentSize?.1
         }
 
-        var contentConstraints = windowConstraints.calculateChild(placement.size,
-                                                                  contentSize: contentSize,
-                                                                  margin: placement.margin,
-                                                                  ignoreSafeArea: placement.ignoreSafeArea)
+        var contentConstraints = windowConstraints.contentConstraints(placement.size,
+                                                                      contentSize: contentSize,
+                                                                      margin: placement.margin)
 
         let windowHeight = windowConstraints.height ?? 0
         let contentHeight = contentConstraints.height ?? 0
@@ -111,7 +110,6 @@ struct ModalView: View {
         .applyIf(self.contentSize == nil) { $0.id(initUUID) }
     }
 
-    
     @ViewBuilder
     private func modalBackground(_ placement: ModalPlacement) -> some View {
         if (placement.isFullScreen() && placement.ignoreSafeArea != true) {
@@ -181,6 +179,7 @@ struct ModalView: View {
     }
 }
 
+@available(iOS 13.0.0, tvOS 13.0, *)
 private extension ModalPlacement {
     func isFullScreen() -> Bool {
         if case let .percent(height) = self.size.height, height >= 100.0,

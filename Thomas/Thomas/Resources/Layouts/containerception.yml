@@ -1,0 +1,355 @@
+---
+version: 1
+presentation:
+  type: modal
+  default_placement:
+    size:
+      width: 100%
+      height: 100%
+    shade_color:
+      default:
+        hex: '#000000'
+        alpha: 0.5
+    ignore_safe_area: true
+view:
+  type: container
+  background_color:
+    default:
+      hex: "#FF0000"
+      alpha: 1
+  items:
+  - position:
+      horizontal: center
+      vertical: center
+    size:
+      width: 100%
+      height: 100%
+    ignore_safe_area: false
+    view:
+      type: container
+      background_color:
+        default:
+          hex: "#FFFFFF"
+          alpha: 1
+      items:
+      - position:
+          horizontal: center
+          vertical: top
+        size:
+          width: auto
+          height: auto
+        ignore_safe_area: true
+        view:
+          type: label
+          text: "DANGER AREA"
+          text_appearance:
+            font_size: 12
+            color:
+              default:
+                type: hex
+                hex: "#FF0000"
+                alpha: 1
+            styles:
+            - bold
+            alignment: center
+      - position:
+          horizontal: center
+          vertical: bottom
+        size:
+          width: auto
+          height: auto
+        ignore_safe_area: false
+        view:
+          type: label
+          text: "DANGER AREA"
+          text_appearance:
+            font_size: 12
+            color:
+              default:
+                type: hex
+                hex: "#FF0000"
+                alpha: 1
+            styles:
+            - bold
+            alignment: center
+  - position:
+      horizontal: center
+      vertical: top
+    size:
+      width: auto
+      height: auto
+    ignore_safe_area: true
+    margin:
+      top: 4
+    view:
+      type: label
+      text: "SAFE AREA"
+      text_appearance:
+        font_size: 12
+        color:
+          default:
+            type: hex
+            hex: "#FFFF00"
+            alpha: 1
+        styles:
+        - bold
+        alignment: center
+  - position:
+      horizontal: start
+      vertical: top
+    size:
+      width: auto
+      height: auto
+    ignore_safe_area: true
+    margin:
+      top: 4
+      start: 16
+    view:
+      type: label
+      text: "SAFE AREA"
+      text_appearance:
+        font_size: 12
+        color:
+          default:
+            type: hex
+            hex: "#FFFF00"
+            alpha: 1
+        styles:
+        - bold
+        alignment: center
+  - position:
+      horizontal: end
+      vertical: top
+    size:
+      width: auto
+      height: auto
+    ignore_safe_area: true
+    margin:
+      top: 4
+      end: 16
+    view:
+      type: label
+      text: "SAFE AREA"
+      text_appearance:
+        font_size: 12
+        color:
+          default:
+            type: hex
+            hex: "#FFFF00"
+            alpha: 1
+        styles:
+        - bold
+        alignment: center
+  - position:
+      horizontal: center
+      vertical: bottom
+    size:
+      width: auto
+      height: auto
+    ignore_safe_area: true
+    margin:
+      bottom: 8
+    view:
+      type: label
+      text: "SAFE AREA"
+      text_appearance:
+        font_size: 12
+        color:
+          default:
+            type: hex
+            hex: "#FFFF00"
+            alpha: 1
+        styles:
+        - bold
+        alignment: center
+  - position:
+      horizontal: start
+      vertical: bottom
+    size:
+      width: auto
+      height: auto
+    ignore_safe_area: true
+    margin:
+      bottom: 8
+      start: 16
+    view:
+      type: label
+      text: "SAFE AREA"
+      text_appearance:
+        font_size: 12
+        color:
+          default:
+            type: hex
+            hex: "#FFFF00"
+            alpha: 1
+        styles:
+        - bold
+        alignment: center
+  - position:
+      horizontal: end
+      vertical: bottom
+    size:
+      width: auto
+      height: auto
+    ignore_safe_area: true
+    margin:
+      bottom: 8
+      end: 16
+    view:
+      type: label
+      text: "SAFE AREA"
+      text_appearance:
+        font_size: 12
+        color:
+          default:
+            type: hex
+            hex: "#FFFF00"
+            alpha: 1
+        styles:
+        - bold
+        alignment: center
+  - position:
+      horizontal: center
+      vertical: center
+    size:
+      width: 100%
+      height: 100%
+    ignore_safe_area: true
+    view:
+      type: container
+      background_color:
+        default:
+          hex: "#00FFFF"
+          alpha: 0
+      items:
+      - position:
+          horizontal: end
+          vertical: top
+        size:
+          width: 100
+          height: 100
+        ignore_safe_area: false
+        view:
+          type: label
+          background_color:
+            default:
+              hex: "#00FF00"
+              alpha: 1
+          text: "ignore_safe_area: false"
+          text_appearance:
+            font_size: 10
+            color:
+              default:
+                type: hex
+                hex: "#000000"
+                alpha: 1
+            alignment: center
+      - position:
+          horizontal: start
+          vertical: top
+        ignore_safe_area: true
+        size:
+          width: 100
+          height: 100
+        view:
+          type: label
+          background_color:
+            default:
+              hex: "#be70ef"
+              alpha: 1
+          text: "ignore_safe_area: true"
+          text_appearance:
+            font_size: 10
+            color:
+              default:
+                type: hex
+                hex: "#FFFFFF"
+                alpha: 1
+            alignment: center
+      - position:
+          horizontal: start
+          vertical: bottom
+        size:
+          width: 100
+          height: 100
+        ignore_safe_area: false
+        view:
+          type: label
+          background_color:
+            default:
+              hex: "#0000FF"
+              alpha: 1
+          text: "ignore_safe_area: false"
+          text_appearance:
+            font_size: 10
+            color:
+              default:
+                type: hex
+                hex: "#FFFFFF"
+                alpha: 1
+            alignment: center
+      - position:
+          horizontal: end
+          vertical: bottom
+        ignore_safe_area: true
+        size:
+          width: 100
+          height: 100
+        view:
+          type: label
+          background_color:
+            default:
+              hex: "#FF00FF"
+              alpha: 1
+          text: "ignore_safe_area: true"
+          text_appearance:
+            font_size: 10
+            color:
+              default:
+                type: hex
+                hex: "#FFFFFF"
+                alpha: 1
+            alignment: center
+      - position:
+          horizontal: center
+          vertical: center
+        ignore_safe_area: true
+        size:
+          width: auto
+          height: auto
+        view:
+          type: linear_layout
+          background_color:
+            default:
+              hex: "#FF0000"
+              alpha: 1
+          direction: vertical
+          items:
+          - size:
+              width: auto
+              height: 50
+            view:
+              type: label
+              text: "container"
+              text_appearance:
+                font_size: 10
+                color:
+                  default:
+                    type: hex
+                    hex: "#333333"
+                    alpha: 1
+                alignment: center
+          - size:
+              width: auto
+              height: 50
+            view:
+              type: label
+              text: "ignore_safe_area: true"
+              text_appearance:
+                font_size: 10
+                color:
+                  default:
+                    type: hex
+                    hex: "#333333"
+                    alpha: 1
+                alignment: center

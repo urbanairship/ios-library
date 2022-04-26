@@ -43,21 +43,22 @@ struct Container : View {
     private func childItem(_ index: Int, item: ContainerItem) -> some View {
         let placementWidth =  placementWidth(item.position.horizontal)
         let placementHeight = placementHeight(item.position.vertical)
+        let consumeSafeAreaInsets = item.ignoreSafeArea != true
 
         let alignment = Alignment(horizontal: item.position.horizontal.toAlignment(),
                                   vertical: item.position.vertical.toAlignment())
 
         let borderPadding = self.model.border?.strokeWidth ?? 0
-        let childConstraints = self.constraints.calculateChild(item.size,
-                                                               margin: item.margin,
-                                                               additionalPadding: borderPadding,
-                                                               ignoreSafeArea: item.ignoreSafeArea)
+        let childConstraints = self.constraints.childConstraints(item.size,
+                                                                 margin: item.margin,
+                                                                 padding: borderPadding,
+                                                                 safeAreaInsetsMode: consumeSafeAreaInsets ? .consumeMargin : .ignore)
   
         ZStack {
             ViewFactory.createView(model: item.view, constraints: childConstraints)
                 .margin(item.margin)
         }
-        .applyIf(item.ignoreSafeArea != true) {
+        .applyIf(consumeSafeAreaInsets) {
             $0.padding(self.constraints.safeAreaInsets)
         }
         .padding(borderPadding)

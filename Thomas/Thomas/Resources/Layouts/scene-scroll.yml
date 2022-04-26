@@ -1,0 +1,685 @@
+---
+presentation:
+  android:
+    disable_back_button: false
+  default_placement:
+    device:
+      lock_orientation: portrait
+    ignore_safe_area: false
+    position:
+      horizontal: center
+      vertical: center
+    shade_color:
+      default:
+        alpha: 0.2
+        hex: "#000000"
+        type: hex
+    size:
+      height: 100%
+      max_height: 100%
+      max_width: 100%
+      min_height: 100%
+      min_width: 100%
+      width: 100%
+  dismiss_on_touch_outside: false
+  type: modal
+version: 1
+view:
+  identifier: d565411e-b6ac-46be-9b12-9160ca354cb2
+  type: pager_controller
+  view:
+    items:
+      - ignore_safe_area: false
+        position:
+          horizontal: center
+          vertical: center
+        size:
+          height: 100%
+          width: 100%
+        view:
+          disable_swipe: false
+          items:
+            - identifier: d86b50db-5ef4-44dd-a0a8-fba5bee5a00f
+              type: pager_item
+              view:
+                background_color:
+                  default:
+                    alpha: 1
+                    hex: "#FFFFFF"
+                    type: hex
+                items:
+                  - margin:
+                      bottom: 28
+                      end: 0
+                      start: 0
+                      top: 0
+                    position:
+                      horizontal: center
+                      vertical: center
+                    size:
+                      height: 100%
+                      width: 100%
+                    view:
+                      direction: vertical
+                      items:
+                        - margin:
+                            top: 0
+                          size:
+                            height: auto
+                            width: 100%
+                          view:
+                            media_fit: center_crop
+                            media_type: image
+                            type: media
+                            url: https://dl-staging.urbanairship.com/binary/public/Vl0wyG8kSyCyOUW98Wj4xg/56956abe-2bf2-416c-8f7e-f25d65ab6fc0
+                        - margin:
+                            bottom: 10
+                            end: 0
+                            start: 0
+                            top: 10
+                          size:
+                            height: auto
+                            width: 90%
+                          view:
+                            text: Your free trial has ended
+                            text_appearance:
+                              alignment: center
+                              color:
+                                default:
+                                  alpha: 1
+                                  hex: "#111111"
+                                  type: hex
+                              font_families:
+                                - sans-serif
+                              font_size: 20
+                              styles:
+                                - underlined
+                                - bold
+                                - italic
+                            type: label
+                        - margin:
+                            bottom: 10
+                            end: 0
+                            start: 0
+                            top: 10
+                          size:
+                            height: 100%
+                            width: 90%
+                          view:
+                            direction: vertical
+                            type: scroll_layout
+                            view:
+                              text: 'Are you enjoying your experience? To continue enjoying
+                        your benefits, select a plan to upgrade to today. '
+                              text_appearance:
+                                alignment: center
+                                color:
+                                  default:
+                                    alpha: 1
+                                    hex: "#111111"
+                                    type: hex
+                                font_families:
+                                  - sans-serif
+                                font_size: 34
+                                styles:
+                                  - underlined
+                                  - bold
+                                  - italic
+                              type: label
+                        - size:
+                            height: 0
+                            width: 0
+                          view:
+                            actions: {}
+                            identifier: home_page--footer_button
+                            label:
+                              text: ''
+                              text_appearance:
+                                alignment: center
+                                color:
+                                  default:
+                                    alpha: 1
+                                    hex: "#37FF00"
+                                    type: hex
+                                font_families:
+                                  - Test limit
+                                font_size: 34
+                                styles:
+                                  - bold
+                                  - italic
+                                  - underlined
+                              type: label
+                            type: label_button
+                        - margin:
+                            bottom: 0
+                            top: 10
+                          size:
+                            height: auto
+                            width: 92%
+                          view:
+                            direction: vertical
+                            items:
+                              - margin:
+                                  bottom: 4
+                                  end: 0
+                                  start: 0
+                                  top: 4
+                                size:
+                                  height: 40
+                                  width: 100%
+                                view:
+                                  actions: {}
+                                  background_color:
+                                    default:
+                                      alpha: 1
+                                      hex: "#222222"
+                                      type: hex
+                                  border:
+                                    radius: 0
+                                    stroke_color:
+                                      default:
+                                        alpha: 1
+                                        hex: "#222222"
+                                        type: hex
+                                    stroke_width: 1
+                                  button_click:
+                                    - pager_next
+                                  enabled:
+                                    - pager_next
+                                  identifier: next--See All Plans
+                                  label:
+                                    text: See All Plans
+                                    text_appearance:
+                                      alignment: center
+                                      color:
+                                        default:
+                                          alpha: 1
+                                          hex: "#FFFFFF"
+                                          type: hex
+                                      font_families:
+                                        - sans-serif
+                                      font_size: 14
+                                      styles: []
+                                    type: label
+                                  type: label_button
+                              - margin:
+                                  bottom: 20
+                                  end: 0
+                                  start: 0
+                                  top: 4
+                                size:
+                                  height: 40
+                                  width: 100%
+                                view:
+                                  actions: {}
+                                  background_color:
+                                    default:
+                                      alpha: 1
+                                      hex: "#222222"
+                                      type: hex
+                                  border:
+                                    radius: 0
+                                    stroke_color:
+                                      default:
+                                        alpha: 1
+                                        hex: "#222222"
+                                        type: hex
+                                    stroke_width: 1
+                                  button_click:
+                                    - dismiss
+                                  enabled: []
+                                  identifier: 'home_page--Go back to basic account '
+                                  label:
+                                    text: 'Go back to basic account '
+                                    text_appearance:
+                                      alignment: center
+                                      color:
+                                        default:
+                                          alpha: 1
+                                          hex: "#FFFFF0"
+                                          type: hex
+                                      font_families:
+                                        - SF Pro
+                                      font_size: 14
+                                      styles: []
+                                    type: label
+                                  type: label_button
+                            type: linear_layout
+                      type: linear_layout
+                type: container
+            - identifier: ed3ff5ff-f633-4dd0-869b-32b285c3e9d9
+              type: pager_item
+              view:
+                background_color:
+                  default:
+                    alpha: 1
+                    hex: "#FFFFFF"
+                    type: hex
+                items:
+                  - margin:
+                      bottom: 28
+                      end: 0
+                      start: 0
+                      top: 0
+                    position:
+                      horizontal: center
+                      vertical: center
+                    size:
+                      height: 100%
+                      width: 100%
+                    view:
+                      direction: vertical
+                      items:
+                        - margin:
+                            bottom: 0
+                            end: 20
+                            start: 20
+                            top: 0
+                          size:
+                            height: auto
+                            width: 100%
+                          view:
+                            direction: vertical
+                            items:
+                              - margin:
+                                  bottom: 10
+                                  end: 0
+                                  start: 0
+                                  top: 35
+                                size:
+                                  height: auto
+                                  width: 90%
+                                view:
+                                  text: Why upgrade?
+                                  text_appearance:
+                                    alignment: center
+                                    color:
+                                      default:
+                                        alpha: 1
+                                        hex: "#111111"
+                                        type: hex
+                                    font_families:
+                                      - sans-serif
+                                    font_size: 20
+                                    styles:
+                                      - underlined
+                                      - bold
+                                      - italic
+                                  type: label
+                              - size:
+                                  height: 0
+                                  width: 0
+                                view:
+                                  text: ''
+                                  text_appearance:
+                                    alignment: center
+                                    color:
+                                      default:
+                                        alpha: 1
+                                        hex: "#111111"
+                                        type: hex
+                                    font_families:
+                                      - sans-serif
+                                    font_size: 34
+                                    styles:
+                                      - underlined
+                                      - bold
+                                      - italic
+                                  type: label
+                              - margin:
+                                  bottom: 10
+                                  end: 0
+                                  start: 0
+                                  top: 10
+                                size:
+                                  height: 60
+                                  width: 100%
+                                view:
+                                  direction: horizontal
+                                  items:
+                                    - margin:
+                                        bottom: 0
+                                        end: 20
+                                        start: 20
+                                        top: 0
+                                      size:
+                                        height: 60
+                                        width: 60
+                                      view:
+                                        media_fit: center_inside
+                                        media_type: image
+                                        type: media
+                                        url: https://unroll-images-production.s3.amazonaws.com/projects/2487/1565801064410-banner-500x500-no-words.jpg
+                                    - margin:
+                                        bottom: 0
+                                        end: 0
+                                        start: 0
+                                        top: 0
+                                      size:
+                                        height: 100%
+                                        width: 100%
+                                      view:
+                                        text: 'Plan #1 - Value prop - Price'
+                                        text_appearance:
+                                          alignment: start
+                                          color:
+                                            default:
+                                              alpha: 1
+                                              hex: "#111111"
+                                              type: hex
+                                          font_families:
+                                            - sans-serif
+                                          font_size: 34
+                                          styles:
+                                            - underlined
+                                            - bold
+                                            - italic
+                                        type: label
+                                  type: linear_layout
+                              - margin:
+                                  bottom: 10
+                                  end: 0
+                                  start: 0
+                                  top: 10
+                                size:
+                                  height: 60
+                                  width: 100%
+                                view:
+                                  direction: horizontal
+                                  items:
+                                    - margin:
+                                        bottom: 0
+                                        end: 20
+                                        start: 20
+                                        top: 0
+                                      size:
+                                        height: 60
+                                        width: 60
+                                      view:
+                                        media_fit: center_inside
+                                        media_type: image
+                                        type: media
+                                        url: https://unroll-images-production.s3.amazonaws.com/projects/2487/1565801064410-banner-500x500-no-words.jpg
+                                    - margin:
+                                        bottom: 0
+                                        end: 0
+                                        start: 0
+                                        top: 0
+                                      size:
+                                        height: 100%
+                                        width: 100%
+                                      view:
+                                        text: 'Plan #2 - Value prop - Price'
+                                        text_appearance:
+                                          alignment: start
+                                          color:
+                                            default:
+                                              alpha: 1
+                                              hex: "#111111"
+                                              type: hex
+                                          font_families:
+                                            - sans-serif
+                                          font_size: 34
+                                          styles:
+                                            - underlined
+                                            - bold
+                                            - italic
+                                        type: label
+                                  type: linear_layout
+                              - margin:
+                                  bottom: 10
+                                  end: 0
+                                  start: 0
+                                  top: 10
+                                size:
+                                  height: 60
+                                  width: 100%
+                                view:
+                                  direction: horizontal
+                                  items:
+                                    - margin:
+                                        bottom: 0
+                                        end: 20
+                                        start: 20
+                                        top: 0
+                                      size:
+                                        height: 60
+                                        width: 60
+                                      view:
+                                        media_fit: center_inside
+                                        media_type: image
+                                        type: media
+                                        url: https://unroll-images-production.s3.amazonaws.com/projects/2487/1565801064410-banner-500x500-no-words.jpg
+                                    - margin:
+                                        bottom: 0
+                                        end: 0
+                                        start: 0
+                                        top: 0
+                                      size:
+                                        height: 100%
+                                        width: 100%
+                                      view:
+                                        text: 'Plan #3 - Value prop - Price'
+                                        text_appearance:
+                                          alignment: start
+                                          color:
+                                            default:
+                                              alpha: 1
+                                              hex: "#111111"
+                                              type: hex
+                                          font_families:
+                                            - sans-serif
+                                          font_size: 34
+                                          styles:
+                                            - underlined
+                                            - bold
+                                            - italic
+                                        type: label
+                                  type: linear_layout
+                            type: linear_layout
+                        - margin:
+                            bottom: 0
+                            end: 0
+                            start: 0
+                            top: 0
+                          size:
+                            height: 100%
+                            width: 100%
+                          view:
+                            type: empty_view
+                        - margin:
+                            bottom: 0
+                            top: 10
+                          size:
+                            height: auto
+                            width: 92%
+                          view:
+                            direction: vertical
+                            items:
+                              - margin:
+                                  bottom: 4
+                                  end: 0
+                                  start: 0
+                                  top: 4
+                                size:
+                                  height: 40
+                                  width: 100%
+                                view:
+                                  actions: {}
+                                  background_color:
+                                    default:
+                                      alpha: 1
+                                      hex: "#222222"
+                                      type: hex
+                                  border:
+                                    radius: 0
+                                    stroke_color:
+                                      default:
+                                        alpha: 1
+                                        hex: "#222222"
+                                        type: hex
+                                    stroke_width: 1
+                                  button_click:
+                                    - pager_next
+                                  enabled:
+                                    - pager_next
+                                  identifier: 'next--Plan #1'
+                                  label:
+                                    text: 'Plan #1'
+                                    text_appearance:
+                                      alignment: center
+                                      color:
+                                        default:
+                                          alpha: 1
+                                          hex: "#FFFFFF"
+                                          type: hex
+                                      font_families:
+                                        - sans-serif
+                                      font_size: 14
+                                      styles: []
+                                    type: label
+                                  type: label_button
+                              - margin:
+                                  bottom: 4
+                                  end: 0
+                                  start: 0
+                                  top: 4
+                                size:
+                                  height: 40
+                                  width: 100%
+                                view:
+                                  actions: {}
+                                  background_color:
+                                    default:
+                                      alpha: 1
+                                      hex: "#222222"
+                                      type: hex
+                                  border:
+                                    radius: 0
+                                    stroke_color:
+                                      default:
+                                        alpha: 1
+                                        hex: "#222222"
+                                        type: hex
+                                    stroke_width: 1
+                                  button_click:
+                                    - dismiss
+                                  enabled: []
+                                  identifier: 'home_page--Plan #2'
+                                  label:
+                                    text: 'Plan #2'
+                                    text_appearance:
+                                      alignment: center
+                                      color:
+                                        default:
+                                          alpha: 1
+                                          hex: "#FFFFF0"
+                                          type: hex
+                                      font_families:
+                                        - SF Pro
+                                      font_size: 14
+                                      styles: []
+                                    type: label
+                                  type: label_button
+                              - margin:
+                                  bottom: 20
+                                  end: 0
+                                  start: 0
+                                  top: 4
+                                size:
+                                  height: 40
+                                  width: 100%
+                                view:
+                                  actions: {}
+                                  background_color:
+                                    default:
+                                      alpha: 1
+                                      hex: "#222222"
+                                      type: hex
+                                  border:
+                                    radius: 0
+                                    stroke_color:
+                                      default:
+                                        alpha: 1
+                                        hex: "#222222"
+                                        type: hex
+                                    stroke_width: 1
+                                  button_click:
+                                    - dismiss
+                                  enabled: []
+                                  identifier: 'home_page--Plan #3'
+                                  label:
+                                    text: 'Plan #3'
+                                    text_appearance:
+                                      alignment: center
+                                      color:
+                                        default:
+                                          alpha: 1
+                                          hex: "#FFFFFF"
+                                          type: hex
+                                      font_families:
+                                        - sans-serif
+                                      font_size: 14
+                                      styles: []
+                                    type: label
+                                  type: label_button
+                            type: linear_layout
+                      type: linear_layout
+                type: container
+          type: pager
+      - position:
+          horizontal: end
+          vertical: top
+        size:
+          height: 48
+          width: 48
+        view:
+          button_click:
+            - dismiss
+          identifier: dismiss_button
+          image:
+            color:
+              default:
+                alpha: 1
+                hex: "#000000"
+                type: hex
+            icon: close
+            scale: 0.4
+            type: icon
+          type: image_button
+      - margin:
+          bottom: 4
+          end: 0
+          start: 0
+          top: 0
+        position:
+          horizontal: center
+          vertical: bottom
+        size:
+          height: 12
+          width: 100%
+        view:
+          bindings:
+            selected:
+              shapes:
+                - aspect_ratio: 1
+                  color:
+                    default:
+                      alpha: 1
+                      hex: "#AAAAAA"
+                      type: hex
+                  scale: 1
+                  type: ellipse
+            unselected:
+              shapes:
+                - aspect_ratio: 1
+                  color:
+                    default:
+                      alpha: 1
+                      hex: "#CCCCCC"
+                      type: hex
+                  scale: 1
+                  type: ellipse
+          spacing: 4
+          type: pager_indicator
+    type: container

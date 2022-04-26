@@ -25,11 +25,9 @@ struct BannerView: View {
             RootView(thomasEnvironment: thomasEnvironment, layout: layout) { orientation, windowSize in
                 let placement = resolvePlacement(orientation: orientation, windowSize: windowSize)
                 let ignoreSafeArea = placement.ignoreSafeArea == true
+                let safeAreaInsets = ignoreSafeArea ? metrics.safeAreaInsets : ViewConstraints.emptyEdgeSet
+                let constraints = ViewConstraints(size: metrics.size, safeAreaInsets: safeAreaInsets)
 
-                let constraints = ViewConstraints.containerConstraints(metrics.size,
-                                                                       safeAreaInsets: metrics.safeAreaInsets,
-                                                                       ignoreSafeArea: ignoreSafeArea)
-                
                 createBanner(constraints: constraints, placement: placement)
                     .applyIf(ignoreSafeArea) { $0.edgesIgnoringSafeArea(.all) }
             }
@@ -47,12 +45,10 @@ struct BannerView: View {
             contentSize = self.contentSize?.1
         }
 
-        let contentConstraints = constraints.calculateChild(placement.size,
-                                                            contentSize: contentSize,
-                                                            margin: placement.margin,
-                                                            ignoreSafeArea: placement.ignoreSafeArea)
+        let contentConstraints = constraints.contentConstraints(placement.size,
+                                                                contentSize: contentSize,
+                                                                margin: placement.margin)
 
-        
         return VStack {
             ViewFactory.createView(model: layout.view, constraints: contentConstraints)
                 .margin(placement.margin)
@@ -113,4 +109,3 @@ struct BannerView: View {
     }
         
 }
-

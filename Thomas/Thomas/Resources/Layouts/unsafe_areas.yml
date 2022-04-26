@@ -1,0 +1,456 @@
+---
+version: 1
+presentation:
+  type: modal
+  default_placement:
+    size:
+      width: 100%
+      height: 100%
+    shade_color:
+      default:
+        hex: '#000000'
+        alpha: 0.5 # no shade
+    ignore_safe_area: true
+view:
+  # Top-level container (yellow bkg, ignores safe area)
+  type: container
+  background_color:
+    default:
+      hex: "#FFFF00"
+      alpha: 1
+  items:
+  # TOP|END linear_layout (ignores safe area)
+  - position:
+      horizontal: end
+      vertical: top
+    size:
+      height: 50%
+      width: 50%
+    ignore_safe_area: true
+    view:
+      type: linear_layout
+      direction: vertical
+      background_color:
+        default:
+          hex: "#FFFFFF"
+          alpha: 1
+      border:
+        stroke_color:
+          default:
+            hex: "#0000FF"
+            alpha: 1
+        stroke_width: 2
+      items:
+      - size:
+          width: 100%
+          height: auto
+        view:
+          type: label
+          text: Linear Layout
+          background_color:
+            default:
+              hex: "#FF7586"
+              alpha: 1
+          text_appearance:
+            font_size: 12
+            color:
+              default:
+                type: hex
+                hex: "#000000"
+                alpha: 1
+            alignment: center
+      - size:
+          width: 100%
+          height: auto
+        view:
+          type: label
+          text: "ignore_safe_area: true"
+          background_color:
+            default:
+              hex: "#7385FF"
+              alpha: 1
+          text_appearance:
+            font_size: 10
+            color:
+              default:
+                type: hex
+                hex: "#000000"
+                alpha: 1
+            alignment: center
+  # TOP|START linear_layout (respects safe area)
+  - position:
+      horizontal: start
+      vertical: top
+    size:
+      height: 50%
+      width: 50%
+    ignore_safe_area: true # originally false
+    view:
+      type: linear_layout
+      direction: vertical
+      background_color:
+        default:
+          hex: "#FFFFFF"
+          alpha: 1
+      border:
+        stroke_color:
+          default:
+            hex: "#0000FF"
+            alpha: 1
+        stroke_width: 2
+      items:
+      - size:
+          width: 100%
+          height: auto
+        view:
+          type: label
+          text: Linear Layout
+          background_color:
+            default:
+              hex: "#FF7586"
+              alpha: 1
+          text_appearance:
+            font_size: 12
+            color:
+              default:
+                type: hex
+                hex: "#000000"
+                alpha: 1
+            alignment: center
+      - size:
+          width: 100%
+          height: auto
+        view:
+          type: label
+          text: "ignore_safe_area: true" # originally false
+          background_color:
+            default:
+              hex: "#7385FF"
+              alpha: 1
+          text_appearance:
+            font_size: 10
+            color:
+              default:
+                type: hex
+                hex: "#000000"
+                alpha: 1
+            alignment: center
+  # BOTTOM|END linear_layout (ignores safe area, 4 nested children)
+  - position:
+      horizontal: end
+      vertical: bottom
+    size:
+      height: 50%
+      width: 50%
+    ignore_safe_area: true
+    view:
+      type: linear_layout
+      direction: vertical
+      background_color:
+        default:
+          hex: "#FFFFFF"
+          alpha: 1
+      border:
+        stroke_color:
+          default:
+            hex: "#0000FF"
+            alpha: 1
+        stroke_width: 2
+      items:
+      - size:
+          width: 100%
+          height: 100%
+        view:
+          type: container
+          background_color:
+            default:
+              hex: "#FFFF00"
+              alpha: 1
+          items:
+          - position:
+              horizontal: end
+              vertical: top
+            size:
+              height: 50%
+              width: 50%
+            ignore_safe_area: true
+            view:
+              type: linear_layout
+              direction: vertical
+              background_color:
+                default:
+                  hex: "#FFFFFF"
+                  alpha: 1
+              border:
+                stroke_color:
+                  default:
+                    hex: "#0000FF"
+                    alpha: 1
+                stroke_width: 2
+              items:
+              - size:
+                  width: 100%
+                  height: auto
+                view:
+                  type: label
+                  text: Linear Layout
+                  background_color:
+                    default:
+                      hex: "#FF7586"
+                      alpha: 1
+                  text_appearance:
+                    font_size: 12
+                    color:
+                      default:
+                        type: hex
+                        hex: "#000000"
+                        alpha: 1
+                    alignment: center
+              - size:
+                  width: 100%
+                  height: auto
+                view:
+                  type: label
+                  text: "ignore_safe_area: true"
+                  background_color:
+                    default:
+                      hex: "#7385FF"
+                      alpha: 1
+                  text_appearance:
+                    font_size: 10
+                    color:
+                      default:
+                        type: hex
+                        hex: "#000000"
+                        alpha: 1
+                    alignment: center
+
+          - position:
+              horizontal: start
+              vertical: top
+            size:
+              height: 50%
+              width: 50%
+            ignore_safe_area: false
+            view:
+              type: linear_layout
+              direction: vertical
+              background_color:
+                default:
+                  hex: "#FFFFFF"
+                  alpha: 1
+              border:
+                stroke_color:
+                  default:
+                    hex: "#0000FF"
+                    alpha: 1
+                stroke_width: 2
+              items:
+              - size:
+                  width: 100%
+                  height: auto
+                view:
+                  type: label
+                  text: Linear Layout
+                  background_color:
+                    default:
+                      hex: "#FF7586"
+                      alpha: 1
+                  text_appearance:
+                    font_size: 12
+                    color:
+                      default:
+                        type: hex
+                        hex: "#000000"
+                        alpha: 1
+                    alignment: center
+              - size:
+                  width: 100%
+                  height: auto
+                view:
+                  type: label
+                  text: "ignore_safe_area: false"
+                  background_color:
+                    default:
+                      hex: "#7385FF"
+                      alpha: 1
+                  text_appearance:
+                    font_size: 10
+                    color:
+                      default:
+                        type: hex
+                        hex: "#000000"
+                        alpha: 1
+                    alignment: center
+          - position:
+              horizontal: end
+              vertical: bottom
+            size:
+              height: 50%
+              width: 50%
+            ignore_safe_area: true
+            view:
+              type: linear_layout
+              direction: vertical
+              background_color:
+                default:
+                  hex: "#FFFFFF"
+                  alpha: 1
+              border:
+                stroke_color:
+                  default:
+                    hex: "#0000FF"
+                    alpha: 1
+                stroke_width: 2
+              items:
+              - size:
+                  width: 100%
+                  height: auto
+                view:
+                  type: label
+                  text: Linear Layout
+                  background_color:
+                    default:
+                      hex: "#FF7586"
+                      alpha: 1
+                  text_appearance:
+                    font_size: 12
+                    color:
+                      default:
+                        type: hex
+                        hex: "#000000"
+                        alpha: 1
+                    alignment: center
+              - size:
+                  width: 100%
+                  height: auto
+                view:
+                  type: label
+                  text: "ignore_safe_area: true"
+                  background_color:
+                    default:
+                      hex: "#7385FF"
+                      alpha: 1
+                  text_appearance:
+                    font_size: 10
+                    color:
+                      default:
+                        type: hex
+                        hex: "#000000"
+                        alpha: 1
+                    alignment: center
+          - position:
+              horizontal: start
+              vertical: bottom
+            size:
+              height: 50%
+              width: 50%
+            ignore_safe_area: false
+            view:
+              type: linear_layout
+              direction: vertical
+              background_color:
+                default:
+                  hex: "#FFFFFF"
+                  alpha: 1
+              border:
+                stroke_color:
+                  default:
+                    hex: "#0000FF"
+                    alpha: 1
+                stroke_width: 2
+              items:
+              - size:
+                  width: 100%
+                  height: auto
+                view:
+                  type: label
+                  text: Linear Layout
+                  background_color:
+                    default:
+                      hex: "#FF7586"
+                      alpha: 1
+                  text_appearance:
+                    font_size: 12
+                    color:
+                      default:
+                        type: hex
+                        hex: "#000000"
+                        alpha: 1
+                    alignment: center
+              - size:
+                  width: 100%
+                  height: auto
+                view:
+                  type: label
+                  text: "ignore_safe_area: false"
+                  background_color:
+                    default:
+                      hex: "#7385FF"
+                      alpha: 1
+                  text_appearance:
+                    font_size: 10
+                    color:
+                      default:
+                        type: hex
+                        hex: "#000000"
+                        alpha: 1
+                    alignment: center
+
+  - position:
+      horizontal: start
+      vertical: bottom
+    size:
+      height: 50%
+      width: 50%
+    ignore_safe_area: false
+    view:
+      type: linear_layout
+      direction: vertical
+      background_color:
+        default:
+          hex: "#FFFFFF"
+          alpha: 1
+      border:
+        stroke_color:
+          default:
+            hex: "#0000FF"
+            alpha: 1
+        stroke_width: 2
+      items:
+      - size:
+          width: 100%
+          height: auto
+        view:
+          type: label
+          text: Linear Layout
+          background_color:
+            default:
+              hex: "#FF7586"
+              alpha: 1
+          text_appearance:
+            font_size: 12
+            color:
+              default:
+                type: hex
+                hex: "#000000"
+                alpha: 1
+            alignment: center
+      - size:
+          width: 100%
+          height: auto
+        view:
+          type: label
+          text: "ignore_safe_area: false"
+          background_color:
+            default:
+              hex: "#7385FF"
+              alpha: 1
+          text_appearance:
+            font_size: 10
+            color:
+              default:
+                type: hex
+                hex: "#000000"
+                alpha: 1
+            alignment: center
