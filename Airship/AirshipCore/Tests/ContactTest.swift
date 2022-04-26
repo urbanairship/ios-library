@@ -62,7 +62,7 @@ class ContactTest: XCTestCase {
 
         let identityRule = self.taskManager.rateLimits[Contact.identityRateLimitID]!
         XCTAssertEqual(1, identityRule.rate)
-        XCTAssertEqual(2.0, identityRule.timeInterval, accuracy: 0.01)
+        XCTAssertEqual(5.0, identityRule.timeInterval, accuracy: 0.01)
     }
 
     func testMigrateNamedUser() throws {

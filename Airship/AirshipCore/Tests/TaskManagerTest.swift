@@ -10,7 +10,7 @@ class TaskManagerTest: XCTestCase {
     let backgroundTasks = TestBackgroundTasks()
     let networkMonitor = TestNetworkMonitor()
     let date = UATestDate(offset: 0, dateOverride: Date())
-    
+
     lazy var rateLimiter: RateLimiter = {
         return RateLimiter(date: self.date)
     }()
@@ -341,6 +341,148 @@ class TaskManagerTest: XCTestCase {
         XCTAssertEqual(2, attempts)
     }
 
+    func testWaitForRateLimitTasks() throws {
+        self.backgroundTasks.timeRemaining = 4000
+
+        try self.taskManager.setRateLimit("foo", rate: 1, timeInterval: 48)
+        self.taskManager.register(taskID: "foo", dispatcher: self.dispatcher) { _ in }
+        self.rateLimiter.track("foo")
+
+        try self.taskManager.setRateLimit("bar", rate: 1, timeInterval: 90)
+        self.taskManager.register(taskID: "bar", dispatcher: self.dispatcher) { _ in }
+        self.rateLimiter.track("bar")
+
+        var bgTaskFinished = false
+        var bgTaskStarted = false
+        self.backgroundTasks.taskHandler = { name, _ in
+            guard name == TaskManager.rateLimitBackgroundTaskName else {
+                return Disposable()
+            }
+
+            if (bgTaskStarted) {
+                XCTFail()
+            }
+            bgTaskStarted = true
+            return Disposable {
+                if (bgTaskFinished) {
+                    XCTFail()
+                }
+                bgTaskFinished = true
+            }
+        }
+
+        self.taskManager.enqueueRequest(taskID: "foo", rateLimitID: "foo", options: .defaultOptions)
+        self.taskManager.enqueueRequest(taskID: "bar", rateLimitID: "bar", options: .defaultOptions)
+
+        self.notificationCenter.post(name: AppStateTracker.didEnterBackgroundNotification, object: nil)
+
+        XCTAssertTrue(bgTaskStarted)
+        XCTAssertFalse(bgTaskFinished)
+
+        // 48(foo) + 10(buffer) - 1 (right before)
+        self.dispatcher.advanceTime(57)
+        XCTAssertFalse(bgTaskFinished)
+
+        self.dispatcher.advanceTime(1)
+        XCTAssertTrue(bgTaskFinished)
+    }
+
+    func testWaitForRateLimitTasksInsufficientBackgroundTime() throws {
+        // Tasks require at least 30 seconds
+        self.backgroundTasks.timeRemaining = 30
+
+        try self.taskManager.setRateLimit("foo", rate: 1, timeInterval: 1)
+        self.taskManager.register(taskID: "foo", dispatcher: self.dispatcher) { _ in }
+        self.rateLimiter.track("foo")
+
+        var bgTaskFinished = false
+        var bgTaskStarted = false
+        self.backgroundTasks.taskHandler = { name, _ in
+            guard name == TaskManager.rateLimitBackgroundTaskName else {
+                return Disposable()
+            }
+
+            if (bgTaskStarted) {
+                XCTFail()
+            }
+            bgTaskStarted = true
+            return Disposable {
+                if (bgTaskFinished) {
+                    XCTFail()
+                }
+                bgTaskFinished = true
+            }
+        }
+
+        self.taskManager.enqueueRequest(taskID: "foo", rateLimitID: "foo", options: .defaultOptions)
+        self.notificationCenter.post(name: AppStateTracker.didEnterBackgroundNotification, object: nil)
+
+        XCTAssertTrue(bgTaskStarted)
+        XCTAssertTrue(bgTaskFinished)
+    }
+
+    func testWaitForRateLimitTasksBeyondMaxTime() throws {
+        self.backgroundTasks.timeRemaining = 400
+        try self.taskManager.setRateLimit("foo", rate: 1, timeInterval: 61)
+        self.taskManager.register(taskID: "foo", dispatcher: self.dispatcher) { _ in }
+        self.rateLimiter.track("foo")
+
+        var bgTaskFinished = false
+        var bgTaskStarted = false
+        self.backgroundTasks.taskHandler = { name, _ in
+            guard name == TaskManager.rateLimitBackgroundTaskName else {
+                return Disposable()
+            }
+
+            if (bgTaskStarted) {
+                XCTFail()
+            }
+            bgTaskStarted = true
+            return Disposable {
+                if (bgTaskFinished) {
+                    XCTFail()
+                }
+                bgTaskFinished = true
+            }
+        }
+
+        self.taskManager.enqueueRequest(taskID: "foo", rateLimitID: "foo", options: .defaultOptions)
+        self.notificationCenter.post(name: AppStateTracker.didEnterBackgroundNotification, object: nil)
+
+        XCTAssertTrue(bgTaskStarted)
+        XCTAssertTrue(bgTaskFinished)
+    }
+
+    func testWaitForRateLimitTasksNoTasks() throws {
+        self.backgroundTasks.timeRemaining = 400
+        try self.taskManager.setRateLimit("foo", rate: 1, timeInterval: 61)
+        self.taskManager.register(taskID: "foo", dispatcher: self.dispatcher) { _ in }
+        self.rateLimiter.track("foo")
+
+        var bgTaskFinished = false
+        var bgTaskStarted = false
+        self.backgroundTasks.taskHandler = { name, _ in
+            guard name == TaskManager.rateLimitBackgroundTaskName else {
+                return Disposable()
+            }
+
+            if (bgTaskStarted) {
+                XCTFail()
+            }
+            bgTaskStarted = true
+            return Disposable {
+                if (bgTaskFinished) {
+                    XCTFail()
+                }
+                bgTaskFinished = true
+            }
+        }
+
+        self.notificationCenter.post(name: AppStateTracker.didEnterBackgroundNotification, object: nil)
+        XCTAssertTrue(bgTaskStarted)
+        XCTAssertTrue(bgTaskFinished)
+    }
+
     func testRateLimit() throws {
         self.backgroundTasks.timeRemaining = 45
         self.backgroundTasks.taskHandler = { _, _ in
@@ -378,6 +520,6 @@ class TaskManagerTest: XCTestCase {
         self.date.offset += 6000
         self.dispatcher.advanceTime(6000)
         XCTAssertEqual(5, attempts)
-
     }
 }
+

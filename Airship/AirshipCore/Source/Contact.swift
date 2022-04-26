@@ -389,7 +389,7 @@ public class Contact : NSObject, Component, ContactProtocol {
         }
 
         do {
-            try self.taskManager.setRateLimit(Contact.identityRateLimitID, rate: 1, timeInterval: 2.0)
+            try self.taskManager.setRateLimit(Contact.identityRateLimitID, rate: 1, timeInterval: 5.0)
             try self.taskManager.setRateLimit(Contact.updateRateLimitID, rate: 1, timeInterval: 0.5)
         } catch {
             AirshipLogger.error("Failed to create rate limits")

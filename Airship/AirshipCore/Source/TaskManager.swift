@@ -11,6 +11,12 @@ public class TaskManager : NSObject, TaskManagerProtocol {
     private static let maxBackOff = 120.0
     private static let minBackgroundTime = 30.0
 
+
+    static let requestBackgroundTaskNamePrefix = "Airship.TaskManager -  Request: "
+    static let rateLimitBackgroundTaskName = "Airship.TaskManager - Background"
+    private static let rateLimitBackgroundTimeFilter = 60.0
+    private static let rateLimitBackgroundTimeBuffer = 10.0
+
     private var launcherMap: [String : [TaskLauncher]] = [:]
     private var currentRequests: [String : [TaskRequest]] = [:]
     private var waitingConditionsRequests: [TaskRequest] = []
@@ -242,7 +248,8 @@ public class TaskManager : NSObject, TaskManagerProtocol {
         }
 
         do {
-            backgroundTask = try self.backgroundTasks.beginTask("UATaskManager \(request.taskID)") {
+            let name = TaskManager.requestBackgroundTaskNamePrefix + request.taskID
+            backgroundTask = try self.backgroundTasks.beginTask(name) {
                 task.expire()
             }
 
@@ -320,16 +327,49 @@ public class TaskManager : NSObject, TaskManagerProtocol {
 
     @objc
     func didEnterBackground() {
-        self.retryWaitingConditions()
+        var backgroundTask: Disposable?
+        backgroundTask = try? self.backgroundTasks.beginTask(TaskManager.rateLimitBackgroundTaskName) {
+            backgroundTask?.dispose()
+        }
 
+        guard let backgroundTask = backgroundTask else {
+            return
+        }
+
+        self.retryWaitingConditions()
         var copyRetryingRequests : [TaskRequest]? = nil
+
+        var rateLimitTime: TimeInterval?
+        var maxWaitTime = self.backgroundTasks.timeRemaining - TaskManager.minBackgroundTime - TaskManager.rateLimitBackgroundTimeBuffer
+        maxWaitTime = min(maxWaitTime, TaskManager.rateLimitBackgroundTimeFilter)
 
         requestsLock.sync {
             copyRetryingRequests = self.retryingRequests
             self.retryingRequests = []
+
+            // Find the time we should hold onto a background task to allow for
+            // rate limited tasks to execute. Filter all tasks greater than the
+            // max wait time, then find the max value of those tasks.
+            rateLimitTime = self.currentRequests
+                .compactMap { entry in
+                    return entry.value
+                        .compactMap { taskRateLimitDelay($0.rateLimitID) }
+                        .filter { $0 <= maxWaitTime }
+                        .max()
+                }
+                .max()
         }
 
         copyRetryingRequests?.forEach { self.attemptRequest($0, nextBackOff: TaskManager.initialBackOff) }
+
+        if let rateLimitTime = rateLimitTime, maxWaitTime > 0 {
+            let actualWaitTime = min(maxWaitTime, rateLimitTime + TaskManager.rateLimitBackgroundTimeBuffer)
+            self.dispatcher.dispatch(after: actualWaitTime) {
+                backgroundTask.dispose()
+            }
+        } else {
+            backgroundTask.dispose()
+        }
     }
 
     private func isRequestCurrent(_ request: TaskRequest) -> Bool {
