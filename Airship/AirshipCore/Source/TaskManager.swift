@@ -99,17 +99,17 @@ public class TaskManager : NSObject, TaskManagerProtocol {
 
     @objc(enqueueRequestWithID:options:initialDelay:)
     public func enqueueRequest(taskID: String, options: TaskRequestOptions, initialDelay: TimeInterval) {
-        self.enqueueRequest(taskID: taskID, rateLimitID: nil, options: options, minDelay: initialDelay)
+        self.enqueueRequest(taskID: taskID, rateLimitIDs: [], options: options, minDelay: initialDelay)
     }
 
-    @objc(enqueueRequestWithID:rateLimitID:options:)
-    public func enqueueRequest(taskID: String, rateLimitID: String?, options: TaskRequestOptions) {
-        self.enqueueRequest(taskID: taskID, rateLimitID: rateLimitID, options: options, minDelay: 0)
+    @objc(enqueueRequestWithID:rateLimitIDs:options:)
+    public func enqueueRequest(taskID: String, rateLimitIDs: [String], options: TaskRequestOptions) {
+        self.enqueueRequest(taskID: taskID, rateLimitIDs: rateLimitIDs, options: options, minDelay: 0)
     }
 
-    @objc(enqueueRequestWithID:rateLimitID:options:minDelay:)
+    @objc(enqueueRequestWithID:rateLimitIDs:options:minDelay:)
     public func enqueueRequest(taskID: String,
-                               rateLimitID: String?,
+                               rateLimitIDs: [String],
                                options: TaskRequestOptions,
                                minDelay: TimeInterval) {
         
@@ -120,7 +120,7 @@ public class TaskManager : NSObject, TaskManagerProtocol {
 
         let requests = launchers.map {
             TaskRequest(taskID: taskID,
-                        rateLimitID: rateLimitID,
+                        rateLimitIDs: rateLimitIDs,
                         options: options,
                         launcher: $0)
         }
@@ -153,7 +153,7 @@ public class TaskManager : NSObject, TaskManagerProtocol {
                 self.currentRequests[taskID] = requests
             }
 
-            if let delay = taskRateLimitDelay(rateLimitID) {
+            if let delay = taskRateLimitDelay(rateLimitIDs) {
                 rateLimitDelay = delay
             }
         }
@@ -230,9 +230,7 @@ public class TaskManager : NSObject, TaskManagerProtocol {
                 return
             }
 
-            if let rateLimitID = request.rateLimitID {
-                strongSelf.rateLimiter.track(rateLimitID)
-            }
+            request.rateLimitIDs.forEach { strongSelf.rateLimiter.track($0) }
 
             if (strongSelf.isRequestCurrent(request)) {
                 if (result) {
@@ -353,7 +351,7 @@ public class TaskManager : NSObject, TaskManagerProtocol {
             rateLimitTime = self.currentRequests
                 .compactMap { entry in
                     return entry.value
-                        .compactMap { taskRateLimitDelay($0.rateLimitID) }
+                        .compactMap { taskRateLimitDelay($0.rateLimitIDs) }
                         .filter { $0 <= maxWaitTime }
                         .max()
                 }
@@ -381,30 +379,28 @@ public class TaskManager : NSObject, TaskManagerProtocol {
     }
 
     private func taskRateLimitDelay(_ taskRequest: TaskRequest) -> TimeInterval? {
-        return taskRateLimitDelay(taskRequest.rateLimitID)
+        return taskRateLimitDelay(taskRequest.rateLimitIDs)
     }
 
-    private func taskRateLimitDelay(_ rateLimitID: String?) -> TimeInterval? {
-        guard let rateLimitID = rateLimitID else {
-            return nil
-        }
-
-        if case .overLimit(let delay) = self.rateLimiter.status(rateLimitID) {
-            return delay
-        }
-
-        return nil
+    private func taskRateLimitDelay(_ rateLimitIDs: [String]) -> TimeInterval? {
+        return rateLimitIDs.compactMap { rateLimitID in
+            if case .overLimit(let delay) = self.rateLimiter.status(rateLimitID) {
+                return delay
+            } else {
+                return nil
+            }
+        }.max()
     }
 
     private class TaskRequest {
         let taskID: String
-        let rateLimitID: String?
+        let rateLimitIDs: [String]
         let options: TaskRequestOptions
         let launcher: TaskLauncher
 
-        init(taskID: String, rateLimitID: String?, options: TaskRequestOptions, launcher: TaskLauncher) {
+        init(taskID: String, rateLimitIDs: [String], options: TaskRequestOptions, launcher: TaskLauncher) {
             self.taskID = taskID
-            self.rateLimitID = rateLimitID
+            self.rateLimitIDs = rateLimitIDs
             self.options = options
             self.launcher = launcher
         }

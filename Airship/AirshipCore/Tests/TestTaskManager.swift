@@ -9,7 +9,7 @@ public class TestTaskManager : NSObject, TaskManagerProtocol {
 
     public struct Pending {
         let taskID: String
-        let rateLimitID: String?
+        let rateLimitIDs: [String]
         let options: TaskRequestOptions
         let minDelay: TimeInterval
     }
@@ -53,22 +53,22 @@ public class TestTaskManager : NSObject, TaskManagerProtocol {
     }
     
     public func enqueueRequest(taskID: String, options: TaskRequestOptions, initialDelay: TimeInterval) {
-        enqueueRequest(taskID: taskID, rateLimitID: nil, options: options, minDelay: initialDelay)
+        enqueueRequest(taskID: taskID, rateLimitIDs: [], options: options, minDelay: initialDelay)
     }
 
     public func enqueueRequest(taskID: String,
-                               rateLimitID: String?,
+                               rateLimitIDs: [String],
                                options: TaskRequestOptions) {
-        enqueueRequest(taskID: taskID, rateLimitID: rateLimitID, options: options, minDelay: 0)
+        enqueueRequest(taskID: taskID, rateLimitIDs: rateLimitIDs, options: options, minDelay: 0)
     }
 
     public func enqueueRequest(taskID: String,
-                               rateLimitID: String?,
+                               rateLimitIDs: [String],
                                options: TaskRequestOptions,
                                minDelay: TimeInterval) {
 
         let pending = Pending(taskID: taskID,
-                              rateLimitID: rateLimitID,
+                              rateLimitIDs: rateLimitIDs,
                               options: options,
                               minDelay: minDelay)
 
@@ -79,7 +79,7 @@ public class TestTaskManager : NSObject, TaskManagerProtocol {
     @objc
     public func launchSync(taskID: String, options: TaskRequestOptions = TaskRequestOptions.defaultOptions) -> TestTask {
 
-        let pending = Pending(taskID: taskID, rateLimitID: nil, options: options, minDelay: 0)
+        let pending = Pending(taskID: taskID, rateLimitIDs: [], options: options, minDelay: 0)
         return self.launchTask(pending)
     }
 
@@ -136,7 +136,7 @@ public class TestTask : NSObject, Task {
     public var minDelay: TimeInterval
 
     @objc
-    public var rateLimitID: String?
+    public var rateLimitIDs: [String]
 
     private let onFinish: () -> Void
 
@@ -144,7 +144,7 @@ public class TestTask : NSObject, Task {
         self.taskID = pending.taskID
         self.requestOptions = pending.options
         self.minDelay = pending.minDelay
-        self.rateLimitID = pending.rateLimitID
+        self.rateLimitIDs = pending.rateLimitIDs
         self.onFinish = onFinish
     }
     

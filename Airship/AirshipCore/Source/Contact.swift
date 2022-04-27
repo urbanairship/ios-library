@@ -750,24 +750,18 @@ public class Contact : NSObject, Component, ContactProtocol {
             return
         }
 
-        var rateLimitID: String?
+        var rateLimitIDs = [Contact.updateRateLimitID]
 
         switch(next.type) {
-        case .associateChannel: fallthrough
-        case .registerEmail: fallthrough
-        case .registerSMS: fallthrough
-        case .registerOpen: fallthrough
-        case .update:
-            rateLimitID = Contact.updateRateLimitID
-
         case .resolve: fallthrough
         case .identify: fallthrough
         case .reset:
-            rateLimitID = Contact.identityRateLimitID
+            rateLimitIDs.append(Contact.identityRateLimitID)
+        default: break
         }
 
         self.taskManager.enqueueRequest(taskID: Contact.updateTaskID,
-                                        rateLimitID: rateLimitID,
+                                        rateLimitIDs: rateLimitIDs,
                                         options: .defaultOptions)
     }
     

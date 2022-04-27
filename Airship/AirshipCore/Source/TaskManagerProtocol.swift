@@ -21,12 +21,12 @@ public protocol TaskManagerProtocol {
     @objc(setRateLimitForID:rate:timeInterval:error:)
     func setRateLimit(_ rateLimitID: String, rate: Int, timeInterval: TimeInterval) throws
 
-    @objc(enqueueRequestWithID:rateLimitID:options:minDelay:)
+    @objc(enqueueRequestWithID:rateLimitIDs:options:minDelay:)
     func enqueueRequest(taskID: String,
-                        rateLimitID: String?,
+                        rateLimitIDs: [String],
                         options: TaskRequestOptions,
                         minDelay: TimeInterval)
 
-    @objc(enqueueRequestWithID:rateLimitID:options:)
-    func enqueueRequest(taskID: String, rateLimitID: String?, options: TaskRequestOptions)
+    @objc(enqueueRequestWithID:rateLimitIDs:options:)
+    func enqueueRequest(taskID: String, rateLimitIDs: [String], options: TaskRequestOptions)
 }

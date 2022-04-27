@@ -371,8 +371,8 @@ class TaskManagerTest: XCTestCase {
             }
         }
 
-        self.taskManager.enqueueRequest(taskID: "foo", rateLimitID: "foo", options: .defaultOptions)
-        self.taskManager.enqueueRequest(taskID: "bar", rateLimitID: "bar", options: .defaultOptions)
+        self.taskManager.enqueueRequest(taskID: "foo", rateLimitIDs: ["foo"], options: .defaultOptions)
+        self.taskManager.enqueueRequest(taskID: "bar", rateLimitIDs: ["bar"], options: .defaultOptions)
 
         self.notificationCenter.post(name: AppStateTracker.didEnterBackgroundNotification, object: nil)
 
@@ -414,7 +414,7 @@ class TaskManagerTest: XCTestCase {
             }
         }
 
-        self.taskManager.enqueueRequest(taskID: "foo", rateLimitID: "foo", options: .defaultOptions)
+        self.taskManager.enqueueRequest(taskID: "foo", rateLimitIDs: ["foo"], options: .defaultOptions)
         self.notificationCenter.post(name: AppStateTracker.didEnterBackgroundNotification, object: nil)
 
         XCTAssertTrue(bgTaskStarted)
@@ -446,7 +446,7 @@ class TaskManagerTest: XCTestCase {
             }
         }
 
-        self.taskManager.enqueueRequest(taskID: "foo", rateLimitID: "foo", options: .defaultOptions)
+        self.taskManager.enqueueRequest(taskID: "foo", rateLimitIDs: ["foo"], options: .defaultOptions)
         self.notificationCenter.post(name: AppStateTracker.didEnterBackgroundNotification, object: nil)
 
         XCTAssertTrue(bgTaskStarted)
@@ -502,8 +502,8 @@ class TaskManagerTest: XCTestCase {
         let rateLimitID = "oncePerMinute"
         try self.taskManager.setRateLimit(rateLimitID, rate: 1, timeInterval: 60)
 
-        self.taskManager.enqueueRequest(taskID: "test", rateLimitID: rateLimitID, options: .defaultOptions)
-        self.taskManager.enqueueRequest(taskID: "test", rateLimitID: rateLimitID, options: .defaultOptions)
+        self.taskManager.enqueueRequest(taskID: "test", rateLimitIDs: [rateLimitID], options: .defaultOptions)
+        self.taskManager.enqueueRequest(taskID: "test", rateLimitIDs: [rateLimitID], options: .defaultOptions)
         XCTAssertEqual(3, attempts)
 
         self.date.offset += 60
@@ -511,15 +511,83 @@ class TaskManagerTest: XCTestCase {
 
         XCTAssertEqual(4, attempts)
 
-        self.taskManager.enqueueRequest(taskID: "test", rateLimitID: rateLimitID, options: .defaultOptions)
-        self.taskManager.enqueueRequest(taskID: "test", rateLimitID: rateLimitID, options: .defaultOptions)
-        self.taskManager.enqueueRequest(taskID: "test", rateLimitID: rateLimitID, options: .defaultOptions)
-        self.taskManager.enqueueRequest(taskID: "test", rateLimitID: rateLimitID, options: .defaultOptions)
-        self.taskManager.enqueueRequest(taskID: "test", rateLimitID: rateLimitID, options: .defaultOptions)
+        self.taskManager.enqueueRequest(taskID: "test", rateLimitIDs: [rateLimitID], options: .defaultOptions)
+        self.taskManager.enqueueRequest(taskID: "test", rateLimitIDs: [rateLimitID], options: .defaultOptions)
+        self.taskManager.enqueueRequest(taskID: "test", rateLimitIDs: [rateLimitID], options: .defaultOptions)
+        self.taskManager.enqueueRequest(taskID: "test", rateLimitIDs: [rateLimitID], options: .defaultOptions)
+        self.taskManager.enqueueRequest(taskID: "test", rateLimitIDs: [rateLimitID], options: .defaultOptions)
 
         self.date.offset += 6000
         self.dispatcher.advanceTime(6000)
         XCTAssertEqual(5, attempts)
+    }
+
+    func testMultipleRateLimits() throws {
+        self.backgroundTasks.timeRemaining = 3000
+        self.backgroundTasks.taskHandler = { _, _ in
+            return Disposable {}
+        }
+
+        var attempts = 0
+        self.taskManager.register(taskID: "test", dispatcher: self.dispatcher) { task in
+            attempts += 1
+            task.taskCompleted()
+        }
+
+        let twoPerMinute = "twoPerMinute"
+        try self.taskManager.setRateLimit(twoPerMinute, rate: 2, timeInterval: 60)
+        let oncePer10Seconds = "oncePer10Seconds"
+        try self.taskManager.setRateLimit(oncePer10Seconds, rate: 1, timeInterval: 10)
+
+        self.taskManager.enqueueRequest(taskID: "test",
+                                        rateLimitIDs: [twoPerMinute, oncePer10Seconds],
+                                        options: .defaultOptions)
+
+        XCTAssertEqual(1, attempts)
+
+        self.taskManager.enqueueRequest(taskID: "test",
+                                        rateLimitIDs: [twoPerMinute, oncePer10Seconds],
+                                        options: .defaultOptions)
+
+        self.date.offset += 9
+        self.dispatcher.advanceTime(9)
+        XCTAssertEqual(1, attempts)
+
+        self.date.offset += 1
+        self.dispatcher.advanceTime(1)
+        XCTAssertEqual(2, attempts)
+
+        self.taskManager.enqueueRequest(taskID: "test",
+                                        rateLimitIDs: [twoPerMinute, oncePer10Seconds],
+                                        options: .defaultOptions)
+
+
+        self.date.offset += 49
+        self.dispatcher.advanceTime(49)
+        XCTAssertEqual(2, attempts)
+
+        self.date.offset += 1
+        self.dispatcher.advanceTime(1)
+        XCTAssertEqual(3, attempts)
+
+        self.taskManager.enqueueRequest(taskID: "test",
+                                        rateLimitIDs: [twoPerMinute, oncePer10Seconds],
+                                        options: .defaultOptions)
+
+        self.date.offset += 9
+        self.dispatcher.advanceTime(9)
+        XCTAssertEqual(3, attempts)
+
+        // Track it, should reschedule it
+        self.rateLimiter.track(oncePer10Seconds)
+
+        self.date.offset += 1
+        self.dispatcher.advanceTime(1)
+        XCTAssertEqual(3, attempts)
+
+        self.date.offset += 10
+        self.dispatcher.advanceTime(10)
+        XCTAssertEqual(4, attempts)
     }
 }
 
