@@ -230,8 +230,6 @@ public class TaskManager : NSObject, TaskManagerProtocol {
                 return
             }
 
-            request.rateLimitIDs.forEach { strongSelf.rateLimiter.track($0) }
-
             if (strongSelf.isRequestCurrent(request)) {
                 if (result) {
                     AirshipLogger.trace("Task \(request.taskID) finished")
@@ -261,15 +259,17 @@ public class TaskManager : NSObject, TaskManagerProtocol {
                     return
                 }
 
-                var launch = true
+                var rateLimitHit = false
                 strongSelf.requestsLock.sync {
                     if let rateLimitDelay = strongSelf.taskRateLimitDelay(request) {
                         strongSelf.retryRequest(request, delay: rateLimitDelay, nextBackOff: nextBackOff)
-                        launch = false
+                        rateLimitHit = true
+                    } else {
+                        request.rateLimitIDs.forEach { strongSelf.rateLimiter.track($0) }
                     }
                 }
 
-                if (launch) {
+                if (!rateLimitHit) {
                     request.launcher.launchHandler(task)
                     semaphore.wait()
                 }
@@ -283,12 +283,7 @@ public class TaskManager : NSObject, TaskManagerProtocol {
     }
 
     private func checkRequestRequirements(_ request: TaskRequest) -> Bool {
-        var backgroundTime : TimeInterval = 0.0
-        UADispatcher.main.doSync {
-            backgroundTime = self.backgroundTasks.timeRemaining
-        }
-
-        guard backgroundTime >= TaskManager.minBackgroundTime else {
+        guard self.backgroundTasks.timeRemaining >= TaskManager.minBackgroundTime else {
             return false
         }
 
