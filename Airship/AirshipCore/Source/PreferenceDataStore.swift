@@ -1,5 +1,7 @@
 /* Copyright Airship and Contributors */
 
+import Foundation
+
 /**
  * Preference data store.
  * - Note: For internal use only. :nodoc:
@@ -9,6 +11,10 @@ public class PreferenceDataStore : NSObject {
     private let defaults: UserDefaults
     private let appKey: String
     static let deviceIDKey = "deviceID"
+
+    private var pending: [String : [Any?]] = [:]
+    private let lock = Lock()
+    private let dispatcher: UADispatcher
 
     lazy var isAppRestore: Bool = {
         let deviceID = UAKeychainUtils.getDeviceID()
@@ -27,9 +33,14 @@ public class PreferenceDataStore : NSObject {
     }()
 
     @objc
-    public init(appKey: String) {
+    public convenience init(appKey: String) {
+        self.init(appKey: appKey, dispatcher: UADispatcher.serial())
+    }
+
+    init(appKey: String, dispatcher: UADispatcher) {
         self.defaults = PreferenceDataStore.createDefaults(appKey: appKey)
         self.appKey = appKey
+        self.dispatcher = dispatcher
         super.init()
         mergeKeys()
     }
@@ -40,7 +51,7 @@ public class PreferenceDataStore : NSObject {
             AirshipLogger.error("Failed to create defaults \(suiteName)")
             return UserDefaults.standard
         }
-        
+
         let legacyPrefix = legacyKeyPrefix(appKey: appKey)
         for (key, value) in UserDefaults.standard.dictionaryRepresentation() {
             if key.hasPrefix(appKey) || key.hasPrefix(legacyPrefix) {
@@ -51,24 +62,20 @@ public class PreferenceDataStore : NSObject {
         
         return defaults
     }
-    
-    func prefixKey(_ key: String) -> String {
-        return (appKey) + key
-    }
 
     @objc
     public override func value(forKey key: String) -> Any? {
-        return defaults.value(forKey: prefixKey(key))
+        return read(key)
     }
 
     @objc
     public override func setValue(_ value: Any?, forKey key: String) {
-        defaults.setValue(value, forKey: prefixKey(key))
+        write(key, value: value)
     }
 
     @objc
     public func removeObject(forKey key: String) {
-        defaults.removeObject(forKey: prefixKey(key))
+        write(key, value: nil)
     }
 
     @objc
@@ -78,105 +85,87 @@ public class PreferenceDataStore : NSObject {
 
     @objc
     public func object(forKey key: String) -> Any? {
-        return defaults.object(forKey: prefixKey(key))
+        return read(key)
     }
 
     @objc
     public func string(forKey key: String) -> String? {
-        return defaults.string(forKey: prefixKey(key))
+        return read(key)
     }
 
     @objc
     public func array(forKey key: String) -> [AnyHashable]? {
-        return defaults.array(forKey: prefixKey(key)) as? [AnyHashable]
+        return read(key)
     }
 
     @objc
     public func dictionary(forKey key: String) -> [AnyHashable : Any]? {
-        return defaults.dictionary(forKey: prefixKey(key))
+        return read(key)
     }
 
     @objc
     public func data(forKey key: String) -> Data? {
-        return defaults.data(forKey: prefixKey(key))
+        return read(key)
     }
 
     @objc
     public func stringArray(forKey key: String) -> [AnyHashable]? {
-        return defaults.stringArray(forKey: prefixKey(key))
+        return read(key)
     }
 
     @objc
     public func integer(forKey key: String) -> Int {
-        return defaults.integer(forKey: prefixKey(key))
+        return read(key) ?? 0
     }
 
     @objc
     public func float(forKey key: String) -> Float {
-        return defaults.float(forKey: prefixKey(key))
+        return read(key) ?? 0.0
     }
 
     @objc
     public func double(forKey key: String) -> Double {
-        return defaults.double(forKey: prefixKey(key))
+        return read(key) ?? 0.0
     }
 
     @objc
     public func double(forKey key: String, defaultValue: Double) -> Double {
-        if (keyExists(key)) {
-            return double(forKey: key)
-        } else {
-            return defaultValue
-        }
+        return read(key, defaultValue: defaultValue)
     }
 
     @objc
     public func bool(forKey key: String) -> Bool {
-        return defaults.bool(forKey: prefixKey(key))
+        return read(key) ?? false
     }
 
     @objc
     public func bool(forKey key: String, defaultValue: Bool) -> Bool {
-        if keyExists(key) {
-            return bool(forKey: key)
-        } else {
-            return defaultValue
-        }
-    }
-
-    @objc
-    public func url(forKey key: String) -> URL? {
-        return defaults.url(forKey: prefixKey(key))
+        return read(key, defaultValue: defaultValue)
     }
 
     @objc
     public func setInteger(_ int: Int, forKey key: String) {
-        defaults.set(int, forKey: prefixKey(key))
+        write(key, value: int)
     }
 
     @objc
     public func setFloat(_ float: Float, forKey key: String) {
-        defaults.set(float, forKey: prefixKey(key))
+        write(key, value: float)
     }
 
     @objc
     public func setDouble(_ double: Double, forKey key: String) {
-        defaults.set(double, forKey: prefixKey(key))
+        write(key, value: double)
     }
 
     @objc
     public func setBool(_ bool: Bool, forKey key: String) {
-        defaults.set(bool, forKey: prefixKey(key))
-    }
-
-    @objc
-    public func setURL(_ url: URL?, forKey key: String) {
-        defaults.set(url, forKey: prefixKey(key))
+        write(key, value: bool)
     }
 
     @objc
     public func setObject(_ object: Any?, forKey key: String) {
-        defaults.set(object, forKey: prefixKey(key))
+        write(key, value: object)
     }
     
     /// Merges old key formats `com.urbanairship.<APP_KEY>.<PREFERENCE>` to
@@ -214,4 +203,55 @@ public class PreferenceDataStore : NSObject {
     private class func legacyKeyPrefix(appKey: String) -> String {
         return "com.urbanairship.\(appKey)."
     }
+
+    private func read<T>(_ key: String, defaultValue: T) -> T {
+        return read(key) ?? defaultValue
+    }
+
+    private func read<T>(_ key: String) -> T? {
+        let key = prefixKey(key)
+        let defaults = self.defaults
+        var result: Any?
+
+        lock.sync {
+            if let pending = self.pending[key], pending.count > 0 {
+                result = pending[pending.count - 1]
+            } else {
+                result = defaults.object(forKey:key)
+            }
+        }
+
+        guard let result = result else {
+            return nil
+        }
+
+        return result as? T
+    }
+
+    private func write(_ key: String, value: Any?) {
+        let key = prefixKey(key)
+
+        lock.sync {
+            var pendingValues = self.pending[key] ?? []
+            pendingValues.append(value)
+            self.pending[key] = pendingValues
+        }
+
+        self.dispatcher.dispatchAsync {
+            if let value = value {
+                self.defaults.set(value, forKey: key)
+            } else {
+                self.defaults.removeObject(forKey: key)
+            }
+
+            self.lock.sync {
+                self.pending[key]?.remove(at: 0)
+            }
+        }
+    }
+
+    private func prefixKey(_ key: String) -> String {
+        return (appKey) + key
+    }
 }
+

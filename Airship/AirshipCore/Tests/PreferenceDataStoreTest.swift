@@ -11,7 +11,7 @@ class PreferenceDataStoreTest: XCTestCase {
     let appKey = UUID().uuidString
     
     func testPrefix() throws {
-        let dataStore = PreferenceDataStore(appKey: self.appKey)
+        let dataStore = PreferenceDataStore(appKey: self.appKey, dispatcher: TestDispatcher())
         dataStore.setObject("neat", forKey: "some-key")
         XCTAssertEqual("neat", airshipDefaults.string(forKey: "\(self.appKey)some-key"))
     }
@@ -44,5 +44,67 @@ class PreferenceDataStoreTest: XCTestCase {
         XCTAssertEqual("keep-new: new", dataStore.string(forKey: "keep-new"))
         XCTAssertEqual("restore-old: old", dataStore.string(forKey: "restore-old"))
         XCTAssertEqual(["a", "b", "c"], dataStore.stringArray(forKey: tagsKey))
+    }
+
+    func testData() throws {
+        let dataStore = PreferenceDataStore(appKey: self.appKey)
+
+        let data = "neat".data(using: .utf8)
+        dataStore.setObject(data, forKey: "data")
+        XCTAssertEqual(data, dataStore.data(forKey: "data"))
+
+        dataStore.setBool(false, forKey: "falseBool")
+        XCTAssertFalse(dataStore.bool(forKey: "falseBool"))
+
+        dataStore.setBool(true, forKey: "trueBool")
+        XCTAssertTrue(dataStore.bool(forKey: "trueBool"))
+
+        let array = ["neat", "rad"]
+        dataStore.setObject(array, forKey: "array")
+        XCTAssertEqual(array, dataStore.array(forKey: "array"))
+
+        let dict = ["neat": "rad"]
+        dataStore.setObject(dict, forKey: "dict")
+        XCTAssertEqual(dict, dataStore.dictionary(forKey: "dict") as! [String : String])
+
+        let float: Float = 2.0
+        dataStore.setFloat(float, forKey: "float")
+        XCTAssertEqual(float, dataStore.float(forKey: "float"))
+
+        let double: Double = 3.0
+        dataStore.setDouble(double, forKey: "double")
+        XCTAssertEqual(double, dataStore.double(forKey: "double"))
+
+        let int: Int = 1
+        dataStore.setInteger(int, forKey: "int")
+        XCTAssertEqual(int, dataStore.integer(forKey: "int"))
+
+        let date = Date()
+        dataStore.setObject(date, forKey: "date")
+        XCTAssertEqual(date, dataStore.object(forKey: "date") as! Date)
+    }
+
+    func testNil() throws {
+        let dataStore = PreferenceDataStore(appKey: self.appKey)
+
+        XCTAssertNil(dataStore.object(forKey: "nil?"))
+        dataStore.setObject("not nil", forKey: "nil?")
+        XCTAssertNotNil(dataStore.object(forKey: "nil?"))
+        dataStore.setObject(nil, forKey: "nil?")
+        XCTAssertNil(dataStore.object(forKey: "nil?"))
+    }
+
+    func testDefaults() throws {
+        let dataStore = PreferenceDataStore(appKey: self.appKey)
+        XCTAssertEqual(100.0, dataStore.double(forKey: "neat", defaultValue: 100.0))
+        XCTAssertEqual(true, dataStore.bool(forKey: "neat", defaultValue: true))
+
+        XCTAssertEqual(dataStore.double(forKey: "neat"), self.airshipDefaults.double(forKey: "neat"))
+
+        XCTAssertEqual(dataStore.float(forKey: "neat"), self.airshipDefaults.float(forKey: "neat"))
+
+        XCTAssertEqual(dataStore.bool(forKey: "neat"), self.airshipDefaults.bool(forKey: "neat"))
+
+        XCTAssertEqual(dataStore.integer(forKey: "neat"), self.airshipDefaults.integer(forKey: "neat"))
     }
 }
