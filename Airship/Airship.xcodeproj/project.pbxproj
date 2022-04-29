@@ -369,10 +369,8 @@
 		6E43202126EA814F009228AB /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CC04F1C41DC27E6C00B4842D /* libsqlite3.tbd */; };
 		6E43202226EA814F009228AB /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3261A7F4243CD73100ADBF6B /* CoreTelephony.framework */; platformFilter = maccatalyst; };
 		6E43202326EA814F009228AB /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CC944EC71DB161AE00C42269 /* libz.tbd */; };
-		6E43202426EA814F009228AB /* Network.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EB4E4A32549F95200E3FFD0 /* Network.framework */; };
 		6E43210026EA8199009228AB /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 99666E901EDF2E6500BAE46B /* libsqlite3.tbd */; };
 		6E43210126EA8199009228AB /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 99666E8E1EDF2E5900BAE46B /* libz.tbd */; };
-		6E43210226EA8199009228AB /* Network.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EB4E4BE2549F9B900E3FFD0 /* Network.framework */; };
 		6E43214026EA84A5009228AB /* UAFeature.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43212A26EA84A4009228AB /* UAFeature.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E43214126EA84A5009228AB /* UAFeature.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43212A26EA84A4009228AB /* UAFeature.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E43214226EA84A5009228AB /* UAActionArguments.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43212B26EA84A4009228AB /* UAActionArguments.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -993,8 +991,6 @@
 		6EB11C8D2698C50F00DC698F /* AudienceUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB11C8C2698C50F00DC698F /* AudienceUtils.swift */; };
 		6EB1B3F326EAA4D6000421B9 /* ChannelAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E11267A98AB00654DB2 /* ChannelAPIClient.swift */; };
 		6EB1B42626EAA6E2000421B9 /* RemoteDataResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E05267A7D5300654DB2 /* RemoteDataResponse.swift */; };
-		6EB4E4C02549F9BF00E3FFD0 /* Network.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EB4E4A32549F95200E3FFD0 /* Network.framework */; };
-		6EB4E4C12549F9C500E3FFD0 /* Network.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EB4E4BE2549F9B900E3FFD0 /* Network.framework */; };
 		6EB56C7C27AC4BBB00A7392F /* AssociatedChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9343E1B27AC413700A49AAF /* AssociatedChannel.swift */; };
 		6EB56C7D27AC4BBC00A7392F /* AssociatedChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9343E1B27AC413700A49AAF /* AssociatedChannel.swift */; };
 		6EB56C7F27AC612400A7392F /* PreferenceCenterFilteredSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB56C7E27AC612400A7392F /* PreferenceCenterFilteredSection.swift */; };
@@ -2737,7 +2733,6 @@
 				CC04F1C51DC27E6C00B4842D /* libsqlite3.tbd in Frameworks */,
 				3261A7F6243CD7F900ADBF6B /* CoreTelephony.framework in Frameworks */,
 				CC944EC81DB161AE00C42269 /* libz.tbd in Frameworks */,
-				6EB4E4C02549F9BF00E3FFD0 /* Network.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2748,7 +2743,6 @@
 				6E43202126EA814F009228AB /* libsqlite3.tbd in Frameworks */,
 				6E43202226EA814F009228AB /* CoreTelephony.framework in Frameworks */,
 				6E43202326EA814F009228AB /* libz.tbd in Frameworks */,
-				6E43202426EA814F009228AB /* Network.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2758,7 +2752,6 @@
 			files = (
 				6E43210026EA8199009228AB /* libsqlite3.tbd in Frameworks */,
 				6E43210126EA8199009228AB /* libz.tbd in Frameworks */,
-				6E43210226EA8199009228AB /* Network.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2859,7 +2852,6 @@
 			files = (
 				99666E911EDF2E6500BAE46B /* libsqlite3.tbd in Frameworks */,
 				99666E8F1EDF2E5900BAE46B /* libz.tbd in Frameworks */,
-				6EB4E4C12549F9C500E3FFD0 /* Network.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

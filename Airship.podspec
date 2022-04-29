@@ -23,7 +23,7 @@ Pod::Spec.new do |s|
       basement.private_header_files       = "Airship/AirshipBasement/Source/Internal/*.h"
       basement.exclude_files              = "Airship/AirshipBasement/Source/Public/AirshipBasement.h"
       basement.libraries                  = "z", "sqlite3"
-      basement.frameworks                 = "UserNotifications", "CFNetwork", "CoreGraphics", "Foundation", "Security", "SystemConfiguration", "UIKit", "CoreData", "Network"
+      basement.frameworks                 = "UserNotifications", "CFNetwork", "CoreGraphics", "Foundation", "Security", "SystemConfiguration", "UIKit", "CoreData"
       basement.ios.frameworks             = "WebKit", "CoreTelephony"
    end
 
@@ -32,7 +32,7 @@ Pod::Spec.new do |s|
       core.resource_bundle            = { 'AirshipCoreResources' => "Airship/AirshipCore/Resources/*" }
       core.exclude_files              = "Airship/AirshipCore/Resources/Info.plist", "Airship/AirshipCore/Source/AirshipCore.h"
       core.libraries                  = "z", "sqlite3"
-      core.frameworks                 = "UserNotifications", "CFNetwork", "CoreGraphics", "Foundation", "Security", "SystemConfiguration", "UIKit", "CoreData", "Network"
+      core.frameworks                 = "UserNotifications", "CFNetwork", "CoreGraphics", "Foundation", "Security", "SystemConfiguration", "UIKit", "CoreData"
       core.ios.frameworks             = "WebKit", "CoreTelephony"
       core.dependency                 "Airship/Basement"
    end
