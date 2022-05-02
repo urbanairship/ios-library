@@ -43,6 +43,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property(nonatomic, strong) UAPadding *additionalPadding;
 
+@property(nonatomic, assign) BOOL allowMaxHeight;
+
 /**
  * The dismiss icon image resource name.
  */

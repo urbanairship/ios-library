@@ -102,12 +102,10 @@ static CGFloat const DefaultViewToScreenWidthRatio = 0.75;
 /**
  * Constraints necessary to deactivate before stretching to full screen
  */
-@property (strong, nonatomic) IBOutlet NSLayoutConstraint *maxWidthConstraint;
 @property (strong, nonatomic) IBOutlet NSLayoutConstraint *centerXConstraint;
 @property (strong, nonatomic) IBOutlet NSLayoutConstraint *centerYConstraint;
 @property (strong, nonatomic) IBOutlet NSLayoutConstraint *widthConstraint;
 @property (strong, nonatomic) IBOutlet NSLayoutConstraint *heightConstraint;
-@property (strong, nonatomic) IBOutlet NSLayoutConstraint *containerAspect;
 
 /**
  * The completion handler passed in when the message is shown.
@@ -252,19 +250,23 @@ static double const DefaultResizableViewAnimationDuration = 0.2;
     // disable voiceover interactions with visible items beneath the modal
     self.view.accessibilityViewIsModal = YES;
 
-    if (self.overrideSize) {
-        [self overrideSizeConstraintsForSize:self.size];
-    }
+
 
     if (self.displayFullScreen) {
         // Detect view type
         [self stretchToFullScreen];
         [self refreshViewForCurrentOrientation];
-    }
+    } else {
 
-    // Apply max width and height constraints from style if they are present
-    if (self.maxWidth) {
-        self.maxWidthConstraint.active = NO;
+        if (self.overrideSize) {
+            [self overrideSizeConstraintsForSize:self.size];
+        } else if (!self.allowMaxHeight) {
+            self.heightConstraint.active = false;
+        }
+
+        CGFloat maxWidth = self.maxWidth == nil ? 420.0 : self.maxWidth.floatValue;
+        CGFloat maxHeight = self.maxHeight == nil ? 720.0 : self.maxHeight.floatValue;
+
         // Set max width
         [NSLayoutConstraint constraintWithItem:self.resizingContainerView
                                      attribute:NSLayoutAttributeWidth
@@ -272,10 +274,8 @@ static double const DefaultResizableViewAnimationDuration = 0.2;
                                         toItem:nil
                                      attribute:NSLayoutAttributeNotAnAttribute
                                     multiplier:1
-                                      constant:[self.maxWidth floatValue]].active = YES;
-    }
+                                      constant:maxWidth].active = YES;
 
-    if (self.maxHeight) {
         // Set max height
         [NSLayoutConstraint constraintWithItem:self.resizingContainerView
                                      attribute:NSLayoutAttributeHeight
@@ -283,11 +283,11 @@ static double const DefaultResizableViewAnimationDuration = 0.2;
                                         toItem:nil
                                      attribute:NSLayoutAttributeNotAnAttribute
                                     multiplier:1
-                                      constant:[self.maxHeight floatValue]].active = YES;
-    }
+                                      constant:maxHeight].active = YES;
 
-    // Add the style padding to the modal itself if not full screen
-    if (!self.displayFullScreen) {
+        UAPadding *padding = [UAPadding paddingWithTop:@(48) bottom:@(48) leading:@(24) trailing:@(24)];
+        [UAInAppMessageUtils applyPaddingToView:self.resizingContainerView padding:padding replace:NO];
+
         [UAInAppMessageUtils applyPaddingToView:self.resizingContainerView padding:self.additionalPadding replace:NO];
     }
 }
@@ -374,12 +374,10 @@ static double const DefaultResizableViewAnimationDuration = 0.2;
 - (void)stretchToFullScreen {
 
     // Deactivate necessary modal constraints
-    self.maxWidthConstraint.active = NO;
     self.centerXConstraint.active = NO;
     self.centerYConstraint.active = NO;
     self.widthConstraint.active = NO;
     self.heightConstraint.active = NO;
-    self.containerAspect.active = NO;
 
     // Add full screen constraints
     // (note the these are not to the safe area - so insets will need to be provided opn iPhone X)
