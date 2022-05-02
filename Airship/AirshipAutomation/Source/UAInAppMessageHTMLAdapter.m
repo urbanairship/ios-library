@@ -94,6 +94,8 @@ NSString *const UAHTMLStyleFileName = @"UAInAppMessageHTMLStyle";
     self.resizableContainerViewController.maxWidth = self.htmlViewController.style.maxWidth;
     self.resizableContainerViewController.maxHeight = self.htmlViewController.style.maxHeight;
 
+    self.resizableContainerViewController.allowMaxHeight = YES;
+
     // Set resizable parent
     self.htmlViewController.resizableParent = self.resizableContainerViewController;
 }
