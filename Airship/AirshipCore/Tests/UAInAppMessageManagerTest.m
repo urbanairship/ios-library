@@ -326,12 +326,26 @@ NSString * const UAInAppMessageManagerTestScheduleID = @"schedule ID";
 }
 
 - (void)testIsReadyToDisplay {
-    [self testPrepare];
-
+    [[[self.mockDelegate stub] andReturnValue:@(YES)] isMessageReadyForDisplay:self.message];
     [[[self.mockAdapter stub] andReturnValue:@(YES)] isReadyToDisplay];
     [[[self.mockDefaultDisplayCoordinator stub] andReturnValue:@(YES)] isReady];
+
+    [self testPrepare];
+
     XCTAssertEqual(UAAutomationScheduleReadyResultContinue, [self.manager isReadyToDisplay:UAInAppMessageManagerTestScheduleID]);
 }
+
+- (void)testIsReadyToDisplayDelegateNotReady {
+    [[[self.mockAdapter stub] andReturnValue:@(YES)] isReadyToDisplay];
+    [[[self.mockDefaultDisplayCoordinator stub] andReturnValue:@(YES)] isReady];
+
+    [self testPrepare];
+
+    [[[self.mockDelegate stub] andReturnValue:@(NO)] isMessageReadyForDisplay:self.message];
+
+    XCTAssertEqual(UAAutomationScheduleReadyResultNotReady, [self.manager isReadyToDisplay:UAInAppMessageManagerTestScheduleID]);
+}
+
 
 - (void)testIsReadyToDisplayInvalid {
     XCTAssertEqual(UAAutomationScheduleReadyResultInvalidate, [self.manager isReadyToDisplay:UAInAppMessageManagerTestScheduleID]);
@@ -351,6 +365,16 @@ NSString * const UAInAppMessageManagerTestScheduleID = @"schedule ID";
     [[[self.mockAdapter stub] andReturnValue:@(NO)] isReadyToDisplay];
     [[[self.mockDefaultDisplayCoordinator stub] andReturnValue:@(YES)] isReady];
     XCTAssertEqual(UAAutomationScheduleReadyResultNotReady, [self.manager isReadyToDisplay:UAInAppMessageManagerTestScheduleID]);
+}
+
+- (void)testNotifyDisplayConditionsChanged {
+    id mockExecutionDelegate = [self mockForProtocol:@protocol(UAInAppMessagingExecutionDelegate)];
+    self.manager.executionDelegate = mockExecutionDelegate;
+
+    [[mockExecutionDelegate expect] executionReadinessChanged];
+    [self.manager notifyDisplayConditionsChanged];
+
+    [mockExecutionDelegate verify];
 }
 
 @end

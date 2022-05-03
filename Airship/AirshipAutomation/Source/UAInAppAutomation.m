@@ -488,34 +488,36 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
         return UAAutomationScheduleReadyResultInvalidate;
     }
 
-    UAFrequencyChecker *checker = self.frequencyCheckers[schedule.identifier];
-    [self.frequencyCheckers removeObjectForKey:schedule.identifier];
+    switch (schedule.type) {
+        case UAScheduleTypeDeferred:
+        case UAScheduleTypeInAppMessage: {
+            UAAutomationScheduleReadyResult result = [self.inAppMessageManager isReadyToDisplay:schedule.identifier];
+            if (result != UAAutomationScheduleReadyResultContinue) {
+                return result;
+            }
+        }
+        case UAScheduleTypeActions:
+        default:
+            break;
+    }
 
+    UAFrequencyChecker *checker = self.frequencyCheckers[schedule.identifier];
     if (checker && !checker.checkAndIncrement) {
         // Abort execution if necessary and skip
         if (schedule.type == UAScheduleTypeInAppMessage) {
             [self.inAppMessageManager scheduleExecutionAborted:schedule.identifier];
         }
-
         return UAAutomationScheduleReadyResultSkip;
     }
 
-    switch (schedule.type) {
-        case UAScheduleTypeActions:
-            return UAAutomationScheduleReadyResultContinue;
-
-        case UAScheduleTypeDeferred:
-        case UAScheduleTypeInAppMessage:
-            return [self.inAppMessageManager isReadyToDisplay:schedule.identifier];
-
-        default:
-            UA_LERR(@"Unexpected schedule type: %ld", schedule.type);
-            return UAAutomationScheduleReadyResultContinue;
-    }
+    return UAAutomationScheduleReadyResultContinue;
 }
 
 - (void)executeSchedule:(nonnull UASchedule *)schedule completionHandler:(void (^)(void))completionHandler {
     UA_LTRACE(@"Executing schedule: %@", schedule.identifier);
+
+    [self.frequencyCheckers removeObjectForKey:schedule.identifier];
+
 
     switch (schedule.type) {
         case UAScheduleTypeActions: {

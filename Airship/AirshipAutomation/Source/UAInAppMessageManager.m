@@ -421,6 +421,13 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
         return UAAutomationScheduleReadyResultNotReady;
     }
 
+    id<UAInAppMessagingDelegate> delegate = self.delegate;
+    if ([delegate respondsToSelector:@selector(isMessageReadyForDisplay:)] &&
+        ![delegate isMessageReadyForDisplay:data.message]) {
+        UA_LTRACE(@"Message ready check feailed. Schedule: %@ not ready.", scheduleID);
+        return UAAutomationScheduleReadyResultNotReady;
+    }
+
     UA_LTRACE(@"Schedule %@ ready!", scheduleID);
     return UAAutomationScheduleReadyResultContinue;
 }
@@ -563,6 +570,9 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
     [self.assetManager onScheduleFinished:scheduleID];
 }
 
+- (void)notifyDisplayConditionsChanged {
+    [self.executionDelegate executionReadinessChanged];
+}
 
 @end
 

@@ -63,6 +63,17 @@ NS_SWIFT_NAME(InAppMessagingDelegate)
  */
 - (UIWindowScene *)sceneForMessage:(UAInAppMessage *)message defaultScene:(nullable UIWindowScene *)defaultScene API_AVAILABLE(ios(13.0));
 
+/**
+ * Delegate method to check if an In-App message is ready for display or not. This method will be called for
+ * every message that is pending display whenever a display condition changes. Use `notifyDisplayConditionsChanged`
+ * to notify whenever a condition changes to reevaluate the pending In-App messages.
+ *
+ * This method is called on the main queue.
+ *
+ * @return `true` if the message is ready to be displayed, otherwise `false.
+ */
+- (BOOL)isMessageReadyForDisplay:(UAInAppMessage *)message;
+
 @end
 
 /**
@@ -94,6 +105,13 @@ NS_SWIFT_NAME(InAppMessageManager)
  */
 - (void)setFactoryBlock:(id<UAInAppMessageAdapterProtocol> (^)(UAInAppMessage* message))factory
          forDisplayType:(UAInAppMessageDisplayType)displayType;
+
+/**
+ * Notifies In-App messages that the display conditions should be reevaluated.
+ *
+ * This should only be called when state that was used to prevent a display with  `UAInAppMessagingDelegate` changes.
+ */
+- (void)notifyDisplayConditionsChanged;
 
 @end
 

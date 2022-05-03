@@ -1358,7 +1358,7 @@
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
 
-    [[self.mockInAppMessageManager reject] isReadyToDisplay:@"schedule ID"];
+    [[[self.mockInAppMessageManager expect] andReturnValue:@(UAAutomationScheduleReadyResultContinue)] isReadyToDisplay:@"schedule ID"];
 
     __block BOOL overLimit = NO;
     __block BOOL checkAndIncrement = YES;
@@ -1522,8 +1522,8 @@
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
 
-    [[self.mockInAppMessageManager reject] isReadyToDisplay:@"schedule ID"];
-
+    [[[self.mockInAppMessageManager expect] andReturnValue:@(UAAutomationScheduleReadyResultContinue)] isReadyToDisplay:@"schedule ID"];
+    
     __block BOOL overLimit = NO;
     __block BOOL checkAndIncrement = YES;
 
