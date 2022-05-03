@@ -26,6 +26,8 @@ static NSString * const RefreshTask = @"RemoteDataManager.refresh";
 @property (nonatomic, strong) UATestDate *testDate;
 @property (nonatomic, copy) NSArray<NSDictionary *> *remoteDataFromCloud;
 @property (nonatomic, strong) NSURL *requestURL;
+@property (nonatomic, strong) UATestNetworkMonitor *testNetworkMonitor;
+
 @end
 
 @implementation UARemoteDataManagerTest
@@ -47,7 +49,8 @@ static NSString * const RefreshTask = @"RemoteDataManager.refresh";
         return @{ @"url": self.requestURL.absoluteString,
         };
     };
-    
+
+    self.testNetworkMonitor = [[UATestNetworkMonitor alloc] init];
     self.testStore = [[UARemoteDataStore alloc] initWithStoreName:[NSUUID UUID].UUIDString inMemory:YES];
     self.testDate = [[UATestDate alloc] initWithOffset:0 dateOverride:[NSDate date]];
     self.notificationCenter = [[NSNotificationCenter alloc] init];
@@ -81,7 +84,8 @@ static NSString * const RefreshTask = @"RemoteDataManager.refresh";
                                                dispatcher:[[UATestDispatcher alloc] init]
                                                      date:self.testDate
                                        notificationCenter:self.notificationCenter
-                                          appStateTracker:self.testAppStateTracker];
+                                          appStateTracker:self.testAppStateTracker
+                                           networkMonitor:self.testNetworkMonitor];
 }
 
 
@@ -206,6 +210,18 @@ static NSString * const RefreshTask = @"RemoteDataManager.refresh";
 
     UATestTask *task = [self.testTaskManager launchSyncWithTaskID:RefreshTask options:UATaskRequestOptions.defaultOptions];
     XCTAssertTrue(task.completed);
+}
+
+- (void)testRefreshNoNetwork {
+    self.testNetworkMonitor.isConnectedOverride = false;
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Callback called"];
+
+    [self.remoteDataManager refreshWithCompletionHandler:^(BOOL result) {
+        XCTAssertFalse(result);
+        [expectation fulfill];
+    }];
+
+    [self waitForTestExpectations];
 }
 
 - (void)testRefreshRemoteDataServerError {

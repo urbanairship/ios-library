@@ -25,11 +25,12 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
     private let localeManager: LocaleManagerProtocol
     private let taskManager: TaskManagerProtocol
     private let privacyManager: PrivacyManager
-    
+    private let networkMonitor: NetworkMonitor;
+
     private var subscriptions: [UUID : RemoteDataSubscription] = [:]
     private var updatedSinceLastForeground = false
     
-    private var refreshAttemptCompletionHandlers: [(() -> Void)?] = []
+    private var refreshCompletionHandlers: [((Bool) -> Void)?] = []
     private let refreshLock = Lock()
     private var isRefreshing = false
     
@@ -108,7 +109,8 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
                   dispatcher: UADispatcher.main,
                   date: AirshipDate(),
                   notificationCenter: NotificationCenter.default,
-                  appStateTracker: AppStateTracker.shared)
+                  appStateTracker: AppStateTracker.shared,
+                  networkMonitor: NetworkMonitor())
                      
     }
     
@@ -122,7 +124,8 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
                 dispatcher: UADispatcher,
                 date: AirshipDate,
                 notificationCenter: NotificationCenter,
-                appStateTracker: AppStateTracker) {
+                appStateTracker: AppStateTracker,
+                networkMonitor: NetworkMonitor) {
         
         self.dataStore = dataStore
         self.localeManager = localeManager
@@ -134,6 +137,7 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
         self.date = date
         self.notificationCenter = notificationCenter
         self.appStateTracker = appStateTracker
+        self.networkMonitor = networkMonitor
         
         self.disableHelper = ComponentDisableHelper(dataStore: dataStore,
                                                     className: "UARemoteDataManager")
@@ -198,7 +202,8 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
     private func handleRefreshTask(_ task: Task) {
         let lastModified = self.isLastMetadataCurrent() ? self.lastModified : nil
         let locale = self.localeManager.currentLocale
-        
+
+        var success = false
 
         let request = self.apiClient.fetchRemoteData(locale: locale, lastModified: lastModified) { response, error in
             guard let response = response else {
@@ -219,8 +224,10 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
                 self.updatedSinceLastForeground = true
                 self.lastRefreshTime = self.date.now
                 self.lastAppVersion = Utils.bundleShortVersionString()
+                success = true
                 task.taskCompleted()
             } else if (response.isSuccess) {
+                success = true
                 let payloads = response.payloads ?? []
 
                 self.remoteDataStore.overwriteCachedRemoteData(payloads) { success in
@@ -254,12 +261,12 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
 
         task.completionHandler = {
             self.refreshLock.sync {
-                for completionHandler in self.refreshAttemptCompletionHandlers {
+                for completionHandler in self.refreshCompletionHandlers {
                     if let handler = completionHandler {
-                        handler()
+                        handler(success)
                     }
                 }
-                self.refreshAttemptCompletionHandlers.removeAll()
+                self.refreshCompletionHandlers.removeAll()
                 self.isRefreshing = false
             }
         }
@@ -296,15 +303,18 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
         return metadata.isEqual(last)
     }
     
-    public func attemptRemoteDataRefresh(completionHandler: @escaping () -> Void) {
+    public func refresh(completionHandler: @escaping (Bool) -> Void) {
         refreshLock.sync {
-            if (shouldRefresh()) {
-                self.refreshAttemptCompletionHandlers.append(completionHandler)
+            if (!shouldRefresh()) {
+                // Already up to date
+                completionHandler(true)
+            } else if (self.networkMonitor.isConnected) {
+                self.refreshCompletionHandlers.append(completionHandler)
                 if (!isRefreshing) {
                     enqueueRefreshTask()
                 }
             } else {
-                completionHandler()
+                completionHandler(false)
             }
         }
     }

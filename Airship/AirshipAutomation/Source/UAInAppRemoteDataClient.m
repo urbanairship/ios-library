@@ -419,7 +419,9 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
 }
 
 - (void)attemptRemoteDataRefreshWithCompletionHandler:(void (^)(void))completionHandler {
-    [self.remoteDataProvider attemptRemoteDataRefreshWithCompletionHandler:completionHandler];
+    [self.remoteDataProvider refreshWithCompletionHandler:^(BOOL result) {
+        completionHandler();
+    }];
 }
 
 + (UAFrequencyConstraint *)parseConstraintWithJSON:(id)JSON {
