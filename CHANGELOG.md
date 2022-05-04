@@ -9,6 +9,9 @@ Minor release that adds support for randomizing response order in a Survey, adds
 ### Changes
 - Added new delegate method to `UAInAppMessagingDelegate` that can control when a message is able to be displayed.
 - Added support for randomizing Survey responses.
+- Added subscription list action.
+- Updated localizations. All strings within the SDK are now localized in 48 different languages.
+- Improved accessibility with OOTB Message Center UI.
 - Updated Landing Page, HTML In-App messages, and Modal In-App Messages to have a more deterministic size when rendering not as full screen. Messages will grow to a max of 420x720 points with 24 leading, 48 top, 24 trailing, and 48 bottom padding. 
 - Moved Preference Center and Message Center OOTB UI to use its own window instead of the current key window.
 - In-App rules will now attempt to refresh before displaying. This change should reduce the chances of showing out of data or cancelled in-app automations, scenes, or surveys when background refresh is disabled.
