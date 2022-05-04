@@ -250,8 +250,6 @@ static double const DefaultResizableViewAnimationDuration = 0.2;
     // disable voiceover interactions with visible items beneath the modal
     self.view.accessibilityViewIsModal = YES;
 
-
-
     if (self.displayFullScreen) {
         // Detect view type
         [self stretchToFullScreen];
@@ -285,11 +283,17 @@ static double const DefaultResizableViewAnimationDuration = 0.2;
                                     multiplier:1
                                       constant:maxHeight].active = YES;
 
-        UAPadding *padding = [UAPadding paddingWithTop:@(48) bottom:@(48) leading:@(24) trailing:@(24)];
-        [UAInAppMessageUtils applyPaddingToView:self.resizingContainerView padding:padding replace:NO];
-
-        [UAInAppMessageUtils applyPaddingToView:self.resizingContainerView padding:self.additionalPadding replace:NO];
+        [UAInAppMessageUtils applyPaddingToView:self.resizingContainerView
+                                        padding:[self padding]
+                                        replace:YES];
     }
+}
+
+- (UAPadding *)padding {
+    return [UAPadding paddingWithTop:@(48.0 + self.additionalPadding.top.floatValue)
+                              bottom:@(48.0 + self.additionalPadding.bottom.floatValue)
+                             leading:@(24.0 + self.additionalPadding.leading.floatValue)
+                            trailing:@(24.0 + self.additionalPadding.trailing.floatValue)];
 }
 
 - (void)viewDidAppear:(BOOL)animated {

@@ -283,7 +283,12 @@ public class TaskManager : NSObject, TaskManagerProtocol {
     }
 
     private func checkRequestRequirements(_ request: TaskRequest) -> Bool {
-        guard self.backgroundTasks.timeRemaining >= TaskManager.minBackgroundTime else {
+        var backgroundTime : TimeInterval = 0.0
+        UADispatcher.main.doSync {
+            backgroundTime = self.backgroundTasks.timeRemaining
+        }
+
+        guard backgroundTime >= TaskManager.minBackgroundTime else {
             return false
         }
 

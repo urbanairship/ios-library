@@ -3,6 +3,22 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 16.6.0 May 4, 2022
+Minor release that adds support for randomizing response order in a Survey, adds a new delegate method to InAppMessageManager that controls when a message can be displayed, and fixes several issues with Scenes & Surveys reporting. Apps using Scenes & Surveys should update.
+
+### Changes
+- Added new delegate method to `UAInAppMessagingDelegate` that can control when a message is able to be displayed.
+- Added support for randomizing Survey responses.
+- Updated Landing Page, HTML In-App messages, and Modal In-App Messages to have a more deterministic size when rendering not as full screen. Messages will grow to a max of 420x720 points with 24 leading, 48 top, 24 trailing, and 48 bottom padding. 
+- Moved Preference Center and Message Center OOTB UI to use its own window instead of the current key window.
+- In-App rules will now attempt to refresh before displaying. This change should reduce the chances of showing out of data or cancelled in-app automations, scenes, or surveys when background refresh is disabled.
+- Fixed reporting issue with a single page Scene.
+- Fixed rendering issues for Scenes & Surveys.
+- Fixed deep links that contain invalid characters by encoding those deep links.
+- Fixed potential main thread deadlock when modifying tags, attributes, and subscription lists. The deadlock will only happen if the app is modifying the data on the main queue while a previous change is being uploaded and the device is observing `NSUserDefaultsDidChangeNotification` on the main queue.
+- Fixed strongly linking Network.framework on older iOS versions.
+
+
 ## Version 16.5.1 April 4, 2022
 Patch release to fix a crash introduced in 16.5.0 on app restore on different devices. Apps running 16.5.0 should update.
 
