@@ -4,7 +4,6 @@ import Foundation
 
 #if canImport(AirshipCore)
 import AirshipCore
-import SwiftUI
 #endif
 
 
@@ -167,7 +166,7 @@ public class ContactSubscriptionGroupItem : NSObject, Decodable, Item {
     /**
      * Group component
      */
-    @objc
+    @objc(UAPreferenceComponent)
     public class Component : NSObject, Decodable {
         
         /**
