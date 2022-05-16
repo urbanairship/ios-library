@@ -3,6 +3,14 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 16.7.0 May 16, 2022
+
+Path release that fixes build issues with Xcode 13.3 and adds missing obj-c class prefix to the `UAPreferenceCenterComponent` class. 
+
+### Changes
+- Fixed class collision with CarbonCore.framework
+- Fixed build issues with Xcode 13.3
+
 ## Version 16.6.0 May 4, 2022
 Minor release that adds support for randomizing response order in a Survey, adds a new delegate method to InAppMessageManager that controls when a message can be displayed, and fixes several issues with Scenes & Surveys reporting. Apps using Scenes & Surveys should update.
 
