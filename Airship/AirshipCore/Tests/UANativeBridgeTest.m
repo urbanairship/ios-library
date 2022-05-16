@@ -696,12 +696,10 @@
 - (void)testNamedUserCommand {
     // Mock AirshipNamedUser
     
-    
     // Airship JavaScript request
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"uairship://named_user?id=cool"]];
     NSURL *originatingURL = [NSURL URLWithString:@"https://foo.urbanairship.com/whatever.html"];
     NSString *expectedName = @"cool";
-
     
     id mockWKNavigationAction = [self mockForClass:[WKNavigationAction class]];
     [[[mockWKNavigationAction stub] andReturn:request] request];
@@ -710,16 +708,11 @@
     [[[self.mockWKWebView stub] andReturn:originatingURL] URL];
 
     [[self.mockContact expect] identify:expectedName];
-    
-    [[[self.mockJavaScriptCommandDelegate expect] andReturnValue:@(YES)] performCommand:[OCMArg checkWithBlock:^BOOL(id obj) {
-        return [((UAJavaScriptCommand *)obj).URL isEqual:request.URL];
-    }] webView:self.mockWKWebView];
 
     [self.nativeBridge webView:self.mockWKWebView decidePolicyForNavigationAction:mockWKNavigationAction decisionHandler:^(WKNavigationActionPolicy delegatePolicy) {
        XCTAssertEqual(delegatePolicy, WKNavigationActionPolicyCancel);
     }];
 
-    [self.mockJavaScriptCommandDelegate verify];
     [self.mockContact verify];
 }
 
@@ -741,15 +734,10 @@
 
     [[self.mockContact expect] identify:expectedName];
     
-    [[[self.mockJavaScriptCommandDelegate expect] andReturnValue:@(YES)] performCommand:[OCMArg checkWithBlock:^BOOL(id obj) {
-        return [((UAJavaScriptCommand *)obj).URL isEqual:request.URL];
-    }] webView:self.mockWKWebView];
-
     [self.nativeBridge webView:self.mockWKWebView decidePolicyForNavigationAction:mockWKNavigationAction decisionHandler:^(WKNavigationActionPolicy delegatePolicy) {
        XCTAssertEqual(delegatePolicy, WKNavigationActionPolicyCancel);
     }];
 
-    [self.mockJavaScriptCommandDelegate verify];
     [self.mockContact verify];
 }
 
@@ -768,16 +756,11 @@
     [[[self.mockWKWebView stub] andReturn:originatingURL] URL];
 
     [[self.mockContact expect] reset];
-    
-    [[[self.mockJavaScriptCommandDelegate expect] andReturnValue:@(YES)] performCommand:[OCMArg checkWithBlock:^BOOL(id obj) {
-        return [((UAJavaScriptCommand *)obj).URL isEqual:request.URL];
-    }] webView:self.mockWKWebView];
 
     [self.nativeBridge webView:self.mockWKWebView decidePolicyForNavigationAction:mockWKNavigationAction decisionHandler:^(WKNavigationActionPolicy delegatePolicy) {
        XCTAssertEqual(delegatePolicy, WKNavigationActionPolicyCancel);
     }];
 
-    [self.mockJavaScriptCommandDelegate verify];
     [self.mockContact verify];
 }
 

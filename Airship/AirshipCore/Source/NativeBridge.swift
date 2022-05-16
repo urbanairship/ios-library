@@ -16,14 +16,19 @@ import WebKit
  */
 @objc(UANativeBridge)
 public class NativeBridge : NSObject, WKNavigationDelegate {
-    private static let UANativeBridgeUAirshipScheme = "uairship"
-    private static let UANativeBridgeCloseCommand = "close"
-    private static let UANativeBridgeSetNamedUserCommand = "named_user"
-    private static let UANativeBridgeMultiCommand = "multi"
+    static let airshipScheme = "uairship"
+    private static let closeCommand = "close"
+    private static let setNamedUserCommand = "named_user"
+    private static let multiCommand = "multi"
     
     private static let forwardSchemes = ["itms-apps", "maps", "sms", "tel", "mailto"]
-    private static let forwardHosts = ["maps.google.com", "www.youtube.com", "phobos.apple.com", "itunes.apple.com"]
-    
+
+    private static let forwardHosts = [
+        "maps.google.com",
+        "www.youtube.com",
+        "phobos.apple.com",
+        "itunes.apple.com"
+    ]
 
     /// Delegate to support additional native bridge features such as `close`.
     @objc
@@ -71,63 +76,63 @@ public class NativeBridge : NSObject, WKNavigationDelegate {
     @available(iOSApplicationExtension, unavailable)
     public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         let navigationType = navigationAction.navigationType
-        let request = navigationAction.request
-        
         let originatingURL = webView.url
-        
-        if (self.isAllowedAirshipRequest(request: request, originatingURL: originatingURL)) {
-            // Always handle uairship urls
-            if (navigationType == WKNavigationType.linkActivated || navigationType == WKNavigationType.other) {
-                guard let url = request.url else {
-                    return
-                }
-                let command = JavaScriptCommand(for: url)
-                self.handleAirshipCommand(command: command , webView: webView)
+        let requestURL = navigationAction.request.url
+
+        let isAirshipJSAllowed = originatingURL?.isAllowed(scope: .javaScriptInterface) ?? false
+
+        // Airship commands
+        if let requestURL = requestURL, isAirshipJSAllowed, requestURL.isAirshipCommand {
+            if (navigationType == .linkActivated || navigationType == .other) {
+                let command = JavaScriptCommand(for: requestURL)
+                self.handleAirshipCommand(command: command, webView: webView)
             }
-            decisionHandler(WKNavigationActionPolicy.cancel)
+            decisionHandler(.cancel)
             return
         }
-        
-        if let forward = self.forwardNavigationDelegate?.webView as ((WKWebView, WKNavigationAction, @escaping (WKNavigationActionPolicy) -> Void) -> Void)? {
-            
+
+        let forward = self.forwardNavigationDelegate?.webView as ((WKWebView, WKNavigationAction, @escaping (WKNavigationActionPolicy) -> Void) -> Void)?
+
+        // Forward
+        if let forward = forward {
             forward(webView, navigationAction) { policyForThisURL in
-                // Override any special link actions
                 if (policyForThisURL == WKNavigationActionPolicy.allow && navigationType == WKNavigationType.linkActivated) {
-                    self.handle(request.url) { success in
+                    // Try to override any special link handling
+                    self.handle(requestURL) { success in
                         decisionHandler(success ? .cancel : .allow)
                     }
-                    return
+                } else {
+                    decisionHandler(policyForThisURL)
                 }
-                
-                decisionHandler(policyForThisURL)
             }
             return
         }
 
+        // Default
+        guard let requestURL = requestURL else {
+            decisionHandler(.allow)
+            return
+        }
+
+        // Default
         let handleLink: () -> Void = {
             /// If target frame is a new window navigation, have OS handle it
-            guard navigationAction.request.url != nil else {
-                return
-            }
-            if (navigationAction.targetFrame == nil) {
-                UIApplication.shared.open(navigationAction.request.url!, options: [:], completionHandler: { success in
+            if navigationAction.targetFrame == nil {
+                UIApplication.shared.open(requestURL, options: [:], completionHandler: { success in
                     decisionHandler(success ? .cancel : .allow)
                 })
-                return
+            } else {
+                decisionHandler(.allow)
             }
-            
-            /// Default behavior
-            decisionHandler(.allow)
         }
-        
-        /// Override any special link actions
+
         if (navigationType == WKNavigationType.linkActivated) {
-            self.handle(request.url!) { success in
+            self.handle(requestURL) { success in
                 if (success) {
                     decisionHandler(.cancel)
-                    return
+                } else {
+                    handleLink()
                 }
-                handleLink()
             }
         } else {
             handleLink()
@@ -151,7 +156,15 @@ public class NativeBridge : NSObject, WKNavigationDelegate {
      * Called when the navigation is complete. :nodoc:
      */
     public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        self.populateJavascriptEnvironmentIfAllowed(webview: webView)
+        AirshipLogger.trace("Webview finished navigation: \(String(describing: webView.url))")
+
+        if let url = webView.url, url.isAllowed(scope: .javaScriptInterface) {
+            AirshipLogger.trace("Populating Airship JS bridge: \(url)")
+            let js: JavaScriptEnvironmentProtocol = self.javaScriptEnvironmentFactoryBlock()
+            self.nativeBridgeExtensionDelegate?.extendJavaScriptEnvironment?(js, webView: webView)
+            webView.evaluateJavaScript(js.build(), completionHandler: nil)
+        }
+
         self.forwardNavigationDelegate?.webView?(webView, didFinish: navigation)
     }
     
@@ -196,8 +209,7 @@ public class NativeBridge : NSObject, WKNavigationDelegate {
     public func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
         self.forwardNavigationDelegate?.webView?(webView, didFailProvisionalNavigation: navigation, withError: error)
     }
-    
-    
+
     /**
      * Called when the web view needs to respond to an authentication challenge. :nodoc:
      */
@@ -210,93 +222,60 @@ public class NativeBridge : NSObject, WKNavigationDelegate {
         
         forward(webView, challenge, completionHandler)
     }
-    
-    private func isAirshipRequest(request: URLRequest) -> Bool {
-        return (request.url?.scheme == NativeBridge.UANativeBridgeUAirshipScheme)
-    }
-
-    private func isAllowed(url: URL) -> Bool {
-        return Airship.shared.urlAllowList.isAllowed(url, scope: .javaScriptInterface)
-    }
-    
-    private func isAllowedAirshipRequest(request: URLRequest, originatingURL: URL?) -> Bool {
-        guard let url = originatingURL else {
-            return false
-        }
-        /// uairship://command/[<arguments>][?<options>]
-        return self.isAirshipRequest(request: request) && self.isAllowed(url: url)
-    }
 
     private func handleAirshipCommand(command: JavaScriptCommand, webView: WKWebView) {
-        /// Close
-        if (command.name == NativeBridge.UANativeBridgeCloseCommand) {
+        switch (command.name) {
+        case NativeBridge.closeCommand:
             self.nativeBridgeDelegate?.close()
-            return
-        }
-        
-        /// Actions
-        if (NativeBridgeActionHandler.isActionCommand(command: command)) {
-            let metadata = self.nativeBridgeExtensionDelegate?.actionsMetadata?(for: command, webView: webView)
-            self.actionHandler.runActionsForCommand(command: command, metadata: metadata, completionHandler: { script in
-                guard let script = script else {
-                    return
-                }
-                webView.evaluateJavaScript(script, completionHandler: nil)
-            })
-            return
-        }
-        
-        /// Set named user command
-        if (command.name == NativeBridge.UANativeBridgeSetNamedUserCommand) {
-            let idArgs: NSArray = command.options["id"] as! NSArray
-            let argument = idArgs.firstObject as? String
-            
-            if argument == nil {
-                AirshipLogger.error("Malformed Named User command")
+
+        case NativeBridge.setNamedUserCommand:
+            let idArgs = command.options["id"] as? [String]
+            let argument = idArgs?.first
+
+            let contact: ContactProtocol = Airship.contact
+            if let identifier = argument, !identifier.isEmpty {
+                contact.identify(identifier)
             } else {
-                let contact : ContactProtocol = Airship.contact
-                if (argument!.count != 0) {
-                    contact.identify(argument!)
-                } else {
-                    contact.reset()
-                }
+                contact.reset()
             }
-        }
-        
-        /// Multi command
-        if (command.name == NativeBridge.UANativeBridgeMultiCommand) {
-            let URLs = command.url.query?.components(separatedBy: "&")
-            guard URLs != nil else {
-                return
-            }
-            
-            for URLString in URLs! {
-                let theURL = URL.init(string: URLString.removingPercentEncoding ?? "")
-                guard (theURL != nil) else {
-                    return
-                }
-                
-                if (theURL!.scheme == NativeBridge.UANativeBridgeUAirshipScheme) {
-                    let command = JavaScriptCommand(for: theURL!)
+
+        case NativeBridge.multiCommand:
+            command.url.query?.components(separatedBy: "&")
+                .compactMap {
+                    URL(string: $0.removingPercentEncoding ?? "")
+                }.filter {
+                    $0.isAirshipCommand
+                }.forEach {
+                    let command = JavaScriptCommand(for: $0)
                     self.handleAirshipCommand(command: command, webView: webView)
                 }
+
+        default:
+            if (NativeBridgeActionHandler.isActionCommand(command: command)) {
+                let metadata = self.nativeBridgeExtensionDelegate?.actionsMetadata?(for: command, webView: webView)
+                self.actionHandler.runActionsForCommand(command: command, metadata: metadata, completionHandler: { script in
+                    if let script = script {
+                        webView.evaluateJavaScript(script, completionHandler: nil)
+                    }
+                })
+            } else if (!forwardAirshipCommand(command, webView: webView)) {
+                AirshipLogger.debug(String(format: "Unhandled JavaScript command: %@", command))
             }
-            return
         }
-        
+    }
+
+    private func forwardAirshipCommand(_ command: JavaScriptCommand, webView: WKWebView) -> Bool {
         /// Local JavaScript command delegate
-        var result = self.javaScriptCommandDelegate?.perform(command, webView: webView) ?? false
-        if (result) {
-            return
+        if (self.javaScriptCommandDelegate?.perform(command, webView: webView) == true) {
+            return true
         }
-        
-        result = Airship.shared.javaScriptCommandDelegate?.perform(command, webView: webView) ?? false
-        /// App defined JavaScript command delegate
-        if (result) {
-            return
+
+
+        if (Airship.shared.javaScriptCommandDelegate?.perform(command, webView: webView) == true) {
+            return true
         }
-        
-        AirshipLogger.debug(String(format: "Unhandled JavaScript command: %@", command))
+
+        return false
     }
 
     /**
@@ -328,24 +307,6 @@ public class NativeBridge : NSObject, WKNavigationDelegate {
         return NativeBridge.forwardSchemes.contains(scheme) ||  NativeBridge.forwardHosts.contains(host)
     }
     
-    
-    private func populateJavascriptEnvironmentIfAllowed(webview: WKWebView) {
-        guard let url = webview.url else {
-            return
-        }
-        if (!Airship.shared.urlAllowList.isAllowed(url, scope: .javaScriptInterface)) {
-            /// Don't log in the special case of about:blank URLs
-            if (url.absoluteString != "blank") {
-                AirshipLogger.debug(String(format:"URL %@ is not allowed, not populating JS interface", url.absoluteString))
-            }
-            return
-        }
-        
-        let js: JavaScriptEnvironmentProtocol = self.javaScriptEnvironmentFactoryBlock()
-        self.nativeBridgeExtensionDelegate?.extendJavaScriptEnvironment?(js, webView: webview)
-        webview.evaluateJavaScript(js.build(), completionHandler: nil)
-    }
-    
     private func closeWindow(_ animated: Bool) {
         self.forwardNavigationDelegate?.closeWindow?(animated)
     }
@@ -355,5 +316,15 @@ public class NativeBridge : NSObject, WKNavigationDelegate {
 public protocol UANavigationDelegate: WKNavigationDelegate {
     @objc optional func closeWindow(_ animated: Bool)
 }
-    
+
+private extension URL {
+    var isAirshipCommand: Bool {
+        return self.scheme == NativeBridge.airshipScheme
+    }
+
+    func isAllowed(scope: URLAllowListScope) -> Bool {
+        return Airship.shared.urlAllowList.isAllowed(self, scope: scope)
+    }
+}
+
 #endif
