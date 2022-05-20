@@ -5,7 +5,7 @@
 
 #define UA_LEVEL_LOG(level, fmt, ...) \
 do { \
-   [UALegacyLoggingBridge logWithLevel:level fileID:@(__FILE__) function:@(__PRETTY_FUNCTION__) line:__LINE__ message:^NSString * { return [NSString stringWithFormat:fmt, ##__VA_ARGS__]; }]; \
+   [UALegacyLoggingBridge logWithLevel:level function:@(__PRETTY_FUNCTION__) line:__LINE__ message:^NSString * { return [NSString stringWithFormat:fmt, ##__VA_ARGS__]; }]; \
 } while(0)
 
 

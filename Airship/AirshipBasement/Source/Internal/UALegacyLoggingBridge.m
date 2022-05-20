@@ -16,14 +16,13 @@ static UALoggerBlock _loggerBlock = nil;
 }
 
 + (void)logWithLevel:(NSInteger)level
-              fileID:(NSString *)fileID
             function:(NSString *)function
                 line:(NSUInteger)line
              message:(UAMessageBlock)messageBlock {
 
     UALoggerBlock loggerBlock = _loggerBlock;
     if (loggerBlock) {
-        loggerBlock(level, fileID, function, line, messageBlock);
+        loggerBlock(level, function, line, messageBlock);
     }
 }
 
