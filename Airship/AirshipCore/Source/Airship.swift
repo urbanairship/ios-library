@@ -200,9 +200,9 @@ public class Airship : NSObject {
         
         self.logLevel = resolvedConfig.logLevel
 
-        UALegacyLoggingBridge.logger = { logLevel, message, fileID, function, line in
+        UALegacyLoggingBridge.logger = { logLevel, fileID, function, line, message in
             AirshipLogger.log(logLevel: LogLevel(rawValue: logLevel) ?? .none,
-                              message: message,
+                              message: message(),
                               fileID: fileID,
                               line: line,
                               function: function)
@@ -292,7 +292,7 @@ public class Airship : NSObject {
         let component = shared.airshipInstance.component(ofType: componentType)
         
         if (component == nil) {
-            assertionFailure("Misisng required component: \(componentType)")
+            assertionFailure("Missing required component: \(componentType)")
         }
         return component!
     }

@@ -44,6 +44,8 @@
 - (void)swizzle:(SEL)selector implementation:(IMP)implementation {
     Method method = class_getInstanceMethod(self.class, selector);
     if (method) {
+       
+
         UA_LTRACE(@"Swizzling implementation for %@ class %@", NSStringFromSelector(selector), self.class);
         IMP existing = method_setImplementation(method, implementation);
         if (implementation != existing) {
