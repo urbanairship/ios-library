@@ -5,13 +5,13 @@
 
 @implementation UALegacyLoggingBridge
 
-static LoggerBlock _loggerBlock = nil;
+static UALoggerBlock _loggerBlock = nil;
 
-+ (void)setLogger:(LoggerBlock)loggerBlock {
++ (void)setLogger:(UALoggerBlock)loggerBlock {
     _loggerBlock = loggerBlock;
 }
 
-+ (LoggerBlock)logger {
++ (UALoggerBlock)logger {
     return _loggerBlock;
 }
 
@@ -19,11 +19,11 @@ static LoggerBlock _loggerBlock = nil;
               fileID:(NSString *)fileID
             function:(NSString *)function
                 line:(NSUInteger)line
-             message:(NSString *)message {
+             message:(UAMessageBlock)messageBlock {
 
-    LoggerBlock loggerBlock = _loggerBlock;
+    UALoggerBlock loggerBlock = _loggerBlock;
     if (loggerBlock) {
-        loggerBlock(level, message, fileID, function, line);
+        loggerBlock(level, fileID, function, line, messageBlock);
     }
 }
 

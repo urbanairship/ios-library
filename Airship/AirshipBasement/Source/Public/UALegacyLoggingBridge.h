@@ -11,24 +11,26 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UALegacyLoggingBridge : NSObject
 
+typedef NSString * _Nonnull(^UAMessageBlock)(void);
+
 /**
- * The logger block - log level, log message, fileID, function, line
+ * The logger block - log level,, fileID, function, line, message block
  */
-typedef void (^LoggerBlock)(NSInteger, NSString *, NSString *, NSString *, NSUInteger);
+typedef void (^UALoggerBlock)(NSInteger, NSString *, NSString *, NSUInteger, UAMessageBlock);
 
 /**
  * Set by Airship during takeOff
  */
-@property (class, nonatomic, copy, nullable) LoggerBlock logger;
+@property (class, nonatomic, copy, nullable) UALoggerBlock logger;
 
 /**
  * Called by the macros in UAGlobal.h
  */
 + (void)logWithLevel:(NSInteger)level
-             message:(NSString *)message
               fileID:(NSString *)fileID
             function:(NSString *)function
-                line:(NSUInteger)line;
+                line:(NSUInteger)line
+             message:(UAMessageBlock)messageBlock;
 @end
 
 NS_ASSUME_NONNULL_END

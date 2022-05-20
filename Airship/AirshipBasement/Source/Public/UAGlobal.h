@@ -4,7 +4,10 @@
 #import "UALegacyLoggingBridge.h"
 
 #define UA_LEVEL_LOG(level, fmt, ...) \
-     [UALegacyLoggingBridge logWithLevel:level message:[NSString stringWithFormat:fmt, ##__VA_ARGS__] fileID: @(__FILE__) function:@(__PRETTY_FUNCTION__) line:__LINE__];
+do { \
+   [UALegacyLoggingBridge logWithLevel:level fileID:@(__FILE__) function:@(__PRETTY_FUNCTION__) line:__LINE__ message:^NSString * { return [NSString stringWithFormat:fmt, ##__VA_ARGS__]; }]; \
+} while(0)
+
 
 #define UA_LTRACE(fmt, ...) UA_LEVEL_LOG(5, fmt, ##__VA_ARGS__)
 #define UA_LDEBUG(fmt, ...) UA_LEVEL_LOG(4, fmt, ##__VA_ARGS__)
