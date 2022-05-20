@@ -14,9 +14,9 @@ NS_ASSUME_NONNULL_BEGIN
 typedef NSString * _Nonnull(^UAMessageBlock)(void);
 
 /**
- * The logger block - log level,, fileID, function, line, message block
+ * The logger block - log level, function, line, message block
  */
-typedef void (^UALoggerBlock)(NSInteger, NSString *, NSString *, NSUInteger, UAMessageBlock);
+typedef void (^UALoggerBlock)(NSInteger, NSString *, NSUInteger, UAMessageBlock);
 
 /**
  * Set by Airship during takeOff
@@ -27,7 +27,6 @@ typedef void (^UALoggerBlock)(NSInteger, NSString *, NSString *, NSUInteger, UAM
  * Called by the macros in UAGlobal.h
  */
 + (void)logWithLevel:(NSInteger)level
-              fileID:(NSString *)fileID
             function:(NSString *)function
                 line:(NSUInteger)line
              message:(UAMessageBlock)messageBlock;
