@@ -50,6 +50,8 @@ NSString *const UAMessageDataScheme = @"message";
         self.privacyManager = privacyManager;
         self.disableHelper = [[UAComponentDisableHelper alloc] initWithDataStore:dataStore
                                                                        className:@"UAMessageCenter"];
+
+
         
         [self updateEnableState];
         

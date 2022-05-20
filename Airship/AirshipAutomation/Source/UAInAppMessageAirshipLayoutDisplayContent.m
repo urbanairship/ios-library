@@ -50,7 +50,7 @@ API_AVAILABLE(ios(13.0))
     [UAThomas validateWithJson:layout error:&thomasError];
     
     if (thomasError != nil) {
-        UA_LDEBUG("Invalid Airship layout %@", thomasError);
+        UA_LDEBUG(@"Invalid Airship layout %@", thomasError);
         if (error) {
             *error = thomasError;
         }

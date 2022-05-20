@@ -60,7 +60,7 @@ NSUInteger const UAScheduleDataVersion = 3;
 
 - (BOOL)verifyState:(UAScheduleState)state {
     if (![self checkState:state]) {
-        UA_LTRACE("Schedule %@ in invalid state. Expected %ld, actual %@", self.identifier, (long)state, self.executionState);
+        UA_LTRACE(@"Schedule %@ in invalid state. Expected %ld, actual %@", self.identifier, (long)state, self.executionState);
         return NO;
     } else {
         return YES;
@@ -68,7 +68,7 @@ NSUInteger const UAScheduleDataVersion = 3;
 }
 
 - (void)updateState:(UAScheduleState)state {
-    UA_LTRACE("Updating schedule %@ state from %@ to %ld", self.identifier, self.executionState, (long) state);
+    UA_LTRACE(@"Updating schedule %@ state from %@ to %ld", self.identifier, self.executionState, (long) state);
     self.executionState = @(state);
 }
 

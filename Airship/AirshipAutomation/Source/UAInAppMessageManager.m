@@ -390,7 +390,7 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
 
     UAInAppMessageScheduleData *data = self.scheduleData[scheduleID];
     if (!data) {
-        UA_LERR("No data for schedule: %@", scheduleID);
+        UA_LERR(@"No data for schedule: %@", scheduleID);
         return UAAutomationScheduleReadyResultInvalidate;
     }
 
@@ -531,7 +531,7 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
             onDismiss(resolution);
         }];
     } else {
-        UA_LWARN("Unable to display message, missing display method for schedule %@", scheduleID);
+        UA_LWARN(@"Unable to display message, missing display method for schedule %@", scheduleID);
     }
 }
 

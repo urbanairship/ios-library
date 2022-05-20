@@ -1180,7 +1180,7 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
         }
 
         if (![self isScheduleConditionsSatisfied:schedule.delay]) {
-            UA_LDEBUG("Schedule %@ is not ready to execute. Conditions not satisfied", schedule.identifier);
+            UA_LDEBUG(@"Schedule %@ is not ready to execute. Conditions not satisfied", schedule.identifier);
             return;
         }
 
@@ -1188,13 +1188,13 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
 
         switch ([delegate isScheduleReadyToExecute:schedule]) {
             case UAAutomationScheduleReadyResultInvalidate: {
-                UA_LTRACE("Attempted to execute an invalid schedule %@", schedule.identifier);
+                UA_LTRACE(@"Attempted to execute an invalid schedule %@", schedule.identifier);
                 nextExecutionState = UAScheduleStatePreparingSchedule;
                 [self prepareScheduleWithIdentifier:schedule.identifier];
                 break;
             }
             case UAAutomationScheduleReadyResultContinue: {
-                UA_LTRACE("Executing schedule %@", schedule.identifier);
+                UA_LTRACE(@"Executing schedule %@", schedule.identifier);
                 [delegate executeSchedule:schedule completionHandler:^{
                     UA_STRONGIFY(self)
                     [self.automationStore getSchedule:schedule.identifier completionHandler:^(UAScheduleData *scheduleData) {
@@ -1207,11 +1207,11 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
                 break;
             }
             case UAAutomationScheduleReadyResultNotReady: {
-                UA_LTRACE("Schedule %@ not ready for execution", schedule.identifier);
+                UA_LTRACE(@"Schedule %@ not ready for execution", schedule.identifier);
                 break;
             }
             case UAAutomationScheduleReadyResultSkip: {
-                UA_LTRACE("Schedule %@ not ready for execution, resetting to idle", schedule.identifier);
+                UA_LTRACE(@"Schedule %@ not ready for execution, resetting to idle", schedule.identifier);
                 nextExecutionState = UAScheduleStateIdle;
                 break;
             }

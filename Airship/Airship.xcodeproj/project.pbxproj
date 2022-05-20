@@ -427,8 +427,6 @@
 		6E43217F26EA84BE009228AB /* UACompression.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E43217026EA84BE009228AB /* UACompression.m */; };
 		6E43218026EA84BE009228AB /* UAActionArguments+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43217126EA84BE009228AB /* UAActionArguments+Internal.h */; };
 		6E43218126EA84BE009228AB /* UAActionArguments+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43217126EA84BE009228AB /* UAActionArguments+Internal.h */; };
-		6E43218226EA84BE009228AB /* UAGlobal.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E43217226EA84BE009228AB /* UAGlobal.m */; };
-		6E43218326EA84BE009228AB /* UAGlobal.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E43217226EA84BE009228AB /* UAGlobal.m */; };
 		6E43218426EA84BE009228AB /* UAJavaScriptCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E43217326EA84BE009228AB /* UAJavaScriptCommand.m */; };
 		6E43218526EA84BE009228AB /* UAJavaScriptCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E43217326EA84BE009228AB /* UAJavaScriptCommand.m */; };
 		6E43218626EA84BE009228AB /* UAActionResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E43217426EA84BE009228AB /* UAActionResult.m */; };
@@ -1061,6 +1059,14 @@
 		6EEAE81624CF93150046E311 /* UAScheduleDeferredData.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EEAE81224CF93140046E311 /* UAScheduleDeferredData.m */; };
 		6EEAE81824CF9FBF0046E311 /* UAScheduleDeferredDataTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EEAE81724CF9FBF0046E311 /* UAScheduleDeferredDataTest.m */; };
 		6EF02DF02714EB500008B6C9 /* Thomas.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF02DEF2714EB500008B6C9 /* Thomas.swift */; };
+		6EF1933C2838062B005F192A /* AirshipLogHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF1933B2838062B005F192A /* AirshipLogHandler.swift */; };
+		6EF1933E28380644005F192A /* DefaultLogHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF1933D28380644005F192A /* DefaultLogHandler.swift */; };
+		6EF1933F28380644005F192A /* DefaultLogHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF1933D28380644005F192A /* DefaultLogHandler.swift */; };
+		6EF1934028380648005F192A /* AirshipLogHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF1933B2838062B005F192A /* AirshipLogHandler.swift */; };
+		6EF1934528380BA0005F192A /* UALegacyLoggingBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EF1934228380BA0005F192A /* UALegacyLoggingBridge.m */; };
+		6EF1934628380BA0005F192A /* UALegacyLoggingBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EF1934228380BA0005F192A /* UALegacyLoggingBridge.m */; };
+		6EF1934828380BE1005F192A /* UALegacyLoggingBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EF1934728380BE1005F192A /* UALegacyLoggingBridge.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6EF1934928380BE1005F192A /* UALegacyLoggingBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EF1934728380BE1005F192A /* UALegacyLoggingBridge.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6EF27DD927306C9100548DA3 /* AirshipToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF27DD827306C9100548DA3 /* AirshipToggle.swift */; };
 		6EF27DDB27306CA600548DA3 /* AirshipCheckboxToggleStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF27DDA27306CA600548DA3 /* AirshipCheckboxToggleStyle.swift */; };
 		6EF27DDC27306CA600548DA3 /* AirshipCheckboxToggleStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF27DDA27306CA600548DA3 /* AirshipCheckboxToggleStyle.swift */; };
@@ -2020,7 +2026,6 @@
 		6E43216F26EA84BE009228AB /* UAActionArguments.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAActionArguments.m; path = Internal/UAActionArguments.m; sourceTree = "<group>"; };
 		6E43217026EA84BE009228AB /* UACompression.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UACompression.m; path = Internal/UACompression.m; sourceTree = "<group>"; };
 		6E43217126EA84BE009228AB /* UAActionArguments+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAActionArguments+Internal.h"; path = "Internal/UAActionArguments+Internal.h"; sourceTree = "<group>"; };
-		6E43217226EA84BE009228AB /* UAGlobal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAGlobal.m; path = Internal/UAGlobal.m; sourceTree = "<group>"; };
 		6E43217326EA84BE009228AB /* UAJavaScriptCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAJavaScriptCommand.m; path = Internal/UAJavaScriptCommand.m; sourceTree = "<group>"; };
 		6E43217426EA84BE009228AB /* UAActionResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAActionResult.m; path = Internal/UAActionResult.m; sourceTree = "<group>"; };
 		6E43217526EA84BE009228AB /* UASwizzler+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UASwizzler+Internal.h"; path = "Internal/UASwizzler+Internal.h"; sourceTree = "<group>"; };
@@ -2360,6 +2365,10 @@
 		6EEAE81224CF93140046E311 /* UAScheduleDeferredData.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAScheduleDeferredData.m; sourceTree = "<group>"; };
 		6EEAE81724CF9FBF0046E311 /* UAScheduleDeferredDataTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAScheduleDeferredDataTest.m; sourceTree = "<group>"; };
 		6EF02DEF2714EB500008B6C9 /* Thomas.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Thomas.swift; sourceTree = "<group>"; };
+		6EF1933B2838062B005F192A /* AirshipLogHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipLogHandler.swift; sourceTree = "<group>"; };
+		6EF1933D28380644005F192A /* DefaultLogHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultLogHandler.swift; sourceTree = "<group>"; };
+		6EF1934228380BA0005F192A /* UALegacyLoggingBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UALegacyLoggingBridge.m; path = Internal/UALegacyLoggingBridge.m; sourceTree = "<group>"; };
+		6EF1934728380BE1005F192A /* UALegacyLoggingBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UALegacyLoggingBridge.h; path = Public/UALegacyLoggingBridge.h; sourceTree = "<group>"; };
 		6EF27DD827306C9100548DA3 /* AirshipToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipToggle.swift; sourceTree = "<group>"; };
 		6EF27DDA27306CA600548DA3 /* AirshipCheckboxToggleStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipCheckboxToggleStyle.swift; sourceTree = "<group>"; };
 		6EF27DDD27306CB300548DA3 /* AirshipSwitchToggleStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipSwitchToggleStyle.swift; sourceTree = "<group>"; };
@@ -3667,7 +3676,6 @@
 			children = (
 				6E87BDFD26E283840005D20D /* Airship.swift */,
 				6E87BE0026E283850005D20D /* DeepLinkDelegate.swift */,
-				6E87BDFE26E283840005D20D /* LogLevel.swift */,
 				6E6ED14F2683DBC200A2CBD0 /* AirshipCoreResources.swift */,
 				6E6ED1502683DBC300A2CBD0 /* AirshipVersion.swift */,
 				6E87BDB426DEE61F0005D20D /* ComponentDisableHelper.swift */,
@@ -3944,7 +3952,6 @@
 				6E43213826EA84A4009228AB /* UAEvent.h */,
 				6E43212A26EA84A4009228AB /* UAFeature.h */,
 				6E43213E26EA84A5009228AB /* UAGlobal.h */,
-				6E43217226EA84BE009228AB /* UAGlobal.m */,
 				6E43212C26EA84A4009228AB /* UAJavaScriptCommand.h */,
 				6E43217326EA84BE009228AB /* UAJavaScriptCommand.m */,
 				6E43213226EA84A4009228AB /* UAJavaScriptCommandDelegate.h */,
@@ -3958,6 +3965,8 @@
 				6E43216D26EA84BE009228AB /* UASwizzler.m */,
 				6E43217526EA84BE009228AB /* UASwizzler+Internal.h */,
 				6E43213926EA84A4009228AB /* UAURLAllowListScope.h */,
+				6EF1934228380BA0005F192A /* UALegacyLoggingBridge.m */,
+				6EF1934728380BE1005F192A /* UALegacyLoggingBridge.h */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -4462,12 +4471,12 @@
 		6E937300237615B400AA9C2A /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				6EF1933828380086005F192A /* Logger */,
 				6E062CFF27165642001A74A1 /* Thomas */,
 				6E43218E26EA89B5009228AB /* AirshipCore.h */,
 				A61517AD26A97419008A41C4 /* Subscription Lists */,
 				6E698E02267A799500654DB2 /* AirshipErrors.swift */,
 				6E8E1C9A26447B3800B11791 /* Lock.swift */,
-				6E698DEA26790AC300654DB2 /* AirshipLogger.swift */,
 				6E698DE826790AC300654DB2 /* PreferenceDataStore.swift */,
 				6E698DE726790A9C00654DB2 /* PrivacyManager */,
 				6EA57DEC25433C57005998C7 /* Tasks */,
@@ -4653,6 +4662,17 @@
 				6ED3C04420081013002A746B /* UAInAppMessageCustomDisplayContentTest.m */,
 			);
 			name = Custom;
+			sourceTree = "<group>";
+		};
+		6EF1933828380086005F192A /* Logger */ = {
+			isa = PBXGroup;
+			children = (
+				6E87BDFE26E283840005D20D /* LogLevel.swift */,
+				6E698DEA26790AC300654DB2 /* AirshipLogger.swift */,
+				6EF1933B2838062B005F192A /* AirshipLogHandler.swift */,
+				6EF1933D28380644005F192A /* DefaultLogHandler.swift */,
+			);
+			name = Logger;
 			sourceTree = "<group>";
 		};
 		6EF27DD627306C6900548DA3 /* Forms */ = {
@@ -5373,6 +5393,7 @@
 				6E43215226EA84A5009228AB /* AirshipBasementLib.h in Headers */,
 				6E43215E26EA84A5009228AB /* UAURLAllowListScope.h in Headers */,
 				6E43214E26EA84A5009228AB /* UALocationProvider.h in Headers */,
+				6EF1934828380BE1005F192A /* UALegacyLoggingBridge.h in Headers */,
 				6E43215026EA84A5009228AB /* UAJavaScriptCommandDelegate.h in Headers */,
 				6E43216226EA84A5009228AB /* UASDKModule.h in Headers */,
 				6E43215626EA84A5009228AB /* UAActionPredicateProtocol.h in Headers */,
@@ -5406,6 +5427,7 @@
 				6E43215326EA84A5009228AB /* AirshipBasementLib.h in Headers */,
 				6E43215F26EA84A5009228AB /* UAURLAllowListScope.h in Headers */,
 				6E43214F26EA84A5009228AB /* UALocationProvider.h in Headers */,
+				6EF1934928380BE1005F192A /* UALegacyLoggingBridge.h in Headers */,
 				6E43215126EA84A5009228AB /* UAJavaScriptCommandDelegate.h in Headers */,
 				6E43216326EA84A5009228AB /* UASDKModule.h in Headers */,
 				6E43215726EA84A5009228AB /* UAActionPredicateProtocol.h in Headers */,
@@ -6727,6 +6749,7 @@
 				A61517C426B009D6008A41C4 /* SubscriptionListAPIClient.swift in Sources */,
 				8401769426C5671100373AF7 /* JSONMatcher.swift in Sources */,
 				6E739D6626B9BDC100BC6F6D /* ChannelBulkUpdateAPIClient.swift in Sources */,
+				6EF1933E28380644005F192A /* DefaultLogHandler.swift in Sources */,
 				6E15B6E426CC779A0099C92D /* RemoteConfigModuleAdapter.swift in Sources */,
 				6E46A27C272B63680089CDE3 /* ThomasEnvironment.swift in Sources */,
 				6E1D8AD126CC5D490049DACB /* RemoteConfig.swift in Sources */,
@@ -6807,6 +6830,7 @@
 				6E8BF45126852E4B009A8BD4 /* TaskRequestOptions.swift in Sources */,
 				6E1C9C45271F74E7009EF9EF /* BorderViewModifier.swift in Sources */,
 				6EC7E48D26A738C80038CFDD /* ContactData.swift in Sources */,
+				6EF1933C2838062B005F192A /* AirshipLogHandler.swift in Sources */,
 				6E664BA126C43F5400A2C8E5 /* ActivityViewController.swift in Sources */,
 				6E91B45226883B6E00DDB1A8 /* AppExitEvent.swift in Sources */,
 				6E698E5B267BF63B00654DB2 /* UIKitStateTrackerAdapter.swift in Sources */,
@@ -6863,13 +6887,13 @@
 			files = (
 				6E43217C26EA84BE009228AB /* UAActionArguments.m in Sources */,
 				6E43217626EA84BE009228AB /* UAKeychainUtils.m in Sources */,
-				6E43218226EA84BE009228AB /* UAGlobal.m in Sources */,
 				6E88EF042703D9B100469E2A /* UADisposable.m in Sources */,
 				6E43217E26EA84BE009228AB /* UACompression.m in Sources */,
 				6E43218426EA84BE009228AB /* UAJavaScriptCommand.m in Sources */,
 				6E43217A26EA84BE009228AB /* UAAutoIntegration.m in Sources */,
 				6E43218626EA84BE009228AB /* UAActionResult.m in Sources */,
 				6E43217826EA84BE009228AB /* UASwizzler.m in Sources */,
+				6EF1934528380BA0005F192A /* UALegacyLoggingBridge.m in Sources */,
 				6E88EF062703D9B100469E2A /* UAPadding.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6880,13 +6904,13 @@
 			files = (
 				6E43217D26EA84BE009228AB /* UAActionArguments.m in Sources */,
 				6E43217726EA84BE009228AB /* UAKeychainUtils.m in Sources */,
-				6E43218326EA84BE009228AB /* UAGlobal.m in Sources */,
 				6E88EF052703D9B100469E2A /* UADisposable.m in Sources */,
 				6E43217F26EA84BE009228AB /* UACompression.m in Sources */,
 				6E43218526EA84BE009228AB /* UAJavaScriptCommand.m in Sources */,
 				6E43217B26EA84BE009228AB /* UAAutoIntegration.m in Sources */,
 				6E43218726EA84BE009228AB /* UAActionResult.m in Sources */,
 				6E43217926EA84BE009228AB /* UASwizzler.m in Sources */,
+				6EF1934628380BA0005F192A /* UALegacyLoggingBridge.m in Sources */,
 				6E88EF072703D9B100469E2A /* UAPadding.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -7429,6 +7453,7 @@
 				A6F6726126E1162F008C69C3 /* JSONMatcher.swift in Sources */,
 				6E698DF126790AC300654DB2 /* AirshipLogger.swift in Sources */,
 				6EB56C7D27AC4BBC00A7392F /* AssociatedChannel.swift in Sources */,
+				6EF1933F28380644005F192A /* DefaultLogHandler.swift in Sources */,
 				6ED80794273CA0C800D1F455 /* EnvironmentValues.swift in Sources */,
 				32515874272B038300DF8B44 /* Image.swift in Sources */,
 				6E510C262721DA86006D9126 /* ForegroundColorViewModifier.swift in Sources */,
@@ -7446,6 +7471,7 @@
 				A67F87D6268E07E800EF5F43 /* ContactAPIResponse.swift in Sources */,
 				6E152BCB2743235800788402 /* Icons.swift in Sources */,
 				6E510C1C2721DA6A006D9126 /* ViewFactory.swift in Sources */,
+				6EF1934028380648005F192A /* AirshipLogHandler.swift in Sources */,
 				6EF27DE42730E6F900548DA3 /* RadioInputController.swift in Sources */,
 				6E6ED1582683DBC300A2CBD0 /* ViewUtils.swift in Sources */,
 				6EF66D8F27657B3A00ABCB76 /* UrlInfo.swift in Sources */,

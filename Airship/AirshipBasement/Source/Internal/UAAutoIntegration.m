@@ -5,7 +5,6 @@
 #import "UAGlobal.h"
 
 static UAAutoIntegration *instance_;
-
 @interface UAAutoIntegrationDummyDelegate : NSObject<UNUserNotificationCenterDelegate>
 @end
 

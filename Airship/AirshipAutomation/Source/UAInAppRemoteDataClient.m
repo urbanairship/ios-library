@@ -228,7 +228,7 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
 
         NSString *scheduleID = [UAInAppRemoteDataClient parseScheduleID:message];
         if (!scheduleID.length) {
-            UA_LERR("Missing ID: %@", message);
+            UA_LERR(@"Missing ID: %@", message);
             continue;
         }
 
@@ -254,7 +254,7 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
                                        completionHandler:^(BOOL result) {
                 dispatch_group_leave(dispatchGroup);
                 if (result) {
-                    UA_LTRACE("Updated in-app automation: %@", scheduleID);
+                    UA_LTRACE(@"Updated in-app automation: %@", scheduleID);
                 }
             }];
         } else if ([self isNewSchedule:message
@@ -296,7 +296,7 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
                             completionHandler:^(BOOL result) {
                 dispatch_group_leave(dispatchGroup);
                 if (result) {
-                    UA_LTRACE("Ended in-app automation: %@", scheduleID);
+                    UA_LTRACE(@"Ended in-app automation: %@", scheduleID);
                 }
             }];
         }
