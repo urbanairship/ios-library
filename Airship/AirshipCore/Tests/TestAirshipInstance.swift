@@ -18,7 +18,9 @@ public class TestAirshipInstance : NSObject, AirshipInstanceProtocol {
             _config = newValue;
         }
     }
-    
+
+    @objc
+    public var permissionsManager: PermissionsManager = PermissionsManager()
     
     private var _actionRegistry: ActionRegistry?
     @objc

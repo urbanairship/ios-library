@@ -450,6 +450,15 @@
 		6E46A27D272B63680089CDE3 /* ThomasEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E46A27B272B63680089CDE3 /* ThomasEnvironment.swift */; };
 		6E46A27F272B68660089CDE3 /* ThomasDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E46A27E272B68660089CDE3 /* ThomasDelegate.swift */; };
 		6E46A280272B68660089CDE3 /* ThomasDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E46A27E272B68660089CDE3 /* ThomasDelegate.swift */; };
+		6E49D7B228401D2E00C7BB9D /* Permission.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E49D7A628401D2D00C7BB9D /* Permission.swift */; };
+		6E49D7B328401D2E00C7BB9D /* Permission.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E49D7A628401D2D00C7BB9D /* Permission.swift */; };
+		6E49D7B428401D2E00C7BB9D /* PermissionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E49D7A728401D2D00C7BB9D /* PermissionDelegate.swift */; };
+		6E49D7B528401D2E00C7BB9D /* PermissionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E49D7A728401D2D00C7BB9D /* PermissionDelegate.swift */; };
+		6E49D7BC28401D2E00C7BB9D /* PermissionsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E49D7AB28401D2D00C7BB9D /* PermissionsManager.swift */; };
+		6E49D7BD28401D2E00C7BB9D /* PermissionsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E49D7AB28401D2D00C7BB9D /* PermissionsManager.swift */; };
+		6E49D7C228401D2E00C7BB9D /* PermissionStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E49D7AE28401D2D00C7BB9D /* PermissionStatus.swift */; };
+		6E49D7C328401D2E00C7BB9D /* PermissionStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E49D7AE28401D2D00C7BB9D /* PermissionStatus.swift */; };
+		6E49D7CD284028C600C7BB9D /* PermissionsManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E49D7CC284028C600C7BB9D /* PermissionsManagerTests.swift */; };
 		6E4E5B2926E53EE700198175 /* UABaseTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4E5B2826E53EE700198175 /* UABaseTest.m */; };
 		6E4E5B3B26E7F91600198175 /* LocalizationUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4E5B3926E7F91600198175 /* LocalizationUtils.swift */; };
 		6E4E5B3C26E7F91600198175 /* LocalizationUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4E5B3926E7F91600198175 /* LocalizationUtils.swift */; };
@@ -2032,6 +2041,11 @@
 		6E46A278272B53CD0089CDE3 /* ButtonClickModifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonClickModifiers.swift; sourceTree = "<group>"; };
 		6E46A27B272B63680089CDE3 /* ThomasEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasEnvironment.swift; sourceTree = "<group>"; };
 		6E46A27E272B68660089CDE3 /* ThomasDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasDelegate.swift; sourceTree = "<group>"; };
+		6E49D7A628401D2D00C7BB9D /* Permission.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Permission.swift; sourceTree = "<group>"; };
+		6E49D7A728401D2D00C7BB9D /* PermissionDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PermissionDelegate.swift; sourceTree = "<group>"; };
+		6E49D7AB28401D2D00C7BB9D /* PermissionsManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PermissionsManager.swift; sourceTree = "<group>"; };
+		6E49D7AE28401D2D00C7BB9D /* PermissionStatus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PermissionStatus.swift; sourceTree = "<group>"; };
+		6E49D7CC284028C600C7BB9D /* PermissionsManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsManagerTests.swift; sourceTree = "<group>"; };
 		6E4A00781F2A4A4A0069D8A0 /* UABaseTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UABaseTest.m; sourceTree = "<group>"; };
 		6E4E5B2726E53EE700198175 /* UABaseTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UABaseTest.h; sourceTree = "<group>"; };
 		6E4E5B2826E53EE700198175 /* UABaseTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UABaseTest.m; sourceTree = "<group>"; };
@@ -3962,6 +3976,25 @@
 			path = Source;
 			sourceTree = "<group>";
 		};
+		6E49D7CA2840257000C7BB9D /* PermissionsManager */ = {
+			isa = PBXGroup;
+			children = (
+				6E49D7A628401D2D00C7BB9D /* Permission.swift */,
+				6E49D7A728401D2D00C7BB9D /* PermissionDelegate.swift */,
+				6E49D7AB28401D2D00C7BB9D /* PermissionsManager.swift */,
+				6E49D7AE28401D2D00C7BB9D /* PermissionStatus.swift */,
+			);
+			name = PermissionsManager;
+			sourceTree = "<group>";
+		};
+		6E49D7CB284028A900C7BB9D /* PermissionsManager */ = {
+			isa = PBXGroup;
+			children = (
+				6E49D7CC284028C600C7BB9D /* PermissionsManagerTests.swift */,
+			);
+			name = PermissionsManager;
+			sourceTree = "<group>";
+		};
 		6E5C32B627C9A2C9005B2DDE /* AirshipRelease */ = {
 			isa = PBXGroup;
 			children = (
@@ -4462,6 +4495,7 @@
 		6E937300237615B400AA9C2A /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				6E49D7CA2840257000C7BB9D /* PermissionsManager */,
 				6E062CFF27165642001A74A1 /* Thomas */,
 				6E43218E26EA89B5009228AB /* AirshipCore.h */,
 				A61517AD26A97419008A41C4 /* Subscription Lists */,
@@ -5145,6 +5179,7 @@
 		CC64F0551D8B77E3009CEF27 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				6E49D7CB284028A900C7BB9D /* PermissionsManager */,
 				6E1C9C38271E90D1009EF9EF /* Thomas */,
 				6E64C87F27331ABA000EB887 /* PreferenceDataStoreTest.swift */,
 				6E4E5B2726E53EE700198175 /* UABaseTest.h */,
@@ -6653,9 +6688,11 @@
 				6E91B43C26868A6300DDB1A8 /* CircularRegion.swift in Sources */,
 				6EFD6D89272A53FB005B26F1 /* PagerIndicator.swift in Sources */,
 				6E6C3F9E27A4C3D4007F55C7 /* JSON.swift in Sources */,
+				6E49D7B228401D2E00C7BB9D /* Permission.swift in Sources */,
 				6E4E5B5626E8221500198175 /* AnalyticsEventConsumerProtocol.swift in Sources */,
 				3CA84AAC26DE255200A59685 /* EventAPIClientProtocol.swift in Sources */,
 				6E91B459268904D900DDB1A8 /* DeviceRegistrationEvent.swift in Sources */,
+				6E49D7BC28401D2E00C7BB9D /* PermissionsManager.swift in Sources */,
 				6E062D0727165709001A74A1 /* Label.swift in Sources */,
 				6E698DEC26790AC300654DB2 /* PreferenceDataStore.swift in Sources */,
 				6E91B45D268904D900DDB1A8 /* AssociateIdentifiersEvent.swift in Sources */,
@@ -6742,6 +6779,7 @@
 				3CA84AAA26DE255200A59685 /* EventManager.swift in Sources */,
 				6ED8079A273DA56000D1F455 /* ThomasViewController.swift in Sources */,
 				6E15B6DB26CC749F0099C92D /* RemoteConfigManager.swift in Sources */,
+				6E49D7C228401D2E00C7BB9D /* PermissionStatus.swift in Sources */,
 				6E6C3F8A27A266C0007F55C7 /* CachedValue.swift in Sources */,
 				6E1D8AD826CC66BE0049DACB /* RemoteConfigCache.swift in Sources */,
 				E99605A727A075C600365AE4 /* OpenRegistrationOptions.swift in Sources */,
@@ -6773,6 +6811,7 @@
 				6ED807A0273DBCFC00D1F455 /* ThomasActionRunner.swift in Sources */,
 				3CA84AB826DE257200A59685 /* Analytics.swift in Sources */,
 				3C63556326CF11D5006E9916 /* APNSRegistrationProtocol.swift in Sources */,
+				6E49D7B428401D2E00C7BB9D /* PermissionDelegate.swift in Sources */,
 				8401769626C5715E00373AF7 /* VersionMatcher.swift in Sources */,
 				6E91B44226868C3400DDB1A8 /* ProximityRegion.swift in Sources */,
 				6EC7E47C26A6060E0038CFDD /* TaskManagerProtocol.swift in Sources */,
@@ -7218,6 +7257,7 @@
 				6EAC295A27580063006DFA63 /* ChannelRegistrarTest.swift in Sources */,
 				CC64F1031D8B781C009CEF27 /* UAInboxMessageListTest.m in Sources */,
 				CC64F1201D8B781C009CEF27 /* UAScheduleActionTests.m in Sources */,
+				6E49D7CD284028C600C7BB9D /* PermissionsManagerTests.swift in Sources */,
 				DFB1EA2022275AF100CDBD7E /* UAInAppMessageAssetsTest.m in Sources */,
 				CC64F0F81D8B781C009CEF27 /* UAMessageCenterActionTest.m in Sources */,
 				CC944EDC1DB6AEC600C42269 /* UARequestTest.m in Sources */,
@@ -7378,9 +7418,11 @@
 				6E664BDA26C4CD8700A2C8E5 /* PasteboardAction.swift in Sources */,
 				6E6C3F9F27A4C3D4007F55C7 /* JSON.swift in Sources */,
 				A6AF8D2927E8C6C30068C7EE /* SubscriptionListActionPredicate.swift in Sources */,
+				6E49D7B328401D2E00C7BB9D /* Permission.swift in Sources */,
 				6EC7E46A269E0E370038CFDD /* AttributeUpdate.swift in Sources */,
 				A6F6726526E1163C008C69C3 /* JSONValueMatcher.swift in Sources */,
 				6E91B43D26868A6300DDB1A8 /* CircularRegion.swift in Sources */,
+				6E49D7BD28401D2E00C7BB9D /* PermissionsManager.swift in Sources */,
 				6E91B45A268904D900DDB1A8 /* DeviceRegistrationEvent.swift in Sources */,
 				6E698DED26790AC300654DB2 /* PreferenceDataStore.swift in Sources */,
 				E99605A227A071EA00365AE4 /* EmailRegistrationOptions.swift in Sources */,
@@ -7467,6 +7509,7 @@
 				6E15B6DC26CC749F0099C92D /* RemoteConfigManager.swift in Sources */,
 				6ED8079B273DA56000D1F455 /* ThomasViewController.swift in Sources */,
 				6E510C222721DA80006D9126 /* Container.swift in Sources */,
+				6E49D7C328401D2E00C7BB9D /* PermissionStatus.swift in Sources */,
 				6E6C3F8B27A266C0007F55C7 /* CachedValue.swift in Sources */,
 				A6AF655D271EF4360031410F /* ThomasViewModels.swift in Sources */,
 				E99605A827A075C600365AE4 /* OpenRegistrationOptions.swift in Sources */,
@@ -7498,6 +7541,7 @@
 				6ED807A1273DBCFC00D1F455 /* ThomasActionRunner.swift in Sources */,
 				3CA84AB926DE257200A59685 /* Analytics.swift in Sources */,
 				3C63556426CF11D5006E9916 /* APNSRegistrationProtocol.swift in Sources */,
+				6E49D7B528401D2E00C7BB9D /* PermissionDelegate.swift in Sources */,
 				6E664BB426C46BC600A2C8E5 /* URLActionPredicate.swift in Sources */,
 				6E91B4462686911B00DDB1A8 /* EventUtils.swift in Sources */,
 				6E1892DF2694F1C100417887 /* ChannelRegistrar.swift in Sources */,

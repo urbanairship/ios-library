@@ -7,7 +7,8 @@ protocol AirshipInstanceProtocol  {
     var actionRegistry: ActionRegistry { get }
     var applicationMetrics: ApplicationMetrics { get }
     var locationProvider: UALocationProvider? { get }
-    
+    var permissionsManager: PermissionsManager { get }
+
     #if !os(tvOS)
     var javaScriptCommandDelegate: JavaScriptCommandDelegate? { get set }
     var channelCapture: ChannelCapture { get }
@@ -28,7 +29,8 @@ class AirshipInstance : AirshipInstanceProtocol {
     public let actionRegistry: ActionRegistry
     public let applicationMetrics: ApplicationMetrics
     public let locationProvider: UALocationProvider?
-    
+    public let permissionsManager: PermissionsManager
+
     #if !os(tvOS)
     public weak var javaScriptCommandDelegate: JavaScriptCommandDelegate?
     public let channelCapture: ChannelCapture
@@ -45,6 +47,7 @@ class AirshipInstance : AirshipInstanceProtocol {
 
     init(config: Config) {
         let dataStore = PreferenceDataStore(appKey: config.appKey)
+        self.permissionsManager = PermissionsManager()
         self.config = RuntimeConfig(config: config, dataStore: dataStore)
         self.privacyManager = PrivacyManager(dataStore: dataStore, defaultEnabledFeatures: config.enabledFeatures)
         self.actionRegistry = ActionRegistry.defaultRegistry()

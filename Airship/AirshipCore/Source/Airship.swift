@@ -75,8 +75,12 @@ public class Airship : NSObject {
     /// - Note: For internal use only. :nodoc:
     @objc
     public var locationProvider: UALocationProvider? { return airshipInstance.locationProvider }
-    
-    #if !os(tvOS)
+
+    /// The Airship permissions manager.
+    @objc
+    public var permissionsManager: PermissionsManager { return airshipInstance.permissionsManager }
+
+#if !os(tvOS)
     /// A user configurable UAJavaScriptCommandDelegate
     /// - NOTE: this delegate is not retained.
     @objc
