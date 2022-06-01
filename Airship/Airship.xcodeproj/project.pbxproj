@@ -5706,9 +5706,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3CA0E2A9237CCE2600EE76CF /* Build configuration list for PBXNativeTarget "AirshipDebug" */;
 			buildPhases = (
-				3CA0E29C237CCE2600EE76CF /* Sources */,
-				3CA0E29F237CCE2600EE76CF /* Frameworks */,
 				3CA0E2A2237CCE2600EE76CF /* Headers */,
+				3CA0E29F237CCE2600EE76CF /* Frameworks */,
+				3CA0E29C237CCE2600EE76CF /* Sources */,
 				3CA0E2A8237CCE2600EE76CF /* Resources */,
 			);
 			buildRules = (
@@ -5768,9 +5768,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 494DD96D1B0EB677009C134E /* Build configuration list for PBXNativeTarget "AirshipCore" */;
 			buildPhases = (
-				494DD9521B0EB677009C134E /* Sources */,
-				494DD9531B0EB677009C134E /* Frameworks */,
 				494DD9541B0EB677009C134E /* Headers */,
+				494DD9531B0EB677009C134E /* Frameworks */,
+				494DD9521B0EB677009C134E /* Sources */,
 				494DD9551B0EB677009C134E /* Resources */,
 			);
 			buildRules = (
@@ -5912,9 +5912,9 @@
 			buildConfigurationList = 6E845374237E0271007D3B1E /* Build configuration list for PBXNativeTarget "AirshipAutomation" */;
 			buildPhases = (
 				6E845450237E072F007D3B1E /* Generate AirshipAutomationLib.h */,
-				6E8450FF237E0271007D3B1E /* Sources */,
-				6E8451F8237E0271007D3B1E /* Frameworks */,
 				6E8451FB237E0271007D3B1E /* Headers */,
+				6E8451F8237E0271007D3B1E /* Frameworks */,
+				6E8450FF237E0271007D3B1E /* Sources */,
 				6E845353237E0271007D3B1E /* Resources */,
 			);
 			buildRules = (
@@ -6030,9 +6030,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = DF6DD6531E7A1EB8000C281A /* Build configuration list for PBXNativeTarget "AirshipCore tvOS" */;
 			buildPhases = (
-				DF6DD5031E7A1EB8000C281A /* Sources */,
-				DF6DD5941E7A1EB8000C281A /* Frameworks */,
 				DF6DD5971E7A1EB8000C281A /* Headers */,
+				DF6DD5941E7A1EB8000C281A /* Frameworks */,
+				DF6DD5031E7A1EB8000C281A /* Sources */,
 				DF6DD6511E7A1EB8000C281A /* Resources */,
 			);
 			buildRules = (

@@ -5,7 +5,7 @@
 
 ## Version 16.7.0 May 16, 2022
 
-Path release that fixes build issues with Xcode 13.3 and adds missing obj-c class prefix to the `UAPreferenceCenterComponent` class. 
+Minor release that fixes build issues with Xcode 13.3 and adds missing obj-c class prefix to the `UAPreferenceCenterComponent` class. 
 
 ### Changes
 - Fixed class collision with CarbonCore.framework
