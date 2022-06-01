@@ -62,6 +62,10 @@ public class Channel : NSObject, Component, ChannelProtocol {
     @objc
     public static let audienceAttributesKey = "attributes"
 
+    // NOTE: For internal use only. :nodoc:
+    @objc
+    public static let legacyTagsSettingsKey = "UAPushTags"
+
     private let dataStore: PreferenceDataStore
     private let config: RuntimeConfig
     private let privacyManager: PrivacyManager
@@ -188,6 +192,8 @@ public class Channel : NSObject, Component, ChannelProtocol {
                                                     className: "UAChannel")
 
         super.init()
+
+        self.migrateTags()
         
         self.disableHelper.onChange = { [weak self] in
             self?.onComponentEnableChange()
@@ -204,6 +210,7 @@ public class Channel : NSObject, Component, ChannelProtocol {
 
         self.observeNotificationCenterEvents()
         self.updateRegistration()
+
     }
     
     // NOTE: For internal use only. :nodoc:
@@ -219,6 +226,28 @@ public class Channel : NSObject, Component, ChannelProtocol {
                   audienceManager: ChannelAudienceManager(dataStore: dataStore, config: config, privacyManager: privacyManager),
                   channelRegistrar: ChannelRegistrar(config: config, dataStore: dataStore),
                   notificationCenter: NotificationCenter.default)
+    }
+
+    // NOTE: For internal use only. :nodoc:
+    @objc
+    public func migrateTags() {
+        guard self.dataStore.keyExists(Channel.legacyTagsSettingsKey) else {
+            // Nothing to migrate
+            return
+        }
+
+        // Normalize tags for older SDK versions, and migrate to UAChannel as necessary
+        if let existingPushTags = self.dataStore.object(forKey: Channel.legacyTagsSettingsKey) as? [String] {
+            let existingChannelTags = self.tags
+            if existingChannelTags.count > 0 {
+                let combinedTagsSet = Set(existingPushTags).union(Set(existingChannelTags))
+                self.tags = Array(combinedTagsSet)
+            } else {
+                self.tags = existingPushTags
+            }
+        }
+
+        self.dataStore.removeObject(forKey: Channel.legacyTagsSettingsKey)
     }
     
     private func observeNotificationCenterEvents() {

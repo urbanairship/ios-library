@@ -640,5 +640,36 @@
     XCTAssertTrue(self.testRegistrar.fullRegistrationCalled);
 }
 
+- (void)testmigratePushTagsToChannelTags {
+    [self.dataStore setObject:@[@"cool", @"rad"] forKey:@"UAPushTags"];
+
+    NSArray *expectedTags = @[@"cool", @"rad"];
+
+    [self.channel migrateTags];
+
+    XCTAssertEqualObjects(self.channel.tags, expectedTags);
+    XCTAssertNil([self.dataStore objectForKey:UAChannel.legacyTagsSettingsKey]);
+}
+
+- (void)testMigratePushTagsToChannelTagsCombined {
+    [self.dataStore setObject:@[@"cool", @"rad"] forKey:UAChannel.legacyTagsSettingsKey];
+
+    self.channel.tags = @[@"not cool", @"not rad"];
+
+    [self.channel migrateTags];
+
+    XCTAssertNil([self.dataStore objectForKey:UAChannel.legacyTagsSettingsKey]);
+
+    NSArray *expected = @[@"cool", @"rad", @"not cool", @"not rad"];
+    XCTAssertEqualObjects([NSSet setWithArray:self.channel.tags], [NSSet setWithArray:expected]);
+}
+
+- (void)testMigratePushTagsToChannelTagsAlreadyMigrated {
+    self.channel.tags = @[@"some-random-value"];
+    [self.channel migrateTags];
+
+    XCTAssertEqualObjects(self.channel.tags, @[@"some-random-value"]);
+}
+
 @end
 

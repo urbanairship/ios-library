@@ -65,12 +65,13 @@ class AirshipInstance : AirshipInstanceProtocol {
                                     channel: channel,
                                     localeManager: localeManager,
                                     privacyManager: privacyManager)
-        
+
         let push = Push(config: self.config,
-                          dataStore: dataStore,
-                          channel: channel,
-                          analytics: analytics,
-                          privacyManager: self.privacyManager)
+                        dataStore: dataStore,
+                        channel: channel,
+                        analytics: analytics,
+                        privacyManager: self.privacyManager,
+                        permissionsManager: self.permissionsManager)
         
         let contact = Contact(dataStore: dataStore,
                                 config: self.config,

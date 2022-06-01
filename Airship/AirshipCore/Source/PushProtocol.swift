@@ -22,11 +22,16 @@ public protocol PushProtocol {
     var userPushNotificationsEnabled: Bool { get set }
 
     /// Enables/disables extended App Clip user notifications on this device through Airship.
-    /// Defaults to `false`. Once set to `true`, the user will be prompted for remote notifications.
-    /// - Warning: This property should only be set in an App Clip context. In all other cases, setting it to any value will have no effect.
-    /// If userPushNotificationsEnabled is set to 'false' , setting this property will have no effect.
+    /// Defaults to `false`. Once set to `true`, the user will be prompted for remote notifications if userPushNotificationsEnabled and the user currently has
+    /// ephemeral authorization.
     @objc
+    @available(*, deprecated, message: "Use requestExplicitPermissionWhenEphemeralKey instead")
     var extendedPushNotificationPermissionEnabled: Bool { get set }
+
+    /// When enabled, if the user has ephemeral notification authorization the SDK will promp the user for
+    /// notifications.  Defaults to `false`.
+    @objc
+    var requestExplicitPermissionWhenEphemeral: Bool { get set }
 
     /// The device token for this device, as a hex string.
     @objc

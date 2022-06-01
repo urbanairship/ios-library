@@ -423,7 +423,9 @@ fileprivate class EventTestPush: PushProtocol {
     var userPushNotificationsEnabled = true
     
     var extendedPushNotificationPermissionEnabled = false
-    
+
+    var requestExplicitPermissionWhenEphemeral = false
+
     var notificationOptions: UANotificationOptions = [.alert, .sound, .badge]
     
     var customCategories: Set<UNNotificationCategory> = []

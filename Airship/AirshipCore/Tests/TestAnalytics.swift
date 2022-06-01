@@ -5,7 +5,16 @@ import AirshipCore
 
 @objc(UATestAnalytics)
 public class TestAnalytics : NSObject, AnalyticsProtocol, Component {
- 
+
+    public var headerBlocks: [() -> [String : String]?] = []
+
+    public var headers: [String: String] {
+        var headers: [String: String] = [:]
+        headerBlocks.forEach {
+            headers.merge($0() ?? [:], uniquingKeysWith: { (current, _) in current })
+        }
+        return headers
+    }
     
     public var isComponentEnabled: Bool = true
 
@@ -48,5 +57,6 @@ public class TestAnalytics : NSObject, AnalyticsProtocol, Component {
     }
     
     public func add(_ headerBlock: @escaping () -> [String : String]?) {
+        headerBlocks.append(headerBlock)
     }
 }
