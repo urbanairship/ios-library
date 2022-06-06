@@ -4,21 +4,27 @@ import Foundation
 
 @available(iOS 13.0.0, tvOS 13.0, *)
 struct LayoutState {
-    static let empty = LayoutState(pagerState: nil, formState: nil)
+    static let empty = LayoutState(pagerState: nil, formState: nil, buttonState: nil)
     
     var pagerState: PagerState?
     var formState: FormState?
-    
-    func override(pagerState: PagerState? = nil, formState: FormState? = nil) -> LayoutState {
+    var buttonState: ButtonState?
+
+    func override(pagerState: PagerState?) -> LayoutState {
         var context = self
-        if (pagerState != nil) {
-            context.pagerState = pagerState
-        }
-        
-        if (formState != nil) {
-            context.formState = formState
-        }
-        
+        context.pagerState = pagerState
+        return context
+    }
+
+    func override(formState: FormState?) -> LayoutState {
+        var context = self
+        context.formState = formState
+        return context
+    }
+
+    func override(buttonState: ButtonState?) -> LayoutState {
+        var context = self
+        context.buttonState = buttonState
         return context
     }
 }

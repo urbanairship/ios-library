@@ -15,6 +15,7 @@ struct ImageButton : View {
     let constraints: ViewConstraints
   
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.layoutState) var layoutState
 
     @ViewBuilder
     var body: some View {
@@ -31,6 +32,9 @@ struct ImageButton : View {
                      behaviors: self.model.clickBehaviors,
                      actions: self.model.actions)
         .enableButton(self.model.enableBehaviors)
+        .environment(\.layoutState,
+                      layoutState.override(buttonState: ButtonState(identifier: self.model.identifier)))
+
     }
     
     @ViewBuilder

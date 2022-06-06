@@ -60,6 +60,12 @@ public protocol ThomasDelegate {
     func onPageSwiped(from: ThomasPagerInfo,
                       to: ThomasPagerInfo,
                       layoutContext: ThomasLayoutContext)
+
+    /// Called when actions should be ran.
+    /// - Parameters:
+    ///     - actions: The actions.
+    ///     - layoutContext: The layout context.
+    func onRunActions(actions: [String : Any], layoutContext: ThomasLayoutContext)
 }
 
 /// - Note: for internal use only.  :nodoc:
@@ -114,6 +120,24 @@ public class ThomasFormResult : NSObject {
     }
 }
 
+
+/// - Note: for internal use only.  :nodoc:
+@objc(UAThomasButtonInfo)
+public class ThomasButtonInfo : NSObject {
+    @objc
+    public let identifier: String
+
+
+    @objc
+    public init(identifier: String) {
+        self.identifier = identifier
+    }
+
+    public override var description: String {
+        "ThomasButtonInfo{identifier=\(identifier)}"
+    }
+}
+
 /// - Note: for internal use only.  :nodoc:
 @objc(UAThomasFormInfo)
 public class ThomasFormInfo : NSObject {
@@ -150,14 +174,18 @@ public class ThomasLayoutContext : NSObject {
     
     @objc
     public let pagerInfo: ThomasPagerInfo?
-    
+
     @objc
-    public init(formInfo: ThomasFormInfo?, pagerInfo: ThomasPagerInfo?) {
+    public let buttonInfo: ThomasButtonInfo?
+
+    @objc
+    public init(formInfo: ThomasFormInfo?, pagerInfo: ThomasPagerInfo?, buttonInfo: ThomasButtonInfo?) {
         self.formInfo = formInfo
         self.pagerInfo = pagerInfo
+        self.buttonInfo = buttonInfo
     }
 
     public override var description: String {
-        "ThomasLayoutContext{formInfo=\(String(describing: formInfo)), pagerInfo=\(String(describing: pagerInfo))}"
+        "ThomasLayoutContext{formInfo=\(String(describing: formInfo)), pagerInfo=\(String(describing: pagerInfo)), buttonInfo=\(String(describing: buttonInfo))}"
     }
 }

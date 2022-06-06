@@ -34,14 +34,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
         // Set the icon badge to zero on startup (optional)
         Airship.push.resetBadge()
-
-        // User notifications will not be enabled until userPushNotificationsEnabled is
-        // enabled on UAPush. Once enabled, the setting will be persisted and the user
-        // will be prompted to allow notifications. You should wait for a more appropriate
-        // time to enable push to increase the likelihood that the user will accept
-        // notifications.
-         Airship.push.userPushNotificationsEnabled = true
-
         return true
     }
     

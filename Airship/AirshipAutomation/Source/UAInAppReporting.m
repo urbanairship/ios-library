@@ -36,6 +36,9 @@ NSString *const UAInAppMessageFormContextIDKey = @"identifier";
 NSString *const UAInAppMessageFormContextSubmittedKey = @"submitted";
 NSString *const UAInAppMessageFormContextTypeKey = @"type";
 NSString *const UAInAppMessageFormContextResponseTypeKey = @"response_type";
+NSString *const UAInAppMessageButtonContextKey = @"button";
+NSString *const UAInAppMessageButtonContextIDKey = @"identifier";
+
 
 // Display
 NSString *const UAInAppMessageDisplayEventType = @"in_app_display";
@@ -97,6 +100,11 @@ NSString *const UAInAppMessagePageSwipeEventToIndexKey = @"to_page_index";
 NSString *const UAInAppMessagePageSwipeEventFromPageIDKey = @"from_page_identifier";
 NSString *const UAInAppMessagePageSwipeEventToPageIDKey = @"to_page_identifier";
 
+// Permission
+NSString *const UAInAppMessagePermissionResultEventType = @"in_app_permission_result";
+NSString *const UAInAppMessagePermissionResultEventPermissionKey = @"permission";
+NSString *const UAInAppMessagePermissionResultEventStartingStatusKey = @"starting_permission_status";
+NSString *const UAInAppMessagePermissionResultEventEndingStatusKey = @"ending_permission_status";
 
 // Form result
 NSString *const UAInAppMessageFormResultEventType = @"in_app_form_result";
@@ -246,6 +254,24 @@ NSString *const UAInAppMessageFormDisplayEventFormResponseTypeKey = @"form_respo
     NSDictionary *baseData = @{ UAInAppMessageButtonTapEventButtonIDKey : buttonID ?: @"" };
     
     return [[self alloc] initWithEventType:UAInAppMessageButtonTapEventType
+                                scheduleID:scheduleID
+                                   message:message
+                                  baseData:baseData];
+}
+
++ (instancetype)permissionResultEventWithScheduleID:(NSString *)scheduleID
+                                            message:(UAInAppMessage *)message
+                                         permission:(NSString *)permission
+                                     startingStatus:(NSString *)startingStatus
+                                       endingStatus:(NSString *)endingStatus {
+
+    NSDictionary *baseData = @{
+        UAInAppMessagePermissionResultEventPermissionKey: permission,
+        UAInAppMessagePermissionResultEventStartingStatusKey: startingStatus,
+        UAInAppMessagePermissionResultEventEndingStatusKey: endingStatus
+    };
+
+    return [[self alloc] initWithEventType:UAInAppMessagePermissionResultEventType
                                 scheduleID:scheduleID
                                    message:message
                                   baseData:baseData];
@@ -443,6 +469,12 @@ NSString *const UAInAppMessageFormDisplayEventFormResponseTypeKey = @"form_respo
         [formInfo setValue:self.layoutContext.formInfo.formResponseType forKey:UAInAppMessageFormContextResponseTypeKey];
         [formInfo setValue:self.layoutContext.formInfo.formType forKey:UAInAppMessageFormContextTypeKey];
         context[UAInAppMessageFormContextKey] = formInfo;
+    }
+
+    if (self.layoutContext.buttonInfo) {
+        context[UAInAppMessageButtonContextKey] = @{
+            UAInAppMessageButtonContextIDKey: self.layoutContext.buttonInfo.identifier
+        };
     }
     
     if (self.reportingContext.count) {

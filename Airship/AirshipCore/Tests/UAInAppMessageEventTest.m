@@ -495,6 +495,33 @@
     XCTAssertEqualObjects(event.eventType, @"in_app_resolution");
 }
 
+- (void)testPermissionResultEvent {
+    NSDictionary *expectedData = @{
+        @"id": @{
+            @"message_id": self.scheduleID
+        },
+        @"conversion_send_id": self.analytics.conversionSendID,
+        @"conversion_metadata": self.analytics.conversionPushMetadata,
+        @"locale": self.message.renderedLocale,
+        @"source": @"urban-airship",
+        @"permission": @"post_notifications",
+        @"starting_permission_status": @"denied",
+        @"ending_permission_status": @"granted"
+    };
+
+    UAInAppReporting *reporting = [UAInAppReporting permissionResultEventWithScheduleID:self.scheduleID
+                                                                                message:self.message
+                                                                             permission:@"post_notifications"
+                                                                         startingStatus:@"denied"
+                                                                           endingStatus:@"granted"];
+
+    [reporting record:self.analytics];
+    id<UAEvent> event = self.analytics.events[0];
+
+    XCTAssertEqualObjects(event.data, expectedData);
+    XCTAssertEqualObjects(event.eventType, @"in_app_permission_result");
+}
+
 /**
  * Test campaigns.
  */
@@ -548,6 +575,9 @@
                 @"submitted": @YES,
                 @"type": @"some form type",
                 @"response_type": @"some form response type"
+            },
+            @"button": @{
+                @"identifier": @"some-button",
             }
         }
     };
@@ -563,10 +593,12 @@
                                                              pageIdentifier:@"page1"
                                                                   pageCount:5
                                                                   completed:NO];
-    
+
+    UAThomasButtonInfo *buttonInfo = [[UAThomasButtonInfo alloc] initWithIdentifier:@"some-button"];
     
     UAThomasLayoutContext *layoutContext = [[UAThomasLayoutContext alloc] initWithFormInfo:formInfo
-                                                                                 pagerInfo:pagerInfo];
+                                                                                 pagerInfo:pagerInfo
+                                                                                buttonInfo:buttonInfo];
     
     UAInAppReporting *reporting = [UAInAppReporting displayEventWithScheduleID:self.scheduleID message:self.message];
     reporting.reportingContext = reportingContext;

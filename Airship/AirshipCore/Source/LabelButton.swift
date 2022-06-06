@@ -6,13 +6,15 @@ import SwiftUI
 /// Button view.
 @available(iOS 13.0.0, tvOS 13.0, *)
 struct LabelButton : View {
-
-    /// Button model.
     let model: LabelButtonModel
-    
-    /// View constriants.
     let constraints: ViewConstraints
-        
+    @Environment(\.layoutState) var layoutState
+
+    init(model: LabelButtonModel, constraints: ViewConstraints) {
+        self.model = model
+        self.constraints = constraints
+    }
+
     var body: some View {
         Button(action: {}) {
             Label(model: self.model.label, constraints: constraints)
@@ -33,6 +35,8 @@ struct LabelButton : View {
                      actions: self.model.actions)
         .enableButton(self.model.enableBehaviors)
         .buttonStyle(PlainButtonStyle())
+        .environment(\.layoutState,
+                      layoutState.override(buttonState: ButtonState(identifier: self.model.identifier)))
 
     }
 }

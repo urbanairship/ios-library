@@ -166,9 +166,9 @@ public class Push: NSObject, Component, PushProtocol {
         }
 
         self.permissionsManager.addAirshipEnabler(permission: .postNotifications) {
-            self.userPushNotificationsEnabled = true
-            self.pushEnabled = true
+            self.dataStore.setBool(true, forKey: Push.userPushNotificationsEnabledKey)
             self.privacyManager.enableFeatures(.push)
+            self.channel.updateRegistration()
         }
 
         self.waitForDeviceToken = self.channel.identifier == nil

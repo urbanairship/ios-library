@@ -105,11 +105,12 @@ struct RunActionsButtonModifier: ViewModifier {
     let actions: ActionsPayload?
     
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
+    @Environment(\.layoutState) var layoutState
 
     @ViewBuilder
     func body(content: Content) -> some View {
         content.addTapGesture {
-            thomasEnvironment.actionRunner.run(actions)
+            thomasEnvironment.runActions(actions, layoutState: layoutState)
         }
     }
 }

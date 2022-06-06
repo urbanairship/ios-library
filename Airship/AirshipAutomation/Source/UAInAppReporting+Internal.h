@@ -71,6 +71,12 @@ NS_SWIFT_NAME(InAppReporting)
                                        message:(UAInAppMessage *)message
                                        formResult:(UAThomasFormResult *)formResult;
 
++ (instancetype)permissionResultEventWithScheduleID:(NSString *)scheduleID
+                                            message:(UAInAppMessage *)message
+                                         permission:(NSString *)permission
+                                     startingStatus:(NSString *)startingStatus
+                                       endingStatus:(NSString *)endingStatus;
+
 @property(nonatomic, copy, nullable) NSDictionary *campaigns;
 @property(nonatomic, copy, nullable) NSDictionary *reportingContext;
 @property(nonatomic, strong, nullable) UAThomasLayoutContext *layoutContext;

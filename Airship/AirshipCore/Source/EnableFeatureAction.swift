@@ -10,7 +10,7 @@
  * - "location": To enable location updates.
  * - "background_location": To enable location and allow background updates.
  *
- * Valid situations: UASituationForegroundPush, UASituationLaunchedFromPush,
+ * Valid situations:  UASituationLaunchedFromPush,
  * UASituationWebViewInvocation, UASituationManualInvocation,
  * UASituationForegroundInteractiveButton, and UASituationAutomation
  *
@@ -20,7 +20,12 @@
  */
 @objc(UAEnableFeatureAction)
 public class EnableFeatureAction : NSObject, Action {
-    
+
+    /// Metadata key for a block that takes the permission results`(PermissionStatus, PermissionStatus) -> Void`.
+    /// - Note: For internal use only. :nodoc:
+    @objc
+    public static let resultCompletionHandlerMetadata = PromptPermissionAction.resultReceiverMetadataKey
+
     @objc
     public static let name = "enable_feature"
     
@@ -36,99 +41,79 @@ public class EnableFeatureAction : NSObject, Action {
     @objc
     public static let backgroundLocationActionValue = "background_location"
 
-    private let push: () -> PushProtocol
+    private let permissionPrompter: () -> PermissionPrompter
     private let location: () -> UALocationProvider?
 
-    @objc
-    public override convenience init() {
-        self.init(push: { return Airship.push },
-                  location: { return Airship.shared.locationProvider })
+    required init(permissionPrompter: @escaping () -> PermissionPrompter,
+                  location: @escaping () -> UALocationProvider?) {
+        self.permissionPrompter = permissionPrompter
+        self.location = location
     }
 
-    @objc
-    public init(push: @escaping () -> Push,
-                location: @escaping () -> UALocationProvider?) {
-        self.push = push
-        self.location = location
+    public convenience override init() {
+        self.init(
+            permissionPrompter: {
+                return AirshipPermissionPrompter(permissionsManager: Airship.shared.permissionsManager)
+            },
+            location: { return Airship.shared.locationProvider }
+        )
     }
     
     public func acceptsArguments(_ arguments: ActionArguments) -> Bool {
-        guard arguments.situation != .backgroundPush,
-              arguments.situation != .backgroundInteractiveButton else {
+        switch (arguments.situation) {
+        case .automation: fallthrough
+        case .manualInvocation: fallthrough
+        case .launchedFromPush: fallthrough
+        case .webViewInvocation: fallthrough
+        case .foregroundPush: fallthrough
+        case .foregroundInteractiveButton:
+            return (try? self.parsePermission(arguments: arguments)) != nil
+        case .backgroundPush: fallthrough
+        case .backgroundInteractiveButton: fallthrough
+        @unknown default:
             return false
         }
-
-        let validValues = [
-            EnableFeatureAction.userNotificationsActionValue,
-            EnableFeatureAction.locationActionValue,
-            EnableFeatureAction.backgroundLocationActionValue
-        ]
-        
-        guard let value = arguments.value as? String,
-              validValues.contains(value) else {
-            return false
-        }
-        
-        return true
     }
 
     public func perform(with arguments: ActionArguments, completionHandler: @escaping UAActionCompletionHandler) {
-        
-        switch (arguments.value as? String ?? "") {
-        case EnableFeatureAction.userNotificationsActionValue:
-            enableUserNotifications(completionHandler)
-        case EnableFeatureAction.locationActionValue:
-            enableLocation(completionHandler)
-        case EnableFeatureAction.backgroundLocationActionValue:
-            enableBackgroundLocation(completionHandler)
-        default:
-            completionHandler(ActionResult.empty())
+
+        var permission: Permission!
+        do {
+            permission = try parsePermission(arguments: arguments)
+        } catch {
+            completionHandler(ActionResult(error: error))
+            return
         }
-    }
 
-    private func navigateToSystemSettings(_ completionHandler: @escaping UAActionCompletionHandler) {
-        if let url = URL(string: UIApplication.openSettingsURLString) {
-            UIApplication.shared.open(url, options: [:]) { _ in
-                completionHandler(ActionResult.empty())
-            }
-        } else {
-            AirshipLogger.error("Unable to navigate to system settings.")
-            completionHandler(ActionResult.empty())
+        if (EnableFeatureAction.backgroundLocationActionValue == (arguments.value as? String)) {
+            location()?.isBackgroundLocationUpdatesAllowed = true
         }
-    }
 
-    func enableUserNotifications(_ completionHandler: @escaping UAActionCompletionHandler) {
-        Airship.shared.privacyManager.enableFeatures(.push)
+        self.permissionPrompter().prompt(permission: permission,
+                                         enableAirshipUsage: true,
+                                         fallbackSystemSettings: true) { start, end in
 
-        push().userPushNotificationsEnabled = true
+            if let metadata = arguments.metadata {
+               let resultReceiver = metadata[PromptPermissionAction.resultReceiverMetadataKey] as? PermissionResultReceiver
 
-        if (push().userPromptedForNotifications)  {
-            if (push().authorizedNotificationSettings == []) {
-                navigateToSystemSettings(completionHandler)
-            } else {
-                completionHandler(ActionResult.empty())
-            }
-        } else {
-            completionHandler(ActionResult.empty())
-        }
-    }
-
-    func enableBackgroundLocation(_ completionHandler: @escaping UAActionCompletionHandler) {
-        location()?.isBackgroundLocationUpdatesAllowed = true
-        enableLocation(completionHandler)
-    }
-
-    func enableLocation(_ completionHandler: @escaping UAActionCompletionHandler) {
-        Airship.shared.privacyManager.enableFeatures(.location)
-
-        if let locationProvider = location() {
-            locationProvider.isLocationUpdatesEnabled = true
-            if (locationProvider.isLocationDeniedOrRestricted()) {
-                navigateToSystemSettings(completionHandler)
-                return
+                resultReceiver?(permission, start, end)
             }
         }
-        
+
         completionHandler(ActionResult.empty())
+    }
+
+    private func parsePermission(arguments: ActionArguments) throws -> Permission {
+        let value = arguments.value as? String ?? ""
+        switch (value) {
+        case EnableFeatureAction.userNotificationsActionValue:
+            return .postNotifications
+        case EnableFeatureAction.locationActionValue:
+            return .location
+        case EnableFeatureAction.backgroundLocationActionValue:
+            return .location
+        default:
+            throw AirshipErrors.error("Invalid argument \(value)")
+        }
     }
 }

@@ -534,5 +534,19 @@ public class Utils : NSObject {
         }
         return nil
     }
-    
+
+    /// Needed to get stringValue in InAppAutomation. Delete after its converted to swift.
+    /// - Note: For internal use only. :nodoc:
+    @objc
+    public class func permissionString(_ permission: Permission) -> String {
+        return permission.stringValue
+    }
+
+    /// Needed to get stringValue in InAppAutomation. Delete after its converted to swift.
+    /// - Note: For internal use only. :nodoc:
+    @objc
+    public class func permissionStatusString(_ status: PermissionStatus) -> String {
+        return status.stringValue
+    }
+
 }

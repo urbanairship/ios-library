@@ -129,5 +129,16 @@
 		<key>predicate</key>
 		<string>UASubscriptionListActionPredicate</string>
 	</dict>
+	<dict>
+		<key>predicate</key>
+		<string>UAPromptPermissionActionPredicate</string>
+		<key>action</key>
+		<string>UAPromptPermissionAction</string>
+		<key>names</key>
+		<array>
+			<string>prompt_permission_action</string>
+			<string>^pp</string>
+		</array>
+	</dict>
 </array>
 </plist>

@@ -5,7 +5,6 @@ import Foundation
 @available(iOS 13.0.0, tvOS 13.0, *)
 class ThomasEnvironment : ObservableObject {
     private let delegate: ThomasDelegate
-    let actionRunner: ThomasActionRunner = ThomasActionRunner()
     let extensions: ThomasExtensions?
     let imageLoader: ImageLoader;
     
@@ -97,7 +96,20 @@ class ThomasEnvironment : ObservableObject {
             onDismiss()
         }
     }
-        
+
+    func runActions(_ actionsPayload: ActionsPayload?, layoutState: LayoutState) {
+        guard let actionsPayload = actionsPayload else {
+            return
+        }
+
+        guard let actionValues = actionsPayload.value.unWrap() as? [String : Any] else {
+            AirshipLogger.error("Invalid actions payload: \(actionsPayload)")
+            return
+        }
+
+        self.delegate.onRunActions(actions: actionValues,
+                                   layoutContext: layoutState.toLayoutContext())
+    }
 }
 
 enum DismissReason {
@@ -151,10 +163,18 @@ private extension PagerState {
 }
 
 @available(iOS 13.0.0, tvOS 13.0, *)
+private extension ButtonState {
+    func toButtonInfo() -> ThomasButtonInfo {
+        return ThomasButtonInfo(identifier: self.identifier)
+    }
+}
+
+@available(iOS 13.0.0, tvOS 13.0, *)
 private extension LayoutState {
     func toLayoutContext() -> ThomasLayoutContext {
         ThomasLayoutContext(formInfo: self.formState?.toFormInfo(),
-                            pagerInfo: self.pagerState?.toPagerInfo())
+                            pagerInfo: self.pagerState?.toPagerInfo(),
+                            buttonInfo: self.buttonState?.toButtonInfo())
     }
 }
 

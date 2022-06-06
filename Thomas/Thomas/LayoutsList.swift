@@ -72,6 +72,18 @@ struct ContentView_Previews: PreviewProvider {
 }
 
 class Delegate : ThomasDelegate {
+    func onRunActions(actions: [String: Any], layoutContext: ThomasLayoutContext) {
+        print("Thomas.onRunActions{actions=\(actions), context=\(layoutContext)}")
+        let permissionReceiver: (Permission, PermissionStatus, PermissionStatus) -> Void = { permission, start, end in
+            print("Thomas.permissionResult{permission=\(permission), start=\(start), end=\(end), context=\(layoutContext)}")
+        }
+
+        let metadata: [AnyHashable: Any] = [PromptPermissionAction.resultReceiverMetadataKey: permissionReceiver]
+        ActionRunner.run(actionValues: actions, situation: .manualInvocation, metadata: metadata) { result in
+              AirshipLogger.trace("Finishing running actions with result: \(result)")
+        }
+    }
+
     func onFormSubmitted(formResult: ThomasFormResult, layoutContext: ThomasLayoutContext) {
         print("Thomas.onFormSubmitted{formResult=\(formResult), context=\(layoutContext)}")
     }
