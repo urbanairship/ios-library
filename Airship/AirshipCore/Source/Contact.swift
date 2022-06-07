@@ -177,6 +177,7 @@ public class Contact : NSObject, Component, ContactProtocol {
     private let date : AirshipDate
     private let notificationCenter: NotificationCenter
     private let cachedSubscriptionLists: CachedValue<(String, [String: [ChannelScope]])>
+    private let cachedSubscriptionListsHistory: CachedList<(String, ScopedSubscriptionListUpdate)>
     private let rateLimiter = RateLimiter()
 
     /// A delegate to receive callbacks where there is a contact conflict.
@@ -375,9 +376,8 @@ public class Contact : NSObject, Component, ContactProtocol {
         self.disableHelper = ComponentDisableHelper(dataStore: dataStore,
                                                     className: "Contact")
         
-        self.cachedSubscriptionLists = CachedValue<(String, [String: [ChannelScope]])>(date: date,
-                                                                            maxCacheAge: 600)
-
+        self.cachedSubscriptionLists = CachedValue(date: date, maxCacheAge: 600)
+        self.cachedSubscriptionListsHistory = CachedList(date: date, maxCacheAge: 600)
         super.init()
         
         self.disableHelper.onChange = { [weak self] in
@@ -644,10 +644,20 @@ public class Contact : NSObject, Component, ContactProtocol {
             }
            
             do {
-                let resolved = try self.resolveSubscriptionLists(contactID)
-                let combinedLists =  AudienceUtils.applySubscriptionListsUpdates(resolved,
-                                                                                 updates: self.pendingSubscriptionListUpdates)
-                callback?(AudienceUtils.wrap(combinedLists), nil)
+                var subscriptions = try self.resolveSubscriptionLists(contactID)
+
+                // Local history
+                let localHistory = self.cachedSubscriptionListsHistory.values.compactMap { cached in
+                    cached.0 == contactID ? cached.1 : nil
+                }
+                subscriptions = AudienceUtils.applySubscriptionListsUpdates(subscriptions,
+                                                                          updates: localHistory)
+
+                // Pending
+                subscriptions = AudienceUtils.applySubscriptionListsUpdates(subscriptions,
+                                                                            updates: self.pendingSubscriptionListUpdates)
+
+                callback?(AudienceUtils.wrap(subscriptions), nil)
             } catch {
                 callback?(nil, error)
             }
@@ -706,8 +716,6 @@ public class Contact : NSObject, Component, ContactProtocol {
         guard let contactInfo = self.lastContactInfo else {
             return
         }
-        
-        self.cachedSubscriptionLists.value = nil
         
         if (contactInfo.isAnonymous == false || self.anonContactData != nil) {
             self.addOperation(ContactOperation.reset())
@@ -806,13 +814,18 @@ public class Contact : NSObject, Component, ContactProtocol {
                 return nil
             }
             
+            if let updates = updatePayload.subscriptionListsUpdates {
+                for update in updates {
+                    self.cachedSubscriptionListsHistory.append((contactInfo.contactID, update))
+                }
+            }
+            
             return self.contactAPIClient.update(identifier: contactInfo.contactID,
                                                 tagGroupUpdates: updatePayload.tagUpdates,
                                                 attributeUpdates: updatePayload.attrubuteUpdates,
                                                 subscriptionListUpdates: updatePayload.subscriptionListsUpdates) { response, error in
                 Contact.logOperationResult(operation: operation, response: response, error: error)
                 if (response?.isSuccess == true) {
-                    self.cachedSubscriptionLists.value = nil
                     if (contactInfo.isAnonymous) {
                         self.updateAnonData(updates: updatePayload)
                     }

@@ -40,7 +40,7 @@ public class ChannelAudienceManager : NSObject, ChannelAudienceManagerProtocol {
     static let legacyPendingTagGroupsKey = "com.urbanairship.tag_groups.pending_channel_tag_groups_mutations"
     static let legacyPendingAttributesKey = "com.urbanairship.channel_attributes.registrar_persistent_queue_key"
     
-    static let maxCacheTime : TimeInterval = 600 // 10 minutes
+    static let maxCacheTime: TimeInterval = 600 // 10 minutes
 
     private let dataStore: PreferenceDataStore
     private let privacyManager: PrivacyManager
@@ -54,9 +54,12 @@ public class ChannelAudienceManager : NSObject, ChannelAudienceManagerProtocol {
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
     private let updateLock = Lock()
-    
+
+    private let cachedSubscriptionLists: CachedValue<[String]>
+    private let cachedSubscriptionListsHistory: CachedList<SubscriptionListUpdate>
+
     @objc
-    public var pendingAttributeUpdates : [AttributeUpdate] {
+    public var pendingAttributeUpdates: [AttributeUpdate] {
         get {
             var updates : [AttributeUpdate]!
             updateLock.sync {
@@ -67,7 +70,7 @@ public class ChannelAudienceManager : NSObject, ChannelAudienceManagerProtocol {
     }
     
     @objc
-    public var pendingTagGroupUpdates : [TagGroupUpdate] {
+    public var pendingTagGroupUpdates: [TagGroupUpdate] {
         get {
             var updates : [TagGroupUpdate]!
             updateLock.sync {
@@ -77,8 +80,7 @@ public class ChannelAudienceManager : NSObject, ChannelAudienceManagerProtocol {
         }
     }
     
-    private let cachedSubscriptionLists : CachedValue<[String]>
-    
+
     @objc
     public var channelID: String? {
         didSet {
@@ -94,13 +96,13 @@ public class ChannelAudienceManager : NSObject, ChannelAudienceManagerProtocol {
     }
     
     init(dataStore: PreferenceDataStore,
-        taskManager: TaskManagerProtocol,
-        subscriptionListClient: SubscriptionListAPIClientProtocol,
-        updateClient: ChannelBulkUpdateAPIClientProtocol,
-        privacyManager: PrivacyManager,
-        notificationCenter: NotificationCenter,
-        date: AirshipDate) {
-        
+         taskManager: TaskManagerProtocol,
+         subscriptionListClient: SubscriptionListAPIClientProtocol,
+         updateClient: ChannelBulkUpdateAPIClientProtocol,
+         privacyManager: PrivacyManager,
+         notificationCenter: NotificationCenter,
+         date: AirshipDate) {
+
         self.dataStore = dataStore;
         self.taskManager = taskManager;
         self.privacyManager = privacyManager;
@@ -108,29 +110,31 @@ public class ChannelAudienceManager : NSObject, ChannelAudienceManagerProtocol {
         self.updateClient = updateClient
         self.notificationCenter = notificationCenter
         self.date = date
-        self.cachedSubscriptionLists = CachedValue<[String]>(date: date,
-                                                             maxCacheAge: ChannelAudienceManager.maxCacheTime)
+        self.cachedSubscriptionLists = CachedValue(date: date,
+                                                   maxCacheAge: ChannelAudienceManager.maxCacheTime)
+        self.cachedSubscriptionListsHistory = CachedList(date: date,
+                                                         maxCacheAge: ChannelAudienceManager.maxCacheTime)
         super.init()
-        
+
         self.taskManager.register(taskID: ChannelAudienceManager.updateTaskID, dispatcher: self.dispatcher) { [weak self] task in
             self?.handleUpdateTask(task)
         }
-        
+
         self.migrateMutations()
-        
+
         notificationCenter.addObserver(
             self,
             selector: #selector(checkPrivacyManager),
             name: PrivacyManager.changeEvent,
             object: nil)
-        
+
         notificationCenter.addObserver(
             self,
             selector: #selector(enqueueTask),
             name: RuntimeConfig.configUpdatedEvent,
             object: nil)
-        
-        
+
+
         self.checkPrivacyManager()
     }
     
@@ -217,8 +221,17 @@ public class ChannelAudienceManager : NSObject, ChannelAudienceManagerProtocol {
             }
             
             do {
-                let listIDs = try self.resolveSubscriptionLists(channelID)
-                callback?(self.applyPendingSubscriptionLists(listIDs), nil)
+                var listIDs = try self.resolveSubscriptionLists(channelID)
+
+                // Localy history
+                listIDs = self.applySubscriptionListUpdates(listIDs, updates: self.cachedSubscriptionListsHistory.values)
+
+                // Pending
+                if let pending = ChannelAudienceManager.collapse(self.getUpdates()) {
+                    listIDs = self.applySubscriptionListUpdates(listIDs, updates: pending.subscriptionListUpdates)
+                }
+
+                callback?(listIDs, nil)
             } catch {
                 callback?(nil, error)
             }
@@ -260,16 +273,14 @@ public class ChannelAudienceManager : NSObject, ChannelAudienceManagerProtocol {
         return listIDs
     }
     
-    private func applyPendingSubscriptionLists(_ ids: [String]) -> [String] {
+    private func applySubscriptionListUpdates(_ ids: [String], updates: [SubscriptionListUpdate]) -> [String] {
         var result = ids
-        if let pending = ChannelAudienceManager.collapse(self.getUpdates()) {
-            pending.subscriptionListUpdates.forEach { update in
-                switch(update.type) {
-                case .subscribe:
-                    result.append(update.listId)
-                case .unsubscribe:
-                    result.removeAll(where: { $0 == update.listId })
-                }
+        updates.forEach { update in
+            switch(update.type) {
+            case .subscribe:
+                result.append(update.listId)
+            case .unsubscribe:
+                result.removeAll(where: { $0 == update.listId })
             }
         }
         
@@ -302,6 +313,10 @@ public class ChannelAudienceManager : NSObject, ChannelAudienceManagerProtocol {
             task.taskCompleted()
             return
         }
+               
+        for listUpdate in update.subscriptionListUpdates {
+            self.cachedSubscriptionListsHistory.append(listUpdate)
+        }
 
         let disposable = self.updateClient.update(channelID: channelID,
                                                   subscriptionListUpdates: update.subscriptionListUpdates,
@@ -312,7 +327,6 @@ public class ChannelAudienceManager : NSObject, ChannelAudienceManagerProtocol {
                 AirshipLogger.debug("Update finished with response: \(response)")
                 if (response.isSuccess) {
                     self.popFirstUpdate()
-                    self.cachedSubscriptionLists.value = nil
                     task.taskCompleted()
                     self.enqueueTask()
                     

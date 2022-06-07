@@ -1194,5 +1194,46 @@ class ContactTest: XCTestCase {
 
         wait(for: [expectation], timeout: 10.0)
     }
+    
+    func testFetchSubscriptionListsLocalHistoryApplied() throws {
+        // Resolve the contact ID
+        notificationCenter.post(Notification(name: AppStateTracker.didBecomeActiveNotification))
+        XCTAssertEqual(1, self.taskManager.enqueuedRequests.count)
+        self.apiClient.resolveCallback = { channelID, callback in
+            callback(ContactAPIResponse(status: 200, contactID: "some-contact-id", isAnonymous: true), nil)
+        }
+        XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).completed)
+
+        self.contact.editSubscriptionLists { editor in
+            editor.subscribe("bar", scope: .app)
+        }
+
+        // Apply update
+        let update = XCTestExpectation(description: "update")
+        self.apiClient.updateCallback = { contactID, tagUpdates, attributeUpdates, subscriptionListUpdates, callback in
+            callback(HTTPResponse(status: 200), nil)
+            update.fulfill()
+        }
+        XCTAssertTrue(self.taskManager.launchSync(taskID: Contact.updateTaskID).completed)
+        wait(for: [update], timeout: 10.0)
+
+        XCTAssertTrue(self.contact.pendingSubscriptionListUpdates.isEmpty)
+
+
+        let apiResult: [String: [ChannelScope]] = ["foo": [.web]]
+        self.apiClient.fetchSubscriptionListsCallback = { identifier, callback in
+            XCTAssertEqual("some-contact-id", identifier)
+            callback(ContactSubscriptionListFetchResponse(200, apiResult), nil)
+        }
+
+        let expected: [String: [ChannelScope]] = ["foo": [.web], "bar": [.app]]
+        let expectation = XCTestExpectation(description: "callback called")
+        self.contact.fetchSubscriptionLists { result, error in
+            XCTAssertEqual(AudienceUtils.wrap(expected), result)
+            expectation.fulfill()
+        }
+
+        wait(for: [expectation], timeout: 10.0)
+    }
 
 }

@@ -151,49 +151,6 @@ class ChannelAudienceManagerTest: XCTestCase {
         wait(for: [expectation], timeout: 10.0)
     }
     
-    func testGetCacheInvalidatesOnUpdate() throws {
-        self.date.dateOverride = Date()
-        
-        var apiResult = ["cool", "story"]
-        
-        self.subscriptionListClient.getCallback = { identifier, callback in
-            XCTAssertEqual("some-channel", identifier)
-            callback(SubscriptionListFetchResponse(status: 200, listIDs: apiResult), nil)
-        }
-    
-        // Populate cache
-        var expectation = XCTestExpectation(description: "callback called")
-        self.audienceManager.fetchSubscriptionLists() { lists, error in
-            XCTAssertEqual(["cool", "story"], lists)
-            expectation.fulfill()
-        }
-        wait(for: [expectation], timeout: 10.0)
-        
-        // Update
-        let editor = self.audienceManager.editSubscriptionLists()
-        editor.subscribe("pizza")
-        editor.apply()
-
-        expectation = XCTestExpectation(description: "callback called")
-        self.updateClient.updateCallback = { identifier, subscriptions, tags, attributes, callback in
-            expectation.fulfill()
-            callback(HTTPResponse(status: 200), nil)
-        }
-        
-        XCTAssertTrue(self.taskManager.launchSync(taskID: ChannelAudienceManager.updateTaskID).completed)
-        wait(for: [expectation], timeout: 10.0)
-        
-        apiResult = ["some-other-result"]
-        
-        // From api
-        expectation = XCTestExpectation(description: "callback called")
-        self.audienceManager.fetchSubscriptionLists() { lists, error in
-            XCTAssertEqual(["some-other-result"], lists)
-            expectation.fulfill()
-        }
-        wait(for: [expectation], timeout: 10.0)
-    }
-    
     func testNoPendingOperations() throws {
         let task = self.taskManager.launchSync(taskID: ChannelAudienceManager.updateTaskID)
         XCTAssertTrue(task.completed)
