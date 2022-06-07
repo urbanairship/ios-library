@@ -188,7 +188,6 @@ public class Airship : NSObject {
             return
         }
         
-        
         if (config == nil) {
             guard Bundle.main.path(forResource: "AirshipConfig", ofType: "plist") != nil else {
                 AirshipLogger.impError("AirshipConfig.plist file is missing. Unable to takeOff.")
@@ -204,6 +203,14 @@ public class Airship : NSObject {
         }
         
         self.logLevel = resolvedConfig.logLevel
+
+        UALegacyLoggingBridge.logger = { logLevel, message, fileID, function, line in
+            AirshipLogger.log(logLevel: LogLevel(rawValue: logLevel) ?? .none,
+                              message: message,
+                              fileID: fileID,
+                              line: line,
+                              function: function)
+        }
         
         AirshipLogger.info("Airship TakeOff! SDK Version \(AirshipVersion.get()), App Key: \(resolvedConfig.appKey), inProduction: \(resolvedConfig.inProduction)")
         
@@ -244,18 +251,32 @@ public class Airship : NSObject {
             NotificationCenter.default.post(name: airshipReadyNotification, object: nil)
         }
     }
-    
-    /// Sets the Airship log level. The log level defaults to `.debug` in developer mode,
+
+    /// Airship log handler. All Airship log will be routed through the handler.
+    ///
+    /// The default logger will os.Logger on iOS 14+, and `print` on older devices.
+    ///
+    /// Custom loggers should be set before takeOff.
+    @objc
+    public static var logHandler: AirshipLogHandler {
+        get {
+            return AirshipLogger.logHandler
+        }
+        set {
+            AirshipLogger.logHandler = newValue
+        }
+    }
+
+    /// Airship log level. The log level defaults to `.debug` in developer mode,
     /// and `.error` in production. Values set before `takeOff` will be overridden by
     /// the value from the AirshipConfig.
-    /// - Parameters:
-    ///     - logLevel: The log level. Use .none to disable all logs.
-    ///
     @objc
-    public static var logLevel: LogLevel = .error {
-        didSet {
-            uaLogLevel = logLevel.rawValue
-            AirshipLogger.logLevel = logLevel
+    public static var logLevel: LogLevel {
+        get {
+            return AirshipLogger.logLevel
+        }
+        set {
+            AirshipLogger.logLevel = newValue
         }
     }
     

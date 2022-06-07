@@ -173,7 +173,7 @@ NSString *const UALocationUpdatesEnabled = @"UALocationUpdatesEnabled";
 #if !TARGET_OS_TV   // significantLocationChangeMonitoringAvailable not available on tvOS
     // Check if significant location updates are available
     if (![CLLocationManager significantLocationChangeMonitoringAvailable]) {
-        UA_LTRACE("Significant location updates unavailable.");
+        UA_LTRACE(@"Significant location updates unavailable.");
         [self stopLocationUpdates];
         return;
     }
@@ -188,7 +188,7 @@ NSString *const UALocationUpdatesEnabled = @"UALocationUpdatesEnabled";
     // Check authorization
     switch ([self permissionStatus]) {
         case UAPermissionStatusDenied:
-            UA_LTRACE("Authorization denied. Unable to start location updates.");
+            UA_LTRACE(@"Authorization denied. Unable to start location updates.");
             [self stopLocationUpdates];
             break;
 
@@ -208,7 +208,7 @@ NSString *const UALocationUpdatesEnabled = @"UALocationUpdatesEnabled";
         return;
     }
 
-    UA_LINFO("Stopping location updates.");
+    UA_LINFO(@"Stopping location updates.");
 
 #if !TARGET_OS_TV   // REVISIT - significant location updates not available on tvOS - should we use regular location updates?
     [self.locationManager stopMonitoringSignificantLocationChanges];
@@ -231,7 +231,7 @@ NSString *const UALocationUpdatesEnabled = @"UALocationUpdatesEnabled";
         return;
     }
 
-    UA_LINFO("Starting location updates.");
+    UA_LINFO(@"Starting location updates.");
 
 #if !TARGET_OS_TV
     [self.locationManager startMonitoringSignificantLocationChanges];
@@ -381,7 +381,7 @@ NSString *const UALocationUpdatesEnabled = @"UALocationUpdatesEnabled";
     }
 
     if (!self.isAutoRequestAuthorizationEnabled) {
-        UA_LINFO("Location updates require authorization, auto request authorization is disabled. You must manually request location authorization.");
+        UA_LINFO(@"Location updates require authorization, auto request authorization is disabled. You must manually request location authorization.");
         completionHandler(UAPermissionStatusNotDetermined);
         return;
     }
@@ -391,7 +391,7 @@ NSString *const UALocationUpdatesEnabled = @"UALocationUpdatesEnabled";
         return;
     }
 
-    UA_LINFO("Requesting location authorization.");
+    UA_LINFO(@"Requesting location authorization.");
 #if TARGET_OS_TV //requestAlwaysAuthorization is not available on tvOS
     [self.locationManager requestWhenInUseAuthorization];
 #else
