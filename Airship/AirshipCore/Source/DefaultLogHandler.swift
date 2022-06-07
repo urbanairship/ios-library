@@ -8,7 +8,7 @@ import os
  */
 class DefaultLogHandler: AirshipLogHandler {
     @available(macOS 11.0, iOS 14.0, watchOS 7.0, tvOS 14.0, *)
-    static var logger: Logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "", category: "Airship")
+    private static let logger: Logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "", category: "Airship")
 
     func log(logLevel: LogLevel, message: String, fileID: String, line: UInt, function: String) {
         if #available(macOS 11.0, iOS 14.0, watchOS 7.0, tvOS 14.0, *) {
@@ -36,7 +36,7 @@ private extension LogLevel {
         case .trace: return OSLogType.debug
         case .debug: return OSLogType.debug
         case .info: return OSLogType.info
-        case .warn: return OSLogType.info
+        case .warn: return OSLogType.default
         case .error: return OSLogType.error
         default: return OSLogType.default
         }
