@@ -32,13 +32,13 @@
 + (id<UASDKModule>)loadWithDependencies:(nonnull NSDictionary *)dependencies {
     UAPreferenceDataStore *dataStore = dependencies[UASDKDependencyKeys.dataStore];
     UAChannel *channel = dependencies[UASDKDependencyKeys.channel];
-    UAAnalytics *analytics = dependencies[UASDKDependencyKeys.analytics];
     UAPrivacyManager *privacyManager = dependencies[UASDKDependencyKeys.privacyManager];
-    
+    UAPermissionsManager *permissionsManager = dependencies[UASDKDependencyKeys.permissionsManager];
+
     UALocation *location = [UALocation locationWithDataStore:dataStore
                                                      channel:channel
-                                                   analytics:analytics
-                                              privacyManager:privacyManager];
+                                              privacyManager:privacyManager
+                                          permissionsManager:permissionsManager];
     return [[self alloc] initWithLocation:location];
 
 }

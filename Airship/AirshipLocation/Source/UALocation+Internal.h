@@ -9,6 +9,7 @@
 @protocol UAChannelProtocol;
 @protocol UAAnalyticsProtocol;
 @class UAAnalytics;
+@class UAPermissionsManager;
 
 
 /*
@@ -33,11 +34,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
 
 /**
- * The system version.
- */
-@property (nonatomic, strong) UASystemVersion *systemVersion;
-
-/**
  * Flag indicating if location updates have been started or not.
  */
 @property (nonatomic, assign, getter=isLocationUpdatesStarted) BOOL locationUpdatesStarted;
@@ -46,13 +42,15 @@ NS_ASSUME_NONNULL_BEGIN
  * Location factory method.
  * @param dataStore The data store.
  * @param channel The airship channel.
- * @param analytics The analytics instance.
+ * @param privacyManager The privacy manager.
+ * @param permissionsManager The permissions manager.
  * @return A location instance.
  */
 + (instancetype)locationWithDataStore:(UAPreferenceDataStore *)dataStore
                               channel:(id<UAChannelProtocol>)channel
-                            analytics:(id<UAAnalyticsProtocol>)analytics
-                       privacyManager:(UAPrivacyManager *)privacyManager;
+                       privacyManager:(UAPrivacyManager *)privacyManager
+                   permissionsManager:(UAPermissionsManager *)permissionsManager;
+
 
 NS_ASSUME_NONNULL_END
 

@@ -8,7 +8,7 @@ import Foundation
 public protocol EventManagerDelegate: NSObjectProtocol {
     /// Get the current analytics headers.
     @objc
-    func analyticsHeaders() -> [String : String]?
+    func analyticsHeaders(completionHandler: @escaping ([String : String]) -> Void)
 }
 
 /// Event manager handles storing and uploading events to Airship.
@@ -355,13 +355,18 @@ public class EventManager: NSObject, EventManagerProtocol {
     }
 
     private func prepareHeaders() -> [String: String] {
-        var headers: [String: String] = [:]
-
-        UADispatcher.main.doSync {
-            headers = self.delegate?.analyticsHeaders() ?? headers
+        guard let delegate = delegate else {
+            return [:]
         }
 
-        return headers;
+        let semaphore = Semaphore()
+        var headers: [String: String]!
+        delegate.analyticsHeaders { result in
+            headers = result
+            semaphore.signal()
+        }
+        semaphore.wait()
+        return headers
     }
 
     private func prepareEvents() -> [[String : AnyHashable]] {

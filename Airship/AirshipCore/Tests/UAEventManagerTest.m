@@ -19,6 +19,8 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
 @property (nonatomic, strong) UATestTaskManager *testTaskManager;
 @property(nonatomic, copy) UADelay *(^delayProvider)(NSTimeInterval);
 @property(nonatomic, strong) NSManagedObjectContext *coreDataContext;
+@property(nonatomic, strong) NSDictionary *headers;
+
 @end
 
 @implementation UAEventManagerTest
@@ -54,6 +56,17 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
     self.eventManager.delegate = self.mockDelegate;
     self.eventManager.uploadsEnabled = YES;
     self.coreDataContext = [self createCoreDataContext];
+
+
+   
+    self.headers = [NSMutableDictionary dictionary];
+    [[[self.mockDelegate stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:2];
+        void (^completionHandler)(NSDictionary *) = (__bridge void(^)(NSDictionary *))arg;
+        completionHandler(self.headers ?: @{});
+    }] analyticsHeadersWithCompletionHandler:OCMOCK_ANY];
+
 }
 
 - (NSManagedObjectContext *)createCoreDataContext {
@@ -206,8 +219,7 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
         returnBlock(@[eventData]);
     }] ignoringNonObjectArgs] fetchEventsWithLimit:500 completionHandler:OCMOCK_ANY];
 
-    NSDictionary *headers = @{@"header": @"headerValue"};
-    [[[self.mockDelegate stub] andReturn:headers] analyticsHeaders];
+    self.headers = @{@"header": @"headerValue"};
 
     XCTestExpectation *clientCalled = [self expectationWithDescription:@"client upload callled."];
 
@@ -244,7 +256,7 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
         }
 
         return YES;
-    }] headers:headers completionHandler:OCMOCK_ANY];
+    }] headers:self.headers completionHandler:OCMOCK_ANY];
 
     // Expect the store to delete the event
     [[self.mockStore expect] deleteEventsWithIDs:@[@"mock_event_id"]];
@@ -288,8 +300,7 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
         returnBlock(events);
     }] ignoringNonObjectArgs] fetchEventsWithLimit:500 completionHandler:OCMOCK_ANY];
 
-    NSDictionary *headers = @{@"header": @"headerValue"};
-    [[[self.mockDelegate stub] andReturn:headers] analyticsHeaders];
+    self.headers = @{@"header": @"headerValue"};
 
     XCTestExpectation *clientCalled = [self expectationWithDescription:@"client upload callled."];
 
@@ -305,7 +316,7 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
     }] uploadEvents:[OCMArg checkWithBlock:^BOOL(id obj) {
         NSArray *uploadedEventIDs = [(NSArray *)obj valueForKey:@"event_id"];
         return [uploadedEventIDs isEqualToArray:expectedEventIDs];
-    }] headers:headers completionHandler:OCMOCK_ANY];
+    }] headers:self.headers completionHandler:OCMOCK_ANY];
 
     // Expect the store to delete the event
     [[self.mockStore expect] deleteEventsWithIDs:expectedEventIDs];
@@ -391,7 +402,6 @@ static NSString * const UAEventManagerUploadTask = @"UAEventManager.upload";
     [self.mockClient verify];
     [self.mockStore verify];
     XCTAssertFalse(task.completed);
-
 }
 
 /**

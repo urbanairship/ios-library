@@ -56,15 +56,16 @@ class AirshipInstance : AirshipInstanceProtocol {
         self.localeManager = LocaleManager(dataStore: dataStore)
         
         let channel = Channel(dataStore: dataStore,
-                                config: self.config,
-                                privacyManager: self.privacyManager,
-                                localeManager: self.localeManager)
+                              config: self.config,
+                              privacyManager: self.privacyManager,
+                              localeManager: self.localeManager)
         
         let analytics = Analytics(config: self.config,
-                                    dataStore: dataStore,
-                                    channel: channel,
-                                    localeManager: localeManager,
-                                    privacyManager: privacyManager)
+                                  dataStore: dataStore,
+                                  channel: channel,
+                                  localeManager: localeManager,
+                                  privacyManager: privacyManager,
+                                  permissionsManager: permissionsManager)
 
         let push = Push(config: self.config,
                         dataStore: dataStore,
@@ -102,7 +103,8 @@ class AirshipInstance : AirshipInstanceProtocol {
                                         push: push,
                                         remoteData: remoteDataManager,
                                         analytics: analytics,
-                                        privacyManager: self.privacyManager)
+                                        privacyManager: self.privacyManager,
+                                        permissionsManager: self.permissionsManager)
         
         var components: [Component] = [contact, channel, analytics, namedUser, remoteDataManager, push]
         components.append(contentsOf: moduleLoader.components)

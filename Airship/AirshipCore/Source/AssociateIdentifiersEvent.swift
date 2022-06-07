@@ -3,8 +3,7 @@
 /**
  * - Note: For Internal use only :nodoc:
  */
-@objc(UAAssociateIdentifiersEvent)
-public class AssociateIdentifiersEvent : NSObject, Event {
+class AssociateIdentifiersEvent : NSObject, Event {
 
     @objc
     public var priority: EventPriority {

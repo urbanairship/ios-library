@@ -21,6 +21,8 @@ public class SDKDependencyKeys : NSObject {
     public static let analytics = "analytics"
     @objc
     public static let privacyManager = "privacy_manager"
+    @objc
+    public static let permissionsManager = "permissions_manager"
 }
 
 /// NOTE: For internal use only. :nodoc:
@@ -53,7 +55,8 @@ public class ModuleLoader : NSObject {
                 push: Push,
                 remoteData: RemoteDataManager,
                 analytics: Analytics,
-                privacyManager: PrivacyManager) {
+                privacyManager: PrivacyManager,
+                permissionsManager: PermissionsManager) {
 
         let dependencies: [String : Any] = [
             SDKDependencyKeys.config: config,
@@ -63,7 +66,8 @@ public class ModuleLoader : NSObject {
             SDKDependencyKeys.push: push,
             SDKDependencyKeys.remoteData: remoteData,
             SDKDependencyKeys.analytics: analytics,
-            SDKDependencyKeys.privacyManager: privacyManager
+            SDKDependencyKeys.privacyManager: privacyManager,
+            SDKDependencyKeys.permissionsManager: permissionsManager
         ]
         
         let modules = ModuleLoader.loadModules(dependencies)

@@ -12,14 +12,13 @@
 
 @property (nonatomic, strong) UALocation *location;
 @property (nonatomic, strong) UAPrivacyManager *privacyManager;
+@property (nonatomic, strong) UAPermissionsManager *permissionsManager;
+
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
-@property (nonatomic, strong) id mockAnalytics;
 @property (nonatomic, strong) UATestChannel *testChannel;
 @property (nonatomic, strong) id mockLocationManager;
 @property (nonatomic, strong) id mockedApplication;
 @property (nonatomic, strong) id mockedBundle;
-@property (nonatomic, strong) id mockProcessInfo;
-@property (nonatomic, assign) NSUInteger testOSMajorVersion;
 @end
 
 
@@ -30,7 +29,6 @@
     self.mockedApplication = [self mockForClass:[UIApplication class]];
     [[[self.mockedApplication stub] andReturn:self.mockedApplication] sharedApplication];
 
-    self.mockAnalytics = [self mockForClass:[UAAnalytics class]];
     self.mockLocationManager = [self mockForClass:[CLLocationManager class]];
     self.testChannel = [[UATestChannel alloc] init];
 
@@ -38,7 +36,12 @@
 
     self.privacyManager = [[UAPrivacyManager alloc] initWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
 
-    self.location = [UALocation locationWithDataStore:self.dataStore channel:self.testChannel analytics:self.mockAnalytics privacyManager:self.privacyManager];
+    self.permissionsManager = [[UAPermissionsManager alloc] init];
+
+    self.location = [UALocation locationWithDataStore:self.dataStore
+                                              channel:self.testChannel
+                                       privacyManager:self.privacyManager
+                                   permissionsManager:self.permissionsManager];
         
     self.location.locationManager = self.mockLocationManager;
     self.location.componentEnabled = YES;
@@ -47,35 +50,17 @@
     [[[self.mockedBundle stub] andReturn:self.mockedBundle] mainBundle];
     [[[self.mockedBundle stub] andReturn:@"Always"] objectForInfoDictionaryKey:@"NSLocationAlwaysAndWhenInUseUsageDescription"];
      [[[self.mockedBundle stub] andReturn:@"Always"] objectForInfoDictionaryKey:@"NSLocationWhenInUseUsageDescription"];
-
-    self.testOSMajorVersion = 10;
-    self.mockProcessInfo = [self mockForClass:[NSProcessInfo class]];
-    [[[self.mockProcessInfo stub] andReturn:self.mockProcessInfo] processInfo];
-
-    [[[[self.mockProcessInfo stub] andDo:^(NSInvocation *invocation) {
-        NSOperatingSystemVersion arg;
-        [invocation getArgument:&arg atIndex:2];
-
-        BOOL result = self.testOSMajorVersion >= arg.majorVersion;
-        [invocation setReturnValue:&result];
-    }] ignoringNonObjectArgs] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){0, 0, 0}];
 }
 
 - (void)tearDown {
-    [self.mockProcessInfo stopMocking];
     self.location = nil;
     [super tearDown];
 }
 
 - (void)stubLocationAuthorizationStatus:(CLAuthorizationStatus)status {
-#if (XCODE_VERSION_MAJOR >= 1200)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunguarded-availability"
-    [OCMStub(ClassMethod(([(CLLocationManager *)self.mockLocationManager authorizationStatus]))) andReturnValue:OCMOCK_VALUE(status)];
-#pragma clang diagnostic pop
-#else
-    [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(status)] authorizationStatus];
-#endif
+    if (@available(iOS 14.0, *)) {
+        [(CLLocationManager *)[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(status)] authorizationStatus];
+    }
 }
 
 /**
@@ -177,7 +162,6 @@
 - (void)testEnableLocationInactiveStartsLocation {
     // Make the app inactive
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateInactive)] applicationState];
-
 
     // Authorize location
     [self stubLocationAuthorizationStatus:kCLAuthorizationStatusAuthorizedAlways];
@@ -631,9 +615,6 @@
     [[[self.mockedBundle stub] andReturn:@"Always"] objectForInfoDictionaryKey:@"NSLocationAlwaysAndWhenInUseUsageDescription"];
     [[[self.mockedBundle stub] andReturn:@"When In Use"] objectForInfoDictionaryKey:@"NSLocationWhenInUseUsageDescription"];
 
-    // Set mock iOS version to 11+
-    self.testOSMajorVersion = 11;
-
     // Make the app active
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
 
@@ -660,9 +641,6 @@
 - (void)testMissingAlwaysAndWhenInUseLocationDescription {
     // Stop mocking the bundle to remove the description
     [self.mockedBundle stopMocking];
-
-    // Set mock iOS version to 11+
-    self.testOSMajorVersion = 11;
 
     // Make the app active
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
@@ -708,34 +686,6 @@
 
     // Verify we did not request location authorization
     [self.mockLocationManager verify];
-}
-
-/**
- * Test if the location settings are included in the CRA depending on the data collection status.
- */
-- (void)testLocationSettingsWithDataCollection {
-    // both data collection and location services enabled
-    UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
-    [self.privacyManager enableFeatures:UAFeaturesLocation];
-    self.location.locationUpdatesEnabled = YES;
-    
-    XCTestExpectation *completed = [self expectationWithDescription:@"called"];
-    [self.testChannel extendPayload:payload completionHandler:^(UAChannelRegistrationPayload *payload) {
-        XCTAssertTrue([payload.channel.locationEnabledNumber boolValue]);
-        [completed fulfill];
-    }];
-       
-    [self waitForTestExpectations];
-    
-    [self.privacyManager disableFeatures:UAFeaturesLocation];
-             
-    completed = [self expectationWithDescription:@"called"];
-    [self.testChannel extendPayload:payload completionHandler:^(UAChannelRegistrationPayload *payload) {
-        XCTAssertFalse([payload.channel.locationEnabledNumber boolValue]);
-        [completed fulfill];
-    }];
-       
-    [self waitForTestExpectations];    
 }
 
 /**

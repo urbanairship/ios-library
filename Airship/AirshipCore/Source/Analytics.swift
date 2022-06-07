@@ -75,6 +75,7 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
     private var localeManager: LocaleManagerProtocol
     private var appStateTracker: AppStateTrackerProtocol
     private var handledFirstForegroundTransition = false
+    private var permissionsManager: PermissionsManager
 
     // Screen tracking state
     private var currentScreen: String?
@@ -132,6 +133,7 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
     ///   - channel: The channel instance.
     ///   - localeManager: A UALocaleManager.
     ///   - privacyManager: A PrivacyManager.
+    ///   - permissionsManager: The permissions manager.
     /// - Returns: A new analytics instance.
     @objc
     public convenience init(
@@ -139,19 +141,20 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
         dataStore: PreferenceDataStore,
         channel: ChannelProtocol,
         localeManager: LocaleManagerProtocol,
-        privacyManager: PrivacyManager
+        privacyManager: PrivacyManager,
+        permissionsManager: PermissionsManager
     ) {
-        self.init(
-                    config: config,
-                    dataStore: dataStore,
-                    channel: channel,
-                    eventManager: EventManager(config: config, dataStore: dataStore, channel: channel),
-                    notificationCenter: NotificationCenter.default,
-                    date: AirshipDate(),
-                    dispatcher: UADispatcher.main,
-                    localeManager: localeManager,
-                    appStateTracker: AppStateTracker.shared,
-                    privacyManager: privacyManager)
+        self.init(config: config,
+                  dataStore: dataStore,
+                  channel: channel,
+                  eventManager: EventManager(config: config, dataStore: dataStore, channel: channel),
+                  notificationCenter: NotificationCenter.default,
+                  date: AirshipDate(),
+                  dispatcher: UADispatcher.main,
+                  localeManager: localeManager,
+                  appStateTracker: AppStateTracker.shared,
+                  privacyManager: privacyManager,
+                  permissionsManager: permissionsManager)
     }
 
     /// Factory method to create an analytics instance. Used for testing.
@@ -167,6 +170,7 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
     ///   - localeManager: The locale manager.
     ///   - appStateTracker: The app state tracker.
     ///   - privacyManager: The privacy manager.
+    ///   - permissionsManager: The permissions manager.
     /// - Returns: A new analytics instance.
     @objc
     public init(
@@ -179,7 +183,8 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
         dispatcher: UADispatcher,
         localeManager: LocaleManagerProtocol,
         appStateTracker: AppStateTrackerProtocol,
-        privacyManager: PrivacyManager
+        privacyManager: PrivacyManager,
+        permissionsManager: PermissionsManager
     ) {
         self.config = config
         self.dataStore = dataStore
@@ -191,6 +196,7 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
         self.localeManager = localeManager
         self.privacyManager = privacyManager
         self.appStateTracker = appStateTracker
+        self.permissionsManager = permissionsManager
 
         self.sdkExtensions = []
         self.headerBlocks = []
@@ -301,7 +307,7 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
 
     /// :nodoc:
     @objc
-    public func analyticsHeaders() -> [String : String]? {
+    public func analyticsHeaders(completionHandler: @escaping ([String : String]) -> Void) {
         var headers: [String : String] = [:]
 
         // Device info
@@ -342,8 +348,21 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
             }
         }
 
-        return headers;
+        let group = DispatchGroup()
+        group.enter()
 
+        self.permissionsManager.configuredPermissions.forEach { permission in
+            group.enter()
+            self.permissionsManager.checkPermissionStatus(permission) { status in
+                headers["X-UA-Permission-\(permission.stringValue)"] = status.stringValue
+                group.leave()
+            }
+        }
+
+        group.leave()
+        group.notify(queue: DispatchQueue.global()) {
+            completionHandler(headers);
+        }
     }
 
     // MARK: -

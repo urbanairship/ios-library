@@ -67,6 +67,7 @@ public class PermissionsManager: NSObject {
     ///
     /// - Parameters:
     ///     - permission: The permission.
+    @objc
     public func requestPermission(_ permission: Permission) {
         return requestPermission(permission,
                                  enableAirshipUsageOnGrant: false,
@@ -80,6 +81,7 @@ public class PermissionsManager: NSObject {
     /// - Parameters:
     ///     - permission: The permission.
     ///     - completionHandler: The completion handler.
+    @objc
     public func requestPermission(_ permission: Permission,
                                   completionHandler: ((PermissionStatus) -> Void)?) {
         return requestPermission(permission,
@@ -95,6 +97,7 @@ public class PermissionsManager: NSObject {
     ///     - permission: The permission.
     ///     - enableAirshipUsageOnGrant: `true` to allow any Airship features that need the permission to be enabled as well, e.g., enabling push privacy manager feature and user notifications if `.postNotifications` is granted.
     ///     - completionHandler: The completion handler.
+    @objc
     public func requestPermission(_ permission: Permission,
                                   enableAirshipUsageOnGrant: Bool,
                                   completionHandler: ((PermissionStatus) -> Void)?) {
@@ -127,7 +130,9 @@ public class PermissionsManager: NSObject {
         }
     }
 
-    func addAirshipEnabler(permission: Permission, onEnable: @escaping () -> Void) {
+    /// - Note: for internal use only.  :nodoc:
+    @objc
+    public func addAirshipEnabler(permission: Permission, onEnable: @escaping () -> Void) {
         if (airshipEnablers[permission] == nil) {
             airshipEnablers[permission] = [onEnable]
         } else {

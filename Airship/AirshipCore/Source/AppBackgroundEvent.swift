@@ -3,8 +3,7 @@
 /**
  * - Note: For Internal use only :nodoc:
  */
-@objc(UAAppBackgroundEvent)
-class AppBackgroundEvent : AppExitEvent {
+class AppBackgroundEvent: AppExitEvent {
     @objc
     public override var eventType : String {
         get {

@@ -3,7 +3,6 @@
 /**
  * - Note: For Internal use only :nodoc:
  */
-@objc(UAAppInitEvent)
 class AppInitEvent : NSObject, Event {
 
     private lazy var analytics = Airship.requireComponent(ofType: AnalyticsProtocol.self)

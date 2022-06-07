@@ -3,7 +3,6 @@
 /**
  * - Note: For Internal use only :nodoc:
  */
-@objc(UADeviceRegistrationEvent)
 class DeviceRegistrationEvent : NSObject, Event {
     
     init(channel: ChannelProtocol?,

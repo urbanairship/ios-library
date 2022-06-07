@@ -3,7 +3,6 @@
 /**
  * - Note: For Internal use only :nodoc:
  */
-@objc(UAAppForegroundEvent)
 class AppForegroundEvent : AppInitEvent {
     open override func gatherData() -> [AnyHashable : Any] {
         var data = super.gatherData()

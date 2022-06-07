@@ -20,15 +20,10 @@ NSString *const UALocationAutoRequestAuthorizationEnabled = @"UALocationAutoRequ
 NSString *const UALocationBackgroundUpdatesAllowed = @"UALocationBackgroundUpdatesAllowed";
 NSString *const UALocationUpdatesEnabled = @"UALocationUpdatesEnabled";
 
-@interface UALocation()
-@property (nonatomic, strong) id<UAAnalyticsProtocol> analytics;
+@interface UALocation() <UAPermissionDelegate>
 @property (nonatomic, strong) UAPrivacyManager *privacyManager;
 @property (nonatomic, strong) UAComponentDisableHelper *disableHelper;
-
-@end
-
-@interface UAPrivacyManager()
-@property (nonatomic, strong) NSNotificationCenter *notificationCenter;
+@property (nonatomic, strong) UAPermissionsManager *permissionsManager;
 @end
 
 @implementation UALocation
@@ -37,20 +32,19 @@ NSString *const UALocationUpdatesEnabled = @"UALocationUpdatesEnabled";
     return (UALocation *)[UAirship componentForClassName:NSStringFromClass([self class])];
 }
 
-
 - (instancetype)initWithDataStore:(UAPreferenceDataStore *)dataStore
                           channel:(id<UAChannelProtocol>)channel
-                        analytics:(id<UAAnalyticsProtocol>)analytics
-                   privacyManager:(UAPrivacyManager *)privacyManager {
+                   privacyManager:(UAPrivacyManager *)privacyManager
+               permissionsManager:(UAPermissionsManager *)permissionsManager {
+
 
     self = [super init];
 
     if (self) {
         self.locationManager = [[CLLocationManager alloc] init];
         self.dataStore = dataStore;
-        self.analytics = analytics;
         self.privacyManager = privacyManager;
-        self.systemVersion = [[UASystemVersion alloc] init];
+        self.permissionsManager = permissionsManager;
         self.locationManager.delegate = self;
 
         self.disableHelper = [[UAComponentDisableHelper alloc] initWithDataStore:dataStore
@@ -86,9 +80,10 @@ NSString *const UALocationUpdatesEnabled = @"UALocationUpdatesEnabled";
             [self updateLocationService];
         }
 
-        [self.analytics addAnalyticsHeadersBlock:^NSDictionary<NSString *,NSString *> *{
-            UA_STRONGIFY(self)
-            return [self analyticsHeaders];
+        [permissionsManager addAirshipEnablerWithPermission:UAPermissionLocation onEnable:^{
+            [self.dataStore setBool:YES forKey:UALocationUpdatesEnabled];
+            [privacyManager enableFeatures:UAFeaturesLocation];
+            [self updateLocationService];
         }];
 
         [channel addRegistrationExtender:^(UAChannelRegistrationPayload *payload, void (^ completionHandler)(UAChannelRegistrationPayload * _Nonnull)) {
@@ -99,6 +94,7 @@ NSString *const UALocationUpdatesEnabled = @"UALocationUpdatesEnabled";
 
             completionHandler(payload);
         }];
+        [permissionsManager setDelegate:self permission:UAPermissionLocation];
     }
 
     return self;
@@ -106,43 +102,13 @@ NSString *const UALocationUpdatesEnabled = @"UALocationUpdatesEnabled";
 
 + (instancetype)locationWithDataStore:(UAPreferenceDataStore *)dataStore
                               channel:(id<UAChannelProtocol>)channel
-                            analytics:(id<UAAnalyticsProtocol>)analytics
-                       privacyManager:(UAPrivacyManager *)privacyManager{
-    return [[self alloc] initWithDataStore:dataStore channel:channel analytics:analytics privacyManager:privacyManager];
-}
+                       privacyManager:(UAPrivacyManager *)privacyManager
+                   permissionsManager:(nonnull UAPermissionsManager *)permissionsManager {
 
-#pragma mark -
-#pragma mark Analytics
-
-- (NSDictionary<NSString *, NSString *> *)analyticsHeaders {
-    if ([self.privacyManager isEnabled:UAFeaturesLocation] && self.componentEnabled) {
-        return @{
-            @"X-UA-Location-Permission": [self locationProviderPermissionStatus],
-            @"X-UA-Location-Service-Enabled": self.locationUpdatesEnabled ? @"true" : @"false"
-        };
-    } else {
-        return @{
-            @"X-UA-Location-Service-Enabled": @"false"
-        };
-    }
-}
-
-- (NSString *)locationProviderPermissionStatus {
-    if (![CLLocationManager locationServicesEnabled]) {
-        return @"SYSTEM_LOCATION_DISABLED";
-    } else {
-        switch ([CLLocationManager authorizationStatus]) {
-            case kCLAuthorizationStatusDenied:
-            case kCLAuthorizationStatusRestricted:
-                return @"NOT_ALLOWED";
-            case kCLAuthorizationStatusAuthorizedAlways:
-                return @"ALWAYS_ALLOWED";
-            case kCLAuthorizationStatusAuthorizedWhenInUse:
-                return @"FOREGROUND_ALLOWED";
-            case kCLAuthorizationStatusNotDetermined:
-                return @"UNPROMPTED";
-        }
-    }
+    return [[self alloc] initWithDataStore:dataStore
+                                   channel:channel
+                            privacyManager:privacyManager
+                        permissionsManager:permissionsManager];
 }
 
 - (BOOL)isAutoRequestAuthorizationEnabled {
@@ -220,20 +186,17 @@ NSString *const UALocationUpdatesEnabled = @"UALocationUpdatesEnabled";
     }
 
     // Check authorization
-    switch ([CLLocationManager authorizationStatus]) {
-        case kCLAuthorizationStatusDenied:
-        case kCLAuthorizationStatusRestricted:
+    switch ([self permissionStatus]) {
+        case UAPermissionStatusDenied:
             UA_LTRACE("Authorization denied. Unable to start location updates.");
             [self stopLocationUpdates];
             break;
 
-        case kCLAuthorizationStatusNotDetermined:
-            [self requestAuthorization];
+        case UAPermissionStatusNotDetermined:
+            [self.permissionsManager requestPermission:UAPermissionLocation];
             break;
 
-        case kCLAuthorizationStatusAuthorizedWhenInUse:
-        case kCLAuthorizationStatusAuthorizedAlways:
-        default:
+        case UAPermissionStatusGranted:
             [self startLocationUpdates];
             break;
     }
@@ -270,7 +233,7 @@ NSString *const UALocationUpdatesEnabled = @"UALocationUpdatesEnabled";
 
     UA_LINFO("Starting location updates.");
 
-#if !TARGET_OS_TV   // REVISIT - significant location updates not available on tvOS - should we use regular location updates?
+#if !TARGET_OS_TV
     [self.locationManager startMonitoringSignificantLocationChanges];
 #endif
     self.locationUpdatesStarted = YES;
@@ -279,35 +242,6 @@ NSString *const UALocationUpdatesEnabled = @"UALocationUpdatesEnabled";
     if ([strongDelegate respondsToSelector:@selector(locationUpdatesStarted)]) {
         [strongDelegate locationUpdatesStarted];
     }
-}
-
-- (void)requestAuthorization NS_EXTENSION_UNAVAILABLE("Method not available in app extensions") {
-    // Already requested
-    if ([CLLocationManager authorizationStatus] != kCLAuthorizationStatusNotDetermined) {
-        return;
-    }
-
-    if (!self.isAutoRequestAuthorizationEnabled) {
-        UA_LINFO("Location updates require authorization, auto request authorization is disabled. You must manually request location authorization.");
-        return;
-    }
-
-    if ([UIApplication sharedApplication].applicationState != UIApplicationStateActive) {
-        UA_LINFO("Location updates require authorization, but app is not active. Authorization will be requested next time the app is active.");
-        return;
-    }
-
-    if (![self usageDescriptionsAreValid]) {
-        return;
-    }
-
-    UA_LINFO("Requesting location authorization.");
-#if TARGET_OS_TV //requestAlwaysAuthorization is not available on tvOS
-    [self.locationManager requestWhenInUseAuthorization];
-#else
-    // This will potentially result in 'when in use' authorization
-    [self.locationManager requestAlwaysAuthorization];
-#endif
 }
 
 - (BOOL)usageDescriptionsAreValid {
@@ -341,27 +275,11 @@ NSString *const UALocationUpdatesEnabled = @"UALocationUpdatesEnabled";
         return NO;
     }
 
-    switch ([CLLocationManager authorizationStatus]) {
-        case kCLAuthorizationStatusDenied:
-        case kCLAuthorizationStatusRestricted:
-        case kCLAuthorizationStatusNotDetermined:
-            return NO;
-        case kCLAuthorizationStatusAuthorizedAlways:
-        case kCLAuthorizationStatusAuthorizedWhenInUse:
-            return YES;
-    }
+    return [self permissionStatus] == UAPermissionStatusGranted;
 }
 
 - (BOOL)isLocationDeniedOrRestricted {
-    switch ([CLLocationManager authorizationStatus]) {
-        case kCLAuthorizationStatusDenied:
-        case kCLAuthorizationStatusRestricted:
-            return YES;
-        case kCLAuthorizationStatusNotDetermined:
-        case kCLAuthorizationStatusAuthorizedAlways:
-        case kCLAuthorizationStatusAuthorizedWhenInUse:
-            return NO;
-    }
+    return [self permissionStatus] == UAPermissionStatusDenied;
 }
 
 - (BOOL)isLocationAccuracyReduced {
@@ -392,22 +310,16 @@ NSString *const UALocationUpdatesEnabled = @"UALocationUpdatesEnabled";
 
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     UA_LTRACE(@"Location authorization changed: %d", status);
-
     [self updateLocationService];
 }
-- (void)locationManagerDidChangeAuthorization:(CLLocationManager *)manager {
-#if !TARGET_OS_MACCATALYST
-    if (@available(iOS 14.0, *)) {
-        UA_LTRACE(@"Location authorization changed: %d", manager.authorizationStatus);
-    }
 
-#endif
+- (void)locationManagerDidChangeAuthorization:(CLLocationManager *)manager {
+    UA_LTRACE(@"Location authorization changed");
     [self updateLocationService];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations {
     UA_LINFO(@"Received location updates: %@", locations);
-
     id strongDelegate = self.delegate;
     if ([strongDelegate respondsToSelector:@selector(receivedLocationUpdates:)]) {
         [strongDelegate receivedLocationUpdates:locations];
@@ -416,7 +328,6 @@ NSString *const UALocationUpdatesEnabled = @"UALocationUpdatesEnabled";
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
     UA_LTRACE(@"Location updates failed with error: %@", error);
-
     [self updateLocationService];
 }
 
@@ -426,6 +337,69 @@ NSString *const UALocationUpdatesEnabled = @"UALocationUpdatesEnabled";
 
 - (void)onEnabledFeaturesChanged {
     [self updateLocationService];
+}
+
+- (UAPermissionStatus)permissionStatus {
+
+    CLAuthorizationStatus clStatus;
+    if (@available(iOS 14.0, *)) {
+        clStatus = self.locationManager.authorizationStatus;
+    } else {
+        clStatus = [CLLocationManager authorizationStatus];
+    }
+
+    UAPermissionStatus status = UAPermissionStatusNotDetermined;
+
+    switch (clStatus) {
+        case kCLAuthorizationStatusDenied:
+        case kCLAuthorizationStatusRestricted:
+            status = UAPermissionStatusDenied;
+            break;
+        case kCLAuthorizationStatusAuthorizedAlways:
+        case kCLAuthorizationStatusAuthorizedWhenInUse:
+            status = UAPermissionStatusGranted;
+            break;
+        case kCLAuthorizationStatusNotDetermined:
+        default:
+            status = UAPermissionStatusNotDetermined;
+            break;
+    }
+
+    return status;
+}
+
+- (void)checkPermissionStatusWithCompletionHandler:(void (^ _Nonnull)(enum UAPermissionStatus))completionHandler {
+    completionHandler([self permissionStatus]);
+}
+
+- (void)requestPermissionWithCompletionHandler:(void (^ _Nonnull)(enum UAPermissionStatus))completionHandler {
+    // Already requested
+    UAPermissionStatus startStatus = [self permissionStatus];
+    if (startStatus != UAPermissionStatusNotDetermined) {
+        completionHandler(startStatus);
+        return;
+    }
+
+    if (!self.isAutoRequestAuthorizationEnabled) {
+        UA_LINFO("Location updates require authorization, auto request authorization is disabled. You must manually request location authorization.");
+        completionHandler(UAPermissionStatusNotDetermined);
+        return;
+    }
+
+    if (![self usageDescriptionsAreValid]) {
+        completionHandler(UAPermissionStatusNotDetermined);
+        return;
+    }
+
+    UA_LINFO("Requesting location authorization.");
+#if TARGET_OS_TV //requestAlwaysAuthorization is not available on tvOS
+    [self.locationManager requestWhenInUseAuthorization];
+#else
+    // This will potentially result in 'when in use' authorization
+    [self.locationManager requestAlwaysAuthorization];
+#endif
+
+    completionHandler([self permissionStatus]);
 }
 
 @end
