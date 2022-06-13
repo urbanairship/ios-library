@@ -121,12 +121,13 @@ public class PermissionsManager: NSObject {
         }
     }
 
+    /// - Note: for internal use only.  :nodoc:
     func addRequestExtender(permission: Permission,
-                            listener: @escaping (PermissionStatus, @escaping () -> Void) -> Void) {
+                            extender: @escaping (PermissionStatus, @escaping () -> Void) -> Void) {
         if (extenders[permission] == nil) {
-            extenders[permission] = [listener]
+            extenders[permission] = [extender]
         } else {
-            extenders[permission]?.append(listener)
+            extenders[permission]?.append(extender)
         }
     }
 

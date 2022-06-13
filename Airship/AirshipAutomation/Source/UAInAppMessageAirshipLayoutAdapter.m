@@ -244,7 +244,7 @@
                                      situation:UASituationManualInvocation
                                       metadata:metaData
                              completionHandler:^(UAActionResult *result) {
-        UA_LDEBUG("Finished running actions.");
+        UA_LDEBUG(@"Finished running actions.");
     }];
 
 }
