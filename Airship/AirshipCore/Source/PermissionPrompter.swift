@@ -30,17 +30,13 @@ struct AirshipPermissionPrompter: PermissionPrompter {
 
 
         self.permissionsManager.checkPermissionStatus(permission) { startResult in
-            let fallback = permission == .postNotifications &&
-            startResult == .denied &&
-            fallbackSystemSettings
-
-            if (fallback) {
+            if (fallbackSystemSettings && startResult == .denied) {
                 self.requestSystemSettingsChange(permission: permission) { endResult in
                     completionHandler(startResult, endResult)
                 }
             } else {
                 self.permissionsManager.requestPermission(permission,
-                                                     enableAirshipUsageOnGrant: enableAirshipUsage) { endResult in
+                                                          enableAirshipUsageOnGrant: enableAirshipUsage) { endResult in
                     completionHandler(startResult, endResult)
                 }
             }
@@ -59,6 +55,9 @@ struct AirshipPermissionPrompter: PermissionPrompter {
                     if let observer = observer {
                         self.notificationCenter.removeObserver(observer)
                     }
+
+                    self.permissionsManager.checkPermissionStatus(permission,
+                                                                  completionHandler: completionHandler)
                 }
             }
         } else {

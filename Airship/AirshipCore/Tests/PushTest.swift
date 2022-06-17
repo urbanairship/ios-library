@@ -769,6 +769,26 @@ class PushTest: XCTestCase {
 
         self.wait(for: [delegateCalled, completionHandlerCalled], timeout: 1, enforceOrder: true)
     }
+
+    func testOptionsPermissionDelegate() {
+        self.push.userPushNotificationsEnabled = false
+        self.push.notificationOptions = .alert
+
+        let updated = self.expectation(description: "Registration updated")
+        self.notificationRegistrar.onUpdateRegistration = { options, skipIfEphemeral, completionHandler in
+            XCTAssertEqual([.alert], options)
+            XCTAssertTrue(skipIfEphemeral)
+            updated.fulfill()
+            completionHandler()
+        }
+
+        let completionHandlerCalled = self.expectation(description: "Completion handler called")
+        self.permissionsManager.requestPermission(.postNotifications) { _ in
+            completionHandlerCalled.fulfill()
+        }
+
+        self.wait(for: [completionHandlerCalled, updated], timeout: 1);
+    }
 }
 
 extension String {
@@ -865,8 +885,6 @@ class TestNotificationRegistrar: NotificationRegistrar {
         }
         callback(options, skipIfEphemeral, completionHandler)
     }
-
-
 }
 
 class TestAPNSRegistrar: APNSRegistrar {

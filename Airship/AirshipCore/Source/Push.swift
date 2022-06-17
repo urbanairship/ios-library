@@ -152,7 +152,7 @@ public class Push: NSObject, Component, PushProtocol {
 
         if (config.requestAuthorizationToUseNotifications) {
             let permissionDelegate = NotificationPermissionDelegate(registrar: self.notificationRegistrar) {
-                let options = self.userPushNotificationsEnabled ? self.notificationOptions : []
+                let options = self.notificationOptions
                 let skipIfEphemeral = !self.requestExplicitPermissionWhenEphemeral
                 return NotificationPermissionDelegate.Config(options: options,
                                                              skipIfEphemeral: skipIfEphemeral)
