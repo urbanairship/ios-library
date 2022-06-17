@@ -527,19 +527,20 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
             [[NSNotificationCenter defaultCenter] removeObserver:self];
             self.isShowing = NO;
             [self.view removeFromSuperview];
-
+            
             // In macOS Catalina+, restore the previous window
 #if TARGET_OS_MACCATALYST
             // This is necessary else the deallocated/empty alert-level window will still absorb events despite not being the key window
-            self.fullScreenWindow.windowLevel = UIWindowLevelNormal;
-
+            
             if (self.previousKeyWindow) {
                 [self.previousKeyWindow makeKeyAndVisible];
             }
 #endif
-
+            
+            self.fullScreenWindow.windowLevel = UIWindowLevelNormal;
+            self.fullScreenWindow.hidden = true;
             self.fullScreenWindow = nil;
-
+            
             if (self.showCompletionHandler) {
                 self.showCompletionHandler(resolution);
                 self.showCompletionHandler = nil;

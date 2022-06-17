@@ -398,17 +398,17 @@ static double const DefaultResizableViewAnimationDuration = 0.2;
 
     self.isShowing = NO;
     [self.view removeFromSuperview];
+    self.topWindow.windowLevel = UIWindowLevelNormal;
+    self.topWindow.hidden = true;
     self.topWindow = nil;
 
     // In macOS Catalina+, restore the previous window
-    #if TARGET_OS_MACCATALYST
+#if TARGET_OS_MACCATALYST
     // This is necessary else the deallocated/empty alert-level window will still absorb events despite not being the key window
-    self.topWindow.windowLevel = UIWindowLevelNormal;
-
     if (self.previousKeyWindow) {
         [self.previousKeyWindow makeKeyAndVisible];
     }
-    #endif
+#endif
 }
 
 - (void)dismissWithoutResolution {
