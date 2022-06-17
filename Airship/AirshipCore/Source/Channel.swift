@@ -73,6 +73,7 @@ public class Channel : NSObject, Component, ChannelProtocol {
     private let audienceManager: ChannelAudienceManagerProtocol
     private let channelRegistrar: ChannelRegistrarProtocol
     private let notificationCenter: NotificationCenter
+    private let appStateTracker: AppStateTracker
     private let tagsLock = Lock()
 
     private var shouldPerformChannelRegistrationOnForeground = false
@@ -169,7 +170,8 @@ public class Channel : NSObject, Component, ChannelProtocol {
          localeManager: LocaleManagerProtocol,
          audienceManager: ChannelAudienceManagerProtocol,
          channelRegistrar: ChannelRegistrarProtocol,
-         notificationCenter: NotificationCenter) {
+         notificationCenter: NotificationCenter,
+         appStateTracker:AppStateTracker) {
         
         self.dataStore = dataStore
         self.config = config
@@ -178,6 +180,7 @@ public class Channel : NSObject, Component, ChannelProtocol {
         self.audienceManager = audienceManager
         self.channelRegistrar = channelRegistrar
         self.notificationCenter = notificationCenter
+        self.appStateTracker = appStateTracker
         
         // Check config to see if user wants to delay channel creation
         // If channel ID exists or channel creation delay is disabled then channelCreationEnabled
@@ -225,7 +228,8 @@ public class Channel : NSObject, Component, ChannelProtocol {
                   localeManager: localeManager,
                   audienceManager: ChannelAudienceManager(dataStore: dataStore, config: config, privacyManager: privacyManager),
                   channelRegistrar: ChannelRegistrar(config: config, dataStore: dataStore),
-                  notificationCenter: NotificationCenter.default)
+                  notificationCenter: NotificationCenter.default,
+                  appStateTracker:AppStateTracker.shared)
     }
 
     // NOTE: For internal use only. :nodoc:
@@ -561,6 +565,10 @@ extension Channel : ChannelRegistrarDelegate {
     
     public func createChannelPayload(completionHandler: @escaping (ChannelRegistrationPayload) -> ()) {
         let payload = ChannelRegistrationPayload()
+        
+        if (self.appStateTracker.state == .active) {
+            payload.channel.isActive = true
+        }
         
         if (self.isChannelTagRegistrationEnabled) {
             payload.channel.tags = self.tags

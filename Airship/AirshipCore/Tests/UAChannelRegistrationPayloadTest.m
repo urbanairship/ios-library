@@ -67,6 +67,7 @@
                 @"set_tags": @(YES),
                 @"tags": @[@"tagOne", @"tagTwo"],
                 @"timezone": @"timezone",
+                @"is_activity": @(NO),
                 @"ios": @{
                     @"badge": @(1),
                     @"quiettime": @{
@@ -119,6 +120,7 @@
                 @"push_address": @"FAKEADDRESS",
                 @"sdk_version": @"SDKVersion",
                 @"set_tags": @(YES),
+                @"is_activity": @(NO),
                 @"timezone": @"timezone",
                 @"ios": @{
                     @"badge": @(1),
@@ -197,6 +199,7 @@
                 @"push_address": @"FAKEADDRESS",
                 @"sdk_version": @"SDKVersion CHANGED",
                 @"set_tags": @(YES),
+                @"is_activity": @(NO),
                 @"tags": @[@"tags CHANGED"],
                 @"tag_changes": @{
                         @"add": @[@"tags CHANGED"],
@@ -241,6 +244,7 @@
                 @"push_address": @"FAKEADDRESS",
                 @"sdk_version": @"SDKVersion",
                 @"set_tags": @(NO),
+                @"is_activity": @(NO),
                 @"timezone": @"timezone",
                 @"ios": @{
                     @"badge": @(1),
@@ -280,6 +284,7 @@
                 @"push_address": @"FAKEADDRESS",
                 @"sdk_version": @"SDKVersion",
                 @"set_tags": @(NO),
+                @"is_activity": @(NO),
                 @"timezone": @"timezone",
                 @"ios": @{
                     @"badge": @(1),
@@ -320,6 +325,7 @@
                 @"opt_in": @(YES),
                 @"push_address": @"FAKEADDRESS",
                 @"set_tags": @(YES),
+                @"is_activity": @(NO),
                 @"ios": @{
                     @"badge": @(1),
                     @"quiettime": @{

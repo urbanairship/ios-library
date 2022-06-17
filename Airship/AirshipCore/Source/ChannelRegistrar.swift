@@ -122,19 +122,21 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
     private let date: AirshipDate
     private let dispatcher: UADispatcher
     private let taskManager: TaskManagerProtocol
-
+    private let appStateTracker: AppStateTracker
     
     init(dataStore: PreferenceDataStore,
          channelAPIClient: ChannelAPIClientProtocol,
          date: AirshipDate,
          dispatcher: UADispatcher,
-         taskManager: TaskManagerProtocol) {
+         taskManager: TaskManagerProtocol,
+         appStateTracker:AppStateTracker) {
         
         self.dataStore = dataStore
         self.channelAPIClient = channelAPIClient
         self.date = date
         self.dispatcher = dispatcher
         self.taskManager = taskManager
+        self.appStateTracker = appStateTracker
         
         super.init()
 
@@ -161,7 +163,8 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
                   channelAPIClient: ChannelAPIClient(config: config),
                   date: AirshipDate(),
                   dispatcher: UADispatcher.serial(),
-                  taskManager: TaskManager.shared)
+                  taskManager: TaskManager.shared,
+                  appStateTracker:AppStateTracker.shared)
     }
     
     /**
@@ -341,7 +344,7 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
         }
         
 
-        if (timeSinceLastUpdate >= (24 * 60 * 60)) {
+        if (timeSinceLastUpdate >= (24 * 60 * 60) && self.appStateTracker.state == .active) {
             AirshipLogger.trace("Should update registration. Time since last registration time is greater than 24 hours.")
             return true
         }

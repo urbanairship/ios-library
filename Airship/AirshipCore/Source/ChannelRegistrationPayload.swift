@@ -152,6 +152,10 @@ public class ChannelRegistrationPayload : NSObject, Codable, NSCopying {
         var isLocationEnabled: Bool?
         
         @objc
+        /// The flag indicating if the user is active.
+        public var isActive: Bool = false
+        
+        @objc
         public var locationEnabledNumber : NSNumber? {
             get {
                 return isLocationEnabled as NSNumber?
@@ -206,6 +210,7 @@ public class ChannelRegistrationPayload : NSObject, Codable, NSCopying {
             case carrier = "carrier"
             case contactID = "contact_id"
             case iOSChannelSettings = "ios"
+            case isActive = "is_activity"
         }
         
         override init() {
@@ -234,6 +239,7 @@ public class ChannelRegistrationPayload : NSObject, Codable, NSCopying {
             self.carrier = payload.carrier
             self.contactID = payload.contactID
             self.iOSChannelSettings = payload.iOSChannelSettings?.copy() as! ChannelRegistrationPayload.iOSChannelSettings?
+            self.isActive = payload.isActive
         }
         
         public override func isEqual(_ object: Any?) -> Bool {

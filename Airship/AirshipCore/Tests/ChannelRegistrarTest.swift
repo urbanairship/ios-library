@@ -13,6 +13,7 @@ class ChannelRegistrarTest: XCTestCase {
     private let date = UATestDate()
     private let taskManager = TestTaskManager()
     private let dispatcher = TestDispatcher()
+    private let appStateTracker = AppStateTracker()
 
     private var channelRegistrar: ChannelRegistrar!
 
@@ -21,7 +22,8 @@ class ChannelRegistrarTest: XCTestCase {
                                                  channelAPIClient: self.client,
                                                  date: self.date,
                                                  dispatcher: self.dispatcher,
-                                                 taskManager: self.taskManager)
+                                                 taskManager: self.taskManager,
+                                                 appStateTracker: self.appStateTracker)
         
         self.client.defaultCallback = { method in
             XCTFail("Method \(method) called unexpectedly")

@@ -16,6 +16,7 @@
 @property(nonatomic, strong) UATestChannelAudienceManager *testAudienceManager;
 @property (nonatomic, strong) UAConfig *config;
 @property (nonatomic, strong) UAPreferenceDataStore *dataStore;
+@property (nonatomic, strong) UATestAppStateTracker *appStateTracker;
 @end
 
 @implementation UAChannelTest
@@ -31,6 +32,8 @@
     self.notificationCenter = [[NSNotificationCenter alloc] init];
     self.testRegistrar = [[UATestChannelRegistrar alloc] init];
     self.testLocaleManager = [[UATestLocaleManager alloc] init];
+    self.appStateTracker = [[UATestAppStateTracker alloc] init];
+    self.appStateTracker.currentState = UAApplicationStateActive;
 
     self.privacyManager = [[UAPrivacyManager alloc] initWithDataStore:self.dataStore
                                                defaultEnabledFeatures:UAFeaturesAll
@@ -48,7 +51,8 @@
                                   localeManager:self.testLocaleManager
                                 audienceManager:self.testAudienceManager
                                channelRegistrar:self.testRegistrar
-                             notificationCenter:self.notificationCenter];
+                             notificationCenter:self.notificationCenter
+                                appStateTracker:self.appStateTracker];
 }
 
 - (void)testTags {
@@ -669,6 +673,72 @@
     [self.channel migrateTags];
 
     XCTAssertEqualObjects(self.channel.tags, @[@"some-random-value"]);
+}
+    
+/**
+ * Test channel registration payload.
+ */
+- (void)testRegistrationPayloadIsActiveFlagInForeground {
+    self.channel.isChannelTagRegistrationEnabled = YES;
+    [self.privacyManager enableFeatures:UAFeaturesTagsAndAttributes];
+
+    self.channel.tags = @[@"cool", @"story"];
+
+    UAChannelRegistrationPayload *expectedPayload = [[UAChannelRegistrationPayload alloc] init];
+    expectedPayload.channel.language = [[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleLanguageCode];
+    expectedPayload.channel.country = [[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleCountryCode];
+    expectedPayload.channel.timeZone = [NSTimeZone defaultTimeZone].name;
+    expectedPayload.channel.tags = @[@"cool", @"story"];
+    expectedPayload.channel.setTags = YES;
+    expectedPayload.channel.appVersion = [UAUtils bundleShortVersionString];
+    expectedPayload.channel.sdkVersion = [UAirshipVersion get];
+    expectedPayload.channel.deviceOS = [UIDevice currentDevice].systemVersion;
+    expectedPayload.channel.deviceModel = [UAUtils deviceModelName];
+    expectedPayload.channel.carrier = [UAUtils carrierName];
+    expectedPayload.channel.isActive = YES;
+
+    XCTestExpectation *createdPayload = [self expectationWithDescription:@"create payload"];
+
+    [self.channel createChannelPayloadWithCompletionHandler:^(UAChannelRegistrationPayload * _Nonnull payload) {
+        XCTAssertEqualObjects(payload, expectedPayload);
+        XCTAssertEqual(payload.channel.isActive, expectedPayload.channel.isActive);
+        [createdPayload fulfill];
+    }];
+
+    [self waitForTestExpectations];
+}
+
+/**
+ * Test channel registration payload.
+ */
+- (void)testRegistrationPayloadIsActiveFlagInBackground {
+    self.channel.isChannelTagRegistrationEnabled = YES;
+    self.appStateTracker.currentState = UAApplicationStateBackground;
+    [self.privacyManager enableFeatures:UAFeaturesTagsAndAttributes];
+
+    self.channel.tags = @[@"cool", @"story"];
+
+    UAChannelRegistrationPayload *expectedPayload = [[UAChannelRegistrationPayload alloc] init];
+    expectedPayload.channel.language = [[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleLanguageCode];
+    expectedPayload.channel.country = [[NSLocale autoupdatingCurrentLocale] objectForKey:NSLocaleCountryCode];
+    expectedPayload.channel.timeZone = [NSTimeZone defaultTimeZone].name;
+    expectedPayload.channel.tags = @[@"cool", @"story"];
+    expectedPayload.channel.setTags = YES;
+    expectedPayload.channel.appVersion = [UAUtils bundleShortVersionString];
+    expectedPayload.channel.sdkVersion = [UAirshipVersion get];
+    expectedPayload.channel.deviceOS = [UIDevice currentDevice].systemVersion;
+    expectedPayload.channel.deviceModel = [UAUtils deviceModelName];
+    expectedPayload.channel.carrier = [UAUtils carrierName];
+
+    XCTestExpectation *createdPayload = [self expectationWithDescription:@"create payload"];
+
+    [self.channel createChannelPayloadWithCompletionHandler:^(UAChannelRegistrationPayload * _Nonnull payload) {
+        XCTAssertEqualObjects(payload, expectedPayload);
+        XCTAssertEqual(payload.channel.isActive, expectedPayload.channel.isActive);
+        [createdPayload fulfill];
+    }];
+
+    [self waitForTestExpectations];
 }
 
 @end
