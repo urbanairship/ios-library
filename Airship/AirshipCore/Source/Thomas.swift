@@ -88,13 +88,14 @@ public class Thomas: NSObject {
             throw AirshipErrors.error("Failed to find window")
         }
         
-        var viewController: ThomasViewController<BannerView>?
+        var viewController: ThomasBannerViewController?
 
         let dismissController = {
             viewController?.view.removeFromSuperview()
             viewController = nil
         }
     
+        let options = ThomasViewControllerOptions()
         let environment = ThomasEnvironment(delegate: delegate, extensions: extensions) {
             if let dismissable = viewController?.rootView.dismiss {
                 dismissable(dismissController)
@@ -102,23 +103,16 @@ public class Thomas: NSObject {
                 dismissController()
             }
         }
-        let rootView = BannerView(presentation: presentation,
+        let rootView = BannerView(viewControllerOptions: options, presentation: presentation,
                                   layout: layout,
                                   thomasEnvironment: environment)
-        viewController = ThomasViewController<BannerView>(rootView: rootView)
+        viewController = ThomasBannerViewController(rootView: rootView, options: options)
         
         return {
             if let viewController = viewController, let rootController = window.rootViewController {
                 rootController.addChild(viewController)
                 viewController.didMove(toParent: rootController)
                 rootController.view.addSubview(viewController.view)
-                viewController.view.translatesAutoresizingMaskIntoConstraints = false
-                NSLayoutConstraint.activate([
-                    viewController.view.topAnchor.constraint(equalTo: rootController.view.topAnchor),
-                    viewController.view.leadingAnchor.constraint(equalTo: rootController.view.leadingAnchor),
-                    viewController.view.trailingAnchor.constraint(equalTo: rootController.view.trailingAnchor),
-                    viewController.view.bottomAnchor.constraint(equalTo: rootController.view.bottomAnchor),
-                ])
             }
             
             return Disposable {
@@ -134,7 +128,7 @@ public class Thomas: NSObject {
                                     delegate: ThomasDelegate) throws -> () -> Disposable {
         
         var window: UIWindow? = UIWindow(windowScene: scene)
-        var viewController: ThomasViewController<ModalView>?
+        var viewController: ThomasModalViewController?
         
         let options = ThomasViewControllerOptions()
         let environment = ThomasEnvironment(delegate: delegate, extensions: extensions) {
@@ -147,7 +141,7 @@ public class Thomas: NSObject {
                                  layout: layout,
                                  thomasEnvironment: environment,
                                  viewControllerOptions: options)
-        viewController = ThomasViewController<ModalView>(rootView: rootView, options: options)
+        viewController = ThomasModalViewController(rootView: rootView, options: options)
         viewController?.modalPresentationStyle = .currentContext
         window?.rootViewController = viewController
         

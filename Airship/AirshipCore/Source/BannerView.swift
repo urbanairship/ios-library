@@ -8,47 +8,47 @@ struct BannerView: View {
     static let animationInDuration = 0.2
     static let animationOutDuration = 0.2
     
+    let viewControllerOptions: ThomasViewControllerOptions
     let presentation: BannerPresentationModel
     let layout: Layout
     
     @ObservedObject var thomasEnvironment: ThomasEnvironment
-    @Environment(\.layoutState) var layoutState
     @State private var offsetPercentWrapper = OffsetPercentWrapper()
-
+    @State private var contentSize: (ViewConstraints, CGSize)? = nil
+    
+    @Environment(\.layoutState) var layoutState
     @Environment(\.windowSize) private var windowSize
     @Environment(\.orientation) private var orientation
-
-    @State private var contentSize: (ViewConstraints, CGSize)? = nil
-
+    
     var body: some View {
         GeometryReader { metrics in
             RootView(thomasEnvironment: thomasEnvironment, layout: layout) { orientation, windowSize in
                 let placement = resolvePlacement(orientation: orientation, windowSize: windowSize)
                 let ignoreSafeArea = placement.ignoreSafeArea == true
                 let safeAreaInsets = ignoreSafeArea ? metrics.safeAreaInsets : ViewConstraints.emptyEdgeSet
-                let constraints = ViewConstraints(size: metrics.size, safeAreaInsets: safeAreaInsets)
-
+                let constraints = ViewConstraints(size: UIScreen.main.bounds.size, safeAreaInsets: safeAreaInsets)
+                
                 createBanner(constraints: constraints, placement: placement)
                     .applyIf(ignoreSafeArea) { $0.edgesIgnoringSafeArea(.all) }
             }
         }
     }
-
+    
     private func createBanner(constraints: ViewConstraints, placement: BannerPlacement) -> some View {
         let verticalAlignment = placement.position == .top ? VerticalAlignment.top : VerticalAlignment.bottom
         let alignment = Alignment(horizontal: .center, vertical: verticalAlignment)
         let height = constraints.height ?? 0.0
         let offset = placement.position == .top ? -height : height
-
+        
         var contentSize: CGSize?
         if (constraints == self.contentSize?.0) {
             contentSize = self.contentSize?.1
         }
-
+        
         let contentConstraints = constraints.contentConstraints(placement.size,
                                                                 contentSize: contentSize,
                                                                 margin: placement.margin)
-
+        
         return VStack {
             ViewFactory.createView(model: layout.view, constraints: contentConstraints)
                 .margin(placement.margin)
@@ -58,6 +58,7 @@ struct BannerView: View {
                         let size = contentMetrics.size
                         DispatchQueue.main.async {
                             self.contentSize = (constraints, size)
+                            self.viewControllerOptions.bannerSize = contentMetrics.size
                         }
                         return Color.clear
                     })
@@ -85,8 +86,10 @@ struct BannerView: View {
             onComplete()
         }
     }
-
+    
     private func resolvePlacement(orientation: Orientation, windowSize: WindowSize) ->  BannerPlacement {
+        
+        var placement = self.presentation.defaultPlacement
         for placementSelector in self.presentation.placementSelectors ?? [] {
             if (placementSelector.windowSize != nil && placementSelector.windowSize != windowSize) {
                 continue
@@ -97,15 +100,17 @@ struct BannerView: View {
             }
             
             // its a match!
-            return placementSelector.placement
+            placement = placementSelector.placement
         }
         
-        return self.presentation.defaultPlacement
+        self.viewControllerOptions.bannerPlacement = placement
+        
+        return placement
     }
     
     @available(iOS 13.0.0, tvOS 13.0, *)
     private class OffsetPercentWrapper: ObservableObject {
         @Published var offsetPercent: Double = 1.0
     }
-        
+
 }
