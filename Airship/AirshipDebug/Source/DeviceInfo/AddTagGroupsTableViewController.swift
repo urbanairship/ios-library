@@ -21,7 +21,7 @@ class AddTagGroupsTableViewController: UITableViewController, UITextFieldDelegat
     var isRemove:Bool = false
     var isNamedUser:Bool = false
 
-    var applyButton:UIBarButtonItem = UIBarButtonItem(title: "ua_tags_action_set".localized(comment: "Set"), style: .plain, target: self, action: #selector(AddTagGroupsTableViewController.updateTagGroupTag))
+    lazy var applyButton:UIBarButtonItem = UIBarButtonItem(title: "ua_tags_action_set".localized(comment: "Set"), style: .plain, target: self, action: #selector(AddTagGroupsTableViewController.updateTagGroupTag))
 
     override func viewDidLoad() {
         super.viewDidLoad()

@@ -114,6 +114,8 @@ class AutomationTableViewController: UITableViewController {
                     cell.messageType.text = "H"
                 case .custom:
                     cell.messageType.text = "C"
+                case .airshipLayout:
+                    cell.messageType.text = "AL"
                 @unknown default:
                     break
                 }

@@ -65,6 +65,9 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
         if #available(iOS 15.0, macOS 15.0, *) {
             tableView.sectionHeaderTopPadding = 0.0
         }
+        if #available(iOS 13.0, *) {
+            activityIndicator.style = .medium
+        }
         
         let headerView = PreferenceCenterHeaderLabel(frame: CGRect.zero)
         headerView.numberOfLines = 0

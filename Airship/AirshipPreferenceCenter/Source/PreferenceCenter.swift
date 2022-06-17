@@ -16,7 +16,7 @@ public protocol PreferenceCenterOpenDelegate {
      * Opens the Preference Center with the given ID.
      * - Parameters:
      *   - preferenceCenterID: The preference center ID.
-     *   - Returns: `true` if the preference center was opened, otherwise `false` to fallback to OOTB UI.
+     * - Returns: `true` if the preference center was opened, otherwise `false` to fallback to OOTB UI.
      */
     @objc
     func openPreferenceCenter(_ preferenceCenterID: String) -> Bool

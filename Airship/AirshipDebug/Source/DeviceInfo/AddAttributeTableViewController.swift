@@ -21,7 +21,7 @@ class AddAttributeTableViewController: UITableViewController, UITextFieldDelegat
 
     var isRemove:Bool = false
 
-    var applyButton:UIBarButtonItem = UIBarButtonItem(title: "ua_attributes_action_set".localized(comment: "Set"), style: .plain, target: self, action: #selector(AddAttributeTableViewController.addAttributeMutation))
+    lazy var applyButton:UIBarButtonItem = UIBarButtonItem(title: "ua_attributes_action_set".localized(comment: "Set"), style: .plain, target: self, action: #selector(AddAttributeTableViewController.addAttributeMutation))
 
     override func viewDidLoad() {
         super.viewDidLoad()
