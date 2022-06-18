@@ -1,7 +1,13 @@
 /* Copyright Airship and Contributors */
 
 import SwiftUI
+
+
+#if canImport(AirshipCore)
 import AirshipCore
+#elseif canImport(AirshipKit)
+import AirshipKit
+#endif
 
 @available(iOS 13.0.0, *)
 struct EmailView: View {
