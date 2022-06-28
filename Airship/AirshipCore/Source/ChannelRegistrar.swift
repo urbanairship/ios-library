@@ -162,9 +162,9 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
         self.init(dataStore:dataStore,
                   channelAPIClient: ChannelAPIClient(config: config),
                   date: AirshipDate(),
-                  dispatcher: UADispatcher.serial(),
+                  dispatcher: UADispatcher.serial(.utility),
                   taskManager: TaskManager.shared,
-                  appStateTracker:AppStateTracker.shared)
+                  appStateTracker: AppStateTracker.shared)
     }
     
     /**

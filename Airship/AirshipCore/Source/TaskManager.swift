@@ -32,7 +32,7 @@ public class TaskManager : NSObject, TaskManagerProtocol {
     @objc
     public static let shared = TaskManager(backgroundTasks: BackgroundTasks(),
                                            notificationCenter: NotificationCenter.default,
-                                           dispatcher: UADispatcher.global,
+                                           dispatcher: UADispatcher.globalDispatcher(.utility),
                                            networkMonitor: NetworkMonitor(),
                                            rateLimiter: RateLimiter())
 
@@ -76,7 +76,7 @@ public class TaskManager : NSObject, TaskManagerProtocol {
 
     @objc(registerForTaskWithID:dispatcher:launchHandler:)
     public func register(taskID: String, dispatcher: UADispatcher? = nil, launchHandler: @escaping (Task) -> Void) {
-        let taskLauncher = TaskLauncher(dispatcher: dispatcher ?? UADispatcher.global,
+        let taskLauncher = TaskLauncher(dispatcher: dispatcher ?? UADispatcher.globalDispatcher(.utility),
                                         launchHandler: launchHandler)
 
         requestsLock.sync {

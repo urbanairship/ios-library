@@ -68,7 +68,7 @@ static NSString * const UAInboxMessageListExtraRetrieveCallback = @"retrieveCall
         self.mainDispatcher = dispatcher;
         self.date = date;
         self.taskManager = taskManager;
-        self.taskDispatcher = UADispatcher.serial;
+        self.taskDispatcher = UADispatcher.serialUtility;
         [self registerTasks];
     }
 

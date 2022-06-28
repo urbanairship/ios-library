@@ -171,7 +171,7 @@ public class Contact : NSObject, Component, ContactProtocol {
     private let channel: ChannelProtocol
     private let contactAPIClient: ContactsAPIClientProtocol
     private let taskManager: TaskManagerProtocol
-    private let dispatcher = UADispatcher.serial()
+    private let dispatcher = UADispatcher.serial(.utility)
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
     private let date : AirshipDate

@@ -47,7 +47,7 @@ public class UIKitStateTrackerAdapter: NSObject, AppStateTrackerAdapter {
         notificationCenter.addObserver(
             self,
             selector: #selector(applicationDidBecomeActive),
-            name:UIApplication.didBecomeActiveNotification,
+            name: UIApplication.didBecomeActiveNotification,
             object: nil)
 
         // inactive

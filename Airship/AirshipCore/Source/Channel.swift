@@ -583,7 +583,6 @@ extension Channel : ChannelRegistrarDelegate {
             payload.channel.appVersion = Utils.bundleShortVersionString()
             payload.channel.deviceOS = UIDevice.current.systemVersion
         }
-        
 
         if (self.privacyManager.isAnyFeatureEnabled()) {
             let currentLocale = self.localeManager.currentLocale

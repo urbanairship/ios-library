@@ -106,7 +106,7 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
 
         UA_WEAKIFY(self)
         [self.taskManager registerForTaskWithIDs:@[UAAutomationEngineDelayTaskID, UAAutomationEngineIntervalTaskID]
-                                      dispatcher:UADispatcher.serial
+                                      dispatcher:UADispatcher.serialUtility
                                    launchHandler:^(id<UATask> task) {
             UA_STRONGIFY(self)
             if ([task.taskID isEqualToString:UAAutomationEngineDelayTaskID]) {

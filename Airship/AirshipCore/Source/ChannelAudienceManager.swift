@@ -50,7 +50,7 @@ public class ChannelAudienceManager : NSObject, ChannelAudienceManagerProtocol {
     private let notificationCenter: NotificationCenter
 
     private let date: AirshipDate
-    private let dispatcher = UADispatcher.serial()
+    private let dispatcher = UADispatcher.serial(.utility)
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
     private let updateLock = Lock()

@@ -47,15 +47,20 @@ open class UADispatcher : NSObject {
 
         return dispatcher
     }
-
-    public class func serial(_ qos: DispatchQoS.QoSClass) -> UADispatcher {
-        let queue = DispatchQueue(label: "com.urbanairship.dispatcher.serial_queue")
+    
+    public class func serial(_ qos: DispatchQoS) -> UADispatcher {
+        let queue = DispatchQueue(label: "com.urbanairship.dispatcher.serial_queue", qos: qos)
         return UADispatcher(queue: queue)
     }
 
     @objc
     public class func serial() -> UADispatcher {
         return self.serial(.default)
+    }
+
+    @objc
+    public class func serialUtility() -> UADispatcher {
+        return self.serial(.utility)
     }
 
     @objc

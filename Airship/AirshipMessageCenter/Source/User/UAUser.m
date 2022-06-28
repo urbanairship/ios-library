@@ -80,7 +80,7 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
         }];
         
         [self.taskManager registerForTaskWithIDs:@[UAUserUpdateTaskID]
-                                      dispatcher:UADispatcher.serial
+                                      dispatcher:UADispatcher.serialUtility
                                    launchHandler:^(id<UATask> task) {
             if (!self.enabled) {
                 UA_LDEBUG(@"User disabled, unable to run task %@", task);

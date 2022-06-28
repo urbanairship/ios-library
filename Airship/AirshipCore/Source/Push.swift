@@ -525,7 +525,7 @@ public class Push: NSObject, Component, PushProtocol {
                     semaphore.signal()
                 }
 
-                UADispatcher.global.dispatchAsync { [weak self] in
+                UADispatcher.globalDispatcher(.utility).dispatchAsync { [weak self] in
                     guard let self = self else {
                         return
                     }
