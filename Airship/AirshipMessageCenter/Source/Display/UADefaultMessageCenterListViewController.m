@@ -958,7 +958,11 @@ NS_ASSUME_NONNULL_BEGIN
 -(void)displayEmptyMessage {
     UILabel *emptyMessage = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height)];
     [emptyMessage setText:UAMessageCenterLocalizedString(@"ua_empty_message_list")];
-    [emptyMessage setTextColor:[UIColor blackColor]];
+    if (@available(iOS 13.0, *)) {
+        [emptyMessage setTextColor:[UIColor labelColor]];
+    } else {
+        [emptyMessage setTextColor:[UIColor blackColor]];
+    }
     emptyMessage.numberOfLines = 0;
     [emptyMessage setTextAlignment:NSTextAlignmentCenter];
     [emptyMessage sizeToFit];
