@@ -196,12 +196,13 @@ NSUInteger const DebugTab = 3;
         dispatch_async(dispatch_get_main_queue(), ^{
             [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
         });
-
+        completionHandler();
         return;
     }
     
     NSMutableArray<NSString *>*pathComponents = [url.pathComponents mutableCopy];
     if (pathComponents.count == 0) {
+        completionHandler();
         return;
     }
     

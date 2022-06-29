@@ -165,12 +165,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, RegistrationDelegate, Dee
             DispatchQueue.main.async {
                 UIApplication.shared.open(url, options: [:], completionHandler: nil);
             };
-
+            completionHandler()
             return;
         }
         
         var pathComponents = url.pathComponents
         if (pathComponents.count == 0) {
+            completionHandler()
             return;
         }
 
