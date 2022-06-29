@@ -12,7 +12,7 @@ import AirshipKit
 struct SmsView: View {
     @State var phoneNumber: String = ""
     @State var senderId: String = ""
-    
+
     var body: some View {
         VStack(alignment: .leading) {
             TextField("Phone number", text: $phoneNumber)
