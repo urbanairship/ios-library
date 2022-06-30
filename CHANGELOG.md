@@ -3,6 +3,20 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 16.8.0 June 30, 2022
+
+Minor release that fixes several issues and adds support for custom log handler for Airship logs.
+
+### Changes
+- Added new AirshipLogHandler protocol that can be used to override Airship logging.
+- Fixed custom preference center background color not applying to the entire preference center.
+- Fixed message center "No messages" label visibility in dark mode.
+- Fixed Preference Center to always display the correct toggle states when navigating away and back to Preference Center under poor network conditions.
+- Fixed thread optimization warnings in Xcode 14.
+- Changed the landing page and HTML IAA window to be marked as hidden on dismiss.
+- Enabled autoplay videos in any Airship webviews. 
+
+
 ## Version 16.7.0 May 16, 2022
 
 Minor release that fixes build issues with Xcode 13.3 and adds missing obj-c class prefix to the `UAPreferenceCenterComponent` class. 

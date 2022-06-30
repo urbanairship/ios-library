@@ -320,7 +320,7 @@ class AnalyticsTest: XCTestCase {
     func testPermissionHeaders() throws {
         let testPushDelegate = TestPermissionsDelegate()
         testPushDelegate.permissionStatus = .denied
-        self.permissionsManager.setDelegate(testPushDelegate, permission: .postNotifications)
+        self.permissionsManager.setDelegate(testPushDelegate, permission: .displayNotifications)
 
         let testLocationDelegate = TestPermissionsDelegate()
         testLocationDelegate.permissionStatus = .granted
@@ -328,7 +328,7 @@ class AnalyticsTest: XCTestCase {
 
         let headersFetched = self.expectation(description: "Headers fetched")
         self.analytics.analyticsHeaders { headers in
-            XCTAssertEqual("denied", headers["X-UA-Permission-post_notifications"])
+            XCTAssertEqual("denied", headers["X-UA-Permission-display_notifications"])
             XCTAssertEqual("granted", headers["X-UA-Permission-location"])
             headersFetched.fulfill()
         }

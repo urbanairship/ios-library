@@ -158,14 +158,14 @@ public class Push: NSObject, Component, PushProtocol {
                                                              skipIfEphemeral: skipIfEphemeral)
             }
 
-            self.permissionsManager.setDelegate(permissionDelegate, permission: .postNotifications)
+            self.permissionsManager.setDelegate(permissionDelegate, permission: .displayNotifications)
         }
 
-        self.permissionsManager.addRequestExtender(permission: .postNotifications) { status, completionHandler in
+        self.permissionsManager.addRequestExtender(permission: .displayNotifications) { status, completionHandler in
             self.onNotificationRegistrationFinished(completionHandler: completionHandler)
         }
 
-        self.permissionsManager.addAirshipEnabler(permission: .postNotifications) {
+        self.permissionsManager.addAirshipEnabler(permission: .displayNotifications) {
             self.dataStore.setBool(true, forKey: Push.userPushNotificationsEnabledKey)
             self.privacyManager.enableFeatures(.push)
             self.channel.updateRegistration()
@@ -506,7 +506,7 @@ public class Push: NSObject, Component, PushProtocol {
     @objc
     public func enableUserPushNotifications(_ completionHandler: @escaping (_ success: Bool) -> Void) {
         self.dataStore.setBool(true, forKey: Push.userPushNotificationsEnabledKey)
-        self.permissionsManager.requestPermission(.postNotifications) { status in
+        self.permissionsManager.requestPermission(.displayNotifications) { status in
             completionHandler(status == .granted)
         }
     }
@@ -797,7 +797,7 @@ public class Push: NSObject, Component, PushProtocol {
             }
 
             if (self.userPushNotificationsEnabled) {
-                self.permissionsManager.requestPermission(.postNotifications)
+                self.permissionsManager.requestPermission(.displayNotifications)
             } else {
                 // If we are going from `ephemeral` to `[]` it will prompt the user to disable notifications...
                 // avoid that by just skippping if we have ephemeral.

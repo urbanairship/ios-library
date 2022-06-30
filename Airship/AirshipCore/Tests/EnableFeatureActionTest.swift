@@ -94,7 +94,7 @@ class EnableFeatureActionTest: XCTestCase {
 
         let prompted = self.expectation(description: "Prompted")
         testPrompter.onPrompt = { permission, enableAirshipUsage, fallbackSystemSetting, completionHandler in
-            XCTAssertEqual(permission, .postNotifications)
+            XCTAssertEqual(permission, .displayNotifications)
             XCTAssertTrue(enableAirshipUsage)
             XCTAssertTrue(fallbackSystemSetting)
             completionHandler(.notDetermined, .notDetermined)

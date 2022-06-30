@@ -62,7 +62,7 @@ class PushTest: XCTestCase {
         }
 
         let completed = self.expectation(description: "Completed")
-        self.permissionsManager.requestPermission(.postNotifications) { _ in
+        self.permissionsManager.requestPermission(.displayNotifications) { _ in
             completed.fulfill()
         }
 
@@ -78,7 +78,7 @@ class PushTest: XCTestCase {
         }
 
         let completed = self.expectation(description: "Completed")
-        self.permissionsManager.requestPermission(.postNotifications) { _ in
+        self.permissionsManager.requestPermission(.displayNotifications) { _ in
             completed.fulfill()
         }
 
@@ -94,7 +94,7 @@ class PushTest: XCTestCase {
         }
 
         let completed = self.expectation(description: "Completed")
-        self.permissionsManager.requestPermission(.postNotifications) { _ in
+        self.permissionsManager.requestPermission(.displayNotifications) { _ in
             completed.fulfill()
         }
 
@@ -110,7 +110,7 @@ class PushTest: XCTestCase {
         }
 
         let completed = self.expectation(description: "Completed")
-        self.permissionsManager.requestPermission(.postNotifications) { _ in
+        self.permissionsManager.requestPermission(.displayNotifications) { _ in
             completed.fulfill()
         }
 
@@ -127,7 +127,7 @@ class PushTest: XCTestCase {
         }
 
         let completed = self.expectation(description: "Completed")
-        self.permissionsManager.requestPermission(.postNotifications) { _ in
+        self.permissionsManager.requestPermission(.displayNotifications) { _ in
             completed.fulfill()
         }
 
@@ -138,7 +138,7 @@ class PushTest: XCTestCase {
         }
 
         let completedAgain = self.expectation(description: "Completed Again")
-        self.permissionsManager.requestPermission(.postNotifications) { _ in
+        self.permissionsManager.requestPermission(.displayNotifications) { _ in
             completedAgain.fulfill()
         }
 
@@ -150,7 +150,7 @@ class PushTest: XCTestCase {
     func testUserPushNotificationsEnabled() throws {
         // Make sure updates are called through permissions manager
         let permissionsManagerCalled = self.expectation(description: "Permissions manager called")
-        self.permissionsManager.addRequestExtender(permission: .postNotifications) { _, completionHandler in
+        self.permissionsManager.addRequestExtender(permission: .displayNotifications) { _, completionHandler in
             permissionsManagerCalled.fulfill()
             completionHandler()
         }
@@ -225,7 +225,7 @@ class PushTest: XCTestCase {
     func testEnableUserNotificationsAuthorized() throws {
         // Make sure updates are called through permissions manager
         let permissionsManagerCalled = self.expectation(description: "Permissions manager called")
-        self.permissionsManager.addRequestExtender(permission: .postNotifications) { _, completionHandler in
+        self.permissionsManager.addRequestExtender(permission: .displayNotifications) { _, completionHandler in
             permissionsManagerCalled.fulfill()
             completionHandler()
         }
@@ -364,7 +364,7 @@ class PushTest: XCTestCase {
         }
 
         let enabled = self.expectation(description: "Registration updated")
-        self.permissionsManager.requestPermission(.postNotifications, enableAirshipUsageOnGrant: true) { status in
+        self.permissionsManager.requestPermission(.displayNotifications, enableAirshipUsageOnGrant: true) { status in
             enabled.fulfill()
             XCTAssertEqual(.granted, status)
         }
@@ -460,7 +460,7 @@ class PushTest: XCTestCase {
         }
 
         let enabled = self.expectation(description: "Registration updated")
-        self.permissionsManager.requestPermission(.postNotifications, enableAirshipUsageOnGrant: true) { status in
+        self.permissionsManager.requestPermission(.displayNotifications, enableAirshipUsageOnGrant: true) { status in
             enabled.fulfill()
             XCTAssertEqual(.granted, status)
         }
@@ -577,7 +577,7 @@ class PushTest: XCTestCase {
         }
 
         let completed = self.expectation(description: "Completed")
-        self.permissionsManager.requestPermission(.postNotifications) { _ in
+        self.permissionsManager.requestPermission(.displayNotifications) { _ in
             completed.fulfill()
         }
 
@@ -593,7 +593,7 @@ class PushTest: XCTestCase {
 
         // Make sure updates are called through permissions manager
         let permissionsManagerCalled = self.expectation(description: "Permissions manager called")
-        self.permissionsManager.addRequestExtender(permission: .postNotifications) { _, completionHandler in
+        self.permissionsManager.addRequestExtender(permission: .displayNotifications) { _, completionHandler in
             permissionsManagerCalled.fulfill()
             completionHandler()
         }
@@ -614,14 +614,14 @@ class PushTest: XCTestCase {
     }
 
     func testPermissionsDelgateWhenAppIsHandlingAuthorization() {
-        XCTAssertTrue(self.permissionsManager.configuredPermissions.contains(.postNotifications))
-        self.permissionsManager.setDelegate(nil, permission: .postNotifications)
+        XCTAssertTrue(self.permissionsManager.configuredPermissions.contains(.displayNotifications))
+        self.permissionsManager.setDelegate(nil, permission: .displayNotifications)
 
-        XCTAssertFalse(self.permissionsManager.configuredPermissions.contains(.postNotifications))
+        XCTAssertFalse(self.permissionsManager.configuredPermissions.contains(.displayNotifications))
         self.config.requestAuthorizationToUseNotifications = false
         self.push = createPush()
 
-        XCTAssertFalse(self.permissionsManager.configuredPermissions.contains(.postNotifications))
+        XCTAssertFalse(self.permissionsManager.configuredPermissions.contains(.displayNotifications))
     }
 
     func testForwardNotificationRegistrationFinished() {
@@ -783,7 +783,7 @@ class PushTest: XCTestCase {
         }
 
         let completionHandlerCalled = self.expectation(description: "Completion handler called")
-        self.permissionsManager.requestPermission(.postNotifications) { _ in
+        self.permissionsManager.requestPermission(.displayNotifications) { _ in
             completionHandlerCalled.fulfill()
         }
 

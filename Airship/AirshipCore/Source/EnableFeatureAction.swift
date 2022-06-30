@@ -107,7 +107,7 @@ public class EnableFeatureAction : NSObject, Action {
         let value = arguments.value as? String ?? ""
         switch (value) {
         case EnableFeatureAction.userNotificationsActionValue:
-            return .postNotifications
+            return .displayNotifications
         case EnableFeatureAction.locationActionValue:
             return .location
         case EnableFeatureAction.backgroundLocationActionValue:

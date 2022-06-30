@@ -71,12 +71,12 @@ class PromptPermissionActionTest: XCTestCase {
     }
 
     func testPromptDefaultArguments() throws {
-        let actionValue = ["permission": Permission.postNotifications.stringValue]
+        let actionValue = ["permission": Permission.displayNotifications.stringValue]
         let arguments = ActionArguments(value: actionValue, with: .manualInvocation)
 
         let prompted = self.expectation(description: "Prompted")
         testPrompter.onPrompt = { permission, enableAirshipUsage, fallbackSystemSetting, completionHandler in
-            XCTAssertEqual(permission, .postNotifications)
+            XCTAssertEqual(permission, .displayNotifications)
             XCTAssertFalse(enableAirshipUsage)
             XCTAssertFalse(fallbackSystemSetting)
             completionHandler(.notDetermined, .notDetermined)

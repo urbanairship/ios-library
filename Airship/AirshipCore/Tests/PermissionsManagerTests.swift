@@ -11,7 +11,7 @@ class PermissionsManagerTests: XCTestCase {
 
     func testCheckPermissionNotConfigured() throws {
         let callbackCalled = self.expectation(description: "Callback called")
-        self.permissionsManager.checkPermissionStatus(.postNotifications) { status in
+        self.permissionsManager.checkPermissionStatus(.displayNotifications) { status in
             XCTAssertEqual(PermissionStatus.notDetermined, status)
             callbackCalled.fulfill()
         }
@@ -20,11 +20,11 @@ class PermissionsManagerTests: XCTestCase {
     }
 
     func testCheckPermission() throws {
-        self.permissionsManager.setDelegate(self.delegate, permission: .appTransparencyTracking)
+        self.permissionsManager.setDelegate(self.delegate, permission: .location)
         self.delegate.permissionStatus = .granted
 
         let callbackCalled = self.expectation(description: "Callback called")
-        self.permissionsManager.checkPermissionStatus(.appTransparencyTracking) { status in
+        self.permissionsManager.checkPermissionStatus(.location) { status in
             XCTAssertEqual(PermissionStatus.granted, status)
             callbackCalled.fulfill()
         }
@@ -36,7 +36,7 @@ class PermissionsManagerTests: XCTestCase {
 
     func testRequestPermissionNotConfigured() throws {
         let callbackCalled = self.expectation(description: "Callback called")
-        self.permissionsManager.requestPermission(.postNotifications) { status in
+        self.permissionsManager.requestPermission(.displayNotifications) { status in
             XCTAssertEqual(PermissionStatus.notDetermined, status)
             callbackCalled.fulfill()
         }
@@ -45,11 +45,11 @@ class PermissionsManagerTests: XCTestCase {
     }
 
     func testRequestPermission() throws {
-        self.permissionsManager.setDelegate(self.delegate, permission: .appTransparencyTracking)
+        self.permissionsManager.setDelegate(self.delegate, permission: .location)
         self.delegate.permissionStatus = .denied
 
         let callbackCalled = self.expectation(description: "Callback called")
-        self.permissionsManager.requestPermission(.appTransparencyTracking) { status in
+        self.permissionsManager.requestPermission(.location) { status in
             XCTAssertEqual(PermissionStatus.denied, status)
             callbackCalled.fulfill()
         }
@@ -64,33 +64,33 @@ class PermissionsManagerTests: XCTestCase {
     }
 
     func testConfiguredPermissions() throws {
-        self.permissionsManager.setDelegate(self.delegate, permission: .appTransparencyTracking)
-        self.permissionsManager.setDelegate(self.delegate, permission: .bluetooth)
+        self.permissionsManager.setDelegate(self.delegate, permission: .location)
+        self.permissionsManager.setDelegate(self.delegate, permission: .displayNotifications)
 
-        let expected = Set<Permission>([.appTransparencyTracking, .bluetooth])
+        let expected = Set<Permission>([.location, .displayNotifications])
         let configured = self.permissionsManager.configuredPermissions
         XCTAssertEqual(expected, configured)
     }
 
     func testAirshipEnablers() throws {
-        self.permissionsManager.setDelegate(self.delegate, permission: .mic)
+        self.permissionsManager.setDelegate(self.delegate, permission: .displayNotifications)
         self.delegate.permissionStatus = .granted
 
         let enablerCalled = self.expectation(description: "Enabler called")
-        self.permissionsManager.addAirshipEnabler(permission: .mic) {
+        self.permissionsManager.addAirshipEnabler(permission: .displayNotifications) {
             enablerCalled.fulfill()
         }
 
-        self.permissionsManager.requestPermission(.mic, enableAirshipUsageOnGrant: true) { _ in }
+        self.permissionsManager.requestPermission(.displayNotifications, enableAirshipUsageOnGrant: true) { _ in }
         wait(for: [enablerCalled], timeout: 1)
     }
 
     func testRequestExtender() throws {
-        self.permissionsManager.setDelegate(self.delegate, permission: .mic)
+        self.permissionsManager.setDelegate(self.delegate, permission: .location)
         self.delegate.permissionStatus = .denied
 
         let listener1 = self.expectation(description: "Listener 1")
-        self.permissionsManager.addRequestExtender(permission: .mic) { status, completion in
+        self.permissionsManager.addRequestExtender(permission: .location) { status, completion in
             DispatchQueue.main.async {
                 listener1.fulfill()
                 completion()
@@ -98,13 +98,13 @@ class PermissionsManagerTests: XCTestCase {
         }
 
         let listener2 = self.expectation(description: "Listener 2")
-        self.permissionsManager.addRequestExtender(permission: .mic) { status, completion in
+        self.permissionsManager.addRequestExtender(permission: .location) { status, completion in
             listener2.fulfill()
             completion()
         }
 
         let callbackCalled = self.expectation(description: "Callback called")
-        self.permissionsManager.requestPermission(.mic) { status in
+        self.permissionsManager.requestPermission(.location) { status in
             XCTAssertEqual(PermissionStatus.denied, status)
             callbackCalled.fulfill()
         }
