@@ -104,7 +104,7 @@ class MediaInfoDetailViewController: StaticTableViewController {
             let config = WKWebViewConfiguration()
             config.allowsInlineMediaPlayback = true
             config.allowsPictureInPictureMediaPlayback = true
-            config.mediaTypesRequiringUserActionForPlayback = .all
+            config.mediaTypesRequiringUserActionForPlayback = []
 
             webView = WKWebView(frame: mediaCell.contentView.frame, configuration:config)
             guard let webView = webView else { return }
