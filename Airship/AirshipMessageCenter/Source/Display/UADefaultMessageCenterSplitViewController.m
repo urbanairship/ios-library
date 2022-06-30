@@ -381,7 +381,7 @@ NS_ASSUME_NONNULL_BEGIN
         if (error.code == UAMessageCenterMessageLoadErrorCodeFailureStatus) {
             // Encountered a failure status code
             NSUInteger status = [error.userInfo[UAMessageCenterMessageLoadErrorHTTPStatusKey] unsignedIntValue];
-
+            
             if (status >= 500) {
                 retry();
             } else if (status == 410) {

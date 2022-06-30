@@ -262,6 +262,15 @@ typedef enum MessageState {
     UAInboxMessage *message = [[UAMessageCenter shared].messageList messageForID:messageID];
 
     if (message) {
+        if (message.isExpired) {
+           NSString *msg = [NSString stringWithFormat:@"Message is expired: %@", message];
+            NSError *error =  [NSError errorWithDomain:UAMessageCenterMessageLoadErrorDomain
+                                      code:UAMessageCenterMessageLoadErrorCodeMessageExpired
+                                  userInfo:@{NSLocalizedDescriptionKey:msg}];
+
+            [self.delegate messageLoadFailed:messageID error:error];
+            return;
+        }
         [self loadMessage:message];
         return;
     }
