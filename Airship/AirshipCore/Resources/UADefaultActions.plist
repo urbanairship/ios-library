@@ -121,7 +121,9 @@
 	<dict>
 		<key>names</key>
 		<array>
+			<string>^sl</string>
 			<string>subscription_list_action</string>
+			<string>edit_subscription_list_action</string>
 			<string>^sla</string>
 		</array>
 		<key>action</key>
