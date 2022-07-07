@@ -1,6 +1,9 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+#if os(watchOS)
+import WatchKit
+#endif
 
 #if canImport(AirshipBasement)
 @_exported import AirshipBasement
@@ -80,7 +83,8 @@ public class Airship : NSObject {
     @objc
     public var permissionsManager: PermissionsManager { return airshipInstance.permissionsManager }
 
-#if !os(tvOS)
+    #if !os(tvOS) && !os(watchOS)
+    
     /// A user configurable UAJavaScriptCommandDelegate
     /// - NOTE: this delegate is not retained.
     @objc
@@ -164,6 +168,8 @@ public class Airship : NSObject {
         self.airshipInstance = instance
     }
     
+    #if !os(watchOS)
+    
     /// Initalizes Airship. Config will be read from `AirshipConfig.plist`.
     /// - Parameters:
     ///     - launchOptions: The launch options passed into `application:didFinishLaunchingWithOptions:`.
@@ -178,7 +184,68 @@ public class Airship : NSObject {
     ///     - launchOptions: The launch options passed into `application:didFinishLaunchingWithOptions:`.
     @objc
     public class func takeOff(_ config: Config?, launchOptions: [UIApplication.LaunchOptionsKey : Any]?) {
+        guard Thread.isMainThread else {
+            fatalError("TakeOff must be called on the main thread.")
+        }
         
+        guard !Airship.isFlying else {
+            AirshipLogger.impError("TakeOff can only be called once.")
+            return
+        }
+        
+        
+        if (config == nil) {
+            guard Bundle.main.path(forResource: "AirshipConfig", ofType: "plist") != nil else {
+                AirshipLogger.impError("AirshipConfig.plist file is missing. Unable to takeOff.")
+                return
+            }
+        }
+        
+        let resolvedConfig = config?.copy() as? Config ?? Config.default()
+        
+        guard resolvedConfig.validate() else {
+            AirshipLogger.impError("Config is invalid. Unable to takeOff.")
+            return
+        }
+        
+        commonTakeOff(config)
+        
+        #if !os(tvOS) && !os(watchOS)
+        if let remoteNotification = launchOptions?[UIApplication.LaunchOptionsKey.remoteNotification] as? [AnyHashable : Any] {
+            if (AppStateTracker.shared.state != .background) {
+                analytics.launched(fromNotification: remoteNotification)
+            }
+        }
+        #endif
+        
+        self.shared.components.forEach { $0.airshipReady?() }
+
+        if (self.shared.config.isExtendedBroadcastsEnabled) {
+            var userInfo: [String: Any] = [:]
+            userInfo[airshipReadyChannelIdentifier] = self.channel.identifier
+            userInfo[airshipReadyAppKey] = self.shared.config.appKey
+            userInfo[airshipReadyPayloadVersion] = 1
+            NotificationCenter.default.post(name: airshipReadyNotification, object: userInfo)
+        } else {
+            NotificationCenter.default.post(name: airshipReadyNotification, object: nil)
+        }
+    }
+    
+    #else
+    
+    /// Initalizes Airship. Config will be read from `AirshipConfig.plist`.
+
+    @objc
+    public class func takeOff() {
+        takeOff(nil)
+    }
+    
+    /// Initalizes Airship.
+    /// - Parameters:
+    ///     - config: The Airship config.
+    @objc
+    public class func takeOff(_ config: Config?) {
+            
         guard Thread.isMainThread else {
             fatalError("TakeOff must be called on the main thread.")
         }
@@ -202,6 +269,27 @@ public class Airship : NSObject {
             return
         }
         
+        commonTakeOff(config)
+        
+        self.shared.components.forEach { $0.airshipReady?() }
+
+        if (self.shared.config.isExtendedBroadcastsEnabled) {
+            var userInfo: [String: Any] = [:]
+            userInfo[airshipReadyChannelIdentifier] = self.channel.identifier
+            userInfo[airshipReadyAppKey] = self.shared.config.appKey
+            userInfo[airshipReadyPayloadVersion] = 1
+            NotificationCenter.default.post(name: airshipReadyNotification, object: userInfo)
+        } else {
+            NotificationCenter.default.post(name: airshipReadyNotification, object: nil)
+        }
+    }
+    
+    #endif
+    
+    private class func commonTakeOff(_ config: Config?) {
+        
+        let resolvedConfig = config?.copy() as? Config ?? Config.default()
+       
         self.logLevel = resolvedConfig.logLevel
 
         UALegacyLoggingBridge.logger = { logLevel, function, line, message in
@@ -231,25 +319,6 @@ public class Airship : NSObject {
             AppIntegration.integrationDelegate = integrationDelegate
         }
         
-        #if !os(tvOS)
-        if let remoteNotification = launchOptions?[UIApplication.LaunchOptionsKey.remoteNotification] as? [AnyHashable : Any] {
-            if (AppStateTracker.shared.state != .background) {
-                analytics.launched(fromNotification: remoteNotification)
-            }
-        }
-        #endif
-        
-        self.shared.components.forEach { $0.airshipReady?() }
-
-        if (self.shared.config.isExtendedBroadcastsEnabled) {
-            var userInfo: [String: Any] = [:]
-            userInfo[airshipReadyChannelIdentifier] = self.channel.identifier
-            userInfo[airshipReadyAppKey] = self.shared.config.appKey
-            userInfo[airshipReadyPayloadVersion] = 1
-            NotificationCenter.default.post(name: airshipReadyNotification, object: userInfo)
-        } else {
-            NotificationCenter.default.post(name: airshipReadyNotification, object: nil)
-        }
     }
 
     /// Airship log handler. All Airship log will be routed through the handler.
@@ -268,6 +337,7 @@ public class Airship : NSObject {
     }
 
     /// Airship log level. The log level defaults to `.debug` in developer mode,
+    /// Sets the Airship log level. The log level defaults to `.debug` in developer mode,
     /// and `.error` in production. Values set before `takeOff` will be overridden by
     /// the value from the AirshipConfig.
     @objc
@@ -337,11 +407,14 @@ public class Airship : NSObject {
     /// - Returns: `true` if the deeplink is handled, `false` otherwise.
     @objc
     private func handleAirshipDeeplink(_ deeplink: URL) -> Bool {
+        
         switch(deeplink.host) {
         case Airship.appSettingsDeepLinkHost:
+            #if !os(watchOS)
             if let url = URL(string:UIApplication.openSettingsURLString) {
                 UIApplication.shared.open(url)
             }
+            #endif
             return true
         case Airship.appStoreDeepLinkHost:
             let appStoreUrl = "itms-apps://itunes.apple.com/app/"
@@ -349,12 +422,18 @@ public class Airship : NSObject {
                 return true
             }
             if let url = URL(string:appStoreUrl + itunesID) {
+                #if !os(watchOS)
                 UIApplication.shared.open(url)
+                #else
+                WKExtension.shared().openSystemURL(url)
+                #endif
             }
             return true
         default:
             return false
         }
+        
+      
     }
     
     /// Gets the iTunes ID.

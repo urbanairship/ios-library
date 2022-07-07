@@ -97,7 +97,9 @@ open class URLAllowList : NSObject, URLAllowListProtocol {
         allowList.addEntry("sms:", scope: .openURL)
         allowList.addEntry("tel:", scope: .openURL)
         
+        #if !os(watchOS)
         allowList.addEntry(UIApplication.openSettingsURLString, scope: .openURL)
+        #endif
         
         config.urlAllowList?.forEach {
             allowList.addEntry($0)

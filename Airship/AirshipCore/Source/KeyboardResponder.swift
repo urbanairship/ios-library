@@ -3,6 +3,8 @@
 import Foundation
 import Combine
 
+#if !os(watchOS)
+
 @available(iOS 13.0.0, tvOS 13.0, *)
 final class KeyboardResponder: ObservableObject {
     @Published private(set) var keyboardHeight: Double = 0
@@ -25,3 +27,4 @@ final class KeyboardResponder: ObservableObject {
 #endif
 }
 
+#endif

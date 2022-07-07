@@ -19,7 +19,9 @@ struct TextInput : View {
             set: { self.input = $0; self.updateValue($0) }
         )
         
+        #if !os(watchOS)
         AirshipTextInput(model: self.model, text: binding, isEditing:  $isEditing)
+        #endif
     }
 
     var body: some View {

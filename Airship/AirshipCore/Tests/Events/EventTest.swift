@@ -214,7 +214,7 @@ fileprivate final class InternalPush: InternalPushProtocol {
     
     func didFailToRegisterForRemoteNotifications(_ error: Error) {}
     
-    func didReceiveRemoteNotification(_ userInfo: [AnyHashable : Any], isForeground: Bool, completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {}
+    func didReceiveRemoteNotification(_ userInfo: [AnyHashable : Any], isForeground: Bool, completionHandler: @escaping (Any) -> Void) {}
     
     func presentationOptionsForNotification(_ notification: UNNotification) -> UNNotificationPresentationOptions {
         return []

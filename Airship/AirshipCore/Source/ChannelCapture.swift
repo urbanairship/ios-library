@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+#if !os(watchOS)
 
 /**
  * Channel Capture copies the channelId to the device clipboard after a specific number of
@@ -107,3 +108,4 @@ public class ChannelCapture : NSObject {
                                       options: [UIPasteboard.OptionsKey.expirationDate: expirationDate])
     }
 }
+#endif

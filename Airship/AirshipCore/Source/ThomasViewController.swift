@@ -3,6 +3,8 @@
 import Foundation
 import SwiftUI
 
+#if !os(watchOS)
+
 @available(iOS 13.0.0, tvOS 13.0, *)
 class ThomasViewController<Content> : UIHostingController<Content> where Content : View {
     
@@ -116,9 +118,12 @@ class ThomasBannerViewController: ThomasViewController<BannerView> {
 class ThomasModalViewController : ThomasViewController<ModalView> {
 }
 
+#endif
+
 @available(iOS 13.0.0, tvOS 13.0, *)
 class ThomasViewControllerOptions {
     var orientation: Orientation?
     var bannerPlacement: BannerPlacement?
     var bannerSize: CGSize?
 }
+

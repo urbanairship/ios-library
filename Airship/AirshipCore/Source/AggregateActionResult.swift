@@ -14,6 +14,7 @@ public class AggregateActionResult : ActionResult {
     }
     
     private var _fetchResult : ActionFetchResult = .noData
+    
     public override var fetchResult: ActionFetchResult {
         get {
             return self._fetchResult

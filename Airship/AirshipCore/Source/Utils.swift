@@ -2,7 +2,10 @@
 
 import Foundation
 import CommonCrypto
+
+#if !os(watchOS)
 import SystemConfiguration
+#endif
 
 #if os(iOS) && !targetEnvironment(macCatalyst)
 import CoreTelephony
@@ -92,6 +95,7 @@ public class Utils : NSObject {
         #endif
     }
     
+    #if !os(watchOS)
     /// Gets the current connection type.
     ///
     /// - Returns: The current connection type as a `String`.
@@ -134,6 +138,7 @@ public class Utils : NSObject {
         
         return connectionType
     }
+    #endif
 
     /// Compares two version strings and determines their order.
     ///
@@ -215,6 +220,7 @@ public class Utils : NSObject {
     
     // MARK: UI Utilities
     
+    #if !os(watchOS)
     /// Returns the main window for the app.
     ///
     /// This window will be positioned underneath any other windows added and removed at runtime,
@@ -326,10 +332,13 @@ public class Utils : NSObject {
     private class func showWindow(_ window: UIWindow) {
         window.makeKeyAndVisible()
     }
+    #endif
+    
     
     // MARK: Fetch Results
     
-
+    
+    #if !os(watchOS)
     ///  Takes an array of fetch results and returns the merged result.
     ///
     /// - Parameter results: An `Array` of fetch results.
@@ -347,6 +356,25 @@ public class Utils : NSObject {
         }
         return mergedResult
     }
+    #else
+    ///  Takes an array of fetch results and returns the merged result.
+    ///
+    /// - Parameter results: An `Array` of fetch results.
+    ///
+    /// - Returns: The merged fetch result.
+    @objc
+    public class func mergeFetchResults(_ results: [UInt]) -> WKBackgroundFetchResult {
+        var mergedResult: WKBackgroundFetchResult = .noData
+        for r in results {
+            if r == WKBackgroundFetchResult.newData.rawValue {
+                return .newData
+            } else if r == WKBackgroundFetchResult.failed.rawValue {
+                mergedResult = .failed
+            }
+        }
+        return mergedResult
+    }
+    #endif
     
     // MARK: Notification Payload
     

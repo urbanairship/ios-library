@@ -2,7 +2,11 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#if TARGET_OS_WATCH
+#import <WatchKit/WatchKit.h>
+#endif
 
+#if !TARGET_OS_WATCH 
 /**
  * Represents the result of performing a background fetch, or none if no fetch was performed.
  */
@@ -22,6 +26,28 @@ typedef NS_OPTIONS(NSInteger, UAActionFetchResult) {
      */
     UAActionFetchResultFailed = UIBackgroundFetchResultFailed
 } NS_SWIFT_NAME(ActionFetchResult);
+
+#else
+/**
+ * Represents the result of performing a background fetch, or none if no fetch was performed.
+ */
+typedef NS_OPTIONS(NSInteger, UAActionFetchResult) {
+    /**
+     * The action did not result in any new data being fetched.
+     */
+    UAActionFetchResultNoData = WKBackgroundFetchResultNoData,
+
+    /**
+     * The action resulted in new data being fetched.
+     */
+    UAActionFetchResultNewData = WKBackgroundFetchResultNewData,
+
+    /**
+     * The action failed.
+     */
+    UAActionFetchResultFailed = WKBackgroundFetchResultFailed
+} NS_SWIFT_NAME(ActionFetchResult);
+#endif
 
 /**
  * Represents the action status.

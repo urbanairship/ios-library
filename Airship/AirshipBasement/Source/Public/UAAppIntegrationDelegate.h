@@ -3,6 +3,9 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import <UserNotifications/UserNotifications.h>
+#if TARGET_OS_WATCH
+#import <WatchKit/WatchKit.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -19,9 +22,17 @@ NS_SWIFT_NAME(AppIntegrationDelegate)
 
 - (void)didFailToRegisterForRemoteNotificationsWithError:(NSError *)error NS_SWIFT_NAME(didFailToRegisterForRemoteNotifications(error:));
 
+#if !TARGET_OS_WATCH
 - (void)didReceiveRemoteNotification:(NSDictionary *)userInfo
                         isForeground:(BOOL)isForeground
                    completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler NS_SWIFT_NAME(didReceiveRemoteNotification(userInfo:isForeground:completionHandler:));
+
+#else
+- (void)didReceiveRemoteNotification:(NSDictionary *)userInfo
+                        isForeground:(BOOL)isForeground
+                   completionHandler:(void (^)(WKBackgroundFetchResult))completionHandler NS_SWIFT_NAME(didReceiveRemoteNotification(userInfo:isForeground:completionHandler:));
+
+#endif
 
 - (void)willPresentNotification:(UNNotification *)notification
             presentationOptions:(UNNotificationPresentationOptions)options

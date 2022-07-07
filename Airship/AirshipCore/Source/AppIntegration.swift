@@ -1,5 +1,9 @@
 /* Copyright Airship and Contributors */
 
+#if os(watchOS)
+import WatchKit
+#endif
+
 /**
  * Application hooks required by Airship. If `automaticSetupEnabled` is enabled
  * (enabled by default), Airship will automatically integrate these calls into
@@ -17,6 +21,7 @@ public class AppIntegration : NSObject {
         AirshipLogger.impError("Ignoring call to \(method). Either takeOff is not called or automatic integration is enabled.")
     }
     
+    #if !os(watchOS)
     /**
      * Must be called by the UIApplicationDelegate's
      * application:performFetchWithCompletionHandler:.
@@ -52,7 +57,7 @@ public class AppIntegration : NSObject {
         delegate.onBackgroundAppRefresh()
         completionHandler(.noData)
     }
-
+    
     /**
      * Must be called by the UIApplicationDelegate's
      * application:didRegisterForRemoteNotificationsWithDeviceToken:.
@@ -112,6 +117,62 @@ public class AppIntegration : NSObject {
         let isForeground = application.applicationState == .active
         delegate.didReceiveRemoteNotification(userInfo: userInfo, isForeground: isForeground, completionHandler: completionHandler);
     }
+    #else
+    /**
+     * Must be called by the WKExtensionDelegate's
+     * didRegisterForRemoteNotificationsWithDeviceToken:.
+     *
+     * - Parameters:
+     *   - deviceToken: The device token.
+     */
+    @objc(didRegisterForRemoteNotificationsWithDeviceToken:)
+    public class func didRegisterForRemoteNotificationsWithDeviceToken(deviceToken: Data) {
+        guard let delegate = integrationDelegate else {
+            logIgnoringCall()
+            return
+        }
+        
+        delegate.didRegisterForRemoteNotifications(deviceToken: deviceToken)
+    }
+
+    /**
+     * Must be called by the WKExtensionDelegate's
+     * didFailToRegisterForRemoteNotificationsWithError:.
+     *
+     * - Parameters:
+     *   - error: The error.
+     */
+    @objc
+    public class func didFailToRegisterForRemoteNotificationsWithError(error: Error) {
+        guard let delegate = integrationDelegate else {
+            logIgnoringCall()
+            return
+        }
+        
+        delegate.didFailToRegisterForRemoteNotifications(error: error)
+    }
+    /**
+     * Must be called by the WKExtensionDelegate's
+     * didReceiveRemoteNotification:fetchCompletionHandler:.
+     *
+     * - Parameters:
+     *   - userInfo: The remote notification.
+     *   - completionHandler: The completion handler.
+     */
+    @objc
+    public class func didReceiveRemoteNotification(userInfo: [AnyHashable : Any],
+                                  fetchCompletionHandler completionHandler: @escaping (WKBackgroundFetchResult) -> Void) {
+        
+        guard let delegate = integrationDelegate else {
+            logIgnoringCall()
+            completionHandler(.noData)
+            return
+        }
+        
+        let isForeground = WKExtension.shared().applicationState == .active
+        delegate.didReceiveRemoteNotification(userInfo: userInfo, isForeground: isForeground, completionHandler: completionHandler);
+    }
+    #endif
     
     /**
      * Must be called by the UNUserNotificationDelegate's

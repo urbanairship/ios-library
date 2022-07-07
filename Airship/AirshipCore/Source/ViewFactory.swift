@@ -35,7 +35,7 @@ struct ViewFactory {
             PagerIndicator(model: model, constraints: constraints)
         case .pager(let model):
             Pager(model: model, constraints: constraints)
-        #if !os(tvOS)
+        #if !os(tvOS) && !os(watchOS)
         case .webView(let model):
             AirshipWebView(model: model, constraints: constraints)
         #endif

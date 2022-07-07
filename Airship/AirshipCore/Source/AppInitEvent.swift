@@ -40,7 +40,9 @@ class AppInitEvent : NSObject, Event {
         data["push_id"] = self.analytics.conversionSendID
         data["metadata"] = self.analytics.conversionPushMetadata
         data["carrier"] = Utils.carrierName()
+        #if !os(watchOS)
         data["connection_type"] = Utils.connectionType()
+        #endif
 
         data["notification_types"] = EventUtils.notificationTypes(authorizedSettings: push().authorizedNotificationSettings)
         data["notification_authorization"] = EventUtils.notificationAuthorization(authorizationStatus: push().authorizationStatus)
@@ -50,7 +52,11 @@ class AppInitEvent : NSObject, Event {
         data["daylight_savings"] = localtz.isDaylightSavingTime ? "true" : "false"
 
         // Component Versions
+        #if !os(watchOS)
         data["os_version"] = UIDevice.current.systemVersion
+        #else
+        data["os_version"] = WKInterfaceDevice.current().systemVersion
+        #endif
         data["lib_version"] = AirshipVersion.get()
 
         let packageVersion = Utils.bundleShortVersionString() ?? ""

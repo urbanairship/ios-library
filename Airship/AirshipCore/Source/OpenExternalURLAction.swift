@@ -49,6 +49,7 @@ public class OpenExternalURLAction : NSObject, Action {
             return
         }
         
+        #if !os(watchOS)
         UIApplication.shared.open(url, options: [:]) { success in
             if success {
                 completionHandler(ActionResult(value: url.absoluteString))
@@ -57,6 +58,9 @@ public class OpenExternalURLAction : NSObject, Action {
                 completionHandler(ActionResult(error: error))
             }
         }
+        #else
+        WKExtension.shared().openSystemURL(url)
+        #endif
     }
 
     func parseURL(_ arguments: ActionArguments) -> URL? {

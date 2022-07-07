@@ -9,6 +9,7 @@ struct BannerView: View {
     static let animationOutDuration = 0.2
     
     let viewControllerOptions: ThomasViewControllerOptions
+
     let presentation: BannerPresentationModel
     let layout: Layout
     
@@ -26,10 +27,12 @@ struct BannerView: View {
                 let placement = resolvePlacement(orientation: orientation, windowSize: windowSize)
                 let ignoreSafeArea = placement.ignoreSafeArea == true
                 let safeAreaInsets = ignoreSafeArea ? metrics.safeAreaInsets : ViewConstraints.emptyEdgeSet
-                let constraints = ViewConstraints(size: UIScreen.main.bounds.size, safeAreaInsets: safeAreaInsets)
                 
+#if !os(watchOS)
+                let constraints = ViewConstraints(size: UIScreen.main.bounds.size, safeAreaInsets: safeAreaInsets)
                 createBanner(constraints: constraints, placement: placement)
                     .applyIf(ignoreSafeArea) { $0.edgesIgnoringSafeArea(.all) }
+#endif
             }
         }
     }
@@ -59,6 +62,7 @@ struct BannerView: View {
                         DispatchQueue.main.async {
                             self.contentSize = (constraints, size)
                             self.viewControllerOptions.bannerSize = contentMetrics.size
+
                         }
                         return Color.clear
                     })

@@ -39,11 +39,13 @@ public class UACoreData : NSObject {
 
         super.init()
 
+        #if !os(watchOS)
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(protectedDataAvailable),
             name: UIApplication.protectedDataDidBecomeAvailableNotification,
             object: nil)
+        #endif
     }
 
     @objc

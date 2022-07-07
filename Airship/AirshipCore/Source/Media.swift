@@ -24,7 +24,7 @@ struct Media : View {
             .border(model.border)
             .viewAccessibility(label: self.model.contentDescription)
         case .video, .youtube:
-#if !os(tvOS)
+#if !os(tvOS) && !os(watchOS)
             MediaWebView(url: model.url, type: model.mediaType, accessibilityLabel: model.contentDescription)
                 .constraints(constraints)
                 .applyIf(self.constraints.width != nil || self.constraints.height != nil) {

@@ -2,6 +2,8 @@
 
 import UIKit
 
+#if !os(watchOS)
+
 /**
  * - Note: For internal use only. :nodoc:
  */
@@ -74,3 +76,4 @@ public class ViewUtils : NSObject {
         leadingConstraint?.isActive = true
     }
 }
+#endif

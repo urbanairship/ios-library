@@ -6,7 +6,7 @@ import SwiftUI
 @available(iOS 13.0.0, tvOS 13.0.0, *)
 struct RootView<Content: View> : View {
     
-#if !os(tvOS)
+#if !os(tvOS) && !os(watchOS)
     @Environment(\.verticalSizeClass) private var verticalSizeClass
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 #endif
@@ -43,7 +43,7 @@ struct RootView<Content: View> : View {
             .onDisappear {
                 self.isVisible = false
             }
-            #if !os(tvOS)
+            #if !os(tvOS) && !os(watchOS)
             .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
                 self.currentOrientation = RootView.resolveOrientation()
             }
@@ -56,7 +56,7 @@ struct RootView<Content: View> : View {
     /// - medium: regular x compact or compact x regular
     /// - small: compact x compact
     func resolveWindowSize() -> WindowSize {
-#if os(tvOS)
+#if os(tvOS) || os(watchOS)
         return .large
 #else
         switch(verticalSizeClass, horizontalSizeClass) {
@@ -71,7 +71,7 @@ struct RootView<Content: View> : View {
     }
     
     static func resolveOrientation() -> Orientation {
-        #if os(tvOS)
+        #if os(tvOS) || os(watchOS)
         return .landscape
         #else
         if let scene = UIApplication.shared.windows.first?.windowScene {

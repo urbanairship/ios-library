@@ -9,7 +9,7 @@ protocol AirshipInstanceProtocol  {
     var locationProvider: UALocationProvider? { get }
     var permissionsManager: PermissionsManager { get }
 
-    #if !os(tvOS)
+    #if !os(tvOS) && !os(watchOS)
     var javaScriptCommandDelegate: JavaScriptCommandDelegate? { get set }
     var channelCapture: ChannelCapture { get }
     #endif
@@ -31,7 +31,8 @@ class AirshipInstance : AirshipInstanceProtocol {
     public let locationProvider: UALocationProvider?
     public let permissionsManager: PermissionsManager
 
-    #if !os(tvOS)
+    #if !os(tvOS) && !os(watchOS)
+    
     public weak var javaScriptCommandDelegate: JavaScriptCommandDelegate?
     public let channelCapture: ChannelCapture
     #endif
@@ -55,6 +56,12 @@ class AirshipInstance : AirshipInstanceProtocol {
         self.applicationMetrics = ApplicationMetrics(dataStore: dataStore, privacyManager: privacyManager)
         self.localeManager = LocaleManager(dataStore: dataStore)
         
+#if !os(watchOS)
+        let sharedApp = UIApplication.shared
+#else
+        let sharedApp = WKExtension.shared()
+#endif
+        
         let channel = Channel(dataStore: dataStore,
                               config: self.config,
                               privacyManager: self.privacyManager,
@@ -72,7 +79,9 @@ class AirshipInstance : AirshipInstanceProtocol {
                         channel: channel,
                         analytics: analytics,
                         privacyManager: self.privacyManager,
-                        permissionsManager: self.permissionsManager)
+                        permissionsManager: self.permissionsManager,
+                        apnsRegistrar:sharedApp,
+                        badger:sharedApp)
         
         let contact = Contact(dataStore: dataStore,
                                 config: self.config,
@@ -90,7 +99,7 @@ class AirshipInstance : AirshipInstanceProtocol {
                                                         privacyManager: self.privacyManager)
         
         
-        #if !os(tvOS)
+        #if !os(tvOS) && !os(watchOS)
         self.channelCapture = ChannelCapture(config: self.config,
                                              dataStore: dataStore,
                                              channel: channel)

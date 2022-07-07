@@ -42,6 +42,7 @@ public class Thomas: NSObject {
         return try decode(data).urlInfos()
     }
 
+    #if !os(watchOS)
     @objc
     public class func deferredDisplay(json: Any,
                                       scene: UIWindowScene,
@@ -154,8 +155,8 @@ public class Thomas: NSObject {
             }
         }
     }
+#endif
 }
-
 
 /// Airship rendering engine extensions.
 /// - Note: for internal use only.  :nodoc:
@@ -164,13 +165,13 @@ public class Thomas: NSObject {
 public class ThomasExtensions: NSObject {
     
     
-    #if !os(tvOS)
+    #if !os(tvOS) && !os(watchOS)
     let nativeBridgeExtension: NativeBridgeExtensionDelegate?
     #endif
     
     let imageProvider: ImageProvider?
 
-    #if os(tvOS)
+    #if os(tvOS) || os(watchOS)
     @objc
     public init(imageProvider: ImageProvider? = nil) {
         self.imageProvider = imageProvider;

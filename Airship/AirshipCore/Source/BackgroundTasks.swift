@@ -4,11 +4,16 @@ import Foundation
 import UIKit
 
 protocol BackgroundTasksProtocol {
+#if !os(watchOS)
     func beginTask(_ name: String, expirationHandler: @escaping () -> Void) throws -> Disposable
     var timeRemaining: TimeInterval { get }
+#endif
 }
 
 class BackgroundTasks: BackgroundTasksProtocol {
+    
+#if !os(watchOS)
+    
     var timeRemaining: TimeInterval {
         UIApplication.shared.backgroundTimeRemaining
     }
@@ -34,4 +39,7 @@ class BackgroundTasks: BackgroundTasksProtocol {
 
         return disposable
     }
+    
+#endif
+    
 }

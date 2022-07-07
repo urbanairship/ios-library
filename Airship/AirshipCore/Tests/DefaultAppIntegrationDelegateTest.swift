@@ -86,7 +86,7 @@ class TestPush : InternalPushProtocol {
     
     func didReceiveRemoteNotification(_ userInfo: [AnyHashable : Any],
                                       isForeground: Bool,
-                                      completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+                                      completionHandler: @escaping (Any) -> Void) {
         self.didReceiveRemoteNotificationCallback!(userInfo, isForeground, completionHandler)
     }
     

@@ -11,8 +11,10 @@ struct ModalView: View {
     let presentation: ModalPresentationModel
     let layout: Layout
     @ObservedObject var thomasEnvironment: ThomasEnvironment
+    #if !os(watchOS)
     @ObservedObject private var keyboardResponder = KeyboardResponder()
     let viewControllerOptions: ThomasViewControllerOptions
+    #endif
 
     @State private var contentSize: (ViewConstraints, CGSize)? = nil
 
@@ -27,11 +29,12 @@ struct ModalView: View {
         .ignoreKeyboardSafeArea()
     }
 
-
+    #if !os(watchOS)
     private func calculateKeyboardHeight(metrics: GeometryProxy) -> Double {
         guard self.keyboardResponder.keyboardHeight > 0 else { return 0.0 }
         return self.keyboardResponder.keyboardHeight - metrics.safeAreaInsets.bottom + ModalView.keyboardPadding
     }
+    #endif
     
     private func calculateKeyboardOverlap(placement: ModalPlacement,
                                           keyboardHeight: Double,
@@ -71,6 +74,7 @@ struct ModalView: View {
 
         let windowHeight = windowConstraints.height ?? 0
         let contentHeight = contentConstraints.height ?? 0
+        #if !os(watchOS)
         let keyboardHeight = calculateKeyboardHeight(metrics: metrics)
         var keyboardOffset = calculateKeyboardOverlap(placement: placement,
                                                       keyboardHeight: keyboardHeight,
@@ -84,6 +88,7 @@ struct ModalView: View {
             keyboardOffset = 0
             contentConstraints.height = windowHeight - keyboardHeight
         }
+        #endif
 
         return VStack {
             ViewFactory.createView(model: self.layout.view,
@@ -98,7 +103,9 @@ struct ModalView: View {
                     return Color.clear
                 })
             )
+            #if !os(watchOS)
             .offset(y: -keyboardOffset)
+            #endif
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: alignment)
         .background(modalBackground(placement)
@@ -133,7 +140,12 @@ struct ModalView: View {
     private func resolvePlacement(orientation: Orientation, windowSize: WindowSize) -> ModalPlacement {
         var placement = self.presentation.defaultPlacement
         
+        #if !os(watchOS)
         let resolvedOrientation = viewControllerOptions.orientation ?? orientation
+        #else
+        let resolvedOrientation = orientation
+        #endif
+        
         for placementSelector in self.presentation.placementSelectors ?? [] {
             if (placementSelector.windowSize != nil && placementSelector.windowSize != windowSize) {
                 continue
@@ -148,12 +160,14 @@ struct ModalView: View {
             break
         }
     
+        #if !os(watchOS)
         self.viewControllerOptions.orientation = placement.device?.orientationLock
+        #endif
         return placement
     }
 
     private func statusBarShimColor() -> Color {
-        #if os(tvOS)
+        #if os(tvOS) || os(watchOS)
         return Color.clear
         #else
 

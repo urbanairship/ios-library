@@ -3,6 +3,7 @@
 import Foundation
 import UIKit
 
+#if !os(watchOS)
 /**
  * - Note: For internal use only. :nodoc:
  */
@@ -23,3 +24,4 @@ open class SystemVersion : NSObject {
         return result == .orderedSame || result == .orderedDescending
     }
 }
+#endif

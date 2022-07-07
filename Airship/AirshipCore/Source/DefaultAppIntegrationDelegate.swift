@@ -38,6 +38,7 @@ class DefaultAppIntegrationDelegate : NSObject, AppIntegrationDelegate {
         self.push.didFailToRegisterForRemoteNotifications(error)
     }
     
+    #if !os(watchOS)
     public func didReceiveRemoteNotification(userInfo: [AnyHashable: Any],
                                              isForeground: Bool,
                                              completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
@@ -53,11 +54,28 @@ class DefaultAppIntegrationDelegate : NSObject, AppIntegrationDelegate {
                          presentationOptions: nil,
                          completionHandler: completionHandler)
     }
+    #else
+    public func didReceiveRemoteNotification(userInfo: [AnyHashable: Any],
+                                             isForeground: Bool,
+                                             completionHandler: @escaping (WKBackgroundFetchResult) -> Void) {
+        
+        guard !isForeground || Utils.isSilentPush(userInfo) else {
+            // will be handled by willPresentNotification(userInfo:presentationOptions:completionHandler:)
+            completionHandler(.noData)
+            return
+        }
+        
+        self.processPush(userInfo,
+                         isForeground: isForeground,
+                         presentationOptions: nil,
+                         completionHandler: completionHandler)
+    }
+    #endif
     
     public func willPresentNotification(notification: UNNotification,
                                         presentationOptions: UNNotificationPresentationOptions,
                                         completionHandler: @escaping () -> Void) {
-        #if os(tvOS)
+        #if os(tvOS) || os(watchOS)
         completionHandler()
         #else
         self.processPush(notification.request.content.userInfo, isForeground: true, presentationOptions: presentationOptions) { _ in
@@ -123,7 +141,7 @@ class DefaultAppIntegrationDelegate : NSObject, AppIntegrationDelegate {
         return options
     }
     
-    
+#if !os(watchOS)
     private func processPush(_ userInfo: [AnyHashable: Any],
                              isForeground: Bool,
                              presentationOptions: UNNotificationPresentationOptions?,
@@ -162,7 +180,8 @@ class DefaultAppIntegrationDelegate : NSObject, AppIntegrationDelegate {
             }
             self.push.didReceiveRemoteNotification(userInfo, isForeground:isForeground) { pushResult in
                 lock.sync {
-                    fetchResults.append(pushResult.rawValue)
+                    let result: UIBackgroundFetchResult = pushResult as! UIBackgroundFetchResult
+                    fetchResults.append(result.rawValue)
                 }
                 dispatchGroup.leave()
             }
@@ -172,6 +191,58 @@ class DefaultAppIntegrationDelegate : NSObject, AppIntegrationDelegate {
             completionHandler(Utils.mergeFetchResults(fetchResults))
         }
     }
+
+#else
+    private func processPush(_ userInfo: [AnyHashable: Any],
+                             isForeground: Bool,
+                             presentationOptions: UNNotificationPresentationOptions?,
+                             completionHandler: @escaping (WKBackgroundFetchResult) -> Void) {
+        AirshipLogger.info("Application received remote notification: \(userInfo)");
+        
+        let situation = isForeground ? Situation.foregroundPush : Situation.backgroundPush
+        let dispatchGroup = DispatchGroup()
+        var fetchResults: [UInt] = []
+        let lock = Lock()
+        var metadata: [AnyHashable : Any] = [:]
+        metadata[UAActionMetadataPushPayloadKey] = userInfo
+        
+        if let presentationOptions = presentationOptions {
+            metadata[UAActionMetadataForegroundPresentationKey] = self.isForegroundPresentation(presentationOptions)
+        }
+        
+        // Pushable components
+        self.pushableComponents.forEach {
+            if ($0.receivedRemoteNotification != nil) {
+                dispatchGroup.enter()
+                $0.receivedRemoteNotification?(userInfo) { fetchResult in
+                    lock.sync {
+                        fetchResults.append(fetchResult.rawValue)
+                    }
+                    dispatchGroup.leave()
+                }
+            }
+        }
+        
+        // Actions -> Push
+        dispatchGroup.enter()
+        ActionRunner.run(actionValues: userInfo, situation: situation, metadata: metadata) { result in
+            lock.sync {
+                fetchResults.append(UInt(result.fetchResult.rawValue))
+            }
+            self.push.didReceiveRemoteNotification(userInfo, isForeground:isForeground) { pushResult in
+                lock.sync {
+                    let result: WKBackgroundFetchResult = pushResult as! WKBackgroundFetchResult
+                    fetchResults.append(result.rawValue)
+                }
+                dispatchGroup.leave()
+            }
+        }
+        
+        dispatchGroup.notify(queue: .main) {
+            completionHandler(Utils.mergeFetchResults(fetchResults))
+        }
+    }
+#endif
     
     @available(tvOS, unavailable)
     private func situationFromAction(_ action: UNNotificationAction?) -> Situation? {

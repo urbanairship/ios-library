@@ -178,7 +178,6 @@ private extension LayoutState {
     }
 }
 
-
 @available(iOS 13.0.0, tvOS 13.0, *)
 private extension AttributesEditor {
     func set(attributeValue: AttributeValue, attribute: String) {

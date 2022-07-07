@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import UIKit
+#if !os(watchOS)
 import QuartzCore
 
 /**
@@ -66,3 +67,5 @@ public class BespokeCloseView : UIView {
         bPath.stroke()
     }
 }
+
+#endif

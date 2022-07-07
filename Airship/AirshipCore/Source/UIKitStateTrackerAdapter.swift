@@ -1,5 +1,7 @@
 /* Copyright Airship and Contributors */
 
+#if !os(watchOS)
+
 @objc(UAUIKitStateTrackerAdapter)
 @available(iOSApplicationExtension, unavailable)
 public class UIKitStateTrackerAdapter: NSObject, AppStateTrackerAdapter {
@@ -15,7 +17,8 @@ public class UIKitStateTrackerAdapter: NSObject, AppStateTrackerAdapter {
         get {
             var result: ApplicationState = .background
             dispatcher.doSync({
-                switch UIApplication.shared.applicationState {
+                let appState = UIApplication.shared.applicationState
+                switch appState {
                 case .active:
                     result = .active
                 case .inactive:
@@ -104,3 +107,5 @@ public class UIKitStateTrackerAdapter: NSObject, AppStateTrackerAdapter {
         stateTrackerDelegate?.applicationWillResignActive()
     }
 }
+
+#endif

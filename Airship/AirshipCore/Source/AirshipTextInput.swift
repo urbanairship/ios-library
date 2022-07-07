@@ -3,6 +3,8 @@
 import Foundation
 import SwiftUI
 
+#if !os(watchOS)
+
 /// Airship Text input
 @available(iOS 13.0.0, tvOS 13.0, *)
 struct AirshipTextInput : View {
@@ -79,3 +81,4 @@ struct TextView: UIViewRepresentable {
         }
     }
 }
+#endif

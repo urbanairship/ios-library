@@ -3,6 +3,9 @@
 #import "UAAutoIntegration.h"
 #import "UASwizzler+Internal.h"
 #import "UAGlobal.h"
+#if TARGET_OS_WATCH
+#import <WatchKit/WatchKit.h>
+#endif
 
 static UAAutoIntegration *instance_;
 @interface UAAutoIntegrationDummyDelegate : NSObject<UNUserNotificationCenterDelegate>
@@ -14,6 +17,7 @@ static dispatch_once_t onceToken;
 
 @interface UAAutoIntegration()
 @property (nonatomic, strong) UASwizzler *appDelegateSwizzler;
+@property (nonatomic, strong) UASwizzler *extensionDelegateSwizzler;
 @property (nonatomic, strong) UASwizzler *notificationDelegateSwizzler;
 @property (nonatomic, strong) UASwizzler *notificationCenterSwizzler;
 @property (nonatomic, strong) UAAutoIntegrationDummyDelegate *dummyNotificationDelegate;
@@ -26,7 +30,11 @@ static dispatch_once_t onceToken;
 + (void)integrateWithDelegate:(id<UAAppIntegrationDelegate>)delegate {
     dispatch_once(&onceToken, ^{
         instance_ = [[UAAutoIntegration alloc] initWithDelegate:delegate];
+        #if !TARGET_OS_WATCH
         [instance_ swizzleAppDelegate];
+        #else
+        [instance_ swizzleExtensionDelegate];
+        #endif
         [instance_ swizzleNotificationCenter];
     });
 }
@@ -52,6 +60,7 @@ static dispatch_once_t onceToken;
     return self;
 }
 
+#if !TARGET_OS_WATCH
 - (void)swizzleAppDelegate NS_EXTENSION_UNAVAILABLE("Method not available in app extensions") {
     id delegate = [UIApplication sharedApplication].delegate;
     if (!delegate) {
@@ -83,6 +92,7 @@ static dispatch_once_t onceToken;
                              protocol:@protocol(UIApplicationDelegate)
                        implementation:(IMP)ApplicationPerformFetchWithCompletionHandler];
 }
+#endif
 
 - (void)swizzleNotificationCenter {
     Class class = [UNUserNotificationCenter class];
@@ -104,6 +114,34 @@ static dispatch_once_t onceToken;
     }
 }
 
+#if TARGET_OS_WATCH
+- (void)swizzleExtensionDelegate{
+    id delegate = [WKExtension sharedExtension].delegate;
+    if (!delegate) {
+        UA_LERR(@"Extension delegate not set, unable to perform automatic setup.");
+        return;
+    }
+
+    Class class = [delegate class];
+    self.extensionDelegateSwizzler = [UASwizzler swizzlerForClass:class];
+
+    // Device token
+    [self.extensionDelegateSwizzler swizzle:@selector(didRegisterForRemoteNotificationsWithDeviceToken:)
+                             protocol:@protocol(WKExtensionDelegate)
+                       implementation:(IMP)DidRegisterForRemoteNotificationsWithDeviceToken];
+    
+    // Device token errors
+    [self.extensionDelegateSwizzler swizzle:@selector(didFailToRegisterForRemoteNotificationsWithError:)
+                             protocol:@protocol(WKExtensionDelegate)
+                       implementation:(IMP)DidFailToRegisterForRemoteNotificationsWithError];
+
+    // Content-available notifications
+    [self.extensionDelegateSwizzler swizzle:@selector(didReceiveRemoteNotification:fetchCompletionHandler:)
+                             protocol:@protocol(WKExtensionDelegate)
+                       implementation:(IMP)DidReceiveRemoteNotificationFetchCompletionHandler];
+}
+#endif
+
 - (void)swizzleNotificationCenterDelegate:(id<UNUserNotificationCenterDelegate>)delegate {
     Class class = [delegate class];
 
@@ -119,7 +157,6 @@ static dispatch_once_t onceToken;
                                 implementation:(IMP)UserNotificationCenterDidReceiveNotificationResponseWithCompletionHandler];
 #endif
 }
-
 
 - (void)setNotificationCenterSwizzler:(UASwizzler *)notificationCenterSwizzler {
     if (_notificationCenterSwizzler) {
@@ -140,6 +177,13 @@ static dispatch_once_t onceToken;
         [_appDelegateSwizzler unswizzle];
     }
     _appDelegateSwizzler = appDelegateSwizzler;
+}
+
+- (void)setExtensionDelegateSwizzler:(UASwizzler *)extensionDelegateSwizzler {
+    if (_extensionDelegateSwizzler) {
+        [_extensionDelegateSwizzler unswizzle];
+    }
+    _extensionDelegateSwizzler = extensionDelegateSwizzler;
 }
 
 
@@ -257,6 +301,7 @@ void UserNotificationCenterSetDelegate(id self, SEL _cmd, id<UNUserNotificationC
 #pragma mark -
 #pragma mark App delegate (UIApplicationDelegate) swizzled methods
 
+#if !TARGET_OS_WATCH
 void ApplicationPerformFetchWithCompletionHandler(id self,
                                                   SEL _cmd,
                                                   UIApplication *application,
@@ -358,6 +403,94 @@ void ApplicationDidReceiveRemoteNotificationFetchCompletionHandler(id self,
         handler(fetchResult);
     });
 }
+#else
+
+void DidRegisterForRemoteNotificationsWithDeviceToken(id self, SEL _cmd, NSData *deviceToken) {
+    [instance_.delegate didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
+
+    IMP original = [instance_.extensionDelegateSwizzler originalImplementation:_cmd];
+    if (original) {
+        ((void(*)(id, SEL, NSData*))original)(self, _cmd, deviceToken);
+    }
+}
+
+void DidFailToRegisterForRemoteNotificationsWithError(id self, SEL _cmd, NSError *error) {
+    [instance_.delegate didFailToRegisterForRemoteNotificationsWithError:error];
+    IMP original = [instance_.extensionDelegateSwizzler originalImplementation:_cmd];
+    if (original) {
+        ((void(*)(id, SEL, NSError*))original)(self, _cmd, error);
+    }
+}
+
+void DidReceiveRemoteNotificationFetchCompletionHandler(id self,
+                                                                   SEL _cmd,
+                                                                   NSDictionary *userInfo,
+                                                                   void (^handler)(WKBackgroundFetchResult)) {
+
+    __block WKBackgroundFetchResult fetchResult = WKBackgroundFetchResultNoData;
+
+    dispatch_group_t dispatchGroup = dispatch_group_create();
+
+    IMP original = [instance_.extensionDelegateSwizzler originalImplementation:_cmd];
+    if (original) {
+        __block BOOL completionHandlerCalled = NO;
+
+        void (^completionHandler)(WKBackgroundFetchResult) = ^(WKBackgroundFetchResult result) {
+            // Make sure the app's completion handler is called on the main queue
+            [UAAutoIntegration dispatchMain:^{
+                if (completionHandlerCalled) {
+                    UA_LTRACE(@"Completion handler called multiple times.");
+                    return;
+                }
+                completionHandlerCalled = YES;
+
+                // Merge the WKBackgroundFetchResults. If final fetchResult is not already WKBackgroundFetchResultNewData
+                // and the current result is not WKBackgroundFetchResultNoData, then set the fetchResult to result
+                // (should be either WKBackgroundFetchFailed or WKBackgroundFetchResultNewData)
+                if (fetchResult != WKBackgroundFetchResultNewData && result != WKBackgroundFetchResultNoData) {
+                    fetchResult = result;
+                }
+
+                dispatch_group_leave(dispatchGroup);
+            }];
+        };
+
+        // Call the original implementation
+        dispatch_group_enter(dispatchGroup);
+        ((void(*)(id, SEL, NSDictionary *, void (^)(WKBackgroundFetchResult)))original)(self, _cmd, userInfo, completionHandler);
+    }
+
+    dispatch_group_enter(dispatchGroup);
+    __block BOOL completionHandlerCalled = NO;
+    void (^completionHandler)(WKBackgroundFetchResult) = ^(WKBackgroundFetchResult result) {
+        if (completionHandlerCalled) {
+            UA_LTRACE(@"Completion handler called multiple times.");
+            return;
+        }
+        completionHandlerCalled = YES;
+
+        // Merge the WKBackgroundFetchResults. If final fetchResult is not already WKBackgroundFetchResultNewData
+        // and the current result is not WKBackgroundFetchResultNoData, then set the fetchResult to result
+        // (should be either WKBackgroundFetchFailed or WKBackgroundFetchResultNewData)
+        if (fetchResult != WKBackgroundFetchResultNewData && result != WKBackgroundFetchResultNoData) {
+            fetchResult = result;
+        }
+
+        dispatch_group_leave(dispatchGroup);
+    };
+    
+    [instance_.delegate didReceiveRemoteNotification:userInfo
+                                     isForeground:[WKExtension sharedExtension].applicationState == WKApplicationStateActive
+                                completionHandler:completionHandler];
+   
+    
+    dispatch_group_notify(dispatchGroup, dispatch_get_main_queue(),^{
+        // all processing of fetch is complete
+        handler(fetchResult);
+    });
+}
+
+#endif
 
 + (void)dispatchMain:(void (^)(void))block {
     dispatch_async(dispatch_get_main_queue(), block);

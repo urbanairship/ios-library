@@ -209,7 +209,7 @@ enum ViewModelType: String, Decodable {
 indirect enum ViewModel: Decodable, Equatable {
     case container(ContainerModel)
     case linearLayout(LinearLayoutModel)
-#if !os(tvOS)
+#if !os(tvOS) && !os(watchOS)
     case webView(WebViewModel)
 #endif
     case scrollLayout(ScrollLayoutModel)
@@ -247,8 +247,8 @@ indirect enum ViewModel: Decodable, Equatable {
             self = .linearLayout(try singleValueContainer.decode(LinearLayoutModel.self))
 
         case .webView:
-#if os(tvOS)
-            throw AirshipErrors.error("Webview not available on tvOS")
+#if os(tvOS) || os(watchOS)
+            throw AirshipErrors.error("Webview not available on tvOS and watchOS")
 #else
             self = .webView(try singleValueContainer.decode(WebViewModel.self))
 #endif

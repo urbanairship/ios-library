@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import UIKit
+#if !os(watchOS)
 import QuartzCore
 
 /**
@@ -83,3 +84,5 @@ public class BeveledLoadingIndicator : UIView {
         isHidden = true
     }
 }
+
+#endif

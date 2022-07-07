@@ -108,11 +108,13 @@ public protocol PushProtocol {
     @objc
     var defaultPresentationOptions: UNNotificationPresentationOptions { get set}
 
+    #if !os(watchOS)
     /// The current badge number used by the device and on the Airship server.
     ///
     /// - Note: This property must be accessed on the main thread.
     @objc
     var badgeNumber: Int { get set }
+    #endif
 }
 
 protocol InternalPushProtocol {
@@ -120,7 +122,7 @@ protocol InternalPushProtocol {
     func updateAuthorizedNotificationTypes()
     func didRegisterForRemoteNotifications(_ deviceToken: Data)
     func didFailToRegisterForRemoteNotifications(_ error: Error)
-    func didReceiveRemoteNotification(_ userInfo: [AnyHashable : Any], isForeground: Bool, completionHandler: @escaping (UIBackgroundFetchResult) -> Void)
+    func didReceiveRemoteNotification(_ userInfo: [AnyHashable : Any], isForeground: Bool, completionHandler: @escaping (Any) -> Void)
     func presentationOptionsForNotification(_ notification: UNNotification) -> UNNotificationPresentationOptions
     
     #if !os(tvOS)

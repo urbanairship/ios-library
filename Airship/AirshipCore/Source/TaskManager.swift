@@ -55,12 +55,14 @@ public class TaskManager : NSObject, TaskManagerProtocol {
             selector: #selector(didBecomeActive),
             name: AppStateTracker.didBecomeActiveNotification,
             object: nil)
-
+        
+#if !os(watchOS)
         notificationCenter.addObserver(
             self,
             selector: #selector(didEnterBackground),
             name: AppStateTracker.didEnterBackgroundNotification,
             object: nil)
+#endif
 
         self.networkMonitor.connectionUpdates = {  [weak self] _ in
             self?.retryWaitingConditions()
@@ -244,10 +246,12 @@ public class TaskManager : NSObject, TaskManagerProtocol {
         }
 
         do {
+            #if !os(watchOS)
             let name = TaskManager.requestBackgroundTaskNamePrefix + request.taskID
             backgroundTask = try self.backgroundTasks.beginTask(name) {
                 task.expire()
             }
+            #endif
 
             request.launcher.dispatcher.dispatchAsync { [weak self] in
                 guard let strongSelf = self, strongSelf.isRequestCurrent(request) else { return }
@@ -283,6 +287,8 @@ public class TaskManager : NSObject, TaskManagerProtocol {
     }
 
     private func checkRequestRequirements(_ request: TaskRequest) -> Bool {
+        
+        #if !os(watchOS)
         var backgroundTime : TimeInterval = 0.0
         UADispatcher.main.doSync {
             backgroundTime = self.backgroundTasks.timeRemaining
@@ -291,6 +297,7 @@ public class TaskManager : NSObject, TaskManagerProtocol {
         guard backgroundTime >= TaskManager.minBackgroundTime else {
             return false
         }
+        #endif
 
         if #available(iOS 12.0, tvOS 12.0, *) {
             if (request.options.isNetworkRequired && !self.networkMonitor.isConnected) {
@@ -322,7 +329,8 @@ public class TaskManager : NSObject, TaskManagerProtocol {
     func didBecomeActive() {
         self.retryWaitingConditions()
     }
-
+    
+    #if !os(watchOS)
     @objc
     func didEnterBackground() {
         var backgroundTask: Disposable?
@@ -369,6 +377,7 @@ public class TaskManager : NSObject, TaskManagerProtocol {
             backgroundTask.dispose()
         }
     }
+    #endif
 
     private func isRequestCurrent(_ request: TaskRequest) -> Bool {
         var current = false

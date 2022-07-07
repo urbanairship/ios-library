@@ -552,12 +552,21 @@ public class Channel : NSObject, Component, ChannelProtocol {
 /// - Note: for internal use only.  :nodoc:
 extension Channel : PushableComponent {
     
+    #if !os(watchOS)
     public func receivedRemoteNotification(_ notification: [AnyHashable : Any], completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         if (self.identifier == nil) {
             updateRegistration()
         }
         completionHandler(.noData)
     }
+    #else
+    public func receivedRemoteNotification(_ notification: [AnyHashable : Any], completionHandler: @escaping (WKBackgroundFetchResult) -> Void) {
+        if (self.identifier == nil) {
+            updateRegistration()
+        }
+        completionHandler(.noData)
+    }
+    #endif
 }
 
 /// - Note: for internal use only.  :nodoc:
@@ -581,7 +590,9 @@ extension Channel : ChannelRegistrarDelegate {
             payload.channel.deviceModel = Utils.deviceModelName()
             payload.channel.carrier = Utils.carrierName()
             payload.channel.appVersion = Utils.bundleShortVersionString()
+            #if !os(watchOS)
             payload.channel.deviceOS = UIDevice.current.systemVersion
+            #endif
         }
 
         if (self.privacyManager.isAnyFeatureEnabled()) {

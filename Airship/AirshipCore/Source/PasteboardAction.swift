@@ -38,7 +38,9 @@ public class PasteboardAction : NSObject, Action {
     }
 
     public func perform(with arguments: ActionArguments, completionHandler: UAActionCompletionHandler) {
+        #if !os(watchOS)
         UIPasteboard.general.string = pasteboardString(arguments)
+        #endif
         completionHandler(ActionResult(value: arguments.value))
     }
 

@@ -22,7 +22,7 @@ struct AirshipPermissionPrompter: PermissionPrompter {
         self.permissionsManager = permissionsManager
         self.notificationCenter = notificationCenter
     }
-
+    
     func prompt(permission: Permission,
                  enableAirshipUsage: Bool,
                  fallbackSystemSettings: Bool,
@@ -31,9 +31,11 @@ struct AirshipPermissionPrompter: PermissionPrompter {
 
         self.permissionsManager.checkPermissionStatus(permission) { startResult in
             if (fallbackSystemSettings && startResult == .denied) {
+#if !os(watchOS)
                 self.requestSystemSettingsChange(permission: permission) { endResult in
                     completionHandler(startResult, endResult)
                 }
+#endif
             } else {
                 self.permissionsManager.requestPermission(permission,
                                                           enableAirshipUsageOnGrant: enableAirshipUsage) { endResult in
@@ -43,6 +45,8 @@ struct AirshipPermissionPrompter: PermissionPrompter {
         }
     }
 
+#if !os(watchOS)
+    
     private func requestSystemSettingsChange(permission: Permission, completionHandler: @escaping (PermissionStatus) -> Void) {
         if let url = URL(string: UIApplication.openSettingsURLString) {
             UIApplication.shared.open(url, options: [:]) { _ in
@@ -65,4 +69,7 @@ struct AirshipPermissionPrompter: PermissionPrompter {
             self.permissionsManager.checkPermissionStatus(permission, completionHandler: completionHandler)
         }
     }
+    
+#endif
+    
 }

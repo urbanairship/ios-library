@@ -389,6 +389,7 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
     }
 }
 
+#if !os(watchOS)
 extension RemoteDataManager : PushableComponent {
     public func receivedRemoteNotification(_ notification: [AnyHashable : Any], completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         if (notification[RemoteDataManager.refreshRemoteDataPushPayloadKey] == nil) {
@@ -399,6 +400,7 @@ extension RemoteDataManager : PushableComponent {
         }
     }
 }
+#endif
 
 internal class RemoteDataSubscription {
     let payloadTypes: [String]

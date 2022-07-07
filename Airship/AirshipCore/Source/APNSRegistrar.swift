@@ -2,13 +2,20 @@
 
 import Foundation
 import UIKit
+#if os(watchOS)
+import WatchKit
+#endif
 
 protocol APNSRegistrar {
     var isRegisteredForRemoteNotifications: Bool { get }
     func registerForRemoteNotifications() -> Void
-    var isBackgroundRefreshStatusAvailable: Bool { get }
     var isRemoteNotificationBackgroundModeEnabled: Bool { get }
+#if !os(watchOS)
+    var isBackgroundRefreshStatusAvailable: Bool { get }
+#endif
 }
+
+#if !os(watchOS)
 
 extension UIApplication: APNSRegistrar {
     static var _isRemoteNotificationBackgroundModeEnabled: Bool {
@@ -24,3 +31,14 @@ extension UIApplication: APNSRegistrar {
         return self.backgroundRefreshStatus == .available
     }
 }
+
+#else
+
+extension WKExtension: APNSRegistrar {
+    var isRemoteNotificationBackgroundModeEnabled: Bool {
+        return true
+    
+    }
+}
+
+#endif

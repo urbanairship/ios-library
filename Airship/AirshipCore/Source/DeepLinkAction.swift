@@ -54,6 +54,7 @@ public class DeepLinkAction : NSObject, Action {
                 completionHandler(ActionResult(error: AirshipErrors.error("URL \(url) not allowed")))
                 return
             }
+            #if !os(watchOS)
             UIApplication.shared.open(url, options: [:]) { success in
                 if (success) {
                     completionHandler(ActionResult.empty())
@@ -61,6 +62,9 @@ public class DeepLinkAction : NSObject, Action {
                     completionHandler(ActionResult(error: AirshipErrors.error("Failed to open url \(url)")))
                 }
             }
+            #else
+            WKExtension.shared().openSystemURL(url)
+            #endif
         }
     }
     

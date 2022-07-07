@@ -106,12 +106,20 @@ public class NotificationCategories : NSObject {
             return nil
         }
 
+        #if !os(watchOS)
         return UNNotificationCategory(
             identifier: categoryId,
             actions: actions,
             intentIdentifiers: [],
             hiddenPreviewsBodyPlaceholder: hiddenPreviewsBodyPlaceholder,
             options: [])
+        #else
+        return UNNotificationCategory(
+            identifier: categoryId,
+            actions: actions,
+            intentIdentifiers: [],
+            options: [])
+        #endif
     }
 
     private class func createCategories(fromFile path: String, requireAuth: Bool) -> Set<UNNotificationCategory> {

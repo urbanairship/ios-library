@@ -68,7 +68,7 @@ private extension UNAuthorizationStatus {
             return .authorized
         }
 
-#if !os(tvOS) && !targetEnvironment(macCatalyst)
+#if !os(tvOS) && !os(watchOS) && !targetEnvironment(macCatalyst)
 
         if #available(iOS 14.0, *) {
             if (self == .ephemeral) {
@@ -87,10 +87,12 @@ private extension UNAuthorizationStatus {
 private extension UNNotificationSettings {
     var airshipSettings: UAAuthorizedNotificationSettings {
         var authorizedSettings: UAAuthorizedNotificationSettings = []
+#if !os(watchOS)
         if (self.badgeSetting == .enabled) {
             authorizedSettings.insert(.badge)
         }
-
+#endif
+        
 #if !os(tvOS)
 
         if self.soundSetting == .enabled {
@@ -101,6 +103,7 @@ private extension UNNotificationSettings {
             authorizedSettings.insert(.alert)
         }
 
+#if !os(watchOS)
         if self.carPlaySetting == .enabled {
             authorizedSettings.insert(.carPlay)
         }
@@ -108,7 +111,8 @@ private extension UNNotificationSettings {
         if self.lockScreenSetting == .enabled {
             authorizedSettings.insert(.lockScreen)
         }
-
+#endif
+        
         if self.notificationCenterSetting == .enabled {
             authorizedSettings.insert(.notificationCenter)
         }
@@ -181,7 +185,7 @@ private extension UANotificationOptions {
             }
         }
 
-#if !os(tvOS)
+#if !os(tvOS) && !os(watchOS)
         if #available(iOS 13.0, *) {
             // Avoids deprecation warning
             let annoucement = UANotificationOptions(rawValue: (1 << 7))

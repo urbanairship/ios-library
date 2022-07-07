@@ -710,7 +710,8 @@ class PushTest: XCTestCase {
 
         let completionHandlerCalled = self.expectation(description: "Completion handler called")
         self.push.didReceiveRemoteNotification(expected, isForeground: true, completionHandler: { result  in
-            XCTAssertEqual(.noData, result)
+            let res: UIBackgroundFetchResult = result as! UIBackgroundFetchResult
+            XCTAssertEqual(UIBackgroundFetchResult.noData, res)
             completionHandlerCalled.fulfill()
         })
 
@@ -730,7 +731,8 @@ class PushTest: XCTestCase {
 
         let completionHandlerCalled = self.expectation(description: "Completion handler called")
         self.push.didReceiveRemoteNotification(expected, isForeground: true, completionHandler: { result  in
-            XCTAssertEqual(.noData, result)
+            let res: UIBackgroundFetchResult = result as! UIBackgroundFetchResult
+            XCTAssertEqual(UIBackgroundFetchResult.noData, res)
             completionHandlerCalled.fulfill()
         })
 
@@ -743,7 +745,8 @@ class PushTest: XCTestCase {
 
         let completionHandlerCalled = self.expectation(description: "Completion handler called")
         self.push.didReceiveRemoteNotification(expected, isForeground: false, completionHandler: { result  in
-            XCTAssertEqual(.noData, result)
+            let res: UIBackgroundFetchResult = result as! UIBackgroundFetchResult
+            XCTAssertEqual(UIBackgroundFetchResult.noData, res)
             completionHandlerCalled.fulfill()
         })
 
@@ -763,7 +766,8 @@ class PushTest: XCTestCase {
 
         let completionHandlerCalled = self.expectation(description: "Completion handler called")
         self.push.didReceiveRemoteNotification(expected, isForeground: false, completionHandler: { result  in
-            XCTAssertEqual(.newData, result)
+            let res: UIBackgroundFetchResult = result as! UIBackgroundFetchResult
+            XCTAssertEqual(UIBackgroundFetchResult.newData, res)
             completionHandlerCalled.fulfill()
         })
 

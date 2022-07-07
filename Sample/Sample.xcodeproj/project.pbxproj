@@ -383,6 +383,20 @@
 			remoteGlobalIDString = 6E43212626EA819A009228AB;
 			remoteInfo = "AirshipBasement tvOS";
 		};
+		A6722968281981600033F54D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6E5C32B527C9A2C9005B2DDE;
+			remoteInfo = AirshipRelease;
+		};
+		A672296A281981600033F54D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6E5C32D327C9A54A005B2DDE;
+			remoteInfo = "AirshipRelease tvOS";
+		};
 		DFC3839F243EA31300EA78FE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6E75B2622395D1B300425530 /* AirshipExtensions.xcodeproj */;
@@ -642,8 +656,8 @@
 				6E1892BC268CEC9600417887 /* AirshipChatTests.xctest */,
 				6E1892BE268CEC9600417887 /* AirshipPreferenceCenter.framework */,
 				6E1892C0268CEC9600417887 /* AirshipPreferenceCenterTests.xctest */,
-				32103C1C285B368700F72365 /* AirshipRelease.framework */,
-				32103C1E285B368700F72365 /* AirshipRelease_tvOS.framework */,
+				A6722969281981600033F54D /* AirshipRelease.framework */,
+				A672296B281981600033F54D /* AirshipRelease_tvOS.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1078,6 +1092,20 @@
 			fileType = wrapper.framework;
 			path = AirshipBasement.framework;
 			remoteRef = 6EB1B42126EAA539000421B9 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A6722969281981600033F54D /* AirshipRelease.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipRelease.framework;
+			remoteRef = A6722968281981600033F54D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A672296B281981600033F54D /* AirshipRelease_tvOS.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipRelease_tvOS.framework;
+			remoteRef = A672296A281981600033F54D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */

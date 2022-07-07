@@ -311,8 +311,14 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
         var headers: [String : String] = [:]
 
         // Device info
+        #if !os(watchOS)
         headers["X-UA-Device-Family"] = UIDevice.current.systemName
         headers["X-UA-OS-Version"] = UIDevice.current.systemVersion
+        #else
+        headers["X-UA-Device-Family"] = WKInterfaceDevice.current().systemName
+        headers["X-UA-OS-Version"] = WKInterfaceDevice.current().systemVersion
+        #endif
+        
         headers["X-UA-Device-Model"] = Utils.deviceModelName()
 
         // App info

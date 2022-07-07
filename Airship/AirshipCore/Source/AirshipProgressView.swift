@@ -13,7 +13,7 @@ struct AirshipProgressView : View {
         if #available(iOS 14.0.0, tvOS 14.0.0,  *) {
             ProgressView()
         } else {
-            #if !os(tvOS)
+            #if !os(tvOS) && !os(watchOS)
             FallbackLoader(isAnimating: true)
             #else
             Image(systemName: "arrow.2.circlepath")
@@ -27,7 +27,7 @@ struct AirshipProgressView : View {
     }
 }
 
-#if !os(tvOS)
+#if !os(tvOS) && !os(watchOS)
 /// Loader
 @available(iOS 13.0.0, *)
 struct FallbackLoader: UIViewRepresentable {

@@ -2,6 +2,10 @@
 
 import Foundation
 import UserNotifications
+#if os(watchOS)
+import WatchKit
+import UIKit
+#endif
 
 /// This singleton provides an interface to the functionality provided by the Airship iOS Push API.
 @objc(UAPush)
@@ -80,8 +84,10 @@ public class Push: NSObject, Component, PushProtocol {
     private let permissionsManager: PermissionsManager
     private let notificationCenter: NotificationCenter
     private let notificationRegistrar: NotificationRegistrar
+
     private let apnsRegistrar: APNSRegistrar
     private var badger: Badger
+
     private let mainDispatcher: UADispatcher
     private let disableHelper: ComponentDisableHelper
     private var shouldUpdateNotificationRegistration = true
@@ -104,9 +110,11 @@ public class Push: NSObject, Component, PushProtocol {
     private var isBackgroundRefreshStatusAvailable: Bool {
         get {
             var available = false
+#if !os(watchOS)
             self.mainDispatcher.doSync {
                 available = self.apnsRegistrar.isBackgroundRefreshStatusAvailable
             }
+#endif
             return available
         }
     }
@@ -119,7 +127,7 @@ public class Push: NSObject, Component, PushProtocol {
             self.disableHelper.enabled = newValue
         }
     }
-
+    
     init(config: RuntimeConfig,
          dataStore: PreferenceDataStore,
          channel:  ChannelProtocol,
@@ -128,8 +136,8 @@ public class Push: NSObject, Component, PushProtocol {
          permissionsManager: PermissionsManager,
          notificationCenter: NotificationCenter = NotificationCenter.default,
          notificationRegistrar: NotificationRegistrar = UNNotificationRegistrar(),
-         apnsRegistrar: APNSRegistrar = UIApplication.shared,
-         badger: Badger = UIApplication.shared,
+         apnsRegistrar: APNSRegistrar,
+         badger: Badger,
          mainDispatcher: UADispatcher = UADispatcher.main) {
 
         self.config = config
@@ -141,6 +149,7 @@ public class Push: NSObject, Component, PushProtocol {
         self.notificationRegistrar = notificationRegistrar
         self.apnsRegistrar = apnsRegistrar
         self.badger = badger
+
         self.mainDispatcher = mainDispatcher
         self.disableHelper = ComponentDisableHelper(dataStore: dataStore,
                                                     className: "UAPush")
@@ -188,17 +197,19 @@ public class Push: NSObject, Component, PushProtocol {
         }
 
         self.updatePushEnablement()
-        
+    
         if (!self.apnsRegistrar.isRemoteNotificationBackgroundModeEnabled) {
             AirshipLogger.impError("Application is not configured for background notifications. Please enable remote notifications in the application's background modes.")
         }
     }
-
+    
     private func observeNotificationCenterEvents() {
+#if !os(watchOS)
         self.notificationCenter.addObserver(self,
                                             selector: #selector(applicationBackgroundRefreshStatusChanged),
                                             name: UIApplication.backgroundRefreshStatusDidChangeNotification,
                                             object: nil)
+#endif
         self.notificationCenter.addObserver(self,
                                             selector: #selector(applicationDidTransitionToForeground),
                                             name: AppStateTracker.didTransitionToForeground,
@@ -214,6 +225,7 @@ public class Push: NSObject, Component, PushProtocol {
                                             name: PrivacyManager.changeEvent,
                                             object: nil)
     }
+    
 
     /// Enables/disables background remote notifications on this device through Airship.
     /// Defaults to `true`.
@@ -627,6 +639,7 @@ public class Push: NSObject, Component, PushProtocol {
         }
     }
 
+#if !os(watchOS)
     /// The current badge number used by the device and on the Airship server.
     ///
     /// - Note: This property must be accessed on the main thread.
@@ -675,6 +688,8 @@ public class Push: NSObject, Component, PushProtocol {
     public func resetBadge() {
         self.badgeNumber = 0
     }
+    
+#endif
 
     /// Quiet time settings for this device.
     @objc
@@ -836,6 +851,7 @@ public class Push: NSObject, Component, PushProtocol {
         }
     }
 
+#if !os(watchOS)
     @objc
     private func applicationBackgroundRefreshStatusChanged() {
         if self.privacyManager.isEnabled(.push) {
@@ -848,6 +864,7 @@ public class Push: NSObject, Component, PushProtocol {
             }
         }
     }
+#endif
 
     private func extendChannelRegistrationPayload(_ payload: ChannelRegistrationPayload, completionHandler: @escaping (ChannelRegistrationPayload) -> Void) {
         guard self.privacyManager.isEnabled(.push) else {
@@ -867,13 +884,17 @@ public class Push: NSObject, Component, PushProtocol {
             
             payload.channel.pushAddress = self.deviceToken
             payload.channel.isOptedIn = self.isPushNotificationsOptedIn
+#if !os(watchOS)
             payload.channel.isBackgroundEnabled = self.backgroundPushNotificationsAllowed()
+#endif
             
             payload.channel.iOSChannelSettings = payload.channel.iOSChannelSettings ?? ChannelRegistrationPayload.iOSChannelSettings()
             
+#if !os(watchOS)
             if (self.autobadgeEnabled) {
                 payload.channel.iOSChannelSettings?.badge = self.badgeNumber
             }
+#endif
             
             if let timeZoneName = self.timeZone?.name,
                let quietTimeStart = self.quietTime?[Push.quietTimeStartKey] as? String,
@@ -944,8 +965,10 @@ extension Push: InternalPushProtocol {
                     switch presentationOption {
                     case Push.presentationOptionBadge:
                         options.insert(.badge)
+#if !os(watchOS)
                     case Push.presentationOptionAlert:
                         options.insert(.alert)
+#endif
                     case Push.presentationOptionSound:
                         options.insert(.sound)
 #if !targetEnvironment(macCatalyst)
@@ -1001,12 +1024,17 @@ extension Push: InternalPushProtocol {
     
 #endif
 
+
     public func didReceiveRemoteNotification(_ notification: [AnyHashable : Any],
                                              isForeground: Bool,
-                                             completionHandler handler: @escaping (UIBackgroundFetchResult) -> Void) {
+                                             completionHandler handler: @escaping (Any) -> Void) {
 
         guard self.privacyManager.isEnabled(.push) else {
-            handler(.noData)
+#if !os(watchOS)
+            handler(UIBackgroundFetchResult.noData)
+#else
+            handler(WKBackgroundFetchResult.noData)
+#endif
             return
         }
 
@@ -1016,10 +1044,18 @@ extension Push: InternalPushProtocol {
             self.notificationCenter.post(name: Push.receivedForegroundNotificationEvent, object: self, userInfo: notification)
             if let callback = delegate?.receivedForegroundNotification {
                 callback(notification, {
-                    handler(.noData)
+#if !os(watchOS)
+            handler(UIBackgroundFetchResult.noData)
+#else
+            handler(WKBackgroundFetchResult.noData)
+#endif
                 })
             } else {
-                handler(.noData)
+#if !os(watchOS)
+            handler(UIBackgroundFetchResult.noData)
+#else
+            handler(WKBackgroundFetchResult.noData)
+#endif
             }
         } else {
             self.notificationCenter.post(name: Push.receivedBackgroundNotificationEvent, object: self, userInfo: notification)
@@ -1028,7 +1064,11 @@ extension Push: InternalPushProtocol {
                     handler(result)
                 })
             } else {
-                handler(.noData)
+#if !os(watchOS)
+            handler(UIBackgroundFetchResult.noData)
+#else
+            handler(WKBackgroundFetchResult.noData)
+#endif
             }
         }
     }

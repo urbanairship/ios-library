@@ -4,7 +4,7 @@
 import AirshipBasement
 #endif
 
-#if !os(tvOS)
+#if !os(tvOS) && !os(watchOS)
 
 import Foundation
 import WebKit

@@ -406,6 +406,20 @@
 			remoteGlobalIDString = 6E43212626EA819A009228AB;
 			remoteInfo = "AirshipBasement tvOS";
 		};
+		A67229532819813A0033F54D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6E5C32B527C9A2C9005B2DDE;
+			remoteInfo = AirshipRelease;
+		};
+		A67229552819813A0033F54D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6E5C32D327C9A54A005B2DDE;
+			remoteInfo = "AirshipRelease tvOS";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -679,8 +693,8 @@
 				3C0D06B92624F232002337B0 /* AirshipChatTests.xctest */,
 				6EAD7CDF26B2003700B88EA7 /* AirshipPreferenceCenter.framework */,
 				6EAD7CE126B2003700B88EA7 /* AirshipPreferenceCenterTests.xctest */,
-				6E92EC9B28495FFA0038802D /* AirshipRelease.framework */,
-				6E92EC9D28495FFA0038802D /* AirshipRelease_tvOS.framework */,
+				A67229542819813A0033F54D /* AirshipRelease.framework */,
+				A67229562819813A0033F54D /* AirshipRelease_tvOS.framework */
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1121,6 +1135,20 @@
 			fileType = wrapper.framework;
 			path = AirshipBasement.framework;
 			remoteRef = 6EB1B41426EAA531000421B9 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A67229542819813A0033F54D /* AirshipRelease.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipRelease.framework;
+			remoteRef = A67229532819813A0033F54D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A67229562819813A0033F54D /* AirshipRelease_tvOS.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipRelease_tvOS.framework;
+			remoteRef = A67229552819813A0033F54D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
