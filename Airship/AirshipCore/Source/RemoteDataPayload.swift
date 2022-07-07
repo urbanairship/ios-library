@@ -21,11 +21,6 @@ public class RemoteDataPayload : NSObject {
     /// Contains important metadata such as locale.
     @objc
     public let metadata: [AnyHashable : Any]?
-    
-    let UARemoteDataTypeKey = "type"
-    let UARemoteDataTimestampKey = "timestamp"
-    let UARemoteDataDataKey = "data"
-    let UARemoteDataMetaDataKey = "metadata"
 
     @objc
     public init(type: String, timestamp: Date, data: [AnyHashable : Any], metadata: [AnyHashable : Any]?) {

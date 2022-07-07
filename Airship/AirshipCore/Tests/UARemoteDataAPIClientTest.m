@@ -42,6 +42,7 @@
     // Make call
     XCTestExpectation *refreshFinished = [self expectationWithDescription:@"Refresh finished"];
     [self.remoteDataAPIClient fetchRemoteDataWithLocale:[NSLocale currentLocale]
+                                            randomValue: 456
                                            lastModified:nil
                                       completionHandler:^(UARemoteDataResponse *response, NSError * _Nullable error) {
         XCTAssertNil(error);
@@ -68,7 +69,7 @@
     // Wait for the test expectations
     [self waitForTestExpectations];
 
-    NSString *expected = [NSString stringWithFormat:@"https://remote-data.urbanairship.com/api/remote-data/app/%@/ios?sdk_version=%@&language=%@&country=%@", self.config.appKey, [UAirshipVersion get], [NSLocale currentLocale].languageCode, [NSLocale currentLocale].countryCode];
+    NSString *expected = [NSString stringWithFormat:@"https://remote-data.urbanairship.com/api/remote-data/app/%@/ios?sdk_version=%@&language=%@&country=%@&random_value=%@", self.config.appKey, [UAirshipVersion get], [NSLocale currentLocale].languageCode, [NSLocale currentLocale].countryCode, @456];
 
     XCTAssertEqualObjects(expected, self.testSession.lastRequest.url.absoluteString);
 }
@@ -82,6 +83,7 @@
     // Make call
     XCTestExpectation *refreshFinished = [self expectationWithDescription:@"Refresh finished"];
     [self.remoteDataAPIClient fetchRemoteDataWithLocale:[NSLocale currentLocale]
+                                            randomValue:777
                                            lastModified:lastModified
                                       completionHandler:^(UARemoteDataResponse *response, NSError * _Nullable error) {
         XCTAssertEqual(304, response.status);
@@ -109,6 +111,7 @@
     // Make call
     XCTestExpectation *refreshFinished = [self expectationWithDescription:@"Refresh finished"];
     [self.remoteDataAPIClient fetchRemoteDataWithLocale:[NSLocale currentLocale]
+                                            randomValue:333
                                            lastModified:nil
                                       completionHandler:^(UARemoteDataResponse *response, NSError * _Nullable error) {
         XCTAssertEqual(200, response.status);
@@ -135,6 +138,7 @@
     // Make call
     XCTestExpectation *refreshFinished = [self expectationWithDescription:@"Refresh finished"];
     [self.remoteDataAPIClient fetchRemoteDataWithLocale:[NSLocale currentLocale]
+                                            randomValue:444
                                            lastModified:nil
                                       completionHandler:^(UARemoteDataResponse *response, NSError * _Nullable error) {
         [refreshFinished fulfill];
@@ -161,6 +165,7 @@
     // Make call
     XCTestExpectation *refreshFinished = [self expectationWithDescription:@"Refresh finished"];
     [self.remoteDataAPIClient fetchRemoteDataWithLocale:locale
+                                            randomValue:555
                                            lastModified:nil
                                       completionHandler:^(UARemoteDataResponse *response, NSError * _Nullable error) {
         [refreshFinished fulfill];
@@ -189,6 +194,7 @@
     // Make call
     XCTestExpectation *refreshFinished = [self expectationWithDescription:@"Refresh finished"];
     [self.remoteDataAPIClient fetchRemoteDataWithLocale:locale
+                                            randomValue:666
                                            lastModified:nil
                                       completionHandler:^(UARemoteDataResponse *response, NSError * _Nullable error) {
         [refreshFinished fulfill];

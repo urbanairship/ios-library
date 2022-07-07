@@ -31,7 +31,7 @@ public class PreferenceDataStore : NSObject {
         self.setObject(deviceID, forKey:PreferenceDataStore.deviceIDKey)
         return restored
     }()
-
+    
     @objc
     public convenience init(appKey: String) {
         self.init(appKey: appKey, dispatcher: UADispatcher.serial())

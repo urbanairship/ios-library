@@ -6,11 +6,12 @@ public protocol RemoteDataAPIClientProtocol {
     @objc
     @discardableResult
     func fetchRemoteData(locale: Locale,
+                         randomValue: Int,
                          lastModified: String?,
                          completionHandler: @escaping (RemoteDataResponse?, Error?) -> Void) -> Disposable
     
     @objc
-    func metadata(locale: Locale, lastModified:String?) -> [AnyHashable : Any]
+    func metadata(locale: Locale, randomValue: Int, lastModified:String?) -> [AnyHashable : Any]
 }
 
 // NOTE: For internal use only. :nodoc:
@@ -22,7 +23,7 @@ public class RemoteDataAPIClient : NSObject, RemoteDataAPIClientProtocol {
     private let path = "api/remote-data/app"
     private let session: RequestSession
     private let config: RuntimeConfig
-
+    
     @objc
     public init(config: RuntimeConfig, session: RequestSession) {
         self.config = config
@@ -38,10 +39,11 @@ public class RemoteDataAPIClient : NSObject, RemoteDataAPIClientProtocol {
     @objc
     @discardableResult
     public func fetchRemoteData(locale: Locale,
+                                randomValue: Int,
                                 lastModified: String?,
                                 completionHandler: @escaping (RemoteDataResponse?, Error?) -> Void) -> Disposable {
         
-        let url = remoteDataURL(locale: locale)
+        let url = remoteDataURL(locale: locale, randomValue: randomValue)
         let request = Request() { builder in
             builder.url = url
             builder.method = "GET"
@@ -85,10 +87,11 @@ public class RemoteDataAPIClient : NSObject, RemoteDataAPIClientProtocol {
         })
     }
     
-    private func remoteDataURL(locale: Locale) -> URL? {
+    private func remoteDataURL(locale: Locale, randomValue: Int) -> URL? {
         let languageItem = URLQueryItem(name: "language", value: locale.languageCode)
         let countryItem = URLQueryItem(name: "country", value: locale.regionCode)
         let versionItem = URLQueryItem(name: "sdk_version", value: AirshipVersion.get())
+        let randomValue = URLQueryItem(name: "random_value", value: String(randomValue))
 
         var components = URLComponents(string: config.remoteDataAPIURL ?? "")
 
@@ -104,13 +107,17 @@ public class RemoteDataAPIClient : NSObject, RemoteDataAPIClientProtocol {
         if countryItem.value != nil && (countryItem.value?.count ?? 0) != 0 {
             queryItems.append(countryItem)
         }
+        
+        if randomValue.value != nil && (randomValue.value?.count ?? 0) != 0 {
+            queryItems.append(randomValue)
+        }
 
         components?.queryItems = queryItems as [URLQueryItem]
         return components?.url
     }
     
-    public func metadata(locale: Locale, lastModified: String?) -> [AnyHashable : Any] {
-        guard let url = remoteDataURL(locale: locale) else {
+    public func metadata(locale: Locale, randomValue: Int, lastModified: String?) -> [AnyHashable : Any] {
+        guard let url = remoteDataURL(locale: locale, randomValue: randomValue) else {
             return [:]
         }
 
@@ -147,6 +154,7 @@ public class RemoteDataAPIClient : NSObject, RemoteDataAPIClientProtocol {
             AirshipLogger.error("Invalid payload: \(payload). Missing type.")
             return nil
         }
+        
         
         guard let timestampString = payload["timestamp"] as? String,
               let timestamp = Utils.parseISO8601Date(from: timestampString) else {

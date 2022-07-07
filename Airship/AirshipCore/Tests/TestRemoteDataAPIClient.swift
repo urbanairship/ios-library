@@ -16,7 +16,7 @@ public class TestRemoteDataAPIClient : NSObject, RemoteDataAPIClientProtocol {
     public var defaultCallback: ((String) -> Void)?
 
     
-    public func fetchRemoteData(locale: Locale, lastModified: String?, completionHandler: @escaping (RemoteDataResponse?, Error?) -> Void) -> Disposable {
+    public func fetchRemoteData(locale: Locale, randomValue: Int, lastModified: String?, completionHandler: @escaping (RemoteDataResponse?, Error?) -> Void) -> Disposable {
         if let callback = fetchCallback {
             callback(locale, lastModified, completionHandler)
         } else {
@@ -26,7 +26,7 @@ public class TestRemoteDataAPIClient : NSObject, RemoteDataAPIClientProtocol {
         return Disposable()
     }
     
-    public func metadata(locale: Locale, lastModified: String?) -> [AnyHashable : Any] {
+    public func metadata(locale: Locale, randomValue: Int, lastModified: String?) -> [AnyHashable : Any] {
         return self.metdataCallback?(locale, lastModified) ?? [:]
     }
 }

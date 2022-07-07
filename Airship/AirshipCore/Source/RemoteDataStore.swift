@@ -39,7 +39,7 @@ public class RemoteDataStore : NSObject {
                 
                 completionHandler(payloads)
             } catch {
-                AirshipLogger.error("Error executing fetch reauest \(error)")
+                AirshipLogger.error("Error executing fetch request \(error)")
                 completionHandler([])
             }
         }

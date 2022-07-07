@@ -14,6 +14,7 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
     private static let lastRefreshTimeKey = "remotedata.LAST_REFRESH_TIME"
     private static let lastRefreshAppVersionKey = "remotedata.LAST_REFRESH_APP_VERSION"
     private static let lastRemoteDataModifiedTime = "UALastRemoteDataModifiedTime"
+    private static let deviceRandomValueKey = "remotedata.randomValue"
 
     private let dataStore: PreferenceDataStore
     private let apiClient: RemoteDataAPIClientProtocol
@@ -82,6 +83,17 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
     }
     
     private let disableHelper: ComponentDisableHelper
+    
+    @objc
+    private lazy var randomValue: Int = {
+        if let storedRandomValue = self.dataStore.object(forKey: RemoteDataManager.deviceRandomValueKey) as? Int {
+            return storedRandomValue
+        } else {
+            let randomValue = Int.random(in: 0...9999)
+            self.dataStore.setObject(randomValue, forKey: RemoteDataManager.deviceRandomValueKey)
+            return randomValue
+        }
+    }()
         
     // NOTE: For internal use only. :nodoc:
     public var isComponentEnabled: Bool {
@@ -205,7 +217,7 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
 
         var success = false
 
-        let request = self.apiClient.fetchRemoteData(locale: locale, lastModified: lastModified) { response, error in
+        let request = self.apiClient.fetchRemoteData(locale: locale, randomValue: self.randomValue, lastModified: lastModified) { response, error in
             guard let response = response else {
                 if let error = error {
                     AirshipLogger.error("Failed to refresh remote-data with error \(error)")
@@ -293,7 +305,7 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
     }
 
     private func createMetadata(locale: Locale, lastModified: String?) -> [AnyHashable : Any] {
-        return self.apiClient.metadata(locale: locale, lastModified: lastModified)
+        return self.apiClient.metadata(locale: locale, randomValue: self.randomValue, lastModified: lastModified)
     }
 
     public func isMetadataCurrent(_ metadata: [AnyHashable : Any]) -> Bool {
