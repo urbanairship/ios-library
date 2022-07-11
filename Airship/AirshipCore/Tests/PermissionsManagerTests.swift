@@ -113,18 +113,19 @@ class PermissionsManagerTests: XCTestCase {
     }
 }
 
-class TestPermissionsDelegate: PermissionDelegate {
+@objc
+open class TestPermissionsDelegate: NSObject, PermissionDelegate {
 
-    var permissionStatus: PermissionStatus = .notDetermined
+    @objc public var permissionStatus: PermissionStatus = .notDetermined
     var checkCalled: Bool = false
     var requestCalled: Bool = false
 
-    func checkPermissionStatus(completionHandler: @escaping (PermissionStatus) -> Void) {
+    public func checkPermissionStatus(completionHandler: @escaping (PermissionStatus) -> Void) {
         self.checkCalled = true
         completionHandler(permissionStatus)
     }
 
-    func requestPermission(completionHandler: @escaping (PermissionStatus) -> Void) {
+    public func requestPermission(completionHandler: @escaping (PermissionStatus) -> Void) {
         self.requestCalled = true
         completionHandler(permissionStatus)
     }

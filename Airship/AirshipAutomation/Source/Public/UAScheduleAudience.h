@@ -84,6 +84,13 @@ NS_SWIFT_NAME(ScheduleAudienceBuilder)
 @property(nonatomic, strong, nullable) NSNumber *requiresAnalytics;
 
 /**
+ * The audience permission predicate.
+ *
+ * Optional.
+ */
+@property(nonatomic, strong, nullable) UAJSONPredicate *permissionPredicate;
+
+/**
  * Checks if the builder is valid and will produce a audience.
  * @return YES if the builder is valid, otherwise NO.
  */
@@ -132,7 +139,12 @@ NS_SWIFT_NAME(ScheduleAudience)
 /**
  * The require analytics audience condition for the in-app message.
  */
-@property(nonatomic, readonly, nullable) NSNumber * requiresAnalytics;
+@property(nonatomic, readonly, nullable) NSNumber *requiresAnalytics;
+
+/**
+ * The audience permission predicate.
+ */
+@property(nonatomic, readonly, nullable) UAJSONPredicate *permissionPredicate;
 
 /**
  * Factory method for building audience model from a builder block.

@@ -648,11 +648,14 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
 
 - (void)checkAudience:(UAScheduleAudience *)audience completionHandler:(void (^)(BOOL, NSError * _Nullable))completionHandler {
 
-    if ([UAScheduleAudienceChecks checkDisplayAudienceConditions:audience]) {
-        completionHandler(YES, nil);
-    } else {
-        completionHandler(NO, nil);
-    }
+    [UAScheduleAudienceChecks checkDisplayAudienceConditions:audience completionHandler:^(BOOL result) {
+        if (result) {
+            completionHandler(YES, nil);
+        } else {
+            completionHandler(NO, nil);
+        }
+    }];
+    
 }
 
 - (void)executionReadinessChanged {

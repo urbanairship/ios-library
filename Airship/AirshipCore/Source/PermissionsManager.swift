@@ -23,6 +23,27 @@ public class PermissionsManager: NSObject {
         return result
     }
 
+    /// - Note: For internal use only. :nodoc:
+    @objc
+    public func permissionStatusMap(completionHandler: @escaping ([String : String]) -> Void) {
+        
+        var map: [String : String] = [:]
+        let group = DispatchGroup()
+        
+        configuredPermissions.forEach { permission in
+            group.enter()
+            checkPermissionStatus(permission) { status in
+                map[permission.stringValue] = status.stringValue
+                group.leave()
+            }
+        }
+        
+        group.notify(queue: DispatchQueue.global()) {
+            completionHandler(map);
+        }
+        
+    }
+
     /// Sets a permission delegate.
     ///
     /// - Note: The delegate will be strongly retained.
@@ -37,13 +58,14 @@ public class PermissionsManager: NSObject {
         }
     }
 
-    /// Sets a permission delegate.
+    /// Checks a permission status.
     ///
-    /// - Note: The delegate will be strongly retained.
+    /// - Note: If no delegate is set for the given permission this will always return `.notDetermined`.
     ///
     /// - Parameters:
-    ///     - delegate: The delegate.
     ///     - permission: The permission.
+    ///     - completionHandler: The completion handler.
+    @objc
     public func checkPermissionStatus(_ permission: Permission,
                                       completionHandler: @escaping (PermissionStatus) -> Void) {
 

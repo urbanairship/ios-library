@@ -58,64 +58,92 @@
     return NO;
 }
 
-+ (BOOL)checkDisplayAudienceConditions:(UAScheduleAudience *)audience {
++ (void)checkDisplayAudienceConditions:(UAScheduleAudience *)audience completionHandler:(void (^)(BOOL))completionHandler {
     if (!audience) {
-        return YES;
+        completionHandler(YES);
+        return;
     }
 
-    // Test devices
+    /// Test devices
     if (![self checkTestDeviceCondition:audience]) {
-        return NO;
+        completionHandler(NO);
+        return;
     }
 
-    // Location opt-in
+    /// Location opt-in
     if (audience.locationOptIn) {
         if ([audience.locationOptIn boolValue] != [UAirship shared].locationProvider.isLocationOptedIn) {
-            return NO;
+            completionHandler(NO);
+            return;
         }
     }
 
-    // Notification opt-in
+    /// Notification opt-in
     if (audience.notificationsOptIn) {
         if ([audience.notificationsOptIn boolValue] != [self isNotificationsOptedIn]) {
-            return NO;
+            completionHandler(NO);
+            return;
         }
     }
 
-    // Tag Selector
+    /// Tag Selector
     if (audience.tagSelector) {
         if (![[UAirship shared].privacyManager isEnabled:UAFeaturesTagsAndAttributes]) {
-            return NO;
+            completionHandler(NO);
+            return;
         }
 
         if (![audience.tagSelector apply:[UAirship channel].tags]) {
-            return NO;
+            completionHandler(NO);
+            return;
         }
     }
 
-    // Locales
+    /// Locales
     if (![self areLocationConditionsMet:audience]) {
-        return NO;
+        completionHandler(NO);
+        return;
     }
 
 
-    // Version
+    /// Version
     if (audience.versionPredicate) {
         NSString *currentVersion = [UAirship shared].applicationMetrics.currentAppVersion;
         id versionObject = currentVersion ? @{@"ios" : @{@"version": currentVersion}} : nil;
         if (!versionObject || ![audience.versionPredicate evaluateObject:versionObject]) {
-            return NO;
+            completionHandler(NO);
+            return;
         }
     }
     
-    //requires analytics
+    /// Requires analytics
     if ([audience.requiresAnalytics boolValue]) {
         if (![[UAirship shared].privacyManager isEnabled:UAFeaturesAnalytics]) {
-            return false;
+            completionHandler(NO);
+            return;
         }
     }
 
-    return YES;
+    /// Permissions
+    if (audience.permissionPredicate) {
+        __block NSDictionary *currentPermisisons = [[NSDictionary alloc] init];
+        UAPermissionsManager *permissionManager = [[UAirship shared] permissionsManager];
+        
+        dispatch_group_t dispatchGroup = dispatch_group_create();
+        dispatch_group_enter(dispatchGroup);
+        [permissionManager permissionStatusMapWithCompletionHandler:^(NSDictionary<NSString *,NSString *> * _Nonnull map) {
+            currentPermisisons = map;
+            dispatch_group_leave(dispatchGroup);
+        }];
+        
+        dispatch_group_wait(dispatchGroup,  DISPATCH_TIME_FOREVER);
+        if (![audience.permissionPredicate evaluateObject:currentPermisisons]) {
+            completionHandler(NO);
+            return;
+        }
+    }
+
+    completionHandler(YES);
 }
 
 

@@ -20,6 +20,7 @@ NSString * const UAScheduleAudienceAppVersionKey = @"app_version";
 NSString * const UAScheduleAudienceTestDevicesKey = @"test_devices";
 NSString * const UAScheduleAudienceMissBehaviorKey = @"miss_behavior";
 NSString * const UAScheduleAudienceRequiresAnalytics = @"requires_analytics";
+NSString * const UAScheduleAudiencePermissions = @"permissions";
 
 NSString * const UAScheduleAudienceMissBehaviorCancelValue   = @"cancel";
 NSString * const UAScheduleAudienceMissBehaviorSkipValue     = @"skip";
@@ -35,6 +36,7 @@ NSString * const UAScheduleAudienceErrorDomain = @"com.urbanairship.in_app_messa
 @property(nonatomic, strong, nullable) UAJSONPredicate *versionPredicate;
 @property(nonatomic, assign) UAScheduleAudienceMissBehaviorType missBehavior;
 @property(nonatomic, strong, nullable) NSNumber *requiresAnalytics;
+@property(nonatomic, strong, nullable) UAJSONPredicate *permissionPredicate;
 @end
 
 @implementation UAScheduleAudienceBuilder
@@ -71,6 +73,7 @@ NSString * const UAScheduleAudienceErrorDomain = @"com.urbanairship.in_app_messa
         return nil;
     }
 
+    /// New user
     id onlyNewUser = json[UAScheduleAudienceNewUserKey];
     if (onlyNewUser) {
         if (![onlyNewUser isKindOfClass:[NSNumber class]]) {
@@ -82,6 +85,7 @@ NSString * const UAScheduleAudienceErrorDomain = @"com.urbanairship.in_app_messa
         builder.isNewUser = onlyNewUser;
     }
 
+    /// Notification Optin
     id notificationsOptIn = json[UAScheduleAudienceNotificationOptInKey];
     if (notificationsOptIn) {
         if (![notificationsOptIn isKindOfClass:[NSNumber class]]) {
@@ -93,6 +97,7 @@ NSString * const UAScheduleAudienceErrorDomain = @"com.urbanairship.in_app_messa
         builder.notificationsOptIn = notificationsOptIn;
     }
 
+    /// Location Optin
     id locationOptIn = json[UAScheduleAudienceLocationOptInKey];
     if (locationOptIn) {
         if (![locationOptIn isKindOfClass:[NSNumber class]]) {
@@ -104,6 +109,7 @@ NSString * const UAScheduleAudienceErrorDomain = @"com.urbanairship.in_app_messa
         builder.locationOptIn = locationOptIn;
     }
 
+    /// Language tags
     id languageTags = json[UAScheduleAudienceLanguageTagsKey];
     if (languageTags) {
         if (![languageTags isKindOfClass:[NSArray class]]) {
@@ -115,6 +121,7 @@ NSString * const UAScheduleAudienceErrorDomain = @"com.urbanairship.in_app_messa
         builder.languageTags = languageTags;
     }
 
+    /// Tag selector
     id tagSelector = json[UATagSelectorKey];
     if (tagSelector) {
         builder.tagSelector = [UATagSelector selectorWithJSON:tagSelector error:error];
@@ -123,6 +130,7 @@ NSString * const UAScheduleAudienceErrorDomain = @"com.urbanairship.in_app_messa
         }
     }
 
+    /// App version
     id versionPredicate = json[UAScheduleAudienceAppVersionKey];
     if (versionPredicate) {
         UAJSONPredicate *predicate = [[UAJSONPredicate alloc] initWithJSON:versionPredicate error:error];
@@ -132,6 +140,7 @@ NSString * const UAScheduleAudienceErrorDomain = @"com.urbanairship.in_app_messa
         }
     }
 
+    /// Test devices
     id testDevices = json[UAScheduleAudienceTestDevicesKey];
     if (testDevices) {
         if (![testDevices isKindOfClass:[NSArray class]]) {
@@ -153,6 +162,7 @@ NSString * const UAScheduleAudienceErrorDomain = @"com.urbanairship.in_app_messa
         builder.testDevices = testDevices;
     }
     
+    /// Miss behavior
     id missBehaviorValue = json[UAScheduleAudienceMissBehaviorKey];
     if (missBehaviorValue) {
         if (![missBehaviorValue isKindOfClass:[NSString class]]) {
@@ -182,6 +192,7 @@ NSString * const UAScheduleAudienceErrorDomain = @"com.urbanairship.in_app_messa
         }
     }
     
+    /// Requires analytics
     id requiresAnalyticsValue = json[UAScheduleAudienceRequiresAnalytics];
     if (requiresAnalyticsValue) {
         if(![requiresAnalyticsValue isKindOfClass:[NSNumber class]]) {
@@ -195,6 +206,16 @@ NSString * const UAScheduleAudienceErrorDomain = @"com.urbanairship.in_app_messa
         } else {
             builder.requiresAnalytics = requiresAnalyticsValue;
         }
+    }
+    
+    /// Permissions
+    id permissionPredicate = json[UAScheduleAudiencePermissions];
+    if (permissionPredicate) {
+        UAJSONPredicate *predicate = [[UAJSONPredicate alloc] initWithJSON:permissionPredicate error:error];
+        if (!predicate) {
+            return nil;
+        }
+        builder.permissionPredicate = predicate;
     }
     
     if (![builder isValid]) {
@@ -240,6 +261,7 @@ NSString * const UAScheduleAudienceErrorDomain = @"com.urbanairship.in_app_messa
         self.versionPredicate = builder.versionPredicate;
         self.missBehavior = builder.missBehavior;
         self.requiresAnalytics = builder.requiresAnalytics;
+        self.permissionPredicate = builder.permissionPredicate;
 
     }
     return self;
@@ -266,6 +288,7 @@ NSString * const UAScheduleAudienceErrorDomain = @"com.urbanairship.in_app_messa
     [json setValue:self.versionPredicate.payload forKey:UAScheduleAudienceAppVersionKey];
     [json setValue:self.testDevices forKey:UAScheduleAudienceTestDevicesKey];
     [json setValue:self.requiresAnalytics forKey:UAScheduleAudienceRequiresAnalytics];
+    [json setValue:self.permissionPredicate.payload forKey:UAScheduleAudiencePermissions];
     
     switch (self.missBehavior) {
         case UAScheduleAudienceMissBehaviorCancel:
@@ -322,6 +345,10 @@ NSString * const UAScheduleAudienceErrorDomain = @"com.urbanairship.in_app_messa
     if (self.requiresAnalytics != audience.requiresAnalytics) {
         return NO;
     }
+    if ((self.permissionPredicate != audience.permissionPredicate) && ![self.permissionPredicate.payload isEqual:audience.permissionPredicate.payload]) {
+        return  NO;
+    }
+
     return YES;
 }
 
@@ -336,6 +363,7 @@ NSString * const UAScheduleAudienceErrorDomain = @"com.urbanairship.in_app_messa
     result = 31 * result + [self.testDevices hash];
     result = 31 * result + self.missBehavior;
     result = 31 * result + [self.requiresAnalytics hash];
+    result = 31 * result + [self.permissionPredicate.payload hash];
     return result;
 }
 

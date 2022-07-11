@@ -23,8 +23,8 @@
  * Check display audience conditions.
  *
  * @param audience The specified audience
- * @return YES if the current user is a member of the specified audience
+ * @param completionHandler The completion handler
  */
-+ (BOOL)checkDisplayAudienceConditions:(UAScheduleAudience *)audience;
++ (void)checkDisplayAudienceConditions:(UAScheduleAudience *)audience completionHandler:(void (^)(BOOL))completionHandler;
 
 @end

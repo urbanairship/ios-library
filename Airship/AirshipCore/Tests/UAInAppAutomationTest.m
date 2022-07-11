@@ -981,7 +981,13 @@
 
     // Mock the checks to reject the audience
     id checks = [self mockForClass:[UAScheduleAudienceChecks class]];
-    [[[checks expect] andReturnValue:@(NO)] checkDisplayAudienceConditions:schedule.audience];
+    [[[checks expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL ) =  (__bridge void (^)(BOOL ))arg;
+        callback(NO);
+    }] checkDisplayAudienceConditions:schedule.audience completionHandler:OCMOCK_ANY];
+    
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
 
@@ -1014,7 +1020,12 @@
 
     // Mock the checks to reject the audience
     id checks = [self mockForClass:[UAScheduleAudienceChecks class]];
-    [[[checks expect] andReturnValue:@(NO)] checkDisplayAudienceConditions:schedule.audience];
+    [[[checks expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL ) =  (__bridge void (^)(BOOL ))arg;
+        callback(NO);
+    }] checkDisplayAudienceConditions:schedule.audience completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
 
@@ -1047,7 +1058,12 @@
 
     // Mock the checks to reject the audience
     id checks = [self mockForClass:[UAScheduleAudienceChecks class]];
-    [[[checks expect] andReturnValue:@(NO)] checkDisplayAudienceConditions:schedule.audience];
+    [[[checks expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL ) =  (__bridge void (^)(BOOL ))arg;
+        callback(NO);
+    }] checkDisplayAudienceConditions:schedule.audience completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
 
@@ -1080,7 +1096,12 @@
 
     // Mock the checks to reject the audience
     id checks = [self mockForClass:[UAScheduleAudienceChecks class]];
-    [[[checks expect] andReturnValue:@(NO)] checkDisplayAudienceConditions:schedule.audience];
+    [[[checks expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL ) =  (__bridge void (^)(BOOL ))arg;
+        callback(NO);
+    }] checkDisplayAudienceConditions:schedule.audience completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
 
