@@ -6,15 +6,26 @@ import XCTest
 import AirshipCore
 
 class SubscriptionListActionTests: XCTestCase {
-    var action: SubscriptionListAction!
-    var channel: TestChannel!
-    var contact: TestContact!
+
+    private let channel = TestChannel()
+    private let contact = TestContact()
+    private let date = UATestDate(offset: 0, dateOverride: Date())
+    private var action: SubscriptionListAction!
+
+    private var channelEdits: [SubscriptionListUpdate] = []
+    private var contactEdits: [ScopedSubscriptionListUpdate] = []
+
     override func setUp() {
-        self.channel = TestChannel()
-        self.channel.subscriptionListEditor = SubscriptionListEditor(completionHandler: { updates in })
-        self.contact = TestContact()
-        self.contact.subscriptionListEditor = ScopedSubscriptionListEditor(date: AirshipDate(), completionHandler: { updates in })
-        self.action = SubscriptionListAction(channel: {return self.channel}, contact: {return self.contact})
+        self.action = SubscriptionListAction(channel: {return self.channel},
+                                             contact: {return self.contact})
+
+        self.channel.subscriptionListEditor = SubscriptionListEditor { updates in
+            self.channelEdits.append(contentsOf: updates)
+        }
+        
+        self.contact.subscriptionListEditor = ScopedSubscriptionListEditor(date: date) { updates in
+            self.contactEdits.append(contentsOf: updates)
+        }
     }
 
     func testAcceptsArguments() throws {
@@ -34,13 +45,11 @@ class SubscriptionListActionTests: XCTestCase {
 
         validSituations.forEach { (situation) in
             let args = ActionArguments(value: [[:]], with: situation)
-         
             XCTAssertTrue(self.action.acceptsArguments(args))
         }
 
         rejectedSituations.forEach { (situation) in
-            let args = ActionArguments(value: nil, with: situation)
-         
+            let args = ActionArguments(value: [[:]], with: situation)
             XCTAssertFalse(self.action.acceptsArguments(args))
         }
     }
@@ -50,21 +59,33 @@ class SubscriptionListActionTests: XCTestCase {
         let args = ActionArguments(value: nil, with: .manualInvocation)
         action.perform(with: args) { (result) in
             XCTAssertNil(result.value)
-            XCTAssertNil(result.error)
+            XCTAssertNotNil(result.error)
             expectation.fulfill()
         }
 
         wait(for: [expectation], timeout: 10.0)
+
+        XCTAssertTrue(self.channelEdits.isEmpty)
+        XCTAssertTrue(self.contactEdits.isEmpty)
     }
 
-    func testPerformWithValidChannelPayload() throws {
+    func testPerformWithValidPayload() throws {
+        let actionValue = [
+            [
+                "type": "channel",
+                "action": "subscribe",
+                "list": "456"
+            ],
+            [
+                "type": "contact",
+                "action": "unsubscribe",
+                "list": "4567",
+                "scope": "app"
+            ]
+        ]
+
+        let args = ActionArguments(value: actionValue, with: .manualInvocation)
         let expectation = XCTestExpectation(description: "Completed")
-        let edits = [["type": "channel",
-            "action": "subscribe",
-            "list": "456"], ["type": "channel",
-                     "action": "unsubscribe",
-                     "list": "4567"]]
-        let args = ActionArguments(value: ["edits":edits], with: .manualInvocation)
         action.perform(with: args) { (result) in
             XCTAssertNil(result.value)
             XCTAssertNil(result.error)
@@ -72,14 +93,82 @@ class SubscriptionListActionTests: XCTestCase {
         }
 
         wait(for: [expectation], timeout: 10.0)
+
+        let expectedChannelEdits = [
+            SubscriptionListUpdate(listId: "456", type: .subscribe)
+        ]
+        XCTAssertEqual(expectedChannelEdits, self.channelEdits)
+
+
+        let expectedContactEdits = [
+            ScopedSubscriptionListUpdate(listId: "4567",
+                                         type: .unsubscribe,
+                                         scope: .app,
+                                         date: self.date.now)
+        ]
+        XCTAssertEqual(expectedContactEdits, self.contactEdits)
     }
-  
-    func testPerformWithInvalidChannelPayload() throws {
+
+    func testPerformWithAltValidPayload() throws {
+        let actionValue = [
+            "edits": [
+                [
+                    "type": "channel",
+                    "action": "subscribe",
+                    "list": "456"
+                ],
+                [
+                    "type": "contact",
+                    "action": "unsubscribe",
+                    "list": "4567",
+                    "scope": "app"
+                ]
+            ]
+        ]
+
+        let args = ActionArguments(value: actionValue, with: .manualInvocation)
         let expectation = XCTestExpectation(description: "Completed")
-        let edits = [["type": "channel",
-            "action": "subscribe"], ["type": "channel",
-                     "action": "unsubscribe"]]
-        let args = ActionArguments(value: ["edits":edits], with: .manualInvocation)
+        action.perform(with: args) { (result) in
+            XCTAssertNil(result.value)
+            XCTAssertNil(result.error)
+            expectation.fulfill()
+        }
+
+        wait(for: [expectation], timeout: 10.0)
+
+        let expectedChannelEdits = [
+            SubscriptionListUpdate(listId: "456", type: .subscribe)
+        ]
+        XCTAssertEqual(expectedChannelEdits, self.channelEdits)
+
+
+        let expectedContactEdits = [
+            ScopedSubscriptionListUpdate(listId: "4567",
+                                         type: .unsubscribe,
+                                         scope: .app,
+                                         date: self.date.now)
+        ]
+        XCTAssertEqual(expectedContactEdits, self.contactEdits)
+    }
+
+    func testPerformWithInvalidPayload() throws {
+        let actionValue = [
+            "edits": [
+                [
+                    "type": "channel",
+                    "action": "subscribe",
+                    "list": "456"
+                ],
+                [
+                    "type": "contact",
+                    "list": "4567",
+                    "scope": "app"
+                ]
+            ]
+        ]
+
+        let args = ActionArguments(value: actionValue, with: .manualInvocation)
+        let expectation = XCTestExpectation(description: "Completed")
         action.perform(with: args) { (result) in
             XCTAssertNil(result.value)
             XCTAssertNotNil(result.error)
@@ -87,35 +176,9 @@ class SubscriptionListActionTests: XCTestCase {
         }
 
         wait(for: [expectation], timeout: 10.0)
-    }
-    
-    func testPerformWithValidContactPayload() throws {
-        let expectation = XCTestExpectation(description: "Completed")
-        let edits = [["type": "contact",
-                      "action": "subscribe","list": "456", "scope":"app"], ["type": "contact",
-                                                                            "action": "unsubscribe", "list": "4567", "scope":"app"]]
-        let args = ActionArguments(value: ["edits":edits], with: .manualInvocation)
-        action.perform(with: args) { (result) in
-            XCTAssertNil(result.value)
-            XCTAssertNil(result.error)
-            expectation.fulfill()
-        }
 
-        wait(for: [expectation], timeout: 10.0)
+        XCTAssertTrue(self.channelEdits.isEmpty)
+        XCTAssertTrue(self.contactEdits.isEmpty)
     }
-  
-    func testPerformWithInvalidContactPayload() throws {
-        let expectation = XCTestExpectation(description: "Completed")
-        let edits = [["type": "contact",
-                      "action": "subscribe","list": "456", "scope":"apps"], ["type": "contact",
-                                                                            "action": "unsubscribe", "list": "4567", "scope":"apps"]]
-        let args = ActionArguments(value: ["edits":edits], with: .manualInvocation)
-        action.perform(with: args) { (result) in
-            XCTAssertNil(result.value)
-            XCTAssertNotNil(result.error)
-            expectation.fulfill()
-        }
 
-        wait(for: [expectation], timeout: 10.0)
-    }
 }
