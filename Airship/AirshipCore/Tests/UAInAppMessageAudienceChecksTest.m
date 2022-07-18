@@ -11,7 +11,6 @@
 @interface UAScheduleAudienceChecksTest : UAAirshipBaseTest
 
 @property(nonatomic, strong) UATestAirshipInstance *airship;
-@property (nonatomic, strong) id mockLocationProvider;
 @property (nonatomic, strong) id mockPush;
 @property (nonatomic, strong) id mockChannel;
 @property (nonatomic, strong) id mockApplicationMetrics;
@@ -26,7 +25,6 @@
 
     self.mockPush = [self mockForClass:[UAPush class]];
     self.mockChannel = [self mockForClass:[UAChannel class]];
-    self.mockLocationProvider = [self mockForProtocol:@protocol(UALocationProvider)];
     self.mockApplicationMetrics = [self mockForClass:[UAApplicationMetrics class]];
     
     self.privacyManager = [[UAPrivacyManager alloc] initWithDataStore:self.dataStore
@@ -36,7 +34,6 @@
     self.airship = [[UATestAirshipInstance alloc] init];
     self.airship.components = @[self.mockPush, self.mockChannel];
     self.airship.privacyManager = self.privacyManager;
-    self.airship.locationProvider = self.mockLocationProvider;
     self.airship.applicationMetrics = self.mockApplicationMetrics;
     self.airship.permissionsManager = self.permissionManager;
     [self.airship makeShared];
@@ -60,14 +57,16 @@
     UAScheduleAudience *requiresOptedOut = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
         builder.locationOptIn = @NO;
     }];
-    
-    [[[self.mockLocationProvider stub] andReturnValue:@YES] isLocationOptedIn];
-    [[[self.mockLocationProvider stub] andReturnValue:@YES] isLocationUpdatesEnabled];
+
+    TestPermissionsDelegate *locationDelgate = [[TestPermissionsDelegate alloc] init];
+    locationDelgate.permissionStatus = UAPermissionStatusGranted;
+    [self.permissionManager setDelegate:locationDelgate permission:UAPermissionLocation];
 
     // test
     [UAScheduleAudienceChecks checkDisplayAudienceConditions:requiresOptedIn completionHandler:^(BOOL result) {
         XCTAssertTrue(result);
     }];
+
     [UAScheduleAudienceChecks checkDisplayAudienceConditions:requiresOptedOut completionHandler:^(BOOL result) {
         XCTAssertFalse(result);
     }];
@@ -83,8 +82,9 @@
         builder.locationOptIn = @NO;
     }];
     
-    [[[self.mockLocationProvider stub] andReturnValue:@NO] isLocationOptedIn];
-    [[[self.mockLocationProvider stub] andReturnValue:@YES] isLocationUpdatesEnabled];
+    TestPermissionsDelegate *locationDelgate = [[TestPermissionsDelegate alloc] init];
+    locationDelgate.permissionStatus = UAPermissionStatusDenied;
+    [self.permissionManager setDelegate:locationDelgate permission:UAPermissionLocation];
 
     // test
     [UAScheduleAudienceChecks checkDisplayAudienceConditions:requiresOptedIn completionHandler:^(BOOL result) {
@@ -94,6 +94,27 @@
         XCTAssertTrue(result);
     }];
 }
+
+- (void)testLocationNoPermissionDelegate {
+    // setup
+    UAScheduleAudience *requiresOptedIn = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
+        builder.locationOptIn = @YES;
+    }];
+
+    UAScheduleAudience *requiresOptedOut = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
+        builder.locationOptIn = @NO;
+    }];
+
+    // test
+    [UAScheduleAudienceChecks checkDisplayAudienceConditions:requiresOptedIn completionHandler:^(BOOL result) {
+        XCTAssertFalse(result);
+    }];
+
+    [UAScheduleAudienceChecks checkDisplayAudienceConditions:requiresOptedOut completionHandler:^(BOOL result) {
+        XCTAssertFalse(result);
+    }];
+}
+
 
 - (void)testNotificationOptIn {
     // setup

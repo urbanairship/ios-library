@@ -70,14 +70,6 @@
         return;
     }
 
-    /// Location opt-in
-    if (audience.locationOptIn) {
-        if ([audience.locationOptIn boolValue] != [UAirship shared].locationProvider.isLocationOptedIn) {
-            completionHandler(NO);
-            return;
-        }
-    }
-
     /// Notification opt-in
     if (audience.notificationsOptIn) {
         if ([audience.notificationsOptIn boolValue] != [self isNotificationsOptedIn]) {
@@ -124,26 +116,30 @@
         }
     }
 
-    /// Permissions
-    if (audience.permissionPredicate) {
-        __block NSDictionary *currentPermisisons = [[NSDictionary alloc] init];
-        UAPermissionsManager *permissionManager = [[UAirship shared] permissionsManager];
-        
-        dispatch_group_t dispatchGroup = dispatch_group_create();
-        dispatch_group_enter(dispatchGroup);
-        [permissionManager permissionStatusMapWithCompletionHandler:^(NSDictionary<NSString *,NSString *> * _Nonnull map) {
-            currentPermisisons = map;
-            dispatch_group_leave(dispatchGroup);
-        }];
-        
-        dispatch_group_wait(dispatchGroup,  DISPATCH_TIME_FOREVER);
-        if (![audience.permissionPredicate evaluateObject:currentPermisisons]) {
-            completionHandler(NO);
-            return;
-        }
-    }
 
-    completionHandler(YES);
+    /// Permissions
+    if (audience.permissionPredicate || audience.locationOptIn) {
+        [UAirship.shared.permissionsManager permissionStatusMapWithCompletionHandler:^(NSDictionary<NSString *,NSString *> * _Nonnull map) {
+
+            if (audience.permissionPredicate && ![audience.permissionPredicate evaluateObject:map]) {
+                completionHandler(NO);
+                return;
+            }
+
+            if (audience.locationOptIn) {
+                NSString *locationPermission = map[@"location"];
+                if (!locationPermission) {
+                    completionHandler(NO);
+                    return;
+                }
+
+                BOOL granted = [locationPermission isEqualToString:@"granted"];
+                completionHandler(granted == [audience.locationOptIn boolValue]);
+            }
+        }];
+    } else {
+        completionHandler(YES);
+    }
 }
 
 
