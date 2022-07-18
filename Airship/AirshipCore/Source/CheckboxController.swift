@@ -8,7 +8,7 @@ struct CheckboxController : View {
     let constraints: ViewConstraints
     
     @State private var cancellable: AnyCancellable?
-    @EnvironmentObject var parentFormState: FormState
+    @EnvironmentObject var formState: FormState
     @State var checkboxState: CheckboxState
 
     init(model: CheckboxControllerModel, constraints: ViewConstraints) {
@@ -20,12 +20,15 @@ struct CheckboxController : View {
 
     var body: some View {
         ViewFactory.createView(model: self.model.view, constraints: constraints)
-            .environmentObject(checkboxState)
             .constraints(constraints)
-            .background(model.backgroundColor)
-            .border(model.border)
-            .viewAccessibility(label: self.model.contentDescription)
+            .background(self.model.backgroundColor)
+            .border(self.model.border)
+            .common(self.model, formInputID: self.model.identifier)
+            .accessible(self.model)
+            .formElement()
+            .environmentObject(checkboxState)
             .onAppear {
+                restoreFormState()
                 self.cancellable = self.checkboxState.$selectedItems.sink { incoming in
                     let selected = Array(incoming)
                     let isFilled = selected.count >= (self.model.minSelection ?? 0)
@@ -37,8 +40,21 @@ struct CheckboxController : View {
                                              value: .multipleCheckbox(selected),
                                              isValid: isValid)
                 
-                    self.parentFormState.updateFormInput(data)
+                    self.formState.updateFormInput(data)
                 }
             }
+    }
+
+    private func restoreFormState() {
+        let formValue = self.formState.data.formValue(identifier: self.model.identifier)
+
+
+        guard case let .multipleCheckbox(value) = formValue,
+              let value = value
+        else {
+            return
+        }
+
+        self.checkboxState.selectedItems = Set<String>(value)
     }
 }

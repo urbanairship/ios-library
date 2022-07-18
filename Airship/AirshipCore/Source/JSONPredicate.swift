@@ -58,8 +58,7 @@ public class JSONPredicate : NSObject {
 
         if let type = type {
             var subpredicates: [JSONPredicate] = []
-            
-            guard let typeInfo = parsedJson[type] as? [AnyHashable] else {
+            guard let typeInfo = parsedJson[type] as? [Any] else {
                 AirshipLogger.error("Attempted to deserialize invalid object")
                 throw AirshipErrors.parseError("Attempted to deserialize invalid object")
             }

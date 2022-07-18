@@ -38,13 +38,15 @@ struct Score : View {
         let constraints = modifiedConstraints()
         createScore(constraints)
             .constraints(constraints)
-            .border(self.model.border)
             .background(self.model.backgroundColor)
-            .viewAccessibility(label: self.model.contentDescription)
+            .border(self.model.border)
+            .common(self.model, formInputID: self.model.identifier)
+            .accessible(self.model)
+            .formElement()
             .onAppear {
+                self.restoreFormState()
                 self.updateScore(self.score)
             }
-            .formInput()
     }
     
     private func modifiedConstraints() -> ViewConstraints {
@@ -91,6 +93,19 @@ struct Score : View {
         
         self.formState.updateFormInput(data)
     }
+
+    private func restoreFormState() {
+        let formValue = self.formState.data.formValue(identifier: self.model.identifier)
+
+        guard case let .score(value) = formValue,
+              let value = value
+        else {
+            return
+        }
+
+        self.score = value
+    }
+
 }
 
 @available(iOS 13.0.0, tvOS 13.0, *)
@@ -136,4 +151,5 @@ private struct AirshipNumberRangeToggleStyle: ToggleStyle {
         }
         .animation(Animation.easeInOut(duration: 0.05))
     }
+    
 }

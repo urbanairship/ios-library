@@ -12,8 +12,9 @@ struct EmptyView : View {
 
     var body: some View {
         Color.clear
+            .constraints(constraints)
             .background(self.model.backgroundColor)
             .border(self.model.border)
-            .constraints(constraints)
+            .common(self.model)
     }
 }

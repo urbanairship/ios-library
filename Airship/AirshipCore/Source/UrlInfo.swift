@@ -97,6 +97,8 @@ extension Layout {
             return nil
         case .toggle(_):
             return nil
+        case .stateController(_):
+            return nil
         }
     }
 }

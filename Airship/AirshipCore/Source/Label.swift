@@ -15,12 +15,13 @@ struct Label : View {
     var body: some View {
         Text(self.model.text)
             .textAppearance(self.model.textAppearance)
-            .constraints(constraints, alignment: self.model.textAppearance.alignment?.toFrameAlignment() ?? Alignment.center)
-            .viewAccessibility(label: self.model.contentDescription)
             .truncationMode(.tail)
+            .constraints(constraints, alignment: self.model.textAppearance.alignment?.toFrameAlignment() ?? Alignment.center)
             .fixedSize(horizontal: false, vertical: self.constraints.height == nil)
             .background(self.model.backgroundColor)
             .border(self.model.border)
+            .common(self.model)
+            .accessible(self.model)
     }
 }
 

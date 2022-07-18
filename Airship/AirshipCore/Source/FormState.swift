@@ -7,13 +7,16 @@ class FormState: ObservableObject {
     @Published var data: FormInputData
     @Published var isVisible: Bool = false
     @Published var isSubmitted: Bool = false
-    
+    @Published var isEnabled: Bool = true
+
     public let identifier: String
     public let formType: FormType
     public let formResponseType: String?
     private var children: [String: FormInputData] = [:]
-    
-    init(identifier: String, formType: FormType, formResponseType: String?) {
+
+    init(identifier: String,
+         formType: FormType,
+         formResponseType: String?) {
         self.identifier = identifier
         self.formType = formType
         self.formResponseType = formResponseType
@@ -22,6 +25,8 @@ class FormState: ObservableObject {
                                   value: .form(formResponseType, formType, []),
                                   isValid: false)
     }
+
+    
     
     func updateFormInput(_ data: FormInputData) {
         self.children[data.identifier] = data
@@ -69,7 +74,29 @@ public struct FormInputData {
         self.attributeValue = attributeValue
         self.isValid = isValid
     }
-    
+
+    func formData(identifier: String) -> FormInputData? {
+        if (self.identifier == identifier) {
+            return self
+        }
+
+        switch(self.value) {
+        case .form(_, _, let children):
+            let child = children.first {
+                $0.identifier == identifier
+            }
+            return child
+        default:
+            break
+        }
+
+        return nil
+    }
+
+    func formValue(identifier: String) -> FormValue? {
+        return formData(identifier: identifier)?.value
+    }
+
     func attributes() -> [(AttributeName, AttributeValue)] {
         var result: [(AttributeName, AttributeValue)] = []
         if let attributeName = attributeName, let attributeValue = attributeValue {
@@ -164,11 +191,12 @@ public struct FormInputData {
 
 public enum FormValue {
     case toggle(Bool)
-    case radio(Any?)
-    case multipleCheckbox([Any]?)
+    case radio(String?)
+    case multipleCheckbox([String]?)
     case form(String?, FormType, [FormInputData])
     case text(String?)
     case score(Int?)
+
 }
 
 public enum FormType {

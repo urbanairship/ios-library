@@ -53,6 +53,8 @@ struct ViewFactory {
             RadioInput(model: model, constraints: constraints)
         case .score(let model):
             Score(model: model, constraints: constraints)
+        case .stateController(let model):
+            StateController(model: model, constraints: constraints)
         }
     }
     

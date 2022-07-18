@@ -27,13 +27,13 @@ struct LabelButton : View {
                 }
                 .background(self.model.backgroundColor)
                 .border(self.model.border)
-                .viewAccessibility(label: self.model.contentDescription)
+                .accessible(self.model)
         }
         .buttonClick(self.model.identifier,
                      buttonDescription: self.model.contentDescription ?? self.model.label.text,
                      behaviors: self.model.clickBehaviors,
                      actions: self.model.actions)
-        .enableButton(self.model.enableBehaviors)
+        .common(self.model)
         .buttonStyle(PlainButtonStyle())
         .environment(\.layoutState,
                       layoutState.override(buttonState: ButtonState(identifier: self.model.identifier)))

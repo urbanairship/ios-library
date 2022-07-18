@@ -23,8 +23,8 @@ struct Container : View {
         }
         .constraints(constraints)
         .clipped()
-        .background(model.backgroundColor)
-        .border(model.border)
+        .background(self.model.backgroundColor)
+        .border(self.model.border)
         .background(
             GeometryReader(content: { contentMetrics -> Color in
                 let size = contentMetrics.size
@@ -34,6 +34,7 @@ struct Container : View {
                 return Color.clear
             })
         )
+        .common(self.model)
     }
     
     @ViewBuilder

@@ -36,10 +36,23 @@ extension View {
         self.simultaneousGesture(TapGesture().onEnded(action))
         #endif
     }
-    
-    func viewAccessibility(label: String?) -> some View {
-        return self
-            .accessibility(label: Text(label ?? ""))
+
+    @ViewBuilder
+    func accessible(_ accessible: Accessible?) -> some View {
+        if let label = accessible?.contentDescription {
+            self.accessibility(label: Text(label))
+        } else {
+            self
+        }
+    }
+
+
+    @ViewBuilder
+    func common<Content: BaseModel>(_ model: Content,
+                formInputID: String? = nil) -> some View {
+        self.eventHandlers(model.eventHandlers, formInputID: formInputID)
+            .enableBehaviors(model.enableBehaviors)
+            .visibility(model.visibility)
     }
 }
 

@@ -31,7 +31,11 @@ struct AirshipWebView : View {
             if (self.isLoading) {
                 AirshipProgressView()
             }
-        }.constraints(constraints)
+        }
+        .constraints(constraints)
+        .background(self.model.backgroundColor)
+        .border(self.model.border)
+        .common(self.model)
     }
 }
 

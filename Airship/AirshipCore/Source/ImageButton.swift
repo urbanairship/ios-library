@@ -24,14 +24,14 @@ struct ImageButton : View {
                 .constraints(constraints, fixedSize: true)
                 .background(self.model.backgroundColor)
                 .border(self.model.border)
-                .viewAccessibility(label: self.model.contentDescription)
+                .accessible(self.model)
 
         }
         .buttonClick(self.model.identifier,
                      buttonDescription: self.model.contentDescription ?? self.model.identifier,
                      behaviors: self.model.clickBehaviors,
                      actions: self.model.actions)
-        .enableButton(self.model.enableBehaviors)
+        .common(self.model)
         .environment(\.layoutState,
                       layoutState.override(buttonState: ButtonState(identifier: self.model.identifier)))
 

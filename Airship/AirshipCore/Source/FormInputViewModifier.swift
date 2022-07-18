@@ -5,7 +5,7 @@ import SwiftUI
 import Combine
 
 @available(iOS 13.0.0, tvOS 13.0, *)
-struct FormInputViewModifier: ViewModifier {
+struct FormVisibilityViewModifier: ViewModifier {
     @Environment(\.isVisible) private var isVisible
     @EnvironmentObject var formState: FormState
 
@@ -21,19 +21,31 @@ struct FormInputViewModifier: ViewModifier {
             content
                 .onAppear()
                 .onReceive(Just(isVisible)) { newValue in
-                if (newValue) {
-                    formState.markVisible()
+                    if (newValue) {
+                        formState.markVisible()
+                    }
                 }
-            }
         }
     }
 }
 
 @available(iOS 13.0.0, tvOS 13.0, *)
+struct FormInputEnabledViewModifier: ViewModifier {
+    @EnvironmentObject var formState: FormState
+
+    @ViewBuilder
+    func body(content: Content) -> some View {
+        content.disabled(!formState.isEnabled)
+    }
+}
+
+
+@available(iOS 13.0.0, tvOS 13.0, *)
 extension View {
     @ViewBuilder
-    func formInput() -> some View  {
-        self.modifier(FormInputViewModifier())
+    func formElement() -> some View  {
+        self.modifier(FormVisibilityViewModifier())
+            .modifier(FormInputEnabledViewModifier())
     }
 }
 

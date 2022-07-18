@@ -7,7 +7,7 @@ import SwiftUI
 struct AirshipToggle : View {
     let model: ToggleModel
     let constraints: ViewConstraints
-    
+
     @EnvironmentObject var formState: FormState
     @State private var isOn: Bool = false
     @Environment(\.colorScheme) var colorScheme
@@ -16,10 +16,15 @@ struct AirshipToggle : View {
     var body: some View {
         createToggle()
             .constraints(self.constraints)
-            .background(model.backgroundColor)
-            .border(model.border)
-            .viewAccessibility(label: self.model.contentDescription)
-            .formInput()
+            .background(self.model.backgroundColor)
+            .border(self.model.border)
+            .common(self.model, formInputID: self.model.identifier)
+            .accessible(self.model)
+            .formElement()
+            .onAppear {
+                restoreFormState()
+                updateValue(self.isOn)
+            }
     }
     
     @ViewBuilder
@@ -51,4 +56,16 @@ struct AirshipToggle : View {
                                  
         self.formState.updateFormInput(data)
     }
+
+    private func restoreFormState() {
+        let formValue = self.formState.data.formValue(identifier: self.model.identifier)
+
+        guard case let .toggle(value) = formValue
+        else {
+            return
+        }
+
+        self.isOn = value
+    }
+
 }

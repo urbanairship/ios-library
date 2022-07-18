@@ -10,7 +10,7 @@ env:
 jobs:
   check-version:
     if: github.repository == 'urbanairship/ios-library'
-    runs-on: macOS-11
+    runs-on: macOS-12
     steps:
       - uses: actions/checkout@v2
       - name: Get the version
@@ -27,7 +27,7 @@ jobs:
 
   build-package:
     needs: check-version
-    runs-on: macOS-11
+    runs-on: macOS-12
     steps:
       - uses: actions/checkout@v2
       - uses: actions/cache@v1
@@ -55,7 +55,7 @@ jobs:
 
   build-samples:
     needs: check-version
-    runs-on: macOS-11
+    runs-on: macOS-12
     steps:
       - uses: actions/checkout@v2
       - uses: actions/cache@v1
@@ -68,7 +68,7 @@ jobs:
 
   run-tests:
     needs: check-version
-    runs-on: macOS-11
+    runs-on: macOS-12
     steps:
       - uses: actions/checkout@v2
       - uses: actions/cache@v1
@@ -82,7 +82,7 @@ jobs:
         run: make test
 
   deploy:
-    runs-on: macOS-11
+    runs-on: macOS-12
     needs: [run-tests, build-package, build-samples]
     steps:
       - uses: actions/checkout@v2

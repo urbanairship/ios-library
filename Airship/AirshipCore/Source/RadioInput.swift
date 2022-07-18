@@ -41,11 +41,11 @@ struct RadioInput : View {
             .constraints(constraints)
             .background(model.backgroundColor)
             .border(model.border)
-            .viewAccessibility(label: self.model.contentDescription)
+            .common(self.model)
+            .formElement()
             .onAppear {
                 self.radioInputState.attributeValue = self.model.attributeValue
             }
-            .formInput()
     }
 }
 

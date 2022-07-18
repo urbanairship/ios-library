@@ -204,6 +204,7 @@ enum ViewModelType: String, Decodable {
     case score = "score"
     case npsController = "nps_form_controller"
     case toggle = "toggle"
+    case stateController = "state_controller"
 }
 
 indirect enum ViewModel: Decodable, Equatable {
@@ -230,7 +231,8 @@ indirect enum ViewModel: Decodable, Equatable {
     case score(ScoreModel)
     case npsController(NpsControllerModel)
     case toggle(ToggleModel)
-    
+    case stateController(StateControllerModel)
+
     private enum CodingKeys: String, CodingKey {
         case type
     }
@@ -289,6 +291,8 @@ indirect enum ViewModel: Decodable, Equatable {
             self = .npsController(try singleValueContainer.decode(NpsControllerModel.self))
         case .toggle:
             self = .toggle(try singleValueContainer.decode(ToggleModel.self))
+        case .stateController:
+            self = .stateController(try singleValueContainer.decode(StateControllerModel.self))
         }
     }
 }
@@ -317,6 +321,101 @@ struct TextAppearance : BaseTextAppearance {
     }
 }
 
+protocol BaseModel: Decodable, Equatable {
+    var type: ViewModelType { get }
+    var border: Border? { get }
+    var backgroundColor: ThomasColor? { get }
+    var visibility: VisibilityInfo? { get }
+    var eventHandlers: [EventHandler]? { get }
+    var enableBehaviors: [EnableBehavior]? { get }
+}
+
+enum EventHandlerType: String, Decodable, Equatable {
+    case tap
+    case show
+    case hide
+    case focus
+    case formInput = "form_input"
+}
+
+struct EventHandler: Decodable, Equatable {
+    let type: EventHandlerType
+    let stateActions: [StateAction]
+
+    enum CodingKeys : String, CodingKey {
+        case type = "type"
+        case stateActions = "state_actions"
+    }
+}
+
+enum StateActionType: String, Decodable, Equatable {
+    case setState = "set"
+    case clearState = "clear"
+    case formValue = "set_form_value"
+
+}
+
+enum StateAction: Decodable, Equatable {
+    case setState(SetStateAction)
+    case clearState
+    case formValue(SetFormValueStateAction)
+
+    enum CodingKeys: String, CodingKey {
+        case type = "type"
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let type = try container.decode(StateActionType.self, forKey: .type)
+        let singleValueContainer = try decoder.singleValueContainer()
+
+        switch type {
+        case .setState:
+            self = .setState(try singleValueContainer.decode(SetStateAction.self))
+        case .clearState:
+            self = .clearState
+        case .formValue:
+            self = .formValue(try singleValueContainer.decode(SetFormValueStateAction.self))
+        }
+    }
+}
+
+struct SetStateAction: Decodable, Equatable {
+    let key: String
+    let value: JSON?
+
+    enum CodingKeys: String, CodingKey {
+        case key = "key"
+        case value = "value"
+    }
+}
+
+struct SetFormValueStateAction: Decodable, Equatable {
+    let key: String
+
+    enum CodingKeys: String, CodingKey {
+        case key = "key"
+    }
+}
+
+struct VisibilityInfo: Decodable, Equatable {
+    let invertWhenStateMatches: JSONPredicate
+    let defaultVisibility: Bool
+
+    enum CodingKeys : String, CodingKey {
+        case statePredicate = "invert_when_state_matches"
+        case defaultVisibility = "default"
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let predicateJson = try container.decode(JSON.self, forKey: .statePredicate)
+
+        self.defaultVisibility = try container.decode(Bool.self, forKey: .defaultVisibility)
+        self.invertWhenStateMatches = try JSONPredicate(json: predicateJson.unWrap())
+    }
+}
+
 struct TextInputTextAppearance : BaseTextAppearance {
     var color: ThomasColor
     var fontSize: Double
@@ -336,20 +435,26 @@ struct TextInputTextAppearance : BaseTextAppearance {
 }
 
 
-struct ContainerModel : Decodable, Equatable {
+struct ContainerModel: BaseModel {
     let type = ViewModelType.container
     let border: Border?
     let backgroundColor: ThomasColor?
     let items: [ContainerItem]
+    let visibility: VisibilityInfo?
+    let eventHandlers: [EventHandler]?
+    let enableBehaviors: [EnableBehavior]?
     
     enum CodingKeys : String, CodingKey {
         case border = "border"
         case backgroundColor = "background_color"
         case items = "items"
+        case visibility = "visibility"
+        case eventHandlers = "event_handlers"
+        case enableBehaviors = "enabled"
     }
 }
 
-struct ContainerItem : Decodable, Equatable {
+struct ContainerItem: Decodable, Equatable {
     let position: Position
     let margin: Margin?
     let size: Size
@@ -365,7 +470,7 @@ struct ContainerItem : Decodable, Equatable {
     }
 }
 
-struct LinearLayoutModel: Decodable, Equatable {
+struct LinearLayoutModel: BaseModel {
     let type = ViewModelType.linearLayout
     let identifier: String?
     let border: Border?
@@ -374,6 +479,9 @@ struct LinearLayoutModel: Decodable, Equatable {
     let items: [LinearLayoutItem]
     let ignoreSafeArea: Bool?
     let randomizeChildren: Bool?
+    let visibility: VisibilityInfo?
+    let eventHandlers: [EventHandler]?
+    let enableBehaviors: [EnableBehavior]?
 
     enum CodingKeys: String, CodingKey {
         case items = "items"
@@ -383,6 +491,9 @@ struct LinearLayoutModel: Decodable, Equatable {
         case direction = "direction"
         case ignoreSafeArea = "ignore_safe_area"
         case randomizeChildren = "randomize_children"
+        case visibility = "visibility"
+        case eventHandlers = "event_handlers"
+        case enableBehaviors = "enabled"
     }
 }
 
@@ -398,35 +509,47 @@ struct LinearLayoutItem: Decodable, Equatable {
     }
 }
 
-struct ScrollLayoutModel: Decodable, Equatable {
+struct ScrollLayoutModel: BaseModel {
     let type = ViewModelType.scrollLayout
     let border: Border?
     let backgroundColor: ThomasColor?
     let direction: Direction
     let view: ViewModel
+    let visibility: VisibilityInfo?
+    let eventHandlers: [EventHandler]?
+    let enableBehaviors: [EnableBehavior]?
 
     enum CodingKeys: String, CodingKey {
         case border = "border"
         case backgroundColor = "background_color"
         case direction = "direction"
         case view = "view"
+        case visibility = "visibility"
+        case eventHandlers = "event_handlers"
+        case enableBehaviors = "enabled"
     }
 }
 
-struct WebViewModel: Decodable, Equatable {
+struct WebViewModel: BaseModel {
     let type = ViewModelType.webView
     let border: Border?
     let backgroundColor: ThomasColor?
     let url: String
-    
+    let visibility: VisibilityInfo?
+    let eventHandlers: [EventHandler]?
+    let enableBehaviors: [EnableBehavior]?
+
     enum CodingKeys: String, CodingKey {
         case border = "border"
         case backgroundColor = "background_color"
         case url = "url"
+        case visibility = "visibility"
+        case eventHandlers = "event_handlers"
+        case enableBehaviors = "enabled"
     }
 }
 
-struct MediaModel: Decodable, Equatable {
+struct MediaModel: BaseModel, Accessible {
     let type = ViewModelType.media
     let border: Border?
     let backgroundColor: ThomasColor?
@@ -434,7 +557,10 @@ struct MediaModel: Decodable, Equatable {
     let mediaType: MediaType
     let mediaFit: MediaFit
     let contentDescription: String?
-    
+    let visibility: VisibilityInfo?
+    let eventHandlers: [EventHandler]?
+    let enableBehaviors: [EnableBehavior]?
+
     enum CodingKeys: String, CodingKey {
         case mediaType = "media_type"
         case url = "url"
@@ -442,16 +568,22 @@ struct MediaModel: Decodable, Equatable {
         case backgroundColor = "background_color"
         case mediaFit = "media_fit"
         case contentDescription = "content_description"
+        case visibility = "visibility"
+        case eventHandlers = "event_handlers"
+        case enableBehaviors = "enabled"
     }
 }
 
-struct LabelModel: Decodable, Equatable {
+struct LabelModel: BaseModel, Accessible {
     let type = ViewModelType.label
     let border: Border?
     let backgroundColor: ThomasColor?
     let text: String
     let textAppearance: TextAppearance
     let contentDescription: String?
+    let visibility: VisibilityInfo?
+    let eventHandlers: [EventHandler]?
+    let enableBehaviors: [EnableBehavior]?
     
     enum CodingKeys: String, CodingKey {
         case text = "text"
@@ -459,19 +591,24 @@ struct LabelModel: Decodable, Equatable {
         case border = "border"
         case backgroundColor = "background_color"
         case contentDescription = "content_description"
+        case visibility = "visibility"
+        case eventHandlers = "event_handlers"
+        case enableBehaviors = "enabled"
     }
 }
 
-struct LabelButtonModel: Decodable, Equatable {
+struct LabelButtonModel: BaseModel, Accessible {
     let type = ViewModelType.labelButton
     let identifier: String
     let border: Border?
     let backgroundColor: ThomasColor?
     let clickBehaviors: [ButtonClickBehavior]?
-    let enableBehaviors: [ButtonEnableBehavior]?
+    let enableBehaviors: [EnableBehavior]?
     let actions: ActionsPayload?
     let label: LabelModel
     let contentDescription: String?
+    let visibility: VisibilityInfo?
+    let eventHandlers: [EventHandler]?
     
     enum CodingKeys: String, CodingKey {
         case identifier = "identifier"
@@ -482,6 +619,8 @@ struct LabelButtonModel: Decodable, Equatable {
         case actions = "actions"
         case label = "label"
         case contentDescription = "content_description"
+        case visibility = "visibility"
+        case eventHandlers = "event_handlers"
     }
 }
 
@@ -553,16 +692,18 @@ struct ActionsPayload: Decodable, Equatable {
     }
 }
 
-struct ImageButtonModel: Decodable, Equatable {
+struct ImageButtonModel: BaseModel, Accessible {
     let type = ViewModelType.imageButton
     let identifier: String
     let border: Border?
     let backgroundColor: ThomasColor?
     let image: ButtomImageModel
     let clickBehaviors: [ButtonClickBehavior]?
-    let enableBehaviors: [ButtonEnableBehavior]?
+    let enableBehaviors: [EnableBehavior]?
     let actions: ActionsPayload?
     let contentDescription: String?
+    let visibility: VisibilityInfo?
+    let eventHandlers: [EventHandler]?
     
     enum CodingKeys: String, CodingKey {
         case identifier = "identifier"
@@ -573,32 +714,46 @@ struct ImageButtonModel: Decodable, Equatable {
         case clickBehaviors = "button_click"
         case actions = "actions"
         case contentDescription = "content_description"
+        case visibility = "visibility"
+        case eventHandlers = "event_handlers"
     }
 }
 
-struct EmptyViewModel: Decodable, Equatable {
+struct EmptyViewModel: BaseModel {
     let type = ViewModelType.emptyView
     let border: Border?
     let backgroundColor: ThomasColor?
-    
+    let visibility: VisibilityInfo?
+    let eventHandlers: [EventHandler]?
+    let enableBehaviors: [EnableBehavior]?
+
     enum CodingKeys: String, CodingKey {
         case border = "border"
         case backgroundColor = "background_color"
+        case visibility = "visibility"
+        case eventHandlers = "event_handlers"
+        case enableBehaviors = "enabled"
     }
 }
 
-struct PagerModel: Decodable, Equatable {
+struct PagerModel: BaseModel {
     let type = ViewModelType.pager
     let border: Border?
     let backgroundColor: ThomasColor?
     let disableSwipe: Bool?
     let items: [PagerItem]
+    let visibility: VisibilityInfo?
+    let eventHandlers: [EventHandler]?
+    let enableBehaviors: [EnableBehavior]?
     
     enum CodingKeys: String, CodingKey {
         case border = "border"
         case backgroundColor = "background_color"
         case items = "items"
         case disableSwipe = "disable_swipe"
+        case visibility = "visibility"
+        case eventHandlers = "event_handlers"
+        case enableBehaviors = "enabled"
     }
 }
 
@@ -614,18 +769,24 @@ struct PagerItem : Decodable, Equatable {
     }
 }
 
-struct PagerIndicatorModel: Decodable, Equatable {
+struct PagerIndicatorModel: BaseModel {
     let type = ViewModelType.pagerIndicator
     let border: Border?
     let backgroundColor: ThomasColor?
     let bindings: Bindings
     let spacing: Double
+    let visibility: VisibilityInfo?
+    let eventHandlers: [EventHandler]?
+    let enableBehaviors: [EnableBehavior]?
 
     enum CodingKeys: String, CodingKey {
         case border = "border"
         case backgroundColor = "background_color"
         case bindings = "bindings"
         case spacing = "spacing"
+        case visibility = "visibility"
+        case eventHandlers = "event_handlers"
+        case enableBehaviors = "enabled"
     }
     
     struct Bindings: Decodable, Equatable {
@@ -649,19 +810,24 @@ struct PagerIndicatorModel: Decodable, Equatable {
     }
 }
 
-struct PagerControllerModel: Decodable, Equatable {
+struct PagerControllerModel: BaseModel {
     let type = ViewModelType.pagerController
     let border: Border?
     let backgroundColor: ThomasColor?
     let view: ViewModel
     let identifier: String
-
+    let visibility: VisibilityInfo?
+    let eventHandlers: [EventHandler]?
+    let enableBehaviors: [EnableBehavior]?
 
     enum CodingKeys: String, CodingKey {
         case border = "border"
         case backgroundColor = "background_color"
         case view = "view"
         case identifier = "identifier"
+        case visibility = "visibility"
+        case eventHandlers = "event_handlers"
+        case enableBehaviors = "enabled"
     }
     
     static func == (lhs: PagerControllerModel, rhs: PagerControllerModel) -> Bool {
@@ -669,7 +835,7 @@ struct PagerControllerModel: Decodable, Equatable {
     }
 }
 
-struct FormControllerModel: Decodable, Equatable {
+struct FormControllerModel: BaseModel {
     let type = ViewModelType.formController
     let identifier: String
     let submit: FormSubmitBehavior?
@@ -677,6 +843,10 @@ struct FormControllerModel: Decodable, Equatable {
     let backgroundColor: ThomasColor?
     let view: ViewModel
     let responseType: String?
+    let enableBehaviors: [EnableBehavior]?
+    let visibility: VisibilityInfo?
+    let eventHandlers: [EventHandler]?
+    let formEnableBehaviors: [EnableBehavior]?
 
     enum CodingKeys: String, CodingKey {
         case identifier = "identifier"
@@ -685,10 +855,34 @@ struct FormControllerModel: Decodable, Equatable {
         case backgroundColor = "background_color"
         case view = "view"
         case responseType = "response_type"
+        case visibility = "visibility"
+        case eventHandlers = "event_handlers"
+        case enableBehaviors = "enabled"
+        case formEnableBehaviors = "form_enabled"
     }
 }
 
-struct NpsControllerModel: Decodable, Equatable {
+struct StateControllerModel: BaseModel {
+    let type = ViewModelType.formController
+    let border: Border?
+    let backgroundColor: ThomasColor?
+    let view: ViewModel
+    let visibility: VisibilityInfo?
+    let eventHandlers: [EventHandler]?
+    let enableBehaviors: [EnableBehavior]?
+
+    enum CodingKeys: String, CodingKey {
+        case border = "border"
+        case backgroundColor = "background_color"
+        case view = "view"
+        case visibility = "visibility"
+        case eventHandlers = "event_handlers"
+        case enableBehaviors = "enabled"
+    }
+}
+
+
+struct NpsControllerModel: BaseModel {
     let type = ViewModelType.formController
     let identifier: String
     let submit: FormSubmitBehavior?
@@ -697,7 +891,10 @@ struct NpsControllerModel: Decodable, Equatable {
     let npsIdentifier: String
     let view: ViewModel
     let responseType: String?
-    
+    let enableBehaviors: [EnableBehavior]?
+    let visibility: VisibilityInfo?
+    let eventHandlers: [EventHandler]?
+    let formEnableBehaviors: [EnableBehavior]?
 
     enum CodingKeys: String, CodingKey {
         case identifier = "identifier"
@@ -707,10 +904,14 @@ struct NpsControllerModel: Decodable, Equatable {
         case view = "view"
         case npsIdentifier = "nps_identifier"
         case responseType = "response_type"
+        case enableBehaviors = "enabled"
+        case visibility = "visibility"
+        case eventHandlers = "event_handlers"
+        case formEnableBehaviors = "form_enabled"
     }
 }
 
-struct CheckboxControllerModel: Decodable, Equatable {
+struct CheckboxControllerModel: BaseModel, Accessible {
     let type = ViewModelType.checkboxController
     let identifier: String
     let border: Border?
@@ -720,6 +921,9 @@ struct CheckboxControllerModel: Decodable, Equatable {
     let maxSelection: Int?
     let view: ViewModel
     let contentDescription: String?
+    let enableBehaviors: [EnableBehavior]?
+    let visibility: VisibilityInfo?
+    let eventHandlers: [EventHandler]?
 
     enum CodingKeys: String, CodingKey {
         case identifier = "identifier"
@@ -730,10 +934,13 @@ struct CheckboxControllerModel: Decodable, Equatable {
         case minSelection = "min_selection"
         case maxSelection = "max_selection"
         case contentDescription = "content_description"
+        case enableBehaviors = "enabled"
+        case visibility = "visibility"
+        case eventHandlers = "event_handlers"
     }
 }
 
-struct RadioInputControllerModel: Decodable, Equatable {
+struct RadioInputControllerModel: BaseModel, Accessible {
     let type = ViewModelType.radioInputController
     let identifier: String
     let submit: FormSubmitBehavior?
@@ -743,6 +950,9 @@ struct RadioInputControllerModel: Decodable, Equatable {
     let view: ViewModel
     let contentDescription: String?
     let attributeName: AttributeName?
+    let enableBehaviors: [EnableBehavior]?
+    let visibility: VisibilityInfo?
+    let eventHandlers: [EventHandler]?
 
     enum CodingKeys: String, CodingKey {
         case identifier = "identifier"
@@ -753,10 +963,17 @@ struct RadioInputControllerModel: Decodable, Equatable {
         case isRequired = "required"
         case contentDescription = "content_description"
         case attributeName = "attribute_name"
+        case enableBehaviors = "enabled"
+        case visibility = "visibility"
+        case eventHandlers = "event_handlers"
     }
 }
 
-struct TextInputModel: Decodable, Equatable {
+protocol Accessible {
+    var contentDescription: String? { get }
+}
+
+struct TextInputModel: BaseModel, Accessible {
     let type = ViewModelType.textInput
     let border: Border?
     let backgroundColor: ThomasColor?
@@ -765,6 +982,9 @@ struct TextInputModel: Decodable, Equatable {
     let isRequired: Bool?
     let placeHolder: String?
     let textAppearance: TextInputTextAppearance
+    let enableBehaviors: [EnableBehavior]?
+    let visibility: VisibilityInfo?
+    let eventHandlers: [EventHandler]?
 
     enum CodingKeys: String, CodingKey {
         case textAppearance = "text_appearance"
@@ -774,10 +994,13 @@ struct TextInputModel: Decodable, Equatable {
         case contentDescription = "content_description"
         case isRequired = "required"
         case placeHolder = "place_holder"
+        case enableBehaviors = "enabled"
+        case visibility = "visibility"
+        case eventHandlers = "event_handlers"
     }
 }
 
-struct ToggleModel: Decodable, Equatable {
+struct ToggleModel: BaseModel, Accessible {
     let type = ViewModelType.toggle
     let border: Border?
     let backgroundColor: ThomasColor?
@@ -787,6 +1010,9 @@ struct ToggleModel: Decodable, Equatable {
     let style: ToggleStyleModel
     let attributeName: AttributeName?
     let attributeValue: AttributeValue?
+    let enableBehaviors: [EnableBehavior]?
+    let visibility: VisibilityInfo?
+    let eventHandlers: [EventHandler]?
 
     enum CodingKeys: String, CodingKey {
         case border = "border"
@@ -797,16 +1023,22 @@ struct ToggleModel: Decodable, Equatable {
         case style = "style"
         case attributeName = "attribute_name"
         case attributeValue = "attribute_value"
+        case enableBehaviors = "enabled"
+        case visibility = "visibility"
+        case eventHandlers = "event_handlers"
     }
 }
 
-struct CheckboxModel: Decodable, Equatable {
+struct CheckboxModel: BaseModel, Accessible {
     let type = ViewModelType.checkbox
     let border: Border?
     let backgroundColor: ThomasColor?
     let contentDescription: String?
     let value: String
     let style: ToggleStyleModel
+    let visibility: VisibilityInfo?
+    let eventHandlers: [EventHandler]?
+    let enableBehaviors: [EnableBehavior]?
 
     enum CodingKeys: String, CodingKey {
         case border = "border"
@@ -814,10 +1046,14 @@ struct CheckboxModel: Decodable, Equatable {
         case contentDescription = "content_description"
         case value = "reporting_value"
         case style = "style"
+        case visibility = "visibility"
+        case eventHandlers = "event_handlers"
+        case enableBehaviors = "enabled"
+
     }
 }
 
-struct RadioInputModel: Decodable, Equatable {
+struct RadioInputModel: BaseModel, Accessible {
     let type = ViewModelType.radioInput
     let border: Border?
     let backgroundColor: ThomasColor?
@@ -825,6 +1061,9 @@ struct RadioInputModel: Decodable, Equatable {
     let value: String
     let style: ToggleStyleModel
     let attributeValue: AttributeValue?
+    let visibility: VisibilityInfo?
+    let eventHandlers: [EventHandler]?
+    let enableBehaviors: [EnableBehavior]?
     
     enum CodingKeys: String, CodingKey {
         case style = "style"
@@ -833,9 +1072,11 @@ struct RadioInputModel: Decodable, Equatable {
         case contentDescription = "content_description"
         case value = "reporting_value"
         case attributeValue = "attribute_value"
+        case visibility = "visibility"
+        case eventHandlers = "event_handlers"
+        case enableBehaviors = "enabled"
     }
 }
-
 
 enum ScoreStyleModelType: String, Decodable, Equatable {
     case numberRange = "number_range"
@@ -896,7 +1137,7 @@ struct ScoreNumberRangeStyle: Decodable, Equatable {
     }
 }
 
-struct ScoreModel: Decodable, Equatable {
+struct ScoreModel: BaseModel, Accessible {
     let type = ViewModelType.score
     let border: Border?
     let backgroundColor: ThomasColor?
@@ -905,7 +1146,10 @@ struct ScoreModel: Decodable, Equatable {
     let isRequired: Bool?
     let style: ScoreStyleModel
     let attributeName: AttributeName?
-    
+    let enableBehaviors: [EnableBehavior]?
+    let visibility: VisibilityInfo?
+    let eventHandlers: [EventHandler]?
+
     enum CodingKeys: String, CodingKey {
         case border = "border"
         case backgroundColor = "background_color"
@@ -914,6 +1158,9 @@ struct ScoreModel: Decodable, Equatable {
         case isRequired = "required"
         case style = "style"
         case attributeName = "attribute_name"
+        case enableBehaviors = "enabled"
+        case visibility = "visibility"
+        case eventHandlers = "event_handlers"
     }
 }
 
@@ -984,7 +1231,6 @@ enum ShapeModel : Decodable, Equatable {
         }
     }
 }
-
 
 struct EllipseShapeModel: Decodable, Equatable {
     let type = ShapeModelType.ellipse
@@ -1182,8 +1428,9 @@ enum TextStyle: String, Decodable, Equatable {
     case underlined = "underlined"
 }
 
-enum ButtonEnableBehavior: String, Decodable, Equatable {
+enum EnableBehavior: String, Decodable, Equatable {
     case formValidation = "form_validation"
+    case formSubmission = "form_submission"
     case pagerNext = "pager_next"
     case pagerPrevious = "pager_previous"
 }
@@ -1199,6 +1446,7 @@ enum ButtonClickBehavior: String, Decodable, Equatable {
 enum FormSubmitBehavior: String, Decodable, Equatable {
     case submitEvent = "submit_event"
 }
+
 
 enum ThomasPlatform: String, Decodable, Equatable {
     case android

@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   build-sdk:
-    runs-on: macOS-11
+    runs-on: macOS-12
     steps:
       - name: Set env variable
         run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
@@ -25,7 +25,7 @@ jobs:
         run: make build-xcframeworks
 
   build-docs:
-    runs-on: macOS-11
+    runs-on: macOS-12
     steps:
       - name: Set env variable
         run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
@@ -39,7 +39,7 @@ jobs:
         run: make build-docs
 
   run-tests:
-    runs-on: macOS-11
+    runs-on: macOS-12
     steps:
       - name: Set env variable
         run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
@@ -55,7 +55,7 @@ jobs:
         run: make test build-samples
 
   pod-lib-lint:
-    runs-on: macOS-11
+    runs-on: macOS-12
     steps:
       - name: Set env variable
         run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV

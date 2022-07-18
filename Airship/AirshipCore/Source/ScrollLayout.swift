@@ -58,6 +58,7 @@ struct ScrollLayout : View {
         .constraints(self.constraints)
         .background(self.model.backgroundColor)
         .border(self.model.border)
+        .common(self.model)
     }
 
     private func childConstraints() -> ViewConstraints {

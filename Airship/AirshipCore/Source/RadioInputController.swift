@@ -14,11 +14,15 @@ struct RadioInputController : View {
     var body: some View {
         ViewFactory.createView(model: self.model.view, constraints: constraints)
             .constraints(constraints)
-            .background(model.backgroundColor)
-            .border(model.border)
-            .viewAccessibility(label: self.model.contentDescription)
+            .background(self.model.backgroundColor)
+            .border(self.model.border)
+            .common(self.model, formInputID: self.model.identifier)
+            .accessible(self.model)
+            .formElement()
             .environmentObject(radioInputState)
             .onAppear {
+                restoreFormState()
+
                 self.cancellable = self.radioInputState.$selectedItem.sink { incoming in
                     let data = FormInputData(self.model.identifier,
                                              value: .radio(incoming),
@@ -29,5 +33,15 @@ struct RadioInputController : View {
                     self.parentFormState.updateFormInput(data)
                 }
             }
+    }
+
+    private func restoreFormState() {
+        guard case let .radio(value) = self.parentFormState.data.formValue(identifier: self.model.identifier),
+              let value = value
+        else {
+            return
+        }
+
+        self.radioInputState.selectedItem = value
     }
 }

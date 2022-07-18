@@ -21,9 +21,13 @@ struct FormController : View {
     
     var body: some View {
         if (model.submit != nil) {
-            ParentFormController(model: model, constraints: constraints, formState: formState)
+            ParentFormController(model: model,
+                                 constraints: constraints,
+                                 formState: formState)
         } else {
-            ChildFormController(model: model, constraints: constraints, formState: formState)
+            ChildFormController(model: model,
+                                constraints: constraints,
+                                formState: formState)
         }
     }
 }
@@ -41,6 +45,13 @@ private struct ParentFormController : View {
 
     var body: some View {
         ViewFactory.createView(model: self.model.view, constraints: constraints)
+            .background(self.model.backgroundColor)
+            .border(self.model.border)
+
+            .common(self.model, formInputID: self.model.identifier)
+            .enableBehaviors(self.model.formEnableBehaviors) { enabled in
+                self.formState.isEnabled = enabled
+            }
             .environment(\.layoutState, layoutState.override(formState: formState))
             .environmentObject(formState)
             .onAppear {
@@ -50,6 +61,7 @@ private struct ParentFormController : View {
                     }
                 }
             }
+
     }
 }
 
@@ -65,11 +77,16 @@ private struct ChildFormController : View {
 
     var body: some View {
         return ViewFactory.createView(model: self.model.view, constraints: constraints)
-            .constraints(constraints)
-            .background(model.backgroundColor)
-            .border(model.border)
+            .background(self.model.backgroundColor)
+            .border(self.model.border)
+            .common(self.model, formInputID: self.model.identifier)
+            .enableBehaviors(self.model.formEnableBehaviors) { enabled in
+                self.formState.isEnabled = enabled
+            }
             .environmentObject(formState)
             .onAppear {
+                self.restoreFormState()
+
                 self.dataCancellable = self.formState.$data.sink { incoming in
                     self.parentFormState.updateFormInput(incoming)
                 }
@@ -81,4 +98,29 @@ private struct ChildFormController : View {
                 }
             }
     }
+
+    private func restoreFormState() {
+        guard let formData = self.parentFormState.data.formData(identifier: self.model.identifier),
+              case let .form(responseType, formType, children) = formData.value,
+              responseType == self.model.responseType,
+              case .form = formType
+        else {
+            return
+        }
+
+        children.forEach {
+            self.formState.updateFormInput($0)
+        }
+    }
 }
+
+
+@available(iOS 13.0.0, tvOS 13.0, *)
+struct FormControllerDebug: View {
+    @EnvironmentObject var state: FormState
+
+    var body: some View {
+        Text(String(describing: state.data.toPayload()))
+    }
+}
+

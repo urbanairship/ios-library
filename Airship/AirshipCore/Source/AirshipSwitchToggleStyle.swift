@@ -8,12 +8,17 @@ struct AirshipSwitchToggleStyle: ToggleStyle {
     let model: SwitchToggleStyleModel
     let colorScheme: ColorScheme
 
+    @Environment (\.isEnabled) var isEnabled
+
     func makeBody(configuration: Self.Configuration) -> some View {
         let colors = self.model.colors
         let fill = configuration.isOn ? colors.on.toColor(colorScheme) : colors.off.toColor(colorScheme)
         Button(action: { configuration.isOn.toggle() } ) {}
-        .buttonStyle(AirshipSwitchButtonStyle(fillColor: fill,
-                                              isOn: configuration.isOn))
+            .buttonStyle(AirshipSwitchButtonStyle(fillColor: fill,
+                                                  isOn: configuration.isOn))
+            .applyIf(!isEnabled) {
+                $0.saturation(0.5)
+            }
     }
     
     struct AirshipSwitchButtonStyle: ButtonStyle {
@@ -27,11 +32,10 @@ struct AirshipSwitchToggleStyle: ToggleStyle {
         
         static let offSet = (trackWidth - thumbDiameter)/2
         static let pressedOffset = offSet - (pressedThumbStretch/2)
-    
+
         @ViewBuilder
         func createOverlay(isPressed: Bool) -> some View  {
-            if (isPressed) {
-                            
+            if (isPressed) {                            
                 RoundedRectangle(cornerRadius: AirshipSwitchButtonStyle.thumbDiameter, style: .continuous)
                                 .fill(Color.white)
                                 .shadow(radius: 1, x: 0, y: 1)

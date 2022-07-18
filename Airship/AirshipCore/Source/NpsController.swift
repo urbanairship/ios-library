@@ -40,9 +40,12 @@ private struct ParentNpsController : View {
 
     var body: some View {
         ViewFactory.createView(model: self.model.view, constraints: constraints)
-            .constraints(constraints)
-            .background(model.backgroundColor)
-            .border(model.border)
+            .background(self.model.backgroundColor)
+            .border(self.model.border)
+            .common(self.model, formInputID: self.model.identifier)
+            .enableBehaviors(self.model.formEnableBehaviors) { enabled in
+                self.formState.isEnabled = enabled
+            }
             .environmentObject(formState)
             .environment(\.layoutState, layoutState.override(formState: formState))
             .onAppear {
@@ -68,11 +71,16 @@ private struct ChildNpsController : View {
     
     var body: some View {
         return ViewFactory.createView(model: self.model.view, constraints: constraints)
-            .constraints(constraints)
-            .background(model.backgroundColor)
-            .border(model.border)
+            .background(self.model.backgroundColor)
+            .border(self.model.border)
+            .common(self.model, formInputID: self.model.identifier)
+            .enableBehaviors(self.model.formEnableBehaviors) { enabled in
+                self.formState.isEnabled = enabled
+            }
             .environmentObject(formState)
             .onAppear {
+                restoreFormState()
+                
                 self.dataCancellable = self.formState.$data.sink { incoming in
                     self.parentFormState.updateFormInput(incoming)
                 }
@@ -83,5 +91,20 @@ private struct ChildNpsController : View {
                     }
                 }
             }
+    }
+
+    private func restoreFormState() {
+        guard let formData = self.parentFormState.data.formData(identifier: self.model.identifier),
+              case let .form(responseType, formType, children) = formData.value,
+              responseType == self.model.responseType,
+              case let .nps(scoreID) = formType,
+              scoreID == self.model.npsIdentifier
+        else {
+            return
+        }
+
+        children.forEach {
+            self.formState.updateFormInput($0)
+        }
     }
 }

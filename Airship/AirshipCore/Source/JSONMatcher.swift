@@ -4,7 +4,7 @@
  * Matcher for a JSON payload.
  */
 @objc(UAJSONMatcher)
-public class JSONMatcher : NSObject {
+public class JSONMatcher: NSObject {
     
     private static let keyKey = "key"
     private static let scopeKey = "scope"

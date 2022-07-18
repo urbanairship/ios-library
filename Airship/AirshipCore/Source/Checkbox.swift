@@ -39,10 +39,11 @@ struct Checkbox : View {
         let enabled = self.checkboxState.selectedItems.contains(self.model.value) || self.checkboxState.selectedItems.count < self.checkboxState.maxSelection
         createToggle()
             .constraints(constraints)
-            .background(model.backgroundColor)
-            .border(model.border)
-            .viewAccessibility(label: self.model.contentDescription)
-            .formInput()
+            .background(self.model.backgroundColor)
+            .border(self.model.border)
+            .common(self.model)
+            .accessible(self.model)
+            .formElement()
             .disabled(!enabled)
     }
 }

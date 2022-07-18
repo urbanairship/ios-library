@@ -214,7 +214,7 @@ private extension ViewModel {
     }
     
     private func validateButtonBehaviors(_ clickBehaviors: [ButtonClickBehavior]?,
-                                         _ enableBehaviors: [ButtonEnableBehavior]?,
+                                         _ enableBehaviors: [EnableBehavior]?,
                                          _ controllers: Set<ParentController>) throws {
         
         try clickBehaviors?.forEach {
@@ -242,6 +242,10 @@ private extension ViewModel {
              case .formValidation:
                  if (!controllers.contains(.form)) {
                      throw AirshipErrors.error("Button with form subimt behavior must be a descendent of a form or nps controller")
+                 }
+             case .formSubmission:
+                 if (!controllers.contains(.form)) {
+                     throw AirshipErrors.error("Button with form submission behavior must be a descendent of a form or nps controller")
                  }
              case .pagerNext:
                  if (!controllers.contains(.pager)) {
