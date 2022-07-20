@@ -7,888 +7,832 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1BEF600724CB3D8A0039091F /* SampleAppClip.app in Embed App Clips */ = {isa = PBXBuildFile; fileRef = 1BEF5FED24CB3D870039091F /* SampleAppClip.app */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		1BEF605524CF0CC90039091F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 764693A91C237B630090FE40 /* AppDelegate.m */; };
-		1BEF605624CF0CC90039091F /* PushHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 61A672FB1CAB3E5A00BAF58A /* PushHandler.m */; };
-		1BEF605724CF0CC90039091F /* HomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 764693AC1C237B630090FE40 /* HomeViewController.m */; };
-		1BEF605824CF0CC90039091F /* MessageCenterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 493F50E91C5B261100B050A1 /* MessageCenterViewController.m */; };
-		1BEF605924CF0CC90039091F /* MessageCenterDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 493F51201C5B3A5100B050A1 /* MessageCenterDelegate.m */; };
-		1BEF605A24CF0CC90039091F /* TabBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = DF0127E2243813CC0011F7C7 /* TabBarController.m */; };
-		1BEF605B24CF0CC90039091F /* AddNamedUserTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DEDB897D24192F9D000D5241 /* AddNamedUserTableViewController.m */; };
-		1BEF605C24CF0CC90039091F /* AddTagsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DEDB897F24192F9D000D5241 /* AddTagsTableViewController.m */; };
-		1BEF605D24CF0CC90039091F /* TagsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DEDB898024192F9D000D5241 /* TagsTableViewController.m */; };
-		1BEF605E24CF0CC90039091F /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 83B4C02323D9FD5800299543 /* SettingsViewController.m */; };
-		1BEF605F24CF0CDE0039091F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 764693A61C237B630090FE40 /* main.m */; };
-		1BEF606024CF0CEB0039091F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 764693BF1C237CAB0090FE40 /* Main.storyboard */; };
-		1BEF606124CF0CEB0039091F /* UAPushUI.strings in Resources */ = {isa = PBXBuildFile; fileRef = 493F51091C5B275100B050A1 /* UAPushUI.strings */; };
-		1BEF606224CF0CEB0039091F /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 76AE35641C2B6FD600D7F3B9 /* AirshipConfig.plist */; };
-		1BFB704023882E4900BF7F07 /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BFB703F23882E4900BF7F07 /* UserNotifications.framework */; };
-		1BFB704223882E4900BF7F07 /* UserNotificationsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BFB704123882E4900BF7F07 /* UserNotificationsUI.framework */; };
-		1BFB704623882E4A00BF7F07 /* NotificationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BFB704523882E4A00BF7F07 /* NotificationViewController.m */; };
-		1BFB704923882E4A00BF7F07 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1BFB704723882E4A00BF7F07 /* MainInterface.storyboard */; };
-		1BFB704D23882E4A00BF7F07 /* SampleContentExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 1BFB703E23882E4900BF7F07 /* SampleContentExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		3CCB661124E7491C0039CA3B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 764693B61C237B630090FE40 /* LaunchScreen.storyboard */; };
-		3CCB661224E7491C0039CA3B /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 764693FC1C238E7C0090FE40 /* Images.xcassets */; };
-		3CCB661324E7491C0039CA3B /* MessageCenterStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 61E392301CC81EA800D994E3 /* MessageCenterStyle.plist */; };
-		3CE5592C26F11EDD00FBCBA5 /* AirshipBasement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EB1B42026EAA539000421B9 /* AirshipBasement.framework */; };
-		3CE5592D26F11EDD00FBCBA5 /* AirshipBasement.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6EB1B42026EAA539000421B9 /* AirshipBasement.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		3CE5593126F11EEC00FBCBA5 /* AirshipBasement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EB1B42026EAA539000421B9 /* AirshipBasement.framework */; };
-		3CE5593226F11EEC00FBCBA5 /* AirshipBasement.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6EB1B42026EAA539000421B9 /* AirshipBasement.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		3CF3DDF124E75CF7000CF516 /* AirshipAccengage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E6CC33B239A2F93003D583C /* AirshipAccengage.framework */; };
-		3CF3DDF224E75CF7000CF516 /* AirshipAccengage.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6E6CC33B239A2F93003D583C /* AirshipAccengage.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		3CF3DDF324E75CF8000CF516 /* AirshipAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E75B25D2395D1B100425530 /* AirshipAutomation.framework */; };
-		3CF3DDF424E75CF8000CF516 /* AirshipAutomation.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6E75B25D2395D1B100425530 /* AirshipAutomation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		3CF3DDF524E75CFA000CF516 /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E75B2532395D1B100425530 /* AirshipCore.framework */; };
-		3CF3DDF624E75CFA000CF516 /* AirshipCore.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6E75B2532395D1B100425530 /* AirshipCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		3CF3DDF724E75CFB000CF516 /* AirshipExtendedActions.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E75B2612395D1B100425530 /* AirshipExtendedActions.framework */; };
-		3CF3DDF824E75CFB000CF516 /* AirshipExtendedActions.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6E75B2612395D1B100425530 /* AirshipExtendedActions.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		3CF3DDF924E75CFC000CF516 /* AirshipLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E75B2592395D1B100425530 /* AirshipLocation.framework */; };
-		3CF3DDFA24E75CFC000CF516 /* AirshipLocation.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6E75B2592395D1B100425530 /* AirshipLocation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		3CF3DDFB24E75CFE000CF516 /* AirshipMessageCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E75B25F2395D1B100425530 /* AirshipMessageCenter.framework */; };
-		3CF3DDFC24E75CFE000CF516 /* AirshipMessageCenter.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6E75B25F2395D1B100425530 /* AirshipMessageCenter.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		3CF3DE8324E76F44000CF516 /* AirshipAccengage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E6CC33B239A2F93003D583C /* AirshipAccengage.framework */; };
-		3CF3DE8424E76F44000CF516 /* AirshipAccengage.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E6CC33B239A2F93003D583C /* AirshipAccengage.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		3CF3DE8524E76F44000CF516 /* AirshipAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E75B25D2395D1B100425530 /* AirshipAutomation.framework */; };
-		3CF3DE8624E76F44000CF516 /* AirshipAutomation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E75B25D2395D1B100425530 /* AirshipAutomation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		3CF3DE8724E76F44000CF516 /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E75B2532395D1B100425530 /* AirshipCore.framework */; };
-		3CF3DE8824E76F44000CF516 /* AirshipCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E75B2532395D1B100425530 /* AirshipCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		3CF3DE8B24E76F44000CF516 /* AirshipExtendedActions.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E75B2612395D1B100425530 /* AirshipExtendedActions.framework */; };
-		3CF3DE8C24E76F44000CF516 /* AirshipExtendedActions.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E75B2612395D1B100425530 /* AirshipExtendedActions.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		3CF3DE8D24E76F44000CF516 /* AirshipLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E75B2592395D1B100425530 /* AirshipLocation.framework */; };
-		3CF3DE8E24E76F44000CF516 /* AirshipLocation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E75B2592395D1B100425530 /* AirshipLocation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		3CF3DE8F24E76F44000CF516 /* AirshipMessageCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E75B25F2395D1B100425530 /* AirshipMessageCenter.framework */; };
-		3CF3DE9024E76F44000CF516 /* AirshipMessageCenter.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E75B25F2395D1B100425530 /* AirshipMessageCenter.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		3CF62FF42588495E0007502B /* AirshipDebug.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E75B25B2395D1B100425530 /* AirshipDebug.framework */; };
-		493F50EA1C5B261100B050A1 /* MessageCenterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 493F50E91C5B261100B050A1 /* MessageCenterViewController.m */; };
-		493F510B1C5B275100B050A1 /* UAPushUI.strings in Resources */ = {isa = PBXBuildFile; fileRef = 493F51091C5B275100B050A1 /* UAPushUI.strings */; };
-		493F51211C5B3A5100B050A1 /* MessageCenterDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 493F51201C5B3A5100B050A1 /* MessageCenterDelegate.m */; };
-		49D2C73F1D6F952D0049B0A0 /* NotificationService.m in Sources */ = {isa = PBXBuildFile; fileRef = 49D2C73E1D6F952D0049B0A0 /* NotificationService.m */; };
-		49D2C7431D6F952D0049B0A0 /* SampleServiceExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 49D2C73B1D6F952D0049B0A0 /* SampleServiceExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		61A672FC1CAB3E5A00BAF58A /* PushHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 61A672FB1CAB3E5A00BAF58A /* PushHandler.m */; };
-		61E392311CC81EA800D994E3 /* MessageCenterStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 61E392301CC81EA800D994E3 /* MessageCenterStyle.plist */; };
-		6E1892C4268CFCA400417887 /* AirshipPreferenceCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E1892BE268CEC9600417887 /* AirshipPreferenceCenter.framework */; };
-		6E75B26D2395D1CA00425530 /* AirshipNotificationServiceExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E75B2682395D1B300425530 /* AirshipNotificationServiceExtension.framework */; };
-		6E75B26E2395D1CA00425530 /* AirshipNotificationServiceExtension.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6E75B2682395D1B300425530 /* AirshipNotificationServiceExtension.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		6E75B26F2395D1CF00425530 /* AirshipNotificationContentExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E75B26A2395D1B300425530 /* AirshipNotificationContentExtension.framework */; };
-		6E75B2702395D1CF00425530 /* AirshipNotificationContentExtension.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E75B26A2395D1B300425530 /* AirshipNotificationContentExtension.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		6E7C072E261285AA006D0E84 /* AirshipChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E7C071D2612821C006D0E84 /* AirshipChat.framework */; };
-		6E7C072F261285AA006D0E84 /* AirshipChat.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6E7C071D2612821C006D0E84 /* AirshipChat.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		764693A71C237B630090FE40 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 764693A61C237B630090FE40 /* main.m */; };
-		764693AA1C237B630090FE40 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 764693A91C237B630090FE40 /* AppDelegate.m */; };
-		764693AD1C237B630090FE40 /* HomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 764693AC1C237B630090FE40 /* HomeViewController.m */; };
-		764693B81C237B630090FE40 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 764693B61C237B630090FE40 /* LaunchScreen.storyboard */; };
-		764693C01C237CAB0090FE40 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 764693BF1C237CAB0090FE40 /* Main.storyboard */; };
-		7646940D1C238E7C0090FE40 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 764693FC1C238E7C0090FE40 /* Images.xcassets */; };
-		76AE35651C2B6FD600D7F3B9 /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 76AE35641C2B6FD600D7F3B9 /* AirshipConfig.plist */; };
-		83B4C02423D9FD5800299543 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 83B4C02323D9FD5800299543 /* SettingsViewController.m */; };
-		DEDB898224192F9D000D5241 /* AddNamedUserTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DEDB897D24192F9D000D5241 /* AddNamedUserTableViewController.m */; };
-		DEDB898324192F9D000D5241 /* AddTagsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DEDB897F24192F9D000D5241 /* AddTagsTableViewController.m */; };
-		DEDB898424192F9D000D5241 /* TagsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DEDB898024192F9D000D5241 /* TagsTableViewController.m */; };
-		DF0127E3243813CC0011F7C7 /* TabBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = DF0127E2243813CC0011F7C7 /* TabBarController.m */; };
-		E9F15EE726EA534F007E07E9 /* AirshipPreferenceCenter.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6E1892BE268CEC9600417887 /* AirshipPreferenceCenter.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1B94297923883234002051B3 /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BFB70562388302000BF7F07 /* UserNotifications.framework */; };
+		1B94297A23883234002051B3 /* UserNotificationsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BFB70582388302000BF7F07 /* UserNotificationsUI.framework */; };
+		1B94297D23883234002051B3 /* NotificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B94297C23883234002051B3 /* NotificationViewController.swift */; };
+		1B94298023883234002051B3 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1B94297E23883234002051B3 /* MainInterface.storyboard */; };
+		1B94298423883234002051B3 /* SampleContentExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 1B94297823883234002051B3 /* SampleContentExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1BEF602F24CB3DB60039091F /* SampleAppClip.app in Embed App Clips */ = {isa = PBXBuildFile; fileRef = 1BEF601B24CB3DB60039091F /* SampleAppClip.app */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1BEF604124CB40190039091F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCDA35A61B8D233A00950AD5 /* AppDelegate.swift */; };
+		1BEF604224CB40190039091F /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCDA35A81B8D233A00950AD5 /* HomeViewController.swift */; };
+		1BEF604324CB40190039091F /* PushHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61A672E71CA9F4B000BAF58A /* PushHandler.swift */; };
+		1BEF604424CB40190039091F /* MessageCenterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493F51121C5B2C9E00B050A1 /* MessageCenterViewController.swift */; };
+		1BEF604524CB40190039091F /* MessageCenterDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493F51281C5B423700B050A1 /* MessageCenterDelegate.swift */; };
+		1BEF604624CB40190039091F /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF0127DA2437E8640011F7C7 /* TabBarController.swift */; };
+		1BEF604724CB40190039091F /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8325FBBB23F5947A005F423A /* SettingsViewController.swift */; };
+		1BEF604824CB40190039091F /* AddTagsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8381A3412406D0DD001E2922 /* AddTagsTableViewController.swift */; };
+		1BEF604924CB40190039091F /* AddNamedUserTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8381A3472406D2C9001E2922 /* AddNamedUserTableViewController.swift */; };
+		1BEF604A24CB40190039091F /* TagsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8381A3492406D362001E2922 /* TagsTableViewController.swift */; };
+		1BEF604F24CED85D0039091F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CCDA35AC1B8D233A00950AD5 /* Main.storyboard */; };
+		1BEF605024CED8DB0039091F /* UAPushUI.strings in Resources */ = {isa = PBXBuildFile; fileRef = 493F510F1C5B2C8D00B050A1 /* UAPushUI.strings */; };
+		1BEF605324CF03990039091F /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = CCDA35C31B8D237300950AD5 /* AirshipConfig.plist */; };
+		3CE5591F26F11EBF00FBCBA5 /* AirshipBasement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EB1B41326EAA531000421B9 /* AirshipBasement.framework */; };
+		3CE5592026F11EBF00FBCBA5 /* AirshipBasement.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6EB1B41326EAA531000421B9 /* AirshipBasement.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		3CE5592326F11ECD00FBCBA5 /* AirshipBasement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EB1B41326EAA531000421B9 /* AirshipBasement.framework */; };
+		3CE5592426F11ECD00FBCBA5 /* AirshipBasement.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6EB1B41326EAA531000421B9 /* AirshipBasement.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		3CE5597C26F14B2D00FBCBA5 /* AirshipBasement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EB1B41326EAA531000421B9 /* AirshipBasement.framework */; };
+		3CF3DDC924E74F9B000CF516 /* MessageCenterStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0C9222834F6B008302F1 /* MessageCenterStyle.plist */; };
+		3CF3DDCA24E74F9B000CF516 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D401BE81D7B00D9E863 /* Images.xcassets */; };
+		3CF3DDCB24E74F9B000CF516 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CCDA35B11B8D233A00950AD5 /* LaunchScreen.storyboard */; };
+		3CF3DE7724E76ED6000CF516 /* AirshipAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5862396E99D00AF2D1A /* AirshipAutomation.framework */; };
+		3CF3DE7824E76ED6000CF516 /* AirshipAutomation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5862396E99D00AF2D1A /* AirshipAutomation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		3CF3DE7924E76ED6000CF516 /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D57C2396E99D00AF2D1A /* AirshipCore.framework */; };
+		3CF3DE7A24E76ED6000CF516 /* AirshipCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D57C2396E99D00AF2D1A /* AirshipCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		3CF3DE7D24E76ED6000CF516 /* AirshipExtendedActions.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D58A2396E99D00AF2D1A /* AirshipExtendedActions.framework */; };
+		3CF3DE7E24E76ED6000CF516 /* AirshipExtendedActions.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D58A2396E99D00AF2D1A /* AirshipExtendedActions.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		3CF3DE8124E76ED6000CF516 /* AirshipMessageCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5882396E99D00AF2D1A /* AirshipMessageCenter.framework */; };
+		3CF3DE8224E76ED6000CF516 /* AirshipMessageCenter.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5882396E99D00AF2D1A /* AirshipMessageCenter.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		3CF62FFE258849710007502B /* AirshipDebug.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5842396E99D00AF2D1A /* AirshipDebug.framework */; };
+		456156E622B6F8FE00A68ADA /* UITestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456156E522B6F8FE00A68ADA /* UITestUtils.swift */; };
+		45AF558122B562FE006CAE7F /* CoreUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45AF558022B562FE006CAE7F /* CoreUITests.swift */; };
+		45BE0C9822837B7A008302F1 /* MessageCenterStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 45BE0C9222834F6B008302F1 /* MessageCenterStyle.plist */; };
+		49251DEE1D6F9C1500EED4BD /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49251DED1D6F9C1500EED4BD /* NotificationService.swift */; };
+		49251DF21D6F9C1500EED4BD /* SampleServiceExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 49251DEB1D6F9C1500EED4BD /* SampleServiceExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		493F51111C5B2C8D00B050A1 /* UAPushUI.strings in Resources */ = {isa = PBXBuildFile; fileRef = 493F510F1C5B2C8D00B050A1 /* UAPushUI.strings */; };
+		493F51131C5B2C9E00B050A1 /* MessageCenterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493F51121C5B2C9E00B050A1 /* MessageCenterViewController.swift */; };
+		493F51291C5B423700B050A1 /* MessageCenterDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493F51281C5B423700B050A1 /* MessageCenterDelegate.swift */; };
+		619A0D411BE81D7B00D9E863 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D401BE81D7B00D9E863 /* Images.xcassets */; };
+		61A672E81CA9F4B000BAF58A /* PushHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61A672E71CA9F4B000BAF58A /* PushHandler.swift */; };
+		6E65D5AA2396EA7A00AF2D1A /* AirshipNotificationServiceExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5912396E9A300AF2D1A /* AirshipNotificationServiceExtension.framework */; };
+		6E65D5AB2396EA7A00AF2D1A /* AirshipNotificationServiceExtension.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6E65D5912396E9A300AF2D1A /* AirshipNotificationServiceExtension.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6E65D5BB2396ECC200AF2D1A /* AirshipAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5862396E99D00AF2D1A /* AirshipAutomation.framework */; };
+		6E65D5BC2396ECC200AF2D1A /* AirshipAutomation.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6E65D5862396E99D00AF2D1A /* AirshipAutomation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6E65D5BD2396ECC200AF2D1A /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D57C2396E99D00AF2D1A /* AirshipCore.framework */; };
+		6E65D5BE2396ECC200AF2D1A /* AirshipCore.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6E65D57C2396E99D00AF2D1A /* AirshipCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6E65D5BF2396ECC200AF2D1A /* AirshipExtendedActions.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D58A2396E99D00AF2D1A /* AirshipExtendedActions.framework */; };
+		6E65D5C02396ECC200AF2D1A /* AirshipExtendedActions.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6E65D58A2396E99D00AF2D1A /* AirshipExtendedActions.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6E65D5C22396ECC200AF2D1A /* AirshipMessageCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5882396E99D00AF2D1A /* AirshipMessageCenter.framework */; };
+		6E65D5C32396ECC200AF2D1A /* AirshipMessageCenter.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6E65D5882396E99D00AF2D1A /* AirshipMessageCenter.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		8325FBBC23F5947A005F423A /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8325FBBB23F5947A005F423A /* SettingsViewController.swift */; };
+		8381A3422406D0DD001E2922 /* AddTagsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8381A3412406D0DD001E2922 /* AddTagsTableViewController.swift */; };
+		8381A3482406D2C9001E2922 /* AddNamedUserTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8381A3472406D2C9001E2922 /* AddNamedUserTableViewController.swift */; };
+		8381A34A2406D362001E2922 /* TagsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8381A3492406D362001E2922 /* TagsTableViewController.swift */; };
+		A68E346726B2ABC50024BE1D /* AirshipPreferenceCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EAD7CDF26B2003700B88EA7 /* AirshipPreferenceCenter.framework */; };
+		A68E346826B2ABC50024BE1D /* AirshipPreferenceCenter.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6EAD7CDF26B2003700B88EA7 /* AirshipPreferenceCenter.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A68E347926B2BAB40024BE1D /* AirshipPreferenceCenterStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = A68E347126B2BAB40024BE1D /* AirshipPreferenceCenterStyle.plist */; };
+		CCDA35A71B8D233A00950AD5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCDA35A61B8D233A00950AD5 /* AppDelegate.swift */; };
+		CCDA35A91B8D233A00950AD5 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCDA35A81B8D233A00950AD5 /* HomeViewController.swift */; };
+		CCDA35AE1B8D233A00950AD5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CCDA35AC1B8D233A00950AD5 /* Main.storyboard */; };
+		CCDA35B31B8D233A00950AD5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CCDA35B11B8D233A00950AD5 /* LaunchScreen.storyboard */; };
+		CCDA35C41B8D237300950AD5 /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = CCDA35C31B8D237300950AD5 /* AirshipConfig.plist */; };
+		DF0127DB2437E8640011F7C7 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF0127DA2437E8640011F7C7 /* TabBarController.swift */; };
+		DFC383A1243EA37B00EA78FE /* AirshipNotificationContentExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5932396E9A300AF2D1A /* AirshipNotificationContentExtension.framework */; };
+		DFC383A2243EA37B00EA78FE /* AirshipNotificationContentExtension.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5932396E9A300AF2D1A /* AirshipNotificationContentExtension.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		1BEF600424CB3D8A0039091F /* PBXContainerItemProxy */ = {
+		1B94298223883234002051B3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 7646939A1C237B630090FE40 /* Project object */;
+			containerPortal = CCDA359B1B8D233A00950AD5 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 1BEF5FEC24CB3D870039091F;
-			remoteInfo = SampleAppClip;
+			remoteGlobalIDString = 1B94297723883234002051B3;
+			remoteInfo = SwiftSampleContentExtension;
 		};
-		1BEF601224CB3D8A0039091F /* PBXContainerItemProxy */ = {
+		1BEF602D24CB3DB60039091F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 6E75B2622395D1B300425530 /* AirshipExtensions.xcodeproj */;
+			containerPortal = CCDA359B1B8D233A00950AD5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1BEF601A24CB3DB60039091F;
+			remoteInfo = SwiftSampleAppClip;
+		};
+		1BEF603A24CB3DB60039091F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D58B2396E9A300AF2D1A /* AirshipExtensions.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = DF0C1B14244E483C0011ACCA;
 			remoteInfo = AirshipNotificationServiceExtensionTests;
 		};
-		1BEF601424CB3D8A0039091F /* PBXContainerItemProxy */ = {
+		1BEF603C24CB3DB60039091F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 6E75B2622395D1B300425530 /* AirshipExtensions.xcodeproj */;
+			containerPortal = 6E65D58B2396E9A300AF2D1A /* AirshipExtensions.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = DFE03D032450E73400622F11;
 			remoteInfo = AirshipNotificationContentExtensionTests;
 		};
-		1BF9B0D923A24E2400E68DBE /* PBXContainerItemProxy */ = {
+		3CE5597F26F14B4300FBCBA5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 1BB4C02A239FE5E50000559B;
-			remoteInfo = AirshipAccengageTests;
-		};
-		1BFB704B23882E4A00BF7F07 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 7646939A1C237B630090FE40 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 1BFB703D23882E4900BF7F07;
-			remoteInfo = SampleContentExtension;
-		};
-		32103C1B285B368700F72365 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 6E5C32B527C9A2C9005B2DDE;
-			remoteInfo = AirshipRelease;
-		};
-		32103C1D285B368700F72365 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 6E5C32D327C9A54A005B2DDE;
-			remoteInfo = "AirshipRelease tvOS";
-		};
-		3CE5598326F14B5B00FBCBA5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = 6E431F6B26EA814F009228AB;
 			remoteInfo = AirshipBasement;
 		};
-		3CE5598F26F14B6400FBCBA5 /* PBXContainerItemProxy */ = {
+		3CE5598126F14B4A00FBCBA5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = 6E431F6B26EA814F009228AB;
 			remoteInfo = AirshipBasement;
 		};
-		3CF3DE9124EB0768000CF516 /* PBXContainerItemProxy */ = {
+		3CF3DEA124EB0787000CF516 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 6E6CC310239A2EA9003D583C;
-			remoteInfo = AirshipAccengage;
-		};
-		3CF3DE9324EB0768000CF516 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = 6E8450FD237E0271007D3B1E;
 			remoteInfo = AirshipAutomation;
 		};
-		3CF3DE9524EB0768000CF516 /* PBXContainerItemProxy */ = {
+		3CF3DEA324EB0787000CF516 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = 494DD9561B0EB677009C134E;
 			remoteInfo = AirshipCore;
 		};
-		3CF3DE9924EB0768000CF516 /* PBXContainerItemProxy */ = {
+		3CF3DEA724EB0787000CF516 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = 45C69118238DC79400A03C94;
 			remoteInfo = AirshipExtendedActions;
 		};
-		3CF3DE9B24EB0768000CF516 /* PBXContainerItemProxy */ = {
+		3CF3DEAB24EB0787000CF516 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 6E9373032376164600AA9C2A;
-			remoteInfo = AirshipLocation;
-		};
-		3CF3DE9D24EB0768000CF516 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = 3CA0E346237E4A7B00EE76CF;
 			remoteInfo = AirshipMessageCenter;
 		};
-		49D2C7411D6F952D0049B0A0 /* PBXContainerItemProxy */ = {
+		45AF558322B562FE006CAE7F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 7646939A1C237B630090FE40 /* Project object */;
+			containerPortal = CCDA359B1B8D233A00950AD5 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 49D2C73A1D6F952D0049B0A0;
+			remoteGlobalIDString = CCDA35A21B8D233A00950AD5;
+			remoteInfo = SwiftSample;
+		};
+		49251DF01D6F9C1500EED4BD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CCDA359B1B8D233A00950AD5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 49251DEA1D6F9C1500EED4BD;
 			remoteInfo = SampleServiceExtension;
 		};
-		6E1892B3268CEC9600417887 /* PBXContainerItemProxy */ = {
+		6E65D57B2396E99D00AF2D1A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 847BFFF3267CD739007CD249;
-			remoteInfo = AirshipPreferenceCenter;
-		};
-		6E1892BB268CEC9600417887 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 6E8776A7261BC1E100B03FC0;
-			remoteInfo = AirshipChatTests;
-		};
-		6E1892BD268CEC9600417887 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 847BFFF4267CD739007CD249;
-			remoteInfo = AirshipPreferenceCenter;
-		};
-		6E1892BF268CEC9600417887 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 847BFFFC267CD73A007CD249;
-			remoteInfo = AirshipPreferenceCenterTests;
-		};
-		6E65D4F22395E72200AF2D1A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 3CA0E298237CCE2600EE76CF;
-			remoteInfo = AirshipDebug;
-		};
-		6E65D4F42395E72200AF2D1A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 6E9373032376164600AA9C2A;
-			remoteInfo = AirshipLocation;
-		};
-		6E65D52C2396305F00AF2D1A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 6E8450FD237E0271007D3B1E;
-			remoteInfo = AirshipAutomation;
-		};
-		6E65D52E2396305F00AF2D1A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 494DD9561B0EB677009C134E;
-			remoteInfo = AirshipCore;
-		};
-		6E65D5302396305F00AF2D1A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 45C69118238DC79400A03C94;
-			remoteInfo = AirshipExtendedActions;
-		};
-		6E65D5322396305F00AF2D1A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 3CA0E346237E4A7B00EE76CF;
-			remoteInfo = AirshipMessageCenter;
-		};
-		6E6CC333239A2F93003D583C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 6E6CC310239A2EA9003D583C;
-			remoteInfo = AirshipAccengage;
-		};
-		6E6CC33A239A2F93003D583C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 6E6CC32C239A2EA9003D583C;
-			remoteInfo = AirshipAccengage;
-		};
-		6E75B2522395D1B100425530 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 494DD9571B0EB677009C134E;
 			remoteInfo = AirshipCore;
 		};
-		6E75B2542395D1B100425530 /* PBXContainerItemProxy */ = {
+		6E65D57D2396E99D00AF2D1A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = DF6DD6561E7A1EB8000C281A;
 			remoteInfo = "AirshipCore tvOS";
 		};
-		6E75B2562395D1B100425530 /* PBXContainerItemProxy */ = {
+		6E65D57F2396E99D00AF2D1A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = CC64F0541D8B77E3009CEF27;
 			remoteInfo = AirshipTests;
 		};
-		6E75B2582395D1B100425530 /* PBXContainerItemProxy */ = {
+		6E65D5832396E99D00AF2D1A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 6E9375602376164600AA9C2A;
-			remoteInfo = AirshipLocation;
-		};
-		6E75B25A2395D1B100425530 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 3CA0E2AC237CCE2600EE76CF;
 			remoteInfo = AirshipDebug;
 		};
-		6E75B25C2395D1B100425530 /* PBXContainerItemProxy */ = {
+		6E65D5852396E99D00AF2D1A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 6E845377237E0271007D3B1E;
 			remoteInfo = AirshipAutomation;
 		};
-		6E75B25E2395D1B100425530 /* PBXContainerItemProxy */ = {
+		6E65D5872396E99D00AF2D1A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 3CA0E423237E4A7B00EE76CF;
 			remoteInfo = AirshipMessageCenter;
 		};
-		6E75B2602395D1B100425530 /* PBXContainerItemProxy */ = {
+		6E65D5892396E99D00AF2D1A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 45C6912A238DC79400A03C94;
 			remoteInfo = AirshipExtendedActions;
 		};
-		6E75B2672395D1B300425530 /* PBXContainerItemProxy */ = {
+		6E65D5902396E9A300AF2D1A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 6E75B2622395D1B300425530 /* AirshipExtensions.xcodeproj */;
+			containerPortal = 6E65D58B2396E9A300AF2D1A /* AirshipExtensions.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 49AA00FC1D65158C0081989A;
 			remoteInfo = AirshipNotificationServiceExtension;
 		};
-		6E75B2692395D1B300425530 /* PBXContainerItemProxy */ = {
+		6E65D5922396E9A300AF2D1A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 6E75B2622395D1B300425530 /* AirshipExtensions.xcodeproj */;
+			containerPortal = 6E65D58B2396E9A300AF2D1A /* AirshipExtensions.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 1BFF18AE23854F0C00013FB9;
 			remoteInfo = AirshipNotificationContentExtension;
 		};
-		6E7C07142612821C006D0E84 /* PBXContainerItemProxy */ = {
+		6E65D5AF2396EA8600AF2D1A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
+			containerPortal = 6E65D58B2396E9A300AF2D1A /* AirshipExtensions.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 6E7C067A26127557006D0E84;
-			remoteInfo = AirshipChat;
+			remoteGlobalIDString = 1BFF18AD23854F0C00013FB9;
+			remoteInfo = AirshipNotificationContentExtension;
 		};
-		6E7C071C2612821C006D0E84 /* PBXContainerItemProxy */ = {
+		6E65D5B12396EA8C00AF2D1A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 6E7C067B26127557006D0E84;
-			remoteInfo = AirshipChat;
-		};
-		6EB1B41F26EAA539000421B9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 6E43204826EA814F009228AB;
-			remoteInfo = AirshipBasement;
-		};
-		6EB1B42126EAA539000421B9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 6E43212626EA819A009228AB;
-			remoteInfo = "AirshipBasement tvOS";
-		};
-		A6722968281981600033F54D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 6E5C32B527C9A2C9005B2DDE;
-			remoteInfo = AirshipRelease;
-		};
-		A672296A281981600033F54D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 6E5C32D327C9A54A005B2DDE;
-			remoteInfo = "AirshipRelease tvOS";
-		};
-		DFC3839F243EA31300EA78FE /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6E75B2622395D1B300425530 /* AirshipExtensions.xcodeproj */;
+			containerPortal = 6E65D58B2396E9A300AF2D1A /* AirshipExtensions.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = 49AA00FB1D65158C0081989A;
 			remoteInfo = AirshipNotificationServiceExtension;
 		};
+		6E65D5B52396EA9C00AF2D1A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 3CA0E298237CCE2600EE76CF;
+			remoteInfo = AirshipDebug;
+		};
+		6E65D5C42396ECD600AF2D1A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 6E8450FD237E0271007D3B1E;
+			remoteInfo = AirshipAutomation;
+		};
+		6E65D5C62396ECD600AF2D1A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 494DD9561B0EB677009C134E;
+			remoteInfo = AirshipCore;
+		};
+		6E65D5C82396ECD600AF2D1A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 45C69118238DC79400A03C94;
+			remoteInfo = AirshipExtendedActions;
+		};
+		6E65D5CA2396ECD600AF2D1A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 3CA0E346237E4A7B00EE76CF;
+			remoteInfo = AirshipMessageCenter;
+		};
+		6EAD7CD626B2003700B88EA7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 847BFFF3267CD739007CD249;
+			remoteInfo = AirshipPreferenceCenter;
+		};
+		6EAD7CDE26B2003700B88EA7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 847BFFF4267CD739007CD249;
+			remoteInfo = AirshipPreferenceCenter;
+		};
+		6EAD7CE026B2003700B88EA7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 847BFFFC267CD73A007CD249;
+			remoteInfo = AirshipPreferenceCenterTests;
+		};
+		6EB1B41226EAA531000421B9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6E43204826EA814F009228AB;
+			remoteInfo = AirshipBasement;
+		};
+		6EB1B41426EAA531000421B9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6E43212626EA819A009228AB;
+			remoteInfo = "AirshipBasement tvOS";
+		};
+		6ED5B74A288613460093CEEC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A6722ABF281A9F460033F54D;
+			remoteInfo = "AirshipBasement watchOS";
+		};
+		6ED5B74C288613460093CEEC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A67229B228199CEF0033F54D;
+			remoteInfo = "AirshipCore watchOS";
+		};
+		A67229532819813A0033F54D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6E5C32B527C9A2C9005B2DDE;
+			remoteInfo = AirshipRelease;
+		};
+		A67229552819813A0033F54D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6E5C32D327C9A54A005B2DDE;
+			remoteInfo = "AirshipRelease tvOS";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		1BEF600624CB3D8A0039091F /* Embed App Clips */ = {
+		1BEF603024CB3DB60039091F /* Embed App Clips */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "$(CONTENTS_FOLDER_PATH)/AppClips";
 			dstSubfolderSpec = 16;
 			files = (
-				1BEF600724CB3D8A0039091F /* SampleAppClip.app in Embed App Clips */,
+				1BEF602F24CB3DB60039091F /* SampleAppClip.app in Embed App Clips */,
 			);
 			name = "Embed App Clips";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		3CF3DE0624E75DEC000CF516 /* Embed Frameworks */ = {
+		3CF3DE1324E75E01000CF516 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				3CF3DE8E24E76F44000CF516 /* AirshipLocation.framework in Embed Frameworks */,
-				3CF3DE8624E76F44000CF516 /* AirshipAutomation.framework in Embed Frameworks */,
-				3CF3DE8824E76F44000CF516 /* AirshipCore.framework in Embed Frameworks */,
-				3CE5592D26F11EDD00FBCBA5 /* AirshipBasement.framework in Embed Frameworks */,
-				3CF3DE8C24E76F44000CF516 /* AirshipExtendedActions.framework in Embed Frameworks */,
-				3CF3DE9024E76F44000CF516 /* AirshipMessageCenter.framework in Embed Frameworks */,
-				3CF3DE8424E76F44000CF516 /* AirshipAccengage.framework in Embed Frameworks */,
+				3CF3DE7824E76ED6000CF516 /* AirshipAutomation.framework in Embed Frameworks */,
+				3CF3DE7A24E76ED6000CF516 /* AirshipCore.framework in Embed Frameworks */,
+				3CE5592426F11ECD00FBCBA5 /* AirshipBasement.framework in Embed Frameworks */,
+				3CF3DE7E24E76ED6000CF516 /* AirshipExtendedActions.framework in Embed Frameworks */,
+				3CF3DE8224E76ED6000CF516 /* AirshipMessageCenter.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		49251DDB1D6F962200EED4BD /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				6E75B26E2395D1CA00425530 /* AirshipNotificationServiceExtension.framework in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		49D2C7471D6F952D0049B0A0 /* Embed App Extensions */ = {
+		49251DF61D6F9C1500EED4BD /* Embed App Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				1BFB704D23882E4A00BF7F07 /* SampleContentExtension.appex in Embed App Extensions */,
-				49D2C7431D6F952D0049B0A0 /* SampleServiceExtension.appex in Embed App Extensions */,
+				1B94298423883234002051B3 /* SampleContentExtension.appex in Embed App Extensions */,
+				49251DF21D6F9C1500EED4BD /* SampleServiceExtension.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		6E75B2712395D1CF00425530 /* Embed Frameworks */ = {
+		49251DFA1D6F9C8800EED4BD /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				6E75B2702395D1CF00425530 /* AirshipNotificationContentExtension.framework in Embed Frameworks */,
+				6E65D5AB2396EA7A00AF2D1A /* AirshipNotificationServiceExtension.framework in CopyFiles */,
 			);
-			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		76AE34E91C2B6BF700D7F3B9 /* CopyFiles */ = {
+		CCDA35D21B8D276C00950AD5 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				E9F15EE726EA534F007E07E9 /* AirshipPreferenceCenter.framework in CopyFiles */,
-				3CF3DDF824E75CFB000CF516 /* AirshipExtendedActions.framework in CopyFiles */,
-				3CF3DDF424E75CF8000CF516 /* AirshipAutomation.framework in CopyFiles */,
-				3CE5593226F11EEC00FBCBA5 /* AirshipBasement.framework in CopyFiles */,
-				6E7C072F261285AA006D0E84 /* AirshipChat.framework in CopyFiles */,
-				3CF3DDFC24E75CFE000CF516 /* AirshipMessageCenter.framework in CopyFiles */,
-				3CF3DDFA24E75CFC000CF516 /* AirshipLocation.framework in CopyFiles */,
-				3CF3DDF624E75CFA000CF516 /* AirshipCore.framework in CopyFiles */,
-				3CF3DDF224E75CF7000CF516 /* AirshipAccengage.framework in CopyFiles */,
+				6E65D5BC2396ECC200AF2D1A /* AirshipAutomation.framework in CopyFiles */,
+				3CE5592026F11EBF00FBCBA5 /* AirshipBasement.framework in CopyFiles */,
+				6E65D5C32396ECC200AF2D1A /* AirshipMessageCenter.framework in CopyFiles */,
+				6E65D5BE2396ECC200AF2D1A /* AirshipCore.framework in CopyFiles */,
+				6E65D5C02396ECC200AF2D1A /* AirshipExtendedActions.framework in CopyFiles */,
+				A68E346826B2ABC50024BE1D /* AirshipPreferenceCenter.framework in CopyFiles */,
 			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DFC383A3243EA37B00EA78FE /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				DFC383A2243EA37B00EA78FE /* AirshipNotificationContentExtension.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		1BEF5FED24CB3D870039091F /* SampleAppClip.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SampleAppClip.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		1BEF600024CB3D8A0039091F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		1BEF600324CB3D8A0039091F /* SampleAppClip.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SampleAppClip.entitlements; sourceTree = "<group>"; };
-		1BFB703E23882E4900BF7F07 /* SampleContentExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SampleContentExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		1BFB703F23882E4900BF7F07 /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
-		1BFB704123882E4900BF7F07 /* UserNotificationsUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotificationsUI.framework; path = System/Library/Frameworks/UserNotificationsUI.framework; sourceTree = SDKROOT; };
-		1BFB704423882E4900BF7F07 /* NotificationViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NotificationViewController.h; sourceTree = "<group>"; };
-		1BFB704523882E4A00BF7F07 /* NotificationViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NotificationViewController.m; sourceTree = "<group>"; };
-		1BFB704823882E4A00BF7F07 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
-		1BFB704A23882E4A00BF7F07 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		4578585222FDBB030020D161 /* SampleServiceExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SampleServiceExtension.entitlements; sourceTree = "<group>"; };
-		4929EA2E1D5156F000D7B322 /* Sample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Sample.entitlements; sourceTree = "<group>"; };
-		493F50E81C5B261100B050A1 /* MessageCenterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageCenterViewController.h; sourceTree = "<group>"; };
-		493F50E91C5B261100B050A1 /* MessageCenterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MessageCenterViewController.m; sourceTree = "<group>"; };
-		493F510A1C5B275100B050A1 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/UAPushUI.strings; sourceTree = "<group>"; };
-		493F511F1C5B3A5100B050A1 /* MessageCenterDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageCenterDelegate.h; sourceTree = "<group>"; };
-		493F51201C5B3A5100B050A1 /* MessageCenterDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MessageCenterDelegate.m; sourceTree = "<group>"; };
-		49D2C73B1D6F952D0049B0A0 /* SampleServiceExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SampleServiceExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		49D2C73D1D6F952D0049B0A0 /* NotificationService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NotificationService.h; sourceTree = "<group>"; };
-		49D2C73E1D6F952D0049B0A0 /* NotificationService.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NotificationService.m; sourceTree = "<group>"; };
-		49D2C7401D6F952D0049B0A0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		61A672FA1CAB3E5A00BAF58A /* PushHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushHandler.h; sourceTree = "<group>"; };
-		61A672FB1CAB3E5A00BAF58A /* PushHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PushHandler.m; sourceTree = "<group>"; };
-		61E392301CC81EA800D994E3 /* MessageCenterStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = MessageCenterStyle.plist; sourceTree = "<group>"; };
-		6E75B2412395D1B100425530 /* Airship.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Airship.xcodeproj; path = ../Airship/Airship.xcodeproj; sourceTree = "<group>"; };
-		6E75B2622395D1B300425530 /* AirshipExtensions.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipExtensions.xcodeproj; path = ../AirshipExtensions/AirshipExtensions.xcodeproj; sourceTree = "<group>"; };
-		764693A21C237B630090FE40 /* Sample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sample.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		764693A61C237B630090FE40 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		764693A81C237B630090FE40 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		764693A91C237B630090FE40 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		764693AB1C237B630090FE40 /* HomeViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HomeViewController.h; sourceTree = "<group>"; };
-		764693AC1C237B630090FE40 /* HomeViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HomeViewController.m; sourceTree = "<group>"; };
-		764693B71C237B630090FE40 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		764693B91C237B630090FE40 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		764693BF1C237CAB0090FE40 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
-		764693FC1C238E7C0090FE40 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		76AE35641C2B6FD600D7F3B9 /* AirshipConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = AirshipConfig.plist; sourceTree = "<group>"; };
-		83B4C01C23D9FD4500299543 /* SettingsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SettingsViewController.h; sourceTree = "<group>"; };
-		83B4C02323D9FD5800299543 /* SettingsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SettingsViewController.m; sourceTree = "<group>"; };
-		DEDB897524192F9D000D5241 /* AddNamedUserTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddNamedUserTableViewController.h; sourceTree = "<group>"; };
-		DEDB897D24192F9D000D5241 /* AddNamedUserTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddNamedUserTableViewController.m; sourceTree = "<group>"; };
-		DEDB897E24192F9D000D5241 /* AddTagsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddTagsTableViewController.h; sourceTree = "<group>"; };
-		DEDB897F24192F9D000D5241 /* AddTagsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddTagsTableViewController.m; sourceTree = "<group>"; };
-		DEDB898024192F9D000D5241 /* TagsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TagsTableViewController.m; sourceTree = "<group>"; };
-		DEDB898124192F9D000D5241 /* TagsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagsTableViewController.h; sourceTree = "<group>"; };
-		DF0127E1243813CC0011F7C7 /* TabBarController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TabBarController.h; sourceTree = "<group>"; };
-		DF0127E2243813CC0011F7C7 /* TabBarController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TabBarController.m; sourceTree = "<group>"; };
+		1B94297823883234002051B3 /* SampleContentExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SampleContentExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		1B94297C23883234002051B3 /* NotificationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationViewController.swift; sourceTree = "<group>"; };
+		1B94297F23883234002051B3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
+		1B94298123883234002051B3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1BEF601B24CB3DB60039091F /* SampleAppClip.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SampleAppClip.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1BEF602B24CB3DB60039091F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1BEF602C24CB3DB60039091F /* SampleAppClip.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SampleAppClip.entitlements; sourceTree = "<group>"; };
+		1BEF603F24CB3FF10039091F /* AppClip.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppClip.framework; path = System/Library/Frameworks/AppClip.framework; sourceTree = SDKROOT; };
+		1BFB70562388302000BF7F07 /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
+		1BFB70582388302000BF7F07 /* UserNotificationsUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotificationsUI.framework; path = System/Library/Frameworks/UserNotificationsUI.framework; sourceTree = SDKROOT; };
+		456156E522B6F8FE00A68ADA /* UITestUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITestUtils.swift; sourceTree = "<group>"; };
+		4578585E22FDBB660020D161 /* SampleServiceExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SampleServiceExtension.entitlements; sourceTree = "<group>"; };
+		45AF557E22B562FE006CAE7F /* SampleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SampleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		45AF558022B562FE006CAE7F /* CoreUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreUITests.swift; sourceTree = "<group>"; };
+		45AF558222B562FE006CAE7F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		45BE0C9222834F6B008302F1 /* MessageCenterStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = MessageCenterStyle.plist; sourceTree = "<group>"; };
+		49251DEB1D6F9C1500EED4BD /* SampleServiceExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SampleServiceExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		49251DED1D6F9C1500EED4BD /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		49251DEF1D6F9C1500EED4BD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		493F51101C5B2C8D00B050A1 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/UAPushUI.strings; sourceTree = "<group>"; };
+		493F51121C5B2C9E00B050A1 /* MessageCenterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterViewController.swift; sourceTree = "<group>"; };
+		493F51281C5B423700B050A1 /* MessageCenterDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterDelegate.swift; sourceTree = "<group>"; };
+		619A0D401BE81D7B00D9E863 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		61A672E71CA9F4B000BAF58A /* PushHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushHandler.swift; sourceTree = "<group>"; };
+		6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Airship.xcodeproj; path = ../Airship/Airship.xcodeproj; sourceTree = "<group>"; };
+		6E65D58B2396E9A300AF2D1A /* AirshipExtensions.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipExtensions.xcodeproj; path = ../AirshipExtensions/AirshipExtensions.xcodeproj; sourceTree = "<group>"; };
+		8325FBBB23F5947A005F423A /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		8381A3412406D0DD001E2922 /* AddTagsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTagsTableViewController.swift; sourceTree = "<group>"; };
+		8381A3472406D2C9001E2922 /* AddNamedUserTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNamedUserTableViewController.swift; sourceTree = "<group>"; };
+		8381A3492406D362001E2922 /* TagsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsTableViewController.swift; sourceTree = "<group>"; };
+		A68E347126B2BAB40024BE1D /* AirshipPreferenceCenterStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = AirshipPreferenceCenterStyle.plist; sourceTree = "<group>"; };
+		CC0E3A061D2DAA4900DAF1E5 /* Sample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Sample.entitlements; sourceTree = "<group>"; };
+		CCDA35A31B8D233A00950AD5 /* Sample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CCDA35A61B8D233A00950AD5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		CCDA35A81B8D233A00950AD5 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
+		CCDA35AD1B8D233A00950AD5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		CCDA35B21B8D233A00950AD5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		CCDA35B41B8D233A00950AD5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CCDA35C31B8D237300950AD5 /* AirshipConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = AirshipConfig.plist; sourceTree = "<group>"; };
+		DF0127DA2437E8640011F7C7 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		1BEF5FEA24CB3D870039091F /* Frameworks */ = {
+		1B94297523883234002051B3 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3CF3DE8D24E76F44000CF516 /* AirshipLocation.framework in Frameworks */,
-				3CF3DE8524E76F44000CF516 /* AirshipAutomation.framework in Frameworks */,
-				3CF3DE8724E76F44000CF516 /* AirshipCore.framework in Frameworks */,
-				3CF3DE8B24E76F44000CF516 /* AirshipExtendedActions.framework in Frameworks */,
-				3CE5592C26F11EDD00FBCBA5 /* AirshipBasement.framework in Frameworks */,
-				3CF3DE8F24E76F44000CF516 /* AirshipMessageCenter.framework in Frameworks */,
-				3CF62FF42588495E0007502B /* AirshipDebug.framework in Frameworks */,
-				3CF3DE8324E76F44000CF516 /* AirshipAccengage.framework in Frameworks */,
+				DFC383A1243EA37B00EA78FE /* AirshipNotificationContentExtension.framework in Frameworks */,
+				1B94297A23883234002051B3 /* UserNotificationsUI.framework in Frameworks */,
+				1B94297923883234002051B3 /* UserNotifications.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		1BFB703B23882E4900BF7F07 /* Frameworks */ = {
+		1BEF601824CB3DB60039091F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E75B26F2395D1CF00425530 /* AirshipNotificationContentExtension.framework in Frameworks */,
-				1BFB704223882E4900BF7F07 /* UserNotificationsUI.framework in Frameworks */,
-				1BFB704023882E4900BF7F07 /* UserNotifications.framework in Frameworks */,
+				3CF3DE7724E76ED6000CF516 /* AirshipAutomation.framework in Frameworks */,
+				3CF3DE7924E76ED6000CF516 /* AirshipCore.framework in Frameworks */,
+				3CF3DE7D24E76ED6000CF516 /* AirshipExtendedActions.framework in Frameworks */,
+				3CE5592326F11ECD00FBCBA5 /* AirshipBasement.framework in Frameworks */,
+				3CF3DE8124E76ED6000CF516 /* AirshipMessageCenter.framework in Frameworks */,
+				3CF62FFE258849710007502B /* AirshipDebug.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		49D2C7381D6F952D0049B0A0 /* Frameworks */ = {
+		45AF557B22B562FE006CAE7F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E75B26D2395D1CA00425530 /* AirshipNotificationServiceExtension.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		7646939F1C237B630090FE40 /* Frameworks */ = {
+		49251DE81D6F9C1500EED4BD /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E1892C4268CFCA400417887 /* AirshipPreferenceCenter.framework in Frameworks */,
-				3CF3DDF924E75CFC000CF516 /* AirshipLocation.framework in Frameworks */,
-				3CF3DDF324E75CF8000CF516 /* AirshipAutomation.framework in Frameworks */,
-				3CE5593126F11EEC00FBCBA5 /* AirshipBasement.framework in Frameworks */,
-				6E7C072E261285AA006D0E84 /* AirshipChat.framework in Frameworks */,
-				3CF3DDFB24E75CFE000CF516 /* AirshipMessageCenter.framework in Frameworks */,
-				3CF3DDF724E75CFB000CF516 /* AirshipExtendedActions.framework in Frameworks */,
-				3CF3DDF124E75CF7000CF516 /* AirshipAccengage.framework in Frameworks */,
-				3CF3DDF524E75CFA000CF516 /* AirshipCore.framework in Frameworks */,
+				6E65D5AA2396EA7A00AF2D1A /* AirshipNotificationServiceExtension.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CCDA35A01B8D233A00950AD5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3CE5597C26F14B2D00FBCBA5 /* AirshipBasement.framework in Frameworks */,
+				3CE5591F26F11EBF00FBCBA5 /* AirshipBasement.framework in Frameworks */,
+				6E65D5BB2396ECC200AF2D1A /* AirshipAutomation.framework in Frameworks */,
+				6E65D5BD2396ECC200AF2D1A /* AirshipCore.framework in Frameworks */,
+				6E65D5BF2396ECC200AF2D1A /* AirshipExtendedActions.framework in Frameworks */,
+				6E65D5C22396ECC200AF2D1A /* AirshipMessageCenter.framework in Frameworks */,
+				A68E346726B2ABC50024BE1D /* AirshipPreferenceCenter.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		1BEF5FEE24CB3D870039091F /* SampleAppClip */ = {
+		1B94297B23883234002051B3 /* SampleContentExtension */ = {
 			isa = PBXGroup;
 			children = (
-				1BEF600024CB3D8A0039091F /* Info.plist */,
-				1BEF600324CB3D8A0039091F /* SampleAppClip.entitlements */,
-			);
-			path = SampleAppClip;
-			sourceTree = "<group>";
-		};
-		1BFB704323882E4900BF7F07 /* SampleContentExtension */ = {
-			isa = PBXGroup;
-			children = (
-				1BFB704423882E4900BF7F07 /* NotificationViewController.h */,
-				1BFB704523882E4A00BF7F07 /* NotificationViewController.m */,
-				1BFB704723882E4A00BF7F07 /* MainInterface.storyboard */,
-				1BFB704A23882E4A00BF7F07 /* Info.plist */,
+				1B94297C23883234002051B3 /* NotificationViewController.swift */,
+				1B94297E23883234002051B3 /* MainInterface.storyboard */,
+				1B94298123883234002051B3 /* Info.plist */,
 			);
 			path = SampleContentExtension;
 			sourceTree = "<group>";
 		};
-		493F51081C5B275100B050A1 /* Localization */ = {
+		1BEF601C24CB3DB60039091F /* SampleAppClip */ = {
 			isa = PBXGroup;
 			children = (
-				493F51091C5B275100B050A1 /* UAPushUI.strings */,
+				1BEF602B24CB3DB60039091F /* Info.plist */,
+				1BEF602C24CB3DB60039091F /* SampleAppClip.entitlements */,
 			);
-			path = Localization;
+			path = SampleAppClip;
 			sourceTree = "<group>";
 		};
-		49D2C73C1D6F952D0049B0A0 /* SampleServiceExtension */ = {
-			isa = PBXGroup;
-			children = (
-				4578585222FDBB030020D161 /* SampleServiceExtension.entitlements */,
-				49D2C73D1D6F952D0049B0A0 /* NotificationService.h */,
-				49D2C73E1D6F952D0049B0A0 /* NotificationService.m */,
-				49D2C7401D6F952D0049B0A0 /* Info.plist */,
-			);
-			path = SampleServiceExtension;
-			sourceTree = "<group>";
-		};
-		50E49B229E80ED2B02DB66EE /* Pods */ = {
+		2452FEF4E8211FC541825459 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
 			);
 			path = Pods;
 			sourceTree = "<group>";
 		};
-		6E75B2422395D1B100425530 /* Products */ = {
+		45AF557F22B562FE006CAE7F /* SampleUITests */ = {
 			isa = PBXGroup;
 			children = (
-				6EB1B42026EAA539000421B9 /* AirshipBasement.framework */,
-				6EB1B42226EAA539000421B9 /* AirshipBasement.framework */,
-				6E75B2532395D1B100425530 /* AirshipCore.framework */,
-				6E75B2552395D1B100425530 /* AirshipCore.framework */,
-				6E75B2572395D1B100425530 /* AirshipTests.xctest */,
-				6E75B2592395D1B100425530 /* AirshipLocation.framework */,
-				6E75B25B2395D1B100425530 /* AirshipDebug.framework */,
-				6E75B25D2395D1B100425530 /* AirshipAutomation.framework */,
-				6E75B25F2395D1B100425530 /* AirshipMessageCenter.framework */,
-				6E75B2612395D1B100425530 /* AirshipExtendedActions.framework */,
-				6E6CC33B239A2F93003D583C /* AirshipAccengage.framework */,
-				1BF9B0DA23A24E2400E68DBE /* AirshipAccengageTests.xctest */,
-				6E7C071D2612821C006D0E84 /* AirshipChat.framework */,
-				6E1892BC268CEC9600417887 /* AirshipChatTests.xctest */,
-				6E1892BE268CEC9600417887 /* AirshipPreferenceCenter.framework */,
-				6E1892C0268CEC9600417887 /* AirshipPreferenceCenterTests.xctest */,
-				A6722969281981600033F54D /* AirshipRelease.framework */,
-				A672296B281981600033F54D /* AirshipRelease_tvOS.framework */,
+				45AF558022B562FE006CAE7F /* CoreUITests.swift */,
+				456156E522B6F8FE00A68ADA /* UITestUtils.swift */,
+				45AF558222B562FE006CAE7F /* Info.plist */,
+			);
+			path = SampleUITests;
+			sourceTree = "<group>";
+		};
+		49251DEC1D6F9C1500EED4BD /* SampleServiceExtension */ = {
+			isa = PBXGroup;
+			children = (
+				4578585E22FDBB660020D161 /* SampleServiceExtension.entitlements */,
+				49251DED1D6F9C1500EED4BD /* NotificationService.swift */,
+				49251DEF1D6F9C1500EED4BD /* Info.plist */,
+			);
+			path = SampleServiceExtension;
+			sourceTree = "<group>";
+		};
+		493F510E1C5B2C8D00B050A1 /* Localization */ = {
+			isa = PBXGroup;
+			children = (
+				493F510F1C5B2C8D00B050A1 /* UAPushUI.strings */,
+			);
+			name = Localization;
+			path = Resources/Localization;
+			sourceTree = "<group>";
+		};
+		613420361BD6C09B00236A18 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				A68E347126B2BAB40024BE1D /* AirshipPreferenceCenterStyle.plist */,
+				45BE0C9222834F6B008302F1 /* MessageCenterStyle.plist */,
+				493F510E1C5B2C8D00B050A1 /* Localization */,
+				619A0D401BE81D7B00D9E863 /* Images.xcassets */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		6E65D56B2396E99D00AF2D1A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6EB1B41326EAA531000421B9 /* AirshipBasement.framework */,
+				6EB1B41526EAA531000421B9 /* AirshipBasement.framework */,
+				6ED5B74B288613460093CEEC /* AirshipBasement.framework */,
+				6E65D57C2396E99D00AF2D1A /* AirshipCore.framework */,
+				6E65D57E2396E99D00AF2D1A /* AirshipCore.framework */,
+				6ED5B74D288613460093CEEC /* AirshipCore.framework */,
+				6E65D5802396E99D00AF2D1A /* AirshipTests.xctest */,
+				6E65D5842396E99D00AF2D1A /* AirshipDebug.framework */,
+				6E65D5862396E99D00AF2D1A /* AirshipAutomation.framework */,
+				6E65D5882396E99D00AF2D1A /* AirshipMessageCenter.framework */,
+				6E65D58A2396E99D00AF2D1A /* AirshipExtendedActions.framework */,
+				6EAD7CDF26B2003700B88EA7 /* AirshipPreferenceCenter.framework */,
+				6EAD7CE126B2003700B88EA7 /* AirshipPreferenceCenterTests.xctest */,
+				A67229542819813A0033F54D /* AirshipRelease.framework */,
+				A67229562819813A0033F54D /* AirshipRelease_tvOS.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		6E75B2632395D1B300425530 /* Products */ = {
+		6E65D58C2396E9A300AF2D1A /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				6E75B2682395D1B300425530 /* AirshipNotificationServiceExtension.framework */,
-				6E75B26A2395D1B300425530 /* AirshipNotificationContentExtension.framework */,
-				1BEF601324CB3D8A0039091F /* AirshipNotificationServiceExtensionTests.xctest */,
-				1BEF601524CB3D8A0039091F /* AirshipNotificationContentExtensionTests.xctest */,
+				6E65D5912396E9A300AF2D1A /* AirshipNotificationServiceExtension.framework */,
+				6E65D5932396E9A300AF2D1A /* AirshipNotificationContentExtension.framework */,
+				1BEF603B24CB3DB60039091F /* AirshipNotificationServiceExtensionTests.xctest */,
+				1BEF603D24CB3DB60039091F /* AirshipNotificationContentExtensionTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		764693991C237B630090FE40 = {
+		CCDA359A1B8D233A00950AD5 = {
 			isa = PBXGroup;
 			children = (
-				6E75B2622395D1B300425530 /* AirshipExtensions.xcodeproj */,
-				6E75B2412395D1B100425530 /* Airship.xcodeproj */,
-				764693A41C237B630090FE40 /* Sample */,
-				49D2C73C1D6F952D0049B0A0 /* SampleServiceExtension */,
-				76AE35641C2B6FD600D7F3B9 /* AirshipConfig.plist */,
-				61E392301CC81EA800D994E3 /* MessageCenterStyle.plist */,
-				1BFB704323882E4900BF7F07 /* SampleContentExtension */,
-				1BEF5FEE24CB3D870039091F /* SampleAppClip */,
-				764693A31C237B630090FE40 /* Products */,
-				50E49B229E80ED2B02DB66EE /* Pods */,
-				A1B3DF99B91AC968C1AC9860 /* Frameworks */,
+				6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */,
+				6E65D58B2396E9A300AF2D1A /* AirshipExtensions.xcodeproj */,
+				CCDA35A51B8D233A00950AD5 /* Sample */,
+				49251DEC1D6F9C1500EED4BD /* SampleServiceExtension */,
+				CCDA35C31B8D237300950AD5 /* AirshipConfig.plist */,
+				45AF557F22B562FE006CAE7F /* SampleUITests */,
+				1B94297B23883234002051B3 /* SampleContentExtension */,
+				1BEF601C24CB3DB60039091F /* SampleAppClip */,
+				CCDA35A41B8D233A00950AD5 /* Products */,
+				DF4E494E221D96CB00F306A5 /* Frameworks */,
+				2452FEF4E8211FC541825459 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
-		764693A31C237B630090FE40 /* Products */ = {
+		CCDA35A41B8D233A00950AD5 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				764693A21C237B630090FE40 /* Sample.app */,
-				49D2C73B1D6F952D0049B0A0 /* SampleServiceExtension.appex */,
-				1BFB703E23882E4900BF7F07 /* SampleContentExtension.appex */,
-				1BEF5FED24CB3D870039091F /* SampleAppClip.app */,
+				CCDA35A31B8D233A00950AD5 /* Sample.app */,
+				49251DEB1D6F9C1500EED4BD /* SampleServiceExtension.appex */,
+				45AF557E22B562FE006CAE7F /* SampleUITests.xctest */,
+				1B94297823883234002051B3 /* SampleContentExtension.appex */,
+				1BEF601B24CB3DB60039091F /* SampleAppClip.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		764693A41C237B630090FE40 /* Sample */ = {
+		CCDA35A51B8D233A00950AD5 /* Sample */ = {
 			isa = PBXGroup;
 			children = (
-				4929EA2E1D5156F000D7B322 /* Sample.entitlements */,
-				764693A81C237B630090FE40 /* AppDelegate.h */,
-				764693A91C237B630090FE40 /* AppDelegate.m */,
-				61A672FA1CAB3E5A00BAF58A /* PushHandler.h */,
-				61A672FB1CAB3E5A00BAF58A /* PushHandler.m */,
-				764693AB1C237B630090FE40 /* HomeViewController.h */,
-				764693AC1C237B630090FE40 /* HomeViewController.m */,
-				493F50E81C5B261100B050A1 /* MessageCenterViewController.h */,
-				493F50E91C5B261100B050A1 /* MessageCenterViewController.m */,
-				493F511F1C5B3A5100B050A1 /* MessageCenterDelegate.h */,
-				493F51201C5B3A5100B050A1 /* MessageCenterDelegate.m */,
-				DF0127E1243813CC0011F7C7 /* TabBarController.h */,
-				DF0127E2243813CC0011F7C7 /* TabBarController.m */,
-				764693BF1C237CAB0090FE40 /* Main.storyboard */,
-				764693B61C237B630090FE40 /* LaunchScreen.storyboard */,
-				764693B91C237B630090FE40 /* Info.plist */,
-				DE1B54CC242D178A0044054D /* Settings View */,
-				764693FB1C238E7C0090FE40 /* Resources */,
-				764693A51C237B630090FE40 /* Supporting Files */,
+				CC0E3A061D2DAA4900DAF1E5 /* Sample.entitlements */,
+				CCDA35A61B8D233A00950AD5 /* AppDelegate.swift */,
+				CCDA35A81B8D233A00950AD5 /* HomeViewController.swift */,
+				61A672E71CA9F4B000BAF58A /* PushHandler.swift */,
+				493F51121C5B2C9E00B050A1 /* MessageCenterViewController.swift */,
+				493F51281C5B423700B050A1 /* MessageCenterDelegate.swift */,
+				DF0127DA2437E8640011F7C7 /* TabBarController.swift */,
+				DE1B54D4242D17A20044054D /* Settings View */,
+				613420361BD6C09B00236A18 /* Resources */,
+				CCDA35AC1B8D233A00950AD5 /* Main.storyboard */,
+				CCDA35B11B8D233A00950AD5 /* LaunchScreen.storyboard */,
+				CCDA35B41B8D233A00950AD5 /* Info.plist */,
 			);
 			path = Sample;
 			sourceTree = "<group>";
 		};
-		764693A51C237B630090FE40 /* Supporting Files */ = {
+		DE1B54D4242D17A20044054D /* Settings View */ = {
 			isa = PBXGroup;
 			children = (
-				764693A61C237B630090FE40 /* main.m */,
+				8325FBBB23F5947A005F423A /* SettingsViewController.swift */,
+				8381A3412406D0DD001E2922 /* AddTagsTableViewController.swift */,
+				8381A3472406D2C9001E2922 /* AddNamedUserTableViewController.swift */,
+				8381A3492406D362001E2922 /* TagsTableViewController.swift */,
 			);
-			name = "Supporting Files";
+			name = "Settings View";
 			sourceTree = "<group>";
 		};
-		764693FB1C238E7C0090FE40 /* Resources */ = {
+		DF4E494E221D96CB00F306A5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				493F51081C5B275100B050A1 /* Localization */,
-				764693FC1C238E7C0090FE40 /* Images.xcassets */,
-			);
-			path = Resources;
-			sourceTree = "<group>";
-		};
-		A1B3DF99B91AC968C1AC9860 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				1BFB703F23882E4900BF7F07 /* UserNotifications.framework */,
-				1BFB704123882E4900BF7F07 /* UserNotificationsUI.framework */,
+				1BEF603F24CB3FF10039091F /* AppClip.framework */,
+				1BFB70562388302000BF7F07 /* UserNotifications.framework */,
+				1BFB70582388302000BF7F07 /* UserNotificationsUI.framework */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		DE1B54CC242D178A0044054D /* Settings View */ = {
-			isa = PBXGroup;
-			children = (
-				DEDB897524192F9D000D5241 /* AddNamedUserTableViewController.h */,
-				DEDB897D24192F9D000D5241 /* AddNamedUserTableViewController.m */,
-				DEDB897E24192F9D000D5241 /* AddTagsTableViewController.h */,
-				DEDB897F24192F9D000D5241 /* AddTagsTableViewController.m */,
-				DEDB898124192F9D000D5241 /* TagsTableViewController.h */,
-				DEDB898024192F9D000D5241 /* TagsTableViewController.m */,
-				83B4C01C23D9FD4500299543 /* SettingsViewController.h */,
-				83B4C02323D9FD5800299543 /* SettingsViewController.m */,
-			);
-			path = "Settings View";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		1BEF5FEC24CB3D870039091F /* SampleAppClip */ = {
+		1B94297723883234002051B3 /* SampleContentExtension */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1BEF601624CB3D8A0039091F /* Build configuration list for PBXNativeTarget "SampleAppClip" */;
+			buildConfigurationList = 1B94298523883234002051B3 /* Build configuration list for PBXNativeTarget "SampleContentExtension" */;
 			buildPhases = (
-				1BEF5FE924CB3D870039091F /* Sources */,
-				1BEF5FEA24CB3D870039091F /* Frameworks */,
-				1BEF5FEB24CB3D870039091F /* Resources */,
-				3CF3DE0624E75DEC000CF516 /* Embed Frameworks */,
-				3C12C2042535081C00318371 /* Conditionally Embed Debug Framework */,
+				1B94297423883234002051B3 /* Sources */,
+				1B94297523883234002051B3 /* Frameworks */,
+				1B94297623883234002051B3 /* Resources */,
+				DFC383A3243EA37B00EA78FE /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				3CE5599026F14B6400FBCBA5 /* PBXTargetDependency */,
-				3CF3DE9224EB0768000CF516 /* PBXTargetDependency */,
-				3CF3DE9424EB0768000CF516 /* PBXTargetDependency */,
-				3CF3DE9624EB0768000CF516 /* PBXTargetDependency */,
-				3CF3DE9A24EB0768000CF516 /* PBXTargetDependency */,
-				3CF3DE9C24EB0768000CF516 /* PBXTargetDependency */,
-				3CF3DE9E24EB0768000CF516 /* PBXTargetDependency */,
-			);
-			name = SampleAppClip;
-			productName = SampleAppClip;
-			productReference = 1BEF5FED24CB3D870039091F /* SampleAppClip.app */;
-			productType = "com.apple.product-type.application.on-demand-install-capable";
-		};
-		1BFB703D23882E4900BF7F07 /* SampleContentExtension */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 1BFB705023882E4A00BF7F07 /* Build configuration list for PBXNativeTarget "SampleContentExtension" */;
-			buildPhases = (
-				1BFB703A23882E4900BF7F07 /* Sources */,
-				1BFB703B23882E4900BF7F07 /* Frameworks */,
-				1BFB703C23882E4900BF7F07 /* Resources */,
-				6E75B2712395D1CF00425530 /* Embed Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
+				6E65D5B02396EA8600AF2D1A /* PBXTargetDependency */,
 			);
 			name = SampleContentExtension;
-			productName = SampleContentExtension;
-			productReference = 1BFB703E23882E4900BF7F07 /* SampleContentExtension.appex */;
+			productName = SwiftSampleContentExtension;
+			productReference = 1B94297823883234002051B3 /* SampleContentExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
-		49D2C73A1D6F952D0049B0A0 /* SampleServiceExtension */ = {
+		1BEF601A24CB3DB60039091F /* SampleAppClip */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 49D2C7461D6F952D0049B0A0 /* Build configuration list for PBXNativeTarget "SampleServiceExtension" */;
+			buildConfigurationList = 1BEF603E24CB3DB60039091F /* Build configuration list for PBXNativeTarget "SampleAppClip" */;
 			buildPhases = (
-				49D2C7371D6F952D0049B0A0 /* Sources */,
-				49D2C7381D6F952D0049B0A0 /* Frameworks */,
-				49D2C7391D6F952D0049B0A0 /* Resources */,
-				49251DDB1D6F962200EED4BD /* CopyFiles */,
+				1BEF601724CB3DB60039091F /* Sources */,
+				1BEF601824CB3DB60039091F /* Frameworks */,
+				1BEF601924CB3DB60039091F /* Resources */,
+				3CF3DE1324E75E01000CF516 /* Embed Frameworks */,
+				3C12C2052535085800318371 /* Conditionally Embed Debug Framework */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				DFC383A0243EA31300EA78FE /* PBXTargetDependency */,
+				3CE5598226F14B4A00FBCBA5 /* PBXTargetDependency */,
+				3CF3DEA224EB0787000CF516 /* PBXTargetDependency */,
+				3CF3DEA424EB0787000CF516 /* PBXTargetDependency */,
+				3CF3DEA824EB0787000CF516 /* PBXTargetDependency */,
+				3CF3DEAC24EB0787000CF516 /* PBXTargetDependency */,
+			);
+			name = SampleAppClip;
+			productName = SwiftSampleAppClip;
+			productReference = 1BEF601B24CB3DB60039091F /* SampleAppClip.app */;
+			productType = "com.apple.product-type.application.on-demand-install-capable";
+		};
+		45AF557D22B562FE006CAE7F /* SampleUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 45AF559022B562FE006CAE7F /* Build configuration list for PBXNativeTarget "SampleUITests" */;
+			buildPhases = (
+				45AF557A22B562FE006CAE7F /* Sources */,
+				45AF557B22B562FE006CAE7F /* Frameworks */,
+				45AF557C22B562FE006CAE7F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				45AF558422B562FE006CAE7F /* PBXTargetDependency */,
+			);
+			name = SampleUITests;
+			productName = SwiftSampleUITests;
+			productReference = 45AF557E22B562FE006CAE7F /* SampleUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		49251DEA1D6F9C1500EED4BD /* SampleServiceExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 49251DF31D6F9C1500EED4BD /* Build configuration list for PBXNativeTarget "SampleServiceExtension" */;
+			buildPhases = (
+				49251DE71D6F9C1500EED4BD /* Sources */,
+				49251DE81D6F9C1500EED4BD /* Frameworks */,
+				49251DE91D6F9C1500EED4BD /* Resources */,
+				49251DFA1D6F9C8800EED4BD /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				6E65D5B22396EA8C00AF2D1A /* PBXTargetDependency */,
 			);
 			name = SampleServiceExtension;
 			productName = SampleServiceExtension;
-			productReference = 49D2C73B1D6F952D0049B0A0 /* SampleServiceExtension.appex */;
+			productReference = 49251DEB1D6F9C1500EED4BD /* SampleServiceExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
-		764693A11C237B630090FE40 /* Sample */ = {
+		CCDA35A21B8D233A00950AD5 /* Sample */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 764693BC1C237B630090FE40 /* Build configuration list for PBXNativeTarget "Sample" */;
+			buildConfigurationList = CCDA35B71B8D233A00950AD5 /* Build configuration list for PBXNativeTarget "Sample" */;
 			buildPhases = (
-				7646939E1C237B630090FE40 /* Sources */,
-				7646939F1C237B630090FE40 /* Frameworks */,
-				764693A01C237B630090FE40 /* Resources */,
-				DF7A7E29243BC26400D23488 /* Conditionally Embed Debug Framework */,
-				76AE34E91C2B6BF700D7F3B9 /* CopyFiles */,
-				49D2C7471D6F952D0049B0A0 /* Embed App Extensions */,
-				1BEF600624CB3D8A0039091F /* Embed App Clips */,
+				CCDA359F1B8D233A00950AD5 /* Sources */,
+				CCDA35A01B8D233A00950AD5 /* Frameworks */,
+				CCDA35A11B8D233A00950AD5 /* Resources */,
+				DFC38388243D250F00EA78FE /* Conditionally Embed Debug Frameworks */,
+				CCDA35D21B8D276C00950AD5 /* CopyFiles */,
+				49251DF61D6F9C1500EED4BD /* Embed App Extensions */,
+				1BEF603024CB3DB60039091F /* Embed App Clips */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				3CE5598426F14B5B00FBCBA5 /* PBXTargetDependency */,
-				6E1892B4268CEC9600417887 /* PBXTargetDependency */,
-				6E7C07152612821C006D0E84 /* PBXTargetDependency */,
-				6E6CC334239A2F93003D583C /* PBXTargetDependency */,
-				6E65D52D2396305F00AF2D1A /* PBXTargetDependency */,
-				6E65D52F2396305F00AF2D1A /* PBXTargetDependency */,
-				6E65D5312396305F00AF2D1A /* PBXTargetDependency */,
-				6E65D4F52395E72200AF2D1A /* PBXTargetDependency */,
-				6E65D5332396305F00AF2D1A /* PBXTargetDependency */,
-				6E65D4F32395E72200AF2D1A /* PBXTargetDependency */,
-				49D2C7421D6F952D0049B0A0 /* PBXTargetDependency */,
-				1BFB704C23882E4A00BF7F07 /* PBXTargetDependency */,
-				1BEF600524CB3D8A0039091F /* PBXTargetDependency */,
+				3CE5598026F14B4300FBCBA5 /* PBXTargetDependency */,
+				6EAD7CD726B2003700B88EA7 /* PBXTargetDependency */,
+				6E65D5C52396ECD600AF2D1A /* PBXTargetDependency */,
+				6E65D5C72396ECD600AF2D1A /* PBXTargetDependency */,
+				6E65D5C92396ECD600AF2D1A /* PBXTargetDependency */,
+				6E65D5CB2396ECD600AF2D1A /* PBXTargetDependency */,
+				6E65D5B62396EA9C00AF2D1A /* PBXTargetDependency */,
+				49251DF11D6F9C1500EED4BD /* PBXTargetDependency */,
+				1B94298323883234002051B3 /* PBXTargetDependency */,
+				1BEF602E24CB3DB60039091F /* PBXTargetDependency */,
 			);
 			name = Sample;
-			productName = Sample;
-			productReference = 764693A21C237B630090FE40 /* Sample.app */;
+			productName = SwiftSample;
+			productReference = CCDA35A31B8D233A00950AD5 /* Sample.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		7646939A1C237B630090FE40 /* Project object */ = {
+		CCDA359B1B8D233A00950AD5 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 1200;
 				LastUpgradeCheck = 1250;
 				ORGANIZATIONNAME = "Urban Airship";
 				TargetAttributes = {
-					1BEF5FEC24CB3D870039091F = {
-						CreatedOnToolsVersion = 12.0;
-					};
-					1BFB703D23882E4900BF7F07 = {
+					1B94297723883234002051B3 = {
 						CreatedOnToolsVersion = 11.2.1;
+						DevelopmentTeam = PGJV57GD94;
 						ProvisioningStyle = Automatic;
 					};
-					49D2C73A1D6F952D0049B0A0 = {
-						CreatedOnToolsVersion = 8.0;
+					1BEF601A24CB3DB60039091F = {
+						CreatedOnToolsVersion = 12.0;
 					};
-					764693A11C237B630090FE40 = {
-						CreatedOnToolsVersion = 7.2;
+					45AF557D22B562FE006CAE7F = {
+						CreatedOnToolsVersion = 10.2.1;
+						DevelopmentTeam = PGJV57GD94;
+						ProvisioningStyle = Automatic;
+						TestTargetID = CCDA35A21B8D233A00950AD5;
+					};
+					49251DEA1D6F9C1500EED4BD = {
+						CreatedOnToolsVersion = 8.0;
+						LastSwiftMigration = 1100;
+						ProvisioningStyle = Automatic;
+					};
+					CCDA35A21B8D233A00950AD5 = {
+						CreatedOnToolsVersion = 7.0;
+						DevelopmentTeam = PGJV57GD94;
+						LastSwiftMigration = 1100;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -900,7 +844,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 7646939D1C237B630090FE40 /* Build configuration list for PBXProject "Sample" */;
+			buildConfigurationList = CCDA359E1B8D233A00950AD5 /* Build configuration list for PBXProject "Sample" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -916,246 +860,220 @@
 				"zh-Hans",
 				"zh-Hant",
 			);
-			mainGroup = 764693991C237B630090FE40;
-			productRefGroup = 764693A31C237B630090FE40 /* Products */;
+			mainGroup = CCDA359A1B8D233A00950AD5;
+			productRefGroup = CCDA35A41B8D233A00950AD5 /* Products */;
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 6E75B2422395D1B100425530 /* Products */;
-					ProjectRef = 6E75B2412395D1B100425530 /* Airship.xcodeproj */;
+					ProductGroup = 6E65D56B2396E99D00AF2D1A /* Products */;
+					ProjectRef = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
 				},
 				{
-					ProductGroup = 6E75B2632395D1B300425530 /* Products */;
-					ProjectRef = 6E75B2622395D1B300425530 /* AirshipExtensions.xcodeproj */;
+					ProductGroup = 6E65D58C2396E9A300AF2D1A /* Products */;
+					ProjectRef = 6E65D58B2396E9A300AF2D1A /* AirshipExtensions.xcodeproj */;
 				},
 			);
 			projectRoot = "";
 			targets = (
-				764693A11C237B630090FE40 /* Sample */,
-				49D2C73A1D6F952D0049B0A0 /* SampleServiceExtension */,
-				1BFB703D23882E4900BF7F07 /* SampleContentExtension */,
-				1BEF5FEC24CB3D870039091F /* SampleAppClip */,
+				CCDA35A21B8D233A00950AD5 /* Sample */,
+				49251DEA1D6F9C1500EED4BD /* SampleServiceExtension */,
+				45AF557D22B562FE006CAE7F /* SampleUITests */,
+				1B94297723883234002051B3 /* SampleContentExtension */,
+				1BEF601A24CB3DB60039091F /* SampleAppClip */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		1BEF601324CB3D8A0039091F /* AirshipNotificationServiceExtensionTests.xctest */ = {
+		1BEF603B24CB3DB60039091F /* AirshipNotificationServiceExtensionTests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
 			path = AirshipNotificationServiceExtensionTests.xctest;
-			remoteRef = 1BEF601224CB3D8A0039091F /* PBXContainerItemProxy */;
+			remoteRef = 1BEF603A24CB3DB60039091F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		1BEF601524CB3D8A0039091F /* AirshipNotificationContentExtensionTests.xctest */ = {
+		1BEF603D24CB3DB60039091F /* AirshipNotificationContentExtensionTests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
 			path = AirshipNotificationContentExtensionTests.xctest;
-			remoteRef = 1BEF601424CB3D8A0039091F /* PBXContainerItemProxy */;
+			remoteRef = 1BEF603C24CB3DB60039091F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		1BF9B0DA23A24E2400E68DBE /* AirshipAccengageTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = AirshipAccengageTests.xctest;
-			remoteRef = 1BF9B0D923A24E2400E68DBE /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		32103C1C285B368700F72365 /* AirshipRelease.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = AirshipRelease.framework;
-			remoteRef = 32103C1B285B368700F72365 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		32103C1E285B368700F72365 /* AirshipRelease_tvOS.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = AirshipRelease_tvOS.framework;
-			remoteRef = 32103C1D285B368700F72365 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		6E1892BC268CEC9600417887 /* AirshipChatTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = AirshipChatTests.xctest;
-			remoteRef = 6E1892BB268CEC9600417887 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		6E1892BE268CEC9600417887 /* AirshipPreferenceCenter.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = AirshipPreferenceCenter.framework;
-			remoteRef = 6E1892BD268CEC9600417887 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		6E1892C0268CEC9600417887 /* AirshipPreferenceCenterTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = AirshipPreferenceCenterTests.xctest;
-			remoteRef = 6E1892BF268CEC9600417887 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		6E6CC33B239A2F93003D583C /* AirshipAccengage.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = AirshipAccengage.framework;
-			remoteRef = 6E6CC33A239A2F93003D583C /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		6E75B2532395D1B100425530 /* AirshipCore.framework */ = {
+		6E65D57C2396E99D00AF2D1A /* AirshipCore.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = AirshipCore.framework;
-			remoteRef = 6E75B2522395D1B100425530 /* PBXContainerItemProxy */;
+			remoteRef = 6E65D57B2396E99D00AF2D1A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6E75B2552395D1B100425530 /* AirshipCore.framework */ = {
+		6E65D57E2396E99D00AF2D1A /* AirshipCore.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = AirshipCore.framework;
-			remoteRef = 6E75B2542395D1B100425530 /* PBXContainerItemProxy */;
+			remoteRef = 6E65D57D2396E99D00AF2D1A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6E75B2572395D1B100425530 /* AirshipTests.xctest */ = {
+		6E65D5802396E99D00AF2D1A /* AirshipTests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
 			path = AirshipTests.xctest;
-			remoteRef = 6E75B2562395D1B100425530 /* PBXContainerItemProxy */;
+			remoteRef = 6E65D57F2396E99D00AF2D1A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6E75B2592395D1B100425530 /* AirshipLocation.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = AirshipLocation.framework;
-			remoteRef = 6E75B2582395D1B100425530 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		6E75B25B2395D1B100425530 /* AirshipDebug.framework */ = {
+		6E65D5842396E99D00AF2D1A /* AirshipDebug.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = AirshipDebug.framework;
-			remoteRef = 6E75B25A2395D1B100425530 /* PBXContainerItemProxy */;
+			remoteRef = 6E65D5832396E99D00AF2D1A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6E75B25D2395D1B100425530 /* AirshipAutomation.framework */ = {
+		6E65D5862396E99D00AF2D1A /* AirshipAutomation.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = AirshipAutomation.framework;
-			remoteRef = 6E75B25C2395D1B100425530 /* PBXContainerItemProxy */;
+			remoteRef = 6E65D5852396E99D00AF2D1A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6E75B25F2395D1B100425530 /* AirshipMessageCenter.framework */ = {
+		6E65D5882396E99D00AF2D1A /* AirshipMessageCenter.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = AirshipMessageCenter.framework;
-			remoteRef = 6E75B25E2395D1B100425530 /* PBXContainerItemProxy */;
+			remoteRef = 6E65D5872396E99D00AF2D1A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6E75B2612395D1B100425530 /* AirshipExtendedActions.framework */ = {
+		6E65D58A2396E99D00AF2D1A /* AirshipExtendedActions.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = AirshipExtendedActions.framework;
-			remoteRef = 6E75B2602395D1B100425530 /* PBXContainerItemProxy */;
+			remoteRef = 6E65D5892396E99D00AF2D1A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6E75B2682395D1B300425530 /* AirshipNotificationServiceExtension.framework */ = {
+		6E65D5912396E9A300AF2D1A /* AirshipNotificationServiceExtension.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = AirshipNotificationServiceExtension.framework;
-			remoteRef = 6E75B2672395D1B300425530 /* PBXContainerItemProxy */;
+			remoteRef = 6E65D5902396E9A300AF2D1A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6E75B26A2395D1B300425530 /* AirshipNotificationContentExtension.framework */ = {
+		6E65D5932396E9A300AF2D1A /* AirshipNotificationContentExtension.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = AirshipNotificationContentExtension.framework;
-			remoteRef = 6E75B2692395D1B300425530 /* PBXContainerItemProxy */;
+			remoteRef = 6E65D5922396E9A300AF2D1A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6E7C071D2612821C006D0E84 /* AirshipChat.framework */ = {
+		6EAD7CDF26B2003700B88EA7 /* AirshipPreferenceCenter.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			path = AirshipChat.framework;
-			remoteRef = 6E7C071C2612821C006D0E84 /* PBXContainerItemProxy */;
+			path = AirshipPreferenceCenter.framework;
+			remoteRef = 6EAD7CDE26B2003700B88EA7 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6EB1B42026EAA539000421B9 /* AirshipBasement.framework */ = {
+		6EAD7CE126B2003700B88EA7 /* AirshipPreferenceCenterTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = AirshipPreferenceCenterTests.xctest;
+			remoteRef = 6EAD7CE026B2003700B88EA7 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6EB1B41326EAA531000421B9 /* AirshipBasement.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = AirshipBasement.framework;
-			remoteRef = 6EB1B41F26EAA539000421B9 /* PBXContainerItemProxy */;
+			remoteRef = 6EB1B41226EAA531000421B9 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6EB1B42226EAA539000421B9 /* AirshipBasement.framework */ = {
+		6EB1B41526EAA531000421B9 /* AirshipBasement.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = AirshipBasement.framework;
-			remoteRef = 6EB1B42126EAA539000421B9 /* PBXContainerItemProxy */;
+			remoteRef = 6EB1B41426EAA531000421B9 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		A6722969281981600033F54D /* AirshipRelease.framework */ = {
+		6ED5B74B288613460093CEEC /* AirshipBasement.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipBasement.framework;
+			remoteRef = 6ED5B74A288613460093CEEC /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6ED5B74D288613460093CEEC /* AirshipCore.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipCore.framework;
+			remoteRef = 6ED5B74C288613460093CEEC /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A67229542819813A0033F54D /* AirshipRelease.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = AirshipRelease.framework;
-			remoteRef = A6722968281981600033F54D /* PBXContainerItemProxy */;
+			remoteRef = A67229532819813A0033F54D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		A672296B281981600033F54D /* AirshipRelease_tvOS.framework */ = {
+		A67229562819813A0033F54D /* AirshipRelease_tvOS.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = AirshipRelease_tvOS.framework;
-			remoteRef = A672296A281981600033F54D /* PBXContainerItemProxy */;
+			remoteRef = A67229552819813A0033F54D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
-		1BEF5FEB24CB3D870039091F /* Resources */ = {
+		1B94297623883234002051B3 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3CCB661124E7491C0039CA3B /* LaunchScreen.storyboard in Resources */,
-				3CCB661224E7491C0039CA3B /* Images.xcassets in Resources */,
-				3CCB661324E7491C0039CA3B /* MessageCenterStyle.plist in Resources */,
-				1BEF606024CF0CEB0039091F /* Main.storyboard in Resources */,
-				1BEF606124CF0CEB0039091F /* UAPushUI.strings in Resources */,
-				1BEF606224CF0CEB0039091F /* AirshipConfig.plist in Resources */,
+				1B94298023883234002051B3 /* MainInterface.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		1BFB703C23882E4900BF7F07 /* Resources */ = {
+		1BEF601924CB3DB60039091F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1BFB704923882E4A00BF7F07 /* MainInterface.storyboard in Resources */,
+				3CF3DDC924E74F9B000CF516 /* MessageCenterStyle.plist in Resources */,
+				3CF3DDCA24E74F9B000CF516 /* Images.xcassets in Resources */,
+				3CF3DDCB24E74F9B000CF516 /* LaunchScreen.storyboard in Resources */,
+				1BEF605324CF03990039091F /* AirshipConfig.plist in Resources */,
+				1BEF605024CED8DB0039091F /* UAPushUI.strings in Resources */,
+				1BEF604F24CED85D0039091F /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		49D2C7391D6F952D0049B0A0 /* Resources */ = {
+		45AF557C22B562FE006CAE7F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		764693A01C237B630090FE40 /* Resources */ = {
+		49251DE91D6F9C1500EED4BD /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				764693B81C237B630090FE40 /* LaunchScreen.storyboard in Resources */,
-				7646940D1C238E7C0090FE40 /* Images.xcassets in Resources */,
-				764693C01C237CAB0090FE40 /* Main.storyboard in Resources */,
-				76AE35651C2B6FD600D7F3B9 /* AirshipConfig.plist in Resources */,
-				61E392311CC81EA800D994E3 /* MessageCenterStyle.plist in Resources */,
-				493F510B1C5B275100B050A1 /* UAPushUI.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CCDA35A11B8D233A00950AD5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				45BE0C9822837B7A008302F1 /* MessageCenterStyle.plist in Resources */,
+				CCDA35B31B8D233A00950AD5 /* LaunchScreen.storyboard in Resources */,
+				493F51111C5B2C8D00B050A1 /* UAPushUI.strings in Resources */,
+				A68E347926B2BAB40024BE1D /* AirshipPreferenceCenterStyle.plist in Resources */,
+				CCDA35AE1B8D233A00950AD5 /* Main.storyboard in Resources */,
+				CCDA35C41B8D237300950AD5 /* AirshipConfig.plist in Resources */,
+				619A0D411BE81D7B00D9E863 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		3C12C2042535081C00318371 /* Conditionally Embed Debug Framework */ = {
+		3C12C2052535085800318371 /* Conditionally Embed Debug Framework */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1173,9 +1091,9 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}\"/embed_debug_framework.sh\n";
+			shellScript = "\"${SRCROOT}\"/embed_debug_framework.sh\n\n";
 		};
-		DF7A7E29243BC26400D23488 /* Conditionally Embed Debug Framework */ = {
+		DFC38388243D250F00EA78FE /* Conditionally Embed Debug Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1185,7 +1103,7 @@
 			inputPaths = (
 				"${BUILT_PRODUCTS_DIR}/AirshipDebug.framework",
 			);
-			name = "Conditionally Embed Debug Framework";
+			name = "Conditionally Embed Debug Frameworks";
 			outputFileListPaths = (
 			);
 			outputPaths = (
@@ -1198,191 +1116,191 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		1BEF5FE924CB3D870039091F /* Sources */ = {
+		1B94297423883234002051B3 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1BEF605F24CF0CDE0039091F /* main.m in Sources */,
-				1BEF605524CF0CC90039091F /* AppDelegate.m in Sources */,
-				1BEF605624CF0CC90039091F /* PushHandler.m in Sources */,
-				1BEF605724CF0CC90039091F /* HomeViewController.m in Sources */,
-				1BEF605824CF0CC90039091F /* MessageCenterViewController.m in Sources */,
-				1BEF605924CF0CC90039091F /* MessageCenterDelegate.m in Sources */,
-				1BEF605A24CF0CC90039091F /* TabBarController.m in Sources */,
-				1BEF605B24CF0CC90039091F /* AddNamedUserTableViewController.m in Sources */,
-				1BEF605C24CF0CC90039091F /* AddTagsTableViewController.m in Sources */,
-				1BEF605D24CF0CC90039091F /* TagsTableViewController.m in Sources */,
-				1BEF605E24CF0CC90039091F /* SettingsViewController.m in Sources */,
+				1B94297D23883234002051B3 /* NotificationViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		1BFB703A23882E4900BF7F07 /* Sources */ = {
+		1BEF601724CB3DB60039091F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1BFB704623882E4A00BF7F07 /* NotificationViewController.m in Sources */,
+				1BEF604124CB40190039091F /* AppDelegate.swift in Sources */,
+				1BEF604224CB40190039091F /* HomeViewController.swift in Sources */,
+				1BEF604324CB40190039091F /* PushHandler.swift in Sources */,
+				1BEF604424CB40190039091F /* MessageCenterViewController.swift in Sources */,
+				1BEF604524CB40190039091F /* MessageCenterDelegate.swift in Sources */,
+				1BEF604624CB40190039091F /* TabBarController.swift in Sources */,
+				1BEF604724CB40190039091F /* SettingsViewController.swift in Sources */,
+				1BEF604824CB40190039091F /* AddTagsTableViewController.swift in Sources */,
+				1BEF604924CB40190039091F /* AddNamedUserTableViewController.swift in Sources */,
+				1BEF604A24CB40190039091F /* TagsTableViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		49D2C7371D6F952D0049B0A0 /* Sources */ = {
+		45AF557A22B562FE006CAE7F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				49D2C73F1D6F952D0049B0A0 /* NotificationService.m in Sources */,
+				45AF558122B562FE006CAE7F /* CoreUITests.swift in Sources */,
+				456156E622B6F8FE00A68ADA /* UITestUtils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		7646939E1C237B630090FE40 /* Sources */ = {
+		49251DE71D6F9C1500EED4BD /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DEDB898224192F9D000D5241 /* AddNamedUserTableViewController.m in Sources */,
-				DEDB898324192F9D000D5241 /* AddTagsTableViewController.m in Sources */,
-				DEDB898424192F9D000D5241 /* TagsTableViewController.m in Sources */,
-				764693AA1C237B630090FE40 /* AppDelegate.m in Sources */,
-				61A672FC1CAB3E5A00BAF58A /* PushHandler.m in Sources */,
-				DF0127E3243813CC0011F7C7 /* TabBarController.m in Sources */,
-				764693AD1C237B630090FE40 /* HomeViewController.m in Sources */,
-				493F51211C5B3A5100B050A1 /* MessageCenterDelegate.m in Sources */,
-				764693A71C237B630090FE40 /* main.m in Sources */,
-				493F50EA1C5B261100B050A1 /* MessageCenterViewController.m in Sources */,
-				83B4C02423D9FD5800299543 /* SettingsViewController.m in Sources */,
+				49251DEE1D6F9C1500EED4BD /* NotificationService.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CCDA359F1B8D233A00950AD5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				493F51131C5B2C9E00B050A1 /* MessageCenterViewController.swift in Sources */,
+				CCDA35A71B8D233A00950AD5 /* AppDelegate.swift in Sources */,
+				493F51291C5B423700B050A1 /* MessageCenterDelegate.swift in Sources */,
+				DF0127DB2437E8640011F7C7 /* TabBarController.swift in Sources */,
+				CCDA35A91B8D233A00950AD5 /* HomeViewController.swift in Sources */,
+				8381A34A2406D362001E2922 /* TagsTableViewController.swift in Sources */,
+				8381A3482406D2C9001E2922 /* AddNamedUserTableViewController.swift in Sources */,
+				61A672E81CA9F4B000BAF58A /* PushHandler.swift in Sources */,
+				8325FBBC23F5947A005F423A /* SettingsViewController.swift in Sources */,
+				8381A3422406D0DD001E2922 /* AddTagsTableViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		1BEF600524CB3D8A0039091F /* PBXTargetDependency */ = {
+		1B94298323883234002051B3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			platformFilter = ios;
-			target = 1BEF5FEC24CB3D870039091F /* SampleAppClip */;
-			targetProxy = 1BEF600424CB3D8A0039091F /* PBXContainerItemProxy */;
+			target = 1B94297723883234002051B3 /* SampleContentExtension */;
+			targetProxy = 1B94298223883234002051B3 /* PBXContainerItemProxy */;
 		};
-		1BFB704C23882E4A00BF7F07 /* PBXTargetDependency */ = {
+		1BEF602E24CB3DB60039091F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			platformFilter = ios;
-			target = 1BFB703D23882E4900BF7F07 /* SampleContentExtension */;
-			targetProxy = 1BFB704B23882E4A00BF7F07 /* PBXContainerItemProxy */;
+			target = 1BEF601A24CB3DB60039091F /* SampleAppClip */;
+			targetProxy = 1BEF602D24CB3DB60039091F /* PBXContainerItemProxy */;
 		};
-		3CE5598426F14B5B00FBCBA5 /* PBXTargetDependency */ = {
+		3CE5598026F14B4300FBCBA5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = AirshipBasement;
-			targetProxy = 3CE5598326F14B5B00FBCBA5 /* PBXContainerItemProxy */;
+			targetProxy = 3CE5597F26F14B4300FBCBA5 /* PBXContainerItemProxy */;
 		};
-		3CE5599026F14B6400FBCBA5 /* PBXTargetDependency */ = {
+		3CE5598226F14B4A00FBCBA5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = AirshipBasement;
-			targetProxy = 3CE5598F26F14B6400FBCBA5 /* PBXContainerItemProxy */;
+			targetProxy = 3CE5598126F14B4A00FBCBA5 /* PBXContainerItemProxy */;
 		};
-		3CF3DE9224EB0768000CF516 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = AirshipAccengage;
-			targetProxy = 3CF3DE9124EB0768000CF516 /* PBXContainerItemProxy */;
-		};
-		3CF3DE9424EB0768000CF516 /* PBXTargetDependency */ = {
+		3CF3DEA224EB0787000CF516 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = AirshipAutomation;
-			targetProxy = 3CF3DE9324EB0768000CF516 /* PBXContainerItemProxy */;
+			targetProxy = 3CF3DEA124EB0787000CF516 /* PBXContainerItemProxy */;
 		};
-		3CF3DE9624EB0768000CF516 /* PBXTargetDependency */ = {
+		3CF3DEA424EB0787000CF516 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = AirshipCore;
-			targetProxy = 3CF3DE9524EB0768000CF516 /* PBXContainerItemProxy */;
+			targetProxy = 3CF3DEA324EB0787000CF516 /* PBXContainerItemProxy */;
 		};
-		3CF3DE9A24EB0768000CF516 /* PBXTargetDependency */ = {
+		3CF3DEA824EB0787000CF516 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = AirshipExtendedActions;
-			targetProxy = 3CF3DE9924EB0768000CF516 /* PBXContainerItemProxy */;
+			targetProxy = 3CF3DEA724EB0787000CF516 /* PBXContainerItemProxy */;
 		};
-		3CF3DE9C24EB0768000CF516 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = AirshipLocation;
-			targetProxy = 3CF3DE9B24EB0768000CF516 /* PBXContainerItemProxy */;
-		};
-		3CF3DE9E24EB0768000CF516 /* PBXTargetDependency */ = {
+		3CF3DEAC24EB0787000CF516 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = AirshipMessageCenter;
-			targetProxy = 3CF3DE9D24EB0768000CF516 /* PBXContainerItemProxy */;
+			targetProxy = 3CF3DEAB24EB0787000CF516 /* PBXContainerItemProxy */;
 		};
-		49D2C7421D6F952D0049B0A0 /* PBXTargetDependency */ = {
+		45AF558422B562FE006CAE7F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 49D2C73A1D6F952D0049B0A0 /* SampleServiceExtension */;
-			targetProxy = 49D2C7411D6F952D0049B0A0 /* PBXContainerItemProxy */;
+			target = CCDA35A21B8D233A00950AD5 /* Sample */;
+			targetProxy = 45AF558322B562FE006CAE7F /* PBXContainerItemProxy */;
 		};
-		6E1892B4268CEC9600417887 /* PBXTargetDependency */ = {
+		49251DF11D6F9C1500EED4BD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = AirshipPreferenceCenter;
-			targetProxy = 6E1892B3268CEC9600417887 /* PBXContainerItemProxy */;
+			target = 49251DEA1D6F9C1500EED4BD /* SampleServiceExtension */;
+			targetProxy = 49251DF01D6F9C1500EED4BD /* PBXContainerItemProxy */;
 		};
-		6E65D4F32395E72200AF2D1A /* PBXTargetDependency */ = {
+		6E65D5B02396EA8600AF2D1A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = AirshipDebug;
-			targetProxy = 6E65D4F22395E72200AF2D1A /* PBXContainerItemProxy */;
+			name = AirshipNotificationContentExtension;
+			targetProxy = 6E65D5AF2396EA8600AF2D1A /* PBXContainerItemProxy */;
 		};
-		6E65D4F52395E72200AF2D1A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = AirshipLocation;
-			targetProxy = 6E65D4F42395E72200AF2D1A /* PBXContainerItemProxy */;
-		};
-		6E65D52D2396305F00AF2D1A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = AirshipAutomation;
-			targetProxy = 6E65D52C2396305F00AF2D1A /* PBXContainerItemProxy */;
-		};
-		6E65D52F2396305F00AF2D1A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = AirshipCore;
-			targetProxy = 6E65D52E2396305F00AF2D1A /* PBXContainerItemProxy */;
-		};
-		6E65D5312396305F00AF2D1A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = AirshipExtendedActions;
-			targetProxy = 6E65D5302396305F00AF2D1A /* PBXContainerItemProxy */;
-		};
-		6E65D5332396305F00AF2D1A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = AirshipMessageCenter;
-			targetProxy = 6E65D5322396305F00AF2D1A /* PBXContainerItemProxy */;
-		};
-		6E6CC334239A2F93003D583C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = AirshipAccengage;
-			targetProxy = 6E6CC333239A2F93003D583C /* PBXContainerItemProxy */;
-		};
-		6E7C07152612821C006D0E84 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = AirshipChat;
-			targetProxy = 6E7C07142612821C006D0E84 /* PBXContainerItemProxy */;
-		};
-		DFC383A0243EA31300EA78FE /* PBXTargetDependency */ = {
+		6E65D5B22396EA8C00AF2D1A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = AirshipNotificationServiceExtension;
-			targetProxy = DFC3839F243EA31300EA78FE /* PBXContainerItemProxy */;
+			targetProxy = 6E65D5B12396EA8C00AF2D1A /* PBXContainerItemProxy */;
+		};
+		6E65D5B62396EA9C00AF2D1A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AirshipDebug;
+			targetProxy = 6E65D5B52396EA9C00AF2D1A /* PBXContainerItemProxy */;
+		};
+		6E65D5C52396ECD600AF2D1A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AirshipAutomation;
+			targetProxy = 6E65D5C42396ECD600AF2D1A /* PBXContainerItemProxy */;
+		};
+		6E65D5C72396ECD600AF2D1A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AirshipCore;
+			targetProxy = 6E65D5C62396ECD600AF2D1A /* PBXContainerItemProxy */;
+		};
+		6E65D5C92396ECD600AF2D1A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AirshipExtendedActions;
+			targetProxy = 6E65D5C82396ECD600AF2D1A /* PBXContainerItemProxy */;
+		};
+		6E65D5CB2396ECD600AF2D1A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AirshipMessageCenter;
+			targetProxy = 6E65D5CA2396ECD600AF2D1A /* PBXContainerItemProxy */;
+		};
+		6EAD7CD726B2003700B88EA7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AirshipPreferenceCenter;
+			targetProxy = 6EAD7CD626B2003700B88EA7 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		1BFB704723882E4A00BF7F07 /* MainInterface.storyboard */ = {
+		1B94297E23883234002051B3 /* MainInterface.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				1BFB704823882E4A00BF7F07 /* Base */,
+				1B94297F23883234002051B3 /* Base */,
 			);
 			name = MainInterface.storyboard;
 			sourceTree = "<group>";
 		};
-		493F51091C5B275100B050A1 /* UAPushUI.strings */ = {
+		493F510F1C5B2C8D00B050A1 /* UAPushUI.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				493F510A1C5B275100B050A1 /* en */,
+				493F51101C5B2C8D00B050A1 /* en */,
 			);
 			name = UAPushUI.strings;
 			sourceTree = "<group>";
 		};
-		764693B61C237B630090FE40 /* LaunchScreen.storyboard */ = {
+		CCDA35AC1B8D233A00950AD5 /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				764693B71C237B630090FE40 /* Base */,
+				CCDA35AD1B8D233A00950AD5 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		CCDA35B11B8D233A00950AD5 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CCDA35B21B8D233A00950AD5 /* Base */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
@@ -1390,73 +1308,7 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		1BEF600824CB3D8A0039091F /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = SampleAppClip/SampleAppClip.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = PGJV57GD94;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"APPCLIP=1",
-				);
-				INFOPLIST_FILE = SampleAppClip/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush.Clip;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		1BEF600924CB3D8A0039091F /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = SampleAppClip/SampleAppClip.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = PGJV57GD94;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_PREPROCESSOR_DEFINITIONS = "APPCLIP=1";
-				INFOPLIST_FILE = SampleAppClip/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush.Clip;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		1BFB704E23882E4A00BF7F07 /* Debug */ = {
+		1B94298623883234002051B3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1465,7 +1317,6 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = PGJV57GD94;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -1481,11 +1332,13 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush.SampleContentExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
-		1BFB704F23882E4A00BF7F07 /* Release */ = {
+		1B94298723883234002051B3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1494,7 +1347,6 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = PGJV57GD94;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -1509,39 +1361,136 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush.SampleContentExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
-		49D2C7441D6F952D0049B0A0 /* Debug */ = {
+		1BEF603124CB3DB60039091F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_SUSPICIOUS_MOVES = YES;
-				CODE_SIGN_ENTITLEMENTS = SampleServiceExtension/SampleServiceExtension.entitlements;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = SampleAppClip/SampleAppClip.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
 				DEVELOPMENT_TEAM = PGJV57GD94;
-				INFOPLIST_FILE = SampleServiceExtension/Info.plist;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
+				INFOPLIST_FILE = SampleAppClip/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush.SampleServiceExtension;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush.Clip;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
-				SKIP_INSTALL = YES;
-				SUPPORTS_MACCATALYST = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "APPCLIP DEBUG";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
-		49D2C7451D6F952D0049B0A0 /* Release */ = {
+		1BEF603224CB3DB60039091F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = SampleAppClip/SampleAppClip.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = PGJV57GD94;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = SampleAppClip/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush.Clip;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = APPCLIP;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		45AF558522B562FE006CAE7F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = PGJV57GD94;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = SampleUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.SampleUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Sample;
+			};
+			name = Debug;
+		};
+		45AF558622B562FE006CAE7F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = PGJV57GD94;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = SampleUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.SampleUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Sample;
+			};
+			name = Release;
+		};
+		49251DF41D6F9C1500EED4BD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1549,9 +1498,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CODE_SIGN_ENTITLEMENTS = SampleServiceExtension/SampleServiceExtension.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
 				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
 				DEVELOPMENT_TEAM = PGJV57GD94;
 				INFOPLIST_FILE = SampleServiceExtension/Info.plist;
@@ -1561,15 +1508,44 @@
 					"@executable_path/../../Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush.SampleServiceExtension;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
+				PRODUCT_NAME = SampleServiceExtension;
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		49251DF51D6F9C1500EED4BD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CODE_SIGN_ENTITLEMENTS = SampleServiceExtension/SampleServiceExtension.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
+				DEVELOPMENT_TEAM = PGJV57GD94;
+				INFOPLIST_FILE = SampleServiceExtension/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush.SampleServiceExtension;
+				PRODUCT_NAME = SampleServiceExtension;
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
-		764693BA1C237B630090FE40 /* Debug */ = {
+		CCDA35B51B8D233A00950AD5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1620,12 +1596,13 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "$(inherited)";
 			};
 			name = Debug;
 		};
-		764693BB1C237B630090FE40 /* Release */ = {
+		CCDA35B61B8D233A00950AD5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1669,21 +1646,23 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				VALID_ARCHS = "$(inherited)";
 			};
 			name = Release;
 		};
-		764693BD1C237B630090FE40 /* Debug */ = {
+		CCDA35B81B8D233A00950AD5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Sample/Sample.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
-				DEVELOPMENT_TEAM = PGJV57GD94;
 				INFOPLIST_FILE = Sample/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1691,19 +1670,23 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
+				SWIFT_VERSION = 5.0;
 				VALID_ARCHS = "$(inherited)";
 			};
 			name = Debug;
 		};
-		764693BE1C237B630090FE40 /* Release */ = {
+		CCDA35B91B8D233A00950AD5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Sample/Sample.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
-				DEVELOPMENT_TEAM = PGJV57GD94;
 				INFOPLIST_FILE = Sample/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1711,6 +1694,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
+				SWIFT_VERSION = 5.0;
 				VALID_ARCHS = "$(inherited)";
 			};
 			name = Release;
@@ -1718,52 +1704,61 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1BEF601624CB3D8A0039091F /* Build configuration list for PBXNativeTarget "SampleAppClip" */ = {
+		1B94298523883234002051B3 /* Build configuration list for PBXNativeTarget "SampleContentExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1BEF600824CB3D8A0039091F /* Debug */,
-				1BEF600924CB3D8A0039091F /* Release */,
+				1B94298623883234002051B3 /* Debug */,
+				1B94298723883234002051B3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		1BFB705023882E4A00BF7F07 /* Build configuration list for PBXNativeTarget "SampleContentExtension" */ = {
+		1BEF603E24CB3DB60039091F /* Build configuration list for PBXNativeTarget "SampleAppClip" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1BFB704E23882E4A00BF7F07 /* Debug */,
-				1BFB704F23882E4A00BF7F07 /* Release */,
+				1BEF603124CB3DB60039091F /* Debug */,
+				1BEF603224CB3DB60039091F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		49D2C7461D6F952D0049B0A0 /* Build configuration list for PBXNativeTarget "SampleServiceExtension" */ = {
+		45AF559022B562FE006CAE7F /* Build configuration list for PBXNativeTarget "SampleUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				49D2C7441D6F952D0049B0A0 /* Debug */,
-				49D2C7451D6F952D0049B0A0 /* Release */,
+				45AF558522B562FE006CAE7F /* Debug */,
+				45AF558622B562FE006CAE7F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		7646939D1C237B630090FE40 /* Build configuration list for PBXProject "Sample" */ = {
+		49251DF31D6F9C1500EED4BD /* Build configuration list for PBXNativeTarget "SampleServiceExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				764693BA1C237B630090FE40 /* Debug */,
-				764693BB1C237B630090FE40 /* Release */,
+				49251DF41D6F9C1500EED4BD /* Debug */,
+				49251DF51D6F9C1500EED4BD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		764693BC1C237B630090FE40 /* Build configuration list for PBXNativeTarget "Sample" */ = {
+		CCDA359E1B8D233A00950AD5 /* Build configuration list for PBXProject "Sample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				764693BD1C237B630090FE40 /* Debug */,
-				764693BE1C237B630090FE40 /* Release */,
+				CCDA35B51B8D233A00950AD5 /* Debug */,
+				CCDA35B61B8D233A00950AD5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CCDA35B71B8D233A00950AD5 /* Build configuration list for PBXNativeTarget "Sample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CCDA35B81B8D233A00950AD5 /* Debug */,
+				CCDA35B91B8D233A00950AD5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 7646939A1C237B630090FE40 /* Project object */;
+	rootObject = CCDA359B1B8D233A00950AD5 /* Project object */;
 }

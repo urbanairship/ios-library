@@ -35,10 +35,6 @@ class ProjectValidationTest: XCTestCase {
         validateTarget(target: "AirshipCore tvOS", sourcePaths:["AirshipCore/Source/Internal", "AirshipCore/Source/Public", "AirshipCore/Source"])
     }
 
-    func testAirshipLocation() {
-        validateTarget(target: "AirshipLocation", sourcePaths:["AirshipLocation/Source"])
-    }
-
     func testAirshipAutomation() {
         validateTarget(target: "AirshipAutomation", sourcePaths:["AirshipAutomation/Source"])
     }
@@ -49,10 +45,6 @@ class ProjectValidationTest: XCTestCase {
 
     func testAirshipExtendedActions() {
         validateTarget(target: "AirshipExtendedActions", sourcePaths:["AirshipExtendedActions/Source"])
-    }
-
-    func testAirshipAccengage() {
-        validateTarget(target: "AirshipAccengage", sourcePaths:["AirshipAccengage/Source"])
     }
 
     func convertSourceTreeFolderToURL(sourceTreeFolder: SourceTreeFolder) -> URL {

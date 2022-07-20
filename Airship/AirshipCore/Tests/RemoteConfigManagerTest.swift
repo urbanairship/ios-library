@@ -9,23 +9,23 @@ class RemoteConfigManagerTest: XCTestCase {
     let testRemoteDataProvider = TestRemoteDataProvider()
     let testModuleAdapter = TestRemoteConfigModuleAdapter()
     let notificationCenter = NotificationCenter.default
-    
+
     var privacyManager: PrivacyManager!
     var remoteConfigManager: RemoteConfigManager!
-    
+
     var appVersion = ""
-    
+
     override func setUpWithError() throws {
         self.privacyManager = PrivacyManager(dataStore: self.dataStore,
-                                               defaultEnabledFeatures: .all,
-                                               notificationCenter: self.notificationCenter)
-        
+                                             defaultEnabledFeatures: .all,
+                                             notificationCenter: self.notificationCenter)
+
         self.remoteConfigManager = RemoteConfigManager(remoteDataManager: self.testRemoteDataProvider,
                                                        privacyManager: self.privacyManager,
                                                        moduleAdapter: self.testModuleAdapter,
                                                        notificationCenter: self.notificationCenter,
                                                        versionBlock: { [weak self] in return self?.appVersion ?? "" })
-        
+
     }
 
     func testSusbcription() throws {
@@ -33,33 +33,33 @@ class RemoteConfigManagerTest: XCTestCase {
 
         self.privacyManager.enabledFeatures = []
         XCTAssertEqual(0, self.testRemoteDataProvider.subscribers.count)
-        
+
         self.privacyManager.enabledFeatures = .chat
         XCTAssertEqual(2, self.testRemoteDataProvider.subscribers.count)
     }
-    
+
     func testDisableModules() throws {
         let data = [
             "disable_features": [
                 [
-                    "modules": ["chat", "channel"]
+                    "modules": ["message_center", "channel"]
                 ]
             ]
         ]
-        
+
         let payload = RemoteDataPayload(type: "app_config", timestamp: Date(), data: data, metadata: nil)
         self.testRemoteDataProvider.dispatchPayload(payload)
-        
-        let expectedDisabled: Set<RemoteConfigModule> = Set([RemoteConfigModule.chat, RemoteConfigModule.channel])
+
+        let expectedDisabled: Set<RemoteConfigModule> = Set([RemoteConfigModule.messageCenter, RemoteConfigModule.channel])
         let expectedEnabled: Set<RemoteConfigModule> = Set(RemoteConfigModule.allCases).subtracting(expectedDisabled)
         XCTAssertEqual(expectedDisabled, self.testModuleAdapter.disabledModules)
         XCTAssertEqual(expectedEnabled, self.testModuleAdapter.enabledModules)
     }
-    
+
     func testEmptyConfig() throws {
         let payload = RemoteDataPayload(type: "app_config", timestamp: Date(), data: [:], metadata: nil)
         self.testRemoteDataProvider.dispatchPayload(payload)
-        
+
         XCTAssertEqual(Set(RemoteConfigModule.allCases), self.testModuleAdapter.enabledModules)
         RemoteConfigModule.allCases.forEach { module in
             XCTAssertTrue(self.testModuleAdapter.moduleConfig.keys.contains(where: {$0 == module}))
@@ -67,7 +67,7 @@ class RemoteConfigManagerTest: XCTestCase {
         }
         XCTAssertEqual(10, self.testRemoteDataProvider.remoteDataRefreshInterval)
     }
-    
+
     func testRefreshInterval() throws {
         let data = [
             "disable_features": [
@@ -76,48 +76,48 @@ class RemoteConfigManagerTest: XCTestCase {
                 ]
             ]
         ]
-        
+
         let payload = RemoteDataPayload(type: "app_config", timestamp: Date(), data: data, metadata: nil)
         self.testRemoteDataProvider.dispatchPayload(payload)
         XCTAssertEqual(100.0, self.testRemoteDataProvider.remoteDataRefreshInterval)
     }
-    
+
     func testModuleConfig() throws {
         let data: [String : Any] = [
             "contact": "some-config",
             "channel": ["neat"]
         ]
-        
+
         let payload = RemoteDataPayload(type: "app_config:ios", timestamp: Date(), data: data, metadata: nil)
         self.testRemoteDataProvider.dispatchPayload(payload)
-        
+
         XCTAssertEqual("some-config", self.testModuleAdapter.moduleConfig[.contact] as! String)
         XCTAssertEqual(["neat"], self.testModuleAdapter.moduleConfig[.channel] as! [String])
     }
-    
+
     func testRemoteConfig() throws {
         let remoteConfig = RemoteConfig(remoteDataURL: "cool://remote",
                                         deviceAPIURL: "cool://devices",
                                         analyticsURL: "cool://analytics",
                                         chatURL: "cool://chat",
                                         chatWebSocketURL: "cool://chatWebSocket")
-        
+
         let remoteConfigData = try! JSONEncoder().encode(remoteConfig)
-        
+
         let data: [String : Any] = [
             "airship_config": try! JSONSerialization.jsonObject(with: remoteConfigData, options: [])
         ]
-        
+
         var fromNotification: RemoteConfig?
         self.notificationCenter.addObserver(forName: RemoteConfigManager.remoteConfigUpdatedEvent,
                                             object: nil,
                                             queue: nil) { notification in
             fromNotification = notification.userInfo?[RemoteConfigManager.remoteConfigKey] as? RemoteConfig
         }
-        
+
         let payload = RemoteDataPayload(type: "app_config:ios", timestamp: Date(), data: data, metadata: nil)
         self.testRemoteDataProvider.dispatchPayload(payload)
-        
+
         XCTAssertEqual(remoteConfig, fromNotification)
     }
 
@@ -126,26 +126,26 @@ class RemoteConfigManagerTest: XCTestCase {
             "contact": "some-config",
             "channel": ["neat"]
         ]
-        
+
         let commonData: [String : Any] = [
             "contact": "some-other-config",
             "message_center": ["wild"]
         ]
         let platformPayload = RemoteDataPayload(type: "app_config:ios", timestamp: Date(), data: platformData, metadata: nil)
         let commonPayload = RemoteDataPayload(type: "app_config", timestamp: Date(), data: commonData, metadata: nil)
-        
+
         self.testRemoteDataProvider.dispatchPayloads([platformPayload, commonPayload])
-        
+
         XCTAssertEqual("some-config", self.testModuleAdapter.moduleConfig[.contact] as! String)
         XCTAssertEqual(["neat"], self.testModuleAdapter.moduleConfig[.channel] as! [String])
         XCTAssertEqual(["wild"], self.testModuleAdapter.moduleConfig[.messageCenter] as! [String])
     }
-    
+
     func testFilterDisableInfos() throws {
         let data = [
             "disable_features": [
                 [
-                    "modules": ["chat"],
+                    "modules": ["in_app_v2"],
                     "sdk_versions": ["+"],
                     "remote_data_refresh_interval": 100.0
                 ],
@@ -166,24 +166,24 @@ class RemoteConfigManagerTest: XCTestCase {
                     "remote_data_refresh_interval": 200.0
                 ],
                 [
-                    "modules": ["location"],
+                    "modules": ["analytics"],
                     "sdk_versions": ["1.0.0", "[1.0,99.0["]
                 ]
             ]
         ]
-        
+
         let payload = RemoteDataPayload(type: "app_config", timestamp: Date(), data: data, metadata: nil)
-        
+
         self.appVersion = "0.0.0"
         self.testRemoteDataProvider.dispatchPayload(payload)
-        
-        var expectedDisable: [RemoteConfigModule] = [.location, .messageCenter, .chat]
+
+        var expectedDisable: [RemoteConfigModule] = [.analytics, .messageCenter, .inAppAutomation]
         XCTAssertEqual(Set(expectedDisable), self.testModuleAdapter.disabledModules)
         XCTAssertEqual(100.0, self.testRemoteDataProvider.remoteDataRefreshInterval)
-        
+
         self.appVersion = "2.0.0"
         self.testRemoteDataProvider.dispatchPayload(payload)
-        expectedDisable = [.location, .contact, .messageCenter, .chat]
+        expectedDisable = [.analytics, .contact, .messageCenter, .inAppAutomation]
         XCTAssertEqual(Set(expectedDisable), self.testModuleAdapter.disabledModules)
         XCTAssertEqual(200.0, self.testRemoteDataProvider.remoteDataRefreshInterval)
     }

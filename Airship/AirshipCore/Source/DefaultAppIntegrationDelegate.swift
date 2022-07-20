@@ -257,17 +257,17 @@ class DefaultAppIntegrationDelegate : NSObject, AppIntegrationDelegate {
     }
     
     private func isForegroundPresentation(_ presentationOptions: UNNotificationPresentationOptions?) -> Bool {
-        var foregroundPresentation = false
-        if let presentationOptions = presentationOptions {
-            foregroundPresentation = presentationOptions.contains(.alert)
-            #if !targetEnvironment(macCatalyst)
-            if #available(iOS 14, tvOS 14, *) {
-                foregroundPresentation = presentationOptions.contains(.alert) || presentationOptions.contains(.list) || presentationOptions.contains(.banner)
-            }
-            #endif
+
+        guard var presentationOptions = presentationOptions else {
+            return false
         }
-        
-        return foregroundPresentation
+
+        // Remove all the non-alerting options in the foreground
+        presentationOptions.remove(.sound)
+        presentationOptions.remove(.badge)
+
+        // Make sure its still not empty
+        return presentationOptions != []
     }
     
     @available(tvOS, unavailable)

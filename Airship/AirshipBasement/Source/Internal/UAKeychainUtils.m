@@ -103,9 +103,8 @@ static NSString *cachedDeviceID_ = nil;
 
     if (status == errSecSuccess && resultDict) {
 
-        // Check if we have the old attribute type(s)
-        if ([[[resultDict objectForKey:(__bridge id)kSecAttrAccessible] copy] isEqualToString:(__bridge NSString *)(kSecAttrAccessibleAlways)]
-            || [[[resultDict objectForKey:(__bridge id)kSecAttrAccessible] copy] isEqualToString:(__bridge NSString *)(kSecAttrAccessibleAlwaysThisDeviceOnly)]) {
+        // Make sure we have the right protection level
+        if (![[[resultDict objectForKey:(__bridge id)kSecAttrAccessible] copy] isEqualToString:(__bridge NSString *)(kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly)]) {
 
             UA_LTRACE(@"Updating user credentials attributes");
 
@@ -216,9 +215,8 @@ static NSString *cachedDeviceID_ = nil;
         UA_LTRACE(@"Retrieved Device ID info from keychain.");
 
         if (resultDataRef) {
-            // Check if we have the old attribute type(s)
-            if ([[[resultDict objectForKey:(__bridge id)kSecAttrAccessible] copy] isEqualToString:(__bridge NSString *)(kSecAttrAccessibleAlways)]
-                || [[[resultDict objectForKey:(__bridge id)kSecAttrAccessible] copy] isEqualToString:(__bridge NSString *)(kSecAttrAccessibleAlwaysThisDeviceOnly)]) {
+            // Make sure we have the right protection level
+            if (![[[resultDict objectForKey:(__bridge id)kSecAttrAccessible] copy] isEqualToString:(__bridge NSString *)(kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly)]) {
 
                 UA_LTRACE(@"Updating Device ID attributes");
 

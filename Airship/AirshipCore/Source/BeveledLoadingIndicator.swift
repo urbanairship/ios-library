@@ -44,7 +44,7 @@ public class BeveledLoadingIndicator : UIView {
         layer.cornerRadius = 10.0
         isHidden = true
 
-        activity = UIActivityIndicatorView(style: .whiteLarge)
+        activity = UIActivityIndicatorView(style: .large)
         activity?.hidesWhenStopped = true
         activity?.translatesAutoresizingMaskIntoConstraints = false
 

@@ -174,7 +174,7 @@ static CGFloat const DefaultVideoHeightPadding = 60;
                 if (self.videoWindowResignedKey) {
                     [[NSNotificationCenter defaultCenter] removeObserver:self.videoWindowResignedKey];
                 }
-                self.videoWindowResignedKey = [[NSNotificationCenter defaultCenter] addObserverForName:UIWindowDidResignKeyNotification object:[[UIApplication sharedApplication] keyWindow] queue:nil usingBlock:^(NSNotification * _Nonnull note) {
+                self.videoWindowResignedKey = [[NSNotificationCenter defaultCenter] addObserverForName:UIWindowDidResignKeyNotification object:[UAUtils mainWindow] queue:nil usingBlock:^(NSNotification * _Nonnull note) {
                     UA_STRONGIFY(self);
                     [self.window makeKeyAndVisible];
                     [[NSNotificationCenter defaultCenter] removeObserver:self.videoWindowResignedKey];

@@ -14,9 +14,6 @@
       location = "group:Sample/Sample.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:SwiftSample/SwiftSample.xcodeproj">
-   </FileRef>
-   <FileRef
       location = "group:SwiftSample/../tvOSSample/tvOSSample.xcodeproj">
    </FileRef>
    <FileRef

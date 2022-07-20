@@ -26,7 +26,7 @@ open class RequestSession : NSObject {
         let sessionConfig = URLSessionConfiguration.default
         sessionConfig.urlCache = nil
         sessionConfig.requestCachePolicy = .reloadIgnoringLocalCacheData
-        sessionConfig.tlsMinimumSupportedProtocol = .tlsProtocol12
+        sessionConfig.tlsMinimumSupportedProtocolVersion = .TLSv12
         return URLSession(configuration: sessionConfig, delegate: nil, delegateQueue: nil)
     }
 

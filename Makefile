@@ -46,34 +46,22 @@ build-xcframeworks: setup clean-xcframeworks
 	bash ./scripts/build_xcframeworks.sh "${xcframeworks_path}" "${derived_data_path}" "${archive_path}"
 
 .PHONY: build-samples
-build-samples: build-sample-tvos build-sample-objc build-sample-swift
+build-samples: build-sample-tvos build-sample-ios
 
 .PHONY: build-sample-tvos
 build-sample-tvos: setup
 	bash ./scripts/build_sample.sh "tvOSSample" "${derived_data_path}"
 
-.PHONY: build-sample-objc
-build-sample-objc: setup
+.PHONY: build-sample-ios
+build-sample-ios: setup
 	bash ./scripts/build_sample.sh "Sample" "${derived_data_path}"
 
-.PHONY: build-sample-swift
-build-sample-swift: setup
-	bash ./scripts/build_sample.sh "SwiftSample" "${derived_data_path}"
-
 .PHONY: test
-test: setup test-core test-accengage test-chat test-content-extension test-service-extension test-packages
+test: setup test-core test-content-extension test-service-extension test-packages
 
 .PHONY: test-core
 test-core: setup
 	bash ./scripts/run_tests.sh AirshipCore "${derived_data_path}"
-
-.PHONY: test-chat
-test-chat: setup
-	bash ./scripts/run_tests.sh AirshipChat "${derived_data_path}"
-
-.PHONY: test-accengage
-test-accengage: setup
-	bash ./scripts/run_tests.sh AirshipAccengage "${derived_data_path}"
 
 .PHONY: test-content-extension
 test-content-extension: setup
@@ -86,21 +74,29 @@ test-service-extension: setup
 .PHONY: test-packages
 test-packages: setup
 	bash ./scripts/test_package.sh spm
-	bash ./scripts/test_package.sh spm11.4
 
 .PHONY: pod-publish
 pod-publish: setup
 	bundle exec pod trunk push Airship.podspec
-	bundle exec pod trunk push AirshipExtensions.podspec
 	bundle exec pod trunk push AirshipServiceExtension.podspec
 	bundle exec pod trunk push AirshipContentExtension.podspec
 
 .PHONY: pod-lint
-pod-lint: setup
-	bundle exec pod lib lint Airship.podspec --verbose --platforms=tvos,ios
-	bundle exec pod lib lint AirshipExtensions.podspec --verbose --platforms=ios
+pod-lint: pod-lint-tvos pod-lint-ios pod-lint-extensions
+
+.PHONY: pod-lint-tvos
+pod-lint-tvos: setup
+	bundle exec pod lib lint Airship.podspec --verbose --platforms=tvos --subspec=Core
+
+.PHONY: pod-lint-ios
+pod-lint-ios: setup
+	bundle exec pod lib lint Airship.podspec --verbose --platforms=ios
+
+.PHONY: pod-lint-extensions
+pod-lint-extensions: setup
 	bundle exec pod lib lint AirshipServiceExtension.podspec --verbose --platforms=ios
 	bundle exec pod lib lint AirshipContentExtension.podspec --verbose --platforms=ios
+
 
 .PHONY: clean
 clean:

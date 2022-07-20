@@ -27,6 +27,8 @@ NSString *const UARateAppItunesURLFormat = @"itms-apps://itunes.apple.com/app/id
 - (void)performWithArguments:(UAActionArguments *)arguments
            completionHandler:(UAActionCompletionHandler)completionHandler {
 
+
+
     BOOL showLinkPrompt = [[UARateAppAction numberForKey:UARateAppShowLinkPromptKey
                                             defaultValue:@(NO)
                                               dictionary:arguments.value] boolValue];
@@ -36,7 +38,13 @@ NSString *const UARateAppItunesURLFormat = @"itms-apps://itunes.apple.com/app/id
                                             dictionary:arguments.value];
 
     if (showLinkPrompt) {
-        [SKStoreReviewController requestReview];
+        UIWindowScene *scene = [self scene];
+        if (!scene) {
+            completionHandler([UAActionResult resultWithError:[UAirshipErrors error:@"Scene unavailable"]]);
+            return;
+        }
+
+        [SKStoreReviewController requestReviewInScene:scene];
         completionHandler([UAActionResult emptyResult]);
         return;
     } else if (itunesID.length) {
@@ -65,6 +73,15 @@ NSString *const UARateAppItunesURLFormat = @"itms-apps://itunes.apple.com/app/id
     }
 
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:linkString] options:@{} completionHandler:nil];
+}
+
+- (UIWindowScene *)scene {
+    UIWindowScene *scene = UAUtils.mainWindow.windowScene;
+    if (scene) {
+        return scene;
+    }
+
+    return [UAUtils findWindowSceneAndReturnError:nil];
 }
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {

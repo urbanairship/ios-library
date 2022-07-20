@@ -27,13 +27,10 @@ public class SDKDependencyKeys : NSObject {
 
 /// NOTE: For internal use only. :nodoc:
 enum SDKModuleNames: String, CaseIterable {
-    case location = "UALocationSDKModule"
     case messageCenter = "UAMessageCenterSDKModule"
     case automation = "UAAutomationSDKModule"
-    case chat = "UAChatSDKModule"
     case preferenceCenter = "UAPreferenceCenterSDKModule"
     case extendedActions = "UAExtendedActionsSDKModule"
-    case accengage = "UAAccengageSDKModule"
     case debug = "UADebugSDKModule"
 }
 

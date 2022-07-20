@@ -88,10 +88,10 @@ public class Utils : NSObject {
     @objc
     public class func carrierName() -> String? {
         #if os(iOS) && !targetEnvironment(macCatalyst)
-            let info = CTTelephonyNetworkInfo()
-            return info.subscriberCellularProvider?.carrierName
+        let info = CTTelephonyNetworkInfo()
+        return info.serviceSubscriberCellularProviders?.values.first?.carrierName
         #else
-            return nil;
+        return nil
         #endif
     }
     
@@ -303,7 +303,7 @@ public class Utils : NSObject {
         let window = createWindow()
         if #available(iOS 13.0, tvOS 13.0, *) {
             do {
-                let scene = try findScene()
+                let scene = try findWindowScene()
                 window.windowScene = scene
             } catch {
                 AirshipLogger.error("\(error)")
@@ -320,9 +320,9 @@ public class Utils : NSObject {
         window.windowLevel = .alert
         return window
     }
-    
-    @available(iOS 13.0.0, tvOS 13.0, *)
-    private class func findScene() throws -> UIWindowScene? {
+
+    @objc
+    public class func findWindowScene() throws -> UIWindowScene {
         guard let scene = UIApplication.shared.connectedScenes.first(where: { $0.isKind(of: UIWindowScene.self) }) as? UIWindowScene else {
             throw AirshipErrors.error("Unable to find a window!")
         }

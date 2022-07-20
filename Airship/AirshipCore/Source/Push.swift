@@ -965,24 +965,15 @@ extension Push: InternalPushProtocol {
                     switch presentationOption {
                     case Push.presentationOptionBadge:
                         options.insert(.badge)
-#if !os(watchOS)
                     case Push.presentationOptionAlert:
-                        options.insert(.alert)
-#endif
+                        options.insert(.list)
+                        options.insert(.banner)
                     case Push.presentationOptionSound:
                         options.insert(.sound)
-#if !targetEnvironment(macCatalyst)
                     case Push.presentationOptionList:
-                        if #available(iOS 14.0, tvOS 14.0, *) {
-                            options.insert(.list)
-                        }
+                        options.insert(.list)
                     case Push.presentationOptionBanner:
-                        if #available(iOS 14.0, tvOS 14.0, *) {
-                            options.insert(.banner)
-                        } else {
-                            // Fallback on earlier versions
-                        }
-#endif
+                        options.insert(.banner)
                     default:
                         break
                     }

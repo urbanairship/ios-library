@@ -368,9 +368,9 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
 }
 
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator NS_EXTENSION_UNAVAILABLE("Method not available in app extensions") {
-    BOOL statusBarShowing = !([UIApplication sharedApplication].isStatusBarHidden);
 
-    UIWindow *window = [UIApplication sharedApplication].keyWindow;
+    UIWindow *window = [UAUtils mainWindow];
+    BOOL statusBarShowing = !window.windowScene.statusBarManager.isStatusBarHidden;
 
     // Black out the inset and compensate for excess vertical safe area when iPhone X is horizontal
     if (window.safeAreaInsets.top == 0 && window.safeAreaInsets.left > 0) {

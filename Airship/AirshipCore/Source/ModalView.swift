@@ -174,8 +174,6 @@ struct ModalView: View {
         var statusBarStyle = UIStatusBarStyle.default
         if let sceneStyle = UIApplication.shared.windows.first?.windowScene?.statusBarManager?.statusBarStyle {
             statusBarStyle = sceneStyle
-        } else {
-            statusBarStyle = UIApplication.shared.statusBarStyle
         }
 
         switch (statusBarStyle) {

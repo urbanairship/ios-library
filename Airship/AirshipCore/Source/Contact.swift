@@ -1209,15 +1209,25 @@ public class Contact : NSObject, Component, ContactProtocol {
         if (self.privacyManager.isEnabled([.contacts, .tagsAndAttributes])) {
             var pendingTagUpdates : [TagGroupUpdate]?
             var pendingAttributeUpdates : [AttributeUpdate]?
+
             
             if let pendingTagGroupsData = self.dataStore.data(forKey: Contact.legacyPendingTagGroupsKey) {
-                if let pendingTagGroups = NSKeyedUnarchiver.unarchiveObject(with: pendingTagGroupsData) as? [TagGroupsMutation] {
+                let classes = [NSArray.self, TagGroupsMutation.self]
+                let pendingTagGroups = try? NSKeyedUnarchiver.unarchivedObject(ofClasses:classes,
+                                                                               from: pendingTagGroupsData)
+
+                if let pendingTagGroups = pendingTagGroups as? [TagGroupsMutation] {
                     pendingTagUpdates = pendingTagGroups.map { $0.tagGroupUpdates }.reduce([], +)
                 }
             }
             
             if let pendingAttributesData = self.dataStore.data(forKey: Contact.legacyPendingAttributesKey) {
-                if let pendingAttributes = NSKeyedUnarchiver.unarchiveObject(with: pendingAttributesData) as? [AttributePendingMutations] {
+
+                let classes = [NSArray.self, AttributePendingMutations.self]
+                let pendingAttributes = try? NSKeyedUnarchiver.unarchivedObject(ofClasses:classes,
+                                                                                from: pendingAttributesData)
+
+                if let pendingAttributes = pendingAttributes as? [AttributePendingMutations] {
                     pendingAttributeUpdates = pendingAttributes.map { $0.attributeUpdates }.reduce([], +)
                 }
             }

@@ -1,6 +1,0 @@
-include:
-  - spm.yaml
-name: TestApp.spm11.4
-targets:
-  TestApp:
-    deploymentTarget: "11.4"

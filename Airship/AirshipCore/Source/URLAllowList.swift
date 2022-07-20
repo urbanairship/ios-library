@@ -28,9 +28,11 @@ public protocol URLAllowListProtocol {
     func isAllowed(_ url: URL?, scope: URLAllowListScope) -> Bool
     
     @objc
+    @discardableResult
     func addEntry(_ patternString: String, scope: URLAllowListScope) -> Bool
     
     @objc
+    @discardableResult
     func addEntry(_ patternString: String) -> Bool
 }
 

@@ -1,4 +1,4 @@
-AIRSHIP_VERSION="16.8.0"
+AIRSHIP_VERSION="17.0.0"
 
 Pod::Spec.new do |s|
    s.version                 = AIRSHIP_VERSION
@@ -11,8 +11,8 @@ Pod::Spec.new do |s|
    s.source                  = { :git => "https://github.com/urbanairship/ios-library.git", :tag => s.version.to_s }
    s.module_name             = "AirshipKit"
    s.header_dir              = "AirshipKit"
-   s.ios.deployment_target   = "11.0"
-   s.tvos.deployment_target  = "11.0"
+   s.ios.deployment_target   = "14.0"
+   s.tvos.deployment_target  = "14.0"
    s.swift_versions          = "5.0"
    s.requires_arc            = true
    s.default_subspecs        = ["Basement", "Core", "Automation", "MessageCenter", "ExtendedActions"]
@@ -46,15 +46,6 @@ Pod::Spec.new do |s|
       actions.dependency                 "Airship/Core"
    end
 
-   s.subspec "Location" do |location|
-      location.ios.public_header_files    = "Airship/AirshipLocation/Source/Public/*.h"
-      location.ios.source_files           = "Airship/AirshipLocation/Source/*.{h,m}", "Airship/AirshipLocation/Source/Public/**/*.{h,m}"
-      location.ios.private_header_files   = "Airship/AirshipLocation/Source/*+Internal*.h"
-      location.ios.exclude_files          = "Airship/AirshipLocation/Source/AirshipLocation.h"
-      location.ios.frameworks             = "CoreLocation"
-      location.dependency                  "Airship/Core"
-   end
-
    s.subspec "Automation" do |automation|
       automation.ios.public_header_files       = "Airship/AirshipAutomation/Source/Public/*.h"
       automation.ios.source_files              = "Airship/AirshipAutomation/Source/**/*.{h,m}", "Airship/AirshipAutomation/Source/Public/**/*.{h,m}"
@@ -73,22 +64,6 @@ Pod::Spec.new do |s|
       messageCenter.dependency                  "Airship/Core"
    end
 
-   s.subspec "Accengage" do |accengage|
-      accengage.ios.public_header_files   = "Airship/AirshipAccengage/Source/Public/*.h"
-      accengage.ios.source_files          = "Airship/AirshipAccengage/Source/**/*.{h,m}", "Airship/AirshipAccengage/Source/Public/**/*.{h,m}"
-      accengage.ios.private_header_files  = "Airship/AirshipAccengage/Source/**/*+Internal*.h"
-      accengage.ios.exclude_files         = "Airship/AirshipAccengage/Source/AirshipAccengage.h"
-      accengage.ios.resource_bundle       = { 'AirshipAccengageResources' => "Airship/AirshipAccengage/Resources/**/*" }
-      accengage.dependency                  "Airship/Core"
-   end
-
-   s.subspec "Chat" do |chat|
-      chat.ios.source_files              = "Airship/AirshipChat/Source/**/*.{h,m,swift}"
-      chat.ios.exclude_files             = "Airship/AirshipChat/Source/AirshipChat.h"
-      chat.ios.resource_bundle           = { 'AirshipChatResources' => "Airship/AirshipChat/Resources/**/*" }
-      chat.dependency                      "Airship/Core"
-   end
- 
    s.subspec "PreferenceCenter" do |preferenceCenter|
       preferenceCenter.ios.source_files              = "Airship/AirshipPreferenceCenter/Source/**/*.{h,m,swift}"
       preferenceCenter.ios.exclude_files             = "Airship/AirshipPreferenceCenter/Source/AirshipPreferenceCenter.h"

@@ -10,10 +10,10 @@
         <!--Notification View Controller-->
         <scene sceneID="cwh-vc-ff4">
             <objects>
-                <viewController id="M4Y-Lb-cyx" userLabel="Notification View Controller" customClass="NotificationViewController" sceneMemberID="viewController">
+                <viewController id="M4Y-Lb-cyx" userLabel="Notification View Controller" customClass="NotificationViewController" customModule="SwiftSampleContentExtension" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="eZB-cA-faf"/>
-                        <viewControllerLayoutGuide type="bottom" id="Utl-At-d7p"/>
+                        <viewControllerLayoutGuide type="top" id="FIX-Cp-Kec"/>
+                        <viewControllerLayoutGuide type="bottom" id="cDO-0k-q0m"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" simulatedAppContext="notificationCenter" id="S3S-Oj-5AN">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="37"/>

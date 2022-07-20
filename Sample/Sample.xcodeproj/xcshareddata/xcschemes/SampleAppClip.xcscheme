@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1BEF5FEC24CB3D870039091F"
+               BlueprintIdentifier = "1BEF601A24CB3DB60039091F"
                BuildableName = "SampleAppClip.app"
                BlueprintName = "SampleAppClip"
                ReferencedContainer = "container:Sample.xcodeproj">
@@ -44,7 +44,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1BEF5FEC24CB3D870039091F"
+            BlueprintIdentifier = "1BEF601A24CB3DB60039091F"
             BuildableName = "SampleAppClip.app"
             BlueprintName = "SampleAppClip"
             ReferencedContainer = "container:Sample.xcodeproj">
@@ -53,7 +53,7 @@
       <EnvironmentVariables>
          <EnvironmentVariable
             key = "_XCAppClipURL"
-            value = "https://airship.sample?2"
+            value = "https://airship.sample?1"
             isEnabled = "YES">
          </EnvironmentVariable>
       </EnvironmentVariables>
@@ -68,7 +68,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1BEF5FEC24CB3D870039091F"
+            BlueprintIdentifier = "1BEF601A24CB3DB60039091F"
             BuildableName = "SampleAppClip.app"
             BlueprintName = "SampleAppClip"
             ReferencedContainer = "container:Sample.xcodeproj">

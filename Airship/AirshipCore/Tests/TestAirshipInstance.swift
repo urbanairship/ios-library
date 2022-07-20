@@ -89,9 +89,6 @@ public class TestAirshipInstance : NSObject, AirshipInstanceProtocol {
     }
 
     @objc
-    public var locationProvider: UALocationProvider?
-    
-    @objc
     public var javaScriptCommandDelegate: JavaScriptCommandDelegate?
     
     @objc

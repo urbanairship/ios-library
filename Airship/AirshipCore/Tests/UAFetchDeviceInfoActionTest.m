@@ -11,7 +11,6 @@
 @interface UAFetchDeviceInfoActionTest : UABaseTest
 
 @property(nonatomic, strong) UAFetchDeviceInfoAction *action;
-@property(nonatomic, strong) id mockLocation;
 @property(nonatomic, strong) id mockPush;
 @property(nonatomic, strong) UATestChannel *testChannel;
 @property(nonatomic, strong) UATestContact *testContact;
@@ -24,14 +23,12 @@
     [super setUp];
     
     self.mockPush = [self mockForClass:[UAPush class]];
-    self.mockLocation = [self mockForProtocol:@protocol(UALocationProvider)];
     self.testChannel = [[UATestChannel alloc] init];
     self.testContact = [[UATestContact alloc] init];
 
     self.action = [[UAFetchDeviceInfoAction alloc] initWithChannel:^{ return self.testChannel; }
                                                            contact:^{ return self.testContact; }
-                                                              push:^{ return self.mockPush; }
-                                                          location:^{ return self.mockLocation; }];
+                                                              push:^{ return self.mockPush; }];
 }
 
 /**

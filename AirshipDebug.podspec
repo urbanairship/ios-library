@@ -1,4 +1,4 @@
-AIRSHIP_VERSION="16.8.0"
+AIRSHIP_VERSION="17.0.0"
 
 Pod::Spec.new do |s|
    s.version                 = AIRSHIP_VERSION
@@ -12,7 +12,7 @@ Pod::Spec.new do |s|
    s.source                  = { :git => "https://github.com/urbanairship/ios-library.git", :tag => s.version.to_s }
 
    s.module_name             = "AirshipDebug"
-   s.ios.deployment_target   = "11.0"
+   s.ios.deployment_target   = "14.0"
    s.requires_arc            = true
    s.swift_version           = "5.0"
    s.source_files            = "Airship/AirshipDebug/Source/**/*.{h,m,swift}"

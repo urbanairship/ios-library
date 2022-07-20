@@ -42,21 +42,15 @@ public class EnableFeatureAction : NSObject, Action {
     public static let backgroundLocationActionValue = "background_location"
 
     private let permissionPrompter: () -> PermissionPrompter
-    private let location: () -> UALocationProvider?
 
-    required init(permissionPrompter: @escaping () -> PermissionPrompter,
-                  location: @escaping () -> UALocationProvider?) {
+    required init(permissionPrompter: @escaping () -> PermissionPrompter) {
         self.permissionPrompter = permissionPrompter
-        self.location = location
     }
 
     public convenience override init() {
-        self.init(
-            permissionPrompter: {
-                return AirshipPermissionPrompter(permissionsManager: Airship.shared.permissionsManager)
-            },
-            location: { return Airship.shared.locationProvider }
-        )
+        self.init {
+            return AirshipPermissionPrompter(permissionsManager: Airship.shared.permissionsManager)
+        }
     }
     
     public func acceptsArguments(_ arguments: ActionArguments) -> Bool {
@@ -83,10 +77,6 @@ public class EnableFeatureAction : NSObject, Action {
         } catch {
             completionHandler(ActionResult(error: error))
             return
-        }
-
-        if (EnableFeatureAction.backgroundLocationActionValue == (arguments.value as? String)) {
-            location()?.isBackgroundLocationUpdatesAllowed = true
         }
 
         self.permissionPrompter().prompt(permission: permission,

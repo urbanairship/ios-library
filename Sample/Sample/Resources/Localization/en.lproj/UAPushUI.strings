@@ -13,7 +13,6 @@
 "ua_device_info_channel_id" = "Channel ID";
 "ua_device_info_named_user" = "Named User";
 "ua_device_info_tags" = "Tags";
-"ua_device_info_tag" = "Tag";
 "ua_device_info_analytics_enabled" = "Analytics Enabled";
 "ua_device_info_enable_analytics_tracking" = "Enable analytics tracking";
 "ua_device_info_location_settings" = "Location Settings";
@@ -30,14 +29,8 @@
 "ua_notification_type_announcement" = "AirPod Announcement";
 "ua_push_settings_link_disabled_title" = "⚠ Push is Disabled with iOS";
 
-"ua_none" = "None";
+"ua_copied_to_clipboard" = "Copied to clipboard!";
 
-"ua_alert_title_notice" = "Notice";
-"ua_cancel" = "Cancel";
-"ua_disable_warning" = "Disable Warning";
-"ua_exit_application" = "Exit Application";
-"ua_invalid_airshipcconfig_plist_title" = "Invalid AirshipConfig.plist";
-"ua_invalid_airshipcconfig_plist_message" = "The AirshipConfig.plist must be a part of the app bundle and include a valid appkey and secret for the selected production level.";
-"ua_no_push_in_simulator_message" = "You will not be able to receive push notifications in the simulator.";
+"ua_none" = "None";
 
 "ua_debug_tab_title" = "Debug";

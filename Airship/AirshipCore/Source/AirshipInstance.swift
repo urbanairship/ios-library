@@ -6,7 +6,6 @@ protocol AirshipInstanceProtocol  {
     var config: RuntimeConfig { get }
     var actionRegistry: ActionRegistry { get }
     var applicationMetrics: ApplicationMetrics { get }
-    var locationProvider: UALocationProvider? { get }
     var permissionsManager: PermissionsManager { get }
 
     #if !os(tvOS) && !os(watchOS)
@@ -28,7 +27,6 @@ class AirshipInstance : AirshipInstanceProtocol {
     public let config: RuntimeConfig
     public let actionRegistry: ActionRegistry
     public let applicationMetrics: ApplicationMetrics
-    public let locationProvider: UALocationProvider?
     public let permissionsManager: PermissionsManager
 
     #if !os(tvOS) && !os(watchOS)
@@ -118,10 +116,6 @@ class AirshipInstance : AirshipInstanceProtocol {
         var components: [Component] = [contact, channel, analytics, namedUser, remoteDataManager, push]
         components.append(contentsOf: moduleLoader.components)
         
-        self.locationProvider = components.compactMap {
-            return $0 as? UALocationProvider
-        }.first
-            
         self.components = components
             
         moduleLoader.actionPlists.forEach {

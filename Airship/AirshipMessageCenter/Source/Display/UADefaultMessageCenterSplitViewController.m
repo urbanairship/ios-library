@@ -90,7 +90,7 @@ NS_ASSUME_NONNULL_BEGIN
     self.viewControllers = @[self.listNavigationController,self.messageNavigationController];
     
     // display both view controllers in horizontally regular contexts
-    self.preferredDisplayMode = UISplitViewControllerDisplayModeAllVisible;
+    self.preferredDisplayMode = UISplitViewControllerDisplayModeOneBesideSecondary;
     
     if (self.messageCenterStyle) {
         [self applyStyle];

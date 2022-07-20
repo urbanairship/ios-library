@@ -159,16 +159,10 @@ public class PrivacyManager : NSObject {
         }
 
         if dataStore.keyExists(LegacyChatEnableFlag) {
-            if !(dataStore.bool(forKey: LegacyChatEnableFlag)) {
-                features.remove(.chat)
-            }
             dataStore.removeObject(forKey: LegacyChatEnableFlag)
         }
 
         if dataStore.keyExists(LegacyLocationEnableFlag) {
-            if !(dataStore.bool(forKey: LegacyLocationEnableFlag)) {
-                disableFeatures(.location)
-            }
             dataStore.removeObject(forKey: LegacyLocationEnableFlag)
         }
 

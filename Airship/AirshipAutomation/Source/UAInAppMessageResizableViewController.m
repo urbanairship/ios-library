@@ -440,7 +440,8 @@ static double const DefaultResizableViewAnimationDuration = 0.2;
 
 - (void)refreshViewForCurrentOrientation NS_EXTENSION_UNAVAILABLE("Method not available in app extensions") {
     if (self.displayFullScreen) {
-        UIWindow *window = [UIApplication sharedApplication].keyWindow;
+        UIWindow *window = [UAUtils mainWindow];
+
         // Black out the inset and compensate for excess vertical safe area when iPhone X is horizontal
         if (window.safeAreaInsets.top == 0 && window.safeAreaInsets.left > 0) {
             self.shadeView.backgroundColor = [UIColor blackColor];

@@ -73,11 +73,6 @@ public class Airship : NSObject {
     @objc
     public var applicationMetrics: ApplicationMetrics  { return airshipInstance.applicationMetrics }
     
-    /// The Airship location provider. Requires the `AirshipLocation`
-    /// module, otherwise nil.
-    /// - Note: For internal use only. :nodoc:
-    @objc
-    public var locationProvider: UALocationProvider? { return airshipInstance.locationProvider }
 
     /// The Airship permissions manager.
     @objc

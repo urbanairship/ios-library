@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="20037" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina5_9" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment version="4368" identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="20020"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -63,6 +63,7 @@
                     </constraints>
                 </view>
             </subviews>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <constraints>
                 <constraint firstItem="scV-ja-7hz" firstAttribute="bottom" secondItem="iN0-l3-epB" secondAttribute="bottom" id="0Ok-Pj-8Hq"/>
                 <constraint firstAttribute="top" secondItem="scV-ja-7hz" secondAttribute="top" id="3ZH-S4-Fzn"/>
@@ -71,7 +72,6 @@
                 <constraint firstItem="scV-ja-7hz" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="Aua-l0-qF6"/>
                 <constraint firstAttribute="trailing" secondItem="scV-ja-7hz" secondAttribute="trailing" id="JYO-3N-Z33"/>
             </constraints>
-            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <point key="canvasLocation" x="220" y="8.1280788177339911"/>
         </view>
     </objects>

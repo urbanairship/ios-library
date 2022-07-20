@@ -54,7 +54,7 @@ jobs:
       - name: Test
         run: make test build-samples
 
-  pod-lib-lint:
+  pod-lib-lint-tvos:
     runs-on: macOS-12
     steps:
       - name: Set env variable
@@ -66,4 +66,32 @@ jobs:
           key: ${{ runner.os }}-gems-${{ env.ImageVersion }}-${{ hashFiles('**/Gemfile.lock') }}
           restore-keys: ${{ runner.os }}-gems-${{ env.ImageVersion }}
       - name: Pod lint
-        run: make pod-lint
+        run: make pod-lint-tvos
+
+  pod-lib-lint-ios:
+    runs-on: macOS-12
+    steps:
+      - name: Set env variable
+        run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v1
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ env.ImageVersion }}-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: ${{ runner.os }}-gems-${{ env.ImageVersion }}
+      - name: Pod lint
+        run: make pod-lint-ios
+
+  pod-lib-lint-extensions:
+    runs-on: macOS-12
+    steps:
+      - name: Set env variable
+        run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v1
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ env.ImageVersion }}-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: ${{ runner.os }}-gems-${{ env.ImageVersion }}
+      - name: Pod lint
+        run: make pod-lint-extensions

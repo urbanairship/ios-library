@@ -7,7 +7,7 @@ import PackageDescription
 let package = Package(
     name: "Airship",
     defaultLocalization: "en",
-    platforms: [.macOS(.v10_15), .iOS(.v11), .tvOS(.v11)],
+    platforms: [.macOS(.v10_15), .iOS(.v14), .tvOS(.v14)],
     products: [
         .library(
             name: "AirshipCore",
@@ -22,20 +22,11 @@ let package = Package(
             name: "AirshipExtendedActions",
             targets: ["AirshipExtendedActions"]),
         .library(
-            name: "AirshipLocation",
-            targets: ["AirshipLocation"]),
-        .library(
-            name: "AirshipAccengage",
-            targets: ["AirshipAccengage"]),
-        .library(
             name: "AirshipNotificationContentExtension",
             targets: ["AirshipNotificationContentExtension"]),
         .library(
             name: "AirshipNotificationServiceExtension",
             targets: ["AirshipNotificationServiceExtension"]),
-        .library(
-            name: "AirshipChat",
-            targets: ["AirshipChat"]),
         .library(
             name: "AirshipPreferenceCenter",
             targets: ["AirshipPreferenceCenter"]),
@@ -138,32 +129,6 @@ let package = Package(
                 linkerSettings: [
                     .linkedFramework("StoreKit")]
         ),
-        .target(name:"AirshipLocation",
-                dependencies: [.target(name: "AirshipCore")],
-                path: "Airship/AirshipLocation",
-                exclude: ["Source/AirshipLocation.h",
-                          "Info.plist"],
-                sources : ["Source"],
-                publicHeadersPath: "Source/Public",
-                cSettings: [
-                    .headerSearchPath("Source")],
-                linkerSettings: [
-                    .linkedFramework("CoreLocation")]
-        ),
-        .target(name:"AirshipAccengage",
-                dependencies: [.target(name: "AirshipCore")],
-                path: "Airship/AirshipAccengage",
-                exclude: ["Source/AirshipAccengage.h",
-                          "Info.plist",
-                          "Tests"],
-                sources : ["Source"],
-                resources: [
-                    .process("Resources")],
-                publicHeadersPath: "Source/Public",
-                cSettings: [
-                    .headerSearchPath("Source"),
-                    .headerSearchPath("Source/AccengageInternal")]
-        ),
         .target(name:"AirshipNotificationContentExtension",
                 path: "AirshipExtensions/AirshipNotificationContentExtension",
                 exclude: ["Source/AirshipNotificationContentExtension.h",
@@ -179,16 +144,6 @@ let package = Package(
                           "Tests"],
                 sources : ["Source"],
                 publicHeadersPath: "Source"
-        ),
-        .target(name:"AirshipChat",
-                dependencies: [.target(name: "AirshipCore")],
-                path: "Airship/AirshipChat",
-                exclude: ["Source/AirshipChat.h",
-                          "Info.plist",
-                          "Tests"],
-                sources : ["Source"],
-                resources: [
-                    .process("Resources")]
         ),
         .target(name:"AirshipPreferenceCenter",
                 dependencies: [.target(name: "AirshipCore")],

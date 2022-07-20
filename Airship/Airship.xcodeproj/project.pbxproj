@@ -10,8 +10,6 @@
 		1B05132824AE103D00F5051F /* UALocaleManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B05132724AE103D00F5051F /* UALocaleManagerTest.m */; };
 		1B05133624AF600000F5051F /* UAScheduleTriggerContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B05133424AF600000F5051F /* UAScheduleTriggerContext.m */; };
 		1B05133D24AF657C00F5051F /* UAScheduleTriggerContext+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B05133B24AF657C00F5051F /* UAScheduleTriggerContext+Internal.h */; };
-		1B0B43BB243389D20051CCF0 /* UALocationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B0B43BA243389D20051CCF0 /* UALocationTest.m */; };
-		1B281ED924F6AA4100FDC188 /* AirshipLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B281ED824F6AA4100FDC188 /* AirshipLocation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1B281EDC24F6AB8100FDC188 /* AirshipMessageCenterLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B281EDB24F6AB8100FDC188 /* AirshipMessageCenterLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1B70A13F24F7B3D8003209E0 /* AirshipExtendedActionsLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B70A13E24F7B3D8003209E0 /* AirshipExtendedActionsLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1B70A14224F7B85D003209E0 /* AirshipAutomationLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B70A14124F7B85D003209E0 /* AirshipAutomationLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -20,23 +18,8 @@
 		1B8DCF652507BDA70006E595 /* UAMessageCenterListViewDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B8DCF612507BDA60006E595 /* UAMessageCenterListViewDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1B8DCF662507BDA70006E595 /* UAMessageCenterStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B8DCF622507BDA60006E595 /* UAMessageCenterStyle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1B8DCF6C2507BE0F0006E595 /* UAMessageCenterStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B8DCF6B2507BE0F0006E595 /* UAMessageCenterStyle.m */; };
-		1B8F1B6923CCBFA200BEE715 /* ACCStubData+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B8F1B6723CCBFA200BEE715 /* ACCStubData+Internal.h */; };
-		1B8F1B6A23CCBFA200BEE715 /* ACCStubData.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B8F1B6823CCBFA200BEE715 /* ACCStubData.m */; };
-		1B8F1B7123CCBFF300BEE715 /* ACCDeviceInformationSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B8F1B6F23CCBFF300BEE715 /* ACCDeviceInformationSet.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1B8F1B7223CCBFF300BEE715 /* ACCDeviceInformationSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B8F1B7023CCBFF300BEE715 /* ACCDeviceInformationSet.m */; };
-		1BA67C3C23A0FFA800A07324 /* UAAccengageUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BA67C3A23A0FFA800A07324 /* UAAccengageUtils.h */; };
-		1BA67C3D23A0FFA800A07324 /* UAAccengageUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BA67C3B23A0FFA800A07324 /* UAAccengageUtils.m */; };
 		1BB4C014239FB4CD0000559B /* UAExtendedActionsResources.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BB4C012239FB4CD0000559B /* UAExtendedActionsResources.m */; };
 		1BB4C015239FB4CD0000559B /* UAExtendedActionsResources.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BB4C013239FB4CD0000559B /* UAExtendedActionsResources.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1BB4C018239FB4EC0000559B /* UAAccengagePayload.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BB4C016239FB4EB0000559B /* UAAccengagePayload.h */; };
-		1BB4C019239FB4EC0000559B /* UAAccengagePayload.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BB4C017239FB4EB0000559B /* UAAccengagePayload.m */; };
-		1BB4C02D239FE5E50000559B /* AirshipAccengageTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BB4C02C239FE5E50000559B /* AirshipAccengageTest.m */; };
-		1BB4C02F239FE5E50000559B /* AirshipAccengage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BB4C00E239FB4700000559B /* AirshipAccengage.framework */; };
-		1BB4C03B239FE7A30000559B /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; };
-		1BCDE30723A12C070006A319 /* UAAccengageNotificationCategories.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1BCDE30623A12C070006A319 /* UAAccengageNotificationCategories.plist */; };
-		1BCDE30A23A12C430006A319 /* UAAccengageResources.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BCDE30823A12C430006A319 /* UAAccengageResources.h */; };
-		1BCDE30B23A12C430006A319 /* UAAccengageResources.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCDE30923A12C430006A319 /* UAAccengageResources.m */; };
-		1BCDE30E23A12CBA0006A319 /* AirshipAccengage.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1BCDE30C23A12CBA0006A319 /* AirshipAccengage.strings */; };
 		320AAE7427A84B0000BAD3CE /* PreferenceCenterAlertCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 320AAE7327A84B0000BAD3CE /* PreferenceCenterAlertCell.xib */; };
 		320AAE7627A84B3200BAD3CE /* PreferenceCenterAlertCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 320AAE7527A84B3200BAD3CE /* PreferenceCenterAlertCell.swift */; };
 		3210FAF827AD2AAE00A5C5D7 /* PreferenceCenterConditionMonitorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3210FAF327AD27E700A5C5D7 /* PreferenceCenterConditionMonitorTest.swift */; };
@@ -60,10 +43,6 @@
 		32CF81E3275627F4003009D1 /* AirshipAsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32CF81E1275627F4003009D1 /* AirshipAsyncImage.swift */; };
 		32D6E87B2727F7060077C784 /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32D6E87A2727F7060077C784 /* Image.swift */; };
 		3C07645825EDEDEE007F425C /* UAStateOverridesTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C07644A25EDEDE4007F425C /* UAStateOverridesTest.m */; };
-		3C0D066A2624EB6C002337B0 /* ChatMessageCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C0D06642624EB6C002337B0 /* ChatMessageCell.xib */; };
-		3C0D067E2624EBD3002337B0 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C0D06792624EBD2002337B0 /* ChatViewController.swift */; };
-		3C0D06802624EBD3002337B0 /* ChatResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C0D067A2624EBD3002337B0 /* ChatResources.swift */; };
-		3C0D06842624EBD3002337B0 /* ChatMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C0D067C2624EBD3002337B0 /* ChatMessageCell.swift */; };
 		3C13BFB62384AC0E0071E80C /* UAAutomationResources.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C13BFB42384AC0E0071E80C /* UAAutomationResources.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3C13BFB72384AC0E0071E80C /* UAAutomationResources.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C13BFB52384AC0E0071E80C /* UAAutomationResources.m */; };
 		3C13BFBA2384AD270071E80C /* UAMessageCenterResources.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C13BFB82384AD270071E80C /* UAMessageCenterResources.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -85,7 +64,6 @@
 		3C45B06223E11D8B004B9590 /* UADefaultMessageCenterSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C45B05C23E11D8A004B9590 /* UADefaultMessageCenterSplitViewController.m */; };
 		3C45B06323E11D8B004B9590 /* UADefaultMessageCenterMessageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C45B05D23E11D8A004B9590 /* UADefaultMessageCenterMessageViewController.m */; };
 		3C45B06423E11D8B004B9590 /* UADefaultMessageCenterSplitViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C45B05E23E11D8A004B9590 /* UADefaultMessageCenterSplitViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3C5264AC20DAEE2B00FCA903 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C5264AB20DAEE2A00FCA903 /* CoreData.framework */; };
 		3C63556026CDD4F8006E9916 /* PushProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C63555F26CDD4F8006E9916 /* PushProtocol.swift */; };
 		3C63556126CDD4F8006E9916 /* PushProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C63555F26CDD4F8006E9916 /* PushProtocol.swift */; };
 		3C693E4D25141C7E00EBFB88 /* UAAutomation.xcdatamodeld in Resources */ = {isa = PBXBuildFile; fileRef = 1B2F3B0324B7525500A5DE8C /* UAAutomation.xcdatamodeld */; };
@@ -96,7 +74,6 @@
 		3C927F7A23A2F94C003C5FC8 /* UAAppStateTrackerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C927F7923A2F94C003C5FC8 /* UAAppStateTrackerTest.m */; };
 		3C927F8123A425F0003C5FC8 /* UAUIKitStateTrackerAdapterTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C927F8023A425F0003C5FC8 /* UAUIKitStateTrackerAdapterTest.m */; };
 		3C927F8423A97CDA003C5FC8 /* UADefaultValueTransformerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C927F8323A97CD9003C5FC8 /* UADefaultValueTransformerTest.m */; };
-		3C9AC940262F9AC300D6E346 /* ChatStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C9AC93F262F9AC300D6E346 /* ChatStyle.swift */; };
 		3C9E9D6821D42EEB0072F65B /* UAInAppMessageResolutionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C9E9D6721D42EEB0072F65B /* UAInAppMessageResolutionTest.m */; };
 		3CA0E2A0237CCE2600EE76CF /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		3CA0E2AE237CD05F00EE76CF /* AssociatedIdentifiersTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E22B237CCBA600EE76CF /* AssociatedIdentifiersTableViewController.swift */; };
@@ -321,12 +298,6 @@
 		6E1D8AD826CC66BE0049DACB /* RemoteConfigCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1D8AD726CC66BE0049DACB /* RemoteConfigCache.swift */; };
 		6E1D8AD926CC66BE0049DACB /* RemoteConfigCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1D8AD726CC66BE0049DACB /* RemoteConfigCache.swift */; };
 		6E20BF6724F5C21D005347EC /* UAScheduleTriggerContextTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E20BF6624F5C21D005347EC /* UAScheduleTriggerContextTest.m */; };
-		6E21734B237C7FC20084933A /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
-		6E217362237C811E0084933A /* UALocationSDKModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E21735D237C811D0084933A /* UALocationSDKModule.m */; };
-		6E217363237C811E0084933A /* UALocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E21735E237C811D0084933A /* UALocation.m */; };
-		6E217364237C811E0084933A /* UALocationSDKModule.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E21735F237C811D0084933A /* UALocationSDKModule.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E217365237C811E0084933A /* UALocation+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E217360237C811E0084933A /* UALocation+Internal.h */; };
-		6E217366237C811E0084933A /* UALocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E217361237C811E0084933A /* UALocation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E21786625F2BBA800E1EFAA /* UAHTTPResponseTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E21786525F2BBA800E1EFAA /* UAHTTPResponseTest.m */; };
 		6E21852B237D32B30084933A /* EventData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21852A237D32B30084933A /* EventData.swift */; };
 		6E218539237DB7960084933A /* AddAttributeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E218538237DB7960084933A /* AddAttributeTableViewController.swift */; };
@@ -336,8 +307,6 @@
 		6E2D6AF226B0B64E00B7C226 /* SubscriptionListAPIClientTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2D6AF126B0B64E00B7C226 /* SubscriptionListAPIClientTest.swift */; };
 		6E2D6AF426B0C3C500B7C226 /* ChannelAudienceManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2D6AF326B0C3C500B7C226 /* ChannelAudienceManagerTest.swift */; };
 		6E2D6AF626B0C6CA00B7C226 /* TestSubscriptionListAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2D6AF526B0C6CA00B7C226 /* TestSubscriptionListAPIClient.swift */; };
-		6E2E914F238D99F0008488D3 /* AirshipLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E9375602376164600AA9C2A /* AirshipLocation.framework */; };
-		6E2E9152238DA39E008488D3 /* AirshipLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E9375602376164600AA9C2A /* AirshipLocation.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		6E382C21276D3E990091A351 /* ThomasValidationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E382C20276D3E990091A351 /* ThomasValidationTests.swift */; };
 		6E3942281F33DA52003D1C50 /* UAInboxStoreTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E3942271F33DA52003D1C50 /* UAInboxStoreTest.m */; };
 		6E3B32CC27559D8B00B89C7B /* FormInputViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3B32CB27559D8B00B89C7B /* FormInputViewModifier.swift */; };
@@ -359,11 +328,7 @@
 		6E411CAC2538C6A600FEE4E8 /* UARemoteData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E411CA42538C6A500FEE4E8 /* UARemoteData.xcdatamodeld */; };
 		6E411CAF2538C6A600FEE4E8 /* UAEvents.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E411CA72538C6A500FEE4E8 /* UAEvents.xcdatamodeld */; };
 		6E411CB02538C6A600FEE4E8 /* UAEvents.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E411CA72538C6A500FEE4E8 /* UAEvents.xcdatamodeld */; };
-		6E43202126EA814F009228AB /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CC04F1C41DC27E6C00B4842D /* libsqlite3.tbd */; };
 		6E43202226EA814F009228AB /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3261A7F4243CD73100ADBF6B /* CoreTelephony.framework */; platformFilter = maccatalyst; };
-		6E43202326EA814F009228AB /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CC944EC71DB161AE00C42269 /* libz.tbd */; };
-		6E43210026EA8199009228AB /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 99666E901EDF2E6500BAE46B /* libsqlite3.tbd */; };
-		6E43210126EA8199009228AB /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 99666E8E1EDF2E5900BAE46B /* libz.tbd */; };
 		6E43214026EA84A5009228AB /* UAFeature.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43212A26EA84A4009228AB /* UAFeature.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E43214126EA84A5009228AB /* UAFeature.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43212A26EA84A4009228AB /* UAFeature.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E43214226EA84A5009228AB /* UAActionArguments.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43212B26EA84A4009228AB /* UAActionArguments.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -378,8 +343,6 @@
 		6E43214B26EA84A5009228AB /* UAAppIntegrationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43212F26EA84A4009228AB /* UAAppIntegrationDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E43214C26EA84A5009228AB /* UAAutoIntegration.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213026EA84A4009228AB /* UAAutoIntegration.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E43214D26EA84A5009228AB /* UAAutoIntegration.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213026EA84A4009228AB /* UAAutoIntegration.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E43214E26EA84A5009228AB /* UALocationProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213126EA84A4009228AB /* UALocationProvider.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E43214F26EA84A5009228AB /* UALocationProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213126EA84A4009228AB /* UALocationProvider.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E43215026EA84A5009228AB /* UAJavaScriptCommandDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213226EA84A4009228AB /* UAJavaScriptCommandDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E43215126EA84A5009228AB /* UAJavaScriptCommandDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213226EA84A4009228AB /* UAJavaScriptCommandDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E43215226EA84A5009228AB /* AirshipBasementLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213326EA84A4009228AB /* AirshipBasementLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -510,7 +473,6 @@
 		6E64C88027331ABA000EB887 /* PreferenceDataStoreTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E64C87F27331ABA000EB887 /* PreferenceDataStoreTest.swift */; };
 		6E6541E02758976D009676CA /* AirshipProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6541DF2758976D009676CA /* AirshipProgressView.swift */; };
 		6E6541E12758976D009676CA /* AirshipProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6541DF2758976D009676CA /* AirshipProgressView.swift */; };
-		6E65D537239632EF00AF2D1A /* UALocationCoreImport.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E65D536239632EA00AF2D1A /* UALocationCoreImport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E65D53B2396DBF800AF2D1A /* UAExtendedActionsCoreImport.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E65D53A2396DB3F00AF2D1A /* UAExtendedActionsCoreImport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E65D53C2396DED400AF2D1A /* UARateAppActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 996A03B91EF08EBF003424E0 /* UARateAppActionTest.m */; };
 		6E664B9E26C21B6F00A2C8E5 /* AggregateActionResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E664B9D26C21B6F00A2C8E5 /* AggregateActionResult.swift */; };
@@ -609,12 +571,6 @@
 		6E6C3F9C27A47ED6007F55C7 /* Conditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6C3F9B27A47ED6007F55C7 /* Conditions.swift */; };
 		6E6C3F9E27A4C3D4007F55C7 /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6C3F9D27A4C3D4007F55C7 /* JSON.swift */; };
 		6E6C3F9F27A4C3D4007F55C7 /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6C3F9D27A4C3D4007F55C7 /* JSON.swift */; };
-		6E6CC31B239A2EA9003D583C /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; settings = {ATTRIBUTES = (Required, ); }; };
-		6E6CC32E239A2F18003D583C /* UAAccengage+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E6CC303239A2E8F003D583C /* UAAccengage+Internal.h */; };
-		6E6CC32F239A2F19003D583C /* UAAccengageSDKModule.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E6CC304239A2E8F003D583C /* UAAccengageSDKModule.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E6CC330239A2F19003D583C /* AirshipAccengage.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E6CC305239A2E8F003D583C /* AirshipAccengage.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E6CC331239A2F26003D583C /* UAAccengageSDKModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E6CC301239A2E8F003D583C /* UAAccengageSDKModule.m */; };
-		6E6CC332239A2F26003D583C /* UAAccengage.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E6CC302239A2E8F003D583C /* UAAccengage.m */; };
 		6E6CC38423A3F9B4003D583C /* PushNotificationsDetailTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6CC37E23A3F9B4003D583C /* PushNotificationsDetailTableViewController.swift */; };
 		6E6CC38623A3F9B4003D583C /* PushDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6CC38023A3F9B4003D583C /* PushDataManager.swift */; };
 		6E6CC38723A3F9B4003D583C /* PushPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6CC38123A3F9B4003D583C /* PushPayload.swift */; };
@@ -685,15 +641,6 @@
 		6E739D8026BB01C500BC6F6D /* ChannelBulkUpdateAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E739D6526B9BDC100BC6F6D /* ChannelBulkUpdateAPIClient.swift */; };
 		6E739D8226BB33A200BC6F6D /* ChannelBulkUpdateAPIClientTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E739D8126BB33A200BC6F6D /* ChannelBulkUpdateAPIClientTest.swift */; };
 		6E746507235FA9B6000BF09C /* UAMessageCenterTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E746506235FA9B6000BF09C /* UAMessageCenterTest.m */; };
-		6E7C067F26127557006D0E84 /* AirshipChat.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E7C067D26127557006D0E84 /* AirshipChat.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E7C06A0261275F6006D0E84 /* ChatSDKModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7C069F261275F6006D0E84 /* ChatSDKModule.swift */; };
-		6E7C06AF26127606006D0E84 /* Chat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7C06AE26127606006D0E84 /* Chat.swift */; };
-		6E7C070326128035006D0E84 /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; };
-		6E7C07C026139223006D0E84 /* ChatConnectionProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7C07BF26139223006D0E84 /* ChatConnectionProtocol.swift */; };
-		6E7C07CF26139B4A006D0E84 /* Conversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7C07CE26139B4A006D0E84 /* Conversation.swift */; };
-		6E7C07DE26139B58006D0E84 /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7C07DD26139B58006D0E84 /* ChatMessage.swift */; };
-		6E7C07FA26139C02006D0E84 /* ChatDAOProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7C07F926139C02006D0E84 /* ChatDAOProtocol.swift */; };
-		6E7C080926139F74006D0E84 /* ChatAPIClientProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7C080826139F74006D0E84 /* ChatAPIClientProtocol.swift */; };
 		6E845389237E04FB007D3B1E /* UAInAppMessageResizableViewController+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 4515B6A92134AFC200284CFF /* UAInAppMessageResizableViewController+Internal.h */; };
 		6E84538A237E0523007D3B1E /* UAInAppMessageHTMLDisplayContent+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C805B16200ED87D0079F56E /* UAInAppMessageHTMLDisplayContent+Internal.h */; };
 		6E84538B237E0523007D3B1E /* UAInAppMessageHTMLViewController+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 45F0CD402124E58000EED496 /* UAInAppMessageHTMLViewController+Internal.h */; };
@@ -870,11 +817,6 @@
 		6E84548C237E2320007D3B1E /* UAInAppMessageHTMLViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E845483237E2320007D3B1E /* UAInAppMessageHTMLViewController.xib */; };
 		6E84548F237E2889007D3B1E /* AirshipAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E845377237E0271007D3B1E /* AirshipAutomation.framework */; };
 		6E845492237E2D52007D3B1E /* AirshipAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E845377237E0271007D3B1E /* AirshipAutomation.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
-		6E8776AC261BC1E100B03FC0 /* AirshipChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E7C067B26127557006D0E84 /* AirshipChat.framework */; };
-		6E8776F9261BC55100B03FC0 /* ChatAPIClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8776F8261BC55100B03FC0 /* ChatAPIClientTests.swift */; };
-		6E877761261CED1A00B03FC0 /* PendingChatMessageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E877760261CED1A00B03FC0 /* PendingChatMessageData.swift */; };
-		6E877771261CED2C00B03FC0 /* ChatMessageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E877770261CED2C00B03FC0 /* ChatMessageData.swift */; };
-		6E877782261CF0A400B03FC0 /* ChatResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E877781261CF0A400B03FC0 /* ChatResponse.swift */; };
 		6E87BD6426D594870005D20D /* ChannelRegistrationPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BD6326D594870005D20D /* ChannelRegistrationPayload.swift */; };
 		6E87BD6526D594870005D20D /* ChannelRegistrationPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BD6326D594870005D20D /* ChannelRegistrationPayload.swift */; };
 		6E87BD6726D6A39A0005D20D /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BD6626D6A39A0005D20D /* Config.swift */; };
@@ -891,7 +833,6 @@
 		6E87BDB626DEE61F0005D20D /* ComponentDisableHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BDB426DEE61F0005D20D /* ComponentDisableHelper.swift */; };
 		6E87BDBD26E01FF40005D20D /* ModuleLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BDBC26E01FF40005D20D /* ModuleLoader.swift */; };
 		6E87BDBE26E01FF40005D20D /* ModuleLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BDBC26E01FF40005D20D /* ModuleLoader.swift */; };
-		6E87BDC026E038E30005D20D /* UAChatActions.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6E87BDBF26E038E30005D20D /* UAChatActions.plist */; };
 		6E87BE0126E283850005D20D /* Airship.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BDFD26E283840005D20D /* Airship.swift */; };
 		6E87BE0226E283850005D20D /* Airship.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BDFD26E283840005D20D /* Airship.swift */; };
 		6E87BE0326E283850005D20D /* LogLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BDFE26E283840005D20D /* LogLevel.swift */; };
@@ -909,8 +850,6 @@
 		6E887CD5272C5F5A00E83363 /* CheckboxController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E887CD4272C5F5A00E83363 /* CheckboxController.swift */; };
 		6E887CD6272C5FEF00E83363 /* CheckboxState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E887CD0272C5E8400E83363 /* CheckboxState.swift */; };
 		6E887CD7272C602B00E83363 /* CheckboxController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E887CD4272C5F5A00E83363 /* CheckboxController.swift */; };
-		6E88ECC4262E92FF00C46A23 /* UAChatViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E88ECC3262E92FF00C46A23 /* UAChatViewController.xib */; };
-		6E88EDB2262F7C0B00C46A23 /* MockChatDAO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E88EDB1262F7C0B00C46A23 /* MockChatDAO.swift */; };
 		6E88EF042703D9B100469E2A /* UADisposable.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E88EF022703D9B100469E2A /* UADisposable.m */; };
 		6E88EF052703D9B100469E2A /* UADisposable.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E88EF022703D9B100469E2A /* UADisposable.m */; };
 		6E88EF062703D9B100469E2A /* UAPadding.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E88EF032703D9B100469E2A /* UAPadding.m */; };
@@ -973,7 +912,6 @@
 		6E92ECB1284ECE590038802D /* CachedList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E92ECB0284ECE590038802D /* CachedList.swift */; };
 		6E92ECB2284ECE590038802D /* CachedList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E92ECB0284ECE590038802D /* CachedList.swift */; };
 		6E92ECB6284ED7330038802D /* CachedListTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E92ECB3284ED6F10038802D /* CachedListTest.swift */; };
-		6E937643237618AF00AA9C2A /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E937642237618AF00AA9C2A /* CoreLocation.framework */; };
 		6E952920268A6C1500398B54 /* SearchEventTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E95291F268A6C1500398B54 /* SearchEventTemplate.swift */; };
 		6E952921268A6C1500398B54 /* SearchEventTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E95291F268A6C1500398B54 /* SearchEventTemplate.swift */; };
 		6E952923268B812000398B54 /* AccountEventTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E952922268B812000398B54 /* AccountEventTemplate.swift */; };
@@ -988,32 +926,6 @@
 		6E9D529926C1A502004EA16B /* ActionRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D529726C195F7004EA16B /* ActionRunner.swift */; };
 		6E9D529B26C1A77C004EA16B /* ActionRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D529A26C1A77C004EA16B /* ActionRegistry.swift */; };
 		6E9D529C26C1A77C004EA16B /* ActionRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D529A26C1A77C004EA16B /* ActionRegistry.swift */; };
-		6E9D53CA261D2ED6009BD6EB /* HTTPRequestSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D53C9261D2ED6009BD6EB /* HTTPRequestSession.swift */; };
-		6E9D5423261D6B42009BD6EB /* MockHTTPRequestSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D53F7261D6B0F009BD6EB /* MockHTTPRequestSession.swift */; };
-		6E9D5433261E0C49009BD6EB /* WebSocketProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D5432261E0C49009BD6EB /* WebSocketProtocol.swift */; };
-		6E9D5443261E0C62009BD6EB /* WebSocketFactoryProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D5442261E0C62009BD6EB /* WebSocketFactoryProtocol.swift */; };
-		6E9D5453261E0C7E009BD6EB /* WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D5452261E0C7E009BD6EB /* WebSocket.swift */; };
-		6E9D5463261E0CD6009BD6EB /* WebSocketFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D5462261E0CD6009BD6EB /* WebSocketFactory.swift */; };
-		6E9D54BD261E13BB009BD6EB /* ChatConnectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D54AD261E13B5009BD6EB /* ChatConnectionTests.swift */; };
-		6E9D54CD261E14BC009BD6EB /* MockWebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D54CC261E14BC009BD6EB /* MockWebSocket.swift */; };
-		6E9D54EB261E158B009BD6EB /* MockWebSocketFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D54EA261E158B009BD6EB /* MockWebSocketFactory.swift */; };
-		6E9D554B261E31D2009BD6EB /* ChatConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D554A261E31D2009BD6EB /* ChatConnection.swift */; };
-		6E9D5585261E33AC009BD6EB /* MockChatConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D5584261E33AC009BD6EB /* MockChatConnection.swift */; };
-		6E9D5595261E35C1009BD6EB /* ChatAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D5594261E35C1009BD6EB /* ChatAPIClient.swift */; };
-		6E9D55A5261E39BE009BD6EB /* MockChatAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D55A4261E39BE009BD6EB /* MockChatAPIClient.swift */; };
-		6E9D55C3261E3A92009BD6EB /* AirshipChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D55C2261E3A92009BD6EB /* AirshipChannel.swift */; };
-		6E9D55E1261E3B21009BD6EB /* MockChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D55E0261E3B21009BD6EB /* MockChannel.swift */; };
-		6E9D55F1261E3B96009BD6EB /* MockAppStateTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D55F0261E3B96009BD6EB /* MockAppStateTracker.swift */; };
-		6E9D560E261E3C66009BD6EB /* ConversationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D553A261E3182009BD6EB /* ConversationTests.swift */; };
-		6E9D56D4261E6C6A009BD6EB /* ChatDAO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D56D3261E6C6A009BD6EB /* ChatDAO.swift */; };
-		6E9D5759261F6C22009BD6EB /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; };
-		6E9D57C1261F99BF009BD6EB /* ChatConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D57C0261F99BF009BD6EB /* ChatConfig.swift */; };
-		6E9D57DF261F9EC0009BD6EB /* MockChatConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D57DE261F9EC0009BD6EB /* MockChatConfig.swift */; };
-		6E9D580B261FC344009BD6EB /* OpenChatAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D580A261FC344009BD6EB /* OpenChatAction.swift */; };
-		6E9D58702620A29C009BD6EB /* OpenChatActionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D58522620A291009BD6EB /* OpenChatActionTests.swift */; };
-		6E9D58802620A2B5009BD6EB /* AirshipChatTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D587F2620A2B5009BD6EB /* AirshipChatTests.swift */; };
-		6E9D58902620A7A8009BD6EB /* MockConversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D588F2620A7A8009BD6EB /* MockConversation.swift */; };
-		6E9D58BD2620AB5F009BD6EB /* MockAirshipChatOpenDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D58AD2620AB36009BD6EB /* MockAirshipChatOpenDelegate.swift */; };
 		6E9F74D124E6F414001F9B05 /* UADeferredScheduleAPIClient+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E9F74CE24E6F414001F9B05 /* UADeferredScheduleAPIClient+Internal.h */; };
 		6E9F74D324E6F414001F9B05 /* UADeferredScheduleAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E9F74CF24E6F414001F9B05 /* UADeferredScheduleAPIClient.m */; };
 		6E9F74D724E6F68D001F9B05 /* UADeferredScheduleResult+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E9F74D424E6F68D001F9B05 /* UADeferredScheduleResult+Internal.h */; };
@@ -1129,7 +1041,6 @@
 		6EF66D912769B69C00ABCB76 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF66D902769B69C00ABCB76 /* RootView.swift */; };
 		6EF66D922769B69C00ABCB76 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF66D902769B69C00ABCB76 /* RootView.swift */; };
 		6EFB377D234595C9005E4E44 /* UAMessageCenterNativeBridgeExtensionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EFB377C234595C9005E4E44 /* UAMessageCenterNativeBridgeExtensionTest.m */; };
-		6EFBDEE1262DF71C008380AC /* MockDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFBDEE0262DF71C008380AC /* MockDispatcher.swift */; };
 		6EFD6D4B27272333005B26F1 /* EmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFD6D4A27272333005B26F1 /* EmptyView.swift */; };
 		6EFD6D4C27272333005B26F1 /* EmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFD6D4A27272333005B26F1 /* EmptyView.swift */; };
 		6EFD6D5C27273257005B26F1 /* Shapes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFD6D5B27273257005B26F1 /* Shapes.swift */; };
@@ -1166,24 +1077,13 @@
 		84FA93E325F29E8C008A1729 /* ActionDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FA93E025F29E8C008A1729 /* ActionDetailViewController.swift */; };
 		84FA93E425F29E8C008A1729 /* DeferredDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FA93E125F29E8C008A1729 /* DeferredDetailViewController.swift */; };
 		84FA93E525F29E8C008A1729 /* InAppMessageDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FA93E225F29E8C008A1729 /* InAppMessageDetailViewController.swift */; };
-		872BA2B223D9EDA900D7C10C /* Accengage.m in Sources */ = {isa = PBXBuildFile; fileRef = 872BA2AE23D9EDA800D7C10C /* Accengage.m */; };
-		872BA2B323D9EDA900D7C10C /* Accengage.h in Headers */ = {isa = PBXBuildFile; fileRef = 872BA2AF23D9EDA800D7C10C /* Accengage.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		872BA2B423D9EDA900D7C10C /* ACCUserProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 872BA2B023D9EDA800D7C10C /* ACCUserProfile.m */; };
-		872BA2B523D9EDA900D7C10C /* ACCUserProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 872BA2B123D9EDA800D7C10C /* ACCUserProfile.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		872BA2BA23D9F12E00D7C10C /* ACCDeviceInformationSet+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 872BA2B823D9F12E00D7C10C /* ACCDeviceInformationSet+Internal.h */; };
-		873A868D23C493A900AAA0B9 /* AirshipAccengageResourcesTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 873A868B23C344E400AAA0B9 /* AirshipAccengageResourcesTest.m */; };
-		873A869023C49A4300AAA0B9 /* AirshipAccengageUtilsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 873A868E23C49A3700AAA0B9 /* AirshipAccengageUtilsTest.m */; };
 		991A94651FCF2C6B00B57D24 /* UAInAppMessageTextInfoTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 991A94641FCF2C6B00B57D24 /* UAInAppMessageTextInfoTest.m */; };
 		991A94671FCF2C7F00B57D24 /* UAInAppMessageButtonInfoTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 991A94661FCF2C7F00B57D24 /* UAInAppMessageButtonInfoTest.m */; };
 		991A94691FCF2CEF00B57D24 /* UAInAppMessageMediaInfoTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 991A94681FCF2CEF00B57D24 /* UAInAppMessageMediaInfoTest.m */; };
-		992F89871EFD7F8600E4C8FE /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 992F89861EFD7F8600E4C8FE /* StoreKit.framework */; };
-		99666E8F1EDF2E5900BAE46B /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 99666E8E1EDF2E5900BAE46B /* libz.tbd */; };
-		99666E911EDF2E6500BAE46B /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 99666E901EDF2E6500BAE46B /* libsqlite3.tbd */; };
 		997140F11FB0F3E600EF5445 /* UAInAppMessageManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 997140EE1FB0F3E600EF5445 /* UAInAppMessageManagerTest.m */; };
 		997140F61FB0F45000EF5445 /* UAInAppMessageTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 997140F31FB0F45000EF5445 /* UAInAppMessageTest.m */; };
 		997AC8221FE5ACE000260440 /* UAInAppMessageFullScreenDisplayContentTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 997AC8211FE5ACE000260440 /* UAInAppMessageFullScreenDisplayContentTest.m */; };
 		9987672A1FBE6B4200197AF4 /* UAInAppMessageBannerDisplayContentTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 998767291FBE6B4200197AF4 /* UAInAppMessageBannerDisplayContentTest.m */; };
-		A6031ED326738CE600FFE328 /* ChatMessageDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A6031ED126738CE600FFE328 /* ChatMessageDataModel.xcdatamodeld */; };
 		A604DB7E25597F85001ADCA8 /* UASearchEventTemplateTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A604DB7D25597F85001ADCA8 /* UASearchEventTemplateTest.m */; };
 		A60A23EE258CEBBE006B7D80 /* UAModifyAttributesActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A60A23ED258CEBBE006B7D80 /* UAModifyAttributesActionTest.m */; };
 		A615178D26A0436E008A41C4 /* PreferenceCenterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A615178A26A0436E008A41C4 /* PreferenceCenterViewController.swift */; };
@@ -1495,7 +1395,6 @@
 		A6722AE4281AA05B0033F54D /* UAJavaScriptCommandDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213226EA84A4009228AB /* UAJavaScriptCommandDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6722AE5281AA05B0033F54D /* UAJavaScriptEnvironmentProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43212D26EA84A4009228AB /* UAJavaScriptEnvironmentProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6722AE6281AA05B0033F54D /* UAKeychainUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213426EA84A4009228AB /* UAKeychainUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A6722AE7281AA05B0033F54D /* UALocationProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213126EA84A4009228AB /* UALocationProvider.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6722AE8281AA05B0033F54D /* UANativeBridgeExtensionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213726EA84A4009228AB /* UANativeBridgeExtensionDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6722AE9281AA05B0033F54D /* UAPush.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43212E26EA84A4009228AB /* UAPush.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6722AEA281AA05B0033F54D /* UASDKModule.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213B26EA84A5009228AB /* UASDKModule.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1558,7 +1457,6 @@
 		A6DF51F0287706B400A42433 /* WKStateTrackerAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6DF51EF287706B400A42433 /* WKStateTrackerAdapter.swift */; };
 		A6DF51F1287707E500A42433 /* WKStateTrackerAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6DF51EF287706B400A42433 /* WKStateTrackerAdapter.swift */; };
 		A6DF51F2287707EB00A42433 /* WKStateTrackerAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6DF51EF287706B400A42433 /* WKStateTrackerAdapter.swift */; };
-		A6F6726026E10C7A008C69C3 /* ChatIncomingMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F6725F26E10C7A008C69C3 /* ChatIncomingMessage.swift */; };
 		A6F6726126E1162F008C69C3 /* JSONMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401769326C5671100373AF7 /* JSONMatcher.swift */; };
 		A6F6726226E11633008C69C3 /* VersionMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401769526C5715E00373AF7 /* VersionMatcher.swift */; };
 		A6F6726326E11637008C69C3 /* JSONPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401769726C5722400373AF7 /* JSONPredicate.swift */; };
@@ -1580,7 +1478,6 @@
 		C02D0B6626C1A3E200F673E6 /* ChannelCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02D0B6526C1A3E200F673E6 /* ChannelCapture.swift */; };
 		C088383726E0244C00D40838 /* TestURLAllowList.swift in Sources */ = {isa = PBXBuildFile; fileRef = C088383526E0244C00D40838 /* TestURLAllowList.swift */; };
 		C0EE8CE526C1B3410006F003 /* ChannelCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02D0B6526C1A3E200F673E6 /* ChannelCapture.swift */; };
-		CC04F1C51DC27E6C00B4842D /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CC04F1C41DC27E6C00B4842D /* libsqlite3.tbd */; };
 		CC64F0591D8B77E3009CEF27 /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; };
 		CC64F0CE1D8B781C009CEF27 /* CustomNotificationCategories.plist in Resources */ = {isa = PBXBuildFile; fileRef = CC64F0611D8B781C009CEF27 /* CustomNotificationCategories.plist */; };
 		CC64F0D01D8B781C009CEF27 /* Invalid-UAMessageCenterDefaultStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = CC64F0631D8B781C009CEF27 /* Invalid-UAMessageCenterDefaultStyle.plist */; };
@@ -1648,7 +1545,6 @@
 		CC64F1501D8B7954009CEF27 /* AirshipConfig-Without-InProduction-And-DetectProvisioningMode.plist in Resources */ = {isa = PBXBuildFile; fileRef = CC64F1481D8B7954009CEF27 /* AirshipConfig-Without-InProduction-And-DetectProvisioningMode.plist */; };
 		CC64F1511D8B7954009CEF27 /* development-embedded.mobileprovision in Resources */ = {isa = PBXBuildFile; fileRef = CC64F1491D8B7954009CEF27 /* development-embedded.mobileprovision */; };
 		CC64F1521D8B7954009CEF27 /* production-embedded.mobileprovision in Resources */ = {isa = PBXBuildFile; fileRef = CC64F14A1D8B7954009CEF27 /* production-embedded.mobileprovision */; };
-		CC944EC81DB161AE00C42269 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CC944EC71DB161AE00C42269 /* libz.tbd */; };
 		CC944EDC1DB6AEC600C42269 /* UARequestTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC944EDB1DB6AEC600C42269 /* UARequestTest.m */; };
 		CC944EF91DB80E0C00C42269 /* UARequestSessionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC944EF81DB80E0C00C42269 /* UARequestSessionTest.m */; };
 		CCB902251DCBBCDA009A66D7 /* UAAsyncOperationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCB902221DCBBCDA009A66D7 /* UAAsyncOperationTest.m */; };
@@ -1664,10 +1560,6 @@
 		DF2519C12458E6CF00B3587A /* AddNamedUserAttributeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF2519C02458E6CF00B3587A /* AddNamedUserAttributeTableViewController.swift */; };
 		DF4E49A5221F487500F306A5 /* UAInAppMessageAssetManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DF4E49A4221F487500F306A5 /* UAInAppMessageAssetManagerTest.m */; };
 		DF4E49CB221FB36100F306A5 /* airship.jpg in Resources */ = {isa = PBXBuildFile; fileRef = DF4E49CA221FB36100F306A5 /* airship.jpg */; };
-		DF6AD3C01ED8A95B006EB1DA /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF6AD3BF1ED8A95B006EB1DA /* CoreLocation.framework */; };
-		DF6AD3C21ED8A961006EB1DA /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF6AD3C11ED8A961006EB1DA /* WebKit.framework */; };
-		DF6AD3C41ED8A969006EB1DA /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF6AD3C31ED8A969006EB1DA /* UserNotifications.framework */; };
-		DF6AD3C61ED8A970006EB1DA /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF6AD3C51ED8A970006EB1DA /* JavaScriptCore.framework */; };
 		DF702D811FABA38400E7A3DC /* UAVersionMatcherTests.m in Sources */ = {isa = PBXBuildFile; fileRef = DF702D801FABA38400E7A3DC /* UAVersionMatcherTests.m */; };
 		DF7E22BC1ED63E9200C79C46 /* ProjectValidationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF7E22BB1ED63E9200C79C46 /* ProjectValidationTest.swift */; };
 		DF829AD8222341C60090386E /* UAInAppMessageAssetCacheTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DF829AD7222341C60090386E /* UAInAppMessageAssetCacheTest.m */; };
@@ -1681,10 +1573,6 @@
 		DFECEA871E662E25006AA8EA /* UANativeBridgeTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DFECEA861E662E25006AA8EA /* UANativeBridgeTest.m */; };
 		DFFCF5AF1FCF53100014DE2E /* UAInAppRemoteDataClientTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DFFCF5AE1FCF53100014DE2E /* UAInAppRemoteDataClientTest.m */; };
 		E29D35EF1DB9751F003C292F /* UAFetchDeviceInfoActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = E29D35EE1DB9751F003C292F /* UAFetchDeviceInfoActionTest.m */; };
-		E39D6A22D2DD999CD2FA0A4F /* Pods_AirshipAccengageTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 45F651ACE8833830E1D2333D /* Pods_AirshipAccengageTests.framework */; };
-		E8A47CD22735D26D001B8717 /* SendChatAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8A47CD12735D26D001B8717 /* SendChatAction.swift */; };
-		E8A47CD52739E105001B8717 /* SendChatActionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8A47CD32739DEBA001B8717 /* SendChatActionTests.swift */; };
-		E8A58B38268FDF12005079F3 /* ChatRouting.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8A58B37268FDF12005079F3 /* ChatRouting.swift */; };
 		E976486F27A46CC50024518D /* ChannelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E976486E27A46CC50024518D /* ChannelType.swift */; };
 		E976487027A46CC50024518D /* ChannelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E976486E27A46CC50024518D /* ChannelType.swift */; };
 		E99605A127A071EA00365AE4 /* EmailRegistrationOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99605A027A071EA00365AE4 /* EmailRegistrationOptions.swift */; };
@@ -1696,20 +1584,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		1BB4C030239FE5E50000559B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 6E6CC310239A2EA9003D583C;
-			remoteInfo = AirshipAccengage;
-		};
-		1BB4C039239FE76B0000559B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 494DD9561B0EB677009C134E;
-			remoteInfo = AirshipCore;
-		};
 		3C38AE082384C1E700EDE9B7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
@@ -1745,13 +1619,6 @@
 			remoteGlobalIDString = 494DD9561B0EB677009C134E;
 			remoteInfo = Core;
 		};
-		6E2E914D238D98BE008488D3 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 6E9373032376164600AA9C2A;
-			remoteInfo = AirshipLocation;
-		};
 		6E43218A26EA891F009228AB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
@@ -1765,13 +1632,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 6E43204A26EA8199009228AB;
 			remoteInfo = "AirshipBasement tvOS";
-		};
-		6E5C32BC27C9A2E5005B2DDE /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 6E6CC310239A2EA9003D583C;
-			remoteInfo = AirshipAccengage;
 		};
 		6E5C32BE27C9A2E5005B2DDE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1787,13 +1647,6 @@
 			remoteGlobalIDString = 6E431F6B26EA814F009228AB;
 			remoteInfo = AirshipBasement;
 		};
-		6E5C32C227C9A2E5005B2DDE /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 6E7C067A26127557006D0E84;
-			remoteInfo = AirshipChat;
-		};
 		6E5C32C427C9A2E5005B2DDE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
@@ -1807,13 +1660,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 3CA0E298237CCE2600EE76CF;
 			remoteInfo = AirshipDebug;
-		};
-		6E5C32C827C9A2E5005B2DDE /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 6E9373032376164600AA9C2A;
-			remoteInfo = AirshipLocation;
 		};
 		6E5C32CA27C9A2E5005B2DDE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1850,33 +1696,12 @@
 			remoteGlobalIDString = 45C69118238DC79400A03C94;
 			remoteInfo = AirshipExtendedActions;
 		};
-		6E65D5042396079800AF2D1A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 6E9373032376164600AA9C2A;
-			remoteInfo = AirshipLocation;
-		};
 		6E65D5402396E12A00AF2D1A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 45C69118238DC79400A03C94;
 			remoteInfo = AirshipExtendedActions;
-		};
-		6E6CC312239A2EA9003D583C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 494DD9561B0EB677009C134E;
-			remoteInfo = Core;
-		};
-		6E7C070526128035006D0E84 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 494DD9561B0EB677009C134E;
-			remoteInfo = AirshipCore;
 		};
 		6E845451237E08EE007D3B1E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1898,27 +1723,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 6E8450FD237E0271007D3B1E;
 			remoteInfo = AirshipAutomation;
-		};
-		6E8776AD261BC1E100B03FC0 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 6E7C067A26127557006D0E84;
-			remoteInfo = AirshipChat;
-		};
-		6E9376252376167B00AA9C2A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 494DD9561B0EB677009C134E;
-			remoteInfo = Core;
-		};
-		6E9D5749261F6C0D009BD6EB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 494DD9561B0EB677009C134E;
-			remoteInfo = AirshipCore;
 		};
 		847B000D267CD85E007CD249 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1973,8 +1777,6 @@
 		1B05132724AE103D00F5051F /* UALocaleManagerTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UALocaleManagerTest.m; sourceTree = "<group>"; };
 		1B05133424AF600000F5051F /* UAScheduleTriggerContext.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAScheduleTriggerContext.m; sourceTree = "<group>"; };
 		1B05133B24AF657C00F5051F /* UAScheduleTriggerContext+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAScheduleTriggerContext+Internal.h"; sourceTree = "<group>"; };
-		1B0B43BA243389D20051CCF0 /* UALocationTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UALocationTest.m; sourceTree = "<group>"; };
-		1B281ED824F6AA4100FDC188 /* AirshipLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AirshipLocation.h; sourceTree = "<group>"; };
 		1B281EDB24F6AB8100FDC188 /* AirshipMessageCenterLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AirshipMessageCenterLib.h; sourceTree = "<group>"; };
 		1B2F3B0424B7525500A5DE8C /* UAAutomation 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAAutomation 2.xcdatamodel"; sourceTree = "<group>"; };
 		1B2F3B0524B7525500A5DE8C /* UAAutomation 4.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAAutomation 4.xcdatamodel"; sourceTree = "<group>"; };
@@ -1989,29 +1791,8 @@
 		1B8DCF612507BDA60006E595 /* UAMessageCenterListViewDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAMessageCenterListViewDelegate.h; sourceTree = "<group>"; };
 		1B8DCF622507BDA60006E595 /* UAMessageCenterStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAMessageCenterStyle.h; sourceTree = "<group>"; };
 		1B8DCF6B2507BE0F0006E595 /* UAMessageCenterStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAMessageCenterStyle.m; sourceTree = "<group>"; };
-		1B8F1B6723CCBFA200BEE715 /* ACCStubData+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ACCStubData+Internal.h"; sourceTree = "<group>"; };
-		1B8F1B6823CCBFA200BEE715 /* ACCStubData.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ACCStubData.m; sourceTree = "<group>"; };
-		1B8F1B6F23CCBFF300BEE715 /* ACCDeviceInformationSet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ACCDeviceInformationSet.h; sourceTree = "<group>"; };
-		1B8F1B7023CCBFF300BEE715 /* ACCDeviceInformationSet.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ACCDeviceInformationSet.m; sourceTree = "<group>"; };
-		1BA67C3A23A0FFA800A07324 /* UAAccengageUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAAccengageUtils.h; sourceTree = "<group>"; };
-		1BA67C3B23A0FFA800A07324 /* UAAccengageUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAccengageUtils.m; sourceTree = "<group>"; };
-		1BB4C00E239FB4700000559B /* AirshipAccengage.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipAccengage.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1BB4C012239FB4CD0000559B /* UAExtendedActionsResources.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAExtendedActionsResources.m; sourceTree = "<group>"; };
 		1BB4C013239FB4CD0000559B /* UAExtendedActionsResources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAExtendedActionsResources.h; sourceTree = "<group>"; };
-		1BB4C016239FB4EB0000559B /* UAAccengagePayload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAAccengagePayload.h; sourceTree = "<group>"; };
-		1BB4C017239FB4EB0000559B /* UAAccengagePayload.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAccengagePayload.m; sourceTree = "<group>"; };
-		1BB4C02A239FE5E50000559B /* AirshipAccengageTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipAccengageTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		1BB4C02C239FE5E50000559B /* AirshipAccengageTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AirshipAccengageTest.m; sourceTree = "<group>"; };
-		1BB4C02E239FE5E50000559B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		1BCDE30623A12C070006A319 /* UAAccengageNotificationCategories.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; name = UAAccengageNotificationCategories.plist; path = AirshipAccengage/Resources/ios/UAAccengageNotificationCategories.plist; sourceTree = SOURCE_ROOT; };
-		1BCDE30823A12C430006A319 /* UAAccengageResources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAAccengageResources.h; sourceTree = "<group>"; };
-		1BCDE30923A12C430006A319 /* UAAccengageResources.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAccengageResources.m; sourceTree = "<group>"; };
-		1BCDE30D23A12CBA0006A319 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = Resources/common/en.lproj/AirshipAccengage.strings; sourceTree = "<group>"; };
-		1BCDE30F23A12CC80006A319 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = Resources/common/de.lproj/AirshipAccengage.strings; sourceTree = "<group>"; };
-		1BCDE31023A12CD30006A319 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = Resources/common/es.lproj/AirshipAccengage.strings; sourceTree = "<group>"; };
-		1BCDE31123A12CD30006A319 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = Resources/common/ru.lproj/AirshipAccengage.strings; sourceTree = "<group>"; };
-		1BCDE31223A12CD30006A319 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = Resources/common/it.lproj/AirshipAccengage.strings; sourceTree = "<group>"; };
-		1BCDE31323A12CD30006A319 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = Resources/common/fr.lproj/AirshipAccengage.strings; sourceTree = "<group>"; };
 		320AAE7327A84B0000BAD3CE /* PreferenceCenterAlertCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PreferenceCenterAlertCell.xib; sourceTree = "<group>"; };
 		320AAE7527A84B3200BAD3CE /* PreferenceCenterAlertCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterAlertCell.swift; sourceTree = "<group>"; };
 		3210FAF327AD27E700A5C5D7 /* PreferenceCenterConditionMonitorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterConditionMonitorTest.swift; sourceTree = "<group>"; };
@@ -2030,10 +1811,6 @@
 		32CF81E1275627F4003009D1 /* AirshipAsyncImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipAsyncImage.swift; sourceTree = "<group>"; };
 		32D6E87A2727F7060077C784 /* Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
 		3C07644A25EDEDE4007F425C /* UAStateOverridesTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAStateOverridesTest.m; sourceTree = "<group>"; };
-		3C0D06642624EB6C002337B0 /* ChatMessageCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ChatMessageCell.xib; sourceTree = "<group>"; };
-		3C0D06792624EBD2002337B0 /* ChatViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
-		3C0D067A2624EBD3002337B0 /* ChatResources.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatResources.swift; sourceTree = "<group>"; };
-		3C0D067C2624EBD3002337B0 /* ChatMessageCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatMessageCell.swift; sourceTree = "<group>"; };
 		3C13BFB42384AC0E0071E80C /* UAAutomationResources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAAutomationResources.h; sourceTree = "<group>"; };
 		3C13BFB52384AC0E0071E80C /* UAAutomationResources.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAutomationResources.m; sourceTree = "<group>"; };
 		3C13BFB82384AD270071E80C /* UAMessageCenterResources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAMessageCenterResources.h; sourceTree = "<group>"; };
@@ -2055,7 +1832,6 @@
 		3C45B05C23E11D8A004B9590 /* UADefaultMessageCenterSplitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADefaultMessageCenterSplitViewController.m; sourceTree = "<group>"; };
 		3C45B05D23E11D8A004B9590 /* UADefaultMessageCenterMessageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADefaultMessageCenterMessageViewController.m; sourceTree = "<group>"; };
 		3C45B05E23E11D8A004B9590 /* UADefaultMessageCenterSplitViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UADefaultMessageCenterSplitViewController.h; sourceTree = "<group>"; };
-		3C5264AB20DAEE2A00FCA903 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		3C63555F26CDD4F8006E9916 /* PushProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushProtocol.swift; sourceTree = "<group>"; };
 		3C77BF912016B22900AD37F3 /* UAInAppMessageHTMLDisplayContentTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageHTMLDisplayContentTest.m; sourceTree = "<group>"; };
 		3C7B15F42009766800ECA6D0 /* UAInAppMessageHTMLAdapter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAInAppMessageHTMLAdapter.h; sourceTree = "<group>"; };
@@ -2067,7 +1843,6 @@
 		3C927F7923A2F94C003C5FC8 /* UAAppStateTrackerTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAAppStateTrackerTest.m; sourceTree = "<group>"; };
 		3C927F8023A425F0003C5FC8 /* UAUIKitStateTrackerAdapterTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAUIKitStateTrackerAdapterTest.m; sourceTree = "<group>"; };
 		3C927F8323A97CD9003C5FC8 /* UADefaultValueTransformerTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UADefaultValueTransformerTest.m; sourceTree = "<group>"; };
-		3C9AC93F262F9AC300D6E346 /* ChatStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatStyle.swift; sourceTree = "<group>"; };
 		3C9E9D6721D42EEB0072F65B /* UAInAppMessageResolutionTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageResolutionTest.m; sourceTree = "<group>"; };
 		3CA0E21D237CCBA600EE76CF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/AirshipDebug.strings; sourceTree = "<group>"; };
 		3CA0E21F237CCBA600EE76CF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = en; path = en.lproj/AirshipDebug.stringsdict; sourceTree = "<group>"; };
@@ -2280,7 +2055,6 @@
 		6E15B73A26D43F110099C92D /* NSURLValueTransformer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSURLValueTransformer.swift; sourceTree = "<group>"; };
 		6E15B73B26D43F120099C92D /* NSArrayValueTransformer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSArrayValueTransformer.swift; sourceTree = "<group>"; };
 		6E15B73C26D43F120099C92D /* NSDictionaryValueTransformer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSDictionaryValueTransformer.swift; sourceTree = "<group>"; };
-		6E15B74826D4A8380099C92D /* ChatMessageDataModel 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "ChatMessageDataModel 2.xcdatamodel"; sourceTree = "<group>"; };
 		6E1892C7268D15C300417887 /* PreferenceCenterTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterTest.swift; sourceTree = "<group>"; };
 		6E1892C9268D16E200417887 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6E1892CC268D17D200417887 /* MockRemoteDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockRemoteDataProvider.swift; sourceTree = "<group>"; };
@@ -2304,11 +2078,6 @@
 		6E1D8AB226CC5D490049DACB /* RemoteConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteConfig.swift; sourceTree = "<group>"; };
 		6E1D8AD726CC66BE0049DACB /* RemoteConfigCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteConfigCache.swift; sourceTree = "<group>"; };
 		6E20BF6624F5C21D005347EC /* UAScheduleTriggerContextTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAScheduleTriggerContextTest.m; sourceTree = "<group>"; };
-		6E21735D237C811D0084933A /* UALocationSDKModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationSDKModule.m; sourceTree = "<group>"; };
-		6E21735E237C811D0084933A /* UALocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocation.m; sourceTree = "<group>"; };
-		6E21735F237C811D0084933A /* UALocationSDKModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALocationSDKModule.h; sourceTree = "<group>"; };
-		6E217360237C811E0084933A /* UALocation+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UALocation+Internal.h"; sourceTree = "<group>"; };
-		6E217361237C811E0084933A /* UALocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALocation.h; sourceTree = "<group>"; };
 		6E21786525F2BBA800E1EFAA /* UAHTTPResponseTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAHTTPResponseTest.m; sourceTree = "<group>"; };
 		6E21852A237D32B30084933A /* EventData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventData.swift; sourceTree = "<group>"; };
 		6E218538237DB7960084933A /* AddAttributeTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAttributeTableViewController.swift; sourceTree = "<group>"; };
@@ -2373,7 +2142,6 @@
 		6E43212E26EA84A4009228AB /* UAPush.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAPush.h; path = Public/UAPush.h; sourceTree = "<group>"; };
 		6E43212F26EA84A4009228AB /* UAAppIntegrationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAAppIntegrationDelegate.h; path = Public/UAAppIntegrationDelegate.h; sourceTree = "<group>"; };
 		6E43213026EA84A4009228AB /* UAAutoIntegration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAAutoIntegration.h; path = Public/UAAutoIntegration.h; sourceTree = "<group>"; };
-		6E43213126EA84A4009228AB /* UALocationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UALocationProvider.h; path = Public/UALocationProvider.h; sourceTree = "<group>"; };
 		6E43213226EA84A4009228AB /* UAJavaScriptCommandDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAJavaScriptCommandDelegate.h; path = Public/UAJavaScriptCommandDelegate.h; sourceTree = "<group>"; };
 		6E43213326EA84A4009228AB /* AirshipBasementLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirshipBasementLib.h; path = Public/AirshipBasementLib.h; sourceTree = "<group>"; };
 		6E43213426EA84A4009228AB /* UAKeychainUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAKeychainUtils.h; path = Public/UAKeychainUtils.h; sourceTree = "<group>"; };
@@ -2458,7 +2226,6 @@
 		6E5F723520169A6600D684B7 /* UADeepLinkActionTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UADeepLinkActionTest.m; sourceTree = "<group>"; };
 		6E64C87F27331ABA000EB887 /* PreferenceDataStoreTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferenceDataStoreTest.swift; sourceTree = "<group>"; };
 		6E6541DF2758976D009676CA /* AirshipProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipProgressView.swift; sourceTree = "<group>"; };
-		6E65D536239632EA00AF2D1A /* UALocationCoreImport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UALocationCoreImport.h; sourceTree = "<group>"; };
 		6E65D53A2396DB3F00AF2D1A /* UAExtendedActionsCoreImport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAExtendedActionsCoreImport.h; sourceTree = "<group>"; };
 		6E664B9D26C21B6F00A2C8E5 /* AggregateActionResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AggregateActionResult.swift; sourceTree = "<group>"; };
 		6E664BA026C43F5400A2C8E5 /* ActivityViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityViewController.swift; sourceTree = "<group>"; };
@@ -2514,12 +2281,6 @@
 		6E6C3F9927A47DB4007F55C7 /* PreferenceCenterConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterConfig.swift; sourceTree = "<group>"; };
 		6E6C3F9B27A47ED6007F55C7 /* Conditions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Conditions.swift; sourceTree = "<group>"; };
 		6E6C3F9D27A4C3D4007F55C7 /* JSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
-		6E6CC2FF239A2E8F003D583C /* info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = info.plist; sourceTree = "<group>"; };
-		6E6CC301239A2E8F003D583C /* UAAccengageSDKModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAAccengageSDKModule.m; sourceTree = "<group>"; };
-		6E6CC302239A2E8F003D583C /* UAAccengage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAAccengage.m; sourceTree = "<group>"; };
-		6E6CC303239A2E8F003D583C /* UAAccengage+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAAccengage+Internal.h"; sourceTree = "<group>"; };
-		6E6CC304239A2E8F003D583C /* UAAccengageSDKModule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAAccengageSDKModule.h; sourceTree = "<group>"; };
-		6E6CC305239A2E8F003D583C /* AirshipAccengage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AirshipAccengage.h; sourceTree = "<group>"; };
 		6E6CC37E23A3F9B4003D583C /* PushNotificationsDetailTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushNotificationsDetailTableViewController.swift; sourceTree = "<group>"; };
 		6E6CC38023A3F9B4003D583C /* PushDataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushDataManager.swift; sourceTree = "<group>"; };
 		6E6CC38123A3F9B4003D583C /* PushPayload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushPayload.swift; sourceTree = "<group>"; };
@@ -2558,16 +2319,6 @@
 		6E739D7E26BAFCB800BC6F6D /* TestChannelBulkUpdateAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestChannelBulkUpdateAPIClient.swift; sourceTree = "<group>"; };
 		6E739D8126BB33A200BC6F6D /* ChannelBulkUpdateAPIClientTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelBulkUpdateAPIClientTest.swift; sourceTree = "<group>"; };
 		6E746506235FA9B6000BF09C /* UAMessageCenterTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAMessageCenterTest.m; sourceTree = "<group>"; };
-		6E7C067B26127557006D0E84 /* AirshipChat.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipChat.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		6E7C067D26127557006D0E84 /* AirshipChat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AirshipChat.h; sourceTree = "<group>"; };
-		6E7C067E26127557006D0E84 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		6E7C069F261275F6006D0E84 /* ChatSDKModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatSDKModule.swift; sourceTree = "<group>"; };
-		6E7C06AE26127606006D0E84 /* Chat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chat.swift; sourceTree = "<group>"; };
-		6E7C07BF26139223006D0E84 /* ChatConnectionProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatConnectionProtocol.swift; sourceTree = "<group>"; };
-		6E7C07CE26139B4A006D0E84 /* Conversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Conversation.swift; sourceTree = "<group>"; };
-		6E7C07DD26139B58006D0E84 /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
-		6E7C07F926139C02006D0E84 /* ChatDAOProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatDAOProtocol.swift; sourceTree = "<group>"; };
-		6E7C080826139F74006D0E84 /* ChatAPIClientProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAPIClientProtocol.swift; sourceTree = "<group>"; };
 		6E8450AE237DFE89007D3B1E /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6E845377237E0271007D3B1E /* AirshipAutomation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipAutomation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E84544E237E05F3007D3B1E /* AirshipAutomation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AirshipAutomation.h; sourceTree = "<group>"; };
@@ -2580,12 +2331,6 @@
 		6E84547B237E2320007D3B1E /* UAInAppMessageBannerContentView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = UAInAppMessageBannerContentView.xib; path = Resources/UAInAppMessageBannerContentView.xib; sourceTree = "<group>"; };
 		6E845482237E2320007D3B1E /* UAInAppMessageBannerView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = UAInAppMessageBannerView.xib; path = Resources/UAInAppMessageBannerView.xib; sourceTree = "<group>"; };
 		6E845483237E2320007D3B1E /* UAInAppMessageHTMLViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = UAInAppMessageHTMLViewController.xib; path = Resources/UAInAppMessageHTMLViewController.xib; sourceTree = "<group>"; };
-		6E8776A7261BC1E100B03FC0 /* AirshipChatTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipChatTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		6E8776AB261BC1E100B03FC0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		6E8776F8261BC55100B03FC0 /* ChatAPIClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAPIClientTests.swift; sourceTree = "<group>"; };
-		6E877760261CED1A00B03FC0 /* PendingChatMessageData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PendingChatMessageData.swift; sourceTree = "<group>"; };
-		6E877770261CED2C00B03FC0 /* ChatMessageData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageData.swift; sourceTree = "<group>"; };
-		6E877781261CF0A400B03FC0 /* ChatResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatResponse.swift; sourceTree = "<group>"; };
 		6E87BD6326D594870005D20D /* ChannelRegistrationPayload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelRegistrationPayload.swift; sourceTree = "<group>"; };
 		6E87BD6626D6A39A0005D20D /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		6E87BD8226D757CA0005D20D /* CloudSite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudSite.swift; sourceTree = "<group>"; };
@@ -2595,7 +2340,6 @@
 		6E87BD9E26DDDB250005D20D /* AppIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIntegrationTests.swift; sourceTree = "<group>"; };
 		6E87BDB426DEE61F0005D20D /* ComponentDisableHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComponentDisableHelper.swift; sourceTree = "<group>"; };
 		6E87BDBC26E01FF40005D20D /* ModuleLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModuleLoader.swift; sourceTree = "<group>"; };
-		6E87BDBF26E038E30005D20D /* UAChatActions.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = UAChatActions.plist; sourceTree = "<group>"; };
 		6E87BDFD26E283840005D20D /* Airship.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Airship.swift; sourceTree = "<group>"; };
 		6E87BDFE26E283840005D20D /* LogLevel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogLevel.swift; sourceTree = "<group>"; };
 		6E87BE0026E283850005D20D /* DeepLinkDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeepLinkDelegate.swift; sourceTree = "<group>"; };
@@ -2607,8 +2351,6 @@
 		6E887CD0272C5E8400E83363 /* CheckboxState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckboxState.swift; sourceTree = "<group>"; };
 		6E887CD2272C5F5000E83363 /* Checkbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Checkbox.swift; sourceTree = "<group>"; };
 		6E887CD4272C5F5A00E83363 /* CheckboxController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckboxController.swift; sourceTree = "<group>"; };
-		6E88ECC3262E92FF00C46A23 /* UAChatViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAChatViewController.xib; sourceTree = "<group>"; };
-		6E88EDB1262F7C0B00C46A23 /* MockChatDAO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockChatDAO.swift; sourceTree = "<group>"; };
 		6E88EF022703D9B100469E2A /* UADisposable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UADisposable.m; path = Internal/UADisposable.m; sourceTree = "<group>"; };
 		6E88EF032703D9B100469E2A /* UAPadding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAPadding.m; path = Internal/UAPadding.m; sourceTree = "<group>"; };
 		6E88EF082703D9C700469E2A /* UADisposable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UADisposable.h; path = Public/UADisposable.h; sourceTree = "<group>"; };
@@ -2649,9 +2391,6 @@
 		6E92ECAB284EA7DA0038802D /* AnalyticsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsTest.swift; sourceTree = "<group>"; };
 		6E92ECB0284ECE590038802D /* CachedList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedList.swift; sourceTree = "<group>"; };
 		6E92ECB3284ED6F10038802D /* CachedListTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedListTest.swift; sourceTree = "<group>"; };
-		6E9375602376164600AA9C2A /* AirshipLocation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipLocation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		6E93762A237616EF00AA9C2A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		6E937642237618AF00AA9C2A /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/CoreLocation.framework; sourceTree = DEVELOPER_DIR; };
 		6E95291F268A6C1500398B54 /* SearchEventTemplate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchEventTemplate.swift; sourceTree = "<group>"; };
 		6E952922268B812000398B54 /* AccountEventTemplate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountEventTemplate.swift; sourceTree = "<group>"; };
 		6E952925268B8F6500398B54 /* AssociatedIdentifiers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssociatedIdentifiers.swift; sourceTree = "<group>"; };
@@ -2659,31 +2398,6 @@
 		6E95292E268BBD7D00398B54 /* RetailEventTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetailEventTemplate.swift; sourceTree = "<group>"; };
 		6E9D529726C195F7004EA16B /* ActionRunner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActionRunner.swift; sourceTree = "<group>"; };
 		6E9D529A26C1A77C004EA16B /* ActionRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionRegistry.swift; sourceTree = "<group>"; };
-		6E9D53C9261D2ED6009BD6EB /* HTTPRequestSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPRequestSession.swift; sourceTree = "<group>"; };
-		6E9D53F7261D6B0F009BD6EB /* MockHTTPRequestSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockHTTPRequestSession.swift; sourceTree = "<group>"; };
-		6E9D5432261E0C49009BD6EB /* WebSocketProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketProtocol.swift; sourceTree = "<group>"; };
-		6E9D5442261E0C62009BD6EB /* WebSocketFactoryProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketFactoryProtocol.swift; sourceTree = "<group>"; };
-		6E9D5452261E0C7E009BD6EB /* WebSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocket.swift; sourceTree = "<group>"; };
-		6E9D5462261E0CD6009BD6EB /* WebSocketFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketFactory.swift; sourceTree = "<group>"; };
-		6E9D54AD261E13B5009BD6EB /* ChatConnectionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatConnectionTests.swift; sourceTree = "<group>"; };
-		6E9D54CC261E14BC009BD6EB /* MockWebSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockWebSocket.swift; sourceTree = "<group>"; };
-		6E9D54EA261E158B009BD6EB /* MockWebSocketFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockWebSocketFactory.swift; sourceTree = "<group>"; };
-		6E9D553A261E3182009BD6EB /* ConversationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationTests.swift; sourceTree = "<group>"; };
-		6E9D554A261E31D2009BD6EB /* ChatConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatConnection.swift; sourceTree = "<group>"; };
-		6E9D5584261E33AC009BD6EB /* MockChatConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockChatConnection.swift; sourceTree = "<group>"; };
-		6E9D5594261E35C1009BD6EB /* ChatAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAPIClient.swift; sourceTree = "<group>"; };
-		6E9D55A4261E39BE009BD6EB /* MockChatAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockChatAPIClient.swift; sourceTree = "<group>"; };
-		6E9D55C2261E3A92009BD6EB /* AirshipChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipChannel.swift; sourceTree = "<group>"; };
-		6E9D55E0261E3B21009BD6EB /* MockChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockChannel.swift; sourceTree = "<group>"; };
-		6E9D55F0261E3B96009BD6EB /* MockAppStateTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAppStateTracker.swift; sourceTree = "<group>"; };
-		6E9D56D3261E6C6A009BD6EB /* ChatDAO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatDAO.swift; sourceTree = "<group>"; };
-		6E9D57C0261F99BF009BD6EB /* ChatConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatConfig.swift; sourceTree = "<group>"; };
-		6E9D57DE261F9EC0009BD6EB /* MockChatConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockChatConfig.swift; sourceTree = "<group>"; };
-		6E9D580A261FC344009BD6EB /* OpenChatAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenChatAction.swift; sourceTree = "<group>"; };
-		6E9D58522620A291009BD6EB /* OpenChatActionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenChatActionTests.swift; sourceTree = "<group>"; };
-		6E9D587F2620A2B5009BD6EB /* AirshipChatTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipChatTests.swift; sourceTree = "<group>"; };
-		6E9D588F2620A7A8009BD6EB /* MockConversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockConversation.swift; sourceTree = "<group>"; };
-		6E9D58AD2620AB36009BD6EB /* MockAirshipChatOpenDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAirshipChatOpenDelegate.swift; sourceTree = "<group>"; };
 		6E9F74CE24E6F414001F9B05 /* UADeferredScheduleAPIClient+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UADeferredScheduleAPIClient+Internal.h"; sourceTree = "<group>"; };
 		6E9F74CF24E6F414001F9B05 /* UADeferredScheduleAPIClient.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UADeferredScheduleAPIClient.m; sourceTree = "<group>"; };
 		6E9F74D424E6F68D001F9B05 /* UADeferredScheduleResult+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UADeferredScheduleResult+Internal.h"; sourceTree = "<group>"; };
@@ -2774,7 +2488,6 @@
 		6EF66D8C276461DA00ABCB76 /* UrlInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UrlInfo.swift; sourceTree = "<group>"; };
 		6EF66D902769B69C00ABCB76 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		6EFB377C234595C9005E4E44 /* UAMessageCenterNativeBridgeExtensionTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAMessageCenterNativeBridgeExtensionTest.m; sourceTree = "<group>"; };
-		6EFBDEE0262DF71C008380AC /* MockDispatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockDispatcher.swift; sourceTree = "<group>"; };
 		6EFD6D4A27272333005B26F1 /* EmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyView.swift; sourceTree = "<group>"; };
 		6EFD6D5B27273257005B26F1 /* Shapes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shapes.swift; sourceTree = "<group>"; };
 		6EFD6D6D27290C0B005B26F1 /* FormController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormController.swift; sourceTree = "<group>"; };
@@ -2803,22 +2516,11 @@
 		84FA93E025F29E8C008A1729 /* ActionDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActionDetailViewController.swift; sourceTree = "<group>"; };
 		84FA93E125F29E8C008A1729 /* DeferredDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeferredDetailViewController.swift; sourceTree = "<group>"; };
 		84FA93E225F29E8C008A1729 /* InAppMessageDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InAppMessageDetailViewController.swift; sourceTree = "<group>"; };
-		872BA2AE23D9EDA800D7C10C /* Accengage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Accengage.m; sourceTree = "<group>"; };
-		872BA2AF23D9EDA800D7C10C /* Accengage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Accengage.h; sourceTree = "<group>"; };
-		872BA2B023D9EDA800D7C10C /* ACCUserProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACCUserProfile.m; sourceTree = "<group>"; };
-		872BA2B123D9EDA800D7C10C /* ACCUserProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACCUserProfile.h; sourceTree = "<group>"; };
-		872BA2B823D9F12E00D7C10C /* ACCDeviceInformationSet+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ACCDeviceInformationSet+Internal.h"; sourceTree = "<group>"; };
-		873A868B23C344E400AAA0B9 /* AirshipAccengageResourcesTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AirshipAccengageResourcesTest.m; sourceTree = "<group>"; };
-		873A868E23C49A3700AAA0B9 /* AirshipAccengageUtilsTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AirshipAccengageUtilsTest.m; sourceTree = "<group>"; };
-		8F98742CB99EDEDE99A230C2 /* Pods_AirshipKitTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AirshipKitTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		991A94641FCF2C6B00B57D24 /* UAInAppMessageTextInfoTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageTextInfoTest.m; sourceTree = "<group>"; };
 		991A94661FCF2C7F00B57D24 /* UAInAppMessageButtonInfoTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageButtonInfoTest.m; sourceTree = "<group>"; };
 		991A94681FCF2CEF00B57D24 /* UAInAppMessageMediaInfoTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageMediaInfoTest.m; sourceTree = "<group>"; };
-		992F89861EFD7F8600E4C8FE /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		992F89881EFD99B000E4C8FE /* UARateAppActionPredicate+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UARateAppActionPredicate+Internal.h"; sourceTree = "<group>"; };
 		992F89891EFD99B000E4C8FE /* UARateAppActionPredicate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UARateAppActionPredicate.m; sourceTree = "<group>"; };
-		99666E8E1EDF2E5900BAE46B /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.2.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
-		99666E901EDF2E6500BAE46B /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.2.sdk/usr/lib/libsqlite3.tbd; sourceTree = DEVELOPER_DIR; };
 		996A03AB1EF08E1E003424E0 /* UARateAppAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UARateAppAction.h; sourceTree = "<group>"; };
 		996A03AC1EF08E1E003424E0 /* UARateAppAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UARateAppAction.m; sourceTree = "<group>"; };
 		996A03B91EF08EBF003424E0 /* UARateAppActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UARateAppActionTest.m; sourceTree = "<group>"; };
@@ -2871,7 +2573,6 @@
 		99EC01821FE0953100B9C408 /* UAInAppMessageFullScreenViewController+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageFullScreenViewController+Internal.h"; sourceTree = "<group>"; };
 		99EC01901FE095B600B9C408 /* UAInAppMessageFullScreenDisplayContent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInAppMessageFullScreenDisplayContent.h; sourceTree = "<group>"; };
 		99EC01971FE1FED100B9C408 /* UAInAppMessageFullScreenAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInAppMessageFullScreenAdapter.h; sourceTree = "<group>"; };
-		A6031ED226738CE600FFE328 /* ChatMessageDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ChatMessageDataModel.xcdatamodel; sourceTree = "<group>"; };
 		A604DB7D25597F85001ADCA8 /* UASearchEventTemplateTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UASearchEventTemplateTest.m; sourceTree = "<group>"; };
 		A60A23ED258CEBBE006B7D80 /* UAModifyAttributesActionTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAModifyAttributesActionTest.m; sourceTree = "<group>"; };
 		A615178A26A0436E008A41C4 /* PreferenceCenterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterViewController.swift; sourceTree = "<group>"; };
@@ -2919,7 +2620,6 @@
 		A6CDD8CF269491BE0040A673 /* ContactAPIClientTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactAPIClientTest.swift; sourceTree = "<group>"; };
 		A6CF89302593910300006C83 /* AddTagGroupsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTagGroupsTableViewController.swift; sourceTree = "<group>"; };
 		A6DF51EF287706B400A42433 /* WKStateTrackerAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKStateTrackerAdapter.swift; sourceTree = "<group>"; };
-		A6F6725F26E10C7A008C69C3 /* ChatIncomingMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatIncomingMessage.swift; sourceTree = "<group>"; };
 		BD8C10762865F92200358622 /* SmsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SmsView.swift; sourceTree = "<group>"; };
 		BD8C10772865F92200358622 /* ContactList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactList.swift; sourceTree = "<group>"; };
 		BD8C10782865F92200358622 /* ContactViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactViewController.swift; sourceTree = "<group>"; };
@@ -2935,8 +2635,6 @@
 		C02D0B6526C1A3E200F673E6 /* ChannelCapture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelCapture.swift; sourceTree = "<group>"; };
 		C088383526E0244C00D40838 /* TestURLAllowList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestURLAllowList.swift; sourceTree = "<group>"; };
 		C3AEC8D23AA7835AC1E74C9A /* Pods-AirshipAccengageTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipAccengageTests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipAccengageTests/Pods-AirshipAccengageTests.debug.xcconfig"; sourceTree = "<group>"; };
-		CC04F1C41DC27E6C00B4842D /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
-		CC40D87B1D8C703E00BABD4F /* libOCMock.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libOCMock.a; path = ../TestCommon/OCMockLibrary/libOCMock.a; sourceTree = "<group>"; };
 		CC40DAFE1D8C996900BABD4F /* UASchedule+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UASchedule+Internal.h"; sourceTree = "<group>"; };
 		CC40DAFF1D8C996900BABD4F /* UASchedule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UASchedule.h; sourceTree = "<group>"; };
 		CC40DB001D8C996900BABD4F /* UASchedule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UASchedule.m; sourceTree = "<group>"; };
@@ -3031,7 +2729,6 @@
 		CC64F1481D8B7954009CEF27 /* AirshipConfig-Without-InProduction-And-DetectProvisioningMode.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "AirshipConfig-Without-InProduction-And-DetectProvisioningMode.plist"; sourceTree = "<group>"; };
 		CC64F1491D8B7954009CEF27 /* development-embedded.mobileprovision */ = {isa = PBXFileReference; lastKnownFileType = file; path = "development-embedded.mobileprovision"; sourceTree = "<group>"; };
 		CC64F14A1D8B7954009CEF27 /* production-embedded.mobileprovision */ = {isa = PBXFileReference; lastKnownFileType = file; path = "production-embedded.mobileprovision"; sourceTree = "<group>"; };
-		CC944EC71DB161AE00C42269 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		CC944EDB1DB6AEC600C42269 /* UARequestTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UARequestTest.m; sourceTree = "<group>"; };
 		CC944EF81DB80E0C00C42269 /* UARequestSessionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UARequestSessionTest.m; sourceTree = "<group>"; };
 		CCB902221DCBBCDA009A66D7 /* UAAsyncOperationTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAsyncOperationTest.m; sourceTree = "<group>"; };
@@ -3061,10 +2758,6 @@
 		DF4E49CA221FB36100F306A5 /* airship.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = airship.jpg; sourceTree = "<group>"; };
 		DF5A352C223069BD001BD2D8 /* UAInAppMessageDefaultPrepareAssetsDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAInAppMessageDefaultPrepareAssetsDelegate.h; sourceTree = "<group>"; };
 		DF5A352D223069BD001BD2D8 /* UAInAppMessageDefaultPrepareAssetsDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageDefaultPrepareAssetsDelegate.m; sourceTree = "<group>"; };
-		DF6AD3BF1ED8A95B006EB1DA /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
-		DF6AD3C11ED8A961006EB1DA /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
-		DF6AD3C31ED8A969006EB1DA /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
-		DF6AD3C51ED8A970006EB1DA /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		DF6DD6561E7A1EB8000C281A /* AirshipCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DF702D801FABA38400E7A3DC /* UAVersionMatcherTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAVersionMatcherTests.m; sourceTree = "<group>"; };
 		DF7E22BB1ED63E9200C79C46 /* ProjectValidationTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProjectValidationTest.swift; sourceTree = "<group>"; };
@@ -3093,9 +2786,6 @@
 		DFFCF5AE1FCF53100014DE2E /* UAInAppRemoteDataClientTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppRemoteDataClientTest.m; sourceTree = "<group>"; };
 		DFFCF5B91FD1E65F0014DE2E /* UAInAppRemoteDataClient+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInAppRemoteDataClient+Internal.h"; sourceTree = "<group>"; };
 		E29D35EE1DB9751F003C292F /* UAFetchDeviceInfoActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAFetchDeviceInfoActionTest.m; sourceTree = "<group>"; };
-		E8A47CD12735D26D001B8717 /* SendChatAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendChatAction.swift; sourceTree = "<group>"; };
-		E8A47CD32739DEBA001B8717 /* SendChatActionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendChatActionTests.swift; sourceTree = "<group>"; };
-		E8A58B37268FDF12005079F3 /* ChatRouting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatRouting.swift; sourceTree = "<group>"; };
 		E9343E1B27AC413700A49AAF /* AssociatedChannel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssociatedChannel.swift; sourceTree = "<group>"; };
 		E976486E27A46CC50024518D /* ChannelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelType.swift; sourceTree = "<group>"; };
 		E99605A027A071EA00365AE4 /* EmailRegistrationOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailRegistrationOptions.swift; sourceTree = "<group>"; };
@@ -3105,22 +2795,11 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		1BB4C027239FE5E50000559B /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				1BB4C03B239FE7A30000559B /* AirshipCore.framework in Frameworks */,
-				1BB4C02F239FE5E50000559B /* AirshipAccengage.framework in Frameworks */,
-				E39D6A22D2DD999CD2FA0A4F /* Pods_AirshipAccengageTests.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		3CA0E29F237CCE2600EE76CF /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				3CA0E2A0237CCE2600EE76CF /* AirshipCore.framework in Frameworks */,
-				6E2E9152238DA39E008488D3 /* AirshipLocation.framework in Frameworks */,
 				3C39D3092384C8BE003C50D4 /* AirshipMessageCenter.framework in Frameworks */,
 				6E845492237E2D52007D3B1E /* AirshipAutomation.framework in Frameworks */,
 			);
@@ -3146,9 +2825,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CC04F1C51DC27E6C00B4842D /* libsqlite3.tbd in Frameworks */,
 				3261A7F6243CD7F900ADBF6B /* CoreTelephony.framework in Frameworks */,
-				CC944EC81DB161AE00C42269 /* libz.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3156,9 +2833,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E43202126EA814F009228AB /* libsqlite3.tbd in Frameworks */,
 				6E43202226EA814F009228AB /* CoreTelephony.framework in Frameworks */,
-				6E43202326EA814F009228AB /* libz.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3166,8 +2841,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E43210026EA8199009228AB /* libsqlite3.tbd in Frameworks */,
-				6E43210126EA8199009228AB /* libz.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3185,45 +2858,11 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		6E6CC31A239A2EA9003D583C /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				6E6CC31B239A2EA9003D583C /* AirshipCore.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		6E7C067826127557006D0E84 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				6E7C070326128035006D0E84 /* AirshipCore.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		6E8451F8237E0271007D3B1E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				6EE7725C238F17C000E79944 /* AirshipCore.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		6E8776A4261BC1E100B03FC0 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				6E9D5759261F6C22009BD6EB /* AirshipCore.framework in Frameworks */,
-				6E8776AC261BC1E100B03FC0 /* AirshipChat.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		6E9373FF2376164600AA9C2A /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				6E21734B237C7FC20084933A /* AirshipCore.framework in Frameworks */,
-				6E937643237618AF00AA9C2A /* CoreLocation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3269,15 +2908,8 @@
 			files = (
 				CC64F0591D8B77E3009CEF27 /* AirshipCore.framework in Frameworks */,
 				6E84548F237E2889007D3B1E /* AirshipAutomation.framework in Frameworks */,
-				6E2E914F238D99F0008488D3 /* AirshipLocation.framework in Frameworks */,
 				45C6913E238DC91900A03C94 /* AirshipExtendedActions.framework in Frameworks */,
 				3C38AE0A2384C1F700EDE9B7 /* AirshipMessageCenter.framework in Frameworks */,
-				3C5264AC20DAEE2B00FCA903 /* CoreData.framework in Frameworks */,
-				992F89871EFD7F8600E4C8FE /* StoreKit.framework in Frameworks */,
-				DF6AD3C01ED8A95B006EB1DA /* CoreLocation.framework in Frameworks */,
-				DF6AD3C61ED8A970006EB1DA /* JavaScriptCore.framework in Frameworks */,
-				DF6AD3C41ED8A969006EB1DA /* UserNotifications.framework in Frameworks */,
-				DF6AD3C21ED8A961006EB1DA /* WebKit.framework in Frameworks */,
 				54DE2901247B2AF059E46862 /* Pods_AirshipTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3286,8 +2918,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				99666E911EDF2E6500BAE46B /* libsqlite3.tbd in Frameworks */,
-				99666E8F1EDF2E5900BAE46B /* libz.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3323,19 +2953,6 @@
 			name = "Recovered References";
 			sourceTree = "<group>";
 		};
-		1B8F1B6623CCBF7C00BEE715 /* AccengageInternal */ = {
-			isa = PBXGroup;
-			children = (
-				872BA2AE23D9EDA800D7C10C /* Accengage.m */,
-				872BA2B023D9EDA800D7C10C /* ACCUserProfile.m */,
-				1B8F1B6723CCBFA200BEE715 /* ACCStubData+Internal.h */,
-				1B8F1B6823CCBFA200BEE715 /* ACCStubData.m */,
-				872BA2B823D9F12E00D7C10C /* ACCDeviceInformationSet+Internal.h */,
-				1B8F1B7023CCBFF300BEE715 /* ACCDeviceInformationSet.m */,
-			);
-			path = AccengageInternal;
-			sourceTree = "<group>";
-		};
 		1BAE376124F5561D0095C6E3 /* Public */ = {
 			isa = PBXGroup;
 			children = (
@@ -3344,30 +2961,6 @@
 				6E27A7D52367AC3200F46B69 /* UAExtendedActionsSDKModule.h */,
 				6E65D53A2396DB3F00AF2D1A /* UAExtendedActionsCoreImport.h */,
 				996A03AB1EF08E1E003424E0 /* UARateAppAction.h */,
-			);
-			path = Public;
-			sourceTree = "<group>";
-		};
-		1BAE376224F556E60095C6E3 /* Public */ = {
-			isa = PBXGroup;
-			children = (
-				6E65D536239632EA00AF2D1A /* UALocationCoreImport.h */,
-				6E21735F237C811D0084933A /* UALocationSDKModule.h */,
-				6E217361237C811E0084933A /* UALocation.h */,
-			);
-			path = Public;
-			sourceTree = "<group>";
-		};
-		1BAE376324F5572D0095C6E3 /* Public */ = {
-			isa = PBXGroup;
-			children = (
-				1BCDE30823A12C430006A319 /* UAAccengageResources.h */,
-				1BB4C016239FB4EB0000559B /* UAAccengagePayload.h */,
-				6E6CC304239A2E8F003D583C /* UAAccengageSDKModule.h */,
-				1BA67C3A23A0FFA800A07324 /* UAAccengageUtils.h */,
-				872BA2AF23D9EDA800D7C10C /* Accengage.h */,
-				872BA2B123D9EDA800D7C10C /* ACCUserProfile.h */,
-				1B8F1B6F23CCBFF300BEE715 /* ACCDeviceInformationSet.h */,
 			);
 			path = Public;
 			sourceTree = "<group>";
@@ -3459,53 +3052,6 @@
 				3CA0E32C237E396100EE76CF /* UAUserData.h */,
 			);
 			path = Public;
-			sourceTree = "<group>";
-		};
-		1BB4C02B239FE5E50000559B /* Tests */ = {
-			isa = PBXGroup;
-			children = (
-				1BB4C02C239FE5E50000559B /* AirshipAccengageTest.m */,
-				873A868B23C344E400AAA0B9 /* AirshipAccengageResourcesTest.m */,
-				873A868E23C49A3700AAA0B9 /* AirshipAccengageUtilsTest.m */,
-				1BB4C02E239FE5E50000559B /* Info.plist */,
-			);
-			path = Tests;
-			sourceTree = "<group>";
-		};
-		1BCDE30323A12BDB0006A319 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				1BCDE30523A12BE80006A319 /* common */,
-				1BCDE30423A12BE30006A319 /* ios */,
-			);
-			name = Resources;
-			sourceTree = "<group>";
-		};
-		1BCDE30423A12BE30006A319 /* ios */ = {
-			isa = PBXGroup;
-			children = (
-				1BCDE30623A12C070006A319 /* UAAccengageNotificationCategories.plist */,
-			);
-			path = ios;
-			sourceTree = "<group>";
-		};
-		1BCDE30523A12BE80006A319 /* common */ = {
-			isa = PBXGroup;
-			children = (
-				1BCDE30C23A12CBA0006A319 /* AirshipAccengage.strings */,
-			);
-			name = common;
-			sourceTree = "<group>";
-		};
-		3C0D06612624EB38002337B0 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				A6031ED126738CE600FFE328 /* ChatMessageDataModel.xcdatamodeld */,
-				6E88ECC3262E92FF00C46A23 /* UAChatViewController.xib */,
-				3C0D06642624EB6C002337B0 /* ChatMessageCell.xib */,
-				6E87BDBF26E038E30005D20D /* UAChatActions.plist */,
-			);
-			path = Resources;
 			sourceTree = "<group>";
 		};
 		3C152F5A24E4B2EC00CF1181 /* Auth */ = {
@@ -3872,11 +3418,8 @@
 			children = (
 				6E43212826EA844E009228AB /* AirshipBasement */,
 				6E93769E23761FFA00AA9C2A /* AirshipCore */,
-				6E6CC2FE239A2E5F003D583C /* AirshipAccengage */,
-				6E7C067C26127557006D0E84 /* AirshipChat */,
 				847BFFF5267CD73A007CD249 /* AirshipPreferenceCenter */,
 				45C6912C238DC7B300A03C94 /* AirshipExtendedActions */,
-				6E9373012376160C00AA9C2A /* AirshipLocation */,
 				3CA0E21A237CCBA600EE76CF /* AirshipDebug */,
 				6E84509C237DFE89007D3B1E /* AirshipAutomation */,
 				3CA0E302237E396100EE76CF /* AirshipMessageCenter */,
@@ -3895,15 +3438,10 @@
 				494DD9571B0EB677009C134E /* AirshipCore.framework */,
 				CC64F0541D8B77E3009CEF27 /* AirshipTests.xctest */,
 				DF6DD6561E7A1EB8000C281A /* AirshipCore.framework */,
-				6E9375602376164600AA9C2A /* AirshipLocation.framework */,
 				3CA0E2AC237CCE2600EE76CF /* AirshipDebug.framework */,
 				6E845377237E0271007D3B1E /* AirshipAutomation.framework */,
 				3CA0E423237E4A7B00EE76CF /* AirshipMessageCenter.framework */,
 				45C6912A238DC79400A03C94 /* AirshipExtendedActions.framework */,
-				1BB4C00E239FB4700000559B /* AirshipAccengage.framework */,
-				1BB4C02A239FE5E50000559B /* AirshipAccengageTests.xctest */,
-				6E7C067B26127557006D0E84 /* AirshipChat.framework */,
-				6E8776A7261BC1E100B03FC0 /* AirshipChatTests.xctest */,
 				847BFFF4267CD739007CD249 /* AirshipPreferenceCenter.framework */,
 				847BFFFC267CD73A007CD249 /* AirshipPreferenceCenterTests.xctest */,
 				6E43204826EA814F009228AB /* AirshipBasement.framework */,
@@ -4396,7 +3934,6 @@
 				6E43212D26EA84A4009228AB /* UAJavaScriptEnvironmentProtocol.h */,
 				6E43213426EA84A4009228AB /* UAKeychainUtils.h */,
 				6E43216C26EA84BE009228AB /* UAKeychainUtils.m */,
-				6E43213126EA84A4009228AB /* UALocationProvider.h */,
 				6E43213726EA84A4009228AB /* UANativeBridgeExtensionDelegate.h */,
 				6E43212E26EA84A4009228AB /* UAPush.h */,
 				6E43213B26EA84A5009228AB /* UASDKModule.h */,
@@ -4466,33 +4003,6 @@
 			path = data;
 			sourceTree = "<group>";
 		};
-		6E6CC2FE239A2E5F003D583C /* AirshipAccengage */ = {
-			isa = PBXGroup;
-			children = (
-				1BCDE30323A12BDB0006A319 /* Resources */,
-				6E6CC2FF239A2E8F003D583C /* info.plist */,
-				1BB4C02B239FE5E50000559B /* Tests */,
-				6E6CC300239A2E8F003D583C /* Source */,
-			);
-			path = AirshipAccengage;
-			sourceTree = "<group>";
-		};
-		6E6CC300239A2E8F003D583C /* Source */ = {
-			isa = PBXGroup;
-			children = (
-				6E6CC305239A2E8F003D583C /* AirshipAccengage.h */,
-				1BAE376324F5572D0095C6E3 /* Public */,
-				1B8F1B6623CCBF7C00BEE715 /* AccengageInternal */,
-				1BCDE30923A12C430006A319 /* UAAccengageResources.m */,
-				1BB4C017239FB4EB0000559B /* UAAccengagePayload.m */,
-				6E6CC301239A2E8F003D583C /* UAAccengageSDKModule.m */,
-				6E6CC302239A2E8F003D583C /* UAAccengage.m */,
-				6E6CC303239A2E8F003D583C /* UAAccengage+Internal.h */,
-				1BA67C3B23A0FFA800A07324 /* UAAccengageUtils.m */,
-			);
-			path = Source;
-			sourceTree = "<group>";
-		};
 		6E6CC37C23A3F9B4003D583C /* ReceivedPushes */ = {
 			isa = PBXGroup;
 			children = (
@@ -4513,43 +4023,6 @@
 				6E8A54DA23639363004AE2A0 /* UAInAppAudienceManager+Internal.h */,
 			);
 			name = Audience;
-			sourceTree = "<group>";
-		};
-		6E7C067C26127557006D0E84 /* AirshipChat */ = {
-			isa = PBXGroup;
-			children = (
-				6E8776A2261BC15D00B03FC0 /* Tests */,
-				3C0D06612624EB38002337B0 /* Resources */,
-				6E7C0691261275C3006D0E84 /* Source */,
-				6E7C067E26127557006D0E84 /* Info.plist */,
-			);
-			path = AirshipChat;
-			sourceTree = "<group>";
-		};
-		6E7C0691261275C3006D0E84 /* Source */ = {
-			isa = PBXGroup;
-			children = (
-				A6F6725F26E10C7A008C69C3 /* ChatIncomingMessage.swift */,
-				3C0D067C2624EBD3002337B0 /* ChatMessageCell.swift */,
-				3C0D06792624EBD2002337B0 /* ChatViewController.swift */,
-				3C0D067A2624EBD3002337B0 /* ChatResources.swift */,
-				6E9D5472261E0D35009BD6EB /* WebSocket */,
-				6E9D53C8261D2EC2009BD6EB /* HTTP */,
-				6E877780261CF02C00B03FC0 /* ChatAPI */,
-				6E877733261CEC2400B03FC0 /* Data */,
-				6E7C067D26127557006D0E84 /* AirshipChat.h */,
-				6E7C069F261275F6006D0E84 /* ChatSDKModule.swift */,
-				6E7C06AE26127606006D0E84 /* Chat.swift */,
-				6E7C07CE26139B4A006D0E84 /* Conversation.swift */,
-				6E7C07DD26139B58006D0E84 /* ChatMessage.swift */,
-				6E9D55C2261E3A92009BD6EB /* AirshipChannel.swift */,
-				6E9D57C0261F99BF009BD6EB /* ChatConfig.swift */,
-				6E9D580A261FC344009BD6EB /* OpenChatAction.swift */,
-				E8A47CD12735D26D001B8717 /* SendChatAction.swift */,
-				E8A58B37268FDF12005079F3 /* ChatRouting.swift */,
-				3C9AC93F262F9AC300D6E346 /* ChatStyle.swift */,
-			);
-			path = Source;
 			sourceTree = "<group>";
 		};
 		6E84509C237DFE89007D3B1E /* AirshipAutomation */ = {
@@ -4861,43 +4334,6 @@
 			name = Legacy;
 			sourceTree = "<group>";
 		};
-		6E8776A2261BC15D00B03FC0 /* Tests */ = {
-			isa = PBXGroup;
-			children = (
-				6E9D549D261E1385009BD6EB /* ChatAPI */,
-				6E9D53F6261D6AFE009BD6EB /* Mocks */,
-				6E8776AB261BC1E100B03FC0 /* Info.plist */,
-				6E9D553A261E3182009BD6EB /* ConversationTests.swift */,
-				6E9D58522620A291009BD6EB /* OpenChatActionTests.swift */,
-				6E9D587F2620A2B5009BD6EB /* AirshipChatTests.swift */,
-				E8A47CD32739DEBA001B8717 /* SendChatActionTests.swift */,
-			);
-			path = Tests;
-			sourceTree = "<group>";
-		};
-		6E877733261CEC2400B03FC0 /* Data */ = {
-			isa = PBXGroup;
-			children = (
-				6E7C07F926139C02006D0E84 /* ChatDAOProtocol.swift */,
-				6E877760261CED1A00B03FC0 /* PendingChatMessageData.swift */,
-				6E877770261CED2C00B03FC0 /* ChatMessageData.swift */,
-				6E9D56D3261E6C6A009BD6EB /* ChatDAO.swift */,
-			);
-			path = Data;
-			sourceTree = "<group>";
-		};
-		6E877780261CF02C00B03FC0 /* ChatAPI */ = {
-			isa = PBXGroup;
-			children = (
-				6E7C080826139F74006D0E84 /* ChatAPIClientProtocol.swift */,
-				6E7C07BF26139223006D0E84 /* ChatConnectionProtocol.swift */,
-				6E877781261CF0A400B03FC0 /* ChatResponse.swift */,
-				6E9D554A261E31D2009BD6EB /* ChatConnection.swift */,
-				6E9D5594261E35C1009BD6EB /* ChatAPIClient.swift */,
-			);
-			path = ChatAPI;
-			sourceTree = "<group>";
-		};
 		6E87BD9B26DD78B40005D20D /* Integration */ = {
 			isa = PBXGroup;
 			children = (
@@ -4974,28 +4410,6 @@
 			path = Source;
 			sourceTree = "<group>";
 		};
-		6E9373012376160C00AA9C2A /* AirshipLocation */ = {
-			isa = PBXGroup;
-			children = (
-				6E93762A237616EF00AA9C2A /* Info.plist */,
-				6E9373022376162B00AA9C2A /* Source */,
-				CC40D87A1D8C703E00BABD4F /* Frameworks */,
-			);
-			path = AirshipLocation;
-			sourceTree = "<group>";
-		};
-		6E9373022376162B00AA9C2A /* Source */ = {
-			isa = PBXGroup;
-			children = (
-				1B281ED824F6AA4100FDC188 /* AirshipLocation.h */,
-				1BAE376224F556E60095C6E3 /* Public */,
-				6E21735D237C811D0084933A /* UALocationSDKModule.m */,
-				6E21735E237C811D0084933A /* UALocation.m */,
-				6E217360237C811E0084933A /* UALocation+Internal.h */,
-			);
-			path = Source;
-			sourceTree = "<group>";
-		};
 		6E93769E23761FFA00AA9C2A /* AirshipCore */ = {
 			isa = PBXGroup;
 			children = (
@@ -5005,53 +4419,6 @@
 				CC64F0551D8B77E3009CEF27 /* Tests */,
 			);
 			path = AirshipCore;
-			sourceTree = "<group>";
-		};
-		6E9D53C8261D2EC2009BD6EB /* HTTP */ = {
-			isa = PBXGroup;
-			children = (
-				6E9D53C9261D2ED6009BD6EB /* HTTPRequestSession.swift */,
-			);
-			path = HTTP;
-			sourceTree = "<group>";
-		};
-		6E9D53F6261D6AFE009BD6EB /* Mocks */ = {
-			isa = PBXGroup;
-			children = (
-				6E9D53F7261D6B0F009BD6EB /* MockHTTPRequestSession.swift */,
-				6E9D54CC261E14BC009BD6EB /* MockWebSocket.swift */,
-				6E9D54EA261E158B009BD6EB /* MockWebSocketFactory.swift */,
-				6E9D5584261E33AC009BD6EB /* MockChatConnection.swift */,
-				6E9D55A4261E39BE009BD6EB /* MockChatAPIClient.swift */,
-				6E9D55E0261E3B21009BD6EB /* MockChannel.swift */,
-				6E9D55F0261E3B96009BD6EB /* MockAppStateTracker.swift */,
-				6E9D57DE261F9EC0009BD6EB /* MockChatConfig.swift */,
-				6E9D588F2620A7A8009BD6EB /* MockConversation.swift */,
-				6E9D58AD2620AB36009BD6EB /* MockAirshipChatOpenDelegate.swift */,
-				6EFBDEE0262DF71C008380AC /* MockDispatcher.swift */,
-				6E88EDB1262F7C0B00C46A23 /* MockChatDAO.swift */,
-			);
-			path = Mocks;
-			sourceTree = "<group>";
-		};
-		6E9D5472261E0D35009BD6EB /* WebSocket */ = {
-			isa = PBXGroup;
-			children = (
-				6E9D5462261E0CD6009BD6EB /* WebSocketFactory.swift */,
-				6E9D5452261E0C7E009BD6EB /* WebSocket.swift */,
-				6E9D5432261E0C49009BD6EB /* WebSocketProtocol.swift */,
-				6E9D5442261E0C62009BD6EB /* WebSocketFactoryProtocol.swift */,
-			);
-			path = WebSocket;
-			sourceTree = "<group>";
-		};
-		6E9D549D261E1385009BD6EB /* ChatAPI */ = {
-			isa = PBXGroup;
-			children = (
-				6E8776F8261BC55100B03FC0 /* ChatAPIClientTests.swift */,
-				6E9D54AD261E13B5009BD6EB /* ChatConnectionTests.swift */,
-			);
-			path = ChatAPI;
 			sourceTree = "<group>";
 		};
 		6EA42D9C2735F99000B2A532 /* AirshipLayout */ = {
@@ -5453,25 +4820,6 @@
 			name = Interactive;
 			sourceTree = "<group>";
 		};
-		CC04F20C1DCAB57200B4842D /* Location */ = {
-			isa = PBXGroup;
-			children = (
-				1B0B43BA243389D20051CCF0 /* UALocationTest.m */,
-				CC04F20D1DCAB58B00B4842D /* Events */,
-			);
-			name = Location;
-			sourceTree = "<group>";
-		};
-		CC04F20D1DCAB58B00B4842D /* Events */ = {
-			isa = PBXGroup;
-			children = (
-				CC64F0B71D8B781C009CEF27 /* UAProximityRegionTest.m */,
-				CC64F0871D8B781C009CEF27 /* UACircularRegionTest.m */,
-				CC64F0B91D8B781C009CEF27 /* UARegionEventTest.m */,
-			);
-			name = Events;
-			sourceTree = "<group>";
-		};
 		CC04F20E1DCAB5C600B4842D /* ActionsFramework */ = {
 			isa = PBXGroup;
 			children = (
@@ -5598,6 +4946,9 @@
 		CC04F2171DCAB75E00B4842D /* Events */ = {
 			isa = PBXGroup;
 			children = (
+				CC64F0B71D8B781C009CEF27 /* UAProximityRegionTest.m */,
+				CC64F0871D8B781C009CEF27 /* UACircularRegionTest.m */,
+				CC64F0B91D8B781C009CEF27 /* UARegionEventTest.m */,
 				CC04F2181DCAB78500B4842D /* Custom Events */,
 				CC64F0A21D8B781C009CEF27 /* UAInteractiveNotificationEventTest.m */,
 				CC64F0A11D8B781C009CEF27 /* UAInstallAttributionEventTest.m */,
@@ -5647,27 +4998,6 @@
 			name = NativeBridge;
 			sourceTree = "<group>";
 		};
-		CC40D87A1D8C703E00BABD4F /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				6E937642237618AF00AA9C2A /* CoreLocation.framework */,
-				3C5264AB20DAEE2A00FCA903 /* CoreData.framework */,
-				992F89861EFD7F8600E4C8FE /* StoreKit.framework */,
-				99666E901EDF2E6500BAE46B /* libsqlite3.tbd */,
-				99666E8E1EDF2E5900BAE46B /* libz.tbd */,
-				DF6AD3C51ED8A970006EB1DA /* JavaScriptCore.framework */,
-				DF6AD3C31ED8A969006EB1DA /* UserNotifications.framework */,
-				DF6AD3C11ED8A961006EB1DA /* WebKit.framework */,
-				DF6AD3BF1ED8A95B006EB1DA /* CoreLocation.framework */,
-				CC04F1C41DC27E6C00B4842D /* libsqlite3.tbd */,
-				CC944EC71DB161AE00C42269 /* libz.tbd */,
-				CC40D87B1D8C703E00BABD4F /* libOCMock.a */,
-				8F98742CB99EDEDE99A230C2 /* Pods_AirshipKitTests.framework */,
-			);
-			name = Frameworks;
-			path = ../;
-			sourceTree = "<group>";
-		};
 		CC64F0551D8B77E3009CEF27 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
@@ -5694,7 +5024,6 @@
 				CC04F1FF1DCAB22E00B4842D /* Automation */,
 				CC04F2091DCAB4FD00B4842D /* Channel */,
 				CC04F2061DCAB4C000B4842D /* Push */,
-				CC04F20C1DCAB57200B4842D /* Location */,
 				CC04F20E1DCAB5C600B4842D /* ActionsFramework */,
 				CC04F2121DCAB65800B4842D /* MessageCenter */,
 				CC04F2131DCAB66900B4842D /* InAppMessaging */,
@@ -5902,7 +5231,6 @@
 				6E43216426EA84A5009228AB /* UAAction.h in Headers */,
 				6E43215226EA84A5009228AB /* AirshipBasementLib.h in Headers */,
 				6E43215E26EA84A5009228AB /* UAURLAllowListScope.h in Headers */,
-				6E43214E26EA84A5009228AB /* UALocationProvider.h in Headers */,
 				6EF1934828380BE1005F192A /* UALegacyLoggingBridge.h in Headers */,
 				6E43215026EA84A5009228AB /* UAJavaScriptCommandDelegate.h in Headers */,
 				6E43216226EA84A5009228AB /* UASDKModule.h in Headers */,
@@ -5936,7 +5264,6 @@
 				6E43216526EA84A5009228AB /* UAAction.h in Headers */,
 				6E43215326EA84A5009228AB /* AirshipBasementLib.h in Headers */,
 				6E43215F26EA84A5009228AB /* UAURLAllowListScope.h in Headers */,
-				6E43214F26EA84A5009228AB /* UALocationProvider.h in Headers */,
 				6EF1934928380BE1005F192A /* UALegacyLoggingBridge.h in Headers */,
 				6E43215126EA84A5009228AB /* UAJavaScriptCommandDelegate.h in Headers */,
 				6E43216326EA84A5009228AB /* UASDKModule.h in Headers */,
@@ -5961,32 +5288,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				6E5C32D627C9A54A005B2DDE /* AirshipRelease_tvOS.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		6E6CC31C239A2EA9003D583C /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				1B8F1B6923CCBFA200BEE715 /* ACCStubData+Internal.h in Headers */,
-				6E6CC32F239A2F19003D583C /* UAAccengageSDKModule.h in Headers */,
-				872BA2BA23D9F12E00D7C10C /* ACCDeviceInformationSet+Internal.h in Headers */,
-				872BA2B323D9EDA900D7C10C /* Accengage.h in Headers */,
-				1BCDE30A23A12C430006A319 /* UAAccengageResources.h in Headers */,
-				6E6CC330239A2F19003D583C /* AirshipAccengage.h in Headers */,
-				1BB4C018239FB4EC0000559B /* UAAccengagePayload.h in Headers */,
-				1B8F1B7123CCBFF300BEE715 /* ACCDeviceInformationSet.h in Headers */,
-				872BA2B523D9EDA900D7C10C /* ACCUserProfile.h in Headers */,
-				6E6CC32E239A2F18003D583C /* UAAccengage+Internal.h in Headers */,
-				1BA67C3C23A0FFA800A07324 /* UAAccengageUtils.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		6E7C067626127557006D0E84 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				6E7C067F26127557006D0E84 /* AirshipChat.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6129,18 +5430,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		6E9374022376164600AA9C2A /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				6E217364237C811E0084933A /* UALocationSDKModule.h in Headers */,
-				1B281ED924F6AA4100FDC188 /* AirshipLocation.h in Headers */,
-				6E65D537239632EF00AF2D1A /* UALocationCoreImport.h in Headers */,
-				6E217365237C811E0084933A /* UALocation+Internal.h in Headers */,
-				6E217366237C811E0084933A /* UALocation.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		847BFFEF267CD739007CD249 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -6181,7 +5470,6 @@
 				A6722AE8281AA05B0033F54D /* UANativeBridgeExtensionDelegate.h in Headers */,
 				A6722AE6281AA05B0033F54D /* UAKeychainUtils.h in Headers */,
 				A6722AEA281AA05B0033F54D /* UASDKModule.h in Headers */,
-				A6722AE7281AA05B0033F54D /* UALocationProvider.h in Headers */,
 				A6722AEC281AA05C0033F54D /* UAURLAllowListScope.h in Headers */,
 				A684358E285B67E600FB6394 /* UALegacyLoggingBridge.h in Headers */,
 				A6722AE5281AA05B0033F54D /* UAJavaScriptEnvironmentProtocol.h in Headers */,
@@ -6202,27 +5490,6 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		1BB4C029239FE5E50000559B /* AirshipAccengageTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 1BB4C032239FE5E50000559B /* Build configuration list for PBXNativeTarget "AirshipAccengageTests" */;
-			buildPhases = (
-				2BA1F13F965F119E1EB1A822 /* [CP] Check Pods Manifest.lock */,
-				1BB4C026239FE5E50000559B /* Sources */,
-				1BB4C027239FE5E50000559B /* Frameworks */,
-				1BB4C028239FE5E50000559B /* Resources */,
-				CFE9E8AFDCEC030DA94DE109 /* [CP] Embed Pods Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				1BB4C03A239FE76B0000559B /* PBXTargetDependency */,
-				1BB4C031239FE5E50000559B /* PBXTargetDependency */,
-			);
-			name = AirshipAccengageTests;
-			productName = AirshipAccengageTests;
-			productReference = 1BB4C02A239FE5E50000559B /* AirshipAccengageTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 		3CA0E298237CCE2600EE76CF /* AirshipDebug */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3CA0E2A9237CCE2600EE76CF /* Build configuration list for PBXNativeTarget "AirshipDebug" */;
@@ -6235,7 +5502,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				6E65D5052396079800AF2D1A /* PBXTargetDependency */,
 				3CA0E2DA237CD59100EE76CF /* PBXTargetDependency */,
 				3C39D3082384C8B6003C50D4 /* PBXTargetDependency */,
 				6E845491237E2D49007D3B1E /* PBXTargetDependency */,
@@ -6355,13 +5621,10 @@
 			);
 			dependencies = (
 				6E5C32DF27C9AD40005B2DDE /* PBXTargetDependency */,
-				6E5C32BD27C9A2E5005B2DDE /* PBXTargetDependency */,
 				6E5C32BF27C9A2E5005B2DDE /* PBXTargetDependency */,
 				6E5C32C127C9A2E5005B2DDE /* PBXTargetDependency */,
-				6E5C32C327C9A2E5005B2DDE /* PBXTargetDependency */,
 				6E5C32C527C9A2E5005B2DDE /* PBXTargetDependency */,
 				6E5C32C727C9A2E5005B2DDE /* PBXTargetDependency */,
-				6E5C32C927C9A2E5005B2DDE /* PBXTargetDependency */,
 				6E5C32CB27C9A2E5005B2DDE /* PBXTargetDependency */,
 				6E5C32CD27C9A2E5005B2DDE /* PBXTargetDependency */,
 			);
@@ -6390,44 +5653,6 @@
 			productReference = 6E5C32D327C9A54A005B2DDE /* AirshipRelease_tvOS.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		6E6CC310239A2EA9003D583C /* AirshipAccengage */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 6E6CC329239A2EA9003D583C /* Build configuration list for PBXNativeTarget "AirshipAccengage" */;
-			buildPhases = (
-				6E6CC314239A2EA9003D583C /* Sources */,
-				6E6CC31A239A2EA9003D583C /* Frameworks */,
-				6E6CC31C239A2EA9003D583C /* Headers */,
-				6E6CC326239A2EA9003D583C /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				6E6CC311239A2EA9003D583C /* PBXTargetDependency */,
-			);
-			name = AirshipAccengage;
-			productName = AirshipKit;
-			productReference = 1BB4C00E239FB4700000559B /* AirshipAccengage.framework */;
-			productType = "com.apple.product-type.framework";
-		};
-		6E7C067A26127557006D0E84 /* AirshipChat */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 6E7C068026127557006D0E84 /* Build configuration list for PBXNativeTarget "AirshipChat" */;
-			buildPhases = (
-				6E7C067626127557006D0E84 /* Headers */,
-				6E7C067726127557006D0E84 /* Sources */,
-				6E7C067826127557006D0E84 /* Frameworks */,
-				6E7C067926127557006D0E84 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				6E7C070626128035006D0E84 /* PBXTargetDependency */,
-			);
-			name = AirshipChat;
-			productName = AirshipChat;
-			productReference = 6E7C067B26127557006D0E84 /* AirshipChat.framework */;
-			productType = "com.apple.product-type.framework";
-		};
 		6E8450FD237E0271007D3B1E /* AirshipAutomation */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6E845374237E0271007D3B1E /* Build configuration list for PBXNativeTarget "AirshipAutomation" */;
@@ -6446,44 +5671,6 @@
 			name = AirshipAutomation;
 			productName = AirshipCore;
 			productReference = 6E845377237E0271007D3B1E /* AirshipAutomation.framework */;
-			productType = "com.apple.product-type.framework";
-		};
-		6E8776A6261BC1E100B03FC0 /* AirshipChatTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 6E8776AF261BC1E100B03FC0 /* Build configuration list for PBXNativeTarget "AirshipChatTests" */;
-			buildPhases = (
-				6E8776A3261BC1E100B03FC0 /* Sources */,
-				6E8776A4261BC1E100B03FC0 /* Frameworks */,
-				6E8776A5261BC1E100B03FC0 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				6E9D574A261F6C0D009BD6EB /* PBXTargetDependency */,
-				6E8776AE261BC1E100B03FC0 /* PBXTargetDependency */,
-			);
-			name = AirshipChatTests;
-			productName = AirshipChatTests;
-			productReference = 6E8776A7261BC1E100B03FC0 /* AirshipChatTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		6E9373032376164600AA9C2A /* AirshipLocation */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 6E93755D2376164600AA9C2A /* Build configuration list for PBXNativeTarget "AirshipLocation" */;
-			buildPhases = (
-				6E9373072376164600AA9C2A /* Sources */,
-				6E9373FF2376164600AA9C2A /* Frameworks */,
-				6E9374022376164600AA9C2A /* Headers */,
-				6E93755A2376164600AA9C2A /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				6E9376262376167B00AA9C2A /* PBXTargetDependency */,
-			);
-			name = AirshipLocation;
-			productName = AirshipKit;
-			productReference = 6E9375602376164600AA9C2A /* AirshipLocation.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		847BFFF3267CD739007CD249 /* AirshipPreferenceCenter */ = {
@@ -6574,7 +5761,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				6E2E914E238D98BE008488D3 /* PBXTargetDependency */,
 				3C38AE092384C1E700EDE9B7 /* PBXTargetDependency */,
 				6E84548E237E27D1007D3B1E /* PBXTargetDependency */,
 				CC64F05B1D8B77E3009CEF27 /* PBXTargetDependency */,
@@ -6614,11 +5800,6 @@
 				LastUpgradeCheck = 1250;
 				ORGANIZATIONNAME = "Urban Airship";
 				TargetAttributes = {
-					1BB4C029239FE5E50000559B = {
-						CreatedOnToolsVersion = 11.2.1;
-						DevelopmentTeam = PGJV57GD94;
-						ProvisioningStyle = Automatic;
-					};
 					3CA0E298237CCE2600EE76CF = {
 						LastSwiftMigration = 1140;
 					};
@@ -6633,13 +5814,6 @@
 					};
 					6E5C32D227C9A54A005B2DDE = {
 						CreatedOnToolsVersion = 13.0;
-					};
-					6E7C067A26127557006D0E84 = {
-						CreatedOnToolsVersion = 12.4;
-						LastSwiftMigration = 1240;
-					};
-					6E8776A6261BC1E100B03FC0 = {
-						CreatedOnToolsVersion = 12.4;
 					};
 					847BFFF3267CD739007CD249 = {
 						CreatedOnToolsVersion = 12.5;
@@ -6731,36 +5905,24 @@
 			targets = (
 				6E431F6B26EA814F009228AB /* AirshipBasement */,
 				6E43204A26EA8199009228AB /* AirshipBasement tvOS */,
+				A6722ABE281A9F460033F54D /* AirshipBasement watchOS */,
 				494DD9561B0EB677009C134E /* AirshipCore */,
 				DF6DD4FE1E7A1EB8000C281A /* AirshipCore tvOS */,
+				A67229B128199CEF0033F54D /* AirshipCore watchOS */,
 				CC64F0531D8B77E3009CEF27 /* AirshipTests */,
-				6E9373032376164600AA9C2A /* AirshipLocation */,
 				3CA0E298237CCE2600EE76CF /* AirshipDebug */,
 				6E8450FD237E0271007D3B1E /* AirshipAutomation */,
 				3CA0E346237E4A7B00EE76CF /* AirshipMessageCenter */,
 				45C69118238DC79400A03C94 /* AirshipExtendedActions */,
-				6E6CC310239A2EA9003D583C /* AirshipAccengage */,
-				1BB4C029239FE5E50000559B /* AirshipAccengageTests */,
-				6E7C067A26127557006D0E84 /* AirshipChat */,
-				6E8776A6261BC1E100B03FC0 /* AirshipChatTests */,
 				847BFFF3267CD739007CD249 /* AirshipPreferenceCenter */,
 				847BFFFB267CD73A007CD249 /* AirshipPreferenceCenterTests */,
 				6E5C32B427C9A2C9005B2DDE /* AirshipRelease */,
 				6E5C32D227C9A54A005B2DDE /* AirshipRelease tvOS */,
-				A67229B128199CEF0033F54D /* AirshipCore watchOS */,
-				A6722ABE281A9F460033F54D /* AirshipBasement watchOS */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		1BB4C028239FE5E50000559B /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		3CA0E2A8237CCE2600EE76CF /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -6837,25 +5999,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		6E6CC326239A2EA9003D583C /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				1BCDE30E23A12CBA0006A319 /* AirshipAccengage.strings in Resources */,
-				1BCDE30723A12C070006A319 /* UAAccengageNotificationCategories.plist in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		6E7C067926127557006D0E84 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				6E88ECC4262E92FF00C46A23 /* UAChatViewController.xib in Resources */,
-				6E87BDC026E038E30005D20D /* UAChatActions.plist in Resources */,
-				3C0D066A2624EB6C002337B0 /* ChatMessageCell.xib in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		6E845353237E0271007D3B1E /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -6869,20 +6012,6 @@
 				6E845486237E2320007D3B1E /* UAAutomationActions.plist in Resources */,
 				6E845488237E2320007D3B1E /* UAInAppMessageResizableViewController.xib in Resources */,
 				6E845484237E2320007D3B1E /* UAInAppMessageButtonView.xib in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		6E8776A5261BC1E100B03FC0 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		6E93755A2376164600AA9C2A /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6968,28 +6097,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		2BA1F13F965F119E1EB1A822 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-AirshipAccengageTests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
 		3CA0E349237E4A7B00EE76CF /* Generate AirshipMessageCenterLib.h */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -7098,24 +6205,6 @@
 			shellPath = /bin/sh;
 			shellScript = "\"$SRCROOT\"/AirshipBasement/generate_header_imports.sh Public \n";
 		};
-		CFE9E8AFDCEC030DA94DE109 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-AirshipAccengageTests/Pods-AirshipAccengageTests-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/OCMock/OCMock.framework",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OCMock.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-AirshipAccengageTests/Pods-AirshipAccengageTests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		D3775F1A08A9BD2223C1AC9E /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -7157,16 +6246,6 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		1BB4C026239FE5E50000559B /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				873A868D23C493A900AAA0B9 /* AirshipAccengageResourcesTest.m in Sources */,
-				873A869023C49A4300AAA0B9 /* AirshipAccengageUtilsTest.m in Sources */,
-				1BB4C02D239FE5E50000559B /* AirshipAccengageTest.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		3CA0E29C237CCE2600EE76CF /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -7597,58 +6676,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		6E6CC314239A2EA9003D583C /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				1BCDE30B23A12C430006A319 /* UAAccengageResources.m in Sources */,
-				6E6CC331239A2F26003D583C /* UAAccengageSDKModule.m in Sources */,
-				1B8F1B6A23CCBFA200BEE715 /* ACCStubData.m in Sources */,
-				1BB4C019239FB4EC0000559B /* UAAccengagePayload.m in Sources */,
-				872BA2B423D9EDA900D7C10C /* ACCUserProfile.m in Sources */,
-				872BA2B223D9EDA900D7C10C /* Accengage.m in Sources */,
-				1B8F1B7223CCBFF300BEE715 /* ACCDeviceInformationSet.m in Sources */,
-				1BA67C3D23A0FFA800A07324 /* UAAccengageUtils.m in Sources */,
-				6E6CC332239A2F26003D583C /* UAAccengage.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		6E7C067726127557006D0E84 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				6E9D5453261E0C7E009BD6EB /* WebSocket.swift in Sources */,
-				6E9D53CA261D2ED6009BD6EB /* HTTPRequestSession.swift in Sources */,
-				E8A47CD22735D26D001B8717 /* SendChatAction.swift in Sources */,
-				6E9D5463261E0CD6009BD6EB /* WebSocketFactory.swift in Sources */,
-				6E7C06AF26127606006D0E84 /* Chat.swift in Sources */,
-				3C9AC940262F9AC300D6E346 /* ChatStyle.swift in Sources */,
-				6E7C07FA26139C02006D0E84 /* ChatDAOProtocol.swift in Sources */,
-				6E7C07CF26139B4A006D0E84 /* Conversation.swift in Sources */,
-				6E7C07DE26139B58006D0E84 /* ChatMessage.swift in Sources */,
-				E8A58B38268FDF12005079F3 /* ChatRouting.swift in Sources */,
-				6E877761261CED1A00B03FC0 /* PendingChatMessageData.swift in Sources */,
-				A6031ED326738CE600FFE328 /* ChatMessageDataModel.xcdatamodeld in Sources */,
-				6E9D5595261E35C1009BD6EB /* ChatAPIClient.swift in Sources */,
-				6E877782261CF0A400B03FC0 /* ChatResponse.swift in Sources */,
-				6E7C06A0261275F6006D0E84 /* ChatSDKModule.swift in Sources */,
-				6E9D56D4261E6C6A009BD6EB /* ChatDAO.swift in Sources */,
-				6E9D5433261E0C49009BD6EB /* WebSocketProtocol.swift in Sources */,
-				6E9D5443261E0C62009BD6EB /* WebSocketFactoryProtocol.swift in Sources */,
-				A6F6726026E10C7A008C69C3 /* ChatIncomingMessage.swift in Sources */,
-				6E9D580B261FC344009BD6EB /* OpenChatAction.swift in Sources */,
-				3C0D067E2624EBD3002337B0 /* ChatViewController.swift in Sources */,
-				6E9D554B261E31D2009BD6EB /* ChatConnection.swift in Sources */,
-				3C0D06842624EBD3002337B0 /* ChatMessageCell.swift in Sources */,
-				6E9D57C1261F99BF009BD6EB /* ChatConfig.swift in Sources */,
-				6E7C07C026139223006D0E84 /* ChatConnectionProtocol.swift in Sources */,
-				6E7C080926139F74006D0E84 /* ChatAPIClientProtocol.swift in Sources */,
-				3C0D06802624EBD3002337B0 /* ChatResources.swift in Sources */,
-				6E9D55C3261E3A92009BD6EB /* AirshipChannel.swift in Sources */,
-				6E877771261CED2C00B03FC0 /* ChatMessageData.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		6E8450FF237E0271007D3B1E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -7755,40 +6782,6 @@
 				6E845442237E0575007D3B1E /* UACancelSchedulesAction.m in Sources */,
 				6E845443237E0575007D3B1E /* UAScheduleAction.m in Sources */,
 				6E845444237E0575007D3B1E /* UAAutomationSDKModule.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		6E8776A3261BC1E100B03FC0 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				6E9D5423261D6B42009BD6EB /* MockHTTPRequestSession.swift in Sources */,
-				6E9D5585261E33AC009BD6EB /* MockChatConnection.swift in Sources */,
-				6E9D560E261E3C66009BD6EB /* ConversationTests.swift in Sources */,
-				6E9D58BD2620AB5F009BD6EB /* MockAirshipChatOpenDelegate.swift in Sources */,
-				6E9D55A5261E39BE009BD6EB /* MockChatAPIClient.swift in Sources */,
-				6EFBDEE1262DF71C008380AC /* MockDispatcher.swift in Sources */,
-				6E9D54CD261E14BC009BD6EB /* MockWebSocket.swift in Sources */,
-				E8A47CD52739E105001B8717 /* SendChatActionTests.swift in Sources */,
-				6E8776F9261BC55100B03FC0 /* ChatAPIClientTests.swift in Sources */,
-				6E9D55E1261E3B21009BD6EB /* MockChannel.swift in Sources */,
-				6E88EDB2262F7C0B00C46A23 /* MockChatDAO.swift in Sources */,
-				6E9D58802620A2B5009BD6EB /* AirshipChatTests.swift in Sources */,
-				6E9D58702620A29C009BD6EB /* OpenChatActionTests.swift in Sources */,
-				6E9D58902620A7A8009BD6EB /* MockConversation.swift in Sources */,
-				6E9D54EB261E158B009BD6EB /* MockWebSocketFactory.swift in Sources */,
-				6E9D55F1261E3B96009BD6EB /* MockAppStateTracker.swift in Sources */,
-				6E9D57DF261F9EC0009BD6EB /* MockChatConfig.swift in Sources */,
-				6E9D54BD261E13BB009BD6EB /* ChatConnectionTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		6E9373072376164600AA9C2A /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				6E217363237C811E0084933A /* UALocation.m in Sources */,
-				6E217362237C811E0084933A /* UALocationSDKModule.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8136,7 +7129,6 @@
 				CC64F1141D8B781C009CEF27 /* UAJavaScriptEnvironmentTest.m in Sources */,
 				6E92ECA7284AC1120038802D /* EnableFeatureActionTest.swift in Sources */,
 				459D40532092460D00C40E2D /* UAInAppMessageModalStyleTest.m in Sources */,
-				1B0B43BB243389D20051CCF0 /* UALocationTest.m in Sources */,
 				CC944EF91DB80E0C00C42269 /* UARequestSessionTest.m in Sources */,
 				450F82B92225E65F007B5B10 /* UARemoteDataManagerTest.m in Sources */,
 				6E6EF9E7270625C400D30C35 /* EventTest.swift in Sources */,
@@ -8590,16 +7582,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		1BB4C031239FE5E50000559B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 6E6CC310239A2EA9003D583C /* AirshipAccengage */;
-			targetProxy = 1BB4C030239FE5E50000559B /* PBXContainerItemProxy */;
-		};
-		1BB4C03A239FE76B0000559B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 494DD9561B0EB677009C134E /* AirshipCore */;
-			targetProxy = 1BB4C039239FE76B0000559B /* PBXContainerItemProxy */;
-		};
 		3C38AE092384C1E700EDE9B7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 3CA0E346237E4A7B00EE76CF /* AirshipMessageCenter */;
@@ -8625,11 +7607,6 @@
 			target = 494DD9561B0EB677009C134E /* AirshipCore */;
 			targetProxy = 45C6911A238DC79400A03C94 /* PBXContainerItemProxy */;
 		};
-		6E2E914E238D98BE008488D3 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 6E9373032376164600AA9C2A /* AirshipLocation */;
-			targetProxy = 6E2E914D238D98BE008488D3 /* PBXContainerItemProxy */;
-		};
 		6E43218B26EA891F009228AB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 6E431F6B26EA814F009228AB /* AirshipBasement */;
@@ -8639,11 +7616,6 @@
 			isa = PBXTargetDependency;
 			target = 6E43204A26EA8199009228AB /* AirshipBasement tvOS */;
 			targetProxy = 6E43219B26EAA1A8009228AB /* PBXContainerItemProxy */;
-		};
-		6E5C32BD27C9A2E5005B2DDE /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 6E6CC310239A2EA9003D583C /* AirshipAccengage */;
-			targetProxy = 6E5C32BC27C9A2E5005B2DDE /* PBXContainerItemProxy */;
 		};
 		6E5C32BF27C9A2E5005B2DDE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -8655,11 +7627,6 @@
 			target = 6E431F6B26EA814F009228AB /* AirshipBasement */;
 			targetProxy = 6E5C32C027C9A2E5005B2DDE /* PBXContainerItemProxy */;
 		};
-		6E5C32C327C9A2E5005B2DDE /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 6E7C067A26127557006D0E84 /* AirshipChat */;
-			targetProxy = 6E5C32C227C9A2E5005B2DDE /* PBXContainerItemProxy */;
-		};
 		6E5C32C527C9A2E5005B2DDE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 494DD9561B0EB677009C134E /* AirshipCore */;
@@ -8669,11 +7636,6 @@
 			isa = PBXTargetDependency;
 			target = 3CA0E298237CCE2600EE76CF /* AirshipDebug */;
 			targetProxy = 6E5C32C627C9A2E5005B2DDE /* PBXContainerItemProxy */;
-		};
-		6E5C32C927C9A2E5005B2DDE /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 6E9373032376164600AA9C2A /* AirshipLocation */;
-			targetProxy = 6E5C32C827C9A2E5005B2DDE /* PBXContainerItemProxy */;
 		};
 		6E5C32CB27C9A2E5005B2DDE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -8700,25 +7662,10 @@
 			target = 45C69118238DC79400A03C94 /* AirshipExtendedActions */;
 			targetProxy = 6E5C32DE27C9AD40005B2DDE /* PBXContainerItemProxy */;
 		};
-		6E65D5052396079800AF2D1A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 6E9373032376164600AA9C2A /* AirshipLocation */;
-			targetProxy = 6E65D5042396079800AF2D1A /* PBXContainerItemProxy */;
-		};
 		6E65D5412396E12A00AF2D1A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 45C69118238DC79400A03C94 /* AirshipExtendedActions */;
 			targetProxy = 6E65D5402396E12A00AF2D1A /* PBXContainerItemProxy */;
-		};
-		6E6CC311239A2EA9003D583C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 494DD9561B0EB677009C134E /* AirshipCore */;
-			targetProxy = 6E6CC312239A2EA9003D583C /* PBXContainerItemProxy */;
-		};
-		6E7C070626128035006D0E84 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 494DD9561B0EB677009C134E /* AirshipCore */;
-			targetProxy = 6E7C070526128035006D0E84 /* PBXContainerItemProxy */;
 		};
 		6E845452237E08EE007D3B1E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -8734,21 +7681,6 @@
 			isa = PBXTargetDependency;
 			target = 6E8450FD237E0271007D3B1E /* AirshipAutomation */;
 			targetProxy = 6E845490237E2D49007D3B1E /* PBXContainerItemProxy */;
-		};
-		6E8776AE261BC1E100B03FC0 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 6E7C067A26127557006D0E84 /* AirshipChat */;
-			targetProxy = 6E8776AD261BC1E100B03FC0 /* PBXContainerItemProxy */;
-		};
-		6E9376262376167B00AA9C2A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 494DD9561B0EB677009C134E /* AirshipCore */;
-			targetProxy = 6E9376252376167B00AA9C2A /* PBXContainerItemProxy */;
-		};
-		6E9D574A261F6C0D009BD6EB /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 494DD9561B0EB677009C134E /* AirshipCore */;
-			targetProxy = 6E9D5749261F6C0D009BD6EB /* PBXContainerItemProxy */;
 		};
 		847B000E267CD85E007CD249 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -8773,19 +7705,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		1BCDE30C23A12CBA0006A319 /* AirshipAccengage.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				1BCDE30D23A12CBA0006A319 /* en */,
-				1BCDE30F23A12CC80006A319 /* de */,
-				1BCDE31023A12CD30006A319 /* es */,
-				1BCDE31123A12CD30006A319 /* ru */,
-				1BCDE31223A12CD30006A319 /* it */,
-				1BCDE31323A12CD30006A319 /* fr */,
-			);
-			name = AirshipAccengage.strings;
-			sourceTree = "<group>";
-		};
 		3CA0E21C237CCBA600EE76CF /* AirshipDebug.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -8860,66 +7779,6 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		1BB4C033239FE5E50000559B /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = C3AEC8D23AA7835AC1E74C9A /* Pods-AirshipAccengageTests.debug.xcconfig */;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = PGJV57GD94;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				INFOPLIST_FILE = AirshipAccengage/Tests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipAccengageTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALID_ARCHS = "$(inherited) x86_64";
-			};
-			name = Debug;
-		};
-		1BB4C034239FE5E50000559B /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6D0D4500368AC9710E0F37B7 /* Pods-AirshipAccengageTests.release.xcconfig */;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = PGJV57GD94;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				INFOPLIST_FILE = AirshipAccengage/Tests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipAccengageTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALID_ARCHS = "$(inherited) x86_64";
-			};
-			name = Release;
-		};
 		3CA0E2AA237CCE2600EE76CF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */;
@@ -9167,7 +8026,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
@@ -9179,9 +8038,10 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TVOS_DEPLOYMENT_TARGET = 11.0;
+				TVOS_DEPLOYMENT_TARGET = 14.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
+				WATCHOS_DEPLOYMENT_TARGET = 8.0;
 			};
 			name = Debug;
 		};
@@ -9230,7 +8090,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = (
@@ -9243,10 +8103,11 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TVOS_DEPLOYMENT_TARGET = 11.0;
+				TVOS_DEPLOYMENT_TARGET = 14.0;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
+				WATCHOS_DEPLOYMENT_TARGET = 8.0;
 			};
 			name = Release;
 		};
@@ -9610,129 +8471,6 @@
 			};
 			name = Release;
 		};
-		6E6CC32A239A2EA9003D583C /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */;
-			buildSettings = {
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_TESTABILITY = YES;
-				INFOPLIST_FILE = "$(SRCROOT)/AirshipAccengage/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.urbanairship.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				VALID_ARCHS = "$(inherited) x86_64";
-			};
-			name = Debug;
-		};
-		6E6CC32B239A2EA9003D583C /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */;
-			buildSettings = {
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = "$(SRCROOT)/AirshipAccengage/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.urbanairship.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				VALID_ARCHS = "$(inherited) x86_64";
-			};
-			name = Release;
-		};
-		6E7C068126127557006D0E84 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				INFOPLIST_FILE = AirshipChat/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipChat;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		6E7C068226127557006D0E84 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				INFOPLIST_FILE = AirshipChat/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipChat;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
 		6E845375237E0271007D3B1E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */;
@@ -9802,118 +8540,6 @@
 			};
 			name = Release;
 		};
-		6E8776B0261BC1E100B03FC0 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = JZP4756KMT;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				INFOPLIST_FILE = AirshipChat/Tests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipChatTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		6E8776B1261BC1E100B03FC0 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = JZP4756KMT;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				INFOPLIST_FILE = AirshipChat/Tests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipChatTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		6E93755E2376164600AA9C2A /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */;
-			buildSettings = {
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_TESTABILITY = YES;
-				INFOPLIST_FILE = "$(SRCROOT)/AirshipLocation/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.urbanairship.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				VALID_ARCHS = "$(inherited) x86_64";
-			};
-			name = Debug;
-		};
-		6E93755F2376164600AA9C2A /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */;
-			buildSettings = {
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = "$(SRCROOT)/AirshipLocation/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.urbanairship.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				VALID_ARCHS = "$(inherited) x86_64";
-			};
-			name = Release;
-		};
 		847B0006267CD73A007CD249 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -9935,7 +8561,6 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = AirshipPreferenceCenter/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -9973,7 +8598,6 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = AirshipPreferenceCenter/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -10358,15 +8982,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1BB4C032239FE5E50000559B /* Build configuration list for PBXNativeTarget "AirshipAccengageTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				1BB4C033239FE5E50000559B /* Debug */,
-				1BB4C034239FE5E50000559B /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		3CA0E2A9237CCE2600EE76CF /* Build configuration list for PBXNativeTarget "AirshipDebug" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -10448,47 +9063,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		6E6CC329239A2EA9003D583C /* Build configuration list for PBXNativeTarget "AirshipAccengage" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				6E6CC32A239A2EA9003D583C /* Debug */,
-				6E6CC32B239A2EA9003D583C /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		6E7C068026127557006D0E84 /* Build configuration list for PBXNativeTarget "AirshipChat" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				6E7C068126127557006D0E84 /* Debug */,
-				6E7C068226127557006D0E84 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		6E845374237E0271007D3B1E /* Build configuration list for PBXNativeTarget "AirshipAutomation" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				6E845375237E0271007D3B1E /* Debug */,
 				6E845376237E0271007D3B1E /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		6E8776AF261BC1E100B03FC0 /* Build configuration list for PBXNativeTarget "AirshipChatTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				6E8776B0261BC1E100B03FC0 /* Debug */,
-				6E8776B1261BC1E100B03FC0 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		6E93755D2376164600AA9C2A /* Build configuration list for PBXNativeTarget "AirshipLocation" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				6E93755E2376164600AA9C2A /* Debug */,
-				6E93755F2376164600AA9C2A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -10629,17 +9208,6 @@
 			);
 			currentVersion = 83A674F723AA7AA4005C0C8F /* AirshipDebugPushData.xcdatamodel */;
 			path = AirshipDebugPushData.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
-		A6031ED126738CE600FFE328 /* ChatMessageDataModel.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				6E15B74826D4A8380099C92D /* ChatMessageDataModel 2.xcdatamodel */,
-				A6031ED226738CE600FFE328 /* ChatMessageDataModel.xcdatamodel */,
-			);
-			currentVersion = 6E15B74826D4A8380099C92D /* ChatMessageDataModel 2.xcdatamodel */;
-			path = ChatMessageDataModel.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};

@@ -7,7 +7,6 @@ import UIKit
 import AirshipCore
 import AirshipAutomation
 import AirshipMessageCenter
-import AirshipLocation
 #elseif canImport(AirshipKit)
 import AirshipKit
 #endif
@@ -36,13 +35,13 @@ class DeviceInfoCell: UITableViewCell {
 
         layoutIfNeeded()
     }
-    
+
     @IBAction func stepperValueChanged(_ sender: UIStepper) {
         let stepperValue = Int(sender.value)
         subtitle.text = "ua_timeinterval_description_integer_seconds".localizedWithFormat(count:stepperValue)
         inAppAutomationDisplayInterval = stepperValue
     }
-    
+
 }
 
 var isInAppAutomationEnabled: Bool {
@@ -59,8 +58,8 @@ var isInAppAutomationEnabled: Bool {
 }
 
 var inAppAutomationDisplayInterval: Int {
-    
-    
+
+
     get {
         return Int(InAppAutomation.shared.inAppMessageManager.displayInterval)
     }
@@ -78,7 +77,7 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
 
     private let localizedNone = "ua_none".localized(comment: "None")
     private let sectionCount = 8
-    
+
     @IBOutlet private var tableView: UITableView!
 
     /* Section
@@ -86,12 +85,12 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
      * table view data source methods
      */
     let privacyManagerSettings = 0,
-    pushSettings = 1,
-    inAppAutomationSettings = 2,
-    deviceSettings = 3,
-    locationSettings = 4,
-    sdkInfo = 5,
-    appInfo = 6
+        pushSettings = 1,
+        inAppAutomationSettings = 2,
+        deviceSettings = 3,
+        locationSettings = 4,
+        sdkInfo = 5,
+        appInfo = 6
 
     // Privacy Manager settings
     private let inAppAutomationFeatureEnabled = IndexPath(row: 0, section: 0),
@@ -108,28 +107,28 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
 
     // In-App automation settings
     private let displayInterval = IndexPath(row: 0, section: 2)
-    
+
     // Device settings
     private let channelID = IndexPath(row: 0, section: 3),
-    username = IndexPath(row: 1, section: 3),
-    namedUser = IndexPath(row: 2, section: 3),
-    tags = IndexPath(row: 3, section: 3),
-    tagGroups = IndexPath(row: 4, section: 3),
-    associatedIdentifiers = IndexPath(row: 5, section: 3),
-    channelAttributes = IndexPath(row: 6, section: 3),
-    namedUserAttributes = IndexPath(row: 7, section: 3),
-    timezone = IndexPath(row: 8, section: 3)
+                username = IndexPath(row: 1, section: 3),
+                namedUser = IndexPath(row: 2, section: 3),
+                tags = IndexPath(row: 3, section: 3),
+                tagGroups = IndexPath(row: 4, section: 3),
+                associatedIdentifiers = IndexPath(row: 5, section: 3),
+                channelAttributes = IndexPath(row: 6, section: 3),
+                namedUserAttributes = IndexPath(row: 7, section: 3),
+                timezone = IndexPath(row: 8, section: 3)
 
     // Location settings
     private let locationEnabled = IndexPath(row: 0, section: 4)
 
     // SDK Info
     private let sdkVersion = IndexPath(row: 0, section: 5),
-    localeInfo = IndexPath(row: 1, section: 5)
+                localeInfo = IndexPath(row: 1, section: 5)
 
     // App Info
     private let appVersion = IndexPath(row: 0, section: 6)
-    
+
     @objc func pushSettingsButtonTapped(sender:Any) {
         UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: [:],completionHandler: nil)
     }
@@ -144,13 +143,13 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
 
         tableView.dataSource = self
         tableView.delegate = self
-        
+
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(DeviceInfoViewController.refreshView),
             name: Channel.channelUpdatedEvent,
             object: nil);
-        
+
         // add observer to didBecomeActive to update upon retrun from system settings screen
         NotificationCenter.default.addObserver(
             self,
@@ -164,7 +163,7 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
         navigationController?.navigationBar.titleTextAttributes = [.foregroundColor:ThemeManager.shared.currentTheme.NavigationBarText]
         navigationController?.navigationBar.barTintColor = ThemeManager.shared.currentTheme.NavigationBarBackground;
     }
-    
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated);
 
@@ -183,18 +182,18 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
             launchCompletionHandler()
         }
     }
-    
+
     // this is necessary to update the view when returning from the system settings screen
     @objc func didBecomeActive() {
         refreshView()
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         refreshView()
         setTableViewTheme()
     }
-    
+
     @objc func refreshView() {
         tableView.reloadData()
     }
@@ -388,19 +387,6 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
         case namedUserAttributes:
             cell.title.text = "ua_device_info_named_user_attributes".localized()
             cell.accessoryType = .disclosureIndicator
-        case locationEnabled:
-            cell.title.text = "ua_device_info_enable_location_enabled".localized()
-
-            cell.cellSwitch.isHidden = false
-            cell.cellSwitch.isOn = Airship.shared.privacyManager.isEnabled(Features.location)
-
-            let optedInToLocation = UALocation.shared.isLocationOptedIn()
-
-            if (Airship.shared.privacyManager.isEnabled(Features.location) && !optedInToLocation) {
-                cell.subtitle?.text = "ua_location_enabled_detail".localized(comment: "Enable GPS and WIFI Based Location detail label") + " - NOT OPTED IN"
-            } else {
-                cell.subtitle?.text = localizedNone
-            }
         case sdkVersion:
             cell.title.text = "ua_device_info_sdk_version".localized()
             cell.subtitle?.text = AirshipVersion.get()
@@ -413,7 +399,7 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
         case timezone:
             cell.title.text = "ua_device_info_timezone".localized()
             cell.subtitle?.text = TimeZone.current.identifier
-            
+
         default:
             break
         }
@@ -519,7 +505,7 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
         default:
             break
         }
-        
+
         tableView.deselectRow(at: indexPath, animated: true)
     }
 
@@ -577,7 +563,7 @@ class DeviceInfoViewController: UIViewController, UITableViewDelegate, UITableVi
         if (authorizedSettings.contains(.announcement)) {
             settingsArray.append("ua_notification_type_announcement".localized(comment: "AirPod Announcement"))
         }
-        
+
         if (settingsArray.count == 0) {
             settingsArray.append("ua_push_settings_link_disabled_title".localized(comment: "Pushes Currently Disabled"))
         }

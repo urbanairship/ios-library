@@ -41,16 +41,20 @@ public class LocaleManager : NSObject, LocaleManagerProtocol {
     public var currentLocale : Locale {
         get {
             if let encodedLocale = dataStore.object(forKey: LocaleManager.storeKey) as? Data {
-                if let locale = NSKeyedUnarchiver.unarchiveObject(with: encodedLocale) as? Locale {
+                if let locale = try? NSKeyedUnarchiver.unarchivedObject(ofClass: NSLocale.self,
+                                                                        from: encodedLocale) as? Locale {
                     return locale
                 }
             }
             return Locale.autoupdatingCurrent
         }
         set {
-            let encodedLocale: Data = NSKeyedArchiver.archivedData(withRootObject: newValue)
-            dataStore.setValue(encodedLocale, forKey: LocaleManager.storeKey)
-            notificationCenter.post(name: LocaleManager.localeUpdatedEvent, object:[LocaleManager.localeEventKey: newValue])
+            if let encodedLocale: Data = try? NSKeyedArchiver.archivedData(withRootObject: newValue, requiringSecureCoding: true) {
+                dataStore.setValue(encodedLocale, forKey: LocaleManager.storeKey)
+                notificationCenter.post(name: LocaleManager.localeUpdatedEvent, object:[LocaleManager.localeEventKey: newValue])
+            } else {
+                AirshipLogger.error("Failed to encode locale!")
+            }
         }
     }
 

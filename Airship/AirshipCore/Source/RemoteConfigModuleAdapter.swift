@@ -12,8 +12,6 @@ enum RemoteConfigModule : String, CaseIterable {
     case messageCenter = "message_center"
     case inAppAutomation = "in_app_v2"
     case contact
-    case location
-    case chat
 }
 
 /// Expected module names used in remote config.
@@ -39,10 +37,6 @@ class RemoteConfigModuleAdapter : RemoteConfigModuleAdapterProtocol {
             return components(["UAInAppAutomation", "UALegacyInAppMessaging"])
         case .contact:
             return [Airship.contact]
-        case .location:
-            return components(["UALocation"])
-        case .chat:
-            return components(["UAirshipChat"])
         }
     }
 

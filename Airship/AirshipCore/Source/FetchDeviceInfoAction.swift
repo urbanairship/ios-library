@@ -49,33 +49,25 @@ public class FetchDeviceInfoAction : NSObject, Action {
     // Push opt-in key
     @objc
     public static let pushOptIn = "push_opt_in"
-    
-    // Location enabled key
-    @objc
-    public static let locationEnabled  = "location_enabled"
 
     private let channel: () -> ChannelProtocol
     private let contact: () -> ContactProtocol
     private let push: () -> PushProtocol
-    private let location: () -> UALocationProvider?
-    
+
     @objc
     public override convenience init() {
         self.init(channel: Channel.supplier,
                   contact: Contact.supplier,
-                  push: { return Airship.push },
-                  location: { return Airship.shared.locationProvider })
+                  push: { return Airship.push })
     }
     
     @objc
     public init(channel: @escaping () -> ChannelProtocol,
                 contact: @escaping () -> ContactProtocol,
-                push: @escaping () -> PushProtocol,
-                location: @escaping () -> UALocationProvider?) {
+                push: @escaping () -> PushProtocol) {
         self.channel = channel
         self.contact = contact
         self.push = push
-        self.location = location
     }
     
     public func acceptsArguments(_ arguments: ActionArguments) -> Bool {
@@ -87,7 +79,6 @@ public class FetchDeviceInfoAction : NSObject, Action {
         let channel = self.channel()
         let contact = self.contact()
         let push = self.push()
-        let location = self.location()
 
         dict[FetchDeviceInfoAction.channelID] = channel.identifier
         dict[FetchDeviceInfoAction.namedUser] = contact.namedUserID
@@ -98,7 +89,7 @@ public class FetchDeviceInfoAction : NSObject, Action {
         }
         
         dict[FetchDeviceInfoAction.pushOptIn] = push.authorizedNotificationSettings != []
-        dict[FetchDeviceInfoAction.locationEnabled] = location?.isLocationUpdatesEnabled
+        
         completionHandler(ActionResult(value: dict))
     }
 }

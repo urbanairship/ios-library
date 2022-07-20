@@ -9,13 +9,13 @@ class RemoteConfigDisableInfoTest: XCTestCase {
 
     func testParse() throws {
         let json: [String : Any] = [
-               "modules": ["push", "location"],
+               "modules": ["push", "message_center"],
                "app_versions": [ "value": ["version_matches": "+" ], "scope": ["ios", "version"] ],
                "sdk_versions": ["1.0.0", "[1.0,99.0["],
                "remote_data_refresh_interval": 100 ]
 
         let disableInfo = RemoteConfigDisableInfo(json: json)
-        let expectedModules = [RemoteConfigModule.push, RemoteConfigModule.location]
+        let expectedModules = [RemoteConfigModule.push, RemoteConfigModule.messageCenter]
         XCTAssertEqual(expectedModules, disableInfo?.disableModules)
         XCTAssertEqual(100.0, disableInfo?.remoteDataRefreshInterval)
         XCTAssertNotNil(disableInfo?.appVersionConstraint)

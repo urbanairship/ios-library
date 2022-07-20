@@ -50,8 +50,13 @@ class TagGroupsMutation : NSObject, NSSecureCoding {
     }
     
     required init?(coder: NSCoder) {
-        self.adds = coder.decodeObject(of: NSDictionary.self, forKey: TagGroupsMutation.codableAddKey) as?  [String : Set<String>]
-        self.removes = coder.decodeObject(of: NSDictionary.self, forKey: TagGroupsMutation.codableRemoveKey) as?  [String : Set<String>]
-        self.sets = coder.decodeObject(of: NSDictionary.self, forKey: TagGroupsMutation.codableSetKey) as?  [String : Set<String>]
+        self.adds = coder.decodeObject(of: [NSDictionary.self, NSString.self, NSSet.self],
+                                       forKey: TagGroupsMutation.codableAddKey) as?  [String : Set<String>]
+        self.removes = coder.decodeObject(of: [NSDictionary.self, NSString.self, NSSet.self],
+                                          forKey: TagGroupsMutation.codableRemoveKey) as?  [String : Set<String>]
+        self.sets = coder.decodeObject(of: [NSDictionary.self, NSString.self, NSSet.self],
+                                       forKey: TagGroupsMutation.codableSetKey) as?  [String : Set<String>]
     }
+
+    
 }

@@ -51,6 +51,6 @@ class AttributePendingMutations : NSObject, NSSecureCoding {
     }
     
     required init?(coder: NSCoder) {
-        self.mutationsPayload = coder.decodeObject(of: NSArray.self, forKey: AttributePendingMutations.codableKey) as? [[AnyHashable : Any]] ?? []
+        self.mutationsPayload = coder.decodeObject(of: [NSNull.self, NSNumber.self, NSArray.self, NSDictionary.self, NSString.self], forKey: AttributePendingMutations.codableKey) as? [[AnyHashable : Any]] ?? []
     }
 }

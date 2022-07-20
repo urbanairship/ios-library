@@ -709,10 +709,9 @@ public class Config: NSObject, NSCopying {
         }
 
         let scanner = Scanner(string: embeddedProfile)
-        var extractedPlist: NSString?
-        guard scanner.scanUpTo("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", into: nil),
-              scanner.scanUpTo("</plist>", into: &extractedPlist),
-              let plistData = extractedPlist?.appending("</plist>").data(using: .utf8),
+        _ = scanner.scanUpToString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
+        guard let extractedPlist = scanner.scanUpToString("</plist>"),
+              let plistData = extractedPlist.appending("</plist>").data(using: .utf8),
               let plistDict = try? PropertyListSerialization.propertyList(from: plistData, options: [], format: nil) as? [AnyHashable : Any] else {
             AirshipLogger.error("Unable to read provision profile. Defaulting to production mode.")
             return true

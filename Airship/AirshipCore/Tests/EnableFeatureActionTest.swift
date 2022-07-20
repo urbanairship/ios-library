@@ -8,12 +8,10 @@ import AirshipCore
 class EnableFeatureActionTest: XCTestCase {
 
     let testPrompter = TestPermissionPrompter()
-    let testLocationProvider = TestLocationProvider()
     var action: EnableFeatureAction!
 
     override func setUpWithError() throws {
-        self.action = EnableFeatureAction(permissionPrompter: { return self.testPrompter },
-                                          location: { return self.testLocationProvider })
+        self.action = EnableFeatureAction {  return self.testPrompter }
     }
 
     func testAcceptsArguments() throws {
@@ -84,7 +82,6 @@ class EnableFeatureActionTest: XCTestCase {
         }
 
         self.wait(for: [actionFinished, prompted], timeout: 1)
-        XCTAssertTrue(self.testLocationProvider.isBackgroundLocationUpdatesAllowed)
     }
 
 
@@ -155,18 +152,4 @@ class EnableFeatureActionTest: XCTestCase {
         self.wait(for: [actionFinished, resultReceived], timeout: 1)
     }
 }
-
-class TestLocationProvider: NSObject, UALocationProvider {
-    var isLocationUpdatesEnabled = false
-    var isBackgroundLocationUpdatesAllowed = false
-
-    func isLocationOptedIn() -> Bool {
-        return false
-    }
-
-    func isLocationDeniedOrRestricted() -> Bool {
-        return false
-    }
-}
-
 
