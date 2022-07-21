@@ -12,13 +12,7 @@ public protocol ChannelProtocol {
      * The Channel ID.
      */
     var identifier : String? { get }
-    
-    /**
-     * Returns if channel creation is enabled or not.
-     */
-    @objc
-    var isChannelCreationEnabled: Bool { get }
-    
+
     // NOTE: For internal use only. :nodoc:
     @objc
     var pendingAttributeUpdates : [AttributeUpdate] { get }
@@ -26,7 +20,7 @@ public protocol ChannelProtocol {
     // NOTE: For internal use only. :nodoc:
     @objc
     var pendingTagGroupUpdates : [TagGroupUpdate] { get }
-    
+
     /**
      * Device tags
      */
@@ -133,5 +127,10 @@ public protocol ChannelProtocol {
      */
     @objc
     func enableChannelCreation()
-
 }
+
+protocol InternalChannelProtocol : ChannelProtocol {
+    func processContactSubscriptionUpdates(_ updates: [SubscriptionListUpdate])
+}
+
+

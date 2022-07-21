@@ -2,38 +2,30 @@
 
 import Foundation
 
-// NOTE: For internal use only. :nodoc:
-@objc(UAChannelAudienceManagerProtocol)
-public protocol ChannelAudienceManagerProtocol {
+protocol ChannelAudienceManagerProtocol {
     var pendingAttributeUpdates : [AttributeUpdate] { get }
     
-    @objc
     var pendingTagGroupUpdates : [TagGroupUpdate] { get }
         
-    @objc
     var channelID: String? { get set }
     
-    @objc
     var enabled: Bool { get set }
         
-    @objc
     func editSubscriptionLists() -> SubscriptionListEditor
-    
-    @objc
+
     func editTagGroups(allowDeviceGroup: Bool) -> TagGroupsEditor
-    
-    @objc
+
     func editAttributes() -> AttributesEditor
-    
-    @objc
+
     @discardableResult
     func fetchSubscriptionLists(completionHandler: @escaping ([String]?, Error?) -> Void) -> Disposable
+
+    func processContactSubscriptionUpdates(_ updates: [SubscriptionListUpdate])
 }
 
 
 // NOTE: For internal use only. :nodoc:
-@objc(UAChannelAudienceManager)
-public class ChannelAudienceManager : NSObject, ChannelAudienceManagerProtocol {
+class ChannelAudienceManager: ChannelAudienceManagerProtocol {
     static let updateTaskID = "ChannelAudienceManager.update"
     static let updatesKey = "UAChannel.audienceUpdates"
     
@@ -114,7 +106,6 @@ public class ChannelAudienceManager : NSObject, ChannelAudienceManagerProtocol {
                                                    maxCacheAge: ChannelAudienceManager.maxCacheTime)
         self.cachedSubscriptionListsHistory = CachedList(date: date,
                                                          maxCacheAge: ChannelAudienceManager.maxCacheTime)
-        super.init()
 
         self.taskManager.register(taskID: ChannelAudienceManager.updateTaskID, dispatcher: self.dispatcher) { [weak self] task in
             self?.handleUpdateTask(task)
@@ -278,7 +269,9 @@ public class ChannelAudienceManager : NSObject, ChannelAudienceManagerProtocol {
         updates.forEach { update in
             switch(update.type) {
             case .subscribe:
-                result.append(update.listId)
+                if (!result.contains(update.listId)) {
+                    result.append(update.listId)
+                }
             case .unsubscribe:
                 result.removeAll(where: { $0 == update.listId })
             }
@@ -464,6 +457,12 @@ public class ChannelAudienceManager : NSObject, ChannelAudienceManagerProtocol {
             }
         }
     }
+
+    func processContactSubscriptionUpdates(_ updates: [SubscriptionListUpdate]) {
+        updates.forEach {
+            self.cachedSubscriptionListsHistory.append($0)
+        }
+    }
 }
 
 internal struct AudienceUpdate : Codable {
@@ -471,4 +470,3 @@ internal struct AudienceUpdate : Codable {
     let tagGroupUpdates : [TagGroupUpdate]
     let attributeUpdates : [AttributeUpdate]
 }
-

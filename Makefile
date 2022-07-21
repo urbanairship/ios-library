@@ -97,10 +97,10 @@ pod-publish: setup
 
 .PHONY: pod-lint
 pod-lint: setup
-	bundle exec pod lib lint Airship.podspec --verbose --platforms=tvos,ios
-	bundle exec pod lib lint AirshipExtensions.podspec --verbose --platforms=ios
-	bundle exec pod lib lint AirshipServiceExtension.podspec --verbose --platforms=ios
-	bundle exec pod lib lint AirshipContentExtension.podspec --verbose --platforms=ios
+	bundle exec pod lib lint Airship.podspec --verbose --platforms=tvos,ios --fail-fast --skip-tests 
+	bundle exec pod lib lint AirshipExtensions.podspec --verbose --platforms=ios --fail-fast --skip-tests 
+	bundle exec pod lib lint AirshipServiceExtension.podspec --verbose --platforms=ios --fail-fast --skip-tests 
+	bundle exec pod lib lint AirshipContentExtension.podspec --verbose --platforms=ios --fail-fast --skip-tests 
 
 .PHONY: clean
 clean:

@@ -5,6 +5,8 @@ import AirshipCore
 
 @objc(UATestChannelAudienceManager)
 public class TestChannelAudienceManager : NSObject, ChannelAudienceManagerProtocol {
+    public var contactUpdates: [SubscriptionListUpdate] = []
+    
     public var pendingAttributeUpdates: [AttributeUpdate] = []
     
     public var pendingTagGroupUpdates: [TagGroupUpdate] = []
@@ -40,5 +42,9 @@ public class TestChannelAudienceManager : NSObject, ChannelAudienceManagerProtoc
     
     public func fetchSubscriptionLists(completionHandler: @escaping ([String]?, Error?) -> Void) -> Disposable {
         return fetchSubscriptionListCallback!(completionHandler)
+    }
+
+    public func processContactSubscriptionUpdates(_ updates: [SubscriptionListUpdate]) {
+        self.contactUpdates.append(contentsOf: updates)
     }
 }
