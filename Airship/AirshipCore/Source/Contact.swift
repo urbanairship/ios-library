@@ -122,7 +122,6 @@ public protocol ContactProtocol {
     func fetchSubscriptionLists(completionHandler: @escaping ([String: ChannelScopes]?, Error?) -> Void) -> Disposable
 }
 
-
 /**
  * Airship contact. A contact is distinct from a channel and  represents a "user"
  * within Airship. Contacts may be named and have channels associated with it.
@@ -168,7 +167,7 @@ public class Contact : NSObject, Component, ContactProtocol {
     private let dataStore: PreferenceDataStore
     private let config: RuntimeConfig
     private let privacyManager: PrivacyManager
-    private let channel: ChannelProtocol
+    private let channel: InternalChannelProtocol
     private let contactAPIClient: ContactsAPIClientProtocol
     private let taskManager: TaskManagerProtocol
     private let dispatcher = UADispatcher.serial(.utility)
@@ -357,7 +356,7 @@ public class Contact : NSObject, Component, ContactProtocol {
      */
     init(dataStore: PreferenceDataStore,
          config: RuntimeConfig,
-         channel: ChannelProtocol,
+         channel: InternalChannelProtocol,
          privacyManager: PrivacyManager,
          contactAPIClient: ContactsAPIClientProtocol,
          taskManager: TaskManagerProtocol,
@@ -379,6 +378,7 @@ public class Contact : NSObject, Component, ContactProtocol {
         self.cachedSubscriptionLists = CachedValue(date: date, maxCacheAge: 600)
         self.cachedSubscriptionListsHistory = CachedList(date: date, maxCacheAge: 600)
         super.init()
+
         
         self.disableHelper.onChange = { [weak self] in
             self?.onComponentEnableChange()
@@ -422,6 +422,8 @@ public class Contact : NSObject, Component, ContactProtocol {
         
         self.checkPrivacyManager()
         self.enqueueTask()
+
+        self.notifyChannelSubscriptionListUpdates(self.pendingSubscriptionListUpdates)
     }
     
     /**
@@ -609,7 +611,9 @@ public class Contact : NSObject, Component, ContactProtocol {
                 AirshipLogger.warn("Contacts or tags are disabled. Enable to apply subscription lists edits.")
                 return
             }
-            
+
+            self.notifyChannelSubscriptionListUpdates(updates)
+
             self.addOperation(ContactOperation.resolve())
             self.addOperation(ContactOperation.update(subscriptionListsUpdates: updates))
             self.enqueueTask()
@@ -1237,6 +1241,16 @@ public class Contact : NSObject, Component, ContactProtocol {
                 addOperation(operation)
             }
         }
+    }
+
+    private func notifyChannelSubscriptionListUpdates(_ updates: [ScopedSubscriptionListUpdate]) {
+        let channelUpdates = updates
+            .filter { $0.scope == .app }
+            .map { SubscriptionListUpdate(listId: $0.listId, type: $0.type) }
+
+        guard !channelUpdates.isEmpty else { return }
+
+        self.channel.processContactSubscriptionUpdates(channelUpdates)
     }
 }
 

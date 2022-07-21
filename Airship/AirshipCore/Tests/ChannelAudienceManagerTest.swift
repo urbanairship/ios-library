@@ -212,5 +212,26 @@ class ChannelAudienceManagerTest: XCTestCase {
         let pendingAttributeUpdates = [AttributeUpdate.remove(attribute: "some-attribute")]
         XCTAssertEqual(pendingAttributeUpdates, self.audienceManager.pendingAttributeUpdates)
     }
+
+    func testContactSubscriptionListUpdates() throws {
+        let updates = [
+            SubscriptionListUpdate(listId: "bar", type: .subscribe),
+            SubscriptionListUpdate(listId: "baz", type: .unsubscribe)
+        ]
+
+        self.audienceManager.processContactSubscriptionUpdates(updates)
+
+        self.subscriptionListClient.getCallback = { identifier, callback in
+            callback(SubscriptionListFetchResponse(status: 200, listIDs: ["cool", "baz"]), nil)
+        }
+
+        let expectation = self.expectation(description: "callback called")
+        self.audienceManager.fetchSubscriptionLists() { lists, error in
+            XCTAssertEqual(["cool", "bar"], lists)
+            expectation.fulfill()
+        }
+
+        self.waitForExpectations(timeout: 10.0)
+    }
     
 }

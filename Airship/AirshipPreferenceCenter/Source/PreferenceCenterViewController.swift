@@ -484,10 +484,9 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
         
         self.disposable?.dispose()
         
-        var onComplete : ((PreferenceCenterConfig, [String]?, [String : ChannelScopes]?) -> Void)? = { config, channelLists, contactLists in
+        var onComplete : ((PreferenceCenterConfig, [String]?, [String : [ChannelScope]]?) -> Void)? = { config, channelLists, contactLists in
             self.shouldRefresh = false
-            let mappedContactLists = contactLists?.mapValues { $0.values }
-            self.onConfigLoaded(config: config, channelLists: channelLists, contactLists: mappedContactLists)
+            self.onConfigLoaded(config: config, channelLists: channelLists, contactLists: contactLists)
         }
         
         guard let preferenceCenterID = self.preferenceCenterID else {
@@ -517,6 +516,7 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
                     return ($0.itemType == .channelSubscription)
                 })
             })
+
             let containsContactSubscriptions = config.sections.contains(where: {
                 let items = $0.items
                 return items.contains(where: {
@@ -524,12 +524,13 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
                 })
             })
             
-            var subscribedChannelIDs: [String] = []
-            var subscribedContactIDs: [String : ChannelScopes] = [:]
+            var channelSubscriptions: [String]?
+            var contactSubscriptions: [String : [ChannelScope]]?
             
             let dispatchGroup = DispatchGroup()
-            
-            if (containsChannelSubscriptions) {
+
+            let mergeChannelDataToContact = config.options?.mergeChannelDataToContact ?? false
+            if (containsChannelSubscriptions || mergeChannelDataToContact) {
                 dispatchGroup.enter()
                 Airship.channel.fetchSubscriptionLists() { subscribedIDs, error in
                     guard error == nil, let subscribedIDs = subscribedIDs else {
@@ -541,7 +542,7 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
                         dispatchGroup.leave()
                         return
                     }
-                    subscribedChannelIDs = subscribedIDs
+                    channelSubscriptions = subscribedIDs
                     dispatchGroup.leave()
                 }
             }
@@ -558,13 +559,16 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
                         dispatchGroup.leave()
                         return
                     }
-                    subscribedContactIDs = subscribedIDs
+                    contactSubscriptions = subscribedIDs.mapValues { $0.values }
                     dispatchGroup.leave()
                 }
             }
             
             dispatchGroup.notify(queue: .main) {
-                onComplete?(config, subscribedChannelIDs, subscribedContactIDs)
+                if (mergeChannelDataToContact) {
+                    contactSubscriptions = self?.mergeChannelSubscriptions(channelSubscriptions, contactSubscriptions: contactSubscriptions)
+                }
+                onComplete?(config, channelSubscriptions ?? [], contactSubscriptions ?? [:])
             }
         }
     }
@@ -629,6 +633,27 @@ open class PreferenceCenterViewController: UIViewController, UITableViewDataSour
     
     open override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         self.tableView.reloadData()
+    }
+
+    private func mergeChannelSubscriptions(_ channelSubscriptions: [String]?,
+                                           contactSubscriptions: [String: [ChannelScope]]?) -> [String: [ChannelScope]] {
+        var contactSubscriptions = contactSubscriptions ?? [:]
+
+        guard let channelSubscriptions = channelSubscriptions else {
+            return contactSubscriptions
+        }
+
+        channelSubscriptions.forEach { channelSubscription in
+            if var scopes = contactSubscriptions[channelSubscription], !scopes.contains(.app) {
+                scopes.append(.app)
+                contactSubscriptions[channelSubscription] = scopes
+            } else {
+                contactSubscriptions[channelSubscription] = [.app]
+            }
+        }
+
+        return contactSubscriptions
+
     }
 }
 

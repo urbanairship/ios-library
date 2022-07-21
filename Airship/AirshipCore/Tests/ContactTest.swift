@@ -37,20 +37,22 @@ class ContactTest: XCTestCase {
         
         self.dataStore = PreferenceDataStore(appKey: UUID().uuidString)
         self.privacyManager = PrivacyManager(dataStore: self.dataStore, defaultEnabledFeatures: .all, notificationCenter: self.notificationCenter)
-        
-        
-        let config = RuntimeConfig(config: Config(), dataStore: dataStore)
-        
-        self.contact = Contact(dataStore: self.dataStore,
-                               config: config,
-                               channel: self.channel,
-                               privacyManager: self.privacyManager,
-                               contactAPIClient: self.apiClient,
-                               taskManager: self.taskManager,
-                               notificationCenter: self.notificationCenter,
-                               date: self.date)
 
+        self.contact = createContact()
         self.channel.identifier = "channel id"
+    }
+
+    func createContact() -> Contact {
+        let config = RuntimeConfig(config: Config(), dataStore: dataStore)
+
+        return Contact(dataStore: self.dataStore,
+                       config: config,
+                       channel: self.channel,
+                       privacyManager: self.privacyManager,
+                       contactAPIClient: self.apiClient,
+                       taskManager: self.taskManager,
+                       notificationCenter: self.notificationCenter,
+                       date: self.date)
     }
 
     func testRateLimits() throws {
@@ -1236,4 +1238,36 @@ class ContactTest: XCTestCase {
         wait(for: [expectation], timeout: 10.0)
     }
 
+    func testForwardAppSubscriptionListUpdates() throws {
+        self.contact.editSubscriptionLists { editor in
+            editor.subscribe("foo", scope: .web)
+            editor.subscribe("bar", scope: .app)
+            editor.unsubscribe("baz", scope: .app)
+        }
+
+        let expectedUpdates = [
+            SubscriptionListUpdate(listId: "bar", type: .subscribe),
+            SubscriptionListUpdate(listId: "baz", type: .unsubscribe)
+        ]
+
+        XCTAssertEqual(expectedUpdates, self.channel.contactUpdates)
+    }
+
+    func testForwardPendingAppSubscriptionListUpdatesOnInit() throws {
+        self.contact.editSubscriptionLists { editor in
+            editor.subscribe("foo", scope: .web)
+            editor.subscribe("bar", scope: .app)
+            editor.unsubscribe("baz", scope: .app)
+        }
+
+        self.channel.contactUpdates.removeAll()
+        self.contact = createContact()
+
+        let expectedUpdates = [
+            SubscriptionListUpdate(listId: "bar", type: .subscribe),
+            SubscriptionListUpdate(listId: "baz", type: .unsubscribe)
+        ]
+
+        XCTAssertEqual(expectedUpdates, self.channel.contactUpdates)
+    }
 }

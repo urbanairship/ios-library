@@ -70,7 +70,7 @@ public class Channel : NSObject, Component, ChannelProtocol {
     private let config: RuntimeConfig
     private let privacyManager: PrivacyManager
     private let localeManager: LocaleManagerProtocol
-    private let audienceManager: ChannelAudienceManagerProtocol
+    private var audienceManager: ChannelAudienceManagerProtocol
     private let channelRegistrar: ChannelRegistrarProtocol
     private let notificationCenter: NotificationCenter
     private let appStateTracker: AppStateTracker
@@ -79,9 +79,7 @@ public class Channel : NSObject, Component, ChannelProtocol {
     private var shouldPerformChannelRegistrationOnForeground = false
     private var extensionBlocks: [((ChannelRegistrationPayload, @escaping (ChannelRegistrationPayload) -> Void) -> Void)] = []
 
-    /// - Note: For internal use only. :nodoc:
-    @objc
-    public private(set) var isChannelCreationEnabled: Bool
+    private var isChannelCreationEnabled: Bool
 
     /// The channel identifier.
     public var identifier: String? {
@@ -161,10 +159,8 @@ public class Channel : NSObject, Component, ChannelProtocol {
     public static var shared: Channel {
         return Airship.channel
     }
-    
-    // NOTE: For internal use only. :nodoc:
-    @objc
-    public init(dataStore: PreferenceDataStore,
+
+    init(dataStore: PreferenceDataStore,
          config: RuntimeConfig,
          privacyManager: PrivacyManager,
          localeManager: LocaleManagerProtocol,
@@ -232,9 +228,7 @@ public class Channel : NSObject, Component, ChannelProtocol {
                   appStateTracker:AppStateTracker.shared)
     }
 
-    // NOTE: For internal use only. :nodoc:
-    @objc
-    public func migrateTags() {
+    private func migrateTags() {
         guard self.dataStore.keyExists(Channel.legacyTagsSettingsKey) else {
             // Nothing to migrate
             return
@@ -659,5 +653,12 @@ extension Channel : ChannelRegistrarDelegate {
                 extendPayload(payload, extenders: remaining, completionHandler: completionHandler)
             }
         }
+    }
+}
+
+
+extension Channel : InternalChannelProtocol {
+    func processContactSubscriptionUpdates(_ updates: [SubscriptionListUpdate]) {
+        self.audienceManager.processContactSubscriptionUpdates(updates)
     }
 }
