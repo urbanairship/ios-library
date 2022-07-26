@@ -55,6 +55,5 @@ build_docs_swift "Airship" "AirshipPreferenceCenter"
 
 build_docs "Airship" "AirshipAutomation"  "Source/AirshipAutomation.h"
 build_docs "Airship" "AirshipMessageCenter"  "Source/AirshipMessageCenter.h"
-build_docs "Airship" "AirshipExtendedActions"  "Source/AirshipExtendedActions.h"
 build_docs "AirshipExtensions" "AirshipNotificationServiceExtension" "Source/AirshipNotificationServiceExtension.h"
 build_docs "AirshipExtensions" "AirshipNotificationContentExtension" "Source/AirshipNotificationContentExtension.h"

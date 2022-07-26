@@ -82,15 +82,15 @@ pod-publish: setup
 	bundle exec pod trunk push AirshipContentExtension.podspec
 
 .PHONY: pod-lint
-pod-lint: pod-lint-tvos pod-lint-ios pod-lint-extensions  --fail-fast --skip-tests 
+pod-lint: pod-lint-tvos pod-lint-ios pod-lint-extensions
 
 .PHONY: pod-lint-tvos
 pod-lint-tvos: setup
-	bundle exec pod lib lint Airship.podspec --verbose --platforms=tvos --subspec=Core  --fail-fast --skip-tests 
+	bundle exec pod lib lint Airship.podspec --verbose --platforms=tvos --fail-fast --skip-tests --no-subspecs
 
 .PHONY: pod-lint-ios
 pod-lint-ios: setup
-	bundle exec pod lib lint Airship.podspec --verbose --platforms=ios  --fail-fast --skip-tests 
+	bundle exec pod lib lint Airship.podspec --verbose --platforms=ios  --fail-fast --skip-tests --no-subspecs
 
 .PHONY: pod-lint-extensions
 pod-lint-extensions: setup

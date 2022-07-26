@@ -12,7 +12,7 @@ targets:
       - package: Airship
         product: AirshipMessageCenter
       - package: Airship
-        product: AirshipExtendedActions
+        product: AirshipPreferenceCenter
       - package: Airship
         product: AirshipAutomation
       - target: TestContentExtension

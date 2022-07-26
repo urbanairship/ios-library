@@ -37,9 +37,6 @@ class HomeViewController: UIViewController {
     }
 
     @IBAction func buttonTapped(_ sender: UIButton) {
-
-        PreferenceCenter.shared.open("app_default")
-
         if (sender == enablePushButton) {
             Airship.push.userPushNotificationsEnabled = true
             Airship.shared.privacyManager.enableFeatures(.push)

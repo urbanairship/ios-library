@@ -5,7 +5,7 @@
 @import AirshipCore;
 @import AirshipAutomation;
 @import AirshipMessageCenter;
-@import AirshipExtendedActions;
+@import AirshipPreferenceCenter;
 
 @interface AppDelegate ()
 @end
@@ -20,7 +20,6 @@
     
     [[UAMessageCenter shared] display];
     [UAInAppAutomation shared].inAppMessageManager.displayInterval = 12345;
-    [[UAirship shared].actionRegistry registerAction:[[UARateAppAction alloc] init] name:@"raa"];
 
     return YES;
 }

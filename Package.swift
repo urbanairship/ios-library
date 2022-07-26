@@ -19,9 +19,6 @@ let package = Package(
             name: "AirshipMessageCenter",
             targets: ["AirshipMessageCenter"]),
         .library(
-            name: "AirshipExtendedActions",
-            targets: ["AirshipExtendedActions"]),
-        .library(
             name: "AirshipNotificationContentExtension",
             targets: ["AirshipNotificationContentExtension"]),
         .library(
@@ -78,6 +75,7 @@ let package = Package(
                     .linkedFramework("CoreData"),
                     .linkedFramework("WebKit", .when(platforms: [.iOS])),
                     .linkedFramework("CoreTelephony", .when(platforms: [.iOS])),
+                    .linkedFramework("StoreKit", .when(platforms: [.iOS])),
                     //Libraries
                     .linkedLibrary("sqlite3")
                 ]
@@ -112,22 +110,6 @@ let package = Package(
                     .headerSearchPath("Source/Inbox"),
                     .headerSearchPath("Source/Inbox/Data"),
                     .headerSearchPath("Source/User"),]
-        ),
-        .target(name:"AirshipExtendedActions",
-                dependencies: [.target(name: "AirshipCore")],
-                path: "Airship/AirshipExtendedActions",
-                exclude: ["Source/AirshipExtendedActions.h",
-                          "generate_header_imports.sh",
-                          "Info.plist"],
-                sources : ["Source"],
-                resources: [
-                    .process("Resources")
-                ],
-                publicHeadersPath: "Source/Public",
-                cSettings: [
-                    .headerSearchPath("Source/RateApp")],
-                linkerSettings: [
-                    .linkedFramework("StoreKit")]
         ),
         .target(name:"AirshipNotificationContentExtension",
                 path: "AirshipExtensions/AirshipNotificationContentExtension",

@@ -5,6 +5,17 @@
 	<dict>
 		<key>names</key>
 		<array>
+			<string>rate_app_action</string>
+			<string>^ra</string>
+		</array>
+		<key>action</key>
+		<string>UARateAppAction</string>
+		<key>predicate</key>
+		<string>UARateAppActionPredicate</string>
+	</dict>
+	<dict>
+		<key>names</key>
+		<array>
 			<string>open_external_url_action</string>
 			<string>^u</string>
 		</array>

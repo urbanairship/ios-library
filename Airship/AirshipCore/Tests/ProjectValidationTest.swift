@@ -43,10 +43,6 @@ class ProjectValidationTest: XCTestCase {
         validateTarget(target: "AirshipMessageCenter", sourcePaths:["AirshipMessageCenter/Source"])
     }
 
-    func testAirshipExtendedActions() {
-        validateTarget(target: "AirshipExtendedActions", sourcePaths:["AirshipExtendedActions/Source"])
-    }
-
     func convertSourceTreeFolderToURL(sourceTreeFolder: SourceTreeFolder) -> URL {
         if (sourceTreeFolder != .sourceRoot) {
             XCTFail("SourceTreeFolders other than .sourceRoot are not currently supported by this tool")

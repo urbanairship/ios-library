@@ -30,7 +30,6 @@ enum SDKModuleNames: String, CaseIterable {
     case messageCenter = "UAMessageCenterSDKModule"
     case automation = "UAAutomationSDKModule"
     case preferenceCenter = "UAPreferenceCenterSDKModule"
-    case extendedActions = "UAExtendedActionsSDKModule"
     case debug = "UADebugSDKModule"
 }
 

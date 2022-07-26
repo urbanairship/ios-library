@@ -15,7 +15,7 @@ Pod::Spec.new do |s|
    s.tvos.deployment_target  = "14.0"
    s.swift_versions          = "5.0"
    s.requires_arc            = true
-   s.default_subspecs        = ["Basement", "Core", "Automation", "MessageCenter", "ExtendedActions"]
+   s.default_subspecs        = ["Basement", "Core", "Automation", "MessageCenter", "PreferenceCenter"]
 
    s.subspec "Basement" do |basement|
       basement.public_header_files        = "Airship/AirshipBasement/Source/Public/*.h", "Cocoapods/AirshipKit.h"
@@ -33,17 +33,8 @@ Pod::Spec.new do |s|
       core.exclude_files              = "Airship/AirshipCore/Resources/Info.plist", "Airship/AirshipCore/Source/AirshipCore.h"
       core.libraries                  = "z", "sqlite3"
       core.frameworks                 = "UserNotifications", "CFNetwork", "CoreGraphics", "Foundation", "Security", "SystemConfiguration", "UIKit", "CoreData"
-      core.ios.frameworks             = "WebKit", "CoreTelephony"
+      core.ios.frameworks             = "WebKit", "CoreTelephony", "StoreKit"
       core.dependency                 "Airship/Basement"
-   end
-   s.subspec "ExtendedActions" do |actions|
-      actions.ios.public_header_files    = "Airship/AirshipExtendedActions/Source/Public/*.h"
-      actions.ios.source_files           = "Airship/AirshipExtendedActions/Source/**/*.{h,m}", "Airship/AirshipExtendedActions/Source/Public/**/*.{h,m}"
-      actions.ios.private_header_files   = "Airship/AirshipExtendedActions/Source/**/*+Internal*.h"
-      actions.ios.resource_bundle        = { 'AirshipExtendedActionsResources' => "Airship/AirshipExtendedActions/Resources/*" }
-      actions.ios.exclude_files          = "Airship/AirshipExtendedActions/Resources/Info.plist", "Airship/AirshipExtendedActions/Source/AirshipExtendedActions.h"
-      actions.ios.frameworks             = "StoreKit"
-      actions.dependency                 "Airship/Core"
    end
 
    s.subspec "Automation" do |automation|

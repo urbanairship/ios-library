@@ -38,8 +38,6 @@
 		3CF3DE7824E76ED6000CF516 /* AirshipAutomation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5862396E99D00AF2D1A /* AirshipAutomation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3CF3DE7924E76ED6000CF516 /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D57C2396E99D00AF2D1A /* AirshipCore.framework */; };
 		3CF3DE7A24E76ED6000CF516 /* AirshipCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D57C2396E99D00AF2D1A /* AirshipCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		3CF3DE7D24E76ED6000CF516 /* AirshipExtendedActions.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D58A2396E99D00AF2D1A /* AirshipExtendedActions.framework */; };
-		3CF3DE7E24E76ED6000CF516 /* AirshipExtendedActions.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D58A2396E99D00AF2D1A /* AirshipExtendedActions.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3CF3DE8124E76ED6000CF516 /* AirshipMessageCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5882396E99D00AF2D1A /* AirshipMessageCenter.framework */; };
 		3CF3DE8224E76ED6000CF516 /* AirshipMessageCenter.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5882396E99D00AF2D1A /* AirshipMessageCenter.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3CF62FFE258849710007502B /* AirshipDebug.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5842396E99D00AF2D1A /* AirshipDebug.framework */; };
@@ -59,8 +57,6 @@
 		6E65D5BC2396ECC200AF2D1A /* AirshipAutomation.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6E65D5862396E99D00AF2D1A /* AirshipAutomation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6E65D5BD2396ECC200AF2D1A /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D57C2396E99D00AF2D1A /* AirshipCore.framework */; };
 		6E65D5BE2396ECC200AF2D1A /* AirshipCore.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6E65D57C2396E99D00AF2D1A /* AirshipCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		6E65D5BF2396ECC200AF2D1A /* AirshipExtendedActions.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D58A2396E99D00AF2D1A /* AirshipExtendedActions.framework */; };
-		6E65D5C02396ECC200AF2D1A /* AirshipExtendedActions.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6E65D58A2396E99D00AF2D1A /* AirshipExtendedActions.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6E65D5C22396ECC200AF2D1A /* AirshipMessageCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5882396E99D00AF2D1A /* AirshipMessageCenter.framework */; };
 		6E65D5C32396ECC200AF2D1A /* AirshipMessageCenter.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6E65D5882396E99D00AF2D1A /* AirshipMessageCenter.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8325FBBC23F5947A005F423A /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8325FBBB23F5947A005F423A /* SettingsViewController.swift */; };
@@ -137,13 +133,6 @@
 			remoteGlobalIDString = 494DD9561B0EB677009C134E;
 			remoteInfo = AirshipCore;
 		};
-		3CF3DEA724EB0787000CF516 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 45C69118238DC79400A03C94;
-			remoteInfo = AirshipExtendedActions;
-		};
 		3CF3DEAB24EB0787000CF516 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
@@ -207,13 +196,6 @@
 			remoteGlobalIDString = 3CA0E423237E4A7B00EE76CF;
 			remoteInfo = AirshipMessageCenter;
 		};
-		6E65D5892396E99D00AF2D1A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 45C6912A238DC79400A03C94;
-			remoteInfo = AirshipExtendedActions;
-		};
 		6E65D5902396E9A300AF2D1A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6E65D58B2396E9A300AF2D1A /* AirshipExtensions.xcodeproj */;
@@ -262,13 +244,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 494DD9561B0EB677009C134E;
 			remoteInfo = AirshipCore;
-		};
-		6E65D5C82396ECD600AF2D1A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 45C69118238DC79400A03C94;
-			remoteInfo = AirshipExtendedActions;
 		};
 		6E65D5CA2396ECD600AF2D1A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -363,7 +338,6 @@
 				3CF3DE7824E76ED6000CF516 /* AirshipAutomation.framework in Embed Frameworks */,
 				3CF3DE7A24E76ED6000CF516 /* AirshipCore.framework in Embed Frameworks */,
 				3CE5592426F11ECD00FBCBA5 /* AirshipBasement.framework in Embed Frameworks */,
-				3CF3DE7E24E76ED6000CF516 /* AirshipExtendedActions.framework in Embed Frameworks */,
 				3CF3DE8224E76ED6000CF516 /* AirshipMessageCenter.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -401,7 +375,6 @@
 				3CE5592026F11EBF00FBCBA5 /* AirshipBasement.framework in CopyFiles */,
 				6E65D5C32396ECC200AF2D1A /* AirshipMessageCenter.framework in CopyFiles */,
 				6E65D5BE2396ECC200AF2D1A /* AirshipCore.framework in CopyFiles */,
-				6E65D5C02396ECC200AF2D1A /* AirshipExtendedActions.framework in CopyFiles */,
 				A68E346826B2ABC50024BE1D /* AirshipPreferenceCenter.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -479,7 +452,6 @@
 			files = (
 				3CF3DE7724E76ED6000CF516 /* AirshipAutomation.framework in Frameworks */,
 				3CF3DE7924E76ED6000CF516 /* AirshipCore.framework in Frameworks */,
-				3CF3DE7D24E76ED6000CF516 /* AirshipExtendedActions.framework in Frameworks */,
 				3CE5592326F11ECD00FBCBA5 /* AirshipBasement.framework in Frameworks */,
 				3CF3DE8124E76ED6000CF516 /* AirshipMessageCenter.framework in Frameworks */,
 				3CF62FFE258849710007502B /* AirshipDebug.framework in Frameworks */,
@@ -509,7 +481,6 @@
 				3CE5591F26F11EBF00FBCBA5 /* AirshipBasement.framework in Frameworks */,
 				6E65D5BB2396ECC200AF2D1A /* AirshipAutomation.framework in Frameworks */,
 				6E65D5BD2396ECC200AF2D1A /* AirshipCore.framework in Frameworks */,
-				6E65D5BF2396ECC200AF2D1A /* AirshipExtendedActions.framework in Frameworks */,
 				6E65D5C22396ECC200AF2D1A /* AirshipMessageCenter.framework in Frameworks */,
 				A68E346726B2ABC50024BE1D /* AirshipPreferenceCenter.framework in Frameworks */,
 			);
@@ -597,7 +568,6 @@
 				6E65D5842396E99D00AF2D1A /* AirshipDebug.framework */,
 				6E65D5862396E99D00AF2D1A /* AirshipAutomation.framework */,
 				6E65D5882396E99D00AF2D1A /* AirshipMessageCenter.framework */,
-				6E65D58A2396E99D00AF2D1A /* AirshipExtendedActions.framework */,
 				6EAD7CDF26B2003700B88EA7 /* AirshipPreferenceCenter.framework */,
 				6EAD7CE126B2003700B88EA7 /* AirshipPreferenceCenterTests.xctest */,
 				A67229542819813A0033F54D /* AirshipRelease.framework */,
@@ -724,7 +694,6 @@
 				3CE5598226F14B4A00FBCBA5 /* PBXTargetDependency */,
 				3CF3DEA224EB0787000CF516 /* PBXTargetDependency */,
 				3CF3DEA424EB0787000CF516 /* PBXTargetDependency */,
-				3CF3DEA824EB0787000CF516 /* PBXTargetDependency */,
 				3CF3DEAC24EB0787000CF516 /* PBXTargetDependency */,
 			);
 			name = SampleAppClip;
@@ -788,7 +757,6 @@
 				6EAD7CD726B2003700B88EA7 /* PBXTargetDependency */,
 				6E65D5C52396ECD600AF2D1A /* PBXTargetDependency */,
 				6E65D5C72396ECD600AF2D1A /* PBXTargetDependency */,
-				6E65D5C92396ECD600AF2D1A /* PBXTargetDependency */,
 				6E65D5CB2396ECD600AF2D1A /* PBXTargetDependency */,
 				6E65D5B62396EA9C00AF2D1A /* PBXTargetDependency */,
 				49251DF11D6F9C1500EED4BD /* PBXTargetDependency */,
@@ -939,13 +907,6 @@
 			fileType = wrapper.framework;
 			path = AirshipMessageCenter.framework;
 			remoteRef = 6E65D5872396E99D00AF2D1A /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		6E65D58A2396E99D00AF2D1A /* AirshipExtendedActions.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = AirshipExtendedActions.framework;
-			remoteRef = 6E65D5892396E99D00AF2D1A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		6E65D5912396E9A300AF2D1A /* AirshipNotificationServiceExtension.framework */ = {
@@ -1210,11 +1171,6 @@
 			name = AirshipCore;
 			targetProxy = 3CF3DEA324EB0787000CF516 /* PBXContainerItemProxy */;
 		};
-		3CF3DEA824EB0787000CF516 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = AirshipExtendedActions;
-			targetProxy = 3CF3DEA724EB0787000CF516 /* PBXContainerItemProxy */;
-		};
 		3CF3DEAC24EB0787000CF516 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = AirshipMessageCenter;
@@ -1254,11 +1210,6 @@
 			isa = PBXTargetDependency;
 			name = AirshipCore;
 			targetProxy = 6E65D5C62396ECD600AF2D1A /* PBXContainerItemProxy */;
-		};
-		6E65D5C92396ECD600AF2D1A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = AirshipExtendedActions;
-			targetProxy = 6E65D5C82396ECD600AF2D1A /* PBXContainerItemProxy */;
 		};
 		6E65D5CB2396ECD600AF2D1A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1321,7 +1272,6 @@
 				DEVELOPMENT_TEAM = PGJV57GD94;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = SampleContentExtension/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1351,7 +1301,6 @@
 				DEVELOPMENT_TEAM = PGJV57GD94;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = SampleContentExtension/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1592,7 +1541,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -1643,7 +1592,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -1662,7 +1611,6 @@
 				CODE_SIGN_ENTITLEMENTS = Sample/Sample.entitlements;
 				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
 				INFOPLIST_FILE = Sample/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1686,7 +1634,6 @@
 				CODE_SIGN_ENTITLEMENTS = Sample/Sample.entitlements;
 				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
 				INFOPLIST_FILE = Sample/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
