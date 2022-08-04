@@ -3,6 +3,13 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 16.9.1 August 4, 2022
+
+Patch release to rename an internal `Task` protocol to avoid conflicts with Swift concurrency Tasks.
+
+### Changes
+- Rename Task to AirshipTask to avoid name conflicts
+
 ## Version 16.9.0 July 29, 2022
 
 Minor release that fixes the subscription list action and makes it possible to replace all Airship

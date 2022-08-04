@@ -19,7 +19,7 @@ public class TestTaskManager : NSObject, TaskManagerProtocol {
         let timeInterval: TimeInterval
     }
 
-    private var launchHandlers: [String : (UADispatcher, (Task) -> Void)] = [:]
+    private var launchHandlers: [String : (UADispatcher, (AirshipTask) -> Void)] = [:]
     
     public var enqueuedRequests: [Pending] = []
     public var rateLimits: [String: RateLimit] = [:]
@@ -40,11 +40,11 @@ public class TestTaskManager : NSObject, TaskManagerProtocol {
         self.enqueuedRequests.removeAll()
     }
     
-    public func register(taskIDs: [String], dispatcher: UADispatcher?, launchHandler: @escaping (Task) -> Void) {
+    public func register(taskIDs: [String], dispatcher: UADispatcher?, launchHandler: @escaping (AirshipTask) -> Void) {
         taskIDs.forEach { register(taskID: $0, dispatcher: dispatcher, launchHandler: launchHandler) }
     }
     
-    public func register(taskID: String, dispatcher: UADispatcher?, launchHandler: @escaping (Task) -> Void) {
+    public func register(taskID: String, dispatcher: UADispatcher?, launchHandler: @escaping (AirshipTask) -> Void) {
         launchHandlers[taskID] = (dispatcher ?? UADispatcher.serial(), launchHandler)
     }
     
@@ -113,7 +113,7 @@ public class TestTaskManager : NSObject, TaskManagerProtocol {
 }
 
 @objc(UATestTask)
-public class TestTask : NSObject, Task {
+public class TestTask : NSObject, AirshipTask {
     @objc
     public var expirationHandler: (() -> Void)?
 

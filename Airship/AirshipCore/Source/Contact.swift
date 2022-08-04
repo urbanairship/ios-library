@@ -777,7 +777,7 @@ public class Contact : NSObject, Component, ContactProtocol {
                                         options: .defaultOptions)
     }
     
-    private func handleUpdateTask(task: Task) {
+    private func handleUpdateTask(task: AirshipTask) {
         guard let channelID = self.channel.identifier else {
             task.taskCompleted()
             return

@@ -211,7 +211,7 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
         }
     }
     
-    private func handleRefreshTask(_ task: Task) {
+    private func handleRefreshTask(_ task: AirshipTask) {
         let lastModified = self.isLastMetadataCurrent() ? self.lastModified : nil
         let locale = self.localeManager.currentLocale
 

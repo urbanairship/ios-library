@@ -7,10 +7,10 @@ import Foundation
 public protocol TaskManagerProtocol {
     
     @objc(registerForTaskWithIDs:dispatcher:launchHandler:)
-    func register(taskIDs: [String], dispatcher: UADispatcher?, launchHandler: @escaping (Task) -> Void)
+    func register(taskIDs: [String], dispatcher: UADispatcher?, launchHandler: @escaping (AirshipTask) -> Void)
 
     @objc(registerForTaskWithID:dispatcher:launchHandler:)
-    func register(taskID: String, dispatcher: UADispatcher?, launchHandler: @escaping (Task) -> Void)
+    func register(taskID: String, dispatcher: UADispatcher?, launchHandler: @escaping (AirshipTask) -> Void)
 
     @objc(enqueueRequestWithID:options:)
     func enqueueRequest(taskID: String, options: TaskRequestOptions)

@@ -250,7 +250,7 @@ public class EventManager: NSObject, EventManagerProtocol {
         }
     }
 
-    private func uploadEventsTask(_ task: Task) {
+    private func uploadEventsTask(_ task: AirshipTask) {
         guard self.uploadsEnabled else {
             self.lock.sync {
                 self.nextUploadDate = nil;

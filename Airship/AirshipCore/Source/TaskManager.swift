@@ -70,14 +70,14 @@ public class TaskManager : NSObject, TaskManagerProtocol {
     }
 
     @objc(registerForTaskWithIDs:dispatcher:launchHandler:)
-    public func register(taskIDs: [String], dispatcher: UADispatcher? = nil, launchHandler: @escaping (Task) -> Void) {
+    public func register(taskIDs: [String], dispatcher: UADispatcher? = nil, launchHandler: @escaping (AirshipTask) -> Void) {
         taskIDs.forEach({ taskID in
             register(taskID: taskID, dispatcher: dispatcher, launchHandler: launchHandler)
         })
     }
 
     @objc(registerForTaskWithID:dispatcher:launchHandler:)
-    public func register(taskID: String, dispatcher: UADispatcher? = nil, launchHandler: @escaping (Task) -> Void) {
+    public func register(taskID: String, dispatcher: UADispatcher? = nil, launchHandler: @escaping (AirshipTask) -> Void) {
         let taskLauncher = TaskLauncher(dispatcher: dispatcher ?? UADispatcher.globalDispatcher(.utility),
                                         launchHandler: launchHandler)
 
@@ -417,6 +417,6 @@ public class TaskManager : NSObject, TaskManagerProtocol {
 
     private struct TaskLauncher {
         let dispatcher: UADispatcher
-        let launchHandler: (Task) -> Void
+        let launchHandler: (AirshipTask) -> Void
     }
 }
