@@ -1,5 +1,7 @@
 /* Copyright Airship and Contributors */
 
+import Foundation
+
 class ExpirableTask: AirshipTask {
     private let _taskID : String
     @objc
