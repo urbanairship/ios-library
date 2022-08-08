@@ -296,7 +296,7 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
         }
     }
     
-    private func handleUpdateTask(_ task: Task)  {
+    private func handleUpdateTask(_ task: AirshipTask)  {
         guard self.enabled && self.privacyManager.isEnabled(.tagsAndAttributes) else {
             task.taskCompleted()
             return

@@ -3,6 +3,24 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 16.9.1 August 4, 2022
+
+Patch release to rename an internal `Task` protocol to avoid conflicts with Swift concurrency Tasks.
+
+### Changes
+- Rename Task to AirshipTask to avoid name conflicts
+
+## Version 16.9.0 July 29, 2022
+
+Minor release that fixes the subscription list action and makes it possible to replace all Airship
+location integration with a location permissions delegate. The location module will be removed in
+SDK 17.
+
+### Changes
+- Location integration with Airship can be replaced with setting a location permission delegate on `PermissionsManager`.
+- Fixed subscription list action.
+
+
 ## Version 16.8.0 June 30, 2022
 
 Minor release that fixes several issues and adds support for custom log handler for Airship logs.

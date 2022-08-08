@@ -62,9 +62,9 @@ public class PreferenceCenterConfig : NSObject, Decodable {
         }
 
         public required init(from decoder: Decoder) throws {
-            let container = try decoder.singleValueContainer()
+            let container = try decoder.container(keyedBy: CodingKeys.self)
 
-            if let mergeChannelDataToContact = try? container.decode(Bool.self) {
+            if let mergeChannelDataToContact = try? container.decode(Bool.self, forKey: .mergeChannelDataToContact) {
                 self.mergeChannelDataToContact = mergeChannelDataToContact
             } else {
                 self.mergeChannelDataToContact = false

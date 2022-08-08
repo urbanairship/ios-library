@@ -19,6 +19,9 @@ class PreferenceCenterDecoderTest: XCTestCase {
               "display":{
                  "name":"Notification Preferences"
               },
+              "options": {
+                "merge_channel_data_to_contact": true
+              },
               "sections":[
                  {
                     "type":"labeled_section_break",
@@ -217,5 +220,8 @@ class PreferenceCenterDecoderTest: XCTestCase {
         let secondComponent = contactSubscriptionGroupItem.components[1]
         XCTAssertEqual("APP", secondComponent.display.title)
         XCTAssertEqual([.app], secondComponent.scopes.values)
+
+        XCTAssertTrue(response.config.options?.mergeChannelDataToContact ?? false)
+
     }
 }

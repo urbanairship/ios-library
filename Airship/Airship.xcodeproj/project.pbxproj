@@ -846,8 +846,8 @@
 		6E8BF44F26852E4B009A8BD4 /* ExpirableTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8BF44A26852E4A009A8BD4 /* ExpirableTask.swift */; };
 		6E8BF45126852E4B009A8BD4 /* TaskRequestOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8BF44C26852E4A009A8BD4 /* TaskRequestOptions.swift */; };
 		6E8BF45226852E4B009A8BD4 /* TaskManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8BF44D26852E4B009A8BD4 /* TaskManager.swift */; };
-		6E8BF45526852E84009A8BD4 /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8BF45426852E83009A8BD4 /* Task.swift */; };
-		6E8BF45626852E86009A8BD4 /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8BF45426852E83009A8BD4 /* Task.swift */; };
+		6E8BF45526852E84009A8BD4 /* AirshipTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8BF45426852E83009A8BD4 /* AirshipTask.swift */; };
+		6E8BF45626852E86009A8BD4 /* AirshipTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8BF45426852E83009A8BD4 /* AirshipTask.swift */; };
 		6E8BF45726852E88009A8BD4 /* ExpirableTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8BF44A26852E4A009A8BD4 /* ExpirableTask.swift */; };
 		6E8BF45926852E8D009A8BD4 /* TaskManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8BF44D26852E4B009A8BD4 /* TaskManager.swift */; };
 		6E8BF45B26852E92009A8BD4 /* TaskRequestOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8BF44C26852E4A009A8BD4 /* TaskRequestOptions.swift */; };
@@ -1181,7 +1181,7 @@
 		A6722A0B281A9E820033F54D /* AirshipLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698DEA26790AC300654DB2 /* AirshipLogger.swift */; };
 		A6722A0C281A9E820033F54D /* PreferenceDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698DE826790AC300654DB2 /* PreferenceDataStore.swift */; };
 		A6722A0D281A9E820033F54D /* UAPrivacyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698DEB26790AC300654DB2 /* UAPrivacyManager.swift */; };
-		A6722A0E281A9E820033F54D /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8BF45426852E83009A8BD4 /* Task.swift */; };
+		A6722A0E281A9E820033F54D /* AirshipTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8BF45426852E83009A8BD4 /* AirshipTask.swift */; };
 		A6722A0F281A9E820033F54D /* ExpirableTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8BF44A26852E4A009A8BD4 /* ExpirableTask.swift */; };
 		A6722A10281A9E820033F54D /* TaskManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8BF44D26852E4B009A8BD4 /* TaskManager.swift */; };
 		A6722A11281A9E820033F54D /* TaskRequestOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8BF44C26852E4A009A8BD4 /* TaskRequestOptions.swift */; };
@@ -2321,7 +2321,7 @@
 		6E8BF44A26852E4A009A8BD4 /* ExpirableTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExpirableTask.swift; sourceTree = "<group>"; };
 		6E8BF44C26852E4A009A8BD4 /* TaskRequestOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskRequestOptions.swift; sourceTree = "<group>"; };
 		6E8BF44D26852E4B009A8BD4 /* TaskManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskManager.swift; sourceTree = "<group>"; };
-		6E8BF45426852E83009A8BD4 /* Task.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Task.swift; sourceTree = "<group>"; };
+		6E8BF45426852E83009A8BD4 /* AirshipTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirshipTask.swift; sourceTree = "<group>"; };
 		6E8CE761284137D600CF4B11 /* PushTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushTest.swift; sourceTree = "<group>"; };
 		6E8E1C9A26447B3800B11791 /* Lock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lock.swift; sourceTree = "<group>"; };
 		6E91B43B26868A6300DDB1A8 /* CircularRegion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CircularRegion.swift; sourceTree = "<group>"; };
@@ -4328,7 +4328,7 @@
 		6EA57DEC25433C57005998C7 /* Tasks */ = {
 			isa = PBXGroup;
 			children = (
-				6E8BF45426852E83009A8BD4 /* Task.swift */,
+				6E8BF45426852E83009A8BD4 /* AirshipTask.swift */,
 				6E8BF44A26852E4A009A8BD4 /* ExpirableTask.swift */,
 				6E8BF44D26852E4B009A8BD4 /* TaskManager.swift */,
 				6E8BF44C26852E4A009A8BD4 /* TaskRequestOptions.swift */,
@@ -6411,7 +6411,7 @@
 				3CC95B1F268E785900FE2ACD /* NotificationCategories.swift in Sources */,
 				A61517B526AEEAAB008A41C4 /* SubscriptionListUpdate.swift in Sources */,
 				6E664BB526C46BC600A2C8E5 /* AddCustomEventActionPredicate.swift in Sources */,
-				6E8BF45526852E84009A8BD4 /* Task.swift in Sources */,
+				6E8BF45526852E84009A8BD4 /* AirshipTask.swift in Sources */,
 				6E952926268B8F6600398B54 /* AssociatedIdentifiers.swift in Sources */,
 				3CA84AB426DE255200A59685 /* EventManagerProtocol.swift in Sources */,
 				6EB11C872697ACBF00DC698F /* ContactOperation.swift in Sources */,
@@ -6837,7 +6837,7 @@
 				A6722A0B281A9E820033F54D /* AirshipLogger.swift in Sources */,
 				A6722A0C281A9E820033F54D /* PreferenceDataStore.swift in Sources */,
 				A6722A0D281A9E820033F54D /* UAPrivacyManager.swift in Sources */,
-				A6722A0E281A9E820033F54D /* Task.swift in Sources */,
+				A6722A0E281A9E820033F54D /* AirshipTask.swift in Sources */,
 				A6722A0F281A9E820033F54D /* ExpirableTask.swift in Sources */,
 				A6722A10281A9E820033F54D /* TaskManager.swift in Sources */,
 				A6722A11281A9E820033F54D /* TaskRequestOptions.swift in Sources */,
@@ -7378,7 +7378,7 @@
 				3CA84ABB26DE257200A59685 /* AnalyticsProtocol.swift in Sources */,
 				6E664BA626C4417400A2C8E5 /* ShareActionPredicate.swift in Sources */,
 				6ED735DE26C7401F003B0A7D /* TagEditor.swift in Sources */,
-				6E8BF45626852E86009A8BD4 /* Task.swift in Sources */,
+				6E8BF45626852E86009A8BD4 /* AirshipTask.swift in Sources */,
 				6E6ED16E2683DBC300A2CBD0 /* BespokeCloseView.swift in Sources */,
 				6E698E42267BEDC300654DB2 /* TagGroupsEditor.swift in Sources */,
 				6EFD6D5D27273257005B26F1 /* Shapes.swift in Sources */,

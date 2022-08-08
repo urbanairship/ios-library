@@ -200,7 +200,7 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
         }
     }
     
-    private func handleRegistrationTask(_ task: Task) {
+    private func handleRegistrationTask(_ task: AirshipTask) {
         AirshipLogger.trace("Handling registration task: \(task)")
         
         guard let payload = self.createPayload() else {
@@ -230,7 +230,7 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
     private func updateChannel(_ channelID: String,
                                payload: ChannelRegistrationPayload,
                                lastPayload: ChannelRegistrationPayload?,
-                               task: Task) {
+                               task: AirshipTask) {
 
         let minimizedPayload = payload.minimizePayload(previous: lastPayload)
         let disposable = self.channelAPIClient.updateChannel(withID: channelID, withPayload: minimizedPayload) { response, error in
@@ -269,7 +269,7 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
         }
     }
     
-    private func createChannel(payload: ChannelRegistrationPayload, task: Task) {
+    private func createChannel(payload: ChannelRegistrationPayload, task: AirshipTask) {
         let disposable = self.channelAPIClient.createChannel(withPayload: payload) { response, error in
             
             guard let response = response else {

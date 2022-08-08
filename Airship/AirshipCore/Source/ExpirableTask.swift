@@ -1,6 +1,8 @@
 /* Copyright Airship and Contributors */
 
-class ExpirableTask : Task {
+import Foundation
+
+class ExpirableTask: AirshipTask {
     private let _taskID : String
     @objc
     public var taskID: String {

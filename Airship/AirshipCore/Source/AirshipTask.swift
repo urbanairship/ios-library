@@ -8,7 +8,7 @@ import Foundation
  * - Note: For internal use only. :nodoc:
  */
 @objc(UATask)
-public protocol Task {
+public protocol AirshipTask {
     
     /**
      * Expiration handler. Will be called when background time is about to expire. The launcher is still expected to call `taskCompleted` or `taskFailed`.
