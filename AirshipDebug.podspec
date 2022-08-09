@@ -19,5 +19,4 @@ Pod::Spec.new do |s|
    s.resources               = "Airship/AirshipDebug/Resources/*"
    s.frameworks              = 'UIKit'
    s.dependency                'Airship', AIRSHIP_VERSION
-   s.dependency                "Airship/Location", AIRSHIP_VERSION
 end
