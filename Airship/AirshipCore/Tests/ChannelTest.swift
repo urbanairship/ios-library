@@ -407,4 +407,5 @@ class ChannelTest: XCTestCase {
         self.channel.processContactSubscriptionUpdates(updates)
         XCTAssertEqual(updates, self.audienceManager.contactUpdates)
     }
+
 }

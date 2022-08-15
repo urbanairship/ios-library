@@ -2,6 +2,8 @@
 
 import Foundation
 import UserNotifications
+import Combine
+
 #if os(watchOS)
 import WatchKit
 import UIKit
@@ -10,7 +12,16 @@ import UIKit
 /// This singleton provides an interface to the functionality provided by the Airship iOS Push API.
 @objc(UAPush)
 public class Push: NSObject, Component, PushProtocol {
-    
+
+    private let optInSubject = PassthroughSubject<Bool, Never>()
+
+    /// Push opt-in updates
+    public var optInUpdates: AnyPublisher<Bool, Never> {
+        optInSubject
+            .removeDuplicates()
+            .eraseToAnyPublisher()
+    }
+
     /// The shared Push instance.
     @objc
     public static var shared: Push {
@@ -253,6 +264,8 @@ public class Push: NSObject, Component, PushProtocol {
             if previous != newValue {
                 self.dispatchUpdateNotifications()
             }
+
+            optInSubject.send(isPushNotificationsOptedIn)
         }
 
         get {
@@ -296,6 +309,7 @@ public class Push: NSObject, Component, PushProtocol {
         set {
             guard let deviceToken = newValue else {
                 self.dataStore.removeObject(forKey: Push.deviceTokenKey)
+                optInSubject.send(isPushNotificationsOptedIn)
                 return
             }
 
@@ -316,6 +330,8 @@ public class Push: NSObject, Component, PushProtocol {
             } catch {
                 AirshipLogger.error("Unable to set device token")
             }
+
+            optInSubject.send(isPushNotificationsOptedIn)
         }
 
         get {
@@ -422,6 +438,8 @@ public class Push: NSObject, Component, PushProtocol {
     public private(set) var authorizedNotificationSettings: UAAuthorizedNotificationSettings {
         set {
             self.dataStore.setInteger(Int(newValue.rawValue), forKey: Push.typesAuthorizedKey)
+
+            optInSubject.send(isPushNotificationsOptedIn)
         }
 
         get {
@@ -609,6 +627,8 @@ public class Push: NSObject, Component, PushProtocol {
         } else {
             self.pushEnabled = false
         }
+
+        optInSubject.send(isPushNotificationsOptedIn)
     }
 
     private func onNotificationRegistrationFinished(completionHandler: (() -> Void)? = nil) {

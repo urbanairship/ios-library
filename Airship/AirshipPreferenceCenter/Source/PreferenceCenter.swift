@@ -1,10 +1,12 @@
 /* Copyright Airship and Contributors */
 
 import Foundation;
+import SwiftUI
 
 #if canImport(AirshipCore)
 import AirshipCore
 #endif
+
 
 /**
  * Open delegate.
@@ -36,9 +38,7 @@ public class PreferenceCenter : NSObject, Component {
     
     private static let payloadType = "preference_forms"
     private static let preferenceFormsKey = "preference_forms"
-    
-    var preferenceCenterWindow: UIWindow?
-    
+
     /**
      * Open delegate.
      *
@@ -50,15 +50,22 @@ public class PreferenceCenter : NSObject, Component {
     private let dataStore: PreferenceDataStore
     private let privacyManager: PrivacyManager
     private let remoteDataProvider: RemoteDataProvider
-    
-    private var viewController : UIViewController?
-    
+    private var currentDisplay: Disposable?
+
     /**
-     * Preference center style
+     * Preference center theme
      */
-    @objc
-    public var style: PreferenceCenterStyle?
+    public var theme: PreferenceCenterTheme?
+
+    @objc(setTheme:)
+    public func _setTheme(_ theme: _PreferenceCenterThemeObjc) {
+        self.theme = theme.toPreferenceCenterTheme()
+    }
     
+    public func setThemeFromPlist(_ plist: String) throws {
+        self.theme = try PreferenceCenterThemeLoader.fromPlist(plist)
+    }
+
     private let disableHelper: ComponentDisableHelper
     
     // NOTE: For internal use only. :nodoc:
@@ -75,7 +82,7 @@ public class PreferenceCenter : NSObject, Component {
         self.dataStore = dataStore
         self.privacyManager = privacyManager
         self.remoteDataProvider = remoteDataProvider
-        self.style = PreferenceCenterStyle(file: "AirshipPreferenceCenterStyle")
+        self.theme = PreferenceCenterThemeLoader.defaultPlist()
         self.disableHelper = ComponentDisableHelper(dataStore: dataStore, className: "PreferenceCenter")
         super.init()
         AirshipLogger.info("PreferenceCenter initialized")
@@ -92,78 +99,30 @@ public class PreferenceCenter : NSObject, Component {
             AirshipLogger.trace("Preference center \(preferenceCenterID) opened through delegate")
         } else {
             AirshipLogger.trace("Launching OOTB preference center")
-            openDefaultPreferenceCenter(preferenceCenterID: preferenceCenterID)
-        }
-    }
-    
-    private func openDefaultPreferenceCenter(preferenceCenterID: String) {
-        guard viewController == nil else {
-            AirshipLogger.debug("Already displaying preference center: \(self.viewController!.description)")
-            return
-        }
-        
-        AirshipLogger.debug("Opening default preference center UI")
-        
-        let preferenceCenterVC = PreferenceCenterViewController(identifier: preferenceCenterID)
-        
-        preferenceCenterVC.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismiss))
-        
-        preferenceCenterVC.style = style
-        
-        viewController = preferenceCenterVC
-    
-        if let window =  Utils.presentInNewWindow(createNavigationViewController()) {
-            self.preferenceCenterWindow = window
-            AirshipLogger.trace("Presented preference center view controller: \(preferenceCenterVC.description)")
-        }
-    }
-    
-    private func createNavigationViewController() -> UINavigationController {
-        let navController = UINavigationController(nibName: nil, bundle: nil)
-        navController.modalTransitionStyle = UIModalTransitionStyle.crossDissolve
-        navController.modalPresentationStyle = UIModalPresentationStyle.fullScreen
-        
-        var titleTextAttributes: [NSAttributedString.Key : Any] = [:]
-        titleTextAttributes[.font] = style?.titleFont
-        titleTextAttributes[.foregroundColor] = style?.titleColor
-        
-        navController.navigationBar.tintColor = style?.tintColor
-        navController.navigationBar.barTintColor = style?.navigationBarColor
-        if (!titleTextAttributes.isEmpty) {
-            navController.navigationBar.titleTextAttributes = titleTextAttributes
-        }
-        
-        // Customizing our navigation bar
-        if #available(iOS 13.0, *) {
-            let appearance = UINavigationBarAppearance()
-            appearance.configureWithOpaqueBackground()
-            appearance.backgroundColor = style?.navigationBarColor
-            if (!titleTextAttributes.isEmpty) {
-                appearance.titleTextAttributes = titleTextAttributes
+            Task {
+                await openDefaultPreferenceCenter(preferenceCenterID: preferenceCenterID)
             }
-            navController.navigationBar.standardAppearance = appearance
-            navController.navigationBar.scrollEdgeAppearance = appearance
         }
-        
-        if let vc = viewController {
-            navController.pushViewController(vc, animated: false)
-        }
-        return navController
     }
 
-    @objc
-    private func dismiss(sender: Any) {
-        if let vc = viewController {
-            vc.dismiss(animated: true) {
-                AirshipLogger.trace("Dismissed preference center view controller: \(vc.description)")
-                self.viewController = nil
-            }
-        } else {
-            AirshipLogger.debug("Preference center already dismissed")
+    @MainActor
+    private func openDefaultPreferenceCenter(preferenceCenterID: String) async {
+        guard let scene = try? Utils.findWindowScene() else {
+            AirshipLogger.error("Unable to display, missing scene.")
+            return
         }
-        preferenceCenterWindow = nil
+
+        currentDisplay?.dispose()
+
+        AirshipLogger.debug("Opening default preference center UI")
+
+        self.currentDisplay = showPreferenceCenter(
+            preferenceCenterID,
+            scene: scene,
+            theme: theme
+        )
     }
-    
+
     /**
      * Returns the configuration of the Preference Center with the given ID trough a callback method.
      * - Parameters:
@@ -173,9 +132,11 @@ public class PreferenceCenter : NSObject, Component {
     @objc(configForPreferenceCenterID:completionHandler:)
     @discardableResult
     public func config(preferenceCenterID: String, completionHandler: @escaping (PreferenceCenterConfig?) -> ()) -> Disposable {
-        return self.remoteDataProvider.subscribe(types: [PreferenceCenter.payloadType]) { payloads in
+        var disposable: Disposable!
+        disposable = self.remoteDataProvider.subscribe(types: [PreferenceCenter.payloadType]) { payloads in
             
             guard let preferences = payloads.first?.data[PreferenceCenter.preferenceFormsKey] as? [[AnyHashable : Any]] else {
+                disposable.dispose()
                 completionHandler(nil)
                 return
             }
@@ -190,7 +151,28 @@ public class PreferenceCenter : NSObject, Component {
             }
             
             let config = responses.first { $0.config.identifier == preferenceCenterID }?.config
+            disposable.dispose()
             completionHandler(config)
+        }
+
+        return disposable
+    }
+
+    /**
+     * Returns the configuration of the Preference Center with the given ID.
+     * - Parameters:
+     *   - preferenceCenterID: The preference center ID.
+     */
+    public func config(preferenceCenterID: String) async throws -> PreferenceCenterConfig {
+        return try await withCheckedThrowingContinuation { continuation in
+            self.config(preferenceCenterID: preferenceCenterID) { config in
+                guard let config = config else {
+                    continuation.resume(throwing: AirshipErrors.error("Config not available"))
+                    return
+                }
+
+                continuation.resume(returning: config)
+            }
         }
     }
     
@@ -224,5 +206,101 @@ public class PreferenceCenter : NSObject, Component {
         let preferenceCenterID = deepLink.pathComponents[1]
         self.open(preferenceCenterID)
         return true
+    }
+}
+
+fileprivate extension PreferenceCenter {
+
+    func showPreferenceCenter(_ preferenceCenterID: String,
+                              scene: UIWindowScene,
+                              theme: PreferenceCenterTheme?) -> Disposable {
+
+        let defaultTitle = theme?.viewController?.navigationBar?.title ?? "ua_preference_center_title".localized
+        let navController = makeNavController(theme: theme?.viewController?.navigationBar)
+        var window: UIWindow? = UIWindow(windowScene: scene)
+
+        let disposable = Disposable {
+            window?.windowLevel = .normal
+            window?.isHidden = true
+            window = nil
+        }
+
+        var viewController: UIViewController!
+
+        let view = PreferenceCenterView(
+            preferenceCenterID: preferenceCenterID,
+            onPhaseChange: { phase in
+                switch (phase) {
+                case .loaded(let state):
+                    viewController?.title = state.config.display?.title ?? defaultTitle
+                default:
+                    viewController?.title = defaultTitle
+                }
+            }
+        )
+
+        viewController = PreferenceCenterViewControllerFactory.makeViewController(
+            view: view,
+            preferenceCenterTheme: theme
+        )
+
+        navController.pushViewController(viewController, animated: false)
+        viewController.navigationItem.leftBarButtonItem = DoneBarButtonItem {
+            disposable.dispose()
+        }
+
+        window?.windowLevel = .alert
+        window?.makeKeyAndVisible()
+        window?.rootViewController = navController
+
+        return disposable
+    }
+
+    private func makeNavController(theme: PreferenceCenterTheme.NavigationBar?) -> UINavigationController {
+        let navController = UINavigationController(nibName: nil, bundle: nil)
+        navController.modalTransitionStyle = UIModalTransitionStyle.crossDissolve
+        navController.modalPresentationStyle = UIModalPresentationStyle.fullScreen
+
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithDefaultBackground()
+
+        var titleTextAttributes: [NSAttributedString.Key : Any] = [:]
+        titleTextAttributes[.font] = theme?.titleFont
+        titleTextAttributes[.foregroundColor] = theme?.titleColor
+
+        if let tintColor = theme?.tintColor {
+            navController.navigationBar.tintColor = tintColor
+        }
+
+        if let backgroundColor = theme?.backgroundColor {
+            navController.navigationBar.backgroundColor = backgroundColor
+            appearance.backgroundColor = backgroundColor
+        }
+
+        if (!titleTextAttributes.isEmpty) {
+            navController.navigationBar.titleTextAttributes = titleTextAttributes
+            appearance.titleTextAttributes = titleTextAttributes
+        }
+
+        navController.navigationBar.standardAppearance = appearance
+        navController.navigationBar.scrollEdgeAppearance = appearance
+        return navController
+    }
+}
+
+
+class DoneBarButtonItem: UIBarButtonItem {
+    typealias ActionHandler = () -> Void
+
+    private var actionHandler: ActionHandler?
+
+    convenience init(actionHandler: ActionHandler?) {
+        self.init(barButtonSystemItem: .done, target: nil, action: #selector(done))
+        target = self
+        self.actionHandler = actionHandler
+    }
+
+    @objc func done() {
+        actionHandler?()
     }
 }

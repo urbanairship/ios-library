@@ -5,27 +5,39 @@ import Foundation
 import SwiftUI
 import Combine
 
+/// - Note: for internal use only.  :nodoc:
 @available(iOS 13.0.0, tvOS 13.0.0, *)
-struct AirshipAsyncImage<Placeholder: View, ImageView: View> : View {
+public struct AirshipAsyncImage<Placeholder: View, ImageView: View> : View {
     
     let url: String
+    let imageLoader: ImageLoader
     let image: (Image, CGSize) -> ImageView
     let placeholder: () -> Placeholder
-    
+
+
+    public init(url: String,
+         imageLoader: ImageLoader = ImageLoader(),
+         image: @escaping (Image, CGSize) -> ImageView,
+         placeholder: @escaping () -> Placeholder) {
+        self.url = url
+        self.imageLoader = imageLoader
+        self.image = image
+        self.placeholder = placeholder
+    }
+
     @State private var loadedImage: UIImage?
     @State private var currentImage: UIImage?
     @State private var imageIndex: Int = 0
     @State private var timer: Timer?
     @State private var cancellable: AnyCancellable?
-    @EnvironmentObject var thomasEnvironment: ThomasEnvironment
 
-    var body: some View {
+    public var body: some View {
         content
             .onAppear {
                 if (self.loadedImage != nil) {
                     animateImage()
                 } else {
-                    self.cancellable = thomasEnvironment.imageLoader.load(url: self.url)
+                    self.cancellable = self.imageLoader.load(url: self.url)
                         .receive(on: DispatchQueue.main)
                         .sink(receiveCompletion: { completion in
                             if case let .failure(error) = completion {

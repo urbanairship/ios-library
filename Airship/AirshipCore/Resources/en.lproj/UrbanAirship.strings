@@ -70,5 +70,6 @@
 "ua_chat_send_button" = "Send";
 
 "ua_preference_center_title" = "Preference Center";
+"ua_preference_center_empty" = "Unable to load preferences. Please try again later.";
 
 

@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+import Combine
 
 protocol ChannelAudienceManagerProtocol {
     var pendingAttributeUpdates : [AttributeUpdate] { get }
@@ -10,7 +11,9 @@ protocol ChannelAudienceManagerProtocol {
     var channelID: String? { get set }
     
     var enabled: Bool { get set }
-        
+
+    var subscriptionListEdits: AnyPublisher<SubscriptionListEdit, Never> { get }
+
     func editSubscriptionLists() -> SubscriptionListEditor
 
     func editTagGroups(allowDeviceGroup: Bool) -> TagGroupsEditor
@@ -49,6 +52,11 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
 
     private let cachedSubscriptionLists: CachedValue<[String]>
     private let cachedSubscriptionListsHistory: CachedList<SubscriptionListUpdate>
+
+    private let subscriptionListEditsSubject = PassthroughSubject<SubscriptionListEdit, Never>()
+    public var subscriptionListEdits: AnyPublisher<SubscriptionListEdit, Never> {
+        self.subscriptionListEditsSubject.eraseToAnyPublisher()
+    }
 
     @objc
     public var pendingAttributeUpdates: [AttributeUpdate] {
@@ -157,6 +165,19 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
             
             let audienceUpdate = AudienceUpdate(subscriptionListUpdates: updates, tagGroupUpdates: [], attributeUpdates: [])
             self.addUpdate(audienceUpdate)
+
+            updates.forEach {
+                switch ($0.type) {
+                case .subscribe:
+                    self.subscriptionListEditsSubject.send(
+                        .subscribe($0.listId)
+                    )
+                case .unsubscribe:
+                    self.subscriptionListEditsSubject.send(
+                        .unsubscribe($0.listId)
+                    )
+                }
+            }
             self.enqueueTask()
         }
     }
@@ -252,11 +273,11 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
                 AirshipLogger.debug("Fetched lists failed")
             }
 
-            throw AirshipErrors.error("Failed to fetch subscriptoin lists failed")
+            throw AirshipErrors.error("Failed to fetch subscription lists failed")
         }
         
         guard response.isSuccess, let listIDs = response.listIDs else {
-            throw AirshipErrors.error("Failed to fetch subscriptoin lists with status: \(response.status)")
+            throw AirshipErrors.error("Failed to fetch subscription lists with status: \(response.status)")
         }
         
         AirshipLogger.debug("Fetched lists finished with response: \(response)")

@@ -5,13 +5,13 @@ import SwiftUI
 import Combine
 
 @available(iOS 13.0.0, tvOS 13.0, *)
-struct ImageLoader {
+public struct ImageLoader {
     private static let retryDelay = 10
     private static let retries = 10
     
     private let imageProvider: ImageProvider?
     
-    init(imageProvider: ImageProvider? = nil) {
+    public init(imageProvider: ImageProvider? = nil) {
         self.imageProvider = imageProvider
     }
 

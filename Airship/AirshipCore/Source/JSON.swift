@@ -30,7 +30,7 @@ public enum JSON: Decodable, Equatable {
             throw AirshipErrors.error("Invalid JSON")
         }
     }
-    
+
     public func unWrap() -> Any? {
         switch (self) {
         case .string(let value):
@@ -56,6 +56,5 @@ public enum JSON: Decodable, Equatable {
             }
             return array
         }
-       
     }
 }

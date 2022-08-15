@@ -1,10 +1,17 @@
 import Foundation
+import Combine
 
 @testable
 import AirshipCore
 
 @objc(UATestChannelAudienceManager)
 public class TestChannelAudienceManager : NSObject, ChannelAudienceManagerProtocol {
+
+    public let subscriptionListEditsSubject = PassthroughSubject<SubscriptionListEdit, Never>()
+    public var subscriptionListEdits: AnyPublisher<SubscriptionListEdit, Never> {
+        self.subscriptionListEditsSubject.eraseToAnyPublisher()
+    }
+
     public var contactUpdates: [SubscriptionListUpdate] = []
     
     public var pendingAttributeUpdates: [AttributeUpdate] = []

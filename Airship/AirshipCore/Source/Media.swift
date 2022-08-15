@@ -9,11 +9,13 @@ struct Media : View {
     
     let model: MediaModel
     let constraints: ViewConstraints
-    
+    @EnvironmentObject var thomasEnvironment: ThomasEnvironment
+
     var body: some View {
         switch model.mediaType {
         case .image:
-            AirshipAsyncImage(url: self.model.url) { image, imageSize in
+            AirshipAsyncImage(url: self.model.url,
+                              imageLoader: thomasEnvironment.imageLoader) { image, imageSize in
                 image
                     .fitMedia(mediaFit:self.model.mediaFit, constraints: constraints, imageSize: imageSize)
             } placeholder: {

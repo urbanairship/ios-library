@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+import Combine
 
 /**
  * Airship Channel protocol.
@@ -129,7 +130,7 @@ public protocol ChannelProtocol {
     func enableChannelCreation()
 }
 
-protocol InternalChannelProtocol : ChannelProtocol {
+protocol InternalChannelProtocol: ChannelProtocol {
     func processContactSubscriptionUpdates(_ updates: [SubscriptionListUpdate])
 }
 

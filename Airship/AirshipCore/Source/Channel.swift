@@ -2,6 +2,8 @@
 
 import Foundation
 
+import Combine
+
 /**
  * This singleton provides an interface to the channel functionality.
  */
@@ -383,6 +385,24 @@ public class Channel : NSObject, Component, ChannelProtocol {
     public func fetchSubscriptionLists(completionHandler: @escaping ([String]?, Error?) -> Void) -> Disposable {
         return audienceManager.fetchSubscriptionLists(completionHandler: completionHandler)
     }
+
+    public func fetchSubscriptionLists() async throws -> [String] {
+        try await withCheckedThrowingContinuation { continuation in
+            self.audienceManager.fetchSubscriptionLists { subscriptionLists, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: subscriptionLists ?? [])
+                }
+            }
+        }
+    }
+
+    /// Publishes edits made to the subscription lists through the SDK
+    public var subscriptionListEdits: AnyPublisher<SubscriptionListEdit, Never> {
+        audienceManager.subscriptionListEdits
+    }
+
 
     /// Begins an attributes editing session
     /// - Returns: An AttributesEditor

@@ -233,5 +233,33 @@ class ChannelAudienceManagerTest: XCTestCase {
 
         self.waitForExpectations(timeout: 10.0)
     }
+
+    func testSubscriptionListEdits() throws {
+        var edits = [SubscriptionListEdit]()
+
+        let expectation = self.expectation(description: "Publisher")
+        expectation.expectedFulfillmentCount = 3
+        let cancellable = self.audienceManager.subscriptionListEdits.sink {
+            edits.append($0)
+            expectation.fulfill()
+        }
+
+        let editor = self.audienceManager.editSubscriptionLists()
+        editor.unsubscribe("apple")
+        editor.unsubscribe("pen")
+        editor.subscribe("apple pen")
+        editor.apply()
+
+        self.waitForExpectations(timeout: 10.0)
+
+        let expected: [SubscriptionListEdit] = [
+            .unsubscribe("apple"),
+            .unsubscribe("pen"),
+            .subscribe("apple pen")
+        ]
+
+        XCTAssertEqual(expected, edits)
+        cancellable.cancel()
+    }
     
 }

@@ -16,6 +16,7 @@ struct ImageButton : View {
   
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.layoutState) var layoutState
+    @EnvironmentObject var thomasEnvironment: ThomasEnvironment
 
     @ViewBuilder
     var body: some View {
@@ -41,14 +42,18 @@ struct ImageButton : View {
     private func createInnerButton() -> some View {
         switch(model.image) {
         case .url(let model):
-            AirshipAsyncImage(url: model.url) { image, _ in
+            AirshipAsyncImage(url: model.url,
+                              imageLoader: thomasEnvironment.imageLoader,
+                              image: { image, _ in
                 image
                     .renderingMode(.original)
                     .resizable()
                     .scaledToFit()
-            } placeholder: {
+            },
+
+                              placeholder: {
                 AirshipProgressView()
-            }
+            })
         case .icon(let model):
             Icons.icon(model: model, colorScheme: colorScheme)
         }

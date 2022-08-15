@@ -1270,4 +1270,32 @@ class ContactTest: XCTestCase {
 
         XCTAssertEqual(expectedUpdates, self.channel.contactUpdates)
     }
+
+    func testSubscriptionListEdits() throws {
+        var edits = [ScopedSubscriptionListEdit]()
+
+        let expectation = self.expectation(description: "Publisher")
+        expectation.expectedFulfillmentCount = 3
+        let cancellable = self.contact.subscriptionListEdits.sink {
+            edits.append($0)
+            expectation.fulfill()
+        }
+
+        self.contact.editSubscriptionLists { editor in
+            editor.unsubscribe("pen", scope: .web)
+            editor.unsubscribe("pinapple", scope: .app)
+            editor.subscribe("pinapple pen", scope: .email)
+        }
+
+        self.waitForExpectations(timeout: 10.0)
+
+        let expected: [ScopedSubscriptionListEdit] = [
+            .unsubscribe("pen", .web),
+            .unsubscribe("pinapple", .app),
+            .subscribe("pinapple pen", .email)
+        ]
+
+        XCTAssertEqual(expected, edits)
+        cancellable.cancel()
+    }
 }

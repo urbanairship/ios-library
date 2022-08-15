@@ -31,7 +31,7 @@ struct TextInput : View {
         return ZStack {
             if let hint = self.model.placeHolder {
                 Text(hint)
-                    .textAppearance(placeHolderTextApperance())
+                    .textAppearance(placeHolderTextAppearance())
                     .padding(EdgeInsets(top: 8, leading: 5, bottom: 0, trailing: 0 ))
                     .constraints(constraints, alignment:.topLeading)
                     .opacity(input.isEmpty && !isEditing ? 1 : 0)
@@ -70,7 +70,7 @@ struct TextInput : View {
         self.formState.updateFormInput(data)
     }
 
-    private func placeHolderTextApperance() -> some BaseTextAppearance {
+    private func placeHolderTextAppearance() -> some BaseTextAppearance {
         guard let color = self.model.textAppearance.placeHolderColor else {
             return self.model.textAppearance
         }

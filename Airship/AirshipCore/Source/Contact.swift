@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+import Combine
 
 
 /**
@@ -9,7 +10,7 @@ import Foundation
  */
 @objc(UAContactProtocol)
 public protocol ContactProtocol {
-    
+
     /**
      * The current named user ID.
      */
@@ -613,6 +614,18 @@ public class Contact : NSObject, Component, ContactProtocol {
             }
 
             self.notifyChannelSubscriptionListUpdates(updates)
+            updates.forEach {
+                switch ($0.type) {
+                case .subscribe:
+                    self.subscriptionListEditsSubject.send(
+                        .subscribe($0.listId, $0.scope)
+                    )
+                case .unsubscribe:
+                    self.subscriptionListEditsSubject.send(
+                        .unsubscribe($0.listId, $0.scope)
+                    )
+                }
+            }
 
             self.addOperation(ContactOperation.resolve())
             self.addOperation(ContactOperation.update(subscriptionListsUpdates: updates))
@@ -669,7 +682,13 @@ public class Contact : NSObject, Component, ContactProtocol {
         
         return disposable
     }
-    
+
+    private let subscriptionListEditsSubject = PassthroughSubject<ScopedSubscriptionListEdit, Never>()
+
+    /// Publishes all edits made to the subscription lists through the  SDK
+    public var subscriptionListEdits: AnyPublisher<ScopedSubscriptionListEdit, Never> {
+        subscriptionListEditsSubject.eraseToAnyPublisher()
+    }
 
     private func resolveSubscriptionLists(_ contactID: String) throws -> [String: [ChannelScope]] {
         if let cached = self.cachedSubscriptionLists.value, cached.0 == contactID {
@@ -692,11 +711,11 @@ public class Contact : NSObject, Component, ContactProtocol {
                 AirshipLogger.debug("Fetched lists failed")
             }
 
-            throw AirshipErrors.error("Failed to fetch subscriptoin lists failed")
+            throw AirshipErrors.error("Failed to fetch subscription lists failed")
         }
         
         guard response.isSuccess, let scopedLists = response.result else {
-            throw AirshipErrors.error("Failed to fetch subscriptoin lists with status: \(response.status)")
+            throw AirshipErrors.error("Failed to fetch subscription lists with status: \(response.status)")
         }
         
         AirshipLogger.debug("Fetched lists finished with response: \(response)")
@@ -1239,6 +1258,20 @@ public class Contact : NSObject, Component, ContactProtocol {
             if (!(pendingTagUpdates?.isEmpty ?? true && pendingAttributeUpdates?.isEmpty ?? true)) {
                 let operation = ContactOperation.update(tagUpdates: pendingTagUpdates, attributeUpdates: pendingAttributeUpdates)
                 addOperation(operation)
+            }
+        }
+    }
+
+
+    public func fetchSubscriptionLists() async throws -> [String: [ChannelScope]] {
+        try await withCheckedThrowingContinuation { continuation in
+            self.fetchSubscriptionLists { subscriptionLists, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    let subscrpitions = subscriptionLists?.mapValues { $0.values }
+                    continuation.resume(returning: subscrpitions ?? [:])
+                }
             }
         }
     }
