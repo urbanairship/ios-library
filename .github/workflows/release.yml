@@ -188,9 +188,9 @@ jobs:
       - name: Prepare Carthage
         shell: bash
         run: |
-        mkdir -p Carthage/build
-        cp -R build/*.xcframework Carthage/build
-        zip -r Airship.xcframeworks.zip Carthage -x "*.DS_Store"
+          mkdir -p Carthage/build
+          cp -R build/*.xcframework Carthage/build
+          zip -r Airship.xcframeworks.zip Carthage -x "*.DS_Store"
       - name: Upload carthage distribution
         uses: actions/upload-release-asset@v1.0.1
         env:
