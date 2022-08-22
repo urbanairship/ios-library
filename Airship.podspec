@@ -1,21 +1,22 @@
 AIRSHIP_VERSION="17.0.0"
 
 Pod::Spec.new do |s|
-   s.version                 = AIRSHIP_VERSION
-   s.name                    = "Airship"
-   s.summary                 = "Airship iOS SDK"
-   s.documentation_url       = "https://docs.airship.com/platform/ios"
-   s.homepage                = "https://www.airship.com"
-   s.author                  = { "Airship" => "support@airship.com" }
-   s.license                 = { :type => "Apache License, Version 2.0", :file => "LICENSE" }
-   s.source                  = { :git => "https://github.com/urbanairship/ios-library.git", :tag => s.version.to_s }
-   s.module_name             = "AirshipKit"
-   s.header_dir              = "AirshipKit"
-   s.ios.deployment_target   = "14.0"
-   s.tvos.deployment_target  = "14.0"
-   s.swift_versions          = "5.0"
-   s.requires_arc            = true
-   s.default_subspecs        = ["Basement", "Core", "Automation", "MessageCenter", "PreferenceCenter"]
+   s.version                    = AIRSHIP_VERSION
+   s.name                       = "Airship"
+   s.summary                    = "Airship iOS SDK"
+   s.documentation_url          = "https://docs.airship.com/platform/ios"
+   s.homepage                   = "https://www.airship.com"
+   s.author                     = { "Airship" => "support@airship.com" }
+   s.license                    = { :type => "Apache License, Version 2.0", :file => "LICENSE" }
+   s.source                     = { :git => "https://github.com/urbanairship/ios-library.git", :tag => s.version.to_s }
+   s.module_name                = "AirshipKit"
+   s.header_dir                 = "AirshipKit"
+   s.ios.deployment_target      = "14.0"
+   s.tvos.deployment_target     = "14.0"
+   s.watchos.deployment_target  = "7.0"
+   s.swift_versions             = "5.0"
+   s.requires_arc               = true
+   s.default_subspecs           = ["Basement", "Core", "Automation", "MessageCenter", "PreferenceCenter"]
 
    s.subspec "Basement" do |basement|
       basement.public_header_files        = "Airship/AirshipBasement/Source/Public/*.h", "Cocoapods/AirshipKit.h"
@@ -23,8 +24,10 @@ Pod::Spec.new do |s|
       basement.private_header_files       = "Airship/AirshipBasement/Source/Internal/*.h"
       basement.exclude_files              = "Airship/AirshipBasement/Source/Public/AirshipBasement.h"
       basement.libraries                  = "z", "sqlite3"
-      basement.frameworks                 = "UserNotifications", "CFNetwork", "CoreGraphics", "Foundation", "Security", "SystemConfiguration", "UIKit", "CoreData"
-      basement.ios.frameworks             = "WebKit", "CoreTelephony"
+      basement.frameworks                 = "UserNotifications", "CFNetwork", "CoreGraphics", "Foundation", "Security", "UIKit", "CoreData"
+      basement.ios.frameworks             = "WebKit", "CoreTelephony","SystemConfiguration"
+      basement.tvos.frameworks            = "SystemConfiguration"
+      basement.watchos.frameworks         = "WatchKit"
    end
 
    s.subspec "Core" do |core|
@@ -32,8 +35,10 @@ Pod::Spec.new do |s|
       core.resource_bundle            = { 'AirshipCoreResources' => "Airship/AirshipCore/Resources/*" }
       core.exclude_files              = "Airship/AirshipCore/Resources/Info.plist", "Airship/AirshipCore/Source/AirshipCore.h"
       core.libraries                  = "z", "sqlite3"
-      core.frameworks                 = "UserNotifications", "CFNetwork", "CoreGraphics", "Foundation", "Security", "SystemConfiguration", "UIKit", "CoreData"
-      core.ios.frameworks             = "WebKit", "CoreTelephony", "StoreKit"
+      core.frameworks                 = "UserNotifications", "CFNetwork", "CoreGraphics", "Foundation", "Security", "UIKit", "CoreData"
+      core.ios.frameworks             = "WebKit", "CoreTelephony", "SystemConfiguration", "StoreKit"
+      core.tvos.frameworks            = "SystemConfiguration"
+      core.watchos.frameworks         = "WatchKit"
       core.dependency                 "Airship/Basement"
    end
 

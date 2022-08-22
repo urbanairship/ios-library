@@ -55,6 +55,10 @@ build-sample-tvos: setup
 .PHONY: build-sample-ios
 build-sample-ios: setup
 	bash ./scripts/build_sample.sh "Sample" "${derived_data_path}"
+	
+.PHONY: build-sample-watchos
+build-sample-watchos: setup
+	bash ./scripts/build_sample_watchos.sh "watchOSSample_WatchKit_Extension" "${derived_data_path}"
 
 .PHONY: test
 test: setup test-core test-content-extension test-service-extension test-packages
@@ -87,6 +91,10 @@ pod-lint: pod-lint-tvos pod-lint-ios pod-lint-extensions
 .PHONY: pod-lint-tvos
 pod-lint-tvos: setup
 	bundle exec pod lib lint Airship.podspec --verbose --platforms=tvos --fail-fast --skip-tests --no-subspecs
+
+.PHONY: pod-lint-watchos
+pod-lint-watchos: setup
+	bundle exec pod lib lint Airship.podspec --verbose --platforms=watchos --subspec=Core --fail-fast --skip-tests 
 
 .PHONY: pod-lint-ios
 pod-lint-ios: setup

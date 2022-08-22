@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A61AC1F728AE271B00C4B1BA /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = A61AC1F628AE265400C4B1BA /* AirshipConfig.plist */; };
 		A6ADC0772829645F0082110B /* watchOSSample WatchKit App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = A6ADC0762829645F0082110B /* watchOSSample WatchKit App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		A6ADC07D2829645F0082110B /* Interface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A6ADC07B2829645F0082110B /* Interface.storyboard */; };
 		A6ADC07F282964620082110B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A6ADC07E282964620082110B /* Assets.xcassets */; };
@@ -16,17 +17,10 @@
 		A6ADC08E282964620082110B /* NotificationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6ADC08D282964620082110B /* NotificationController.swift */; };
 		A6ADC090282964620082110B /* ComplicationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6ADC08F282964620082110B /* ComplicationController.swift */; };
 		A6ADC092282964640082110B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A6ADC091282964640082110B /* Assets.xcassets */; };
-		A6ADC09E282964640082110B /* watchOSSampleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6ADC09D282964640082110B /* watchOSSampleTests.swift */; };
-		A6ADC0A8282964640082110B /* watchOSSampleUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6ADC0A7282964640082110B /* watchOSSampleUITests.swift */; };
-		A6ADC0AA282964640082110B /* watchOSSampleUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6ADC0A9282964640082110B /* watchOSSampleUITestsLaunchTests.swift */; };
-		A6ADC0C7282967FC0082110B /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = A6ADC0C6282967FC0082110B /* AirshipConfig.plist */; };
-		A6ADC0C82829707C0082110B /* AirshipBasement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A6ADC0C4282967580082110B /* AirshipBasement.framework */; };
-		A6ADC0C92829707C0082110B /* AirshipBasement.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A6ADC0C4282967580082110B /* AirshipBasement.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		A6ADC0CB2829707E0082110B /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A6ADC0C22829674F0082110B /* AirshipCore.framework */; };
-		A6ADC0CC2829707E0082110B /* AirshipCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A6ADC0C22829674F0082110B /* AirshipCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		A6ADC0CD282A71570082110B /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = A6ADC0C6282967FC0082110B /* AirshipConfig.plist */; };
 		A6ADC0CF282A9B120082110B /* ButtonRowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6ADC0CE282A9B120082110B /* ButtonRowController.swift */; };
 		A6ADC0D1282A9B340082110B /* LabelRowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6ADC0D0282A9B340082110B /* LabelRowController.swift */; };
+		A6D41211288AFFEF0030DB9E /* AirshipBasement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A6D41210288AFFEF0030DB9E /* AirshipBasement.framework */; };
+		A6D41213288AFFEF0030DB9E /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A6D41212288AFFEF0030DB9E /* AirshipCore.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,19 +38,117 @@
 			remoteGlobalIDString = A6ADC083282964620082110B;
 			remoteInfo = "watchOSSample WatchKit Extension";
 		};
-		A6ADC09A282964640082110B /* PBXContainerItemProxy */ = {
+		A6D41271288B02130030DB9E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = A6ADC06C2829645F0082110B /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = A6ADC083282964620082110B;
-			remoteInfo = "watchOSSample WatchKit Extension";
+			containerPortal = A6D4125F288B02130030DB9E /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6E43204826EA814F009228AB;
+			remoteInfo = AirshipBasement;
 		};
-		A6ADC0A4282964640082110B /* PBXContainerItemProxy */ = {
+		A6D41273288B02130030DB9E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = A6ADC06C2829645F0082110B /* Project object */;
+			containerPortal = A6D4125F288B02130030DB9E /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6E43212626EA819A009228AB;
+			remoteInfo = "AirshipBasement tvOS";
+		};
+		A6D41275288B02130030DB9E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A6D4125F288B02130030DB9E /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A6722ABF281A9F460033F54D;
+			remoteInfo = "AirshipBasement watchOS";
+		};
+		A6D41277288B02130030DB9E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A6D4125F288B02130030DB9E /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 494DD9571B0EB677009C134E;
+			remoteInfo = AirshipCore;
+		};
+		A6D41279288B02130030DB9E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A6D4125F288B02130030DB9E /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DF6DD6561E7A1EB8000C281A;
+			remoteInfo = "AirshipCore tvOS";
+		};
+		A6D4127B288B02130030DB9E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A6D4125F288B02130030DB9E /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A67229B228199CEF0033F54D;
+			remoteInfo = "AirshipCore watchOS";
+		};
+		A6D4127D288B02130030DB9E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A6D4125F288B02130030DB9E /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CC64F0541D8B77E3009CEF27;
+			remoteInfo = AirshipTests;
+		};
+		A6D4127F288B02130030DB9E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A6D4125F288B02130030DB9E /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3CA0E2AC237CCE2600EE76CF;
+			remoteInfo = AirshipDebug;
+		};
+		A6D41281288B02130030DB9E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A6D4125F288B02130030DB9E /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6E845377237E0271007D3B1E;
+			remoteInfo = AirshipAutomation;
+		};
+		A6D41283288B02130030DB9E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A6D4125F288B02130030DB9E /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3CA0E423237E4A7B00EE76CF;
+			remoteInfo = AirshipMessageCenter;
+		};
+		A6D41287288B02130030DB9E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A6D4125F288B02130030DB9E /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 847BFFF4267CD739007CD249;
+			remoteInfo = AirshipPreferenceCenter;
+		};
+		A6D41289288B02130030DB9E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A6D4125F288B02130030DB9E /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 847BFFFC267CD73A007CD249;
+			remoteInfo = AirshipPreferenceCenterTests;
+		};
+		A6D4128B288B02130030DB9E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A6D4125F288B02130030DB9E /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6E5C32B527C9A2C9005B2DDE;
+			remoteInfo = AirshipRelease;
+		};
+		A6D4128D288B02130030DB9E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A6D4125F288B02130030DB9E /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6E5C32D327C9A54A005B2DDE;
+			remoteInfo = "AirshipRelease tvOS";
+		};
+		A6D4128F288B02360030DB9E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A6D4125F288B02130030DB9E /* Airship.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = A6ADC0752829645F0082110B;
-			remoteInfo = "watchOSSample WatchKit App";
+			remoteGlobalIDString = A6722ABE281A9F460033F54D;
+			remoteInfo = "AirshipBasement watchOS";
+		};
+		A6D41291288B02360030DB9E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A6D4125F288B02130030DB9E /* Airship.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = A67229B128199CEF0033F54D;
+			remoteInfo = "AirshipCore watchOS";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -83,21 +175,10 @@
 			name = "Embed Watch Content";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A6ADC0CA2829707C0082110B /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				A6ADC0CC2829707E0082110B /* AirshipCore.framework in Embed Frameworks */,
-				A6ADC0C92829707C0082110B /* AirshipBasement.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		A61AC1F628AE265400C4B1BA /* AirshipConfig.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = AirshipConfig.plist; sourceTree = "<group>"; };
 		A6ADC0722829645F0082110B /* watchOSSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = watchOSSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A6ADC0762829645F0082110B /* watchOSSample WatchKit App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "watchOSSample WatchKit App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A6ADC07C2829645F0082110B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Interface.storyboard; sourceTree = "<group>"; };
@@ -110,18 +191,18 @@
 		A6ADC091282964640082110B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A6ADC093282964640082110B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A6ADC094282964640082110B /* PushNotificationPayload.apns */ = {isa = PBXFileReference; lastKnownFileType = text; path = PushNotificationPayload.apns; sourceTree = "<group>"; };
-		A6ADC099282964640082110B /* watchOSSampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = watchOSSampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A6ADC09D282964640082110B /* watchOSSampleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = watchOSSampleTests.swift; sourceTree = "<group>"; };
-		A6ADC0A3282964640082110B /* watchOSSampleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = watchOSSampleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A6ADC0A7282964640082110B /* watchOSSampleUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = watchOSSampleUITests.swift; sourceTree = "<group>"; };
 		A6ADC0A9282964640082110B /* watchOSSampleUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = watchOSSampleUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		A6ADC0BE282964920082110B /* watchOSSample WatchKit Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "watchOSSample WatchKit Extension.entitlements"; sourceTree = "<group>"; };
 		A6ADC0BF282964980082110B /* watchOSSample WatchKit App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "watchOSSample WatchKit App.entitlements"; sourceTree = "<group>"; };
 		A6ADC0C22829674F0082110B /* AirshipCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = AirshipCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A6ADC0C4282967580082110B /* AirshipBasement.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = AirshipBasement.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		A6ADC0C6282967FC0082110B /* AirshipConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = AirshipConfig.plist; sourceTree = "<group>"; };
 		A6ADC0CE282A9B120082110B /* ButtonRowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonRowController.swift; sourceTree = "<group>"; };
 		A6ADC0D0282A9B340082110B /* LabelRowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelRowController.swift; sourceTree = "<group>"; };
+		A6D41210288AFFEF0030DB9E /* AirshipBasement.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = AirshipBasement.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A6D41212288AFFEF0030DB9E /* AirshipCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = AirshipCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A6D4125F288B02130030DB9E /* Airship.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Airship.xcodeproj; path = ../Airship/Airship.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -129,22 +210,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A6ADC0CB2829707E0082110B /* AirshipCore.framework in Frameworks */,
-				A6ADC0C82829707C0082110B /* AirshipBasement.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		A6ADC096282964640082110B /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		A6ADC0A0282964640082110B /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
+				A6D41211288AFFEF0030DB9E /* AirshipBasement.framework in Frameworks */,
+				A6D41213288AFFEF0030DB9E /* AirshipCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -154,7 +221,8 @@
 		A6ADC06B2829645F0082110B = {
 			isa = PBXGroup;
 			children = (
-				A6ADC0C6282967FC0082110B /* AirshipConfig.plist */,
+				A61AC1F628AE265400C4B1BA /* AirshipConfig.plist */,
+				A6D4125F288B02130030DB9E /* Airship.xcodeproj */,
 				A6ADC07A2829645F0082110B /* watchOSSample WatchKit App */,
 				A6ADC088282964620082110B /* watchOSSample WatchKit Extension */,
 				A6ADC09C282964640082110B /* watchOSSampleTests */,
@@ -170,8 +238,6 @@
 				A6ADC0722829645F0082110B /* watchOSSample.app */,
 				A6ADC0762829645F0082110B /* watchOSSample WatchKit App.app */,
 				A6ADC084282964620082110B /* watchOSSample WatchKit Extension.appex */,
-				A6ADC099282964640082110B /* watchOSSampleTests.xctest */,
-				A6ADC0A3282964640082110B /* watchOSSampleUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -223,10 +289,33 @@
 		A6ADC0C12829674F0082110B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A6D41210288AFFEF0030DB9E /* AirshipBasement.framework */,
+				A6D41212288AFFEF0030DB9E /* AirshipCore.framework */,
 				A6ADC0C4282967580082110B /* AirshipBasement.framework */,
 				A6ADC0C22829674F0082110B /* AirshipCore.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		A6D41260288B02130030DB9E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A6D41272288B02130030DB9E /* AirshipBasement.framework */,
+				A6D41274288B02130030DB9E /* AirshipBasement.framework */,
+				A6D41276288B02130030DB9E /* AirshipBasement.framework */,
+				A6D41278288B02130030DB9E /* AirshipCore.framework */,
+				A6D4127A288B02130030DB9E /* AirshipCore.framework */,
+				A6D4127C288B02130030DB9E /* AirshipCore.framework */,
+				A6D4127E288B02130030DB9E /* AirshipTests.xctest */,
+				A6D41280288B02130030DB9E /* AirshipDebug.framework */,
+				A6D41282288B02130030DB9E /* AirshipAutomation.framework */,
+				A6D41284288B02130030DB9E /* AirshipMessageCenter.framework */,
+				A6D41288288B02130030DB9E /* AirshipPreferenceCenter.framework */,
+				A6D4128A288B02130030DB9E /* AirshipPreferenceCenterTests.xctest */,
+				A6D4128C288B02130030DB9E /* AirshipRelease.framework */,
+				A6D4128E288B02130030DB9E /* AirshipRelease_tvOS.framework */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -273,52 +362,17 @@
 				A6ADC080282964620082110B /* Sources */,
 				A6ADC081282964620082110B /* Frameworks */,
 				A6ADC082282964620082110B /* Resources */,
-				A6ADC0CA2829707C0082110B /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				A6D41290288B02360030DB9E /* PBXTargetDependency */,
+				A6D41292288B02360030DB9E /* PBXTargetDependency */,
 			);
 			name = "watchOSSample WatchKit Extension";
 			productName = "watchOSSample WatchKit Extension";
 			productReference = A6ADC084282964620082110B /* watchOSSample WatchKit Extension.appex */;
 			productType = "com.apple.product-type.watchkit2-extension";
-		};
-		A6ADC098282964640082110B /* watchOSSampleTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = A6ADC0B8282964640082110B /* Build configuration list for PBXNativeTarget "watchOSSampleTests" */;
-			buildPhases = (
-				A6ADC095282964640082110B /* Sources */,
-				A6ADC096282964640082110B /* Frameworks */,
-				A6ADC097282964640082110B /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				A6ADC09B282964640082110B /* PBXTargetDependency */,
-			);
-			name = watchOSSampleTests;
-			productName = watchOSSampleTests;
-			productReference = A6ADC099282964640082110B /* watchOSSampleTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		A6ADC0A2282964640082110B /* watchOSSampleUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = A6ADC0BB282964640082110B /* Build configuration list for PBXNativeTarget "watchOSSampleUITests" */;
-			buildPhases = (
-				A6ADC09F282964640082110B /* Sources */,
-				A6ADC0A0282964640082110B /* Frameworks */,
-				A6ADC0A1282964640082110B /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				A6ADC0A5282964640082110B /* PBXTargetDependency */,
-			);
-			name = watchOSSampleUITests;
-			productName = watchOSSampleUITests;
-			productReference = A6ADC0A3282964640082110B /* watchOSSampleUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
 
@@ -339,14 +393,6 @@
 					A6ADC083282964620082110B = {
 						CreatedOnToolsVersion = 13.2.1;
 					};
-					A6ADC098282964640082110B = {
-						CreatedOnToolsVersion = 13.2.1;
-						TestTargetID = A6ADC083282964620082110B;
-					};
-					A6ADC0A2282964640082110B = {
-						CreatedOnToolsVersion = 13.2.1;
-						TestTargetID = A6ADC0752829645F0082110B;
-					};
 				};
 			};
 			buildConfigurationList = A6ADC06F2829645F0082110B /* Build configuration list for PBXProject "watchOSSample" */;
@@ -360,23 +406,127 @@
 			mainGroup = A6ADC06B2829645F0082110B;
 			productRefGroup = A6ADC0732829645F0082110B /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = A6D41260288B02130030DB9E /* Products */;
+					ProjectRef = A6D4125F288B02130030DB9E /* Airship.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				A6ADC0712829645F0082110B /* watchOSSample */,
 				A6ADC0752829645F0082110B /* watchOSSample WatchKit App */,
 				A6ADC083282964620082110B /* watchOSSample WatchKit Extension */,
-				A6ADC098282964640082110B /* watchOSSampleTests */,
-				A6ADC0A2282964640082110B /* watchOSSampleUITests */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		A6D41272288B02130030DB9E /* AirshipBasement.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipBasement.framework;
+			remoteRef = A6D41271288B02130030DB9E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A6D41274288B02130030DB9E /* AirshipBasement.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipBasement.framework;
+			remoteRef = A6D41273288B02130030DB9E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A6D41276288B02130030DB9E /* AirshipBasement.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipBasement.framework;
+			remoteRef = A6D41275288B02130030DB9E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A6D41278288B02130030DB9E /* AirshipCore.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipCore.framework;
+			remoteRef = A6D41277288B02130030DB9E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A6D4127A288B02130030DB9E /* AirshipCore.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipCore.framework;
+			remoteRef = A6D41279288B02130030DB9E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A6D4127C288B02130030DB9E /* AirshipCore.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipCore.framework;
+			remoteRef = A6D4127B288B02130030DB9E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A6D4127E288B02130030DB9E /* AirshipTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = AirshipTests.xctest;
+			remoteRef = A6D4127D288B02130030DB9E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A6D41280288B02130030DB9E /* AirshipDebug.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipDebug.framework;
+			remoteRef = A6D4127F288B02130030DB9E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A6D41282288B02130030DB9E /* AirshipAutomation.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipAutomation.framework;
+			remoteRef = A6D41281288B02130030DB9E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A6D41284288B02130030DB9E /* AirshipMessageCenter.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipMessageCenter.framework;
+			remoteRef = A6D41283288B02130030DB9E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A6D41288288B02130030DB9E /* AirshipPreferenceCenter.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipPreferenceCenter.framework;
+			remoteRef = A6D41287288B02130030DB9E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A6D4128A288B02130030DB9E /* AirshipPreferenceCenterTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = AirshipPreferenceCenterTests.xctest;
+			remoteRef = A6D41289288B02130030DB9E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A6D4128C288B02130030DB9E /* AirshipRelease.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipRelease.framework;
+			remoteRef = A6D4128B288B02130030DB9E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A6D4128E288B02130030DB9E /* AirshipRelease_tvOS.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipRelease_tvOS.framework;
+			remoteRef = A6D4128D288B02130030DB9E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		A6ADC0702829645F0082110B /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A6ADC0C7282967FC0082110B /* AirshipConfig.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -384,6 +534,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A61AC1F728AE271B00C4B1BA /* AirshipConfig.plist in Resources */,
 				A6ADC07F282964620082110B /* Assets.xcassets in Resources */,
 				A6ADC07D2829645F0082110B /* Interface.storyboard in Resources */,
 			);
@@ -393,22 +544,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A6ADC0CD282A71570082110B /* AirshipConfig.plist in Resources */,
 				A6ADC092282964640082110B /* Assets.xcassets in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		A6ADC097282964640082110B /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		A6ADC0A1282964640082110B /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -428,23 +564,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A6ADC095282964640082110B /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				A6ADC09E282964640082110B /* watchOSSampleTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		A6ADC09F282964640082110B /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				A6ADC0AA282964640082110B /* watchOSSampleUITestsLaunchTests.swift in Sources */,
-				A6ADC0A8282964640082110B /* watchOSSampleUITests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -458,15 +577,15 @@
 			target = A6ADC083282964620082110B /* watchOSSample WatchKit Extension */;
 			targetProxy = A6ADC086282964620082110B /* PBXContainerItemProxy */;
 		};
-		A6ADC09B282964640082110B /* PBXTargetDependency */ = {
+		A6D41290288B02360030DB9E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = A6ADC083282964620082110B /* watchOSSample WatchKit Extension */;
-			targetProxy = A6ADC09A282964640082110B /* PBXContainerItemProxy */;
+			name = "AirshipBasement watchOS";
+			targetProxy = A6D4128F288B02360030DB9E /* PBXContainerItemProxy */;
 		};
-		A6ADC0A5282964640082110B /* PBXTargetDependency */ = {
+		A6D41292288B02360030DB9E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = A6ADC0752829645F0082110B /* watchOSSample WatchKit App */;
-			targetProxy = A6ADC0A4282964640082110B /* PBXContainerItemProxy */;
+			name = "AirshipCore watchOS";
+			targetProxy = A6D41291288B02360030DB9E /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -536,7 +655,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = iphoneos;
+				SDKROOT = watchos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -589,7 +708,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				SDKROOT = iphoneos;
+				SDKROOT = watchos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				VALIDATE_PRODUCT = YES;
@@ -602,7 +721,8 @@
 				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
 				CODE_SIGN_ENTITLEMENTS = "watchOSSample WatchKit Extension/watchOSSample WatchKit Extension.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = PGJV57GD94;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -620,13 +740,13 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush.watchkitapp.watchkitextension;
 				PRODUCT_NAME = "${TARGET_NAME}";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = wkext_prof;
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 8.3;
+				WATCHOS_DEPLOYMENT_TARGET = 7.0;
 			};
 			name = Debug;
 		};
@@ -636,7 +756,8 @@
 				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
 				CODE_SIGN_ENTITLEMENTS = "watchOSSample WatchKit Extension/watchOSSample WatchKit Extension.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = PGJV57GD94;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -654,13 +775,13 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush.watchkitapp.watchkitextension;
 				PRODUCT_NAME = "${TARGET_NAME}";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = wkext_prof;
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 8.3;
+				WATCHOS_DEPLOYMENT_TARGET = 7.0;
 			};
 			name = Release;
 		};
@@ -672,7 +793,8 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "watchOSSample WatchKit App/watchOSSample WatchKit App.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = PGJV57GD94;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -682,13 +804,13 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = wkapp_prof;
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 8.3;
+				WATCHOS_DEPLOYMENT_TARGET = 7.0;
 			};
 			name = Debug;
 		};
@@ -700,7 +822,8 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "watchOSSample WatchKit App/watchOSSample WatchKit App.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = PGJV57GD94;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -710,25 +833,29 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = wkapp_prof;
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 8.3;
+				WATCHOS_DEPLOYMENT_TARGET = 7.0;
 			};
 			name = Release;
 		};
 		A6ADC0B6282964640082110B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = PGJV57GD94;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
@@ -736,89 +863,15 @@
 		A6ADC0B7282964640082110B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = PGJV57GD94;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
-			};
-			name = Release;
-		};
-		A6ADC0B9282964640082110B /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.watchOSSampleTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = watchos;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 4;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/watchOSSample WatchKit Extension.appex/watchOSSample WatchKit Extension";
-				WATCHOS_DEPLOYMENT_TARGET = 8.3;
-			};
-			name = Debug;
-		};
-		A6ADC0BA282964640082110B /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.watchOSSampleTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = watchos;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 4;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/watchOSSample WatchKit Extension.appex/watchOSSample WatchKit Extension";
-				WATCHOS_DEPLOYMENT_TARGET = 8.3;
-			};
-			name = Release;
-		};
-		A6ADC0BC282964640082110B /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.watchOSSampleUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = watchos;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 4;
-				TEST_TARGET_NAME = "watchOSSample WatchKit App";
-				WATCHOS_DEPLOYMENT_TARGET = 8.3;
-			};
-			name = Debug;
-		};
-		A6ADC0BD282964640082110B /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.watchOSSampleUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = watchos;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 4;
-				TEST_TARGET_NAME = "watchOSSample WatchKit App";
-				WATCHOS_DEPLOYMENT_TARGET = 8.3;
 			};
 			name = Release;
 		};
@@ -857,24 +910,6 @@
 			buildConfigurations = (
 				A6ADC0B6282964640082110B /* Debug */,
 				A6ADC0B7282964640082110B /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		A6ADC0B8282964640082110B /* Build configuration list for PBXNativeTarget "watchOSSampleTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				A6ADC0B9282964640082110B /* Debug */,
-				A6ADC0BA282964640082110B /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		A6ADC0BB282964640082110B /* Build configuration list for PBXNativeTarget "watchOSSampleUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				A6ADC0BC282964640082110B /* Debug */,
-				A6ADC0BD282964640082110B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

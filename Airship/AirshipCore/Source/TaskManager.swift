@@ -57,17 +57,21 @@ public class TaskManager : NSObject, TaskManagerProtocol {
             object: nil)
         
 #if !os(watchOS)
+
         notificationCenter.addObserver(
             self,
             selector: #selector(didEnterBackground),
             name: AppStateTracker.didEnterBackgroundNotification,
             object: nil)
-#endif
+
 
         self.networkMonitor.connectionUpdates = {  [weak self] _ in
             self?.retryWaitingConditions()
         }
+#endif
+        
     }
+
 
     @objc(registerForTaskWithIDs:dispatcher:launchHandler:)
     public func register(taskIDs: [String], dispatcher: UADispatcher? = nil, launchHandler: @escaping (AirshipTask) -> Void) {

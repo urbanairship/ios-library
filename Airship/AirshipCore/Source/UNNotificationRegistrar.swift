@@ -131,21 +131,21 @@ private extension UNNotificationSettings {
 
 #endif
 
-
+        if #available(iOS 15.0, watchOS 8.0, *) {
 #if !os(tvOS) && !targetEnvironment(macCatalyst)
-
-        if #available(iOS 15.0, *) {
+            
             if self.timeSensitiveSetting == .enabled {
                 authorizedSettings.insert(.timeSensitive)
             }
-
+            
             if self.scheduledDeliverySetting == .enabled {
                 authorizedSettings.insert(.scheduledDelivery)
             }
-        }
-
+            
 #endif
-
+        } else {
+            // Fallback on earlier versions
+        }
         return authorizedSettings
     }
 }
