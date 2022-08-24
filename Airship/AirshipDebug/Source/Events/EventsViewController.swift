@@ -50,8 +50,6 @@ class EventsViewController:UIViewController, UITableViewDataSource, UITableViewD
 
     func setTableViewTheme() {
         tableView.backgroundColor = ThemeManager.shared.currentTheme.Background;
-        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor:ThemeManager.shared.currentTheme.NavigationBarText]
-        navigationController?.navigationBar.barTintColor = ThemeManager.shared.currentTheme.NavigationBarBackground;
     }
 
     override func viewDidLoad() {
@@ -73,9 +71,6 @@ class EventsViewController:UIViewController, UITableViewDataSource, UITableViewD
 
         searchController.searchBar.searchBarStyle = .prominent
         searchController.searchBar.showsScopeBar = false
-        searchController.searchBar.tintColor = ThemeManager.shared.currentTheme.NavigationBarText
-        searchController.searchBar.barTintColor = ThemeManager.shared.currentTheme.NavigationBarText
-
         searchController.searchBar.delegate = self
         tableView.delegate = self
         tableView.dataSource = self

@@ -19,8 +19,6 @@ public class Theme: NSObject {
     @objc public var WidgetTint:UIColor = Palette.AirshipBlue
     @objc public var ButtonBackground:UIColor = Palette.AirshipBlue
     @objc public var ButtonText:UIColor = Palette.CloudWhite
-    @objc public var NavigationBarBackground:UIColor = Palette.SpaceBlack
-    @objc public var NavigationBarText:UIColor = Palette.CloudWhite
     @objc public var PrimaryText:UIColor = Palette.SpaceBlack
     @objc public var SecondaryText:UIColor = Palette.AlienGrey
     @objc public var TabBarBackground:UIColor = Palette.CloudWhite

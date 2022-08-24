@@ -12,3 +12,13 @@ class DebugResources: NSObject {
         return Bundle(path:bundlePath)!
     }
 }
+
+internal extension String {
+    func localized(bundle: Bundle = DebugResources.bundle(), tableName: String = "AirshipDebug", comment: String = "") -> String {
+        return NSLocalizedString(self, tableName: tableName, bundle: bundle, comment: comment)
+    }
+
+    func localizedWithFormat(count:Int) -> String {
+        return String.localizedStringWithFormat(localized(), count)
+    }
+}

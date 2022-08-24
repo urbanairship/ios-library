@@ -157,7 +157,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, RegistrationDelegate, Dee
     //    - <scheme>://deeplink/inbox
     //    - <scheme>://deeplink/inbox/message/<messageId>
     //    - <scheme>://deeplink/settings
-    //    - <scheme>://deeplink/settings/tags
 
     func receivedDeepLink(_ url: URL, completionHandler: @escaping () -> ()) {
         // if the deep link is an http or https URL, open it in the browser
@@ -185,7 +184,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, RegistrationDelegate, Dee
         switch (pathComponents[0].lowercased()) {
             #if DEBUG
         case InAppAutomationStoryboardID:
-            pathComponents = [ DebugStoryboardID, AirshipDebug.automationViewName ]
+            pathComponents = [ DebugStoryboardID ]
             #endif
         default:
             break
@@ -245,7 +244,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, RegistrationDelegate, Dee
 
             // get rest of deep link
             pathComponents.remove(at: 0)
-            AirshipDebug.showView(pathComponents)
             #endif
             break
         default:

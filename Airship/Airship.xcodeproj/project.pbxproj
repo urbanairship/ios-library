@@ -66,12 +66,6 @@
 		3C927F8423A97CDA003C5FC8 /* UADefaultValueTransformerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C927F8323A97CD9003C5FC8 /* UADefaultValueTransformerTest.m */; };
 		3C9E9D6821D42EEB0072F65B /* UAInAppMessageResolutionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C9E9D6721D42EEB0072F65B /* UAInAppMessageResolutionTest.m */; };
 		3CA0E2A0237CCE2600EE76CF /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
-		3CA0E2AE237CD05F00EE76CF /* AssociatedIdentifiersTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E22B237CCBA600EE76CF /* AssociatedIdentifiersTableViewController.swift */; };
-		3CA0E2AF237CD05F00EE76CF /* AddTagsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E22C237CCBA600EE76CF /* AddTagsTableViewController.swift */; };
-		3CA0E2B1237CD05F00EE76CF /* AddNamedUserTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E22E237CCBA600EE76CF /* AddNamedUserTableViewController.swift */; };
-		3CA0E2B2237CD05F00EE76CF /* AddAssociatedIdentifiersTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E22F237CCBA600EE76CF /* AddAssociatedIdentifiersTableViewController.swift */; };
-		3CA0E2B3237CD05F00EE76CF /* TagsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E230237CCBA600EE76CF /* TagsTableViewController.swift */; };
-		3CA0E2B4237CD05F00EE76CF /* DeviceInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E231237CCBA600EE76CF /* DeviceInfoViewController.swift */; };
 		3CA0E2B5237CD05F00EE76CF /* DebugAutomationUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E235237CCBA600EE76CF /* DebugAutomationUtilities.swift */; };
 		3CA0E2B6237CD05F00EE76CF /* ButtonDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E236237CCBA600EE76CF /* ButtonDetailViewController.swift */; };
 		3CA0E2B7237CD05F00EE76CF /* AudienceDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E237237CCBA600EE76CF /* AudienceDetailViewController.swift */; };
@@ -90,18 +84,15 @@
 		3CA0E2C7237CD05F00EE76CF /* CustomEventTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E24A237CCBA600EE76CF /* CustomEventTableViewController.swift */; };
 		3CA0E2C9237CD05F00EE76CF /* EventsDetailTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E24C237CCBA600EE76CF /* EventsDetailTableViewController.swift */; };
 		3CA0E2CA237CD05F00EE76CF /* EventDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E24D237CCBA600EE76CF /* EventDataManager.swift */; };
-		3CA0E2CB237CD05F00EE76CF /* RootTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E229237CCBA600EE76CF /* RootTableViewController.swift */; };
 		3CA0E2CC237CD05F00EE76CF /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E232237CCBA600EE76CF /* ThemeManager.swift */; };
-		3CA0E2CD237CD05F00EE76CF /* AirshipDebug.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E233237CCBA600EE76CF /* AirshipDebug.swift */; };
+		3CA0E2CD237CD05F00EE76CF /* AirshipDebugManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E233237CCBA600EE76CF /* AirshipDebugManager.swift */; };
 		3CA0E2CE237CD05F00EE76CF /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E23F237CCBA600EE76CF /* Theme.swift */; };
 		3CA0E2CF237CD05F00EE76CF /* DebugUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E24E237CCBA600EE76CF /* DebugUtils.swift */; };
 		3CA0E2D0237CD0BD00EE76CF /* AirshipDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E228237CCBA600EE76CF /* AirshipDebug.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3CA0E2D1237CD57100EE76CF /* AirshipDebug.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E21C237CCBA600EE76CF /* AirshipDebug.strings */; };
 		3CA0E2D2237CD57100EE76CF /* AirshipDebug.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E21E237CCBA600EE76CF /* AirshipDebug.stringsdict */; };
 		3CA0E2D3237CD57100EE76CF /* AirshipDebugEvents.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E220237CCBA600EE76CF /* AirshipDebugEvents.storyboard */; };
-		3CA0E2D4237CD57100EE76CF /* AirshipDebugDeviceInfo.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E221237CCBA600EE76CF /* AirshipDebugDeviceInfo.storyboard */; };
 		3CA0E2D6237CD57100EE76CF /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E224237CCBA600EE76CF /* Images.xcassets */; };
-		3CA0E2D7237CD57100EE76CF /* AirshipDebug.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E225237CCBA600EE76CF /* AirshipDebug.storyboard */; };
 		3CA0E2D8237CD57100EE76CF /* AirshipDebugAutomation.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E226237CCBA600EE76CF /* AirshipDebugAutomation.storyboard */; };
 		3CA0E426237E4BED00EE76CF /* UAMessageCenterAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E32E237E396100EE76CF /* UAMessageCenterAction.m */; };
 		3CA0E428237E4BED00EE76CF /* UADefaultMessageCenterUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E331237E396100EE76CF /* UADefaultMessageCenterUI.m */; };
@@ -222,6 +213,19 @@
 		6E062D092716571F001A74A1 /* LabelButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E062D082716571F001A74A1 /* LabelButton.swift */; };
 		6E062D0B271657BB001A74A1 /* ThomasViewModelExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E062D0A271657BB001A74A1 /* ThomasViewModelExtensions.swift */; };
 		6E062D0D2718B505001A74A1 /* ViewConstraints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E062D0C2718B505001A74A1 /* ViewConstraints.swift */; };
+		6E14C97928B3FC8400A55E65 /* AirshipToast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E14C97828B3FC8400A55E65 /* AirshipToast.swift */; };
+		6E14C97D28B41EDB00A55E65 /* NamedUserDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E14C97C28B41EDB00A55E65 /* NamedUserDebugView.swift */; };
+		6E14C97F28B424C000A55E65 /* PrviacyManagerDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E14C97E28B424C000A55E65 /* PrviacyManagerDebugView.swift */; };
+		6E14C98328B430C000A55E65 /* DeviceTagsDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E14C98228B430C000A55E65 /* DeviceTagsDebugView.swift */; };
+		6E14C98528B43AC800A55E65 /* TagGroupsDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E14C98428B43AC800A55E65 /* TagGroupsDebugView.swift */; };
+		6E14C98728B43C8B00A55E65 /* AirshipDebugExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E14C98628B43C8B00A55E65 /* AirshipDebugExtensions.swift */; };
+		6E14C98928B4421900A55E65 /* SubscriptionListsDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E14C98828B4421900A55E65 /* SubscriptionListsDebugView.swift */; };
+		6E14C98B28B4435600A55E65 /* ScopedSubscriptionListsDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E14C98A28B4435600A55E65 /* ScopedSubscriptionListsDebugView.swift */; };
+		6E14C98D28B4457600A55E65 /* AttributesDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E14C98C28B4457600A55E65 /* AttributesDebugView.swift */; };
+		6E14C99B28B55EFD00A55E65 /* AnalyticsIdentifiersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E14C99A28B55EFD00A55E65 /* AnalyticsIdentifiersView.swift */; };
+		6E14C99D28B5619B00A55E65 /* PreferenceCenterListDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E14C99C28B5619B00A55E65 /* PreferenceCenterListDebugView.swift */; };
+		6E14C99F28B5A14300A55E65 /* ReceivedPushListDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E14C99E28B5A14300A55E65 /* ReceivedPushListDebugView.swift */; };
+		6E14C9A128B5E4AF00A55E65 /* PushNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E14C9A028B5E4AF00A55E65 /* PushNotification.swift */; };
 		6E152BCA2743235800788402 /* Icons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E152BC92743235800788402 /* Icons.swift */; };
 		6E152BCB2743235800788402 /* Icons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E152BC92743235800788402 /* Icons.swift */; };
 		6E15B6DB26CC749F0099C92D /* RemoteConfigManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15B6D826CC749F0099C92D /* RemoteConfigManager.swift */; };
@@ -280,7 +284,6 @@
 		6E20BF6724F5C21D005347EC /* UAScheduleTriggerContextTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E20BF6624F5C21D005347EC /* UAScheduleTriggerContextTest.m */; };
 		6E21786625F2BBA800E1EFAA /* UAHTTPResponseTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E21786525F2BBA800E1EFAA /* UAHTTPResponseTest.m */; };
 		6E21852B237D32B30084933A /* EventData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21852A237D32B30084933A /* EventData.swift */; };
-		6E218539237DB7960084933A /* AddAttributeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E218538237DB7960084933A /* AddAttributeTableViewController.swift */; };
 		6E2486DF28945D3900657CE4 /* PreferenceCenterState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2486DE28945D3900657CE4 /* PreferenceCenterState.swift */; };
 		6E2486EC2894901E00657CE4 /* ConditionsViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2486EB2894901E00657CE4 /* ConditionsViewModifier.swift */; };
 		6E2486F22898341400657CE4 /* ConditionsMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2486F02898341400657CE4 /* ConditionsMonitor.swift */; };
@@ -552,10 +555,7 @@
 		6E6C3F9A27A47DB4007F55C7 /* PreferenceCenterConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6C3F9927A47DB4007F55C7 /* PreferenceCenterConfig.swift */; };
 		6E6C3F9E27A4C3D4007F55C7 /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6C3F9D27A4C3D4007F55C7 /* JSON.swift */; };
 		6E6C3F9F27A4C3D4007F55C7 /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6C3F9D27A4C3D4007F55C7 /* JSON.swift */; };
-		6E6CC38423A3F9B4003D583C /* PushNotificationsDetailTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6CC37E23A3F9B4003D583C /* PushNotificationsDetailTableViewController.swift */; };
 		6E6CC38623A3F9B4003D583C /* PushDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6CC38023A3F9B4003D583C /* PushDataManager.swift */; };
-		6E6CC38723A3F9B4003D583C /* PushPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6CC38123A3F9B4003D583C /* PushPayload.swift */; };
-		6E6CC38823A3F9B4003D583C /* PushNotificationsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6CC38223A3F9B4003D583C /* PushNotificationsTableViewController.swift */; };
 		6E6CC38A23A3FA38003D583C /* AirshipDebugPushNotifications.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6E6CC38923A3FA38003D583C /* AirshipDebugPushNotifications.storyboard */; };
 		6E6ED1372683A58D00A2CBD0 /* Delay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1332683A58D00A2CBD0 /* Delay.swift */; };
 		6E6ED1382683A58D00A2CBD0 /* Delay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1332683A58D00A2CBD0 /* Delay.swift */; };
@@ -940,6 +940,7 @@
 		6EB11C8D2698C50F00DC698F /* AudienceUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB11C8C2698C50F00DC698F /* AudienceUtils.swift */; };
 		6EB1B3F326EAA4D6000421B9 /* ChannelAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E11267A98AB00654DB2 /* ChannelAPIClient.swift */; };
 		6EB1B42626EAA6E2000421B9 /* RemoteDataResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E05267A7D5300654DB2 /* RemoteDataResponse.swift */; };
+		6EB41B9A28B3DD6C003631C5 /* AirshipDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB41B9928B3DD6C003631C5 /* AirshipDebugView.swift */; };
 		6EB5156E28A42B5800870C5A /* PreferenceCenterResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB5156D28A42B5800870C5A /* PreferenceCenterResources.swift */; };
 		6EB5157128A4608C00870C5A /* PreferenceCenterViewControllerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB5157028A4608C00870C5A /* PreferenceCenterViewControllerFactory.swift */; };
 		6EB5158128A47BD700870C5A /* SubscriptionListEdit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB5158028A47BD700870C5A /* SubscriptionListEdit.swift */; };
@@ -1450,7 +1451,6 @@
 		A6AF8D2927E8C6C30068C7EE /* SubscriptionListActionPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A69C988027E4ECAA0063A101 /* SubscriptionListActionPredicate.swift */; };
 		A6AF8D2D27E8D4910068C7EE /* SubscriptionListActionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6AF8D2C27E8D4910068C7EE /* SubscriptionListActionTest.swift */; };
 		A6CDD8D0269491BE0040A673 /* ContactAPIClientTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6CDD8CF269491BE0040A673 /* ContactAPIClientTest.swift */; };
-		A6CF89312593910300006C83 /* AddTagGroupsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6CF89302593910300006C83 /* AddTagGroupsTableViewController.swift */; };
 		A6DF51F0287706B400A42433 /* WKStateTrackerAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6DF51EF287706B400A42433 /* WKStateTrackerAdapter.swift */; };
 		A6DF51F1287707E500A42433 /* WKStateTrackerAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6DF51EF287706B400A42433 /* WKStateTrackerAdapter.swift */; };
 		A6DF51F2287707EB00A42433 /* WKStateTrackerAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6DF51EF287706B400A42433 /* WKStateTrackerAdapter.swift */; };
@@ -1459,17 +1459,10 @@
 		A6F6726326E11637008C69C3 /* JSONPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401769726C5722400373AF7 /* JSONPredicate.swift */; };
 		A6F6726426E1163A008C69C3 /* JSONUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401769926C5725800373AF7 /* JSONUtils.swift */; };
 		A6F6726526E1163C008C69C3 /* JSONValueMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401769B26C5729E00373AF7 /* JSONValueMatcher.swift */; };
-		BD8C10832865F92200358622 /* SmsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8C10762865F92200358622 /* SmsView.swift */; };
-		BD8C10842865F92200358622 /* ContactList.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8C10772865F92200358622 /* ContactList.swift */; };
-		BD8C10852865F92200358622 /* ContactViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8C10782865F92200358622 /* ContactViewController.swift */; };
-		BD8C10862865F92200358622 /* EmailPropertyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8C107A2865F92200358622 /* EmailPropertyView.swift */; };
-		BD8C10872865F92200358622 /* Properties.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8C107B2865F92200358622 /* Properties.swift */; };
-		BD8C10882865F92200358622 /* SelectButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8C107C2865F92200358622 /* SelectButton.swift */; };
-		BD8C10892865F92200358622 /* EmailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8C107D2865F92200358622 /* EmailView.swift */; };
-		BD8C108A2865F92200358622 /* PropertiesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8C107E2865F92200358622 /* PropertiesView.swift */; };
-		BD8C108B2865F92200358622 /* OpenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8C10802865F92200358622 /* OpenView.swift */; };
-		BD8C108C2865F92200358622 /* Identifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8C10812865F92200358622 /* Identifiers.swift */; };
-		BD8C108D2865F92200358622 /* IdentifiersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8C10822865F92200358622 /* IdentifiersView.swift */; };
+		BD8C10832865F92200358622 /* CreateSMSChannelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8C10762865F92200358622 /* CreateSMSChannelView.swift */; };
+		BD8C10842865F92200358622 /* AddChannelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8C10772865F92200358622 /* AddChannelView.swift */; };
+		BD8C10892865F92200358622 /* CreateEmailChannelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8C107D2865F92200358622 /* CreateEmailChannelView.swift */; };
+		BD8C108B2865F92200358622 /* CreateOpenChannelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8C10802865F92200358622 /* CreateOpenChannelView.swift */; };
 		C00ED4CF26C729390040C5D0 /* URLAllowList.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00ED4CE26C729390040C5D0 /* URLAllowList.swift */; };
 		C00ED4D026C729390040C5D0 /* URLAllowList.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00ED4CE26C729390040C5D0 /* URLAllowList.swift */; };
 		C02D0B6626C1A3E200F673E6 /* ChannelCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02D0B6526C1A3E200F673E6 /* ChannelCapture.swift */; };
@@ -1553,8 +1546,6 @@
 		DF0C1B29244E562B0011ACCA /* UAAirshipBaseTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DF0C1B28244E562B0011ACCA /* UAAirshipBaseTest.m */; };
 		DF147BE321B89A9A00506D3D /* UAScheduleDataMigratorTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DF147BE221B89A9A00506D3D /* UAScheduleDataMigratorTest.m */; };
 		DF17A1101F57617200DC39E0 /* UARemoteDataAPIClientTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DF17A10F1F57617200DC39E0 /* UARemoteDataAPIClientTest.m */; };
-		DF2519BF2458E3D800B3587A /* AddChannelAttributeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF2519BE2458E3D800B3587A /* AddChannelAttributeTableViewController.swift */; };
-		DF2519C12458E6CF00B3587A /* AddNamedUserAttributeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF2519C02458E6CF00B3587A /* AddNamedUserAttributeTableViewController.swift */; };
 		DF4E49A5221F487500F306A5 /* UAInAppMessageAssetManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DF4E49A4221F487500F306A5 /* UAInAppMessageAssetManagerTest.m */; };
 		DF4E49CB221FB36100F306A5 /* airship.jpg in Resources */ = {isa = PBXBuildFile; fileRef = DF4E49CA221FB36100F306A5 /* airship.jpg */; };
 		DF702D811FABA38400E7A3DC /* UAVersionMatcherTests.m in Sources */ = {isa = PBXBuildFile; fileRef = DF702D801FABA38400E7A3DC /* UAVersionMatcherTests.m */; };
@@ -1813,21 +1804,12 @@
 		3CA0E21D237CCBA600EE76CF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/AirshipDebug.strings; sourceTree = "<group>"; };
 		3CA0E21F237CCBA600EE76CF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = en; path = en.lproj/AirshipDebug.stringsdict; sourceTree = "<group>"; };
 		3CA0E220237CCBA600EE76CF /* AirshipDebugEvents.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = AirshipDebugEvents.storyboard; sourceTree = "<group>"; };
-		3CA0E221237CCBA600EE76CF /* AirshipDebugDeviceInfo.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = AirshipDebugDeviceInfo.storyboard; sourceTree = "<group>"; };
 		3CA0E223237CCBA600EE76CF /* AirshipEventData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = AirshipEventData.xcdatamodel; sourceTree = "<group>"; };
 		3CA0E224237CCBA600EE76CF /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		3CA0E225237CCBA600EE76CF /* AirshipDebug.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = AirshipDebug.storyboard; sourceTree = "<group>"; };
 		3CA0E226237CCBA600EE76CF /* AirshipDebugAutomation.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = AirshipDebugAutomation.storyboard; sourceTree = "<group>"; };
 		3CA0E228237CCBA600EE76CF /* AirshipDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AirshipDebug.h; sourceTree = "<group>"; };
-		3CA0E229237CCBA600EE76CF /* RootTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RootTableViewController.swift; sourceTree = "<group>"; };
-		3CA0E22B237CCBA600EE76CF /* AssociatedIdentifiersTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssociatedIdentifiersTableViewController.swift; sourceTree = "<group>"; };
-		3CA0E22C237CCBA600EE76CF /* AddTagsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddTagsTableViewController.swift; sourceTree = "<group>"; };
-		3CA0E22E237CCBA600EE76CF /* AddNamedUserTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddNamedUserTableViewController.swift; sourceTree = "<group>"; };
-		3CA0E22F237CCBA600EE76CF /* AddAssociatedIdentifiersTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddAssociatedIdentifiersTableViewController.swift; sourceTree = "<group>"; };
-		3CA0E230237CCBA600EE76CF /* TagsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TagsTableViewController.swift; sourceTree = "<group>"; };
-		3CA0E231237CCBA600EE76CF /* DeviceInfoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceInfoViewController.swift; sourceTree = "<group>"; };
 		3CA0E232237CCBA600EE76CF /* ThemeManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
-		3CA0E233237CCBA600EE76CF /* AirshipDebug.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirshipDebug.swift; sourceTree = "<group>"; };
+		3CA0E233237CCBA600EE76CF /* AirshipDebugManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirshipDebugManager.swift; sourceTree = "<group>"; };
 		3CA0E235237CCBA600EE76CF /* DebugAutomationUtilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DebugAutomationUtilities.swift; sourceTree = "<group>"; };
 		3CA0E236237CCBA600EE76CF /* ButtonDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ButtonDetailViewController.swift; sourceTree = "<group>"; };
 		3CA0E237237CCBA600EE76CF /* AudienceDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudienceDetailViewController.swift; sourceTree = "<group>"; };
@@ -1999,6 +1981,19 @@
 		6E062D0C2718B505001A74A1 /* ViewConstraints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewConstraints.swift; sourceTree = "<group>"; };
 		6E12138C1E5D1B95006738FD /* UAScheduleDelay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAScheduleDelay.h; sourceTree = "<group>"; };
 		6E12138D1E5D1B95006738FD /* UAScheduleDelay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAScheduleDelay.m; sourceTree = "<group>"; };
+		6E14C97828B3FC8400A55E65 /* AirshipToast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipToast.swift; sourceTree = "<group>"; };
+		6E14C97C28B41EDB00A55E65 /* NamedUserDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NamedUserDebugView.swift; sourceTree = "<group>"; };
+		6E14C97E28B424C000A55E65 /* PrviacyManagerDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrviacyManagerDebugView.swift; sourceTree = "<group>"; };
+		6E14C98228B430C000A55E65 /* DeviceTagsDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceTagsDebugView.swift; sourceTree = "<group>"; };
+		6E14C98428B43AC800A55E65 /* TagGroupsDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagGroupsDebugView.swift; sourceTree = "<group>"; };
+		6E14C98628B43C8B00A55E65 /* AirshipDebugExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipDebugExtensions.swift; sourceTree = "<group>"; };
+		6E14C98828B4421900A55E65 /* SubscriptionListsDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionListsDebugView.swift; sourceTree = "<group>"; };
+		6E14C98A28B4435600A55E65 /* ScopedSubscriptionListsDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScopedSubscriptionListsDebugView.swift; sourceTree = "<group>"; };
+		6E14C98C28B4457600A55E65 /* AttributesDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributesDebugView.swift; sourceTree = "<group>"; };
+		6E14C99A28B55EFD00A55E65 /* AnalyticsIdentifiersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsIdentifiersView.swift; sourceTree = "<group>"; };
+		6E14C99C28B5619B00A55E65 /* PreferenceCenterListDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterListDebugView.swift; sourceTree = "<group>"; };
+		6E14C99E28B5A14300A55E65 /* ReceivedPushListDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceivedPushListDebugView.swift; sourceTree = "<group>"; };
+		6E14C9A028B5E4AF00A55E65 /* PushNotification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PushNotification.swift; path = ReceivedPushes/PushNotification.swift; sourceTree = "<group>"; };
 		6E152BC92743235800788402 /* Icons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Icons.swift; sourceTree = "<group>"; };
 		6E15B6D826CC749F0099C92D /* RemoteConfigManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteConfigManager.swift; sourceTree = "<group>"; };
 		6E15B6DF26CC779A0099C92D /* RemoteConfigModuleAdapter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteConfigModuleAdapter.swift; sourceTree = "<group>"; };
@@ -2043,7 +2038,6 @@
 		6E20BF6624F5C21D005347EC /* UAScheduleTriggerContextTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAScheduleTriggerContextTest.m; sourceTree = "<group>"; };
 		6E21786525F2BBA800E1EFAA /* UAHTTPResponseTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAHTTPResponseTest.m; sourceTree = "<group>"; };
 		6E21852A237D32B30084933A /* EventData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventData.swift; sourceTree = "<group>"; };
-		6E218538237DB7960084933A /* AddAttributeTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAttributeTableViewController.swift; sourceTree = "<group>"; };
 		6E2486DE28945D3900657CE4 /* PreferenceCenterState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterState.swift; sourceTree = "<group>"; };
 		6E2486EB2894901E00657CE4 /* ConditionsViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConditionsViewModifier.swift; sourceTree = "<group>"; };
 		6E2486F02898341400657CE4 /* ConditionsMonitor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConditionsMonitor.swift; sourceTree = "<group>"; };
@@ -2244,10 +2238,7 @@
 		6E6C3F8C27A26992007F55C7 /* CachedValueTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedValueTest.swift; sourceTree = "<group>"; };
 		6E6C3F9927A47DB4007F55C7 /* PreferenceCenterConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterConfig.swift; sourceTree = "<group>"; };
 		6E6C3F9D27A4C3D4007F55C7 /* JSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
-		6E6CC37E23A3F9B4003D583C /* PushNotificationsDetailTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushNotificationsDetailTableViewController.swift; sourceTree = "<group>"; };
 		6E6CC38023A3F9B4003D583C /* PushDataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushDataManager.swift; sourceTree = "<group>"; };
-		6E6CC38123A3F9B4003D583C /* PushPayload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushPayload.swift; sourceTree = "<group>"; };
-		6E6CC38223A3F9B4003D583C /* PushNotificationsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushNotificationsTableViewController.swift; sourceTree = "<group>"; };
 		6E6CC38923A3FA38003D583C /* AirshipDebugPushNotifications.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = AirshipDebugPushNotifications.storyboard; sourceTree = "<group>"; };
 		6E6ED1332683A58D00A2CBD0 /* Delay.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Delay.swift; sourceTree = "<group>"; };
 		6E6ED1342683A58D00A2CBD0 /* Semaphore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Semaphore.swift; sourceTree = "<group>"; };
@@ -2389,6 +2380,7 @@
 		6EB11C882697AF5600DC698F /* TagGroupUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagGroupUpdate.swift; sourceTree = "<group>"; };
 		6EB11C8A2697AFC700DC698F /* AttributeUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributeUpdate.swift; sourceTree = "<group>"; };
 		6EB11C8C2698C50F00DC698F /* AudienceUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudienceUtils.swift; sourceTree = "<group>"; };
+		6EB41B9928B3DD6C003631C5 /* AirshipDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipDebugView.swift; sourceTree = "<group>"; };
 		6EB4E4A32549F95200E3FFD0 /* Network.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Network.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/Network.framework; sourceTree = DEVELOPER_DIR; };
 		6EB4E4BE2549F9B900E3FFD0 /* Network.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Network.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS14.0.sdk/System/Library/Frameworks/Network.framework; sourceTree = DEVELOPER_DIR; };
 		6EB5156D28A42B5800870C5A /* PreferenceCenterResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterResources.swift; sourceTree = "<group>"; };
@@ -2585,19 +2577,11 @@
 		A6A8077B26C1566E00CB266E /* ColorUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorUtils.swift; sourceTree = "<group>"; };
 		A6AF8D2C27E8D4910068C7EE /* SubscriptionListActionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionListActionTest.swift; sourceTree = "<group>"; };
 		A6CDD8CF269491BE0040A673 /* ContactAPIClientTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactAPIClientTest.swift; sourceTree = "<group>"; };
-		A6CF89302593910300006C83 /* AddTagGroupsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTagGroupsTableViewController.swift; sourceTree = "<group>"; };
 		A6DF51EF287706B400A42433 /* WKStateTrackerAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKStateTrackerAdapter.swift; sourceTree = "<group>"; };
-		BD8C10762865F92200358622 /* SmsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SmsView.swift; sourceTree = "<group>"; };
-		BD8C10772865F92200358622 /* ContactList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactList.swift; sourceTree = "<group>"; };
-		BD8C10782865F92200358622 /* ContactViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactViewController.swift; sourceTree = "<group>"; };
-		BD8C107A2865F92200358622 /* EmailPropertyView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmailPropertyView.swift; sourceTree = "<group>"; };
-		BD8C107B2865F92200358622 /* Properties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Properties.swift; sourceTree = "<group>"; };
-		BD8C107C2865F92200358622 /* SelectButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectButton.swift; sourceTree = "<group>"; };
-		BD8C107D2865F92200358622 /* EmailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmailView.swift; sourceTree = "<group>"; };
-		BD8C107E2865F92200358622 /* PropertiesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PropertiesView.swift; sourceTree = "<group>"; };
-		BD8C10802865F92200358622 /* OpenView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenView.swift; sourceTree = "<group>"; };
-		BD8C10812865F92200358622 /* Identifiers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Identifiers.swift; sourceTree = "<group>"; };
-		BD8C10822865F92200358622 /* IdentifiersView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IdentifiersView.swift; sourceTree = "<group>"; };
+		BD8C10762865F92200358622 /* CreateSMSChannelView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateSMSChannelView.swift; sourceTree = "<group>"; };
+		BD8C10772865F92200358622 /* AddChannelView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddChannelView.swift; sourceTree = "<group>"; };
+		BD8C107D2865F92200358622 /* CreateEmailChannelView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateEmailChannelView.swift; sourceTree = "<group>"; };
+		BD8C10802865F92200358622 /* CreateOpenChannelView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateOpenChannelView.swift; sourceTree = "<group>"; };
 		C00ED4CE26C729390040C5D0 /* URLAllowList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLAllowList.swift; sourceTree = "<group>"; };
 		C02D0B6526C1A3E200F673E6 /* ChannelCapture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelCapture.swift; sourceTree = "<group>"; };
 		C088383526E0244C00D40838 /* TestURLAllowList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestURLAllowList.swift; sourceTree = "<group>"; };
@@ -2714,8 +2698,6 @@
 		DF18CCE41FEC73B000652445 /* UAInAppMessageModalAdapter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageModalAdapter.m; sourceTree = "<group>"; };
 		DF18CCE91FEC74D200652445 /* UAInAppMessageModalViewController+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageModalViewController+Internal.h"; sourceTree = "<group>"; };
 		DF18CCEA1FEC74D200652445 /* UAInAppMessageModalViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageModalViewController.m; sourceTree = "<group>"; };
-		DF2519BE2458E3D800B3587A /* AddChannelAttributeTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddChannelAttributeTableViewController.swift; sourceTree = "<group>"; };
-		DF2519C02458E6CF00B3587A /* AddNamedUserAttributeTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNamedUserAttributeTableViewController.swift; sourceTree = "<group>"; };
 		DF4E48EF221CC73B00F306A5 /* UAInAppMessageAssetCache.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageAssetCache.m; sourceTree = "<group>"; };
 		DF4E48F4221CC79100F306A5 /* UAInAppMessageAssetManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAInAppMessageAssetManager.h; sourceTree = "<group>"; };
 		DF4E48F5221CC79100F306A5 /* UAInAppMessageAssetManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageAssetManager.m; sourceTree = "<group>"; };
@@ -3035,10 +3017,8 @@
 				3CA0E21C237CCBA600EE76CF /* AirshipDebug.strings */,
 				3CA0E21E237CCBA600EE76CF /* AirshipDebug.stringsdict */,
 				3CA0E220237CCBA600EE76CF /* AirshipDebugEvents.storyboard */,
-				3CA0E221237CCBA600EE76CF /* AirshipDebugDeviceInfo.storyboard */,
 				3CA0E222237CCBA600EE76CF /* AirshipEventData.xcdatamodeld */,
 				3CA0E224237CCBA600EE76CF /* Images.xcassets */,
-				3CA0E225237CCBA600EE76CF /* AirshipDebug.storyboard */,
 				3CA0E226237CCBA600EE76CF /* AirshipDebugAutomation.storyboard */,
 				83A674F623AA7AA4005C0C8F /* AirshipDebugPushData.xcdatamodeld */,
 			);
@@ -3048,38 +3028,20 @@
 		3CA0E227237CCBA600EE76CF /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				BD8C10742865F92200358622 /* Contact */,
-				6E6CC37C23A3F9B4003D583C /* ReceivedPushes */,
-				3CA0E22A237CCBA600EE76CF /* DeviceInfo */,
+				6E14C97728B3FC5800A55E65 /* View */,
 				3CA0E234237CCBA600EE76CF /* Automation */,
 				3CA0E240237CCBA600EE76CF /* Events */,
 				3CA0E228237CCBA600EE76CF /* AirshipDebug.h */,
-				3CA0E229237CCBA600EE76CF /* RootTableViewController.swift */,
 				3CA0E232237CCBA600EE76CF /* ThemeManager.swift */,
-				3CA0E233237CCBA600EE76CF /* AirshipDebug.swift */,
+				6E6CC38023A3F9B4003D583C /* PushDataManager.swift */,
+				6E14C9A028B5E4AF00A55E65 /* PushNotification.swift */,
+				3CA0E233237CCBA600EE76CF /* AirshipDebugManager.swift */,
 				3CA0E23F237CCBA600EE76CF /* Theme.swift */,
 				3CA0E24E237CCBA600EE76CF /* DebugUtils.swift */,
 				DFD2464D2473404C000FD565 /* DebugSDKModule.swift */,
 				3CB37A1D251151A400E60392 /* DebugResources.swift */,
 			);
 			path = Source;
-			sourceTree = "<group>";
-		};
-		3CA0E22A237CCBA600EE76CF /* DeviceInfo */ = {
-			isa = PBXGroup;
-			children = (
-				3CA0E231237CCBA600EE76CF /* DeviceInfoViewController.swift */,
-				3CA0E22B237CCBA600EE76CF /* AssociatedIdentifiersTableViewController.swift */,
-				3CA0E22C237CCBA600EE76CF /* AddTagsTableViewController.swift */,
-				3CA0E22E237CCBA600EE76CF /* AddNamedUserTableViewController.swift */,
-				3CA0E22F237CCBA600EE76CF /* AddAssociatedIdentifiersTableViewController.swift */,
-				3CA0E230237CCBA600EE76CF /* TagsTableViewController.swift */,
-				6E218538237DB7960084933A /* AddAttributeTableViewController.swift */,
-				DF2519BE2458E3D800B3587A /* AddChannelAttributeTableViewController.swift */,
-				DF2519C02458E6CF00B3587A /* AddNamedUserAttributeTableViewController.swift */,
-				A6CF89302593910300006C83 /* AddTagGroupsTableViewController.swift */,
-			);
-			path = DeviceInfo;
 			sourceTree = "<group>";
 		};
 		3CA0E234237CCBA600EE76CF /* Automation */ = {
@@ -3374,6 +3336,27 @@
 				6EF66D8C276461DA00ABCB76 /* UrlInfo.swift */,
 			);
 			name = Thomas;
+			sourceTree = "<group>";
+		};
+		6E14C97728B3FC5800A55E65 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				BD8C10742865F92200358622 /* Contact */,
+				6EB41B9928B3DD6C003631C5 /* AirshipDebugView.swift */,
+				6E14C97828B3FC8400A55E65 /* AirshipToast.swift */,
+				6E14C97C28B41EDB00A55E65 /* NamedUserDebugView.swift */,
+				6E14C97E28B424C000A55E65 /* PrviacyManagerDebugView.swift */,
+				6E14C98228B430C000A55E65 /* DeviceTagsDebugView.swift */,
+				6E14C98428B43AC800A55E65 /* TagGroupsDebugView.swift */,
+				6E14C98628B43C8B00A55E65 /* AirshipDebugExtensions.swift */,
+				6E14C98828B4421900A55E65 /* SubscriptionListsDebugView.swift */,
+				6E14C98A28B4435600A55E65 /* ScopedSubscriptionListsDebugView.swift */,
+				6E14C98C28B4457600A55E65 /* AttributesDebugView.swift */,
+				6E14C99A28B55EFD00A55E65 /* AnalyticsIdentifiersView.swift */,
+				6E14C99C28B5619B00A55E65 /* PreferenceCenterListDebugView.swift */,
+				6E14C99E28B5A14300A55E65 /* ReceivedPushListDebugView.swift */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 		6E1892C5268D159900417887 /* Tests */ = {
@@ -3923,17 +3906,6 @@
 				6E6C3F9927A47DB4007F55C7 /* PreferenceCenterConfig.swift */,
 			);
 			path = data;
-			sourceTree = "<group>";
-		};
-		6E6CC37C23A3F9B4003D583C /* ReceivedPushes */ = {
-			isa = PBXGroup;
-			children = (
-				6E6CC37E23A3F9B4003D583C /* PushNotificationsDetailTableViewController.swift */,
-				6E6CC38023A3F9B4003D583C /* PushDataManager.swift */,
-				6E6CC38123A3F9B4003D583C /* PushPayload.swift */,
-				6E6CC38223A3F9B4003D583C /* PushNotificationsTableViewController.swift */,
-			);
-			path = ReceivedPushes;
 			sourceTree = "<group>";
 		};
 		6E737E0924F042CC0094E2E8 /* Audience */ = {
@@ -4589,43 +4561,12 @@
 		BD8C10742865F92200358622 /* Contact */ = {
 			isa = PBXGroup;
 			children = (
-				BD8C10752865F92200358622 /* sms */,
-				BD8C10772865F92200358622 /* ContactList.swift */,
-				BD8C10782865F92200358622 /* ContactViewController.swift */,
-				BD8C10792865F92200358622 /* email */,
-				BD8C107F2865F92200358622 /* open */,
+				BD8C10772865F92200358622 /* AddChannelView.swift */,
+				BD8C10802865F92200358622 /* CreateOpenChannelView.swift */,
+				BD8C10762865F92200358622 /* CreateSMSChannelView.swift */,
+				BD8C107D2865F92200358622 /* CreateEmailChannelView.swift */,
 			);
 			path = Contact;
-			sourceTree = "<group>";
-		};
-		BD8C10752865F92200358622 /* sms */ = {
-			isa = PBXGroup;
-			children = (
-				BD8C10762865F92200358622 /* SmsView.swift */,
-			);
-			path = sms;
-			sourceTree = "<group>";
-		};
-		BD8C10792865F92200358622 /* email */ = {
-			isa = PBXGroup;
-			children = (
-				BD8C107A2865F92200358622 /* EmailPropertyView.swift */,
-				BD8C107B2865F92200358622 /* Properties.swift */,
-				BD8C107C2865F92200358622 /* SelectButton.swift */,
-				BD8C107D2865F92200358622 /* EmailView.swift */,
-				BD8C107E2865F92200358622 /* PropertiesView.swift */,
-			);
-			path = email;
-			sourceTree = "<group>";
-		};
-		BD8C107F2865F92200358622 /* open */ = {
-			isa = PBXGroup;
-			children = (
-				BD8C10802865F92200358622 /* OpenView.swift */,
-				BD8C10812865F92200358622 /* Identifiers.swift */,
-				BD8C10822865F92200358622 /* IdentifiersView.swift */,
-			);
-			path = open;
 			sourceTree = "<group>";
 		};
 		CC04F1FF1DCAB22E00B4842D /* Automation */ = {
@@ -5843,9 +5784,7 @@
 				3CA0E2D1237CD57100EE76CF /* AirshipDebug.strings in Resources */,
 				3CA0E2D2237CD57100EE76CF /* AirshipDebug.stringsdict in Resources */,
 				3CA0E2D3237CD57100EE76CF /* AirshipDebugEvents.storyboard in Resources */,
-				3CA0E2D4237CD57100EE76CF /* AirshipDebugDeviceInfo.storyboard in Resources */,
 				3CA0E2D6237CD57100EE76CF /* Images.xcassets in Resources */,
-				3CA0E2D7237CD57100EE76CF /* AirshipDebug.storyboard in Resources */,
 				3CA0E2D8237CD57100EE76CF /* AirshipDebugAutomation.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6136,64 +6075,57 @@
 			files = (
 				3C693E4F25141CAC00EBFB88 /* AirshipDebugPushData.xcdatamodeld in Sources */,
 				3C693E4E25141CAC00EBFB88 /* AirshipEventData.xcdatamodeld in Sources */,
-				6E6CC38823A3F9B4003D583C /* PushNotificationsTableViewController.swift in Sources */,
-				3CA0E2AE237CD05F00EE76CF /* AssociatedIdentifiersTableViewController.swift in Sources */,
-				BD8C108B2865F92200358622 /* OpenView.swift in Sources */,
-				BD8C10842865F92200358622 /* ContactList.swift in Sources */,
+				BD8C108B2865F92200358622 /* CreateOpenChannelView.swift in Sources */,
+				BD8C10842865F92200358622 /* AddChannelView.swift in Sources */,
 				DFD2464E2473404C000FD565 /* DebugSDKModule.swift in Sources */,
-				BD8C108D2865F92200358622 /* IdentifiersView.swift in Sources */,
-				DF2519BF2458E3D800B3587A /* AddChannelAttributeTableViewController.swift in Sources */,
-				3CA0E2AF237CD05F00EE76CF /* AddTagsTableViewController.swift in Sources */,
-				BD8C10872865F92200358622 /* Properties.swift in Sources */,
+				6E14C98928B4421900A55E65 /* SubscriptionListsDebugView.swift in Sources */,
+				6E14C99F28B5A14300A55E65 /* ReceivedPushListDebugView.swift in Sources */,
 				3CB37A1E251151A400E60392 /* DebugResources.swift in Sources */,
 				6E21852B237D32B30084933A /* EventData.swift in Sources */,
-				3CA0E2B1237CD05F00EE76CF /* AddNamedUserTableViewController.swift in Sources */,
 				4568A6902446E0C100021E02 /* MultilineTextField.swift in Sources */,
-				6E6CC38423A3F9B4003D583C /* PushNotificationsDetailTableViewController.swift in Sources */,
-				3CA0E2B2237CD05F00EE76CF /* AddAssociatedIdentifiersTableViewController.swift in Sources */,
-				3CA0E2B3237CD05F00EE76CF /* TagsTableViewController.swift in Sources */,
-				3CA0E2B4237CD05F00EE76CF /* DeviceInfoViewController.swift in Sources */,
+				6E14C98328B430C000A55E65 /* DeviceTagsDebugView.swift in Sources */,
+				6E14C98D28B4457600A55E65 /* AttributesDebugView.swift in Sources */,
+				6EB41B9A28B3DD6C003631C5 /* AirshipDebugView.swift in Sources */,
 				3CA0E2B5237CD05F00EE76CF /* DebugAutomationUtilities.swift in Sources */,
 				3CA0E2B6237CD05F00EE76CF /* ButtonDetailViewController.swift in Sources */,
 				3CA0E2B7237CD05F00EE76CF /* AudienceDetailViewController.swift in Sources */,
+				6E14C9A128B5E4AF00A55E65 /* PushNotification.swift in Sources */,
 				84FA93E525F29E8C008A1729 /* InAppMessageDetailViewController.swift in Sources */,
-				6E218539237DB7960084933A /* AddAttributeTableViewController.swift in Sources */,
+				6E14C99B28B55EFD00A55E65 /* AnalyticsIdentifiersView.swift in Sources */,
 				3CA0E2B8237CD05F00EE76CF /* TriggerTableViewController.swift in Sources */,
-				6E6CC38723A3F9B4003D583C /* PushPayload.swift in Sources */,
 				3CA0E2B9237CD05F00EE76CF /* AutomationTableViewController.swift in Sources */,
-				A6CF89312593910300006C83 /* AddTagGroupsTableViewController.swift in Sources */,
 				DEE54BA62445B57000F75970 /* ExtrasDetailViewController.swift in Sources */,
 				3CA0E2BA237CD05F00EE76CF /* AutomationDetailViewController.swift in Sources */,
 				3CA0E2BB237CD05F00EE76CF /* ButtonsTableViewController.swift in Sources */,
 				3CA0E2BC237CD05F00EE76CF /* MediaInfoDetailViewController.swift in Sources */,
 				3CA0E2BD237CD05F00EE76CF /* StaticTableViewController.swift in Sources */,
+				6E14C98528B43AC800A55E65 /* TagGroupsDebugView.swift in Sources */,
 				3CA0E2BE237CD05F00EE76CF /* TextInfoDetailViewController.swift in Sources */,
+				6E14C99D28B5619B00A55E65 /* PreferenceCenterListDebugView.swift in Sources */,
+				6E14C98728B43C8B00A55E65 /* AirshipDebugExtensions.swift in Sources */,
 				3CA0E2BF237CD05F00EE76CF /* Event.swift in Sources */,
-				BD8C10882865F92200358622 /* SelectButton.swift in Sources */,
 				3CA0E2C0237CD05F00EE76CF /* SearchFooter.swift in Sources */,
 				3CA0E2C1237CD05F00EE76CF /* EventsViewController.swift in Sources */,
+				6E14C97F28B424C000A55E65 /* PrviacyManagerDebugView.swift in Sources */,
 				3CA0E2C2237CD05F00EE76CF /* CustomEventTableViewCell.swift in Sources */,
 				3CA0E2C5237CD05F00EE76CF /* CustomPropertyTableViewCell.swift in Sources */,
 				3CA0E2C7237CD05F00EE76CF /* CustomEventTableViewController.swift in Sources */,
 				3CA0E2C9237CD05F00EE76CF /* EventsDetailTableViewController.swift in Sources */,
-				BD8C10832865F92200358622 /* SmsView.swift in Sources */,
+				BD8C10832865F92200358622 /* CreateSMSChannelView.swift in Sources */,
 				3CA0E2CA237CD05F00EE76CF /* EventDataManager.swift in Sources */,
 				45CCE9BB2445412F00D264D4 /* PropertyCells.swift in Sources */,
 				84FA93E325F29E8C008A1729 /* ActionDetailViewController.swift in Sources */,
-				3CA0E2CB237CD05F00EE76CF /* RootTableViewController.swift in Sources */,
+				6E14C98B28B4435600A55E65 /* ScopedSubscriptionListsDebugView.swift in Sources */,
 				3CA0E2CC237CD05F00EE76CF /* ThemeManager.swift in Sources */,
-				3CA0E2CD237CD05F00EE76CF /* AirshipDebug.swift in Sources */,
-				BD8C108A2865F92200358622 /* PropertiesView.swift in Sources */,
-				BD8C10852865F92200358622 /* ContactViewController.swift in Sources */,
+				3CA0E2CD237CD05F00EE76CF /* AirshipDebugManager.swift in Sources */,
 				84FA93E425F29E8C008A1729 /* DeferredDetailViewController.swift in Sources */,
-				DF2519C12458E6CF00B3587A /* AddNamedUserAttributeTableViewController.swift in Sources */,
-				BD8C10892865F92200358622 /* EmailView.swift in Sources */,
-				BD8C10862865F92200358622 /* EmailPropertyView.swift in Sources */,
+				BD8C10892865F92200358622 /* CreateEmailChannelView.swift in Sources */,
 				6E6CC38623A3F9B4003D583C /* PushDataManager.swift in Sources */,
+				6E14C97D28B41EDB00A55E65 /* NamedUserDebugView.swift in Sources */,
 				3CA0E2CE237CD05F00EE76CF /* Theme.swift in Sources */,
 				4569E2ED2444E11100F2FB5C /* CustomPropertyAdderTableViewController.swift in Sources */,
+				6E14C97928B3FC8400A55E65 /* AirshipToast.swift in Sources */,
 				4568A6932446E11500021E02 /* CustomPropertyAdderTableViewCell.swift in Sources */,
-				BD8C108C2865F92200358622 /* Identifiers.swift in Sources */,
 				3CA0E2CF237CD05F00EE76CF /* DebugUtils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

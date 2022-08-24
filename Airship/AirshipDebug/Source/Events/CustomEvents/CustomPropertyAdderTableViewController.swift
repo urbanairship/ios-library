@@ -37,8 +37,6 @@ class CustomPropertyAdderTableViewController: UITableViewController, UITextViewD
 
     func setTableViewTheme() {
         self.tableView.backgroundColor = ThemeManager.shared.currentTheme.SecondaryBackground
-        self.navigationController?.navigationBar.titleTextAttributes = [.foregroundColor:ThemeManager.shared.currentTheme.NavigationBarText]
-        self.navigationController?.navigationBar.barTintColor = ThemeManager.shared.currentTheme.NavigationBarBackground
     }
 
     @IBAction func doneButtonTapped(_ sender: Any) {

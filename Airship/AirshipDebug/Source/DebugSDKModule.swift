@@ -9,9 +9,26 @@ import AirshipKit
 
 @objc(UADebugSDKModule)
 public class DebugSDKModule : NSObject, SDKModule {
+    private let debugManager: AirshipDebugManager
+
+    public init(_ debugManager : AirshipDebugManager) {
+        self.debugManager = debugManager
+    }
+
+    public func components() -> [Component] {
+        return [self.debugManager]
+    }
+
     public static func load(withDependencies dependencies: [AnyHashable : Any]) -> SDKModule? {
         let analytics = dependencies[SDKDependencyKeys.analytics] as! Analytics
-        AirshipDebug.takeOff(analytics)
-        return nil
+        let remoteData = dependencies[SDKDependencyKeys.remoteData] as! RemoteDataManager
+        let config = dependencies[SDKDependencyKeys.config] as! RuntimeConfig
+
+        let debugManager = AirshipDebugManager(
+            config: config,
+            analytics: analytics,
+            remoteData: remoteData
+        )
+        return DebugSDKModule(debugManager)
     }
 }

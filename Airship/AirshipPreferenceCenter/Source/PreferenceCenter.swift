@@ -215,7 +215,7 @@ fileprivate extension PreferenceCenter {
                               scene: UIWindowScene,
                               theme: PreferenceCenterTheme?) -> Disposable {
 
-        let defaultTitle = theme?.viewController?.navigationBar?.title ?? "ua_preference_center_title".localized
+
         let navController = makeNavController(theme: theme?.viewController?.navigationBar)
         var window: UIWindow? = UIWindow(windowScene: scene)
 
@@ -227,20 +227,10 @@ fileprivate extension PreferenceCenter {
 
         var viewController: UIViewController!
 
-        let view = PreferenceCenterView(
-            preferenceCenterID: preferenceCenterID,
-            onPhaseChange: { phase in
-                switch (phase) {
-                case .loaded(let state):
-                    viewController?.title = state.config.display?.title ?? defaultTitle
-                default:
-                    viewController?.title = defaultTitle
-                }
-            }
-        )
-
         viewController = PreferenceCenterViewControllerFactory.makeViewController(
-            view: view,
+            view: PreferenceCenterView(
+                preferenceCenterID: preferenceCenterID
+            ),
             preferenceCenterTheme: theme
         )
 

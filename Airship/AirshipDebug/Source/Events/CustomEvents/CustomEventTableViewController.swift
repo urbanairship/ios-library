@@ -60,9 +60,6 @@ class CustomEventTableViewController: UITableViewController, UITextFieldDelegate
 
     func setTableViewTheme() {
         self.tableView.backgroundColor = ThemeManager.shared.currentTheme.SecondaryBackground
-
-        self.navigationController?.navigationBar.titleTextAttributes = [.foregroundColor:ThemeManager.shared.currentTheme.NavigationBarText]
-        self.navigationController?.navigationBar.barTintColor = ThemeManager.shared.currentTheme.NavigationBarBackground
     }
 
     override func viewWillAppear(_ animated: Bool) {

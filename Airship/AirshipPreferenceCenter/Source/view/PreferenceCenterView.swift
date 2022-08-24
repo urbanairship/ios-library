@@ -117,59 +117,91 @@ public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
         color: .white
     )
 
+
+    @ViewBuilder
+    private func makeProgressView(configuration: Configuration) -> some View {
+        let title = configuration.preferenceCenterTheme.viewController?.navigationBar?.title
+        ProgressView()
+            .frame(alignment: .center)
+            .navigationTitle(title ?? "ua_preference_center_title".localized)
+    }
+
+
+    @ViewBuilder
+    public func makeErrorView(configuration: Configuration) -> some View {
+        let theme = configuration.preferenceCenterTheme.preferenceCenter
+        let title = configuration.preferenceCenterTheme.viewController?.navigationBar?.title
+
+        let retry = theme?.retryButtonLabel ?? "ua_retry_button".localized
+        let errorMessage = theme?.retryMessage ?? "ua_preference_center_empty".localized
+
+        VStack {
+            Text(errorMessage)
+                .textAppearance(theme?.retryMessageAppearance)
+                .padding(16)
+
+            Button(
+                action: {
+                    configuration.refresh()
+                },
+                label: {
+                    Text(retry)
+                        .textAppearance(
+                            theme?.retryButtonLabelAppearance,
+                            base: DefaultPreferenceCenterViewStyle.buttonLabelAppearance
+                        )
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Capsule()
+                            .fill(theme?.retryButtonBackgroundColor ?? Color.blue))
+                        .cornerRadius(8)
+                        .frame(minWidth: 44)
+                }
+            )
+        }
+        .navigationTitle(title ?? "ua_preference_center_title".localized)
+    }
+
+    public func makePreferenceCenterView(configuration: Configuration,
+                                         state: PreferenceCenterState) -> some View {
+        let theme = configuration.preferenceCenterTheme
+        var title = state.config.display?.title
+        if (title?.isEmpty != false) {
+            title = configuration.preferenceCenterTheme.viewController?.navigationBar?.title
+        }
+
+        return ScrollView {
+            LazyVStack(alignment: .leading) {
+                if let subtitle = state.config.display?.subtitle {
+                    Text(subtitle)
+                        .textAppearance(
+                            theme.preferenceCenter?.subtitleAppearance,
+                            base: DefaultPreferenceCenterViewStyle.subtitleAppearance
+                        )
+                        .padding(.bottom, 16)
+                }
+
+                ForEach(0..<state.config.sections.count, id: \.self) { index in
+                    self.section(state.config.sections[index], state: state)
+                }
+            }
+            .padding(16)
+            Spacer()
+        }
+        .navigationBarTitle(title ?? "ua_preference_center_title".localized)
+    }
+
+
     @ViewBuilder
     public func makeBody(configuration: Configuration) -> some View {
-        let theme = configuration.preferenceCenterTheme.preferenceCenter
 
         switch(configuration.phase) {
         case .loading:
-            ProgressView()
-                .frame(alignment: .center)
+            makeProgressView(configuration: configuration)
         case .error(_):
-            let retry = theme?.retryButtonLabel ?? "ua_retry_button".localized
-            let errorMessage = theme?.retryMessage ?? "ua_preference_center_empty".localized
-            VStack {
-                Text(errorMessage)
-                    .textAppearance(theme?.retryMessageAppearance)
-                    .padding(16)
-
-                Button(
-                    action: {
-                        configuration.refresh()
-                    },
-                    label: {
-                        Text(retry)
-                            .textAppearance(
-                                theme?.retryButtonLabelAppearance,
-                                base: DefaultPreferenceCenterViewStyle.buttonLabelAppearance
-                            )
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
-                            .background(Capsule()
-                                .fill(theme?.retryButtonBackgroundColor ?? Color.blue))
-                            .cornerRadius(8)
-                            .frame(minWidth: 44)
-                    }
-                )
-            }
+            makeErrorView(configuration: configuration)
         case .loaded(let state):
-            ScrollView {
-                LazyVStack(alignment: .leading) {
-                    if let subtitle = state.config.display?.subtitle {
-                        Text(subtitle)
-                            .textAppearance(
-                                theme?.subtitleAppearance,
-                                base: DefaultPreferenceCenterViewStyle.subtitleAppearance
-                            )
-                    }
-
-                    ForEach(0..<state.config.sections.count, id: \.self) { index in
-                        self.section(state.config.sections[index], state: state)
-                    }
-                }
-                .padding(16)
-                Spacer()
-            }
+            makePreferenceCenterView(configuration: configuration, state: state)
         }
     }
 

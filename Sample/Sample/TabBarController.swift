@@ -1,22 +1,20 @@
 /* Copyright Airship and Contributors */
 
 import UIKit
+import SwiftUI
+import AirshipDebug
 
 class TabBarController: UITabBarController {
     #if DEBUG
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // Instantiate debug library and add it to the tab bar
-        
-        // Instantiate debug library storyboard
-        let debugStoryboard = UIStoryboard(name: "AirshipDebug", bundle:Bundle.init(identifier: "com.urbanairship.AirshipDebug"))
-            
-        // Instantiate debug library's initial view controller
-        guard let debugViewController = debugStoryboard.instantiateInitialViewController() else { return }
+
+        let debugViewController = UIHostingController(
+            rootView: AirshipDebugView()
+        )
         
         // Debug library needs to operate in a nav controller
-        let debugNavController = UINavigationController.init(rootViewController: debugViewController)
+        let debugNavController = UINavigationController(rootViewController: debugViewController)
         
         // Create new tab bar item for debug library
         let debugTitle = NSLocalizedString("ua_debug_tab_title", tableName: "UAPushUI", comment: "Debug")
