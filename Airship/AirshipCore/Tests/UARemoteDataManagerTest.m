@@ -81,7 +81,6 @@ static NSString * const RefreshTask = @"RemoteDataManager.refresh";
                                                 apiClient:self.testAPIClient
                                           remoteDataStore:self.testStore
                                               taskManager:self.testTaskManager
-                                               dispatcher:[[UATestDispatcher alloc] init]
                                                      date:self.testDate
                                        notificationCenter:self.notificationCenter
                                           appStateTracker:self.testAppStateTracker
@@ -331,7 +330,7 @@ static NSString * const RefreshTask = @"RemoteDataManager.refresh";
     XCTestExpectation *callbackCalled = [self expectationWithDescription:@"Callback called"];
     callbackCalled.expectedFulfillmentCount = 3;
     NSMutableArray *responses = [NSMutableArray array];
-    [self.remoteDataManager subscribeWithTypes:@[@"test"] block:^(NSArray<UARemoteDataPayload *> * _Nonnull remoteDataArray) {
+    id disposable = [self.remoteDataManager subscribeWithTypes:@[@"test"] block:^(NSArray<UARemoteDataPayload *> * _Nonnull remoteDataArray) {
         [responses addObject:remoteDataArray];
         [callbackCalled fulfill];
     }];
@@ -357,7 +356,7 @@ static NSString * const RefreshTask = @"RemoteDataManager.refresh";
     XCTestExpectation *callbackCalled = [self expectationWithDescription:@"Callback called"];
     callbackCalled.expectedFulfillmentCount = 2;
     NSMutableArray *responses = [NSMutableArray array];
-    [self.remoteDataManager subscribeWithTypes:@[@"test"] block:^(NSArray<UARemoteDataPayload *> * _Nonnull remoteDataArray) {
+    id disposable = [self.remoteDataManager subscribeWithTypes:@[@"test"] block:^(NSArray<UARemoteDataPayload *> * _Nonnull remoteDataArray) {
         [responses addObject:remoteDataArray];
         [callbackCalled fulfill];
     }];
@@ -379,7 +378,7 @@ static NSString * const RefreshTask = @"RemoteDataManager.refresh";
     XCTestExpectation *callbackCalled = [self expectationWithDescription:@"Callback called"];
     callbackCalled.expectedFulfillmentCount = 3;
     NSMutableArray *responses = [NSMutableArray array];
-    [self.remoteDataManager subscribeWithTypes:@[@"test"] block:^(NSArray<UARemoteDataPayload *> * _Nonnull remoteDataArray) {
+    id disposable = [self.remoteDataManager subscribeWithTypes:@[@"test"] block:^(NSArray<UARemoteDataPayload *> * _Nonnull remoteDataArray) {
         [responses addObject:remoteDataArray];
         [callbackCalled fulfill];
     }];

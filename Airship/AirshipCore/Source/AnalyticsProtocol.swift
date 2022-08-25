@@ -18,15 +18,6 @@ public protocol AnalyticsProtocol {
     @objc
     var sessionID: String? { get }
 
-    /// Optional event consumer.
-    ///
-    /// - Note: AirshipDebug uses the event consumer to capture events. Setting the event
-    /// consumer for other purposes will result in an interruption to AirshipDebug's event stream.
-    ///
-    /// For internal use only. :nodoc:
-    @objc
-    var eventConsumer: AnalyticsEventConsumerProtocol? { get set}
-
     /// Triggers an analytics event.
     /// - Parameter event: The event to be triggered
     @objc

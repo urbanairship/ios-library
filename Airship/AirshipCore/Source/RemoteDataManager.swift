@@ -1,5 +1,7 @@
 /* Copyright Airship and Contributors */
 
+import Combine
+
 // NOTE: For internal use only. :nodoc:
 @objc(UARemoteDataManager)
 public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
@@ -19,7 +21,6 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
     private let dataStore: PreferenceDataStore
     private let apiClient: RemoteDataAPIClientProtocol
     private let remoteDataStore: RemoteDataStore
-    private let dispatcher: UADispatcher
     private let date: AirshipDate
     private let notificationCenter: NotificationCenter
     private let appStateTracker: AppStateTracker
@@ -28,13 +29,14 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
     private let privacyManager: PrivacyManager
     private let networkMonitor: NetworkMonitor;
 
-    private var subscriptions: [UUID : RemoteDataSubscription] = [:]
     private var updatedSinceLastForeground = false
     
     private var refreshCompletionHandlers: [((Bool) -> Void)?] = []
     private let refreshLock = Lock()
     private var isRefreshing = false
-    
+
+    private let updateSubject = PassthroughSubject<[RemoteDataPayload], Never>()
+
     public var remoteDataRefreshInterval: TimeInterval {
         get {
             let fromStore = self.dataStore.object(forKey: RemoteDataManager.refreshIntervalKey ) as? TimeInterval
@@ -118,7 +120,6 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
                   apiClient: RemoteDataAPIClient(config: config),
                   remoteDataStore: RemoteDataStore(storeName: "RemoteData-\(config.appKey).sqlite"),
                   taskManager: TaskManager.shared,
-                  dispatcher: UADispatcher.main,
                   date: AirshipDate(),
                   notificationCenter: NotificationCenter.default,
                   appStateTracker: AppStateTracker.shared,
@@ -133,7 +134,6 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
                 apiClient: RemoteDataAPIClientProtocol,
                 remoteDataStore: RemoteDataStore,
                 taskManager: TaskManagerProtocol,
-                dispatcher: UADispatcher,
                 date: AirshipDate,
                 notificationCenter: NotificationCenter,
                 appStateTracker: AppStateTracker,
@@ -145,7 +145,6 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
         self.apiClient = apiClient
         self.remoteDataStore = remoteDataStore
         self.taskManager = taskManager
-        self.dispatcher = dispatcher
         self.date = date
         self.notificationCenter = notificationCenter
         self.appStateTracker = appStateTracker
@@ -248,10 +247,9 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
                         self.lastModified = response.lastModified
                         self.lastRefreshTime = self.date.now
                         self.lastAppVersion = Utils.bundleShortVersionString()
-                        self.notifySubscribers(payloads) {
-                            self.updatedSinceLastForeground = true
-                            task.taskCompleted()
-                        }
+                        self.updateSubject.send(payloads)
+                        self.updatedSinceLastForeground = true
+                        task.taskCompleted()
                     } else {
                         AirshipLogger.error("Failed to save remote-data.")
                         task.taskFailed()
@@ -281,26 +279,6 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
                 self.refreshCompletionHandlers.removeAll()
                 self.isRefreshing = false
             }
-        }
-    }
-    
-    private func notifySubscribers(_ payloads: [RemoteDataPayload], completionHandler: @escaping () -> Void) {
-        let dispatchGroup = DispatchGroup()
-        let subscriptions = self.subscriptions.values
-        
-        subscriptions.forEach { subscription in
-            let subscriptionPayloads = payloads.filter {
-                subscription.payloadTypes.contains($0.type)
-            }
-            
-            dispatchGroup.enter()
-            subscription.notify(payloads: subscriptionPayloads, dispatcher: self.dispatcher) {
-                dispatchGroup.leave()
-            }
-        }
-        
-        dispatchGroup.notify(queue: DispatchQueue.global(qos: .default)) {
-            completionHandler()
         }
     }
 
@@ -363,28 +341,44 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
         
         return false
     }
-    
-    @discardableResult
-    public func subscribe(types: [String], block:@escaping ([RemoteDataPayload]) -> Void) -> Disposable {
-        let subscriptionID = UUID()
-        let subscription = RemoteDataSubscription(payloadTypes: types, publishBlock: block)
-        self.subscriptions[subscriptionID] = subscription
-        
-        let disposable = Disposable() {
-            subscription.cancel()
-            self.subscriptions[subscriptionID] = nil
+
+
+    public func current(types: [String]) -> Future<[RemoteDataPayload], Never> {
+        return Future { promise in
+            let predicate = NSPredicate(format: "(type IN %@)", types)
+            self.remoteDataStore.fetchRemoteDataFromCache(predicate: predicate) { payloads in
+                promise(.success(payloads))
+            }
         }
-        
-        self.notifySubscriber(subscription: subscription)
-        return disposable
     }
-    
-    
-    private func notifySubscriber(subscription: RemoteDataSubscription) {
-        let predicate = NSPredicate(format: "(type IN %@)", subscription.payloadTypes)
-        self.remoteDataStore.fetchRemoteDataFromCache(predicate: predicate) { [weak self] payloads in
-            guard let self = self else { return }
-            subscription.notify(payloads: payloads, dispatcher: self.dispatcher){}
+
+    public func publisher(types: [String]) -> AnyPublisher<[RemoteDataPayload], Never> {
+        return self.updateSubject
+            .prepend(current(types: types))
+            .map { payloads -> [RemoteDataPayload] in
+                var filtered = payloads.filter { types.contains($0.type) }
+                filtered.sort { first, second in
+                    let firstIndex = types.firstIndex(of: first.type) ?? 0
+                    let secondIndex = types.firstIndex(of: second.type) ?? 0
+                    return firstIndex < secondIndex
+                }
+                return filtered
+            }
+            .removeDuplicates()
+            .eraseToAnyPublisher()
+    }
+
+    public func subscribe(types: [String],
+                          block:@escaping ([RemoteDataPayload]) -> Void) -> Disposable {
+
+        let cancellable = publisher(types: types)
+            .receive(on: RunLoop.main)
+            .sink { payloads in
+                block(payloads)
+            }
+
+        return Disposable {
+            cancellable.cancel()
         }
     }
 }
@@ -401,44 +395,3 @@ extension RemoteDataManager : PushableComponent {
     }
 }
 #endif
-
-internal class RemoteDataSubscription {
-    let payloadTypes: [String]
-    private(set) var publishBlock: (([RemoteDataPayload]) -> Void)?
-    private var previousPayloadTimeStamps: [String : Date] = [:]
-    private var previousMetadata: [String : [AnyHashable : Any]] = [:]
-
-    init(payloadTypes: [String], publishBlock: @escaping ([RemoteDataPayload]) -> Void) {
-        self.payloadTypes = payloadTypes
-        self.publishBlock = publishBlock
-    }
-    
-    func notify(payloads: [RemoteDataPayload], dispatcher: UADispatcher, completionHandler: @escaping () -> Void) {
-        var payloads = payloads
-        payloads.sort { first, second in
-            let firstIndex = payloadTypes.firstIndex(of: first.type) ?? 0
-            let secondIndex = payloadTypes.firstIndex(of: second.type) ?? 0
-            return firstIndex < secondIndex
-        }
-        
-        dispatcher.dispatchAsync { [weak self] in
-            let updated = payloads.contains(where: {
-                let date = self?.previousPayloadTimeStamps[$0.type]
-                let metadata = self?.previousMetadata[$0.type]
-                return date != $0.timestamp || (metadata as NSDictionary?) != ($0.metadata as NSDictionary?)
-            })
-            
-            if (payloads.isEmpty || updated) {
-                self?.publishBlock?(payloads)
-                payloads.forEach {
-                    self?.previousPayloadTimeStamps[$0.type] = $0.timestamp
-                    self?.previousMetadata[$0.type] = $0.metadata
-                }
-            }
-            completionHandler()
-        }
-    }
-    func cancel() {
-        self.publishBlock = nil
-    }
-}

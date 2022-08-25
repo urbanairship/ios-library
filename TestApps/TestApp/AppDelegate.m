@@ -6,6 +6,7 @@
 @import AirshipAutomation;
 @import AirshipMessageCenter;
 @import AirshipPreferenceCenter;
+@import AirshipDebug;
 
 @interface AppDelegate ()
 @end

@@ -42,7 +42,7 @@ public class RemoteConfigManager : NSObject {
         self.notificationCenter = notificationCenter
         
         super.init()
-        
+
         updateRemoteConfigSubscription()
 
         self.notificationCenter.addObserver(

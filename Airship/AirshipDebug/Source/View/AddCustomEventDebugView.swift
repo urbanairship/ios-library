@@ -1,19 +1,8 @@
-/* Copyright Airship and Contributors */
-
+import Foundation
 import SwiftUI
-
-#if canImport(AirshipCore)
 import AirshipCore
-#elseif canImport(AirshipKit)
-import AirshipKit
-#endif
 
-struct CreateEmailChannelView: View {
-
-    enum RegistrationType: String, Equatable, CaseIterable {
-        case transactional = "Transactional"
-        case commercial = "Commercial"
-    }
+struct AddCustomEventView: View {
 
     @StateObject
     private var viewModel = ViewModel()
@@ -21,31 +10,38 @@ struct CreateEmailChannelView: View {
     @Environment(\.presentationMode)
     private var presentationMode: Binding<PresentationMode>
 
+    @ViewBuilder
+    func makeTextInput(title: String, binding: Binding<String>) -> some View{
+        HStack {
+            Text(title.lowercased())
+            Spacer()
+            TextField(title.lowercased(), text: binding.preventWhiteSpace())
+                .freeInput()
+        }
+    }
+
+    @ViewBuilder
+    func makeNumberInput(title: String, binding: Binding<Double>) -> some View{
+        HStack {
+            Text(title.lowercased())
+            Spacer()
+            TextField(
+                title.lowercased(),
+                value: binding,
+                formatter: NumberFormatter()
+            )
+            .keyboardType(.numberPad)
+        }
+    }
+
     var body: some View {
         Form {
-            Section(header: Text("Channel Info".localized())) {
-                HStack {
-                    Text("Email")
-                    Spacer()
-                    TextField("Email", text: self.$viewModel.emailAddress.preventWhiteSpace())
-                        .freeInput()
-                }
-
-                Picker(
-                    "Registration Type".localized(),
-                    selection: self.$viewModel.registrationType
-                ) {
-                    ForEach(RegistrationType.allCases, id: \.self) { value in
-                        Text(value.rawValue.localized())
-                    }
-                }
-                .pickerStyle(.segmented)
-            }
-
-            if (self.viewModel.registrationType == .commercial) {
-                Section(header: Text("Commercial Options".localized())) {
-                    Toggle("Double Opt-In", isOn: self.$viewModel.doubleOptIn)
-                }
+            Section(header: Text("Event Properties".localized())) {
+                makeTextInput(title: "Event Name", binding: self.$viewModel.eventName)
+                makeNumberInput(title: "Event Value", binding: self.$viewModel.eventValue)
+                makeTextInput(title: "Transaction ID", binding: self.$viewModel.transactionID)
+                makeTextInput(title: "Interaction ID", binding: self.$viewModel.interactionID)
+                makeTextInput(title: "Interaction Type", binding: self.$viewModel.interactionType)
             }
 
             Section(header: Text("Properties".localized())) {
@@ -75,77 +71,62 @@ struct CreateEmailChannelView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
-                    self.viewModel.createChannel()
+                    self.viewModel.createEvent()
                     presentationMode.wrappedValue.dismiss()
                 } label: {
                     Text("Create".localized())
                 }
-                .disabled(self.viewModel.emailAddress.isEmpty)
+                .disabled(self.viewModel.eventName.isEmpty)
             }
         }
-        .navigationTitle("Email Channel".localized())
+        .navigationTitle("Custom Event".localized())
     }
 
     fileprivate class ViewModel: ObservableObject {
-        @Published var emailAddress: String = ""
-        @Published var commercial: Bool = false
-        @Published var registrationType: RegistrationType = .transactional
-        @Published var doubleOptIn: Bool = false
-        @Published
+        @Published var eventName: String = ""
+        @Published var eventValue: Double = 1.0
+        @Published var interactionID: String = ""
+        @Published var interactionType: String = ""
+        @Published var transactionID: String = ""
+
         var properties: [String: PropertyValue] = [:]
 
-        func createChannel() {
+        func createEvent() {
             guard
                 Airship.isFlying,
-                !self.emailAddress.isEmpty
+                !self.eventName.isEmpty
             else {
                 return
             }
 
-            var options: EmailRegistrationOptions!
-            let date = Date()
-
-            switch (self.registrationType) {
-            case .commercial:
-                if (doubleOptIn) {
-                    options = EmailRegistrationOptions.options(
-                        transactionalOptedIn: date,
-                        properties: nil,
-                        doubleOptIn: true
-                    )
-                } else {
-                    options = EmailRegistrationOptions.commercialOptions(
-                        transactionalOptedIn: date,
-                        commercialOptedIn: date,
-                        properties: nil
-                    )
-                }
-            case .transactional:
-                options = EmailRegistrationOptions.options(
-                    transactionalOptedIn: date,
-                    properties: nil,
-                    doubleOptIn: false
-                )
+            let event = CustomEvent(name: self.eventName, value: self.eventValue as NSNumber)
+            if (!self.transactionID.isEmpty) {
+                event.transactionID = self.transactionID
             }
+            if (!self.interactionID.isEmpty && !self.interactionType.isEmpty) {
+                event.interactionID = self.interactionID
+                event.interactionType = self.interactionType
+            }
+            event.properties = self.properties.mapValues { $0.unwrappedValue }
 
-            Airship.contact.registerEmail(
-                self.emailAddress,
-                options: options
-            )
+            event.track()
         }
     }
 }
+
 
 fileprivate enum PropertyValue: Equatable {
     case bool(Bool)
     case string(String)
     case number(Double)
+    case json(AnyHashable)
 
     var unwrappedValue: Any {
         switch (self) {
         case .bool(let value): return value
         case .string(let value): return value
         case .number(let value): return value
+        case .json(let value): return value
         }
     }
 
@@ -154,6 +135,7 @@ fileprivate enum PropertyValue: Equatable {
         case .bool(let value): return value ? "true".localized() : "false".localized()
         case .string(let value): return value
         case .number(let value): return String(value)
+        case .json(let value): return (try? JSONUtils.string(value, options: .prettyPrinted)) ?? ""
         }
     }
 }
@@ -164,6 +146,7 @@ fileprivate struct AddPropetyView: View {
         case bool = "Bool"
         case string = "String"
         case number = "Number"
+        case json = "JSON"
     }
 
     @State
@@ -177,6 +160,9 @@ fileprivate struct AddPropetyView: View {
 
     @State
     private var stringValue: String = ""
+
+    @State
+    private var jsonValue: String = ""
 
     @State
     private var propertyType: PropertyType = .string
@@ -226,8 +212,10 @@ fileprivate struct AddPropetyView: View {
         case .bool: return .bool(self.boolValue)
         case .number: return .number(self.numberValue)
         case .string: return .string(self.stringValue)
+        case .json: return .json(JSONUtils.object(self.jsonValue) as! AnyHashable)
         }
     }
+
     private var isValid: Bool {
         guard !self.key.isEmpty else {
             return false
@@ -236,6 +224,8 @@ fileprivate struct AddPropetyView: View {
         case .bool: return true
         case .number: return true
         case .string: return !self.stringValue.isEmpty
+        case .json:
+            return !self.jsonValue.isEmpty && (JSONUtils.object(self.jsonValue)) != nil
         }
     }
 
@@ -251,6 +241,13 @@ fileprivate struct AddPropetyView: View {
                 TextField("String".localized(), text: self.$stringValue.preventWhiteSpace())
                     .freeInput()
             }
+        case .json:
+            VStack {
+                Text("JSON".localized())
+                Spacer()
+                TextEditor(text: self.$jsonValue.preventWhiteSpace())
+                    .frame(maxWidth: .infinity, minHeight: 300)
+            }
         case .number:
             HStack {
                 Text("Number".localized())
@@ -263,5 +260,6 @@ fileprivate struct AddPropetyView: View {
                 .keyboardType(.numberPad)
             }
         }
+        
     }
 }

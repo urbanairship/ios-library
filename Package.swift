@@ -27,6 +27,9 @@ let package = Package(
         .library(
             name: "AirshipPreferenceCenter",
             targets: ["AirshipPreferenceCenter"]),
+        .library(
+            name: "AirshipDebug",
+            targets: ["AirshipDebug"]),
     ],
     targets: [
         .target(name: "AirshipBasement",
@@ -134,6 +137,21 @@ let package = Package(
                           "Info.plist",
                           "Tests"],
                 sources : ["Source"],
+                resources: [
+                    .process("Resources")]
+        ),
+        .target(name:"AirshipDebug",
+                dependencies: [
+                    .target(name: "AirshipCore"),
+                    .target(name: "AirshipPreferenceCenter"),
+                    .target(name: "AirshipMessageCenter"),
+                    .target(name: "AirshipAutomation")
+                ],
+                path: "Airship/AirshipDebug",
+                exclude: ["Source/AirshipDebug.h",
+                          "Info.plist",
+                          "Tests"],
+                sources: ["Source"],
                 resources: [
                     .process("Resources")]
         )

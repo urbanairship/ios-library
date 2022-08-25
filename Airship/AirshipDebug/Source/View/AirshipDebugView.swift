@@ -105,7 +105,11 @@ public struct AirshipDebugView: View {
             Section(header: Text("Analytics".localized())) {
                 makeNavItem(
                     "Events",
-                    destination: StoryBoardViewController(storyBoardName: "AirshipDebugEvents")
+                    destination: EventListDebugView()
+                )
+                makeNavItem(
+                    "Add Custom Event",
+                    destination: AddCustomEventView()
                 )
                 makeNavItem("Associated Identifiers", destination: AnalyticsIdentifiersView())
             }
@@ -113,7 +117,7 @@ public struct AirshipDebugView: View {
             Section(header: Text("In-App Automation".localized())) {
                 makeNavItem(
                     "Automations",
-                    destination: StoryBoardViewController(storyBoardName: "AirshipDebugAutomation")
+                    destination: InAppAutomationListDebugView()
                 )
 
                 makeNavItem("Display Interval", destination: AirshipDebugView())

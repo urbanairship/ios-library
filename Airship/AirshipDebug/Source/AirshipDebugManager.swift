@@ -19,10 +19,30 @@ public class AirshipDebugManager : NSObject, Component {
 
     private var currentDisplay: Disposable?
     private let pushDataManager: PushDataManager
+    private let eventDataManager: EventDataManager
+    private let remoteData: RemoteDataManager
+    private var eventUpdates: AnyCancellable? = nil
 
-    private let preferenceFormsSubject = CurrentValueSubject<[String], Never>([])
     var preferenceFormsPublisher: AnyPublisher<[String], Never> {
-        return preferenceFormsSubject.eraseToAnyPublisher()
+        self.remoteData.publisher(types: ["preference_forms"])
+            .map { payloads -> [String] in
+                guard let data = payloads.first?.data["preference_forms"] as? [[String: Any]]
+                else {
+                    return []
+                }
+                return data
+                    .compactMap { $0["form"] as? [String: Any] }
+                    .compactMap { $0["id"] as? String }
+            }
+            .eraseToAnyPublisher()
+    }
+
+    var inAppAutomationsPublisher: AnyPublisher<[[String: AnyHashable]], Never> {
+        self.remoteData.publisher(types: ["in_app_messages"])
+            .compactMap { payloads -> [[String: AnyHashable]] in
+                return payloads.first?.data["in_app_messages"] as? [[String: AnyHashable]] ?? []
+            }
+            .eraseToAnyPublisher()
     }
 
     private let pushNotifiacitonReceivedSubject = PassthroughSubject<PushNotification, Never>()
@@ -30,25 +50,42 @@ public class AirshipDebugManager : NSObject, Component {
         return pushNotifiacitonReceivedSubject.eraseToAnyPublisher()
     }
 
-    init(config: RuntimeConfig, analytics: Analytics, remoteData: RemoteDataManager) {
-        self.pushDataManager = PushDataManager(appKey: config.appKey)
-        super.init()
-        
-        analytics.eventConsumer = EventDataManager.shared
-        self.observePayloadEvents()
-
-        remoteData.subscribe(types: ["preference_forms"]) { payloads in
-            let data = payloads.first?.data["preference_forms"] as? [[String: Any]]
-            let ids = data?
-                .compactMap { $0["form"] as? [String: Any] }
-                .compactMap { $0["id"] as? String }
-
-            self.preferenceFormsSubject.send(ids ?? [])
-        }
+    private let eventReceivedSubject = PassthroughSubject<AirshipEvent, Never>()
+    var eventReceivedPublisher: AnyPublisher<AirshipEvent, Never> {
+        return eventReceivedSubject.eraseToAnyPublisher()
     }
 
+    init(config: RuntimeConfig, analytics: Analytics, remoteData: RemoteDataManager) {
+        self.remoteData = remoteData
+        self.pushDataManager = PushDataManager(appKey: config.appKey)
+        self.eventDataManager = EventDataManager(appKey: config.appKey)
+
+        super.init()
+
+        self.eventUpdates = analytics.eventPublisher
+            .sink { incoming in
+                guard let body = try? JSONUtils.string(incoming.event.data, options: .prettyPrinted) else {
+                    return
+                }
+
+                let airshipEvent = AirshipEvent(
+                    identifier: incoming.identifier,
+                    type: incoming.event.eventType,
+                    date: incoming.date,
+                    body: body
+                )
+
+                self.eventDataManager.saveEvent(airshipEvent)
+                self.eventReceivedSubject.send(airshipEvent)
+            }
+    }
+    
     func pushNotifications() async -> [PushNotification] {
         return await self.pushDataManager.pushNotifications()
+    }
+
+    func events(searchString: String? = nil) async -> [AirshipEvent] {
+        return await self.eventDataManager.events(searchString: searchString)
     }
 
     public func open() {

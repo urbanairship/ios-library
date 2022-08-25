@@ -8,8 +8,8 @@ public class EventData: NSManagedObject {
         return NSFetchRequest<EventData>(entityName: "EventData")
     }
 
-    @NSManaged public var data: String?
+    @NSManaged public var eventBody: String?
     @NSManaged public var eventID: String?
     @NSManaged public var eventType: String?
-    @NSManaged public var time: Double
+    @NSManaged public var eventDate: Date?
 }

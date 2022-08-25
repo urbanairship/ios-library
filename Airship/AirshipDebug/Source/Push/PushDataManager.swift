@@ -2,7 +2,6 @@
 
 import CoreData
 
-
 #if canImport(AirshipCore)
 import AirshipCore
 #elseif canImport(AirshipKit)
@@ -11,10 +10,9 @@ import AirshipKit
 
 class PushDataManager {
 
-    // The number of days push payloads will be stored by default.
-    private let maxAge = TimeInterval(864000) // 10 days
-
+    private let maxAge = TimeInterval(172800) // 2 days
     private let appKey: String
+    private let coreData: UACoreData
 
     public init(appKey: String) {
         self.appKey = appKey
@@ -29,8 +27,6 @@ class PushDataManager {
         
         self.trimDatabase()
     }
-
-    private let coreData: UACoreData
 
     private func trimDatabase() {
         coreData.performBlockIfStoresExist { isSafe, context in
@@ -92,30 +88,21 @@ class PushDataManager {
                     return
                 }
 
-                var pushes: [PushNotification] = []
-                var pushDatas: [Any] = []
-                let sort = NSSortDescriptor(key: "time", ascending: false)
-                let sortDescriptors = [sort]
                 let fetchRequest:NSFetchRequest = PushData.fetchRequest()
-                fetchRequest.sortDescriptors = sortDescriptors
+                fetchRequest.sortDescriptors = [NSSortDescriptor(key: "time", ascending: false)]
+
                 do {
-                    pushDatas = try context.fetch(fetchRequest)
+                    let result = try context.fetch(fetchRequest)
+                    let notifications = result.map {
+                        PushNotification(pushData: $0)
+                    }
+                    continuation.resume(returning: notifications)
                 } catch {
                     if let error = error as NSError? {
                         print("ERROR: error fetching push payload list - \(error), \(error.userInfo)")
                     }
+                    continuation.resume(returning: [])
                 }
-
-                for pushData in pushDatas {
-                    guard let data = pushData as? PushData, data.data != nil else {
-                        continue
-                    }
-
-                    let push = PushNotification(pushData:data)
-                    pushes.append(push)
-                }
-
-                continuation.resume(returning: pushes)
             }
         }
     }

@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+import Combine
 
 /// Allowed SDK extension types.
 /// - Note: For internal use only. :nodoc:
@@ -23,7 +24,20 @@ public enum SDKExtension : Int {
 /// The Analytics object provides an interface to the Airship Analytics API.
 @objc(UAAnalytics)
 public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDelegate {
-    
+
+    /// Full event
+    public struct FullEvent {
+
+        /// The original event
+        public let event: Event
+
+        /// The event ID
+        public let identifier: String
+
+        /// The event date
+        public let date: Date
+    }
+
     /**
      * Analytics supplier, for testing purposes. :nodoc:
      */
@@ -104,14 +118,12 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
     @objc
     public private(set) var sessionID: String?
 
-    /// Optional event consumer.
-    ///
-    /// - Note: AirshipDebug uses the event consumer to capture events. Setting the event
-    /// consumer for other purposes will result in an interruption to AirshipDebug's event stream.
-    ///
-    /// For internal use only. :nodoc:
-    @objc
-    public var eventConsumer: AnalyticsEventConsumerProtocol?
+    private let eventSubject = PassthroughSubject<FullEvent, Never>()
+
+    /// Airship event publisher
+    public var eventPublisher: AnyPublisher<FullEvent, Never> {
+        eventSubject.eraseToAnyPublisher()
+    }
 
     private let disableHelper: ComponentDisableHelper
         
@@ -405,9 +417,13 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
             self.eventManager.add(event, eventID: identifier, eventDate: date, sessionID: sessionID)
             AirshipLogger.trace("Event added: \(event)")
 
-            if let eventConsumer = self.eventConsumer {
-                eventConsumer.eventAdded(event: event, eventID: identifier, eventDate: date)
-            }
+            self.eventSubject.send(
+                FullEvent(
+                    event: event,
+                    identifier: identifier,
+                    date: date
+                )
+            )
 
             if let customEvent = event as? CustomEvent {
                 self.notificationCenter.post(name: Analytics.customEventAdded, object: self, userInfo: [Analytics.eventKey : customEvent])

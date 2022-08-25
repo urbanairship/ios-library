@@ -17,13 +17,11 @@ struct ReceivedPushListDebugView: View {
     var body: some View {
         Form {
             Section(header: Text("")) {
-                List {
-                    ForEach(self.viewModel.pushNotifications, id: \.self) { push in
-                        NavigationLink(destination: PushDetailDebugView(push: push)) {
-                            HStack {
-                                Text(push.alert ?? "Silent Push".localized())
-                                Text(push.pushID)
-                            }
+                List(self.viewModel.pushNotifications, id: \.self) { push in
+                    NavigationLink(destination: PushDetailDebugView(push: push)) {
+                        HStack {
+                            Text(push.alert ?? "Silent Push".localized())
+                            Text(push.pushID)
                         }
                     }
                 }
@@ -40,8 +38,8 @@ struct ReceivedPushListDebugView: View {
             if (Airship.isFlying) {
                 self.refreshPush()
                 self.cancellable = AirshipDebugManager.shared.pushNotifiacitonReceivedPublisher
-                    .sink { _ in
-                        self.refreshPush()
+                    .sink { [weak self] _ in
+                        self?.refreshPush()
                     }
             }
         }

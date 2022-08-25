@@ -1,7 +1,5 @@
 /* Copyright Airship and Contributors */
 
-import UIKit
-
 #if canImport(AirshipCore)
 import AirshipCore
 #elseif canImport(AirshipKit)
