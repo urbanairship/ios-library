@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="20037" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="20020"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -14,10 +14,7 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Oik-SJ-Loq" userLabel="Nub Cover">
-                    <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="44" id="jde-qW-0hx"/>
-                    </constraints>
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="384"/>
                 </view>
                 <view contentMode="scaleToFill" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="3me-ax-tOr" userLabel="Container View">
                     <rect key="frame" x="0.0" y="0.0" width="375" height="384"/>
@@ -55,9 +52,11 @@
                     </constraints>
                 </view>
             </subviews>
+            <viewLayoutGuide key="safeArea" id="6xT-tW-dyV"/>
             <gestureRecognizers/>
             <constraints>
-                <constraint firstItem="Oik-SJ-Loq" firstAttribute="top" secondItem="aYE-JN-m3c" secondAttribute="top" id="8tw-TI-DPO"/>
+                <constraint firstItem="Oik-SJ-Loq" firstAttribute="bottom" secondItem="6xT-tW-dyV" secondAttribute="bottom" id="8tw-TI-DPO"/>
+                <constraint firstItem="Oik-SJ-Loq" firstAttribute="top" secondItem="aYE-JN-m3c" secondAttribute="top" id="8ty-TI-DPP"/>
                 <constraint firstItem="Oik-SJ-Loq" firstAttribute="width" secondItem="aYE-JN-m3c" secondAttribute="width" id="Kuy-7k-ZMP"/>
                 <constraint firstItem="Oik-SJ-Loq" firstAttribute="width" secondItem="3me-ax-tOr" secondAttribute="width" id="ZGX-Pm-ShL"/>
                 <constraint firstItem="3me-ax-tOr" firstAttribute="top" secondItem="6xT-tW-dyV" secondAttribute="top" id="b5W-gr-JKv"/>
@@ -67,7 +66,6 @@
                 <constraint firstItem="3me-ax-tOr" firstAttribute="bottom" secondItem="aYE-JN-m3c" secondAttribute="bottom" id="vQE-Uu-9vi"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-            <viewLayoutGuide key="safeArea" id="6xT-tW-dyV"/>
             <connections>
                 <outlet property="bannerContentContainerView" destination="A4y-Le-7Tg" id="Mzy-WX-1Km"/>
                 <outlet property="buttonContainerView" destination="1dl-fi-7LK" id="xmY-8N-SJA"/>
