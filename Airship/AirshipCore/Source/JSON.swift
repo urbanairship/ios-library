@@ -3,20 +3,20 @@
 import Foundation
 
 /// - Note: for internal use only.  :nodoc:
-public enum JSON: Decodable, Equatable {
+public enum AirshipJSON: Decodable, Equatable {
     case string(String)
     case number(Double)
-    case object([String:JSON])
-    case array([JSON])
+    case object([String:AirshipJSON])
+    case array([AirshipJSON])
     case bool(Bool)
     case null
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
 
-        if let object = try? container.decode([String: JSON].self) {
+        if let object = try? container.decode([String: AirshipJSON].self) {
             self = .object(object)
-        } else if let array = try? container.decode([JSON].self) {
+        } else if let array = try? container.decode([AirshipJSON].self) {
             self = .array(array)
         } else if let string = try? container.decode(String.self) {
             self = .string(string)

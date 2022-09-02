@@ -276,7 +276,7 @@ public class AlertItem : NSObject, Decodable, Item {
     @objc
     public class Button : NSObject, Decodable {
         
-        let actionJSON : JSON
+        let actionJSON : AirshipJSON
         
         /**
          * Button text.
