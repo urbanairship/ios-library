@@ -14,8 +14,8 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "6E5C32D227C9A54A005B2DDE"
-               BuildableName = "AirshipRelease_tvOS.framework"
+               BlueprintIdentifier = "6EAAE87028C2AD67003CAE53"
+               BuildableName = "AirshipRelease tvOS"
                BlueprintName = "AirshipRelease tvOS"
                ReferencedContainer = "container:Airship.xcodeproj">
             </BuildableReference>
@@ -50,8 +50,8 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "6E5C32D227C9A54A005B2DDE"
-            BuildableName = "AirshipRelease_tvOS.framework"
+            BlueprintIdentifier = "6EAAE87028C2AD67003CAE53"
+            BuildableName = "AirshipRelease tvOS"
             BlueprintName = "AirshipRelease tvOS"
             ReferencedContainer = "container:Airship.xcodeproj">
          </BuildableReference>

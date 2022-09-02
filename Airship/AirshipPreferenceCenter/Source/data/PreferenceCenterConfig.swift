@@ -640,7 +640,7 @@ public class PreferenceCenterConfig: NSObject, Decodable {
             @objc
             public let contentDescription: String?
 
-            let actionJSON: JSON
+            let actionJSON: AirshipJSON
 
             /// Actions paylaod to run on tap
             @objc

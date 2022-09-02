@@ -382,7 +382,7 @@ enum StateAction: Decodable, Equatable {
 
 struct SetStateAction: Decodable, Equatable {
     let key: String
-    let value: JSON?
+    let value: AirshipJSON?
 
     enum CodingKeys: String, CodingKey {
         case key = "key"
@@ -409,7 +409,7 @@ struct VisibilityInfo: Decodable, Equatable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        let predicateJson = try container.decode(JSON.self, forKey: .statePredicate)
+        let predicateJson = try container.decode(AirshipJSON.self, forKey: .statePredicate)
 
         self.defaultVisibility = try container.decode(Bool.self, forKey: .defaultVisibility)
         self.invertWhenStateMatches = try JSONPredicate(json: predicateJson.unWrap())
@@ -679,11 +679,11 @@ struct IconModel: Decodable, Equatable {
 }
 
 struct ActionsPayload: Decodable, Equatable {
-    let value: JSON
+    let value: AirshipJSON
     
     init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
-        let json = try container.decode(JSON.self)
+        let json = try container.decode(AirshipJSON.self)
         
         guard case .object(_) = json else {
             throw AirshipErrors.error("Invalid actions payload.")
