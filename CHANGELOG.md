@@ -3,6 +3,10 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 16.9.3 September 2, 2022
+
+Patch release that fixes an IAA banner issue and renames an internal `JSON` enum to avoid conflicts.
+
 ## Version 16.9.2 August 15, 2022
 
 Patch release that prevents Carthage from building internal targets and adds prebuild Carthage xcframeworks to the release. Apps using Carthage experiencing long builds should update.
