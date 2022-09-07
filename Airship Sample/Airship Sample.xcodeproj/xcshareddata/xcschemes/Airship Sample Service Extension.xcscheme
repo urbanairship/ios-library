@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
    LastUpgradeVersion = "1340"
-   version = "1.3">
+   wasCreatedForAppExtension = "YES"
+   version = "2.0">
    <BuildAction
       parallelizeBuildables = "YES"
       buildImplicitDependencies = "YES">
@@ -14,10 +15,24 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "A6ADC083282964620082110B"
-               BuildableName = "watchOSSample WatchKit Extension.appex"
-               BlueprintName = "watchOSSample WatchKit Extension"
-               ReferencedContainer = "container:watchOSSample.xcodeproj">
+               BlueprintIdentifier = "6EAAE9EE28C7E417003CAE53"
+               BuildableName = "Airship Sample Service Extension.appex"
+               BlueprintName = "Airship Sample Service Extension"
+               ReferencedContainer = "container:Airship Sample.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "6EAAE97728C7E18B003CAE53"
+               BuildableName = "Airship Sample.app"
+               BlueprintName = "Airship Sample"
+               ReferencedContainer = "container:Airship Sample.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -35,51 +50,42 @@
       selectedDebuggerIdentifier = ""
       selectedLauncherIdentifier = "Xcode.IDEFoundation.Launcher.PosixSpawn"
       launchStyle = "0"
+      askForAppToLaunch = "Yes"
       useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
-      allowLocationSimulation = "YES">
-      <RemoteRunnable
-         runnableDebuggingMode = "2"
-         BundleIdentifier = "com.apple.Carousel"
-         RemotePath = "/watchOSSample WatchKit Extension">
+      allowLocationSimulation = "YES"
+      launchAutomaticallySubstyle = "2">
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "A6ADC083282964620082110B"
-            BuildableName = "watchOSSample WatchKit Extension.appex"
-            BlueprintName = "watchOSSample WatchKit Extension"
-            ReferencedContainer = "container:watchOSSample.xcodeproj">
+            BlueprintIdentifier = "6EAAE97728C7E18B003CAE53"
+            BuildableName = "Airship Sample.app"
+            BlueprintName = "Airship Sample"
+            ReferencedContainer = "container:Airship Sample.xcodeproj">
          </BuildableReference>
-      </RemoteRunnable>
+      </BuildableProductRunnable>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
       shouldUseLaunchSchemeArgsEnv = "YES"
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
-      debugDocumentVersioning = "YES">
-      <RemoteRunnable
-         runnableDebuggingMode = "2"
-         BundleIdentifier = "com.apple.Carousel"
-         RemotePath = "/watchOSSample WatchKit Extension">
+      debugDocumentVersioning = "YES"
+      askForAppToLaunch = "Yes"
+      launchAutomaticallySubstyle = "2">
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "A6ADC083282964620082110B"
-            BuildableName = "watchOSSample WatchKit Extension.appex"
-            BlueprintName = "watchOSSample WatchKit Extension"
-            ReferencedContainer = "container:watchOSSample.xcodeproj">
+            BlueprintIdentifier = "6EAAE97728C7E18B003CAE53"
+            BuildableName = "Airship Sample.app"
+            BlueprintName = "Airship Sample"
+            ReferencedContainer = "container:Airship Sample.xcodeproj">
          </BuildableReference>
-      </RemoteRunnable>
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "A6ADC083282964620082110B"
-            BuildableName = "watchOSSample WatchKit Extension.appex"
-            BlueprintName = "watchOSSample WatchKit Extension"
-            ReferencedContainer = "container:watchOSSample.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
+      </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

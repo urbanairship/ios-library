@@ -24,6 +24,6 @@ cp -np "${ROOT_PATH}/$SAMPLE/AirshipConfig.plist.sample" "${ROOT_PATH}/$SAMPLE/A
 xcrun xcodebuild \
 -configuration Debug \
 -workspace "${ROOT_PATH}/Airship.xcworkspace" \
--scheme $SAMPLE \
+-scheme "${SAMPLE}" \
 -sdk $TARGET_SDK \
 -derivedDataPath "$DERIVED_DATA"
