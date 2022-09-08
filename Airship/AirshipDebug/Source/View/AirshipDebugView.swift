@@ -127,7 +127,7 @@ public struct AirshipDebugView: View {
                 )
 
                 VStack {
-                    makeInfoItem("Display Interval", "\(self.$viewModel.displayInterval) seconds")
+                    makeInfoItem("Display Interval", "\(self.viewModel.displayInterval) seconds")
 
                     Slider(value: self.$viewModel.displayInterval, in: 0.0...200.0, step: 1.0)
                 }
