@@ -6,6 +6,7 @@ import Combine
 
 #if canImport(AirshipCore)
 import AirshipCore
+import AirshipAutomation
 #elseif canImport(AirshipKit)
 import AirshipKit
 #endif
@@ -89,8 +90,13 @@ public struct AirshipDebugView: View {
 
             Section(header: Text("Push".localized())) {
                 Toggle(
-                    "Notification Opt-In".localized(),
+                    "Notification Enabled".localized(),
                     isOn: self.$viewModel.userPushNotificationsEnabled
+                )
+
+                Toggle(
+                    "Background Push Enabled".localized(),
+                    isOn: self.$viewModel.backgroundPushEnabled
                 )
 
                 let optInStatus = viewModel.isPushNotificationsOptedIn ? "Opted-In": "Opted-Out"
@@ -120,7 +126,11 @@ public struct AirshipDebugView: View {
                     destination: InAppAutomationListDebugView()
                 )
 
-                makeNavItem("Display Interval", destination: AirshipDebugView())
+                VStack {
+                    makeInfoItem("Display Interval", "\(self.$viewModel.displayInterval) seconds")
+
+                    Slider(value: self.$viewModel.displayInterval, in: 0.0...200.0, step: 1.0)
+                }
             }
 
             Section(header: Text("Preference Center".localized())) {
@@ -256,6 +266,14 @@ fileprivate class AirshipDebugViewModel: ObservableObject {
     private(set) var isPushNotificationsOptedIn: Bool
 
     @Published
+    var displayInterval: TimeInterval {
+        didSet {
+            guard Airship.isFlying else { return }
+            InAppAutomation.shared.inAppMessageManager.displayInterval = displayInterval
+        }
+    }
+
+    @Published
     var userPushNotificationsEnabled: Bool {
         didSet {
             guard Airship.isFlying else { return }
@@ -266,11 +284,19 @@ fileprivate class AirshipDebugViewModel: ObservableObject {
     }
 
     @Published
+    var backgroundPushEnabled: Bool {
+        didSet {
+            guard Airship.isFlying else { return }
+            if (self.backgroundPushEnabled != Airship.push.backgroundPushNotificationsEnabled) {
+                Airship.push.backgroundPushNotificationsEnabled = backgroundPushEnabled
+            }
+        }
+    }
+
+    @Published
     var namedUser: String
 
-    private var channelUpdates: AnyCancellable? = nil
-    private var pushUpdates: AnyCancellable? = nil
-    private var contactUpdates: AnyCancellable? = nil
+    private var subscriptions: Set<AnyCancellable> = Set()
 
     init() {
         self.locale = Locale.autoupdatingCurrent
@@ -282,36 +308,42 @@ fileprivate class AirshipDebugViewModel: ObservableObject {
             self.airshipLocaleIdentifier = Airship.shared.localeManager.currentLocale.identifier
             self.namedUser = Airship.contact.namedUserID ?? ""
             self.userPushNotificationsEnabled = Airship.push.userPushNotificationsEnabled
-
+            self.backgroundPushEnabled = Airship.push.backgroundPushNotificationsEnabled
+            self.displayInterval = InAppAutomation.shared.inAppMessageManager.displayInterval
             subscribeUpdates()
         } else {
             self.channelID = "TakeOff not called"
             self.deviceToken = "TakeOff not called"
             self.isPushNotificationsOptedIn = false
             self.userPushNotificationsEnabled = false
+            self.backgroundPushEnabled = false
             self.airshipLocaleIdentifier = Locale.autoupdatingCurrent.identifier
             self.namedUser = "TakeOff not called"
+            self.displayInterval = 0.0
         }
     }
 
     private func subscribeUpdates() {
-        self.channelUpdates = NotificationCenter.default
+        NotificationCenter.default
             .publisher(for: Channel.channelCreatedEvent)
             .sink(receiveValue: { _ in
                 self.channelID = Airship.channel.identifier
             })
+            .store(in: &self.subscriptions)
 
-        self.pushUpdates = Airship.push.optInUpdates
+        Airship.push.optInUpdates
             .sink(receiveValue: { _ in
                 self.isPushNotificationsOptedIn = Airship.push.isPushNotificationsOptedIn
                 self.deviceToken = Airship.push.deviceToken
             })
+            .store(in: &self.subscriptions)
 
-        self.contactUpdates = NotificationCenter.default
+        NotificationCenter.default
             .publisher(for: Contact.contactChangedEvent)
             .sink(receiveValue: { _ in
                 self.namedUser = Airship.contact.namedUserID ?? ""
             })
+            .store(in: &self.subscriptions)
     }
 
     func clearLocaleOverride() {
