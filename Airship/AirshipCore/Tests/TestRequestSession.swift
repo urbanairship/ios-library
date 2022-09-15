@@ -1,3 +1,5 @@
+/* Copyright Airship and Contributors */
+
 import Foundation
 import AirshipCore
 
@@ -22,7 +24,7 @@ public class TestRequestSession : RequestSession {
     @objc
     public init() {
         let config = RuntimeConfig(config: Config(), dataStore: PreferenceDataStore(appKey: UUID().uuidString))
-        super.init(config: config, session: RequestSession.sharedURLSession)
+        super.init(config: config)
     }
 
     public override func performHTTPRequest(_ request: Request, completionHandler: @escaping (Data?, HTTPURLResponse?, Error?) -> Void) -> Disposable {

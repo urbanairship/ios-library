@@ -22,7 +22,6 @@ public class RequestBuilder : NSObject {
         super.init()
     }
 
-
     @objc
     public func setValue(_ value: String?, header: String) {
         headers[header] = value
@@ -41,42 +40,22 @@ public class Request : NSObject {
     @objc
     public let url: URL?
     @objc
-    public let headers: [String : String]
+    public let headers: [String: String]
     @objc
     public let body: Data?
 
+    let username: String?
+    let password: String?
+    let compressBody: Bool
+
     private init(builder: RequestBuilder) {
-        method = builder.method
-        url = builder.url
-        var headers = builder.headers
-
-        // Additional headers
-        for (k, v) in builder.headers { headers[k] = v }
-
-        // Basic auth
-        if builder.username != nil && builder.password != nil {
-            let credentials = "\(builder.username!):\(builder.password!)"
-            let encodedCredentials = credentials.data(using: .utf8)
-            let authoriazationValue = "Basic \(encodedCredentials?.base64EncodedString(options: []) ?? "")"
-            headers["Authorization"] = authoriazationValue
-        }
-
-        if builder.body != nil {
-            if builder.compressBody {
-                if let gzipped = builder.body?.gzip() {
-                    body = gzipped
-                    headers["Content-Encoding"] = "gzip"
-                } else {
-                    body = builder.body
-                }
-            } else {
-                body = builder.body
-            }
-        } else {
-            body = nil
-        }
-
-        self.headers = headers
+        self.method = builder.method
+        self.url = builder.url
+        self.headers = builder.headers
+        self.username = builder.username
+        self.password = builder.password
+        self.body = builder.body
+        self.compressBody = builder.compressBody
     }
 
     @objc
@@ -93,8 +72,4 @@ public class Request : NSObject {
 }
 
 
-private extension Data {
-    func gzip() -> Data? {
-        return UACompression.gzipData(self)
-    }
-}
+
