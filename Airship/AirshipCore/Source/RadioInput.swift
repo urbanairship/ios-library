@@ -17,7 +17,7 @@ struct RadioInput : View {
             get: { self.radioInputState.selectedItem == self.model.value },
             set: {
                 if ($0) {
-                    self.radioInputState.selectedItem = self.model.value
+                    self.radioInputState.updateSelectedItem(self.model)
                 }
             }
         )
@@ -43,9 +43,6 @@ struct RadioInput : View {
             .border(model.border)
             .common(self.model)
             .formElement()
-            .onAppear {
-                self.radioInputState.attributeValue = self.model.attributeValue
-            }
     }
 }
 
