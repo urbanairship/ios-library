@@ -57,10 +57,12 @@ public class RemoteConfigManager : NSObject {
     }
     
     func processRemoteConfig(_ payloads: [RemoteDataPayload]?) {
-        // Combine the data
         var combinedData: [AnyHashable : Any] = [:]
-        payloads?.forEach {
-            combinedData.merge($0.data) { (current, _) in current }
+
+        // Combine the data, overriding the common config (first) with
+        // the platform config (second).
+        payloads?.forEach { payload in
+            combinedData.merge(payload.data) { (_, new) in new }
         }
 
         // Disable features

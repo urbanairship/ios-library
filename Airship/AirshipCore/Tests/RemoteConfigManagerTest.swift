@@ -133,8 +133,10 @@ class RemoteConfigManagerTest: XCTestCase {
         ]
         let platformPayload = RemoteDataPayload(type: "app_config:ios", timestamp: Date(), data: platformData, metadata: nil)
         let commonPayload = RemoteDataPayload(type: "app_config", timestamp: Date(), data: commonData, metadata: nil)
-        
-        self.testRemoteDataProvider.dispatchPayloads([platformPayload, commonPayload])
+
+        // The test provider does not properly order payloads so we need to pass
+        // them in the order we subscribe to them
+        self.testRemoteDataProvider.dispatchPayloads([commonPayload, platformPayload])
         
         XCTAssertEqual("some-config", self.testModuleAdapter.moduleConfig[.contact] as! String)
         XCTAssertEqual(["neat"], self.testModuleAdapter.moduleConfig[.channel] as! [String])
