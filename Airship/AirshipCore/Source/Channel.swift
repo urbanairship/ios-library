@@ -731,9 +731,9 @@ public extension Channel {
     /// - Parameters:
     ///     - callback: Callback with the restorer.
     func restoreLiveActivityTracking(
-        callback: (AirshipActivityRestorer) async -> Void
+        callback: (LiveActivityRestorer) async -> Void
     ) async {
-        let restorer = AirshipActivityRestorer(registry: self.liveActivityRegistry)
+        let restorer = AirshipLiveActivityRestorer(registry: self.liveActivityRegistry)
         await callback(restorer)
         await self.liveActivityRegistry.clearUntracked()
     }
