@@ -3,6 +3,10 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 16.9.4 October 5, 2022
+
+Patch release that fixes Survey Attributes not being stored properly for radio buttons.
+
 ## Version 16.9.3 September 2, 2022
 
 Patch release that fixes an IAA banner issue and renames an internal `JSON` enum to avoid conflicts.
