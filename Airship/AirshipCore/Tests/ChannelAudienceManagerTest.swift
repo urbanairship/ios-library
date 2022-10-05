@@ -65,17 +65,28 @@ class ChannelAudienceManagerTest: XCTestCase {
         let attributeEditor = self.audienceManager.editAttributes()
         attributeEditor.set(string: "hello", attribute: "some-attribute")
         attributeEditor.apply()
+
+        let activityUpdate = LiveActivityUpdate(
+            action: .set,
+            id: "foo",
+            name: "bar",
+            actionTimeMS: 10,
+            startTimeMS: 10
+        )
+
+        self.audienceManager.addLiveActivityUpdate(activityUpdate)
         
-        XCTAssertEqual(4, self.taskManager.enqueuedRequests.count)
+        XCTAssertEqual(5, self.taskManager.enqueuedRequests.count)
 
         let expectation = XCTestExpectation(description: "callback called")
 
-        self.updateClient.updateCallback = { identifier, subscriptionUpdates, tagUpdates, attributeUpdates, callback in
+        self.updateClient.updateCallback = { identifier, update, callback in
             expectation.fulfill()
             XCTAssertEqual("some-channel", identifier)
-            XCTAssertEqual(3, subscriptionUpdates!.count)
-            XCTAssertEqual(1, tagUpdates!.count)
-            XCTAssertEqual(1, attributeUpdates!.count)
+            XCTAssertEqual(3, update.subscriptionListUpdates.count)
+            XCTAssertEqual(1, update.tagGroupUpdates.count)
+            XCTAssertEqual(1, update.attributeUpdates.count)
+            XCTAssertEqual([activityUpdate], update.liveActivityUpdates)
             callback(HTTPResponse(status: 200), nil)
         }
         
@@ -261,5 +272,117 @@ class ChannelAudienceManagerTest: XCTestCase {
         XCTAssertEqual(expected, edits)
         cancellable.cancel()
     }
-    
+
+    func testLiveActivityUpdates() throws {
+        let activityUpdate = LiveActivityUpdate(
+            action: .set,
+            id: "foo",
+            name: "bar",
+            actionTimeMS: 10,
+            startTimeMS: 10
+        )
+
+        self.audienceManager.addLiveActivityUpdate(activityUpdate)
+        let expectation = XCTestExpectation(description: "callback called")
+        self.updateClient.updateCallback = { identifier, update, callback in
+            expectation.fulfill()
+            XCTAssertEqual("some-channel", identifier)
+            XCTAssertEqual([activityUpdate], update.liveActivityUpdates)
+            callback(HTTPResponse(status: 200), nil)
+        }
+
+        XCTAssertTrue(
+            self.taskManager.launchSync(
+                taskID: ChannelAudienceManager.updateTaskID
+            ).completed
+        )
+
+        wait(for: [expectation], timeout: 10.0)
+    }
+
+    func testLiveActivityUpdateAdjustTimestamps() throws {
+        let activityUpdates = [
+            LiveActivityUpdate(
+                action: .set,
+                id: "foo",
+                name: "bar",
+                actionTimeMS: 10,
+                startTimeMS: 10
+            ),
+            LiveActivityUpdate(
+                action: .remove,
+                id: "foo",
+                name: "bar",
+                actionTimeMS: 10,
+                startTimeMS: 10
+            ),
+            LiveActivityUpdate(
+                action: .set,
+                id: "some other foo",
+                name: "bar",
+                actionTimeMS: 10,
+                startTimeMS: 10
+            ),
+            LiveActivityUpdate(
+                action: .set,
+                id: "something else",
+                name: "something else",
+                actionTimeMS: 1,
+                startTimeMS: 1
+            )
+        ]
+
+        let expected =  [
+            LiveActivityUpdate(
+                action: .set,
+                id: "foo",
+                name: "bar",
+                actionTimeMS: 10,
+                startTimeMS: 10
+            ),
+            LiveActivityUpdate(
+                action: .remove,
+                id: "foo",
+                name: "bar",
+                actionTimeMS: 11,
+                startTimeMS: 10
+            ),
+            LiveActivityUpdate(
+                action: .set,
+                id: "some other foo",
+                name: "bar",
+                actionTimeMS: 12,
+                startTimeMS: 10
+            ),
+            LiveActivityUpdate(
+                action: .set,
+                id: "something else",
+                name: "something else",
+                actionTimeMS: 1,
+                startTimeMS: 1
+            )
+        ]
+
+        activityUpdates.forEach { update in
+            self.audienceManager.addLiveActivityUpdate(update)
+        }
+
+        let expectation = XCTestExpectation(description: "callback called")
+        self.updateClient.updateCallback = { identifier, update, callback in
+            expectation.fulfill()
+            XCTAssertEqual("some-channel", identifier)
+            XCTAssertEqual(expected, update.liveActivityUpdates)
+            callback(HTTPResponse(status: 200), nil)
+        }
+
+        XCTAssertTrue(
+            self.taskManager.launchSync(
+                taskID: ChannelAudienceManager.updateTaskID
+            ).completed
+        )
+
+        wait(for: [expectation], timeout: 10.0)
+    }
+
+
 }

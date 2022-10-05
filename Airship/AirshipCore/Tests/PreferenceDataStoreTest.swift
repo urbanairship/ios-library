@@ -107,4 +107,31 @@ class PreferenceDataStoreTest: XCTestCase {
 
         XCTAssertEqual(dataStore.integer(forKey: "neat"), self.airshipDefaults.integer(forKey: "neat"))
     }
+
+    func testCodable() throws {
+        let dataStore = PreferenceDataStore(appKey: self.appKey)
+        let nilValue: FooCodable? = try dataStore.codable(forKey: "codable")
+        XCTAssertNil(nilValue)
+        let codable = FooCodable(foo: "woot")
+        try dataStore.setCodable(codable, forKey: "codable")
+        XCTAssertEqual(codable, try dataStore.codable(forKey: "codable"))
+    }
+
+    func testCodableWrongType() throws {
+        let dataStore = PreferenceDataStore(appKey: self.appKey)
+        let foo = FooCodable(foo: "woot")
+
+        try dataStore.setCodable(foo, forKey: "codable")
+        XCTAssertThrowsError(try {
+            let _: BarCodable? = try dataStore.codable(forKey: "codable")
+        }())
+    }
+}
+
+fileprivate struct FooCodable: Codable, Equatable {
+    let foo: String
+}
+
+fileprivate struct BarCodable: Codable, Equatable {
+    let bar: String
 }

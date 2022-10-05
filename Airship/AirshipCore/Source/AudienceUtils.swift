@@ -174,4 +174,26 @@ public class AudienceUtils : NSObject {
         
         return updated
     }
+
+    class func normalize(_ updates: [LiveActivityUpdate]) -> [LiveActivityUpdate] {
+        var timeStamps : [String: UInt64] = [:]
+
+        var normalized: [LiveActivityUpdate] = []
+
+        updates.forEach { update in
+            if let timeStamp = timeStamps[update.name],
+               timeStamp >= update.actionTimeMS
+            {
+                var mutable = update
+                mutable.actionTimeMS = timeStamp + 1
+                normalized.append(mutable)
+                timeStamps[mutable.name] = mutable.actionTimeMS
+            } else {
+                normalized.append(update)
+                timeStamps[update.name] = update.actionTimeMS
+            }
+        }
+
+        return normalized
+    }
 }

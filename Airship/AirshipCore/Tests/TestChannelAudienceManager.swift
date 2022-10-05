@@ -7,6 +7,7 @@ import AirshipCore
 @objc(UATestChannelAudienceManager)
 public class TestChannelAudienceManager : NSObject, ChannelAudienceManagerProtocol {
 
+
     public let subscriptionListEditsSubject = PassthroughSubject<SubscriptionListEdit, Never>()
     public var subscriptionListEdits: AnyPublisher<SubscriptionListEdit, Never> {
         self.subscriptionListEditsSubject.eraseToAnyPublisher()
@@ -53,5 +54,8 @@ public class TestChannelAudienceManager : NSObject, ChannelAudienceManagerProtoc
 
     public func processContactSubscriptionUpdates(_ updates: [SubscriptionListUpdate]) {
         self.contactUpdates.append(contentsOf: updates)
+    }
+
+    public func addLiveActivityUpdate(_ update: LiveActivityUpdate) {
     }
 }

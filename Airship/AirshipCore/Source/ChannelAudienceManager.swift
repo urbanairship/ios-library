@@ -13,6 +13,7 @@ protocol ChannelAudienceManagerProtocol {
     var enabled: Bool { get set }
 
     var subscriptionListEdits: AnyPublisher<SubscriptionListEdit, Never> { get }
+    func addLiveActivityUpdate(_ update: LiveActivityUpdate)
 
     func editSubscriptionLists() -> SubscriptionListEditor
 
@@ -163,8 +164,9 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
                 return
             }
             
-            let audienceUpdate = AudienceUpdate(subscriptionListUpdates: updates, tagGroupUpdates: [], attributeUpdates: [])
-            self.addUpdate(audienceUpdate)
+            self.addUpdate(
+                AudienceUpdate(subscriptionListUpdates: updates)
+            )
 
             updates.forEach {
                 switch ($0.type) {
@@ -194,8 +196,9 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
                 return
             }
             
-            let audienceUpdate = AudienceUpdate(subscriptionListUpdates: [], tagGroupUpdates: updates, attributeUpdates: [])
-            self.addUpdate(audienceUpdate)
+            self.addUpdate(
+                AudienceUpdate(tagGroupUpdates: updates)
+            )
             self.enqueueTask()
         }
     }
@@ -207,13 +210,14 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
                 return
             }
             
-            guard self.privacyManager.isEnabled( .tagsAndAttributes) else {
+            guard self.privacyManager.isEnabled(.tagsAndAttributes) else {
                 AirshipLogger.warn("Tags and attributes are disabled. Enable to apply attribute edits.")
                 return
             }
             
-            let audienceUpdate = AudienceUpdate(subscriptionListUpdates: [], tagGroupUpdates: [], attributeUpdates: updates)
-            self.addUpdate(audienceUpdate)
+            self.addUpdate(
+                AudienceUpdate(attributeUpdates: updates)
+            )
             self.enqueueTask()
         }
     }
@@ -239,7 +243,7 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
                 listIDs = self.applySubscriptionListUpdates(listIDs, updates: self.cachedSubscriptionListsHistory.values)
 
                 // Pending
-                if let pending = ChannelAudienceManager.collapse(self.getUpdates()) {
+                if let pending = AudienceUpdate.collapse(self.getUpdates()) {
                     listIDs = self.applySubscriptionListUpdates(listIDs, updates: pending.subscriptionListUpdates)
                 }
 
@@ -318,12 +322,14 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
     }
     
     private func handleUpdateTask(_ task: AirshipTask)  {
-        guard self.enabled && self.privacyManager.isEnabled(.tagsAndAttributes) else {
+        guard self.enabled else {
             task.taskCompleted()
             return
         }
         
-        guard let channelID = self.channelID, let update = self.prepareNextUpdate() else {
+        guard let channelID = self.channelID,
+              let update = self.prepareNextUpdate()
+        else {
             task.taskCompleted()
             return
         }
@@ -332,27 +338,26 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
             self.cachedSubscriptionListsHistory.append(listUpdate)
         }
 
-        let disposable = self.updateClient.update(channelID: channelID,
-                                                  subscriptionListUpdates: update.subscriptionListUpdates,
-                                                  tagGroupUpdates: update.tagGroupUpdates,
-                                                  attributeUpdates: update.attributeUpdates) { response, error in
-            
+        let disposable = self.updateClient.update(
+            update,
+            channelID: channelID
+        ) { response, error in
             if let response = response {
                 AirshipLogger.debug("Update finished with response: \(response)")
                 if (response.isSuccess) {
                     self.popFirstUpdate()
                     task.taskCompleted()
                     self.enqueueTask()
-                    
+
                     let payload : [String : Any] = [
                         Channel.audienceTagsKey: update.tagGroupUpdates,
                         Channel.audienceAttributesKey: update.attributeUpdates
                     ]
-                    
+
                     self.notificationCenter.post(name: Channel.audienceUpdatedEvent,
                                                  object: nil,
                                                  userInfo: payload)
-                    
+
                 } else if (response.isServerError) {
                     task.taskFailed()
                 } else {
@@ -374,11 +379,20 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
     }
     
     private func addUpdate(_ update: AudienceUpdate) {
+        guard !update.isEmpty else { return }
         self.updateLock.sync {
             var updates = getUpdates()
             updates.append(update)
             self.storeUpdates(updates)
         }
+    }
+    
+    func addLiveActivityUpdate(_ update: LiveActivityUpdate) {
+        AirshipLogger.error("Live activity: \(update)")
+        self.addUpdate(
+            AudienceUpdate(liveActivityUpdates: [update])
+        )
+        self.enqueueTask()
     }
     
     private func getUpdates() -> [AudienceUpdate] {
@@ -413,48 +427,34 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
         var nextUpdate: AudienceUpdate? = nil
         updateLock.sync {
             let updates = self.getUpdates()
-            if let collapsed = ChannelAudienceManager.collapse(updates) {
+            if let collapsed = AudienceUpdate.collapse(updates) {
                 self.storeUpdates([collapsed])
                 nextUpdate = collapsed
             } else {
                 self.storeUpdates([])
             }
         }
+
+        if !self.privacyManager.isEnabled(.tagsAndAttributes) {
+            nextUpdate?.attributeUpdates = []
+            nextUpdate?.tagGroupUpdates = []
+            nextUpdate?.attributeUpdates = []
+        }
+
+        guard nextUpdate?.isEmpty == false else {
+            return nil
+        }
+
         return nextUpdate
     }
     
-    private class func collapse(_ updates: [AudienceUpdate]) -> AudienceUpdate? {
-        var subscriptionListUpdates : [SubscriptionListUpdate] = []
-        var tagGroupUpdates : [TagGroupUpdate] = []
-        var attributeUpdates : [AttributeUpdate] = []
 
-        updates.forEach {
-            subscriptionListUpdates.append(contentsOf: $0.subscriptionListUpdates)
-            tagGroupUpdates.append(contentsOf: $0.tagGroupUpdates)
-            attributeUpdates.append(contentsOf: $0.attributeUpdates)
-        }
-        
-        subscriptionListUpdates = AudienceUtils.collapse(subscriptionListUpdates)
-        tagGroupUpdates = AudienceUtils.collapse(tagGroupUpdates)
-        attributeUpdates = AudienceUtils.collapse(attributeUpdates)
-
-        guard !subscriptionListUpdates.isEmpty || !tagGroupUpdates.isEmpty || !attributeUpdates.isEmpty else {
-            return nil
-        }
-        
-        return AudienceUpdate(subscriptionListUpdates: subscriptionListUpdates,
-                              tagGroupUpdates: tagGroupUpdates,
-                              attributeUpdates: attributeUpdates)
-    }
-    
     
     func migrateMutations() {
         defer {
             self.dataStore.removeObject(forKey: ChannelAudienceManager.legacyPendingTagGroupsKey)
             self.dataStore.removeObject(forKey: ChannelAudienceManager.legacyPendingAttributesKey)
         }
-
-
 
         if (self.privacyManager.isEnabled(.tagsAndAttributes)) {
             var pendingTagUpdates : [TagGroupUpdate]?
@@ -482,13 +482,10 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
                     pendingAttributeUpdates = pendingAttributes.map { $0.attributeUpdates }.reduce([], +)
                 }
             }
-            
-            if (pendingTagUpdates != nil || pendingAttributeUpdates != nil) {
-                let update = AudienceUpdate(subscriptionListUpdates: [],
-                                            tagGroupUpdates: pendingTagUpdates ?? [],
-                                            attributeUpdates: pendingAttributeUpdates ?? [])
-                addUpdate(update)
-            }
+
+            let update = AudienceUpdate(tagGroupUpdates: pendingTagUpdates ?? [],
+                                        attributeUpdates: pendingAttributeUpdates ?? [])
+            addUpdate(update)
         }
     }
 
@@ -499,8 +496,54 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
     }
 }
 
-internal struct AudienceUpdate : Codable {
-    let subscriptionListUpdates : [SubscriptionListUpdate]
-    let tagGroupUpdates : [TagGroupUpdate]
-    let attributeUpdates : [AttributeUpdate]
+internal struct AudienceUpdate: Codable {
+    var subscriptionListUpdates: [SubscriptionListUpdate]
+    var tagGroupUpdates: [TagGroupUpdate]
+    var attributeUpdates: [AttributeUpdate]
+    var liveActivityUpdates: [LiveActivityUpdate]
+
+    init(
+        subscriptionListUpdates: [SubscriptionListUpdate] = [],
+        tagGroupUpdates: [TagGroupUpdate] = [],
+        attributeUpdates: [AttributeUpdate] = [],
+        liveActivityUpdates: [LiveActivityUpdate] = []
+    ) {
+        self.subscriptionListUpdates = subscriptionListUpdates
+        self.tagGroupUpdates = tagGroupUpdates
+        self.attributeUpdates = attributeUpdates
+        self.liveActivityUpdates = liveActivityUpdates
+    }
+
+    var isEmpty: Bool {
+        return subscriptionListUpdates.isEmpty &&
+        tagGroupUpdates.isEmpty &&
+        attributeUpdates.isEmpty &&
+        liveActivityUpdates.isEmpty
+    }
+
+    static func collapse(_ updates: [AudienceUpdate]) -> AudienceUpdate? {
+        var subscriptionListUpdates : [SubscriptionListUpdate] = []
+        var tagGroupUpdates : [TagGroupUpdate] = []
+        var attributeUpdates : [AttributeUpdate] = []
+        var liveActivityUpdates : [LiveActivityUpdate] = []
+
+        updates.forEach { update in
+            subscriptionListUpdates.append(contentsOf: update.subscriptionListUpdates)
+            tagGroupUpdates.append(contentsOf: update.tagGroupUpdates)
+            attributeUpdates.append(contentsOf: update.attributeUpdates)
+            liveActivityUpdates.append(contentsOf: update.liveActivityUpdates)
+        }
+
+        let collapsed = AudienceUpdate(
+            subscriptionListUpdates: AudienceUtils.collapse(subscriptionListUpdates),
+            tagGroupUpdates: AudienceUtils.collapse(tagGroupUpdates),
+            attributeUpdates: AudienceUtils.collapse(attributeUpdates),
+            liveActivityUpdates: AudienceUtils.normalize(liveActivityUpdates)
+        )
+
+        return collapsed.isEmpty ? nil : collapsed
+    }
+
 }
+
+
