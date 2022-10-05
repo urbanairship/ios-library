@@ -36,33 +36,53 @@ struct HomeView: View {
 
     @ViewBuilder
     private func makeQuickSettings() -> some View {
-        VStack {
-            Button(
-                action: {
-                    self.viewModel.copyChannel()
-                    self.appState.toastMessage = Toast.Message(
-                        text: "Channel copied to pasteboard",
-                        duration: 2.0
+        ScrollView {
+            VStack {
+                Button(
+                    action: {
+                        self.viewModel.copyChannel()
+                        self.appState.toastMessage = Toast.Message(
+                            text: "Channel copied to pasteboard",
+                            duration: 2.0
+                        )
+                    }
+                ) {
+                    makeQuickSettingItem(
+                        title: "Channel ID",
+                        value: self.viewModel.channelID ?? "Unavailable"
                     )
                 }
-            ) {
-                makeQuickSettingItem(
-                    title: "Channel ID",
-                    value: self.viewModel.channelID ?? "Unavailable"
-                )
-            }
 
-            Divider()
+                Divider()
 
-            NavigationLink(
-                destination: NamedUserView(),
-                tag: HomeDestination.namedUser,
-                selection: self.$appState.homeDestination
-            ) {
-                makeQuickSettingItem(
-                    title: "Named User",
-                    value: self.viewModel.namedUserID ?? "Not Set"
-                )
+                NavigationLink(
+                    destination: NamedUserView(),
+                    tag: HomeDestination.namedUser,
+                    selection: self.$appState.homeDestination
+                ) {
+                    makeQuickSettingItem(
+                        title: "Named User",
+                        value: self.viewModel.namedUserID ?? "Not Set"
+                    )
+                }
+
+
+                Divider()
+
+#if canImport(ActivityKit)
+                if #available(iOS 16.1, *) {
+                    NavigationLink(
+                        destination: LiveActivityManagementView(),
+                        tag: HomeDestination.liveactivities,
+                        selection: self.$appState.homeDestination
+                    ) {
+                        Text("Live Activities!")
+                            .foregroundColor(.accentColor)
+                            .multilineTextAlignment(.leading)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                }
+#endif
             }
         }
     }

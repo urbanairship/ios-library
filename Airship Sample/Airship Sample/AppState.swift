@@ -46,6 +46,7 @@ enum SampleTabs: Hashable {
 enum HomeDestination: Hashable {
     case settings
     case namedUser
+    case liveactivities
 }
 
 

@@ -5,9 +5,14 @@ import AirshipCore
 import AirshipMessageCenter
 import AirshipPreferenceCenter
 
+#if canImport(ActivityKit)
+import ActivityKit
+#endif
+
 class AppDelegate: UIResponder, UIApplicationDelegate, DeepLinkDelegate, MessageCenterDisplayDelegate, PreferenceCenterOpenDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+
 
         let config = Config.default()
         config.productionLogLevel = .trace
@@ -18,6 +23,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, DeepLinkDelegate, Message
         Airship.push.autobadgeEnabled = true
         Airship.push.notificationOptions = [.alert, .badge, .sound, .carPlay]
         Airship.push.defaultPresentationOptions = [.sound, .banner, .list]
+
 
 
         Airship.shared.deepLinkDelegate = self
@@ -32,6 +38,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate, DeepLinkDelegate, Message
             // Set the icon badge to zero
             Airship.push.resetBadge()
         }
+
+#if canImport(ActivityKit)
+        if #available(iOS 16.1, *) {
+            Task {
+                await Airship.channel.restoreLiveActivityTracking { restorer in
+                    await restorer.restore(forType: Activity<DeliveryAttributes>.self)
+                }
+            }
+        }
+#endif
+
 
         return true
     }
@@ -97,5 +114,3 @@ class AppDelegate: UIResponder, UIApplicationDelegate, DeepLinkDelegate, Message
         return true
     }
 }
-
-
