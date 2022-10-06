@@ -42,9 +42,11 @@ public class AirshipRequestSession {
     /// Performs an HTTP request
     /// - Parameters:
     ///    - request: The request
+    ///    - autoCancel: If the request should be cancelled if the task is cancelled. Defaults to false.
     /// - Returns: An AirshipHTTPResponse.
     public func performHTTPRequest(
-        _ request: AirshipRequest
+        _ request: AirshipRequest,
+        autoCancel: Bool = false
     ) async throws -> AirshipHTTPResponse<Void> {
         return try await self.performHTTPRequest(request, responseParser: nil)
     }
@@ -53,10 +55,12 @@ public class AirshipRequestSession {
     /// Performs an HTTP request
     /// - Parameters:
     ///    - request: The request
+    ///    - autoCancel: If the request should be cancelled if the task is cancelled. Defaults to false.
     ///    - responseParser: A block that parses the response.
     /// - Returns: An AirshipHTTPResponse.
     public func performHTTPRequest<T>(
         _ request: AirshipRequest,
+        autoCancel: Bool = false,
         responseParser: ((Data?, HTTPURLResponse) throws -> T?)?
     ) async throws -> AirshipHTTPResponse<T> {
 
@@ -90,41 +94,49 @@ public class AirshipRequestSession {
         for (k, v) in headers { urlRequest.setValue(v, forHTTPHeaderField: k) }
 
         var disposable: Disposable?
-
-        return try await withTaskCancellationHandler { [disposable] in
+        let onCancel = {
             disposable?.dispose()
-        } operation: {
-            return try await withCheckedThrowingContinuation { continuation in
-                disposable = self.session.dataTask(request: urlRequest) { (data, response, error) in
-                    if let error = error {
-                        continuation.resume(throwing: error)
-                        return
-                    }
+        }
 
-                    guard let response = response else {
-                        let error = AirshipErrors.error("Missing response")
-                        continuation.resume(throwing: error)
-                        return
-                    }
+        return try await withTaskCancellationHandler(
+            operation: {
+                return try await withCheckedThrowingContinuation { continuation in
+                    disposable = self.session.dataTask(request: urlRequest) { (data, response, error) in
+                        if let error = error {
+                            continuation.resume(throwing: error)
+                            return
+                        }
 
-                    guard let httpResponse = response as? HTTPURLResponse else {
-                        let error = AirshipErrors.error("Unable to cast to HTTPURLResponse: \(response)")
-                        continuation.resume(throwing: error)
-                        return
-                    }
+                        guard let response = response else {
+                            let error = AirshipErrors.error("Missing response")
+                            continuation.resume(throwing: error)
+                            return
+                        }
 
-                    do {
-                        let result = AirshipHTTPResponse(
-                            result: try responseParser?(data, httpResponse),
-                            statusCode: httpResponse.statusCode
-                        )
-                        continuation.resume(with: .success(result))
-                    } catch {
-                        continuation.resume(throwing: error)
+                        guard let httpResponse = response as? HTTPURLResponse else {
+                            let error = AirshipErrors.error("Unable to cast to HTTPURLResponse: \(response)")
+                            continuation.resume(throwing: error)
+                            return
+                        }
+
+                        do {
+                            let result = AirshipHTTPResponse(
+                                result: try responseParser?(data, httpResponse),
+                                statusCode: httpResponse.statusCode
+                            )
+                            continuation.resume(with: .success(result))
+                        } catch {
+                            continuation.resume(throwing: error)
+                        }
                     }
                 }
+            },
+            onCancel: {
+                if (autoCancel) {
+                    onCancel()
+                }
             }
-        }
+        )
     }
 }
 

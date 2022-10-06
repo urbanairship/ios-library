@@ -3,22 +3,22 @@
 import Foundation
 import UIKit
 
-protocol BackgroundTasksProtocol {
-#if !os(watchOS)
-    func beginTask(_ name: String, expirationHandler: @escaping () -> Void) throws -> Disposable
-    var timeRemaining: TimeInterval { get }
-#endif
+protocol WorkBackgroundTasksProtocol {
+    func beginTask(
+        _ name: String,
+        expirationHandler: (() -> Void)?
+    ) throws -> Disposable
 }
 
-class BackgroundTasks: BackgroundTasksProtocol {
-    
-#if !os(watchOS)
-    
-    var timeRemaining: TimeInterval {
-        UIApplication.shared.backgroundTimeRemaining
-    }
+class WorkBackgroundTasks: WorkBackgroundTasksProtocol {
 
-    func beginTask(_ name: String, expirationHandler: @escaping () -> Void) throws -> Disposable {
+    func beginTask(
+        _ name: String,
+        expirationHandler: (() -> Void)? = nil)
+    throws -> Disposable {
+#if os(watchOS)
+        return Disposable()
+#else
         let application = UIApplication.shared
         var taskID = UIBackgroundTaskIdentifier.invalid
 
@@ -30,7 +30,8 @@ class BackgroundTasks: BackgroundTasksProtocol {
         }
 
         taskID = application.beginBackgroundTask(withName: name) {
-            expirationHandler()
+            expirationHandler?()
+            disposable.dispose()
         }
 
         if (taskID == UIBackgroundTaskIdentifier.invalid) {
@@ -38,8 +39,6 @@ class BackgroundTasks: BackgroundTasksProtocol {
         }
 
         return disposable
-    }
-    
 #endif
-    
+    }
 }

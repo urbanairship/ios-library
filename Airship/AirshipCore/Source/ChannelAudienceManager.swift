@@ -116,7 +116,11 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
         self.cachedSubscriptionListsHistory = CachedList(date: date,
                                                          maxCacheAge: ChannelAudienceManager.maxCacheTime)
 
-        self.taskManager.register(taskID: ChannelAudienceManager.updateTaskID, dispatcher: self.dispatcher) { [weak self] task in
+        self.taskManager.register(
+            taskID: ChannelAudienceManager.updateTaskID,
+            type: .serial,
+            dispatcher: self.dispatcher
+        ) { [weak self] task in
             self?.handleUpdateTask(task)
         }
 

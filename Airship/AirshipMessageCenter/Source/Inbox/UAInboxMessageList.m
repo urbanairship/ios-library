@@ -174,37 +174,37 @@ static NSString * const UAInboxMessageListExtraRetrieveCallback = @"retrieveCall
 
 - (void)registerTasks {
     UA_WEAKIFY(self)
-    [self.taskManager registerForTaskWithIDs:@[UAInboxMessageListRetrieveTask, UAInboxMessageListSyncReadMessagesTask, UAInboxMessageListSyncDeletedMessagesTask]
-                                  dispatcher:self.taskDispatcher
-                               launchHandler:^(id<UATask> task) {
-        @synchronized (self) {
-            if (!self.enabled) {
-                UA_LDEBUG(@"Message list disabled, unable to run task %@", task);
-                [task taskCompleted];
-                return;
-            }
-        }
+    [self.taskManager registerForTaskWithID:UAInboxMessageListExtraRetrieveCallback
+                                       type:UAirshipWorkerTypeSerial
+                                 dispatcher:self.taskDispatcher
+                              launchHandler:^(id<UATask> task) {
+        [self handleRetrieveTask:task];
+    }];
 
-        UA_STRONGIFY(self)
-        task.expirationHandler = ^{
-            UA_STRONGIFY(self)
-            [self.client cancelAllRequests];
-        };
+    [self.taskManager registerForTaskWithID:UAInboxMessageListSyncDeletedMessagesTask
+                                       type:UAirshipWorkerTypeSerial
+                                 dispatcher:self.taskDispatcher
+                              launchHandler:^(id<UATask> task) {
+        [self handleSyncDeletedMessagesTask:task];
+    }];
 
-        if ([task.taskID isEqualToString:UAInboxMessageListRetrieveTask]) {
-            [self handleRetrieveTask:task];
-        } else if ([task.taskID isEqualToString:UAInboxMessageListSyncReadMessagesTask]) {
-            [self handleSyncReadMessagesTask:task];
-        } else if ([task.taskID isEqualToString:UAInboxMessageListSyncDeletedMessagesTask]) {
-            [self handleSyncDeletedMessagesTask:task];
-        } else {
-            UA_LERR(@"Invalid task: %@", task.taskID);
-            [task taskCompleted];
-        }
+    [self.taskManager registerForTaskWithID:UAInboxMessageListSyncReadMessagesTask
+                                       type:UAirshipWorkerTypeSerial
+                                 dispatcher:self.taskDispatcher
+                              launchHandler:^(id<UATask> task) {
+        [self handleSyncReadMessagesTask:task];
     }];
 }
 
 - (void)handleRetrieveTask:(id<UATask>)task {
+    @synchronized (self) {
+        if (!self.enabled) {
+            UA_LDEBUG(@"Message list disabled, unable to run task %@", task);
+            [task taskCompleted];
+            return;
+        }
+    }
+
     // Fetch
     NSError *error;
     NSArray *messages = [self.client retrieveMessageList:&error];
@@ -250,11 +250,27 @@ static NSString * const UAInboxMessageListExtraRetrieveCallback = @"retrieveCall
 }
 
 - (void)handleSyncReadMessagesTask:(id<UATask>)task {
+    @synchronized (self) {
+        if (!self.enabled) {
+            UA_LDEBUG(@"Message list disabled, unable to run task %@", task);
+            [task taskCompleted];
+            return;
+        }
+    }
+
     [self syncReadMessageState];
     [task taskCompleted];
 }
 
 - (void)handleSyncDeletedMessagesTask:(id<UATask>)task {
+    @synchronized (self) {
+        if (!self.enabled) {
+            UA_LDEBUG(@"Message list disabled, unable to run task %@", task);
+            [task taskCompleted];
+            return;
+        }
+    }
+
     [self syncDeletedMessageState];
     [task taskCompleted];
 }
@@ -310,7 +326,7 @@ static NSString * const UAInboxMessageListExtraRetrieveCallback = @"retrieveCall
     }];
 
 
-    UATaskRequestOptions *requestOptions = [[UATaskRequestOptions alloc] initWithConflictPolicy:UATaskConflictPolicyAppend
+    UATaskRequestOptions *requestOptions = [[UATaskRequestOptions alloc] initWithConflictPolicy:UAirshipWorkRequestConflictPolicyAppend
                                                                                 requiresNetwork:NO
                                                                                          extras:extras];
 
@@ -501,7 +517,7 @@ static NSString * const UAInboxMessageListExtraRetrieveCallback = @"retrieveCall
 }
 
 - (void)enqueueSyncReadMessagesTask {
-    UATaskRequestOptions *requestOptions = [[UATaskRequestOptions alloc] initWithConflictPolicy:UATaskConflictPolicyKeep
+    UATaskRequestOptions *requestOptions = [[UATaskRequestOptions alloc] initWithConflictPolicy:UAirshipWorkRequestConflictPolicyKeep
                                                                                 requiresNetwork:NO
                                                                                          extras:nil];
 
@@ -509,7 +525,7 @@ static NSString * const UAInboxMessageListExtraRetrieveCallback = @"retrieveCall
 }
 
 - (void)enqueueSyncDeletedMessagesTask {
-    UATaskRequestOptions *requestOptions = [[UATaskRequestOptions alloc] initWithConflictPolicy:UATaskConflictPolicyKeep
+    UATaskRequestOptions *requestOptions = [[UATaskRequestOptions alloc] initWithConflictPolicy:UAirshipWorkRequestConflictPolicyKeep
                                                                                 requiresNetwork:NO
                                                                                          extras:nil];
 

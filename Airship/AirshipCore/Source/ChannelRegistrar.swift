@@ -146,7 +146,11 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
             }
         }
         
-        self.taskManager.register(taskID: ChannelRegistrar.taskID, dispatcher: self.dispatcher) { [weak self] task in
+        self.taskManager.register(
+            taskID: ChannelRegistrar.taskID,
+            type: .serial,
+            dispatcher: self.dispatcher
+        ) { [weak self] task in
             if (task.taskID == ChannelRegistrar.taskID) {
                 self?.handleRegistrationTask(task)
             } else {
@@ -175,9 +179,13 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
      * - Parameter forcefully: YES to force the registration.
      */
     public func register(forcefully: Bool) {
-        let extras = [ChannelRegistrar.forcefullyKey: forcefully]
-        let policy = forcefully ? UATaskConflictPolicy.replace : UATaskConflictPolicy.keep
-        let options = TaskRequestOptions(conflictPolicy: policy, requiresNetwork: true, extras: extras)
+        let options = TaskRequestOptions(
+            conflictPolicy: forcefully ? .replace : .keep,
+            requiresNetwork: true,
+            extras: [
+                ChannelRegistrar.forcefullyKey: forcefully
+            ]
+        )
         
         self.taskManager.enqueueRequest(taskID: ChannelRegistrar.taskID, options: options)
     }

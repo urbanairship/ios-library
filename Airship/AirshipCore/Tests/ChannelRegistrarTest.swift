@@ -40,7 +40,7 @@ class ChannelRegistrarTest: XCTestCase {
         XCTAssertEqual(1, self.taskManager.enqueuedRequestsCount)
         
         let extras = ["forcefully": false]
-        let options = TaskRequestOptions(conflictPolicy:  UATaskConflictPolicy.keep, requiresNetwork: true, extras: extras)
+        let options = TaskRequestOptions(conflictPolicy: .keep, requiresNetwork: true, extras: extras)
         
         let task = self.taskManager.enqueuedRequests[0]
         XCTAssertEqual("UAChannelRegistrar.registration", task.taskID)
@@ -55,7 +55,7 @@ class ChannelRegistrarTest: XCTestCase {
         
         XCTAssertEqual(1, self.taskManager.enqueuedRequestsCount)
         
-        let options = TaskRequestOptions(conflictPolicy:  UATaskConflictPolicy.replace, requiresNetwork: true, extras: ["forcefully": true])
+        let options = TaskRequestOptions(conflictPolicy: .replace, requiresNetwork: true, extras: ["forcefully": true])
         
         let task = self.taskManager.enqueuedRequests[0]
         XCTAssertEqual(ChannelRegistrar.taskID, task.taskID)
@@ -149,7 +149,7 @@ class ChannelRegistrarTest: XCTestCase {
             expectation.fulfill()
         }
         
-        let options = TaskRequestOptions(conflictPolicy:  UATaskConflictPolicy.replace, requiresNetwork: true, extras: ["forcefully": false])
+        let options = TaskRequestOptions(conflictPolicy: .replace, requiresNetwork: true, extras: ["forcefully": false])
         let task = self.taskManager.launchSync(taskID: ChannelRegistrar.taskID, options: options)
         XCTAssertTrue(task.completed)
         wait(for: [expectation], timeout: 10.0)
@@ -168,7 +168,7 @@ class ChannelRegistrarTest: XCTestCase {
         createChannel(channelID: someChannelID)
                 
         // Try to update
-        let options = TaskRequestOptions(conflictPolicy:  UATaskConflictPolicy.replace, requiresNetwork: true, extras: ["forcefully": false])
+        let options = TaskRequestOptions(conflictPolicy: .replace, requiresNetwork: true, extras: ["forcefully": false])
         let task = self.taskManager.launchSync(taskID: ChannelRegistrar.taskID, options: options)
         XCTAssertTrue(task.completed)
     
@@ -196,7 +196,7 @@ class ChannelRegistrarTest: XCTestCase {
             expectation.fulfill()
         }
         
-        let options = TaskRequestOptions(conflictPolicy:  UATaskConflictPolicy.replace, requiresNetwork: true, extras: ["forcefully": true])
+        let options = TaskRequestOptions(conflictPolicy: .replace, requiresNetwork: true, extras: ["forcefully": true])
         let task = self.taskManager.launchSync(taskID: ChannelRegistrar.taskID, options: options)
         XCTAssertTrue(task.completed)
         wait(for: [expectation], timeout: 10.0)
@@ -226,7 +226,7 @@ class ChannelRegistrarTest: XCTestCase {
             expectation.fulfill()
         }
         
-        let options = TaskRequestOptions(conflictPolicy:  UATaskConflictPolicy.replace, requiresNetwork: true, extras: ["forcefully": true])
+        let options = TaskRequestOptions(conflictPolicy: .replace, requiresNetwork: true, extras: ["forcefully": true])
         let task = self.taskManager.launchSync(taskID: ChannelRegistrar.taskID, options: options)
         XCTAssertTrue(task.completed)
         wait(for: [expectation], timeout: 10.0)
@@ -267,7 +267,7 @@ class ChannelRegistrarTest: XCTestCase {
             expectation.fulfill()
         }
         
-        let options = TaskRequestOptions(conflictPolicy:  UATaskConflictPolicy.replace, requiresNetwork: true, extras: ["forcefully": false])
+        let options = TaskRequestOptions(conflictPolicy: .replace, requiresNetwork: true, extras: ["forcefully": false])
         let task = self.taskManager.launchSync(taskID: ChannelRegistrar.taskID, options: options)
         XCTAssertTrue(task.completed)
         wait(for: [expectation], timeout: 10.0)
@@ -287,7 +287,7 @@ class ChannelRegistrarTest: XCTestCase {
         createChannel(channelID: someChannelID)
 
         // Try to update
-        let options = TaskRequestOptions(conflictPolicy:  UATaskConflictPolicy.replace, requiresNetwork: true, extras: ["forcefully": false])
+        let options = TaskRequestOptions(conflictPolicy: .replace, requiresNetwork: true, extras: ["forcefully": false])
         XCTAssertTrue(self.taskManager.launchSync(taskID: ChannelRegistrar.taskID, options: options).completed)
         XCTAssertNil(self.delegate.didRegistrationSucceed)
     
@@ -335,7 +335,7 @@ class ChannelRegistrarTest: XCTestCase {
             expectation.fulfill()
         }
         
-        let options = TaskRequestOptions(conflictPolicy:  UATaskConflictPolicy.replace, requiresNetwork: true, extras: ["forcefully": true])
+        let options = TaskRequestOptions(conflictPolicy: .replace, requiresNetwork: true, extras: ["forcefully": true])
         XCTAssertTrue(self.taskManager.launchSync(taskID: ChannelRegistrar.taskID, options: options).failed)
         wait(for: [expectation], timeout: 10.0)
         

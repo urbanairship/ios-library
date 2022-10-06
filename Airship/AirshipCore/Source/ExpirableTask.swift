@@ -55,16 +55,16 @@ class ExpirableTask: AirshipTask {
 
     private var isExpired = false
     private var isCompleted = false
-    private var onTaskFinshed: (Bool) -> Void
+    private var onTaskFinished: (Bool) -> Void
 
     @objc
     public init(taskID: String,
                 requestOptions: TaskRequestOptions,
-                onTaskFinshed: @escaping (Bool) -> Void) {
+                onTaskFinished: @escaping (Bool) -> Void) {
 
         self._taskID = taskID
         self._requestOptions = requestOptions
-        self.onTaskFinshed = onTaskFinshed
+        self.onTaskFinished = onTaskFinished
     }
 
     @objc
@@ -103,6 +103,6 @@ class ExpirableTask: AirshipTask {
         self.expirationHandler = nil
         self.completionHandler?()
         self.completionHandler = nil
-        self.onTaskFinshed(result)
+        self.onTaskFinished(result)
     }
 }

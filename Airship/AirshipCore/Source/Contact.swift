@@ -385,7 +385,11 @@ public class Contact : NSObject, Component, ContactProtocol {
             self?.onComponentEnableChange()
         }
                 
-        self.taskManager.register(taskID: Contact.updateTaskID, dispatcher: self.dispatcher) { [weak self] task in
+        self.taskManager.register(
+            taskID: Contact.updateTaskID,
+            type: .serial,
+            dispatcher: self.dispatcher
+        ) { [weak self] task in
             self?.handleUpdateTask(task: task)
         }
 

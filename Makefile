@@ -94,7 +94,7 @@ pod-lint-tvos: setup
 
 .PHONY: pod-lint-watchos
 pod-lint-watchos: setup
-	bundle exec pod lib lint Airship.podspec --verbose --platforms=watchos --subspec=Core --fail-fast --skip-tests 
+	bundle exec pod lib lint Airship.podspec --verbose --platforms=watchos --subspec=Core --fail-fast --skip-tests --no-clean
 
 .PHONY: pod-lint-ios
 pod-lint-ios: setup

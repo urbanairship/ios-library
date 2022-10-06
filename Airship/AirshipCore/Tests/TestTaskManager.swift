@@ -7,6 +7,10 @@ import SwiftUI
 @objc(UATestTaskManager)
 public class TestTaskManager : NSObject, TaskManagerProtocol {
 
+
+
+
+
     public struct Pending {
         let taskID: String
         let rateLimitIDs: [String]
@@ -25,7 +29,7 @@ public class TestTaskManager : NSObject, TaskManagerProtocol {
     public var rateLimits: [String: RateLimit] = [:]
 
     @objc
-    public var enqueuedRequestsCount : Int {
+    public var enqueuedRequestsCount: Int {
         get {
             return enqueuedRequests.count
         }
@@ -45,9 +49,20 @@ public class TestTaskManager : NSObject, TaskManagerProtocol {
     }
     
     public func register(taskID: String, dispatcher: UADispatcher?, launchHandler: @escaping (AirshipTask) -> Void) {
-        launchHandlers[taskID] = (dispatcher ?? UADispatcher.serial(), launchHandler)
     }
-    
+
+
+    public func register(taskID: String, type: AirshipCore.AirshipWorkerType, launchHandler: @escaping (AirshipCore.AirshipTask) -> Void) {
+        self.register(taskID: taskID,
+                      type: type,
+                      dispatcher: UADispatcher.globalDispatcher(.utility),
+                      launchHandler: launchHandler)
+
+    }
+
+    public func register(taskID: String, type: AirshipCore.AirshipWorkerType, dispatcher: AirshipCore.UADispatcher, launchHandler: @escaping (AirshipCore.AirshipTask) -> Void) {
+        launchHandlers[taskID] = (dispatcher, launchHandler)
+    }
     public func enqueueRequest(taskID: String, options: TaskRequestOptions) {
         enqueueRequest(taskID: taskID, options: options, initialDelay: 0)
     }

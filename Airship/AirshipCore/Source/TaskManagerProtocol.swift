@@ -5,12 +5,21 @@ import Foundation
 // NOTE: For internal use only. :nodoc:
 @objc
 public protocol TaskManagerProtocol {
-    
-    @objc(registerForTaskWithIDs:dispatcher:launchHandler:)
-    func register(taskIDs: [String], dispatcher: UADispatcher?, launchHandler: @escaping (AirshipTask) -> Void)
 
-    @objc(registerForTaskWithID:dispatcher:launchHandler:)
-    func register(taskID: String, dispatcher: UADispatcher?, launchHandler: @escaping (AirshipTask) -> Void)
+    @objc(registerForTaskWithID:type:launchHandler:)
+    func register(
+        taskID: String,
+        type: AirshipWorkerType,
+        launchHandler: @escaping (AirshipTask) -> Void
+    )
+
+    @objc(registerForTaskWithID:type:dispatcher:launchHandler:)
+    func register(
+        taskID: String,
+        type: AirshipWorkerType,
+        dispatcher: UADispatcher,
+        launchHandler: @escaping (AirshipTask) -> Void
+    )
 
     @objc(enqueueRequestWithID:options:)
     func enqueueRequest(taskID: String, options: TaskRequestOptions)

@@ -169,11 +169,25 @@ public class EventManager: NSObject, EventManagerProtocol {
 
         super.init()
 
-        self.notificationCenter.addObserver(self, selector: #selector(scheduleUpload as () -> Void), name: Channel.channelCreatedEvent, object: nil)
-        self.notificationCenter.addObserver(self, selector: #selector(applicationDidEnterBackground), name: AppStateTracker.didEnterBackgroundNotification, object: nil)
+        self.notificationCenter.addObserver(
+            self,
+            selector: #selector(scheduleUpload as () -> Void),
+            name: Channel.channelCreatedEvent,
+            object: nil
+        )
 
-            self.taskManager.register(taskID: EventManager.uploadTask, dispatcher: UADispatcher.serial(.utility)) { [weak self] task in
-            self?.uploadEventsTask(task)
+        self.notificationCenter.addObserver(
+            self,
+            selector: #selector(applicationDidEnterBackground),
+            name: AppStateTracker.didEnterBackgroundNotification,
+            object: nil
+        )
+
+        self.taskManager.register(
+            taskID: EventManager.uploadTask,
+            type: .serial
+        ) { [weak self] task in
+                self?.uploadEventsTask(task)
         }
     }
 

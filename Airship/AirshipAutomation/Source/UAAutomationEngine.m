@@ -105,18 +105,18 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
         self.isAppSessionPending = NO;
 
         UA_WEAKIFY(self)
-        [self.taskManager registerForTaskWithIDs:@[UAAutomationEngineDelayTaskID, UAAutomationEngineIntervalTaskID]
-                                      dispatcher:UADispatcher.serialUtility
+        [self.taskManager registerForTaskWithID:UAAutomationEngineDelayTaskID
+                                           type:UAirshipWorkerTypeConcurrent
                                    launchHandler:^(id<UATask> task) {
             UA_STRONGIFY(self)
-            if ([task.taskID isEqualToString:UAAutomationEngineDelayTaskID]) {
-                [self handleDelayTask:task];
-            } else if ([task.taskID isEqualToString:UAAutomationEngineIntervalTaskID]) {
-                [self handleIntervalTask:task];
-            } else {
-                UA_LERR(@"Invalid task: %@", task.taskID);
-                [task taskCompleted];
-            }
+            [self handleDelayTask:task];
+        }];
+
+        [self.taskManager registerForTaskWithID:UAAutomationEngineIntervalTaskID
+                                           type:UAirshipWorkerTypeConcurrent
+                                  launchHandler:^(id<UATask> task) {
+            UA_STRONGIFY(self)
+            [self handleIntervalTask:task];
         }];
 
         if (@available(ios 12.0, tvOS 12.0, *)) {
@@ -725,7 +725,7 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
 - (void)enqueueDelayTaskForSchedule:(UAScheduleData *)scheduleData timeInterval:(NSTimeInterval)timeInterval {
     id extras = @{UAAutomationEngineTaskExtrasIdentifier : scheduleData.identifier};
 
-    UATaskRequestOptions *requestOptions = [[UATaskRequestOptions alloc] initWithConflictPolicy:UATaskConflictPolicyAppend
+    UATaskRequestOptions *requestOptions = [[UATaskRequestOptions alloc] initWithConflictPolicy:UAirshipWorkRequestConflictPolicyAppend
                                                                                 requiresNetwork:NO
                                                                                          extras:extras];
 
@@ -738,7 +738,7 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
 - (void)enqueueIntervalTaskForSchedule:(UAScheduleData *)scheduleData timeInterval:(NSTimeInterval)timeInterval {
     id extras = @{UAAutomationEngineTaskExtrasIdentifier : scheduleData.identifier};
 
-    UATaskRequestOptions *requestOptions = [[UATaskRequestOptions alloc] initWithConflictPolicy:UATaskConflictPolicyAppend
+    UATaskRequestOptions *requestOptions = [[UATaskRequestOptions alloc] initWithConflictPolicy:UAirshipWorkRequestConflictPolicyAppend
                                                                                 requiresNetwork:NO
                                                                                          extras:extras];
 

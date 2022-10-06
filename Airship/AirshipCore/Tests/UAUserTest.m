@@ -39,7 +39,7 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
         void *arg;
         [invocation getArgument:&arg atIndex:4];
         self.launchHandler =  (__bridge void (^)(id<UATask>))arg;
-    }] registerForTaskWithIDs:@[UAUserUpdateTaskID] dispatcher:OCMOCK_ANY launchHandler:OCMOCK_ANY];
+    }] registerForTaskWithID:UAUserUpdateTaskID type:UAirshipWorkerTypeSerial launchHandler:OCMOCK_ANY];
 
 
     self.notificationCenter = [[NSNotificationCenter alloc] init];

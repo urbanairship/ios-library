@@ -30,7 +30,9 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
 @property (nonatomic, strong) UATestDispatcher *dispatcher;
 @property (nonatomic, copy) void (^taskEnqueueBlock)(void);
 @property (nonatomic, strong) UATestDate *testDate;
-@property(nonatomic, copy) void (^launchHandler)(id<UATask>);
+@property(nonatomic, copy) void (^delayLaunchHandler)(id<UATask>);
+@property(nonatomic, copy) void (^intervalLaunchHandler)(id<UATask>);
+
 @end
 
 #define UAAUTOMATIONENGINETESTS_SCHEDULE_LIMIT 100
@@ -58,8 +60,14 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
     [[[self.mockTaskManager stub] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:4];
-        self.launchHandler =  (__bridge void (^)(id<UATask>))arg;
-    }] registerForTaskWithIDs:@[UAAutomationEngineDelayTaskID, UAAutomationEngineIntervalTaskID] dispatcher:OCMOCK_ANY launchHandler:OCMOCK_ANY];
+        self.delayLaunchHandler =  (__bridge void (^)(id<UATask>))arg;
+}] registerForTaskWithID:UAAutomationEngineDelayTaskID type:UAirshipWorkerTypeConcurrent launchHandler:OCMOCK_ANY];
+
+[[[self.mockTaskManager stub] andDo:^(NSInvocation *invocation) {
+    void *arg;
+    [invocation getArgument:&arg atIndex:4];
+    self.intervalLaunchHandler =  (__bridge void (^)(id<UATask>))arg;
+}] registerForTaskWithID:UAAutomationEngineIntervalTaskID type:UAirshipWorkerTypeConcurrent launchHandler:OCMOCK_ANY];
 
     self.mockMetrics = [self mockForClass:[UAApplicationMetrics class]];
 
@@ -739,10 +747,10 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
 
         id mockTask = [self mockForProtocol:@protocol(UATask)];
         [[[mockTask stub] andReturn:UAAutomationEngineDelayTaskID] taskID];
-        [[[mockTask stub] andReturn:[[UATaskRequestOptions alloc] initWithConflictPolicy:UATaskConflictPolicyAppend
+        [[[mockTask stub] andReturn:[[UATaskRequestOptions alloc] initWithConflictPolicy:UAirshipWorkRequestConflictPolicyAppend
                                                                          requiresNetwork:NO
                                                                                   extras:@{@"identifier" : options.extras[@"identifier"]}]] requestOptions];
-        self.launchHandler(mockTask);
+        self.delayLaunchHandler(mockTask);
 
     }] enqueueRequestWithID:OCMOCK_ANY options:OCMOCK_ANY initialDelay:1.0];
 
@@ -1241,11 +1249,11 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
 
     id mockTask = [self mockForProtocol:@protocol(UATask)];
     [[[mockTask stub] andReturn:UAAutomationEngineIntervalTaskID] taskID];
-    [[[mockTask stub] andReturn:[[UATaskRequestOptions alloc] initWithConflictPolicy:UATaskConflictPolicyAppend
+    [[[mockTask stub] andReturn:[[UATaskRequestOptions alloc] initWithConflictPolicy:UAirshipWorkRequestConflictPolicyAppend
                                                                      requiresNetwork:NO
                                                                               extras:@{@"identifier" : @"test"}]] requestOptions];
     // Launch the task
-    self.launchHandler(mockTask);
+    self.intervalLaunchHandler(mockTask);
 
     // Verify we are back to idle
     XCTestExpectation *checkIdleState = [self expectationWithDescription:@"idle state"];

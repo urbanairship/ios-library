@@ -79,8 +79,8 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
             }
         }];
         
-        [self.taskManager registerForTaskWithIDs:@[UAUserUpdateTaskID]
-                                      dispatcher:UADispatcher.serialUtility
+        [self.taskManager registerForTaskWithID:UAUserUpdateTaskID
+                                           type:UAirshipWorkerTypeSerial
                                    launchHandler:^(id<UATask> task) {
             if (!self.enabled) {
                 UA_LDEBUG(@"User disabled, unable to run task %@", task);
@@ -166,7 +166,7 @@ static NSString * const UAUserUpdateTaskID = @"UAUser.update";
         return;
     }
 
-    UATaskRequestOptions *requestOptions = [[UATaskRequestOptions alloc] initWithConflictPolicy:UATaskConflictPolicyKeep
+    UATaskRequestOptions *requestOptions = [[UATaskRequestOptions alloc] initWithConflictPolicy:UAirshipWorkRequestConflictPolicyKeep
                                                                                 requiresNetwork:YES
                                                                                          extras:nil];
 

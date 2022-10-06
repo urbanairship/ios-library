@@ -1,41 +1,28 @@
 /* Copyright Airship and Contributors */
 
-/// Conflict policy if a task with the same ID is already scheduled.
-/// - Note: For internal use only. :nodoc:
-@objc
-public enum UATaskConflictPolicy : Int {
-    /// Keep previously scheduled task.
-    case keep
-
-    /// Replace previously scheduled task with new request.
-    case replace
-
-    /// Add new task but leave previously scheduled tasks.
-    case append
-}
 
 /**
  * - Note: For internal use only. :nodoc:
  */
 @objc(UATaskRequestOptions)
-public class TaskRequestOptions : NSObject {
+public class TaskRequestOptions: NSObject {
     @objc
-    public let conflictPolicy: UATaskConflictPolicy
+    public let conflictPolicy: AirshipWorkRequest.ConflictPolicy
 
     @objc
-    public let isNetworkRequired : Bool
+    public let isNetworkRequired: Bool
 
     @objc
-    public let extras: [AnyHashable : Any]
+    public let extras: [String : Any]
 
     @objc
     public static let defaultOptions = TaskRequestOptions(conflictPolicy: .replace, requiresNetwork: true)
 
 
     @objc
-    public init(conflictPolicy: UATaskConflictPolicy = .replace,
+    public init(conflictPolicy: AirshipWorkRequest.ConflictPolicy = .replace,
                 requiresNetwork: Bool = false,
-                extras: [AnyHashable : Any]? = nil) {
+                extras: [String : Any]? = nil) {
         self.conflictPolicy = conflictPolicy
         self.isNetworkRequired = requiresNetwork
         self.extras = extras ?? [:]

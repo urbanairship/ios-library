@@ -175,7 +175,10 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
                                             name: PrivacyManager.changeEvent,
                                             object: nil)
         
-        self.taskManager.register(taskID: RemoteDataManager.refreshTaskID, dispatcher: UADispatcher.serial(.utility)) { [weak self] task in
+        self.taskManager.register(
+            taskID: RemoteDataManager.refreshTaskID,
+            type: .serial
+        ) { [weak self] task in
             
             guard let self = self,
                   self.privacyManager.isAnyFeatureEnabled() else {
