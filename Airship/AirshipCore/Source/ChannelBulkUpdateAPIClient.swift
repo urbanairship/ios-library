@@ -3,10 +3,8 @@
 // NOTE: For internal use only. :nodoc:
 protocol ChannelBulkUpdateAPIClientProtocol {
     @discardableResult
-    func update(channelID: String,
-                subscriptionListUpdates: [SubscriptionListUpdate]?,
-                tagGroupUpdates: [TagGroupUpdate]?,
-                attributeUpdates: [AttributeUpdate]?,
+    func update(_ update: AudienceUpdate,
+                channelID: String,
                 completionHandler: @escaping (HTTPResponse?, Error?) -> Void) -> Disposable;
 }
 
@@ -16,6 +14,7 @@ class ChannelBulkUpdateAPIClient : ChannelBulkUpdateAPIClientProtocol {
 
     private var config: RuntimeConfig
     private var session: RequestSession
+    private var encoder: JSONEncoder = JSONEncoder()
 
     init(config: RuntimeConfig, session: RequestSession) {
         self.config = config
@@ -27,14 +26,16 @@ class ChannelBulkUpdateAPIClient : ChannelBulkUpdateAPIClientProtocol {
     }
 
     @discardableResult
-    func update(channelID: String, subscriptionListUpdates: [SubscriptionListUpdate]?,
-                tagGroupUpdates: [TagGroupUpdate]?,
-                attributeUpdates: [AttributeUpdate]?,
-                completionHandler: @escaping (HTTPResponse?, Error?) -> Void) -> Disposable {
-        
+    func update(
+        _ update: AudienceUpdate,
+        channelID: String,
+        completionHandler: @escaping (HTTPResponse?, Error?) -> Void
+    ) -> Disposable {
+
         let url = buildURL(channelID: channelID)
-        let payload = buildPayload(subscriptionListUpdates: subscriptionListUpdates, tagGroupUpdates: tagGroupUpdates, attributeUpdates: attributeUpdates)
-        
+
+        let payload = update.clientPayload
+
         AirshipLogger.debug("Updating channel with url \(url?.absoluteString ?? "") payload \(payload)")
 
         let request = Request(builderBlock: { [self] builder in
@@ -44,7 +45,7 @@ class ChannelBulkUpdateAPIClient : ChannelBulkUpdateAPIClientProtocol {
             builder.password = config.appSecret
             builder.setValue("application/vnd.urbanairship+json; version=3;", header: "Accept")
             builder.setValue("application/json", header: "Content-Type")
-            builder.body = try? JSONUtils.data(payload, options: [])
+            builder.body = try? encoder.encode(payload)
         })
         
         return session.performHTTPRequest(request, completionHandler: { (data, response, error) in
@@ -59,30 +60,6 @@ class ChannelBulkUpdateAPIClient : ChannelBulkUpdateAPIClientProtocol {
         })
     }
     
-    func buildPayload(subscriptionListUpdates: [SubscriptionListUpdate]?,
-                      tagGroupUpdates: [TagGroupUpdate]?,
-                      attributeUpdates: [AttributeUpdate]?) -> [AnyHashable : Any] {
-    
-        var payload: [AnyHashable : Any] = [:]
-        
-        let tags = map(tagGroupUpdates)
-        if (!tags.isEmpty) {
-            payload["tags"] = tags
-        }
-        
-        let attributes = map(attributeUpdates)
-        if (!attributes.isEmpty) {
-            payload["attributes"] = attributes
-        }
-        
-        let subscriptions = map(subscriptionListUpdates)
-        if (!subscriptions.isEmpty) {
-            payload["subscription_lists"] = subscriptions
-        }
-        
-        return payload
-    }
-    
     func buildURL(channelID: String) -> URL? {
         guard let deviceUrl = config.deviceAPIURL else {
             return nil
@@ -92,80 +69,145 @@ class ChannelBulkUpdateAPIClient : ChannelBulkUpdateAPIClientProtocol {
         urlComps?.queryItems = [URLQueryItem(name: "platform", value: "ios")]
         return urlComps?.url
     }
-    
-    
-    private func map(_ attributeUpdates: [AttributeUpdate]?) -> [[AnyHashable : Any]] {
-        guard let attributeUpdates = attributeUpdates else {
-            return []
-        }
-        
-        return AudienceUtils.collapse(attributeUpdates).map { (attribute) -> ([AnyHashable : Any]) in
-            var action : String
-            switch(attribute.type) {
-            case .set:
-                action = "set"
-            case .remove:
-                action = "remove"
+}
+
+
+
+fileprivate extension AudienceUpdate {
+
+    var clientSubscriptionListPayload: [ClientPayload.SubscriptionOperation]? {
+        guard !self.subscriptionListUpdates.isEmpty else { return nil }
+
+        return self.subscriptionListUpdates.map { update in
+            switch(update.type) {
+            case .subscribe:
+                return ClientPayload.SubscriptionOperation(
+                    action: .subscribe,
+                    listID: update.listId
+                )
+            case .unsubscribe:
+                return ClientPayload.SubscriptionOperation(
+                    action: .unsubscribe,
+                    listID: update.listId
+                )
             }
-            
-            var payload: [AnyHashable : Any] = [
-                "action": action,
-                "key": attribute.attribute,
-                "timestamp": Utils.isoDateFormatterUTCWithDelimiter().string(from: attribute.date)
-            ]
-            
-            if let value = attribute.value() {
-                payload["value"] = value
-            }
-            
-            return payload
         }
-    }
-    
-    private func map(_ tagGroupUpdates: [TagGroupUpdate]?) -> [AnyHashable : Any]{
-        guard let tagGroupUpdates = tagGroupUpdates else {
-            return [:]
-        }
-        
-        var tagsPayload : [String : [String: [String]]] = [:]
-        
-        AudienceUtils.collapse(tagGroupUpdates).forEach { tagUpdate in
-            var key : String
-            switch (tagUpdate.type) {
-            case .add:
-                key = "add"
-            case .remove:
-                key = "remove"
-            case .set:
-                key = "set"
-            }
-            
-            if (tagsPayload[key] == nil) {
-                tagsPayload[key] = [:]
-            }
-            tagsPayload[key]?[tagUpdate.group] = tagUpdate.tags
-        }
-        
-        return tagsPayload
     }
 
-    private func map(_ subscriptionListsUpdates: [SubscriptionListUpdate]?) -> [[AnyHashable : Any]] {
-        guard let subscriptionListsUpdates = subscriptionListsUpdates else {
-            return []
-        }
-        
-        return AudienceUtils.collapse(subscriptionListsUpdates).map { (list) -> ([AnyHashable : Any]) in
-            var action : String
-            switch(list.type) {
-            case .subscribe:
-                action = "subscribe"
-            case .unsubscribe:
-                action = "unsubscribe"
+    var clientAttributePayload: [ClientPayload.AttributeOperation]? {
+        guard !self.attributeUpdates.isEmpty else { return nil }
+
+        return self.attributeUpdates.map { update in
+            let timestamp = Utils.isoDateFormatterUTCWithDelimiter().string(
+                from: update.date
+            )
+            switch(update.type) {
+            case .set:
+                return ClientPayload.AttributeOperation(
+                    action: .set,
+                    key: update.attribute,
+                    timestamp: timestamp,
+                    value: try? AirshipJSON.wrap(update.value())
+                )
+            case .remove:
+                return ClientPayload.AttributeOperation(
+                    action: .remove,
+                    key: update.attribute,
+                    timestamp: timestamp,
+                    value: nil
+                )
             }
-            return [
-                "action": action,
-                "list_id": list.listId
-            ]
         }
+    }
+
+    var clientLiveActivitiesPayload: [LiveActivityUpdate]? {
+        guard !self.liveActivityUpdates.isEmpty else { return nil }
+        return liveActivityUpdates
+    }
+
+
+    var clientTagPayload: ClientPayload.TagPayload? {
+        guard !self.tagGroupUpdates.isEmpty else { return nil }
+
+        var tagPayload = ClientPayload.TagPayload()
+        self.tagGroupUpdates.forEach { tagUpdate in
+            switch(tagUpdate.type) {
+            case .set:
+                if (tagPayload.set == nil) {
+                    tagPayload.set = [:]
+                }
+                tagPayload.set?[tagUpdate.group] = tagUpdate.tags
+            case .remove:
+                if (tagPayload.remove == nil) {
+                    tagPayload.remove = [:]
+                }
+                tagPayload.remove?[tagUpdate.group] = tagUpdate.tags
+            case .add:
+                if (tagPayload.add == nil) {
+                    tagPayload.add = [:]
+                }
+                tagPayload.add?[tagUpdate.group] = tagUpdate.tags
+            }
+        }
+
+        return tagPayload
+    }
+
+    var clientPayload: ClientPayload {
+        return ClientPayload(
+            tags: self.clientTagPayload,
+            subscriptionLists: self.clientSubscriptionListPayload,
+            attributes: self.clientAttributePayload,
+            liveActivities: self.clientLiveActivitiesPayload
+        )
+    }
+}
+
+
+fileprivate struct ClientPayload: Encodable {
+
+    struct TagPayload: Encodable {
+        var add: [String: [String]]? = nil
+        var remove: [String: [String]]? = nil
+        var set: [String: [String]]? = nil
+    }
+
+    enum SubscriptionAction: String, Encodable {
+        case subscribe
+        case unsubscribe
+    }
+
+    struct SubscriptionOperation: Encodable {
+        var action: SubscriptionAction
+        var listID: String
+
+        enum CodingKeys: String, CodingKey {
+            case action = "action"
+            case listID = "list_id"
+        }
+    }
+
+    enum AttributeAction: String, Encodable {
+        case set
+        case remove
+    }
+
+    struct AttributeOperation: Encodable {
+        var action: AttributeAction
+        var key: String
+        var timestamp: String
+        var value: AirshipJSON?
+    }
+
+    let tags: TagPayload?
+    let subscriptionLists: [SubscriptionOperation]?
+    let attributes: [AttributeOperation]?
+    let liveActivities: [LiveActivityUpdate]?
+
+    enum CodingKeys: String, CodingKey {
+        case tags = "tags"
+        case subscriptionLists = "subscription_lists"
+        case attributes = "attributes"
+        case liveActivities = "live_activities"
     }
 }

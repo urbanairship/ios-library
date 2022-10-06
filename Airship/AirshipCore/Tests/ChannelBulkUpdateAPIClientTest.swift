@@ -26,21 +26,43 @@ class ChannelBulkUpdateAPIClientTest: XCTestCase {
 
         let expectation = XCTestExpectation(description: "callback called")
 
-        let subscriptionUpdates = [
-            SubscriptionListUpdate(listId: "coffee", type: .unsubscribe),
-            SubscriptionListUpdate(listId: "pizza", type: .subscribe)
-        ]
-        
-        let tagUpdates = [
-            TagGroupUpdate(group: "some-group", tags: ["tag-1", "tag-2"], type: .add),
-            TagGroupUpdate(group: "some-other-group", tags: ["tag-3", "tag-4"], type: .set)
-        ]
-        
-        let attributeUpdates = [
-            AttributeUpdate(attribute: "some-attribute", type: .set, value: "hello", date: date)
-        ]
+        let update = AudienceUpdate(
+            subscriptionListUpdates: [
+                SubscriptionListUpdate(
+                    listId: "coffee",
+                    type: .unsubscribe
+                ),
+                SubscriptionListUpdate(
+                    listId: "pizza",
+                    type: .subscribe
+                )
+            ],
+            tagGroupUpdates: [
+                TagGroupUpdate(
+                    group: "some-group",
+                    tags: ["tag-1", "tag-2"],
+                    type: .add
+                ),
+                TagGroupUpdate(
+                    group: "some-other-group",
+                    tags: ["tag-3", "tag-4"],
+                    type: .set
+                )
+            ],
+            attributeUpdates: [
+                AttributeUpdate(
+                    attribute: "some-attribute",
+                    type: .set,
+                    value: "hello",
+                    date: date
+                )
+            ]
+        )
 
-        self.client.update(channelID: "some-channel", subscriptionListUpdates: subscriptionUpdates, tagGroupUpdates: tagUpdates, attributeUpdates: attributeUpdates) { response, error in
+        self.client.update(
+            update,
+            channelID: "some-channel"
+        ) { response, error in
             XCTAssertEqual(response?.status, 200)
             XCTAssertNil(error)
             expectation.fulfill()
@@ -91,12 +113,23 @@ class ChannelBulkUpdateAPIClientTest: XCTestCase {
 
         let expectation = XCTestExpectation(description: "callback called")
 
-        let updates = [
-            SubscriptionListUpdate(listId: "coffee", type: .unsubscribe),
-            SubscriptionListUpdate(listId: "pizza", type: .subscribe)
-        ]
+        let update = AudienceUpdate(
+            subscriptionListUpdates: [
+                SubscriptionListUpdate(
+                    listId: "coffee",
+                    type: .unsubscribe
+                ),
+                SubscriptionListUpdate(
+                    listId: "pizza",
+                    type: .subscribe
+                )
+            ]
+        )
 
-        self.client.update(channelID: "some-channel", subscriptionListUpdates: updates, tagGroupUpdates: nil, attributeUpdates: nil) { response, error in
+        self.client.update(
+            update,
+            channelID: "some-channel"
+        ) { response, error in
             XCTAssertEqual(sessionError as NSError, error! as NSError)
             XCTAssertNil(response)
             expectation.fulfill()

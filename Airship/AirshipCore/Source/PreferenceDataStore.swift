@@ -12,6 +12,9 @@ public class PreferenceDataStore : NSObject {
     private let appKey: String
     static let deviceIDKey = "deviceID"
 
+    private let decoder = JSONDecoder()
+    private let encoder = JSONEncoder()
+
     private var pending: [String : [Any?]] = [:]
     private let lock = Lock()
     private let dispatcher: UADispatcher
@@ -167,6 +170,28 @@ public class PreferenceDataStore : NSObject {
     public func setObject(_ object: Any?, forKey key: String) {
         write(key, value: object)
     }
+
+    public func codable<T: Codable>(forKey key: String) throws -> T? {
+        guard let data: Data = read(key) else {
+             return nil
+        }
+
+        return try decoder.decode(T.self, from: data)
+    }
+
+    public func setCodable<T: Codable>(
+        _ codable: T?,
+        forKey key: String
+    ) throws {
+        guard let codable = codable else {
+            write(key, value: nil)
+            return
+        }
+
+        let data = try encoder.encode(codable)
+        write(key, value: data)
+    }
+    
     
     /// Merges old key formats `com.urbanairship.<APP_KEY>.<PREFERENCE>` to
     /// the new key formats `<APP_KEY><PREFERENCE>`. Fixes a bug in SDK 15.x-16.0.1

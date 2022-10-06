@@ -3,6 +3,40 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 16.10.0-beta October 6, 2022
+
+Beta release for SDK 16.10.0 that adds support for live activities. To support live activities, you must call restore once after takeOff during `application(_:didFinishLaunchingWithOptions:)` with all the live activity types that you
+might track with Airship:
+
+```
+  Airship.takeOff(config, launchOptions: launchOptions)
+
+  Task {
+      await Airship.channel.restoreLiveActivityTracking { restorer in
+          await restorer.restore(
+            forType: Activity<DeliveryAttributes>.self
+          )
+          await restorer.restore(
+            forType: Activity<SomeOtherAttributes>.self
+          )
+      }
+  }
+```
+
+Then whenever you want Airship to track an activity, call trackLiveActivity on the channel instance with the name of the activity:
+
+```
+  Task {
+      await Airship.channel.trackLiveActivity(
+          activity,
+          name: "my-neat-activity"
+      )
+  }
+```
+
+You will then be able to send updates through the Airship Push API to the live activity using the name `my-neat-activity`.
+
+
 ## Version 16.9.4 October 5, 2022
 
 Patch release that fixes Survey Attributes not being stored properly for radio buttons.

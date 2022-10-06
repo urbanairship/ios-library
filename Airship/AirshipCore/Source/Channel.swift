@@ -8,7 +8,6 @@ import Foundation
 @objc(UAChannel)
 public class Channel : NSObject, Component, ChannelProtocol {
 
-
     private static let tagsDataStoreKey = "com.urbanairship.channel.tags";
     
     /**
@@ -75,6 +74,10 @@ public class Channel : NSObject, Component, ChannelProtocol {
     private let notificationCenter: NotificationCenter
     private let appStateTracker: AppStateTracker
     private let tagsLock = Lock()
+
+#if canImport(ActivityKit)
+    private let liveActivityRegistry: Any?
+#endif
 
     private var shouldPerformChannelRegistrationOnForeground = false
     private var extensionBlocks: [((ChannelRegistrationPayload, @escaping (ChannelRegistrationPayload) -> Void) -> Void)] = []
@@ -177,6 +180,16 @@ public class Channel : NSObject, Component, ChannelProtocol {
         self.channelRegistrar = channelRegistrar
         self.notificationCenter = notificationCenter
         self.appStateTracker = appStateTracker
+
+#if canImport(ActivityKit)
+        if #available(iOS 16.1, *) {
+            self.liveActivityRegistry = LiveActivityRegistry(
+                dataStore: dataStore
+            )
+        } else {
+            self.liveActivityRegistry = nil
+        }
+#endif
         
         // Check config to see if user wants to delay channel creation
         // If channel ID exists or channel creation delay is disabled then channelCreationEnabled
@@ -209,6 +222,24 @@ public class Channel : NSObject, Component, ChannelProtocol {
 
         self.observeNotificationCenterEvents()
         self.updateRegistration()
+
+#if canImport(ActivityKit)
+        if #available(iOS 16.1, *) {
+            if let liveActivityRegistry = self.liveActivityRegistry as?  LiveActivityRegistry {
+                Task {
+                    for await update in liveActivityRegistry.updates {
+                        // addLiveActivityUpdate has a sync on its store, so
+                        // dispatch to global dispatcher to avoid blocking
+                        // a structured concurrency thread. Once we move to
+                        // actors/async/await we can remove the dispatch calls
+                        UADispatcher.globalDispatcher(.utility).dispatchAsync {
+                            self.audienceManager.addLiveActivityUpdate(update)
+                        }
+                    }
+                }
+            }
+        }
+#endif
 
     }
     
@@ -662,3 +693,46 @@ extension Channel : InternalChannelProtocol {
         self.audienceManager.processContactSubscriptionUpdates(updates)
     }
 }
+
+#if canImport(ActivityKit)
+import ActivityKit
+@available(iOS 16.1, *)
+public extension Channel {
+
+    /// Tracks a live activity with Airship for the given name.
+    /// Airship will monitor the push token and status and automatically
+    /// add and remove it from the channel for the App. If an activity is already
+    /// tracked with the given name it will be replaced with the new activity.
+    ///
+    /// The name will be used to send updates through Airship. It can be unique
+    /// for the device or shared across many devices.
+    ///
+    /// - Parameters:
+    ///     - activity: The live activity
+    ///     - name: The name of the activity
+    func trackLiveActivity<T: ActivityAttributes>(
+            _ activity: Activity<T>,
+            name: String
+    ) async {
+        guard let liveActivityRegistry = self.liveActivityRegistry as? LiveActivityRegistry else { return }
+        await liveActivityRegistry.addLiveActivity(activity, name: name)
+    }
+
+    /// Called to restore live activity tracking. This method needs to be called exactly once
+    /// during `application(_:didFinishLaunchingWithOptions:)` right
+    /// after takeOff. Any activities not restored will stop being tracked by Airship.
+    /// - Parameters:
+    ///     - callback: Callback with the restorer.
+    func restoreLiveActivityTracking(
+        callback: (LiveActivityRestorer) async -> Void
+    ) async {
+        guard let liveActivityRegistry = self.liveActivityRegistry as? LiveActivityRegistry else { return }
+
+        let restorer = AirshipLiveActivityRestorer(registry: liveActivityRegistry)
+        await callback(restorer)
+        await liveActivityRegistry.clearUntracked()
+    }
+}
+
+
+#endif
