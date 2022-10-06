@@ -433,6 +433,14 @@
 		6E49D7C828401D2E00C7BB9D /* APNSRegistrar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E49D7B128401D2E00C7BB9D /* APNSRegistrar.swift */; };
 		6E49D7C928401D2E00C7BB9D /* APNSRegistrar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E49D7B128401D2E00C7BB9D /* APNSRegistrar.swift */; };
 		6E49D7CD284028C600C7BB9D /* PermissionsManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E49D7CC284028C600C7BB9D /* PermissionsManagerTests.swift */; };
+		6E4A466128EF447C00A25617 /* MessageCenterUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4A466028EF447C00A25617 /* MessageCenterUser.swift */; };
+		6E4A466528EF448600A25617 /* MessageCenterStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4A466228EF448600A25617 /* MessageCenterStore.swift */; };
+		6E4A466628EF448600A25617 /* MessageCenterAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4A466328EF448600A25617 /* MessageCenterAPIClient.swift */; };
+		6E4A466728EF448600A25617 /* MessageCenterMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4A466428EF448600A25617 /* MessageCenterMessage.swift */; };
+		6E4A467228EF44F600A25617 /* AirshipMessageCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CA0E423237E4A7B00EE76CF /* AirshipMessageCenter.framework */; };
+		6E4A467928EF453400A25617 /* MessageCenterAPIClientTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4A467828EF453400A25617 /* MessageCenterAPIClientTest.swift */; };
+		6E4A468028EF4FAF00A25617 /* TestAirshipRequestSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4A467F28EF4FAF00A25617 /* TestAirshipRequestSession.swift */; };
+		6E4A468128EF4FAF00A25617 /* TestAirshipRequestSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4A467F28EF4FAF00A25617 /* TestAirshipRequestSession.swift */; };
 		6E4E5B2926E53EE700198175 /* UABaseTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4E5B2826E53EE700198175 /* UABaseTest.m */; };
 		6E4E5B3B26E7F91600198175 /* LocalizationUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4E5B3926E7F91600198175 /* LocalizationUtils.swift */; };
 		6E4E5B3C26E7F91600198175 /* LocalizationUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4E5B3926E7F91600198175 /* LocalizationUtils.swift */; };
@@ -1663,6 +1671,13 @@
 			remoteGlobalIDString = 6E43204A26EA8199009228AB;
 			remoteInfo = "AirshipBasement tvOS";
 		};
+		6E4A467328EF44F600A25617 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3CA0E346237E4A7B00EE76CF;
+			remoteInfo = AirshipMessageCenter;
+		};
 		6E845451237E08EE007D3B1E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
@@ -2176,6 +2191,13 @@
 		6E49D7B128401D2E00C7BB9D /* APNSRegistrar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APNSRegistrar.swift; sourceTree = "<group>"; };
 		6E49D7CC284028C600C7BB9D /* PermissionsManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsManagerTests.swift; sourceTree = "<group>"; };
 		6E4A00781F2A4A4A0069D8A0 /* UABaseTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UABaseTest.m; sourceTree = "<group>"; };
+		6E4A466028EF447C00A25617 /* MessageCenterUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterUser.swift; sourceTree = "<group>"; };
+		6E4A466228EF448600A25617 /* MessageCenterStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterStore.swift; sourceTree = "<group>"; };
+		6E4A466328EF448600A25617 /* MessageCenterAPIClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterAPIClient.swift; sourceTree = "<group>"; };
+		6E4A466428EF448600A25617 /* MessageCenterMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterMessage.swift; sourceTree = "<group>"; };
+		6E4A466E28EF44F600A25617 /* AirshipMessageCenterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipMessageCenterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		6E4A467828EF453400A25617 /* MessageCenterAPIClientTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterAPIClientTest.swift; sourceTree = "<group>"; };
+		6E4A467F28EF4FAF00A25617 /* TestAirshipRequestSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAirshipRequestSession.swift; sourceTree = "<group>"; };
 		6E4E5B2726E53EE700198175 /* UABaseTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UABaseTest.h; sourceTree = "<group>"; };
 		6E4E5B2826E53EE700198175 /* UABaseTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UABaseTest.m; sourceTree = "<group>"; };
 		6E4E5B3926E7F91600198175 /* LocalizationUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalizationUtils.swift; sourceTree = "<group>"; };
@@ -2818,6 +2840,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		6E4A466B28EF44F600A25617 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6E4A467228EF44F600A25617 /* AirshipMessageCenter.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6E8451F8237E0271007D3B1E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -3065,6 +3095,7 @@
 		3CA0E302237E396100EE76CF /* AirshipMessageCenter */ = {
 			isa = PBXGroup;
 			children = (
+				6E4A466F28EF44F600A25617 /* Tests */,
 				3CA0E47F237E505200EE76CF /* Info.plist */,
 				3CA0E303237E396100EE76CF /* Resources */,
 				3CA0E30B237E396100EE76CF /* Source */,
@@ -3088,6 +3119,7 @@
 		3CA0E30B237E396100EE76CF /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				6E4A466828EF449A00A25617 /* New */,
 				3C13BFBC2384AE050071E80C /* AirshipMessageCenter.h */,
 				1BAE376624F55A340095C6E3 /* Public */,
 				3CA0E344237E39CB00EE76CF /* Actions */,
@@ -3275,6 +3307,7 @@
 				6E43212626EA819A009228AB /* AirshipBasement.framework */,
 				A67229B228199CEF0033F54D /* AirshipCore.framework */,
 				A6722ABF281A9F460033F54D /* AirshipBasement.framework */,
+				6E4A466E28EF44F600A25617 /* AirshipMessageCenterTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3855,6 +3888,33 @@
 				6E49D7CC284028C600C7BB9D /* PermissionsManagerTests.swift */,
 			);
 			name = PermissionsManager;
+			sourceTree = "<group>";
+		};
+		6E4A466828EF449A00A25617 /* New */ = {
+			isa = PBXGroup;
+			children = (
+				6E4A467E28EF47C100A25617 /* APIClient */,
+				6E4A466428EF448600A25617 /* MessageCenterMessage.swift */,
+				6E4A466228EF448600A25617 /* MessageCenterStore.swift */,
+				6E4A466028EF447C00A25617 /* MessageCenterUser.swift */,
+			);
+			path = New;
+			sourceTree = "<group>";
+		};
+		6E4A466F28EF44F600A25617 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				6E4A467828EF453400A25617 /* MessageCenterAPIClientTest.swift */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		6E4A467E28EF47C100A25617 /* APIClient */ = {
+			isa = PBXGroup;
+			children = (
+				6E4A466328EF448600A25617 /* MessageCenterAPIClient.swift */,
+			);
+			path = APIClient;
 			sourceTree = "<group>";
 		};
 		6E57CE3528DBBD8C00287601 /* LiveActivities */ = {
@@ -4956,6 +5016,7 @@
 				CC64F0A31D8B781C009CEF27 /* UAirshipTest.m */,
 				3C927F8323A97CD9003C5FC8 /* UADefaultValueTransformerTest.m */,
 				CC64F0581D8B77E3009CEF27 /* Info.plist */,
+				6E4A467F28EF4FAF00A25617 /* TestAirshipRequestSession.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -5404,8 +5465,8 @@
 			buildPhases = (
 				3CA0E349237E4A7B00EE76CF /* Generate AirshipMessageCenterLib.h */,
 				3CA0E3A0237E4A7B00EE76CF /* Frameworks */,
-				3CA0E34A237E4A7B00EE76CF /* Sources */,
 				3CA0E3A1237E4A7B00EE76CF /* Headers */,
+				3CA0E34A237E4A7B00EE76CF /* Sources */,
 				3CA0E417237E4A7B00EE76CF /* Resources */,
 			);
 			buildRules = (
@@ -5474,6 +5535,24 @@
 			productName = AirshipCore;
 			productReference = 6E43212626EA819A009228AB /* AirshipBasement.framework */;
 			productType = "com.apple.product-type.framework";
+		};
+		6E4A466D28EF44F600A25617 /* AirshipMessageCenterTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6E4A467528EF44F600A25617 /* Build configuration list for PBXNativeTarget "AirshipMessageCenterTests" */;
+			buildPhases = (
+				6E4A466A28EF44F600A25617 /* Sources */,
+				6E4A466B28EF44F600A25617 /* Frameworks */,
+				6E4A466C28EF44F600A25617 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				6E4A467428EF44F600A25617 /* PBXTargetDependency */,
+			);
+			name = AirshipMessageCenterTests;
+			productName = AirshipMessageCenterTests;
+			productReference = 6E4A466E28EF44F600A25617 /* AirshipMessageCenterTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		6E8450FD237E0271007D3B1E /* AirshipAutomation */ = {
 			isa = PBXNativeTarget;
@@ -5617,18 +5696,25 @@
 		494DD94E1B0EB677009C134E /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1320;
+				LastSwiftUpdateCheck = 1340;
 				LastUpgradeCheck = 1250;
 				ORGANIZATIONNAME = "Urban Airship";
 				TargetAttributes = {
 					3CA0E298237CCE2600EE76CF = {
 						LastSwiftMigration = 1140;
 					};
+					3CA0E346237E4A7B00EE76CF = {
+						LastSwiftMigration = 1340;
+					};
 					494DD9561B0EB677009C134E = {
 						CreatedOnToolsVersion = 6.3.1;
 						DevelopmentTeam = PGJV57GD94;
 						DevelopmentTeamName = "Urban Airship Inc.";
 						LastSwiftMigration = 1250;
+					};
+					6E4A466D28EF44F600A25617 = {
+						CreatedOnToolsVersion = 13.4;
+						LastSwiftMigration = 1340;
 					};
 					6EAAE85D28C2AD3A003CAE53 = {
 						CreatedOnToolsVersion = 13.4;
@@ -5738,6 +5824,7 @@
 				847BFFFB267CD73A007CD249 /* AirshipPreferenceCenterTests */,
 				6EAAE85D28C2AD3A003CAE53 /* AirshipRelease */,
 				6EAAE87028C2AD67003CAE53 /* AirshipRelease tvOS */,
+				6E4A466D28EF44F600A25617 /* AirshipMessageCenterTests */,
 			);
 		};
 /* End PBXProject section */
@@ -5783,6 +5870,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		6E43211D26EA8199009228AB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6E4A466C28EF44F600A25617 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -6057,12 +6151,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E4A466528EF448600A25617 /* MessageCenterStore.swift in Sources */,
 				1B8DCF6C2507BE0F0006E595 /* UAMessageCenterStyle.m in Sources */,
 				3CA0E426237E4BED00EE76CF /* UAMessageCenterAction.m in Sources */,
 				3CA0E428237E4BED00EE76CF /* UADefaultMessageCenterUI.m in Sources */,
 				3C45B05F23E11D8B004B9590 /* UADefaultMessageCenterListViewController.m in Sources */,
 				3CA0E42A237E4BED00EE76CF /* UAMessageCenterDateUtils.m in Sources */,
 				3CA0E42C237E4BED00EE76CF /* UAMessageCenterListCell.m in Sources */,
+				6E4A466628EF448600A25617 /* MessageCenterAPIClient.swift in Sources */,
 				3CA0E437237E4BED00EE76CF /* UAInboxMessageData.m in Sources */,
 				3CA0E439237E4BED00EE76CF /* UAInboxStore.m in Sources */,
 				3CA0E43B237E4BED00EE76CF /* UAJSONValueTransformer.m in Sources */,
@@ -6070,6 +6166,7 @@
 				3CA0E440237E4BED00EE76CF /* UAInboxMessage.m in Sources */,
 				3CA0E443237E4BED00EE76CF /* UAInboxMessageList.m in Sources */,
 				3CA0E446237E4BED00EE76CF /* UAInboxUtils.m in Sources */,
+				6E4A466128EF447C00A25617 /* MessageCenterUser.swift in Sources */,
 				3CCFD5E023A082EF001AF966 /* UADefaultMessageCenterSplitViewDelegate.m in Sources */,
 				3CA0E448237E4BED00EE76CF /* UAMessageCenterNativeBridgeExtension.m in Sources */,
 				3C45B06223E11D8B004B9590 /* UADefaultMessageCenterSplitViewController.m in Sources */,
@@ -6078,6 +6175,7 @@
 				3CA0E44C237E4BED00EE76CF /* UAUserAPIClient.m in Sources */,
 				3CA0E44F237E4BED00EE76CF /* UAUserData.m in Sources */,
 				3CA0E451237E4BED00EE76CF /* UAUserDataDAO.m in Sources */,
+				6E4A466728EF448600A25617 /* MessageCenterMessage.swift in Sources */,
 				3CA0E454237E4BED00EE76CF /* UAMessageCenter.m in Sources */,
 				3C45B06323E11D8B004B9590 /* UADefaultMessageCenterMessageViewController.m in Sources */,
 				3CA0E457237E4BED00EE76CF /* UAMessageCenterSDKModule.m in Sources */,
@@ -6407,6 +6505,15 @@
 				6E43217926EA84BE009228AB /* UASwizzler.m in Sources */,
 				6EF1934628380BA0005F192A /* UALegacyLoggingBridge.m in Sources */,
 				6E88EF072703D9B100469E2A /* UAPadding.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6E4A466A28EF44F600A25617 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6E4A467928EF453400A25617 /* MessageCenterAPIClientTest.swift in Sources */,
+				6E4A468128EF4FAF00A25617 /* TestAirshipRequestSession.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6891,6 +6998,7 @@
 				6E6EF9E7270625C400D30C35 /* EventTest.swift in Sources */,
 				CC64F1071D8B781C009CEF27 /* UAInteractiveNotificationEventTest.m in Sources */,
 				CC64F0D71D8B781C009CEF27 /* UAAccountEventTemplateTest.m in Sources */,
+				6E4A468028EF4FAF00A25617 /* TestAirshipRequestSession.swift in Sources */,
 				CC64F0E71D8B781C009CEF27 /* UAAssociatedIdentifiersTest.m in Sources */,
 				DFFCF5AF1FCF53100014DE2E /* UAInAppRemoteDataClientTest.m in Sources */,
 				CC64F0F01D8B781C009CEF27 /* UAChannelRegistrationPayloadTest.m in Sources */,
@@ -7388,6 +7496,11 @@
 			target = 6E43204A26EA8199009228AB /* AirshipBasement tvOS */;
 			targetProxy = 6E43219B26EAA1A8009228AB /* PBXContainerItemProxy */;
 		};
+		6E4A467428EF44F600A25617 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3CA0E346237E4A7B00EE76CF /* AirshipMessageCenter */;
+			targetProxy = 6E4A467328EF44F600A25617 /* PBXContainerItemProxy */;
+		};
 		6E845452237E08EE007D3B1E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 494DD9561B0EB677009C134E /* AirshipCore */;
@@ -7604,6 +7717,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				DEFINES_MODULE = YES;
@@ -7630,7 +7744,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.urbanairship.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = "";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				VALID_ARCHS = "$(inherited) x86_64";
 			};
 			name = Debug;
@@ -7639,6 +7753,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				DEFINES_MODULE = YES;
@@ -7664,7 +7779,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.urbanairship.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = "";
 				VALID_ARCHS = "$(inherited) x86_64";
 			};
 			name = Release;
@@ -8006,6 +8120,74 @@
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
+			};
+			name = Release;
+		};
+		6E4A467628EF44F600A25617 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = PGJV57GD94;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = airship.AirshipMessageCenterTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		6E4A467728EF44F600A25617 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = PGJV57GD94;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = airship.AirshipMessageCenterTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -8616,6 +8798,15 @@
 			buildConfigurations = (
 				6E43212426EA8199009228AB /* Debug */,
 				6E43212526EA8199009228AB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6E4A467528EF44F600A25617 /* Build configuration list for PBXNativeTarget "AirshipMessageCenterTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6E4A467628EF44F600A25617 /* Debug */,
+				6E4A467728EF44F600A25617 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

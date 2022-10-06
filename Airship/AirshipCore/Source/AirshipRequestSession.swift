@@ -122,7 +122,8 @@ public class AirshipRequestSession {
                         do {
                             let result = AirshipHTTPResponse(
                                 result: try responseParser?(data, httpResponse),
-                                statusCode: httpResponse.statusCode
+                                statusCode: httpResponse.statusCode,
+                                headers: httpResponse.allHeaderFields
                             )
                             continuation.resume(with: .success(result))
                         } catch {

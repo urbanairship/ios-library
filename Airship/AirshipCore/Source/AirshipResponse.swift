@@ -7,8 +7,8 @@ import Foundation
 public struct AirshipHTTPResponse<T> {
     public let result: T?
     public let statusCode: Int
+    public let headers: [AnyHashable: Any]
 }
-
 
 public extension AirshipHTTPResponse {
     var isSuccess: Bool {
