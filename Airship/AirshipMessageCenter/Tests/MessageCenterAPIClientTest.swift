@@ -16,10 +16,16 @@ final class MessageCenterAPIClientTest: XCTestCase {
     private let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
     private let messages = [
         MessageCenterMessage(
-            messageID: "foo",
-            messageReporting: .string("foo reporting"),
-            unread: false
-        )
+            title: "Foo message",
+            id: "foo",
+            extra: [:],
+            bodyURL: URL(string: "anyurl.com")!,
+            expirationDate: nil,
+            messageReporting: [ "foo": "reporting"],
+            unread: true,
+            sentDate: Date(),
+            messageURL: URL(string: "anyurl.com")!,
+            rawMessageObject: [:])
     ]
 
     override func setUpWithError() throws {
@@ -36,7 +42,29 @@ final class MessageCenterAPIClientTest: XCTestCase {
             headerFields: [:]
         )
 
-        self.session.data = "{\"ok\":true, \"messages\": [{\"message_id\":\"messageID\", \"title\":\"someTitle\", \"unread\":false}]}".data(using: .utf8)
+        let messageResponse: String = """
+        {
+            "messages": [
+                {
+                    "message_id": "some_mesg_id",
+                    "message_url": "https://go.urbanairship.com/api/user/userId/messages/message/some_mesg_id/",
+                    "message_body_url": "https://go.urbanairship.com/api/user/userId/messages/message/some_mesg_id/body/",
+                    "message_read_url": "https://go.urbanairship.com/api/user/userId/messages/message/some_mesg_id/read/",
+                    "unread": true,
+                    "message_sent": "2010-09-05 12:13 -0000",
+                    "title": "Message title",
+                    "extra": {
+                        "some_key": "some_value"
+                    },
+                    "message_reporting": { "cool": "story" },
+                    "content_type": "text/html",
+                    "content_size": "128"
+                }
+            ]
+        }
+        """
+
+        self.session.data = messageResponse.data(using: .utf8)
 
         let response = try await self.client.retrieveMessageList(
             user: self.user,
@@ -46,8 +74,8 @@ final class MessageCenterAPIClientTest: XCTestCase {
 
         let messages = response.result!
         let message = messages[0] as MessageCenterMessage
-        XCTAssertEqual(message.messageID, "messageID")
-        XCTAssertEqual(message.title, "someTitle")
+        XCTAssertEqual(message.id, "some_mesg_id")
+        XCTAssertEqual(message.title, "Message title")
 
         let request = self.session.lastRequest!
         XCTAssertEqual("https://device-api.urbanairship.com/api/user/username/messages/", request.url!.absoluteString)
@@ -146,7 +174,7 @@ final class MessageCenterAPIClientTest: XCTestCase {
         let requestPayload = try JSONSerialization.jsonObject(with: request.body!)
 
         let expected: [String: AnyHashable] = [
-            "messages": ["foo reporting"]
+            "messages": [["foo": "reporting"]]
         ]
 
         XCTAssertEqual(expected as NSDictionary, requestPayload as! NSDictionary)
@@ -190,7 +218,7 @@ final class MessageCenterAPIClientTest: XCTestCase {
         let requestPayload = try JSONSerialization.jsonObject(with: request.body!)
 
         let expected: [String: AnyHashable] = [
-            "messages": ["foo reporting"]
+            "messages": [["foo": "reporting"]]
         ]
 
         XCTAssertEqual(expected as NSDictionary, requestPayload as! NSDictionary)

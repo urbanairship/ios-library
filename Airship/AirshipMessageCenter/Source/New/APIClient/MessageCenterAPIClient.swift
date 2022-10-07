@@ -3,11 +3,6 @@
 import Foundation
 import AirshipCore
 
-/* Copyright Airship and Contributors */
-
-import Foundation
-import AirshipCore
-
 /// Message Center API client protocol
 protocol MessageCenterAPIClientProtocol {
 
@@ -111,27 +106,30 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol {
             guard response.isSuccess else { return nil }
 
             let parsed: MessageListResponse = try JSONUtils.decode(data: data)
-            return parsed.messages
+            return try parsed.convertMessages()
         }
     }
 
     func performBatchDelete(
-            forMessages messages: [MessageCenterMessage],
-            user: MessageCenterUser,
-            channelID: String
+        forMessages messages: [MessageCenterMessage],
+        user: MessageCenterUser,
+        channelID: String
     ) async throws -> AirshipHTTPResponse<Void> {
         guard let deviceAPIURL = config.deviceAPIURL else {
             throw AirshipErrors.error("The deviceAPIURL is nil")
         }
 
-        let messageReportings = messages.compactMap{ $0.messageReporting }
+        let messageReportings = messages.compactMap { message in
+            try? AirshipJSON.wrap(message.messageReporting)
+        }
+
         guard !messageReportings.isEmpty else {
-            throw AirshipErrors.error("messages list is empty")
+            throw AirshipErrors.error("No reporting")
         }
 
         let urlString = "\(deviceAPIURL)\("/api/user/")\(user.username)\("/messages/delete/")"
 
-        let body = MessageRequestBody(messages: messageReportings)
+        let body = UpdateMessagseRequestBody(messages: messageReportings)
 
         let request = AirshipRequest(
             url: URL(string: urlString),
@@ -159,9 +157,12 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol {
             throw AirshipErrors.error("The deviceAPIURL is nil")
         }
 
-        let messageReportings = messages.compactMap{ $0.messageReporting }
+        let messageReportings = messages.compactMap { message in
+            try? AirshipJSON.wrap(message.messageReporting)
+        }
+
         guard !messageReportings.isEmpty else {
-            throw AirshipErrors.error("messages list is empty")
+            throw AirshipErrors.error("No reporting")
         }
 
         let urlString = "\(deviceAPIURL)\("/api/user/")\(user.username)\("/messages/unread/")"
@@ -172,14 +173,13 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol {
             MessageCenterAPIClient.channelIDHeader: channelID
         ]
 
-        let body = MessageRequestBody(messages: messageReportings)
-        let bodyData = try JSONUtils.encode(object: body)
+        let body = UpdateMessagseRequestBody(messages: messageReportings)
         let request = AirshipRequest(
             url: URL(string: urlString),
             headers: headers,
             method: "POST",
             auth: .basic(user.username, user.password),
-            body: bodyData
+            body: try JSONUtils.encode(object: body)
         )
 
         AirshipLogger.trace("Request to perfom batch mark messages as read: \(urlString) body: \(body)")
@@ -256,8 +256,7 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol {
     }
 }
 
-
-fileprivate struct MessageRequestBody: Encodable {
+fileprivate struct UpdateMessagseRequestBody: Encodable {
     let messages: [AirshipJSON]
 }
 
@@ -282,11 +281,70 @@ fileprivate struct CreateUserRequestBody: Encodable {
 }
 
 fileprivate struct MessageListResponse: Decodable {
-    let messages: [MessageCenterMessage]
+    let messages: [Message]
+
+    struct Message: Codable {
+        let messageID: String
+        let messageBodyURL: URL
+        let messageReporting: AirshipJSON
+        let messageURL: URL
+        let contentType: String
+        /// String insteaed of Date because they might be nonstandard ISO dates
+        let messageSent: String
+        let messageExpiration: String?
+        let title: String
+        let extra: AirshipJSON?
+        let unread: Bool
+
+        private enum CodingKeys: String, CodingKey {
+            case messageID = "message_id"
+            case title = "title"
+            case contentType = "content_type"
+            case messageBodyURL = "message_body_url"
+            case messageURL = "message_url"
+            case unread = "unread"
+            case messageSent = "message_sent"
+            case messageExpiration = "message_expiry"
+            case extra = "extra"
+            case messageReporting = "message_reporting"
+        }
+    }
 }
 
-extension HTTPURLResponse {
+fileprivate extension MessageListResponse {
+    func convertMessages() throws -> [MessageCenterMessage] {
+        return try self.messages.map { responseMessage in
+            let rawJSONData = try JSONUtils.encode(object: responseMessage)
+            let rawJSON = try JSONSerialization.jsonObject(with: rawJSONData)
+            return MessageCenterMessage(
+                title: responseMessage.title,
+                id: responseMessage.messageID,
+                extra: responseMessage.extra?.unWrap() as? [String: String] ?? [:] ,
+                bodyURL: responseMessage.messageBodyURL,
+                expirationDate: try responseMessage.messageExpiration?.toDate(),
+                messageReporting: responseMessage.messageReporting.unWrap() as? [String: AnyHashable] ?? [:],
+                unread: responseMessage.unread,
+                sentDate: try responseMessage.messageSent.toDate(),
+                messageURL: responseMessage.messageURL,
+                rawMessageObject: rawJSON as? [String: AnyHashable] ?? [:]
+            )
+        }
+    }
+}
+
+fileprivate extension HTTPURLResponse {
     var isSuccess: Bool {
         return self.statusCode >= 200 && self.statusCode <= 299
     }
 }
+
+
+fileprivate extension String {
+    func toDate() throws -> Date {
+        guard let date = Utils.parseISO8601Date(from: self) else {
+            throw AirshipErrors.error("Invalid date \(self)")
+        }
+        return date
+    }
+}
+

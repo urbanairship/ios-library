@@ -69,6 +69,42 @@ public class UACoreData : NSObject {
         self.init(context: moc, inMemory: inMemory, stores: stores)
     }
 
+
+    public func perform(
+        _ block: @escaping (NSManagedObjectContext) throws -> Void
+    ) async throws {
+        return try await withCheckedThrowingContinuation { continuation in
+            context.perform({ [weak self] in
+                guard let strongSelf = self else {
+                    continuation.resume()
+                    return
+                }
+
+                guard (!strongSelf.isFinished) else {
+                    continuation.resume()
+                    return
+                }
+
+                strongSelf.shouldCreateStore = true
+                strongSelf.createPendingStores()
+
+                if (strongSelf.context.persistentStoreCoordinator?.persistentStores.count ?? 0) != 0 {
+                    do {
+                        try block(strongSelf.context)
+                        continuation.resume()
+                    } catch {
+                        continuation.resume(throwing: error)
+                    }
+
+                } else {
+                    continuation.resume(
+                        throwing: AirshipErrors.error("Peristant store unable to be created")
+                    )
+                }
+            })
+        }
+    }
+
     @objc(safePerformBlock:)
     public func safePerform(_ block: @escaping (Bool, NSManagedObjectContext) -> Void) {
         context.perform({ [weak self] in

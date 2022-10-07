@@ -3,34 +3,88 @@
 import Foundation
 import AirshipCore
 
-public struct MessageCenterMessage: Decodable {
-    
-    var messageID: String
-    var messageBodyURL: URL?
-    var messageURL: URL?
-    var contentType: String?
-    var messageSent: Date?
-    var messageExpiration: Date?
-    var title: String?
-    var extra: AirshipJSON?
-    var rawMessageObject: AirshipJSON?
-    var date: Date?
-    var messageReporting: AirshipJSON?
-    var unread: Bool
+/**
+ * Message center message.
+ */
+@objc(UAMessageCenterMessage)
+public class MessageCenterMessage: NSObject {
+    public let title: String
+    public let id: String
+    public let extra: [String: String]
+    public let bodyURL: URL
+    public let expirationDate: Date?
+    public let unread: Bool
+    public let sentDate: Date
 
-    private enum CodingKeys: String, CodingKey {
-        case messageID = "message_id"
-        case title = "title"
-        case contentType = "content_type"
-        case messageBodyURL = "message_body_url"
-        case messageURL = "message_url"
-        case unread = "unread"
-        case messageSent = "message_sent"
-        case messageExpiration = "message_expiry"
-        case extra = "extra"
-        case rawMessageObject = "raw_message_object"
-        case date = "date"
-        case messageReporting = "message_reporting"
+    let messageReporting: [String: Any]?
+    let messageURL: URL
+    let rawMessageObject: [String: Any]
+
+    init(
+        title: String,
+        id: String,
+        extra: [String: String],
+        bodyURL: URL,
+        expirationDate: Date?,
+        messageReporting: [String: Any]?,
+        unread: Bool,
+        sentDate: Date,
+        messageURL: URL,
+        rawMessageObject: [String: Any]
+    ) {
+        self.title = title
+        self.id = id
+        self.extra = extra
+        self.bodyURL = bodyURL
+        self.expirationDate = expirationDate
+        self.messageReporting = messageReporting
+        self.unread = unread
+        self.sentDate = sentDate
+        self.messageURL = messageURL
+        self.rawMessageObject = rawMessageObject
     }
-    
+
+    public override func isEqual(_ object: Any?) -> Bool {
+
+        guard let object = object as? MessageCenterMessage,
+              self.title == object.title,
+              self.id == object.id,
+              self.bodyURL == object.bodyURL,
+              self.expirationDate == object.expirationDate,
+              self.unread == object.unread,
+              self.sentDate == object.sentDate,
+              self.messageURL == object.messageURL,
+              self.extra == object.extra,
+              compare(self.messageReporting, object.messageReporting),
+              compare(self.rawMessageObject, object.rawMessageObject)
+        else {
+            return false
+        }
+
+
+        return true
+    }
+
+    private func compare(
+        _ first: [String: Any]?,
+        _ second: [String: Any]?
+    ) -> Bool {
+        if (first == nil && second == nil) {
+            return true
+        }
+
+        guard let first = first, let second = second else {
+            return false
+        }
+
+        let result = NSDictionary(dictionary: first).isEqual(
+            to: second
+        )
+        return result
+        
+    }
+
+    public override var description: String {
+        return "MessageCenterMessage(id=\(id))"
+    }
 }

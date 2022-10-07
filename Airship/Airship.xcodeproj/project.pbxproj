@@ -64,6 +64,10 @@
 		32CF81E2275627F4003009D1 /* AirshipAsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32CF81E1275627F4003009D1 /* AirshipAsyncImage.swift */; };
 		32CF81E3275627F4003009D1 /* AirshipAsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32CF81E1275627F4003009D1 /* AirshipAsyncImage.swift */; };
 		32D6E87B2727F7060077C784 /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32D6E87A2727F7060077C784 /* Image.swift */; };
+		32F68CDC28F02A7100F7F52A /* MessageCenterStoreTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F68CDA28F02A6B00F7F52A /* MessageCenterStoreTest.swift */; };
+		32F68CE528F078A100F7F52A /* InboxMessageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4A468B28EF673800A25617 /* InboxMessageData.swift */; };
+		32F68CE628F07ACD00F7F52A /* UAInboxMessageData.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E335237E396100EE76CF /* UAInboxMessageData.m */; };
+		32F68CE728F07AD100F7F52A /* UAInboxMessageData+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E323237E396100EE76CF /* UAInboxMessageData+Internal.h */; };
 		3C07645825EDEDEE007F425C /* UAStateOverridesTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C07644A25EDEDE4007F425C /* UAStateOverridesTest.m */; };
 		3C13BFB62384AC0E0071E80C /* UAAutomationResources.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C13BFB42384AC0E0071E80C /* UAAutomationResources.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3C13BFB72384AC0E0071E80C /* UAAutomationResources.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C13BFB52384AC0E0071E80C /* UAAutomationResources.m */; };
@@ -105,7 +109,6 @@
 		3CA0E428237E4BED00EE76CF /* UADefaultMessageCenterUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E331237E396100EE76CF /* UADefaultMessageCenterUI.m */; };
 		3CA0E42A237E4BED00EE76CF /* UAMessageCenterDateUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E333237E396100EE76CF /* UAMessageCenterDateUtils.m */; };
 		3CA0E42C237E4BED00EE76CF /* UAMessageCenterListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E31D237E396100EE76CF /* UAMessageCenterListCell.m */; };
-		3CA0E437237E4BED00EE76CF /* UAInboxMessageData.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E335237E396100EE76CF /* UAInboxMessageData.m */; };
 		3CA0E439237E4BED00EE76CF /* UAInboxStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E32D237E396100EE76CF /* UAInboxStore.m */; };
 		3CA0E43B237E4BED00EE76CF /* UAJSONValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E330237E396100EE76CF /* UAJSONValueTransformer.m */; };
 		3CA0E43D237E4BED00EE76CF /* UAInboxAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E321237E396100EE76CF /* UAInboxAPIClient.m */; };
@@ -123,7 +126,6 @@
 		3CA0E459237E4CA100EE76CF /* UADefaultMessageCenterUI.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E310237E396100EE76CF /* UADefaultMessageCenterUI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3CA0E45A237E4CA100EE76CF /* UAMessageCenterDateUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E31B237E396100EE76CF /* UAMessageCenterDateUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3CA0E45B237E4CA100EE76CF /* UAMessageCenterListCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E33E237E396100EE76CF /* UAMessageCenterListCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3CA0E462237E4CA100EE76CF /* UAInboxMessageData+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E323237E396100EE76CF /* UAInboxMessageData+Internal.h */; };
 		3CA0E463237E4CA100EE76CF /* UAInboxStore+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E33B237E396100EE76CF /* UAInboxStore+Internal.h */; };
 		3CA0E464237E4CA100EE76CF /* UAJSONValueTransformer+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E30E237E396100EE76CF /* UAJSONValueTransformer+Internal.h */; };
 		3CA0E465237E4CA100EE76CF /* UAInboxAPIClient+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E31E237E396100EE76CF /* UAInboxAPIClient+Internal.h */; };
@@ -1832,6 +1834,7 @@
 		3261A7F4243CD73100ADBF6B /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/CoreTelephony.framework; sourceTree = DEVELOPER_DIR; };
 		32CF81E1275627F4003009D1 /* AirshipAsyncImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipAsyncImage.swift; sourceTree = "<group>"; };
 		32D6E87A2727F7060077C784 /* Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
+		32F68CDA28F02A6B00F7F52A /* MessageCenterStoreTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCenterStoreTest.swift; sourceTree = "<group>"; };
 		3C07644A25EDEDE4007F425C /* UAStateOverridesTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAStateOverridesTest.m; sourceTree = "<group>"; };
 		3C13BFB42384AC0E0071E80C /* UAAutomationResources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAAutomationResources.h; sourceTree = "<group>"; };
 		3C13BFB52384AC0E0071E80C /* UAAutomationResources.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAutomationResources.m; sourceTree = "<group>"; };
@@ -2198,6 +2201,7 @@
 		6E4A466E28EF44F600A25617 /* AirshipMessageCenterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipMessageCenterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E4A467828EF453400A25617 /* MessageCenterAPIClientTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterAPIClientTest.swift; sourceTree = "<group>"; };
 		6E4A467F28EF4FAF00A25617 /* TestAirshipRequestSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAirshipRequestSession.swift; sourceTree = "<group>"; };
+		6E4A468B28EF673800A25617 /* InboxMessageData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InboxMessageData.swift; path = AirshipMessageCenter/Source/Model/InboxMessageData.swift; sourceTree = SOURCE_ROOT; };
 		6E4E5B2726E53EE700198175 /* UABaseTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UABaseTest.h; sourceTree = "<group>"; };
 		6E4E5B2826E53EE700198175 /* UABaseTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UABaseTest.m; sourceTree = "<group>"; };
 		6E4E5B3926E7F91600198175 /* LocalizationUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalizationUtils.swift; sourceTree = "<group>"; };
@@ -3896,6 +3900,7 @@
 				6E4A467E28EF47C100A25617 /* APIClient */,
 				6E4A466428EF448600A25617 /* MessageCenterMessage.swift */,
 				6E4A466228EF448600A25617 /* MessageCenterStore.swift */,
+				6E4A468B28EF673800A25617 /* InboxMessageData.swift */,
 				6E4A466028EF447C00A25617 /* MessageCenterUser.swift */,
 			);
 			path = New;
@@ -3905,6 +3910,7 @@
 			isa = PBXGroup;
 			children = (
 				6E4A467828EF453400A25617 /* MessageCenterAPIClientTest.swift */,
+				32F68CDA28F02A6B00F7F52A /* MessageCenterStoreTest.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -5132,6 +5138,7 @@
 				3C45B06023E11D8B004B9590 /* UADefaultMessageCenterMessageViewController.h in Headers */,
 				3C45B06123E11D8B004B9590 /* UADefaultMessageCenterListViewController.h in Headers */,
 				3CCFD5DF23A082EF001AF966 /* UADefaultMessageCenterSplitViewDelegate.h in Headers */,
+				32F68CE728F07AD100F7F52A /* UAInboxMessageData+Internal.h in Headers */,
 				3C13BFBA2384AD270071E80C /* UAMessageCenterResources.h in Headers */,
 				3C13BFBD2384AE050071E80C /* AirshipMessageCenter.h in Headers */,
 				3CA0E458237E4CA100EE76CF /* UAMessageCenterAction.h in Headers */,
@@ -5148,7 +5155,6 @@
 				3CA0E472237E4CA100EE76CF /* UAMessageCenter.h in Headers */,
 				3C13BFBF2384B0BB0071E80C /* UAAirshipMessageCenterCoreImport.h in Headers */,
 				3CA0E474237E4CA100EE76CF /* UAMessageCenterSDKModule.h in Headers */,
-				3CA0E462237E4CA100EE76CF /* UAInboxMessageData+Internal.h in Headers */,
 				3CA0E463237E4CA100EE76CF /* UAInboxStore+Internal.h in Headers */,
 				1B8DCF652507BDA70006E595 /* UAMessageCenterListViewDelegate.h in Headers */,
 				1B8DCF642507BDA70006E595 /* UAMessageCenterLocalization.h in Headers */,
@@ -6159,7 +6165,7 @@
 				3CA0E42A237E4BED00EE76CF /* UAMessageCenterDateUtils.m in Sources */,
 				3CA0E42C237E4BED00EE76CF /* UAMessageCenterListCell.m in Sources */,
 				6E4A466628EF448600A25617 /* MessageCenterAPIClient.swift in Sources */,
-				3CA0E437237E4BED00EE76CF /* UAInboxMessageData.m in Sources */,
+				32F68CE528F078A100F7F52A /* InboxMessageData.swift in Sources */,
 				3CA0E439237E4BED00EE76CF /* UAInboxStore.m in Sources */,
 				3CA0E43B237E4BED00EE76CF /* UAJSONValueTransformer.m in Sources */,
 				3CA0E43D237E4BED00EE76CF /* UAInboxAPIClient.m in Sources */,
@@ -6512,6 +6518,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				32F68CDC28F02A7100F7F52A /* MessageCenterStoreTest.swift in Sources */,
 				6E4A467928EF453400A25617 /* MessageCenterAPIClientTest.swift in Sources */,
 				6E4A468128EF4FAF00A25617 /* TestAirshipRequestSession.swift in Sources */,
 			);
@@ -6642,6 +6649,7 @@
 				6E9B488F2891B57300C905B1 /* CommonSectionView.swift in Sources */,
 				6E2486DF28945D3900657CE4 /* PreferenceCenterState.swift in Sources */,
 				6E1892CD268D17D200417887 /* MockRemoteDataProvider.swift in Sources */,
+				32F68CE628F07ACD00F7F52A /* UAInboxMessageData.m in Sources */,
 				6EB5156E28A42B5800870C5A /* PreferenceCenterResources.swift in Sources */,
 				841E7D12268617C800EA0317 /* PreferenceCenterResponse.swift in Sources */,
 				6E3B230F28A318CD0005D46E /* PreferenceCenterThemeLoader.swift in Sources */,
