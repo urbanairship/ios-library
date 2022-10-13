@@ -1167,6 +1167,9 @@
 		A61517C626B009D6008A41C4 /* SubscriptionListFetchResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61517C126B009D6008A41C4 /* SubscriptionListFetchResponse.swift */; };
 		A61517C726B009D6008A41C4 /* SubscriptionListFetchResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61517C126B009D6008A41C4 /* SubscriptionListFetchResponse.swift */; };
 		A615E215264EAFB9004FA211 /* UAPrivacyManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A615E214264EAFB9004FA211 /* UAPrivacyManagerTest.m */; };
+		A63A567628F449D8004B8951 /* TestWorkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A63A567528F449D8004B8951 /* TestWorkManager.swift */; };
+		A63A567828F457FE004B8951 /* TestWorkRateLimiterActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A63A567728F457FE004B8951 /* TestWorkRateLimiterActor.swift */; };
+		A63A567A28F458A6004B8951 /* TestWorker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A63A567928F458A6004B8951 /* TestWorker.swift */; };
 		A64D2F4127D1137900E034A6 /* UADeferredAPIClientResponse+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = A64D2F3F27D1137900E034A6 /* UADeferredAPIClientResponse+Internal.h */; };
 		A64D2F4227D1137900E034A6 /* UADeferredAPIClientResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = A64D2F4027D1137900E034A6 /* UADeferredAPIClientResponse.m */; };
 		A65070DD275FC6FD00BA22E4 /* UAInAppMessageEventTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A65070DC275FC6FD00BA22E4 /* UAInAppMessageEventTest.m */; };
@@ -2612,6 +2615,9 @@
 		A61517C026B009D6008A41C4 /* SubscriptionListAPIClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubscriptionListAPIClient.swift; sourceTree = "<group>"; };
 		A61517C126B009D6008A41C4 /* SubscriptionListFetchResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubscriptionListFetchResponse.swift; sourceTree = "<group>"; };
 		A615E214264EAFB9004FA211 /* UAPrivacyManagerTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAPrivacyManagerTest.m; sourceTree = "<group>"; };
+		A63A567528F449D8004B8951 /* TestWorkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestWorkManager.swift; sourceTree = "<group>"; };
+		A63A567728F457FE004B8951 /* TestWorkRateLimiterActor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestWorkRateLimiterActor.swift; sourceTree = "<group>"; };
+		A63A567928F458A6004B8951 /* TestWorker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestWorker.swift; sourceTree = "<group>"; };
 		A649F50A252F4F39005453CB /* UAInbox 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAInbox 2.xcdatamodel"; sourceTree = "<group>"; };
 		A64D2F3F27D1137900E034A6 /* UADeferredAPIClientResponse+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UADeferredAPIClientResponse+Internal.h"; sourceTree = "<group>"; };
 		A64D2F4027D1137900E034A6 /* UADeferredAPIClientResponse.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UADeferredAPIClientResponse.m; sourceTree = "<group>"; };
@@ -4712,6 +4718,9 @@
 				6E15B72F26CF4F6B0099C92D /* TestRemoteDataAPIClient.swift */,
 				6E87BE1526E29BC90005D20D /* TestAirshipInstance.swift */,
 				6E87BE1726E2C5940005D20D /* TestAnalytics.swift */,
+				A63A567528F449D8004B8951 /* TestWorkManager.swift */,
+				A63A567728F457FE004B8951 /* TestWorkRateLimiterActor.swift */,
+				A63A567928F458A6004B8951 /* TestWorker.swift */,
 			);
 			name = TestUtils;
 			sourceTree = "<group>";
@@ -7055,12 +7064,14 @@
 				9987672A1FBE6B4200197AF4 /* UAInAppMessageBannerDisplayContentTest.m in Sources */,
 				6E746507235FA9B6000BF09C /* UAMessageCenterTest.m in Sources */,
 				6EC82DB52813122500642596 /* RateLimiterTest.swift in Sources */,
+				A63A567828F457FE004B8951 /* TestWorkRateLimiterActor.swift in Sources */,
 				3C07645825EDEDEE007F425C /* UAStateOverridesTest.m in Sources */,
 				6EC7E47D26A607210038CFDD /* TestTaskManager.swift in Sources */,
 				3230E60B24D04C75002C344D /* UAInAppAudienceHistorianTest.m in Sources */,
 				991A94691FCF2CEF00B57D24 /* UAInAppMessageMediaInfoTest.m in Sources */,
 				6E3942281F33DA52003D1C50 /* UAInboxStoreTest.m in Sources */,
 				CC64F1081D8B781C009CEF27 /* UAirshipTest.m in Sources */,
+				A63A567A28F458A6004B8951 /* TestWorker.swift in Sources */,
 				459D4051209245E500C40E2D /* UAInAppMessageBannerStyleTest.m in Sources */,
 				DF0C1B29244E562B0011ACCA /* UAAirshipBaseTest.m in Sources */,
 				6EC7E46E269E2A4C0038CFDD /* AttributeEditorTest.swift in Sources */,
@@ -7149,6 +7160,7 @@
 				6E87BD9D26DD78CC0005D20D /* DefaultAppIntegrationDelegateTest.swift in Sources */,
 				6E15B73026CF4F6B0099C92D /* TestRemoteDataAPIClient.swift in Sources */,
 				CC64F1021D8B781C009CEF27 /* UAInboxAPIClientTest.m in Sources */,
+				A63A567628F449D8004B8951 /* TestWorkManager.swift in Sources */,
 				6E4116872135C4E4005CC871 /* UARetriablePipelineTest.m in Sources */,
 				3C77BF922016B22900AD37F3 /* UAInAppMessageHTMLDisplayContentTest.m in Sources */,
 				CC64F10B1D8B781C009CEF27 /* UAJSONValueMatcherTests.m in Sources */,
