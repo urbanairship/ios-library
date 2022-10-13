@@ -23,6 +23,8 @@ public class SDKDependencyKeys : NSObject {
     public static let privacyManager = "privacy_manager"
     @objc
     public static let permissionsManager = "permissions_manager"
+    @objc
+    public static let workManager = "work_manager"
 }
 
 /// NOTE: For internal use only. :nodoc:
@@ -63,7 +65,8 @@ public class ModuleLoader : NSObject {
             SDKDependencyKeys.remoteData: remoteData,
             SDKDependencyKeys.analytics: analytics,
             SDKDependencyKeys.privacyManager: privacyManager,
-            SDKDependencyKeys.permissionsManager: permissionsManager
+            SDKDependencyKeys.permissionsManager: permissionsManager,
+            SDKDependencyKeys.workManager: AirshipWorkManager.shared
         ]
         
         let modules = ModuleLoader.loadModules(dependencies)

@@ -41,13 +41,7 @@
 		1B05132824AE103D00F5051F /* UALocaleManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B05132724AE103D00F5051F /* UALocaleManagerTest.m */; };
 		1B05133624AF600000F5051F /* UAScheduleTriggerContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B05133424AF600000F5051F /* UAScheduleTriggerContext.m */; };
 		1B05133D24AF657C00F5051F /* UAScheduleTriggerContext+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B05133B24AF657C00F5051F /* UAScheduleTriggerContext+Internal.h */; };
-		1B281EDC24F6AB8100FDC188 /* AirshipMessageCenterLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B281EDB24F6AB8100FDC188 /* AirshipMessageCenterLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1B70A14224F7B85D003209E0 /* AirshipAutomationLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B70A14124F7B85D003209E0 /* AirshipAutomationLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1B8DCF632507BDA70006E595 /* UAMessageCenterMessageViewDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B8DCF5F2507BDA60006E595 /* UAMessageCenterMessageViewDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1B8DCF642507BDA70006E595 /* UAMessageCenterLocalization.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B8DCF602507BDA60006E595 /* UAMessageCenterLocalization.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1B8DCF652507BDA70006E595 /* UAMessageCenterListViewDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B8DCF612507BDA60006E595 /* UAMessageCenterListViewDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1B8DCF662507BDA70006E595 /* UAMessageCenterStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B8DCF622507BDA60006E595 /* UAMessageCenterStyle.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1B8DCF6C2507BE0F0006E595 /* UAMessageCenterStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B8DCF6B2507BE0F0006E595 /* UAMessageCenterStyle.m */; };
 		3215CA9D2739349800B7D97E /* ModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3215CA9C2739349700B7D97E /* ModalView.swift */; };
 		3215CA9E2739349800B7D97E /* ModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3215CA9C2739349700B7D97E /* ModalView.swift */; };
 		3230E60B24D04C75002C344D /* UAInAppAudienceHistorianTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3230E60A24D04C75002C344D /* UAInAppAudienceHistorianTest.m */; };
@@ -64,31 +58,24 @@
 		32CF81E2275627F4003009D1 /* AirshipAsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32CF81E1275627F4003009D1 /* AirshipAsyncImage.swift */; };
 		32CF81E3275627F4003009D1 /* AirshipAsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32CF81E1275627F4003009D1 /* AirshipAsyncImage.swift */; };
 		32D6E87B2727F7060077C784 /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32D6E87A2727F7060077C784 /* Image.swift */; };
+		32F615A728F708980015696D /* MessageCenterListTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F615A628F708980015696D /* MessageCenterListTests.swift */; };
+		32F615A828F708AD0015696D /* TestChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC7E48426A60CDF0038CFDD /* TestChannel.swift */; };
 		32F68CDC28F02A7100F7F52A /* MessageCenterStoreTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F68CDA28F02A6B00F7F52A /* MessageCenterStoreTest.swift */; };
 		32F68CE528F078A100F7F52A /* InboxMessageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4A468B28EF673800A25617 /* InboxMessageData.swift */; };
-		32F68CE628F07ACD00F7F52A /* UAInboxMessageData.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E335237E396100EE76CF /* UAInboxMessageData.m */; };
-		32F68CE728F07AD100F7F52A /* UAInboxMessageData+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E323237E396100EE76CF /* UAInboxMessageData+Internal.h */; };
+		32F68CEE28F07C2C00F7F52A /* MessageCenterResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F68CE828F07C2B00F7F52A /* MessageCenterResources.swift */; };
+		32F68CEF28F07C2C00F7F52A /* MessageCenterSDKModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F68CE928F07C2C00F7F52A /* MessageCenterSDKModule.swift */; };
+		32F68CF328F07C2C00F7F52A /* MessageCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F68CED28F07C2C00F7F52A /* MessageCenter.swift */; };
+		32F68CF528F07C4900F7F52A /* MessageCenterList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F68CF428F07C4800F7F52A /* MessageCenterList.swift */; };
 		3C07645825EDEDEE007F425C /* UAStateOverridesTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C07644A25EDEDE4007F425C /* UAStateOverridesTest.m */; };
 		3C13BFB62384AC0E0071E80C /* UAAutomationResources.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C13BFB42384AC0E0071E80C /* UAAutomationResources.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3C13BFB72384AC0E0071E80C /* UAAutomationResources.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C13BFB52384AC0E0071E80C /* UAAutomationResources.m */; };
-		3C13BFBA2384AD270071E80C /* UAMessageCenterResources.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C13BFB82384AD270071E80C /* UAMessageCenterResources.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3C13BFBB2384AD270071E80C /* UAMessageCenterResources.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C13BFB92384AD270071E80C /* UAMessageCenterResources.m */; };
 		3C13BFBD2384AE050071E80C /* AirshipMessageCenter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C13BFBC2384AE050071E80C /* AirshipMessageCenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3C13BFBF2384B0BB0071E80C /* UAAirshipMessageCenterCoreImport.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C13BFBE2384B0BB0071E80C /* UAAirshipMessageCenterCoreImport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3C152F5C24E4B31700CF1181 /* UAAuthTokenManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C152F5B24E4B31700CF1181 /* UAAuthTokenManagerTest.m */; };
 		3C152F5E24E4B33000CF1181 /* UAAuthTokenAPIClientTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C152F5D24E4B33000CF1181 /* UAAuthTokenAPIClientTest.m */; };
-		3C16DA7723E11FB3001499A4 /* UADefaultMessageCenterListViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C16DA7223E11FB3001499A4 /* UADefaultMessageCenterListViewController.xib */; };
-		3C16DA7923E11FB3001499A4 /* UADefaultMessageCenterMessageViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C16DA7323E11FB3001499A4 /* UADefaultMessageCenterMessageViewController.xib */; };
 		3C2C53C524ECB43F009D45D0 /* UADeferredScheduleAPIClientTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C2C53C424ECB43F009D45D0 /* UADeferredScheduleAPIClientTest.m */; };
 		3C38AE0A2384C1F700EDE9B7 /* AirshipMessageCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CA0E423237E4A7B00EE76CF /* AirshipMessageCenter.framework */; };
 		3C39D3092384C8BE003C50D4 /* AirshipMessageCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CA0E423237E4A7B00EE76CF /* AirshipMessageCenter.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		3C3BCBA820E16C8300D86E60 /* UAAutomationEngineIntegrationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C3BCBA720E16C8300D86E60 /* UAAutomationEngineIntegrationTest.m */; };
-		3C45B05F23E11D8B004B9590 /* UADefaultMessageCenterListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C45B05923E11D8A004B9590 /* UADefaultMessageCenterListViewController.m */; };
-		3C45B06023E11D8B004B9590 /* UADefaultMessageCenterMessageViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C45B05A23E11D8A004B9590 /* UADefaultMessageCenterMessageViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3C45B06123E11D8B004B9590 /* UADefaultMessageCenterListViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C45B05B23E11D8A004B9590 /* UADefaultMessageCenterListViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3C45B06223E11D8B004B9590 /* UADefaultMessageCenterSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C45B05C23E11D8A004B9590 /* UADefaultMessageCenterSplitViewController.m */; };
-		3C45B06323E11D8B004B9590 /* UADefaultMessageCenterMessageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C45B05D23E11D8A004B9590 /* UADefaultMessageCenterMessageViewController.m */; };
-		3C45B06423E11D8B004B9590 /* UADefaultMessageCenterSplitViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C45B05E23E11D8A004B9590 /* UADefaultMessageCenterSplitViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3C63556026CDD4F8006E9916 /* PushProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C63555F26CDD4F8006E9916 /* PushProtocol.swift */; };
 		3C63556126CDD4F8006E9916 /* PushProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C63555F26CDD4F8006E9916 /* PushProtocol.swift */; };
 		3C693E4D25141C7E00EBFB88 /* UAAutomation.xcdatamodeld in Resources */ = {isa = PBXBuildFile; fileRef = 1B2F3B0324B7525500A5DE8C /* UAAutomation.xcdatamodeld */; };
@@ -105,49 +92,8 @@
 		3CA0E2CA237CD05F00EE76CF /* EventDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E24D237CCBA600EE76CF /* EventDataManager.swift */; };
 		3CA0E2CD237CD05F00EE76CF /* AirshipDebugManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E233237CCBA600EE76CF /* AirshipDebugManager.swift */; };
 		3CA0E2D0237CD0BD00EE76CF /* AirshipDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E228237CCBA600EE76CF /* AirshipDebug.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3CA0E426237E4BED00EE76CF /* UAMessageCenterAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E32E237E396100EE76CF /* UAMessageCenterAction.m */; };
-		3CA0E428237E4BED00EE76CF /* UADefaultMessageCenterUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E331237E396100EE76CF /* UADefaultMessageCenterUI.m */; };
-		3CA0E42A237E4BED00EE76CF /* UAMessageCenterDateUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E333237E396100EE76CF /* UAMessageCenterDateUtils.m */; };
-		3CA0E42C237E4BED00EE76CF /* UAMessageCenterListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E31D237E396100EE76CF /* UAMessageCenterListCell.m */; };
-		3CA0E439237E4BED00EE76CF /* UAInboxStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E32D237E396100EE76CF /* UAInboxStore.m */; };
-		3CA0E43B237E4BED00EE76CF /* UAJSONValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E330237E396100EE76CF /* UAJSONValueTransformer.m */; };
-		3CA0E43D237E4BED00EE76CF /* UAInboxAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E321237E396100EE76CF /* UAInboxAPIClient.m */; };
-		3CA0E440237E4BED00EE76CF /* UAInboxMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E30C237E396100EE76CF /* UAInboxMessage.m */; };
-		3CA0E443237E4BED00EE76CF /* UAInboxMessageList.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E30F237E396100EE76CF /* UAInboxMessageList.m */; };
-		3CA0E446237E4BED00EE76CF /* UAInboxUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E319237E396100EE76CF /* UAInboxUtils.m */; };
-		3CA0E448237E4BED00EE76CF /* UAMessageCenterNativeBridgeExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E336237E396100EE76CF /* UAMessageCenterNativeBridgeExtension.m */; };
-		3CA0E44A237E4BED00EE76CF /* UAUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E317237E396100EE76CF /* UAUser.m */; };
-		3CA0E44C237E4BED00EE76CF /* UAUserAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E324237E396100EE76CF /* UAUserAPIClient.m */; };
-		3CA0E44F237E4BED00EE76CF /* UAUserData.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E313237E396100EE76CF /* UAUserData.m */; };
-		3CA0E451237E4BED00EE76CF /* UAUserDataDAO.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E33A237E396100EE76CF /* UAUserDataDAO.m */; };
-		3CA0E454237E4BED00EE76CF /* UAMessageCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E31F237E396100EE76CF /* UAMessageCenter.m */; };
-		3CA0E457237E4BED00EE76CF /* UAMessageCenterSDKModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E30D237E396100EE76CF /* UAMessageCenterSDKModule.m */; };
-		3CA0E458237E4CA100EE76CF /* UAMessageCenterAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E312237E396100EE76CF /* UAMessageCenterAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3CA0E459237E4CA100EE76CF /* UADefaultMessageCenterUI.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E310237E396100EE76CF /* UADefaultMessageCenterUI.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3CA0E45A237E4CA100EE76CF /* UAMessageCenterDateUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E31B237E396100EE76CF /* UAMessageCenterDateUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3CA0E45B237E4CA100EE76CF /* UAMessageCenterListCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E33E237E396100EE76CF /* UAMessageCenterListCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3CA0E463237E4CA100EE76CF /* UAInboxStore+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E33B237E396100EE76CF /* UAInboxStore+Internal.h */; };
-		3CA0E464237E4CA100EE76CF /* UAJSONValueTransformer+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E30E237E396100EE76CF /* UAJSONValueTransformer+Internal.h */; };
-		3CA0E465237E4CA100EE76CF /* UAInboxAPIClient+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E31E237E396100EE76CF /* UAInboxAPIClient+Internal.h */; };
-		3CA0E466237E4CA100EE76CF /* UAInboxMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E327237E396100EE76CF /* UAInboxMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3CA0E467237E4CA100EE76CF /* UAInboxMessage+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E33C237E396100EE76CF /* UAInboxMessage+Internal.h */; };
-		3CA0E468237E4CA100EE76CF /* UAInboxMessageList.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E325237E396100EE76CF /* UAInboxMessageList.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3CA0E469237E4CA100EE76CF /* UAInboxMessageList+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E320237E396100EE76CF /* UAInboxMessageList+Internal.h */; };
-		3CA0E46A237E4CA100EE76CF /* UAInboxUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E338237E396100EE76CF /* UAInboxUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3CA0E46B237E4CA100EE76CF /* UAMessageCenterNativeBridgeExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E31A237E396100EE76CF /* UAMessageCenterNativeBridgeExtension.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3CA0E46C237E4CA100EE76CF /* UAUser.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E339237E396100EE76CF /* UAUser.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3CA0E46D237E4CA100EE76CF /* UAUser+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E328237E396100EE76CF /* UAUser+Internal.h */; };
-		3CA0E46E237E4CA100EE76CF /* UAUserAPIClient+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E32B237E396100EE76CF /* UAUserAPIClient+Internal.h */; };
-		3CA0E46F237E4CA100EE76CF /* UAUserData.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E32C237E396100EE76CF /* UAUserData.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3CA0E470237E4CA100EE76CF /* UAUserData+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E334237E396100EE76CF /* UAUserData+Internal.h */; };
-		3CA0E471237E4CA100EE76CF /* UAUserDataDAO+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E322237E396100EE76CF /* UAUserDataDAO+Internal.h */; };
-		3CA0E472237E4CA100EE76CF /* UAMessageCenter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E33D237E396100EE76CF /* UAMessageCenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3CA0E473237E4CA100EE76CF /* UAMessageCenter+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E32A237E396100EE76CF /* UAMessageCenter+Internal.h */; };
-		3CA0E474237E4CA100EE76CF /* UAMessageCenterSDKModule.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E326237E396100EE76CF /* UAMessageCenterSDKModule.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3CA0E479237E4E3000EE76CF /* UAInbox.xcdatamodeld in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E304237E396100EE76CF /* UAInbox.xcdatamodeld */; };
 		3CA0E47B237E4E3000EE76CF /* UAMessageCenterActions.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E307237E396100EE76CF /* UAMessageCenterActions.plist */; };
-		3CA0E47C237E4E3000EE76CF /* UAMessageCenterListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E308237E396100EE76CF /* UAMessageCenterListCell.xib */; };
-		3CA0E47D237E4E3000EE76CF /* UAMessageCenterPlaceholderIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E309237E396100EE76CF /* UAMessageCenterPlaceholderIcon.png */; };
 		3CA6C3252554E89600F71ABF /* UAFrequencyConstraint+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA6C3222554E89600F71ABF /* UAFrequencyConstraint+Internal.h */; };
 		3CA6C3272554E89600F71ABF /* UAFrequencyConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA6C3232554E89600F71ABF /* UAFrequencyConstraint.m */; };
 		3CA6C3432554ED8B00F71ABF /* UAFrequencyChecker+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA6C3402554ED8B00F71ABF /* UAFrequencyChecker+Internal.h */; };
@@ -175,8 +121,6 @@
 		3CC95B20268E785900FE2ACD /* NotificationCategories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC95B1E268E785900FE2ACD /* NotificationCategories.swift */; };
 		3CC95B2B2696549B00FE2ACD /* PushableComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC95B2A2696549B00FE2ACD /* PushableComponent.swift */; };
 		3CC95B2C2696549B00FE2ACD /* PushableComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC95B2A2696549B00FE2ACD /* PushableComponent.swift */; };
-		3CCFD5DF23A082EF001AF966 /* UADefaultMessageCenterSplitViewDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CCFD5DD23A082EF001AF966 /* UADefaultMessageCenterSplitViewDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3CCFD5E023A082EF001AF966 /* UADefaultMessageCenterSplitViewDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CCFD5DE23A082EF001AF966 /* UADefaultMessageCenterSplitViewDelegate.m */; };
 		3CF5E809255619DC0074B2A0 /* UAFrequencyLimitManager+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CF5E806255619DC0074B2A0 /* UAFrequencyLimitManager+Internal.h */; };
 		3CF5E80B255619DC0074B2A0 /* UAFrequencyLimitManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF5E807255619DC0074B2A0 /* UAFrequencyLimitManager.m */; };
 		3CF5E81B25561FCC0074B2A0 /* UAOccurrence+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CF5E81825561FCC0074B2A0 /* UAOccurrence+Internal.h */; };
@@ -313,7 +257,6 @@
 		6E2D6AF426B0C3C500B7C226 /* ChannelAudienceManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2D6AF326B0C3C500B7C226 /* ChannelAudienceManagerTest.swift */; };
 		6E2D6AF626B0C6CA00B7C226 /* TestSubscriptionListAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2D6AF526B0C6CA00B7C226 /* TestSubscriptionListAPIClient.swift */; };
 		6E382C21276D3E990091A351 /* ThomasValidationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E382C20276D3E990091A351 /* ThomasValidationTests.swift */; };
-		6E3942281F33DA52003D1C50 /* UAInboxStoreTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E3942271F33DA52003D1C50 /* UAInboxStoreTest.m */; };
 		6E3B230F28A318CD0005D46E /* PreferenceCenterThemeLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3B230E28A318CD0005D46E /* PreferenceCenterThemeLoader.swift */; };
 		6E3B231128A32CDE0005D46E /* PreferenceCenterThemeObjc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3B231028A32CDE0005D46E /* PreferenceCenterThemeObjc.swift */; };
 		6E3B231328A32EC30005D46E /* PreferenceCenterViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3B231228A32EC30005D46E /* PreferenceCenterViewExtensions.swift */; };
@@ -443,6 +386,9 @@
 		6E4A467928EF453400A25617 /* MessageCenterAPIClientTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4A467828EF453400A25617 /* MessageCenterAPIClientTest.swift */; };
 		6E4A468028EF4FAF00A25617 /* TestAirshipRequestSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4A467F28EF4FAF00A25617 /* TestAirshipRequestSession.swift */; };
 		6E4A468128EF4FAF00A25617 /* TestAirshipRequestSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4A467F28EF4FAF00A25617 /* TestAirshipRequestSession.swift */; };
+		6E4A468D28EF673800A25617 /* InboxMessageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4A468B28EF673800A25617 /* InboxMessageData.swift */; };
+		6E4A469F28F4A7DF00A25617 /* MessageCenterAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4A469E28F4A7DF00A25617 /* MessageCenterAction.swift */; };
+		6E4A46A128F4AEDF00A25617 /* MessageCenterNativeBridgeExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4A46A028F4AEDF00A25617 /* MessageCenterNativeBridgeExtension.swift */; };
 		6E4E5B2926E53EE700198175 /* UABaseTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4E5B2826E53EE700198175 /* UABaseTest.m */; };
 		6E4E5B3B26E7F91600198175 /* LocalizationUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4E5B3926E7F91600198175 /* LocalizationUtils.swift */; };
 		6E4E5B3C26E7F91600198175 /* LocalizationUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4E5B3926E7F91600198175 /* LocalizationUtils.swift */; };
@@ -650,7 +596,6 @@
 		6E739D7F26BAFCB800BC6F6D /* TestChannelBulkUpdateAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E739D7E26BAFCB800BC6F6D /* TestChannelBulkUpdateAPIClient.swift */; };
 		6E739D8026BB01C500BC6F6D /* ChannelBulkUpdateAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E739D6526B9BDC100BC6F6D /* ChannelBulkUpdateAPIClient.swift */; };
 		6E739D8226BB33A200BC6F6D /* ChannelBulkUpdateAPIClientTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E739D8126BB33A200BC6F6D /* ChannelBulkUpdateAPIClientTest.swift */; };
-		6E746507235FA9B6000BF09C /* UAMessageCenterTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E746506235FA9B6000BF09C /* UAMessageCenterTest.m */; };
 		6E7DB37F28ECDB13002725F6 /* LiveActivityRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E57CE3628DBBD9A00287601 /* LiveActivityRegistry.swift */; };
 		6E7DB38028ECDB13002725F6 /* LiveActivityRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E57CE3628DBBD9A00287601 /* LiveActivityRegistry.swift */; };
 		6E7DB38328ECDC41002725F6 /* LiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7DB38228ECDC41002725F6 /* LiveActivity.swift */; };
@@ -1115,7 +1060,6 @@
 		6EF66D8F27657B3A00ABCB76 /* UrlInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF66D8C276461DA00ABCB76 /* UrlInfo.swift */; };
 		6EF66D912769B69C00ABCB76 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF66D902769B69C00ABCB76 /* RootView.swift */; };
 		6EF66D922769B69C00ABCB76 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF66D902769B69C00ABCB76 /* RootView.swift */; };
-		6EFB377D234595C9005E4E44 /* UAMessageCenterNativeBridgeExtensionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EFB377C234595C9005E4E44 /* UAMessageCenterNativeBridgeExtensionTest.m */; };
 		6EFD6D4B27272333005B26F1 /* EmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFD6D4A27272333005B26F1 /* EmptyView.swift */; };
 		6EFD6D4C27272333005B26F1 /* EmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFD6D4A27272333005B26F1 /* EmptyView.swift */; };
 		6EFD6D5C27273257005B26F1 /* Shapes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFD6D5B27273257005B26F1 /* Shapes.swift */; };
@@ -1558,12 +1502,8 @@
 		CC64F0F31D8B781C009CEF27 /* UAColorUtilsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0891D8B781C009CEF27 /* UAColorUtilsTest.m */; };
 		CC64F0F41D8B781C009CEF27 /* UAConfigTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F08B1D8B781C009CEF27 /* UAConfigTest.m */; };
 		CC64F0F51D8B781C009CEF27 /* UACustomEventTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F08C1D8B781C009CEF27 /* UACustomEventTest.m */; };
-		CC64F0F61D8B781C009CEF27 /* UAMessageCenterStyleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F08D1D8B781C009CEF27 /* UAMessageCenterStyleTest.m */; };
-		CC64F0F81D8B781C009CEF27 /* UAMessageCenterActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0901D8B781C009CEF27 /* UAMessageCenterActionTest.m */; };
 		CC64F0FF1D8B781C009CEF27 /* UALegacyInAppMessageTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F09A1D8B781C009CEF27 /* UALegacyInAppMessageTest.m */; };
 		CC64F1001D8B781C009CEF27 /* UALegacyInAppMessagingTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F09B1D8B781C009CEF27 /* UALegacyInAppMessagingTest.m */; };
-		CC64F1021D8B781C009CEF27 /* UAInboxAPIClientTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F09D1D8B781C009CEF27 /* UAInboxAPIClientTest.m */; };
-		CC64F1041D8B781C009CEF27 /* UAInboxMessageTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F09F1D8B781C009CEF27 /* UAInboxMessageTest.m */; };
 		CC64F1061D8B781C009CEF27 /* UAInstallAttributionEventTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0A11D8B781C009CEF27 /* UAInstallAttributionEventTest.m */; };
 		CC64F1071D8B781C009CEF27 /* UAInteractiveNotificationEventTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0A21D8B781C009CEF27 /* UAInteractiveNotificationEventTest.m */; };
 		CC64F1081D8B781C009CEF27 /* UAirshipTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0A31D8B781C009CEF27 /* UAirshipTest.m */; };
@@ -1585,8 +1525,6 @@
 		CC64F1211D8B781C009CEF27 /* UAScheduleTriggerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0BC1D8B781C009CEF27 /* UAScheduleTriggerTests.m */; };
 		CC64F1231D8B781C009CEF27 /* UAShareActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0BE1D8B781C009CEF27 /* UAShareActionTest.m */; };
 		CC64F1241D8B781C009CEF27 /* UATagActionsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0BF1D8B781C009CEF27 /* UATagActionsTest.m */; };
-		CC64F1281D8B781C009CEF27 /* UAUserAPIClientTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0C31D8B781C009CEF27 /* UAUserAPIClientTest.m */; };
-		CC64F1291D8B781C009CEF27 /* UAUserTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0C41D8B781C009CEF27 /* UAUserTest.m */; };
 		CC64F12A1D8B781C009CEF27 /* UAUtilsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0C61D8B781C009CEF27 /* UAUtilsTest.m */; };
 		CC64F12B1D8B781C009CEF27 /* UAJavaScriptCommandTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0C71D8B781C009CEF27 /* UAJavaScriptCommandTest.m */; };
 		CC64F12D1D8B781C009CEF27 /* UAURLAllowListTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC64F0C91D8B781C009CEF27 /* UAURLAllowListTest.m */; };
@@ -1813,7 +1751,6 @@
 		1B05132724AE103D00F5051F /* UALocaleManagerTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UALocaleManagerTest.m; sourceTree = "<group>"; };
 		1B05133424AF600000F5051F /* UAScheduleTriggerContext.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAScheduleTriggerContext.m; sourceTree = "<group>"; };
 		1B05133B24AF657C00F5051F /* UAScheduleTriggerContext+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAScheduleTriggerContext+Internal.h"; sourceTree = "<group>"; };
-		1B281EDB24F6AB8100FDC188 /* AirshipMessageCenterLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AirshipMessageCenterLib.h; sourceTree = "<group>"; };
 		1B2F3B0424B7525500A5DE8C /* UAAutomation 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAAutomation 2.xcdatamodel"; sourceTree = "<group>"; };
 		1B2F3B0524B7525500A5DE8C /* UAAutomation 4.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAAutomation 4.xcdatamodel"; sourceTree = "<group>"; };
 		1B2F3B0624B7525500A5DE8C /* UAAutomation 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAAutomation 3.xcdatamodel"; sourceTree = "<group>"; };
@@ -1821,11 +1758,6 @@
 		1B2F3B0824B7525500A5DE8C /* UAAutomation 6.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAAutomation 6.xcdatamodel"; sourceTree = "<group>"; };
 		1B2F3B0924B7525500A5DE8C /* UAAutomation 5.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAAutomation 5.xcdatamodel"; sourceTree = "<group>"; };
 		1B70A14124F7B85D003209E0 /* AirshipAutomationLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AirshipAutomationLib.h; sourceTree = "<group>"; };
-		1B8DCF5F2507BDA60006E595 /* UAMessageCenterMessageViewDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAMessageCenterMessageViewDelegate.h; sourceTree = "<group>"; };
-		1B8DCF602507BDA60006E595 /* UAMessageCenterLocalization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAMessageCenterLocalization.h; sourceTree = "<group>"; };
-		1B8DCF612507BDA60006E595 /* UAMessageCenterListViewDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAMessageCenterListViewDelegate.h; sourceTree = "<group>"; };
-		1B8DCF622507BDA60006E595 /* UAMessageCenterStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAMessageCenterStyle.h; sourceTree = "<group>"; };
-		1B8DCF6B2507BE0F0006E595 /* UAMessageCenterStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAMessageCenterStyle.m; sourceTree = "<group>"; };
 		3215CA9C2739349700B7D97E /* ModalView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModalView.swift; sourceTree = "<group>"; };
 		3226E11424C1DF54000106CC /* UAInAppAudienceHistorian.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInAppAudienceHistorian.m; sourceTree = "<group>"; };
 		3226E11524C1DF54000106CC /* UAInAppAudienceHistorian+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAInAppAudienceHistorian+Internal.h"; sourceTree = "<group>"; };
@@ -1837,28 +1769,22 @@
 		3261A7F4243CD73100ADBF6B /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/CoreTelephony.framework; sourceTree = DEVELOPER_DIR; };
 		32CF81E1275627F4003009D1 /* AirshipAsyncImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipAsyncImage.swift; sourceTree = "<group>"; };
 		32D6E87A2727F7060077C784 /* Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
+		32F615A628F708980015696D /* MessageCenterListTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCenterListTests.swift; sourceTree = "<group>"; };
 		32F68CDA28F02A6B00F7F52A /* MessageCenterStoreTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCenterStoreTest.swift; sourceTree = "<group>"; };
+		32F68CE828F07C2B00F7F52A /* MessageCenterResources.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterResources.swift; sourceTree = "<group>"; };
+		32F68CE928F07C2C00F7F52A /* MessageCenterSDKModule.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterSDKModule.swift; sourceTree = "<group>"; };
+		32F68CED28F07C2C00F7F52A /* MessageCenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenter.swift; sourceTree = "<group>"; };
+		32F68CF428F07C4800F7F52A /* MessageCenterList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterList.swift; sourceTree = "<group>"; };
 		3C07644A25EDEDE4007F425C /* UAStateOverridesTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAStateOverridesTest.m; sourceTree = "<group>"; };
 		3C13BFB42384AC0E0071E80C /* UAAutomationResources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAAutomationResources.h; sourceTree = "<group>"; };
 		3C13BFB52384AC0E0071E80C /* UAAutomationResources.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAutomationResources.m; sourceTree = "<group>"; };
-		3C13BFB82384AD270071E80C /* UAMessageCenterResources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAMessageCenterResources.h; sourceTree = "<group>"; };
-		3C13BFB92384AD270071E80C /* UAMessageCenterResources.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAMessageCenterResources.m; sourceTree = "<group>"; };
 		3C13BFBC2384AE050071E80C /* AirshipMessageCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AirshipMessageCenter.h; sourceTree = "<group>"; };
-		3C13BFBE2384B0BB0071E80C /* UAAirshipMessageCenterCoreImport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAAirshipMessageCenterCoreImport.h; sourceTree = "<group>"; };
 		3C152F5B24E4B31700CF1181 /* UAAuthTokenManagerTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAAuthTokenManagerTest.m; sourceTree = "<group>"; };
 		3C152F5D24E4B33000CF1181 /* UAAuthTokenAPIClientTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAAuthTokenAPIClientTest.m; sourceTree = "<group>"; };
-		3C16DA7223E11FB3001499A4 /* UADefaultMessageCenterListViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UADefaultMessageCenterListViewController.xib; sourceTree = "<group>"; };
-		3C16DA7323E11FB3001499A4 /* UADefaultMessageCenterMessageViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UADefaultMessageCenterMessageViewController.xib; sourceTree = "<group>"; };
 		3C2C53C424ECB43F009D45D0 /* UADeferredScheduleAPIClientTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UADeferredScheduleAPIClientTest.m; sourceTree = "<group>"; };
 		3C3BCBA720E16C8300D86E60 /* UAAutomationEngineIntegrationTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAAutomationEngineIntegrationTest.m; sourceTree = "<group>"; };
 		3C3BCBA920E19FC500D86E60 /* UATimerScheduler+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UATimerScheduler+Internal.h"; sourceTree = "<group>"; };
 		3C3BCBAA20E19FC500D86E60 /* UATimerScheduler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UATimerScheduler.m; sourceTree = "<group>"; };
-		3C45B05923E11D8A004B9590 /* UADefaultMessageCenterListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADefaultMessageCenterListViewController.m; sourceTree = "<group>"; };
-		3C45B05A23E11D8A004B9590 /* UADefaultMessageCenterMessageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UADefaultMessageCenterMessageViewController.h; sourceTree = "<group>"; };
-		3C45B05B23E11D8A004B9590 /* UADefaultMessageCenterListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UADefaultMessageCenterListViewController.h; sourceTree = "<group>"; };
-		3C45B05C23E11D8A004B9590 /* UADefaultMessageCenterSplitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADefaultMessageCenterSplitViewController.m; sourceTree = "<group>"; };
-		3C45B05D23E11D8A004B9590 /* UADefaultMessageCenterMessageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADefaultMessageCenterMessageViewController.m; sourceTree = "<group>"; };
-		3C45B05E23E11D8A004B9590 /* UADefaultMessageCenterSplitViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UADefaultMessageCenterSplitViewController.h; sourceTree = "<group>"; };
 		3C63555F26CDD4F8006E9916 /* PushProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushProtocol.swift; sourceTree = "<group>"; };
 		3C77BF912016B22900AD37F3 /* UAInAppMessageHTMLDisplayContentTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageHTMLDisplayContentTest.m; sourceTree = "<group>"; };
 		3C7B15F42009766800ECA6D0 /* UAInAppMessageHTMLAdapter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAInAppMessageHTMLAdapter.h; sourceTree = "<group>"; };
@@ -1880,49 +1806,6 @@
 		3CA0E2AC237CCE2600EE76CF /* AirshipDebug.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipDebug.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CA0E305237E396100EE76CF /* UAInbox.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UAInbox.xcdatamodel; sourceTree = "<group>"; };
 		3CA0E307237E396100EE76CF /* UAMessageCenterActions.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = UAMessageCenterActions.plist; sourceTree = "<group>"; };
-		3CA0E308237E396100EE76CF /* UAMessageCenterListCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UAMessageCenterListCell.xib; sourceTree = "<group>"; };
-		3CA0E309237E396100EE76CF /* UAMessageCenterPlaceholderIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = UAMessageCenterPlaceholderIcon.png; sourceTree = "<group>"; };
-		3CA0E30C237E396100EE76CF /* UAInboxMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInboxMessage.m; sourceTree = "<group>"; };
-		3CA0E30D237E396100EE76CF /* UAMessageCenterSDKModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAMessageCenterSDKModule.m; sourceTree = "<group>"; };
-		3CA0E30E237E396100EE76CF /* UAJSONValueTransformer+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAJSONValueTransformer+Internal.h"; sourceTree = "<group>"; };
-		3CA0E30F237E396100EE76CF /* UAInboxMessageList.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInboxMessageList.m; sourceTree = "<group>"; };
-		3CA0E310237E396100EE76CF /* UADefaultMessageCenterUI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UADefaultMessageCenterUI.h; sourceTree = "<group>"; };
-		3CA0E312237E396100EE76CF /* UAMessageCenterAction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAMessageCenterAction.h; sourceTree = "<group>"; };
-		3CA0E313237E396100EE76CF /* UAUserData.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAUserData.m; sourceTree = "<group>"; };
-		3CA0E317237E396100EE76CF /* UAUser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAUser.m; sourceTree = "<group>"; };
-		3CA0E319237E396100EE76CF /* UAInboxUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInboxUtils.m; sourceTree = "<group>"; };
-		3CA0E31A237E396100EE76CF /* UAMessageCenterNativeBridgeExtension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAMessageCenterNativeBridgeExtension.h; sourceTree = "<group>"; };
-		3CA0E31B237E396100EE76CF /* UAMessageCenterDateUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAMessageCenterDateUtils.h; sourceTree = "<group>"; };
-		3CA0E31D237E396100EE76CF /* UAMessageCenterListCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAMessageCenterListCell.m; sourceTree = "<group>"; };
-		3CA0E31E237E396100EE76CF /* UAInboxAPIClient+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInboxAPIClient+Internal.h"; sourceTree = "<group>"; };
-		3CA0E31F237E396100EE76CF /* UAMessageCenter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAMessageCenter.m; sourceTree = "<group>"; };
-		3CA0E320237E396100EE76CF /* UAInboxMessageList+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInboxMessageList+Internal.h"; sourceTree = "<group>"; };
-		3CA0E321237E396100EE76CF /* UAInboxAPIClient.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInboxAPIClient.m; sourceTree = "<group>"; };
-		3CA0E322237E396100EE76CF /* UAUserDataDAO+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAUserDataDAO+Internal.h"; sourceTree = "<group>"; };
-		3CA0E323237E396100EE76CF /* UAInboxMessageData+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInboxMessageData+Internal.h"; sourceTree = "<group>"; };
-		3CA0E324237E396100EE76CF /* UAUserAPIClient.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAUserAPIClient.m; sourceTree = "<group>"; };
-		3CA0E325237E396100EE76CF /* UAInboxMessageList.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAInboxMessageList.h; sourceTree = "<group>"; };
-		3CA0E326237E396100EE76CF /* UAMessageCenterSDKModule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAMessageCenterSDKModule.h; sourceTree = "<group>"; };
-		3CA0E327237E396100EE76CF /* UAInboxMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAInboxMessage.h; sourceTree = "<group>"; };
-		3CA0E328237E396100EE76CF /* UAUser+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAUser+Internal.h"; sourceTree = "<group>"; };
-		3CA0E32A237E396100EE76CF /* UAMessageCenter+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAMessageCenter+Internal.h"; sourceTree = "<group>"; };
-		3CA0E32B237E396100EE76CF /* UAUserAPIClient+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAUserAPIClient+Internal.h"; sourceTree = "<group>"; };
-		3CA0E32C237E396100EE76CF /* UAUserData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAUserData.h; sourceTree = "<group>"; };
-		3CA0E32D237E396100EE76CF /* UAInboxStore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInboxStore.m; sourceTree = "<group>"; };
-		3CA0E32E237E396100EE76CF /* UAMessageCenterAction.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAMessageCenterAction.m; sourceTree = "<group>"; };
-		3CA0E330237E396100EE76CF /* UAJSONValueTransformer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAJSONValueTransformer.m; sourceTree = "<group>"; };
-		3CA0E331237E396100EE76CF /* UADefaultMessageCenterUI.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UADefaultMessageCenterUI.m; sourceTree = "<group>"; };
-		3CA0E333237E396100EE76CF /* UAMessageCenterDateUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAMessageCenterDateUtils.m; sourceTree = "<group>"; };
-		3CA0E334237E396100EE76CF /* UAUserData+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAUserData+Internal.h"; sourceTree = "<group>"; };
-		3CA0E335237E396100EE76CF /* UAInboxMessageData.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInboxMessageData.m; sourceTree = "<group>"; };
-		3CA0E336237E396100EE76CF /* UAMessageCenterNativeBridgeExtension.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAMessageCenterNativeBridgeExtension.m; sourceTree = "<group>"; };
-		3CA0E338237E396100EE76CF /* UAInboxUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAInboxUtils.h; sourceTree = "<group>"; };
-		3CA0E339237E396100EE76CF /* UAUser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAUser.h; sourceTree = "<group>"; };
-		3CA0E33A237E396100EE76CF /* UAUserDataDAO.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAUserDataDAO.m; sourceTree = "<group>"; };
-		3CA0E33B237E396100EE76CF /* UAInboxStore+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInboxStore+Internal.h"; sourceTree = "<group>"; };
-		3CA0E33C237E396100EE76CF /* UAInboxMessage+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInboxMessage+Internal.h"; sourceTree = "<group>"; };
-		3CA0E33D237E396100EE76CF /* UAMessageCenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAMessageCenter.h; sourceTree = "<group>"; };
-		3CA0E33E237E396100EE76CF /* UAMessageCenterListCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAMessageCenterListCell.h; sourceTree = "<group>"; };
 		3CA0E423237E4A7B00EE76CF /* AirshipMessageCenter.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipMessageCenter.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CA0E47F237E505200EE76CF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3CA6C3222554E89600F71ABF /* UAFrequencyConstraint+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UAFrequencyConstraint+Internal.h"; path = "AirshipAutomation/Source/UAFrequencyConstraint+Internal.h"; sourceTree = SOURCE_ROOT; };
@@ -1949,8 +1832,6 @@
 		3CC8AA0526BB3C7900405614 /* Push.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Push.swift; sourceTree = "<group>"; };
 		3CC95B1E268E785900FE2ACD /* NotificationCategories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCategories.swift; sourceTree = "<group>"; };
 		3CC95B2A2696549B00FE2ACD /* PushableComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushableComponent.swift; sourceTree = "<group>"; };
-		3CCFD5DD23A082EF001AF966 /* UADefaultMessageCenterSplitViewDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UADefaultMessageCenterSplitViewDelegate.h; sourceTree = "<group>"; };
-		3CCFD5DE23A082EF001AF966 /* UADefaultMessageCenterSplitViewDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UADefaultMessageCenterSplitViewDelegate.m; sourceTree = "<group>"; };
 		3CD9C1D021D1A43600B129A6 /* UAInAppMessageResolution+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageResolution+Internal.h"; sourceTree = "<group>"; };
 		3CF5E806255619DC0074B2A0 /* UAFrequencyLimitManager+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAFrequencyLimitManager+Internal.h"; sourceTree = "<group>"; };
 		3CF5E807255619DC0074B2A0 /* UAFrequencyLimitManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAFrequencyLimitManager.m; sourceTree = "<group>"; };
@@ -2099,7 +1980,6 @@
 		6E3494EB2580222A007F5357 /* UAAutomation 8.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAAutomation 8.xcdatamodel"; sourceTree = "<group>"; };
 		6E356F9B2579513D004CCCC8 /* UAAutomation 7.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAAutomation 7.xcdatamodel"; sourceTree = "<group>"; };
 		6E382C20276D3E990091A351 /* ThomasValidationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasValidationTests.swift; sourceTree = "<group>"; };
-		6E3942271F33DA52003D1C50 /* UAInboxStoreTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxStoreTest.m; sourceTree = "<group>"; };
 		6E3B230E28A318CD0005D46E /* PreferenceCenterThemeLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterThemeLoader.swift; sourceTree = "<group>"; };
 		6E3B231028A32CDE0005D46E /* PreferenceCenterThemeObjc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterThemeObjc.swift; sourceTree = "<group>"; };
 		6E3B231228A32EC30005D46E /* PreferenceCenterViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterViewExtensions.swift; sourceTree = "<group>"; };
@@ -2204,7 +2084,9 @@
 		6E4A466E28EF44F600A25617 /* AirshipMessageCenterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipMessageCenterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E4A467828EF453400A25617 /* MessageCenterAPIClientTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterAPIClientTest.swift; sourceTree = "<group>"; };
 		6E4A467F28EF4FAF00A25617 /* TestAirshipRequestSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAirshipRequestSession.swift; sourceTree = "<group>"; };
-		6E4A468B28EF673800A25617 /* InboxMessageData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InboxMessageData.swift; path = AirshipMessageCenter/Source/Model/InboxMessageData.swift; sourceTree = SOURCE_ROOT; };
+		6E4A468B28EF673800A25617 /* InboxMessageData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InboxMessageData.swift; path = AirshipMessageCenter/Source/InboxMessageData.swift; sourceTree = SOURCE_ROOT; };
+		6E4A469E28F4A7DF00A25617 /* MessageCenterAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCenterAction.swift; sourceTree = "<group>"; };
+		6E4A46A028F4AEDF00A25617 /* MessageCenterNativeBridgeExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCenterNativeBridgeExtension.swift; sourceTree = "<group>"; };
 		6E4E5B2726E53EE700198175 /* UABaseTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UABaseTest.h; sourceTree = "<group>"; };
 		6E4E5B2826E53EE700198175 /* UABaseTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UABaseTest.m; sourceTree = "<group>"; };
 		6E4E5B3926E7F91600198175 /* LocalizationUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalizationUtils.swift; sourceTree = "<group>"; };
@@ -2328,7 +2210,6 @@
 		6E739D6D26B9F58700BC6F6D /* TagGroupMutations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagGroupMutations.swift; sourceTree = "<group>"; };
 		6E739D7E26BAFCB800BC6F6D /* TestChannelBulkUpdateAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestChannelBulkUpdateAPIClient.swift; sourceTree = "<group>"; };
 		6E739D8126BB33A200BC6F6D /* ChannelBulkUpdateAPIClientTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelBulkUpdateAPIClientTest.swift; sourceTree = "<group>"; };
-		6E746506235FA9B6000BF09C /* UAMessageCenterTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAMessageCenterTest.m; sourceTree = "<group>"; };
 		6E7DB38228ECDC41002725F6 /* LiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivity.swift; sourceTree = "<group>"; };
 		6E7DB38A28ECDDD9002725F6 /* LiveActivityRegistryTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityRegistryTest.swift; sourceTree = "<group>"; };
 		6E7DB38D28ECFCED002725F6 /* AirshipJSONTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipJSONTest.swift; sourceTree = "<group>"; };
@@ -2530,7 +2411,6 @@
 		6EF2DF0E1E5CBAE30062099A /* UAScheduleDelayData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAScheduleDelayData.m; sourceTree = "<group>"; };
 		6EF66D8C276461DA00ABCB76 /* UrlInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UrlInfo.swift; sourceTree = "<group>"; };
 		6EF66D902769B69C00ABCB76 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
-		6EFB377C234595C9005E4E44 /* UAMessageCenterNativeBridgeExtensionTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAMessageCenterNativeBridgeExtensionTest.m; sourceTree = "<group>"; };
 		6EFD6D4A27272333005B26F1 /* EmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyView.swift; sourceTree = "<group>"; };
 		6EFD6D5B27273257005B26F1 /* Shapes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shapes.swift; sourceTree = "<group>"; };
 		6EFD6D6D27290C0B005B26F1 /* FormController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormController.swift; sourceTree = "<group>"; };
@@ -2706,12 +2586,8 @@
 		CC64F08A1D8B781C009CEF27 /* UABaseTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UABaseTest.h; sourceTree = "<group>"; };
 		CC64F08B1D8B781C009CEF27 /* UAConfigTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAConfigTest.m; sourceTree = "<group>"; };
 		CC64F08C1D8B781C009CEF27 /* UACustomEventTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UACustomEventTest.m; sourceTree = "<group>"; };
-		CC64F08D1D8B781C009CEF27 /* UAMessageCenterStyleTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAMessageCenterStyleTest.m; sourceTree = "<group>"; };
-		CC64F0901D8B781C009CEF27 /* UAMessageCenterActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAMessageCenterActionTest.m; sourceTree = "<group>"; };
 		CC64F09A1D8B781C009CEF27 /* UALegacyInAppMessageTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALegacyInAppMessageTest.m; sourceTree = "<group>"; };
 		CC64F09B1D8B781C009CEF27 /* UALegacyInAppMessagingTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALegacyInAppMessagingTest.m; sourceTree = "<group>"; };
-		CC64F09D1D8B781C009CEF27 /* UAInboxAPIClientTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxAPIClientTest.m; sourceTree = "<group>"; };
-		CC64F09F1D8B781C009CEF27 /* UAInboxMessageTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxMessageTest.m; sourceTree = "<group>"; };
 		CC64F0A11D8B781C009CEF27 /* UAInstallAttributionEventTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInstallAttributionEventTest.m; sourceTree = "<group>"; };
 		CC64F0A21D8B781C009CEF27 /* UAInteractiveNotificationEventTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInteractiveNotificationEventTest.m; sourceTree = "<group>"; };
 		CC64F0A31D8B781C009CEF27 /* UAirshipTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAirshipTest.m; sourceTree = "<group>"; };
@@ -2733,8 +2609,6 @@
 		CC64F0BC1D8B781C009CEF27 /* UAScheduleTriggerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAScheduleTriggerTests.m; sourceTree = "<group>"; };
 		CC64F0BE1D8B781C009CEF27 /* UAShareActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAShareActionTest.m; sourceTree = "<group>"; };
 		CC64F0BF1D8B781C009CEF27 /* UATagActionsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UATagActionsTest.m; sourceTree = "<group>"; };
-		CC64F0C31D8B781C009CEF27 /* UAUserAPIClientTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAUserAPIClientTest.m; sourceTree = "<group>"; };
-		CC64F0C41D8B781C009CEF27 /* UAUserTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAUserTest.m; sourceTree = "<group>"; };
 		CC64F0C61D8B781C009CEF27 /* UAUtilsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAUtilsTest.m; sourceTree = "<group>"; };
 		CC64F0C71D8B781C009CEF27 /* UAJavaScriptCommandTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAJavaScriptCommandTest.m; sourceTree = "<group>"; };
 		CC64F0C91D8B781C009CEF27 /* UAURLAllowListTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAURLAllowListTest.m; sourceTree = "<group>"; };
@@ -3011,36 +2885,6 @@
 			path = Public;
 			sourceTree = "<group>";
 		};
-		1BAE376624F55A340095C6E3 /* Public */ = {
-			isa = PBXGroup;
-			children = (
-				1B281EDB24F6AB8100FDC188 /* AirshipMessageCenterLib.h */,
-				1B8DCF612507BDA60006E595 /* UAMessageCenterListViewDelegate.h */,
-				1B8DCF602507BDA60006E595 /* UAMessageCenterLocalization.h */,
-				1B8DCF5F2507BDA60006E595 /* UAMessageCenterMessageViewDelegate.h */,
-				1B8DCF622507BDA60006E595 /* UAMessageCenterStyle.h */,
-				3CA0E312237E396100EE76CF /* UAMessageCenterAction.h */,
-				3C13BFBE2384B0BB0071E80C /* UAAirshipMessageCenterCoreImport.h */,
-				3CA0E326237E396100EE76CF /* UAMessageCenterSDKModule.h */,
-				3C45B05B23E11D8A004B9590 /* UADefaultMessageCenterListViewController.h */,
-				3C45B05A23E11D8A004B9590 /* UADefaultMessageCenterMessageViewController.h */,
-				3C45B05E23E11D8A004B9590 /* UADefaultMessageCenterSplitViewController.h */,
-				3CA0E310237E396100EE76CF /* UADefaultMessageCenterUI.h */,
-				3CA0E31B237E396100EE76CF /* UAMessageCenterDateUtils.h */,
-				3CA0E33E237E396100EE76CF /* UAMessageCenterListCell.h */,
-				3CCFD5DD23A082EF001AF966 /* UADefaultMessageCenterSplitViewDelegate.h */,
-				3CA0E327237E396100EE76CF /* UAInboxMessage.h */,
-				3CA0E325237E396100EE76CF /* UAInboxMessageList.h */,
-				3CA0E338237E396100EE76CF /* UAInboxUtils.h */,
-				3CA0E31A237E396100EE76CF /* UAMessageCenterNativeBridgeExtension.h */,
-				3CA0E33D237E396100EE76CF /* UAMessageCenter.h */,
-				3C13BFB82384AD270071E80C /* UAMessageCenterResources.h */,
-				3CA0E339237E396100EE76CF /* UAUser.h */,
-				3CA0E32C237E396100EE76CF /* UAUserData.h */,
-			);
-			path = Public;
-			sourceTree = "<group>";
-		};
 		3C152F5A24E4B2EC00CF1181 /* Auth */ = {
 			isa = PBXGroup;
 			children = (
@@ -3117,11 +2961,7 @@
 			isa = PBXGroup;
 			children = (
 				3CA0E304237E396100EE76CF /* UAInbox.xcdatamodeld */,
-				3C16DA7223E11FB3001499A4 /* UADefaultMessageCenterListViewController.xib */,
-				3C16DA7323E11FB3001499A4 /* UADefaultMessageCenterMessageViewController.xib */,
 				3CA0E307237E396100EE76CF /* UAMessageCenterActions.plist */,
-				3CA0E308237E396100EE76CF /* UAMessageCenterListCell.xib */,
-				3CA0E309237E396100EE76CF /* UAMessageCenterPlaceholderIcon.png */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -3129,94 +2969,20 @@
 		3CA0E30B237E396100EE76CF /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				6E4A466828EF449A00A25617 /* New */,
+				6E4A466328EF448600A25617 /* MessageCenterAPIClient.swift */,
+				6E4A466428EF448600A25617 /* MessageCenterMessage.swift */,
+				6E4A466228EF448600A25617 /* MessageCenterStore.swift */,
+				6E4A468B28EF673800A25617 /* InboxMessageData.swift */,
+				6E4A466028EF447C00A25617 /* MessageCenterUser.swift */,
+				32F68CED28F07C2C00F7F52A /* MessageCenter.swift */,
+				32F68CE828F07C2B00F7F52A /* MessageCenterResources.swift */,
+				32F68CE928F07C2C00F7F52A /* MessageCenterSDKModule.swift */,
+				32F68CF428F07C4800F7F52A /* MessageCenterList.swift */,
 				3C13BFBC2384AE050071E80C /* AirshipMessageCenter.h */,
-				1BAE376624F55A340095C6E3 /* Public */,
-				3CA0E344237E39CB00EE76CF /* Actions */,
-				3CA0E343237E39BC00EE76CF /* Display */,
-				3CA0E341237E399E00EE76CF /* Inbox */,
-				3CA0E345237E39D700EE76CF /* NativeBridge */,
-				3CA0E31F237E396100EE76CF /* UAMessageCenter.m */,
-				3CA0E32A237E396100EE76CF /* UAMessageCenter+Internal.h */,
-				3CA0E30D237E396100EE76CF /* UAMessageCenterSDKModule.m */,
-				3C13BFB92384AD270071E80C /* UAMessageCenterResources.m */,
-				3CA0E340237E399600EE76CF /* User */,
+				6E4A469E28F4A7DF00A25617 /* MessageCenterAction.swift */,
+				6E4A46A028F4AEDF00A25617 /* MessageCenterNativeBridgeExtension.swift */,
 			);
 			path = Source;
-			sourceTree = "<group>";
-		};
-		3CA0E340237E399600EE76CF /* User */ = {
-			isa = PBXGroup;
-			children = (
-				3CA0E317237E396100EE76CF /* UAUser.m */,
-				3CA0E328237E396100EE76CF /* UAUser+Internal.h */,
-				3CA0E324237E396100EE76CF /* UAUserAPIClient.m */,
-				3CA0E32B237E396100EE76CF /* UAUserAPIClient+Internal.h */,
-				3CA0E313237E396100EE76CF /* UAUserData.m */,
-				3CA0E334237E396100EE76CF /* UAUserData+Internal.h */,
-				3CA0E33A237E396100EE76CF /* UAUserDataDAO.m */,
-				3CA0E322237E396100EE76CF /* UAUserDataDAO+Internal.h */,
-			);
-			path = User;
-			sourceTree = "<group>";
-		};
-		3CA0E341237E399E00EE76CF /* Inbox */ = {
-			isa = PBXGroup;
-			children = (
-				3CA0E342237E39A900EE76CF /* Data */,
-				3CA0E321237E396100EE76CF /* UAInboxAPIClient.m */,
-				3CA0E31E237E396100EE76CF /* UAInboxAPIClient+Internal.h */,
-				3CA0E30C237E396100EE76CF /* UAInboxMessage.m */,
-				3CA0E33C237E396100EE76CF /* UAInboxMessage+Internal.h */,
-				3CA0E30F237E396100EE76CF /* UAInboxMessageList.m */,
-				3CA0E320237E396100EE76CF /* UAInboxMessageList+Internal.h */,
-				3CA0E319237E396100EE76CF /* UAInboxUtils.m */,
-			);
-			path = Inbox;
-			sourceTree = "<group>";
-		};
-		3CA0E342237E39A900EE76CF /* Data */ = {
-			isa = PBXGroup;
-			children = (
-				3CA0E335237E396100EE76CF /* UAInboxMessageData.m */,
-				3CA0E323237E396100EE76CF /* UAInboxMessageData+Internal.h */,
-				3CA0E32D237E396100EE76CF /* UAInboxStore.m */,
-				3CA0E33B237E396100EE76CF /* UAInboxStore+Internal.h */,
-				3CA0E330237E396100EE76CF /* UAJSONValueTransformer.m */,
-				3CA0E30E237E396100EE76CF /* UAJSONValueTransformer+Internal.h */,
-			);
-			path = Data;
-			sourceTree = "<group>";
-		};
-		3CA0E343237E39BC00EE76CF /* Display */ = {
-			isa = PBXGroup;
-			children = (
-				1B8DCF6B2507BE0F0006E595 /* UAMessageCenterStyle.m */,
-				3C45B05923E11D8A004B9590 /* UADefaultMessageCenterListViewController.m */,
-				3C45B05D23E11D8A004B9590 /* UADefaultMessageCenterMessageViewController.m */,
-				3C45B05C23E11D8A004B9590 /* UADefaultMessageCenterSplitViewController.m */,
-				3CA0E331237E396100EE76CF /* UADefaultMessageCenterUI.m */,
-				3CA0E333237E396100EE76CF /* UAMessageCenterDateUtils.m */,
-				3CA0E31D237E396100EE76CF /* UAMessageCenterListCell.m */,
-				3CCFD5DE23A082EF001AF966 /* UADefaultMessageCenterSplitViewDelegate.m */,
-			);
-			path = Display;
-			sourceTree = "<group>";
-		};
-		3CA0E344237E39CB00EE76CF /* Actions */ = {
-			isa = PBXGroup;
-			children = (
-				3CA0E32E237E396100EE76CF /* UAMessageCenterAction.m */,
-			);
-			path = Actions;
-			sourceTree = "<group>";
-		};
-		3CA0E345237E39D700EE76CF /* NativeBridge */ = {
-			isa = PBXGroup;
-			children = (
-				3CA0E336237E396100EE76CF /* UAMessageCenterNativeBridgeExtension.m */,
-			);
-			path = NativeBridge;
 			sourceTree = "<group>";
 		};
 		3CF5E7E02554F6150074B2A0 /* Limits */ = {
@@ -3500,14 +3266,6 @@
 				6E2D6AF126B0B64E00B7C226 /* SubscriptionListAPIClientTest.swift */,
 			);
 			name = "Subscription Lists";
-			sourceTree = "<group>";
-		};
-		6E3942261F33DA31003D1C50 /* Data */ = {
-			isa = PBXGroup;
-			children = (
-				6E3942271F33DA52003D1C50 /* UAInboxStoreTest.m */,
-			);
-			name = Data;
 			sourceTree = "<group>";
 		};
 		6E4116852135C4D7005CC871 /* Operations */ = {
@@ -3900,33 +3658,14 @@
 			name = PermissionsManager;
 			sourceTree = "<group>";
 		};
-		6E4A466828EF449A00A25617 /* New */ = {
-			isa = PBXGroup;
-			children = (
-				6E4A467E28EF47C100A25617 /* APIClient */,
-				6E4A466428EF448600A25617 /* MessageCenterMessage.swift */,
-				6E4A466228EF448600A25617 /* MessageCenterStore.swift */,
-				6E4A468B28EF673800A25617 /* InboxMessageData.swift */,
-				6E4A466028EF447C00A25617 /* MessageCenterUser.swift */,
-			);
-			path = New;
-			sourceTree = "<group>";
-		};
 		6E4A466F28EF44F600A25617 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
 				6E4A467828EF453400A25617 /* MessageCenterAPIClientTest.swift */,
 				32F68CDA28F02A6B00F7F52A /* MessageCenterStoreTest.swift */,
+				32F615A628F708980015696D /* MessageCenterListTests.swift */,
 			);
 			path = Tests;
-			sourceTree = "<group>";
-		};
-		6E4A467E28EF47C100A25617 /* APIClient */ = {
-			isa = PBXGroup;
-			children = (
-				6E4A466328EF448600A25617 /* MessageCenterAPIClient.swift */,
-			);
-			path = APIClient;
 			sourceTree = "<group>";
 		};
 		6E57CE3528DBBD8C00287601 /* LiveActivities */ = {
@@ -4573,14 +4312,6 @@
 			name = Forms;
 			sourceTree = "<group>";
 		};
-		6EFB377B2345959C005E4E44 /* NativeBridge */ = {
-			isa = PBXGroup;
-			children = (
-				6EFB377C234595C9005E4E44 /* UAMessageCenterNativeBridgeExtensionTest.m */,
-			);
-			name = NativeBridge;
-			sourceTree = "<group>";
-		};
 		6EFD6D732729D84D005B26F1 /* Environment */ = {
 			isa = PBXGroup;
 			children = (
@@ -4744,33 +4475,6 @@
 			name = Predicate;
 			sourceTree = "<group>";
 		};
-		CC04F2031DCAB3DD00B4842D /* Inbox */ = {
-			isa = PBXGroup;
-			children = (
-				6E3942261F33DA31003D1C50 /* Data */,
-				CC64F09D1D8B781C009CEF27 /* UAInboxAPIClientTest.m */,
-				CC64F09F1D8B781C009CEF27 /* UAInboxMessageTest.m */,
-			);
-			name = Inbox;
-			sourceTree = "<group>";
-		};
-		CC04F2041DCAB46500B4842D /* Actions */ = {
-			isa = PBXGroup;
-			children = (
-				CC64F0901D8B781C009CEF27 /* UAMessageCenterActionTest.m */,
-			);
-			name = Actions;
-			sourceTree = "<group>";
-		};
-		CC04F2051DCAB48000B4842D /* User */ = {
-			isa = PBXGroup;
-			children = (
-				CC64F0C31D8B781C009CEF27 /* UAUserAPIClientTest.m */,
-				CC64F0C41D8B781C009CEF27 /* UAUserTest.m */,
-			);
-			name = User;
-			sourceTree = "<group>";
-		};
 		CC04F2061DCAB4C000B4842D /* Push */ = {
 			isa = PBXGroup;
 			children = (
@@ -4860,19 +4564,6 @@
 				CC64F0BE1D8B781C009CEF27 /* UAShareActionTest.m */,
 			);
 			name = Share;
-			sourceTree = "<group>";
-		};
-		CC04F2121DCAB65800B4842D /* MessageCenter */ = {
-			isa = PBXGroup;
-			children = (
-				CC04F2041DCAB46500B4842D /* Actions */,
-				CC04F2051DCAB48000B4842D /* User */,
-				CC04F2031DCAB3DD00B4842D /* Inbox */,
-				6EFB377B2345959C005E4E44 /* NativeBridge */,
-				CC64F08D1D8B781C009CEF27 /* UAMessageCenterStyleTest.m */,
-				6E746506235FA9B6000BF09C /* UAMessageCenterTest.m */,
-			);
-			name = MessageCenter;
 			sourceTree = "<group>";
 		};
 		CC04F2131DCAB66900B4842D /* InAppMessaging */ = {
@@ -5019,7 +4710,6 @@
 				CC04F2091DCAB4FD00B4842D /* Channel */,
 				CC04F2061DCAB4C000B4842D /* Push */,
 				CC04F20E1DCAB5C600B4842D /* ActionsFramework */,
-				CC04F2121DCAB65800B4842D /* MessageCenter */,
 				CC04F2131DCAB66900B4842D /* InAppMessaging */,
 				CC04F2151DCAB73000B4842D /* Analytics */,
 				CC04F2191DCAB7BE00B4842D /* Utils */,
@@ -5142,41 +4832,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3C45B06423E11D8B004B9590 /* UADefaultMessageCenterSplitViewController.h in Headers */,
-				1B8DCF632507BDA70006E595 /* UAMessageCenterMessageViewDelegate.h in Headers */,
-				3C45B06023E11D8B004B9590 /* UADefaultMessageCenterMessageViewController.h in Headers */,
-				3C45B06123E11D8B004B9590 /* UADefaultMessageCenterListViewController.h in Headers */,
-				3CCFD5DF23A082EF001AF966 /* UADefaultMessageCenterSplitViewDelegate.h in Headers */,
-				32F68CE728F07AD100F7F52A /* UAInboxMessageData+Internal.h in Headers */,
-				3C13BFBA2384AD270071E80C /* UAMessageCenterResources.h in Headers */,
 				3C13BFBD2384AE050071E80C /* AirshipMessageCenter.h in Headers */,
-				3CA0E458237E4CA100EE76CF /* UAMessageCenterAction.h in Headers */,
-				3CA0E459237E4CA100EE76CF /* UADefaultMessageCenterUI.h in Headers */,
-				3CA0E45A237E4CA100EE76CF /* UAMessageCenterDateUtils.h in Headers */,
-				3CA0E45B237E4CA100EE76CF /* UAMessageCenterListCell.h in Headers */,
-				1B281EDC24F6AB8100FDC188 /* AirshipMessageCenterLib.h in Headers */,
-				3CA0E466237E4CA100EE76CF /* UAInboxMessage.h in Headers */,
-				3CA0E468237E4CA100EE76CF /* UAInboxMessageList.h in Headers */,
-				3CA0E46A237E4CA100EE76CF /* UAInboxUtils.h in Headers */,
-				3CA0E46B237E4CA100EE76CF /* UAMessageCenterNativeBridgeExtension.h in Headers */,
-				3CA0E46C237E4CA100EE76CF /* UAUser.h in Headers */,
-				3CA0E46F237E4CA100EE76CF /* UAUserData.h in Headers */,
-				3CA0E472237E4CA100EE76CF /* UAMessageCenter.h in Headers */,
-				3C13BFBF2384B0BB0071E80C /* UAAirshipMessageCenterCoreImport.h in Headers */,
-				3CA0E474237E4CA100EE76CF /* UAMessageCenterSDKModule.h in Headers */,
-				3CA0E463237E4CA100EE76CF /* UAInboxStore+Internal.h in Headers */,
-				1B8DCF652507BDA70006E595 /* UAMessageCenterListViewDelegate.h in Headers */,
-				1B8DCF642507BDA70006E595 /* UAMessageCenterLocalization.h in Headers */,
-				3CA0E464237E4CA100EE76CF /* UAJSONValueTransformer+Internal.h in Headers */,
-				3CA0E465237E4CA100EE76CF /* UAInboxAPIClient+Internal.h in Headers */,
-				3CA0E467237E4CA100EE76CF /* UAInboxMessage+Internal.h in Headers */,
-				3CA0E469237E4CA100EE76CF /* UAInboxMessageList+Internal.h in Headers */,
-				3CA0E46D237E4CA100EE76CF /* UAUser+Internal.h in Headers */,
-				1B8DCF662507BDA70006E595 /* UAMessageCenterStyle.h in Headers */,
-				3CA0E46E237E4CA100EE76CF /* UAUserAPIClient+Internal.h in Headers */,
-				3CA0E470237E4CA100EE76CF /* UAUserData+Internal.h in Headers */,
-				3CA0E471237E4CA100EE76CF /* UAUserDataDAO+Internal.h in Headers */,
-				3CA0E473237E4CA100EE76CF /* UAMessageCenter+Internal.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5478,7 +5134,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3CA0E420237E4A7B00EE76CF /* Build configuration list for PBXNativeTarget "AirshipMessageCenter" */;
 			buildPhases = (
-				3CA0E349237E4A7B00EE76CF /* Generate AirshipMessageCenterLib.h */,
 				3CA0E3A0237E4A7B00EE76CF /* Frameworks */,
 				3CA0E3A1237E4A7B00EE76CF /* Headers */,
 				3CA0E34A237E4A7B00EE76CF /* Sources */,
@@ -5517,7 +5172,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6E43204526EA814F009228AB /* Build configuration list for PBXNativeTarget "AirshipBasement" */;
 			buildPhases = (
-				6E431F6C26EA814F009228AB /* Generate AirshipBasementLib.h */,
 				6E431F6D26EA814F009228AB /* Sources */,
 				6E43202026EA814F009228AB /* Frameworks */,
 				6E43202526EA814F009228AB /* Headers */,
@@ -5536,7 +5190,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6E43212326EA8199009228AB /* Build configuration list for PBXNativeTarget "AirshipBasement tvOS" */;
 			buildPhases = (
-				6E43204B26EA8199009228AB /* Generate AirshipBasementLib.h */,
 				6E43204C26EA8199009228AB /* Sources */,
 				6E4320FF26EA8199009228AB /* Frameworks */,
 				6E43210326EA8199009228AB /* Headers */,
@@ -5649,7 +5302,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = A6722AC3281A9F460033F54D /* Build configuration list for PBXNativeTarget "AirshipBasement watchOS" */;
 			buildPhases = (
-				A6DF51EC2876EB1000A42433 /* Generate AirshipBasementLib.h */,
 				A6722ABA281A9F460033F54D /* Headers */,
 				A6722ABB281A9F460033F54D /* Sources */,
 				A6722ABC281A9F460033F54D /* Frameworks */,
@@ -5858,10 +5510,6 @@
 			files = (
 				3CA0E479237E4E3000EE76CF /* UAInbox.xcdatamodeld in Resources */,
 				3CA0E47B237E4E3000EE76CF /* UAMessageCenterActions.plist in Resources */,
-				3CA0E47C237E4E3000EE76CF /* UAMessageCenterListCell.xib in Resources */,
-				3CA0E47D237E4E3000EE76CF /* UAMessageCenterPlaceholderIcon.png in Resources */,
-				3C16DA7923E11FB3001499A4 /* UADefaultMessageCenterMessageViewController.xib in Resources */,
-				3C16DA7723E11FB3001499A4 /* UADefaultMessageCenterListViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5995,58 +5643,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		3CA0E349237E4A7B00EE76CF /* Generate AirshipMessageCenterLib.h */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Generate AirshipMessageCenterLib.h";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/newOutputFile",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"$SRCROOT\"/AirshipMessageCenter/generate_header_imports.sh\n";
-		};
-		6E431F6C26EA814F009228AB /* Generate AirshipBasementLib.h */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Generate AirshipBasementLib.h";
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/newOutputFile",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"$SRCROOT\"/AirshipBasement/generate_header_imports.sh Public \n";
-		};
-		6E43204B26EA8199009228AB /* Generate AirshipBasementLib.h */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Generate AirshipBasementLib.h";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"$SRCROOT\"/AirshipBasement/generate_header_imports.sh Public \n";
-		};
 		6E845450237E072F007D3B1E /* Generate AirshipAutomationLib.h */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -6065,24 +5661,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"$SRCROOT\"/AirshipAutomation/generate_header_imports.sh\n";
-		};
-		A6DF51EC2876EB1000A42433 /* Generate AirshipBasementLib.h */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Generate AirshipBasementLib.h";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"$SRCROOT\"/AirshipBasement/generate_header_imports.sh Public \n";
 		};
 		D3775F1A08A9BD2223C1AC9E /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -6166,34 +5744,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E4A469F28F4A7DF00A25617 /* MessageCenterAction.swift in Sources */,
 				6E4A466528EF448600A25617 /* MessageCenterStore.swift in Sources */,
-				1B8DCF6C2507BE0F0006E595 /* UAMessageCenterStyle.m in Sources */,
-				3CA0E426237E4BED00EE76CF /* UAMessageCenterAction.m in Sources */,
-				3CA0E428237E4BED00EE76CF /* UADefaultMessageCenterUI.m in Sources */,
-				3C45B05F23E11D8B004B9590 /* UADefaultMessageCenterListViewController.m in Sources */,
-				3CA0E42A237E4BED00EE76CF /* UAMessageCenterDateUtils.m in Sources */,
-				3CA0E42C237E4BED00EE76CF /* UAMessageCenterListCell.m in Sources */,
+				32F68CEF28F07C2C00F7F52A /* MessageCenterSDKModule.swift in Sources */,
+				32F68CEE28F07C2C00F7F52A /* MessageCenterResources.swift in Sources */,
 				6E4A466628EF448600A25617 /* MessageCenterAPIClient.swift in Sources */,
 				32F68CE528F078A100F7F52A /* InboxMessageData.swift in Sources */,
-				3CA0E439237E4BED00EE76CF /* UAInboxStore.m in Sources */,
-				3CA0E43B237E4BED00EE76CF /* UAJSONValueTransformer.m in Sources */,
-				3CA0E43D237E4BED00EE76CF /* UAInboxAPIClient.m in Sources */,
-				3CA0E440237E4BED00EE76CF /* UAInboxMessage.m in Sources */,
-				3CA0E443237E4BED00EE76CF /* UAInboxMessageList.m in Sources */,
-				3CA0E446237E4BED00EE76CF /* UAInboxUtils.m in Sources */,
 				6E4A466128EF447C00A25617 /* MessageCenterUser.swift in Sources */,
-				3CCFD5E023A082EF001AF966 /* UADefaultMessageCenterSplitViewDelegate.m in Sources */,
-				3CA0E448237E4BED00EE76CF /* UAMessageCenterNativeBridgeExtension.m in Sources */,
-				3C45B06223E11D8B004B9590 /* UADefaultMessageCenterSplitViewController.m in Sources */,
-				3CA0E44A237E4BED00EE76CF /* UAUser.m in Sources */,
-				3C13BFBB2384AD270071E80C /* UAMessageCenterResources.m in Sources */,
-				3CA0E44C237E4BED00EE76CF /* UAUserAPIClient.m in Sources */,
-				3CA0E44F237E4BED00EE76CF /* UAUserData.m in Sources */,
-				3CA0E451237E4BED00EE76CF /* UAUserDataDAO.m in Sources */,
+				6E4A46A128F4AEDF00A25617 /* MessageCenterNativeBridgeExtension.swift in Sources */,
+				6E4A468D28EF673800A25617 /* InboxMessageData.swift in Sources */,
 				6E4A466728EF448600A25617 /* MessageCenterMessage.swift in Sources */,
-				3CA0E454237E4BED00EE76CF /* UAMessageCenter.m in Sources */,
-				3C45B06323E11D8B004B9590 /* UADefaultMessageCenterMessageViewController.m in Sources */,
-				3CA0E457237E4BED00EE76CF /* UAMessageCenterSDKModule.m in Sources */,
+				32F68CF328F07C2C00F7F52A /* MessageCenter.swift in Sources */,
+				32F68CF528F07C4900F7F52A /* MessageCenterList.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6527,6 +6089,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				32F615A728F708980015696D /* MessageCenterListTests.swift in Sources */,
+				32F615A828F708AD0015696D /* TestChannel.swift in Sources */,
 				32F68CDC28F02A7100F7F52A /* MessageCenterStoreTest.swift in Sources */,
 				6E4A467928EF453400A25617 /* MessageCenterAPIClientTest.swift in Sources */,
 				6E4A468128EF4FAF00A25617 /* TestAirshipRequestSession.swift in Sources */,
@@ -6658,7 +6222,6 @@
 				6E9B488F2891B57300C905B1 /* CommonSectionView.swift in Sources */,
 				6E2486DF28945D3900657CE4 /* PreferenceCenterState.swift in Sources */,
 				6E1892CD268D17D200417887 /* MockRemoteDataProvider.swift in Sources */,
-				32F68CE628F07ACD00F7F52A /* UAInboxMessageData.m in Sources */,
 				6EB5156E28A42B5800870C5A /* PreferenceCenterResources.swift in Sources */,
 				841E7D12268617C800EA0317 /* PreferenceCenterResponse.swift in Sources */,
 				6E3B230F28A318CD0005D46E /* PreferenceCenterThemeLoader.swift in Sources */,
@@ -7062,14 +6625,12 @@
 				CC64F11A1D8B781C009CEF27 /* UAPasteboardActionTest.m in Sources */,
 				CC64F0FF1D8B781C009CEF27 /* UALegacyInAppMessageTest.m in Sources */,
 				9987672A1FBE6B4200197AF4 /* UAInAppMessageBannerDisplayContentTest.m in Sources */,
-				6E746507235FA9B6000BF09C /* UAMessageCenterTest.m in Sources */,
 				6EC82DB52813122500642596 /* RateLimiterTest.swift in Sources */,
 				A63A567828F457FE004B8951 /* TestWorkRateLimiterActor.swift in Sources */,
 				3C07645825EDEDEE007F425C /* UAStateOverridesTest.m in Sources */,
 				6EC7E47D26A607210038CFDD /* TestTaskManager.swift in Sources */,
 				3230E60B24D04C75002C344D /* UAInAppAudienceHistorianTest.m in Sources */,
 				991A94691FCF2CEF00B57D24 /* UAInAppMessageMediaInfoTest.m in Sources */,
-				6E3942281F33DA52003D1C50 /* UAInboxStoreTest.m in Sources */,
 				CC64F1081D8B781C009CEF27 /* UAirshipTest.m in Sources */,
 				A63A567A28F458A6004B8951 /* TestWorker.swift in Sources */,
 				459D4051209245E500C40E2D /* UAInAppMessageBannerStyleTest.m in Sources */,
@@ -7084,7 +6645,6 @@
 				CC64F1201D8B781C009CEF27 /* UAScheduleActionTests.m in Sources */,
 				6E49D7CD284028C600C7BB9D /* PermissionsManagerTests.swift in Sources */,
 				DFB1EA2022275AF100CDBD7E /* UAInAppMessageAssetsTest.m in Sources */,
-				CC64F0F81D8B781C009CEF27 /* UAMessageCenterActionTest.m in Sources */,
 				CC64F0E61D8B781C009CEF27 /* UAApplicationMetricsTest.m in Sources */,
 				C088383726E0244C00D40838 /* TestURLAllowList.swift in Sources */,
 				6ED735E026C74321003B0A7D /* TagEditorTest.swift in Sources */,
@@ -7132,7 +6692,6 @@
 				6EC7E472269E51030038CFDD /* AttributeUpdateTest.swift in Sources */,
 				6E698E62267C03C700654DB2 /* TestAppStateTracker.swift in Sources */,
 				6ED735E226CAE2D7003B0A7D /* TestChannelRegistrar.swift in Sources */,
-				CC64F1291D8B781C009CEF27 /* UAUserTest.m in Sources */,
 				6ED735E626CAEABC003B0A7D /* TestLocaleManager.swift in Sources */,
 				6E15B70726CE07BD0099C92D /* TestRemoteConfigModuleAdapter.swift in Sources */,
 				CC64F0EB1D8B781C009CEF27 /* UABase64Test.m in Sources */,
@@ -7142,12 +6701,10 @@
 				6E5062B024E23E1C00689C6D /* UAActionScheduleTests.m in Sources */,
 				457366432137084B00C5993A /* UAJSONUtilsTest.m in Sources */,
 				6E739D7F26BAFCB800BC6F6D /* TestChannelBulkUpdateAPIClient.swift in Sources */,
-				CC64F0F61D8B781C009CEF27 /* UAMessageCenterStyleTest.m in Sources */,
 				A615E215264EAFB9004FA211 /* UAPrivacyManagerTest.m in Sources */,
 				6EEAE81824CF9FBF0046E311 /* UAScheduleDeferredDataTest.m in Sources */,
 				3C152F5E24E4B33000CF1181 /* UAAuthTokenAPIClientTest.m in Sources */,
 				CC64F1211D8B781C009CEF27 /* UAScheduleTriggerTests.m in Sources */,
-				CC64F1041D8B781C009CEF27 /* UAInboxMessageTest.m in Sources */,
 				3CF5E8C6255E28980074B2A0 /* UAFrequencyLimitManagerTest.m in Sources */,
 				CC64F0EC1D8B781C009CEF27 /* UACancelSchedulesActionTests.m in Sources */,
 				6E6C3F8D27A26992007F55C7 /* CachedValueTest.swift in Sources */,
@@ -7159,15 +6716,12 @@
 				6EC82DBC2813501800642596 /* TestBackgroundTasks.swift in Sources */,
 				6E87BD9D26DD78CC0005D20D /* DefaultAppIntegrationDelegateTest.swift in Sources */,
 				6E15B73026CF4F6B0099C92D /* TestRemoteDataAPIClient.swift in Sources */,
-				CC64F1021D8B781C009CEF27 /* UAInboxAPIClientTest.m in Sources */,
 				A63A567628F449D8004B8951 /* TestWorkManager.swift in Sources */,
 				6E4116872135C4E4005CC871 /* UARetriablePipelineTest.m in Sources */,
 				3C77BF922016B22900AD37F3 /* UAInAppMessageHTMLDisplayContentTest.m in Sources */,
 				CC64F10B1D8B781C009CEF27 /* UAJSONValueMatcherTests.m in Sources */,
-				6EFB377D234595C9005E4E44 /* UAMessageCenterNativeBridgeExtensionTest.m in Sources */,
 				6E87BD9F26DDDB250005D20D /* AppIntegrationTests.swift in Sources */,
 				CC64F12B1D8B781C009CEF27 /* UAJavaScriptCommandTest.m in Sources */,
-				CC64F1281D8B781C009CEF27 /* UAUserAPIClientTest.m in Sources */,
 				6EC82DBA28134FC200642596 /* TaskManagerTest.swift in Sources */,
 				6E2D6AF626B0C6CA00B7C226 /* TestSubscriptionListAPIClient.swift in Sources */,
 				DFD442B61FD892AE002E4FA1 /* UAInAppMessageTagSelectorTest.m in Sources */,
@@ -7678,10 +7232,6 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				"OTHER_CFLAGS[arch=*]" = (
-					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
-					"$(inherited)",
-				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-weak_framework",
@@ -7716,10 +7266,6 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				"OTHER_CFLAGS[arch=*]" = (
-					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
-					"$(inherited)",
-				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-weak_framework",
@@ -7752,10 +7298,6 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				"OTHER_CFLAGS[arch=*]" = (
-					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
-					"$(inherited)",
-				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-weak_framework",
@@ -7787,10 +7329,6 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				"OTHER_CFLAGS[arch=*]" = (
-					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
-					"$(inherited)",
-				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-weak_framework",
@@ -7813,7 +7351,6 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
@@ -7857,11 +7394,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = (
-					"-D_UA_USE_MODULE_AIRSHIP_IMPORTS=\"YES\"",
-					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
-					"$(inherited)",
-				);
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -7883,7 +7415,6 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
@@ -7921,14 +7452,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (
-					"-D_UA_USE_MODULE_AIRSHIP_IMPORTS=\"YES\"",
-					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
-					"$(inherited)",
-				);
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TVOS_DEPLOYMENT_TARGET = 14.0;
@@ -7958,19 +7483,9 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				"OTHER_CFLAGS[arch=*]" = (
-					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
-					"$(inherited)",
-				);
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"-weak_framework",
-					PassKit,
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.urbanairship.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				VALID_ARCHS = "$(inherited) x86_64";
 			};
 			name = Debug;
@@ -7993,15 +7508,6 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				"OTHER_CFLAGS[arch=*]" = (
-					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
-					"$(inherited)",
-				);
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"-weak_framework",
-					PassKit,
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.urbanairship.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -8014,6 +7520,7 @@
 			baseConfigurationReference = CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -8027,15 +7534,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				"OTHER_CFLAGS[arch=*]" = (
-					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
-					"$(inherited)",
-				);
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"-weak_framework",
-					PassKit,
-				);
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.urbanairship.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -8049,6 +7548,7 @@
 			baseConfigurationReference = CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -8061,15 +7561,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				"OTHER_CFLAGS[arch=*]" = (
-					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
-					"$(inherited)",
-				);
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"-weak_framework",
-					PassKit,
-				);
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.urbanairship.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -8082,6 +7574,7 @@
 			baseConfigurationReference = CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				DEFINES_MODULE = YES;
@@ -8096,10 +7589,6 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
-				);
-				"OTHER_CFLAGS[arch=*]" = (
-					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
-					"$(inherited)",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipBasement;
@@ -8116,6 +7605,7 @@
 			baseConfigurationReference = CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				DEFINES_MODULE = YES;
@@ -8129,10 +7619,6 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
-				);
-				"OTHER_CFLAGS[arch=*]" = (
-					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
-					"$(inherited)",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipBasement;
@@ -8215,6 +7701,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				DEFINES_MODULE = YES;
@@ -8228,10 +7715,6 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
-				);
-				"OTHER_CFLAGS[arch=*]" = (
-					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
-					"$(inherited)",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -8250,6 +7733,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				DEFINES_MODULE = YES;
@@ -8262,10 +7746,6 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
-				);
-				"OTHER_CFLAGS[arch=*]" = (
-					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
-					"$(inherited)",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -8543,6 +8023,7 @@
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
@@ -8569,6 +8050,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipBasement;
 				PRODUCT_NAME = AirshipBasement;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -8588,6 +8070,7 @@
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
@@ -8612,6 +8095,7 @@
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipBasement;
 				PRODUCT_NAME = AirshipBasement;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -8631,6 +8115,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
@@ -8670,6 +8155,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
@@ -8719,11 +8205,6 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				"OTHER_CFLAGS[arch=*]" = (
-					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
-					"$(inherited)",
-				);
-				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipCore;
 				PRODUCT_NAME = AirshipCore;
 				SDKROOT = appletvos;
@@ -8752,11 +8233,6 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				"OTHER_CFLAGS[arch=*]" = (
-					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
-					"$(inherited)",
-				);
-				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipCore;
 				PRODUCT_NAME = AirshipCore;
 				SDKROOT = appletvos;

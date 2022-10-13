@@ -36,9 +36,6 @@ public class AirshipRequestSession {
         ]
     }
 
-
-
-
     /// Performs an HTTP request
     /// - Parameters:
     ///    - request: The request

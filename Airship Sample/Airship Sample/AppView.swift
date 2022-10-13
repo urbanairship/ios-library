@@ -31,7 +31,7 @@ struct AppView: View {
                         systemImage: "tray.fill"
                     )
                 }
-                .badgeCompat(self.appState.messageCount)
+                .badgeCompat(self.appState.unreadCount)
                 .onAppear {
                     Airship.analytics.trackScreen("message_center")
                 }

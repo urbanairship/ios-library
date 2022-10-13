@@ -90,17 +90,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate, DeepLinkDelegate, Message
         }
     }
 
-    func displayMessageCenter(forMessageID messageID: String, animated: Bool) {
+    func displayMessageCenter(forMessageID messageID: String) {
         AppState.shared.messageID = messageID
         AppState.shared.selectedTab = .messageCenter
     }
 
-    func displayMessageCenter(animated: Bool) {
+    func displayMessageCenter() {
         AppState.shared.messageID = nil
         AppState.shared.selectedTab = .messageCenter
     }
 
-    func dismissMessageCenter(animated: Bool) {
+    func dismissMessageCenter() {
     }
 
     func openPreferenceCenter(_ preferenceCenterID: String) -> Bool {

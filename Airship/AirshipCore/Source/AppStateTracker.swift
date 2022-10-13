@@ -61,9 +61,12 @@ open class AppStateTracker: NSObject, AppStateTrackerDelegate, AppStateTrackerPr
     public func applicationDidBecomeActive() {
         notificationCenter.post(name: AppStateTracker.didBecomeActiveNotification, object: nil)
 
-        if !isForegrounded {
+        if (!isForegrounded) {
             isForegrounded = true
-            notificationCenter.post(name: AppStateTracker.didTransitionToForeground, object: nil)
+            notificationCenter.post(
+                name: AppStateTracker.didTransitionToForeground,
+                object: nil
+            )
         }
     }
 

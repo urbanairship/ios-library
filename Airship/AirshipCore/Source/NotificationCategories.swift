@@ -182,7 +182,10 @@ public class NotificationCategories : NSObject {
                                                                moduleBundle: AirshipCoreResources.bundle,
                                                                defaultValue: title)
             }
-            return localizedTitle
+            if let localizedTitle = localizedTitle,
+               !localizedTitle.isEmpty {
+                return localizedTitle
+            }
         }
 
         return title

@@ -11,7 +11,7 @@ final class MessageCenterStoreTest: XCTestCase {
     private var dataStore = PreferenceDataStore(appKey: UUID().uuidString)
     private lazy var config = RuntimeConfig(config: Config(), dataStore: dataStore)
     private lazy var store: MessageCenterStore = {
-        let modelURL = MessageCenterResources.bundle().url(forResource: "UAInbox", withExtension: "momd")
+        let modelURL = MessageCenterResources.bundle?.url(forResource: "UAInbox", withExtension: "momd")
         if let modelURL = modelURL {
             let storeName = String(format: "Inbox-%@.sqlite", self.config.appKey)
             let coreData = UACoreData(modelURL: modelURL, inMemory: true, stores: [storeName])
@@ -51,43 +51,44 @@ final class MessageCenterStoreTest: XCTestCase {
         requiredUpdate = await store.userRequiredUpdate
         XCTAssertFalse(requiredUpdate)
     }
-
+    
     func testFetchMessages() async throws {
-        let messages = generateMessages(3)
-
+        let messages = MessageCenterMessage.generateMessages(3)
+        
+        try await store.updateMessages(
+            messages: messages,
+            lastModifiedTime: ""
+        )
+    }
+    
+    func testSyncMessages() async throws {
+        let generated = MessageCenterMessage.generateMessages(5)
+        var messages = Array(generated[0...2])
+        
         try await store.updateMessages(
             messages: messages,
             lastModifiedTime: ""
         )
         
-    }
-
-    func testSyncMessages() async throws {
-        let generated = generateMessages(5)
-        var messages = Array(generated[0...2])
-
-        try await store.updateMessages(
-            messages: messages,
-            lastModifiedTime: ""
-        )
-
         var fetchedMessage = await store.messages
         XCTAssertEqual(messages, fetchedMessage)
-
+        
         messages.remove(at: 0)
         messages.append(contentsOf: generated[3...4])
-
+        
         try await store.updateMessages(
             messages: messages,
             lastModifiedTime: ""
         )
-
+        
         fetchedMessage = await store.messages
         XCTAssertEqual(messages, fetchedMessage)
     }
+}
 
-
-    func generateMessage(
+extension MessageCenterMessage {
+    
+    class func generateMessage(
         sentDate: Date = Date(),
         expiry: Date? = nil
     ) -> MessageCenterMessage {
@@ -104,12 +105,13 @@ final class MessageCenterStoreTest: XCTestCase {
             rawMessageObject: [:]
         )
     }
-
-    func generateMessages(_ count: Int) -> [MessageCenterMessage] {
+    
+    class func generateMessages(_ count: Int) -> [MessageCenterMessage] {
         // Sets the sent date to make the order predictable
         let date = Date()
         return (0..<count).map { index in
             generateMessage(sentDate: date.addingTimeInterval(Double(-index)))
         }
     }
+    
 }

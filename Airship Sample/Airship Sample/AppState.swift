@@ -16,7 +16,7 @@ class AppState: ObservableObject {
     var messageID: String? = nil
 
     @Published
-    var messageCount = 0;
+    var unreadCount = 0;
 
     @Published
     var toastMessage: Toast.Message?
@@ -25,11 +25,10 @@ class AppState: ObservableObject {
 
     init() {
         if (Airship.isFlying) {
-            self.messageCount = MessageCenter.shared.messageList.unreadCount
-            NotificationCenter.default
-                .publisher(for: NSNotification.Name.UAInboxMessageListUpdated)
-                .sink { _ in
-                    self.messageCount = MessageCenter.shared.messageList.unreadCount
+            MessageCenter.shared.inbox.unreadCountPublisher
+                .receive(on: RunLoop.main)
+                .sink { unreadCount in
+                    self.unreadCount = unreadCount
                 }
                 .store(in: &self.subscriptions)
         }
