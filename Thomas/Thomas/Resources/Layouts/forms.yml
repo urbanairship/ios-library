@@ -99,6 +99,8 @@ view:
                           view:
                             identifier: 52fd50d9-c899-4887-8210-9669cb27188c
                             type: radio_input_controller
+                            attribute_name:
+                                channel: HowSatisfiedAreYou
                             event_handlers:
                                 - type: form_input
                                   state_actions:
@@ -118,6 +120,7 @@ view:
                                           width: auto
                                         view:
                                           reporting_value: very_satisfied
+                                          attribute_value: VerySatisfied
                                           style:
                                             bindings:
                                               selected:
@@ -185,6 +188,7 @@ view:
                                           width: auto
                                         view:
                                           reporting_value: satisfied
+                                          attribute_value: Satisfied
                                           style:
                                             bindings:
                                               selected:
@@ -252,6 +256,7 @@ view:
                                           width: auto
                                         view:
                                           reporting_value: eh
+                                          attribute_value: Eh
                                           style:
                                             bindings:
                                               selected:
@@ -319,6 +324,7 @@ view:
                                           width: auto
                                         view:
                                           reporting_value: dissatisfied
+                                          attribute_value: Dissatisfied
                                           style:
                                             bindings:
                                               selected:
@@ -386,6 +392,7 @@ view:
                                           width: auto
                                         view:
                                           reporting_value: very_dissatisfied
+                                          attribute_value: VeryDissatisfied
                                           style:
                                             bindings:
                                               selected:
