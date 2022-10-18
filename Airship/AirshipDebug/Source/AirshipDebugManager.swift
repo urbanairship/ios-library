@@ -78,6 +78,8 @@ public class AirshipDebugManager : NSObject, Component {
                 self.eventDataManager.saveEvent(airshipEvent)
                 self.eventReceivedSubject.send(airshipEvent)
             }
+
+        self.observePayloadEvents()
     }
     
     func pushNotifications() async -> [PushNotification] {
