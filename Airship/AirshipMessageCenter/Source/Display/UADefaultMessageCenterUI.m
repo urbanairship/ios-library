@@ -91,12 +91,11 @@
                           completion:(void(^)(void))completionHandler {
     if (!self.splitViewController) {
         [self createSplitViewController];
-        
         self.messageCenterWindow = [UAUtils presentInNewWindow:self.splitViewController];
-    } else {
-        if (completionHandler) {
-            completionHandler();
-        }
+    }
+
+    if (completionHandler) {
+        completionHandler();
     }
 }
 
