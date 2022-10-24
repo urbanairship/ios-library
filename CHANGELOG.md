@@ -3,6 +3,16 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 16.10.0 October 24, 2022
+
+Adds support for live activity and custom Airship domains.
+
+## Changes
+- Adds support for live activities (when built with Xcode 14.1+)
+- Adds support for setting the initialConfigURL when using custom domains
+- Fixed OOTB Message Center deep linking to a Message on first display
+- Fixed logging live activities update as an error instead of debug
+
 ## Version 16.10.0-beta October 6, 2022
 
 Beta release for SDK 16.10.0 that adds support for live activities. To support live activities, you must call restore once after takeOff during `application(_:didFinishLaunchingWithOptions:)` with all the live activity types that you
