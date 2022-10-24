@@ -13,7 +13,9 @@ class SubscriptionListAPIClientTest: XCTestCase {
     var client: SubscriptionListAPIClient!
 
     override func setUpWithError() throws {
-        self.config = RuntimeConfig(config: Config(), dataStore: PreferenceDataStore(appKey: UUID().uuidString))
+        let airshipConfig = Config()
+        airshipConfig.requireInitialRemoteConfigEnabled = false
+        self.config = RuntimeConfig(config: airshipConfig, dataStore: PreferenceDataStore(appKey: UUID().uuidString))
         self.session = TestRequestSession.init()
         self.client = SubscriptionListAPIClient(config: self.config, session: self.session)
     }

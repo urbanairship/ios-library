@@ -26,6 +26,7 @@
         config.site = UACloudSiteUS;
         config.developmentAppKey = @"test-app-key";
         config.developmentAppSecret = @"test-app-secret";
+        config.requireInitialRemoteConfigEnabled = false;
         _config = [[UARuntimeConfig alloc] initWithConfig:config dataStore:self.dataStore];
     }
     

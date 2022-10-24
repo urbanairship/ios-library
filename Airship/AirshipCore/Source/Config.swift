@@ -230,9 +230,15 @@ public class Config: NSObject, NSCopying {
     
     /// If set to `true`, the SDK will wait for an initial remote config instead of falling back on default API URLs.
     ///
-    /// Defaults to `false`.
+    /// Defaults to `true`.
     @objc
-    public var requireInitialRemoteConfigEnabled = false
+    public var requireInitialRemoteConfigEnabled = true
+
+    /// The Airship URL used to pull the initial config. This should only be set
+    /// if you are using custom domains that forward to Airship.
+    ///
+    @objc
+    public var initialConfigURL: String?
 
     /// The Airship device API url.
     ///
@@ -359,6 +365,7 @@ public class Config: NSObject, NSCopying {
         defaultAppSecret = config.defaultAppSecret
         deviceAPIURL = config.deviceAPIURL
         remoteDataAPIURL = config.remoteDataAPIURL
+        initialConfigURL = config.initialConfigURL
         chatWebSocketURL = config.chatWebSocketURL
         chatURL = config.chatURL
         analyticsURL = config.analyticsURL
@@ -416,6 +423,7 @@ public class Config: NSObject, NSCopying {
                 Analytics URL: %@\n\
                 Device API URL: %@\n\
                 Remote Data API URL: %@\n\
+                Initial config URL: %@\n\
                 Automatic Setup Enabled: %d\n\
                 Clear user on Application Restore: %d\n\
                 URL Accepts List: %@\n\
@@ -430,7 +438,7 @@ public class Config: NSObject, NSCopying {
                 Use iTunes ID: %@\n\
                 Site:  %ld\n\
                 Enabled features  %ld\n
-                """, inProduction, inProduction, appKey, appSecret, logLevel.rawValue, defaultAppKey, defaultAppSecret, developmentAppKey ?? "", developmentAppSecret ?? "", developmentLogLevel.rawValue, productionAppKey ?? "", productionAppSecret ?? "", productionLogLevel.rawValue, detectProvisioningMode, requestAuthorizationToUseNotifications ? "YES" : "NO", suppressAllowListError ? "YES" : "NO", requireInitialRemoteConfigEnabled ? "YES" : "NO", isAnalyticsEnabled, analyticsURL ?? "", deviceAPIURL ?? "", remoteDataAPIURL ?? "", isAutomaticSetupEnabled, clearUserOnAppRestore, urlAllowList , urlAllowListScopeJavaScriptInterface, urlAllowListScopeOpenURL, clearNamedUserOnAppRestore, isChannelCaptureEnabled, customConfig, isChannelCreationDelayEnabled, isExtendedBroadcastsEnabled, messageCenterStyleConfig ?? "", itunesID ?? "", site.rawValue, enabledFeatures.rawValue)
+                """, inProduction, inProduction, appKey, appSecret, logLevel.rawValue, defaultAppKey, defaultAppSecret, developmentAppKey ?? "", developmentAppSecret ?? "", developmentLogLevel.rawValue, productionAppKey ?? "", productionAppSecret ?? "", productionLogLevel.rawValue, detectProvisioningMode, requestAuthorizationToUseNotifications ? "YES" : "NO", suppressAllowListError ? "YES" : "NO", requireInitialRemoteConfigEnabled ? "YES" : "NO", isAnalyticsEnabled, analyticsURL ?? "", deviceAPIURL ?? "", remoteDataAPIURL ?? "", initialConfigURL ?? "", isAutomaticSetupEnabled, clearUserOnAppRestore, urlAllowList , urlAllowListScopeJavaScriptInterface, urlAllowListScopeOpenURL, clearNamedUserOnAppRestore, isChannelCaptureEnabled, customConfig, isChannelCreationDelayEnabled, isExtendedBroadcastsEnabled, messageCenterStyleConfig ?? "", itunesID ?? "", site.rawValue, enabledFeatures.rawValue)
         }
     }
 

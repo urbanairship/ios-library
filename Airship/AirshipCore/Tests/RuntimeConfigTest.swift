@@ -12,6 +12,7 @@ class RuntimeConfigTest: XCTestCase {
     func testUSSiteURLS() throws {
         let appConfig = Config()
         appConfig.site = .us
+        appConfig.requireInitialRemoteConfigEnabled = false
         
         let config = RuntimeConfig(config: appConfig, dataStore: self.dataStore)
         XCTAssertEqual("https://device-api.urbanairship.com", config.deviceAPIURL)
@@ -22,6 +23,7 @@ class RuntimeConfigTest: XCTestCase {
     func testEUSiteURLS() throws {
         let appConfig = Config()
         appConfig.site = .eu
+        appConfig.requireInitialRemoteConfigEnabled = false
         
         let config = RuntimeConfig(config: appConfig, dataStore: self.dataStore)
         XCTAssertEqual("https://device-api.asnapieu.com", config.deviceAPIURL);
@@ -40,6 +42,24 @@ class RuntimeConfigTest: XCTestCase {
         XCTAssertEqual("cool://analytics", config.analyticsURL)
         XCTAssertEqual("cool://remote", config.remoteDataAPIURL)
     }
+
+    func testInitialConfigURL() throws {
+        let appConfig = Config()
+        appConfig.initialConfigURL = "cool://remote"
+
+        let config = RuntimeConfig(config: appConfig, dataStore: self.dataStore)
+        XCTAssertEqual("cool://remote", config.remoteDataAPIURL)
+    }
+
+    func testInitialConfigURLOverridesRemoteDataAPIURL() throws {
+        let appConfig = Config()
+        appConfig.initialConfigURL = "cool://remote-good"
+        appConfig.remoteDataAPIURL = "cool://remote-bad"
+
+        let config = RuntimeConfig(config: appConfig, dataStore: self.dataStore)
+        XCTAssertEqual("cool://remote-good", config.remoteDataAPIURL)
+    }
+
     
     func testRequireInitialRemoteConfigEnabled() throws {
         let appConfig = Config()
