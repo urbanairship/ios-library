@@ -297,6 +297,7 @@ fileprivate struct MessageListResponse: Decodable {
         let messageExpiration: String?
         let title: String
         let extra: AirshipJSON?
+        let icons: AirshipJSON?
         let unread: Bool
 
         private enum CodingKeys: String, CodingKey {
@@ -309,6 +310,7 @@ fileprivate struct MessageListResponse: Decodable {
             case messageSent = "message_sent"
             case messageExpiration = "message_expiry"
             case extra = "extra"
+            case icons = "icons"
             case messageReporting = "message_reporting"
         }
     }
