@@ -48,8 +48,7 @@ public class Airship : NSObject {
     public static let airshipReadyPayloadVersion = "payload_version"
     
     /// User defualts key to clear the keychain of Airship values for one app run. Used for testing. :nodoc:
-    @objc
-    public static let resetKeyChainKey = "com.urbanairship.reset_keychain"
+    private static let resetKeychainKey = "com.urbanairship.reset_keychain"
     
     /// A flag that checks if the Airship instance is available. `true` if available, otherwise `false`.
     @objc
@@ -302,11 +301,21 @@ public class Airship : NSObject {
         
         AirshipLogger.info("Airship TakeOff! SDK Version \(AirshipVersion.get()), App Key: \(resolvedConfig.appKey), inProduction: \(resolvedConfig.inProduction)")
         
-        // Clearing the key chain
-        if (UserDefaults.standard.bool(forKey: resetKeyChainKey) == true) {
+        // Clearing the keychain
+        if (UserDefaults.standard.bool(forKey: resetKeychainKey) == true) {
+            let keychainAccess = AirshipKeychainAccess(
+                appKey: resolvedConfig.appKey
+            )
+
+            // This only clears the user credentials for message center
+            keychainAccess.deleteCredentials(
+                identifier: resolvedConfig.appKey
+            )
+
             AirshipLogger.debug("Deleting the keychain credentials")
-            UAKeychainUtils.deleteKeychainValue(resolvedConfig.appKey)
-            UserDefaults.standard.removeObject(forKey: resetKeyChainKey)
+            UserDefaults.standard.removeObject(
+                forKey: resetKeychainKey
+            )
         }
         
         _shared = Airship(instance: AirshipInstance(config: resolvedConfig))

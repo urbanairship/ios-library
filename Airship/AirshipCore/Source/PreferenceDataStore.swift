@@ -19,8 +19,12 @@ public class PreferenceDataStore : NSObject {
     private let lock = Lock()
     private let dispatcher: UADispatcher
 
+
     lazy var isAppRestore: Bool = {
-        let deviceID = UAKeychainUtils.getDeviceID()
+        let deviceID = AirshipKeychainAccess(
+            appKey: self.appKey
+        ).deviceID
+
         let previousDeviceID = self.string(forKey: PreferenceDataStore.deviceIDKey)
         if (deviceID == previousDeviceID) {
             return false
@@ -280,3 +284,30 @@ public class PreferenceDataStore : NSObject {
     }
 }
 
+
+
+extension AirshipKeychainAccess {
+    var deviceID: String? {
+        let deviceID = self.readCredentialsSync(
+            identifier: "com.urbanairship.deviceID"
+        )?.password
+
+        if let deviceID = deviceID {
+            return deviceID
+        }
+
+        let newDeviceID = UUID().uuidString
+        self.writeCredentials(
+            AirshipKeychainCredentials(
+                username: "airship",
+                password: UUID().uuidString
+            ),
+            identifier: "com.urbanairship.deviceID"
+        ) { result in
+            if (!result) {
+                AirshipLogger.error("Unable to save device ID")
+            }
+        }
+        return newDeviceID
+    }
+}

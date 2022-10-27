@@ -17,6 +17,7 @@
 @property (nonatomic, strong) UARuntimeConfig *config;
 @property (nonatomic, strong) UADispatcher *backgroundDispatcher;
 @property (strong) UAUserData *userData;
+@property (strong) UAirshipKeychainAccess *keychainAccess;
 @end
 
 @implementation UAUserDataDAO
@@ -27,6 +28,7 @@
     if (self) {
         self.config = config;
         self.backgroundDispatcher = UADispatcher.global;
+        self.keychainAccess = [[UAirshipKeychainAccess alloc] initWithAppKey:config.appKey];
     }
 
     return self;
@@ -44,17 +46,16 @@
         UA_STRONGIFY(self)
 
         @synchronized (self) {
-            if (self.userData) {
-                userData = self.userData;
-                return;
+            if (!self.userData) {
+                UAirshipKeychainCredentials *credentials = [self.keychainAccess readCredentialsSyncWithIdentifier:self.config.appKey];
+
+                if (credentials) {
+                    self.userData = [UAUserData dataWithUsername:credentials.username
+                                                        password:credentials.password];
+                }
             }
 
-            NSString *username = [UAKeychainUtils getUsername:self.config.appKey];
-            NSString *password = [UAKeychainUtils getPassword:self.config.appKey];
-
-            if (username && password) {
-                self.userData = userData = [UAUserData dataWithUsername:username password:password];
-            }
+            userData = self.userData;
         }
     }];
 
@@ -101,27 +102,19 @@
  * Save username and password data to disk.
  */
 - (void)saveUserData:(UAUserData *)data completionHandler:(void (^)(BOOL))completionHandler {
-    UA_WEAKIFY(self)
-    [self getUserData:^(UAUserData *savedData) {
-        UA_STRONGIFY(self)
-        if (!savedData) {
-            // No username object stored in the keychain for this app, so let's create it
-            if (![UAKeychainUtils createKeychainValueForUsername:data.username withPassword:data.password forIdentifier:self.config.appKey]) {
-                UA_LERR(@"Save failed: unable to create keychain for username.");
-                return completionHandler(NO);
-            }
-        }
+    UAirshipKeychainCredentials *credentials = [[UAirshipKeychainCredentials alloc] initWithUsername:data.username
+                                                                                            password:data.password];
 
-        @synchronized (self) {
+    [self.keychainAccess writeCredentials:credentials
+                               identifier:self.config.appKey
+                        completionHandler:^(BOOL success) {
+        if (success) {
             self.userData = data;
-
-            // Update keychain with latest username and password
-            [UAKeychainUtils updateKeychainValueForUsername:data.username
-                                               withPassword:data.password
-                                              forIdentifier:self.config.appKey];
+            completionHandler(YES);
+        } else {
+            UA_LERR(@"Save failed: unable to create keychain for username.");
+            completionHandler(NO);
         }
-
-        completionHandler(YES);
     }];
 }
 
@@ -131,7 +124,7 @@
         UA_STRONGIFY(self)
         UA_LDEBUG(@"Deleting the keychain credentials");
         @synchronized (self) {
-            [UAKeychainUtils deleteKeychainValue:self.config.appKey];
+            [self.keychainAccess deleteCredentialsWithIdentifier:self.config.appKey];
             self.userData = nil;
         }
     }];

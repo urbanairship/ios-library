@@ -4,7 +4,6 @@
 #import "UAUser+Internal.h"
 #import "UAUserAPIClient+Internal.h"
 #import "UAUserData+Internal.h"
-#import "UAKeychainUtils.h"
 #import "AirshipTests-Swift.h"
 
 @import AirshipCore;

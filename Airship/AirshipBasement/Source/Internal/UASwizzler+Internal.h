@@ -40,7 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Swizzles a protocol method.
- * @param class The class.
+ * @param clazz The class.
  * @param selector The selector to swizzle.
  * @param protocol The selector's protocol.
  * @param implementation The implmentation to replace the method with.
@@ -52,7 +52,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Swizzles a class or instance method.
- * @param class The class.
+ * @param clazz The class.
  * @param selector The selector to swizzle.
  * @param implementation The implmentation to replace the method with.
  */
