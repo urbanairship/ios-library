@@ -662,8 +662,8 @@ struct ImageURLModel: Decodable, Equatable {
 enum Icon: String, Decodable, Equatable {
     case close
     case checkmark
-    case leftArrow
-    case rightArrow
+    case forwardArrow = "forward_arrow"
+    case backArrow = "back_arrow"
 }
 
 struct IconModel: Decodable, Equatable {
