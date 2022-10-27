@@ -12,28 +12,53 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Factory method.
- *
- * @param class The class to swizzle.
- * @return A UASwizzler instance.
  */
-+ (instancetype)swizzlerForClass:(Class)class;
++ (instancetype)swizzler;
 
 /**
  * Swizzles a protocol method.
- *
+ * @param instance The instance.
  * @param selector The selector to swizzle.
  * @param protocol The selector's protocol.
  * @param implementation The implmentation to replace the method with.
  */
-- (void)swizzle:(SEL)selector protocol:(Protocol *)protocol implementation:(IMP)implementation;
+- (void)swizzleInstance:(id)instance
+               selector:(SEL)selector
+               protocol:(Protocol *)protocol
+         implementation:(IMP)implementation;
 
 /**
  * Swizzles a class or instance method.
- *
+ * @param instance The instance.
  * @param selector The selector to swizzle.
  * @param implementation The implmentation to replace the method with.
  */
-- (void)swizzle:(SEL)selector implementation:(IMP)implementation;
+- (void)swizzleInstance:(id)instance
+               selector:(SEL)selector
+         implementation:(IMP)implementation;
+
+
+/**
+ * Swizzles a protocol method.
+ * @param class The class.
+ * @param selector The selector to swizzle.
+ * @param protocol The selector's protocol.
+ * @param implementation The implmentation to replace the method with.
+ */
+- (void)swizzleClass:(Class)clazz
+            selector:(SEL)selector
+            protocol:(Protocol *)protocol
+      implementation:(IMP)implementation;
+
+/**
+ * Swizzles a class or instance method.
+ * @param class The class.
+ * @param selector The selector to swizzle.
+ * @param implementation The implmentation to replace the method with.
+ */
+- (void)swizzleClass:(Class)clazz
+            selector:(SEL)selector
+      implementation:(IMP)implementation;
 
 /**
  * Unswizzles all methods.

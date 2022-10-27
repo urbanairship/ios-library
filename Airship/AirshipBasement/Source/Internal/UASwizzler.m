@@ -4,87 +4,158 @@
 #import "UASwizzler+Internal.h"
 #import <objc/runtime.h>
 
-@interface UASwizzler()
+@interface UASwizzlerEntry: NSObject
 @property (nonatomic, assign) Class class;
-@property (nonatomic, strong) NSMutableDictionary *originalMethods;
+@property (nonatomic, strong) NSValue *originalMethod;
+@property (nonatomic, copy) NSString *selectorString;
 @end
 
-@implementation UASwizzler
+@implementation UASwizzlerEntry
 
-- (instancetype)initWithClass:(Class)class {
+- (instancetype)initWithClass:(Class)class
+               originalMethod:(NSValue *)method
+               selectorString:(NSString *)selectorString {
     self = [super init];
 
     if (self) {
         self.class = class;
-        self.originalMethods = [NSMutableDictionary dictionary];
+        self.originalMethod = method;
+        self.selectorString = selectorString;
     }
 
     return self;
 }
 
-+ (instancetype)swizzlerForClass:(Class)class {
-    return [[UASwizzler alloc] initWithClass:class];
+- (IMP)implementation {
+    IMP implementation;
+    [self.originalMethod getValue:&implementation];
+    return implementation;
 }
 
-- (void)swizzle:(SEL)selector protocol:(Protocol *)protocol implementation:(IMP)implementation {
-    Method method = class_getInstanceMethod(self.class, selector);
+@end
+
+
+
+@interface UASwizzler()
+@property (nonatomic, strong) NSMutableDictionary *entryMap;
+@end
+
+@implementation UASwizzler
+
+- (instancetype)init {
+    self = [super init];
+
+    if (self) {
+        self.entryMap = [NSMutableDictionary dictionary];
+    }
+
+    return self;
+}
+
++ (instancetype)swizzler {
+    return [[UASwizzler alloc] init];
+}
+
+- (void)swizzleInstance:(id)instance
+               selector:(SEL)selector
+         implementation:(IMP)implementation {
+
+    Class class = [self classForSelector:selector target:instance];
+    if (class) {
+        [self swizzleClass:class
+                  selector:selector
+            implementation:implementation];
+    }
+}
+
+- (void)swizzleInstance:(id)instance
+               selector:(SEL)selector
+               protocol:(Protocol *)protocol
+         implementation:(IMP)implementation {
+    Class class = [self classForSelector:selector target:instance];
+    if (class) {
+        [self swizzleClass:class
+                  selector:selector
+                  protocol:protocol
+            implementation:implementation];
+    }
+}
+- (void)swizzleClass:(Class)clazz
+               selector:(nonnull SEL)selector
+               protocol:(Protocol *)protocol
+         implementation:(IMP)implementation {
+    Method method = class_getInstanceMethod(clazz, selector);
     if (method) {
-        UA_LTRACE(@"Swizzling implementation for %@ class %@", NSStringFromSelector(selector), self.class);
+        UA_LTRACE(@"Swizzling implementation for %@ class %@", NSStringFromSelector(selector), clazz);
         IMP existing = method_setImplementation(method, implementation);
         if (implementation != existing) {
             [self storeOriginalImplementation:existing selector:selector];
         }
     } else {
         struct objc_method_description description = protocol_getMethodDescription(protocol, selector, NO, YES);
-        UA_LTRACE(@"Adding implementation for %@ class %@", NSStringFromSelector(selector), self.class);
-        class_addMethod(self.class, selector, implementation, description.types);
+        UA_LTRACE(@"Adding implementation for %@ class %@", NSStringFromSelector(selector), clazz);
+        class_addMethod(clazz, selector, implementation, description.types);
     }
 }
 
-- (void)swizzle:(SEL)selector implementation:(IMP)implementation {
-    Method method = class_getInstanceMethod(self.class, selector);
+- (void)swizzleClass:(Class)clazz
+               selector:(SEL)selector
+         implementation:(IMP)implementation {
+    Method method = class_getInstanceMethod(clazz, selector);
     if (method) {
-        UA_LTRACE(@"Swizzling implementation for %@ class %@", NSStringFromSelector(selector), self.class);
+        UA_LTRACE(@"Swizzling implementation for %@ class %@", NSStringFromSelector(selector), clazz);
         IMP existing = method_setImplementation(method, implementation);
         if (implementation != existing) {
             [self storeOriginalImplementation:existing selector:selector];
         }
     } else {
-        UA_LTRACE(@"Unable to swizzle method for %@ class %@, method not found.", NSStringFromSelector(selector), self.class);
+        UA_LTRACE(@"Unable to swizzle method for %@ class %@, method not found.", NSStringFromSelector(selector), clazz);
     }
 }
 
 - (void)unswizzle {
-    for (NSString *selectorString in [self.originalMethods allKeys]) {
-        SEL selector = NSSelectorFromString(selectorString);
-        Method method = class_getInstanceMethod(self.class, selector);
-        IMP originalImplementation = [self originalImplementation:selector];
+    for (UASwizzlerEntry *entry in self.entryMap.allValues) {
+        SEL selector = NSSelectorFromString(entry.selectorString);
+        Method method = class_getInstanceMethod(entry.class, selector);
+        IMP originalImplementation = [entry implementation];
 
-        if (originalImplementation) {
-            UA_LTRACE(@"Unswizzling implementation for %@ class %@", NSStringFromSelector(selector), self.class);
-            method_setImplementation(method, originalImplementation);
-        }
+        UA_LTRACE(@"Unswizzling implementation for %@ class %@", entry.selectorString, self.class);
+        method_setImplementation(method, originalImplementation);
     }
 
-    [self.originalMethods removeAllObjects];
+    [self.entryMap removeAllObjects];
 }
 
 - (void)storeOriginalImplementation:(IMP)implementation selector:(SEL)selector {
     NSString *selectorString = NSStringFromSelector(selector);
-    self.originalMethods[selectorString] = [NSValue valueWithPointer:implementation];
+
+    self.entryMap[selectorString] = [[UASwizzlerEntry alloc] initWithClass:self.class
+                                                            originalMethod:[NSValue valueWithPointer:implementation]
+                                                                  selectorString:selectorString];
 }
 
 - (IMP)originalImplementation:(SEL)selector {
     NSString *selectorString = NSStringFromSelector(selector);
 
-    NSValue *value = self.originalMethods[selectorString];
-    if (!value) {
-        return nil;
+    UASwizzlerEntry *entry = self.entryMap[selectorString];
+    return [entry implementation];
+}
+
+- (Class)classForSelector:(SEL)selector target:(id)target {
+    // If the class has the method return it
+    id classTarget = [target class];
+    if (class_getInstanceMethod(classTarget, selector)) {
+        return classTarget;
     }
 
-    IMP implementation;
-    [value getValue:&implementation];
-    return implementation;
+    // Fallback to forward target if we have it
+    id forwardingTarget = [target forwardingTargetForSelector:selector];
+    if (forwardingTarget) {
+        return [forwardingTarget class];
+    }
+
+    // Neither, add method to original class
+    return [target class];
 }
 
 @end
