@@ -392,7 +392,7 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
     }
     
     func addLiveActivityUpdate(_ update: LiveActivityUpdate) {
-        AirshipLogger.error("Live activity: \(update)")
+        AirshipLogger.debug("Live activity update: \(update)")
         self.addUpdate(
             AudienceUpdate(liveActivityUpdates: [update])
         )

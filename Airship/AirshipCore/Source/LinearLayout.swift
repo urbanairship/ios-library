@@ -35,7 +35,7 @@ struct LinearLayout : View {
                 }
             }
             .padding(self.model.border?.strokeWidth ?? 0)
-            .constraints(constraints)
+            .constraints(constraints, alignment: .leading)
         }
     }
                         

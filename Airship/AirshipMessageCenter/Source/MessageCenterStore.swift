@@ -27,6 +27,7 @@ actor MessageCenterStore {
     private let coreData: UACoreData?
     private let config: RuntimeConfig
     private let dataStore: PreferenceDataStore
+    private let keychainAccess: AirshipKeychainAccess
 
     var registeredChannelID: String? {
         get {
@@ -41,11 +42,16 @@ actor MessageCenterStore {
                 return user
             }
 
-            guard let username = UAKeychainUtils.getUsername(self.config.appKey), let password = UAKeychainUtils.getPassword(self.config.appKey) else {
-                return nil
-            }
+            let credentials = self.keychainAccess.readCredentialsSync(
+                identifier: self.config.appKey
+            )
 
-            _user = MessageCenterUser(username: username, password: password)
+            if let credentials = credentials {
+                _user = MessageCenterUser(
+                    username: credentials.username,
+                    password: credentials.password
+                )
+            }
             return _user
         }
     }
@@ -79,6 +85,7 @@ actor MessageCenterStore {
          dataStore: PreferenceDataStore) {
         self.config = config
         self.dataStore = dataStore
+        self.keychainAccess = AirshipKeychainAccess(appKey: config.appKey)
         let modelURL = MessageCenterResources.bundle?.url(forResource: "UAInbox", withExtension: "momd")
         if let modelURL = modelURL {
             let storeName = String(format: MessageCenterStore.coreDataStoreName, config.appKey)
@@ -97,6 +104,7 @@ actor MessageCenterStore {
         self.config = config
         self.dataStore = dataStore
         self.coreData = coreData
+        self.keychainAccess = AirshipKeychainAccess(appKey: config.appKey)
     }
 
     var unreadCount: Int {
@@ -212,31 +220,24 @@ actor MessageCenterStore {
     }
 
     func saveUser(_ user: MessageCenterUser, channelID: String) {
-        if (self.user == nil) {
-            UAKeychainUtils.createKeychainValue(
-                forUsername: user.username,
-                withPassword: user.password,
-                forIdentifier: self.config.appKey
-            )
-        } else {
-            UAKeychainUtils.updateKeychainValue(
-                forUsername: user.username,
-                withPassword: user.password,
-                forIdentifier: self.config.appKey
-            )
+        self.keychainAccess.writeCredentials(
+            AirshipKeychainCredentials(
+                username: user.username,
+                password: user.password
+            ),
+            identifier: self.config.appKey
+        ) { result in
+            if (!result) {
+                AirshipLogger.error("Failed to write user credentials")
+            }
         }
-
         setUserRegisteredChannelID(channelID)
         _user = user
     }
 
     func resetUser() {
         _user = nil
-        UAKeychainUtils.deleteKeychainValue(self.config.appKey)
-    }
-    
-    func resetChannelID() {
-        
+        self.keychainAccess.deleteCredentials(identifier: self.config.appKey)
     }
 
     func setUserRequireUpdate(_ value: Bool) {

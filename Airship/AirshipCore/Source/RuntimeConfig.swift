@@ -275,7 +275,13 @@ open class RuntimeConfig: NSObject {
         self.site = config.site
         self.defaultAnalyticsURL = config.analyticsURL?.normalizeURLString()
         self.defaultDeviceAPIURL = config.deviceAPIURL?.normalizeURLString()
-        self.defaultRemoteDataAPIURL = config.remoteDataAPIURL?.normalizeURLString()
+
+        if let initialConfigURL = config.initialConfigURL {
+            self.defaultRemoteDataAPIURL = initialConfigURL.normalizeURLString()
+        } else {
+            self.defaultRemoteDataAPIURL = config.remoteDataAPIURL?.normalizeURLString()
+        }
+
         self.defaultChatURL = config.chatURL?.normalizeURLString()
         self.defaultChatWebSocketURL = config.chatWebSocketURL?.normalizeURLString()
         self.remoteConfigCache = RemoteConfigCache(dataStore: dataStore)

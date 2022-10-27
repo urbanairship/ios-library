@@ -311,7 +311,8 @@
     XCTAssertFalse(config.isChannelCreationDelayEnabled);
     XCTAssertFalse(config.isExtendedBroadcastsEnabled);
     XCTAssertTrue(config.requestAuthorizationToUseNotifications);
-    XCTAssertFalse(config.requireInitialRemoteConfigEnabled);
+    XCTAssertTrue(config.requireInitialRemoteConfigEnabled);
+
 }
 
 @end

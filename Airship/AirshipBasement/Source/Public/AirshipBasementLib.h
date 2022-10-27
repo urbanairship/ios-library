@@ -13,7 +13,6 @@
 #import "UAJavaScriptCommand.h"
 #import "UAJavaScriptCommandDelegate.h"
 #import "UAJavaScriptEnvironmentProtocol.h"
-#import "UAKeychainUtils.h"
 #import "UALegacyLoggingBridge.h"
 #import "UANativeBridgeExtensionDelegate.h"
 #import "UAPadding.h"

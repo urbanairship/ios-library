@@ -12,7 +12,9 @@ class ContactAPIClientTest: XCTestCase {
     var contactAPIClient: ContactAPIClient!
 
     override func setUpWithError() throws {
-        self.config = RuntimeConfig(config: Config(), dataStore: PreferenceDataStore(appKey: UUID().uuidString))
+        let airshipConfig = Config()
+        airshipConfig.requireInitialRemoteConfigEnabled = false
+        self.config = RuntimeConfig(config: airshipConfig, dataStore: PreferenceDataStore(appKey: UUID().uuidString))
         self.localeManager = LocaleManager(dataStore: PreferenceDataStore(appKey: config.appKey))
         self.session = TestRequestSession.init()
         self.session.response = HTTPURLResponse(url: URL(string: "https://contacts_test")!,

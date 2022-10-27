@@ -68,27 +68,29 @@ static dispatch_once_t onceToken;
         return;
     }
 
-    Class class = [delegate class];
-
-    self.appDelegateSwizzler = [UASwizzler swizzlerForClass:class];
+    self.appDelegateSwizzler = [UASwizzler swizzler];
 
     // Device token
-    [self.appDelegateSwizzler swizzle:@selector(application:didRegisterForRemoteNotificationsWithDeviceToken:)
-                             protocol:@protocol(UIApplicationDelegate)
-                       implementation:(IMP)ApplicationDidRegisterForRemoteNotificationsWithDeviceToken];
+    [self.appDelegateSwizzler swizzleInstance:delegate
+                                     selector:@selector(application:didRegisterForRemoteNotificationsWithDeviceToken:)
+                                     protocol:@protocol(UIApplicationDelegate)
+                               implementation:(IMP)ApplicationDidRegisterForRemoteNotificationsWithDeviceToken];
 
     // Device token errors
-    [self.appDelegateSwizzler swizzle:@selector(application:didFailToRegisterForRemoteNotificationsWithError:)
+    [self.appDelegateSwizzler swizzleInstance:delegate
+                                     selector:@selector(application:didFailToRegisterForRemoteNotificationsWithError:)
                              protocol:@protocol(UIApplicationDelegate)
                        implementation:(IMP)ApplicationDidFailToRegisterForRemoteNotificationsWithError];
 
     // Content-available notifications
-    [self.appDelegateSwizzler swizzle:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)
+    [self.appDelegateSwizzler swizzleInstance:delegate
+                                     selector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)
                              protocol:@protocol(UIApplicationDelegate)
                        implementation:(IMP)ApplicationDidReceiveRemoteNotificationFetchCompletionHandler];
 
     // Background app refresh
-    [self.appDelegateSwizzler swizzle:@selector(application:performFetchWithCompletionHandler:)
+    [self.appDelegateSwizzler swizzleInstance:delegate
+                                     selector:@selector(application:performFetchWithCompletionHandler:)
                              protocol:@protocol(UIApplicationDelegate)
                        implementation:(IMP)ApplicationPerformFetchWithCompletionHandler];
 }
@@ -101,10 +103,10 @@ static dispatch_once_t onceToken;
         return;
     }
 
-    self.notificationCenterSwizzler = [UASwizzler swizzlerForClass:class];
+    self.notificationCenterSwizzler = [UASwizzler swizzler];
 
     // setDelegate:
-    [self.notificationCenterSwizzler swizzle:@selector(setDelegate:) implementation:(IMP)UserNotificationCenterSetDelegate];
+    [self.notificationCenterSwizzler swizzleClass:class selector:@selector(setDelegate:) implementation:(IMP)UserNotificationCenterSetDelegate];
 
     id notificationCenterDelegate = [UNUserNotificationCenter currentNotificationCenter].delegate;
     if (notificationCenterDelegate) {
@@ -122,8 +124,7 @@ static dispatch_once_t onceToken;
         return;
     }
 
-    Class class = [delegate class];
-    self.extensionDelegateSwizzler = [UASwizzler swizzlerForClass:class];
+    self.extensionDelegateSwizzler = [UASwizzler swizzler];
 
     // Device token
     [self.extensionDelegateSwizzler swizzle:@selector(didRegisterForRemoteNotificationsWithDeviceToken:)
@@ -143,16 +144,15 @@ static dispatch_once_t onceToken;
 #endif
 
 - (void)swizzleNotificationCenterDelegate:(id<UNUserNotificationCenterDelegate>)delegate {
-    Class class = [delegate class];
 
-    self.notificationDelegateSwizzler = [UASwizzler swizzlerForClass:class];
+    self.notificationDelegateSwizzler = [UASwizzler swizzler];
 
-    [self.notificationDelegateSwizzler swizzle:@selector(userNotificationCenter:willPresentNotification:withCompletionHandler:)
+    [self.notificationDelegateSwizzler swizzleInstance:delegate selector:@selector(userNotificationCenter:willPresentNotification:withCompletionHandler:)
                                       protocol:@protocol(UNUserNotificationCenterDelegate)
                                 implementation:(IMP)UserNotificationCenterWillPresentNotificationWithCompletionHandler];
 
 #if !TARGET_OS_TV  // Delegate method not supported on tvOS
-    [self.notificationDelegateSwizzler swizzle:@selector(userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:)
+    [self.notificationDelegateSwizzler swizzleInstance:delegate selector:@selector(userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:)
                                       protocol:@protocol(UNUserNotificationCenterDelegate)
                                 implementation:(IMP)UserNotificationCenterDidReceiveNotificationResponseWithCompletionHandler];
 #endif

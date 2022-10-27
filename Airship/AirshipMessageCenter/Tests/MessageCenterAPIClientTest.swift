@@ -29,7 +29,9 @@ final class MessageCenterAPIClientTest: XCTestCase {
     ]
 
     override func setUpWithError() throws {
-        let runtimeConfig = RuntimeConfig(config: Config(), dataStore: self.dataStore)
+        let airshipConfig = Config()
+        airshipConfig.requireInitialRemoteConfigEnabled = false
+        let runtimeConfig = RuntimeConfig(config: airshipConfig, dataStore: self.dataStore)
         self.client = MessageCenterAPIClient(config: runtimeConfig, session: session)
     }
     

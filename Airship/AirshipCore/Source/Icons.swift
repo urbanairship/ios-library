@@ -12,10 +12,10 @@ struct Icons {
             return Image(systemName: "checkmark")
         case .close:
             return Image(systemName: "xmark")
-        case .leftArrow:
-            return Image(systemName: "chevron.backward")
-        case .rightArrow:
-            return Image(systemName: "chevron.forward")
+        case .backArrow:
+            return Image(systemName: "arrow.backward")
+        case .forwardArrow:
+            return Image(systemName: "arrow.forward")
         }
     }
     
