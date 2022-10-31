@@ -301,14 +301,12 @@ public class Utils : NSObject {
     @objc (presentInNewWindow:)
     public class func presentInNewWindow(_ rootViewController: UIViewController) -> UIWindow? {
         let window = createWindow()
-        if #available(iOS 13.0, tvOS 13.0, *) {
-            do {
-                let scene = try findWindowScene()
-                window.windowScene = scene
-            } catch {
-                AirshipLogger.error("\(error)")
-                return nil
-            }
+        do {
+            let scene = try findWindowScene()
+            window.windowScene = scene
+        } catch {
+            AirshipLogger.error("\(error)")
+            return nil
         }
         showWindow(window)
         window.rootViewController = rootViewController

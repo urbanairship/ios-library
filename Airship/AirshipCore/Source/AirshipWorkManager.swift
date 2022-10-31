@@ -49,7 +49,9 @@ class AirshipWorkManager: NSObject, AirshipWorkManagerProtocol {
             task = Task {
                 let wait = 300.0
                 if (wait > 0) {
-                    try? await Task.sleep(nanoseconds: UInt64(wait) * 1_000_000_000)
+                    try? await Task.sleep(
+                        nanoseconds: UInt64(wait * 1_000_000_000)
+                    )
                 }
                 backgroundTask.dispose()
             }

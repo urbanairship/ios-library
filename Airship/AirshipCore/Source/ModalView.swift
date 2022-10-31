@@ -2,6 +2,8 @@
 
 import SwiftUI
 
+
+
 @available(iOS 13.0.0, tvOS 13.0, *)
 struct ModalView: View {
     
@@ -10,9 +12,9 @@ struct ModalView: View {
 
     let presentation: ModalPresentationModel
     let layout: Layout
-    @ObservedObject var thomasEnvironment: ThomasEnvironment
+    @ObservedObject
+    var thomasEnvironment: ThomasEnvironment
     #if !os(watchOS)
-    @ObservedObject private var keyboardResponder = KeyboardResponder()
     let viewControllerOptions: ThomasViewControllerOptions
     #endif
 
@@ -20,7 +22,10 @@ struct ModalView: View {
 
     var body: some View {
         GeometryReader { metrics in
-            RootView(thomasEnvironment: thomasEnvironment, layout: layout) { orientation, windowSize in
+            RootView(
+                thomasEnvironment: thomasEnvironment,
+                layout: layout
+            ) { orientation, windowSize in
                 let placement = resolvePlacement(orientation: orientation, windowSize: windowSize)
                 createModal(placement: placement, metrics:metrics)
             }
@@ -31,8 +36,8 @@ struct ModalView: View {
 
     #if !os(watchOS)
     private func calculateKeyboardHeight(metrics: GeometryProxy) -> Double {
-        guard self.keyboardResponder.keyboardHeight > 0 else { return 0.0 }
-        return self.keyboardResponder.keyboardHeight - metrics.safeAreaInsets.bottom + ModalView.keyboardPadding
+        guard self.thomasEnvironment.keyboardHeight > 0 else { return 0.0 }
+        return self.thomasEnvironment.keyboardHeight - metrics.safeAreaInsets.bottom + ModalView.keyboardPadding
     }
     #endif
     
@@ -75,11 +80,15 @@ struct ModalView: View {
         let windowHeight = windowConstraints.height ?? 0
         let contentHeight = contentConstraints.height ?? 0
         #if !os(watchOS)
-        let keyboardHeight = calculateKeyboardHeight(metrics: metrics)
-        var keyboardOffset = calculateKeyboardOverlap(placement: placement,
-                                                      keyboardHeight: keyboardHeight,
-                                                      containerHeight: windowHeight,
-                                                      contentHeight: contentHeight)
+        let keyboardHeight = calculateKeyboardHeight(
+            metrics: metrics
+        )
+        var keyboardOffset = calculateKeyboardOverlap(
+            placement: placement,
+            keyboardHeight: keyboardHeight,
+            containerHeight: windowHeight,
+            contentHeight: contentHeight
+        )
 
         // If the keyboard will push the content outside the screen,
         // resize it and position it at the top

@@ -249,7 +249,9 @@ actor TestWorker {
                     workRequest.rateLimitIDs
                 )
                 if (rateLimit > 0) {
-                    try await Task.sleep(nanoseconds: UInt64(rateLimit) * 1_000_000_000)
+                    try await Task.sleep(
+                        nanoseconds: UInt64(rateLimit * 1_000_000_000)
+                    )
                 }
                 await self.conditionsMonitor.awaitConditions(workRequest: workRequest)
             } while (await !rateLimiter.trackIfWithinLimit(workRequest.rateLimitIDs))

@@ -13,17 +13,22 @@ struct BannerView: View {
     let presentation: BannerPresentationModel
     let layout: Layout
     
-    @ObservedObject var thomasEnvironment: ThomasEnvironment
+    @ObservedObject
+    var thomasEnvironment: ThomasEnvironment
+
     @State private var offsetPercentWrapper = OffsetPercentWrapper()
     @State private var contentSize: (ViewConstraints, CGSize)? = nil
-    
+
     @Environment(\.layoutState) var layoutState
     @Environment(\.windowSize) private var windowSize
     @Environment(\.orientation) private var orientation
     
     var body: some View {
         GeometryReader { metrics in
-            RootView(thomasEnvironment: thomasEnvironment, layout: layout) { orientation, windowSize in
+            RootView(
+                thomasEnvironment: thomasEnvironment,
+                layout: layout
+            ) { orientation, windowSize in
                 let placement = resolvePlacement(orientation: orientation, windowSize: windowSize)
                 let ignoreSafeArea = placement.ignoreSafeArea == true
                 let safeAreaInsets = ignoreSafeArea ? metrics.safeAreaInsets : ViewConstraints.emptyEdgeSet

@@ -69,16 +69,14 @@ private extension UNAuthorizationStatus {
         }
 
 #if !os(tvOS) && !os(watchOS) && !targetEnvironment(macCatalyst)
-
-        if #available(iOS 14.0, *) {
-            if (self == .ephemeral) {
-                return .ephemeral;
-            }
+        if (self == .ephemeral) {
+            return .ephemeral;
         }
-
 #endif
 
-        AirshipLogger.warn("Unable to handle UNAuthorizationStatus: \(self.rawValue)")
+        AirshipLogger.warn(
+            "Unable to handle UNAuthorizationStatus: \(self.rawValue)"
+        )
         return .notDetermined
     }
 }
@@ -123,12 +121,9 @@ private extension UNNotificationSettings {
             }
         }
 
-        if #available(iOS 13.0, *) {
-            if self.announcementSetting == .enabled {
-                authorizedSettings.insert(.announcement)
-            }
+        if self.announcementSetting == .enabled {
+            authorizedSettings.insert(.announcement)
         }
-
 #endif
 
         if #available(iOS 15.0, watchOS 8.0, *) {
@@ -186,12 +181,10 @@ private extension UANotificationOptions {
         }
 
 #if !os(tvOS) && !os(watchOS)
-        if #available(iOS 13.0, *) {
-            // Avoids deprecation warning
-            let annoucement = UANotificationOptions(rawValue: (1 << 7))
-            if self.contains(annoucement) {
-                authorizedOptions.insert(.announcement)
-            }
+        // Avoids deprecation warning
+        let annoucement = UANotificationOptions(rawValue: (1 << 7))
+        if self.contains(annoucement) {
+            authorizedOptions.insert(.announcement)
         }
 #endif
 

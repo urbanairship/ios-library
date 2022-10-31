@@ -245,7 +245,9 @@ actor Worker {
                     workRequest.rateLimitIDs
                 )
                 if (rateLimit > 0) {
-                    try await Task.sleep(nanoseconds: UInt64(rateLimit) * 1_000_000_000)
+                    try await Task.sleep(
+                        nanoseconds: UInt64(rateLimit * 1_000_000_000)
+                    )
                 }
                 await self.conditionsMonitor.awaitConditions(workRequest: workRequest)
             } while (await !rateLimiter.trackIfWithinLimit(workRequest.rateLimitIDs))
@@ -253,7 +255,7 @@ actor Worker {
     }
 
     private func sleep(_ time: TimeInterval) async throws {
-        let sleep = UInt64(time) * 1_000_000_000
+        let sleep = UInt64(time * 1_000_000_000)
         try await Task.sleep(nanoseconds: sleep)
     }
 

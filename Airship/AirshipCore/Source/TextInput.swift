@@ -8,8 +8,10 @@ import Combine
 struct TextInput : View {
     let model: TextInputModel
     let constraints: ViewConstraints
-    
+
     @EnvironmentObject var formState: FormState
+    @EnvironmentObject var thomasEnvironment: ThomasEnvironment
+
     @State private var input: String = ""
     @State private var isEditing: Bool = false
 
@@ -19,16 +21,23 @@ struct TextInput : View {
             get: { self.input },
             set: { self.input = $0; self.updateValue($0) }
         )
-        
+
 #if !os(watchOS)
-        AirshipTextView(textAppearance: self.model.textAppearance,
-                         text: binding,
-                         isEditing: $isEditing)
+        AirshipTextView(
+            textAppearance: self.model.textAppearance,
+            text: binding,
+            isEditing: $isEditing
+        )
+        .onChange(of: self.isEditing) { newValue in
+            let focusedID = newValue ? self.model.identifier : nil
+            self.thomasEnvironment.focusedID = focusedID
+        }
 #endif
     }
 
+    @ViewBuilder
     var body: some View {
-        return ZStack {
+        ZStack {
             if let hint = self.model.placeHolder {
                 Text(hint)
                     .textAppearance(placeHolderTextAppearance())
@@ -38,6 +47,7 @@ struct TextInput : View {
                     .animation(.linear(duration: 0.1))
             }
             createTextEditor()
+                .id(self.model.identifier)
         }
         .constraints(constraints, alignment: .topLeading)
         .background(self.model.backgroundColor)

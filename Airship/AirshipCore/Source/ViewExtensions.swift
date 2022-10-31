@@ -7,11 +7,7 @@ import SwiftUI
 extension View {
     @ViewBuilder
     func ignoreKeyboardSafeArea() -> some View {
-        if #available(iOS 14.0, tvOS 14.0, *) {
-            self.ignoresSafeArea(.keyboard)
-        } else {
-            self
-        }
+        self.ignoresSafeArea(.keyboard)
     }
     
     @ViewBuilder

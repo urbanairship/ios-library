@@ -24,15 +24,11 @@ struct Pager : View {
     }
 
     @ViewBuilder
-    func createStack<Content: View>(@ViewBuilder content: () -> Content) -> some View {
-        if #available(iOS 14.0, tvOS 14.0, *) {
-            LazyHStack(spacing: 0) {
-                content()
-            }
-        } else {
-            HStack(spacing: 0) {
-                content()
-            }
+    func createStack<Content: View>(
+        @ViewBuilder content: () -> Content
+    ) -> some View {
+        LazyHStack(spacing: 0) {
+            content()
         }
     }
     

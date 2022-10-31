@@ -5,6 +5,7 @@ import SwiftUI
 
 @available(iOS 13.0.0, tvOS 13.0.0, *)
 struct RootView<Content: View> : View {
+
     
 #if !os(tvOS) && !os(watchOS)
     @Environment(\.verticalSizeClass) private var verticalSizeClass
@@ -16,18 +17,18 @@ struct RootView<Content: View> : View {
     @State private var displayedCalled: Bool = false
 
     @ObservedObject var thomasEnvironment: ThomasEnvironment
+
     let layout: Layout
     let content: (Orientation, WindowSize) -> Content
 
-    
     init(thomasEnvironment: ThomasEnvironment,
          layout: Layout,
-         @ViewBuilder content: @escaping (Orientation, WindowSize) -> Content) {
+         @ViewBuilder content: @escaping (Orientation, WindowSize) -> Content
+    ) {
         self.thomasEnvironment = thomasEnvironment
         self.layout = layout
         self.content = content
     }
-
 
     @ViewBuilder
     var body: some View {
