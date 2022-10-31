@@ -250,7 +250,7 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol {
             url: URL(string: urlString),
             headers: headers,
             method: "POST",
-            auth: .basic(config.appKey, config.appSecret),
+            auth: .basic(user.username, user.password),
             body: bodyData
         )
         AirshipLogger.trace("Request to perfom batch update user: \(urlString) body: \(body)")

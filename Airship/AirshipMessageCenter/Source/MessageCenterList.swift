@@ -189,7 +189,9 @@ public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
             object: nil,
             queue: nil
         ) { [weak self] _ in
-            self?.dispatchUpdateWorkRequest()
+            self?.dispatchUpdateWorkRequest(
+                conflictPolicy: .replace
+            )
         }
 
         self.updateSubject
@@ -294,15 +296,14 @@ public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
                             update == .refreshFailed || update == .refreshSucess
                         }
                         .first()
-                        .handleEvents(
-                            receiveSubscription: { _ in
-                                self.dispatchUpdateWorkRequest()
-                            }
-                        )
                         .sink { result in
                             let success = result == .refreshSucess
                             continuation.resume(returning: success)
                         }
+
+                    self.dispatchUpdateWorkRequest(
+                        conflictPolicy: .replace
+                    )
                 }
             },
             onCancel: {
@@ -423,6 +424,7 @@ public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
             forChannelID: channelID
         )
         else {
+            self.updateSubject.send(.refreshFailed)
             return .failure
         }
 
@@ -457,12 +459,14 @@ public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
 
     // MARK: Enqueue tasks
 
-    private func dispatchUpdateWorkRequest() {
+    private func dispatchUpdateWorkRequest(
+        conflictPolicy: AirshipWorkRequest.ConflictPolicy = .keep
+    ) {
         self.workManager.dispatchWorkRequest(
             AirshipWorkRequest(
                 workID: self.updateWorkID,
                 requiresNetwork: true,
-                conflictPolicy: .keep
+                conflictPolicy: conflictPolicy
             )
         )
     }
@@ -567,7 +571,9 @@ public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
     private func remoteURLConfigUpdated() {
         Task {
             await self.store.setUserRequireUpdate(true)
-            dispatchUpdateWorkRequest()
+            dispatchUpdateWorkRequest(
+                conflictPolicy: .replace
+            )
         }
     }
 }
