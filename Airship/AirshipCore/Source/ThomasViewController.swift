@@ -10,7 +10,8 @@ class ThomasViewController<Content> : UIHostingController<Content> where Content
     
     var options: ThomasViewControllerOptions
     var onDismiss: (() -> Void)?
-    
+    private var bounceDisabled: Bool = false
+
     init(rootView: Content, options: ThomasViewControllerOptions = ThomasViewControllerOptions()) {
         self.options = options
         super.init(rootView: rootView)
@@ -45,6 +46,27 @@ class ThomasViewController<Content> : UIHostingController<Content> where Content
         return self.options.orientation == nil
     }
 #endif
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        if !bounceDisabled {
+            disableBounce(view: self.view)
+            bounceDisabled = true
+        }
+    }
+
+    func disableBounce(view: UIView) {
+        view.subviews.forEach { subView in
+            if let subView = subView as? UIScrollView {
+                if (subView.bounces) {
+                    subView.bounces = false
+                }
+            }
+
+            disableBounce(view: subView)
+        }
+    }
+
 }
 
 

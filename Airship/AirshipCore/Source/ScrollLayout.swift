@@ -2,7 +2,6 @@
 
 import Foundation
 import SwiftUI
-import MapKit
 
 /// Scroll view layout
 @available(iOS 13.0.0, tvOS 13.0, *)
@@ -15,50 +14,82 @@ struct ScrollLayout : View {
     let constraints: ViewConstraints
     
     @State private var contentSize: (ViewConstraints, CGSize)? = nil
-    @State private var isScrollable = true
-    
+    @EnvironmentObject var thomasEnvironment: ThomasEnvironment
+    @State private var scrollTask: (String, Task<Void, Never>)?
+
+    private static let scrollInterval: TimeInterval = 0.01
+
     init(model: ScrollLayoutModel, constraints: ViewConstraints) {
         self.model = model
         self.constraints = constraints
     }
 
     @ViewBuilder
-    func content(parentMetrics: GeometryProxy, constraints: ViewConstraints) -> some View {
-        let parentSize = parentMetrics.size
-        ZStack {
-            ViewFactory.createView(model: self.model.view, constraints: constraints)
-                .background(
-                    GeometryReader(content: { contentMetrics -> Color in
-                        let size = contentMetrics.size
-                        DispatchQueue.main.async {
-                            self.contentSize = (self.constraints, size)
-                            updateScrollable(parentSize)
+    private func makeScrollView() -> some View {
+        let isVertical = self.model.direction == .vertical
+        let axis = isVertical ? Axis.Set.vertical : Axis.Set.horizontal
+
+        let scrollView = ScrollView(axis) {
+            makeContent()
+            if #available(iOS 14.0, tvOS 14.0, *) {} else {
+                Spacer()
+            }
+        }.clipped()
+
+        if #available(iOS 14.0, tvOS 14.0, *) {
+            ScrollViewReader { proxy in
+                scrollView
+                    .onChange(
+                        of: self.thomasEnvironment.keyboardState
+                    ) { newValue in
+                        if let focusedID = self.thomasEnvironment.focusedID {
+                            switch (newValue) {
+                            case .hidden:
+                                scrollTask?.1.cancel()
+                            case .displaying(let duration):
+                                let task = Task {
+                                    await self.startScrolling(
+                                        scrollID: focusedID,
+                                        proxy: proxy,
+                                        duration: duration
+                                    )
+                                }
+                                self.scrollTask = (focusedID, task)
+                            case .visible:
+                                scrollTask?.1.cancel()
+                                proxy.scrollTo(focusedID)
+                            }
+                        } else {
+                            scrollTask?.1.cancel()
                         }
-                        return Color.clear
-                    })
-                )
-                .fixedSize(horizontal: self.model.direction == .horizontal, vertical: self.model.direction == .vertical)
+                    }
+            }
+        } else {
+            scrollView
+        }
+    }
+
+    @ViewBuilder
+    func makeContent() -> some View {
+        ZStack {
+            ViewFactory.createView(
+                model: self.model.view,
+                constraints: self.childConstraints()
+            )
+            .fixedSize(
+                horizontal: self.model.direction == .horizontal,
+                vertical: self.model.direction == .vertical
+            )
         }.frame(alignment: .topLeading)
     }
 
+    @ViewBuilder
     var body: some View {
-        GeometryReader { parentMetrics in
-            let isVertical = self.model.direction == .vertical
-            let childConstraints = childConstraints()
-            let axis = isVertical ? Axis.Set.vertical : Axis.Set.horizontal
-            
-            ScrollView(self.isScrollable ? axis : []) {
-                content(parentMetrics: parentMetrics, constraints: childConstraints)
-                if #available(iOS 14.0, tvOS 14.0, *) {} else {
-                    Spacer()
-                }
-            }
-            .clipped()
-        }
-        .constraints(self.constraints)
-        .background(self.model.backgroundColor)
-        .border(self.model.border)
-        .common(self.model)
+        makeScrollView()
+            .constraints(self.constraints)
+            .background(self.model.backgroundColor)
+            .border(self.model.border)
+            .common(self.model)
     }
 
     private func childConstraints() -> ViewConstraints {
@@ -73,24 +104,21 @@ struct ScrollLayout : View {
 
         return childConstraints
     }
-    
-    private func updateScrollable(_ parentSize: CGSize) {
-        guard let contentSize = contentSize, contentSize.0 == self.constraints else {
-            return
-        }
-        let isScrollable = scrollable(parent: parentSize, content: contentSize.1)
-        if (isScrollable != self.isScrollable) {
-            self.isScrollable = isScrollable
-        }
-    }
-    
-    private func scrollable(parent: CGSize, content: CGSize) -> Bool {
-        var isScrollable = false
-        if (self.model.direction == .vertical) {
-            isScrollable = content.height > parent.height
-        } else {
-            isScrollable = content.width > parent.width
-        }
-        return isScrollable
+
+    @available(iOS 14.0, tvOS 14.0, *)
+    @MainActor
+    private func startScrolling(
+        scrollID: String,
+        proxy: ScrollViewProxy,
+        duration: TimeInterval
+    ) async {
+        var remaining = duration
+        repeat {
+            proxy.scrollTo(scrollID)
+            remaining = remaining - ScrollLayout.scrollInterval
+            try? await Task.sleep(
+                nanoseconds: UInt64(ScrollLayout.scrollInterval * 1_000_000_000)
+            )
+        } while(remaining > 0 && !Task.isCancelled)
     }
 }
