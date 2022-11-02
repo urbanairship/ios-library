@@ -332,8 +332,6 @@ protocol BaseModel: Decodable, Equatable {
 
 enum EventHandlerType: String, Decodable, Equatable {
     case tap
-    case show
-    case hide
     case focus
     case formInput = "form_input"
 }

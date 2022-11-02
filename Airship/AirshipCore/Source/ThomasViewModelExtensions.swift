@@ -213,10 +213,11 @@ private extension ViewModel {
         }
     }
     
-    private func validateButtonBehaviors(_ clickBehaviors: [ButtonClickBehavior]?,
-                                         _ enableBehaviors: [EnableBehavior]?,
-                                         _ controllers: Set<ParentController>) throws {
-        
+    private func validateButtonBehaviors(
+        _ clickBehaviors: [ButtonClickBehavior]?,
+        _ enableBehaviors: [EnableBehavior]?,
+        _ controllers: Set<ParentController>
+    ) throws {
         try clickBehaviors?.forEach {
              switch ($0) {
              case .formSubmit:

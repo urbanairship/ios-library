@@ -20,17 +20,8 @@ internal struct FormEventHandlerViewModifier: ViewModifier {
                 applyStateChanges(type: .tap, formData: self.formState.data)
             }
         }
-        .applyIf(types.contains(.show)) { view in
-            view.onAppear {
-                applyStateChanges(type: .show, formData: self.formState.data)
-            }
-        }
-        .applyIf(types.contains(.hide)) { view in
-            view.onDisappear {
-                applyStateChanges(type: .hide, formData: self.formState.data)
-            }
-        }.applyIf(types.contains(.formInput)) { view in
-            content.onReceive(self.formState.$data) { incoming in
+        .applyIf(types.contains(.formInput)) { view in
+            view.onReceive(self.formState.$data) { incoming in
                 applyStateChanges(type: .formInput, formData: incoming)
             }
         }
@@ -83,16 +74,6 @@ internal struct EventHandlerViewModifier: ViewModifier {
                 applyStateChanges(type: .tap)
             }
         }
-        .applyIf(types.contains(.show)) { view in
-            view.onAppear {
-                applyStateChanges(type: .show)
-            }
-        }
-        .applyIf(types.contains(.hide)) { view in
-            view.onDisappear {
-                applyStateChanges(type: .hide)
-            }
-        }
     }
 
     private func applyStateChanges(type: EventHandlerType) {
@@ -119,15 +100,25 @@ internal struct EventHandlerViewModifier: ViewModifier {
 extension View {
 
     @ViewBuilder
-    func eventHandlers(_ eventHandlers: [EventHandler]?,
-                       formInputID: String? = nil) -> some View {
+    func eventHandlers(
+        _ eventHandlers: [EventHandler]?,
+        formInputID: String? = nil
+    ) -> some View {
+        
+
         if let handlers = eventHandlers {
             if let formInputID = formInputID {
-                self.modifier(FormEventHandlerViewModifier(eventHandlers: handlers, formInputID: formInputID))
+                self.modifier(
+                    FormEventHandlerViewModifier(
+                        eventHandlers: handlers,
+                        formInputID: formInputID
+                    )
+                )
             } else {
-                self.modifier(EventHandlerViewModifier(eventHandlers: handlers))
+                self.modifier(
+                    EventHandlerViewModifier(eventHandlers: handlers)
+                )
             }
-
         } else {
             self
         }

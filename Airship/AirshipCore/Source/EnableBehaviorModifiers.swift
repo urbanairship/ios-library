@@ -104,22 +104,28 @@ internal struct AggregateEnableBehavior: ViewModifier {
 
 @available(iOS 13.0.0, tvOS 13.0, *)
 extension View {
-
     @ViewBuilder
-    fileprivate func addBehaviorModifiers(_ behaviors: [EnableBehavior]?,
-                                       onApply: ((Bool, EnableBehavior) -> Void)? = nil) -> some View {
+    fileprivate func addBehaviorModifiers(
+        _ behaviors: [EnableBehavior]?,
+        onApply: ((Bool, EnableBehavior) -> Void)? = nil
+    ) -> some View {
         if let behaviors = behaviors {
-            self.applyIf(behaviors.contains(.formValidation)) { view in
-                view.modifier(ValidFormButtonEnableBehavior(onApply: onApply))
-            }
-            .applyIf(behaviors.contains(.pagerNext)) { view in
-                view.modifier(PagerNextButtonEnableBehavior(onApply: onApply))
-            }
-            .applyIf(behaviors.contains(.pagerPrevious)) { view in
-                view.modifier(PagerPreviousButtonEnableBehavior(onApply: onApply))
-            }
-            .applyIf(behaviors.contains(.formSubmission)) { view in
-                view.modifier(FormSubmissionEnableBehavior(onApply: onApply))
+            self.viewModifiers {
+                if behaviors.contains(.formValidation) {
+                    ValidFormButtonEnableBehavior(onApply: onApply)
+                }
+
+                if behaviors.contains(.pagerNext) {
+                    PagerPreviousButtonEnableBehavior(onApply: onApply)
+                }
+
+                if behaviors.contains(.pagerPrevious) {
+                    PagerPreviousButtonEnableBehavior(onApply: onApply)
+                }
+
+                if behaviors.contains(.formSubmission) {
+                    FormSubmissionEnableBehavior(onApply: onApply)
+                }
             }
         } else {
             self
@@ -132,7 +138,12 @@ extension View {
 
         if let behaviors = behaviors {
             if let onApply = onApply {
-                self.modifier(AggregateEnableBehavior(behaviors: behaviors, onApply: onApply))
+                self.modifier(
+                    AggregateEnableBehavior(
+                        behaviors: behaviors,
+                        onApply: onApply
+                    )
+                )
             } else {
                 self.addBehaviorModifiers(behaviors)
             }
