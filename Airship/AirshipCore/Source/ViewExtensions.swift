@@ -74,7 +74,7 @@ struct AirshipViewModifierBuilder {
     }
 
     static func buildOptional<VM0: ViewModifier>(_ vm0: VM0?) -> some ViewModifier {
-        return EmptyModifier()
+        return Optional(viewModifier: vm0)
     }
 
     static func buildBlock<VM0: ViewModifier>(_ vm0: VM0) -> some ViewModifier {
@@ -100,4 +100,17 @@ struct AirshipViewModifierBuilder {
     static func buildBlock<VM0: ViewModifier , VM1: ViewModifier , VM2: ViewModifier, VM3: ViewModifier, VM4: ViewModifier, VM5: ViewModifier>(_ vm0: VM0, _ vm1: VM1, _ vm2: VM2, _ vm3: VM3, _ vm4: VM4, _ vm5: VM5) -> some ViewModifier {
         return vm0.concat(vm1).concat(vm2).concat(vm3).concat(vm4).concat(vm5)
     }
+
+    private struct Optional<Modifier: ViewModifier>: ViewModifier {
+        let viewModifier: Modifier?
+
+        func body(content: Content) -> some View {
+            if let viewModifier = viewModifier {
+                content.modifier(viewModifier)
+            } else {
+                content
+            }
+        }
+    }
 }
+

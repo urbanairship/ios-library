@@ -21,20 +21,29 @@ class FormState: ObservableObject {
         self.formType = formType
         self.formResponseType = formResponseType
         
-        self.data = FormInputData(identifier,
-                                  value: .form(formResponseType, formType, []),
-                                  isValid: false)
+        self.data = FormInputData(
+            identifier,
+            value: .form(formResponseType, formType, []),
+            isValid: false
+        )
     }
 
-    
-    
     func updateFormInput(_ data: FormInputData) {
         self.children[data.identifier] = data
         
-        let isValid = self.children.values.contains(where: { $0.isValid == false }) == false
-        self.data = FormInputData(identifier,
-                                  value: .form(formResponseType, formType, Array(self.children.values)),
-                                  isValid: isValid)
+        let isValid = self.children.values.contains(
+            where: { $0.isValid == false }
+        ) == false
+
+        self.data = FormInputData(
+            identifier,
+            value: .form(
+                formResponseType,
+                formType,
+                Array(self.children.values)
+            ),
+            isValid: isValid
+        )
     }
 
     func markVisible() {

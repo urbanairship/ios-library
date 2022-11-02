@@ -21,7 +21,7 @@ internal struct FormEventHandlerViewModifier: ViewModifier {
             }
         }
         .applyIf(types.contains(.formInput)) { view in
-            content.onReceive(self.formState.$data) { incoming in
+            view.onReceive(self.formState.$data) { incoming in
                 applyStateChanges(type: .formInput, formData: incoming)
             }
         }
