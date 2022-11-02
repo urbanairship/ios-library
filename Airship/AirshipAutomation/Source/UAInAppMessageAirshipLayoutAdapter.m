@@ -58,11 +58,11 @@
 @end
 
 @implementation UAAssetImageProvider
-- (UIImage * _Nullable)getWithUrl:(NSURL * _Nonnull)url {
+- (UAirshipImageData * _Nullable)getWithUrl:(NSURL * _Nonnull)url {
     if ([self.assets isCached:url]) {
         NSURL *cacheURL = [self.assets getCacheURL:url];
         NSData *data =  [[NSFileManager defaultManager] contentsAtPath:[cacheURL path]];
-        return [UIImage fancyImageWithData:data fillIn:NO];
+        return [[UAirshipImageData alloc] initWithData:data error:nil];
     }
     return nil;
 }

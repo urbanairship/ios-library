@@ -39,7 +39,8 @@ static CGFloat const DefaultVideoHeightPadding = 60;
     return [[self alloc] initWithMediaInfo:mediaInfo imageData:imageData];
 }
 
-- (instancetype)initWithMediaInfo:(UAInAppMessageMediaInfo *)mediaInfo imageData:(nullable NSData *)imageData {
+- (instancetype)initWithMediaInfo:(UAInAppMessageMediaInfo *)mediaInfo
+                        imageData:(nullable NSData *)imageData {
     self = [super init];
 
     if (self) {

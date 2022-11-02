@@ -15,15 +15,15 @@ public struct ImageLoader {
         self.imageProvider = imageProvider
     }
 
-    func load(url: String) -> AnyPublisher<UIImage?, Error> {
+    func load(url: String) -> AnyPublisher<AirshipImageData, Error> {
         guard let url = URL(string:url) else {
             return Fail(error: AirshipErrors.error("failed to fetch message"))
                 .eraseToAnyPublisher()
         }
         
-        return Deferred { () -> AnyPublisher<UIImage?, Error> in
-            if let image = self.imageProvider?.get(url: url) {
-                return Just(image)
+        return Deferred { () -> AnyPublisher<AirshipImageData, Error> in
+            if let imageData = self.imageProvider?.get(url: url) {
+                return Just(imageData)
                     .setFailureType(to: Error.self)
                     .eraseToAnyPublisher()
             } else {
@@ -35,25 +35,33 @@ public struct ImageLoader {
     }
     
 
-    private func fetchImage(url: URL) -> AnyPublisher<UIImage?, Error> {
+    private func fetchImage(url: URL) -> AnyPublisher<AirshipImageData, Error> {
         return URLSession.shared.dataTaskPublisher(for: url)
             .mapError { AirshipErrors.error("URL error \($0)") }
-            .map { response -> AnyPublisher<UIImage?, Error> in
+            .map { response -> AnyPublisher<AirshipImageData, Error> in
                 guard let httpResponse = response.response as? HTTPURLResponse,
-                      httpResponse.statusCode == 200,
-                      let image = UIImage.fancyImage(with: response.data, fillIn: false)
+                      httpResponse.statusCode == 200
                 else {
                     return Fail(error: AirshipErrors.error("failed to fetch message"))
                         .eraseToAnyPublisher()
                 }
 
-                return Just(image)
-                    .setFailureType(to: Error.self)
-                    .eraseToAnyPublisher()
+                do {
+                    let imageData = try AirshipImageData(data: response.data)
+                    return Just(imageData)
+                        .setFailureType(to: Error.self)
+                        .eraseToAnyPublisher()
+                } catch {
+                    return Fail(error: error)
+                        .eraseToAnyPublisher()
+                }
             }
             .catch { error in
                 return Fail(error: AirshipErrors.error("failed to fetch message"))
-                    .delay(for: .seconds(ImageLoader.retryDelay), scheduler:DispatchQueue.global())
+                    .delay(
+                        for: .seconds(ImageLoader.retryDelay),
+                        scheduler: DispatchQueue.global()
+                    )
                     .eraseToAnyPublisher()
             }
             .switchToLatest()

@@ -12,5 +12,5 @@ public protocol ImageProvider {
     ///     - url: The image URL.
     /// - Returns: The image or nil to let the image loader fetch it.
     @objc
-    func get(url: URL) -> UIImage?
+    func get(url: URL) -> AirshipImageData?
 }
