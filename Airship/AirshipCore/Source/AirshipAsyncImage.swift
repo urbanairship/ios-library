@@ -45,9 +45,6 @@ struct AirshipAsyncImage<Placeholder: View, ImageView: View> : View {
                         })
                 }
             }
-            .onDisappear {
-                animationTask?.cancel()
-            }
     }
     
     private var content: some View {
@@ -55,6 +52,9 @@ struct AirshipAsyncImage<Placeholder: View, ImageView: View> : View {
             if let image = currentImage {
                 self.image(Image(uiImage: image), image.size)
                     .animation(nil, value: self.imageIndex)
+                    .onDisappear {
+                        animationTask?.cancel()
+                    }
             } else {
                 self.placeholder()
             }
