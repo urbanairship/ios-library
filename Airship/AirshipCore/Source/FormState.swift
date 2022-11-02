@@ -63,11 +63,13 @@ public struct FormInputData {
     let attributeValue: AttributeValue?
     let isValid: Bool
 
-    init(_ identifier: String,
-         value: FormValue,
-         attributeName: AttributeName? = nil,
-         attributeValue: AttributeValue? = nil,
-         isValid: Bool) {
+    init(
+        _ identifier: String,
+        value: FormValue,
+        attributeName: AttributeName? = nil,
+        attributeValue: AttributeValue? = nil,
+        isValid: Bool
+    ) {
         self.identifier = identifier
         self.value = value
         self.attributeName = attributeName
@@ -76,18 +78,14 @@ public struct FormInputData {
     }
 
     func formData(identifier: String) -> FormInputData? {
-        if (self.identifier == identifier) {
+        guard self.identifier != identifier else {
             return self
         }
 
-        switch(self.value) {
-        case .form(_, _, let children):
-            let child = children.first {
-                $0.identifier == identifier
+        if case let .form(_, _, children) = self.value {
+            return children.first { child in
+                child.identifier == identifier
             }
-            return child
-        default:
-            break
         }
 
         return nil
@@ -102,16 +100,13 @@ public struct FormInputData {
         if let attributeName = attributeName, let attributeValue = attributeValue {
             result.append((attributeName, attributeValue))
         }
-        
-        switch(self.value) {
-        case .form(_, _, let children):
-            children.forEach {
-                result.append(contentsOf: $0.attributes())
+
+        if case let .form(_, _, children) = self.value {
+            children.forEach { child in
+                result.append(contentsOf: child.attributes())
             }
-        default:
-            break
         }
-        
+
         return result
     }
     

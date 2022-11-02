@@ -17,30 +17,52 @@ struct LinearLayout : View {
     private var numberGenerator = RepeatableNumberGenerator()
 
     @ViewBuilder
-    func createStack() -> some View {
-        let items = orderedItems()
-        let parentConstraints = parentConstraints()
+    private func makeVStack(
+        items: [LinearLayoutItem],
+        parentConstraints: ViewConstraints
+    ) -> some View {
+        VStack(alignment: .center, spacing: 0) {
+            ForEach(0..<items.count, id: \.self) { index in
+                childItem(items[index], parentConstraints: parentConstraints)
+            }
+        }
+        .padding(self.model.border?.strokeWidth ?? 0)
+        .constraints(self.constraints, alignment: .top)
+    }
+
+    @ViewBuilder
+    private func makeHStack(
+        items: [LinearLayoutItem],
+        parentConstraints: ViewConstraints
+    ) -> some View {
+        HStack(spacing: 0) {
+            ForEach(0..<items.count, id: \.self) { index in
+                childItem(items[index], parentConstraints: parentConstraints)
+            }
+        }
+        .padding(self.model.border?.strokeWidth ?? 0)
+        .constraints(constraints, alignment: .leading)
+    }
+
+
+
+    @ViewBuilder
+    private func makeStack() -> some View {
         if (self.model.direction == .vertical) {
-            VStack(alignment: .center, spacing: 0) {
-                ForEach(0..<items.count, id: \.self) { index in
-                    childItem(items[index], parentConstraints: parentConstraints)
-                }
-            }
-            .padding(self.model.border?.strokeWidth ?? 0)
-            .constraints(constraints, alignment: .top)
+            makeVStack(
+                items: orderedItems(),
+                parentConstraints: parentConstraints()
+            )
         } else {
-            HStack(spacing: 0) {
-                ForEach(0..<items.count, id: \.self) { index in
-                    childItem(items[index], parentConstraints: parentConstraints)
-                }
-            }
-            .padding(self.model.border?.strokeWidth ?? 0)
-            .constraints(constraints, alignment: .leading)
+            makeHStack(
+                items: orderedItems(),
+                parentConstraints: parentConstraints()
+            )
         }
     }
                         
     var body: some View {
-        createStack()
+        makeStack()
             .clipped()
             .background(self.model.backgroundColor)
             .border(self.model.border)
