@@ -11,11 +11,13 @@ struct AirshipAsyncImage<Placeholder: View, ImageView: View> : View {
     let url: String
     let image: (Image, CGSize) -> ImageView
     let placeholder: () -> Placeholder
-    
-    @State private var loadedImage: UIImage?
+
+    @State private var loadedImage: AirshipImageData? = nil
+
+
     @State private var currentImage: UIImage?
     @State private var imageIndex: Int = 0
-    @State private var timer: Timer?
+    @State private var animationTask: Task<Void, Never>?
     @State private var cancellable: AnyCancellable?
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
 
@@ -23,7 +25,10 @@ struct AirshipAsyncImage<Placeholder: View, ImageView: View> : View {
         content
             .onAppear {
                 if (self.loadedImage != nil) {
-                    animateImage()
+                    self.animationTask?.cancel()
+                    self.animationTask = Task {
+                        await animateImage()
+                    }
                 } else {
                     self.cancellable = thomasEnvironment.imageLoader.load(url: self.url)
                         .receive(on: DispatchQueue.main)
@@ -33,12 +38,15 @@ struct AirshipAsyncImage<Placeholder: View, ImageView: View> : View {
                             }
                         }, receiveValue: { image in
                             self.loadedImage = image
-                            self.animateImage()
+                            self.animationTask?.cancel()
+                            self.animationTask = Task {
+                                await animateImage()
+                            }
                         })
                 }
             }
             .onDisappear {
-                timer?.invalidate()
+                animationTask?.cancel()
             }
     }
     
@@ -46,38 +54,45 @@ struct AirshipAsyncImage<Placeholder: View, ImageView: View> : View {
         Group {
             if let image = currentImage {
                 self.image(Image(uiImage: image), image.size)
+                    .animation(nil, value: self.imageIndex)
             } else {
                 self.placeholder()
             }
         }
     }
-    
-    private func animateImage() {
+
+    @MainActor
+    private func animateImage() async {
         guard let loadedImage = self.loadedImage else {
             return
         }
-        
-        let duration = loadedImage.duration
-        
-        guard let frames = loadedImage.images, duration > 0 && frames.count > 1 else {
-            self.currentImage = loadedImage
+
+        guard loadedImage.frames.count > 1 else {
+            self.currentImage = loadedImage.frames[0].image
             return
         }
-        
-        self.timer = Timer(timeInterval: duration/Double(frames.count), repeats: true) { timer in
-            if (self.imageIndex >= (frames.count - 1)) {
-                self.imageIndex = 0
-            } else {
-                self.imageIndex += 1
+
+
+        let frames = loadedImage.frames
+        self.currentImage = frames[self.imageIndex].image
+
+        while(!Task.isCancelled) {
+            let duration = frames[self.imageIndex].duration
+            try? await Task.sleep(
+                nanoseconds: UInt64(duration * 1_000_000_000)
+            )
+
+            if (!Task.isCancelled) {
+                if (self.imageIndex >= (frames.count - 1)) {
+                    self.imageIndex = 0
+                } else {
+                    self.imageIndex += 1
+                }
+
+                self.currentImage = frames[self.imageIndex].image
             }
-            
-            self.currentImage = frames[self.imageIndex];
         }
-        
-        
-        if let timer = timer {
-            RunLoop.main.add(timer, forMode: .common)
-        }
+
         
     }
 }
