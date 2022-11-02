@@ -46,9 +46,16 @@ public class TaskManager: NSObject, TaskManagerProtocol {
     ) {
         self.workManager._registerWorker(taskID, type: type) { request, continuation in
 
+            let requestOptions = TaskRequestOptions(
+                conflictPolicy: request.conflictPolicy,
+                requiresNetwork: request.requiresNetwork,
+                extras: request.extras
+            )
+
+
             let expirableTask = ExpirableTask(
                 taskID: taskID,
-                requestOptions: TaskRequestOptions.defaultOptions
+                requestOptions: requestOptions
             ) { success in
                 if (success) {
                     continuation.finishTask(.success)
