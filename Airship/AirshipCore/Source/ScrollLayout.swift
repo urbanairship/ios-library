@@ -36,7 +36,7 @@ struct ScrollLayout : View {
             }
         }.clipped()
 
-        if #available(iOS 14.0, tvOS 14.0, *) {
+        if #available(iOS 16.0, tvOS 16.0, macOS 12.0, *) {
             ScrollViewReader { proxy in
                 scrollView
                     .onChange(
