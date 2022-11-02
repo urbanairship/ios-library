@@ -37,25 +37,27 @@ struct ScrollLayout : View {
             .onChange(
                 of: self.thomasEnvironment.keyboardState
             ) { newValue in
-                if let focusedID = self.thomasEnvironment.focusedID {
-                    switch (newValue) {
-                    case .hidden:
-                        scrollTask?.1.cancel()
-                    case .displaying(let duration):
-                        let task = Task {
-                            await self.startScrolling(
-                                scrollID: focusedID,
-                                proxy: proxy,
-                                duration: duration
-                            )
+                if #available(iOS 16.0, tvOS 16.0, macOS 12.0, *) {
+                    if let focusedID = self.thomasEnvironment.focusedID {
+                        switch (newValue) {
+                        case .hidden:
+                            scrollTask?.1.cancel()
+                        case .displaying(let duration):
+                            let task = Task {
+                                await self.startScrolling(
+                                    scrollID: focusedID,
+                                    proxy: proxy,
+                                    duration: duration
+                                )
+                            }
+                            self.scrollTask = (focusedID, task)
+                        case .visible:
+                            scrollTask?.1.cancel()
+                            proxy.scrollTo(focusedID)
                         }
-                        self.scrollTask = (focusedID, task)
-                    case .visible:
+                    } else {
                         scrollTask?.1.cancel()
-                        proxy.scrollTo(focusedID)
                     }
-                } else {
-                    scrollTask?.1.cancel()
                 }
             }
         }
