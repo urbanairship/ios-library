@@ -122,26 +122,39 @@ extension View {
                      buttonDescription: String,
                      behaviors: [ButtonClickBehavior]?,
                      actions: ActionsPayload? = nil) -> some View {
-        
+
         let behaviors = behaviors ?? []
 
-        self.applyIf(actions != nil) { view in
-            view.modifier(RunActionsButtonModifier(actions: actions))
-        }
-        .applyIf(behaviors.contains(.dismiss)) { view in
-            view.modifier(DismissButtonClickBehavior(buttonIdentifier: buttonIdentifier, buttonDescription: buttonDescription))
-        }
-        .applyIf(behaviors.contains(.cancel)) { view in
-            view.modifier(CancelButtonClickBehavior(buttonIdentifier: buttonIdentifier, buttonDescription: buttonDescription))
-        }
-        .applyIf(behaviors.contains(.formSubmit)) { view in
-            view.modifier(SubmitFormButtonClickBehavior())
-        }
-        .applyIf(behaviors.contains(.pagerNext)) { view in
-            view.modifier(PagerNextPageButtonClickBehavior())
-        }
-        .applyIf(behaviors.contains(.pagerPrevious)) { view in
-            view.modifier(PagerPreviousPageButtonClickBehavior())
+        self.viewModifiers {
+            if let actions = actions {
+                RunActionsButtonModifier(actions: actions)
+            }
+
+            if behaviors.contains(.dismiss) {
+                DismissButtonClickBehavior(
+                    buttonIdentifier: buttonIdentifier,
+                    buttonDescription: buttonDescription
+                )
+            }
+
+            if behaviors.contains(.cancel) {
+                CancelButtonClickBehavior(
+                    buttonIdentifier: buttonIdentifier,
+                    buttonDescription: buttonDescription
+                )
+            }
+
+            if behaviors.contains(.formSubmit) {
+                SubmitFormButtonClickBehavior()
+            }
+
+            if behaviors.contains(.pagerNext) {
+                PagerNextPageButtonClickBehavior()
+            }
+
+            if behaviors.contains(.pagerPrevious) {
+                PagerPreviousPageButtonClickBehavior()
+            }
         }
         .modifier(ReportButtonModifier(buttonIdentifier: buttonIdentifier))
     }

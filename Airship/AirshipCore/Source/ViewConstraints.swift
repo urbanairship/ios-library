@@ -46,28 +46,30 @@ struct ViewConstraints: Equatable {
                   safeAreaInsets: safeAreaInsets)
     }
 
-    func contentConstraints(_ constrainedSize: ConstrainedSize,
-                            contentSize: CGSize?,
-                            margin: Margin?) -> ViewConstraints {
+    func contentConstraints(
+        _ constrainedSize: ConstrainedSize,
+        contentSize: CGSize?,
+        margin: Margin?
+    ) -> ViewConstraints {
 
-        let verticalMargins = (margin?.top ?? 0) + (margin?.bottom ?? 0)
-        let horizontalMargins = (margin?.start ?? 0) + (margin?.end ?? 0)
+        let verticalMargins: CGFloat = margin?.verticalMargins ?? 0.0
+        let horizontalMargins: CGFloat = margin?.horiztonalMargins ?? 0.0
 
-        let parentWidth = self.width?.subtract(horizontalMargins)
-        let parentHeight = self.height?.subtract(verticalMargins)
+        let parentWidth: CGFloat? = self.width?.subtract(horizontalMargins)
+        let parentHeight: CGFloat? = self.height?.subtract(verticalMargins)
 
-        let childMinWidth = constrainedSize.minWidth?.calculateSize(parentWidth)
-        let childMaxWidth = constrainedSize.maxWidth?.calculateSize(parentWidth)
-        var childWidth = constrainedSize.width.calculateSize(parentWidth)
+        let childMinWidth: CGFloat? = constrainedSize.minWidth?.calculateSize(parentWidth)
+        let childMaxWidth: CGFloat? = constrainedSize.maxWidth?.calculateSize(parentWidth)
+        var childWidth: CGFloat? = constrainedSize.width.calculateSize(parentWidth)
         childWidth = childWidth?.bound(minValue: childMinWidth, maxValue: childMaxWidth)
 
-        let childMinHeight = constrainedSize.minHeight?.calculateSize(parentHeight)
-        let childMaxHeight = constrainedSize.maxHeight?.calculateSize(parentHeight)
-        var childHeight = constrainedSize.height.calculateSize(parentHeight)
+        let childMinHeight: CGFloat? = constrainedSize.minHeight?.calculateSize(parentHeight)
+        let childMaxHeight: CGFloat? = constrainedSize.maxHeight?.calculateSize(parentHeight)
+        var childHeight: CGFloat? = constrainedSize.height.calculateSize(parentHeight)
         childHeight = childHeight?.bound(minValue: childMinHeight, maxValue: childMaxHeight)
 
-        let isVerticalFixedSize = constrainedSize.height.isFixedSize(self.isVerticalFixedSize)
-        let isHorizontalFixedSize = constrainedSize.width.isFixedSize(self.isHorizontalFixedSize)
+        let isVerticalFixedSize: Bool = constrainedSize.height.isFixedSize(self.isVerticalFixedSize)
+        let isHorizontalFixedSize: Bool = constrainedSize.width.isFixedSize(self.isHorizontalFixedSize)
 
         if let contentSize = contentSize {
             if let maxWidth = childMaxWidth, contentSize.width >= maxWidth {
@@ -91,18 +93,20 @@ struct ViewConstraints: Equatable {
     }
 
 
-    func childConstraints(_ size: Size,
-                          margin: Margin?,
-                          padding: Double = 0,
-                          safeAreaInsetsMode: SafeAreaInsetsMode = .ignore) -> ViewConstraints {
+    func childConstraints(
+        _ size: Size,
+        margin: Margin?,
+        padding: Double = 0,
+        safeAreaInsetsMode: SafeAreaInsetsMode = .ignore
+    ) -> ViewConstraints {
 
-        let parentWidth = self.width?.subtract(padding * 2)
-        let parentHeight = self.height?.subtract(padding * 2)
+        let parentWidth: CGFloat? = self.width?.subtract(padding * 2)
+        let parentHeight: CGFloat? = self.height?.subtract(padding * 2)
 
-        var horizontalMargins = (margin?.start ?? 0) + (margin?.end ?? 0)
-        var verticalMargins = (margin?.top ?? 0) + (margin?.bottom ?? 0)
+        var horizontalMargins: CGFloat = margin?.horiztonalMargins ?? 0.0
+        var verticalMargins: CGFloat = margin?.verticalMargins ?? 0.0
 
-        var safeAreaInsets = self.safeAreaInsets
+        var safeAreaInsets: EdgeInsets = self.safeAreaInsets
         switch(safeAreaInsetsMode) {
         case .ignore:
             break
@@ -114,8 +118,8 @@ struct ViewConstraints: Equatable {
             safeAreaInsets = ViewConstraints.emptyEdgeSet
         }
 
-        var childWidth = size.width.calculateSize(parentWidth)
-        var childHeight = size.height.calculateSize(parentHeight)
+        var childWidth: CGFloat? = size.width.calculateSize(parentWidth)
+        var childHeight: CGFloat? = size.height.calculateSize(parentHeight)
 
         if size.width.isPercent(), let width = childWidth, let parentWidth = parentWidth {
             childWidth = min(width, parentWidth.subtract(horizontalMargins))
@@ -125,14 +129,16 @@ struct ViewConstraints: Equatable {
             childHeight = min(height, parentHeight.subtract(verticalMargins))
         }
 
-        let isVerticalFixedSize = size.height.isFixedSize(self.isVerticalFixedSize)
-        let isHorizontalFixedSize = size.width.isFixedSize(self.isHorizontalFixedSize)
+        let isVerticalFixedSize: Bool = size.height.isFixedSize(self.isVerticalFixedSize)
+        let isHorizontalFixedSize: Bool = size.width.isFixedSize(self.isHorizontalFixedSize)
 
-        return ViewConstraints(width: childWidth,
-                               height: childHeight,
-                               isHorizontalFixedSize: isHorizontalFixedSize,
-                               isVerticalFixedSize: isVerticalFixedSize,
-                               safeAreaInsets: safeAreaInsets)
+        return ViewConstraints(
+            width: childWidth,
+            height: childHeight,
+            isHorizontalFixedSize: isHorizontalFixedSize,
+            isVerticalFixedSize: isVerticalFixedSize,
+            safeAreaInsets: safeAreaInsets
+        )
     }
 }
 
@@ -171,6 +177,16 @@ extension SizeConstraint {
         case.auto:
             return false
         }
+    }
+}
+
+extension Margin {
+    var verticalMargins: CGFloat {
+        return (self.bottom ?? 0.0) + (self.top ?? 0.0)
+    }
+
+    var horiztonalMargins: CGFloat {
+        return (self.start ?? 0.0) + (self.end ?? 0.0)
     }
 }
 

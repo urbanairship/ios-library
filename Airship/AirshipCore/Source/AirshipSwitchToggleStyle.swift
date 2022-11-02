@@ -8,7 +8,7 @@ struct AirshipSwitchToggleStyle: ToggleStyle {
     let model: SwitchToggleStyleModel
     let colorScheme: ColorScheme
 
-    @Environment (\.isEnabled) var isEnabled
+    @Environment (\.isEnabled) var isEnabled: Bool
 
     func makeBody(configuration: Self.Configuration) -> some View {
         let colors = self.model.colors
