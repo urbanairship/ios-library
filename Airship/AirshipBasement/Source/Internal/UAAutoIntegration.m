@@ -127,19 +127,22 @@ static dispatch_once_t onceToken;
     self.extensionDelegateSwizzler = [UASwizzler swizzler];
 
     // Device token
-    [self.extensionDelegateSwizzler swizzle:@selector(didRegisterForRemoteNotificationsWithDeviceToken:)
-                             protocol:@protocol(WKExtensionDelegate)
-                       implementation:(IMP)DidRegisterForRemoteNotificationsWithDeviceToken];
+    [self.extensionDelegateSwizzler swizzleInstance:delegate
+                                           selector:@selector(didRegisterForRemoteNotificationsWithDeviceToken:)
+                                           protocol:@protocol(WKExtensionDelegate)
+                                     implementation:(IMP)DidRegisterForRemoteNotificationsWithDeviceToken];
     
     // Device token errors
-    [self.extensionDelegateSwizzler swizzle:@selector(didFailToRegisterForRemoteNotificationsWithError:)
-                             protocol:@protocol(WKExtensionDelegate)
-                       implementation:(IMP)DidFailToRegisterForRemoteNotificationsWithError];
+    [self.extensionDelegateSwizzler swizzleInstance:delegate
+                                           selector:@selector(didFailToRegisterForRemoteNotificationsWithError:)
+                                           protocol:@protocol(WKExtensionDelegate)
+                                     implementation:(IMP)DidFailToRegisterForRemoteNotificationsWithError];
 
     // Content-available notifications
-    [self.extensionDelegateSwizzler swizzle:@selector(didReceiveRemoteNotification:fetchCompletionHandler:)
-                             protocol:@protocol(WKExtensionDelegate)
-                       implementation:(IMP)DidReceiveRemoteNotificationFetchCompletionHandler];
+    [self.extensionDelegateSwizzler swizzleInstance:delegate
+                                           selector:@selector(didReceiveRemoteNotification:fetchCompletionHandler:)
+                                           protocol:@protocol(WKExtensionDelegate)
+                                     implementation:(IMP)DidReceiveRemoteNotificationFetchCompletionHandler];
 }
 #endif
 

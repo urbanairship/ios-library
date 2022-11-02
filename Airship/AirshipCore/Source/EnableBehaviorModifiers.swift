@@ -116,7 +116,7 @@ extension View {
                 }
 
                 if behaviors.contains(.pagerNext) {
-                    PagerPreviousButtonEnableBehavior(onApply: onApply)
+                    PagerNextButtonEnableBehavior(onApply: onApply)
                 }
 
                 if behaviors.contains(.pagerPrevious) {
