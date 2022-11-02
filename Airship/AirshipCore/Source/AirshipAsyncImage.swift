@@ -34,7 +34,8 @@ public struct AirshipAsyncImage<Placeholder: View, ImageView: View> : View {
         content
             .onAppear {
                 if (self.loadedImage != nil) {
-                    Task {
+                    self.animationTask?.cancel()
+                    self.animationTask = Task {
                         await animateImage()
                     }
                 } else {
@@ -46,14 +47,12 @@ public struct AirshipAsyncImage<Placeholder: View, ImageView: View> : View {
                             }
                         }, receiveValue: { image in
                             self.loadedImage = image
-                            Task {
+                            self.animationTask?.cancel()
+                            self.animationTask = Task {
                                 await animateImage()
                             }
                         })
                 }
-            }
-            .onDisappear {
-                animationTask?.cancel()
             }
     }
     
@@ -62,6 +61,9 @@ public struct AirshipAsyncImage<Placeholder: View, ImageView: View> : View {
             if let image = currentImage {
                 self.image(Image(uiImage: image), image.size)
                     .animation(nil, value: self.imageIndex)
+                    .onDisappear {
+                        animationTask?.cancel()
+                    }
             } else {
                 self.placeholder()
             }
@@ -99,7 +101,5 @@ public struct AirshipAsyncImage<Placeholder: View, ImageView: View> : View {
                 self.currentImage = frames[self.imageIndex].image
             }
         }
-
-        
     }
 }
