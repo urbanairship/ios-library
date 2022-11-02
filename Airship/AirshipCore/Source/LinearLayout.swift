@@ -44,8 +44,6 @@ struct LinearLayout : View {
         .constraints(constraints, alignment: .leading)
     }
 
-
-
     @ViewBuilder
     private func makeStack() -> some View {
         if (self.model.direction == .vertical) {

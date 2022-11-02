@@ -26,18 +26,6 @@ extension View {
         }
     }
 
-    @ViewBuilder
-    func apply<Content: View>(
-        _ predicate:  @autoclosure () -> Bool,
-        transform: (Self) -> Content
-    ) -> some View {
-        if predicate() {
-            transform(self)
-        } else {
-            self
-        }
-    }
-
     func addTapGesture(action: @escaping () -> Void) -> some View {
         #if os(tvOS)
         // broken on tvOS for now
@@ -57,20 +45,16 @@ extension View {
     }
 
     @ViewBuilder
-    func common<Content: BaseModel>(_ model: Content,
-                formInputID: String? = nil) -> some View {
-
-        self.modifier(
-            VisibilityViewModifier(
-                visibilityInfo: model.visibility
-            )
-        )
-        .enableBehaviors(model.enableBehaviors)
-        .eventHandlers(
+    func common<Content: BaseModel>(
+        _ model: Content,
+        formInputID: String? = nil
+    ) -> some View {
+        self.eventHandlers(
             model.eventHandlers,
             formInputID: formInputID
         )
-
+        .enableBehaviors(model.enableBehaviors)
+        .visibility(model.visibility)
     }
 
     func viewModifiers<Modifiers: ViewModifier>(
