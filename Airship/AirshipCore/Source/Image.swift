@@ -67,7 +67,7 @@ public class AirshipImageData: NSObject {
     }
 
     let frames: [Frame]
-    private static let minFrameDuration: TimeInterval = 0.1
+    private static let minFrameDuration: TimeInterval = 0.01
     
     init(frames: [Frame]) {
         self.frames = frames
