@@ -3,11 +3,23 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 16.10.1 November 3, 2022
+
+Patch release that significantly speeds up SDK build time, fixes issues
+with automatic setup for SwiftUI apps, and improves Scene & Surveys.
+
+### Changes
+- Fixed issues causing slow build times. The compile swift step is now ~6x faster.
+- Fixed issues calling the original app delegate methods when the app delegate is set using UIApplicationDelegateAdaptor in a SwiftUI app.
+- Moved Airship Keystore data to its own service bucket to avoid being accidentally deleted by other plugins/apps.
+- Improved Scene text input focus on iOS 16.
+- Improved gif rendering in Scenes & Surveys.
+ 
 ## Version 16.10.0 October 24, 2022
 
 Adds support for live activity and custom Airship domains.
 
-## Changes
+### Changes
 - Adds support for live activities (when built with Xcode 14.1+)
 - Adds support for setting the initialConfigURL when using custom domains
 - Fixed OOTB Message Center deep linking to a Message on first display
@@ -79,7 +91,6 @@ SDK 17.
 ### Changes
 - Location integration with Airship can be replaced with setting a location permission delegate on `PermissionsManager`.
 - Fixed subscription list action.
-
 
 ## Version 16.8.0 June 30, 2022
 

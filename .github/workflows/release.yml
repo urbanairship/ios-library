@@ -175,32 +175,6 @@ jobs:
           job_name: "Deploy iOS SDK to Bintray :bento:"
           url: ${{ secrets.SLACK_WEBHOOK }}
 
-  deploy-carthage:
-    runs-on: macOS-12
-    needs: [deploy]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Download zip distribution
-        uses: actions/download-artifact@v1
-        with:
-          name: airship
-          path: ./build
-      - name: Prepare Carthage
-        shell: bash
-        run: |
-          mkdir -p Carthage/build
-          cp -R build/*.xcframework Carthage/build
-          zip -r Airship.xcframeworks.zip Carthage -x "*.DS_Store"
-      - name: Upload carthage distribution
-        uses: actions/upload-release-asset@v1.0.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: Airship.xcframeworks.zip
-          asset_name: Airship.xcframeworks.zip
-          asset_content_type: application/zip
-
   finished:
     runs-on: ubuntu-latest
     needs: [deploy]
