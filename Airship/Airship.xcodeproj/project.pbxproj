@@ -458,6 +458,11 @@
 		6E43219126EA89B6009228AB /* AirshipCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43218E26EA89B5009228AB /* AirshipCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E43219226EA89B6009228AB /* NativeBridgeDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E43218F26EA89B6009228AB /* NativeBridgeDelegate.swift */; };
 		6E43219326EA89B6009228AB /* NativeBridgeDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E43218F26EA89B6009228AB /* NativeBridgeDelegate.swift */; };
+		6E45404D2914264D00AE084B /* LiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E68204228EE042900A4F90B /* LiveActivity.swift */; };
+		6E45404E2914264D00AE084B /* LiveActivityRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E68204128EE042900A4F90B /* LiveActivityRegistry.swift */; };
+		6E45404F2914264D00AE084B /* LiveActivityUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E68204528EE042900A4F90B /* LiveActivityUpdate.swift */; };
+		6E4540502914264D00AE084B /* LiveActivityRestorer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E68204328EE042900A4F90B /* LiveActivityRestorer.swift */; };
+		6E4540512914268000AE084B /* AirshipJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E68204428EE042900A4F90B /* AirshipJSON.swift */; };
 		6E4627CC1E64E0C300A5BF3B /* UAScheduleDelayTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4627CB1E64E0C300A5BF3B /* UAScheduleDelayTests.m */; };
 		6E46A273272B19760089CDE3 /* ViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E46A272272B19760089CDE3 /* ViewExtensions.swift */; };
 		6E46A274272B19760089CDE3 /* ViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E46A272272B19760089CDE3 /* ViewExtensions.swift */; };
@@ -7896,6 +7901,7 @@
 				A6722A64281A9EB80033F54D /* ChannelAPIClient.swift in Sources */,
 				A6722A65281A9EB80033F54D /* ChannelCreateResponse.swift in Sources */,
 				A6722A66281A9EB80033F54D /* ChannelRegistrar.swift in Sources */,
+				6E45404F2914264D00AE084B /* LiveActivityUpdate.swift in Sources */,
 				A6722A67281A9EB80033F54D /* ChannelProtocol.swift in Sources */,
 				A6722A68281A9EB80033F54D /* ChannelBulkUpdateAPIClient.swift in Sources */,
 				A6722A69281A9EB80033F54D /* Channel.swift in Sources */,
@@ -7904,6 +7910,7 @@
 				A6722A6C281A9EB90033F54D /* URLAllowList.swift in Sources */,
 				A6722A6D281A9EB90033F54D /* RuntimeConfig.swift in Sources */,
 				A6722A6E281A9EB90033F54D /* RemoteConfigCache.swift in Sources */,
+				6E4540512914268000AE084B /* AirshipJSON.swift in Sources */,
 				A6722A6F281A9EB90033F54D /* Config.swift in Sources */,
 				A6722A70281A9EB90033F54D /* CloudSite.swift in Sources */,
 				A6722A71281A9EB90033F54D /* HTTPResponse.swift in Sources */,
@@ -7936,6 +7943,7 @@
 				A6722A33281A9EA00033F54D /* AirshipCoreResources.swift in Sources */,
 				A6722A34281A9EA00033F54D /* AirshipVersion.swift in Sources */,
 				A6722A35281A9EA00033F54D /* ComponentDisableHelper.swift in Sources */,
+				6E45404E2914264D00AE084B /* LiveActivityRegistry.swift in Sources */,
 				A6722A36281A9EA00033F54D /* ModuleLoader.swift in Sources */,
 				A6722A37281A9EA00033F54D /* AirshipInstance.swift in Sources */,
 				A6722A38281A9EA00033F54D /* Analytics.swift in Sources */,
@@ -7985,6 +7993,7 @@
 				A67229C7281A9E630033F54D /* Thomas.swift in Sources */,
 				A67229C8281A9E630033F54D /* ThomasDelegate.swift in Sources */,
 				A67229C9281A9E630033F54D /* ThomasViewController.swift in Sources */,
+				6E45404D2914264D00AE084B /* LiveActivity.swift in Sources */,
 				A67229CA281A9E630033F54D /* (null) in Sources */,
 				A67229CB281A9E640033F54D /* ThomasViewModels.swift in Sources */,
 				A67229CC281A9E640033F54D /* ThomasViewModelExtensions.swift in Sources */,
@@ -8028,6 +8037,7 @@
 				A67229F5281A9E640033F54D /* ScrollLayout.swift in Sources */,
 				A67229F6281A9E640033F54D /* ViewFactory.swift in Sources */,
 				A67229F7281A9E640033F54D /* Media.swift in Sources */,
+				6E4540502914264D00AE084B /* LiveActivityRestorer.swift in Sources */,
 				A67229F8281A9E640033F54D /* MediaWebView.swift in Sources */,
 				A67229F9281A9E640033F54D /* EmptyView.swift in Sources */,
 				A67229FA281A9E640033F54D /* ModalView.swift in Sources */,

@@ -27,7 +27,7 @@ class ThomasEnvironment : ObservableObject {
         self.onDismiss = onDismiss
         self.imageLoader = ImageLoader(imageProvider: extensions?.imageProvider)
 
-#if !os(tvOS)
+#if !os(tvOS) && !os(watchOS)
         self.subscribeKeyboard()
 #endif
     }
@@ -122,7 +122,8 @@ class ThomasEnvironment : ObservableObject {
         self.delegate.onRunActions(actions: actionValues,
                                    layoutContext: layoutState.toLayoutContext())
     }
-#if !os(tvOS)
+
+#if !os(tvOS) && !os(watchOS)
 
     private func subscribeKeyboard() {
         Publishers.Merge(

@@ -137,7 +137,7 @@ public class AirshipImageData: NSObject {
 
         var delayTime: TimeInterval? = nil
 
-        if #available(iOS 13.0, *) {
+        if #available(iOS 13.0, tvOS 13.0, *) {
             delayTime = gifProperties[kCGImageAnimationDelayTime as String] as? TimeInterval
         }
 
