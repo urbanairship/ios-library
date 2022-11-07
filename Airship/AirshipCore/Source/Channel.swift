@@ -314,8 +314,14 @@ public class Channel : NSObject, Component, ChannelProtocol {
     
     @objc
     private func remoteConfigUpdated() {
-        if (self.isChannelCreationEnabled && self.identifier != nil) {
+        guard self.isRegistrationAllowed else {
+            return
+        }
+
+        if (self.identifier != nil) {
             self.channelRegistrar.performFullRegistration()
+        } else {
+            self.updateRegistration(forcefully: true)
         }
     }
     
@@ -553,20 +559,28 @@ public class Channel : NSObject, Component, ChannelProtocol {
     public func updateRegistration() {
         updateRegistration(forcefully: false)
     }
+
+    private var isRegistrationAllowed: Bool {
+        guard self.isComponentEnabled else {
+            return false
+        }
+
+        guard self.isChannelCreationEnabled else {
+            AirshipLogger.debug("Channel creation is currently disabled, unable to update")
+            return false
+        }
+
+        guard self.identifier != nil || self.privacyManager.isAnyFeatureEnabled() else {
+            AirshipLogger.trace("Skipping channel create. All features are disabled.")
+            return false
+        }
+
+        return true
+    }
     
     /// - Note: For internal use only. :nodoc:
     public func updateRegistration(forcefully: Bool) {
-        guard self.isComponentEnabled else {
-            return
-        }
-        
-        guard self.isChannelCreationEnabled else {
-            AirshipLogger.debug("Channel creation is currently disabled, unable to update")
-            return
-        }
-        
-        guard self.identifier != nil || self.privacyManager.isAnyFeatureEnabled() else {
-            AirshipLogger.trace("Skipping channel create. All features are disabled.")
+        guard self.isRegistrationAllowed else {
             return
         }
 
