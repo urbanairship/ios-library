@@ -61,11 +61,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, strong, nullable) NSNumber *maxHeight;
 
 /**
- * Flag indicating if the resizable view will display full screen.
- */
-@property (nonatomic, assign) BOOL displayFullScreen;
-
-/**
  * Flag indicating the resizable view should display as full screen on compact devices.
  * Defaults to `NO`.
  */
@@ -81,11 +76,6 @@ NS_ASSUME_NONNULL_BEGIN
  * The resizing container view's border radius.
  */
 @property (nonatomic, assign) CGFloat borderRadius;
-
-/**
- * Flag indicating the resizable view should round its borders
- */
-@property(nonatomic, assign) BOOL allowBorderRounding;
 
 /**
  * Factory method to initialize a resizable view controller with a child.

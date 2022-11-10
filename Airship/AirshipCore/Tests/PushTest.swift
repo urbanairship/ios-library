@@ -307,8 +307,8 @@ class PushTest: XCTestCase {
     }
 
     func testSetTimeZone() throws {
-        self.push.timeZone = NSTimeZone(abbreviation: "EDT")
-        XCTAssertEqual("EDT", self.push.timeZone?.abbreviation)
+        self.push.timeZone = NSTimeZone(abbreviation: "HST")
+        XCTAssertEqual("HST", self.push.timeZone?.abbreviation)
 
         self.push.timeZone = nil
         XCTAssertEqual(NSTimeZone.default as NSTimeZone, self.push.timeZone)

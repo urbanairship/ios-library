@@ -123,14 +123,15 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
     private let dispatcher: UADispatcher
     private let taskManager: TaskManagerProtocol
     private let appStateTracker: AppStateTracker
-    
-    init(dataStore: PreferenceDataStore,
-         channelAPIClient: ChannelAPIClientProtocol,
-         date: AirshipDate,
-         dispatcher: UADispatcher,
-         taskManager: TaskManagerProtocol,
-         appStateTracker:AppStateTracker) {
-        
+
+    init(
+        dataStore: PreferenceDataStore,
+        channelAPIClient: ChannelAPIClientProtocol,
+        date: AirshipDate,
+        dispatcher: UADispatcher,
+        taskManager: TaskManagerProtocol,
+        appStateTracker:AppStateTracker
+    ) {
         self.dataStore = dataStore
         self.channelAPIClient = channelAPIClient
         self.date = date
@@ -161,14 +162,18 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
     }
     
     @objc
-    public convenience init(config: RuntimeConfig,
-                            dataStore: PreferenceDataStore) {
-        self.init(dataStore:dataStore,
-                  channelAPIClient: ChannelAPIClient(config: config),
-                  date: AirshipDate(),
-                  dispatcher: UADispatcher.serial(.utility),
-                  taskManager: TaskManager.shared,
-                  appStateTracker: AppStateTracker.shared)
+    public convenience init(
+        config: RuntimeConfig,
+        dataStore: PreferenceDataStore
+    ) {
+        self.init(
+            dataStore:dataStore,
+            channelAPIClient: ChannelAPIClient(config: config),
+            date: AirshipDate(),
+            dispatcher: UADispatcher.serial(.utility),
+            taskManager: TaskManager.shared,
+            appStateTracker: AppStateTracker.shared
+        )
     }
     
     /**
@@ -187,7 +192,10 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
             ]
         )
         
-        self.taskManager.enqueueRequest(taskID: ChannelRegistrar.taskID, options: options)
+        self.taskManager.enqueueRequest(
+            taskID: ChannelRegistrar.taskID,
+            options: options
+        )
     }
     
     /**
@@ -195,7 +203,7 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
      */
     @objc
     public func performFullRegistration() {
-        self.dispatcher .dispatchAsync {
+        self.dispatcher.dispatchAsync {
             self.lastSuccessPayload = nil
             self.lastUpdateDate = Date.distantPast
             self.register(forcefully: true)

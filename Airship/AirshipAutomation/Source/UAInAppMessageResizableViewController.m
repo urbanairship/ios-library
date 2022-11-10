@@ -16,17 +16,9 @@
 #else
 @import AirshipCore;
 #endif
-/*
- * Hand tuned value that removes excess vertical safe area to make the
- * top padding look more consistent with the iPhone X nub
- */
-static CGFloat const ResizingViewExcessiveSafeAreaPadding = -8;
 
 static NSString *const ResizingViewControllerNibName = @"UAInAppMessageResizableViewController";
-static CGFloat const ResizingViewControllerDefaultInnerViewPadding = 15;
 
-static CGFloat const DefaultViewToScreenHeightRatio = 0.50;
-static CGFloat const DefaultViewToScreenWidthRatio = 0.75;
 
 /**
  * The in-app message resizing view interface necessary for rounded corners.
@@ -102,10 +94,13 @@ static CGFloat const DefaultViewToScreenWidthRatio = 0.75;
 /**
  * Constraints necessary to deactivate before stretching to full screen
  */
-@property (strong, nonatomic) IBOutlet NSLayoutConstraint *centerXConstraint;
-@property (strong, nonatomic) IBOutlet NSLayoutConstraint *centerYConstraint;
 @property (strong, nonatomic) IBOutlet NSLayoutConstraint *widthConstraint;
 @property (strong, nonatomic) IBOutlet NSLayoutConstraint *heightConstraint;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *trailingConstraint;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *leadingConstraint;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *topConstraint;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *bottomConstraint;
+
 
 /**
  * The completion handler passed in when the message is shown.
@@ -122,11 +117,6 @@ static CGFloat const DefaultViewToScreenWidthRatio = 0.75;
  * when the view needs to resize to fit the screen.
  */
 @property (nonatomic, assign) BOOL aspectLock;
-
-/**
- * The flag that determines if the view is overriding the default size.
- */
-@property (nonatomic, assign) BOOL overrideSize;
 
 /**
  * The window before the IAA is displayed.
@@ -160,8 +150,7 @@ static double const DefaultResizableViewAnimationDuration = 0.2;
     self = [self initFromNib];
 
     if (self) {
-        self.overrideSize = NO;
-        self.size = [self defaultScreenRelativeSize];
+        self.size = CGSizeZero;
         self.aspectLock = NO;
         [self addChildViewController:vc];
     }
@@ -175,7 +164,6 @@ static double const DefaultResizableViewAnimationDuration = 0.2;
     self = [self initFromNib];
 
     if (self) {
-        self.overrideSize = !CGSizeEqualToSize(size, CGSizeZero);
         self.size = size;
         self.aspectLock = aspectLock;
         [self addChildViewController:vc];
@@ -184,38 +172,25 @@ static double const DefaultResizableViewAnimationDuration = 0.2;
     return self;
 }
 
-- (void)overrideSizeConstraintsForSize:(CGSize)size {
-    CGSize normalizedSize = [self normalizeSize:size];
-
-    // Apply height and width constraints
-    self.widthConstraint.active = NO;
-    self.widthConstraint = [NSLayoutConstraint constraintWithItem:self.resizingContainerView
-                                                        attribute:NSLayoutAttributeWidth
-                                                        relatedBy:NSLayoutRelationEqual
-                                                           toItem:nil
-                                                        attribute:NSLayoutAttributeNotAnAttribute
-                                                       multiplier:1
-                                                         constant:normalizedSize.width];
-    self.widthConstraint.active = YES;
-
-    self.heightConstraint.active = NO;
-    self.heightConstraint = [NSLayoutConstraint constraintWithItem:self.resizingContainerView
-                                                         attribute:NSLayoutAttributeHeight
-                                                         relatedBy:NSLayoutRelationEqual
-                                                            toItem:nil
-                                                         attribute:NSLayoutAttributeNotAnAttribute
-                                                        multiplier:1
-                                                          constant:normalizedSize.height];
-    self.heightConstraint.active = YES;
-}
-
 - (void)addInAppMessageChildViewController:(UIViewController *)child  {
     [self.resizingContainerView addSubview:child.view];
-    [UAViewUtils applyContainerConstraintsToContainer:self.resizingContainerView containedView:child.view];
+    [UAViewUtils applyContainerConstraintsToContainer:self.resizingContainerView
+                                        containedView:child.view];
 }
 
 -(instancetype)initFromNib {
     return [self initWithNibName:ResizingViewControllerNibName bundle:[UAAutomationResources bundle]];
+}
+
+- (BOOL)isFullScreen {
+    if (self.allowFullScreenDisplay) {
+        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+            return self.extendFullScreenLargeDevice;
+        } else {
+            return YES;
+        }
+    }
+    return NO;
 }
 
 - (void)viewDidLoad {
@@ -223,77 +198,99 @@ static double const DefaultResizableViewAnimationDuration = 0.2;
 
     if (self.childViewControllers.count > 0) {
         UIViewController *child = self.childViewControllers[0];
-
         [self addInAppMessageChildViewController:child];
         [child didMoveToParentViewController:self];
     }
 
-    self.resizingContainerView.allowBorderRounding = self.allowBorderRounding;
-    self.resizingContainerView.backgroundColor = self.backgroundColor;
-    self.resizingContainerView.borderRadius = self.borderRadius;
-
-    self.displayFullScreen = false;
-    if (self.allowFullScreenDisplay) {
-        if (UIDevice.currentDevice.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
-            if (self.extendFullScreenLargeDevice) {
-                self.displayFullScreen = true;
-            }
-        } else {
-            self.displayFullScreen = true;
-        }
-    }
-
-    self.resizingContainerView.allowBorderRounding = !(self.displayFullScreen);
-
-    // will make opaque as part of animation when view appears
     self.view.alpha = 0;
-    // disable voiceover interactions with visible items beneath the modal
     self.view.accessibilityViewIsModal = YES;
+    self.resizingContainerView.backgroundColor = self.backgroundColor;
 
-    if (self.displayFullScreen) {
-        // Detect view type
-        [self stretchToFullScreen];
-        [self refreshViewForCurrentOrientation];
+    if ([self isFullScreen]) {
+        self.resizingContainerView.allowBorderRounding = NO;
+        self.shadeView.opaque = YES;
+        self.shadeView.alpha = 1;
+        self.shadeView.backgroundColor = self.backgroundColor;
     } else {
-
-        if (self.overrideSize) {
-            [self overrideSizeConstraintsForSize:self.size];
-        } else if (!self.allowMaxHeight) {
-            self.heightConstraint.active = false;
+        if (self.borderRadius > 0) {
+            self.resizingContainerView.allowBorderRounding = YES;
+            self.resizingContainerView.borderRadius = self.borderRadius;
         }
 
-        CGFloat maxWidth = self.maxWidth == nil ? 420.0 : self.maxWidth.floatValue;
-        CGFloat maxHeight = self.maxHeight == nil ? 720.0 : self.maxHeight.floatValue;
+        if (self.size.width > 0) {
+            self.widthConstraint.active = NO;
+            NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem:self.resizingContainerView
+                                                                          attribute:NSLayoutAttributeWidth
+                                                                          relatedBy:NSLayoutRelationEqual
+                                                                             toItem:nil
+                                                                          attribute:NSLayoutAttributeNotAnAttribute
+                                                                         multiplier:1
+                                                                           constant:self.size.width];
 
-        // Set max width
-        [NSLayoutConstraint constraintWithItem:self.resizingContainerView
-                                     attribute:NSLayoutAttributeWidth
-                                     relatedBy:NSLayoutRelationLessThanOrEqual
-                                        toItem:nil
-                                     attribute:NSLayoutAttributeNotAnAttribute
-                                    multiplier:1
-                                      constant:maxWidth].active = YES;
+            constraint.priority = 999;
+            constraint.active = YES;
+        } else {
+            CGFloat maxWidth = self.maxWidth == nil ? 420.0 : self.maxWidth.floatValue;
+            [NSLayoutConstraint constraintWithItem:self.resizingContainerView
+                                         attribute:NSLayoutAttributeWidth
+                                         relatedBy:NSLayoutRelationLessThanOrEqual
+                                            toItem:nil
+                                         attribute:NSLayoutAttributeNotAnAttribute
+                                        multiplier:1
+                                          constant:maxWidth].active = YES;
+        }
 
-        // Set max height
-        [NSLayoutConstraint constraintWithItem:self.resizingContainerView
-                                     attribute:NSLayoutAttributeHeight
-                                     relatedBy:NSLayoutRelationLessThanOrEqual
-                                        toItem:nil
-                                     attribute:NSLayoutAttributeNotAnAttribute
-                                    multiplier:1
-                                      constant:maxHeight].active = YES;
 
-        [UAInAppMessageUtils applyPaddingToView:self.resizingContainerView
-                                        padding:[self padding]
-                                        replace:YES];
+        if (self.size.height > 0) {
+            self.heightConstraint.active = NO;
+            NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem:self.resizingContainerView
+                                                                          attribute:NSLayoutAttributeHeight
+                                                                          relatedBy:NSLayoutRelationEqual
+                                                                             toItem:nil
+                                                                          attribute:NSLayoutAttributeNotAnAttribute
+                                                                         multiplier:1
+                                                                           constant:self.size.height];
+
+            constraint.priority = 999;
+            constraint.active = YES;
+        } else {
+            CGFloat maxHeight = self.maxHeight == nil ? 720.0 : self.maxHeight.floatValue;
+
+            // Set max height
+            [NSLayoutConstraint constraintWithItem:self.resizingContainerView
+                                         attribute:NSLayoutAttributeHeight
+                                         relatedBy:NSLayoutRelationLessThanOrEqual
+                                            toItem:nil
+                                         attribute:NSLayoutAttributeNotAnAttribute
+                                        multiplier:1
+                                          constant:maxHeight].active = YES;
+
+        }
+
+        if (!self.allowMaxHeight) {
+            self.heightConstraint.active = NO;
+        }
+
+        if (self.size.height > 0 && self.size.width > 0 && self.aspectLock) {
+            CGFloat aspectRatio = self.size.width/self.size.height;
+            [NSLayoutConstraint constraintWithItem:self.resizingContainerView
+                                         attribute:NSLayoutAttributeWidth
+                                         relatedBy:NSLayoutRelationEqual
+                                            toItem:self.resizingContainerView
+                                         attribute:NSLayoutAttributeHeight
+                                        multiplier:aspectRatio
+                                          constant:0.0f].active = YES;
+        }
+
+        self.bottomConstraint.constant = (48.0 + self.additionalPadding.trailing.floatValue);
+
+        self.topConstraint.constant = -(48 + self.additionalPadding.trailing.floatValue);
+
+        self.leadingConstraint.constant = (24.0 + self.additionalPadding.trailing.floatValue);
+
+
+        self.trailingConstraint.constant = -(24.0 + self.additionalPadding.trailing.floatValue);
     }
-}
-
-- (UAPadding *)padding {
-    return [UAPadding paddingWithTop:@(48.0 + self.additionalPadding.top.floatValue)
-                              bottom:@(48.0 + self.additionalPadding.bottom.floatValue)
-                             leading:@(24.0 + self.additionalPadding.leading.floatValue)
-                            trailing:@(24.0 + self.additionalPadding.trailing.floatValue)];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -309,7 +306,6 @@ static double const DefaultResizableViewAnimationDuration = 0.2;
         } completion:^(BOOL finished) {
             UA_STRONGIFY(self);
             self.isShowing = YES;
-            [self refreshViewForCurrentOrientation];
         }];
     }
 }
@@ -374,25 +370,6 @@ static double const DefaultResizableViewAnimationDuration = 0.2;
     [self displayWindow:completionHandler];
 }
 
-// Alters contraints to cover the full screen.
-- (void)stretchToFullScreen {
-
-    // Deactivate necessary modal constraints
-    self.centerXConstraint.active = NO;
-    self.centerYConstraint.active = NO;
-    self.widthConstraint.active = NO;
-    self.heightConstraint.active = NO;
-
-    // Add full screen constraints
-    // (note the these are not to the safe area - so insets will need to be provided opn iPhone X)
-    [UAViewUtils applyContainerConstraintsToContainer:self.view containedView:self.resizingContainerView];
-
-    // Set shade view to background colorv
-    self.shadeView.opaque = YES;
-    self.shadeView.alpha = 1;
-    self.shadeView.backgroundColor = self.backgroundColor;
-}
-
 - (void)tearDown {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 
@@ -437,160 +414,4 @@ static double const DefaultResizableViewAnimationDuration = 0.2;
         }
     }];
 }
-
-- (void)refreshViewForCurrentOrientation NS_EXTENSION_UNAVAILABLE("Method not available in app extensions") {
-    if (self.displayFullScreen) {
-        UIWindow *window = [UAUtils mainWindow];
-
-        // Black out the inset and compensate for excess vertical safe area when iPhone X is horizontal
-        if (window.safeAreaInsets.top == 0 && window.safeAreaInsets.left > 0) {
-            self.shadeView.backgroundColor = [UIColor blackColor];
-            // Apply insets for iPhone X, use larger safe inset on rotation to balance the view
-            CGFloat largerInset = fmax(window.safeAreaInsets.left, window.safeAreaInsets.right);
-            [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTrailing onView:self.resizingContainerView padding:largerInset replace:YES];
-            [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeLeading onView:self.resizingContainerView padding:largerInset replace:YES];
-            [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop onView:self.resizingContainerView padding:window.safeAreaInsets.top replace:YES];
-            [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeBottom onView:self.resizingContainerView padding:window.safeAreaInsets.bottom replace:YES];
-        } else if (window.safeAreaInsets.top > 0 && window.safeAreaInsets.left == 0) {
-            [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTrailing onView:self.resizingContainerView padding:0 replace:YES];
-            [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeLeading onView:self.resizingContainerView padding:0 replace:YES];
-            [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeTop onView:self.resizingContainerView padding:window.safeAreaInsets.top + ResizingViewExcessiveSafeAreaPadding replace:YES];
-            [UAInAppMessageUtils applyPaddingForAttribute:NSLayoutAttributeBottom onView:self.resizingContainerView padding:window.safeAreaInsets.bottom replace:YES];
-            self.shadeView.backgroundColor = self.backgroundColor;
-        }
-    }
-}
-
-#pragma mark -
-#pragma mark Resizing Helpers
-
-- (CGSize)getMaxSafeSize {
-    CGSize screenSize = [UIScreen mainScreen].bounds.size;
-
-    // Get insets for max size
-    CGFloat topInset = 0;
-    CGFloat bottomInset = 0;
-    CGFloat leftInset = 0;
-    CGFloat rightInset = 0;
-
-    UIWindow *window = [UAUtils mainWindow];
-    topInset = window.safeAreaInsets.top;
-    bottomInset = window.safeAreaInsets.bottom;
-    leftInset = window.safeAreaInsets.left;
-    rightInset = window.safeAreaInsets.right;
-
-    CGFloat maxOverlayWidth = screenSize.width - (fabs(leftInset) + fabs(rightInset));
-    CGFloat maxOverlayHeight = screenSize.height - (fabs(topInset) + fabs(bottomInset));
-
-    return CGSizeMake(maxOverlayWidth, maxOverlayHeight);
-}
-
-// Helper that generates default screen-relative size - this was previously done in the storyboard
-- (CGSize)defaultScreenRelativeSize {
-    CGSize maxSafeSize = [self getMaxSafeSize];
-
-    return CGSizeMake(maxSafeSize.width * DefaultViewToScreenWidthRatio,
-                      maxSafeSize.height * DefaultViewToScreenHeightRatio);
-}
-
-// Normalizes the provided size to aspect fill the current screen
-- (CGSize)normalizeSize:(CGSize)size {
-    CGFloat requestedAspect = size.width/size.height;
-
-    CGSize maxSafeOverlaySize = [self getMaxSafeSize];
-    CGFloat screenAspect = maxSafeOverlaySize.width/maxSafeOverlaySize.height;
-
-    // If aspect ratio is invalid, remove aspect lock
-    if (![self validateAspectRatio:requestedAspect]) {
-        self.aspectLock = NO;
-    }
-
-    BOOL sizeIsValid = ([self validateWidth:size.width] && [self validateHeight:size.height]);
-
-    // If aspect lock is on and size is invalid, adjust size
-    if (self.aspectLock && !sizeIsValid) {
-        if (screenAspect > requestedAspect) {
-            return CGSizeMake(size.width * (maxSafeOverlaySize.height/size.height), maxSafeOverlaySize.height);
-        } else {
-            return CGSizeMake(maxSafeOverlaySize.width, size.height * (maxSafeOverlaySize.width/size.width));
-        }
-    }
-
-    // Fill screen width if width is invalid
-    if (![self validateWidth:size.width]) {
-        size.width = maxSafeOverlaySize.width;
-    }
-
-    // Fill screen height if height is invalid
-    if (![self validateHeight:size.height]) {
-        size.height = maxSafeOverlaySize.height;
-    }
-
-    return size;
-}
-
-- (BOOL)validateAspectRatio:(CGFloat)aspectRatio {
-    if (isnan(aspectRatio) || aspectRatio > INTMAX_MAX) {
-        return NO;
-    }
-
-    if (aspectRatio == 0) {
-        return NO;
-    }
-
-    return YES;
-}
-
-- (BOOL)validateWidth:(CGFloat)width {
-    CGSize screenSize = [self getMaxSafeSize];
-    CGFloat maximumOverlayViewWidth = screenSize.width;
-    CGFloat minimumOverlayViewWidth = (ResizingViewControllerDefaultInnerViewPadding * 2) * 2;
-
-    if (width < minimumOverlayViewWidth) {
-        if (width != 0) {
-            UA_LDEBUG(@"Overlay view width is less than the minimum allowed width.");
-        }
-        return NO;
-    }
-
-    if (width > maximumOverlayViewWidth) {
-        UA_LDEBUG(@"Overlay view width is greater than the maximum allowed width.");
-        return NO;
-    }
-
-    return YES;
-}
-
-- (BOOL)validateHeight:(CGFloat)height {
-    CGSize maxScreenSize = [self getMaxSafeSize];
-    CGFloat maximumOverlayViewHeight = maxScreenSize.height;
-    CGFloat minimumOverlayViewHeight = (ResizingViewControllerDefaultInnerViewPadding * 2) * 2;
-
-    if (height < minimumOverlayViewHeight) {
-        if (height != 0) {
-            UA_LDEBUG(@"Overlay view height is less than the minimum allowed height.");
-        }
-        return NO;
-    }
-
-    if (height > maximumOverlayViewHeight) {
-        UA_LDEBUG(@"Overlay view height is greater than the maximum allowed height.");
-        return NO;
-    }
-
-    return YES;
-}
-
-- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
-    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
-
-    // apply the size if size is being overridden
-    if (self.overrideSize) {
-        [self overrideSizeConstraintsForSize:self.size];
-    }
-
-    [self refreshViewForCurrentOrientation];
-}
-
-
 @end

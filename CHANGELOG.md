@@ -3,6 +3,12 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 16.10.2 November 7, 2022
+Patch release to fix a delay when creating the Airship channel on first run. Apps that are using 16.10.1 or `requireInitialRemoteConfigEnabled` config should update.
+
+### Changes
+- Fixed channel creation delay on first run
+
 ## Version 16.10.1 November 3, 2022
 
 Patch release that significantly speeds up SDK build time, fixes issues

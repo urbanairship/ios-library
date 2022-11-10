@@ -355,6 +355,19 @@ class ChannelTest: XCTestCase {
         XCTAssertTrue(self.channelRegistrar.fullRegistrationCalled)
     }
 
+    func testConfigUpdateNoChannelID() throws {
+        self.channelRegistrar.channelID = nil
+        self.privacyManager.enableFeatures(.all)
+        self.channelRegistrar.registerCalled = false
+
+        self.notificationCenter.post(
+            name: RuntimeConfig.configUpdatedEvent,
+            object: nil
+        )
+
+        XCTAssertTrue(self.channelRegistrar.registerCalled)
+    }
+
     func testMigratePushTagsToChannelTags() throws {
         self.privacyManager.enableFeatures(.all)
 
