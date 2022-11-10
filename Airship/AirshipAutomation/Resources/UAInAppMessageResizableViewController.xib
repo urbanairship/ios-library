@@ -1,23 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina5_5" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="UAInAppMessageResizableViewController">
+        id="Ri0-Rq-Npt"/>
+                
             <connections>
-                <outlet property="centerXConstraint" destination="nP9-Sr-HcU" id="QlU-BP-rZY"/>
-                <outlet property="centerYConstraint" destination="sDs-L5-7Dh" id="Ij3-ee-366"/>
                 <outlet property="heightConstraint" destination="ijq-fT-ON3" id="0Re-yb-Lld"/>
+                <outlet property="trailingConstraint" destination="RpM-2c-Vq7" id="3Re-yb-Lld"/>
+                <outlet property="leadingConstraint" destination="VgD-Wa-SUZ" id="2Re-yb-Lld"/>
+                <outlet property="bottomConstraint" destination="RsM-2c-Vq7" id="1Re-yb-Lld"/>
+                <outlet property="topConstraint" destination="ZO7-QR-XtN" id="4Re-yb-Lld"/>
                 <outlet property="resizableContainer" destination="Gmc-md-UHv" id="ZXw-l6-teC"/>
                 <outlet property="resizingContainerView" destination="Gmc-md-UHv" id="mIp-z0-EaP"/>
                 <outlet property="shadeView" destination="KZc-00-wWo" id="TCb-wx-Kyj"/>
                 <outlet property="view" destination="iN0-l3-epB" id="UMN-dI-yol"/>
-                <outlet property="widthConstraint" destination="jhd-FM-oN8" id="Z5O-O0-5vl"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
@@ -29,7 +32,7 @@
                     <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                     <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                 </view>
-                <view contentMode="scaleToFill" verticalHuggingPriority="999" verticalCompressionResistancePriority="200" translatesAutoresizingMaskIntoConstraints="NO" id="Gmc-md-UHv" userLabel="Resizable View Container" customClass="UAInAppMessageResizableView">
+                <view contentMode="scaleToFill" verticalHuggingPriority="999" verticalCompressionResistancePriority="200" preservesSuperviewLayoutMargins="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Gmc-md-UHv" userLabel="Resizable View Container" customClass="UAInAppMessageResizableView">
                     <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
@@ -40,16 +43,16 @@
             <viewLayoutGuide key="safeArea" id="Zz3-1x-iBw"/>
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <constraints>
-                <constraint firstItem="KZc-00-wWo" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="Ajh-9C-jj5"/>
+                <constraint firstItem="KZc-00-wWo" firstAttribute="bottom" secondItem="iN0-l3-epB" secondAttribute="bottom" id="A8u-P3-r3l"/>
+                <constraint firstItem="KZc-00-wWo" firstAttribute="trailing" secondItem="iN0-l3-epB" secondAttribute="trailing" id="Ajh-9C-jj5"/>
                 <constraint firstItem="Gmc-md-UHv" firstAttribute="width" secondItem="iN0-l3-epB" secondAttribute="width" priority="988" id="Ids-YR-FEQ"/>
-                <constraint firstItem="KZc-00-wWo" firstAttribute="height" secondItem="iN0-l3-epB" secondAttribute="height" id="Iep-YR-FEQ"/>
                 <constraint firstItem="Gmc-md-UHv" firstAttribute="top" relation="greaterThanOrEqual" secondItem="Zz3-1x-iBw" secondAttribute="top" id="Ri0-Rq-Npt"/>
-                <constraint firstItem="Gmc-md-UHv" firstAttribute="trailing" relation="lessThanOrEqual" secondItem="Zz3-1x-iBw" secondAttribute="trailing" priority="999" id="RpM-2c-Vq7"/>
-                <constraint firstItem="Gmc-md-UHv" firstAttribute="bottom" relation="lessThanOrEqual" secondItem="Zz3-1x-iBw" secondAttribute="bottom" priority="999" id="RsM-2c-Vq7"/>
-                <constraint firstItem="Gmc-md-UHv" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Zz3-1x-iBw" secondAttribute="leading" priority="999" id="VgD-Wa-SUZ"/>
+                <constraint firstItem="Gmc-md-UHv" firstAttribute="trailing" relation="lessThanOrEqual" secondItem="Zz3-1x-iBw" secondAttribute="trailing" id="RpM-2c-Vq7"/>
+                <constraint firstItem="Gmc-md-UHv" firstAttribute="bottom" relation="lessThanOrEqual" secondItem="Zz3-1x-iBw" secondAttribute="bottom" id="RsM-2c-Vq7"/>
+                <constraint firstItem="Gmc-md-UHv" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Zz3-1x-iBw" secondAttribute="leading" id="VgD-Wa-SUZ"/>
+                <constraint firstItem="KZc-00-wWo" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="ZO7-QR-XtN"/>
                 <constraint firstItem="Gmc-md-UHv" firstAttribute="height" secondItem="iN0-l3-epB" secondAttribute="height" priority="988" id="ijq-fT-ON3"/>
-                <constraint firstItem="KZc-00-wWo" firstAttribute="width" secondItem="iN0-l3-epB" secondAttribute="width" id="jhd-FM-oN8"/>
-                <constraint firstItem="KZc-00-wWo" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="kgj-9D-TpW"/>
+                <constraint firstItem="KZc-00-wWo" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="kgj-9D-TpW"/>
                 <constraint firstItem="Gmc-md-UHv" firstAttribute="centerX" secondItem="Zz3-1x-iBw" secondAttribute="centerX" id="nP9-Sr-HcU"/>
                 <constraint firstItem="Gmc-md-UHv" firstAttribute="centerY" secondItem="Zz3-1x-iBw" secondAttribute="centerY" id="sDs-L5-7Dh"/>
             </constraints>
