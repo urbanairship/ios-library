@@ -91,12 +91,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, DeepLinkDelegate, Message
     }
 
     func displayMessageCenter(forMessageID messageID: String) {
-        AppState.shared.messageID = messageID
         AppState.shared.selectedTab = .messageCenter
     }
 
     func displayMessageCenter() {
-        AppState.shared.messageID = nil
         AppState.shared.selectedTab = .messageCenter
     }
 

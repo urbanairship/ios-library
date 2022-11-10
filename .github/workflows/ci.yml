@@ -54,54 +54,54 @@ jobs:
       - name: Test
         run: make test build-samples
 
-  run-tests-watchos:
-    runs-on: macOS-12
-    steps:
-      - name: Set env variable
-        run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v1
-        with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ env.ImageVersion }}-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: ${{ runner.os }}-gems-${{ env.ImageVersion }}
-      - name: Install xcodegen
-        run: brew install xcodegen
-      - name: Install Apple Certificate
-        uses: apple-actions/import-codesign-certs@v1
-        with:
-          p12-file-base64: ${{ secrets.CERTIFICATE_P12_BASE64 }}
-          p12-password: ${{ secrets.CERTIFICATE_P12_PASSWORD }}
-      - name: Install the provisioning profile
-        env:
-          PROVISIONING_APP_BASE64: ${{ secrets.PROVISIONING_PROFILE_APP_BASE64 }}
-          PROVISIONING_EXT_BASE64: ${{ secrets.PROVISIONING_PROFILE_EXT_BASE64 }}
-        run: |
-          PP_APP_PATH=$RUNNER_TEMP/wkapp_prof.mobileprovision
-          PP_EXT_PATH=$RUNNER_TEMP/wkext_prof.mobileprovision
+  # run-tests-watchos:
+  #   runs-on: macOS-12
+  #   steps:
+  #     - name: Set env variable
+  #       run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
+  #     - uses: actions/checkout@v2
+  #     - uses: actions/cache@v1
+  #       with:
+  #         path: vendor/bundle
+  #         key: ${{ runner.os }}-gems-${{ env.ImageVersion }}-${{ hashFiles('**/Gemfile.lock') }}
+  #         restore-keys: ${{ runner.os }}-gems-${{ env.ImageVersion }}
+  #     - name: Install xcodegen
+  #       run: brew install xcodegen
+  #     - name: Install Apple Certificate
+  #       uses: apple-actions/import-codesign-certs@v1
+  #       with:
+  #         p12-file-base64: ${{ secrets.CERTIFICATE_P12_BASE64 }}
+  #         p12-password: ${{ secrets.CERTIFICATE_P12_PASSWORD }}
+  #     - name: Install the provisioning profile
+  #       env:
+  #         PROVISIONING_APP_BASE64: ${{ secrets.PROVISIONING_PROFILE_APP_BASE64 }}
+  #         PROVISIONING_EXT_BASE64: ${{ secrets.PROVISIONING_PROFILE_EXT_BASE64 }}
+  #       run: |
+  #         PP_APP_PATH=$RUNNER_TEMP/wkapp_prof.mobileprovision
+  #         PP_EXT_PATH=$RUNNER_TEMP/wkext_prof.mobileprovision
 
-          echo -n "$PROVISIONING_APP_BASE64" | base64 --decode --output $PP_APP_PATH
-          echo -n "$PROVISIONING_EXT_BASE64" | base64 --decode --output $PP_EXT_PATH
+  #         echo -n "$PROVISIONING_APP_BASE64" | base64 --decode --output $PP_APP_PATH
+  #         echo -n "$PROVISIONING_EXT_BASE64" | base64 --decode --output $PP_EXT_PATH
 
-          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-          cp $PP_APP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
-          cp $PP_EXT_PATH ~/Library/MobileDevice/Provisioning\ Profiles
-      - name: Test
-        run: make build-sample-watchos
+  #         mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+  #         cp $PP_APP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+  #         cp $PP_EXT_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+  #     - name: Test
+  #       run: make build-sample-watchos
         
-  pod-lib-lint-watchos:
-    runs-on: macOS-12
-    steps:
-      - name: Set env variable
-        run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v1
-        with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ env.ImageVersion }}-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: ${{ runner.os }}-gems-${{ env.ImageVersion }}
-      - name: Pod lint
-        run: make pod-lint-watchos
+  # pod-lib-lint-watchos:
+  #   runs-on: macOS-12
+  #   steps:
+  #     - name: Set env variable
+  #       run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
+  #     - uses: actions/checkout@v2
+  #     - uses: actions/cache@v1
+  #       with:
+  #         path: vendor/bundle
+  #         key: ${{ runner.os }}-gems-${{ env.ImageVersion }}-${{ hashFiles('**/Gemfile.lock') }}
+  #         restore-keys: ${{ runner.os }}-gems-${{ env.ImageVersion }}
+  #     - name: Pod lint
+  #       run: make pod-lint-watchos
         
   pod-lib-lint-tvos:
     runs-on: macOS-12

@@ -321,5 +321,3 @@ extension _PreferenceCenterThemeObjc {
         )
     }
 }
-
-

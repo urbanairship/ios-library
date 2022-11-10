@@ -53,8 +53,21 @@
 		32515872272B007F00DF8B44 /* Media.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32515866272AFB2E00DF8B44 /* Media.swift */; };
 		32515874272B038300DF8B44 /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32D6E87A2727F7060077C784 /* Image.swift */; };
 		3261A7F6243CD7F900ADBF6B /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3261A7F4243CD73100ADBF6B /* CoreTelephony.framework */; platformFilter = maccatalyst; };
+		32B5BE3B28F8A7EB00F2254B /* MessageCenterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B5BE3A28F8A7EB00F2254B /* MessageCenterController.swift */; };
+		32B5BE3E28F8A8C000F2254B /* MessageCenterListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B5BE2728F8A7D600F2254B /* MessageCenterListItemView.swift */; };
+		32B5BE3F28F8A8C200F2254B /* MessageCenterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B5BE2828F8A7D600F2254B /* MessageCenterView.swift */; };
+		32B5BE4028F8A8C500F2254B /* MessageCenterMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B5BE2928F8A7D600F2254B /* MessageCenterMessageView.swift */; };
+		32B5BE4128F8A8C700F2254B /* MessageCenterListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B5BE2A28F8A7D600F2254B /* MessageCenterListView.swift */; };
+		32B5BE4228F8A8CA00F2254B /* MessageCenterListItemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B5BE2B28F8A7D600F2254B /* MessageCenterListItemViewModel.swift */; };
+		32B5BE4328F8A8CD00F2254B /* MessageCenterListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B5BE2C28F8A7D600F2254B /* MessageCenterListViewModel.swift */; };
+		32B5BE4928F8B66500F2254B /* MessageCenterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B5BE4828F8B66500F2254B /* MessageCenterViewController.swift */; };
+		32B632882906CA17000D3E34 /* MessageCenterThemeLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B632862906CA17000D3E34 /* MessageCenterThemeLoader.swift */; };
+		32B632892906CA17000D3E34 /* MessageCenterTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B632872906CA17000D3E34 /* MessageCenterTheme.swift */; };
 		32CF81E2275627F4003009D1 /* AirshipAsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32CF81E1275627F4003009D1 /* AirshipAsyncImage.swift */; };
 		32CF81E3275627F4003009D1 /* AirshipAsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32CF81E1275627F4003009D1 /* AirshipAsyncImage.swift */; };
+		32D1D738290C0CD3008788E1 /* JSONValueTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32D1D736290C05D7008788E1 /* JSONValueTransformer.swift */; };
+		32D1D739290C0CD4008788E1 /* JSONValueTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32D1D736290C05D7008788E1 /* JSONValueTransformer.swift */; };
+		32D1D73A290C0CD4008788E1 /* JSONValueTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32D1D736290C05D7008788E1 /* JSONValueTransformer.swift */; };
 		32D6E87B2727F7060077C784 /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32D6E87A2727F7060077C784 /* Image.swift */; };
 		32F615A728F708980015696D /* MessageCenterListTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F615A628F708980015696D /* MessageCenterListTests.swift */; };
 		32F615A828F708AD0015696D /* TestChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC7E48426A60CDF0038CFDD /* TestChannel.swift */; };
@@ -1758,7 +1771,18 @@
 		32515866272AFB2E00DF8B44 /* Media.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Media.swift; sourceTree = "<group>"; };
 		32515868272AFB2E00DF8B44 /* MediaWebView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaWebView.swift; sourceTree = "<group>"; };
 		3261A7F4243CD73100ADBF6B /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/CoreTelephony.framework; sourceTree = DEVELOPER_DIR; };
+		32B5BE2728F8A7D600F2254B /* MessageCenterListItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterListItemView.swift; sourceTree = "<group>"; };
+		32B5BE2828F8A7D600F2254B /* MessageCenterView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterView.swift; sourceTree = "<group>"; };
+		32B5BE2928F8A7D600F2254B /* MessageCenterMessageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterMessageView.swift; sourceTree = "<group>"; };
+		32B5BE2A28F8A7D600F2254B /* MessageCenterListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterListView.swift; sourceTree = "<group>"; };
+		32B5BE2B28F8A7D600F2254B /* MessageCenterListItemViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCenterListItemViewModel.swift; sourceTree = "<group>"; };
+		32B5BE2C28F8A7D600F2254B /* MessageCenterListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCenterListViewModel.swift; sourceTree = "<group>"; };
+		32B5BE3A28F8A7EB00F2254B /* MessageCenterController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterController.swift; sourceTree = "<group>"; };
+		32B5BE4828F8B66500F2254B /* MessageCenterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCenterViewController.swift; sourceTree = "<group>"; };
+		32B632862906CA17000D3E34 /* MessageCenterThemeLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterThemeLoader.swift; sourceTree = "<group>"; };
+		32B632872906CA17000D3E34 /* MessageCenterTheme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterTheme.swift; sourceTree = "<group>"; };
 		32CF81E1275627F4003009D1 /* AirshipAsyncImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipAsyncImage.swift; sourceTree = "<group>"; };
+		32D1D736290C05D7008788E1 /* JSONValueTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONValueTransformer.swift; sourceTree = "<group>"; };
 		32D6E87A2727F7060077C784 /* Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
 		32F615A628F708980015696D /* MessageCenterListTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCenterListTests.swift; sourceTree = "<group>"; };
 		32F68CDA28F02A6B00F7F52A /* MessageCenterStoreTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCenterStoreTest.swift; sourceTree = "<group>"; };
@@ -2073,7 +2097,7 @@
 		6E4A466E28EF44F600A25617 /* AirshipMessageCenterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipMessageCenterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E4A467828EF453400A25617 /* MessageCenterAPIClientTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterAPIClientTest.swift; sourceTree = "<group>"; };
 		6E4A467F28EF4FAF00A25617 /* TestAirshipRequestSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAirshipRequestSession.swift; sourceTree = "<group>"; };
-		6E4A468B28EF673800A25617 /* InboxMessageData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InboxMessageData.swift; path = AirshipMessageCenter/Source/InboxMessageData.swift; sourceTree = SOURCE_ROOT; };
+		6E4A468B28EF673800A25617 /* InboxMessageData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InboxMessageData.swift; path = AirshipMessageCenter/Source/model/InboxMessageData.swift; sourceTree = SOURCE_ROOT; };
 		6E4A469E28F4A7DF00A25617 /* MessageCenterAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCenterAction.swift; sourceTree = "<group>"; };
 		6E4A46A028F4AEDF00A25617 /* MessageCenterNativeBridgeExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCenterNativeBridgeExtension.swift; sourceTree = "<group>"; };
 		6E4E5B2726E53EE700198175 /* UABaseTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UABaseTest.h; sourceTree = "<group>"; };
@@ -2874,6 +2898,47 @@
 			path = Public;
 			sourceTree = "<group>";
 		};
+		32B5BE2D28F8A7D600F2254B /* views */ = {
+			isa = PBXGroup;
+			children = (
+				32B5BE3A28F8A7EB00F2254B /* MessageCenterController.swift */,
+				32B5BE4828F8B66500F2254B /* MessageCenterViewController.swift */,
+				32B5BE2828F8A7D600F2254B /* MessageCenterView.swift */,
+				32B5BE2A28F8A7D600F2254B /* MessageCenterListView.swift */,
+				32B5BE2728F8A7D600F2254B /* MessageCenterListItemView.swift */,
+				32B5BE2928F8A7D600F2254B /* MessageCenterMessageView.swift */,
+			);
+			path = views;
+			sourceTree = "<group>";
+		};
+		32B632852906CA17000D3E34 /* theme */ = {
+			isa = PBXGroup;
+			children = (
+				32B632872906CA17000D3E34 /* MessageCenterTheme.swift */,
+				32B632862906CA17000D3E34 /* MessageCenterThemeLoader.swift */,
+			);
+			path = theme;
+			sourceTree = "<group>";
+		};
+		32BACFAA2901827D009DA5C8 /* viewModel */ = {
+			isa = PBXGroup;
+			children = (
+				32B5BE2B28F8A7D600F2254B /* MessageCenterListItemViewModel.swift */,
+				32B5BE2C28F8A7D600F2254B /* MessageCenterListViewModel.swift */,
+			);
+			path = viewModel;
+			sourceTree = "<group>";
+		};
+		32BACFAB290182B7009DA5C8 /* model */ = {
+			isa = PBXGroup;
+			children = (
+				6E4A468B28EF673800A25617 /* InboxMessageData.swift */,
+				6E4A466028EF447C00A25617 /* MessageCenterUser.swift */,
+				6E4A466428EF448600A25617 /* MessageCenterMessage.swift */,
+			);
+			path = model;
+			sourceTree = "<group>";
+		};
 		3C152F5A24E4B2EC00CF1181 /* Auth */ = {
 			isa = PBXGroup;
 			children = (
@@ -2958,11 +3023,12 @@
 		3CA0E30B237E396100EE76CF /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				32B632852906CA17000D3E34 /* theme */,
+				32BACFAB290182B7009DA5C8 /* model */,
+				32BACFAA2901827D009DA5C8 /* viewModel */,
+				32B5BE2D28F8A7D600F2254B /* views */,
 				6E4A466328EF448600A25617 /* MessageCenterAPIClient.swift */,
-				6E4A466428EF448600A25617 /* MessageCenterMessage.swift */,
 				6E4A466228EF448600A25617 /* MessageCenterStore.swift */,
-				6E4A468B28EF673800A25617 /* InboxMessageData.swift */,
-				6E4A466028EF447C00A25617 /* MessageCenterUser.swift */,
 				32F68CED28F07C2C00F7F52A /* MessageCenter.swift */,
 				32F68CE828F07C2B00F7F52A /* MessageCenterResources.swift */,
 				32F68CE928F07C2C00F7F52A /* MessageCenterSDKModule.swift */,
@@ -3574,6 +3640,7 @@
 				6E15B73B26D43F120099C92D /* NSArrayValueTransformer.swift */,
 				6E15B73C26D43F120099C92D /* NSDictionaryValueTransformer.swift */,
 				6E15B73A26D43F110099C92D /* NSURLValueTransformer.swift */,
+				32D1D736290C05D7008788E1 /* JSONValueTransformer.swift */,
 			);
 			name = "Value Transformers";
 			sourceTree = "<group>";
@@ -5729,15 +5796,25 @@
 			files = (
 				6E4A469F28F4A7DF00A25617 /* MessageCenterAction.swift in Sources */,
 				6E4A466528EF448600A25617 /* MessageCenterStore.swift in Sources */,
+				32B632892906CA17000D3E34 /* MessageCenterTheme.swift in Sources */,
 				32F68CEF28F07C2C00F7F52A /* MessageCenterSDKModule.swift in Sources */,
+				32B5BE3F28F8A8C200F2254B /* MessageCenterView.swift in Sources */,
 				32F68CEE28F07C2C00F7F52A /* MessageCenterResources.swift in Sources */,
 				6E4A466628EF448600A25617 /* MessageCenterAPIClient.swift in Sources */,
 				6E4A466128EF447C00A25617 /* MessageCenterUser.swift in Sources */,
 				6E4A46A128F4AEDF00A25617 /* MessageCenterNativeBridgeExtension.swift in Sources */,
+				32B632882906CA17000D3E34 /* MessageCenterThemeLoader.swift in Sources */,
 				6E4A468D28EF673800A25617 /* InboxMessageData.swift in Sources */,
+				32B5BE4928F8B66500F2254B /* MessageCenterViewController.swift in Sources */,
+				32B5BE4328F8A8CD00F2254B /* MessageCenterListViewModel.swift in Sources */,
 				6E4A466728EF448600A25617 /* MessageCenterMessage.swift in Sources */,
+				32B5BE4128F8A8C700F2254B /* MessageCenterListView.swift in Sources */,
+				32B5BE3E28F8A8C000F2254B /* MessageCenterListItemView.swift in Sources */,
+				32B5BE3B28F8A7EB00F2254B /* MessageCenterController.swift in Sources */,
 				32F68CF328F07C2C00F7F52A /* MessageCenter.swift in Sources */,
 				32F68CF528F07C4900F7F52A /* MessageCenterList.swift in Sources */,
+				32B5BE4228F8A8CA00F2254B /* MessageCenterListItemViewModel.swift in Sources */,
+				32B5BE4028F8A8C500F2254B /* MessageCenterMessageView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5856,6 +5933,7 @@
 				6E91B4612689092F00DDB1A8 /* InstallAttributionEvent.swift in Sources */,
 				6EF27DE62730E77300548DA3 /* RadioInputState.swift in Sources */,
 				6EB56C7C27AC4BBB00A7392F /* AssociatedChannel.swift in Sources */,
+				32D1D738290C0CD3008788E1 /* JSONValueTransformer.swift in Sources */,
 				6E91E44328EF423400B6F25E /* WorkRateLimiterActor.swift in Sources */,
 				6E1BACDD2719FC0A0038399E /* ViewFactory.swift in Sources */,
 				6E9B4874288F0CE000C905B1 /* RateAppAction.swift in Sources */,
@@ -6285,6 +6363,7 @@
 				6EEE8BA4290B3EDE00230528 /* AirshipKeychainAccess.swift in Sources */,
 				A6722A90281A9EDA0033F54D /* Push.swift in Sources */,
 				A6722A91281A9EDA0033F54D /* PushProtocol.swift in Sources */,
+				32D1D73A290C0CD4008788E1 /* JSONValueTransformer.swift in Sources */,
 				A6722A92281A9EDA0033F54D /* (null) in Sources */,
 				A6722A93281A9EDA0033F54D /* RemoteConfigDisableInfo.swift in Sources */,
 				A6722A94281A9EDA0033F54D /* RemoteConfigModuleAdapter.swift in Sources */,
@@ -6838,6 +6917,7 @@
 				A6F6726126E1162F008C69C3 /* JSONMatcher.swift in Sources */,
 				6E698DF126790AC300654DB2 /* AirshipLogger.swift in Sources */,
 				6EB56C7D27AC4BBC00A7392F /* AssociatedChannel.swift in Sources */,
+				32D1D739290C0CD4008788E1 /* JSONValueTransformer.swift in Sources */,
 				6E91E44428EF423400B6F25E /* WorkRateLimiterActor.swift in Sources */,
 				6EF1933F28380644005F192A /* DefaultLogHandler.swift in Sources */,
 				6E9B4875288F0CE000C905B1 /* RateAppAction.swift in Sources */,

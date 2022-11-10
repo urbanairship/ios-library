@@ -35,11 +35,18 @@ public class MessageCenter: NSObject {
     @objc
     public var inbox: MessageCenterInbox
     
+    private var currentDisplay: Disposable?
+    
+    private var controller: MessageCenterController = MessageCenterController()
+    
+    /// Message center theme
+    public var theme: MessageCenterTheme?
+    
     private var enabled: Bool {
         return self.isComponentEnabled && self.privacyManager.isEnabled(.messageCenter)
     }
     
-    /// The shared PreferenceCenter instance.
+    /// The shared MessageCenter instance.
     @objc
     public static var shared: MessageCenter {
         return Airship.requireComponent(ofType: MessageCenter.self)
@@ -53,10 +60,12 @@ public class MessageCenter: NSObject {
     ) {
         self.inbox = inbox
         self.privacyManager = privacyManager
+        self.theme = MessageCenterThemeLoader.defaultPlist()
         self.disableHelper = ComponentDisableHelper(
             dataStore: dataStore,
             className: "MessageCenter"
         )
+        self.controller = MessageCenterController()
         
         super.init()
         
@@ -105,11 +114,17 @@ public class MessageCenter: NSObject {
             return
         }
         
+        self.controller.navigate(messageID: nil)
+        
         guard let displayDelegate = self.displayDelegate else {
-            // TODO
+            AirshipLogger.trace("Launching OOTB message center")
+            Task {
+                await openDefaultMessageCenter()
+            }
             return
         }
         
+        AirshipLogger.trace("Message center opened through delegate")
         displayDelegate.displayMessageCenter()
     }
     
@@ -124,14 +139,20 @@ public class MessageCenter: NSObject {
             return
         }
         
+        self.controller.navigate(messageID: messageID)
+        
         guard let displayDelegate = self.displayDelegate else {
-            // TODO
+            AirshipLogger.trace("Launching OOTB message center")
+            Task {
+                await openDefaultMessageCenter()
+            }
             return
         }
         
         displayDelegate.displayMessageCenter(
             forMessageID: messageID
         )
+        
     }
     
     /// Dismiss the message center.
@@ -140,13 +161,31 @@ public class MessageCenter: NSObject {
         if let displayDelegate = self.displayDelegate {
             displayDelegate.dismissMessageCenter()
         } else {
-            // TODO
+            currentDisplay?.dispose()
         }
     }
 
     private func updateEnableState() {
         self.inbox.enabled = self.enabled
     }
+    
+    @MainActor
+    private func openDefaultMessageCenter() async {
+        guard let scene = try? Utils.findWindowScene() else {
+            AirshipLogger.error("Unable to display message center, missing scene.")
+            return
+        }
+
+        currentDisplay?.dispose()
+
+        AirshipLogger.debug("Opening default message center UI")
+        
+        self.currentDisplay = showMessageCenter(
+            scene: scene,
+            theme: theme
+        )
+    }
+    
 }
 
 extension MessageCenter: Component, PushableComponent {
@@ -218,5 +257,36 @@ extension MessageCenter: Component, PushableComponent {
             }
             completionHandler(.newData)
         }
+    }
+}
+
+fileprivate extension MessageCenter {
+    
+    func showMessageCenter(scene: UIWindowScene,
+                           theme: MessageCenterTheme?) -> Disposable {
+        var window: UIWindow? = UIWindow(windowScene: scene)
+
+        let disposable = Disposable {
+            window?.windowLevel = .normal
+            window?.isHidden = true
+            window = nil
+        }
+
+        let viewController = MessageCenterViewControllerFactory.make(
+            theme: theme,
+            controller: self.controller
+        ) {
+            disposable.dispose()
+        }
+
+        
+        window?.isHidden = false
+        window?.windowLevel = .alert
+        window?.makeKeyAndVisible()
+        window?.rootViewController = viewController
+
+
+        
+        return disposable
     }
 }

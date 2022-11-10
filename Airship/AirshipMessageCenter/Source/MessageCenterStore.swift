@@ -291,6 +291,10 @@ actor MessageCenterStore {
 
             let fetchedMessages = try context.fetch(request)
             messages = fetchedMessages.compactMap() { data in data.message() }
+            
+            AirshipLogger.trace(
+                "Fetched messsages \(String(describing: messages)))"
+            )
         }
 
         return messages ?? []

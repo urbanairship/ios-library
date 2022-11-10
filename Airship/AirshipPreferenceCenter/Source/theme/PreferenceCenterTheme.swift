@@ -9,8 +9,8 @@ import UIKit
 public struct PreferenceCenterTheme: Equatable {
 
     /// View controller theme
-    public var viewController: PreferenceCenterTheme.ViewController? = nil
-
+        public var viewController: PreferenceCenterTheme.ViewController? = nil
+    
     /// Preference center
     public var preferenceCenter: PreferenceCenterTheme.PreferenceCenter? = nil
 

@@ -184,7 +184,7 @@ static double const DefaultResizableViewAnimationDuration = 0.2;
 
 - (BOOL)isFullScreen {
     if (self.allowFullScreenDisplay) {
-        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
             return self.extendFullScreenLargeDevice;
         } else {
             return YES;

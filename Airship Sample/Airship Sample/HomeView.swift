@@ -167,7 +167,7 @@ struct HomeView: View {
             tag: HomeDestination.settings,
             selection: self.$appState.homeDestination
         ) {
-            Image(systemName: "gearshape.circle.fill")
+            Image(systemName: "gear")
                 .resizable()
                 .scaledToFit()
                 .foregroundColor(.accentColor)

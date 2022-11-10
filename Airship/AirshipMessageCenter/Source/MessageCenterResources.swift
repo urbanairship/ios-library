@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+import AirshipCore
 
 class MessageCenterResources {
     
@@ -26,5 +27,16 @@ class MessageCenterResources {
                 forResource: "AirshipMessageCenterResources",
                 ofType: "bundle") ?? "")
         return bundle ?? sourceBundle
+    }
+    
+    public static func localizedString(key: String) -> String? {
+        return LocalizationUtils.localizedString(key, withTable:"UrbanAirship", moduleBundle:bundle)
+    }
+    
+}
+
+extension String {
+    var localized: String {
+        return MessageCenterResources.localizedString(key: self) ?? self
     }
 }

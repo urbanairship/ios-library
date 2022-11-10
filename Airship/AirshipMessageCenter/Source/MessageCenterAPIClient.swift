@@ -292,7 +292,7 @@ fileprivate struct MessageListResponse: Decodable {
         let messageReporting: AirshipJSON
         let messageURL: URL
         let contentType: String
-        /// String insteaed of Date because they might be nonstandard ISO dates
+        /// String instead of Date because they might be nonstandard ISO dates
         let messageSent: String
         let messageExpiration: String?
         let title: String

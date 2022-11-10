@@ -6,9 +6,7 @@ import Foundation
 import AirshipCore
 #endif
 
-/**
- * Message center message.
- */
+/// Message center message.
 @objc(UAMessageCenterMessage)
 public class MessageCenterMessage: NSObject {
     @objc

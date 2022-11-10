@@ -1,6 +1,7 @@
 /* Copyright Urban Airship and Contributors */
 
 import SwiftUI
+import AirshipMessageCenter
 
 @main
 struct MainApp: App {

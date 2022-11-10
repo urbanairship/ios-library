@@ -1,19 +1,20 @@
+/* Copyright Urban Airship and Contributors */
+
 import SwiftUI
+import Combine
 import AirshipCore
 import AirshipMessageCenter
-import Combine
 
 class AppState: ObservableObject {
     static let shared = AppState()
+
+    let messageCenterController = MessageCenterController()
 
     @Published
     var selectedTab: SampleTabs = .home
 
     @Published
     var homeDestination: HomeDestination? = nil
-
-    @Published
-    var messageID: String? = nil
 
     @Published
     var unreadCount = 0;

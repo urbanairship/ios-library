@@ -333,7 +333,7 @@ public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
     @objc
     public func delete(messages: [MessageCenterMessage]) async {
         await self.delete(
-            messageIDs: messages.map { message in message.id }
+            messages: messages
         )
     }
 

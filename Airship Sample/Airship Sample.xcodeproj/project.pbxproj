@@ -7,27 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		32F68D0A28F07C7300F7F52A /* MessageCenterListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F68CF728F07C7300F7F52A /* MessageCenterListItemView.swift */; };
-		32F68D0B28F07C7300F7F52A /* MessageCenterListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F68CF728F07C7300F7F52A /* MessageCenterListItemView.swift */; };
-		32F68D0E28F07C7300F7F52A /* MessageCenterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F68CF928F07C7300F7F52A /* MessageCenterView.swift */; };
-		32F68D0F28F07C7300F7F52A /* MessageCenterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F68CF928F07C7300F7F52A /* MessageCenterView.swift */; };
-		32F68D1028F07C7300F7F52A /* MessageCenterMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F68CFA28F07C7300F7F52A /* MessageCenterMessageView.swift */; };
-		32F68D1128F07C7300F7F52A /* MessageCenterMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F68CFA28F07C7300F7F52A /* MessageCenterMessageView.swift */; };
-		32F68D1228F07C7300F7F52A /* MessageCenterListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F68CFB28F07C7300F7F52A /* MessageCenterListView.swift */; };
-		32F68D1328F07C7300F7F52A /* MessageCenterListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F68CFB28F07C7300F7F52A /* MessageCenterListView.swift */; };
-		6E4A46A328F4B49D00A25617 /* MessageCenterListItemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4A46A228F4B49D00A25617 /* MessageCenterListItemViewModel.swift */; };
-		6E4A46B128F4B4A800A25617 /* MessageCenterListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4A46B028F4B4A800A25617 /* MessageCenterListViewModel.swift */; };
-		6E4A46B228F4B74F00A25617 /* MessageCenterListItemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4A46A228F4B49D00A25617 /* MessageCenterListItemViewModel.swift */; };
-		6E4A46B328F4B74F00A25617 /* MessageCenterListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4A46B028F4B4A800A25617 /* MessageCenterListViewModel.swift */; };
+		32B5BE4B28F8BFBA00F2254B /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B5BE4A28F8BFBA00F2254B /* AppState.swift */; };
+		32B5BE4C28F8BFBA00F2254B /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B5BE4A28F8BFBA00F2254B /* AppState.swift */; };
+		32B5BE4E28F94FD200F2254B /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B5BE4D28F94FD200F2254B /* Toast.swift */; };
+		32B5BE4F28F94FD200F2254B /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B5BE4D28F94FD200F2254B /* Toast.swift */; };
 		6E7DB38F28ED0AF3002725F6 /* DeliveryAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7DB37B28ECA830002725F6 /* DeliveryAttributes.swift */; };
 		6E7DB39028ED0AF4002725F6 /* DeliveryAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7DB37B28ECA830002725F6 /* DeliveryAttributes.swift */; };
 		6E7DB39128ED0AF5002725F6 /* DeliveryAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7DB37B28ECA830002725F6 /* DeliveryAttributes.swift */; };
 		6EAAE97F28C7E18C003CAE53 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6EAAE97E28C7E18C003CAE53 /* Assets.xcassets */; };
 		6EAAE98228C7E18C003CAE53 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6EAAE98128C7E18C003CAE53 /* Preview Assets.xcassets */; };
-		6EAAE98628C7E1A1003CAE53 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAAE8BD28C7C9A3003CAE53 /* AppState.swift */; };
 		6EAAE98728C7E1A1003CAE53 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAAE8B828C7C9A3003CAE53 /* HomeView.swift */; };
 		6EAAE98828C7E1A1003CAE53 /* NamedUserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAAE8BB28C7C9A3003CAE53 /* NamedUserView.swift */; };
-		6EAAE98928C7E1A1003CAE53 /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAAE8D528C7CAD8003CAE53 /* Toast.swift */; };
 		6EAAE98A28C7E1A1003CAE53 /* MainApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAAE8BC28C7C9A3003CAE53 /* MainApp.swift */; };
 		6EAAE98B28C7E1A1003CAE53 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAAE8B628C7C9A3003CAE53 /* AppDelegate.swift */; };
 		6EAAE98C28C7E1A1003CAE53 /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAAE8C028C7C9A3003CAE53 /* AppView.swift */; };
@@ -36,9 +26,7 @@
 		6EAAE9B028C7E31E003CAE53 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAAE8B628C7C9A3003CAE53 /* AppDelegate.swift */; };
 		6EAAE9B128C7E31E003CAE53 /* MainApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAAE8BC28C7C9A3003CAE53 /* MainApp.swift */; };
 		6EAAE9B228C7E31E003CAE53 /* NamedUserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAAE8BB28C7C9A3003CAE53 /* NamedUserView.swift */; };
-		6EAAE9B828C7E31E003CAE53 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAAE8BD28C7C9A3003CAE53 /* AppState.swift */; };
 		6EAAE9B928C7E31E003CAE53 /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAAE8C028C7C9A3003CAE53 /* AppView.swift */; };
-		6EAAE9BB28C7E31E003CAE53 /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAAE8D528C7CAD8003CAE53 /* Toast.swift */; };
 		6EAAE9BD28C7E31E003CAE53 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAAE8B828C7C9A3003CAE53 /* HomeView.swift */; };
 		6EAAE9BE28C7E31E003CAE53 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6EAAE97E28C7E18C003CAE53 /* Assets.xcassets */; };
 		6EAAE9C028C7E322003CAE53 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6EAAE98128C7E18C003CAE53 /* Preview Assets.xcassets */; };
@@ -362,12 +350,8 @@
 		1BEF603F24CB3FF10039091F /* AppClip.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppClip.framework; path = System/Library/Frameworks/AppClip.framework; sourceTree = SDKROOT; };
 		1BFB70562388302000BF7F07 /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
 		1BFB70582388302000BF7F07 /* UserNotificationsUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotificationsUI.framework; path = System/Library/Frameworks/UserNotificationsUI.framework; sourceTree = SDKROOT; };
-		32F68CF728F07C7300F7F52A /* MessageCenterListItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterListItemView.swift; sourceTree = "<group>"; };
-		32F68CF928F07C7300F7F52A /* MessageCenterView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterView.swift; sourceTree = "<group>"; };
-		32F68CFA28F07C7300F7F52A /* MessageCenterMessageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterMessageView.swift; sourceTree = "<group>"; };
-		32F68CFB28F07C7300F7F52A /* MessageCenterListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterListView.swift; sourceTree = "<group>"; };
-		6E4A46A228F4B49D00A25617 /* MessageCenterListItemViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCenterListItemViewModel.swift; sourceTree = "<group>"; };
-		6E4A46B028F4B4A800A25617 /* MessageCenterListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCenterListViewModel.swift; sourceTree = "<group>"; };
+		32B5BE4A28F8BFBA00F2254B /* AppState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		32B5BE4D28F94FD200F2254B /* Toast.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Toast.swift; sourceTree = "<group>"; };
 		6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Airship.xcodeproj; path = ../Airship/Airship.xcodeproj; sourceTree = "<group>"; };
 		6E65D58B2396E9A300AF2D1A /* AirshipExtensions.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipExtensions.xcodeproj; path = ../AirshipExtensions/AirshipExtensions.xcodeproj; sourceTree = "<group>"; };
 		6E7DB37B28ECA830002725F6 /* DeliveryAttributes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeliveryAttributes.swift; sourceTree = "<group>"; };
@@ -375,9 +359,7 @@
 		6EAAE8B828C7C9A3003CAE53 /* HomeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		6EAAE8BB28C7C9A3003CAE53 /* NamedUserView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NamedUserView.swift; sourceTree = "<group>"; };
 		6EAAE8BC28C7C9A3003CAE53 /* MainApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainApp.swift; sourceTree = "<group>"; };
-		6EAAE8BD28C7C9A3003CAE53 /* AppState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		6EAAE8C028C7C9A3003CAE53 /* AppView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppView.swift; sourceTree = "<group>"; };
-		6EAAE8D528C7CAD8003CAE53 /* Toast.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Toast.swift; sourceTree = "<group>"; };
 		6EAAE97828C7E18B003CAE53 /* Airship Sample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Airship Sample.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EAAE97E28C7E18C003CAE53 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6EAAE98128C7E18C003CAE53 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
@@ -442,19 +424,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		32F68CF628F07C7300F7F52A /* MessageCenter */ = {
-			isa = PBXGroup;
-			children = (
-				32F68CF728F07C7300F7F52A /* MessageCenterListItemView.swift */,
-				32F68CF928F07C7300F7F52A /* MessageCenterView.swift */,
-				32F68CFA28F07C7300F7F52A /* MessageCenterMessageView.swift */,
-				32F68CFB28F07C7300F7F52A /* MessageCenterListView.swift */,
-				6E4A46A228F4B49D00A25617 /* MessageCenterListItemViewModel.swift */,
-				6E4A46B028F4B4A800A25617 /* MessageCenterListViewModel.swift */,
-			);
-			path = MessageCenter;
-			sourceTree = "<group>";
-		};
 		6E65D56B2396E99D00AF2D1A /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -491,13 +460,12 @@
 			children = (
 				6EAAE99628C7E257003CAE53 /* Airship-Sample-Info.plist */,
 				6EAAE99528C7E254003CAE53 /* Airship Sample.entitlements */,
-				32F68CF628F07C7300F7F52A /* MessageCenter */,
 				6EDB2B2328D4E34500A01377 /* LiveActivityManagementView.swift */,
+				32B5BE4D28F94FD200F2254B /* Toast.swift */,
 				6EAAE8B628C7C9A3003CAE53 /* AppDelegate.swift */,
-				6EAAE8BD28C7C9A3003CAE53 /* AppState.swift */,
+				32B5BE4A28F8BFBA00F2254B /* AppState.swift */,
 				6EAAE8BC28C7C9A3003CAE53 /* MainApp.swift */,
 				6EAAE8C028C7C9A3003CAE53 /* AppView.swift */,
-				6EAAE8D528C7CAD8003CAE53 /* Toast.swift */,
 				6EAAE8B828C7C9A3003CAE53 /* HomeView.swift */,
 				6EAAE8BB28C7C9A3003CAE53 /* NamedUserView.swift */,
 				6EAAE97E28C7E18C003CAE53 /* Assets.xcassets */,
@@ -910,20 +878,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				32F68D0E28F07C7300F7F52A /* MessageCenterView.swift in Sources */,
 				6EAAE98B28C7E1A1003CAE53 /* AppDelegate.swift in Sources */,
-				6E4A46B128F4B4A800A25617 /* MessageCenterListViewModel.swift in Sources */,
 				6EDB2B1128D4E25100A01377 /* LiveActivity.intentdefinition in Sources */,
 				6EDB2B2428D4E34500A01377 /* LiveActivityManagementView.swift in Sources */,
-				6EAAE98628C7E1A1003CAE53 /* AppState.swift in Sources */,
+				32B5BE4B28F8BFBA00F2254B /* AppState.swift in Sources */,
 				6EAAE98C28C7E1A1003CAE53 /* AppView.swift in Sources */,
-				32F68D0A28F07C7300F7F52A /* MessageCenterListItemView.swift in Sources */,
-				6EAAE98928C7E1A1003CAE53 /* Toast.swift in Sources */,
-				32F68D1028F07C7300F7F52A /* MessageCenterMessageView.swift in Sources */,
 				6EAAE98A28C7E1A1003CAE53 /* MainApp.swift in Sources */,
-				6E4A46A328F4B49D00A25617 /* MessageCenterListItemViewModel.swift in Sources */,
 				6EAAE98828C7E1A1003CAE53 /* NamedUserView.swift in Sources */,
-				32F68D1228F07C7300F7F52A /* MessageCenterListView.swift in Sources */,
+				32B5BE4E28F94FD200F2254B /* Toast.swift in Sources */,
 				6EAAE98728C7E1A1003CAE53 /* HomeView.swift in Sources */,
 				6E7DB39128ED0AF5002725F6 /* DeliveryAttributes.swift in Sources */,
 			);
@@ -936,17 +898,11 @@
 				6EDB2B2528D4E4EF00A01377 /* LiveActivityManagementView.swift in Sources */,
 				6EAAE9B128C7E31E003CAE53 /* MainApp.swift in Sources */,
 				6EAAE9BD28C7E31E003CAE53 /* HomeView.swift in Sources */,
-				32F68D1328F07C7300F7F52A /* MessageCenterListView.swift in Sources */,
-				32F68D0F28F07C7300F7F52A /* MessageCenterView.swift in Sources */,
-				6EAAE9BB28C7E31E003CAE53 /* Toast.swift in Sources */,
-				6E4A46B228F4B74F00A25617 /* MessageCenterListItemViewModel.swift in Sources */,
+				32B5BE4C28F8BFBA00F2254B /* AppState.swift in Sources */,
 				6EAAE9B028C7E31E003CAE53 /* AppDelegate.swift in Sources */,
-				32F68D1128F07C7300F7F52A /* MessageCenterMessageView.swift in Sources */,
-				6EAAE9B828C7E31E003CAE53 /* AppState.swift in Sources */,
-				6E4A46B328F4B74F00A25617 /* MessageCenterListViewModel.swift in Sources */,
-				32F68D0B28F07C7300F7F52A /* MessageCenterListItemView.swift in Sources */,
 				6EAAE9B928C7E31E003CAE53 /* AppView.swift in Sources */,
 				6E7DB39028ED0AF4002725F6 /* DeliveryAttributes.swift in Sources */,
+				32B5BE4F28F94FD200F2254B /* Toast.swift in Sources */,
 				6EAAE9B228C7E31E003CAE53 /* NamedUserView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1085,7 +1041,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -1129,7 +1085,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;

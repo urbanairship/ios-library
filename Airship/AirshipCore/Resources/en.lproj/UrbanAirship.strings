@@ -7,6 +7,9 @@
 "ua_delete_messages" = "Delete";
 "ua_delete_messages_description" = "Delete selected messages";
 
+"ua_done" = "Done";
+"ua_done_description" = "Dismiss message center";
+
 "ua_message_cell_editing_description" = "Toggles selection";
 "ua_message_cell_description" = "Displays full message";
 

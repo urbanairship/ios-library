@@ -24,18 +24,20 @@ struct AppView: View {
                 }
                 .tag(SampleTabs.home)
 
-            MessageCenterView()
-                .tabItem {
-                    Label(
-                        "Message Center",
-                        systemImage: "tray.fill"
-                    )
-                }
-                .badgeCompat(self.appState.unreadCount)
-                .onAppear {
-                    Airship.analytics.trackScreen("message_center")
-                }
-                .tag(SampleTabs.messageCenter)
+            MessageCenterView(
+                controller: self.appState.messageCenterController
+            )
+            .tabItem {
+                Label(
+                    "Message Center",
+                    systemImage: "tray.fill"
+                )
+            }
+            .badgeCompat(self.appState.unreadCount)
+            .onAppear {
+                Airship.analytics.trackScreen("message_center")
+            }
+            .tag(SampleTabs.messageCenter)
 
             NavigationView {
                 PreferenceCenterView(
