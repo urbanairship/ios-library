@@ -1,11 +1,11 @@
 /* Copyright Urban Airship and Contributors */
 
 import Foundation
-import UIKit
 import SwiftUI
+import UIKit
 
 #if canImport(AirshipCore)
-import AirshipCore
+    import AirshipCore
 #endif
 
 public enum SeparatorStyle {
@@ -51,7 +51,7 @@ public class MessageCenterTheme: NSObject {
 
     /// The message cell separator style.
     public var cellSeparatorStyle: SeparatorStyle?
-    
+
     /// The message cell separator color.
     public var cellSeparatorColor: Color? = Color(UIColor.separator)
 
@@ -78,25 +78,25 @@ public class MessageCenterTheme: NSObject {
 
     /// The title color for the "Done" button.
     public var backButtonColor: Color? = nil
-    
+
     /// The navigation bar title
     public var navigationBarTitle: String? = nil
-    
+
     public override init() {
-        
+
         // Default to disabling icons
         self.iconsEnabled = false
-        
+
         super.init()
     }
-        
+
 }
 
-public extension View {
+extension View {
     /// Overrides the message center theme
     /// - Parameters:
     ///     - theme: The message center theme
-    func messageCenterTheme(_ theme: MessageCenterTheme) -> some View {
+    public func messageCenterTheme(_ theme: MessageCenterTheme) -> some View {
         environment(\.airshipMessageCenterTheme, theme)
     }
 }
@@ -105,19 +105,19 @@ struct MessageCenterThemeKey: EnvironmentKey {
     static let defaultValue = MessageCenterTheme()
 }
 
-public extension EnvironmentValues {
+extension EnvironmentValues {
     /// Airship message center theme environment value
-    var airshipMessageCenterTheme: MessageCenterTheme {
+    public var airshipMessageCenterTheme: MessageCenterTheme {
         get { self[MessageCenterThemeKey.self] }
         set { self[MessageCenterThemeKey.self] = newValue }
     }
 }
 
-public extension MessageCenterTheme {
+extension MessageCenterTheme {
     /// Loads a message center theme from a plist file
     /// - Parameters:
     ///     - plist: The name of the plist in the bundle
-    static func fromPlist(_ plist: String) throws -> MessageCenterTheme {
+    public static func fromPlist(_ plist: String) throws -> MessageCenterTheme {
         return try MessageCenterThemeLoader.fromPlist(plist)
     }
 }

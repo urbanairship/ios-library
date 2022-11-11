@@ -27,7 +27,7 @@ class Atomic<T: Equatable> {
     func compareAndSet(expected: T, value: T) -> Bool {
         var result = false
         lock.sync {
-            if (expected == self._value) {
+            if expected == self._value {
                 self.value = value
                 result = true
             }

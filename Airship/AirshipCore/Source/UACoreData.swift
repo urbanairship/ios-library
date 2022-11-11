@@ -2,20 +2,20 @@
 
 import CoreData
 
-/**
- * - Note: For internal use only. :nodoc:
- */
+/// - Note: For internal use only. :nodoc:
 @objc(UACoreDataDelegate)
 public protocol CoreDataDelegate: AnyObject {
     @objc
-    func persistentStoreCreated(_ store: NSPersistentStore, name: String, context: NSManagedObjectContext)
+    func persistentStoreCreated(
+        _ store: NSPersistentStore,
+        name: String,
+        context: NSManagedObjectContext
+    )
 }
 
-/**
- * - Note: For internal use only. :nodoc:
- */
+/// - Note: For internal use only. :nodoc:
 @objc(UACoreData)
-public class UACoreData : NSObject {
+public class UACoreData: NSObject {
     private let UAManagedContextStoreDirectory = "com.urbanairship.no-backup"
 
     private let context: NSManagedObjectContext
@@ -29,7 +29,7 @@ public class UACoreData : NSObject {
     private var isFinished = false
 
     @objc
-    public weak var delegate: CoreDataDelegate?;
+    public weak var delegate: CoreDataDelegate?
 
     init(context: NSManagedObjectContext, inMemory: Bool, stores: [String]) {
         self.context = context
@@ -40,22 +40,35 @@ public class UACoreData : NSObject {
         super.init()
 
         #if !os(watchOS)
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(protectedDataAvailable),
-            name: UIApplication.protectedDataDidBecomeAvailableNotification,
-            object: nil)
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(protectedDataAvailable),
+                name: UIApplication.protectedDataDidBecomeAvailableNotification,
+                object: nil
+            )
         #endif
     }
 
     @objc
     public convenience init(modelURL: URL, inMemory: Bool, stores: [String]) {
-        self.init(modelURL: modelURL, inMemory: inMemory, stores: stores, mergePolicy: NSErrorMergePolicy)
+        self.init(
+            modelURL: modelURL,
+            inMemory: inMemory,
+            stores: stores,
+            mergePolicy: NSErrorMergePolicy
+        )
     }
 
     @objc
-    public convenience init(modelURL: URL, inMemory: Bool, stores: [String], mergePolicy: Any?) {
-        let moc = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+    public convenience init(
+        modelURL: URL,
+        inMemory: Bool,
+        stores: [String],
+        mergePolicy: Any?
+    ) {
+        let moc = NSManagedObjectContext(
+            concurrencyType: .privateQueueConcurrencyType
+        )
         let mom = NSManagedObjectModel(contentsOf: modelURL)
         if let mom = mom {
             let psc = NSPersistentStoreCoordinator(managedObjectModel: mom)
@@ -69,7 +82,6 @@ public class UACoreData : NSObject {
         self.init(context: moc, inMemory: inMemory, stores: stores)
     }
 
-
     public func perform(
         _ block: @escaping (NSManagedObjectContext) throws -> Void
     ) async throws {
@@ -80,7 +92,7 @@ public class UACoreData : NSObject {
                     return
                 }
 
-                guard (!strongSelf.isFinished) else {
+                guard !strongSelf.isFinished else {
                     continuation.resume()
                     return
                 }
@@ -88,7 +100,10 @@ public class UACoreData : NSObject {
                 strongSelf.shouldCreateStore = true
                 strongSelf.createPendingStores()
 
-                if (strongSelf.context.persistentStoreCoordinator?.persistentStores.count ?? 0) != 0 {
+                if (strongSelf.context.persistentStoreCoordinator?
+                    .persistentStores
+                    .count ?? 0) != 0
+                {
                     do {
                         try block(strongSelf.context)
                         continuation.resume()
@@ -98,7 +113,9 @@ public class UACoreData : NSObject {
 
                 } else {
                     continuation.resume(
-                        throwing: AirshipErrors.error("Peristant store unable to be created")
+                        throwing: AirshipErrors.error(
+                            "Peristant store unable to be created"
+                        )
                     )
                 }
             })
@@ -106,20 +123,25 @@ public class UACoreData : NSObject {
     }
 
     @objc(safePerformBlock:)
-    public func safePerform(_ block: @escaping (Bool, NSManagedObjectContext) -> Void) {
+    public func safePerform(
+        _ block: @escaping (Bool, NSManagedObjectContext) -> Void
+    ) {
         context.perform({ [weak self] in
             guard let strongSelf = self else {
                 return
             }
 
-            guard (!strongSelf.isFinished) else {
+            guard !strongSelf.isFinished else {
                 return
             }
 
             strongSelf.shouldCreateStore = true
             strongSelf.createPendingStores()
 
-            if (strongSelf.context.persistentStoreCoordinator?.persistentStores.count ?? 0) != 0 {
+            if (strongSelf.context.persistentStoreCoordinator?.persistentStores
+                .count
+                ?? 0) != 0
+            {
                 block(true, strongSelf.context)
             } else {
                 block(false, strongSelf.context)
@@ -128,20 +150,25 @@ public class UACoreData : NSObject {
     }
 
     @objc(safePerformBlockAndWait:)
-    public func safePerformAndWait(_ block: @escaping (Bool, NSManagedObjectContext) -> Void) {
+    public func safePerformAndWait(
+        _ block: @escaping (Bool, NSManagedObjectContext) -> Void
+    ) {
         context.performAndWait({ [weak self] in
             guard let strongSelf = self else {
                 return
             }
 
-            guard (!strongSelf.isFinished) else {
+            guard !strongSelf.isFinished else {
                 return
             }
 
             strongSelf.shouldCreateStore = true
             strongSelf.createPendingStores()
 
-            if (strongSelf.context.persistentStoreCoordinator?.persistentStores.count ?? 0) != 0 {
+            if (strongSelf.context.persistentStoreCoordinator?.persistentStores
+                .count
+                ?? 0) != 0
+            {
                 block(true, strongSelf.context)
             } else {
                 block(false, strongSelf.context)
@@ -150,7 +177,9 @@ public class UACoreData : NSObject {
     }
 
     @objc
-    public func performBlockIfStoresExist(_ block: @escaping (Bool, NSManagedObjectContext) -> Void) {
+    public func performBlockIfStoresExist(
+        _ block: @escaping (Bool, NSManagedObjectContext) -> Void
+    ) {
         context.perform({ [weak self] in
             guard let strongSelf = self else {
                 return
@@ -167,7 +196,10 @@ public class UACoreData : NSObject {
             strongSelf.shouldCreateStore = true
             strongSelf.createPendingStores()
 
-            if (strongSelf.context.persistentStoreCoordinator?.persistentStores.count ?? 0) != 0 {
+            if (strongSelf.context.persistentStoreCoordinator?.persistentStores
+                .count
+                ?? 0) != 0
+            {
                 block(true, strongSelf.context)
             } else {
                 block(false, strongSelf.context)
@@ -192,7 +224,7 @@ public class UACoreData : NSObject {
                 return
             }
 
-            if (strongSelf.shouldCreateStore) {
+            if strongSelf.shouldCreateStore {
                 strongSelf.createPendingStores()
             }
         })
@@ -205,13 +237,13 @@ public class UACoreData : NSObject {
 
         for name in pendingStores {
             var created = false
-            if (inMemory) {
+            if inMemory {
                 created = createInMemoryStore(storeName: name)
             } else {
                 created = createSqlStore(storeName: name)
             }
 
-            if (created) {
+            if created {
                 pendingStores.removeAll { $0 == name }
             }
         }
@@ -220,19 +252,26 @@ public class UACoreData : NSObject {
     func createInMemoryStore(storeName: String) -> Bool {
         let options = [
             NSMigratePersistentStoresAutomaticallyOption: NSNumber(value: true),
-            NSInferMappingModelAutomaticallyOption: NSNumber(value: true)
+            NSInferMappingModelAutomaticallyOption: NSNumber(value: true),
         ]
 
         do {
-            let result = try context.persistentStoreCoordinator?.addPersistentStore(
-                ofType: NSInMemoryStoreType,
-                configurationName: nil,
-                at: nil,
-                options: options)
+            let result = try context.persistentStoreCoordinator?
+                .addPersistentStore(
+                    ofType: NSInMemoryStoreType,
+                    configurationName: nil,
+                    at: nil,
+                    options: options
+                )
 
             if let result = result {
                 AirshipLogger.debug("Created store: \(storeName)")
-                self.delegate?.persistentStoreCreated(result, name: storeName, context: context)
+                self.delegate?
+                    .persistentStoreCreated(
+                        result,
+                        name: storeName,
+                        context: context
+                    )
                 return true
             } else {
                 AirshipLogger.error("Failed to create store \(storeName)")
@@ -248,12 +287,23 @@ public class UACoreData : NSObject {
         let fileManager = FileManager.default
 
         #if os(tvOS)
-        let baseDirectory = fileManager.urls(for: .cachesDirectory, in: .userDomainMask).last
+            let baseDirectory =
+                fileManager.urls(
+                    for: .cachesDirectory,
+                    in: .userDomainMask
+                )
+                .last
         #else
-        let baseDirectory = fileManager.urls(for: .libraryDirectory, in: .userDomainMask).last
+            let baseDirectory =
+                fileManager.urls(
+                    for: .libraryDirectory,
+                    in: .userDomainMask
+                )
+                .last
         #endif
 
-        return baseDirectory?.appendingPathComponent(UAManagedContextStoreDirectory)
+        return baseDirectory?
+            .appendingPathComponent(UAManagedContextStoreDirectory)
     }
 
     func storeURL(_ storeName: String?) -> URL? {
@@ -263,7 +313,9 @@ public class UACoreData : NSObject {
     func storesExistOnDisk() -> Bool {
         for name in self.storeNames {
             let storeURL = self.storeURL(name)
-            if storeURL != nil && FileManager.default.fileExists(atPath: storeURL?.path ?? "") {
+            if storeURL != nil
+                && FileManager.default.fileExists(atPath: storeURL?.path ?? "")
+            {
                 return true
             }
         }
@@ -287,15 +339,19 @@ public class UACoreData : NSObject {
                 try fileManager.createDirectory(
                     at: storeDirectory,
                     withIntermediateDirectories: true,
-                    attributes: nil)
+                    attributes: nil
+                )
             } catch {
-                AirshipLogger.debug("Failed to create aiship SQL directory. \(error)")
+                AirshipLogger.debug(
+                    "Failed to create aiship SQL directory. \(error)"
+                )
                 return false
             }
         }
 
         // Make sure it does not already exist
-        for store in context.persistentStoreCoordinator?.persistentStores ?? [] {
+        for store in context.persistentStoreCoordinator?.persistentStores ?? []
+        {
             if (store.url == storeURL) && (store.type == NSSQLiteStoreType) {
                 return true
             }
@@ -303,19 +359,28 @@ public class UACoreData : NSObject {
 
         let options = [
             NSMigratePersistentStoresAutomaticallyOption: NSNumber(value: true),
-            NSInferMappingModelAutomaticallyOption: NSNumber(value: true)
+            NSInferMappingModelAutomaticallyOption: NSNumber(value: true),
         ]
 
         do {
-            let result = try context.persistentStoreCoordinator?.addPersistentStore(
-                ofType: NSSQLiteStoreType,
-                configurationName: nil,
-                at: storeURL,
-                options: options)
+            let result = try context.persistentStoreCoordinator?
+                .addPersistentStore(
+                    ofType: NSSQLiteStoreType,
+                    configurationName: nil,
+                    at: storeURL,
+                    options: options
+                )
 
             if let result = result {
-                AirshipLogger.debug("Created store: \(storeName) url: \(storeURL)")
-                self.delegate?.persistentStoreCreated(result, name: storeName, context: context)
+                AirshipLogger.debug(
+                    "Created store: \(storeName) url: \(storeURL)"
+                )
+                self.delegate?
+                    .persistentStoreCreated(
+                        result,
+                        name: storeName,
+                        context: context
+                    )
                 return true
             } else {
                 AirshipLogger.error("Failed to create store \(storeName)")
@@ -329,8 +394,12 @@ public class UACoreData : NSObject {
     @objc
     @discardableResult
     public class func safeSave(_ context: NSManagedObjectContext?) -> Bool {
-        if (context?.persistentStoreCoordinator?.persistentStores.count ?? 0) == 0 {
-            AirshipLogger.error("Unable to save context. Missing persistent store.")
+        if (context?.persistentStoreCoordinator?.persistentStores.count ?? 0)
+            == 0
+        {
+            AirshipLogger.error(
+                "Unable to save context. Missing persistent store."
+            )
             return false
         }
 

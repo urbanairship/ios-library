@@ -1,9 +1,6 @@
 /* Copyright Airship and Contributors */
 
-
-/**
- * - Note: For internal use only. :nodoc:
- */
+/// - Note: For internal use only. :nodoc:
 @objc(UATaskRequestOptions)
 public class TaskRequestOptions: NSObject {
     @objc
@@ -13,16 +10,20 @@ public class TaskRequestOptions: NSObject {
     public let isNetworkRequired: Bool
 
     @objc
-    public let extras: [String : Any]
+    public let extras: [String: Any]
 
     @objc
-    public static let defaultOptions = TaskRequestOptions(conflictPolicy: .replace, requiresNetwork: true)
-
+    public static let defaultOptions = TaskRequestOptions(
+        conflictPolicy: .replace,
+        requiresNetwork: true
+    )
 
     @objc
-    public init(conflictPolicy: AirshipWorkRequest.ConflictPolicy = .replace,
-                requiresNetwork: Bool = false,
-                extras: [String : Any]? = nil) {
+    public init(
+        conflictPolicy: AirshipWorkRequest.ConflictPolicy = .replace,
+        requiresNetwork: Bool = false,
+        extras: [String: Any]? = nil
+    ) {
         self.conflictPolicy = conflictPolicy
         self.isNetworkRequired = requiresNetwork
         self.extras = extras ?? [:]
@@ -30,9 +31,9 @@ public class TaskRequestOptions: NSObject {
     }
 
     func isEqual(to options: TaskRequestOptions) -> Bool {
-        return conflictPolicy == options.conflictPolicy &&
-            isNetworkRequired == options.isNetworkRequired &&
-            NSDictionary(dictionary: extras).isEqual(to: options.extras)
+        return conflictPolicy == options.conflictPolicy
+            && isNetworkRequired == options.isNetworkRequired
+            && NSDictionary(dictionary: extras).isEqual(to: options.extras)
     }
 
     public override func isEqual(_ object: Any?) -> Bool {
@@ -40,7 +41,7 @@ public class TaskRequestOptions: NSObject {
             return false
         }
 
-        if (self === options) {
+        if self === options {
             return true
         }
 

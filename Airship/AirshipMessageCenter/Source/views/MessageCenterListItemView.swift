@@ -4,11 +4,11 @@ import Foundation
 import SwiftUI
 
 #if canImport(AirshipCore)
-import AirshipCore
+    import AirshipCore
 #endif
 
 struct MessageCenterListItemView: View {
-    
+
     @Environment(\.airshipMessageCenterListItemStyle)
     private var itemStyle
 
@@ -24,12 +24,16 @@ struct MessageCenterListItemView: View {
     }
 }
 
-public extension View {
+extension View {
     /// Sets the list item style
     /// - Parameters:
     ///     - style: The style
-    func setMessageCenterItemViewStyle<S>(_ style: S) -> some View where S : MessageCenterListItemViewStyle {
-        self.environment(\.airshipMessageCenterListItemStyle, AnyListItemViewStyle(style: style))
+    public func setMessageCenterItemViewStyle<S>(_ style: S) -> some View
+    where S: MessageCenterListItemViewStyle {
+        self.environment(
+            \.airshipMessageCenterListItemStyle,
+            AnyListItemViewStyle(style: style)
+        )
     }
 }
 
@@ -40,16 +44,17 @@ public struct ListItemViewStyleConfiguration {
 
 public protocol MessageCenterListItemViewStyle {
     associatedtype Body: View
-    
+
     typealias Configuration = ListItemViewStyleConfiguration
-    
+
     func makeBody(configuration: Self.Configuration) -> Self.Body
 }
 
-public extension MessageCenterListItemViewStyle where Self == DefaultListItemViewStyle {
+extension MessageCenterListItemViewStyle
+where Self == DefaultListItemViewStyle {
 
     /// Default style
-    static var defaultStyle: Self {
+    public static var defaultStyle: Self {
         return .init()
     }
 }
@@ -89,25 +94,26 @@ extension EnvironmentValues {
     }
 }
 
-fileprivate struct MessageCenterListContentView: View {
-    
+private struct MessageCenterListContentView: View {
+
     @Environment(\.airshipMessageCenterTheme)
     private var theme
-    
+
     let message: MessageCenterMessage
-    
+
     private var placeHolder: some View {
         var image = Image(systemName: "photo")
         if let placeholderIcon = theme.placeholderIcon {
             image = placeholderIcon
         }
-        return image
+        return
+            image
             .resizable()
             .scaledToFit()
             .foregroundColor(.primary)
             .frame(width: theme.iconsEnabled ? 60 : 20.0)
             .opacity(theme.iconsEnabled ? 1.0 : 0.0)
-        
+
     }
 
     @ViewBuilder
@@ -127,22 +133,22 @@ fileprivate struct MessageCenterListContentView: View {
 
     @ViewBuilder
     func makeUnreadIndicator(_ unread: Bool) -> some View {
-        if (unread) {
+        if unread {
             Image(systemName: "circle.fill")
                 .foregroundColor(
-                    theme.unreadIndicatorColor ??  theme.cellTintColor
+                    theme.unreadIndicatorColor ?? theme.cellTintColor
                 )
                 .frame(width: 8, height: 8)
         }
     }
-    
+
     @ViewBuilder
     func makeTitle(_ title: String) -> some View {
         Text(title)
             .font(theme.cellTitleFont)
             .foregroundColor(theme.cellTitleColor)
     }
-    
+
     @ViewBuilder
     func makeSubtitle(_ subtitle: String?) -> some View {
         if let subtitle = subtitle {
@@ -150,7 +156,7 @@ fileprivate struct MessageCenterListContentView: View {
                 .font(.subheadline)
         }
     }
-    
+
     @ViewBuilder
     func makeMessageSentDate(_ messageSent: Date) -> some View {
         let messageSent = messageSent
@@ -158,7 +164,7 @@ fileprivate struct MessageCenterListContentView: View {
             .font(theme.cellDateFont)
             .foregroundColor(theme.cellDateColor)
     }
-    
+
     @ViewBuilder
     var body: some View {
         let message = message
@@ -175,4 +181,3 @@ fileprivate struct MessageCenterListContentView: View {
         .padding(8)
     }
 }
-

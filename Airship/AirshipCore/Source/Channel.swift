@@ -1,29 +1,28 @@
 /* Copyright Airship and Contributors */
 
+import Combine
 import Foundation
 
-import Combine
-
-/**
- * This singleton provides an interface to the channel functionality.
- */
+/// This singleton provides an interface to the channel functionality.
 @objc(UAChannel)
-public class Channel : NSObject, Component, ChannelProtocol {
+public class Channel: NSObject, Component, ChannelProtocol {
 
-    private static let tagsDataStoreKey = "com.urbanairship.channel.tags";
-    
+    private static let tagsDataStoreKey = "com.urbanairship.channel.tags"
+
     /**
      * Notification event when the channel is created.
      */
     @objc
-    public static let channelCreatedEvent = NSNotification.Name("com.urbanairship.channel.channel_created")
-    
+    public static let channelCreatedEvent = NSNotification.Name(
+        "com.urbanairship.channel.channel_created"
+    )
+
     /**
      * Channel ID key for channelCreatedEvent and channelUpdatedEvent.
      */
     @objc
     public static let channelIdentifierKey = "channel_identifier"
-    
+
     /**
      * Channel existing key for channelCreatedEvent.
      */
@@ -34,28 +33,34 @@ public class Channel : NSObject, Component, ChannelProtocol {
      * Notification event when the channel is updated.
      */
     @objc
-    public static let channelUpdatedEvent = NSNotification.Name("com.urbanairship.channel.channel_updated")
-    
+    public static let channelUpdatedEvent = NSNotification.Name(
+        "com.urbanairship.channel.channel_updated"
+    )
+
     /**
      * Notification event when channel registration failed.
      */
     @objc
-    public static let channelRegistrationFailedEvent = NSNotification.Name("com.urbanairship.channel.registration_failed")
-    
+    public static let channelRegistrationFailedEvent = NSNotification.Name(
+        "com.urbanairship.channel.registration_failed"
+    )
+
     /**
      * Notification event when the audience is updated.
      * - NOTE: For internal use only. :nodoc:
      */
     @objc
-    public static let audienceUpdatedEvent = NSNotification.Name("com.urbanairship.channel.audience_updated")
-    
+    public static let audienceUpdatedEvent = NSNotification.Name(
+        "com.urbanairship.channel.audience_updated"
+    )
+
     /**
      * Tags event key for audienceUpdatedEvent.
      * - NOTE: For internal use only. :nodoc:
      */
     @objc
     public static let audienceTagsKey = "tags"
-    
+
     /**
      * Attributes event key for audienceUpdatedEvent.
      * - NOTE: For internal use only. :nodoc:
@@ -77,59 +82,66 @@ public class Channel : NSObject, Component, ChannelProtocol {
     private let appStateTracker: AppStateTracker
     private let tagsLock = Lock()
 
-#if canImport(ActivityKit)
-    private let liveActivityRegistry: LiveActivityRegistry
-#endif
+    #if canImport(ActivityKit)
+        private let liveActivityRegistry: LiveActivityRegistry
+    #endif
 
     private var shouldPerformChannelRegistrationOnForeground = false
-    private var extensionBlocks: [((ChannelRegistrationPayload, @escaping (ChannelRegistrationPayload) -> Void) -> Void)] = []
+    private var extensionBlocks:
+        [(
+            (
+                ChannelRegistrationPayload,
+                @escaping (ChannelRegistrationPayload) -> Void
+            ) -> Void
+        )] = []
 
     private var isChannelCreationEnabled: Bool
 
     /// The channel identifier.
     public var identifier: String? {
-        get {
-            return self.channelRegistrar.channelID
-        }
+        return self.channelRegistrar.channelID
     }
-    
+
     // NOTE: For internal use only. :nodoc:
-    public var pendingAttributeUpdates : [AttributeUpdate] {
-        get {
-            return self.audienceManager.pendingAttributeUpdates
-        }
+    public var pendingAttributeUpdates: [AttributeUpdate] {
+        return self.audienceManager.pendingAttributeUpdates
     }
-    
+
     // NOTE: For internal use only. :nodoc:
-    public var pendingTagGroupUpdates : [TagGroupUpdate] {
-        get {
-            return self.audienceManager.pendingTagGroupUpdates
-        }
+    public var pendingTagGroupUpdates: [TagGroupUpdate] {
+        return self.audienceManager.pendingTagGroupUpdates
     }
 
     /// The channel tags.
     public var tags: [String] {
         get {
-            guard (self.privacyManager.isEnabled(.tagsAndAttributes)) else {
+            guard self.privacyManager.isEnabled(.tagsAndAttributes) else {
                 return []
             }
-            
+
             var result: [String]?
             tagsLock.sync {
-                result = self.dataStore.array(forKey: Channel.tagsDataStoreKey) as? [String]
+                result =
+                    self.dataStore.array(forKey: Channel.tagsDataStoreKey)
+                    as? [String]
             }
             return result ?? []
         }
-        
+
         set {
-            guard (self.privacyManager.isEnabled(.tagsAndAttributes)) else {
-                AirshipLogger.warn("Unable to modify channel tags \(tags) when data collection is disabled.")
-                return;
+            guard self.privacyManager.isEnabled(.tagsAndAttributes) else {
+                AirshipLogger.warn(
+                    "Unable to modify channel tags \(tags) when data collection is disabled."
+                )
+                return
             }
-            
+
             tagsLock.sync {
                 let normalized = AudienceUtils.normalizeTags(newValue)
-                self.dataStore.setValue(normalized, forKey: Channel.tagsDataStoreKey)
+                self.dataStore.setValue(
+                    normalized,
+                    forKey: Channel.tagsDataStoreKey
+                )
             }
 
             self.updateRegistration()
@@ -142,7 +154,7 @@ public class Channel : NSObject, Component, ChannelProtocol {
     public var isChannelTagRegistrationEnabled = true
 
     private let disableHelper: ComponentDisableHelper
-    
+
     // NOTE: For internal use only. :nodoc:
     public var isComponentEnabled: Bool {
         get {
@@ -152,12 +164,12 @@ public class Channel : NSObject, Component, ChannelProtocol {
             disableHelper.enabled = newValue
         }
     }
-    
+
     // NOTE: For internal use only. :nodoc:
-    static let supplier : () -> (ChannelProtocol) = {
+    static let supplier: () -> (ChannelProtocol) = {
         return Airship.requireComponent(ofType: ChannelProtocol.self)
     }
-    
+
     /// The shared Channel instance.
     /// - Returns The shared Channel instance.
     @objc
@@ -165,15 +177,17 @@ public class Channel : NSObject, Component, ChannelProtocol {
         return Airship.channel
     }
 
-    init(dataStore: PreferenceDataStore,
-         config: RuntimeConfig,
-         privacyManager: PrivacyManager,
-         localeManager: LocaleManagerProtocol,
-         audienceManager: ChannelAudienceManagerProtocol,
-         channelRegistrar: ChannelRegistrarProtocol,
-         notificationCenter: NotificationCenter,
-         appStateTracker:AppStateTracker) {
-        
+    init(
+        dataStore: PreferenceDataStore,
+        config: RuntimeConfig,
+        privacyManager: PrivacyManager,
+        localeManager: LocaleManagerProtocol,
+        audienceManager: ChannelAudienceManagerProtocol,
+        channelRegistrar: ChannelRegistrarProtocol,
+        notificationCenter: NotificationCenter,
+        appStateTracker: AppStateTracker
+    ) {
+
         self.dataStore = dataStore
         self.config = config
         self.privacyManager = privacyManager
@@ -183,37 +197,41 @@ public class Channel : NSObject, Component, ChannelProtocol {
         self.notificationCenter = notificationCenter
         self.appStateTracker = appStateTracker
 
-#if canImport(ActivityKit)
-        self.liveActivityRegistry = LiveActivityRegistry(
-            dataStore: dataStore
-        )
-#endif
-        
+        #if canImport(ActivityKit)
+            self.liveActivityRegistry = LiveActivityRegistry(
+                dataStore: dataStore
+            )
+        #endif
+
         // Check config to see if user wants to delay channel creation
         // If channel ID exists or channel creation delay is disabled then channelCreationEnabled
-        if (self.channelRegistrar.channelID != nil || !config.isChannelCreationDelayEnabled) {
+        if self.channelRegistrar.channelID != nil
+            || !config.isChannelCreationDelayEnabled
+        {
             self.isChannelCreationEnabled = true
         } else {
             AirshipLogger.debug("Channelc creation disabled.")
             self.isChannelCreationEnabled = false
         }
-        
-        self.disableHelper = ComponentDisableHelper(dataStore: dataStore,
-                                                    className: "UAChannel")
+
+        self.disableHelper = ComponentDisableHelper(
+            dataStore: dataStore,
+            className: "UAChannel"
+        )
 
         super.init()
 
         self.migrateTags()
-        
+
         self.disableHelper.onChange = { [weak self] in
             self?.onComponentEnableChange()
         }
-    
+
         self.channelRegistrar.delegate = self
         self.audienceManager.channelID = self.channelRegistrar.channelID
 
         self.audienceManager.enabled = self.isComponentEnabled
-        
+
         if let identifier = self.identifier {
             AirshipLogger.importantInfo("Channel ID \(identifier)")
         }
@@ -221,32 +239,44 @@ public class Channel : NSObject, Component, ChannelProtocol {
         self.observeNotificationCenterEvents()
         self.updateRegistration()
 
-#if canImport(ActivityKit)
-        Task {
-            for await update in self.liveActivityRegistry.updates {
-                UADispatcher.globalDispatcher(.utility).dispatchAsync {
-                    self.audienceManager.addLiveActivityUpdate(update)
+        #if canImport(ActivityKit)
+            Task {
+                for await update in self.liveActivityRegistry.updates {
+                    UADispatcher.globalDispatcher(.utility)
+                        .dispatchAsync {
+                            self.audienceManager.addLiveActivityUpdate(update)
+                        }
                 }
             }
-        }
-#endif
+        #endif
 
     }
-    
+
     // NOTE: For internal use only. :nodoc:
     @objc
-    convenience public init(dataStore: PreferenceDataStore,
-                            config: RuntimeConfig,
-                            privacyManager: PrivacyManager,
-                            localeManager: LocaleManagerProtocol) {
-        self.init(dataStore:dataStore,
-                  config: config,
-                  privacyManager: privacyManager,
-                  localeManager: localeManager,
-                  audienceManager: ChannelAudienceManager(dataStore: dataStore, config: config, privacyManager: privacyManager),
-                  channelRegistrar: ChannelRegistrar(config: config, dataStore: dataStore),
-                  notificationCenter: NotificationCenter.default,
-                  appStateTracker:AppStateTracker.shared)
+    convenience public init(
+        dataStore: PreferenceDataStore,
+        config: RuntimeConfig,
+        privacyManager: PrivacyManager,
+        localeManager: LocaleManagerProtocol
+    ) {
+        self.init(
+            dataStore: dataStore,
+            config: config,
+            privacyManager: privacyManager,
+            localeManager: localeManager,
+            audienceManager: ChannelAudienceManager(
+                dataStore: dataStore,
+                config: config,
+                privacyManager: privacyManager
+            ),
+            channelRegistrar: ChannelRegistrar(
+                config: config,
+                dataStore: dataStore
+            ),
+            notificationCenter: NotificationCenter.default,
+            appStateTracker: AppStateTracker.shared
+        )
     }
 
     private func migrateTags() {
@@ -256,10 +286,15 @@ public class Channel : NSObject, Component, ChannelProtocol {
         }
 
         // Normalize tags for older SDK versions, and migrate to UAChannel as necessary
-        if let existingPushTags = self.dataStore.object(forKey: Channel.legacyTagsSettingsKey) as? [String] {
+        if let existingPushTags = self.dataStore.object(
+            forKey: Channel.legacyTagsSettingsKey
+        ) as? [String] {
             let existingChannelTags = self.tags
             if existingChannelTags.count > 0 {
-                let combinedTagsSet = Set(existingPushTags).union(Set(existingChannelTags))
+                let combinedTagsSet = Set(existingPushTags)
+                    .union(
+                        Set(existingChannelTags)
+                    )
                 self.tags = Array(combinedTagsSet)
             } else {
                 self.tags = existingPushTags
@@ -268,89 +303,105 @@ public class Channel : NSObject, Component, ChannelProtocol {
 
         self.dataStore.removeObject(forKey: Channel.legacyTagsSettingsKey)
     }
-    
-    private func observeNotificationCenterEvents() {
-        notificationCenter.addObserver(self,
-                                       selector: #selector(applicationDidTransitionToForeground),
-                                       name: AppStateTracker.didTransitionToForeground,
-                                       object: nil)
-        
-        notificationCenter.addObserver(self,
-                                       selector: #selector(applicationDidTransitionToForeground),
-                                       name: LocaleManager.localeUpdatedEvent,
-                                       object: nil)
-        
-        notificationCenter.addObserver(self,
-                                       selector: #selector(remoteConfigUpdated),
-                                       name: RuntimeConfig.configUpdatedEvent,
-                                       object: nil)
 
-        notificationCenter.addObserver(self,
-                                       selector: #selector(onEnableFeaturesChanged),
-                                       name: PrivacyManager.changeEvent,
-                                       object: nil)
-        
-        
-        notificationCenter.addObserver(self,
-                                       selector: #selector(localeUpdates),
-                                       name: LocaleManager.localeUpdatedEvent,
-                                       object: nil)
+    private func observeNotificationCenterEvents() {
+        notificationCenter.addObserver(
+            self,
+            selector: #selector(applicationDidTransitionToForeground),
+            name: AppStateTracker.didTransitionToForeground,
+            object: nil
+        )
+
+        notificationCenter.addObserver(
+            self,
+            selector: #selector(applicationDidTransitionToForeground),
+            name: LocaleManager.localeUpdatedEvent,
+            object: nil
+        )
+
+        notificationCenter.addObserver(
+            self,
+            selector: #selector(remoteConfigUpdated),
+            name: RuntimeConfig.configUpdatedEvent,
+            object: nil
+        )
+
+        notificationCenter.addObserver(
+            self,
+            selector: #selector(onEnableFeaturesChanged),
+            name: PrivacyManager.changeEvent,
+            object: nil
+        )
+
+        notificationCenter.addObserver(
+            self,
+            selector: #selector(localeUpdates),
+            name: LocaleManager.localeUpdatedEvent,
+            object: nil
+        )
     }
-    
+
     @objc
     private func localeUpdates() {
         self.updateRegistration()
     }
-    
+
     @objc
     private func remoteConfigUpdated() {
         guard self.isRegistrationAllowed else {
             return
         }
 
-        if (self.identifier != nil) {
+        if self.identifier != nil {
             self.channelRegistrar.performFullRegistration()
         } else {
             self.updateRegistration(forcefully: true)
         }
     }
-    
+
     // NOTE: For internal use only. :nodoc:
     private func onComponentEnableChange() {
-        if (self.isComponentEnabled) {
+        if self.isComponentEnabled {
             self.updateRegistration()
         }
         self.audienceManager.enabled = self.isComponentEnabled
     }
-    
+
     @objc
     private func onEnableFeaturesChanged() {
-        if (!self.privacyManager.isEnabled(.tagsAndAttributes)) {
+        if !self.privacyManager.isEnabled(.tagsAndAttributes) {
             self.dataStore.removeObject(forKey: Channel.tagsDataStoreKey)
         }
-        
+
         self.updateRegistration()
     }
-    
+
     @objc
     private func applicationDidTransitionToForeground() {
-        if (self.privacyManager.isAnyFeatureEnabled()) {
-            AirshipLogger.trace("Application did become active. Updating registration.")
+        if self.privacyManager.isAnyFeatureEnabled() {
+            AirshipLogger.trace(
+                "Application did become active. Updating registration."
+            )
             self.updateRegistration()
         }
     }
-    
+
     // NOTE: For internal use only. :nodoc:
     @objc
-    public func addRegistrationExtender(_ extender: @escaping(ChannelRegistrationPayload, (@escaping (ChannelRegistrationPayload) -> Void)) -> Void) {
+    public func addRegistrationExtender(
+        _ extender: @escaping (
+            ChannelRegistrationPayload,
+            (@escaping (ChannelRegistrationPayload) -> Void)
+        ) -> Void
+    ) {
         self.extensionBlocks.append(extender)
     }
-    
+
     /// Begins a tag editing session
     /// - Returns: A TagEditor
     @objc
     public func editTags() -> TagEditor {
-        return TagEditor() { tagApplicator in
+        return TagEditor { tagApplicator in
             self.tagsLock.sync {
                 self.tags = tagApplicator(self.tags)
             }
@@ -372,7 +423,9 @@ public class Channel : NSObject, Component, ChannelProtocol {
     @objc
     public func editTagGroups() -> TagGroupsEditor {
         let allowDeviceTags = !self.isChannelTagRegistrationEnabled
-        return self.audienceManager.editTagGroups(allowDeviceGroup: allowDeviceTags)
+        return self.audienceManager.editTagGroups(
+            allowDeviceGroup: allowDeviceTags
+        )
     }
 
     /// Begins a tag group editing session
@@ -396,7 +449,9 @@ public class Channel : NSObject, Component, ChannelProtocol {
     /// - Parameter editorBlock: A subscription list editor block.
     /// - Returns: A SubscriptionListEditor
     @objc
-    public func editSubscriptionLists(_ editorBlock: (SubscriptionListEditor) -> Void) {
+    public func editSubscriptionLists(
+        _ editorBlock: (SubscriptionListEditor) -> Void
+    ) {
         let editor = editSubscriptionLists()
         editorBlock(editor)
         editor.apply()
@@ -407,13 +462,19 @@ public class Channel : NSObject, Component, ChannelProtocol {
     /// - Returns: A Disposable.
     @discardableResult
     @objc
-    public func fetchSubscriptionLists(completionHandler: @escaping ([String]?, Error?) -> Void) -> Disposable {
-        return audienceManager.fetchSubscriptionLists(completionHandler: completionHandler)
+    public func fetchSubscriptionLists(
+        completionHandler: @escaping ([String]?, Error?) -> Void
+    ) -> Disposable {
+        return audienceManager.fetchSubscriptionLists(
+            completionHandler: completionHandler
+        )
     }
 
     public func fetchSubscriptionLists() async throws -> [String] {
         try await withCheckedThrowingContinuation { continuation in
-            self.audienceManager.fetchSubscriptionLists { subscriptionLists, error in
+            self.audienceManager.fetchSubscriptionLists {
+                subscriptionLists,
+                error in
                 if let error = error {
                     continuation.resume(throwing: error)
                 } else {
@@ -424,10 +485,10 @@ public class Channel : NSObject, Component, ChannelProtocol {
     }
 
     /// Publishes edits made to the subscription lists through the SDK
-    public var subscriptionListEdits: AnyPublisher<SubscriptionListEdit, Never> {
+    public var subscriptionListEdits: AnyPublisher<SubscriptionListEdit, Never>
+    {
         audienceManager.subscriptionListEdits
     }
-
 
     /// Begins an attributes editing session
     /// - Returns: An AttributesEditor
@@ -445,7 +506,7 @@ public class Channel : NSObject, Component, ChannelProtocol {
         editorBlock(editor)
         editor.apply()
     }
-    
+
     /**
      * Adds a device tag.
      *  - Parameters:
@@ -454,11 +515,11 @@ public class Channel : NSObject, Component, ChannelProtocol {
     @available(*, deprecated, message: "Use editTags instead.")
     @objc(addTag:)
     public func addTag(_ tag: String) {
-        editTags() { editor in
+        editTags { editor in
             editor.add(tag)
         }
     }
-    
+
     /**
      * Adds a list of device tags.
      *  - Parameters:
@@ -467,11 +528,11 @@ public class Channel : NSObject, Component, ChannelProtocol {
     @available(*, deprecated, message: "Use editTags instead.")
     @objc(addTags:)
     public func addTags(_ tags: [String]) {
-        editTags() { editor in
+        editTags { editor in
             editor.add(tags)
         }
     }
-    
+
     /**
      * Removes a device tag.
      *  - Parameters:
@@ -480,11 +541,11 @@ public class Channel : NSObject, Component, ChannelProtocol {
     @available(*, deprecated, message: "Use editTags instead.")
     @objc(removeTag:)
     public func removeTag(_ tag: String) {
-        editTags() { editor in
+        editTags { editor in
             editor.remove(tag)
         }
     }
-    
+
     /**
      * Removes a list of device tags.
      *  - Parameters:
@@ -493,11 +554,11 @@ public class Channel : NSObject, Component, ChannelProtocol {
     @available(*, deprecated, message: "Use editTags instead.")
     @objc(removeTags:)
     public func removeTags(_ tags: [String]) {
-        editTags() { editor in
+        editTags { editor in
             editor.remove(tags)
         }
     }
-    
+
     /**
      * Adds a list of tags to a group.
      *  - Parameters:
@@ -507,11 +568,11 @@ public class Channel : NSObject, Component, ChannelProtocol {
     @available(*, deprecated, message: "Use editTagGroups instead.")
     @objc(addTags:group:)
     public func addTags(_ tags: [String], group: String) {
-        editTagGroups(){ editor in
+        editTagGroups { editor in
             editor.add(tags, group: group)
         }
     }
-    
+
     /**
      * Removes a list of tags from a group.
      *  - Parameters:
@@ -521,11 +582,11 @@ public class Channel : NSObject, Component, ChannelProtocol {
     @available(*, deprecated, message: "Use editTagGroups instead.")
     @objc(removeTags:group:)
     public func removeTags(_ tags: [String], group: String) {
-        editTagGroups(){ editor in
+        editTagGroups { editor in
             editor.remove(tags, group: group)
         }
     }
-    
+
     /**
      * Sets a list of tags to a group.
      *  - Parameters:
@@ -535,11 +596,11 @@ public class Channel : NSObject, Component, ChannelProtocol {
     @available(*, deprecated, message: "Use editTagGroups instead.")
     @objc(setTags:group:)
     public func setTags(_ tags: [String], group: String) {
-        editTagGroups(){ editor in
+        editTagGroups { editor in
             editor.set(tags, group: group)
         }
     }
-    
+
     /**
      * Applies attribute mutations.
      *  - Parameters:
@@ -548,17 +609,17 @@ public class Channel : NSObject, Component, ChannelProtocol {
     @available(*, deprecated, message: "Use editAttributes instead.")
     @objc(applyAttributeMutations:)
     public func apply(_ mutations: AttributeMutations) {
-        editAttributes() { editor in
+        editAttributes { editor in
             mutations.applyMutations(editor: editor)
         }
     }
-    
+
     /**
      * Enables channel creation if channelCreationDelayEnabled was set to `YES` in the config.
      */
     @objc(enableChannelCreation)
     public func enableChannelCreation() {
-        if (!self.isChannelCreationEnabled) {
+        if !self.isChannelCreationEnabled {
             self.isChannelCreationEnabled = true
             self.updateRegistration()
         }
@@ -574,18 +635,24 @@ public class Channel : NSObject, Component, ChannelProtocol {
         }
 
         guard self.isChannelCreationEnabled else {
-            AirshipLogger.debug("Channel creation is currently disabled, unable to update")
+            AirshipLogger.debug(
+                "Channel creation is currently disabled, unable to update"
+            )
             return false
         }
 
-        guard self.identifier != nil || self.privacyManager.isAnyFeatureEnabled() else {
-            AirshipLogger.trace("Skipping channel create. All features are disabled.")
+        guard
+            self.identifier != nil || self.privacyManager.isAnyFeatureEnabled()
+        else {
+            AirshipLogger.trace(
+                "Skipping channel create. All features are disabled."
+            )
             return false
         }
 
         return true
     }
-    
+
     /// - Note: For internal use only. :nodoc:
     public func updateRegistration(forcefully: Bool) {
         guard self.isRegistrationAllowed else {
@@ -597,161 +664,188 @@ public class Channel : NSObject, Component, ChannelProtocol {
 }
 
 /// - Note: for internal use only.  :nodoc:
-extension Channel : PushableComponent {
-    
+extension Channel: PushableComponent {
+
     #if !os(watchOS)
-    public func receivedRemoteNotification(_ notification: [AnyHashable : Any], completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        if (self.identifier == nil) {
-            updateRegistration()
+        public func receivedRemoteNotification(
+            _ notification: [AnyHashable: Any],
+            completionHandler: @escaping (UIBackgroundFetchResult) -> Void
+        ) {
+            if self.identifier == nil {
+                updateRegistration()
+            }
+            completionHandler(.noData)
         }
-        completionHandler(.noData)
-    }
     #else
-    public func receivedRemoteNotification(_ notification: [AnyHashable : Any], completionHandler: @escaping (WKBackgroundFetchResult) -> Void) {
-        if (self.identifier == nil) {
-            updateRegistration()
+        public func receivedRemoteNotification(
+            _ notification: [AnyHashable: Any],
+            completionHandler: @escaping (WKBackgroundFetchResult) -> Void
+        ) {
+            if self.identifier == nil {
+                updateRegistration()
+            }
+            completionHandler(.noData)
         }
-        completionHandler(.noData)
-    }
     #endif
 }
 
 /// - Note: for internal use only.  :nodoc:
-extension Channel : ChannelRegistrarDelegate {
-    
-    public func createChannelPayload(completionHandler: @escaping (ChannelRegistrationPayload) -> ()) {
+extension Channel: ChannelRegistrarDelegate {
+
+    public func createChannelPayload(
+        completionHandler: @escaping (ChannelRegistrationPayload) -> Void
+    ) {
         let payload = ChannelRegistrationPayload()
-        
-        if (self.appStateTracker.state == .active) {
+
+        if self.appStateTracker.state == .active {
             payload.channel.isActive = true
         }
-        
-        if (self.isChannelTagRegistrationEnabled) {
+
+        if self.isChannelTagRegistrationEnabled {
             payload.channel.tags = self.tags
             payload.channel.setTags = true
         } else {
             payload.channel.setTags = false
         }
-        
-        if (self.privacyManager.isEnabled(.analytics)) {
+
+        if self.privacyManager.isEnabled(.analytics) {
             payload.channel.deviceModel = Utils.deviceModelName()
             payload.channel.carrier = Utils.carrierName()
             payload.channel.appVersion = Utils.bundleShortVersionString()
             #if !os(watchOS)
-            payload.channel.deviceOS = UIDevice.current.systemVersion
+                payload.channel.deviceOS = UIDevice.current.systemVersion
             #endif
         }
 
-        if (self.privacyManager.isAnyFeatureEnabled()) {
+        if self.privacyManager.isAnyFeatureEnabled() {
             let currentLocale = self.localeManager.currentLocale
             payload.channel.language = currentLocale.languageCode
             payload.channel.country = currentLocale.regionCode
             payload.channel.timeZone = TimeZone.current.identifier
             payload.channel.sdkVersion = AirshipVersion.get()
-            
-            Channel.extendPayload(payload,
-                                  extenders: self.extensionBlocks,
-                                  completionHandler: completionHandler)
+
+            Channel.extendPayload(
+                payload,
+                extenders: self.extensionBlocks,
+                completionHandler: completionHandler
+            )
         } else {
-            completionHandler(payload);
+            completionHandler(payload)
         }
     }
-    
+
     public func registrationFailed() {
         AirshipLogger.info("Channel registration failed")
         UADispatcher.main.dispatchAsync {
-            self.notificationCenter.post(name: Channel.channelRegistrationFailedEvent,
-                                         object: self,
-                                         userInfo: nil)
+            self.notificationCenter.post(
+                name: Channel.channelRegistrationFailedEvent,
+                object: self,
+                userInfo: nil
+            )
         }
     }
-    
+
     public func registrationSucceeded() {
         AirshipLogger.info("Channel registration updated successfully.")
         UADispatcher.main.dispatchAsync {
-            self.notificationCenter.post(name: Channel.channelUpdatedEvent,
-                                         object: self,
-                                         userInfo: [Channel.channelIdentifierKey : self.identifier ?? ""])
+            self.notificationCenter.post(
+                name: Channel.channelUpdatedEvent,
+                object: self,
+                userInfo: [Channel.channelIdentifierKey: self.identifier ?? ""]
+            )
         }
     }
-    
+
     public func channelCreated(channelID: String, existing: Bool) {
         AirshipLogger.importantInfo("Channel ID: \(channelID)")
         self.audienceManager.channelID = channelID
         UADispatcher.main.dispatchAsync {
-            self.notificationCenter.post(name: Channel.channelCreatedEvent,
-                                         object: self,
-                                         userInfo: [
-                                            Channel.channelIdentifierKey: channelID,
-                                            Channel.channelExistingKey: existing
-                                         ])
+            self.notificationCenter.post(
+                name: Channel.channelCreatedEvent,
+                object: self,
+                userInfo: [
+                    Channel.channelIdentifierKey: channelID,
+                    Channel.channelExistingKey: existing,
+                ]
+            )
         }
     }
-    
-    
-    class func extendPayload(_ payload: ChannelRegistrationPayload,
-                             extenders: [((ChannelRegistrationPayload, @escaping (ChannelRegistrationPayload) -> Void) -> Void)],
-                             completionHandler: @escaping (ChannelRegistrationPayload) -> Void) {
-        
+
+    class func extendPayload(
+        _ payload: ChannelRegistrationPayload,
+        extenders: [(
+            (
+                ChannelRegistrationPayload,
+                @escaping (ChannelRegistrationPayload) -> Void
+            ) -> Void
+        )],
+        completionHandler: @escaping (ChannelRegistrationPayload) -> Void
+    ) {
+
         guard extenders.count > 0 else {
             completionHandler(payload)
             return
         }
-        
+
         var remaining = extenders
         let next = remaining.removeFirst()
-        
+
         UADispatcher.main.dispatchAsync {
             next(payload) { payload in
-                extendPayload(payload, extenders: remaining, completionHandler: completionHandler)
+                extendPayload(
+                    payload,
+                    extenders: remaining,
+                    completionHandler: completionHandler
+                )
             }
         }
     }
 }
 
-
-extension Channel : InternalChannelProtocol {
-    func processContactSubscriptionUpdates(_ updates: [SubscriptionListUpdate]) {
+extension Channel: InternalChannelProtocol {
+    func processContactSubscriptionUpdates(_ updates: [SubscriptionListUpdate])
+    {
         self.audienceManager.processContactSubscriptionUpdates(updates)
     }
 }
 
 #if canImport(ActivityKit)
-import ActivityKit
-@available(iOS 16.1, *)
-public extension Channel {
+    import ActivityKit
+    @available(iOS 16.1, *)
+    extension Channel {
 
-    /// Tracks a live activity with Airship for the given name.
-    /// Airship will monitor the push token and status and automatically
-    /// add and remove it from the channel for the App. If an activity is already
-    /// tracked with the given name it will be replaced with the new activity.
-    ///
-    /// The name will be used to send updates through Airship. It can be unique
-    /// for the device or shared across many devices.
-    ///
-    /// - Parameters:
-    ///     - activity: The live activity
-    ///     - name: The name of the activity
-    func trackLiveActivity<T: ActivityAttributes>(
+        /// Tracks a live activity with Airship for the given name.
+        /// Airship will monitor the push token and status and automatically
+        /// add and remove it from the channel for the App. If an activity is already
+        /// tracked with the given name it will be replaced with the new activity.
+        ///
+        /// The name will be used to send updates through Airship. It can be unique
+        /// for the device or shared across many devices.
+        ///
+        /// - Parameters:
+        ///     - activity: The live activity
+        ///     - name: The name of the activity
+        public func trackLiveActivity<T: ActivityAttributes>(
             _ activity: Activity<T>,
             name: String
-    ) async {
-        await liveActivityRegistry.addLiveActivity(activity, name: name)
-    }
+        ) async {
+            await liveActivityRegistry.addLiveActivity(activity, name: name)
+        }
 
-    /// Called to restore live activity tracking. This method needs to be called exactly once
-    /// during `application(_:didFinishLaunchingWithOptions:)` right
-    /// after takeOff. Any activities not restored will stop being tracked by Airship.
-    /// - Parameters:
-    ///     - callback: Callback with the restorer.
-    func restoreLiveActivityTracking(
-        callback: (LiveActivityRestorer) async -> Void
-    ) async {
-        let restorer = AirshipLiveActivityRestorer(registry: self.liveActivityRegistry)
-        await callback(restorer)
-        await self.liveActivityRegistry.clearUntracked()
+        /// Called to restore live activity tracking. This method needs to be called exactly once
+        /// during `application(_:didFinishLaunchingWithOptions:)` right
+        /// after takeOff. Any activities not restored will stop being tracked by Airship.
+        /// - Parameters:
+        ///     - callback: Callback with the restorer.
+        public func restoreLiveActivityTracking(
+            callback: (LiveActivityRestorer) async -> Void
+        ) async {
+            let restorer = AirshipLiveActivityRestorer(
+                registry: self.liveActivityRegistry
+            )
+            await callback(restorer)
+            await self.liveActivityRegistry.clearUntracked()
+        }
     }
-}
-
 
 #endif

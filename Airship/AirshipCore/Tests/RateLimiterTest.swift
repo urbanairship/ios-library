@@ -1,8 +1,8 @@
 /* Copyright Airship and Contributors */
 
 import XCTest
-@testable
-import AirshipCore
+
+@testable import AirshipCore
 
 class RateLimiterTest: XCTestCase {
     let testDate = UATestDate(offset: 0, dateOverride: Date())
@@ -43,8 +43,12 @@ class RateLimiterTest: XCTestCase {
     }
 
     func testInvalidRateLimitThrows() throws {
-        XCTAssertThrowsError(try rateLimiter.set("foo", rate: 1, timeInterval: 0))
-        XCTAssertThrowsError(try rateLimiter.set("foo", rate: 0, timeInterval: 1.0))
+        XCTAssertThrowsError(
+            try rateLimiter.set("foo", rate: 1, timeInterval: 0)
+        )
+        XCTAssertThrowsError(
+            try rateLimiter.set("foo", rate: 0, timeInterval: 1.0)
+        )
     }
 
     func testRateLimitOverTrack() throws {
@@ -88,7 +92,7 @@ class RateLimiterTest: XCTestCase {
 
 extension RateLimiter.Status {
     func assertWithinLimit(_ expected: Int) {
-        switch(self) {
+        switch self {
         case .withinLimit(let count):
             XCTAssertEqual(expected, count)
         default:
@@ -97,7 +101,7 @@ extension RateLimiter.Status {
     }
 
     func assertOverLimit(_ expected: TimeInterval) {
-        switch(self) {
+        switch self {
         case .overLimit(let next):
             XCTAssertEqual(expected, next, accuracy: 0.001)
         default:

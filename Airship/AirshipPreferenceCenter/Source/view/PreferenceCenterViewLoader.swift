@@ -1,11 +1,11 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
 import Combine
+import Foundation
 import SwiftUI
 
 #if canImport(AirshipCore)
-import AirshipCore
+    import AirshipCore
 #endif
 
 class PreferenceCenterViewLoader: ObservableObject {
@@ -15,16 +15,24 @@ class PreferenceCenterViewLoader: ObservableObject {
 
     private var task: Task<Void, Never>?
 
-    public func load(preferenceCenterID: String,
-                     onLoad: ((String) async -> PreferenceCenterViewPhase)? = nil) {
+    public func load(
+        preferenceCenterID: String,
+        onLoad: ((String) async -> PreferenceCenterViewPhase)? = nil
+    ) {
         self.task?.cancel()
         self.task = Task {
-            await loadAsync(preferenceCenterID: preferenceCenterID, onLoad: onLoad)
+            await loadAsync(
+                preferenceCenterID: preferenceCenterID,
+                onLoad: onLoad
+            )
         }
     }
 
     @MainActor
-    private func loadAsync(preferenceCenterID: String, onLoad: ((String) async -> PreferenceCenterViewPhase)? = nil) async -> Void {
+    private func loadAsync(
+        preferenceCenterID: String,
+        onLoad: ((String) async -> PreferenceCenterViewPhase)? = nil
+    ) async {
         self.phase = .loading
 
         if let onLoad = onLoad {
@@ -33,31 +41,39 @@ class PreferenceCenterViewLoader: ObservableObject {
         }
 
         do {
-            let state = try await self.fetchState(preferenceCenterID: preferenceCenterID)
+            let state = try await self.fetchState(
+                preferenceCenterID: preferenceCenterID
+            )
             self.phase = .loaded(state)
         } catch {
             self.phase = .error(error)
         }
     }
 
-    private func fetchState(preferenceCenterID: String) async throws -> PreferenceCenterState {
+    private func fetchState(preferenceCenterID: String) async throws
+        -> PreferenceCenterState
+    {
         AirshipLogger.info("Fetching config: \(preferenceCenterID)")
 
-        guard Airship.isFlying else  {
+        guard Airship.isFlying else {
             throw AirshipErrors.error("TakeOff not called")
         }
 
-        let config = try await PreferenceCenter.shared.config(preferenceCenterID: preferenceCenterID)
+        let config = try await PreferenceCenter.shared.config(
+            preferenceCenterID: preferenceCenterID
+        )
 
         var channelSubscriptions: [String]?
         var contactSubscriptions: [String: Set<ChannelScope>]?
 
-        if (config.containsChannelSubscriptions()) {
-            channelSubscriptions = try await Airship.channel.fetchSubscriptionLists()
+        if config.containsChannelSubscriptions() {
+            channelSubscriptions = try await Airship.channel
+                .fetchSubscriptionLists()
         }
 
-        if (config.containsContactSubscriptions()) {
-            contactSubscriptions = try await Airship.contact.fetchSubscriptionLists()
+        if config.containsContactSubscriptions() {
+            contactSubscriptions = try await Airship.contact
+                .fetchSubscriptionLists()
                 .mapValues { Set($0) }
         }
 

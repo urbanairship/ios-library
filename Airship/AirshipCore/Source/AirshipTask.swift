@@ -2,14 +2,11 @@
 
 import Foundation
 
-
-/**
- * Task passed to the launcher when ready to execute.
- * - Note: For internal use only. :nodoc:
- */
+/// Task passed to the launcher when ready to execute.
+/// - Note: For internal use only. :nodoc:
 @objc(UATask)
 public protocol AirshipTask {
-    
+
     /**
      * Expiration handler. Will be called when background time is about to expire. The launcher is still expected to call `taskCompleted` or `taskFailed`.
      */

@@ -1,10 +1,8 @@
 /* Copyright Airship and Contributors */
 
-/**
- * - Note: For internal use only. :nodoc:
- */
+/// - Note: For internal use only. :nodoc:
 @objc(UADispatcherTimeBase)
-public enum DispatcherTimeBase : Int {
+public enum DispatcherTimeBase: Int {
     /// Wall time.
     case wall
 
@@ -12,19 +10,22 @@ public enum DispatcherTimeBase : Int {
     case system
 }
 
-/**
- * - Note: For internal use only. :nodoc:
- */
+/// - Note: For internal use only. :nodoc:
 @objc(UADispatcher)
-open class UADispatcher : NSObject {
+open class UADispatcher: NSObject {
     @objc
-    public static let main: UADispatcher = UADispatcher(queue: DispatchQueue.main)
+    public static let main: UADispatcher = UADispatcher(
+        queue: DispatchQueue.main
+    )
 
     @objc
-    public static let global: UADispatcher = UADispatcher.globalDispatcher(.background)
+    public static let global: UADispatcher = UADispatcher.globalDispatcher(
+        .background
+    )
 
     private static let dispatchKey = DispatchSpecificKey<UADispatcher>()
-    private static var globalDispatchers: [DispatchQoS.QoSClass : UADispatcher] =  [:]
+    private static var globalDispatchers: [DispatchQoS.QoSClass: UADispatcher] =
+        [:]
     private static let lock = NSRecursiveLock()
 
     private let queue: DispatchQueue
@@ -47,9 +48,12 @@ open class UADispatcher : NSObject {
 
         return dispatcher
     }
-    
+
     public class func serial(_ qos: DispatchQoS) -> UADispatcher {
-        let queue = DispatchQueue(label: "com.urbanairship.dispatcher.serial_queue", qos: qos)
+        let queue = DispatchQueue(
+            label: "com.urbanairship.dispatcher.serial_queue",
+            qos: qos
+        )
         return UADispatcher(queue: queue)
     }
 
@@ -93,21 +97,31 @@ open class UADispatcher : NSObject {
 
     @objc
     @discardableResult
-    open func dispatch(after delay: TimeInterval, timebase: DispatcherTimeBase, block: @escaping () -> Void) -> Disposable {
+    open func dispatch(
+        after delay: TimeInterval,
+        timebase: DispatcherTimeBase,
+        block: @escaping () -> Void
+    ) -> Disposable {
         let workItem = DispatchWorkItem(block: block)
 
-        if (delay == 0) {
+        if delay == 0 {
             queue.async(execute: workItem)
         } else {
             if timebase == .wall {
-                queue.asyncAfter(wallDeadline: DispatchWallTime.now() + delay, execute: workItem)
+                queue.asyncAfter(
+                    wallDeadline: DispatchWallTime.now() + delay,
+                    execute: workItem
+                )
             } else {
-                queue.asyncAfter(deadline: DispatchTime.now() + delay, execute: workItem)
+                queue.asyncAfter(
+                    deadline: DispatchTime.now() + delay,
+                    execute: workItem
+                )
             }
         }
 
         return Disposable {
-            if (!workItem.isCancelled) {
+            if !workItem.isCancelled {
                 workItem.cancel()
             }
         }
@@ -115,12 +129,14 @@ open class UADispatcher : NSObject {
 
     @objc
     @discardableResult
-    open func dispatch(after delay:TimeInterval, block: @escaping () -> Void) -> Disposable {
+    open func dispatch(after delay: TimeInterval, block: @escaping () -> Void)
+        -> Disposable
+    {
         return dispatch(after: delay, timebase: .wall, block: block)
     }
 
     private func isCurrentQueue() -> Bool {
-        if (DispatchQueue.getSpecific(key: UADispatcher.dispatchKey) == self) {
+        if DispatchQueue.getSpecific(key: UADispatcher.dispatchKey) == self {
             return true
         } else if self === UADispatcher.main && Thread.isMainThread {
             return true

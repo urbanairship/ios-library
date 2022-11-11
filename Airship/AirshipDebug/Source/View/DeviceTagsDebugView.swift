@@ -4,9 +4,9 @@ import Foundation
 import SwiftUI
 
 #if canImport(AirshipCore)
-import AirshipCore
+    import AirshipCore
 #elseif canImport(AirshipKit)
-import AirshipKit
+    import AirshipKit
 #endif
 
 struct DeviceTagsDebugView: View {
@@ -32,9 +32,12 @@ struct DeviceTagsDebugView: View {
         }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                NavigationLink("Add", destination: AddTagView {
-                    self.viewModel.addTag($0)
-                })
+                NavigationLink(
+                    "Add",
+                    destination: AddTagView {
+                        self.viewModel.addTag($0)
+                    }
+                )
             }
         }
         .navigationTitle("Tags".localized())
@@ -45,9 +48,8 @@ struct DeviceTagsDebugView: View {
         @Published
         private(set) var tags: [String]
 
-
         init() {
-            if (Airship.isFlying) {
+            if Airship.isFlying {
                 self.tags = Airship.channel.tags
             } else {
                 self.tags = []
@@ -55,7 +57,7 @@ struct DeviceTagsDebugView: View {
         }
 
         func addTag(_ tag: String) {
-            if (Airship.isFlying) {
+            if Airship.isFlying {
                 Airship.channel.editTags {
                     $0.add(tag)
                 }
@@ -64,7 +66,7 @@ struct DeviceTagsDebugView: View {
         }
 
         func removeTag(_ tag: String) {
-            if (Airship.isFlying) {
+            if Airship.isFlying {
                 Airship.channel.editTags {
                     $0.remove(tag)
                 }
@@ -74,7 +76,7 @@ struct DeviceTagsDebugView: View {
     }
 }
 
-fileprivate struct AddTagView: View {
+private struct AddTagView: View {
 
     @State
     private var tag: String = ""
@@ -100,7 +102,8 @@ fileprivate struct AddTagView: View {
                         presentationMode.wrappedValue.dismiss()
                     } label: {
                         Text("Save".localized())
-                    }.disabled(tag.isEmpty)
+                    }
+                    .disabled(tag.isEmpty)
                 }
             }
         }
@@ -108,7 +111,3 @@ fileprivate struct AddTagView: View {
 
     }
 }
-
-
-
-

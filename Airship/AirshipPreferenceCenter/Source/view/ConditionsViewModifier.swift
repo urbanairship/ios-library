@@ -22,14 +22,26 @@ struct ConditionsViewModifier: ViewModifier {
 extension View {
 
     @ViewBuilder
-    func preferenceConditions(_ conditions: [PreferenceCenterConfig.Condition]?) -> some View {
-       self
+    func preferenceConditions(_ conditions: [PreferenceCenterConfig.Condition]?)
+        -> some View
+    {
+        self
     }
 
     @ViewBuilder
-    func preferenceConditions(_ conditions: [PreferenceCenterConfig.Condition]?, binding: Binding<Bool>) -> some View {
+    func preferenceConditions(
+        _ conditions: [PreferenceCenterConfig.Condition]?,
+        binding: Binding<Bool>
+    ) -> some View {
         if let conditions = conditions {
-            self.modifier(ConditionsViewModifier(conditionsMonitor: ConditionsMonitor(conditions: conditions), binding: binding))
+            self.modifier(
+                ConditionsViewModifier(
+                    conditionsMonitor: ConditionsMonitor(
+                        conditions: conditions
+                    ),
+                    binding: binding
+                )
+            )
         } else {
             self
         }

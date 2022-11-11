@@ -4,7 +4,7 @@ import Foundation
 import SwiftUI
 
 #if canImport(AirshipCore)
-import AirshipCore
+    import AirshipCore
 #endif
 
 /// Contact subscription group item view
@@ -45,8 +45,8 @@ struct ContactSubscriptionGroupView: View {
             state: self.state,
             displayConditionsMet: self.displayConditionsMet,
             preferenceCenterTheme: self.preferenceCenterTheme,
-            componentStates: componentStates)
-
+            componentStates: componentStates
+        )
 
         style.makeBody(configuration: configuration)
             .preferenceConditions(
@@ -56,14 +56,15 @@ struct ContactSubscriptionGroupView: View {
     }
 }
 
-public extension View {
+extension View {
     /// Sets the contact subscription group style
     /// - Parameters:
     ///     - style: The style
-    func contactSubscriptionGroupStyle<S>(_ style: S) -> some View where S : ContactSubscriptionGroupStyle {
+    public func contactSubscriptionGroupStyle<S>(_ style: S) -> some View
+    where S: ContactSubscriptionGroupStyle {
         self.environment(
             \.airshipContactSubscriptionGroupStyle,
-             AnyContactSubscriptionGroupStyle(style: style)
+            AnyContactSubscriptionGroupStyle(style: style)
         )
     }
 }
@@ -86,7 +87,8 @@ public struct ContactSubscriptionGroupStyleConfiguration {
     /// Component state
     public struct ComponentState {
         /// The component
-        public let component: PreferenceCenterConfig.ContactSubscriptionGroup.Component
+        public let component:
+            PreferenceCenterConfig.ContactSubscriptionGroup.Component
 
         /// The component's subscription binding
         public let isSubscribed: Binding<Bool>
@@ -99,23 +101,27 @@ public protocol ContactSubscriptionGroupStyle {
     func makeBody(configuration: Self.Configuration) -> Self.Body
 }
 
-public extension ContactSubscriptionGroupStyle where Self == DefaultContactSubscriptionGroupStyle {
+extension ContactSubscriptionGroupStyle
+where Self == DefaultContactSubscriptionGroupStyle {
 
     /// Default style
-    static var defaultStyle: Self {
+    public static var defaultStyle: Self {
         return .init()
     }
 }
 
 /// The default subscription group item style
-public struct DefaultContactSubscriptionGroupStyle: ContactSubscriptionGroupStyle {
+public struct DefaultContactSubscriptionGroupStyle:
+    ContactSubscriptionGroupStyle
+{
 
     @Environment(\.airshipPreferenceCenterTheme)
     private var preferenceCenterTheme
 
-    private static let chipLabelAppearance = PreferenceCenterTheme.TextAppearance(
-        color: .primary
-    )
+    private static let chipLabelAppearance =
+        PreferenceCenterTheme.TextAppearance(
+            color: .primary
+        )
 
     static let titleAppearance = PreferenceCenterTheme.TextAppearance(
         font: .headline,
@@ -130,15 +136,17 @@ public struct DefaultContactSubscriptionGroupStyle: ContactSubscriptionGroupStyl
     @ViewBuilder
     public func makeBody(configuration: Configuration) -> some View {
         let item = configuration.item
-        let itemTheme = configuration.preferenceCenterTheme.contactSubscriptionGroup
+        let itemTheme = configuration.preferenceCenterTheme
+            .contactSubscriptionGroup
 
-        if (configuration.displayConditionsMet) {
+        if configuration.displayConditionsMet {
             VStack(alignment: .leading) {
                 if let title = item.display?.title {
                     Text(title)
                         .textAppearance(
                             itemTheme?.titleAppearance,
-                            base: DefaultContactSubscriptionGroupStyle.titleAppearance
+                            base: DefaultContactSubscriptionGroupStyle
+                                .titleAppearance
                         )
                 }
 
@@ -146,7 +154,8 @@ public struct DefaultContactSubscriptionGroupStyle: ContactSubscriptionGroupStyl
                     Text(subtitle)
                         .textAppearance(
                             itemTheme?.subtitleAppearance,
-                            base: DefaultContactSubscriptionGroupStyle.subtitleAppearance
+                            base: DefaultContactSubscriptionGroupStyle
+                                .subtitleAppearance
                         )
                 }
 
@@ -173,17 +182,21 @@ public struct DefaultContactSubscriptionGroupStyle: ContactSubscriptionGroupStyl
 
             GeometryReader { geometry in
                 ZStack(alignment: .topLeading) {
-                    ForEach(0..<self.componentStates.count, id: \.self) { index in
+                    ForEach(0..<self.componentStates.count, id: \.self) {
+                        index in
                         let state = self.componentStates[index]
                         makeComponent(state.component, isOn: state.isSubscribed)
-                            .alignmentGuide(HorizontalAlignment.leading) { viewDimensions in
+                            .alignmentGuide(HorizontalAlignment.leading) {
+                                viewDimensions in
                                 if index == 0 {
                                     dx = 0
                                     dy = 0
                                 }
 
                                 var offSet = dx
-                                if (abs(offSet - viewDimensions.width) > geometry.size.width) {
+                                if abs(offSet - viewDimensions.width)
+                                    > geometry.size.width
+                                {
                                     offSet = 0
                                     dx = 0
                                     dy -= viewDimensions.height
@@ -192,7 +205,8 @@ public struct DefaultContactSubscriptionGroupStyle: ContactSubscriptionGroupStyl
                                 dx -= (viewDimensions.width + hSpacing)
                                 return offSet
                             }
-                            .alignmentGuide(VerticalAlignment.top) { viewDimensions in
+                            .alignmentGuide(VerticalAlignment.top) {
+                                viewDimensions in
                                 return dy
                             }
                     }
@@ -210,39 +224,49 @@ public struct DefaultContactSubscriptionGroupStyle: ContactSubscriptionGroupStyl
             .frame(minHeight: componentHeight)
         }
 
-
         @ViewBuilder
-        func makeComponent(_ component: PreferenceCenterConfig.ContactSubscriptionGroup.Component,
-                           isOn: Binding<Bool>) -> some View {
+        func makeComponent(
+            _ component: PreferenceCenterConfig.ContactSubscriptionGroup
+                .Component,
+            isOn: Binding<Bool>
+        ) -> some View {
 
             Button(action: {
                 isOn.wrappedValue.toggle()
             }) {
                 HStack(spacing: 4) {
                     ZStack {
-                        if (isOn.wrappedValue) {
+                        if isOn.wrappedValue {
                             Image(systemName: "checkmark.circle.fill")
                                 .font(.system(size: 24))
                                 .foregroundColor(chipTheme?.checkColor)
                         } else {
                             Image(systemName: "circle")
                                 .font(.system(size: 24))
-                                .foregroundColor(chipTheme?.borderColor ?? .secondary)
+                                .foregroundColor(
+                                    chipTheme?.borderColor ?? .secondary
+                                )
                         }
                     }
 
                     Text(component.display?.title ?? "")
                         .textAppearance(
                             chipTheme?.labelAppearance,
-                            base: DefaultContactSubscriptionGroupStyle.chipLabelAppearance
+                            base: DefaultContactSubscriptionGroupStyle
+                                .chipLabelAppearance
                         )
                         .padding(.trailing, 8)
                 }
                 .padding(2)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 22,
-                                     style: .circular)
-                    .strokeBorder(self.chipTheme?.borderColor ?? .secondary, lineWidth: 1)
+                    RoundedRectangle(
+                        cornerRadius: 22,
+                        style: .circular
+                    )
+                    .strokeBorder(
+                        self.chipTheme?.borderColor ?? .secondary,
+                        lineWidth: 1
+                    )
                 )
                 .frame(minHeight: 44)
             }
@@ -269,7 +293,9 @@ struct AnyContactSubscriptionGroupStyle: ContactSubscriptionGroupStyle {
 }
 
 struct ContactSubscriptionGroupStyleKey: EnvironmentKey {
-    static var defaultValue = AnyContactSubscriptionGroupStyle(style: .defaultStyle)
+    static var defaultValue = AnyContactSubscriptionGroupStyle(
+        style: .defaultStyle
+    )
 }
 
 extension EnvironmentValues {

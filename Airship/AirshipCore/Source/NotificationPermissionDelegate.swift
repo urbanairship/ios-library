@@ -18,16 +18,22 @@ class NotificationPermissionDelegate: PermissionDelegate {
         self.config = config
     }
 
-    func checkPermissionStatus(completionHandler: @escaping (PermissionStatus) -> Void) {
+    func checkPermissionStatus(
+        completionHandler: @escaping (PermissionStatus) -> Void
+    ) {
         registrar.checkStatus { status, _ in
             completionHandler(status.permissionStatus)
         }
     }
 
-    func requestPermission(completionHandler: @escaping (PermissionStatus) -> Void) {
+    func requestPermission(
+        completionHandler: @escaping (PermissionStatus) -> Void
+    ) {
         let config = self.config()
-        self.registrar.updateRegistration(options: config.options,
-                                          skipIfEphemeral: config.skipIfEphemeral) {
+        self.registrar.updateRegistration(
+            options: config.options,
+            skipIfEphemeral: config.skipIfEphemeral
+        ) {
             self.checkPermissionStatus(completionHandler: completionHandler)
         }
     }
@@ -35,7 +41,7 @@ class NotificationPermissionDelegate: PermissionDelegate {
 
 extension UAAuthorizationStatus {
     var permissionStatus: PermissionStatus {
-        switch(self) {
+        switch self {
         case .authorized: return .granted
         case .provisional: return .granted
         case .ephemeral: return .granted
@@ -46,5 +52,3 @@ extension UAAuthorizationStatus {
 
     }
 }
-
-

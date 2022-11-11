@@ -1,15 +1,16 @@
 /* Copyright Airship and Contributors */
 
+import AirshipCore
 import Foundation
 import Yams
-import AirshipCore
 
 let directoryName = "/Layouts"
 
 // Returns the list of layouts file from Layouts folder
 func getLayoutsList() throws -> [String] {
     let docsPath = Bundle.main.resourcePath! + directoryName
-    return try FileManager.default.contentsOfDirectory(atPath: docsPath).sorted()
+    return try FileManager.default.contentsOfDirectory(atPath: docsPath)
+        .sorted()
 }
 
 // Returns the YML file contents
@@ -20,10 +21,13 @@ func getContentOfFile(fileName: String) throws -> String {
 
 /// Convert YML content to json content using Yams
 func getJsonContentFromYmlContent(ymlContent: String) throws -> Data {
-    if let jsonContentOfFile = try Yams.load(yaml:ymlContent) as? NSDictionary {
-        return try JSONSerialization.data(withJSONObject: jsonContentOfFile,
-                                          options: .prettyPrinted)
-    } else {
+    guard
+        let jsonContentOfFile = try Yams.load(yaml: ymlContent) as? NSDictionary
+    else {
         throw AirshipErrors.error("Invalid content: \(ymlContent)")
     }
+    return try JSONSerialization.data(
+        withJSONObject: jsonContentOfFile,
+        options: .prettyPrinted
+    )
 }

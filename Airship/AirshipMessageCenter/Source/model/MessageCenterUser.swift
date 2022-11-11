@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #if canImport(AirshipCore)
-import AirshipCore
+    import AirshipCore
 #endif
 
 /// Model object for holding user data.
@@ -11,7 +11,7 @@ public class MessageCenterUser: NSObject, Codable {
     /// The username.
     @objc
     public let password: String
-    
+
     /// The password.
     @objc
     public let username: String
@@ -28,10 +28,9 @@ public class MessageCenterUser: NSObject, Codable {
     }
 }
 
-
-public extension MessageCenterUser {
+extension MessageCenterUser {
     @objc
-    var basicAuthString: String {
+    public var basicAuthString: String {
         return Utils.authHeader(
             username: self.username,
             password: self.password

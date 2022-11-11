@@ -29,6 +29,7 @@ public protocol AirshipWorkManagerProtocol: AirshipWorkManagerBaseProtocol {
     func registerWorker(
         _ workID: String,
         type: AirshipWorkerType,
-        workHandler: @escaping (AirshipWorkRequest) async throws -> AirshipWorkResult
+        workHandler: @escaping (AirshipWorkRequest) async throws ->
+            AirshipWorkResult
     )
 }

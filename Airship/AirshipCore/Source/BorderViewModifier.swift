@@ -7,26 +7,38 @@ import SwiftUI
 struct BorderViewModifier: ViewModifier {
     let border: Border
     @Environment(\.colorScheme) var colorScheme
-    
+
     @ViewBuilder
     func body(content: Content) -> some View {
-        if let color = border.strokeColor?.toColor(colorScheme), let width = border.strokeWidth {
+        if let color = border.strokeColor?.toColor(colorScheme),
+            let width = border.strokeWidth
+        {
             if let cornerRadius = border.radius, cornerRadius > 0 {
                 content.overlay(
-                    RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                        .strokeBorder(color, lineWidth: width)
-                ).clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
+                    RoundedRectangle(
+                        cornerRadius: cornerRadius,
+                        style: .continuous
+                    )
+                    .strokeBorder(color, lineWidth: width)
+                )
+                .clipShape(
+                    RoundedRectangle(
+                        cornerRadius: cornerRadius,
+                        style: .continuous
+                    )
+                )
             } else {
                 content.border(color, width: width)
             }
         } else if let cornerRadius = border.radius, cornerRadius > 0 {
-            content.clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
+            content.clipShape(
+                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+            )
         } else {
             content
         }
     }
 }
-
 
 @available(iOS 13.0.0, tvOS 13.0, *)
 extension View {
@@ -39,4 +51,3 @@ extension View {
         }
     }
 }
-

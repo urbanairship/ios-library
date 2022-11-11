@@ -2,8 +2,7 @@
 
 import XCTest
 
-@testable
-import AirshipCore
+@testable import AirshipCore
 
 final class LiveActivityRegistryTest: XCTestCase {
 
@@ -20,7 +19,7 @@ final class LiveActivityRegistryTest: XCTestCase {
         )
     }
 
-    func testAdd() async throws  {
+    func testAdd() async throws {
         let activity = TestLiveActivity("foo id")
         await self.registry.addLiveActivity(activity, name: "foo")
 
@@ -52,7 +51,7 @@ final class LiveActivityRegistryTest: XCTestCase {
         )
     }
 
-    func testReplace() async throws  {
+    func testReplace() async throws {
         let activityFirst = TestLiveActivity("first id")
         activityFirst.pushTokenString = "first token"
 
@@ -82,7 +81,7 @@ final class LiveActivityRegistryTest: XCTestCase {
         )
     }
 
-    func testRestore() async throws  {
+    func testRestore() async throws {
         var activity = TestLiveActivity("foo id")
         await self.registry.addLiveActivity(activity, name: "foo")
 
@@ -92,7 +91,6 @@ final class LiveActivityRegistryTest: XCTestCase {
             date: self.date
         )
         activity = TestLiveActivity("foo id")
-
 
         await self.registry.restoreTracking(activities: [activity])
         await self.registry.clearUntracked()
@@ -111,7 +109,7 @@ final class LiveActivityRegistryTest: XCTestCase {
         )
     }
 
-    func testCleareUntracked() async throws  {
+    func testCleareUntracked() async throws {
         let activity = TestLiveActivity("foo id")
         activity.pushTokenString = "neat"
         await self.registry.addLiveActivity(activity, name: "foo")
@@ -147,12 +145,12 @@ final class LiveActivityRegistryTest: XCTestCase {
             )
         )
     }
-    
-    func testCleareUntrackedMaxActionTime() async throws  {
+
+    func testCleareUntrackedMaxActionTime() async throws {
         let activity = TestLiveActivity("foo id")
         activity.pushTokenString = "neat"
         await self.registry.addLiveActivity(activity, name: "foo")
-        
+
         await assertUpdate(
             LiveActivityUpdate(
                 action: .set,
@@ -163,23 +161,23 @@ final class LiveActivityRegistryTest: XCTestCase {
                 startTimeMS: 0
             )
         )
-        
+
         // Recreate it
         self.registry = LiveActivityRegistry(
             dataStore: self.dataStore,
             date: self.date
         )
-        
-        self.date.offset += 288000.1 // 8 hours and .1 second
+
+        self.date.offset += 288000.1  // 8 hours and .1 second
         await self.registry.restoreTracking(activities: [])
         await self.registry.clearUntracked()
-        
+
         await assertUpdate(
             LiveActivityUpdate(
                 action: .remove,
                 id: "foo id",
                 name: "foo",
-                actionTimeMS: 288000000, // 8 hours
+                actionTimeMS: 288_000_000,  // 8 hours
                 startTimeMS: 0
             )
         )
@@ -190,14 +188,13 @@ final class LiveActivityRegistryTest: XCTestCase {
         file: StaticString = #filePath,
         line: UInt = #line
     ) async {
-        let next = await self.registry.updates.first(where: { _ in true } )
+        let next = await self.registry.updates.first(where: { _ in true })
         XCTAssertEqual(update, next, file: file, line: line)
     }
 }
 
-
 /// Tried to match as closely as I coudl to the real object
-fileprivate class TestLiveActivity: LiveActivity {
+private class TestLiveActivity: LiveActivity {
     let id: String
     var isActive: Bool = true {
         didSet {
@@ -235,7 +232,7 @@ fileprivate class TestLiveActivity: LiveActivity {
         guard self.isActive else {
             return
         }
-        
+
         let task = Task {
             for await token in self.pushTokenUpdates {
                 try Task.checkCancellation()
@@ -255,4 +252,3 @@ fileprivate class TestLiveActivity: LiveActivity {
         }
     }
 }
-

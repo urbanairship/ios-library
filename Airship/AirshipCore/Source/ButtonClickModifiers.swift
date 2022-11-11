@@ -3,7 +3,6 @@
 import Foundation
 import SwiftUI
 
-
 @available(iOS 13.0.0, tvOS 13.0, *)
 struct SubmitFormButtonClickBehavior: ViewModifier {
     @EnvironmentObject var formState: FormState
@@ -22,12 +21,15 @@ struct SubmitFormButtonClickBehavior: ViewModifier {
 @available(iOS 13.0.0, tvOS 13.0, *)
 struct PagerNextPageButtonClickBehavior: ViewModifier {
     @EnvironmentObject var pagerState: PagerState
-    
+
     @ViewBuilder
     func body(content: Content) -> some View {
         content.addTapGesture {
             withAnimation {
-                pagerState.pageIndex = min(pagerState.pageIndex + 1, pagerState.pages.count - 1)
+                pagerState.pageIndex = min(
+                    pagerState.pageIndex + 1,
+                    pagerState.pages.count - 1
+                )
             }
         }
     }
@@ -36,7 +38,7 @@ struct PagerNextPageButtonClickBehavior: ViewModifier {
 @available(iOS 13.0.0, tvOS 13.0, *)
 struct PagerPreviousPageButtonClickBehavior: ViewModifier {
     @EnvironmentObject var pagerState: PagerState
-    
+
     @ViewBuilder
     func body(content: Content) -> some View {
         content.addTapGesture {
@@ -58,10 +60,12 @@ struct DismissButtonClickBehavior: ViewModifier {
     @ViewBuilder
     func body(content: Content) -> some View {
         content.addTapGesture {
-            thomasEnvironment.dismiss(buttonIdentifier: buttonIdentifier,
-                                      buttonDescription: buttonDescription,
-                                      cancel: false,
-                                      layoutState: layoutState)
+            thomasEnvironment.dismiss(
+                buttonIdentifier: buttonIdentifier,
+                buttonDescription: buttonDescription,
+                cancel: false,
+                layoutState: layoutState
+            )
         }
     }
 }
@@ -76,10 +80,12 @@ struct CancelButtonClickBehavior: ViewModifier {
     @ViewBuilder
     func body(content: Content) -> some View {
         content.addTapGesture {
-            thomasEnvironment.dismiss(buttonIdentifier: buttonIdentifier,
-                                      buttonDescription: buttonDescription,
-                                      cancel: true,
-                                      layoutState: layoutState)
+            thomasEnvironment.dismiss(
+                buttonIdentifier: buttonIdentifier,
+                buttonDescription: buttonDescription,
+                cancel: true,
+                layoutState: layoutState
+            )
         }
     }
 }
@@ -87,23 +93,25 @@ struct CancelButtonClickBehavior: ViewModifier {
 @available(iOS 13.0.0, tvOS 13.0, *)
 struct ReportButtonModifier: ViewModifier {
     let buttonIdentifier: String
-    
+
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
     @Environment(\.layoutState) var layoutState
 
     @ViewBuilder
     func body(content: Content) -> some View {
         content.addTapGesture {
-            thomasEnvironment.buttonTapped(buttonIdentifier: buttonIdentifier, layoutState: layoutState)
+            thomasEnvironment.buttonTapped(
+                buttonIdentifier: buttonIdentifier,
+                layoutState: layoutState
+            )
         }
     }
 }
 
-
 @available(iOS 13.0.0, tvOS 13.0, *)
 struct RunActionsButtonModifier: ViewModifier {
     let actions: ActionsPayload?
-    
+
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
     @Environment(\.layoutState) var layoutState
 
@@ -118,10 +126,12 @@ struct RunActionsButtonModifier: ViewModifier {
 @available(iOS 13.0.0, tvOS 13.0, *)
 extension View {
     @ViewBuilder
-    func buttonClick(_ buttonIdentifier: String,
-                     buttonDescription: String,
-                     behaviors: [ButtonClickBehavior]?,
-                     actions: ActionsPayload? = nil) -> some View {
+    func buttonClick(
+        _ buttonIdentifier: String,
+        buttonDescription: String,
+        behaviors: [ButtonClickBehavior]?,
+        actions: ActionsPayload? = nil
+    ) -> some View {
 
         let behaviors = behaviors ?? []
 
@@ -159,4 +169,3 @@ extension View {
         .modifier(ReportButtonModifier(buttonIdentifier: buttonIdentifier))
     }
 }
-

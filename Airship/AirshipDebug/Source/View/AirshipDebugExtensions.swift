@@ -7,7 +7,11 @@ extension Binding where Value == String {
     func preventWhiteSpace() -> Binding<String> {
         return Binding<String>(
             get: { self.wrappedValue },
-            set: { self.wrappedValue = $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            set: {
+                self.wrappedValue = $0.trimmingCharacters(
+                    in: .whitespacesAndNewlines
+                )
+            }
         )
     }
 

@@ -2,58 +2,73 @@
 
 import Foundation
 
-
 /// UNNotificationCenter notification registrar
 struct UNNotificationRegistrar: NotificationRegistrar {
 
-#if !os(tvOS)
-    func setCategories(_ categories: Set<UNNotificationCategory>) {
-        UNUserNotificationCenter.current().setNotificationCategories(categories)
-    }
-#endif
-
-    func checkStatus(completionHandler: @escaping (UAAuthorizationStatus, UAAuthorizedNotificationSettings) -> Void) {
-        UNUserNotificationCenter.current().getNotificationSettings { settings in
-            completionHandler(settings.authorizationStatus.airshipStatus, settings.airshipSettings)
+    #if !os(tvOS)
+        func setCategories(_ categories: Set<UNNotificationCategory>) {
+            UNUserNotificationCenter.current()
+                .setNotificationCategories(categories)
         }
+    #endif
+
+    func checkStatus(
+        completionHandler: @escaping (
+            UAAuthorizationStatus, UAAuthorizedNotificationSettings
+        ) -> Void
+    ) {
+        UNUserNotificationCenter.current()
+            .getNotificationSettings { settings in
+                completionHandler(
+                    settings.authorizationStatus.airshipStatus,
+                    settings.airshipSettings
+                )
+            }
     }
 
-    func updateRegistration(options: UANotificationOptions,
-                            skipIfEphemeral: Bool,
-                            completionHandler: @escaping () -> Void) {
+    func updateRegistration(
+        options: UANotificationOptions,
+        skipIfEphemeral: Bool,
+        completionHandler: @escaping () -> Void
+    ) {
 
         let requestOptions = options.appleOptions
         checkStatus { status, settings in
 
             // Skip registration if no options are enable dand we are requestion no options
-            if (settings == [] && requestOptions == []) {
+            if settings == [] && requestOptions == [] {
                 completionHandler()
                 return
             }
 
-
             // Skip registration for ephemeral if skipRegistrationIfEphemeral
-            if (status == .ephemeral && skipIfEphemeral) {
+            if status == .ephemeral && skipIfEphemeral {
                 completionHandler()
                 return
             }
 
             // Request
-            UNUserNotificationCenter.current().requestAuthorization(options: options.appleOptions) { granted, error in
-                AirshipLogger.debug("requestAuthorizationWithOptions \(granted)")
+            UNUserNotificationCenter.current()
+                .requestAuthorization(
+                    options: options.appleOptions
+                ) { granted, error in
+                    AirshipLogger.debug(
+                        "requestAuthorizationWithOptions \(granted)"
+                    )
 
-                if let error = error  {
-                    AirshipLogger.error("requestAuthorizationWithOptions failed with error: \(error)")
+                    if let error = error {
+                        AirshipLogger.error(
+                            "requestAuthorizationWithOptions failed with error: \(error)"
+                        )
+                    }
+                    completionHandler()
                 }
-                completionHandler()
-            }
         }
     }
 }
 
-
-private extension UNAuthorizationStatus {
-    var airshipStatus: UAAuthorizationStatus {
+extension UNAuthorizationStatus {
+    fileprivate var airshipStatus: UAAuthorizationStatus {
         if #available(iOS 12.0, tvOS 12.0, *) {
             if self == .provisional {
                 return .provisional
@@ -68,11 +83,11 @@ private extension UNAuthorizationStatus {
             return .authorized
         }
 
-#if !os(tvOS) && !os(watchOS) && !targetEnvironment(macCatalyst)
-        if (self == .ephemeral) {
-            return .ephemeral;
-        }
-#endif
+        #if !os(tvOS) && !os(watchOS) && !targetEnvironment(macCatalyst)
+            if self == .ephemeral {
+                return .ephemeral
+            }
+        #endif
 
         AirshipLogger.warn(
             "Unable to handle UNAuthorizationStatus: \(self.rawValue)"
@@ -81,63 +96,62 @@ private extension UNAuthorizationStatus {
     }
 }
 
-
-private extension UNNotificationSettings {
-    var airshipSettings: UAAuthorizedNotificationSettings {
+extension UNNotificationSettings {
+    fileprivate var airshipSettings: UAAuthorizedNotificationSettings {
         var authorizedSettings: UAAuthorizedNotificationSettings = []
-#if !os(watchOS)
-        if (self.badgeSetting == .enabled) {
-            authorizedSettings.insert(.badge)
-        }
-#endif
-        
-#if !os(tvOS)
-
-        if self.soundSetting == .enabled {
-            authorizedSettings.insert(.sound)
-        }
-
-        if self.alertSetting == .enabled {
-            authorizedSettings.insert(.alert)
-        }
-
-#if !os(watchOS)
-        if self.carPlaySetting == .enabled {
-            authorizedSettings.insert(.carPlay)
-        }
-
-        if self.lockScreenSetting == .enabled {
-            authorizedSettings.insert(.lockScreen)
-        }
-#endif
-        
-        if self.notificationCenterSetting == .enabled {
-            authorizedSettings.insert(.notificationCenter)
-        }
-
-        if #available(iOS 12.0, *) {
-            if self.criticalAlertSetting == .enabled {
-                authorizedSettings.insert(.criticalAlert)
+        #if !os(watchOS)
+            if self.badgeSetting == .enabled {
+                authorizedSettings.insert(.badge)
             }
-        }
+        #endif
 
-        if self.announcementSetting == .enabled {
-            authorizedSettings.insert(.announcement)
-        }
-#endif
+        #if !os(tvOS)
+
+            if self.soundSetting == .enabled {
+                authorizedSettings.insert(.sound)
+            }
+
+            if self.alertSetting == .enabled {
+                authorizedSettings.insert(.alert)
+            }
+
+            #if !os(watchOS)
+                if self.carPlaySetting == .enabled {
+                    authorizedSettings.insert(.carPlay)
+                }
+
+                if self.lockScreenSetting == .enabled {
+                    authorizedSettings.insert(.lockScreen)
+                }
+            #endif
+
+            if self.notificationCenterSetting == .enabled {
+                authorizedSettings.insert(.notificationCenter)
+            }
+
+            if #available(iOS 12.0, *) {
+                if self.criticalAlertSetting == .enabled {
+                    authorizedSettings.insert(.criticalAlert)
+                }
+            }
+
+            if self.announcementSetting == .enabled {
+                authorizedSettings.insert(.announcement)
+            }
+        #endif
 
         if #available(iOS 15.0, watchOS 8.0, *) {
-#if !os(tvOS) && !targetEnvironment(macCatalyst)
-            
-            if self.timeSensitiveSetting == .enabled {
-                authorizedSettings.insert(.timeSensitive)
-            }
-            
-            if self.scheduledDeliverySetting == .enabled {
-                authorizedSettings.insert(.scheduledDelivery)
-            }
-            
-#endif
+            #if !os(tvOS) && !targetEnvironment(macCatalyst)
+
+                if self.timeSensitiveSetting == .enabled {
+                    authorizedSettings.insert(.timeSensitive)
+                }
+
+                if self.scheduledDeliverySetting == .enabled {
+                    authorizedSettings.insert(.scheduledDelivery)
+                }
+
+            #endif
         } else {
             // Fallback on earlier versions
         }
@@ -145,9 +159,8 @@ private extension UNNotificationSettings {
     }
 }
 
-
-private extension UANotificationOptions {
-    var appleOptions: UNAuthorizationOptions {
+extension UANotificationOptions {
+    fileprivate var appleOptions: UNAuthorizationOptions {
         var authorizedOptions: UNAuthorizationOptions = []
 
         if self.contains(.badge) {
@@ -180,16 +193,14 @@ private extension UANotificationOptions {
             }
         }
 
-#if !os(tvOS) && !os(watchOS)
-        // Avoids deprecation warning
-        let annoucement = UANotificationOptions(rawValue: (1 << 7))
-        if self.contains(annoucement) {
-            authorizedOptions.insert(.announcement)
-        }
-#endif
+        #if !os(tvOS) && !os(watchOS)
+            // Avoids deprecation warning
+            let annoucement = UANotificationOptions(rawValue: (1 << 7))
+            if self.contains(annoucement) {
+                authorizedOptions.insert(.announcement)
+            }
+        #endif
 
         return authorizedOptions
     }
 }
-
-

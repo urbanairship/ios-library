@@ -4,7 +4,7 @@ import Foundation
 import SwiftUI
 
 #if canImport(AirshipCore)
-import AirshipCore
+    import AirshipCore
 #endif
 
 /// The contact subscription item view
@@ -49,15 +49,15 @@ public struct ContactSubscriptionView: View {
     }
 }
 
-
-public extension View {
+extension View {
     /// Sets the contact subscription style
     /// - Parameters:
     ///     - style: The style
-    func contactSubscriptionStyle<S>(_ style: S) -> some View where S : ContactSubscriptionViewStyle {
+    public func contactSubscriptionStyle<S>(_ style: S) -> some View
+    where S: ContactSubscriptionViewStyle {
         self.environment(
             \.airshipContactSubscriptionViewStyle,
-             AnyContactSubscriptionViewStyle(style: style)
+            AnyContactSubscriptionViewStyle(style: style)
         )
     }
 }
@@ -87,16 +87,17 @@ public protocol ContactSubscriptionViewStyle {
     func makeBody(configuration: Self.Configuration) -> Self.Body
 }
 
-public extension ContactSubscriptionViewStyle where Self == DefaultContactSubscriptionViewStyle {
+extension ContactSubscriptionViewStyle
+where Self == DefaultContactSubscriptionViewStyle {
     /// Default style
-    static var defaultStyle: Self {
+    public static var defaultStyle: Self {
         return .init()
     }
 }
 
-
 /// Default contact subscription view style
-public struct DefaultContactSubscriptionViewStyle: ContactSubscriptionViewStyle {
+public struct DefaultContactSubscriptionViewStyle: ContactSubscriptionViewStyle
+{
 
     static let titleAppearance = PreferenceCenterTheme.TextAppearance(
         font: .headline,
@@ -107,20 +108,21 @@ public struct DefaultContactSubscriptionViewStyle: ContactSubscriptionViewStyle 
         font: .subheadline,
         color: .primary
     )
-    
+
     @ViewBuilder
     public func makeBody(configuration: Configuration) -> some View {
         let item = configuration.item
         let itemTheme = configuration.preferenceCenterTheme.contactSubscription
 
-        if (configuration.displayConditionsMet) {
+        if configuration.displayConditionsMet {
             Toggle(isOn: configuration.isSubscribed) {
                 VStack(alignment: .leading) {
                     if let title = item.display?.title {
                         Text(title)
                             .textAppearance(
                                 itemTheme?.titleAppearance,
-                                base: DefaultContactSubscriptionViewStyle.titleAppearance
+                                base: DefaultContactSubscriptionViewStyle
+                                    .titleAppearance
                             )
                     }
 
@@ -128,7 +130,8 @@ public struct DefaultContactSubscriptionViewStyle: ContactSubscriptionViewStyle 
                         Text(subtitle)
                             .textAppearance(
                                 itemTheme?.subtitleAppearance,
-                                base: DefaultContactSubscriptionViewStyle.subtitleAppearance
+                                base: DefaultContactSubscriptionViewStyle
+                                    .subtitleAppearance
                             )
                     }
                 }
@@ -156,7 +159,9 @@ struct AnyContactSubscriptionViewStyle: ContactSubscriptionViewStyle {
 }
 
 struct ContactSubscriptionViewStyleKey: EnvironmentKey {
-    static var defaultValue = AnyContactSubscriptionViewStyle(style: .defaultStyle)
+    static var defaultValue = AnyContactSubscriptionViewStyle(
+        style: .defaultStyle
+    )
 }
 
 extension EnvironmentValues {

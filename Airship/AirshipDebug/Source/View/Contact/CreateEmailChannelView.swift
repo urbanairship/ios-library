@@ -3,9 +3,9 @@
 import SwiftUI
 
 #if canImport(AirshipCore)
-import AirshipCore
+    import AirshipCore
 #elseif canImport(AirshipKit)
-import AirshipKit
+    import AirshipKit
 #endif
 
 struct CreateEmailChannelView: View {
@@ -27,8 +27,11 @@ struct CreateEmailChannelView: View {
                 HStack {
                     Text("Email")
                     Spacer()
-                    TextField("Email", text: self.$viewModel.emailAddress.preventWhiteSpace())
-                        .freeInput()
+                    TextField(
+                        "Email",
+                        text: self.$viewModel.emailAddress.preventWhiteSpace()
+                    )
+                    .freeInput()
                 }
 
                 Picker(
@@ -42,7 +45,7 @@ struct CreateEmailChannelView: View {
                 .pickerStyle(.segmented)
             }
 
-            if (self.viewModel.registrationType == .commercial) {
+            if self.viewModel.registrationType == .commercial {
                 Section(header: Text("Commercial Options".localized())) {
                     Toggle("Double Opt-In", isOn: self.$viewModel.doubleOptIn)
                 }
@@ -57,11 +60,14 @@ struct CreateEmailChannelView: View {
                 )
 
                 List {
-                    let keys = Array<String>(self.viewModel.properties.keys)
+                    let keys = [String](self.viewModel.properties.keys)
                     ForEach(keys, id: \.self) { key in
                         HStack {
                             Text("\(key):")
-                            Text(self.viewModel.properties[key]?.stringValue ?? "")
+                            Text(
+                                self.viewModel.properties[key]?.stringValue
+                                    ?? ""
+                            )
                         }
                     }
                     .onDelete {
@@ -105,9 +111,9 @@ struct CreateEmailChannelView: View {
             var options: EmailRegistrationOptions!
             let date = Date()
 
-            switch (self.registrationType) {
+            switch self.registrationType {
             case .commercial:
-                if (doubleOptIn) {
+                if doubleOptIn {
                     options = EmailRegistrationOptions.options(
                         transactionalOptedIn: date,
                         properties: nil,
@@ -136,13 +142,13 @@ struct CreateEmailChannelView: View {
     }
 }
 
-fileprivate enum PropertyValue: Equatable {
+private enum PropertyValue: Equatable {
     case bool(Bool)
     case string(String)
     case number(Double)
 
     var unwrappedValue: Any {
-        switch (self) {
+        switch self {
         case .bool(let value): return value
         case .string(let value): return value
         case .number(let value): return value
@@ -150,15 +156,16 @@ fileprivate enum PropertyValue: Equatable {
     }
 
     var stringValue: String {
-        switch (self) {
-        case .bool(let value): return value ? "true".localized() : "false".localized()
+        switch self {
+        case .bool(let value):
+            return value ? "true".localized() : "false".localized()
         case .string(let value): return value
         case .number(let value): return String(value)
         }
     }
 }
 
-fileprivate struct AddPropetyView: View {
+private struct AddPropetyView: View {
 
     enum PropertyType: String, Equatable, CaseIterable {
         case bool = "Bool"
@@ -222,7 +229,7 @@ fileprivate struct AddPropetyView: View {
     }
 
     private var value: PropertyValue {
-        switch (self.propertyType) {
+        switch self.propertyType {
         case .bool: return .bool(self.boolValue)
         case .number: return .number(self.numberValue)
         case .string: return .string(self.stringValue)
@@ -232,7 +239,7 @@ fileprivate struct AddPropetyView: View {
         guard !self.key.isEmpty else {
             return false
         }
-        switch (self.propertyType) {
+        switch self.propertyType {
         case .bool: return true
         case .number: return true
         case .string: return !self.stringValue.isEmpty
@@ -241,15 +248,18 @@ fileprivate struct AddPropetyView: View {
 
     @ViewBuilder
     private func makeValue() -> some View {
-        switch(self.propertyType) {
+        switch self.propertyType {
         case .bool:
             Toggle(self.value.stringValue, isOn: self.$boolValue)
         case .string:
             HStack {
                 Text("String".localized())
                 Spacer()
-                TextField("String".localized(), text: self.$stringValue.preventWhiteSpace())
-                    .freeInput()
+                TextField(
+                    "String".localized(),
+                    text: self.$stringValue.preventWhiteSpace()
+                )
+                .freeInput()
             }
         case .number:
             HStack {

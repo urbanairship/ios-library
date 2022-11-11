@@ -1,9 +1,8 @@
 /* Copyright Airship and Contributors */
 
-
 @objc(UARequestBuilder)
-public class RequestBuilder : NSObject {
-    var headers: [String : String] = [:]
+public class RequestBuilder: NSObject {
+    var headers: [String: String] = [:]
 
     @objc
     public var method: String?
@@ -28,13 +27,13 @@ public class RequestBuilder : NSObject {
     }
 
     @objc
-    public func addHeaders(_ headers: [String : String]) {
+    public func addHeaders(_ headers: [String: String]) {
         for (k, v) in headers { self.headers[k] = v }
     }
 }
 
 @objc(UARequest)
-public class Request : NSObject {
+public class Request: NSObject {
     @objc
     public let method: String?
     @objc
@@ -59,17 +58,18 @@ public class Request : NSObject {
     }
 
     @objc
-    public static func request(withBuilderBlock block: @escaping (_ builder: RequestBuilder) -> Void) -> Request {
-        return Request(builderBlock: block);
+    public static func request(
+        withBuilderBlock block: @escaping (_ builder: RequestBuilder) -> Void
+    ) -> Request {
+        return Request(builderBlock: block)
     }
 
     @objc
-    public convenience init(builderBlock: @escaping (_ builder: RequestBuilder) -> Void) {
+    public convenience init(
+        builderBlock: @escaping (_ builder: RequestBuilder) -> Void
+    ) {
         let builder = RequestBuilder()
         builderBlock(builder)
         self.init(builder: builder)
     }
 }
-
-
-

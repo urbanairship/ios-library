@@ -4,7 +4,7 @@ import Foundation
 import SwiftUI
 
 #if canImport(AirshipCore)
-import AirshipCore
+    import AirshipCore
 #endif
 
 /// Preference center view phase
@@ -19,9 +19,10 @@ public enum PreferenceCenterViewPhase {
 
 /// Preference center view
 public struct PreferenceCenterView: View {
-    
+
     @StateObject
-    private var loader: PreferenceCenterViewLoader = PreferenceCenterViewLoader()
+    private var loader: PreferenceCenterViewLoader =
+        PreferenceCenterViewLoader()
 
     @State
     private var initialLoadCalled = false
@@ -41,9 +42,11 @@ public struct PreferenceCenterView: View {
     ///     - preferenceCenterID: The preference center ID
     ///     - onLoad: An optional load block to load the view phase
     ///     - onPhaseChange: A callback when the phase changed
-    public init(preferenceCenterID: String,
-                onLoad: ((String) async -> PreferenceCenterViewPhase)? = nil,
-                onPhaseChange: ((PreferenceCenterViewPhase) -> Void)? = nil) {
+    public init(
+        preferenceCenterID: String,
+        onLoad: ((String) async -> PreferenceCenterViewPhase)? = nil,
+        onPhaseChange: ((PreferenceCenterViewPhase) -> Void)? = nil
+    ) {
         self.preferenceCenterID = preferenceCenterID
         self.onLoad = onLoad
         self.onPhaseChange = onPhaseChange
@@ -70,14 +73,13 @@ public struct PreferenceCenterView: View {
             .onReceive(self.loader.$phase) {
                 self.onPhaseChange?($0)
 
-                if (!self.initialLoadCalled) {
+                if !self.initialLoadCalled {
                     refresh()
                     self.initialLoadCalled = true
                 }
             }
     }
 }
-
 
 /// Preference Center view style configuration
 public struct PreferenceCenterViewStyleConfiguration {
@@ -98,9 +100,10 @@ public protocol PreferenceCenterViewStyle {
     func makeBody(configuration: Self.Configuration) -> Self.Body
 }
 
-public extension PreferenceCenterViewStyle where Self == DefaultPreferenceCenterViewStyle {
+extension PreferenceCenterViewStyle
+where Self == DefaultPreferenceCenterViewStyle {
     /// Default style
-    static var defaultStyle: Self {
+    public static var defaultStyle: Self {
         return .init()
     }
 }
@@ -112,28 +115,30 @@ public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
         font: .subheadline
     )
 
-
     static let buttonLabelAppearance = PreferenceCenterTheme.TextAppearance(
         color: .white
     )
 
-
     @ViewBuilder
     private func makeProgressView(configuration: Configuration) -> some View {
-        let title = configuration.preferenceCenterTheme.viewController?.navigationBar?.title
+        let title = configuration.preferenceCenterTheme.viewController?
+            .navigationBar?
+            .title
         ProgressView()
             .frame(alignment: .center)
             .navigationTitle(title ?? "ua_preference_center_title".localized)
     }
 
-
     @ViewBuilder
     public func makeErrorView(configuration: Configuration) -> some View {
         let theme = configuration.preferenceCenterTheme.preferenceCenter
-        let title = configuration.preferenceCenterTheme.viewController?.navigationBar?.title
+        let title = configuration.preferenceCenterTheme.viewController?
+            .navigationBar?
+            .title
 
         let retry = theme?.retryButtonLabel ?? "ua_retry_button".localized
-        let errorMessage = theme?.retryMessage ?? "ua_preference_center_empty".localized
+        let errorMessage =
+            theme?.retryMessage ?? "ua_preference_center_empty".localized
 
         VStack {
             Text(errorMessage)
@@ -148,12 +153,18 @@ public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
                     Text(retry)
                         .textAppearance(
                             theme?.retryButtonLabelAppearance,
-                            base: DefaultPreferenceCenterViewStyle.buttonLabelAppearance
+                            base: DefaultPreferenceCenterViewStyle
+                                .buttonLabelAppearance
                         )
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
-                        .background(Capsule()
-                            .fill(theme?.retryButtonBackgroundColor ?? Color.blue))
+                        .background(
+                            Capsule()
+                                .fill(
+                                    theme?.retryButtonBackgroundColor
+                                        ?? Color.blue
+                                )
+                        )
                         .cornerRadius(8)
                         .frame(minWidth: 44)
                 }
@@ -162,12 +173,17 @@ public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
         .navigationTitle(title ?? "ua_preference_center_title".localized)
     }
 
-    public func makePreferenceCenterView(configuration: Configuration,
-                                         state: PreferenceCenterState) -> some View {
+    public func makePreferenceCenterView(
+        configuration: Configuration,
+        state: PreferenceCenterState
+    ) -> some View {
         let theme = configuration.preferenceCenterTheme
         var title = state.config.display?.title
-        if (title?.isEmpty != false) {
-            title = configuration.preferenceCenterTheme.viewController?.navigationBar?.title
+        if title?.isEmpty != false {
+            title =
+                configuration.preferenceCenterTheme.viewController?
+                .navigationBar?
+                .title
         }
 
         return ScrollView {
@@ -176,7 +192,8 @@ public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
                     Text(subtitle)
                         .textAppearance(
                             theme.preferenceCenter?.subtitleAppearance,
-                            base: DefaultPreferenceCenterViewStyle.subtitleAppearance
+                            base: DefaultPreferenceCenterViewStyle
+                                .subtitleAppearance
                         )
                         .padding(.bottom, 16)
                 }
@@ -191,11 +208,10 @@ public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
         .navigationBarTitle(title ?? "ua_preference_center_title".localized)
     }
 
-
     @ViewBuilder
     public func makeBody(configuration: Configuration) -> some View {
 
-        switch(configuration.phase) {
+        switch configuration.phase {
         case .loading:
             makeProgressView(configuration: configuration)
         case .error(_):
@@ -206,9 +222,11 @@ public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
     }
 
     @ViewBuilder
-    func section(_ section: PreferenceCenterConfig.Section,
-                 state: PreferenceCenterState) -> some View {
-        switch(section) {
+    func section(
+        _ section: PreferenceCenterConfig.Section,
+        state: PreferenceCenterState
+    ) -> some View {
+        switch section {
         case .common(let section):
             CommonSectionView(section: section, state: state)
         case .labeledSectionBreak(let section):
@@ -244,7 +262,6 @@ extension EnvironmentValues {
     }
 }
 
-
 struct PreferenceCenterView_Previews: PreviewProvider {
     static var previews: some View {
         let config = PreferenceCenterConfig(
@@ -266,10 +283,12 @@ struct PreferenceCenterView_Previews: PreviewProvider {
                                 PreferenceCenterConfig.ChannelSubscription(
                                     identifier: "ChannelSubscription",
                                     subscriptionID: "ChannelSubscription",
-                                    display: PreferenceCenterConfig.CommonDisplay(
-                                        title: "Channel Subscription Title",
-                                        subtitle: "Channel Subscription Subtitle"
-                                    )
+                                    display:
+                                        PreferenceCenterConfig.CommonDisplay(
+                                            title: "Channel Subscription Title",
+                                            subtitle:
+                                                "Channel Subscription Subtitle"
+                                        )
                                 )
                             ),
                             .contactSubscription(
@@ -277,10 +296,12 @@ struct PreferenceCenterView_Previews: PreviewProvider {
                                     identifier: "ContactSubscription",
                                     subscriptionID: "ContactSubscription",
                                     scopes: [.app, .web],
-                                    display: PreferenceCenterConfig.CommonDisplay(
-                                        title: "Contact Subscription Title",
-                                        subtitle: "Contact Subscription Subtitle"
-                                    )
+                                    display:
+                                        PreferenceCenterConfig.CommonDisplay(
+                                            title: "Contact Subscription Title",
+                                            subtitle:
+                                                "Contact Subscription Subtitle"
+                                        )
                                 )
                             ),
                             .contactSubscriptionGroup(
@@ -288,30 +309,38 @@ struct PreferenceCenterView_Previews: PreviewProvider {
                                     identifier: "ContactSubscriptionGroup",
                                     subscriptionID: "ContactSubscriptionGroup",
                                     components: [
-                                        PreferenceCenterConfig.ContactSubscriptionGroup.Component(
-                                            scopes: [.web, .app],
-                                            display: PreferenceCenterConfig.CommonDisplay(
-                                                title: "Web and App Component"
+                                        PreferenceCenterConfig
+                                            .ContactSubscriptionGroup.Component(
+                                                scopes: [.web, .app],
+                                                display:
+                                                    PreferenceCenterConfig
+                                                    .CommonDisplay(
+                                                        title:
+                                                            "Web and App Component"
+                                                    )
                                             )
-                                        )
                                     ],
-                                    display: PreferenceCenterConfig.CommonDisplay(
-                                        title: "Contact Subscription Group Title",
-                                        subtitle: "Contact Subscription Group Subtitle"
-                                    )
+                                    display:
+                                        PreferenceCenterConfig.CommonDisplay(
+                                            title:
+                                                "Contact Subscription Group Title",
+                                            subtitle:
+                                                "Contact Subscription Group Subtitle"
+                                        )
                                 )
-                            )
+                            ),
                         ],
                         display: PreferenceCenterConfig.CommonDisplay(
                             title: "Section Title",
                             subtitle: "Section Subtitle"
                         )
                     )
-                )
+                ),
             ]
         )
 
-        PreferenceCenterView(preferenceCenterID: "PREVIEW") { preferenceCenterID in
+        PreferenceCenterView(preferenceCenterID: "PREVIEW") {
+            preferenceCenterID in
             return .loaded(PreferenceCenterState(config: config))
         }
     }

@@ -3,9 +3,9 @@
 import SwiftUI
 
 #if canImport(AirshipCore)
-import AirshipCore
+    import AirshipCore
 #elseif canImport(AirshipKit)
-import AirshipKit
+    import AirshipKit
 #endif
 
 struct AnalyticsIdentifiersView: View {
@@ -24,7 +24,7 @@ struct AnalyticsIdentifiersView: View {
                 )
 
                 List {
-                    let keys = Array<String>(self.viewModel.identifiers.keys)
+                    let keys = [String](self.viewModel.identifiers.keys)
                     ForEach(keys, id: \.self) { key in
                         HStack {
                             Text("\(key):")
@@ -50,8 +50,9 @@ struct AnalyticsIdentifiersView: View {
         }
 
         init() {
-            if (Airship.isFlying) {
-                self.identifiers = Analytics.shared.currentAssociatedDeviceIdentifiers().allIDs
+            if Airship.isFlying {
+                self.identifiers =
+                    Analytics.shared.currentAssociatedDeviceIdentifiers().allIDs
             } else {
                 self.identifiers = [:]
             }
@@ -66,14 +67,13 @@ struct AnalyticsIdentifiersView: View {
     }
 }
 
-fileprivate struct AddIdentifierView: View {
+private struct AddIdentifierView: View {
 
     @State
     private var key: String = ""
 
     @State
     private var value: String = ""
-
 
     let onAdd: (String, String) -> Void
 
@@ -108,7 +108,8 @@ fileprivate struct AddIdentifierView: View {
                     presentationMode.wrappedValue.dismiss()
                 } label: {
                     Text("Add".localized())
-                }.disabled(key.isEmpty || value.isEmpty)
+                }
+                .disabled(key.isEmpty || value.isEmpty)
             }
         }
         .navigationTitle("Identifier".localized())

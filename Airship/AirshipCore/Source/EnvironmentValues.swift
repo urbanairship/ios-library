@@ -13,7 +13,6 @@ private struct WindowSizeKey: EnvironmentKey {
     static let defaultValue: WindowSize? = nil
 }
 
-
 @available(iOS 13.0.0, tvOS 13.0, *)
 private struct VisibleEnvironmentKey: EnvironmentKey {
     static let defaultValue: Bool = false
@@ -35,19 +34,18 @@ extension EnvironmentValues {
         get { self[WindowSizeKey.self] }
         set { self[WindowSizeKey.self] = newValue }
     }
-    
+
     var isVisible: Bool {
         get { self[VisibleEnvironmentKey.self] }
         set { self[VisibleEnvironmentKey.self] = newValue }
     }
-    
+
     var layoutState: LayoutState {
         get { self[LayoutStateEnvironmentKey.self] }
         set { self[LayoutStateEnvironmentKey.self] = newValue }
     }
-    
-}
 
+}
 
 @available(iOS 13.0.0, tvOS 13.0, *)
 extension View {

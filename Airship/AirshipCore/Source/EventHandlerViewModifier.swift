@@ -1,8 +1,8 @@
 /* Copyright Airship and Contributors */
 
+import Combine
 import Foundation
 import SwiftUI
-import Combine
 
 @available(iOS 13.0.0, tvOS 13.0, *)
 internal struct FormEventHandlerViewModifier: ViewModifier {
@@ -28,7 +28,7 @@ internal struct FormEventHandlerViewModifier: ViewModifier {
     }
 
     func unwrapValue(_ formValue: FormValue?) -> Any? {
-        switch(formValue) {
+        switch formValue {
         case .toggle(let value): return value
         case .radio(let value): return value
         case .multipleCheckbox(let value): return value
@@ -39,16 +39,21 @@ internal struct FormEventHandlerViewModifier: ViewModifier {
         }
     }
 
-    private func applyStateChanges(type: EventHandlerType,
-                                   formData: FormInputData) {
+    private func applyStateChanges(
+        type: EventHandlerType,
+        formData: FormInputData
+    ) {
         let value = unwrapValue(formData.formValue(identifier: formInputID))
 
         self.eventHandlers.forEach { eventHandler in
-            if (eventHandler.type == type) {
+            if eventHandler.type == type {
                 eventHandler.stateActions.forEach { action in
-                    switch(action) {
+                    switch action {
                     case .setState(let details):
-                        viewState.updateState(key: details.key, value: details.value?.unWrap())
+                        viewState.updateState(
+                            key: details.key,
+                            value: details.value?.unWrap()
+                        )
                     case .clearState:
                         viewState.clearState()
                     case .formValue(let details):
@@ -78,11 +83,14 @@ internal struct EventHandlerViewModifier: ViewModifier {
 
     private func applyStateChanges(type: EventHandlerType) {
         self.eventHandlers.forEach { eventHandler in
-            if (eventHandler.type == type) {
+            if eventHandler.type == type {
                 eventHandler.stateActions.forEach { action in
-                    switch(action) {
+                    switch action {
                     case .setState(let details):
-                        viewState.updateState(key: details.key, value: details.value?.unWrap())
+                        viewState.updateState(
+                            key: details.key,
+                            value: details.value?.unWrap()
+                        )
                     case .clearState:
                         viewState.clearState()
                     case .formValue(_):
@@ -94,8 +102,6 @@ internal struct EventHandlerViewModifier: ViewModifier {
     }
 }
 
-
-
 @available(iOS 13.0.0, tvOS 13.0, *)
 extension View {
 
@@ -104,7 +110,6 @@ extension View {
         _ eventHandlers: [EventHandler]?,
         formInputID: String? = nil
     ) -> some View {
-        
 
         if let handlers = eventHandlers {
             if let formInputID = formInputID {
@@ -124,4 +129,3 @@ extension View {
         }
     }
 }
-

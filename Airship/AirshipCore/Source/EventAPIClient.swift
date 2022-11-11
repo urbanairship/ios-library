@@ -1,10 +1,8 @@
 /* Copyright Airship and Contributors */
 
-/**
- * - Note: For internal use only. :nodoc:
- */
+/// - Note: For internal use only. :nodoc:
 @objc(UAEventAPIClient)
-public class EventAPIClient : NSObject, EventAPIClientProtocol {
+public class EventAPIClient: NSObject, EventAPIClientProtocol {
     private let config: RuntimeConfig
     private let session: RequestSession
 
@@ -22,9 +20,13 @@ public class EventAPIClient : NSObject, EventAPIClientProtocol {
 
     @objc
     @discardableResult
-    public func uploadEvents(_ events: [AnyHashable], headers: [String : String], completionHandler: @escaping (EventAPIResponse?, Error?) -> Void) -> Disposable {
+    public func uploadEvents(
+        _ events: [AnyHashable],
+        headers: [String: String],
+        completionHandler: @escaping (EventAPIResponse?, Error?) -> Void
+    ) -> Disposable {
 
-        var body : Data?
+        var body: Data?
         do {
             body = try JSONUtils.data(events, options: [])
         } catch {
@@ -33,14 +35,19 @@ public class EventAPIClient : NSObject, EventAPIClientProtocol {
         }
 
         let request = Request(builderBlock: { builder in
-            builder.url = URL(string: "\(self.config.analyticsURL ?? "")\("/warp9/")")
+            builder.url = URL(
+                string: "\(self.config.analyticsURL ?? "")\("/warp9/")"
+            )
             builder.method = "POST"
             builder.compressBody = true
             builder.body = body
 
             builder.addHeaders(headers)
             builder.setValue("application/json", header: "Content-Type")
-            builder.setValue("\(Date().timeIntervalSince1970)", header: "X-UA-Sent-At")
+            builder.setValue(
+                "\(Date().timeIntervalSince1970)",
+                header: "X-UA-Sent-At"
+            )
         })
 
         AirshipLogger.trace("Sending to server: \(config.analyticsURL ?? "")")
@@ -48,29 +55,39 @@ public class EventAPIClient : NSObject, EventAPIClientProtocol {
         AirshipLogger.trace("Sending analytics events: \(events)")
 
         // Perform the upload
-        return session.performHTTPRequest(request, completionHandler: { (data, response, error) in
-            guard (response != nil) else {
-                completionHandler(nil, error)
-                return
+        return session.performHTTPRequest(
+            request,
+            completionHandler: { (data, response, error) in
+                guard response != nil else {
+                    completionHandler(nil, error)
+                    return
+                }
+
+                let headers = response?.allHeaderFields
+                let maxTotal = EventAPIClient.parseNumber(
+                    headers?["X-UA-Max-Total"] as? String
+                )
+                let maxBatch = EventAPIClient.parseNumber(
+                    headers?["X-UA-Max-Batch"] as? String
+                )
+                let minBatchInterval = EventAPIClient.parseNumber(
+                    headers?["X-UA-Min-Batch-Interval"] as? String
+                )
+
+                let eventAPIResponse = EventAPIResponse(
+                    status: response?.statusCode ?? 0,
+                    maxTotalDBSize: maxTotal,
+                    maxBatchSize: maxBatch,
+                    minBatchInterval: minBatchInterval
+                )
+                completionHandler(eventAPIResponse, nil)
             }
-
-            let headers = response?.allHeaderFields
-            let maxTotal = EventAPIClient.parseNumber(headers?["X-UA-Max-Total"] as? String)
-            let maxBatch = EventAPIClient.parseNumber(headers?["X-UA-Max-Batch"] as? String)
-            let minBatchInterval = EventAPIClient.parseNumber(headers?["X-UA-Min-Batch-Interval"] as? String)
-
-            let eventAPIResponse = EventAPIResponse(
-                status: response?.statusCode ?? 0,
-                maxTotalDBSize: maxTotal,
-                maxBatchSize: maxBatch,
-                minBatchInterval: minBatchInterval)
-            completionHandler(eventAPIResponse, nil)
-        })
+        )
     }
 
     private static func parseNumber(_ value: String?) -> NSNumber? {
         let int = value == nil ? nil : Int(value!)
-        if (int != nil) {
+        if int != nil {
             return NSNumber(value: int!)
         }
         return nil

@@ -16,8 +16,9 @@ public class TaskManager: NSObject, TaskManagerProtocol {
     let workManager: AirshipWorkManagerProtocol
     let dispatcher: UADispatcher
 
-    init(workManager: AirshipWorkManagerProtocol,
-         dispatcher: UADispatcher
+    init(
+        workManager: AirshipWorkManagerProtocol,
+        dispatcher: UADispatcher
     ) {
         self.workManager = workManager
         self.dispatcher = dispatcher
@@ -44,7 +45,9 @@ public class TaskManager: NSObject, TaskManagerProtocol {
         dispatcher: UADispatcher,
         launchHandler: @escaping (AirshipTask) -> Void
     ) {
-        self.workManager._registerWorker(taskID, type: type) { request, continuation in
+        self.workManager._registerWorker(taskID, type: type) {
+            request,
+            continuation in
 
             let requestOptions = TaskRequestOptions(
                 conflictPolicy: request.conflictPolicy,
@@ -52,12 +55,11 @@ public class TaskManager: NSObject, TaskManagerProtocol {
                 extras: request.extras
             )
 
-
             let expirableTask = ExpirableTask(
                 taskID: taskID,
                 requestOptions: requestOptions
             ) { success in
-                if (success) {
+                if success {
                     continuation.finishTask(.success)
                 } else {
                     continuation.finishTask(.failure)
@@ -75,7 +77,11 @@ public class TaskManager: NSObject, TaskManagerProtocol {
     }
 
     @objc(setRateLimitForID:rate:timeInterval:error:)
-    public func setRateLimit(_ rateLimitID: String, rate: Int, timeInterval: TimeInterval) throws {
+    public func setRateLimit(
+        _ rateLimitID: String,
+        rate: Int,
+        timeInterval: TimeInterval
+    ) throws {
         self.workManager.setRateLimit(
             rateLimitID,
             rate: rate,
@@ -89,20 +95,40 @@ public class TaskManager: NSObject, TaskManagerProtocol {
     }
 
     @objc(enqueueRequestWithID:options:initialDelay:)
-    public func enqueueRequest(taskID: String, options: TaskRequestOptions, initialDelay: TimeInterval) {
-        self.enqueueRequest(taskID: taskID, rateLimitIDs: [], options: options, minDelay: initialDelay)
+    public func enqueueRequest(
+        taskID: String,
+        options: TaskRequestOptions,
+        initialDelay: TimeInterval
+    ) {
+        self.enqueueRequest(
+            taskID: taskID,
+            rateLimitIDs: [],
+            options: options,
+            minDelay: initialDelay
+        )
     }
 
     @objc(enqueueRequestWithID:rateLimitIDs:options:)
-    public func enqueueRequest(taskID: String, rateLimitIDs: [String], options: TaskRequestOptions) {
-        self.enqueueRequest(taskID: taskID, rateLimitIDs: rateLimitIDs, options: options, minDelay: 0)
+    public func enqueueRequest(
+        taskID: String,
+        rateLimitIDs: [String],
+        options: TaskRequestOptions
+    ) {
+        self.enqueueRequest(
+            taskID: taskID,
+            rateLimitIDs: rateLimitIDs,
+            options: options,
+            minDelay: 0
+        )
     }
 
     @objc(enqueueRequestWithID:rateLimitIDs:options:minDelay:)
-    public func enqueueRequest(taskID: String,
-                               rateLimitIDs: [String],
-                               options: TaskRequestOptions,
-                               minDelay: TimeInterval) {
+    public func enqueueRequest(
+        taskID: String,
+        rateLimitIDs: [String],
+        options: TaskRequestOptions,
+        minDelay: TimeInterval
+    ) {
 
         let workRequest = AirshipWorkRequest(
             workID: taskID,
@@ -113,7 +139,5 @@ public class TaskManager: NSObject, TaskManagerProtocol {
         )
 
         self.workManager.dispatchWorkRequest(workRequest)
-    }    
+    }
 }
-
-

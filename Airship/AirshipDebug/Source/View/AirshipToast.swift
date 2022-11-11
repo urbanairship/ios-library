@@ -39,7 +39,7 @@ struct AirshipToast: View {
     var body: some View {
         makeView()
             .onChange(of: self.message) { incoming in
-                if (incoming != nil) {
+                if incoming != nil {
                     showToast()
                 }
             }
@@ -54,14 +54,16 @@ struct AirshipToast: View {
         }
 
         let waitTask = Task {
-            try? await Task.sleep(nanoseconds: UInt64(message.duration * 1_000_000_000))
+            try? await Task.sleep(
+                nanoseconds: UInt64(message.duration * 1_000_000_000)
+            )
             return
         }
 
         Task {
             let _ = await waitTask.result
             await MainActor.run {
-                if (!waitTask.isCancelled) {
+                if !waitTask.isCancelled {
                     self.toastVisible = false
                     self.message = nil
                 }
@@ -76,7 +78,7 @@ struct AirshipToast: View {
 extension View {
     @ViewBuilder
     func hideOpt(_ shouldHide: Bool) -> some View {
-        if (shouldHide) {
+        if shouldHide {
             self.hidden()
         } else {
             self

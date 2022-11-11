@@ -2,7 +2,7 @@
 
 // NOTE: For internal use only. :nodoc:
 @objc(UARemoteDataResponse)
-public class RemoteDataResponse : HTTPResponse {
+public class RemoteDataResponse: HTTPResponse {
 
     @objc
     public let payloads: [RemoteDataPayload]?
@@ -11,12 +11,12 @@ public class RemoteDataResponse : HTTPResponse {
     public let lastModified: String?
 
     @objc
-    public let metadata: [AnyHashable : Any]?
+    public let metadata: [AnyHashable: Any]?
 
     @objc
     public init(
         status: Int,
-        metadata: [AnyHashable : Any]?,
+        metadata: [AnyHashable: Any]?,
         payloads: [RemoteDataPayload]?,
         lastModified: String?
     ) {

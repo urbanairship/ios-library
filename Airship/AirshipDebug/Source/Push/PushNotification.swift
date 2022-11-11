@@ -1,14 +1,12 @@
 /* Copyright Airship and Contributors */
 
 #if canImport(AirshipCore)
-import AirshipCore
+    import AirshipCore
 #elseif canImport(AirshipKit)
-import AirshipKit
+    import AirshipKit
 #endif
 
-/**
- * A wrapper for representing an Airship push in the Debug UI
- */
+/// A wrapper for representing an Airship push in the Debug UI
 struct PushNotification: Equatable, Hashable, CustomStringConvertible {
 
     /**
@@ -32,18 +30,19 @@ struct PushNotification: Equatable, Hashable, CustomStringConvertible {
     var description: String
 
     init(push: [AnyHashable: Any]) throws {
-        self.description = String(
-            data: try JSONSerialization.data(
-            withJSONObject: push,
-            options: .prettyPrinted
-            ),
-            encoding:.utf8
-        ) ?? ""
+        self.description =
+            String(
+                data: try JSONSerialization.data(
+                    withJSONObject: push,
+                    options: .prettyPrinted
+                ),
+                encoding: .utf8
+            ) ?? ""
         self.time = Date().timeIntervalSince1970
         self.alert = PushNotification.parseAlert(userInfo: push)
         self.pushID = push[AnyHashable("_")] as? String ?? "MISSING_PUSH_ID"
     }
-    
+
     init(pushData: PushData) {
         self.description = pushData.data ?? ""
         self.time = pushData.time
@@ -59,9 +58,9 @@ struct PushNotification: Equatable, Hashable, CustomStringConvertible {
         }
 
         if let alert = aps["alert"] as? [String: Any],
-           let body = alert["body"] as? String
+            let body = alert["body"] as? String
         {
-           return body
+            return body
         }
 
         return nil

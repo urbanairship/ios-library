@@ -2,8 +2,7 @@
 
 import XCTest
 
-@testable
-import AirshipCore
+@testable import AirshipCore
 
 final class AirshipJSONTest: XCTestCase {
     func testWrapPrimitives() throws {
@@ -23,11 +22,11 @@ final class AirshipJSONTest: XCTestCase {
             100,
             [
                 "foo",
-                ["cool": "story"]
+                ["cool": "story"],
             ],
             ["neat": "object"],
             nil,
-            true
+            true,
         ]
 
         let expected: [AirshipJSON] = [
@@ -36,12 +35,12 @@ final class AirshipJSONTest: XCTestCase {
             .array(
                 [
                     .string("foo"),
-                    .object(["cool": .string("story")])
+                    .object(["cool": .string("story")]),
                 ]
             ),
             .object(["neat": .string("object")]),
             .null,
-            .bool(true)
+            .bool(true),
         ]
 
         XCTAssertEqual(.array(expected), try AirshipJSON.wrap(array))
@@ -54,7 +53,7 @@ final class AirshipJSONTest: XCTestCase {
             "array": ["cool", "story"],
             "null": nil,
             "boolean": true,
-            "object": ["neat": "object"]
+            "object": ["neat": "object"],
         ]
 
         let expected: [String: AirshipJSON] = [
@@ -76,4 +75,3 @@ final class AirshipJSONTest: XCTestCase {
     fileprivate struct InvalidJSON {
     }
 }
-                             

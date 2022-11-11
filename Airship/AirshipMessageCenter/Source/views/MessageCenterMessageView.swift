@@ -1,11 +1,11 @@
 /* Copyright Urban Airship and Contributors */
 
+import Combine
 import Foundation
 import SwiftUI
-import Combine
 
 #if canImport(AirshipCore)
-import AirshipCore
+    import AirshipCore
 #endif
 
 enum MessageCenterMessageError: Error {
@@ -46,16 +46,18 @@ public struct MessageCenterMessageView: View {
     }
 }
 
-
-public extension View {
+extension View {
 
     /// Sets the message style
     /// - Parameters:
     ///     - style: The style
-    func setMessageCenterMessageViewStyle<S>(
+    public func setMessageCenterMessageViewStyle<S>(
         _ style: S
-    ) -> some View where S : MessageViewStyle {
-        self.environment(\.airshipMessageViewStyle, AnyMessageViewStyle(style: style))
+    ) -> some View where S: MessageViewStyle {
+        self.environment(
+            \.airshipMessageViewStyle,
+            AnyMessageViewStyle(style: style)
+        )
     }
 }
 
@@ -71,10 +73,10 @@ public protocol MessageViewStyle {
     func makeBody(configuration: Self.Configuration) -> Self.Body
 }
 
-public extension MessageViewStyle where Self == DefaultMessageViewStyle {
+extension MessageViewStyle where Self == DefaultMessageViewStyle {
 
     /// Default style
-    static var defaultStyle: Self {
+    public static var defaultStyle: Self {
         return .init()
     }
 }
@@ -106,7 +108,7 @@ struct AnyMessageViewStyle: MessageViewStyle {
     }
 }
 
-struct AirshipWebView : UIViewRepresentable  {
+struct AirshipWebView: UIViewRepresentable {
     typealias UIViewType = WKWebView
 
     enum Phase {
@@ -117,7 +119,8 @@ struct AirshipWebView : UIViewRepresentable  {
 
     @Binding
     var phase: Phase
-    let nativeBridgeExtension: (() async throws -> NativeBridgeExtensionDelegate)?
+    let nativeBridgeExtension:
+        (() async throws -> NativeBridgeExtensionDelegate)?
 
     let request: () async throws -> URLRequest
 
@@ -126,10 +129,13 @@ struct AirshipWebView : UIViewRepresentable  {
     @State
     private var isLoading: Bool = false
 
-    func makeUIView(context: Context) -> WKWebView  {
+    func makeUIView(context: Context) -> WKWebView {
         let configuration = WKWebViewConfiguration()
         configuration.allowsInlineMediaPlayback = true
-        let webView = WKWebView(frame: CGRect.zero, configuration: configuration)
+        let webView = WKWebView(
+            frame: CGRect.zero,
+            configuration: configuration
+        )
         webView.navigationDelegate = context.coordinator.nativeBridge
         return webView
     }
@@ -170,7 +176,6 @@ struct AirshipWebView : UIViewRepresentable  {
         }
     }
 
-
     @MainActor
     private func pageFinished(error: Error? = nil) async {
         self.isLoading = false
@@ -182,7 +187,10 @@ struct AirshipWebView : UIViewRepresentable  {
         }
     }
 
-    class Coordinator : NSObject, UANavigationDelegate, JavaScriptCommandDelegate, NativeBridgeDelegate {
+    class Coordinator: NSObject, UANavigationDelegate,
+        JavaScriptCommandDelegate,
+        NativeBridgeDelegate
+    {
         private let parent: AirshipWebView
         let nativeBridge: NativeBridge
 
@@ -195,7 +203,8 @@ struct AirshipWebView : UIViewRepresentable  {
             self.nativeBridge.nativeBridgeDelegate = self
         }
 
-        func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!)
+        {
             Task {
                 await parent.pageFinished()
             }
@@ -207,14 +216,20 @@ struct AirshipWebView : UIViewRepresentable  {
             }
         }
 
-        func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+        func webView(
+            _ webView: WKWebView,
+            didFail navigation: WKNavigation!,
+            withError error: Error
+        ) {
             Task {
                 await parent.pageFinished(error: error)
             }
         }
 
-        func perform(_ command: JavaScriptCommand,
-                     webView: WKWebView) -> Bool {
+        func perform(
+            _ command: JavaScriptCommand,
+            webView: WKWebView
+        ) -> Bool {
             return false
         }
 
@@ -237,8 +252,7 @@ extension EnvironmentValues {
     }
 }
 
-
-fileprivate struct MessageCenterMessageContentView: View {
+private struct MessageCenterMessageContentView: View {
 
     @Environment(\.presentationMode)
     private var presentationMode: Binding<PresentationMode>
@@ -256,21 +270,18 @@ fileprivate struct MessageCenterMessageContentView: View {
     let title: String?
 
     private var isLoading: Bool {
-        if case .loading = self.webViewPhase {
-            return true
-        } else {
+        guard case .loading = self.webViewPhase else {
             return false
         }
+        return true
     }
 
     private var isLoaded: Bool {
-        if case .loaded = self.webViewPhase {
-            return true
-        } else {
+        guard case .loaded = self.webViewPhase else {
             return false
         }
+        return true
     }
-
 
     @MainActor
     func getMessage(_ messageID: String) async -> MessageCenterMessage? {
@@ -284,9 +295,11 @@ fileprivate struct MessageCenterMessageContentView: View {
         return message
     }
 
-    private func makeRequest(forMessageID messageID:String) async throws -> URLRequest {
+    private func makeRequest(forMessageID messageID: String) async throws
+        -> URLRequest
+    {
         guard let message = await getMessage(messageID),
-              let user = await MessageCenter.shared.inbox.user
+            let user = await MessageCenter.shared.inbox.user
         else {
             throw AirshipErrors.error("")
         }
@@ -300,9 +313,11 @@ fileprivate struct MessageCenterMessageContentView: View {
         return request
     }
 
-    private func makeExtensionDelegate(messageID: String) async throws -> NativeBridgeExtensionDelegate {
+    private func makeExtensionDelegate(messageID: String) async throws
+        -> NativeBridgeExtensionDelegate
+    {
         guard let message = await getMessage(messageID),
-              let user = await MessageCenter.shared.inbox.user
+            let user = await MessageCenter.shared.inbox.user
         else {
             throw AirshipErrors.error("")
         }
@@ -336,12 +351,12 @@ fileprivate struct MessageCenterMessageContentView: View {
 
                     if Airship.isFlying {
                         Task {
-                            let message = await MessageCenter.shared.inbox.message(
-                                forID: messageID
-                            )
+                            let message = await MessageCenter.shared.inbox
+                                .message(
+                                    forID: messageID
+                                )
                             if let message = message {
-                                await
-                                MessageCenter.shared.inbox.markRead(
+                                await MessageCenter.shared.inbox.markRead(
                                     messages: [message]
                                 )
                             }
@@ -356,7 +371,7 @@ fileprivate struct MessageCenterMessageContentView: View {
                 ProgressView()
             } else if case .error(let error) = self.webViewPhase {
                 if let error = error as? MessageCenterMessageError,
-                   error == .messageGone
+                    error == .messageGone
                 {
                     VStack {
                         Text("ua_mc_no_longer_available".localized)

@@ -5,20 +5,20 @@ import Foundation
 /// Url Info
 /// - Note: for internal use only.  :nodoc:
 @objc(UAURLInfo)
-public class URLInfo : NSObject {
+public class URLInfo: NSObject {
     @objc
-    public enum URLType : Int {
+    public enum URLType: Int {
         case web
         case video
         case image
     }
-    
+
     @objc
     public let urlType: URLType
-    
+
     @objc
     public let url: String
-    
+
     @objc
     public init(urlType: URLType, url: String) {
         self.urlType = urlType
@@ -28,13 +28,13 @@ public class URLInfo : NSObject {
 
 @available(iOS 13.0.0, tvOS 13.0, *)
 extension Layout {
-    
+
     func urlInfos() -> [URLInfo] {
         return extractUrlInfos(model: self.view) ?? []
     }
-    
+
     private func extractUrlInfos(model: ViewModel) -> [URLInfo]? {
-        switch (model) {
+        switch model {
         case .container(let model):
             return model.items
                 .compactMap { extractUrlInfos(model: $0.view) }
@@ -60,20 +60,20 @@ extension Layout {
         case .pagerController(let model):
             return extractUrlInfos(model: model.view)
         case .media(let model):
-            switch(model.mediaType) {
+            switch model.mediaType {
             case .image:
-                return [URLInfo(urlType: .image, url: model.url)];
+                return [URLInfo(urlType: .image, url: model.url)]
             case .youtube:
-                return [URLInfo(urlType: .video, url: model.url)];
+                return [URLInfo(urlType: .video, url: model.url)]
             case .video:
-                return [URLInfo(urlType: .video, url: model.url)];
+                return [URLInfo(urlType: .video, url: model.url)]
             }
         #if !os(tvOS) && !os(watchOS)
-        case .webView(let model):
-            return [URLInfo(urlType: .web, url: model.url)];
+            case .webView(let model):
+                return [URLInfo(urlType: .web, url: model.url)]
         #endif
         case .imageButton(let model):
-            switch(model.image) {
+            switch model.image {
             case .url(let imageModel):
                 return [URLInfo(urlType: .image, url: imageModel.url)]
             case .icon(_):

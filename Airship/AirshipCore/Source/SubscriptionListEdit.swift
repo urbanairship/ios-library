@@ -10,4 +10,3 @@ public enum SubscriptionListEdit: Equatable {
     /// Unsubscribed
     case unsubscribe(String)
 }
-

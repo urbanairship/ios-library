@@ -1,8 +1,8 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-import UIKit
 import SwiftUI
+import UIKit
 
 /// Preference center theme
 @objc(UAPreferenceCenterTheme)
@@ -182,20 +182,20 @@ public class _PreferenceCenterThemeObjc: NSObject {
     }
 }
 
-fileprivate extension UIFont {
-    func toFont() -> Font {
+extension UIFont {
+    fileprivate func toFont() -> Font {
         return Font(self)
     }
 }
 
-fileprivate extension UIColor {
-    func toColor() -> Color {
+extension UIColor {
+    fileprivate func toColor() -> Color {
         return Color(self)
     }
 }
 
-fileprivate extension _PreferenceCenterThemeObjc.TextAppearance {
-    func toTextApperance() -> PreferenceCenterTheme.TextAppearance {
+extension _PreferenceCenterThemeObjc.TextAppearance {
+    fileprivate func toTextApperance() -> PreferenceCenterTheme.TextAppearance {
         return PreferenceCenterTheme.TextAppearance(
             font: self.font?.toFont(),
             color: self.color?.toColor()
@@ -203,8 +203,8 @@ fileprivate extension _PreferenceCenterThemeObjc.TextAppearance {
     }
 }
 
-fileprivate extension _PreferenceCenterThemeObjc.Chip {
-    func toChip() -> PreferenceCenterTheme.Chip {
+extension _PreferenceCenterThemeObjc.Chip {
+    fileprivate func toChip() -> PreferenceCenterTheme.Chip {
         return PreferenceCenterTheme.Chip(
             checkColor: self.checkColor?.toColor(),
             borderColor: self.borderColor?.toColor(),
@@ -213,8 +213,8 @@ fileprivate extension _PreferenceCenterThemeObjc.Chip {
     }
 }
 
-fileprivate extension _PreferenceCenterThemeObjc.NavigationBar {
-    func toNavigationBar() -> PreferenceCenterTheme.NavigationBar {
+extension _PreferenceCenterThemeObjc.NavigationBar {
+    fileprivate func toNavigationBar() -> PreferenceCenterTheme.NavigationBar {
         return PreferenceCenterTheme.NavigationBar(
             title: self.title,
             titleFont: self.titleFont,
@@ -225,8 +225,8 @@ fileprivate extension _PreferenceCenterThemeObjc.NavigationBar {
     }
 }
 
-fileprivate extension _PreferenceCenterThemeObjc.CommonSection {
-    func toCommonSection() -> PreferenceCenterTheme.CommonSection {
+extension _PreferenceCenterThemeObjc.CommonSection {
+    fileprivate func toCommonSection() -> PreferenceCenterTheme.CommonSection {
         return PreferenceCenterTheme.CommonSection(
             titleAppearance: self.titleAppearance?.toTextApperance(),
             subtitleAppearance: self.subtitleAppearance?.toTextApperance()
@@ -234,8 +234,10 @@ fileprivate extension _PreferenceCenterThemeObjc.CommonSection {
     }
 }
 
-fileprivate extension _PreferenceCenterThemeObjc.LabeledSectionBreak {
-    func toLabeledSectionBreak() -> PreferenceCenterTheme.LabeledSectionBreak {
+extension _PreferenceCenterThemeObjc.LabeledSectionBreak {
+    fileprivate func toLabeledSectionBreak()
+        -> PreferenceCenterTheme.LabeledSectionBreak
+    {
         return PreferenceCenterTheme.LabeledSectionBreak(
             titleAppearance: self.titleAppearance?.toTextApperance(),
             backgroundColor: self.backgroundColor?.toColor()
@@ -243,9 +245,10 @@ fileprivate extension _PreferenceCenterThemeObjc.LabeledSectionBreak {
     }
 }
 
-
-fileprivate extension _PreferenceCenterThemeObjc.ChannelSubscription {
-    func toChannelSubscription() -> PreferenceCenterTheme.ChannelSubscription {
+extension _PreferenceCenterThemeObjc.ChannelSubscription {
+    fileprivate func toChannelSubscription()
+        -> PreferenceCenterTheme.ChannelSubscription
+    {
         return PreferenceCenterTheme.ChannelSubscription(
             titleAppearance: self.titleAppearance?.toTextApperance(),
             subtitleAppearance: self.subtitleAppearance?.toTextApperance(),
@@ -254,8 +257,10 @@ fileprivate extension _PreferenceCenterThemeObjc.ChannelSubscription {
     }
 }
 
-fileprivate extension _PreferenceCenterThemeObjc.ContactSubscription {
-    func toContactSubscription() -> PreferenceCenterTheme.ContactSubscription {
+extension _PreferenceCenterThemeObjc.ContactSubscription {
+    fileprivate func toContactSubscription()
+        -> PreferenceCenterTheme.ContactSubscription
+    {
         return PreferenceCenterTheme.ContactSubscription(
             titleAppearance: self.titleAppearance?.toTextApperance(),
             subtitleAppearance: self.subtitleAppearance?.toTextApperance(),
@@ -264,8 +269,10 @@ fileprivate extension _PreferenceCenterThemeObjc.ContactSubscription {
     }
 }
 
-fileprivate extension _PreferenceCenterThemeObjc.ContactSubscriptionGroup {
-    func toContactSubscriptionGroup() -> PreferenceCenterTheme.ContactSubscriptionGroup {
+extension _PreferenceCenterThemeObjc.ContactSubscriptionGroup {
+    fileprivate func toContactSubscriptionGroup()
+        -> PreferenceCenterTheme.ContactSubscriptionGroup
+    {
         return PreferenceCenterTheme.ContactSubscriptionGroup(
             titleAppearance: self.titleAppearance?.toTextApperance(),
             subtitleAppearance: self.subtitleAppearance?.toTextApperance(),
@@ -274,32 +281,39 @@ fileprivate extension _PreferenceCenterThemeObjc.ContactSubscriptionGroup {
     }
 }
 
-fileprivate extension _PreferenceCenterThemeObjc.Alert {
-    func toAlert() -> PreferenceCenterTheme.Alert {
+extension _PreferenceCenterThemeObjc.Alert {
+    fileprivate func toAlert() -> PreferenceCenterTheme.Alert {
         return PreferenceCenterTheme.Alert(
             titleAppearance: self.titleAppearance?.toTextApperance(),
             subtitleAppearance: self.subtitleAppearance?.toTextApperance(),
-            buttonLabelAppearance: self.buttonLabelAppearance?.toTextApperance(),
+            buttonLabelAppearance: self.buttonLabelAppearance?
+                .toTextApperance(),
             buttonBackgroundColor: self.buttonBackgroundColor?.toColor()
         )
     }
 }
 
-fileprivate extension _PreferenceCenterThemeObjc.PreferenceCenter {
-    func toPreferenceCenter() -> PreferenceCenterTheme.PreferenceCenter {
+extension _PreferenceCenterThemeObjc.PreferenceCenter {
+    fileprivate func toPreferenceCenter()
+        -> PreferenceCenterTheme.PreferenceCenter
+    {
         return PreferenceCenterTheme.PreferenceCenter(
             subtitleAppearance: self.subtitleAppearance?.toTextApperance(),
-            retryButtonBackgroundColor: self.retryButtonBackgroundColor?.toColor(),
-            retryButtonLabelAppearance: self.retryButtonLabelAppearance?.toTextApperance(),
+            retryButtonBackgroundColor: self.retryButtonBackgroundColor?
+                .toColor(),
+            retryButtonLabelAppearance: self.retryButtonLabelAppearance?
+                .toTextApperance(),
             retryButtonLabel: self.retryButtonLabel,
             retryMessage: self.retryMessage,
-            retryMessageAppearance: self.retryMessageAppearance?.toTextApperance()
+            retryMessageAppearance: self.retryMessageAppearance?
+                .toTextApperance()
         )
     }
 }
 
-fileprivate extension _PreferenceCenterThemeObjc.ViewController {
-    func toViewController() -> PreferenceCenterTheme.ViewController {
+extension _PreferenceCenterThemeObjc.ViewController {
+    fileprivate func toViewController() -> PreferenceCenterTheme.ViewController
+    {
         return PreferenceCenterTheme.ViewController(
             navigationBar: self.navigationBar?.toNavigationBar(),
             backgroundColor: self.backgroundColor
@@ -313,11 +327,15 @@ extension _PreferenceCenterThemeObjc {
             viewController: self.viewController?.toViewController(),
             preferenceCenter: self.preferenceCenter?.toPreferenceCenter(),
             commonSection: self.commonSection?.toCommonSection(),
-            labeledSectionBreak: self.labeledSectionBreak?.toLabeledSectionBreak(),
+            labeledSectionBreak: self.labeledSectionBreak?
+                .toLabeledSectionBreak(),
             alert: self.alert?.toAlert(),
-            channelSubscription: self.channelSubscription?.toChannelSubscription(),
-            contactSubscription: self.contactSubscription?.toContactSubscription(),
-            contactSubscriptionGroup: self.contactSubscriptionGroup?.toContactSubscriptionGroup()
+            channelSubscription: self.channelSubscription?
+                .toChannelSubscription(),
+            contactSubscription: self.contactSubscription?
+                .toContactSubscription(),
+            contactSubscriptionGroup: self.contactSubscriptionGroup?
+                .toContactSubscriptionGroup()
         )
     }
 }

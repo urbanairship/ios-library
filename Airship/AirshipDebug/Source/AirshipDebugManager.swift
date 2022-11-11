@@ -1,16 +1,16 @@
 /* Copyright Airship and Contributors */
 
-import UIKit
-import SwiftUI
 import Combine
+import SwiftUI
+import UIKit
 
 #if canImport(AirshipCore)
-import AirshipCore
+    import AirshipCore
 #elseif canImport(AirshipKit)
-import AirshipKit
+    import AirshipKit
 #endif
 
-public class AirshipDebugManager : NSObject, Component {
+public class AirshipDebugManager: NSObject, Component {
     public var isComponentEnabled: Bool = true
 
     public static var shared: AirshipDebugManager {
@@ -26,27 +26,35 @@ public class AirshipDebugManager : NSObject, Component {
     var preferenceFormsPublisher: AnyPublisher<[String], Never> {
         self.remoteData.publisher(types: ["preference_forms"])
             .map { payloads -> [String] in
-                guard let data = payloads.first?.data["preference_forms"] as? [[String: Any]]
+                guard
+                    let data = payloads.first?.data["preference_forms"]
+                        as? [[String: Any]]
                 else {
                     return []
                 }
-                return data
+                return
+                    data
                     .compactMap { $0["form"] as? [String: Any] }
                     .compactMap { $0["id"] as? String }
             }
             .eraseToAnyPublisher()
     }
 
-    var inAppAutomationsPublisher: AnyPublisher<[[String: AnyHashable]], Never> {
+    var inAppAutomationsPublisher: AnyPublisher<[[String: AnyHashable]], Never>
+    {
         self.remoteData.publisher(types: ["in_app_messages"])
             .compactMap { payloads -> [[String: AnyHashable]] in
-                return payloads.first?.data["in_app_messages"] as? [[String: AnyHashable]] ?? []
+                return payloads.first?.data["in_app_messages"]
+                    as? [[String: AnyHashable]] ?? []
             }
             .eraseToAnyPublisher()
     }
 
-    private let pushNotifiacitonReceivedSubject = PassthroughSubject<PushNotification, Never>()
-    var pushNotifiacitonReceivedPublisher: AnyPublisher<PushNotification, Never> {
+    private let pushNotifiacitonReceivedSubject = PassthroughSubject<
+        PushNotification, Never
+    >()
+    var pushNotifiacitonReceivedPublisher: AnyPublisher<PushNotification, Never>
+    {
         return pushNotifiacitonReceivedSubject.eraseToAnyPublisher()
     }
 
@@ -55,7 +63,11 @@ public class AirshipDebugManager : NSObject, Component {
         return eventReceivedSubject.eraseToAnyPublisher()
     }
 
-    init(config: RuntimeConfig, analytics: Analytics, remoteData: RemoteDataManager) {
+    init(
+        config: RuntimeConfig,
+        analytics: Analytics,
+        remoteData: RemoteDataManager
+    ) {
         self.remoteData = remoteData
         self.pushDataManager = PushDataManager(appKey: config.appKey)
         self.eventDataManager = EventDataManager(appKey: config.appKey)
@@ -64,7 +76,12 @@ public class AirshipDebugManager : NSObject, Component {
 
         self.eventUpdates = analytics.eventPublisher
             .sink { incoming in
-                guard let body = try? JSONUtils.string(incoming.event.data, options: .prettyPrinted) else {
+                guard
+                    let body = try? JSONUtils.string(
+                        incoming.event.data,
+                        options: .prettyPrinted
+                    )
+                else {
                     return
                 }
 
@@ -81,7 +98,7 @@ public class AirshipDebugManager : NSObject, Component {
 
         self.observePayloadEvents()
     }
-    
+
     func pushNotifications() async -> [PushNotification] {
         return await self.pushDataManager.pushNotifications()
     }
@@ -105,11 +122,9 @@ public class AirshipDebugManager : NSObject, Component {
             window = nil
         }
 
-
         let viewController: UIViewController = UIHostingController(
             rootView: DebugRootView(disposable: disposable)
         )
-        
 
         window?.windowLevel = .alert
         window?.makeKeyAndVisible()
@@ -118,22 +133,27 @@ public class AirshipDebugManager : NSObject, Component {
         self.currentDisplay = disposable
     }
 
-
     func observePayloadEvents() {
-        NotificationCenter.default.addObserver(self,
-                                               selector:#selector(receivedForegroundNotification(notification:)),
-                                               name: Push.receivedForegroundNotificationEvent,
-                                               object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(receivedForegroundNotification(notification:)),
+            name: Push.receivedForegroundNotificationEvent,
+            object: nil
+        )
 
-        NotificationCenter.default.addObserver(self,
-                                               selector:#selector(receivedBackgroundNotification(notification:)),
-                                               name: Push.receivedBackgroundNotificationEvent,
-                                               object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(receivedBackgroundNotification(notification:)),
+            name: Push.receivedBackgroundNotificationEvent,
+            object: nil
+        )
 
-        NotificationCenter.default.addObserver(self,
-                                               selector:#selector(receivedNotificationResponse(notification:)),
-                                               name: Push.receivedNotificationResponseEvent,
-                                               object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(receivedNotificationResponse(notification:)),
+            name: Push.receivedNotificationResponseEvent,
+            object: nil
+        )
     }
 
     @objc func receivedForegroundNotification(notification: NSNotification) {
@@ -152,15 +172,20 @@ public class AirshipDebugManager : NSObject, Component {
     }
 
     @objc func receivedNotificationResponse(notification: NSNotification) {
-        guard let response = notification.userInfo?[Push.receivedNotificationResponseEventResponseKey] as? UNNotificationResponse else {
+        guard
+            let response =
+                notification.userInfo?[
+                    Push.receivedNotificationResponseEventResponseKey
+                ] as? UNNotificationResponse
+        else {
             return
         }
-        
+
         let push = response.notification.request.content.userInfo
         savePush(userInfo: push)
     }
 
-    func savePush(userInfo : [AnyHashable: Any]) {
+    func savePush(userInfo: [AnyHashable: Any]) {
         guard let pushPayload = try? PushNotification(push: userInfo) else {
             return
         }
@@ -170,14 +195,12 @@ public class AirshipDebugManager : NSObject, Component {
     }
 }
 
-/**
- * Adds IBInspectable to UILabel for use in storyboards.
- *
- * Designer can enter a localization key in the storyboard attributes
- * inspector for the UILabel. This key will be used to localize the
- * UILabel's text when the storyboard is loaded.
- */
-internal extension UILabel {
+/// Adds IBInspectable to UILabel for use in storyboards.
+///
+/// Designer can enter a localization key in the storyboard attributes
+/// inspector for the UILabel. This key will be used to localize the
+/// UILabel's text when the storyboard is loaded.
+extension UILabel {
     @IBInspectable var keyForLocalization: String? {
         // Don't need to ever get the key.
         get { return nil }
@@ -189,14 +212,12 @@ internal extension UILabel {
     }
 }
 
-/**
- * Adds IBInspectable to UINavigationItem for use in storyboards.
- *
- * Designer can enter a localization key in the storyboard attributes
- * inspector for the UINavigationItem. This key will be used to localize the
- * UINavigationItem's title when the storyboard is loaded.
- */
-internal extension UINavigationItem {
+/// Adds IBInspectable to UINavigationItem for use in storyboards.
+///
+/// Designer can enter a localization key in the storyboard attributes
+/// inspector for the UINavigationItem. This key will be used to localize the
+/// UINavigationItem's title when the storyboard is loaded.
+extension UINavigationItem {
     @IBInspectable var keyForLocalization: String? {
         // Don't need to ever get the key.
         get { return nil }
@@ -208,14 +229,12 @@ internal extension UINavigationItem {
     }
 }
 
-/**
- * Adds IBInspectable to UITextField for use in storyboards.
- *
- * Designer can enter a localization key in the storyboard attributes
- * inspector for the UITextField. This key will be used to localize the
- * UITextField's placeholder when the storyboard is loaded.
- */
-internal extension UITextField {
+/// Adds IBInspectable to UITextField for use in storyboards.
+///
+/// Designer can enter a localization key in the storyboard attributes
+/// inspector for the UITextField. This key will be used to localize the
+/// UITextField's placeholder when the storyboard is loaded.
+extension UITextField {
     @IBInspectable var keyForLocalization: String? {
         // Don't need to ever get the key.
         get { return nil }
@@ -227,8 +246,7 @@ internal extension UITextField {
     }
 }
 
-
-fileprivate struct DebugRootView: View {
+private struct DebugRootView: View {
     let disposable: Disposable
 
     @ViewBuilder

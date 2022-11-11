@@ -6,14 +6,17 @@ import Foundation
 @objc(UARemoteDataProvider)
 public protocol RemoteDataProvider {
     var remoteDataRefreshInterval: TimeInterval { get set }
-    
+
     @discardableResult
     @objc
-    func subscribe(types: [String], block:@escaping ([RemoteDataPayload]) -> Void) -> Disposable
-    
+    func subscribe(
+        types: [String],
+        block: @escaping ([RemoteDataPayload]) -> Void
+    ) -> Disposable
+
     @objc
-    func isMetadataCurrent(_ metadata: [AnyHashable : Any]) -> Bool
-    
+    func isMetadataCurrent(_ metadata: [AnyHashable: Any]) -> Bool
+
     @objc
     func refresh(completionHandler: @escaping (Bool) -> Void)
 }

@@ -1,11 +1,9 @@
 /* Copyright Airship and Contributors */
 
-/**
- * Defines analytics identifiers to be associated with
- * the device.
- */
+/// Defines analytics identifiers to be associated with
+/// the device.
 @objc(UAAssociatedIdentifiers)
-public class AssociatedIdentifiers : NSObject{
+public class AssociatedIdentifiers: NSObject {
 
     /**
      * Maximum number of associated IDs that can be set.
@@ -18,7 +16,6 @@ public class AssociatedIdentifiers : NSObject{
      */
     @objc
     public static let maxCharacterCount = 255
-
 
     /**
      * The advertising ID.
@@ -52,10 +49,13 @@ public class AssociatedIdentifiers : NSObject{
     @objc
     public var advertisingTrackingEnabled: Bool {
         get {
-            return self.identifiers["com.urbanairship.limited_ad_tracking_enabled"] == "false"
+            return
+                self.identifiers["com.urbanairship.limited_ad_tracking_enabled"]
+                == "false"
         }
         set {
-            self.identifiers["com.urbanairship.limited_ad_tracking_enabled"] = newValue ? "false" : "true"
+            self.identifiers["com.urbanairship.limited_ad_tracking_enabled"] =
+                newValue ? "false" : "true"
         }
     }
 
@@ -63,22 +63,20 @@ public class AssociatedIdentifiers : NSObject{
      * A map of all the associated identifiers.
      */
     @objc
-    public var allIDs : [String : String] {
-        get {
-            return identifiers;
-        }
+    public var allIDs: [String: String] {
+        return identifiers
     }
 
-    private var identifiers : [String : String]
+    private var identifiers: [String: String]
 
     @objc
-    public init(identifiers: [String : String]?) {
+    public init(identifiers: [String: String]?) {
         self.identifiers = identifiers ?? [:]
         super.init()
     }
 
     @objc
-    public convenience init(dictionary: [String : String]?) {
+    public convenience init(dictionary: [String: String]?) {
         self.init(identifiers: dictionary)
     }
 
@@ -102,7 +100,9 @@ public class AssociatedIdentifiers : NSObject{
      * - Returns: The created associated identifiers.
      */
     @objc(identifiersWithDictionary:)
-    public class func identifiers(identifiers: [String : String]?) -> AssociatedIdentifiers {
+    public class func identifiers(identifiers: [String: String]?)
+        -> AssociatedIdentifiers
+    {
         return AssociatedIdentifiers(identifiers: identifiers)
     }
 

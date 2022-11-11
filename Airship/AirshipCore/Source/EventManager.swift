@@ -8,7 +8,9 @@ import Foundation
 public protocol EventManagerDelegate: NSObjectProtocol {
     /// Get the current analytics headers.
     @objc
-    func analyticsHeaders(completionHandler: @escaping ([String : String]) -> Void)
+    func analyticsHeaders(
+        completionHandler: @escaping ([String: String]) -> Void
+    )
 }
 
 /// Event manager handles storing and uploading events to Airship.
@@ -19,24 +21,26 @@ public class EventManager: NSObject, EventManagerProtocol {
     private static let foregroundTaskBatchDelay: TimeInterval = 1
     private static let backgroundTaskBatchDelay: TimeInterval = 5
     private static let uploadScheduleDelay: TimeInterval = 15
-    private static let backgroundLowPriorityEventUploadInterval: TimeInterval = 900
+    private static let backgroundLowPriorityEventUploadInterval: TimeInterval =
+        900
     private static let uploadTask = "UAEventManager.upload"
     private static let fetchEventLimit = 500
 
     // Max database size
-    private static let maxTotalDBSizeBytes = UInt(5) * 1024 * 1024 // local max of 5MB
-    private static let minTotalDBSizeBytes = UInt(10) * 1024 // local min of 10KB
+    private static let maxTotalDBSizeBytes = UInt(5) * 1024 * 1024  // local max of 5MB
+    private static let minTotalDBSizeBytes = UInt(10) * 1024  // local min of 10KB
     // Total size in bytes that a given event post is allowed to send.
-    private static let maxBatchSizeBytes = UInt(500) * 1024 // local max of 500KB
-    private static let minBatchSizeBytes = UInt(10) * 1024 // local min of 10KB
+    private static let maxBatchSizeBytes = UInt(500) * 1024  // local max of 500KB
+    private static let minBatchSizeBytes = UInt(10) * 1024  // local min of 10KB
     // The actual amount of time in seconds that elapse between event-server posts
-    private static let minBatchIntervalSeconds = TimeInterval(60) // local min of 60s
-    private static let maxBatchIntervalSeconds = TimeInterval(7 * 24 * 3600) // local max of 7 days
+    private static let minBatchIntervalSeconds = TimeInterval(60)  // local min of 60s
+    private static let maxBatchIntervalSeconds = TimeInterval(7 * 24 * 3600)  // local max of 7 days
     // Data store keys
     private static let maxTotalDBSizeUserDefaultsKey = "X-UA-Max-Total"
     private static let maxBatchSizeUserDefaultsKey = "X-UA-Max-Batch"
     private static let maxWaitUserDefaultsKey = "X-UA-Max-Wait"
-    private static let minBatchIntervalUserDefaultsKey = "X-UA-Min-Batch-Interval"
+    private static let minBatchIntervalUserDefaultsKey =
+        "X-UA-Min-Batch-Interval"
 
     private var config: RuntimeConfig
     private var dataStore: PreferenceDataStore
@@ -51,44 +55,78 @@ public class EventManager: NSObject, EventManagerProtocol {
     private let lock = Lock()
     private var nextUploadDate: Date?
 
-    private var maxTotalDBSize: UInt  {
+    private var maxTotalDBSize: UInt {
         get {
-            var value = UInt(self.dataStore.integer(forKey: EventManager.maxTotalDBSizeUserDefaultsKey))
-            value = value == 0 ?  EventManager.maxTotalDBSizeBytes : value
-            return self.clamp(value, min:EventManager.minTotalDBSizeBytes, max:EventManager.maxTotalDBSizeBytes)
+            var value = UInt(
+                self.dataStore.integer(
+                    forKey: EventManager.maxTotalDBSizeUserDefaultsKey
+                )
+            )
+            value = value == 0 ? EventManager.maxTotalDBSizeBytes : value
+            return self.clamp(
+                value,
+                min: EventManager.minTotalDBSizeBytes,
+                max: EventManager.maxTotalDBSizeBytes
+            )
         }
 
         set {
-            self.dataStore.setInteger(Int(newValue), forKey: EventManager.maxTotalDBSizeUserDefaultsKey)
+            self.dataStore.setInteger(
+                Int(newValue),
+                forKey: EventManager.maxTotalDBSizeUserDefaultsKey
+            )
         }
     }
 
     private var maxBatchSize: UInt {
         get {
-            var value = UInt(self.dataStore.integer(forKey: EventManager.maxBatchSizeUserDefaultsKey))
+            var value = UInt(
+                self.dataStore.integer(
+                    forKey: EventManager.maxBatchSizeUserDefaultsKey
+                )
+            )
             value = value == 0 ? EventManager.maxBatchSizeBytes : value
-            return self.clamp(value, min: EventManager.minBatchSizeBytes, max: EventManager.maxBatchSizeBytes)
+            return self.clamp(
+                value,
+                min: EventManager.minBatchSizeBytes,
+                max: EventManager.maxBatchSizeBytes
+            )
         }
 
         set {
-            self.dataStore.setInteger(Int(newValue), forKey: EventManager.maxBatchSizeUserDefaultsKey)
+            self.dataStore.setInteger(
+                Int(newValue),
+                forKey: EventManager.maxBatchSizeUserDefaultsKey
+            )
         }
     }
 
     private var minBatchInterval: TimeInterval {
         get {
-            let value = Double(self.dataStore.integer(forKey: EventManager.minBatchIntervalUserDefaultsKey))
-            return self.clamp(value, min: EventManager.minBatchIntervalSeconds, max: EventManager.maxBatchIntervalSeconds)
+            let value = Double(
+                self.dataStore.integer(
+                    forKey: EventManager.minBatchIntervalUserDefaultsKey
+                )
+            )
+            return self.clamp(
+                value,
+                min: EventManager.minBatchIntervalSeconds,
+                max: EventManager.maxBatchIntervalSeconds
+            )
         }
 
         set {
-            self.dataStore.setInteger(Int(newValue), forKey: EventManager.minBatchIntervalUserDefaultsKey)
+            self.dataStore.setInteger(
+                Int(newValue),
+                forKey: EventManager.minBatchIntervalUserDefaultsKey
+            )
         }
     }
 
     private var lastSendTime: Date {
         get {
-            return self.dataStore.object(forKey: "X-UA-Last-Send-Time") as? Date ?? Date.distantPast
+            return self.dataStore.object(forKey: "X-UA-Last-Send-Time") as? Date
+                ?? Date.distantPast
         }
 
         set {
@@ -111,23 +149,31 @@ public class EventManager: NSObject, EventManagerProtocol {
     ///   - config: The airship config.
     ///   - dataStore: The preference data store.
     ///   - channel: The channel instance.
-    ///   
+    ///
     /// - Returns: UAEventManager instance.
     @objc
     public convenience init(
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,
-        channel: ChannelProtocol) {
+        channel: ChannelProtocol
+    ) {
         let eventStore = EventStore(config: config)
         let client = EventAPIClient(config: config)
-        let delayProvider =  { (delay: TimeInterval) in
+        let delayProvider = { (delay: TimeInterval) in
             return Delay(delay)
         }
 
-        self.init(config: config, dataStore: dataStore, channel: channel, eventStore: eventStore,
-                  client: client, notificationCenter: NotificationCenter.default, appStateTracker: AppStateTracker.shared,
-                  taskManager: TaskManager.shared, delayProvider: delayProvider)
-
+        self.init(
+            config: config,
+            dataStore: dataStore,
+            channel: channel,
+            eventStore: eventStore,
+            client: client,
+            notificationCenter: NotificationCenter.default,
+            appStateTracker: AppStateTracker.shared,
+            taskManager: TaskManager.shared,
+            delayProvider: delayProvider
+        )
 
     }
 
@@ -155,7 +201,8 @@ public class EventManager: NSObject, EventManagerProtocol {
         notificationCenter: NotificationCenter,
         appStateTracker: AppStateTracker,
         taskManager: TaskManagerProtocol,
-        delayProvider: @escaping (TimeInterval) -> DelayProtocol) {
+        delayProvider: @escaping (TimeInterval) -> DelayProtocol
+    ) {
 
         self.config = config
         self.dataStore = dataStore
@@ -187,7 +234,7 @@ public class EventManager: NSObject, EventManagerProtocol {
             taskID: EventManager.uploadTask,
             type: .serial
         ) { [weak self] task in
-                self?.uploadEventsTask(task)
+            self?.uploadEventsTask(task)
         }
     }
 
@@ -199,9 +246,19 @@ public class EventManager: NSObject, EventManagerProtocol {
     ///   - eventDate: The event date.
     ///   - sessionID: The analytics session ID.
     @objc
-    public func add(_ event: Event, eventID: String, eventDate: Date, sessionID: String) {
-        self.eventStore.save(event, eventID: eventID, eventDate: eventDate, sessionID: sessionID)
-        self.scheduleUpload(priority:event.priority)
+    public func add(
+        _ event: Event,
+        eventID: String,
+        eventDate: Date,
+        sessionID: String
+    ) {
+        self.eventStore.save(
+            event,
+            eventID: eventID,
+            eventDate: eventDate,
+            sessionID: sessionID
+        )
+        self.scheduleUpload(priority: event.priority)
     }
 
     /// Deletes all events and cancels any uploads in progress. :nodoc:
@@ -222,7 +279,7 @@ public class EventManager: NSObject, EventManagerProtocol {
     }
 
     private func scheduleUpload(priority: EventPriority) {
-        switch (priority) {
+        switch priority {
         case .high:
             self.scheduleUpload(delay: 0)
         case .normal:
@@ -233,9 +290,14 @@ public class EventManager: NSObject, EventManagerProtocol {
             }
         case .low:
             if self.appStateTracker.state == .background {
-                let timeSinceLastSend = Date().timeIntervalSince(self.lastSendTime)
-                if timeSinceLastSend < EventManager.backgroundLowPriorityEventUploadInterval {
-                    AirshipLogger.trace("Skipping low priority background event send.")
+                let timeSinceLastSend = Date()
+                    .timeIntervalSince(self.lastSendTime)
+                if timeSinceLastSend
+                    < EventManager.backgroundLowPriorityEventUploadInterval
+                {
+                    AirshipLogger.trace(
+                        "Skipping low priority background event send."
+                    )
                 }
             }
             self.scheduleUpload(delay: self.calculateNextUploadDelay())
@@ -251,8 +313,12 @@ public class EventManager: NSObject, EventManagerProtocol {
 
         self.lock.sync {
             let uploadDate = Date(timeIntervalSinceNow: delay)
-            if delay > 0 && self.nextUploadDate != nil && self.nextUploadDate?.compare(uploadDate) == .orderedAscending {
-                AirshipLogger.trace("Upload already scheduled for an earlier time.")
+            if delay > 0 && self.nextUploadDate != nil
+                && self.nextUploadDate?.compare(uploadDate) == .orderedAscending
+            {
+                AirshipLogger.trace(
+                    "Upload already scheduled for an earlier time."
+                )
                 return
             }
 
@@ -260,14 +326,18 @@ public class EventManager: NSObject, EventManagerProtocol {
 
             AirshipLogger.trace("Scheduling upload in \(delay) seconds.")
 
-            self.taskManager.enqueueRequest(taskID: EventManager.uploadTask, options: TaskRequestOptions.defaultOptions, initialDelay: delay)
+            self.taskManager.enqueueRequest(
+                taskID: EventManager.uploadTask,
+                options: TaskRequestOptions.defaultOptions,
+                initialDelay: delay
+            )
         }
     }
 
     private func uploadEventsTask(_ task: AirshipTask) {
         guard self.uploadsEnabled else {
             self.lock.sync {
-                self.nextUploadDate = nil;
+                self.nextUploadDate = nil
             }
 
             task.taskCompleted()
@@ -299,14 +369,17 @@ public class EventManager: NSObject, EventManagerProtocol {
 
         let events = self.prepareEvents()
         guard events.count > 0 else {
-            AirshipLogger.trace("Analytic upload finished, no events to upload.")
+            AirshipLogger.trace(
+                "Analytic upload finished, no events to upload."
+            )
             task.taskCompleted()
             return
         }
 
         let headers = self.prepareHeaders()
 
-        let request = self.client.uploadEvents(events, headers: headers) { [weak self] response, error in
+        let request = self.client.uploadEvents(events, headers: headers) {
+            [weak self] response, error in
             guard let self = self else {
                 return
             }
@@ -320,9 +393,11 @@ public class EventManager: NSObject, EventManagerProtocol {
                 let response = response!
                 if response.isSuccess {
                     AirshipLogger.trace("Analytic upload success")
-                    self.eventStore.deleteEvents(withIDs: events.map({ event in
-                        return event["event_id"] as? String ?? ""
-                    }))
+                    self.eventStore.deleteEvents(
+                        withIDs: events.map({ event in
+                            return event["event_id"] as? String ?? ""
+                        })
+                    )
 
                     self.updateAnalyticsParameters(response: response)
                     task.taskCompleted()
@@ -331,7 +406,9 @@ public class EventManager: NSObject, EventManagerProtocol {
                         self.scheduleUpload()
                     }
                 } else {
-                    AirshipLogger.trace("Analytics upload request failed with status: \(response.status)")
+                    AirshipLogger.trace(
+                        "Analytics upload request failed with status: \(response.status)"
+                    )
                     task.taskFailed()
                 }
             }
@@ -348,7 +425,7 @@ public class EventManager: NSObject, EventManagerProtocol {
         }
 
         if let maxBatchSizeNumber = response.maxBatchSize {
-            self.maxBatchSize = maxBatchSizeNumber.uintValue * 1024 // value expressed in kB
+            self.maxBatchSize = maxBatchSizeNumber.uintValue * 1024  // value expressed in kB
         }
 
         if let minBatchIntervalNumber = response.minBatchInterval {
@@ -356,9 +433,8 @@ public class EventManager: NSObject, EventManagerProtocol {
         }
     }
 
-
     private func calculateNextUploadDelay() -> TimeInterval {
-        var delay: TimeInterval = 0;
+        var delay: TimeInterval = 0
         let timeSincelastSend = Date().timeIntervalSince(self.lastSendTime)
 
         if timeSincelastSend < self.minBatchInterval {
@@ -383,13 +459,14 @@ public class EventManager: NSObject, EventManagerProtocol {
         return headers
     }
 
-    private func prepareEvents() -> [[String : AnyHashable]] {
+    private func prepareEvents() -> [[String: AnyHashable]] {
         var preparedEvents: [[String: AnyHashable]] = []
         let semaphore = Semaphore()
 
         let maxBatchSize = self.maxBatchSize
 
-        self.eventStore.fetchEvents(withLimit: EventManager.fetchEventLimit) { result in
+        self.eventStore.fetchEvents(withLimit: EventManager.fetchEventLimit) {
+            result in
             if result.count > 0 {
                 var batchSize = 0
                 for eventData in result {
@@ -401,22 +478,30 @@ public class EventManager: NSObject, EventManagerProtocol {
                         batchSize += bytes.intValue
 
                         var eventBody: [String: AnyHashable] = [:]
-                        eventBody["event_id"] =  eventData.identifier
+                        eventBody["event_id"] = eventData.identifier
                         eventBody["time"] = eventData.time
                         eventBody["type"] = eventData.type
 
                         do {
-                            if var jsonData = try JSONSerialization.jsonObject(with: data, options: []) as? [String: AnyHashable] {
+                            if var jsonData = try JSONSerialization.jsonObject(
+                                with: data,
+                                options: []
+                            ) as? [String: AnyHashable] {
                                 jsonData["session_id"] = eventData.sessionID
                                 eventBody["data"] = jsonData
 
                                 preparedEvents.append(eventBody)
                             } else {
-                                AirshipLogger.error("Failed to deserialize event.")
-                                eventData.managedObjectContext?.delete(eventData)
+                                AirshipLogger.error(
+                                    "Failed to deserialize event."
+                                )
+                                eventData.managedObjectContext?
+                                    .delete(eventData)
                             }
                         } catch {
-                            AirshipLogger.error("Failed to deserialize event \(eventData): \(error)")
+                            AirshipLogger.error(
+                                "Failed to deserialize event \(eventData): \(error)"
+                            )
                             eventData.managedObjectContext?.delete(eventData)
                         }
                     }
@@ -430,15 +515,15 @@ public class EventManager: NSObject, EventManagerProtocol {
         return preparedEvents
     }
 
-    private func clamp<T>(_ value: T, min: T, max: T) -> T where T : Comparable {
+    private func clamp<T>(_ value: T, min: T, max: T) -> T where T: Comparable {
         if value < min {
-            return min;
+            return min
         }
 
         if value > max {
-            return max;
+            return max
         }
 
-        return value;
+        return value
     }
 }

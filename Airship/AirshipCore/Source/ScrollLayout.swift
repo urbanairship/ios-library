@@ -5,14 +5,14 @@ import SwiftUI
 
 /// Scroll view layout
 @available(iOS 14.0.0, tvOS 14.0, *)
-struct ScrollLayout : View {
+struct ScrollLayout: View {
 
     /// ScrollLayout model.
     let model: ScrollLayoutModel
-    
+
     /// View constriants.
     let constraints: ViewConstraints
-    
+
     @State private var contentSize: (ViewConstraints, CGSize)? = nil
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
     @State private var scrollTask: (String, Task<Void, Never>)?
@@ -39,7 +39,7 @@ struct ScrollLayout : View {
             ) { newValue in
                 if #available(iOS 16.0, tvOS 16.0, macOS 12.0, *) {
                     if let focusedID = self.thomasEnvironment.focusedID {
-                        switch (newValue) {
+                        switch newValue {
                         case .hidden:
                             scrollTask?.1.cancel()
                         case .displaying(let duration):
@@ -74,7 +74,8 @@ struct ScrollLayout : View {
                 horizontal: self.model.direction == .horizontal,
                 vertical: self.model.direction == .vertical
             )
-        }.frame(alignment: .topLeading)
+        }
+        .frame(alignment: .topLeading)
     }
 
     @ViewBuilder
@@ -88,7 +89,7 @@ struct ScrollLayout : View {
 
     private func childConstraints() -> ViewConstraints {
         var childConstraints = constraints
-        if (self.model.direction == .vertical) {
+        if self.model.direction == .vertical {
             childConstraints.height = nil
             childConstraints.isVerticalFixedSize = false
         } else {
@@ -112,6 +113,6 @@ struct ScrollLayout : View {
             try? await Task.sleep(
                 nanoseconds: UInt64(ScrollLayout.scrollInterval * 1_000_000_000)
             )
-        } while(remaining > 0 && !Task.isCancelled)
+        } while remaining > 0 && !Task.isCancelled
     }
 }

@@ -1,18 +1,18 @@
 /* Copyright Urban Airship and Contributors */
 
 import AirshipCore
-import SwiftUI
 import Combine
+import SwiftUI
 
 #if canImport(AirshipDebug)
-import AirshipDebug
+    import AirshipDebug
 #endif
 
 struct HomeView: View {
 
     @StateObject
     private var viewModel: ViewModel = ViewModel()
-    
+
     @Environment(\.verticalSizeClass)
     private var verticalSizeClass
 
@@ -20,7 +20,8 @@ struct HomeView: View {
     private var appState: AppState
 
     @ViewBuilder
-    private func makeQuickSettingItem(title: String, value: String) -> some View {
+    private func makeQuickSettingItem(title: String, value: String) -> some View
+    {
         VStack(alignment: .leading) {
             Text(title)
                 .foregroundColor(.accentColor)
@@ -66,23 +67,22 @@ struct HomeView: View {
                     )
                 }
 
-
                 Divider()
 
-#if canImport(ActivityKit)
-                if #available(iOS 16.1, *) {
-                    NavigationLink(
-                        destination: LiveActivityManagementView(),
-                        tag: HomeDestination.liveactivities,
-                        selection: self.$appState.homeDestination
-                    ) {
-                        Text("Live Activities!")
-                            .foregroundColor(.accentColor)
-                            .multilineTextAlignment(.leading)
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                #if canImport(ActivityKit)
+                    if #available(iOS 16.1, *) {
+                        NavigationLink(
+                            destination: LiveActivityManagementView(),
+                            tag: HomeDestination.liveactivities,
+                            selection: self.$appState.homeDestination
+                        ) {
+                            Text("Live Activities!")
+                                .foregroundColor(.accentColor)
+                                .multilineTextAlignment(.leading)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
                     }
-                }
-#endif
+                #endif
             }
         }
     }
@@ -95,7 +95,7 @@ struct HomeView: View {
             .padding(.horizontal, 16)
             .padding(.vertical, 8)
     }
-    
+
     @ViewBuilder
     func makeEnablePushButton() -> some View {
         // MARK: Push/Bleat Button
@@ -105,8 +105,9 @@ struct HomeView: View {
                     .strokeBorder(Color.accentColor, lineWidth: 2.0)
                     .frame(height: 40, alignment: .center)
                     .padding()
-                
-                let title = self.viewModel.pushEnabled ? "Disable Push" : "Enable Push"
+
+                let title =
+                    self.viewModel.pushEnabled ? "Disable Push" : "Enable Push"
                 Text(title)
                     .fontWeight(.bold)
                     .foregroundColor(.primary)
@@ -145,7 +146,7 @@ struct HomeView: View {
     var body: some View {
         NavigationView {
             ZStack {
-                if (self.verticalSizeClass == .compact) {
+                if self.verticalSizeClass == .compact {
                     makeCompactContent()
                 } else {
                     makeContent()
@@ -162,27 +163,29 @@ struct HomeView: View {
     @ViewBuilder
     private func makeSettingLink() -> some View {
         #if canImport(AirshipDebug)
-        NavigationLink(
-            destination: AirshipDebugView(),
-            tag: HomeDestination.settings,
-            selection: self.$appState.homeDestination
-        ) {
-            Image(systemName: "gear")
-                .resizable()
-                .scaledToFit()
-                .foregroundColor(.accentColor)
-                .padding(10)
-                .frame(width: 44, height: 44)
-        }
+            NavigationLink(
+                destination: AirshipDebugView(),
+                tag: HomeDestination.settings,
+                selection: self.$appState.homeDestination
+            ) {
+                Image(systemName: "gear")
+                    .resizable()
+                    .scaledToFit()
+                    .foregroundColor(.accentColor)
+                    .padding(10)
+                    .frame(width: 44, height: 44)
+            }
         #endif
     }
 
-
-    class ViewModel : ObservableObject {
+    class ViewModel: ObservableObject {
         @Published
-        var pushEnabled: Bool = Airship.push.userPushNotificationsEnabled && Airship.shared.privacyManager.isEnabled(.push) {
+        var pushEnabled: Bool =
+            Airship.push.userPushNotificationsEnabled
+            && Airship.shared.privacyManager.isEnabled(.push)
+        {
             didSet {
-                if (pushEnabled) {
+                if pushEnabled {
                     Airship.shared.privacyManager.enableFeatures(.push)
                     Airship.push.userPushNotificationsEnabled = true
                 } else {
@@ -199,8 +202,6 @@ struct HomeView: View {
 
         private var subscriptions = Set<AnyCancellable>()
 
-
-
         init() {
             NotificationCenter.default
                 .publisher(for: Channel.channelCreatedEvent)
@@ -209,7 +210,6 @@ struct HomeView: View {
                     self.channelID = Airship.channel.identifier
                 }
                 .store(in: &self.subscriptions)
-
 
             NotificationCenter.default
                 .publisher(for: Contact.contactChangedEvent)
@@ -226,4 +226,3 @@ struct HomeView: View {
 
     }
 }
-

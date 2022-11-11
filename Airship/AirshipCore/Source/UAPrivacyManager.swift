@@ -1,38 +1,41 @@
 /* Copyright Airship and Contributors */
 
-import Foundation;
+import Foundation
 
-/**
- * The privacy manager allow enabling/disabling features in the SDK.
- * The SDK will not make any network requests or collect data if all features our disabled, with
- * a few exceptions when going from enabled -> disabled. To have the SDK opt-out of all features on startup,
- * set the default enabled features in the Config to an empty option set, or in the
- * airshipconfig.plist file with `enabledFeatures = none`.
- * If any feature is enabled, the SDK will collect and send the following data:
- * - Channel ID
- * - Locale
- * - TimeZone
- * - Platform
- * - Opt in state (push and notifications)
- * - SDK version
- * - Accengage Device ID (Accengage module for migration)
- */
+/// The privacy manager allow enabling/disabling features in the SDK.
+/// The SDK will not make any network requests or collect data if all features our disabled, with
+/// a few exceptions when going from enabled -> disabled. To have the SDK opt-out of all features on startup,
+/// set the default enabled features in the Config to an empty option set, or in the
+/// airshipconfig.plist file with `enabledFeatures = none`.
+/// If any feature is enabled, the SDK will collect and send the following data:
+/// - Channel ID
+/// - Locale
+/// - TimeZone
+/// - Platform
+/// - Opt in state (push and notifications)
+/// - SDK version
+/// - Accengage Device ID (Accengage module for migration)
 @objc(UAPrivacyManager)
-public class PrivacyManager : NSObject {
+public class PrivacyManager: NSObject {
 
     /**
     * NSNotification event when enabled feature list is updated.
      */
     @objc
-    public static let changeEvent = Notification.Name("com.urbanairship.privacymanager.enabledfeatures_changed")
+    public static let changeEvent = Notification.Name(
+        "com.urbanairship.privacymanager.enabledfeatures_changed"
+    )
 
-    private let UAPrivacyManagerEnabledFeaturesKey = "com.urbanairship.privacymanager.enabledfeatures"
+    private let UAPrivacyManagerEnabledFeaturesKey =
+        "com.urbanairship.privacymanager.enabledfeatures"
     private let LegacyIAAEnableFlag = "UAInAppMessageManagerEnabled"
     private let LegacyChatEnableFlag = "AirshipChat.enabled"
     private let LegacyLocationEnableFlag = "UALocationUpdatesEnabled"
     private let LegacyAnalyticsEnableFlag = "UAAnalyticsEnabled"
-    private let LegacyPushTokenRegistrationEnableFlag = "UAPushTokenRegistrationEnabled"
-    private let LegacyDataCollectionEnableEnableFlag = "com.urbanairship.data_collection_enabled"
+    private let LegacyPushTokenRegistrationEnableFlag =
+        "UAPushTokenRegistrationEnabled"
+    private let LegacyDataCollectionEnableEnableFlag =
+        "com.urbanairship.data_collection_enabled"
 
     private let dataStore: PreferenceDataStore
     private let notificationCenter: NotificationCenter
@@ -44,12 +47,19 @@ public class PrivacyManager : NSObject {
     public var enabledFeatures: Features {
         get {
             _enabledFeatures
-        } set {
-            if (_enabledFeatures != newValue) {
+        }
+        set {
+            if _enabledFeatures != newValue {
                 _enabledFeatures = newValue
-                dataStore.setObject(NSNumber(value: enabledFeatures.rawValue), forKey: UAPrivacyManagerEnabledFeaturesKey)
+                dataStore.setObject(
+                    NSNumber(value: enabledFeatures.rawValue),
+                    forKey: UAPrivacyManagerEnabledFeaturesKey
+                )
                 UADispatcher.main.dispatchAsyncIfNecessary({ [self] in
-                    notificationCenter.post(name: PrivacyManager.changeEvent, object: nil)
+                    notificationCenter.post(
+                        name: PrivacyManager.changeEvent,
+                        object: nil
+                    )
                 })
             }
         }
@@ -59,24 +69,38 @@ public class PrivacyManager : NSObject {
      * - Note: For internal use only. :nodoc:
      */
     @objc
-    public convenience init(dataStore: PreferenceDataStore, defaultEnabledFeatures: Features) {
+    public convenience init(
+        dataStore: PreferenceDataStore,
+        defaultEnabledFeatures: Features
+    ) {
         self.init(
             dataStore: dataStore,
             defaultEnabledFeatures: defaultEnabledFeatures,
-            notificationCenter: NotificationCenter.default)
+            notificationCenter: NotificationCenter.default
+        )
     }
 
     /*
      * - Note: For internal use only. :nodoc:
      */
     @objc
-    public init(dataStore: PreferenceDataStore, defaultEnabledFeatures: Features, notificationCenter: NotificationCenter) {
+    public init(
+        dataStore: PreferenceDataStore,
+        defaultEnabledFeatures: Features,
+        notificationCenter: NotificationCenter
+    ) {
 
         self.dataStore = dataStore
         self.notificationCenter = notificationCenter
 
         if self.dataStore.keyExists(UAPrivacyManagerEnabledFeaturesKey) {
-            self._enabledFeatures = Features(rawValue: UInt(self.dataStore.integer(forKey: UAPrivacyManagerEnabledFeaturesKey)))
+            self._enabledFeatures = Features(
+                rawValue: UInt(
+                    self.dataStore.integer(
+                        forKey: UAPrivacyManagerEnabledFeaturesKey
+                    )
+                )
+            )
         } else {
             self._enabledFeatures = defaultEnabledFeatures
         }
@@ -101,7 +125,7 @@ public class PrivacyManager : NSObject {
         enabledFeatures.remove(features)
     }
 
-   /**
+    /**
     * Checks if a given feature is enabled.
     *
     * - Parameter feature: The features to check.
@@ -109,14 +133,14 @@ public class PrivacyManager : NSObject {
     */
     @objc
     public func isEnabled(_ feature: Features) -> Bool {
-        if feature == .none {
-            return enabledFeatures == .none
-        } else {
-            return (enabledFeatures.rawValue & feature.rawValue) == feature.rawValue
+        guard feature == .none else {
+            return (enabledFeatures.rawValue & feature.rawValue)
+                == feature.rawValue
         }
+        return enabledFeatures == .none
     }
 
-   /**
+    /**
     * Checks if any feature is enabled.
     *
     * - Returns: True if any feature is enabled, otherwise false.
@@ -138,10 +162,13 @@ public class PrivacyManager : NSObject {
         }
 
         if dataStore.keyExists(LegacyPushTokenRegistrationEnableFlag) {
-            if !(dataStore.bool(forKey: LegacyPushTokenRegistrationEnableFlag)) {
+            if !(dataStore.bool(forKey: LegacyPushTokenRegistrationEnableFlag))
+            {
                 features.remove(.push)
             }
-            dataStore.removeObject(forKey: LegacyPushTokenRegistrationEnableFlag)
+            dataStore.removeObject(
+                forKey: LegacyPushTokenRegistrationEnableFlag
+            )
         }
 
         if dataStore.keyExists(LegacyAnalyticsEnableFlag) {

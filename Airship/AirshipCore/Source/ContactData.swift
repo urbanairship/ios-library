@@ -2,36 +2,34 @@
 
 import Foundation
 
-/**
- * Contact data.
- */
+/// Contact data.
 @objc(UAContactData)
-public class ContactData : NSObject {
-    
+public class ContactData: NSObject {
+
     /**
      * Subscription lists
      */
     @objc
     public let subscriptionLists: [String: ChannelScopes]
-    
+
     /**
      * Tag groups.
      */
     @objc
     public let tags: [String: [String]]
-    
+
     /**
      * Attributes.
      */
     @objc
     public let attributes: [String: Any]
-    
+
     /**
      * Associated channels.
      */
     @objc
     public let channels: [AssociatedChannel]
-    
+
     /**
      * Default constructor.
      * - Parameters:
@@ -41,10 +39,12 @@ public class ContactData : NSObject {
      *   - channels: The associated channels.
      */
     @objc
-    public init(tags: [String : [String]],
-                attributes: [String : Any],
-                channels: [AssociatedChannel],
-                subscriptionLists: [String : ChannelScopes]) {
+    public init(
+        tags: [String: [String]],
+        attributes: [String: Any],
+        channels: [AssociatedChannel],
+        subscriptionLists: [String: ChannelScopes]
+    ) {
 
         self.tags = tags
         self.attributes = attributes
@@ -53,5 +53,3 @@ public class ContactData : NSObject {
         super.init()
     }
 }
-
-

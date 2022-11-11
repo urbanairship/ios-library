@@ -8,7 +8,7 @@ actor LiveActivityRegistry {
     /// A stream of registry updates
     let updates: AsyncStream<LiveActivityUpdate>
 
-    private let maxActiveTime: TimeInterval = 288000.0 // 8 hours
+    private let maxActiveTime: TimeInterval = 288000.0  // 8 hours
 
     private let trackedKey = "LiveaActivityRegister#tracked"
     private var tracked: [LiveActivityInfo] {
@@ -23,12 +23,15 @@ actor LiveActivityRegistry {
     }
 
     private var taskMap: [String: Task<Void, Never>] = [:]
-    private let updatesContinuation: AsyncStream<LiveActivityUpdate>.Continuation
+    private let updatesContinuation:
+        AsyncStream<LiveActivityUpdate>.Continuation
     private let dataStore: PreferenceDataStore
     private let date: AirshipDate
 
-    init(dataStore: PreferenceDataStore,
-         date: AirshipDate = AirshipDate()) {
+    init(
+        dataStore: PreferenceDataStore,
+        date: AirshipDate = AirshipDate()
+    ) {
         self.date = date
         self.dataStore = dataStore
         var escapee: AsyncStream<LiveActivityUpdate>.Continuation? = nil
@@ -51,10 +54,13 @@ actor LiveActivityRegistry {
     ///     - activities: An array of activities
     func restoreTracking(activities: [LiveActivity]) {
         activities.forEach { activity in
-            findInfos(id: activity.id).forEach { info in
-                AirshipLogger.debug("Live activity restore: \(activity.id) name: \(info.name)")
-                watchActivity(activity, name: info.name)
-            }
+            findInfos(id: activity.id)
+                .forEach { info in
+                    AirshipLogger.debug(
+                        "Live activity restore: \(activity.id) name: \(info.name)"
+                    )
+                    watchActivity(activity, name: info.name)
+                }
         }
     }
 
@@ -67,7 +73,7 @@ actor LiveActivityRegistry {
             var date = self.date.now
             let maxActiveDate = info.startDate.addingTimeInterval(maxActiveTime)
 
-            if (date > maxActiveDate) {
+            if date > maxActiveDate {
                 date = maxActiveDate
             }
 
@@ -89,10 +95,11 @@ actor LiveActivityRegistry {
         guard activity.isActive else {
             return
         }
-        
-        findInfos(name: name).forEach { info in
-            self.removeLiveActivity(id: info.id, name: info.name)
-        }
+
+        findInfos(name: name)
+            .forEach { info in
+                self.removeLiveActivity(id: info.id, name: info.name)
+            }
 
         let info = LiveActivityInfo(
             id: activity.id,
@@ -103,7 +110,7 @@ actor LiveActivityRegistry {
 
         self.tracked.append(info)
 
-        if (info.token != nil) {
+        if info.token != nil {
             yieldUpdate(
                 info: info,
                 action: .set
@@ -134,15 +141,15 @@ actor LiveActivityRegistry {
         var tracked = self.tracked
 
         for index in 0..<tracked.count {
-            if (tracked[index].id == id && tracked[index].name == name) {
-                if (tracked[index].token != token) {
+            if tracked[index].id == id && tracked[index].name == name {
+                if tracked[index].token != token {
                     tracked[index].token = token
                     yieldUpdate(info: tracked[index], action: .set)
                 }
                 break
             }
         }
-        
+
         self.tracked = tracked
     }
 
@@ -154,15 +161,15 @@ actor LiveActivityRegistry {
         let taskID = makeTaskID(id: id, name: name)
         taskMap[taskID]?.cancel()
         taskMap[taskID] = nil
-        
+
         self.tracked.removeAll { info in
-            if (info.name == name && info.id == id) {
-                if (info.token != nil) {
+            if info.name == name && info.id == id {
+                if info.token != nil {
                     yieldUpdate(info: info, action: .remove, date: date)
                 }
                 return true
             }
-            
+
             return false
         }
     }
@@ -185,34 +192,36 @@ actor LiveActivityRegistry {
         )
     }
 
-    private func findInfos(id: String? = nil, name: String? = nil) -> [LiveActivityInfo] {
+    private func findInfos(id: String? = nil, name: String? = nil)
+        -> [LiveActivityInfo]
+    {
         return self.tracked.filter { info in
-            if (id != nil && info.id != id) {
+            if id != nil && info.id != id {
                 return false
             }
-            
-            if (name != nil && info.name != name) {
+
+            if name != nil && info.name != name {
                 return false
             }
 
             return true
         }
     }
-    
+
     private func makeTaskID(id: String, name: String) -> String {
         return id + name
     }
 }
 
-fileprivate struct LiveActivityInfo: Codable {
+private struct LiveActivityInfo: Codable {
     var id: String
     var name: String
     var token: String?
     var startDate: Date
 }
 
-fileprivate extension Date {
-    var millisecondsSince1970: UInt64 {
+extension Date {
+    fileprivate var millisecondsSince1970: UInt64 {
         UInt64((self.timeIntervalSince1970 * 1000.0).rounded())
     }
 }

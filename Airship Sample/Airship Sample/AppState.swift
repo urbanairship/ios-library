@@ -1,9 +1,9 @@
 /* Copyright Urban Airship and Contributors */
 
-import SwiftUI
-import Combine
 import AirshipCore
 import AirshipMessageCenter
+import Combine
+import SwiftUI
 
 class AppState: ObservableObject {
     static let shared = AppState()
@@ -17,7 +17,7 @@ class AppState: ObservableObject {
     var homeDestination: HomeDestination? = nil
 
     @Published
-    var unreadCount = 0;
+    var unreadCount = 0
 
     @Published
     var toastMessage: Toast.Message?
@@ -25,7 +25,7 @@ class AppState: ObservableObject {
     private var subscriptions = Set<AnyCancellable>()
 
     init() {
-        if (Airship.isFlying) {
+        if Airship.isFlying {
             MessageCenter.shared.inbox.unreadCountPublisher
                 .receive(on: RunLoop.main)
                 .sink { unreadCount in
@@ -48,5 +48,3 @@ enum HomeDestination: Hashable {
     case namedUser
     case liveactivities
 }
-
-

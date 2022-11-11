@@ -1,11 +1,9 @@
 /* Copyright Airship and Contributors */
 
-/**
- * A SearchEventTemplate represents a custom search event template for the
- * application.
- */
+/// A SearchEventTemplate represents a custom search event template for the
+/// application.
 @objc(SearchEventTemplate)
-public class SearchEventTemplate : NSObject {
+public class SearchEventTemplate: NSObject {
     /**
      * The event's value. The value must be between -2^31 and
      * 2^31 - 1 or it will invalidate the event.
@@ -25,7 +23,6 @@ public class SearchEventTemplate : NSObject {
     @objc
     public var identifier: String?
 
-
     /**
      * The event's category.
      */
@@ -43,7 +40,6 @@ public class SearchEventTemplate : NSObject {
      */
     @objc
     public var totalResults: Int = 0
-
 
     /**
      * Default constructor.
@@ -83,13 +79,14 @@ public class SearchEventTemplate : NSObject {
      */
     @objc
     public func createEvent() -> CustomEvent {
-        var propertyDictionary: [String : Any] = [:]
+        var propertyDictionary: [String: Any] = [:]
         propertyDictionary["ltv"] = self.eventValue != nil
         propertyDictionary["id"] = identifier
         propertyDictionary["category"] = category
         propertyDictionary["query"] = query
         propertyDictionary["type"] = type
-        propertyDictionary["total_results"] = self.totalResults > 0 ? self.totalResults : nil
+        propertyDictionary["total_results"] =
+            self.totalResults > 0 ? self.totalResults : nil
 
         let event = CustomEvent(name: "search")
         event.eventValue = self.eventValue

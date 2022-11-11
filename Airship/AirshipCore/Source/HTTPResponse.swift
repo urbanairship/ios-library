@@ -10,7 +10,7 @@ public class HTTPResponse: NSObject {
     }
 
     @objc
-    public override var description : String {
+    public override var description: String {
         return self.debugDescription
     }
 
@@ -20,23 +20,17 @@ public class HTTPResponse: NSObject {
     }
 
     @objc
-    public var isSuccess : Bool {
-        get {
-            return status >= 200 && status <= 299
-        }
+    public var isSuccess: Bool {
+        return status >= 200 && status <= 299
     }
 
     @objc
-    public var isClientError : Bool {
-        get {
-            return status >= 400 && status <= 499
-        }
+    public var isClientError: Bool {
+        return status >= 400 && status <= 499
     }
 
     @objc
-    public var isServerError : Bool {
-        get {
-            return status >= 500 && status <= 599
-        }
+    public var isServerError: Bool {
+        return status >= 500 && status <= 599
     }
 }

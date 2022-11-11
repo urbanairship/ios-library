@@ -2,8 +2,7 @@
 
 import XCTest
 
-@testable
-import AirshipCore
+@testable import AirshipCore
 
 class ChannelBulkUpdateAPIClientTest: XCTestCase {
 
@@ -14,17 +13,25 @@ class ChannelBulkUpdateAPIClientTest: XCTestCase {
     override func setUpWithError() throws {
         let airshipConfig = Config()
         airshipConfig.requireInitialRemoteConfigEnabled = false
-        self.config = RuntimeConfig(config: airshipConfig, dataStore: PreferenceDataStore(appKey: UUID().uuidString))
+        self.config = RuntimeConfig(
+            config: airshipConfig,
+            dataStore: PreferenceDataStore(appKey: UUID().uuidString)
+        )
         self.session = TestRequestSession.init()
-        self.client = ChannelBulkUpdateAPIClient(config: self.config, session: self.session)
+        self.client = ChannelBulkUpdateAPIClient(
+            config: self.config,
+            session: self.session
+        )
     }
 
     func testUpdate() throws {
         let date = Date()
-        self.session.response = HTTPURLResponse(url: URL(string: "https://neat")!,
-                                                  statusCode: 200,
-                                                  httpVersion: "",
-                                                  headerFields: [String: String]())
+        self.session.response = HTTPURLResponse(
+            url: URL(string: "https://neat")!,
+            statusCode: 200,
+            httpVersion: "",
+            headerFields: [String: String]()
+        )
 
         let expectation = XCTestExpectation(description: "callback called")
 
@@ -37,7 +44,7 @@ class ChannelBulkUpdateAPIClientTest: XCTestCase {
                 SubscriptionListUpdate(
                     listId: "pizza",
                     type: .subscribe
-                )
+                ),
             ],
             tagGroupUpdates: [
                 TagGroupUpdate(
@@ -49,7 +56,7 @@ class ChannelBulkUpdateAPIClientTest: XCTestCase {
                     group: "some-other-group",
                     tags: ["tag-3", "tag-4"],
                     type: .set
-                )
+                ),
             ],
             attributeUpdates: [
                 AttributeUpdate(
@@ -71,42 +78,51 @@ class ChannelBulkUpdateAPIClientTest: XCTestCase {
         }
         wait(for: [expectation], timeout: 10.0)
 
-        let expectedBody = [
-            "subscription_lists": [
-                [
-                    "action": "unsubscribe",
-                    "list_id": "coffee",
+        let expectedBody =
+            [
+                "subscription_lists": [
+                    [
+                        "action": "unsubscribe",
+                        "list_id": "coffee",
+                    ],
+                    [
+                        "action": "subscribe",
+                        "list_id": "pizza",
+                    ],
                 ],
-                [
-                    "action": "subscribe",
-                    "list_id": "pizza",
-                ]
-            ],
-            "tags": [
-                "add": [
-                    "some-group": ["tag-1", "tag-2"]
+                "tags": [
+                    "add": [
+                        "some-group": ["tag-1", "tag-2"]
+                    ],
+                    "set": [
+                        "some-other-group": ["tag-3", "tag-4"]
+                    ],
                 ],
-                "set": [
-                    "some-other-group": ["tag-3", "tag-4"]
-                ]
-            ],
-            "attributes": [
-                [
-                    "action": "set",
-                    "key": "some-attribute",
-                    "timestamp": Utils.isoDateFormatterUTCWithDelimiter().string(from: date),
-                    "value": "hello",
-                ]
-            ]
-        ] as NSDictionary
+                "attributes": [
+                    [
+                        "action": "set",
+                        "key": "some-attribute",
+                        "timestamp": Utils.isoDateFormatterUTCWithDelimiter()
+                            .string(
+                                from: date
+                            ),
+                        "value": "hello",
+                    ]
+                ],
+            ] as NSDictionary
 
         let lastRequest = self.session.lastRequest!
-        let body = JSONUtils.object(String(data: lastRequest.body!, encoding: .utf8)!) as? NSDictionary
+        let body =
+            JSONUtils.object(String(data: lastRequest.body!, encoding: .utf8)!)
+            as? NSDictionary
         XCTAssertEqual("PUT", lastRequest.method)
         XCTAssertEqual(expectedBody, body)
-        
+
         let url = lastRequest.url
-        XCTAssertEqual("https://device-api.urbanairship.com/api/channels/sdk/batch/some-channel?platform=ios", url?.absoluteString)
+        XCTAssertEqual(
+            "https://device-api.urbanairship.com/api/channels/sdk/batch/some-channel?platform=ios",
+            url?.absoluteString
+        )
     }
 
     func testUpdateError() throws {
@@ -124,7 +140,7 @@ class ChannelBulkUpdateAPIClientTest: XCTestCase {
                 SubscriptionListUpdate(
                     listId: "pizza",
                     type: .subscribe
-                )
+                ),
             ]
         )
 
@@ -138,5 +154,5 @@ class ChannelBulkUpdateAPIClientTest: XCTestCase {
         }
         wait(for: [expectation], timeout: 10.0)
     }
-   
+
 }

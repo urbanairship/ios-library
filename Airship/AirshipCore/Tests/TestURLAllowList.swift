@@ -3,8 +3,8 @@
 import AirshipCore
 
 @objc(UATestURLAllowList)
-public class TestURLAllowList : URLAllowList {
-    
+public class TestURLAllowList: URLAllowList {
+
     @objc
     public var isAllowedReturnValue: Bool = true
     @objc
@@ -14,7 +14,9 @@ public class TestURLAllowList : URLAllowList {
         return isAllowedReturnValue
     }
 
-    public override func isAllowed(_ url: URL?, scope: URLAllowListScope) -> Bool {
+    public override func isAllowed(_ url: URL?, scope: URLAllowListScope)
+        -> Bool
+    {
         return isAllowedReturnValue
     }
 
@@ -22,7 +24,10 @@ public class TestURLAllowList : URLAllowList {
         return addEntryReturnValue
     }
 
-    public override func addEntry(_ patternString: String, scope: URLAllowListScope) -> Bool {
+    public override func addEntry(
+        _ patternString: String,
+        scope: URLAllowListScope
+    ) -> Bool {
         return addEntryReturnValue
     }
 }

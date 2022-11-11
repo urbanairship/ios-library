@@ -2,9 +2,7 @@
 
 import ImageIO
 
-/**
- * @note For internal use only. :nodoc:
- */
+/// @note For internal use only. :nodoc:
 extension UIImage {
     /**
      * Image factory method that supports animated data.
@@ -16,33 +14,32 @@ extension UIImage {
     @objc(fancyImageWithData:fillIn:)
     public class func fancyImage(with data: Data?, fillIn: Bool) -> UIImage? {
         guard let data = data,
-              let imageData = try? AirshipImageData(data: data)
+            let imageData = try? AirshipImageData(data: data)
         else {
             return nil
         }
 
-        if imageData.frames.count > 1 {
-            var totalDuration: TimeInterval = 0.0
-            var images: [UIImage] = []
-
-            imageData.frames.forEach { frame in
-                if (frame.duration > 0.0) {
-                    totalDuration += frame.duration
-                }
-
-                if (fillIn) {
-                    let centiseconds = Int(frame.duration * 100)
-                    for _ in 0..<centiseconds {
-                        images.append(frame.image)
-                    }
-                } else {
-                    images.append(frame.image)
-                }
-            }
-            return UIImage.animatedImage(with: images, duration: totalDuration)
-        } else {
+        guard imageData.frames.count > 1 else {
             return imageData.frames[0].image
         }
+        var totalDuration: TimeInterval = 0.0
+        var images: [UIImage] = []
+
+        imageData.frames.forEach { frame in
+            if frame.duration > 0.0 {
+                totalDuration += frame.duration
+            }
+
+            if fillIn {
+                let centiseconds = Int(frame.duration * 100)
+                for _ in 0..<centiseconds {
+                    images.append(frame.image)
+                }
+            } else {
+                images.append(frame.image)
+            }
+        }
+        return UIImage.animatedImage(with: images, duration: totalDuration)
     }
 
     /**
@@ -68,19 +65,20 @@ public class AirshipImageData: NSObject {
 
     let frames: [Frame]
     private static let minFrameDuration: TimeInterval = 0.01
-    
+
     init(frames: [Frame]) {
         self.frames = frames
     }
 
     @objc
     public convenience init(data: Data) throws {
-        guard let source = CGImageSourceCreateWithData(data as CFData, nil) else {
+        guard let source = CGImageSourceCreateWithData(data as CFData, nil)
+        else {
             throw AirshipErrors.error("Invalid image data")
         }
 
         let frames = AirshipImageData.frames(from: source)
-        if (frames.isEmpty) {
+        if frames.isEmpty {
             throw AirshipErrors.error("Invalid image, no frames.")
         }
 
@@ -90,11 +88,10 @@ public class AirshipImageData: NSObject {
     private class func frames(from source: CGImageSource) -> [Frame] {
         let count = CGImageSourceGetCount(source)
         guard count > 1 else {
-            if let image = frameImage(0, source: source) {
-                return [Frame(image: image, duration: 0.0)]
-            } else {
+            guard let image = frameImage(0, source: source) else {
                 return []
             }
+            return [Frame(image: image, duration: 0.0)]
         }
 
         var frames: [Frame] = []
@@ -113,8 +110,11 @@ public class AirshipImageData: NSObject {
         return frames
     }
 
-    private static func frameImage(_ index: Int, source: CGImageSource) -> UIImage? {
-        guard let imageRef = CGImageSourceCreateImageAtIndex(source, index, nil) else {
+    private static func frameImage(_ index: Int, source: CGImageSource)
+        -> UIImage?
+    {
+        guard let imageRef = CGImageSourceCreateImageAtIndex(source, index, nil)
+        else {
             return nil
         }
 
@@ -126,19 +126,31 @@ public class AirshipImageData: NSObject {
         source: CGImageSource
     ) -> TimeInterval {
 
-        guard let properties = CGImageSourceCopyPropertiesAtIndex(source, index, nil) as? [AnyHashable: Any] else {
-            return minFrameDuration
-        }
-
-        guard let gifProperties = properties[kCGImagePropertyGIFDictionary as String] as? [AnyHashable : Any]
+        guard
+            let properties = CGImageSourceCopyPropertiesAtIndex(
+                source,
+                index,
+                nil
+            )
+                as? [AnyHashable: Any]
         else {
             return minFrameDuration
         }
 
-        let delayTime = gifProperties[kCGImageAnimationDelayTime as String] as? TimeInterval
-        let gifDelayTime = gifProperties[[kCGImagePropertyGIFUnclampedDelayTime as String]] as? TimeInterval
+        guard
+            let gifProperties =
+                properties[kCGImagePropertyGIFDictionary as String]
+                as? [AnyHashable: Any]
+        else {
+            return minFrameDuration
+        }
 
-        return max(gifDelayTime ?? delayTime  ?? 0.0, minFrameDuration)
+        let delayTime =
+            gifProperties[kCGImageAnimationDelayTime as String] as? TimeInterval
+        let gifDelayTime =
+            gifProperties[[kCGImagePropertyGIFUnclampedDelayTime as String]]
+            as? TimeInterval
+
+        return max(gifDelayTime ?? delayTime ?? 0.0, minFrameDuration)
     }
 }
-

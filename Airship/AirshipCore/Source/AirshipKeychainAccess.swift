@@ -113,8 +113,10 @@ public class AirshipKeychainAccess {
     ///     - completionHandler: The completion handler with the result
     public func readCredentials(
         identifier: String,
-        completionHandler: @escaping(AirshipKeychainCredentials?
-    ) -> Void) {
+        completionHandler: @escaping (
+            AirshipKeychainCredentials?
+        ) -> Void
+    ) {
         self.dispatcher.dispatchAsync {
             let credentials = self.readCredentialsHelper(
                 identifier: identifier
@@ -124,7 +126,9 @@ public class AirshipKeychainAccess {
     }
 
     /// Helper method that migrates data from the old storage location to the new on read.
-    private func readCredentialsHelper(identifier: String) -> AirshipKeychainCredentials? {
+    private func readCredentialsHelper(identifier: String)
+        -> AirshipKeychainCredentials?
+    {
         var credentials = Keychain.readCredentials(
             identifier: identifier,
             service: self.service
@@ -146,7 +150,7 @@ public class AirshipKeychainAccess {
                     identifier: identifier,
                     service: self.service
                 )
-                if (result) {
+                if result {
                     Keychain.deleteCredentials(
                         identifier: identifier,
                         service: bundleID
@@ -162,16 +166,16 @@ public class AirshipKeychainAccess {
 }
 
 /// Helper that wraps the actual keychain calls
-fileprivate struct Keychain {
+private struct Keychain {
     static func writeCredentials(
         _ credentials: AirshipKeychainCredentials,
         identifier: String,
         service: String
     ) -> Bool {
         guard let identifierData = identifier.data(using: .utf8),
-              let passwordData = credentials.password.data(
+            let passwordData = credentials.password.data(
                 using: .utf8
-              )
+            )
         else {
             return false
         }
@@ -184,7 +188,7 @@ fileprivate struct Keychain {
             kSecAttrService as String: service,
             kSecAttrGeneric as String: identifierData,
             kSecAttrAccount as String: credentials.username,
-            kSecValueData as String: passwordData
+            kSecValueData as String: passwordData,
         ]
 
         let status = SecItemAdd(addquery as CFDictionary, nil)
@@ -223,7 +227,7 @@ fileprivate struct Keychain {
             kSecAttrService as String: service,
             kSecAttrGeneric as String: identifierData,
             kSecReturnAttributes as String: true,
-            kSecReturnData as String: true
+            kSecReturnData as String: true,
         ]
 
         var item: CFTypeRef?
@@ -232,10 +236,13 @@ fileprivate struct Keychain {
             return nil
         }
 
-        guard let existingItem = item as? [String : Any],
-              let passwordData = existingItem[kSecValueData as String] as? Data,
-              let password = String(data: passwordData, encoding: String.Encoding.utf8),
-              let username = existingItem[kSecAttrAccount as String] as? String
+        guard let existingItem = item as? [String: Any],
+            let passwordData = existingItem[kSecValueData as String] as? Data,
+            let password = String(
+                data: passwordData,
+                encoding: String.Encoding.utf8
+            ),
+            let username = existingItem[kSecAttrAccount as String] as? String
         else {
             return nil
         }

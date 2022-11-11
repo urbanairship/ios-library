@@ -1,9 +1,7 @@
+import Combine
 import Foundation
 
-@testable
-import AirshipCore
-
-import Combine
+@testable import AirshipCore
 
 /// Worker that handles queuing tasks and performing the actual work
 actor TestWorker {
@@ -21,8 +19,10 @@ actor TestWorker {
     private let conditionsMonitor: WorkConditionsMonitor
     let rateLimiter: TestWorkRateLimiter
     private let backgroundTasks: WorkBackgroundTasksProtocol
-    private let workHandler: (AirshipWorkRequest) async throws -> AirshipWorkResult
-    private let notificationCenter: NotificationCenter = NotificationCenter.default
+    private let workHandler:
+        (AirshipWorkRequest) async throws -> AirshipWorkResult
+    private let notificationCenter: NotificationCenter = NotificationCenter
+        .default
 
     init(
         workID: String,
@@ -30,7 +30,8 @@ actor TestWorker {
         conditionsMonitor: WorkConditionsMonitor,
         rateLimiter: TestWorkRateLimiter,
         backgroundTasks: WorkBackgroundTasksProtocol,
-        workHandler: @escaping (AirshipWorkRequest) async throws -> AirshipWorkResult
+        workHandler: @escaping (AirshipWorkRequest) async throws ->
+            AirshipWorkResult
     ) {
         self.workID = workID
         self.type = type
@@ -53,7 +54,7 @@ actor TestWorker {
         }
 
         var queueWork = false
-        switch (request.conflictPolicy) {
+        switch request.conflictPolicy {
         case .append:
             queueWork = true
 
@@ -67,7 +68,7 @@ actor TestWorker {
             queueWork = pending.isEmpty
         }
 
-        if (queueWork) {
+        if queueWork {
             let pendingID = nextPendingID
             nextPendingID += 1
 
@@ -108,7 +109,7 @@ actor TestWorker {
             }
 
             tasks.insert(task)
-            switch (self.type) {
+            switch self.type {
             case .concurrent:
                 Task {
                     try? await task.result.get()
@@ -120,7 +121,6 @@ actor TestWorker {
             }
         }
     }
-
 
     private func isValidRequest(_ pendingRequest: PendingRequest) -> Bool {
         return self.pending.contains(pendingRequest)
@@ -141,7 +141,9 @@ actor TestWorker {
         try await prepare(pendingRequest: pendingRequest)
         try Task.checkCancellation()
 
-        let backgroundTask = try backgroundTasks.beginTask("Airship: \(canonicalID)") {
+        let backgroundTask = try backgroundTasks.beginTask(
+            "Airship: \(canonicalID)"
+        ) {
             disposable.dispose()
         }
         var result: AirshipWorkResult = .failure
@@ -153,7 +155,7 @@ actor TestWorker {
             )
         }
 
-        if (result == .success) {
+        if result == .success {
             // Success
             AirshipLogger.trace(
                 "Work \(canonicalID) finished"
@@ -166,26 +168,32 @@ actor TestWorker {
             )
             backgroundTask.dispose()
             try Task.checkCancellation()
-            let backOff = min(TestWorker.maxBackOff, Double(attempt) * TestWorker.initialBackOff)
+            let backOff = min(
+                TestWorker.maxBackOff,
+                Double(attempt) * TestWorker.initialBackOff
+            )
             AirshipLogger.trace(
                 "Work \(canonicalID) backing off for \(backOff) seconds."
             )
 
-            let cancellable = self.notificationCenter.publisher(
-                for: AppStateTracker.didEnterBackgroundNotification
-            )
-            .first()
-            .sink { _ in
-                disposable.dispose()
-            }
+            let cancellable = self.notificationCenter
+                .publisher(
+                    for: AppStateTracker.didEnterBackgroundNotification
+                )
+                .first()
+                .sink { _ in
+                    disposable.dispose()
+                }
 
             try await sleep(backOff)
             cancellable.cancel()
         }
     }
 
-    func calculateBackgroundWaitTime(maxTime: TimeInterval) async -> TimeInterval {
-        switch (self.type) {
+    func calculateBackgroundWaitTime(maxTime: TimeInterval) async
+        -> TimeInterval
+    {
+        switch self.type {
         case .serial:
             guard let pending = self.pending.first else {
                 return 0.0
@@ -213,48 +221,58 @@ actor TestWorker {
         workRequest: AirshipWorkRequest,
         maxTime: TimeInterval
     ) async -> TimeInterval {
-        guard await self.conditionsMonitor.checkConditions(
+        guard
+            await self.conditionsMonitor.checkConditions(
                 workRequest: workRequest
-              )
+            )
         else {
             return 0.0
         }
 
-        if !workRequest.rateLimitIDs.isEmpty {
-            let wait = await self.rateLimiter.nextAvailable(workRequest.rateLimitIDs)
-            if (wait > maxTime) {
-                return 0.0
-            }
-            return wait
-        } else {
+        guard !workRequest.rateLimitIDs.isEmpty else {
             return 1.0
         }
+        let wait = await self.rateLimiter.nextAvailable(
+            workRequest.rateLimitIDs
+        )
+        if wait > maxTime {
+            return 0.0
+        }
+        return wait
     }
 
     private func prepare(pendingRequest: PendingRequest) async throws {
         let workRequest = pendingRequest.request
 
-        if (workRequest.initialDelay > 0) {
-            let remainingDelay = pendingRequest.date.timeIntervalSinceNow - workRequest.initialDelay
-            if (remainingDelay > 0) {
+        if workRequest.initialDelay > 0 {
+            let remainingDelay =
+                pendingRequest.date.timeIntervalSinceNow
+                - workRequest.initialDelay
+            if remainingDelay > 0 {
                 try await sleep(remainingDelay)
             }
         }
 
         if workRequest.rateLimitIDs.isEmpty {
-            await self.conditionsMonitor.awaitConditions(workRequest: workRequest)
+            await self.conditionsMonitor.awaitConditions(
+                workRequest: workRequest
+            )
         } else {
             repeat {
                 let rateLimit = await rateLimiter.nextAvailable(
                     workRequest.rateLimitIDs
                 )
-                if (rateLimit > 0) {
+                if rateLimit > 0 {
                     try await Task.sleep(
                         nanoseconds: UInt64(rateLimit * 1_000_000_000)
                     )
                 }
-                await self.conditionsMonitor.awaitConditions(workRequest: workRequest)
-            } while (await !rateLimiter.trackIfWithinLimit(workRequest.rateLimitIDs))
+                await self.conditionsMonitor.awaitConditions(
+                    workRequest: workRequest
+                )
+            } while await !rateLimiter.trackIfWithinLimit(
+                workRequest.rateLimitIDs
+            )
         }
     }
 

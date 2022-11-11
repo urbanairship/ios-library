@@ -1,8 +1,8 @@
 /* Copyright Airship and Contributors */
 
+import Combine
 import Foundation
 import SwiftUI
-import Combine
 
 @available(iOS 13.0.0, tvOS 13.0, *)
 struct FormVisibilityViewModifier: ViewModifier {
@@ -12,7 +12,7 @@ struct FormVisibilityViewModifier: ViewModifier {
     @ViewBuilder
     func body(content: Content) -> some View {
         content.onChange(of: isVisible) { newValue in
-            if (newValue) {
+            if newValue {
                 formState.markVisible()
             }
         }
@@ -30,13 +30,11 @@ struct FormInputEnabledViewModifier: ViewModifier {
     }
 }
 
-
 @available(iOS 14.0.0, tvOS 14.0, *)
 extension View {
     @ViewBuilder
-    func formElement() -> some View  {
+    func formElement() -> some View {
         self.modifier(FormVisibilityViewModifier())
             .modifier(FormInputEnabledViewModifier())
     }
 }
-

@@ -2,27 +2,25 @@
 
 import Foundation
 
-/**
- * Channel type
- */
+/// Channel type
 @objc(UAChannelType)
-public enum ChannelType : Int, Codable, CustomStringConvertible {
-    
+public enum ChannelType: Int, Codable, CustomStringConvertible {
+
     /**
      * Email channel
      */
     case email
-    
+
     /**
      * SMS channel
      */
     case sms
-    
+
     /**
      * Open channel
      */
     case open
-    
+
     /// The string value of the channel type
     /// - Returns: The string value of the channel type
     var stringValue: String {
@@ -35,7 +33,7 @@ public enum ChannelType : Int, Codable, CustomStringConvertible {
             return "open"
         }
     }
-    
+
     /// Returns a channel type from a string.
     /// - Parameter value: The string value
     /// - Returns: A channel type.

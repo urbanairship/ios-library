@@ -11,11 +11,9 @@ public protocol DelayProtocol {
     func start()
 }
 
-/**
- * - Note: For internal use only. :nodoc:
- */
+/// - Note: For internal use only. :nodoc:
 @objc(UADelay)
-public class Delay : NSObject, DelayProtocol {
+public class Delay: NSObject, DelayProtocol {
     private let seconds: TimeInterval
     private let semaphore: DispatchSemaphore
 

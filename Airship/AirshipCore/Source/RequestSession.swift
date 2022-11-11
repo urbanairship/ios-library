@@ -14,8 +14,10 @@ open class RequestSession: NSObject {
     @discardableResult
     open func performHTTPRequest(
         _ request: Request,
-        completionHandler: @escaping (Data?, HTTPURLResponse?, Error?) -> Void)
-    -> Disposable {
+        completionHandler: @escaping (Data?, HTTPURLResponse?, Error?) -> Void
+    )
+        -> Disposable
+    {
 
         var auth: AirshipRequest.Auth? = nil
         if let username = request.username, let password = request.password {
@@ -34,7 +36,11 @@ open class RequestSession: NSObject {
         let task = Task {
             do {
                 var response: AirshipHTTPResponse<(Data?, HTTPURLResponse)>!
-                response = try await self.session.performHTTPRequest(airshipRequest) { data, response in
+                response = try await self.session.performHTTPRequest(
+                    airshipRequest
+                ) {
+                    data,
+                    response in
                     return (data, response)
                 }
                 completionHandler(response.result?.0, response.result?.1, nil)

@@ -1,19 +1,19 @@
 /* Copyright Airship and Contributors */
 
+import Combine
 import Foundation
 import SwiftUI
-import Combine
 
 /// Image Button view.
 @available(iOS 13.0.0, tvOS 13.0, *)
-struct ImageButton : View {
- 
+struct ImageButton: View {
+
     /// Image Button model.
     let model: ImageButtonModel
-  
+
     /// View constriants.
     let constraints: ViewConstraints
-  
+
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.layoutState) var layoutState
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
@@ -28,32 +28,41 @@ struct ImageButton : View {
                 .accessible(self.model)
 
         }
-        .buttonClick(self.model.identifier,
-                     buttonDescription: self.model.contentDescription ?? self.model.identifier,
-                     behaviors: self.model.clickBehaviors,
-                     actions: self.model.actions)
+        .buttonClick(
+            self.model.identifier,
+            buttonDescription: self.model.contentDescription
+                ?? self.model.identifier,
+            behaviors: self.model.clickBehaviors,
+            actions: self.model.actions
+        )
         .common(self.model)
-        .environment(\.layoutState,
-                      layoutState.override(buttonState: ButtonState(identifier: self.model.identifier)))
+        .environment(
+            \.layoutState,
+            layoutState.override(
+                buttonState: ButtonState(identifier: self.model.identifier)
+            )
+        )
 
     }
-    
+
     @ViewBuilder
     private func createInnerButton() -> some View {
-        switch(model.image) {
+        switch model.image {
         case .url(let model):
-            AirshipAsyncImage(url: model.url,
-                              imageLoader: thomasEnvironment.imageLoader,
-                              image: { image, _ in
-                image
-                    .renderingMode(.original)
-                    .resizable()
-                    .scaledToFit()
-            },
+            AirshipAsyncImage(
+                url: model.url,
+                imageLoader: thomasEnvironment.imageLoader,
+                image: { image, _ in
+                    image
+                        .renderingMode(.original)
+                        .resizable()
+                        .scaledToFit()
+                },
 
-                              placeholder: {
-                AirshipProgressView()
-            })
+                placeholder: {
+                    AirshipProgressView()
+                }
+            )
         case .icon(let model):
             Icons.icon(model: model, colorScheme: colorScheme)
         }

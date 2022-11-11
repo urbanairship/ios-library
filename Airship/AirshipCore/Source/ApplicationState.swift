@@ -3,7 +3,7 @@
 /// Platform independent representation of application state.
 /// - Note: For internal use only. :nodoc:
 @objc(UAApplicationState)
-public enum ApplicationState : Int {
+public enum ApplicationState: Int {
     /// The active state.
     case active
     /// The inactive state.

@@ -2,24 +2,25 @@
 
 import Foundation
 
-
-/**
- * DEPRECATED.  Use contact instead.
- * The named user is an alternate method of identifying the device. Once a named
- * user is associated to the device, it can be used to send push notifications
- * to the device.
- */
+/// DEPRECATED.  Use contact instead.
+/// The named user is an alternate method of identifying the device. Once a named
+/// user is associated to the device, it can be used to send push notifications
+/// to the device.
 @objc(UANamedUser)
-public class NamedUser : NSObject, Component {
-    
-    private let contact : ContactProtocol
-    
+public class NamedUser: NSObject, Component {
+
+    private let contact: ContactProtocol
+
     /**
      * The named user ID for this device.
      */
-    @available(*, deprecated, message: "Use Contact#identify or Contact#reset instead.")
+    @available(
+        *,
+        deprecated,
+        message: "Use Contact#identify or Contact#reset instead."
+    )
     @objc
-    public var identifier : String? {
+    public var identifier: String? {
         get {
             return contact.namedUserID
         }
@@ -31,10 +32,9 @@ public class NamedUser : NSObject, Component {
             }
         }
     }
-    
-    
+
     private let disableHelper: ComponentDisableHelper
-        
+
     // NOTE: For internal use only. :nodoc:
     public var isComponentEnabled: Bool {
         get {
@@ -44,7 +44,7 @@ public class NamedUser : NSObject, Component {
             disableHelper.enabled = newValue
         }
     }
-    
+
     /// The shared  named user  instance.
     @objc
     @available(*, deprecated, message: "Use contact instead.")
@@ -55,12 +55,14 @@ public class NamedUser : NSObject, Component {
     @objc
     public init(dataStore: PreferenceDataStore, contact: ContactProtocol) {
         self.contact = contact
-        self.disableHelper = ComponentDisableHelper(dataStore: dataStore,
-                                                    className: "UANamedUser")
+        self.disableHelper = ComponentDisableHelper(
+            dataStore: dataStore,
+            className: "UANamedUser"
+        )
 
         super.init()
     }
-    
+
     /**
      * Force updating the association or disassociation of the current named user ID.
      */
@@ -69,14 +71,13 @@ public class NamedUser : NSObject, Component {
     public func forceUpdate() {
         // no-op
     }
-    
-    
+
     @available(*, deprecated, message: "No longer required.")
     @objc
     public func updateTags() {
         // no-op
     }
-    
+
     /**
      * Add tags on the contact.
      * - Parameters:
@@ -90,7 +91,7 @@ public class NamedUser : NSObject, Component {
         editor.add(tags, group: group)
         editor.apply()
     }
-    
+
     /**
      * Sets tags on the contact.
      * - Parameters:
@@ -104,7 +105,7 @@ public class NamedUser : NSObject, Component {
         editor.set(tags, group: group)
         editor.apply()
     }
-    
+
     /**
      * Removes tags on the contact.
      * - Parameters:
@@ -118,7 +119,7 @@ public class NamedUser : NSObject, Component {
         editor.remove(tags, group: group)
         editor.apply()
     }
-    
+
     /**
      * Applies attribute mutations to the contact.
      *
@@ -131,5 +132,5 @@ public class NamedUser : NSObject, Component {
         let editor = contact.editAttributes()
         mutations.applyMutations(editor: editor)
         editor.apply()
-    }    
+    }
 }

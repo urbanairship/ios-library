@@ -3,13 +3,13 @@
 import SwiftUI
 
 #if canImport(AirshipCore)
-import AirshipCore
+    import AirshipCore
 #endif
 
 /// Controller for the Message Center View.
 @objc(UAMessageCenterController)
 public class MessageCenterController: NSObject, ObservableObject {
-    
+
     @Published
     var messageID: String? = nil
 
@@ -24,5 +24,3 @@ public class MessageCenterController: NSObject, ObservableObject {
     @objc
     public override init() {}
 }
-
-

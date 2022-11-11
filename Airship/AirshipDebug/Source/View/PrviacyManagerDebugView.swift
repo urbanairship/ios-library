@@ -4,9 +4,9 @@ import Foundation
 import SwiftUI
 
 #if canImport(AirshipCore)
-import AirshipCore
+    import AirshipCore
 #elseif canImport(AirshipKit)
-import AirshipKit
+    import AirshipKit
 #endif
 
 struct PrivacyManagerDebugView: View {
@@ -14,22 +14,31 @@ struct PrivacyManagerDebugView: View {
     @StateObject
     private var viewModel = ViewModel()
 
-
     @ViewBuilder
-    private func makeFeatureToggle(_ title: String, _ isOn: Binding<Bool>) -> some View {
+    private func makeFeatureToggle(_ title: String, _ isOn: Binding<Bool>)
+        -> some View
+    {
         Toggle(title.localized(), isOn: isOn)
     }
-
 
     var body: some View {
         Form {
             Section(header: Text("")) {
                 makeFeatureToggle("Contacts", self.$viewModel.contactsEnabled)
-                makeFeatureToggle("Tags & Attributes", self.$viewModel.tagsAndAttributesEnabled)
+                makeFeatureToggle(
+                    "Tags & Attributes",
+                    self.$viewModel.tagsAndAttributesEnabled
+                )
                 makeFeatureToggle("Analytics", self.$viewModel.analyticsEnabled)
                 makeFeatureToggle("Push", self.$viewModel.pushEnabled)
-                makeFeatureToggle("In App Automation", self.$viewModel.iaaEnabled)
-                makeFeatureToggle("Message Center", self.$viewModel.messageCenterEnabled)
+                makeFeatureToggle(
+                    "In App Automation",
+                    self.$viewModel.iaaEnabled
+                )
+                makeFeatureToggle(
+                    "Message Center",
+                    self.$viewModel.messageCenterEnabled
+                )
             }
 
         }
@@ -69,7 +78,10 @@ struct PrivacyManagerDebugView: View {
         @Published
         public var tagsAndAttributesEnabled: Bool {
             didSet {
-                update(.tagsAndAttributes, enable: self.tagsAndAttributesEnabled)
+                update(
+                    .tagsAndAttributes,
+                    enable: self.tagsAndAttributesEnabled
+                )
             }
         }
 
@@ -81,14 +93,18 @@ struct PrivacyManagerDebugView: View {
         }
 
         init() {
-            if (Airship.isFlying) {
+            if Airship.isFlying {
                 let privacyManager = Airship.shared.privacyManager
                 self.iaaEnabled = privacyManager.isEnabled(.inAppAutomation)
-                self.messageCenterEnabled = privacyManager.isEnabled(.messageCenter)
+                self.messageCenterEnabled = privacyManager.isEnabled(
+                    .messageCenter
+                )
                 self.pushEnabled = privacyManager.isEnabled(.push)
                 self.analyticsEnabled = privacyManager.isEnabled(.analytics)
                 self.contactsEnabled = privacyManager.isEnabled(.contacts)
-                self.tagsAndAttributesEnabled = privacyManager.isEnabled(.tagsAndAttributes)
+                self.tagsAndAttributesEnabled = privacyManager.isEnabled(
+                    .tagsAndAttributes
+                )
             } else {
                 self.iaaEnabled = false
                 self.messageCenterEnabled = false
@@ -102,7 +118,7 @@ struct PrivacyManagerDebugView: View {
         private func update(_ features: Features, enable: Bool) {
             guard Airship.isFlying else { return }
 
-            if (enable) {
+            if enable {
                 Airship.shared.privacyManager.enableFeatures(features)
             } else {
                 Airship.shared.privacyManager.disableFeatures(features)
@@ -110,7 +126,3 @@ struct PrivacyManagerDebugView: View {
         }
     }
 }
-
-
-
-

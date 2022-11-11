@@ -10,16 +10,16 @@ public struct AirshipHTTPResponse<T> {
     public let headers: [AnyHashable: Any]
 }
 
-public extension AirshipHTTPResponse {
-    var isSuccess: Bool {
+extension AirshipHTTPResponse {
+    public var isSuccess: Bool {
         return self.statusCode >= 200 && self.statusCode <= 299
     }
 
-    var isClientError: Bool {
+    public var isClientError: Bool {
         return self.statusCode >= 400 && self.statusCode <= 499
     }
 
-    var isServerError: Bool {
+    public var isServerError: Bool {
         return self.statusCode >= 500 && self.statusCode <= 599
     }
 }

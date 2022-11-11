@@ -2,8 +2,7 @@
 
 import XCTest
 
-@testable
-import AirshipCore
+@testable import AirshipCore
 
 class SubscriptionListActionTests: XCTestCase {
 
@@ -16,14 +15,19 @@ class SubscriptionListActionTests: XCTestCase {
     private var contactEdits: [ScopedSubscriptionListUpdate] = []
 
     override func setUp() {
-        self.action = SubscriptionListAction(channel: {return self.channel},
-                                             contact: {return self.contact})
+        self.action = SubscriptionListAction(
+            channel: { return self.channel },
+            contact: { return self.contact }
+        )
 
-        self.channel.subscriptionListEditor = SubscriptionListEditor { updates in
+        self.channel.subscriptionListEditor = SubscriptionListEditor {
+            updates in
             self.channelEdits.append(contentsOf: updates)
         }
-        
-        self.contact.subscriptionListEditor = ScopedSubscriptionListEditor(date: date) { updates in
+
+        self.contact.subscriptionListEditor = ScopedSubscriptionListEditor(
+            date: date
+        ) { updates in
             self.contactEdits.append(contentsOf: updates)
         }
     }
@@ -36,7 +40,7 @@ class SubscriptionListActionTests: XCTestCase {
             Situation.webViewInvocation,
             Situation.automation,
             Situation.foregroundPush,
-            Situation.backgroundInteractiveButton
+            Situation.backgroundInteractiveButton,
         ]
 
         let rejectedSituations = [
@@ -74,14 +78,14 @@ class SubscriptionListActionTests: XCTestCase {
             [
                 "type": "channel",
                 "action": "subscribe",
-                "list": "456"
+                "list": "456",
             ],
             [
                 "type": "contact",
                 "action": "unsubscribe",
                 "list": "4567",
-                "scope": "app"
-            ]
+                "scope": "app",
+            ],
         ]
 
         let args = ActionArguments(value: actionValue, with: .manualInvocation)
@@ -99,12 +103,13 @@ class SubscriptionListActionTests: XCTestCase {
         ]
         XCTAssertEqual(expectedChannelEdits, self.channelEdits)
 
-
         let expectedContactEdits = [
-            ScopedSubscriptionListUpdate(listId: "4567",
-                                         type: .unsubscribe,
-                                         scope: .app,
-                                         date: self.date.now)
+            ScopedSubscriptionListUpdate(
+                listId: "4567",
+                type: .unsubscribe,
+                scope: .app,
+                date: self.date.now
+            )
         ]
         XCTAssertEqual(expectedContactEdits, self.contactEdits)
     }
@@ -115,14 +120,14 @@ class SubscriptionListActionTests: XCTestCase {
                 [
                     "type": "channel",
                     "action": "subscribe",
-                    "list": "456"
+                    "list": "456",
                 ],
                 [
                     "type": "contact",
                     "action": "unsubscribe",
                     "list": "4567",
-                    "scope": "app"
-                ]
+                    "scope": "app",
+                ],
             ]
         ]
 
@@ -141,12 +146,13 @@ class SubscriptionListActionTests: XCTestCase {
         ]
         XCTAssertEqual(expectedChannelEdits, self.channelEdits)
 
-
         let expectedContactEdits = [
-            ScopedSubscriptionListUpdate(listId: "4567",
-                                         type: .unsubscribe,
-                                         scope: .app,
-                                         date: self.date.now)
+            ScopedSubscriptionListUpdate(
+                listId: "4567",
+                type: .unsubscribe,
+                scope: .app,
+                date: self.date.now
+            )
         ]
         XCTAssertEqual(expectedContactEdits, self.contactEdits)
     }
@@ -157,13 +163,13 @@ class SubscriptionListActionTests: XCTestCase {
                 [
                     "type": "channel",
                     "action": "subscribe",
-                    "list": "456"
+                    "list": "456",
                 ],
                 [
                     "type": "contact",
                     "list": "4567",
-                    "scope": "app"
-                ]
+                    "scope": "app",
+                ],
             ]
         ]
 

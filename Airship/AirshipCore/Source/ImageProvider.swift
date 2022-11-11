@@ -6,7 +6,7 @@ import Foundation
 /// - Note: for internal use only.  :nodoc:
 @objc(UAImageProvider)
 public protocol ImageProvider {
-    
+
     /// Gets the an image.
     /// - Parameters:
     ///     - url: The image URL.

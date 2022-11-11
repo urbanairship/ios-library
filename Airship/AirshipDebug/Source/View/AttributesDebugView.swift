@@ -4,9 +4,9 @@ import Foundation
 import SwiftUI
 
 #if canImport(AirshipCore)
-import AirshipCore
+    import AirshipCore
 #elseif canImport(AirshipKit)
-import AirshipKit
+    import AirshipKit
 #endif
 
 struct AttributesDebugView: View {
@@ -41,10 +41,10 @@ struct AttributesDebugView: View {
 
     @State
     private var number: Double = 0.0
-    
+
     @ViewBuilder
     func makeValue() -> some View {
-        switch(self.type) {
+        switch self.type {
         case .date:
             DatePicker(
                 "Date".localized(),
@@ -55,8 +55,11 @@ struct AttributesDebugView: View {
             HStack {
                 Text("Text")
                 Spacer()
-                TextField("Value".localized(), text: self.$text.preventWhiteSpace())
-                    .freeInput()
+                TextField(
+                    "Value".localized(),
+                    text: self.$text.preventWhiteSpace()
+                )
+                .freeInput()
             }
         case .number:
             HStack {
@@ -71,7 +74,6 @@ struct AttributesDebugView: View {
             }
         }
     }
-
 
     var body: some View {
         Form {
@@ -93,7 +95,7 @@ struct AttributesDebugView: View {
                     .freeInput()
                 }
 
-                if (self.action == .add) {
+                if self.action == .add {
                     Picker("Type".localized(), selection: $type) {
                         ForEach(AttributeType.allCases, id: \.self) { value in
                             Text(value.rawValue.localized())
@@ -121,9 +123,9 @@ struct AttributesDebugView: View {
     private func isValid() -> Bool {
         guard !attribute.isEmpty else { return false }
 
-        switch (self.action) {
+        switch self.action {
         case .add:
-            switch (self.type) {
+            switch self.type {
             case .number:
                 return true
             case .text:
@@ -137,9 +139,9 @@ struct AttributesDebugView: View {
     }
     private func apply() {
         let editor = editorFactory()
-        switch(self.action) {
+        switch self.action {
         case .add:
-            switch (self.type) {
+            switch self.type {
             case .number:
                 editor?.set(double: self.number, attribute: self.attribute)
             case .text:
@@ -154,7 +156,3 @@ struct AttributesDebugView: View {
         self.attribute = ""
     }
 }
-
-
-
-

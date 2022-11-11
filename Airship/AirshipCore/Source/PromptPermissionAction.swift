@@ -27,18 +27,17 @@ public class PromptPermissionAction: NSObject, Action {
 
     convenience override init() {
         self.init {
-            return AirshipPermissionPrompter(permissionsManager: Airship.shared.permissionsManager)
+            return AirshipPermissionPrompter(
+                permissionsManager: Airship.shared.permissionsManager
+            )
         }
     }
 
     public func acceptsArguments(_ arguments: ActionArguments) -> Bool {
-        switch (arguments.situation) {
-        case .automation: fallthrough
-        case .manualInvocation: fallthrough
-        case .launchedFromPush: fallthrough
-        case .webViewInvocation: fallthrough
-        case .foregroundInteractiveButton: fallthrough
-        case .foregroundPush:
+        switch arguments.situation {
+        case .automation, .manualInvocation, .launchedFromPush,
+            .webViewInvocation,
+            .foregroundInteractiveButton, .foregroundPush:
             return arguments.value != nil
         case .backgroundPush: fallthrough
         case .backgroundInteractiveButton: fallthrough
@@ -47,8 +46,10 @@ public class PromptPermissionAction: NSObject, Action {
         }
     }
 
-    public func perform(with arguments: ActionArguments,
-                 completionHandler: @escaping UAActionCompletionHandler) {
+    public func perform(
+        with arguments: ActionArguments,
+        completionHandler: @escaping UAActionCompletionHandler
+    ) {
 
         guard let arg = arguments.value else {
             completionHandler(ActionResult.empty())
@@ -56,22 +57,30 @@ public class PromptPermissionAction: NSObject, Action {
         }
 
         do {
-            let data = try JSONSerialization.data(withJSONObject: arg, options: [])
+            let data = try JSONSerialization.data(
+                withJSONObject: arg,
+                options: []
+            )
             let args = try JSONDecoder().decode(Args.self, from: data)
             self.permissionPrompter()
-                .prompt(permission: args.permission,
-                        enableAirshipUsage: args.enableAirshipUsage ?? false,
-                        fallbackSystemSettings: args.fallbackSystemSettings ?? false) { start, end in
+                .prompt(
+                    permission: args.permission,
+                    enableAirshipUsage: args.enableAirshipUsage ?? false,
+                    fallbackSystemSettings: args.fallbackSystemSettings ?? false
+                ) { start, end in
 
                     if let metadata = arguments.metadata {
-                        let resultReceiver = metadata[PromptPermissionAction.resultReceiverMetadataKey] as? PermissionResultReceiver
+                        let resultReceiver =
+                            metadata[
+                                PromptPermissionAction.resultReceiverMetadataKey
+                            ]
+                            as? PermissionResultReceiver
 
                         resultReceiver?(args.permission, start, end)
                     }
                 }
             completionHandler(ActionResult.empty())
-        }
-        catch {
+        } catch {
             completionHandler(ActionResult(error: error))
             return
         }

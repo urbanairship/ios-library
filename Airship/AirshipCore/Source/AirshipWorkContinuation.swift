@@ -10,7 +10,7 @@ public class AirshipWorkContinuation: NSObject {
             return _cancellationHandler
         }
         set {
-            if (isCancelled) {
+            if isCancelled {
                 newValue?()
                 self._cancellationHandler = nil
             } else {
@@ -26,7 +26,7 @@ public class AirshipWorkContinuation: NSObject {
             return _completionHandler
         }
         set {
-            if (isCompleted) {
+            if isCompleted {
                 newValue?()
                 self._completionHandler = nil
             } else {

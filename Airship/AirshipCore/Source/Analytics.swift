@@ -1,12 +1,12 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
 import Combine
+import Foundation
 
 /// Allowed SDK extension types.
 /// - Note: For internal use only. :nodoc:
 @objc(UASDKExtension)
-public enum SDKExtension : Int {
+public enum SDKExtension: Int {
     /// The Cordova SDK extension.
     case cordova = 0
     /// The Xamarin SDK extension.
@@ -23,7 +23,9 @@ public enum SDKExtension : Int {
 
 /// The Analytics object provides an interface to the Airship Analytics API.
 @objc(UAAnalytics)
-public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDelegate {
+public class Analytics: NSObject, Component, AnalyticsProtocol,
+    EventManagerDelegate
+{
 
     /// Full event
     public struct FullEvent {
@@ -45,13 +47,13 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
     public static let supplier: () -> AnalyticsProtocol = {
         return Airship.requireComponent(ofType: AnalyticsProtocol.self)
     }
-    
+
     /// The shared Analytics instance.
     @objc
     public static var shared: Analytics {
         return Airship.analytics
     }
-    
+
     private static let associatedIdentifiers = "UAAssociatedIdentifiers"
     private static let missingSendID = "MISSING_SEND_ID"
     private static let pushMetadata = "com.urbanairship.metadata"
@@ -66,11 +68,15 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
 
     /// Custom event added notification. :nodoc:
     @objc
-    public static let customEventAdded = NSNotification.Name("UACustomEventAdded")
+    public static let customEventAdded = NSNotification.Name(
+        "UACustomEventAdded"
+    )
 
     /// Region event added notification. :nodoc:
     @objc
-    public static let regionEventAdded = NSNotification.Name("UARegionEventAdded")
+    public static let regionEventAdded = NSNotification.Name(
+        "UARegionEventAdded"
+    )
 
     /// Screen tracked notification,. :nodoc:
     @objc
@@ -85,7 +91,7 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
     private var date: AirshipDate
     private var dispatcher: UADispatcher
     private var sdkExtensions: [String]
-    private var headerBlocks: [(() -> [String : String]?)]
+    private var headerBlocks: [(() -> [String: String]?)]
     private var localeManager: LocaleManagerProtocol
     private var appStateTracker: AppStateTrackerProtocol
     private var handledFirstForegroundTransition = false
@@ -101,9 +107,8 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
     private var isAirshipReady = false
 
     private var isAnalyticsEnabled: Bool {
-        get {
-            return self.isComponentEnabled && self.config.isAnalyticsEnabled && self.privacyManager.isEnabled(.analytics)
-        }
+        return self.isComponentEnabled && self.config.isAnalyticsEnabled
+            && self.privacyManager.isEnabled(.analytics)
     }
 
     /// The conversion send ID. :nodoc:
@@ -126,7 +131,7 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
     }
 
     private let disableHelper: ComponentDisableHelper
-        
+
     // NOTE: For internal use only. :nodoc:
     public var isComponentEnabled: Bool {
         get {
@@ -156,17 +161,23 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
         privacyManager: PrivacyManager,
         permissionsManager: PermissionsManager
     ) {
-        self.init(config: config,
-                  dataStore: dataStore,
-                  channel: channel,
-                  eventManager: EventManager(config: config, dataStore: dataStore, channel: channel),
-                  notificationCenter: NotificationCenter.default,
-                  date: AirshipDate(),
-                  dispatcher: UADispatcher.main,
-                  localeManager: localeManager,
-                  appStateTracker: AppStateTracker.shared,
-                  privacyManager: privacyManager,
-                  permissionsManager: permissionsManager)
+        self.init(
+            config: config,
+            dataStore: dataStore,
+            channel: channel,
+            eventManager: EventManager(
+                config: config,
+                dataStore: dataStore,
+                channel: channel
+            ),
+            notificationCenter: NotificationCenter.default,
+            date: AirshipDate(),
+            dispatcher: UADispatcher.main,
+            localeManager: localeManager,
+            appStateTracker: AppStateTracker.shared,
+            privacyManager: privacyManager,
+            permissionsManager: permissionsManager
+        )
     }
 
     /// Factory method to create an analytics instance. Used for testing.
@@ -213,14 +224,17 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
         self.sdkExtensions = []
         self.headerBlocks = []
 
-        self.disableHelper = ComponentDisableHelper(dataStore: dataStore, className: "UAAnalytics")
+        self.disableHelper = ComponentDisableHelper(
+            dataStore: dataStore,
+            className: "UAAnalytics"
+        )
 
         super.init()
-        
+
         self.disableHelper.onChange = { [weak self] in
             self?.onComponentEnableChange()
         }
-        
+
         self.eventManager.delegate = self
 
         updateEventManagerUploadsEnabled()
@@ -230,31 +244,36 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
             self,
             selector: #selector(applicationDidTransitionToForeground),
             name: AppStateTracker.didTransitionToForeground,
-            object: nil)
+            object: nil
+        )
 
         self.notificationCenter.addObserver(
             self,
             selector: #selector(applicationWillEnterForeground),
             name: AppStateTracker.willEnterForegroundNotification,
-            object: nil)
+            object: nil
+        )
 
         self.notificationCenter.addObserver(
             self,
             selector: #selector(applicationDidEnterBackground),
             name: AppStateTracker.didEnterBackgroundNotification,
-            object: nil)
+            object: nil
+        )
 
         self.notificationCenter.addObserver(
             self,
             selector: #selector(applicationWillTerminate),
             name: AppStateTracker.willTerminateNotification,
-            object: nil)
+            object: nil
+        )
 
         self.notificationCenter.addObserver(
             self,
             selector: #selector(onEnabledFeaturesChanged),
             name: PrivacyManager.changeEvent,
-            object: nil)
+            object: nil
+        )
     }
 
     // MARK: -
@@ -269,7 +288,7 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
             ensureInit()
             return
         }
-        
+
         // Otherwise start a new session and emit a foreground event.
         startSession()
 
@@ -293,7 +312,7 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
 
         // Ensure an app init event
         ensureInit()
-        
+
         // Add app_background event
         self.addEvent(AppBackgroundEvent())
 
@@ -313,29 +332,34 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
 
     /// :nodoc:
     @objc(addAnalyticsHeadersBlock:)
-    public func add(_ headerBlock: @escaping () -> [String : String]?) {
+    public func add(_ headerBlock: @escaping () -> [String: String]?) {
         self.headerBlocks.append(headerBlock)
     }
 
     /// :nodoc:
     @objc
-    public func analyticsHeaders(completionHandler: @escaping ([String : String]) -> Void) {
-        var headers: [String : String] = [:]
+    public func analyticsHeaders(
+        completionHandler: @escaping ([String: String]) -> Void
+    ) {
+        var headers: [String: String] = [:]
 
         // Device info
         #if !os(watchOS)
-        headers["X-UA-Device-Family"] = UIDevice.current.systemName
-        headers["X-UA-OS-Version"] = UIDevice.current.systemVersion
+            headers["X-UA-Device-Family"] = UIDevice.current.systemName
+            headers["X-UA-OS-Version"] = UIDevice.current.systemVersion
         #else
-        headers["X-UA-Device-Family"] = WKInterfaceDevice.current().systemName
-        headers["X-UA-OS-Version"] = WKInterfaceDevice.current().systemVersion
+            headers["X-UA-Device-Family"] =
+                WKInterfaceDevice.current().systemName
+            headers["X-UA-OS-Version"] =
+                WKInterfaceDevice.current().systemVersion
         #endif
-        
+
         headers["X-UA-Device-Model"] = Utils.deviceModelName()
 
         // App info
-        if let infoDictionary  = Bundle.main.infoDictionary {
-            headers["X-UA-Package-Name"] = infoDictionary[kCFBundleIdentifierKey as String] as? String
+        if let infoDictionary = Bundle.main.infoDictionary {
+            headers["X-UA-Package-Name"] =
+                infoDictionary[kCFBundleIdentifierKey as String] as? String
         }
 
         headers["X-UA-Package-Version"] = Utils.bundleShortVersionString() ?? ""
@@ -356,13 +380,18 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
 
         // SDK Extensions
         if self.sdkExtensions.count > 0 {
-            headers["X-UA-Frameworks"] = self.sdkExtensions.joined(separator: ", ")
+            headers["X-UA-Frameworks"] = self.sdkExtensions.joined(
+                separator: ", "
+            )
         }
 
         // Header extenders
         for block in self.headerBlocks {
             if let result = block() {
-                headers.merge(result, uniquingKeysWith: { (current, _) in current })
+                headers.merge(
+                    result,
+                    uniquingKeysWith: { (current, _) in current }
+                )
             }
         }
 
@@ -371,15 +400,17 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
 
         self.permissionsManager.configuredPermissions.forEach { permission in
             group.enter()
-            self.permissionsManager.checkPermissionStatus(permission) { status in
-                headers["X-UA-Permission-\(permission.stringValue)"] = status.stringValue
+            self.permissionsManager.checkPermissionStatus(permission) {
+                status in
+                headers["X-UA-Permission-\(permission.stringValue)"] =
+                    status.stringValue
                 group.leave()
             }
         }
 
         group.leave()
         group.notify(queue: DispatchQueue.global()) {
-            completionHandler(headers);
+            completionHandler(headers)
         }
     }
 
@@ -400,7 +431,7 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
             return
         }
 
-        let date = Date();
+        let date = Date()
         let identifier = NSUUID().uuidString
 
         self.dispatcher.dispatchAsync { [weak self] in
@@ -409,12 +440,19 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
             }
 
             guard self.isAnalyticsEnabled else {
-                AirshipLogger.trace("Analytics disabled, ignoring event: \(event.eventType)")
+                AirshipLogger.trace(
+                    "Analytics disabled, ignoring event: \(event.eventType)"
+                )
                 return
             }
 
             AirshipLogger.debug("Adding \(event.eventType) event \(identifier)")
-            self.eventManager.add(event, eventID: identifier, eventDate: date, sessionID: sessionID)
+            self.eventManager.add(
+                event,
+                eventID: identifier,
+                eventDate: date,
+                sessionID: sessionID
+            )
             AirshipLogger.trace("Event added: \(event)")
 
             self.eventSubject.send(
@@ -426,11 +464,19 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
             )
 
             if let customEvent = event as? CustomEvent {
-                self.notificationCenter.post(name: Analytics.customEventAdded, object: self, userInfo: [Analytics.eventKey : customEvent])
+                self.notificationCenter.post(
+                    name: Analytics.customEventAdded,
+                    object: self,
+                    userInfo: [Analytics.eventKey: customEvent]
+                )
             }
 
             if let regionEvent = event as? RegionEvent {
-                self.notificationCenter.post(name: Analytics.regionEventAdded, object: self, userInfo: [Analytics.eventKey : regionEvent])
+                self.notificationCenter.post(
+                    name: Analytics.regionEventAdded,
+                    object: self,
+                    userInfo: [Analytics.eventKey: regionEvent]
+                )
             }
         }
     }
@@ -443,22 +489,35 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
     ///
     /// - Parameter associatedIdentifiers: The associated identifiers.
     @objc
-    public func associateDeviceIdentifiers(_ associatedIdentifiers: AssociatedIdentifiers) {
+    public func associateDeviceIdentifiers(
+        _ associatedIdentifiers: AssociatedIdentifiers
+    ) {
         guard self.isAnalyticsEnabled else {
-            AirshipLogger.warn("Unable to associate identifiers \(associatedIdentifiers.allIDs) when analytics is disabled")
+            AirshipLogger.warn(
+                "Unable to associate identifiers \(associatedIdentifiers.allIDs) when analytics is disabled"
+            )
             return
         }
 
-        if let previous = self.dataStore.object(forKey: Analytics.associatedIdentifiers) as? [String : String] {
+        if let previous = self.dataStore.object(
+            forKey: Analytics.associatedIdentifiers
+        ) as? [String: String] {
             if previous == associatedIdentifiers.allIDs {
-                AirshipLogger.info("Skipping analytics event addition for duplicate associated identifiers.")
+                AirshipLogger.info(
+                    "Skipping analytics event addition for duplicate associated identifiers."
+                )
                 return
             }
         }
 
-        self.dataStore.setObject(associatedIdentifiers.allIDs, forKey: Analytics.associatedIdentifiers)
+        self.dataStore.setObject(
+            associatedIdentifiers.allIDs,
+            forKey: Analytics.associatedIdentifiers
+        )
 
-        if let event = AssociateIdentifiersEvent(identifiers: associatedIdentifiers) {
+        if let event = AssociateIdentifiersEvent(
+            identifiers: associatedIdentifiers
+        ) {
             self.addEvent(event)
         }
     }
@@ -467,8 +526,12 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
     /// - Returns: The device's current associated identifiers.
     @objc
     public func currentAssociatedDeviceIdentifiers() -> AssociatedIdentifiers {
-        let storedIDs = self.dataStore.object(forKey: Analytics.associatedIdentifiers) as? [String : String]
-        return AssociatedIdentifiers(dictionary: storedIDs != nil ? storedIDs : [:])
+        let storedIDs =
+            self.dataStore.object(forKey: Analytics.associatedIdentifiers)
+            as? [String: String]
+        return AssociatedIdentifiers(
+            dictionary: storedIDs != nil ? storedIDs : [:]
+        )
     }
 
     /// Initiates screen tracking for a specific app screen, must be called once per tracked screen.
@@ -478,15 +541,28 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
         self.dispatcher.dispatchAsyncIfNecessary {
             // Prevent duplicate calls to track same screen
             guard screen != self.currentScreen else {
-                return;
+                return
             }
 
-            self.notificationCenter.post(name: Analytics.screenTracked, object: self, userInfo: screen == nil ? [:] : [Analytics.screenKey : screen!])
+            self.notificationCenter.post(
+                name: Analytics.screenTracked,
+                object: self,
+                userInfo: screen == nil ? [:] : [Analytics.screenKey: screen!]
+            )
 
             // If there's a screen currently being tracked set it's stop time and add it to analytics
             if let currentScreen = self.currentScreen {
-                guard let ste = ScreenTrackingEvent(screen: currentScreen, previousScreen: self.previousScreen, startTime: self.startTime, stopTime: self.date.now.timeIntervalSince1970) else {
-                    AirshipLogger.error("Unable to create screen tracking event")
+                guard
+                    let ste = ScreenTrackingEvent(
+                        screen: currentScreen,
+                        previousScreen: self.previousScreen,
+                        startTime: self.startTime,
+                        stopTime: self.date.now.timeIntervalSince1970
+                    )
+                else {
+                    AirshipLogger.error(
+                        "Unable to create screen tracking event"
+                    )
                     return
                 }
 
@@ -525,11 +601,13 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
     /// For internal use only. :nodoc:
     /// - Parameter notification: The push notification.
     @objc
-    public func launched(fromNotification notification: [AnyHashable : Any]) {
+    public func launched(fromNotification notification: [AnyHashable: Any]) {
         if Utils.isAlertingPush(notification) {
             let sendID = notification["_"] as? String
-            self.conversionSendID = sendID != nil ? sendID : Analytics.missingSendID
-            self.conversionPushMetadata = notification[Analytics.pushMetadata] as? String
+            self.conversionSendID =
+                sendID != nil ? sendID : Analytics.missingSendID
+            self.conversionPushMetadata =
+                notification[Analytics.pushMetadata] as? String
             self.ensureInit()
         } else {
             self.conversionSendID = nil
@@ -543,11 +621,11 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
 
     @objc
     private func onEnabledFeaturesChanged() {
-        self.updateEventManagerUploadsEnabled();
+        self.updateEventManagerUploadsEnabled()
     }
 
     private func nameForSDKExtension(_ ext: SDKExtension) -> String {
-        switch (ext) {
+        switch ext {
         case .cordova:
             return "cordova"
         case .xamarin:
@@ -571,33 +649,36 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
 
     private func updateEventManagerUploadsEnabled() {
         if self.isAnalyticsEnabled {
-            self.eventManager.uploadsEnabled = true;
+            self.eventManager.uploadsEnabled = true
             self.eventManager.scheduleUpload()
         } else {
             self.eventManager.uploadsEnabled = false
             self.eventManager.deleteAllEvents()
-            self.dataStore.setValue(nil, forKey: Analytics.associatedIdentifiers)
+            self.dataStore.setValue(
+                nil,
+                forKey: Analytics.associatedIdentifiers
+            )
         }
     }
 
     private func startSession() {
         self.sessionID = NSUUID().uuidString
     }
-    
+
     /// needed to ensure AppInit event gets added
     /// since App Clips get launched via Push Notification delegate
     private func ensureInit() {
         lock.sync {
-            if (!self.initialized && self.isAirshipReady) {
+            if !self.initialized && self.isAirshipReady {
                 self.addEvent(AppInitEvent())
                 self.initialized = true
             }
         }
     }
-    
+
     public func airshipReady() {
         self.isAirshipReady = true
-        
+
         // If analytics is initialized in the background state, we are responding to a
         // content-available push. If it's initialized in the foreground state takeOff
         // was probably called late. We should ensure an init event in either case.
@@ -607,31 +688,38 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
     }
 }
 
-extension Analytics : InternalAnalyticsProtocol {
+extension Analytics: InternalAnalyticsProtocol {
     func onDeviceRegistration() {
-        if (self.isAirshipReady) {
+        if self.isAirshipReady {
             addEvent(DeviceRegistrationEvent())
         }
     }
-    
+
     @available(tvOS, unavailable)
-    func onNotificationResponse(response: UNNotificationResponse, action: UNNotificationAction?) {
+    func onNotificationResponse(
+        response: UNNotificationResponse,
+        action: UNNotificationAction?
+    ) {
         let userInfo = response.notification.request.content.userInfo
 
-        if (response.actionIdentifier == UNNotificationDefaultActionIdentifier) {
+        if response.actionIdentifier == UNNotificationDefaultActionIdentifier {
             self.launched(fromNotification: userInfo)
         } else if let action = action {
-            let categoryID = response.notification.request.content.categoryIdentifier
-            let responseText = (response as? UNTextInputNotificationResponse)?.userText
-            
-            if (action.options.contains(.foreground) == true) {
+            let categoryID = response.notification.request.content
+                .categoryIdentifier
+            let responseText = (response as? UNTextInputNotificationResponse)?
+                .userText
+
+            if action.options.contains(.foreground) == true {
                 self.launched(fromNotification: userInfo)
             }
-            
-            let event = InteractiveNotificationEvent(action: action,
-                                                       category: categoryID,
-                                                       notification: userInfo,
-                                                       responseText: responseText)
+
+            let event = InteractiveNotificationEvent(
+                action: action,
+                category: categoryID,
+                notification: userInfo,
+                responseText: responseText
+            )
             addEvent(event)
         }
     }

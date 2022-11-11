@@ -2,8 +2,7 @@
 
 import XCTest
 
-@testable
-import AirshipCore
+@testable import AirshipCore
 
 class CachedValueTest: XCTestCase {
 
@@ -12,13 +11,13 @@ class CachedValueTest: XCTestCase {
     func testValue() throws {
         let cachedValue = CachedValue<String>(date: date, maxCacheAge: 100)
         cachedValue.value = "Hello!"
-        
+
         XCTAssertEqual("Hello!", cachedValue.value)
 
         date.offset += 99
-        
+
         XCTAssertEqual("Hello!", cachedValue.value)
-        
+
         date.offset += 1
         XCTAssertNil(cachedValue.value)
     }

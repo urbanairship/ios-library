@@ -1,8 +1,8 @@
 /* Copyright Airship and Contributors */
 
+import Combine
 import Foundation
 import SwiftUI
-import Combine
 
 @available(iOS 13.0.0, tvOS 13.0, *)
 internal struct FormSubmissionEnableBehavior: ViewModifier {
@@ -53,7 +53,9 @@ internal struct PagerNextButtonEnableBehavior: ViewModifier {
                 onApply(pageIndex < (pagerState.pages.count - 1), .pagerNext)
             }
         } else {
-            content.disabled(pagerState.pageIndex >= (pagerState.pages.count - 1))
+            content.disabled(
+                pagerState.pageIndex >= (pagerState.pages.count - 1)
+            )
         }
     }
 }
@@ -63,7 +65,6 @@ struct PagerPreviousButtonEnableBehavior: ViewModifier {
     let onApply: ((Bool, EnableBehavior) -> Void)?
 
     @EnvironmentObject var pagerState: PagerState
-
 
     @ViewBuilder
     func body(content: Content) -> some View {
@@ -93,14 +94,13 @@ internal struct AggregateEnableBehavior: ViewModifier {
                 !value
             })
 
-            if (updated != enabled) {
+            if updated != enabled {
                 enabled = updated
                 onApply(updated)
             }
         }
     }
 }
-
 
 @available(iOS 13.0.0, tvOS 13.0, *)
 extension View {
@@ -133,8 +133,10 @@ extension View {
     }
 
     @ViewBuilder
-    func enableBehaviors(_ behaviors: [EnableBehavior]?,
-                         onApply: ((Bool) -> Void)? = nil) -> some View {
+    func enableBehaviors(
+        _ behaviors: [EnableBehavior]?,
+        onApply: ((Bool) -> Void)? = nil
+    ) -> some View {
 
         if let behaviors = behaviors {
             if let onApply = onApply {
@@ -152,4 +154,3 @@ extension View {
         }
     }
 }
-

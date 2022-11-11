@@ -3,7 +3,7 @@
 import Foundation
 
 #if canImport(AirshipCore)
-import AirshipCore
+    import AirshipCore
 #endif
 
 /// Preference center config.
@@ -22,7 +22,6 @@ public class PreferenceCenterConfig: NSObject, Decodable {
         self.sections.map { $0.info }
     }
 
-
     /// The config's display info.
     @objc
     public let display: CommonDisplay?
@@ -33,11 +32,12 @@ public class PreferenceCenterConfig: NSObject, Decodable {
     @objc
     public let options: Options?
 
-
-    public init(identifier: String,
-                sections: [Section],
-                display: CommonDisplay? = nil,
-                options: Options? = nil) {
+    public init(
+        identifier: String,
+        sections: [Section],
+        display: CommonDisplay? = nil,
+        options: Options? = nil
+    ) {
 
         self.identifier = identifier
         self.sections = sections
@@ -58,9 +58,9 @@ public class PreferenceCenterConfig: NSObject, Decodable {
         }
 
         return self.identifier == object.identifier
-        && self.sections == object.sections
-        && self.display == object.display
-        && self.options == object.options
+            && self.sections == object.sections
+            && self.display == object.display
+            && self.options == object.options
     }
 
     /// Config options.
@@ -85,7 +85,10 @@ public class PreferenceCenterConfig: NSObject, Decodable {
         public required init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
 
-            if let mergeChannelDataToContact = try? container.decode(Bool.self, forKey: .mergeChannelDataToContact) {
+            if let mergeChannelDataToContact = try? container.decode(
+                Bool.self,
+                forKey: .mergeChannelDataToContact
+            ) {
                 self.mergeChannelDataToContact = mergeChannelDataToContact
             } else {
                 self.mergeChannelDataToContact = false
@@ -97,13 +100,14 @@ public class PreferenceCenterConfig: NSObject, Decodable {
                 return false
             }
 
-            return self.mergeChannelDataToContact == object.mergeChannelDataToContact
+            return self.mergeChannelDataToContact
+                == object.mergeChannelDataToContact
         }
     }
 
     /// Common display info
     @objc(UAPreferenceConfigCommonDisplay)
-    public class CommonDisplay : NSObject, Decodable {
+    public class CommonDisplay: NSObject, Decodable {
 
         /// Title
         @objc
@@ -128,12 +132,15 @@ public class PreferenceCenterConfig: NSObject, Decodable {
                 return false
             }
 
-            return self.title == object.title && self.subtitle == object.subtitle
+            return self.title == object.title
+                && self.subtitle == object.subtitle
         }
     }
 
     @objc(UAPreferenceCenterConfigNotificationOptInCondition)
-    public class NotificationOptInCondition: NSObject, Decodable, PreferenceConfigCondition {
+    public class NotificationOptInCondition: NSObject, Decodable,
+        PreferenceConfigCondition
+    {
 
         @objc(UANotificationOptInConditionStatus)
         public enum OptInStatus: Int, Equatable {
@@ -157,7 +164,10 @@ public class PreferenceCenterConfig: NSObject, Decodable {
 
         public required init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            let optInStatus = try container.decode(String.self, forKey: .optInStatus)
+            let optInStatus = try container.decode(
+                String.self,
+                forKey: .optInStatus
+            )
 
             switch optInStatus {
             case "opt_in":
@@ -178,7 +188,6 @@ public class PreferenceCenterConfig: NSObject, Decodable {
         }
     }
 
-
     /**
      * Typed conditions.
      */
@@ -191,21 +200,27 @@ public class PreferenceCenterConfig: NSObject, Decodable {
 
         public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            let type = try PreferenceCenterConfigConditionType.fromString(container.decode(String.self, forKey: .type))
+            let type = try PreferenceCenterConfigConditionType.fromString(
+                container.decode(String.self, forKey: .type)
+            )
             let singleValueContainer = try decoder.singleValueContainer()
 
             switch type {
             case .notificationOptIn:
-                self = .notificationOptIn(try singleValueContainer.decode(NotificationOptInCondition.self))
+                self = .notificationOptIn(
+                    try singleValueContainer.decode(
+                        NotificationOptInCondition.self
+                    )
+                )
             }
         }
     }
 
-
-
     /// Common section.
     @objc(UAPreferenceCenterConfigCommonSection)
-    public class CommonSection: NSObject, Decodable, PreferenceCenterConfigSection {
+    public class CommonSection: NSObject, Decodable,
+        PreferenceCenterConfigSection
+    {
 
         /// The section's type.
         @objc
@@ -235,11 +250,12 @@ public class PreferenceCenterConfig: NSObject, Decodable {
             self.conditions?.map { $0.info }
         }
 
-
-        public init(identifier: String,
-                    items: [Item],
-                    display: CommonDisplay? = nil,
-                    conditions: [Condition]? = nil) {
+        public init(
+            identifier: String,
+            items: [Item],
+            display: CommonDisplay? = nil,
+            conditions: [Condition]? = nil
+        ) {
 
             self.identifier = identifier
             self.items = items
@@ -260,16 +276,17 @@ public class PreferenceCenterConfig: NSObject, Decodable {
             }
 
             return self.identifier == object.identifier
-            && self.display == object.display
-            && self.items == object.items
-            && self.conditions == object.conditions
+                && self.display == object.display
+                && self.items == object.items
+                && self.conditions == object.conditions
         }
     }
 
     /// Labeled section break info.
     @objc(UAPreferenceLabeledSectionBreak)
     public class LabeledSectionBreak: NSObject, Decodable,
-                                      PreferenceCenterConfigSection {
+        PreferenceCenterConfigSection
+    {
 
         /// The section's type.
         @objc
@@ -291,9 +308,11 @@ public class PreferenceCenterConfig: NSObject, Decodable {
             self.conditions?.map { $0.info }
         }
 
-        public init(identifier: String,
-                    display: CommonDisplay? = nil,
-                    conditions: [Condition]? = nil) {
+        public init(
+            identifier: String,
+            display: CommonDisplay? = nil,
+            conditions: [Condition]? = nil
+        ) {
 
             self.identifier = identifier
             self.display = display
@@ -312,8 +331,8 @@ public class PreferenceCenterConfig: NSObject, Decodable {
             }
 
             return self.identifier == object.identifier
-            && self.display == object.display
-            && self.conditions == object.conditions
+                && self.display == object.display
+                && self.conditions == object.conditions
         }
     }
 
@@ -332,20 +351,28 @@ public class PreferenceCenterConfig: NSObject, Decodable {
 
         public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            let type = try PreferenceCenterConfigSectionType.fromString(container.decode(String.self, forKey: .type))
+            let type = try PreferenceCenterConfigSectionType.fromString(
+                container.decode(String.self, forKey: .type)
+            )
             let singleValueContainer = try decoder.singleValueContainer()
 
             switch type {
             case .common:
-                self = .common((try singleValueContainer.decode(CommonSection.self)))
+                self = .common(
+                    (try singleValueContainer.decode(CommonSection.self))
+                )
             case .labeledSectionBreak:
-                self = .labeledSectionBreak((try singleValueContainer.decode(LabeledSectionBreak.self)))
+                self = .labeledSectionBreak(
+                    (try singleValueContainer.decode(LabeledSectionBreak.self))
+                )
             }
         }
     }
     /// Channel subscription item info.
     @objc(UAPreferenceCenterConfigChannelSubscription)
-    public class ChannelSubscription: NSObject, Decodable, PreferenceCenterConfigItem {
+    public class ChannelSubscription: NSObject, Decodable,
+        PreferenceCenterConfigItem
+    {
 
         /// The item's type.
         @objc
@@ -378,10 +405,12 @@ public class PreferenceCenterConfig: NSObject, Decodable {
             case conditions = "conditions"
         }
 
-        public init(identifier: String,
-                    subscriptionID: String,
-                    display: CommonDisplay? = nil,
-                    conditions: [Condition]? = nil) {
+        public init(
+            identifier: String,
+            subscriptionID: String,
+            display: CommonDisplay? = nil,
+            conditions: [Condition]? = nil
+        ) {
 
             self.identifier = identifier
             self.subscriptionID = subscriptionID
@@ -395,19 +424,22 @@ public class PreferenceCenterConfig: NSObject, Decodable {
             }
 
             return self.identifier == object.identifier
-            && self.display == object.display
-            && self.subscriptionID == object.subscriptionID
-            && self.conditions == object.conditions
+                && self.display == object.display
+                && self.subscriptionID == object.subscriptionID
+                && self.conditions == object.conditions
         }
     }
 
     /// Group contact subscription item info.
     @objc(UAPreferenceCenterConfigContactSubscriptionGroup)
-    public class ContactSubscriptionGroup: NSObject, Decodable, PreferenceCenterConfigItem {
+    public class ContactSubscriptionGroup: NSObject, Decodable,
+        PreferenceCenterConfigItem
+    {
 
         /// The item's type.
         @objc
-        public let type = PreferenceCenterConfigItemType.contactSubscriptionGroup
+        public let type = PreferenceCenterConfigItemType
+            .contactSubscriptionGroup
 
         /// The item's identifier.
         @objc
@@ -441,11 +473,13 @@ public class PreferenceCenterConfig: NSObject, Decodable {
             case components = "components"
         }
 
-        public init(identifier: String,
-                    subscriptionID: String,
-                    components: [Component],
-                    display: CommonDisplay? = nil,
-                    conditions: [Condition]? = nil) {
+        public init(
+            identifier: String,
+            subscriptionID: String,
+            components: [Component],
+            display: CommonDisplay? = nil,
+            conditions: [Condition]? = nil
+        ) {
 
             self.identifier = identifier
             self.subscriptionID = subscriptionID
@@ -460,10 +494,10 @@ public class PreferenceCenterConfig: NSObject, Decodable {
             }
 
             return self.identifier == object.identifier
-            && self.display == object.display
-            && self.subscriptionID == object.subscriptionID
-            && self.conditions == object.conditions
-            && self.components == object.components
+                && self.display == object.display
+                && self.subscriptionID == object.subscriptionID
+                && self.conditions == object.conditions
+                && self.components == object.components
         }
 
         /// Contact subscription group component.
@@ -487,8 +521,10 @@ public class PreferenceCenterConfig: NSObject, Decodable {
                 case display = "display"
             }
 
-            public init(scopes: [ChannelScope],
-                        display: CommonDisplay? = nil) {
+            public init(
+                scopes: [ChannelScope],
+                display: CommonDisplay? = nil
+            ) {
                 self._scopes = ChannelScopes(scopes)
                 self.display = display
             }
@@ -498,14 +534,17 @@ public class PreferenceCenterConfig: NSObject, Decodable {
                     return false
                 }
 
-                return self.display == object.display && self._scopes == object._scopes
+                return self.display == object.display
+                    && self._scopes == object._scopes
             }
         }
     }
 
     /// Contact subscription item info.
     @objc(UAPreferenceCenterConfigContactSubscription)
-    public class ContactSubscription: NSObject, Decodable, PreferenceCenterConfigItem {
+    public class ContactSubscription: NSObject, Decodable,
+        PreferenceCenterConfigItem
+    {
 
         /// The item's type.
         @objc
@@ -547,11 +586,13 @@ public class PreferenceCenterConfig: NSObject, Decodable {
             case _scopes = "scopes"
         }
 
-        public init(identifier: String,
-                    subscriptionID: String,
-                    scopes: [ChannelScope],
-                    display: CommonDisplay? = nil,
-                    conditions: [Condition]? = nil) {
+        public init(
+            identifier: String,
+            subscriptionID: String,
+            scopes: [ChannelScope],
+            display: CommonDisplay? = nil,
+            conditions: [Condition]? = nil
+        ) {
 
             self.identifier = identifier
             self.subscriptionID = subscriptionID
@@ -566,10 +607,10 @@ public class PreferenceCenterConfig: NSObject, Decodable {
             }
 
             return self.identifier == object.identifier
-            && self.display == object.display
-            && self.subscriptionID == object.subscriptionID
-            && self.conditions == object.conditions
-            && self._scopes == object._scopes
+                && self.display == object.display
+                && self.subscriptionID == object.subscriptionID
+                && self.conditions == object.conditions
+                && self._scopes == object._scopes
         }
     }
 
@@ -607,10 +648,12 @@ public class PreferenceCenterConfig: NSObject, Decodable {
             case button = "button"
         }
 
-        public init(identifier: String,
-                    display: Display? = nil,
-                    conditions: [Condition]? = nil,
-                    button: Button? = nil) {
+        public init(
+            identifier: String,
+            display: Display? = nil,
+            conditions: [Condition]? = nil,
+            button: Button? = nil
+        ) {
 
             self.identifier = identifier
             self.display = display
@@ -624,8 +667,8 @@ public class PreferenceCenterConfig: NSObject, Decodable {
             }
 
             return self.identifier == object.identifier
-            && self.display == object.display
-            && self.conditions == object.conditions
+                && self.display == object.display
+                && self.conditions == object.conditions
         }
 
         /// Alert button info.
@@ -654,8 +697,10 @@ public class PreferenceCenterConfig: NSObject, Decodable {
                 case actionJSON = "actions"
             }
 
-            public init(text: String,
-                        contentDescription: String? = nil) {
+            public init(
+                text: String,
+                contentDescription: String? = nil
+            ) {
 
                 self.text = text
                 self.contentDescription = contentDescription
@@ -668,11 +713,10 @@ public class PreferenceCenterConfig: NSObject, Decodable {
                 }
 
                 return self.text == object.text
-                && self.contentDescription == object.contentDescription
-                && self.actionJSON == object.actionJSON
+                    && self.contentDescription == object.contentDescription
+                    && self.actionJSON == object.actionJSON
             }
         }
-
 
         /// Alert display info
         @objc(UAPreferenceConfigAlertDisplay)
@@ -696,9 +740,11 @@ public class PreferenceCenterConfig: NSObject, Decodable {
                 case iconURL = "icon"
             }
 
-            public init(title: String? = nil,
-                        subtitle: String? = nil,
-                        iconURL: String? = nil) {
+            public init(
+                title: String? = nil,
+                subtitle: String? = nil,
+                iconURL: String? = nil
+            ) {
                 self.title = title
                 self.subtitle = subtitle
                 self.iconURL = iconURL
@@ -710,12 +756,11 @@ public class PreferenceCenterConfig: NSObject, Decodable {
                 }
 
                 return self.title == object.title
-                && self.subtitle == object.subtitle
-                && self.iconURL == object.iconURL
+                    && self.subtitle == object.subtitle
+                    && self.iconURL == object.iconURL
             }
         }
     }
-
 
     /// Config item.
     public enum Item: Decodable, Equatable {
@@ -730,28 +775,39 @@ public class PreferenceCenterConfig: NSObject, Decodable {
 
         public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            let type = try PreferenceCenterConfigItemType.fromString(container.decode(String.self, forKey: .type))
+            let type = try PreferenceCenterConfigItemType.fromString(
+                container.decode(String.self, forKey: .type)
+            )
             let singleValueContainer = try decoder.singleValueContainer()
 
             switch type {
             case .channelSubscription:
-                self = .channelSubscription((try singleValueContainer.decode(ChannelSubscription.self)))
+                self = .channelSubscription(
+                    (try singleValueContainer.decode(ChannelSubscription.self))
+                )
             case .contactSubscription:
-                self = .contactSubscription((try singleValueContainer.decode(ContactSubscription.self)))
+                self = .contactSubscription(
+                    (try singleValueContainer.decode(ContactSubscription.self))
+                )
             case .contactSubscriptionGroup:
-                self = .contactSubscriptionGroup((try singleValueContainer.decode(ContactSubscriptionGroup.self)))
+                self = .contactSubscriptionGroup(
+                    (try singleValueContainer.decode(
+                        ContactSubscriptionGroup.self
+                    ))
+                )
             case .alert:
                 self = .alert((try singleValueContainer.decode(Alert.self)))
             }
         }
     }
 
-
 }
 
 /// Condition types
 @objc(UAPreferenceCenterConfigConditionType)
-public enum PreferenceCenterConfigConditionType: Int, CustomStringConvertible, Equatable {
+public enum PreferenceCenterConfigConditionType: Int, CustomStringConvertible,
+    Equatable
+{
 
     /// Notification opt-in condition.
     case notificationOptIn
@@ -763,7 +819,9 @@ public enum PreferenceCenterConfigConditionType: Int, CustomStringConvertible, E
         }
     }
 
-    static func fromString(_ value: String) throws -> PreferenceCenterConfigConditionType {
+    static func fromString(_ value: String) throws
+        -> PreferenceCenterConfigConditionType
+    {
         switch value {
         case "notification_opt_in":
             return .notificationOptIn
@@ -777,9 +835,7 @@ public enum PreferenceCenterConfigConditionType: Int, CustomStringConvertible, E
     }
 }
 
-/**
- * Condition
- */
+/// Condition
 @objc(UAPreferenceConfigCondition)
 public protocol PreferenceConfigCondition {
 
@@ -792,7 +848,9 @@ public protocol PreferenceConfigCondition {
 
 /// Item types.
 @objc(UAPreferenceCenterConfigItemType)
-public enum PreferenceCenterConfigItemType: Int, CustomStringConvertible, Equatable {
+public enum PreferenceCenterConfigItemType: Int, CustomStringConvertible,
+    Equatable
+{
 
     /// Channel subscription type.
     case channelSubscription
@@ -815,7 +873,9 @@ public enum PreferenceCenterConfigItemType: Int, CustomStringConvertible, Equata
         }
     }
 
-    static func fromString(_ value: String) throws -> PreferenceCenterConfigItemType {
+    static func fromString(_ value: String) throws
+        -> PreferenceCenterConfigItemType
+    {
         switch value {
         case "channel_subscription": return .channelSubscription
         case "contact_subscription": return .contactSubscription
@@ -831,7 +891,6 @@ public enum PreferenceCenterConfigItemType: Int, CustomStringConvertible, Equata
     }
 }
 
-
 /// Preference section item info.
 @objc(UAPreferenceCenterConfigItem)
 public protocol PreferenceCenterConfigItem {
@@ -844,10 +903,11 @@ public protocol PreferenceCenterConfigItem {
     var identifier: String { get }
 }
 
-
 /// Preference config section type.
 @objc(UAPreferenceCenterConfigSectionType)
-public enum PreferenceCenterConfigSectionType: Int, CustomStringConvertible, Equatable {
+public enum PreferenceCenterConfigSectionType: Int, CustomStringConvertible,
+    Equatable
+{
 
     /// Common section type.
     case common
@@ -862,7 +922,9 @@ public enum PreferenceCenterConfigSectionType: Int, CustomStringConvertible, Equ
         }
     }
 
-    static func fromString(_ value: String) throws -> PreferenceCenterConfigSectionType {
+    static func fromString(_ value: String) throws
+        -> PreferenceCenterConfigSectionType
+    {
         switch value {
         case "section":
             return .common
@@ -897,7 +959,7 @@ public protocol PreferenceCenterConfigSection {
 
 extension PreferenceCenterConfig.Item {
     var info: PreferenceCenterConfigItem {
-        switch(self) {
+        switch self {
         case .channelSubscription(let info): return info
         case .contactSubscription(let info): return info
         case .contactSubscriptionGroup(let info): return info
@@ -908,7 +970,7 @@ extension PreferenceCenterConfig.Item {
 
 extension PreferenceCenterConfig.Section {
     var info: PreferenceCenterConfigSection {
-        switch(self) {
+        switch self {
         case .common(let info): return info
         case .labeledSectionBreak(let info): return info
         }
@@ -917,14 +979,14 @@ extension PreferenceCenterConfig.Section {
 
 extension PreferenceCenterConfig.Condition {
     var info: PreferenceConfigCondition {
-        switch(self) {
+        switch self {
         case .notificationOptIn(let info): return info
         }
     }
 }
 
-public extension PreferenceCenterConfig {
-    func containsChannelSubscriptions() -> Bool {
+extension PreferenceCenterConfig {
+    public func containsChannelSubscriptions() -> Bool {
         return self.sections.contains(where: { section in
             guard case .common(let info) = section else { return false }
             return info.items.contains(where: { item in
@@ -933,12 +995,13 @@ public extension PreferenceCenterConfig {
         })
     }
 
-    func containsContactSubscriptions() -> Bool {
+    public func containsContactSubscriptions() -> Bool {
         return self.sections.contains(where: { section in
             guard case .common(let info) = section else { return false }
             return info.items.contains(where: { item in
-                return (item.info.type == .contactSubscription ||
-                        item.info.type == .contactSubscriptionGroup)
+                return
+                    (item.info.type == .contactSubscription
+                    || item.info.type == .contactSubscriptionGroup)
             })
         })
     }

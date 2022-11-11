@@ -4,7 +4,7 @@ import Foundation
 import SwiftUI
 
 #if canImport(AirshipCore)
-import AirshipCore
+    import AirshipCore
 #endif
 
 /// Labeled section break view
@@ -43,14 +43,15 @@ public struct LabeledSectionBreakView: View {
     }
 }
 
-public extension View {
+extension View {
     /// Sets the labeled section break style
     /// - Parameters:
     ///     - style: The style
-    func labeledSectionBreakStyle<S>(_ style: S) -> some View where S : LabeledSectionBreakStyle {
+    public func labeledSectionBreakStyle<S>(_ style: S) -> some View
+    where S: LabeledSectionBreakStyle {
         self.environment(
             \.airshipLabeledSectionBreakStyle,
-             AnyLabeledSectionBreakStyle(style: style)
+            AnyLabeledSectionBreakStyle(style: style)
         )
     }
 }
@@ -77,10 +78,11 @@ public protocol LabeledSectionBreakStyle {
     func makeBody(configuration: Self.Configuration) -> Self.Body
 }
 
-public extension LabeledSectionBreakStyle where Self == DefaultLabeledSectionBreakStyle {
+extension LabeledSectionBreakStyle
+where Self == DefaultLabeledSectionBreakStyle {
 
     /// Default style
-    static var defaultStyle: Self {
+    public static var defaultStyle: Self {
         return .init()
     }
 }
@@ -96,9 +98,10 @@ public struct DefaultLabeledSectionBreakStyle: LabeledSectionBreakStyle {
     @ViewBuilder
     public func makeBody(configuration: Configuration) -> some View {
         let section = configuration.section
-        let sectionTheme = configuration.preferenceCenterTheme.labeledSectionBreak
+        let sectionTheme = configuration.preferenceCenterTheme
+            .labeledSectionBreak
 
-        if (configuration.displayConditionsMet) {
+        if configuration.displayConditionsMet {
             Text(section.display?.title ?? "")
                 .textAppearance(
                     sectionTheme?.titleAppearance,

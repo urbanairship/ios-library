@@ -10,12 +10,10 @@ protocol WorkBackgroundTimeProtocol {
 class WorkBackgroundTime: WorkBackgroundTimeProtocol {
     @MainActor
     var remainingTime: TimeInterval {
-#if os(watchOS)
-        return Double.infinity
-#else
-        return UIApplication.shared.backgroundTimeRemaining
-#endif
+        #if os(watchOS)
+            return Double.infinity
+        #else
+            return UIApplication.shared.backgroundTimeRemaining
+        #endif
     }
 }
-
-

@@ -3,28 +3,29 @@
 import CoreData
 
 #if canImport(AirshipCore)
-import AirshipCore
+    import AirshipCore
 #elseif canImport(AirshipKit)
-import AirshipKit
+    import AirshipKit
 #endif
 
 class PushDataManager {
 
-    private let maxAge = TimeInterval(172800) // 2 days
+    private let maxAge = TimeInterval(172800)  // 2 days
     private let appKey: String
     private let coreData: UACoreData
 
     public init(appKey: String) {
         self.appKey = appKey
         self.coreData = UACoreData(
-            modelURL: DebugResources.bundle().url(
-                forResource: "AirshipDebugPushData",
-                withExtension:"momd"
-            )!,
+            modelURL: DebugResources.bundle()
+                .url(
+                    forResource: "AirshipDebugPushData",
+                    withExtension: "momd"
+                )!,
             inMemory: false,
             stores: ["AirshipDebugPushData-\(appKey).sqlite"]
         )
-        
+
         self.trimDatabase()
     }
 
@@ -32,7 +33,8 @@ class PushDataManager {
         coreData.performBlockIfStoresExist { isSafe, context in
             guard isSafe else { return }
 
-            let fetchRequest: NSFetchRequest<NSFetchRequestResult> = PushData.fetchRequest()
+            let fetchRequest: NSFetchRequest<NSFetchRequestResult> =
+                PushData.fetchRequest()
 
             let storageDaysInterval = Date()
                 .addingTimeInterval(
@@ -40,8 +42,13 @@ class PushDataManager {
                 )
                 .timeIntervalSince1970
 
-            fetchRequest.predicate = NSPredicate(format:"time < %f", storageDaysInterval)
-            let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+            fetchRequest.predicate = NSPredicate(
+                format: "time < %f",
+                storageDaysInterval
+            )
+            let batchDeleteRequest = NSBatchDeleteRequest(
+                fetchRequest: fetchRequest
+            )
 
             do {
                 _ = try context.execute(batchDeleteRequest)
@@ -54,12 +61,15 @@ class PushDataManager {
     public func savePushNotification(_ push: PushNotification) {
         coreData.safePerform { isSafe, context in
             guard isSafe,
-                  !self.pushExists(id: push.pushID, context: context)
+                !self.pushExists(id: push.pushID, context: context)
             else {
                 return
             }
 
-            let persistedPush = PushData(entity: PushData.entity(), insertInto:context)
+            let persistedPush = PushData(
+                entity: PushData.entity(),
+                insertInto: context
+            )
             persistedPush.pushID = push.pushID
             persistedPush.alert = push.alert
             persistedPush.data = push.description
@@ -67,8 +77,9 @@ class PushDataManager {
             UACoreData.safeSave(context)
         }
     }
-    
-    private func pushExists(id: String, context: NSManagedObjectContext) -> Bool {
+
+    private func pushExists(id: String, context: NSManagedObjectContext) -> Bool
+    {
         let fetchRequest: NSFetchRequest = PushData.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "pushID = %@", id)
         var results: [NSManagedObject] = []
@@ -88,8 +99,10 @@ class PushDataManager {
                     return
                 }
 
-                let fetchRequest:NSFetchRequest = PushData.fetchRequest()
-                fetchRequest.sortDescriptors = [NSSortDescriptor(key: "time", ascending: false)]
+                let fetchRequest: NSFetchRequest = PushData.fetchRequest()
+                fetchRequest.sortDescriptors = [
+                    NSSortDescriptor(key: "time", ascending: false)
+                ]
 
                 do {
                     let result = try context.fetch(fetchRequest)
@@ -99,7 +112,9 @@ class PushDataManager {
                     continuation.resume(returning: notifications)
                 } catch {
                     if let error = error as NSError? {
-                        print("ERROR: error fetching push payload list - \(error), \(error.userInfo)")
+                        print(
+                            "ERROR: error fetching push payload list - \(error), \(error.userInfo)"
+                        )
                     }
                     continuation.resume(returning: [])
                 }

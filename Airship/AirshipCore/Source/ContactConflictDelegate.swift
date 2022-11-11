@@ -2,12 +2,10 @@
 
 import Foundation
 
-/**
- * Contact delegate to handle conflicts.
- */
+/// Contact delegate to handle conflicts.
 @objc(UAContactConflictDelegate)
-public protocol ContactConflictDelegate  {
-    
+public protocol ContactConflictDelegate {
+
     /**
      * Called when an anonymous user data will be lost due to the device being associated to an existing contact or
      * when the device is associated to a contact outside of the SDK.

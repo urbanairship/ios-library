@@ -1,12 +1,12 @@
 /* Copyright Airship and Contributors */
 
+import Combine
 import Foundation
 import UserNotifications
-import Combine
 
 #if os(watchOS)
-import WatchKit
-import UIKit
+    import WatchKit
+    import UIKit
 #endif
 
 /// This singleton provides an interface to the functionality provided by the Airship iOS Push API.
@@ -31,7 +31,9 @@ public class Push: NSObject, Component, PushProtocol {
     /// NSNotification event when a notification response is received.
     /// The event will contain the notification response object.
     @objc
-    public static let receivedNotificationResponseEvent = NSNotification.Name("com.urbanairship.push.received_notification_response")
+    public static let receivedNotificationResponseEvent = NSNotification.Name(
+        "com.urbanairship.push.received_notification_response"
+    )
 
     /// Response key for ReceivedNotificationResponseEvent
     @objc
@@ -40,12 +42,16 @@ public class Push: NSObject, Component, PushProtocol {
     /// NSNotification event when a foreground notification is received.
     /// The event will contain the payload dictionary as user info.
     @objc
-    public static let receivedForegroundNotificationEvent = NSNotification.Name("com.urbanairship.push.received_foreground_notification")
+    public static let receivedForegroundNotificationEvent = NSNotification.Name(
+        "com.urbanairship.push.received_foreground_notification"
+    )
 
     /// NSNotification event when a background notification is received.
     /// The event will contain the payload dictionary as user info.
     @objc
-    public static let receivedBackgroundNotificationEvent = NSNotification.Name("com.urbanairship.push.received_background_notification")
+    public static let receivedBackgroundNotificationEvent = NSNotification.Name(
+        "com.urbanairship.push.received_background_notification"
+    )
 
     /// Quiet Time dictionary start key. For internal use only :nodoc:
     @objc
@@ -55,10 +61,14 @@ public class Push: NSObject, Component, PushProtocol {
     @objc
     public static let quietTimeEndKey = "end"
 
-    private static let pushNotificationsOptionsKey = "UAUserPushNotificationsOptions"
-    private static let userPushNotificationsEnabledKey = "UAUserPushNotificationsEnabled"
-    private static let backgroundPushNotificationsEnabledKey = "UABackgroundPushNotificationsEnabled"
-    private static let requestExplicitPermissionWhenEphemeralKey = "UAExtendedPushNotificationPermissionEnabled"
+    private static let pushNotificationsOptionsKey =
+        "UAUserPushNotificationsOptions"
+    private static let userPushNotificationsEnabledKey =
+        "UAUserPushNotificationsEnabled"
+    private static let backgroundPushNotificationsEnabledKey =
+        "UABackgroundPushNotificationsEnabled"
+    private static let requestExplicitPermissionWhenEphemeralKey =
+        "UAExtendedPushNotificationPermissionEnabled"
 
     private static let badgeSettingsKey = "UAPushBadge"
     private static let deviceTokenKey = "UADeviceToken"
@@ -68,11 +78,12 @@ public class Push: NSObject, Component, PushProtocol {
 
     private static let typesAuthorizedKey = "UAPushTypesAuthorized"
     private static let authorizationStatusKey = "UAPushAuthorizationStatus"
-    private static let userPromptedForNotificationsKey = "UAPushUserPromptedForNotifications"
+    private static let userPromptedForNotificationsKey =
+        "UAPushUserPromptedForNotifications"
 
     // Old push enabled key
     private static let oldPushEnabledKey = "UAPushEnabled"
-    
+
     // The default device tag group.
     private static let defaultDeviceTagGroup = "device"
 
@@ -84,8 +95,10 @@ public class Push: NSObject, Component, PushProtocol {
     private static let presentationOptionBanner = "banner"
 
     // Foreground presentation keys
-    private static let ForegroundPresentationLegacykey = "foreground_presentation"
-    private static let ForegroundPresentationkey = "com.urbanairship.foreground_presentation"
+    private static let ForegroundPresentationLegacykey =
+        "foreground_presentation"
+    private static let ForegroundPresentationkey =
+        "com.urbanairship.foreground_presentation"
     private static let deviceTokenRegistrationWaitTime: TimeInterval = 10
 
     private let config: RuntimeConfig
@@ -109,25 +122,22 @@ public class Push: NSObject, Component, PushProtocol {
     private var isNotificationRegistrationDispatched = Atomic<Bool>(false)
 
     private var isRegisteredForRemoteNotifications: Bool {
-        get {
-            var registered = false
-            self.mainDispatcher.doSync {
-                registered = self.apnsRegistrar.isRegisteredForRemoteNotifications
-            }
-            return registered
+        var registered = false
+        self.mainDispatcher.doSync {
+            registered = self.apnsRegistrar.isRegisteredForRemoteNotifications
         }
+        return registered
     }
 
     private var isBackgroundRefreshStatusAvailable: Bool {
-        get {
-            var available = false
-#if !os(watchOS)
+        var available = false
+        #if !os(watchOS)
             self.mainDispatcher.doSync {
-                available = self.apnsRegistrar.isBackgroundRefreshStatusAvailable
+                available =
+                    self.apnsRegistrar.isBackgroundRefreshStatusAvailable
             }
-#endif
-            return available
-        }
+        #endif
+        return available
     }
     // NOTE: For internal use only. :nodoc:
     public var isComponentEnabled: Bool {
@@ -138,18 +148,21 @@ public class Push: NSObject, Component, PushProtocol {
             self.disableHelper.enabled = newValue
         }
     }
-    
-    init(config: RuntimeConfig,
-         dataStore: PreferenceDataStore,
-         channel:  ChannelProtocol,
-         analytics: AnalyticsProtocol,
-         privacyManager: PrivacyManager,
-         permissionsManager: PermissionsManager,
-         notificationCenter: NotificationCenter = NotificationCenter.default,
-         notificationRegistrar: NotificationRegistrar = UNNotificationRegistrar(),
-         apnsRegistrar: APNSRegistrar,
-         badger: Badger,
-         mainDispatcher: UADispatcher = UADispatcher.main) {
+
+    init(
+        config: RuntimeConfig,
+        dataStore: PreferenceDataStore,
+        channel: ChannelProtocol,
+        analytics: AnalyticsProtocol,
+        privacyManager: PrivacyManager,
+        permissionsManager: PermissionsManager,
+        notificationCenter: NotificationCenter = NotificationCenter.default,
+        notificationRegistrar: NotificationRegistrar =
+            UNNotificationRegistrar(),
+        apnsRegistrar: APNSRegistrar,
+        badger: Badger,
+        mainDispatcher: UADispatcher = UADispatcher.main
+    ) {
 
         self.config = config
         self.dataStore = dataStore
@@ -162,31 +175,50 @@ public class Push: NSObject, Component, PushProtocol {
         self.badger = badger
 
         self.mainDispatcher = mainDispatcher
-        self.disableHelper = ComponentDisableHelper(dataStore: dataStore,
-                                                    className: "UAPush")
+        self.disableHelper = ComponentDisableHelper(
+            dataStore: dataStore,
+            className: "UAPush"
+        )
         super.init()
-        
+
         self.disableHelper.onChange = { [weak self] in
             self?.onComponentEnableChange()
         }
 
-        if (config.requestAuthorizationToUseNotifications) {
-            let permissionDelegate = NotificationPermissionDelegate(registrar: self.notificationRegistrar) {
+        if config.requestAuthorizationToUseNotifications {
+            let permissionDelegate = NotificationPermissionDelegate(
+                registrar: self.notificationRegistrar
+            ) {
                 let options = self.notificationOptions
-                let skipIfEphemeral = !self.requestExplicitPermissionWhenEphemeral
-                return NotificationPermissionDelegate.Config(options: options,
-                                                             skipIfEphemeral: skipIfEphemeral)
+                let skipIfEphemeral = !self
+                    .requestExplicitPermissionWhenEphemeral
+                return NotificationPermissionDelegate.Config(
+                    options: options,
+                    skipIfEphemeral: skipIfEphemeral
+                )
             }
 
-            self.permissionsManager.setDelegate(permissionDelegate, permission: .displayNotifications)
+            self.permissionsManager.setDelegate(
+                permissionDelegate,
+                permission: .displayNotifications
+            )
         }
 
-        self.permissionsManager.addRequestExtender(permission: .displayNotifications) { status, completionHandler in
-            self.onNotificationRegistrationFinished(completionHandler: completionHandler)
+        self.permissionsManager.addRequestExtender(
+            permission: .displayNotifications
+        ) { status, completionHandler in
+            self.onNotificationRegistrationFinished(
+                completionHandler: completionHandler
+            )
         }
 
-        self.permissionsManager.addAirshipEnabler(permission: .displayNotifications) {
-            self.dataStore.setBool(true, forKey: Push.userPushNotificationsEnabledKey)
+        self.permissionsManager.addAirshipEnabler(
+            permission: .displayNotifications
+        ) {
+            self.dataStore.setBool(
+                true,
+                forKey: Push.userPushNotificationsEnabledKey
+            )
             self.privacyManager.enableFeatures(.push)
             self.channel.updateRegistration()
         }
@@ -196,11 +228,14 @@ public class Push: NSObject, Component, PushProtocol {
 
         var checkedAppRestore = false
         self.channel.addRegistrationExtender { payload, completionHandler in
-            if (!checkedAppRestore && self.dataStore.isAppRestore) {
+            if !checkedAppRestore && self.dataStore.isAppRestore {
                 self.resetDeviceToken()
             }
             checkedAppRestore = true
-            self.extendChannelRegistrationPayload(payload, completionHandler: completionHandler)
+            self.extendChannelRegistrationPayload(
+                payload,
+                completionHandler: completionHandler
+            )
         }
 
         analytics.add {
@@ -208,35 +243,45 @@ public class Push: NSObject, Component, PushProtocol {
         }
 
         self.updatePushEnablement()
-    
-        if (!self.apnsRegistrar.isRemoteNotificationBackgroundModeEnabled) {
-            AirshipLogger.impError("Application is not configured for background notifications. Please enable remote notifications in the application's background modes.")
+
+        if !self.apnsRegistrar.isRemoteNotificationBackgroundModeEnabled {
+            AirshipLogger.impError(
+                "Application is not configured for background notifications. Please enable remote notifications in the application's background modes."
+            )
         }
     }
-    
+
     private func observeNotificationCenterEvents() {
-#if !os(watchOS)
-        self.notificationCenter.addObserver(self,
-                                            selector: #selector(applicationBackgroundRefreshStatusChanged),
-                                            name: UIApplication.backgroundRefreshStatusDidChangeNotification,
-                                            object: nil)
-#endif
-        self.notificationCenter.addObserver(self,
-                                            selector: #selector(applicationDidTransitionToForeground),
-                                            name: AppStateTracker.didTransitionToForeground,
-                                            object: nil)
+        #if !os(watchOS)
+            self.notificationCenter.addObserver(
+                self,
+                selector: #selector(applicationBackgroundRefreshStatusChanged),
+                name: UIApplication
+                    .backgroundRefreshStatusDidChangeNotification,
+                object: nil
+            )
+        #endif
+        self.notificationCenter.addObserver(
+            self,
+            selector: #selector(applicationDidTransitionToForeground),
+            name: AppStateTracker.didTransitionToForeground,
+            object: nil
+        )
 
-        self.notificationCenter.addObserver(self,
-                                            selector: #selector(applicationDidEnterBackground),
-                                            name: AppStateTracker.didEnterBackgroundNotification,
-                                            object: nil)
+        self.notificationCenter.addObserver(
+            self,
+            selector: #selector(applicationDidEnterBackground),
+            name: AppStateTracker.didEnterBackgroundNotification,
+            object: nil
+        )
 
-        self.notificationCenter.addObserver(self,
-                                            selector: #selector(onEnabledFeaturesChanged),
-                                            name: PrivacyManager.changeEvent,
-                                            object: nil)
+        self.notificationCenter.addObserver(
+            self,
+            selector: #selector(onEnabledFeaturesChanged),
+            name: PrivacyManager.changeEvent,
+            object: nil
+        )
     }
-    
 
     /// Enables/disables background remote notifications on this device through Airship.
     /// Defaults to `true`.
@@ -244,13 +289,19 @@ public class Push: NSObject, Component, PushProtocol {
     public var backgroundPushNotificationsEnabled: Bool {
         set {
             let previous = self.backgroundPushNotificationsEnabled
-            self.dataStore.setBool(newValue, forKey: Push.backgroundPushNotificationsEnabledKey)
+            self.dataStore.setBool(
+                newValue,
+                forKey: Push.backgroundPushNotificationsEnabledKey
+            )
             if !previous == newValue {
                 self.channel.updateRegistration()
             }
         }
         get {
-            return self.dataStore.bool(forKey: Push.backgroundPushNotificationsEnabledKey, defaultValue: true)
+            return self.dataStore.bool(
+                forKey: Push.backgroundPushNotificationsEnabledKey,
+                defaultValue: true
+            )
         }
     }
 
@@ -260,7 +311,10 @@ public class Push: NSObject, Component, PushProtocol {
     public var userPushNotificationsEnabled: Bool {
         set {
             let previous = self.userPushNotificationsEnabled
-            self.dataStore.setBool(newValue, forKey: Push.userPushNotificationsEnabledKey)
+            self.dataStore.setBool(
+                newValue,
+                forKey: Push.userPushNotificationsEnabledKey
+            )
             if previous != newValue {
                 self.dispatchUpdateNotifications()
             }
@@ -269,7 +323,9 @@ public class Push: NSObject, Component, PushProtocol {
         }
 
         get {
-            return self.dataStore.bool(forKey: Push.userPushNotificationsEnabledKey)
+            return self.dataStore.bool(
+                forKey: Push.userPushNotificationsEnabledKey
+            )
         }
     }
 
@@ -277,7 +333,11 @@ public class Push: NSObject, Component, PushProtocol {
     /// Defaults to `false`. Once set to `true`, the user will be prompted for remote notifications if userPushNotificationsEnabled and the user currently has
     /// ephemeral authorization.
     @objc
-    @available(*, deprecated, message: "Use requestExplicitPermissionWhenEphemeral instead")
+    @available(
+        *,
+        deprecated,
+        message: "Use requestExplicitPermissionWhenEphemeral instead"
+    )
     public var extendedPushNotificationPermissionEnabled: Bool {
         set {
             self.requestExplicitPermissionWhenEphemeral = newValue
@@ -294,12 +354,17 @@ public class Push: NSObject, Component, PushProtocol {
         set {
             let previous = self.requestExplicitPermissionWhenEphemeral
             if previous != newValue {
-                self.dataStore.setBool(newValue, forKey: Push.requestExplicitPermissionWhenEphemeralKey)
+                self.dataStore.setBool(
+                    newValue,
+                    forKey: Push.requestExplicitPermissionWhenEphemeralKey
+                )
                 self.dispatchUpdateNotifications()
             }
         }
         get {
-            return self.dataStore.bool(forKey: Push.requestExplicitPermissionWhenEphemeralKey)
+            return self.dataStore.bool(
+                forKey: Push.requestExplicitPermissionWhenEphemeralKey
+            )
         }
     }
 
@@ -314,17 +379,31 @@ public class Push: NSObject, Component, PushProtocol {
             }
 
             do {
-                let regex =  try NSRegularExpression(pattern: "[^0-9a-fA-F]", options: .caseInsensitive)
-                if regex.numberOfMatches(in: deviceToken, options: [], range: NSRange(location: 0, length: deviceToken.count)) != 0 {
-                    AirshipLogger.error("Device token \(deviceToken) contains invalid characters. Only hex characters are allowed")
+                let regex = try NSRegularExpression(
+                    pattern: "[^0-9a-fA-F]",
+                    options: .caseInsensitive
+                )
+                if regex.numberOfMatches(
+                    in: deviceToken,
+                    options: [],
+                    range: NSRange(location: 0, length: deviceToken.count)
+                ) != 0 {
+                    AirshipLogger.error(
+                        "Device token \(deviceToken) contains invalid characters. Only hex characters are allowed"
+                    )
                     return
                 }
 
                 if deviceToken.count < 64 || deviceToken.count > 200 {
-                    AirshipLogger.warn("Device token \(deviceToken) should be 64 to 200 hex characters (32 to 100 bytes) long.")
+                    AirshipLogger.warn(
+                        "Device token \(deviceToken) should be 64 to 200 hex characters (32 to 100 bytes) long."
+                    )
                 }
 
-                self.dataStore.setObject(deviceToken, forKey: Push.deviceTokenKey)
+                self.dataStore.setObject(
+                    deviceToken,
+                    forKey: Push.deviceTokenKey
+                )
                 self.deviceTokenAvailableBlock?()
                 AirshipLogger.importantInfo("Device token: \(deviceToken)")
             } catch {
@@ -348,61 +427,69 @@ public class Push: NSObject, Component, PushProtocol {
     public var notificationOptions: UANotificationOptions {
         set {
             let previous = self.notificationOptions
-            self.dataStore.setObject(NSNumber(value:newValue.rawValue), forKey: Push.pushNotificationsOptionsKey)
+            self.dataStore.setObject(
+                NSNumber(value: newValue.rawValue),
+                forKey: Push.pushNotificationsOptionsKey
+            )
             if previous != newValue {
                 self.dispatchUpdateNotifications()
             }
         }
 
         get {
-            guard let value = self.dataStore.object(forKey: Push.pushNotificationsOptionsKey) as? NSNumber else {
-#if os(tvOS)
-                return .badge
-#else
-                if (self.authorizationStatus == .provisional) {
+            guard
+                let value = self.dataStore.object(
+                    forKey: Push.pushNotificationsOptionsKey
+                ) as? NSNumber
+            else {
+                #if os(tvOS)
+                    return .badge
+                #else
+                    guard self.authorizationStatus == .provisional else {
+                        return [.badge, .sound, .alert]
+                    }
                     return [.badge, .sound, .alert, .provisional]
-                } else {
-                    return [.badge, .sound, .alert]
-                }
-#endif
+                #endif
             }
 
             return UANotificationOptions(rawValue: value.uintValue)
         }
     }
 
-#if !os(tvOS)
-    /// Custom notification categories. Airship default notification
-    /// categories will be unaffected by this field.
-    ///
-    /// Changes to this value will not take effect until the next time the app registers
-    /// with updateRegistration.
-    @objc
-    public var customCategories: Set<UNNotificationCategory> = Set() {
-        didSet {
-            self.updateCategories()
+    #if !os(tvOS)
+        /// Custom notification categories. Airship default notification
+        /// categories will be unaffected by this field.
+        ///
+        /// Changes to this value will not take effect until the next time the app registers
+        /// with updateRegistration.
+        @objc
+        public var customCategories: Set<UNNotificationCategory> = Set() {
+            didSet {
+                self.updateCategories()
+            }
         }
-    }
 
-    /// The combined set of notification categories from `customCategories` set by the app
-    /// and the Airship provided categories.
-    @objc
-    public var combinedCategories: Set<UNNotificationCategory> {
-        get {
-            let defaultCategories = NotificationCategories.defaultCategories(withRequireAuth: requireAuthorizationForDefaultCategories)
-            return defaultCategories.union(self.customCategories.union(self.accengageCategories))
+        /// The combined set of notification categories from `customCategories` set by the app
+        /// and the Airship provided categories.
+        @objc
+        public var combinedCategories: Set<UNNotificationCategory> {
+            let defaultCategories = NotificationCategories.defaultCategories(
+                withRequireAuth: requireAuthorizationForDefaultCategories
+            )
+            return defaultCategories.union(
+                self.customCategories.union(self.accengageCategories)
+            )
         }
-    }
 
-    /// The set of Accengage notification categories.
-    /// - Note For internal use only. :nodoc:
-    @objc
-    public var accengageCategories: Set<UNNotificationCategory> = [] {
-        didSet {
-            self.updateCategories()
+        /// The set of Accengage notification categories.
+        /// - Note For internal use only. :nodoc:
+        @objc
+        public var accengageCategories: Set<UNNotificationCategory> = [] {
+            didSet {
+                self.updateCategories()
+            }
         }
-    }
-#endif
+    #endif
 
     /// Sets authorization required for the default Airship categories. Only applies
     /// to background user notification actions.
@@ -415,7 +502,7 @@ public class Push: NSObject, Component, PushProtocol {
             self.updateCategories()
         }
     }
-    
+
     /// Set a delegate that implements the PushNotificationDelegate protocol.
     @objc
     public weak var pushNotificationDelegate: PushNotificationDelegate?
@@ -424,26 +511,37 @@ public class Push: NSObject, Component, PushProtocol {
     @objc
     public weak var registrationDelegate: RegistrationDelegate?
 
-#if !os(tvOS)
-    /// Notification response that launched the application.
-    @objc
-    public private(set) var launchNotificationResponse: UNNotificationResponse?
-#endif
+    #if !os(tvOS)
+        /// Notification response that launched the application.
+        @objc
+        public private(set) var launchNotificationResponse:
+            UNNotificationResponse?
+    #endif
     /// The current authorized notification settings.
     /// If push is disabled in privacy manager, this value could be out of date.
     ///
     /// Note: this value reflects all the notification settings currently enabled in the
     /// Settings app and does not take into account which options were originally requested.
     @objc
-    public private(set) var authorizedNotificationSettings: UAAuthorizedNotificationSettings {
+    public private(set) var authorizedNotificationSettings:
+        UAAuthorizedNotificationSettings
+    {
         set {
-            self.dataStore.setInteger(Int(newValue.rawValue), forKey: Push.typesAuthorizedKey)
+            self.dataStore.setInteger(
+                Int(newValue.rawValue),
+                forKey: Push.typesAuthorizedKey
+            )
 
             optInSubject.send(isPushNotificationsOptedIn)
         }
 
         get {
-            guard let value = self.dataStore.object(forKey: Push.typesAuthorizedKey) as? NSNumber else {
+            guard
+                let value = self.dataStore.object(
+                    forKey: Push.typesAuthorizedKey
+                )
+                    as? NSNumber
+            else {
                 return []
             }
 
@@ -456,15 +554,24 @@ public class Push: NSObject, Component, PushProtocol {
     @objc
     public private(set) var authorizationStatus: UAAuthorizationStatus {
         set {
-            self.dataStore.setInteger(newValue.rawValue, forKey: Push.authorizationStatusKey)
+            self.dataStore.setInteger(
+                newValue.rawValue,
+                forKey: Push.authorizationStatusKey
+            )
         }
 
         get {
-            guard let value = self.dataStore.object(forKey: Push.authorizationStatusKey) as? NSNumber else {
+            guard
+                let value = self.dataStore.object(
+                    forKey: Push.authorizationStatusKey
+                )
+                    as? NSNumber
+            else {
                 return .notDetermined
             }
 
-            return UAAuthorizationStatus(rawValue: Int(value.uintValue)) ?? .notDetermined
+            return UAAuthorizationStatus(rawValue: Int(value.uintValue))
+                ?? .notDetermined
         }
     }
 
@@ -473,28 +580,36 @@ public class Push: NSObject, Component, PushProtocol {
     @objc
     public private(set) var userPromptedForNotifications: Bool {
         set {
-            self.dataStore.setBool(newValue, forKey: Push.userPromptedForNotificationsKey)
+            self.dataStore.setBool(
+                newValue,
+                forKey: Push.userPromptedForNotificationsKey
+            )
         }
         get {
-            return self.dataStore.bool(forKey: Push.userPromptedForNotificationsKey)
+            return self.dataStore.bool(
+                forKey: Push.userPromptedForNotificationsKey
+            )
         }
     }
 
     /// The default presentation options to use for foreground notifications.
     @objc
-    public var defaultPresentationOptions: UNNotificationPresentationOptions = []
-
+    public var defaultPresentationOptions: UNNotificationPresentationOptions =
+        []
 
     func updateAuthorizedNotificationTypes() {
         self.updateAuthorizedNotificationTypes { settingsChanged, _, _ in
-            if (settingsChanged) {
+            if settingsChanged {
                 self.channel.updateRegistration()
             }
         }
     }
 
-
-    private func updateAuthorizedNotificationTypes(completionHandler: @escaping (Bool, UAAuthorizationStatus, UAAuthorizedNotificationSettings) -> Void) {
+    private func updateAuthorizedNotificationTypes(
+        completionHandler: @escaping (
+            Bool, UAAuthorizationStatus, UAAuthorizedNotificationSettings
+        ) -> Void
+    ) {
 
         AirshipLogger.trace("Updating authorized types.")
 
@@ -502,21 +617,24 @@ public class Push: NSObject, Component, PushProtocol {
             var settingsChanged = false
             if self.privacyManager.isEnabled(.push) {
 
-                if (!self.userPromptedForNotifications) {
-                    if (status != .notDetermined && status != .ephemeral) {
+                if !self.userPromptedForNotifications {
+                    if status != .notDetermined && status != .ephemeral {
                         self.userPromptedForNotifications = true
                     }
                 }
 
-                if (status != self.authorizationStatus) {
+                if status != self.authorizationStatus {
                     self.authorizationStatus = status
                     settingsChanged = true
                 }
 
-                if (self.authorizedNotificationSettings != settings) {
+                if self.authorizedNotificationSettings != settings {
                     self.authorizedNotificationSettings = settings
                     self.mainDispatcher.dispatchAsync {
-                        self.registrationDelegate?.notificationAuthorizedSettingsDidChange?(settings)
+                        self.registrationDelegate?
+                            .notificationAuthorizedSettingsDidChange?(
+                                settings
+                            )
                     }
                     settingsChanged = true
                 }
@@ -534,20 +652,31 @@ public class Push: NSObject, Component, PushProtocol {
     ///
     /// - Parameter completionHandler: The completion handler with success flag representing the system authorization state.
     @objc
-    public func enableUserPushNotifications(_ completionHandler: @escaping (_ success: Bool) -> Void) {
-        self.dataStore.setBool(true, forKey: Push.userPushNotificationsEnabledKey)
-        self.permissionsManager.requestPermission(.displayNotifications) { status in
+    public func enableUserPushNotifications(
+        _ completionHandler: @escaping (_ success: Bool) -> Void
+    ) {
+        self.dataStore.setBool(
+            true,
+            forKey: Push.userPushNotificationsEnabledKey
+        )
+        self.permissionsManager.requestPermission(.displayNotifications) {
+            status in
             completionHandler(status == .granted)
         }
     }
 
-    private func waitForDeviceTokenRegistration(_ completionHandler: @escaping () -> Void) {
+    private func waitForDeviceTokenRegistration(
+        _ completionHandler: @escaping () -> Void
+    ) {
         self.mainDispatcher.dispatchAsync { [weak self] in
             guard let self = self else {
                 return
             }
 
-            if self.waitForDeviceToken && self.privacyManager.isEnabled(.push) && self.deviceToken == nil && self.apnsRegistrar.isRegisteredForRemoteNotifications {
+            if self.waitForDeviceToken && self.privacyManager.isEnabled(.push)
+                && self.deviceToken == nil
+                && self.apnsRegistrar.isRegisteredForRemoteNotifications
+            {
                 let semaphore = Semaphore()
                 self.waitForDeviceToken = false
 
@@ -555,14 +684,15 @@ public class Push: NSObject, Component, PushProtocol {
                     semaphore.signal()
                 }
 
-                UADispatcher.globalDispatcher(.utility).dispatchAsync { [weak self] in
-                    guard let self = self else {
-                        return
-                    }
+                UADispatcher.globalDispatcher(.utility)
+                    .dispatchAsync { [weak self] in
+                        guard let self = self else {
+                            return
+                        }
 
-                    semaphore.wait(Push.deviceTokenRegistrationWaitTime)
-                    self.mainDispatcher.dispatchAsync(completionHandler)
-                }
+                        semaphore.wait(Push.deviceTokenRegistrationWaitTime)
+                        self.mainDispatcher.dispatchAsync(completionHandler)
+                    }
             } else {
                 completionHandler()
             }
@@ -572,48 +702,51 @@ public class Push: NSObject, Component, PushProtocol {
     /// Indicates whether the user is opted in for push notifications or not.
     @objc
     public var isPushNotificationsOptedIn: Bool {
-        get {
-            var optedIn = true
+        var optedIn = true
 
-            if self.deviceToken == nil {
-                AirshipLogger.trace("Opted out: missing device token")
-                optedIn = false
-            }
-
-            if !self.userPushNotificationsEnabled {
-                AirshipLogger.trace("Opted out: user push notifications disabled")
-                optedIn = false
-            }
-
-            if self.authorizedNotificationSettings == [] {
-                AirshipLogger.trace("Opted out: no authorized notification settings")
-                optedIn = false
-            }
-
-            if !self.isRegisteredForRemoteNotifications {
-                AirshipLogger.trace("Opted out: not registered for remote notifications")
-                optedIn = false
-            }
-
-            if !self.privacyManager.isEnabled(.push) {
-                AirshipLogger.trace("Opted out: push is disabled")
-                optedIn = false
-            }
-
-            return optedIn
+        if self.deviceToken == nil {
+            AirshipLogger.trace("Opted out: missing device token")
+            optedIn = false
         }
+
+        if !self.userPushNotificationsEnabled {
+            AirshipLogger.trace("Opted out: user push notifications disabled")
+            optedIn = false
+        }
+
+        if self.authorizedNotificationSettings == [] {
+            AirshipLogger.trace(
+                "Opted out: no authorized notification settings"
+            )
+            optedIn = false
+        }
+
+        if !self.isRegisteredForRemoteNotifications {
+            AirshipLogger.trace(
+                "Opted out: not registered for remote notifications"
+            )
+            optedIn = false
+        }
+
+        if !self.privacyManager.isEnabled(.push) {
+            AirshipLogger.trace("Opted out: push is disabled")
+            optedIn = false
+        }
+
+        return optedIn
     }
 
     private func backgroundPushNotificationsAllowed() -> Bool {
         guard self.deviceToken != nil,
-              self.backgroundPushNotificationsEnabled,
-              self.apnsRegistrar.isRemoteNotificationBackgroundModeEnabled,
-              self.privacyManager.isEnabled(.push)
+            self.backgroundPushNotificationsEnabled,
+            self.apnsRegistrar.isRemoteNotificationBackgroundModeEnabled,
+            self.privacyManager.isEnabled(.push)
         else {
             return false
         }
 
-        return self.isRegisteredForRemoteNotifications && self.isBackgroundRefreshStatusAvailable
+        return self.isRegisteredForRemoteNotifications
+            && self.isBackgroundRefreshStatusAvailable
     }
 
     private func updatePushEnablement() {
@@ -631,7 +764,9 @@ public class Push: NSObject, Component, PushProtocol {
         optInSubject.send(isPushNotificationsOptedIn)
     }
 
-    private func onNotificationRegistrationFinished(completionHandler: (() -> Void)? = nil) {
+    private func onNotificationRegistrationFinished(
+        completionHandler: (() -> Void)? = nil
+    ) {
         guard self.privacyManager.isEnabled(.push) else {
             completionHandler?()
             return
@@ -645,77 +780,92 @@ public class Push: NSObject, Component, PushProtocol {
 
         self.updateAuthorizedNotificationTypes { _, status, settings in
             self.mainDispatcher.dispatchAsync {
-#if !os(tvOS)
-                self.registrationDelegate?.notificationRegistrationFinished?(withAuthorizedSettings: settings,
-                                                                             categories: self.combinedCategories,
-                                                                             status: status)
+                #if !os(tvOS)
+                    self.registrationDelegate?
+                        .notificationRegistrationFinished?(
+                            withAuthorizedSettings: settings,
+                            categories: self.combinedCategories,
+                            status: status
+                        )
 
-#else
-                self.registrationDelegate?.notificationRegistrationFinished?(withAuthorizedSettings: settings, status: status)
-#endif
+                #else
+                    self.registrationDelegate?
+                        .notificationRegistrationFinished?(
+                            withAuthorizedSettings: settings,
+                            status: status
+                        )
+                #endif
                 self.channel.updateRegistration()
             }
             completionHandler?()
         }
     }
 
-#if !os(watchOS)
-    /// The current badge number used by the device and on the Airship server.
-    ///
-    /// - Note: This property must be accessed on the main thread.
-    @objc
-    public var badgeNumber: Int {
-        set {
-            if self.badger.applicationIconBadgeNumber == newValue {
-                return
+    #if !os(watchOS)
+        /// The current badge number used by the device and on the Airship server.
+        ///
+        /// - Note: This property must be accessed on the main thread.
+        @objc
+        public var badgeNumber: Int {
+            set {
+                if self.badger.applicationIconBadgeNumber == newValue {
+                    return
+                }
+
+                AirshipLogger.debug(
+                    "Change Badge from \(self.badger.applicationIconBadgeNumber), to \(newValue)"
+                )
+
+                self.badger.applicationIconBadgeNumber = newValue
+
+                if self.autobadgeEnabled {
+                    self.channel.updateRegistration(forcefully: true)
+                }
             }
 
-            AirshipLogger.debug("Change Badge from \(self.badger.applicationIconBadgeNumber), to \(newValue)")
-
-            self.badger.applicationIconBadgeNumber = newValue
-
-            if (self.autobadgeEnabled) {
-                self.channel.updateRegistration(forcefully: true)
-            }
-        }
-
-        get {
-            return self.badger.applicationIconBadgeNumber
-        }
-    }
-    
-    /// Toggle the Airship auto-badge feature. Defaults to `false` If enabled, this will update the
-    /// badge number stored by Airship every time the app is started or foregrounded.
-    @objc
-    public var autobadgeEnabled: Bool {
-        set {
-            if self.autobadgeEnabled != newValue {
-                self.dataStore.setBool(newValue, forKey: Push.badgeSettingsKey)
-                self.channel.updateRegistration(forcefully: true)
+            get {
+                return self.badger.applicationIconBadgeNumber
             }
         }
 
-        get {
-            return self.dataStore.bool(forKey:Push.badgeSettingsKey)
-        }
-    }
+        /// Toggle the Airship auto-badge feature. Defaults to `false` If enabled, this will update the
+        /// badge number stored by Airship every time the app is started or foregrounded.
+        @objc
+        public var autobadgeEnabled: Bool {
+            set {
+                if self.autobadgeEnabled != newValue {
+                    self.dataStore.setBool(
+                        newValue,
+                        forKey: Push.badgeSettingsKey
+                    )
+                    self.channel.updateRegistration(forcefully: true)
+                }
+            }
 
-    /// Resets the badge to zero (0) on both the device and on Airships servers. This is a
-    /// convenience method for setting the `badgeNumber` property to zero.
-    ///
-    /// - Note: This method must be called on the main thread.
-    @objc
-    public func resetBadge() {
-        self.badgeNumber = 0
-    }
-    
-#endif
+            get {
+                return self.dataStore.bool(forKey: Push.badgeSettingsKey)
+            }
+        }
+
+        /// Resets the badge to zero (0) on both the device and on Airships servers. This is a
+        /// convenience method for setting the `badgeNumber` property to zero.
+        ///
+        /// - Note: This method must be called on the main thread.
+        @objc
+        public func resetBadge() {
+            self.badgeNumber = 0
+        }
+
+    #endif
 
     /// Quiet time settings for this device.
     @objc
-    public private(set) var quietTime: [AnyHashable : Any]? {
+    public private(set) var quietTime: [AnyHashable: Any]? {
         set {
-            self.dataStore.setObject(newValue, forKey: Push.quietTimeSettingsKey)
+            self.dataStore.setObject(
+                newValue,
+                forKey: Push.quietTimeSettingsKey
+            )
             self.channel.updateRegistration()
         }
 
@@ -729,12 +879,17 @@ public class Push: NSObject, Component, PushProtocol {
     @objc
     public var timeZone: NSTimeZone? {
         set {
-            self.dataStore.setObject(newValue?.name ?? nil, forKey: Push.timeZoneSettingsKey)
+            self.dataStore.setObject(
+                newValue?.name ?? nil,
+                forKey: Push.timeZoneSettingsKey
+            )
         }
 
         get {
-            let timeZoneName = self.dataStore.string(forKey: Push.timeZoneSettingsKey) ?? ""
-            return NSTimeZone(name: timeZoneName) ?? NSTimeZone.default as NSTimeZone
+            let timeZoneName =
+                self.dataStore.string(forKey: Push.timeZoneSettingsKey) ?? ""
+            return NSTimeZone(name: timeZoneName) ?? NSTimeZone.default
+                as NSTimeZone
         }
     }
 
@@ -742,7 +897,10 @@ public class Push: NSObject, Component, PushProtocol {
     @objc
     public var quietTimeEnabled: Bool {
         set {
-            self.dataStore.setBool(newValue, forKey: Push.quietTimeEnabledSettingsKey)
+            self.dataStore.setBool(
+                newValue,
+                forKey: Push.quietTimeEnabledSettingsKey
+            )
         }
 
         get {
@@ -773,23 +931,33 @@ public class Push: NSObject, Component, PushProtocol {
         endHour: Int,
         endMinute: Int
     ) {
-        let startTimeString = "\(String(format: "%02d", startHour)):\(String(format: "%02d", startMinute))"
-        let endTimeString = "\(String(format: "%02d", endHour)):\(String(format: "%02d", endMinute))"
+        let startTimeString =
+            "\(String(format: "%02d", startHour)):\(String(format: "%02d", startMinute))"
+        let endTimeString =
+            "\(String(format: "%02d", endHour)):\(String(format: "%02d", endMinute))"
 
         if startHour >= 24 || startMinute >= 60 {
-            AirshipLogger.error("Unable to set quiet time, invalid start time: \(startTimeString)")
+            AirshipLogger.error(
+                "Unable to set quiet time, invalid start time: \(startTimeString)"
+            )
             return
         }
 
         if endHour >= 24 || endMinute >= 60 {
-            AirshipLogger.error("Unable to set quiet time, invalid end time: \(endTimeString)")
+            AirshipLogger.error(
+                "Unable to set quiet time, invalid end time: \(endTimeString)"
+            )
             return
         }
 
-        AirshipLogger.debug("Setting quiet time: \(startTimeString) to \(endTimeString)")
+        AirshipLogger.debug(
+            "Setting quiet time: \(startTimeString) to \(endTimeString)"
+        )
 
-        self.quietTime = [Push.quietTimeStartKey : startTimeString,
-                          Push.quietTimeEndKey : endTimeString]
+        self.quietTime = [
+            Push.quietTimeStartKey: startTimeString,
+            Push.quietTimeEndKey: endTimeString,
+        ]
     }
 
     /// Registers or updates the current registration with an API call. If push notifications are
@@ -802,27 +970,34 @@ public class Push: NSObject, Component, PushProtocol {
     }
 
     private func updateCategories() {
-#if !os(tvOS)
-        guard self.isComponentEnabled,
-              self.privacyManager.isEnabled(Features.push),
-              self.config.requestAuthorizationToUseNotifications
-        else {
-            return
-        }
+        #if !os(tvOS)
+            guard self.isComponentEnabled,
+                self.privacyManager.isEnabled(Features.push),
+                self.config.requestAuthorizationToUseNotifications
+            else {
+                return
+            }
 
-        self.notificationRegistrar.setCategories(self.combinedCategories)
-#endif
+            self.notificationRegistrar.setCategories(self.combinedCategories)
+        #endif
     }
 
     private func dispatchUpdateNotifications() {
-        guard self.isNotificationRegistrationDispatched.compareAndSet(expected: false, value: true) else {
+        guard
+            self.isNotificationRegistrationDispatched.compareAndSet(
+                expected: false,
+                value: true
+            )
+        else {
             return
         }
 
         mainDispatcher.dispatchAsync {
             self.isNotificationRegistrationDispatched.value = false
 
-            guard self.isComponentEnabled, self.privacyManager.isEnabled(Features.push) else {
+            guard self.isComponentEnabled,
+                self.privacyManager.isEnabled(Features.push)
+            else {
                 return
             }
 
@@ -831,18 +1006,20 @@ public class Push: NSObject, Component, PushProtocol {
                 return
             }
 
-            if (self.userPushNotificationsEnabled) {
+            if self.userPushNotificationsEnabled {
                 self.permissionsManager.requestPermission(.displayNotifications)
             } else {
                 // If we are going from `ephemeral` to `[]` it will prompt the user to disable notifications...
                 // avoid that by just skippping if we have ephemeral.
-                self.notificationRegistrar.updateRegistration(options: [], skipIfEphemeral: true) {
+                self.notificationRegistrar.updateRegistration(
+                    options: [],
+                    skipIfEphemeral: true
+                ) {
                     self.onNotificationRegistrationFinished()
                 }
             }
         }
     }
-
 
     /// - Note: For internal use only. :nodoc:
     private func onComponentEnableChange() {
@@ -863,30 +1040,33 @@ public class Push: NSObject, Component, PushProtocol {
 
     @objc
     private func applicationDidEnterBackground() {
-#if !os(tvOS)
-        self.launchNotificationResponse = nil
-#endif
+        #if !os(tvOS)
+            self.launchNotificationResponse = nil
+        #endif
         if self.privacyManager.isEnabled(.push) {
             self.updateAuthorizedNotificationTypes()
         }
     }
 
-#if !os(watchOS)
-    @objc
-    private func applicationBackgroundRefreshStatusChanged() {
-        if self.privacyManager.isEnabled(.push) {
-            AirshipLogger.trace("Background refresh status changed.")
+    #if !os(watchOS)
+        @objc
+        private func applicationBackgroundRefreshStatusChanged() {
+            if self.privacyManager.isEnabled(.push) {
+                AirshipLogger.trace("Background refresh status changed.")
 
-            if self.apnsRegistrar.isBackgroundRefreshStatusAvailable {
-                self.apnsRegistrar.registerForRemoteNotifications()
-            } else {
-                self.channel.updateRegistration()
+                if self.apnsRegistrar.isBackgroundRefreshStatusAvailable {
+                    self.apnsRegistrar.registerForRemoteNotifications()
+                } else {
+                    self.channel.updateRegistration()
+                }
             }
         }
-    }
-#endif
+    #endif
 
-    private func extendChannelRegistrationPayload(_ payload: ChannelRegistrationPayload, completionHandler: @escaping (ChannelRegistrationPayload) -> Void) {
+    private func extendChannelRegistrationPayload(
+        _ payload: ChannelRegistrationPayload,
+        completionHandler: @escaping (ChannelRegistrationPayload) -> Void
+    ) {
         guard self.privacyManager.isEnabled(.push) else {
             completionHandler(payload)
             return
@@ -896,55 +1076,76 @@ public class Push: NSObject, Component, PushProtocol {
             guard let self = self else {
                 return
             }
-            
+
             guard self.privacyManager.isEnabled(.push) else {
                 completionHandler(payload)
                 return
             }
-            
+
             payload.channel.pushAddress = self.deviceToken
             payload.channel.isOptedIn = self.isPushNotificationsOptedIn
-#if !os(watchOS)
-            payload.channel.isBackgroundEnabled = self.backgroundPushNotificationsAllowed()
-#endif
-            
-            payload.channel.iOSChannelSettings = payload.channel.iOSChannelSettings ?? ChannelRegistrationPayload.iOSChannelSettings()
-            
-#if !os(watchOS)
-            if (self.autobadgeEnabled) {
-                payload.channel.iOSChannelSettings?.badge = self.badgeNumber
-            }
-#endif
-            
+            #if !os(watchOS)
+                payload.channel.isBackgroundEnabled =
+                    self.backgroundPushNotificationsAllowed()
+            #endif
+
+            payload.channel.iOSChannelSettings =
+                payload.channel.iOSChannelSettings
+                ?? ChannelRegistrationPayload.iOSChannelSettings()
+
+            #if !os(watchOS)
+                if self.autobadgeEnabled {
+                    payload.channel.iOSChannelSettings?.badge = self.badgeNumber
+                }
+            #endif
+
             if let timeZoneName = self.timeZone?.name,
-               let quietTimeStart = self.quietTime?[Push.quietTimeStartKey] as? String,
-               let quietTimeEnd = self.quietTime?[Push.quietTimeEndKey] as? String,
-               self.quietTimeEnabled {
-                
-                let quietTime = ChannelRegistrationPayload.QuietTime(start: quietTimeStart, end: quietTimeEnd)
-                payload.channel.iOSChannelSettings?.quietTimeTimeZone = timeZoneName
+                let quietTimeStart = self.quietTime?[Push.quietTimeStartKey]
+                    as? String,
+                let quietTimeEnd = self.quietTime?[Push.quietTimeEndKey]
+                    as? String,
+                self.quietTimeEnabled
+            {
+
+                let quietTime = ChannelRegistrationPayload.QuietTime(
+                    start: quietTimeStart,
+                    end: quietTimeEnd
+                )
+                payload.channel.iOSChannelSettings?.quietTimeTimeZone =
+                    timeZoneName
                 payload.channel.iOSChannelSettings?.quietTime = quietTime
             }
-            
-            payload.channel.iOSChannelSettings?.isScheduledSummary = (self.authorizedNotificationSettings.rawValue & UAAuthorizedNotificationSettings.scheduledDelivery.rawValue > 0)
-            payload.channel.iOSChannelSettings?.isTimeSensitive = (self.authorizedNotificationSettings.rawValue & UAAuthorizedNotificationSettings.timeSensitive.rawValue > 0)
+
+            payload.channel.iOSChannelSettings?.isScheduledSummary =
+                (self.authorizedNotificationSettings.rawValue
+                    & UAAuthorizedNotificationSettings.scheduledDelivery
+                    .rawValue > 0)
+            payload.channel.iOSChannelSettings?.isTimeSensitive =
+                (self.authorizedNotificationSettings.rawValue
+                    & UAAuthorizedNotificationSettings.timeSensitive.rawValue
+                    > 0)
 
             completionHandler(payload)
         }
     }
 
-    private func analyticsHeaders() -> [String : String] {
-        if self.privacyManager.isEnabled(.push) {
-            var headers:[String : String] = [:]
-            headers["X-UA-Channel-Opted-In"] = self.isPushNotificationsOptedIn ? "true" : "false"
-            headers["X-UA-Notification-Prompted"] = self.userPromptedForNotifications ? "true" : "false"
-            headers["X-UA-Channel-Background-Enabled"] = self.backgroundPushNotificationsAllowed() ? "true" : "false"
-            headers["X-UA-Push-Address"] = self.deviceToken
-
-            return headers
-        } else {
-            return ["X-UA-Channel-Opted-In" : "false", "X-UA-Channel-Background-Enabled" : "false"]
+    private func analyticsHeaders() -> [String: String] {
+        guard self.privacyManager.isEnabled(.push) else {
+            return [
+                "X-UA-Channel-Opted-In": "false",
+                "X-UA-Channel-Background-Enabled": "false",
+            ]
         }
+        var headers: [String: String] = [:]
+        headers["X-UA-Channel-Opted-In"] =
+            self.isPushNotificationsOptedIn ? "true" : "false"
+        headers["X-UA-Notification-Prompted"] =
+            self.userPromptedForNotifications ? "true" : "false"
+        headers["X-UA-Channel-Background-Enabled"] =
+            self.backgroundPushNotificationsAllowed() ? "true" : "false"
+        headers["X-UA-Push-Address"] = self.deviceToken
+
+        return headers
     }
 }
 
@@ -954,12 +1155,14 @@ extension Push: InternalPushProtocol {
         guard self.privacyManager.isEnabled(.push) else {
             return
         }
-        
+
         let tokenString = Utils.deviceTokenStringFromDeviceToken(deviceToken)
         AirshipLogger.info("Device token string: \(tokenString)")
         self.deviceToken = tokenString
         self.channel.updateRegistration()
-        self.registrationDelegate?.apnsRegistrationSucceeded?(withDeviceToken: deviceToken)
+        self.registrationDelegate?.apnsRegistrationSucceeded?(
+            withDeviceToken: deviceToken
+        )
     }
 
     public func didFailToRegisterForRemoteNotifications(_ error: Error) {
@@ -970,7 +1173,11 @@ extension Push: InternalPushProtocol {
         self.registrationDelegate?.apnsRegistrationFailedWithError?(error)
     }
 
-    public func presentationOptionsForNotification(_ notification: UNNotification) -> UNNotificationPresentationOptions {
+    public func presentationOptionsForNotification(
+        _ notification: UNNotification
+    )
+        -> UNNotificationPresentationOptions
+    {
         guard self.privacyManager.isEnabled(.push) else {
             return []
         }
@@ -978,7 +1185,9 @@ extension Push: InternalPushProtocol {
         var options: UNNotificationPresentationOptions = []
 
         // get foreground presentation options defined from the push API/dashboard
-        if let payloadPresentationOptions = self.foregroundPresentationOptions(notification:notification) {
+        if let payloadPresentationOptions = self.foregroundPresentationOptions(
+            notification: notification
+        ) {
             if payloadPresentationOptions.count > 0 {
                 // build the options bitmask from the array
                 for presentationOption in payloadPresentationOptions {
@@ -1005,98 +1214,138 @@ extension Push: InternalPushProtocol {
             options = self.defaultPresentationOptions
         }
 
-        if let extendedOptions = self.pushNotificationDelegate?.extend?(options, notification: notification) {
+        if let extendedOptions = self.pushNotificationDelegate?.extend?(
+            options,
+            notification: notification
+        ) {
             options = extendedOptions
         }
 
         return options
     }
 
-#if !os(tvOS)
+    #if !os(tvOS)
 
-    public func didReceiveNotificationResponse(_ response: UNNotificationResponse, completionHandler: @escaping () -> Void) {
+        public func didReceiveNotificationResponse(
+            _ response: UNNotificationResponse,
+            completionHandler: @escaping () -> Void
+        ) {
+            guard self.privacyManager.isEnabled(.push) else {
+                completionHandler()
+                return
+            }
+
+            if response.actionIdentifier
+                == UNNotificationDefaultActionIdentifier
+            {
+                self.launchNotificationResponse = response
+            }
+
+            self.notificationCenter.post(
+                name: Push.receivedNotificationResponseEvent,
+                object: self,
+                userInfo: [
+                    Push.receivedNotificationResponseEventResponseKey: response
+                ]
+            )
+
+            if let callback = self.pushNotificationDelegate?
+                .receivedNotificationResponse
+            {
+                callback(response, completionHandler)
+            } else {
+                completionHandler()
+            }
+        }
+
+    #endif
+
+    public func didReceiveRemoteNotification(
+        _ notification: [AnyHashable: Any],
+        isForeground: Bool,
+        completionHandler handler: @escaping (Any) -> Void
+    ) {
+
         guard self.privacyManager.isEnabled(.push) else {
-            completionHandler()
-            return
-        }
-
-        if response.actionIdentifier == UNNotificationDefaultActionIdentifier {
-            self.launchNotificationResponse = response
-        }
-
-        self.notificationCenter.post(name: Push.receivedNotificationResponseEvent, object: self, userInfo:[Push.receivedNotificationResponseEventResponseKey : response])
-
-        if let callback = self.pushNotificationDelegate?.receivedNotificationResponse {
-            callback(response, completionHandler)
-        } else {
-            completionHandler()
-        }
-    }
-    
-#endif
-
-
-    public func didReceiveRemoteNotification(_ notification: [AnyHashable : Any],
-                                             isForeground: Bool,
-                                             completionHandler handler: @escaping (Any) -> Void) {
-
-        guard self.privacyManager.isEnabled(.push) else {
-#if !os(watchOS)
-            handler(UIBackgroundFetchResult.noData)
-#else
-            handler(WKBackgroundFetchResult.noData)
-#endif
+            #if !os(watchOS)
+                handler(UIBackgroundFetchResult.noData)
+            #else
+                handler(WKBackgroundFetchResult.noData)
+            #endif
             return
         }
 
         let delegate = self.pushNotificationDelegate
 
-        if (isForeground) {
-            self.notificationCenter.post(name: Push.receivedForegroundNotificationEvent, object: self, userInfo: notification)
+        if isForeground {
+            self.notificationCenter.post(
+                name: Push.receivedForegroundNotificationEvent,
+                object: self,
+                userInfo: notification
+            )
             if let callback = delegate?.receivedForegroundNotification {
-                callback(notification, {
-#if !os(watchOS)
-            handler(UIBackgroundFetchResult.noData)
-#else
-            handler(WKBackgroundFetchResult.noData)
-#endif
-                })
+                callback(
+                    notification,
+                    {
+                        #if !os(watchOS)
+                            handler(UIBackgroundFetchResult.noData)
+                        #else
+                            handler(WKBackgroundFetchResult.noData)
+                        #endif
+                    }
+                )
             } else {
-#if !os(watchOS)
-            handler(UIBackgroundFetchResult.noData)
-#else
-            handler(WKBackgroundFetchResult.noData)
-#endif
+                #if !os(watchOS)
+                    handler(UIBackgroundFetchResult.noData)
+                #else
+                    handler(WKBackgroundFetchResult.noData)
+                #endif
             }
         } else {
-            self.notificationCenter.post(name: Push.receivedBackgroundNotificationEvent, object: self, userInfo: notification)
+            self.notificationCenter.post(
+                name: Push.receivedBackgroundNotificationEvent,
+                object: self,
+                userInfo: notification
+            )
             if let callback = delegate?.receivedBackgroundNotification {
-                callback(notification, { result in
-                    handler(result)
-                })
+                callback(
+                    notification,
+                    { result in
+                        handler(result)
+                    }
+                )
             } else {
-#if !os(watchOS)
-            handler(UIBackgroundFetchResult.noData)
-#else
-            handler(WKBackgroundFetchResult.noData)
-#endif
+                #if !os(watchOS)
+                    handler(UIBackgroundFetchResult.noData)
+                #else
+                    handler(WKBackgroundFetchResult.noData)
+                #endif
             }
         }
     }
 
-    private func foregroundPresentationOptions(notification: UNNotification) -> [String]? {
+    private func foregroundPresentationOptions(notification: UNNotification)
+        -> [String]?
+    {
         var presentationOptions: [String]? = nil
-#if !os(tvOS)
-        // get the presentation options from the the notification
-        presentationOptions = notification.request.content.userInfo[Push.ForegroundPresentationkey] as? [String]
+        #if !os(tvOS)
+            // get the presentation options from the the notification
+            presentationOptions =
+                notification.request.content.userInfo[
+                    Push.ForegroundPresentationkey
+                ]
+                as? [String]
 
-        if (presentationOptions == nil) {
-            presentationOptions = notification.request.content.userInfo[Push.ForegroundPresentationLegacykey] as? [String]
-        }
-#endif
+            if presentationOptions == nil {
+                presentationOptions =
+                    notification.request.content.userInfo[
+                        Push.ForegroundPresentationLegacykey
+                    ] as? [String]
+            }
+        #endif
         return presentationOptions
     }
-    
+
     /// - NOTE: For internal use only. :nodoc:
     func resetDeviceToken() {
         self.deviceToken = nil

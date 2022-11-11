@@ -31,7 +31,9 @@ public protocol AnalyticsProtocol {
     ///
     /// - Parameter associatedIdentifiers: The associated identifiers.
     @objc
-    func associateDeviceIdentifiers(_ associatedIdentifiers: AssociatedIdentifiers)
+    func associateDeviceIdentifiers(
+        _ associatedIdentifiers: AssociatedIdentifiers
+    )
 
     /// The device's current associated identifiers.
     /// - Returns: The device's current associated identifiers.
@@ -60,18 +62,20 @@ public protocol AnalyticsProtocol {
     /// For internal use only. :nodoc:
     /// - Parameter notification: The push notification.
     @objc
-    func launched(fromNotification notification: [AnyHashable : Any])
-    
+    func launched(fromNotification notification: [AnyHashable: Any])
+
     /// For internal use only. :nodoc:
     @objc(addAnalyticsHeadersBlock:)
-    func add(_ headerBlock: @escaping () -> [String : String]?)
+    func add(_ headerBlock: @escaping () -> [String: String]?)
 }
-
 
 protocol InternalAnalyticsProtocol {
     func onDeviceRegistration()
-    
+
     #if !os(tvOS)
-    func onNotificationResponse(response: UNNotificationResponse, action: UNNotificationAction?)
+        func onNotificationResponse(
+            response: UNNotificationResponse,
+            action: UNNotificationAction?
+        )
     #endif
 }

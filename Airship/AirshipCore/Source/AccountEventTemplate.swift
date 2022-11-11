@@ -1,11 +1,9 @@
 /* Copyright Airship and Contributors */
 
-/**
- * AccountEventTemplate represents a custom account event template for the
- * application.
- */
+/// AccountEventTemplate represents a custom account event template for the
+/// application.
 @objc(UAAccountEventTemplate)
-public class AccountEventTemplate : NSObject {
+public class AccountEventTemplate: NSObject {
 
     private let eventName: String
 
@@ -21,14 +19,13 @@ public class AccountEventTemplate : NSObject {
      * characters or it will invalidate the event.
      */
     @objc
-    public var  transactionID : String?
+    public var transactionID: String?
 
     /**
      * The event's identifier.
      */
     @objc
     public var userID: String?
-
 
     /**
      * The event's category.
@@ -65,8 +62,11 @@ public class AccountEventTemplate : NSObject {
      * - Returns: An Account event template instance
      */
     @objc(registeredTemplateWithValueFromString:)
-    public class func registeredTemplate(valueString: String?) -> AccountEventTemplate {
-        let decimalValue = valueString != nil ? NSDecimalNumber(string: valueString) : nil
+    public class func registeredTemplate(valueString: String?)
+        -> AccountEventTemplate
+    {
+        let decimalValue =
+            valueString != nil ? NSDecimalNumber(string: valueString) : nil
         return registeredTemplate(value: decimalValue)
     }
 
@@ -78,8 +78,13 @@ public class AccountEventTemplate : NSObject {
      * - Returns: An Account event template instance
      */
     @objc(registeredTemplateWithValue:)
-    public class func registeredTemplate(value: NSNumber?) -> AccountEventTemplate {
-        return AccountEventTemplate(eventName: "registered_account", value: value)
+    public class func registeredTemplate(value: NSNumber?)
+        -> AccountEventTemplate
+    {
+        return AccountEventTemplate(
+            eventName: "registered_account",
+            value: value
+        )
     }
 
     /**
@@ -99,8 +104,11 @@ public class AccountEventTemplate : NSObject {
      * - Returns: An Account event template instance
      */
     @objc(loggedInTemplateWithValueFromString:)
-    public class func loggedInTemplate(valueString: String?) -> AccountEventTemplate {
-        let decimalValue = valueString != nil ? NSDecimalNumber(string: valueString) : nil
+    public class func loggedInTemplate(valueString: String?)
+        -> AccountEventTemplate
+    {
+        let decimalValue =
+            valueString != nil ? NSDecimalNumber(string: valueString) : nil
         return loggedInTemplate(value: decimalValue)
     }
 
@@ -112,10 +120,10 @@ public class AccountEventTemplate : NSObject {
      * - Returns: An Account event template instance
      */
     @objc(loggedInTemplateWithValue:)
-    public class func loggedInTemplate(value: NSNumber?) -> AccountEventTemplate {
+    public class func loggedInTemplate(value: NSNumber?) -> AccountEventTemplate
+    {
         return AccountEventTemplate(eventName: "logged_in", value: value)
     }
-
 
     /**
      * Factory method for creating a logged out account event template.
@@ -134,8 +142,11 @@ public class AccountEventTemplate : NSObject {
      * - Returns: An Account event template instance
      */
     @objc(loggedOutTemplateWithValueFromString:)
-    public class func loggedOutTemplate(valueString: String?) -> AccountEventTemplate {
-        let decimalValue = valueString != nil ? NSDecimalNumber(string: valueString) : nil
+    public class func loggedOutTemplate(valueString: String?)
+        -> AccountEventTemplate
+    {
+        let decimalValue =
+            valueString != nil ? NSDecimalNumber(string: valueString) : nil
         return loggedOutTemplate(value: decimalValue)
     }
 
@@ -147,7 +158,9 @@ public class AccountEventTemplate : NSObject {
      * - Returns: An Account event template instance
      */
     @objc(loggedOutTemplateWithValue:)
-    public class func loggedOutTemplate(value: NSNumber?) -> AccountEventTemplate {
+    public class func loggedOutTemplate(value: NSNumber?)
+        -> AccountEventTemplate
+    {
         return AccountEventTemplate(eventName: "logged_out", value: value)
     }
 
@@ -156,7 +169,7 @@ public class AccountEventTemplate : NSObject {
      */
     @objc
     public func createEvent() -> CustomEvent? {
-        var propertyDictionary: [String : Any] = [:]
+        var propertyDictionary: [String: Any] = [:]
         propertyDictionary["ltv"] = self.eventValue != nil
         propertyDictionary["user_id"] = self.userID
         propertyDictionary["category"] = self.category

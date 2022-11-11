@@ -2,8 +2,7 @@
 
 import XCTest
 
-@testable
-import AirshipCore
+@testable import AirshipCore
 
 class ChannelTest: XCTestCase {
 
@@ -19,24 +18,29 @@ class ChannelTest: XCTestCase {
 
     override func setUpWithError() throws {
 
-
-        self.privacyManager = PrivacyManager(dataStore: self.dataStore,
-                                             defaultEnabledFeatures: [],
-                                             notificationCenter: self.notificationCenter)
+        self.privacyManager = PrivacyManager(
+            dataStore: self.dataStore,
+            defaultEnabledFeatures: [],
+            notificationCenter: self.notificationCenter
+        )
 
         self.channel = createChannel()
     }
 
     private func createChannel() -> Channel {
-        return Channel(dataStore: self.dataStore,
-                       config: RuntimeConfig(config: self.config,
-                                             dataStore: self.dataStore),
-                       privacyManager: self.privacyManager,
-                       localeManager: self.localeManager,
-                       audienceManager: self.audienceManager,
-                       channelRegistrar: self.channelRegistrar,
-                       notificationCenter: self.notificationCenter,
-                       appStateTracker: self.appStateTracker)
+        return Channel(
+            dataStore: self.dataStore,
+            config: RuntimeConfig(
+                config: self.config,
+                dataStore: self.dataStore
+            ),
+            privacyManager: self.privacyManager,
+            localeManager: self.localeManager,
+            audienceManager: self.audienceManager,
+            channelRegistrar: self.channelRegistrar,
+            notificationCenter: self.notificationCenter,
+            appStateTracker: self.appStateTracker
+        )
     }
 
     func testRegistrationFeatureEnabled() throws {
@@ -102,7 +106,7 @@ class ChannelTest: XCTestCase {
             "",
             String(repeating: "함", count: 128),
             String(repeating: "g", count: 128),
-            String(repeating: "b", count: 129)
+            String(repeating: "b", count: 129),
         ]
 
         let expected = [
@@ -111,12 +115,11 @@ class ChannelTest: XCTestCase {
             "neat",
             "1",
             String(repeating: "함", count: 128),
-            String(repeating: "g", count: 128)
+            String(repeating: "g", count: 128),
         ]
 
         XCTAssertEqual(expected, self.channel.tags)
     }
-
 
     func testChannelCreationFlagDisabled() throws {
         self.privacyManager.enableFeatures(.tagsAndAttributes)
@@ -139,12 +142,14 @@ class ChannelTest: XCTestCase {
 
     func testCRAPayload() throws {
         self.privacyManager.enableFeatures(.all)
-        
+
         self.channel.tags = ["foo", "bar"]
         let expectedPayload = ChannelRegistrationPayload()
-        expectedPayload.channel.language = Locale.autoupdatingCurrent.languageCode
+        expectedPayload.channel.language =
+            Locale.autoupdatingCurrent.languageCode
         expectedPayload.channel.country = Locale.autoupdatingCurrent.regionCode
-        expectedPayload.channel.timeZone = TimeZone.autoupdatingCurrent.identifier
+        expectedPayload.channel.timeZone =
+            TimeZone.autoupdatingCurrent.identifier
         expectedPayload.channel.tags = ["foo", "bar"]
         expectedPayload.channel.appVersion = Utils.bundleShortVersionString()
         expectedPayload.channel.sdkVersion = AirshipVersion.get()
@@ -166,11 +171,13 @@ class ChannelTest: XCTestCase {
         self.privacyManager.enableFeatures(.all)
         self.channel.isChannelTagRegistrationEnabled = false
         self.channel.tags = ["foo", "bar"]
-        
+
         let expectedPayload = ChannelRegistrationPayload()
-        expectedPayload.channel.language = Locale.autoupdatingCurrent.languageCode
+        expectedPayload.channel.language =
+            Locale.autoupdatingCurrent.languageCode
         expectedPayload.channel.country = Locale.autoupdatingCurrent.regionCode
-        expectedPayload.channel.timeZone = TimeZone.autoupdatingCurrent.identifier
+        expectedPayload.channel.timeZone =
+            TimeZone.autoupdatingCurrent.identifier
         expectedPayload.channel.appVersion = Utils.bundleShortVersionString()
         expectedPayload.channel.sdkVersion = AirshipVersion.get()
         expectedPayload.channel.deviceOS = UIDevice.current.systemVersion
@@ -232,10 +239,11 @@ class ChannelTest: XCTestCase {
         }
 
         self.channel.addRegistrationExtender { payload, completionHandler in
-            DispatchQueue.global(qos: .userInteractive).async {
-                payload.channel.pushAddress = "OK"
-                completionHandler(payload)
-            }
+            DispatchQueue.global(qos: .userInteractive)
+                .async {
+                    payload.channel.pushAddress = "OK"
+                    completionHandler(payload)
+                }
         }
 
         let expectation = self.expectation(description: "Created payload")
@@ -251,8 +259,10 @@ class ChannelTest: XCTestCase {
         self.privacyManager.enableFeatures(.all)
         self.channelRegistrar.registerCalled = false
 
-        self.notificationCenter.post(name: AppStateTracker.didTransitionToForeground,
-                                     object: nil)
+        self.notificationCenter.post(
+            name: AppStateTracker.didTransitionToForeground,
+            object: nil
+        )
 
         XCTAssertTrue(self.channelRegistrar.registerCalled)
     }
@@ -262,12 +272,19 @@ class ChannelTest: XCTestCase {
 
         let expectedUserInfo: [String: Any] = [
             Channel.channelExistingKey: true,
-            Channel.channelIdentifierKey: "someChannelID"
+            Channel.channelIdentifierKey: "someChannelID",
         ]
 
         let expectation = self.expectation(description: "Notification received")
-        self.notificationCenter.addObserver(forName: Channel.channelCreatedEvent, object: nil, queue: nil) { notification in
-            XCTAssertEqual(expectedUserInfo as NSDictionary, notification.userInfo! as NSDictionary)
+        self.notificationCenter.addObserver(
+            forName: Channel.channelCreatedEvent,
+            object: nil,
+            queue: nil
+        ) { notification in
+            XCTAssertEqual(
+                expectedUserInfo as NSDictionary,
+                notification.userInfo! as NSDictionary
+            )
             expectation.fulfill()
         }
 
@@ -281,12 +298,19 @@ class ChannelTest: XCTestCase {
 
         let expectedUserInfo: [String: Any] = [
             Channel.channelExistingKey: false,
-            Channel.channelIdentifierKey: "someChannelID"
+            Channel.channelIdentifierKey: "someChannelID",
         ]
 
         let expectation = self.expectation(description: "Notification received")
-        self.notificationCenter.addObserver(forName: Channel.channelCreatedEvent, object: nil, queue: nil) { notification in
-            XCTAssertEqual(expectedUserInfo as NSDictionary, notification.userInfo! as NSDictionary)
+        self.notificationCenter.addObserver(
+            forName: Channel.channelCreatedEvent,
+            object: nil,
+            queue: nil
+        ) { notification in
+            XCTAssertEqual(
+                expectedUserInfo as NSDictionary,
+                notification.userInfo! as NSDictionary
+            )
             expectation.fulfill()
         }
 
@@ -304,8 +328,15 @@ class ChannelTest: XCTestCase {
         ]
 
         let expectation = self.expectation(description: "Notification received")
-        self.notificationCenter.addObserver(forName: Channel.channelUpdatedEvent, object: nil, queue: nil) { notification in
-            XCTAssertEqual(expectedUserInfo as NSDictionary, notification.userInfo! as NSDictionary)
+        self.notificationCenter.addObserver(
+            forName: Channel.channelUpdatedEvent,
+            object: nil,
+            queue: nil
+        ) { notification in
+            XCTAssertEqual(
+                expectedUserInfo as NSDictionary,
+                notification.userInfo! as NSDictionary
+            )
             expectation.fulfill()
         }
 
@@ -317,7 +348,11 @@ class ChannelTest: XCTestCase {
         self.privacyManager.enableFeatures(.all)
 
         let expectation = self.expectation(description: "Notification received")
-        self.notificationCenter.addObserver(forName: Channel.channelRegistrationFailedEvent, object: nil, queue: nil) { notification in
+        self.notificationCenter.addObserver(
+            forName: Channel.channelRegistrationFailedEvent,
+            object: nil,
+            queue: nil
+        ) { notification in
             expectation.fulfill()
         }
 
@@ -340,7 +375,10 @@ class ChannelTest: XCTestCase {
         self.privacyManager.enableFeatures(.all)
         self.channelRegistrar.registerCalled = false
 
-        self.notificationCenter.post(name: LocaleManager.localeUpdatedEvent, object: nil)
+        self.notificationCenter.post(
+            name: LocaleManager.localeUpdatedEvent,
+            object: nil
+        )
 
         XCTAssertTrue(self.channelRegistrar.registerCalled)
     }
@@ -350,7 +388,10 @@ class ChannelTest: XCTestCase {
         self.privacyManager.enableFeatures(.all)
         self.channelRegistrar.registerCalled = false
 
-        self.notificationCenter.post(name: RuntimeConfig.configUpdatedEvent, object: nil)
+        self.notificationCenter.post(
+            name: RuntimeConfig.configUpdatedEvent,
+            object: nil
+        )
 
         XCTAssertTrue(self.channelRegistrar.fullRegistrationCalled)
     }
@@ -414,7 +455,7 @@ class ChannelTest: XCTestCase {
     func testForwardContactSubscriptionListUpdates() throws {
         let updates = [
             SubscriptionListUpdate(listId: "bar", type: .subscribe),
-            SubscriptionListUpdate(listId: "baz", type: .unsubscribe)
+            SubscriptionListUpdate(listId: "baz", type: .unsubscribe),
         ]
 
         self.channel.processContactSubscriptionUpdates(updates)

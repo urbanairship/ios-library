@@ -1,4 +1,3 @@
-
 actor WorkRateLimiter {
     private struct RateLimitRule {
         let rate: Int
@@ -20,7 +19,9 @@ actor WorkRateLimiter {
 
     func set(_ key: String, rate: Int, timeInterval: TimeInterval) throws {
         guard rate > 0, timeInterval > 0 else {
-            throw AirshipErrors.error("Rate and time interval must be greater than 0")
+            throw AirshipErrors.error(
+                "Rate and time interval must be greater than 0"
+            )
         }
 
         self.rules[key] = RateLimitRule(rate: rate, timeInterval: timeInterval)
@@ -28,13 +29,14 @@ actor WorkRateLimiter {
     }
 
     func nextAvailable(_ keys: [String]) -> TimeInterval {
-        return keys.map { key in
-            if case .overLimit(let delay) = status(key) {
+        return
+            keys.map { key in
+                guard case .overLimit(let delay) = status(key) else {
+                    return 0.0
+                }
                 return delay
-            } else {
-                return 0.0
             }
-        }.max() ?? 0.0
+            .max() ?? 0.0
     }
 
     func trackIfWithinLimit(_ keys: [String]) -> Bool {
@@ -48,12 +50,11 @@ actor WorkRateLimiter {
             return false
         }
 
-        if (!overLimit) {
-            keys.forEach { track($0) }
-            return true
-        } else {
+        guard !overLimit else {
             return false
         }
+        keys.forEach { track($0) }
+        return true
     }
 
     private func status(_ key: String) -> Status? {
@@ -67,12 +68,13 @@ actor WorkRateLimiter {
         let filtered = filter(self.hits[key], rule: rule, date: date) ?? []
         let count = filtered.count
 
-        if count >= rule.rate {
-            let nextAvailable = rule.timeInterval - date.timeIntervalSince(filtered[count - rule.rate])
-            return .overLimit(nextAvailable)
-        } else {
+        guard count >= rule.rate else {
             return .withinLimit(rule.rate - count)
         }
+        let nextAvailable =
+            rule.timeInterval
+            - date.timeIntervalSince(filtered[count - rule.rate])
+        return .overLimit(nextAvailable)
     }
 
     private func track(_ key: String) {
@@ -86,7 +88,9 @@ actor WorkRateLimiter {
         hits[key] = filter(keyHits, rule: rule, date: self.date.now)
     }
 
-    private func filter(_ hits: [Date]?, rule: RateLimitRule, date: Date) -> [Date]? {
+    private func filter(_ hits: [Date]?, rule: RateLimitRule, date: Date)
+        -> [Date]?
+    {
         guard let hits = hits else { return nil }
         return hits.filter { hit in
             return hit.addingTimeInterval(rule.timeInterval) > date

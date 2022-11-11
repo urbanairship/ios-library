@@ -4,9 +4,9 @@ import Foundation
 import SwiftUI
 
 #if canImport(AirshipCore)
-import AirshipCore
+    import AirshipCore
 #elseif canImport(AirshipKit)
-import AirshipKit
+    import AirshipKit
 #endif
 
 struct SubscriptionListsDebugView: View {
@@ -30,7 +30,8 @@ struct SubscriptionListsDebugView: View {
                 header: Text("Subscription Info".localized())
             ) {
                 Picker("Action".localized(), selection: $action) {
-                    ForEach(SubscriptionListAction.allCases, id: \.self) { value in
+                    ForEach(SubscriptionListAction.allCases, id: \.self) {
+                        value in
                         Text(value.rawValue.localized())
                     }
                 }
@@ -39,7 +40,8 @@ struct SubscriptionListsDebugView: View {
                 HStack {
                     Text("List ID".localized())
                     Spacer()
-                    TextField("", text: self.$listID.preventWhiteSpace())     .freeInput()
+                    TextField("", text: self.$listID.preventWhiteSpace())
+                        .freeInput()
                 }
             }
         }
@@ -58,7 +60,7 @@ struct SubscriptionListsDebugView: View {
 
     private func apply() {
         let editor = editorFactory()
-        switch(self.action) {
+        switch self.action {
         case .subscribe:
             editor?.subscribe(self.listID)
         case .unsubscribe:

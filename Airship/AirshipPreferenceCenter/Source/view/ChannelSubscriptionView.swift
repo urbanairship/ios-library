@@ -4,7 +4,7 @@ import Foundation
 import SwiftUI
 
 #if canImport(AirshipCore)
-import AirshipCore
+    import AirshipCore
 #endif
 
 /// The channel subscription item view
@@ -46,13 +46,16 @@ struct ChannelSubscriptionView: View {
     }
 }
 
-
-public extension View {
+extension View {
     /// Sets the channel subscription style
     /// - Parameters:
     ///     - style: The style
-    func channelSubscriptionStyle<S>(_ style: S) -> some View where S : ChannelSubscriptionViewStyle {
-        self.environment(\.airshipChannelSubscriptionViewStyle, AnyChannelSubscriptionViewStyle(style: style))
+    public func channelSubscriptionStyle<S>(_ style: S) -> some View
+    where S: ChannelSubscriptionViewStyle {
+        self.environment(
+            \.airshipChannelSubscriptionViewStyle,
+            AnyChannelSubscriptionViewStyle(style: style)
+        )
     }
 }
 
@@ -80,16 +83,18 @@ public protocol ChannelSubscriptionViewStyle {
     func makeBody(configuration: Self.Configuration) -> Self.Body
 }
 
-public extension ChannelSubscriptionViewStyle where Self == DefaultChannelSubscriptionViewStyle {
+extension ChannelSubscriptionViewStyle
+where Self == DefaultChannelSubscriptionViewStyle {
 
     /// Default style
-    static var defaultStyle: Self {
+    public static var defaultStyle: Self {
         return .init()
     }
 }
 
 /// The default channel subscription view style
-public struct DefaultChannelSubscriptionViewStyle: ChannelSubscriptionViewStyle {
+public struct DefaultChannelSubscriptionViewStyle: ChannelSubscriptionViewStyle
+{
 
     static let titleAppearance = PreferenceCenterTheme.TextAppearance(
         font: .headline,
@@ -100,7 +105,7 @@ public struct DefaultChannelSubscriptionViewStyle: ChannelSubscriptionViewStyle 
         font: .subheadline,
         color: .primary
     )
-    
+
     @Environment(\.airshipPreferenceCenterTheme)
     private var preferenceCenterTheme
 
@@ -109,14 +114,15 @@ public struct DefaultChannelSubscriptionViewStyle: ChannelSubscriptionViewStyle 
         let item = configuration.item
         let itemTheme = configuration.preferenceCenterTheme.channelSubscription
 
-        if (configuration.displayConditionsMet) {
+        if configuration.displayConditionsMet {
             Toggle(isOn: configuration.isSubscribed) {
                 VStack(alignment: .leading) {
                     if let title = item.display?.title {
                         Text(title)
                             .textAppearance(
                                 itemTheme?.titleAppearance,
-                                base: DefaultChannelSubscriptionViewStyle.titleAppearance
+                                base: DefaultChannelSubscriptionViewStyle
+                                    .titleAppearance
                             )
                     }
 
@@ -124,7 +130,8 @@ public struct DefaultChannelSubscriptionViewStyle: ChannelSubscriptionViewStyle 
                         Text(subtitle)
                             .textAppearance(
                                 itemTheme?.subtitleAppearance,
-                                base: DefaultChannelSubscriptionViewStyle.subtitleAppearance
+                                base: DefaultChannelSubscriptionViewStyle
+                                    .subtitleAppearance
                             )
                     }
                 }
@@ -152,7 +159,9 @@ struct AnyChannelSubscriptionViewStyle: ChannelSubscriptionViewStyle {
 }
 
 struct ChannelSubscriptionViewStyleKey: EnvironmentKey {
-    static var defaultValue = AnyChannelSubscriptionViewStyle(style: .defaultStyle)
+    static var defaultValue = AnyChannelSubscriptionViewStyle(
+        style: .defaultStyle
+    )
 }
 
 extension EnvironmentValues {

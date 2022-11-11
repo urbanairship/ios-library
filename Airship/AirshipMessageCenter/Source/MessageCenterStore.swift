@@ -1,10 +1,10 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
 import CoreData
+import Foundation
 
 #if canImport(AirshipCore)
-import AirshipCore
+    import AirshipCore
 #endif
 
 enum MessageCenterStoreError: Error {
@@ -20,7 +20,8 @@ enum MessageCenterStoreLevel: Int {
 actor MessageCenterStore {
 
     private static let coreDataStoreName = "Inbox-%@.sqlite"
-    private static let lastMessageListModifiedTime = "UALastMessageListModifiedTime"
+    private static let lastMessageListModifiedTime =
+        "UALastMessageListModifiedTime"
     private static let userRegisteredChannelID = "UAUserRegisteredChannelID"
     private static let userRequireUpdate = "UAUserRequireUpdate"
 
@@ -30,39 +31,33 @@ actor MessageCenterStore {
     private let keychainAccess: AirshipKeychainAccess
 
     var registeredChannelID: String? {
-        get {
-            return self.dataStore.string(forKey: MessageCenterStore.userRegisteredChannelID)
-        }
+        return self.dataStore.string(
+            forKey: MessageCenterStore.userRegisteredChannelID
+        )
     }
 
     private var _user: MessageCenterUser? = nil
     var user: MessageCenterUser? {
-        get {
-            if let user = _user {
-                return user
-            }
-
-            let credentials = self.keychainAccess.readCredentialsSync(
-                identifier: self.config.appKey
-            )
-
-            if let credentials = credentials {
-                _user = MessageCenterUser(
-                    username: credentials.username,
-                    password: credentials.password
-                )
-            }
-            return _user
+        if let user = _user {
+            return user
         }
+
+        let credentials = self.keychainAccess.readCredentialsSync(
+            identifier: self.config.appKey
+        )
+
+        if let credentials = credentials {
+            _user = MessageCenterUser(
+                username: credentials.username,
+                password: credentials.password
+            )
+        }
+        return _user
     }
 
     var userRequiredUpdate: Bool {
-        get {
-            return self.dataStore.bool(forKey: MessageCenterStore.userRequireUpdate)
-        }
+        return self.dataStore.bool(forKey: MessageCenterStore.userRequireUpdate)
     }
-
-    
 
     var lastMessageListModifiedTime: String? {
         return self.dataStore.string(
@@ -73,7 +68,9 @@ actor MessageCenterStore {
     var messages: [MessageCenterMessage] {
         get async {
             let predicate = NSPredicate(
-                format: "(messageExpiration == nil || messageExpiration >= %@) && (deletedClient == NO || deletedClient == nil)", AirshipDate().now as CVarArg
+                format:
+                    "(messageExpiration == nil || messageExpiration >= %@) && (deletedClient == NO || deletedClient == nil)",
+                AirshipDate().now as CVarArg
             )
 
             let messages = try? await fetchMessages(withPredicate: predicate)
@@ -81,15 +78,28 @@ actor MessageCenterStore {
         }
     }
 
-    init(config: RuntimeConfig,
-         dataStore: PreferenceDataStore) {
+    init(
+        config: RuntimeConfig,
+        dataStore: PreferenceDataStore
+    ) {
         self.config = config
         self.dataStore = dataStore
         self.keychainAccess = AirshipKeychainAccess(appKey: config.appKey)
-        let modelURL = MessageCenterResources.bundle?.url(forResource: "UAInbox", withExtension: "momd")
+        let modelURL = MessageCenterResources.bundle?
+            .url(
+                forResource: "UAInbox",
+                withExtension: "momd"
+            )
         if let modelURL = modelURL {
-            let storeName = String(format: MessageCenterStore.coreDataStoreName, config.appKey)
-            self.coreData = UACoreData(modelURL: modelURL, inMemory: false, stores: [storeName])
+            let storeName = String(
+                format: MessageCenterStore.coreDataStoreName,
+                config.appKey
+            )
+            self.coreData = UACoreData(
+                modelURL: modelURL,
+                inMemory: false,
+                stores: [storeName]
+            )
         } else {
             self.coreData = nil
         }
@@ -115,7 +125,8 @@ actor MessageCenterStore {
 
             var result = 0
             try? await coreData.perform { context in
-                let request: NSFetchRequest<InboxMessageData> = InboxMessageData.fetchRequest()
+                let request: NSFetchRequest<InboxMessageData> =
+                    InboxMessageData.fetchRequest()
                 request.predicate = NSPredicate(format: "unread == YES")
                 request.includesPropertyValues = false
                 let fetchedMessages = try context.fetch(request)
@@ -126,26 +137,35 @@ actor MessageCenterStore {
         }
     }
 
-    func message(forID messageID: String) async throws -> MessageCenterMessage? {
+    func message(forID messageID: String) async throws -> MessageCenterMessage?
+    {
         let predicate = NSPredicate(
-            format: "messageID == %@ && (messageExpiration == nil || messageExpiration >= %@) && (deletedClient == NO || deletedClient == nil)", messageID, AirshipDate().now as CVarArg
+            format:
+                "messageID == %@ && (messageExpiration == nil || messageExpiration >= %@) && (deletedClient == NO || deletedClient == nil)",
+            messageID,
+            AirshipDate().now as CVarArg
         )
 
         let messages = try await fetchMessages(withPredicate: predicate)
         return messages.first
     }
 
-    func message(forBodyURL bodyURL: URL) async throws -> MessageCenterMessage? {
+    func message(forBodyURL bodyURL: URL) async throws -> MessageCenterMessage?
+    {
         let predicate = NSPredicate(
-            format: "messageBodyURL == %@ && (messageExpiration == nil || messageExpiration >= %@) && (deletedClient == NO || deletedClient == nil)", bodyURL as CVarArg, AirshipDate().now as CVarArg
+            format:
+                "messageBodyURL == %@ && (messageExpiration == nil || messageExpiration >= %@) && (deletedClient == NO || deletedClient == nil)",
+            bodyURL as CVarArg,
+            AirshipDate().now as CVarArg
         )
 
         let messages = try await fetchMessages(withPredicate: predicate)
         return messages.first
     }
 
-
-    func markRead(messageIDs: [String], level: MessageCenterStoreLevel) async throws {
+    func markRead(messageIDs: [String], level: MessageCenterStoreLevel)
+        async throws
+    {
         guard let coreData = self.coreData else {
             throw MessageCenterStoreError.coreDataUnavailble
         }
@@ -154,10 +174,13 @@ actor MessageCenterStore {
 
         try await coreData.perform { context in
             let request = InboxMessageData.batchUpdateRequest()
-            request.predicate = NSPredicate(format: "messageID IN %@", messageIDs)
-            if (level == .local) {
+            request.predicate = NSPredicate(
+                format: "messageID IN %@",
+                messageIDs
+            )
+            if level == .local {
                 request.propertiesToUpdate = ["unreadClient": false]
-            } else if (level == .global) {
+            } else if level == .global {
                 request.propertiesToUpdate = ["unread": false]
             }
 
@@ -177,7 +200,8 @@ actor MessageCenterStore {
         try await coreData.perform { context in
             try self.delete(
                 predicate: NSPredicate(
-                    format: "messageID IN %@", messageIDs
+                    format: "messageID IN %@",
+                    messageIDs
                 ),
                 useBatch: !coreData.inMemory,
                 context: context
@@ -195,7 +219,10 @@ actor MessageCenterStore {
 
         try await coreData.perform { context in
             let request = InboxMessageData.batchUpdateRequest()
-            request.predicate = NSPredicate(format: "messageID IN %@", messageIDs)
+            request.predicate = NSPredicate(
+                format: "messageID IN %@",
+                messageIDs
+            )
             request.propertiesToUpdate = ["deletedClient": true]
             request.resultType = .updatedObjectsCountResultType
             try context.execute(request)
@@ -208,7 +235,7 @@ actor MessageCenterStore {
             format: "deletedClient == YES"
         )
 
-        return  try await fetchMessages(withPredicate: predicate)
+        return try await fetchMessages(withPredicate: predicate)
     }
 
     func fetchLocallyReadOnlyMessages() async throws -> [MessageCenterMessage] {
@@ -216,7 +243,7 @@ actor MessageCenterStore {
             format: "unreadClient == NO && unread == YES"
         )
 
-        return  try await fetchMessages(withPredicate: predicate)
+        return try await fetchMessages(withPredicate: predicate)
     }
 
     func saveUser(_ user: MessageCenterUser, channelID: String) {
@@ -227,7 +254,7 @@ actor MessageCenterStore {
             ),
             identifier: self.config.appKey
         ) { result in
-            if (!result) {
+            if !result {
                 AirshipLogger.error("Failed to write user credentials")
             }
         }
@@ -243,26 +270,30 @@ actor MessageCenterStore {
     func setUserRequireUpdate(_ value: Bool) {
         self.dataStore.setBool(
             value,
-            forKey: MessageCenterStore.userRequireUpdate)
+            forKey: MessageCenterStore.userRequireUpdate
+        )
     }
-    
+
     func setUserRegisteredChannelID(_ value: String) {
         self.dataStore.setValue(
             value,
-            forKey: MessageCenterStore.userRegisteredChannelID)
+            forKey: MessageCenterStore.userRegisteredChannelID
+        )
     }
-    
+
     func setLastMessageListModifiedTime(_ value: String?) {
         self.dataStore.setValue(
             value,
             forKey: MessageCenterStore.lastMessageListModifiedTime
         )
     }
-    
+
     func clearLastModified(username: String) {
-        self.dataStore.removeObject(forKey: MessageCenterStore.lastMessageListModifiedTime)
+        self.dataStore.removeObject(
+            forKey: MessageCenterStore.lastMessageListModifiedTime
+        )
     }
-    
+
     private func fetchMessages(
         withPredicate predicate: NSPredicate? = nil
     ) async throws -> [MessageCenterMessage] {
@@ -276,7 +307,8 @@ actor MessageCenterStore {
 
         var messages: [MessageCenterMessage]? = nil
         try await coreData.perform { context in
-            let request: NSFetchRequest<InboxMessageData> = InboxMessageData.fetchRequest()
+            let request: NSFetchRequest<InboxMessageData> =
+                InboxMessageData.fetchRequest()
 
             request.sortDescriptors = [
                 NSSortDescriptor(
@@ -290,8 +322,8 @@ actor MessageCenterStore {
             }
 
             let fetchedMessages = try context.fetch(request)
-            messages = fetchedMessages.compactMap() { data in data.message() }
-            
+            messages = fetchedMessages.compactMap { data in data.message() }
+
             AirshipLogger.trace(
                 "Fetched messsages \(String(describing: messages)))"
             )
@@ -305,13 +337,14 @@ actor MessageCenterStore {
         useBatch: Bool,
         context: NSManagedObjectContext
     ) throws {
-        if (useBatch) {
+        if useBatch {
             let request = InboxMessageData.fetchRequest()
             request.predicate = predicate
             let deleteRequest = NSBatchDeleteRequest(fetchRequest: request)
             try context.execute(deleteRequest)
         } else {
-            let request: NSFetchRequest<InboxMessageData> = InboxMessageData.fetchRequest()
+            let request: NSFetchRequest<InboxMessageData> =
+                InboxMessageData.fetchRequest()
             request.predicate = predicate
             request.includesPropertyValues = false
             let fetchedMessages = try context.fetch(request)
@@ -320,14 +353,14 @@ actor MessageCenterStore {
             }
         }
 
-
     }
 
     private func getOrCreateMessageEntity(
         messageID: String,
         context: NSManagedObjectContext
     ) throws -> InboxMessageData {
-        let request: NSFetchRequest<InboxMessageData> = InboxMessageData.fetchRequest()
+        let request: NSFetchRequest<InboxMessageData> =
+            InboxMessageData.fetchRequest()
         request.predicate = NSPredicate(format: "messageID == %@", messageID)
         request.fetchLimit = 1
 
@@ -336,10 +369,12 @@ actor MessageCenterStore {
             return existing
         }
 
-        guard let data = NSEntityDescription.insertNewObject(
-            forEntityName: InboxMessageData.messageDataEntity,
-            into: context
-        ) as? InboxMessageData else {
+        guard
+            let data = NSEntityDescription.insertNewObject(
+                forEntityName: InboxMessageData.messageDataEntity,
+                into: context
+            ) as? InboxMessageData
+        else {
             throw MessageCenterStoreError.coreDataError
         }
 
@@ -379,7 +414,8 @@ actor MessageCenterStore {
             let messageIDs = messages.map { message in message.id }
             try self.delete(
                 predicate: NSPredicate(
-                    format: "NOT(messageID IN %@)", messageIDs
+                    format: "NOT(messageID IN %@)",
+                    messageIDs
                 ),
                 useBatch: !coreData.inMemory,
                 context: context
@@ -392,15 +428,15 @@ actor MessageCenterStore {
     }
 }
 
-fileprivate extension InboxMessageData {
-    func message() -> MessageCenterMessage? {
+extension InboxMessageData {
+    fileprivate func message() -> MessageCenterMessage? {
         guard let title = self.title,
-              let messageID = self.messageID,
-              let messageBodyURL = self.messageBodyURL,
-              let messageReporting = self.messageReporting,
-              let messageURL = self.messageURL,
-              let messageSent = self.messageSent,
-              let rawMessageObject = self.rawMessageObject
+            let messageID = self.messageID,
+            let messageBodyURL = self.messageBodyURL,
+            let messageReporting = self.messageReporting,
+            let messageURL = self.messageURL,
+            let messageSent = self.messageSent,
+            let rawMessageObject = self.rawMessageObject
         else {
             AirshipLogger.error("Invalid message data")
             return nil

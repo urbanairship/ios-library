@@ -1,12 +1,12 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
 import CoreData
+import Foundation
 
 /// Event data store. For internal use only.
 /// :nodoc:
 @objc(UAEventStore)
-public class EventStore : NSObject, EventStoreProtocol {
+public class EventStore: NSObject, EventStoreProtocol {
     private static let fileFormat = "Events-%@.sqlite"
     private static let eventDataEntityName = "UAEventData"
 
@@ -15,31 +15,52 @@ public class EventStore : NSObject, EventStoreProtocol {
 
     @objc
     public init(config: RuntimeConfig?) {
-        let storeName = String(format: EventStore.fileFormat, config?.appKey ?? "")
-        let modelURL = AirshipCoreResources.bundle.url(forResource: "UAEvents", withExtension: "momd")
-        self.coreData = UACoreData(modelURL: modelURL!, inMemory: false, stores: [storeName])
+        let storeName = String(
+            format: EventStore.fileFormat,
+            config?.appKey ?? ""
+        )
+        let modelURL = AirshipCoreResources.bundle.url(
+            forResource: "UAEvents",
+            withExtension: "momd"
+        )
+        self.coreData = UACoreData(
+            modelURL: modelURL!,
+            inMemory: false,
+            stores: [storeName]
+        )
 
         super.init()
     }
 
-
     @objc
-    public func save(_ event: Event, eventID: String, eventDate: Date, sessionID: String) {
+    public func save(
+        _ event: Event,
+        eventID: String,
+        eventDate: Date,
+        sessionID: String
+    ) {
         self.coreData.safePerform { [weak self] isSafe, context in
             guard isSafe else {
-                AirshipLogger.error("Unable to save event: \(event). Persistent store unavailable")
+                AirshipLogger.error(
+                    "Unable to save event: \(event). Persistent store unavailable"
+                )
                 return
             }
 
-            let eventTime = String(format: "%f", eventDate.timeIntervalSince1970)
+            let eventTime = String(
+                format: "%f",
+                eventDate.timeIntervalSince1970
+            )
 
-            self?.storeEvent(
-                withID: eventID,
-                eventType: event.eventType,
-                eventTime: eventTime,
-                eventBody: event.data,
-                sessionID: sessionID,
-                context: context)
+            self?
+                .storeEvent(
+                    withID: eventID,
+                    eventType: event.eventType,
+                    eventTime: eventTime,
+                    eventBody: event.data,
+                    sessionID: sessionID,
+                    context: context
+                )
 
             UACoreData.safeSave(context)
         }
@@ -56,9 +77,13 @@ public class EventStore : NSObject, EventStoreProtocol {
                 return
             }
 
-            let request = NSFetchRequest<NSFetchRequestResult>(entityName: EventStore.eventDataEntityName)
+            let request = NSFetchRequest<NSFetchRequestResult>(
+                entityName: EventStore.eventDataEntityName
+            )
             request.fetchLimit = limit
-            request.sortDescriptors = [NSSortDescriptor(key: "storeDate", ascending: true)]
+            request.sortDescriptors = [
+                NSSortDescriptor(key: "storeDate", ascending: true)
+            ]
 
             do {
                 let result = try context.fetch(request) as? [EventData] ?? []
@@ -78,9 +103,14 @@ public class EventStore : NSObject, EventStoreProtocol {
                 return
             }
 
-            let request = NSFetchRequest<NSFetchRequestResult>(entityName: EventStore.eventDataEntityName)
+            let request = NSFetchRequest<NSFetchRequestResult>(
+                entityName: EventStore.eventDataEntityName
+            )
             if let eventIDs = eventIDs {
-                request.predicate = NSPredicate(format: "identifier IN %@", eventIDs)
+                request.predicate = NSPredicate(
+                    format: "identifier IN %@",
+                    eventIDs
+                )
             }
 
             do {
@@ -100,7 +130,9 @@ public class EventStore : NSObject, EventStoreProtocol {
                 return
             }
 
-            let request = NSFetchRequest<NSFetchRequestResult>(entityName: EventStore.eventDataEntityName)
+            let request = NSFetchRequest<NSFetchRequestResult>(
+                entityName: EventStore.eventDataEntityName
+            )
 
             do {
                 let deleteRequest = NSBatchDeleteRequest(fetchRequest: request)
@@ -121,7 +153,8 @@ public class EventStore : NSObject, EventStoreProtocol {
 
             while self.fetchTotalEventSize(with: context) > maxSize {
                 guard let sessionID = self.fetchOldestSessionID(with: context),
-                      self.deleteSession(sessionID, context: context) else {
+                    self.deleteSession(sessionID, context: context)
+                else {
                     return
                 }
             }
@@ -130,8 +163,13 @@ public class EventStore : NSObject, EventStoreProtocol {
         })
     }
 
-    private func deleteSession(_ sessionID: String, context: NSManagedObjectContext) -> Bool {
-        let request = NSFetchRequest<NSFetchRequestResult>(entityName: EventStore.eventDataEntityName)
+    private func deleteSession(
+        _ sessionID: String,
+        context: NSManagedObjectContext
+    ) -> Bool {
+        let request = NSFetchRequest<NSFetchRequestResult>(
+            entityName: EventStore.eventDataEntityName
+        )
         request.predicate = NSPredicate(format: "sessionID == %@", sessionID)
 
         do {
@@ -140,15 +178,21 @@ public class EventStore : NSObject, EventStoreProtocol {
             return true
         } catch {
             AirshipLogger.error("Error deleting session: \(sessionID)")
-            return false;
+            return false
 
         }
     }
 
-    private func fetchOldestSessionID(with context: NSManagedObjectContext) -> String? {
-        let request = NSFetchRequest<NSFetchRequestResult>(entityName: EventStore.eventDataEntityName)
+    private func fetchOldestSessionID(with context: NSManagedObjectContext)
+        -> String?
+    {
+        let request = NSFetchRequest<NSFetchRequestResult>(
+            entityName: EventStore.eventDataEntityName
+        )
         request.fetchLimit = 1
-        request.sortDescriptors = [NSSortDescriptor(key: "storeDate", ascending: true)]
+        request.sortDescriptors = [
+            NSSortDescriptor(key: "storeDate", ascending: true)
+        ]
         request.propertiesToFetch = ["sessionID"]
 
         do {
@@ -161,15 +205,20 @@ public class EventStore : NSObject, EventStoreProtocol {
 
     }
 
-    private func fetchTotalEventSize(with context: NSManagedObjectContext) -> Int {
+    private func fetchTotalEventSize(with context: NSManagedObjectContext)
+        -> Int
+    {
         let sumDescription = NSExpressionDescription()
         sumDescription.name = "sum"
         sumDescription.expression = NSExpression(
             forFunction: "sum:",
-            arguments: [NSExpression(forKeyPath: "bytes")])
+            arguments: [NSExpression(forKeyPath: "bytes")]
+        )
         sumDescription.expressionResultType = .doubleAttributeType
 
-        let request = NSFetchRequest<NSFetchRequestResult>(entityName: EventStore.eventDataEntityName)
+        let request = NSFetchRequest<NSFetchRequestResult>(
+            entityName: EventStore.eventDataEntityName
+        )
         request.resultType = .dictionaryResultType
         request.propertiesToFetch = [sumDescription]
 
@@ -182,12 +231,21 @@ public class EventStore : NSObject, EventStoreProtocol {
         }
     }
 
-    private func storeEvent(withID eventID: String, eventType: String, eventTime: String,
-                            eventBody: Any, sessionID: String, context: NSManagedObjectContext) {
+    private func storeEvent(
+        withID eventID: String,
+        eventType: String,
+        eventTime: String,
+        eventBody: Any,
+        sessionID: String,
+        context: NSManagedObjectContext
+    ) {
         do {
             let json = try JSONUtils.data(eventBody, options: [])
 
-            if let eventData = NSEntityDescription.insertNewObject(forEntityName: EventStore.eventDataEntityName, into: context) as? EventData {
+            if let eventData = NSEntityDescription.insertNewObject(
+                forEntityName: EventStore.eventDataEntityName,
+                into: context
+            ) as? EventData {
                 eventData.sessionID = sessionID
                 eventData.type = eventType
                 eventData.time = eventTime

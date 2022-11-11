@@ -12,7 +12,11 @@ public class AirshipRequestSession {
         sessionConfig.urlCache = nil
         sessionConfig.requestCachePolicy = .reloadIgnoringLocalCacheData
         sessionConfig.tlsMinimumSupportedProtocolVersion = .TLSv12
-        return URLSession(configuration: sessionConfig, delegate: nil, delegateQueue: nil)
+        return URLSession(
+            configuration: sessionConfig,
+            delegate: nil,
+            delegateQueue: nil
+        )
     }()
 
     public init(appKey: String) {
@@ -32,7 +36,7 @@ public class AirshipRequestSession {
         return [
             "Accept-Encoding": "gzip;q=1.0, compress;q=0.5",
             "User-Agent": "(UALib \(AirshipVersion.get()); \(appKey))",
-            "X-UA-App-Key": appKey
+            "X-UA-App-Key": appKey,
         ]
     }
 
@@ -48,7 +52,6 @@ public class AirshipRequestSession {
         return try await self.performHTTPRequest(request, responseParser: nil)
     }
 
-
     /// Performs an HTTP request
     /// - Parameters:
     ///    - request: The request
@@ -62,7 +65,9 @@ public class AirshipRequestSession {
     ) async throws -> AirshipHTTPResponse<T> {
 
         guard let url = request.url else {
-            throw AirshipErrors.error("Attempted to perform request with a missing URL.")
+            throw AirshipErrors.error(
+                "Attempted to perform request with a missing URL."
+            )
         }
 
         var urlRequest = URLRequest(url: url)
@@ -77,7 +82,7 @@ public class AirshipRequestSession {
             headers["Authorization"] = auth.authorizaitionValue
         }
 
-        if (request.compressBody == true) {
+        if request.compressBody == true {
             if let gzipped = request.body?.gzip() {
                 urlRequest.httpBody = gzipped
                 headers["Content-Encoding"] = "gzip"
@@ -97,8 +102,10 @@ public class AirshipRequestSession {
 
         return try await withTaskCancellationHandler(
             operation: {
-                return try await withCheckedThrowingContinuation { continuation in
-                    disposable = self.session.dataTask(request: urlRequest) { (data, response, error) in
+                return try await withCheckedThrowingContinuation {
+                    continuation in
+                    disposable = self.session.dataTask(request: urlRequest) {
+                        (data, response, error) in
                         if let error = error {
                             continuation.resume(throwing: error)
                             return
@@ -110,8 +117,11 @@ public class AirshipRequestSession {
                             return
                         }
 
-                        guard let httpResponse = response as? HTTPURLResponse else {
-                            let error = AirshipErrors.error("Unable to cast to HTTPURLResponse: \(response)")
+                        guard let httpResponse = response as? HTTPURLResponse
+                        else {
+                            let error = AirshipErrors.error(
+                                "Unable to cast to HTTPURLResponse: \(response)"
+                            )
                             continuation.resume(throwing: error)
                             return
                         }
@@ -130,7 +140,7 @@ public class AirshipRequestSession {
                 }
             },
             onCancel: {
-                if (autoCancel) {
+                if autoCancel {
                     onCancel()
                 }
             }
@@ -138,19 +148,20 @@ public class AirshipRequestSession {
     }
 }
 
-private extension Data {
-    func gzip() -> Data? {
+extension Data {
+    fileprivate func gzip() -> Data? {
         return UACompression.gzipData(self)
     }
 }
 
-fileprivate extension AirshipRequest.Auth {
-    var authorizaitionValue: String {
-        switch(self) {
+extension AirshipRequest.Auth {
+    fileprivate var authorizaitionValue: String {
+        switch self {
         case .basic(let username, let password):
             let credentials = "\(username):\(password)"
             let encodedCredentials = credentials.data(using: .utf8)
-            return "Basic \(encodedCredentials?.base64EncodedString(options: []) ?? "")"
+            return
+                "Basic \(encodedCredentials?.base64EncodedString(options: []) ?? "")"
         }
     }
 }
@@ -159,17 +170,23 @@ protocol URLRequestSessionProtocol {
     @discardableResult
     func dataTask(
         request: URLRequest,
-        completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void)
-    -> Disposable
+        completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void
+    )
+        -> Disposable
 }
 
 extension URLSession: URLRequestSessionProtocol {
     @discardableResult
     func dataTask(
         request: URLRequest,
-        completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void)
-    -> Disposable {
-        let task = self.dataTask(with: request, completionHandler: completionHandler)
+        completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void
+    )
+        -> Disposable
+    {
+        let task = self.dataTask(
+            with: request,
+            completionHandler: completionHandler
+        )
         task.resume()
 
         return Disposable {

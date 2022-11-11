@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import XCTest
+
 @testable import watchOSSample_WatchKit_Extension
 
 class watchOSSampleTests: XCTestCase {

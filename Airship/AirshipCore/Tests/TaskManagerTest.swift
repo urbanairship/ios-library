@@ -1,69 +1,123 @@
 /* Copyright Airship and Contributors */
 
 import XCTest
-@testable
-import AirshipCore
+
+@testable import AirshipCore
 
 class TaskManagerTest: XCTestCase {
-    
+
     private var workManager = TestWorkManager()
     private var dispatcher = UADispatcher.global
     private var taskManager: TaskManager?
-    
+
     override func setUpWithError() throws {
-        self.taskManager = TaskManager(workManager: self.workManager, dispatcher: self.dispatcher)
+        self.taskManager = TaskManager(
+            workManager: self.workManager,
+            dispatcher: self.dispatcher
+        )
     }
-    
+
     func testRegisterConcurrentTask() async throws {
-        self.taskManager?.register(taskID: "test_id", type: AirshipWorkerType.concurrent, dispatcher: self.dispatcher, launchHandler: { task in})
+        self.taskManager?
+            .register(
+                taskID: "test_id",
+                type: AirshipWorkerType.concurrent,
+                dispatcher: self.dispatcher,
+                launchHandler: { task in }
+            )
         Task {
             let worker = await self.workManager.workers.workerMap["test_id"]
-            let fakeWorker = await self.workManager.workers.workerMap["fake_test_id"]
+            let fakeWorker = await self.workManager.workers.workerMap[
+                "fake_test_id"
+            ]
             XCTAssertNotNil(worker)
             XCTAssertNil(fakeWorker)
-            }
+        }
     }
-    
+
     func testRegisterSerialTask() async throws {
-        self.taskManager?.register(taskID: "test_id", type: AirshipWorkerType.concurrent, dispatcher: self.dispatcher, launchHandler: { task in})
+        self.taskManager?
+            .register(
+                taskID: "test_id",
+                type: AirshipWorkerType.concurrent,
+                dispatcher: self.dispatcher,
+                launchHandler: { task in }
+            )
         Task {
             let worker = await self.workManager.workers.workerMap["test_id"]
-            let fakeWorker = await self.workManager.workers.workerMap["fake_test_id"]
+            let fakeWorker = await self.workManager.workers.workerMap[
+                "fake_test_id"
+            ]
             XCTAssertNotNil(worker)
             XCTAssertNil(fakeWorker)
-            }
+        }
     }
-    
+
     func testSetLimit() async throws {
-        try self.taskManager?.setRateLimit("test_rate_limit", rate: 1, timeInterval: 1)
+        try self.taskManager?
+            .setRateLimit(
+                "test_rate_limit",
+                rate: 1,
+                timeInterval: 1
+            )
         Task {
-            let rules = await self.workManager.rateLimitor.rules["test_rate_limit"]
-            let fakeRules = await self.workManager.rateLimitor.rules["fake_test_rate_limit"]
+            let rules = await self.workManager.rateLimitor.rules[
+                "test_rate_limit"
+            ]
+            let fakeRules = await self.workManager.rateLimitor.rules[
+                "fake_test_rate_limit"
+            ]
             XCTAssertNotNil(rules)
             XCTAssertNil(fakeRules)
-            }
+        }
     }
-    
+
     func testSetLimitInvalidRate() async throws {
-        try self.taskManager?.setRateLimit("test_rate_limit", rate: 0, timeInterval: 1)
+        try self.taskManager?
+            .setRateLimit(
+                "test_rate_limit",
+                rate: 0,
+                timeInterval: 1
+            )
         Task {
-            let rules = await self.workManager.rateLimitor.rules["test_rate_limit"]
+            let rules = await self.workManager.rateLimitor.rules[
+                "test_rate_limit"
+            ]
             XCTAssertNil(rules)
-            }
+        }
     }
-    
+
     func testSetLimitInvalidTime() async throws {
-        try self.taskManager?.setRateLimit("test_rate_limit", rate: 1, timeInterval: 0)
+        try self.taskManager?
+            .setRateLimit(
+                "test_rate_limit",
+                rate: 1,
+                timeInterval: 0
+            )
         Task {
-            let rules = await self.workManager.rateLimitor.rules["test_rate_limit"]
+            let rules = await self.workManager.rateLimitor.rules[
+                "test_rate_limit"
+            ]
             XCTAssertNil(rules)
-            }
+        }
     }
-    
+
     func testEnqueueRequest() async throws {
-        self.taskManager?.register(taskID: "test_id", type: AirshipWorkerType.concurrent, dispatcher: self.dispatcher, launchHandler: { task in})
-        self.taskManager?.enqueueRequest(taskID: "test_id", rateLimitIDs: ["test_id1", "test_id2"], options: TaskRequestOptions.defaultOptions, minDelay: 1)
-        
+        self.taskManager?
+            .register(
+                taskID: "test_id",
+                type: AirshipWorkerType.concurrent,
+                dispatcher: self.dispatcher,
+                launchHandler: { task in }
+            )
+        self.taskManager?
+            .enqueueRequest(
+                taskID: "test_id",
+                rateLimitIDs: ["test_id1", "test_id2"],
+                options: TaskRequestOptions.defaultOptions,
+                minDelay: 1
+            )
+
         let testWorkRequest = AirshipWorkRequest(
             workID: "test_id",
             extras: TaskRequestOptions.defaultOptions.extras,
@@ -71,7 +125,7 @@ class TaskManagerTest: XCTestCase {
             rateLimitIDs: ["test_id1", "test_id2"],
             conflictPolicy: TaskRequestOptions.defaultOptions.conflictPolicy
         )
-        
+
         Task {
             var assertTrue = false
             let workers = await self.workManager.workers.workerMap["test_id"]
@@ -84,10 +138,9 @@ class TaskManagerTest: XCTestCase {
             }
             XCTAssertTrue(assertTrue)
         }
-    }    
+    }
 }
 
-    
 //import XCTest
 //@testable
 //import AirshipCore

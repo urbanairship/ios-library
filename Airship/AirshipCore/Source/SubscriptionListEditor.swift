@@ -2,20 +2,18 @@
 
 import Foundation
 
-/**
- * Subscription list editor.
- */
+/// Subscription list editor.
 @objc(UASubscriptionListEditor)
 public class SubscriptionListEditor: NSObject {
-    
-    private var subscriptionListUpdates : [SubscriptionListUpdate] = []
-    private let completionHandler : ([SubscriptionListUpdate]) -> Void
+
+    private var subscriptionListUpdates: [SubscriptionListUpdate] = []
+    private let completionHandler: ([SubscriptionListUpdate]) -> Void
 
     init(completionHandler: @escaping ([SubscriptionListUpdate]) -> Void) {
         self.completionHandler = completionHandler
         super.init()
     }
-    
+
     /**
      * Subscribes to a list.
      * - Parameters:
@@ -23,7 +21,10 @@ public class SubscriptionListEditor: NSObject {
      */
     @objc(subscribe:)
     public func subscribe(_ subscriptionListID: String) {
-        let subscriptionListUpdate = SubscriptionListUpdate(listId: subscriptionListID, type: .subscribe)
+        let subscriptionListUpdate = SubscriptionListUpdate(
+            listId: subscriptionListID,
+            type: .subscribe
+        )
         subscriptionListUpdates.append(subscriptionListUpdate)
     }
 
@@ -34,7 +35,10 @@ public class SubscriptionListEditor: NSObject {
      */
     @objc(unsubscribe:)
     public func unsubscribe(_ subscriptionListID: String) {
-        let subscriptionListUpdate = SubscriptionListUpdate(listId: subscriptionListID, type: .unsubscribe)
+        let subscriptionListUpdate = SubscriptionListUpdate(
+            listId: subscriptionListID,
+            type: .unsubscribe
+        )
         subscriptionListUpdates.append(subscriptionListUpdate)
     }
 

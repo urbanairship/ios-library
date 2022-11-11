@@ -4,7 +4,7 @@ import Foundation
 import SwiftUI
 
 @available(iOS 13.0.0, tvOS 13.0, *)
-struct AirshipToggle : View {
+struct AirshipToggle: View {
     let model: ToggleModel
     let constraints: ViewConstraints
 
@@ -12,7 +12,6 @@ struct AirshipToggle : View {
     @State private var isOn: Bool = false
     @Environment(\.colorScheme) var colorScheme
 
-    
     var body: some View {
         createToggle()
             .constraints(self.constraints)
@@ -26,39 +25,52 @@ struct AirshipToggle : View {
                 updateValue(self.isOn)
             }
     }
-    
+
     @ViewBuilder
-    private func createToggle() -> some View  {
+    private func createToggle() -> some View {
         let binding = Binding<Bool>(
             get: { self.isOn },
-            set: { self.isOn = $0; self.updateValue($0) }
+            set: {
+                self.isOn = $0
+                self.updateValue($0)
+            }
         )
-        
+
         let toggle = Toggle(isOn: binding.animation()) {}
 
-        switch (self.model.style) {
+        switch self.model.style {
         case .checkboxStyle(let style):
-            toggle.toggleStyle(AirshipCheckboxToggleStyle(viewConstraints: self.constraints,
-                                                          model: style,
-                                                          colorScheme: colorScheme))
+            toggle.toggleStyle(
+                AirshipCheckboxToggleStyle(
+                    viewConstraints: self.constraints,
+                    model: style,
+                    colorScheme: colorScheme
+                )
+            )
         case .switchStyle(let style):
-            toggle.toggleStyle(AirshipSwitchToggleStyle(model: style, colorScheme: colorScheme))
+            toggle.toggleStyle(
+                AirshipSwitchToggleStyle(model: style, colorScheme: colorScheme)
+            )
         }
     }
-    
+
     private func updateValue(_ isOn: Bool) {
         let isValid = isOn || !(self.model.isRequired ?? false)
-        let data = FormInputData(self.model.identifier,
-                                 value: .toggle(isOn),
-                                 attributeName: self.model.attributeName,
-                                 attributeValue: isOn ? self.model.attributeValue : nil,
-                                 isValid: isValid)
-                                 
+        let data = FormInputData(
+            self.model.identifier,
+            value: .toggle(isOn),
+            attributeName: self.model.attributeName,
+            attributeValue: isOn ? self.model.attributeValue : nil,
+            isValid: isValid
+        )
+
         self.formState.updateFormInput(data)
     }
 
     private func restoreFormState() {
-        let formValue = self.formState.data.formValue(identifier: self.model.identifier)
+        let formValue = self.formState.data.formValue(
+            identifier: self.model.identifier
+        )
 
         guard case let .toggle(value) = formValue
         else {

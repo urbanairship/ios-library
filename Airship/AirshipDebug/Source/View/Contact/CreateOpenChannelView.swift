@@ -3,13 +3,13 @@
 import SwiftUI
 
 #if canImport(AirshipCore)
-import AirshipCore
+    import AirshipCore
 #elseif canImport(AirshipKit)
-import AirshipKit
+    import AirshipKit
 #endif
 
 struct CreateOpenChannelView: View {
-    
+
     @StateObject
     private var viewModel = ViewModel()
 
@@ -23,15 +23,21 @@ struct CreateOpenChannelView: View {
                 HStack {
                     Text("Platform")
                     Spacer()
-                    TextField("Platform", text: self.$viewModel.platformName.preventWhiteSpace())
-                        .freeInput()
+                    TextField(
+                        "Platform",
+                        text: self.$viewModel.platformName.preventWhiteSpace()
+                    )
+                    .freeInput()
                 }
 
                 HStack {
                     Text("Address")
                     Spacer()
-                    TextField("Address", text: self.$viewModel.address.preventWhiteSpace())
-                        .freeInput()
+                    TextField(
+                        "Address",
+                        text: self.$viewModel.address.preventWhiteSpace()
+                    )
+                    .freeInput()
                 }
             }
 
@@ -44,7 +50,7 @@ struct CreateOpenChannelView: View {
                 )
 
                 List {
-                    let keys = Array<String>(self.viewModel.identifiers.keys)
+                    let keys = [String](self.viewModel.identifiers.keys)
                     ForEach(keys, id: \.self) { key in
                         HStack {
                             Text("\(key):")
@@ -67,7 +73,10 @@ struct CreateOpenChannelView: View {
                 } label: {
                     Text("Create".localized())
                 }
-                .disabled(self.viewModel.address.isEmpty || self.viewModel.platformName.isEmpty)
+                .disabled(
+                    self.viewModel.address.isEmpty
+                        || self.viewModel.platformName.isEmpty
+                )
             }
         }
         .navigationTitle("Open Channel".localized())
@@ -92,21 +101,22 @@ struct CreateOpenChannelView: View {
                 identifiers: identifiers
             )
 
-            Airship.contact.registerOpen(self.address,
-                                         options: options)
+            Airship.contact.registerOpen(
+                self.address,
+                options: options
+            )
 
         }
     }
 }
 
-fileprivate struct AddIdentifierView: View {
+private struct AddIdentifierView: View {
 
     @State
     private var key: String = ""
 
     @State
     private var value: String = ""
-
 
     let onAdd: (String, String) -> Void
 
@@ -141,7 +151,8 @@ fileprivate struct AddIdentifierView: View {
                     presentationMode.wrappedValue.dismiss()
                 } label: {
                     Text("Add".localized())
-                }.disabled(key.isEmpty || value.isEmpty)
+                }
+                .disabled(key.isEmpty || value.isEmpty)
             }
         }
         .navigationTitle("Identifier".localized())

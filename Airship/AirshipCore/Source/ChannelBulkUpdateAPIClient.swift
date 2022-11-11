@@ -3,13 +3,15 @@
 // NOTE: For internal use only. :nodoc:
 protocol ChannelBulkUpdateAPIClientProtocol {
     @discardableResult
-    func update(_ update: AudienceUpdate,
-                channelID: String,
-                completionHandler: @escaping (HTTPResponse?, Error?) -> Void) -> Disposable;
+    func update(
+        _ update: AudienceUpdate,
+        channelID: String,
+        completionHandler: @escaping (HTTPResponse?, Error?) -> Void
+    ) -> Disposable
 }
 
 // NOTE: For internal use only. :nodoc:
-class ChannelBulkUpdateAPIClient : ChannelBulkUpdateAPIClientProtocol {
+class ChannelBulkUpdateAPIClient: ChannelBulkUpdateAPIClientProtocol {
     private static let path = "/api/channels/sdk/batch/"
 
     private var config: RuntimeConfig
@@ -20,7 +22,7 @@ class ChannelBulkUpdateAPIClient : ChannelBulkUpdateAPIClientProtocol {
         self.config = config
         self.session = session
     }
-    
+
     convenience init(config: RuntimeConfig) {
         self.init(config: config, session: RequestSession(config: config))
     }
@@ -36,50 +38,67 @@ class ChannelBulkUpdateAPIClient : ChannelBulkUpdateAPIClientProtocol {
 
         let payload = update.clientPayload
 
-        AirshipLogger.debug("Updating channel with url \(url?.absoluteString ?? "") payload \(payload)")
+        AirshipLogger.debug(
+            "Updating channel with url \(url?.absoluteString ?? "") payload \(payload)"
+        )
 
         let request = Request(builderBlock: { [self] builder in
             builder.method = "PUT"
             builder.url = url
             builder.username = config.appKey
             builder.password = config.appSecret
-            builder.setValue("application/vnd.urbanairship+json; version=3;", header: "Accept")
+            builder.setValue(
+                "application/vnd.urbanairship+json; version=3;",
+                header: "Accept"
+            )
             builder.setValue("application/json", header: "Content-Type")
             builder.body = try? encoder.encode(payload)
         })
-        
-        return session.performHTTPRequest(request, completionHandler: { (data, response, error) in
-            guard let response = response else {
-                AirshipLogger.debug("Update finished with error: \(error.debugDescription)")
-                completionHandler(nil, error)
-                return
-            }
 
-            AirshipLogger.debug("Update finished with response: \(response)")
-            completionHandler(HTTPResponse(status: response.statusCode), nil)
-        })
+        return session.performHTTPRequest(
+            request,
+            completionHandler: { (data, response, error) in
+                guard let response = response else {
+                    AirshipLogger.debug(
+                        "Update finished with error: \(error.debugDescription)"
+                    )
+                    completionHandler(nil, error)
+                    return
+                }
+
+                AirshipLogger.debug(
+                    "Update finished with response: \(response)"
+                )
+                completionHandler(
+                    HTTPResponse(status: response.statusCode),
+                    nil
+                )
+            }
+        )
     }
-    
+
     func buildURL(channelID: String) -> URL? {
         guard let deviceUrl = config.deviceAPIURL else {
             return nil
         }
-        
-        var urlComps = URLComponents(string: "\(deviceUrl)\(ChannelBulkUpdateAPIClient.path)\(channelID)")
+
+        var urlComps = URLComponents(
+            string: "\(deviceUrl)\(ChannelBulkUpdateAPIClient.path)\(channelID)"
+        )
         urlComps?.queryItems = [URLQueryItem(name: "platform", value: "ios")]
         return urlComps?.url
     }
 }
 
+extension AudienceUpdate {
 
-
-fileprivate extension AudienceUpdate {
-
-    var clientSubscriptionListPayload: [ClientPayload.SubscriptionOperation]? {
+    fileprivate var clientSubscriptionListPayload:
+        [ClientPayload.SubscriptionOperation]?
+    {
         guard !self.subscriptionListUpdates.isEmpty else { return nil }
 
         return self.subscriptionListUpdates.map { update in
-            switch(update.type) {
+            switch update.type {
             case .subscribe:
                 return ClientPayload.SubscriptionOperation(
                     action: .subscribe,
@@ -94,14 +113,16 @@ fileprivate extension AudienceUpdate {
         }
     }
 
-    var clientAttributePayload: [ClientPayload.AttributeOperation]? {
+    fileprivate var clientAttributePayload: [ClientPayload.AttributeOperation]?
+    {
         guard !self.attributeUpdates.isEmpty else { return nil }
 
         return self.attributeUpdates.map { update in
-            let timestamp = Utils.isoDateFormatterUTCWithDelimiter().string(
-                from: update.date
-            )
-            switch(update.type) {
+            let timestamp = Utils.isoDateFormatterUTCWithDelimiter()
+                .string(
+                    from: update.date
+                )
+            switch update.type {
             case .set:
                 return ClientPayload.AttributeOperation(
                     action: .set,
@@ -120,30 +141,29 @@ fileprivate extension AudienceUpdate {
         }
     }
 
-    var clientLiveActivitiesPayload: [LiveActivityUpdate]? {
+    fileprivate var clientLiveActivitiesPayload: [LiveActivityUpdate]? {
         guard !self.liveActivityUpdates.isEmpty else { return nil }
         return liveActivityUpdates
     }
 
-
-    var clientTagPayload: ClientPayload.TagPayload? {
+    fileprivate var clientTagPayload: ClientPayload.TagPayload? {
         guard !self.tagGroupUpdates.isEmpty else { return nil }
 
         var tagPayload = ClientPayload.TagPayload()
         self.tagGroupUpdates.forEach { tagUpdate in
-            switch(tagUpdate.type) {
+            switch tagUpdate.type {
             case .set:
-                if (tagPayload.set == nil) {
+                if tagPayload.set == nil {
                     tagPayload.set = [:]
                 }
                 tagPayload.set?[tagUpdate.group] = tagUpdate.tags
             case .remove:
-                if (tagPayload.remove == nil) {
+                if tagPayload.remove == nil {
                     tagPayload.remove = [:]
                 }
                 tagPayload.remove?[tagUpdate.group] = tagUpdate.tags
             case .add:
-                if (tagPayload.add == nil) {
+                if tagPayload.add == nil {
                     tagPayload.add = [:]
                 }
                 tagPayload.add?[tagUpdate.group] = tagUpdate.tags
@@ -153,7 +173,7 @@ fileprivate extension AudienceUpdate {
         return tagPayload
     }
 
-    var clientPayload: ClientPayload {
+    fileprivate var clientPayload: ClientPayload {
         return ClientPayload(
             tags: self.clientTagPayload,
             subscriptionLists: self.clientSubscriptionListPayload,
@@ -163,8 +183,7 @@ fileprivate extension AudienceUpdate {
     }
 }
 
-
-fileprivate struct ClientPayload: Encodable {
+private struct ClientPayload: Encodable {
 
     struct TagPayload: Encodable {
         var add: [String: [String]]? = nil

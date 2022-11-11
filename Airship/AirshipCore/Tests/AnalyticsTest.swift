@@ -1,7 +1,6 @@
 import XCTest
 
-@testable
-import AirshipCore
+@testable import AirshipCore
 
 class AnalyticsTest: XCTestCase {
 
@@ -19,30 +18,36 @@ class AnalyticsTest: XCTestCase {
     private var privacyManager: PrivacyManager!
     private var analytics: Analytics!
 
-
     override func setUpWithError() throws {
-        self.privacyManager = PrivacyManager(dataStore: dataStore,
-                                             defaultEnabledFeatures: .all,
-                                             notificationCenter: notificationCenter)
+        self.privacyManager = PrivacyManager(
+            dataStore: dataStore,
+            defaultEnabledFeatures: .all,
+            notificationCenter: notificationCenter
+        )
 
-        self.analytics = Analytics(config: RuntimeConfig(config: config, dataStore: dataStore),
-                                   dataStore: dataStore,
-                                   channel: channel,
-                                   eventManager: eventManager,
-                                   notificationCenter: notificationCenter,
-                                   date: date,
-                                   dispatcher: dispatcher,
-                                   localeManager: locale,
-                                   appStateTracker: appStateTracker,
-                                   privacyManager: privacyManager,
-                                   permissionsManager: permissionsManager)
+        self.analytics = Analytics(
+            config: RuntimeConfig(config: config, dataStore: dataStore),
+            dataStore: dataStore,
+            channel: channel,
+            eventManager: eventManager,
+            notificationCenter: notificationCenter,
+            date: date,
+            dispatcher: dispatcher,
+            localeManager: locale,
+            appStateTracker: appStateTracker,
+            privacyManager: privacyManager,
+            permissionsManager: permissionsManager
+        )
 
     }
 
     func testFirstTransitionToForegroundEmitsAppInit() throws {
         self.appStateTracker.currentState = .inactive
         self.analytics.airshipReady()
-        self.notificationCenter.post(name: AppStateTracker.didTransitionToForeground, object: nil)
+        self.notificationCenter.post(
+            name: AppStateTracker.didTransitionToForeground,
+            object: nil
+        )
 
         let event = self.eventManager.events.last
         XCTAssertEqual("app_init", event?.eventType)
@@ -51,8 +56,14 @@ class AnalyticsTest: XCTestCase {
     func testSubsequentTransitionToForegroundEmitsForegroundEvent() throws {
         self.appStateTracker.currentState = .inactive
 
-        self.notificationCenter.post(name: AppStateTracker.didTransitionToForeground, object: nil)
-        self.notificationCenter.post(name: AppStateTracker.didTransitionToForeground, object: nil)
+        self.notificationCenter.post(
+            name: AppStateTracker.didTransitionToForeground,
+            object: nil
+        )
+        self.notificationCenter.post(
+            name: AppStateTracker.didTransitionToForeground,
+            object: nil
+        )
 
         let event = self.eventManager.events.last
         XCTAssertEqual("app_foreground", event?.eventType)
@@ -60,7 +71,10 @@ class AnalyticsTest: XCTestCase {
 
     func testBackgroundBeforeForegroundEmitsAppInit() throws {
         self.appStateTracker.currentState = .inactive
-        self.notificationCenter.post(name: AppStateTracker.didEnterBackgroundNotification, object: nil)
+        self.notificationCenter.post(
+            name: AppStateTracker.didEnterBackgroundNotification,
+            object: nil
+        )
 
         let event = self.eventManager.events.last
         XCTAssertEqual("app_background", event?.eventType)
@@ -68,7 +82,10 @@ class AnalyticsTest: XCTestCase {
 
     func testBackgroundAfterForegroundDoesNotEmitAppInit() throws {
         self.appStateTracker.currentState = .active
-        self.notificationCenter.post(name: AppStateTracker.didEnterBackgroundNotification, object: nil)
+        self.notificationCenter.post(
+            name: AppStateTracker.didEnterBackgroundNotification,
+            object: nil
+        )
 
         let event = self.eventManager.events.last
         XCTAssertNotEqual("app_init", event?.eventType)
@@ -78,9 +95,13 @@ class AnalyticsTest: XCTestCase {
         self.analytics.trackScreen("test_screen")
 
         XCTAssertNil(self.eventManager.events.last)
-        self.notificationCenter.post(name: AppStateTracker.didEnterBackgroundNotification, object: nil)
+        self.notificationCenter.post(
+            name: AppStateTracker.didEnterBackgroundNotification,
+            object: nil
+        )
 
-        let screenEvent = self.eventManager.events.first?.event as! ScreenTrackingEvent
+        let screenEvent =
+            self.eventManager.events.first?.event as! ScreenTrackingEvent
         XCTAssertEqual("test_screen", screenEvent.screen)
     }
 
@@ -88,9 +109,13 @@ class AnalyticsTest: XCTestCase {
         self.analytics.trackScreen("test_screen")
 
         XCTAssertNil(self.eventManager.events.last)
-        self.notificationCenter.post(name: AppStateTracker.willTerminateNotification, object: nil)
+        self.notificationCenter.post(
+            name: AppStateTracker.willTerminateNotification,
+            object: nil
+        )
 
-        let screenEvent = self.eventManager.events.first?.event as! ScreenTrackingEvent
+        let screenEvent =
+            self.eventManager.events.first?.event as! ScreenTrackingEvent
         XCTAssertEqual("test_screen", screenEvent.screen)
     }
 
@@ -100,7 +125,8 @@ class AnalyticsTest: XCTestCase {
         XCTAssertNil(self.eventManager.events.last)
         self.analytics.trackScreen("another_screen")
 
-        let screenEvent = self.eventManager.events.first?.event as! ScreenTrackingEvent
+        let screenEvent =
+            self.eventManager.events.first?.event as! ScreenTrackingEvent
         XCTAssertEqual("test_screen", screenEvent.screen)
     }
 
@@ -152,8 +178,12 @@ class AnalyticsTest: XCTestCase {
         let ids = AssociatedIdentifiers(dictionary: ["neat": "id"])
         self.analytics.associateDeviceIdentifiers(ids)
 
-        let event = self.eventManager.events.first?.event as! AssociateIdentifiersEvent
-        XCTAssertEqual(["neat": "id"] as NSDictionary, event.data as NSDictionary)
+        let event =
+            self.eventManager.events.first?.event as! AssociateIdentifiersEvent
+        XCTAssertEqual(
+            ["neat": "id"] as NSDictionary,
+            event.data as NSDictionary
+        )
     }
 
     func testAssociateDeviceIdentifiersAnalyticsDisbaled() throws {
@@ -186,7 +216,7 @@ class AnalyticsTest: XCTestCase {
     func testConversionSendID() throws {
         let notification: [String: AnyHashable] = [
             "aps": ["alert": "neat"],
-            "_": "some conversionSendID"
+            "_": "some conversionSendID",
         ]
         self.analytics.launched(fromNotification: notification)
         XCTAssertEqual("some conversionSendID", self.analytics.conversionSendID)
@@ -196,7 +226,7 @@ class AnalyticsTest: XCTestCase {
         let notification: [String: AnyHashable] = [
             "aps": ["alert": "neat"],
             "_": "some conversionSendID",
-            "com.urbanairship.metadata": "some metadata"
+            "com.urbanairship.metadata": "some metadata",
         ]
 
         self.analytics.launched(fromNotification: notification)
@@ -207,7 +237,7 @@ class AnalyticsTest: XCTestCase {
         let notification: [String: AnyHashable] = [
             "aps": ["neat": "neat"],
             "_": "some conversionSendID",
-            "com.urbanairship.metadata": "some metadata"
+            "com.urbanairship.metadata": "some metadata",
         ]
 
         self.analytics.launched(fromNotification: notification)
@@ -217,11 +247,16 @@ class AnalyticsTest: XCTestCase {
 
     func testForwardScreenTracking() throws {
         let eventAdded = self.expectation(description: "Event added")
-        self.notificationCenter.addObserver(forName: Analytics.screenTracked,
-                                            object: nil,
-                                            queue: nil) { notification in
+        self.notificationCenter.addObserver(
+            forName: Analytics.screenTracked,
+            object: nil,
+            queue: nil
+        ) { notification in
 
-            XCTAssertEqual(["screen": "some screen"], notification.userInfo as? [String: String])
+            XCTAssertEqual(
+                ["screen": "some screen"],
+                notification.userInfo as? [String: String]
+            )
             eventAdded.fulfill()
         }
 
@@ -231,14 +266,23 @@ class AnalyticsTest: XCTestCase {
     }
 
     func testForwardRegionEvents() throws {
-        let event = RegionEvent(regionID: "foo", source: "test", boundaryEvent: .enter)!
+        let event = RegionEvent(
+            regionID: "foo",
+            source: "test",
+            boundaryEvent: .enter
+        )!
 
         let eventAdded = self.expectation(description: "Event added")
-        self.notificationCenter.addObserver(forName: Analytics.regionEventAdded,
-                                            object: nil,
-                                            queue: nil) { notification in
+        self.notificationCenter.addObserver(
+            forName: Analytics.regionEventAdded,
+            object: nil,
+            queue: nil
+        ) { notification in
 
-            XCTAssertEqual(event, notification.userInfo?["event"] as? RegionEvent)
+            XCTAssertEqual(
+                event,
+                notification.userInfo?["event"] as? RegionEvent
+            )
             eventAdded.fulfill()
         }
 
@@ -250,11 +294,16 @@ class AnalyticsTest: XCTestCase {
         let event = CustomEvent(name: "foo")
 
         let eventAdded = self.expectation(description: "Event added")
-        self.notificationCenter.addObserver(forName: Analytics.customEventAdded,
-                                            object: nil,
-                                            queue: nil) { notification in
+        self.notificationCenter.addObserver(
+            forName: Analytics.customEventAdded,
+            object: nil,
+            queue: nil
+        ) { notification in
 
-            XCTAssertEqual(event, notification.userInfo?["event"] as? CustomEvent)
+            XCTAssertEqual(
+                event,
+                notification.userInfo?["event"] as? CustomEvent
+            )
             eventAdded.fulfill()
         }
 
@@ -264,11 +313,14 @@ class AnalyticsTest: XCTestCase {
 
     func testSDKExtensions() throws {
         self.analytics.registerSDKExtension(.cordova, version: "1.2.3")
-        self.analytics.registerSDKExtension(.unity, version:"5,.6,.7,,,")
+        self.analytics.registerSDKExtension(.unity, version: "5,.6,.7,,,")
 
         let headersFetched = self.expectation(description: "Headers fetched")
         self.analytics.analyticsHeaders { headers in
-            XCTAssertEqual("cordova:1.2.3, unity:5.6.7", headers["X-UA-Frameworks"])
+            XCTAssertEqual(
+                "cordova:1.2.3, unity:5.6.7",
+                headers["X-UA-Frameworks"]
+            )
             headersFetched.fulfill()
         }
 
@@ -286,12 +338,14 @@ class AnalyticsTest: XCTestCase {
             "X-UA-Locale-Country": "US",
             "X-UA-Locale-Variant": "POSIX",
             "X-UA-Device-Family": UIDevice.current.systemName,
-            "X-UA-OS-Version":  UIDevice.current.systemVersion,
+            "X-UA-OS-Version": UIDevice.current.systemVersion,
             "X-UA-Device-Model": Utils.deviceModelName(),
             "X-UA-Lib-Version": AirshipVersion.get(),
             "X-UA-App-Key": self.config.appKey,
-            "X-UA-Package-Name": Bundle.main.infoDictionary?[kCFBundleIdentifierKey as String] as? String,
-            "X-UA-Package-Version": Utils.bundleShortVersionString() ?? ""
+            "X-UA-Package-Name":
+                Bundle.main.infoDictionary?[kCFBundleIdentifierKey as String]
+                as? String,
+            "X-UA-Package-Version": Utils.bundleShortVersionString() ?? "",
         ]
 
         let headersFetched = self.expectation(description: "Headers fetched")
@@ -320,15 +374,24 @@ class AnalyticsTest: XCTestCase {
     func testPermissionHeaders() throws {
         let testPushDelegate = TestPermissionsDelegate()
         testPushDelegate.permissionStatus = .denied
-        self.permissionsManager.setDelegate(testPushDelegate, permission: .displayNotifications)
+        self.permissionsManager.setDelegate(
+            testPushDelegate,
+            permission: .displayNotifications
+        )
 
         let testLocationDelegate = TestPermissionsDelegate()
         testLocationDelegate.permissionStatus = .granted
-        self.permissionsManager.setDelegate(testLocationDelegate, permission: .location)
+        self.permissionsManager.setDelegate(
+            testLocationDelegate,
+            permission: .location
+        )
 
         let headersFetched = self.expectation(description: "Headers fetched")
         self.analytics.analyticsHeaders { headers in
-            XCTAssertEqual("denied", headers["X-UA-Permission-display_notifications"])
+            XCTAssertEqual(
+                "denied",
+                headers["X-UA-Permission-display_notifications"]
+            )
             XCTAssertEqual("granted", headers["X-UA-Permission-location"])
             headersFetched.fulfill()
         }
@@ -359,17 +422,24 @@ class TestEventManager: EventManagerProtocol {
         let eventID: String
     }
 
-    func add(_ event: Event, eventID: String, eventDate: Date, sessionID: String) {
-        let testEvent = TestEvent(eventType: event.eventType,
-                                  event: event,
-                                  sessionID: sessionID,
-                                  eventID: eventID)
+    func add(
+        _ event: Event,
+        eventID: String,
+        eventDate: Date,
+        sessionID: String
+    ) {
+        let testEvent = TestEvent(
+            eventType: event.eventType,
+            event: event,
+            sessionID: sessionID,
+            eventID: eventID
+        )
         events.append(testEvent)
     }
 }
 
 class InvalidEvent: NSObject, Event {
-    var data: [AnyHashable : Any] = [:]
+    var data: [AnyHashable: Any] = [:]
     var eventType: String = "invliad"
     var priority: EventPriority = .normal
 
@@ -379,7 +449,7 @@ class InvalidEvent: NSObject, Event {
 }
 
 class ValidEvent: NSObject, Event {
-    var data: [AnyHashable : Any] = [:]
+    var data: [AnyHashable: Any] = [:]
     var eventType: String = "valid"
     var priority: EventPriority = .normal
 
@@ -387,4 +457,3 @@ class ValidEvent: NSObject, Event {
         return true
     }
 }
-

@@ -1,10 +1,9 @@
-import Foundation
 import Combine
+import Foundation
 
-@testable
-import AirshipCore
+@testable import AirshipCore
 
-class TestWorkManager : NSObject, AirshipWorkManagerProtocol {
+class TestWorkManager: NSObject, AirshipWorkManagerProtocol {
     let rateLimitor = TestWorkRateLimiter()
     private let conditionsMonitor = WorkConditionsMonitor()
     private let backgroundTasks = WorkBackgroundTasks()
@@ -26,71 +25,79 @@ class TestWorkManager : NSObject, AirshipWorkManagerProtocol {
 
         AnyCancellable {
             task.cancel()
-        }.store(in: &subscriptions)
+        }
+        .store(in: &subscriptions)
     }
-
 
     private func startBackgroundListener() {
         var task: Task<Void, Never>? = nil
-        let cancellable = self.notificationCenter.publisher(
-            for: AppStateTracker.didEnterBackgroundNotification
-        ).sink { _ in
-            task?.cancel()
+        let cancellable = self.notificationCenter
+            .publisher(
+                for: AppStateTracker.didEnterBackgroundNotification
+            )
+            .sink { _ in
+                task?.cancel()
 
-            let backgroundTask = try? self.backgroundTasks.beginTask(
-                "Airship.WorkManager"
-            ) {
+                let backgroundTask = try? self.backgroundTasks.beginTask(
+                    "Airship.WorkManager"
+                ) {
+                    task?.cancel()
+                }
+
+                guard let backgroundTask = backgroundTask else {
+                    return
+                }
+
+                task = Task {
+                    let wait = 300.0
+                    if wait > 0 {
+                        try? await Task.sleep(
+                            nanoseconds: UInt64(wait * 1_000_000_000)
+                        )
+                    }
+                    backgroundTask.dispose()
+                }
+            }
+
+        self.notificationCenter
+            .publisher(
+                for: AppStateTracker.didBecomeActiveNotification
+            )
+            .sink { _ in
                 task?.cancel()
             }
-
-            guard let backgroundTask = backgroundTask else {
-                return
-            }
-
-            task = Task {
-                let wait = 300.0
-                if (wait > 0) {
-                    try? await Task.sleep(
-                        nanoseconds: UInt64(wait * 1_000_000_000)
-                    )
-                }
-                backgroundTask.dispose()
-            }
-        }
-
-        self.notificationCenter.publisher(
-            for: AppStateTracker.didBecomeActiveNotification
-        ).sink { _ in
-            task?.cancel()
-        }.store(in: &self.subscriptions)
+            .store(in: &self.subscriptions)
 
         AnyCancellable {
             cancellable.cancel()
             task?.cancel()
-        }.store(in: &self.subscriptions)
+        }
+        .store(in: &self.subscriptions)
     }
 
     @objc(registerWorkerWithForID:type:workHandler:)
     public func _registerWorker(
         _ workID: String,
         type: AirshipWorkerType,
-        workHandler: @escaping (AirshipWorkRequest, AirshipWorkContinuation) -> Void
+        workHandler: @escaping (AirshipWorkRequest, AirshipWorkContinuation) ->
+            Void
     ) {
         registerWorker(
-             workID,
-             type: type
+            workID,
+            type: type
         ) { workRequest in
             var continuation: AirshipWorkContinuation? = nil
             let cancel = { continuation?.cancel() }
             return await withTaskCancellationHandler(
                 operation: {
                     return await withCheckedContinuation { taskContinuation in
-                        continuation = AirshipWorkContinuation { result  in
+                        continuation = AirshipWorkContinuation { result in
                             taskContinuation.resume(returning: result)
                         }
                         workHandler(workRequest, continuation!)
                     }
-                }, onCancel: {
+                },
+                onCancel: {
                     cancel()
                 }
             )
@@ -100,7 +107,8 @@ class TestWorkManager : NSObject, AirshipWorkManagerProtocol {
     public func registerWorker(
         _ workID: String,
         type: AirshipWorkerType,
-        workHandler: @escaping (AirshipWorkRequest) async throws -> AirshipWorkResult
+        workHandler: @escaping (AirshipWorkRequest) async throws ->
+            AirshipWorkResult
     ) {
         let worker = TestWorker(
             workID: workID,

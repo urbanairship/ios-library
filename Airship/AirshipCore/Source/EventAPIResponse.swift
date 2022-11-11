@@ -1,9 +1,6 @@
-
-/**
- * - Note: For internal use only. :nodoc:
- */
+/// - Note: For internal use only. :nodoc:
 @objc(UAEventAPIResponse)
-public class EventAPIResponse : HTTPResponse {
+public class EventAPIResponse: HTTPResponse {
     @objc
     public let maxTotalDBSize: NSNumber?
 
@@ -14,7 +11,12 @@ public class EventAPIResponse : HTTPResponse {
     public let minBatchInterval: NSNumber?
 
     @objc
-    public init(status: Int, maxTotalDBSize: NSNumber?, maxBatchSize: NSNumber?, minBatchInterval: NSNumber?) {
+    public init(
+        status: Int,
+        maxTotalDBSize: NSNumber?,
+        maxBatchSize: NSNumber?,
+        minBatchInterval: NSNumber?
+    ) {
         self.maxTotalDBSize = maxTotalDBSize
         self.maxBatchSize = maxBatchSize
         self.minBatchInterval = minBatchInterval

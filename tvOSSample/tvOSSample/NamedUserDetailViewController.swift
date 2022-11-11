@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
-import UIKit
 import AirshipCore
+import UIKit
 
 class NamedUserDetailViewController: UIViewController, UITextFieldDelegate {
 
@@ -15,10 +15,13 @@ class NamedUserDetailViewController: UIViewController, UITextFieldDelegate {
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         guard let text = textField.text else { return false }
-        Airship.contact.identify(text);
+        Airship.contact.identify(text)
         Airship.push.updateRegistration()
 
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "refreshView"), object: nil);
+        NotificationCenter.default.post(
+            name: NSNotification.Name(rawValue: "refreshView"),
+            object: nil
+        )
 
         namedUserTextField.text = ""
 

@@ -1,12 +1,12 @@
 /* Copyright Airship and Contributors */
 
-import SwiftUI
 import Combine
+import SwiftUI
 
 #if canImport(AirshipCore)
-import AirshipCore
+    import AirshipCore
 #elseif canImport(AirshipKit)
-import AirshipKit
+    import AirshipKit
 #endif
 
 struct EventListDebugView: View {
@@ -15,7 +15,7 @@ struct EventListDebugView: View {
     private var viewModel = ViewModel()
 
     @ViewBuilder
-    func makeList() -> some View  {
+    func makeList() -> some View {
         List(self.viewModel.events, id: \.self) { event in
             NavigationLink(
                 destination: EventDetailsView(
@@ -39,7 +39,10 @@ struct EventListDebugView: View {
                 makeList()
                 if #available(iOS 15.0, *) {
                     makeList()
-                    .searchable(text: self.$viewModel.searchString.preventWhiteSpace())
+                        .searchable(
+                            text: self.$viewModel.searchString
+                                .preventWhiteSpace()
+                        )
                 } else {
                     makeList()
                 }
@@ -61,8 +64,9 @@ struct EventListDebugView: View {
         private var cancellable: AnyCancellable? = nil
 
         init() {
-            if (Airship.isFlying) {
-                self.cancellable = AirshipDebugManager.shared.eventReceivedPublisher
+            if Airship.isFlying {
+                self.cancellable = AirshipDebugManager.shared
+                    .eventReceivedPublisher
                     .sink { [weak self] incoming in
                         self?.refreshEvents()
                     }
@@ -84,12 +88,11 @@ struct EventListDebugView: View {
     }
 }
 
-fileprivate struct EventDetailsView: View {
+private struct EventDetailsView: View {
     let event: AirshipEvent
 
     @State
     private var toastMessage: AirshipToast.Message? = nil
-
 
     @ViewBuilder
     var body: some View {

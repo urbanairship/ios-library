@@ -3,18 +3,21 @@
 import Foundation
 
 #if canImport(AirshipCore)
-import AirshipCore
+    import AirshipCore
 #endif
 
 @objc(UAMessageCenterNativeBridgeExtension)
-public class MessageCenterNativeBridgeExtension: NSObject, NativeBridgeExtensionDelegate {
+public class MessageCenterNativeBridgeExtension: NSObject,
+    NativeBridgeExtensionDelegate
+{
 
     let message: MessageCenterMessage
     let user: MessageCenterUser
 
     @objc
-    public init(message: MessageCenterMessage,
-         user: MessageCenterUser
+    public init(
+        message: MessageCenterMessage,
+        user: MessageCenterUser
     ) {
         self.message = message
         self.user = user
@@ -23,12 +26,12 @@ public class MessageCenterNativeBridgeExtension: NSObject, NativeBridgeExtension
     public func actionsMetadata(
         for command: JavaScriptCommand,
         webView: WKWebView
-    ) -> [AnyHashable : Any] {
+    ) -> [AnyHashable: Any] {
         return [
             UAActionMetadataInboxMessageIDKey: message.id
         ]
     }
-    
+
     public func extendJavaScriptEnvironment(
         _ js: JavaScriptEnvironmentProtocol,
         webView: WKWebView
@@ -37,7 +40,9 @@ public class MessageCenterNativeBridgeExtension: NSObject, NativeBridgeExtension
         js.add("getMessageTitle", string: self.message.title)
         js.add(
             "getMessageSentDateMS",
-            number: (self.message.sentDate.timeIntervalSince1970 * 1000.0).rounded() as NSNumber
+            number: (self.message.sentDate.timeIntervalSince1970 * 1000.0)
+                .rounded()
+                as NSNumber
         )
         js.add(
             "getMessageSentDate",

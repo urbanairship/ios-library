@@ -2,11 +2,9 @@
 
 import Foundation
 
-/**
- * - Note: For internal use only. :nodoc:
- */
+/// - Note: For internal use only. :nodoc:
 @objc(UADate)
-open class AirshipDate : NSObject {
+open class AirshipDate: NSObject {
 
     @objc
     public override init() {
@@ -14,9 +12,7 @@ open class AirshipDate : NSObject {
     }
 
     @objc
-    open var now : Date {
-        get {
-            return Date()
-        }
+    open var now: Date {
+        return Date()
     }
 }

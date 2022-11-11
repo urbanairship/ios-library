@@ -2,21 +2,19 @@
 
 import Foundation
 
-/**
- * SMS registration options
- */
+/// SMS registration options
 @objc(UASMSRegistrationOptions)
-public class SMSRegistrationOptions : NSObject, Codable {
-    
+public class SMSRegistrationOptions: NSObject, Codable {
+
     /**
      * Sender ID
      */
     let senderID: String
-    
+
     private init(senderID: String) {
         self.senderID = senderID
     }
-    
+
     /// Returns a SMS registration options with opt-in status
     /// - Parameter senderID: The sender ID
     /// - Returns: A SMS registration options.

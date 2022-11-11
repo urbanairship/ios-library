@@ -1,12 +1,12 @@
 /* Copyright Airship and Contributors */
 
-import SwiftUI
 import Combine
+import SwiftUI
 
 #if canImport(AirshipCore)
-import AirshipCore
+    import AirshipCore
 #elseif canImport(AirshipKit)
-import AirshipKit
+    import AirshipKit
 #endif
 
 struct ReceivedPushListDebugView: View {
@@ -18,7 +18,8 @@ struct ReceivedPushListDebugView: View {
         Form {
             Section(header: Text("")) {
                 List(self.viewModel.pushNotifications, id: \.self) { push in
-                    NavigationLink(destination: PushDetailDebugView(push: push)) {
+                    NavigationLink(destination: PushDetailDebugView(push: push))
+                    {
                         HStack {
                             Text(push.alert ?? "Silent Push".localized())
                             Text(push.pushID)
@@ -35,19 +36,20 @@ struct ReceivedPushListDebugView: View {
         private var cancellable: AnyCancellable? = nil
 
         init() {
-            if (Airship.isFlying) {
+            if Airship.isFlying {
                 self.refreshPush()
-                self.cancellable = AirshipDebugManager.shared.pushNotifiacitonReceivedPublisher
+                self.cancellable = AirshipDebugManager.shared
+                    .pushNotifiacitonReceivedPublisher
                     .sink { [weak self] _ in
                         self?.refreshPush()
                     }
             }
         }
 
-
         private func refreshPush() {
             Task {
-                let notifications = await AirshipDebugManager.shared.pushNotifications()
+                let notifications = await AirshipDebugManager.shared
+                    .pushNotifications()
                 await MainActor.run {
                     self.pushNotifications = notifications
                 }
@@ -56,7 +58,7 @@ struct ReceivedPushListDebugView: View {
     }
 }
 
-fileprivate struct PushDetailDebugView: View {
+private struct PushDetailDebugView: View {
     let push: PushNotification
 
     @ViewBuilder

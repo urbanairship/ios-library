@@ -4,13 +4,12 @@ import Foundation
 import SwiftUI
 import UIKit
 
-
 /// Preferenece Center theme
 public struct PreferenceCenterTheme: Equatable {
 
     /// View controller theme
-        public var viewController: PreferenceCenterTheme.ViewController? = nil
-    
+    public var viewController: PreferenceCenterTheme.ViewController? = nil
+
     /// Preference center
     public var preferenceCenter: PreferenceCenterTheme.PreferenceCenter? = nil
 
@@ -36,7 +35,7 @@ public struct PreferenceCenterTheme: Equatable {
     public struct NavigationBar: Equatable {
         /// The default title
         public var title: String? = nil
-        
+
         /// Navigation bar title font
         public var titleFont: UIFont? = nil
 
@@ -171,33 +170,36 @@ public struct PreferenceCenterTheme: Equatable {
     }
 }
 
-
 struct PreferenceCenterThemeKey: EnvironmentKey {
     static let defaultValue = PreferenceCenterTheme()
 }
 
-public extension EnvironmentValues {
+extension EnvironmentValues {
     /// Airship preference theme environment value
-    var airshipPreferenceCenterTheme: PreferenceCenterTheme {
+    public var airshipPreferenceCenterTheme: PreferenceCenterTheme {
         get { self[PreferenceCenterThemeKey.self] }
         set { self[PreferenceCenterThemeKey.self] = newValue }
     }
 }
 
-public extension View {
+extension View {
     /// Overrides the preference center theme
     /// - Parameters:
     ///     - theme: The preference center theme
-    func preferenceCenterTheme(_ theme: PreferenceCenterTheme) -> some View {
+    public func preferenceCenterTheme(_ theme: PreferenceCenterTheme)
+        -> some View
+    {
         environment(\.airshipPreferenceCenterTheme, theme)
     }
 }
 
-public extension PreferenceCenterTheme {
+extension PreferenceCenterTheme {
     /// Loads a preference center theme from a plist file
     /// - Parameters:
     ///     - plist: The name of the plist in the bundle
-    static func fromPlist(_ plist: String) throws -> PreferenceCenterTheme {
+    public static func fromPlist(_ plist: String) throws
+        -> PreferenceCenterTheme
+    {
         return try PreferenceCenterThemeLoader.fromPlist(plist)
     }
 }

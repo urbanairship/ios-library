@@ -1,31 +1,23 @@
 /* Copyright Airship and Contributors */
 
-/**
- * Event to track install attributions.
- */
+/// Event to track install attributions.
 @objc(UAInstallAttributionEvent)
-public class InstallAttributionEvent : NSObject, Event {
+public class InstallAttributionEvent: NSObject, Event {
     @objc
-    public var eventType : String {
-        get {
-            return "install_attribution"
-        }
+    public var eventType: String {
+        return "install_attribution"
     }
 
-    private let _data : [AnyHashable : Any]
+    private let _data: [AnyHashable: Any]
 
     @objc
-    public  var data: [AnyHashable : Any] {
-        get {
-            return self._data
-        }
+    public var data: [AnyHashable: Any] {
+        return self._data
     }
 
     @objc
     public var priority: EventPriority {
-        get {
-            return .normal
-        }
+        return .normal
     }
 
     @objc
@@ -36,9 +28,11 @@ public class InstallAttributionEvent : NSObject, Event {
 
     @objc
     public init(appPurchaseDate: Date, iAdImpressionDate: Date) {
-        var data: [AnyHashable : Any] = [:]
-        data["app_store_purchase_date"] = "\(appPurchaseDate.timeIntervalSince1970)"
-        data["app_store_ad_impression_date"] = "\(iAdImpressionDate.timeIntervalSince1970)"
+        var data: [AnyHashable: Any] = [:]
+        data["app_store_purchase_date"] =
+            "\(appPurchaseDate.timeIntervalSince1970)"
+        data["app_store_ad_impression_date"] =
+            "\(iAdImpressionDate.timeIntervalSince1970)"
 
         self._data = data
         super.init()
@@ -51,8 +45,13 @@ public class InstallAttributionEvent : NSObject, Event {
      * - Returns: InstallAttributionEvent instance.
      */
     @objc(eventWithAppPurchaseDate:iAdImpressionDate:)
-    public class func event(appPurchaseDate: Date, iAdImpressionDate: Date) -> InstallAttributionEvent {
-        return InstallAttributionEvent(appPurchaseDate: appPurchaseDate, iAdImpressionDate: iAdImpressionDate)
+    public class func event(appPurchaseDate: Date, iAdImpressionDate: Date)
+        -> InstallAttributionEvent
+    {
+        return InstallAttributionEvent(
+            appPurchaseDate: appPurchaseDate,
+            iAdImpressionDate: iAdImpressionDate
+        )
     }
 
     /**

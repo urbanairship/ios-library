@@ -1,7 +1,6 @@
 import XCTest
 
-@testable
-import AirshipCore
+@testable import AirshipCore
 
 class RateAppActionTest: XCTestCase {
     private let testAppRater = TestAppRater()
@@ -17,11 +16,15 @@ class RateAppActionTest: XCTestCase {
     func testShowPrompt() async throws {
         let args: [String: Any] = [
             "show_link_prompt": true,
-            "itunes_id": "test id"
+            "itunes_id": "test id",
         ]
 
-        let result = await action.perform(with: ActionArguments(value: args,
-                                                                with: .manualInvocation))
+        let result = await action.perform(
+            with: ActionArguments(
+                value: args,
+                with: .manualInvocation
+            )
+        )
         XCTAssertNil(result.error)
         XCTAssertTrue(testAppRater.showPromptCalled)
         XCTAssertNil(testAppRater.openStoreItunesID)
@@ -32,8 +35,12 @@ class RateAppActionTest: XCTestCase {
             "itunes_id": "test id"
         ]
 
-        let result = await action.perform(with: ActionArguments(value: args,
-                                                                with: .manualInvocation))
+        let result = await action.perform(
+            with: ActionArguments(
+                value: args,
+                with: .manualInvocation
+            )
+        )
         XCTAssertNil(result.error)
         XCTAssertFalse(testAppRater.showPromptCalled)
         XCTAssertEqual("test id", testAppRater.openStoreItunesID)
@@ -43,8 +50,12 @@ class RateAppActionTest: XCTestCase {
         self.configItunesID = "config iTunes ID"
         let args: [String: Any] = [:]
 
-        let result = await action.perform(with: ActionArguments(value: args,
-                                                                with: .manualInvocation))
+        let result = await action.perform(
+            with: ActionArguments(
+                value: args,
+                with: .manualInvocation
+            )
+        )
         XCTAssertNil(result.error)
         XCTAssertFalse(testAppRater.showPromptCalled)
         XCTAssertEqual(configItunesID, testAppRater.openStoreItunesID)
@@ -53,8 +64,12 @@ class RateAppActionTest: XCTestCase {
     func testNilConfig() async throws {
         self.configItunesID = "config iTunes ID"
 
-        let result = await action.perform(with: ActionArguments(value: nil,
-                                                                with: .manualInvocation))
+        let result = await action.perform(
+            with: ActionArguments(
+                value: nil,
+                with: .manualInvocation
+            )
+        )
         XCTAssertNil(result.error)
         XCTAssertFalse(testAppRater.showPromptCalled)
         XCTAssertEqual(configItunesID, testAppRater.openStoreItunesID)
@@ -62,8 +77,12 @@ class RateAppActionTest: XCTestCase {
 
     func testNoItunesID() async throws {
         self.configItunesID = nil
-        let result = await action.perform(with: ActionArguments(value: nil,
-                                                                with: .manualInvocation))
+        let result = await action.perform(
+            with: ActionArguments(
+                value: nil,
+                with: .manualInvocation
+            )
+        )
         XCTAssertNotNil(result.error)
         XCTAssertFalse(testAppRater.showPromptCalled)
         XCTAssertNil(testAppRater.openStoreItunesID)
@@ -71,8 +90,12 @@ class RateAppActionTest: XCTestCase {
 
     func testInvalidArgs() async throws {
         self.configItunesID = "config id"
-        let result = await action.perform(with: ActionArguments(value: "invalid",
-                                                                with: .manualInvocation))
+        let result = await action.perform(
+            with: ActionArguments(
+                value: "invalid",
+                with: .manualInvocation
+            )
+        )
         XCTAssertNotNil(result.error)
         XCTAssertFalse(testAppRater.showPromptCalled)
         XCTAssertNil(testAppRater.openStoreItunesID)
@@ -85,7 +108,7 @@ class RateAppActionTest: XCTestCase {
             .foregroundPush,
             .foregroundInteractiveButton,
             .webViewInvocation,
-            .launchedFromPush
+            .launchedFromPush,
         ]
 
         validSituations.forEach {
@@ -97,7 +120,7 @@ class RateAppActionTest: XCTestCase {
     func testRejectsArguments() async throws {
         let invalidSituations: [Situation] = [
             .backgroundPush,
-            .backgroundInteractiveButton
+            .backgroundInteractiveButton,
         ]
 
         invalidSituations.forEach {

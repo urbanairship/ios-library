@@ -14,13 +14,15 @@ class FormState: ObservableObject {
     public let formResponseType: String?
     private var children: [String: FormInputData] = [:]
 
-    init(identifier: String,
-         formType: FormType,
-         formResponseType: String?) {
+    init(
+        identifier: String,
+        formType: FormType,
+        formResponseType: String?
+    ) {
         self.identifier = identifier
         self.formType = formType
         self.formResponseType = formResponseType
-        
+
         self.data = FormInputData(
             identifier,
             value: .form(formResponseType, formType, []),
@@ -30,10 +32,11 @@ class FormState: ObservableObject {
 
     func updateFormInput(_ data: FormInputData) {
         self.children[data.identifier] = data
-        
-        let isValid = self.children.values.contains(
-            where: { $0.isValid == false }
-        ) == false
+
+        let isValid =
+            self.children.values.contains(
+                where: { $0.isValid == false }
+            ) == false
 
         self.data = FormInputData(
             identifier,
@@ -47,13 +50,13 @@ class FormState: ObservableObject {
     }
 
     func markVisible() {
-        if (!self.isVisible) {
+        if !self.isVisible {
             self.isVisible = true
         }
     }
-    
+
     func markSubmitted() {
-        if (!self.isSubmitted) {
+        if !self.isSubmitted {
             self.isSubmitted = true
         }
     }
@@ -65,7 +68,7 @@ public struct FormInputData {
     private static let childrenKey = "children"
     private static let scoreIDKey = "score_id"
     private static let responseTypeKey = "response_type"
-    
+
     let identifier: String
     let value: FormValue
     let attributeName: AttributeName?
@@ -106,7 +109,9 @@ public struct FormInputData {
 
     func attributes() -> [(AttributeName, AttributeValue)] {
         var result: [(AttributeName, AttributeValue)] = []
-        if let attributeName = attributeName, let attributeValue = attributeValue {
+        if let attributeName = attributeName,
+            let attributeValue = attributeValue
+        {
             result.append((attributeName, attributeValue))
         }
 
@@ -118,27 +123,27 @@ public struct FormInputData {
 
         return result
     }
-    
+
     func toPayload() -> [String: Any]? {
         guard let data = self.getData() else { return nil }
-        return [self.identifier : data]
+        return [self.identifier: data]
     }
-    
+
     private func getData() -> [String: Any]? {
-        switch(self.value) {
+        switch self.value {
         case .toggle(let value):
             return [
                 FormInputData.typeKey: "toggle",
-                FormInputData.valueKey: value
+                FormInputData.valueKey: value,
             ]
         case .radio(let value):
             guard let value = value else {
                 return nil
             }
-            
+
             return [
                 FormInputData.typeKey: "single_choice",
-                FormInputData.valueKey: value
+                FormInputData.valueKey: value,
             ]
         case .multipleCheckbox(let value):
             guard let value = value else {
@@ -146,7 +151,7 @@ public struct FormInputData {
             }
             return [
                 FormInputData.typeKey: "multiple_choice",
-                FormInputData.valueKey: value
+                FormInputData.valueKey: value,
             ]
         case .text(let value):
             guard let value = value else {
@@ -154,7 +159,7 @@ public struct FormInputData {
             }
             return [
                 FormInputData.typeKey: "text_input",
-                FormInputData.valueKey: value
+                FormInputData.valueKey: value,
             ]
         case .score(let value):
             guard let value = value else {
@@ -162,31 +167,31 @@ public struct FormInputData {
             }
             return [
                 FormInputData.typeKey: "score",
-                FormInputData.valueKey: value
+                FormInputData.valueKey: value,
             ]
         case .form(let responseType, let formType, let value):
             var childrenMap: [String: Any] = [:]
             value.forEach { value in
                 childrenMap[value.identifier] = value.getData()
             }
-            
+
             guard !childrenMap.isEmpty else {
                 return nil
             }
-            
+
             switch formType {
             case .form:
                 return [
                     FormInputData.typeKey: "form",
                     FormInputData.childrenKey: childrenMap,
-                    FormInputData.responseTypeKey: responseType as Any
+                    FormInputData.responseTypeKey: responseType as Any,
                 ]
             case .nps(let scoreID):
                 return [
                     FormInputData.typeKey: "nps",
                     FormInputData.childrenKey: childrenMap,
                     FormInputData.responseTypeKey: responseType as Any,
-                    FormInputData.scoreIDKey: scoreID
+                    FormInputData.scoreIDKey: scoreID,
                 ]
             }
         }

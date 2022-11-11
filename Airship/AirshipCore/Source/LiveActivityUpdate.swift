@@ -36,7 +36,3 @@ struct LiveActivityUpdate: Codable, Equatable {
         case startTimeMS = "start_ts_ms"
     }
 }
-
-
-
-

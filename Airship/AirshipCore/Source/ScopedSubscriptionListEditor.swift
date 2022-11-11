@@ -2,22 +2,23 @@
 
 import Foundation
 
-/**
- * Scoped subscription list editor.
- */
+/// Scoped subscription list editor.
 @objc(UAScopedSubscriptionListEditor)
 public class ScopedSubscriptionListEditor: NSObject {
-    
-    private var subscriptionListUpdates : [ScopedSubscriptionListUpdate] = []
-    private let date : AirshipDate
-    private let completionHandler : ([ScopedSubscriptionListUpdate]) -> Void
 
-    init(date: AirshipDate, completionHandler: @escaping ([ScopedSubscriptionListUpdate]) -> Void) {
+    private var subscriptionListUpdates: [ScopedSubscriptionListUpdate] = []
+    private let date: AirshipDate
+    private let completionHandler: ([ScopedSubscriptionListUpdate]) -> Void
+
+    init(
+        date: AirshipDate,
+        completionHandler: @escaping ([ScopedSubscriptionListUpdate]) -> Void
+    ) {
         self.date = date
         self.completionHandler = completionHandler
         super.init()
     }
-    
+
     /**
      * Subscribes to a list.
      * - Parameters:
@@ -26,10 +27,12 @@ public class ScopedSubscriptionListEditor: NSObject {
      */
     @objc(subscribe:scope:)
     public func subscribe(_ subscriptionListID: String, scope: ChannelScope) {
-        let subscriptionListUpdate = ScopedSubscriptionListUpdate(listId: subscriptionListID,
-                                                                  type: .subscribe,
-                                                                  scope: scope,
-                                                                  date: self.date.now)
+        let subscriptionListUpdate = ScopedSubscriptionListUpdate(
+            listId: subscriptionListID,
+            type: .subscribe,
+            scope: scope,
+            date: self.date.now
+        )
         subscriptionListUpdates.append(subscriptionListUpdate)
     }
 
@@ -41,13 +44,15 @@ public class ScopedSubscriptionListEditor: NSObject {
      */
     @objc(unsubscribe:scope:)
     public func unsubscribe(_ subscriptionListID: String, scope: ChannelScope) {
-        let subscriptionListUpdate = ScopedSubscriptionListUpdate(listId: subscriptionListID,
-                                                                  type: .unsubscribe,
-                                                                  scope: scope,
-                                                                  date: date.now)
+        let subscriptionListUpdate = ScopedSubscriptionListUpdate(
+            listId: subscriptionListID,
+            type: .unsubscribe,
+            scope: scope,
+            date: date.now
+        )
         subscriptionListUpdates.append(subscriptionListUpdate)
     }
-    
+
     /**
      * Internal helper that uses a boolean flag to indicate whether to subscribe or unsubscribe.
      * - Parameters:
@@ -55,8 +60,12 @@ public class ScopedSubscriptionListEditor: NSObject {
      *   - scopes: The scopes.
      *   - subscribe:`true` to subscribe, `false`to unsubscribe
      */
-    public func mutate(_ subscriptionListID: String, scopes: [ChannelScope], subscribe: Bool) {
-        if (subscribe) {
+    public func mutate(
+        _ subscriptionListID: String,
+        scopes: [ChannelScope],
+        subscribe: Bool
+    ) {
+        if subscribe {
             scopes.forEach { self.subscribe(subscriptionListID, scope: $0) }
         } else {
             scopes.forEach { self.unsubscribe(subscriptionListID, scope: $0) }

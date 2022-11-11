@@ -1,11 +1,11 @@
 /* Copyright Airship and Contributors */
 
+import Combine
 import Foundation
 import SwiftUI
-import Combine
 
 #if canImport(AirshipCore)
-import AirshipCore
+    import AirshipCore
 #endif
 
 /// Preference Center State
@@ -20,15 +20,16 @@ public class PreferenceCenterState: ObservableObject {
     private var contactUpdates: AnyCancellable?
     private let subscriber: PreferenceSubscriber
 
-
     /// Default constructor.
     /// - Parameters:
     ///     - config: The preference config
     ///     - contactSubscriptions: The relavent contact subscriptions
     ///     - channelSubscriptions: The relavent channel subscriptions.
-    public convenience init(config: PreferenceCenterConfig,
-                contactSubscriptions: [String: Set<ChannelScope>] = [:],
-                channelSubscriptions: Set<String> = Set()) {
+    public convenience init(
+        config: PreferenceCenterConfig,
+        contactSubscriptions: [String: Set<ChannelScope>] = [:],
+        channelSubscriptions: Set<String> = Set()
+    ) {
 
         self.init(
             config: config,
@@ -38,10 +39,12 @@ public class PreferenceCenterState: ObservableObject {
         )
     }
 
-    init(config: PreferenceCenterConfig,
-                contactSubscriptions: [String: Set<ChannelScope>] = [:],
-                channelSubscriptions: Set<String> = Set(),
-                subscriber: PreferenceSubscriber) {
+    init(
+        config: PreferenceCenterConfig,
+        contactSubscriptions: [String: Set<ChannelScope>] = [:],
+        channelSubscriptions: Set<String> = Set(),
+        subscriber: PreferenceSubscriber
+    ) {
 
         self.config = config
         self.contactSubscriptions = contactSubscriptions
@@ -77,16 +80,19 @@ public class PreferenceCenterState: ObservableObject {
     ///     - listID: The preference list ID
     ///     - scope: The channel scope
     /// - Returns: true if any the contact is subscribed for that scope, otherwise false.
-    public func isContactSubscribed(_ listID: String, scope: ChannelScope) -> Bool {
-        let containsSubscription = self.contactSubscriptions[listID]?.contains {
-            $0 == scope
-        }
+    public func isContactSubscribed(_ listID: String, scope: ChannelScope)
+        -> Bool
+    {
+        let containsSubscription = self.contactSubscriptions[listID]?
+            .contains {
+                $0 == scope
+            }
 
-        if (containsSubscription == true) {
+        if containsSubscription == true {
             return true
         }
 
-        if (config.options?.mergeChannelDataToContact == true && scope == .app) {
+        if config.options?.mergeChannelDataToContact == true && scope == .app {
             return isChannelSubscribed(listID)
         }
 
@@ -98,7 +104,9 @@ public class PreferenceCenterState: ObservableObject {
     ///     - listID: The preference list ID
     ///     - scopes: The channel scopes
     /// - Returns: true if the contact is subscribed to any of the scopes, otherwise false.
-    public func isContactSubscribed(_ listID: String, scopes: [ChannelScope]) -> Bool {
+    public func isContactSubscribed(_ listID: String, scopes: [ChannelScope])
+        -> Bool
+    {
         return scopes.contains { scope in
             isContactSubscribed(listID, scope: scope)
         }
@@ -108,7 +116,7 @@ public class PreferenceCenterState: ObservableObject {
     /// - Parameters:
     ///     - channelListID: The subscription list ID
     /// - Returns: A subscription binding
-    public func makeBinding(channelListID: String) -> Binding<Bool>  {
+    public func makeBinding(channelListID: String) -> Binding<Bool> {
         return Binding<Bool>(
             get: { self.isChannelSubscribed(channelListID) },
             set: { subscribe in
@@ -125,8 +133,10 @@ public class PreferenceCenterState: ObservableObject {
     ///     - contactListID: The subscription list ID
     ///     - scopes: The subscription list scopes
     /// - Returns: A subscription binding
-    public func makeBinding(contactListID: String,
-                            scopes: [ChannelScope]) -> Binding<Bool> {
+    public func makeBinding(
+        contactListID: String,
+        scopes: [ChannelScope]
+    ) -> Binding<Bool> {
 
         return Binding<Bool>(
             get: {
@@ -145,15 +155,16 @@ public class PreferenceCenterState: ObservableObject {
     private func processContactEdit(_ edit: ScopedSubscriptionListEdit) {
         self.objectWillChange.send()
 
-        switch (edit) {
+        switch edit {
         case .subscribe(let listID, let scope):
-            var scopes = self.contactSubscriptions[listID] ?? Set<ChannelScope>()
+            var scopes =
+                self.contactSubscriptions[listID] ?? Set<ChannelScope>()
             scopes.insert(scope)
             self.contactSubscriptions[listID] = scopes
         case .unsubscribe(let listID, let scope):
             if var scopes = self.contactSubscriptions[listID] {
                 scopes.remove(scope)
-                if (scopes.isEmpty) {
+                if scopes.isEmpty {
                     self.contactSubscriptions[listID] = nil
                 } else {
                     self.contactSubscriptions[listID] = scopes
@@ -164,8 +175,8 @@ public class PreferenceCenterState: ObservableObject {
 
     private func processChannelEdit(_ edit: SubscriptionListEdit) {
         self.objectWillChange.send()
-        
-        switch (edit) {
+
+        switch edit {
         case .subscribe(let listID):
             self.channelSubscriptions.insert(listID)
         case .unsubscribe(let listID):
@@ -174,49 +185,67 @@ public class PreferenceCenterState: ObservableObject {
     }
 
     static func makeSubscriber() -> PreferenceSubscriber {
-        if (Airship.isFlying) {
-            return AirshipPreferenceSubscriber()
-        } else {
+        guard Airship.isFlying else {
             return PreviewPreferenceSubscriber()
         }
+        return AirshipPreferenceSubscriber()
     }
 }
 
 protocol PreferenceSubscriber {
-    var channelSubscriptionListEdits: AnyPublisher<SubscriptionListEdit, Never> { get }
-    var contactSubscriptionListEdits: AnyPublisher<ScopedSubscriptionListEdit, Never> { get }
+    var channelSubscriptionListEdits: AnyPublisher<SubscriptionListEdit, Never>
+    {
+        get
+    }
+    var contactSubscriptionListEdits:
+        AnyPublisher<ScopedSubscriptionListEdit, Never>
+    { get }
 
-    func updateChannelSubscription(_ listID: String,
-                                   subscribe: Bool)
+    func updateChannelSubscription(
+        _ listID: String,
+        subscribe: Bool
+    )
 
-    func updateContactSubscription(_ listID: String,
-                                   scopes: [ChannelScope],
-                                   subscribe: Bool)
+    func updateContactSubscription(
+        _ listID: String,
+        scopes: [ChannelScope],
+        subscribe: Bool
+    )
 }
 
-
 class PreviewPreferenceSubscriber: PreferenceSubscriber {
-    private let channelEditsSubject = PassthroughSubject<SubscriptionListEdit, Never>()
-    var channelSubscriptionListEdits: AnyPublisher<SubscriptionListEdit, Never> {
+    private let channelEditsSubject = PassthroughSubject<
+        SubscriptionListEdit, Never
+    >()
+    var channelSubscriptionListEdits: AnyPublisher<SubscriptionListEdit, Never>
+    {
         return channelEditsSubject.eraseToAnyPublisher()
     }
 
-    private let contactEditsSubject = PassthroughSubject<ScopedSubscriptionListEdit, Never>()
-    var contactSubscriptionListEdits: AnyPublisher<ScopedSubscriptionListEdit, Never> {
+    private let contactEditsSubject = PassthroughSubject<
+        ScopedSubscriptionListEdit, Never
+    >()
+    var contactSubscriptionListEdits:
+        AnyPublisher<ScopedSubscriptionListEdit, Never>
+    {
         return contactEditsSubject.eraseToAnyPublisher()
     }
 
     func updateChannelSubscription(_ listID: String, subscribe: Bool) {
-        if (subscribe) {
+        if subscribe {
             channelEditsSubject.send(.subscribe(listID))
         } else {
             channelEditsSubject.send(.unsubscribe(listID))
         }
     }
 
-    func updateContactSubscription(_ listID: String, scopes: [ChannelScope], subscribe: Bool) {
+    func updateContactSubscription(
+        _ listID: String,
+        scopes: [ChannelScope],
+        subscribe: Bool
+    ) {
         scopes.forEach { scope in
-            if (subscribe) {
+            if subscribe {
                 contactEditsSubject.send(.subscribe(listID, scope))
             } else {
                 contactEditsSubject.send(.unsubscribe(listID, scope))
@@ -226,17 +255,20 @@ class PreviewPreferenceSubscriber: PreferenceSubscriber {
 }
 
 class AirshipPreferenceSubscriber: PreferenceSubscriber {
-    var channelSubscriptionListEdits: AnyPublisher<SubscriptionListEdit, Never> {
+    var channelSubscriptionListEdits: AnyPublisher<SubscriptionListEdit, Never>
+    {
         return Airship.channel.subscriptionListEdits
     }
 
-    var contactSubscriptionListEdits: AnyPublisher<ScopedSubscriptionListEdit, Never> {
+    var contactSubscriptionListEdits:
+        AnyPublisher<ScopedSubscriptionListEdit, Never>
+    {
         return Airship.contact.subscriptionListEdits
     }
 
     func updateChannelSubscription(_ listID: String, subscribe: Bool) {
         Airship.channel.editSubscriptionLists { editor in
-            if (subscribe) {
+            if subscribe {
                 editor.subscribe(listID)
             } else {
                 editor.unsubscribe(listID)
@@ -244,7 +276,11 @@ class AirshipPreferenceSubscriber: PreferenceSubscriber {
         }
     }
 
-    func updateContactSubscription(_ listID: String, scopes: [ChannelScope], subscribe: Bool) {
+    func updateContactSubscription(
+        _ listID: String,
+        scopes: [ChannelScope],
+        subscribe: Bool
+    ) {
         Airship.contact.editSubscriptionLists { editor in
             editor.mutate(
                 listID,

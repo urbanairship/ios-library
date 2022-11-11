@@ -9,21 +9,19 @@ internal struct VisibilityViewModifier: ViewModifier {
 
     @ViewBuilder
     func body(content: Content) -> some View {
-        if (isVisible()) {
+        if isVisible() {
             content
         }
     }
 
     func isVisible() -> Bool {
         let predicate = visibilityInfo.invertWhenStateMatches
-        if (predicate.evaluate(viewState.state)) {
-            return !visibilityInfo.defaultVisibility
-        } else {
+        guard predicate.evaluate(viewState.state) else {
             return visibilityInfo.defaultVisibility
         }
+        return !visibilityInfo.defaultVisibility
     }
 }
-
 
 @available(iOS 13.0.0, tvOS 13.0, *)
 extension View {
@@ -31,7 +29,9 @@ extension View {
     @ViewBuilder
     func visibility(_ visibilityInfo: VisibilityInfo?) -> some View {
         if let visibilityInfo = visibilityInfo {
-            self.modifier(VisibilityViewModifier(visibilityInfo: visibilityInfo))
+            self.modifier(
+                VisibilityViewModifier(visibilityInfo: visibilityInfo)
+            )
         } else {
             self
         }

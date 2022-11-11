@@ -5,7 +5,7 @@ import SwiftUI
 
 /// Button view.
 @available(iOS 13.0.0, tvOS 13.0, *)
-struct LabelButton : View {
+struct LabelButton: View {
     let model: LabelButtonModel
     let constraints: ViewConstraints
     @Environment(\.layoutState) var layoutState
@@ -29,14 +29,21 @@ struct LabelButton : View {
                 .border(self.model.border)
                 .accessible(self.model)
         }
-        .buttonClick(self.model.identifier,
-                     buttonDescription: self.model.contentDescription ?? self.model.label.text,
-                     behaviors: self.model.clickBehaviors,
-                     actions: self.model.actions)
+        .buttonClick(
+            self.model.identifier,
+            buttonDescription: self.model.contentDescription
+                ?? self.model.label.text,
+            behaviors: self.model.clickBehaviors,
+            actions: self.model.actions
+        )
         .common(self.model)
         .buttonStyle(PlainButtonStyle())
-        .environment(\.layoutState,
-                      layoutState.override(buttonState: ButtonState(identifier: self.model.identifier)))
+        .environment(
+            \.layoutState,
+            layoutState.override(
+                buttonState: ButtonState(identifier: self.model.identifier)
+            )
+        )
 
     }
 }

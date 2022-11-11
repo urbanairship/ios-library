@@ -3,20 +3,16 @@
 import Foundation
 
 class ExpirableTask: AirshipTask {
-    private let _taskID : String
+    private let _taskID: String
     @objc
     public var taskID: String {
-        get {
-            return self._taskID
-        }
+        return self._taskID
     }
 
-    private let _requestOptions : TaskRequestOptions
+    private let _requestOptions: TaskRequestOptions
     @objc
     public var requestOptions: TaskRequestOptions {
-        get {
-            return self._requestOptions
-        }
+        return self._requestOptions
     }
 
     private var _expirationHandler: (() -> Void)? = nil
@@ -27,7 +23,7 @@ class ExpirableTask: AirshipTask {
             return _expirationHandler
         }
         set {
-            if (isExpired) {
+            if isExpired {
                 newValue?()
                 self._expirationHandler = nil
             } else {
@@ -44,7 +40,7 @@ class ExpirableTask: AirshipTask {
             return _completionHandler
         }
         set {
-            if (isCompleted) {
+            if isCompleted {
                 newValue?()
                 self._completionHandler = nil
             } else {
@@ -58,9 +54,11 @@ class ExpirableTask: AirshipTask {
     private var onTaskFinished: (Bool) -> Void
 
     @objc
-    public init(taskID: String,
-                requestOptions: TaskRequestOptions,
-                onTaskFinished: @escaping (Bool) -> Void) {
+    public init(
+        taskID: String,
+        requestOptions: TaskRequestOptions,
+        onTaskFinished: @escaping (Bool) -> Void
+    ) {
 
         self._taskID = taskID
         self._requestOptions = requestOptions
@@ -79,7 +77,7 @@ class ExpirableTask: AirshipTask {
 
     @objc
     public func expire() {
-        guard !isCompleted  && !self.isExpired else {
+        guard !isCompleted && !self.isExpired else {
             return
         }
 
@@ -89,7 +87,9 @@ class ExpirableTask: AirshipTask {
             handler()
             self._expirationHandler = nil
         } else {
-            AirshipLogger.debug("Expiration handler not set, marking task as failed.")
+            AirshipLogger.debug(
+                "Expiration handler not set, marking task as failed."
+            )
             taskFailed()
         }
     }

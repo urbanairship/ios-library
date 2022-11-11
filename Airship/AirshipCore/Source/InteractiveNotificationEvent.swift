@@ -1,49 +1,45 @@
 /* Copyright Airship and Contributors */
 
-/**
- * - Note: For Internal use only :nodoc:
- */
+/// - Note: For Internal use only :nodoc:
 @objc(UAInteractiveNotificationEvent)
 @available(tvOS, unavailable)
-public class InteractiveNotificationEvent : NSObject, Event {
+public class InteractiveNotificationEvent: NSObject, Event {
     private static let notificationEventCharacterLimit = 255
 
     @objc
-    public var eventType : String {
-        get {
-            return "interactive_notification_action"
-        }
+    public var eventType: String {
+        return "interactive_notification_action"
     }
 
-    private let _data : [AnyHashable : Any]
+    private let _data: [AnyHashable: Any]
 
     @objc
-    public var data: [AnyHashable : Any] {
-        get {
-            return self._data
-        }
+    public var data: [AnyHashable: Any] {
+        return self._data
     }
 
     @objc
-    public var priority : EventPriority {
-        get {
-            return .high
-        }
+    public var priority: EventPriority {
+        return .high
     }
 
     @objc
-    public init(action: UNNotificationAction,
-                category: String,
-                notification: [AnyHashable : Any],
-                responseText: String?) {
+    public init(
+        action: UNNotificationAction,
+        category: String,
+        notification: [AnyHashable: Any],
+        responseText: String?
+    ) {
 
         #if os(tvOS)
-        let foreground = false
+            let foreground = false
         #else
-        let foreground = (action.options.rawValue & UNNotificationActionOptions.foreground.rawValue) > 0
+            let foreground =
+                (action.options.rawValue
+                    & UNNotificationActionOptions.foreground.rawValue) > 0
         #endif
 
-        var data: [AnyHashable : Any] = [:]
+        var data: [AnyHashable: Any] = [:]
         data["button_group"] = category
         data["button_id"] = action.identifier
         data["button_description"] = action.title
@@ -53,7 +49,8 @@ public class InteractiveNotificationEvent : NSObject, Event {
         if let responseText = responseText {
             if responseText.count > 255 {
                 AirshipLogger.warn(
-                    "Interactive Notification \(responseText) value exceeds \(255) characters. Truncating to max chars")
+                    "Interactive Notification \(responseText) value exceeds \(255) characters. Truncating to max chars"
+                )
                 data["user_input"] = responseText.prefix(255)
             } else {
                 data["user_input"] = responseText
@@ -65,8 +62,8 @@ public class InteractiveNotificationEvent : NSObject, Event {
     }
 }
 
-private extension Bool {
-    func toBoolString() -> String {
+extension Bool {
+    fileprivate func toBoolString() -> String {
         return self ? "true" : "false"
     }
 }

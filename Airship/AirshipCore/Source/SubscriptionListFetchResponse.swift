@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 // NOTE: For internal use only. :nodoc:
-class SubscriptionListFetchResponse : HTTPResponse {
+class SubscriptionListFetchResponse: HTTPResponse {
     let listIDs: [String]?
 
     init(status: Int, listIDs: [String]? = nil) {
@@ -9,5 +9,3 @@ class SubscriptionListFetchResponse : HTTPResponse {
         super.init(status: status)
     }
 }
-
-

@@ -24,7 +24,7 @@ public enum Permission: UInt, CustomStringConvertible {
     /// - Parameter value: The string value
     /// - Returns: A permission.
     static func fromString(_ value: String) throws -> Permission {
-        switch (value.lowercased()) {
+        switch value.lowercased() {
         case "display_notifications": return .displayNotifications
         case "location": return .location
         default: throw AirshipErrors.error("invalid permission \(value)")
@@ -35,7 +35,6 @@ public enum Permission: UInt, CustomStringConvertible {
         return stringValue
     }
 }
-
 
 extension Permission: Decodable {
 

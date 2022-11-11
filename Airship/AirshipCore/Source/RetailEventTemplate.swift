@@ -2,10 +2,8 @@
 
 import Foundation
 
-/**
- * A RetailEventTemplate represents a custom retail event template for the
- * application.
- */
+/// A RetailEventTemplate represents a custom retail event template for the
+/// application.
 @objc(UARetailEventTemplate)
 public class RetailEventTemplate: NSObject {
 
@@ -51,7 +49,7 @@ public class RetailEventTemplate: NSObject {
      * If the item is new or not.
      */
     @objc
-    public var isNewItem : Bool {
+    public var isNewItem: Bool {
         get {
             return self._isNewItem ?? false
         }
@@ -84,8 +82,11 @@ public class RetailEventTemplate: NSObject {
      * - Returns: A Retail event template instance
      */
     @objc(browsedTemplateWithValueFromString:)
-    public class func browsedTemplate(valueString: String?) -> RetailEventTemplate {
-        let decimalValue = valueString != nil ? NSDecimalNumber(string: valueString) : nil
+    public class func browsedTemplate(valueString: String?)
+        -> RetailEventTemplate
+    {
+        let decimalValue =
+            valueString != nil ? NSDecimalNumber(string: valueString) : nil
         return browsedTemplate(value: decimalValue)
     }
 
@@ -118,8 +119,11 @@ public class RetailEventTemplate: NSObject {
      * - Returns: A Retail event template instance
      */
     @objc(addedToCartTemplateWithValueFromString:)
-    public class func addedToCartTemplate(valueString: String?) -> RetailEventTemplate {
-        let decimalValue = valueString != nil ? NSDecimalNumber(string: valueString) : nil
+    public class func addedToCartTemplate(valueString: String?)
+        -> RetailEventTemplate
+    {
+        let decimalValue =
+            valueString != nil ? NSDecimalNumber(string: valueString) : nil
         return addedToCartTemplate(value: decimalValue)
     }
 
@@ -131,7 +135,9 @@ public class RetailEventTemplate: NSObject {
      * - Returns: A Retail event template instance
      */
     @objc(addedToCartTemplateWithValue:)
-    public class func addedToCartTemplate(value: NSNumber?) -> RetailEventTemplate {
+    public class func addedToCartTemplate(value: NSNumber?)
+        -> RetailEventTemplate
+    {
         return RetailEventTemplate("added_to_cart", value: value)
     }
 
@@ -152,8 +158,11 @@ public class RetailEventTemplate: NSObject {
      * - Returns: A Retail event template instance
      */
     @objc(starredProductTemplateWithValueFromString:)
-    public class func starredProductTemplate(valueString: String?) -> RetailEventTemplate {
-        let decimalValue = valueString != nil ? NSDecimalNumber(string: valueString) : nil
+    public class func starredProductTemplate(valueString: String?)
+        -> RetailEventTemplate
+    {
+        let decimalValue =
+            valueString != nil ? NSDecimalNumber(string: valueString) : nil
         return starredProductTemplate(value: decimalValue)
     }
 
@@ -165,7 +174,9 @@ public class RetailEventTemplate: NSObject {
      * - Returns: A Retail event template instance
      */
     @objc(starredProductTemplateWithValue:)
-    public class func starredProductTemplate(value: NSNumber?) -> RetailEventTemplate {
+    public class func starredProductTemplate(value: NSNumber?)
+        -> RetailEventTemplate
+    {
         return RetailEventTemplate("starred_product", value: value)
     }
 
@@ -186,8 +197,11 @@ public class RetailEventTemplate: NSObject {
      * - Returns: A Retail event template instance
      */
     @objc(purchasedTemplateWithValueFromString:)
-    public class func purchasedTemplate(valueString: String?) -> RetailEventTemplate {
-        let decimalValue = valueString != nil ? NSDecimalNumber(string: valueString) : nil
+    public class func purchasedTemplate(valueString: String?)
+        -> RetailEventTemplate
+    {
+        let decimalValue =
+            valueString != nil ? NSDecimalNumber(string: valueString) : nil
         return purchasedTemplate(value: decimalValue)
     }
 
@@ -199,7 +213,8 @@ public class RetailEventTemplate: NSObject {
      * - Returns: A Retail event template instance
      */
     @objc(purchasedTemplateWithValue:)
-    public class func purchasedTemplate(value: NSNumber?) -> RetailEventTemplate {
+    public class func purchasedTemplate(value: NSNumber?) -> RetailEventTemplate
+    {
         return RetailEventTemplate("purchased", value: value)
     }
 
@@ -220,9 +235,16 @@ public class RetailEventTemplate: NSObject {
      * - Returns: A Retail event template instance
      */
     @objc(sharedProductTemplateWithValueFromString:)
-    public class func sharedProductTemplate(valueString: String?) -> RetailEventTemplate {
-        let decimalValue = valueString != nil ? NSDecimalNumber(string: valueString) : nil
-        return sharedProductTemplate(value: decimalValue, source: nil, medium: nil)
+    public class func sharedProductTemplate(valueString: String?)
+        -> RetailEventTemplate
+    {
+        let decimalValue =
+            valueString != nil ? NSDecimalNumber(string: valueString) : nil
+        return sharedProductTemplate(
+            value: decimalValue,
+            source: nil,
+            medium: nil
+        )
     }
 
     /**
@@ -233,7 +255,9 @@ public class RetailEventTemplate: NSObject {
      * - Returns: A Retail event template instance
      */
     @objc(sharedProductTemplateWithValue:)
-    public class func sharedProductTemplate(value: NSNumber?) -> RetailEventTemplate {
+    public class func sharedProductTemplate(value: NSNumber?)
+        -> RetailEventTemplate
+    {
         return sharedProductTemplate(value: value, source: nil, medium: nil)
     }
 
@@ -244,7 +268,9 @@ public class RetailEventTemplate: NSObject {
      * - Returns: A Retail event template instance.
      */
     @objc(sharedProductTemplateWithSource:withMedium:)
-    public class func sharedProductTemplate(source: String?, medium: String?) -> RetailEventTemplate {
+    public class func sharedProductTemplate(source: String?, medium: String?)
+        -> RetailEventTemplate
+    {
         return sharedProductTemplate(value: nil, source: source, medium: medium)
     }
 
@@ -258,9 +284,18 @@ public class RetailEventTemplate: NSObject {
      * - Returns: A Retail event template instance
      */
     @objc(sharedProductTemplateWithValueFromString:withSource:withMedium:)
-    public class func sharedProductTemplate(valueString: String?, source: String?, medium: String?) -> RetailEventTemplate {
-        let decimalValue = valueString != nil ? NSDecimalNumber(string: valueString) : nil
-        return sharedProductTemplate(value: decimalValue, source: source, medium: medium)
+    public class func sharedProductTemplate(
+        valueString: String?,
+        source: String?,
+        medium: String?
+    ) -> RetailEventTemplate {
+        let decimalValue =
+            valueString != nil ? NSDecimalNumber(string: valueString) : nil
+        return sharedProductTemplate(
+            value: decimalValue,
+            source: source,
+            medium: medium
+        )
     }
 
     /**
@@ -273,8 +308,17 @@ public class RetailEventTemplate: NSObject {
      * - Returns: A Retail event template instance
      */
     @objc(sharedProductTemplateWithValue:withSource:withMedium:)
-    public class func sharedProductTemplate(value: NSNumber?, source: String?, medium: String?) -> RetailEventTemplate {
-        return RetailEventTemplate("shared_product", value: value, source: source, medium: medium)
+    public class func sharedProductTemplate(
+        value: NSNumber?,
+        source: String?,
+        medium: String?
+    ) -> RetailEventTemplate {
+        return RetailEventTemplate(
+            "shared_product",
+            value: value,
+            source: source,
+            medium: medium
+        )
     }
 
     /**
@@ -286,7 +330,6 @@ public class RetailEventTemplate: NSObject {
         return wishlistTemplate(name: nil, wishlistID: nil)
     }
 
-
     /**
      * Factory method for creating a wishlist event template with a wishlist name and ID.
      *
@@ -295,11 +338,24 @@ public class RetailEventTemplate: NSObject {
      * - Returns: A Retail event template instance
      */
     @objc(wishlistTemplateWithName:wishlistID:)
-    public class func wishlistTemplate(name: String?, wishlistID: String?) -> RetailEventTemplate {
-        return RetailEventTemplate("wishlist", wishlistName: name, wishlistID: wishlistID)
+    public class func wishlistTemplate(name: String?, wishlistID: String?)
+        -> RetailEventTemplate
+    {
+        return RetailEventTemplate(
+            "wishlist",
+            wishlistName: name,
+            wishlistID: wishlistID
+        )
     }
 
-    private init(_ eventName: String, value: NSNumber? = nil, source: String? = nil, medium: String? = nil, wishlistName: String? = nil, wishlistID: String? = nil) {
+    private init(
+        _ eventName: String,
+        value: NSNumber? = nil,
+        source: String? = nil,
+        medium: String? = nil,
+        wishlistName: String? = nil,
+        wishlistID: String? = nil
+    ) {
         self.eventName = eventName
         self.eventValue = value
         self.source = source
@@ -314,8 +370,9 @@ public class RetailEventTemplate: NSObject {
      */
     @objc
     public func createEvent() -> CustomEvent {
-        var propertyDictionary: [String : Any] = [:]
-        propertyDictionary["ltv"] = self.eventName == "purchased" && self.eventValue != nil
+        var propertyDictionary: [String: Any] = [:]
+        propertyDictionary["ltv"] =
+            self.eventName == "purchased" && self.eventValue != nil
         propertyDictionary["id"] = self.identifier
         propertyDictionary["category"] = self.category
         propertyDictionary["brand"] = self.brand

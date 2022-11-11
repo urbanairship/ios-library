@@ -4,7 +4,7 @@ import Foundation
 
 /// NOTE: For internal use only. :nodoc:
 @objc(UASDKDependencyKeys)
-public class SDKDependencyKeys : NSObject {
+public class SDKDependencyKeys: NSObject {
     @objc
     public static let channel = "channel"
     @objc
@@ -37,26 +37,28 @@ enum SDKModuleNames: String, CaseIterable {
 
 /// NOTE: For internal use only. :nodoc:
 @objc(UAModuleLoader)
-public class ModuleLoader : NSObject {
-    
+public class ModuleLoader: NSObject {
+
     @objc
     public let components: [Component]
-    
+
     @objc
     public let actionPlists: [String]
-    
-    @objc
-    public init(config: RuntimeConfig,
-                dataStore: PreferenceDataStore,
-                channel: Channel,
-                contact: Contact,
-                push: Push,
-                remoteData: RemoteDataManager,
-                analytics: Analytics,
-                privacyManager: PrivacyManager,
-                permissionsManager: PermissionsManager) {
 
-        let dependencies: [String : Any] = [
+    @objc
+    public init(
+        config: RuntimeConfig,
+        dataStore: PreferenceDataStore,
+        channel: Channel,
+        contact: Contact,
+        push: Push,
+        remoteData: RemoteDataManager,
+        analytics: Analytics,
+        privacyManager: PrivacyManager,
+        permissionsManager: PermissionsManager
+    ) {
+
+        let dependencies: [String: Any] = [
             SDKDependencyKeys.config: config,
             SDKDependencyKeys.dataStore: dataStore,
             SDKDependencyKeys.channel: channel,
@@ -66,18 +68,22 @@ public class ModuleLoader : NSObject {
             SDKDependencyKeys.analytics: analytics,
             SDKDependencyKeys.privacyManager: privacyManager,
             SDKDependencyKeys.permissionsManager: permissionsManager,
-            SDKDependencyKeys.workManager: AirshipWorkManager.shared
+            SDKDependencyKeys.workManager: AirshipWorkManager.shared,
         ]
-        
+
         let modules = ModuleLoader.loadModules(dependencies)
         self.components = modules.compactMap { $0.components?() }.reduce([], +)
         self.actionPlists = modules.compactMap { $0.actionsPlist?() }
         super.init()
     }
-    
-    private class func loadModules(_ dependencies: [String : Any]) -> [SDKModule] {
+
+    private class func loadModules(_ dependencies: [String: Any]) -> [SDKModule]
+    {
         return SDKModuleNames.allCases.compactMap {
-            guard let moduleClass = NSClassFromString($0.rawValue) as? SDKModule.Type else {
+            guard
+                let moduleClass = NSClassFromString($0.rawValue)
+                    as? SDKModule.Type
+            else {
                 return nil
             }
 

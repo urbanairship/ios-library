@@ -1,10 +1,8 @@
 /* Copyright Airship and Contributors */
 
-/**
- * Represents the boundary crossing event type.
- */
+/// Represents the boundary crossing event type.
 @objc
-public enum UABoundaryEvent : Int {
+public enum UABoundaryEvent: Int {
     /**
      * Enter event
      */
@@ -17,11 +15,9 @@ public enum UABoundaryEvent : Int {
     case exit = 2
 }
 
-/**
- * A region event captures information regarding a region event for analytics.
- */
+/// A region event captures information regarding a region event for analytics.
 @objc(UARegionEvent)
-public class RegionEvent : NSObject, Event {
+public class RegionEvent: NSObject, Event {
 
     @objc
     public static let regionIDKey = "region_id"
@@ -70,34 +66,26 @@ public class RegionEvent : NSObject, Event {
     public let proximityRegion: ProximityRegion?
 
     @objc
-    public var eventType : String {
-        get {
-            return "region_event"
-        }
+    public var eventType: String {
+        return "region_event"
     }
 
     @objc
-    public var priority : EventPriority {
-        get {
-            return .high
-        }
+    public var priority: EventPriority {
+        return .high
     }
 
     @objc
-    public var data: [AnyHashable : Any] {
-        get {
-            return self.generatePayload(stringifyFields: true)
-        }
+    public var data: [AnyHashable: Any] {
+        return self.generatePayload(stringifyFields: true)
     }
 
     /**
      * - Note: For internal use only. :nodoc:
      */
     @objc
-    public var payload : [AnyHashable : Any] {
-        get {
-            return self.generatePayload(stringifyFields: false)
-        }
+    public var payload: [AnyHashable: Any] {
+        return self.generatePayload(stringifyFields: false)
     }
 
     /**
@@ -111,18 +99,20 @@ public class RegionEvent : NSObject, Event {
      *
      * - Returns: Region event object or `nil` if error occurs.
      */
-    public init?(regionID: String,
-                 source: String,
-                 boundaryEvent: UABoundaryEvent,
-                 circularRegion: CircularRegion? = nil,
-                 proximityRegion: ProximityRegion? = nil) {
+    public init?(
+        regionID: String,
+        source: String,
+        boundaryEvent: UABoundaryEvent,
+        circularRegion: CircularRegion? = nil,
+        proximityRegion: ProximityRegion? = nil
+    ) {
 
         guard RegionEvent.isValid(regionID: regionID) else {
-            return nil;
+            return nil
         }
 
         guard RegionEvent.isValid(source: source) else {
-            return nil;
+            return nil
         }
 
         self.regionID = regionID
@@ -143,8 +133,16 @@ public class RegionEvent : NSObject, Event {
      * - Returns: Region event object or `nil` if error occurs.
      */
     @objc(regionEventWithRegionID:source:boundaryEvent:)
-    public class func regionEvent(regionID: String, source: String, boundaryEvent: UABoundaryEvent) -> RegionEvent? {
-        return RegionEvent(regionID: regionID, source: source, boundaryEvent: boundaryEvent)
+    public class func regionEvent(
+        regionID: String,
+        source: String,
+        boundaryEvent: UABoundaryEvent
+    ) -> RegionEvent? {
+        return RegionEvent(
+            regionID: regionID,
+            source: source,
+            boundaryEvent: boundaryEvent
+        )
     }
 
     /**
@@ -158,14 +156,34 @@ public class RegionEvent : NSObject, Event {
      *
      * - Returns: Region event object or `nil` if error occurs.
      */
-    @objc(regionEventWithRegionID:source:boundaryEvent:circularRegion:proximityRegion:)
-    public class func regionEvent(regionID: String, source: String, boundaryEvent: UABoundaryEvent, circularRegion: CircularRegion?, proximityRegion: ProximityRegion?) -> RegionEvent? {
-        return RegionEvent(regionID: regionID, source: source, boundaryEvent: boundaryEvent, circularRegion: circularRegion, proximityRegion: proximityRegion)
+    @objc(
+        regionEventWithRegionID:
+        source:
+        boundaryEvent:
+        circularRegion:
+        proximityRegion:
+    )
+    public class func regionEvent(
+        regionID: String,
+        source: String,
+        boundaryEvent: UABoundaryEvent,
+        circularRegion: CircularRegion?,
+        proximityRegion: ProximityRegion?
+    ) -> RegionEvent? {
+        return RegionEvent(
+            regionID: regionID,
+            source: source,
+            boundaryEvent: boundaryEvent,
+            circularRegion: circularRegion,
+            proximityRegion: proximityRegion
+        )
     }
 
     private class func isValid(regionID: String) -> Bool {
         guard regionID.count >= 1 && regionID.count <= 255 else {
-            AirshipLogger.error("Invalid region ID \(regionID). Must be between 1 and 255 characters")
+            AirshipLogger.error(
+                "Invalid region ID \(regionID). Must be between 1 and 255 characters"
+            )
             return false
         }
         return true
@@ -173,38 +191,56 @@ public class RegionEvent : NSObject, Event {
 
     private class func isValid(source: String) -> Bool {
         guard source.count >= 1 && source.count <= 255 else {
-            AirshipLogger.error("Invalid source ID \(source). Must be between 1 and 255 characters")
+            AirshipLogger.error(
+                "Invalid source ID \(source). Must be between 1 and 255 characters"
+            )
             return false
         }
         return true
     }
 
     private func generatePayload(stringifyFields: Bool) -> [String: Any] {
-        var dictionary: [String : Any] = [:]
+        var dictionary: [String: Any] = [:]
         dictionary[RegionEvent.sourceKey] = self.source
         dictionary[RegionEvent.regionIDKey] = self.regionID
 
-        switch(self.boundaryEvent) {
+        switch self.boundaryEvent {
         case .enter:
-            dictionary[RegionEvent.boundaryEventKey] = RegionEvent.boundaryEventEnterValue
+            dictionary[RegionEvent.boundaryEventKey] =
+                RegionEvent.boundaryEventEnterValue
         case .exit:
-            dictionary[RegionEvent.boundaryEventKey] = RegionEvent.boundaryEventExitValue
+            dictionary[RegionEvent.boundaryEventKey] =
+                RegionEvent.boundaryEventExitValue
         }
 
         if let proximityRegion = self.proximityRegion {
-            var proximityData : [String : Any] = [:]
-            proximityData[RegionEvent.proximityRegionIDKey] = proximityRegion.proximityID
-            proximityData[RegionEvent.proximityRegionMajorKey] = proximityRegion.major
-            proximityData[RegionEvent.proximityRegionMinorKey] = proximityRegion.minor
-            proximityData[RegionEvent.proximityRegionRSSIKey] = proximityRegion.rssi
+            var proximityData: [String: Any] = [:]
+            proximityData[RegionEvent.proximityRegionIDKey] =
+                proximityRegion.proximityID
+            proximityData[RegionEvent.proximityRegionMajorKey] =
+                proximityRegion.major
+            proximityData[RegionEvent.proximityRegionMinorKey] =
+                proximityRegion.minor
+            proximityData[RegionEvent.proximityRegionRSSIKey] =
+                proximityRegion.rssi
 
-            if (proximityRegion.latitude != nil && proximityRegion.longitude != nil) {
-                if (stringifyFields) {
-                    proximityData[RegionEvent.latitudeKey] = String(format: "%.7f", proximityRegion.latitude!)
-                    proximityData[RegionEvent.longitudeKey] = String(format: "%.7f", proximityRegion.longitude!)
+            if proximityRegion.latitude != nil
+                && proximityRegion.longitude != nil
+            {
+                if stringifyFields {
+                    proximityData[RegionEvent.latitudeKey] = String(
+                        format: "%.7f",
+                        proximityRegion.latitude!
+                    )
+                    proximityData[RegionEvent.longitudeKey] = String(
+                        format: "%.7f",
+                        proximityRegion.longitude!
+                    )
                 } else {
-                    proximityData[RegionEvent.latitudeKey] = proximityRegion.latitude
-                    proximityData[RegionEvent.longitudeKey] = proximityRegion.longitude
+                    proximityData[RegionEvent.latitudeKey] =
+                        proximityRegion.latitude
+                    proximityData[RegionEvent.longitudeKey] =
+                        proximityRegion.longitude
                 }
             }
 
@@ -212,15 +248,26 @@ public class RegionEvent : NSObject, Event {
         }
 
         if let circularRegion = self.circularRegion {
-            var circularData : [String : Any] = [:]
-            if (stringifyFields) {
-                circularData[RegionEvent.circularRegionRadiusKey] = String(format: "%.1f", circularRegion.radius)
-                circularData[RegionEvent.latitudeKey] = String(format: "%.7f", circularRegion.latitude)
-                circularData[RegionEvent.longitudeKey] = String(format: "%.7f", circularRegion.longitude)
+            var circularData: [String: Any] = [:]
+            if stringifyFields {
+                circularData[RegionEvent.circularRegionRadiusKey] = String(
+                    format: "%.1f",
+                    circularRegion.radius
+                )
+                circularData[RegionEvent.latitudeKey] = String(
+                    format: "%.7f",
+                    circularRegion.latitude
+                )
+                circularData[RegionEvent.longitudeKey] = String(
+                    format: "%.7f",
+                    circularRegion.longitude
+                )
             } else {
-                circularData[RegionEvent.circularRegionRadiusKey] = circularRegion.radius
+                circularData[RegionEvent.circularRegionRadiusKey] =
+                    circularRegion.radius
                 circularData[RegionEvent.latitudeKey] = circularRegion.latitude
-                circularData[RegionEvent.longitudeKey] = circularRegion.longitude
+                circularData[RegionEvent.longitudeKey] =
+                    circularRegion.longitude
             }
             dictionary[RegionEvent.circularRegionKey] = circularData
         }

@@ -1,9 +1,9 @@
 /* Copyright Urban Airship and Contributors */
 
-import SwiftUI
 import AirshipCore
-import AirshipPreferenceCenter
 import AirshipMessageCenter
+import AirshipPreferenceCenter
+import SwiftUI
 
 struct AppView: View {
 
@@ -66,7 +66,6 @@ struct AppView: View {
     }
 }
 
-
 extension View {
     @ViewBuilder
     func badgeCompat(_ badge: Int) -> some View {
@@ -83,4 +82,3 @@ struct AppView_Previews: PreviewProvider {
         AppView()
     }
 }
-

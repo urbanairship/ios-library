@@ -7,7 +7,7 @@ import SwiftUI
 struct BackgroundColorViewModifier: ViewModifier {
     let color: ThomasColor
     @Environment(\.colorScheme) var colorScheme
-    
+
     func body(content: Content) -> some View {
         content.background(color.toColor(colorScheme))
     }
@@ -24,4 +24,3 @@ extension View {
         }
     }
 }
-

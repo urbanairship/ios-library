@@ -1,18 +1,23 @@
 /* Copyright Urban Airship and Contributors */
 
-import UIKit
 import AirshipCore
 import AirshipMessageCenter
 import AirshipPreferenceCenter
+import UIKit
 
 #if canImport(ActivityKit)
-import ActivityKit
+    import ActivityKit
 #endif
 
-class AppDelegate: UIResponder, UIApplicationDelegate, DeepLinkDelegate, MessageCenterDisplayDelegate, PreferenceCenterOpenDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, DeepLinkDelegate,
+    MessageCenterDisplayDelegate, PreferenceCenterOpenDelegate
+{
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-
+    func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication
+            .LaunchOptionsKey: Any]? = nil
+    ) -> Bool {
 
         let config = Config.default()
         config.productionLogLevel = .trace
@@ -23,8 +28,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, DeepLinkDelegate, Message
         Airship.push.autobadgeEnabled = true
         Airship.push.notificationOptions = [.alert, .badge, .sound, .carPlay]
         Airship.push.defaultPresentationOptions = [.sound, .banner, .list]
-
-
 
         Airship.shared.deepLinkDelegate = self
         MessageCenter.shared.displayDelegate = self
@@ -39,21 +42,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate, DeepLinkDelegate, Message
             Airship.push.resetBadge()
         }
 
-#if canImport(ActivityKit)
-        if #available(iOS 16.1, *) {
-            Task {
-                await Airship.channel.restoreLiveActivityTracking { restorer in
-                    await restorer.restore(forType: Activity<DeliveryAttributes>.self)
+        #if canImport(ActivityKit)
+            if #available(iOS 16.1, *) {
+                Task {
+                    await Airship.channel.restoreLiveActivityTracking {
+                        restorer in
+                        await restorer.restore(
+                            forType: Activity<DeliveryAttributes>.self
+                        )
+                    }
                 }
             }
-        }
-#endif
-
+        #endif
 
         return true
     }
 
-    
     func showInvalidDeepLinkAlert(_ url: URL) {
         AppState.shared.toastMessage = Toast.Message(
             text: "App does not know how to handle deepLink \(url)",
@@ -61,8 +65,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, DeepLinkDelegate, Message
         )
     }
 
-    func receivedDeepLink(_ deepLink: URL,
-                          completionHandler: @escaping () -> Void) {
+    func receivedDeepLink(
+        _ deepLink: URL,
+        completionHandler: @escaping () -> Void
+    ) {
         DispatchQueue.main.async {
             guard deepLink.host?.lowercased() == "deeplink" else {
                 self.showInvalidDeepLinkAlert(deepLink)
@@ -71,7 +77,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, DeepLinkDelegate, Message
             }
 
             let components = deepLink.path.lowercased().split(separator: "/")
-            switch(components.first) {
+            switch components.first {
             case "settings":
                 AppState.shared.homeDestination = .settings
                 AppState.shared.selectedTab = .home

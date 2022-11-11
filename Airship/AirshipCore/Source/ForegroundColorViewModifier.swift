@@ -7,7 +7,7 @@ import SwiftUI
 struct ForegroundColorViewModifier: ViewModifier {
     let color: ThomasColor
     @Environment(\.colorScheme) var colorScheme
-    
+
     func body(content: Content) -> some View {
         content.foregroundColor(color.toColor(colorScheme))
     }
@@ -24,4 +24,3 @@ extension View {
         }
     }
 }
-

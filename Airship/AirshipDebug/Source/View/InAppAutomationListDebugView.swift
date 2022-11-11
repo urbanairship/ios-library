@@ -1,12 +1,12 @@
 /* Copyright Airship and Contributors */
 
-import SwiftUI
 import Combine
+import SwiftUI
 
 #if canImport(AirshipCore)
-import AirshipCore
+    import AirshipCore
 #elseif canImport(AirshipKit)
-import AirshipKit
+    import AirshipKit
 #endif
 
 struct InAppAutomationListDebugView: View {
@@ -50,12 +50,14 @@ struct InAppAutomationListDebugView: View {
     }
 
     class ViewModel: ObservableObject {
-        @Published private(set) var messagePayloads: [[String: AnyHashable]] = []
+        @Published private(set) var messagePayloads: [[String: AnyHashable]] =
+            []
         private var cancellable: AnyCancellable? = nil
 
         init() {
-            if (Airship.isFlying) {
-                self.cancellable = AirshipDebugManager.shared.inAppAutomationsPublisher
+            if Airship.isFlying {
+                self.cancellable = AirshipDebugManager.shared
+                    .inAppAutomationsPublisher
                     .receive(on: RunLoop.main)
                     .sink { incoming in
                         self.messagePayloads = incoming
@@ -65,14 +67,16 @@ struct InAppAutomationListDebugView: View {
     }
 }
 
-
-fileprivate struct InAppMessageDetailsView: View {
+private struct InAppMessageDetailsView: View {
     let payload: [String: AnyHashable]
     let title: String
 
     @ViewBuilder
     var body: some View {
-        let description = try? JSONUtils.string(payload, options: .prettyPrinted)
+        let description = try? JSONUtils.string(
+            payload,
+            options: .prettyPrinted
+        )
         Form {
             Section(header: Text("Message details".localized())) {
                 Text(description ?? "ERROR!")

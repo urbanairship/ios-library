@@ -1,10 +1,10 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
 import Combine
+import Foundation
 
 #if canImport(AirshipCore)
-import AirshipCore
+    import AirshipCore
 #endif
 
 class ConditionsMonitor: ObservableObject {
@@ -26,12 +26,14 @@ class ConditionsMonitor: ObservableObject {
             })
     }
 
-    private func conditionUpdates(_ condition: PreferenceCenterConfig.Condition) -> AnyPublisher<Bool, Never> {
+    private func conditionUpdates(_ condition: PreferenceCenterConfig.Condition)
+        -> AnyPublisher<Bool, Never>
+    {
         guard Airship.isFlying else {
             return Just(true).eraseToAnyPublisher()
         }
 
-        switch(condition) {
+        switch condition {
         case .notificationOptIn(_):
             return Airship.push.optInUpdates
         }
@@ -43,14 +45,16 @@ class ConditionsMonitor: ObservableObject {
         return !conditionResults.contains(false)
     }
 
-    private func checkCondition(_ condition: PreferenceCenterConfig.Condition) -> Bool {
+    private func checkCondition(_ condition: PreferenceCenterConfig.Condition)
+        -> Bool
+    {
         guard Airship.isFlying else {
             return true
         }
-        
-        switch(condition) {
+
+        switch condition {
         case .notificationOptIn(let condition):
-            switch (condition.optInStatus) {
+            switch condition.optInStatus {
             case .optedIn:
                 return Airship.push.isPushNotificationsOptedIn
             case .optedOut:

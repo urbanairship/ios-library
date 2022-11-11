@@ -1,9 +1,9 @@
 /* Copyright Urban Airship and Contributors */
 
-import Foundation
-import AirshipPreferenceCenter
-import SwiftUI
 import AirshipCore
+import AirshipPreferenceCenter
+import Foundation
+import SwiftUI
 
 struct NamedUserView: View {
 
@@ -11,7 +11,9 @@ struct NamedUserView: View {
     private var namedUserID: String = Airship.contact.namedUserID ?? ""
 
     private func updateNamedUser() {
-        let normalized = namedUserID.trimmingCharacters(in: .whitespacesAndNewlines)
+        let normalized = namedUserID.trimmingCharacters(
+            in: .whitespacesAndNewlines
+        )
 
         if !normalized.isEmpty {
             Airship.contact.identify(normalized)
@@ -38,8 +40,10 @@ struct NamedUserView: View {
     }
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
-            Text("A named user is an identifier that maps multiple devices and channels to a specific individual.")
-                .multilineTextAlignment(.leading)
+            Text(
+                "A named user is an identifier that maps multiple devices and channels to a specific individual."
+            )
+            .multilineTextAlignment(.leading)
 
             makeTextInput()
                 .padding()
@@ -53,5 +57,3 @@ struct NamedUserView: View {
         .padding()
     }
 }
-
-

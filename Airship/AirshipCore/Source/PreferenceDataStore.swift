@@ -2,12 +2,10 @@
 
 import Foundation
 
-/**
- * Preference data store.
- * - Note: For internal use only. :nodoc:
- */
+/// Preference data store.
+/// - Note: For internal use only. :nodoc:
 @objc(UAPreferenceDataStore)
-public class PreferenceDataStore : NSObject {
+public class PreferenceDataStore: NSObject {
     private let defaults: UserDefaults
     private let appKey: String
     static let deviceIDKey = "deviceID"
@@ -15,30 +13,32 @@ public class PreferenceDataStore : NSObject {
     private let decoder = JSONDecoder()
     private let encoder = JSONEncoder()
 
-    private var pending: [String : [Any?]] = [:]
+    private var pending: [String: [Any?]] = [:]
     private let lock = Lock()
     private let dispatcher: UADispatcher
-
 
     lazy var isAppRestore: Bool = {
         let deviceID = AirshipKeychainAccess(
             appKey: self.appKey
-        ).deviceID
+        )
+        .deviceID
 
-        let previousDeviceID = self.string(forKey: PreferenceDataStore.deviceIDKey)
-        if (deviceID == previousDeviceID) {
+        let previousDeviceID = self.string(
+            forKey: PreferenceDataStore.deviceIDKey
+        )
+        if deviceID == previousDeviceID {
             return false
         }
 
         var restored = previousDeviceID != nil
-        if (restored)  {
+        if restored {
             AirshipLogger.info("App restored")
         }
 
-        self.setObject(deviceID, forKey:PreferenceDataStore.deviceIDKey)
+        self.setObject(deviceID, forKey: PreferenceDataStore.deviceIDKey)
         return restored
     }()
-    
+
     @objc
     public convenience init(appKey: String) {
         self.init(appKey: appKey, dispatcher: UADispatcher.serial())
@@ -51,7 +51,7 @@ public class PreferenceDataStore : NSObject {
         super.init()
         mergeKeys()
     }
-    
+
     class func createDefaults(appKey: String) -> UserDefaults {
         let suiteName = "\(Bundle.main.bundleIdentifier ?? "").airship.settings"
         guard let defaults = UserDefaults(suiteName: suiteName) else {
@@ -66,7 +66,7 @@ public class PreferenceDataStore : NSObject {
                 UserDefaults.standard.removeObject(forKey: key)
             }
         }
-        
+
         return defaults
     }
 
@@ -106,7 +106,7 @@ public class PreferenceDataStore : NSObject {
     }
 
     @objc
-    public func dictionary(forKey key: String) -> [AnyHashable : Any]? {
+    public func dictionary(forKey key: String) -> [AnyHashable: Any]? {
         return read(key)
     }
 
@@ -177,7 +177,7 @@ public class PreferenceDataStore : NSObject {
 
     public func codable<T: Codable>(forKey key: String) throws -> T? {
         guard let data: Data = read(key) else {
-             return nil
+            return nil
         }
 
         return try decoder.decode(T.self, from: data)
@@ -195,40 +195,43 @@ public class PreferenceDataStore : NSObject {
         let data = try encoder.encode(codable)
         write(key, value: data)
     }
-    
-    
+
     /// Merges old key formats `com.urbanairship.<APP_KEY>.<PREFERENCE>` to
     /// the new key formats `<APP_KEY><PREFERENCE>`. Fixes a bug in SDK 15.x-16.0.1
     /// where the key changed but we didnt migrate the data.
     private func mergeKeys() {
-        let legacyKeyPrefix = PreferenceDataStore.legacyKeyPrefix(appKey: self.appKey)
-        
+        let legacyKeyPrefix = PreferenceDataStore.legacyKeyPrefix(
+            appKey: self.appKey
+        )
+
         for (key, value) in self.defaults.dictionaryRepresentation() {
-            
+
             // Check for old key
             if key.hasPrefix(legacyKeyPrefix) {
 
                 let preference = String(key.dropFirst(legacyKeyPrefix.count))
                 let newValue = object(forKey: preference)
-                
-                if (newValue == nil) {
+
+                if newValue == nil {
                     // Value not updated on new key, restore value
                     setObject(value, forKey: preference)
-                } else if (preference == "com.urbanairship.channel.tags") {
-                    
+                } else if preference == "com.urbanairship.channel.tags" {
+
                     // Both old and new tag keys have data, merge
-                    if let old = value as? [String], let new = newValue as? [String] {
+                    if let old = value as? [String],
+                        let new = newValue as? [String]
+                    {
                         let combined = AudienceUtils.normalizeTags(old + new)
                         setObject(combined, forKey: preference)
                     }
                 }
-                
+
                 // Delete the old key
                 self.defaults.removeObject(forKey: key)
             }
         }
     }
-    
+
     private class func legacyKeyPrefix(appKey: String) -> String {
         return "com.urbanairship.\(appKey)."
     }
@@ -246,7 +249,7 @@ public class PreferenceDataStore : NSObject {
             if let pending = self.pending[key], pending.count > 0 {
                 result = pending[pending.count - 1]
             } else {
-                result = defaults.object(forKey:key)
+                result = defaults.object(forKey: key)
             }
         }
 
@@ -284,13 +287,12 @@ public class PreferenceDataStore : NSObject {
     }
 }
 
-
-
 extension AirshipKeychainAccess {
     var deviceID: String? {
         let deviceID = self.readCredentialsSync(
             identifier: "com.urbanairship.deviceID"
-        )?.password
+        )?
+        .password
 
         if let deviceID = deviceID {
             return deviceID
@@ -304,7 +306,7 @@ extension AirshipKeychainAccess {
             ),
             identifier: "com.urbanairship.deviceID"
         ) { result in
-            if (!result) {
+            if !result {
                 AirshipLogger.error("Unable to save device ID")
             }
         }

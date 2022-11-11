@@ -1,13 +1,12 @@
 /* Copyright Airship and Contributors */
 
-@testable
-import AirshipCore
-
 import XCTest
+
+@testable import AirshipCore
 
 final class AirshipRequestSessionTest: XCTestCase {
 
-    private let appKey =  UUID().uuidString
+    private let appKey = UUID().uuidString
     private let testURLSession = TestURLRequestSession()
     private var airshipSession: AirshipRequestSession!
 
@@ -21,7 +20,9 @@ final class AirshipRequestSessionTest: XCTestCase {
     func testDefaultHeaders() async throws {
         let request = AirshipRequest(url: URL(string: "http://neat.com"))
 
-        let _ = try? await self.airshipSession.performHTTPRequest(request) { _, _ in
+        let _ = try? await self.airshipSession.performHTTPRequest(request) {
+            _,
+            _ in
             return false
         }
 
@@ -29,7 +30,7 @@ final class AirshipRequestSessionTest: XCTestCase {
         let expected = [
             "Accept-Encoding": "gzip;q=1.0, compress;q=0.5",
             "User-Agent": "(UALib \(AirshipVersion.get()); \(self.appKey))",
-            "X-UA-App-Key": self.appKey
+            "X-UA-App-Key": self.appKey,
         ]
 
         XCTAssertEqual(expected, headers)
@@ -40,11 +41,13 @@ final class AirshipRequestSessionTest: XCTestCase {
             url: URL(string: "http://neat.com"),
             headers: [
                 "foo": "bar",
-                "User-Agent": "Something else"
+                "User-Agent": "Something else",
             ]
         )
 
-        let _ = try? await self.airshipSession.performHTTPRequest(request) { _, _ in
+        let _ = try? await self.airshipSession.performHTTPRequest(request) {
+            _,
+            _ in
             return false
         }
 
@@ -53,7 +56,7 @@ final class AirshipRequestSessionTest: XCTestCase {
             "foo": "bar",
             "Accept-Encoding": "gzip;q=1.0, compress;q=0.5",
             "User-Agent": "Something else",
-            "X-UA-App-Key": self.appKey
+            "X-UA-App-Key": self.appKey,
         ]
 
         XCTAssertEqual(expected, headers)
@@ -65,11 +68,15 @@ final class AirshipRequestSessionTest: XCTestCase {
             auth: .basic("name", "password")
         )
 
-        let _ = try? await self.airshipSession.performHTTPRequest(request) { _, _ in
+        let _ = try? await self.airshipSession.performHTTPRequest(request) {
+            _,
+            _ in
             return false
         }
 
-        let auth = testURLSession.lastRequest?.allHTTPHeaderFields?["Authorization"]
+        let auth = testURLSession.lastRequest?.allHTTPHeaderFields?[
+            "Authorization"
+        ]
         XCTAssertEqual("Basic bmFtZTpwYXNzd29yZA==", auth)
     }
 
@@ -79,7 +86,9 @@ final class AirshipRequestSessionTest: XCTestCase {
             body: "body".data(using: .utf8)
         )
 
-        let _ = try? await self.airshipSession.performHTTPRequest(request) { _, _ in
+        let _ = try? await self.airshipSession.performHTTPRequest(request) {
+            _,
+            _ in
             return false
         }
 
@@ -93,7 +102,9 @@ final class AirshipRequestSessionTest: XCTestCase {
             method: "HEAD"
         )
 
-        let _ = try? await self.airshipSession.performHTTPRequest(request) { _, _ in
+        let _ = try? await self.airshipSession.performHTTPRequest(request) {
+            _,
+            _ in
             return false
         }
 
@@ -107,13 +118,18 @@ final class AirshipRequestSessionTest: XCTestCase {
             body: "body".data(using: .utf8),
             compressBody: true
         )
-        
-        let _ = try? await self.airshipSession.performHTTPRequest(request) { _, _ in
+
+        let _ = try? await self.airshipSession.performHTTPRequest(request) {
+            _,
+            _ in
             return false
         }
 
         let body = testURLSession.lastRequest?.httpBody
-        XCTAssertEqual("H4sIAAAAAAAAE0vKT6kEALILqNsEAAAA", body?.base64EncodedString())
+        XCTAssertEqual(
+            "H4sIAAAAAAAAE0vKT6kEALILqNsEAAAA",
+            body?.base64EncodedString()
+        )
     }
 
     func testRequest() async throws {
@@ -130,7 +146,11 @@ final class AirshipRequestSessionTest: XCTestCase {
 
         self.testURLSession.responseBody = "Neat"
 
-        let response = try! await self.airshipSession.performHTTPRequest(request) { data, response in
+        let response = try! await self.airshipSession.performHTTPRequest(
+            request
+        ) {
+            data,
+            response in
             return String(data: data!, encoding: .utf8)
         }
 
@@ -168,7 +188,9 @@ final class AirshipRequestSessionTest: XCTestCase {
         self.testURLSession.responseBody = "Neat"
 
         do {
-            let _ = try await self.airshipSession.performHTTPRequest(request) { _, _ in
+            let _ = try await self.airshipSession.performHTTPRequest(request) {
+                _,
+                _ in
                 throw AirshipErrors.error("NEAT!")
             }
             XCTFail()
@@ -178,14 +200,13 @@ final class AirshipRequestSessionTest: XCTestCase {
     }
 }
 
-
 class TestURLRequestSession: URLRequestSessionProtocol {
 
-    private (set) var lastRequest: URLRequest?
+    private(set) var lastRequest: URLRequest?
 
-    var responseBody : String?
-    var response : HTTPURLResponse?
-    var error : Error?
+    var responseBody: String?
+    var response: HTTPURLResponse?
+    var error: Error?
 
     func dataTask(
         request: URLRequest,

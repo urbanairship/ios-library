@@ -5,13 +5,19 @@ import UserNotifications
 
 protocol NotificationRegistrar {
 
-#if !os(tvOS)
-    func setCategories(_ categories: Set<UNNotificationCategory>)
-#endif
+    #if !os(tvOS)
+        func setCategories(_ categories: Set<UNNotificationCategory>)
+    #endif
 
-    func checkStatus(completionHandler: @escaping (UAAuthorizationStatus, UAAuthorizedNotificationSettings) -> Void)
+    func checkStatus(
+        completionHandler: @escaping (
+            UAAuthorizationStatus, UAAuthorizedNotificationSettings
+        ) -> Void
+    )
 
-    func updateRegistration(options: UANotificationOptions,
-                            skipIfEphemeral: Bool,
-                            completionHandler: @escaping () -> Void)
+    func updateRegistration(
+        options: UANotificationOptions,
+        skipIfEphemeral: Bool,
+        completionHandler: @escaping () -> Void
+    )
 }

@@ -1,11 +1,9 @@
 /* Copyright Airship and Contributors */
 
-/**
- * CustomEvent captures information regarding a custom event for
- * Analytics.
- */
+/// CustomEvent captures information regarding a custom event for
+/// Analytics.
 @objc(UACustomEvent)
-public class CustomEvent : NSObject, Event {
+public class CustomEvent: NSObject, Event {
 
     private static let interactionMCRAP = "ua_mcrap"
 
@@ -34,7 +32,6 @@ public class CustomEvent : NSObject, Event {
     static let eventConversionSendIDKey = "conversion_send_id"
     static let eventTemplateTypeKey = "template_type"
 
-
     /**
      * The send ID that triggered the event.
      * - Note: For internal use only. :nodoc:
@@ -57,23 +54,25 @@ public class CustomEvent : NSObject, Event {
     @objc
     public var templateType: String?
 
-    private var _eventValue : NSDecimalNumber?
+    private var _eventValue: NSDecimalNumber?
 
     /**
      * The event's value. The value must be between -2^31 and
      * 2^31 - 1 or it will invalidate the event.
      */
     @objc
-    public var eventValue : NSNumber? {
+    public var eventValue: NSNumber? {
         get {
             return self._eventValue
         }
         set {
             if let newValue = newValue {
-                if let decimal = newValue as? NSDecimalNumber  {
+                if let decimal = newValue as? NSDecimalNumber {
                     self._eventValue = decimal
                 } else {
-                    let converted = NSDecimalNumber.init(decimal: newValue.decimalValue)
+                    let converted = NSDecimalNumber.init(
+                        decimal: newValue.decimalValue
+                    )
                     self._eventValue = converted
                 }
             } else {
@@ -82,9 +81,10 @@ public class CustomEvent : NSObject, Event {
         }
     }
 
-    private lazy var analytics = Airship.requireComponent(ofType: AnalyticsProtocol.self)
+    private lazy var analytics = Airship.requireComponent(
+        ofType: AnalyticsProtocol.self
+    )
 
-    
     /**
      * The event's name. The name's length must not exceed 255 characters or it will
      * invalidate the event.
@@ -117,20 +117,16 @@ public class CustomEvent : NSObject, Event {
      * The event's properties. Properties must be valid JSON.
      */
     @objc
-    public var properties : [String: Any] = [:]
+    public var properties: [String: Any] = [:]
 
     @objc
-    public var eventType : String {
-        get {
-            return "enhanced_custom_event"
-        }
+    public var eventType: String {
+        return "enhanced_custom_event"
     }
 
     @objc
     public var priority: EventPriority {
-        get {
-            return .normal
-        }
+        return .normal
     }
 
     /**
@@ -159,7 +155,8 @@ public class CustomEvent : NSObject, Event {
      */
     @objc
     public convenience init(name: String, stringValue: String?) {
-        let decimalValue = stringValue != nil ? NSDecimalNumber(string: stringValue) : nil
+        let decimalValue =
+            stringValue != nil ? NSDecimalNumber(string: stringValue) : nil
         self.init(name: name, value: decimalValue)
     }
 
@@ -169,7 +166,7 @@ public class CustomEvent : NSObject, Event {
      * - Parameter name: The name of the event. The event's name must not exceed
      * 255 characters or it will invalidate the event.
      */
-    public convenience init(name:  String) {
+    public convenience init(name: String) {
         self.init(name: name, value: nil)
     }
 
@@ -210,9 +207,9 @@ public class CustomEvent : NSObject, Event {
      */
     @objc(eventWithName:value:)
     public class func event(name: String, value: NSNumber?) -> CustomEvent {
-        if (value == nil) {
+        if value == nil {
             return CustomEvent(name: name)
-        } else if let decimal = value as? NSDecimalNumber  {
+        } else if let decimal = value as? NSDecimalNumber {
             return CustomEvent(name: name, value: decimal)
         } else {
             let converted = NSDecimalNumber.init(decimal: value!.decimalValue)
@@ -223,29 +220,68 @@ public class CustomEvent : NSObject, Event {
     @objc
     public func isValid() -> Bool {
         var isValid = true
-        isValid = self.isValid(string: self.eventName, name: "eventName", required: true) && isValid
-        isValid = self.isValid(string: self.interactionType, name: "interactionType", required: false) && isValid
-        isValid = self.isValid(string: self.interactionID, name: "interactionID", required: false) && isValid
-        isValid = self.isValid(string: self.transactionID, name: "transactionID", required: false) && isValid
-        isValid = self.isValid(string: self.templateType, name: "templateType", required: false) && isValid
+        isValid =
+            self.isValid(
+                string: self.eventName,
+                name: "eventName",
+                required: true
+            )
+            && isValid
+        isValid =
+            self.isValid(
+                string: self.interactionType,
+                name: "interactionType",
+                required: false
+            ) && isValid
+        isValid =
+            self.isValid(
+                string: self.interactionID,
+                name: "interactionID",
+                required: false
+            ) && isValid
+        isValid =
+            self.isValid(
+                string: self.transactionID,
+                name: "transactionID",
+                required: false
+            ) && isValid
+        isValid =
+            self.isValid(
+                string: self.templateType,
+                name: "templateType",
+                required: false
+            ) && isValid
 
         if let eventValue = self._eventValue {
             if eventValue == NSDecimalNumber.notANumber {
                 AirshipLogger.error("Event value is not a number.")
                 isValid = false
-            } else if (eventValue.compare(NSNumber(value: Int32.max)).rawValue > 0) {
-                AirshipLogger.error("Event value \(eventValue) is larger than 2^31-1.")
+            } else if eventValue.compare(NSNumber(value: Int32.max)).rawValue
+                > 0
+            {
+                AirshipLogger.error(
+                    "Event value \(eventValue) is larger than 2^31-1."
+                )
                 isValid = false
-            } else if (eventValue.compare(NSNumber(value: Int32.min)).rawValue < 0) {
-                AirshipLogger.error("Event value \(eventValue) is smaller than -2^31.")
+            } else if eventValue.compare(NSNumber(value: Int32.min)).rawValue
+                < 0
+            {
+                AirshipLogger.error(
+                    "Event value \(eventValue) is smaller than -2^31."
+                )
                 isValid = false
             }
         }
 
         do {
-            let propertyData = try JSONSerialization.data(withJSONObject: properties, options: [])
-            if (propertyData.count > CustomEvent.maxPropertiesSize) {
-                AirshipLogger.error("Event properties (%lu bytes) are larger than the maximum size of \(CustomEvent.maxPropertiesSize) bytes.")
+            let propertyData = try JSONSerialization.data(
+                withJSONObject: properties,
+                options: []
+            )
+            if propertyData.count > CustomEvent.maxPropertiesSize {
+                AirshipLogger.error(
+                    "Event properties (%lu bytes) are larger than the maximum size of \(CustomEvent.maxPropertiesSize) bytes."
+                )
                 isValid = false
             }
         } catch {
@@ -268,51 +304,48 @@ public class CustomEvent : NSObject, Event {
     }
 
     @objc
-    public var data : [AnyHashable : Any] {
-        get {
-            let sendID = conversionSendID ?? self.analytics.conversionSendID
-            let sendMetadata = conversionPushMetadata ?? self.analytics.conversionPushMetadata
+    public var data: [AnyHashable: Any] {
+        let sendID = conversionSendID ?? self.analytics.conversionSendID
+        let sendMetadata =
+            conversionPushMetadata ?? self.analytics.conversionPushMetadata
 
-            var dictionary: [AnyHashable : Any] = [:]
-            dictionary[CustomEvent.eventNameKey] = eventName
-            dictionary[CustomEvent.eventConversionSendIDKey] = sendID
-            dictionary[CustomEvent.eventConversionMetadataKey] = sendMetadata
-            dictionary[CustomEvent.eventInteractionIDKey] = interactionID
-            dictionary[CustomEvent.eventInteractionTypeKey] = interactionType
-            dictionary[CustomEvent.eventTransactionIDKey] = transactionID
-            dictionary[CustomEvent.eventTemplateTypeKey] = templateType
-            dictionary[CustomEvent.eventPropertiesKey] = properties
+        var dictionary: [AnyHashable: Any] = [:]
+        dictionary[CustomEvent.eventNameKey] = eventName
+        dictionary[CustomEvent.eventConversionSendIDKey] = sendID
+        dictionary[CustomEvent.eventConversionMetadataKey] = sendMetadata
+        dictionary[CustomEvent.eventInteractionIDKey] = interactionID
+        dictionary[CustomEvent.eventInteractionTypeKey] = interactionType
+        dictionary[CustomEvent.eventTransactionIDKey] = transactionID
+        dictionary[CustomEvent.eventTemplateTypeKey] = templateType
+        dictionary[CustomEvent.eventPropertiesKey] = properties
 
-            if let eventValue = self._eventValue {
-                let number = eventValue.multiplying(byPowerOf10: 6)
-                dictionary[CustomEvent.eventValueKey] = number.int64Value
-            }
-
-            return dictionary
+        if let eventValue = self._eventValue {
+            let number = eventValue.multiplying(byPowerOf10: 6)
+            dictionary[CustomEvent.eventValueKey] = number.int64Value
         }
+
+        return dictionary
     }
 
     /**
      * - Note: For internal use only. :nodoc:
      */
     @objc
-    public var payload : [AnyHashable : Any] {
-        get {
-            /*
+    public var payload: [AnyHashable: Any] {
+        /*
              * We are unable to use the event.data for automation because we modify some
              * values to be stringified versions before we store the event to be sent to
              * warp9. Instead we are going to recreate the event data with the unmodified
              * values.
              */
-            var eventData: [AnyHashable : Any] = [:]
-            eventData[CustomEvent.eventNameKey] = eventName
-            eventData[CustomEvent.eventInteractionIDKey] = interactionID
-            eventData[CustomEvent.eventInteractionTypeKey] = interactionType
-            eventData[CustomEvent.eventTransactionIDKey] = transactionID
-            eventData[CustomEvent.eventValueKey] = eventValue
-            eventData[CustomEvent.eventPropertiesKey] = properties
-            return eventData
-        }
+        var eventData: [AnyHashable: Any] = [:]
+        eventData[CustomEvent.eventNameKey] = eventName
+        eventData[CustomEvent.eventInteractionIDKey] = interactionID
+        eventData[CustomEvent.eventInteractionTypeKey] = interactionType
+        eventData[CustomEvent.eventTransactionIDKey] = transactionID
+        eventData[CustomEvent.eventValueKey] = eventValue
+        eventData[CustomEvent.eventPropertiesKey] = properties
+        return eventData
     }
 
     /**
@@ -323,18 +356,21 @@ public class CustomEvent : NSObject, Event {
         self.analytics.addEvent(self)
     }
 
-    private func isValid(string: String?, name: String, required: Bool = false) -> Bool {
+    private func isValid(string: String?, name: String, required: Bool = false)
+        -> Bool
+    {
         guard let string = string else {
-            if (required) {
-                AirshipLogger.error("Missing requied field \(name)")
-                return false
-            } else {
+            guard required else {
                 return true
             }
+            AirshipLogger.error("Missing requied field \(name)")
+            return false
         }
 
         guard (!required || string.count > 0) && string.count <= 255 else {
-            AirshipLogger.error("Field \(name) must be between \(required ? 1 : 0) and 255 characters.")
+            AirshipLogger.error(
+                "Field \(name) must be between \(required ? 1 : 0) and 255 characters."
+            )
             return false
         }
 

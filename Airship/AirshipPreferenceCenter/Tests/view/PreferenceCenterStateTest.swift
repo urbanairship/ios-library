@@ -1,11 +1,10 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
-import Combine
-
-@testable
-import AirshipPreferenceCenter
 import AirshipCore
+import Combine
+import XCTest
+
+@testable import AirshipPreferenceCenter
 
 class PreferenceCenterStateTest: XCTestCase {
     let subscriber = TestPreferenceSubscriber()
@@ -34,7 +33,10 @@ class PreferenceCenterStateTest: XCTestCase {
         XCTAssertEqual([.unsubscribe("foo")], self.subscriber.channelEdits)
 
         channelFoo.wrappedValue.toggle()
-        XCTAssertEqual([.unsubscribe("foo"), .subscribe("foo")], self.subscriber.channelEdits)
+        XCTAssertEqual(
+            [.unsubscribe("foo"), .subscribe("foo")],
+            self.subscriber.channelEdits
+        )
     }
 
     func testChannelBindingNotSubscribed() {
@@ -47,33 +49,54 @@ class PreferenceCenterStateTest: XCTestCase {
     }
 
     func testContactBinding() {
-        let contactBaz = self.state.makeBinding(contactListID: "baz", scopes: [.app])
+        let contactBaz = self.state.makeBinding(
+            contactListID: "baz",
+            scopes: [.app]
+        )
         XCTAssertTrue(contactBaz.wrappedValue)
 
         contactBaz.wrappedValue.toggle()
         XCTAssertFalse(contactBaz.wrappedValue)
-        XCTAssertEqual([.unsubscribe("baz", .app)], self.subscriber.contactEdits)
+        XCTAssertEqual(
+            [.unsubscribe("baz", .app)],
+            self.subscriber.contactEdits
+        )
 
         contactBaz.wrappedValue.toggle()
-        XCTAssertEqual([.unsubscribe("baz", .app), .subscribe("baz", .app)], self.subscriber.contactEdits)
+        XCTAssertEqual(
+            [.unsubscribe("baz", .app), .subscribe("baz", .app)],
+            self.subscriber.contactEdits
+        )
     }
 
     func testContactlBindingNotSubscribed() {
-        let contactNotBaz = self.state.makeBinding(contactListID: "not baz", scopes: [.app])
+        let contactNotBaz = self.state.makeBinding(
+            contactListID: "not baz",
+            scopes: [.app]
+        )
         XCTAssertFalse(contactNotBaz.wrappedValue)
 
         contactNotBaz.wrappedValue.toggle()
         XCTAssertTrue(contactNotBaz.wrappedValue)
-        XCTAssertEqual([.subscribe("not baz", .app)], self.subscriber.contactEdits)
+        XCTAssertEqual(
+            [.subscribe("not baz", .app)],
+            self.subscriber.contactEdits
+        )
     }
 
     func testContactlBindingPartialScope() {
-        let contactBaz = self.state.makeBinding(contactListID: "baz", scopes: [.app, .web])
+        let contactBaz = self.state.makeBinding(
+            contactListID: "baz",
+            scopes: [.app, .web]
+        )
         XCTAssertTrue(contactBaz.wrappedValue)
 
         contactBaz.wrappedValue.toggle()
         XCTAssertFalse(contactBaz.wrappedValue)
-        XCTAssertEqual([.unsubscribe("baz", .app), .unsubscribe("baz", .web)], self.subscriber.contactEdits)
+        XCTAssertEqual(
+            [.unsubscribe("baz", .app), .unsubscribe("baz", .web)],
+            self.subscriber.contactEdits
+        )
 
         contactBaz.wrappedValue.toggle()
         XCTAssertEqual(
@@ -81,14 +104,17 @@ class PreferenceCenterStateTest: XCTestCase {
                 .unsubscribe("baz", .app),
                 .unsubscribe("baz", .web),
                 .subscribe("baz", .app),
-                .subscribe("baz", .web)
+                .subscribe("baz", .web),
             ],
             self.subscriber.contactEdits
         )
     }
 
     func testContactDifferentScope() {
-        let contactBaz = self.state.makeBinding(contactListID: "baz", scopes: [.web])
+        let contactBaz = self.state.makeBinding(
+            contactListID: "baz",
+            scopes: [.web]
+        )
         XCTAssertFalse(contactBaz.wrappedValue)
     }
 
@@ -108,12 +134,18 @@ class PreferenceCenterStateTest: XCTestCase {
             subscriber: subscriber
         )
 
-        let contactAppBaz = self.state.makeBinding(contactListID: "baz", scopes: [.app])
+        let contactAppBaz = self.state.makeBinding(
+            contactListID: "baz",
+            scopes: [.app]
+        )
         XCTAssertTrue(contactAppBaz.wrappedValue)
 
         contactAppBaz.wrappedValue.toggle()
         XCTAssertTrue(contactAppBaz.wrappedValue)
-        XCTAssertEqual([.unsubscribe("baz", .app)], self.subscriber.contactEdits)
+        XCTAssertEqual(
+            [.unsubscribe("baz", .app)],
+            self.subscriber.contactEdits
+        )
         XCTAssertEqual([], self.subscriber.channelEdits)
     }
 
@@ -135,7 +167,10 @@ class PreferenceCenterStateTest: XCTestCase {
     }
 
     func testContactExternalUpdates() {
-        let contactBaz = self.state.makeBinding(contactListID: "baz", scopes: [.app])
+        let contactBaz = self.state.makeBinding(
+            contactListID: "baz",
+            scopes: [.app]
+        )
         XCTAssertTrue(contactBaz.wrappedValue)
 
         self.subscriber.contactEditsSubject.send(.subscribe("baz", .app))
@@ -154,12 +189,17 @@ class PreferenceCenterStateTest: XCTestCase {
 
 class TestPreferenceSubscriber: PreferenceSubscriber {
     let channelEditsSubject = PassthroughSubject<SubscriptionListEdit, Never>()
-    var channelSubscriptionListEdits: AnyPublisher<SubscriptionListEdit, Never> {
+    var channelSubscriptionListEdits: AnyPublisher<SubscriptionListEdit, Never>
+    {
         return channelEditsSubject.eraseToAnyPublisher()
     }
 
-    let contactEditsSubject = PassthroughSubject<ScopedSubscriptionListEdit, Never>()
-    var contactSubscriptionListEdits: AnyPublisher<ScopedSubscriptionListEdit, Never> {
+    let contactEditsSubject = PassthroughSubject<
+        ScopedSubscriptionListEdit, Never
+    >()
+    var contactSubscriptionListEdits:
+        AnyPublisher<ScopedSubscriptionListEdit, Never>
+    {
         return contactEditsSubject.eraseToAnyPublisher()
     }
 
@@ -168,7 +208,7 @@ class TestPreferenceSubscriber: PreferenceSubscriber {
 
     func updateChannelSubscription(_ listID: String, subscribe: Bool) {
         var edit: SubscriptionListEdit!
-        if (subscribe) {
+        if subscribe {
             edit = .subscribe(listID)
         } else {
             edit = .unsubscribe(listID)
@@ -177,10 +217,14 @@ class TestPreferenceSubscriber: PreferenceSubscriber {
         self.channelEditsSubject.send(edit)
     }
 
-    func updateContactSubscription(_ listID: String, scopes: [ChannelScope], subscribe: Bool) {
+    func updateContactSubscription(
+        _ listID: String,
+        scopes: [ChannelScope],
+        subscribe: Bool
+    ) {
         scopes.forEach { scope in
             var edit: ScopedSubscriptionListEdit!
-            if (subscribe) {
+            if subscribe {
                 edit = .subscribe(listID, scope)
             } else {
                 edit = .unsubscribe(listID, scope)

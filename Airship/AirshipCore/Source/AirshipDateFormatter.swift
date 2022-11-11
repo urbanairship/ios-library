@@ -4,10 +4,10 @@ import Foundation
 
 /// - Note: for internal use only.  :nodoc:
 @objc(UADateFormatter)
-public class AirshipDateFormatter : NSObject {
+public class AirshipDateFormatter: NSObject {
 
     @objc(UADateFormatterFormat)
-    public enum Format : Int {
+    public enum Format: Int {
         /// ISO 8601
         case iso
         /// ISO 8601 with delimitter
@@ -22,43 +22,49 @@ public class AirshipDateFormatter : NSObject {
         case relativeFullDate
     }
 
-    private static let dateFormatterISO : DateFormatter = createDateFormatter { formatter in
+    private static let dateFormatterISO: DateFormatter = createDateFormatter {
+        formatter in
         formatter.locale = Locale(identifier: "en_US_POSIX")
         formatter.timeStyle = .full
         formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         formatter.timeZone = TimeZone(secondsFromGMT: 0)
     }
 
-    private static let dateFormatterISOWithDelimiter : DateFormatter = createDateFormatter { formatter in
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.timeStyle = .full
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
-        formatter.timeZone = TimeZone(secondsFromGMT: 0)
-    }
+    private static let dateFormatterISOWithDelimiter: DateFormatter =
+        createDateFormatter { formatter in
+            formatter.locale = Locale(identifier: "en_US_POSIX")
+            formatter.timeStyle = .full
+            formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+            formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        }
 
-    private static let dateFormatterRelativeFull : DateFormatter = createDateFormatter { formatter in
-        formatter.timeStyle = .full
-        formatter.dateStyle = .full
-        formatter.doesRelativeDateFormatting = true
-    }
+    private static let dateFormatterRelativeFull: DateFormatter =
+        createDateFormatter { formatter in
+            formatter.timeStyle = .full
+            formatter.dateStyle = .full
+            formatter.doesRelativeDateFormatting = true
+        }
 
-    private static let dateFormatterRelativeShort : DateFormatter = createDateFormatter { formatter in
-        formatter.timeStyle = .short
-        formatter.dateStyle = .short
-        formatter.doesRelativeDateFormatting = true
-    }
+    private static let dateFormatterRelativeShort: DateFormatter =
+        createDateFormatter { formatter in
+            formatter.timeStyle = .short
+            formatter.dateStyle = .short
+            formatter.doesRelativeDateFormatting = true
+        }
 
-    private static let dateFormatterRelativeShortDate : DateFormatter = createDateFormatter { formatter in
-        formatter.timeStyle = .none
-        formatter.dateStyle = .short
-        formatter.doesRelativeDateFormatting = true
-    }
+    private static let dateFormatterRelativeShortDate: DateFormatter =
+        createDateFormatter { formatter in
+            formatter.timeStyle = .none
+            formatter.dateStyle = .short
+            formatter.doesRelativeDateFormatting = true
+        }
 
-    private static let dateFormatterRelativeFullDate : DateFormatter = createDateFormatter { formatter in
-        formatter.timeStyle = .none
-        formatter.dateStyle = .full
-        formatter.doesRelativeDateFormatting = true
-    }
+    private static let dateFormatterRelativeFullDate: DateFormatter =
+        createDateFormatter { formatter in
+            formatter.timeStyle = .none
+            formatter.dateStyle = .full
+            formatter.doesRelativeDateFormatting = true
+        }
 
     /// Parses ISO 8601 date strings.
     ///
@@ -82,17 +88,19 @@ public class AirshipDateFormatter : NSObject {
         formatter.timeZone = TimeZone(secondsFromGMT: 0)
 
         // All the various formats
-        let formats = ["yyyy-MM-dd'T'HH:mm:ss.SSS",
-                       "yyyy-MM-dd'T'HH:mm:ss",
-                       "yyyy-MM-dd'T'HH:mm:ss'Z'",
-                       "yyyy-MM-dd HH:mm:ss",
-                       "yyyy-MM-dd'T'HH:mm",
-                       "yyyy-MM-dd HH:mm",
-                       "yyyy-MM-dd'T'HH",
-                       "yyyy-MM-dd HH",
-                       "yyyy-MM-dd",
-                       "yyyy-MM",
-                       "yyyy"];
+        let formats = [
+            "yyyy-MM-dd'T'HH:mm:ss.SSS",
+            "yyyy-MM-dd'T'HH:mm:ss",
+            "yyyy-MM-dd'T'HH:mm:ss'Z'",
+            "yyyy-MM-dd HH:mm:ss",
+            "yyyy-MM-dd'T'HH:mm",
+            "yyyy-MM-dd HH:mm",
+            "yyyy-MM-dd'T'HH",
+            "yyyy-MM-dd HH",
+            "yyyy-MM-dd",
+            "yyyy-MM",
+            "yyyy",
+        ]
 
         for format in formats {
             formatter.dateFormat = format
@@ -106,7 +114,7 @@ public class AirshipDateFormatter : NSObject {
 
     @objc
     public static func string(fromDate date: Date, format: Format) -> String {
-        switch(format) {
+        switch format {
         case .iso:
             return self.dateFormatterISO.string(from: date)
         case .isoDelimitter:
@@ -122,7 +130,9 @@ public class AirshipDateFormatter : NSObject {
         }
     }
 
-    private static func createDateFormatter(editBlock:(DateFormatter) -> Void) -> DateFormatter {
+    private static func createDateFormatter(editBlock: (DateFormatter) -> Void)
+        -> DateFormatter
+    {
         let formatter = DateFormatter()
         editBlock(formatter)
         return formatter

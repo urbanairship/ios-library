@@ -1,10 +1,8 @@
 /* Copyright Airship and Contributors */
 
-/**
- * - Note: For internal use only. :nodoc:
- */
+/// - Note: For internal use only. :nodoc:
 @objc(UASemaphore)
-public class Semaphore : NSObject {
+public class Semaphore: NSObject {
     private let semaphore: DispatchSemaphore
 
     @objc
@@ -26,7 +24,8 @@ public class Semaphore : NSObject {
     @objc
     @discardableResult
     public func wait(_ timeout: TimeInterval) -> Bool {
-        return self.semaphore.wait(timeout: DispatchTime.now() + timeout) == .success
+        return self.semaphore.wait(timeout: DispatchTime.now() + timeout)
+            == .success
     }
 
     @objc

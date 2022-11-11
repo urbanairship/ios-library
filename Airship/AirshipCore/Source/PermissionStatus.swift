@@ -14,7 +14,6 @@ public enum PermissionStatus: UInt {
     /// Permission is denied.
     case denied
 
-
     /// The string value of the status
     /// - Returns: The string value of the status
     var stringValue: String {

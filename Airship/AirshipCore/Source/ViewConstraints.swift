@@ -17,7 +17,12 @@ struct ViewConstraints: Equatable {
         case consumeMargin
     }
 
-    static let emptyEdgeSet = EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
+    static let emptyEdgeSet = EdgeInsets(
+        top: 0,
+        leading: 0,
+        bottom: 0,
+        trailing: 0
+    )
 
     var width: CGFloat?
     var height: CGFloat?
@@ -25,11 +30,13 @@ struct ViewConstraints: Equatable {
     var isHorizontalFixedSize: Bool
     var isVerticalFixedSize: Bool
 
-    init(width: CGFloat? = nil,
-         height: CGFloat? = nil,
-         isHorizontalFixedSize: Bool = false,
-         isVerticalFixedSize: Bool = false,
-         safeAreaInsets: EdgeInsets = emptyEdgeSet) {
+    init(
+        width: CGFloat? = nil,
+        height: CGFloat? = nil,
+        isHorizontalFixedSize: Bool = false,
+        isVerticalFixedSize: Bool = false,
+        safeAreaInsets: EdgeInsets = emptyEdgeSet
+    ) {
 
         self.width = width
         self.height = height
@@ -39,11 +46,14 @@ struct ViewConstraints: Equatable {
     }
 
     init(size: CGSize, safeAreaInsets: EdgeInsets) {
-        self.init(width: size.width + safeAreaInsets.trailing + safeAreaInsets.leading,
-                  height: size.height + safeAreaInsets.top + safeAreaInsets.bottom,
-                  isHorizontalFixedSize: true,
-                  isVerticalFixedSize: true,
-                  safeAreaInsets: safeAreaInsets)
+        self.init(
+            width: size.width + safeAreaInsets.trailing
+                + safeAreaInsets.leading,
+            height: size.height + safeAreaInsets.top + safeAreaInsets.bottom,
+            isHorizontalFixedSize: true,
+            isVerticalFixedSize: true,
+            safeAreaInsets: safeAreaInsets
+        )
     }
 
     func contentConstraints(
@@ -58,40 +68,73 @@ struct ViewConstraints: Equatable {
         let parentWidth: CGFloat? = self.width?.subtract(horizontalMargins)
         let parentHeight: CGFloat? = self.height?.subtract(verticalMargins)
 
-        let childMinWidth: CGFloat? = constrainedSize.minWidth?.calculateSize(parentWidth)
-        let childMaxWidth: CGFloat? = constrainedSize.maxWidth?.calculateSize(parentWidth)
-        var childWidth: CGFloat? = constrainedSize.width.calculateSize(parentWidth)
-        childWidth = childWidth?.bound(minValue: childMinWidth, maxValue: childMaxWidth)
+        let childMinWidth: CGFloat? = constrainedSize.minWidth?
+            .calculateSize(
+                parentWidth
+            )
+        let childMaxWidth: CGFloat? = constrainedSize.maxWidth?
+            .calculateSize(
+                parentWidth
+            )
+        var childWidth: CGFloat? = constrainedSize.width.calculateSize(
+            parentWidth
+        )
+        childWidth = childWidth?
+            .bound(
+                minValue: childMinWidth,
+                maxValue: childMaxWidth
+            )
 
-        let childMinHeight: CGFloat? = constrainedSize.minHeight?.calculateSize(parentHeight)
-        let childMaxHeight: CGFloat? = constrainedSize.maxHeight?.calculateSize(parentHeight)
-        var childHeight: CGFloat? = constrainedSize.height.calculateSize(parentHeight)
-        childHeight = childHeight?.bound(minValue: childMinHeight, maxValue: childMaxHeight)
+        let childMinHeight: CGFloat? = constrainedSize.minHeight?
+            .calculateSize(
+                parentHeight
+            )
+        let childMaxHeight: CGFloat? = constrainedSize.maxHeight?
+            .calculateSize(
+                parentHeight
+            )
+        var childHeight: CGFloat? = constrainedSize.height.calculateSize(
+            parentHeight
+        )
+        childHeight = childHeight?
+            .bound(
+                minValue: childMinHeight,
+                maxValue: childMaxHeight
+            )
 
-        let isVerticalFixedSize: Bool = constrainedSize.height.isFixedSize(self.isVerticalFixedSize)
-        let isHorizontalFixedSize: Bool = constrainedSize.width.isFixedSize(self.isHorizontalFixedSize)
+        let isVerticalFixedSize: Bool = constrainedSize.height.isFixedSize(
+            self.isVerticalFixedSize
+        )
+        let isHorizontalFixedSize: Bool = constrainedSize.width.isFixedSize(
+            self.isHorizontalFixedSize
+        )
 
         if let contentSize = contentSize {
             if let maxWidth = childMaxWidth, contentSize.width >= maxWidth {
                 childWidth = maxWidth
-            } else if let minWidth = childMinWidth, contentSize.width <= minWidth {
+            } else if let minWidth = childMinWidth,
+                contentSize.width <= minWidth
+            {
                 childWidth = minWidth
             }
 
             if let maxHeight = childMaxHeight, contentSize.height >= maxHeight {
                 childHeight = maxHeight
-            } else if let minHeight = childMinHeight, contentSize.height <= minHeight {
+            } else if let minHeight = childMinHeight,
+                contentSize.height <= minHeight
+            {
                 childHeight = minHeight
             }
         }
 
-        return ViewConstraints(width: childWidth,
-                               height: childHeight,
-                               isHorizontalFixedSize: isHorizontalFixedSize,
-                               isVerticalFixedSize: isVerticalFixedSize,
-                               safeAreaInsets: self.safeAreaInsets)
+        return ViewConstraints(
+            width: childWidth,
+            height: childHeight,
+            isHorizontalFixedSize: isHorizontalFixedSize,
+            isVerticalFixedSize: isVerticalFixedSize,
+            safeAreaInsets: self.safeAreaInsets
+        )
     }
-
 
     func childConstraints(
         _ size: Size,
@@ -107,30 +150,42 @@ struct ViewConstraints: Equatable {
         var verticalMargins: CGFloat = margin?.verticalMargins ?? 0.0
 
         var safeAreaInsets: EdgeInsets = self.safeAreaInsets
-        switch(safeAreaInsetsMode) {
+        switch safeAreaInsetsMode {
         case .ignore:
             break
         case .consume:
             safeAreaInsets = ViewConstraints.emptyEdgeSet
         case .consumeMargin:
-            horizontalMargins = horizontalMargins + self.safeAreaInsets.leading + self.safeAreaInsets.trailing
-            verticalMargins = verticalMargins + self.safeAreaInsets.top + self.safeAreaInsets.bottom
+            horizontalMargins =
+                horizontalMargins + self.safeAreaInsets.leading
+                + self.safeAreaInsets.trailing
+            verticalMargins =
+                verticalMargins + self.safeAreaInsets.top
+                + self.safeAreaInsets.bottom
             safeAreaInsets = ViewConstraints.emptyEdgeSet
         }
 
         var childWidth: CGFloat? = size.width.calculateSize(parentWidth)
         var childHeight: CGFloat? = size.height.calculateSize(parentHeight)
 
-        if size.width.isPercent(), let width = childWidth, let parentWidth = parentWidth {
+        if size.width.isPercent(), let width = childWidth,
+            let parentWidth = parentWidth
+        {
             childWidth = min(width, parentWidth.subtract(horizontalMargins))
         }
 
-        if size.height.isPercent(), let height = childHeight, let parentHeight = parentHeight {
+        if size.height.isPercent(), let height = childHeight,
+            let parentHeight = parentHeight
+        {
             childHeight = min(height, parentHeight.subtract(verticalMargins))
         }
 
-        let isVerticalFixedSize: Bool = size.height.isFixedSize(self.isVerticalFixedSize)
-        let isHorizontalFixedSize: Bool = size.width.isFixedSize(self.isHorizontalFixedSize)
+        let isVerticalFixedSize: Bool = size.height.isFixedSize(
+            self.isVerticalFixedSize
+        )
+        let isHorizontalFixedSize: Bool = size.width.isFixedSize(
+            self.isHorizontalFixedSize
+        )
 
         return ViewConstraints(
             width: childWidth,
@@ -144,37 +199,37 @@ struct ViewConstraints: Equatable {
 
 extension SizeConstraint {
     func calculateSize(_ parentSize: CGFloat?) -> CGFloat? {
-        switch (self) {
+        switch self {
         case .points(let points):
             return points
         case .percent(let percent):
             guard let parentSize = parentSize else {
                 return nil
             }
-            return percent/100.0 * parentSize
-        case.auto:
+            return percent / 100.0 * parentSize
+        case .auto:
             return nil
         }
     }
 
     func isFixedSize(_ isParentFixed: Bool) -> Bool {
-        switch (self) {
+        switch self {
         case .points(_):
             return true
         case .percent(_):
             return isParentFixed
-        case.auto:
+        case .auto:
             return false
         }
     }
 
     func isPercent() -> Bool {
-        switch (self) {
+        switch self {
         case .points(_):
             return false
         case .percent(_):
             return true
-        case.auto:
+        case .auto:
             return false
         }
     }

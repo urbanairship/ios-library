@@ -2,16 +2,17 @@
 
 import Foundation
 
-
-/**
- * Defines attributes mutations.
- */
-@available(*, deprecated, message: "Use Contact#editAttributes() or Channel#editAttributes() instead.")
+/// Defines attributes mutations.
+@available(
+    *,
+    deprecated,
+    message: "Use Contact#editAttributes() or Channel#editAttributes() instead."
+)
 @objc(UAAttributeMutations)
-public class AttributeMutations : NSObject {
-    
+public class AttributeMutations: NSObject {
+
     var mutations: [Mutation] = []
-    
+
     /**
      * Sets an attribute.
      * - Parameters:
@@ -20,11 +21,16 @@ public class AttributeMutations : NSObject {
      */
     @objc(setString:forAttribute:)
     public func setString(_ string: String, forAttribute: String) {
-        mutations.append(Mutation(attribute: forAttribute, apply: { editor in
-            editor.set(string: string, attribute: forAttribute)
-        }))
+        mutations.append(
+            Mutation(
+                attribute: forAttribute,
+                apply: { editor in
+                    editor.set(string: string, attribute: forAttribute)
+                }
+            )
+        )
     }
-    
+
     /**
      * Sets an attribute.
      * - Parameters:
@@ -33,11 +39,16 @@ public class AttributeMutations : NSObject {
      */
     @objc(setNumber:forAttribute:)
     public func setNumber(_ number: NSNumber, forAttribute: String) {
-        mutations.append(Mutation(attribute: forAttribute, apply: { editor in
-            editor.set(number: number, attribute: forAttribute)
-        }))
+        mutations.append(
+            Mutation(
+                attribute: forAttribute,
+                apply: { editor in
+                    editor.set(number: number, attribute: forAttribute)
+                }
+            )
+        )
     }
-    
+
     /**
      * Sets an attribute.
      * - Parameters:
@@ -46,11 +57,16 @@ public class AttributeMutations : NSObject {
      */
     @objc(setDate:forAttribute:)
     public func setDate(_ date: Date, forAttribute: String) {
-        mutations.append(Mutation(attribute: forAttribute, apply: { editor in
-            editor.set(date: date, attribute: forAttribute)
-        }))
+        mutations.append(
+            Mutation(
+                attribute: forAttribute,
+                apply: { editor in
+                    editor.set(date: date, attribute: forAttribute)
+                }
+            )
+        )
     }
-    
+
     /**
      * Removes an attribute.
      * - Parameters:
@@ -58,11 +74,16 @@ public class AttributeMutations : NSObject {
      */
     @objc(removeAttribute:)
     public func removeAttribute(_ attribute: String) {
-        mutations.append(Mutation(attribute: attribute, apply: { editor in
-            editor.remove(attribute)
-        }))
+        mutations.append(
+            Mutation(
+                attribute: attribute,
+                apply: { editor in
+                    editor.remove(attribute)
+                }
+            )
+        )
     }
-    
+
     /**
      * Generates an empty mutation.
      * - Returns: An empty mutation object.
@@ -71,7 +92,7 @@ public class AttributeMutations : NSObject {
     public class func mutations() -> AttributeMutations {
         return AttributeMutations()
     }
-    
+
     // NOTE: For internal use only. :nodoc:
     @objc
     public func applyMutations(editor: AttributesEditor) {
@@ -81,7 +102,5 @@ public class AttributeMutations : NSObject {
 
 internal struct Mutation {
     let attribute: String
-    let apply : (AttributesEditor) -> Void
+    let apply: (AttributesEditor) -> Void
 }
-
-

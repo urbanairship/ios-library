@@ -1,13 +1,10 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-
-import UserNotifications
 import UIKit
+import UserNotifications
 
-/**
- * Airship Push protocol.
- */
+/// Airship Push protocol.
 @objc(UAPushProtocol)
 public protocol PushProtocol {
 
@@ -25,7 +22,11 @@ public protocol PushProtocol {
     /// Defaults to `false`. Once set to `true`, the user will be prompted for remote notifications if userPushNotificationsEnabled and the user currently has
     /// ephemeral authorization.
     @objc
-    @available(*, deprecated, message: "Use requestExplicitPermissionWhenEphemeralKey instead")
+    @available(
+        *,
+        deprecated,
+        message: "Use requestExplicitPermissionWhenEphemeralKey instead"
+    )
     var extendedPushNotificationPermissionEnabled: Bool { get set }
 
     /// When enabled, if the user has ephemeral notification authorization the SDK will promp the user for
@@ -46,23 +47,23 @@ public protocol PushProtocol {
     var notificationOptions: UANotificationOptions { get set }
 
     #if !os(tvOS)
-    /// Custom notification categories. Airship default notification
-    /// categories will be unaffected by this field.
-    ///
-    /// Changes to this value will not take effect until the next time the app registers
-    /// with updateRegistration.
-    @objc
-    var customCategories: Set<UNNotificationCategory> { get set }
+        /// Custom notification categories. Airship default notification
+        /// categories will be unaffected by this field.
+        ///
+        /// Changes to this value will not take effect until the next time the app registers
+        /// with updateRegistration.
+        @objc
+        var customCategories: Set<UNNotificationCategory> { get set }
 
-    /// The combined set of notification categories from `customCategories` set by the app
-    /// and the Airship provided categories.
-    @objc
-    var combinedCategories: Set<UNNotificationCategory> { get }
+        /// The combined set of notification categories from `customCategories` set by the app
+        /// and the Airship provided categories.
+        @objc
+        var combinedCategories: Set<UNNotificationCategory> { get }
 
-    /// The set of Accengage notification categories.
-    /// - Note For internal use only. :nodoc:
-    @objc
-    var accengageCategories: Set<UNNotificationCategory> { get set }
+        /// The set of Accengage notification categories.
+        /// - Note For internal use only. :nodoc:
+        @objc
+        var accengageCategories: Set<UNNotificationCategory> { get set }
     #endif
     /// Sets authorization required for the default Airship categories. Only applies
     /// to background user notification actions.
@@ -70,22 +71,22 @@ public protocol PushProtocol {
     /// Changes to this value will not take effect until the next time the app registers
     /// with updateRegistration.
     @objc
-    var requireAuthorizationForDefaultCategories : Bool { get set }
+    var requireAuthorizationForDefaultCategories: Bool { get set }
 
     /// Set a delegate that implements the PushNotificationDelegate protocol.
     @objc
-    weak var pushNotificationDelegate: PushNotificationDelegate? { get set}
+    weak var pushNotificationDelegate: PushNotificationDelegate? { get set }
 
     /// Set a delegate that implements the RegistrationDelegate protocol.
     @objc
     weak var registrationDelegate: RegistrationDelegate? { get set }
 
     #if !os(tvOS)
-    /// Notification response that launched the application.
-    @objc
-    var launchNotificationResponse: UNNotificationResponse? { get }
+        /// Notification response that launched the application.
+        @objc
+        var launchNotificationResponse: UNNotificationResponse? { get }
     #endif
-    
+
     /// The current authorized notification settings.
     /// If push is disabled in privacy manager, this value could be out of date.
     ///
@@ -106,14 +107,16 @@ public protocol PushProtocol {
 
     /// The default presentation options to use for foreground notifications.
     @objc
-    var defaultPresentationOptions: UNNotificationPresentationOptions { get set}
+    var defaultPresentationOptions: UNNotificationPresentationOptions {
+        get set
+    }
 
     #if !os(watchOS)
-    /// The current badge number used by the device and on the Airship server.
-    ///
-    /// - Note: This property must be accessed on the main thread.
-    @objc
-    var badgeNumber: Int { get set }
+        /// The current badge number used by the device and on the Airship server.
+        ///
+        /// - Note: This property must be accessed on the main thread.
+        @objc
+        var badgeNumber: Int { get set }
     #endif
 }
 
@@ -122,11 +125,19 @@ protocol InternalPushProtocol {
     func updateAuthorizedNotificationTypes()
     func didRegisterForRemoteNotifications(_ deviceToken: Data)
     func didFailToRegisterForRemoteNotifications(_ error: Error)
-    func didReceiveRemoteNotification(_ userInfo: [AnyHashable : Any], isForeground: Bool, completionHandler: @escaping (Any) -> Void)
-    func presentationOptionsForNotification(_ notification: UNNotification) -> UNNotificationPresentationOptions
-    
+    func didReceiveRemoteNotification(
+        _ userInfo: [AnyHashable: Any],
+        isForeground: Bool,
+        completionHandler: @escaping (Any) -> Void
+    )
+    func presentationOptionsForNotification(_ notification: UNNotification)
+        -> UNNotificationPresentationOptions
+
     #if !os(tvOS)
-    func didReceiveNotificationResponse(_ response: UNNotificationResponse, completionHandler: @escaping () -> Void)
-    var combinedCategories: Set<UNNotificationCategory> { get }
+        func didReceiveNotificationResponse(
+            _ response: UNNotificationResponse,
+            completionHandler: @escaping () -> Void
+        )
+        var combinedCategories: Set<UNNotificationCategory> { get }
     #endif
 }

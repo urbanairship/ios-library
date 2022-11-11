@@ -1,10 +1,10 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
 import Combine
+import Foundation
 
 #if canImport(AirshipCore)
-import AirshipCore
+    import AirshipCore
 #endif
 
 @objc(UAMessageCenterInboxBaseProtocol)
@@ -189,9 +189,10 @@ public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
             object: nil,
             queue: nil
         ) { [weak self] _ in
-            self?.dispatchUpdateWorkRequest(
-                conflictPolicy: .replace
-            )
+            self?
+                .dispatchUpdateWorkRequest(
+                    conflictPolicy: .replace
+                )
         }
 
         self.updateSubject
@@ -202,19 +203,22 @@ public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
                     name: MessageCenterInbox.messageListUpdatedEvent,
                     object: nil
                 )
-            }.store(in: &self.subscriptions)
+            }
+            .store(in: &self.subscriptions)
 
-        self.channel.addRegistrationExtender { [weak self] payload, completionHandler in
+        self.channel.addRegistrationExtender {
+            [weak self] payload, completionHandler in
             Task { [weak self] in
                 guard self?.enabled == true,
-                      let user = await self?.store.user
+                    let user = await self?.store.user
                 else {
                     completionHandler(payload)
                     return
                 }
 
-                if (payload.identityHints == nil) {
-                    let identityHints = ChannelRegistrationPayload.IdentityHints()
+                if payload.identityHints == nil {
+                    let identityHints =
+                        ChannelRegistrationPayload.IdentityHints()
                     payload.identityHints = identityHints
                 }
 
@@ -224,7 +228,7 @@ public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
         }
     }
 
-    convenience init (
+    convenience init(
         with config: RuntimeConfig,
         dataStore: PreferenceDataStore,
         channel: ChannelProtocol,
@@ -349,7 +353,8 @@ public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
     }
 
     @objc
-    public func message(forBodyURL bodyURL: URL) async -> MessageCenterMessage? {
+    public func message(forBodyURL bodyURL: URL) async -> MessageCenterMessage?
+    {
         do {
             return try await self.store.message(forBodyURL: bodyURL)
         } catch {
@@ -359,7 +364,8 @@ public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
 
     }
 
-    public func message(forID messageID: String) async -> MessageCenterMessage? {
+    public func message(forID messageID: String) async -> MessageCenterMessage?
+    {
         do {
             return try await self.store.message(forID: messageID)
         } catch {
@@ -368,23 +374,29 @@ public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
         }
     }
 
-
-    private func getOrCreateUser(forChannelID channelID: String) async -> MessageCenterUser? {
+    private func getOrCreateUser(forChannelID channelID: String) async
+        -> MessageCenterUser?
+    {
         guard let user = await self.store.user else {
             do {
                 AirshipLogger.debug("Creating Message Center user")
 
-                let response = try await self.client.createUser(withChannelID: channelID)
-                AirshipLogger.debug("Message Center user create request finished with response: \(response)")
+                let response = try await self.client.createUser(
+                    withChannelID: channelID
+                )
+                AirshipLogger.debug(
+                    "Message Center user create request finished with response: \(response)"
+                )
 
-                if let user = response.result {
-                    await self.store.saveUser(user, channelID: channelID)
-                    return user
-                } else {
+                guard let user = response.result else {
                     return nil
                 }
+                await self.store.saveUser(user, channelID: channelID)
+                return user
             } catch {
-                AirshipLogger.info("Failed to create Message Center user: \(error)")
+                AirshipLogger.info(
+                    "Failed to create Message Center user: \(error)"
+                )
                 return nil
             }
         }
@@ -392,37 +404,38 @@ public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
         let requireUpdate = await self.store.userRequiredUpdate
         let channelMismatch = await self.store.registeredChannelID != channelID
 
-        if (requireUpdate || channelMismatch) {
-            do {
-                AirshipLogger.debug("Updating Message Center user")
-                let response = try await self.client.updateUser(
-                    user,
-                    channelID: channelID
-                )
+        guard requireUpdate || channelMismatch else {
+            return user
+        }
+        do {
+            AirshipLogger.debug("Updating Message Center user")
+            let response = try await self.client.updateUser(
+                user,
+                channelID: channelID
+            )
 
-                AirshipLogger.debug("Message Center update request finished with response: \(response)")
+            AirshipLogger.debug(
+                "Message Center update request finished with response: \(response)"
+            )
 
-                if (response.isSuccess) {
-                    await self.store.setUserRequireUpdate(true)
-                    return user
-                } else {
-                    return nil
-                }
-            } catch {
-                AirshipLogger.info("Failed to update Message Center user: \(error)")
+            guard response.isSuccess else {
                 return nil
             }
-        } else {
+            await self.store.setUserRequireUpdate(true)
             return user
+        } catch {
+            AirshipLogger.info("Failed to update Message Center user: \(error)")
+            return nil
         }
     }
 
     private func updateInbox() async throws -> AirshipWorkResult {
         guard let channelID = channel.identifier else { return .success }
 
-        guard let user = await getOrCreateUser(
-            forChannelID: channelID
-        )
+        guard
+            let user = await getOrCreateUser(
+                forChannelID: channelID
+            )
         else {
             self.updateSubject.send(.refreshFailed)
             return .failure
@@ -443,19 +456,17 @@ public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
             channelID: channelID
         )
 
-        if (syncedList) {
+        if syncedList {
             self.updateSubject.send(.refreshSucess)
         } else {
             self.updateSubject.send(.refreshFailed)
         }
 
-        if syncedRead && synedDeleted && syncedList {
-            return .success
-        } else {
+        guard syncedRead && synedDeleted && syncedList else {
             return .failure
         }
+        return .success
     }
-
 
     // MARK: Enqueue tasks
 
@@ -477,14 +488,14 @@ public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
     ) async -> Bool {
         do {
             let lastModified = await self.store.lastMessageListModifiedTime
-            let response =  try await self.client.retrieveMessageList(
+            let response = try await self.client.retrieveMessageList(
                 user: user,
                 channelID: channelID,
                 lastModified: lastModified
             )
 
             guard response.isSuccess,
-                  let messages = response.result
+                let messages = response.result
             else {
                 AirshipLogger.error("Retrieve list message failed")
                 return false
@@ -512,7 +523,9 @@ public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
                 return true
             }
 
-            AirshipLogger.trace("Synchronizing locally read messages on server. \(messages)")
+            AirshipLogger.trace(
+                "Synchronizing locally read messages on server. \(messages)"
+            )
             let response = try await self.client.performBatchMarkAsRead(
                 forMessages: messages,
                 user: user,
@@ -520,16 +533,20 @@ public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
             )
 
             if response.isSuccess {
-                AirshipLogger.trace("Successfully synchronized locally read messages on server.")
+                AirshipLogger.trace(
+                    "Successfully synchronized locally read messages on server."
+                )
 
                 try await self.store.markRead(
-                    messageIDs: messages.compactMap{ $0.id },
+                    messageIDs: messages.compactMap { $0.id },
                     level: .local
                 )
                 return true
             }
         } catch {
-            AirshipLogger.trace("Failed to synchronize locally read messages on server.")
+            AirshipLogger.trace(
+                "Failed to synchronize locally read messages on server."
+            )
         }
         return false
     }
@@ -545,7 +562,9 @@ public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
                 return true
             }
 
-            AirshipLogger.trace("Synchronizing locally deleted messages on server.");
+            AirshipLogger.trace(
+                "Synchronizing locally deleted messages on server."
+            )
             let response = try await self.client.performBatchDelete(
                 forMessages: messages,
                 user: user,
@@ -553,17 +572,21 @@ public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
             )
 
             if response.isSuccess {
-                AirshipLogger.trace("Successfully synchronized locally deleted messages on server.")
+                AirshipLogger.trace(
+                    "Successfully synchronized locally deleted messages on server."
+                )
 
                 try await self.store.delete(
-                    messageIDs: messages.compactMap{ $0.id }
+                    messageIDs: messages.compactMap { $0.id }
                 )
 
                 return true
             }
 
         } catch {
-            AirshipLogger.trace("Failed to synchronize locally deleted messages on server.")
+            AirshipLogger.trace(
+                "Failed to synchronize locally deleted messages on server."
+            )
         }
         return false
     }
@@ -577,4 +600,3 @@ public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
         }
     }
 }
-

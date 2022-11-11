@@ -3,22 +3,22 @@
 import Foundation
 
 #if canImport(AirshipCore)
-import AirshipCore
+    import AirshipCore
 #endif
 
 /// Delegate protocol for receiving callbacks related to message center.
 @objc(UAMessageCenterDisplayDelegate)
 public protocol MessageCenterDisplayDelegate {
-    
+
     /// Called when a message is requested to be displayed.
     ///
     /// - Parameters:
     ///   - messageID: The message ID.
     func displayMessageCenter(forMessageID messageID: String)
-    
+
     /// Called when the message center is requested to be displayed.
     func displayMessageCenter()
-    
+
     /// Called when the message center is requested to be dismissed.
     func dismissMessageCenter()
 }
@@ -28,30 +28,31 @@ public class MessageCenter: NSObject {
 
     @objc
     public var displayDelegate: MessageCenterDisplayDelegate?
-    
+
     private let privacyManager: PrivacyManager
     private let disableHelper: ComponentDisableHelper
 
     @objc
     public var inbox: MessageCenterInbox
-    
+
     private var currentDisplay: Disposable?
-    
+
     private var controller: MessageCenterController = MessageCenterController()
-    
+
     /// Message center theme
     public var theme: MessageCenterTheme?
-    
+
     private var enabled: Bool {
-        return self.isComponentEnabled && self.privacyManager.isEnabled(.messageCenter)
+        return self.isComponentEnabled
+            && self.privacyManager.isEnabled(.messageCenter)
     }
-    
+
     /// The shared MessageCenter instance.
     @objc
     public static var shared: MessageCenter {
         return Airship.requireComponent(ofType: MessageCenter.self)
     }
-    
+
     init(
         dataStore: PreferenceDataStore,
         privacyManager: PrivacyManager,
@@ -66,9 +67,9 @@ public class MessageCenter: NSObject {
             className: "MessageCenter"
         )
         self.controller = MessageCenterController()
-        
+
         super.init()
-        
+
         notificationCenter.addObserver(
             forName: PrivacyManager.changeEvent,
             object: nil,
@@ -76,14 +77,14 @@ public class MessageCenter: NSObject {
         ) { [weak self] _ in
             self?.updateEnableState()
         }
-        
+
         self.disableHelper.onChange = {
             self.updateEnableState()
         }
-        
+
         self.updateEnableState()
     }
-    
+
     convenience init(
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,
@@ -91,31 +92,31 @@ public class MessageCenter: NSObject {
         privacyManager: PrivacyManager,
         workManager: AirshipWorkManagerProtocol
     ) {
-        
+
         let inbox = MessageCenterInbox(
             with: config,
             dataStore: dataStore,
             channel: channel,
             workManager: workManager
         )
-        
+
         self.init(
             dataStore: dataStore,
             privacyManager: privacyManager,
             inbox: inbox
         )
     }
-    
+
     /// Display the message center.
     @objc
     public func display() {
         guard self.enabled else {
-            AirshipLogger.warn("Message center disabled. Unable to display.");
+            AirshipLogger.warn("Message center disabled. Unable to display.")
             return
         }
-        
+
         self.controller.navigate(messageID: nil)
-        
+
         guard let displayDelegate = self.displayDelegate else {
             AirshipLogger.trace("Launching OOTB message center")
             Task {
@@ -123,11 +124,11 @@ public class MessageCenter: NSObject {
             }
             return
         }
-        
+
         AirshipLogger.trace("Message center opened through delegate")
         displayDelegate.displayMessageCenter()
     }
-    
+
     ///
     /// Display the given message with animation.
     /// - Parameters:
@@ -135,12 +136,12 @@ public class MessageCenter: NSObject {
     @objc
     public func display(withMessageID messageID: String) {
         guard self.enabled else {
-            AirshipLogger.warn("Message center disabled. Unable to display.");
+            AirshipLogger.warn("Message center disabled. Unable to display.")
             return
         }
-        
+
         self.controller.navigate(messageID: messageID)
-        
+
         guard let displayDelegate = self.displayDelegate else {
             AirshipLogger.trace("Launching OOTB message center")
             Task {
@@ -148,13 +149,13 @@ public class MessageCenter: NSObject {
             }
             return
         }
-        
+
         displayDelegate.displayMessageCenter(
             forMessageID: messageID
         )
-        
+
     }
-    
+
     /// Dismiss the message center.
     @objc
     public func dismiss() {
@@ -168,89 +169,96 @@ public class MessageCenter: NSObject {
     private func updateEnableState() {
         self.inbox.enabled = self.enabled
     }
-    
+
     @MainActor
     private func openDefaultMessageCenter() async {
         guard let scene = try? Utils.findWindowScene() else {
-            AirshipLogger.error("Unable to display message center, missing scene.")
+            AirshipLogger.error(
+                "Unable to display message center, missing scene."
+            )
             return
         }
 
         currentDisplay?.dispose()
 
         AirshipLogger.debug("Opening default message center UI")
-        
+
         self.currentDisplay = showMessageCenter(
             scene: scene,
             theme: theme
         )
     }
-    
+
 }
 
 extension MessageCenter: Component, PushableComponent {
-    
+
     private static let kUARichPushMessageIDKey = "_uamid"
-    
+
     // MARK: Component
-    
+
     public var isComponentEnabled: Bool {
         get {
             return self.disableHelper.enabled
         }
-        
+
         set {
             self.disableHelper.enabled = newValue
         }
     }
-    
+
     func deepLink(deepLink: URL) -> Bool {
         if !(deepLink.scheme == Airship.deepLinkScheme) {
             return false
         }
-        
+
         if !(deepLink.host == "message_center") {
             return false
         }
-        
-        if (deepLink.path.hasPrefix("/message/")) {
-            if (deepLink.pathComponents.count != 3) {
+
+        if deepLink.path.hasPrefix("/message/") {
+            if deepLink.pathComponents.count != 3 {
                 return false
             }
             let messageID: String = deepLink.pathComponents[2]
             self.display(withMessageID: messageID)
         } else {
-            if ((deepLink.path.count != 0) && !(deepLink.path == "/")) {
+            if (deepLink.path.count != 0) && !(deepLink.path == "/") {
                 return false
             }
-            
+
             self.display()
         }
-        
+
         return true
     }
-    
+
     // MARK: PushableComponent
-    
-    public func receivedRemoteNotification(_
-                                           notification: [AnyHashable : Any],
-                                           completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        
-        guard let messageID = MessageCenterMessage.parseMessageID(userInfo: notification) else {
+
+    public func receivedRemoteNotification(
+        _ notification: [AnyHashable: Any],
+        completionHandler: @escaping (UIBackgroundFetchResult) -> Void
+    ) {
+
+        guard
+            let messageID = MessageCenterMessage.parseMessageID(
+                userInfo: notification
+            )
+        else {
             completionHandler(.noData)
             return
         }
-        
+
         Task {
             let result = await self.inbox.refreshMessages()
-            
+
             if !result {
                 completionHandler(.failed)
                 return
             }
-            
+
             let message = await self.inbox.message(forID: messageID)
-            
+
             guard message != nil else {
                 completionHandler(.noData)
                 return
@@ -260,10 +268,12 @@ extension MessageCenter: Component, PushableComponent {
     }
 }
 
-fileprivate extension MessageCenter {
-    
-    func showMessageCenter(scene: UIWindowScene,
-                           theme: MessageCenterTheme?) -> Disposable {
+extension MessageCenter {
+
+    fileprivate func showMessageCenter(
+        scene: UIWindowScene,
+        theme: MessageCenterTheme?
+    ) -> Disposable {
         var window: UIWindow? = UIWindow(windowScene: scene)
 
         let disposable = Disposable {
@@ -279,14 +289,11 @@ fileprivate extension MessageCenter {
             disposable.dispose()
         }
 
-        
         window?.isHidden = false
         window?.windowLevel = .alert
         window?.makeKeyAndVisible()
         window?.rootViewController = viewController
 
-
-        
         return disposable
     }
 }

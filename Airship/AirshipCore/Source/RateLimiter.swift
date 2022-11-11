@@ -23,9 +23,11 @@ class RateLimiter {
 
     func set(_ key: String, rate: Int, timeInterval: TimeInterval) throws {
         guard rate > 0, timeInterval > 0 else {
-            throw AirshipErrors.error("Rate and time interval must be greater than 0")
+            throw AirshipErrors.error(
+                "Rate and time interval must be greater than 0"
+            )
         }
-        
+
         self.rules[key] = RateLimitRule(rate: rate, timeInterval: timeInterval)
         self.hits[key] = []
     }
@@ -41,12 +43,13 @@ class RateLimiter {
         let filtered = filter(self.hits[key], rule: rule, date: date) ?? []
         let count = filtered.count
 
-        if count >= rule.rate {
-            let nextAvailable = rule.timeInterval - date.timeIntervalSince(filtered[count - rule.rate])
-            return .overLimit(nextAvailable)
-        } else {
+        guard count >= rule.rate else {
             return .withinLimit(rule.rate - count)
         }
+        let nextAvailable =
+            rule.timeInterval
+            - date.timeIntervalSince(filtered[count - rule.rate])
+        return .overLimit(nextAvailable)
     }
 
     func track(_ key: String) {
@@ -60,12 +63,12 @@ class RateLimiter {
         hits[key] = filter(keyHits, rule: rule, date: self.date.now)
     }
 
-    private func filter(_ hits: [Date]?, rule: RateLimitRule, date: Date) -> [Date]? {
+    private func filter(_ hits: [Date]?, rule: RateLimitRule, date: Date)
+        -> [Date]?
+    {
         guard let hits = hits else { return nil }
         return hits.filter { hit in
             return hit.addingTimeInterval(rule.timeInterval) > date
         }
     }
 }
-
-

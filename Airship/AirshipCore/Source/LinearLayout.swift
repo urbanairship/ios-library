@@ -5,11 +5,11 @@ import SwiftUI
 
 /// Linear Layout - either a VStack or HStack depending on the direction.
 @available(iOS 13.0.0, tvOS 13.0, *)
-struct LinearLayout : View {
-    
+struct LinearLayout: View {
+
     /// LinearLayout model.
     let model: LinearLayoutModel
-    
+
     /// View constriants.
     let constraints: ViewConstraints
 
@@ -46,7 +46,7 @@ struct LinearLayout : View {
 
     @ViewBuilder
     private func makeStack() -> some View {
-        if (self.model.direction == .vertical) {
+        if self.model.direction == .vertical {
             makeVStack(
                 items: orderedItems(),
                 parentConstraints: parentConstraints()
@@ -58,7 +58,7 @@ struct LinearLayout : View {
             )
         }
     }
-                        
+
     var body: some View {
         makeStack()
             .clipped()
@@ -66,13 +66,18 @@ struct LinearLayout : View {
             .border(self.model.border)
             .common(self.model)
     }
-    
+
     @ViewBuilder
-    private func childItem(_ item: LinearLayoutItem, parentConstraints: ViewConstraints) -> some View {
-        let constraints = parentConstraints.childConstraints(item.size,
-                                                             margin: item.margin,
-                                                             padding: self.model.border?.strokeWidth ?? 0,
-                                                             safeAreaInsetsMode: .consume)
+    private func childItem(
+        _ item: LinearLayoutItem,
+        parentConstraints: ViewConstraints
+    ) -> some View {
+        let constraints = parentConstraints.childConstraints(
+            item.size,
+            margin: item.margin,
+            padding: self.model.border?.strokeWidth ?? 0,
+            safeAreaInsetsMode: .consume
+        )
 
         ViewFactory.createView(model: item.view, constraints: constraints)
             .margin(item.margin)
@@ -81,7 +86,7 @@ struct LinearLayout : View {
     private func parentConstraints() -> ViewConstraints {
         var constraints = self.constraints
 
-        if (self.model.direction == .vertical) {
+        if self.model.direction == .vertical {
             constraints.isVerticalFixedSize = false
         } else {
             constraints.isHorizontalFixedSize = false
@@ -91,18 +96,16 @@ struct LinearLayout : View {
     }
 
     private func orderedItems() -> [LinearLayoutItem] {
-        if (self.model.randomizeChildren == true) {
-            var generator = self.numberGenerator
-            generator.repeatNumbers()
-            return model.items.shuffled(using: &generator)
-        } else {
+        guard self.model.randomizeChildren == true else {
             return self.model.items
         }
+        var generator = self.numberGenerator
+        generator.repeatNumbers()
+        return model.items.shuffled(using: &generator)
     }
 }
 
-
-class RepeatableNumberGenerator : RandomNumberGenerator {
+class RepeatableNumberGenerator: RandomNumberGenerator {
     private var numbers: [UInt64] = []
     private var index = 0
     private var numberGenerator = SystemRandomNumberGenerator()
@@ -112,13 +115,12 @@ class RepeatableNumberGenerator : RandomNumberGenerator {
             self.index += 1
         }
 
-        if (index < numbers.count) {
-            return numbers[index]
-        } else {
+        guard index < numbers.count else {
             let next = numberGenerator.next()
             numbers.append(next)
             return next
         }
+        return numbers[index]
     }
 
     func repeatNumbers() {

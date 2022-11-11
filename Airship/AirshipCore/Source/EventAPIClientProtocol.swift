@@ -8,5 +8,9 @@ import Foundation
 public protocol EventAPIClientProtocol {
     @objc
     @discardableResult
-    func uploadEvents(_ events: [AnyHashable], headers: [String : String], completionHandler: @escaping (EventAPIResponse?, Error?) -> Void) -> Disposable
+    func uploadEvents(
+        _ events: [AnyHashable],
+        headers: [String: String],
+        completionHandler: @escaping (EventAPIResponse?, Error?) -> Void
+    ) -> Disposable
 }

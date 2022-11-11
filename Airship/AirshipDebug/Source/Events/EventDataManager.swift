@@ -1,27 +1,28 @@
 /* Copyright Airship and Contributors */
 
-import UIKit
 import CoreData
+import UIKit
 
 #if canImport(AirshipCore)
-import AirshipCore
+    import AirshipCore
 #elseif canImport(AirshipKit)
-import AirshipKit
+    import AirshipKit
 #endif
 
 class EventDataManager {
 
-    private let maxAge = TimeInterval(172800) // 2 days
+    private let maxAge = TimeInterval(172800)  // 2 days
     private let appKey: String
     private let coreData: UACoreData
 
     public init(appKey: String) {
         self.appKey = appKey
         self.coreData = UACoreData(
-            modelURL: DebugResources.bundle().url(
-                forResource: "AirshipDebugEventData",
-                withExtension:"momd"
-            )!,
+            modelURL: DebugResources.bundle()
+                .url(
+                    forResource: "AirshipDebugEventData",
+                    withExtension: "momd"
+                )!,
             inMemory: false,
             stores: ["AirshipDebugEventData-\(appKey).sqlite"]
         )
@@ -33,15 +34,21 @@ class EventDataManager {
         coreData.performBlockIfStoresExist { isSafe, context in
             guard isSafe else { return }
 
-            let fetchRequest: NSFetchRequest<NSFetchRequestResult> = EventData.fetchRequest()
+            let fetchRequest: NSFetchRequest<NSFetchRequestResult> =
+                EventData.fetchRequest()
 
             let cutOffDate = Date()
                 .addingTimeInterval(
                     -self.maxAge
                 )
 
-            fetchRequest.predicate = NSPredicate(format:"eventDate < %@", cutOffDate as NSDate)
-            let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+            fetchRequest.predicate = NSPredicate(
+                format: "eventDate < %@",
+                cutOffDate as NSDate
+            )
+            let batchDeleteRequest = NSBatchDeleteRequest(
+                fetchRequest: fetchRequest
+            )
 
             do {
                 _ = try context.execute(batchDeleteRequest)
@@ -55,10 +62,9 @@ class EventDataManager {
         self.coreData.safePerform { isSafe, context in
             guard isSafe else { return }
 
-
             let persistedEvent = EventData(
                 entity: EventData.entity(),
-                insertInto:context
+                insertInto: context
             )
 
             persistedEvent.eventBody = event.body
@@ -81,12 +87,18 @@ class EventDataManager {
                 let fetchRequest: NSFetchRequest = EventData.fetchRequest()
                 fetchRequest.fetchLimit = 200
                 fetchRequest.sortDescriptors = [
-                    NSSortDescriptor(key: #keyPath(EventData.eventDate), ascending: false)
+                    NSSortDescriptor(
+                        key: #keyPath(EventData.eventDate),
+                        ascending: false
+                    )
                 ]
 
                 if let searchString = searchString, !searchString.isEmpty {
                     fetchRequest.predicate = NSPredicate(
-                        format: "eventID CONTAINS[cd] %@ OR eventType CONTAINS[cd] %@", searchString, searchString
+                        format:
+                            "eventID CONTAINS[cd] %@ OR eventType CONTAINS[cd] %@",
+                        searchString,
+                        searchString
                     )
                 }
 
@@ -94,9 +106,9 @@ class EventDataManager {
                     let result = try context.fetch(fetchRequest)
                     let events = result.compactMap { data -> AirshipEvent? in
                         if let eventType = data.eventType,
-                           let eventBody = data.eventBody,
-                           let eventDate = data.eventDate,
-                           let eventID = data.eventID
+                            let eventBody = data.eventBody,
+                            let eventDate = data.eventDate,
+                            let eventID = data.eventID
                         {
                             return AirshipEvent(
                                 identifier: eventID,
@@ -111,7 +123,9 @@ class EventDataManager {
                     continuation.resume(returning: events)
                 } catch {
                     if let error = error as NSError? {
-                        print("ERROR: error fetching events list - \(error), \(error.userInfo)")
+                        print(
+                            "ERROR: error fetching events list - \(error), \(error.userInfo)"
+                        )
                     }
                     continuation.resume(returning: [])
                 }

@@ -38,9 +38,9 @@ struct WorkConditionsMonitor {
 
     @MainActor
     func checkConditions(workRequest: AirshipWorkRequest) -> Bool {
-        guard timeRemaining >= 60.0 else  { return false }
+        guard timeRemaining >= 60.0 else { return false }
 
-        if (workRequest.requiresNetwork == true) {
+        if workRequest.requiresNetwork == true {
             return networkMonitor.isConnected
         }
 
@@ -62,9 +62,8 @@ struct WorkConditionsMonitor {
 
     @MainActor
     func awaitConditions(workRequest: AirshipWorkRequest) async {
-        while(checkConditions(workRequest: workRequest) == false) {
+        while checkConditions(workRequest: workRequest) == false {
             await waitConditionsUpdate()
         }
     }
 }
-

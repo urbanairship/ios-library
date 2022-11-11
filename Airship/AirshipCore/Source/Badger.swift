@@ -2,22 +2,23 @@
 
 import Foundation
 import UIKit
+
 #if os(watchOS)
-import WatchKit
+    import WatchKit
 #endif
 
 protocol Badger {
-#if !os(watchOS)
-    var applicationIconBadgeNumber: Int { get set }
-#endif
+    #if !os(watchOS)
+        var applicationIconBadgeNumber: Int { get set }
+    #endif
 }
 
 #if !os(watchOS)
 
-extension UIApplication: Badger {}
+    extension UIApplication: Badger {}
 
 #else
 
-extension WKExtension: Badger {}
+    extension WKExtension: Badger {}
 
 #endif

@@ -2,9 +2,7 @@
 
 import Foundation
 
-/**
- * Represents the possible log levels.
- */
+/// Represents the possible log levels.
 @objc(UALogLevel)
 public enum LogLevel: Int {
     /**

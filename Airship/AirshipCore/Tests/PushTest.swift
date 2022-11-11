@@ -2,8 +2,7 @@
 
 import XCTest
 
-@testable
-import AirshipCore
+@testable import AirshipCore
 
 class PushTest: XCTestCase {
 
@@ -25,25 +24,33 @@ class PushTest: XCTestCase {
     private var privacyManager: PrivacyManager!
     private var push: Push!
 
-
     override func setUpWithError() throws {
-        self.privacyManager = PrivacyManager(dataStore: dataStore, defaultEnabledFeatures: .all, notificationCenter: notificationCenter)
+        self.privacyManager = PrivacyManager(
+            dataStore: dataStore,
+            defaultEnabledFeatures: .all,
+            notificationCenter: notificationCenter
+        )
         self.push = createPush()
         self.channel.updateRegistrationCalled = false
     }
 
     func createPush() -> Push {
-        return Push(config: RuntimeConfig(config: self.config, dataStore: self.dataStore),
-                    dataStore: dataStore,
-                    channel: channel,
-                    analytics: analtyics,
-                    privacyManager: privacyManager,
-                    permissionsManager: permissionsManager,
-                    notificationCenter: notificationCenter,
-                    notificationRegistrar: notificationRegistrar,
-                    apnsRegistrar: apnsRegistrar,
-                    badger: badger,
-                    mainDispatcher: dispatcher)
+        return Push(
+            config: RuntimeConfig(
+                config: self.config,
+                dataStore: self.dataStore
+            ),
+            dataStore: dataStore,
+            channel: channel,
+            analytics: analtyics,
+            privacyManager: privacyManager,
+            permissionsManager: permissionsManager,
+            notificationCenter: notificationCenter,
+            notificationRegistrar: notificationRegistrar,
+            apnsRegistrar: apnsRegistrar,
+            badger: badger,
+            mainDispatcher: dispatcher
+        )
     }
 
     func testBackgroundPushNotificationsEnabled() throws {
@@ -149,8 +156,12 @@ class PushTest: XCTestCase {
 
     func testUserPushNotificationsEnabled() throws {
         // Make sure updates are called through permissions manager
-        let permissionsManagerCalled = self.expectation(description: "Permissions manager called")
-        self.permissionsManager.addRequestExtender(permission: .displayNotifications) { _, completionHandler in
+        let permissionsManagerCalled = self.expectation(
+            description: "Permissions manager called"
+        )
+        self.permissionsManager.addRequestExtender(
+            permission: .displayNotifications
+        ) { _, completionHandler in
             permissionsManagerCalled.fulfill()
             completionHandler()
         }
@@ -159,7 +170,10 @@ class PushTest: XCTestCase {
         self.push.requestExplicitPermissionWhenEphemeral = false
 
         let updated = self.expectation(description: "Registration updated")
-        self.notificationRegistrar.onUpdateRegistration = { options, skipIfEphemeral, completionHandler in
+        self.notificationRegistrar.onUpdateRegistration = {
+            options,
+            skipIfEphemeral,
+            completionHandler in
             XCTAssertEqual([.alert, .badge], options)
             XCTAssertTrue(skipIfEphemeral)
             updated.fulfill()
@@ -172,7 +186,10 @@ class PushTest: XCTestCase {
 
     func testUserPushNotificationsDisabled() throws {
         let enabled = self.expectation(description: "Registration updated")
-        self.notificationRegistrar.onUpdateRegistration = { options, skipIfEphemeral, completionHandler in
+        self.notificationRegistrar.onUpdateRegistration = {
+            options,
+            skipIfEphemeral,
+            completionHandler in
             XCTAssertEqual([.badge, .alert, .sound], options)
             XCTAssertTrue(skipIfEphemeral)
             enabled.fulfill()
@@ -183,7 +200,10 @@ class PushTest: XCTestCase {
         self.wait(for: [enabled], timeout: 1)
 
         let disabled = self.expectation(description: "Registration updated")
-        self.notificationRegistrar.onUpdateRegistration = { options, skipIfEphemeral, completionHandler in
+        self.notificationRegistrar.onUpdateRegistration = {
+            options,
+            skipIfEphemeral,
+            completionHandler in
             XCTAssertEqual([], options)
             XCTAssertTrue(skipIfEphemeral)
             disabled.fulfill()
@@ -199,7 +219,10 @@ class PushTest: XCTestCase {
         self.push.requestExplicitPermissionWhenEphemeral = false
 
         let enabled = self.expectation(description: "Registration updated")
-        self.notificationRegistrar.onUpdateRegistration = { options, skipIfEphemeral, completionHandler in
+        self.notificationRegistrar.onUpdateRegistration = {
+            options,
+            skipIfEphemeral,
+            completionHandler in
             XCTAssertEqual([.badge, .alert, .sound], options)
             XCTAssertTrue(skipIfEphemeral)
             enabled.fulfill()
@@ -210,13 +233,15 @@ class PushTest: XCTestCase {
         self.wait(for: [enabled], timeout: 1)
 
         let disabled = self.expectation(description: "Registration updated")
-        self.notificationRegistrar.onUpdateRegistration = { options, skipIfEphemeral, completionHandler in
+        self.notificationRegistrar.onUpdateRegistration = {
+            options,
+            skipIfEphemeral,
+            completionHandler in
             XCTAssertEqual([], options)
             XCTAssertTrue(skipIfEphemeral)
             disabled.fulfill()
             completionHandler()
         }
-
 
         self.push.userPushNotificationsEnabled = false
         self.wait(for: [disabled], timeout: 1)
@@ -224,8 +249,12 @@ class PushTest: XCTestCase {
 
     func testEnableUserNotificationsAuthorized() throws {
         // Make sure updates are called through permissions manager
-        let permissionsManagerCalled = self.expectation(description: "Permissions manager called")
-        self.permissionsManager.addRequestExtender(permission: .displayNotifications) { _, completionHandler in
+        let permissionsManagerCalled = self.expectation(
+            description: "Permissions manager called"
+        )
+        self.permissionsManager.addRequestExtender(
+            permission: .displayNotifications
+        ) { _, completionHandler in
             permissionsManagerCalled.fulfill()
             completionHandler()
         }
@@ -234,7 +263,10 @@ class PushTest: XCTestCase {
         self.push.requestExplicitPermissionWhenEphemeral = false
 
         let updated = self.expectation(description: "Registration updated")
-        self.notificationRegistrar.onUpdateRegistration = { options, skipIfEphemeral, completionHandler in
+        self.notificationRegistrar.onUpdateRegistration = {
+            options,
+            skipIfEphemeral,
+            completionHandler in
             XCTAssertEqual([.alert, .badge], options)
             XCTAssertTrue(skipIfEphemeral)
             updated.fulfill()
@@ -251,7 +283,10 @@ class PushTest: XCTestCase {
             XCTAssertTrue(success)
         }
 
-        self.wait(for: [permissionsManagerCalled, updated, enabled], timeout: 1)
+        self.wait(
+            for: [permissionsManagerCalled, updated, enabled],
+            timeout: 1
+        )
     }
 
     func testEnableUserNotificationsDenied() throws {
@@ -273,7 +308,10 @@ class PushTest: XCTestCase {
         self.push.requestExplicitPermissionWhenEphemeral = true
 
         let updated = self.expectation(description: "Registration updated")
-        self.notificationRegistrar.onUpdateRegistration = { options, skipIfEphemeral, completionHandler in
+        self.notificationRegistrar.onUpdateRegistration = {
+            options,
+            skipIfEphemeral,
+            completionHandler in
             XCTAssertEqual([.alert, .badge], options)
             XCTAssertFalse(skipIfEphemeral)
             updated.fulfill()
@@ -285,24 +323,47 @@ class PushTest: XCTestCase {
     }
 
     func testDeviceToken() throws {
-        push.didRegisterForRemoteNotifications(PushTest.validDeviceToken.hexData)
+        push.didRegisterForRemoteNotifications(
+            PushTest.validDeviceToken.hexData
+        )
         XCTAssertEqual(PushTest.validDeviceToken, self.push.deviceToken)
     }
 
     func testSetQuietTime() throws {
-        self.push.setQuietTimeStartHour(12, startMinute: 30, endHour: 14, endMinute: 58)
-        XCTAssertEqual("12:30", self.push.quietTime![Push.quietTimeStartKey] as! String)
-        XCTAssertEqual("14:58", self.push.quietTime![Push.quietTimeEndKey] as! String)
+        self.push.setQuietTimeStartHour(
+            12,
+            startMinute: 30,
+            endHour: 14,
+            endMinute: 58
+        )
+        XCTAssertEqual(
+            "12:30",
+            self.push.quietTime![Push.quietTimeStartKey] as! String
+        )
+        XCTAssertEqual(
+            "14:58",
+            self.push.quietTime![Push.quietTimeEndKey] as! String
+        )
         XCTAssertTrue(self.channel.updateRegistrationCalled)
     }
 
     func testSetQuietTimeInvalid() throws {
         XCTAssertNil(self.push.quietTime)
 
-        self.push.setQuietTimeStartHour(25, startMinute: 30, endHour: 14, endMinute: 58)
+        self.push.setQuietTimeStartHour(
+            25,
+            startMinute: 30,
+            endHour: 14,
+            endMinute: 58
+        )
         XCTAssertNil(self.push.quietTime)
 
-        self.push.setQuietTimeStartHour(12, startMinute: 61, endHour: 14, endMinute: 58)
+        self.push.setQuietTimeStartHour(
+            12,
+            startMinute: 61,
+            endHour: 14,
+            endMinute: 58
+        )
         XCTAssertNil(self.push.quietTime)
     }
 
@@ -315,7 +376,9 @@ class PushTest: XCTestCase {
     }
 
     func testChannelPayloadRegistered() throws {
-        self.push.didRegisterForRemoteNotifications(PushTest.validDeviceToken.hexData)
+        self.push.didRegisterForRemoteNotifications(
+            PushTest.validDeviceToken.hexData
+        )
 
         let extended = expectation(description: "Extended")
         var payload: ChannelRegistrationPayload!
@@ -328,8 +391,12 @@ class PushTest: XCTestCase {
         self.wait(for: [extended], timeout: 1)
 
         XCTAssertEqual(PushTest.validDeviceToken, payload.channel.pushAddress)
-        XCTAssertTrue(payload.channel.iOSChannelSettings?.isTimeSensitive == false)
-        XCTAssertTrue(payload.channel.iOSChannelSettings?.isScheduledSummary == false)
+        XCTAssertTrue(
+            payload.channel.iOSChannelSettings?.isTimeSensitive == false
+        )
+        XCTAssertTrue(
+            payload.channel.iOSChannelSettings?.isScheduledSummary == false
+        )
     }
 
     func testChannelPayloadNotRegistered() throws {
@@ -348,23 +415,35 @@ class PushTest: XCTestCase {
         XCTAssertFalse(payload.channel.isBackgroundEnabled)
         XCTAssertNil(payload.channel.iOSChannelSettings?.quietTime)
         XCTAssertNil(payload.channel.iOSChannelSettings?.quietTimeTimeZone)
-        XCTAssertTrue(payload.channel.iOSChannelSettings?.isTimeSensitive == false)
-        XCTAssertTrue(payload.channel.iOSChannelSettings?.isScheduledSummary == false)
+        XCTAssertTrue(
+            payload.channel.iOSChannelSettings?.isTimeSensitive == false
+        )
+        XCTAssertTrue(
+            payload.channel.iOSChannelSettings?.isScheduledSummary == false
+        )
         XCTAssertNil(payload.channel.iOSChannelSettings?.badge)
     }
 
     func testChannelPayloadNotificationsEnabled() throws {
-        self.push.didRegisterForRemoteNotifications(PushTest.validDeviceToken.hexData)
+        self.push.didRegisterForRemoteNotifications(
+            PushTest.validDeviceToken.hexData
+        )
         apnsRegistrar.isRegisteredForRemoteNotifications = true
         apnsRegistrar.isRemoteNotificationBackgroundModeEnabled = true
         apnsRegistrar.isBackgroundRefreshStatusAvailable = true
 
         self.notificationRegistrar.onCheckStatus = { completionHandler in
-            completionHandler(.authorized, [.timeSensitive, .scheduledDelivery, .alert])
+            completionHandler(
+                .authorized,
+                [.timeSensitive, .scheduledDelivery, .alert]
+            )
         }
 
         let enabled = self.expectation(description: "Registration updated")
-        self.permissionsManager.requestPermission(.displayNotifications, enableAirshipUsageOnGrant: true) { status in
+        self.permissionsManager.requestPermission(
+            .displayNotifications,
+            enableAirshipUsageOnGrant: true
+        ) { status in
             enabled.fulfill()
             XCTAssertEqual(.granted, status)
         }
@@ -383,13 +462,22 @@ class PushTest: XCTestCase {
         XCTAssertEqual(PushTest.validDeviceToken, payload.channel.pushAddress)
         XCTAssertTrue(payload.channel.isOptedIn)
         XCTAssertTrue(payload.channel.isBackgroundEnabled)
-        XCTAssertTrue(payload.channel.iOSChannelSettings?.isTimeSensitive == true)
-        XCTAssertTrue(payload.channel.iOSChannelSettings?.isScheduledSummary == true)
+        XCTAssertTrue(
+            payload.channel.iOSChannelSettings?.isTimeSensitive == true
+        )
+        XCTAssertTrue(
+            payload.channel.iOSChannelSettings?.isScheduledSummary == true
+        )
     }
 
     func testChannelPayloadQuietTime() throws {
         self.push.quietTimeEnabled = true
-        self.push.setQuietTimeStartHour(1, startMinute: 30, endHour: 2, endMinute: 30)
+        self.push.setQuietTimeStartHour(
+            1,
+            startMinute: 30,
+            endHour: 2,
+            endMinute: 30
+        )
         self.push.timeZone = NSTimeZone(abbreviation: "EDT")
 
         let extended = expectation(description: "Extended")
@@ -401,14 +489,28 @@ class PushTest: XCTestCase {
 
         self.wait(for: [extended], timeout: 1)
 
-        XCTAssertEqual("01:30", payload.channel.iOSChannelSettings?.quietTime?.start)
-        XCTAssertEqual("02:30", payload.channel.iOSChannelSettings?.quietTime?.end)
-        XCTAssertEqual("America/New_York", payload.channel.iOSChannelSettings?.quietTimeTimeZone)
+        XCTAssertEqual(
+            "01:30",
+            payload.channel.iOSChannelSettings?.quietTime?.start
+        )
+        XCTAssertEqual(
+            "02:30",
+            payload.channel.iOSChannelSettings?.quietTime?.end
+        )
+        XCTAssertEqual(
+            "America/New_York",
+            payload.channel.iOSChannelSettings?.quietTimeTimeZone
+        )
     }
 
     func testChannelPayloadQuietTimeDisabled() throws {
         self.push.quietTimeEnabled = false
-        self.push.setQuietTimeStartHour(1, startMinute: 30, endHour: 2, endMinute: 30)
+        self.push.setQuietTimeStartHour(
+            1,
+            startMinute: 30,
+            endHour: 2,
+            endMinute: 30
+        )
         self.push.timeZone = NSTimeZone(abbreviation: "EDT")
 
         let extended = expectation(description: "Extended")
@@ -450,17 +552,25 @@ class PushTest: XCTestCase {
     }
 
     func testAnalyticsHeadersOptedIn() throws {
-        self.push.didRegisterForRemoteNotifications(PushTest.validDeviceToken.hexData)
+        self.push.didRegisterForRemoteNotifications(
+            PushTest.validDeviceToken.hexData
+        )
         apnsRegistrar.isRegisteredForRemoteNotifications = true
         apnsRegistrar.isRemoteNotificationBackgroundModeEnabled = true
         apnsRegistrar.isBackgroundRefreshStatusAvailable = true
 
         self.notificationRegistrar.onCheckStatus = { completionHandler in
-            completionHandler(.authorized, [.timeSensitive, .scheduledDelivery, .alert])
+            completionHandler(
+                .authorized,
+                [.timeSensitive, .scheduledDelivery, .alert]
+            )
         }
 
         let enabled = self.expectation(description: "Registration updated")
-        self.permissionsManager.requestPermission(.displayNotifications, enableAirshipUsageOnGrant: true) { status in
+        self.permissionsManager.requestPermission(
+            .displayNotifications,
+            enableAirshipUsageOnGrant: true
+        ) { status in
             enabled.fulfill()
             XCTAssertEqual(.granted, status)
         }
@@ -470,13 +580,15 @@ class PushTest: XCTestCase {
             "X-UA-Channel-Opted-In": "true",
             "X-UA-Notification-Prompted": "true",
             "X-UA-Channel-Background-Enabled": "true",
-            "X-UA-Push-Address": PushTest.validDeviceToken
+            "X-UA-Push-Address": PushTest.validDeviceToken,
         ]
         XCTAssertEqual(expected, self.analtyics.headers)
     }
 
     func testAnalyticsHeadersPushDisabled() throws {
-        self.push.didRegisterForRemoteNotifications(PushTest.validDeviceToken.hexData)
+        self.push.didRegisterForRemoteNotifications(
+            PushTest.validDeviceToken.hexData
+        )
         self.privacyManager.disableFeatures(.push)
         let expected = [
             "X-UA-Channel-Opted-In": "false",
@@ -493,7 +605,11 @@ class PushTest: XCTestCase {
 
     func testNotificationCategories() throws {
         let defaultCategories = NotificationCategories.defaultCategories()
-        let customCategory = UNNotificationCategory(identifier: "something", actions:[], intentIdentifiers: ["intents"])
+        let customCategory = UNNotificationCategory(
+            identifier: "something",
+            actions: [],
+            intentIdentifiers: ["intents"]
+        )
         let combined = Set(defaultCategories).union([customCategory])
 
         self.push.customCategories = Set([customCategory])
@@ -502,7 +618,9 @@ class PushTest: XCTestCase {
 
     func testRequireAuthorizationForDefaultCategories() throws {
         self.push.requireAuthorizationForDefaultCategories = true
-        let defaultCategories = NotificationCategories.defaultCategories(withRequireAuth: true)
+        let defaultCategories = NotificationCategories.defaultCategories(
+            withRequireAuth: true
+        )
         XCTAssertEqual(defaultCategories, notificationRegistrar.categories)
         XCTAssertEqual(defaultCategories, self.push.combinedCategories)
     }
@@ -546,7 +664,10 @@ class PushTest: XCTestCase {
             updated.fulfill()
         }
 
-        self.notificationCenter.post(name: AppStateTracker.didTransitionToForeground, object: nil)
+        self.notificationCenter.post(
+            name: AppStateTracker.didTransitionToForeground,
+            object: nil
+        )
         self.wait(for: [updated], timeout: 1)
 
         XCTAssertEqual(.authorized, self.push.authorizationStatus)
@@ -561,7 +682,10 @@ class PushTest: XCTestCase {
             updated.fulfill()
         }
 
-        self.notificationCenter.post(name: AppStateTracker.didTransitionToForeground, object: nil)
+        self.notificationCenter.post(
+            name: AppStateTracker.didTransitionToForeground,
+            object: nil
+        )
         self.wait(for: [updated], timeout: 1)
 
         XCTAssertTrue(self.channel.updateRegistrationCalled)
@@ -584,7 +708,10 @@ class PushTest: XCTestCase {
         self.push.userPushNotificationsEnabled = true
         self.wait(for: [completed], timeout: 1)
 
-        XCTAssertEqual([.alert, .badge, .sound, .provisional], self.push.notificationOptions)
+        XCTAssertEqual(
+            [.alert, .badge, .sound, .provisional],
+            self.push.notificationOptions
+        )
     }
 
     func testComponentEnabledUpdatesRegistration() {
@@ -592,8 +719,12 @@ class PushTest: XCTestCase {
         self.push.userPushNotificationsEnabled = true
 
         // Make sure updates are called through permissions manager
-        let permissionsManagerCalled = self.expectation(description: "Permissions manager called")
-        self.permissionsManager.addRequestExtender(permission: .displayNotifications) { _, completionHandler in
+        let permissionsManagerCalled = self.expectation(
+            description: "Permissions manager called"
+        )
+        self.permissionsManager.addRequestExtender(
+            permission: .displayNotifications
+        ) { _, completionHandler in
             permissionsManagerCalled.fulfill()
             completionHandler()
         }
@@ -607,21 +738,40 @@ class PushTest: XCTestCase {
         self.config.requestAuthorizationToUseNotifications = false
         self.push = createPush()
 
-        let customCategory = UNNotificationCategory(identifier: "something", actions:[], intentIdentifiers: ["intents"])
+        let customCategory = UNNotificationCategory(
+            identifier: "something",
+            actions: [],
+            intentIdentifiers: ["intents"]
+        )
         self.push.customCategories = Set([customCategory])
 
         XCTAssertNil(self.notificationRegistrar.categories)
     }
 
     func testPermissionsDelgateWhenAppIsHandlingAuthorization() {
-        XCTAssertTrue(self.permissionsManager.configuredPermissions.contains(.displayNotifications))
-        self.permissionsManager.setDelegate(nil, permission: .displayNotifications)
+        XCTAssertTrue(
+            self.permissionsManager.configuredPermissions.contains(
+                .displayNotifications
+            )
+        )
+        self.permissionsManager.setDelegate(
+            nil,
+            permission: .displayNotifications
+        )
 
-        XCTAssertFalse(self.permissionsManager.configuredPermissions.contains(.displayNotifications))
+        XCTAssertFalse(
+            self.permissionsManager.configuredPermissions.contains(
+                .displayNotifications
+            )
+        )
         self.config.requestAuthorizationToUseNotifications = false
         self.push = createPush()
 
-        XCTAssertFalse(self.permissionsManager.configuredPermissions.contains(.displayNotifications))
+        XCTAssertFalse(
+            self.permissionsManager.configuredPermissions.contains(
+                .displayNotifications
+            )
+        )
     }
 
     func testForwardNotificationRegistrationFinished() {
@@ -632,7 +782,10 @@ class PushTest: XCTestCase {
         }
 
         let called = self.expectation(description: "Delegate called")
-        self.registrationDelegate.onNotificationRegistrationFinished = { settings, categories, status in
+        self.registrationDelegate.onNotificationRegistrationFinished = {
+            settings,
+            categories,
+            status in
             XCTAssertEqual([.badge], settings)
             XCTAssertEqual(self.push.combinedCategories, categories)
             XCTAssertEqual(.provisional, status)
@@ -650,7 +803,8 @@ class PushTest: XCTestCase {
         }
 
         let called = self.expectation(description: "Delegate called")
-        self.registrationDelegate.onNotificationAuthorizedSettingsDidChange = { settings in
+        self.registrationDelegate.onNotificationAuthorizedSettingsDidChange = {
+            settings in
             XCTAssertEqual([.alert], settings)
             called.fulfill()
         }
@@ -666,12 +820,16 @@ class PushTest: XCTestCase {
         }
 
         let called = self.expectation(description: "Delegate called")
-        self.registrationDelegate.onNotificationAuthorizedSettingsDidChange = { settings in
+        self.registrationDelegate.onNotificationAuthorizedSettingsDidChange = {
+            settings in
             XCTAssertEqual([.badge], settings)
             called.fulfill()
         }
 
-        self.notificationCenter.post(name: AppStateTracker.didTransitionToForeground, object: nil)
+        self.notificationCenter.post(
+            name: AppStateTracker.didTransitionToForeground,
+            object: nil
+        )
         self.wait(for: [called], timeout: 1)
     }
 
@@ -697,7 +855,10 @@ class PushTest: XCTestCase {
 
         let called = self.expectation(description: "Delegate called")
         self.registrationDelegate.onAPNSRegistrationFailed = { error in
-            XCTAssertEqual(expectedError.localizedDescription, error.localizedDescription)
+            XCTAssertEqual(
+                expectedError.localizedDescription,
+                error.localizedDescription
+            )
             called.fulfill()
         }
 
@@ -708,14 +869,25 @@ class PushTest: XCTestCase {
     func testReceivedForegroundNotification() {
         let expected = ["cool": "payload"]
 
-        let completionHandlerCalled = self.expectation(description: "Completion handler called")
-        self.push.didReceiveRemoteNotification(expected, isForeground: true, completionHandler: { result  in
-            let res: UIBackgroundFetchResult = result as! UIBackgroundFetchResult
-            XCTAssertEqual(UIBackgroundFetchResult.noData, res)
-            completionHandlerCalled.fulfill()
-        })
+        let completionHandlerCalled = self.expectation(
+            description: "Completion handler called"
+        )
+        self.push.didReceiveRemoteNotification(
+            expected,
+            isForeground: true,
+            completionHandler: { result in
+                let res: UIBackgroundFetchResult =
+                    result as! UIBackgroundFetchResult
+                XCTAssertEqual(UIBackgroundFetchResult.noData, res)
+                completionHandlerCalled.fulfill()
+            }
+        )
 
-        self.wait(for: [completionHandlerCalled], timeout: 1, enforceOrder: true)
+        self.wait(
+            for: [completionHandlerCalled],
+            timeout: 1,
+            enforceOrder: true
+        )
     }
 
     func testForwardReceivedForegroundNotification() {
@@ -723,34 +895,61 @@ class PushTest: XCTestCase {
         self.push.pushNotificationDelegate = self.pushDelegate
 
         let delegateCalled = self.expectation(description: "Delegate called")
-        self.pushDelegate.onReceivedForegroundNotification = { notificaiton, completionHandler in
-            XCTAssertEqual(expected as NSDictionary, notificaiton as NSDictionary)
+        self.pushDelegate.onReceivedForegroundNotification = {
+            notificaiton,
+            completionHandler in
+            XCTAssertEqual(
+                expected as NSDictionary,
+                notificaiton as NSDictionary
+            )
             delegateCalled.fulfill()
             completionHandler()
         }
 
-        let completionHandlerCalled = self.expectation(description: "Completion handler called")
-        self.push.didReceiveRemoteNotification(expected, isForeground: true, completionHandler: { result  in
-            let res: UIBackgroundFetchResult = result as! UIBackgroundFetchResult
-            XCTAssertEqual(UIBackgroundFetchResult.noData, res)
-            completionHandlerCalled.fulfill()
-        })
+        let completionHandlerCalled = self.expectation(
+            description: "Completion handler called"
+        )
+        self.push.didReceiveRemoteNotification(
+            expected,
+            isForeground: true,
+            completionHandler: { result in
+                let res: UIBackgroundFetchResult =
+                    result as! UIBackgroundFetchResult
+                XCTAssertEqual(UIBackgroundFetchResult.noData, res)
+                completionHandlerCalled.fulfill()
+            }
+        )
 
-        self.wait(for: [delegateCalled, completionHandlerCalled], timeout: 1, enforceOrder: true)
+        self.wait(
+            for: [delegateCalled, completionHandlerCalled],
+            timeout: 1,
+            enforceOrder: true
+        )
 
     }
 
     func testReceivedBackgroundNotification() {
         let expected = ["cool": "payload"]
 
-        let completionHandlerCalled = self.expectation(description: "Completion handler called")
-        self.push.didReceiveRemoteNotification(expected, isForeground: false, completionHandler: { result  in
-            let res: UIBackgroundFetchResult = result as! UIBackgroundFetchResult
-            XCTAssertEqual(UIBackgroundFetchResult.noData, res)
-            completionHandlerCalled.fulfill()
-        })
+        let completionHandlerCalled = self.expectation(
+            description: "Completion handler called"
+        )
+        self.push.didReceiveRemoteNotification(
+            expected,
+            isForeground: false,
+            completionHandler: { result in
+                let res: UIBackgroundFetchResult =
+                    result as! UIBackgroundFetchResult
+                XCTAssertEqual(UIBackgroundFetchResult.noData, res)
+                completionHandlerCalled.fulfill()
+            }
+        )
 
-        self.wait(for: [completionHandlerCalled], timeout: 1, enforceOrder: true)
+        self.wait(
+            for: [completionHandlerCalled],
+            timeout: 1,
+            enforceOrder: true
+        )
     }
 
     func testForwardReceivedBackgroundNotification() {
@@ -758,20 +957,36 @@ class PushTest: XCTestCase {
         self.push.pushNotificationDelegate = self.pushDelegate
 
         let delegateCalled = self.expectation(description: "Delegate called")
-        self.pushDelegate.onReceivedBackgroundNotification = { notificaiton, completionHandler in
-            XCTAssertEqual(expected as NSDictionary, notificaiton as NSDictionary)
+        self.pushDelegate.onReceivedBackgroundNotification = {
+            notificaiton,
+            completionHandler in
+            XCTAssertEqual(
+                expected as NSDictionary,
+                notificaiton as NSDictionary
+            )
             delegateCalled.fulfill()
             completionHandler(.newData)
         }
 
-        let completionHandlerCalled = self.expectation(description: "Completion handler called")
-        self.push.didReceiveRemoteNotification(expected, isForeground: false, completionHandler: { result  in
-            let res: UIBackgroundFetchResult = result as! UIBackgroundFetchResult
-            XCTAssertEqual(UIBackgroundFetchResult.newData, res)
-            completionHandlerCalled.fulfill()
-        })
+        let completionHandlerCalled = self.expectation(
+            description: "Completion handler called"
+        )
+        self.push.didReceiveRemoteNotification(
+            expected,
+            isForeground: false,
+            completionHandler: { result in
+                let res: UIBackgroundFetchResult =
+                    result as! UIBackgroundFetchResult
+                XCTAssertEqual(UIBackgroundFetchResult.newData, res)
+                completionHandlerCalled.fulfill()
+            }
+        )
 
-        self.wait(for: [delegateCalled, completionHandlerCalled], timeout: 1, enforceOrder: true)
+        self.wait(
+            for: [delegateCalled, completionHandlerCalled],
+            timeout: 1,
+            enforceOrder: true
+        )
     }
 
     func testOptionsPermissionDelegate() {
@@ -779,19 +994,24 @@ class PushTest: XCTestCase {
         self.push.notificationOptions = .alert
 
         let updated = self.expectation(description: "Registration updated")
-        self.notificationRegistrar.onUpdateRegistration = { options, skipIfEphemeral, completionHandler in
+        self.notificationRegistrar.onUpdateRegistration = {
+            options,
+            skipIfEphemeral,
+            completionHandler in
             XCTAssertEqual([.alert], options)
             XCTAssertTrue(skipIfEphemeral)
             updated.fulfill()
             completionHandler()
         }
 
-        let completionHandlerCalled = self.expectation(description: "Completion handler called")
+        let completionHandlerCalled = self.expectation(
+            description: "Completion handler called"
+        )
         self.permissionsManager.requestPermission(.displayNotifications) { _ in
             completionHandlerCalled.fulfill()
         }
 
-        self.wait(for: [completionHandlerCalled, updated], timeout: 1);
+        self.wait(for: [completionHandlerCalled, updated], timeout: 1)
     }
 }
 
@@ -805,12 +1025,22 @@ extension String {
 }
 
 class TestPushNotificationDelegate: NSObject, PushNotificationDelegate {
-    var onReceivedForegroundNotification: (([AnyHashable : Any], () -> Void) -> Void)?
-    var onReceivedBackgroundNotification: (([AnyHashable : Any], (UIBackgroundFetchResult) -> Void) -> Void)?
-    var onReceivedNotificationResponse: ((UNNotificationResponse, () -> Void) -> Void)?
-    var onExtend: ((UNNotificationPresentationOptions, UNNotification) -> UNNotificationPresentationOptions)?
+    var onReceivedForegroundNotification:
+        (([AnyHashable: Any], () -> Void) -> Void)?
+    var onReceivedBackgroundNotification:
+        (([AnyHashable: Any], (UIBackgroundFetchResult) -> Void) -> Void)?
+    var onReceivedNotificationResponse:
+        ((UNNotificationResponse, () -> Void) -> Void)?
+    var onExtend:
+        (
+            (UNNotificationPresentationOptions, UNNotification) ->
+                UNNotificationPresentationOptions
+        )?
 
-    func receivedForegroundNotification(_ userInfo: [AnyHashable : Any], completionHandler: @escaping () -> Void) {
+    func receivedForegroundNotification(
+        _ userInfo: [AnyHashable: Any],
+        completionHandler: @escaping () -> Void
+    ) {
         guard let block = onReceivedForegroundNotification else {
             completionHandler()
             return
@@ -818,7 +1048,10 @@ class TestPushNotificationDelegate: NSObject, PushNotificationDelegate {
         block(userInfo, completionHandler)
     }
 
-    func receivedBackgroundNotification(_ userInfo: [AnyHashable : Any], completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+    func receivedBackgroundNotification(
+        _ userInfo: [AnyHashable: Any],
+        completionHandler: @escaping (UIBackgroundFetchResult) -> Void
+    ) {
         guard let block = onReceivedBackgroundNotification else {
             completionHandler(.noData)
             return
@@ -826,7 +1059,10 @@ class TestPushNotificationDelegate: NSObject, PushNotificationDelegate {
         block(userInfo, completionHandler)
     }
 
-    func receivedNotificationResponse(_ notificationResponse: UNNotificationResponse, completionHandler: @escaping () -> Void) {
+    func receivedNotificationResponse(
+        _ notificationResponse: UNNotificationResponse,
+        completionHandler: @escaping () -> Void
+    ) {
         guard let block = onReceivedNotificationResponse else {
             completionHandler()
             return
@@ -834,25 +1070,44 @@ class TestPushNotificationDelegate: NSObject, PushNotificationDelegate {
         block(notificationResponse, completionHandler)
     }
 
-    func extend(_ options: UNNotificationPresentationOptions, notification: UNNotification) -> UNNotificationPresentationOptions {
+    func extend(
+        _ options: UNNotificationPresentationOptions,
+        notification: UNNotification
+    ) -> UNNotificationPresentationOptions {
         return self.onExtend?(options, notification) ?? options
     }
 }
 
 class TestRegistraitonDelegate: NSObject, RegistrationDelegate {
 
-    var onNotificationRegistrationFinished: ((UAAuthorizedNotificationSettings, Set<UNNotificationCategory>, UAAuthorizationStatus) -> Void)?
-    var onNotificationAuthorizedSettingsDidChange: ((UAAuthorizedNotificationSettings) -> Void)?
+    var onNotificationRegistrationFinished:
+        (
+            (
+                UAAuthorizedNotificationSettings, Set<UNNotificationCategory>,
+                UAAuthorizationStatus
+            ) -> Void
+        )?
+    var onNotificationAuthorizedSettingsDidChange:
+        ((UAAuthorizedNotificationSettings) -> Void)?
     var onAPNSRegistrationSucceeded: ((Data) -> Void)?
     var onAPNSRegistrationFailed: ((Error) -> Void)?
 
-    func notificationRegistrationFinished(withAuthorizedSettings authorizedSettings: UAAuthorizedNotificationSettings,
-                                          categories: Set<UNNotificationCategory>,
-                                          status: UAAuthorizationStatus) {
-        self.onNotificationRegistrationFinished?(authorizedSettings, categories, status)
+    func notificationRegistrationFinished(
+        withAuthorizedSettings authorizedSettings:
+            UAAuthorizedNotificationSettings,
+        categories: Set<UNNotificationCategory>,
+        status: UAAuthorizationStatus
+    ) {
+        self.onNotificationRegistrationFinished?(
+            authorizedSettings,
+            categories,
+            status
+        )
     }
 
-    func notificationAuthorizedSettingsDidChange(_ authorizedSettings: UAAuthorizedNotificationSettings) {
+    func notificationAuthorizedSettingsDidChange(
+        _ authorizedSettings: UAAuthorizedNotificationSettings
+    ) {
         self.onNotificationAuthorizedSettingsDidChange?(authorizedSettings)
     }
 
@@ -867,14 +1122,28 @@ class TestRegistraitonDelegate: NSObject, RegistrationDelegate {
 
 class TestNotificationRegistrar: NotificationRegistrar {
     var categories: Set<UNNotificationCategory>?
-    var onCheckStatus: ((((UAAuthorizationStatus, UAAuthorizedNotificationSettings) -> Void)) -> Void)?
-    var onUpdateRegistration: ((UANotificationOptions, Bool, (() -> Void)) -> Void)?
+    var onCheckStatus:
+        (
+            (
+                (
+                    (UAAuthorizationStatus, UAAuthorizedNotificationSettings) ->
+                        Void
+                )
+            ) ->
+                Void
+        )?
+    var onUpdateRegistration:
+        ((UANotificationOptions, Bool, (() -> Void)) -> Void)?
 
     func setCategories(_ categories: Set<UNNotificationCategory>) {
         self.categories = categories
     }
 
-    func checkStatus(completionHandler: @escaping (UAAuthorizationStatus, UAAuthorizedNotificationSettings) -> Void) {
+    func checkStatus(
+        completionHandler: @escaping (
+            UAAuthorizationStatus, UAAuthorizedNotificationSettings
+        ) -> Void
+    ) {
         guard let callback = self.onCheckStatus else {
             completionHandler(.notDetermined, [])
             return
@@ -882,7 +1151,11 @@ class TestNotificationRegistrar: NotificationRegistrar {
         callback(completionHandler)
     }
 
-    func updateRegistration(options: UANotificationOptions, skipIfEphemeral: Bool, completionHandler: @escaping () -> Void) {
+    func updateRegistration(
+        options: UANotificationOptions,
+        skipIfEphemeral: Bool,
+        completionHandler: @escaping () -> Void
+    ) {
         guard let callback = self.onUpdateRegistration else {
             completionHandler()
             return

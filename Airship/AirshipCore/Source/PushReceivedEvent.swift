@@ -1,37 +1,29 @@
 /* Copyright Airship and Contributors */
 
-/**
- * - Note: For Internal use only :nodoc:
- */
+/// - Note: For Internal use only :nodoc:
 @objc(UAPushReceivedEvent)
-class PushReceivedEvent : NSObject, Event {
+class PushReceivedEvent: NSObject, Event {
 
     @objc
     public var priority: EventPriority {
-        get {
-            return .normal
-        }
+        return .normal
     }
 
     @objc
-    public var eventType : String {
-        get {
-            return "push_received"
-        }
+    public var eventType: String {
+        return "push_received"
     }
 
-    private let _data : [AnyHashable : Any]
+    private let _data: [AnyHashable: Any]
 
     @objc
-    public var data: [AnyHashable : Any] {
-        get {
-            return self._data
-        }
+    public var data: [AnyHashable: Any] {
+        return self._data
     }
 
     @objc
-    public init(notification: [AnyHashable : Any]) {
-        var data: [AnyHashable : Any] = [:]
+    public init(notification: [AnyHashable: Any]) {
+        var data: [AnyHashable: Any] = [:]
         data["metadata"] = notification["com.urbanairship.metadata"]
         data["push_id"] = notification["_"] ?? "MISSING_SEND_ID"
 

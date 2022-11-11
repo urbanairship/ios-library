@@ -6,7 +6,7 @@ import Foundation
 public enum AirshipJSON: Codable, Equatable {
     case string(String)
     case number(Double)
-    case object([String:AirshipJSON])
+    case object([String: AirshipJSON])
     case array([AirshipJSON])
     case bool(Bool)
     case null
@@ -16,13 +16,13 @@ public enum AirshipJSON: Codable, Equatable {
         switch self {
         case .array(let array): try container.encode(array)
         case .object(let object): try container.encode(object)
-        case .number(let number):  try container.encode(number)
+        case .number(let number): try container.encode(number)
         case .string(let string): try container.encode(string)
         case .bool(let bool): try container.encode(bool)
         case .null: try container.encodeNil()
         }
     }
-    
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
 
@@ -44,7 +44,7 @@ public enum AirshipJSON: Codable, Equatable {
     }
 
     public func unWrap() -> Any? {
-        switch (self) {
+        switch self {
         case .string(let value):
             return value
         case .number(let value):

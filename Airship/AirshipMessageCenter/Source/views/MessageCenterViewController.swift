@@ -1,8 +1,8 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-import UIKit
 import SwiftUI
+import UIKit
 
 /// View controller for Message Center view
 @objc(UAMessageCenterViewController)
@@ -33,8 +33,9 @@ public class MessageCenterViewControllerFactory: NSObject {
     }
 }
 
-fileprivate class MessageCenterViewController<Content> : UIHostingController<Content> where Content : View {
-    
+private class MessageCenterViewController<Content>: UIHostingController<Content>
+where Content: View {
+
     override init(rootView: Content) {
         super.init(rootView: rootView)
         self.view.backgroundColor = .clear

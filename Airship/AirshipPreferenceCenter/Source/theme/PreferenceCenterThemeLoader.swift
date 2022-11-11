@@ -4,30 +4,41 @@ import Foundation
 import SwiftUI
 
 #if canImport(AirshipCore)
-import AirshipCore
+    import AirshipCore
 #endif
 
 struct PreferenceCenterThemeLoader {
     static func defaultPlist() -> PreferenceCenterTheme? {
-        if let _ = try? plistPath(file: "AirshipPreferenceCenterTheme", bundle: Bundle.main) {
+        if let _ = try? plistPath(
+            file: "AirshipPreferenceCenterTheme",
+            bundle: Bundle.main
+        ) {
             do {
                 return try fromPlist("AirshipPreferenceCenterTheme")
             } catch {
-                AirshipLogger.error("Unable to load preference center theme \(error)")
+                AirshipLogger.error(
+                    "Unable to load preference center theme \(error)"
+                )
             }
-        } else if let _ = try? plistPath(file: "AirshipPreferenceCenterStyle", bundle: Bundle.main) {
+        } else if let _ = try? plistPath(
+            file: "AirshipPreferenceCenterStyle",
+            bundle: Bundle.main
+        ) {
             do {
                 return try fromPlist("AirshipPreferenceCenterStyle")
             } catch {
-                AirshipLogger.error("Unable to load preference center theme \(error)")
+                AirshipLogger.error(
+                    "Unable to load preference center theme \(error)"
+                )
             }
         }
 
         return nil
     }
 
-
-    static func fromPlist(_ file: String, bundle: Bundle = Bundle.main) throws -> PreferenceCenterTheme {
+    static func fromPlist(_ file: String, bundle: Bundle = Bundle.main) throws
+        -> PreferenceCenterTheme
+    {
         let path = try plistPath(file: file, bundle: bundle)
 
         guard let data = FileManager.default.contents(atPath: path) else {
@@ -37,17 +48,16 @@ struct PreferenceCenterThemeLoader {
         let decoder = PropertyListDecoder()
 
         let config = try decoder.decode(Config.self, from: data)
-        if (config.isEmpty) {
-            let legacy = try  decoder.decode(LegacyConfig.self, from: data)
-            return try legacy.toPreferenceCenterTheme()
-        } else {
+        guard config.isEmpty else {
             return try config.toPreferenceCenterTheme()
         }
+        let legacy = try decoder.decode(LegacyConfig.self, from: data)
+        return try legacy.toPreferenceCenterTheme()
     }
 
     static func plistPath(file: String, bundle: Bundle) throws -> String {
         guard let path = bundle.path(forResource: file, ofType: "plist"),
-              FileManager.default.fileExists(atPath: path)
+            FileManager.default.fileExists(atPath: path)
         else {
             throw AirshipErrors.error("File not found \(file).")
         }
@@ -182,8 +192,8 @@ struct PreferenceCenterThemeLoader {
     }
 }
 
-fileprivate extension String {
-    func toColor() -> Color {
+extension String {
+    fileprivate func toColor() -> Color {
         let colorString = self.trimmingCharacters(in: .whitespaces)
         if let uiColor = ColorUtils.color(colorString) {
             return Color(uiColor)
@@ -192,7 +202,7 @@ fileprivate extension String {
         return Color(colorString)
     }
 
-    func toUIColor() -> UIColor? {
+    fileprivate func toUIColor() -> UIColor? {
         let colorString = self.trimmingCharacters(in: .whitespaces)
         if let uiColor = ColorUtils.color(colorString) {
             return uiColor
@@ -202,25 +212,41 @@ fileprivate extension String {
     }
 }
 
-fileprivate extension PreferenceCenterThemeLoader.FontConfig {
-    func toFont() throws -> Font {
-        guard let fontSize = Double(fontSize.trimmingCharacters(in: .whitespaces)),
-              fontSize > 0.0
+extension PreferenceCenterThemeLoader.FontConfig {
+    fileprivate func toFont() throws -> Font {
+        guard
+            let fontSize = Double(
+                fontSize.trimmingCharacters(in: .whitespaces)
+            ),
+            fontSize > 0.0
         else {
-            throw AirshipErrors.error("Font size must represent a double greater than 0")
+            throw AirshipErrors.error(
+                "Font size must represent a double greater than 0"
+            )
         }
 
-        return Font.custom(fontName.trimmingCharacters(in: .whitespaces), size: fontSize)
+        return Font.custom(
+            fontName.trimmingCharacters(in: .whitespaces),
+            size: fontSize
+        )
     }
 
-    func toUIFont() throws -> UIFont? {
-        guard let fontSize = Double(fontSize.trimmingCharacters(in: .whitespaces)),
-              fontSize > 0.0
+    fileprivate func toUIFont() throws -> UIFont? {
+        guard
+            let fontSize = Double(
+                fontSize.trimmingCharacters(in: .whitespaces)
+            ),
+            fontSize > 0.0
         else {
-            throw AirshipErrors.error("Font size must represent a double greater than 0")
+            throw AirshipErrors.error(
+                "Font size must represent a double greater than 0"
+            )
         }
 
-        return UIFont(name: fontName.trimmingCharacters(in: .whitespaces), size: fontSize)
+        return UIFont(
+            name: fontName.trimmingCharacters(in: .whitespaces),
+            size: fontSize
+        )
     }
 }
 
@@ -265,7 +291,9 @@ extension PreferenceCenterThemeLoader.Config.CommonSection {
 }
 
 extension PreferenceCenterThemeLoader.Config.LabeledSectionBreak {
-    func toLabeledSectionBreak() throws -> PreferenceCenterTheme.LabeledSectionBreak {
+    func toLabeledSectionBreak() throws
+        -> PreferenceCenterTheme.LabeledSectionBreak
+    {
         return PreferenceCenterTheme.LabeledSectionBreak(
             titleAppearance: try self.titleAppearance?.toTextApperance(),
             backgroundColor: self.backgroundColor?.toColor()
@@ -273,9 +301,10 @@ extension PreferenceCenterThemeLoader.Config.LabeledSectionBreak {
     }
 }
 
-
 extension PreferenceCenterThemeLoader.Config.ChannelSubscription {
-    func toChannelSubscription() throws -> PreferenceCenterTheme.ChannelSubscription {
+    func toChannelSubscription() throws
+        -> PreferenceCenterTheme.ChannelSubscription
+    {
         return PreferenceCenterTheme.ChannelSubscription(
             titleAppearance: try self.titleAppearance?.toTextApperance(),
             subtitleAppearance: try self.subtitleAppearance?.toTextApperance(),
@@ -285,7 +314,9 @@ extension PreferenceCenterThemeLoader.Config.ChannelSubscription {
 }
 
 extension PreferenceCenterThemeLoader.Config.ContactSubscription {
-    func toContactSubscription() throws -> PreferenceCenterTheme.ContactSubscription {
+    func toContactSubscription() throws
+        -> PreferenceCenterTheme.ContactSubscription
+    {
         return PreferenceCenterTheme.ContactSubscription(
             titleAppearance: try self.titleAppearance?.toTextApperance(),
             subtitleAppearance: try self.subtitleAppearance?.toTextApperance(),
@@ -295,7 +326,9 @@ extension PreferenceCenterThemeLoader.Config.ContactSubscription {
 }
 
 extension PreferenceCenterThemeLoader.Config.ContactSubscriptionGroup {
-    func toContactSubscriptionGroup() throws -> PreferenceCenterTheme.ContactSubscriptionGroup {
+    func toContactSubscriptionGroup() throws
+        -> PreferenceCenterTheme.ContactSubscriptionGroup
+    {
         return PreferenceCenterTheme.ContactSubscriptionGroup(
             titleAppearance: try self.titleAppearance?.toTextApperance(),
             subtitleAppearance: try self.subtitleAppearance?.toTextApperance(),
@@ -309,7 +342,8 @@ extension PreferenceCenterThemeLoader.Config.Alert {
         return PreferenceCenterTheme.Alert(
             titleAppearance: try self.titleAppearance?.toTextApperance(),
             subtitleAppearance: try self.subtitleAppearance?.toTextApperance(),
-            buttonLabelAppearance: try self.buttonLabelAppearance?.toTextApperance(),
+            buttonLabelAppearance: try self.buttonLabelAppearance?
+                .toTextApperance(),
             buttonBackgroundColor: self.buttonBackgroundColor?.toColor()
         )
     }
@@ -319,11 +353,14 @@ extension PreferenceCenterThemeLoader.Config.PreferenceCenter {
     func toPreferenceCenter() throws -> PreferenceCenterTheme.PreferenceCenter {
         return PreferenceCenterTheme.PreferenceCenter(
             subtitleAppearance: try self.subtitleAppearance?.toTextApperance(),
-            retryButtonBackgroundColor: self.retryButtonBackgroundColor?.toColor(),
-            retryButtonLabelAppearance: try self.retryButtonLabelAppearance?.toTextApperance(),
+            retryButtonBackgroundColor: self.retryButtonBackgroundColor?
+                .toColor(),
+            retryButtonLabelAppearance: try self.retryButtonLabelAppearance?
+                .toTextApperance(),
             retryButtonLabel: self.retryButtonLabel,
             retryMessage: self.retryMessage,
-            retryMessageAppearance: try self.retryMessageAppearance?.toTextApperance()
+            retryMessageAppearance: try self.retryMessageAppearance?
+                .toTextApperance()
         )
     }
 }
@@ -337,43 +374,52 @@ extension PreferenceCenterThemeLoader.Config.ViewController {
     }
 }
 
-fileprivate extension PreferenceCenterThemeLoader.Config {
-    var isEmpty: Bool {
+extension PreferenceCenterThemeLoader.Config {
+    fileprivate var isEmpty: Bool {
         return self.viewController == nil
-        && self.preferenceCenter == nil
-        && self.commonSection == nil
-        && self.labeledSectionBreak == nil
-        && self.alert == nil
-        && self.channelSubscription == nil
-        && self.contactSubscription == nil
-        && self.contactSubscription == nil
-        && self.contactSubscriptionGroup == nil
+            && self.preferenceCenter == nil
+            && self.commonSection == nil
+            && self.labeledSectionBreak == nil
+            && self.alert == nil
+            && self.channelSubscription == nil
+            && self.contactSubscription == nil
+            && self.contactSubscription == nil
+            && self.contactSubscriptionGroup == nil
 
     }
-    func toPreferenceCenterTheme() throws -> PreferenceCenterTheme {
+    fileprivate func toPreferenceCenterTheme() throws -> PreferenceCenterTheme {
         return PreferenceCenterTheme(
             viewController: try self.viewController?.toViewController(),
             preferenceCenter: try self.preferenceCenter?.toPreferenceCenter(),
             commonSection: try self.commonSection?.toCommonSection(),
-            labeledSectionBreak: try self.labeledSectionBreak?.toLabeledSectionBreak(),
+            labeledSectionBreak: try self.labeledSectionBreak?
+                .toLabeledSectionBreak(),
             alert: try self.alert?.toAlert(),
-            channelSubscription: try self.channelSubscription?.toChannelSubscription(),
-            contactSubscription: try self.contactSubscription?.toContactSubscription(),
-            contactSubscriptionGroup: try self.contactSubscriptionGroup?.toContactSubscriptionGroup()
+            channelSubscription: try self.channelSubscription?
+                .toChannelSubscription(),
+            contactSubscription: try self.contactSubscription?
+                .toContactSubscription(),
+            contactSubscriptionGroup: try self.contactSubscriptionGroup?
+                .toContactSubscriptionGroup()
         )
     }
 }
 
-fileprivate extension PreferenceCenterThemeLoader.LegacyConfig {
-    func toPreferenceCenterTheme() throws -> PreferenceCenterTheme {
+extension PreferenceCenterThemeLoader.LegacyConfig {
+    fileprivate func toPreferenceCenterTheme() throws -> PreferenceCenterTheme {
         let preferenceTitle = PreferenceCenterTheme.TextAppearance(
-            font: try (self.preferenceTitleTextFont ?? self.preferenceTextFont)?.toFont(),
-            color: (self.preferenceTitleTextColor ?? self.preferenceTextColor)?.toColor()
+            font: try (self.preferenceTitleTextFont ?? self.preferenceTextFont)?
+                .toFont(),
+            color: (self.preferenceTitleTextColor ?? self.preferenceTextColor)?
+                .toColor()
         )
 
         let preferenceSubtitle = PreferenceCenterTheme.TextAppearance(
-            font: try (self.preferenceSubtitleTextFont ?? self.preferenceTextFont)?.toFont(),
-            color: (self.preferenceSubtitleTextColor ?? self.preferenceTextColor)?.toColor()
+            font: try
+                (self.preferenceSubtitleTextFont ?? self.preferenceTextFont)?
+                .toFont(),
+            color: (self.preferenceSubtitleTextColor ?? self.preferenceTextColor)?
+                .toColor()
         )
 
         return PreferenceCenterTheme(
@@ -395,18 +441,28 @@ fileprivate extension PreferenceCenterThemeLoader.LegacyConfig {
             ),
             commonSection: PreferenceCenterTheme.CommonSection(
                 titleAppearance: PreferenceCenterTheme.TextAppearance(
-                    font: try (self.sectionTitleTextFont ?? self.sectionTextFont)?.toFont(),
-                    color: (self.sectionTitleTextColor ?? self.sectionTextColor)?.toColor()
+                    font: try
+                        (self.sectionTitleTextFont ?? self.sectionTextFont)?
+                        .toFont(),
+                    color: (self.sectionTitleTextColor ?? self.sectionTextColor)?
+                        .toColor()
                 ),
                 subtitleAppearance: PreferenceCenterTheme.TextAppearance(
-                    font: try (self.sectionSubtitleTextFont ?? self.sectionTextFont)?.toFont(),
-                    color: (self.sectionSubtitleTextColor ?? self.sectionTextColor)?.toColor()
+                    font: try
+                        (self.sectionSubtitleTextFont ?? self.sectionTextFont)?
+                        .toFont(),
+                    color: (self.sectionSubtitleTextColor
+                        ?? self.sectionTextColor)?
+                        .toColor()
                 )
             ),
             labeledSectionBreak: PreferenceCenterTheme.LabeledSectionBreak(
                 titleAppearance: PreferenceCenterTheme.TextAppearance(
-                    font: try (self.sectionBreakTextFont ?? self.sectionTextFont)?.toFont(),
-                    color: (self.sectionBreakTextColor ?? self.sectionTextColor)?.toColor()
+                    font: try
+                        (self.sectionBreakTextFont ?? self.sectionTextFont)?
+                        .toFont(),
+                    color: (self.sectionBreakTextColor ?? self.sectionTextColor)?
+                        .toColor()
                 ),
                 backgroundColor: self.sectionBreakBackgroundColor?.toColor()
             ),
@@ -423,7 +479,8 @@ fileprivate extension PreferenceCenterThemeLoader.LegacyConfig {
                     font: try self.alertButtonLabelFont?.toFont(),
                     color: self.alertButtonLabelColor?.toColor()
                 ),
-                buttonBackgroundColor: self.alertButtonBackgroundColor?.toColor()
+                buttonBackgroundColor: self.alertButtonBackgroundColor?
+                    .toColor()
             ),
             channelSubscription: PreferenceCenterTheme.ChannelSubscription(
                 titleAppearance: preferenceTitle,
@@ -435,18 +492,21 @@ fileprivate extension PreferenceCenterThemeLoader.LegacyConfig {
                 subtitleAppearance: preferenceSubtitle,
                 toggleTintColor: self.preferenceTextColor?.toColor()
             ),
-            contactSubscriptionGroup: PreferenceCenterTheme.ContactSubscriptionGroup(
-                titleAppearance: preferenceTitle,
-                subtitleAppearance: preferenceSubtitle,
-                chip: PreferenceCenterTheme.Chip(
-                    checkColor: self.preferenceChipCheckmarkCheckedBackgroundColor?.toColor(),
-                    borderColor: self.preferenceChipBorderColor?.toColor(),
-                    labelAppearance: PreferenceCenterTheme.TextAppearance(
-                        font: try self.preferenceChipTextFont?.toFont(),
-                        color: self.preferenceChipTextColor?.toColor()
+            contactSubscriptionGroup:
+                PreferenceCenterTheme.ContactSubscriptionGroup(
+                    titleAppearance: preferenceTitle,
+                    subtitleAppearance: preferenceSubtitle,
+                    chip: PreferenceCenterTheme.Chip(
+                        checkColor: self
+                            .preferenceChipCheckmarkCheckedBackgroundColor?
+                            .toColor(),
+                        borderColor: self.preferenceChipBorderColor?.toColor(),
+                        labelAppearance: PreferenceCenterTheme.TextAppearance(
+                            font: try self.preferenceChipTextFont?.toFont(),
+                            color: self.preferenceChipTextColor?.toColor()
+                        )
                     )
                 )
-            )
         )
     }
 }

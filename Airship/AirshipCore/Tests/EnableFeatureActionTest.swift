@@ -2,8 +2,7 @@
 
 import XCTest
 
-@testable
-import AirshipCore
+@testable import AirshipCore
 
 class EnableFeatureActionTest: XCTestCase {
 
@@ -11,7 +10,7 @@ class EnableFeatureActionTest: XCTestCase {
     var action: EnableFeatureAction!
 
     override func setUpWithError() throws {
-        self.action = EnableFeatureAction {  return self.testPrompter }
+        self.action = EnableFeatureAction { return self.testPrompter }
     }
 
     func testAcceptsArguments() throws {
@@ -21,31 +20,43 @@ class EnableFeatureActionTest: XCTestCase {
             Situation.manualInvocation,
             Situation.webViewInvocation,
             Situation.automation,
-            Situation.foregroundPush
+            Situation.foregroundPush,
         ]
 
         let rejectedSituations = [
             Situation.backgroundPush,
-            Situation.backgroundInteractiveButton
+            Situation.backgroundInteractiveButton,
         ]
 
         validSituations.forEach { (situation) in
-            let args = ActionArguments(value: EnableFeatureAction.locationActionValue, with: situation)
+            let args = ActionArguments(
+                value: EnableFeatureAction.locationActionValue,
+                with: situation
+            )
             XCTAssertTrue(self.action.acceptsArguments(args))
         }
 
         rejectedSituations.forEach { (situation) in
-            let args = ActionArguments(value: EnableFeatureAction.locationActionValue, with: situation)
+            let args = ActionArguments(
+                value: EnableFeatureAction.locationActionValue,
+                with: situation
+            )
             XCTAssertFalse(self.action.acceptsArguments(args))
         }
     }
 
     func testLocation() throws {
-        let arguments = ActionArguments(value: EnableFeatureAction.locationActionValue,
-                                        with: .manualInvocation)
+        let arguments = ActionArguments(
+            value: EnableFeatureAction.locationActionValue,
+            with: .manualInvocation
+        )
 
         let prompted = self.expectation(description: "Prompted")
-        testPrompter.onPrompt = { permission, enableAirshipUsage, fallbackSystemSetting, completionHandler in
+        testPrompter.onPrompt = {
+            permission,
+            enableAirshipUsage,
+            fallbackSystemSetting,
+            completionHandler in
             XCTAssertEqual(permission, .location)
             XCTAssertTrue(enableAirshipUsage)
             XCTAssertTrue(fallbackSystemSetting)
@@ -63,11 +74,17 @@ class EnableFeatureActionTest: XCTestCase {
     }
 
     func testBackgroundLocation() throws {
-        let arguments = ActionArguments(value: EnableFeatureAction.backgroundLocationActionValue,
-                                        with: .manualInvocation)
+        let arguments = ActionArguments(
+            value: EnableFeatureAction.backgroundLocationActionValue,
+            with: .manualInvocation
+        )
 
         let prompted = self.expectation(description: "Prompted")
-        testPrompter.onPrompt = { permission, enableAirshipUsage, fallbackSystemSetting, completionHandler in
+        testPrompter.onPrompt = {
+            permission,
+            enableAirshipUsage,
+            fallbackSystemSetting,
+            completionHandler in
             XCTAssertEqual(permission, .location)
             XCTAssertTrue(enableAirshipUsage)
             XCTAssertTrue(fallbackSystemSetting)
@@ -84,13 +101,18 @@ class EnableFeatureActionTest: XCTestCase {
         self.wait(for: [actionFinished, prompted], timeout: 1)
     }
 
-
     func testNotifications() throws {
-        let arguments = ActionArguments(value: EnableFeatureAction.userNotificationsActionValue,
-                                        with: .manualInvocation)
+        let arguments = ActionArguments(
+            value: EnableFeatureAction.userNotificationsActionValue,
+            with: .manualInvocation
+        )
 
         let prompted = self.expectation(description: "Prompted")
-        testPrompter.onPrompt = { permission, enableAirshipUsage, fallbackSystemSetting, completionHandler in
+        testPrompter.onPrompt = {
+            permission,
+            enableAirshipUsage,
+            fallbackSystemSetting,
+            completionHandler in
             XCTAssertEqual(permission, .displayNotifications)
             XCTAssertTrue(enableAirshipUsage)
             XCTAssertTrue(fallbackSystemSetting)
@@ -107,11 +129,17 @@ class EnableFeatureActionTest: XCTestCase {
         self.wait(for: [actionFinished, prompted], timeout: 1)
     }
 
-
     func testInvalidArgument() throws {
-        let arguments = ActionArguments(value: "invalid", with: .manualInvocation)
+        let arguments = ActionArguments(
+            value: "invalid",
+            with: .manualInvocation
+        )
 
-        testPrompter.onPrompt = { permission, enableAirshipUsage, fallbackSystemSetting, completionHandler in
+        testPrompter.onPrompt = {
+            permission,
+            enableAirshipUsage,
+            fallbackSystemSetting,
+            completionHandler in
             XCTFail()
         }
 
@@ -127,20 +155,32 @@ class EnableFeatureActionTest: XCTestCase {
     func testResultReceiver() throws {
         let resultReceived = self.expectation(description: "Result received")
 
-        let resultRecevier: (Permission, PermissionStatus, PermissionStatus) -> Void = { permission, start, end in
-            XCTAssertEqual(.notDetermined, start)
-            XCTAssertEqual(.granted, end)
-            XCTAssertEqual(.location, permission)
-            resultReceived.fulfill()
-        }
+        let resultRecevier:
+            (Permission, PermissionStatus, PermissionStatus) -> Void = {
+                permission,
+                start,
+                end in
+                XCTAssertEqual(.notDetermined, start)
+                XCTAssertEqual(.granted, end)
+                XCTAssertEqual(.location, permission)
+                resultReceived.fulfill()
+            }
 
-        let metadata = [PromptPermissionAction.resultReceiverMetadataKey: resultRecevier]
+        let metadata = [
+            PromptPermissionAction.resultReceiverMetadataKey: resultRecevier
+        ]
 
-        let arguments = ActionArguments(value: EnableFeatureAction.locationActionValue,
-                                        with: .manualInvocation,
-                                        metadata: metadata)
+        let arguments = ActionArguments(
+            value: EnableFeatureAction.locationActionValue,
+            with: .manualInvocation,
+            metadata: metadata
+        )
 
-        testPrompter.onPrompt = { permission, enableAirshipUsage, fallbackSystemSetting, completionHandler in
+        testPrompter.onPrompt = {
+            permission,
+            enableAirshipUsage,
+            fallbackSystemSetting,
+            completionHandler in
             completionHandler(.notDetermined, .granted)
         }
 
@@ -152,4 +192,3 @@ class EnableFeatureActionTest: XCTestCase {
         self.wait(for: [actionFinished, resultReceived], timeout: 1)
     }
 }
-

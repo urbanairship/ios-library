@@ -4,9 +4,9 @@ import Foundation
 import SwiftUI
 
 #if canImport(AirshipCore)
-import AirshipCore
+    import AirshipCore
 #elseif canImport(AirshipKit)
-import AirshipKit
+    import AirshipKit
 #endif
 
 struct ScopedSubscriptionListsDebugView: View {
@@ -22,7 +22,7 @@ struct ScopedSubscriptionListsDebugView: View {
         case sms = "SMS"
 
         var channelScope: ChannelScope {
-            switch(self) {
+            switch self {
             case .app: return .app
             case .web: return .web
             case .email: return .email
@@ -49,7 +49,8 @@ struct ScopedSubscriptionListsDebugView: View {
                 HStack {
                     Text("List ID".localized())
                     Spacer()
-                    TextField("", text: self.$listID.preventWhiteSpace())     .freeInput()
+                    TextField("", text: self.$listID.preventWhiteSpace())
+                        .freeInput()
                 }
 
                 Picker("Scope".localized(), selection: $scope) {
@@ -60,7 +61,8 @@ struct ScopedSubscriptionListsDebugView: View {
                 .pickerStyle(.segmented)
 
                 Picker("Action".localized(), selection: $action) {
-                    ForEach(SubscriptionListAction.allCases, id: \.self) { value in
+                    ForEach(SubscriptionListAction.allCases, id: \.self) {
+                        value in
                         Text(value.rawValue.localized())
                     }
                 }
@@ -82,7 +84,7 @@ struct ScopedSubscriptionListsDebugView: View {
 
     private func apply() {
         let editor = editorFactory()
-        switch(self.action) {
+        switch self.action {
         case .subscribe:
             editor?.subscribe(self.listID, scope: self.scope.channelScope)
         case .unsubscribe:
@@ -92,7 +94,3 @@ struct ScopedSubscriptionListsDebugView: View {
         self.listID = ""
     }
 }
-
-
-
-

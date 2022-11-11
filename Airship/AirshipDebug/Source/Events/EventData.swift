@@ -1,5 +1,5 @@
-import Foundation
 import CoreData
+import Foundation
 
 @objc(EventData)
 public class EventData: NSManagedObject {

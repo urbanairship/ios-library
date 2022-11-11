@@ -2,8 +2,8 @@
 import AirshipCore
 
 class Entry {
-    let time : TimeInterval
-    let block : () -> Void
+    let time: TimeInterval
+    let block: () -> Void
 
     init(time: TimeInterval, block: @escaping () -> Void) {
         self.time = time
@@ -13,7 +13,7 @@ class Entry {
 
 @objc(UATestDispatcher)
 public class TestDispatcher: UADispatcher {
-    private var currentTime : TimeInterval  = 0
+    private var currentTime: TimeInterval = 0
     private lazy var pending = [Entry]()
     private let internalDispatcher = UADispatcher.serial(.default)
 
@@ -42,16 +42,24 @@ public class TestDispatcher: UADispatcher {
         block()
     }
 
-    public override func dispatch(after delay: TimeInterval, timebase: DispatcherTimeBase, block: @escaping () -> Void) -> Disposable {
+    public override func dispatch(
+        after delay: TimeInterval,
+        timebase: DispatcherTimeBase,
+        block: @escaping () -> Void
+    ) -> Disposable {
 
-        var disposable : Disposable? = nil
+        var disposable: Disposable? = nil
         self.internalDispatcher.doSync { [self] in
-            let entry = Entry(time: self.currentTime + Swift.max(delay, 0), block: block)
+            let entry = Entry(
+                time: self.currentTime + Swift.max(delay, 0),
+                block: block
+            )
             self.pending.append(entry)
-            disposable = Disposable() { [weak self] in
-                self?.internalDispatcher.doSync {
-                    self?.pending.removeAll { $0 === entry }
-                }
+            disposable = Disposable { [weak self] in
+                self?.internalDispatcher
+                    .doSync {
+                        self?.pending.removeAll { $0 === entry }
+                    }
             }
         }
 

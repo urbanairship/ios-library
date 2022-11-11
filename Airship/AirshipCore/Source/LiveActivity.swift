@@ -21,49 +21,49 @@ protocol LiveActivity {
 
 #if canImport(ActivityKit)
 
-import ActivityKit
+    import ActivityKit
 
-@available(iOS 16.1, *)
-extension Activity: LiveActivity {
-    func track(tokenUpdates: @escaping (String) async -> Void) async {
-        guard self.activityState == .active else {
-            return
-        }
+    @available(iOS 16.1, *)
+    extension Activity: LiveActivity {
+        func track(tokenUpdates: @escaping (String) async -> Void) async {
+            guard self.activityState == .active else {
+                return
+            }
 
-        let task = Task {
-            for await token in self.pushTokenUpdates {
-                try Task.checkCancellation()
+            let task = Task {
+                for await token in self.pushTokenUpdates {
+                    try Task.checkCancellation()
+                    await tokenUpdates(token.tokenString)
+                }
+            }
+
+            /// If the push token is already created it does not cause an update above,
+            /// so we will call the tokenUpdate callback direclty if we have a token.
+            if let token = self.pushToken {
                 await tokenUpdates(token.tokenString)
             }
-        }
 
-        /// If the push token is already created it does not cause an update above,
-        /// so we will call the tokenUpdate callback direclty if we have a token.
-        if let token = self.pushToken {
-            await tokenUpdates(token.tokenString)
-        }
-
-        for await update in self.activityStateUpdates {
-            if update != .active || Task.isCancelled {
-                task.cancel()
-                break
+            for await update in self.activityStateUpdates {
+                if update != .active || Task.isCancelled {
+                    task.cancel()
+                    break
+                }
             }
         }
+
+        var isActive: Bool {
+            return self.activityState == .active
+        }
+
+        var pushTokenString: String? {
+            return self.pushToken?.tokenString
+        }
     }
 
-    var isActive: Bool {
-        return self.activityState == .active
+    extension Data {
+        fileprivate var tokenString: String {
+            Utils.deviceTokenStringFromDeviceToken(self)
+        }
     }
-
-    var pushTokenString: String? {
-        return self.pushToken?.tokenString
-    }
-}
-
-fileprivate extension Data {
-    var tokenString: String {
-        Utils.deviceTokenStringFromDeviceToken(self)
-    }
-}
 
 #endif

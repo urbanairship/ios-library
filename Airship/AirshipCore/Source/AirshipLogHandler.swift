@@ -15,5 +15,11 @@ public protocol AirshipLogHandler {
     ///     - line: The line number.
     ///     - function: The function.
     @objc
-    func log(logLevel: LogLevel, message: String, fileID: String, line: UInt, function: String)
+    func log(
+        logLevel: LogLevel,
+        message: String,
+        fileID: String,
+        line: UInt,
+        function: String
+    )
 }

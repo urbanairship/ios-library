@@ -3,7 +3,7 @@
 import Foundation
 
 #if canImport(AirshipCore)
-import AirshipCore
+    import AirshipCore
 #endif
 
 /// Message Center API client protocol
@@ -68,7 +68,8 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol {
 
     private static let channelIDHeader = "X-UA-Channel-ID"
     private static let lastModifiedIDHeader = "If-Modified-Since"
-    private static let lastMessageListModifiedTime = "UALastMessageListModifiedTime.%@"
+    private static let lastMessageListModifiedTime =
+        "UALastMessageListModifiedTime.%@"
 
     private let config: RuntimeConfig
     private let session: AirshipRequestSession
@@ -87,7 +88,8 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol {
             throw AirshipErrors.error("The deviceAPIURL is nil")
         }
 
-        let urlString = "\(deviceAPIURL)\("/api/user/")\(user.username)\("/messages/")"
+        let urlString =
+            "\(deviceAPIURL)\("/api/user/")\(user.username)\("/messages/")"
         var headers: [String: String] = [
             MessageCenterAPIClient.channelIDHeader: channelID
         ]
@@ -105,7 +107,9 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol {
 
         AirshipLogger.trace("Request to retrieve message list: \(urlString)")
 
-        return try await self.session.performHTTPRequest(request) { data, response in
+        return try await self.session.performHTTPRequest(request) {
+            data,
+            response in
             guard response.isSuccess else { return nil }
 
             let parsed: MessageListResponse = try JSONUtils.decode(data: data)
@@ -130,7 +134,8 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol {
             throw AirshipErrors.error("No reporting")
         }
 
-        let urlString = "\(deviceAPIURL)\("/api/user/")\(user.username)\("/messages/delete/")"
+        let urlString =
+            "\(deviceAPIURL)\("/api/user/")\(user.username)\("/messages/delete/")"
 
         let body = UpdateMessagseRequestBody(messages: messageReportings)
 
@@ -139,14 +144,16 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol {
             headers: [
                 "Accept": "application/vnd.urbanairship+json; version=3;",
                 "Content-Type": "application/json",
-                MessageCenterAPIClient.channelIDHeader: channelID
+                MessageCenterAPIClient.channelIDHeader: channelID,
             ],
             method: "POST",
             auth: .basic(user.username, user.password),
             body: try JSONUtils.encode(object: body)
         )
 
-        AirshipLogger.trace("Request to perform batch delete: \(urlString)  body: \(body)")
+        AirshipLogger.trace(
+            "Request to perform batch delete: \(urlString)  body: \(body)"
+        )
         return try await self.session.performHTTPRequest(request)
     }
 
@@ -168,12 +175,13 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol {
             throw AirshipErrors.error("No reporting")
         }
 
-        let urlString = "\(deviceAPIURL)\("/api/user/")\(user.username)\("/messages/unread/")"
+        let urlString =
+            "\(deviceAPIURL)\("/api/user/")\(user.username)\("/messages/unread/")"
 
         let headers: [String: String] = [
             "Accept": "application/vnd.urbanairship+json; version=3;",
             "Content-Type": "application/json",
-            MessageCenterAPIClient.channelIDHeader: channelID
+            MessageCenterAPIClient.channelIDHeader: channelID,
         ]
 
         let body = UpdateMessagseRequestBody(messages: messageReportings)
@@ -185,7 +193,9 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol {
             body: try JSONUtils.encode(object: body)
         )
 
-        AirshipLogger.trace("Request to perfom batch mark messages as read: \(urlString) body: \(body)")
+        AirshipLogger.trace(
+            "Request to perfom batch mark messages as read: \(urlString) body: \(body)"
+        )
 
         return try await self.session.performHTTPRequest(request)
     }
@@ -202,7 +212,7 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol {
         let headers: [String: String] = [
             "Accept": "application/vnd.urbanairship+json; version=3;",
             "Content-Type": "application/json",
-            MessageCenterAPIClient.channelIDHeader: channelID
+            MessageCenterAPIClient.channelIDHeader: channelID,
         ]
 
         let body = CreateUserRequestBody(iOSChannels: [channelID])
@@ -214,9 +224,13 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol {
             body: try JSONUtils.encode(object: body)
         )
 
-        AirshipLogger.trace("Request to perfom batch create user: \(urlString) body: \(body)")
+        AirshipLogger.trace(
+            "Request to perfom batch create user: \(urlString) body: \(body)"
+        )
 
-        return try await self.session.performHTTPRequest(request) { data, response in
+        return try await self.session.performHTTPRequest(request) {
+            data,
+            response in
             guard response.isSuccess else { return nil }
 
             let response: MessageCenterUser = try JSONUtils.decode(data: data)
@@ -236,7 +250,7 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol {
         let urlString = "\(deviceAPIURL)\("/api/user/")\(user.username)"
         let headers: [String: String] = [
             "Accept": "application/vnd.urbanairship+json; version=3;",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
         ]
 
         let body = UpdateUserRequestBody(
@@ -253,17 +267,19 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol {
             auth: .basic(user.username, user.password),
             body: bodyData
         )
-        AirshipLogger.trace("Request to perfom batch update user: \(urlString) body: \(body)")
+        AirshipLogger.trace(
+            "Request to perfom batch update user: \(urlString) body: \(body)"
+        )
 
         return try await self.session.performHTTPRequest(request)
     }
 }
 
-fileprivate struct UpdateMessagseRequestBody: Encodable {
+private struct UpdateMessagseRequestBody: Encodable {
     let messages: [AirshipJSON]
 }
 
-fileprivate struct UpdateUserRequestBody: Encodable {
+private struct UpdateUserRequestBody: Encodable {
     var iOSChannels: UserOperation
 
     private enum CodingKeys: String, CodingKey {
@@ -275,7 +291,7 @@ fileprivate struct UpdateUserRequestBody: Encodable {
     }
 }
 
-fileprivate struct CreateUserRequestBody: Encodable {
+private struct CreateUserRequestBody: Encodable {
     var iOSChannels: [String]
 
     private enum CodingKeys: String, CodingKey {
@@ -283,7 +299,7 @@ fileprivate struct CreateUserRequestBody: Encodable {
     }
 }
 
-fileprivate struct MessageListResponse: Decodable {
+private struct MessageListResponse: Decodable {
     let messages: [Message]
 
     struct Message: Codable {
@@ -316,18 +332,20 @@ fileprivate struct MessageListResponse: Decodable {
     }
 }
 
-fileprivate extension MessageListResponse {
-    func convertMessages() throws -> [MessageCenterMessage] {
+extension MessageListResponse {
+    fileprivate func convertMessages() throws -> [MessageCenterMessage] {
         return try self.messages.map { responseMessage in
             let rawJSONData = try JSONUtils.encode(object: responseMessage)
             let rawJSON = try JSONSerialization.jsonObject(with: rawJSONData)
             return MessageCenterMessage(
                 title: responseMessage.title,
                 id: responseMessage.messageID,
-                extra: responseMessage.extra?.unWrap() as? [String: String] ?? [:] ,
+                extra: responseMessage.extra?.unWrap() as? [String: String]
+                    ?? [:],
                 bodyURL: responseMessage.messageBodyURL,
                 expirationDate: try responseMessage.messageExpiration?.toDate(),
-                messageReporting: responseMessage.messageReporting.unWrap() as? [String: AnyHashable] ?? [:],
+                messageReporting: responseMessage.messageReporting.unWrap()
+                    as? [String: AnyHashable] ?? [:],
                 unread: responseMessage.unread,
                 sentDate: try responseMessage.messageSent.toDate(),
                 messageURL: responseMessage.messageURL,
@@ -337,19 +355,17 @@ fileprivate extension MessageListResponse {
     }
 }
 
-fileprivate extension HTTPURLResponse {
-    var isSuccess: Bool {
+extension HTTPURLResponse {
+    fileprivate var isSuccess: Bool {
         return self.statusCode >= 200 && self.statusCode <= 299
     }
 }
 
-
-fileprivate extension String {
-    func toDate() throws -> Date {
+extension String {
+    fileprivate func toDate() throws -> Date {
         guard let date = Utils.parseISO8601Date(from: self) else {
             throw AirshipErrors.error("Invalid date \(self)")
         }
         return date
     }
 }
-

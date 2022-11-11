@@ -1,16 +1,16 @@
 /* Copyright Urban Airship and Contributors */
 
+import Combine
 import Foundation
 import SwiftUI
-import Combine
 
 #if canImport(AirshipCore)
-import AirshipCore
+    import AirshipCore
 #endif
 
 /// Message Center View
 public struct MessageCenterView: View {
-    
+
     /// The message center state
     @ObservedObject
     private var controller: MessageCenterController
@@ -20,7 +20,7 @@ public struct MessageCenterView: View {
 
     @Environment(\.airshipMessageCenterTheme)
     private var theme
-    
+
     @State
     var editMode: EditMode = .inactive
 
@@ -32,7 +32,7 @@ public struct MessageCenterView: View {
     }
 
     @ViewBuilder
-    private func makeBackButton() -> some View  {
+    private func makeBackButton() -> some View {
         Button(action: {
             self.dismissAction?()
         }) {
@@ -48,16 +48,18 @@ public struct MessageCenterView: View {
         let content = MessageCenterListView(
             controller: self.controller
         )
-            .applyIf(self.dismissAction != nil) { view in
-                view.toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        makeBackButton()
-                    }
+        .applyIf(self.dismissAction != nil) { view in
+            view.toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    makeBackButton()
                 }
             }
-            .environment(\.editMode, $editMode)
-            .navigationTitle(theme.navigationBarTitle ?? "ua_message_center_title".localized)
-        
+        }
+        .environment(\.editMode, $editMode)
+        .navigationTitle(
+            theme.navigationBarTitle ?? "ua_message_center_title".localized
+        )
+
         if #available(iOS 16.0, *) {
             NavigationStack {
                 content
@@ -92,7 +94,7 @@ extension View {
 
     @ViewBuilder
     func applyIf<Content: View>(
-        _ predicate:  @autoclosure () -> Bool,
+        _ predicate: @autoclosure () -> Bool,
         transform: (Self) -> Content
     ) -> some View {
         if predicate() {

@@ -1,35 +1,45 @@
 /* Copyright Airship and Contributors */
 
+import Combine
 import Foundation
 import SwiftUI
-import Combine
 
 @available(iOS 13.0.0, tvOS 13.0, *)
-struct NpsController : View {
+struct NpsController: View {
     let model: NpsControllerModel
     let constraints: ViewConstraints
-    
+
     @State var formState: FormState
-    
+
     init(model: NpsControllerModel, constraints: ViewConstraints) {
         self.model = model
         self.constraints = constraints
-        self.formState = FormState(identifier: self.model.identifier,
-                                   formType: .nps(self.model.npsIdentifier),
-                                   formResponseType: self.model.responseType)
+        self.formState = FormState(
+            identifier: self.model.identifier,
+            formType: .nps(self.model.npsIdentifier),
+            formResponseType: self.model.responseType
+        )
     }
-    
+
     var body: some View {
-        if (model.submit != nil) {
-            ParentNpsController(model: model, constraints: constraints, formState: formState)
+        if model.submit != nil {
+            ParentNpsController(
+                model: model,
+                constraints: constraints,
+                formState: formState
+            )
         } else {
-            ChildNpsController(model: model, constraints: constraints, formState: formState)
+            ChildNpsController(
+                model: model,
+                constraints: constraints,
+                formState: formState
+            )
         }
     }
 }
 
 @available(iOS 13.0.0, tvOS 13.0, *)
-private struct ParentNpsController : View {
+private struct ParentNpsController: View {
     let model: NpsControllerModel
     let constraints: ViewConstraints
 
@@ -47,12 +57,20 @@ private struct ParentNpsController : View {
                 self.formState.isEnabled = enabled
             }
             .environmentObject(formState)
-            .environment(\.layoutState, layoutState.override(formState: formState))
+            .environment(
+                \.layoutState,
+                layoutState.override(formState: formState)
+            )
             .onAppear {
-                self.visibleCancellable = self.formState.$isVisible.sink { incoming in
-                    if (incoming) {
-                        self.thomasEnvironment.formDisplayed(self.formState,
-                                                             layoutState: layoutState.override(formState: formState))
+                self.visibleCancellable = self.formState.$isVisible.sink {
+                    incoming in
+                    if incoming {
+                        self.thomasEnvironment.formDisplayed(
+                            self.formState,
+                            layoutState: layoutState.override(
+                                formState: formState
+                            )
+                        )
                     }
                 }
             }
@@ -60,17 +78,21 @@ private struct ParentNpsController : View {
 }
 
 @available(iOS 13.0.0, tvOS 13.0, *)
-private struct ChildNpsController : View {
+private struct ChildNpsController: View {
     let model: NpsControllerModel
     let constraints: ViewConstraints
-    
+
     @EnvironmentObject var parentFormState: FormState
     @ObservedObject var formState: FormState
     @State private var dataCancellable: AnyCancellable?
     @State private var visibleCancellable: AnyCancellable?
-    
+
     var body: some View {
-        return ViewFactory.createView(model: self.model.view, constraints: constraints)
+        return
+            ViewFactory.createView(
+                model: self.model.view,
+                constraints: constraints
+            )
             .background(self.model.backgroundColor)
             .border(self.model.border)
             .common(self.model, formInputID: self.model.identifier)
@@ -80,13 +102,14 @@ private struct ChildNpsController : View {
             .environmentObject(formState)
             .onAppear {
                 restoreFormState()
-                
+
                 self.dataCancellable = self.formState.$data.sink { incoming in
                     self.parentFormState.updateFormInput(incoming)
                 }
-                
-                self.visibleCancellable = self.formState.$isVisible.sink { incoming in
-                    if (incoming) {
+
+                self.visibleCancellable = self.formState.$isVisible.sink {
+                    incoming in
+                    if incoming {
                         parentFormState.markVisible()
                     }
                 }
@@ -94,11 +117,14 @@ private struct ChildNpsController : View {
     }
 
     private func restoreFormState() {
-        guard let formData = self.parentFormState.data.formData(identifier: self.model.identifier),
-              case let .form(responseType, formType, children) = formData.value,
-              responseType == self.model.responseType,
-              case let .nps(scoreID) = formType,
-              scoreID == self.model.npsIdentifier
+        guard
+            let formData = self.parentFormState.data.formData(
+                identifier: self.model.identifier
+            ),
+            case let .form(responseType, formType, children) = formData.value,
+            responseType == self.model.responseType,
+            case let .nps(scoreID) = formType,
+            scoreID == self.model.npsIdentifier
         else {
             return
         }

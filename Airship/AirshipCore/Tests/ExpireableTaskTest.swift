@@ -2,14 +2,16 @@
 
 import XCTest
 
-@testable
-import AirshipCore
+@testable import AirshipCore
 
 class ExpireableTaskTest: XCTestCase {
 
     func testCompletionHandler() throws {
         var taskResult: Bool?
-        let task = ExpirableTask(taskID: "some-task", requestOptions: .defaultOptions) { result in
+        let task = ExpirableTask(
+            taskID: "some-task",
+            requestOptions: .defaultOptions
+        ) { result in
             taskResult = result
         }
 
@@ -25,7 +27,10 @@ class ExpireableTaskTest: XCTestCase {
 
     func testSetCompletionHandlerAfterComplete() throws {
         var taskResult: Bool?
-        let task = ExpirableTask(taskID: "some-task", requestOptions: .defaultOptions) { result in
+        let task = ExpirableTask(
+            taskID: "some-task",
+            requestOptions: .defaultOptions
+        ) { result in
             taskResult = result
         }
 
@@ -42,7 +47,10 @@ class ExpireableTaskTest: XCTestCase {
 
     func testExpireNoHandler() throws {
         var taskResult: Bool?
-        let task = ExpirableTask(taskID: "some-task", requestOptions: .defaultOptions) { result in
+        let task = ExpirableTask(
+            taskID: "some-task",
+            requestOptions: .defaultOptions
+        ) { result in
             taskResult = result
         }
         task.expire()
@@ -51,7 +59,10 @@ class ExpireableTaskTest: XCTestCase {
 
     func testExpire() throws {
         var taskResult: Bool?
-        let task = ExpirableTask(taskID: "some-task", requestOptions: .defaultOptions) { result in
+        let task = ExpirableTask(
+            taskID: "some-task",
+            requestOptions: .defaultOptions
+        ) { result in
             taskResult = result
         }
 
@@ -65,7 +76,10 @@ class ExpireableTaskTest: XCTestCase {
     }
 
     func testSetExpireHandlerAfterExpired() throws {
-        let task = ExpirableTask(taskID: "some-task", requestOptions: .defaultOptions) { _ in }
+        let task = ExpirableTask(
+            taskID: "some-task",
+            requestOptions: .defaultOptions
+        ) { _ in }
 
         task.expire()
 

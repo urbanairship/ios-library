@@ -2,8 +2,7 @@
 
 import XCTest
 
-@testable
-import AirshipCore
+@testable import AirshipCore
 
 class PromptPermissionActionTest: XCTestCase {
 
@@ -24,12 +23,12 @@ class PromptPermissionActionTest: XCTestCase {
             Situation.manualInvocation,
             Situation.webViewInvocation,
             Situation.automation,
-            Situation.foregroundPush
+            Situation.foregroundPush,
         ]
 
         let rejectedSituations = [
             Situation.backgroundPush,
-            Situation.backgroundInteractiveButton
+            Situation.backgroundInteractiveButton,
         ]
 
         validSituations.forEach { (situation) in
@@ -50,10 +49,17 @@ class PromptPermissionActionTest: XCTestCase {
             "fallback_system_settings": true,
         ]
 
-        let arguments = ActionArguments(value: actionValue, with: .manualInvocation)
+        let arguments = ActionArguments(
+            value: actionValue,
+            with: .manualInvocation
+        )
 
         let prompted = self.expectation(description: "Prompted")
-        testPrompter.onPrompt = { permission, enableAirshipUsage, fallbackSystemSetting, completionHandler in
+        testPrompter.onPrompt = {
+            permission,
+            enableAirshipUsage,
+            fallbackSystemSetting,
+            completionHandler in
             XCTAssertEqual(permission, .location)
             XCTAssertTrue(enableAirshipUsage)
             XCTAssertTrue(fallbackSystemSetting)
@@ -71,11 +77,20 @@ class PromptPermissionActionTest: XCTestCase {
     }
 
     func testPromptDefaultArguments() throws {
-        let actionValue = ["permission": Permission.displayNotifications.stringValue]
-        let arguments = ActionArguments(value: actionValue, with: .manualInvocation)
+        let actionValue = [
+            "permission": Permission.displayNotifications.stringValue
+        ]
+        let arguments = ActionArguments(
+            value: actionValue,
+            with: .manualInvocation
+        )
 
         let prompted = self.expectation(description: "Prompted")
-        testPrompter.onPrompt = { permission, enableAirshipUsage, fallbackSystemSetting, completionHandler in
+        testPrompter.onPrompt = {
+            permission,
+            enableAirshipUsage,
+            fallbackSystemSetting,
+            completionHandler in
             XCTAssertEqual(permission, .displayNotifications)
             XCTAssertFalse(enableAirshipUsage)
             XCTAssertFalse(fallbackSystemSetting)
@@ -97,9 +112,16 @@ class PromptPermissionActionTest: XCTestCase {
             "permission": "not a permission"
         ]
 
-        let arguments = ActionArguments(value: actionValue, with: .manualInvocation)
+        let arguments = ActionArguments(
+            value: actionValue,
+            with: .manualInvocation
+        )
 
-        testPrompter.onPrompt = { permission, enableAirshipUsage, fallbackSystemSetting, completionHandler in
+        testPrompter.onPrompt = {
+            permission,
+            enableAirshipUsage,
+            fallbackSystemSetting,
+            completionHandler in
             XCTFail()
         }
 
@@ -119,20 +141,32 @@ class PromptPermissionActionTest: XCTestCase {
 
         let resultReceived = self.expectation(description: "Result received")
 
-        let resultRecevier: (Permission, PermissionStatus, PermissionStatus) -> Void = { permission, start, end in
-            XCTAssertEqual(.notDetermined, start)
-            XCTAssertEqual(.granted, end)
-            XCTAssertEqual(.location, permission)
-            resultReceived.fulfill()
-        }
+        let resultRecevier:
+            (Permission, PermissionStatus, PermissionStatus) -> Void = {
+                permission,
+                start,
+                end in
+                XCTAssertEqual(.notDetermined, start)
+                XCTAssertEqual(.granted, end)
+                XCTAssertEqual(.location, permission)
+                resultReceived.fulfill()
+            }
 
-        let metadata = [PromptPermissionAction.resultReceiverMetadataKey: resultRecevier]
+        let metadata = [
+            PromptPermissionAction.resultReceiverMetadataKey: resultRecevier
+        ]
 
-        let arguments = ActionArguments(value: actionValue,
-                                        with: .manualInvocation,
-                                        metadata: metadata)
+        let arguments = ActionArguments(
+            value: actionValue,
+            with: .manualInvocation,
+            metadata: metadata
+        )
 
-        testPrompter.onPrompt = { permission, enableAirshipUsage, fallbackSystemSetting, completionHandler in
+        testPrompter.onPrompt = {
+            permission,
+            enableAirshipUsage,
+            fallbackSystemSetting,
+            completionHandler in
             completionHandler(.notDetermined, .granted)
         }
 
@@ -144,5 +178,3 @@ class PromptPermissionActionTest: XCTestCase {
         self.wait(for: [actionFinished, resultReceived], timeout: 1)
     }
 }
-
-

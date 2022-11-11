@@ -2,15 +2,13 @@
 
 import Foundation
 
-/**
- * Action that runs a block.
- * - Note: For internal use only. :nodoc:
- */
+/// Action that runs a block.
+/// - Note: For internal use only. :nodoc:
 @objc(UABlockAction)
-public class BlockAction : NSObject, Action {
-    private let block: UAActionBlock;
-    private let predicate: UAActionPredicate?;
-    
+public class BlockAction: NSObject, Action {
+    private let block: UAActionBlock
+    private let predicate: UAActionPredicate?
+
     /**
      * Block action constructor.
      *  - Parameters:
@@ -23,7 +21,7 @@ public class BlockAction : NSObject, Action {
         self.block = block
         super.init()
     }
-    
+
     /**
      * Block action constructor.
      *  - Parameters:
@@ -37,8 +35,11 @@ public class BlockAction : NSObject, Action {
     public func acceptsArguments(_ arguments: ActionArguments) -> Bool {
         return self.predicate?(arguments) ?? true
     }
-    
-    public func perform(with arguments: ActionArguments, completionHandler: @escaping UAActionCompletionHandler) {
+
+    public func perform(
+        with arguments: ActionArguments,
+        completionHandler: @escaping UAActionCompletionHandler
+    ) {
         self.block(arguments, completionHandler)
     }
 }

@@ -5,10 +5,10 @@ import SwiftUI
 
 /// Text/Label view
 @available(iOS 13.0.0, tvOS 13.0, *)
-struct Label : View {
+struct Label: View {
     /// Label model.
     let model: LabelModel
-    
+
     /// View constriants.
     let constraints: ViewConstraints
 
@@ -16,8 +16,16 @@ struct Label : View {
         Text(self.model.text)
             .textAppearance(self.model.textAppearance)
             .truncationMode(.tail)
-            .constraints(constraints, alignment: self.model.textAppearance.alignment?.toFrameAlignment() ?? Alignment.center)
-            .fixedSize(horizontal: false, vertical: self.constraints.height == nil)
+            .constraints(
+                constraints,
+                alignment: self.model.textAppearance.alignment?
+                    .toFrameAlignment()
+                    ?? Alignment.center
+            )
+            .fixedSize(
+                horizontal: false,
+                vertical: self.constraints.height == nil
+            )
             .background(self.model.backgroundColor)
             .border(self.model.border)
             .common(self.model)
@@ -26,9 +34,9 @@ struct Label : View {
 }
 
 @available(iOS 13.0.0, tvOS 13.0, *)
-internal extension TextAlignement {
+extension TextAlignement {
     func toFrameAlignment() -> Alignment {
-        switch(self) {
+        switch self {
         case .start:
             return Alignment.leading
         case .end:
@@ -37,9 +45,9 @@ internal extension TextAlignement {
             return Alignment.center
         }
     }
-    
+
     func toSwiftTextAlignment() -> SwiftUI.TextAlignment {
-        switch(self) {
+        switch self {
         case .start:
             return SwiftUI.TextAlignment.leading
         case .end:
@@ -48,9 +56,9 @@ internal extension TextAlignement {
             return SwiftUI.TextAlignment.center
         }
     }
-    
+
     func toNSTextAlignment() -> NSTextAlignment {
-        switch(self) {
+        switch self {
         case .start:
             return .left
         case .end:

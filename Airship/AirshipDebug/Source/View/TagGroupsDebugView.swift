@@ -4,9 +4,9 @@ import Foundation
 import SwiftUI
 
 #if canImport(AirshipCore)
-import AirshipCore
+    import AirshipCore
 #elseif canImport(AirshipKit)
-import AirshipKit
+    import AirshipKit
 #endif
 
 struct TagGroupsDebugView: View {
@@ -36,11 +36,12 @@ struct TagGroupsDebugView: View {
                     }
                 }
                 .pickerStyle(.segmented)
-                
+
                 HStack {
                     Text("Tag")
                     Spacer()
-                    TextField("", text: self.$tag.preventWhiteSpace())     .freeInput()
+                    TextField("", text: self.$tag.preventWhiteSpace())
+                        .freeInput()
                 }
 
                 HStack {
@@ -66,7 +67,7 @@ struct TagGroupsDebugView: View {
 
     private func apply() {
         let editor = editorFactory()
-        switch(self.action) {
+        switch self.action {
         case .add:
             editor?.add([tag], group: group)
         case .remove:
@@ -77,5 +78,3 @@ struct TagGroupsDebugView: View {
         self.group = ""
     }
 }
-
-

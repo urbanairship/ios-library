@@ -7,8 +7,10 @@ import SwiftUI
 @available(iOS 13.0.0, tvOS 13.0, *)
 struct ViewFactory {
     @ViewBuilder
-    static func createView(model: ViewModel, constraints: ViewConstraints) -> some View {
-        switch (model) {
+    static func createView(model: ViewModel, constraints: ViewConstraints)
+        -> some View
+    {
+        switch model {
         case .container(let model):
             Container(model: model, constraints: constraints)
         case .linearLayout(let model):
@@ -36,8 +38,8 @@ struct ViewFactory {
         case .pager(let model):
             Pager(model: model, constraints: constraints)
         #if !os(tvOS) && !os(watchOS)
-        case .webView(let model):
-            AirshipWebView(model: model, constraints: constraints)
+            case .webView(let model):
+                AirshipWebView(model: model, constraints: constraints)
         #endif
         case .imageButton(let model):
             ImageButton(model: model, constraints: constraints)
@@ -57,6 +59,5 @@ struct ViewFactory {
             StateController(model: model, constraints: constraints)
         }
     }
-    
-}
 
+}

@@ -3,10 +3,10 @@
 import Foundation
 
 #if canImport(AirshipCore)
-import AirshipCore
+    import AirshipCore
 #endif
 
-struct PrefrenceCenterResponse : Decodable {
+struct PrefrenceCenterResponse: Decodable {
     let config: PreferenceCenterConfig
 
     enum CodingKeys: String, CodingKey {

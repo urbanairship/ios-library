@@ -1,10 +1,10 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-@testable
-import AirshipCore
 
-public class TestAirshipRequestSession : AirshipRequestSession {
+@testable import AirshipCore
+
+public class TestAirshipRequestSession: AirshipRequestSession {
 
     public var previousRequest: AirshipRequest?
 

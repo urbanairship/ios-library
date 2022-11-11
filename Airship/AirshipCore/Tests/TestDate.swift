@@ -3,10 +3,10 @@
 import AirshipCore
 
 @objc(UATestDate)
-public class UATestDate : AirshipDate {
+public class UATestDate: AirshipDate {
 
     @objc
-    public init(offset : TimeInterval, dateOverride: Date?) {
+    public init(offset: TimeInterval, dateOverride: Date?) {
         self.offset = offset
         self.dateOverride = dateOverride
         super.init()
@@ -17,17 +17,14 @@ public class UATestDate : AirshipDate {
     }
 
     @objc
-    public var offset : TimeInterval
+    public var offset: TimeInterval
 
     @objc
-    public var dateOverride : Date?
+    public var dateOverride: Date?
 
     public override var now: Date {
-        get {
-            let date = dateOverride ?? Date()
-            return date.addingTimeInterval(offset)
-        }
+        let date = dateOverride ?? Date()
+        return date.addingTimeInterval(offset)
     }
-
 
 }

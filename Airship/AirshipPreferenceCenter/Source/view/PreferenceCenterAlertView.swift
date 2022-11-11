@@ -4,7 +4,7 @@ import Foundation
 import SwiftUI
 
 #if canImport(AirshipCore)
-import AirshipCore
+    import AirshipCore
 #endif
 
 /// The Preference Center alert item view
@@ -43,14 +43,15 @@ public struct PreferenceCenterAlertView: View {
     }
 }
 
-public extension View {
+extension View {
     /// Sets the alert style
     /// - Parameters:
     ///     - style: The style
-    func prefernceCenterAlertStyle<S>(_ style: S) -> some View where S : PrefernceCenterAlertStyle {
+    public func prefernceCenterAlertStyle<S>(_ style: S) -> some View
+    where S: PrefernceCenterAlertStyle {
         self.environment(
             \.airshipPrefenceCenterAlertStyle,
-             AnyPrefernceCenterAlertStyle(style: style)
+            AnyPrefernceCenterAlertStyle(style: style)
         )
     }
 }
@@ -77,14 +78,14 @@ public protocol PrefernceCenterAlertStyle {
     func makeBody(configuration: Self.Configuration) -> Self.Body
 }
 
-public extension PrefernceCenterAlertStyle where Self == DefaultPrefernceCenterAlertStyle {
+extension PrefernceCenterAlertStyle
+where Self == DefaultPrefernceCenterAlertStyle {
 
     /// Default style
-    static var defaultStyle: Self {
+    public static var defaultStyle: Self {
         return .init()
     }
 }
-
 
 /// The default Preference Center alert style
 public struct DefaultPrefernceCenterAlertStyle: PrefernceCenterAlertStyle {
@@ -108,7 +109,7 @@ public struct DefaultPrefernceCenterAlertStyle: PrefernceCenterAlertStyle {
         let item = configuration.item
         let itemTheme = configuration.preferenceCenterTheme.alert
 
-        if (configuration.displayConditionsMet) {
+        if configuration.displayConditionsMet {
             VStack(alignment: .center) {
                 HStack(spacing: 16) {
                     if let url = item.display?.iconURL, !url.isEmpty {
@@ -121,7 +122,8 @@ public struct DefaultPrefernceCenterAlertStyle: PrefernceCenterAlertStyle {
                             },
                             placeholder: {
                                 return ProgressView()
-                            })
+                            }
+                        )
                         .frame(width: 60, height: 60)
                     }
 
@@ -130,7 +132,8 @@ public struct DefaultPrefernceCenterAlertStyle: PrefernceCenterAlertStyle {
                             Text(title)
                                 .textAppearance(
                                     itemTheme?.titleAppearance,
-                                    base: DefaultPrefernceCenterAlertStyle.titleAppearance
+                                    base: DefaultPrefernceCenterAlertStyle
+                                        .titleAppearance
                                 )
                         }
 
@@ -138,34 +141,49 @@ public struct DefaultPrefernceCenterAlertStyle: PrefernceCenterAlertStyle {
                             Text(subtitle)
                                 .textAppearance(
                                     itemTheme?.subtitleAppearance,
-                                    base: DefaultPrefernceCenterAlertStyle.subtitleAppearance
+                                    base: DefaultPrefernceCenterAlertStyle
+                                        .subtitleAppearance
                                 )
                         }
 
                         if let button = item.button {
                             Button(
                                 action: {
-                                    if let actions = button.actionJSON.unWrap() as? [String : Any] {
-                                        ActionRunner.run(actionValues: actions,
-                                                         situation: .manualInvocation,
-                                                         metadata: nil,
-                                                         completionHandler: nil)
+                                    if let actions = button.actionJSON.unWrap()
+                                        as? [String: Any]
+                                    {
+                                        ActionRunner.run(
+                                            actionValues: actions,
+                                            situation: .manualInvocation,
+                                            metadata: nil,
+                                            completionHandler: nil
+                                        )
                                     }
                                 },
                                 label: {
                                     Text(button.text)
                                         .textAppearance(
                                             itemTheme?.buttonLabelAppearance,
-                                            base: DefaultPrefernceCenterAlertStyle.buttonLabelAppearance
+                                            base:
+                                                DefaultPrefernceCenterAlertStyle
+                                                .buttonLabelAppearance
                                         )
                                         .padding(.horizontal, 8)
                                         .padding(.vertical, 4)
-                                        .background(Capsule()
-                                            .fill(itemTheme?.buttonBackgroundColor ?? Color.blue))
+                                        .background(
+                                            Capsule()
+                                                .fill(
+                                                    itemTheme?
+                                                        .buttonBackgroundColor
+                                                        ?? Color.blue
+                                                )
+                                        )
                                         .cornerRadius(8)
                                 }
                             )
-                            .optAccessibilityLabel(string: button.contentDescription)
+                            .optAccessibilityLabel(
+                                string: button.contentDescription
+                            )
                         }
                     }
                 }
@@ -201,4 +219,3 @@ extension EnvironmentValues {
         set { self[PrefernceCenterAlertStyleKey.self] = newValue }
     }
 }
-

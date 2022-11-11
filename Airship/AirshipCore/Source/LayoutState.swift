@@ -4,8 +4,12 @@ import Foundation
 
 @available(iOS 13.0.0, tvOS 13.0, *)
 struct LayoutState {
-    static let empty = LayoutState(pagerState: nil, formState: nil, buttonState: nil)
-    
+    static let empty = LayoutState(
+        pagerState: nil,
+        formState: nil,
+        buttonState: nil
+    )
+
     var pagerState: PagerState?
     var formState: FormState?
     var buttonState: ButtonState?
@@ -28,4 +32,3 @@ struct LayoutState {
         return context
     }
 }
-

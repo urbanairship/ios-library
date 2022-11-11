@@ -6,8 +6,10 @@ import SwiftUI
 extension Text {
 
     @ViewBuilder
-    func textAppearance(_ overrides: PreferenceCenterTheme.TextAppearance?,
-                        base: PreferenceCenterTheme.TextAppearance? = nil) -> Text {
+    func textAppearance(
+        _ overrides: PreferenceCenterTheme.TextAppearance?,
+        base: PreferenceCenterTheme.TextAppearance? = nil
+    ) -> Text {
         self.font(overrides?.font ?? base?.font)
             .foregroundColor(overrides?.color ?? base?.color)
     }
@@ -22,7 +24,6 @@ extension View {
             self
         }
     }
-
 
     @ViewBuilder
     func optAccessibilityLabel(string: String?) -> some View {

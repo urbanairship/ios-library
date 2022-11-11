@@ -3,7 +3,7 @@
 import Foundation
 
 #if canImport(AirshipCore)
-import AirshipCore
+    import AirshipCore
 #endif
 
 /// Message center message.
@@ -55,20 +55,19 @@ public class MessageCenterMessage: NSObject {
     public override func isEqual(_ object: Any?) -> Bool {
 
         guard let object = object as? MessageCenterMessage,
-              self.title == object.title,
-              self.id == object.id,
-              self.bodyURL == object.bodyURL,
-              self.expirationDate == object.expirationDate,
-              self.unread == object.unread,
-              self.sentDate == object.sentDate,
-              self.messageURL == object.messageURL,
-              compare(self.extra, object.extra),
-              compare(self.messageReporting, object.messageReporting),
-              compare(self.rawMessageObject, object.rawMessageObject)
+            self.title == object.title,
+            self.id == object.id,
+            self.bodyURL == object.bodyURL,
+            self.expirationDate == object.expirationDate,
+            self.unread == object.unread,
+            self.sentDate == object.sentDate,
+            self.messageURL == object.messageURL,
+            compare(self.extra, object.extra),
+            compare(self.messageReporting, object.messageReporting),
+            compare(self.rawMessageObject, object.rawMessageObject)
         else {
             return false
         }
-
 
         return true
     }
@@ -77,7 +76,7 @@ public class MessageCenterMessage: NSObject {
         _ first: [String: Any]?,
         _ second: [String: Any]?
     ) -> Bool {
-        if (first == nil && second == nil) {
+        if first == nil && second == nil {
             return true
         }
 
@@ -85,33 +84,34 @@ public class MessageCenterMessage: NSObject {
             return false
         }
 
-        let result = NSDictionary(dictionary: first).isEqual(
-            to: second
-        )
+        let result = NSDictionary(dictionary: first)
+            .isEqual(
+                to: second
+            )
         return result
-        
+
     }
-    
+
     public override var description: String {
         return "MessageCenterMessage(id=\(id))"
     }
 }
 
-public extension MessageCenterMessage {
+extension MessageCenterMessage {
 
     @objc
-    var listIcon: String? {
+    public var listIcon: String? {
         let icons = self.rawMessageObject["icons"] as? [String: String]
         return icons?["list_icon"]
     }
 
     @objc
-    var subtitle: String? {
+    public var subtitle: String? {
         return self.extra["com.urbanairship.listing.field1"] as? String
     }
 
     @objc
-    static func parseMessageID(userInfo: [AnyHashable: Any]) -> String? {
+    public static func parseMessageID(userInfo: [AnyHashable: Any]) -> String? {
         guard let uamid = userInfo["_uamid"] else {
             return nil
         }
@@ -126,7 +126,7 @@ public extension MessageCenterMessage {
     }
 
     @objc
-    var isExpired: Bool {
+    public var isExpired: Bool {
         if let messageExpiration = self.expirationDate {
             let result = messageExpiration.compare(AirshipDate().now)
             return (result == .orderedAscending || result == .orderedSame)

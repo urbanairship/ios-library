@@ -1,15 +1,15 @@
 import Foundation
 
-@testable
-import AirshipCore
+@testable import AirshipCore
 
 class TestChannelBulkUpdateAPIClient: ChannelBulkUpdateAPIClientProtocol {
-    
-    var updateCallback: ((String, AudienceUpdate, ((HTTPResponse?, Error?) -> Void)) -> Void)?
+
+    var updateCallback:
+        ((String, AudienceUpdate, ((HTTPResponse?, Error?) -> Void)) -> Void)?
     var defaultCallback: ((String) -> Void)?
-    
+
     init() {}
-    
+
     func update(
         _ update: AudienceUpdate,
         channelID: String,
@@ -20,7 +20,7 @@ class TestChannelBulkUpdateAPIClient: ChannelBulkUpdateAPIClientProtocol {
         } else {
             defaultCallback?("update")
         }
-        
+
         return Disposable()
     }
 }

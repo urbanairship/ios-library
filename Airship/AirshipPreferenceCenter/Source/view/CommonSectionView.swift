@@ -4,7 +4,7 @@ import Foundation
 import SwiftUI
 
 #if canImport(AirshipCore)
-import AirshipCore
+    import AirshipCore
 #endif
 
 /// Common section item view
@@ -43,14 +43,15 @@ public struct CommonSectionView: View {
     }
 }
 
-public extension View {
+extension View {
     /// Sets the common section style
     /// - Parameters:
     ///     - style: The style
-    func commonSectionViewStyle<S>(_ style: S) -> some View where S : CommonSectionViewStyle {
+    public func commonSectionViewStyle<S>(_ style: S) -> some View
+    where S: CommonSectionViewStyle {
         self.environment(
             \.airshipCommonSectionViewStyle,
-             AnyCommonSectionViewStyle(style: style)
+            AnyCommonSectionViewStyle(style: style)
         )
     }
 }
@@ -77,11 +78,10 @@ public protocol CommonSectionViewStyle {
     func makeBody(configuration: Self.Configuration) -> Self.Body
 }
 
-
-public extension CommonSectionViewStyle where Self == DefaultCommonSectionViewStyle {
+extension CommonSectionViewStyle where Self == DefaultCommonSectionViewStyle {
 
     /// The default style
-    static var defaultStyle: Self {
+    public static var defaultStyle: Self {
         return .init()
     }
 }
@@ -104,14 +104,17 @@ public struct DefaultCommonSectionViewStyle: CommonSectionViewStyle {
         let section = configuration.section
         let sectionTheme = configuration.preferenceCenterTheme.commonSection
 
-        if (configuration.displayConditionsMet) {
+        if configuration.displayConditionsMet {
             VStack(alignment: .leading) {
-                if (section.display?.title != nil || section.display?.subtitle != nil) {
+                if section.display?.title != nil
+                    || section.display?.subtitle != nil
+                {
                     if let title = section.display?.title {
                         Text(title)
                             .textAppearance(
                                 sectionTheme?.titleAppearance,
-                                base: DefaultCommonSectionViewStyle.titleAppearance
+                                base: DefaultCommonSectionViewStyle
+                                    .titleAppearance
                             )
                     }
 
@@ -119,7 +122,8 @@ public struct DefaultCommonSectionViewStyle: CommonSectionViewStyle {
                         Text(subtitle)
                             .textAppearance(
                                 sectionTheme?.subtitleAppearance,
-                                base: DefaultCommonSectionViewStyle.subtitleAppearance
+                                base: DefaultCommonSectionViewStyle
+                                    .subtitleAppearance
                             )
                     }
 
@@ -135,9 +139,11 @@ public struct DefaultCommonSectionViewStyle: CommonSectionViewStyle {
     }
 
     @ViewBuilder
-    func makeItem(_ item: PreferenceCenterConfig.Item,
-                  state: PreferenceCenterState) -> some View {
-        switch(item) {
+    func makeItem(
+        _ item: PreferenceCenterConfig.Item,
+        state: PreferenceCenterState
+    ) -> some View {
+        switch item {
         case .alert(let item):
             PreferenceCenterAlertView(item: item, state: state)
         case .channelSubscription(let item):
@@ -170,7 +176,9 @@ struct AnyCommonSectionViewStyle: CommonSectionViewStyle {
 }
 
 struct CommonSectionViewStyleKey: EnvironmentKey {
-    static var defaultValue = AnyCommonSectionViewStyle(style: DefaultCommonSectionViewStyle())
+    static var defaultValue = AnyCommonSectionViewStyle(
+        style: DefaultCommonSectionViewStyle()
+    )
 }
 
 extension EnvironmentValues {

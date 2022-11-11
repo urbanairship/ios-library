@@ -23,19 +23,33 @@ public protocol TaskManagerProtocol {
 
     @objc(enqueueRequestWithID:options:)
     func enqueueRequest(taskID: String, options: TaskRequestOptions)
-    
+
     @objc(enqueueRequestWithID:options:initialDelay:)
-    func enqueueRequest(taskID: String, options: TaskRequestOptions, initialDelay: TimeInterval)
+    func enqueueRequest(
+        taskID: String,
+        options: TaskRequestOptions,
+        initialDelay: TimeInterval
+    )
 
     @objc(setRateLimitForID:rate:timeInterval:error:)
-    func setRateLimit(_ rateLimitID: String, rate: Int, timeInterval: TimeInterval) throws
+    func setRateLimit(
+        _ rateLimitID: String,
+        rate: Int,
+        timeInterval: TimeInterval
+    ) throws
 
     @objc(enqueueRequestWithID:rateLimitIDs:options:minDelay:)
-    func enqueueRequest(taskID: String,
-                        rateLimitIDs: [String],
-                        options: TaskRequestOptions,
-                        minDelay: TimeInterval)
+    func enqueueRequest(
+        taskID: String,
+        rateLimitIDs: [String],
+        options: TaskRequestOptions,
+        minDelay: TimeInterval
+    )
 
     @objc(enqueueRequestWithID:rateLimitIDs:options:)
-    func enqueueRequest(taskID: String, rateLimitIDs: [String], options: TaskRequestOptions)
+    func enqueueRequest(
+        taskID: String,
+        rateLimitIDs: [String],
+        options: TaskRequestOptions
+    )
 }

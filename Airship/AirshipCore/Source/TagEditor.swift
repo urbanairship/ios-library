@@ -2,12 +2,10 @@
 
 import Foundation
 
-/**
- * Tag editor.
- */
+/// Tag editor.
 @objc(UATagEditor)
 public class TagEditor: NSObject {
-    
+
     typealias TagApplicator = ([String]) -> [String]
 
     private var tagOperations: [([String]) -> [String]] = []
@@ -17,7 +15,7 @@ public class TagEditor: NSObject {
         self.onApply = onApply
         super.init()
     }
-    
+
     /**
      * Adds tags.
      * - Parameters:
@@ -42,7 +40,7 @@ public class TagEditor: NSObject {
     public func add(_ tag: String) {
         self.add([tag])
     }
-    
+
     /**
      * Removes tags from the given group.
      * - Parameters:
@@ -57,7 +55,7 @@ public class TagEditor: NSObject {
             return mutable
         })
     }
-    
+
     /**
      * Removes a single tag.
      * - Parameters:
@@ -80,7 +78,7 @@ public class TagEditor: NSObject {
             return normalizedTags
         })
     }
-    
+
     /**
      * Clears tags.
      */
@@ -99,10 +97,9 @@ public class TagEditor: NSObject {
         let operations = tagOperations
         tagOperations.removeAll()
         self.onApply({ tags in
-            return operations.reduce(tags) { result, operation  in
+            return operations.reduce(tags) { result, operation in
                 return operation(result)
             }
         })
     }
 }
-

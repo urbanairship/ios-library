@@ -5,9 +5,9 @@ import SwiftUI
 
 @available(iOS 13.0.0, tvOS 13.0, *)
 struct Icons {
-    
+
     private static func createImage(icon: Icon) -> Image {
-        switch(icon) {
+        switch icon {
         case .checkmark:
             return Image(systemName: "checkmark")
         case .close:
@@ -18,10 +18,12 @@ struct Icons {
             return Image(systemName: "arrow.forward")
         }
     }
-    
+
     @ViewBuilder
-    static func icon(model: IconModel,
-                     colorScheme: ColorScheme) -> some View {
+    static func icon(
+        model: IconModel,
+        colorScheme: ColorScheme
+    ) -> some View {
         createImage(icon: model.icon)
             .resizable()
             .aspectRatio(contentMode: .fit)
@@ -31,6 +33,3 @@ struct Icons {
             }
     }
 }
-
-
-
