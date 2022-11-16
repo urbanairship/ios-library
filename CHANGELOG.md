@@ -3,6 +3,12 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 16.10.3 November 15, 2022
+Patch release that fixes checking for notification opt-in when disabling the config option requestAuthorizationToUseNotifications.
+
+### Changes
+- Check for notification opt-in on active, not just transition to foreground.
+
 ## Version 16.10.2 November 7, 2022
 Patch release to fix a delay when creating the Airship channel on first run. Apps that are using 16.10.1 or `requireInitialRemoteConfigEnabled` config should update.
 

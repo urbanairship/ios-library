@@ -211,8 +211,8 @@ public class Push: NSObject, Component, PushProtocol {
                                             object: nil)
 #endif
         self.notificationCenter.addObserver(self,
-                                            selector: #selector(applicationDidTransitionToForeground),
-                                            name: AppStateTracker.didTransitionToForeground,
+                                            selector: #selector(applicationDidBecomeActive),
+                                            name: AppStateTracker.didBecomeActiveNotification,
                                             object: nil)
 
         self.notificationCenter.addObserver(self,
@@ -835,7 +835,7 @@ public class Push: NSObject, Component, PushProtocol {
     }
 
     @objc
-    private func applicationDidTransitionToForeground() {
+    private func applicationDidBecomeActive() {
         if self.privacyManager.isEnabled(.push) {
             self.updateAuthorizedNotificationTypes()
         }

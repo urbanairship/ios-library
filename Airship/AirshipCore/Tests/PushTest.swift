@@ -539,14 +539,14 @@ class PushTest: XCTestCase {
         XCTAssertEqual(0, self.badger.applicationIconBadgeNumber)
     }
 
-    func testForegroundChecksRegistration() {
+    func testActiveChecksRegistration() {
         let updated = self.expectation(description: "Updated")
         self.notificationRegistrar.onCheckStatus = { completion in
             completion(.authorized, [.alert])
             updated.fulfill()
         }
 
-        self.notificationCenter.post(name: AppStateTracker.didTransitionToForeground, object: nil)
+        self.notificationCenter.post(name: AppStateTracker.didBecomeActiveNotification, object: nil)
         self.wait(for: [updated], timeout: 1)
 
         XCTAssertEqual(.authorized, self.push.authorizationStatus)
@@ -561,7 +561,7 @@ class PushTest: XCTestCase {
             updated.fulfill()
         }
 
-        self.notificationCenter.post(name: AppStateTracker.didTransitionToForeground, object: nil)
+        self.notificationCenter.post(name: AppStateTracker.didBecomeActiveNotification, object: nil)
         self.wait(for: [updated], timeout: 1)
 
         XCTAssertTrue(self.channel.updateRegistrationCalled)
@@ -671,7 +671,7 @@ class PushTest: XCTestCase {
             called.fulfill()
         }
 
-        self.notificationCenter.post(name: AppStateTracker.didTransitionToForeground, object: nil)
+        self.notificationCenter.post(name: AppStateTracker.didBecomeActiveNotification, object: nil)
         self.wait(for: [called], timeout: 1)
     }
 
