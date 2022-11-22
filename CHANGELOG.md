@@ -3,6 +3,12 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 16.10.4 November 22, 2022
+Patch release that fixes a regression with Scenes and Surveys next page button enablement. Apps on 16.10.1-16.10.3 that use Scenes & Surveys should update.
+
+### Changes
+- Fix pager button enablement
+
 ## Version 16.10.3 November 15, 2022
 Patch release that fixes checking for notification opt-in when disabling the config option requestAuthorizationToUseNotifications.
 
