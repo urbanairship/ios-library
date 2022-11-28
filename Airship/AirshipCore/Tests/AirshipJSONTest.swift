@@ -10,11 +10,23 @@ final class AirshipJSONTest: XCTestCase {
         XCTAssertEqual(.number(100.0), try AirshipJSON.wrap(100.0))
         XCTAssertEqual(.number(99.0), try AirshipJSON.wrap(99))
         XCTAssertEqual(.number(33.0), try AirshipJSON.wrap(UInt(33)))
+        XCTAssertEqual(.number(1), try AirshipJSON.wrap(1))
+        XCTAssertEqual(.number(0), try AirshipJSON.wrap(0))
 
         XCTAssertEqual(.string("hello"), try AirshipJSON.wrap("hello"))
         XCTAssertEqual(.bool(true), try AirshipJSON.wrap(true))
         XCTAssertEqual(.bool(false), try AirshipJSON.wrap(false))
         XCTAssertEqual(.null, try AirshipJSON.wrap(nil))
+    }
+
+    func testWrapNSNumber() throws {
+        XCTAssertEqual(.number(100.0), try AirshipJSON.wrap(NSNumber(100)))
+        XCTAssertEqual(.number(99.0), try AirshipJSON.wrap(NSNumber(99.0)))
+        XCTAssertEqual(.number(33.0), try AirshipJSON.wrap(NSNumber(33.0)))
+        XCTAssertEqual(.number(1), try AirshipJSON.wrap(NSNumber(1)))
+        XCTAssertEqual(.number(0), try AirshipJSON.wrap(NSNumber(0)))
+        XCTAssertEqual(.bool(true), try AirshipJSON.wrap(NSNumber(true)))
+        XCTAssertEqual(.bool(false), try AirshipJSON.wrap(NSNumber(false)))
     }
 
     func testWrapArray() throws {
