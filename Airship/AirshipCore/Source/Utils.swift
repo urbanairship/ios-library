@@ -299,39 +299,64 @@ public class Utils : NSObject {
     }
     
     @objc (presentInNewWindow:)
-    public class func presentInNewWindow(_ rootViewController: UIViewController) -> UIWindow? {
-        let window = createWindow()
+    public class func presentInNewWindow(
+        _ rootViewController: UIViewController
+    ) -> UIWindow? {
+        var window: UIWindow?
         if #available(iOS 13.0, tvOS 13.0, *) {
             do {
                 let scene = try findScene()
-                window.windowScene = scene
+                window = createWindow(
+                    scene: scene,
+                    rootViewController: rootViewController
+                )
             } catch {
-                AirshipLogger.error("\(error)")
+                AirshipLogger.error("Unable to create window: \(error)")
                 return nil
             }
+        } else {
+            window = createWindow(
+                rootViewController: rootViewController
+            )
         }
-        showWindow(window)
+        window?.makeKeyAndVisible()
+        return window
+    }
+
+    @objc
+    @available(iOS 13.0.0, tvOS 13.0, *)
+    public class func createWindow(
+        scene: UIWindowScene,
+        rootViewController: UIViewController
+    ) -> UIWindow {
+        let window = UIWindow(frame: scene.screen.bounds)
+        window.rootViewController = rootViewController
+        window.windowScene = scene
+        return window
+    }
+
+    @objc
+    public class func createWindow(
+        rootViewController: UIViewController
+    ) -> UIWindow {
+        let window = UIWindow(frame: UIScreen.main.bounds)
         window.rootViewController = rootViewController
         return window
     }
     
-    private class func createWindow() -> UIWindow {
-        let window = UIWindow(frame: UIScreen.main.bounds)
-        window.windowLevel = .alert
-        return window
-    }
-    
     @available(iOS 13.0.0, tvOS 13.0, *)
-    private class func findScene() throws -> UIWindowScene? {
-        guard let scene = UIApplication.shared.connectedScenes.first(where: { $0.isKind(of: UIWindowScene.self) }) as? UIWindowScene else {
+    private class func findScene() throws -> UIWindowScene {
+        let windowScene = UIApplication.shared.connectedScenes.first(
+            where: { scene in
+                scene.isKind(of: UIWindowScene.self)
+            }
+        )
+        guard let scene = windowScene as? UIWindowScene else {
             throw AirshipErrors.error("Unable to find a window!")
         }
         return scene
     }
-    
-    private class func showWindow(_ window: UIWindow) {
-        window.makeKeyAndVisible()
-    }
+
     #endif
     
     

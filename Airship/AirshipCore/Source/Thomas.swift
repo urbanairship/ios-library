@@ -133,7 +133,6 @@ public class Thomas: NSObject {
         
         let options = ThomasViewControllerOptions()
         let environment = ThomasEnvironment(delegate: delegate, extensions: extensions) {
-            window?.windowLevel = .normal
             window?.isHidden = true
             window = nil
         }
@@ -147,7 +146,6 @@ public class Thomas: NSObject {
         window?.rootViewController = viewController
         
         return {
-            window?.windowLevel = .alert
             window?.makeKeyAndVisible()
             
             return Disposable {

@@ -313,17 +313,6 @@ static double const DefaultResizableViewAnimationDuration = 0.2;
 #pragma mark -
 #pragma mark Core Functionality
 
-- (void)createWindow {
-    // create a new window that covers the entire display
-    self.topWindow = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
-
-    // make sure window appears above any alerts already showing
-    self.topWindow.windowLevel = UIWindowLevelAlert;
-
-    // add this view controller to the window
-    self.topWindow.rootViewController = self;
-}
-
 - (void)displayWindow:(void (^)(UAInAppMessageResolution * _Nonnull))completionHandler {
     self.showCompletionHandler = completionHandler;
     [self.topWindow makeKeyAndVisible];
@@ -348,7 +337,7 @@ static double const DefaultResizableViewAnimationDuration = 0.2;
         return;
     }
 
-    [self createWindow];
+    self.topWindow = [UAUtils createWindowWithRootViewController:self];
     [self displayWindow:completionHandler];
 }
 
@@ -358,8 +347,8 @@ static double const DefaultResizableViewAnimationDuration = 0.2;
         return;
     }
 
-    [self createWindow];
-    self.topWindow.windowScene = scene;
+    self.topWindow = [UAUtils createWindowWithScene:scene
+                                 rootViewController:self];
     [self observeSceneEvents];
 
     #if TARGET_OS_MACCATALYST
@@ -375,7 +364,6 @@ static double const DefaultResizableViewAnimationDuration = 0.2;
 
     self.isShowing = NO;
     [self.view removeFromSuperview];
-    self.topWindow.windowLevel = UIWindowLevelNormal;
     self.topWindow.hidden = true;
     self.topWindow = nil;
 

@@ -436,17 +436,6 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
     return (UAInAppMessageFullScreenContentLayoutType)content.contentLayout;
 }
 
-- (void)createWindow {
-    // create a new window that covers the entire display
-    self.fullScreenWindow = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
-
-    // make sure window appears above any alerts already showing
-    self.fullScreenWindow.windowLevel = UIWindowLevelAlert;
-
-    // add this view controller to the window
-    self.fullScreenWindow.rootViewController = self;
-}
-
 - (void)displayWindow:(void (^)(UAInAppMessageResolution * _Nonnull))completionHandler {
     self.showCompletionHandler = completionHandler;
     [self.fullScreenWindow makeKeyAndVisible];
@@ -471,7 +460,7 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
         return;
     }
 
-    [self createWindow];
+    self.fullScreenWindow = [UAUtils createWindowWithRootViewController:self];
     [self displayWindow:completionHandler];
 }
 
@@ -481,8 +470,8 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
         return;
     }
 
-    [self createWindow];
-    self.fullScreenWindow.windowScene = scene;
+    self.fullScreenWindow = [UAUtils createWindowWithScene:scene
+                                        rootViewController:self];
     [self observeSceneEvents];
 
 #if TARGET_OS_MACCATALYST
@@ -537,7 +526,6 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
             }
 #endif
             
-            self.fullScreenWindow.windowLevel = UIWindowLevelNormal;
             self.fullScreenWindow.hidden = true;
             self.fullScreenWindow = nil;
             
