@@ -63,9 +63,12 @@ public class NativeBridge : NSObject, WKNavigationDelegate {
     /// NativeBridge initializer.
     @objc
     public convenience override init() {
-        let actionHandler: NativeBridgeActionHandlerProtocol = NativeBridgeActionHandler.init()
-        let javaScriptEnvironment: JavaScriptEnvironmentProtocol = JavaScriptEnvironment.init()
-        self.init(actionHandler: actionHandler, javaScriptEnvironmentFactoryBlock: { return javaScriptEnvironment })
+        self.init(
+            actionHandler: NativeBridgeActionHandler(),
+            javaScriptEnvironmentFactoryBlock: {
+                return JavaScriptEnvironment()
+            }
+        )
     }
 
     /**
