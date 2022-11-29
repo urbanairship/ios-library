@@ -69,14 +69,10 @@
         /// NativeBridge initializer.
         @objc
         public convenience override init() {
-            let actionHandler: NativeBridgeActionHandlerProtocol =
-                NativeBridgeActionHandler.init()
-            let javaScriptEnvironment: JavaScriptEnvironmentProtocol =
-                JavaScriptEnvironment.init()
             self.init(
-                actionHandler: actionHandler,
+                actionHandler: NativeBridgeActionHandler(),
                 javaScriptEnvironmentFactoryBlock: {
-                    return javaScriptEnvironment
+                    return JavaScriptEnvironment()
                 }
             )
         }

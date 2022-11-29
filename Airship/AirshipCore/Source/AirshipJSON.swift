@@ -79,10 +79,18 @@ public enum AirshipJSON: Codable, Equatable {
             return .string(string)
         }
 
+        if let number = value as? NSNumber {
+            if (CFBooleanGetTypeID() == CFGetTypeID(number)) {
+                return .bool(number.boolValue)
+            } else {
+                return .number(number.doubleValue)
+            }
+        }
+
         if let bool = value as? Bool {
             return .bool(bool)
         }
-
+        
         if let number = value as? Double {
             return .number(number)
         }
