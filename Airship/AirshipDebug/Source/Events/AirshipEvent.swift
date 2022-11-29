@@ -1,9 +1,9 @@
 /* Copyright Airship and Contributors */
 
 #if canImport(AirshipCore)
-    import AirshipCore
+import AirshipCore
 #elseif canImport(AirshipKit)
-    import AirshipKit
+import AirshipKit
 #endif
 
 /// A wrapper for representing an Airship event in the Debug UI

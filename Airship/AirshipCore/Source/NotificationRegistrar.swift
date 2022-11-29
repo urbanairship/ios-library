@@ -6,7 +6,7 @@ import UserNotifications
 protocol NotificationRegistrar {
 
     #if !os(tvOS)
-        func setCategories(_ categories: Set<UNNotificationCategory>)
+    func setCategories(_ categories: Set<UNNotificationCategory>)
     #endif
 
     func checkStatus(

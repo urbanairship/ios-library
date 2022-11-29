@@ -65,21 +65,21 @@ public class DeepLinkAction: NSObject, Action {
                 return
             }
             #if !os(watchOS)
-                UIApplication.shared.open(url, options: [:]) { success in
-                    if success {
-                        completionHandler(ActionResult.empty())
-                    } else {
-                        completionHandler(
-                            ActionResult(
-                                error: AirshipErrors.error(
-                                    "Failed to open url \(url)"
-                                )
+            UIApplication.shared.open(url, options: [:]) { success in
+                if success {
+                    completionHandler(ActionResult.empty())
+                } else {
+                    completionHandler(
+                        ActionResult(
+                            error: AirshipErrors.error(
+                                "Failed to open url \(url)"
                             )
                         )
-                    }
+                    )
                 }
+            }
             #else
-                WKExtension.shared().openSystemURL(url)
+            WKExtension.shared().openSystemURL(url)
             #endif
         }
     }

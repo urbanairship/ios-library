@@ -13,7 +13,7 @@ struct ModalView: View {
     @ObservedObject
     var thomasEnvironment: ThomasEnvironment
     #if !os(watchOS)
-        let viewControllerOptions: ThomasViewControllerOptions
+    let viewControllerOptions: ThomasViewControllerOptions
     #endif
 
     @State private var contentSize: (ViewConstraints, CGSize)? = nil
@@ -36,11 +36,11 @@ struct ModalView: View {
     }
 
     #if !os(watchOS)
-        private func calculateKeyboardHeight(metrics: GeometryProxy) -> Double {
-            guard self.thomasEnvironment.keyboardHeight > 0 else { return 0.0 }
-            return self.thomasEnvironment.keyboardHeight
-                - metrics.safeAreaInsets.bottom + ModalView.keyboardPadding
-        }
+    private func calculateKeyboardHeight(metrics: GeometryProxy) -> Double {
+        guard self.thomasEnvironment.keyboardHeight > 0 else { return 0.0 }
+        return self.thomasEnvironment.keyboardHeight
+            - metrics.safeAreaInsets.bottom + ModalView.keyboardPadding
+    }
     #endif
 
     private func calculateKeyboardOverlap(
@@ -100,26 +100,26 @@ struct ModalView: View {
         let windowHeight = windowConstraints.height ?? 0
         let contentHeight = contentConstraints.height ?? 0
         #if !os(watchOS)
-            let keyboardHeight = calculateKeyboardHeight(
-                metrics: metrics
-            )
-            var keyboardOffset = calculateKeyboardOverlap(
-                placement: placement,
-                keyboardHeight: keyboardHeight,
-                containerHeight: windowHeight,
-                contentHeight: contentHeight
-            )
+        let keyboardHeight = calculateKeyboardHeight(
+            metrics: metrics
+        )
+        var keyboardOffset = calculateKeyboardOverlap(
+            placement: placement,
+            keyboardHeight: keyboardHeight,
+            containerHeight: windowHeight,
+            contentHeight: contentHeight
+        )
 
-            // If the keyboard will push the content outside the screen,
-            // resize it and position it at the top
-            if (keyboardHeight + contentHeight) >= windowHeight {
-                alignment = Alignment(
-                    horizontal: alignment.horizontal,
-                    vertical: .top
-                )
-                keyboardOffset = 0
-                contentConstraints.height = windowHeight - keyboardHeight
-            }
+        // If the keyboard will push the content outside the screen,
+        // resize it and position it at the top
+        if (keyboardHeight + contentHeight) >= windowHeight {
+            alignment = Alignment(
+                horizontal: alignment.horizontal,
+                vertical: .top
+            )
+            keyboardOffset = 0
+            contentConstraints.height = windowHeight - keyboardHeight
+        }
         #endif
 
         return VStack {
@@ -138,7 +138,7 @@ struct ModalView: View {
                 })
             )
             #if !os(watchOS)
-                .offset(y: -keyboardOffset)
+            .offset(y: -keyboardOffset)
             #endif
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: alignment)
@@ -180,10 +180,10 @@ struct ModalView: View {
         var placement = self.presentation.defaultPlacement
 
         #if !os(watchOS)
-            let resolvedOrientation =
-                viewControllerOptions.orientation ?? orientation
+        let resolvedOrientation =
+            viewControllerOptions.orientation ?? orientation
         #else
-            let resolvedOrientation = orientation
+        let resolvedOrientation = orientation
         #endif
 
         for placementSelector in self.presentation.placementSelectors ?? [] {
@@ -205,35 +205,35 @@ struct ModalView: View {
         }
 
         #if !os(watchOS)
-            self.viewControllerOptions.orientation =
-                placement.device?.orientationLock
+        self.viewControllerOptions.orientation =
+            placement.device?.orientationLock
         #endif
         return placement
     }
 
     private func statusBarShimColor() -> Color {
         #if os(tvOS) || os(watchOS)
-            return Color.clear
+        return Color.clear
         #else
 
-            var statusBarStyle = UIStatusBarStyle.default
-            if let sceneStyle = UIApplication.shared.windows.first?.windowScene?
-                .statusBarManager?
-                .statusBarStyle
-            {
-                statusBarStyle = sceneStyle
-            }
+        var statusBarStyle = UIStatusBarStyle.default
+        if let sceneStyle = UIApplication.shared.windows.first?.windowScene?
+            .statusBarManager?
+            .statusBarStyle
+        {
+            statusBarStyle = sceneStyle
+        }
 
-            switch statusBarStyle {
-            case .darkContent:
-                return Color.white
-            case .lightContent:
-                return Color.black
-            case .default:
-                return self.colorScheme == .dark ? Color.black : Color.white
-            @unknown default:
-                return Color.black
-            }
+        switch statusBarStyle {
+        case .darkContent:
+            return Color.white
+        case .lightContent:
+            return Color.black
+        case .default:
+            return self.colorScheme == .dark ? Color.black : Color.white
+        @unknown default:
+            return Color.black
+        }
         #endif
     }
 }

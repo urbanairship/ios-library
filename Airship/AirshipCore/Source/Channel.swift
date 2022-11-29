@@ -83,7 +83,7 @@ public class Channel: NSObject, Component, ChannelProtocol {
     private let tagsLock = Lock()
 
     #if canImport(ActivityKit)
-        private let liveActivityRegistry: LiveActivityRegistry
+    private let liveActivityRegistry: LiveActivityRegistry
     #endif
 
     private var shouldPerformChannelRegistrationOnForeground = false
@@ -198,9 +198,9 @@ public class Channel: NSObject, Component, ChannelProtocol {
         self.appStateTracker = appStateTracker
 
         #if canImport(ActivityKit)
-            self.liveActivityRegistry = LiveActivityRegistry(
-                dataStore: dataStore
-            )
+        self.liveActivityRegistry = LiveActivityRegistry(
+            dataStore: dataStore
+        )
         #endif
 
         // Check config to see if user wants to delay channel creation
@@ -240,14 +240,14 @@ public class Channel: NSObject, Component, ChannelProtocol {
         self.updateRegistration()
 
         #if canImport(ActivityKit)
-            Task {
-                for await update in self.liveActivityRegistry.updates {
-                    UADispatcher.globalDispatcher(.utility)
-                        .dispatchAsync {
-                            self.audienceManager.addLiveActivityUpdate(update)
-                        }
-                }
+        Task {
+            for await update in self.liveActivityRegistry.updates {
+                UADispatcher.globalDispatcher(.utility)
+                    .dispatchAsync {
+                        self.audienceManager.addLiveActivityUpdate(update)
+                    }
             }
+        }
         #endif
 
     }
@@ -667,25 +667,25 @@ public class Channel: NSObject, Component, ChannelProtocol {
 extension Channel: PushableComponent {
 
     #if !os(watchOS)
-        public func receivedRemoteNotification(
-            _ notification: [AnyHashable: Any],
-            completionHandler: @escaping (UIBackgroundFetchResult) -> Void
-        ) {
-            if self.identifier == nil {
-                updateRegistration()
-            }
-            completionHandler(.noData)
+    public func receivedRemoteNotification(
+        _ notification: [AnyHashable: Any],
+        completionHandler: @escaping (UIBackgroundFetchResult) -> Void
+    ) {
+        if self.identifier == nil {
+            updateRegistration()
         }
+        completionHandler(.noData)
+    }
     #else
-        public func receivedRemoteNotification(
-            _ notification: [AnyHashable: Any],
-            completionHandler: @escaping (WKBackgroundFetchResult) -> Void
-        ) {
-            if self.identifier == nil {
-                updateRegistration()
-            }
-            completionHandler(.noData)
+    public func receivedRemoteNotification(
+        _ notification: [AnyHashable: Any],
+        completionHandler: @escaping (WKBackgroundFetchResult) -> Void
+    ) {
+        if self.identifier == nil {
+            updateRegistration()
         }
+        completionHandler(.noData)
+    }
     #endif
 }
 
@@ -713,7 +713,7 @@ extension Channel: ChannelRegistrarDelegate {
             payload.channel.carrier = Utils.carrierName()
             payload.channel.appVersion = Utils.bundleShortVersionString()
             #if !os(watchOS)
-                payload.channel.deviceOS = UIDevice.current.systemVersion
+            payload.channel.deviceOS = UIDevice.current.systemVersion
             #endif
         }
 
@@ -810,42 +810,42 @@ extension Channel: InternalChannelProtocol {
 }
 
 #if canImport(ActivityKit)
-    import ActivityKit
-    @available(iOS 16.1, *)
-    extension Channel {
+import ActivityKit
+@available(iOS 16.1, *)
+extension Channel {
 
-        /// Tracks a live activity with Airship for the given name.
-        /// Airship will monitor the push token and status and automatically
-        /// add and remove it from the channel for the App. If an activity is already
-        /// tracked with the given name it will be replaced with the new activity.
-        ///
-        /// The name will be used to send updates through Airship. It can be unique
-        /// for the device or shared across many devices.
-        ///
-        /// - Parameters:
-        ///     - activity: The live activity
-        ///     - name: The name of the activity
-        public func trackLiveActivity<T: ActivityAttributes>(
-            _ activity: Activity<T>,
-            name: String
-        ) async {
-            await liveActivityRegistry.addLiveActivity(activity, name: name)
-        }
-
-        /// Called to restore live activity tracking. This method needs to be called exactly once
-        /// during `application(_:didFinishLaunchingWithOptions:)` right
-        /// after takeOff. Any activities not restored will stop being tracked by Airship.
-        /// - Parameters:
-        ///     - callback: Callback with the restorer.
-        public func restoreLiveActivityTracking(
-            callback: (LiveActivityRestorer) async -> Void
-        ) async {
-            let restorer = AirshipLiveActivityRestorer(
-                registry: self.liveActivityRegistry
-            )
-            await callback(restorer)
-            await self.liveActivityRegistry.clearUntracked()
-        }
+    /// Tracks a live activity with Airship for the given name.
+    /// Airship will monitor the push token and status and automatically
+    /// add and remove it from the channel for the App. If an activity is already
+    /// tracked with the given name it will be replaced with the new activity.
+    ///
+    /// The name will be used to send updates through Airship. It can be unique
+    /// for the device or shared across many devices.
+    ///
+    /// - Parameters:
+    ///     - activity: The live activity
+    ///     - name: The name of the activity
+    public func trackLiveActivity<T: ActivityAttributes>(
+        _ activity: Activity<T>,
+        name: String
+    ) async {
+        await liveActivityRegistry.addLiveActivity(activity, name: name)
     }
+
+    /// Called to restore live activity tracking. This method needs to be called exactly once
+    /// during `application(_:didFinishLaunchingWithOptions:)` right
+    /// after takeOff. Any activities not restored will stop being tracked by Airship.
+    /// - Parameters:
+    ///     - callback: Callback with the restorer.
+    public func restoreLiveActivityTracking(
+        callback: (LiveActivityRestorer) async -> Void
+    ) async {
+        let restorer = AirshipLiveActivityRestorer(
+            registry: self.liveActivityRegistry
+        )
+        await callback(restorer)
+        await self.liveActivityRegistry.clearUntracked()
+    }
+}
 
 #endif

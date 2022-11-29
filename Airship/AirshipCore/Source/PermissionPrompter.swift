@@ -42,10 +42,10 @@ struct AirshipPermissionPrompter: PermissionPrompter {
             startResult in
             if fallbackSystemSettings && startResult == .denied {
                 #if !os(watchOS)
-                    self.requestSystemSettingsChange(permission: permission) {
-                        endResult in
-                        completionHandler(startResult, endResult)
-                    }
+                self.requestSystemSettingsChange(permission: permission) {
+                    endResult in
+                    completionHandler(startResult, endResult)
+                }
                 #endif
             } else {
                 self.permissionsManager.requestPermission(
@@ -60,38 +60,38 @@ struct AirshipPermissionPrompter: PermissionPrompter {
 
     #if !os(watchOS)
 
-        private func requestSystemSettingsChange(
-            permission: Permission,
-            completionHandler: @escaping (PermissionStatus) -> Void
-        ) {
-            if let url = URL(string: UIApplication.openSettingsURLString) {
-                UIApplication.shared.open(url, options: [:]) { _ in
+    private func requestSystemSettingsChange(
+        permission: Permission,
+        completionHandler: @escaping (PermissionStatus) -> Void
+    ) {
+        if let url = URL(string: UIApplication.openSettingsURLString) {
+            UIApplication.shared.open(url, options: [:]) { _ in
 
-                    var observer: Any? = nil
-                    observer = self.notificationCenter.addObserver(
-                        forName: AppStateTracker.didBecomeActiveNotification,
-                        object: nil,
-                        queue: .main
-                    ) { _ in
+                var observer: Any? = nil
+                observer = self.notificationCenter.addObserver(
+                    forName: AppStateTracker.didBecomeActiveNotification,
+                    object: nil,
+                    queue: .main
+                ) { _ in
 
-                        if let observer = observer {
-                            self.notificationCenter.removeObserver(observer)
-                        }
-
-                        self.permissionsManager.checkPermissionStatus(
-                            permission,
-                            completionHandler: completionHandler
-                        )
+                    if let observer = observer {
+                        self.notificationCenter.removeObserver(observer)
                     }
+
+                    self.permissionsManager.checkPermissionStatus(
+                        permission,
+                        completionHandler: completionHandler
+                    )
                 }
-            } else {
-                AirshipLogger.error("Unable to navigate to system settings.")
-                self.permissionsManager.checkPermissionStatus(
-                    permission,
-                    completionHandler: completionHandler
-                )
             }
+        } else {
+            AirshipLogger.error("Unable to navigate to system settings.")
+            self.permissionsManager.checkPermissionStatus(
+                permission,
+                completionHandler: completionHandler
+            )
         }
+    }
 
     #endif
 

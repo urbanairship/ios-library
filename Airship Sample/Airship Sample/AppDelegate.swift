@@ -6,7 +6,7 @@ import AirshipPreferenceCenter
 import UIKit
 
 #if canImport(ActivityKit)
-    import ActivityKit
+import ActivityKit
 #endif
 
 class AppDelegate: UIResponder, UIApplicationDelegate, DeepLinkDelegate,
@@ -43,16 +43,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, DeepLinkDelegate,
         }
 
         #if canImport(ActivityKit)
-            if #available(iOS 16.1, *) {
-                Task {
-                    await Airship.channel.restoreLiveActivityTracking {
-                        restorer in
-                        await restorer.restore(
-                            forType: Activity<DeliveryAttributes>.self
-                        )
-                    }
+        if #available(iOS 16.1, *) {
+            Task {
+                await Airship.channel.restoreLiveActivityTracking {
+                    restorer in
+                    await restorer.restore(
+                        forType: Activity<DeliveryAttributes>.self
+                    )
                 }
             }
+        }
         #endif
 
         return true

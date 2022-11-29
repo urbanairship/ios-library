@@ -68,15 +68,15 @@ open class AppStateTracker: NSObject, AppStateTrackerDelegate,
 
     public override convenience init() {
         #if !os(watchOS)
-            self.init(
-                notificationCenter: NotificationCenter.default,
-                adapter: UIKitStateTrackerAdapter()
-            )
+        self.init(
+            notificationCenter: NotificationCenter.default,
+            adapter: UIKitStateTrackerAdapter()
+        )
         #else
-            self.init(
-                notificationCenter: NotificationCenter.default,
-                adapter: WKStateTrackerAdapter()
-            )
+        self.init(
+            notificationCenter: NotificationCenter.default,
+            adapter: WKStateTrackerAdapter()
+        )
         #endif
     }
 

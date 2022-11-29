@@ -30,7 +30,7 @@ class ThomasEnvironment: ObservableObject {
         self.imageLoader = ImageLoader(imageProvider: extensions?.imageProvider)
 
         #if !os(tvOS) && !os(watchOS)
-            self.subscribeKeyboard()
+        self.subscribeKeyboard()
         #endif
     }
 
@@ -162,54 +162,54 @@ class ThomasEnvironment: ObservableObject {
     }
 
     #if !os(tvOS) && !os(watchOS)
-        private func subscribeKeyboard() {
-            Publishers.Merge(
-                NotificationCenter.default
-                    .publisher(
-                        for: UIResponder.keyboardWillShowNotification
-                    )
-                    .map {
-                        $0.userInfo?[UIResponder.keyboardFrameEndUserInfoKey]
-                            as? CGRect
-                            ?? CGRect.zero
-                    }
-                    .map { Double($0.height) },
-                NotificationCenter.default
-                    .publisher(
-                        for: UIResponder.keyboardWillHideNotification
-                    )
-                    .map { _ in 0.0 }
-            )
-            .subscribe(on: DispatchQueue.main)
-            .assign(to: \.self.keyboardHeight, on: self)
-            .store(in: &self.subscriptions)
+    private func subscribeKeyboard() {
+        Publishers.Merge(
+            NotificationCenter.default
+                .publisher(
+                    for: UIResponder.keyboardWillShowNotification
+                )
+                .map {
+                    $0.userInfo?[UIResponder.keyboardFrameEndUserInfoKey]
+                        as? CGRect
+                        ?? CGRect.zero
+                }
+                .map { Double($0.height) },
+            NotificationCenter.default
+                .publisher(
+                    for: UIResponder.keyboardWillHideNotification
+                )
+                .map { _ in 0.0 }
+        )
+        .subscribe(on: DispatchQueue.main)
+        .assign(to: \.self.keyboardHeight, on: self)
+        .store(in: &self.subscriptions)
 
-            Publishers.Merge3(
-                NotificationCenter.default
-                    .publisher(for: UIResponder.keyboardDidShowNotification)
-                    .map { _ in
-                        return KeyboardState.visible
-                    },
-                NotificationCenter.default
-                    .publisher(for: UIResponder.keyboardWillShowNotification)
-                    .map { notification in
-                        let duration =
-                            notification.userInfo?[
-                                UIResponder.keyboardAnimationDurationUserInfoKey
-                            ] as? Double
-                        return KeyboardState.displaying(duration ?? 0.25)
-                    },
-                NotificationCenter.default
-                    .publisher(for: UIResponder.keyboardDidHideNotification)
-                    .map { _ in
-                        return KeyboardState.hidden
-                    }
-            )
-            .removeDuplicates()
-            .subscribe(on: DispatchQueue.main)
-            .assign(to: \.self.keyboardState, on: self)
-            .store(in: &self.subscriptions)
-        }
+        Publishers.Merge3(
+            NotificationCenter.default
+                .publisher(for: UIResponder.keyboardDidShowNotification)
+                .map { _ in
+                    return KeyboardState.visible
+                },
+            NotificationCenter.default
+                .publisher(for: UIResponder.keyboardWillShowNotification)
+                .map { notification in
+                    let duration =
+                        notification.userInfo?[
+                            UIResponder.keyboardAnimationDurationUserInfoKey
+                        ] as? Double
+                    return KeyboardState.displaying(duration ?? 0.25)
+                },
+            NotificationCenter.default
+                .publisher(for: UIResponder.keyboardDidHideNotification)
+                .map { _ in
+                    return KeyboardState.hidden
+                }
+        )
+        .removeDuplicates()
+        .subscribe(on: DispatchQueue.main)
+        .assign(to: \.self.keyboardState, on: self)
+        .store(in: &self.subscriptions)
+    }
 
     #endif
 }

@@ -4,7 +4,7 @@ import Combine
 import Foundation
 
 #if canImport(AirshipCore)
-    import AirshipCore
+import AirshipCore
 #endif
 
 class ConditionsMonitor: ObservableObject {

@@ -5,8 +5,8 @@ import Foundation
 import UserNotifications
 
 #if os(watchOS)
-    import WatchKit
-    import UIKit
+import WatchKit
+import UIKit
 #endif
 
 /// This singleton provides an interface to the functionality provided by the Airship iOS Push API.
@@ -132,10 +132,10 @@ public class Push: NSObject, Component, PushProtocol {
     private var isBackgroundRefreshStatusAvailable: Bool {
         var available = false
         #if !os(watchOS)
-            self.mainDispatcher.doSync {
-                available =
-                    self.apnsRegistrar.isBackgroundRefreshStatusAvailable
-            }
+        self.mainDispatcher.doSync {
+            available =
+                self.apnsRegistrar.isBackgroundRefreshStatusAvailable
+        }
         #endif
         return available
     }
@@ -253,13 +253,13 @@ public class Push: NSObject, Component, PushProtocol {
 
     private func observeNotificationCenterEvents() {
         #if !os(watchOS)
-            self.notificationCenter.addObserver(
-                self,
-                selector: #selector(applicationBackgroundRefreshStatusChanged),
-                name: UIApplication
-                    .backgroundRefreshStatusDidChangeNotification,
-                object: nil
-            )
+        self.notificationCenter.addObserver(
+            self,
+            selector: #selector(applicationBackgroundRefreshStatusChanged),
+            name: UIApplication
+                .backgroundRefreshStatusDidChangeNotification,
+            object: nil
+        )
         #endif
         self.notificationCenter.addObserver(
             self,
@@ -267,7 +267,6 @@ public class Push: NSObject, Component, PushProtocol {
             name: AppStateTracker.didBecomeActiveNotification,
             object: nil
         )
-
 
         self.notificationCenter.addObserver(
             self,
@@ -444,12 +443,12 @@ public class Push: NSObject, Component, PushProtocol {
                 ) as? NSNumber
             else {
                 #if os(tvOS)
-                    return .badge
+                return .badge
                 #else
-                    guard self.authorizationStatus == .provisional else {
-                        return [.badge, .sound, .alert]
-                    }
-                    return [.badge, .sound, .alert, .provisional]
+                guard self.authorizationStatus == .provisional else {
+                    return [.badge, .sound, .alert]
+                }
+                return [.badge, .sound, .alert, .provisional]
                 #endif
             }
 
@@ -458,38 +457,38 @@ public class Push: NSObject, Component, PushProtocol {
     }
 
     #if !os(tvOS)
-        /// Custom notification categories. Airship default notification
-        /// categories will be unaffected by this field.
-        ///
-        /// Changes to this value will not take effect until the next time the app registers
-        /// with updateRegistration.
-        @objc
-        public var customCategories: Set<UNNotificationCategory> = Set() {
-            didSet {
-                self.updateCategories()
-            }
+    /// Custom notification categories. Airship default notification
+    /// categories will be unaffected by this field.
+    ///
+    /// Changes to this value will not take effect until the next time the app registers
+    /// with updateRegistration.
+    @objc
+    public var customCategories: Set<UNNotificationCategory> = Set() {
+        didSet {
+            self.updateCategories()
         }
+    }
 
-        /// The combined set of notification categories from `customCategories` set by the app
-        /// and the Airship provided categories.
-        @objc
-        public var combinedCategories: Set<UNNotificationCategory> {
-            let defaultCategories = NotificationCategories.defaultCategories(
-                withRequireAuth: requireAuthorizationForDefaultCategories
-            )
-            return defaultCategories.union(
-                self.customCategories.union(self.accengageCategories)
-            )
-        }
+    /// The combined set of notification categories from `customCategories` set by the app
+    /// and the Airship provided categories.
+    @objc
+    public var combinedCategories: Set<UNNotificationCategory> {
+        let defaultCategories = NotificationCategories.defaultCategories(
+            withRequireAuth: requireAuthorizationForDefaultCategories
+        )
+        return defaultCategories.union(
+            self.customCategories.union(self.accengageCategories)
+        )
+    }
 
-        /// The set of Accengage notification categories.
-        /// - Note For internal use only. :nodoc:
-        @objc
-        public var accengageCategories: Set<UNNotificationCategory> = [] {
-            didSet {
-                self.updateCategories()
-            }
+    /// The set of Accengage notification categories.
+    /// - Note For internal use only. :nodoc:
+    @objc
+    public var accengageCategories: Set<UNNotificationCategory> = [] {
+        didSet {
+            self.updateCategories()
         }
+    }
     #endif
 
     /// Sets authorization required for the default Airship categories. Only applies
@@ -513,10 +512,9 @@ public class Push: NSObject, Component, PushProtocol {
     public weak var registrationDelegate: RegistrationDelegate?
 
     #if !os(tvOS)
-        /// Notification response that launched the application.
-        @objc
-        public private(set) var launchNotificationResponse:
-            UNNotificationResponse?
+    /// Notification response that launched the application.
+    @objc
+    public private(set) var launchNotificationResponse: UNNotificationResponse?
     #endif
     /// The current authorized notification settings.
     /// If push is disabled in privacy manager, this value could be out of date.
@@ -782,19 +780,19 @@ public class Push: NSObject, Component, PushProtocol {
         self.updateAuthorizedNotificationTypes { _, status, settings in
             self.mainDispatcher.dispatchAsync {
                 #if !os(tvOS)
-                    self.registrationDelegate?
-                        .notificationRegistrationFinished?(
-                            withAuthorizedSettings: settings,
-                            categories: self.combinedCategories,
-                            status: status
-                        )
+                self.registrationDelegate?
+                    .notificationRegistrationFinished?(
+                        withAuthorizedSettings: settings,
+                        categories: self.combinedCategories,
+                        status: status
+                    )
 
                 #else
-                    self.registrationDelegate?
-                        .notificationRegistrationFinished?(
-                            withAuthorizedSettings: settings,
-                            status: status
-                        )
+                self.registrationDelegate?
+                    .notificationRegistrationFinished?(
+                        withAuthorizedSettings: settings,
+                        status: status
+                    )
                 #endif
                 self.channel.updateRegistration()
             }
@@ -803,59 +801,59 @@ public class Push: NSObject, Component, PushProtocol {
     }
 
     #if !os(watchOS)
-        /// The current badge number used by the device and on the Airship server.
-        ///
-        /// - Note: This property must be accessed on the main thread.
-        @objc
-        public var badgeNumber: Int {
-            set {
-                if self.badger.applicationIconBadgeNumber == newValue {
-                    return
-                }
+    /// The current badge number used by the device and on the Airship server.
+    ///
+    /// - Note: This property must be accessed on the main thread.
+    @objc
+    public var badgeNumber: Int {
+        set {
+            if self.badger.applicationIconBadgeNumber == newValue {
+                return
+            }
 
-                AirshipLogger.debug(
-                    "Change Badge from \(self.badger.applicationIconBadgeNumber), to \(newValue)"
+            AirshipLogger.debug(
+                "Change Badge from \(self.badger.applicationIconBadgeNumber), to \(newValue)"
+            )
+
+            self.badger.applicationIconBadgeNumber = newValue
+
+            if self.autobadgeEnabled {
+                self.channel.updateRegistration(forcefully: true)
+            }
+        }
+
+        get {
+            return self.badger.applicationIconBadgeNumber
+        }
+    }
+
+    /// Toggle the Airship auto-badge feature. Defaults to `false` If enabled, this will update the
+    /// badge number stored by Airship every time the app is started or foregrounded.
+    @objc
+    public var autobadgeEnabled: Bool {
+        set {
+            if self.autobadgeEnabled != newValue {
+                self.dataStore.setBool(
+                    newValue,
+                    forKey: Push.badgeSettingsKey
                 )
-
-                self.badger.applicationIconBadgeNumber = newValue
-
-                if self.autobadgeEnabled {
-                    self.channel.updateRegistration(forcefully: true)
-                }
-            }
-
-            get {
-                return self.badger.applicationIconBadgeNumber
+                self.channel.updateRegistration(forcefully: true)
             }
         }
 
-        /// Toggle the Airship auto-badge feature. Defaults to `false` If enabled, this will update the
-        /// badge number stored by Airship every time the app is started or foregrounded.
-        @objc
-        public var autobadgeEnabled: Bool {
-            set {
-                if self.autobadgeEnabled != newValue {
-                    self.dataStore.setBool(
-                        newValue,
-                        forKey: Push.badgeSettingsKey
-                    )
-                    self.channel.updateRegistration(forcefully: true)
-                }
-            }
-
-            get {
-                return self.dataStore.bool(forKey: Push.badgeSettingsKey)
-            }
+        get {
+            return self.dataStore.bool(forKey: Push.badgeSettingsKey)
         }
+    }
 
-        /// Resets the badge to zero (0) on both the device and on Airships servers. This is a
-        /// convenience method for setting the `badgeNumber` property to zero.
-        ///
-        /// - Note: This method must be called on the main thread.
-        @objc
-        public func resetBadge() {
-            self.badgeNumber = 0
-        }
+    /// Resets the badge to zero (0) on both the device and on Airships servers. This is a
+    /// convenience method for setting the `badgeNumber` property to zero.
+    ///
+    /// - Note: This method must be called on the main thread.
+    @objc
+    public func resetBadge() {
+        self.badgeNumber = 0
+    }
 
     #endif
 
@@ -972,14 +970,14 @@ public class Push: NSObject, Component, PushProtocol {
 
     private func updateCategories() {
         #if !os(tvOS)
-            guard self.isComponentEnabled,
-                self.privacyManager.isEnabled(Features.push),
-                self.config.requestAuthorizationToUseNotifications
-            else {
-                return
-            }
+        guard self.isComponentEnabled,
+            self.privacyManager.isEnabled(Features.push),
+            self.config.requestAuthorizationToUseNotifications
+        else {
+            return
+        }
 
-            self.notificationRegistrar.setCategories(self.combinedCategories)
+        self.notificationRegistrar.setCategories(self.combinedCategories)
         #endif
     }
 
@@ -1042,7 +1040,7 @@ public class Push: NSObject, Component, PushProtocol {
     @objc
     private func applicationDidEnterBackground() {
         #if !os(tvOS)
-            self.launchNotificationResponse = nil
+        self.launchNotificationResponse = nil
         #endif
         if self.privacyManager.isEnabled(.push) {
             self.updateAuthorizedNotificationTypes()
@@ -1050,18 +1048,18 @@ public class Push: NSObject, Component, PushProtocol {
     }
 
     #if !os(watchOS)
-        @objc
-        private func applicationBackgroundRefreshStatusChanged() {
-            if self.privacyManager.isEnabled(.push) {
-                AirshipLogger.trace("Background refresh status changed.")
+    @objc
+    private func applicationBackgroundRefreshStatusChanged() {
+        if self.privacyManager.isEnabled(.push) {
+            AirshipLogger.trace("Background refresh status changed.")
 
-                if self.apnsRegistrar.isBackgroundRefreshStatusAvailable {
-                    self.apnsRegistrar.registerForRemoteNotifications()
-                } else {
-                    self.channel.updateRegistration()
-                }
+            if self.apnsRegistrar.isBackgroundRefreshStatusAvailable {
+                self.apnsRegistrar.registerForRemoteNotifications()
+            } else {
+                self.channel.updateRegistration()
             }
         }
+    }
     #endif
 
     private func extendChannelRegistrationPayload(
@@ -1086,8 +1084,8 @@ public class Push: NSObject, Component, PushProtocol {
             payload.channel.pushAddress = self.deviceToken
             payload.channel.isOptedIn = self.isPushNotificationsOptedIn
             #if !os(watchOS)
-                payload.channel.isBackgroundEnabled =
-                    self.backgroundPushNotificationsAllowed()
+            payload.channel.isBackgroundEnabled =
+                self.backgroundPushNotificationsAllowed()
             #endif
 
             payload.channel.iOSChannelSettings =
@@ -1095,9 +1093,9 @@ public class Push: NSObject, Component, PushProtocol {
                 ?? ChannelRegistrationPayload.iOSChannelSettings()
 
             #if !os(watchOS)
-                if self.autobadgeEnabled {
-                    payload.channel.iOSChannelSettings?.badge = self.badgeNumber
-                }
+            if self.autobadgeEnabled {
+                payload.channel.iOSChannelSettings?.badge = self.badgeNumber
+            }
             #endif
 
             if let timeZoneName = self.timeZone?.name,
@@ -1227,37 +1225,37 @@ extension Push: InternalPushProtocol {
 
     #if !os(tvOS)
 
-        public func didReceiveNotificationResponse(
-            _ response: UNNotificationResponse,
-            completionHandler: @escaping () -> Void
-        ) {
-            guard self.privacyManager.isEnabled(.push) else {
-                completionHandler()
-                return
-            }
-
-            if response.actionIdentifier
-                == UNNotificationDefaultActionIdentifier
-            {
-                self.launchNotificationResponse = response
-            }
-
-            self.notificationCenter.post(
-                name: Push.receivedNotificationResponseEvent,
-                object: self,
-                userInfo: [
-                    Push.receivedNotificationResponseEventResponseKey: response
-                ]
-            )
-
-            if let callback = self.pushNotificationDelegate?
-                .receivedNotificationResponse
-            {
-                callback(response, completionHandler)
-            } else {
-                completionHandler()
-            }
+    public func didReceiveNotificationResponse(
+        _ response: UNNotificationResponse,
+        completionHandler: @escaping () -> Void
+    ) {
+        guard self.privacyManager.isEnabled(.push) else {
+            completionHandler()
+            return
         }
+
+        if response.actionIdentifier
+            == UNNotificationDefaultActionIdentifier
+        {
+            self.launchNotificationResponse = response
+        }
+
+        self.notificationCenter.post(
+            name: Push.receivedNotificationResponseEvent,
+            object: self,
+            userInfo: [
+                Push.receivedNotificationResponseEventResponseKey: response
+            ]
+        )
+
+        if let callback = self.pushNotificationDelegate?
+            .receivedNotificationResponse
+        {
+            callback(response, completionHandler)
+        } else {
+            completionHandler()
+        }
+    }
 
     #endif
 
@@ -1269,9 +1267,9 @@ extension Push: InternalPushProtocol {
 
         guard self.privacyManager.isEnabled(.push) else {
             #if !os(watchOS)
-                handler(UIBackgroundFetchResult.noData)
+            handler(UIBackgroundFetchResult.noData)
             #else
-                handler(WKBackgroundFetchResult.noData)
+            handler(WKBackgroundFetchResult.noData)
             #endif
             return
         }
@@ -1289,17 +1287,17 @@ extension Push: InternalPushProtocol {
                     notification,
                     {
                         #if !os(watchOS)
-                            handler(UIBackgroundFetchResult.noData)
+                        handler(UIBackgroundFetchResult.noData)
                         #else
-                            handler(WKBackgroundFetchResult.noData)
+                        handler(WKBackgroundFetchResult.noData)
                         #endif
                     }
                 )
             } else {
                 #if !os(watchOS)
-                    handler(UIBackgroundFetchResult.noData)
+                handler(UIBackgroundFetchResult.noData)
                 #else
-                    handler(WKBackgroundFetchResult.noData)
+                handler(WKBackgroundFetchResult.noData)
                 #endif
             }
         } else {
@@ -1317,9 +1315,9 @@ extension Push: InternalPushProtocol {
                 )
             } else {
                 #if !os(watchOS)
-                    handler(UIBackgroundFetchResult.noData)
+                handler(UIBackgroundFetchResult.noData)
                 #else
-                    handler(WKBackgroundFetchResult.noData)
+                handler(WKBackgroundFetchResult.noData)
                 #endif
             }
         }
@@ -1330,19 +1328,19 @@ extension Push: InternalPushProtocol {
     {
         var presentationOptions: [String]? = nil
         #if !os(tvOS)
-            // get the presentation options from the the notification
+        // get the presentation options from the the notification
+        presentationOptions =
+            notification.request.content.userInfo[
+                Push.ForegroundPresentationkey
+            ]
+            as? [String]
+
+        if presentationOptions == nil {
             presentationOptions =
                 notification.request.content.userInfo[
-                    Push.ForegroundPresentationkey
-                ]
-                as? [String]
-
-            if presentationOptions == nil {
-                presentationOptions =
-                    notification.request.content.userInfo[
-                        Push.ForegroundPresentationLegacykey
-                    ] as? [String]
-            }
+                    Push.ForegroundPresentationLegacykey
+                ] as? [String]
+        }
         #endif
         return presentationOptions
     }

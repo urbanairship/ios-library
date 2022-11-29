@@ -26,15 +26,15 @@ struct TextInput: View {
         )
 
         #if !os(watchOS)
-            AirshipTextView(
-                textAppearance: self.model.textAppearance,
-                text: binding,
-                isEditing: $isEditing
-            )
-            .onChange(of: self.isEditing) { newValue in
-                let focusedID = newValue ? self.model.identifier : nil
-                self.thomasEnvironment.focusedID = focusedID
-            }
+        AirshipTextView(
+            textAppearance: self.model.textAppearance,
+            text: binding,
+            isEditing: $isEditing
+        )
+        .onChange(of: self.isEditing) { newValue in
+            let focusedID = newValue ? self.model.identifier : nil
+            self.thomasEnvironment.focusedID = focusedID
+        }
         #endif
     }
 
@@ -102,82 +102,82 @@ struct TextInput: View {
 }
 
 #if !os(watchOS)
-    /// TextView
-    @available(iOS 13.0.0, tvOS 13.0, *)
-    internal struct AirshipTextView: UIViewRepresentable {
-        let textAppearance: TextInputTextAppearance
-        @Binding var text: String
-        @Binding var isEditing: Bool
+/// TextView
+@available(iOS 13.0.0, tvOS 13.0, *)
+internal struct AirshipTextView: UIViewRepresentable {
+    let textAppearance: TextInputTextAppearance
+    @Binding var text: String
+    @Binding var isEditing: Bool
 
-        @Environment(\.colorScheme) var colorScheme
-        func makeUIView(context: Context) -> UITextView {
-            let textView = UITextView()
-            /// Set textView background color to clear to can set the parent background color instead
-            textView.backgroundColor = .clear
-            textView.delegate = context.coordinator
+    @Environment(\.colorScheme) var colorScheme
+    func makeUIView(context: Context) -> UITextView {
+        let textView = UITextView()
+        /// Set textView background color to clear to can set the parent background color instead
+        textView.backgroundColor = .clear
+        textView.delegate = context.coordinator
 
-            #if !os(tvOS)
-                let toolbar = UIToolbar()
-                toolbar.sizeToFit()
-                let done = UIBarButtonItem(
-                    barButtonSystemItem: .done,
-                    target: textView,
-                    action: #selector(textView.resignFirstResponder)
-                )
+        #if !os(tvOS)
+        let toolbar = UIToolbar()
+        toolbar.sizeToFit()
+        let done = UIBarButtonItem(
+            barButtonSystemItem: .done,
+            target: textView,
+            action: #selector(textView.resignFirstResponder)
+        )
 
-                let flexSpace = UIBarButtonItem(
-                    barButtonSystemItem: .flexibleSpace,
-                    target: nil,
-                    action: nil
-                )
+        let flexSpace = UIBarButtonItem(
+            barButtonSystemItem: .flexibleSpace,
+            target: nil,
+            action: nil
+        )
 
-                toolbar.items = [flexSpace, done]
-                textView.inputAccessoryView = toolbar
-            #endif
+        toolbar.items = [flexSpace, done]
+        textView.inputAccessoryView = toolbar
+        #endif
 
-            return textView.textAppearance(self.textAppearance, colorScheme)
-        }
+        return textView.textAppearance(self.textAppearance, colorScheme)
+    }
 
-        func updateUIView(_ uiView: UITextView, context: Context) {
-            uiView.textModifyAppearance(self.textAppearance)
-            if uiView.text.isEmpty && !self.text.isEmpty {
-                uiView.text = self.text
-            }
-        }
-
-        func makeCoordinator() -> Coordinator {
-            Coordinator($text, isEditing: $isEditing)
-        }
-
-        class Coordinator: NSObject, UITextViewDelegate {
-            var text: Binding<String>
-            var isEditing: Binding<Bool>
-
-            let subject = PassthroughSubject<String, Never>()
-            let cancellable: Cancellable
-
-            init(_ text: Binding<String>, isEditing: Binding<Bool>) {
-                self.text = text
-                self.isEditing = isEditing
-                self.cancellable =
-                    subject
-                    .debounce(for: .seconds(0.2), scheduler: RunLoop.main)
-                    .sink {
-                        text.wrappedValue = $0
-                    }
-            }
-
-            func textViewDidChange(_ textView: UITextView) {
-                subject.send(textView.text)
-            }
-
-            func textViewDidBeginEditing(_ textView: UITextView) {
-                self.isEditing.wrappedValue = true
-            }
-
-            func textViewDidEndEditing(_ textView: UITextView) {
-                self.isEditing.wrappedValue = false
-            }
+    func updateUIView(_ uiView: UITextView, context: Context) {
+        uiView.textModifyAppearance(self.textAppearance)
+        if uiView.text.isEmpty && !self.text.isEmpty {
+            uiView.text = self.text
         }
     }
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator($text, isEditing: $isEditing)
+    }
+
+    class Coordinator: NSObject, UITextViewDelegate {
+        var text: Binding<String>
+        var isEditing: Binding<Bool>
+
+        let subject = PassthroughSubject<String, Never>()
+        let cancellable: Cancellable
+
+        init(_ text: Binding<String>, isEditing: Binding<Bool>) {
+            self.text = text
+            self.isEditing = isEditing
+            self.cancellable =
+                subject
+                .debounce(for: .seconds(0.2), scheduler: RunLoop.main)
+                .sink {
+                    text.wrappedValue = $0
+                }
+        }
+
+        func textViewDidChange(_ textView: UITextView) {
+            subject.send(textView.text)
+        }
+
+        func textViewDidBeginEditing(_ textView: UITextView) {
+            self.isEditing.wrappedValue = true
+        }
+
+        func textViewDidEndEditing(_ textView: UITextView) {
+            self.isEditing.wrappedValue = false
+        }
+    }
+}
 #endif

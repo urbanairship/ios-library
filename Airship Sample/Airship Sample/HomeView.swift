@@ -5,7 +5,7 @@ import Combine
 import SwiftUI
 
 #if canImport(AirshipDebug)
-    import AirshipDebug
+import AirshipDebug
 #endif
 
 struct HomeView: View {
@@ -70,18 +70,18 @@ struct HomeView: View {
                 Divider()
 
                 #if canImport(ActivityKit)
-                    if #available(iOS 16.1, *) {
-                        NavigationLink(
-                            destination: LiveActivityManagementView(),
-                            tag: HomeDestination.liveactivities,
-                            selection: self.$appState.homeDestination
-                        ) {
-                            Text("Live Activities!")
-                                .foregroundColor(.accentColor)
-                                .multilineTextAlignment(.leading)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                        }
+                if #available(iOS 16.1, *) {
+                    NavigationLink(
+                        destination: LiveActivityManagementView(),
+                        tag: HomeDestination.liveactivities,
+                        selection: self.$appState.homeDestination
+                    ) {
+                        Text("Live Activities!")
+                            .foregroundColor(.accentColor)
+                            .multilineTextAlignment(.leading)
+                            .frame(maxWidth: .infinity, alignment: .leading)
                     }
+                }
                 #endif
             }
         }
@@ -163,18 +163,18 @@ struct HomeView: View {
     @ViewBuilder
     private func makeSettingLink() -> some View {
         #if canImport(AirshipDebug)
-            NavigationLink(
-                destination: AirshipDebugView(),
-                tag: HomeDestination.settings,
-                selection: self.$appState.homeDestination
-            ) {
-                Image(systemName: "gear")
-                    .resizable()
-                    .scaledToFit()
-                    .foregroundColor(.accentColor)
-                    .padding(10)
-                    .frame(width: 44, height: 44)
-            }
+        NavigationLink(
+            destination: AirshipDebugView(),
+            tag: HomeDestination.settings,
+            selection: self.$appState.homeDestination
+        ) {
+            Image(systemName: "gear")
+                .resizable()
+                .scaledToFit()
+                .foregroundColor(.accentColor)
+                .padding(10)
+                .frame(width: 44, height: 44)
+        }
         #endif
     }
 

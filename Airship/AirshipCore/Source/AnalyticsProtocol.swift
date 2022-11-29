@@ -73,9 +73,9 @@ protocol InternalAnalyticsProtocol {
     func onDeviceRegistration()
 
     #if !os(tvOS)
-        func onNotificationResponse(
-            response: UNNotificationResponse,
-            action: UNNotificationAction?
-        )
+    func onNotificationResponse(
+        response: UNNotificationResponse,
+        action: UNNotificationAction?
+    )
     #endif
 }

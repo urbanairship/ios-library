@@ -51,45 +51,45 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
     }
 
     #if !os(watchOS)
-        public func didReceiveRemoteNotification(
-            userInfo: [AnyHashable: Any],
-            isForeground: Bool,
-            completionHandler: @escaping (UIBackgroundFetchResult) -> Void
-        ) {
+    public func didReceiveRemoteNotification(
+        userInfo: [AnyHashable: Any],
+        isForeground: Bool,
+        completionHandler: @escaping (UIBackgroundFetchResult) -> Void
+    ) {
 
-            guard !isForeground || Utils.isSilentPush(userInfo) else {
-                // will be handled by willPresentNotification(userInfo:presentationOptions:completionHandler:)
-                completionHandler(.noData)
-                return
-            }
-
-            self.processPush(
-                userInfo,
-                isForeground: isForeground,
-                presentationOptions: nil,
-                completionHandler: completionHandler
-            )
+        guard !isForeground || Utils.isSilentPush(userInfo) else {
+            // will be handled by willPresentNotification(userInfo:presentationOptions:completionHandler:)
+            completionHandler(.noData)
+            return
         }
+
+        self.processPush(
+            userInfo,
+            isForeground: isForeground,
+            presentationOptions: nil,
+            completionHandler: completionHandler
+        )
+    }
     #else
-        public func didReceiveRemoteNotification(
-            userInfo: [AnyHashable: Any],
-            isForeground: Bool,
-            completionHandler: @escaping (WKBackgroundFetchResult) -> Void
-        ) {
+    public func didReceiveRemoteNotification(
+        userInfo: [AnyHashable: Any],
+        isForeground: Bool,
+        completionHandler: @escaping (WKBackgroundFetchResult) -> Void
+    ) {
 
-            guard !isForeground || Utils.isSilentPush(userInfo) else {
-                // will be handled by willPresentNotification(userInfo:presentationOptions:completionHandler:)
-                completionHandler(.noData)
-                return
-            }
-
-            self.processPush(
-                userInfo,
-                isForeground: isForeground,
-                presentationOptions: nil,
-                completionHandler: completionHandler
-            )
+        guard !isForeground || Utils.isSilentPush(userInfo) else {
+            // will be handled by willPresentNotification(userInfo:presentationOptions:completionHandler:)
+            completionHandler(.noData)
+            return
         }
+
+        self.processPush(
+            userInfo,
+            isForeground: isForeground,
+            presentationOptions: nil,
+            completionHandler: completionHandler
+        )
+    }
     #endif
 
     public func willPresentNotification(
@@ -98,82 +98,82 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
         completionHandler: @escaping () -> Void
     ) {
         #if os(tvOS) || os(watchOS)
-            completionHandler()
+        completionHandler()
         #else
-            self.processPush(
-                notification.request.content.userInfo,
-                isForeground: true,
-                presentationOptions: presentationOptions
-            ) { _ in
-                completionHandler()
-            }
+        self.processPush(
+            notification.request.content.userInfo,
+            isForeground: true,
+            presentationOptions: presentationOptions
+        ) { _ in
+            completionHandler()
+        }
         #endif
     }
 
     #if !os(tvOS)
-        public func didReceiveNotificationResponse(
-            response: UNNotificationResponse,
-            completionHandler: @escaping () -> Void
-        ) {
-            AirshipLogger.info(
-                "Application received notification response: \(response)"
-            )
+    public func didReceiveNotificationResponse(
+        response: UNNotificationResponse,
+        completionHandler: @escaping () -> Void
+    ) {
+        AirshipLogger.info(
+            "Application received notification response: \(response)"
+        )
 
-            let dispatchGroup = DispatchGroup()
-            let userInfo = response.notification.request.content.userInfo
-            let responseText = (response as? UNTextInputNotificationResponse)?
-                .userText
-            let categoryID = response.notification.request.content
-                .categoryIdentifier
-            let actionID = response.actionIdentifier
-            let action = self.notificationAction(
-                categoryID: categoryID,
-                actionID: actionID
-            )
-            let actionsPayload = self.actionsPayloadForNotification(
-                userInfo: userInfo,
-                actionID: actionID
-            )
-            let situation =
-                self.situationFromAction(action) ?? .launchedFromPush
+        let dispatchGroup = DispatchGroup()
+        let userInfo = response.notification.request.content.userInfo
+        let responseText = (response as? UNTextInputNotificationResponse)?
+            .userText
+        let categoryID = response.notification.request.content
+            .categoryIdentifier
+        let actionID = response.actionIdentifier
+        let action = self.notificationAction(
+            categoryID: categoryID,
+            actionID: actionID
+        )
+        let actionsPayload = self.actionsPayloadForNotification(
+            userInfo: userInfo,
+            actionID: actionID
+        )
+        let situation =
+            self.situationFromAction(action) ?? .launchedFromPush
 
-            var metadata: [AnyHashable: Any] = [:]
-            metadata[UAActionMetadataUserNotificationActionIDKey] = actionID
-            metadata[UAActionMetadataPushPayloadKey] = userInfo
-            metadata[UAActionMetadataResponseInfoKey] = responseText
+        var metadata: [AnyHashable: Any] = [:]
+        metadata[UAActionMetadataUserNotificationActionIDKey] = actionID
+        metadata[UAActionMetadataPushPayloadKey] = userInfo
+        metadata[UAActionMetadataResponseInfoKey] = responseText
 
-            // Analytics
-            self.analytics.onNotificationResponse(
-                response: response,
-                action: action
-            )
+        // Analytics
+        self.analytics.onNotificationResponse(
+            response: response,
+            action: action
+        )
 
-            // Pushable components
-            self.pushableComponents.forEach {
-                if $0.receivedNotificationResponse != nil {
-                    dispatchGroup.enter()
-                    $0.receivedNotificationResponse?(response) {
-                        dispatchGroup.leave()
-                    }
-                }
-            }
-
-            // Actions -> Push
-            dispatchGroup.enter()
-            ActionRunner.run(
-                actionValues: actionsPayload,
-                situation: situation,
-                metadata: metadata
-            ) { _ in
-                self.push.didReceiveNotificationResponse(response) {
+        // Pushable components
+        self.pushableComponents.forEach {
+            if $0.receivedNotificationResponse != nil {
+                dispatchGroup.enter()
+                $0.receivedNotificationResponse?(response) {
                     dispatchGroup.leave()
                 }
             }
+        }
 
-            dispatchGroup.notify(queue: .main) {
-                completionHandler()
+        // Actions -> Push
+        dispatchGroup.enter()
+        ActionRunner.run(
+            actionValues: actionsPayload,
+            situation: situation,
+            metadata: metadata
+        ) { _ in
+            self.push.didReceiveNotificationResponse(response) {
+                dispatchGroup.leave()
             }
         }
+
+        dispatchGroup.notify(queue: .main) {
+            completionHandler()
+        }
+    }
     #endif
 
     public func presentationOptions(for notification: UNNotification)
@@ -194,136 +194,136 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
     }
 
     #if !os(watchOS)
-        private func processPush(
-            _ userInfo: [AnyHashable: Any],
-            isForeground: Bool,
-            presentationOptions: UNNotificationPresentationOptions?,
-            completionHandler: @escaping (UIBackgroundFetchResult) -> Void
-        ) {
-            AirshipLogger.info(
-                "Application received remote notification: \(userInfo)"
-            )
+    private func processPush(
+        _ userInfo: [AnyHashable: Any],
+        isForeground: Bool,
+        presentationOptions: UNNotificationPresentationOptions?,
+        completionHandler: @escaping (UIBackgroundFetchResult) -> Void
+    ) {
+        AirshipLogger.info(
+            "Application received remote notification: \(userInfo)"
+        )
 
-            let situation =
-                isForeground
-                ? Situation.foregroundPush : Situation.backgroundPush
-            let dispatchGroup = DispatchGroup()
-            var fetchResults: [UInt] = []
-            let lock = Lock()
-            var metadata: [AnyHashable: Any] = [:]
-            metadata[UAActionMetadataPushPayloadKey] = userInfo
+        let situation =
+            isForeground
+            ? Situation.foregroundPush : Situation.backgroundPush
+        let dispatchGroup = DispatchGroup()
+        var fetchResults: [UInt] = []
+        let lock = Lock()
+        var metadata: [AnyHashable: Any] = [:]
+        metadata[UAActionMetadataPushPayloadKey] = userInfo
 
-            if let presentationOptions = presentationOptions {
-                metadata[UAActionMetadataForegroundPresentationKey] =
-                    self.isForegroundPresentation(presentationOptions)
-            }
+        if let presentationOptions = presentationOptions {
+            metadata[UAActionMetadataForegroundPresentationKey] =
+                self.isForegroundPresentation(presentationOptions)
+        }
 
-            // Pushable components
-            self.pushableComponents.forEach {
-                if $0.receivedRemoteNotification != nil {
-                    dispatchGroup.enter()
-                    $0.receivedRemoteNotification?(userInfo) { fetchResult in
-                        lock.sync {
-                            fetchResults.append(fetchResult.rawValue)
-                        }
-                        dispatchGroup.leave()
-                    }
-                }
-            }
-
-            // Actions -> Push
-            dispatchGroup.enter()
-            ActionRunner.run(
-                actionValues: userInfo,
-                situation: situation,
-                metadata: metadata
-            ) { result in
-                lock.sync {
-                    fetchResults.append(UInt(result.fetchResult.rawValue))
-                }
-                self.push.didReceiveRemoteNotification(
-                    userInfo,
-                    isForeground: isForeground
-                ) { pushResult in
+        // Pushable components
+        self.pushableComponents.forEach {
+            if $0.receivedRemoteNotification != nil {
+                dispatchGroup.enter()
+                $0.receivedRemoteNotification?(userInfo) { fetchResult in
                     lock.sync {
-                        let result: UIBackgroundFetchResult =
-                            pushResult as! UIBackgroundFetchResult
-                        fetchResults.append(result.rawValue)
+                        fetchResults.append(fetchResult.rawValue)
                     }
                     dispatchGroup.leave()
                 }
             }
+        }
 
-            dispatchGroup.notify(queue: .main) {
-                completionHandler(Utils.mergeFetchResults(fetchResults))
+        // Actions -> Push
+        dispatchGroup.enter()
+        ActionRunner.run(
+            actionValues: userInfo,
+            situation: situation,
+            metadata: metadata
+        ) { result in
+            lock.sync {
+                fetchResults.append(UInt(result.fetchResult.rawValue))
+            }
+            self.push.didReceiveRemoteNotification(
+                userInfo,
+                isForeground: isForeground
+            ) { pushResult in
+                lock.sync {
+                    let result: UIBackgroundFetchResult =
+                        pushResult as! UIBackgroundFetchResult
+                    fetchResults.append(result.rawValue)
+                }
+                dispatchGroup.leave()
             }
         }
+
+        dispatchGroup.notify(queue: .main) {
+            completionHandler(Utils.mergeFetchResults(fetchResults))
+        }
+    }
 
     #else
-        private func processPush(
-            _ userInfo: [AnyHashable: Any],
-            isForeground: Bool,
-            presentationOptions: UNNotificationPresentationOptions?,
-            completionHandler: @escaping (WKBackgroundFetchResult) -> Void
-        ) {
-            AirshipLogger.info(
-                "Application received remote notification: \(userInfo)"
-            )
+    private func processPush(
+        _ userInfo: [AnyHashable: Any],
+        isForeground: Bool,
+        presentationOptions: UNNotificationPresentationOptions?,
+        completionHandler: @escaping (WKBackgroundFetchResult) -> Void
+    ) {
+        AirshipLogger.info(
+            "Application received remote notification: \(userInfo)"
+        )
 
-            let situation =
-                isForeground
-                ? Situation.foregroundPush : Situation.backgroundPush
-            let dispatchGroup = DispatchGroup()
-            var fetchResults: [UInt] = []
-            let lock = Lock()
-            var metadata: [AnyHashable: Any] = [:]
-            metadata[UAActionMetadataPushPayloadKey] = userInfo
+        let situation =
+            isForeground
+            ? Situation.foregroundPush : Situation.backgroundPush
+        let dispatchGroup = DispatchGroup()
+        var fetchResults: [UInt] = []
+        let lock = Lock()
+        var metadata: [AnyHashable: Any] = [:]
+        metadata[UAActionMetadataPushPayloadKey] = userInfo
 
-            if let presentationOptions = presentationOptions {
-                metadata[UAActionMetadataForegroundPresentationKey] =
-                    self.isForegroundPresentation(presentationOptions)
-            }
+        if let presentationOptions = presentationOptions {
+            metadata[UAActionMetadataForegroundPresentationKey] =
+                self.isForegroundPresentation(presentationOptions)
+        }
 
-            // Pushable components
-            self.pushableComponents.forEach {
-                if $0.receivedRemoteNotification != nil {
-                    dispatchGroup.enter()
-                    $0.receivedRemoteNotification?(userInfo) { fetchResult in
-                        lock.sync {
-                            fetchResults.append(fetchResult.rawValue)
-                        }
-                        dispatchGroup.leave()
-                    }
-                }
-            }
-
-            // Actions -> Push
-            dispatchGroup.enter()
-            ActionRunner.run(
-                actionValues: userInfo,
-                situation: situation,
-                metadata: metadata
-            ) { result in
-                lock.sync {
-                    fetchResults.append(UInt(result.fetchResult.rawValue))
-                }
-                self.push.didReceiveRemoteNotification(
-                    userInfo,
-                    isForeground: isForeground
-                ) { pushResult in
+        // Pushable components
+        self.pushableComponents.forEach {
+            if $0.receivedRemoteNotification != nil {
+                dispatchGroup.enter()
+                $0.receivedRemoteNotification?(userInfo) { fetchResult in
                     lock.sync {
-                        let result: WKBackgroundFetchResult =
-                            pushResult as! WKBackgroundFetchResult
-                        fetchResults.append(result.rawValue)
+                        fetchResults.append(fetchResult.rawValue)
                     }
                     dispatchGroup.leave()
                 }
             }
+        }
 
-            dispatchGroup.notify(queue: .main) {
-                completionHandler(Utils.mergeFetchResults(fetchResults))
+        // Actions -> Push
+        dispatchGroup.enter()
+        ActionRunner.run(
+            actionValues: userInfo,
+            situation: situation,
+            metadata: metadata
+        ) { result in
+            lock.sync {
+                fetchResults.append(UInt(result.fetchResult.rawValue))
+            }
+            self.push.didReceiveRemoteNotification(
+                userInfo,
+                isForeground: isForeground
+            ) { pushResult in
+                lock.sync {
+                    let result: WKBackgroundFetchResult =
+                        pushResult as! WKBackgroundFetchResult
+                    fetchResults.append(result.rawValue)
+                }
+                dispatchGroup.leave()
             }
         }
+
+        dispatchGroup.notify(queue: .main) {
+            completionHandler(Utils.mergeFetchResults(fetchResults))
+        }
+    }
     #endif
 
     @available(tvOS, unavailable)
@@ -377,9 +377,9 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
     {
         var category: UNNotificationCategory?
         #if !os(tvOS)
-            category = self.push.combinedCategories.first(where: {
-                return $0.identifier == categoryID
-            })
+        category = self.push.combinedCategories.first(where: {
+            return $0.identifier == categoryID
+        })
         #endif
         if category == nil {
             AirshipLogger.error(

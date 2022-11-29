@@ -3,7 +3,7 @@
 import Foundation
 
 #if canImport(AirshipCore)
-    import AirshipCore
+import AirshipCore
 #endif
 
 @objc(UAMessageCenterAction)

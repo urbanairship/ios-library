@@ -38,7 +38,7 @@ class AppInitEvent: NSObject, Event {
         data["metadata"] = self.analytics.conversionPushMetadata
         data["carrier"] = Utils.carrierName()
         #if !os(watchOS)
-            data["connection_type"] = Utils.connectionType()
+        data["connection_type"] = Utils.connectionType()
         #endif
 
         data["notification_types"] = EventUtils.notificationTypes(
@@ -56,9 +56,9 @@ class AppInitEvent: NSObject, Event {
 
         // Component Versions
         #if !os(watchOS)
-            data["os_version"] = UIDevice.current.systemVersion
+        data["os_version"] = UIDevice.current.systemVersion
         #else
-            data["os_version"] = WKInterfaceDevice.current().systemVersion
+        data["os_version"] = WKInterfaceDevice.current().systemVersion
         #endif
         data["lib_version"] = AirshipVersion.get()
 

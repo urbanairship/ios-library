@@ -4,9 +4,9 @@ import CoreData
 import UIKit
 
 #if canImport(AirshipCore)
-    import AirshipCore
+import AirshipCore
 #elseif canImport(AirshipKit)
-    import AirshipKit
+import AirshipKit
 #endif
 
 class EventDataManager {

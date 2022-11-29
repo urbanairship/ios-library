@@ -8,19 +8,19 @@ import Foundation
 @objc(UARegistrationDelegate)
 public protocol RegistrationDelegate: NSObjectProtocol {
     #if !os(tvOS)
-        /// Called when APNS registration completes.
-        ///
-        /// - Parameters:
-        ///   - authorizedSettings: The settings that were authorized at the time of registration.
-        ///   - categories: Set of the categories that were most recently registered.
-        ///   - status: The authorization status.
-        @objc
-        optional func notificationRegistrationFinished(
-            withAuthorizedSettings authorizedSettings:
-                UAAuthorizedNotificationSettings,
-            categories: Set<UNNotificationCategory>,
-            status: UAAuthorizationStatus
-        )
+    /// Called when APNS registration completes.
+    ///
+    /// - Parameters:
+    ///   - authorizedSettings: The settings that were authorized at the time of registration.
+    ///   - categories: Set of the categories that were most recently registered.
+    ///   - status: The authorization status.
+    @objc
+    optional func notificationRegistrationFinished(
+        withAuthorizedSettings authorizedSettings:
+            UAAuthorizedNotificationSettings,
+        categories: Set<UNNotificationCategory>,
+        status: UAAuthorizationStatus
+    )
     #endif
 
     /// Called when APNS registration completes.

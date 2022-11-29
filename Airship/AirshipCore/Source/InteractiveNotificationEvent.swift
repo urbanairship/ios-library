@@ -32,11 +32,11 @@ public class InteractiveNotificationEvent: NSObject, Event {
     ) {
 
         #if os(tvOS)
-            let foreground = false
+        let foreground = false
         #else
-            let foreground =
-                (action.options.rawValue
-                    & UNNotificationActionOptions.foreground.rawValue) > 0
+        let foreground =
+            (action.options.rawValue
+                & UNNotificationActionOptions.foreground.rawValue) > 0
         #endif
 
         var data: [AnyHashable: Any] = [:]

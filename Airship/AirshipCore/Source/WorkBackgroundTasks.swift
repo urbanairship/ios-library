@@ -19,28 +19,28 @@ class WorkBackgroundTasks: WorkBackgroundTasksProtocol {
         throws -> Disposable
     {
         #if os(watchOS)
-            return Disposable()
+        return Disposable()
         #else
-            let application = UIApplication.shared
-            var taskID = UIBackgroundTaskIdentifier.invalid
+        let application = UIApplication.shared
+        var taskID = UIBackgroundTaskIdentifier.invalid
 
-            let disposable = Disposable {
-                if taskID != UIBackgroundTaskIdentifier.invalid {
-                    application.endBackgroundTask(taskID)
-                    taskID = UIBackgroundTaskIdentifier.invalid
-                }
+        let disposable = Disposable {
+            if taskID != UIBackgroundTaskIdentifier.invalid {
+                application.endBackgroundTask(taskID)
+                taskID = UIBackgroundTaskIdentifier.invalid
             }
+        }
 
-            taskID = application.beginBackgroundTask(withName: name) {
-                expirationHandler?()
-                disposable.dispose()
-            }
+        taskID = application.beginBackgroundTask(withName: name) {
+            expirationHandler?()
+            disposable.dispose()
+        }
 
-            if taskID == UIBackgroundTaskIdentifier.invalid {
-                throw AirshipErrors.error("Unable to request background time.")
-            }
+        if taskID == UIBackgroundTaskIdentifier.invalid {
+            throw AirshipErrors.error("Unable to request background time.")
+        }
 
-            return disposable
+        return disposable
         #endif
     }
 }

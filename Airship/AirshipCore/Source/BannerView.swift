@@ -39,14 +39,14 @@ struct BannerView: View {
                     ? metrics.safeAreaInsets : ViewConstraints.emptyEdgeSet
 
                 #if !os(watchOS)
-                    let constraints = ViewConstraints(
-                        size: UIScreen.main.bounds.size,
-                        safeAreaInsets: safeAreaInsets
-                    )
-                    createBanner(constraints: constraints, placement: placement)
-                        .applyIf(ignoreSafeArea) {
-                            $0.edgesIgnoringSafeArea(.all)
-                        }
+                let constraints = ViewConstraints(
+                    size: UIScreen.main.bounds.size,
+                    safeAreaInsets: safeAreaInsets
+                )
+                createBanner(constraints: constraints, placement: placement)
+                    .applyIf(ignoreSafeArea) {
+                        $0.edgesIgnoringSafeArea(.all)
+                    }
                 #endif
             }
         }

@@ -5,9 +5,9 @@ import SwiftUI
 import UIKit
 
 #if canImport(AirshipCore)
-    import AirshipCore
+import AirshipCore
 #elseif canImport(AirshipKit)
-    import AirshipKit
+import AirshipKit
 #endif
 
 public class AirshipDebugManager: NSObject, Component {

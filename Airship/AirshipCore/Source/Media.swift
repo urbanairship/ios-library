@@ -34,21 +34,21 @@ struct Media: View {
             .accessible(self.model)
         case .video, .youtube:
             #if !os(tvOS) && !os(watchOS)
-                MediaWebView(
-                    url: model.url,
-                    type: model.mediaType,
-                    accessibilityLabel: model.contentDescription
-                )
-                .constraints(constraints)
-                .applyIf(
-                    self.constraints.width != nil
-                        || self.constraints.height != nil
-                ) {
-                    $0.aspectRatio(16.0 / 9.0, contentMode: .fit)
-                }
-                .background(self.model.backgroundColor)
-                .border(self.model.border)
-                .common(self.model)
+            MediaWebView(
+                url: model.url,
+                type: model.mediaType,
+                accessibilityLabel: model.contentDescription
+            )
+            .constraints(constraints)
+            .applyIf(
+                self.constraints.width != nil
+                    || self.constraints.height != nil
+            ) {
+                $0.aspectRatio(16.0 / 9.0, contentMode: .fit)
+            }
+            .background(self.model.backgroundColor)
+            .border(self.model.border)
+            .common(self.model)
             #endif
         }
     }

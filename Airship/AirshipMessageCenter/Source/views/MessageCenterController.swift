@@ -3,7 +3,7 @@
 import SwiftUI
 
 #if canImport(AirshipCore)
-    import AirshipCore
+import AirshipCore
 #endif
 
 /// Controller for the Message Center View.

@@ -299,9 +299,9 @@ public class Config: NSObject, NSCopying {
 
     private var isSimulator: Bool {
         #if targetEnvironment(simulator)
-            return true
+        return true
         #else
-            return false
+        return false
         #endif
     }
 
@@ -357,19 +357,19 @@ public class Config: NSObject, NSCopying {
     @objc
     public override init() {
         #if !targetEnvironment(macCatalyst)
-            self.profilePath = Bundle.main.path(
-                forResource: "embedded",
-                ofType: "mobileprovision"
-            )
+        self.profilePath = Bundle.main.path(
+            forResource: "embedded",
+            ofType: "mobileprovision"
+        )
         #else
-            self.profilePath =
-                URL(
-                    fileURLWithPath: URL(
-                        fileURLWithPath: Bundle.main.resourcePath ?? ""
-                    )
-                    .deletingLastPathComponent().path
+        self.profilePath =
+            URL(
+                fileURLWithPath: URL(
+                    fileURLWithPath: Bundle.main.resourcePath ?? ""
                 )
-                .appendingPathComponent("embedded.provisionprofile").path
+                .deletingLastPathComponent().path
+            )
+            .appendingPathComponent("embedded.provisionprofile").path
         #endif
     }
 

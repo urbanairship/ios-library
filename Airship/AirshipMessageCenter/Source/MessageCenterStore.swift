@@ -4,7 +4,7 @@ import CoreData
 import Foundation
 
 #if canImport(AirshipCore)
-    import AirshipCore
+import AirshipCore
 #endif
 
 enum MessageCenterStoreError: Error {

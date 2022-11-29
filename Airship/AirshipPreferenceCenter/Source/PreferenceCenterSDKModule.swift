@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #if canImport(AirshipCore)
-    import AirshipCore
+import AirshipCore
 #endif
 
 /// AirshipPreferenceCenter module loader.

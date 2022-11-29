@@ -47,23 +47,23 @@ public protocol PushProtocol {
     var notificationOptions: UANotificationOptions { get set }
 
     #if !os(tvOS)
-        /// Custom notification categories. Airship default notification
-        /// categories will be unaffected by this field.
-        ///
-        /// Changes to this value will not take effect until the next time the app registers
-        /// with updateRegistration.
-        @objc
-        var customCategories: Set<UNNotificationCategory> { get set }
+    /// Custom notification categories. Airship default notification
+    /// categories will be unaffected by this field.
+    ///
+    /// Changes to this value will not take effect until the next time the app registers
+    /// with updateRegistration.
+    @objc
+    var customCategories: Set<UNNotificationCategory> { get set }
 
-        /// The combined set of notification categories from `customCategories` set by the app
-        /// and the Airship provided categories.
-        @objc
-        var combinedCategories: Set<UNNotificationCategory> { get }
+    /// The combined set of notification categories from `customCategories` set by the app
+    /// and the Airship provided categories.
+    @objc
+    var combinedCategories: Set<UNNotificationCategory> { get }
 
-        /// The set of Accengage notification categories.
-        /// - Note For internal use only. :nodoc:
-        @objc
-        var accengageCategories: Set<UNNotificationCategory> { get set }
+    /// The set of Accengage notification categories.
+    /// - Note For internal use only. :nodoc:
+    @objc
+    var accengageCategories: Set<UNNotificationCategory> { get set }
     #endif
     /// Sets authorization required for the default Airship categories. Only applies
     /// to background user notification actions.
@@ -82,9 +82,9 @@ public protocol PushProtocol {
     weak var registrationDelegate: RegistrationDelegate? { get set }
 
     #if !os(tvOS)
-        /// Notification response that launched the application.
-        @objc
-        var launchNotificationResponse: UNNotificationResponse? { get }
+    /// Notification response that launched the application.
+    @objc
+    var launchNotificationResponse: UNNotificationResponse? { get }
     #endif
 
     /// The current authorized notification settings.
@@ -112,11 +112,11 @@ public protocol PushProtocol {
     }
 
     #if !os(watchOS)
-        /// The current badge number used by the device and on the Airship server.
-        ///
-        /// - Note: This property must be accessed on the main thread.
-        @objc
-        var badgeNumber: Int { get set }
+    /// The current badge number used by the device and on the Airship server.
+    ///
+    /// - Note: This property must be accessed on the main thread.
+    @objc
+    var badgeNumber: Int { get set }
     #endif
 }
 
@@ -134,10 +134,10 @@ protocol InternalPushProtocol {
         -> UNNotificationPresentationOptions
 
     #if !os(tvOS)
-        func didReceiveNotificationResponse(
-            _ response: UNNotificationResponse,
-            completionHandler: @escaping () -> Void
-        )
-        var combinedCategories: Set<UNNotificationCategory> { get }
+    func didReceiveNotificationResponse(
+        _ response: UNNotificationResponse,
+        completionHandler: @escaping () -> Void
+    )
+    var combinedCategories: Set<UNNotificationCategory> { get }
     #endif
 }

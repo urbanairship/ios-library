@@ -38,8 +38,8 @@ struct ViewFactory {
         case .pager(let model):
             Pager(model: model, constraints: constraints)
         #if !os(tvOS) && !os(watchOS)
-            case .webView(let model):
-                AirshipWebView(model: model, constraints: constraints)
+        case .webView(let model):
+            AirshipWebView(model: model, constraints: constraints)
         #endif
         case .imageButton(let model):
             ImageButton(model: model, constraints: constraints)

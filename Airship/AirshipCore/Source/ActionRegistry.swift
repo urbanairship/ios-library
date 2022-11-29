@@ -485,15 +485,15 @@ public class ActionRegistry: NSObject {
 
     func registerDefaultActions() {
         #if os(tvOS)
-            let path = AirshipCoreResources.bundle.path(
-                forResource: "UADefaultActionsTVOS",
-                ofType: "plist"
-            )
+        let path = AirshipCoreResources.bundle.path(
+            forResource: "UADefaultActionsTVOS",
+            ofType: "plist"
+        )
         #else
-            let path = AirshipCoreResources.bundle.path(
-                forResource: "UADefaultActions",
-                ofType: "plist"
-            )
+        let path = AirshipCoreResources.bundle.path(
+            forResource: "UADefaultActions",
+            ofType: "plist"
+        )
         #endif
 
         if let path = path {

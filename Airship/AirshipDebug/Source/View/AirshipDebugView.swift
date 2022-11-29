@@ -5,10 +5,10 @@ import Foundation
 import SwiftUI
 
 #if canImport(AirshipCore)
-    import AirshipCore
-    import AirshipAutomation
+import AirshipCore
+import AirshipAutomation
 #elseif canImport(AirshipKit)
-    import AirshipKit
+import AirshipKit
 #endif
 
 public struct AirshipDebugView: View {

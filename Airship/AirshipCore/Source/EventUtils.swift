@@ -36,53 +36,53 @@ class EventUtils {
         }
 
         #if !os(tvOS)
-            if (UAAuthorizedNotificationSettings.sound.rawValue
-                & authorizedSettings.rawValue) > 0
-            {
-                notificationTypes.append("sound")
-            }
+        if (UAAuthorizedNotificationSettings.sound.rawValue
+            & authorizedSettings.rawValue) > 0
+        {
+            notificationTypes.append("sound")
+        }
 
-            if (UAAuthorizedNotificationSettings.alert.rawValue
-                & authorizedSettings.rawValue) > 0
-            {
-                notificationTypes.append("alert")
-            }
+        if (UAAuthorizedNotificationSettings.alert.rawValue
+            & authorizedSettings.rawValue) > 0
+        {
+            notificationTypes.append("alert")
+        }
 
-            if (UAAuthorizedNotificationSettings.carPlay.rawValue
-                & authorizedSettings.rawValue) > 0
-            {
-                notificationTypes.append("car_play")
-            }
+        if (UAAuthorizedNotificationSettings.carPlay.rawValue
+            & authorizedSettings.rawValue) > 0
+        {
+            notificationTypes.append("car_play")
+        }
 
-            if (UAAuthorizedNotificationSettings.lockScreen.rawValue
-                & authorizedSettings.rawValue) > 0
-            {
-                notificationTypes.append("lock_screen")
-            }
+        if (UAAuthorizedNotificationSettings.lockScreen.rawValue
+            & authorizedSettings.rawValue) > 0
+        {
+            notificationTypes.append("lock_screen")
+        }
 
-            if (UAAuthorizedNotificationSettings.notificationCenter.rawValue
-                & authorizedSettings.rawValue) > 0
-            {
-                notificationTypes.append("notification_center")
-            }
+        if (UAAuthorizedNotificationSettings.notificationCenter.rawValue
+            & authorizedSettings.rawValue) > 0
+        {
+            notificationTypes.append("notification_center")
+        }
 
-            if (UAAuthorizedNotificationSettings.criticalAlert.rawValue
-                & authorizedSettings.rawValue) > 0
-            {
-                notificationTypes.append("critical_alert")
-            }
+        if (UAAuthorizedNotificationSettings.criticalAlert.rawValue
+            & authorizedSettings.rawValue) > 0
+        {
+            notificationTypes.append("critical_alert")
+        }
 
-            if (UAAuthorizedNotificationSettings.scheduledDelivery.rawValue
-                & authorizedSettings.rawValue) > 0
-            {
-                notificationTypes.append("scheduled_summary")
-            }
+        if (UAAuthorizedNotificationSettings.scheduledDelivery.rawValue
+            & authorizedSettings.rawValue) > 0
+        {
+            notificationTypes.append("scheduled_summary")
+        }
 
-            if (UAAuthorizedNotificationSettings.timeSensitive.rawValue
-                & authorizedSettings.rawValue) > 0
-            {
-                notificationTypes.append("time_sensitive")
-            }
+        if (UAAuthorizedNotificationSettings.timeSensitive.rawValue
+            & authorizedSettings.rawValue) > 0
+        {
+            notificationTypes.append("time_sensitive")
+        }
 
         #endif
 

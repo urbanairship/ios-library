@@ -42,7 +42,7 @@ public class PasteboardAction: NSObject, Action {
         completionHandler: UAActionCompletionHandler
     ) {
         #if !os(watchOS)
-            UIPasteboard.general.string = pasteboardString(arguments)
+        UIPasteboard.general.string = pasteboardString(arguments)
         #endif
         completionHandler(ActionResult(value: arguments.value))
     }

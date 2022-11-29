@@ -40,12 +40,12 @@ public class UACoreData: NSObject {
         super.init()
 
         #if !os(watchOS)
-            NotificationCenter.default.addObserver(
-                self,
-                selector: #selector(protectedDataAvailable),
-                name: UIApplication.protectedDataDidBecomeAvailableNotification,
-                object: nil
-            )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(protectedDataAvailable),
+            name: UIApplication.protectedDataDidBecomeAvailableNotification,
+            object: nil
+        )
         #endif
     }
 
@@ -287,19 +287,19 @@ public class UACoreData: NSObject {
         let fileManager = FileManager.default
 
         #if os(tvOS)
-            let baseDirectory =
-                fileManager.urls(
-                    for: .cachesDirectory,
-                    in: .userDomainMask
-                )
-                .last
+        let baseDirectory =
+            fileManager.urls(
+                for: .cachesDirectory,
+                in: .userDomainMask
+            )
+            .last
         #else
-            let baseDirectory =
-                fileManager.urls(
-                    for: .libraryDirectory,
-                    in: .userDomainMask
-                )
-                .last
+        let baseDirectory =
+            fileManager.urls(
+                for: .libraryDirectory,
+                in: .userDomainMask
+            )
+            .last
         #endif
 
         return baseDirectory?

@@ -32,7 +32,7 @@ class AppExitEvent: NSObject, Event {
         data["push_id"] = self.analytics.conversionSendID
         data["metadata"] = self.analytics.conversionPushMetadata
         #if !os(watchOS)
-            data["connection_type"] = Utils.connectionType()
+        data["connection_type"] = Utils.connectionType()
         #endif
 
         return data

@@ -7,8 +7,8 @@ import SwiftUI
 struct RootView<Content: View>: View {
 
     #if !os(tvOS) && !os(watchOS)
-        @Environment(\.verticalSizeClass) private var verticalSizeClass
-        @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     #endif
 
     @State private var currentOrientation: Orientation =
@@ -46,13 +46,13 @@ struct RootView<Content: View>: View {
             self.isVisible = false
         }
         #if !os(tvOS) && !os(watchOS)
-            .onReceive(
-                NotificationCenter.default.publisher(
-                    for: UIDevice.orientationDidChangeNotification
-                )
-            ) { _ in
-                self.currentOrientation = RootView.resolveOrientation()
-            }
+        .onReceive(
+            NotificationCenter.default.publisher(
+                for: UIDevice.orientationDidChangeNotification
+            )
+        ) { _ in
+            self.currentOrientation = RootView.resolveOrientation()
+        }
         #endif
     }
 
@@ -62,31 +62,31 @@ struct RootView<Content: View>: View {
     /// - small: compact x compact
     func resolveWindowSize() -> WindowSize {
         #if os(tvOS) || os(watchOS)
-            return .large
+        return .large
         #else
-            switch (verticalSizeClass, horizontalSizeClass) {
-            case (.regular, .regular):
-                return .large
-            case (.compact, .compact):
-                return .small
-            default:
-                return .medium
-            }
+        switch (verticalSizeClass, horizontalSizeClass) {
+        case (.regular, .regular):
+            return .large
+        case (.compact, .compact):
+            return .small
+        default:
+            return .medium
+        }
         #endif
     }
 
     static func resolveOrientation() -> Orientation {
         #if os(tvOS) || os(watchOS)
-            return .landscape
+        return .landscape
         #else
-            if let scene = UIApplication.shared.windows.first?.windowScene {
-                if scene.interfaceOrientation.isLandscape {
-                    return .landscape
-                } else if scene.interfaceOrientation.isPortrait {
-                    return .portrait
-                }
+        if let scene = UIApplication.shared.windows.first?.windowScene {
+            if scene.interfaceOrientation.isLandscape {
+                return .landscape
+            } else if scene.interfaceOrientation.isPortrait {
+                return .portrait
             }
-            return .portrait
+        }
+        return .portrait
         #endif
     }
 }

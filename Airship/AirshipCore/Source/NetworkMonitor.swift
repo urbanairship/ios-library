@@ -3,7 +3,7 @@
 import Network
 
 #if os(watchOS)
-    import WatchConnectivity
+import WatchConnectivity
 #endif
 
 /// - Note: For internal use only. :nodoc:
@@ -24,12 +24,12 @@ open class NetworkMonitor: NSObject {
     @objc
     open var isConnected: Bool {
         #if !os(watchOS)
-            guard #available(iOS 12.0, tvOS 12.0, *) else {
-                return Utils.connectionType() != ConnectionType.none
-            }
-            return _isConnected
+        guard #available(iOS 12.0, tvOS 12.0, *) else {
+            return Utils.connectionType() != ConnectionType.none
+        }
+        return _isConnected
         #else
-            return true
+        return true
         #endif
     }
 

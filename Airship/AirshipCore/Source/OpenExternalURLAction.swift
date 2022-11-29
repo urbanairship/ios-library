@@ -54,18 +54,18 @@ public class OpenExternalURLAction: NSObject, Action {
         }
 
         #if !os(watchOS)
-            UIApplication.shared.open(url, options: [:]) { success in
-                if success {
-                    completionHandler(ActionResult(value: url.absoluteString))
-                } else {
-                    let error = AirshipErrors.error(
-                        "Unable to open url \(url)."
-                    )
-                    completionHandler(ActionResult(error: error))
-                }
+        UIApplication.shared.open(url, options: [:]) { success in
+            if success {
+                completionHandler(ActionResult(value: url.absoluteString))
+            } else {
+                let error = AirshipErrors.error(
+                    "Unable to open url \(url)."
+                )
+                completionHandler(ActionResult(error: error))
             }
+        }
         #else
-            WKExtension.shared().openSystemURL(url)
+        WKExtension.shared().openSystemURL(url)
         #endif
     }
 

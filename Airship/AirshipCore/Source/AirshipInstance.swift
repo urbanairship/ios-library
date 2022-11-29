@@ -9,8 +9,8 @@ protocol AirshipInstanceProtocol {
     var permissionsManager: PermissionsManager { get }
 
     #if !os(tvOS) && !os(watchOS)
-        var javaScriptCommandDelegate: JavaScriptCommandDelegate? { get set }
-        var channelCapture: ChannelCapture { get }
+    var javaScriptCommandDelegate: JavaScriptCommandDelegate? { get set }
+    var channelCapture: ChannelCapture { get }
     #endif
 
     var deepLinkDelegate: DeepLinkDelegate? { get set }
@@ -31,8 +31,8 @@ class AirshipInstance: AirshipInstanceProtocol {
 
     #if !os(tvOS) && !os(watchOS)
 
-        public weak var javaScriptCommandDelegate: JavaScriptCommandDelegate?
-        public let channelCapture: ChannelCapture
+    public weak var javaScriptCommandDelegate: JavaScriptCommandDelegate?
+    public let channelCapture: ChannelCapture
     #endif
 
     public weak var deepLinkDelegate: DeepLinkDelegate?
@@ -61,9 +61,9 @@ class AirshipInstance: AirshipInstanceProtocol {
         self.localeManager = LocaleManager(dataStore: dataStore)
 
         #if !os(watchOS)
-            let sharedApp = UIApplication.shared
+        let sharedApp = UIApplication.shared
         #else
-            let sharedApp = WKExtension.shared()
+        let sharedApp = WKExtension.shared()
         #endif
 
         let channel = Channel(
@@ -115,11 +115,11 @@ class AirshipInstance: AirshipInstanceProtocol {
         )
 
         #if !os(tvOS) && !os(watchOS)
-            self.channelCapture = ChannelCapture(
-                config: self.config,
-                dataStore: dataStore,
-                channel: channel
-            )
+        self.channelCapture = ChannelCapture(
+            config: self.config,
+            dataStore: dataStore,
+            channel: channel
+        )
         #endif
 
         let moduleLoader = ModuleLoader(

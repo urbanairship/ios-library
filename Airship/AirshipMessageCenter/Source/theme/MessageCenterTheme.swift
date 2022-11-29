@@ -5,7 +5,7 @@ import SwiftUI
 import UIKit
 
 #if canImport(AirshipCore)
-    import AirshipCore
+import AirshipCore
 #endif
 
 public enum SeparatorStyle {

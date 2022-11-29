@@ -3,11 +3,11 @@
 import Foundation
 
 #if os(watchOS)
-    import WatchKit
+import WatchKit
 #endif
 
 #if canImport(AirshipBasement)
-    @_exported import AirshipBasement
+@_exported import AirshipBasement
 #endif
 
 /**
@@ -85,23 +85,23 @@ public class Airship: NSObject {
 
     #if !os(tvOS) && !os(watchOS)
 
-        /// A user configurable UAJavaScriptCommandDelegate
-        /// - NOTE: this delegate is not retained.
-        @objc
-        public weak var javaScriptCommandDelegate: JavaScriptCommandDelegate? {
-            get {
-                return airshipInstance.javaScriptCommandDelegate
-            }
-            set {
-                airshipInstance.javaScriptCommandDelegate = newValue
-            }
+    /// A user configurable UAJavaScriptCommandDelegate
+    /// - NOTE: this delegate is not retained.
+    @objc
+    public weak var javaScriptCommandDelegate: JavaScriptCommandDelegate? {
+        get {
+            return airshipInstance.javaScriptCommandDelegate
         }
+        set {
+            airshipInstance.javaScriptCommandDelegate = newValue
+        }
+    }
 
-        /// The channel capture utility.
-        @objc
-        public var channelCapture: ChannelCapture {
-            return airshipInstance.channelCapture
-        }
+    /// The channel capture utility.
+    @objc
+    public var channelCapture: ChannelCapture {
+        return airshipInstance.channelCapture
+    }
     #endif
 
     /// A user configurable deep link delegate.
@@ -185,156 +185,156 @@ public class Airship: NSObject {
 
     #if !os(watchOS)
 
-        /// Initalizes Airship. Config will be read from `AirshipConfig.plist`.
-        /// - Parameters:
-        ///     - launchOptions: The launch options passed into `application:didFinishLaunchingWithOptions:`.
-        @objc
-        public class func takeOff(
-            launchOptions: [UIApplication.LaunchOptionsKey: Any]?
-        ) {
-            takeOff(nil, launchOptions: launchOptions)
+    /// Initalizes Airship. Config will be read from `AirshipConfig.plist`.
+    /// - Parameters:
+    ///     - launchOptions: The launch options passed into `application:didFinishLaunchingWithOptions:`.
+    @objc
+    public class func takeOff(
+        launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+    ) {
+        takeOff(nil, launchOptions: launchOptions)
+    }
+
+    /// Initalizes Airship.
+    /// - Parameters:
+    ///     - config: The Airship config.
+    ///     - launchOptions: The launch options passed into `application:didFinishLaunchingWithOptions:`.
+    @objc
+    public class func takeOff(
+        _ config: Config?,
+        launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+    ) {
+        guard Thread.isMainThread else {
+            fatalError("TakeOff must be called on the main thread.")
         }
 
-        /// Initalizes Airship.
-        /// - Parameters:
-        ///     - config: The Airship config.
-        ///     - launchOptions: The launch options passed into `application:didFinishLaunchingWithOptions:`.
-        @objc
-        public class func takeOff(
-            _ config: Config?,
-            launchOptions: [UIApplication.LaunchOptionsKey: Any]?
-        ) {
-            guard Thread.isMainThread else {
-                fatalError("TakeOff must be called on the main thread.")
-            }
+        guard !Airship.isFlying else {
+            AirshipLogger.impError("TakeOff can only be called once.")
+            return
+        }
 
-            guard !Airship.isFlying else {
-                AirshipLogger.impError("TakeOff can only be called once.")
-                return
-            }
-
-            if config == nil {
-                guard
-                    Bundle.main.path(
-                        forResource: "AirshipConfig",
-                        ofType: "plist"
-                    ) != nil
-                else {
-                    AirshipLogger.impError(
-                        "AirshipConfig.plist file is missing. Unable to takeOff."
-                    )
-                    return
-                }
-            }
-
-            let resolvedConfig = config?.copy() as? Config ?? Config.default()
-
-            guard resolvedConfig.validate() else {
-                AirshipLogger.impError("Config is invalid. Unable to takeOff.")
-                return
-            }
-
-            commonTakeOff(config)
-
-            #if !os(tvOS) && !os(watchOS)
-                if let remoteNotification =
-                    launchOptions?[
-                        UIApplication.LaunchOptionsKey.remoteNotification
-                    ]
-                    as? [AnyHashable: Any]
-                {
-                    if AppStateTracker.shared.state != .background {
-                        analytics.launched(fromNotification: remoteNotification)
-                    }
-                }
-            #endif
-
-            self.shared.components.forEach { $0.airshipReady?() }
-
-            if self.shared.config.isExtendedBroadcastsEnabled {
-                var userInfo: [String: Any] = [:]
-                userInfo[airshipReadyChannelIdentifier] =
-                    self.channel.identifier
-                userInfo[airshipReadyAppKey] = self.shared.config.appKey
-                userInfo[airshipReadyPayloadVersion] = 1
-                NotificationCenter.default.post(
-                    name: airshipReadyNotification,
-                    object: userInfo
+        if config == nil {
+            guard
+                Bundle.main.path(
+                    forResource: "AirshipConfig",
+                    ofType: "plist"
+                ) != nil
+            else {
+                AirshipLogger.impError(
+                    "AirshipConfig.plist file is missing. Unable to takeOff."
                 )
-            } else {
-                NotificationCenter.default.post(
-                    name: airshipReadyNotification,
-                    object: nil
-                )
+                return
             }
         }
+
+        let resolvedConfig = config?.copy() as? Config ?? Config.default()
+
+        guard resolvedConfig.validate() else {
+            AirshipLogger.impError("Config is invalid. Unable to takeOff.")
+            return
+        }
+
+        commonTakeOff(config)
+
+        #if !os(tvOS) && !os(watchOS)
+        if let remoteNotification =
+            launchOptions?[
+                UIApplication.LaunchOptionsKey.remoteNotification
+            ]
+            as? [AnyHashable: Any]
+        {
+            if AppStateTracker.shared.state != .background {
+                analytics.launched(fromNotification: remoteNotification)
+            }
+        }
+        #endif
+
+        self.shared.components.forEach { $0.airshipReady?() }
+
+        if self.shared.config.isExtendedBroadcastsEnabled {
+            var userInfo: [String: Any] = [:]
+            userInfo[airshipReadyChannelIdentifier] =
+                self.channel.identifier
+            userInfo[airshipReadyAppKey] = self.shared.config.appKey
+            userInfo[airshipReadyPayloadVersion] = 1
+            NotificationCenter.default.post(
+                name: airshipReadyNotification,
+                object: userInfo
+            )
+        } else {
+            NotificationCenter.default.post(
+                name: airshipReadyNotification,
+                object: nil
+            )
+        }
+    }
 
     #else
 
-        /// Initalizes Airship. Config will be read from `AirshipConfig.plist`.
+    /// Initalizes Airship. Config will be read from `AirshipConfig.plist`.
 
-        @objc
-        public class func takeOff() {
-            takeOff(nil)
+    @objc
+    public class func takeOff() {
+        takeOff(nil)
+    }
+
+    /// Initalizes Airship.
+    /// - Parameters:
+    ///     - config: The Airship config.
+    @objc
+    public class func takeOff(_ config: Config?) {
+
+        guard Thread.isMainThread else {
+            fatalError("TakeOff must be called on the main thread.")
         }
 
-        /// Initalizes Airship.
-        /// - Parameters:
-        ///     - config: The Airship config.
-        @objc
-        public class func takeOff(_ config: Config?) {
+        guard !Airship.isFlying else {
+            AirshipLogger.impError("TakeOff can only be called once.")
+            return
+        }
 
-            guard Thread.isMainThread else {
-                fatalError("TakeOff must be called on the main thread.")
-            }
-
-            guard !Airship.isFlying else {
-                AirshipLogger.impError("TakeOff can only be called once.")
-                return
-            }
-
-            if config == nil {
-                guard
-                    Bundle.main.path(
-                        forResource: "AirshipConfig",
-                        ofType: "plist"
-                    ) != nil
-                else {
-                    AirshipLogger.impError(
-                        "AirshipConfig.plist file is missing. Unable to takeOff."
-                    )
-                    return
-                }
-            }
-
-            let resolvedConfig = config?.copy() as? Config ?? Config.default()
-
-            guard resolvedConfig.validate() else {
-                AirshipLogger.impError("Config is invalid. Unable to takeOff.")
-                return
-            }
-
-            commonTakeOff(config)
-
-            self.shared.components.forEach { $0.airshipReady?() }
-
-            if self.shared.config.isExtendedBroadcastsEnabled {
-                var userInfo: [String: Any] = [:]
-                userInfo[airshipReadyChannelIdentifier] =
-                    self.channel.identifier
-                userInfo[airshipReadyAppKey] = self.shared.config.appKey
-                userInfo[airshipReadyPayloadVersion] = 1
-                NotificationCenter.default.post(
-                    name: airshipReadyNotification,
-                    object: userInfo
+        if config == nil {
+            guard
+                Bundle.main.path(
+                    forResource: "AirshipConfig",
+                    ofType: "plist"
+                ) != nil
+            else {
+                AirshipLogger.impError(
+                    "AirshipConfig.plist file is missing. Unable to takeOff."
                 )
-            } else {
-                NotificationCenter.default.post(
-                    name: airshipReadyNotification,
-                    object: nil
-                )
+                return
             }
         }
+
+        let resolvedConfig = config?.copy() as? Config ?? Config.default()
+
+        guard resolvedConfig.validate() else {
+            AirshipLogger.impError("Config is invalid. Unable to takeOff.")
+            return
+        }
+
+        commonTakeOff(config)
+
+        self.shared.components.forEach { $0.airshipReady?() }
+
+        if self.shared.config.isExtendedBroadcastsEnabled {
+            var userInfo: [String: Any] = [:]
+            userInfo[airshipReadyChannelIdentifier] =
+                self.channel.identifier
+            userInfo[airshipReadyAppKey] = self.shared.config.appKey
+            userInfo[airshipReadyPayloadVersion] = 1
+            NotificationCenter.default.post(
+                name: airshipReadyNotification,
+                object: userInfo
+            )
+        } else {
+            NotificationCenter.default.post(
+                name: airshipReadyNotification,
+                object: nil
+            )
+        }
+    }
 
     #endif
 
@@ -483,9 +483,9 @@ public class Airship: NSObject {
         switch deeplink.host {
         case Airship.appSettingsDeepLinkHost:
             #if !os(watchOS)
-                if let url = URL(string: UIApplication.openSettingsURLString) {
-                    UIApplication.shared.open(url)
-                }
+            if let url = URL(string: UIApplication.openSettingsURLString) {
+                UIApplication.shared.open(url)
+            }
             #endif
             return true
         case Airship.appStoreDeepLinkHost:
@@ -495,9 +495,9 @@ public class Airship: NSObject {
             }
             if let url = URL(string: appStoreUrl + itunesID) {
                 #if !os(watchOS)
-                    UIApplication.shared.open(url)
+                UIApplication.shared.open(url)
                 #else
-                    WKExtension.shared().openSystemURL(url)
+                WKExtension.shared().openSystemURL(url)
                 #endif
             }
             return true

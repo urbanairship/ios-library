@@ -4,11 +4,11 @@ import CommonCrypto
 import Foundation
 
 #if !os(watchOS)
-    import SystemConfiguration
+import SystemConfiguration
 #endif
 
 #if os(iOS) && !targetEnvironment(macCatalyst)
-    import CoreTelephony
+import CoreTelephony
 #endif
 
 /// Representations of various device connection types.
@@ -62,22 +62,22 @@ public class Utils: NSObject {
     @objc
     public class func deviceModelName() -> String? {
         #if targetEnvironment(macCatalyst)
-            return "mac"
+        return "mac"
         #else
-            var systemInfo = utsname()
-            uname(&systemInfo)
-            let machineMirror = Mirror(reflecting: systemInfo.machine)
-            let modelName = machineMirror.children.reduce(
-                "",
-                { modelName, element in
-                    guard let value = element.value as? Int8, value != 0 else {
-                        return modelName
-                    }
-                    return modelName + String(UnicodeScalar(UInt8(value)))
+        var systemInfo = utsname()
+        uname(&systemInfo)
+        let machineMirror = Mirror(reflecting: systemInfo.machine)
+        let modelName = machineMirror.children.reduce(
+            "",
+            { modelName, element in
+                guard let value = element.value as? Int8, value != 0 else {
+                    return modelName
                 }
-            )
+                return modelName + String(UnicodeScalar(UInt8(value)))
+            }
+        )
 
-            return modelName
+        return modelName
         #endif
     }
 
@@ -96,67 +96,67 @@ public class Utils: NSObject {
     @objc
     public class func carrierName() -> String? {
         #if os(iOS) && !targetEnvironment(macCatalyst)
-            let info = CTTelephonyNetworkInfo()
-            return info.serviceSubscriberCellularProviders?.values.first?
-                .carrierName
+        let info = CTTelephonyNetworkInfo()
+        return info.serviceSubscriberCellularProviders?.values.first?
+            .carrierName
         #else
-            return nil
+        return nil
         #endif
     }
 
     #if !os(watchOS)
-        /// Gets the current connection type.
-        ///
-        /// - Returns: The current connection type as a `String`.
-        @objc
-        public class func connectionType() -> String {
-            var zeroAddress = sockaddr_in()
-            zeroAddress.sin_len = UInt8(MemoryLayout.size(ofValue: zeroAddress))
-            zeroAddress.sin_family = sa_family_t(AF_INET)
+    /// Gets the current connection type.
+    ///
+    /// - Returns: The current connection type as a `String`.
+    @objc
+    public class func connectionType() -> String {
+        var zeroAddress = sockaddr_in()
+        zeroAddress.sin_len = UInt8(MemoryLayout.size(ofValue: zeroAddress))
+        zeroAddress.sin_family = sa_family_t(AF_INET)
 
-            guard
-                let reachability = withUnsafePointer(
-                    to: &zeroAddress,
-                    {
-                        $0.withMemoryRebound(
-                            to: sockaddr.self,
-                            capacity: MemoryLayout<sockaddr>.size
-                        ) { ptr in
-                            SCNetworkReachabilityCreateWithAddress(nil, ptr)
-                        }
+        guard
+            let reachability = withUnsafePointer(
+                to: &zeroAddress,
+                {
+                    $0.withMemoryRebound(
+                        to: sockaddr.self,
+                        capacity: MemoryLayout<sockaddr>.size
+                    ) { ptr in
+                        SCNetworkReachabilityCreateWithAddress(nil, ptr)
                     }
-                )
-            else {
-                return ConnectionType.none
-            }
+                }
+            )
+        else {
+            return ConnectionType.none
+        }
 
-            var flags = SCNetworkReachabilityFlags()
-            let isSuccess = SCNetworkReachabilityGetFlags(reachability, &flags)
+        var flags = SCNetworkReachabilityFlags()
+        let isSuccess = SCNetworkReachabilityGetFlags(reachability, &flags)
 
-            var connectionType: String = ConnectionType.none
+        var connectionType: String = ConnectionType.none
 
-            guard isSuccess && flags.contains(.reachable) else {
-                return ConnectionType.none
-            }
+        guard isSuccess && flags.contains(.reachable) else {
+            return ConnectionType.none
+        }
 
-            if !flags.contains(.connectionRequired) {
+        if !flags.contains(.connectionRequired) {
+            connectionType = ConnectionType.wifi
+        }
+
+        if flags.contains(.connectionOnDemand)
+            || flags.contains(.connectionOnTraffic)
+        {
+            if !flags.contains(.interventionRequired) {
                 connectionType = ConnectionType.wifi
             }
-
-            if flags.contains(.connectionOnDemand)
-                || flags.contains(.connectionOnTraffic)
-            {
-                if !flags.contains(.interventionRequired) {
-                    connectionType = ConnectionType.wifi
-                }
-            }
-
-            if flags.contains(.isWWAN) {
-                connectionType = ConnectionType.cell
-            }
-
-            return connectionType
         }
+
+        if flags.contains(.isWWAN) {
+            connectionType = ConnectionType.cell
+        }
+
+        return connectionType
+    }
     #endif
 
     /// Compares two version strings and determines their order.
@@ -248,171 +248,171 @@ public class Utils: NSObject {
     // MARK: UI Utilities
 
     #if !os(watchOS)
-        /// Returns the main window for the app.
-        ///
-        /// This window will be positioned underneath any other windows added and removed at runtime,
-        /// by classes such a `UIAlertView` or `UIActionSheet`.
-        ///
-        /// - Returns: The main window, or `nil` if the window cannot be found.
-        @objc
-        public class func mainWindow() -> UIWindow? {
-            let sharedApp: UIApplication = UIApplication.shared
-            for window in sharedApp.windows {
-                if window.isKeyWindow {
-                    return window
-                }
+    /// Returns the main window for the app.
+    ///
+    /// This window will be positioned underneath any other windows added and removed at runtime,
+    /// by classes such a `UIAlertView` or `UIActionSheet`.
+    ///
+    /// - Returns: The main window, or `nil` if the window cannot be found.
+    @objc
+    public class func mainWindow() -> UIWindow? {
+        let sharedApp: UIApplication = UIApplication.shared
+        for window in sharedApp.windows {
+            if window.isKeyWindow {
+                return window
             }
-            return sharedApp.delegate?.window ?? nil
         }
+        return sharedApp.delegate?.window ?? nil
+    }
 
-        /// Returns the main window for the given `UIWindowScene`.
-        ///
-        /// This window will be positioned underneath any other windows added and removed at runtime,
-        /// by classes such a `UIAlertView` or `UIActionSheet`.
-        ///
-        /// - Parameter scene: The `UIWindowScene`.
-        ///
-        /// - Returns: The main window, or `nil` if the window cannot be found.
-        @objc(mainWindow:)
-        @available(iOS 13.0, tvOS 13.0, *)
-        public class func mainWindow(scene: UIWindowScene) -> UIWindow? {
-            for w in scene.windows {
-                if !w.isHidden {
-                    return w
-                }
+    /// Returns the main window for the given `UIWindowScene`.
+    ///
+    /// This window will be positioned underneath any other windows added and removed at runtime,
+    /// by classes such a `UIAlertView` or `UIActionSheet`.
+    ///
+    /// - Parameter scene: The `UIWindowScene`.
+    ///
+    /// - Returns: The main window, or `nil` if the window cannot be found.
+    @objc(mainWindow:)
+    @available(iOS 13.0, tvOS 13.0, *)
+    public class func mainWindow(scene: UIWindowScene) -> UIWindow? {
+        for w in scene.windows {
+            if !w.isHidden {
+                return w
             }
-
-            return self.mainWindow()
         }
 
-        /// Returns the window containing the provided view.
-        ///
-        /// - Parameter view: The view.
-        ///
-        /// - Returns: The window containing the view, or `nil` if the view is not currently displayed.
-        @objc
-        public class func windowFor(view: UIView) -> UIWindow? {
-            var view: UIView? = view
-            var window: UIWindow? = nil
+        return self.mainWindow()
+    }
 
-            repeat {
-                view = view?.superview
-                if view is UIWindow {
-                    window = view as? UIWindow
-                }
-            } while view != nil
+    /// Returns the window containing the provided view.
+    ///
+    /// - Parameter view: The view.
+    ///
+    /// - Returns: The window containing the view, or `nil` if the view is not currently displayed.
+    @objc
+    public class func windowFor(view: UIView) -> UIWindow? {
+        var view: UIView? = view
+        var window: UIWindow? = nil
 
-            return window
-        }
-
-        /// Returns the top-most view controller for the main application window, if found.
-        ///
-        /// - Returns: The top-most view controller or `nil` if a suitable view controller cannot be found.
-        @objc
-        @available(
-            tvOSApplicationExtension,
-            unavailable,
-            message: "Method not available in app extensions"
-        )
-        public class func topController() -> UIViewController? {
-            var topController = self.mainWindow()?.rootViewController
-            if topController == nil {
-                AirshipLogger.debug("Unable to find top controller")
-                return nil
+        repeat {
+            view = view?.superview
+            if view is UIWindow {
+                window = view as? UIWindow
             }
+        } while view != nil
 
-            // Iterate through any presented view controllers and find the top-most presentation context
-            while topController?.presentedViewController != nil {
-                topController = topController?.presentedViewController
-            }
+        return window
+    }
 
-            return topController
+    /// Returns the top-most view controller for the main application window, if found.
+    ///
+    /// - Returns: The top-most view controller or `nil` if a suitable view controller cannot be found.
+    @objc
+    @available(
+        tvOSApplicationExtension,
+        unavailable,
+        message: "Method not available in app extensions"
+    )
+    public class func topController() -> UIViewController? {
+        var topController = self.mainWindow()?.rootViewController
+        if topController == nil {
+            AirshipLogger.debug("Unable to find top controller")
+            return nil
         }
 
-        @objc(presentInNewWindow:)
-        public class func presentInNewWindow(
-            _ rootViewController: UIViewController
-        )
-            -> UIWindow?
-        {
-            let window = createWindow()
-            do {
-                let scene = try findWindowScene()
-                window.windowScene = scene
-            } catch {
-                AirshipLogger.error("\(error)")
-                return nil
-            }
-            showWindow(window)
-            window.rootViewController = rootViewController
-            return window
+        // Iterate through any presented view controllers and find the top-most presentation context
+        while topController?.presentedViewController != nil {
+            topController = topController?.presentedViewController
         }
 
-        private class func createWindow() -> UIWindow {
-            let window = UIWindow(frame: UIScreen.main.bounds)
-            window.windowLevel = .alert
-            return window
-        }
+        return topController
+    }
 
-        @objc
-        public class func findWindowScene() throws -> UIWindowScene {
-            guard
-                let scene = UIApplication.shared.connectedScenes.first(where: {
-                    $0.isKind(of: UIWindowScene.self)
-                }) as? UIWindowScene
-            else {
-                throw AirshipErrors.error("Unable to find a window!")
-            }
-            return scene
+    @objc(presentInNewWindow:)
+    public class func presentInNewWindow(
+        _ rootViewController: UIViewController
+    )
+        -> UIWindow?
+    {
+        let window = createWindow()
+        do {
+            let scene = try findWindowScene()
+            window.windowScene = scene
+        } catch {
+            AirshipLogger.error("\(error)")
+            return nil
         }
+        showWindow(window)
+        window.rootViewController = rootViewController
+        return window
+    }
 
-        private class func showWindow(_ window: UIWindow) {
-            window.makeKeyAndVisible()
+    private class func createWindow() -> UIWindow {
+        let window = UIWindow(frame: UIScreen.main.bounds)
+        window.windowLevel = .alert
+        return window
+    }
+
+    @objc
+    public class func findWindowScene() throws -> UIWindowScene {
+        guard
+            let scene = UIApplication.shared.connectedScenes.first(where: {
+                $0.isKind(of: UIWindowScene.self)
+            }) as? UIWindowScene
+        else {
+            throw AirshipErrors.error("Unable to find a window!")
         }
+        return scene
+    }
+
+    private class func showWindow(_ window: UIWindow) {
+        window.makeKeyAndVisible()
+    }
     #endif
 
     // MARK: Fetch Results
 
     #if !os(watchOS)
-        ///  Takes an array of fetch results and returns the merged result.
-        ///
-        /// - Parameter results: An `Array` of fetch results.
-        ///
-        /// - Returns: The merged fetch result.
-        @objc
-        public class func mergeFetchResults(_ results: [UInt])
-            -> UIBackgroundFetchResult
-        {
-            var mergedResult: UIBackgroundFetchResult = .noData
-            for r in results {
-                if r == UIBackgroundFetchResult.newData.rawValue {
-                    return .newData
-                } else if r == UIBackgroundFetchResult.failed.rawValue {
-                    mergedResult = .failed
-                }
+    ///  Takes an array of fetch results and returns the merged result.
+    ///
+    /// - Parameter results: An `Array` of fetch results.
+    ///
+    /// - Returns: The merged fetch result.
+    @objc
+    public class func mergeFetchResults(_ results: [UInt])
+        -> UIBackgroundFetchResult
+    {
+        var mergedResult: UIBackgroundFetchResult = .noData
+        for r in results {
+            if r == UIBackgroundFetchResult.newData.rawValue {
+                return .newData
+            } else if r == UIBackgroundFetchResult.failed.rawValue {
+                mergedResult = .failed
             }
-            return mergedResult
         }
+        return mergedResult
+    }
     #else
-        ///  Takes an array of fetch results and returns the merged result.
-        ///
-        /// - Parameter results: An `Array` of fetch results.
-        ///
-        /// - Returns: The merged fetch result.
-        @objc
-        public class func mergeFetchResults(_ results: [UInt])
-            -> WKBackgroundFetchResult
-        {
-            var mergedResult: WKBackgroundFetchResult = .noData
-            for r in results {
-                if r == WKBackgroundFetchResult.newData.rawValue {
-                    return .newData
-                } else if r == WKBackgroundFetchResult.failed.rawValue {
-                    mergedResult = .failed
-                }
+    ///  Takes an array of fetch results and returns the merged result.
+    ///
+    /// - Parameter results: An `Array` of fetch results.
+    ///
+    /// - Returns: The merged fetch result.
+    @objc
+    public class func mergeFetchResults(_ results: [UInt])
+        -> WKBackgroundFetchResult
+    {
+        var mergedResult: WKBackgroundFetchResult = .noData
+        for r in results {
+            if r == WKBackgroundFetchResult.newData.rawValue {
+                return .newData
+            } else if r == WKBackgroundFetchResult.failed.rawValue {
+                mergedResult = .failed
             }
-            return mergedResult
         }
+        return mergedResult
+    }
     #endif
 
     // MARK: Notification Payload

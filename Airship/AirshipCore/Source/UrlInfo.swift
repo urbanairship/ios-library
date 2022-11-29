@@ -69,8 +69,8 @@ extension Layout {
                 return [URLInfo(urlType: .video, url: model.url)]
             }
         #if !os(tvOS) && !os(watchOS)
-            case .webView(let model):
-                return [URLInfo(urlType: .web, url: model.url)]
+        case .webView(let model):
+            return [URLInfo(urlType: .web, url: model.url)]
         #endif
         case .imageButton(let model):
             switch model.image {

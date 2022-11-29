@@ -3,9 +3,9 @@
 import CoreData
 
 #if canImport(AirshipCore)
-    import AirshipCore
+import AirshipCore
 #elseif canImport(AirshipKit)
-    import AirshipKit
+import AirshipKit
 #endif
 
 class PushDataManager {

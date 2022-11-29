@@ -3,7 +3,7 @@
 import Foundation
 
 #if canImport(AirshipCore)
-    import AirshipCore
+import AirshipCore
 #endif
 
 /// Delegate protocol for receiving callbacks related to message center.

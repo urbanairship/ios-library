@@ -81,31 +81,31 @@ struct Pager: View {
         .clipped()
         .applyIf(allowSwipe) { view in
             #if !os(tvOS)
-                view.simultaneousGesture(
-                    DragGesture()
-                        .updating(self.$translation) { value, state, _ in
-                            state = value.translation.width
+            view.simultaneousGesture(
+                DragGesture()
+                    .updating(self.$translation) { value, state, _ in
+                        state = value.translation.width
+                    }
+                    .onEnded { value in
+                        let velocity =
+                            value.predictedEndLocation.x - value.location.x
+                        let offset =
+                            value.translation.width / metrics.size.width
+                        if abs(velocity) >= Pager.flingSpeed {
+                            attemptSwipe(
+                                index,
+                                indexOffset: velocity > 0 ? -1 : 1
+                            )
+                        } else if abs(offset) >= Pager.offsetPercent {
+                            attemptSwipe(
+                                index,
+                                indexOffset: offset > 0 ? -1 : 1
+                            )
                         }
-                        .onEnded { value in
-                            let velocity =
-                                value.predictedEndLocation.x - value.location.x
-                            let offset =
-                                value.translation.width / metrics.size.width
-                            if abs(velocity) >= Pager.flingSpeed {
-                                attemptSwipe(
-                                    index,
-                                    indexOffset: velocity > 0 ? -1 : 1
-                                )
-                            } else if abs(offset) >= Pager.offsetPercent {
-                                attemptSwipe(
-                                    index,
-                                    indexOffset: offset > 0 ? -1 : 1
-                                )
-                            }
-                        }
-                )
+                    }
+            )
             #else
-                view
+            view
             #endif
         }
     }
