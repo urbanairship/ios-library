@@ -355,7 +355,7 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
     NSArray *operations = @[checkFrequencyLimits, checkAudience, prepare];
 
     if ([self.remoteDataClient isRemoteSchedule:schedule]) {
-        [self.remoteDataClient attemptRemoteDataRefreshWithCompletionHandler:^{
+        [self.remoteDataClient attemptRemoteDataRefreshWithForce:NO completionHandler:^{
             if ([self isScheduleInvalid:schedule]) {
                 [self.remoteDataClient notifyOnUpdate:^{
                     completionHandler(UAAutomationSchedulePrepareResultInvalidate);
@@ -432,8 +432,13 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
                     break;
                 }
                 case 409: {
+                    [self.remoteDataClient attemptRemoteDataRefreshWithForce:YES
+                                                           completionHandler:^{
+                        [self.remoteDataClient notifyOnUpdate:^{
+                            completionHandler(UAAutomationSchedulePrepareResultInvalidate);
+                        }];
+                    }];
                     retriableHandler(UARetriableResultCancel, 0);
-                    completionHandler(UAAutomationSchedulePrepareResultInvalidate);
                     break;
                 }
                 case 429: {

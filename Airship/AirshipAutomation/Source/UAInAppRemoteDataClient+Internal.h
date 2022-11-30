@@ -120,9 +120,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Attempts to refresh remote data.
+ * @param forceRefresh YES if the refresh should be forced, otherwise NO.
  * @param completionHandler The completion handler.
  */
-- (void)attemptRemoteDataRefreshWithCompletionHandler:(void (^)(void))completionHandler;
+- (void)attemptRemoteDataRefreshWithForce:(BOOL)forceRefresh completionHandler:(void (^)(void))completionHandler;
 
 @end
 

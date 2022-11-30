@@ -373,9 +373,12 @@ public class RemoteDataManager: NSObject, Component, RemoteDataProvider {
         return metadata.isEqual(last)
     }
 
-    public func refresh(completionHandler: @escaping (Bool) -> Void) {
+    public func refresh(
+        force: Bool,
+        completionHandler: @escaping (Bool) -> Void
+    ) {
         refreshLock.sync {
-            if !shouldRefresh() {
+            if (!(force || shouldRefresh())) {
                 // Already up to date
                 completionHandler(true)
             } else if self.networkMonitor.isConnected {

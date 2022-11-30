@@ -215,7 +215,7 @@ static NSString * const RefreshTask = @"RemoteDataManager.refresh";
     self.testNetworkMonitor.isConnectedOverride = false;
     XCTestExpectation *expectation = [self expectationWithDescription:@"Callback called"];
 
-    [self.remoteDataManager refreshWithCompletionHandler:^(BOOL result) {
+    [self.remoteDataManager refreshWithForce:NO completionHandler:^(BOOL result) {
         XCTAssertFalse(result);
         [expectation fulfill];
     }];
