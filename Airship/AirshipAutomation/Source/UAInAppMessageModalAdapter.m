@@ -16,7 +16,7 @@ NSString *const UAModalStyleFileName = @"UAInAppMessageModalStyle";
 @property (nonatomic, strong) UAInAppMessage *message;
 @property (nonatomic, strong) UAInAppMessageModalViewController *modalController;
 @property (nonatomic, strong) UAInAppMessageResizableViewController *resizableContainerViewController;
-@property (nonatomic, strong) UIWindowScene *scene API_AVAILABLE(ios(13.0));
+@property (nonatomic, strong) UIWindowScene *scene;
 @end
 
 @implementation UAInAppMessageModalAdapter
@@ -55,12 +55,10 @@ NSString *const UAModalStyleFileName = @"UAInAppMessageModalStyle";
         return NO;
     }
 
-    if (@available(iOS 13.0, *)) {
-        self.scene = [[UAInAppMessageSceneManager shared] sceneForMessage:self.message];
-        if (!self.scene) {
-            UA_LDEBUG(@"Unable to display message %@, no scene.", self.message);
-            return NO;
-        }
+    self.scene = [[UAInAppMessageSceneManager shared] sceneForMessage:self.message];
+    if (!self.scene) {
+        UA_LDEBUG(@"Unable to display message %@, no scene.", self.message);
+        return NO;
     }
 
     return YES;
@@ -84,16 +82,12 @@ NSString *const UAModalStyleFileName = @"UAInAppMessageModalStyle";
 - (void)display:(void (^)(UAInAppMessageResolution *))completionHandler {
     [self createContainerViewController];
 
-    if (@available(iOS 13.0, *)) {
-        UA_WEAKIFY(self)
-        [self.resizableContainerViewController showWithScene:self.scene completionHandler:^(UAInAppMessageResolution *result) {
-            UA_STRONGIFY(self)
-            self.scene = nil;
-            completionHandler(result);
-        }];
-      } else {
-          [self.resizableContainerViewController showWithCompletionHandler:completionHandler];
-      }
+    UA_WEAKIFY(self)
+    [self.resizableContainerViewController showWithScene:self.scene completionHandler:^(UAInAppMessageResolution *result) {
+        UA_STRONGIFY(self)
+        self.scene = nil;
+        completionHandler(result);
+    }];
 }
 
 @end

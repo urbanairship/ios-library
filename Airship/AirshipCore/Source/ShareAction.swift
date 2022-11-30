@@ -18,6 +18,7 @@
  */
 #if os(iOS)
 @objc(UAShareAction)
+
 public class ShareAction: NSObject, Action {
 
     @objc
@@ -26,7 +27,6 @@ public class ShareAction: NSObject, Action {
     @objc
     public static let shortName = "^s"
 
-    private var lastActivityViewController: ActivityViewController?
 
     public func acceptsArguments(_ arguments: ActionArguments) -> Bool {
         guard arguments.situation != .backgroundPush,
@@ -44,12 +44,11 @@ public class ShareAction: NSObject, Action {
     ) {
         AirshipLogger.debug("Running share action: \(arguments)")
 
-        let activityItems = [arguments.value as Any]
-
         let activityViewController = ActivityViewController(
-            activityItems: activityItems,
+            activityItems: [arguments.value as Any],
             applicationActivities: nil
         )
+
         activityViewController.excludedActivityTypes = [
             .assignToContact,
             .print,
@@ -58,43 +57,30 @@ public class ShareAction: NSObject, Action {
             .postToFacebook,
         ]
 
-        let displayShareBlock: (() -> Void) = { [self] in
-            lastActivityViewController = activityViewController
-            if let popoverPresentationController = activityViewController
-                .popoverPresentationController
-            {
-                popoverPresentationController.permittedArrowDirections = []
+        let viewController = UIViewController()
+        var window: UIWindow? = Utils.presentInNewWindow(
+            viewController,
+            windowLevel: .alert
+        )
 
-                // Set the delegate, center the popover on the screen
-                popoverPresentationController.delegate =
-                    activityViewController
-                popoverPresentationController.sourceRect =
-                    activityViewController.sourceRect()
-                popoverPresentationController.sourceView =
-                    Utils.topController()?.view
-
-                Utils.topController()?
-                    .present(activityViewController, animated: true)
-            } else {
-                Utils.topController()?
-                    .present(activityViewController, animated: true)
-            }
+        activityViewController.dismissalBlock = {
+            window?.windowLevel = .normal
+            window?.isHidden = true
+            window = nil
         }
 
-        activityViewController.dismissalBlock = { [weak self] in
-            self?.lastActivityViewController = nil
+        if let popoverPresentationController = activityViewController.popoverPresentationController {
+            popoverPresentationController.permittedArrowDirections = []
+            // Set the delegate, center the popover on the screen
+            popoverPresentationController.delegate = activityViewController
+            popoverPresentationController.sourceRect = activityViewController.sourceRect()
+            popoverPresentationController.sourceView = viewController.view
         }
 
-        if self.lastActivityViewController != nil {
-            let dismissalBlock = self.lastActivityViewController?
-                .dismissalBlock
-            self.lastActivityViewController?.dismissalBlock = {
-                dismissalBlock?()
-                displayShareBlock()
-            }
-        } else {
-            displayShareBlock()
-        }
+        viewController.present(
+            activityViewController,
+            animated: true
+        )
 
         completionHandler(ActionResult.empty())
     }

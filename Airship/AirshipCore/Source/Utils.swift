@@ -305,53 +305,21 @@ public class Utils: NSObject {
         return window
     }
 
-    /// Returns the top-most view controller for the main application window, if found.
-    ///
-    /// - Returns: The top-most view controller or `nil` if a suitable view controller cannot be found.
-    @objc
-    @available(
-        tvOSApplicationExtension,
-        unavailable,
-        message: "Method not available in app extensions"
-    )
-    public class func topController() -> UIViewController? {
-        var topController = self.mainWindow()?.rootViewController
-        if topController == nil {
-            AirshipLogger.debug("Unable to find top controller")
-            return nil
-        }
-
-        // Iterate through any presented view controllers and find the top-most presentation context
-        while topController?.presentedViewController != nil {
-            topController = topController?.presentedViewController
-        }
-
-        return topController
-    }
-
-    @objc(presentInNewWindow:)
-    public class func presentInNewWindow(
-        _ rootViewController: UIViewController
-    )
-        -> UIWindow?
-    {
-        let window = createWindow()
+    class func presentInNewWindow(
+        _ rootViewController: UIViewController,
+        windowLevel: UIWindow.Level = .normal
+    ) -> UIWindow? {
         do {
             let scene = try findWindowScene()
-            window.windowScene = scene
+            let window = UIWindow(windowScene: scene)
+            window.rootViewController = rootViewController
+            window.windowLevel = windowLevel
+            window.makeKeyAndVisible()
+            return window
         } catch {
             AirshipLogger.error("\(error)")
             return nil
         }
-        showWindow(window)
-        window.rootViewController = rootViewController
-        return window
-    }
-
-    private class func createWindow() -> UIWindow {
-        let window = UIWindow(frame: UIScreen.main.bounds)
-        window.windowLevel = .alert
-        return window
     }
 
     @objc
@@ -366,9 +334,7 @@ public class Utils: NSObject {
         return scene
     }
 
-    private class func showWindow(_ window: UIWindow) {
-        window.makeKeyAndVisible()
-    }
+
     #endif
 
     // MARK: Fetch Results
@@ -380,9 +346,9 @@ public class Utils: NSObject {
     ///
     /// - Returns: The merged fetch result.
     @objc
-    public class func mergeFetchResults(_ results: [UInt])
-        -> UIBackgroundFetchResult
-    {
+    public class func mergeFetchResults(
+        _ results: [UInt]
+    ) -> UIBackgroundFetchResult {
         var mergedResult: UIBackgroundFetchResult = .noData
         for r in results {
             if r == UIBackgroundFetchResult.newData.rawValue {

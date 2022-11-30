@@ -313,22 +313,6 @@ static double const DefaultResizableViewAnimationDuration = 0.2;
 #pragma mark -
 #pragma mark Core Functionality
 
-- (void)createWindow {
-    // create a new window that covers the entire display
-    self.topWindow = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
-
-    // make sure window appears above any alerts already showing
-    self.topWindow.windowLevel = UIWindowLevelAlert;
-
-    // add this view controller to the window
-    self.topWindow.rootViewController = self;
-}
-
-- (void)displayWindow:(void (^)(UAInAppMessageResolution * _Nonnull))completionHandler {
-    self.showCompletionHandler = completionHandler;
-    [self.topWindow makeKeyAndVisible];
-}
-
 - (void)observeSceneEvents API_AVAILABLE(ios(13.0)) {
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(sceneRemoved:)
@@ -342,24 +326,14 @@ static double const DefaultResizableViewAnimationDuration = 0.2;
     }
 }
 
-- (void)showWithCompletionHandler:(void (^)(UAInAppMessageResolution * _Nonnull))completionHandler {
-    if (self.isShowing) {
-        UA_LTRACE(@"In-app message resizable view has already been displayed");
-        return;
-    }
-
-    [self createWindow];
-    [self displayWindow:completionHandler];
-}
-
 - (void)showWithScene:(UIWindowScene *)scene completionHandler:(void (^)(UAInAppMessageResolution * _Nonnull))completionHandler {
     if (self.isShowing) {
         UA_LTRACE(@"In-app message resizable view has already been displayed");
         return;
     }
 
-    [self createWindow];
-    self.topWindow.windowScene = scene;
+    self.topWindow = [[UIWindow alloc] initWithWindowScene:scene];
+    self.topWindow.rootViewController = self;
     [self observeSceneEvents];
 
     #if TARGET_OS_MACCATALYST
@@ -367,7 +341,8 @@ static double const DefaultResizableViewAnimationDuration = 0.2;
     self.previousKeyWindow = [UAInAppMessageUtils keyWindowFromScene:scene];
     #endif
 
-    [self displayWindow:completionHandler];
+    self.showCompletionHandler = completionHandler;
+    [self.topWindow makeKeyAndVisible];
 }
 
 - (void)tearDown {
@@ -375,7 +350,6 @@ static double const DefaultResizableViewAnimationDuration = 0.2;
 
     self.isShowing = NO;
     [self.view removeFromSuperview];
-    self.topWindow.windowLevel = UIWindowLevelNormal;
     self.topWindow.hidden = true;
     self.topWindow = nil;
 

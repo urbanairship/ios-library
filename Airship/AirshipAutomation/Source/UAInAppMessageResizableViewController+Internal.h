@@ -96,12 +96,6 @@ NS_ASSUME_NONNULL_BEGIN
                                             size:(CGSize)size
                                       aspectLock:(BOOL)aspectLock;
 
-/**
- * The method to show the resizable view controller.
- *
- * @param completionHandler The completion handler that's called when the show operation completes.
- */
-- (void)showWithCompletionHandler:(void (^)(UAInAppMessageResolution *))completionHandler;
 
 /**
  * The method to show the resizable view controller.

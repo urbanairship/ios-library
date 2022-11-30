@@ -23,7 +23,7 @@ NSString *const UAHTMLStyleFileName = @"UAInAppMessageHTMLStyle";
 @property (nonatomic, strong) UAInAppMessageHTMLDisplayContent *displayContent;
 @property (nonatomic, strong) UAInAppMessageHTMLViewController *htmlViewController;
 @property (nonatomic, strong) UAInAppMessageResizableViewController *resizableContainerViewController;
-@property (nonatomic, strong) UIWindowScene *scene API_AVAILABLE(ios(13.0));
+@property (nonatomic, strong) UIWindowScene *scene;
 @end
 
 @implementation UAInAppMessageHTMLAdapter
@@ -69,12 +69,11 @@ NSString *const UAHTMLStyleFileName = @"UAInAppMessageHTMLStyle";
         return NO;
     }
 
-    if (@available(iOS 13.0, *)) {
-        self.scene = [[UAInAppMessageSceneManager shared] sceneForMessage:self.message];
-        if (!self.scene) {
-            UA_LDEBUG(@"Unable to display message %@, no scene.", self.message);
-            return NO;
-        }
+    self.scene = [[UAInAppMessageSceneManager shared] sceneForMessage:self.message];
+
+    if (!self.scene) {
+        UA_LDEBUG(@"Unable to display message %@, no scene.", self.message);
+        return NO;
     }
 
     return YES;
@@ -103,16 +102,12 @@ NSString *const UAHTMLStyleFileName = @"UAInAppMessageHTMLStyle";
 - (void)display:(nonnull void (^)(UAInAppMessageResolution * _Nonnull))completionHandler {
     [self createContainerViewController];
 
-    if (@available(iOS 13.0, *)) {
-        UA_WEAKIFY(self)
-        [self.resizableContainerViewController showWithScene:self.scene completionHandler:^(UAInAppMessageResolution *result) {
-            UA_STRONGIFY(self)
-            self.scene = nil;
-            completionHandler(result);
-        }];
-    } else {
-        [self.resizableContainerViewController showWithCompletionHandler:completionHandler];
-    }
+    UA_WEAKIFY(self)
+    [self.resizableContainerViewController showWithScene:self.scene completionHandler:^(UAInAppMessageResolution *result) {
+        UA_STRONGIFY(self)
+        self.scene = nil;
+        completionHandler(result);
+    }];
 }
 
 @end

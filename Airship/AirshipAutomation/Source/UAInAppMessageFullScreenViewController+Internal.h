@@ -27,12 +27,6 @@ NS_ASSUME_NONNULL_BEGIN
                                              mediaView:(nullable UAInAppMessageMediaView *)mediaView
                                                  style:(UAInAppMessageFullScreenStyle *)style;
 
-/**
- * The method to show the full screen view controller.
- *
- * @param completionHandler The completion handler that's called when the show operation completes.
- */
-- (void)showWithCompletionHandler:(void (^)(UAInAppMessageResolution *))completionHandler;
 
 /**
  * The method to show the full screen view controller.

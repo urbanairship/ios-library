@@ -13,7 +13,7 @@ NSString *const UAFullScreenStyleFileName = @"UAInAppMessageFullScreenStyle";
 @interface UAInAppMessageFullScreenAdapter ()
 @property (nonatomic, strong) UAInAppMessage *message;
 @property (nonatomic, strong) UAInAppMessageFullScreenViewController *fullScreenController;
-@property (nonatomic, strong) UIWindowScene *scene API_AVAILABLE(ios(13.0));
+@property (nonatomic, strong) UIWindowScene *scene;
 @end
 
 @implementation UAInAppMessageFullScreenAdapter
@@ -51,27 +51,21 @@ NSString *const UAFullScreenStyleFileName = @"UAInAppMessageFullScreenStyle";
         return NO;
     }
 
-    if (@available(iOS 13.0, *)) {
-        self.scene = [[UAInAppMessageSceneManager shared] sceneForMessage:self.message];
-        if (!self.scene) {
-            UA_LDEBUG(@"Unable to display message %@, no scene.", self.message);
-            return NO;
-        }
+    self.scene = [[UAInAppMessageSceneManager shared] sceneForMessage:self.message];
+    if (!self.scene) {
+        UA_LDEBUG(@"Unable to display message %@, no scene.", self.message);
+        return NO;
     }
     return YES;
 }
 
 - (void)display:(void (^)(UAInAppMessageResolution *))completionHandler {
-    if (@available(iOS 13.0, *)) {
-        UA_WEAKIFY(self)
-        [self.fullScreenController showWithScene:self.scene completionHandler:^(UAInAppMessageResolution *result) {
-            UA_STRONGIFY(self)
-            self.scene = nil;
-            completionHandler(result);
-        }];
-    } else {
-        [self.fullScreenController showWithCompletionHandler:completionHandler];
-    }
+    UA_WEAKIFY(self)
+    [self.fullScreenController showWithScene:self.scene completionHandler:^(UAInAppMessageResolution *result) {
+        UA_STRONGIFY(self)
+        self.scene = nil;
+        completionHandler(result);
+    }];
 }
 
 
