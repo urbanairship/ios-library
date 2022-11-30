@@ -329,9 +329,8 @@ public class Utils : NSObject {
         scene: UIWindowScene,
         rootViewController: UIViewController
     ) -> UIWindow {
-        let window = UIWindow(frame: scene.screen.bounds)
+        let window = UIWindow(windowScene: scene)
         window.rootViewController = rootViewController
-        window.windowScene = scene
         return window
     }
 
