@@ -687,7 +687,9 @@ NS_ASSUME_NONNULL_BEGIN
     cell.messageCenterStyle = self.messageCenterStyle;
     UAInboxMessage *message = [self messageAtIndex:indexPath.row];
 
-    [cell setData:message];
+    if (message) {
+        [cell setData:message];
+    }
 
     if (self.editing) {
         cell.accessibilityHint = UAMessageCenterLocalizedString(@"ua_message_cell_editing_description");
