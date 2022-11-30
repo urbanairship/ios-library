@@ -418,8 +418,9 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
     return [self.remoteDataProvider isMetadataCurrent:schedule.metadata[UAInAppRemoteDataClientMetadataKey]];
 }
 
-- (void)attemptRemoteDataRefreshWithCompletionHandler:(void (^)(void))completionHandler {
-    [self.remoteDataProvider refreshWithCompletionHandler:^(BOOL result) {
+- (void)attemptRemoteDataRefreshWithForce:(BOOL)forceRefresh
+                        completionHandler:(void (^)(void))completionHandler {
+    [self.remoteDataProvider refreshWithForce:forceRefresh completionHandler:^(BOOL result) {
         completionHandler();
     }];
 }

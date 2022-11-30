@@ -62,7 +62,7 @@ public class PreferenceDataStore : NSObject {
         let legacyPrefix = legacyKeyPrefix(appKey: appKey)
         for (key, value) in UserDefaults.standard.dictionaryRepresentation() {
             if key.hasPrefix(appKey) || key.hasPrefix(legacyPrefix) {
-                defaults.setValue(value, forKey: key)
+                defaults.set(value, forKey: key)
                 UserDefaults.standard.removeObject(forKey: key)
             }
         }

@@ -58,10 +58,10 @@
 
     [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:2];
+        [invocation getArgument:&arg atIndex:3];
         void(^callback)(void) =  (__bridge void (^)(void))arg;
         callback();
-    }] attemptRemoteDataRefreshWithCompletionHandler:OCMOCK_ANY];
+    }] attemptRemoteDataRefreshWithForce:NO completionHandler:OCMOCK_ANY];
     
     [[[self.mockAutomationEngine stub] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -615,6 +615,18 @@
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
 
+    [[[self.mockRemoteDataClient expect] andDo:^(NSInvocation *invocation) {
+        void (^block)(void);
+        [invocation getArgument:&block atIndex:2];
+        block();
+    }] notifyOnUpdate:OCMOCK_ANY];
+    
+    [[[self.mockRemoteDataClient expect] andDo:^(NSInvocation *invocation) {
+        void (^block)(void);
+        [invocation getArgument:&block atIndex:3];
+        block();
+    }] attemptRemoteDataRefreshWithForce:YES completionHandler:OCMOCK_ANY];
+    
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];

@@ -62,5 +62,5 @@ class TestRemoteDataProvider : NSObject, RemoteDataProvider {
         return true
     }
     
-    func refresh(completionHandler: @escaping (Bool) -> Void) {}
+    func refresh(force: Bool, completionHandler: @escaping (Bool) -> Void) {}
 }
