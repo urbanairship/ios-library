@@ -1354,3 +1354,14 @@ extension Push: InternalPushProtocol {
         }
     }
 }
+
+#if !os(tvOS)
+extension UNNotification {
+    
+    /// Checks if the push was sent from Airship.
+    /// - Returns: true if it's an Airship notification, otherwise false.
+    public func isAirshipPush() -> Bool {
+        return self.request.content.userInfo["com.urbanairship.metadata"] != nil
+    }
+}
+#endif
