@@ -279,7 +279,7 @@ public class RemoteDataManager: NSObject, Component, RemoteDataProvider {
 
         var success = false
 
-        let request = self.apiClient.fetchRemoteData(
+        self.apiClient.fetchRemoteData(
             locale: locale,
             randomValue: self.randomValue,
             lastModified: lastModified
@@ -337,10 +337,6 @@ public class RemoteDataManager: NSObject, Component, RemoteDataProvider {
                     task.taskCompleted()
                 }
             }
-        }
-
-        task.expirationHandler = {
-            request.dispose()
         }
 
         task.completionHandler = {

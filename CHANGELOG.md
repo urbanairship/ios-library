@@ -3,6 +3,24 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 16.10.6 December 5, 2022
+Patch release that fixes Airship not performing network operations until next app foreground when triggered in the background.
+
+### Changes
+- Fixed background initiated operations.
+
+## Version 16.10.5 November 30, 2022
+Patch release with several fixes for Message Center, attributes, 
+and In-App Automation.
+
+### Changes
+- Fixed issue with setting attributes to `0` or `1`.
+- Fixed message getters in the JS native bridge when using Message Center.
+- Updated the window levels to normal for IAA, Preference Center, and Message Center. This avoid conflicts with full screen video and other alert level windows.
+- Fixed share action dialog from closing when an IAA is dismissed.
+
+
+
 ## Version 16.10.4 November 22, 2022
 Patch release that fixes a regression with Scenes and Surveys next page button enablement. Apps on 16.10.1-16.10.3 that use Scenes & Surveys should update.
 

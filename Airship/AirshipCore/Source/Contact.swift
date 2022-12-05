@@ -933,7 +933,7 @@ public class Contact: NSObject, Component, ContactProtocol {
             return
         }
 
-        let disposable = self.performOperation(
+        self.performOperation(
             operation: operation,
             channelID: channelID
         ) { response in
@@ -951,17 +951,13 @@ public class Contact: NSObject, Component, ContactProtocol {
                 task.taskFailed()
             }
         }
-
-        task.expirationHandler = {
-            disposable?.dispose()
-        }
     }
 
     private func performOperation(
         operation: ContactOperation,
         channelID: String,
         completionHandler: @escaping (HTTPResponse?) -> Void
-    ) -> Disposable? {
+    ) {
         switch operation.type {
         case .update:
             guard let contactInfo = self.lastContactInfo,
@@ -969,7 +965,7 @@ public class Contact: NSObject, Component, ContactProtocol {
             else {
                 self.removeFirstOperation()
                 completionHandler(nil)
-                return nil
+                return
             }
 
             if let updates = updatePayload.subscriptionListsUpdates {
@@ -980,7 +976,7 @@ public class Contact: NSObject, Component, ContactProtocol {
                 }
             }
 
-            return self.contactAPIClient.update(
+            self.contactAPIClient.update(
                 identifier: contactInfo.contactID,
                 tagGroupUpdates: updatePayload.tagUpdates,
                 attributeUpdates: updatePayload.attrubuteUpdates,
@@ -1014,14 +1010,14 @@ public class Contact: NSObject, Component, ContactProtocol {
             else {
                 self.removeFirstOperation()
                 completionHandler(nil)
-                return nil
+                return
             }
             var contactID: String? = nil
             if self.lastContactInfo?.isAnonymous ?? false {
                 contactID = self.lastContactInfo?.contactID
             }
 
-            return self.contactAPIClient.identify(
+            self.contactAPIClient.identify(
                 channelID: channelID,
                 namedUserID: identifyPayload.identifier,
                 contactID: contactID
@@ -1039,7 +1035,7 @@ public class Contact: NSObject, Component, ContactProtocol {
             }
 
         case .reset:
-            return self.contactAPIClient.reset(channelID: channelID) {
+            self.contactAPIClient.reset(channelID: channelID) {
                 response,
                 error in
                 Contact.logOperationResult(
@@ -1052,7 +1048,7 @@ public class Contact: NSObject, Component, ContactProtocol {
             }
 
         case .resolve:
-            return self.contactAPIClient.resolve(channelID: channelID) {
+            self.contactAPIClient.resolve(channelID: channelID) {
                 response,
                 error in
                 Contact.logOperationResult(
@@ -1075,10 +1071,10 @@ public class Contact: NSObject, Component, ContactProtocol {
             else {
                 self.removeFirstOperation()
                 completionHandler(nil)
-                return nil
+                return
             }
 
-            return self.contactAPIClient.registerEmail(
+            self.contactAPIClient.registerEmail(
                 identifier: contactInfo.contactID,
                 address: registerPayload.address,
                 options: registerPayload.options
@@ -1098,10 +1094,10 @@ public class Contact: NSObject, Component, ContactProtocol {
             else {
                 self.removeFirstOperation()
                 completionHandler(nil)
-                return nil
+                return
             }
 
-            return self.contactAPIClient.registerSMS(
+            self.contactAPIClient.registerSMS(
                 identifier: contactInfo.contactID,
                 msisdn: registerPayload.msisdn,
                 options: registerPayload.options
@@ -1121,10 +1117,10 @@ public class Contact: NSObject, Component, ContactProtocol {
             else {
                 self.removeFirstOperation()
                 completionHandler(nil)
-                return nil
+                return
             }
 
-            return self.contactAPIClient.registerOpen(
+            self.contactAPIClient.registerOpen(
                 identifier: contactInfo.contactID,
                 address: registerPayload.address,
                 options: registerPayload.options
@@ -1144,10 +1140,10 @@ public class Contact: NSObject, Component, ContactProtocol {
             else {
                 self.removeFirstOperation()
                 completionHandler(nil)
-                return nil
+                return
             }
 
-            return self.contactAPIClient.associateChannel(
+            self.contactAPIClient.associateChannel(
                 identifier: contactInfo.contactID,
                 channelID: payload.channelID,
                 channelType: payload.channelType

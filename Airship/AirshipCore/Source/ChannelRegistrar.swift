@@ -271,7 +271,7 @@ public class ChannelRegistrar: NSObject, ChannelRegistrarProtocol {
     ) {
 
         let minimizedPayload = payload.minimizePayload(previous: lastPayload)
-        let disposable = self.channelAPIClient.updateChannel(
+        self.channelAPIClient.updateChannel(
             withID: channelID,
             withPayload: minimizedPayload
         ) { response, error in
@@ -306,17 +306,13 @@ public class ChannelRegistrar: NSObject, ChannelRegistrarProtocol {
                 }
             }
         }
-
-        task.expirationHandler = {
-            disposable.dispose()
-        }
     }
 
     private func createChannel(
         payload: ChannelRegistrationPayload,
         task: AirshipTask
     ) {
-        let disposable = self.channelAPIClient.createChannel(
+        self.channelAPIClient.createChannel(
             withPayload: payload
         ) {
             response,
@@ -356,10 +352,6 @@ public class ChannelRegistrar: NSObject, ChannelRegistrarProtocol {
                     task.taskCompleted()
                 }
             }
-        }
-
-        task.expirationHandler = {
-            disposable.dispose()
         }
     }
 

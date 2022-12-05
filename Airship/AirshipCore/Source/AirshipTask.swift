@@ -8,12 +8,6 @@ import Foundation
 public protocol AirshipTask {
 
     /**
-     * Expiration handler. Will be called when background time is about to expire. The launcher is still expected to call `taskCompleted` or `taskFailed`.
-     */
-    @objc
-    var expirationHandler: (() -> Void)? { get set }
-
-    /**
      * Completion handler. Will be called once task is completed.
      */
     @objc

@@ -55,7 +55,7 @@ public class TaskManager: NSObject, TaskManagerProtocol {
                 extras: request.extras
             )
 
-            let expirableTask = ExpirableTask(
+            let expirableTask = WorkTask(
                 taskID: taskID,
                 requestOptions: requestOptions
             ) { success in
@@ -64,10 +64,6 @@ public class TaskManager: NSObject, TaskManagerProtocol {
                 } else {
                     continuation.finishTask(.failure)
                 }
-            }
-
-            continuation.cancellationHandler = {
-                expirableTask.expire()
             }
 
             dispatcher.dispatchAsync {
@@ -139,5 +135,74 @@ public class TaskManager: NSObject, TaskManagerProtocol {
         )
 
         self.workManager.dispatchWorkRequest(workRequest)
+    }
+}
+
+
+fileprivate class WorkTask: AirshipTask {
+    private let _taskID: String
+    @objc
+    public var taskID: String {
+        return self._taskID
+    }
+
+    private let _requestOptions: TaskRequestOptions
+    @objc
+    public var requestOptions: TaskRequestOptions {
+        return self._requestOptions
+    }
+
+
+    private var _completionHandler: (() -> Void)? = nil
+
+    @objc
+    public var completionHandler: (() -> Void)? {
+        get {
+            return _completionHandler
+        }
+        set {
+            if isCompleted {
+                newValue?()
+                self._completionHandler = nil
+            } else {
+                self._completionHandler = newValue
+            }
+        }
+    }
+
+    private var isCompleted = false
+    private var onTaskFinished: (Bool) -> Void
+
+    @objc
+    public init(
+        taskID: String,
+        requestOptions: TaskRequestOptions,
+        onTaskFinished: @escaping (Bool) -> Void
+    ) {
+
+        self._taskID = taskID
+        self._requestOptions = requestOptions
+        self.onTaskFinished = onTaskFinished
+    }
+
+    @objc
+    public func taskCompleted() {
+        finishTask(true)
+    }
+
+    @objc
+    public func taskFailed() {
+        finishTask(false)
+    }
+
+    private func finishTask(_ result: Bool) {
+        guard !isCompleted else {
+            return
+        }
+
+        self.isCompleted = true
+        self.completionHandler?()
+        self.completionHandler = nil
+        self.onTaskFinished(result)
     }
 }
