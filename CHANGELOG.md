@@ -3,6 +3,12 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 16.10.6 December 5, 2022
+Patch release that fixes Airship not performing network operations until next app foreground when triggered in the background.
+
+### Changes
+- Fixed background initiated operations.
+
 ## Version 16.10.5 November 30, 2022
 Patch release with several fixes for Message Center, attributes, 
 and In-App Automation.

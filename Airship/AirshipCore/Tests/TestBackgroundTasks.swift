@@ -6,7 +6,6 @@ import Foundation
 import AirshipCore
 
 class TestBackgroundTasks: BackgroundTasksProtocol {
-    var timeRemaining: TimeInterval = 0
     var taskHandler: ((String, (@escaping () -> Void)) -> Disposable?)?
 
     func beginTask(_ name: String, expirationHandler: @escaping () -> Void) throws -> Disposable {

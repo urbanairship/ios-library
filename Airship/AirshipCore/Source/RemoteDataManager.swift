@@ -217,7 +217,7 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
 
         var success = false
 
-        let request = self.apiClient.fetchRemoteData(locale: locale, randomValue: self.randomValue, lastModified: lastModified) { response, error in
+        self.apiClient.fetchRemoteData(locale: locale, randomValue: self.randomValue, lastModified: lastModified) { response, error in
             guard let response = response else {
                 if let error = error {
                     AirshipLogger.error("Failed to refresh remote-data with error \(error)")
@@ -265,10 +265,6 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
                     task.taskCompleted()
                 }
             }
-        }
-        
-        task.expirationHandler = {
-            request.dispose()
         }
 
         task.completionHandler = {

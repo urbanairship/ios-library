@@ -245,7 +245,7 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
                                task: AirshipTask) {
 
         let minimizedPayload = payload.minimizePayload(previous: lastPayload)
-        let disposable = self.channelAPIClient.updateChannel(withID: channelID, withPayload: minimizedPayload) { response, error in
+        self.channelAPIClient.updateChannel(withID: channelID, withPayload: minimizedPayload) { response, error in
             guard let response = response else {
                 if let error = error {
                     AirshipLogger.error("Failed request with error: \(error)")
@@ -275,14 +275,11 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
                 }
             }
         }
-        
-        task.expirationHandler = {
-            disposable.dispose()
-        }
+
     }
     
     private func createChannel(payload: ChannelRegistrationPayload, task: AirshipTask) {
-        let disposable = self.channelAPIClient.createChannel(withPayload: payload) { response, error in
+        self.channelAPIClient.createChannel(withPayload: payload) { response, error in
             
             guard let response = response else {
                 if let error = error {
@@ -310,10 +307,6 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
                     task.taskCompleted()
                 }
             }
-        }
-        
-        task.expirationHandler = {
-            disposable.dispose()
         }
     }
     

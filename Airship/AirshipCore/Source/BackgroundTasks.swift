@@ -6,17 +6,12 @@ import UIKit
 protocol BackgroundTasksProtocol {
 #if !os(watchOS)
     func beginTask(_ name: String, expirationHandler: @escaping () -> Void) throws -> Disposable
-    var timeRemaining: TimeInterval { get }
 #endif
 }
 
 class BackgroundTasks: BackgroundTasksProtocol {
     
 #if !os(watchOS)
-    
-    var timeRemaining: TimeInterval {
-        UIApplication.shared.backgroundTimeRemaining
-    }
 
     func beginTask(_ name: String, expirationHandler: @escaping () -> Void) throws -> Disposable {
         let application = UIApplication.shared
@@ -24,6 +19,7 @@ class BackgroundTasks: BackgroundTasksProtocol {
 
         let disposable = Disposable {
             if (taskID != UIBackgroundTaskIdentifier.invalid) {
+                AirshipLogger.trace("Ending background task: \(name)")
                 application.endBackgroundTask(taskID)
                 taskID = UIBackgroundTaskIdentifier.invalid
             }
@@ -31,11 +27,14 @@ class BackgroundTasks: BackgroundTasksProtocol {
 
         taskID = application.beginBackgroundTask(withName: name) {
             expirationHandler()
+            disposable.dispose()
         }
 
         if (taskID == UIBackgroundTaskIdentifier.invalid) {
             throw AirshipErrors.error("Unable to request background time.")
         }
+
+        AirshipLogger.trace("Background task started: \(name)")
 
         return disposable
     }

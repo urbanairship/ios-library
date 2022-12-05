@@ -88,9 +88,6 @@ class ExpirableTask: AirshipTask {
         if let handler = expirationHandler {
             handler()
             self._expirationHandler = nil
-        } else {
-            AirshipLogger.debug("Expiration handler not set, marking task as failed.")
-            taskFailed()
         }
     }
 

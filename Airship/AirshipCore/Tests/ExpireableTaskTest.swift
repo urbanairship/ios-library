@@ -40,15 +40,6 @@ class ExpireableTaskTest: XCTestCase {
         XCTAssertTrue(completedCalled)
     }
 
-    func testExpireNoHandler() throws {
-        var taskResult: Bool?
-        let task = ExpirableTask(taskID: "some-task", requestOptions: .defaultOptions) { result in
-            taskResult = result
-        }
-        task.expire()
-        XCTAssertFalse(taskResult!)
-    }
-
     func testExpire() throws {
         var taskResult: Bool?
         let task = ExpirableTask(taskID: "some-task", requestOptions: .defaultOptions) { result in

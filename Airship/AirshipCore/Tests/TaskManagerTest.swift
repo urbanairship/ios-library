@@ -36,8 +36,6 @@ class TaskManagerTest: XCTestCase {
         self.backgroundTasks.taskHandler = { _, _ in
             return backgroundTask
         }
-        self.backgroundTasks.timeRemaining = 45
-
         let requestOptions = TaskRequestOptions(conflictPolicy: .append,
                                                 requiresNetwork: false,
                                                 extras: ["neat": "story"])
@@ -68,8 +66,6 @@ class TaskManagerTest: XCTestCase {
                 backgroundExpectation.fulfill()
             }
         }
-        self.backgroundTasks.timeRemaining = 45
-
         var attempts = 0
         let taskExpectation = self.expectation(description: "task launched")
         taskExpectation.expectedFulfillmentCount = 5
@@ -102,7 +98,6 @@ class TaskManagerTest: XCTestCase {
             return Disposable {}
         }
 
-        self.backgroundTasks.timeRemaining = 45
 
         let taskExpired = self.expectation(description: "task expired")
         let taskRan = self.expectation(description: "task ran")
@@ -122,7 +117,6 @@ class TaskManagerTest: XCTestCase {
     }
 
     func testEnqueueWithDelay() throws {
-        self.backgroundTasks.timeRemaining = 45
         self.backgroundTasks.taskHandler = { _, _ in
             return Disposable {}
         }
@@ -143,7 +137,6 @@ class TaskManagerTest: XCTestCase {
     }
 
     func testConflictPolicyReplace() throws {
-        self.backgroundTasks.timeRemaining = 45
         self.backgroundTasks.taskHandler = { _, _ in
             return Disposable {}
         }
@@ -176,7 +169,6 @@ class TaskManagerTest: XCTestCase {
     }
 
     func testConflictPolicyKeep() throws {
-        self.backgroundTasks.timeRemaining = 45
         self.backgroundTasks.taskHandler = { _, _ in
             return Disposable {}
         }
@@ -209,7 +201,6 @@ class TaskManagerTest: XCTestCase {
     }
 
     func testConflictPolicyAppend() throws {
-        self.backgroundTasks.timeRemaining = 45
         self.backgroundTasks.taskHandler = { _, _ in
             return Disposable {}
         }
@@ -236,7 +227,6 @@ class TaskManagerTest: XCTestCase {
 
     func testRequiresNetwork() throws {
         self.networkMonitor.isConnectedOverride = false
-        self.backgroundTasks.timeRemaining = 45
         self.backgroundTasks.taskHandler = { _, _ in
             return Disposable {}
         }
@@ -262,36 +252,7 @@ class TaskManagerTest: XCTestCase {
         XCTAssertTrue(ran)
     }
 
-    func testNotEnoughBackgroundTime() throws {
-        self.backgroundTasks.timeRemaining = 29
-        self.backgroundTasks.taskHandler = { _, _ in
-            return Disposable {}
-        }
-
-        var ran = false
-        self.taskManager.register(taskID: "test", dispatcher: self.dispatcher) { task in
-            if ran {
-                XCTFail()
-            }
-
-            ran = true
-            task.taskCompleted()
-        }
-
-        let options = TaskRequestOptions(conflictPolicy: .keep,
-                                         requiresNetwork: true,
-                                         extras: nil)
-
-        self.taskManager.enqueueRequest(taskID: "test", options: options)
-        XCTAssertFalse(ran)
-
-        self.backgroundTasks.timeRemaining = 30
-        self.notificationCenter.post(name: AppStateTracker.didBecomeActiveNotification, object: nil)
-        XCTAssertTrue(ran)
-    }
-
     func testInvalidBackgroundTask() throws {
-        self.backgroundTasks.timeRemaining = 45
         self.backgroundTasks.taskHandler = { _, _ in
             return nil
         }
@@ -322,7 +283,6 @@ class TaskManagerTest: XCTestCase {
     }
 
     func testAttemptPendingOnBackground() throws {
-        self.backgroundTasks.timeRemaining = 45
         self.backgroundTasks.taskHandler = { _, _ in
             return Disposable {}
         }
@@ -342,9 +302,8 @@ class TaskManagerTest: XCTestCase {
     }
 
     func testWaitForRateLimitTasks() throws {
-        self.backgroundTasks.timeRemaining = 4000
 
-        try self.taskManager.setRateLimit("foo", rate: 1, timeInterval: 48)
+        try self.taskManager.setRateLimit("foo", rate: 1, timeInterval: 14)
         self.taskManager.register(taskID: "foo", dispatcher: self.dispatcher) { _ in }
         self.rateLimiter.track("foo")
 
@@ -379,51 +338,21 @@ class TaskManagerTest: XCTestCase {
         XCTAssertTrue(bgTaskStarted)
         XCTAssertFalse(bgTaskFinished)
 
-        // 48(foo) + 10(buffer) - 1 (right before)
-        self.dispatcher.advanceTime(57)
+        // 14(foo) + 5(buffer) - 1 (right before)
+        self.dispatcher.advanceTime(18)
         XCTAssertFalse(bgTaskFinished)
 
         self.dispatcher.advanceTime(1)
         XCTAssertTrue(bgTaskFinished)
     }
 
-    func testWaitForRateLimitTasksInsufficientBackgroundTime() throws {
-        // Tasks require at least 30 seconds
-        self.backgroundTasks.timeRemaining = 30
-
-        try self.taskManager.setRateLimit("foo", rate: 1, timeInterval: 1)
-        self.taskManager.register(taskID: "foo", dispatcher: self.dispatcher) { _ in }
-        self.rateLimiter.track("foo")
-
-        var bgTaskFinished = false
-        var bgTaskStarted = false
-        self.backgroundTasks.taskHandler = { name, _ in
-            guard name == TaskManager.rateLimitBackgroundTaskName else {
-                return Disposable()
-            }
-
-            if (bgTaskStarted) {
-                XCTFail()
-            }
-            bgTaskStarted = true
-            return Disposable {
-                if (bgTaskFinished) {
-                    XCTFail()
-                }
-                bgTaskFinished = true
-            }
-        }
-
-        self.taskManager.enqueueRequest(taskID: "foo", rateLimitIDs: ["foo"], options: .defaultOptions)
-        self.notificationCenter.post(name: AppStateTracker.didEnterBackgroundNotification, object: nil)
-
-        XCTAssertTrue(bgTaskStarted)
-        XCTAssertTrue(bgTaskFinished)
-    }
-
     func testWaitForRateLimitTasksBeyondMaxTime() throws {
-        self.backgroundTasks.timeRemaining = 400
-        try self.taskManager.setRateLimit("foo", rate: 1, timeInterval: 61)
+        try self.taskManager.setRateLimit(
+            "foo",
+            rate: 1,
+            timeInterval: 16
+        )
+
         self.taskManager.register(taskID: "foo", dispatcher: self.dispatcher) { _ in }
         self.rateLimiter.track("foo")
 
@@ -454,7 +383,6 @@ class TaskManagerTest: XCTestCase {
     }
 
     func testWaitForRateLimitTasksNoTasks() throws {
-        self.backgroundTasks.timeRemaining = 400
         try self.taskManager.setRateLimit("foo", rate: 1, timeInterval: 61)
         self.taskManager.register(taskID: "foo", dispatcher: self.dispatcher) { _ in }
         self.rateLimiter.track("foo")
@@ -484,7 +412,6 @@ class TaskManagerTest: XCTestCase {
     }
 
     func testRateLimit() throws {
-        self.backgroundTasks.timeRemaining = 45
         self.backgroundTasks.taskHandler = { _, _ in
             return Disposable {}
         }
@@ -523,7 +450,6 @@ class TaskManagerTest: XCTestCase {
     }
 
     func testMultipleRateLimits() throws {
-        self.backgroundTasks.timeRemaining = 3000
         self.backgroundTasks.taskHandler = { _, _ in
             return Disposable {}
         }

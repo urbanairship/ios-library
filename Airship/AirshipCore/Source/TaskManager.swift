@@ -9,13 +9,11 @@ public class TaskManager : NSObject, TaskManagerProtocol {
 
     private static let initialBackOff = 30.0
     private static let maxBackOff = 120.0
-    private static let minBackgroundTime = 30.0
-
+    private static let rateLimitBackgroundTimeFilter = 15.0
+    private static let rateLimitBackgroundTimeBuffer = 5.0
 
     static let requestBackgroundTaskNamePrefix = "Airship.TaskManager -  Request: "
     static let rateLimitBackgroundTaskName = "Airship.TaskManager - Background"
-    private static let rateLimitBackgroundTimeFilter = 60.0
-    private static let rateLimitBackgroundTimeBuffer = 10.0
 
     private var launcherMap: [String : [TaskLauncher]] = [:]
     private var currentRequests: [String : [TaskRequest]] = [:]
@@ -274,6 +272,7 @@ public class TaskManager : NSObject, TaskManagerProtocol {
                 }
 
                 if (!rateLimitHit) {
+                    AirshipLogger.trace("Task \(request.taskID) started")
                     request.launcher.launchHandler(task)
                     semaphore.wait()
                 }
@@ -287,18 +286,6 @@ public class TaskManager : NSObject, TaskManagerProtocol {
     }
 
     private func checkRequestRequirements(_ request: TaskRequest) -> Bool {
-        
-        #if !os(watchOS)
-        var backgroundTime : TimeInterval = 0.0
-        UADispatcher.main.doSync {
-            backgroundTime = self.backgroundTasks.timeRemaining
-        }
-
-        guard backgroundTime >= TaskManager.minBackgroundTime else {
-            return false
-        }
-        #endif
-
         if #available(iOS 12.0, tvOS 12.0, *) {
             if (request.options.isNetworkRequired && !self.networkMonitor.isConnected) {
                 return false;
@@ -333,10 +320,9 @@ public class TaskManager : NSObject, TaskManagerProtocol {
     #if !os(watchOS)
     @objc
     func didEnterBackground() {
-        var backgroundTask: Disposable?
-        backgroundTask = try? self.backgroundTasks.beginTask(TaskManager.rateLimitBackgroundTaskName) {
-            backgroundTask?.dispose()
-        }
+        let backgroundTask = try? self.backgroundTasks.beginTask(
+            TaskManager.rateLimitBackgroundTaskName
+        ) {}
 
         guard let backgroundTask = backgroundTask else {
             return
@@ -346,8 +332,6 @@ public class TaskManager : NSObject, TaskManagerProtocol {
         var copyRetryingRequests : [TaskRequest]? = nil
 
         var rateLimitTime: TimeInterval?
-        var maxWaitTime = self.backgroundTasks.timeRemaining - TaskManager.minBackgroundTime - TaskManager.rateLimitBackgroundTimeBuffer
-        maxWaitTime = min(maxWaitTime, TaskManager.rateLimitBackgroundTimeFilter)
 
         requestsLock.sync {
             copyRetryingRequests = self.retryingRequests
@@ -360,7 +344,7 @@ public class TaskManager : NSObject, TaskManagerProtocol {
                 .compactMap { entry in
                     return entry.value
                         .compactMap { taskRateLimitDelay($0.rateLimitIDs) }
-                        .filter { $0 <= maxWaitTime }
+                        .filter { $0 <= TaskManager.rateLimitBackgroundTimeFilter }
                         .max()
                 }
                 .max()
@@ -368,8 +352,8 @@ public class TaskManager : NSObject, TaskManagerProtocol {
 
         copyRetryingRequests?.forEach { self.attemptRequest($0, nextBackOff: TaskManager.initialBackOff) }
 
-        if let rateLimitTime = rateLimitTime, maxWaitTime > 0 {
-            let actualWaitTime = min(maxWaitTime, rateLimitTime + TaskManager.rateLimitBackgroundTimeBuffer)
+        if let rateLimitTime = rateLimitTime {
+            let actualWaitTime = rateLimitTime + TaskManager.rateLimitBackgroundTimeBuffer
             self.dispatcher.dispatch(after: actualWaitTime) {
                 backgroundTask.dispose()
             }

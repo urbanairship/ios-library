@@ -292,7 +292,7 @@ public class EventManager: NSObject, EventManagerProtocol {
 
         let headers = self.prepareHeaders()
 
-        let request = self.client.uploadEvents(events, headers: headers) { [weak self] response, error in
+        self.client.uploadEvents(events, headers: headers) { [weak self] response, error in
             guard let self = self else {
                 return
             }
@@ -313,6 +313,8 @@ public class EventManager: NSObject, EventManagerProtocol {
                     self.updateAnalyticsParameters(response: response)
                     task.taskCompleted()
 
+
+
                     UADispatcher.main.dispatchAsync {
                         self.scheduleUpload()
                     }
@@ -321,10 +323,6 @@ public class EventManager: NSObject, EventManagerProtocol {
                     task.taskFailed()
                 }
             }
-        }
-
-        task.expirationHandler = {
-            request.dispose()
         }
     }
 

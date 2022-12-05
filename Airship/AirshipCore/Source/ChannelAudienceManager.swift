@@ -319,7 +319,7 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
             self.cachedSubscriptionListsHistory.append(listUpdate)
         }
 
-        let disposable = self.updateClient.update(
+        self.updateClient.update(
             update,
             channelID: channelID
         ) { response, error in
@@ -352,10 +352,6 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
                 }
                 task.taskFailed()
             }
-        }
-        
-        task.expirationHandler = {
-            disposable.dispose()
         }
     }
     

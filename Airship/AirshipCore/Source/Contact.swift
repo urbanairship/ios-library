@@ -788,7 +788,7 @@ public class Contact : NSObject, Component, ContactProtocol {
             return
         }
 
-        let disposable = self.performOperation(operation: operation, channelID: channelID) { response in
+        self.performOperation(operation: operation, channelID: channelID) { response in
             if let response = response {
                 if (response.isServerError) {
                     // retry
@@ -803,19 +803,15 @@ public class Contact : NSObject, Component, ContactProtocol {
                 task.taskFailed()
             }
         }
-        
-        task.expirationHandler = {
-            disposable?.dispose()
-        }
     }
     
-    private func performOperation(operation: ContactOperation, channelID: String, completionHandler: @escaping (HTTPResponse?) -> Void) -> Disposable? {
+    private func performOperation(operation: ContactOperation, channelID: String, completionHandler: @escaping (HTTPResponse?) -> Void) {
         switch(operation.type) {
         case .update:
             guard let contactInfo = self.lastContactInfo, let updatePayload = operation.payload as? UpdatePayload else {
                 self.removeFirstOperation()
                 completionHandler(nil)
-                return nil
+                return
             }
             
             if let updates = updatePayload.subscriptionListsUpdates {
@@ -824,7 +820,7 @@ public class Contact : NSObject, Component, ContactProtocol {
                 }
             }
             
-            return self.contactAPIClient.update(identifier: contactInfo.contactID,
+            self.contactAPIClient.update(identifier: contactInfo.contactID,
                                                 tagGroupUpdates: updatePayload.tagUpdates,
                                                 attributeUpdates: updatePayload.attrubuteUpdates,
                                                 subscriptionListUpdates: updatePayload.subscriptionListsUpdates) { response, error in
@@ -847,28 +843,28 @@ public class Contact : NSObject, Component, ContactProtocol {
             guard let identifyPayload = operation.payload as? IdentifyPayload else {
                 self.removeFirstOperation()
                 completionHandler(nil)
-                return nil
+                return
             }
             var contactID: String? = nil
             if (self.lastContactInfo?.isAnonymous ?? false) {
                 contactID = self.lastContactInfo?.contactID
             }
             
-            return self.contactAPIClient.identify(channelID: channelID, namedUserID: identifyPayload.identifier, contactID: contactID) { response, error in
+            self.contactAPIClient.identify(channelID: channelID, namedUserID: identifyPayload.identifier, contactID: contactID) { response, error in
                 Contact.logOperationResult(operation: operation, response: response, error: error)
                 self.processContactResponse(response, namedUserID: identifyPayload.identifier)
                 completionHandler(response)
             }
             
         case .reset:
-            return self.contactAPIClient.reset(channelID: channelID) { response, error in
+            self.contactAPIClient.reset(channelID: channelID) { response, error in
                 Contact.logOperationResult(operation: operation, response: response, error: error)
                 self.processContactResponse(response)
                 completionHandler(response)
             }
 
         case .resolve:
-            return self.contactAPIClient.resolve(channelID: channelID) { response, error in
+            self.contactAPIClient.resolve(channelID: channelID) { response, error in
                 Contact.logOperationResult(operation: operation, response: response, error: error)
                 self.processContactResponse(response)
                 
@@ -883,10 +879,10 @@ public class Contact : NSObject, Component, ContactProtocol {
             guard let contactInfo = self.lastContactInfo, let registerPayload = operation.payload as? RegisterEmailPayload else {
                 self.removeFirstOperation()
                 completionHandler(nil)
-                return nil
+                return
             }
             
-            return self.contactAPIClient.registerEmail(identifier: contactInfo.contactID, address: registerPayload.address, options: registerPayload.options) { response, error in
+            self.contactAPIClient.registerEmail(identifier: contactInfo.contactID, address: registerPayload.address, options: registerPayload.options) { response, error in
                 Contact.logOperationResult(operation: operation, response: response, error: error)
                 self.processChannelRegistration(response)
                 completionHandler(response)
@@ -896,10 +892,10 @@ public class Contact : NSObject, Component, ContactProtocol {
             guard let contactInfo = self.lastContactInfo, let registerPayload = operation.payload as? RegisterSMSPayload else {
                 self.removeFirstOperation()
                 completionHandler(nil)
-                return nil
+                return
             }
             
-            return self.contactAPIClient.registerSMS(identifier: contactInfo.contactID, msisdn: registerPayload.msisdn, options: registerPayload.options) { response, error in
+            self.contactAPIClient.registerSMS(identifier: contactInfo.contactID, msisdn: registerPayload.msisdn, options: registerPayload.options) { response, error in
                 Contact.logOperationResult(operation: operation, response: response, error: error)
                 self.processChannelRegistration(response)
                 completionHandler(response)
@@ -909,10 +905,10 @@ public class Contact : NSObject, Component, ContactProtocol {
             guard let contactInfo = self.lastContactInfo, let registerPayload = operation.payload as? RegisterOpenPayload else {
                 self.removeFirstOperation()
                 completionHandler(nil)
-                return nil
+                return
             }
             
-            return self.contactAPIClient.registerOpen(identifier: contactInfo.contactID, address: registerPayload.address, options: registerPayload.options) { response, error in
+            self.contactAPIClient.registerOpen(identifier: contactInfo.contactID, address: registerPayload.address, options: registerPayload.options) { response, error in
                 Contact.logOperationResult(operation: operation, response: response, error: error)
                 self.processChannelRegistration(response)
                 completionHandler(response)
@@ -922,17 +918,16 @@ public class Contact : NSObject, Component, ContactProtocol {
             guard let contactInfo = self.lastContactInfo, let payload = operation.payload as? AssociateChannelPayload else {
                 self.removeFirstOperation()
                 completionHandler(nil)
-                return nil
+                return
             }
             
-            return self.contactAPIClient.associateChannel(identifier: contactInfo.contactID,
+            self.contactAPIClient.associateChannel(identifier: contactInfo.contactID,
                                                           channelID: payload.channelID,
                                                           channelType: payload.channelType) { response, error in
                 Contact.logOperationResult(operation: operation, response: response, error: error)
                 self.processChannelRegistration(response)
                 completionHandler(response)
             }
-            
         }
     }
     
