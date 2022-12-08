@@ -83,6 +83,7 @@ public class UACoreData: NSObject {
     }
 
     public func perform(
+        skipIfStoreNotCreated: Bool = false,
         _ block: @escaping (NSManagedObjectContext) throws -> Void
     ) async throws {
         return try await withCheckedThrowingContinuation { continuation in
@@ -95,6 +96,12 @@ public class UACoreData: NSObject {
                 guard !strongSelf.isFinished else {
                     continuation.resume()
                     return
+                }
+
+                if (skipIfStoreNotCreated) {
+                    guard strongSelf.inMemory || strongSelf.storesExistOnDisk() else {
+                        return
+                    }
                 }
 
                 strongSelf.shouldCreateStore = true

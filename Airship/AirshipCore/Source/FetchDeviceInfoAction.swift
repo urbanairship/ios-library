@@ -55,9 +55,9 @@ public class FetchDeviceInfoAction: NSObject, Action {
     @objc
     public override convenience init() {
         self.init(
-            channel: Channel.supplier,
-            contact: Contact.supplier,
-            push: { return Airship.push }
+            channel: Airship.componentSupplier(),
+            contact: Airship.componentSupplier(),
+            push: Airship.componentSupplier()
         )
     }
 

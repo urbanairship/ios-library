@@ -3,19 +3,34 @@ import Foundation
 @testable import AirshipCore
 
 @objc(UATestAnalytics)
-public class TestAnalytics: NSObject, AnalyticsProtocol, Component {
+public class TestAnalytics: NSObject, InternalAnalyticsProtocol, Component {
+    public func onDeviceRegistration(token: String) {
 
-    public var headerBlocks: [() -> [String: String]?] = []
+    }
+
+    public func onNotificationResponse(response: UNNotificationResponse, action: UNNotificationAction?) {
+
+    }
+
+    public func addHeaderProvider(_ headerProvider: @escaping () async -> [String : String]) {
+        headerBlocks.append(headerProvider)
+    }
+
+
+    public var headerBlocks: [() async -> [String: String]] = []
 
     public var headers: [String: String] {
-        var headers: [String: String] = [:]
-        headerBlocks.forEach {
-            headers.merge(
-                $0() ?? [:],
-                uniquingKeysWith: { (current, _) in current }
-            )
+        get async {
+            var allHeaders: [String: String] = [:]
+            for headerBlock in self.headerBlocks {
+                let headers = await headerBlock()
+                allHeaders.merge(headers) { (_, new) in
+                    return new
+                }
+            }
+            return allHeaders
         }
-        return headers
+
     }
 
     public var isComponentEnabled: Bool = true
@@ -31,8 +46,6 @@ public class TestAnalytics: NSObject, AnalyticsProtocol, Component {
 
     @objc
     public var sessionID: String?
-
-    public var eventConsumer: AnalyticsEventConsumerProtocol?
 
     public func addEvent(_ event: Event) {
         events.append(event)
@@ -54,13 +67,13 @@ public class TestAnalytics: NSObject, AnalyticsProtocol, Component {
     public func scheduleUpload() {
     }
 
-    public func registerSDKExtension(_ ext: SDKExtension, version: String) {
+    public func registerSDKExtension(
+        _ ext: AirshipSDKExtension,
+        version: String
+    ) {
     }
 
     public func launched(fromNotification notification: [AnyHashable: Any]) {
     }
 
-    public func add(_ headerBlock: @escaping () -> [String: String]?) {
-        headerBlocks.append(headerBlock)
-    }
 }

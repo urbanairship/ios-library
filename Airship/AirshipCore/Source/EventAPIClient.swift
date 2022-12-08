@@ -1,95 +1,129 @@
 /* Copyright Airship and Contributors */
 
-/// - Note: For internal use only. :nodoc:
-@objc(UAEventAPIClient)
-public class EventAPIClient: NSObject, EventAPIClientProtocol {
-    private let config: RuntimeConfig
-    private let session: RequestSession
+protocol EventAPIClientProtocol {
+    func uploadEvents(
+        _ events: [AirshipEventData],
+        headers: [String: String]
+    ) async throws -> AirshipHTTPResponse<EventUploadTuningInfo>
+}
 
-    @objc
-    public init(config: RuntimeConfig, session: RequestSession) {
+class EventAPIClient: EventAPIClientProtocol {
+    private let config: RuntimeConfig
+    private let session: AirshipRequestSession
+    private let encoder: JSONEncoder = JSONEncoder()
+
+    init(config: RuntimeConfig, session: AirshipRequestSession) {
         self.config = config
         self.session = session
-        super.init()
     }
 
-    @objc
-    public convenience init(config: RuntimeConfig) {
-        self.init(config: config, session: RequestSession(config: config))
-    }
-
-    @objc
-    @discardableResult
-    public func uploadEvents(
-        _ events: [AnyHashable],
-        headers: [String: String],
-        completionHandler: @escaping (EventAPIResponse?, Error?) -> Void
-    ) -> Disposable {
-
-        var body: Data?
-        do {
-            body = try JSONUtils.data(events, options: [])
-        } catch {
-            completionHandler(nil, error)
-            return Disposable()
-        }
-
-        let request = Request(builderBlock: { builder in
-            builder.url = URL(
-                string: "\(self.config.analyticsURL ?? "")\("/warp9/")"
-            )
-            builder.method = "POST"
-            builder.compressBody = true
-            builder.body = body
-
-            builder.addHeaders(headers)
-            builder.setValue("application/json", header: "Content-Type")
-            builder.setValue(
-                "\(Date().timeIntervalSince1970)",
-                header: "X-UA-Sent-At"
-            )
-        })
-
-        AirshipLogger.trace("Sending to server: \(config.analyticsURL ?? "")")
-        AirshipLogger.trace("Sending analytics headers: \(headers)")
-        AirshipLogger.trace("Sending analytics events: \(events)")
-
-        // Perform the upload
-        return session.performHTTPRequest(
-            request,
-            completionHandler: { (data, response, error) in
-                guard response != nil else {
-                    completionHandler(nil, error)
-                    return
-                }
-
-                let headers = response?.allHeaderFields
-                let maxTotal = EventAPIClient.parseNumber(
-                    headers?["X-UA-Max-Total"] as? String
-                )
-                let maxBatch = EventAPIClient.parseNumber(
-                    headers?["X-UA-Max-Batch"] as? String
-                )
-                let minBatchInterval = EventAPIClient.parseNumber(
-                    headers?["X-UA-Min-Batch-Interval"] as? String
-                )
-
-                let eventAPIResponse = EventAPIResponse(
-                    status: response?.statusCode ?? 0,
-                    maxTotalDBSize: maxTotal,
-                    maxBatchSize: maxBatch,
-                    minBatchInterval: minBatchInterval
-                )
-                completionHandler(eventAPIResponse, nil)
-            }
+    convenience init(config: RuntimeConfig) {
+        self.init(
+            config: config,
+            session: AirshipRequestSession(appKey: config.appKey)
         )
     }
 
-    private static func parseNumber(_ value: String?) -> NSNumber? {
-        let int = value == nil ? nil : Int(value!)
-        if int != nil {
-            return NSNumber(value: int!)
+    func uploadEvents(
+        _ events: [AirshipEventData],
+        headers: [String: String]
+    ) async throws -> AirshipHTTPResponse<EventUploadTuningInfo> {
+
+        guard let analyticsURL = config.analyticsURL else {
+            throw AirshipErrors.error("The analyticsURL is nil")
         }
+
+        var allHeaders = headers
+        allHeaders["X-UA-Sent-At"] = "\(Date().timeIntervalSince1970)"
+        allHeaders["Content-Type"] = "application/json"
+
+        let request = AirshipRequest(
+            url: URL(string: "\(analyticsURL)/warp9/"),
+            headers: allHeaders,
+            method: "POST",
+            body: try self.requestBody(fromEvents: events),
+            compressBody: true
+        )
+
+        AirshipLogger.trace("Sending to server: \(config.analyticsURL ?? "")")
+        AirshipLogger.trace("Sending analytics headers: \(allHeaders)")
+        AirshipLogger.trace("Sending analytics events: \(events)")
+
+        // Perform the upload
+        return try await self.session.performHTTPRequest(request) { _ , response in
+            return EventUploadTuningInfo(
+                maxTotalStoreSizeKB: response.unsignedInt(
+                    forHeader: "X-UA-Max-Total"
+                ),
+                maxBatchSizeKB: response.unsignedInt(
+                    forHeader: "X-UA-Max-Batch"
+                ),
+                minBatchInterval: response.double(
+                    forHeader: "X-UA-Min-Batch-Interval"
+                )
+            )
+        }
+    }
+
+    private func requestBody(fromEvents events: [AirshipEventData]) throws -> Data {
+        let preparedEvents: [[String: Any]] = events.map { eventData in
+            var eventBody: [String: Any] = [:]
+            eventBody["event_id"] =  eventData.id
+            eventBody["time"] = String(
+                format: "%f",
+                eventData.date.timeIntervalSince1970
+            )
+            eventBody["type"] = eventData.type
+            var data = eventData.body
+            data["session_id"] = eventData.sessionID
+            eventBody["data"] = data
+            
+            return eventBody
+        }
+
+        return try JSONUtils.data(preparedEvents, options: [])
+    }
+}
+
+
+fileprivate extension HTTPURLResponse {
+    func double(forHeader header: String) -> Double? {
+        guard let value = self.allHeaderFields[header] else {
+            return nil
+        }
+
+        if let value = value as? Double {
+            return value
+        }
+
+        if let value = value as? String {
+            return Double(value)
+        }
+
+        if let value = value as? NSNumber {
+            return value.doubleValue
+        }
+
+        return nil
+    }
+
+    func unsignedInt(forHeader header: String) -> UInt? {
+        guard let value = self.allHeaderFields[header] else {
+            return nil
+        }
+
+        if let value = value as? UInt {
+            return value
+        }
+
+        if let value = value as? String {
+            return UInt(value)
+        }
+
+        if let value = value as? NSNumber {
+            return value.uintValue
+        }
+
         return nil
     }
 }

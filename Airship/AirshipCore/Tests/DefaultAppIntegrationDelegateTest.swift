@@ -158,10 +158,41 @@ class TestPushableComponent: PushableComponent {
 }
 
 class InternalTestAnalytics: InternalAnalyticsProtocol {
+    func addHeaderProvider(_ headerProvider: @escaping () async -> [String : String]) {
+
+    }
+
+    var conversionSendID: String?
+
+    var conversionPushMetadata: String?
+
+    var sessionID: String?
+
+    func addEvent(_ event: Event) {
+
+    }
+
+    func associateDeviceIdentifiers(_ associatedIdentifiers: AirshipCore.AssociatedIdentifiers) {
+
+    }
+
+    func currentAssociatedDeviceIdentifiers() -> AssociatedIdentifiers {
+        return AssociatedIdentifiers()
+    }
+
+    func trackScreen(_ screen: String?) {
+
+    }
+
+    func registerSDKExtension(_ ext: AirshipCore.AirshipSDKExtension, version: String) {
+
+    }
+
+    func launched(fromNotification notification: [AnyHashable : Any]) {}
 
     var onDeviceRegistrationCalled = false
 
-    func onDeviceRegistration() {
+    func onDeviceRegistration(token: String) {
         onDeviceRegistrationCalled = true
     }
 

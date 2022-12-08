@@ -153,7 +153,7 @@ public class Push: NSObject, Component, PushProtocol {
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,
         channel: ChannelProtocol,
-        analytics: AnalyticsProtocol,
+        analytics: InternalAnalyticsProtocol,
         privacyManager: PrivacyManager,
         permissionsManager: PermissionsManager,
         notificationCenter: NotificationCenter = NotificationCenter.default,
@@ -238,9 +238,7 @@ public class Push: NSObject, Component, PushProtocol {
             )
         }
 
-        analytics.add {
-            return self.analyticsHeaders()
-        }
+        analytics.addHeaderProvider(self.analyticsHeaders)
 
         self.updatePushEnablement()
 

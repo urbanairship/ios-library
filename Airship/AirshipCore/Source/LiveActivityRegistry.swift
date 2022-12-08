@@ -34,11 +34,8 @@ actor LiveActivityRegistry {
     ) {
         self.date = date
         self.dataStore = dataStore
-        var escapee: AsyncStream<LiveActivityUpdate>.Continuation? = nil
-        self.updates = AsyncStream { continuation in
-            escapee = continuation
-        }
-        self.updatesContinuation = escapee!
+        (self.updates, self.updatesContinuation) = AsyncStream<LiveActivityUpdate>.makeStreamWithContinuation()
+
     }
 
     /// For tests

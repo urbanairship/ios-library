@@ -1,22 +1,26 @@
+/* Copyright Airship and Contributors */
+
 import XCTest
+import Combine
 
 @testable import AirshipCore
 
 class AnalyticsTest: XCTestCase {
 
     private let appStateTracker = TestAppStateTracker()
-    private let eventManager = TestEventManager()
     private let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
     private let config = Config()
     private let channel = TestChannel()
     private let locale = TestLocaleManager()
     private let permissionsManager = PermissionsManager()
-    private let dispatcher = TestDispatcher()
     private let notificationCenter = NotificationCenter()
     private let date = UATestDate()
+    private let eventManager = TestEventManager()
+    private let lifecycleEventFactory = TestLifecyleEventFactory()
 
     private var privacyManager: PrivacyManager!
     private var analytics: Analytics!
+    private let testAirship = TestAirshipInstance()
 
     override func setUpWithError() throws {
         self.privacyManager = PrivacyManager(
@@ -29,181 +33,218 @@ class AnalyticsTest: XCTestCase {
             config: RuntimeConfig(config: config, dataStore: dataStore),
             dataStore: dataStore,
             channel: channel,
-            eventManager: eventManager,
             notificationCenter: notificationCenter,
             date: date,
-            dispatcher: dispatcher,
             localeManager: locale,
             appStateTracker: appStateTracker,
             privacyManager: privacyManager,
-            permissionsManager: permissionsManager
+            permissionsManager: permissionsManager,
+            eventManager: eventManager,
+            lifeCycleEventFactory: lifecycleEventFactory
         )
-
     }
 
-    func testFirstTransitionToForegroundEmitsAppInit() throws {
+    func testFirstTransitionToForegroundEmitsAppInit() async throws {
         self.appStateTracker.currentState = .inactive
         self.analytics.airshipReady()
-        self.notificationCenter.post(
-            name: AppStateTracker.didTransitionToForeground,
-            object: nil
-        )
 
-        let event = self.eventManager.events.last
-        XCTAssertEqual("app_init", event?.eventType)
+        let events = try await self.produceEvents(count: 2) {
+            self.notificationCenter.post(
+                name: AppStateTracker.didTransitionToForeground,
+                object: nil
+            )
+
+            self.notificationCenter.post(
+                name: AppStateTracker.didTransitionToForeground,
+                object: nil
+            )
+        }
+
+        XCTAssertEqual("app_init", events[0].type)
+        XCTAssertEqual("app_foreground", events[1].type)
+
+        testAirship.components = [analytics]
+        testAirship.makeShared()
     }
 
-    func testSubsequentTransitionToForegroundEmitsForegroundEvent() throws {
+    override class func tearDown() {
+        TestAirshipInstance.clearShared()
+    }
+
+    func testBackgroundBeforeForegroundEmitsAppInit() async throws {
         self.appStateTracker.currentState = .inactive
+        self.analytics.airshipReady()
 
-        self.notificationCenter.post(
-            name: AppStateTracker.didTransitionToForeground,
-            object: nil
-        )
-        self.notificationCenter.post(
-            name: AppStateTracker.didTransitionToForeground,
-            object: nil
-        )
+        let events = try await self.produceEvents(count: 2) {
+            notificationCenter.post(
+                name: AppStateTracker.didEnterBackgroundNotification,
+                object: nil
+            )
+        }
 
-        let event = self.eventManager.events.last
-        XCTAssertEqual("app_foreground", event?.eventType)
+        XCTAssertEqual("app_init", events[0].type)
+        XCTAssertEqual("app_background", events[1].type)
     }
 
-    func testBackgroundBeforeForegroundEmitsAppInit() throws {
-        self.appStateTracker.currentState = .inactive
-        self.notificationCenter.post(
-            name: AppStateTracker.didEnterBackgroundNotification,
-            object: nil
-        )
+    func testBackgroundAfterForegroundDoesNotEmitAppInit() async throws {
+        let _ = try await self.produceEvents(count: 1) {
+            self.appStateTracker.currentState = .active
+            self.analytics.airshipReady()
+        }
 
-        let event = self.eventManager.events.last
-        XCTAssertEqual("app_background", event?.eventType)
+        let events = try await self.produceEvents(count: 1) {
+            self.notificationCenter.post(
+                name: AppStateTracker.didEnterBackgroundNotification,
+                object: nil
+            )
+        }
+
+        XCTAssertEqual("app_background", events[0].type)
     }
 
-    func testBackgroundAfterForegroundDoesNotEmitAppInit() throws {
-        self.appStateTracker.currentState = .active
-        self.notificationCenter.post(
-            name: AppStateTracker.didEnterBackgroundNotification,
-            object: nil
-        )
+    func testScreenTrackingBackground() async throws {
+        // Foreground
+        let _ = try await self.produceEvents(count: 1) {
+            self.appStateTracker.currentState = .active
+            self.analytics.airshipReady()
+        }
 
-        let event = self.eventManager.events.last
-        XCTAssertNotEqual("app_init", event?.eventType)
-    }
-
-    func testScreenTrackingBackground() throws {
         self.analytics.trackScreen("test_screen")
 
-        XCTAssertNil(self.eventManager.events.last)
-        self.notificationCenter.post(
-            name: AppStateTracker.didEnterBackgroundNotification,
-            object: nil
-        )
+        let events = try await self.produceEvents(count: 2) {
+            self.notificationCenter.post(
+                name: AppStateTracker.didEnterBackgroundNotification,
+                object: nil
+            )
+        }
 
-        let screenEvent =
-            self.eventManager.events.first?.event as! ScreenTrackingEvent
-        XCTAssertEqual("test_screen", screenEvent.screen)
+        XCTAssertEqual("app_background", events[0].type)
+        XCTAssertEqual("screen_tracking", events[1].type)
     }
 
-    func testScreenTrackingTerminate() throws {
+    func testScreenTrackingTerminate() async throws {
+        // Foreground
+        let _ = try await self.produceEvents(count: 1) {
+            self.appStateTracker.currentState = .active
+            self.analytics.airshipReady()
+        }
+
         self.analytics.trackScreen("test_screen")
 
-        XCTAssertNil(self.eventManager.events.last)
-        self.notificationCenter.post(
-            name: AppStateTracker.willTerminateNotification,
-            object: nil
-        )
+        let events = try await self.produceEvents(count: 1) {
+            self.notificationCenter.post(
+                name: AppStateTracker.willTerminateNotification,
+                object: nil
+            )
+        }
 
-        let screenEvent =
-            self.eventManager.events.first?.event as! ScreenTrackingEvent
-        XCTAssertEqual("test_screen", screenEvent.screen)
+        XCTAssertEqual("screen_tracking", events[0].type)
     }
 
-    func testScreenTrackingNextScreen() throws {
-        self.analytics.trackScreen("test_screen")
+    func testScreenTracking() async throws {
+        self.date.dateOverride = Date(timeIntervalSince1970: 100.0)
 
-        XCTAssertNil(self.eventManager.events.last)
-        self.analytics.trackScreen("another_screen")
+        let events = try await self.produceEvents(count: 1) {
+            self.analytics.trackScreen("test_screen")
+            self.date.offset = 3.0
+            self.analytics.trackScreen("another_screen")
+        }
 
-        let screenEvent =
-            self.eventManager.events.first?.event as! ScreenTrackingEvent
-        XCTAssertEqual("test_screen", screenEvent.screen)
+        let expectedData = [
+            "screen": "test_screen",
+            "entered_time": "100.000",
+            "exited_time": "103.000",
+            "duration": "3.000"
+        ]
+
+        XCTAssertEqual("screen_tracking", events[0].type)
+        XCTAssertEqual(
+            try AirshipJSON.wrap(expectedData),
+            try AirshipJSON.wrap(events[0].body)
+        )
     }
 
     func testDisablingAnalytics() throws {
+        self.channel.identifier = "test channel"
+        self.analytics.airshipReady()
+
         XCTAssertTrue(self.eventManager.uploadsEnabled)
-        XCTAssertFalse(self.eventManager.deleteAllEventsCalled)
+
+        let expectation = XCTestExpectation()
+        self.eventManager.deleteEventsCallback = {
+            expectation.fulfill()
+        }
 
         self.privacyManager.disableFeatures(.analytics)
-
+        wait(for: [expectation], timeout: 5.0)
         XCTAssertFalse(self.eventManager.uploadsEnabled)
-        XCTAssertTrue(self.eventManager.deleteAllEventsCalled)
+
     }
 
     func testDisablingAnalyticsComponent() throws {
+        self.channel.identifier = "test channel"
+        self.analytics.airshipReady()
+
         XCTAssertTrue(self.eventManager.uploadsEnabled)
-        XCTAssertFalse(self.eventManager.deleteAllEventsCalled)
+
+        let expectation = XCTestExpectation()
+        self.eventManager.deleteEventsCallback = {
+            expectation.fulfill()
+        }
 
         self.analytics.isComponentEnabled = false
 
+        wait(for: [expectation], timeout: 5.0)
         XCTAssertFalse(self.eventManager.uploadsEnabled)
-        XCTAssertTrue(self.eventManager.deleteAllEventsCalled)
     }
 
+
     func testEnableAnalytics() throws {
+        self.channel.identifier = "test channel"
+        self.analytics.airshipReady()
+
+        XCTAssertTrue(self.eventManager.uploadsEnabled)
+        
         self.privacyManager.disableFeatures(.analytics)
         XCTAssertFalse(self.eventManager.uploadsEnabled)
 
+        let expectation = XCTestExpectation()
+        self.eventManager.scheduleUploadCallback = { priority in
+            XCTAssertEqual(EventPriority.normal, priority)
+            expectation.fulfill()
+        }
         self.privacyManager.enableFeatures(.analytics)
         XCTAssertTrue(self.eventManager.uploadsEnabled)
+        wait(for: [expectation], timeout: 5.0)
     }
 
     func testAddEvent() throws {
+        let expectation = XCTestExpectation()
+        self.eventManager.addEventCallabck = { event in
+            XCTAssertEqual("valid", event.type)
+            expectation.fulfill()
+        }
+
         self.analytics.addEvent(ValidEvent())
-        XCTAssertFalse(self.eventManager.events.isEmpty)
+
+        wait(for: [expectation], timeout: 5.0)
     }
 
-    func testAddInvalidEvent() throws {
-        self.analytics.addEvent(InvalidEvent())
-        XCTAssertTrue(self.eventManager.events.isEmpty)
-    }
+    func testAssociateDeviceIdentifiers() async throws {
+        let events = try await self.produceEvents(count: 1) {
+            let ids = AssociatedIdentifiers(dictionary: ["neat": "id"])
+            self.analytics.associateDeviceIdentifiers(ids)
+        }
 
-    func testAddEventAnalyticsDisabled() throws {
-        self.privacyManager.disableFeatures(.analytics)
-        self.analytics.addEvent(ValidEvent())
-        XCTAssertTrue(self.eventManager.events.isEmpty)
-    }
+        let expectedData = [
+            "neat": "id",
+        ]
 
-    func testAssociateDeviceIdentifiers() throws {
-        let ids = AssociatedIdentifiers(dictionary: ["neat": "id"])
-        self.analytics.associateDeviceIdentifiers(ids)
-
-        let event =
-            self.eventManager.events.first?.event as! AssociateIdentifiersEvent
+        XCTAssertEqual("associate_identifiers", events[0].type)
         XCTAssertEqual(
-            ["neat": "id"] as NSDictionary,
-            event.data as NSDictionary
+            try AirshipJSON.wrap(expectedData),
+            try AirshipJSON.wrap(events[0].body)
         )
-    }
-
-    func testAssociateDeviceIdentifiersAnalyticsDisbaled() throws {
-        self.privacyManager.disableFeatures(.analytics)
-
-        let ids = AssociatedIdentifiers(dictionary: ["neat": "id"])
-        self.analytics.associateDeviceIdentifiers(ids)
-
-        XCTAssertTrue(self.eventManager.events.isEmpty)
-    }
-
-    func testAssociateDeviceIdentifiersDedupe() throws {
-        let ids = AssociatedIdentifiers(dictionary: ["neat": "id"])
-        self.analytics.associateDeviceIdentifiers(ids)
-        self.eventManager.events.removeAll()
-
-        self.analytics.associateDeviceIdentifiers(ids)
-        self.analytics.associateDeviceIdentifiers(ids)
-        self.analytics.associateDeviceIdentifiers(ids)
-        XCTAssertTrue(self.eventManager.events.isEmpty)
     }
 
     func testMissingSendID() throws {
@@ -311,27 +352,22 @@ class AnalyticsTest: XCTestCase {
         self.wait(for: [eventAdded], timeout: 1)
     }
 
-    func testSDKExtensions() throws {
+    func testSDKExtensions() async throws {
         self.analytics.registerSDKExtension(.cordova, version: "1.2.3")
         self.analytics.registerSDKExtension(.unity, version: "5,.6,.7,,,")
 
-        let headersFetched = self.expectation(description: "Headers fetched")
-        self.analytics.analyticsHeaders { headers in
-            XCTAssertEqual(
-                "cordova:1.2.3, unity:5.6.7",
-                headers["X-UA-Frameworks"]
-            )
-            headersFetched.fulfill()
-        }
-
-        self.wait(for: [headersFetched], timeout: 1)
+        let headers = await self.eventManager.headers
+        XCTAssertEqual(
+            "cordova:1.2.3, unity:5.6.7",
+            headers["X-UA-Frameworks"]
+        )
     }
 
-    func testAnalyticsHeaders() throws {
+    func testAnalyticsHeaders() async throws {
         self.channel.identifier = "someChannelID"
         self.locale.currentLocale = Locale(identifier: "en-US-POSIX")
 
-        let expected = [
+        let expected = await [
             "X-UA-Channel-ID": "someChannelID",
             "X-UA-Timezone": NSTimeZone.default.identifier,
             "X-UA-Locale-Language": "en",
@@ -348,30 +384,23 @@ class AnalyticsTest: XCTestCase {
             "X-UA-Package-Version": Utils.bundleShortVersionString() ?? "",
         ]
 
-        let headersFetched = self.expectation(description: "Headers fetched")
-        self.analytics.analyticsHeaders { headers in
-            XCTAssertEqual(expected, headers)
-            headersFetched.fulfill()
-        }
-
-        self.wait(for: [headersFetched], timeout: 1)
+        let headers = await self.eventManager.headers
+        XCTAssertEqual(expected, headers)
     }
 
-    func testAnalyticsHeaderExtension() throws {
-        self.analytics.add {
+    func testAnalyticsHeaderExtension() async throws {
+        self.analytics.addHeaderProvider {
             return ["neat": "story"]
         }
 
-        let headersFetched = self.expectation(description: "Headers fetched")
-        self.analytics.analyticsHeaders { headers in
-            XCTAssertEqual("story", headers["neat"])
-            headersFetched.fulfill()
-        }
-
-        self.wait(for: [headersFetched], timeout: 1)
+        let headers = await self.eventManager.headers
+        XCTAssertEqual(
+            "story",
+            headers["neat"]
+        )
     }
 
-    func testPermissionHeaders() throws {
+    func testPermissionHeaders() async throws {
         let testPushDelegate = TestPermissionsDelegate()
         testPushDelegate.permissionStatus = .denied
         self.permissionsManager.setDelegate(
@@ -386,72 +415,130 @@ class AnalyticsTest: XCTestCase {
             permission: .location
         )
 
-        let headersFetched = self.expectation(description: "Headers fetched")
-        self.analytics.analyticsHeaders { headers in
-            XCTAssertEqual(
-                "denied",
-                headers["X-UA-Permission-display_notifications"]
-            )
-            XCTAssertEqual("granted", headers["X-UA-Permission-location"])
-            headersFetched.fulfill()
+        let headers = await self.eventManager.headers
+
+        XCTAssertEqual(
+            "denied",
+            headers["X-UA-Permission-display_notifications"]
+        )
+        XCTAssertEqual("granted", headers["X-UA-Permission-location"])
+    }
+
+    func produceEvents(
+        count: Int,
+        eventProducingAction: () -> Void
+    ) async throws -> [AirshipEventData] {
+        var subscription: AnyCancellable?
+        defer {
+            subscription?.cancel()
         }
 
-        self.wait(for: [headersFetched], timeout: 1)
+        let stream = AsyncThrowingStream<AirshipEventData, Error> { continuation in
+            let cancelTask = Task {
+                try await Task.sleep(nanoseconds: 3_000_000_000)
+                continuation.finish(
+                    throwing: AirshipErrors.error("Failed to get event")
+                )
+            }
+
+            var received = 0
+            subscription = self.analytics.eventPublisher
+                .sink { data in
+                    continuation.yield(data)
+                    received += 1
+                    if (received >= count) {
+                        cancelTask.cancel()
+                        continuation.finish()
+                    }
+                }
+            eventProducingAction()
+        }
+
+        var result: [AirshipEventData] = []
+        for try await value in stream {
+            result.append(value)
+        }
+
+        return result
     }
 
-}
-
-class TestEventManager: EventManagerProtocol {
-    var uploadsEnabled: Bool = false
-    var deleteAllEventsCalled = false
-
-    var delegate: EventManagerDelegate?
-
-    func deleteAllEvents() {
-        self.deleteAllEventsCalled = true
-    }
-
-    func scheduleUpload() {}
-
-    var events: [TestEvent] = []
-
-    struct TestEvent {
-        let eventType: String
-        let event: Event
-        let sessionID: String
-        let eventID: String
-    }
-
-    func add(
-        _ event: Event,
-        eventID: String,
-        eventDate: Date,
-        sessionID: String
-    ) {
-        let testEvent = TestEvent(
-            eventType: event.eventType,
-            event: event,
-            sessionID: sessionID,
-            eventID: eventID
-        )
-        events.append(testEvent)
-    }
-}
-
-class InvalidEvent: NSObject, Event {
-    var data: [AnyHashable: Any] = [:]
-    var eventType: String = "invliad"
-    var priority: EventPriority = .normal
-
-    func isValid() -> Bool {
-        return false
-    }
 }
 
 class ValidEvent: NSObject, Event {
     var data: [AnyHashable: Any] = [:]
     var eventType: String = "valid"
     var priority: EventPriority = .normal
+
+    func isValid() -> Bool {
+        return true
+    }
+}
+
+class TestEventManager: EventManagerProtocol {
+    var uploadsEnabled: Bool = false
+
+    var addEventCallabck: ((AirshipEventData) -> Void)?
+
+
+    func addEvent(_ event: AirshipEventData) async throws {
+        addEventCallabck?(event)
+    }
+
+    var deleteEventsCallback: (() -> Void)?
+    func deleteEvents() async throws {
+        self.deleteEventsCallback?()
+    }
+
+    var scheduleUploadCallback: ((EventPriority) -> Void)?
+
+    func scheduleUpload(eventPriority: EventPriority) async {
+        scheduleUploadCallback?(eventPriority)
+    }
+
+    var headerProviders: [() async -> [String : String]] = []
+    func addHeaderProvider(
+        _ headerProvider: @escaping () async -> [String : String]
+    ) {
+        headerProviders.append(headerProvider)
+    }
+
+    public var headers: [String: String] {
+        get async {
+            var allHeaders: [String: String] = [:]
+            for provider in self.headerProviders {
+                let headers = await provider()
+                allHeaders.merge(headers) { (_, new) in
+                    return new
+                }
+            }
+            return allHeaders
+        }
+
+    }
+}
+
+
+class TestLifecyleEventFactory: LifeCycleEventFactoryProtocol {
+    func make(type: LifeCycleEventType) -> Event {
+        return TestLifeCycleEvent(type: type)
+    }
+}
+
+class TestLifeCycleEvent: NSObject, Event {
+    var data: [AnyHashable: Any] = [:]
+    let eventType: String
+    var priority: EventPriority = .normal
+
+    init(type: LifeCycleEventType) {
+        switch(type) {
+        case .appInit:
+            self.eventType = "app_init"
+        case .background:
+            self.eventType = "app_background"
+        case .foreground:
+            self.eventType = "app_foreground"
+        }
+    }
 
     func isValid() -> Bool {
         return true

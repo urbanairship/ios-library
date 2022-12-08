@@ -102,48 +102,12 @@ class EventTest: XCTestCase {
     }
 
     func testDeviceRegistrationEvent() throws {
-
-        let testChannel = TestChannel()
-        testChannel.identifier = "someChannelID"
-        let testPush = InternalPush()
-
-        let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
-        let privacyManager = PrivacyManager(
-            dataStore: dataStore,
-            defaultEnabledFeatures: .all
-        )
-
-        let event = DeviceRegistrationEvent.init(
-            channel: testChannel,
-            push: testPush,
-            privacyManager: privacyManager
+        let event = DeviceRegistrationEvent(
+            channelID: "someChannelID",
+            deviceToken: "a12312ad"
         )
 
         XCTAssertEqual(event.data["device_token"] as! String, "a12312ad")
-        XCTAssertEqual(event.data["channel_id"] as! String, "someChannelID")
-        XCTAssertEqual(event.eventType, "device_registration")
-    }
-
-    func testDeviceRegistrationEventWhenPushIsDisabled() throws {
-
-        let testChannel = TestChannel()
-        testChannel.identifier = "someChannelID"
-        let testPush = InternalPush()
-
-        let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
-        let privacyManager = PrivacyManager(
-            dataStore: dataStore,
-            defaultEnabledFeatures: .all
-        )
-        privacyManager.disableFeatures(.push)
-
-        let event = DeviceRegistrationEvent.init(
-            channel: testChannel,
-            push: testPush,
-            privacyManager: privacyManager
-        )
-
-        XCTAssertNil(event.data["device_token"])
         XCTAssertEqual(event.data["channel_id"] as! String, "someChannelID")
         XCTAssertEqual(event.eventType, "device_registration")
     }
@@ -175,12 +139,13 @@ class EventTest: XCTestCase {
     }
 
     func testScreenTracking() throws {
-        let event = ScreenTrackingEvent.init(
+        let event = ScreenTrackingEvent(
             screen: "test_screen",
             previousScreen: "previous_screen",
-            startTime: 0,
-            stopTime: 1
+            startDate: Date(timeIntervalSince1970: 0),
+            duration: 1
         )
+
 
         XCTAssertEqual(event!.data["duration"] as! String, "1.000")
         XCTAssertEqual(event!.data["entered_time"] as! String, "0.000")
@@ -199,14 +164,14 @@ class EventTest: XCTestCase {
                 withPad: "test_screen_name",
                 startingAt: 0
             )
-        var event = ScreenTrackingEvent.init(
+        var event = ScreenTrackingEvent(
             screen: screenName,
             previousScreen: nil,
-            startTime: 0,
-            stopTime: 1
+            startDate: Date(),
+            duration: 1
         )
 
-        XCTAssertEqual(event!.screen, screenName)
+        XCTAssertEqual(screenName, event!.data["screen"] as! String)
 
         screenName = ""
             .padding(
@@ -214,46 +179,40 @@ class EventTest: XCTestCase {
                 withPad: "test_screen_name",
                 startingAt: 0
             )
-        event = ScreenTrackingEvent.init(
+        event = ScreenTrackingEvent(
             screen: screenName,
             previousScreen: nil,
-            startTime: 0,
-            stopTime: 1
+            startDate: Date(),
+            duration: 1
         )
         XCTAssertNil(event)
 
         screenName = ""
-        event = ScreenTrackingEvent.init(
+        event = ScreenTrackingEvent(
             screen: screenName,
             previousScreen: nil,
-            startTime: 0,
-            stopTime: 1
+            startDate: Date(),
+            duration: 1
         )
         XCTAssertNil(event)
     }
 
     func testScreenStopTimeValidation() throws {
-        var event = ScreenTrackingEvent.init(
+        let beginningOfTime = Date(timeIntervalSince1970: 0)
+        var event = ScreenTrackingEvent(
             screen: "test_screen",
             previousScreen: nil,
-            startTime: 0,
-            stopTime: 0
+            startDate: beginningOfTime,
+            duration: 0
         )
         XCTAssertNil(event)
 
-        event = ScreenTrackingEvent.init(
-            screen: "test_screen",
-            previousScreen: nil,
-            startTime: 1,
-            stopTime: 0
-        )
-        XCTAssertNil(event)
 
-        event = ScreenTrackingEvent.init(
+        event = ScreenTrackingEvent(
             screen: "test_screen",
             previousScreen: nil,
-            startTime: 0,
-            stopTime: 1
+            startDate: beginningOfTime,
+            duration: 1.0
         )
         XCTAssertNotNil(event)
     }

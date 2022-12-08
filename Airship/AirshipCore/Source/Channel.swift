@@ -165,11 +165,6 @@ public class Channel: NSObject, Component, ChannelProtocol {
         }
     }
 
-    // NOTE: For internal use only. :nodoc:
-    static let supplier: () -> (ChannelProtocol) = {
-        return Airship.requireComponent(ofType: ChannelProtocol.self)
-    }
-
     /// The shared Channel instance.
     /// - Returns The shared Channel instance.
     @objc

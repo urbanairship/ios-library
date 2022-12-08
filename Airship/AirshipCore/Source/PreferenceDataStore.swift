@@ -80,6 +80,10 @@ public class PreferenceDataStore: NSObject {
         write(key, value: value)
     }
 
+    func storeValue(_ value: Any?, forKey key: String) {
+        write(key, value: value)
+    }
+
     @objc
     public func removeObject(forKey key: String) {
         write(key, value: nil)
@@ -125,6 +129,11 @@ public class PreferenceDataStore: NSObject {
         return read(key) ?? 0
     }
 
+    public func unsignedInteger(forKey key: String) -> UInt? {
+        return read(key)
+    }
+    
+
     @objc
     public func float(forKey key: String) -> Float {
         return read(key) ?? 0.0
@@ -153,6 +162,10 @@ public class PreferenceDataStore: NSObject {
     @objc
     public func setInteger(_ int: Int, forKey key: String) {
         write(key, value: int)
+    }
+
+    public func setUnsignedInteger(_ value: UInt, forKey key: String) {
+        write(key, value: value)
     }
 
     @objc
@@ -260,7 +273,7 @@ public class PreferenceDataStore: NSObject {
         return result as? T
     }
 
-    private func write(_ key: String, value: Any?) {
+    func write(_ key: String, value: Any?) {
         let key = prefixKey(key)
 
         lock.sync {

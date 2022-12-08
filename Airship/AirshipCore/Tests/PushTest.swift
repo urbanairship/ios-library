@@ -542,16 +542,17 @@ class PushTest: XCTestCase {
         XCTAssertEqual(10, payload.channel.iOSChannelSettings?.badgeNumber)
     }
 
-    func testAnalyticsHeadersOptedOut() throws {
+    func testAnalyticsHeadersOptedOut() async throws {
         let expected = [
             "X-UA-Channel-Opted-In": "false",
             "X-UA-Notification-Prompted": "false",
             "X-UA-Channel-Background-Enabled": "false",
         ]
-        XCTAssertEqual(expected, self.analtyics.headers)
+        let headers = await self.analtyics.headers
+        XCTAssertEqual(expected, headers)
     }
 
-    func testAnalyticsHeadersOptedIn() throws {
+    func testAnalyticsHeadersOptedIn() async throws {
         self.push.didRegisterForRemoteNotifications(
             PushTest.validDeviceToken.hexData
         )
@@ -582,10 +583,12 @@ class PushTest: XCTestCase {
             "X-UA-Channel-Background-Enabled": "true",
             "X-UA-Push-Address": PushTest.validDeviceToken,
         ]
-        XCTAssertEqual(expected, self.analtyics.headers)
+
+        let headers = await self.analtyics.headers
+        XCTAssertEqual(expected, headers)
     }
 
-    func testAnalyticsHeadersPushDisabled() throws {
+    func testAnalyticsHeadersPushDisabled() async throws {
         self.push.didRegisterForRemoteNotifications(
             PushTest.validDeviceToken.hexData
         )
@@ -594,7 +597,9 @@ class PushTest: XCTestCase {
             "X-UA-Channel-Opted-In": "false",
             "X-UA-Channel-Background-Enabled": "false",
         ]
-        XCTAssertEqual(expected, self.analtyics.headers)
+
+        let headers = await self.analtyics.headers
+        XCTAssertEqual(expected, headers)
     }
 
     func testDefaultNotificationCategories() throws {

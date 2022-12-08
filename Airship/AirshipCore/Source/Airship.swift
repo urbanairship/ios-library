@@ -429,12 +429,21 @@ public class Airship: NSObject {
 
     /// - NOTE: For internal use only. :nodoc:
     public class func requireComponent<E>(ofType componentType: E.Type) -> E {
-        let component = shared.airshipInstance.component(ofType: componentType)
+        let component = shared.airshipInstance.component(
+            ofType: componentType
+        )
 
         if component == nil {
             assertionFailure("Missing required component: \(componentType)")
         }
         return component!
+    }
+
+    /// - NOTE: For internal use only. :nodoc:
+    public class func componentSupplier<E>() -> () -> E {
+        return {
+            return requireComponent(ofType: E.self)
+        }
     }
 
     /// Processes a deep link.

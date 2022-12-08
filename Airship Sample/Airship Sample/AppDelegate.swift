@@ -54,7 +54,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, DeepLinkDelegate,
             }
         }
         #endif
-
         return true
     }
 

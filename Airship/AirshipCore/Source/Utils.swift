@@ -29,6 +29,18 @@ public class ConnectionType: NSObject {
 @objc(UAUtils)
 public class Utils: NSObject {
 
+    class func clamp<T>(_ value: T, min: T, max: T) -> T where T: Comparable {
+        if value < min {
+            return min
+        }
+
+        if value > max {
+            return max
+        }
+
+        return value
+    }
+
     // MARK: Math Utilities
 
     /// Compares two `float` values and returns `true` if the difference between them is less than or equal

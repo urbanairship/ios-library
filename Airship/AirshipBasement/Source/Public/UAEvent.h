@@ -10,12 +10,6 @@ NS_ASSUME_NONNULL_BEGIN
  * @note For internal use only. :nodoc:
  */
 typedef NS_ENUM(NSInteger, UAEventPriority) {
-    /**
-     * Low priority event. When added in the background, it will not schedule a send
-     * if the last send was within 15 mins. Adding in the foreground will schedule
-     * sends normally.
-     */
-    UAEventPriorityLow,
 
     /**
      * Normal priority event. Sends will be scheduled based on the batching time.

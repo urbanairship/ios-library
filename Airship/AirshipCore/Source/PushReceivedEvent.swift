@@ -1,7 +1,5 @@
 /* Copyright Airship and Contributors */
 
-/// - Note: For Internal use only :nodoc:
-@objc(UAPushReceivedEvent)
 class PushReceivedEvent: NSObject, Event {
 
     @objc

@@ -14,7 +14,9 @@ public class AirshipDebugManager: NSObject, Component {
     public var isComponentEnabled: Bool = true
 
     public static var shared: AirshipDebugManager {
-        return Airship.requireComponent(ofType: AirshipDebugManager.self)
+        return Airship.requireComponent(
+            ofType: AirshipDebugManager.self
+        )
     }
 
     private var currentDisplay: Disposable?
@@ -78,7 +80,7 @@ public class AirshipDebugManager: NSObject, Component {
             .sink { incoming in
                 guard
                     let body = try? JSONUtils.string(
-                        incoming.event.data,
+                        incoming.body,
                         options: .prettyPrinted
                     )
                 else {
@@ -86,8 +88,8 @@ public class AirshipDebugManager: NSObject, Component {
                 }
 
                 let airshipEvent = AirshipEvent(
-                    identifier: incoming.identifier,
-                    type: incoming.event.eventType,
+                    identifier: incoming.id,
+                    type: incoming.type,
                     date: incoming.date,
                     body: body
                 )

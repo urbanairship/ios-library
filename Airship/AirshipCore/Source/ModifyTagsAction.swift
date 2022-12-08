@@ -13,8 +13,8 @@ public class ModifyTagsAction: NSObject, Action {
     @objc
     public override convenience init() {
         self.init(
-            channel: Channel.supplier,
-            contact: Contact.supplier
+            channel: Airship.componentSupplier(),
+            contact: Airship.componentSupplier()
         )
     }
 

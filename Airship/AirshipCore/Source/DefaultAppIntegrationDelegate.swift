@@ -36,11 +36,13 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
     }
 
     public func didRegisterForRemoteNotifications(deviceToken: Data) {
+        let tokenString = Utils.deviceTokenStringFromDeviceToken(deviceToken)
+
         AirshipLogger.info(
-            "Application registered device token: \(deviceToken)"
+            "Application registered device token: \(tokenString)"
         )
         self.push.didRegisterForRemoteNotifications(deviceToken)
-        self.analytics.onDeviceRegistration()
+        self.analytics.onDeviceRegistration(token: tokenString)
     }
 
     public func didFailToRegisterForRemoteNotifications(error: Error) {

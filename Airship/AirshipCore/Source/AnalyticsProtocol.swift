@@ -45,9 +45,6 @@ public protocol AnalyticsProtocol {
     @objc
     func trackScreen(_ screen: String?)
 
-    /// Schedules an event upload if one is not already scheduled.
-    @objc
-    func scheduleUpload()
 
     /// Registers an SDK extension with the analytics module.
     /// For internal use only. :nodoc:
@@ -56,21 +53,12 @@ public protocol AnalyticsProtocol {
     ///   - ext: The SDK extension.
     ///   - version: The version.
     @objc
-    func registerSDKExtension(_ ext: SDKExtension, version: String)
+    func registerSDKExtension(_ ext: AirshipSDKExtension, version: String)
 
-    /// Called to notify analytics the app was launched from a push notification.
-    /// For internal use only. :nodoc:
-    /// - Parameter notification: The push notification.
-    @objc
-    func launched(fromNotification notification: [AnyHashable: Any])
-
-    /// For internal use only. :nodoc:
-    @objc(addAnalyticsHeadersBlock:)
-    func add(_ headerBlock: @escaping () -> [String: String]?)
 }
 
-protocol InternalAnalyticsProtocol {
-    func onDeviceRegistration()
+protocol InternalAnalyticsProtocol: AnalyticsProtocol {
+    func onDeviceRegistration(token: String)
 
     #if !os(tvOS)
     func onNotificationResponse(
@@ -78,4 +66,13 @@ protocol InternalAnalyticsProtocol {
         action: UNNotificationAction?
     )
     #endif
+
+
+    /// Called to notify analytics the app was launched from a push notification.
+    /// For internal use only. :nodoc:
+    /// - Parameter notification: The push notification.
+    func launched(fromNotification notification: [AnyHashable: Any])
+
+    func addHeaderProvider(_ headerProvider: @escaping () async -> [String: String])
+
 }

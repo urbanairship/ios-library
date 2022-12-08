@@ -128,12 +128,6 @@ public protocol ContactProtocol {
 /// within Airship. Contacts may be named and have channels associated with it.
 @objc(UAContact)
 public class Contact: NSObject, Component, ContactProtocol {
-
-    // NOTE: For internal use only. :nodoc:
-    static let supplier: () -> (ContactProtocol) = {
-        return Airship.requireComponent(ofType: ContactProtocol.self)
-    }
-
     static let updateTaskID = "Contact.update"
     static let operationsKey = "Contact.operations"
     static let contactInfoKey = "Contact.contactInfo"

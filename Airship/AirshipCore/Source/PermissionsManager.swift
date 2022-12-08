@@ -76,7 +76,6 @@ public class PermissionsManager: NSObject {
         _ permission: Permission,
         completionHandler: @escaping (PermissionStatus) -> Void
     ) {
-
         mainDispatcher.dispatchAsyncIfNecessary {
             guard let delegate = self.permissionDelegate(permission) else {
                 completionHandler(.notDetermined)
@@ -87,6 +86,19 @@ public class PermissionsManager: NSObject {
                 self.mainDispatcher.dispatchAsyncIfNecessary {
                     completionHandler(status)
                 }
+            }
+        }
+    }
+
+    @MainActor
+    public func checkPermissionStatus(_ permission: Permission) async -> PermissionStatus {
+        guard let delegate = self.permissionDelegate(permission) else {
+            return .notDetermined
+        }
+
+        return await withCheckedContinuation { continuation in
+            delegate.checkPermissionStatus { status in
+                continuation.resume(returning: status)
             }
         }
     }

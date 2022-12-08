@@ -3,50 +3,9 @@
 import Combine
 import Foundation
 
-/// Allowed SDK extension types.
-/// - Note: For internal use only. :nodoc:
-@objc(UASDKExtension)
-public enum SDKExtension: Int {
-    /// The Cordova SDK extension.
-    case cordova = 0
-    /// The Xamarin SDK extension.
-    case xamarin = 1
-    /// The Unity SDK extension.
-    case unity = 2
-    /// The Flutter SDK extension.
-    case flutter = 3
-    /// The React Native SDK extension.
-    case reactNative = 4
-    /// The Titanium SDK extension.
-    case titanium = 5
-}
-
 /// The Analytics object provides an interface to the Airship Analytics API.
 @objc(UAAnalytics)
-public class Analytics: NSObject, Component, AnalyticsProtocol,
-    EventManagerDelegate
-{
-
-    /// Full event
-    public struct FullEvent {
-
-        /// The original event
-        public let event: Event
-
-        /// The event ID
-        public let identifier: String
-
-        /// The event date
-        public let date: Date
-    }
-
-    /**
-     * Analytics supplier, for testing purposes. :nodoc:
-     */
-    @objc
-    public static let supplier: () -> AnalyticsProtocol = {
-        return Airship.requireComponent(ofType: AnalyticsProtocol.self)
-    }
+public class Analytics: NSObject, Component, AnalyticsProtocol {
 
     /// The shared Analytics instance.
     @objc
@@ -82,34 +41,29 @@ public class Analytics: NSObject, Component, AnalyticsProtocol,
     @objc
     public static let screenTracked = NSNotification.Name("UAScreenTracked")
 
-    private var config: RuntimeConfig
-    private var dataStore: PreferenceDataStore
-    private var channel: ChannelProtocol
+    private let config: RuntimeConfig
+    private let dataStore: PreferenceDataStore
+    private let channel: ChannelProtocol
+    private let privacyManager: PrivacyManager
+    private let notificationCenter: NotificationCenter
+    private let date: AirshipDate
     private var eventManager: EventManagerProtocol
-    private var privacyManager: PrivacyManager
-    private var notificationCenter: NotificationCenter
-    private var date: AirshipDate
-    private var dispatcher: UADispatcher
-    private var sdkExtensions: [String]
-    private var headerBlocks: [(() -> [String: String]?)]
-    private var localeManager: LocaleManagerProtocol
-    private var appStateTracker: AppStateTrackerProtocol
-    private var handledFirstForegroundTransition = false
-    private var permissionsManager: PermissionsManager
+    private let localeManager: LocaleManagerProtocol
+    private let appStateTracker: AppStateTrackerProtocol
+    private let permissionsManager: PermissionsManager
+    private let disableHelper: ComponentDisableHelper
+    private let lifeCycleEventFactory: LifeCycleEventFactoryProtocol
+
+    private var sdkExtensions: [String] = []
 
     // Screen tracking state
     private var currentScreen: String?
     private var previousScreen: String?
-    private var startTime: TimeInterval = 0.0
+    private var screenStartDate: Date?
 
-    private let lock = Lock()
     private var initialized = false
     private var isAirshipReady = false
-
-    private var isAnalyticsEnabled: Bool {
-        return self.isComponentEnabled && self.config.isAnalyticsEnabled
-            && self.privacyManager.isEnabled(.analytics)
-    }
+    private var handledFirstForegroundTransition = false
 
     /// The conversion send ID. :nodoc:
     @objc
@@ -123,14 +77,12 @@ public class Analytics: NSObject, Component, AnalyticsProtocol,
     @objc
     public private(set) var sessionID: String?
 
-    private let eventSubject = PassthroughSubject<FullEvent, Never>()
+    private let eventSubject = PassthroughSubject<AirshipEventData, Never>()
 
     /// Airship event publisher
-    public var eventPublisher: AnyPublisher<FullEvent, Never> {
+    public var eventPublisher: AnyPublisher<AirshipEventData, Never> {
         eventSubject.eraseToAnyPublisher()
     }
-
-    private let disableHelper: ComponentDisableHelper
 
     // NOTE: For internal use only. :nodoc:
     public var isComponentEnabled: Bool {
@@ -142,18 +94,13 @@ public class Analytics: NSObject, Component, AnalyticsProtocol,
         }
     }
 
-    /// Factory method to create an analytics instance.
-    /// - Note: For internal use only. :nodoc:
-    /// - Parameters:
-    ///   - config: The runtime config.
-    ///   - dataStore: The shared preference data store.
-    ///   - channel: The channel instance.
-    ///   - localeManager: A UALocaleManager.
-    ///   - privacyManager: A PrivacyManager.
-    ///   - permissionsManager: The permissions manager.
-    /// - Returns: A new analytics instance.
-    @objc
-    public convenience init(
+    private var isAnalyticsEnabled: Bool {
+        return self.privacyManager.isEnabled(.analytics) &&
+        self.config.isAnalyticsEnabled &&
+        self.isComponentEnabled
+    }
+
+    convenience init(
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,
         channel: ChannelProtocol,
@@ -165,64 +112,40 @@ public class Analytics: NSObject, Component, AnalyticsProtocol,
             config: config,
             dataStore: dataStore,
             channel: channel,
-            eventManager: EventManager(
-                config: config,
-                dataStore: dataStore,
-                channel: channel
-            ),
             notificationCenter: NotificationCenter.default,
             date: AirshipDate(),
-            dispatcher: UADispatcher.main,
             localeManager: localeManager,
             appStateTracker: AppStateTracker.shared,
             privacyManager: privacyManager,
-            permissionsManager: permissionsManager
+            permissionsManager: permissionsManager,
+            eventManager: EventManager(config: config, dataStore: dataStore)
         )
     }
 
-    /// Factory method to create an analytics instance. Used for testing.
-    /// - Note: For internal use only. :nodoc:
-    /// - Parameters:
-    ///   - config: The runtime config.
-    ///   - dataStore: The shared preference data store.
-    ///   - channel: The channel instance.
-    ///   - eventManager: The event manager.
-    ///   - notificationCenter: The notification center.
-    ///   - date: A DateUtils instance.
-    ///   - dispatcher: The dispatcher.
-    ///   - localeManager: The locale manager.
-    ///   - appStateTracker: The app state tracker.
-    ///   - privacyManager: The privacy manager.
-    ///   - permissionsManager: The permissions manager.
-    /// - Returns: A new analytics instance.
-    @objc
-    public init(
+    init(
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,
         channel: ChannelProtocol,
-        eventManager: EventManagerProtocol,
         notificationCenter: NotificationCenter,
         date: AirshipDate,
-        dispatcher: UADispatcher,
         localeManager: LocaleManagerProtocol,
         appStateTracker: AppStateTrackerProtocol,
         privacyManager: PrivacyManager,
-        permissionsManager: PermissionsManager
+        permissionsManager: PermissionsManager,
+        eventManager: EventManagerProtocol,
+        lifeCycleEventFactory: LifeCycleEventFactoryProtocol = LifeCylceEventFactory()
     ) {
         self.config = config
         self.dataStore = dataStore
         self.channel = channel
-        self.eventManager = eventManager
         self.notificationCenter = notificationCenter
         self.date = date
-        self.dispatcher = dispatcher
         self.localeManager = localeManager
         self.privacyManager = privacyManager
         self.appStateTracker = appStateTracker
         self.permissionsManager = permissionsManager
-
-        self.sdkExtensions = []
-        self.headerBlocks = []
+        self.eventManager = eventManager
+        self.lifeCycleEventFactory = lifeCycleEventFactory
 
         self.disableHelper = ComponentDisableHelper(
             dataStore: dataStore,
@@ -232,12 +155,11 @@ public class Analytics: NSObject, Component, AnalyticsProtocol,
         super.init()
 
         self.disableHelper.onChange = { [weak self] in
-            self?.onComponentEnableChange()
+            self?.updateEnablement()
         }
 
-        self.eventManager.delegate = self
+        self.eventManager.addHeaderProvider(self.makeHeaders)
 
-        updateEventManagerUploadsEnabled()
         startSession()
 
         self.notificationCenter.addObserver(
@@ -270,8 +192,15 @@ public class Analytics: NSObject, Component, AnalyticsProtocol,
 
         self.notificationCenter.addObserver(
             self,
-            selector: #selector(onEnabledFeaturesChanged),
+            selector: #selector(updateEnablement),
             name: PrivacyManager.changeEvent,
+            object: nil
+        )
+
+        self.notificationCenter.addObserver(
+            self,
+            selector: #selector(updateEnablement),
+            name: Channel.channelCreatedEvent,
             object: nil
         )
     }
@@ -293,7 +222,7 @@ public class Analytics: NSObject, Component, AnalyticsProtocol,
         startSession()
 
         // Add app_foreground event
-        self.addEvent(AppForegroundEvent())
+        self.addLifeCycleEvent(.foreground)
     }
 
     @objc
@@ -308,13 +237,13 @@ public class Analytics: NSObject, Component, AnalyticsProtocol,
     private func applicationDidEnterBackground() {
         AirshipLogger.debug("Application did enter background.")
 
-        stopTrackingScreen()
+        self.trackScreen(nil)
 
         // Ensure an app init event
         ensureInit()
 
         // Add app_background event
-        self.addEvent(AppBackgroundEvent())
+        self.addLifeCycleEvent(.background)
 
         startSession()
         conversionSendID = nil
@@ -324,29 +253,27 @@ public class Analytics: NSObject, Component, AnalyticsProtocol,
     @objc
     private func applicationWillTerminate() {
         AirshipLogger.debug("Application is terminating.")
-        stopTrackingScreen()
+        self.trackScreen(nil)
     }
+
 
     // MARK: -
     // MARK: Analytics Headers
 
     /// :nodoc:
-    @objc(addAnalyticsHeadersBlock:)
-    public func add(_ headerBlock: @escaping () -> [String: String]?) {
-        self.headerBlocks.append(headerBlock)
+    public func addHeaderProvider(
+        _ headerProvider: @escaping () async -> [String: String]
+    ) {
+        self.eventManager.addHeaderProvider(headerProvider)
     }
 
-    /// :nodoc:
-    @objc
-    public func analyticsHeaders(
-        completionHandler: @escaping ([String: String]) -> Void
-    ) {
+    private func makeHeaders() async -> [String: String] {
         var headers: [String: String] = [:]
 
         // Device info
         #if !os(watchOS)
-        headers["X-UA-Device-Family"] = UIDevice.current.systemName
-        headers["X-UA-OS-Version"] = UIDevice.current.systemVersion
+        headers["X-UA-Device-Family"] = await UIDevice.current.systemName
+        headers["X-UA-OS-Version"] = await UIDevice.current.systemVersion
         #else
         headers["X-UA-Device-Family"] =
             WKInterfaceDevice.current().systemName
@@ -385,33 +312,13 @@ public class Analytics: NSObject, Component, AnalyticsProtocol,
             )
         }
 
-        // Header extenders
-        for block in self.headerBlocks {
-            if let result = block() {
-                headers.merge(
-                    result,
-                    uniquingKeysWith: { (current, _) in current }
-                )
-            }
+        // Permissions
+        for permission in self.permissionsManager.configuredPermissions {
+            let status = await self.permissionsManager.checkPermissionStatus(permission)
+            headers["X-UA-Permission-\(permission.stringValue)"] = status.stringValue
         }
 
-        let group = DispatchGroup()
-        group.enter()
-
-        self.permissionsManager.configuredPermissions.forEach { permission in
-            group.enter()
-            self.permissionsManager.checkPermissionStatus(permission) {
-                status in
-                headers["X-UA-Permission-\(permission.stringValue)"] =
-                    status.stringValue
-                group.leave()
-            }
-        }
-
-        group.leave()
-        group.notify(queue: DispatchQueue.global()) {
-            completionHandler(headers)
-        }
+        return headers
     }
 
     // MARK: -
@@ -421,11 +328,6 @@ public class Analytics: NSObject, Component, AnalyticsProtocol,
     /// - Parameter event: The event to be triggered
     @objc
     public func addEvent(_ event: Event) {
-        guard event.isValid?() != false else {
-            AirshipLogger.error("Dropping invalid event: \(event)")
-            return
-        }
-
         guard let sessionID = self.sessionID else {
             AirshipLogger.error("Missing session ID")
             return
@@ -434,8 +336,12 @@ public class Analytics: NSObject, Component, AnalyticsProtocol,
         let date = Date()
         let identifier = NSUUID().uuidString
 
-        self.dispatcher.dispatchAsync { [weak self] in
-            guard let self = self else {
+        Task { @MainActor in
+            
+            guard event.isValid?() != false,
+                  let data = event.data as? [String: Any]
+            else {
+                AirshipLogger.error("Dropping invalid event: \(event)")
                 return
             }
 
@@ -446,22 +352,27 @@ public class Analytics: NSObject, Component, AnalyticsProtocol,
                 return
             }
 
-            AirshipLogger.debug("Adding \(event.eventType) event \(identifier)")
-            self.eventManager.add(
-                event,
-                eventID: identifier,
-                eventDate: date,
-                sessionID: sessionID
-            )
-            AirshipLogger.trace("Event added: \(event)")
-
-            self.eventSubject.send(
-                FullEvent(
-                    event: event,
-                    identifier: identifier,
-                    date: date
+            do {
+                let eventData = AirshipEventData(
+                    body: data,
+                    id: identifier,
+                    date: date,
+                    sessionID: sessionID,
+                    type: event.eventType
                 )
-            )
+
+                AirshipLogger.debug("Adding event with type \(eventData.type)")
+                AirshipLogger.trace("Adding event \(eventData)")
+
+                try await self.eventManager.addEvent(eventData)
+                self.eventSubject.send(eventData)
+                await self.eventManager.scheduleUpload(
+                    eventPriority: event.priority
+                )
+            } catch {
+                AirshipLogger.error("Failed to save event \(error)")
+                return
+            }
 
             if let customEvent = event as? CustomEvent {
                 self.notificationCenter.post(
@@ -538,7 +449,8 @@ public class Analytics: NSObject, Component, AnalyticsProtocol,
     /// - Parameter screen: The screen's identifier.
     @objc
     public func trackScreen(_ screen: String?) {
-        self.dispatcher.dispatchAsyncIfNecessary {
+        let date = self.date.now
+        Task { @MainActor in
             // Prevent duplicate calls to track same screen
             guard screen != self.currentScreen else {
                 return
@@ -551,13 +463,15 @@ public class Analytics: NSObject, Component, AnalyticsProtocol,
             )
 
             // If there's a screen currently being tracked set it's stop time and add it to analytics
-            if let currentScreen = self.currentScreen {
+            if let currentScreen = self.currentScreen,
+               let screenStartDate = self.screenStartDate {
+
                 guard
                     let ste = ScreenTrackingEvent(
                         screen: currentScreen,
                         previousScreen: self.previousScreen,
-                        startTime: self.startTime,
-                        stopTime: self.date.now.timeIntervalSince1970
+                        startDate: screenStartDate,
+                        duration: date.timeIntervalSince(screenStartDate)
                     )
                 else {
                     AirshipLogger.error(
@@ -574,14 +488,8 @@ public class Analytics: NSObject, Component, AnalyticsProtocol,
             }
 
             self.currentScreen = screen
-            self.startTime = self.date.now.timeIntervalSince1970
+            self.screenStartDate = date
         }
-    }
-
-    /// Schedules an event upload if one is not already scheduled.
-    @objc
-    public func scheduleUpload() {
-        self.eventManager.scheduleUpload()
     }
 
     /// Registers an SDK extension with the analytics module.
@@ -591,73 +499,41 @@ public class Analytics: NSObject, Component, AnalyticsProtocol,
     ///   - ext: The SDK extension.
     ///   - version: The version.
     @objc
-    public func registerSDKExtension(_ ext: SDKExtension, version: String) {
+    public func registerSDKExtension(
+        _ ext: AirshipSDKExtension,
+        version: String
+    ) {
         let sanitizedVersion = version.replacingOccurrences(of: ",", with: "")
-        let name = self.nameForSDKExtension(ext)
-        self.sdkExtensions.append("\(name):\(sanitizedVersion)")
-    }
-
-    /// Called to notify analytics the app was launched from a push notification.
-    /// For internal use only. :nodoc:
-    /// - Parameter notification: The push notification.
-    @objc
-    public func launched(fromNotification notification: [AnyHashable: Any]) {
-        if Utils.isAlertingPush(notification) {
-            let sendID = notification["_"] as? String
-            self.conversionSendID =
-                sendID != nil ? sendID : Analytics.missingSendID
-            self.conversionPushMetadata =
-                notification[Analytics.pushMetadata] as? String
-            self.ensureInit()
-        } else {
-            self.conversionSendID = nil
-            self.conversionPushMetadata = nil
-        }
-    }
-
-    private func onComponentEnableChange() {
-        self.updateEventManagerUploadsEnabled()
+        self.sdkExtensions.append("\(ext.name):\(sanitizedVersion)")
     }
 
     @objc
-    private func onEnabledFeaturesChanged() {
-        self.updateEventManagerUploadsEnabled()
-    }
-
-    private func nameForSDKExtension(_ ext: SDKExtension) -> String {
-        switch ext {
-        case .cordova:
-            return "cordova"
-        case .xamarin:
-            return "xamarin"
-        case .unity:
-            return "unity"
-        case .flutter:
-            return "flutter"
-        case .reactNative:
-            return "react-native"
-        case .titanium:
-            return "titanium"
-        default:
-            return ""
-        }
-    }
-
-    private func stopTrackingScreen() {
-        self.trackScreen(nil)
-    }
-
-    private func updateEventManagerUploadsEnabled() {
-        if self.isAnalyticsEnabled {
-            self.eventManager.uploadsEnabled = true
-            self.eventManager.scheduleUpload()
-        } else {
+    private func updateEnablement() {
+        guard self.isAnalyticsEnabled else {
             self.eventManager.uploadsEnabled = false
-            self.eventManager.deleteAllEvents()
-            self.dataStore.setValue(
-                nil,
-                forKey: Analytics.associatedIdentifiers
-            )
+            Task {
+                do {
+                    try await self.eventManager.deleteEvents()
+                } catch {
+                    AirshipLogger.error("Failed to delete events \(error)")
+                }
+            }
+            return
+        }
+
+        let uploadsEnabled = self.isAirshipReady && self.channel.identifier != nil
+
+
+        if (self.eventManager.uploadsEnabled != uploadsEnabled) {
+            self.eventManager.uploadsEnabled = uploadsEnabled
+
+            if (uploadsEnabled) {
+                Task {
+                    await self.eventManager.scheduleUpload(
+                        eventPriority: .normal
+                    )
+                }
+            }
         }
     }
 
@@ -668,11 +544,9 @@ public class Analytics: NSObject, Component, AnalyticsProtocol,
     /// needed to ensure AppInit event gets added
     /// since App Clips get launched via Push Notification delegate
     private func ensureInit() {
-        lock.sync {
-            if !self.initialized && self.isAirshipReady {
-                self.addEvent(AppInitEvent())
-                self.initialized = true
-            }
+        if !self.initialized && self.isAirshipReady {
+            self.addLifeCycleEvent(.appInit)
+            self.initialized = true
         }
     }
 
@@ -685,14 +559,40 @@ public class Analytics: NSObject, Component, AnalyticsProtocol,
         if self.appStateTracker.state != .inactive {
             ensureInit()
         }
+
+        self.updateEnablement()
     }
 }
 
 extension Analytics: InternalAnalyticsProtocol {
-    func onDeviceRegistration() {
-        if self.isAirshipReady {
-            addEvent(DeviceRegistrationEvent())
+    /// Called to notify analytics the app was launched from a push notification.
+    /// For internal use only. :nodoc:
+    /// - Parameter notification: The push notification.
+    func launched(fromNotification notification: [AnyHashable: Any]) {
+        if Utils.isAlertingPush(notification) {
+            let sendID = notification["_"] as? String
+            self.conversionSendID =
+            sendID != nil ? sendID : Analytics.missingSendID
+            self.conversionPushMetadata =
+            notification[Analytics.pushMetadata] as? String
+            self.ensureInit()
+        } else {
+            self.conversionSendID = nil
+            self.conversionPushMetadata = nil
         }
+    }
+
+    func onDeviceRegistration(token: String) {
+        guard privacyManager.isEnabled(.push) else {
+            return
+        }
+
+        addEvent(
+            DeviceRegistrationEvent(
+                channelID: self.channel.identifier,
+                deviceToken: token
+            )
+        )
     }
 
     @available(tvOS, unavailable)
@@ -714,13 +614,44 @@ extension Analytics: InternalAnalyticsProtocol {
                 self.launched(fromNotification: userInfo)
             }
 
-            let event = InteractiveNotificationEvent(
-                action: action,
-                category: categoryID,
-                notification: userInfo,
-                responseText: responseText
+            addEvent(
+                InteractiveNotificationEvent(
+                    action: action,
+                    category: categoryID,
+                    notification: userInfo,
+                    responseText: responseText
+                )
             )
-            addEvent(event)
+        }
+    }
+
+    private func addLifeCycleEvent(_ type: LifeCycleEventType) {
+        let event = self.lifeCycleEventFactory.make(type: type)
+        addEvent(event)
+    }
+}
+
+enum LifeCycleEventType {
+    case appInit
+    case foreground
+    case background
+}
+
+protocol LifeCycleEventFactoryProtocol {
+    func make(type: LifeCycleEventType) -> Event
+}
+
+fileprivate class LifeCylceEventFactory: LifeCycleEventFactoryProtocol {
+    func make(type: LifeCycleEventType) -> Event {
+        switch (type) {
+        case .appInit:
+            return AppInitEvent()
+        case .background:
+            return AppBackgroundEvent()
+        case .foreground:
+            return AppForegroundEvent()
         }
     }
 }
+
+

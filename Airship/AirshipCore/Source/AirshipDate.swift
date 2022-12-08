@@ -6,6 +6,8 @@ import Foundation
 @objc(UADate)
 open class AirshipDate: NSObject {
 
+    static var shared = AirshipDate()
+
     @objc
     public override init() {
         super.init()

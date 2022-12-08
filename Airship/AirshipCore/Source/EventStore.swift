@@ -3,21 +3,20 @@
 import CoreData
 import Foundation
 
-/// Event data store. For internal use only.
-/// :nodoc:
-@objc(UAEventStore)
-public class EventStore: NSObject, EventStoreProtocol {
+actor EventStore {
     private static let fileFormat = "Events-%@.sqlite"
     private static let eventDataEntityName = "UAEventData"
+    private static let fetchEventLimit = 500
 
     private var coreData: UACoreData
     private var storeName: String?
 
-    @objc
-    public init(config: RuntimeConfig?) {
+    init(appKey: String,
+         inMemory: Bool = false
+    ) {
         let storeName = String(
             format: EventStore.fileFormat,
-            config?.appKey ?? ""
+            appKey
         )
         let modelURL = AirshipCoreResources.bundle.url(
             forResource: "UAEvents",
@@ -25,133 +24,128 @@ public class EventStore: NSObject, EventStoreProtocol {
         )
         self.coreData = UACoreData(
             modelURL: modelURL!,
-            inMemory: false,
+            inMemory: inMemory,
             stores: [storeName]
         )
-
-        super.init()
     }
 
-    @objc
-    public func save(
-        _ event: Event,
-        eventID: String,
-        eventDate: Date,
-        sessionID: String
-    ) {
-        self.coreData.safePerform { [weak self] isSafe, context in
-            guard isSafe else {
-                AirshipLogger.error(
-                    "Unable to save event: \(event). Persistent store unavailable"
-                )
-                return
-            }
-
-            let eventTime = String(
-                format: "%f",
-                eventDate.timeIntervalSince1970
-            )
-
-            self?
-                .storeEvent(
-                    withID: eventID,
-                    eventType: event.eventType,
-                    eventTime: eventTime,
-                    eventBody: event.data,
-                    sessionID: sessionID,
-                    context: context
-                )
-
+    func save(
+        event: AirshipEventData
+    ) async throws {
+        try await self.coreData.perform { context in
+            try self.saveEvent(event: event, context: context)
             UACoreData.safeSave(context)
         }
     }
 
-    @objc
-    public func fetchEvents(
-        withLimit limit: Int,
-        completionHandler: @escaping ([EventData]) -> Void
-    ) {
-        self.coreData.safePerform({ isSafe, context in
-            if !isSafe {
-                completionHandler([])
-                return
-            }
-
+    func fetchEvents(
+        maxBatchSizeKB: UInt
+    ) async throws -> [AirshipEventData] {
+        var events: [AirshipEventData] = []
+        try await self.coreData.perform { context in
             let request = NSFetchRequest<NSFetchRequestResult>(
                 entityName: EventStore.eventDataEntityName
             )
-            request.fetchLimit = limit
+            request.fetchLimit = EventStore.fetchEventLimit
             request.sortDescriptors = [
                 NSSortDescriptor(key: "storeDate", ascending: true)
             ]
 
-            do {
-                let result = try context.fetch(request) as? [EventData] ?? []
-                completionHandler(result)
-                UACoreData.safeSave(context)
-            } catch {
-                AirshipLogger.error("Error fetching events: \(error)")
-                completionHandler([])
+            let fetchResult = try context.fetch(request) as? [EventData] ?? []
+            let batchSizeBytesLimit = maxBatchSizeKB * 1024
+            var batchSize = 0
+            for eventData in fetchResult {
+                let bytes = eventData.bytes?.intValue ?? 0
+                if ((batchSize + bytes) > batchSizeBytesLimit) {
+                    break
+                }
+
+                do {
+                    events.append(try self.convert(internalEventData: eventData))
+                    batchSize += bytes
+                } catch {
+                    AirshipLogger.error("Unable to read event, deleting. \(error)")
+                    context.delete(eventData)
+                }
             }
-        })
+
+            UACoreData.safeSave(context)
+        }
+        
+        return events
     }
 
-    @objc
-    public func deleteEvents(withIDs eventIDs: [String]?) {
-        self.coreData.safePerform({ isSafe, context in
-            if !isSafe {
-                return
-            }
-
+    func hasEvents() async throws -> Bool {
+        var result = false
+        try await self.coreData.perform { context in
             let request = NSFetchRequest<NSFetchRequestResult>(
                 entityName: EventStore.eventDataEntityName
             )
-            if let eventIDs = eventIDs {
-                request.predicate = NSPredicate(
-                    format: "identifier IN %@",
-                    eventIDs
-                )
+            if try context.count(for: request) > 0 {
+                result = true
             }
+        }
 
+        return result
+    }
+
+    func deleteEvents(eventIDs: [String]) async throws {
+        try await self.coreData.perform { context in
+            let request = NSFetchRequest<NSFetchRequestResult>(
+                entityName: EventStore.eventDataEntityName
+            )
+            
+            request.predicate = NSPredicate(
+                format: "identifier IN %@",
+                eventIDs
+            )
+            
             do {
-                let deleteRequest = NSBatchDeleteRequest(fetchRequest: request)
-                try context.execute(deleteRequest)
+                if self.coreData.inMemory {
+                    request.includesPropertyValues = false
+                    let events = try context.fetch(request) as? [NSManagedObject]
+                    events?.forEach { event in
+                        context.delete(event)
+                    }
+                } else {
+                    let deleteRequest = NSBatchDeleteRequest(fetchRequest: request)
+                    try context.execute(deleteRequest)
+                }
                 UACoreData.safeSave(context)
             } catch {
                 AirshipLogger.error("Error deleting analytics events: \(error)")
             }
-        })
+        }
     }
 
-    @objc
-    public func deleteAllEvents() {
-        self.coreData.performBlockIfStoresExist({ isSafe, context in
-            if !isSafe {
-                return
-            }
-
+    func deleteAllEvents() async throws {
+        try await self.coreData.perform(skipIfStoreNotCreated: true) { context in
             let request = NSFetchRequest<NSFetchRequestResult>(
                 entityName: EventStore.eventDataEntityName
             )
 
             do {
-                let deleteRequest = NSBatchDeleteRequest(fetchRequest: request)
-                try context.execute(deleteRequest)
+                if self.coreData.inMemory {
+                    request.includesPropertyValues = false
+                    let events = try context.fetch(request) as? [NSManagedObject]
+                    events?.forEach { event in
+                        context.delete(event)
+                    }
+                } else {
+                    let deleteRequest = NSBatchDeleteRequest(fetchRequest: request)
+                    try context.execute(deleteRequest)
+                }
                 UACoreData.safeSave(context)
             } catch {
                 AirshipLogger.error("Error deleting analytics events: \(error)")
             }
-        })
+        }
     }
 
-    @objc
-    public func trimEvents(toStoreSize maxSize: UInt) {
-        self.coreData.safePerform({ [weak self] isSafe, context in
-            guard isSafe, let self = self else {
-                return
-            }
-
-            while self.fetchTotalEventSize(with: context) > maxSize {
+    func trimEvents(maxStoreSizeKB: UInt) async throws {
+        let maxBytes = maxStoreSizeKB * 1024
+        try await self.coreData.perform { context in
+            while self.fetchTotalEventSize(with: context) > maxBytes {
                 guard let sessionID = self.fetchOldestSessionID(with: context),
                     self.deleteSession(sessionID, context: context)
                 else {
@@ -160,7 +154,7 @@ public class EventStore: NSObject, EventStoreProtocol {
             }
 
             UACoreData.safeSave(context)
-        })
+        }
     }
 
     private func deleteSession(
@@ -208,6 +202,10 @@ public class EventStore: NSObject, EventStoreProtocol {
     private func fetchTotalEventSize(with context: NSManagedObjectContext)
         -> Int
     {
+        guard !coreData.inMemory else {
+            return 0
+        }
+
         let sumDescription = NSExpressionDescription()
         sumDescription.name = "sum"
         sumDescription.expression = NSExpression(
@@ -231,43 +229,102 @@ public class EventStore: NSObject, EventStoreProtocol {
         }
     }
 
-    private func storeEvent(
-        withID eventID: String,
-        eventType: String,
-        eventTime: String,
-        eventBody: Any,
-        sessionID: String,
+    private func saveEvent(
+        event: AirshipEventData,
         context: NSManagedObjectContext
-    ) {
-        do {
-            let json = try JSONUtils.data(eventBody, options: [])
+    ) throws {
+        if let eventData = NSEntityDescription.insertNewObject(
+            forEntityName: EventStore.eventDataEntityName,
+            into: context
+        ) as? EventData {
+            eventData.sessionID = event.sessionID
+            eventData.type = event.type
+            eventData.identifier = event.id
+            eventData.data = try JSONSerialization.data(
+                withJSONObject: event.body,
+                options: []
+            )
+            eventData.storeDate = event.date
 
-            if let eventData = NSEntityDescription.insertNewObject(
-                forEntityName: EventStore.eventDataEntityName,
-                into: context
-            ) as? EventData {
-                eventData.sessionID = sessionID
-                eventData.type = eventType
-                eventData.time = eventTime
-                eventData.identifier = eventID
-                eventData.data = json
-                eventData.storeDate = Date()
+            // Approximate size
+            var count = 0
+            count += eventData.sessionID?.count ?? 0
+            count += eventData.type?.count ?? 0
+            count += eventData.time?.count ?? 0
+            count += eventData.identifier?.count ?? 0
+            count += eventData.data?.count ?? 0
+            eventData.bytes = NSNumber(value: count)
 
-                // Approximate size
-                var count = 0
-                count += eventData.sessionID?.count ?? 0
-                count += eventData.type?.count ?? 0
-                count += eventData.time?.count ?? 0
-                count += eventData.identifier?.count ?? 0
-                count += eventData.data?.count ?? 0
-                eventData.bytes = NSNumber(value: count)
-
-                AirshipLogger.debug("Event saved: \(eventID)")
-            } else {
-                AirshipLogger.error("Unable to insert event data: \(json)")
-            }
-        } catch {
-            AirshipLogger.error("Unable to save event: \(error)")
+            AirshipLogger.debug("Event saved: \(event)")
+        } else {
+            AirshipLogger.error("Failed to save event: \(event)")
         }
     }
+
+    private func date(internalEventData: EventData) -> Date? {
+        // Stopped using the time field on new events. Will remove
+        // in a future SDK version.
+        if let time = internalEventData.time, let time = Double(time) {
+            return Date(timeIntervalSince1970: time)
+        }
+
+        return internalEventData.storeDate
+    }
+
+    private func convert(
+        internalEventData: EventData
+    ) throws -> AirshipEventData {
+        guard let sessionID = internalEventData.sessionID,
+              let id = internalEventData.identifier,
+              let type = internalEventData.type,
+              let data = internalEventData.data,
+              let body = try JSONSerialization.jsonObject(
+                with: data,
+                options: []
+              ) as? [String: Any],
+              let date = date(internalEventData: internalEventData)
+        else {
+            throw AirshipErrors.error("Invalid event data")
+        }
+
+        return AirshipEventData(
+            body: body,
+            id: id,
+            date: date,
+            sessionID: sessionID,
+            type: type
+        )
+    }
+}
+
+// Internal core data entity
+@objc(UAEventData)
+fileprivate class EventData: NSManagedObject {
+
+    /// The event's session ID.
+    @objc
+    @NSManaged public dynamic var sessionID: String?
+
+    /// The event's Data.
+    @NSManaged public dynamic var data: Data?
+
+    /// The event's creation time.
+    @objc
+    @NSManaged public dynamic var time: String?
+
+    /// The event's number of bytes.
+    @objc
+    @NSManaged public dynamic var bytes: NSNumber?
+
+    /// The event's type.
+    @objc
+    @NSManaged public dynamic var type: String?
+
+    /// The event's identifier.
+    @objc
+    @NSManaged public dynamic var identifier: String?
+
+    /// The event's store date.
+    @objc
+    @NSManaged public dynamic var storeDate: Date?
 }

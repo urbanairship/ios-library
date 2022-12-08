@@ -243,11 +243,9 @@ actor Worker {
         let workRequest = pendingRequest.request
 
         if workRequest.initialDelay > 0 {
-            let remainingDelay =
-                pendingRequest.date.timeIntervalSinceNow
-                - workRequest.initialDelay
-            if remainingDelay > 0 {
-                try await sleep(remainingDelay)
+            let timeSinceRequest = Date().timeIntervalSince(pendingRequest.date)
+            if timeSinceRequest < workRequest.initialDelay {
+                try await sleep(workRequest.initialDelay - timeSinceRequest)
             }
         }
 

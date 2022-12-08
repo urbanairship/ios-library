@@ -4,28 +4,13 @@
 class DeviceRegistrationEvent: NSObject, Event {
 
     init(
-        channel: ChannelProtocol?,
-        push: InternalPushProtocol?,
-        privacyManager: PrivacyManager?
+        channelID: String?,
+        deviceToken: String
     ) {
-
         var data: [AnyHashable: Any] = [:]
-        if privacyManager?.isEnabled(.push) == true {
-            data["device_token"] = push?.deviceToken
-        }
-
-        data["channel_id"] = channel?.identifier
-
+        data["device_token"] = deviceToken
+        data["channel_id"] = channelID
         self._data = data
-    }
-
-    @objc
-    public override convenience init() {
-        self.init(
-            channel: Airship.channel,
-            push: Airship.push,
-            privacyManager: Airship.shared.privacyManager
-        )
     }
 
     @objc
