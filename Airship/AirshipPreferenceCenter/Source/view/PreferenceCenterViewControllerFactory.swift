@@ -7,19 +7,22 @@ import UIKit
 /// View factories for Preference Center view controllers
 @objc(UAPreferenceCenterViewControllerFactory)
 public class PreferenceCenterViewControllerFactory: NSObject {
-
+        
     /// Makes a view controller for the given Preference Center ID.
     /// - Parameters:
     ///     - preferenceCenterID: The preferenceCenterID.
+    ///     - dismissAction: Optional action to dismiss the view controller.
     /// - Returns: A view controller.
     @objc
-    public class func makeViewController(preferenceCenterID: String)
-        -> UIViewController
-    {
+    public class func makeViewController(
+        preferenceCenterID: String,
+        dismissAction: (() -> Void)? = nil
+    )-> UIViewController {
         let view = PreferenceCenterView(preferenceCenterID: preferenceCenterID)
         return makeViewController(
             view: view,
-            preferenceCenterTheme: nil
+            preferenceCenterTheme: nil,
+            dismissAction: dismissAction
         )
     }
 
@@ -47,15 +50,18 @@ public class PreferenceCenterViewControllerFactory: NSObject {
     /// - Parameters:
     ///     - preferenceCenterID: The preferenceCenterID.
     ///     - preferenceCenterTheme: The theme.
+    ///     - dismissAction: Optional action to dismiss the view controller.
     /// - Returns: A view controller.
     public class func makeViewController(
         preferenceCenterID: String,
-        preferenceCenterTheme: PreferenceCenterTheme
+        preferenceCenterTheme: PreferenceCenterTheme? = nil,
+        dismissAction: (() -> Void)? = nil
     ) -> UIViewController {
         let view = PreferenceCenterView(preferenceCenterID: preferenceCenterID)
         return makeViewController(
             view: view,
-            preferenceCenterTheme: preferenceCenterTheme
+            preferenceCenterTheme: preferenceCenterTheme,
+            dismissAction: dismissAction
         )
     }
 
@@ -63,15 +69,21 @@ public class PreferenceCenterViewControllerFactory: NSObject {
     /// - Parameters:
     ///     - preferenceCenterID: The Preference Center view.
     ///     - preferenceCenterTheme: The theme.
+    ///     - dismissAction: Optional action to dismiss the view controller.
     /// - Returns: A view controller.
     public class func makeViewController(
         view: PreferenceCenterView,
-        preferenceCenterTheme: PreferenceCenterTheme?
+        preferenceCenterTheme: PreferenceCenterTheme?,
+        dismissAction: (() -> Void)? = nil
     ) -> UIViewController {
 
         let theme = preferenceCenterTheme ?? PreferenceCenterTheme()
         return PreferenceCenterViewController(
-            rootView: view.preferenceCenterTheme(theme),
+            rootView: view
+                .preferenceCenterTheme(theme)
+                .addPreferenceCenterDismissAction(
+                    action: dismissAction
+                ),
             backgroundColor: theme.viewController?.backgroundColor
         )
     }

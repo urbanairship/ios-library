@@ -248,9 +248,6 @@ extension PreferenceCenter {
         theme: PreferenceCenterTheme?
     ) -> Disposable {
 
-        let navController = makeNavController(
-            theme: theme?.viewController?.navigationBar
-        )
         var window: UIWindow? = UIWindow(windowScene: scene)
 
         let disposable = Disposable {
@@ -261,79 +258,19 @@ extension PreferenceCenter {
 
         var viewController: UIViewController!
 
-        viewController =
-            PreferenceCenterViewControllerFactory.makeViewController(
-                view: PreferenceCenterView(
-                    preferenceCenterID: preferenceCenterID
-                ),
-                preferenceCenterTheme: theme
-            )
-
-        navController.pushViewController(viewController, animated: false)
-        viewController.navigationItem.leftBarButtonItem = DoneBarButtonItem {
-            disposable.dispose()
-        }
+        viewController = PreferenceCenterViewControllerFactory.makeViewController(
+            view: PreferenceCenterView(
+                preferenceCenterID: preferenceCenterID
+            ),
+            preferenceCenterTheme: theme,
+            dismissAction: {
+                disposable.dispose()
+            })
 
         window?.windowLevel = .alert
         window?.makeKeyAndVisible()
-        window?.rootViewController = navController
+        window?.rootViewController = viewController
 
         return disposable
-    }
-
-    private func makeNavController(theme: PreferenceCenterTheme.NavigationBar?)
-        -> UINavigationController
-    {
-        let navController = UINavigationController(nibName: nil, bundle: nil)
-        navController.modalTransitionStyle =
-            UIModalTransitionStyle.crossDissolve
-        navController.modalPresentationStyle =
-            UIModalPresentationStyle.fullScreen
-
-        let appearance = UINavigationBarAppearance()
-        appearance.configureWithDefaultBackground()
-
-        var titleTextAttributes: [NSAttributedString.Key: Any] = [:]
-        titleTextAttributes[.font] = theme?.titleFont
-        titleTextAttributes[.foregroundColor] = theme?.titleColor
-
-        if let tintColor = theme?.tintColor {
-            navController.navigationBar.tintColor = tintColor
-        }
-
-        if let backgroundColor = theme?.backgroundColor {
-            navController.navigationBar.backgroundColor = backgroundColor
-            appearance.backgroundColor = backgroundColor
-        }
-
-        if !titleTextAttributes.isEmpty {
-            navController.navigationBar.titleTextAttributes =
-                titleTextAttributes
-            appearance.titleTextAttributes = titleTextAttributes
-        }
-
-        navController.navigationBar.standardAppearance = appearance
-        navController.navigationBar.scrollEdgeAppearance = appearance
-        return navController
-    }
-}
-
-class DoneBarButtonItem: UIBarButtonItem {
-    typealias ActionHandler = () -> Void
-
-    private var actionHandler: ActionHandler?
-
-    convenience init(actionHandler: ActionHandler?) {
-        self.init(
-            barButtonSystemItem: .done,
-            target: nil,
-            action: #selector(done)
-        )
-        target = self
-        self.actionHandler = actionHandler
-    }
-
-    @objc func done() {
-        actionHandler?()
     }
 }

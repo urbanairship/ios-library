@@ -217,9 +217,6 @@ extension _PreferenceCenterThemeObjc.NavigationBar {
     fileprivate func toNavigationBar() -> PreferenceCenterTheme.NavigationBar {
         return PreferenceCenterTheme.NavigationBar(
             title: self.title,
-            titleFont: self.titleFont,
-            titleColor: self.titleColor,
-            tintColor: self.tintColor,
             backgroundColor: self.backgroundColor
         )
     }

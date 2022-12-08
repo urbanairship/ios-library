@@ -230,24 +230,6 @@ extension PreferenceCenterThemeLoader.FontConfig {
             size: fontSize
         )
     }
-
-    fileprivate func toUIFont() throws -> UIFont? {
-        guard
-            let fontSize = Double(
-                fontSize.trimmingCharacters(in: .whitespaces)
-            ),
-            fontSize > 0.0
-        else {
-            throw AirshipErrors.error(
-                "Font size must represent a double greater than 0"
-            )
-        }
-
-        return UIFont(
-            name: fontName.trimmingCharacters(in: .whitespaces),
-            size: fontSize
-        )
-    }
 }
 
 extension PreferenceCenterThemeLoader.Config.TextAppearance {
@@ -273,9 +255,6 @@ extension PreferenceCenterThemeLoader.Config.NavigationBar {
     func toNavigationBar() throws -> PreferenceCenterTheme.NavigationBar {
         return PreferenceCenterTheme.NavigationBar(
             title: self.title,
-            titleFont: try self.titleFont?.toUIFont(),
-            titleColor: self.titleColor?.toUIColor(),
-            tintColor: self.tintColor?.toUIColor(),
             backgroundColor: self.backgroundColor?.toUIColor()
         )
     }
@@ -426,9 +405,6 @@ extension PreferenceCenterThemeLoader.LegacyConfig {
             viewController: PreferenceCenterTheme.ViewController(
                 navigationBar: PreferenceCenterTheme.NavigationBar(
                     title: self.title,
-                    titleFont: try self.titleFont?.toUIFont(),
-                    titleColor: self.titleColor?.toUIColor(),
-                    tintColor: self.tintColor?.toUIColor(),
                     backgroundColor: self.navigationBarColor?.toUIColor()
                 ),
                 backgroundColor: self.backgroundColor?.toUIColor()

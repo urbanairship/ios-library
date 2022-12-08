@@ -18,7 +18,7 @@ public enum PreferenceCenterViewPhase {
 }
 
 /// Preference center view
-public struct PreferenceCenterView: View {
+public struct PreferenceCenterList: View {
 
     @StateObject
     private var loader: PreferenceCenterViewLoader =
@@ -205,7 +205,6 @@ public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
             .padding(16)
             Spacer()
         }
-        .navigationBarTitle(title ?? "ua_preference_center_title".localized)
     }
 
     @ViewBuilder
@@ -339,9 +338,104 @@ struct PreferenceCenterView_Previews: PreviewProvider {
             ]
         )
 
-        PreferenceCenterView(preferenceCenterID: "PREVIEW") {
+        PreferenceCenterList(preferenceCenterID: "PREVIEW") {
             preferenceCenterID in
             return .loaded(PreferenceCenterState(config: config))
+        }
+    }
+}
+
+/// Preference Center View
+public struct PreferenceCenterView: View {
+
+    @Environment(\.preferenceCenterDismissAction)
+    private var dismissAction: (() -> Void)?
+
+    @Environment(\.airshipPreferenceCenterTheme)
+    private var theme
+    
+    private let preferenceCenterID: String
+
+    /// Default constructor
+    /// - Parameters:
+    ///     - preferenceCenterID: The preference center ID
+    public init(preferenceCenterID: String) {
+        self.preferenceCenterID = preferenceCenterID
+    }
+    
+    @ViewBuilder
+    private func makeBackButton(_ theme: PreferenceCenterTheme) -> some View {
+        Button(action: {
+            self.dismissAction?()
+        }) {
+            let backImage = Image(systemName: "chevron.backward")
+                .scaleEffect(0.68)
+                .font(Font.title.weight(.medium))
+            if let backgroundColor = theme.viewController?.navigationBar?.backgroundColor {
+                backImage
+                    .foregroundColor(Color(backgroundColor))
+            } else {
+                backImage
+            }
+        }
+    }
+
+    @ViewBuilder
+    public var body: some View {
+            
+        let content = PreferenceCenterList(preferenceCenterID: preferenceCenterID)
+            .airshipApplyIf(self.dismissAction != nil) { view in
+                view.toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        makeBackButton(theme)
+                    }
+                }
+            }
+            .navigationTitle(
+                theme.viewController?.navigationBar?.title ?? "ua_preference_center_title".localized
+            )
+        if #available(iOS 16.0, *) {
+            NavigationStack {
+                content
+            }
+        } else {
+            NavigationView {
+                content
+            }
+            .navigationViewStyle(.stack)
+        }
+    }
+}
+
+
+@available(iOS 13.0.0, tvOS 13.0, *)
+private struct PreferenceCenterDismissActionKey: EnvironmentKey {
+    static let defaultValue: (() -> Void)? = nil
+}
+
+@available(iOS 13.0.0, tvOS 13.0, *)
+extension EnvironmentValues {
+    var preferenceCenterDismissAction: (() -> Void)? {
+        get { self[PreferenceCenterDismissActionKey.self] }
+        set { self[PreferenceCenterDismissActionKey.self] = newValue }
+    }
+}
+
+@available(iOS 13.0.0, tvOS 13.0, *)
+extension View {
+    func addPreferenceCenterDismissAction(action: (() -> Void)?) -> some View {
+        environment(\.preferenceCenterDismissAction, action)
+    }
+    
+    @ViewBuilder
+    func airshipApplyIf<Content: View>(
+        _ predicate: @autoclosure () -> Bool,
+        transform: (Self) -> Content
+    ) -> some View {
+        if predicate() {
+            transform(self)
+        } else {
+            self
         }
     }
 }

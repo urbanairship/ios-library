@@ -36,15 +36,6 @@ public struct PreferenceCenterTheme: Equatable {
         /// The default title
         public var title: String? = nil
 
-        /// Navigation bar title font
-        public var titleFont: UIFont? = nil
-
-        /// Navigation bar title color
-        public var titleColor: UIColor? = nil
-
-        /// Navigation bar tint color
-        public var tintColor: UIColor? = nil
-
         /// Navigation bar background color
         public var backgroundColor: UIColor? = nil
     }
