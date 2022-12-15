@@ -61,11 +61,24 @@ build-sample-watchos: setup
 	bash ./scripts/build_sample_watchos.sh "watchOSSample_WatchKit_Extension" "${derived_data_path}"
 
 .PHONY: test
-test: setup test-core test-content-extension test-service-extension test-packages
+test: setup test-core test-preference-center test-message-center test-automation test-content-extension test-service-extension test-packages
 
 .PHONY: test-core
 test-core: setup
 	bash ./scripts/run_tests.sh AirshipCore "${derived_data_path}"
+
+.PHONY: test-message-center
+test-message-center: setup
+	bash ./scripts/run_tests.sh AirshipMessageCenter "${derived_data_path}"
+
+.PHONY: test-preference-center
+test-preference-center: setup
+	bash ./scripts/run_tests.sh AirshipPreferenceCenter "${derived_data_path}"
+
+.PHONY: test-automation
+test-automation: setup
+	bash ./scripts/run_tests.sh AirshipAutomationSwift "${derived_data_path}"
+
 
 .PHONY: test-content-extension
 test-content-extension: setup

@@ -34,17 +34,6 @@ class PreferenceThemeLoaderTest: XCTestCase {
         XCTAssertNotNil(emptyTheme)
     }
 
-    func testLoadInvalidPlist() throws {
-        let bundle = Bundle(for: Self.self)
-
-        XCTAssertThrowsError(
-            try PreferenceCenterThemeLoader.fromPlist(
-                "TestThemeInvalid",
-                bundle: bundle
-            )
-        )
-    }
-
     func testInvalidFile() throws {
         let bundle = Bundle(for: Self.self)
 
