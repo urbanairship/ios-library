@@ -91,19 +91,16 @@ completionHandler:(nonnull void (^)(UAInAppMessagePrepareResult))completionHandl
             return [self cacheableURLFromMediaInfo:modalDisplayContent.media];
         }
         case UAInAppMessageDisplayTypeAirshipLayout: {
-            if (@available(iOS 13.0.0, *)) {
-                UAInAppMessageAirshipLayoutDisplayContent *displayContent = (UAInAppMessageAirshipLayoutDisplayContent *)message.displayContent;
-                
-                if (displayContent != nil) {
-                    NSMutableSet *images = [NSMutableSet set];
-                    for (UAURLInfo *info in [UAThomas urlsWithJson:displayContent.layout error:nil]) {
-                        if (info.urlType == UrlTypesImage) {
-                            [images addObject:info.url];
-                        }
+            UAInAppMessageAirshipLayoutDisplayContent *displayContent = (UAInAppMessageAirshipLayoutDisplayContent *)message.displayContent;
+
+            if (displayContent != nil) {
+                NSMutableSet *images = [NSMutableSet set];
+                for (UAURLInfo *info in [UAThomas urlsWithJson:displayContent.layout error:nil]) {
+                    if (info.urlType == UrlTypesImage) {
+                        [images addObject:info.url];
                     }
-                    return images;
-                    
                 }
+                return images;
             }
         }
         case UAInAppMessageDisplayTypeHTML:

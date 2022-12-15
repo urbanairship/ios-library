@@ -5,7 +5,7 @@ import Foundation
 /// Image provider to extend image loading.
 /// - Note: for internal use only.  :nodoc:
 @objc(UAImageProvider)
-public protocol ImageProvider {
+public protocol AirshipImageProvider {
 
     /// Gets the an image.
     /// - Parameters:

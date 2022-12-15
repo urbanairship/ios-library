@@ -4,7 +4,6 @@ import Combine
 import Foundation
 import SwiftUI
 
-@available(iOS 13.0.0, tvOS 13.0, *)
 internal struct FormSubmissionEnableBehavior: ViewModifier {
     let onApply: ((Bool, EnableBehavior) -> Void)?
 
@@ -22,7 +21,6 @@ internal struct FormSubmissionEnableBehavior: ViewModifier {
     }
 }
 
-@available(iOS 13.0.0, tvOS 13.0, *)
 internal struct ValidFormButtonEnableBehavior: ViewModifier {
     let onApply: ((Bool, EnableBehavior) -> Void)?
 
@@ -40,7 +38,7 @@ internal struct ValidFormButtonEnableBehavior: ViewModifier {
     }
 }
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 internal struct PagerNextButtonEnableBehavior: ViewModifier {
     let onApply: ((Bool, EnableBehavior) -> Void)?
 
@@ -60,7 +58,7 @@ internal struct PagerNextButtonEnableBehavior: ViewModifier {
     }
 }
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 struct PagerPreviousButtonEnableBehavior: ViewModifier {
     let onApply: ((Bool, EnableBehavior) -> Void)?
 
@@ -78,7 +76,7 @@ struct PagerPreviousButtonEnableBehavior: ViewModifier {
     }
 }
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 internal struct AggregateEnableBehavior: ViewModifier {
     let behaviors: [EnableBehavior]
     let onApply: ((Bool) -> Void)
@@ -102,7 +100,7 @@ internal struct AggregateEnableBehavior: ViewModifier {
     }
 }
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 extension View {
     @ViewBuilder
     fileprivate func addBehaviorModifiers(

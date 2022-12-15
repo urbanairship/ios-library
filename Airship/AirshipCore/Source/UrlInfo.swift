@@ -26,7 +26,7 @@ public class URLInfo: NSObject {
     }
 }
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 extension Layout {
 
     func urlInfos() -> [URLInfo] {

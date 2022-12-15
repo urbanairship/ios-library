@@ -5,7 +5,6 @@ import SwiftUI
 
 /// Airship rendering engine.
 /// - Note: for internal use only.  :nodoc:
-@available(iOS 13.0.0, tvOS 13.0, *)
 @objc(UAThomas)
 public class Thomas: NSObject {
 
@@ -216,7 +215,6 @@ public class Thomas: NSObject {
 
 /// Airship rendering engine extensions.
 /// - Note: for internal use only.  :nodoc:
-@available(iOS 13.0.0, tvOS 13.0, *)
 @objc(UAThomasExtensions)
 public class ThomasExtensions: NSObject {
 
@@ -224,18 +222,18 @@ public class ThomasExtensions: NSObject {
     let nativeBridgeExtension: NativeBridgeExtensionDelegate?
     #endif
 
-    let imageProvider: ImageProvider?
+    let imageProvider: AirshipImageProvider?
 
     #if os(tvOS) || os(watchOS)
     @objc
-    public init(imageProvider: ImageProvider? = nil) {
+    public init(imageProvider: AirshipImageProvider? = nil) {
         self.imageProvider = imageProvider
     }
     #else
     @objc
     public init(
         nativeBridgeExtension: NativeBridgeExtensionDelegate? = nil,
-        imageProvider: ImageProvider? = nil
+        imageProvider: AirshipImageProvider? = nil
     ) {
         self.nativeBridgeExtension = nativeBridgeExtension
         self.imageProvider = imageProvider

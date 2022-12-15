@@ -4,7 +4,7 @@ import Foundation
 import SwiftUI
 
 /// Media view.
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 struct Media: View {
 
     let model: MediaModel
@@ -54,7 +54,6 @@ struct Media: View {
     }
 }
 
-@available(iOS 13.0.0, tvOS 13.0.0, *)
 extension Image {
 
     @ViewBuilder

@@ -66,7 +66,6 @@ struct CreateSMSChannelView: View {
     }
 }
 
-@available(iOS 13.0.0, *)
 struct CreateSMSChannelView_Previews: PreviewProvider {
     static var previews: some View {
         CreateSMSChannelView()

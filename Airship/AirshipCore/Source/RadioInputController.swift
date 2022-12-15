@@ -2,7 +2,7 @@ import Combine
 import Foundation
 import SwiftUI
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 struct RadioInputController: View {
     let model: RadioInputControllerModel
     let constraints: ViewConstraints

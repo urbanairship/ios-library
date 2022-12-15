@@ -162,6 +162,8 @@
 		6E062D092716571F001A74A1 /* LabelButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E062D082716571F001A74A1 /* LabelButton.swift */; };
 		6E062D0B271657BB001A74A1 /* ThomasViewModelExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E062D0A271657BB001A74A1 /* ThomasViewModelExtensions.swift */; };
 		6E062D0D2718B505001A74A1 /* ViewConstraints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E062D0C2718B505001A74A1 /* ViewConstraints.swift */; };
+		6E0B8723294A92F10064B7BD /* UAPadding.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E88EF032703D9B100469E2A /* UAPadding.m */; };
+		6E0B8724294A93780064B7BD /* UAPadding.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E88EF0B2703D9EC00469E2A /* UAPadding.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E14C97928B3FC8400A55E65 /* AirshipToast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E14C97828B3FC8400A55E65 /* AirshipToast.swift */; };
 		6E14C97D28B41EDB00A55E65 /* NamedUserDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E14C97C28B41EDB00A55E65 /* NamedUserDebugView.swift */; };
 		6E14C97F28B424C000A55E65 /* PrviacyManagerDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E14C97E28B424C000A55E65 /* PrviacyManagerDebugView.swift */; };
@@ -554,8 +556,6 @@
 		6E6ED16A2683DBC300A2CBD0 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1542683DBC300A2CBD0 /* NetworkMonitor.swift */; };
 		6E6ED16B2683DBC300A2CBD0 /* SystemVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1552683DBC300A2CBD0 /* SystemVersion.swift */; };
 		6E6ED16C2683DBC300A2CBD0 /* SystemVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1552683DBC300A2CBD0 /* SystemVersion.swift */; };
-		6E6ED16D2683DBC300A2CBD0 /* BespokeCloseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1562683DBC300A2CBD0 /* BespokeCloseView.swift */; };
-		6E6ED16E2683DBC300A2CBD0 /* BespokeCloseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1562683DBC300A2CBD0 /* BespokeCloseView.swift */; };
 		6E6ED1702683F14C00A2CBD0 /* TestSystemVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED16F2683F14B00A2CBD0 /* TestSystemVersion.swift */; };
 		6E6ED172268448EC00A2CBD0 /* TestNetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED171268448EC00A2CBD0 /* TestNetworkMonitor.swift */; };
 		6E6EF9E7270625C400D30C35 /* EventTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6EF9E6270625C400D30C35 /* EventTest.swift */; };
@@ -795,8 +795,8 @@
 		6E87BE1426E28F570005D20D /* AirshipInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BE1226E28F570005D20D /* AirshipInstance.swift */; };
 		6E87BE1626E29BC90005D20D /* TestAirshipInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BE1526E29BC90005D20D /* TestAirshipInstance.swift */; };
 		6E87BE1B26E2C59D0005D20D /* TestAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BE1726E2C5940005D20D /* TestAnalytics.swift */; };
-		6E88739A2763D8AB00AC248A /* ImageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8873992763D8AB00AC248A /* ImageProvider.swift */; };
-		6E88739B2763D8B200AC248A /* ImageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8873992763D8AB00AC248A /* ImageProvider.swift */; };
+		6E88739A2763D8AB00AC248A /* AirshipImageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8873992763D8AB00AC248A /* AirshipImageProvider.swift */; };
+		6E88739B2763D8B200AC248A /* AirshipImageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8873992763D8AB00AC248A /* AirshipImageProvider.swift */; };
 		6E887CD1272C5E8400E83363 /* CheckboxState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E887CD0272C5E8400E83363 /* CheckboxState.swift */; };
 		6E887CD3272C5F5000E83363 /* Checkbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E887CD2272C5F5000E83363 /* Checkbox.swift */; };
 		6E887CD5272C5F5A00E83363 /* CheckboxController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E887CD4272C5F5A00E83363 /* CheckboxController.swift */; };
@@ -804,12 +804,8 @@
 		6E887CD7272C602B00E83363 /* CheckboxController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E887CD4272C5F5A00E83363 /* CheckboxController.swift */; };
 		6E88EF042703D9B100469E2A /* UADisposable.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E88EF022703D9B100469E2A /* UADisposable.m */; };
 		6E88EF052703D9B100469E2A /* UADisposable.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E88EF022703D9B100469E2A /* UADisposable.m */; };
-		6E88EF062703D9B100469E2A /* UAPadding.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E88EF032703D9B100469E2A /* UAPadding.m */; };
-		6E88EF072703D9B100469E2A /* UAPadding.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E88EF032703D9B100469E2A /* UAPadding.m */; };
 		6E88EF092703D9C700469E2A /* UADisposable.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E88EF082703D9C700469E2A /* UADisposable.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E88EF0A2703D9C700469E2A /* UADisposable.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E88EF082703D9C700469E2A /* UADisposable.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E88EF0C2703D9EC00469E2A /* UAPadding.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E88EF0B2703D9EC00469E2A /* UAPadding.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E88EF0D2703D9EC00469E2A /* UAPadding.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E88EF0B2703D9EC00469E2A /* UAPadding.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E8B4BF12888606D00AA336E /* ChannelTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8B4BEF2888606400AA336E /* ChannelTest.swift */; };
 		6E8BF45126852E4B009A8BD4 /* TaskRequestOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8BF44C26852E4A009A8BD4 /* TaskRequestOptions.swift */; };
 		6E8BF45226852E4B009A8BD4 /* TaskManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8BF44D26852E4B009A8BD4 /* TaskManager.swift */; };
@@ -1129,8 +1125,8 @@
 		A658DE1227280B3400007672 /* ImageButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE0A2727020100007672 /* ImageButton.swift */; };
 		A658DE192728498900007672 /* AirshipWebview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE182728498900007672 /* AirshipWebview.swift */; };
 		A658DE1A2728498900007672 /* AirshipWebview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE182728498900007672 /* AirshipWebview.swift */; };
-		A658DE2B272AFB0400007672 /* ImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE2A272AFB0400007672 /* ImageLoader.swift */; };
-		A658DE2C272AFB0400007672 /* ImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE2A272AFB0400007672 /* ImageLoader.swift */; };
+		A658DE2B272AFB0400007672 /* AirshipImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE2A272AFB0400007672 /* AirshipImageLoader.swift */; };
+		A658DE2C272AFB0400007672 /* AirshipImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE2A272AFB0400007672 /* AirshipImageLoader.swift */; };
 		A66613952875EB31006E762C /* UAActionResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E43217426EA84BE009228AB /* UAActionResult.m */; };
 		A66C656427C93777006B7F2B /* UADeferredScheduleRetryRules+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = A66C656227C93777006B7F2B /* UADeferredScheduleRetryRules+Internal.h */; };
 		A66C656527C93777006B7F2B /* UADeferredScheduleRetryRules.m in Sources */ = {isa = PBXBuildFile; fileRef = A66C656327C93777006B7F2B /* UADeferredScheduleRetryRules.m */; };
@@ -1143,8 +1139,8 @@
 		A67229C2281A9E330033F54D /* UADefaultActionsTvOS.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6E411B6B2538C4E500FEE4E8 /* UADefaultActionsTvOS.plist */; };
 		A67229C3281A9E330033F54D /* UANativeBridge in Resources */ = {isa = PBXBuildFile; fileRef = 6E411B6C2538C4E500FEE4E8 /* UANativeBridge */; };
 		A67229C4281A9E330033F54D /* UANotificationCategories.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6E411B6D2538C4E600FEE4E8 /* UANotificationCategories.plist */; };
-		A67229C5281A9E630033F54D /* ImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE2A272AFB0400007672 /* ImageLoader.swift */; };
-		A67229C6281A9E630033F54D /* ImageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8873992763D8AB00AC248A /* ImageProvider.swift */; };
+		A67229C5281A9E630033F54D /* AirshipImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE2A272AFB0400007672 /* AirshipImageLoader.swift */; };
+		A67229C6281A9E630033F54D /* AirshipImageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8873992763D8AB00AC248A /* AirshipImageProvider.swift */; };
 		A67229C7281A9E630033F54D /* Thomas.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF02DEF2714EB500008B6C9 /* Thomas.swift */; };
 		A67229C8281A9E630033F54D /* ThomasDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E46A27E272B68660089CDE3 /* ThomasDelegate.swift */; };
 		A67229C9281A9E630033F54D /* ThomasViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED80799273DA56000D1F455 /* ThomasViewController.swift */; };
@@ -1355,7 +1351,6 @@
 		A6722AA2281A9EDA0033F54D /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E664BE926C6DB7500A2C8E5 /* Utils.swift */; };
 		A6722AA3281A9EDA0033F54D /* AudienceUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB11C8C2698C50F00DC698F /* AudienceUtils.swift */; };
 		A6722AA4281A9EDA0033F54D /* Base64.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED14D2683DBC200A2CBD0 /* Base64.swift */; };
-		A6722AA5281A9EDA0033F54D /* BespokeCloseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1562683DBC300A2CBD0 /* BespokeCloseView.swift */; };
 		A6722AA6281A9EDA0033F54D /* BeveledLoadingIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED14E2683DBC200A2CBD0 /* BeveledLoadingIndicator.swift */; };
 		A6722AA7281A9EDA0033F54D /* UACoreData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1532683DBC300A2CBD0 /* UACoreData.swift */; };
 		A6722AA8281A9EDA0033F54D /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1542683DBC300A2CBD0 /* NetworkMonitor.swift */; };
@@ -1383,9 +1378,7 @@
 		A6722ACB281A9FEE0033F54D /* UACompression.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E43217026EA84BE009228AB /* UACompression.m */; };
 		A6722ACD281A9FEE0033F54D /* UAJavaScriptCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E43217326EA84BE009228AB /* UAJavaScriptCommand.m */; };
 		A6722ACF281A9FEE0033F54D /* UASwizzler.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E43216D26EA84BE009228AB /* UASwizzler.m */; };
-		A6722AD0281A9FFB0033F54D /* UAPadding.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E88EF032703D9B100469E2A /* UAPadding.m */; };
 		A6722AD1281A9FFB0033F54D /* UAActionArguments.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E43216F26EA84BE009228AB /* UAActionArguments.m */; };
-		A6722AD3281AA05A0033F54D /* UAPadding.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E88EF0B2703D9EC00469E2A /* UAPadding.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6722AD4281AA05A0033F54D /* UADisposable.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E88EF082703D9C700469E2A /* UADisposable.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6722AD5281AA05A0033F54D /* AirshipBasement.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213F26EA84A5009228AB /* AirshipBasement.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6722AD6281AA05A0033F54D /* AirshipBasementLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213326EA84A4009228AB /* AirshipBasementLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -2188,7 +2181,6 @@
 		6E6ED1532683DBC300A2CBD0 /* UACoreData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UACoreData.swift; sourceTree = "<group>"; };
 		6E6ED1542683DBC300A2CBD0 /* NetworkMonitor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
 		6E6ED1552683DBC300A2CBD0 /* SystemVersion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SystemVersion.swift; sourceTree = "<group>"; };
-		6E6ED1562683DBC300A2CBD0 /* BespokeCloseView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BespokeCloseView.swift; sourceTree = "<group>"; };
 		6E6ED16F2683F14B00A2CBD0 /* TestSystemVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSystemVersion.swift; sourceTree = "<group>"; };
 		6E6ED171268448EC00A2CBD0 /* TestNetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestNetworkMonitor.swift; sourceTree = "<group>"; };
 		6E6EF9E6270625C400D30C35 /* EventTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventTest.swift; sourceTree = "<group>"; };
@@ -2234,14 +2226,14 @@
 		6E87BE1526E29BC90005D20D /* TestAirshipInstance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAirshipInstance.swift; sourceTree = "<group>"; };
 		6E87BE1726E2C5940005D20D /* TestAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAnalytics.swift; sourceTree = "<group>"; };
 		6E8873952762A77400AC248A /* UAAutomation 9.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAAutomation 9.xcdatamodel"; sourceTree = "<group>"; };
-		6E8873992763D8AB00AC248A /* ImageProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageProvider.swift; sourceTree = "<group>"; };
+		6E8873992763D8AB00AC248A /* AirshipImageProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipImageProvider.swift; sourceTree = "<group>"; };
 		6E887CD0272C5E8400E83363 /* CheckboxState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckboxState.swift; sourceTree = "<group>"; };
 		6E887CD2272C5F5000E83363 /* Checkbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Checkbox.swift; sourceTree = "<group>"; };
 		6E887CD4272C5F5A00E83363 /* CheckboxController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckboxController.swift; sourceTree = "<group>"; };
 		6E88EF022703D9B100469E2A /* UADisposable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UADisposable.m; path = Internal/UADisposable.m; sourceTree = "<group>"; };
-		6E88EF032703D9B100469E2A /* UAPadding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAPadding.m; path = Internal/UAPadding.m; sourceTree = "<group>"; };
+		6E88EF032703D9B100469E2A /* UAPadding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPadding.m; sourceTree = "<group>"; };
 		6E88EF082703D9C700469E2A /* UADisposable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UADisposable.h; path = Public/UADisposable.h; sourceTree = "<group>"; };
-		6E88EF0B2703D9EC00469E2A /* UAPadding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAPadding.h; path = Public/UAPadding.h; sourceTree = "<group>"; };
+		6E88EF0B2703D9EC00469E2A /* UAPadding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPadding.h; sourceTree = "<group>"; };
 		6E8A54B9236243A3004AE2A0 /* UAAutomationSDKModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAutomationSDKModule.m; sourceTree = "<group>"; };
 		6E8A54BA236243A3004AE2A0 /* UAAutomationSDKModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAAutomationSDKModule.h; sourceTree = "<group>"; };
 		6E8A54D523639363004AE2A0 /* UAInAppAudienceManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInAppAudienceManager.m; sourceTree = "<group>"; };
@@ -2504,7 +2496,7 @@
 		A65070DC275FC6FD00BA22E4 /* UAInAppMessageEventTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageEventTest.m; sourceTree = "<group>"; };
 		A658DE0A2727020100007672 /* ImageButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageButton.swift; sourceTree = "<group>"; };
 		A658DE182728498900007672 /* AirshipWebview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipWebview.swift; sourceTree = "<group>"; };
-		A658DE2A272AFB0400007672 /* ImageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLoader.swift; sourceTree = "<group>"; };
+		A658DE2A272AFB0400007672 /* AirshipImageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipImageLoader.swift; sourceTree = "<group>"; };
 		A66C656227C93777006B7F2B /* UADeferredScheduleRetryRules+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UADeferredScheduleRetryRules+Internal.h"; sourceTree = "<group>"; };
 		A66C656327C93777006B7F2B /* UADeferredScheduleRetryRules.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UADeferredScheduleRetryRules.m; sourceTree = "<group>"; };
 		A67229B228199CEF0033F54D /* AirshipCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2826,6 +2818,7 @@
 		1BAE376524F559950095C6E3 /* Public */ = {
 			isa = PBXGroup;
 			children = (
+				6E88EF0B2703D9EC00469E2A /* UAPadding.h */,
 				8449BB5125F7AD99004F4A49 /* UADeferredSchedule.h */,
 				1B70A14124F7B85D003209E0 /* AirshipAutomationLib.h */,
 				6EA734B024B7AA600012B737 /* UAInAppAutomation.h */,
@@ -3595,7 +3588,6 @@
 				6E664BE926C6DB7500A2C8E5 /* Utils.swift */,
 				6EB11C8C2698C50F00DC698F /* AudienceUtils.swift */,
 				6E6ED14D2683DBC200A2CBD0 /* Base64.swift */,
-				6E6ED1562683DBC300A2CBD0 /* BespokeCloseView.swift */,
 				6E6ED14E2683DBC200A2CBD0 /* BeveledLoadingIndicator.swift */,
 				6E6ED1532683DBC300A2CBD0 /* UACoreData.swift */,
 				6E6ED1542683DBC300A2CBD0 /* NetworkMonitor.swift */,
@@ -3638,10 +3630,8 @@
 		6E43212926EA847D009228AB /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				6E88EF0B2703D9EC00469E2A /* UAPadding.h */,
 				6E88EF082703D9C700469E2A /* UADisposable.h */,
 				6E88EF022703D9B100469E2A /* UADisposable.m */,
-				6E88EF032703D9B100469E2A /* UAPadding.m */,
 				6E43213F26EA84A5009228AB /* AirshipBasement.h */,
 				6E43213326EA84A4009228AB /* AirshipBasementLib.h */,
 				6E43213C26EA84A5009228AB /* UAAction.h */,
@@ -3807,6 +3797,7 @@
 		6E8450BB237DFFB5007D3B1E /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				6E88EF032703D9B100469E2A /* UAPadding.m */,
 				6E4E5B4526E81EF600198175 /* NSDictionary+UAAdditions+Internal.h */,
 				6E4E5B4626E81EF700198175 /* NSDictionary+UAAdditions.m */,
 				6E4E5B4C26E81EF700198175 /* NSObject+UAAdditions+Internal.h */,
@@ -4098,8 +4089,8 @@
 		6E8873982763D80400AC248A /* Image Loading */ = {
 			isa = PBXGroup;
 			children = (
-				A658DE2A272AFB0400007672 /* ImageLoader.swift */,
-				6E8873992763D8AB00AC248A /* ImageProvider.swift */,
+				A658DE2A272AFB0400007672 /* AirshipImageLoader.swift */,
+				6E8873992763D8AB00AC248A /* AirshipImageProvider.swift */,
 			);
 			name = "Image Loading";
 			sourceTree = "<group>";
@@ -4886,7 +4877,6 @@
 				6E43216626EA84A5009228AB /* UAComponent.h in Headers */,
 				6E43218826EA84BE009228AB /* UASwizzler+Internal.h in Headers */,
 				6E43214A26EA84A5009228AB /* UAAppIntegrationDelegate.h in Headers */,
-				6E88EF0C2703D9EC00469E2A /* UAPadding.h in Headers */,
 				6E43216426EA84A5009228AB /* UAAction.h in Headers */,
 				6E43215226EA84A5009228AB /* AirshipBasementLib.h in Headers */,
 				6E43215E26EA84A5009228AB /* UAURLAllowListScope.h in Headers */,
@@ -4918,7 +4908,6 @@
 				6E43216726EA84A5009228AB /* UAComponent.h in Headers */,
 				6E43218926EA84BE009228AB /* UASwizzler+Internal.h in Headers */,
 				6E43214B26EA84A5009228AB /* UAAppIntegrationDelegate.h in Headers */,
-				6E88EF0D2703D9EC00469E2A /* UAPadding.h in Headers */,
 				6E43216526EA84A5009228AB /* UAAction.h in Headers */,
 				6E43215326EA84A5009228AB /* AirshipBasementLib.h in Headers */,
 				6E43215F26EA84A5009228AB /* UAURLAllowListScope.h in Headers */,
@@ -4941,6 +4930,7 @@
 				3CF62FB225883BEB0007502B /* UAAutomationNativeBridgeExtension+Internal.h in Headers */,
 				3CF5E81B25561FCC0074B2A0 /* UAOccurrence+Internal.h in Headers */,
 				6E8453C4237E0540007D3B1E /* UAInAppMessageHTMLDisplayContent.h in Headers */,
+				6E0B8724294A93780064B7BD /* UAPadding.h in Headers */,
 				6E8453C5237E0540007D3B1E /* UAInAppMessageHTMLAdapter.h in Headers */,
 				6E8453C6237E0540007D3B1E /* UAInAppMessageHTMLStyle.h in Headers */,
 				6E8453C7237E0540007D3B1E /* UAInAppMessageCustomDisplayContent.h in Headers */,
@@ -5092,7 +5082,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A6722AD3281AA05A0033F54D /* UAPadding.h in Headers */,
 				A6722AD4281AA05A0033F54D /* UADisposable.h in Headers */,
 				A6722AD8281AA05A0033F54D /* UAActionArguments.h in Headers */,
 				A6722AD7281AA05A0033F54D /* UAAction.h in Headers */,
@@ -5863,7 +5852,7 @@
 				6E91E45528EF423400B6F25E /* AirshipWorkContinuation.swift in Sources */,
 				6E92ECB1284ECE590038802D /* CachedList.swift in Sources */,
 				6E952923268B812000398B54 /* AccountEventTemplate.swift in Sources */,
-				A658DE2B272AFB0400007672 /* ImageLoader.swift in Sources */,
+				A658DE2B272AFB0400007672 /* AirshipImageLoader.swift in Sources */,
 				6EA5202327D1364E003011CA /* AirshipDateFormatter.swift in Sources */,
 				6E7DB38328ECDC41002725F6 /* LiveActivity.swift in Sources */,
 				6E91B45B268904D900DDB1A8 /* PushReceivedEvent.swift in Sources */,
@@ -5961,7 +5950,7 @@
 				6E6ED16B2683DBC300A2CBD0 /* SystemVersion.swift in Sources */,
 				6E299FDF28D14258001305A7 /* AirshipRequestSession.swift in Sources */,
 				6E7112A52880DACB004942E4 /* StateController.swift in Sources */,
-				6E88739A2763D8AB00AC248A /* ImageProvider.swift in Sources */,
+				6E88739A2763D8AB00AC248A /* AirshipImageProvider.swift in Sources */,
 				6EF27DD927306C9100548DA3 /* AirshipToggle.swift in Sources */,
 				6EB5158128A47BD700870C5A /* SubscriptionListEdit.swift in Sources */,
 				6E6ED15D2683DBC300A2CBD0 /* BeveledLoadingIndicator.swift in Sources */,
@@ -6049,7 +6038,6 @@
 				6EB11C872697ACBF00DC698F /* ContactOperation.swift in Sources */,
 				6E664BA526C4417400A2C8E5 /* ShareActionPredicate.swift in Sources */,
 				8401769A26C5725800373AF7 /* JSONUtils.swift in Sources */,
-				6E6ED16D2683DBC300A2CBD0 /* BespokeCloseView.swift in Sources */,
 				6E887CD1272C5E8400E83363 /* CheckboxState.swift in Sources */,
 				6E87BDB526DEE61F0005D20D /* ComponentDisableHelper.swift in Sources */,
 				3CA84ABA26DE257200A59685 /* AnalyticsProtocol.swift in Sources */,
@@ -6091,7 +6079,6 @@
 				6E43218626EA84BE009228AB /* UAActionResult.m in Sources */,
 				6E43217826EA84BE009228AB /* UASwizzler.m in Sources */,
 				6EF1934528380BA0005F192A /* UALegacyLoggingBridge.m in Sources */,
-				6E88EF062703D9B100469E2A /* UAPadding.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6107,7 +6094,6 @@
 				6E43218726EA84BE009228AB /* UAActionResult.m in Sources */,
 				6E43217926EA84BE009228AB /* UASwizzler.m in Sources */,
 				6EF1934628380BA0005F192A /* UALegacyLoggingBridge.m in Sources */,
-				6E88EF072703D9B100469E2A /* UAPadding.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6172,6 +6158,7 @@
 				6E845466237E1C62007D3B1E /* UARetriable.m in Sources */,
 				6E845417237E0575007D3B1E /* UAInAppReporting.m in Sources */,
 				6E4E5B4E26E81EF700198175 /* NSDictionary+UAAdditions.m in Sources */,
+				6E0B8723294A92F10064B7BD /* UAPadding.m in Sources */,
 				6ED80798273D9C3400D1F455 /* UAInAppMessageAirshipLayoutAdapter.m in Sources */,
 				6E845419237E0575007D3B1E /* UAInAppMessageResolution.m in Sources */,
 				6E4E5B5226E81EF700198175 /* UAAsyncOperation.m in Sources */,
@@ -6356,7 +6343,6 @@
 				A6722AA2281A9EDA0033F54D /* Utils.swift in Sources */,
 				A6722AA3281A9EDA0033F54D /* AudienceUtils.swift in Sources */,
 				A6722AA4281A9EDA0033F54D /* Base64.swift in Sources */,
-				A6722AA5281A9EDA0033F54D /* BespokeCloseView.swift in Sources */,
 				A6722AA6281A9EDA0033F54D /* BeveledLoadingIndicator.swift in Sources */,
 				A6722AA7281A9EDA0033F54D /* UACoreData.swift in Sources */,
 				A6722AA8281A9EDA0033F54D /* NetworkMonitor.swift in Sources */,
@@ -6499,8 +6485,8 @@
 				A6722A20281A9E830033F54D /* EnableFeatureActionPredicate.swift in Sources */,
 				A6722A21281A9E830033F54D /* FetchDeviceInfoAction.swift in Sources */,
 				A6722A22281A9E830033F54D /* FetchDeviceInfoActionPredicate.swift in Sources */,
-				A67229C5281A9E630033F54D /* ImageLoader.swift in Sources */,
-				A67229C6281A9E630033F54D /* ImageProvider.swift in Sources */,
+				A67229C5281A9E630033F54D /* AirshipImageLoader.swift in Sources */,
+				A67229C6281A9E630033F54D /* AirshipImageProvider.swift in Sources */,
 				A67229C7281A9E630033F54D /* Thomas.swift in Sources */,
 				A67229C8281A9E630033F54D /* ThomasDelegate.swift in Sources */,
 				A67229C9281A9E630033F54D /* ThomasViewController.swift in Sources */,
@@ -6573,7 +6559,6 @@
 			files = (
 				A66613952875EB31006E762C /* UAActionResult.m in Sources */,
 				A684358D285B67C800FB6394 /* UALegacyLoggingBridge.m in Sources */,
-				A6722AD0281A9FFB0033F54D /* UAPadding.m in Sources */,
 				A6722AD1281A9FFB0033F54D /* UAActionArguments.m in Sources */,
 				A6722AC9281A9FEE0033F54D /* UADisposable.m in Sources */,
 				A6722ACA281A9FEE0033F54D /* UAAutoIntegration.m in Sources */,
@@ -6841,7 +6826,7 @@
 				6E739D8026BB01C500BC6F6D /* ChannelBulkUpdateAPIClient.swift in Sources */,
 				6E91E45628EF423400B6F25E /* AirshipWorkContinuation.swift in Sources */,
 				6E92ECB2284ECE590038802D /* CachedList.swift in Sources */,
-				A658DE2C272AFB0400007672 /* ImageLoader.swift in Sources */,
+				A658DE2C272AFB0400007672 /* AirshipImageLoader.swift in Sources */,
 				6E15B72E26CF13BC0099C92D /* RemoteDataProvider.swift in Sources */,
 				6EA5202427D1364E003011CA /* AirshipDateFormatter.swift in Sources */,
 				6E7DB38428ECDC41002725F6 /* LiveActivity.swift in Sources */,
@@ -6939,7 +6924,7 @@
 				6E299FE028D14258001305A7 /* AirshipRequestSession.swift in Sources */,
 				6E7112A62880DACB004942E4 /* StateController.swift in Sources */,
 				6E664BBE26C46BC600A2C8E5 /* TagsActionPredicate.swift in Sources */,
-				6E88739B2763D8B200AC248A /* ImageProvider.swift in Sources */,
+				6E88739B2763D8B200AC248A /* AirshipImageProvider.swift in Sources */,
 				6E952930268BBD7D00398B54 /* RetailEventTemplate.swift in Sources */,
 				6E887CD7272C602B00E83363 /* CheckboxController.swift in Sources */,
 				6E91E43E28EF423400B6F25E /* WorkConditionsMonitor.swift in Sources */,
@@ -7034,7 +7019,6 @@
 				6E664BA626C4417400A2C8E5 /* ShareActionPredicate.swift in Sources */,
 				6ED735DE26C7401F003B0A7D /* TagEditor.swift in Sources */,
 				6E8BF45626852E86009A8BD4 /* AirshipTask.swift in Sources */,
-				6E6ED16E2683DBC300A2CBD0 /* BespokeCloseView.swift in Sources */,
 				6E698E42267BEDC300654DB2 /* TagGroupsEditor.swift in Sources */,
 				6EFD6D5D27273257005B26F1 /* Shapes.swift in Sources */,
 				6E91B44F26883B6E00DDB1A8 /* AppBackgroundEvent.swift in Sources */,

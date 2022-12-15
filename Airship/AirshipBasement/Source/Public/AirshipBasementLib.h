@@ -15,7 +15,6 @@
 #import "UAJavaScriptEnvironmentProtocol.h"
 #import "UALegacyLoggingBridge.h"
 #import "UANativeBridgeExtensionDelegate.h"
-#import "UAPadding.h"
 #import "UAPush.h"
 #import "UASDKModule.h"
 #import "UAURLAllowListScope.h"

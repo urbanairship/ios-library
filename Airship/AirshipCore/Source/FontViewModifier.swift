@@ -3,7 +3,7 @@
 import Foundation
 import SwiftUI
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 struct TextAppearanceViewModifier<Appearance: BaseTextAppearance>: ViewModifier
 {
     let textAppearance: Appearance
@@ -59,7 +59,7 @@ struct TextAppearanceViewModifier<Appearance: BaseTextAppearance>: ViewModifier
 
 }
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 extension Text {
 
     private func applyTextStyles(styles: [TextStyle]?) -> Text {
@@ -100,7 +100,7 @@ extension Text {
 }
 
 #if !os(watchOS)
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 extension UITextView {
     func textAppearance<Appearance: BaseTextAppearance>(
         _ textAppearance: Appearance?,

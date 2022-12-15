@@ -58,29 +58,22 @@ NSString *const UABannerStyleFileName = @"UAInAppMessageBannerStyle";
         return NO;
     }
 
-    if (@available(iOS 13.0, *)) {
-        self.scene = [[UAInAppMessageSceneManager shared] sceneForMessage:self.message];
-        if (!self.scene) {
-            UA_LDEBUG(@"Unable to display message %@, no scene.", self.message);
-            return NO;
-        }
+    self.scene = [[UAInAppMessageSceneManager shared] sceneForMessage:self.message];
+    if (!self.scene) {
+        UA_LDEBUG(@"Unable to display message %@, no scene.", self.message);
+        return NO;
     }
 
     return YES;
 }
 
 - (void)display:(void (^)(UAInAppMessageResolution *))completionHandler {
-    if (@available(iOS 13.0, *)) {
-        UA_WEAKIFY(self)
-        [self.bannerController showWithParentView:[UAUtils mainWindow:self.scene] completionHandler:^(UAInAppMessageResolution *result) {
-            UA_STRONGIFY(self)
-            self.scene = nil;
-            completionHandler(result);
-        }];
-    } else {
-        [self.bannerController showWithParentView:[UAUtils mainWindow]
-                                completionHandler:completionHandler];
-    }
+    UA_WEAKIFY(self)
+    [self.bannerController showWithParentView:[UAUtils mainWindow:self.scene] completionHandler:^(UAInAppMessageResolution *result) {
+        UA_STRONGIFY(self)
+        self.scene = nil;
+        completionHandler(result);
+    }];
 }
 
 @end

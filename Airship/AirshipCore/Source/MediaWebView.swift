@@ -5,7 +5,7 @@
 import Foundation
 import SwiftUI
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 struct MediaWebView: UIViewRepresentable {
 
     typealias UIViewType = WKWebView
@@ -14,7 +14,7 @@ struct MediaWebView: UIViewRepresentable {
     let type: MediaType
     let accessibilityLabel: String?
 
-    @available(iOS 13.0.0, tvOS 13.0, *)
+    
     func makeUIView(context: Context) -> WKWebView {
         return createWebView()
     }

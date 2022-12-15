@@ -1,7 +1,7 @@
 import Foundation
 import SwiftUI
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 struct Pager: View {
     private static let flingSpeed: CGFloat = 300.0
     private static let offsetPercent: CGFloat = 0.50

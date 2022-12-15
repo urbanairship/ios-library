@@ -4,7 +4,7 @@ import Foundation
 import SwiftUI
 
 /// View factory. Inflates views based on type.
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 struct ViewFactory {
     @ViewBuilder
     static func createView(model: ViewModel, constraints: ViewConstraints)

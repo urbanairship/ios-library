@@ -4,7 +4,7 @@ import Foundation
 import SwiftUI
 
 /// Container view.
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 struct Container: View {
 
     /// Container model.

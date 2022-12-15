@@ -3,7 +3,7 @@
 import Foundation
 import SwiftUI
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 struct Score: View {
 
     let model: ScoreModel
@@ -121,7 +121,7 @@ struct Score: View {
 
 }
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 private struct AirshipNumberRangeToggleStyle: ToggleStyle {
 
     let style: ScoreNumberRangeStyle

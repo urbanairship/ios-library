@@ -2,7 +2,6 @@
 
 import Foundation
 
-@available(iOS 13.0.0, tvOS 13.0, *)
 class FormState: ObservableObject {
     @Published var data: FormInputData
     @Published var isVisible: Bool = false

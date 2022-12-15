@@ -3,11 +3,10 @@
 import Combine
 import Foundation
 
-@available(iOS 13.0.0, tvOS 13.0, *)
 class ThomasEnvironment: ObservableObject {
     private let delegate: ThomasDelegate
     let extensions: ThomasExtensions?
-    let imageLoader: ImageLoader
+    let imageLoader: AirshipImageLoader
 
     var isDismissed = false
     @Published
@@ -27,7 +26,9 @@ class ThomasEnvironment: ObservableObject {
         self.delegate = delegate
         self.extensions = extensions
         self.onDismiss = onDismiss
-        self.imageLoader = ImageLoader(imageProvider: extensions?.imageProvider)
+        self.imageLoader = AirshipImageLoader(
+            imageProvider: extensions?.imageProvider
+        )
 
         #if !os(tvOS) && !os(watchOS)
         self.subscribeKeyboard()
@@ -220,7 +221,6 @@ enum DismissReason {
     case other
 }
 
-@available(iOS 13.0.0, tvOS 13.0, *)
 extension FormState {
     fileprivate func toFormInfo() -> ThomasFormInfo {
         ThomasFormInfo(
@@ -251,7 +251,6 @@ extension FormState {
     }
 }
 
-@available(iOS 13.0.0, tvOS 13.0, *)
 extension PagerState {
     fileprivate func toPagerInfo(index: Int? = nil) -> ThomasPagerInfo {
         let index = index ?? self.pageIndex
@@ -270,14 +269,12 @@ extension PagerState {
     }
 }
 
-@available(iOS 13.0.0, tvOS 13.0, *)
 extension ButtonState {
     fileprivate func toButtonInfo() -> ThomasButtonInfo {
         return ThomasButtonInfo(identifier: self.identifier)
     }
 }
 
-@available(iOS 13.0.0, tvOS 13.0, *)
 extension LayoutState {
     fileprivate func toLayoutContext() -> ThomasLayoutContext {
         ThomasLayoutContext(
@@ -288,7 +285,6 @@ extension LayoutState {
     }
 }
 
-@available(iOS 13.0.0, tvOS 13.0, *)
 extension AttributesEditor {
     fileprivate func set(attributeValue: AttributeValue, attribute: String) {
         switch attributeValue {

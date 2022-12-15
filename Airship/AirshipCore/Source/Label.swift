@@ -4,7 +4,7 @@ import Foundation
 import SwiftUI
 
 /// Text/Label view
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 struct Label: View {
     /// Label model.
     let model: LabelModel
@@ -33,7 +33,7 @@ struct Label: View {
     }
 }
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 extension TextAlignement {
     func toFrameAlignment() -> Alignment {
         switch self {

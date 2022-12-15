@@ -7,7 +7,6 @@ import SwiftUI
 import WebKit
 
 /// Airship Webview
-@available(iOS 13.0.0, *)
 struct AirshipWebView: View {
 
     let model: WebViewModel
@@ -43,7 +42,6 @@ struct AirshipWebView: View {
 }
 
 /// Webview
-@available(iOS 13.0.0, *)
 struct WebViewView: UIViewRepresentable {
     typealias UIViewType = WKWebView
 

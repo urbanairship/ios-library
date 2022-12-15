@@ -5,17 +5,16 @@ import Foundation
 import SwiftUI
 
 /// - Note: for internal use only.  :nodoc:
-@available(iOS 13.0.0, tvOS 13.0.0, *)
 public struct AirshipAsyncImage<Placeholder: View, ImageView: View>: View {
 
     let url: String
-    let imageLoader: ImageLoader
+    let imageLoader: AirshipImageLoader
     let image: (Image, CGSize) -> ImageView
     let placeholder: () -> Placeholder
 
     public init(
         url: String,
-        imageLoader: ImageLoader = ImageLoader(),
+        imageLoader: AirshipImageLoader = AirshipImageLoader(),
         image: @escaping (Image, CGSize) -> ImageView,
         placeholder: @escaping () -> Placeholder
     ) {

@@ -5,6 +5,7 @@
 #import "UAInAppMessageButtonStyle.h"
 #import "UAInAppMessageMediaStyle.h"
 #import "UAAirshipAutomationCoreImport.h"
+#import "UAPadding.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

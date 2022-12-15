@@ -4,8 +4,8 @@
 #import <UIKit/UIKit.h>
 #import "UAInAppMessageStyleProtocol.h"
 #import "UAAirshipAutomationCoreImport.h"
+#import "UAPadding.h"
 
-@class UAPadding;
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -2,7 +2,7 @@
 
 import SwiftUI
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 struct ModalView: View {
 
     static let keyboardPadding = 1.0
@@ -238,7 +238,7 @@ struct ModalView: View {
     }
 }
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 extension ModalPlacement {
     fileprivate func isFullScreen() -> Bool {
         if case let .percent(height) = self.size.height, height >= 100.0,

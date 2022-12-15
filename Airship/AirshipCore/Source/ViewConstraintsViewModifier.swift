@@ -3,7 +3,7 @@
 import Foundation
 import SwiftUI
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 struct ViewConstraintsViewModifier: ViewModifier {
     let viewConstraints: ViewConstraints
     let alignment: Alignment?
@@ -27,7 +27,7 @@ struct ViewConstraintsViewModifier: ViewModifier {
     }
 }
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 extension View {
     @ViewBuilder
     func constraints(

@@ -11,6 +11,7 @@
 #import "UAInAppMessageDismissButton+Internal.h"
 #import "UAInAppMessageAssets.h"
 #import "UAAirshipAutomationCoreImport.h"
+#import "UAPadding.h"
 
 @interface UAInAppMessageUtils : NSObject
 

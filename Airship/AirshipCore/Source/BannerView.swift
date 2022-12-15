@@ -2,7 +2,7 @@
 
 import SwiftUI
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 struct BannerView: View {
 
     static let animationInDuration = 0.2
@@ -150,7 +150,7 @@ struct BannerView: View {
         return placement
     }
 
-    @available(iOS 13.0.0, tvOS 13.0, *)
+    
     private class OffsetPercentWrapper: ObservableObject {
         @Published var offsetPercent: Double = 1.0
     }

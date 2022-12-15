@@ -166,17 +166,7 @@ NSString *const UAInAppMessageSourceLegacyPushValue = @"legacy-push";
             } else if ([UAInAppMessageDisplayTypeCustomValue isEqualToString:displayTypeStr]) {
                 builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithJSON:displayContentDict error:error];
             } else if ([UAInAppMessageDisplayTypeAirshipLayoutValue isEqualToString:displayTypeStr]) {
-                if (@available(iOS 13.0, *)) {
-                    builder.displayContent = [UAInAppMessageAirshipLayoutDisplayContent displayContentWithJSON:displayContentDict error:error];
-                } else {
-                    if (error) {
-                        NSString *msg = [NSString stringWithFormat:@"Layout type is only available on iOS 13+"];
-                        *error =  [NSError errorWithDomain:UAInAppMessageErrorDomain
-                                                      code:UAInAppMessageErrorCodeInvalidJSON
-                                                  userInfo:@{NSLocalizedDescriptionKey:msg}];
-                    }
-                    return nil;
-                }
+                builder.displayContent = [UAInAppMessageAirshipLayoutDisplayContent displayContentWithJSON:displayContentDict error:error];
             } else {
                 if (error) {
                     NSString *msg = [NSString stringWithFormat:@"Message display type must be a string represening a valid display type. Invalid value: %@", displayTypeStr];

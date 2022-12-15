@@ -4,7 +4,7 @@ import Foundation
 import SwiftUI
 
 /// Button view.
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 struct LabelButton: View {
     let model: LabelButtonModel
     let constraints: ViewConstraints

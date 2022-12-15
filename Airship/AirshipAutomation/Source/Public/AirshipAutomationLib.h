@@ -41,6 +41,7 @@
 #import "UALandingPageAction.h"
 #import "UALegacyInAppMessage.h"
 #import "UALegacyInAppMessaging.h"
+#import "UAPadding.h"
 #import "UASchedule.h"
 #import "UAScheduleAction.h"
 #import "UAScheduleAudience.h"

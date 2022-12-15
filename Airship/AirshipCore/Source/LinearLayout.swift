@@ -4,7 +4,7 @@ import Foundation
 import SwiftUI
 
 /// Linear Layout - either a VStack or HStack depending on the direction.
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 struct LinearLayout: View {
 
     /// LinearLayout model.

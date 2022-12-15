@@ -184,9 +184,7 @@ static double const MinimumSwipeVelocity = 100.0;
 
     self.showCompletionHandler = completionHandler;
 
-    if (@available(iOS 13.0, *)) {
-        [self observeSceneEvents];
-    }
+    [self observeSceneEvents];
 
     [self bannerView:self.bannerView animateInWithParentView:parentView completionHandler:^{
         [self scheduleDismissalTimer];

@@ -408,12 +408,12 @@ public struct PreferenceCenterView: View {
 }
 
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 private struct PreferenceCenterDismissActionKey: EnvironmentKey {
     static let defaultValue: (() -> Void)? = nil
 }
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 extension EnvironmentValues {
     var preferenceCenterDismissAction: (() -> Void)? {
         get { self[PreferenceCenterDismissActionKey.self] }
@@ -421,7 +421,7 @@ extension EnvironmentValues {
     }
 }
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 extension View {
     func addPreferenceCenterDismissAction(action: (() -> Void)?) -> some View {
         environment(\.preferenceCenterDismissAction, action)

@@ -4,7 +4,7 @@ import Foundation
 import SwiftUI
 
 /// Scroll view layout
-@available(iOS 14.0.0, tvOS 14.0, *)
+
 struct ScrollLayout: View {
 
     /// ScrollLayout model.

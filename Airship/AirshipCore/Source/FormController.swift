@@ -4,7 +4,7 @@ import Combine
 import Foundation
 import SwiftUI
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 struct FormController: View {
 
     let model: FormControllerModel
@@ -38,7 +38,7 @@ struct FormController: View {
     }
 }
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 private struct ParentFormController: View {
 
     let model: FormControllerModel
@@ -80,7 +80,7 @@ private struct ParentFormController: View {
     }
 }
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 private struct ChildFormController: View {
     let model: FormControllerModel
     let constraints: ViewConstraints
@@ -137,7 +137,7 @@ private struct ChildFormController: View {
     }
 }
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 struct FormControllerDebug: View {
     @EnvironmentObject var state: FormState
 

@@ -120,47 +120,42 @@
 }
 
 - (BOOL)isReadyToDisplay {
-    if (@available(iOS 13.0, *)) {
-        
-        BOOL isConnected = [self isNetworkConnected];
-        
-        for (UAURLInfo *info in self.urlInfos) {
-            if (info.urlType == UrlTypesImage && ![self.assets isCached:[NSURL URLWithString:info.url]]) {
-                continue;
-            }
-            
-            if (!isConnected) {
-                return false;
-            }
-        }
-        
-        UIWindowScene *scene = [[UAInAppMessageSceneManager shared] sceneForMessage:self.message];
-        if (!scene) {
-            return NO;
-        }
-        
-        UAAutomationNativeBridgeExtension *nativeBridgeExtension = [UAAutomationNativeBridgeExtension extensionWithMessage:self.message];
-        
-        UAAssetImageProvider *assetImageProvider = [[UAAssetImageProvider alloc] init];
-        assetImageProvider.assets = self.assets;
+    BOOL isConnected = [self isNetworkConnected];
 
-        UAThomasExtensions *extensions = [[UAThomasExtensions alloc]
-                                          initWithNativeBridgeExtension:nativeBridgeExtension
-                                          imageProvider:assetImageProvider];
-
-        self.deferredDisplay = [UAThomas deferredDisplayWithJson:self.displayContent.layout
-                                                           scene:scene
-                                                      extensions:extensions
-                                                        delegate:self
-                                                           error:nil];
-        if (!self.deferredDisplay) {
-            return NO;
+    for (UAURLInfo *info in self.urlInfos) {
+        if (info.urlType == UrlTypesImage && ![self.assets isCached:[NSURL URLWithString:info.url]]) {
+            continue;
         }
-        
-        return YES;
-    } else {
+
+        if (!isConnected) {
+            return false;
+        }
+    }
+
+    UIWindowScene *scene = [[UAInAppMessageSceneManager shared] sceneForMessage:self.message];
+    if (!scene) {
         return NO;
     }
+
+    UAAutomationNativeBridgeExtension *nativeBridgeExtension = [UAAutomationNativeBridgeExtension extensionWithMessage:self.message];
+
+    UAAssetImageProvider *assetImageProvider = [[UAAssetImageProvider alloc] init];
+    assetImageProvider.assets = self.assets;
+
+    UAThomasExtensions *extensions = [[UAThomasExtensions alloc]
+                                      initWithNativeBridgeExtension:nativeBridgeExtension
+                                      imageProvider:assetImageProvider];
+
+    self.deferredDisplay = [UAThomas deferredDisplayWithJson:self.displayContent.layout
+                                                       scene:scene
+                                                  extensions:extensions
+                                                    delegate:self
+                                                       error:nil];
+    if (!self.deferredDisplay) {
+        return NO;
+    }
+
+    return YES;
 }
 
 

@@ -3,7 +3,6 @@
 import Foundation
 import SwiftUI
 
-@available(iOS 13.0.0, tvOS 13.0, *)
 extension HexColor {
     func toColor() -> Color {
         guard let uiColor = ColorUtils.color(self.hex) else {
@@ -48,7 +47,6 @@ extension HexColor {
     }
 }
 
-@available(iOS 13.0.0, tvOS 13.0, *)
 extension ThomasColor {
     func toColor(_ colorScheme: ColorScheme) -> Color {
         let darkMode = colorScheme == .dark
@@ -92,7 +90,6 @@ extension ThomasColor {
     }
 }
 
-@available(iOS 13.0.0, tvOS 13.0, *)
 extension VerticalPosition {
     func toAlignment() -> VerticalAlignment {
         switch self {
@@ -103,7 +100,6 @@ extension VerticalPosition {
     }
 }
 
-@available(iOS 13.0.0, tvOS 13.0, *)
 extension HorizontalPosition {
     func toAlignment() -> HorizontalAlignment {
         switch self {
@@ -114,7 +110,6 @@ extension HorizontalPosition {
     }
 }
 
-@available(iOS 13.0.0, tvOS 13.0, *)
 extension HexColor {
     static let clear = HexColor(hex: "#000000", alpha: 0.00001)
 }

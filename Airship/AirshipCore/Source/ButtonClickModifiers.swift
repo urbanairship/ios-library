@@ -3,7 +3,7 @@
 import Foundation
 import SwiftUI
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 struct SubmitFormButtonClickBehavior: ViewModifier {
     @EnvironmentObject var formState: FormState
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
@@ -18,7 +18,7 @@ struct SubmitFormButtonClickBehavior: ViewModifier {
     }
 }
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 struct PagerNextPageButtonClickBehavior: ViewModifier {
     @EnvironmentObject var pagerState: PagerState
 
@@ -35,7 +35,7 @@ struct PagerNextPageButtonClickBehavior: ViewModifier {
     }
 }
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 struct PagerPreviousPageButtonClickBehavior: ViewModifier {
     @EnvironmentObject var pagerState: PagerState
 
@@ -49,7 +49,7 @@ struct PagerPreviousPageButtonClickBehavior: ViewModifier {
     }
 }
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 struct DismissButtonClickBehavior: ViewModifier {
     let buttonIdentifier: String
     let buttonDescription: String
@@ -70,7 +70,7 @@ struct DismissButtonClickBehavior: ViewModifier {
     }
 }
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 struct CancelButtonClickBehavior: ViewModifier {
     let buttonIdentifier: String
     let buttonDescription: String
@@ -90,7 +90,7 @@ struct CancelButtonClickBehavior: ViewModifier {
     }
 }
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 struct ReportButtonModifier: ViewModifier {
     let buttonIdentifier: String
 
@@ -108,7 +108,7 @@ struct ReportButtonModifier: ViewModifier {
     }
 }
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 struct RunActionsButtonModifier: ViewModifier {
     let actions: ActionsPayload?
 
@@ -123,7 +123,7 @@ struct RunActionsButtonModifier: ViewModifier {
     }
 }
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 extension View {
     @ViewBuilder
     func buttonClick(

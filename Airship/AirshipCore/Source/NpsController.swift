@@ -4,7 +4,7 @@ import Combine
 import Foundation
 import SwiftUI
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 struct NpsController: View {
     let model: NpsControllerModel
     let constraints: ViewConstraints
@@ -38,7 +38,7 @@ struct NpsController: View {
     }
 }
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 private struct ParentNpsController: View {
     let model: NpsControllerModel
     let constraints: ViewConstraints
@@ -77,7 +77,7 @@ private struct ParentNpsController: View {
     }
 }
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 private struct ChildNpsController: View {
     let model: NpsControllerModel
     let constraints: ViewConstraints

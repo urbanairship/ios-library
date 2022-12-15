@@ -3,7 +3,7 @@
 import Foundation
 import SwiftUI
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 struct BorderViewModifier: ViewModifier {
     let border: Border
     @Environment(\.colorScheme) var colorScheme
@@ -40,7 +40,7 @@ struct BorderViewModifier: ViewModifier {
     }
 }
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 extension View {
     @ViewBuilder
     func border(_ border: Border?) -> some View {

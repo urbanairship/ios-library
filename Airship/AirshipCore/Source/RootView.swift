@@ -3,7 +3,6 @@
 import Foundation
 import SwiftUI
 
-@available(iOS 13.0.0, tvOS 13.0.0, *)
 struct RootView<Content: View>: View {
 
     #if !os(tvOS) && !os(watchOS)

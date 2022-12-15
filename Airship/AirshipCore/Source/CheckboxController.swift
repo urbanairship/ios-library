@@ -2,7 +2,7 @@ import Combine
 import Foundation
 import SwiftUI
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 struct CheckboxController: View {
     let model: CheckboxControllerModel
     let constraints: ViewConstraints

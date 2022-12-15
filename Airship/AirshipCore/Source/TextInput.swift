@@ -4,7 +4,7 @@ import Combine
 import Foundation
 import SwiftUI
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 struct TextInput: View {
     let model: TextInputModel
     let constraints: ViewConstraints
@@ -103,7 +103,7 @@ struct TextInput: View {
 
 #if !os(watchOS)
 /// TextView
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 internal struct AirshipTextView: UIViewRepresentable {
     let textAppearance: TextInputTextAppearance
     @Binding var text: String

@@ -4,7 +4,7 @@ import Combine
 import Foundation
 import SwiftUI
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 internal struct FormEventHandlerViewModifier: ViewModifier {
     @EnvironmentObject var viewState: ViewState
     @EnvironmentObject var formState: FormState
@@ -65,7 +65,7 @@ internal struct FormEventHandlerViewModifier: ViewModifier {
     }
 }
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 internal struct EventHandlerViewModifier: ViewModifier {
     @EnvironmentObject var viewState: ViewState
     let eventHandlers: [EventHandler]
@@ -102,7 +102,7 @@ internal struct EventHandlerViewModifier: ViewModifier {
     }
 }
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 extension View {
 
     @ViewBuilder

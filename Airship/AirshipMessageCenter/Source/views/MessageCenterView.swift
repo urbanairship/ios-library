@@ -73,12 +73,12 @@ public struct MessageCenterView: View {
     }
 }
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 private struct MessageCenterDismissActionKey: EnvironmentKey {
     static let defaultValue: (() -> Void)? = nil
 }
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 extension EnvironmentValues {
     var messageCenterDismissAction: (() -> Void)? {
         get { self[MessageCenterDismissActionKey.self] }
@@ -86,7 +86,7 @@ extension EnvironmentValues {
     }
 }
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 extension View {
     func addMessageCenterDismissAction(action: (() -> Void)?) -> some View {
         environment(\.messageCenterDismissAction, action)

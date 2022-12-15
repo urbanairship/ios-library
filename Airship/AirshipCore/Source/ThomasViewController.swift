@@ -5,7 +5,6 @@ import SwiftUI
 
 #if !os(watchOS)
 
-@available(iOS 13.0.0, tvOS 13.0, *)
 class ThomasViewController<Content>: UIHostingController<Content>
 where Content: View {
 
@@ -73,7 +72,6 @@ where Content: View {
 
 }
 
-@available(iOS 13.0.0, tvOS 13.0, *)
 class ThomasBannerViewController: ThomasViewController<BannerView> {
 
     private var centerXConstraint: NSLayoutConstraint?
@@ -158,13 +156,11 @@ class ThomasBannerViewController: ThomasViewController<BannerView> {
     }
 }
 
-@available(iOS 13.0.0, tvOS 13.0, *)
 class ThomasModalViewController: ThomasViewController<ModalView> {
 }
 
 #endif
 
-@available(iOS 13.0.0, tvOS 13.0, *)
 class ThomasViewControllerOptions {
     var orientation: Orientation?
     var bannerPlacement: BannerPlacement?

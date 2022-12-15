@@ -4,14 +4,13 @@ import Combine
 import Foundation
 import SwiftUI
 
-@available(iOS 13.0.0, tvOS 13.0, *)
-public struct ImageLoader {
+public struct AirshipImageLoader {
     private static let retryDelay = 10
     private static let retries = 10
 
-    private let imageProvider: ImageProvider?
+    private let imageProvider: AirshipImageProvider?
 
-    public init(imageProvider: ImageProvider? = nil) {
+    public init(imageProvider: AirshipImageProvider? = nil) {
         self.imageProvider = imageProvider
     }
 
@@ -61,13 +60,13 @@ public struct ImageLoader {
                     error: AirshipErrors.error("failed to fetch message")
                 )
                 .delay(
-                    for: .seconds(ImageLoader.retryDelay),
+                    for: .seconds(AirshipImageLoader.retryDelay),
                     scheduler: DispatchQueue.global()
                 )
                 .eraseToAnyPublisher()
             }
             .switchToLatest()
-            .retry(ImageLoader.retries)
+            .retry(AirshipImageLoader.retries)
             .eraseToAnyPublisher()
     }
 }

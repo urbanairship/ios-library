@@ -1,7 +1,7 @@
 import Foundation
 import SwiftUI
 
-@available(iOS 13.0.0, tvOS 13.0, *)
+
 struct StateController: View {
     let model: StateControllerModel
     let constraints: ViewConstraints
