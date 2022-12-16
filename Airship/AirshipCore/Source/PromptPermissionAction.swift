@@ -97,4 +97,15 @@ public class PromptPermissionAction: NSObject, Action {
             case permission = "permission"
         }
     }
+
+    @objc
+    public class func makePermissionReceiverMetadata(
+        resultReceiver: @escaping (Permission, PermissionStatus, PermissionStatus) -> Void
+    ) -> [AnyHashable: Any] {
+        return [
+            PromptPermissionAction.resultReceiverMetadataKey: resultReceiver
+        ]
+    }
 }
+
+

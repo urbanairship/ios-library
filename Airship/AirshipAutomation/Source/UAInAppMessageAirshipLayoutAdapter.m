@@ -212,7 +212,7 @@
     id message = self.message;
     id scheduleID = self.scheduleID;
 
-    void (^permissionResultReceiver)(UAPermission, UAPermissionStatus, UAPermissionStatus) = ^(UAPermission permission, UAPermissionStatus start, UAPermissionStatus end) {
+    id metadata = [UAPromptPermissionAction makePermissionReceiverMetadataWithResultReceiver:^(UAPermission permission, UAPermissionStatus start, UAPermissionStatus end) {
 
         // We cant expose swift types in an obj-c interface so we stringify it before passing it over. We can
         // do it the right way once we convert this module to swift.
@@ -231,13 +231,11 @@
         if (onEvent) {
             onEvent(event);
         }
-    };
-
-    id metaData = @{ UAPromptPermissionAction.resultReceiverMetadataKey: permissionResultReceiver };
+    }];
 
     [UAActionRunner runActionsWithActionValues:actions
                                      situation:UASituationManualInvocation
-                                      metadata:metaData
+                                      metadata:metadata
                              completionHandler:^(UAActionResult *result) {
         UA_LDEBUG(@"Finished running actions.");
     }];
