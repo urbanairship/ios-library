@@ -23,7 +23,6 @@
 @property (nonatomic, strong) id mockCachePolicyDelegate;
 @property (nonatomic, strong) id mockAssetCache;
 @property (nonatomic, strong) id mockAssets;
-@property (nonatomic, strong) id mockRemoteDataManager;
 
 @end
 
@@ -52,8 +51,6 @@
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
     NSURL *url = [bundle URLForResource:@"airship" withExtension:@"jpg"];
     self.mediaURL = [url absoluteString];
-
-    self.mockRemoteDataManager = [self mockForClass:[UARemoteDataManager class]];
 
     // set up asset manager delegates
     self.mockPrepareAssetDelegate = [self mockForProtocol:@protocol(UAInAppMessagePrepareAssetsDelegate)];

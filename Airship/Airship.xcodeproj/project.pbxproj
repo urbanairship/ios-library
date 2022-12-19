@@ -53,6 +53,9 @@
 		32515872272B007F00DF8B44 /* Media.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32515866272AFB2E00DF8B44 /* Media.swift */; };
 		32515874272B038300DF8B44 /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32D6E87A2727F7060077C784 /* Image.swift */; };
 		3261A7F6243CD7F900ADBF6B /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3261A7F4243CD73100ADBF6B /* CoreTelephony.framework */; platformFilter = maccatalyst; };
+		3299EF172948CBC100251E70 /* RemoteDataAPIClientTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3299EF162948CBC100251E70 /* RemoteDataAPIClientTest.swift */; };
+		3299EF222949EC3E00251E70 /* AirshipBaseTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3299EF212949EC3E00251E70 /* AirshipBaseTest.swift */; };
+		3299EF26294B222F00251E70 /* RemoteDataStoreTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3299EF25294B222F00251E70 /* RemoteDataStoreTest.swift */; };
 		32B5BE3B28F8A7EB00F2254B /* MessageCenterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B5BE3A28F8A7EB00F2254B /* MessageCenterController.swift */; };
 		32B5BE3E28F8A8C000F2254B /* MessageCenterListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B5BE2728F8A7D600F2254B /* MessageCenterListItemView.swift */; };
 		32B5BE3F28F8A8C200F2254B /* MessageCenterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B5BE2828F8A7D600F2254B /* MessageCenterView.swift */; };
@@ -63,6 +66,7 @@
 		32B5BE4928F8B66500F2254B /* MessageCenterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B5BE4828F8B66500F2254B /* MessageCenterViewController.swift */; };
 		32B632882906CA17000D3E34 /* MessageCenterThemeLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B632862906CA17000D3E34 /* MessageCenterThemeLoader.swift */; };
 		32B632892906CA17000D3E34 /* MessageCenterTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B632872906CA17000D3E34 /* MessageCenterTheme.swift */; };
+		32C68D0529424449006BBB29 /* RemoteDataManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32C68D0429424449006BBB29 /* RemoteDataManagerTest.swift */; };
 		32CF81E2275627F4003009D1 /* AirshipAsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32CF81E1275627F4003009D1 /* AirshipAsyncImage.swift */; };
 		32CF81E3275627F4003009D1 /* AirshipAsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32CF81E1275627F4003009D1 /* AirshipAsyncImage.swift */; };
 		32D1D738290C0CD3008788E1 /* JSONValueTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32D1D736290C05D7008788E1 /* JSONValueTransformer.swift */; };
@@ -143,7 +147,6 @@
 		3CFB564024E346FD008F9CCE /* UAAuthTokenManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CFB563C24E346FD008F9CCE /* UAAuthTokenManager.m */; };
 		3CFB564424E3491A008F9CCE /* UAAuthTokenAPIClient+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CFB564124E3491A008F9CCE /* UAAuthTokenAPIClient+Internal.h */; };
 		3CFB564624E3491A008F9CCE /* UAAuthTokenAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CFB564224E3491A008F9CCE /* UAAuthTokenAPIClient.m */; };
-		450F82B92225E65F007B5B10 /* UARemoteDataManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DF86DAB01F59F71100309F41 /* UARemoteDataManagerTest.m */; };
 		457366432137084B00C5993A /* UAJSONUtilsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 457366422137084B00C5993A /* UAJSONUtilsTest.m */; };
 		459D404A208FE64D00C40E2D /* Valid-UAInAppMessageFullScreenStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 459D4049208FE64D00C40E2D /* Valid-UAInAppMessageFullScreenStyle.plist */; };
 		459D404C208FE6BB00C40E2D /* Invalid-UAInAppMessageFullScreenStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 459D404B208FE6BA00C40E2D /* Invalid-UAInAppMessageFullScreenStyle.plist */; };
@@ -1537,7 +1540,6 @@
 		DF0221F41FDB03B100EF8C9D /* UAInAppMessageAudienceChecksTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DF0221F31FDB03B100EF8C9D /* UAInAppMessageAudienceChecksTest.m */; };
 		DF0C1B29244E562B0011ACCA /* UAAirshipBaseTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DF0C1B28244E562B0011ACCA /* UAAirshipBaseTest.m */; };
 		DF147BE321B89A9A00506D3D /* UAScheduleDataMigratorTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DF147BE221B89A9A00506D3D /* UAScheduleDataMigratorTest.m */; };
-		DF17A1101F57617200DC39E0 /* UARemoteDataAPIClientTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DF17A10F1F57617200DC39E0 /* UARemoteDataAPIClientTest.m */; };
 		DF4E49A5221F487500F306A5 /* UAInAppMessageAssetManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DF4E49A4221F487500F306A5 /* UAInAppMessageAssetManagerTest.m */; };
 		DF4E49CB221FB36100F306A5 /* airship.jpg in Resources */ = {isa = PBXBuildFile; fileRef = DF4E49CA221FB36100F306A5 /* airship.jpg */; };
 		DF702D811FABA38400E7A3DC /* UAVersionMatcherTests.m in Sources */ = {isa = PBXBuildFile; fileRef = DF702D801FABA38400E7A3DC /* UAVersionMatcherTests.m */; };
@@ -1545,7 +1547,6 @@
 		DF829AD8222341C60090386E /* UAInAppMessageAssetCacheTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DF829AD7222341C60090386E /* UAInAppMessageAssetCacheTest.m */; };
 		DF829ADB22248F470090386E /* alternate-airship.jpg in Resources */ = {isa = PBXBuildFile; fileRef = DF829ADA22248F470090386E /* alternate-airship.jpg */; };
 		DF8D7366200006850092FDEA /* UAInAppMessageModalDisplayContentTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DF8D7365200006850092FDEA /* UAInAppMessageModalDisplayContentTest.m */; };
-		DF9FED0A1F75D64900C79417 /* UARemoteDataStoreTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DF9FED091F75D64900C79417 /* UARemoteDataStoreTest.m */; };
 		DFB1EA1E22274F2700CDBD7E /* UAInAppMessageDefaultPrepareAssetsDelegateTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DFB1EA1D22274F2700CDBD7E /* UAInAppMessageDefaultPrepareAssetsDelegateTest.m */; };
 		DFB1EA2022275AF100CDBD7E /* UAInAppMessageAssetsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DFB1EA1F22275AF100CDBD7E /* UAInAppMessageAssetsTest.m */; };
 		DFD2464E2473404C000FD565 /* DebugSDKModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD2464D2473404C000FD565 /* DebugSDKModule.swift */; };
@@ -1793,6 +1794,9 @@
 		32515866272AFB2E00DF8B44 /* Media.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Media.swift; sourceTree = "<group>"; };
 		32515868272AFB2E00DF8B44 /* MediaWebView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaWebView.swift; sourceTree = "<group>"; };
 		3261A7F4243CD73100ADBF6B /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/CoreTelephony.framework; sourceTree = DEVELOPER_DIR; };
+		3299EF162948CBC100251E70 /* RemoteDataAPIClientTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteDataAPIClientTest.swift; sourceTree = "<group>"; };
+		3299EF212949EC3E00251E70 /* AirshipBaseTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipBaseTest.swift; sourceTree = "<group>"; };
+		3299EF25294B222F00251E70 /* RemoteDataStoreTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteDataStoreTest.swift; sourceTree = "<group>"; };
 		32B5BE2728F8A7D600F2254B /* MessageCenterListItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterListItemView.swift; sourceTree = "<group>"; };
 		32B5BE2828F8A7D600F2254B /* MessageCenterView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterView.swift; sourceTree = "<group>"; };
 		32B5BE2928F8A7D600F2254B /* MessageCenterMessageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterMessageView.swift; sourceTree = "<group>"; };
@@ -1803,6 +1807,7 @@
 		32B5BE4828F8B66500F2254B /* MessageCenterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCenterViewController.swift; sourceTree = "<group>"; };
 		32B632862906CA17000D3E34 /* MessageCenterThemeLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterThemeLoader.swift; sourceTree = "<group>"; };
 		32B632872906CA17000D3E34 /* MessageCenterTheme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterTheme.swift; sourceTree = "<group>"; };
+		32C68D0429424449006BBB29 /* RemoteDataManagerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteDataManagerTest.swift; sourceTree = "<group>"; };
 		32CF81E1275627F4003009D1 /* AirshipAsyncImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipAsyncImage.swift; sourceTree = "<group>"; };
 		32D1D736290C05D7008788E1 /* JSONValueTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONValueTransformer.swift; sourceTree = "<group>"; };
 		32D6E87A2727F7060077C784 /* Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
@@ -2668,7 +2673,6 @@
 		DF0C1B27244E562B0011ACCA /* UAAirshipBaseTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAAirshipBaseTest.h; sourceTree = "<group>"; };
 		DF0C1B28244E562B0011ACCA /* UAAirshipBaseTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAAirshipBaseTest.m; sourceTree = "<group>"; };
 		DF147BE221B89A9A00506D3D /* UAScheduleDataMigratorTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAScheduleDataMigratorTest.m; sourceTree = "<group>"; };
-		DF17A10F1F57617200DC39E0 /* UARemoteDataAPIClientTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UARemoteDataAPIClientTest.m; sourceTree = "<group>"; };
 		DF18CCE31FEC73B000652445 /* UAInAppMessageModalAdapter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAInAppMessageModalAdapter.h; sourceTree = "<group>"; };
 		DF18CCE41FEC73B000652445 /* UAInAppMessageModalAdapter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageModalAdapter.m; sourceTree = "<group>"; };
 		DF18CCE91FEC74D200652445 /* UAInAppMessageModalViewController+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageModalViewController+Internal.h"; sourceTree = "<group>"; };
@@ -2687,13 +2691,11 @@
 		DF7E22BB1ED63E9200C79C46 /* ProjectValidationTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProjectValidationTest.swift; sourceTree = "<group>"; };
 		DF829AD7222341C60090386E /* UAInAppMessageAssetCacheTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageAssetCacheTest.m; sourceTree = "<group>"; };
 		DF829ADA22248F470090386E /* alternate-airship.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "alternate-airship.jpg"; sourceTree = "<group>"; };
-		DF86DAB01F59F71100309F41 /* UARemoteDataManagerTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UARemoteDataManagerTest.m; sourceTree = "<group>"; };
 		DF87DB0C1FDF26AE00DCAF9B /* UAScheduleAudience.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAScheduleAudience.h; sourceTree = "<group>"; };
 		DF8D735F2000055D0092FDEA /* UAInAppMessageModalDisplayContent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInAppMessageModalDisplayContent.h; sourceTree = "<group>"; };
 		DF8D73602000055D0092FDEA /* UAInAppMessageModalDisplayContent+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageModalDisplayContent+Internal.h"; sourceTree = "<group>"; };
 		DF8D73612000055D0092FDEA /* UAInAppMessageModalDisplayContent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageModalDisplayContent.m; sourceTree = "<group>"; };
 		DF8D7365200006850092FDEA /* UAInAppMessageModalDisplayContentTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageModalDisplayContentTest.m; sourceTree = "<group>"; };
-		DF9FED091F75D64900C79417 /* UARemoteDataStoreTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UARemoteDataStoreTest.m; sourceTree = "<group>"; };
 		DFB1EA162227323300CDBD7E /* UAInAppMessageAssets.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAInAppMessageAssets.h; sourceTree = "<group>"; };
 		DFB1EA172227323300CDBD7E /* UAInAppMessageAssets.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageAssets.m; sourceTree = "<group>"; };
 		DFB1EA1C2227377400CDBD7E /* UAInAppMessageAssets+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageAssets+Internal.h"; sourceTree = "<group>"; };
@@ -4535,6 +4537,7 @@
 				6E6ED1422683B8FA00A2CBD0 /* TestDate.swift */,
 				DF0C1B27244E562B0011ACCA /* UAAirshipBaseTest.h */,
 				DF0C1B28244E562B0011ACCA /* UAAirshipBaseTest.m */,
+				3299EF212949EC3E00251E70 /* AirshipBaseTest.swift */,
 				CC64F08A1D8B781C009CEF27 /* UABaseTest.h */,
 				6E4A00781F2A4A4A0069D8A0 /* UABaseTest.m */,
 				6E698E21267ABAB600654DB2 /* TestRequestSession.swift */,
@@ -4882,9 +4885,9 @@
 		DF17A10E1F57614800DC39E0 /* RemoteData */ = {
 			isa = PBXGroup;
 			children = (
-				DF17A10F1F57617200DC39E0 /* UARemoteDataAPIClientTest.m */,
-				DF86DAB01F59F71100309F41 /* UARemoteDataManagerTest.m */,
-				DF9FED091F75D64900C79417 /* UARemoteDataStoreTest.m */,
+				32C68D0429424449006BBB29 /* RemoteDataManagerTest.swift */,
+				3299EF162948CBC100251E70 /* RemoteDataAPIClientTest.swift */,
+				3299EF25294B222F00251E70 /* RemoteDataStoreTest.swift */,
 			);
 			name = RemoteData;
 			sourceTree = "<group>";
@@ -6752,6 +6755,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6E8B4BF12888606D00AA336E /* ChannelTest.swift in Sources */,
+				32C68D0529424449006BBB29 /* RemoteDataManagerTest.swift in Sources */,
 				CC64F0E11D8B781C009CEF27 /* UAAddCustomEventActionTest.m in Sources */,
 				CC64F0DF1D8B781C009CEF27 /* UAActionRunnerTest.m in Sources */,
 				6E6ED1432683B8FA00A2CBD0 /* TestDate.swift in Sources */,
@@ -6760,7 +6764,6 @@
 				CC64F1141D8B781C009CEF27 /* UAJavaScriptEnvironmentTest.m in Sources */,
 				6E92ECA7284AC1120038802D /* EnableFeatureActionTest.swift in Sources */,
 				459D40532092460D00C40E2D /* UAInAppMessageModalStyleTest.m in Sources */,
-				450F82B92225E65F007B5B10 /* UARemoteDataManagerTest.m in Sources */,
 				6E6EF9E7270625C400D30C35 /* EventTest.swift in Sources */,
 				CC64F1071D8B781C009CEF27 /* UAInteractiveNotificationEventTest.m in Sources */,
 				CC64F0D71D8B781C009CEF27 /* UAAccountEventTemplateTest.m in Sources */,
@@ -6776,7 +6779,6 @@
 				CC64F1091D8B781C009CEF27 /* UAJSONMatcherTests.m in Sources */,
 				6E7DB38E28ECFCED002725F6 /* AirshipJSONTest.swift in Sources */,
 				6E96ED1429417A600053CC91 /* EventStoreTest.swift in Sources */,
-				DF9FED0A1F75D64900C79417 /* UARemoteDataStoreTest.m in Sources */,
 				6E299FD528D13D00001305A7 /* AirshipRequestSessionTest.swift in Sources */,
 				E29D35EF1DB9751F003C292F /* UAFetchDeviceInfoActionTest.m in Sources */,
 				6E92ECA5284A7A5C0038802D /* TestPermissionPrompter.swift in Sources */,
@@ -6786,6 +6788,7 @@
 				CC64F0ED1D8B781C009CEF27 /* UAChannelAPIClientTest.m in Sources */,
 				6E15B70126CDD1A40099C92D /* RemoteConfigDisableInfoTest.swift in Sources */,
 				CC64F1111D8B781C009CEF27 /* UAMediaEventTemplateTest.m in Sources */,
+				3299EF26294B222F00251E70 /* RemoteDataStoreTest.swift in Sources */,
 				CC64F0F31D8B781C009CEF27 /* UAColorUtilsTest.m in Sources */,
 				CC64F1241D8B781C009CEF27 /* UATagActionsTest.m in Sources */,
 				CC64F1001D8B781C009CEF27 /* UALegacyInAppMessagingTest.m in Sources */,
@@ -6799,7 +6802,6 @@
 				3C927F8423A97CDA003C5FC8 /* UADefaultValueTransformerTest.m in Sources */,
 				6E87BE1B26E2C59D0005D20D /* TestAnalytics.swift in Sources */,
 				6E739D8226BB33A200BC6F6D /* ChannelBulkUpdateAPIClientTest.swift in Sources */,
-				DF17A1101F57617200DC39E0 /* UARemoteDataAPIClientTest.m in Sources */,
 				6ED3C04520081013002A746B /* UAInAppMessageCustomDisplayContentTest.m in Sources */,
 				6E5062B224E23F1B00689C6D /* UADeferredScheduleTests.m in Sources */,
 				6E15B6FA26CDCA6A0099C92D /* RuntimeConfigTest.swift in Sources */,
@@ -6917,6 +6919,8 @@
 				DF0221F41FDB03B100EF8C9D /* UAInAppMessageAudienceChecksTest.m in Sources */,
 				CC64F1231D8B781C009CEF27 /* UAShareActionTest.m in Sources */,
 				45DCD83E2087C57C00BCF10F /* UAInAppMessageFullScreenStyleTest.m in Sources */,
+				3299EF172948CBC100251E70 /* RemoteDataAPIClientTest.swift in Sources */,
+				3299EF222949EC3E00251E70 /* AirshipBaseTest.swift in Sources */,
 				CC64F11F1D8B781C009CEF27 /* UARetailEventTemplateTest.m in Sources */,
 				A60A23EE258CEBBE006B7D80 /* UAModifyAttributesActionTest.m in Sources */,
 				997140F61FB0F45000EF5445 /* UAInAppMessageTest.m in Sources */,

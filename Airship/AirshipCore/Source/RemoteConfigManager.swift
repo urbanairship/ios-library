@@ -1,8 +1,7 @@
 /* Copyright Airship and Contributors */
 
 // NOTE: For internal use only. :nodoc:
-@objc(UARemoteConfigManager)
-public class RemoteConfigManager: NSObject {
+class RemoteConfigManager {
 
     @objc
     public static let remoteConfigUpdatedEvent = Notification.Name(
@@ -20,8 +19,7 @@ public class RemoteConfigManager: NSObject {
     private let versionBlock: (() -> String)
     private let notificationCenter: NotificationCenter
 
-    @objc
-    public convenience init(
+    convenience init(
         remoteDataManager: RemoteDataProvider,
         privacyManager: PrivacyManager
     ) {
@@ -48,9 +46,6 @@ public class RemoteConfigManager: NSObject {
         self.moduleAdapter = moduleAdapter
         self.versionBlock = versionBlock
         self.notificationCenter = notificationCenter
-
-        super.init()
-
         updateRemoteConfigSubscription()
 
         self.notificationCenter.addObserver(

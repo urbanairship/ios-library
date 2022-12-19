@@ -1,111 +1,68 @@
 /* Copyright Airship and Contributors */
 
-// NOTE: For internal use only. :nodoc:
-@objc(UARemoteDataAPIClientProtcol)
-public protocol RemoteDataAPIClientProtocol {
-    @objc
-    @discardableResult
+protocol RemoteDataAPIClientProtocol {
     func fetchRemoteData(
         locale: Locale,
         randomValue: Int,
-        lastModified: String?,
-        completionHandler: @escaping (RemoteDataResponse?, Error?) -> Void
-    ) -> Disposable
+        lastModified: String?
+    ) async throws -> AirshipHTTPResponse<RemoteDataResponse>
 
-    @objc
     func metadata(locale: Locale, randomValue: Int, lastModified: String?)
         -> [AnyHashable: Any]
 }
 
-// NOTE: For internal use only. :nodoc:
-@objc(UARemoteDataAPIClient)
-public class RemoteDataAPIClient: NSObject, RemoteDataAPIClientProtocol {
+class RemoteDataAPIClient: RemoteDataAPIClientProtocol {
     private static let urlMetadataKey = "url"
     private static let lastModifiedMetadataKey = "last_modified"
 
     private let path = "api/remote-data/app"
-    private let session: RequestSession
+    private let session: AirshipRequestSession
     private let config: RuntimeConfig
 
-    @objc
-    public init(config: RuntimeConfig, session: RequestSession) {
+    init(config: RuntimeConfig, session: AirshipRequestSession) {
         self.config = config
         self.session = session
-        super.init()
     }
 
-    @objc
-    public convenience init(config: RuntimeConfig) {
-        self.init(config: config, session: RequestSession(config: config))
+    convenience init(config: RuntimeConfig) {
+        self.init(
+            config: config,
+            session: AirshipRequestSession(appKey: config.appKey)
+        )
     }
 
-    @objc
-    @discardableResult
-    public func fetchRemoteData(
+    func fetchRemoteData(
         locale: Locale,
         randomValue: Int,
-        lastModified: String?,
-        completionHandler: @escaping (RemoteDataResponse?, Error?) -> Void
-    ) -> Disposable {
-
+        lastModified: String?
+    ) async throws -> AirshipHTTPResponse<RemoteDataResponse> {
+        
         let url = remoteDataURL(locale: locale, randomValue: randomValue)
-        let request = Request { builder in
-            builder.url = url
-            builder.method = "GET"
-            builder.setValue(lastModified, header: "If-Modified-Since")
-        }
-
+        let headers = ["Content-Type" : "application/json"]
+        let request = AirshipRequest(
+            url: url,
+            headers: headers,
+            method: "GET"
+        )
         AirshipLogger.debug("Request to update remote data: \(request)")
 
-        return session.performHTTPRequest(
-            request,
-            completionHandler: { (data, response, error) in
-
-                guard let response = response else {
-                    AirshipLogger.debug(
-                        "Fetch finished with \(error?.localizedDescription ?? "")"
-                    )
-                    completionHandler(nil, error)
-                    return
-                }
-
-                if response.statusCode == 200 {
-                    do {
-                        let lastModified =
-                            response.allHeaderFields["Last-Modified"] as? String
-                        let metadata = self.metadata(
-                            url: url,
-                            lastModified: lastModified
-                        )
-                        let payloads = try self.parseResponse(
-                            data: data,
-                            metadata: metadata
-                        )
-                        let remoteDataResponse = RemoteDataResponse(
-                            status: 200,
-                            metadata: metadata,
-                            payloads: payloads,
-                            lastModified: lastModified
-                        )
-                        completionHandler(remoteDataResponse, nil)
-                    } catch {
-                        AirshipLogger.debug(
-                            "Failed to parse remote data with error: \(error)"
-                        )
-                        completionHandler(nil, error)
-                        return
-                    }
-                } else {
-                    let remoteDataResponse = RemoteDataResponse(
-                        status: response.statusCode,
-                        metadata: nil,
-                        payloads: nil,
-                        lastModified: nil
-                    )
-                    completionHandler(remoteDataResponse, nil)
-                }
-            }
-        )
+        return try await self.session.performHTTPRequest(request) { data , response in
+            let lastModified =
+            response.allHeaderFields["Last-Modified"] as? String
+            let metadata = self.metadata(
+                url: url,
+                lastModified: lastModified
+            )
+            let payloads = try self.parseResponse(
+                data: data,
+                metadata: metadata
+            )
+            return RemoteDataResponse(
+                metadata: metadata,
+                payloads: payloads,
+                lastModified: lastModified
+            )
+        }
     }
 
     private func remoteDataURL(locale: Locale, randomValue: Int) -> URL? {

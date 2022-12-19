@@ -3,7 +3,6 @@
 import Combine
 
 // NOTE: For internal use only. :nodoc:
-@objc(UARemoteDataManager)
 public class RemoteDataManager: NSObject, Component, RemoteDataProvider {
 
     static let refreshTaskID = "RemoteDataManager.refresh"
@@ -29,7 +28,7 @@ public class RemoteDataManager: NSObject, Component, RemoteDataProvider {
     private let notificationCenter: NotificationCenter
     private let appStateTracker: AppStateTracker
     private let localeManager: LocaleManagerProtocol
-    private let taskManager: TaskManagerProtocol
+    private let workManager: AirshipWorkManagerProtocol
     private let privacyManager: PrivacyManager
     private let networkMonitor: NetworkMonitor
 
@@ -58,8 +57,7 @@ public class RemoteDataManager: NSObject, Component, RemoteDataProvider {
         }
     }
 
-    @objc
-    public var lastModified: String? {
+    var lastModified: String? {
         get {
             return self.dataStore.string(
                 forKey: RemoteDataManager.lastRemoteDataModifiedTime
@@ -118,7 +116,6 @@ public class RemoteDataManager: NSObject, Component, RemoteDataProvider {
 
     private let disableHelper: ComponentDisableHelper
 
-    @objc
     private lazy var randomValue: Int = {
         guard
             let storedRandomValue = self.dataStore.object(
@@ -145,14 +142,12 @@ public class RemoteDataManager: NSObject, Component, RemoteDataProvider {
         }
     }
 
-    @objc
-    public convenience init(
+    convenience init(
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,
         localeManager: LocaleManagerProtocol,
         privacyManager: PrivacyManager
     ) {
-
         self.init(
             dataStore: dataStore,
             localeManager: localeManager,
@@ -160,36 +155,28 @@ public class RemoteDataManager: NSObject, Component, RemoteDataProvider {
             apiClient: RemoteDataAPIClient(config: config),
             remoteDataStore: RemoteDataStore(
                 storeName: "RemoteData-\(config.appKey).sqlite"
-            ),
-            taskManager: TaskManager.shared,
-            date: AirshipDate(),
-            notificationCenter: NotificationCenter.default,
-            appStateTracker: AppStateTracker.shared,
-            networkMonitor: NetworkMonitor()
+            )
         )
-
     }
 
-    @objc
-    public init(
+    init(
         dataStore: PreferenceDataStore,
         localeManager: LocaleManagerProtocol,
         privacyManager: PrivacyManager,
         apiClient: RemoteDataAPIClientProtocol,
         remoteDataStore: RemoteDataStore,
-        taskManager: TaskManagerProtocol,
-        date: AirshipDate,
-        notificationCenter: NotificationCenter,
-        appStateTracker: AppStateTracker,
-        networkMonitor: NetworkMonitor
+        workManager: AirshipWorkManagerProtocol = AirshipWorkManager.shared,
+        date: AirshipDate = AirshipDate.shared,
+        notificationCenter: NotificationCenter = NotificationCenter.default,
+        appStateTracker: AppStateTracker = AppStateTracker.shared,
+        networkMonitor: NetworkMonitor = NetworkMonitor()
     ) {
-
         self.dataStore = dataStore
         self.localeManager = localeManager
         self.privacyManager = privacyManager
         self.apiClient = apiClient
         self.remoteDataStore = remoteDataStore
-        self.taskManager = taskManager
+        self.workManager = workManager
         self.date = date
         self.notificationCenter = notificationCenter
         self.appStateTracker = appStateTracker
@@ -229,20 +216,12 @@ public class RemoteDataManager: NSObject, Component, RemoteDataProvider {
             name: PrivacyManager.changeEvent,
             object: nil
         )
-
-        self.taskManager.register(
-            taskID: RemoteDataManager.refreshTaskID,
+        
+        self.workManager.registerWorker(
+            RemoteDataManager.refreshTaskID,
             type: .serial
-        ) { [weak self] task in
-
-            guard let self = self,
-                self.privacyManager.isAnyFeatureEnabled()
-            else {
-                task.taskCompleted()
-                return
-            }
-
-            self.handleRefreshTask(task)
+        ) { [weak self] _ in
+            return try await self?.handleRefreshTask() ?? .success
         }
 
         self.checkRefresh()
@@ -265,90 +244,82 @@ public class RemoteDataManager: NSObject, Component, RemoteDataProvider {
     private func enqueueRefreshTask() {
         if self.privacyManager.isAnyFeatureEnabled() {
             isRefreshing = true
-            self.taskManager.enqueueRequest(
-                taskID: RemoteDataManager.refreshTaskID,
-                options: TaskRequestOptions.defaultOptions
+            self.workManager.dispatchWorkRequest(
+                AirshipWorkRequest(
+                    workID: RemoteDataManager.refreshTaskID,
+                    initialDelay: 0,
+                    requiresNetwork: true,
+                    conflictPolicy: .replace
+                )
             )
         }
     }
-
-    private func handleRefreshTask(_ task: AirshipTask) {
-        let lastModified =
-            self.isLastMetadataCurrent() ? self.lastModified : nil
-        let locale = self.localeManager.currentLocale
+    
+    private func handleRefreshTask() async throws -> AirshipWorkResult {
+        guard self.privacyManager.isAnyFeatureEnabled() else {
+            return .success
+        }
 
         var success = false
+        defer {
+            self.refreshFinished(result: success)
+        }
 
-        self.apiClient.fetchRemoteData(
+        let lastModified = self.isLastMetadataCurrent() ? self.lastModified : nil
+        let locale = self.localeManager.currentLocale
+        
+        let response = try await self.apiClient.fetchRemoteData(
             locale: locale,
             randomValue: self.randomValue,
             lastModified: lastModified
-        ) { response, error in
-            guard let response = response else {
-                if let error = error {
-                    AirshipLogger.error(
-                        "Failed to refresh remote-data with error \(error)"
-                    )
-                } else {
-                    AirshipLogger.error("Failed to refresh remote-data")
-                }
+        )
 
-                task.taskFailed()
-                return
-            }
+        AirshipLogger.debug(
+            "Remote data status code: \(response.statusCode)"
+        )
 
-            AirshipLogger.debug(
-                "Remote data refresh finished with response: \(response)"
-            )
-            AirshipLogger.trace(
-                "Remote data refresh finished with payloads: \(response.payloads ?? [])"
-            )
+        AirshipLogger.trace(
+            "Remote data response \(response)"
+        )
 
-            if response.status == 304 {
-                self.updatedSinceLastForeground = true
-                self.lastRefreshTime = self.date.now
-                self.lastAppVersion = Utils.bundleShortVersionString()
-                success = true
-                task.taskCompleted()
-            } else if response.isSuccess {
-                success = true
-                let payloads = response.payloads ?? []
-
-                self.remoteDataStore.overwriteCachedRemoteData(payloads) {
-                    success in
-                    if success {
-                        self.lastMetadata = response.metadata
-                        self.lastModified = response.lastModified
-                        self.lastRefreshTime = self.date.now
-                        self.lastAppVersion = Utils.bundleShortVersionString()
-                        self.updateSubject.send(payloads)
-                        self.updatedSinceLastForeground = true
-                        task.taskCompleted()
-                    } else {
-                        AirshipLogger.error("Failed to save remote-data.")
-                        task.taskFailed()
-                    }
-                }
-            } else {
-                AirshipLogger.debug("Failed to refresh remote-data")
-                if response.isServerError {
-                    task.taskFailed()
-                } else {
-                    task.taskCompleted()
-                }
-            }
+        guard response.isSuccess || response.statusCode == 304
+        else {
+            // Prevents retrying on client error
+            return response.isServerError ? .failure : .success
         }
 
-        task.completionHandler = {
-            self.refreshLock.sync {
-                for completionHandler in self.refreshCompletionHandlers {
-                    if let handler = completionHandler {
-                        handler(success)
-                    }
+        var payloads: [RemoteDataPayload]?
+
+        if response.isSuccess, let remoteData = response.result {
+            payloads = remoteData.payloads ?? []
+            try await self.remoteDataStore.overwriteCachedRemoteData(
+                payloads ?? []
+            )
+            self.lastMetadata = remoteData.metadata
+            self.lastModified = remoteData.lastModified
+        }
+
+        self.updatedSinceLastForeground = true
+        self.lastRefreshTime = self.date.now
+        self.lastAppVersion = Utils.bundleShortVersionString()
+        success = true
+
+        if let payloads = payloads {
+            self.updateSubject.send(payloads)
+        }
+
+        return .success
+    }
+
+    private func refreshFinished(result: Bool) {
+        self.refreshLock.sync {
+            for completionHandler in self.refreshCompletionHandlers {
+                if let handler = completionHandler {
+                    handler(result)
                 }
-                self.refreshCompletionHandlers.removeAll()
-                self.isRefreshing = false
             }
+            self.refreshCompletionHandlers.removeAll()
+            self.isRefreshing = false
         }
     }
 
@@ -431,11 +402,14 @@ public class RemoteDataManager: NSObject, Component, RemoteDataProvider {
 
     public func current(types: [String]) -> Future<[RemoteDataPayload], Never> {
         return Future { promise in
-            let predicate = NSPredicate(format: "(type IN %@)", types)
-            self.remoteDataStore.fetchRemoteDataFromCache(predicate: predicate)
-            {
-                payloads in
-                promise(.success(payloads))
+            Task {
+                do {
+                    let predicate = NSPredicate(format: "(type IN %@)", types)
+                    let payloads = try await self.remoteDataStore.fetchRemoteDataFromCache(predicate: predicate)
+                    promise(.success(payloads))
+                } catch {
+                    AirshipLogger.error("Error executing fetch request \(error)")
+                }
             }
         }
     }
