@@ -15,10 +15,9 @@ struct DeliveryActivityWidget: Widget {
         } dynamicIsland: { context in
             DynamicIsland {
                 DynamicIslandExpandedRegion(.leading) {
-                    Image("23Grande")
+                    Image(systemName: "box.truck.fill")
                         .resizable()
-                        .scaledToFill()
-                        .clipShape(Circle())
+                        .scaledToFit()
                         .frame(width: 30, height: 30)
                 }
                 DynamicIslandExpandedRegion(.trailing) {
@@ -41,10 +40,9 @@ struct DeliveryActivityWidget: Widget {
                     DeliveryStatusView(stopsAway: context.state.stopsAway)
                 }
             } compactLeading: {
-                Image("23Grande")
+                Image(systemName: "box.truck.fill")
                     .resizable()
-                    .scaledToFill()
-                    .clipShape(Circle())
+                    .scaledToFit()
                     .padding(2)
             } compactTrailing: {
                 if context.state.stopsAway > 0 {
@@ -53,10 +51,9 @@ struct DeliveryActivityWidget: Widget {
                     Text("Delivered")
                 }
             } minimal: {
-                Image("23Grande")
+                Image(systemName: "box.truck.fill")
                     .resizable()
-                    .scaledToFill()
-                    .clipShape(Circle())
+                    .scaledToFit()
                     .padding(2)
             }
             .keylineTint(.red)
@@ -71,12 +68,10 @@ struct LockScreenLiveActivityView: View {
         VStack(alignment: .leading) {
             HStack(alignment: .top) {
                 VStack(alignment: .leading) {
-                    Image("23Grande")
+                    Image(systemName: "box.truck.fill")
                         .resizable()
-                        .scaledToFill()
+                        .scaledToFit()
                         .frame(width: 48, height: 48)
-                        .cornerRadius(8)
-
                     Text("Shipping Status")
 
                     if context.state.stopsAway <= 0 {
