@@ -6,7 +6,7 @@ import XCTest
 
 class ChannelAudienceManagerTest: XCTestCase {
 
-    var taskManager: TestTaskManager!
+    private let workManager = TestWorkManager()
     var notificationCenter: NotificationCenter!
     var date: UATestDate!
     var privacyManager: PrivacyManager!
@@ -18,16 +18,8 @@ class ChannelAudienceManagerTest: XCTestCase {
 
     override func setUpWithError() throws {
         self.notificationCenter = NotificationCenter()
-        self.taskManager = TestTaskManager()
         self.subscriptionListClient = TestSubscriptionListAPIClient()
-        self.subscriptionListClient.defaultCallback = { method in
-            XCTFail("Method \(method) called unexpectedly")
-        }
-
         self.updateClient = TestChannelBulkUpdateAPIClient()
-        self.updateClient.defaultCallback = { method in
-            XCTFail("Method \(method) called unexpectedly")
-        }
 
         self.date = UATestDate()
         self.dataStore = PreferenceDataStore(appKey: UUID().uuidString)
@@ -39,7 +31,7 @@ class ChannelAudienceManagerTest: XCTestCase {
 
         self.audienceManager = ChannelAudienceManager(
             dataStore: self.dataStore,
-            taskManager: self.taskManager,
+            workManager: self.workManager,
             subscriptionListClient: self.subscriptionListClient,
             updateClient: self.updateClient,
             privacyManager: self.privacyManager,
@@ -50,10 +42,10 @@ class ChannelAudienceManagerTest: XCTestCase {
         self.audienceManager.enabled = true
         self.audienceManager.channelID = "some-channel"
 
-        self.taskManager.enqueuedRequests.removeAll()
+        self.workManager.workRequests.removeAll()
     }
 
-    func testUpdates() throws {
+    func testUpdates() async throws {
         let subscriptionListEditor = self.audienceManager
             .editSubscriptionLists()
         subscriptionListEditor.subscribe("pizza")
@@ -83,134 +75,113 @@ class ChannelAudienceManagerTest: XCTestCase {
 
         self.audienceManager.addLiveActivityUpdate(activityUpdate)
 
-        XCTAssertEqual(5, self.taskManager.enqueuedRequests.count)
+        XCTAssertEqual(5, self.workManager.workRequests.count)
 
         let expectation = XCTestExpectation(description: "callback called")
 
-        self.updateClient.updateCallback = { identifier, update, callback in
+        self.updateClient.updateCallback = { identifier, update in
             expectation.fulfill()
             XCTAssertEqual("some-channel", identifier)
             XCTAssertEqual(3, update.subscriptionListUpdates.count)
             XCTAssertEqual(1, update.tagGroupUpdates.count)
             XCTAssertEqual(1, update.attributeUpdates.count)
             XCTAssertEqual([activityUpdate], update.liveActivityUpdates)
-            callback(HTTPResponse(status: 200), nil)
+            return AirshipHTTPResponse(result: nil, statusCode: 200, headers: [:])
         }
 
-        XCTAssertTrue(
-            self.taskManager
-                .launchSync(taskID: ChannelAudienceManager.updateTaskID)
-                .completed
+        var result = try? await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: ChannelAudienceManager.updateTaskID
+            )
         )
-
+        XCTAssertEqual(result, .success)
         wait(for: [expectation], timeout: 10.0)
 
-        XCTAssertTrue(
-            self.taskManager
-                .launchSync(taskID: ChannelAudienceManager.updateTaskID)
-                .completed
+        result = try? await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: ChannelAudienceManager.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
     }
 
-    func testGet() throws {
+    func testGet() async throws {
         let expectedLists = ["cool", "story"]
-        self.subscriptionListClient.getCallback = { identifier, callback in
+        self.subscriptionListClient.getCallback = { identifier in
             XCTAssertEqual("some-channel", identifier)
-            callback(
-                SubscriptionListFetchResponse(
-                    status: 200,
-                    listIDs: expectedLists
-                ),
-                nil
+            return AirshipHTTPResponse(
+                result: expectedLists,
+                statusCode: 200,
+                headers: [:]
             )
         }
-
-        let expectation = XCTestExpectation(description: "callback called")
-        self.audienceManager.fetchSubscriptionLists { lists, error in
-            XCTAssertEqual(expectedLists, lists)
-            expectation.fulfill()
-        }
-
-        wait(for: [expectation], timeout: 10.0)
+        let result = try await self.audienceManager.fetchSubscriptionLists()
+        XCTAssertEqual(expectedLists, result)
     }
 
-    func testGetCache() throws {
+    func testGetCache() async throws {
         self.date.dateOverride = Date()
 
         var apiResult = ["cool", "story"]
 
-        self.subscriptionListClient.getCallback = { identifier, callback in
+        self.subscriptionListClient.getCallback = { identifier in
             XCTAssertEqual("some-channel", identifier)
-            callback(
-                SubscriptionListFetchResponse(status: 200, listIDs: apiResult),
-                nil
+            return AirshipHTTPResponse(
+                result: apiResult,
+                statusCode: 200,
+                headers: [:]
             )
         }
 
         // Populate cache
-        var expectation = XCTestExpectation(description: "callback called")
-        self.audienceManager.fetchSubscriptionLists { lists, error in
-            XCTAssertEqual(["cool", "story"], lists)
-            expectation.fulfill()
-        }
-        wait(for: [expectation], timeout: 10.0)
+        var result = try await self.audienceManager.fetchSubscriptionLists()
+        XCTAssertEqual(["cool", "story"], result)
 
         apiResult = ["some-other-result"]
 
         // From cache
-        expectation = XCTestExpectation(description: "callback called")
-        self.audienceManager.fetchSubscriptionLists { lists, error in
-            XCTAssertEqual(["cool", "story"], lists)
-            expectation.fulfill()
-        }
-        wait(for: [expectation], timeout: 10.0)
-
+        result = try await self.audienceManager.fetchSubscriptionLists()
+        XCTAssertEqual(["cool", "story"], result)
         self.date.offset += 599  // 1 second before cache should invalidate
 
         // From cache
-        expectation = XCTestExpectation(description: "callback called")
-        self.audienceManager.fetchSubscriptionLists { lists, error in
-            XCTAssertEqual(["cool", "story"], lists)
-            expectation.fulfill()
-        }
-        wait(for: [expectation], timeout: 10.0)
+        result = try await self.audienceManager.fetchSubscriptionLists()
+        XCTAssertEqual(["cool", "story"], result)
 
         self.date.offset += 1
 
         // From api
-        expectation = XCTestExpectation(description: "callback called")
-        self.audienceManager.fetchSubscriptionLists { lists, error in
-            XCTAssertEqual(["some-other-result"], lists)
-            expectation.fulfill()
-        }
-        wait(for: [expectation], timeout: 10.0)
+        result = try await self.audienceManager.fetchSubscriptionLists()
+        XCTAssertEqual(["some-other-result"], result)
     }
 
-    func testNoPendingOperations() throws {
-        let task = self.taskManager.launchSync(
-            taskID: ChannelAudienceManager.updateTaskID
+    func testNoPendingOperations() async throws {
+        let result = try? await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: ChannelAudienceManager.updateTaskID
+            )
         )
-        XCTAssertTrue(task.completed)
-        XCTAssertEqual(0, self.taskManager.enqueuedRequests.count)
+        XCTAssertEqual(result, .success)
+        XCTAssertEqual(0, self.workManager.workRequests.count)
     }
 
     func testEnableEnqueuesTask() throws {
         self.audienceManager.enabled = false
-        XCTAssertEqual(0, self.taskManager.enqueuedRequests.count)
+        XCTAssertEqual(0, self.workManager.workRequests.count)
 
         self.audienceManager.enabled = true
-        XCTAssertEqual(1, self.taskManager.enqueuedRequests.count)
+        XCTAssertEqual(1, self.workManager.workRequests.count)
     }
 
     func testSetChannelIDEnqueuesTask() throws {
         self.audienceManager.channelID = nil
-        XCTAssertEqual(0, self.taskManager.enqueuedRequests.count)
+        XCTAssertEqual(0, self.workManager.workRequests.count)
 
         self.audienceManager.channelID = "sweet"
-        XCTAssertEqual(1, self.taskManager.enqueuedRequests.count)
+        XCTAssertEqual(1, self.workManager.workRequests.count)
     }
 
-    func testPrivacyManagerDisabledIgnoresUpdates() throws {
+    func testPrivacyManagerDisabledIgnoresUpdates() async throws {
         self.privacyManager.disableFeatures(.tagsAndAttributes)
 
         let editor = self.audienceManager.editSubscriptionLists()
@@ -219,10 +190,11 @@ class ChannelAudienceManagerTest: XCTestCase {
         editor.apply()
 
         self.privacyManager.enableFeatures(.tagsAndAttributes)
-        let task = self.taskManager.launchSync(
-            taskID: ChannelAudienceManager.updateTaskID
+        _ = try? await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: ChannelAudienceManager.updateTaskID
+            )
         )
-        XCTAssertTrue(task.completed)
     }
 
     func testMigrateMutations() throws {
@@ -283,7 +255,7 @@ class ChannelAudienceManagerTest: XCTestCase {
         )
     }
 
-    func testContactSubscriptionListUpdates() throws {
+    func testContactSubscriptionListUpdates() async throws {
         let updates = [
             SubscriptionListUpdate(listId: "bar", type: .subscribe),
             SubscriptionListUpdate(listId: "baz", type: .unsubscribe),
@@ -291,23 +263,16 @@ class ChannelAudienceManagerTest: XCTestCase {
 
         self.audienceManager.processContactSubscriptionUpdates(updates)
 
-        self.subscriptionListClient.getCallback = { identifier, callback in
-            callback(
-                SubscriptionListFetchResponse(
-                    status: 200,
-                    listIDs: ["cool", "baz"]
-                ),
-                nil
+        self.subscriptionListClient.getCallback = { identifier in
+            return AirshipHTTPResponse(
+                result: ["cool", "baz"],
+                statusCode: 200,
+                headers: [:]
             )
         }
 
-        let expectation = self.expectation(description: "callback called")
-        self.audienceManager.fetchSubscriptionLists { lists, error in
-            XCTAssertEqual(["cool", "bar"], lists)
-            expectation.fulfill()
-        }
-
-        self.waitForExpectations(timeout: 10.0)
+        let result = try await self.audienceManager.fetchSubscriptionLists()
+        XCTAssertEqual(["cool", "bar"], result)
     }
 
     func testSubscriptionListEdits() throws {
@@ -338,7 +303,7 @@ class ChannelAudienceManagerTest: XCTestCase {
         cancellable.cancel()
     }
 
-    func testLiveActivityUpdates() throws {
+    func testLiveActivityUpdates() async throws {
         let activityUpdate = LiveActivityUpdate(
             action: .set,
             id: "foo",
@@ -349,25 +314,23 @@ class ChannelAudienceManagerTest: XCTestCase {
 
         self.audienceManager.addLiveActivityUpdate(activityUpdate)
         let expectation = XCTestExpectation(description: "callback called")
-        self.updateClient.updateCallback = { identifier, update, callback in
+        self.updateClient.updateCallback = { identifier, update in
             expectation.fulfill()
             XCTAssertEqual("some-channel", identifier)
             XCTAssertEqual([activityUpdate], update.liveActivityUpdates)
-            callback(HTTPResponse(status: 200), nil)
+            return AirshipHTTPResponse(result: nil, statusCode: 200, headers: [:])
         }
 
-        XCTAssertTrue(
-            self.taskManager
-                .launchSync(
-                    taskID: ChannelAudienceManager.updateTaskID
-                )
-                .completed
+        let result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: ChannelAudienceManager.updateTaskID
+            )
         )
-
+        XCTAssertEqual(result, .success)
         wait(for: [expectation], timeout: 10.0)
     }
 
-    func testLiveActivityUpdateAdjustTimestamps() throws {
+    func testLiveActivityUpdateAdjustTimestamps() async throws {
         let activityUpdates = [
             LiveActivityUpdate(
                 action: .set,
@@ -435,21 +398,19 @@ class ChannelAudienceManagerTest: XCTestCase {
         }
 
         let expectation = XCTestExpectation(description: "callback called")
-        self.updateClient.updateCallback = { identifier, update, callback in
+        self.updateClient.updateCallback = { identifier, update in
             expectation.fulfill()
             XCTAssertEqual("some-channel", identifier)
             XCTAssertEqual(expected, update.liveActivityUpdates)
-            callback(HTTPResponse(status: 200), nil)
+            return AirshipHTTPResponse(result: nil, statusCode: 200, headers: [:])
         }
 
-        XCTAssertTrue(
-            self.taskManager
-                .launchSync(
-                    taskID: ChannelAudienceManager.updateTaskID
-                )
-                .completed
+        let result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: ChannelAudienceManager.updateTaskID
+            )
         )
-
+        XCTAssertEqual(result, .success)
         wait(for: [expectation], timeout: 10.0)
     }
 

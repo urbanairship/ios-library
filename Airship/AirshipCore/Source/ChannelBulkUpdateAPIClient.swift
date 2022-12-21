@@ -2,12 +2,10 @@
 
 // NOTE: For internal use only. :nodoc:
 protocol ChannelBulkUpdateAPIClientProtocol {
-    @discardableResult
     func update(
         _ update: AudienceUpdate,
-        channelID: String,
-        completionHandler: @escaping (HTTPResponse?, Error?) -> Void
-    ) -> Disposable
+        channelID: String
+    ) async throws -> AirshipHTTPResponse<Void>
 }
 
 // NOTE: For internal use only. :nodoc:
@@ -15,78 +13,62 @@ class ChannelBulkUpdateAPIClient: ChannelBulkUpdateAPIClientProtocol {
     private static let path = "/api/channels/sdk/batch/"
 
     private var config: RuntimeConfig
-    private var session: RequestSession
+    private var session: AirshipRequestSession
     private var encoder: JSONEncoder = JSONEncoder()
 
-    init(config: RuntimeConfig, session: RequestSession) {
+    init(config: RuntimeConfig, session: AirshipRequestSession) {
         self.config = config
         self.session = session
     }
 
     convenience init(config: RuntimeConfig) {
-        self.init(config: config, session: RequestSession(config: config))
+        self.init(
+            config: config,
+            session: AirshipRequestSession(
+                appKey: config.appKey
+            )
+        )
     }
 
-    @discardableResult
     func update(
         _ update: AudienceUpdate,
-        channelID: String,
-        completionHandler: @escaping (HTTPResponse?, Error?) -> Void
-    ) -> Disposable {
-
-        let url = buildURL(channelID: channelID)
-
+        channelID: String
+    ) async throws -> AirshipHTTPResponse<Void> {
+        let url = try makeURL(channelID: channelID)
         let payload = update.clientPayload
 
         AirshipLogger.debug(
-            "Updating channel with url \(url?.absoluteString ?? "") payload \(payload)"
+            "Updating channel with url \(url.absoluteString) payload \(payload)"
         )
 
-        let request = Request(builderBlock: { [self] builder in
-            builder.method = "PUT"
-            builder.url = url
-            builder.username = config.appKey
-            builder.password = config.appSecret
-            builder.setValue(
-                "application/vnd.urbanairship+json; version=3;",
-                header: "Accept"
-            )
-            builder.setValue("application/json", header: "Content-Type")
-            builder.body = try? encoder.encode(payload)
-        })
-
-        return session.performHTTPRequest(
-            request,
-            completionHandler: { (data, response, error) in
-                guard let response = response else {
-                    AirshipLogger.debug(
-                        "Update finished with error: \(error.debugDescription)"
-                    )
-                    completionHandler(nil, error)
-                    return
-                }
-
-                AirshipLogger.debug(
-                    "Update finished with response: \(response)"
-                )
-                completionHandler(
-                    HTTPResponse(status: response.statusCode),
-                    nil
-                )
-            }
+        let request = AirshipRequest(
+            url: url,
+            headers: [
+                "Accept": "application/vnd.urbanairship+json; version=3;",
+                "Content-Type": "application/json"
+            ],
+            method: "PUT",
+            auth: .basic(config.appKey, config.appSecret),
+            body: try? encoder.encode(payload)
         )
+        return try await session.performHTTPRequest(request)
     }
 
-    func buildURL(channelID: String) -> URL? {
+    func makeURL(channelID: String) throws -> URL {
         guard let deviceUrl = config.deviceAPIURL else {
-            return nil
+            throw AirshipErrors.error("URL config not downloaded.")
         }
 
         var urlComps = URLComponents(
             string: "\(deviceUrl)\(ChannelBulkUpdateAPIClient.path)\(channelID)"
         )
         urlComps?.queryItems = [URLQueryItem(name: "platform", value: "ios")]
-        return urlComps?.url
+
+        guard let url = urlComps?.url else {
+            throw AirshipErrors.error("Invalid url from \(String(describing: urlComps)).")
+        }
+
+        return url
     }
 }
 

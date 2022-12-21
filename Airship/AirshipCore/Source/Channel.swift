@@ -237,10 +237,7 @@ public class Channel: NSObject, Component, ChannelProtocol {
         #if canImport(ActivityKit)
         Task {
             for await update in self.liveActivityRegistry.updates {
-                UADispatcher.globalDispatcher(.utility)
-                    .dispatchAsync {
-                        self.audienceManager.addLiveActivityUpdate(update)
-                    }
+                self.audienceManager.addLiveActivityUpdate(update)
             }
         }
         #endif
@@ -452,31 +449,13 @@ public class Channel: NSObject, Component, ChannelProtocol {
         editor.apply()
     }
 
+
     /// Fetches subscription lists.
     /// - Parameter completionHandler: A completion handler.
     /// - Returns: A Disposable.
-    @discardableResult
     @objc
-    public func fetchSubscriptionLists(
-        completionHandler: @escaping ([String]?, Error?) -> Void
-    ) -> Disposable {
-        return audienceManager.fetchSubscriptionLists(
-            completionHandler: completionHandler
-        )
-    }
-
     public func fetchSubscriptionLists() async throws -> [String] {
-        try await withCheckedThrowingContinuation { continuation in
-            self.audienceManager.fetchSubscriptionLists {
-                subscriptionLists,
-                error in
-                if let error = error {
-                    continuation.resume(throwing: error)
-                } else {
-                    continuation.resume(returning: subscriptionLists ?? [])
-                }
-            }
-        }
+        return try await self.audienceManager.fetchSubscriptionLists()
     }
 
     /// Publishes edits made to the subscription lists through the SDK

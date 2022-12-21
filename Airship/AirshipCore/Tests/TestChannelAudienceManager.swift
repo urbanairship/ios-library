@@ -3,10 +3,10 @@ import Foundation
 
 @testable import AirshipCore
 
-@objc(UATestChannelAudienceManager)
-public class TestChannelAudienceManager: NSObject,
-    ChannelAudienceManagerProtocol
+public class TestChannelAudienceManager: ChannelAudienceManagerProtocol
 {
+
+
 
     public let subscriptionListEditsSubject = PassthroughSubject<
         SubscriptionListEdit, Never
@@ -35,9 +35,8 @@ public class TestChannelAudienceManager: NSObject,
     @objc
     public var subcriptionListEditor: SubscriptionListEditor?
 
-    @objc
     public var fetchSubscriptionListCallback:
-        ((([String]?, Error?) -> Void) -> Disposable)?
+        (() async throws -> [String])?
 
     public func editSubscriptionLists() -> SubscriptionListEditor {
         return subcriptionListEditor!
@@ -51,10 +50,9 @@ public class TestChannelAudienceManager: NSObject,
         return attributeEditor!
     }
 
-    public func fetchSubscriptionLists(
-        completionHandler: @escaping ([String]?, Error?) -> Void
-    ) -> Disposable {
-        return fetchSubscriptionListCallback!(completionHandler)
+
+    public func fetchSubscriptionLists() async throws -> [String] {
+        return try await fetchSubscriptionListCallback!()
     }
 
     public func processContactSubscriptionUpdates(

@@ -4,22 +4,14 @@ import Foundation
 
 public class TestSubscriptionListAPIClient: SubscriptionListAPIClientProtocol {
     var getCallback:
-        ((String, ((SubscriptionListFetchResponse?, Error?) -> Void)) -> Void)?
-    var defaultCallback: ((String) -> Void)?
+        ((String) async throws -> AirshipHTTPResponse<[String]>)?
 
     init() {}
 
     public func get(
-        channelID: String,
-        completionHandler: @escaping (SubscriptionListFetchResponse?, Error?) ->
-            Void
-    ) -> Disposable {
-        if let callback = getCallback {
-            callback(channelID, completionHandler)
-        } else {
-            defaultCallback?("get")
-        }
+        channelID: String
+    ) async throws -> AirshipHTTPResponse<[String]> {
+        return try await getCallback!(channelID)
 
-        return Disposable()
     }
 }

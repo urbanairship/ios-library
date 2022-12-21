@@ -1121,8 +1121,6 @@
 		A61517B626AEEABA008A41C4 /* SubscriptionListUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61517B426AEEAAB008A41C4 /* SubscriptionListUpdate.swift */; };
 		A61517C426B009D6008A41C4 /* SubscriptionListAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61517C026B009D6008A41C4 /* SubscriptionListAPIClient.swift */; };
 		A61517C526B009D6008A41C4 /* SubscriptionListAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61517C026B009D6008A41C4 /* SubscriptionListAPIClient.swift */; };
-		A61517C626B009D6008A41C4 /* SubscriptionListFetchResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61517C126B009D6008A41C4 /* SubscriptionListFetchResponse.swift */; };
-		A61517C726B009D6008A41C4 /* SubscriptionListFetchResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61517C126B009D6008A41C4 /* SubscriptionListFetchResponse.swift */; };
 		A615E215264EAFB9004FA211 /* UAPrivacyManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A615E214264EAFB9004FA211 /* UAPrivacyManagerTest.m */; };
 		A63A567628F449D8004B8951 /* TestWorkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A63A567528F449D8004B8951 /* TestWorkManager.swift */; };
 		A63A567828F457FE004B8951 /* TestWorkRateLimiterActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A63A567728F457FE004B8951 /* TestWorkRateLimiterActor.swift */; };
@@ -1207,7 +1205,6 @@
 		A6722A00281A9E640033F54D /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF66D902769B69C00ABCB76 /* RootView.swift */; };
 		A6722A01281A9E640033F54D /* UrlInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF66D8C276461DA00ABCB76 /* UrlInfo.swift */; };
 		A6722A02281A9E820033F54D /* SubscriptionListAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61517C026B009D6008A41C4 /* SubscriptionListAPIClient.swift */; };
-		A6722A03281A9E820033F54D /* SubscriptionListFetchResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61517C126B009D6008A41C4 /* SubscriptionListFetchResponse.swift */; };
 		A6722A04281A9E820033F54D /* SubscriptionListEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61517B126A9C4C3008A41C4 /* SubscriptionListEditor.swift */; };
 		A6722A05281A9E820033F54D /* SubscriptionListUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61517B426AEEAAB008A41C4 /* SubscriptionListUpdate.swift */; };
 		A6722A06281A9E820033F54D /* ScopedSubscriptionListUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67EC24A279B1C34009089E1 /* ScopedSubscriptionListUpdate.swift */; };
@@ -2537,7 +2534,6 @@
 		A61517B126A9C4C3008A41C4 /* SubscriptionListEditor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SubscriptionListEditor.swift; path = AirshipCore/Source/SubscriptionListEditor.swift; sourceTree = SOURCE_ROOT; };
 		A61517B426AEEAAB008A41C4 /* SubscriptionListUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SubscriptionListUpdate.swift; path = AirshipCore/Source/SubscriptionListUpdate.swift; sourceTree = SOURCE_ROOT; };
 		A61517C026B009D6008A41C4 /* SubscriptionListAPIClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubscriptionListAPIClient.swift; sourceTree = "<group>"; };
-		A61517C126B009D6008A41C4 /* SubscriptionListFetchResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubscriptionListFetchResponse.swift; sourceTree = "<group>"; };
 		A615E214264EAFB9004FA211 /* UAPrivacyManagerTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAPrivacyManagerTest.m; sourceTree = "<group>"; };
 		A63A567528F449D8004B8951 /* TestWorkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestWorkManager.swift; sourceTree = "<group>"; };
 		A63A567728F457FE004B8951 /* TestWorkRateLimiterActor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestWorkRateLimiterActor.swift; sourceTree = "<group>"; };
@@ -4465,7 +4461,6 @@
 			isa = PBXGroup;
 			children = (
 				A61517C026B009D6008A41C4 /* SubscriptionListAPIClient.swift */,
-				A61517C126B009D6008A41C4 /* SubscriptionListFetchResponse.swift */,
 				A61517B126A9C4C3008A41C4 /* SubscriptionListEditor.swift */,
 				A61517B426AEEAAB008A41C4 /* SubscriptionListUpdate.swift */,
 				A67EC24A279B1C34009089E1 /* ScopedSubscriptionListUpdate.swift */,
@@ -6066,7 +6061,6 @@
 				6E9B4874288F0CE000C905B1 /* RateAppAction.swift in Sources */,
 				6ED80793273CA0C800D1F455 /* EnvironmentValues.swift in Sources */,
 				6E49D7BE28401D2E00C7BB9D /* RegistrationDelegate.swift in Sources */,
-				A61517C626B009D6008A41C4 /* SubscriptionListFetchResponse.swift in Sources */,
 				6E6ED15B2683DBC300A2CBD0 /* Base64.swift in Sources */,
 				A61517B226A9C4C3008A41C4 /* SubscriptionListEditor.swift in Sources */,
 				6E664BCA26C4852B00A2C8E5 /* AddCustomEventAction.swift in Sources */,
@@ -6634,7 +6628,6 @@
 				A6722A3E281A9EA00033F54D /* EventStore.swift in Sources */,
 				A6722A40281A9EA00033F54D /* CustomEvent.swift in Sources */,
 				A6722A02281A9E820033F54D /* SubscriptionListAPIClient.swift in Sources */,
-				A6722A03281A9E820033F54D /* SubscriptionListFetchResponse.swift in Sources */,
 				A6722A04281A9E820033F54D /* SubscriptionListEditor.swift in Sources */,
 				A6722A05281A9E820033F54D /* SubscriptionListUpdate.swift in Sources */,
 				A6722A06281A9E820033F54D /* ScopedSubscriptionListUpdate.swift in Sources */,
@@ -7062,7 +7055,6 @@
 				6E91B46A2689327D00DDB1A8 /* CustomEvent.swift in Sources */,
 				6E664BCB26C4852B00A2C8E5 /* AddCustomEventAction.swift in Sources */,
 				6E91B4622689092F00DDB1A8 /* InstallAttributionEvent.swift in Sources */,
-				A61517C726B009D6008A41C4 /* SubscriptionListFetchResponse.swift in Sources */,
 				6E664BE326C4D6B600A2C8E5 /* WalletAction.swift in Sources */,
 				6E6ED15C2683DBC300A2CBD0 /* Base64.swift in Sources */,
 				A61517B326A9C4C3008A41C4 /* SubscriptionListEditor.swift in Sources */,

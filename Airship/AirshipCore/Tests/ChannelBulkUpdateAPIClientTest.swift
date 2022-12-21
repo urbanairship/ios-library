@@ -6,8 +6,8 @@ import XCTest
 
 class ChannelBulkUpdateAPIClientTest: XCTestCase {
 
-    var config: RuntimeConfig!
-    var session: TestRequestSession!
+    private var config: RuntimeConfig!
+    private let session = TestAirshipRequestSession()
     var client: ChannelBulkUpdateAPIClient!
 
     override func setUpWithError() throws {
@@ -17,14 +17,13 @@ class ChannelBulkUpdateAPIClientTest: XCTestCase {
             config: airshipConfig,
             dataStore: PreferenceDataStore(appKey: UUID().uuidString)
         )
-        self.session = TestRequestSession.init()
         self.client = ChannelBulkUpdateAPIClient(
             config: self.config,
             session: self.session
         )
     }
 
-    func testUpdate() throws {
+    func testUpdate() async throws {
         let date = Date()
         self.session.response = HTTPURLResponse(
             url: URL(string: "https://neat")!,
@@ -33,7 +32,6 @@ class ChannelBulkUpdateAPIClientTest: XCTestCase {
             headerFields: [String: String]()
         )
 
-        let expectation = XCTestExpectation(description: "callback called")
 
         let update = AudienceUpdate(
             subscriptionListUpdates: [
@@ -68,15 +66,12 @@ class ChannelBulkUpdateAPIClientTest: XCTestCase {
             ]
         )
 
-        self.client.update(
+        let response = try await self.client.update(
             update,
             channelID: "some-channel"
-        ) { response, error in
-            XCTAssertEqual(response?.status, 200)
-            XCTAssertNil(error)
-            expectation.fulfill()
-        }
-        wait(for: [expectation], timeout: 10.0)
+        )
+
+        XCTAssertEqual(response.statusCode, 200)
 
         let expectedBody =
             [
@@ -125,7 +120,7 @@ class ChannelBulkUpdateAPIClientTest: XCTestCase {
         )
     }
 
-    func testUpdateError() throws {
+    func testUpdateError() async throws {
         let sessionError = AirshipErrors.error("error!")
         self.session.error = sessionError
 
@@ -144,15 +139,15 @@ class ChannelBulkUpdateAPIClientTest: XCTestCase {
             ]
         )
 
-        self.client.update(
-            update,
-            channelID: "some-channel"
-        ) { response, error in
-            XCTAssertEqual(sessionError as NSError, error! as NSError)
-            XCTAssertNil(response)
-            expectation.fulfill()
+        do {
+            _ = try await self.client.update(
+                update,
+                channelID: "some-channel"
+            )
+        } catch {
+            XCTAssertEqual(sessionError as NSError, error as NSError)
+
         }
-        wait(for: [expectation], timeout: 10.0)
     }
 
 }

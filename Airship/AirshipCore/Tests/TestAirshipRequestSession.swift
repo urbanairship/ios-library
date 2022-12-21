@@ -27,6 +27,11 @@ public class TestAirshipRequestSession: AirshipRequestSession {
     ) async throws -> AirshipHTTPResponse<T> {
         self.previousRequest = self.lastRequest
         self.lastRequest = request
+
+        if let error = self.error {
+            throw error
+        }
+        
         let result = AirshipHTTPResponse(
             result: try responseParser?(data, response!),
             statusCode: response!.statusCode,

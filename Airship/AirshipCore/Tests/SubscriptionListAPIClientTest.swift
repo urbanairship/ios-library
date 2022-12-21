@@ -8,7 +8,7 @@ import XCTest
 class SubscriptionListAPIClientTest: XCTestCase {
 
     var config: RuntimeConfig!
-    var session: TestRequestSession!
+    var session: TestAirshipRequestSession = TestAirshipRequestSession()
     var client: SubscriptionListAPIClient!
 
     override func setUpWithError() throws {
@@ -18,14 +18,13 @@ class SubscriptionListAPIClientTest: XCTestCase {
             config: airshipConfig,
             dataStore: PreferenceDataStore(appKey: UUID().uuidString)
         )
-        self.session = TestRequestSession.init()
         self.client = SubscriptionListAPIClient(
             config: self.config,
             session: self.session
         )
     }
 
-    func testGet() throws {
+    func testGet() async throws {
         let responseBody = """
                 {
                    "ok" : true,
@@ -41,19 +40,13 @@ class SubscriptionListAPIClientTest: XCTestCase {
         )
         self.session.data = responseBody.data(using: .utf8)
 
-        let expectation = XCTestExpectation(description: "callback called")
+        let response = try await self.client.get(channelID: "some-channel")
 
-        self.client.get(channelID: "some-channel") { response, error in
-            XCTAssertEqual(response?.status, 200)
-            XCTAssertNil(error)
-            XCTAssertEqual(
-                ["example_listId-1", "example_listId-2"],
-                response?.listIDs
-            )
-            expectation.fulfill()
-        }
-
-        wait(for: [expectation], timeout: 10.0)
+        XCTAssertEqual(response.statusCode, 200)
+        XCTAssertEqual(
+            ["example_listId-1", "example_listId-2"],
+            response.result
+        )
 
         XCTAssertEqual("GET", self.session.lastRequest?.method)
         XCTAssertEqual(
@@ -62,7 +55,7 @@ class SubscriptionListAPIClientTest: XCTestCase {
         )
     }
 
-    func testGetParseError() throws {
+    func testGetParseError() async throws {
         let responseBody = "What?"
 
         self.session.response = HTTPURLResponse(
@@ -73,29 +66,23 @@ class SubscriptionListAPIClientTest: XCTestCase {
         )
         self.session.data = responseBody.data(using: .utf8)
 
-        let expectation = XCTestExpectation(description: "callback called")
 
-        self.client.get(channelID: "some-channel") { response, error in
-            XCTAssertNotNil(error)
-            XCTAssertNil(response)
-            expectation.fulfill()
+        do {
+            _ = try await self.client.get(channelID: "some-channel")
+            XCTFail("Should throw")
+        } catch {
         }
-
-        wait(for: [expectation], timeout: 10.0)
     }
 
-    func testGetError() throws {
+    func testGetError() async throws {
         let sessionError = AirshipErrors.error("error!")
         self.session.error = sessionError
 
-        let expectation = XCTestExpectation(description: "callback called")
-
-        self.client.get(channelID: "some-channel") { response, error in
-            XCTAssertEqual(sessionError as NSError, error! as NSError)
-            XCTAssertNil(response)
-            expectation.fulfill()
+        do {
+            _ = try await self.client.get(channelID: "some-channel")
+            XCTFail("Should throw")
+        } catch {
+            XCTAssertEqual(sessionError as NSError, error as NSError)
         }
-
-        wait(for: [expectation], timeout: 10.0)
     }
 }

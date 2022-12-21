@@ -4,6 +4,8 @@ import Foundation
 
 @objc(UATestChannel)
 public class TestChannel: NSObject, ChannelProtocol, Component {
+
+
     public var isComponentEnabled: Bool = true
 
     public var extenders:
@@ -80,9 +82,7 @@ public class TestChannel: NSObject, ChannelProtocol, Component {
         editor.apply()
     }
 
-    public func fetchSubscriptionLists(
-        completionHandler: @escaping ([String]?, Error?) -> Void
-    ) -> Disposable {
+    public func fetchSubscriptionLists() async throws -> [String] {
         fatalError("Not implemented")
     }
 

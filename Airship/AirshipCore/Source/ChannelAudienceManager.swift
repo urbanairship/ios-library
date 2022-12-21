@@ -21,10 +21,7 @@ protocol ChannelAudienceManagerProtocol {
 
     func editAttributes() -> AttributesEditor
 
-    @discardableResult
-    func fetchSubscriptionLists(
-        completionHandler: @escaping ([String]?, Error?) -> Void
-    ) -> Disposable
+    func fetchSubscriptionLists() async throws -> [String]
 
     func processContactSubscriptionUpdates(_ updates: [SubscriptionListUpdate])
 }
@@ -43,13 +40,12 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
 
     private let dataStore: PreferenceDataStore
     private let privacyManager: PrivacyManager
-    private let taskManager: TaskManagerProtocol
+    private let workManager: AirshipWorkManagerProtocol
     private let subscriptionListClient: SubscriptionListAPIClientProtocol
     private let updateClient: ChannelBulkUpdateAPIClientProtocol
     private let notificationCenter: NotificationCenter
 
     private let date: AirshipDate
-    private let dispatcher = UADispatcher.serial(.utility)
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
     private let updateLock = Lock()
@@ -61,13 +57,13 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
     private let subscriptionListEditsSubject = PassthroughSubject<
         SubscriptionListEdit, Never
     >()
-    public var subscriptionListEdits: AnyPublisher<SubscriptionListEdit, Never>
+
+    var subscriptionListEdits: AnyPublisher<SubscriptionListEdit, Never>
     {
         self.subscriptionListEditsSubject.eraseToAnyPublisher()
     }
 
-    @objc
-    public var pendingAttributeUpdates: [AttributeUpdate] {
+   var pendingAttributeUpdates: [AttributeUpdate] {
         var updates: [AttributeUpdate]!
         updateLock.sync {
             updates = getUpdates().compactMap { $0.attributeUpdates }
@@ -76,8 +72,7 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
         return updates
     }
 
-    @objc
-    public var pendingTagGroupUpdates: [TagGroupUpdate] {
+    var pendingTagGroupUpdates: [TagGroupUpdate] {
         var updates: [TagGroupUpdate]!
         updateLock.sync {
             updates = getUpdates().compactMap { $0.tagGroupUpdates }
@@ -86,15 +81,13 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
         return updates
     }
 
-    @objc
-    public var channelID: String? {
+    var channelID: String? {
         didSet {
             self.enqueueTask()
         }
     }
 
-    @objc
-    public var enabled: Bool = false {
+    var enabled: Bool = false {
         didSet {
             self.enqueueTask()
         }
@@ -102,7 +95,7 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
 
     init(
         dataStore: PreferenceDataStore,
-        taskManager: TaskManagerProtocol,
+        workManager: AirshipWorkManagerProtocol,
         subscriptionListClient: SubscriptionListAPIClientProtocol,
         updateClient: ChannelBulkUpdateAPIClientProtocol,
         privacyManager: PrivacyManager,
@@ -111,7 +104,7 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
     ) {
 
         self.dataStore = dataStore
-        self.taskManager = taskManager
+        self.workManager = workManager
         self.privacyManager = privacyManager
         self.subscriptionListClient = subscriptionListClient
         self.updateClient = updateClient
@@ -126,12 +119,11 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
             maxCacheAge: ChannelAudienceManager.maxCacheTime
         )
 
-        self.taskManager.register(
-            taskID: ChannelAudienceManager.updateTaskID,
-            type: .serial,
-            dispatcher: self.dispatcher
-        ) { [weak self] task in
-            self?.handleUpdateTask(task)
+        self.workManager.registerWorker(
+            ChannelAudienceManager.updateTaskID,
+            type: .serial
+        ) { [weak self] _ in
+            return try await self?.handleUpdateTask() ?? .success
         }
 
         self.migrateMutations()
@@ -153,16 +145,14 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
         self.checkPrivacyManager()
     }
 
-    @objc
-    public convenience init(
+    convenience init(
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,
         privacyManager: PrivacyManager
     ) {
-
         self.init(
             dataStore: dataStore,
-            taskManager: TaskManager.shared,
+            workManager: AirshipWorkManager.shared,
             subscriptionListClient: SubscriptionListAPIClient(config: config),
             updateClient: ChannelBulkUpdateAPIClient(config: config),
             privacyManager: privacyManager,
@@ -171,8 +161,7 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
         )
     }
 
-    @objc
-    public func editSubscriptionLists() -> SubscriptionListEditor {
+    func editSubscriptionLists() -> SubscriptionListEditor {
         return SubscriptionListEditor { updates in
             guard !updates.isEmpty else {
                 return
@@ -205,8 +194,7 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
         }
     }
 
-    @objc
-    public func editTagGroups(allowDeviceGroup: Bool) -> TagGroupsEditor {
+    func editTagGroups(allowDeviceGroup: Bool) -> TagGroupsEditor {
         return TagGroupsEditor(allowDeviceTagGroup: allowDeviceGroup) {
             updates in
             guard !updates.isEmpty else {
@@ -227,8 +215,7 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
         }
     }
 
-    @objc
-    public func editAttributes() -> AttributesEditor {
+    func editAttributes() -> AttributesEditor {
         return AttributesEditor { updates in
             guard !updates.isEmpty else {
                 return
@@ -248,87 +235,53 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
         }
     }
 
-    @objc
-    @discardableResult
-    public func fetchSubscriptionLists(
-        completionHandler: @escaping ([String]?, Error?) -> Void
-    ) -> Disposable {
-        var callback: (([String]?, Error?) -> Void)? = completionHandler
-        let disposable = Disposable {
-            callback = nil
+    func fetchSubscriptionLists() async throws -> [String] {
+        guard let channelID = self.channelID else {
+            throw AirshipErrors.error("Channel not created yet")
         }
 
-        self.dispatcher.dispatchAsync {
-            guard let channelID = self.channelID else {
-                callback?(nil, AirshipErrors.error("Channel not created yet"))
-                return
-            }
+        var listIDs = try await self.resolveSubscriptionLists(
+            channelID: channelID
+        )
 
-            do {
-                var listIDs = try self.resolveSubscriptionLists(channelID)
+        // Localy history
+        listIDs = self.applySubscriptionListUpdates(
+            listIDs,
+            updates: self.cachedSubscriptionListsHistory.values
+        )
 
-                // Localy history
-                listIDs = self.applySubscriptionListUpdates(
-                    listIDs,
-                    updates: self.cachedSubscriptionListsHistory.values
-                )
-
-                // Pending
-                if let pending = AudienceUpdate.collapse(self.getUpdates()) {
-                    listIDs = self.applySubscriptionListUpdates(
-                        listIDs,
-                        updates: pending.subscriptionListUpdates
-                    )
-                }
-
-                callback?(listIDs, nil)
-            } catch {
-                callback?(nil, error)
-            }
+        // Pending
+        if let pending = AudienceUpdate.collapse(self.getUpdates()) {
+            listIDs = self.applySubscriptionListUpdates(
+                listIDs,
+                updates: pending.subscriptionListUpdates
+            )
         }
 
-        return disposable
+        return listIDs
     }
 
-    private func resolveSubscriptionLists(_ channelID: String) throws
-        -> [String]
-    {
+
+    private func resolveSubscriptionLists(
+        channelID: String
+    ) async throws -> [String] {
         if let cached = self.cachedSubscriptionLists.value {
             return cached
         }
 
-        var fetchResponse: (SubscriptionListFetchResponse?, Error?)
-        let semaphore = Semaphore()
-        self.subscriptionListClient.get(channelID: channelID) {
-            response,
-            error in
-            fetchResponse = (response, error)
-            semaphore.signal()
-        }
+        let response = try await self.subscriptionListClient.get(
+            channelID: channelID
+        )
 
-        semaphore.wait()
-
-        guard let response = fetchResponse.0 else {
-            if let error = fetchResponse.1 {
-                AirshipLogger.debug("Fetched lists failed with error: \(error)")
-            } else {
-                AirshipLogger.debug("Fetched lists failed")
-            }
-
+        guard response.isSuccess, let lists = response.result else {
             throw AirshipErrors.error(
-                "Failed to fetch subscription lists failed"
+                "Failed to fetch subscription lists with status: \(response.statusCode)"
             )
         }
 
-        guard response.isSuccess, let listIDs = response.listIDs else {
-            throw AirshipErrors.error(
-                "Failed to fetch subscription lists with status: \(response.status)"
-            )
-        }
+        self.cachedSubscriptionLists.value = lists
 
-        AirshipLogger.debug("Fetched lists finished with response: \(response)")
-        self.cachedSubscriptionLists.value = listIDs
-        return listIDs
+        return lists
     }
 
     private func applySubscriptionListUpdates(
@@ -363,68 +316,56 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
     @objc
     private func enqueueTask() {
         if self.enabled && self.channelID != nil {
-            self.taskManager.enqueueRequest(
-                taskID: ChannelAudienceManager.updateTaskID,
-                options: TaskRequestOptions.defaultOptions
+            self.workManager.dispatchWorkRequest(
+                AirshipWorkRequest(
+                    workID: ChannelAudienceManager.updateTaskID,
+                    requiresNetwork: true
+                )
             )
         }
     }
 
-    private func handleUpdateTask(_ task: AirshipTask) {
-        guard self.enabled else {
-            task.taskCompleted()
-            return
-        }
-
-        guard let channelID = self.channelID,
-            let update = self.prepareNextUpdate()
+    private func handleUpdateTask() async throws -> AirshipWorkResult {
+        guard self.enabled,
+              let channelID = self.channelID,
+              let update = self.prepareNextUpdate()
         else {
-            task.taskCompleted()
-            return
+            return .success
         }
 
         for listUpdate in update.subscriptionListUpdates {
             self.cachedSubscriptionListsHistory.append(listUpdate)
         }
 
-        self.updateClient.update(
+        let response = try await self.updateClient.update(
             update,
             channelID: channelID
-        ) { response, error in
-            if let response = response {
-                AirshipLogger.debug(
-                    "Update finished with response: \(response)"
-                )
-                if response.isSuccess {
-                    self.popFirstUpdate()
-                    task.taskCompleted()
-                    self.enqueueTask()
+        )
 
-                    let payload: [String: Any] = [
-                        Channel.audienceTagsKey: update.tagGroupUpdates,
-                        Channel.audienceAttributesKey: update.attributeUpdates,
-                    ]
 
-                    self.notificationCenter.post(
-                        name: Channel.audienceUpdatedEvent,
-                        object: nil,
-                        userInfo: payload
-                    )
+        AirshipLogger.debug(
+            "Update finished with response: \(response)"
+        )
 
-                } else if response.isServerError {
-                    task.taskFailed()
-                } else {
-                    task.taskCompleted()
-                }
-            } else {
-                if let error = error {
-                    AirshipLogger.debug("Update failed with error: \(error)")
-                } else {
-                    AirshipLogger.debug("Update failed")
-                }
-                task.taskFailed()
-            }
+        guard response.isSuccess else {
+            return response.isServerError ? .failure : .success
         }
+
+        self.popFirstUpdate()
+        self.enqueueTask()
+
+        let payload: [String: Any] = [
+            Channel.audienceTagsKey: update.tagGroupUpdates,
+            Channel.audienceAttributesKey: update.attributeUpdates,
+        ]
+
+        self.notificationCenter.post(
+            name: Channel.audienceUpdatedEvent,
+            object: nil,
+            userInfo: payload
+        )
+
+        return .success
     }
 
     private func addUpdate(_ update: AudienceUpdate) {

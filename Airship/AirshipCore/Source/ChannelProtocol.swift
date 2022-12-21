@@ -103,15 +103,10 @@ public protocol ChannelProtocol {
 
     /**
      * Fetches current subscription lists.
-     * - Parameters:
-     *   - completionHandler: The completion handler with the result.
-     * - Returns: A disposable to cancel the callback.
+     * - Returns: The subscription lists
      */
     @objc
-    @discardableResult
-    func fetchSubscriptionLists(
-        completionHandler: @escaping ([String]?, Error?) -> Void
-    ) -> Disposable
+    func fetchSubscriptionLists() async throws -> [String]
 
     /**
      * Edits channel attributes.
