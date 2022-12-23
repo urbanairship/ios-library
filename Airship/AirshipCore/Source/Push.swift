@@ -13,11 +13,20 @@ import UIKit
 @objc(UAPush)
 public class Push: NSObject, Component, PushProtocol {
 
+    private let pushTokenSubject = PassthroughSubject<String?, Never>()
+    private var pushTokenPublisher: AnyPublisher<String?, Never> {
+        self.pushTokenSubject
+            .prepend(Just(self.deviceToken))
+            .eraseToAnyPublisher()
+    }
+
+
     private let optInSubject = PassthroughSubject<Bool, Never>()
 
     /// Push opt-in updates
     public var optInUpdates: AnyPublisher<Bool, Never> {
         optInSubject
+            .prepend(Just(self.isPushNotificationsOptedIn))
             .removeDuplicates()
             .eraseToAnyPublisher()
     }
@@ -227,14 +236,13 @@ public class Push: NSObject, Component, PushProtocol {
         self.observeNotificationCenterEvents()
 
         var checkedAppRestore = false
-        self.channel.addRegistrationExtender { payload, completionHandler in
+        self.channel.addRegistrationExtender { payload in
             if !checkedAppRestore && self.dataStore.isAppRestore {
                 self.resetDeviceToken()
             }
             checkedAppRestore = true
-            self.extendChannelRegistrationPayload(
-                payload,
-                completionHandler: completionHandler
+            return await self.extendChannelRegistrationPayload(
+                payload
             )
         }
 
@@ -662,37 +670,43 @@ public class Push: NSObject, Component, PushProtocol {
         }
     }
 
-    private func waitForDeviceTokenRegistration(
-        _ completionHandler: @escaping () -> Void
-    ) {
-        self.mainDispatcher.dispatchAsync { [weak self] in
-            guard let self = self else {
-                return
+    @MainActor
+    private func waitForDeviceTokenRegistration() async {
+        guard self.waitForDeviceToken,
+              self.privacyManager.isEnabled(.push),
+              self.deviceToken == nil,
+              self.apnsRegistrar.isRegisteredForRemoteNotifications
+        else {
+            return
+        }
+
+        self.waitForDeviceToken = false
+
+        var subscription: AnyCancellable?
+        defer {
+            subscription?.cancel()
+        }
+
+        await withCheckedContinuation { continuation in
+            let cancelTask = Task { @MainActor in
+                try await Task.sleep(
+                    nanoseconds: UInt64(Push.deviceTokenRegistrationWaitTime * 1_000_000_000)
+                )
+                subscription?.cancel()
+                try Task.checkCancellation()
+                continuation.resume()
             }
 
-            if self.waitForDeviceToken && self.privacyManager.isEnabled(.push)
-                && self.deviceToken == nil
-                && self.apnsRegistrar.isRegisteredForRemoteNotifications
-            {
-                let semaphore = Semaphore()
-                self.waitForDeviceToken = false
-
-                self.deviceTokenAvailableBlock = {
-                    semaphore.signal()
-                }
-
-                UADispatcher.globalDispatcher(.utility)
-                    .dispatchAsync { [weak self] in
-                        guard let self = self else {
-                            return
-                        }
-
-                        semaphore.wait(Push.deviceTokenRegistrationWaitTime)
-                        self.mainDispatcher.dispatchAsync(completionHandler)
+            subscription = self.pushTokenPublisher
+                .receive(on: RunLoop.main)
+                .sink { token in
+                    if (token != nil) {
+                        continuation.resume()
+                        cancelTask.cancel()
+                        subscription?.cancel()
                     }
-            } else {
-                completionHandler()
-            }
+
+                }
         }
     }
 
@@ -1060,70 +1074,67 @@ public class Push: NSObject, Component, PushProtocol {
     }
     #endif
 
+    @MainActor
     private func extendChannelRegistrationPayload(
-        _ payload: ChannelRegistrationPayload,
-        completionHandler: @escaping (ChannelRegistrationPayload) -> Void
-    ) {
+        _ payload: ChannelRegistrationPayload
+    ) async -> ChannelRegistrationPayload {
+        var payload = payload
+
         guard self.privacyManager.isEnabled(.push) else {
-            completionHandler(payload)
-            return
+            return payload
         }
 
-        self.waitForDeviceTokenRegistration { [weak self] in
-            guard let self = self else {
-                return
-            }
+        await self.waitForDeviceTokenRegistration()
 
-            guard self.privacyManager.isEnabled(.push) else {
-                completionHandler(payload)
-                return
-            }
-
-            payload.channel.pushAddress = self.deviceToken
-            payload.channel.isOptedIn = self.isPushNotificationsOptedIn
-            #if !os(watchOS)
-            payload.channel.isBackgroundEnabled =
-                self.backgroundPushNotificationsAllowed()
-            #endif
-
-            payload.channel.iOSChannelSettings =
-                payload.channel.iOSChannelSettings
-                ?? ChannelRegistrationPayload.iOSChannelSettings()
-
-            #if !os(watchOS)
-            if self.autobadgeEnabled {
-                payload.channel.iOSChannelSettings?.badge = self.badgeNumber
-            }
-            #endif
-
-            if let timeZoneName = self.timeZone?.name,
-                let quietTimeStart = self.quietTime?[Push.quietTimeStartKey]
-                    as? String,
-                let quietTimeEnd = self.quietTime?[Push.quietTimeEndKey]
-                    as? String,
-                self.quietTimeEnabled
-            {
-
-                let quietTime = ChannelRegistrationPayload.QuietTime(
-                    start: quietTimeStart,
-                    end: quietTimeEnd
-                )
-                payload.channel.iOSChannelSettings?.quietTimeTimeZone =
-                    timeZoneName
-                payload.channel.iOSChannelSettings?.quietTime = quietTime
-            }
-
-            payload.channel.iOSChannelSettings?.isScheduledSummary =
-                (self.authorizedNotificationSettings.rawValue
-                    & UAAuthorizedNotificationSettings.scheduledDelivery
-                    .rawValue > 0)
-            payload.channel.iOSChannelSettings?.isTimeSensitive =
-                (self.authorizedNotificationSettings.rawValue
-                    & UAAuthorizedNotificationSettings.timeSensitive.rawValue
-                    > 0)
-
-            completionHandler(payload)
+        guard self.privacyManager.isEnabled(.push) else {
+            return payload
         }
+
+
+        payload.channel.pushAddress = self.deviceToken
+        payload.channel.isOptedIn = self.isPushNotificationsOptedIn
+#if !os(watchOS)
+        payload.channel.isBackgroundEnabled =
+        self.backgroundPushNotificationsAllowed()
+#endif
+
+        payload.channel.iOSChannelSettings =
+        payload.channel.iOSChannelSettings
+        ?? ChannelRegistrationPayload.iOSChannelSettings()
+
+#if !os(watchOS)
+        if self.autobadgeEnabled {
+            payload.channel.iOSChannelSettings?.badge = self.badgeNumber
+        }
+#endif
+
+        if let timeZoneName = self.timeZone?.name,
+           let quietTimeStart = self.quietTime?[Push.quietTimeStartKey]
+            as? String,
+           let quietTimeEnd = self.quietTime?[Push.quietTimeEndKey]
+            as? String,
+           self.quietTimeEnabled
+        {
+
+            let quietTime = ChannelRegistrationPayload.QuietTime(
+                start: quietTimeStart,
+                end: quietTimeEnd
+            )
+            payload.channel.iOSChannelSettings?.quietTimeTimeZone =
+            timeZoneName
+            payload.channel.iOSChannelSettings?.quietTime = quietTime
+        }
+
+        payload.channel.iOSChannelSettings?.isScheduledSummary =
+        (self.authorizedNotificationSettings.rawValue
+         & UAAuthorizedNotificationSettings.scheduledDelivery
+            .rawValue > 0)
+        payload.channel.iOSChannelSettings?.isTimeSensitive =
+        (self.authorizedNotificationSettings.rawValue
+         & UAAuthorizedNotificationSettings.timeSensitive.rawValue
+         > 0)
+
+        return payload
     }
 
     private func analyticsHeaders() -> [String: String] {

@@ -375,20 +375,12 @@ class PushTest: XCTestCase {
         XCTAssertEqual(NSTimeZone.default as NSTimeZone, self.push.timeZone)
     }
 
-    func testChannelPayloadRegistered() throws {
+    func testChannelPayloadRegistered() async throws {
         self.push.didRegisterForRemoteNotifications(
             PushTest.validDeviceToken.hexData
         )
 
-        let extended = expectation(description: "Extended")
-        var payload: ChannelRegistrationPayload!
-
-        self.channel.extendPayload(ChannelRegistrationPayload()) { result in
-            payload = result
-            extended.fulfill()
-        }
-
-        self.wait(for: [extended], timeout: 1)
+        let payload = await self.channel.channelPayload
 
         XCTAssertEqual(PushTest.validDeviceToken, payload.channel.pushAddress)
         XCTAssertTrue(
@@ -399,16 +391,8 @@ class PushTest: XCTestCase {
         )
     }
 
-    func testChannelPayloadNotRegistered() throws {
-        let extended = expectation(description: "Extended")
-        var payload: ChannelRegistrationPayload!
-
-        self.channel.extendPayload(ChannelRegistrationPayload()) { result in
-            payload = result
-            extended.fulfill()
-        }
-
-        self.wait(for: [extended], timeout: 1)
+    func testChannelPayloadNotRegistered() async throws {
+        let payload = await self.channel.channelPayload
 
         XCTAssertNil(payload.channel.pushAddress)
         XCTAssertFalse(payload.channel.isOptedIn)
@@ -424,7 +408,7 @@ class PushTest: XCTestCase {
         XCTAssertNil(payload.channel.iOSChannelSettings?.badge)
     }
 
-    func testChannelPayloadNotificationsEnabled() throws {
+    func testChannelPayloadNotificationsEnabled() async throws {
         self.push.didRegisterForRemoteNotifications(
             PushTest.validDeviceToken.hexData
         )
@@ -449,15 +433,7 @@ class PushTest: XCTestCase {
         }
         self.wait(for: [enabled], timeout: 2)
 
-        var payload: ChannelRegistrationPayload!
-
-        let extended = expectation(description: "Extended")
-        self.channel.extendPayload(ChannelRegistrationPayload()) { result in
-            payload = result
-            extended.fulfill()
-        }
-
-        self.wait(for: [extended], timeout: 1)
+        let payload = await self.channel.channelPayload
 
         XCTAssertEqual(PushTest.validDeviceToken, payload.channel.pushAddress)
         XCTAssertTrue(payload.channel.isOptedIn)
@@ -470,7 +446,7 @@ class PushTest: XCTestCase {
         )
     }
 
-    func testChannelPayloadQuietTime() throws {
+    func testChannelPayloadQuietTime() async throws {
         self.push.quietTimeEnabled = true
         self.push.setQuietTimeStartHour(
             1,
@@ -480,14 +456,7 @@ class PushTest: XCTestCase {
         )
         self.push.timeZone = NSTimeZone(abbreviation: "EDT")
 
-        let extended = expectation(description: "Extended")
-        var payload: ChannelRegistrationPayload!
-        self.channel.extendPayload(ChannelRegistrationPayload()) { result in
-            payload = result
-            extended.fulfill()
-        }
-
-        self.wait(for: [extended], timeout: 1)
+        let payload = await self.channel.channelPayload
 
         XCTAssertEqual(
             "01:30",
@@ -503,7 +472,7 @@ class PushTest: XCTestCase {
         )
     }
 
-    func testChannelPayloadQuietTimeDisabled() throws {
+    func testChannelPayloadQuietTimeDisabled() async throws {
         self.push.quietTimeEnabled = false
         self.push.setQuietTimeStartHour(
             1,
@@ -513,33 +482,19 @@ class PushTest: XCTestCase {
         )
         self.push.timeZone = NSTimeZone(abbreviation: "EDT")
 
-        let extended = expectation(description: "Extended")
-        var payload: ChannelRegistrationPayload!
-        self.channel.extendPayload(ChannelRegistrationPayload()) { result in
-            payload = result
-            extended.fulfill()
-        }
-
-        self.wait(for: [extended], timeout: 1)
+        let payload = await self.channel.channelPayload
 
         XCTAssertNil(payload.channel.iOSChannelSettings?.quietTime)
         XCTAssertNil(payload.channel.iOSChannelSettings?.quietTimeTimeZone)
     }
 
-    func testChannelPayloadAutoBadge() throws {
+    func testChannelPayloadAutoBadge() async throws {
         self.push.autobadgeEnabled = true
         self.push.badgeNumber = 10
 
-        let extended = expectation(description: "Extended")
-        var payload: ChannelRegistrationPayload!
-        self.channel.extendPayload(ChannelRegistrationPayload()) { result in
-            payload = result
-            extended.fulfill()
-        }
+        let payload = await self.channel.channelPayload
 
-        self.wait(for: [extended], timeout: 1)
-
-        XCTAssertEqual(10, payload.channel.iOSChannelSettings?.badgeNumber)
+        XCTAssertEqual(10, payload.channel.iOSChannelSettings?.badge)
     }
 
     func testAnalyticsHeadersOptedOut() async throws {

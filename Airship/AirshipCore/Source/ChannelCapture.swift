@@ -14,12 +14,11 @@ public class ChannelCapture: NSObject {
     private static let knocksMaxTimeSeconds: TimeInterval = 30
     private static let pasteboardExpirationSeconds: TimeInterval = 60
 
-    private let dataStore: PreferenceDataStore
     private let config: RuntimeConfig
     private let channel: ChannelProtocol
     private let notificationCenter: NotificationCenter
     private let date: AirshipDate
-    private let pasteboardProvider: () -> UIPasteboard
+    private let pasteboard: AirshipPasteboardProtocol
 
     private var knockTimes: [Date] = []
 
@@ -34,22 +33,18 @@ public class ChannelCapture: NSObject {
         }
     }
 
-    @objc
-    public init(
+    init(
         config: RuntimeConfig,
-        dataStore: PreferenceDataStore,
         channel: ChannelProtocol,
         notificationCenter: NotificationCenter,
         date: AirshipDate,
-        pasteboardProvider: @escaping () -> UIPasteboard
+        pasteboard: AirshipPasteboardProtocol
     ) {
-
         self.config = config
-        self.dataStore = dataStore
         self.channel = channel
         self.notificationCenter = notificationCenter
         self.date = date
-        self.pasteboardProvider = pasteboardProvider
+        self.pasteboard = pasteboard
 
         self.enabled = config.isChannelCaptureEnabled
 
@@ -63,20 +58,17 @@ public class ChannelCapture: NSObject {
         )
     }
 
-    @objc
-    public convenience init(
+    convenience init(
         config: RuntimeConfig,
-        dataStore: PreferenceDataStore,
         channel: Channel
     ) {
 
         self.init(
             config: config,
-            dataStore: dataStore,
             channel: channel,
             notificationCenter: NotificationCenter.default,
             date: AirshipDate(),
-            pasteboardProvider: { UIPasteboard.general }
+            pasteboard: UIPasteboard.general
         )
     }
 
@@ -116,20 +108,36 @@ public class ChannelCapture: NSObject {
         knockTimes.removeAll()
 
         let identifier = "ua:\(channel.identifier ?? "")"
-        let expirationDate = date.now.addingTimeInterval(
-            ChannelCapture.pasteboardExpirationSeconds
-        )
-
         AirshipLogger.debug(
             "Channel Capture setting channel ID:\(identifier) to pasteboard."
         )
-        pasteboardProvider()
-            .setItems(
-                [[UIPasteboard.typeAutomatic: identifier]],
-                options: [
-                    UIPasteboard.OptionsKey.expirationDate: expirationDate
-                ]
-            )
+
+        self.pasteboard.copy(
+            value: identifier,
+            expiry: ChannelCapture.pasteboardExpirationSeconds
+        )
     }
 }
+
+@available(tvOS, unavailable)
+protocol AirshipPasteboardProtocol {
+    func copy(value: String, expiry: TimeInterval)
+}
+
+@available(tvOS, unavailable)
+extension UIPasteboard: AirshipPasteboardProtocol {
+
+    func copy(value: String, expiry: TimeInterval) {
+        let expirationDate = Date().addingTimeInterval(expiry)
+        self.setItems(
+            [[UIPasteboard.typeAutomatic: value]],
+            options: [
+                UIPasteboard.OptionsKey.expirationDate: expirationDate
+            ]
+        )
+    }
+}
+
 #endif
+
+

@@ -48,8 +48,7 @@ public class SubscriptionListAction: NSObject, Action {
         )
     }
 
-    @objc
-    public init(
+    init(
         channel: @escaping () -> ChannelProtocol,
         contact: @escaping () -> ContactProtocol
     ) {

@@ -54,8 +54,7 @@ public class ModifyAttributesAction: NSObject, Action {
         )
     }
 
-    @objc
-    public init(
+    init(
         channel: @escaping () -> ChannelProtocol,
         contact: @escaping () -> ContactProtocol
     ) {
@@ -96,6 +95,8 @@ public class ModifyAttributesAction: NSObject, Action {
         {
             applyEdits(namedUserAttributes, editor: contact().editAttributes())
         }
+
+        completionHandler(.empty())
     }
 
     func applyEdits(

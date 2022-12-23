@@ -3,18 +3,22 @@ import Foundation
 @testable import AirshipCore
 
 @objc(UATestChannel)
-public class TestChannel: NSObject, ChannelProtocol, Component {
-
+public class TestChannel: NSObject, BaseChannelProtocol, Component {
 
     public var isComponentEnabled: Bool = true
 
-    public var extenders:
-        [(
-            (
-                ChannelRegistrationPayload,
-                @escaping (ChannelRegistrationPayload) -> Void
-            ) -> Void
-        )] = []
+    public var extenders: [(ChannelRegistrationPayload) async -> ChannelRegistrationPayload] = []
+
+    public var channelPayload: ChannelRegistrationPayload {
+        get async {
+            var result: ChannelRegistrationPayload = ChannelRegistrationPayload()
+
+            for extender in extenders {
+                result = await extender(result)
+            }
+            return result
+        }
+    }
 
     @objc
     public var identifier: String? = nil
@@ -37,7 +41,7 @@ public class TestChannel: NSObject, ChannelProtocol, Component {
 
     @objc
     public var tagGroupEditor: TagGroupsEditor?
-
+    
     @objc
     public var attributeEditor: AttributesEditor?
 
@@ -104,29 +108,12 @@ public class TestChannel: NSObject, ChannelProtocol, Component {
         self.updateRegistrationCalled = true
     }
 
-    public func addRegistrationExtender(
-        _ extender: @escaping (
-            ChannelRegistrationPayload,
-            (@escaping (ChannelRegistrationPayload) -> Void)
-        ) -> Void
-    ) {
-        self.extenders.append(extender)
-    }
-
     public override var description: String {
         return "TestChannel"
     }
 
-    @objc
-    public func extendPayload(
-        _ payload: ChannelRegistrationPayload,
-        completionHandler: @escaping (ChannelRegistrationPayload) -> Void
-    ) {
-        Channel.extendPayload(
-            payload,
-            extenders: self.extenders,
-            completionHandler: completionHandler
-        )
+    public func addRegistrationExtender(_ extender: @escaping (AirshipCore.ChannelRegistrationPayload) async -> AirshipCore.ChannelRegistrationPayload) {
+        self.extenders.append(extender)
     }
 
     public func processContactSubscriptionUpdates(
@@ -137,3 +124,6 @@ public class TestChannel: NSObject, ChannelProtocol, Component {
 }
 
 extension TestChannel: InternalChannelProtocol {}
+extension TestChannel: ChannelProtocol {
+
+}

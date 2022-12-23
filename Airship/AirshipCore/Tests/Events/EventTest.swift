@@ -219,6 +219,8 @@ class EventTest: XCTestCase {
 }
 
 private class EventTestPush: PushProtocol {
+    var isPushNotificationsOptedIn: Bool = false
+
     var deviceToken: String?
 
     var combinedCategories: Set<UNNotificationCategory> = []

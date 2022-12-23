@@ -38,14 +38,6 @@ public class Channel: NSObject, Component, ChannelProtocol {
     )
 
     /**
-     * Notification event when channel registration failed.
-     */
-    @objc
-    public static let channelRegistrationFailedEvent = NSNotification.Name(
-        "com.urbanairship.channel.registration_failed"
-    )
-
-    /**
      * Notification event when the audience is updated.
      * - NOTE: For internal use only. :nodoc:
      */
@@ -81,19 +73,13 @@ public class Channel: NSObject, Component, ChannelProtocol {
     private let notificationCenter: NotificationCenter
     private let appStateTracker: AppStateTracker
     private let tagsLock = Lock()
+    private var subscriptions: Set<AnyCancellable> = Set()
 
     #if canImport(ActivityKit)
     private let liveActivityRegistry: LiveActivityRegistry
     #endif
 
     private var shouldPerformChannelRegistrationOnForeground = false
-    private var extensionBlocks:
-        [(
-            (
-                ChannelRegistrationPayload,
-                @escaping (ChannelRegistrationPayload) -> Void
-            ) -> Void
-        )] = []
 
     private var isChannelCreationEnabled: Bool
 
@@ -222,7 +208,17 @@ public class Channel: NSObject, Component, ChannelProtocol {
             self?.onComponentEnableChange()
         }
 
-        self.channelRegistrar.delegate = self
+        self.channelRegistrar.updatesPublisher
+            .receive(on: RunLoop.main)
+            .sink { [weak self] update in
+                self?.processChannelUpdate(update)
+            }
+            .store(in: &self.subscriptions)
+
+        self.channelRegistrar.addChannelRegistrationExtender(
+            extender: self.extendPayload
+        )
+
         self.audienceManager.channelID = self.channelRegistrar.channelID
 
         self.audienceManager.enabled = self.isComponentEnabled
@@ -344,11 +340,7 @@ public class Channel: NSObject, Component, ChannelProtocol {
             return
         }
 
-        if self.identifier != nil {
-            self.channelRegistrar.performFullRegistration()
-        } else {
-            self.updateRegistration(forcefully: true)
-        }
+        self.updateRegistration(forcefully: true)
     }
 
     // NOTE: For internal use only. :nodoc:
@@ -379,14 +371,12 @@ public class Channel: NSObject, Component, ChannelProtocol {
     }
 
     // NOTE: For internal use only. :nodoc:
-    @objc
     public func addRegistrationExtender(
-        _ extender: @escaping (
-            ChannelRegistrationPayload,
-            (@escaping (ChannelRegistrationPayload) -> Void)
-        ) -> Void
+        _ extender: @escaping (ChannelRegistrationPayload) -> ChannelRegistrationPayload
     ) {
-        self.extensionBlocks.append(extender)
+        self.channelRegistrar.addChannelRegistrationExtender(
+            extender: extender
+        )
     }
 
     /// Begins a tag editing session
@@ -661,15 +651,34 @@ extension Channel: PushableComponent {
         completionHandler(.noData)
     }
     #endif
-}
 
-/// - Note: for internal use only.  :nodoc:
-extension Channel: ChannelRegistrarDelegate {
+    private func processChannelUpdate(_ update: ChannelRegistrationUpdate) {
+        switch(update) {
+        case .created(let channelID, let isExisting):
+            AirshipLogger.importantInfo("Channel ID: \(channelID)")
+            self.audienceManager.channelID = channelID
+            self.notificationCenter.post(
+                name: Channel.channelCreatedEvent,
+                object: self,
+                userInfo: [
+                    Channel.channelIdentifierKey: channelID,
+                    Channel.channelExistingKey: isExisting,
+                ]
+            )
+        case .updated(let channelID):
+            AirshipLogger.info("Channel updated.")
+            self.notificationCenter.post(
+                name: Channel.channelUpdatedEvent,
+                object: self,
+                userInfo: [Channel.channelIdentifierKey: channelID]
+            )
+        }
+    }
 
-    public func createChannelPayload(
-        completionHandler: @escaping (ChannelRegistrationPayload) -> Void
-    ) {
-        let payload = ChannelRegistrationPayload()
+    private func extendPayload(
+        payload: ChannelRegistrationPayload
+    ) async -> ChannelRegistrationPayload {
+        var payload = payload
 
         if self.appStateTracker.state == .active {
             payload.channel.isActive = true
@@ -686,9 +695,9 @@ extension Channel: ChannelRegistrarDelegate {
             payload.channel.deviceModel = Utils.deviceModelName()
             payload.channel.carrier = Utils.carrierName()
             payload.channel.appVersion = Utils.bundleShortVersionString()
-            #if !os(watchOS)
-            payload.channel.deviceOS = UIDevice.current.systemVersion
-            #endif
+#if !os(watchOS)
+            payload.channel.deviceOS = await UIDevice.current.systemVersion
+#endif
         }
 
         if self.privacyManager.isAnyFeatureEnabled() {
@@ -697,88 +706,24 @@ extension Channel: ChannelRegistrarDelegate {
             payload.channel.country = currentLocale.regionCode
             payload.channel.timeZone = TimeZone.current.identifier
             payload.channel.sdkVersion = AirshipVersion.get()
-
-            Channel.extendPayload(
-                payload,
-                extenders: self.extensionBlocks,
-                completionHandler: completionHandler
-            )
-        } else {
-            completionHandler(payload)
-        }
-    }
-
-    public func registrationFailed() {
-        AirshipLogger.info("Channel registration failed")
-        UADispatcher.main.dispatchAsync {
-            self.notificationCenter.post(
-                name: Channel.channelRegistrationFailedEvent,
-                object: self,
-                userInfo: nil
-            )
-        }
-    }
-
-    public func registrationSucceeded() {
-        AirshipLogger.info("Channel registration updated successfully.")
-        UADispatcher.main.dispatchAsync {
-            self.notificationCenter.post(
-                name: Channel.channelUpdatedEvent,
-                object: self,
-                userInfo: [Channel.channelIdentifierKey: self.identifier ?? ""]
-            )
-        }
-    }
-
-    public func channelCreated(channelID: String, existing: Bool) {
-        AirshipLogger.importantInfo("Channel ID: \(channelID)")
-        self.audienceManager.channelID = channelID
-        UADispatcher.main.dispatchAsync {
-            self.notificationCenter.post(
-                name: Channel.channelCreatedEvent,
-                object: self,
-                userInfo: [
-                    Channel.channelIdentifierKey: channelID,
-                    Channel.channelExistingKey: existing,
-                ]
-            )
-        }
-    }
-
-    class func extendPayload(
-        _ payload: ChannelRegistrationPayload,
-        extenders: [(
-            (
-                ChannelRegistrationPayload,
-                @escaping (ChannelRegistrationPayload) -> Void
-            ) -> Void
-        )],
-        completionHandler: @escaping (ChannelRegistrationPayload) -> Void
-    ) {
-
-        guard extenders.count > 0 else {
-            completionHandler(payload)
-            return
         }
 
-        var remaining = extenders
-        let next = remaining.removeFirst()
-
-        UADispatcher.main.dispatchAsync {
-            next(payload) { payload in
-                extendPayload(
-                    payload,
-                    extenders: remaining,
-                    completionHandler: completionHandler
-                )
-            }
-        }
+        return payload
     }
 }
 
 extension Channel: InternalChannelProtocol {
-    func processContactSubscriptionUpdates(_ updates: [SubscriptionListUpdate])
-    {
+    public func addRegistrationExtender(
+        _ extender: @escaping (ChannelRegistrationPayload) async -> ChannelRegistrationPayload
+    ) {
+        self.channelRegistrar.addChannelRegistrationExtender(
+            extender: extender
+        )
+    }
+
+    func processContactSubscriptionUpdates(
+        _ updates: [SubscriptionListUpdate]
+    ){
         self.audienceManager.processContactSubscriptionUpdates(updates)
     }
 }

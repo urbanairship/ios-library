@@ -5,7 +5,7 @@ import Foundation
 
 /// Airship Channel protocol.
 @objc(UAChannelProtocol)
-public protocol ChannelProtocol {
+public protocol BaseChannelProtocol {
 
     /**
      * The Channel ID.
@@ -46,15 +46,6 @@ public protocol ChannelProtocol {
     // NOTE: For internal use only. :nodoc:
     @objc(updateRegistrationForcefully:)
     func updateRegistration(forcefully: Bool)
-
-    // NOTE: For internal use only. :nodoc:
-    @objc
-    func addRegistrationExtender(
-        _ extender: @escaping (
-            ChannelRegistrationPayload,
-            (@escaping (ChannelRegistrationPayload) -> Void)
-        ) -> Void
-    )
 
     /**
      * Edits channel tags.
@@ -130,6 +121,15 @@ public protocol ChannelProtocol {
     func enableChannelCreation()
 }
 
+public protocol ChannelProtocol: BaseChannelProtocol {
+    // NOTE: For internal use only. :nodoc:
+    func addRegistrationExtender(
+        _ extender: @escaping (ChannelRegistrationPayload) async -> ChannelRegistrationPayload
+    )
+}
+
 protocol InternalChannelProtocol: ChannelProtocol {
     func processContactSubscriptionUpdates(_ updates: [SubscriptionListUpdate])
+
+
 }

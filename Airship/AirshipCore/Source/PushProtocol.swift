@@ -8,6 +8,9 @@ import UserNotifications
 @objc(UAPushProtocol)
 public protocol PushProtocol {
 
+    @objc
+    var isPushNotificationsOptedIn: Bool { get }
+
     /// Enables/disables background remote notifications on this device through Airship.
     /// Defaults to `true`.
     @objc

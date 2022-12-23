@@ -79,7 +79,41 @@ class DefaultAppIntegrationdelegateTest: XCTestCase {
     }
 }
 
-class TestPush: InternalPushProtocol {
+class TestPush: InternalPushProtocol, PushProtocol {
+    var isPushNotificationsOptedIn: Bool = false
+
+    var backgroundPushNotificationsEnabled: Bool = false
+
+    var userPushNotificationsEnabled: Bool = false
+
+    var extendedPushNotificationPermissionEnabled: Bool = false
+
+    var requestExplicitPermissionWhenEphemeral: Bool = false
+
+    var notificationOptions: UANotificationOptions  = []
+
+    var customCategories: Set<UNNotificationCategory> = Set()
+
+    var accengageCategories: Set<UNNotificationCategory> = Set()
+
+    var requireAuthorizationForDefaultCategories: Bool = false
+
+    var pushNotificationDelegate: PushNotificationDelegate?
+
+    var registrationDelegate: RegistrationDelegate?
+
+    var launchNotificationResponse: UNNotificationResponse?
+
+    var authorizedNotificationSettings: UAAuthorizedNotificationSettings = []
+
+    var authorizationStatus: UAAuthorizationStatus = .notDetermined
+
+    var userPromptedForNotifications: Bool = false
+
+    var defaultPresentationOptions: UNNotificationPresentationOptions = []
+
+    var badgeNumber: Int = 0
+
     var deviceToken: String?
     var updateAuthorizedNotificationTypesCalled = false
     var registrationError: Error?
@@ -131,6 +165,8 @@ class TestPush: InternalPushProtocol {
         assertionFailure("Unable to create UNNotificationResponse in tests.")
     }
 }
+
+
 
 class TestPushableComponent: PushableComponent {
     var didReceiveRemoteNotificationCallback:

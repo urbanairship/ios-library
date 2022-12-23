@@ -206,25 +206,24 @@ public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
             }
             .store(in: &self.subscriptions)
 
-        self.channel.addRegistrationExtender {
-            [weak self] payload, completionHandler in
-            Task { [weak self] in
-                guard self?.enabled == true,
-                    let user = await self?.store.user
-                else {
-                    completionHandler(payload)
-                    return
-                }
-
-                if payload.identityHints == nil {
-                    let identityHints =
-                        ChannelRegistrationPayload.IdentityHints()
-                    payload.identityHints = identityHints
-                }
-
-                payload.identityHints?.userID = user.username
-                completionHandler(payload)
+        self.channel.addRegistrationExtender { [weak self] payload in
+            guard self?.enabled == true,
+                  let user = await self?.store.user
+            else {
+                return payload
             }
+
+            var payload = payload
+            if payload.identityHints == nil {
+                payload.identityHints = ChannelRegistrationPayload.IdentityHints(
+                    userID: user.username
+                )
+            } else {
+                payload.identityHints?.userID = user.username
+            }
+
+
+            return payload
         }
     }
 

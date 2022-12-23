@@ -140,11 +140,11 @@ class ChannelTest: XCTestCase {
         XCTAssertTrue(self.channelRegistrar.registerCalled)
     }
 
-    func testCRAPayload() throws {
+    func testCRAPayload() async throws {
         self.privacyManager.enableFeatures(.all)
 
         self.channel.tags = ["foo", "bar"]
-        let expectedPayload = ChannelRegistrationPayload()
+        var expectedPayload = ChannelRegistrationPayload()
         expectedPayload.channel.language =
             Locale.autoupdatingCurrent.languageCode
         expectedPayload.channel.country = Locale.autoupdatingCurrent.regionCode
@@ -153,26 +153,21 @@ class ChannelTest: XCTestCase {
         expectedPayload.channel.tags = ["foo", "bar"]
         expectedPayload.channel.appVersion = Utils.bundleShortVersionString()
         expectedPayload.channel.sdkVersion = AirshipVersion.get()
-        expectedPayload.channel.deviceOS = UIDevice.current.systemVersion
+        expectedPayload.channel.deviceOS = await UIDevice.current.systemVersion
         expectedPayload.channel.deviceModel = Utils.deviceModelName()
         expectedPayload.channel.carrier = Utils.carrierName()
         expectedPayload.channel.setTags = true
 
-        let expectation = self.expectation(description: "Created payload")
-        self.channel.createChannelPayload { payload in
-            XCTAssertEqual(expectedPayload, payload)
-            expectation.fulfill()
-        }
-
-        self.waitForExpectations(timeout: 10)
+        let payload = await self.channelRegistrar.channelPayload
+        XCTAssertEqual(expectedPayload, payload)
     }
 
-    func testCRAPayloadDisabledDeviceTags() throws {
+    func testCRAPayloadDisabledDeviceTags() async throws {
         self.privacyManager.enableFeatures(.all)
         self.channel.isChannelTagRegistrationEnabled = false
         self.channel.tags = ["foo", "bar"]
 
-        let expectedPayload = ChannelRegistrationPayload()
+        var expectedPayload = ChannelRegistrationPayload()
         expectedPayload.channel.language =
             Locale.autoupdatingCurrent.languageCode
         expectedPayload.channel.country = Locale.autoupdatingCurrent.regionCode
@@ -180,79 +175,42 @@ class ChannelTest: XCTestCase {
             TimeZone.autoupdatingCurrent.identifier
         expectedPayload.channel.appVersion = Utils.bundleShortVersionString()
         expectedPayload.channel.sdkVersion = AirshipVersion.get()
-        expectedPayload.channel.deviceOS = UIDevice.current.systemVersion
+        expectedPayload.channel.deviceOS = await UIDevice.current.systemVersion
         expectedPayload.channel.deviceModel = Utils.deviceModelName()
         expectedPayload.channel.carrier = Utils.carrierName()
         expectedPayload.channel.setTags = false
 
-        let expectation = self.expectation(description: "Created payload")
-        self.channel.createChannelPayload { payload in
-            XCTAssertEqual(expectedPayload, payload)
-            expectation.fulfill()
-        }
-
-        self.waitForExpectations(timeout: 10)
+        let payload = await self.channelRegistrar.channelPayload
+        XCTAssertEqual(expectedPayload, payload)
     }
 
-    func testCRAPayloadPrivacyManagerDisabled() throws {
-        let expectedPayload = ChannelRegistrationPayload()
+    func testCRAPayloadPrivacyManagerDisabled() async throws {
+        var expectedPayload = ChannelRegistrationPayload()
         expectedPayload.channel.setTags = true
         expectedPayload.channel.tags = []
 
-        let expectation = self.expectation(description: "Created payload")
-        self.channel.createChannelPayload { payload in
-            XCTAssertEqual(expectedPayload, payload)
-            expectation.fulfill()
-        }
-
-        self.waitForExpectations(timeout: 10)
+        let payload = await self.channelRegistrar.channelPayload
+        XCTAssertEqual(expectedPayload, payload)
     }
 
-    func testExtendingCRAPayload() throws {
+    func testExtendingCRAPayload() async throws {
         self.privacyManager.enableFeatures(.all)
 
-        self.channel.addRegistrationExtender { payload, completionHandler in
+        self.channel.addRegistrationExtender { payload in
+            var payload = payload
             payload.channel.pushAddress = "WHAT"
-            completionHandler(payload)
+            return payload
         }
 
-        self.channel.addRegistrationExtender { payload, completionHandler in
+        self.channel.addRegistrationExtender { payload in
+            var payload = payload
             payload.channel.pushAddress = "OK"
-            completionHandler(payload)
+            return payload
         }
 
-        let expectation = self.expectation(description: "Created payload")
-        self.channel.createChannelPayload { payload in
-            XCTAssertEqual("OK", payload.channel.pushAddress)
-            expectation.fulfill()
-        }
 
-        self.waitForExpectations(timeout: 10)
-    }
-
-    func testExtendingCRAPayloadBackgroundQueue() throws {
-        self.privacyManager.enableFeatures(.all)
-
-        self.channel.addRegistrationExtender { payload, completionHandler in
-            payload.channel.pushAddress = "WHAT"
-            completionHandler(payload)
-        }
-
-        self.channel.addRegistrationExtender { payload, completionHandler in
-            DispatchQueue.global(qos: .userInteractive)
-                .async {
-                    payload.channel.pushAddress = "OK"
-                    completionHandler(payload)
-                }
-        }
-
-        let expectation = self.expectation(description: "Created payload")
-        self.channel.createChannelPayload { payload in
-            XCTAssertEqual("OK", payload.channel.pushAddress)
-            expectation.fulfill()
-        }
-
-        self.waitForExpectations(timeout: 10)
+        let payload = await self.channelRegistrar.channelPayload
+        XCTAssertEqual("OK", payload.channel.pushAddress)
     }
 
     func testApplicationDidTransitionToForeground() throws {
@@ -288,7 +246,12 @@ class ChannelTest: XCTestCase {
             expectation.fulfill()
         }
 
-        self.channel.channelCreated(channelID: "someChannelID", existing: true)
+        self.channelRegistrar.updatesSubject.send(
+            .created(
+                channelID: "someChannelID",
+                isExisting: true
+            )
+        )
 
         self.waitForExpectations(timeout: 10)
     }
@@ -314,19 +277,52 @@ class ChannelTest: XCTestCase {
             expectation.fulfill()
         }
 
-        self.channel.channelCreated(channelID: "someChannelID", existing: false)
+        self.channelRegistrar.updatesSubject.send(
+            .created(
+                channelID: "someChannelID",
+                isExisting: false
+            )
+        )
 
         self.waitForExpectations(timeout: 10)
     }
 
-    func testChannelUpdated() throws {
+    func testCreatedIdentifierPassedToAudienceManager() throws {
+        self.channelRegistrar.updatesSubject.send(
+            .created(
+                channelID: "foo",
+                isExisting: true
+            )
+        )
+
+        let expectation = self.expectation(description: "Notification received")
+
+        self.notificationCenter.addObserver(
+            forName: Channel.channelCreatedEvent,
+            object: nil,
+            queue: nil
+        ) { notification in
+            expectation.fulfill()
+        }
+
+        self.waitForExpectations(timeout: 10)
+        XCTAssertEqual("foo", self.audienceManager.channelID)
+    }
+
+    func testInitialIdentifierPassedToAudienceManager() throws {
+        self.channelRegistrar.channelID = "foo"
+        self.channel = createChannel()
+        XCTAssertEqual("foo", self.audienceManager.channelID)
+    }
+
+    func testChannelUpdatedNotification() throws {
         self.privacyManager.enableFeatures(.all)
-        self.channelRegistrar.channelID = "someChannelID"
 
         let expectedUserInfo: [String: Any] = [
-            Channel.channelIdentifierKey: "someChannelID"
+            Channel.channelIdentifierKey: "someChannelID",
         ]
 
+        
         let expectation = self.expectation(description: "Notification received")
         self.notificationCenter.addObserver(
             forName: Channel.channelUpdatedEvent,
@@ -340,35 +336,13 @@ class ChannelTest: XCTestCase {
             expectation.fulfill()
         }
 
-        self.channel.registrationSucceeded()
+        self.channelRegistrar.updatesSubject.send(
+            .updated(
+                channelID: "someChannelID"
+            )
+        )
+
         self.waitForExpectations(timeout: 10)
-    }
-
-    func testChannelUpdateFailed() throws {
-        self.privacyManager.enableFeatures(.all)
-
-        let expectation = self.expectation(description: "Notification received")
-        self.notificationCenter.addObserver(
-            forName: Channel.channelRegistrationFailedEvent,
-            object: nil,
-            queue: nil
-        ) { notification in
-            expectation.fulfill()
-        }
-
-        self.channel.registrationFailed()
-        self.waitForExpectations(timeout: 10)
-    }
-
-    func testCreatedIdentifierPassedToAudienceManager() throws {
-        self.channel.channelCreated(channelID: "foo", existing: true)
-        XCTAssertEqual("foo", self.audienceManager.channelID)
-    }
-
-    func testInitialIdentifierPassedToAudienceManager() throws {
-        self.channelRegistrar.channelID = "foo"
-        self.channel = createChannel()
-        XCTAssertEqual("foo", self.audienceManager.channelID)
     }
 
     func testLocaleUpdated() throws {
@@ -393,7 +367,7 @@ class ChannelTest: XCTestCase {
             object: nil
         )
 
-        XCTAssertTrue(self.channelRegistrar.fullRegistrationCalled)
+        XCTAssertTrue(self.channelRegistrar.registerCalled)
     }
 
     func testConfigUpdateNoChannelID() throws {
@@ -426,30 +400,21 @@ class ChannelTest: XCTestCase {
         XCTAssertEqual(["some-random-value"], self.channel.tags)
     }
 
-    func testCRAPayloadIsActiveFlagInForeground() throws {
+    func testCRAPayloadIsActiveFlagInForeground() async throws {
         self.privacyManager.enableFeatures(.all)
         self.appStateTracker.currentState = .active
 
-        let expectation = self.expectation(description: "Created payload")
-        self.channel.createChannelPayload { payload in
-            XCTAssertTrue(payload.channel.isActive)
-            expectation.fulfill()
-        }
-
-        self.waitForExpectations(timeout: 10)
+        let payload = await self.channelRegistrar.channelPayload
+        XCTAssertTrue(payload.channel.isActive)
     }
 
-    func testCRAPayloadIsActiveFlagInBackground() throws {
+    func testCRAPayloadIsActiveFlagInBackground() async throws {
         self.privacyManager.enableFeatures(.all)
         self.appStateTracker.currentState = .background
 
-        let expectation = self.expectation(description: "Created payload")
-        self.channel.createChannelPayload { payload in
-            XCTAssertFalse(payload.channel.isActive)
-            expectation.fulfill()
-        }
 
-        self.waitForExpectations(timeout: 10)
+        let payload = await self.channelRegistrar.channelPayload
+        XCTAssertFalse(payload.channel.isActive)
     }
 
     func testForwardContactSubscriptionListUpdates() throws {
@@ -461,5 +426,4 @@ class ChannelTest: XCTestCase {
         self.channel.processContactSubscriptionUpdates(updates)
         XCTAssertEqual(updates, self.audienceManager.contactUpdates)
     }
-
 }

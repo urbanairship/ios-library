@@ -238,19 +238,14 @@ class ContactTest: XCTestCase {
         wait(for: [expectation], timeout: 10.0)
     }
 
-    func testExtendRegistrationPaylaodNilContactID() throws {
+    func testExtendRegistrationPaylaodNilContactID() async throws {
         XCTAssertEqual(1, self.channel.extenders.count)
 
-        let expectation = XCTestExpectation(description: "callback called")
-        self.channel.extenders[0](ChannelRegistrationPayload()) { payload in
-            XCTAssertNil(payload.channel.contactID)
-            expectation.fulfill()
-        }
-
-        wait(for: [expectation], timeout: 10.0)
+        let payload = await self.channel.channelPayload
+        XCTAssertNil(payload.channel.contactID)
     }
 
-    func testExtendRegistrationPaylaod() throws {
+    func testExtendRegistrationPaylaod() async throws {
         notificationCenter.post(
             Notification(name: AppStateTracker.didBecomeActiveNotification)
         )
@@ -277,13 +272,8 @@ class ContactTest: XCTestCase {
 
         XCTAssertEqual(1, self.channel.extenders.count)
 
-        let extendedCallback = XCTestExpectation(description: "callback called")
-        self.channel.extenders[0](ChannelRegistrationPayload()) { payload in
-            XCTAssertEqual("some-contact-id", payload.channel.contactID)
-            extendedCallback.fulfill()
-        }
-
-        wait(for: [extendedCallback], timeout: 10.0)
+        let payload = await self.channel.channelPayload
+        XCTAssertEqual("some-contact-id", payload.channel.contactID)
     }
 
     func testForegroundResolves() throws {

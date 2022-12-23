@@ -61,8 +61,7 @@ public class FetchDeviceInfoAction: NSObject, Action {
         )
     }
 
-    @objc
-    public init(
+    init(
         channel: @escaping () -> ChannelProtocol,
         contact: @escaping () -> ContactProtocol,
         push: @escaping () -> PushProtocol
@@ -94,7 +93,7 @@ public class FetchDeviceInfoAction: NSObject, Action {
         }
 
         dict[FetchDeviceInfoAction.pushOptIn] =
-            push.authorizedNotificationSettings != []
+        push.isPushNotificationsOptedIn
 
         completionHandler(ActionResult(value: dict))
     }

@@ -432,10 +432,10 @@ public class Contact: NSObject, Component, ContactProtocol {
             AirshipLogger.error("Failed to create rate limits")
         }
 
-        self.channel.addRegistrationExtender {
-            [weak self] payload, completionHandler in
+        self.channel.addRegistrationExtender { [weak self] payload in
+            var payload = payload
             payload.channel.contactID = self?.lastContactInfo?.contactID
-            completionHandler(payload)
+            return payload
         }
 
         migrateNamedUser()
