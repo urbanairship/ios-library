@@ -44,8 +44,14 @@ public class ActionRegistry: NSObject {
      */
     @objc(registerAction:names:)
     @discardableResult
-    public func register(_ action: Action, names: [String]) -> Bool {
-        return register(action, names: names, predicate: nil)
+    public func register(
+        _ action: Action,
+        names: [String]
+    ) -> Bool {
+        return register(
+            action,
+            names: names,
+            predicate: nil)
     }
 
     /**
@@ -61,8 +67,14 @@ public class ActionRegistry: NSObject {
      */
     @objc(registerAction:name:)
     @discardableResult
-    public func register(_ action: Action, name: String) -> Bool {
-        return register(action, name: name, predicate: nil)
+    public func register(
+        _ action: Action,
+        name: String
+    ) -> Bool {
+        return register(
+            action,
+            name: name,
+            predicate: nil)
     }
 
     /**
@@ -107,7 +119,10 @@ public class ActionRegistry: NSObject {
         predicate: UAActionPredicate?
     ) -> Bool {
         let entry = ActionRegistryEntry(action: action)
-        return register(entry, names: names, predicate: predicate)
+        return register(
+            entry,
+            names: names,
+            predicate: predicate)
     }
 
     /**
@@ -123,8 +138,14 @@ public class ActionRegistry: NSObject {
      */
     @objc(registerActionClass:names:)
     @discardableResult
-    public func register(_ actionClass: AnyClass, names: [String]) -> Bool {
-        return register(actionClass, names: names, predicate: nil)
+    public func register(
+        _ actionClass: AnyClass,
+        names: [String]
+    ) -> Bool {
+        return register(
+            actionClass,
+            names: names,
+            predicate: nil)
     }
 
     /**
@@ -140,8 +161,14 @@ public class ActionRegistry: NSObject {
      */
     @objc(registerActionClass:name:)
     @discardableResult
-    public func register(_ actionClass: AnyClass, name: String) -> Bool {
-        return register(actionClass, name: name, predicate: nil)
+    public func register(
+        _ actionClass: AnyClass,
+        name: String
+    ) -> Bool {
+        return register(
+            actionClass,
+            name: name,
+            predicate: nil)
     }
 
     /**
@@ -163,7 +190,10 @@ public class ActionRegistry: NSObject {
         name: String,
         predicate: UAActionPredicate?
     ) -> Bool {
-        return register(actionClass, names: [name], predicate: predicate)
+        return register(
+            actionClass,
+            names: [name],
+            predicate: predicate)
     }
 
     /**
@@ -200,7 +230,10 @@ public class ActionRegistry: NSObject {
         }
 
         let entry = ActionRegistryEntry(actionClass: actionClass)
-        return register(entry, names: names, predicate: predicate)
+        return register(
+            entry,
+            names: names,
+            predicate: predicate)
     }
 
     /**
@@ -209,7 +242,9 @@ public class ActionRegistry: NSObject {
      *   - name: The name of the entry to remove.
      */
     @objc(removeEntryWithName:)
-    public func removeEntry(_ name: String) {
+    public func removeEntry(
+        _ name: String
+    ) {
         lock.sync {
             self._entries.removeAll(where: { $0.names.contains(name) })
         }
@@ -221,11 +256,15 @@ public class ActionRegistry: NSObject {
      *   - name: The name to remove.
      */
     @objc(removeName:)
-    public func removeName(_ name: String) {
+    public func removeName(
+        _ name: String
+    ) {
         self.removeNames([name])
     }
 
-    func removeNames(_ names: [String]) {
+    func removeNames(
+        _ names: [String]
+    ) {
         lock.sync {
             names.forEach { name in
                 if let entry = registryEntry(name) {
@@ -246,7 +285,9 @@ public class ActionRegistry: NSObject {
      */
     @objc
     @discardableResult
-    public func addName(_ name: String, forEntryWithName entryName: String)
+    public func addName(
+        _ name: String,
+        forEntryWithName entryName: String)
         -> Bool
     {
         var result = false
@@ -291,7 +332,9 @@ public class ActionRegistry: NSObject {
      * - Returns: The entry if found, otherwise null.
      */
     @objc(registryEntryWithName:)
-    public func registryEntry(_ name: String) -> ActionRegistryEntry? {
+    public func registryEntry(
+        _ name: String
+    ) -> ActionRegistryEntry? {
         var result: ActionRegistryEntry? = nil
         lock.sync {
             result = self._entries.first(where: { $0.names.contains(name) })
@@ -331,8 +374,10 @@ public class ActionRegistry: NSObject {
      */
     @objc(updateAction:forEntryWithName:)
     @discardableResult
-    public func update(_ action: Action, forEntryWithName name: String) -> Bool
-    {
+    public func update(
+        _ action: Action,
+        forEntryWithName name: String
+    ) -> Bool {
         var result = false
         lock.sync {
             if let entry = registryEntry(name) {
@@ -352,9 +397,10 @@ public class ActionRegistry: NSObject {
      */
     @objc(updateActionClass:forEntryWithName:)
     @discardableResult
-    public func update(_ actionClass: AnyClass, forEntryWithName name: String)
-        -> Bool
-    {
+    public func update(
+        _ actionClass: AnyClass,
+        forEntryWithName name: String
+    ) -> Bool {
         guard actionClass is Action.Type else {
             AirshipLogger.error(
                 "Unable to register an action class that isn't a subclass of UAAction."
@@ -386,7 +432,9 @@ public class ActionRegistry: NSObject {
      *   - path: The path to the plist.
      */
     @objc(registerActionsFromFile:)
-    public func registerActions(_ path: String) {
+    public func registerActions(
+        _ path: String
+    ) {
         AirshipLogger.debug("Loading actions from \(path)")
         guard
             let actions = NSArray(contentsOfFile: path) as? [[AnyHashable: Any]]
@@ -555,7 +603,9 @@ public class ActionRegistryEntry: NSObject {
      * - Returns: The action.
      */
     @objc(actionForSituation:)
-    public func action(situation: Situation) -> Action {
+    public func action(
+        situation: Situation
+    ) -> Action {
         return self._situationOverrides[situation] ?? self.action
     }
 }
