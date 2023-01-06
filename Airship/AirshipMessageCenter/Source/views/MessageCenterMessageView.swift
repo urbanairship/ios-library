@@ -166,9 +166,9 @@ struct AirshipWebView: UIViewRepresentable {
 
         do {
             let delegate = try await self.nativeBridgeExtension?()
-            let request = try await self.request()
+            coordinator.nativeBridgeExtensionDelegate = delegate
 
-            coordinator.nativeBridge.nativeBridgeExtensionDelegate = delegate
+            let request = try await self.request()
             _ = webView.load(request)
             self.isLoading = true
         } catch {
@@ -193,6 +193,11 @@ struct AirshipWebView: UIViewRepresentable {
     {
         private let parent: AirshipWebView
         let nativeBridge: NativeBridge
+        var nativeBridgeExtensionDelegate: NativeBridgeExtensionDelegate? {
+            didSet {
+                self.nativeBridge.nativeBridgeExtensionDelegate = self.nativeBridgeExtensionDelegate
+            }
+        }
 
         init(_ parent: AirshipWebView) {
             self.parent = parent
