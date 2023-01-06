@@ -90,6 +90,11 @@ public struct MessageCenterListView: View {
                     messages: Set(offsets.map { viewModel.messageIDs[$0] })
                 )
             }
+            .onReceive(Just(self.selection)) { _ in
+                if (editMode?.wrappedValue != .active) {
+                    self.$selection.wrappedValue.removeAll()
+                }
+            }
         }
 
         if #available(iOS 15.0, *) {

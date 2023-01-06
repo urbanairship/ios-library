@@ -396,6 +396,8 @@ private struct MessageCenterMessageContentView: View {
                 }
             }
         }
-        .navigationTitle(title ?? self.message?.title ?? "")
+        .navigationTitle(
+            Text(title ?? self.message?.title ?? "")
+        )
     }
 }
