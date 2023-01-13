@@ -30,5 +30,6 @@ public struct AirshipRequest {
 
     public enum Auth {
         case basic(String, String)
+        case bearer(String, String, String)
     }
 }

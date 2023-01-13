@@ -1,5 +1,7 @@
 /* Copyright Airship and Contributors */
 
+import CommonCrypto
+
 /// Airship request session.
 /// - Note: For internal use only. :nodoc:
 public class AirshipRequestSession {
@@ -162,6 +164,19 @@ extension AirshipRequest.Auth {
             let encodedCredentials = credentials.data(using: .utf8)
             return
                 "Basic \(encodedCredentials?.base64EncodedString(options: []) ?? "")"
+            
+        case .bearer(let appSecret, let appKey, let channelID):
+            let secret = NSData(data: Data(appSecret.utf8))
+            let message = NSData(data: Data("\(appKey):\(channelID)".utf8))
+            let hash = NSMutableData(length: Int(CC_SHA256_DIGEST_LENGTH))
+            
+            guard let hash else {
+                return ""
+            }
+            
+            CCHmac(CCHmacAlgorithm(kCCHmacAlgSHA256), secret.bytes, secret.count, message.bytes, message.count, hash.mutableBytes)
+            
+            return "Bearer  \(hash.base64EncodedString(options: []))"
         }
     }
 }

@@ -4,15 +4,14 @@ import XCTest
 
 @testable import AirshipCore
 
-final class AirshipRequestSessionTest: XCTestCase {
+final class AirshipRequestSessionTest: AirshipBaseTest {
 
-    private let appKey = UUID().uuidString
     private let testURLSession = TestURLRequestSession()
     private var airshipSession: AirshipRequestSession!
 
     override func setUpWithError() throws {
         self.airshipSession = AirshipRequestSession(
-            appKey: self.appKey,
+            appKey: self.config.appKey,
             session: self.testURLSession
         )
     }
@@ -29,8 +28,8 @@ final class AirshipRequestSessionTest: XCTestCase {
         let headers = testURLSession.lastRequest?.allHTTPHeaderFields
         let expected = [
             "Accept-Encoding": "gzip;q=1.0, compress;q=0.5",
-            "User-Agent": "(UALib \(AirshipVersion.get()); \(self.appKey))",
-            "X-UA-App-Key": self.appKey,
+            "User-Agent": "(UALib \(AirshipVersion.get()); \(self.config.appKey))",
+            "X-UA-App-Key": self.config.appKey,
         ]
 
         XCTAssertEqual(expected, headers)
@@ -56,13 +55,13 @@ final class AirshipRequestSessionTest: XCTestCase {
             "foo": "bar",
             "Accept-Encoding": "gzip;q=1.0, compress;q=0.5",
             "User-Agent": "Something else",
-            "X-UA-App-Key": self.appKey,
+            "X-UA-App-Key": self.config.appKey,
         ]
 
         XCTAssertEqual(expected, headers)
     }
 
-    func testAuth() async throws {
+    func testBasicAuth() async throws {
         let request = AirshipRequest(
             url: URL(string: "http://neat.com"),
             auth: .basic("name", "password")
@@ -78,6 +77,24 @@ final class AirshipRequestSessionTest: XCTestCase {
             "Authorization"
         ]
         XCTAssertEqual("Basic bmFtZTpwYXNzd29yZA==", auth)
+    }
+    
+    func testBearerAuth() async throws {
+        let request = AirshipRequest(
+            url: URL(string: "http://neat.com"),
+            auth: .bearer(self.config.appSecret, self.config.appKey, "channel ID")
+        )
+
+        let _ = try? await self.airshipSession.performHTTPRequest(request) {
+            _,
+            _ in
+            return false
+        }
+
+        let auth = testURLSession.lastRequest?.allHTTPHeaderFields?[
+            "Authorization"
+        ]
+        XCTAssertEqual("Bearer  Npyqy5OZxMEVv4bt64S3aUE4NwUQVLX50vGrEegohFE=", auth)
     }
 
     func testBody() async throws {

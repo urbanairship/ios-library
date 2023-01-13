@@ -52,6 +52,16 @@
 		32515871272B007C00DF8B44 /* MediaWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32515868272AFB2E00DF8B44 /* MediaWebView.swift */; };
 		32515872272B007F00DF8B44 /* Media.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32515866272AFB2E00DF8B44 /* Media.swift */; };
 		32515874272B038300DF8B44 /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32D6E87A2727F7060077C784 /* Image.swift */; };
+		325D53E9296312EB003421B4 /* AuthToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 325D53E8296312EB003421B4 /* AuthToken.swift */; };
+		325D53EB29631304003421B4 /* AuthTokenManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 325D53EA29631304003421B4 /* AuthTokenManager.swift */; };
+		325D53ED2963131D003421B4 /* AuthTokenAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 325D53EC2963131D003421B4 /* AuthTokenAPIClient.swift */; };
+		325D53F02964696C003421B4 /* AuthTokenManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 325D53EF2964696C003421B4 /* AuthTokenManagerTest.swift */; };
+		325D53F529646C39003421B4 /* TestAuthTokenAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 325D53F429646C39003421B4 /* TestAuthTokenAPIClient.swift */; };
+		325D53F629646E53003421B4 /* TestChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC7E48426A60CDF0038CFDD /* TestChannel.swift */; };
+		325D53F729648150003421B4 /* TestDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1422683B8FA00A2CBD0 /* TestDate.swift */; };
+		325D53F92964868F003421B4 /* AuthTokenAPIClientTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 325D53F82964868F003421B4 /* AuthTokenAPIClientTest.swift */; };
+		325D53FA29648818003421B4 /* TestAirshipRequestSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4A467F28EF4FAF00A25617 /* TestAirshipRequestSession.swift */; };
+		325D53FB2964885B003421B4 /* AirshipBaseTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3299EF212949EC3E00251E70 /* AirshipBaseTest.swift */; };
 		325D53DA295C7979003421B4 /* ActionRegistryTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 325D53D9295C7979003421B4 /* ActionRegistryTest.swift */; };
 		3261A7F6243CD7F900ADBF6B /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3261A7F4243CD73100ADBF6B /* CoreTelephony.framework */; platformFilter = maccatalyst; };
 		3299EF172948CBC100251E70 /* RemoteDataAPIClientTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3299EF162948CBC100251E70 /* RemoteDataAPIClientTest.swift */; };
@@ -170,7 +180,6 @@
 		6E0B8723294A92F10064B7BD /* UAPadding.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E88EF032703D9B100469E2A /* UAPadding.m */; };
 		6E0B8724294A93780064B7BD /* UAPadding.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E88EF0B2703D9EC00469E2A /* UAPadding.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E0B8732294A9C130064B7BD /* AirshipAutomationSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E0B872A294A9C120064B7BD /* AirshipAutomationSwift.framework */; };
-		6E0B8737294A9C130064B7BD /* AirshipAutomationSwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0B8736294A9C130064B7BD /* AirshipAutomationSwiftTests.swift */; };
 		6E0B8738294A9C130064B7BD /* AirshipAutomationSwift.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E0B872C294A9C130064B7BD /* AirshipAutomationSwift.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E0B8744294A9C950064B7BD /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; };
 		6E0B8745294A9C950064B7BD /* AirshipCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -1794,6 +1803,12 @@
 		324D3BFE273E6B4500058EE4 /* BannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerView.swift; sourceTree = "<group>"; };
 		32515866272AFB2E00DF8B44 /* Media.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Media.swift; sourceTree = "<group>"; };
 		32515868272AFB2E00DF8B44 /* MediaWebView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaWebView.swift; sourceTree = "<group>"; };
+		325D53E8296312EB003421B4 /* AuthToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthToken.swift; sourceTree = "<group>"; };
+		325D53EA29631304003421B4 /* AuthTokenManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthTokenManager.swift; sourceTree = "<group>"; };
+		325D53EC2963131D003421B4 /* AuthTokenAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthTokenAPIClient.swift; sourceTree = "<group>"; };
+		325D53EF2964696C003421B4 /* AuthTokenManagerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthTokenManagerTest.swift; sourceTree = "<group>"; };
+		325D53F429646C39003421B4 /* TestAuthTokenAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAuthTokenAPIClient.swift; sourceTree = "<group>"; };
+		325D53F82964868F003421B4 /* AuthTokenAPIClientTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthTokenAPIClientTest.swift; sourceTree = "<group>"; };
 		325D53D9295C7979003421B4 /* ActionRegistryTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionRegistryTest.swift; sourceTree = "<group>"; };
 		3261A7F4243CD73100ADBF6B /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/CoreTelephony.framework; sourceTree = DEVELOPER_DIR; };
 		3299EF162948CBC100251E70 /* RemoteDataAPIClientTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteDataAPIClientTest.swift; sourceTree = "<group>"; };
@@ -1945,7 +1960,6 @@
 		6E0B872A294A9C120064B7BD /* AirshipAutomationSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipAutomationSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E0B872C294A9C130064B7BD /* AirshipAutomationSwift.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AirshipAutomationSwift.h; sourceTree = "<group>"; };
 		6E0B8731294A9C130064B7BD /* AirshipAutomationSwiftTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipAutomationSwiftTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		6E0B8736294A9C130064B7BD /* AirshipAutomationSwiftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipAutomationSwiftTests.swift; sourceTree = "<group>"; };
 		6E0B8749294A9CCA0064B7BD /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6E0B874B294A9D590064B7BD /* AirshipAutomationSDKModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipAutomationSDKModule.swift; sourceTree = "<group>"; };
 		6E0B875F294CE0BF0064B7BD /* FarmHashFingerprint64Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FarmHashFingerprint64Test.swift; sourceTree = "<group>"; };
@@ -2942,6 +2956,33 @@
 			path = Public;
 			sourceTree = "<group>";
 		};
+		325D53E7296312C7003421B4 /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				325D53E8296312EB003421B4 /* AuthToken.swift */,
+				325D53EA29631304003421B4 /* AuthTokenManager.swift */,
+				325D53EC2963131D003421B4 /* AuthTokenAPIClient.swift */,
+			);
+			path = Auth;
+			sourceTree = "<group>";
+		};
+		325D53EE296468DD003421B4 /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				325D53EF2964696C003421B4 /* AuthTokenManagerTest.swift */,
+				325D53F82964868F003421B4 /* AuthTokenAPIClientTest.swift */,
+			);
+			path = Auth;
+			sourceTree = "<group>";
+		};
+		325D53F329646C19003421B4 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				325D53F429646C39003421B4 /* TestAuthTokenAPIClient.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
 		32B5BE2D28F8A7D600F2254B /* views */ = {
 			isa = PBXGroup;
 			children = (
@@ -3222,6 +3263,7 @@
 		6E0B8740294A9C500064B7BD /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				325D53E7296312C7003421B4 /* Auth */,
 				6E0B872C294A9C130064B7BD /* AirshipAutomationSwift.h */,
 			);
 			path = Source;
@@ -3230,7 +3272,8 @@
 		6E0B8741294A9C580064B7BD /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				6E0B8736294A9C130064B7BD /* AirshipAutomationSwiftTests.swift */,
+				325D53F329646C19003421B4 /* Utils */,
+				325D53EE296468DD003421B4 /* Auth */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -6232,7 +6275,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				325D53EB29631304003421B4 /* AuthTokenManager.swift in Sources */,
 				6E0B874C294A9D590064B7BD /* AirshipAutomationSDKModule.swift in Sources */,
+				325D53E9296312EB003421B4 /* AuthToken.swift in Sources */,
+				325D53ED2963131D003421B4 /* AuthTokenAPIClient.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6240,7 +6286,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E0B8737294A9C130064B7BD /* AirshipAutomationSwiftTests.swift in Sources */,
+				325D53F02964696C003421B4 /* AuthTokenManagerTest.swift in Sources */,
+				325D53FA29648818003421B4 /* TestAirshipRequestSession.swift in Sources */,
+				325D53F529646C39003421B4 /* TestAuthTokenAPIClient.swift in Sources */,
+				325D53F92964868F003421B4 /* AuthTokenAPIClientTest.swift in Sources */,
+				325D53F629646E53003421B4 /* TestChannel.swift in Sources */,
+				325D53F729648150003421B4 /* TestDate.swift in Sources */,
+				325D53FB2964885B003421B4 /* AirshipBaseTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
