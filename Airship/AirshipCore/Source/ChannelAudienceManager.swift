@@ -438,15 +438,40 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
             var pendingAttributeUpdates : [AttributeUpdate]?
             
             if let pendingTagGroupsData = self.dataStore.data(forKey: ChannelAudienceManager.legacyPendingTagGroupsKey) {
-                if let pendingTagGroups = NSKeyedUnarchiver.unarchiveObject(with: pendingTagGroupsData) as? [TagGroupsMutation] {
-                    pendingTagUpdates = pendingTagGroups.map { $0.tagGroupUpdates }.reduce([], +)
+                
+                let classes = [NSArray.self, TagGroupsMutation.self]
+                let pendingTagGroups = try? NSKeyedUnarchiver.unarchivedObject(
+                    ofClasses: classes,
+                    from: pendingTagGroupsData
+                )
+            
+                if let pendingTagGroups = pendingTagGroups
+                    as? [TagGroupsMutation]
+                {
+                    pendingTagUpdates =
+                        pendingTagGroups.map { $0.tagGroupUpdates }
+                        .reduce([], +)
                 }
             }
             
             if let pendingAttributesData = self.dataStore.data(forKey: ChannelAudienceManager.legacyPendingAttributesKey) {
-                if let pendingAttributes = NSKeyedUnarchiver.unarchiveObject(with: pendingAttributesData) as? [AttributePendingMutations] {
-                    pendingAttributeUpdates = pendingAttributes.map { $0.attributeUpdates }.reduce([], +)
+                
+                let classes = [NSArray.self, AttributePendingMutations.self]
+                let pendingAttributes = try? NSKeyedUnarchiver.unarchivedObject(
+                    ofClasses: classes,
+                    from: pendingAttributesData
+                )
+
+                if let pendingAttributes = pendingAttributes
+                    as? [AttributePendingMutations]
+                {
+                    pendingAttributeUpdates =
+                        pendingAttributes.map {
+                            $0.attributeUpdates
+                        }
+                        .reduce([], +)
                 }
+
             }
 
             let update = AudienceUpdate(tagGroupUpdates: pendingTagUpdates ?? [],

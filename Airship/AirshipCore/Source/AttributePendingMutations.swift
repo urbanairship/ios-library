@@ -4,13 +4,13 @@ import Foundation
 
 // Legacy attribute mutation. Used for migration to AttributeUpdates.
 @objc(UAAttributePendingMutations)
-class AttributePendingMutations : NSObject, NSSecureCoding {
+class AttributePendingMutations: NSObject, NSSecureCoding {
     static let codableKey = "com.urbanairship.attributes"
 
     public static var supportsSecureCoding: Bool = true
-    private let mutationsPayload: [[AnyHashable : Any]]
-    
-    init(mutationsPayload: [[AnyHashable : Any]]) {
+    private let mutationsPayload: [[AnyHashable: Any]]
+
+    init(mutationsPayload: [[AnyHashable: Any]]) {
         self.mutationsPayload = mutationsPayload
         super.init()
     }
@@ -47,10 +47,20 @@ class AttributePendingMutations : NSObject, NSSecureCoding {
     }
 
     func encode(with coder: NSCoder) {
-        coder.encode(mutationsPayload as NSArray, forKey: AttributePendingMutations.codableKey)
+        coder.encode(
+            mutationsPayload as NSArray,
+            forKey: AttributePendingMutations.codableKey
+        )
     }
-    
+
     required init?(coder: NSCoder) {
-        self.mutationsPayload = coder.decodeObject(of: NSArray.self, forKey: AttributePendingMutations.codableKey) as? [[AnyHashable : Any]] ?? []
+        self.mutationsPayload =
+            coder.decodeObject(
+                of: [
+                    NSNull.self, NSNumber.self, NSArray.self, NSDictionary.self,
+                    NSString.self,
+                ],
+                forKey: AttributePendingMutations.codableKey
+            ) as? [[AnyHashable: Any]] ?? []
     }
 }

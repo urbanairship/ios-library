@@ -200,28 +200,59 @@ class ChannelAudienceManagerTest: XCTestCase {
     func testMigrateMutations() throws {
         let testDate = UATestDate()
         testDate.dateOverride = Date()
-        
+
         let attributePayload = [
             "action": "remove",
             "key": "some-attribute",
-            "timestamp": Utils.isoDateFormatterUTCWithDelimiter().string(from: testDate.now)
+            "timestamp": Utils.isoDateFormatterUTCWithDelimiter()
+                .string(
+                    from: testDate.now
+                ),
         ]
-        
-        let attributeMutation = AttributePendingMutations(mutationsPayload: [attributePayload])
-        let attributeData = try! NSKeyedArchiver.archivedData(withRootObject:[attributeMutation], requiringSecureCoding:true)
-        dataStore.setObject(attributeData, forKey: ChannelAudienceManager.legacyPendingAttributesKey)
-        
-        let tagMutation = TagGroupsMutation(adds: ["some-group": Set(["tag"])], removes: nil, sets: nil)
-        let tagData = try! NSKeyedArchiver.archivedData(withRootObject:[tagMutation], requiringSecureCoding:true)
-        dataStore.setObject(tagData, forKey: ChannelAudienceManager.legacyPendingTagGroupsKey)
-        
+
+        let attributeMutation = AttributePendingMutations(mutationsPayload: [
+            attributePayload
+        ])
+        let attributeData = try! NSKeyedArchiver.archivedData(
+            withRootObject: [attributeMutation],
+            requiringSecureCoding: true
+        )
+        dataStore.setObject(
+            attributeData,
+            forKey: ChannelAudienceManager.legacyPendingAttributesKey
+        )
+
+        let tagMutation = TagGroupsMutation(
+            adds: ["some-group": Set(["tag"])],
+            removes: nil,
+            sets: nil
+        )
+        let tagData = try! NSKeyedArchiver.archivedData(
+            withRootObject: [tagMutation],
+            requiringSecureCoding: true
+        )
+        dataStore.setObject(
+            tagData,
+            forKey: ChannelAudienceManager.legacyPendingTagGroupsKey
+        )
+
         self.audienceManager.migrateMutations()
 
-        let pendingTagUpdates = [TagGroupUpdate(group: "some-group", tags: ["tag"], type: .add)]
-        XCTAssertEqual(pendingTagUpdates, self.audienceManager.pendingTagGroupUpdates)
+        let pendingTagUpdates = [
+            TagGroupUpdate(group: "some-group", tags: ["tag"], type: .add)
+        ]
+        XCTAssertEqual(
+            pendingTagUpdates,
+            self.audienceManager.pendingTagGroupUpdates
+        )
 
-        let pendingAttributeUpdates = [AttributeUpdate.remove(attribute: "some-attribute")]
-        XCTAssertEqual(pendingAttributeUpdates, self.audienceManager.pendingAttributeUpdates)
+        let pendingAttributeUpdates = [
+            AttributeUpdate.remove(attribute: "some-attribute")
+        ]
+        XCTAssertEqual(
+            pendingAttributeUpdates,
+            self.audienceManager.pendingAttributeUpdates
+        )
     }
 
     func testContactSubscriptionListUpdates() throws {

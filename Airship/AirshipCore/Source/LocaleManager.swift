@@ -41,7 +41,10 @@ public class LocaleManager : NSObject, LocaleManagerProtocol {
     public var currentLocale : Locale {
         get {
             if let encodedLocale = dataStore.object(forKey: LocaleManager.storeKey) as? Data {
-                if let locale = NSKeyedUnarchiver.unarchiveObject(with: encodedLocale) as? Locale {
+                if let locale = try? NSKeyedUnarchiver.unarchivedObject(
+                    ofClass: NSLocale.self,
+                    from: encodedLocale
+                ) as? Locale {
                     return locale
                 }
             }
