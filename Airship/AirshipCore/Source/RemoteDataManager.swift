@@ -233,7 +233,9 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
             AirshipLogger.trace("Remote data refresh finished with payloads: \(response.payloads ?? [])")
 
             if (response.status == 304) {
-                self.updatedSinceLastForeground = true
+                self.refreshLock.sync {
+                    self.updatedSinceLastForeground = true
+                }
                 self.lastRefreshTime = self.date.now
                 self.lastAppVersion = Utils.bundleShortVersionString()
                 success = true
