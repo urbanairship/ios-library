@@ -560,7 +560,7 @@ public class Analytics: NSObject, Component, AnalyticsProtocol, EventManagerDele
         } else {
             self.eventManager.uploadsEnabled = false
             self.eventManager.deleteAllEvents()
-            self.dataStore.setValue(nil, forKey: Analytics.associatedIdentifiers)
+            self.dataStore.setObject(nil, forKey: Analytics.associatedIdentifiers)
         }
     }
 

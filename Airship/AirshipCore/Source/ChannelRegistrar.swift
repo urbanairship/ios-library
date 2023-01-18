@@ -90,7 +90,7 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
         set {
             if (newValue != nil) {
                 if let data = try? newValue?.encode() {
-                    self.dataStore.setValue(data, forKey: ChannelRegistrar.lastPayloadKey)
+                    self.dataStore.setObject(data, forKey: ChannelRegistrar.lastPayloadKey)
                 }
             } else {
                 self.dataStore.removeObject(forKey: ChannelRegistrar.lastPayloadKey)

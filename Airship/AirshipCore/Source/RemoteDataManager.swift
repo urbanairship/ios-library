@@ -69,7 +69,7 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
             return self.dataStore.object(forKey: RemoteDataManager.lastRefreshTimeKey) as? Date ?? Date.distantPast
         }
         set {
-            self.dataStore.setValue(newValue, forKey: RemoteDataManager.lastRefreshTimeKey)
+            self.dataStore.setObject(newValue, forKey: RemoteDataManager.lastRefreshTimeKey)
         }
     }
     
@@ -78,7 +78,7 @@ public class RemoteDataManager : NSObject, Component, RemoteDataProvider {
             return self.dataStore.string(forKey: RemoteDataManager.lastRefreshAppVersionKey)
         }
         set {
-            self.dataStore.setValue(newValue, forKey: RemoteDataManager.lastRefreshAppVersionKey)
+            self.dataStore.setObject(newValue, forKey: RemoteDataManager.lastRefreshAppVersionKey)
         }
     }
     

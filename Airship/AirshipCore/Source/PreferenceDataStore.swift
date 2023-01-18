@@ -15,7 +15,7 @@ public class PreferenceDataStore : NSObject {
     private let decoder = JSONDecoder()
     private let encoder = JSONEncoder()
 
-    private var pending: [String : [Any?]] = [:]
+    private var cache: [String: Cached] = [:]
     private let lock = Lock()
     private let dispatcher: UADispatcher
 
@@ -243,10 +243,10 @@ public class PreferenceDataStore : NSObject {
         var result: Any?
 
         lock.sync {
-            if let pending = self.pending[key], pending.count > 0 {
-                result = pending[pending.count - 1]
+            if let cached = self.cache[key] {
+                result = cached.value
             } else {
-                result = defaults.object(forKey:key)
+                result = defaults.object(forKey: key)
             }
         }
 
@@ -259,22 +259,19 @@ public class PreferenceDataStore : NSObject {
 
     private func write(_ key: String, value: Any?) {
         let key = prefixKey(key)
+        let value = value
 
         lock.sync {
-            var pendingValues = self.pending[key] ?? []
-            pendingValues.append(value)
-            self.pending[key] = pendingValues
+            self.cache[key] = Cached(value: value)
         }
 
         self.dispatcher.dispatchAsync {
-            if let value = value {
-                self.defaults.set(value, forKey: key)
-            } else {
-                self.defaults.removeObject(forKey: key)
-            }
-
             self.lock.sync {
-                self.pending[key]?.remove(at: 0)
+                if let value = self.cache[key]?.value {
+                    self.defaults.set(value, forKey: key)
+                } else {
+                    self.defaults.removeObject(forKey: key)
+                }
             }
         }
     }
@@ -284,6 +281,9 @@ public class PreferenceDataStore : NSObject {
     }
 }
 
+private struct Cached {
+    let value: Any?
+}
 
 
 extension AirshipKeychainAccess {

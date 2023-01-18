@@ -52,7 +52,7 @@ public class LocaleManager : NSObject, LocaleManagerProtocol {
         }
         set {
             let encodedLocale: Data = NSKeyedArchiver.archivedData(withRootObject: newValue)
-            dataStore.setValue(encodedLocale, forKey: LocaleManager.storeKey)
+            dataStore.setObject(encodedLocale, forKey: LocaleManager.storeKey)
             notificationCenter.post(name: LocaleManager.localeUpdatedEvent, object:[LocaleManager.localeEventKey: newValue])
         }
     }
