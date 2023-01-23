@@ -240,6 +240,8 @@ NS_ASSUME_NONNULL_BEGIN
     }
     
     [self applyToolbarItemStyles];
+    
+    self.messageTable.separatorColor = UIColor.clearColor;
 
     // apply styles to table cells
     [self.messageTable reloadData];
@@ -714,6 +716,8 @@ NS_ASSUME_NONNULL_BEGIN
         // Resize to match the original frame if needed
         cell.listIconView.frame = CGRectMake(frame.origin.x, frame.origin.y, CGRectGetWidth(frame), CGRectGetHeight(frame));
     }
+    
+    cell.dividerView.hidden = indexPath.row == self.messages.count - 1;
 
     return cell;
 }

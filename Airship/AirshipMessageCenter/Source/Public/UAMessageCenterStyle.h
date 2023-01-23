@@ -188,6 +188,15 @@ extern NSString *const UANavigationBarStyleBlackKey;
  */
 @property(nonatomic, strong) UIColor *cancelButtonTitleColor;
 
+/**
+ * The subtitle font
+ */
+@property(nonatomic, strong) UIFont *cellSubtitleFont;
+
+/**
+ * The subtitle color
+ */
+@property(nonatomic, strong) UIColor *cellSubtitleColor;
 
 ///---------------------------------------------------------------------------------------
 /// @name Default Message Center Style Factories

@@ -1194,6 +1194,7 @@
 		6EFD6D8A272A53FB005B26F1 /* PagerIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFD6D85272A53FA005B26F1 /* PagerIndicator.swift */; };
 		6EFD6D8B272A53FB005B26F1 /* PagerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFD6D86272A53FB005B26F1 /* PagerController.swift */; };
 		6EFD6D8C272A53FB005B26F1 /* PagerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFD6D86272A53FB005B26F1 /* PagerController.swift */; };
+		80DAAE7E297F3C1900805B88 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 80DAAE7D297F3C1900805B88 /* Media.xcassets */; };
 		8401769426C5671100373AF7 /* JSONMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401769326C5671100373AF7 /* JSONMatcher.swift */; };
 		8401769626C5715E00373AF7 /* VersionMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401769526C5715E00373AF7 /* VersionMatcher.swift */; };
 		8401769826C5722400373AF7 /* JSONPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401769726C5722400373AF7 /* JSONPredicate.swift */; };
@@ -2825,6 +2826,7 @@
 		6EFD6D84272A53FA005B26F1 /* Pager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pager.swift; sourceTree = "<group>"; };
 		6EFD6D85272A53FA005B26F1 /* PagerIndicator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PagerIndicator.swift; sourceTree = "<group>"; };
 		6EFD6D86272A53FB005B26F1 /* PagerController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PagerController.swift; sourceTree = "<group>"; };
+		80DAAE7D297F3C1900805B88 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
 		83A674F723AA7AA4005C0C8F /* AirshipDebugPushData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = AirshipDebugPushData.xcdatamodel; sourceTree = "<group>"; };
 		8401769326C5671100373AF7 /* JSONMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONMatcher.swift; sourceTree = "<group>"; };
 		8401769526C5715E00373AF7 /* VersionMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionMatcher.swift; sourceTree = "<group>"; };
@@ -3666,6 +3668,7 @@
 				3CA0E47F237E505200EE76CF /* Info.plist */,
 				3CA0E303237E396100EE76CF /* Resources */,
 				3CA0E30B237E396100EE76CF /* Source */,
+				80DAAE7D297F3C1900805B88 /* Media.xcassets */,
 			);
 			path = AirshipMessageCenter;
 			sourceTree = "<group>";
@@ -6751,6 +6754,7 @@
 			files = (
 				3CA0E479237E4E3000EE76CF /* UAInbox.xcdatamodeld in Resources */,
 				3CA0E47B237E4E3000EE76CF /* UAMessageCenterActions.plist in Resources */,
+				80DAAE7E297F3C1900805B88 /* Media.xcassets in Resources */,
 				3CA0E47C237E4E3000EE76CF /* UAMessageCenterListCell.xib in Resources */,
 				3CA0E47D237E4E3000EE76CF /* UAMessageCenterPlaceholderIcon.png in Resources */,
 				3C16DA7923E11FB3001499A4 /* UADefaultMessageCenterMessageViewController.xib in Resources */,

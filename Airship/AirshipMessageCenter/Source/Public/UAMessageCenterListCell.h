@@ -49,6 +49,16 @@ NS_SWIFT_NAME(MessageCenterListCell)
  */
 @property (nonatomic, weak) IBOutlet UIImageView *listIconView;
 
+/**
+ * Subtitle Label
+ */
+@property (nonatomic, weak) IBOutlet UILabel *subtitle;
+
+/**
+ * Divider line
+ */
+@property (nonatomic, weak) IBOutlet UIView *dividerView;
+
 ///---------------------------------------------------------------------------------------
 /// @name Default Message Center List Cell Config
 ///---------------------------------------------------------------------------------------

@@ -25,6 +25,13 @@
                                                   format:UADateFormatterFormatRelativeShortDate];
     }
 
+    if([message.extra objectForKey:@"com.urbanairship.listing.field1"] != nil) {
+        self.subtitle.text = [message.extra objectForKey:@"com.urbanairship.listing.field1"];
+        self.subtitle.hidden = false;
+    } else {
+        self.subtitle.hidden = true;
+    }
+    
     self.title.text = message.title;
     self.unreadIndicator.hidden = !message.unread;
     self.unreadIndicator.accessibilityHint = UAMessageCenterLocalizedString(@"ua_unread_description");
@@ -82,6 +89,16 @@
         self.title.textColor = style.cellTitleColor;
     } else if (@available(iOS 13.0, *)) {
         self.title.textColor = [UIColor labelColor];
+    }
+    
+    if (style.cellSubtitleFont) {
+        self.subtitle.font = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleBody] scaledFontForFont:style.cellSubtitleFont];
+    }
+
+    if (style.cellSubtitleColor) {
+        self.subtitle.textColor = style.cellSubtitleColor;
+    } else if (@available(iOS 13.0, *)) {
+        self.subtitle.textColor = [UIColor labelColor];
     }
 
     if (style.cellTitleHighlightedColor) {
