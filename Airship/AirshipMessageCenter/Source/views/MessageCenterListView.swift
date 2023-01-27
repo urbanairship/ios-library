@@ -38,6 +38,9 @@ public struct MessageCenterListView: View {
     @State
     private var isRefreshing = false
 
+    @State
+    private var isActive = false
+    
     private func markRead(messages: Set<String>) {
         editMode?.animation().wrappedValue = .inactive
         viewModel.markRead(messages: messages)
@@ -95,6 +98,12 @@ public struct MessageCenterListView: View {
                     self.$selection.wrappedValue.removeAll()
                 }
             }
+            .onAppear{
+                let _ = self.controller.$messageID
+                    .sink {
+                        isActive = ($0 != nil)
+                    }
+            }
         }
 
         if #available(iOS 15.0, *) {
@@ -108,16 +117,8 @@ public struct MessageCenterListView: View {
 
     @ViewBuilder
     private func makeContent() -> some View {
-        let isActive = Binding<Bool>(
-            get: { self.controller.messageID != nil },
-            set: { isActive in
-                if !isActive {
-                    self.controller.messageID = nil
-                }
-            }
-        )
-
-        ZStack {
+        
+        let content = ZStack {
             makeList()
                 .opacity(self.listOpacity)
                 .animation(.easeInOut(duration: 0.5), value: self.listOpacity)
@@ -137,21 +138,36 @@ public struct MessageCenterListView: View {
                     .opacity(1.0 - self.listOpacity)
             }
         }
-        .background(
-            NavigationLink(
-                "",
-                destination: self.messageStyle.makeBody(
-                    configuration: MessageViewStyleConfiguration(
-                        messageID: self.controller.messageID ?? "",
-                        title: self.viewModel.messageItem(
-                            forID: self.controller.messageID ?? ""
-                        )?
-                        .message.title
-                    )
-                ),
-                isActive: isActive
+        
+        let destination = self.messageStyle.makeBody(
+            configuration: MessageViewStyleConfiguration(
+                messageID: self.controller.messageID ?? "",
+                title: self.viewModel.messageItem(
+                    forID: self.controller.messageID ?? ""
+                )?
+                    .message.title
             )
         )
+        if #available(iOS 16.0, *) {
+            content
+                .background(
+                    NavigationLink(
+                        "",
+                        value: self.controller.messageID)
+                    .navigationDestination(isPresented: $isActive) {
+                        destination
+                    }
+                )
+        } else {
+            content
+                .background(
+                    NavigationLink(
+                        "",
+                        destination: destination,
+                        isActive: $isActive
+                    )
+                )
+        }
     }
 
     private func markDeleteButton() -> some View {

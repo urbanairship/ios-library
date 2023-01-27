@@ -66,7 +66,6 @@ public class MessageCenter: NSObject {
             dataStore: dataStore,
             className: "MessageCenter"
         )
-        self.controller = MessageCenterController()
 
         super.init()
 
