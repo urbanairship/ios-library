@@ -295,12 +295,11 @@ static CGFloat const CloseButtonHeight = 30;
     switch (textInfo.alignment) {
         case UAInAppMessageTextInfoAlignmentLeft:
             return NSTextAlignmentLeft;
-        case UAInAppMessageTextInfoAlignmentCenter:
-            return NSTextAlignmentCenter;
         case UAInAppMessageTextInfoAlignmentRight:
             return NSTextAlignmentRight;
+        case UAInAppMessageTextInfoAlignmentCenter:
         case UAInAppMessageTextInfoAlignmentNone:
-            return NSTextAlignmentLeft;
+            return NSTextAlignmentCenter;
     }
 }
 
