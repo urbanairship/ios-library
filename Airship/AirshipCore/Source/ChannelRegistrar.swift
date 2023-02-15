@@ -180,6 +180,10 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
      * - Parameter forcefully: YES to force the registration.
      */
     public func register(forcefully: Bool) {
+        guard self.channelAPIClient.isURLConfigured else {
+            return
+        }
+        
         let options = TaskRequestOptions(
             conflictPolicy: forcefully ? .replace : .keep,
             requiresNetwork: true,

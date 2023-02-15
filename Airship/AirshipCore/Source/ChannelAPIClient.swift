@@ -114,6 +114,10 @@ public class ChannelAPIClient : NSObject {
             completionHandler(HTTPResponse(status: response!.statusCode), nil)
         })
     }
+    
+    var isURLConfigured: Bool {
+        return self.config.deviceAPIURL?.isEmpty == false
+    }
 }
 
 
@@ -125,6 +129,8 @@ protocol ChannelAPIClientProtocol {
     func createChannel(withPayload payload: ChannelRegistrationPayload, completionHandler: @escaping (ChannelCreateResponse?, Error?) -> Void) -> Disposable
     @discardableResult
     func updateChannel(withID channelID: String, withPayload payload: ChannelRegistrationPayload, completionHandler: @escaping (HTTPResponse?, Error?) -> Void) -> Disposable
+    
+    var isURLConfigured: Bool { get }
 }
 
 extension ChannelAPIClient : ChannelAPIClientProtocol {

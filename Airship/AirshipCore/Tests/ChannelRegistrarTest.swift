@@ -176,6 +176,19 @@ class ChannelRegistrarTest: XCTestCase {
         XCTAssertNil(self.delegate.channelCreatedResponse)
     }
     
+    func testUpdateNotConfigured() {
+        self.client.isURLConfigured = false
+        self.channelRegistrar.register(forcefully: true)
+        self.channelRegistrar.register(forcefully: false)
+        XCTAssertEqual(0, self.taskManager.enqueuedRequestsCount)
+
+        self.client.isURLConfigured = true
+        
+        self.channelRegistrar.register(forcefully: true)
+        self.channelRegistrar.register(forcefully: false)
+        XCTAssertEqual(2, self.taskManager.enqueuedRequestsCount)
+    }
+    
     func testUpdateForcefully() {
         let someChannelID = UUID().uuidString
         let payload = ChannelRegistrationPayload()
@@ -386,7 +399,8 @@ internal class TestChannelRegistrationClient : ChannelAPIClientProtocol {
     var createCallback: ((ChannelRegistrationPayload, ((ChannelCreateResponse?, Error?) -> Void)) -> Void)?
     var updateCallback: ((String, ChannelRegistrationPayload, ((HTTPResponse?, Error?) -> Void)) -> Void)?
     var defaultCallback: ((String) -> Void)?
-    
+    var isURLConfigured: Bool = true
+
     @discardableResult
     func createChannel(withPayload payload: ChannelRegistrationPayload, completionHandler: @escaping (ChannelCreateResponse?, Error?) -> Void) -> Disposable {
         if let callback = createCallback {
