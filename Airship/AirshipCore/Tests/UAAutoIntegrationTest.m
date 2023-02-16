@@ -340,8 +340,13 @@
                                                                completion(expectedOptions);
                                                            }];
 
-    [[[self.mockDelegate stub] andReturnValue:OCMOCK_VALUE(expectedOptions)] presentationOptionsForNotification:mockUNNotification];
-    
+    [[[self.mockDelegate stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^handler)(UNNotificationPresentationOptions) = (__bridge void (^)(UNNotificationPresentationOptions))arg;
+        handler(expectedOptions);
+    }] presentationOptionsForNotification:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+      
 
     // Stub the implementation for UAAppIntegration that handles handleForegroundNotification:mergedOptions:withCompletionHandler:
     // + (void)handleForegroundNotification:(UNNotification *)notification mergedOptions:(UNNotificationPresentationOptions)options withCompletionHandler:(void(^)())completionHandler {

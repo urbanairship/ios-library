@@ -123,7 +123,11 @@ protocol InternalPushProtocol {
     func didRegisterForRemoteNotifications(_ deviceToken: Data)
     func didFailToRegisterForRemoteNotifications(_ error: Error)
     func didReceiveRemoteNotification(_ userInfo: [AnyHashable : Any], isForeground: Bool, completionHandler: @escaping (Any) -> Void)
-    func presentationOptionsForNotification(_ notification: UNNotification) -> UNNotificationPresentationOptions
+    
+    func presentationOptionsForNotification(
+        _ notification: UNNotification,
+        completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
+    )
     
     #if !os(tvOS)
     func didReceiveNotificationResponse(_ response: UNNotificationResponse, completionHandler: @escaping () -> Void)

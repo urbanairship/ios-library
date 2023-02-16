@@ -193,39 +193,52 @@ static dispatch_once_t onceToken;
 #pragma mark UNUserNotificationCenterDelegate swizzled methods
 
 void UserNotificationCenterWillPresentNotificationWithCompletionHandler(id self, SEL _cmd, UNUserNotificationCenter *notificationCenter, UNNotification *notification, void (^handler)(UNNotificationPresentationOptions)) {
-
-    id<UAAppIntegrationDelegate> delegate = instance_.delegate;
-    __block UNNotificationPresentationOptions mergedPresentationOptions = [delegate presentationOptionsForNotification:notification];
     
+    __block UNNotificationPresentationOptions mergedPresentationOptions = UNNotificationPresentationOptionNone;
+    NSRecursiveLock *lock = [[NSRecursiveLock alloc] init];
+    
+    // Original
     dispatch_group_t dispatchGroup = dispatch_group_create();
-
     IMP original = [instance_.notificationDelegateSwizzler originalImplementation:_cmd];
     if (original) {
         __block BOOL completionHandlerCalled = NO;
         void (^completionHandler)(UNNotificationPresentationOptions) = ^(UNNotificationPresentationOptions options) {
-
-            // Make sure the app's completion handler is called on the main queue
-            [UAAutoIntegration dispatchMain:^{
-                if (completionHandlerCalled) {
-                    UA_LTRACE(@"Completion handler called multiple times.");
-                    return;
-                }
-                completionHandlerCalled = YES;
-
-                mergedPresentationOptions |= options;
-
-                dispatch_group_leave(dispatchGroup);
-            }];
+            [lock lock];
+            if (completionHandlerCalled) {
+                UA_LTRACE(@"Completion handler called multiple times.");
+                return;
+            }
+            completionHandlerCalled = YES;
+            mergedPresentationOptions |= options;
+            [lock unlock];
+            dispatch_group_leave(dispatchGroup);
         };
 
         dispatch_group_enter(dispatchGroup);
         ((void(*)(id, SEL, UNUserNotificationCenter *, UNNotification *, void (^)(UNNotificationPresentationOptions)))original)(self, _cmd, notificationCenter, notification, completionHandler);
     }
+    
+    
+    // Airship
+    dispatch_group_enter(dispatchGroup);
+    __block BOOL airshipCompletionHandlerCalled = NO;
+
+    [instance_.delegate presentationOptionsForNotification:notification completionHandler:^(UNNotificationPresentationOptions options) {
+        [lock lock];
+        if (airshipCompletionHandlerCalled) {
+            UA_LTRACE(@"Completion handler called multiple times.");
+            return;
+        }
+        airshipCompletionHandlerCalled = YES;
+        mergedPresentationOptions |= options;
+        [lock unlock];
+        dispatch_group_leave(dispatchGroup);
+    }];
+    
 
     dispatch_group_notify(dispatchGroup, dispatch_get_main_queue(),^{
         __block BOOL completionHandlerCalled = NO;
-
-        [delegate willPresentNotification:notification presentationOptions:mergedPresentationOptions completionHandler:^{
+        [instance_.delegate willPresentNotification:notification presentationOptions:mergedPresentationOptions completionHandler:^{
             if (completionHandlerCalled) {
                 UA_LTRACE(@"Completion handler called multiple times.");
                 return;

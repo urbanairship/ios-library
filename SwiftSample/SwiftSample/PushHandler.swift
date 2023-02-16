@@ -31,16 +31,20 @@ class PushHandler: NSObject, PushNotificationDelegate {
 
         completionHandler()
     }
-
-    func extend(_ options: UNNotificationPresentationOptions = [], notification: UNNotification) -> UNNotificationPresentationOptions {
+        
+    func extendPresentationOptions(
+        _ options: UNNotificationPresentationOptions,
+        notification: UNNotification,
+        completionHandler: (UNNotificationPresentationOptions) -> Void
+    ) {
         #if !targetEnvironment(macCatalyst)
         if #available(iOS 14.0, *) {
-            return options.union([.banner, .list, .sound])
+            completionHandler([.banner, .list, .sound])
         } else {
-            return options.union([.alert, .sound])
+            return completionHandler([.alert, .sound])
         }
         #else
-        return options.union([.alert, .sound])
+        return completionHandler([.alert, .sound])
         #endif
     }
 }

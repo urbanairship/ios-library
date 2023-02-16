@@ -216,8 +216,9 @@ fileprivate final class InternalPush: InternalPushProtocol {
     
     func didReceiveRemoteNotification(_ userInfo: [AnyHashable : Any], isForeground: Bool, completionHandler: @escaping (Any) -> Void) {}
     
-    func presentationOptionsForNotification(_ notification: UNNotification) -> UNNotificationPresentationOptions {
-        return []
+
+    func presentationOptionsForNotification(_ notification: UNNotification, completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([])
     }
     
     func didReceiveNotificationResponse(_ response: UNNotificationResponse, completionHandler: @escaping () -> Void) {}

@@ -950,9 +950,13 @@ extension Push: InternalPushProtocol {
         self.registrationDelegate?.apnsRegistrationFailedWithError?(error)
     }
 
-    public func presentationOptionsForNotification(_ notification: UNNotification) -> UNNotificationPresentationOptions {
+    public func presentationOptionsForNotification(
+        _ notification: UNNotification,
+        completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
+    ) {
         guard self.privacyManager.isEnabled(.push) else {
-            return []
+            completionHandler([])
+            return
         }
 
         var options: UNNotificationPresentationOptions = []
@@ -997,8 +1001,12 @@ extension Push: InternalPushProtocol {
         if let extendedOptions = self.pushNotificationDelegate?.extend?(options, notification: notification) {
             options = extendedOptions
         }
-
-        return options
+        
+        if let delegateMethod = self.pushNotificationDelegate?.extendPresentationOptions {
+            delegateMethod(options, notification, completionHandler)
+        } else {
+            completionHandler(options)
+        }
     }
 
 #if !os(tvOS)

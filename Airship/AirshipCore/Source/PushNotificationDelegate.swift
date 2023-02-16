@@ -52,5 +52,21 @@ public protocol PushNotificationDelegate: NSObjectProtocol {
     ///   - notification: The notification.
     /// - Returns: a UNNotificationPresentationOptions enum value indicating the presentation options for the notification.
     @objc(extendPresentationOptions:notification:)
-    optional func extend(_ options: UNNotificationPresentationOptions, notification: UNNotification) -> UNNotificationPresentationOptions
+    optional func extend(
+        _ options: UNNotificationPresentationOptions,
+        notification: UNNotification
+    ) -> UNNotificationPresentationOptions
+    
+    /// Called when a notification has arrived in the foreground and is available for display.
+    ///
+    /// - Parameters:
+    ///   - options: The notification presentation options.
+    ///   - notification: The notification.
+    ///   - completionHandler: The completion handler.
+    @objc(extendPresentationOptions:notification:completionHandler:)
+    optional func extendPresentationOptions(
+        _ options: UNNotificationPresentationOptions,
+        notification: UNNotification,
+        completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
+    )
 }

@@ -93,8 +93,7 @@ class TestIntegrationDelegate : NSObject, AppIntegrationDelegate {
         assertionFailure("Unable to mock UNNotificationResponse.")
     }
     
-    func presentationOptions(for notification: UNNotification) -> UNNotificationPresentationOptions {
-        assertionFailure("Unable to mock UNNotification.")
-        return []
+    func presentationOptionsForNotification(_ notification: UNNotification, completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([])
     }
 }
