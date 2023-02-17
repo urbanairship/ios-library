@@ -300,7 +300,7 @@ extension AirshipKeychainAccess {
         self.writeCredentials(
             AirshipKeychainCredentials(
                 username: "airship",
-                password: UUID().uuidString
+                password: newDeviceID
             ),
             identifier: "com.urbanairship.deviceID"
         ) { result in
