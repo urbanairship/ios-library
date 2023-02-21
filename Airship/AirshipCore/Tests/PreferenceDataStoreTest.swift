@@ -9,9 +9,14 @@ class PreferenceDataStoreTest: XCTestCase {
 
     let airshipDefaults = UserDefaults(suiteName: "\(Bundle.main.bundleIdentifier ?? "").airship.settings")!
     let appKey = UUID().uuidString
+    let keychainAcccess = TestKeyChainAccess()
     
     func testPrefix() throws {
-        let dataStore = PreferenceDataStore(appKey: self.appKey, dispatcher: TestDispatcher())
+        let dataStore = PreferenceDataStore(
+            appKey: self.appKey,
+            dispatcher: TestDispatcher(),
+            keychainAccess: keychainAcccess
+        )
         dataStore.setObject("neat", forKey: "some-key")
         XCTAssertEqual("neat", airshipDefaults.string(forKey: "\(self.appKey)some-key"))
     }
@@ -126,6 +131,58 @@ class PreferenceDataStoreTest: XCTestCase {
             let _: BarCodable? = try dataStore.codable(forKey: "codable")
         }())
     }
+    
+    func testAppNotRestored() throws {
+        var dataStore = PreferenceDataStore(
+            appKey: self.appKey,
+            dispatcher: TestDispatcher(),
+            keychainAccess: keychainAcccess
+        )
+        XCTAssertFalse(dataStore.isAppRestore)
+        
+        dataStore = PreferenceDataStore(
+            appKey: self.appKey,
+            dispatcher: TestDispatcher(),
+            keychainAccess: keychainAcccess
+        )
+        XCTAssertFalse(dataStore.isAppRestore)
+    }
+    
+    func testAppRestoredDeviceIDCleared() throws {
+        var dataStore = PreferenceDataStore(
+            appKey: self.appKey,
+            dispatcher: TestDispatcher(),
+            keychainAccess: keychainAcccess
+        )
+        XCTAssertFalse(dataStore.isAppRestore)
+        
+        self.keychainAcccess.deviceID = nil
+    
+        dataStore = PreferenceDataStore(
+            appKey: self.appKey,
+            dispatcher: TestDispatcher(),
+            keychainAccess: keychainAcccess
+        )
+        XCTAssertTrue(dataStore.isAppRestore)
+    }
+    
+    func testAppRestoredDeviceIDChanged() throws {
+        var dataStore = PreferenceDataStore(
+            appKey: self.appKey,
+            dispatcher: TestDispatcher(),
+            keychainAccess: keychainAcccess
+        )
+        XCTAssertFalse(dataStore.isAppRestore)
+        
+        self.keychainAcccess.deviceID = UUID().uuidString
+    
+        dataStore = PreferenceDataStore(
+            appKey: self.appKey,
+            dispatcher: TestDispatcher(),
+            keychainAccess: keychainAcccess
+        )
+        XCTAssertTrue(dataStore.isAppRestore)
+    }
 }
 
 fileprivate struct FooCodable: Codable, Equatable {
@@ -134,4 +191,8 @@ fileprivate struct FooCodable: Codable, Equatable {
 
 fileprivate struct BarCodable: Codable, Equatable {
     let bar: String
+}
+
+class TestKeyChainAccess : PreferenceDataStoreKeychainAccessProtocol {
+    var deviceID: String?
 }

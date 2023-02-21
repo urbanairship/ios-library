@@ -18,13 +18,15 @@ public class PreferenceDataStore : NSObject {
     private var cache: [String: Cached] = [:]
     private let lock = Lock()
     private let dispatcher: UADispatcher
-
+    private var keychainAccess: PreferenceDataStoreKeychainAccessProtocol
 
     lazy var isAppRestore: Bool = {
-        let deviceID = AirshipKeychainAccess(
-            appKey: self.appKey
-        ).deviceID
-
+        var deviceID = self.keychainAccess.deviceID
+        if (deviceID == nil) {
+            deviceID = UUID().uuidString
+            self.keychainAccess.deviceID = deviceID
+        }
+        
         let previousDeviceID = self.string(forKey: PreferenceDataStore.deviceIDKey)
         if (deviceID == previousDeviceID) {
             return false
@@ -41,13 +43,18 @@ public class PreferenceDataStore : NSObject {
     
     @objc
     public convenience init(appKey: String) {
-        self.init(appKey: appKey, dispatcher: UADispatcher.serial())
+        self.init(
+            appKey: appKey,
+            dispatcher: UADispatcher.serial(),
+            keychainAccess: AirshipKeychainAccess(appKey: appKey)
+        )
     }
 
-    init(appKey: String, dispatcher: UADispatcher) {
+    init(appKey: String, dispatcher: UADispatcher, keychainAccess: PreferenceDataStoreKeychainAccessProtocol) {
         self.defaults = PreferenceDataStore.createDefaults(appKey: appKey)
         self.appKey = appKey
         self.dispatcher = dispatcher
+        self.keychainAccess = keychainAccess
         super.init()
         mergeKeys()
     }
@@ -286,28 +293,38 @@ private struct Cached {
 }
 
 
-extension AirshipKeychainAccess {
+protocol PreferenceDataStoreKeychainAccessProtocol {
+    var deviceID: String? { get set }
+}
+
+extension AirshipKeychainAccess : PreferenceDataStoreKeychainAccessProtocol {
+    private static let deviceKeychainID = "com.urbanairship.deviceID"
     var deviceID: String? {
-        let deviceID = self.readCredentialsSync(
-            identifier: "com.urbanairship.deviceID"
-        )?.password
-
-        if let deviceID = deviceID {
-            return deviceID
+        get {
+            self.readCredentialsSync(
+                identifier: AirshipKeychainAccess.deviceKeychainID
+            )?.password
         }
-
-        let newDeviceID = UUID().uuidString
-        self.writeCredentials(
-            AirshipKeychainCredentials(
-                username: "airship",
-                password: UUID().uuidString
-            ),
-            identifier: "com.urbanairship.deviceID"
-        ) { result in
-            if (!result) {
-                AirshipLogger.error("Unable to save device ID")
+        set {
+            if let newValue = newValue {
+                self.writeCredentials(
+                    AirshipKeychainCredentials(
+                        username: "airship",
+                        password: newValue
+                    ),
+                    identifier:  AirshipKeychainAccess.deviceKeychainID
+                ) { result in
+                    if (!result) {
+                        AirshipLogger.error("Unable to save device ID")
+                    }
+                }
+            } else {
+                self.deleteCredentials(
+                    identifier: AirshipKeychainAccess.deviceKeychainID
+                )
             }
+            
         }
-        return newDeviceID
     }
+    
 }
