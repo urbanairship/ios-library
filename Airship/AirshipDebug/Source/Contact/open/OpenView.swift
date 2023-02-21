@@ -12,7 +12,7 @@ import AirshipKit
 struct OpenView: View {
     @State var address: String = ""
     @State var platformName: String = ""
-    @StateObject var identifiers = Identifiers()
+    @ObservedObject var identifiers = Identifiers()
     
     var body: some View {
         VStack(alignment: .leading) {

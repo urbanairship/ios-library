@@ -14,7 +14,7 @@ struct EmailView: View {
     @State var email: String = ""
     @State private var transactional = false;
     @State private var commercial = false;
-    @StateObject var properties = Properties()
+    @ObservedObject var properties = Properties()
     
     var body: some View {
         VStack(alignment: .leading) {
