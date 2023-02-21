@@ -441,12 +441,13 @@ public class Config: NSObject, NSCopying {
                 """, inProduction, inProduction, appKey, appSecret, logLevel.rawValue, defaultAppKey, defaultAppSecret, developmentAppKey ?? "", developmentAppSecret ?? "", developmentLogLevel.rawValue, productionAppKey ?? "", productionAppSecret ?? "", productionLogLevel.rawValue, detectProvisioningMode, requestAuthorizationToUseNotifications ? "YES" : "NO", suppressAllowListError ? "YES" : "NO", requireInitialRemoteConfigEnabled ? "YES" : "NO", isAnalyticsEnabled, analyticsURL ?? "", deviceAPIURL ?? "", remoteDataAPIURL ?? "", initialConfigURL ?? "", isAutomaticSetupEnabled, clearUserOnAppRestore, urlAllowList , urlAllowListScopeJavaScriptInterface, urlAllowListScopeOpenURL, clearNamedUserOnAppRestore, isChannelCaptureEnabled, customConfig, isChannelCreationDelayEnabled, isExtendedBroadcastsEnabled, messageCenterStyleConfig ?? "", itunesID ?? "", site.rawValue, enabledFeatures.rawValue)
         }
     }
-
     /// Validates the current configuration. In addition to performing a strict validation, this method
     /// will log warnings and common configuration errors.
+    /// - Parameters:
+    ///     - logIssues: `true` to log issues with the config,  otherwise `false`
     /// - Returns: `true` if the current configuration is valid, otherwise `false`.
     @objc
-    public func validate() -> Bool {
+    public func validate(logIssues: Bool) -> Bool {
         
         var valid = true
 
@@ -455,46 +456,58 @@ public class Config: NSObject, NSCopying {
         //and prevent the app from connecting to UA.
         let matchPred = NSPredicate(format: "SELF MATCHES %@", "^\\S{22}+$")
 
-        if !matchPred.evaluate(with: developmentAppKey) {
+        if !matchPred.evaluate(with: developmentAppKey), logIssues {
             AirshipLogger.warn("Development App Key is not valid.")
         }
 
-        if !matchPred.evaluate(with: developmentAppSecret) {
+        if !matchPred.evaluate(with: developmentAppSecret), logIssues {
             AirshipLogger.warn("Development App Secret is not valid.")
         }
 
-        if !matchPred.evaluate(with: productionAppKey) {
+        if !matchPred.evaluate(with: productionAppKey), logIssues {
             AirshipLogger.warn("Production App Key is not valid.")
         }
 
-        if !matchPred.evaluate(with: productionAppSecret) {
+        if !matchPred.evaluate(with: productionAppSecret), logIssues {
             AirshipLogger.warn("Production App Secret is not valid.")
         }
 
         if !matchPred.evaluate(with: appKey) {
-            AirshipLogger.error("Current App Key \(appKey) is not valid.")
+            if (logIssues) {
+                AirshipLogger.error("Current App Key \(appKey) is not valid.")
+            }
             valid = false
         }
 
         if !matchPred.evaluate(with: appSecret) {
-            AirshipLogger.error("Current App Secret \(appSecret) is not valid.")
+            if (logIssues) {
+                AirshipLogger.error("Current App Secret \(appSecret) is not valid.")
+            }
             valid = false
         }
         
-        if developmentAppKey == productionAppKey {
+        if developmentAppKey == productionAppKey, logIssues {
             AirshipLogger.warn("Production App Key matches Development App Key.")
         }
 
-        if developmentAppSecret == productionAppSecret {
+        if developmentAppSecret == productionAppSecret, logIssues {
             AirshipLogger.warn("Production App Secret matches Development App Secret.")
         }
         
         
-        if (!self.suppressAllowListError && self.urlAllowList.isEmpty && self.urlAllowListScopeOpenURL.isEmpty) {
+        if (!self.suppressAllowListError && self.urlAllowList.isEmpty && self.urlAllowListScopeOpenURL.isEmpty), logIssues {
             AirshipLogger.impError("The airship config options is missing URL allow list rules for SCOPE_OPEN. By default only Airship, YouTube, mailto, sms, and tel URLs will be allowed. To suppress this error, specify allow list rules by providing rules for URLAllowListScopeOpenURL or URLAllowList. Alternatively you can suppress this error and keep the default rules by using the flag suppressAllowListError. For more information, see https://docs.airship.com/platform/ios/getting-started/#url-allow-list.");
         }
 
         return valid
+    }
+
+    /// Validates the current configuration. In addition to performing a strict validation, this method
+    /// will log warnings and common configuration errors.
+    /// - Returns: `true` if the current configuration is valid, otherwise `false`.
+    @objc
+    public func validate() -> Bool {
+        return validate(logIssues: true)
     }
 
     private func applyConfig(_ keyedValues: [AnyHashable : Any]) {
