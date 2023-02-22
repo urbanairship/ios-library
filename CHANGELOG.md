@@ -3,6 +3,16 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 16.11.0 February 22, 2023
+Minor release that fixes a potential channel restore issue on second run. The impact should be small since the channel create will return the same channel ID if the app has a device token or the app installed the Message Center module. 
+
+### Changes
+- Fixed app restore detection false positive on second run
+- Added new optional `PushNotificationDelegate` method `extendPresentationOptions(_:notification:completionHandler)` that allows returning foreground presentation options with a callback instead of synchronously
+- Added new `Config` method `validate(logIssues:)` to prevent logging on the config.
+- Fixed nil URL log message when attempting to create a channel on the first run. The channel will now wait until the URL is available before attempting to be created. This should not cause any real difference in behavior, it only prevents the log message from being logged.
+- Fixed Xcode 14.3 beta build issues
+
 ## Version 16.10.7 January 17, 2023
 Patch release that adds a potential mitigation for some iOS 16 devices crashing when reading and writing to UserDefaults. We have not been able to reproduce the issue and seems limited to a small number of iOS 16 devices.
 
