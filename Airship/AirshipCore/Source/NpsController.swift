@@ -10,20 +10,28 @@ struct NpsController : View {
     let constraints: ViewConstraints
     
     @State var formState: FormState
-    
+
     init(model: NpsControllerModel, constraints: ViewConstraints) {
         self.model = model
         self.constraints = constraints
-        self.formState = FormState(identifier: self.model.identifier,
-                                   formType: .nps(self.model.npsIdentifier),
-                                   formResponseType: self.model.responseType)
+        self.formState = FormState(
+            identifier: self.model.identifier,
+            formType: .nps(self.model.npsIdentifier),
+            formResponseType: self.model.responseType
+        )
     }
     
     var body: some View {
         if (model.submit != nil) {
-            ParentNpsController(model: model, constraints: constraints, formState: formState)
+            ParentNpsController(
+                model: model,
+                constraints: constraints,
+                formState: formState)
         } else {
-            ChildNpsController(model: model, constraints: constraints, formState: formState)
+            ChildNpsController(
+                model: model,
+                constraints: constraints,
+                formState: formState)
         }
     }
 }
