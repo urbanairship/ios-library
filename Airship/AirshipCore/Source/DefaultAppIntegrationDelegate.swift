@@ -177,22 +177,21 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
         }
     }
     #endif
-
-    public func presentationOptions(for notification: UNNotification)
-        -> UNNotificationPresentationOptions
-    {
-        var options = self.push.presentationOptionsForNotification(notification)
-
-        self.pushableComponents.forEach {
-            if let componentOptions = $0.presentationOptions?(
-                for: notification,
-                defaultPresentationOptions: options
-            ) {
-                options = componentOptions
+    
+    public func presentationOptionsForNotification(
+        _ notification: UNNotification,
+        completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
+    ) {
+        self.push.presentationOptionsForNotification(notification) { presentationOptions in
+            var options = presentationOptions
+            self.pushableComponents.forEach {
+                if let componentOptions = $0.presentationOptions?(for: notification, defaultPresentationOptions: presentationOptions) {
+                    options = componentOptions
+                }
             }
+            
+            completionHandler(options)
         }
-
-        return options
     }
 
     #if !os(watchOS)
@@ -209,6 +208,7 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
         let situation =
             isForeground
             ? Situation.foregroundPush : Situation.backgroundPush
+
         let dispatchGroup = DispatchGroup()
         var fetchResults: [UInt] = []
         let lock = Lock()

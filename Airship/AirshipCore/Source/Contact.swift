@@ -218,7 +218,7 @@ public class Contact: NSObject, Component, ContactProtocol {
         }
         set {
             if let data = try? self.encoder.encode(newValue) {
-                self.dataStore.setValue(data, forKey: Contact.contactInfoKey)
+                self.dataStore.setObject(data, forKey: Contact.contactInfoKey)
             }
         }
     }
@@ -272,10 +272,7 @@ public class Contact: NSObject, Component, ContactProtocol {
         }
         set {
             if let data = try? self.encoder.encode(newValue) {
-                self.dataStore.setValue(
-                    data,
-                    forKey: Contact.anonContactDataKey
-                )
+                self.dataStore.setObject(data, forKey: Contact.anonContactDataKey)
             }
         }
     }
@@ -287,7 +284,7 @@ public class Contact: NSObject, Component, ContactProtocol {
             return date ?? Date.distantPast
         }
         set {
-            self.dataStore.setValue(newValue, forKey: Contact.resolveDateKey)
+            self.dataStore.setObject(newValue, forKey: Contact.resolveDateKey)
         }
     }
 
@@ -1369,7 +1366,7 @@ public class Contact: NSObject, Component, ContactProtocol {
     private func storeOperations(_ operations: [ContactOperation]) {
         operationLock.sync {
             if let data = try? self.encoder.encode(operations) {
-                self.dataStore.setValue(data, forKey: Contact.operationsKey)
+                self.dataStore.setObject(data, forKey: Contact.operationsKey)
             }
         }
     }

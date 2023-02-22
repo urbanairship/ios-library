@@ -130,6 +130,10 @@ class ChannelAPIClient: ChannelAPIClientProtocol {
             )
         }
     }
+    
+    var isURLConfigured: Bool {
+        return self.config.deviceAPIURL?.isEmpty == false
+    }
 }
 
 /// - Note: For internal use only. :nodoc:
@@ -144,6 +148,8 @@ protocol ChannelAPIClientProtocol {
         channelID: String,
         withPayload payload: ChannelRegistrationPayload
     ) async throws -> AirshipHTTPResponse<ChannelAPIResponse>
+
+    var isURLConfigured: Bool { get }
 }
 
 struct ChannelAPIResponse {

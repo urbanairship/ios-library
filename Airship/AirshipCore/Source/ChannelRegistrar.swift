@@ -125,6 +125,10 @@ class ChannelRegistrar: ChannelRegistrarProtocol {
      * - Parameter forcefully: YES to force the registration.
      */
     func register(forcefully: Bool) {
+        guard self.channelAPIClient.isURLConfigured else {
+            return
+        }
+        
         self.workManager.dispatchWorkRequest(
             AirshipWorkRequest(
                 workID: ChannelRegistrar.workID,

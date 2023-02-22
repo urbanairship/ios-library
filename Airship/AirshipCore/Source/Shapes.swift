@@ -38,7 +38,7 @@ struct Shapes {
         let cornerRadius = border?.radius ?? 0
 
         if cornerRadius > 0 {
-            if let strokeColor = strokeColor, strokeWidth > 0 {
+            if strokeWidth > 0 {
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                     .strokeBorder(strokeColor, lineWidth: strokeWidth)
             } else {
@@ -46,7 +46,7 @@ struct Shapes {
                     .fill(Color.clear)
             }
         } else {
-            if let strokeColor = strokeColor, strokeWidth > 0 {
+            if strokeWidth > 0 {
                 Rectangle()
                     .strokeBorder(strokeColor, lineWidth: strokeWidth)
             } else {

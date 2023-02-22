@@ -3,6 +3,13 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 16.10.7 January 17, 2023
+Patch release that adds a potential mitigation for some iOS 16 devices crashing when reading and writing to UserDefaults. We have not been able to reproduce the issue and seems limited to a small number of iOS 16 devices.
+
+### Changes
+- Added potential mitigation for a UserDefaults crash that is occurring on some iOS 16 devices.
+- Specify the classes when using `'NSKeyedUnarchiver`.
+
 ## Version 16.10.6 December 5, 2022
 Patch release that fixes Airship not performing network operations until next app foreground when triggered in the background.
 

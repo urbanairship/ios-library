@@ -403,7 +403,7 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
     private func storeUpdates(_ operations: [AudienceUpdate]) {
         updateLock.sync {
             if let data = try? self.encoder.encode(operations) {
-                self.dataStore.setValue(
+                self.dataStore.setObject(
                     data,
                     forKey: ChannelAudienceManager.updatesKey
                 )

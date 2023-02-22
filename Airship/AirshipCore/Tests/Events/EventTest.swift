@@ -275,10 +275,11 @@ private final class InternalPush: InternalPushProtocol {
         completionHandler: @escaping (Any) -> Void
     ) {}
 
-    func presentationOptionsForNotification(_ notification: UNNotification)
-        -> UNNotificationPresentationOptions
-    {
-        return []
+    func presentationOptionsForNotification(
+        _ notification: UNNotification,
+        completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
+    ) {
+        completionHandler([])
     }
 
     func didReceiveNotificationResponse(

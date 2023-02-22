@@ -151,17 +151,13 @@ class TestPush: InternalPushProtocol, PushProtocol {
         )
     }
 
-    func presentationOptionsForNotification(_ notification: UNNotification)
-        -> UNNotificationPresentationOptions
-    {
-        assertionFailure("Unable to create UNNotification in tests.")
-        return []
-    }
 
-    func didReceiveNotificationResponse(
-        _ response: UNNotificationResponse,
-        completionHandler: @escaping () -> Void
-    ) {
+    func presentationOptionsForNotification(_ notification: UNNotification, completionHandler: (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([])
+    }
+    
+    
+    func didReceiveNotificationResponse(_ response: UNNotificationResponse, completionHandler: @escaping () -> Void) {
         assertionFailure("Unable to create UNNotificationResponse in tests.")
     }
 }

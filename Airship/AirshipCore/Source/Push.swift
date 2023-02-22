@@ -1182,12 +1182,12 @@ extension Push: InternalPushProtocol {
     }
 
     public func presentationOptionsForNotification(
-        _ notification: UNNotification
-    )
-        -> UNNotificationPresentationOptions
-    {
+        _ notification: UNNotification,
+        completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
+    ) {
         guard self.privacyManager.isEnabled(.push) else {
-            return []
+            completionHandler([])
+            return
         }
 
         var options: UNNotificationPresentationOptions = []
@@ -1228,8 +1228,12 @@ extension Push: InternalPushProtocol {
         ) {
             options = extendedOptions
         }
-
-        return options
+        
+        if let delegateMethod = self.pushNotificationDelegate?.extendPresentationOptions {
+            delegateMethod(options, notification, completionHandler)
+        } else {
+            completionHandler(options)
+        }
     }
 
     #if !os(tvOS)

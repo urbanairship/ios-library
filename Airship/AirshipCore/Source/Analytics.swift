@@ -64,14 +64,45 @@ public class Analytics: NSObject, Component, AnalyticsProtocol {
     private var initialized = false
     private var isAirshipReady = false
     private var handledFirstForegroundTransition = false
+    private let lock = Lock()
 
+    private var _conversionSendID : String? = nil
+       
     /// The conversion send ID. :nodoc:
-    @objc
-    public var conversionSendID: String?
+   @objc
+   public var conversionSendID: String? {
+       get {
+           var result: String? = nil
+           lock.sync {
+               result = self._conversionSendID
+           }
+           return result
+       }
+       set {
+           lock.sync {
+               self._conversionSendID = newValue
+           }
+       }
+    }
 
-    /// The conversion push metadata. :nodoc:
-    @objc
-    public var conversionPushMetadata: String?
+   private var _conversionPushMetadata : String? = nil
+   
+   /// The conversion push metadata. :nodoc:
+   @objc
+   public var conversionPushMetadata: String? {
+       get {
+           var result: String? = nil
+           lock.sync {
+               result = self._conversionPushMetadata
+           }
+           return result
+       }
+       set {
+           lock.sync {
+               self._conversionPushMetadata = newValue
+           }
+       }
+   }
 
     /// The current session ID.
     @objc
@@ -653,5 +684,3 @@ fileprivate class LifeCylceEventFactory: LifeCycleEventFactoryProtocol {
         }
     }
 }
-
-

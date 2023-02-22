@@ -16,7 +16,7 @@ class RemoteConfigCache {
             _remoteConfig = newValue
             if newValue != nil {
                 if let data = try? JSONEncoder().encode(newValue) {
-                    self.dataStore.setValue(
+                    self.dataStore.setObject(
                         data,
                         forKey: RemoteConfigCache.dataStoreKey
                     )

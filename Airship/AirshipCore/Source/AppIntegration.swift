@@ -267,13 +267,14 @@ public class AppIntegration: NSObject {
             completionHandler([])
             return
         }
-
-        let options = delegate.presentationOptions(for: notification)
-        delegate.willPresentNotification(
-            notification: notification,
-            presentationOptions: options
-        ) {
-            completionHandler(options)
+        
+        delegate.presentationOptionsForNotification(notification) { presentationOptions in
+            delegate.willPresentNotification(
+                notification: notification,
+                presentationOptions: presentationOptions
+            ) {
+                completionHandler(presentationOptions)
+            }
         }
     }
 

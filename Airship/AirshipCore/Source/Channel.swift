@@ -124,7 +124,7 @@ public class Channel: NSObject, Component, ChannelProtocol {
 
             tagsLock.sync {
                 let normalized = AudienceUtils.normalizeTags(newValue)
-                self.dataStore.setValue(
+                self.dataStore.setObject(
                     normalized,
                     forKey: Channel.tagsDataStoreKey
                 )

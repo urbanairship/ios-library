@@ -41,7 +41,8 @@ NS_SWIFT_NAME(AppIntegrationDelegate)
 
 - (void)didReceiveNotificationResponse:(UNNotificationResponse *)response completionHandler:(void (^)(void))completionHandler API_UNAVAILABLE(tvos) NS_SWIFT_NAME(didReceiveNotificationResponse(response:completionHandler:));
 
-- (UNNotificationPresentationOptions)presentationOptionsForNotification:(UNNotification *)notification;
+- (void)presentationOptionsForNotification:(UNNotification *)notification completionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler
+    NS_SWIFT_NAME(presentationOptionsForNotification(_:completionHandler:));
 
 @end
 

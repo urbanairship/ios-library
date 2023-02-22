@@ -93,7 +93,7 @@ public class RemoteDataManager: NSObject, Component, RemoteDataProvider {
                 as? Date ?? Date.distantPast
         }
         set {
-            self.dataStore.setValue(
+            self.dataStore.setObject(
                 newValue,
                 forKey: RemoteDataManager.lastRefreshTimeKey
             )
@@ -107,7 +107,7 @@ public class RemoteDataManager: NSObject, Component, RemoteDataProvider {
             )
         }
         set {
-            self.dataStore.setValue(
+            self.dataStore.setObject(
                 newValue,
                 forKey: RemoteDataManager.lastRefreshAppVersionKey
             )
@@ -236,7 +236,9 @@ public class RemoteDataManager: NSObject, Component, RemoteDataProvider {
 
     @objc
     private func applicationDidForeground() {
-        self.updatedSinceLastForeground = false
+        self.refreshLock.sync {
+            self.updatedSinceLastForeground = false
+        }
         self.checkRefresh()
     }
 
@@ -282,7 +284,8 @@ public class RemoteDataManager: NSObject, Component, RemoteDataProvider {
             "Remote data response \(response)"
         )
 
-        guard response.isSuccess || response.statusCode == 304
+        guard
+            response.isSuccess || response.statusCode == 304
         else {
             // Prevents retrying on client error
             return response.isServerError ? .failure : .success
@@ -299,7 +302,10 @@ public class RemoteDataManager: NSObject, Component, RemoteDataProvider {
             self.lastModified = remoteData.lastModified
         }
 
-        self.updatedSinceLastForeground = true
+        refreshLock.sync {
+            self.updatedSinceLastForeground = true
+        }
+        
         self.lastRefreshTime = self.date.now
         self.lastAppVersion = Utils.bundleShortVersionString()
         success = true
@@ -388,16 +394,19 @@ public class RemoteDataManager: NSObject, Component, RemoteDataProvider {
             return true
         }
 
-        if !self.updatedSinceLastForeground {
-            let timeSinceLastRefresh = self.date.now.timeIntervalSince(
-                self.lastRefreshTime
-            )
-            if timeSinceLastRefresh >= self.remoteDataRefreshInterval {
-                return true
+        var result = false
+        self.refreshLock.sync {
+            if !self.updatedSinceLastForeground {
+                let timeSinceLastRefresh = self.date.now.timeIntervalSince(
+                    self.lastRefreshTime
+                )
+                if timeSinceLastRefresh >= self.remoteDataRefreshInterval {
+                    result = true
+                }
             }
         }
-
-        return false
+        
+        return result
     }
 
     public func current(types: [String]) -> Future<[RemoteDataPayload], Never> {

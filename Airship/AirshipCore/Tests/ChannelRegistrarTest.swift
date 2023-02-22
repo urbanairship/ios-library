@@ -192,6 +192,19 @@ class ChannelRegistrarTest: XCTestCase {
 
         XCTAssertEqual(.success, result)
     }
+    
+    func testUpdateNotConfigured() {
+        self.client.isURLConfigured = false
+        self.channelRegistrar.register(forcefully: true)
+        self.channelRegistrar.register(forcefully: false)
+        XCTAssertEqual(0, self.workManager.workRequests.count)
+
+        self.client.isURLConfigured = true
+        
+        self.channelRegistrar.register(forcefully: true)
+        self.channelRegistrar.register(forcefully: false)
+        XCTAssertEqual(2, self.workManager.workRequests.count)
+    }
 
     func testCreateChannel429Error() async throws {
         self.client.createCallback =  { channelPayload in
@@ -325,6 +338,7 @@ class ChannelRegistrarTest: XCTestCase {
 
         XCTAssertEqual(.success, result)
     }
+    
 
     func testUpdateChannel429Error() async throws {
         let someChannelID = UUID().uuidString
@@ -582,6 +596,8 @@ class ChannelRegistrarTest: XCTestCase {
 }
 
 internal class TestChannelRegistrationClient: ChannelAPIClientProtocol {
+
+    var isURLConfigured: Bool = true
 
     var createCallback:((ChannelRegistrationPayload) async throws -> AirshipHTTPResponse<ChannelAPIResponse>)?
     var updateCallback:
