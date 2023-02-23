@@ -116,12 +116,9 @@ public protocol ContactProtocol {
     )
 
     /// Fetches subscription lists.
-    /// - Parameter completionHandler: A completion handler.
-    /// - Returns: A Disposable.
-    @discardableResult
-    func fetchSubscriptionLists(
-        completionHandler: @escaping ([String: ChannelScopes]?, Error?) -> Void
-    ) -> Disposable
+    /// - Returns: Subscriptions lists.
+    func fetchSubscriptionLists() async throws ->  [String: ChannelScopes]
+      
 }
 
 /// Airship contact. A contact is distinct from a channel and  represents a "user"
@@ -169,7 +166,7 @@ public class Contact: NSObject, Component, ContactProtocol {
     private let privacyManager: PrivacyManager
     private let channel: InternalChannelProtocol
     private let contactAPIClient: ContactsAPIClientProtocol
-    private let taskManager: TaskManagerProtocol
+    private let workManager: AirshipWorkManagerProtocol
     private let dispatcher = UADispatcher.serial(.utility)
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
@@ -376,7 +373,7 @@ public class Contact: NSObject, Component, ContactProtocol {
         channel: InternalChannelProtocol,
         privacyManager: PrivacyManager,
         contactAPIClient: ContactsAPIClientProtocol,
-        taskManager: TaskManagerProtocol,
+        workManager: AirshipWorkManagerProtocol,
         notificationCenter: NotificationCenter = NotificationCenter.default,
         date: AirshipDate = AirshipDate()
     ) {
@@ -386,7 +383,7 @@ public class Contact: NSObject, Component, ContactProtocol {
         self.channel = channel
         self.privacyManager = privacyManager
         self.contactAPIClient = contactAPIClient
-        self.taskManager = taskManager
+        self.workManager = workManager
         self.date = date
         self.notificationCenter = notificationCenter
 
@@ -406,29 +403,16 @@ public class Contact: NSObject, Component, ContactProtocol {
             self?.onComponentEnableChange()
         }
 
-        self.taskManager.register(
-            taskID: Contact.updateTaskID,
-            type: .serial,
-            dispatcher: self.dispatcher
-        ) { [weak self] task in
-            self?.handleUpdateTask(task: task)
+        self.workManager.registerWorker(
+            Contact.updateTaskID,
+            type: .serial
+        ) { [weak self] _ in
+            return try await self?.handleUpdateTask() ?? .success
         }
-
-        do {
-            try self.taskManager.setRateLimit(
-                Contact.identityRateLimitID,
-                rate: 1,
-                timeInterval: 5.0
-            )
-            try self.taskManager.setRateLimit(
-                Contact.updateRateLimitID,
-                rate: 1,
-                timeInterval: 0.5
-            )
-        } catch {
-            AirshipLogger.error("Failed to create rate limits")
-        }
-
+        
+        self.workManager.setRateLimit(Contact.identityRateLimitID, rate: 1, timeInterval: 5.0)
+        self.workManager.setRateLimit(Contact.updateRateLimitID, rate: 1, timeInterval: 0.5)
+              
         self.channel.addRegistrationExtender { [weak self] payload in
             var payload = payload
             payload.channel.contactID = self?.lastContactInfo?.contactID
@@ -483,7 +467,7 @@ public class Contact: NSObject, Component, ContactProtocol {
             channel: channel,
             privacyManager: privacyManager,
             contactAPIClient: ContactAPIClient(config: config),
-            taskManager: TaskManager.shared
+            workManager: AirshipWorkManager.shared
         )
     }
 
@@ -737,48 +721,30 @@ public class Contact: NSObject, Component, ContactProtocol {
     /// - Parameter completionHandler: A completion handler.
     /// - Returns: A Disposable.
     @discardableResult
-    public func fetchSubscriptionLists(
-        completionHandler: @escaping ([String: ChannelScopes]?, Error?) -> Void
-    ) -> Disposable {
-
-        var callback: (([String: ChannelScopes]?, Error?) -> Void)? =
-            completionHandler
-        let disposable = Disposable {
-            callback = nil
+    public func fetchSubscriptionLists() async throws ->  [String: ChannelScopes] {
+        guard let contactID = self.currentContactID else {
+            throw AirshipErrors.error("Contact not resolved")
         }
 
-        self.dispatcher.dispatchAsync {
-            guard let contactID = self.currentContactID else {
-                callback?(nil, AirshipErrors.error("Contact not resolved"))
-                return
-            }
+        var subscriptions = try await self.resolveSubscriptionLists(contactID)
 
-            do {
-                var subscriptions = try self.resolveSubscriptionLists(contactID)
-
-                // Local history
-                let localHistory = self.cachedSubscriptionListsHistory.values
-                    .compactMap { cached in
-                        cached.0 == contactID ? cached.1 : nil
-                    }
-                subscriptions = AudienceUtils.applySubscriptionListsUpdates(
-                    subscriptions,
-                    updates: localHistory
-                )
-
-                // Pending
-                subscriptions = AudienceUtils.applySubscriptionListsUpdates(
-                    subscriptions,
-                    updates: self.pendingSubscriptionListUpdates
-                )
-
-                callback?(AudienceUtils.wrap(subscriptions), nil)
-            } catch {
-                callback?(nil, error)
-            }
+        // Local history
+        let localHistory = self.cachedSubscriptionListsHistory.values
+        .compactMap { cached in
+            cached.0 == contactID ? cached.1 : nil
         }
+        subscriptions = AudienceUtils.applySubscriptionListsUpdates(
+            subscriptions,
+            updates: localHistory
+        )
 
-        return disposable
+        // Pending
+        subscriptions = AudienceUtils.applySubscriptionListsUpdates(
+            subscriptions,
+            updates: self.pendingSubscriptionListUpdates
+        )
+
+        return AudienceUtils.wrap(subscriptions)
     }
 
     private let subscriptionListEditsSubject = PassthroughSubject<
@@ -792,48 +758,23 @@ public class Contact: NSObject, Component, ContactProtocol {
         subscriptionListEditsSubject.eraseToAnyPublisher()
     }
 
-    private func resolveSubscriptionLists(_ contactID: String) throws
-        -> [String:
-        [ChannelScope]]
-    {
+    private func resolveSubscriptionLists(
+        _ contactID: String
+    ) async throws -> [String:[ChannelScope]] {
         if let cached = self.cachedSubscriptionLists.value,
-            cached.0 == contactID
-        {
+            cached.0 == contactID {
             return cached.1
         }
 
-        var fetchResponse: (ContactSubscriptionListFetchResponse?, Error?)
-        let semaphore = Semaphore()
-        self.contactAPIClient.fetchSubscriptionLists(contactID) {
-            response,
-            error in
-            fetchResponse = (response, error)
-            semaphore.signal()
-        }
+        let response = try await self.contactAPIClient.fetchSubscriptionLists(contactID)
 
-        semaphore.wait()
-
-        guard let response = fetchResponse.0 else {
-            if let error = fetchResponse.1 {
-                AirshipLogger.debug("Fetched lists failed with error: \(error)")
-            } else {
-                AirshipLogger.debug("Fetched lists failed")
-            }
-
-            throw AirshipErrors.error(
-                "Failed to fetch subscription lists failed"
-            )
-        }
-
-        guard response.isSuccess, let scopedLists = response.result else {
-            throw AirshipErrors.error(
-                "Failed to fetch subscription lists with status: \(response.status)"
-            )
+        guard response.isSuccess, let lists = response.result else {
+            throw AirshipErrors.error("Failed to fetch subscription lists")
         }
 
         AirshipLogger.debug("Fetched lists finished with response: \(response)")
-        self.cachedSubscriptionLists.value = (contactID, scopedLists)
-        return scopedLists
+        self.cachedSubscriptionLists.value = (contactID, lists)
+        return lists
     }
 
     /**
@@ -889,7 +830,7 @@ public class Contact: NSObject, Component, ContactProtocol {
         self.addOperation(ContactOperation.resolve())
         self.enqueueTask()
     }
-
+    
     private func enqueueTask() {
         guard self.channel.identifier != nil,
             self.isComponentEnabled,
@@ -905,58 +846,50 @@ public class Contact: NSObject, Component, ContactProtocol {
             rateLimitIDs.append(Contact.identityRateLimitID)
         default: break
         }
-
-        self.taskManager.enqueueRequest(
-            taskID: Contact.updateTaskID,
-            rateLimitIDs: rateLimitIDs,
-            options: .defaultOptions
+        
+        self.workManager.dispatchWorkRequest(
+            AirshipWorkRequest(
+                workID: Contact.updateTaskID,
+                requiresNetwork: true,
+                rateLimitIDs: rateLimitIDs
+            )
         )
     }
 
-    private func handleUpdateTask(task: AirshipTask) {
+    private func handleUpdateTask() async throws -> AirshipWorkResult {
         guard let channelID = self.channel.identifier else {
-            task.taskCompleted()
-            return
+            return .success
         }
 
         guard let operation = prepareNextOperation() else {
-            task.taskCompleted()
-            return
+            return .success
         }
 
-        self.performOperation(
+        let success = try await self.performOperation(
             operation: operation,
             channelID: channelID
-        ) { response in
-            if let response = response {
-                if response.isServerError {
-                    // retry
-                    task.taskFailed()
-                } else {
-                    self.removeFirstOperation()
-                    task.taskCompleted()
-                    self.enqueueTask()
-                }
-            } else {
-                // retry
-                task.taskFailed()
-            }
+        )
+        if (success) {
+            self.removeFirstOperation()
+            self.enqueueTask()
+            return .success
+        } else {
+            // retry
+            return .failure
         }
     }
 
     private func performOperation(
         operation: ContactOperation,
-        channelID: String,
-        completionHandler: @escaping (HTTPResponse?) -> Void
-    ) {
+        channelID: String
+    ) async throws -> Bool {
         switch operation.type {
         case .update:
             guard let contactInfo = self.lastContactInfo,
                 let updatePayload = operation.payload as? UpdatePayload
             else {
                 self.removeFirstOperation()
-                completionHandler(nil)
-                return
+                return false
             }
 
             if let updates = updatePayload.subscriptionListsUpdates {
@@ -967,187 +900,180 @@ public class Contact: NSObject, Component, ContactProtocol {
                 }
             }
 
-            self.contactAPIClient.update(
+            let response = try await self.contactAPIClient.update(
                 identifier: contactInfo.contactID,
                 tagGroupUpdates: updatePayload.tagUpdates,
                 attributeUpdates: updatePayload.attrubuteUpdates,
                 subscriptionListUpdates: updatePayload.subscriptionListsUpdates
-            ) { response, error in
-                Contact.logOperationResult(
-                    operation: operation,
-                    response: response,
-                    error: error
-                )
-                if response?.isSuccess == true {
-                    if contactInfo.isAnonymous {
-                        self.updateAnonData(updates: updatePayload)
-                    }
-
-                    let payload: [String: Any] = [
-                        Contact.tagsKey: updatePayload.tagUpdates ?? [],
-                        Contact.attributesKey: updatePayload.attrubuteUpdates
-                            ?? [],
-                    ]
-                    self.notificationCenter.post(
-                        name: Contact.audienceUpdatedEvent,
-                        object: payload
-                    )
+            )
+            
+            Contact.logOperationResult(
+                operation: operation,
+                success: response.isSuccess
+            )
+            
+            if response.isSuccess == true {
+                if contactInfo.isAnonymous {
+                    self.updateAnonData(updates: updatePayload)
                 }
-                completionHandler(response)
-            }
 
+                let payload: [String: Any] = [
+                    Contact.tagsKey: updatePayload.tagUpdates ?? [],
+                    Contact.attributesKey: updatePayload.attrubuteUpdates
+                        ?? [],
+                ]
+                self.notificationCenter.post(
+                    name: Contact.audienceUpdatedEvent,
+                    object: payload
+                )
+            }
+            
+            return !response.isServerError
         case .identify:
             guard let identifyPayload = operation.payload as? IdentifyPayload
             else {
                 self.removeFirstOperation()
-                completionHandler(nil)
-                return
+                return false
             }
             var contactID: String? = nil
             if self.lastContactInfo?.isAnonymous ?? false {
                 contactID = self.lastContactInfo?.contactID
             }
 
-            self.contactAPIClient.identify(
+            let response = try await self.contactAPIClient.identify(
                 channelID: channelID,
                 namedUserID: identifyPayload.identifier,
                 contactID: contactID
-            ) { response, error in
-                Contact.logOperationResult(
-                    operation: operation,
-                    response: response,
-                    error: error
-                )
-                self.processContactResponse(
-                    response,
-                    namedUserID: identifyPayload.identifier
-                )
-                completionHandler(response)
+            )
+            
+            Contact.logOperationResult(
+                operation: operation,
+                success: response.isSuccess
+            )
+            if let result = response.result {
+                if (response.isSuccess) {
+                    self.processContactResponse(
+                        result,
+                        namedUserID: identifyPayload.identifier
+                    )
+                }
             }
+            return !response.isServerError
 
         case .reset:
-            self.contactAPIClient.reset(channelID: channelID) {
-                response,
-                error in
-                Contact.logOperationResult(
-                    operation: operation,
-                    response: response,
-                    error: error
-                )
-                self.processContactResponse(response)
-                completionHandler(response)
+            let response = try await self.contactAPIClient.reset(channelID: channelID)
+            
+            Contact.logOperationResult(
+                operation: operation,
+                success: response.isSuccess
+            )
+            if let result = response.result {
+                if (response.isSuccess) {
+                    self.processContactResponse(result)
+                }
             }
+            return !response.isServerError
 
         case .resolve:
-            self.contactAPIClient.resolve(channelID: channelID) {
-                response,
-                error in
-                Contact.logOperationResult(
-                    operation: operation,
-                    response: response,
-                    error: error
-                )
-                self.processContactResponse(response)
-
-                if response?.isSuccess == true {
-                    self.lastResolveDate = self.date.now
+            let response = try await self.contactAPIClient.resolve(channelID: channelID)
+            Contact.logOperationResult(
+                operation: operation,
+                success: response.isSuccess
+            )
+            if let result = response.result {
+                if (response.isSuccess) {
+                    self.processContactResponse(result)
                 }
-
-                completionHandler(response)
             }
+            
+            if response.isSuccess == true {
+                self.lastResolveDate = self.date.now
+            }
+
+            return !response.isServerError
 
         case .registerEmail:
             guard let contactInfo = self.lastContactInfo,
                 let registerPayload = operation.payload as? RegisterEmailPayload
             else {
                 self.removeFirstOperation()
-                completionHandler(nil)
-                return
+                return false
             }
 
-            self.contactAPIClient.registerEmail(
+            let response = try await self.contactAPIClient.registerEmail(
                 identifier: contactInfo.contactID,
                 address: registerPayload.address,
                 options: registerPayload.options
-            ) { response, error in
-                Contact.logOperationResult(
-                    operation: operation,
-                    response: response,
-                    error: error
-                )
-                self.processChannelRegistration(response)
-                completionHandler(response)
+            )
+            
+            Contact.logOperationResult(
+                operation: operation,
+                success: response.isSuccess
+            )
+            if (response.isSuccess) {
+                self.processChannelRegistration(response.result)
             }
+            return !response.isServerError
 
         case .registerSMS:
             guard let contactInfo = self.lastContactInfo,
                 let registerPayload = operation.payload as? RegisterSMSPayload
             else {
                 self.removeFirstOperation()
-                completionHandler(nil)
-                return
+                return false
             }
 
-            self.contactAPIClient.registerSMS(
+            let response = try await self.contactAPIClient.registerSMS(
                 identifier: contactInfo.contactID,
                 msisdn: registerPayload.msisdn,
                 options: registerPayload.options
-            ) { response, error in
-                Contact.logOperationResult(
-                    operation: operation,
-                    response: response,
-                    error: error
-                )
-                self.processChannelRegistration(response)
-                completionHandler(response)
-            }
+            )
+            Contact.logOperationResult(
+                operation: operation,
+                success: response.isSuccess
+            )
+            self.processChannelRegistration(response.result)
+            return !response.isServerError
 
         case .registerOpen:
             guard let contactInfo = self.lastContactInfo,
                 let registerPayload = operation.payload as? RegisterOpenPayload
             else {
                 self.removeFirstOperation()
-                completionHandler(nil)
-                return
+                return false
             }
 
-            self.contactAPIClient.registerOpen(
+            let response = try await self.contactAPIClient.registerOpen(
                 identifier: contactInfo.contactID,
                 address: registerPayload.address,
                 options: registerPayload.options
-            ) { response, error in
-                Contact.logOperationResult(
-                    operation: operation,
-                    response: response,
-                    error: error
-                )
-                self.processChannelRegistration(response)
-                completionHandler(response)
-            }
+            )
+            Contact.logOperationResult(
+                operation: operation,
+                success: response.isSuccess
+            )
+            self.processChannelRegistration(response.result)
+            return !response.isServerError
 
         case .associateChannel:
             guard let contactInfo = self.lastContactInfo,
                 let payload = operation.payload as? AssociateChannelPayload
             else {
                 self.removeFirstOperation()
-                completionHandler(nil)
-                return
+                return false
             }
 
-            self.contactAPIClient.associateChannel(
+            let response = try await self.contactAPIClient.associateChannel(
                 identifier: contactInfo.contactID,
                 channelID: payload.channelID,
                 channelType: payload.channelType
-            ) { response, error in
-                Contact.logOperationResult(
-                    operation: operation,
-                    response: response,
-                    error: error
-                )
-                self.processChannelRegistration(response)
-                completionHandler(response)
-            }
-
+            )
+            Contact.logOperationResult(
+                operation: operation,
+                success: response.isSuccess
+            )
+            self.processChannelRegistration(response.result)
+            return !response.isServerError
         }
     }
 
@@ -1261,54 +1187,50 @@ public class Contact: NSObject, Component, ContactProtocol {
     }
 
     private func processContactResponse(
-        _ response: ContactAPIResponse?,
+        _ response: ContactAPIResponse,
         namedUserID: String? = nil
     ) {
-        if let response = response {
-            if response.isSuccess {
-
-                let lastInfo = self.lastContactInfo
-
-                if lastInfo == nil || lastInfo?.contactID != response.contactID
-                {
-                    if lastContactInfo?.isAnonymous == true {
-                        self.onConflict(namedUserID)
-                    }
-
-                    self.lastContactInfo = ContactInfo(
-                        contactID: response.contactID!,
-                        isAnonymous: response.isAnonymous!,
-                        namedUserID: namedUserID
-                    )
-                    self.channel.updateRegistration()
-                    self.anonContactData = nil
-
-                    self.notificationCenter.post(
-                        name: Contact.contactChangedEvent,
-                        object: nil
-                    )
-                } else {
-                    self.lastContactInfo = ContactInfo(
-                        contactID: response.contactID!,
-                        isAnonymous: response.isAnonymous!,
-                        namedUserID: namedUserID ?? lastInfo?.namedUserID
-                    )
-
-                    if response.isAnonymous == false {
-                        self.anonContactData = nil
-                    }
-                }
-
-                self.isContactIDRefreshed = true
+        
+        let lastInfo = self.lastContactInfo
+        
+        if lastInfo == nil || lastInfo?.contactID != response.contactID
+        {
+            if lastContactInfo?.isAnonymous == true {
+                self.onConflict(namedUserID)
+            }
+            
+            self.lastContactInfo = ContactInfo(
+                contactID: response.contactID!,
+                isAnonymous: response.isAnonymous!,
+                namedUserID: namedUserID
+            )
+            self.channel.updateRegistration()
+            self.anonContactData = nil
+            
+            self.notificationCenter.post(
+                name: Contact.contactChangedEvent,
+                object: nil
+            )
+        } else {
+            self.lastContactInfo = ContactInfo(
+                contactID: response.contactID!,
+                isAnonymous: response.isAnonymous!,
+                namedUserID: namedUserID ?? lastInfo?.namedUserID
+            )
+            
+            if response.isAnonymous == false {
+                self.anonContactData = nil
             }
         }
+        
+        self.isContactIDRefreshed = true
+        
     }
 
     private func processChannelRegistration(
-        _ response: ContactAssociatedChannelResponse?
+        _ response: AssociatedChannel?
     ) {
-        guard response?.isSuccess == true, let channel = response?.channel,
-            lastContactInfo?.isAnonymous == true
+        guard let channel = response, lastContactInfo?.isAnonymous == true
         else {
             return
         }
@@ -1318,23 +1240,12 @@ public class Contact: NSObject, Component, ContactProtocol {
 
     private class func logOperationResult(
         operation: ContactOperation,
-        response: HTTPResponse?,
-        error: Error?
+        success: Bool
     ) {
-        if let error = error {
+        if (success) {
             AirshipLogger.debug(
-                "Contact update for operation: \(operation) failed with error: \(error)"
+                "Contact update for operation: \(operation) succeeded"
             )
-        } else if let response = response {
-            if response.isSuccess {
-                AirshipLogger.debug(
-                    "Contact update for operation: \(operation) succeeded with response: \(response)"
-                )
-            } else {
-                AirshipLogger.debug(
-                    "Contact update for operation: \(operation) failed with response: \(response)"
-                )
-            }
         } else {
             AirshipLogger.debug(
                 "Contact update for operation: \(operation) failed"
@@ -1574,17 +1485,8 @@ public class Contact: NSObject, Component, ContactProtocol {
     public func fetchSubscriptionLists() async throws -> [String:
         [ChannelScope]]
     {
-        try await withCheckedThrowingContinuation { continuation in
-            self.fetchSubscriptionLists { subscriptionLists, error in
-                if let error = error {
-                    continuation.resume(throwing: error)
-                } else {
-                    let subscrpitions = subscriptionLists?
-                        .mapValues { $0.values }
-                    continuation.resume(returning: subscrpitions ?? [:])
-                }
-            }
-        }
+        let lists: [String: ChannelScopes] = try await self.fetchSubscriptionLists()
+        return lists.mapValues { $0.values }
     }
 
     private func notifyChannelSubscriptionListUpdates(

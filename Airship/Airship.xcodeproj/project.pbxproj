@@ -1341,7 +1341,6 @@
 		A6722A7C281A9EDA0033F54D /* LocaleManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1482683D8E200A2CBD0 /* LocaleManager.swift */; };
 		A6722A7D281A9EDA0033F54D /* AssociatedChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9343E1B27AC413700A49AAF /* AssociatedChannel.swift */; };
 		A6722A7E281A9EDA0033F54D /* ContactAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67F87D1268DECCE00EF5F43 /* ContactAPIClient.swift */; };
-		A6722A7F281A9EDA0033F54D /* ContactAPIResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67F87D4268E07E800EF5F43 /* ContactAPIResponse.swift */; };
 		A6722A80281A9EDA0033F54D /* ContactOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB11C862697ACBF00DC698F /* ContactOperation.swift */; };
 		A6722A81281A9EDA0033F54D /* JsonValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC7E48F26A739890038CFDD /* JsonValue.swift */; };
 		A6722A82281A9EDA0033F54D /* ContactConflictDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC7E48926A738670038CFDD /* ContactConflictDelegate.swift */; };
@@ -1436,8 +1435,6 @@
 		A67EC24D279ED8E5009089E1 /* ScopedSubscriptionListEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67EC248279B1A40009089E1 /* ScopedSubscriptionListEditor.swift */; };
 		A67F87D2268DECCE00EF5F43 /* ContactAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67F87D1268DECCE00EF5F43 /* ContactAPIClient.swift */; };
 		A67F87D3268DECCE00EF5F43 /* ContactAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67F87D1268DECCE00EF5F43 /* ContactAPIClient.swift */; };
-		A67F87D5268E07E800EF5F43 /* ContactAPIResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67F87D4268E07E800EF5F43 /* ContactAPIResponse.swift */; };
-		A67F87D6268E07E800EF5F43 /* ContactAPIResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67F87D4268E07E800EF5F43 /* ContactAPIResponse.swift */; };
 		A684358D285B67C800FB6394 /* UALegacyLoggingBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EF1934228380BA0005F192A /* UALegacyLoggingBridge.m */; };
 		A684358E285B67E600FB6394 /* UALegacyLoggingBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EF1934728380BE1005F192A /* UALegacyLoggingBridge.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6849387273290520021675E /* Score.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6849386273290520021675E /* Score.swift */; };
@@ -2584,7 +2581,6 @@
 		A67EC248279B1A40009089E1 /* ScopedSubscriptionListEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScopedSubscriptionListEditor.swift; sourceTree = "<group>"; };
 		A67EC24A279B1C34009089E1 /* ScopedSubscriptionListUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScopedSubscriptionListUpdate.swift; sourceTree = "<group>"; };
 		A67F87D1268DECCE00EF5F43 /* ContactAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactAPIClient.swift; sourceTree = "<group>"; };
-		A67F87D4268E07E800EF5F43 /* ContactAPIResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactAPIResponse.swift; sourceTree = "<group>"; };
 		A6849386273290520021675E /* Score.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Score.swift; sourceTree = "<group>"; };
 		A684939C273436370021675E /* FontViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontViewModifier.swift; sourceTree = "<group>"; };
 		A69C987E27E247B20063A101 /* SubscriptionListAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionListAction.swift; sourceTree = "<group>"; };
@@ -3611,7 +3607,6 @@
 			children = (
 				E9343E1B27AC413700A49AAF /* AssociatedChannel.swift */,
 				A67F87D1268DECCE00EF5F43 /* ContactAPIClient.swift */,
-				A67F87D4268E07E800EF5F43 /* ContactAPIResponse.swift */,
 				6EB11C862697ACBF00DC698F /* ContactOperation.swift */,
 				6EC7E48F26A739890038CFDD /* JsonValue.swift */,
 				6EC7E48926A738670038CFDD /* ContactConflictDelegate.swift */,
@@ -6112,7 +6107,6 @@
 				6E952920268A6C1500398B54 /* SearchEventTemplate.swift in Sources */,
 				6E664BE226C4D6B600A2C8E5 /* WalletAction.swift in Sources */,
 				6E739D6E26B9F58700BC6F6D /* TagGroupMutations.swift in Sources */,
-				A67F87D5268E07E800EF5F43 /* ContactAPIResponse.swift in Sources */,
 				6E92ECA9284AC6770038802D /* PromptPermissionActionPredicate.swift in Sources */,
 				6EF02DF02714EB500008B6C9 /* Thomas.swift in Sources */,
 				6E92EC90284954B10038802D /* ButtonState.swift in Sources */,
@@ -6523,7 +6517,6 @@
 				6E91E44E28EF423400B6F25E /* AirshipWorkRequest.swift in Sources */,
 				A6722A7D281A9EDA0033F54D /* AssociatedChannel.swift in Sources */,
 				A6722A7E281A9EDA0033F54D /* ContactAPIClient.swift in Sources */,
-				A6722A7F281A9EDA0033F54D /* ContactAPIResponse.swift in Sources */,
 				A6722A80281A9EDA0033F54D /* ContactOperation.swift in Sources */,
 				A6722A81281A9EDA0033F54D /* JsonValue.swift in Sources */,
 				A6722A82281A9EDA0033F54D /* ContactConflictDelegate.swift in Sources */,
@@ -7117,7 +7110,6 @@
 				6E92ECAA284AC6770038802D /* PromptPermissionActionPredicate.swift in Sources */,
 				6E952921268A6C1500398B54 /* SearchEventTemplate.swift in Sources */,
 				6E92EC91284954B10038802D /* ButtonState.swift in Sources */,
-				A67F87D6268E07E800EF5F43 /* ContactAPIResponse.swift in Sources */,
 				6E152BCB2743235800788402 /* Icons.swift in Sources */,
 				6E510C1C2721DA6A006D9126 /* ViewFactory.swift in Sources */,
 				6EF1934028380648005F192A /* AirshipLogHandler.swift in Sources */,

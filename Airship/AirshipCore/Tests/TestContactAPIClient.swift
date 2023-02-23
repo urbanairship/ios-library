@@ -5,204 +5,99 @@ import Foundation
 public class TestContactAPIClient: ContactsAPIClientProtocol {
 
     var resolveCallback:
-        ((String, ((ContactAPIResponse?, Error?) -> Void)) -> Void)?
+        ((String) async throws -> AirshipHTTPResponse<ContactAPIResponse>)?
+   
     var identifyCallback:
-        (
-            (String, String, String?, ((ContactAPIResponse?, Error?) -> Void))
-                -> Void
-        )?
+        ((String, String, String?) async throws -> AirshipHTTPResponse<ContactAPIResponse>)?
+  
     var resetCallback:
-        ((String, ((ContactAPIResponse?, Error?) -> Void)) -> Void)?
+        ((String) async throws -> AirshipHTTPResponse<ContactAPIResponse>)?
+    
     var updateCallback:
-        (
-            (
-                String, [TagGroupUpdate]?, [AttributeUpdate]?,
-                [ScopedSubscriptionListUpdate]?,
-                ((HTTPResponse?, Error?) -> Void)
-            ) -> Void
-        )?
+        ((String, [TagGroupUpdate]?, [AttributeUpdate]?, [ScopedSubscriptionListUpdate]?) async throws -> AirshipHTTPResponse<Void>)?
+    
     var associateChannelCallback:
-        (
-            (
-                String, String, ChannelType,
-                ((ContactAssociatedChannelResponse?, Error?) -> Void)
-            ) -> Void
-        )?
+        ((String, String, ChannelType) async throws -> AirshipHTTPResponse<AssociatedChannel>)?
+    
     var registerEmailCallback:
-        (
-            (
-                String, String, EmailRegistrationOptions,
-                ((ContactAssociatedChannelResponse?, Error?) -> Void)
-            ) -> Void
-        )?
+        ((String, String, EmailRegistrationOptions) async throws -> AirshipHTTPResponse<AssociatedChannel>)?
+    
     var registerSMSCallback:
-        (
-            (
-                String, String, SMSRegistrationOptions,
-                ((ContactAssociatedChannelResponse?, Error?) -> Void)
-            ) -> Void
-        )?
+        ((String, String, SMSRegistrationOptions) async throws -> AirshipHTTPResponse<AssociatedChannel>)?
+    
     var registerOpenCallback:
-        (
-            (
-                String, String, OpenRegistrationOptions,
-                ((ContactAssociatedChannelResponse?, Error?) -> Void)
-            ) -> Void
-        )?
+        ((String, String, OpenRegistrationOptions) async throws -> AirshipHTTPResponse<AssociatedChannel>)?
+    
     var fetchSubscriptionListsCallback:
-        (
-            (String, ((ContactSubscriptionListFetchResponse?, Error?) -> Void))
-                ->
-                Void
-        )?
-    var defaultCallback: ((String) -> Void)?
+        ((String) async throws -> AirshipHTTPResponse<[String: [ChannelScope]]>)?
+    
     init() {}
 
     public func resolve(
-        channelID: String,
-        completionHandler: @escaping (ContactAPIResponse?, Error?) -> Void
-    ) -> Disposable {
-        if let callback = resolveCallback {
-            callback(channelID, completionHandler)
-        } else {
-            defaultCallback?("resolve")
-        }
-
-        return Disposable()
+        channelID: String
+    ) async throws -> AirshipHTTPResponse<ContactAPIResponse> {
+        return try await resolveCallback!(channelID)
     }
 
     public func identify(
         channelID: String,
         namedUserID: String,
-        contactID: String?,
-        completionHandler: @escaping (ContactAPIResponse?, Error?) -> Void
-    ) -> Disposable {
-        if let callback = identifyCallback {
-            callback(channelID, namedUserID, contactID, completionHandler)
-        } else {
-            defaultCallback?("identify")
-        }
-
-        return Disposable()
+        contactID: String?
+    ) async throws -> AirshipHTTPResponse<ContactAPIResponse> {
+        return try await identifyCallback!(channelID, namedUserID, contactID)
     }
 
     public func reset(
-        channelID: String,
-        completionHandler: @escaping (ContactAPIResponse?, Error?) -> Void
-    ) -> Disposable {
-        if let callback = resetCallback {
-            callback(channelID, completionHandler)
-        } else {
-            defaultCallback?("reset")
-        }
-
-        return Disposable()
+        channelID: String
+    ) async throws -> AirshipHTTPResponse<ContactAPIResponse> {
+        return try await resetCallback!(channelID)
     }
 
     public func update(
         identifier: String,
         tagGroupUpdates: [TagGroupUpdate]?,
         attributeUpdates: [AttributeUpdate]?,
-        subscriptionListUpdates: [ScopedSubscriptionListUpdate]?,
-        completionHandler: @escaping (HTTPResponse?, Error?) -> Void
-    ) -> Disposable {
-        if let callback = updateCallback {
-            callback(
-                identifier,
-                tagGroupUpdates,
-                attributeUpdates,
-                subscriptionListUpdates,
-                completionHandler
-            )
-        } else {
-            defaultCallback?("update")
-        }
-
-        return Disposable()
+        subscriptionListUpdates: [ScopedSubscriptionListUpdate]?
+    ) async throws -> AirshipHTTPResponse<Void> {
+        return try await updateCallback!(identifier, tagGroupUpdates, attributeUpdates, subscriptionListUpdates)
     }
 
     public func associateChannel(
         identifier: String,
         channelID: String,
-        channelType: ChannelType,
-        completionHandler: @escaping (ContactAssociatedChannelResponse?, Error?)
-            ->
-            Void
-    ) -> Disposable {
-        if let callback = associateChannelCallback {
-            callback(identifier, channelID, channelType, completionHandler)
-        } else {
-            defaultCallback?("associateChannel")
-        }
-
-        return Disposable()
+        channelType: ChannelType
+    ) async throws -> AirshipHTTPResponse<AssociatedChannel> {
+        return try await associateChannelCallback!(identifier, channelID, channelType)
     }
 
     public func registerEmail(
         identifier: String,
         address: String,
-        options: EmailRegistrationOptions,
-        completionHandler: @escaping (ContactAssociatedChannelResponse?, Error?)
-            ->
-            Void
-    ) -> Disposable {
-        if let callback = registerEmailCallback {
-            callback(identifier, address, options, completionHandler)
-        } else {
-            defaultCallback?("registerEmail")
-        }
-
-        return Disposable()
+        options: EmailRegistrationOptions
+    ) async throws -> AirshipHTTPResponse<AssociatedChannel> {
+        return try await registerEmailCallback!(identifier, address, options)
     }
 
     public func registerSMS(
         identifier: String,
         msisdn: String,
-        options: SMSRegistrationOptions,
-        completionHandler: @escaping (ContactAssociatedChannelResponse?, Error?)
-            ->
-            Void
-    ) -> Disposable {
-        if let callback = registerSMSCallback {
-            callback(identifier, msisdn, options, completionHandler)
-        } else {
-            defaultCallback?("registerSMS")
-        }
-
-        return Disposable()
+        options: SMSRegistrationOptions
+    ) async throws -> AirshipHTTPResponse<AssociatedChannel> {
+        return try await registerSMSCallback!(identifier, msisdn, options)
     }
 
     public func registerOpen(
         identifier: String,
         address: String,
-        options: OpenRegistrationOptions,
-        completionHandler: @escaping (ContactAssociatedChannelResponse?, Error?)
-            ->
-            Void
-    ) -> Disposable {
-        if let callback = registerOpenCallback {
-            callback(identifier, address, options, completionHandler)
-        } else {
-            defaultCallback?("registerOpen")
-        }
-
-        return Disposable()
+        options: OpenRegistrationOptions
+    ) async throws -> AirshipHTTPResponse<AssociatedChannel> {
+        return try await registerOpenCallback!(identifier, address, options)
     }
-
+    
     public func fetchSubscriptionLists(
-        _ identifier: String,
-        completionHandler: @escaping (
-            ContactSubscriptionListFetchResponse?, Error?
-        )
-            -> Void
-    ) -> Disposable {
-        if let callback = fetchSubscriptionListsCallback {
-            callback(identifier, completionHandler)
-        } else {
-            defaultCallback?("fetchSubscriptionLists")
-        }
-
-        return Disposable()
+        _ identifier: String
+    ) async throws -> AirshipHTTPResponse<[String: [ChannelScope]]> {
+        return try await fetchSubscriptionListsCallback!(identifier)
     }
 
 }

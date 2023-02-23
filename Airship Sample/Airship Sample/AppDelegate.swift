@@ -41,7 +41,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, DeepLinkDelegate,
             // Set the icon badge to zero
             Airship.push.resetBadge()
         }
-
+        
         #if canImport(ActivityKit)
         if #available(iOS 16.1, *) {
             Task {

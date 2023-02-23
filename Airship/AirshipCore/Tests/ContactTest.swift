@@ -13,7 +13,7 @@ class TestDelegate: ContactConflictDelegate {
 
 class ContactTest: XCTestCase {
     var contact: Contact!
-    var taskManager: TestTaskManager!
+    var workManager: TestWorkManager!
     var channel: TestChannel!
     var apiClient: TestContactAPIClient!
     var notificationCenter: NotificationCenter!
@@ -25,11 +25,8 @@ class ContactTest: XCTestCase {
 
         self.notificationCenter = NotificationCenter()
         self.channel = TestChannel()
-        self.taskManager = TestTaskManager()
+        self.workManager = TestWorkManager()
         self.apiClient = TestContactAPIClient()
-        self.apiClient.defaultCallback = { method in
-            XCTFail("Method \(method) called unexpectedly")
-        }
 
         self.date = UATestDate()
 
@@ -53,20 +50,31 @@ class ContactTest: XCTestCase {
             channel: self.channel,
             privacyManager: self.privacyManager,
             contactAPIClient: self.apiClient,
-            taskManager: self.taskManager,
+            workManager: self.workManager,
             notificationCenter: self.notificationCenter,
             date: self.date
         )
     }
 
-    func testRateLimits() throws {
-        XCTAssertEqual(2, self.taskManager.rateLimits.count)
-
-        let updateRule = self.taskManager.rateLimits[Contact.updateRateLimitID]!
+    func testRateLimits() async throws {
+        try await self.workManager.setRateLimit(Contact.updateRateLimitID, rate: 1, timeInterval: 0.5)
+        try await self.workManager.setRateLimit(Contact.identityRateLimitID, rate: 1, timeInterval: 5.0)
+        
+        let limiter = self.workManager.rateLimitor
+    
+        let rules = await limiter.rules
+     
+        XCTAssertEqual(2, rules.count)
+        
+        var updateRule = rules[Contact.updateRateLimitID]!
         XCTAssertEqual(1, updateRule.rate)
         XCTAssertEqual(0.5, updateRule.timeInterval, accuracy: 0.01)
-
-        let identityRule = self.taskManager.rateLimits[
+        
+        updateRule = rules[Contact.updateRateLimitID]!
+        XCTAssertEqual(1, updateRule.rate)
+        XCTAssertEqual(0.5, updateRule.timeInterval, accuracy: 0.01)
+        
+        let identityRule = rules[
             Contact.identityRateLimitID
         ]!
         XCTAssertEqual(1, identityRule.rate)
@@ -168,29 +176,35 @@ class ContactTest: XCTestCase {
     }
 
     /// Test skip calling identify on the legacy named user if we already have contact data
-    func testSkipMigrateLegacyNamedUser() throws {
+    func testSkipMigrateLegacyNamedUser() async throws {
         notificationCenter.post(
             Notification(name: AppStateTracker.didBecomeActiveNotification)
         )
 
-        XCTAssertEqual(1, self.taskManager.enqueuedRequests.count)
+        XCTAssertEqual(1, self.workManager.workRequests.count)
 
         let expectation = XCTestExpectation(description: "callback called")
-        self.apiClient.resolveCallback = { channelID, callback in
-            XCTAssertEqual("channel id", channelID)
-            callback(
-                ContactAPIResponse(
-                    status: 200,
+        self.apiClient.resolveCallback = { identifier in
+            XCTAssertEqual("channel id", identifier)
+            expectation.fulfill()
+            return AirshipHTTPResponse(
+                result: ContactAPIResponse(
                     contactID: "some-contact-id",
                     isAnonymous: true
                 ),
-                nil
+                statusCode: 200,
+                headers: [:]
             )
-            expectation.fulfill()
         }
 
-        let task = self.taskManager.launchSync(taskID: Contact.updateTaskID)
-        XCTAssertTrue(task.completed)
+        let request = self.workManager.workRequests[0]
+        XCTAssertEqual(request.workID, Contact.updateTaskID)
+        let result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
+        )
+        XCTAssertEqual(result, .success)
 
         wait(for: [expectation], timeout: 10.0)
 
@@ -203,37 +217,45 @@ class ContactTest: XCTestCase {
         XCTAssertNil(self.contact.namedUserID)
     }
 
-    func testNoPendingOperations() throws {
-        let task = self.taskManager.launchSync(taskID: Contact.updateTaskID)
-        XCTAssertTrue(task.completed)
-        XCTAssertEqual(0, self.taskManager.enqueuedRequests.count)
+    func testNoPendingOperations() async throws {
+        _ = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
+        )
+                                    
+        XCTAssertEqual(0, self.workManager.workRequests.count)
     }
 
-    func testChannelCreatedEnqueuesUpdateTask() throws {
+    func testChannelCreatedEnqueuesUpdateTask() async throws {
         notificationCenter.post(
             Notification(name: AppStateTracker.didBecomeActiveNotification)
         )
 
-        XCTAssertEqual(1, self.taskManager.enqueuedRequests.count)
-        self.taskManager.enqueuedRequests.removeAll()
+        XCTAssertEqual(1, self.workManager.workRequests.count)
+        self.workManager.workRequests.removeAll()
 
         let expectation = XCTestExpectation(description: "callback called")
 
-        self.apiClient.resolveCallback = { identifier, callback in
-            expectation.fulfill()
+        self.apiClient.resolveCallback = { identifier in
             XCTAssertEqual("channel id", identifier)
-            callback(
-                ContactAPIResponse(
-                    status: 200,
+            expectation.fulfill()
+            return AirshipHTTPResponse(
+                result: ContactAPIResponse(
                     contactID: "some-contact-id",
                     isAnonymous: true
                 ),
-                nil
+                statusCode: 200,
+                headers: [:]
             )
         }
 
-        let task = self.taskManager.launchSync(taskID: Contact.updateTaskID)
-        XCTAssertTrue(task.completed)
+        let result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
+        )
+        XCTAssertEqual(result, .success)
 
         wait(for: [expectation], timeout: 10.0)
     }
@@ -250,23 +272,29 @@ class ContactTest: XCTestCase {
             Notification(name: AppStateTracker.didBecomeActiveNotification)
         )
 
-        XCTAssertEqual(1, self.taskManager.enqueuedRequests.count)
+        XCTAssertEqual(1, self.workManager.workRequests.count)
 
         let expectation = XCTestExpectation(description: "callback called")
-        self.apiClient.resolveCallback = { channelID, callback in
-            callback(
-                ContactAPIResponse(
-                    status: 200,
+        self.apiClient.resolveCallback = { identifier in
+            XCTAssertEqual("channel id", identifier)
+            expectation.fulfill()
+            return AirshipHTTPResponse(
+                result: ContactAPIResponse(
                     contactID: "some-contact-id",
                     isAnonymous: true
                 ),
-                nil
+                statusCode: 200,
+                headers: [:]
             )
-            expectation.fulfill()
         }
 
-        let task = self.taskManager.launchSync(taskID: Contact.updateTaskID)
-        XCTAssertTrue(task.completed)
+        let result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
+        )
+        XCTAssertEqual(result, .success)
+
 
         wait(for: [expectation], timeout: 10.0)
 
@@ -276,153 +304,180 @@ class ContactTest: XCTestCase {
         XCTAssertEqual("some-contact-id", payload.channel.contactID)
     }
 
-    func testForegroundResolves() throws {
+    func testForegroundResolves() async throws {
         notificationCenter.post(
             Notification(name: AppStateTracker.didBecomeActiveNotification)
         )
 
-        XCTAssertEqual(1, self.taskManager.enqueuedRequests.count)
+        XCTAssertEqual(1, self.workManager.workRequests.count)
 
         let expectation = XCTestExpectation(description: "callback called")
-        self.apiClient.resolveCallback = { channelID, callback in
-            XCTAssertEqual("channel id", channelID)
-            callback(
-                ContactAPIResponse(
-                    status: 200,
+        self.apiClient.resolveCallback = { identifier in
+            XCTAssertEqual("channel id", identifier)
+            expectation.fulfill()
+            return AirshipHTTPResponse(
+                result: ContactAPIResponse(
                     contactID: "some-contact-id",
                     isAnonymous: true
                 ),
-                nil
+                statusCode: 200,
+                headers: [:]
             )
-            expectation.fulfill()
         }
 
-        let task = self.taskManager.launchSync(taskID: Contact.updateTaskID)
-        XCTAssertTrue(task.completed)
+        let result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
+        )
+        XCTAssertEqual(result, .success)
 
         wait(for: [expectation], timeout: 10.0)
     }
 
-    func testForegroundSkipsResolvesLessThan24Hours() throws {
+    func testForegroundSkipsResolvesLessThan24Hours() async throws {
         self.date.dateOverride = Date()
 
         notificationCenter.post(
             Notification(name: AppStateTracker.didBecomeActiveNotification)
         )
-        XCTAssertEqual(1, self.taskManager.enqueuedRequests.count)
+        XCTAssertEqual(1, self.workManager.workRequests.count)
+
         let expectation = XCTestExpectation(description: "callback called")
-        self.apiClient.resolveCallback = { channelID, callback in
-            XCTAssertEqual("channel id", channelID)
-            callback(
-                ContactAPIResponse(
-                    status: 200,
+        self.apiClient.resolveCallback = { identifier in
+            XCTAssertEqual("channel id", identifier)
+            expectation.fulfill()
+            return AirshipHTTPResponse(
+                result: ContactAPIResponse(
                     contactID: "some-contact-id",
                     isAnonymous: true
                 ),
-                nil
+                statusCode: 200,
+                headers: [:]
             )
-            expectation.fulfill()
         }
 
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        var result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
+
         wait(for: [expectation], timeout: 10.0)
 
-        self.taskManager.enqueuedRequests.removeAll()
+        self.workManager.workRequests.removeAll()
         self.apiClient.resetCallback = nil
 
         notificationCenter.post(
             Notification(name: AppStateTracker.didBecomeActiveNotification)
         )
-        XCTAssertEqual(0, self.taskManager.enqueuedRequests.count)
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        XCTAssertEqual(0, self.workManager.workRequests.count)
+        result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
+
     }
 
-    func testChannelCreatedResolves() throws {
+    func testChannelCreatedResolves() async throws {
         notificationCenter.post(Notification(name: Channel.channelCreatedEvent))
 
-        XCTAssertEqual(1, self.taskManager.enqueuedRequests.count)
+        XCTAssertEqual(1, self.workManager.workRequests.count)
 
         let expectation = XCTestExpectation(description: "callback called")
-        self.apiClient.resolveCallback = { channelID, callback in
-            XCTAssertEqual("channel id", channelID)
-            callback(
-                ContactAPIResponse(
-                    status: 200,
+        self.apiClient.resolveCallback = { identifier in
+            XCTAssertEqual("channel id", identifier)
+            expectation.fulfill()
+            return AirshipHTTPResponse(
+                result: ContactAPIResponse(
                     contactID: "some-contact-id",
                     isAnonymous: true
                 ),
-                nil
+                statusCode: 200,
+                headers: [:]
             )
-            expectation.fulfill()
         }
 
-        let task = self.taskManager.launchSync(taskID: Contact.updateTaskID)
-        XCTAssertTrue(task.completed)
+        let result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
+        )
+        XCTAssertEqual(result, .success)
+
 
         wait(for: [expectation], timeout: 10.0)
     }
 
-    func testIdentify() throws {
+    func testIdentify() async throws {
         self.contact.identify("cool user 1")
 
-        XCTAssertEqual(1, self.taskManager.enqueuedRequests.count)
-
+        XCTAssertEqual(1, self.workManager.workRequests.count)
+        
         let expectation = XCTestExpectation(description: "callback called")
+    
         self.apiClient.identifyCallback = {
             channelID,
             namedUserID,
-            contactID,
-            callback in
+            contactID in
             XCTAssertEqual("channel id", channelID)
             XCTAssertEqual("cool user 1", namedUserID)
             XCTAssertNil(contactID)
-            callback(
-                ContactAPIResponse(
-                    status: 200,
+            expectation.fulfill()
+            return AirshipHTTPResponse(
+                result: ContactAPIResponse(
                     contactID: "some-contact-id",
                     isAnonymous: false
                 ),
-                nil
+                statusCode: 200,
+                headers: [:]
             )
-            expectation.fulfill()
         }
 
-        let task = self.taskManager.launchSync(taskID: Contact.updateTaskID)
-        XCTAssertTrue(task.completed)
+        let result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
+        )
+        XCTAssertEqual(result, .success)
+
 
         wait(for: [expectation], timeout: 10.0)
     }
 
-    func testReset() throws {
+    func testReset() async throws {
         self.contact.reset()
 
-        XCTAssertEqual(1, self.taskManager.enqueuedRequests.count)
+        XCTAssertEqual(1, self.workManager.workRequests.count)
 
         let expectation = XCTestExpectation(description: "callback called")
-        self.apiClient.resetCallback = { channelID, callback in
-            XCTAssertEqual("channel id", channelID)
-            callback(
-                ContactAPIResponse(
-                    status: 200,
+        self.apiClient.resetCallback = { identifier in
+            XCTAssertEqual("channel id", identifier)
+            expectation.fulfill()
+            return AirshipHTTPResponse(
+                result: ContactAPIResponse(
                     contactID: "some-contact-id",
                     isAnonymous: true
                 ),
-                nil
+                statusCode: 200,
+                headers: [:]
             )
-            expectation.fulfill()
         }
 
-        let task = self.taskManager.launchSync(taskID: Contact.updateTaskID)
-        XCTAssertTrue(task.completed)
+        let result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
+        )
+        XCTAssertEqual(result, .success)
 
         wait(for: [expectation], timeout: 10.0)
     }
 
-    func testRegisterEmail() throws {
+    func testRegisterEmail() async throws {
         self.contact.registerEmail(
             "ua@airship.com",
             options: EmailRegistrationOptions.options(
@@ -434,33 +489,37 @@ class ContactTest: XCTestCase {
 
         // Should resolve first
         let resolve = XCTestExpectation(description: "resolve contact")
-        self.apiClient.resolveCallback = { channelID, callback in
-            XCTAssertEqual("channel id", channelID)
-            callback(
-                ContactAPIResponse(
-                    status: 200,
+        self.apiClient.resolveCallback = { identifier in
+            XCTAssertEqual("channel id", identifier)
+            resolve.fulfill()
+            return AirshipHTTPResponse(
+                result: ContactAPIResponse(
                     contactID: "some-contact-id",
                     isAnonymous: true
                 ),
-                nil
+                statusCode: 200,
+                headers: [:]
             )
-            resolve.fulfill()
         }
 
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        var result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
+
         wait(for: [resolve], timeout: 10.0)
 
-        XCTAssertEqual(2, self.taskManager.enqueuedRequests.count)
+        XCTAssertEqual(2, self.workManager.workRequests.count)
 
         // Then register email
         let expectation = XCTestExpectation(description: "callback called")
+        
         self.apiClient.registerEmailCallback = {
             identifier,
             address,
-            options,
-            callback in
+            options in
             XCTAssertEqual("some-contact-id", identifier)
             XCTAssertEqual("ua@airship.com", address)
             XCTAssertNotNil(options)
@@ -468,20 +527,25 @@ class ContactTest: XCTestCase {
                 channelType: .email,
                 channelID: "some-channel-id"
             )
-            callback(
-                ContactAssociatedChannelResponse(status: 200, channel: channel),
-                nil
-            )
             expectation.fulfill()
+            return AirshipHTTPResponse(
+                result: channel,
+                statusCode: 200,
+                headers: [:]
+            )
         }
 
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
+
         wait(for: [expectation], timeout: 10.0)
     }
 
-    func testRegisterEmailFailed() throws {
+    func testRegisterEmailFailed() async throws {
         self.contact.registerEmail(
             "ua@airship.com",
             options: EmailRegistrationOptions.options(
@@ -493,44 +557,62 @@ class ContactTest: XCTestCase {
 
         // Should resolve first
         let resolve = XCTestExpectation(description: "resolve contact")
-        self.apiClient.resolveCallback = { channelID, callback in
-            XCTAssertEqual("channel id", channelID)
-            callback(
-                ContactAPIResponse(
-                    status: 200,
+        self.apiClient.resolveCallback = { identifier in
+            XCTAssertEqual("channel id", identifier)
+            resolve.fulfill()
+            return AirshipHTTPResponse(
+                result: ContactAPIResponse(
                     contactID: "some-contact-id",
                     isAnonymous: true
                 ),
-                nil
+                statusCode: 200,
+                headers: [:]
             )
-            resolve.fulfill()
         }
 
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        var result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
+
         wait(for: [resolve], timeout: 10.0)
 
-        XCTAssertEqual(2, self.taskManager.enqueuedRequests.count)
+        XCTAssertEqual(2, self.workManager.workRequests.count)
 
         // Then register email
         let expectation = XCTestExpectation(description: "callback called")
         self.apiClient.registerEmailCallback = {
             identifier,
             address,
-            options,
-            callback in
-            callback(ContactAssociatedChannelResponse(status: 500), nil)
+            options in
+            XCTAssertEqual("some-contact-id", identifier)
+            XCTAssertEqual("ua@airship.com", address)
+            XCTAssertNotNil(options)
+            _ = AssociatedChannel(
+                channelType: .email,
+                channelID: "some-channel-id"
+            )
             expectation.fulfill()
+            return AirshipHTTPResponse(
+                result: nil,
+                statusCode: 500,
+                headers: [:]
+            )
         }
 
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).failed
+        result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .failure)
+
         wait(for: [expectation], timeout: 10.0)
     }
 
-    func testRegisterSMS() throws {
+    func testRegisterSMS() async throws {
         self.contact.registerSMS(
             "15035556789",
             options: SMSRegistrationOptions.optIn(senderID: "28855")
@@ -538,33 +620,37 @@ class ContactTest: XCTestCase {
 
         // Should resolve first
         let resolve = XCTestExpectation(description: "resolve contact")
-        self.apiClient.resolveCallback = { channelID, callback in
-            XCTAssertEqual("channel id", channelID)
-            callback(
-                ContactAPIResponse(
-                    status: 200,
+        self.apiClient.resolveCallback = { identifier in
+            XCTAssertEqual("channel id", identifier)
+            resolve.fulfill()
+            return AirshipHTTPResponse(
+                result: ContactAPIResponse(
                     contactID: "some-contact-id",
                     isAnonymous: true
                 ),
-                nil
+                statusCode: 200,
+                headers: [:]
             )
-            resolve.fulfill()
         }
 
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        var result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
+
         wait(for: [resolve], timeout: 10.0)
 
-        XCTAssertEqual(2, self.taskManager.enqueuedRequests.count)
+        XCTAssertEqual(2, self.workManager.workRequests.count)
 
         // Then register sms
         let expectation = XCTestExpectation(description: "callback called")
+      
         self.apiClient.registerSMSCallback = {
             identifier,
             msisdn,
-            options,
-            callback in
+            options in
             XCTAssertEqual("some-contact-id", identifier)
             XCTAssertEqual("15035556789", msisdn)
             XCTAssertNotNil(options)
@@ -572,20 +658,25 @@ class ContactTest: XCTestCase {
                 channelType: .sms,
                 channelID: "some-channel-id"
             )
-            callback(
-                ContactAssociatedChannelResponse(status: 200, channel: channel),
-                nil
-            )
             expectation.fulfill()
+            return AirshipHTTPResponse(
+                result: channel,
+                statusCode: 200,
+                headers: [:]
+            )
         }
 
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
+
         wait(for: [expectation], timeout: 10.0)
     }
 
-    func testRegisterSMSFailed() throws {
+    func testRegisterSMSFailed() async throws {
         self.contact.registerSMS(
             "15035556789",
             options: SMSRegistrationOptions.optIn(senderID: "28855")
@@ -593,44 +684,56 @@ class ContactTest: XCTestCase {
 
         // Should resolve first
         let resolve = XCTestExpectation(description: "resolve contact")
-        self.apiClient.resolveCallback = { channelID, callback in
-            XCTAssertEqual("channel id", channelID)
-            callback(
-                ContactAPIResponse(
-                    status: 200,
+        self.apiClient.resolveCallback = { identifier in
+            XCTAssertEqual("channel id", identifier)
+            resolve.fulfill()
+            return AirshipHTTPResponse(
+                result: ContactAPIResponse(
                     contactID: "some-contact-id",
                     isAnonymous: true
                 ),
-                nil
+                statusCode: 200,
+                headers: [:]
             )
-            resolve.fulfill()
         }
 
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+
+        var result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
+
         wait(for: [resolve], timeout: 10.0)
 
-        XCTAssertEqual(2, self.taskManager.enqueuedRequests.count)
+        XCTAssertEqual(2, self.workManager.workRequests.count)
 
         // Then register sms
         let expectation = XCTestExpectation(description: "callback called")
         self.apiClient.registerSMSCallback = {
             identifier,
             msisdn,
-            options,
-            callback in
-            callback(ContactAssociatedChannelResponse(status: 500), nil)
+            options in
             expectation.fulfill()
+            return AirshipHTTPResponse(
+                result: nil,
+                statusCode:500,
+                headers: [:]
+            )
         }
 
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).failed
+        result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .failure)
+
         wait(for: [expectation], timeout: 10.0)
     }
 
-    func testRegisterOpen() throws {
+    func testRegisterOpen() async throws {
         self.contact.registerOpen(
             "open_address",
             options: OpenRegistrationOptions.optIn(
@@ -641,33 +744,36 @@ class ContactTest: XCTestCase {
 
         // Should resolve first
         let resolve = XCTestExpectation(description: "resolve contact")
-        self.apiClient.resolveCallback = { channelID, callback in
-            XCTAssertEqual("channel id", channelID)
-            callback(
-                ContactAPIResponse(
-                    status: 200,
+        self.apiClient.resolveCallback = { identifier in
+            XCTAssertEqual("channel id", identifier)
+            resolve.fulfill()
+            return AirshipHTTPResponse(
+                result: ContactAPIResponse(
                     contactID: "some-contact-id",
                     isAnonymous: true
                 ),
-                nil
+                statusCode: 200,
+                headers: [:]
             )
-            resolve.fulfill()
         }
 
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        var result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
+
         wait(for: [resolve], timeout: 10.0)
 
-        XCTAssertEqual(2, self.taskManager.enqueuedRequests.count)
+        XCTAssertEqual(2, self.workManager.workRequests.count)
 
         // Then register email
         let expectation = XCTestExpectation(description: "callback called")
         self.apiClient.registerOpenCallback = {
             identifier,
             address,
-            options,
-            callback in
+            options in
             XCTAssertEqual("some-contact-id", identifier)
             XCTAssertEqual("open_address", address)
             XCTAssertNotNil(options)
@@ -675,20 +781,25 @@ class ContactTest: XCTestCase {
                 channelType: .email,
                 channelID: "some-channel-id"
             )
-            callback(
-                ContactAssociatedChannelResponse(status: 200, channel: channel),
-                nil
-            )
             expectation.fulfill()
+            return AirshipHTTPResponse(
+                result: channel,
+                statusCode:200,
+                headers: [:]
+            )
         }
 
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
+
         wait(for: [expectation], timeout: 10.0)
     }
 
-    func testRegisterOpenFailed() throws {
+    func testRegisterOpenFailed() async throws {
         self.contact.registerOpen(
             "open_address",
             options: OpenRegistrationOptions.optIn(
@@ -699,75 +810,86 @@ class ContactTest: XCTestCase {
 
         // Should resolve first
         let resolve = XCTestExpectation(description: "resolve contact")
-        self.apiClient.resolveCallback = { channelID, callback in
-            XCTAssertEqual("channel id", channelID)
-            callback(
-                ContactAPIResponse(
-                    status: 200,
+        self.apiClient.resolveCallback = { identifier in
+            XCTAssertEqual("channel id", identifier)
+            resolve.fulfill()
+            return AirshipHTTPResponse(
+                result: ContactAPIResponse(
                     contactID: "some-contact-id",
                     isAnonymous: true
                 ),
-                nil
+                statusCode: 200,
+                headers: [:]
             )
-            resolve.fulfill()
         }
 
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        var result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
         wait(for: [resolve], timeout: 10.0)
 
-        XCTAssertEqual(2, self.taskManager.enqueuedRequests.count)
+        XCTAssertEqual(2, self.workManager.workRequests.count)
 
         // Then register email
         let expectation = XCTestExpectation(description: "callback called")
         self.apiClient.registerOpenCallback = {
             identifier,
             address,
-            options,
-            callback in
-            callback(ContactAssociatedChannelResponse(status: 500), nil)
+            options in
             expectation.fulfill()
+            return AirshipHTTPResponse(
+                result: nil,
+                statusCode:500,
+                headers: [:]
+            )
         }
 
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).failed
+        result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .failure)
         wait(for: [expectation], timeout: 10.0)
     }
 
-    func testAssociateChannel() throws {
+    func testAssociateChannel() async throws {
         self.contact.associateChannel("some-channel-id", type: .email)
 
         // Should resolve first
         let resolve = XCTestExpectation(description: "resolve contact")
-        self.apiClient.resolveCallback = { channelID, callback in
-            XCTAssertEqual("channel id", channelID)
-            callback(
-                ContactAPIResponse(
-                    status: 200,
+        self.apiClient.resolveCallback = { identifier in
+            XCTAssertEqual("channel id", identifier)
+            resolve.fulfill()
+            return AirshipHTTPResponse(
+                result: ContactAPIResponse(
                     contactID: "some-contact-id",
                     isAnonymous: true
                 ),
-                nil
+                statusCode: 200,
+                headers: [:]
             )
-            resolve.fulfill()
         }
-
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        
+        var result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
         wait(for: [resolve], timeout: 10.0)
 
-        XCTAssertEqual(2, self.taskManager.enqueuedRequests.count)
+        XCTAssertEqual(2, self.workManager.workRequests.count)
 
         // Then associate
         let expectation = XCTestExpectation(description: "callback called")
         self.apiClient.associateChannelCallback = {
             identifier,
             channelID,
-            channelType,
-            callback in
+            channelType in
             XCTAssertEqual("some-contact-id", identifier)
             XCTAssertEqual("some-channel-id", channelID)
             XCTAssertEqual(.email, channelType)
@@ -775,62 +897,75 @@ class ContactTest: XCTestCase {
                 channelType: .email,
                 channelID: "some-channel-id"
             )
-            callback(
-                ContactAssociatedChannelResponse(status: 200, channel: channel),
-                nil
-            )
             expectation.fulfill()
+            return AirshipHTTPResponse(
+                result: channel,
+                statusCode: 200,
+                headers: [:]
+            )
         }
 
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
         wait(for: [expectation], timeout: 10.0)
     }
 
-    func testAssociateChannelFailed() throws {
+    func testAssociateChannelFailed() async throws {
         self.contact.associateChannel("some-channel-id", type: .email)
 
         // Should resolve first
         let resolve = XCTestExpectation(description: "resolve contact")
-        self.apiClient.resolveCallback = { channelID, callback in
-            XCTAssertEqual("channel id", channelID)
-            callback(
-                ContactAPIResponse(
-                    status: 200,
+        self.apiClient.resolveCallback = { identifier in
+            XCTAssertEqual("channel id", identifier)
+            resolve.fulfill()
+            return AirshipHTTPResponse(
+                result: ContactAPIResponse(
                     contactID: "some-contact-id",
                     isAnonymous: true
                 ),
-                nil
+                statusCode: 200,
+                headers: [:]
             )
-            resolve.fulfill()
         }
 
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        var result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
         wait(for: [resolve], timeout: 10.0)
 
-        XCTAssertEqual(2, self.taskManager.enqueuedRequests.count)
+        XCTAssertEqual(2, self.workManager.workRequests.count)
 
         // Then associate
         let expectation = XCTestExpectation(description: "callback called")
         self.apiClient.associateChannelCallback = {
             identifier,
             channelID,
-            channelType,
-            callback in
-            callback(ContactAssociatedChannelResponse(status: 500), nil)
+            channelType in
             expectation.fulfill()
+            return AirshipHTTPResponse(
+                result: nil,
+                statusCode: 500,
+                headers: [:]
+            )
         }
 
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).failed
+        result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .failure)
         wait(for: [expectation], timeout: 10.0)
     }
 
-    func testResetsNotSkippedDuringIdentify() throws {
+    func testResetsNotSkippedDuringIdentify() async throws {
         self.contact.identify("one")
         self.contact.reset()
         self.contact.reset()
@@ -843,58 +978,72 @@ class ContactTest: XCTestCase {
         self.apiClient.identifyCallback = {
             channelID,
             namedUserID,
-            contactID,
-            callback in
-            callback(
-                ContactAPIResponse(
-                    status: 200,
+            contactID in
+            identify.fulfill()
+            return AirshipHTTPResponse(
+                result: ContactAPIResponse(
                     contactID: "some-contact-id",
                     isAnonymous: false
                 ),
-                nil
+                statusCode: 200,
+                headers: [:]
             )
-            identify.fulfill()
         }
 
         let reset = XCTestExpectation(description: "reset")
         reset.expectedFulfillmentCount = 2
         reset.assertForOverFulfill = true
-        self.apiClient.resetCallback = { channelID, callback in
-            callback(
-                ContactAPIResponse(
-                    status: 200,
+        self.apiClient.resetCallback = { channelID in
+            reset.fulfill()
+            return AirshipHTTPResponse(
+                result: ContactAPIResponse(
                     contactID: "some-other-id",
                     isAnonymous: true
                 ),
-                nil
+                statusCode: 200,
+                headers: [:]
             )
-            reset.fulfill()
         }
 
         // identify
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        var result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
         // reset
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
         // identify
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
         // reset
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
         // no-op
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
         wait(for: [reset, identify], timeout: 10.0)
     }
 
-    func testResetsNotSkippDuringUpdate() throws {
+    func testResetsNotSkippDuringUpdate() async throws {
         self.contact.editTagGroups { editor in
             editor.add(["neat"], group: "cool")
         }
@@ -910,17 +1059,17 @@ class ContactTest: XCTestCase {
 
         // Should resolve first
         let resolve = XCTestExpectation(description: "resolve")
-        self.apiClient.resolveCallback = { channelID, callback in
+        self.apiClient.resolveCallback = { channelID in
             XCTAssertEqual("channel id", channelID)
-            callback(
-                ContactAPIResponse(
-                    status: 200,
+            resolve.fulfill()
+            return AirshipHTTPResponse(
+                result: ContactAPIResponse(
                     contactID: "some-contact-id",
                     isAnonymous: true
                 ),
-                nil
+                statusCode: 200,
+                headers: [:]
             )
-            resolve.fulfill()
         }
 
         let update = XCTestExpectation(description: "update")
@@ -930,150 +1079,181 @@ class ContactTest: XCTestCase {
             contactID,
             tagUpdates,
             attributeUpdates,
-            subscriptionListUpdates,
-            callback in
-            callback(HTTPResponse(status: 200), nil)
+            subscriptionListUpdates in
             update.fulfill()
+            return AirshipHTTPResponse(
+                result: nil,
+                statusCode: 200,
+                headers: [:]
+            )
         }
 
         let reset = XCTestExpectation(description: "reset")
         reset.expectedFulfillmentCount = 2
         reset.assertForOverFulfill = true
-        self.apiClient.resetCallback = { channelID, callback in
-            callback(
-                ContactAPIResponse(
-                    status: 200,
+        self.apiClient.resetCallback = { channelID in
+            reset.fulfill()
+            return AirshipHTTPResponse(
+                result: ContactAPIResponse(
                     contactID: "some-other-id",
                     isAnonymous: true
                 ),
-                nil
+                statusCode: 200,
+                headers: [:]
             )
-            reset.fulfill()
         }
 
         // resolve
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        var result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
         // update
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
         // reset
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
         // update
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
         // reset
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
         // no-op
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
 
         wait(for: [resolve, reset, update], timeout: 10.0)
     }
 
-    func testSkipSandwichedIdentifyCalls() throws {
+    func testSkipSandwichedIdentifyCalls() async throws {
         self.contact.identify("one")
         self.contact.identify("two")
         self.contact.identify("three")
         self.contact.identify("four")
 
-        XCTAssertEqual(4, self.taskManager.enqueuedRequests.count)
+        XCTAssertEqual(4, self.workManager.workRequests.count)
 
         let firstCallback = XCTestExpectation(description: "callback called")
         self.apiClient.identifyCallback = {
             channelID,
             namedUserID,
-            contactID,
-            callback in
+            contactID in
             XCTAssertEqual("channel id", channelID)
             XCTAssertEqual("one", namedUserID)
             XCTAssertNil(contactID)
-            callback(
-                ContactAPIResponse(
-                    status: 200,
+            firstCallback.fulfill()
+            return AirshipHTTPResponse(
+                result: ContactAPIResponse(
                     contactID: "some-contact-id",
                     isAnonymous: false
                 ),
-                nil
+                statusCode: 200,
+                headers: [:]
             )
-            firstCallback.fulfill()
         }
 
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        var result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
+
         wait(for: [firstCallback], timeout: 10.0)
-        XCTAssertEqual(5, self.taskManager.enqueuedRequests.count)
+        XCTAssertEqual(5, self.workManager.workRequests.count)
 
         let secondCallback = XCTestExpectation(description: "callback called")
         self.apiClient.identifyCallback = {
             channelID,
             namedUserID,
-            contactID,
-            callback in
+            contactID in
             XCTAssertEqual("channel id", channelID)
             XCTAssertEqual("four", namedUserID)
             XCTAssertNil(contactID)
-            callback(
-                ContactAPIResponse(
-                    status: 200,
+            secondCallback.fulfill()
+            return AirshipHTTPResponse(
+                result: ContactAPIResponse(
                     contactID: "some-other-contact-id",
                     isAnonymous: false
                 ),
-                nil
+                statusCode: 200,
+                headers: [:]
             )
-            secondCallback.fulfill()
         }
 
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
+
         wait(for: [secondCallback], timeout: 10.0)
-        XCTAssertEqual(5, self.taskManager.enqueuedRequests.count)
+        XCTAssertEqual(5, self.workManager.workRequests.count)
     }
 
-    func testCombineSequentialUpdates() throws {
+    func testCombineSequentialUpdates() async throws {
         self.contact.editTagGroups { editor in
             editor.add(["neat"], group: "cool")
         }
-        XCTAssertEqual(1, self.taskManager.enqueuedRequests.count)
+        XCTAssertEqual(1, self.workManager.workRequests.count)
 
         self.contact.editAttributes { editor in
             editor.set(int: 1, attribute: "one")
         }
-        XCTAssertEqual(2, self.taskManager.enqueuedRequests.count)
+        XCTAssertEqual(2, self.workManager.workRequests.count)
 
         self.contact.editSubscriptionLists { editor in
             editor.subscribe("some list", scope: .app)
         }
-        XCTAssertEqual(3, self.taskManager.enqueuedRequests.count)
+        XCTAssertEqual(3, self.workManager.workRequests.count)
 
         // Should resolve first
         let resolve = XCTestExpectation(description: "resolve contact")
-        self.apiClient.resolveCallback = { channelID, callback in
+        self.apiClient.resolveCallback = { channelID in
             XCTAssertEqual("channel id", channelID)
-            callback(
-                ContactAPIResponse(
-                    status: 200,
-                    contactID: "some-contact-id",
-                    isAnonymous: true
-                ),
-                nil
-            )
             resolve.fulfill()
+            return AirshipHTTPResponse(
+                result: ContactAPIResponse(
+                    contactID: "some-contact-id",
+                    isAnonymous: false
+                ),
+                statusCode: 200,
+                headers: [:]
+            )
         }
 
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        var result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
+
         wait(for: [resolve], timeout: 10.0)
 
         // Then update
@@ -1082,27 +1262,38 @@ class ContactTest: XCTestCase {
             contactID,
             tagUpdates,
             attributeUpdates,
-            subscriptionListUpdates,
-            callback in
+            subscriptionListUpdates in
             XCTAssertEqual("some-contact-id", contactID)
             XCTAssertEqual(1, tagUpdates?.count ?? 0)
             XCTAssertEqual(1, attributeUpdates?.count ?? 0)
             XCTAssertEqual(1, subscriptionListUpdates?.count ?? 0)
-            callback(HTTPResponse(status: 200), nil)
             update.fulfill()
+            return AirshipHTTPResponse(
+                result: nil,
+                statusCode: 200,
+                headers: [:]
+            )
         }
 
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
+
         wait(for: [update], timeout: 10.0)
 
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
+
     }
 
-    func testSkipResolves() throws {
+    func testSkipResolves() async throws {
         self.contact.identify("one")
         notificationCenter.post(Notification(name: Channel.channelCreatedEvent))
         notificationCenter.post(Notification(name: Channel.channelCreatedEvent))
@@ -1110,56 +1301,76 @@ class ContactTest: XCTestCase {
         notificationCenter.post(Notification(name: Channel.channelCreatedEvent))
         notificationCenter.post(Notification(name: Channel.channelCreatedEvent))
 
-        self.apiClient.resolveCallback = { channelID, callback in
+        self.apiClient.resolveCallback = { channelID in
             XCTFail()
+            return AirshipHTTPResponse(
+                result: nil,
+                statusCode: 200,
+                headers: [:]
+            )
         }
 
         let identifyCallback = XCTestExpectation(description: "callback called")
         self.apiClient.identifyCallback = {
             channelID,
             namedUserID,
-            contactID,
-            callback in
+            contactID in
             XCTAssertEqual("channel id", channelID)
             XCTAssertEqual("one", namedUserID)
             XCTAssertNil(contactID)
-            callback(
-                ContactAPIResponse(
-                    status: 200,
+            identifyCallback.fulfill()
+            return AirshipHTTPResponse(
+                result: ContactAPIResponse(
                     contactID: "some-contact-id",
                     isAnonymous: false
                 ),
-                nil
+                statusCode: 200,
+                headers: [:]
             )
-            identifyCallback.fulfill()
         }
 
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        var result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
+
         wait(for: [identifyCallback], timeout: 10.0)
 
         // queue should be empty
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        XCTAssertEqual(result, .success)
+
+        result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        XCTAssertEqual(result, .success)
+
+        result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
+
     }
 
-    func testConflictOnIdentify() {
-        self.apiClient.resolveCallback = { channelID, callback in
-            callback(
-                ContactAPIResponse(
-                    status: 200,
+    func testConflictOnIdentify() async throws {
+        self.apiClient.resolveCallback = { channelID in
+            return AirshipHTTPResponse(
+                result: ContactAPIResponse(
                     contactID: "some-contact-id",
                     isAnonymous: true
                 ),
-                nil
+                statusCode: 200,
+                headers: [:]
             )
         }
 
@@ -1167,23 +1378,25 @@ class ContactTest: XCTestCase {
             contactID,
             tagUpdates,
             attributeUpdates,
-            subscriptionListsUpdates,
-            callback in
-            callback(HTTPResponse(status: 200), nil)
+            subscriptionListsUpdates in
+            return AirshipHTTPResponse(
+                result: nil,
+                statusCode: 200,
+                headers: [:]
+            )
         }
 
         self.apiClient.identifyCallback = {
             channelID,
             namedUserID,
-            contactID,
-            callback in
-            callback(
-                ContactAPIResponse(
-                    status: 200,
+            contactID in
+            return AirshipHTTPResponse(
+                result: ContactAPIResponse(
                     contactID: "some-other-contact-id",
                     isAnonymous: false
                 ),
-                nil
+                statusCode: 200,
+                headers: [:]
             )
         }
 
@@ -1225,46 +1438,58 @@ class ContactTest: XCTestCase {
         contact.identify("some-user")
 
         // resolve
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        var result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
         // tags
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
         // attributes
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
         // identify
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
 
         wait(for: [conflictCalled], timeout: 10.0)
     }
 
-    func testConflictOnResolve() {
+    func testConflictOnResolve() async throws {
         var first = true
-        self.apiClient.resolveCallback = { channelID, callback in
+        self.apiClient.resolveCallback = { channelID in
             if first {
                 first = false
-                callback(
-                    ContactAPIResponse(
-                        status: 200,
+                return AirshipHTTPResponse(
+                    result: ContactAPIResponse(
                         contactID: "some-contact-id",
                         isAnonymous: true
                     ),
-                    nil
+                    statusCode: 200,
+                    headers: [:]
                 )
             } else {
-                callback(
-                    ContactAPIResponse(
-                        status: 200,
+                return AirshipHTTPResponse(
+                    result: ContactAPIResponse(
                         contactID: "some-other-contact-id",
                         isAnonymous: true
                     ),
-                    nil
+                    statusCode: 200,
+                    headers: [:]
                 )
             }
         }
@@ -1273,9 +1498,12 @@ class ContactTest: XCTestCase {
             contactID,
             tagUpdates,
             attributeUpdates,
-            subscriptionListsUpdates,
-            callback in
-            callback(HTTPResponse(status: 200), nil)
+            subscriptionListsUpdates in
+            return AirshipHTTPResponse(
+                result: nil,
+                statusCode: 200,
+                headers: [:]
+            )
         }
 
         let delegate = TestDelegate()
@@ -1305,36 +1533,51 @@ class ContactTest: XCTestCase {
         attributeEdits.apply()
 
         // resolve
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        var result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
         // tags
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
         // attributes
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
         // resolve with conflict
         notificationCenter.post(Notification(name: Channel.channelCreatedEvent))
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
 
         wait(for: [conflictCalled], timeout: 10.0)
     }
 
-    func testResolveSkippedContactsDisabled() {
+    func testResolveSkippedContactsDisabled() async throws {
         self.privacyManager.disableFeatures(.contacts)
 
         notificationCenter.post(Notification(name: Channel.channelCreatedEvent))
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        let result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
     }
 
-    func testTagsAndAttributesSkippedContactsDisabled() {
+    func testTagsAndAttributesSkippedContactsDisabled() async throws {
         self.privacyManager.disableFeatures(.contacts)
 
         let tagEdits = self.contact.editTagGroups()
@@ -1345,9 +1588,12 @@ class ContactTest: XCTestCase {
         attributeEdits.set(int: 1, attribute: "one")
         attributeEdits.apply()
 
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        var result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
 
         self.privacyManager.disableFeatures(.tagsAndAttributes)
         self.privacyManager.enableFeatures(.contacts)
@@ -1355,67 +1601,84 @@ class ContactTest: XCTestCase {
         tagEdits.apply()
         attributeEdits.apply()
 
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
     }
 
-    func testIdentifySkippedContactsDisabled() throws {
+    func testIdentifySkippedContactsDisabled() async throws {
         self.privacyManager.disableFeatures(.contacts)
 
         self.contact.identify("cat")
 
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        let result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
     }
 
-    func testResetOnDisbleContacts() throws {
+    func testResetOnDisbleContacts() async throws {
         self.contact.identify("cat")
         self.apiClient.identifyCallback = {
             channelID,
             namedUserID,
-            contactID,
-            callback in
-            callback(
-                ContactAPIResponse(
-                    status: 200,
+            contactID in
+            return AirshipHTTPResponse(
+                result: ContactAPIResponse(
                     contactID: "some-contact-id",
                     isAnonymous: false
                 ),
-                nil
+                statusCode: 200,
+                headers: [:]
             )
-        }
-
-        let expectation = XCTestExpectation(description: "callback called")
-        self.apiClient.resetCallback = { channelID, callback in
-            XCTAssertEqual("channel id", channelID)
-            callback(
-                ContactAPIResponse(
-                    status: 200,
-                    contactID: "some-contact-id",
-                    isAnonymous: true
-                ),
-                nil
-            )
-            expectation.fulfill()
         }
 
         // identify
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        var result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
 
+        let expectation = XCTestExpectation(description: "callback called")
+        self.apiClient.resetCallback = { channelID in
+            XCTAssertEqual("channel id", channelID)
+            expectation.fulfill()
+            return AirshipHTTPResponse(
+                result: ContactAPIResponse(
+                    contactID: "some-contact-id",
+                    isAnonymous: true
+                ),
+                statusCode: 200,
+                headers: [:]
+            )
+        }
+        
+       
         self.privacyManager.disableFeatures(.contacts)
-
-        // reset
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        notificationCenter.post(
+            name: PrivacyManager.changeEvent,
+            object: nil
         )
+            
+        // reset
+        result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
+        )
+        XCTAssertEqual(result, .success)
+        
         wait(for: [expectation], timeout: 10.0)
     }
 
-    func testIdentifyFailed() throws {
+    func testIdentifyFailed() async throws {
         self.contact.identify("cool user 1")
 
         let expectation = XCTestExpectation(description: "callback called")
@@ -1423,74 +1686,88 @@ class ContactTest: XCTestCase {
         self.apiClient.identifyCallback = {
             channelID,
             namedUserID,
-            contactID,
-            callback in
-            callback(
-                ContactAPIResponse(
-                    status: 500,
+            contactID in
+            expectation.fulfill()
+            return AirshipHTTPResponse(
+                result: ContactAPIResponse(
                     contactID: nil,
                     isAnonymous: nil
                 ),
-                nil
+                statusCode: 500,
+                headers: [:]
             )
-            expectation.fulfill()
         }
 
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).failed
+        var result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).failed
+        XCTAssertEqual(result, .failure)
+        result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .failure)
         wait(for: [expectation], timeout: 10.0)
     }
 
-    func testResetFailed() throws {
+    func testResetFailed() async throws {
         self.contact.reset()
 
         let expectation = XCTestExpectation(description: "callback called")
         expectation.expectedFulfillmentCount = 2
-        self.apiClient.resetCallback = { channelID, callback in
-            callback(
-                ContactAPIResponse(
-                    status: 505,
+        self.apiClient.resetCallback = { channelID in
+            expectation.fulfill()
+            return AirshipHTTPResponse(
+                result: ContactAPIResponse(
                     contactID: nil,
                     isAnonymous: nil
                 ),
-                nil
+                statusCode: 505,
+                headers: [:]
             )
-            expectation.fulfill()
         }
 
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).failed
+        var result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).failed
+        XCTAssertEqual(result, .failure)
+        result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .failure)
 
         wait(for: [expectation], timeout: 10.0)
     }
 
-    func testUpdateFailed() throws {
+    func testUpdateFailed() async throws {
         let attributeEdits = self.contact.editAttributes()
         attributeEdits.set(int: 1, attribute: "one")
         attributeEdits.apply()
 
-        self.apiClient.resolveCallback = { channelID, callback in
-            callback(
-                ContactAPIResponse(
-                    status: 200,
+        self.apiClient.resolveCallback = { channelID in
+            return AirshipHTTPResponse(
+                result: ContactAPIResponse(
                     contactID: "some-contact-id",
                     isAnonymous: true
                 ),
-                nil
+                statusCode: 200,
+                headers: [:]
             )
         }
 
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        var result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
 
         let expectation = XCTestExpectation(description: "callback called")
         expectation.expectedFulfillmentCount = 2
@@ -1498,23 +1775,32 @@ class ContactTest: XCTestCase {
             contactID,
             tagUpdates,
             attributeUpdates,
-            subscriptionListsUpdates,
-            callback in
-            callback(HTTPResponse(status: 500), nil)
+            subscriptionListsUpdates in
             expectation.fulfill()
+            return AirshipHTTPResponse(
+                result: nil,
+                statusCode: 500,
+                headers: [:]
+            )
         }
 
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).failed
+        result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).failed
+        XCTAssertEqual(result, .failure)
+        result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .failure)
 
         wait(for: [expectation], timeout: 10.0)
     }
 
-    func testResolveFailed() throws {
+    func testResolveFailed() async throws {
         notificationCenter.post(
             Notification(name: AppStateTracker.didBecomeActiveNotification)
         )
@@ -1522,85 +1808,96 @@ class ContactTest: XCTestCase {
         let expectation = XCTestExpectation(description: "resolve contact")
         expectation.expectedFulfillmentCount = 2
 
-        self.apiClient.resolveCallback = { channelID, callback in
-            callback(
-                ContactAPIResponse(
-                    status: 505,
-                    contactID: nil,
-                    isAnonymous: nil
-                ),
-                nil
-            )
+        self.apiClient.resolveCallback = { channelID in
             expectation.fulfill()
+            return AirshipHTTPResponse(
+                result: nil,
+                statusCode: 505,
+                headers: [:]
+            )
         }
 
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).failed
+        var result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).failed
+        XCTAssertEqual(result, .failure)
+        result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .failure)
 
         wait(for: [expectation], timeout: 10.0)
     }
 
-    func testFetchSubscriptionLists() throws {
+    func testFetchSubscriptionLists() async throws {
         // Resolve the contact ID
         notificationCenter.post(
             Notification(name: AppStateTracker.didBecomeActiveNotification)
         )
-        XCTAssertEqual(1, self.taskManager.enqueuedRequests.count)
-        self.apiClient.resolveCallback = { channelID, callback in
-            callback(
-                ContactAPIResponse(
-                    status: 200,
+        XCTAssertEqual(1, self.workManager.workRequests.count)
+        self.apiClient.resolveCallback = { channelID in
+            return AirshipHTTPResponse(
+                result: ContactAPIResponse(
                     contactID: "some-contact-id",
                     isAnonymous: true
                 ),
-                nil
+                statusCode: 200,
+                headers: [:]
             )
         }
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        let result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
 
         let apiResult: [String: [ChannelScope]] = ["neat": [.web]]
         let expected = AudienceUtils.wrap(apiResult)
         self.apiClient.fetchSubscriptionListsCallback = {
-            identifier,
-            callback in
+            identifier in
             XCTAssertEqual("some-contact-id", identifier)
-            callback(ContactSubscriptionListFetchResponse(200, apiResult), nil)
+            return AirshipHTTPResponse(
+                result: apiResult,
+                statusCode: 200,
+                headers: [:]
+            )
         }
 
         let expectation = XCTestExpectation(description: "callback called")
-        self.contact.fetchSubscriptionLists { result, error in
-            XCTAssertEqual(expected, result)
-            expectation.fulfill()
-        }
+        let lists:[String: ChannelScopes] = try await self.contact.fetchSubscriptionLists()
+        XCTAssertEqual(expected, lists)
+        expectation.fulfill()
 
         wait(for: [expectation], timeout: 10.0)
     }
 
-    func testFetchSubscriptionListsPendingReset() throws {
+    func testFetchSubscriptionListsPendingReset() async throws {
         // Resolve the contact ID
         notificationCenter.post(
             Notification(name: AppStateTracker.didBecomeActiveNotification)
         )
-        XCTAssertEqual(1, self.taskManager.enqueuedRequests.count)
-        self.apiClient.resolveCallback = { channelID, callback in
-            callback(
-                ContactAPIResponse(
-                    status: 200,
+        XCTAssertEqual(1, self.workManager.workRequests.count)
+        self.apiClient.resolveCallback = { channelID in
+            return AirshipHTTPResponse(
+                result: ContactAPIResponse(
                     contactID: "some-contact-id",
                     isAnonymous: true
                 ),
-                nil
+                statusCode: 200,
+                headers: [:]
             )
         }
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        let result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
 
         // Apply an update to current contact, to avoid skipping reset
         self.contact.editSubscriptionLists { editor in
@@ -1608,97 +1905,105 @@ class ContactTest: XCTestCase {
         }
         self.contact.reset()
 
-        let expectation = XCTestExpectation(description: "callback called")
-        self.contact.fetchSubscriptionLists { result, error in
-            XCTAssertNil(result)
-            XCTAssertNotNil(error)
-            expectation.fulfill()
+        do {
+            let _:[String: ChannelScopes] = try await self.contact.fetchSubscriptionLists()
+            XCTFail()
         }
-
-        wait(for: [expectation], timeout: 10)
+        catch {
+            
+        }
     }
 
-    func testFetchSubscriptionListsPendingIdentify() throws {
+    func testFetchSubscriptionListsPendingIdentify() async throws {
         // Resolve the contact ID
         notificationCenter.post(
             Notification(name: AppStateTracker.didBecomeActiveNotification)
         )
-        XCTAssertEqual(1, self.taskManager.enqueuedRequests.count)
-        self.apiClient.resolveCallback = { channelID, callback in
-            callback(
-                ContactAPIResponse(
-                    status: 200,
+        XCTAssertEqual(1, self.workManager.workRequests.count)
+        self.apiClient.resolveCallback = { channelID in
+            return AirshipHTTPResponse(
+                result: ContactAPIResponse(
                     contactID: "some-contact-id",
                     isAnonymous: true
                 ),
-                nil
+                statusCode: 200,
+                headers: [:]
             )
         }
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        let result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
 
         // Reset the contact
         self.contact.identify("some user")
 
-        let expectation = XCTestExpectation(description: "callback called")
-        self.contact.fetchSubscriptionLists { result, error in
-            XCTAssertNil(result)
-            XCTAssertNotNil(error)
-            expectation.fulfill()
+        do {
+            let _:[String: ChannelScopes] = try await self.contact.fetchSubscriptionLists()
+            XCTFail()
         }
-
-        wait(for: [expectation], timeout: 10.0)
+        catch {
+            
+        }
     }
 
-    func testFetchSubscriptionListsNoContact() throws {
-        let expectation = XCTestExpectation(description: "callback called")
-        self.contact.fetchSubscriptionLists { result, error in
-            XCTAssertNil(result)
-            XCTAssertNotNil(error)
-            expectation.fulfill()
+    func testFetchSubscriptionListsNoContact() async throws {
+        do {
+            let _:[String: ChannelScopes] = try await self.contact.fetchSubscriptionLists()
+            XCTFail()
         }
-
-        wait(for: [expectation], timeout: 10.0)
+        catch {
+            
+        }
     }
 
-    func testFetchSubscriptionListsCached() throws {
+    func testFetchSubscriptionListsCached() async throws {
         self.date.dateOverride = Date()
 
         // Resolve the contact ID
         notificationCenter.post(
             Notification(name: AppStateTracker.didBecomeActiveNotification)
         )
-        XCTAssertEqual(1, self.taskManager.enqueuedRequests.count)
-        self.apiClient.resolveCallback = { channelID, callback in
-            callback(
-                ContactAPIResponse(
-                    status: 200,
+        XCTAssertEqual(1, self.workManager.workRequests.count)
+        self.apiClient.resolveCallback = { channelID in
+            return AirshipHTTPResponse(
+                result: ContactAPIResponse(
                     contactID: "some-contact-id",
                     isAnonymous: true
                 ),
-                nil
+                statusCode: 200,
+                headers: [:]
             )
         }
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        let result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
+
 
         var apiResult: [String: [ChannelScope]] = ["neat": [.web]]
         var expected = apiResult
         self.apiClient.fetchSubscriptionListsCallback = {
-            identifier,
-            callback in
+            identifier in
             XCTAssertEqual("some-contact-id", identifier)
-            callback(ContactSubscriptionListFetchResponse(200, apiResult), nil)
+            return AirshipHTTPResponse(
+                result: apiResult,
+                statusCode: 200,
+                headers: [:]
+            )
         }
 
         // Populate cache
         var expectation = XCTestExpectation(description: "callback called")
-        self.contact.fetchSubscriptionLists { result, error in
-            XCTAssertEqual(AudienceUtils.wrap(expected), result)
-            expectation.fulfill()
-        }
+        var lists:[String: ChannelScopes] = try await self.contact.fetchSubscriptionLists()
+      
+        XCTAssertEqual(AudienceUtils.wrap(expected), lists)
+        expectation.fulfill()
+    
 
         wait(for: [expectation], timeout: 10.0)
 
@@ -1706,20 +2011,22 @@ class ContactTest: XCTestCase {
 
         // From cache
         expectation = XCTestExpectation(description: "callback called")
-        self.contact.fetchSubscriptionLists { result, error in
-            XCTAssertEqual(AudienceUtils.wrap(expected), result)
-            expectation.fulfill()
-        }
+        lists = try await self.contact.fetchSubscriptionLists()
+      
+        XCTAssertEqual(AudienceUtils.wrap(expected), lists)
+        expectation.fulfill()
+    
         wait(for: [expectation], timeout: 10.0)
 
         self.date.offset += 599  // 1 second before cache should invalidate
 
         // From cache
         expectation = XCTestExpectation(description: "callback called")
-        self.contact.fetchSubscriptionLists { result, error in
-            XCTAssertEqual(AudienceUtils.wrap(expected), result)
-            expectation.fulfill()
-        }
+        lists = try await self.contact.fetchSubscriptionLists()
+      
+        XCTAssertEqual(AudienceUtils.wrap(expected), lists)
+        expectation.fulfill()
+    
         wait(for: [expectation], timeout: 10.0)
 
         self.date.offset += 1
@@ -1727,119 +2034,134 @@ class ContactTest: XCTestCase {
         // From api
         expected = apiResult
         expectation = XCTestExpectation(description: "callback called")
-        self.contact.fetchSubscriptionLists { result, error in
-            XCTAssertEqual(AudienceUtils.wrap(expected), result)
-            expectation.fulfill()
-        }
+        lists = try await self.contact.fetchSubscriptionLists()
+      
+        XCTAssertEqual(AudienceUtils.wrap(expected), lists)
+        expectation.fulfill()
+    
         wait(for: [expectation], timeout: 10.0)
     }
 
-    func testFetchSubscriptionListsCachedDifferentContactID() throws {
+    func testFetchSubscriptionListsCachedDifferentContactID() async throws {
         self.date.dateOverride = Date()
 
         // Resolve the contact ID
         notificationCenter.post(
             Notification(name: AppStateTracker.didBecomeActiveNotification)
         )
-        XCTAssertEqual(1, self.taskManager.enqueuedRequests.count)
-        self.apiClient.resolveCallback = { channelID, callback in
-            callback(
-                ContactAPIResponse(
-                    status: 200,
+        XCTAssertEqual(1, self.workManager.workRequests.count)
+        self.apiClient.resolveCallback = { channelID in
+            return AirshipHTTPResponse(
+                result: ContactAPIResponse(
                     contactID: "some-contact-id",
                     isAnonymous: true
                 ),
-                nil
+                statusCode: 200,
+                headers: [:]
             )
         }
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        var result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
-
+        XCTAssertEqual(result, .success)
         var apiResult: [String: [ChannelScope]] = ["neat": [ChannelScope.web]]
         var expected = apiResult
         self.apiClient.fetchSubscriptionListsCallback = {
-            identifier,
-            callback in
-            callback(ContactSubscriptionListFetchResponse(200, apiResult), nil)
+            identifier in
+            XCTAssertEqual("some-contact-id", identifier)
+            return AirshipHTTPResponse(
+                result: apiResult,
+                statusCode: 200,
+                headers: [:]
+            )
         }
 
         // Populate cache
-        var expectation = XCTestExpectation(description: "callback called")
-        self.contact.fetchSubscriptionLists { result, error in
-            XCTAssertEqual(AudienceUtils.wrap(expected), result)
-            expectation.fulfill()
-        }
-
-        wait(for: [expectation], timeout: 10.0)
+        var lists:[String: ChannelScopes] = try await self.contact.fetchSubscriptionLists()
+      
+        XCTAssertEqual(AudienceUtils.wrap(expected), lists)
 
         apiResult = ["something else": [.web]]
 
         // From cache
-        expectation = XCTestExpectation(description: "callback called")
-        self.contact.fetchSubscriptionLists { result, error in
-            XCTAssertEqual(AudienceUtils.wrap(expected), result)
-            expectation.fulfill()
-        }
-        wait(for: [expectation], timeout: 10.0)
-
+        lists = try await self.contact.fetchSubscriptionLists()
+      
+        XCTAssertEqual(AudienceUtils.wrap(expected), lists)
+        let expectation = XCTestExpectation(description: "callback called")
         // Resolve a new contact ID
         contact.identify("some user")
         self.apiClient.identifyCallback = {
             channelID,
             namedUserID,
-            contactID,
-            callback in
-            callback(
-                ContactAPIResponse(
-                    status: 200,
+            contactID in
+            expectation.fulfill()
+            return AirshipHTTPResponse(
+                result: ContactAPIResponse(
                     contactID: "some-other-contact-id",
                     isAnonymous: false
                 ),
-                nil
+                statusCode: 200,
+                headers: [:]
             )
-            expectation.fulfill()
         }
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
+
+        self.apiClient.fetchSubscriptionListsCallback = {
+            identifier in
+            XCTAssertEqual("some-other-contact-id", identifier)
+            return AirshipHTTPResponse(
+                result: apiResult,
+                statusCode: 200,
+                headers: [:]
+            )
+        }
 
         // From api
         expected = apiResult
-        expectation = XCTestExpectation(description: "callback called")
-        self.contact.fetchSubscriptionLists { result, error in
-            XCTAssertEqual(AudienceUtils.wrap(expected), result)
-            expectation.fulfill()
-        }
-        wait(for: [expectation], timeout: 10.0)
+        lists = try await self.contact.fetchSubscriptionLists()
+      
+        XCTAssertEqual(AudienceUtils.wrap(expected), lists)
     }
 
-    func testFetchSubscriptionListsPendingApplied() throws {
+    func testFetchSubscriptionListsPendingApplied() async throws {
         // Resolve the contact ID
         notificationCenter.post(
             Notification(name: AppStateTracker.didBecomeActiveNotification)
         )
-        XCTAssertEqual(1, self.taskManager.enqueuedRequests.count)
-        self.apiClient.resolveCallback = { channelID, callback in
-            callback(
-                ContactAPIResponse(
-                    status: 200,
+        XCTAssertEqual(1, self.workManager.workRequests.count)
+        self.apiClient.resolveCallback = { channelID in
+            return AirshipHTTPResponse(
+                result: ContactAPIResponse(
                     contactID: "some-contact-id",
                     isAnonymous: true
                 ),
-                nil
+                statusCode: 200,
+                headers: [:]
             )
         }
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        let result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
 
         let apiResult: [String: [ChannelScope]] = ["foo": [.web, .sms]]
         self.apiClient.fetchSubscriptionListsCallback = {
-            identifier,
-            callback in
+            identifier in
             XCTAssertEqual("some-contact-id", identifier)
-            callback(ContactSubscriptionListFetchResponse(200, apiResult), nil)
+            return AirshipHTTPResponse(
+                result: apiResult,
+                statusCode: 200,
+                headers: [:]
+            )
         }
 
         self.contact.editSubscriptionLists { editor in
@@ -1849,33 +2171,37 @@ class ContactTest: XCTestCase {
 
         let expected: [String: [ChannelScope]] = ["foo": [.web], "bar": [.app]]
         let expectation = XCTestExpectation(description: "callback called")
-        self.contact.fetchSubscriptionLists { result, error in
-            XCTAssertEqual(AudienceUtils.wrap(expected), result)
-            expectation.fulfill()
-        }
+        let lists:[String: ChannelScopes] = try await self.contact.fetchSubscriptionLists()
+      
+        XCTAssertEqual(AudienceUtils.wrap(expected), lists)
+        expectation.fulfill()
+
 
         wait(for: [expectation], timeout: 10.0)
     }
 
-    func testFetchSubscriptionListsLocalHistoryApplied() throws {
+    func testFetchSubscriptionListsLocalHistoryApplied() async throws {
         // Resolve the contact ID
         notificationCenter.post(
             Notification(name: AppStateTracker.didBecomeActiveNotification)
         )
-        XCTAssertEqual(1, self.taskManager.enqueuedRequests.count)
-        self.apiClient.resolveCallback = { channelID, callback in
-            callback(
-                ContactAPIResponse(
-                    status: 200,
+        XCTAssertEqual(1, self.workManager.workRequests.count)
+        self.apiClient.resolveCallback = { channelID in
+            return AirshipHTTPResponse(
+                result: ContactAPIResponse(
                     contactID: "some-contact-id",
                     isAnonymous: true
                 ),
-                nil
+                statusCode: 200,
+                headers: [:]
             )
         }
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        var result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
 
         self.contact.editSubscriptionLists { editor in
             editor.subscribe("bar", scope: .app)
@@ -1887,32 +2213,41 @@ class ContactTest: XCTestCase {
             contactID,
             tagUpdates,
             attributeUpdates,
-            subscriptionListUpdates,
-            callback in
-            callback(HTTPResponse(status: 200), nil)
+            subscriptionListUpdates in
             update.fulfill()
+            return AirshipHTTPResponse(
+                result: nil,
+                statusCode: 200,
+                headers: [:]
+            )
         }
-        XCTAssertTrue(
-            self.taskManager.launchSync(taskID: Contact.updateTaskID).completed
+        result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: Contact.updateTaskID
+            )
         )
+        XCTAssertEqual(result, .success)
         wait(for: [update], timeout: 10.0)
 
         XCTAssertTrue(self.contact.pendingSubscriptionListUpdates.isEmpty)
 
         let apiResult: [String: [ChannelScope]] = ["foo": [.web]]
         self.apiClient.fetchSubscriptionListsCallback = {
-            identifier,
-            callback in
+            identifier in
             XCTAssertEqual("some-contact-id", identifier)
-            callback(ContactSubscriptionListFetchResponse(200, apiResult), nil)
+            return AirshipHTTPResponse(
+                result: apiResult,
+                statusCode: 200,
+                headers: [:]
+            )
         }
 
         let expected: [String: [ChannelScope]] = ["foo": [.web], "bar": [.app]]
         let expectation = XCTestExpectation(description: "callback called")
-        self.contact.fetchSubscriptionLists { result, error in
-            XCTAssertEqual(AudienceUtils.wrap(expected), result)
-            expectation.fulfill()
-        }
+        let lists:[String: ChannelScopes] = try await self.contact.fetchSubscriptionLists()
+      
+        XCTAssertEqual(AudienceUtils.wrap(expected), lists)
+        expectation.fulfill()
 
         wait(for: [expectation], timeout: 10.0)
     }

@@ -35,7 +35,7 @@ class ContactAPIClientTest: XCTestCase {
         )
     }
 
-    func testIdentify() throws {
+    func testIdentify() async throws {
         self.session.data = """
             {
                 "contact_id": "56779"
@@ -43,24 +43,18 @@ class ContactAPIClientTest: XCTestCase {
             """
             .data(using: .utf8)
 
-        let expectation = XCTestExpectation(description: "callback called")
-
-        contactAPIClient.identify(
+        let response = try await contactAPIClient.identify(
             channelID: "test_channel",
             namedUserID: "contact",
             contactID: nil
-        ) { response, error in
-            XCTAssertEqual(response?.status, 200)
-            XCTAssertNil(error)
-            XCTAssertNotNil(response?.contactID)
-            XCTAssertNotNil(response?.isAnonymous)
-            expectation.fulfill()
-        }
-
-        wait(for: [expectation], timeout: 10.0)
+        )
+        
+        XCTAssertTrue(response.isSuccess)
+        XCTAssertNotNil(response.result!.contactID)
+        XCTAssertNotNil(response.result!.isAnonymous)
     }
 
-    func testResolve() throws {
+    func testResolve() async throws {
         self.session.data = """
             {
                 "contact_id": "56779",
@@ -69,19 +63,13 @@ class ContactAPIClientTest: XCTestCase {
             """
             .data(using: .utf8)
 
-        let expectation = XCTestExpectation(description: "callback called")
-
-        contactAPIClient.resolve(channelID: "test_channel") { response, error in
-            XCTAssertEqual(response?.status, 200)
-            XCTAssertNil(error)
-            XCTAssertNotNil(response?.contactID)
-            expectation.fulfill()
-        }
-
-        wait(for: [expectation], timeout: 10.0)
+        let response = try await contactAPIClient.resolve(channelID: "test_channel")
+        
+        XCTAssertTrue(response.isSuccess)
+        XCTAssertNotNil(response.result!.contactID)
     }
 
-    func testReset() throws {
+    func testReset() async throws {
         self.session.data = """
             {
                 "contact_id": "56779",
@@ -89,19 +77,13 @@ class ContactAPIClientTest: XCTestCase {
             """
             .data(using: .utf8)
 
-        let expectation = XCTestExpectation(description: "callback called")
-
-        contactAPIClient.reset(channelID: "test_channel") { response, error in
-            XCTAssertEqual(response?.status, 200)
-            XCTAssertNil(error)
-            XCTAssertNotNil(response?.contactID)
-            expectation.fulfill()
-        }
-
-        wait(for: [expectation], timeout: 10.0)
+        let response = try await contactAPIClient.reset(channelID: "test_channel")
+        
+        XCTAssertTrue(response.isSuccess)
+        XCTAssertNotNil(response.result!.contactID)
     }
 
-    func testRegisterEmail() throws {
+    func testRegisterEmail() async throws {
         self.session.data = """
             {
                 "channel_id": "some-channel",
@@ -109,8 +91,7 @@ class ContactAPIClientTest: XCTestCase {
             """
             .data(using: .utf8)
         let date = Date()
-        let expectation = XCTestExpectation(description: "callback called")
-        contactAPIClient.registerEmail(
+        let response = try await contactAPIClient.registerEmail(
             identifier: "some-contact-id",
             address: "ua@airship.com",
             options: EmailRegistrationOptions.options(
@@ -118,16 +99,12 @@ class ContactAPIClientTest: XCTestCase {
                 properties: ["interests": "newsletter"],
                 doubleOptIn: true
             )
-        ) { response, error in
-            XCTAssertEqual(response?.status, 200)
-            XCTAssertNil(error)
-            XCTAssertEqual("some-channel", response?.channel?.channelID)
-            XCTAssertEqual(.email, response?.channel?.channelType)
-            expectation.fulfill()
-        }
+        )
 
-        wait(for: [expectation], timeout: 10.0)
-
+        XCTAssertTrue(response.isSuccess)
+        XCTAssertEqual("some-channel", response.result!.channelID)
+        XCTAssertEqual(.email, response.result!.channelType)
+        
         let previousRequest = self.session.previousRequest!
         XCTAssertNotNil(previousRequest)
         XCTAssertEqual(
@@ -185,7 +162,7 @@ class ContactAPIClientTest: XCTestCase {
         )
     }
 
-    func testRegisterSMS() throws {
+    func testRegisterSMS() async throws {
         self.session.data = """
             {
                 "channel_id": "some-channel",
@@ -193,22 +170,16 @@ class ContactAPIClientTest: XCTestCase {
             """
             .data(using: .utf8)
 
-        let expectation = XCTestExpectation(description: "callback called")
-
-        contactAPIClient.registerSMS(
+        let response = try await contactAPIClient.registerSMS(
             identifier: "some-contact-id",
             msisdn: "15035556789",
             options: SMSRegistrationOptions.optIn(senderID: "28855")
-        ) { response, error in
-            XCTAssertEqual(response?.status, 200)
-            XCTAssertNil(error)
-            XCTAssertEqual("some-channel", response?.channel?.channelID)
-            XCTAssertEqual(.sms, response?.channel?.channelType)
-            expectation.fulfill()
-        }
-
-        wait(for: [expectation], timeout: 10.0)
-
+        )
+      
+        XCTAssertTrue(response.isSuccess)
+        XCTAssertEqual("some-channel", response.result!.channelID)
+        XCTAssertEqual(.sms, response.result!.channelType)
+        
         let previousRequest = self.session.previousRequest!
         XCTAssertNotNil(previousRequest)
         XCTAssertEqual(
@@ -257,7 +228,7 @@ class ContactAPIClientTest: XCTestCase {
         )
     }
 
-    func testRegisterOpen() throws {
+    func testRegisterOpen() async throws {
         self.session.data = """
             {
                 "channel_id": "some-channel",
@@ -265,24 +236,18 @@ class ContactAPIClientTest: XCTestCase {
             """
             .data(using: .utf8)
 
-        let expectation = XCTestExpectation(description: "callback called")
-
-        contactAPIClient.registerOpen(
+        let response = try await contactAPIClient.registerOpen(
             identifier: "some-contact-id",
             address: "open_address",
             options: OpenRegistrationOptions.optIn(
                 platformName: "my_platform",
                 identifiers: ["model": "4", "category": "1"]
             )
-        ) { response, error in
-            XCTAssertEqual(response?.status, 200)
-            XCTAssertNil(error)
-            XCTAssertEqual("some-channel", response?.channel?.channelID)
-            XCTAssertEqual(.open, response?.channel?.channelType)
-            expectation.fulfill()
-        }
-
-        wait(for: [expectation], timeout: 10.0)
+        )
+        
+        XCTAssertTrue(response.isSuccess)
+        XCTAssertEqual("some-channel", response.result!.channelID)
+        XCTAssertEqual(.open, response.result!.channelType)
 
         let previousRequest = self.session.previousRequest!
         XCTAssertNotNil(previousRequest)
@@ -342,21 +307,16 @@ class ContactAPIClientTest: XCTestCase {
         )
     }
 
-    func testAssociateChannel() throws {
-        let expectation = XCTestExpectation(description: "callback called")
-        contactAPIClient.associateChannel(
+    func testAssociateChannel() async throws {
+        let response = try await contactAPIClient.associateChannel(
             identifier: "some-contact-id",
             channelID: "some-channel",
             channelType: .sms
-        ) { response, error in
-            XCTAssertEqual(response?.status, 200)
-            XCTAssertNil(error)
-            XCTAssertEqual("some-channel", response?.channel?.channelID)
-            XCTAssertEqual(.sms, response?.channel?.channelType)
-            expectation.fulfill()
-        }
-
-        wait(for: [expectation], timeout: 10.0)
+        )
+        
+        XCTAssertTrue(response.isSuccess)
+        XCTAssertEqual("some-channel", response.result!.channelID)
+        XCTAssertEqual(.sms, response.result!.channelType)
 
         let request = self.session.lastRequest!
         XCTAssertEqual(
@@ -379,7 +339,7 @@ class ContactAPIClientTest: XCTestCase {
         XCTAssertEqual(body as! NSDictionary, expectedBody as! NSDictionary)
     }
 
-    func testUpdate() throws {
+    func testUpdate() async throws {
         let tagUpdates = [
             TagGroupUpdate(group: "tag-set", tags: [], type: .set),
             TagGroupUpdate(group: "tag-add", tags: ["add tag"], type: .add),
@@ -425,20 +385,15 @@ class ContactAPIClientTest: XCTestCase {
             ),
         ]
 
-        let expectation = XCTestExpectation(description: "callback called")
-        contactAPIClient.update(
+        let response = try await contactAPIClient.update(
             identifier: "some-contact-id",
             tagGroupUpdates: tagUpdates,
             attributeUpdates: attributeUpdates,
             subscriptionListUpdates: listUpdates
-        ) { response, error in
-            XCTAssertEqual(response?.status, 200)
-            XCTAssertNil(error)
-            expectation.fulfill()
-        }
+        )
 
-        wait(for: [expectation], timeout: 10.0)
-
+        XCTAssertTrue(response.isSuccess)
+        
         let request = self.session.lastRequest!
         XCTAssertEqual(
             "https://device-api.urbanairship.com/api/contacts/some-contact-id",
@@ -510,7 +465,7 @@ class ContactAPIClientTest: XCTestCase {
         XCTAssertEqual(body as! NSDictionary, expectedBody as! NSDictionary)
     }
 
-    func testUpdateMixValidInvalidAttributes() throws {
+    func testUpdateMixValidInvalidAttributes() async throws {
         let date = Date()
         let attributeUpdates = [
             AttributeUpdate(
@@ -526,19 +481,14 @@ class ContactAPIClientTest: XCTestCase {
             ),
         ]
 
-        let expectation = XCTestExpectation(description: "callback called")
-        contactAPIClient.update(
+        let response = try await contactAPIClient.update(
             identifier: "some-contact-id",
             tagGroupUpdates: [],
             attributeUpdates: attributeUpdates,
             subscriptionListUpdates: nil
-        ) { response, error in
-            XCTAssertEqual(response?.status, 200)
-            XCTAssertNil(error)
-            expectation.fulfill()
-        }
-
-        wait(for: [expectation], timeout: 10.0)
+        )
+        
+        XCTAssertTrue(response.isSuccess)
 
         let request = self.session.lastRequest!
         XCTAssertEqual(
@@ -568,7 +518,7 @@ class ContactAPIClientTest: XCTestCase {
         XCTAssertEqual(body as! NSDictionary, expectedBody as! NSDictionary)
     }
 
-    func testGetContactLists() throws {
+    func testGetContactLists() async throws {
         let responseBody = """
             {
                "ok" : true,
@@ -597,8 +547,6 @@ class ContactAPIClientTest: XCTestCase {
         )
         self.session.data = responseBody.data(using: .utf8)
 
-        let expectation = XCTestExpectation(description: "callback called")
-
         let expected: [String: [ChannelScope]] = [
             "example_listId-1": [.email],
             "example_listId-2": [.app, .web],
@@ -606,18 +554,11 @@ class ContactAPIClientTest: XCTestCase {
             "example_listId-4": [.app],
         ]
 
-        self.contactAPIClient.fetchSubscriptionLists("some-contact") {
-            response,
-            error in
-            XCTAssertEqual(response?.status, 200)
-            XCTAssertNil(error)
-
-            XCTAssertEqual(expected, response?.result)
-            expectation.fulfill()
-        }
-
-        wait(for: [expectation], timeout: 10.0)
-
+        let response = try await self.contactAPIClient.fetchSubscriptionLists("some-contact")
+        XCTAssertTrue(response.isSuccess)
+    
+        XCTAssertEqual(expected, response.result!)
+       
         XCTAssertEqual("GET", self.session.lastRequest?.method)
         XCTAssertEqual(
             "https://device-api.urbanairship.com/api/subscription_lists/contacts/some-contact",
@@ -625,44 +566,37 @@ class ContactAPIClientTest: XCTestCase {
         )
     }
 
-    func testGetContactListParseError() throws {
+    func testGetContactListParseError() async throws {
         let responseBody = "What?"
 
+        self.session.data = responseBody.data(using: .utf8)
+        
         self.session.response = HTTPURLResponse(
             url: URL(string: "https://neat")!,
             statusCode: 200,
             httpVersion: "",
             headerFields: [String: String]()
         )
-        self.session.data = responseBody.data(using: .utf8)
 
-        let expectation = XCTestExpectation(description: "callback called")
-
-        self.contactAPIClient.fetchSubscriptionLists("some-contact") {
-            response,
-            error in
-            XCTAssertNotNil(error)
-            XCTAssertNil(response)
-            expectation.fulfill()
+        do {
+            _ = try await self.contactAPIClient.fetchSubscriptionLists("some-contact")
+            XCTFail()
         }
-
-        wait(for: [expectation], timeout: 10.0)
+        catch {
+    
+        }
     }
 
-    func testGetContactListError() throws {
+    func testGetContactListError() async throws {
         let sessionError = AirshipErrors.error("error!")
         self.session.error = sessionError
 
-        let expectation = XCTestExpectation(description: "callback called")
-
-        self.contactAPIClient.fetchSubscriptionLists("some-contact") {
-            response,
-            error in
-            XCTAssertNotNil(error)
-            XCTAssertNil(response)
-            expectation.fulfill()
+        do {
+            _ = try await self.contactAPIClient.fetchSubscriptionLists("some-contact")
+            XCTFail()
         }
+        catch {
 
-        wait(for: [expectation], timeout: 10.0)
+        }
     }
 }

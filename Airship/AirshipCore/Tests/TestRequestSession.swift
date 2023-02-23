@@ -1,16 +1,13 @@
 /* Copyright Airship and Contributors */
 
-import AirshipCore
 import Foundation
+@testable import AirshipCore
 
-@objc(UATestRequestSession)
-public class TestRequestSession: RequestSession {
+public class TestRequestSession: AirshipRequestSession {
 
-    @objc
-    public var previousRequest: Request?
+    public var previousRequest: AirshipRequest?
 
-    @objc
-    public var lastRequest: Request?
+    public var lastRequest: AirshipRequest?
 
     @objc
     public var response: HTTPURLResponse?
@@ -27,17 +24,20 @@ public class TestRequestSession: RequestSession {
             config: Config(),
             dataStore: PreferenceDataStore(appKey: UUID().uuidString)
         )
-        super.init(config: config)
+        super.init(appKey:config.appKey)
     }
 
-    public override func performHTTPRequest(
-        _ request: Request,
-        completionHandler: @escaping (Data?, HTTPURLResponse?, Error?) -> Void
-    ) -> Disposable {
+    public override func performHTTPRequest<T>(
+        _ request: AirshipRequest,
+        autoCancel: Bool = false,
+        responseParser: ((Data?, HTTPURLResponse) throws -> T?)?
+    ) async throws -> AirshipHTTPResponse<T> {
         self.previousRequest = self.lastRequest
         self.lastRequest = request
-        completionHandler(data, response, error)
-        return Disposable()
+        return AirshipHTTPResponse(
+            result: try responseParser?(data, response!),
+            statusCode: response!.statusCode,
+            headers: response!.allHeaderFields
+        )
     }
-
 }

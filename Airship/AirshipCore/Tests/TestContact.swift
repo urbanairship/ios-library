@@ -83,9 +83,7 @@ public class TestContact: NSObject, ContactProtocol, Component {
         editor.apply()
     }
 
-    public func fetchSubscriptionLists(
-        completionHandler: @escaping ([String: ChannelScopes]?, Error?) -> Void
-    ) -> Disposable {
-        return Disposable()
+    public func fetchSubscriptionLists() async throws ->  [String: ChannelScopes] {
+        return [:]
     }
 }
