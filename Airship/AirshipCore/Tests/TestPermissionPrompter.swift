@@ -9,8 +9,8 @@ class TestPermissionPrompter: PermissionPrompter {
     var onPrompt:
         (
             (
-                Permission, Bool, Bool,
-                (PermissionStatus, PermissionStatus) -> Void
+                AirshipPermission, Bool, Bool,
+                (AirshipPermissionStatus, AirshipPermissionStatus) -> Void
             ) ->
                 Void
         )?
@@ -18,10 +18,10 @@ class TestPermissionPrompter: PermissionPrompter {
     init() {}
 
     func prompt(
-        permission: Permission,
+        permission: AirshipPermission,
         enableAirshipUsage: Bool,
         fallbackSystemSettings: Bool,
-        completionHandler: @escaping (PermissionStatus, PermissionStatus) ->
+        completionHandler: @escaping (AirshipPermissionStatus, AirshipPermissionStatus) ->
             Void
     ) {
 

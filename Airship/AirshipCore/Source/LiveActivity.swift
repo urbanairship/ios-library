@@ -76,7 +76,7 @@ extension Activity: LiveActivity {
 
 extension Data {
     fileprivate var tokenString: String {
-        Utils.deviceTokenStringFromDeviceToken(self)
+        AirshipUtils.deviceTokenStringFromDeviceToken(self)
     }
 }
 

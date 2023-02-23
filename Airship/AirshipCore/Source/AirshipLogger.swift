@@ -8,7 +8,7 @@ import Foundation
 /// - Note: For internal use only. :nodoc:
 public class AirshipLogger {
 
-    static var logLevel: LogLevel = .error
+    static var logLevel: AirshipLogLevel = .error
     static var logHandler: AirshipLogHandler = DefaultLogHandler()
 
     public static func trace(
@@ -19,7 +19,7 @@ public class AirshipLogger {
     ) {
 
         log(
-            logLevel: LogLevel.trace,
+            logLevel: AirshipLogLevel.trace,
             message: message(),
             fileID: fileID,
             line: line,
@@ -35,7 +35,7 @@ public class AirshipLogger {
     ) {
 
         log(
-            logLevel: LogLevel.debug,
+            logLevel: AirshipLogLevel.debug,
             message: message(),
             fileID: fileID,
             line: line,
@@ -50,7 +50,7 @@ public class AirshipLogger {
         function: String = #function
     ) {
         log(
-            logLevel: LogLevel.info,
+            logLevel: AirshipLogLevel.info,
             message: message(),
             fileID: fileID,
             line: line,
@@ -65,7 +65,7 @@ public class AirshipLogger {
         function: String = #function
     ) {
         log(
-            logLevel: LogLevel.info,
+            logLevel: AirshipLogLevel.info,
             message: message,
             fileID: fileID,
             line: line,
@@ -81,7 +81,7 @@ public class AirshipLogger {
         function: String = #function
     ) {
         log(
-            logLevel: LogLevel.warn,
+            logLevel: AirshipLogLevel.warn,
             message: message(),
             fileID: fileID,
             line: line,
@@ -97,7 +97,7 @@ public class AirshipLogger {
     ) {
 
         log(
-            logLevel: LogLevel.error,
+            logLevel: AirshipLogLevel.error,
             message: message(),
             fileID: fileID,
             line: line,
@@ -113,7 +113,7 @@ public class AirshipLogger {
     ) {
 
         log(
-            logLevel: LogLevel.error,
+            logLevel: AirshipLogLevel.error,
             message: "🚨Airship Implementation Error🚨: \(message())",
             fileID: fileID,
             line: line,
@@ -122,7 +122,7 @@ public class AirshipLogger {
     }
 
     static func log(
-        logLevel: LogLevel,
+        logLevel: AirshipLogLevel,
         message: @autoclosure () -> String,
         fileID: String,
         line: UInt,

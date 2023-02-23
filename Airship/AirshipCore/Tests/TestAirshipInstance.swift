@@ -19,7 +19,7 @@ public class TestAirshipInstance: NSObject, AirshipInstanceProtocol {
     }
 
     @objc
-    public var permissionsManager: PermissionsManager = PermissionsManager()
+    public var permissionsManager: AirshipPermissionsManager = AirshipPermissionsManager()
 
     private var _actionRegistry: ActionRegistry?
     @objc
@@ -65,9 +65,9 @@ public class TestAirshipInstance: NSObject, AirshipInstanceProtocol {
         }
     }
 
-    private var _localeManager: LocaleManager?
+    private var _localeManager: AirshipLocaleManager?
     @objc
-    public var localeManager: LocaleManager {
+    public var localeManager: AirshipLocaleManager {
         get {
             return _localeManager!
         }
@@ -76,9 +76,9 @@ public class TestAirshipInstance: NSObject, AirshipInstanceProtocol {
         }
     }
 
-    private var _privacyManager: PrivacyManager?
+    private var _privacyManager: AirshipPrivacyManager?
     @objc
-    public var privacyManager: PrivacyManager {
+    public var privacyManager: AirshipPrivacyManager {
         get {
             return _privacyManager!
         }

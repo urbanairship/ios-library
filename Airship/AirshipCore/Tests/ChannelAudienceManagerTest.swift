@@ -9,7 +9,7 @@ class ChannelAudienceManagerTest: XCTestCase {
     private let workManager = TestWorkManager()
     var notificationCenter: NotificationCenter!
     var date: UATestDate!
-    var privacyManager: PrivacyManager!
+    var privacyManager: AirshipPrivacyManager!
     var dataStore: PreferenceDataStore!
     var subscriptionListClient: TestSubscriptionListAPIClient!
     var updateClient: TestChannelBulkUpdateAPIClient!
@@ -23,7 +23,7 @@ class ChannelAudienceManagerTest: XCTestCase {
 
         self.date = UATestDate()
         self.dataStore = PreferenceDataStore(appKey: UUID().uuidString)
-        self.privacyManager = PrivacyManager(
+        self.privacyManager = AirshipPrivacyManager(
             dataStore: self.dataStore,
             defaultEnabledFeatures: .all,
             notificationCenter: self.notificationCenter
@@ -204,7 +204,7 @@ class ChannelAudienceManagerTest: XCTestCase {
         let attributePayload = [
             "action": "remove",
             "key": "some-attribute",
-            "timestamp": Utils.isoDateFormatterUTCWithDelimiter()
+            "timestamp": AirshipUtils.isoDateFormatterUTCWithDelimiter()
                 .string(
                     from: testDate.now
                 ),

@@ -43,7 +43,7 @@ public class PreferenceCenter: NSObject, Component {
     public weak var openDelegate: PreferenceCenterOpenDelegate?
 
     private let dataStore: PreferenceDataStore
-    private let privacyManager: PrivacyManager
+    private let privacyManager: AirshipPrivacyManager
     private let remoteDataProvider: RemoteDataProvider
     private var currentDisplay: Disposable?
 
@@ -75,7 +75,7 @@ public class PreferenceCenter: NSObject, Component {
 
     init(
         dataStore: PreferenceDataStore,
-        privacyManager: PrivacyManager,
+        privacyManager: AirshipPrivacyManager,
         remoteDataProvider: RemoteDataProvider
     ) {
         self.dataStore = dataStore
@@ -113,7 +113,7 @@ public class PreferenceCenter: NSObject, Component {
 
     @MainActor
     private func openDefaultPreferenceCenter(preferenceCenterID: String) async {
-        guard let scene = try? Utils.findWindowScene() else {
+        guard let scene = try? AirshipUtils.findWindowScene() else {
             AirshipLogger.error("Unable to display, missing scene.")
             return
         }

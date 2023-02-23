@@ -12,7 +12,7 @@ class DefaultLogHandler: AirshipLogHandler {
     )
 
     func log(
-        logLevel: LogLevel,
+        logLevel: AirshipLogLevel,
         message: String,
         fileID: String,
         line: UInt,
@@ -31,7 +31,7 @@ class DefaultLogHandler: AirshipLogHandler {
     }
 }
 
-extension LogLevel {
+extension AirshipLogLevel {
     fileprivate var initial: String {
         switch self {
         case .trace: return "T"

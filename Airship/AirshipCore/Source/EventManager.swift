@@ -58,7 +58,7 @@ class EventManager: EventManagerProtocol {
 
 
     private var minBatchInterval: TimeInterval {
-        Utils.clamp(
+        AirshipUtils.clamp(
             self.tuningInfo?.minBatchInterval ?? EventManager.minBatchInterval,
             min: EventManager.minBatchInterval,
             max: EventManager.maxBatchInterval
@@ -66,7 +66,7 @@ class EventManager: EventManagerProtocol {
     }
 
     private var maxTotalStoreSizeKB: UInt {
-        Utils.clamp(
+        AirshipUtils.clamp(
             self.tuningInfo?.maxTotalStoreSizeKB ?? EventManager.maxTotalDBSizeKB,
             min: EventManager.minTotalDBSizeKB,
             max: EventManager.maxTotalDBSizeKB
@@ -74,7 +74,7 @@ class EventManager: EventManagerProtocol {
     }
 
     private var maxBatchSizeKB: UInt {
-        Utils.clamp(
+        AirshipUtils.clamp(
             self.tuningInfo?.maxBatchSizeKB ?? EventManager.maxBatchSizeKB,
             min: EventManager.minBatchSizeKB,
             max: EventManager.maxBatchSizeKB

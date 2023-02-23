@@ -3,7 +3,7 @@
 import Foundation
 import UserNotifications
 
-class NotificationPermissionDelegate: PermissionDelegate {
+class NotificationPermissionDelegate: AirshipPermissionDelegate {
 
     struct Config {
         let options: UANotificationOptions
@@ -19,7 +19,7 @@ class NotificationPermissionDelegate: PermissionDelegate {
     }
 
     func checkPermissionStatus(
-        completionHandler: @escaping (PermissionStatus) -> Void
+        completionHandler: @escaping (AirshipPermissionStatus) -> Void
     ) {
         registrar.checkStatus { status, _ in
             completionHandler(status.permissionStatus)
@@ -27,7 +27,7 @@ class NotificationPermissionDelegate: PermissionDelegate {
     }
 
     func requestPermission(
-        completionHandler: @escaping (PermissionStatus) -> Void
+        completionHandler: @escaping (AirshipPermissionStatus) -> Void
     ) {
         let config = self.config()
         self.registrar.updateRegistration(
@@ -40,7 +40,7 @@ class NotificationPermissionDelegate: PermissionDelegate {
 }
 
 extension UAAuthorizationStatus {
-    var permissionStatus: PermissionStatus {
+    var permissionStatus: AirshipPermissionStatus {
         switch self {
         case .authorized: return .granted
         case .provisional: return .granted

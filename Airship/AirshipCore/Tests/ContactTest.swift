@@ -12,13 +12,13 @@ class TestDelegate: ContactConflictDelegate {
 }
 
 class ContactTest: XCTestCase {
-    var contact: Contact!
+    var contact: AirshipContact!
     var workManager: TestWorkManager!
     var channel: TestChannel!
     var apiClient: TestContactAPIClient!
     var notificationCenter: NotificationCenter!
     var date: UATestDate!
-    var privacyManager: PrivacyManager!
+    var privacyManager: AirshipPrivacyManager!
     var dataStore: PreferenceDataStore!
 
     override func setUpWithError() throws {
@@ -31,7 +31,7 @@ class ContactTest: XCTestCase {
         self.date = UATestDate()
 
         self.dataStore = PreferenceDataStore(appKey: UUID().uuidString)
-        self.privacyManager = PrivacyManager(
+        self.privacyManager = AirshipPrivacyManager(
             dataStore: self.dataStore,
             defaultEnabledFeatures: .all,
             notificationCenter: self.notificationCenter
@@ -41,10 +41,10 @@ class ContactTest: XCTestCase {
         self.channel.identifier = "channel id"
     }
 
-    func createContact() -> Contact {
-        let config = RuntimeConfig(config: Config(), dataStore: dataStore)
+    func createContact() -> AirshipContact {
+        let config = RuntimeConfig(config: AirshipConfig(), dataStore: dataStore)
 
-        return Contact(
+        return AirshipContact(
             dataStore: self.dataStore,
             config: config,
             channel: self.channel,
@@ -57,8 +57,8 @@ class ContactTest: XCTestCase {
     }
 
     func testRateLimits() async throws {
-        try await self.workManager.setRateLimit(Contact.updateRateLimitID, rate: 1, timeInterval: 0.5)
-        try await self.workManager.setRateLimit(Contact.identityRateLimitID, rate: 1, timeInterval: 5.0)
+        try await self.workManager.setRateLimit(AirshipContact.updateRateLimitID, rate: 1, timeInterval: 0.5)
+        try await self.workManager.setRateLimit(AirshipContact.identityRateLimitID, rate: 1, timeInterval: 5.0)
         
         let limiter = self.workManager.rateLimitor
     
@@ -66,16 +66,16 @@ class ContactTest: XCTestCase {
      
         XCTAssertEqual(2, rules.count)
         
-        var updateRule = rules[Contact.updateRateLimitID]!
+        var updateRule = rules[AirshipContact.updateRateLimitID]!
         XCTAssertEqual(1, updateRule.rate)
         XCTAssertEqual(0.5, updateRule.timeInterval, accuracy: 0.01)
         
-        updateRule = rules[Contact.updateRateLimitID]!
+        updateRule = rules[AirshipContact.updateRateLimitID]!
         XCTAssertEqual(1, updateRule.rate)
         XCTAssertEqual(0.5, updateRule.timeInterval, accuracy: 0.01)
         
         let identityRule = rules[
-            Contact.identityRateLimitID
+            AirshipContact.identityRateLimitID
         ]!
         XCTAssertEqual(1, identityRule.rate)
         XCTAssertEqual(5.0, identityRule.timeInterval, accuracy: 0.01)
@@ -88,7 +88,7 @@ class ContactTest: XCTestCase {
         let attributePayload = [
             "action": "remove",
             "key": "some-attribute",
-            "timestamp": Utils.isoDateFormatterUTCWithDelimiter()
+            "timestamp": AirshipUtils.isoDateFormatterUTCWithDelimiter()
                 .string(
                     from: testDate.now
                 ),
@@ -103,7 +103,7 @@ class ContactTest: XCTestCase {
         )
         dataStore.setObject(
             attributeData,
-            forKey: Contact.legacyPendingAttributesKey
+            forKey: AirshipContact.legacyPendingAttributesKey
         )
 
         let tagMutation = TagGroupsMutation(
@@ -115,11 +115,11 @@ class ContactTest: XCTestCase {
             withRootObject: [tagMutation],
             requiringSecureCoding: true
         )
-        dataStore.setObject(tagData, forKey: Contact.legacyPendingTagGroupsKey)
+        dataStore.setObject(tagData, forKey: AirshipContact.legacyPendingTagGroupsKey)
 
         self.dataStore.setObject(
             "named-user",
-            forKey: Contact.legacyNamedUserKey
+            forKey: AirshipContact.legacyNamedUserKey
         )
         self.contact.migrateNamedUser()
 
@@ -150,7 +150,7 @@ class ContactTest: XCTestCase {
         )
         dataStore.setObject(
             attributeData,
-            forKey: Contact.legacyPendingAttributesKey
+            forKey: AirshipContact.legacyPendingAttributesKey
         )
 
         let tags: [TagGroupsMutation] = []
@@ -160,12 +160,12 @@ class ContactTest: XCTestCase {
         )
         dataStore.setObject(
             [tagData],
-            forKey: Contact.legacyPendingTagGroupsKey
+            forKey: AirshipContact.legacyPendingTagGroupsKey
         )
 
         self.dataStore.setObject(
             "named-user",
-            forKey: Contact.legacyNamedUserKey
+            forKey: AirshipContact.legacyNamedUserKey
         )
         self.contact.migrateNamedUser()
 
@@ -198,10 +198,10 @@ class ContactTest: XCTestCase {
         }
 
         let request = self.workManager.workRequests[0]
-        XCTAssertEqual(request.workID, Contact.updateTaskID)
+        XCTAssertEqual(request.workID, AirshipContact.updateTaskID)
         let result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -210,7 +210,7 @@ class ContactTest: XCTestCase {
 
         self.dataStore.setObject(
             "named-user",
-            forKey: Contact.legacyNamedUserKey
+            forKey: AirshipContact.legacyNamedUserKey
         )
         self.contact.migrateNamedUser()
 
@@ -220,7 +220,7 @@ class ContactTest: XCTestCase {
     func testNoPendingOperations() async throws {
         _ = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
                                     
@@ -252,7 +252,7 @@ class ContactTest: XCTestCase {
 
         let result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -290,7 +290,7 @@ class ContactTest: XCTestCase {
 
         let result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -327,7 +327,7 @@ class ContactTest: XCTestCase {
 
         let result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -359,7 +359,7 @@ class ContactTest: XCTestCase {
 
         var result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -375,7 +375,7 @@ class ContactTest: XCTestCase {
         XCTAssertEqual(0, self.workManager.workRequests.count)
         result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -383,7 +383,7 @@ class ContactTest: XCTestCase {
     }
 
     func testChannelCreatedResolves() async throws {
-        notificationCenter.post(Notification(name: Channel.channelCreatedEvent))
+        notificationCenter.post(Notification(name: AirshipChannel.channelCreatedEvent))
 
         XCTAssertEqual(1, self.workManager.workRequests.count)
 
@@ -403,7 +403,7 @@ class ContactTest: XCTestCase {
 
         let result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -439,11 +439,10 @@ class ContactTest: XCTestCase {
 
         let result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
-
 
         wait(for: [expectation], timeout: 10.0)
     }
@@ -469,7 +468,7 @@ class ContactTest: XCTestCase {
 
         let result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -504,7 +503,7 @@ class ContactTest: XCTestCase {
 
         var result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -537,7 +536,7 @@ class ContactTest: XCTestCase {
 
         result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -572,7 +571,7 @@ class ContactTest: XCTestCase {
 
         var result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -604,7 +603,7 @@ class ContactTest: XCTestCase {
 
         result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .failure)
@@ -635,7 +634,7 @@ class ContactTest: XCTestCase {
 
         var result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -668,7 +667,7 @@ class ContactTest: XCTestCase {
 
         result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -700,7 +699,7 @@ class ContactTest: XCTestCase {
 
         var result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -725,7 +724,7 @@ class ContactTest: XCTestCase {
 
         result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .failure)
@@ -759,7 +758,7 @@ class ContactTest: XCTestCase {
 
         var result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -791,7 +790,7 @@ class ContactTest: XCTestCase {
 
         result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -825,7 +824,7 @@ class ContactTest: XCTestCase {
 
         var result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -849,7 +848,7 @@ class ContactTest: XCTestCase {
 
         result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .failure)
@@ -876,7 +875,7 @@ class ContactTest: XCTestCase {
         
         var result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -907,7 +906,7 @@ class ContactTest: XCTestCase {
 
         result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -934,7 +933,7 @@ class ContactTest: XCTestCase {
 
         var result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -958,7 +957,7 @@ class ContactTest: XCTestCase {
 
         result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .failure)
@@ -1008,35 +1007,35 @@ class ContactTest: XCTestCase {
         // identify
         var result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
         // reset
         result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
         // identify
         result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
         // reset
         result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
         // no-op
         result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -1106,42 +1105,42 @@ class ContactTest: XCTestCase {
         // resolve
         var result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
         // update
         result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
         // reset
         result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
         // update
         result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
         // reset
         result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
         // no-op
         result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -1178,7 +1177,7 @@ class ContactTest: XCTestCase {
 
         var result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -1207,7 +1206,7 @@ class ContactTest: XCTestCase {
 
         result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -1249,7 +1248,7 @@ class ContactTest: XCTestCase {
 
         var result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -1277,7 +1276,7 @@ class ContactTest: XCTestCase {
 
         result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -1286,7 +1285,7 @@ class ContactTest: XCTestCase {
 
         result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -1295,11 +1294,11 @@ class ContactTest: XCTestCase {
 
     func testSkipResolves() async throws {
         self.contact.identify("one")
-        notificationCenter.post(Notification(name: Channel.channelCreatedEvent))
-        notificationCenter.post(Notification(name: Channel.channelCreatedEvent))
-        notificationCenter.post(Notification(name: Channel.channelCreatedEvent))
-        notificationCenter.post(Notification(name: Channel.channelCreatedEvent))
-        notificationCenter.post(Notification(name: Channel.channelCreatedEvent))
+        notificationCenter.post(Notification(name: AirshipChannel.channelCreatedEvent))
+        notificationCenter.post(Notification(name: AirshipChannel.channelCreatedEvent))
+        notificationCenter.post(Notification(name: AirshipChannel.channelCreatedEvent))
+        notificationCenter.post(Notification(name: AirshipChannel.channelCreatedEvent))
+        notificationCenter.post(Notification(name: AirshipChannel.channelCreatedEvent))
 
         self.apiClient.resolveCallback = { channelID in
             XCTFail()
@@ -1331,7 +1330,7 @@ class ContactTest: XCTestCase {
 
         var result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -1341,21 +1340,21 @@ class ContactTest: XCTestCase {
         // queue should be empty
         result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
 
         result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
 
         result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -1440,28 +1439,28 @@ class ContactTest: XCTestCase {
         // resolve
         var result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
         // tags
         result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
         // attributes
         result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
         // identify
         result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -1535,29 +1534,29 @@ class ContactTest: XCTestCase {
         // resolve
         var result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
         // tags
         result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
         // attributes
         result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
         // resolve with conflict
-        notificationCenter.post(Notification(name: Channel.channelCreatedEvent))
+        notificationCenter.post(Notification(name: AirshipChannel.channelCreatedEvent))
         result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -1568,10 +1567,10 @@ class ContactTest: XCTestCase {
     func testResolveSkippedContactsDisabled() async throws {
         self.privacyManager.disableFeatures(.contacts)
 
-        notificationCenter.post(Notification(name: Channel.channelCreatedEvent))
+        notificationCenter.post(Notification(name: AirshipChannel.channelCreatedEvent))
         let result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -1590,7 +1589,7 @@ class ContactTest: XCTestCase {
 
         var result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -1603,7 +1602,7 @@ class ContactTest: XCTestCase {
 
         result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -1616,7 +1615,7 @@ class ContactTest: XCTestCase {
 
         let result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -1641,7 +1640,7 @@ class ContactTest: XCTestCase {
         // identify
         var result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -1663,14 +1662,14 @@ class ContactTest: XCTestCase {
        
         self.privacyManager.disableFeatures(.contacts)
         notificationCenter.post(
-            name: PrivacyManager.changeEvent,
+            name: AirshipPrivacyManager.changeEvent,
             object: nil
         )
             
         // reset
         result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -1700,13 +1699,13 @@ class ContactTest: XCTestCase {
 
         var result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .failure)
         result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .failure)
@@ -1732,13 +1731,13 @@ class ContactTest: XCTestCase {
 
         var result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .failure)
         result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .failure)
@@ -1764,7 +1763,7 @@ class ContactTest: XCTestCase {
 
         var result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -1786,13 +1785,13 @@ class ContactTest: XCTestCase {
 
         result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .failure)
         result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .failure)
@@ -1819,13 +1818,13 @@ class ContactTest: XCTestCase {
 
         var result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .failure)
         result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .failure)
@@ -1851,7 +1850,7 @@ class ContactTest: XCTestCase {
         }
         let result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -1894,7 +1893,7 @@ class ContactTest: XCTestCase {
         }
         let result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -1932,7 +1931,7 @@ class ContactTest: XCTestCase {
         }
         let result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -1979,7 +1978,7 @@ class ContactTest: XCTestCase {
         }
         let result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -2062,7 +2061,7 @@ class ContactTest: XCTestCase {
         }
         var result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -2108,7 +2107,7 @@ class ContactTest: XCTestCase {
         }
         result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -2148,7 +2147,7 @@ class ContactTest: XCTestCase {
         }
         let result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -2198,7 +2197,7 @@ class ContactTest: XCTestCase {
         }
         var result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)
@@ -2223,7 +2222,7 @@ class ContactTest: XCTestCase {
         }
         result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
-                workID: Contact.updateTaskID
+                workID: AirshipContact.updateTaskID
             )
         )
         XCTAssertEqual(result, .success)

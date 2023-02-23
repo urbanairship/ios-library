@@ -11,7 +11,7 @@ import UIKit
 
 /// This singleton provides an interface to the functionality provided by the Airship iOS Push API.
 @objc(UAPush)
-public class Push: NSObject, Component, PushProtocol {
+public class AirshipPush: NSObject, Component, PushProtocol {
 
     private let pushTokenSubject = PassthroughSubject<String?, Never>()
     private var pushTokenPublisher: AnyPublisher<String?, Never> {
@@ -33,7 +33,7 @@ public class Push: NSObject, Component, PushProtocol {
 
     /// The shared Push instance.
     @objc
-    public static var shared: Push {
+    public static var shared: AirshipPush {
         return Airship.push
     }
 
@@ -113,8 +113,8 @@ public class Push: NSObject, Component, PushProtocol {
     private let config: RuntimeConfig
     private let dataStore: PreferenceDataStore
     private let channel: ChannelProtocol
-    private let privacyManager: PrivacyManager
-    private let permissionsManager: PermissionsManager
+    private let privacyManager: AirshipPrivacyManager
+    private let permissionsManager: AirshipPermissionsManager
     private let notificationCenter: NotificationCenter
     private let notificationRegistrar: NotificationRegistrar
 
@@ -163,8 +163,8 @@ public class Push: NSObject, Component, PushProtocol {
         dataStore: PreferenceDataStore,
         channel: ChannelProtocol,
         analytics: InternalAnalyticsProtocol,
-        privacyManager: PrivacyManager,
-        permissionsManager: PermissionsManager,
+        privacyManager: AirshipPrivacyManager,
+        permissionsManager: AirshipPermissionsManager,
         notificationCenter: NotificationCenter = NotificationCenter.default,
         notificationRegistrar: NotificationRegistrar =
             UNNotificationRegistrar(),
@@ -226,7 +226,7 @@ public class Push: NSObject, Component, PushProtocol {
         ) {
             self.dataStore.setBool(
                 true,
-                forKey: Push.userPushNotificationsEnabledKey
+                forKey: AirshipPush.userPushNotificationsEnabledKey
             )
             self.privacyManager.enableFeatures(.push)
             self.channel.updateRegistration()
@@ -284,7 +284,7 @@ public class Push: NSObject, Component, PushProtocol {
         self.notificationCenter.addObserver(
             self,
             selector: #selector(onEnabledFeaturesChanged),
-            name: PrivacyManager.changeEvent,
+            name: AirshipPrivacyManager.changeEvent,
             object: nil
         )
     }
@@ -297,7 +297,7 @@ public class Push: NSObject, Component, PushProtocol {
             let previous = self.backgroundPushNotificationsEnabled
             self.dataStore.setBool(
                 newValue,
-                forKey: Push.backgroundPushNotificationsEnabledKey
+                forKey: AirshipPush.backgroundPushNotificationsEnabledKey
             )
             if !previous == newValue {
                 self.channel.updateRegistration()
@@ -305,7 +305,7 @@ public class Push: NSObject, Component, PushProtocol {
         }
         get {
             return self.dataStore.bool(
-                forKey: Push.backgroundPushNotificationsEnabledKey,
+                forKey: AirshipPush.backgroundPushNotificationsEnabledKey,
                 defaultValue: true
             )
         }
@@ -319,7 +319,7 @@ public class Push: NSObject, Component, PushProtocol {
             let previous = self.userPushNotificationsEnabled
             self.dataStore.setBool(
                 newValue,
-                forKey: Push.userPushNotificationsEnabledKey
+                forKey: AirshipPush.userPushNotificationsEnabledKey
             )
             if previous != newValue {
                 self.dispatchUpdateNotifications()
@@ -330,7 +330,7 @@ public class Push: NSObject, Component, PushProtocol {
 
         get {
             return self.dataStore.bool(
-                forKey: Push.userPushNotificationsEnabledKey
+                forKey: AirshipPush.userPushNotificationsEnabledKey
             )
         }
     }
@@ -362,14 +362,14 @@ public class Push: NSObject, Component, PushProtocol {
             if previous != newValue {
                 self.dataStore.setBool(
                     newValue,
-                    forKey: Push.requestExplicitPermissionWhenEphemeralKey
+                    forKey: AirshipPush.requestExplicitPermissionWhenEphemeralKey
                 )
                 self.dispatchUpdateNotifications()
             }
         }
         get {
             return self.dataStore.bool(
-                forKey: Push.requestExplicitPermissionWhenEphemeralKey
+                forKey: AirshipPush.requestExplicitPermissionWhenEphemeralKey
             )
         }
     }
@@ -379,7 +379,7 @@ public class Push: NSObject, Component, PushProtocol {
     public private(set) var deviceToken: String? {
         set {
             guard let deviceToken = newValue else {
-                self.dataStore.removeObject(forKey: Push.deviceTokenKey)
+                self.dataStore.removeObject(forKey: AirshipPush.deviceTokenKey)
                 optInSubject.send(isPushNotificationsOptedIn)
                 return
             }
@@ -408,7 +408,7 @@ public class Push: NSObject, Component, PushProtocol {
 
                 self.dataStore.setObject(
                     deviceToken,
-                    forKey: Push.deviceTokenKey
+                    forKey: AirshipPush.deviceTokenKey
                 )
                 self.deviceTokenAvailableBlock?()
                 AirshipLogger.importantInfo("Device token: \(deviceToken)")
@@ -420,7 +420,7 @@ public class Push: NSObject, Component, PushProtocol {
         }
 
         get {
-            return self.dataStore.string(forKey: Push.deviceTokenKey)
+            return self.dataStore.string(forKey: AirshipPush.deviceTokenKey)
         }
     }
 
@@ -435,7 +435,7 @@ public class Push: NSObject, Component, PushProtocol {
             let previous = self.notificationOptions
             self.dataStore.setObject(
                 NSNumber(value: newValue.rawValue),
-                forKey: Push.pushNotificationsOptionsKey
+                forKey: AirshipPush.pushNotificationsOptionsKey
             )
             if previous != newValue {
                 self.dispatchUpdateNotifications()
@@ -445,7 +445,7 @@ public class Push: NSObject, Component, PushProtocol {
         get {
             guard
                 let value = self.dataStore.object(
-                    forKey: Push.pushNotificationsOptionsKey
+                    forKey: AirshipPush.pushNotificationsOptionsKey
                 ) as? NSNumber
             else {
                 #if os(tvOS)
@@ -534,7 +534,7 @@ public class Push: NSObject, Component, PushProtocol {
         set {
             self.dataStore.setInteger(
                 Int(newValue.rawValue),
-                forKey: Push.typesAuthorizedKey
+                forKey: AirshipPush.typesAuthorizedKey
             )
 
             optInSubject.send(isPushNotificationsOptedIn)
@@ -543,7 +543,7 @@ public class Push: NSObject, Component, PushProtocol {
         get {
             guard
                 let value = self.dataStore.object(
-                    forKey: Push.typesAuthorizedKey
+                    forKey: AirshipPush.typesAuthorizedKey
                 )
                     as? NSNumber
             else {
@@ -561,14 +561,14 @@ public class Push: NSObject, Component, PushProtocol {
         set {
             self.dataStore.setInteger(
                 newValue.rawValue,
-                forKey: Push.authorizationStatusKey
+                forKey: AirshipPush.authorizationStatusKey
             )
         }
 
         get {
             guard
                 let value = self.dataStore.object(
-                    forKey: Push.authorizationStatusKey
+                    forKey: AirshipPush.authorizationStatusKey
                 )
                     as? NSNumber
             else {
@@ -587,12 +587,12 @@ public class Push: NSObject, Component, PushProtocol {
         set {
             self.dataStore.setBool(
                 newValue,
-                forKey: Push.userPromptedForNotificationsKey
+                forKey: AirshipPush.userPromptedForNotificationsKey
             )
         }
         get {
             return self.dataStore.bool(
-                forKey: Push.userPromptedForNotificationsKey
+                forKey: AirshipPush.userPromptedForNotificationsKey
             )
         }
     }
@@ -662,7 +662,7 @@ public class Push: NSObject, Component, PushProtocol {
     ) {
         self.dataStore.setBool(
             true,
-            forKey: Push.userPushNotificationsEnabledKey
+            forKey: AirshipPush.userPushNotificationsEnabledKey
         )
         self.permissionsManager.requestPermission(.displayNotifications) {
             status in
@@ -690,7 +690,7 @@ public class Push: NSObject, Component, PushProtocol {
         await withCheckedContinuation { continuation in
             let cancelTask = Task { @MainActor in
                 try await Task.sleep(
-                    nanoseconds: UInt64(Push.deviceTokenRegistrationWaitTime * 1_000_000_000)
+                    nanoseconds: UInt64(AirshipPush.deviceTokenRegistrationWaitTime * 1_000_000_000)
                 )
                 subscription?.cancel()
                 try Task.checkCancellation()
@@ -847,14 +847,14 @@ public class Push: NSObject, Component, PushProtocol {
             if self.autobadgeEnabled != newValue {
                 self.dataStore.setBool(
                     newValue,
-                    forKey: Push.badgeSettingsKey
+                    forKey: AirshipPush.badgeSettingsKey
                 )
                 self.channel.updateRegistration(forcefully: true)
             }
         }
 
         get {
-            return self.dataStore.bool(forKey: Push.badgeSettingsKey)
+            return self.dataStore.bool(forKey: AirshipPush.badgeSettingsKey)
         }
     }
 
@@ -875,13 +875,13 @@ public class Push: NSObject, Component, PushProtocol {
         set {
             self.dataStore.setObject(
                 newValue,
-                forKey: Push.quietTimeSettingsKey
+                forKey: AirshipPush.quietTimeSettingsKey
             )
             self.channel.updateRegistration()
         }
 
         get {
-            return self.dataStore.dictionary(forKey: Push.quietTimeSettingsKey)
+            return self.dataStore.dictionary(forKey: AirshipPush.quietTimeSettingsKey)
         }
     }
 
@@ -892,13 +892,13 @@ public class Push: NSObject, Component, PushProtocol {
         set {
             self.dataStore.setObject(
                 newValue?.name ?? nil,
-                forKey: Push.timeZoneSettingsKey
+                forKey: AirshipPush.timeZoneSettingsKey
             )
         }
 
         get {
             let timeZoneName =
-                self.dataStore.string(forKey: Push.timeZoneSettingsKey) ?? ""
+                self.dataStore.string(forKey: AirshipPush.timeZoneSettingsKey) ?? ""
             return NSTimeZone(name: timeZoneName) ?? NSTimeZone.default
                 as NSTimeZone
         }
@@ -910,12 +910,12 @@ public class Push: NSObject, Component, PushProtocol {
         set {
             self.dataStore.setBool(
                 newValue,
-                forKey: Push.quietTimeEnabledSettingsKey
+                forKey: AirshipPush.quietTimeEnabledSettingsKey
             )
         }
 
         get {
-            return self.dataStore.bool(forKey: Push.quietTimeEnabledSettingsKey)
+            return self.dataStore.bool(forKey: AirshipPush.quietTimeEnabledSettingsKey)
         }
     }
 
@@ -966,8 +966,8 @@ public class Push: NSObject, Component, PushProtocol {
         )
 
         self.quietTime = [
-            Push.quietTimeStartKey: startTimeString,
-            Push.quietTimeEndKey: endTimeString,
+            AirshipPush.quietTimeStartKey: startTimeString,
+            AirshipPush.quietTimeEndKey: endTimeString,
         ]
     }
 
@@ -1109,9 +1109,9 @@ public class Push: NSObject, Component, PushProtocol {
 #endif
 
         if let timeZoneName = self.timeZone?.name,
-           let quietTimeStart = self.quietTime?[Push.quietTimeStartKey]
+           let quietTimeStart = self.quietTime?[AirshipPush.quietTimeStartKey]
             as? String,
-           let quietTimeEnd = self.quietTime?[Push.quietTimeEndKey]
+           let quietTimeEnd = self.quietTime?[AirshipPush.quietTimeEndKey]
             as? String,
            self.quietTimeEnabled
         {
@@ -1158,13 +1158,13 @@ public class Push: NSObject, Component, PushProtocol {
 }
 
 /// - Note: For internal use only. :nodoc:
-extension Push: InternalPushProtocol {
+extension AirshipPush: InternalPushProtocol {
     public func didRegisterForRemoteNotifications(_ deviceToken: Data) {
         guard self.privacyManager.isEnabled(.push) else {
             return
         }
 
-        let tokenString = Utils.deviceTokenStringFromDeviceToken(deviceToken)
+        let tokenString = AirshipUtils.deviceTokenStringFromDeviceToken(deviceToken)
         AirshipLogger.info("Device token string: \(tokenString)")
         self.deviceToken = tokenString
         self.channel.updateRegistration()
@@ -1200,16 +1200,16 @@ extension Push: InternalPushProtocol {
                 // build the options bitmask from the array
                 for presentationOption in payloadPresentationOptions {
                     switch presentationOption {
-                    case Push.presentationOptionBadge:
+                    case AirshipPush.presentationOptionBadge:
                         options.insert(.badge)
-                    case Push.presentationOptionAlert:
+                    case AirshipPush.presentationOptionAlert:
                         options.insert(.list)
                         options.insert(.banner)
-                    case Push.presentationOptionSound:
+                    case AirshipPush.presentationOptionSound:
                         options.insert(.sound)
-                    case Push.presentationOptionList:
+                    case AirshipPush.presentationOptionList:
                         options.insert(.list)
-                    case Push.presentationOptionBanner:
+                    case AirshipPush.presentationOptionBanner:
                         options.insert(.banner)
                     default:
                         break
@@ -1254,10 +1254,10 @@ extension Push: InternalPushProtocol {
         }
 
         self.notificationCenter.post(
-            name: Push.receivedNotificationResponseEvent,
+            name: AirshipPush.receivedNotificationResponseEvent,
             object: self,
             userInfo: [
-                Push.receivedNotificationResponseEventResponseKey: response
+                AirshipPush.receivedNotificationResponseEventResponseKey: response
             ]
         )
 
@@ -1291,7 +1291,7 @@ extension Push: InternalPushProtocol {
 
         if isForeground {
             self.notificationCenter.post(
-                name: Push.receivedForegroundNotificationEvent,
+                name: AirshipPush.receivedForegroundNotificationEvent,
                 object: self,
                 userInfo: notification
             )
@@ -1315,7 +1315,7 @@ extension Push: InternalPushProtocol {
             }
         } else {
             self.notificationCenter.post(
-                name: Push.receivedBackgroundNotificationEvent,
+                name: AirshipPush.receivedBackgroundNotificationEvent,
                 object: self,
                 userInfo: notification
             )
@@ -1344,14 +1344,14 @@ extension Push: InternalPushProtocol {
         // get the presentation options from the the notification
         presentationOptions =
             notification.request.content.userInfo[
-                Push.ForegroundPresentationkey
+                AirshipPush.ForegroundPresentationkey
             ]
             as? [String]
 
         if presentationOptions == nil {
             presentationOptions =
                 notification.request.content.userInfo[
-                    Push.ForegroundPresentationLegacykey
+                    AirshipPush.ForegroundPresentationLegacykey
                 ] as? [String]
         }
         #endif

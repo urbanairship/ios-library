@@ -16,7 +16,7 @@ public protocol AirshipLogHandler {
     ///     - function: The function.
     @objc
     func log(
-        logLevel: LogLevel,
+        logLevel: AirshipLogLevel,
         message: String,
         fileID: String,
         line: UInt,

@@ -31,7 +31,7 @@ public class MessageCenterUser: NSObject, Codable {
 extension MessageCenterUser {
     @objc
     public var basicAuthString: String {
-        return Utils.authHeader(
+        return AirshipUtils.authHeader(
             username: self.username,
             password: self.password
         ) ?? ""

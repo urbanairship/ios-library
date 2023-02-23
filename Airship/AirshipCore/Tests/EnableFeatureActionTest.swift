@@ -156,7 +156,7 @@ class EnableFeatureActionTest: XCTestCase {
         let resultReceived = self.expectation(description: "Result received")
 
         let resultRecevier:
-            (Permission, PermissionStatus, PermissionStatus) -> Void = {
+            (AirshipPermission, AirshipPermissionStatus, AirshipPermissionStatus) -> Void = {
                 permission,
                 start,
                 end in

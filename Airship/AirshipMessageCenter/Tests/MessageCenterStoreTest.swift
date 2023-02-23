@@ -8,7 +8,7 @@ import XCTest
 final class MessageCenterStoreTest: XCTestCase {
     private var dataStore = PreferenceDataStore(appKey: UUID().uuidString)
     private lazy var config = RuntimeConfig(
-        config: Config(),
+        config: AirshipConfig(),
         dataStore: dataStore
     )
     private lazy var store: MessageCenterStore = {

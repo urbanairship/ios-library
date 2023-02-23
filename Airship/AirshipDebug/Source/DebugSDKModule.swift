@@ -22,7 +22,7 @@ public class DebugSDKModule: NSObject, SDKModule {
     public static func load(withDependencies dependencies: [AnyHashable: Any])
         -> SDKModule?
     {
-        let analytics = dependencies[SDKDependencyKeys.analytics] as! Analytics
+        let analytics = dependencies[SDKDependencyKeys.analytics] as! AirshipAnalytics
         let remoteData =
             dependencies[SDKDependencyKeys.remoteData] as! RemoteDataManager
         let config = dependencies[SDKDependencyKeys.config] as! RuntimeConfig

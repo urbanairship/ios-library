@@ -182,7 +182,7 @@ struct DeliveryActivityView: View {
 
 extension Data {
     var deviceToken: String {
-        Utils.deviceTokenStringFromDeviceToken(self)
+        AirshipUtils.deviceTokenStringFromDeviceToken(self)
     }
 }
 

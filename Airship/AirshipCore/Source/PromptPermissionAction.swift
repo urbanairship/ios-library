@@ -89,7 +89,7 @@ public class PromptPermissionAction: NSObject, Action {
     internal struct Args: Decodable {
         let enableAirshipUsage: Bool?
         let fallbackSystemSettings: Bool?
-        let permission: Permission
+        let permission: AirshipPermission
 
         enum CodingKeys: String, CodingKey {
             case enableAirshipUsage = "enable_airship_usage"
@@ -100,7 +100,7 @@ public class PromptPermissionAction: NSObject, Action {
 
     @objc
     public class func makePermissionReceiverMetadata(
-        resultReceiver: @escaping (Permission, PermissionStatus, PermissionStatus) -> Void
+        resultReceiver: @escaping (AirshipPermission, AirshipPermissionStatus, AirshipPermissionStatus) -> Void
     ) -> [AnyHashable: Any] {
         return [
             PromptPermissionAction.resultReceiverMetadataKey: resultReceiver

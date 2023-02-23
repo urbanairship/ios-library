@@ -185,7 +185,7 @@ public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
         }
 
         notificationCenter.addObserver(
-            forName: Channel.channelCreatedEvent,
+            forName: AirshipChannel.channelCreatedEvent,
             object: nil,
             queue: nil
         ) { [weak self] _ in

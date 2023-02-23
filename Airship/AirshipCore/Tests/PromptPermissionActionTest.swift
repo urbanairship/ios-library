@@ -44,7 +44,7 @@ class PromptPermissionActionTest: XCTestCase {
 
     func testPrompt() throws {
         let actionValue: [String: Any] = [
-            "permission": Permission.location.stringValue,
+            "permission": AirshipPermission.location.stringValue,
             "enable_airship_usage": true,
             "fallback_system_settings": true,
         ]
@@ -78,7 +78,7 @@ class PromptPermissionActionTest: XCTestCase {
 
     func testPromptDefaultArguments() throws {
         let actionValue = [
-            "permission": Permission.displayNotifications.stringValue
+            "permission": AirshipPermission.displayNotifications.stringValue
         ]
         let arguments = ActionArguments(
             value: actionValue,
@@ -136,13 +136,13 @@ class PromptPermissionActionTest: XCTestCase {
 
     func testResultReceiver() throws {
         let actionValue: [String: Any] = [
-            "permission": Permission.location.stringValue
+            "permission": AirshipPermission.location.stringValue
         ]
 
         let resultReceived = self.expectation(description: "Result received")
 
         let resultRecevier:
-            (Permission, PermissionStatus, PermissionStatus) -> Void = {
+            (AirshipPermission, AirshipPermissionStatus, AirshipPermissionStatus) -> Void = {
                 permission,
                 start,
                 end in

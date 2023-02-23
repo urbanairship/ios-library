@@ -22,7 +22,7 @@ class AirshipBaseTest: XCTestCase {
      * lazily when first used.
      */
     lazy var config: RuntimeConfig = {
-        let config = Config()
+        let config = AirshipConfig()
         config.inProduction = false
         config.site = .us
         config.developmentAppKey = "test-app-key";

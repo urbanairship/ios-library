@@ -11,7 +11,7 @@ class ChannelBulkUpdateAPIClientTest: XCTestCase {
     var client: ChannelBulkUpdateAPIClient!
 
     override func setUpWithError() throws {
-        let airshipConfig = Config()
+        let airshipConfig = AirshipConfig()
         airshipConfig.requireInitialRemoteConfigEnabled = false
         self.config = RuntimeConfig(
             config: airshipConfig,
@@ -97,7 +97,7 @@ class ChannelBulkUpdateAPIClientTest: XCTestCase {
                     [
                         "action": "set",
                         "key": "some-attribute",
-                        "timestamp": Utils.isoDateFormatterUTCWithDelimiter()
+                        "timestamp": AirshipUtils.isoDateFormatterUTCWithDelimiter()
                             .string(
                                 from: date
                             ),

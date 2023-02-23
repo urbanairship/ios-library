@@ -100,7 +100,7 @@ extension AudienceUpdate {
         guard !self.attributeUpdates.isEmpty else { return nil }
 
         return self.attributeUpdates.map { update in
-            let timestamp = Utils.isoDateFormatterUTCWithDelimiter()
+            let timestamp = AirshipUtils.isoDateFormatterUTCWithDelimiter()
                 .string(
                     from: update.date
                 )

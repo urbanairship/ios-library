@@ -3,27 +3,27 @@
 import Foundation
 
 typealias PermissionResultReceiver = (
-    Permission, PermissionStatus, PermissionStatus
+    AirshipPermission, AirshipPermissionStatus, AirshipPermissionStatus
 ) -> Void
 
 protocol PermissionPrompter {
 
     func prompt(
-        permission: Permission,
+        permission: AirshipPermission,
         enableAirshipUsage: Bool,
         fallbackSystemSettings: Bool,
-        completionHandler: @escaping (PermissionStatus, PermissionStatus) ->
+        completionHandler: @escaping (AirshipPermissionStatus, AirshipPermissionStatus) ->
             Void
     )
 }
 
 struct AirshipPermissionPrompter: PermissionPrompter {
 
-    private let permissionsManager: PermissionsManager
+    private let permissionsManager: AirshipPermissionsManager
     private let notificationCenter: NotificationCenter
 
     init(
-        permissionsManager: PermissionsManager,
+        permissionsManager: AirshipPermissionsManager,
         notificationCenter: NotificationCenter = NotificationCenter.default
     ) {
         self.permissionsManager = permissionsManager
@@ -31,10 +31,10 @@ struct AirshipPermissionPrompter: PermissionPrompter {
     }
 
     func prompt(
-        permission: Permission,
+        permission: AirshipPermission,
         enableAirshipUsage: Bool,
         fallbackSystemSettings: Bool,
-        completionHandler: @escaping (PermissionStatus, PermissionStatus) ->
+        completionHandler: @escaping (AirshipPermissionStatus, AirshipPermissionStatus) ->
             Void
     ) {
 
@@ -61,8 +61,8 @@ struct AirshipPermissionPrompter: PermissionPrompter {
     #if !os(watchOS)
 
     private func requestSystemSettingsChange(
-        permission: Permission,
-        completionHandler: @escaping (PermissionStatus) -> Void
+        permission: AirshipPermission,
+        completionHandler: @escaping (AirshipPermissionStatus) -> Void
     ) {
         if let url = URL(string: UIApplication.openSettingsURLString) {
             UIApplication.shared.open(url, options: [:]) { _ in

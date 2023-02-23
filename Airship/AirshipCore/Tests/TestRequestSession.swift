@@ -21,7 +21,7 @@ public class TestRequestSession: AirshipRequestSession {
     @objc
     public init() {
         let config = RuntimeConfig(
-            config: Config(),
+            config: AirshipConfig(),
             dataStore: PreferenceDataStore(appKey: UUID().uuidString)
         )
         super.init(appKey:config.appKey)

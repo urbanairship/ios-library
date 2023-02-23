@@ -12,13 +12,13 @@ class ChannelTest: XCTestCase {
     private let appStateTracker = TestAppStateTracker()
     private let notificationCenter = NotificationCenter()
     private let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
-    private var config = Config()
-    private var privacyManager: PrivacyManager!
-    private var channel: Channel!
+    private var config = AirshipConfig()
+    private var privacyManager: AirshipPrivacyManager!
+    private var channel: AirshipChannel!
 
     override func setUpWithError() throws {
 
-        self.privacyManager = PrivacyManager(
+        self.privacyManager = AirshipPrivacyManager(
             dataStore: self.dataStore,
             defaultEnabledFeatures: [],
             notificationCenter: self.notificationCenter
@@ -27,8 +27,8 @@ class ChannelTest: XCTestCase {
         self.channel = createChannel()
     }
 
-    private func createChannel() -> Channel {
-        return Channel(
+    private func createChannel() -> AirshipChannel {
+        return AirshipChannel(
             dataStore: self.dataStore,
             config: RuntimeConfig(
                 config: self.config,
@@ -151,11 +151,11 @@ class ChannelTest: XCTestCase {
         expectedPayload.channel.timeZone =
             TimeZone.autoupdatingCurrent.identifier
         expectedPayload.channel.tags = ["foo", "bar"]
-        expectedPayload.channel.appVersion = Utils.bundleShortVersionString()
+        expectedPayload.channel.appVersion = AirshipUtils.bundleShortVersionString()
         expectedPayload.channel.sdkVersion = AirshipVersion.get()
         expectedPayload.channel.deviceOS = await UIDevice.current.systemVersion
-        expectedPayload.channel.deviceModel = Utils.deviceModelName()
-        expectedPayload.channel.carrier = Utils.carrierName()
+        expectedPayload.channel.deviceModel = AirshipUtils.deviceModelName()
+        expectedPayload.channel.carrier = AirshipUtils.carrierName()
         expectedPayload.channel.setTags = true
 
         let payload = await self.channelRegistrar.channelPayload
@@ -173,11 +173,11 @@ class ChannelTest: XCTestCase {
         expectedPayload.channel.country = Locale.autoupdatingCurrent.regionCode
         expectedPayload.channel.timeZone =
             TimeZone.autoupdatingCurrent.identifier
-        expectedPayload.channel.appVersion = Utils.bundleShortVersionString()
+        expectedPayload.channel.appVersion = AirshipUtils.bundleShortVersionString()
         expectedPayload.channel.sdkVersion = AirshipVersion.get()
         expectedPayload.channel.deviceOS = await UIDevice.current.systemVersion
-        expectedPayload.channel.deviceModel = Utils.deviceModelName()
-        expectedPayload.channel.carrier = Utils.carrierName()
+        expectedPayload.channel.deviceModel = AirshipUtils.deviceModelName()
+        expectedPayload.channel.carrier = AirshipUtils.carrierName()
         expectedPayload.channel.setTags = false
 
         let payload = await self.channelRegistrar.channelPayload
@@ -229,13 +229,13 @@ class ChannelTest: XCTestCase {
         self.privacyManager.enableFeatures(.all)
 
         let expectedUserInfo: [String: Any] = [
-            Channel.channelExistingKey: true,
-            Channel.channelIdentifierKey: "someChannelID",
+            AirshipChannel.channelExistingKey: true,
+            AirshipChannel.channelIdentifierKey: "someChannelID",
         ]
 
         let expectation = self.expectation(description: "Notification received")
         self.notificationCenter.addObserver(
-            forName: Channel.channelCreatedEvent,
+            forName: AirshipChannel.channelCreatedEvent,
             object: nil,
             queue: nil
         ) { notification in
@@ -260,13 +260,13 @@ class ChannelTest: XCTestCase {
         self.privacyManager.enableFeatures(.all)
 
         let expectedUserInfo: [String: Any] = [
-            Channel.channelExistingKey: false,
-            Channel.channelIdentifierKey: "someChannelID",
+            AirshipChannel.channelExistingKey: false,
+            AirshipChannel.channelIdentifierKey: "someChannelID",
         ]
 
         let expectation = self.expectation(description: "Notification received")
         self.notificationCenter.addObserver(
-            forName: Channel.channelCreatedEvent,
+            forName: AirshipChannel.channelCreatedEvent,
             object: nil,
             queue: nil
         ) { notification in
@@ -298,7 +298,7 @@ class ChannelTest: XCTestCase {
         let expectation = self.expectation(description: "Notification received")
 
         self.notificationCenter.addObserver(
-            forName: Channel.channelCreatedEvent,
+            forName: AirshipChannel.channelCreatedEvent,
             object: nil,
             queue: nil
         ) { notification in
@@ -319,13 +319,13 @@ class ChannelTest: XCTestCase {
         self.privacyManager.enableFeatures(.all)
 
         let expectedUserInfo: [String: Any] = [
-            Channel.channelIdentifierKey: "someChannelID",
+            AirshipChannel.channelIdentifierKey: "someChannelID",
         ]
 
         
         let expectation = self.expectation(description: "Notification received")
         self.notificationCenter.addObserver(
-            forName: Channel.channelUpdatedEvent,
+            forName: AirshipChannel.channelUpdatedEvent,
             object: nil,
             queue: nil
         ) { notification in
@@ -350,7 +350,7 @@ class ChannelTest: XCTestCase {
         self.channelRegistrar.registerCalled = false
 
         self.notificationCenter.post(
-            name: LocaleManager.localeUpdatedEvent,
+            name: AirshipLocaleManager.localeUpdatedEvent,
             object: nil
         )
 

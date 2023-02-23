@@ -28,7 +28,7 @@ class PushSettingsViewController: UITableViewController, RegistrationDelegate {
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(PushSettingsViewController.refreshView),
-            name: Channel.channelCreatedEvent,
+            name: AirshipChannel.channelCreatedEvent,
             object: nil
         )
 

@@ -11,7 +11,7 @@ final class MessageCenterListTest: XCTestCase {
     private var disposables = Set<AnyCancellable>()
     private let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
     private lazy var config = RuntimeConfig(
-        config: Config(),
+        config: AirshipConfig(),
         dataStore: dataStore
     )
     private lazy var store: MessageCenterStore = {

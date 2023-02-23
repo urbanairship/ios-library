@@ -6,7 +6,7 @@ import Foundation
 /// The simplest way to use this class is to add an AirshipConfig.plist file in your app's bundle and set
 /// the desired options.
 @objc(UAConfig)
-public class Config: NSObject, NSCopying {
+public class AirshipConfig: NSObject, NSCopying {
 
     /// The development app key. This should match the application on go.urbanairship.com that is
     /// configured with your development push certificate.
@@ -32,11 +32,11 @@ public class Config: NSObject, NSCopying {
 
     /// The log level used for development apps. Defaults to `debug`.
     @objc
-    public var developmentLogLevel: LogLevel = .debug
+    public var developmentLogLevel: AirshipLogLevel = .debug
 
     /// The log level used for production apps. Defaults to `error`.
     @objc
-    public var productionLogLevel: LogLevel = .error
+    public var productionLogLevel: AirshipLogLevel = .error
 
     /// The airship cloud site. Defaults to `us`.
     @objc
@@ -113,7 +113,7 @@ public class Config: NSObject, NSCopying {
                 FileManager.default.fileExists(atPath: profilePath)
             {
                 _usesProductionPushServer =
-                    Config.isProductionProvisioningProfile(
+                AirshipConfig.isProductionProvisioningProfile(
                         profilePath
                     )
             } else {
@@ -293,7 +293,7 @@ public class Config: NSObject, NSCopying {
     /// Returns the resolved log level.
     /// - Returns: The resolved log level.
     @objc
-    public var logLevel: LogLevel {
+    public var logLevel: AirshipLogLevel {
         return inProduction ? productionLogLevel : developmentLogLevel
     }
 
@@ -308,8 +308,8 @@ public class Config: NSObject, NSCopying {
     /// Creates an instance using the values set in the `AirshipConfig.plist` file.
     /// - Returns: A config with values from `AirshipConfig.plist` file.
     @objc(defaultConfig)
-    public class func `default`() -> Config {
-        return Config(
+    public class func `default`() -> AirshipConfig {
+        return AirshipConfig(
             contentsOfFile: Bundle.main.path(
                 forResource: "AirshipConfig",
                 ofType: "plist"
@@ -323,15 +323,15 @@ public class Config: NSObject, NSCopying {
      * - Returns: A config with values from the specified file.
      */
     @objc
-    public class func config(contentsOfFile path: String?) -> Config {
-        return Config(contentsOfFile: path)
+    public class func config(contentsOfFile path: String?) -> AirshipConfig {
+        return AirshipConfig(contentsOfFile: path)
     }
 
     /// Creates an instance with empty values.
     /// - Returns: A config with empty values.
     @objc
-    public class func config() -> Config {
-        return Config()
+    public class func config() -> AirshipConfig {
+        return AirshipConfig()
     }
 
     /**
@@ -373,7 +373,7 @@ public class Config: NSObject, NSCopying {
         #endif
     }
 
-    init(_ config: Config) {
+    init(_ config: AirshipConfig) {
         developmentAppKey = config.developmentAppKey
         developmentAppSecret = config.developmentAppSecret
         productionAppKey = config.productionAppKey
@@ -416,7 +416,7 @@ public class Config: NSObject, NSCopying {
     }
 
     public func copy(with zone: NSZone? = nil) -> Any {
-        return Config(self)
+        return AirshipConfig(self)
     }
 
     public override var description: String {
@@ -653,24 +653,24 @@ public class Config: NSObject, NSCopying {
                     || propertyType == CloudSite?.self
                 {
                     // we do all the work to parse it to a log level, but setValue(forKey:) does not work for enums
-                    normalizedValue = Config.coerceSite(value)?.rawValue
-                } else if propertyType == LogLevel.self
-                    || propertyType == LogLevel?.self
+                    normalizedValue = AirshipConfig.coerceSite(value)?.rawValue
+                } else if propertyType == AirshipLogLevel.self
+                    || propertyType == AirshipLogLevel?.self
                 {
                     // we do all the work to parse it to a log level, but setValue(forKey:) does not work for enums
-                    normalizedValue = Config.coerceLogLevel(value)?.rawValue
+                    normalizedValue = AirshipConfig.coerceLogLevel(value)?.rawValue
                 } else if propertyType == Features.self
                     || propertyType == Features?.self
                 {
-                    normalizedValue = Config.coerceFeatures(value)?.rawValue
+                    normalizedValue = AirshipConfig.coerceFeatures(value)?.rawValue
                 } else if propertyType == String.self
                     || propertyType == String?.self
                 {
-                    normalizedValue = Config.coerceString(value)
+                    normalizedValue = AirshipConfig.coerceString(value)
                 } else if propertyType == Bool.self
                     || propertyType == Bool?.self
                 {
-                    normalizedValue = Config.coerceBool(value)
+                    normalizedValue = AirshipConfig.coerceBool(value)
                 } else {
                     normalizedValue = value
                 }
@@ -745,21 +745,21 @@ public class Config: NSObject, NSCopying {
         return nil
     }
 
-    private class func coerceLogLevel(_ value: Any) -> LogLevel? {
-        if let logLevel = value as? LogLevel {
+    private class func coerceLogLevel(_ value: Any) -> AirshipLogLevel? {
+        if let logLevel = value as? AirshipLogLevel {
             return logLevel
         }
 
         if let rawValue = value as? Int {
-            return LogLevel(rawValue: rawValue)
+            return AirshipLogLevel(rawValue: rawValue)
         }
 
         if let rawValue = value as? UInt {
-            return LogLevel(rawValue: Int(rawValue))
+            return AirshipLogLevel(rawValue: Int(rawValue))
         }
 
         if let number = value as? NSNumber {
-            return LogLevel(rawValue: number.intValue)
+            return AirshipLogLevel(rawValue: number.intValue)
         }
 
         if let string = value as? String {
@@ -767,7 +767,7 @@ public class Config: NSObject, NSCopying {
                 return LogLevelNames(rawValue: string.lowercased())?
                     .toLogLevel()
             }
-            return LogLevel(rawValue: int)
+            return AirshipLogLevel(rawValue: int)
         }
 
         return nil
@@ -912,22 +912,22 @@ private enum LogLevelNames: String {
     case debug
     case trace
 
-    func toLogLevel() -> LogLevel {
+    func toLogLevel() -> AirshipLogLevel {
         switch self {
         case .undefined:
-            return LogLevel.undefined
+            return AirshipLogLevel.undefined
         case .debug:
-            return LogLevel.debug
+            return AirshipLogLevel.debug
         case .none:
-            return LogLevel.none
+            return AirshipLogLevel.none
         case .error:
-            return LogLevel.error
+            return AirshipLogLevel.error
         case .warn:
-            return LogLevel.warn
+            return AirshipLogLevel.warn
         case .info:
-            return LogLevel.info
+            return AirshipLogLevel.info
         case .trace:
-            return LogLevel.trace
+            return AirshipLogLevel.trace
         }
     }
 }

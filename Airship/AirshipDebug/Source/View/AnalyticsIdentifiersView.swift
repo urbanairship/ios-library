@@ -52,7 +52,7 @@ struct AnalyticsIdentifiersView: View {
         init() {
             if Airship.isFlying {
                 self.identifiers =
-                    Analytics.shared.currentAssociatedDeviceIdentifiers().allIDs
+                AirshipAnalytics.shared.currentAssociatedDeviceIdentifiers().allIDs
             } else {
                 self.identifiers = [:]
             }
@@ -60,7 +60,7 @@ struct AnalyticsIdentifiersView: View {
 
         func save() {
             guard Airship.isFlying else { return }
-            Analytics.shared.associateDeviceIdentifiers(
+            AirshipAnalytics.shared.associateDeviceIdentifiers(
                 AssociatedIdentifiers(identifiers: self.identifiers)
             )
         }

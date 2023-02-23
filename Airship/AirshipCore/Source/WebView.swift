@@ -25,7 +25,7 @@ public class WebView: WKWebView {
 
     @discardableResult
     public override func load(_ request: URLRequest) -> WKNavigation? {
-        guard Utils.connectionType() != ConnectionType.none else {
+        guard AirshipUtils.connectionType() != ConnectionType.none else {
             // If we have no connection, modify the request object to prefer the most agressive cache policy
             var modifiedRequest = request
             modifiedRequest.cachePolicy = .returnCacheDataElseLoad

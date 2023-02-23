@@ -124,7 +124,7 @@ public protocol ContactProtocol {
 /// Airship contact. A contact is distinct from a channel and  represents a "user"
 /// within Airship. Contacts may be named and have channels associated with it.
 @objc(UAContact)
-public class Contact: NSObject, Component, ContactProtocol {
+public class AirshipContact: NSObject, Component, ContactProtocol {
     static let updateTaskID = "Contact.update"
     static let operationsKey = "Contact.operations"
     static let contactInfoKey = "Contact.contactInfo"
@@ -163,7 +163,7 @@ public class Contact: NSObject, Component, ContactProtocol {
 
     private let dataStore: PreferenceDataStore
     private let config: RuntimeConfig
-    private let privacyManager: PrivacyManager
+    private let privacyManager: AirshipPrivacyManager
     private let channel: InternalChannelProtocol
     private let contactAPIClient: ContactsAPIClientProtocol
     private let workManager: AirshipWorkManagerProtocol
@@ -207,7 +207,7 @@ public class Contact: NSObject, Component, ContactProtocol {
 
     private var lastContactInfo: ContactInfo? {
         get {
-            guard let data = self.dataStore.data(forKey: Contact.contactInfoKey)
+            guard let data = self.dataStore.data(forKey: AirshipContact.contactInfoKey)
             else {
                 return nil
             }
@@ -215,7 +215,7 @@ public class Contact: NSObject, Component, ContactProtocol {
         }
         set {
             if let data = try? self.encoder.encode(newValue) {
-                self.dataStore.setObject(data, forKey: Contact.contactInfoKey)
+                self.dataStore.setObject(data, forKey: AirshipContact.contactInfoKey)
             }
         }
     }
@@ -257,7 +257,7 @@ public class Contact: NSObject, Component, ContactProtocol {
         get {
             guard
                 let data = self.dataStore.data(
-                    forKey: Contact.anonContactDataKey
+                    forKey: AirshipContact.anonContactDataKey
                 )
             else {
                 return nil
@@ -269,7 +269,7 @@ public class Contact: NSObject, Component, ContactProtocol {
         }
         set {
             if let data = try? self.encoder.encode(newValue) {
-                self.dataStore.setObject(data, forKey: Contact.anonContactDataKey)
+                self.dataStore.setObject(data, forKey: AirshipContact.anonContactDataKey)
             }
         }
     }
@@ -277,11 +277,11 @@ public class Contact: NSObject, Component, ContactProtocol {
     private var lastResolveDate: Date {
         get {
             let date =
-                self.dataStore.object(forKey: Contact.resolveDateKey) as? Date
+                self.dataStore.object(forKey: AirshipContact.resolveDateKey) as? Date
             return date ?? Date.distantPast
         }
         set {
-            self.dataStore.setObject(newValue, forKey: Contact.resolveDateKey)
+            self.dataStore.setObject(newValue, forKey: AirshipContact.resolveDateKey)
         }
     }
 
@@ -343,7 +343,7 @@ public class Contact: NSObject, Component, ContactProtocol {
     }
 
     private var isContactIDRefreshed = false
-    private var operationLock = Lock()
+    private var operationLock = AirshipLock()
 
     private let disableHelper: ComponentDisableHelper
 
@@ -359,7 +359,7 @@ public class Contact: NSObject, Component, ContactProtocol {
 
     /// The shared Contact instance.
     @objc
-    public static var shared: Contact {
+    public static var shared: AirshipContact {
         return Airship.contact
     }
 
@@ -371,7 +371,7 @@ public class Contact: NSObject, Component, ContactProtocol {
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,
         channel: InternalChannelProtocol,
-        privacyManager: PrivacyManager,
+        privacyManager: AirshipPrivacyManager,
         contactAPIClient: ContactsAPIClientProtocol,
         workManager: AirshipWorkManagerProtocol,
         notificationCenter: NotificationCenter = NotificationCenter.default,
@@ -404,14 +404,14 @@ public class Contact: NSObject, Component, ContactProtocol {
         }
 
         self.workManager.registerWorker(
-            Contact.updateTaskID,
+            AirshipContact.updateTaskID,
             type: .serial
         ) { [weak self] _ in
             return try await self?.handleUpdateTask() ?? .success
         }
         
-        self.workManager.setRateLimit(Contact.identityRateLimitID, rate: 1, timeInterval: 5.0)
-        self.workManager.setRateLimit(Contact.updateRateLimitID, rate: 1, timeInterval: 0.5)
+        self.workManager.setRateLimit(AirshipContact.identityRateLimitID, rate: 1, timeInterval: 5.0)
+        self.workManager.setRateLimit(AirshipContact.updateRateLimitID, rate: 1, timeInterval: 0.5)
               
         self.channel.addRegistrationExtender { [weak self] payload in
             var payload = payload
@@ -431,14 +431,14 @@ public class Contact: NSObject, Component, ContactProtocol {
         self.notificationCenter.addObserver(
             self,
             selector: #selector(channelCreated),
-            name: Channel.channelCreatedEvent,
+            name: AirshipChannel.channelCreatedEvent,
             object: nil
         )
 
         self.notificationCenter.addObserver(
             self,
             selector: #selector(checkPrivacyManager),
-            name: PrivacyManager.changeEvent,
+            name: AirshipPrivacyManager.changeEvent,
             object: nil
         )
 
@@ -458,8 +458,8 @@ public class Contact: NSObject, Component, ContactProtocol {
     public convenience init(
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,
-        channel: Channel,
-        privacyManager: PrivacyManager
+        channel: AirshipChannel,
+        privacyManager: AirshipPrivacyManager
     ) {
         self.init(
             dataStore: dataStore,
@@ -486,10 +486,10 @@ public class Contact: NSObject, Component, ContactProtocol {
 
         guard
             trimmedID.count > 0
-                && trimmedID.count <= Contact.maxNamedUserIDLength
+                && trimmedID.count <= AirshipContact.maxNamedUserIDLength
         else {
             AirshipLogger.error(
-                "Unable to set named user \(namedUserID). IDs must be between 1 and \(Contact.maxNamedUserIDLength) characters."
+                "Unable to set named user \(namedUserID). IDs must be between 1 and \(AirshipContact.maxNamedUserIDLength) characters."
             )
             return
         }
@@ -803,7 +803,7 @@ public class Contact: NSObject, Component, ContactProtocol {
     @objc
     private func didBecomeActive() {
         if self.date.now.timeIntervalSince(self.lastResolveDate)
-            >= Contact.foregroundResolveInterval
+            >= AirshipContact.foregroundResolveInterval
         {
             resolveContact()
         }
@@ -812,7 +812,7 @@ public class Contact: NSObject, Component, ContactProtocol {
     @objc
     private func channelCreated(notification: NSNotification) {
         let existing =
-            notification.userInfo?[Channel.channelExistingKey] as? Bool
+            notification.userInfo?[AirshipChannel.channelExistingKey] as? Bool
 
         if existing == true && self.config.clearNamedUserOnAppRestore {
             self.reset()
@@ -839,17 +839,17 @@ public class Contact: NSObject, Component, ContactProtocol {
             return
         }
 
-        var rateLimitIDs = [Contact.updateRateLimitID]
+        var rateLimitIDs = [AirshipContact.updateRateLimitID]
 
         switch next.type {
         case .resolve, .identify, .reset:
-            rateLimitIDs.append(Contact.identityRateLimitID)
+            rateLimitIDs.append(AirshipContact.identityRateLimitID)
         default: break
         }
-        
+
         self.workManager.dispatchWorkRequest(
             AirshipWorkRequest(
-                workID: Contact.updateTaskID,
+                workID: AirshipContact.updateTaskID,
                 requiresNetwork: true,
                 rateLimitIDs: rateLimitIDs
             )
@@ -907,7 +907,7 @@ public class Contact: NSObject, Component, ContactProtocol {
                 subscriptionListUpdates: updatePayload.subscriptionListsUpdates
             )
             
-            Contact.logOperationResult(
+            AirshipContact.logOperationResult(
                 operation: operation,
                 success: response.isSuccess
             )
@@ -918,12 +918,12 @@ public class Contact: NSObject, Component, ContactProtocol {
                 }
 
                 let payload: [String: Any] = [
-                    Contact.tagsKey: updatePayload.tagUpdates ?? [],
-                    Contact.attributesKey: updatePayload.attrubuteUpdates
+                    AirshipContact.tagsKey: updatePayload.tagUpdates ?? [],
+                    AirshipContact.attributesKey: updatePayload.attrubuteUpdates
                         ?? [],
                 ]
                 self.notificationCenter.post(
-                    name: Contact.audienceUpdatedEvent,
+                    name: AirshipContact.audienceUpdatedEvent,
                     object: payload
                 )
             }
@@ -946,7 +946,7 @@ public class Contact: NSObject, Component, ContactProtocol {
                 contactID: contactID
             )
             
-            Contact.logOperationResult(
+            AirshipContact.logOperationResult(
                 operation: operation,
                 success: response.isSuccess
             )
@@ -963,7 +963,7 @@ public class Contact: NSObject, Component, ContactProtocol {
         case .reset:
             let response = try await self.contactAPIClient.reset(channelID: channelID)
             
-            Contact.logOperationResult(
+            AirshipContact.logOperationResult(
                 operation: operation,
                 success: response.isSuccess
             )
@@ -976,7 +976,7 @@ public class Contact: NSObject, Component, ContactProtocol {
 
         case .resolve:
             let response = try await self.contactAPIClient.resolve(channelID: channelID)
-            Contact.logOperationResult(
+            AirshipContact.logOperationResult(
                 operation: operation,
                 success: response.isSuccess
             )
@@ -1006,7 +1006,7 @@ public class Contact: NSObject, Component, ContactProtocol {
                 options: registerPayload.options
             )
             
-            Contact.logOperationResult(
+            AirshipContact.logOperationResult(
                 operation: operation,
                 success: response.isSuccess
             )
@@ -1028,7 +1028,7 @@ public class Contact: NSObject, Component, ContactProtocol {
                 msisdn: registerPayload.msisdn,
                 options: registerPayload.options
             )
-            Contact.logOperationResult(
+            AirshipContact.logOperationResult(
                 operation: operation,
                 success: response.isSuccess
             )
@@ -1048,7 +1048,7 @@ public class Contact: NSObject, Component, ContactProtocol {
                 address: registerPayload.address,
                 options: registerPayload.options
             )
-            Contact.logOperationResult(
+            AirshipContact.logOperationResult(
                 operation: operation,
                 success: response.isSuccess
             )
@@ -1068,7 +1068,7 @@ public class Contact: NSObject, Component, ContactProtocol {
                 channelID: payload.channelID,
                 channelType: payload.channelType
             )
-            Contact.logOperationResult(
+            AirshipContact.logOperationResult(
                 operation: operation,
                 success: response.isSuccess
             )
@@ -1208,7 +1208,7 @@ public class Contact: NSObject, Component, ContactProtocol {
             self.anonContactData = nil
             
             self.notificationCenter.post(
-                name: Contact.contactChangedEvent,
+                name: AirshipContact.contactChangedEvent,
                 object: nil
             )
         } else {
@@ -1264,7 +1264,7 @@ public class Contact: NSObject, Component, ContactProtocol {
     private func getOperations() -> [ContactOperation] {
         var result: [ContactOperation]?
         operationLock.sync {
-            if let data = self.dataStore.data(forKey: Contact.operationsKey) {
+            if let data = self.dataStore.data(forKey: AirshipContact.operationsKey) {
                 result = try? self.decoder.decode(
                     [ContactOperation].self,
                     from: data
@@ -1277,7 +1277,7 @@ public class Contact: NSObject, Component, ContactProtocol {
     private func storeOperations(_ operations: [ContactOperation]) {
         operationLock.sync {
             if let data = try? self.encoder.encode(operations) {
-                self.dataStore.setObject(data, forKey: Contact.operationsKey)
+                self.dataStore.setObject(data, forKey: AirshipContact.operationsKey)
             }
         }
     }
@@ -1406,18 +1406,18 @@ public class Contact: NSObject, Component, ContactProtocol {
 
     func migrateNamedUser() {
         defer {
-            self.dataStore.removeObject(forKey: Contact.legacyNamedUserKey)
+            self.dataStore.removeObject(forKey: AirshipContact.legacyNamedUserKey)
             self.dataStore.removeObject(
-                forKey: Contact.legacyPendingTagGroupsKey
+                forKey: AirshipContact.legacyPendingTagGroupsKey
             )
             self.dataStore.removeObject(
-                forKey: Contact.legacyPendingAttributesKey
+                forKey: AirshipContact.legacyPendingAttributesKey
             )
         }
 
         guard
             let legacyNamedUserID = self.dataStore.string(
-                forKey: Contact.legacyNamedUserKey
+                forKey: AirshipContact.legacyNamedUserKey
             )
         else {
             return
@@ -1432,7 +1432,7 @@ public class Contact: NSObject, Component, ContactProtocol {
             var pendingAttributeUpdates: [AttributeUpdate]?
 
             if let pendingTagGroupsData = self.dataStore.data(
-                forKey: Contact.legacyPendingTagGroupsKey
+                forKey: AirshipContact.legacyPendingTagGroupsKey
             ) {
                 let classes = [NSArray.self, TagGroupsMutation.self]
                 let pendingTagGroups = try? NSKeyedUnarchiver.unarchivedObject(
@@ -1450,7 +1450,7 @@ public class Contact: NSObject, Component, ContactProtocol {
             }
 
             if let pendingAttributesData = self.dataStore.data(
-                forKey: Contact.legacyPendingAttributesKey
+                forKey: AirshipContact.legacyPendingAttributesKey
             ) {
 
                 let classes = [NSArray.self, AttributePendingMutations.self]

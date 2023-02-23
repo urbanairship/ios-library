@@ -87,7 +87,7 @@ public class DeepLinkAction: NSObject, Action {
     private func parseURL(_ arguments: ActionArguments) -> URL? {
         if let value = arguments.value as? String {
 
-            if let url = Utils.parseURL(value) {
+            if let url = AirshipUtils.parseURL(value) {
                 return url
             }
 

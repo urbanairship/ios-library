@@ -58,7 +58,7 @@ public class ShareAction: NSObject, Action {
         ]
 
         let viewController = UIViewController()
-        var window: UIWindow? = Utils.presentInNewWindow(
+        var window: UIWindow? = AirshipUtils.presentInNewWindow(
             viewController,
             windowLevel: .alert
         )

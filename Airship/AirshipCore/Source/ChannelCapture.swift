@@ -60,7 +60,7 @@ public class ChannelCapture: NSObject {
 
     convenience init(
         config: RuntimeConfig,
-        channel: Channel
+        channel: AirshipChannel
     ) {
 
         self.init(

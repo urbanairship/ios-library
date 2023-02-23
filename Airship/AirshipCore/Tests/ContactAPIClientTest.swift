@@ -7,18 +7,18 @@ import XCTest
 class ContactAPIClientTest: XCTestCase {
 
     var config: RuntimeConfig!
-    var localeManager: LocaleManager!
+    var localeManager: AirshipLocaleManager!
     var session: TestRequestSession!
     var contactAPIClient: ContactAPIClient!
 
     override func setUpWithError() throws {
-        let airshipConfig = Config()
+        let airshipConfig = AirshipConfig()
         airshipConfig.requireInitialRemoteConfigEnabled = false
         self.config = RuntimeConfig(
             config: airshipConfig,
             dataStore: PreferenceDataStore(appKey: UUID().uuidString)
         )
-        self.localeManager = LocaleManager(
+        self.localeManager = AirshipLocaleManager(
             dataStore: PreferenceDataStore(appKey: config.appKey)
         )
         self.session = TestRequestSession.init()
@@ -118,7 +118,7 @@ class ContactAPIClientTest: XCTestCase {
         )
         let currentLocale = self.localeManager.currentLocale
 
-        let formatter = Utils.isoDateFormatterUTCWithDelimiter()
+        let formatter = AirshipUtils.isoDateFormatterUTCWithDelimiter()
         let previousExpectedBody: Any = [
             "channel": [
                 "type": "email",
@@ -404,7 +404,7 @@ class ContactAPIClientTest: XCTestCase {
             with: request.body!,
             options: []
         )
-        let formattedDate = Utils.isoDateFormatterUTCWithDelimiter()
+        let formattedDate = AirshipUtils.isoDateFormatterUTCWithDelimiter()
             .string(
                 from: date
             )
@@ -500,7 +500,7 @@ class ContactAPIClientTest: XCTestCase {
             with: request.body!,
             options: []
         )
-        let formattedDate = Utils.isoDateFormatterUTCWithDelimiter()
+        let formattedDate = AirshipUtils.isoDateFormatterUTCWithDelimiter()
             .string(
                 from: date
             )

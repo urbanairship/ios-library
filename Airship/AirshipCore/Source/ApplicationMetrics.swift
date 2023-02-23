@@ -10,7 +10,7 @@ public class ApplicationMetrics: NSObject {
 
     private let dataStore: PreferenceDataStore
     private let date: AirshipDate
-    private let privacyManager: PrivacyManager
+    private let privacyManager: AirshipPrivacyManager
 
     private var _isAppVersionUpdated = false
 
@@ -38,13 +38,13 @@ public class ApplicationMetrics: NSObject {
      */
     @objc
     public var currentAppVersion: String? {
-        return Utils.bundleShortVersionString()
+        return AirshipUtils.bundleShortVersionString()
     }
 
     @objc
     public init(
         dataStore: PreferenceDataStore,
-        privacyManager: PrivacyManager,
+        privacyManager: AirshipPrivacyManager,
         notificationCenter: NotificationCenter,
         date: AirshipDate
     ) {
@@ -66,7 +66,7 @@ public class ApplicationMetrics: NSObject {
         notificationCenter.addObserver(
             self,
             selector: #selector(updateData),
-            name: PrivacyManager.changeEvent,
+            name: AirshipPrivacyManager.changeEvent,
             object: nil
         )
     }
@@ -74,7 +74,7 @@ public class ApplicationMetrics: NSObject {
     @objc
     public convenience init(
         dataStore: PreferenceDataStore,
-        privacyManager: PrivacyManager
+        privacyManager: AirshipPrivacyManager
     ) {
         self.init(
             dataStore: dataStore,
@@ -111,7 +111,7 @@ public class ApplicationMetrics: NSObject {
             )
 
             if lastVersion != nil
-                && Utils.compareVersion(lastVersion!, toVersion: currentVersion)
+                && AirshipUtils.compareVersion(lastVersion!, toVersion: currentVersion)
                     == .orderedAscending
             {
                 self._isAppVersionUpdated = true

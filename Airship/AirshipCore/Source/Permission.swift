@@ -4,7 +4,7 @@ import Foundation
 
 /// Airship permissions. Used with `PermissionsManager`
 @objc(UAPermission)
-public enum Permission: UInt, CustomStringConvertible {
+public enum AirshipPermission: UInt, CustomStringConvertible {
     /// Post notifications
     case displayNotifications
 
@@ -23,7 +23,7 @@ public enum Permission: UInt, CustomStringConvertible {
     /// Returns a permission from a string.
     /// - Parameter value: The string value
     /// - Returns: A permission.
-    static func fromString(_ value: String) throws -> Permission {
+    static func fromString(_ value: String) throws -> AirshipPermission {
         switch value.lowercased() {
         case "display_notifications": return .displayNotifications
         case "location": return .location
@@ -36,11 +36,11 @@ public enum Permission: UInt, CustomStringConvertible {
     }
 }
 
-extension Permission: Decodable {
+extension AirshipPermission: Decodable {
 
     public init(from decoder: Decoder) throws {
         let singleValueContainer = try decoder.singleValueContainer()
         let string = try? singleValueContainer.decode(String.self)
-        self = try Permission.fromString(string ?? "")
+        self = try AirshipPermission.fromString(string ?? "")
     }
 }

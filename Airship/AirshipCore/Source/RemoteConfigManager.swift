@@ -15,13 +15,13 @@ class RemoteConfigManager {
     private var remoteDataSubscription: Disposable?
     private let moduleAdapter: RemoteConfigModuleAdapterProtocol
     private let remoteDataManager: RemoteDataProvider
-    private let privacyManager: PrivacyManager
+    private let privacyManager: AirshipPrivacyManager
     private let versionBlock: (() -> String)
     private let notificationCenter: NotificationCenter
 
     convenience init(
         remoteDataManager: RemoteDataProvider,
-        privacyManager: PrivacyManager
+        privacyManager: AirshipPrivacyManager
     ) {
 
         self.init(
@@ -29,13 +29,13 @@ class RemoteConfigManager {
             privacyManager: privacyManager,
             moduleAdapter: RemoteConfigModuleAdapter(),
             notificationCenter: NotificationCenter.default,
-            versionBlock: { return Utils.bundleShortVersionString() ?? "" }
+            versionBlock: { return AirshipUtils.bundleShortVersionString() ?? "" }
         )
     }
 
     init(
         remoteDataManager: RemoteDataProvider,
-        privacyManager: PrivacyManager,
+        privacyManager: AirshipPrivacyManager,
         moduleAdapter: RemoteConfigModuleAdapterProtocol,
         notificationCenter: NotificationCenter,
         versionBlock: @escaping () -> String
@@ -51,7 +51,7 @@ class RemoteConfigManager {
         self.notificationCenter.addObserver(
             self,
             selector: #selector(updateRemoteConfigSubscription),
-            name: PrivacyManager.changeEvent,
+            name: AirshipPrivacyManager.changeEvent,
             object: nil
         )
     }

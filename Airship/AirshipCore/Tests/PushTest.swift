@@ -11,7 +11,7 @@ class PushTest: XCTestCase {
     private let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
     private let channel = TestChannel()
     private let analtyics = TestAnalytics()
-    private let permissionsManager = PermissionsManager()
+    private let permissionsManager = AirshipPermissionsManager()
     private let notificationCenter = NotificationCenter()
     private let notificationRegistrar = TestNotificationRegistrar()
     private let apnsRegistrar = TestAPNSRegistrar()
@@ -20,12 +20,12 @@ class PushTest: XCTestCase {
     private let registrationDelegate = TestRegistraitonDelegate()
     private let pushDelegate = TestPushNotificationDelegate()
 
-    private var config = Config()
-    private var privacyManager: PrivacyManager!
-    private var push: Push!
+    private var config = AirshipConfig()
+    private var privacyManager: AirshipPrivacyManager!
+    private var push: AirshipPush!
 
     override func setUpWithError() throws {
-        self.privacyManager = PrivacyManager(
+        self.privacyManager = AirshipPrivacyManager(
             dataStore: dataStore,
             defaultEnabledFeatures: .all,
             notificationCenter: notificationCenter
@@ -34,8 +34,8 @@ class PushTest: XCTestCase {
         self.channel.updateRegistrationCalled = false
     }
 
-    func createPush() -> Push {
-        return Push(
+    func createPush() -> AirshipPush {
+        return AirshipPush(
             config: RuntimeConfig(
                 config: self.config,
                 dataStore: self.dataStore
@@ -338,11 +338,11 @@ class PushTest: XCTestCase {
         )
         XCTAssertEqual(
             "12:30",
-            self.push.quietTime![Push.quietTimeStartKey] as! String
+            self.push.quietTime![AirshipPush.quietTimeStartKey] as! String
         )
         XCTAssertEqual(
             "14:58",
-            self.push.quietTime![Push.quietTimeEndKey] as! String
+            self.push.quietTime![AirshipPush.quietTimeEndKey] as! String
         )
         XCTAssertTrue(self.channel.updateRegistrationCalled)
     }

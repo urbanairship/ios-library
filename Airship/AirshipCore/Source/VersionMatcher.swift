@@ -437,7 +437,7 @@ public class VersionMatcher: NSObject {
             else {
                 return false
             }
-            let result = Utils.compareVersion(
+            let result = AirshipUtils.compareVersion(
                 startOfRange,
                 toVersion: checkVersion
             )
@@ -472,7 +472,7 @@ public class VersionMatcher: NSObject {
             else {
                 return false
             }
-            let result = Utils.compareVersion(
+            let result = AirshipUtils.compareVersion(
                 checkVersion,
                 toVersion: endOfRange
             )

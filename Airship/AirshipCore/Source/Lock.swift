@@ -3,7 +3,7 @@
 import Foundation
 
 /// - Note: For internal use only. :nodoc:
-public class Lock {
+public class AirshipLock {
     private let lock = NSRecursiveLock()
 
     public init() {}

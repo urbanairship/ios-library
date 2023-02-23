@@ -60,7 +60,7 @@ final class RemoteDataAPIClientTest: AirshipBaseTest {
         
         var timestamp: String? = nil
         if let aTimestamp = remoteData?.timestamp {
-            timestamp = Utils.isoDateFormatterUTCWithDelimiter().string(from: aTimestamp)
+            timestamp = AirshipUtils.isoDateFormatterUTCWithDelimiter().string(from: aTimestamp)
         }
         XCTAssertEqual(self.remoteData?[0]["timestamp"] as? String, timestamp)
         

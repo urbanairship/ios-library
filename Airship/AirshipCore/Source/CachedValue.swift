@@ -5,7 +5,7 @@ import Foundation
 class CachedValue<Value> where Value: Any {
     private let date: AirshipDate
     private let maxCacheAge: TimeInterval
-    private let lock = Lock()
+    private let lock = AirshipLock()
     private var expiration: Date?
 
     private var _value: Value?

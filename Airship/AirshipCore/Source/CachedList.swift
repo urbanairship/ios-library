@@ -6,7 +6,7 @@ import Foundation
 class CachedList<Value> where Value: Any {
     private let date: AirshipDate
     private let maxCacheAge: TimeInterval
-    private let lock = Lock()
+    private let lock = AirshipLock()
     private var cachedValues: [(Value, Date)] = []
 
     var values: [Value] {

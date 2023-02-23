@@ -16,7 +16,7 @@ import Foundation
 /// - SDK version
 /// - Accengage Device ID (Accengage module for migration)
 @objc(UAPrivacyManager)
-public class PrivacyManager: NSObject {
+public class AirshipPrivacyManager: NSObject {
 
     /**
     * NSNotification event when enabled feature list is updated.
@@ -57,7 +57,7 @@ public class PrivacyManager: NSObject {
                 )
                 UADispatcher.main.dispatchAsyncIfNecessary({ [self] in
                     notificationCenter.post(
-                        name: PrivacyManager.changeEvent,
+                        name: AirshipPrivacyManager.changeEvent,
                         object: nil
                     )
                 })

@@ -17,7 +17,7 @@ public protocol LocaleManagerProtocol {
 }
 /// Airship locale manager.
 @objc(UALocaleManager)
-public class LocaleManager: NSObject, LocaleManagerProtocol {
+public class AirshipLocaleManager: NSObject, LocaleManagerProtocol {
 
     private static let storeKey = "com.urbanairship.locale.locale"
 
@@ -39,7 +39,7 @@ public class LocaleManager: NSObject, LocaleManagerProtocol {
     public var currentLocale: Locale {
         get {
             if let encodedLocale = dataStore.object(
-                forKey: LocaleManager.storeKey
+                forKey: AirshipLocaleManager.storeKey
             )
                 as? Data
             {
@@ -59,11 +59,11 @@ public class LocaleManager: NSObject, LocaleManagerProtocol {
             ) {
                 dataStore.setValue(
                     encodedLocale,
-                    forKey: LocaleManager.storeKey
+                    forKey: AirshipLocaleManager.storeKey
                 )
                 notificationCenter.post(
-                    name: LocaleManager.localeUpdatedEvent,
-                    object: [LocaleManager.localeEventKey: newValue]
+                    name: AirshipLocaleManager.localeUpdatedEvent,
+                    object: [AirshipLocaleManager.localeEventKey: newValue]
                 )
             } else {
                 AirshipLogger.error("Failed to encode locale!")
@@ -100,10 +100,10 @@ public class LocaleManager: NSObject, LocaleManagerProtocol {
      */
     @objc
     public func clearLocale() {
-        dataStore.removeObject(forKey: LocaleManager.storeKey)
+        dataStore.removeObject(forKey: AirshipLocaleManager.storeKey)
         notificationCenter.post(
-            name: LocaleManager.localeUpdatedEvent,
-            object: [LocaleManager.localeEventKey: self.currentLocale]
+            name: AirshipLocaleManager.localeUpdatedEvent,
+            object: [AirshipLocaleManager.localeEventKey: self.currentLocale]
         )
     }
 }

@@ -9,13 +9,13 @@ class RemoteConfigManagerTest: XCTestCase {
     let testModuleAdapter = TestRemoteConfigModuleAdapter()
     let notificationCenter = NotificationCenter.default
 
-    var privacyManager: PrivacyManager!
+    var privacyManager: AirshipPrivacyManager!
     var remoteConfigManager: RemoteConfigManager!
 
     var appVersion = ""
 
     override func setUpWithError() throws {
-        self.privacyManager = PrivacyManager(
+        self.privacyManager = AirshipPrivacyManager(
             dataStore: self.dataStore,
             defaultEnabledFeatures: .all,
             notificationCenter: self.notificationCenter

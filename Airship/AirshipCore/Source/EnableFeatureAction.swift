@@ -72,7 +72,7 @@ public class EnableFeatureAction: NSObject, Action {
         completionHandler: @escaping UAActionCompletionHandler
     ) {
 
-        var permission: Permission!
+        var permission: AirshipPermission!
         do {
             permission = try parsePermission(arguments: arguments)
         } catch {
@@ -102,7 +102,7 @@ public class EnableFeatureAction: NSObject, Action {
     }
 
     private func parsePermission(arguments: ActionArguments) throws
-        -> Permission
+        -> AirshipPermission
     {
         let value = arguments.value as? String ?? ""
         switch value {

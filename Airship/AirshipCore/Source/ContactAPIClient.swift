@@ -89,7 +89,7 @@ class ContactAPIClient: ContactsAPIClientProtocol {
 
     private let config: RuntimeConfig
     private let session: AirshipRequestSession
-    private let localeManager: LocaleManager
+    private let localeManager: AirshipLocaleManager
 
     private lazy var decoder: JSONDecoder = {
         let decoder = JSONDecoder()
@@ -100,7 +100,7 @@ class ContactAPIClient: ContactsAPIClientProtocol {
     init(config: RuntimeConfig, session: AirshipRequestSession) {
         self.config = config
         self.session = session
-        self.localeManager = LocaleManager(
+        self.localeManager = AirshipLocaleManager(
             dataStore: PreferenceDataStore(appKey: config.appKey)
         )
     }
@@ -411,7 +411,7 @@ class ContactAPIClient: ContactsAPIClientProtocol {
             ?? "",
         ]
         
-        let formatter = Utils.isoDateFormatterUTCWithDelimiter()
+        let formatter = AirshipUtils.isoDateFormatterUTCWithDelimiter()
         if let transactionalOptedIn = options.transactionalOptedIn {
             channelPayload[ContactAPIClient.transactionalOptedInKey] =
             formatter.string(from: transactionalOptedIn)
@@ -618,7 +618,7 @@ class ContactAPIClient: ContactsAPIClientProtocol {
                     "action": action,
                     "list_id": list.listId,
                     "scope": list.scope.stringValue,
-                    "timestamp": Utils.isoDateFormatterUTCWithDelimiter()
+                    "timestamp": AirshipUtils.isoDateFormatterUTCWithDelimiter()
                         .string(
                             from: list.date
                         ),
@@ -642,7 +642,7 @@ class ContactAPIClient: ContactsAPIClientProtocol {
                         "action": "set",
                         "key": attribute.attribute,
                         "value": value,
-                        "timestamp": Utils.isoDateFormatterUTCWithDelimiter()
+                        "timestamp": AirshipUtils.isoDateFormatterUTCWithDelimiter()
                             .string(
                                 from: attribute.date
                             ),
@@ -651,7 +651,7 @@ class ContactAPIClient: ContactsAPIClientProtocol {
                     return [
                         "action": "remove",
                         "key": attribute.attribute,
-                        "timestamp": Utils.isoDateFormatterUTCWithDelimiter()
+                        "timestamp": AirshipUtils.isoDateFormatterUTCWithDelimiter()
                             .string(
                                 from: attribute.date
                             ),

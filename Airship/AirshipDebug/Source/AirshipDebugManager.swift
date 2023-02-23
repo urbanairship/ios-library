@@ -67,7 +67,7 @@ public class AirshipDebugManager: NSObject, Component {
 
     init(
         config: RuntimeConfig,
-        analytics: Analytics,
+        analytics: AirshipAnalytics,
         remoteData: RemoteDataManager
     ) {
         self.remoteData = remoteData
@@ -110,7 +110,7 @@ public class AirshipDebugManager: NSObject, Component {
     }
 
     public func open() {
-        guard let scene = try? Utils.findWindowScene() else {
+        guard let scene = try? AirshipUtils.findWindowScene() else {
             AirshipLogger.error("Unable to display, missing scene.")
             return
         }
@@ -139,21 +139,21 @@ public class AirshipDebugManager: NSObject, Component {
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(receivedForegroundNotification(notification:)),
-            name: Push.receivedForegroundNotificationEvent,
+            name: AirshipPush.receivedForegroundNotificationEvent,
             object: nil
         )
 
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(receivedBackgroundNotification(notification:)),
-            name: Push.receivedBackgroundNotificationEvent,
+            name: AirshipPush.receivedBackgroundNotificationEvent,
             object: nil
         )
 
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(receivedNotificationResponse(notification:)),
-            name: Push.receivedNotificationResponseEvent,
+            name: AirshipPush.receivedNotificationResponseEvent,
             object: nil
         )
     }
@@ -177,7 +177,7 @@ public class AirshipDebugManager: NSObject, Component {
         guard
             let response =
                 notification.userInfo?[
-                    Push.receivedNotificationResponseEventResponseKey
+                    AirshipPush.receivedNotificationResponseEventResponseKey
                 ] as? UNNotificationResponse
         else {
             return

@@ -5,7 +5,7 @@ import Foundation
 
 /// This singleton provides an interface to the channel functionality.
 @objc(UAChannel)
-public class Channel: NSObject, Component, ChannelProtocol {
+public class AirshipChannel: NSObject, Component, ChannelProtocol {
 
     private static let tagsDataStoreKey = "com.urbanairship.channel.tags"
 
@@ -66,13 +66,13 @@ public class Channel: NSObject, Component, ChannelProtocol {
 
     private let dataStore: PreferenceDataStore
     private let config: RuntimeConfig
-    private let privacyManager: PrivacyManager
+    private let privacyManager: AirshipPrivacyManager
     private let localeManager: LocaleManagerProtocol
     private var audienceManager: ChannelAudienceManagerProtocol
     private let channelRegistrar: ChannelRegistrarProtocol
     private let notificationCenter: NotificationCenter
     private let appStateTracker: AppStateTracker
-    private let tagsLock = Lock()
+    private let tagsLock = AirshipLock()
     private var subscriptions: Set<AnyCancellable> = Set()
 
     #if canImport(ActivityKit)
@@ -108,7 +108,7 @@ public class Channel: NSObject, Component, ChannelProtocol {
             var result: [String]?
             tagsLock.sync {
                 result =
-                    self.dataStore.array(forKey: Channel.tagsDataStoreKey)
+                    self.dataStore.array(forKey: AirshipChannel.tagsDataStoreKey)
                     as? [String]
             }
             return result ?? []
@@ -126,7 +126,7 @@ public class Channel: NSObject, Component, ChannelProtocol {
                 let normalized = AudienceUtils.normalizeTags(newValue)
                 self.dataStore.setObject(
                     normalized,
-                    forKey: Channel.tagsDataStoreKey
+                    forKey: AirshipChannel.tagsDataStoreKey
                 )
             }
 
@@ -154,14 +154,14 @@ public class Channel: NSObject, Component, ChannelProtocol {
     /// The shared Channel instance.
     /// - Returns The shared Channel instance.
     @objc
-    public static var shared: Channel {
+    public static var shared: AirshipChannel {
         return Airship.channel
     }
 
     init(
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,
-        privacyManager: PrivacyManager,
+        privacyManager: AirshipPrivacyManager,
         localeManager: LocaleManagerProtocol,
         audienceManager: ChannelAudienceManagerProtocol,
         channelRegistrar: ChannelRegistrarProtocol,
@@ -245,7 +245,7 @@ public class Channel: NSObject, Component, ChannelProtocol {
     convenience public init(
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,
-        privacyManager: PrivacyManager,
+        privacyManager: AirshipPrivacyManager,
         localeManager: LocaleManagerProtocol
     ) {
         self.init(
@@ -268,14 +268,14 @@ public class Channel: NSObject, Component, ChannelProtocol {
     }
 
     private func migrateTags() {
-        guard self.dataStore.keyExists(Channel.legacyTagsSettingsKey) else {
+        guard self.dataStore.keyExists(AirshipChannel.legacyTagsSettingsKey) else {
             // Nothing to migrate
             return
         }
 
         // Normalize tags for older SDK versions, and migrate to UAChannel as necessary
         if let existingPushTags = self.dataStore.object(
-            forKey: Channel.legacyTagsSettingsKey
+            forKey: AirshipChannel.legacyTagsSettingsKey
         ) as? [String] {
             let existingChannelTags = self.tags
             if existingChannelTags.count > 0 {
@@ -289,7 +289,7 @@ public class Channel: NSObject, Component, ChannelProtocol {
             }
         }
 
-        self.dataStore.removeObject(forKey: Channel.legacyTagsSettingsKey)
+        self.dataStore.removeObject(forKey: AirshipChannel.legacyTagsSettingsKey)
     }
 
     private func observeNotificationCenterEvents() {
@@ -303,7 +303,7 @@ public class Channel: NSObject, Component, ChannelProtocol {
         notificationCenter.addObserver(
             self,
             selector: #selector(applicationDidTransitionToForeground),
-            name: LocaleManager.localeUpdatedEvent,
+            name: AirshipLocaleManager.localeUpdatedEvent,
             object: nil
         )
 
@@ -317,14 +317,14 @@ public class Channel: NSObject, Component, ChannelProtocol {
         notificationCenter.addObserver(
             self,
             selector: #selector(onEnableFeaturesChanged),
-            name: PrivacyManager.changeEvent,
+            name: AirshipPrivacyManager.changeEvent,
             object: nil
         )
 
         notificationCenter.addObserver(
             self,
             selector: #selector(localeUpdates),
-            name: LocaleManager.localeUpdatedEvent,
+            name: AirshipLocaleManager.localeUpdatedEvent,
             object: nil
         )
     }
@@ -354,7 +354,7 @@ public class Channel: NSObject, Component, ChannelProtocol {
     @objc
     private func onEnableFeaturesChanged() {
         if !self.privacyManager.isEnabled(.tagsAndAttributes) {
-            self.dataStore.removeObject(forKey: Channel.tagsDataStoreKey)
+            self.dataStore.removeObject(forKey: AirshipChannel.tagsDataStoreKey)
         }
 
         self.updateRegistration()
@@ -628,7 +628,7 @@ public class Channel: NSObject, Component, ChannelProtocol {
 }
 
 /// - Note: for internal use only.  :nodoc:
-extension Channel: PushableComponent {
+extension AirshipChannel: PushableComponent {
 
     #if !os(watchOS)
     public func receivedRemoteNotification(
@@ -658,19 +658,19 @@ extension Channel: PushableComponent {
             AirshipLogger.importantInfo("Channel ID: \(channelID)")
             self.audienceManager.channelID = channelID
             self.notificationCenter.post(
-                name: Channel.channelCreatedEvent,
+                name: AirshipChannel.channelCreatedEvent,
                 object: self,
                 userInfo: [
-                    Channel.channelIdentifierKey: channelID,
-                    Channel.channelExistingKey: isExisting,
+                    AirshipChannel.channelIdentifierKey: channelID,
+                    AirshipChannel.channelExistingKey: isExisting,
                 ]
             )
         case .updated(let channelID):
             AirshipLogger.info("Channel updated.")
             self.notificationCenter.post(
-                name: Channel.channelUpdatedEvent,
+                name: AirshipChannel.channelUpdatedEvent,
                 object: self,
-                userInfo: [Channel.channelIdentifierKey: channelID]
+                userInfo: [AirshipChannel.channelIdentifierKey: channelID]
             )
         }
     }
@@ -692,9 +692,9 @@ extension Channel: PushableComponent {
         }
 
         if self.privacyManager.isEnabled(.analytics) {
-            payload.channel.deviceModel = Utils.deviceModelName()
-            payload.channel.carrier = Utils.carrierName()
-            payload.channel.appVersion = Utils.bundleShortVersionString()
+            payload.channel.deviceModel = AirshipUtils.deviceModelName()
+            payload.channel.carrier = AirshipUtils.carrierName()
+            payload.channel.appVersion = AirshipUtils.bundleShortVersionString()
 #if !os(watchOS)
             payload.channel.deviceOS = await UIDevice.current.systemVersion
 #endif
@@ -712,7 +712,7 @@ extension Channel: PushableComponent {
     }
 }
 
-extension Channel: InternalChannelProtocol {
+extension AirshipChannel: InternalChannelProtocol {
     public func addRegistrationExtender(
         _ extender: @escaping (ChannelRegistrationPayload) async -> ChannelRegistrationPayload
     ) {
@@ -731,7 +731,7 @@ extension Channel: InternalChannelProtocol {
 #if canImport(ActivityKit)
 import ActivityKit
 @available(iOS 16.1, *)
-extension Channel {
+extension AirshipChannel {
 
     /// Tracks a live activity with Airship for the given name.
     /// Airship will monitor the push token and status and automatically

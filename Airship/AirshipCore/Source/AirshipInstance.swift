@@ -6,7 +6,7 @@ protocol AirshipInstanceProtocol {
     var config: RuntimeConfig { get }
     var actionRegistry: ActionRegistry { get }
     var applicationMetrics: ApplicationMetrics { get }
-    var permissionsManager: PermissionsManager { get }
+    var permissionsManager: AirshipPermissionsManager { get }
 
     #if !os(tvOS) && !os(watchOS)
     var javaScriptCommandDelegate: JavaScriptCommandDelegate? { get set }
@@ -15,8 +15,8 @@ protocol AirshipInstanceProtocol {
 
     var deepLinkDelegate: DeepLinkDelegate? { get set }
     var urlAllowList: URLAllowList { get }
-    var localeManager: LocaleManager { get }
-    var privacyManager: PrivacyManager { get }
+    var localeManager: AirshipLocaleManager { get }
+    var privacyManager: AirshipPrivacyManager { get }
     var components: [Component] { get }
 
     func component(forClassName className: String) -> Component?
@@ -27,7 +27,7 @@ class AirshipInstance: AirshipInstanceProtocol {
     public let config: RuntimeConfig
     public let actionRegistry: ActionRegistry
     public let applicationMetrics: ApplicationMetrics
-    public let permissionsManager: PermissionsManager
+    public let permissionsManager: AirshipPermissionsManager
 
     #if !os(tvOS) && !os(watchOS)
 
@@ -37,18 +37,18 @@ class AirshipInstance: AirshipInstanceProtocol {
 
     public weak var deepLinkDelegate: DeepLinkDelegate?
     public let urlAllowList: URLAllowList
-    public let localeManager: LocaleManager
-    public let privacyManager: PrivacyManager
+    public let localeManager: AirshipLocaleManager
+    public let privacyManager: AirshipPrivacyManager
     public let components: [Component]
     private let remoteConfigManager: RemoteConfigManager
     private var componentMap: [String: Component] = [:]
-    private var lock = Lock()
+    private var lock = AirshipLock()
 
-    init(config: Config) {
+    init(config: AirshipConfig) {
         let dataStore = PreferenceDataStore(appKey: config.appKey)
-        self.permissionsManager = PermissionsManager()
+        self.permissionsManager = AirshipPermissionsManager()
         self.config = RuntimeConfig(config: config, dataStore: dataStore)
-        self.privacyManager = PrivacyManager(
+        self.privacyManager = AirshipPrivacyManager(
             dataStore: dataStore,
             defaultEnabledFeatures: config.enabledFeatures
         )
@@ -58,7 +58,7 @@ class AirshipInstance: AirshipInstanceProtocol {
             dataStore: dataStore,
             privacyManager: privacyManager
         )
-        self.localeManager = LocaleManager(dataStore: dataStore)
+        self.localeManager = AirshipLocaleManager(dataStore: dataStore)
 
         #if !os(watchOS)
         let sharedApp = UIApplication.shared
@@ -66,14 +66,14 @@ class AirshipInstance: AirshipInstanceProtocol {
         let sharedApp = WKExtension.shared()
         #endif
 
-        let channel = Channel(
+        let channel = AirshipChannel(
             dataStore: dataStore,
             config: self.config,
             privacyManager: self.privacyManager,
             localeManager: self.localeManager
         )
 
-        let analytics = Analytics(
+        let analytics = AirshipAnalytics(
             config: self.config,
             dataStore: dataStore,
             channel: channel,
@@ -82,7 +82,7 @@ class AirshipInstance: AirshipInstanceProtocol {
             permissionsManager: permissionsManager
         )
 
-        let push = Push(
+        let push = AirshipPush(
             config: self.config,
             dataStore: dataStore,
             channel: channel,
@@ -93,7 +93,7 @@ class AirshipInstance: AirshipInstanceProtocol {
             badger: sharedApp
         )
 
-        let contact = Contact(
+        let contact = AirshipContact(
             dataStore: dataStore,
             config: self.config,
             channel: channel,

@@ -166,7 +166,7 @@ class RemoteDataAPIClient: RemoteDataAPIClientProtocol {
         }
 
         guard let timestampString = payload["timestamp"] as? String,
-            let timestamp = Utils.parseISO8601Date(from: timestampString)
+            let timestamp = AirshipUtils.parseISO8601Date(from: timestampString)
         else {
             AirshipLogger.error(
                 "Invalid payload: \(payload). Missing or invalid timestamp."

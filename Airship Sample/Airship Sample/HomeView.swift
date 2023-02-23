@@ -204,7 +204,7 @@ struct HomeView: View {
 
         init() {
             NotificationCenter.default
-                .publisher(for: Channel.channelCreatedEvent)
+                .publisher(for: AirshipChannel.channelCreatedEvent)
                 .receive(on: RunLoop.main)
                 .sink { _ in
                     self.channelID = Airship.channel.identifier
@@ -212,7 +212,7 @@ struct HomeView: View {
                 .store(in: &self.subscriptions)
 
             NotificationCenter.default
-                .publisher(for: Contact.contactChangedEvent)
+                .publisher(for: AirshipContact.contactChangedEvent)
                 .receive(on: RunLoop.main)
                 .sink { _ in
                     self.namedUserID = Airship.contact.namedUserID

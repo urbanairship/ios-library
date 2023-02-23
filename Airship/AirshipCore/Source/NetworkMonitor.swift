@@ -25,7 +25,7 @@ open class NetworkMonitor: NSObject {
     open var isConnected: Bool {
         #if !os(watchOS)
         guard #available(iOS 12.0, tvOS 12.0, *) else {
-            return Utils.connectionType() != ConnectionType.none
+            return AirshipUtils.connectionType() != ConnectionType.none
         }
         return _isConnected
         #else

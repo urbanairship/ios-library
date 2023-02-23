@@ -39,7 +39,7 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
     static let maxCacheTime: TimeInterval = 600  // 10 minutes
 
     private let dataStore: PreferenceDataStore
-    private let privacyManager: PrivacyManager
+    private let privacyManager: AirshipPrivacyManager
     private let workManager: AirshipWorkManagerProtocol
     private let subscriptionListClient: SubscriptionListAPIClientProtocol
     private let updateClient: ChannelBulkUpdateAPIClientProtocol
@@ -48,7 +48,7 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
     private let date: AirshipDate
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
-    private let updateLock = Lock()
+    private let updateLock = AirshipLock()
 
     private let cachedSubscriptionLists: CachedValue<[String]>
     private let cachedSubscriptionListsHistory:
@@ -98,7 +98,7 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
         workManager: AirshipWorkManagerProtocol,
         subscriptionListClient: SubscriptionListAPIClientProtocol,
         updateClient: ChannelBulkUpdateAPIClientProtocol,
-        privacyManager: PrivacyManager,
+        privacyManager: AirshipPrivacyManager,
         notificationCenter: NotificationCenter,
         date: AirshipDate
     ) {
@@ -131,7 +131,7 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
         notificationCenter.addObserver(
             self,
             selector: #selector(checkPrivacyManager),
-            name: PrivacyManager.changeEvent,
+            name: AirshipPrivacyManager.changeEvent,
             object: nil
         )
 
@@ -148,7 +148,7 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
     convenience init(
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,
-        privacyManager: PrivacyManager
+        privacyManager: AirshipPrivacyManager
     ) {
         self.init(
             dataStore: dataStore,
@@ -355,12 +355,12 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
         self.enqueueTask()
 
         let payload: [String: Any] = [
-            Channel.audienceTagsKey: update.tagGroupUpdates,
-            Channel.audienceAttributesKey: update.attributeUpdates,
+            AirshipChannel.audienceTagsKey: update.tagGroupUpdates,
+            AirshipChannel.audienceAttributesKey: update.attributeUpdates,
         ]
 
         self.notificationCenter.post(
-            name: Channel.audienceUpdatedEvent,
+            name: AirshipChannel.audienceUpdatedEvent,
             object: nil,
             userInfo: payload
         )

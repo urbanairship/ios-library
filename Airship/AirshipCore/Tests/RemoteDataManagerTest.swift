@@ -19,8 +19,8 @@ final class RemoteDataManagerTest: AirshipBaseTest {
     var testWorkManager = TestWorkManager()
     var remoteDataManager: RemoteDataManager?
     
-    lazy var privacyManager: PrivacyManager = {
-        PrivacyManager(dataStore: self.dataStore, defaultEnabledFeatures: .all)
+    lazy var privacyManager: AirshipPrivacyManager = {
+        AirshipPrivacyManager(dataStore: self.dataStore, defaultEnabledFeatures: .all)
     }()
     
     var testAppStateTracker = TestAppStateTracker()
@@ -127,7 +127,7 @@ final class RemoteDataManagerTest: AirshipBaseTest {
     
     func testLocaleChangeRefresh() {
         XCTAssertEqual(0, self.testWorkManager.workRequests.count)
-        self.notificationCenter.post(name: LocaleManager.localeUpdatedEvent, object: nil)
+        self.notificationCenter.post(name: AirshipLocaleManager.localeUpdatedEvent, object: nil)
         XCTAssertEqual(1, self.testWorkManager.workRequests.count)
     }
     
@@ -538,7 +538,7 @@ final class RemoteDataManagerTest: AirshipBaseTest {
             var parsed: [RemoteDataPayload] = []
             for payload in payloads {
                 let type = payload["type"] as? String
-                let timestamp = Utils.isoDateFormatterUTCWithDelimiter().date(from: payload["timestamp"] as? String ?? "")
+                let timestamp = AirshipUtils.isoDateFormatterUTCWithDelimiter().date(from: payload["timestamp"] as? String ?? "")
                 let data = payload["data"] as? [AnyHashable : Any]
                 
                 let remoteData = RemoteDataPayload(

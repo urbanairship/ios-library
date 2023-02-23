@@ -4,7 +4,7 @@ import Foundation
 
 /// Represents the possible log levels.
 @objc(UALogLevel)
-public enum LogLevel: Int {
+public enum AirshipLogLevel: Int {
     /**
      * Undefined log level.
      */

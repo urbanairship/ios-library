@@ -36,9 +36,9 @@ class AppInitEvent: NSObject, Event {
 
         data["push_id"] = self.analytics.conversionSendID
         data["metadata"] = self.analytics.conversionPushMetadata
-        data["carrier"] = Utils.carrierName()
+        data["carrier"] = AirshipUtils.carrierName()
         #if !os(watchOS)
-        data["connection_type"] = Utils.connectionType()
+        data["connection_type"] = AirshipUtils.connectionType()
         #endif
 
         data["notification_types"] = EventUtils.notificationTypes(
@@ -62,7 +62,7 @@ class AppInitEvent: NSObject, Event {
         #endif
         data["lib_version"] = AirshipVersion.get()
 
-        let packageVersion = Utils.bundleShortVersionString() ?? ""
+        let packageVersion = AirshipUtils.bundleShortVersionString() ?? ""
         data["package_version"] = packageVersion
 
         // Foreground

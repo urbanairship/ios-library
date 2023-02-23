@@ -3,15 +3,15 @@
 import Foundation
 
 /// Permissions manager delegate. Allows for extending permission gathering.
-@objc(UAPermissionDelegate)
-public protocol PermissionDelegate {
+@objc(UAAirshipPermissionDelegate)
+public protocol AirshipPermissionDelegate {
 
     /// Called when a permission needs to be checked.
     /// - Parameters:
     ///     - completionHandler: The completion handler
     @objc
     func checkPermissionStatus(
-        completionHandler: @escaping (PermissionStatus) -> Void
+        completionHandler: @escaping (AirshipPermissionStatus) -> Void
     )
 
     /// Called when a permission should be requested.
@@ -22,6 +22,6 @@ public protocol PermissionDelegate {
     ///     - completionHandler: The completion handler
     @objc
     func requestPermission(
-        completionHandler: @escaping (PermissionStatus) -> Void
+        completionHandler: @escaping (AirshipPermissionStatus) -> Void
     )
 }

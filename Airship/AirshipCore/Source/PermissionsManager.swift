@@ -7,17 +7,17 @@ import Foundation
 /// Airship will provide the default handling for `Permission.postNotifications`. All other permissions will need
 /// to be configured by the app by providing a `PermissionDelegate` for the given permissions.
 @objc(UAPermissionsManager)
-public class PermissionsManager: NSObject {
-    private let lock = Lock()
-    private var delegateMap: [Permission: PermissionDelegate] = [:]
-    private var airshipEnablers: [Permission: [(() -> Void)]] = [:]
+public class AirshipPermissionsManager: NSObject {
+    private let lock = AirshipLock()
+    private var delegateMap: [AirshipPermission: AirshipPermissionDelegate] = [:]
+    private var airshipEnablers: [AirshipPermission: [(() -> Void)]] = [:]
     private var extenders:
-        [Permission: [((PermissionStatus, @escaping () -> Void) -> Void)]] = [:]
+        [AirshipPermission: [((AirshipPermissionStatus, @escaping () -> Void) -> Void)]] = [:]
 
     private let mainDispatcher = UADispatcher.main
 
-    var configuredPermissions: Set<Permission> {
-        var result: Set<Permission>!
+    var configuredPermissions: Set<AirshipPermission> {
+        var result: Set<AirshipPermission>!
         lock.sync {
             result = Set(delegateMap.keys)
         }
@@ -56,8 +56,8 @@ public class PermissionsManager: NSObject {
     ///     - permission: The permission.
     @objc
     public func setDelegate(
-        _ delegate: PermissionDelegate?,
-        permission: Permission
+        _ delegate: AirshipPermissionDelegate?,
+        permission: AirshipPermission
     ) {
         lock.sync {
             delegateMap[permission] = delegate
@@ -73,8 +73,8 @@ public class PermissionsManager: NSObject {
     ///     - completionHandler: The completion handler.
     @objc
     public func checkPermissionStatus(
-        _ permission: Permission,
-        completionHandler: @escaping (PermissionStatus) -> Void
+        _ permission: AirshipPermission,
+        completionHandler: @escaping (AirshipPermissionStatus) -> Void
     ) {
         mainDispatcher.dispatchAsyncIfNecessary {
             guard let delegate = self.permissionDelegate(permission) else {
@@ -91,7 +91,7 @@ public class PermissionsManager: NSObject {
     }
 
     @MainActor
-    public func checkPermissionStatus(_ permission: Permission) async -> PermissionStatus {
+    public func checkPermissionStatus(_ permission: AirshipPermission) async -> AirshipPermissionStatus {
         guard let delegate = self.permissionDelegate(permission) else {
             return .notDetermined
         }
@@ -110,7 +110,7 @@ public class PermissionsManager: NSObject {
     /// - Parameters:
     ///     - permission: The permission.
     @objc
-    public func requestPermission(_ permission: Permission) {
+    public func requestPermission(_ permission: AirshipPermission) {
         return requestPermission(
             permission,
             enableAirshipUsageOnGrant: false,
@@ -127,8 +127,8 @@ public class PermissionsManager: NSObject {
     ///     - completionHandler: The completion handler.
     @objc
     public func requestPermission(
-        _ permission: Permission,
-        completionHandler: ((PermissionStatus) -> Void)?
+        _ permission: AirshipPermission,
+        completionHandler: ((AirshipPermissionStatus) -> Void)?
     ) {
         return requestPermission(
             permission,
@@ -147,9 +147,9 @@ public class PermissionsManager: NSObject {
     ///     - completionHandler: The completion handler.
     @objc
     public func requestPermission(
-        _ permission: Permission,
+        _ permission: AirshipPermission,
         enableAirshipUsageOnGrant: Bool,
-        completionHandler: ((PermissionStatus) -> Void)?
+        completionHandler: ((AirshipPermissionStatus) -> Void)?
     ) {
 
         self.mainDispatcher.dispatchAsyncIfNecessary {
@@ -166,7 +166,7 @@ public class PermissionsManager: NSObject {
                             enableAirshipUsage: enableAirshipUsageOnGrant
                         )
                     }
-                    PermissionsManager.callExtenders(
+                    AirshipPermissionsManager.callExtenders(
                         self.extenders[permission],
                         status: status
                     ) {
@@ -179,8 +179,8 @@ public class PermissionsManager: NSObject {
 
     /// - Note: for internal use only.  :nodoc:
     func addRequestExtender(
-        permission: Permission,
-        extender: @escaping (PermissionStatus, @escaping () -> Void) -> Void
+        permission: AirshipPermission,
+        extender: @escaping (AirshipPermissionStatus, @escaping () -> Void) -> Void
     ) {
         if extenders[permission] == nil {
             extenders[permission] = [extender]
@@ -192,7 +192,7 @@ public class PermissionsManager: NSObject {
     /// - Note: for internal use only.  :nodoc:
     @objc
     public func addAirshipEnabler(
-        permission: Permission,
+        permission: AirshipPermission,
         onEnable: @escaping () -> Void
     ) {
         if airshipEnablers[permission] == nil {
@@ -203,7 +203,7 @@ public class PermissionsManager: NSObject {
     }
 
     private func onPermissionEnabled(
-        _ permission: Permission,
+        _ permission: AirshipPermission,
         enableAirshipUsage: Bool
     ) {
         if enableAirshipUsage {
@@ -211,10 +211,10 @@ public class PermissionsManager: NSObject {
         }
     }
 
-    private func permissionDelegate(_ permission: Permission)
-        -> PermissionDelegate?
+    private func permissionDelegate(_ permission: AirshipPermission)
+        -> AirshipPermissionDelegate?
     {
-        var delegate: PermissionDelegate?
+        var delegate: AirshipPermissionDelegate?
         lock.sync {
             delegate = delegateMap[permission]
         }
@@ -222,8 +222,8 @@ public class PermissionsManager: NSObject {
     }
 
     class func callExtenders(
-        _ extenders: [(PermissionStatus, @escaping () -> Void) -> Void]?,
-        status: PermissionStatus,
+        _ extenders: [(AirshipPermissionStatus, @escaping () -> Void) -> Void]?,
+        status: AirshipPermissionStatus,
         completionHandler: @escaping () -> Void
     ) {
 
@@ -234,7 +234,7 @@ public class PermissionsManager: NSObject {
 
         let next = remaining.removeFirst()
         next(status) {
-            PermissionsManager.callExtenders(
+            AirshipPermissionsManager.callExtenders(
                 remaining,
                 status: status,
                 completionHandler: completionHandler

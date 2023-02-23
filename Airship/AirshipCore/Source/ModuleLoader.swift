@@ -49,13 +49,13 @@ public class ModuleLoader: NSObject {
     public init(
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,
-        channel: Channel,
-        contact: Contact,
-        push: Push,
+        channel: AirshipChannel,
+        contact: AirshipContact,
+        push: AirshipPush,
         remoteData: RemoteDataManager,
-        analytics: Analytics,
-        privacyManager: PrivacyManager,
-        permissionsManager: PermissionsManager
+        analytics: AirshipAnalytics,
+        privacyManager: AirshipPrivacyManager,
+        permissionsManager: AirshipPermissionsManager
     ) {
 
         let dependencies: [String: Any] = [

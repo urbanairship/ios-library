@@ -35,7 +35,7 @@ open class RuntimeConfig: NSObject {
 
     /// The current default Airship log level.
     @objc
-    public let logLevel: LogLevel
+    public let logLevel: AirshipLogLevel
 
     /// The production status of this application.
     @objc
@@ -244,7 +244,7 @@ open class RuntimeConfig: NSObject {
     }
 
     @objc
-    public convenience init(config: Config, dataStore: PreferenceDataStore) {
+    public convenience init(config: AirshipConfig, dataStore: PreferenceDataStore) {
         self.init(
             config: config,
             dataStore: dataStore,
@@ -253,7 +253,7 @@ open class RuntimeConfig: NSObject {
     }
 
     init(
-        config: Config,
+        config: AirshipConfig,
         dataStore: PreferenceDataStore,
         notificationCenter: NotificationCenter
     ) {

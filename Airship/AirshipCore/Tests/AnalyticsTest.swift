@@ -9,27 +9,27 @@ class AnalyticsTest: XCTestCase {
 
     private let appStateTracker = TestAppStateTracker()
     private let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
-    private let config = Config()
+    private let config = AirshipConfig()
     private let channel = TestChannel()
     private let locale = TestLocaleManager()
-    private let permissionsManager = PermissionsManager()
+    private let permissionsManager = AirshipPermissionsManager()
     private let notificationCenter = NotificationCenter()
     private let date = UATestDate()
     private let eventManager = TestEventManager()
     private let lifecycleEventFactory = TestLifecyleEventFactory()
 
-    private var privacyManager: PrivacyManager!
-    private var analytics: Analytics!
+    private var privacyManager: AirshipPrivacyManager!
+    private var analytics: AirshipAnalytics!
     private let testAirship = TestAirshipInstance()
 
     override func setUpWithError() throws {
-        self.privacyManager = PrivacyManager(
+        self.privacyManager = AirshipPrivacyManager(
             dataStore: dataStore,
             defaultEnabledFeatures: .all,
             notificationCenter: notificationCenter
         )
 
-        self.analytics = Analytics(
+        self.analytics = AirshipAnalytics(
             config: RuntimeConfig(config: config, dataStore: dataStore),
             dataStore: dataStore,
             channel: channel,
@@ -289,7 +289,7 @@ class AnalyticsTest: XCTestCase {
     func testForwardScreenTracking() throws {
         let eventAdded = self.expectation(description: "Event added")
         self.notificationCenter.addObserver(
-            forName: Analytics.screenTracked,
+            forName: AirshipAnalytics.screenTracked,
             object: nil,
             queue: nil
         ) { notification in
@@ -315,7 +315,7 @@ class AnalyticsTest: XCTestCase {
 
         let eventAdded = self.expectation(description: "Event added")
         self.notificationCenter.addObserver(
-            forName: Analytics.regionEventAdded,
+            forName: AirshipAnalytics.regionEventAdded,
             object: nil,
             queue: nil
         ) { notification in
@@ -336,7 +336,7 @@ class AnalyticsTest: XCTestCase {
 
         let eventAdded = self.expectation(description: "Event added")
         self.notificationCenter.addObserver(
-            forName: Analytics.customEventAdded,
+            forName: AirshipAnalytics.customEventAdded,
             object: nil,
             queue: nil
         ) { notification in
@@ -375,13 +375,13 @@ class AnalyticsTest: XCTestCase {
             "X-UA-Locale-Variant": "POSIX",
             "X-UA-Device-Family": UIDevice.current.systemName,
             "X-UA-OS-Version": UIDevice.current.systemVersion,
-            "X-UA-Device-Model": Utils.deviceModelName(),
+            "X-UA-Device-Model": AirshipUtils.deviceModelName(),
             "X-UA-Lib-Version": AirshipVersion.get(),
             "X-UA-App-Key": self.config.appKey,
             "X-UA-Package-Name":
                 Bundle.main.infoDictionary?[kCFBundleIdentifierKey as String]
                 as? String,
-            "X-UA-Package-Version": Utils.bundleShortVersionString() ?? "",
+            "X-UA-Package-Version": AirshipUtils.bundleShortVersionString() ?? "",
         ]
 
         let headers = await self.eventManager.headers

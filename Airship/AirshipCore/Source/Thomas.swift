@@ -118,7 +118,7 @@ public class Thomas: NSObject {
         delegate: ThomasDelegate
     ) throws -> () -> Disposable {
 
-        guard let window = Utils.mainWindow(scene: scene),
+        guard let window = AirshipUtils.mainWindow(scene: scene),
             window.rootViewController != nil
         else {
             throw AirshipErrors.error("Failed to find window")

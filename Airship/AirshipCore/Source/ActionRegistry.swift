@@ -10,7 +10,7 @@ public class ActionRegistry: NSObject {
     private static let predicateKey = "predicate"
 
     private var _entries: [ActionRegistryEntry] = []
-    private var lock = Lock()
+    private var lock = AirshipLock()
 
     /**
      * A set of the current registered entries

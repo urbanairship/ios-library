@@ -29,7 +29,7 @@ public class MessageCenter: NSObject {
     @objc
     public var displayDelegate: MessageCenterDisplayDelegate?
 
-    private let privacyManager: PrivacyManager
+    private let privacyManager: AirshipPrivacyManager
     private let disableHelper: ComponentDisableHelper
 
     @objc
@@ -55,7 +55,7 @@ public class MessageCenter: NSObject {
 
     init(
         dataStore: PreferenceDataStore,
-        privacyManager: PrivacyManager,
+        privacyManager: AirshipPrivacyManager,
         notificationCenter: NotificationCenter = NotificationCenter.default,
         inbox: MessageCenterInbox
     ) {
@@ -70,7 +70,7 @@ public class MessageCenter: NSObject {
         super.init()
 
         notificationCenter.addObserver(
-            forName: PrivacyManager.changeEvent,
+            forName: AirshipPrivacyManager.changeEvent,
             object: nil,
             queue: nil
         ) { [weak self] _ in
@@ -87,8 +87,8 @@ public class MessageCenter: NSObject {
     convenience init(
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,
-        channel: Channel,
-        privacyManager: PrivacyManager,
+        channel: AirshipChannel,
+        privacyManager: AirshipPrivacyManager,
         workManager: AirshipWorkManagerProtocol
     ) {
 
@@ -171,7 +171,7 @@ public class MessageCenter: NSObject {
 
     @MainActor
     private func openDefaultMessageCenter() async {
-        guard let scene = try? Utils.findWindowScene() else {
+        guard let scene = try? AirshipUtils.findWindowScene() else {
             AirshipLogger.error(
                 "Unable to display message center, missing scene."
             )

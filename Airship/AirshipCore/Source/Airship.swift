@@ -79,7 +79,7 @@ public class Airship: NSObject {
 
     /// The Airship permissions manager.
     @objc
-    public var permissionsManager: PermissionsManager {
+    public var permissionsManager: AirshipPermissionsManager {
         return airshipInstance.permissionsManager
     }
 
@@ -126,13 +126,13 @@ public class Airship: NSObject {
 
     /// The locale manager.
     @objc
-    public var localeManager: LocaleManager {
+    public var localeManager: AirshipLocaleManager {
         return airshipInstance.localeManager
     }
 
     /// The privacy manager
     @objc
-    public var privacyManager: PrivacyManager {
+    public var privacyManager: AirshipPrivacyManager {
         return airshipInstance.privacyManager
     }
 
@@ -153,24 +153,24 @@ public class Airship: NSObject {
 
     /// Shared Push instance.
     @objc
-    public static var push: Push { return requireComponent(ofType: Push.self) }
+    public static var push: AirshipPush { return requireComponent(ofType: AirshipPush.self) }
 
     /// Shared Contact instance.
     @objc
-    public static var contact: Contact {
-        return requireComponent(ofType: Contact.self)
+    public static var contact: AirshipContact {
+        return requireComponent(ofType: AirshipContact.self)
     }
 
     /// Shared Analytics instance.
     @objc
-    public static var analytics: Analytics {
-        return requireComponent(ofType: Analytics.self)
+    public static var analytics: AirshipAnalytics {
+        return requireComponent(ofType: AirshipAnalytics.self)
     }
 
     /// Shared Channel instance.
     @objc
-    public static var channel: Channel {
-        return requireComponent(ofType: Channel.self)
+    public static var channel: AirshipChannel {
+        return requireComponent(ofType: AirshipChannel.self)
     }
 
     /// Shared NamedUser instance.
@@ -201,7 +201,7 @@ public class Airship: NSObject {
     ///     - launchOptions: The launch options passed into `application:didFinishLaunchingWithOptions:`.
     @objc
     public class func takeOff(
-        _ config: Config?,
+        _ config: AirshipConfig?,
         launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) {
         guard Thread.isMainThread else {
@@ -227,7 +227,7 @@ public class Airship: NSObject {
             }
         }
 
-        let resolvedConfig = config?.copy() as? Config ?? Config.default()
+        let resolvedConfig = config?.copy() as? AirshipConfig ?? AirshipConfig.default()
 
         guard resolvedConfig.validate() else {
             AirshipLogger.impError("Config is invalid. Unable to takeOff.")
@@ -338,15 +338,15 @@ public class Airship: NSObject {
 
     #endif
 
-    private class func commonTakeOff(_ config: Config?) {
+    private class func commonTakeOff(_ config: AirshipConfig?) {
 
-        let resolvedConfig = config?.copy() as? Config ?? Config.default()
+        let resolvedConfig = config?.copy() as? AirshipConfig ?? AirshipConfig.default()
 
         self.logLevel = resolvedConfig.logLevel
 
         UALegacyLoggingBridge.logger = { logLevel, function, line, message in
             AirshipLogger.log(
-                logLevel: LogLevel(rawValue: logLevel) ?? .none,
+                logLevel: AirshipLogLevel(rawValue: logLevel) ?? .none,
                 message: message(),
                 fileID: "",
                 line: line,
@@ -407,7 +407,7 @@ public class Airship: NSObject {
     /// and `.error` in production. Values set before `takeOff` will be overridden by
     /// the value from the AirshipConfig.
     @objc
-    public static var logLevel: LogLevel {
+    public static var logLevel: AirshipLogLevel {
         get {
             return AirshipLogger.logLevel
         }

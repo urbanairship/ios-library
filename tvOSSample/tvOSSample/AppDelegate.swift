@@ -20,8 +20,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         // Populate AirshipConfig.plist with your app's info from https://go.urbanairship.com
         // or set runtime properties here.
-        let config = Config.default()
-        config.developmentLogLevel = LogLevel.trace
+        let config = AirshipConfig.default()
+        config.developmentLogLevel = AirshipLogLevel.trace
 
         if config.validate() != true {
             showInvalidConfigAlert()
@@ -30,7 +30,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         // Set log level for debugging config loading (optional)
         // It will be set to the value in the loaded config upon takeOff
-        Airship.logLevel = LogLevel.trace
+        Airship.logLevel = AirshipLogLevel.trace
 
         // Print out the application configuration for debugging (optional)
         print("Config:\n \(config)")

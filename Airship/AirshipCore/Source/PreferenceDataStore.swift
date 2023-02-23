@@ -15,7 +15,7 @@ public class PreferenceDataStore: NSObject {
     
     private var pending: [String: [Any?]] = [:]
     private var cache: [String: Cached] = [:]
-    private let lock = Lock()
+    private let lock = AirshipLock()
     private let dispatcher: UADispatcher
     private var keychainAccess: PreferenceDataStoreKeychainAccessProtocol
 

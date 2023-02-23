@@ -20,7 +20,7 @@ final class EventAPIClientTest: XCTestCase {
     ]
 
     override func setUpWithError() throws {
-        let config = Config()
+        let config = AirshipConfig()
         config.requireInitialRemoteConfigEnabled = false
         let runtimeConfig = RuntimeConfig(
             config: config,

@@ -1,7 +1,7 @@
 import Foundation
 
 class Atomic<T: Equatable> {
-    let lock = Lock()
+    let lock = AirshipLock()
     private var _value: T
 
     init(_ value: T) {

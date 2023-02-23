@@ -5,11 +5,11 @@ import Foundation
 
 /// The Analytics object provides an interface to the Airship Analytics API.
 @objc(UAAnalytics)
-public class Analytics: NSObject, Component, AnalyticsProtocol {
+public class AirshipAnalytics: NSObject, Component, AnalyticsProtocol {
 
     /// The shared Analytics instance.
     @objc
-    public static var shared: Analytics {
+    public static var shared: AirshipAnalytics {
         return Airship.analytics
     }
 
@@ -44,13 +44,13 @@ public class Analytics: NSObject, Component, AnalyticsProtocol {
     private let config: RuntimeConfig
     private let dataStore: PreferenceDataStore
     private let channel: ChannelProtocol
-    private let privacyManager: PrivacyManager
+    private let privacyManager: AirshipPrivacyManager
     private let notificationCenter: NotificationCenter
     private let date: AirshipDate
     private var eventManager: EventManagerProtocol
     private let localeManager: LocaleManagerProtocol
     private let appStateTracker: AppStateTrackerProtocol
-    private let permissionsManager: PermissionsManager
+    private let permissionsManager: AirshipPermissionsManager
     private let disableHelper: ComponentDisableHelper
     private let lifeCycleEventFactory: LifeCycleEventFactoryProtocol
 
@@ -64,7 +64,7 @@ public class Analytics: NSObject, Component, AnalyticsProtocol {
     private var initialized = false
     private var isAirshipReady = false
     private var handledFirstForegroundTransition = false
-    private let lock = Lock()
+    private let lock = AirshipLock()
 
     private var _conversionSendID : String? = nil
        
@@ -136,8 +136,8 @@ public class Analytics: NSObject, Component, AnalyticsProtocol {
         dataStore: PreferenceDataStore,
         channel: ChannelProtocol,
         localeManager: LocaleManagerProtocol,
-        privacyManager: PrivacyManager,
-        permissionsManager: PermissionsManager
+        privacyManager: AirshipPrivacyManager,
+        permissionsManager: AirshipPermissionsManager
     ) {
         self.init(
             config: config,
@@ -161,8 +161,8 @@ public class Analytics: NSObject, Component, AnalyticsProtocol {
         date: AirshipDate,
         localeManager: LocaleManagerProtocol,
         appStateTracker: AppStateTrackerProtocol,
-        privacyManager: PrivacyManager,
-        permissionsManager: PermissionsManager,
+        privacyManager: AirshipPrivacyManager,
+        permissionsManager: AirshipPermissionsManager,
         eventManager: EventManagerProtocol,
         lifeCycleEventFactory: LifeCycleEventFactoryProtocol = LifeCylceEventFactory()
     ) {
@@ -224,14 +224,14 @@ public class Analytics: NSObject, Component, AnalyticsProtocol {
         self.notificationCenter.addObserver(
             self,
             selector: #selector(updateEnablement),
-            name: PrivacyManager.changeEvent,
+            name: AirshipPrivacyManager.changeEvent,
             object: nil
         )
 
         self.notificationCenter.addObserver(
             self,
             selector: #selector(updateEnablement),
-            name: Channel.channelCreatedEvent,
+            name: AirshipChannel.channelCreatedEvent,
             object: nil
         )
     }
@@ -312,7 +312,7 @@ public class Analytics: NSObject, Component, AnalyticsProtocol {
             WKInterfaceDevice.current().systemVersion
         #endif
 
-        headers["X-UA-Device-Model"] = Utils.deviceModelName()
+        headers["X-UA-Device-Model"] = AirshipUtils.deviceModelName()
 
         // App info
         if let infoDictionary = Bundle.main.infoDictionary {
@@ -320,7 +320,7 @@ public class Analytics: NSObject, Component, AnalyticsProtocol {
                 infoDictionary[kCFBundleIdentifierKey as String] as? String
         }
 
-        headers["X-UA-Package-Version"] = Utils.bundleShortVersionString() ?? ""
+        headers["X-UA-Package-Version"] = AirshipUtils.bundleShortVersionString() ?? ""
 
         // Time zone
         let currentLocale = self.localeManager.currentLocale
@@ -407,17 +407,17 @@ public class Analytics: NSObject, Component, AnalyticsProtocol {
 
             if let customEvent = event as? CustomEvent {
                 self.notificationCenter.post(
-                    name: Analytics.customEventAdded,
+                    name: AirshipAnalytics.customEventAdded,
                     object: self,
-                    userInfo: [Analytics.eventKey: customEvent]
+                    userInfo: [AirshipAnalytics.eventKey: customEvent]
                 )
             }
 
             if let regionEvent = event as? RegionEvent {
                 self.notificationCenter.post(
-                    name: Analytics.regionEventAdded,
+                    name: AirshipAnalytics.regionEventAdded,
                     object: self,
-                    userInfo: [Analytics.eventKey: regionEvent]
+                    userInfo: [AirshipAnalytics.eventKey: regionEvent]
                 )
             }
         }
@@ -442,7 +442,7 @@ public class Analytics: NSObject, Component, AnalyticsProtocol {
         }
 
         if let previous = self.dataStore.object(
-            forKey: Analytics.associatedIdentifiers
+            forKey: AirshipAnalytics.associatedIdentifiers
         ) as? [String: String] {
             if previous == associatedIdentifiers.allIDs {
                 AirshipLogger.info(
@@ -454,7 +454,7 @@ public class Analytics: NSObject, Component, AnalyticsProtocol {
 
         self.dataStore.setObject(
             associatedIdentifiers.allIDs,
-            forKey: Analytics.associatedIdentifiers
+            forKey: AirshipAnalytics.associatedIdentifiers
         )
 
         if let event = AssociateIdentifiersEvent(
@@ -469,7 +469,7 @@ public class Analytics: NSObject, Component, AnalyticsProtocol {
     @objc
     public func currentAssociatedDeviceIdentifiers() -> AssociatedIdentifiers {
         let storedIDs =
-            self.dataStore.object(forKey: Analytics.associatedIdentifiers)
+            self.dataStore.object(forKey: AirshipAnalytics.associatedIdentifiers)
             as? [String: String]
         return AssociatedIdentifiers(
             dictionary: storedIDs != nil ? storedIDs : [:]
@@ -488,9 +488,9 @@ public class Analytics: NSObject, Component, AnalyticsProtocol {
             }
 
             self.notificationCenter.post(
-                name: Analytics.screenTracked,
+                name: AirshipAnalytics.screenTracked,
                 object: self,
-                userInfo: screen == nil ? [:] : [Analytics.screenKey: screen!]
+                userInfo: screen == nil ? [:] : [AirshipAnalytics.screenKey: screen!]
             )
 
             // If there's a screen currently being tracked set it's stop time and add it to analytics
@@ -595,17 +595,17 @@ public class Analytics: NSObject, Component, AnalyticsProtocol {
     }
 }
 
-extension Analytics: InternalAnalyticsProtocol {
+extension AirshipAnalytics: InternalAnalyticsProtocol {
     /// Called to notify analytics the app was launched from a push notification.
     /// For internal use only. :nodoc:
     /// - Parameter notification: The push notification.
     func launched(fromNotification notification: [AnyHashable: Any]) {
-        if Utils.isAlertingPush(notification) {
+        if AirshipUtils.isAlertingPush(notification) {
             let sendID = notification["_"] as? String
             self.conversionSendID =
-            sendID != nil ? sendID : Analytics.missingSendID
+            sendID != nil ? sendID : AirshipAnalytics.missingSendID
             self.conversionPushMetadata =
-            notification[Analytics.pushMetadata] as? String
+            notification[AirshipAnalytics.pushMetadata] as? String
             self.ensureInit()
         } else {
             self.conversionSendID = nil

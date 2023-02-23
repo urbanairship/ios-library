@@ -7,7 +7,7 @@ import AirshipCore
 
 final class ChannelCaptureTest: XCTestCase {
 
-    private let config: Config = Config()
+    private let config: AirshipConfig = AirshipConfig()
     private let channel: TestChannel = TestChannel()
     private let pasteboard: TestPasteboard = TestPasteboard()
     private let notificationCenter: NotificationCenter = NotificationCenter()

@@ -49,7 +49,7 @@ public class AttributesEditor: NSObject {
     public func set(date: Date, attribute: String) {
         add(
             attribute: attribute,
-            value: Utils.isoDateFormatterUTCWithDelimiter().string(from: date)
+            value: AirshipUtils.isoDateFormatterUTCWithDelimiter().string(from: date)
         )
     }
 

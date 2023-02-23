@@ -27,7 +27,7 @@ public class ConnectionType: NSObject {
 
 /// The `Utils` object provides an interface for utility methods.
 @objc(UAUtils)
-public class Utils: NSObject {
+public class AirshipUtils: NSObject {
 
     class func clamp<T>(_ value: T, min: T, max: T) -> T where T: Comparable {
         if value < min {
@@ -594,14 +594,14 @@ public class Utils: NSObject {
     /// Needed to get stringValue in InAppAutomation. Delete after its converted to swift.
     /// - Note: For internal use only. :nodoc:
     @objc
-    public class func permissionString(_ permission: Permission) -> String {
+    public class func permissionString(_ permission: AirshipPermission) -> String {
         return permission.stringValue
     }
 
     /// Needed to get stringValue in InAppAutomation. Delete after its converted to swift.
     /// - Note: For internal use only. :nodoc:
     @objc
-    public class func permissionStatusString(_ status: PermissionStatus)
+    public class func permissionStatusString(_ status: AirshipPermissionStatus)
         -> String
     {
         return status.stringValue

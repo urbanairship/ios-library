@@ -36,7 +36,7 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
     }
 
     public func didRegisterForRemoteNotifications(deviceToken: Data) {
-        let tokenString = Utils.deviceTokenStringFromDeviceToken(deviceToken)
+        let tokenString = AirshipUtils.deviceTokenStringFromDeviceToken(deviceToken)
 
         AirshipLogger.info(
             "Application registered device token: \(tokenString)"
@@ -59,7 +59,7 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
         completionHandler: @escaping (UIBackgroundFetchResult) -> Void
     ) {
 
-        guard !isForeground || Utils.isSilentPush(userInfo) else {
+        guard !isForeground || AirshipUtils.isSilentPush(userInfo) else {
             // will be handled by willPresentNotification(userInfo:presentationOptions:completionHandler:)
             completionHandler(.noData)
             return
@@ -79,7 +79,7 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
         completionHandler: @escaping (WKBackgroundFetchResult) -> Void
     ) {
 
-        guard !isForeground || Utils.isSilentPush(userInfo) else {
+        guard !isForeground || AirshipUtils.isSilentPush(userInfo) else {
             // will be handled by willPresentNotification(userInfo:presentationOptions:completionHandler:)
             completionHandler(.noData)
             return
@@ -211,7 +211,7 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
 
         let dispatchGroup = DispatchGroup()
         var fetchResults: [UInt] = []
-        let lock = Lock()
+        let lock = AirshipLock()
         var metadata: [AnyHashable: Any] = [:]
         metadata[UAActionMetadataPushPayloadKey] = userInfo
 
@@ -257,7 +257,7 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
         }
 
         dispatchGroup.notify(queue: .main) {
-            completionHandler(Utils.mergeFetchResults(fetchResults))
+            completionHandler(AirshipUtils.mergeFetchResults(fetchResults))
         }
     }
 

@@ -19,7 +19,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, DeepLinkDelegate,
             .LaunchOptionsKey: Any]? = nil
     ) -> Bool {
 
-        let config = Config.default()
+        let config = AirshipConfig.default()
         config.productionLogLevel = .trace
         config.developmentLogLevel = .trace
 

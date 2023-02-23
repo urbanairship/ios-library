@@ -6,14 +6,14 @@ import XCTest
 
 class PermissionsManagerTests: XCTestCase {
 
-    let permissionsManager = PermissionsManager()
+    let permissionsManager = AirshipPermissionsManager()
     let delegate = TestPermissionsDelegate()
 
     func testCheckPermissionNotConfigured() throws {
         let callbackCalled = self.expectation(description: "Callback called")
         self.permissionsManager.checkPermissionStatus(.displayNotifications) {
             status in
-            XCTAssertEqual(PermissionStatus.notDetermined, status)
+            XCTAssertEqual(AirshipPermissionStatus.notDetermined, status)
             callbackCalled.fulfill()
         }
 
@@ -29,7 +29,7 @@ class PermissionsManagerTests: XCTestCase {
 
         let callbackCalled = self.expectation(description: "Callback called")
         self.permissionsManager.checkPermissionStatus(.location) { status in
-            XCTAssertEqual(PermissionStatus.granted, status)
+            XCTAssertEqual(AirshipPermissionStatus.granted, status)
             callbackCalled.fulfill()
         }
 
@@ -42,7 +42,7 @@ class PermissionsManagerTests: XCTestCase {
         let callbackCalled = self.expectation(description: "Callback called")
         self.permissionsManager.requestPermission(.displayNotifications) {
             status in
-            XCTAssertEqual(PermissionStatus.notDetermined, status)
+            XCTAssertEqual(AirshipPermissionStatus.notDetermined, status)
             callbackCalled.fulfill()
         }
 
@@ -58,7 +58,7 @@ class PermissionsManagerTests: XCTestCase {
 
         let callbackCalled = self.expectation(description: "Callback called")
         self.permissionsManager.requestPermission(.location) { status in
-            XCTAssertEqual(PermissionStatus.denied, status)
+            XCTAssertEqual(AirshipPermissionStatus.denied, status)
             callbackCalled.fulfill()
         }
 
@@ -81,7 +81,7 @@ class PermissionsManagerTests: XCTestCase {
             permission: .displayNotifications
         )
 
-        let expected = Set<Permission>([.location, .displayNotifications])
+        let expected = Set<AirshipPermission>([.location, .displayNotifications])
         let configured = self.permissionsManager.configuredPermissions
         XCTAssertEqual(expected, configured)
     }
@@ -134,7 +134,7 @@ class PermissionsManagerTests: XCTestCase {
 
         let callbackCalled = self.expectation(description: "Callback called")
         self.permissionsManager.requestPermission(.location) { status in
-            XCTAssertEqual(PermissionStatus.denied, status)
+            XCTAssertEqual(AirshipPermissionStatus.denied, status)
             callbackCalled.fulfill()
         }
 
@@ -147,21 +147,21 @@ class PermissionsManagerTests: XCTestCase {
 }
 
 @objc
-open class TestPermissionsDelegate: NSObject, PermissionDelegate {
+open class TestPermissionsDelegate: NSObject, AirshipPermissionDelegate {
 
-    @objc public var permissionStatus: PermissionStatus = .notDetermined
+    @objc public var permissionStatus: AirshipPermissionStatus = .notDetermined
     var checkCalled: Bool = false
     var requestCalled: Bool = false
 
     public func checkPermissionStatus(
-        completionHandler: @escaping (PermissionStatus) -> Void
+        completionHandler: @escaping (AirshipPermissionStatus) -> Void
     ) {
         self.checkCalled = true
         completionHandler(permissionStatus)
     }
 
     public func requestPermission(
-        completionHandler: @escaping (PermissionStatus) -> Void
+        completionHandler: @escaping (AirshipPermissionStatus) -> Void
     ) {
         self.requestCalled = true
         completionHandler(permissionStatus)

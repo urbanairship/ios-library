@@ -29,13 +29,13 @@ public class RemoteDataManager: NSObject, Component, RemoteDataProvider {
     private let appStateTracker: AppStateTracker
     private let localeManager: LocaleManagerProtocol
     private let workManager: AirshipWorkManagerProtocol
-    private let privacyManager: PrivacyManager
+    private let privacyManager: AirshipPrivacyManager
     private let networkMonitor: NetworkMonitor
 
     private var updatedSinceLastForeground = false
 
     private var refreshCompletionHandlers: [((Bool) -> Void)?] = []
-    private let refreshLock = Lock()
+    private let refreshLock = AirshipLock()
     private var isRefreshing = false
 
     private let updateSubject = PassthroughSubject<[RemoteDataPayload], Never>()
@@ -146,7 +146,7 @@ public class RemoteDataManager: NSObject, Component, RemoteDataProvider {
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,
         localeManager: LocaleManagerProtocol,
-        privacyManager: PrivacyManager
+        privacyManager: AirshipPrivacyManager
     ) {
         self.init(
             dataStore: dataStore,
@@ -162,7 +162,7 @@ public class RemoteDataManager: NSObject, Component, RemoteDataProvider {
     init(
         dataStore: PreferenceDataStore,
         localeManager: LocaleManagerProtocol,
-        privacyManager: PrivacyManager,
+        privacyManager: AirshipPrivacyManager,
         apiClient: RemoteDataAPIClientProtocol,
         remoteDataStore: RemoteDataStore,
         workManager: AirshipWorkManagerProtocol = AirshipWorkManager.shared,
@@ -192,7 +192,7 @@ public class RemoteDataManager: NSObject, Component, RemoteDataProvider {
         self.notificationCenter.addObserver(
             self,
             selector: #selector(checkRefresh),
-            name: LocaleManager.localeUpdatedEvent,
+            name: AirshipLocaleManager.localeUpdatedEvent,
             object: nil
         )
 
@@ -213,7 +213,7 @@ public class RemoteDataManager: NSObject, Component, RemoteDataProvider {
         self.notificationCenter.addObserver(
             self,
             selector: #selector(checkRefresh),
-            name: PrivacyManager.changeEvent,
+            name: AirshipPrivacyManager.changeEvent,
             object: nil
         )
         
@@ -307,7 +307,7 @@ public class RemoteDataManager: NSObject, Component, RemoteDataProvider {
         }
         
         self.lastRefreshTime = self.date.now
-        self.lastAppVersion = Utils.bundleShortVersionString()
+        self.lastAppVersion = AirshipUtils.bundleShortVersionString()
         success = true
 
         if let payloads = payloads {
@@ -369,7 +369,7 @@ public class RemoteDataManager: NSObject, Component, RemoteDataProvider {
         let lastAppRefreshVersion = self.dataStore.string(
             forKey: RemoteDataManager.lastRefreshAppVersionKey
         )
-        let currentAppVersion = Utils.bundleShortVersionString()
+        let currentAppVersion = AirshipUtils.bundleShortVersionString()
         return lastAppRefreshVersion == currentAppVersion
     }
 
