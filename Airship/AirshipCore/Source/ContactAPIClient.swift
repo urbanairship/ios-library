@@ -516,7 +516,7 @@ class ContactAPIClient: ContactsAPIClientProtocol {
                 ?? "",
                 ContactAPIClient.optInKey: true,
                 ContactAPIClient.openKey: openPayload,
-            ]
+            ] as [String : Any]
         ]
         
         let request = self.request(

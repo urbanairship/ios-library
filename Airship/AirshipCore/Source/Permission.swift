@@ -4,7 +4,7 @@ import Foundation
 
 /// Airship permissions. Used with `PermissionsManager`
 @objc(UAPermission)
-public enum AirshipPermission: UInt, CustomStringConvertible {
+public enum AirshipPermission: UInt, CustomStringConvertible, Sendable {
     /// Post notifications
     case displayNotifications
 

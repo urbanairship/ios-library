@@ -32,7 +32,7 @@ public class RemoteDataManager: NSObject, Component, RemoteDataProvider {
     private let privacyManager: AirshipPrivacyManager
     private let networkMonitor: NetworkMonitor
 
-    private var updatedSinceLastForeground = false
+    private var updatedSinceLastForeground = Atomic<Bool>(false)
 
     private var refreshCompletionHandlers: [((Bool) -> Void)?] = []
     private let refreshLock = AirshipLock()
@@ -236,9 +236,7 @@ public class RemoteDataManager: NSObject, Component, RemoteDataProvider {
 
     @objc
     private func applicationDidForeground() {
-        self.refreshLock.sync {
-            self.updatedSinceLastForeground = false
-        }
+        self.updatedSinceLastForeground.value = false
         self.checkRefresh()
     }
 
@@ -302,9 +300,7 @@ public class RemoteDataManager: NSObject, Component, RemoteDataProvider {
             self.lastModified = remoteData.lastModified
         }
 
-        refreshLock.sync {
-            self.updatedSinceLastForeground = true
-        }
+        self.updatedSinceLastForeground.value = true
         
         self.lastRefreshTime = self.date.now
         self.lastAppVersion = AirshipUtils.bundleShortVersionString()
@@ -396,7 +392,7 @@ public class RemoteDataManager: NSObject, Component, RemoteDataProvider {
 
         var result = false
         self.refreshLock.sync {
-            if !self.updatedSinceLastForeground {
+            if !self.updatedSinceLastForeground.value {
                 let timeSinceLastRefresh = self.date.now.timeIntervalSince(
                     self.lastRefreshTime
                 )

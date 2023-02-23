@@ -133,11 +133,11 @@ public class AirshipPrivacyManager: NSObject {
     */
     @objc
     public func isEnabled(_ feature: Features) -> Bool {
-        guard feature == .none else {
+        guard feature == [] else {
             return (enabledFeatures.rawValue & feature.rawValue)
                 == feature.rawValue
         }
-        return enabledFeatures == .none
+        return enabledFeatures == []
     }
 
     /**

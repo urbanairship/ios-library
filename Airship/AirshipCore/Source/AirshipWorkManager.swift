@@ -1,8 +1,10 @@
+/* Copyright Airship and Contributors */
+
 import Combine
 import Foundation
 
 /// Manages work for the Airship SDK
-class AirshipWorkManager: NSObject, AirshipWorkManagerProtocol {
+class AirshipWorkManager: AirshipWorkManagerProtocol {
     private let rateLimitor = WorkRateLimiter()
     private let conditionsMonitor = WorkConditionsMonitor()
     private let backgroundTasks = WorkBackgroundTasks()
@@ -13,9 +15,7 @@ class AirshipWorkManager: NSObject, AirshipWorkManagerProtocol {
     /// Shared instance
     static let shared = AirshipWorkManager()
 
-    override init() {
-        super.init()
-
+    init() {
         let task = Task { [weak self] in
             await self?.workers.run()
         }
@@ -74,8 +74,7 @@ class AirshipWorkManager: NSObject, AirshipWorkManagerProtocol {
         .store(in: &self.subscriptions)
     }
 
-    @objc(registerWorkerWithForID:type:workHandler:)
-    public func _registerWorker(
+    public func registerWorker(
         _ workID: String,
         type: AirshipWorkerType,
         workHandler: @escaping (AirshipWorkRequest, AirshipWorkContinuation) ->
@@ -85,19 +84,22 @@ class AirshipWorkManager: NSObject, AirshipWorkManagerProtocol {
             workID,
             type: type
         ) { workRequest in
-            var continuation: AirshipWorkContinuation? = nil
-            let cancel = { continuation?.cancel() }
+            let cancellable: CancellabelValueHolder<AirshipWorkContinuation> = CancellabelValueHolder { continuation in
+                continuation.cancel()
+            }
+            
             return await withTaskCancellationHandler(
                 operation: {
                     return await withCheckedContinuation { taskContinuation in
-                        continuation = AirshipWorkContinuation { result in
+                        let continuation = AirshipWorkContinuation { result in
                             taskContinuation.resume(returning: result)
                         }
-                        workHandler(workRequest, continuation!)
+                        cancellable.value = continuation
+                        workHandler(workRequest, continuation)
                     }
                 },
                 onCancel: {
-                    cancel()
+                    cancellable.cancel()
                 }
             )
         }
@@ -123,7 +125,6 @@ class AirshipWorkManager: NSObject, AirshipWorkManagerProtocol {
         }
     }
 
-    @objc
     public func setRateLimit(
         _ rateLimitID: String,
         rate: Int,
@@ -138,7 +139,6 @@ class AirshipWorkManager: NSObject, AirshipWorkManagerProtocol {
         }
     }
 
-    @objc
     public func dispatchWorkRequest(_ request: AirshipWorkRequest) {
         Task {
             await self.workers.dispatchWorkRequest(request)
@@ -183,3 +183,4 @@ private actor Workers {
         }
     }
 }
+

@@ -1,7 +1,6 @@
 import Foundation
 
-@objc
-public enum AirshipWorkResult: Int {
+public enum AirshipWorkResult: Int, Sendable {
     case success
     case failure
 }

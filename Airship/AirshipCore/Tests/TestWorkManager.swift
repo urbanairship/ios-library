@@ -30,7 +30,7 @@ class TestWorkManager: AirshipWorkManagerProtocol {
         self.workHandler = workHandler
     }
     
-    func _registerWorker(_ workID: String, type: AirshipCore.AirshipWorkerType, workHandler: @escaping (AirshipCore.AirshipWorkRequest, AirshipCore.AirshipWorkContinuation) -> Void) {
+    func registerWorker(_ workID: String, type: AirshipCore.AirshipWorkerType, workHandler: @escaping (AirshipCore.AirshipWorkRequest, AirshipCore.AirshipWorkContinuation) -> Void) {
         
     }
     

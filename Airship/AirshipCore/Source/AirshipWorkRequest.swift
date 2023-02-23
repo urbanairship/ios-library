@@ -1,44 +1,33 @@
+/* Copyright Airship and Contributors */
+
 import Foundation
 
-@objc(UAirshipWorkRequest)
-public class AirshipWorkRequest: NSObject {
+@objc
+public enum AirshipWorkRequestConflictPolicy: Int, Sendable {
+    @objc(UAirshipWorkRequestConflictPolicyAppend)
+    case append
+    @objc(UAirshipWorkRequestConflictPolicyReplace)
+    case replace
+    @objc(UAirshipWorkRequestConflictPolicyKeep)
+    case keep
+}
 
-    @objc
+public struct AirshipWorkRequest: Equatable, Sendable {
+
     public let workID: String
-
-    @objc
-    public enum ConflictPolicy: Int {
-        @objc(UAirshipWorkRequestConflictPolicyAppend)
-        case append
-        @objc(UAirshipWorkRequestConflictPolicyReplace)
-        case replace
-        @objc(UAirshipWorkRequestConflictPolicyKeep)
-        case keep
-    }
-
-    @objc
-    public let extras: [String: Any]?
-
-    @objc
+    public let extras: [String: String]?
     public let initialDelay: TimeInterval
-
-    @objc
     public let requiresNetwork: Bool
-
-    @objc
     public let rateLimitIDs: [String]
+    public let conflictPolicy: AirshipWorkRequestConflictPolicy
 
-    @objc
-    public let conflictPolicy: ConflictPolicy
-
-    @objc
     public init(
         workID: String,
-        extras: [String: Any]? = nil,
+        extras: [String: String]? = nil,
         initialDelay: TimeInterval = 0.0,
         requiresNetwork: Bool = true,
         rateLimitIDs: [String] = [],
-        conflictPolicy: ConflictPolicy = .replace
+        conflictPolicy: AirshipWorkRequestConflictPolicy = .replace
     ) {
         self.workID = workID
         self.extras = extras

@@ -228,7 +228,7 @@ class TestURLRequestSession: URLRequestSessionProtocol {
     func dataTask(
         request: URLRequest,
         completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void
-    ) -> Disposable {
+    ) -> AirshipCancellable {
         self.lastRequest = request
 
         completionHandler(
@@ -237,6 +237,6 @@ class TestURLRequestSession: URLRequestSessionProtocol {
             self.error
         )
 
-        return Disposable()
+        return CancellabelValueHolder<String>() { _ in}
     }
 }

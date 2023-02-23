@@ -283,7 +283,7 @@ public struct MessageCenterListView: View {
     private func leadingToolbar() -> some ToolbarContent {
         ToolbarItemGroup(placement: .navigationBarTrailing) {
             editButton()
-            if #unavailable(iOS 15) {
+            if #available(iOS 15, *) {} else {
                 refreshButton()
             }
         }

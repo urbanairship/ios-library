@@ -3,7 +3,7 @@
 import Foundation
 
 /// - Note: For internal use only. :nodoc:
-public class AirshipLock {
+public final class AirshipLock: Sendable {
     private let lock = NSRecursiveLock()
 
     public init() {}

@@ -128,12 +128,12 @@ class ChannelRegistrar: ChannelRegistrarProtocol {
         guard self.channelAPIClient.isURLConfigured else {
             return
         }
-        
+                
         self.workManager.dispatchWorkRequest(
             AirshipWorkRequest(
                 workID: ChannelRegistrar.workID,
                 extras: [
-                    ChannelRegistrar.forcefullyKey: forcefully
+                    ChannelRegistrar.forcefullyKey: String(forcefully)
                 ],
                 requiresNetwork: true,
                 conflictPolicy: forcefully ? .replace : .keep
@@ -163,7 +163,7 @@ class ChannelRegistrar: ChannelRegistrarProtocol {
 
         let forcefully = workRequest.extras?[
             ChannelRegistrar.forcefullyKey
-        ] as? Bool ?? false
+        ]?.lowercased() == "true"
 
         let updatePayload = try makeNextUpdatePayload(
             channelID: channelID,

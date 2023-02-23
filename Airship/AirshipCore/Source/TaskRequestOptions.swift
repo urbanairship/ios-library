@@ -4,13 +4,13 @@
 @objc(UATaskRequestOptions)
 public class TaskRequestOptions: NSObject {
     @objc
-    public let conflictPolicy: AirshipWorkRequest.ConflictPolicy
+    public let conflictPolicy: AirshipWorkRequestConflictPolicy
 
     @objc
     public let isNetworkRequired: Bool
 
     @objc
-    public let extras: [String: Any]
+    public let extras: [String: String]
 
     @objc
     public static let defaultOptions = TaskRequestOptions(
@@ -20,9 +20,9 @@ public class TaskRequestOptions: NSObject {
 
     @objc
     public init(
-        conflictPolicy: AirshipWorkRequest.ConflictPolicy = .replace,
+        conflictPolicy: AirshipWorkRequestConflictPolicy = .replace,
         requiresNetwork: Bool = false,
-        extras: [String: Any]? = nil
+        extras: [String: String]? = nil
     ) {
         self.conflictPolicy = conflictPolicy
         self.isNetworkRequired = requiresNetwork

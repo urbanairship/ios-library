@@ -97,16 +97,17 @@ public class AirshipRequestSession {
 
         for (k, v) in headers { urlRequest.setValue(v, forHTTPHeaderField: k) }
 
-        var disposable: Disposable?
-        let onCancel = {
-            disposable?.dispose()
+        let cancellable = CancellabelValueHolder<AirshipCancellable>() { cancellable in
+            cancellable.cancel()
         }
 
         return try await withTaskCancellationHandler(
             operation: {
                 return try await withCheckedThrowingContinuation {
                     continuation in
-                    disposable = self.session.dataTask(request: urlRequest) {
+                    
+                    
+                    cancellable.value = self.session.dataTask(request: urlRequest) {
                         (data, response, error) in
                         if let error = error {
                             continuation.resume(throwing: error)
@@ -143,7 +144,7 @@ public class AirshipRequestSession {
             },
             onCancel: {
                 if autoCancel {
-                    onCancel()
+                    cancellable.cancel()
                 }
             }
         )
@@ -187,7 +188,7 @@ protocol URLRequestSessionProtocol {
         request: URLRequest,
         completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void
     )
-        -> Disposable
+        -> AirshipCancellable
 }
 
 extension URLSession: URLRequestSessionProtocol {
@@ -196,7 +197,7 @@ extension URLSession: URLRequestSessionProtocol {
         request: URLRequest,
         completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void
     )
-        -> Disposable
+        -> AirshipCancellable
     {
         let task = self.dataTask(
             with: request,
@@ -204,7 +205,7 @@ extension URLSession: URLRequestSessionProtocol {
         )
         task.resume()
 
-        return Disposable {
+        return CancellabelValueHolder(value: task) { task in
             task.cancel()
         }
     }

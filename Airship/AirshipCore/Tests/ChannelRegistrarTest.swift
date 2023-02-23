@@ -39,12 +39,12 @@ class ChannelRegistrarTest: XCTestCase {
 
         XCTAssertEqual(1, self.workManager.workRequests.count)
 
-        let extras = ["forcefully": false]
+        let extras = ["forcefully": "false"]
 
         let request = self.workManager.workRequests[0]
         XCTAssertEqual(workID, request.workID)
         XCTAssertEqual(.keep, request.conflictPolicy)
-        XCTAssertEqual(extras, request.extras as! [String : Bool])
+        XCTAssertEqual(extras, request.extras)
         XCTAssertEqual(0, request.initialDelay)
     }
 
@@ -55,12 +55,12 @@ class ChannelRegistrarTest: XCTestCase {
 
         XCTAssertEqual(1, self.workManager.workRequests.count)
 
-        let extras = ["forcefully": true]
+        let extras = ["forcefully": "true"]
 
         let request = self.workManager.workRequests[0]
         XCTAssertEqual(workID, request.workID)
         XCTAssertEqual(.replace, request.conflictPolicy)
-        XCTAssertEqual(extras, request.extras as! [String : Bool])
+        XCTAssertEqual(extras, request.extras )
         XCTAssertEqual(0, request.initialDelay)
     }
 
@@ -413,7 +413,7 @@ class ChannelRegistrarTest: XCTestCase {
         let result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
                 workID: workID,
-                extras: ["forcefully": true]
+                extras: ["forcefully": "true"]
             )
         )
 

@@ -1,3 +1,5 @@
+/* Copyright Airship and Contributors */
+
 import Combine
 import Foundation
 
@@ -78,31 +80,31 @@ actor Worker {
 
     func run() async {
         for await next in self.workStream {
-            let task: Task<Void, Error> = Task { [weak self] in
+            let task: Task<Void, Error> = Task {
                 var attempt = 1
-                while await self?.isValidRequest(next) == true {
-                    var attemptTask: Task<Void, Error>? = nil
-                    let disposable = Disposable {
-                        attemptTask?.cancel()
+                while self.isValidRequest(next) == true {
+                    
+                    let cancellableValueHolder: CancellabelValueHolder<Task<Void, Error>> = CancellabelValueHolder { task in
+                        task.cancel()
                     }
-
+                    
                     await withTaskCancellationHandler { [attempt] in
                         let task = Task {
                             try Task.checkCancellation()
-                            try await process(
+                            try await self.process(
                                 pendingRequest: next,
-                                attempt: attempt,
-                                disposable: disposable
-                            )
+                                attempt: attempt
+                            ) {
+                                cancellableValueHolder.cancel()
+                            }
                         }
 
-                        attemptTask = task
+                        cancellableValueHolder.value = task
                         try? await task.result.get()
                     } onCancel: {
-                        disposable.dispose()
+                        cancellableValueHolder.cancel()
                     }
                     attempt += 1
-
                 }
             }
 
@@ -133,7 +135,7 @@ actor Worker {
     private func process(
         pendingRequest: PendingRequest,
         attempt: Int,
-        disposable: Disposable
+        onCancel: @escaping @Sendable () -> Void
     ) async throws {
         let canonicalID = "\(workID)(\(pendingRequest.id))"
         try await prepare(pendingRequest: pendingRequest)
@@ -142,7 +144,7 @@ actor Worker {
         let backgroundTask = try backgroundTasks.beginTask(
             "Airship: \(canonicalID)"
         ) {
-            disposable.dispose()
+            onCancel()
         }
         var result: AirshipWorkResult = .failure
         do {
@@ -180,7 +182,7 @@ actor Worker {
                 )
                 .first()
                 .sink { _ in
-                    disposable.dispose()
+                    onCancel()
                 }
 
             try await sleep(backOff)
@@ -277,7 +279,7 @@ actor Worker {
         try await Task.sleep(nanoseconds: sleep)
     }
 
-    fileprivate struct PendingRequest: Equatable {
+    fileprivate struct PendingRequest: Equatable, Sendable {
         let id: Int
         let request: AirshipWorkRequest
         let date: Date = Date()

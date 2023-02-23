@@ -1,7 +1,7 @@
 import Foundation
 
 // NOTE: For internal use only. :nodoc:
-public struct ChannelRegistrationPayload: Codable, Equatable {
+public struct ChannelRegistrationPayload: Codable, Equatable, Sendable {
 
     public var channel: ChannelInfo
 
@@ -32,7 +32,7 @@ public struct ChannelRegistrationPayload: Codable, Equatable {
     }
 
     // NOTE: For internal use only. :nodoc:
-    public struct ChannelInfo: Codable, Equatable {
+    public struct ChannelInfo: Codable, Equatable, Sendable {
 
         var deviceType = "ios"
 
@@ -157,7 +157,7 @@ public struct ChannelRegistrationPayload: Codable, Equatable {
     }
 
     // NOTE: For internal use only. :nodoc:
-    public struct TagChanges: Codable, Equatable {
+    public struct TagChanges: Codable, Equatable, Sendable {
         let adds: [String]?
         let removes: [String]?
 
@@ -177,7 +177,7 @@ public struct ChannelRegistrationPayload: Codable, Equatable {
     }
 
     // NOTE: For internal use only. :nodoc:
-    public struct iOSChannelSettings: Codable, Equatable {
+    public struct iOSChannelSettings: Codable, Equatable, Sendable {
         /// Quiet time settings for this device.
         public var quietTime: QuietTime?
 
@@ -215,7 +215,7 @@ public struct ChannelRegistrationPayload: Codable, Equatable {
     }
 
     // NOTE: For internal use only. :nodoc:
-    public struct IdentityHints: Codable, Equatable {
+    public struct IdentityHints: Codable, Equatable, Sendable {
         /// The user ID.
         public var userID: String?
 
@@ -229,7 +229,7 @@ public struct ChannelRegistrationPayload: Codable, Equatable {
     }
 
     // NOTE: For internal use only. :nodoc:
-    public struct QuietTime: Codable, Equatable {
+    public struct QuietTime: Codable, Equatable, Sendable {
         public var start: String
         public var end: String
 

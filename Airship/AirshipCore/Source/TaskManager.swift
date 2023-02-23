@@ -45,7 +45,7 @@ public class TaskManager: NSObject, TaskManagerProtocol {
         dispatcher: UADispatcher,
         launchHandler: @escaping (AirshipTask) -> Void
     ) {
-        self.workManager._registerWorker(taskID, type: type) {
+        self.workManager.registerWorker(taskID, type: type) {
             request,
             continuation in
 

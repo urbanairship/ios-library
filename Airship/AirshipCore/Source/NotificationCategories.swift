@@ -174,8 +174,7 @@ public class NotificationCategories: NSObject {
             Void
     ) -> Set<UNNotificationCategory> {
 
-        let categoriesDictionary =
-            NSDictionary(contentsOfFile: path) as? Dictionary ?? [:]
+        let categoriesDictionary = NSDictionary(contentsOfFile: path) as? [AnyHashable: Any] ?? [:]
         var categories: Set<UNNotificationCategory> = []
 
         for key in categoriesDictionary.keys {

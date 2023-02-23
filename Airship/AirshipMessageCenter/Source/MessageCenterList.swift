@@ -470,7 +470,7 @@ public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
     // MARK: Enqueue tasks
 
     private func dispatchUpdateWorkRequest(
-        conflictPolicy: AirshipWorkRequest.ConflictPolicy = .keep
+        conflictPolicy: AirshipWorkRequestConflictPolicy = .keep
     ) {
         self.workManager.dispatchWorkRequest(
             AirshipWorkRequest(
