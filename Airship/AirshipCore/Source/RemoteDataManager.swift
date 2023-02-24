@@ -26,15 +26,15 @@ public class RemoteDataManager: NSObject, Component, RemoteDataProvider {
     private let remoteDataStore: RemoteDataStore
     private let date: AirshipDate
     private let notificationCenter: NotificationCenter
-    private let appStateTracker: AppStateTracker
+    private let appStateTracker: AppStateTrackerProtocol
     private let localeManager: LocaleManagerProtocol
     private let workManager: AirshipWorkManagerProtocol
     private let privacyManager: AirshipPrivacyManager
     private let networkMonitor: NetworkMonitor
 
-    private var updatedSinceLastForeground = Atomic<Bool>(false)
+    private var updatedSinceLastForeground: Atomic<Bool> = Atomic(false)
 
-    private var refreshCompletionHandlers: [((Bool) -> Void)?] = []
+    private var refreshCompletionHandlers: [(@Sendable (Bool) -> Void)?] = []
     private let refreshLock = AirshipLock()
     private var isRefreshing = false
 
@@ -168,7 +168,7 @@ public class RemoteDataManager: NSObject, Component, RemoteDataProvider {
         workManager: AirshipWorkManagerProtocol = AirshipWorkManager.shared,
         date: AirshipDate = AirshipDate.shared,
         notificationCenter: NotificationCenter = NotificationCenter.default,
-        appStateTracker: AppStateTracker = AppStateTracker.shared,
+        appStateTracker: AppStateTrackerProtocol = AppStateTracker.shared,
         networkMonitor: NetworkMonitor = NetworkMonitor()
     ) {
         self.dataStore = dataStore
@@ -223,18 +223,23 @@ public class RemoteDataManager: NSObject, Component, RemoteDataProvider {
         ) { [weak self] _ in
             return try await self?.handleRefreshTask() ?? .success
         }
-
+    }
+    
+    @MainActor
+    public func airshipReady() {
         self.checkRefresh()
     }
 
     @objc
+    @MainActor
     private func checkRefresh() {
-        if self.shouldRefresh() {
+        if self.shouldRefresh(state: self.appStateTracker.state) {
             self.enqueueRefreshTask()
         }
     }
 
     @objc
+    @MainActor
     private func applicationDidForeground() {
         self.updatedSinceLastForeground.value = false
         self.checkRefresh()
@@ -299,7 +304,6 @@ public class RemoteDataManager: NSObject, Component, RemoteDataProvider {
             self.lastMetadata = remoteData.metadata
             self.lastModified = remoteData.lastModified
         }
-
         self.updatedSinceLastForeground.value = true
         
         self.lastRefreshTime = self.date.now
@@ -342,22 +346,25 @@ public class RemoteDataManager: NSObject, Component, RemoteDataProvider {
         return metadata.isEqual(last)
     }
 
-    public func refresh(
-        force: Bool,
-        completionHandler: @escaping (Bool) -> Void
-    ) {
-        refreshLock.sync {
-            if (!(force || shouldRefresh())) {
-                // Already up to date
-                completionHandler(true)
-            } else if self.networkMonitor.isConnected {
-                self.refreshCompletionHandlers.append(completionHandler)
-                if !isRefreshing {
-                    enqueueRefreshTask()
+    public func refresh(force: Bool) async -> Bool {
+        let state = await self.appStateTracker.state
+        if (!(force || self.shouldRefresh(state: state))) {
+            // Already up to date
+            return true
+        } else if self.networkMonitor.isConnected {
+            return await withUnsafeContinuation { continuation in
+                self.refreshLock.sync {
+                    self.refreshCompletionHandlers.append({ result in
+                        continuation.resume(returning: result)
+                    })
+                    
+                    if !isRefreshing {
+                        enqueueRefreshTask()
+                    }
                 }
-            } else {
-                completionHandler(false)
             }
+        } else {
+            return false
         }
     }
 
@@ -377,9 +384,9 @@ public class RemoteDataManager: NSObject, Component, RemoteDataProvider {
         return isMetadataCurrent(current)
     }
 
-    private func shouldRefresh() -> Bool {
+    private func shouldRefresh(state: ApplicationState) -> Bool {
         guard self.privacyManager.isAnyFeatureEnabled(),
-            self.appStateTracker.state == .active
+            state == .active
         else {
             return false
         }
@@ -471,3 +478,4 @@ extension RemoteDataManager: PushableComponent {
     }
 }
 #endif
+

@@ -17,7 +17,7 @@ final class RemoteDataManagerTest: AirshipBaseTest {
     var notificationCenter = NotificationCenter()
     var testLocaleManager = TestLocaleManager()
     var testWorkManager = TestWorkManager()
-    var remoteDataManager: RemoteDataManager?
+    var remoteDataManager: RemoteDataManager!
     
     lazy var privacyManager: AirshipPrivacyManager = {
         AirshipPrivacyManager(dataStore: self.dataStore, defaultEnabledFeatures: .all)
@@ -25,6 +25,7 @@ final class RemoteDataManagerTest: AirshipBaseTest {
     
     var testAppStateTracker = TestAppStateTracker()
     
+    @MainActor
     override func setUpWithError() throws {
         
         try super.setUpWithError()
@@ -45,8 +46,9 @@ final class RemoteDataManagerTest: AirshipBaseTest {
         self.testWorkManager.workRequests = []
     }
     
-    func createManager() -> RemoteDataManager? {
-        return RemoteDataManager(
+    @MainActor
+    func createManager() -> RemoteDataManager {
+        let remoteDataManager = RemoteDataManager(
             dataStore: self.dataStore,
             localeManager: self.testLocaleManager,
             privacyManager: self.privacyManager,
@@ -58,6 +60,8 @@ final class RemoteDataManagerTest: AirshipBaseTest {
             appStateTracker: self.testAppStateTracker,
             networkMonitor: self.testNetworkMonitor
         )
+        remoteDataManager.airshipReady()
+        return remoteDataManager
     }
     
     func testForegroundRefresh() {
@@ -206,16 +210,10 @@ final class RemoteDataManagerTest: AirshipBaseTest {
         XCTAssertEqual(result, .success)
     }
     
-    func testRefreshNoNetwork() {
+    func testRefreshNoNetwork() async {
         testNetworkMonitor.isConnectedOverride = false
-        let expectation = self.expectation(description: "Callback called")
-        
-        self.remoteDataManager?.refresh(force: false) { result in
-            XCTAssertFalse(result)
-            expectation.fulfill()
-        }
-        
-        waitForExpectations(timeout: testExpectationTimeOut)
+        let result = await self.remoteDataManager!.refresh(force: false)
+        XCTAssertFalse(result)
     }
     
     func testRefreshRemoteDataServerError() async throws {

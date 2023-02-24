@@ -189,6 +189,7 @@ public class Airship: NSObject {
     /// - Parameters:
     ///     - launchOptions: The launch options passed into `application:didFinishLaunchingWithOptions:`.
     @objc
+    @MainActor
     public class func takeOff(
         launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) {
@@ -200,6 +201,7 @@ public class Airship: NSObject {
     ///     - config: The Airship config.
     ///     - launchOptions: The launch options passed into `application:didFinishLaunchingWithOptions:`.
     @objc
+    @MainActor
     public class func takeOff(
         _ config: AirshipConfig?,
         launchOptions: [UIApplication.LaunchOptionsKey: Any]?

@@ -1,20 +1,16 @@
 /* Copyright Airship and Contributors */
 
 /// - Note: For Internal use only :nodoc:
-class AppInitEvent: NSObject, Event {
+final class AppInitEvent: NSObject, Event {
 
-    private lazy var analytics = Airship.requireComponent(
-        ofType: AnalyticsProtocol.self
-    )
-    private lazy var push: () -> PushProtocol = { Airship.push }
+    private let _data: [AnyHashable: Any]
 
-    convenience init(
-        analytics: AnalyticsProtocol,
-        push: @escaping () -> PushProtocol
+    @MainActor
+    init(
+        analytics: AnalyticsProtocol = Airship.requireComponent(ofType: AnalyticsProtocol.self),
+        push: PushProtocol = Airship.requireComponent(ofType: PushProtocol.self)
     ) {
-        self.init()
-        self.analytics = analytics
-        self.push = push
+        self._data = AppInitEvent.gatherData(analytics: analytics, push: push)
     }
 
     @objc
@@ -29,24 +25,29 @@ class AppInitEvent: NSObject, Event {
 
     @objc
     public var data: [AnyHashable: Any] {
-        return self.gatherData()
+        return self._data
     }
-    open func gatherData() -> [AnyHashable: Any] {
+    
+    @MainActor
+    static func gatherData(
+        analytics: AnalyticsProtocol,
+        push: PushProtocol
+    ) -> [AnyHashable: Any] {
         var data: [AnyHashable: Any] = [:]
 
-        data["push_id"] = self.analytics.conversionSendID
-        data["metadata"] = self.analytics.conversionPushMetadata
+        data["push_id"] = analytics.conversionSendID
+        data["metadata"] = analytics.conversionPushMetadata
         data["carrier"] = AirshipUtils.carrierName()
         #if !os(watchOS)
         data["connection_type"] = AirshipUtils.connectionType()
         #endif
 
         data["notification_types"] = EventUtils.notificationTypes(
-            authorizedSettings: push().authorizedNotificationSettings
+            authorizedSettings: push.authorizedNotificationSettings
         )
         data["notification_authorization"] =
             EventUtils.notificationAuthorization(
-                authorizationStatus: push().authorizationStatus
+                authorizationStatus: push.authorizationStatus
             )
 
         let localtz = NSTimeZone.default as NSTimeZone

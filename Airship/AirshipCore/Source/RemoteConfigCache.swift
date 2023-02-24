@@ -1,41 +1,41 @@
 /* Copyright Airship and Contributors */
 
 // NOTE: For internal use only. :nodoc:
-class RemoteConfigCache {
+final class RemoteConfigCache {
     private static let dataStoreKey =
         "com.urbanairship.config.remote_config_cache"
     private let dataStore: PreferenceDataStore
-
-    private var _remoteConfig: RemoteConfig?
+    private let _remoteConfig: Atomic<RemoteConfig?>
 
     var remoteConfig: RemoteConfig? {
         get {
-            return _remoteConfig
+            return _remoteConfig.value
         }
         set {
-            _remoteConfig = newValue
-            if newValue != nil {
-                if let data = try? JSONEncoder().encode(newValue) {
-                    self.dataStore.setObject(
-                        data,
-                        forKey: RemoteConfigCache.dataStoreKey
-                    )
-                }
+            _remoteConfig.value = newValue
+            do {
+                try self.dataStore.setCodable(
+                    newValue,
+                    forKey: RemoteConfigCache.dataStoreKey
+                )
+            } catch {
+                AirshipLogger.error("Failed to store remote config cache \(error)")
             }
         }
     }
 
     init(dataStore: PreferenceDataStore) {
         self.dataStore = dataStore
-
-        if let data = self.dataStore.data(
-            forKey: RemoteConfigCache.dataStoreKey
-        ) {
-            self._remoteConfig = try? JSONDecoder()
-                .decode(
-                    RemoteConfig.self,
-                    from: data
-                )
+        
+        var fromStore: RemoteConfig? = nil
+        do {
+            fromStore = try dataStore.codable(
+                forKey: RemoteConfigCache.dataStoreKey
+            )
+        } catch {
+            AirshipLogger.error("Failed to read remote config cache \(error)")
         }
+        
+        self._remoteConfig = Atomic(fromStore)
     }
 }

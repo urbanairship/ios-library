@@ -61,6 +61,7 @@ protocol InternalAnalyticsProtocol: AnalyticsProtocol {
     func onDeviceRegistration(token: String)
 
     #if !os(tvOS)
+    @MainActor
     func onNotificationResponse(
         response: UNNotificationResponse,
         action: UNNotificationAction?
@@ -71,6 +72,7 @@ protocol InternalAnalyticsProtocol: AnalyticsProtocol {
     /// Called to notify analytics the app was launched from a push notification.
     /// For internal use only. :nodoc:
     /// - Parameter notification: The push notification.
+    @MainActor
     func launched(fromNotification notification: [AnyHashable: Any])
 
     func addHeaderProvider(_ headerProvider: @escaping () async -> [String: String])

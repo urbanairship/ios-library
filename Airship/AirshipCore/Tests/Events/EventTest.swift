@@ -6,6 +6,7 @@ import XCTest
 
 class EventTest: XCTestCase {
 
+    @MainActor
     func testAppInitEvent() throws {
         let testAnalytics = TestAnalytics()
         testAnalytics.conversionSendID = "push ID"
@@ -13,10 +14,10 @@ class EventTest: XCTestCase {
 
         let event = AppInitEvent.init(
             analytics: testAnalytics,
-            push: { return EventTestPush() }
+            push: EventTestPush()
         )
 
-        let data = event.gatherData()
+        let data = event.data
 
         XCTAssertEqual(event.eventType, "app_init")
         XCTAssertEqual(data["connection_type"] as! String, "wifi")
@@ -39,6 +40,7 @@ class EventTest: XCTestCase {
         XCTAssertEqual(data["foreground"] as! String, "true")
     }
 
+    @MainActor
     func testForegroundEvent() throws {
         let testAnalytics = TestAnalytics()
         testAnalytics.conversionSendID = "push ID"
@@ -46,10 +48,10 @@ class EventTest: XCTestCase {
 
         let event = AppForegroundEvent.init(
             analytics: testAnalytics,
-            push: { return EventTestPush() }
+            push: EventTestPush()
         )
 
-        let data = event.gatherData()
+        let data = event.data
 
         XCTAssertEqual(event.eventType, "app_foreground")
         XCTAssertEqual(data["connection_type"] as! String, "wifi")

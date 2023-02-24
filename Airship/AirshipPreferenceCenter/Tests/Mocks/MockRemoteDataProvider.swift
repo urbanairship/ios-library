@@ -63,5 +63,5 @@ class MockRemoteDataProvider: NSObject, RemoteDataProvider {
         return true
     }
 
-    func refresh(force: Bool, completionHandler: @escaping (Bool) -> Void) {}
+    func refresh(force: Bool) async -> Bool { return false}
 }

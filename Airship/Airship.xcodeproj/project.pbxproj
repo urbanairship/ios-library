@@ -109,8 +109,6 @@
 		3C693E4F25141CAC00EBFB88 /* AirshipDebugPushData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 83A674F623AA7AA4005C0C8F /* AirshipDebugPushData.xcdatamodeld */; };
 		3C77BF922016B22900AD37F3 /* UAInAppMessageHTMLDisplayContentTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C77BF912016B22900AD37F3 /* UAInAppMessageHTMLDisplayContentTest.m */; };
 		3C89DD3E211E4D4900864358 /* UAInAppAudienceManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C89DD3D211E4D4900864358 /* UAInAppAudienceManagerTest.m */; };
-		3C927F7A23A2F94C003C5FC8 /* UAAppStateTrackerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C927F7923A2F94C003C5FC8 /* UAAppStateTrackerTest.m */; };
-		3C927F8123A425F0003C5FC8 /* UAUIKitStateTrackerAdapterTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C927F8023A425F0003C5FC8 /* UAUIKitStateTrackerAdapterTest.m */; };
 		3C927F8423A97CDA003C5FC8 /* UADefaultValueTransformerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C927F8323A97CD9003C5FC8 /* UADefaultValueTransformerTest.m */; };
 		3C9E9D6821D42EEB0072F65B /* UAInAppMessageResolutionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C9E9D6721D42EEB0072F65B /* UAInAppMessageResolutionTest.m */; };
 		3CA0E2A0237CCE2600EE76CF /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
@@ -456,6 +454,7 @@
 		6E57CE3328DB8BDA00287601 /* LiveActivityUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E57CE3128DB8BDA00287601 /* LiveActivityUpdate.swift */; };
 		6E57CE3428DB8BDA00287601 /* LiveActivityUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E57CE3128DB8BDA00287601 /* LiveActivityUpdate.swift */; };
 		6E57CE3728DBBD9A00287601 /* LiveActivityRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E57CE3628DBBD9A00287601 /* LiveActivityRegistry.swift */; };
+		6E590E6E29A94CA90036DFAB /* AppStateTrackerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E590E6D29A94CA90036DFAB /* AppStateTrackerTest.swift */; };
 		6E5F723620169A6600D684B7 /* UADeepLinkActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E5F723520169A6600D684B7 /* UADeepLinkActionTest.m */; };
 		6E64C88027331ABA000EB887 /* PreferenceDataStoreTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E64C87F27331ABA000EB887 /* PreferenceDataStoreTest.swift */; };
 		6E6541E02758976D009676CA /* AirshipProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6541DF2758976D009676CA /* AirshipProgressView.swift */; };
@@ -539,8 +538,6 @@
 		6E698E58267BF63B00654DB2 /* AppStateTrackerAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E52267BF63A00654DB2 /* AppStateTrackerAdapter.swift */; };
 		6E698E59267BF63B00654DB2 /* AppStateTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E53267BF63A00654DB2 /* AppStateTracker.swift */; };
 		6E698E5A267BF63B00654DB2 /* AppStateTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E53267BF63A00654DB2 /* AppStateTracker.swift */; };
-		6E698E5B267BF63B00654DB2 /* UIKitStateTrackerAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E54267BF63B00654DB2 /* UIKitStateTrackerAdapter.swift */; };
-		6E698E5C267BF63B00654DB2 /* UIKitStateTrackerAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E54267BF63B00654DB2 /* UIKitStateTrackerAdapter.swift */; };
 		6E698E5F267BF63B00654DB2 /* ApplicationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E56267BF63B00654DB2 /* ApplicationState.swift */; };
 		6E698E60267BF63B00654DB2 /* ApplicationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E56267BF63B00654DB2 /* ApplicationState.swift */; };
 		6E698E62267C03C700654DB2 /* TestAppStateTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E61267C03C700654DB2 /* TestAppStateTracker.swift */; };
@@ -1314,7 +1311,6 @@
 		A6722A57281A9EB80033F54D /* ApplicationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E56267BF63B00654DB2 /* ApplicationState.swift */; };
 		A6722A58281A9EB80033F54D /* AppStateTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E53267BF63A00654DB2 /* AppStateTracker.swift */; };
 		A6722A59281A9EB80033F54D /* AppStateTrackerAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E52267BF63A00654DB2 /* AppStateTrackerAdapter.swift */; };
-		A6722A5A281A9EB80033F54D /* UIKitStateTrackerAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E54267BF63B00654DB2 /* UIKitStateTrackerAdapter.swift */; };
 		A6722A5B281A9EB80033F54D /* ApplicationMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1512683DBC300A2CBD0 /* ApplicationMetrics.swift */; };
 		A6722A5C281A9EB80033F54D /* AttributeUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB11C8A2697AFC700DC698F /* AttributeUpdate.swift */; };
 		A6722A5D281A9EB80033F54D /* AttributesEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E3B267BEDC300654DB2 /* AttributesEditor.swift */; };
@@ -1485,9 +1481,6 @@
 		A6AF8D2927E8C6C30068C7EE /* SubscriptionListActionPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A69C988027E4ECAA0063A101 /* SubscriptionListActionPredicate.swift */; };
 		A6AF8D2D27E8D4910068C7EE /* SubscriptionListActionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6AF8D2C27E8D4910068C7EE /* SubscriptionListActionTest.swift */; };
 		A6CDD8D0269491BE0040A673 /* ContactAPIClientTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6CDD8CF269491BE0040A673 /* ContactAPIClientTest.swift */; };
-		A6DF51F0287706B400A42433 /* WKStateTrackerAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6DF51EF287706B400A42433 /* WKStateTrackerAdapter.swift */; };
-		A6DF51F1287707E500A42433 /* WKStateTrackerAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6DF51EF287706B400A42433 /* WKStateTrackerAdapter.swift */; };
-		A6DF51F2287707EB00A42433 /* WKStateTrackerAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6DF51EF287706B400A42433 /* WKStateTrackerAdapter.swift */; };
 		A6F6726126E1162F008C69C3 /* JSONMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401769326C5671100373AF7 /* JSONMatcher.swift */; };
 		A6F6726226E11633008C69C3 /* VersionMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401769526C5715E00373AF7 /* VersionMatcher.swift */; };
 		A6F6726326E11637008C69C3 /* JSONPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401769726C5722400373AF7 /* JSONPredicate.swift */; };
@@ -1859,8 +1852,6 @@
 		3C805B16200ED87D0079F56E /* UAInAppMessageHTMLDisplayContent+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageHTMLDisplayContent+Internal.h"; sourceTree = "<group>"; };
 		3C805B17200ED87D0079F56E /* UAInAppMessageHTMLDisplayContent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInAppMessageHTMLDisplayContent.h; sourceTree = "<group>"; };
 		3C89DD3D211E4D4900864358 /* UAInAppAudienceManagerTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppAudienceManagerTest.m; sourceTree = "<group>"; };
-		3C927F7923A2F94C003C5FC8 /* UAAppStateTrackerTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAAppStateTrackerTest.m; sourceTree = "<group>"; };
-		3C927F8023A425F0003C5FC8 /* UAUIKitStateTrackerAdapterTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAUIKitStateTrackerAdapterTest.m; sourceTree = "<group>"; };
 		3C927F8323A97CD9003C5FC8 /* UADefaultValueTransformerTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UADefaultValueTransformerTest.m; sourceTree = "<group>"; };
 		3C9E9D6721D42EEB0072F65B /* UAInAppMessageResolutionTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageResolutionTest.m; sourceTree = "<group>"; };
 		3CA0E223237CCBA600EE76CF /* AirshipEventData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = AirshipEventData.xcdatamodel; sourceTree = "<group>"; };
@@ -2179,6 +2170,7 @@
 		6E5062B324E23FB100689C6D /* UAInAppMessageScheduleTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageScheduleTests.m; sourceTree = "<group>"; };
 		6E57CE3128DB8BDA00287601 /* LiveActivityUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityUpdate.swift; sourceTree = "<group>"; };
 		6E57CE3628DBBD9A00287601 /* LiveActivityRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityRegistry.swift; sourceTree = "<group>"; };
+		6E590E6D29A94CA90036DFAB /* AppStateTrackerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStateTrackerTest.swift; sourceTree = "<group>"; };
 		6E598D1E1FFC44F3005B234B /* UAScheduleEdits.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAScheduleEdits.h; sourceTree = "<group>"; };
 		6E598D1F1FFC44F3005B234B /* UAScheduleEdits.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAScheduleEdits.m; sourceTree = "<group>"; };
 		6E598D261FFC4506005B234B /* UAScheduleEdits+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAScheduleEdits+Internal.h"; sourceTree = "<group>"; };
@@ -2234,7 +2226,6 @@
 		6E698E3C267BEDC300654DB2 /* TagGroupsEditor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TagGroupsEditor.swift; sourceTree = "<group>"; };
 		6E698E52267BF63A00654DB2 /* AppStateTrackerAdapter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppStateTrackerAdapter.swift; sourceTree = "<group>"; };
 		6E698E53267BF63A00654DB2 /* AppStateTracker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppStateTracker.swift; sourceTree = "<group>"; };
-		6E698E54267BF63B00654DB2 /* UIKitStateTrackerAdapter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIKitStateTrackerAdapter.swift; sourceTree = "<group>"; };
 		6E698E56267BF63B00654DB2 /* ApplicationState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationState.swift; sourceTree = "<group>"; };
 		6E698E61267C03C700654DB2 /* TestAppStateTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TestAppStateTracker.swift; path = Support/TestAppStateTracker.swift; sourceTree = "<group>"; };
 		6E6C3F7E27A20C3C007F55C7 /* ChannelScope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelScope.swift; sourceTree = "<group>"; };
@@ -2604,7 +2595,6 @@
 		A6A8077B26C1566E00CB266E /* ColorUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorUtils.swift; sourceTree = "<group>"; };
 		A6AF8D2C27E8D4910068C7EE /* SubscriptionListActionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionListActionTest.swift; sourceTree = "<group>"; };
 		A6CDD8CF269491BE0040A673 /* ContactAPIClientTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactAPIClientTest.swift; sourceTree = "<group>"; };
-		A6DF51EF287706B400A42433 /* WKStateTrackerAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKStateTrackerAdapter.swift; sourceTree = "<group>"; };
 		BD8C10762865F92200358622 /* CreateSMSChannelView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateSMSChannelView.swift; sourceTree = "<group>"; };
 		BD8C10772865F92200358622 /* AddChannelView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddChannelView.swift; sourceTree = "<group>"; };
 		BD8C107D2865F92200358622 /* CreateEmailChannelView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateEmailChannelView.swift; sourceTree = "<group>"; };
@@ -3044,8 +3034,7 @@
 		3C927F8223A42609003C5FC8 /* App State */ = {
 			isa = PBXGroup;
 			children = (
-				3C927F7923A2F94C003C5FC8 /* UAAppStateTrackerTest.m */,
-				3C927F8023A425F0003C5FC8 /* UAUIKitStateTrackerAdapterTest.m */,
+				6E590E6D29A94CA90036DFAB /* AppStateTrackerTest.swift */,
 			);
 			name = "App State";
 			sourceTree = "<group>";
@@ -3556,8 +3545,6 @@
 				6E698E56267BF63B00654DB2 /* ApplicationState.swift */,
 				6E698E53267BF63A00654DB2 /* AppStateTracker.swift */,
 				6E698E52267BF63A00654DB2 /* AppStateTrackerAdapter.swift */,
-				6E698E54267BF63B00654DB2 /* UIKitStateTrackerAdapter.swift */,
-				A6DF51EF287706B400A42433 /* WKStateTrackerAdapter.swift */,
 			);
 			name = "App State";
 			sourceTree = "<group>";
@@ -6042,7 +6029,6 @@
 				6EFD6D89272A53FB005B26F1 /* PagerIndicator.swift in Sources */,
 				6E6C3F9E27A4C3D4007F55C7 /* AirshipJSON.swift in Sources */,
 				6E49D7C828401D2E00C7BB9D /* APNSRegistrar.swift in Sources */,
-				A6DF51F0287706B400A42433 /* WKStateTrackerAdapter.swift in Sources */,
 				6E49D7B228401D2E00C7BB9D /* Permission.swift in Sources */,
 				6E91B459268904D900DDB1A8 /* DeviceRegistrationEvent.swift in Sources */,
 				6E49D7BC28401D2E00C7BB9D /* PermissionsManager.swift in Sources */,
@@ -6227,7 +6213,6 @@
 				6E664BA126C43F5400A2C8E5 /* ActivityViewController.swift in Sources */,
 				6E91B45226883B6E00DDB1A8 /* AppExitEvent.swift in Sources */,
 				6E82482229A6D9DF00136EA0 /* CancellabelValueHolder.swift in Sources */,
-				6E698E5B267BF63B00654DB2 /* UIKitStateTrackerAdapter.swift in Sources */,
 				6E46A273272B19760089CDE3 /* ViewExtensions.swift in Sources */,
 				6E664BEA26C6DB7600A2C8E5 /* Utils.swift in Sources */,
 				6E49D7BA28401D2E00C7BB9D /* NotificationPermissionDelegate.swift in Sources */,
@@ -6562,7 +6547,6 @@
 				A6722A98281A9EDA0033F54D /* RemoteDataProvider.swift in Sources */,
 				6E57CE3428DB8BDA00287601 /* LiveActivityUpdate.swift in Sources */,
 				A6722A99281A9EDA0033F54D /* RemoteDataPayload.swift in Sources */,
-				A6DF51F2287707EB00A42433 /* WKStateTrackerAdapter.swift in Sources */,
 				A6722A9A281A9EDA0033F54D /* RemoteDataStorePayload.swift in Sources */,
 				6E7112A82881D123004942E4 /* StateController.swift in Sources */,
 				A6722A9B281A9EDA0033F54D /* RemoteDataStore.swift in Sources */,
@@ -6618,7 +6602,6 @@
 				A6722A57281A9EB80033F54D /* ApplicationState.swift in Sources */,
 				A6722A58281A9EB80033F54D /* AppStateTracker.swift in Sources */,
 				A6722A59281A9EB80033F54D /* AppStateTrackerAdapter.swift in Sources */,
-				A6722A5A281A9EB80033F54D /* UIKitStateTrackerAdapter.swift in Sources */,
 				A6722A5B281A9EB80033F54D /* ApplicationMetrics.swift in Sources */,
 				A6722A5C281A9EB80033F54D /* AttributeUpdate.swift in Sources */,
 				A6722A5D281A9EB80033F54D /* AttributesEditor.swift in Sources */,
@@ -6819,6 +6802,7 @@
 				459D40532092460D00C40E2D /* UAInAppMessageModalStyleTest.m in Sources */,
 				6E6EF9E7270625C400D30C35 /* EventTest.swift in Sources */,
 				CC64F1071D8B781C009CEF27 /* UAInteractiveNotificationEventTest.m in Sources */,
+				6E590E6E29A94CA90036DFAB /* AppStateTrackerTest.swift in Sources */,
 				CC64F0D71D8B781C009CEF27 /* UAAccountEventTemplateTest.m in Sources */,
 				6E4A468028EF4FAF00A25617 /* TestAirshipRequestSession.swift in Sources */,
 				CC64F0E71D8B781C009CEF27 /* UAAssociatedIdentifiersTest.m in Sources */,
@@ -6916,7 +6900,6 @@
 				6E15B70526CE07180099C92D /* TestRemoteDataProvider.swift in Sources */,
 				6EFAFB7A295525CD008AD187 /* ChannelCaptureTest.swift in Sources */,
 				6E4627CC1E64E0C300A5BF3B /* UAScheduleDelayTests.m in Sources */,
-				3C927F8123A425F0003C5FC8 /* UAUIKitStateTrackerAdapterTest.m in Sources */,
 				6E2D6AF426B0C3C500B7C226 /* ChannelAudienceManagerTest.swift in Sources */,
 				6EC7E48526A60CDF0038CFDD /* TestChannel.swift in Sources */,
 				CC64F12D1D8B781C009CEF27 /* UAURLAllowListTest.m in Sources */,
@@ -6978,7 +6961,6 @@
 				CC64F11F1D8B781C009CEF27 /* UARetailEventTemplateTest.m in Sources */,
 				6EFAFB8A29562474008AD187 /* AddTagsActionTest.swift in Sources */,
 				997140F61FB0F45000EF5445 /* UAInAppMessageTest.m in Sources */,
-				3C927F7A23A2F94C003C5FC8 /* UAAppStateTrackerTest.m in Sources */,
 				997140F11FB0F3E600EF5445 /* UAInAppMessageManagerTest.m in Sources */,
 				CC64F11E1D8B781C009CEF27 /* UARegionEventTest.m in Sources */,
 				3CF63039258965F50007502B /* UAAutomationNativeBridgeExtensionTest.m in Sources */,
@@ -7045,7 +7027,6 @@
 				6E6C3F9F27A4C3D4007F55C7 /* AirshipJSON.swift in Sources */,
 				A6AF8D2927E8C6C30068C7EE /* SubscriptionListActionPredicate.swift in Sources */,
 				6E49D7C928401D2E00C7BB9D /* APNSRegistrar.swift in Sources */,
-				A6DF51F1287707E500A42433 /* WKStateTrackerAdapter.swift in Sources */,
 				6E49D7B328401D2E00C7BB9D /* Permission.swift in Sources */,
 				6EC7E46A269E0E370038CFDD /* AttributeUpdate.swift in Sources */,
 				A6F6726526E1163C008C69C3 /* JSONValueMatcher.swift in Sources */,
@@ -7242,7 +7223,6 @@
 				6EEE8BA3290B3EDE00230528 /* AirshipKeychainAccess.swift in Sources */,
 				6EF27DE127308CAD00548DA3 /* Checkbox.swift in Sources */,
 				A658DE1227280B3400007672 /* ImageButton.swift in Sources */,
-				6E698E5C267BF63B00654DB2 /* UIKitStateTrackerAdapter.swift in Sources */,
 				6E6ED1622683DBC300A2CBD0 /* AirshipVersion.swift in Sources */,
 				6E664BB626C46BC600A2C8E5 /* AddCustomEventActionPredicate.swift in Sources */,
 				6E6ED13A2683A58D00A2CBD0 /* Semaphore.swift in Sources */,

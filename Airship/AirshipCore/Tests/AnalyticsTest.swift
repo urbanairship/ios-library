@@ -46,7 +46,7 @@ class AnalyticsTest: XCTestCase {
 
     func testFirstTransitionToForegroundEmitsAppInit() async throws {
         self.appStateTracker.currentState = .inactive
-        self.analytics.airshipReady()
+        await self.analytics.airshipReady()
 
         let events = try await self.produceEvents(count: 2) {
             self.notificationCenter.post(
@@ -73,7 +73,7 @@ class AnalyticsTest: XCTestCase {
 
     func testBackgroundBeforeForegroundEmitsAppInit() async throws {
         self.appStateTracker.currentState = .inactive
-        self.analytics.airshipReady()
+        await self.analytics.airshipReady()
 
         let events = try await self.produceEvents(count: 2) {
             notificationCenter.post(
@@ -89,7 +89,7 @@ class AnalyticsTest: XCTestCase {
     func testBackgroundAfterForegroundDoesNotEmitAppInit() async throws {
         let _ = try await self.produceEvents(count: 1) {
             self.appStateTracker.currentState = .active
-            self.analytics.airshipReady()
+            await self.analytics.airshipReady()
         }
 
         let events = try await self.produceEvents(count: 1) {
@@ -106,7 +106,7 @@ class AnalyticsTest: XCTestCase {
         // Foreground
         let _ = try await self.produceEvents(count: 1) {
             self.appStateTracker.currentState = .active
-            self.analytics.airshipReady()
+            await self.analytics.airshipReady()
         }
 
         self.analytics.trackScreen("test_screen")
@@ -126,7 +126,7 @@ class AnalyticsTest: XCTestCase {
         // Foreground
         let _ = try await self.produceEvents(count: 1) {
             self.appStateTracker.currentState = .active
-            self.analytics.airshipReady()
+            await self.analytics.airshipReady()
         }
 
         self.analytics.trackScreen("test_screen")
@@ -164,6 +164,7 @@ class AnalyticsTest: XCTestCase {
         )
     }
 
+    @MainActor
     func testDisablingAnalytics() throws {
         self.channel.identifier = "test channel"
         self.analytics.airshipReady()
@@ -181,6 +182,7 @@ class AnalyticsTest: XCTestCase {
 
     }
 
+    @MainActor
     func testDisablingAnalyticsComponent() throws {
         self.channel.identifier = "test channel"
         self.analytics.airshipReady()
@@ -199,6 +201,7 @@ class AnalyticsTest: XCTestCase {
     }
 
 
+    @MainActor
     func testEnableAnalytics() throws {
         self.channel.identifier = "test channel"
         self.analytics.airshipReady()
@@ -247,13 +250,15 @@ class AnalyticsTest: XCTestCase {
         )
     }
 
+    @MainActor
     func testMissingSendID() throws {
         let notification = ["aps": ["alert": "neat"]]
         self.analytics.launched(fromNotification: notification)
         XCTAssertEqual("MISSING_SEND_ID", self.analytics.conversionSendID)
         XCTAssertNil(self.analytics.conversionPushMetadata)
     }
-
+    
+    @MainActor
     func testConversionSendID() throws {
         let notification: [String: AnyHashable] = [
             "aps": ["alert": "neat"],
@@ -263,6 +268,7 @@ class AnalyticsTest: XCTestCase {
         XCTAssertEqual("some conversionSendID", self.analytics.conversionSendID)
     }
 
+    @MainActor
     func testConversationMetadata() throws {
         let notification: [String: AnyHashable] = [
             "aps": ["alert": "neat"],
@@ -274,6 +280,7 @@ class AnalyticsTest: XCTestCase {
         XCTAssertEqual("some metadata", self.analytics.conversionPushMetadata)
     }
 
+    @MainActor
     func testLaunchedFromSilentPush() throws {
         let notification: [String: AnyHashable] = [
             "aps": ["neat": "neat"],
@@ -426,7 +433,7 @@ class AnalyticsTest: XCTestCase {
 
     func produceEvents(
         count: Int,
-        eventProducingAction: () -> Void
+        eventProducingAction: @Sendable () async -> Void
     ) async throws -> [AirshipEventData] {
         var subscription: AnyCancellable?
         defer {
@@ -451,8 +458,9 @@ class AnalyticsTest: XCTestCase {
                         continuation.finish()
                     }
                 }
-            eventProducingAction()
         }
+        
+        await eventProducingAction()
 
         var result: [AirshipEventData] = []
         for try await value in stream {

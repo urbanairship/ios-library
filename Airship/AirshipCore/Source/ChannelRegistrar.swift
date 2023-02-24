@@ -165,7 +165,7 @@ class ChannelRegistrar: ChannelRegistrarProtocol {
             ChannelRegistrar.forcefullyKey
         ]?.lowercased() == "true"
 
-        let updatePayload = try makeNextUpdatePayload(
+        let updatePayload = try await makeNextUpdatePayload(
             channelID: channelID,
             forcefully: forcefully,
             payload: payload,
@@ -275,7 +275,7 @@ class ChannelRegistrar: ChannelRegistrarProtocol {
         registrationInfo: LastRegistrationInfo
     ) async {
         self.lastRegistrationInfo = registrationInfo
-        let nextUploadPayload = try? self.makeNextUpdatePayload(
+        let nextUploadPayload = try? await self.makeNextUpdatePayload(
             channelID: channelID,
             forcefully: false,
             payload: await makePayload(),
@@ -302,7 +302,7 @@ class ChannelRegistrar: ChannelRegistrarProtocol {
         forcefully: Bool,
         payload: ChannelRegistrationPayload,
         lastRegistrationInfo: LastRegistrationInfo?
-    ) throws -> ChannelRegistrationPayload? {
+    ) async throws -> ChannelRegistrationPayload? {
         let currentLocation = try self.channelAPIClient.makeChannelLocation(
             channelID: channelID
         )
@@ -317,8 +317,8 @@ class ChannelRegistrar: ChannelRegistrarProtocol {
             lastRegistrationInfo.date
         )
 
-        let shouldUpdateForActive = timeSinceLastUpdate >= (24 * 60 * 60)
-            && self.appStateTracker.state == .active
+        let isActive = await self.appStateTracker.state == .active
+        let shouldUpdateForActive = isActive && timeSinceLastUpdate >= (24 * 60 * 60)
 
         guard forcefully || shouldUpdateForActive || payload != lastRegistrationInfo.payload else {
             return nil

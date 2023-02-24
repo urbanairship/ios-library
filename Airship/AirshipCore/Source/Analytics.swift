@@ -239,6 +239,7 @@ public class AirshipAnalytics: NSObject, Component, AnalyticsProtocol {
     // MARK: -
     // MARK: Application State
     @objc
+    @MainActor
     private func applicationDidTransitionToForeground() {
         AirshipLogger.debug("Application transitioned to foreground.")
 
@@ -265,6 +266,7 @@ public class AirshipAnalytics: NSObject, Component, AnalyticsProtocol {
     }
 
     @objc
+    @MainActor
     private func applicationDidEnterBackground() {
         AirshipLogger.debug("Application did enter background.")
 
@@ -386,7 +388,6 @@ public class AirshipAnalytics: NSObject, Component, AnalyticsProtocol {
             sessionID: sessionID,
             type: event.eventType
         )
-
 
         Task { @MainActor in
             guard self.isAnalyticsEnabled else {
@@ -575,6 +576,7 @@ public class AirshipAnalytics: NSObject, Component, AnalyticsProtocol {
 
     /// needed to ensure AppInit event gets added
     /// since App Clips get launched via Push Notification delegate
+    @MainActor
     private func ensureInit() {
         if !self.initialized && self.isAirshipReady {
             self.addLifeCycleEvent(.appInit)
@@ -582,6 +584,7 @@ public class AirshipAnalytics: NSObject, Component, AnalyticsProtocol {
         }
     }
 
+    @MainActor
     public func airshipReady() {
         self.isAirshipReady = true
 
@@ -600,6 +603,7 @@ extension AirshipAnalytics: InternalAnalyticsProtocol {
     /// Called to notify analytics the app was launched from a push notification.
     /// For internal use only. :nodoc:
     /// - Parameter notification: The push notification.
+    @MainActor
     func launched(fromNotification notification: [AnyHashable: Any]) {
         if AirshipUtils.isAlertingPush(notification) {
             let sendID = notification["_"] as? String
@@ -628,6 +632,7 @@ extension AirshipAnalytics: InternalAnalyticsProtocol {
     }
 
     @available(tvOS, unavailable)
+    @MainActor
     func onNotificationResponse(
         response: UNNotificationResponse,
         action: UNNotificationAction?
@@ -657,6 +662,7 @@ extension AirshipAnalytics: InternalAnalyticsProtocol {
         }
     }
 
+    @MainActor
     private func addLifeCycleEvent(_ type: LifeCycleEventType) {
         let event = self.lifeCycleEventFactory.make(type: type)
         addEvent(event)
@@ -670,10 +676,12 @@ enum LifeCycleEventType {
 }
 
 protocol LifeCycleEventFactoryProtocol {
+    @MainActor
     func make(type: LifeCycleEventType) -> Event
 }
 
 fileprivate class LifeCylceEventFactory: LifeCycleEventFactoryProtocol {
+    @MainActor
     func make(type: LifeCycleEventType) -> Event {
         switch (type) {
         case .appInit:

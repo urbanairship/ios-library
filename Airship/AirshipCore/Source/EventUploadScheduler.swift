@@ -1,6 +1,6 @@
 import Foundation
 
-protocol EventUploadSchedulerProtocol {
+protocol EventUploadSchedulerProtocol: Sendable {
     func scheduleUpload(
         eventPriority: EventPriority,
         minBatchInterval: TimeInterval
@@ -58,7 +58,7 @@ actor EventUploadScheduler: EventUploadSchedulerProtocol {
         self.isScheduled = false
 
         var batchDelay = EventUploadScheduler.backgroundWorkBatchDelay
-        if (self.appStateTracker.state == .active) {
+        if (await self.appStateTracker.state == .active) {
             batchDelay = EventUploadScheduler.foregroundWorkBatchDelay
         }
         
@@ -74,8 +74,8 @@ actor EventUploadScheduler: EventUploadSchedulerProtocol {
     func scheduleUpload(
         eventPriority: EventPriority,
         minBatchInterval: TimeInterval
-    ) {
-        let delay = self.calculateNextUploadDelay(
+    ) async {
+        let delay = await self.calculateNextUploadDelay(
             eventPriority: eventPriority,
             minBatchInterval: minBatchInterval
         )
@@ -103,14 +103,14 @@ actor EventUploadScheduler: EventUploadSchedulerProtocol {
     private func calculateNextUploadDelay(
         eventPriority: EventPriority,
         minBatchInterval: TimeInterval
-    ) -> TimeInterval {
+    ) async -> TimeInterval {
 
         switch(eventPriority) {
         case .high:
             return 0
         case .normal: fallthrough
         default:
-            if self.appStateTracker.state == .background {
+            if await self.appStateTracker.state == .background {
                 return 0
             } else {
                 var delay: TimeInterval = 0

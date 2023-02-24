@@ -1,14 +1,32 @@
 /* Copyright Airship and Contributors */
 
 /// - Note: For Internal use only :nodoc:
-class AppForegroundEvent: AppInitEvent {
-    open override func gatherData() -> [AnyHashable: Any] {
-        var data = super.gatherData()
+class AppForegroundEvent: NSObject, Event {
+    
+    private let _data: [AnyHashable: Any]
+
+    @MainActor
+    init(
+        analytics: AnalyticsProtocol = Airship.requireComponent(ofType: AnalyticsProtocol.self),
+        push: PushProtocol = Airship.requireComponent(ofType: PushProtocol.self)
+    ) {
+        var data = AppInitEvent.gatherData(analytics: analytics, push: push)
         data.removeValue(forKey: "foreground")
-        return data
+        self._data = data
     }
 
-    public override var eventType: String {
+    @objc
+    public var priority: EventPriority {
+        return .normal
+    }
+
+    @objc
+    public var eventType: String {
         return "app_foreground"
+    }
+
+    @objc
+    public var data: [AnyHashable: Any] {
+        return self._data
     }
 }

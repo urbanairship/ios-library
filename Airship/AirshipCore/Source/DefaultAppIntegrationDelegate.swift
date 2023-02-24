@@ -113,6 +113,7 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
     }
 
     #if !os(tvOS)
+    @MainActor
     public func didReceiveNotificationResponse(
         response: UNNotificationResponse,
         completionHandler: @escaping () -> Void

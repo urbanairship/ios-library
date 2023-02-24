@@ -2,10 +2,16 @@
 
 import Foundation
 
+public protocol AppStateTrackerProtocol: Sendable {
+    /**
+     * Current application state.
+     */
+    @MainActor
+    var state: ApplicationState { get }
+}
+
 @objc(UAAppStateTracker)
-open class AppStateTracker: NSObject, AppStateTrackerDelegate,
-    AppStateTrackerProtocol
-{
+public final class AppStateTracker: NSObject, AppStateTrackerProtocol, @unchecked Sendable {
 
     @objc
     public static let didBecomeActiveNotification = NSNotification.Name(
@@ -45,99 +51,73 @@ open class AppStateTracker: NSObject, AppStateTrackerDelegate,
     @objc
     public static let shared: AppStateTracker = AppStateTracker()
 
-    private var adapter: AppStateTrackerAdapter?
     private let notificationCenter: NotificationCenter
-    private var isForegrounded: Bool
+    private let adapter: AppStateTrackerAdapter
 
+    @MainActor
+    private var isForegrounded: Bool? = nil
+ 
     @objc
-    open var state: ApplicationState {
-        return adapter?.state ?? .background
+    @MainActor
+    public var state: ApplicationState {
+        return adapter.state
     }
-
-    @objc
-    public init(
-        notificationCenter: NotificationCenter,
-        adapter: AppStateTrackerAdapter?
+    
+    init(
+        adapter: AppStateTrackerAdapter = DefaultAppStateTrackerAdapter(),
+        notificationCenter: NotificationCenter = NotificationCenter.default
     ) {
-        self.notificationCenter = notificationCenter
         self.adapter = adapter
-        self.isForegrounded = adapter?.state == .active
+        self.notificationCenter = notificationCenter
         super.init()
-        self.adapter?.stateTrackerDelegate = self
-    }
 
-    public override convenience init() {
-        #if !os(watchOS)
-        self.init(
-            notificationCenter: NotificationCenter.default,
-            adapter: UIKitStateTrackerAdapter()
-        )
-        #else
-        self.init(
-            notificationCenter: NotificationCenter.default,
-            adapter: WKStateTrackerAdapter()
-        )
-        #endif
-    }
-
-    @objc
-    public func applicationDidBecomeActive() {
-        notificationCenter.post(
-            name: AppStateTracker.didBecomeActiveNotification,
-            object: nil
-        )
-
-        if !isForegrounded {
-            isForegrounded = true
-            notificationCenter.post(
-                name: AppStateTracker.didTransitionToForeground,
-                object: nil
-            )
+        Task { @MainActor in
+            self.ensureForegroundSet()
+        }
+        
+        self.adapter.watchAppLifeCycleEvents { event in
+            self.ensureForegroundSet()
+            
+            switch(event) {
+            case .didBecomeActive:
+                self.postNotificaition(name: AppStateTracker.didBecomeActiveNotification)
+                if self.isForegrounded == false {
+                    self.isForegrounded = true
+                    self.postNotificaition(name: AppStateTracker.didTransitionToForeground)
+                }
+                
+            case .willResignActive:
+                self.postNotificaition(name: AppStateTracker.willResignActiveNotification)
+                
+            case .willEnterForeground:
+                self.postNotificaition(name: AppStateTracker.willEnterForegroundNotification)
+                
+            case .didEnterBackground:
+                self.postNotificaition(name: AppStateTracker.didEnterBackgroundNotification)
+                if self.isForegrounded == true {
+                    self.isForegrounded = false
+                    self.postNotificaition(name: AppStateTracker.didTransitionToBackground)
+                }
+                
+            case .willTerminate:
+                self.postNotificaition(name: AppStateTracker.willTerminateNotification)
+            }
         }
     }
-
-    @objc
-    public func applicationWillEnterForeground() {
+    
+    private func postNotificaition(name: Notification.Name) {
         notificationCenter.post(
-            name: AppStateTracker.willEnterForegroundNotification,
+            name: name,
             object: nil
         )
     }
-
-    @objc
-    public func applicationDidEnterBackground() {
-        notificationCenter.post(
-            name: AppStateTracker.didEnterBackgroundNotification,
-            object: nil
-        )
-
-        if isForegrounded {
-            isForegrounded = false
-            notificationCenter.post(
-                name: AppStateTracker.didTransitionToBackground,
-                object: nil
-            )
+    
+    @MainActor
+    private func ensureForegroundSet() {
+        if isForegrounded == nil {
+            isForegrounded = self.state == .active
         }
-    }
-
-    @objc
-    public func applicationWillResignActive() {
-        notificationCenter.post(
-            name: AppStateTracker.willResignActiveNotification,
-            object: nil
-        )
-    }
-
-    @objc
-    public func applicationWillTerminate() {
-        notificationCenter.post(
-            name: AppStateTracker.willTerminateNotification,
-            object: nil
-        )
     }
 }
 
-@objc
-public protocol AppStateTrackerProtocol {
-    var state: ApplicationState { get }
-}
+

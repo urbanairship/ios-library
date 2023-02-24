@@ -4,7 +4,7 @@ import Foundation
 
 /// Represents the possible sites.
 @objc(UACloudSite)
-public enum CloudSite: Int {
+public enum CloudSite: Int, Sendable {
     /// Represents the US cloud site. This is the default value.
     /// Projects avialable at go.airship.com must use this value.
     @objc(UACloudSiteUS)

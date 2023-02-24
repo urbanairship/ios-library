@@ -71,7 +71,7 @@ public class AirshipChannel: NSObject, Component, ChannelProtocol {
     private var audienceManager: ChannelAudienceManagerProtocol
     private let channelRegistrar: ChannelRegistrarProtocol
     private let notificationCenter: NotificationCenter
-    private let appStateTracker: AppStateTracker
+    private let appStateTracker: AppStateTrackerProtocol
     private let tagsLock = AirshipLock()
     private var subscriptions: Set<AnyCancellable> = Set()
 
@@ -166,7 +166,7 @@ public class AirshipChannel: NSObject, Component, ChannelProtocol {
         audienceManager: ChannelAudienceManagerProtocol,
         channelRegistrar: ChannelRegistrarProtocol,
         notificationCenter: NotificationCenter,
-        appStateTracker: AppStateTracker
+        appStateTracker: AppStateTrackerProtocol
     ) {
 
         self.dataStore = dataStore
@@ -680,7 +680,7 @@ extension AirshipChannel: PushableComponent {
     ) async -> ChannelRegistrationPayload {
         var payload = payload
 
-        if self.appStateTracker.state == .active {
+        if await self.appStateTracker.state == .active {
             payload.channel.isActive = true
         }
 
