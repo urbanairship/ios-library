@@ -33,6 +33,10 @@ class ThomasEnvironment : ObservableObject {
     }
 
     func submitForm(_ formState: FormState, layoutState: LayoutState) {
+        guard !formState.isSubmitted else {
+            return
+        }
+        
         if let formResult = formState.toFormResult() {
             self.delegate.onFormSubmitted(formResult: formResult,
                                           layoutContext: layoutState.toLayoutContext())
