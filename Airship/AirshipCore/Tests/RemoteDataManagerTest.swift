@@ -329,6 +329,7 @@ final class RemoteDataManagerTest: AirshipBaseTest {
         await waitForExpectations(timeout: testExpectationTimeOut)
         
         XCTAssertEqual(expectedMetadata, metadata as? [String: String])
+        
     }
     
     func testSubscribe() async throws {

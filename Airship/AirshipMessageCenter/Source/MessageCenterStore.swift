@@ -17,6 +17,7 @@ enum MessageCenterStoreLevel: Int {
     case global
 }
 
+
 actor MessageCenterStore {
 
     private static let coreDataStoreName = "Inbox-%@.sqlite"
@@ -30,6 +31,9 @@ actor MessageCenterStore {
     private let dataStore: PreferenceDataStore
     private let keychainAccess: AirshipKeychainAccess
 
+    private nonisolated let inMemory: Bool
+
+    
     var registeredChannelID: String? {
         return self.dataStore.string(
             forKey: MessageCenterStore.userRegisteredChannelID
@@ -67,10 +71,10 @@ actor MessageCenterStore {
 
     var messages: [MessageCenterMessage] {
         get async {
-            let predicate = NSPredicate(
+            let predicate = AirshipCoreDataPredicate(
                 format:
                     "(messageExpiration == nil || messageExpiration >= %@) && (deletedClient == NO || deletedClient == nil)",
-                AirshipDate().now as CVarArg
+                args: [AirshipDate().now]
             )
 
             let messages = try? await fetchMessages(withPredicate: predicate)
@@ -103,6 +107,7 @@ actor MessageCenterStore {
         } else {
             self.coreData = nil
         }
+        self.inMemory = false
     }
 
     init(
@@ -110,7 +115,7 @@ actor MessageCenterStore {
         dataStore: PreferenceDataStore,
         coreData: UACoreData
     ) {
-
+        self.inMemory = coreData.inMemory
         self.config = config
         self.dataStore = dataStore
         self.coreData = coreData
@@ -123,27 +128,28 @@ actor MessageCenterStore {
                 return 0
             }
 
-            var result = 0
-            try? await coreData.perform { context in
+            let result: Int? = try? await coreData.performWithResult { context in
                 let request: NSFetchRequest<InboxMessageData> =
                     InboxMessageData.fetchRequest()
                 request.predicate = NSPredicate(format: "unread == YES")
                 request.includesPropertyValues = false
                 let fetchedMessages = try context.fetch(request)
-                result = fetchedMessages.count
+                return fetchedMessages.count
             }
 
-            return result
+            return result ?? 0
         }
     }
 
     func message(forID messageID: String) async throws -> MessageCenterMessage?
     {
-        let predicate = NSPredicate(
+        let predicate = AirshipCoreDataPredicate(
             format:
                 "messageID == %@ && (messageExpiration == nil || messageExpiration >= %@) && (deletedClient == NO || deletedClient == nil)",
-            messageID,
-            AirshipDate().now as CVarArg
+            args: [
+                messageID,
+                AirshipDate().now
+            ]
         )
 
         let messages = try await fetchMessages(withPredicate: predicate)
@@ -152,11 +158,13 @@ actor MessageCenterStore {
 
     func message(forBodyURL bodyURL: URL) async throws -> MessageCenterMessage?
     {
-        let predicate = NSPredicate(
+        let predicate = AirshipCoreDataPredicate(
             format:
                 "messageBodyURL == %@ && (messageExpiration == nil || messageExpiration >= %@) && (deletedClient == NO || deletedClient == nil)",
-            bodyURL as CVarArg,
-            AirshipDate().now as CVarArg
+            args: [
+                bodyURL,
+                AirshipDate().now
+            ]
         )
 
         let messages = try await fetchMessages(withPredicate: predicate)
@@ -203,7 +211,7 @@ actor MessageCenterStore {
                     format: "messageID IN %@",
                     messageIDs
                 ),
-                useBatch: !coreData.inMemory,
+                useBatch: !self.inMemory,
                 context: context
             )
             UACoreData.safeSave(context)
@@ -231,7 +239,7 @@ actor MessageCenterStore {
     }
 
     func fetchLocallyDeletedMessages() async throws -> [MessageCenterMessage] {
-        let predicate = NSPredicate(
+        let predicate = AirshipCoreDataPredicate(
             format: "deletedClient == YES"
         )
 
@@ -239,7 +247,7 @@ actor MessageCenterStore {
     }
 
     func fetchLocallyReadOnlyMessages() async throws -> [MessageCenterMessage] {
-        let predicate = NSPredicate(
+        let predicate = AirshipCoreDataPredicate(
             format: "unreadClient == NO && unread == YES"
         )
 
@@ -295,7 +303,7 @@ actor MessageCenterStore {
     }
 
     private func fetchMessages(
-        withPredicate predicate: NSPredicate? = nil
+        withPredicate predicate: AirshipCoreDataPredicate? = nil
     ) async throws -> [MessageCenterMessage] {
         guard let coreData = self.coreData else {
             throw MessageCenterStoreError.coreDataUnavailble
@@ -305,8 +313,7 @@ actor MessageCenterStore {
             "Fetching messsage center with predicate: \(String(describing: predicate))"
         )
 
-        var messages: [MessageCenterMessage]? = nil
-        try await coreData.perform { context in
+        return try await coreData.performWithResult { context in
             let request: NSFetchRequest<InboxMessageData> =
                 InboxMessageData.fetchRequest()
 
@@ -318,17 +325,15 @@ actor MessageCenterStore {
             ]
 
             if let predicate = predicate {
-                request.predicate = predicate
+                request.predicate = predicate.toNSPredicate()
             }
 
             let fetchedMessages = try context.fetch(request)
-            messages = fetchedMessages.compactMap { data in data.message() }
+            return fetchedMessages.compactMap { data in data.message() }
         }
-
-        return messages ?? []
     }
 
-    private func delete(
+    nonisolated private func delete(
         predicate: NSPredicate,
         useBatch: Bool,
         context: NSManagedObjectContext
@@ -351,7 +356,7 @@ actor MessageCenterStore {
 
     }
 
-    private func getOrCreateMessageEntity(
+    nonisolated private func getOrCreateMessageEntity(
         messageID: String,
         context: NSManagedObjectContext
     ) throws -> InboxMessageData {
@@ -401,8 +406,8 @@ actor MessageCenterStore {
                 data.messageURL = message.messageURL
                 data.unread = message.unread
                 data.messageSent = message.sentDate
-                data.rawMessageObject = message.rawMessageObject
-                data.messageReporting = message.messageReporting
+                data.rawMessageObject = message.rawMessageObject.unWrap() as? [String: Any]
+                data.messageReporting = message.messageReporting?.unWrap() as? [String: Any]
                 data.messageExpiration = message.expirationDate
             }
 
@@ -413,14 +418,14 @@ actor MessageCenterStore {
                     format: "NOT(messageID IN %@)",
                     messageIDs
                 ),
-                useBatch: !coreData.inMemory,
+                useBatch: !self.inMemory,
                 context: context
             )
 
             UACoreData.safeSave(context)
-
-            self.setLastMessageListModifiedTime(lastModifiedTime)
         }
+        
+        self.setLastMessageListModifiedTime(lastModifiedTime)
     }
 }
 

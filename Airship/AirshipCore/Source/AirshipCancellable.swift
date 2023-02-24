@@ -1,13 +1,8 @@
-//
-//  AirshipCancellable.swift
-//  Airship
-//
-//  Created by Ryan Lepinski on 2/22/23.
-//  Copyright © 2023 Urban Airship. All rights reserved.
-//
+/* Copyright Airship and Contributors */
 
 import Foundation
 
+/// - Note: for internal use only.  :nodoc:
 protocol AirshipCancellable: Sendable {
     func cancel()
 }

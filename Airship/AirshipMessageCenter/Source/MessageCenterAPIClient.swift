@@ -127,7 +127,7 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol {
         }
 
         let messageReportings = messages.compactMap { message in
-            try? AirshipJSON.wrap(message.messageReporting)
+            message.messageReporting
         }
 
         guard !messageReportings.isEmpty else {
@@ -168,7 +168,7 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol {
         }
 
         let messageReportings = messages.compactMap { message in
-            try? AirshipJSON.wrap(message.messageReporting)
+            message.messageReporting
         }
 
         guard !messageReportings.isEmpty else {

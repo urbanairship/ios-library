@@ -160,7 +160,7 @@ class AnalyticsTest: XCTestCase {
         XCTAssertEqual("screen_tracking", events[0].type)
         XCTAssertEqual(
             try AirshipJSON.wrap(expectedData),
-            try AirshipJSON.wrap(events[0].body)
+            events[0].body
         )
     }
 
@@ -243,7 +243,7 @@ class AnalyticsTest: XCTestCase {
         XCTAssertEqual("associate_identifiers", events[0].type)
         XCTAssertEqual(
             try AirshipJSON.wrap(expectedData),
-            try AirshipJSON.wrap(events[0].body)
+            events[0].body
         )
     }
 

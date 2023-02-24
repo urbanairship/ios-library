@@ -3,7 +3,10 @@
 import Foundation
 
 /// - Note: for internal use only.  :nodoc:
-public enum AirshipJSON: Codable, Equatable {
+public enum AirshipJSON: Codable, Equatable, Sendable, Hashable {
+    public static let defaultEncoder = JSONEncoder()
+    public static let defaultDecoder = JSONDecoder()
+    
     case string(String)
     case number(Double)
     case object([String: AirshipJSON])
@@ -70,6 +73,32 @@ public enum AirshipJSON: Codable, Equatable {
         }
     }
 
+    public static func from(
+        json: String?,
+        decoder: JSONDecoder = AirshipJSON.defaultDecoder
+    ) throws -> AirshipJSON {
+        guard let json = json else {
+            return .null
+        }
+        
+        guard let data = json.data(using: .utf8) else {
+            throw AirshipErrors.error("Invalid encoding: \(json)")
+        }
+        
+        return try decoder.decode(AirshipJSON.self, from: data)
+    }
+    
+    public static func from(
+        data: Data?,
+        decoder: JSONDecoder = AirshipJSON.defaultDecoder
+    ) throws -> AirshipJSON {
+        guard let data = data else {
+            return .null
+        }
+        
+        return try decoder.decode(AirshipJSON.self, from: data)
+    }
+    
     public static func wrap(_ value: Any?) throws -> AirshipJSON {
         guard let value = value else {
             return .null
@@ -115,5 +144,16 @@ public enum AirshipJSON: Codable, Equatable {
         }
 
         throw AirshipErrors.error("Invalid JSON \(value)")
+    }
+    
+    public func toData(encoder: JSONEncoder = AirshipJSON.defaultEncoder) throws -> Data {
+        return try encoder.encode(self)
+    }
+    
+    public func toString(encoder: JSONEncoder = AirshipJSON.defaultEncoder) throws -> String {
+        return String(
+            decoding: try encoder.encode(self),
+            as: UTF8.self
+        )
     }
 }

@@ -138,29 +138,29 @@ final class EventSchedulerTest: XCTestCase {
     }
 
     func testWorkBlockFailed() async throws {
-        var called = false
+        let called = Atomic<Bool>(false)
         await self.eventScheduler.setWorkBlock {
-            called = true
+            called.value = true
             return .failure
         }
 
         let request = AirshipWorkRequest(workID: "neat")
         let result = try await self.workManager.workers[0].workHandler(request)
         XCTAssertEqual(AirshipWorkResult.failure, result)
-        XCTAssertTrue(called)
+        XCTAssertTrue(called.value)
     }
 
     func testWorkBlockSuccess() async throws {
-        var called = false
+        let called = Atomic<Bool>(false)
         await self.eventScheduler.setWorkBlock {
-            called = true
+            called.value = true
             return .success
         }
 
         let request = AirshipWorkRequest(workID: "neat")
         let result = try await self.workManager.workers[0].workHandler(request)
         XCTAssertEqual(AirshipWorkResult.success, result)
-        XCTAssertTrue(called)
+        XCTAssertTrue(called.value)
     }
 
     func testBatchDelay() async throws {

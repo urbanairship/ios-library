@@ -359,42 +359,43 @@ public class AirshipAnalytics: NSObject, Component, AnalyticsProtocol {
     /// - Parameter event: The event to be triggered
     @objc
     public func addEvent(_ event: Event) {
+        guard self.isAnalyticsEnabled else {
+            AirshipLogger.trace(
+                "Analytics disabled, ignoring event: \(event.eventType)"
+            )
+            return
+        }
+
         guard let sessionID = self.sessionID else {
             AirshipLogger.error("Missing session ID")
             return
         }
+        
+        guard
+            event.isValid?() != false,
+            let body = try? AirshipJSON.wrap(event.data as? [String: Any])
+        else {
+            AirshipLogger.error("Dropping invalid event: \(event)")
+            return
+        }
+        
+        let eventData = AirshipEventData(
+            body: body,
+            id: NSUUID().uuidString,
+            date: Date(),
+            sessionID: sessionID,
+            type: event.eventType
+        )
 
-        let date = Date()
-        let identifier = NSUUID().uuidString
 
         Task { @MainActor in
-            
-            guard event.isValid?() != false,
-                  let data = event.data as? [String: Any]
-            else {
-                AirshipLogger.error("Dropping invalid event: \(event)")
-                return
-            }
-
             guard self.isAnalyticsEnabled else {
-                AirshipLogger.trace(
-                    "Analytics disabled, ignoring event: \(event.eventType)"
-                )
                 return
             }
 
             do {
-                let eventData = AirshipEventData(
-                    body: data,
-                    id: identifier,
-                    date: date,
-                    sessionID: sessionID,
-                    type: event.eventType
-                )
-
                 AirshipLogger.debug("Adding event with type \(eventData.type)")
                 AirshipLogger.trace("Adding event \(eventData)")
-
                 try await self.eventManager.addEvent(eventData)
                 self.eventSubject.send(eventData)
                 await self.eventManager.scheduleUpload(

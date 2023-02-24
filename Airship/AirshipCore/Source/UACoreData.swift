@@ -84,7 +84,7 @@ public class UACoreData: NSObject {
 
     public func perform(
         skipIfStoreNotCreated: Bool = false,
-        _ block: @escaping (NSManagedObjectContext) throws -> Void
+        _ block: @Sendable @escaping (NSManagedObjectContext) throws -> Void
     ) async throws {
         return try await withCheckedThrowingContinuation { continuation in
             context.perform({ [weak self] in
@@ -129,6 +129,44 @@ public class UACoreData: NSObject {
         }
     }
 
+    public func performWithResult<T: Sendable>(
+        _ block: @Sendable @escaping (NSManagedObjectContext) throws -> T
+    ) async throws -> T {
+        return try await withCheckedThrowingContinuation { continuation in
+            context.perform { [weak self] in
+                guard let strongSelf = self else {
+                    return
+                }
+
+                guard !strongSelf.isFinished else {
+                    continuation.resume(throwing: AirshipErrors.error("Finished"))
+                    return
+                }
+
+                strongSelf.shouldCreateStore = true
+                strongSelf.createPendingStores()
+
+                if (strongSelf.context.persistentStoreCoordinator?
+                    .persistentStores
+                    .count ?? 0) != 0
+                {
+                    do {
+                        continuation.resume(returning: try block(strongSelf.context))
+                    } catch {
+                        continuation.resume(throwing: error)
+                    }
+                } else {
+                    continuation.resume(
+                        throwing: AirshipErrors.error(
+                            "Peristant store unable to be created"
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+    
     @objc(safePerformBlock:)
     public func safePerform(
         _ block: @escaping (Bool, NSManagedObjectContext) -> Void

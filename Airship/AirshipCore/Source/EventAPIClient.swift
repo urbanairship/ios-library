@@ -66,7 +66,7 @@ class EventAPIClient: EventAPIClientProtocol {
     }
 
     private func requestBody(fromEvents events: [AirshipEventData]) throws -> Data {
-        let preparedEvents: [[String: Any]] = events.map { eventData in
+        let preparedEvents: [[String: Any]] = events.compactMap { eventData in
             var eventBody: [String: Any] = [:]
             eventBody["event_id"] =  eventData.id
             eventBody["time"] = String(
@@ -74,10 +74,17 @@ class EventAPIClient: EventAPIClientProtocol {
                 eventData.date.timeIntervalSince1970
             )
             eventBody["type"] = eventData.type
-            var data = eventData.body
+            
+        
+            guard
+                var data = eventData.body.unWrap() as? [String: Any]
+            else {
+                AirshipLogger.error("Failed to deserialize event body \(eventData)")
+                return nil
+            }
+            
             data["session_id"] = eventData.sessionID
             eventBody["data"] = data
-            
             return eventBody
         }
 

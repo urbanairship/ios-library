@@ -7,7 +7,7 @@ protocol EventUploadSchedulerProtocol {
     ) async
 
     func setWorkBlock(
-        _ workBlock: @escaping () async throws -> AirshipWorkResult
+        _ workBlock: @Sendable @escaping () async throws -> AirshipWorkResult
     ) async
 }
 
@@ -124,7 +124,7 @@ actor EventUploadScheduler: EventUploadSchedulerProtocol {
     }
 
     func setWorkBlock(
-        _ workBlock: @escaping () async throws -> AirshipWorkResult
+        _ workBlock: @Sendable @escaping () async throws -> AirshipWorkResult
     ) {
         self.workBlock = workBlock
     }

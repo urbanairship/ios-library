@@ -56,7 +56,7 @@ class InboxMessageData: NSManagedObject {
 
     /// The message's extra dictionary. This dictionary can be populated
     /// with arbitrary key-value data at the time the message is composed.
-    @NSManaged var extra: [String: Any]?
+    @NSManaged var extra: [String: String]?
 
     ///  The raw message dictionary. This is the dictionary that originally created the message.
     ///  It can contain more values then the message.

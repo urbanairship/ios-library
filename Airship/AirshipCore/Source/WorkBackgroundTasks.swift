@@ -3,14 +3,14 @@
 import Foundation
 import UIKit
 
-protocol WorkBackgroundTasksProtocol {
+protocol WorkBackgroundTasksProtocol: Sendable {
     func beginTask(
         _ name: String,
         expirationHandler: (() -> Void)?
     ) throws -> Disposable
 }
 
-class WorkBackgroundTasks: WorkBackgroundTasksProtocol {
+final class WorkBackgroundTasks: WorkBackgroundTasksProtocol {
 
     func beginTask(
         _ name: String,

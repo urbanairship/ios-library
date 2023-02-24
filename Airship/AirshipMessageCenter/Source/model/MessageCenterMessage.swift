@@ -8,13 +8,13 @@ import AirshipCore
 
 /// Message center message.
 @objc(UAMessageCenterMessage)
-public class MessageCenterMessage: NSObject {
+public final class MessageCenterMessage: NSObject, Sendable {
     @objc
     public let title: String
     @objc
     public let id: String
     @objc
-    public let extra: [String: Any]
+    public let extra: [String: String]
     @objc
     public let bodyURL: URL
     @objc
@@ -24,14 +24,14 @@ public class MessageCenterMessage: NSObject {
     @objc
     public let unread: Bool
 
-    let messageReporting: [String: Any]?
+    let messageReporting: AirshipJSON?
     let messageURL: URL
-    let rawMessageObject: [String: Any]
+    let rawMessageObject: AirshipJSON
 
     init(
         title: String,
         id: String,
-        extra: [String: Any],
+        extra: [String: String],
         bodyURL: URL,
         expirationDate: Date?,
         messageReporting: [String: Any]?,
@@ -45,16 +45,17 @@ public class MessageCenterMessage: NSObject {
         self.extra = extra
         self.bodyURL = bodyURL
         self.expirationDate = expirationDate
-        self.messageReporting = messageReporting
+        self.messageReporting = try? AirshipJSON.wrap(messageReporting)
         self.unread = unread
         self.sentDate = sentDate
         self.messageURL = messageURL
-        self.rawMessageObject = rawMessageObject
+        self.rawMessageObject = (try? AirshipJSON.wrap(rawMessageObject))  ?? AirshipJSON.null
     }
 
     public override func isEqual(_ object: Any?) -> Bool {
 
-        guard let object = object as? MessageCenterMessage,
+        guard
+            let object = object as? MessageCenterMessage,
             self.title == object.title,
             self.id == object.id,
             self.bodyURL == object.bodyURL,
@@ -62,38 +63,14 @@ public class MessageCenterMessage: NSObject {
             self.unread == object.unread,
             self.sentDate == object.sentDate,
             self.messageURL == object.messageURL,
-            compare(self.extra, object.extra),
-            compare(self.messageReporting, object.messageReporting),
-            compare(self.rawMessageObject, object.rawMessageObject)
+            self.extra == object.extra,
+            self.messageReporting == object.messageReporting,
+            self.rawMessageObject == object.rawMessageObject
         else {
             return false
         }
 
         return true
-    }
-
-    private func compare(
-        _ first: [String: Any]?,
-        _ second: [String: Any]?
-    ) -> Bool {
-        if first == nil && second == nil {
-            return true
-        }
-
-        guard let first = first, let second = second else {
-            return false
-        }
-
-        let result = NSDictionary(dictionary: first)
-            .isEqual(
-                to: second
-            )
-        return result
-
-    }
-
-    public override var description: String {
-        return "MessageCenterMessage(id=\(id))"
     }
 }
 
@@ -101,13 +78,20 @@ extension MessageCenterMessage {
 
     @objc
     public var listIcon: String? {
-        let icons = self.rawMessageObject["icons"] as? [String: String]
-        return icons?["list_icon"]
+        guard
+            let rawMessage = self.rawMessageObject.unWrap() as? [String: Any],
+            let icons = rawMessage["icons"] as? [String: String],
+            let listIcon = icons["list_icon"]
+        else {
+            return nil
+        }
+            
+        return listIcon
     }
 
     @objc
     public var subtitle: String? {
-        return self.extra["com.urbanairship.listing.field1"] as? String
+        return self.extra["com.urbanairship.listing.field1"]
     }
 
     @objc

@@ -409,7 +409,7 @@ public class RemoteDataManager: NSObject, Component, RemoteDataProvider {
         return Future { promise in
             Task {
                 do {
-                    let predicate = NSPredicate(format: "(type IN %@)", types)
+                    let predicate = AirshipCoreDataPredicate(format: "(type IN %@)", args: [types])
                     let payloads = try await self.remoteDataStore.fetchRemoteDataFromCache(predicate: predicate)
                     promise(.success(payloads))
                 } catch {

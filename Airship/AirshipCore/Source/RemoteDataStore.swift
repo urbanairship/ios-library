@@ -2,16 +2,18 @@
 
 import CoreData
 
-class RemoteDataStore {
+actor RemoteDataStore {
     
     private static let remoteDataEntity = "UARemoteDataStorePayload"
     
     private let coreData: UACoreData
+    private nonisolated let inMemory: Bool
     
     public init(
         storeName: String,
         inMemory: Bool
     ) {
+        self.inMemory = inMemory
         let modelURL = AirshipCoreResources.bundle.url(
             forResource: "UARemoteData",
             withExtension: "momd"
@@ -23,30 +25,28 @@ class RemoteDataStore {
         )
     }
     
-    convenience init(
+    init(
         storeName: String
     ) {
         self.init(storeName: storeName, inMemory: false)
     }
     
     public func fetchRemoteDataFromCache(
-        predicate: NSPredicate?
+        predicate: AirshipCoreDataPredicate?
     ) async throws -> [RemoteDataPayload] {
         
         AirshipLogger.trace(
             "Fetching remote data from cache with predicate: \(String(describing: predicate))"
         )
         
-        var remoteDataPayloads: [RemoteDataPayload] = []
         
-        try await self.coreData.perform({ context in
-            
+        return try await self.coreData.performWithResult { context in
             let request = NSFetchRequest<NSFetchRequestResult>(
                 entityName: RemoteDataStore.remoteDataEntity
             )
-            request.predicate = predicate
+            request.predicate = predicate?.toNSPredicate()
             let result = try context.fetch(request) as? [RemoteDataStorePayload] ?? []
-            let payloads = result.compactMap {
+            return result.compactMap {
                 return RemoteDataPayload(
                     type: $0.type,
                     timestamp: $0.timestamp,
@@ -54,10 +54,7 @@ class RemoteDataStore {
                     metadata: $0.metadata
                 )
             }
-            remoteDataPayloads =  payloads
-        })
-        
-        return remoteDataPayloads
+        }
     }
     
     public func overwriteCachedRemoteData(
@@ -74,7 +71,7 @@ class RemoteDataStore {
         
     }
     
-    private func deleteAll(
+    nonisolated private func deleteAll(
         context: NSManagedObjectContext
     ) throws {
         
@@ -82,7 +79,7 @@ class RemoteDataStore {
             entityName: RemoteDataStore.remoteDataEntity
         )
         
-        if coreData.inMemory {
+        if self.inMemory {
             fetchRequest.includesPropertyValues = false
             let payloads = try context.fetch(fetchRequest) as? [NSManagedObject]
             payloads?.forEach {
@@ -94,7 +91,7 @@ class RemoteDataStore {
         }
     }
     
-    private func addPayload(
+    nonisolated private func addPayload(
         _ payload: RemoteDataPayload,
         context: NSManagedObjectContext
     ) {

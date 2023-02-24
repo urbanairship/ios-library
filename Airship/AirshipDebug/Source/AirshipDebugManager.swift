@@ -76,12 +76,14 @@ public class AirshipDebugManager: NSObject, Component {
 
         super.init()
 
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .prettyPrinted
+        
         self.eventUpdates = analytics.eventPublisher
             .sink { incoming in
                 guard
-                    let body = try? JSONUtils.string(
-                        incoming.body,
-                        options: .prettyPrinted
+                    let body = try? incoming.body.toString(
+                        encoder: encoder
                     )
                 else {
                     return

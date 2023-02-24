@@ -1,8 +1,9 @@
 /* Copyright Airship and Contributors */
 
-// Utility class that holds a value in a thread safe way. Once cancelled, setting a value
-// on the holder will cause it to immediately be cancelled witht he block and the value to be
-// cleared.
+/// Utility class that holds a value in a thread safe way. Once cancelled, setting a value
+/// on the holder will cause it to immediately be cancelled witht he block and the value to be
+/// cleared.
+/// - Note: for internal use only.  :nodoc:
 class CancellabelValueHolder<T: Sendable>: AirshipCancellable, @unchecked Sendable {
     private let lock: AirshipLock = AirshipLock()
     private let onCancel: (T) -> Void

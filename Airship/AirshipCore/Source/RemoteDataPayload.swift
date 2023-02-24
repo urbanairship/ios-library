@@ -2,7 +2,7 @@
 
 // NOTE: For internal use only. :nodoc:
 @objc(UARemoteDataPayload)
-public class RemoteDataPayload: NSObject {
+public final class RemoteDataPayload: NSObject, Sendable {
 
     /// The payload type
     @objc
@@ -12,15 +12,24 @@ public class RemoteDataPayload: NSObject {
     @objc
     public let timestamp: Date
 
+    private let _data: AirshipJSON
+    
     /// The actual data associated with this payload
     @objc
-    public let data: [AnyHashable: Any]
+    public var data: [AnyHashable: Any] {
+        return _data.unWrap() as? [AnyHashable: Any] ?? [:]
+    }
 
+    
+    public let _metadata: AirshipJSON
+    
     /// The metadata associated with this payload
     ///
     /// Contains important metadata such as locale.
-    @objc
-    public let metadata: [AnyHashable: Any]?
+    @objc(metadata)
+    public var metadata: [AnyHashable: Any]? {
+        return _metadata.unWrap() as? [AnyHashable: Any]
+    }
 
     @objc
     public init(
@@ -31,8 +40,8 @@ public class RemoteDataPayload: NSObject {
     ) {
         self.type = type
         self.timestamp = timestamp
-        self.data = data
-        self.metadata = metadata
+        self._data = (try? AirshipJSON.wrap(data)) ?? AirshipJSON.null
+        self._metadata = (try? AirshipJSON.wrap(metadata)) ?? AirshipJSON.null
         super.init()
     }
 
@@ -49,10 +58,11 @@ public class RemoteDataPayload: NSObject {
     }
 
     private func isEqual(to other: RemoteDataPayload) -> Bool {
-        guard type == other.type,
+        guard
+            type == other.type,
             timestamp == other.timestamp,
-            data as NSDictionary == other.data as NSDictionary,
-            metadata as NSDictionary? == other.metadata as NSDictionary?
+            _data == other._data,
+            _metadata == other._metadata
         else {
             return false
         }
@@ -64,14 +74,13 @@ public class RemoteDataPayload: NSObject {
         var result = 1
         result = 31 * result + self.type.hashValue
         result = 31 * result + timestamp.hashValue
-        result = 31 * result + (self.data as NSDictionary).hashValue
-        result =
-            31 * result + ((self.metadata as NSDictionary?)?.hashValue ?? 0)
+        result = 31 * result + self._data.hashValue
+        result = 31 * result + self._metadata.hashValue
         return result
     }
 
     public override var description: String {
         return
-            "RemoteDataPayload(type=\(type), timestamp = \(timestamp), data = \(data), metadata = \(metadata ?? [:])"
+            "RemoteDataPayload(type=\(type), timestamp = \(timestamp), data = \(_data), metadata = \(_metadata)"
     }
 }

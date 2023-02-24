@@ -210,13 +210,13 @@ struct AirshipWebView: UIViewRepresentable {
 
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!)
         {
-            Task {
+            Task { @MainActor in
                 await parent.pageFinished()
             }
         }
 
         func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
-            Task {
+            Task { @MainActor in
                 await parent.load(webView: webView, coordinator: self)
             }
         }
@@ -226,7 +226,7 @@ struct AirshipWebView: UIViewRepresentable {
             didFail navigation: WKNavigation!,
             withError error: Error
         ) {
-            Task {
+            Task { @MainActor in
                 await parent.pageFinished(error: error)
             }
         }
@@ -239,7 +239,7 @@ struct AirshipWebView: UIViewRepresentable {
         }
 
         func close() {
-            Task {
+            Task { @MainActor in
                 await parent.dismiss()
             }
         }
@@ -300,6 +300,7 @@ private struct MessageCenterMessageContentView: View {
         return message
     }
 
+    @MainActor
     private func makeRequest(forMessageID messageID: String) async throws
         -> URLRequest
     {
@@ -318,6 +319,7 @@ private struct MessageCenterMessageContentView: View {
         return request
     }
 
+    @MainActor
     private func makeExtensionDelegate(messageID: String) async throws
         -> NativeBridgeExtensionDelegate
     {

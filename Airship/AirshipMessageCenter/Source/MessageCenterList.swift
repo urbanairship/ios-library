@@ -287,32 +287,23 @@ public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
         }
 
         var cancellable: AnyCancellable?
-        let onCancel = {
-            cancellable?.cancel()
-        }
-
-        return await withTaskCancellationHandler(
-            operation: {
-                return await withCheckedContinuation { continuation in
-                    cancellable = self.updateSubject
-                        .filter { update in
-                            update == .refreshFailed || update == .refreshSucess
-                        }
-                        .first()
-                        .sink { result in
-                            let success = result == .refreshSucess
-                            continuation.resume(returning: success)
-                        }
-
-                    self.dispatchUpdateWorkRequest(
-                        conflictPolicy: .replace
-                    )
+        let result = await withCheckedContinuation { continuation in
+            cancellable = self.updateSubject
+                .filter { update in
+                    update == .refreshFailed || update == .refreshSucess
                 }
-            },
-            onCancel: {
-                onCancel()
-            }
-        )
+                .first()
+                .sink { result in
+                    let success = result == .refreshSucess
+                    continuation.resume(returning: success)
+                }
+
+            self.dispatchUpdateWorkRequest(
+                conflictPolicy: .replace
+            )
+        }
+        cancellable?.cancel()
+        return result
     }
 
     @objc
@@ -336,7 +327,7 @@ public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
     @objc
     public func delete(messages: [MessageCenterMessage]) async {
         await self.delete(
-            messages: messages
+            messageIDs: messages.map { message in message.id }
         )
     }
 

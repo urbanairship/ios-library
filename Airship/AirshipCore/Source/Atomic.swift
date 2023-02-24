@@ -1,6 +1,6 @@
 import Foundation
 
-class Atomic<T: Equatable> {
+final class Atomic<T: Equatable>: @unchecked Sendable {
     let lock = AirshipLock()
     private var _value: T
 

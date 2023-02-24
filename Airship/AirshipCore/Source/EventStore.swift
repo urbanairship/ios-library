@@ -10,10 +10,12 @@ actor EventStore {
 
     private var coreData: UACoreData
     private var storeName: String?
+    private nonisolated let inMemory: Bool
 
     init(appKey: String,
          inMemory: Bool = false
     ) {
+        self.inMemory = inMemory
         let storeName = String(
             format: EventStore.fileFormat,
             appKey
@@ -41,8 +43,7 @@ actor EventStore {
     func fetchEvents(
         maxBatchSizeKB: UInt
     ) async throws -> [AirshipEventData] {
-        var events: [AirshipEventData] = []
-        try await self.coreData.perform { context in
+        return try await self.coreData.performWithResult { context in
             let request = NSFetchRequest<NSFetchRequestResult>(
                 entityName: EventStore.eventDataEntityName
             )
@@ -54,6 +55,7 @@ actor EventStore {
             let fetchResult = try context.fetch(request) as? [EventData] ?? []
             let batchSizeBytesLimit = maxBatchSizeKB * 1024
             var batchSize = 0
+            var events: [AirshipEventData] = []
             for eventData in fetchResult {
                 let bytes = eventData.bytes?.intValue ?? 0
                 if ((batchSize + bytes) > batchSizeBytesLimit) {
@@ -61,7 +63,9 @@ actor EventStore {
                 }
 
                 do {
-                    events.append(try self.convert(internalEventData: eventData))
+                    events.append(
+                        try self.convert(internalEventData: eventData)
+                    )
                     batchSize += bytes
                 } catch {
                     AirshipLogger.error("Unable to read event, deleting. \(error)")
@@ -70,23 +74,17 @@ actor EventStore {
             }
 
             UACoreData.safeSave(context)
+            return events
         }
-        
-        return events
     }
 
     func hasEvents() async throws -> Bool {
-        var result = false
-        try await self.coreData.perform { context in
+        return try await self.coreData.performWithResult { context in
             let request = NSFetchRequest<NSFetchRequestResult>(
                 entityName: EventStore.eventDataEntityName
             )
-            if try context.count(for: request) > 0 {
-                result = true
-            }
+            return try context.count(for: request) > 0
         }
-
-        return result
     }
 
     func deleteEvents(eventIDs: [String]) async throws {
@@ -101,7 +99,7 @@ actor EventStore {
             )
             
             do {
-                if self.coreData.inMemory {
+                if self.inMemory {
                     request.includesPropertyValues = false
                     let events = try context.fetch(request) as? [NSManagedObject]
                     events?.forEach { event in
@@ -125,7 +123,7 @@ actor EventStore {
             )
 
             do {
-                if self.coreData.inMemory {
+                if self.inMemory {
                     request.includesPropertyValues = false
                     let events = try context.fetch(request) as? [NSManagedObject]
                     events?.forEach { event in
@@ -157,7 +155,7 @@ actor EventStore {
         }
     }
 
-    private func deleteSession(
+    nonisolated private func deleteSession(
         _ sessionID: String,
         context: NSManagedObjectContext
     ) -> Bool {
@@ -177,7 +175,7 @@ actor EventStore {
         }
     }
 
-    private func fetchOldestSessionID(with context: NSManagedObjectContext)
+    nonisolated private func fetchOldestSessionID(with context: NSManagedObjectContext)
         -> String?
     {
         let request = NSFetchRequest<NSFetchRequestResult>(
@@ -199,10 +197,10 @@ actor EventStore {
 
     }
 
-    private func fetchTotalEventSize(with context: NSManagedObjectContext)
+    nonisolated private func fetchTotalEventSize(with context: NSManagedObjectContext)
         -> Int
     {
-        guard !coreData.inMemory else {
+        guard !self.inMemory else {
             return 0
         }
 
@@ -229,7 +227,7 @@ actor EventStore {
         }
     }
 
-    private func saveEvent(
+    nonisolated private func saveEvent(
         event: AirshipEventData,
         context: NSManagedObjectContext
     ) throws {
@@ -240,10 +238,7 @@ actor EventStore {
             eventData.sessionID = event.sessionID
             eventData.type = event.type
             eventData.identifier = event.id
-            eventData.data = try JSONSerialization.data(
-                withJSONObject: event.body,
-                options: []
-            )
+            eventData.data = try event.body.toData()
             eventData.storeDate = event.date
 
             // Approximate size
@@ -261,7 +256,7 @@ actor EventStore {
         }
     }
 
-    private func date(internalEventData: EventData) -> Date? {
+    nonisolated private func date(internalEventData: EventData) -> Date? {
         // Stopped using the time field on new events. Will remove
         // in a future SDK version.
         if let time = internalEventData.time, let time = Double(time) {
@@ -271,24 +266,19 @@ actor EventStore {
         return internalEventData.storeDate
     }
 
-    private func convert(
+    nonisolated private func convert(
         internalEventData: EventData
     ) throws -> AirshipEventData {
         guard let sessionID = internalEventData.sessionID,
               let id = internalEventData.identifier,
               let type = internalEventData.type,
-              let data = internalEventData.data,
-              let body = try JSONSerialization.jsonObject(
-                with: data,
-                options: []
-              ) as? [String: Any],
               let date = date(internalEventData: internalEventData)
         else {
             throw AirshipErrors.error("Invalid event data")
         }
 
         return AirshipEventData(
-            body: body,
+            body: try AirshipJSON.from(data: internalEventData.data),
             id: id,
             date: date,
             sessionID: sessionID,

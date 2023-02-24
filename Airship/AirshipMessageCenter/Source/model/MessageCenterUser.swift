@@ -6,7 +6,7 @@ import AirshipCore
 
 /// Model object for holding user data.
 @objc(UAMessageCenterUser)
-public class MessageCenterUser: NSObject, Codable {
+public final class MessageCenterUser: NSObject, Codable, Sendable {
 
     /// The username.
     @objc
