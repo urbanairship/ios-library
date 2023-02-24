@@ -399,5 +399,6 @@ private struct MessageCenterMessageContentView: View {
         .navigationTitle(
             Text(title ?? self.message?.title ?? "")
         )
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
