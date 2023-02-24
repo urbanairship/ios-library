@@ -1,17 +1,50 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+import Combine
 
 class FormState: ObservableObject {
     @Published var data: FormInputData
     @Published var isVisible: Bool = false
     @Published var isSubmitted: Bool = false
-    @Published var isEnabled: Bool = true
+    
+    @Published var isEnabled: Bool = false {
+        didSet {
+            self.isFormInputEnabled = isEnabled && (self.parentFormState?.isFormInputEnabled ?? true)
+        }
+    }
+    
+    @Published private(set) var isFormInputEnabled: Bool = true
+    
+    @Published var parentFormState: FormState? = nil {
+        didSet {
+            subscriptions.removeAll()
+            
+            guard let newParent = self.parentFormState else { return }
+            
+            parentFormState?.$isFormInputEnabled.sink { [weak self] parentEnabled in
+                guard let strongSelf = self else { return }
+                strongSelf.isFormInputEnabled = strongSelf.isEnabled && parentEnabled
+            }.store(in: &subscriptions)
+            
+            self.$data.sink { incoming in
+                newParent.updateFormInput(incoming)
+            }.store(in: &subscriptions)
+
+            self.$isVisible.sink { incoming in
+                if incoming {
+                    newParent.markVisible()
+                }
+            }.store(in: &subscriptions)
+            
+        }
+    }
 
     public let identifier: String
     public let formType: FormType
     public let formResponseType: String?
     private var children: [String: FormInputData] = [:]
+    private var subscriptions: Set<AnyCancellable> = Set()
 
     init(
         identifier: String,
@@ -58,6 +91,14 @@ class FormState: ObservableObject {
         if !self.isSubmitted {
             self.isSubmitted = true
         }
+    }
+
+    
+    var topFormState: FormState {
+        guard let parent = self.parentFormState else {
+            return self
+        }
+        return parent.topFormState
     }
 }
 

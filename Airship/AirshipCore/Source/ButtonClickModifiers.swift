@@ -12,6 +12,7 @@ struct SubmitFormButtonClickBehavior: ViewModifier {
     @ViewBuilder
     func body(content: Content) -> some View {
         content.addTapGesture {
+            let formState = formState.topFormState
             thomasEnvironment.submitForm(formState, layoutState: layoutState)
             formState.markSubmitted()
         }

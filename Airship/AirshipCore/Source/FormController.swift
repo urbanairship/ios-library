@@ -53,7 +53,6 @@ private struct ParentFormController: View {
         ViewFactory.createView(model: self.model.view, constraints: constraints)
             .background(self.model.backgroundColor)
             .border(self.model.border)
-
             .common(self.model, formInputID: self.model.identifier)
             .enableBehaviors(self.model.formEnableBehaviors) { enabled in
                 self.formState.isEnabled = enabled
@@ -76,7 +75,6 @@ private struct ParentFormController: View {
                     }
                 }
             }
-
     }
 }
 
@@ -87,8 +85,6 @@ private struct ChildFormController: View {
 
     @EnvironmentObject var parentFormState: FormState
     @ObservedObject var formState: FormState
-    @State private var dataCancellable: AnyCancellable?
-    @State private var visibleCancellable: AnyCancellable?
 
     var body: some View {
         return
@@ -105,17 +101,7 @@ private struct ChildFormController: View {
             .environmentObject(formState)
             .onAppear {
                 self.restoreFormState()
-
-                self.dataCancellable = self.formState.$data.sink { incoming in
-                    self.parentFormState.updateFormInput(incoming)
-                }
-
-                self.visibleCancellable = self.formState.$isVisible.sink {
-                    incoming in
-                    if incoming {
-                        parentFormState.markVisible()
-                    }
-                }
+                self.formState.parentFormState = self.parentFormState
             }
     }
 

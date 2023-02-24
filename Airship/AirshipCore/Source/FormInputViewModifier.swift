@@ -25,7 +25,7 @@ struct FormInputEnabledViewModifier: ViewModifier {
 
     @ViewBuilder
     func body(content: Content) -> some View {
-        content.disabled(!formState.isEnabled)
+        content.disabled(!formState.isFormInputEnabled)
     }
 }
 

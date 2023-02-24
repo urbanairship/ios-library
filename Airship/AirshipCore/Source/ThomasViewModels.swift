@@ -926,7 +926,7 @@ struct FormControllerModel: BaseModel {
 }
 
 struct StateControllerModel: BaseModel {
-    let type = ViewModelType.formController
+    let type = ViewModelType.stateController
     let border: Border?
     let backgroundColor: ThomasColor?
     let view: ViewModel

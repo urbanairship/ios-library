@@ -84,8 +84,6 @@ private struct ChildNpsController: View {
 
     @EnvironmentObject var parentFormState: FormState
     @ObservedObject var formState: FormState
-    @State private var dataCancellable: AnyCancellable?
-    @State private var visibleCancellable: AnyCancellable?
 
     var body: some View {
         return
@@ -102,17 +100,7 @@ private struct ChildNpsController: View {
             .environmentObject(formState)
             .onAppear {
                 restoreFormState()
-
-                self.dataCancellable = self.formState.$data.sink { incoming in
-                    self.parentFormState.updateFormInput(incoming)
-                }
-
-                self.visibleCancellable = self.formState.$isVisible.sink {
-                    incoming in
-                    if incoming {
-                        parentFormState.markVisible()
-                    }
-                }
+                self.formState.parentFormState = self.parentFormState
             }
     }
 
