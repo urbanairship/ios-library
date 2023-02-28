@@ -8,6 +8,7 @@ import AirshipCore
 /**
  * Preference Center view controller.
  */
+@objc(UAPreferenceCenterViewController)
 open class PreferenceCenterViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
    
     @IBOutlet private var tableView: UITableView!

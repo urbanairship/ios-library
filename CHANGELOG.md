@@ -3,6 +3,12 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 16.11.11 February 28, 2023
+Patch release that exposes some Preference Center classes to Objective-C.
+
+### Changes
+- Exposes `UAPreferenceCenterResources`, `UAPreferenceCenterViewController` and `UAPreferenceAlertItemButton`to obj-c.
+
 ## Version 16.11.0 February 22, 2023
 Minor release that fixes a potential channel restore issue on second run. The impact should be small since the channel create will return the same channel ID if the app has a device token or the app installed the Message Center module. 
 

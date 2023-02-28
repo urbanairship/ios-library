@@ -273,7 +273,7 @@ public class AlertItem : NSObject, Decodable, Item {
     /**
      * Alert button
      */
-    @objc
+    @objc(UAPreferenceAlertItemButton)
     public class Button : NSObject, Decodable {
         
         let actionJSON : AirshipJSON

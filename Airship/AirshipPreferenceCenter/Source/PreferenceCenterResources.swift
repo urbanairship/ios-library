@@ -10,6 +10,7 @@ import AirshipCore
 /**
  * Resources for AirshipPreferenceCenter.
  */
+@objc(UAPreferenceCenterResources)
 public class PreferenceCenterResources : NSObject {
 
     /**
