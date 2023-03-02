@@ -3,7 +3,14 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
-## Version 16.11.11 February 28, 2023
+## Version 16.11.2 March 2, 2023
+Patch release that fixes a regression introduced in 16.11.0 that disables Survey's submit button and inputs, and added accessibility font scaling to Scenes & Surveys.
+
+### Changes
+- Scale fonts for Scenes & Surveys
+- Fixed Survey enablement regression
+
+## Version 16.11.1 February 28, 2023
 Patch release that exposes some Preference Center classes to Objective-C.
 
 ### Changes
