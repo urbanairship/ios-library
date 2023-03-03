@@ -618,6 +618,7 @@ struct MediaModel: BaseModel, Accessible {
     let visibility: VisibilityInfo?
     let eventHandlers: [EventHandler]?
     let enableBehaviors: [EnableBehavior]?
+    let video: Video?
 
     enum CodingKeys: String, CodingKey {
         case mediaType = "media_type"
@@ -629,6 +630,23 @@ struct MediaModel: BaseModel, Accessible {
         case visibility = "visibility"
         case eventHandlers = "event_handlers"
         case enableBehaviors = "enabled"
+        case video = "video"
+    }
+}
+
+struct Video: Decodable, Equatable {
+    let aspectRatio: Double?
+    let showControls: Bool?
+    let autoplay: Bool?
+    let muted: Bool?
+    let loop: Bool?
+    
+    enum CodingKeys: String, CodingKey {
+        case aspectRatio = "aspect_ratio"
+        case showControls = "show_controls"
+        case autoplay = "autoplay"
+        case muted = "muted"
+        case loop = "loop"
     }
 }
 

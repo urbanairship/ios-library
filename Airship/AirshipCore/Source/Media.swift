@@ -37,14 +37,15 @@ struct Media: View {
             MediaWebView(
                 url: model.url,
                 type: model.mediaType,
-                accessibilityLabel: model.contentDescription
+                accessibilityLabel: model.contentDescription,
+                video: model.video
             )
             .constraints(constraints)
             .applyIf(
                 self.constraints.width != nil
                     || self.constraints.height != nil
             ) {
-                $0.aspectRatio(16.0 / 9.0, contentMode: .fit)
+                $0.aspectRatio((CGFloat)(model.video?.aspectRatio ?? 16.0 / 9.0), contentMode: .fit)
             }
             .background(self.model.backgroundColor)
             .border(self.model.border)

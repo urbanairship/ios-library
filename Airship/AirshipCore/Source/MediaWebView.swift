@@ -13,7 +13,7 @@ struct MediaWebView: UIViewRepresentable {
     let url: String
     let type: MediaType
     let accessibilityLabel: String?
-
+    let video: Video?
     
     func makeUIView(context: Context) -> WKWebView {
         return createWebView()
@@ -35,8 +35,11 @@ struct MediaWebView: UIViewRepresentable {
         webView.scrollView.backgroundColor = UIColor.black
         if type == .video {
             let html = String(
-                format:
-                    "<body style=\"margin:0\"><video playsinline controls height=\"100%%\" width=\"100%%\" src=\"%@\"></video></body>",
+                format: "<body style=\"margin:0\"><video playsinline %@ %@ %@ %@ height=\"100%%\" width=\"100%%\" src=\"%@\"></video></body>",
+                video?.showControls ?? true ? "controls" : "",
+                video?.autoplay ?? false ? "autoplay" : "",
+                video?.muted ?? false ? "muted" : "",
+                video?.loop ?? false ? "loop" : "",
                 url
             )
             guard let mediaUrl = URL(string: url) else { return webView }
