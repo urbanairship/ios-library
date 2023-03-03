@@ -15,7 +15,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
         // Populate AirshipConfig.plist with your app's info from https://go.urbanairship.com
         // or set runtime properties here.
-        let config = Config.default()
+        let config = AirshipConfig.default()
 
         if config.validate() != true {
             showInvalidConfigAlert()
@@ -24,7 +24,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
         // Set log level for debugging config loading (optional)
         // It will be set to the value in the loaded config upon takeOff
-        Airship.logLevel = .trace
+        Airship.logLevel = .verbose
 
         // You can then programmatically override the plist values:
         // config.developmentAppKey = "YourKey"

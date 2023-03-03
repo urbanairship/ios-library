@@ -20,8 +20,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, DeepLinkDelegate,
     ) -> Bool {
 
         let config = AirshipConfig.default()
-        config.productionLogLevel = .trace
-        config.developmentLogLevel = .trace
+        config.productionLogLevel = .verbose
+        config.developmentLogLevel = .verbose
 
         Airship.takeOff(config, launchOptions: launchOptions)
 

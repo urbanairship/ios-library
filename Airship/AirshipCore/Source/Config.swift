@@ -764,8 +764,9 @@ public class AirshipConfig: NSObject, NSCopying {
 
         if let string = value as? String {
             guard let int = Int(string) else {
-                return LogLevelNames(rawValue: string.lowercased())?
-                    .toLogLevel()
+                return LogLevelNames(
+                    rawValue: string.lowercased()
+                )?.toLogLevel()
             }
             return AirshipLogLevel(rawValue: int)
         }
@@ -911,6 +912,7 @@ private enum LogLevelNames: String {
     case info
     case debug
     case trace
+    case verbose
 
     func toLogLevel() -> AirshipLogLevel {
         switch self {
@@ -926,8 +928,10 @@ private enum LogLevelNames: String {
             return AirshipLogLevel.warn
         case .info:
             return AirshipLogLevel.info
+        case .verbose:
+            return AirshipLogLevel.verbose
         case .trace:
-            return AirshipLogLevel.trace
+            return AirshipLogLevel.verbose
         }
     }
 }

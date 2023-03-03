@@ -34,7 +34,7 @@ class DefaultLogHandler: AirshipLogHandler {
 extension AirshipLogLevel {
     fileprivate var initial: String {
         switch self {
-        case .trace: return "T"
+        case .verbose: return "V"
         case .debug: return "D"
         case .info: return "I"
         case .warn: return "W"
@@ -45,7 +45,7 @@ extension AirshipLogLevel {
 
     fileprivate var logType: OSLogType {
         switch self {
-        case .trace: return OSLogType.debug
+        case .verbose: return OSLogType.debug
         case .debug: return OSLogType.debug
         case .info: return OSLogType.info
         case .warn: return OSLogType.default

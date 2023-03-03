@@ -19,7 +19,7 @@ public class AirshipLogger {
     ) {
 
         log(
-            logLevel: AirshipLogLevel.trace,
+            logLevel: AirshipLogLevel.verbose,
             message: message(),
             fileID: fileID,
             line: line,

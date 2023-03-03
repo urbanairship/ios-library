@@ -94,7 +94,7 @@ class Delegate: ThomasDelegate {
             "Thomas.onRunActions{actions=\(actions), context=\(layoutContext)}"
         )
         let permissionReceiver:
-            (Permission, PermissionStatus, PermissionStatus) -> Void = {
+            (AirshipPermission, AirshipPermissionStatus, AirshipPermissionStatus) -> Void = {
                 permission,
                 start,
                 end in

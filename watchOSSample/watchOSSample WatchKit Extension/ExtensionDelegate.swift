@@ -9,12 +9,12 @@ class ExtensionDelegate: NSObject, WKExtensionDelegate {
 
         // Populate AirshipConfig.plist with your app's info from https://go.urbanairship.com
         // or set runtime properties here.
-        let config = Config.default()
-        config.developmentLogLevel = LogLevel.trace
+        let config = AirshipConfig.default()
+        config.developmentLogLevel = LogLevel.verbose
 
         // Set log level for debugging config loading (optional)
         // It will be set to the value in the loaded config upon takeOff
-        Airship.logLevel = LogLevel.trace
+        Airship.logLevel = LogLevel.verbose
 
         // Print out the application configuration for debugging (optional)
         print("Config:\n \(config)")

@@ -64,7 +64,7 @@
     // populate dev and prod keys, then toggle between them
     config.developmentAppKey = @"devAppKey";
     config.developmentAppSecret = @"devAppSecret";
-    config.developmentLogLevel = UALogLevelTrace;//not the default
+    config.developmentLogLevel = UALogLevelVerbose;//not the default
     
     config.productionAppKey = @"prodAppKey";
     config.productionAppSecret = @"prodAppSecret";
