@@ -132,6 +132,8 @@ public class Thomas: NSObject {
         var viewController: ThomasModalViewController?
         
         let options = ThomasViewControllerOptions()
+        options.orientation = presentation.defaultPlacement.device?.orientationLock
+
         let environment = ThomasEnvironment(delegate: delegate, extensions: extensions) {
             window?.isHidden = true
             window = nil
