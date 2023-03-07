@@ -315,7 +315,7 @@ private struct MessageCenterMessageContentView: View {
             user.basicAuthString,
             forHTTPHeaderField: "Authorization"
         )
-        request.timeoutInterval = 60
+        request.timeoutInterval = 120
         return request
     }
 
