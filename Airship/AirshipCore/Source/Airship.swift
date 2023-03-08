@@ -340,6 +340,7 @@ public class Airship: NSObject {
 
     #endif
 
+    @MainActor
     private class func commonTakeOff(_ config: AirshipConfig?) {
 
         let resolvedConfig = config?.copy() as? AirshipConfig ?? AirshipConfig.default()

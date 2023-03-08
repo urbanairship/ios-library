@@ -530,38 +530,7 @@ public class AirshipUtils: NSObject {
         return "Basic \(authString)"
     }
 
-    /// Logs a failed HTTP request.
-    ///
-    /// For internal use only. :nodoc:
-    ///
-    /// - Parameters:
-    ///   - request: The request.
-    ///   - message: The log message.
-    ///   - error: The NSError.
-    ///   - response: The HTTP response.
-    @objc(logFailedRequest:withMessage:withError:withResponse:)
-    public class func logFailedRequest(
-        _ request: Request?,
-        message: String?,
-        error: NSError?,
-        response: HTTPURLResponse?
-    ) {
-        let logMessage = """
-            ***** Request ERROR: \(message ?? "") *****
-            \tError: \(String(describing: error?.description))
-            Request:
-            \tURL: \(String(describing: request?.url?.absoluteString))
-            \tHeaders: \(String(describing: request?.headers))
-            \tMethod: \(String(describing: request?.method))
-            \tBody: \(String(describing: request?.body))
-            Response:
-            \tStatus code: \(String(describing: response?.statusCode))
-            \tHeaders: \(String(describing: response?.allHeaderFields))
-            \tBody: \(String(describing: response))
-            """
-        AirshipLogger.trace(logMessage)
-    }
-
+   
     // MARK: URL
 
     /// Parse url for the input string.
@@ -607,4 +576,18 @@ public class AirshipUtils: NSObject {
         return status.stringValue
     }
 
+
+    class func generateSignedToken(secret: String, tokenParams: [String]) throws -> String {
+        let secret = NSData(data: Data(secret.utf8))
+        let message = NSData(data: Data(tokenParams.joined(separator: ":").utf8))
+
+        let hash = NSMutableData(length: Int(CC_SHA256_DIGEST_LENGTH))
+        guard let hash else {
+            throw AirshipErrors.error("Failed to generate signed token")
+        }
+
+        CCHmac(CCHmacAlgorithm(kCCHmacAlgSHA256), secret.bytes, secret.count, message.bytes, message.count, hash.mutableBytes)
+
+        return hash.base64EncodedString(options: [])
+    }
 }

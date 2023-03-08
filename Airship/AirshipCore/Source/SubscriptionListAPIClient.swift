@@ -23,9 +23,7 @@ class SubscriptionListAPIClient: SubscriptionListAPIClientProtocol {
     convenience init(config: RuntimeConfig) {
         self.init(
             config: config,
-            session: AirshipRequestSession(
-                appKey: config.appKey
-            )
+            session: config.requestSession
         )
     }
 
@@ -47,7 +45,7 @@ class SubscriptionListAPIClient: SubscriptionListAPIClientProtocol {
                 "Accept":  "application/vnd.urbanairship+json; version=3;"
             ],
             method: "GET",
-            auth: .basic(config.appKey, config.appSecret)
+            auth: .basicAppAuth
         )
 
         return try await session.performHTTPRequest(request) { data, response in

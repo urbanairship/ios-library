@@ -8,7 +8,7 @@ public struct AirshipRequest {
     let url: URL?
     let headers: [String: String]
     let method: String?
-    let auth: Auth?
+    let auth: AirshipRequestAuth?
     let body: Data?
     let compressBody: Bool
 
@@ -16,7 +16,7 @@ public struct AirshipRequest {
         url: URL?,
         headers: [String: String] = [:],
         method: String? = nil,
-        auth: Auth? = nil,
+        auth: AirshipRequestAuth? = nil,
         body: Data? = nil,
         compressBody: Bool = false
     ) {
@@ -26,10 +26,5 @@ public struct AirshipRequest {
         self.auth = auth
         self.body = body
         self.compressBody = compressBody
-    }
-
-    public enum Auth {
-        case basic(String, String)
-        case bearer(String, String, String)
     }
 }

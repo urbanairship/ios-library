@@ -142,6 +142,8 @@ public class AirshipContact: NSObject, Component, ContactProtocol {
 
     static let foregroundResolveInterval: TimeInterval = 24 * 60 * 60  // 24 hours
 
+    static let maxSubscriptionListCacheAge: TimeInterval = 600
+
     @objc
     public static let contactChangedEvent = NSNotification.Name(
         "com.urbanairship.contact_changed"
@@ -392,11 +394,8 @@ public class AirshipContact: NSObject, Component, ContactProtocol {
             className: "Contact"
         )
 
-        self.cachedSubscriptionLists = CachedValue(date: date, maxCacheAge: 600)
-        self.cachedSubscriptionListsHistory = CachedList(
-            date: date,
-            maxCacheAge: 600
-        )
+        self.cachedSubscriptionLists = CachedValue(date: date)
+        self.cachedSubscriptionListsHistory = CachedList(date: date)
         super.init()
 
         self.disableHelper.onChange = { [weak self] in
@@ -773,7 +772,10 @@ public class AirshipContact: NSObject, Component, ContactProtocol {
         }
 
         AirshipLogger.debug("Fetched lists finished with response: \(response)")
-        self.cachedSubscriptionLists.value = (contactID, lists)
+        self.cachedSubscriptionLists.set(
+            value: (contactID, lists),
+            expiresIn: AirshipContact.maxSubscriptionListCacheAge
+        )
         return lists
     }
 
@@ -895,7 +897,8 @@ public class AirshipContact: NSObject, Component, ContactProtocol {
             if let updates = updatePayload.subscriptionListsUpdates {
                 for update in updates {
                     self.cachedSubscriptionListsHistory.append(
-                        (contactInfo.contactID, update)
+                        (contactInfo.contactID, update),
+                        expiresIn: AirshipContact.maxSubscriptionListCacheAge
                     )
                 }
             }

@@ -38,7 +38,7 @@ final class ChannelAPIClientTest: XCTestCase {
             headerFields: [String: String]()
         )
 
-        let response = try await self.client.createChannel(withPayload: payload)
+        let response = try await self.client.createChannel(payload: payload)
         XCTAssertEqual("some-channel-id", response.result!.channelID)
         XCTAssertEqual(
             "http://example.com/api/channels/some-channel-id",
@@ -47,6 +47,7 @@ final class ChannelAPIClientTest: XCTestCase {
 
         let request = self.session.lastRequest!
         XCTAssertEqual("POST", request.method)
+        XCTAssertEqual(AirshipRequestAuth.basicAppAuth, request.auth)
         XCTAssertEqual("http://example.com/api/channels/", request.url?.absoluteString)
         XCTAssertEqual(try encoder.encode(payload), request.body)
     }
@@ -66,7 +67,7 @@ final class ChannelAPIClientTest: XCTestCase {
         )
 
         do {
-            _ = try await self.client.createChannel(withPayload: payload)
+            _ = try await self.client.createChannel(payload: payload)
             XCTFail("Should throw")
         } catch {}
     }
@@ -75,7 +76,7 @@ final class ChannelAPIClientTest: XCTestCase {
         let payload = ChannelRegistrationPayload()
         self.session.error = AirshipErrors.error("Error!")
         do {
-            _ = try await self.client.createChannel(withPayload: payload)
+            _ = try await self.client.createChannel(payload: payload)
             XCTFail("Should throw")
         } catch {}
     }
@@ -89,7 +90,7 @@ final class ChannelAPIClientTest: XCTestCase {
             headerFields: [String: String]()
         )
 
-        let response = try await self.client.createChannel(withPayload: payload)
+        let response = try await self.client.createChannel(payload: payload)
         XCTAssertEqual(400, response.statusCode)
     }
 
@@ -104,8 +105,8 @@ final class ChannelAPIClientTest: XCTestCase {
         )
 
         let response = try await self.client.updateChannel(
-            channelID: "some-channel-id",
-            withPayload: payload
+            "some-channel-id",
+            payload: payload
         )
 
         XCTAssertEqual("some-channel-id", response.result!.channelID)
@@ -116,6 +117,7 @@ final class ChannelAPIClientTest: XCTestCase {
 
         let request = self.session.lastRequest!
         XCTAssertEqual("PUT", request.method)
+        XCTAssertEqual(AirshipRequestAuth.basicAppAuth, request.auth)
         XCTAssertEqual(try encoder.encode(payload), request.body)
         XCTAssertEqual("http://example.com/api/channels/some-channel-id", request.url?.absoluteString)
 
@@ -125,8 +127,8 @@ final class ChannelAPIClientTest: XCTestCase {
         self.session.error = AirshipErrors.error("Error!")
         do {
             _ = try await self.client.updateChannel(
-                channelID: "some-channel-id",
-                withPayload: payload
+                "some-channel-id",
+                payload: payload
             )
             XCTFail("Should throw")
         } catch {}
@@ -142,8 +144,8 @@ final class ChannelAPIClientTest: XCTestCase {
         )
 
         let response = try await self.client.updateChannel(
-            channelID: "some-channel-id",
-            withPayload: payload
+            "some-channel-id",
+            payload: payload
         )
         XCTAssertEqual(400, response.statusCode)
     }

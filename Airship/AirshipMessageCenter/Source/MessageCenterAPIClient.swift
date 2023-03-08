@@ -102,7 +102,7 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol {
             url: URL(string: urlString),
             headers: headers,
             method: "GET",
-            auth: .basic(user.username, user.password)
+            auth: .basic(username: user.username, password: user.password)
         )
 
         AirshipLogger.trace("Request to retrieve message list: \(urlString)")
@@ -147,7 +147,7 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol {
                 MessageCenterAPIClient.channelIDHeader: channelID,
             ],
             method: "POST",
-            auth: .basic(user.username, user.password),
+            auth: .basic(username: user.username, password: user.password),
             body: try JSONUtils.encode(object: body)
         )
 
@@ -189,7 +189,7 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol {
             url: URL(string: urlString),
             headers: headers,
             method: "POST",
-            auth: .basic(user.username, user.password),
+            auth: .basic(username: user.username, password: user.password),
             body: try JSONUtils.encode(object: body)
         )
 
@@ -220,7 +220,7 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol {
             url: URL(string: urlString),
             headers: headers,
             method: "POST",
-            auth: .basic(config.appKey, config.appSecret),
+            auth: .basicAppAuth,
             body: try JSONUtils.encode(object: body)
         )
 
@@ -264,7 +264,7 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol {
             url: URL(string: urlString),
             headers: headers,
             method: "POST",
-            auth: .basic(user.username, user.password),
+            auth: .basic(username: user.username, password: user.password),
             body: bodyData
         )
         AirshipLogger.trace(

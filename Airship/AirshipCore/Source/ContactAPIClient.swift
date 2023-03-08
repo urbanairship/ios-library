@@ -106,7 +106,7 @@ class ContactAPIClient: ContactsAPIClientProtocol {
     }
 
     convenience init(config: RuntimeConfig) {
-        self.init(config: config, session: AirshipRequestSession(appKey: config.appKey))
+        self.init(config: config, session: config.requestSession)
     }
     
     func resolve(
@@ -596,7 +596,7 @@ class ContactAPIClient: ContactsAPIClientProtocol {
                 "Content-Type": "application/json"
             ],
             method: "POST",
-            auth: .basic(config.appKey, config.appSecret),
+            auth: .basicAppAuth,
             body: try? JSONUtils.data(payload, options: [])
         )
     }
@@ -710,7 +710,7 @@ class ContactAPIClient: ContactsAPIClientProtocol {
                 "Accept":  "application/vnd.urbanairship+json; version=3;"
             ],
             method: "GET",
-            auth: .basic(config.appKey, config.appSecret)
+            auth: .basicAppAuth
         )
         
         return try await session.performHTTPRequest(

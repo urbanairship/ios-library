@@ -44,10 +44,15 @@ class AirshipInstance: AirshipInstanceProtocol {
     private var componentMap: [String: Component] = [:]
     private var lock = AirshipLock()
 
+    @MainActor
     init(config: AirshipConfig) {
+        let requestSession = DefaultAirshipRequestSession(
+            appKey: config.appKey,
+            appSecret: config.appSecret
+        )
         let dataStore = PreferenceDataStore(appKey: config.appKey)
         self.permissionsManager = AirshipPermissionsManager()
-        self.config = RuntimeConfig(config: config, dataStore: dataStore)
+        self.config = RuntimeConfig(config: config, dataStore: dataStore, requestSession: requestSession)
         self.privacyManager = AirshipPrivacyManager(
             dataStore: dataStore,
             defaultEnabledFeatures: config.enabledFeatures
@@ -71,6 +76,11 @@ class AirshipInstance: AirshipInstanceProtocol {
             config: self.config,
             privacyManager: self.privacyManager,
             localeManager: self.localeManager
+        )
+
+        requestSession.channelAuthTokenProvider = ChannelAuthTokenProvider(
+            channel: channel,
+            runtimeConfig: self.config
         )
 
         let analytics = AirshipAnalytics(
@@ -99,6 +109,7 @@ class AirshipInstance: AirshipInstanceProtocol {
             channel: channel,
             privacyManager: self.privacyManager
         )
+
 
         let namedUser = NamedUser(dataStore: dataStore, contact: contact)
 
@@ -143,6 +154,7 @@ class AirshipInstance: AirshipInstanceProtocol {
         moduleLoader.actionPlists.forEach {
             self.actionRegistry.registerActions($0)
         }
+        
     }
 
     public func component(forClassName className: String) -> Component? {

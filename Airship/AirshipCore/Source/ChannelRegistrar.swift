@@ -37,6 +37,7 @@ class ChannelRegistrar: ChannelRegistrarProtocol {
     private let updatesSubject = PassthroughSubject<ChannelRegistrationUpdate, Never>()
     private var checkAppRestoreTask: Task<Void, Never>?
 
+
     private var lastRegistrationInfo: LastRegistrationInfo? {
         get {
             do {
@@ -192,8 +193,8 @@ class ChannelRegistrar: ChannelRegistrarProtocol {
         minimizedPayload: ChannelRegistrationPayload
     ) async throws -> AirshipWorkResult {
         let response = try await self.channelAPIClient.updateChannel(
-            channelID: channelID,
-            withPayload: minimizedPayload
+            channelID,
+            payload: minimizedPayload
         )
 
         AirshipLogger.debug("Channel update request finished with response: \(response)")
@@ -232,7 +233,7 @@ class ChannelRegistrar: ChannelRegistrarProtocol {
     ) async throws -> AirshipWorkResult {
 
         let response = try await self.channelAPIClient.createChannel(
-            withPayload: payload
+            payload: payload
         )
 
         AirshipLogger.debug("Channel create request finished with response: \(response)")

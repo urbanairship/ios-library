@@ -4,10 +4,10 @@ import Foundation
 
 /// AirshipHTTPResponse when using AirshipRequestSession
 /// - Note: For internal use only. :nodoc:
-public struct AirshipHTTPResponse<T> {
+public struct AirshipHTTPResponse<T: Sendable>: Sendable {
     public let result: T?
     public let statusCode: Int
-    public let headers: [AnyHashable: Any]
+    public let headers: [String: String]
 }
 
 extension AirshipHTTPResponse {

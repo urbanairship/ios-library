@@ -3,13 +3,14 @@
 #import <Foundation/Foundation.h>
 #import "UADeferredScheduleResult+Internal.h"
 #import "UAScheduleTriggerContext+Internal.h"
-#import "UAAuthTokenManager+Internal.h"
 #import "UAStateOverrides+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
 #import "UADeferredAPIClientResponse+Internal.h"
 
 @class UATagGroupUpdate;
 @class UAAttributeUpdate;
+@class UARequestSession;
+@class UARuntimeConfig;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -53,23 +54,18 @@ extern NSString * const UADeferredScheduleAPIClientErrorDomain;
  *
  * @param config The runtime config.
  * @param session The request session.
- * @param dispatcher The serial dispatcher.
- * @param authManager The auth manager.
  * @param stateOverridesProvider The state overrides provider block.
  */
 + (instancetype)clientWithConfig:(UARuntimeConfig *)config
                          session:(UARequestSession *)session
-                      dispatcher:(UADispatcher *)dispatcher
-                     authManager:(UAAuthTokenManager *)authManager
           stateOverridesProvider:(UAStateOverrides * (^)(void))stateOverridesProvider;
 
 /**
  * UADeferredScheduleAPIClient class factory method.
  *
  * @param config The runtime config.
- * @param authManager The auth manager.
  */
-+ (instancetype)clientWithConfig:(UARuntimeConfig *)config authManager:(UAAuthTokenManager *)authManager;
++ (instancetype)clientWithConfig:(UARuntimeConfig *)config;
 
 /**
  * Resolves a deferred schedule.

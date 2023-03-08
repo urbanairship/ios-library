@@ -2,9 +2,8 @@
 
 import Foundation
 
-class CachedValue<Value> where Value: Any {
+final class CachedValue<Value> where Value: Any {
     private let date: AirshipDate
-    private let maxCacheAge: TimeInterval
     private let lock = AirshipLock()
     private var expiration: Date?
 
@@ -26,16 +25,42 @@ class CachedValue<Value> where Value: Any {
 
             return cachedValue
         }
-        set {
-            lock.sync {
-                self.expiration = self.date.now.addingTimeInterval(maxCacheAge)
-                self._value = newValue
+    }
+
+    var timeRemaining: TimeInterval {
+        var timeRemaining: TimeInterval = 0
+        lock.sync {
+            if let expiration = self.expiration {
+                timeRemaining = max(0, expiration.timeIntervalSince(self.date.now))
+            }
+
+        }
+        return timeRemaining
+    }
+
+    func set(value: Value, expiresIn: TimeInterval) {
+        lock.sync {
+            self.expiration = self.date.now.addingTimeInterval(expiresIn)
+            self._value = value
+        }
+    }
+
+    func set(value: Value, expiration: Date) {
+        lock.sync {
+            self.expiration = expiration
+            self._value = value
+        }
+    }
+
+    func expireIf(predicate: (Value) -> Bool) {
+        lock.sync {
+            if let value = self._value, predicate(value) {
+                self._value = nil
             }
         }
     }
 
-    init(date: AirshipDate, maxCacheAge: TimeInterval) {
+    init(date: AirshipDate = AirshipDate.shared) {
         self.date = date
-        self.maxCacheAge = maxCacheAge
     }
 }

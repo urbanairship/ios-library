@@ -24,9 +24,7 @@ class ChannelBulkUpdateAPIClient: ChannelBulkUpdateAPIClientProtocol {
     convenience init(config: RuntimeConfig) {
         self.init(
             config: config,
-            session: AirshipRequestSession(
-                appKey: config.appKey
-            )
+            session: config.requestSession
         )
     }
 
@@ -48,7 +46,7 @@ class ChannelBulkUpdateAPIClient: ChannelBulkUpdateAPIClientProtocol {
                 "Content-Type": "application/json"
             ],
             method: "PUT",
-            auth: .basic(config.appKey, config.appSecret),
+            auth: .basicAppAuth,
             body: try? encoder.encode(payload)
         )
         return try await session.performHTTPRequest(request)

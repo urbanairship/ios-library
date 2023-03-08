@@ -14,7 +14,6 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
 @property (nonatomic, strong) UADeferredScheduleAPIClient *client;
 @property (nonatomic, strong) id mockSession;
 @property (nonatomic, strong) id mockResponse;
-@property (nonatomic, strong) id mockAuthManager;
 @end
 
 @implementation UADeferredScheduleAPIClientTest
@@ -22,11 +21,8 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
 - (void)setUp {
     self.mockSession = [self mockForClass:[UARequestSession class]];
     self.mockResponse = [self mockForClass:[NSHTTPURLResponse class]];
-    self.mockAuthManager = [self mockForClass:[UAAuthTokenManager class]];
     self.client = [UADeferredScheduleAPIClient clientWithConfig:self.config
                                                         session:self.mockSession
-                                                     dispatcher:[[UATestDispatcher alloc] init]
-                                                    authManager:self.mockAuthManager
                                          stateOverridesProvider:[self testStateOverridesProvider]];
 }
 
@@ -59,19 +55,6 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
     NSDictionary *responseBody = @{@"audience_match": @(YES), @"type" : @"in_app_message", @"message": messageJSON};
     NSData *responseData = [UAJSONUtils dataWithObject:responseBody options:0 error:nil];
 
-    NSString *token = @"token";
-
-    XCTestExpectation *authTokenRetrieved = [self expectationWithDescription:@"Auth token retrieved"];
-
-    [[[self.mockAuthManager expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:2];
-
-        void (^handler)(NSString * _NullablemeterTypes) = (__bridge void (^_Nonnull)(NSString * _Nullable))arg;
-        handler(token);
-        [authTokenRetrieved fulfill];
-    }] tokenWithCompletionHandler:OCMOCK_ANY];
-
     XCTestExpectation *sessionFinished = [self expectationWithDescription:@"Session finished"];
 
     NSArray *tagUpdates = @[
@@ -97,7 +80,6 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
         XCTAssertEqualObjects(request.method, @"POST");
         XCTAssertEqualObjects(request.url, URL);
         XCTAssertEqualObjects(request.headers[@"Accept"], @"application/vnd.urbanairship+json; version=3;");
-        XCTAssertEqualObjects(request.headers[@"Authorization"], [@"Bearer " stringByAppendingString:token]);
 
         NSDictionary *body = [NSJSONSerialization JSONObjectWithData:request.body options:NSJSONReadingAllowFragments error:nil];
         XCTAssertEqualObjects(body[@"platform"], @"ios");
@@ -171,19 +153,6 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
     NSDictionary *responseBody = @{@"audience_match": @(YES), @"type" : @"in_app_message", @"message": messageJSON};
     NSData *responseData = [UAJSONUtils dataWithObject:responseBody options:0 error:nil];
 
-    NSString *token = @"token";
-
-    XCTestExpectation *authTokenRetrieved = [self expectationWithDescription:@"Auth token retrieved"];
-
-    [[[self.mockAuthManager expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:2];
-
-        void (^handler)(NSString * _NullablemeterTypes) = (__bridge void (^_Nonnull)(NSString * _Nullable))arg;
-        handler(token);
-        [authTokenRetrieved fulfill];
-    }] tokenWithCompletionHandler:OCMOCK_ANY];
-
     XCTestExpectation *sessionFinished = [self expectationWithDescription:@"Session finished"];
 
     [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
@@ -197,7 +166,6 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
         XCTAssertEqualObjects(request.method, @"POST");
         XCTAssertEqualObjects(request.url, URL);
         XCTAssertEqualObjects(request.headers[@"Accept"], @"application/vnd.urbanairship+json; version=3;");
-        XCTAssertEqualObjects(request.headers[@"Authorization"], [@"Bearer " stringByAppendingString:token]);
 
         NSDictionary *body = [NSJSONSerialization JSONObjectWithData:request.body options:NSJSONReadingAllowFragments error:nil];
         XCTAssertEqualObjects(body[@"platform"], @"ios");
@@ -249,18 +217,6 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
     NSDictionary *responseBody = @{@"audience_match": @(YES), @"type" : @"in_app_message", @"message": messageJSON};
     NSData *responseData = [UAJSONUtils dataWithObject:responseBody options:0 error:nil];
 
-    NSString *token = @"token";
-
-    XCTestExpectation *authTokenRetrieved = [self expectationWithDescription:@"Auth token retrieved"];
-
-    [[[self.mockAuthManager expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:2];
-
-        void (^handler)(NSString * _NullablemeterTypes) = (__bridge void (^_Nonnull)(NSString * _Nullable))arg;
-        handler(token);
-        [authTokenRetrieved fulfill];
-    }] tokenWithCompletionHandler:OCMOCK_ANY];
 
     XCTestExpectation *sessionFinished = [self expectationWithDescription:@"Session finished"];
 
@@ -276,7 +232,6 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
         XCTAssertEqualObjects(request.method, @"POST");
         XCTAssertEqualObjects(request.url, URL);
         XCTAssertEqualObjects(request.headers[@"Accept"], @"application/vnd.urbanairship+json; version=3;");
-        XCTAssertEqualObjects(request.headers[@"Authorization"], [@"Bearer " stringByAppendingString:token]);
 
         NSDictionary *body = [NSJSONSerialization JSONObjectWithData:request.body options:NSJSONReadingAllowFragments error:nil];
         XCTAssertEqualObjects(body[@"platform"], @"ios");
@@ -328,18 +283,6 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
     NSDictionary *responseBody = @{@"audience_match": @(YES), @"type" : @"in_app_message", @"message": messageJSON};
     NSData *responseData = [UAJSONUtils dataWithObject:responseBody options:0 error:nil];
 
-    NSString *token = @"token";
-
-    XCTestExpectation *authTokenRetrieved = [self expectationWithDescription:@"Auth token retrieved"];
-
-    [[[self.mockAuthManager expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:2];
-
-        void (^handler)(NSString * _NullablemeterTypes) = (__bridge void (^_Nonnull)(NSString * _Nullable))arg;
-        handler(token);
-        [authTokenRetrieved fulfill];
-    }] tokenWithCompletionHandler:OCMOCK_ANY];
 
     XCTestExpectation *sessionFinished = [self expectationWithDescription:@"Session finished"];
 
@@ -354,7 +297,6 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
         XCTAssertEqualObjects(request.method, @"POST");
         XCTAssertEqualObjects(request.url, URL);
         XCTAssertEqualObjects(request.headers[@"Accept"], @"application/vnd.urbanairship+json; version=3;");
-        XCTAssertEqualObjects(request.headers[@"Authorization"], [@"Bearer " stringByAppendingString:token]);
 
         NSDictionary *body = [NSJSONSerialization JSONObjectWithData:request.body options:NSJSONReadingAllowFragments error:nil];
         XCTAssertEqualObjects(body[@"platform"], @"ios");
@@ -391,46 +333,6 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
     [self waitForTestExpectations];
 }
 
-- (void)testResolveURLMissingAuthToken {
-    NSURL *URL = [NSURL URLWithString:@"https://cool.story/neat"];
-    NSString *channelID = @"channelID";
-    NSString *event = @"event";
-    UAScheduleTrigger *trigger = [UAScheduleTrigger foregroundTriggerWithCount:1];
-    UAScheduleTriggerContext *triggerContext = [UAScheduleTriggerContext triggerContextWithTrigger:trigger event:event];
-
-    XCTestExpectation *authTokenRetrieved = [self expectationWithDescription:@"Auth token retrieved"];
-
-    [[[self.mockAuthManager expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:2];
-
-        void (^handler)(NSString * _NullablemeterTypes) = (__bridge void (^_Nonnull)(NSString * _Nullable))arg;
-        handler(nil);
-        [authTokenRetrieved fulfill];
-    }] tokenWithCompletionHandler:OCMOCK_ANY];
-
-    [[self.mockSession reject] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
-
-    XCTestExpectation *resultResolved = [self expectationWithDescription:@"Result resolved"];
-
-    [self.client resolveURL:URL
-                  channelID:channelID
-             triggerContext:triggerContext
-               tagOverrides:@[]
-         attributeOverrides:@[]
-          completionHandler:^(UADeferredAPIClientResponse * _Nullable response, NSError * _Nullable error) {
-
-        XCTAssertNil(response.result);
-        XCTAssertNotNil(error);
-        XCTAssertEqualObjects(error.domain, UADeferredScheduleAPIClientErrorDomain);
-        XCTAssertEqual(error.code, UADeferredScheduleAPIClientErrorMissingAuthToken);
-
-        [resultResolved fulfill];
-    }];
-
-    [self waitForTestExpectations];
-}
-
 - (void)testResolveURLTimeout {
     NSURL *URL = [NSURL URLWithString:@"https://cool.story/neat"];
     NSString *channelID = @"channelID";
@@ -438,19 +340,6 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
     UAScheduleTrigger *trigger = [UAScheduleTrigger foregroundTriggerWithCount:1];
     UAScheduleTriggerContext *triggerContext = [UAScheduleTriggerContext triggerContextWithTrigger:trigger event:event];
     [[[self.mockResponse stub] andReturnValue:@401] statusCode];
-
-    NSString *token = @"token";
-
-    XCTestExpectation *authTokenRetrieved = [self expectationWithDescription:@"Auth token retrieved"];
-
-    [[[self.mockAuthManager expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:2];
-
-        void (^handler)(NSString * _NullablemeterTypes) = (__bridge void (^_Nonnull)(NSString * _Nullable))arg;
-        handler(token);
-        [authTokenRetrieved fulfill];
-    }] tokenWithCompletionHandler:OCMOCK_ANY];
 
     XCTestExpectation *sessionFinished = [self expectationWithDescription:@"Session finished"];
 
@@ -483,85 +372,6 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
     [self waitForTestExpectations];
 }
 
-- (void)testResolveURLAuthTokenStale {
-    NSURL *URL = [NSURL URLWithString:@"https://cool.story/neat"];
-    NSString *channelID = @"channelID";
-    NSString *event = @"event";
-    UAScheduleTrigger *trigger = [UAScheduleTrigger foregroundTriggerWithCount:1];
-    UAScheduleTriggerContext *triggerContext = [UAScheduleTriggerContext triggerContextWithTrigger:trigger event:event];
-
-    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:401 HTTPVersion:nil headerFields:nil];
-    NSDictionary *responseBody = @{@"audience_match": @(YES), @"type" : @"whatever"};
-    NSData *responseData = [UAJSONUtils dataWithObject:responseBody options:0 error:nil];
-
-    NSString *token = @"token";
-    NSString *newToken = @"newToken";
-
-    XCTestExpectation *authTokenRetrieved = [self expectationWithDescription:@"Auth token retrieved"];
-
-    [[[self.mockAuthManager expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:2];
-
-        void (^handler)(NSString * _NullablemeterTypes) = (__bridge void (^_Nonnull)(NSString * _Nullable))arg;
-        handler(token);
-        [authTokenRetrieved fulfill];
-    }] tokenWithCompletionHandler:OCMOCK_ANY];
-
-    XCTestExpectation *sessionFinished = [self expectationWithDescription:@"Session finished"];
-
-    [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
-        completionHandler(responseData, response, nil);
-        [sessionFinished fulfill];
-    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
-
-    XCTestExpectation *resultResolved = [self expectationWithDescription:@"Result resolved"];
-
-    XCTestExpectation *newTokenRetrieved = [self expectationWithDescription:@"New auth token retrieved"];
-
-    [[self.mockAuthManager expect] expireToken:token];
-
-    [[[self.mockAuthManager expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:2];
-
-        void (^handler)(NSString * _NullablemeterTypes) = (__bridge void (^_Nonnull)(NSString * _Nullable))arg;
-        handler(newToken);
-        [newTokenRetrieved fulfill];
-    }] tokenWithCompletionHandler:OCMOCK_ANY];
-
-    XCTestExpectation *newSessionFinished = [self expectationWithDescription:@"New session finished"];
-
-    response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:nil];
-
-    [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
-        completionHandler(responseData, response, nil);
-        [newSessionFinished fulfill];
-    }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
-
-    [self.client resolveURL:URL
-                  channelID:channelID
-             triggerContext:triggerContext
-               tagOverrides:@[]
-         attributeOverrides:@[]
-          completionHandler:^(UADeferredAPIClientResponse * _Nullable response, NSError * _Nullable error) {
-
-        XCTAssertNotNil(response.result);
-        XCTAssertTrue(response.result.isAudienceMatch);
-
-        [resultResolved fulfill];
-    }];
-
-    [self waitForTestExpectations];
-    [self.mockAuthManager verify];
-}
-
 - (void)testResolveURLDefaultResponse {
     NSURL *URL = [NSURL URLWithString:@"https://cool.story/neat"];
     NSString *channelID = @"channelID";
@@ -572,19 +382,6 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@""] statusCode:200 HTTPVersion:nil headerFields:nil];
     NSDictionary *responseBody = @{};
     NSData *responseData = [UAJSONUtils dataWithObject:responseBody options:0 error:nil];
-
-    NSString *token = @"token";
-
-    XCTestExpectation *authTokenRetrieved = [self expectationWithDescription:@"Auth token retrieved"];
-
-    [[[self.mockAuthManager expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:2];
-
-        void (^handler)(NSString * _NullablemeterTypes) = (__bridge void (^_Nonnull)(NSString * _Nullable))arg;
-        handler(token);
-        [authTokenRetrieved fulfill];
-    }] tokenWithCompletionHandler:OCMOCK_ANY];
 
     XCTestExpectation *sessionFinished = [self expectationWithDescription:@"Session finished"];
 
@@ -622,18 +419,6 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
     UAScheduleTriggerContext *triggerContext = [UAScheduleTriggerContext triggerContextWithTrigger:trigger event:event];
     [[[self.mockResponse stub] andReturnValue:@409] statusCode];
 
-    NSString *token = @"token";
-
-    XCTestExpectation *authTokenRetrieved = [self expectationWithDescription:@"Auth token retrieved"];
-
-    [[[self.mockAuthManager expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:2];
-
-        void (^handler)(NSString * _NullablemeterTypes) = (__bridge void (^_Nonnull)(NSString * _Nullable))arg;
-        handler(token);
-        [authTokenRetrieved fulfill];
-    }] tokenWithCompletionHandler:OCMOCK_ANY];
 
     XCTestExpectation *sessionFinished = [self expectationWithDescription:@"Session finished"];
 
@@ -676,19 +461,6 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
                                               }] allHeaderFields];
     [[[self.mockResponse stub] andReturnValue:@429] statusCode];
 
-    NSString *token = @"token";
-
-    XCTestExpectation *authTokenRetrieved = [self expectationWithDescription:@"Auth token retrieved"];
-
-    [[[self.mockAuthManager expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:2];
-
-        void (^handler)(NSString * _NullablemeterTypes) = (__bridge void (^_Nonnull)(NSString * _Nullable))arg;
-        handler(token);
-        [authTokenRetrieved fulfill];
-    }] tokenWithCompletionHandler:OCMOCK_ANY];
-
     XCTestExpectation *sessionFinished = [self expectationWithDescription:@"Session finished"];
 
     [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
@@ -730,19 +502,6 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
                                                 @"Retry-After":@5
                                               }] allHeaderFields];
     [[[self.mockResponse stub] andReturnValue:@307] statusCode];
-
-    NSString *token = @"token";
-
-    XCTestExpectation *authTokenRetrieved = [self expectationWithDescription:@"Auth token retrieved"];
-
-    [[[self.mockAuthManager expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:2];
-
-        void (^handler)(NSString * _NullablemeterTypes) = (__bridge void (^_Nonnull)(NSString * _Nullable))arg;
-        handler(token);
-        [authTokenRetrieved fulfill];
-    }] tokenWithCompletionHandler:OCMOCK_ANY];
 
     XCTestExpectation *sessionFinished = [self expectationWithDescription:@"Session finished"];
 

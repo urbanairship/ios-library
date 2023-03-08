@@ -3,9 +3,8 @@
 import Foundation
 
 /// A class that manages a list of cached values, where each value has its own expiry.
-class CachedList<Value> where Value: Any {
+final class CachedList<Value> where Value: Any {
     private let date: AirshipDate
-    private let maxCacheAge: TimeInterval
     private let lock = AirshipLock()
     private var cachedValues: [(Value, Date)] = []
 
@@ -20,8 +19,8 @@ class CachedList<Value> where Value: Any {
         return result
     }
 
-    func append(_ value: Value) {
-        let expiration = self.date.now.addingTimeInterval(maxCacheAge)
+    func append(_ value: Value, expiresIn: TimeInterval) {
+        let expiration = self.date.now.addingTimeInterval(expiresIn)
         lock.sync {
             self.cachedValues.append((value, expiration))
         }
@@ -33,8 +32,7 @@ class CachedList<Value> where Value: Any {
         })
     }
 
-    init(date: AirshipDate, maxCacheAge: TimeInterval) {
+    init(date: AirshipDate = AirshipDate.shared) {
         self.date = date
-        self.maxCacheAge = maxCacheAge
     }
 }

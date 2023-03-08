@@ -7,6 +7,7 @@ import XCTest
 class RuntimeConfigTest: XCTestCase {
     let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
     let notificationCenter = NotificationCenter()
+    let session: TestAirshipRequestSession = TestAirshipRequestSession()
 
     func testUSSiteURLS() throws {
         let appConfig = AirshipConfig()
@@ -94,6 +95,7 @@ class RuntimeConfigTest: XCTestCase {
         let config = RuntimeConfig(
             config: AirshipConfig(),
             dataStore: self.dataStore,
+            requestSession: session,
             notificationCenter: self.notificationCenter
         )
 

@@ -2,7 +2,7 @@
 
 /// - Note: For internal use only. :nodoc:
 class ChannelAPIClient: ChannelAPIClientProtocol {
-    private let path = "/api/channels/"
+    private let channelPath = "/api/channels/"
 
     private let config: RuntimeConfig
     private let session: AirshipRequestSession
@@ -19,38 +19,34 @@ class ChannelAPIClient: ChannelAPIClientProtocol {
     convenience init(config: RuntimeConfig) {
         self.init(
             config: config,
-            session: AirshipRequestSession(appKey: config.appKey)
+            session: config.requestSession
         )
     }
+    
 
-    private func makeURL(channelID: String? = nil) throws -> URL {
+    private func makeURL(path: String) throws -> URL {
         guard let deviceAPIURL = self.config.deviceAPIURL else {
             throw AirshipErrors.error("Initial config not resolved.")
         }
-        var urlString: String?
-        if let channelID = channelID {
-            urlString = "\(deviceAPIURL)\(self.path)\(channelID)"
-        } else {
-            urlString = "\(deviceAPIURL)\(self.path)"
+
+        let urlString = "\(deviceAPIURL)\(path)"
+
+        guard let url = URL(string: "\(deviceAPIURL)\(path)") else {
+            throw AirshipErrors.error("Invalid ChannelAPIClient URL: \(String(describing: urlString))")
         }
 
-        guard let urlString = urlString,
-              let url = URL(string: urlString)
-        else {
-            throw AirshipErrors.error("Invalid channel URL: \(String(describing: urlString))")
-        }
         return url
     }
 
     func makeChannelLocation(channelID: String) throws -> URL {
-        return try makeURL(channelID: channelID)
+        return try makeURL(path: "\(self.channelPath)\(channelID)")
     }
 
-    func createChannel(
-        withPayload payload: ChannelRegistrationPayload
-    ) async throws -> AirshipHTTPResponse<ChannelAPIResponse> {
 
-        let url = try makeURL()
+    func createChannel(
+        payload: ChannelRegistrationPayload
+    ) async throws -> AirshipHTTPResponse<ChannelAPIResponse> {
+        let url = try makeURL(path: self.channelPath)
         let data = try encoder.encode(payload)
 
         AirshipLogger.debug(
@@ -64,7 +60,7 @@ class ChannelAPIClient: ChannelAPIClientProtocol {
                 "Content-Type": "application/json"
             ],
             method: "POST",
-            auth: .basic(config.appKey, config.appSecret),
+            auth: .basicAppAuth,
             body: data
         )
 
@@ -101,11 +97,11 @@ class ChannelAPIClient: ChannelAPIClientProtocol {
     }
 
     func updateChannel(
-        channelID: String,
-        withPayload payload: ChannelRegistrationPayload
+        _ channelID: String,
+        payload: ChannelRegistrationPayload
     ) async throws -> AirshipHTTPResponse<ChannelAPIResponse> {
 
-        let url = try makeURL(channelID: channelID)
+        let url = try makeChannelLocation(channelID: channelID)
         let data = try encoder.encode(payload)
 
         AirshipLogger.debug(
@@ -119,7 +115,7 @@ class ChannelAPIClient: ChannelAPIClientProtocol {
                 "Content-Type": "application/json"
             ],
             method: "PUT",
-            auth: .basic(config.appKey, config.appSecret),
+            auth: .basicAppAuth,
             body: data
         )
 
@@ -134,6 +130,7 @@ class ChannelAPIClient: ChannelAPIClientProtocol {
     var isURLConfigured: Bool {
         return self.config.deviceAPIURL?.isEmpty == false
     }
+
 }
 
 /// - Note: For internal use only. :nodoc:
@@ -141,12 +138,12 @@ protocol ChannelAPIClientProtocol {
     func makeChannelLocation(channelID: String) throws -> URL
 
     func createChannel(
-        withPayload payload: ChannelRegistrationPayload
+        payload: ChannelRegistrationPayload
     ) async throws -> AirshipHTTPResponse<ChannelAPIResponse>
 
     func updateChannel(
-        channelID: String,
-        withPayload payload: ChannelRegistrationPayload
+        _ channelID: String,
+        payload: ChannelRegistrationPayload
     ) async throws -> AirshipHTTPResponse<ChannelAPIResponse>
 
     var isURLConfigured: Bool { get }
@@ -156,3 +153,5 @@ struct ChannelAPIResponse {
     let channelID: String
     let location: URL
 }
+
+

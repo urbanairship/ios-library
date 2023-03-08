@@ -614,14 +614,14 @@ internal class TestChannelRegistrationClient: ChannelAPIClientProtocol {
     }
 
     func createChannel(
-        withPayload payload: ChannelRegistrationPayload
+        payload: ChannelRegistrationPayload
     ) async throws -> AirshipHTTPResponse<ChannelAPIResponse> {
         return try await createCallback!(payload)
     }
 
     func updateChannel(
-        channelID: String,
-        withPayload payload: ChannelRegistrationPayload
+        _ channelID: String,
+        payload payload: ChannelRegistrationPayload
     ) async throws -> AirshipHTTPResponse<ChannelAPIResponse> {
         return try await updateCallback!(channelID, payload)
     }

@@ -13,6 +13,7 @@ protocol ChannelAudienceManagerProtocol {
     var enabled: Bool { get set }
 
     var subscriptionListEdits: AnyPublisher<SubscriptionListEdit, Never> { get }
+    
     func addLiveActivityUpdate(_ update: LiveActivityUpdate)
 
     func editSubscriptionLists() -> SubscriptionListEditor
@@ -111,12 +112,10 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
         self.notificationCenter = notificationCenter
         self.date = date
         self.cachedSubscriptionLists = CachedValue(
-            date: date,
-            maxCacheAge: ChannelAudienceManager.maxCacheTime
+            date: date
         )
         self.cachedSubscriptionListsHistory = CachedList(
-            date: date,
-            maxCacheAge: ChannelAudienceManager.maxCacheTime
+            date: date
         )
 
         self.workManager.registerWorker(
@@ -279,7 +278,11 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
             )
         }
 
-        self.cachedSubscriptionLists.value = lists
+        self.cachedSubscriptionLists.set(
+            value: lists,
+            expiresIn: ChannelAudienceManager.maxCacheTime
+        )
+
 
         return lists
     }
@@ -334,7 +337,10 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
         }
 
         for listUpdate in update.subscriptionListUpdates {
-            self.cachedSubscriptionListsHistory.append(listUpdate)
+            self.cachedSubscriptionListsHistory.append(
+                listUpdate,
+                expiresIn: ChannelAudienceManager.maxCacheTime
+            )
         }
 
         let response = try await self.updateClient.update(
@@ -511,7 +517,10 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
     func processContactSubscriptionUpdates(_ updates: [SubscriptionListUpdate])
     {
         updates.forEach {
-            self.cachedSubscriptionListsHistory.append($0)
+            self.cachedSubscriptionListsHistory.append(
+                $0,
+                expiresIn: ChannelAudienceManager.maxCacheTime
+            )
         }
     }
 }

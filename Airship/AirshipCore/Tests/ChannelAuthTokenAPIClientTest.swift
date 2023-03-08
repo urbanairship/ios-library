@@ -3,17 +3,17 @@
 import XCTest
 
 @testable import AirshipCore
-@testable import AirshipAutomationSwift
 
-final class AuthTokenAPIClientTest: AirshipBaseTest {
+final class ChannelAuthTokenAPIClientTest: AirshipBaseTest {
     
-    var client: AuthTokenAPIClient?
+    var client: ChannelAuthTokenAPIClient!
     var session = TestAirshipRequestSession()
     
     override func setUpWithError() throws {
-        self.client = AuthTokenAPIClient(
+        self.client = ChannelAuthTokenAPIClient(
             config: self.config,
-            session: self.session)
+            session: self.session
+        )
     }
     
     func testTokenWithChannelID() async throws {
@@ -26,14 +26,23 @@ final class AuthTokenAPIClientTest: AirshipBaseTest {
             statusCode: 200,
             httpVersion: nil,
             headerFields: nil)
-        let token = try await self.client?.token(
-            withChannelID: "channel ID")
+
+        let token = try await self.client.fetchToken(channelID: "channel ID")
         XCTAssertNotNil(token)
         
         let request = try XCTUnwrap(self.session.lastRequest)
         
         XCTAssertEqual(request.method, "GET")
         XCTAssertEqual(request.url!.absoluteString, "\(self.config.deviceAPIURL!)/api/auth/device")
+        XCTAssertEqual(
+            AirshipRequestAuth.bearer(
+                token: try! AirshipUtils.generateSignedToken(
+                    secret: config.appSecret,
+                    tokenParams: [config.appKey, "channel ID"]
+                )
+            ),
+            request.auth
+        )
         XCTAssertEqual(request.headers["X-UA-Channel-ID"], "channel ID")
         XCTAssertEqual(request.headers["X-UA-App-Key"], self.config.appKey)
         XCTAssertEqual(request.headers["Accept"], "application/vnd.urbanairship+json; version=3;")
@@ -51,8 +60,7 @@ final class AuthTokenAPIClientTest: AirshipBaseTest {
             headerFields: nil)
         
         do {
-            let _ = try await self.client?.token(
-                withChannelID: "channel ID")
+            let _ = try await self.client.fetchToken(channelID: "channel ID")
             XCTFail("Should throw")
         } catch {
             XCTAssertNotNil(error)
@@ -70,8 +78,7 @@ final class AuthTokenAPIClientTest: AirshipBaseTest {
             httpVersion: nil,
             headerFields: nil)
         
-        let response = try await self.client?.token(
-            withChannelID: "channel ID")
+        let response = try await self.client.fetchToken(channelID: "channel ID")
         let unwrapResponse = try XCTUnwrap(response)
         XCTAssertNil(unwrapResponse.result?.token)
         XCTAssertTrue(unwrapResponse.isClientError)

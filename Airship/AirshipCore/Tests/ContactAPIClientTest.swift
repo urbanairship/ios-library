@@ -8,7 +8,7 @@ class ContactAPIClientTest: XCTestCase {
 
     var config: RuntimeConfig!
     var localeManager: AirshipLocaleManager!
-    var session: TestRequestSession!
+    private let session: TestAirshipRequestSession = TestAirshipRequestSession()
     var contactAPIClient: ContactAPIClient!
 
     override func setUpWithError() throws {
@@ -21,7 +21,6 @@ class ContactAPIClientTest: XCTestCase {
         self.localeManager = AirshipLocaleManager(
             dataStore: PreferenceDataStore(appKey: config.appKey)
         )
-        self.session = TestRequestSession.init()
         self.session.response = HTTPURLResponse(
             url: URL(string: "https://contacts_test")!,
             statusCode: 200,

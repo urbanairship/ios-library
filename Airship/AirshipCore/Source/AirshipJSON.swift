@@ -46,7 +46,7 @@ public enum AirshipJSON: Codable, Equatable, Sendable, Hashable {
         }
     }
 
-    public func unWrap() -> Any? {
+    public func unWrap() -> AnyHashable? {
         switch self {
         case .string(let value):
             return value
@@ -57,13 +57,13 @@ public enum AirshipJSON: Codable, Equatable, Sendable, Hashable {
         case .null:
             return nil
         case .object(let value):
-            var dict: [String: Any] = [:]
+            var dict: [String: AnyHashable] = [:]
             value.forEach {
                 dict[$0.key] = $0.value.unWrap()
             }
             return dict
         case .array(let value):
-            var array: [Any] = []
+            var array: [AnyHashable] = []
             value.forEach {
                 if let item = $0.unWrap() {
                     array.append(item)

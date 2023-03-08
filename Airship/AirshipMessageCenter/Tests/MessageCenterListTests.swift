@@ -49,9 +49,7 @@ final class MessageCenterListTest: XCTestCase {
         channel: channel,
         client: MessageCenterAPIClient(
             config: config,
-            session: AirshipRequestSession(
-                appKey: config.appKey
-            )
+            session: TestAirshipRequestSession()
         ),
         config: config,
         store: store,

@@ -93,11 +93,7 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
     UAInAppMessageManager *inAppMessageManager = [UAInAppMessageManager managerWithDataStore:dataStore
                                                                                    analytics:analytics];
 
-    UAAuthTokenManager *authManager = [UAAuthTokenManager authTokenManagerWithRuntimeConfig:config
-                                                                                    channel:channel];
-
-    UADeferredScheduleAPIClient *deferredScheduleAPIClient = [UADeferredScheduleAPIClient clientWithConfig:config
-                                                                                            authManager:authManager];
+    UADeferredScheduleAPIClient *deferredScheduleAPIClient = [UADeferredScheduleAPIClient clientWithConfig:config];
 
     UAFrequencyLimitManager *frequencyLimitManager = [UAFrequencyLimitManager managerWithConfig:config];
 

@@ -237,9 +237,7 @@ public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
             channel: channel,
             client: MessageCenterAPIClient(
                 config: config,
-                session: AirshipRequestSession(
-                    appKey: config.appKey
-                )
+                session: config.requestSession
             ),
             config: config,
             store: MessageCenterStore(

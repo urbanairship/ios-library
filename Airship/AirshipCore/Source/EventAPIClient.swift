@@ -20,7 +20,7 @@ class EventAPIClient: EventAPIClientProtocol {
     convenience init(config: RuntimeConfig) {
         self.init(
             config: config,
-            session: AirshipRequestSession(appKey: config.appKey)
+            session: config.requestSession
         )
     }
 
