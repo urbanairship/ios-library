@@ -134,7 +134,7 @@ public struct MessageCenterListView: View {
                 ProgressView()
                     .opacity(1.0 - self.listOpacity)
             } else if self.viewModel.messageIDs.isEmpty {
-                Text("ua_empty_message_list".localized)
+                Text("ua_empty_message_list".messageCenterlocalizedString)
                     .opacity(1.0 - self.listOpacity)
             }
         }
@@ -178,11 +178,11 @@ public struct MessageCenterListView: View {
             label: {
                 if self.selection.count > 0 {
                     Text(
-                        "\("ua_delete_messages".localized) (\(self.selection.count))"
+                        "\("ua_delete_messages".messageCenterlocalizedString) (\(self.selection.count))"
                     )
                     .foregroundColor(theme.deleteButtonTitleColor)
                 } else {
-                    Text("ua_delete_messages".localized)
+                    Text("ua_delete_messages".messageCenterlocalizedString)
                         .foregroundColor(theme.deleteButtonTitleColor)
                 }
             }
@@ -199,11 +199,11 @@ public struct MessageCenterListView: View {
             label: {
                 if self.selection.count > 0 {
                     Text(
-                        "\("ua_mark_messages_read".localized) (\(self.selection.count))"
+                        "\("ua_mark_messages_read".messageCenterlocalizedString) (\(self.selection.count))"
                     )
                     .foregroundColor(theme.markAsReadButtonTitleColor)
                 } else {
-                    Text("ua_mark_messages_read".localized)
+                    Text("ua_mark_messages_read".messageCenterlocalizedString)
                         .foregroundColor(theme.markAsReadButtonTitleColor)
                 }
             }
@@ -224,7 +224,7 @@ public struct MessageCenterListView: View {
         Button {
             self.selection = Set(self.viewModel.messageIDs)
         } label: {
-            Text("ua_select_all_messages".localized)
+            Text("ua_select_all_messages".messageCenterlocalizedString)
                 .foregroundColor(theme.selectAllButtonTitleColor)
         }
     }
@@ -233,7 +233,7 @@ public struct MessageCenterListView: View {
         Button {
             self.selection = Set()
         } label: {
-            Text("ua_select_none_messages".localized)
+            Text("ua_select_none_messages".messageCenterlocalizedString)
                 .foregroundColor(theme.selectAllButtonTitleColor)
         }
     }

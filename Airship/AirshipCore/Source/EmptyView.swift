@@ -5,7 +5,7 @@ import SwiftUI
 
 /// Empty View
 
-struct EmptyView: View {
+struct AirshipEmptyView: View {
 
     let model: EmptyViewModel
     let constraints: ViewConstraints

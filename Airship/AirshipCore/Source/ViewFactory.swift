@@ -24,7 +24,7 @@ struct ViewFactory {
         case .labelButton(let model):
             LabelButton(model: model, constraints: constraints)
         case .emptyView(let model):
-            EmptyView(model: model, constraints: constraints)
+            AirshipEmptyView(model: model, constraints: constraints)
         case .formController(let model):
             FormController(model: model, constraints: constraints)
         case .npsController(let model):

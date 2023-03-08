@@ -1,7 +1,9 @@
 /* Copyright Airship and Contributors */
 
-import AirshipCore
 import Foundation
+#if canImport(AirshipCore)
+import AirshipCore
+#endif
 
 class MessageCenterResources {
 
@@ -50,7 +52,7 @@ class MessageCenterResources {
 }
 
 extension String {
-    var localized: String {
+    var messageCenterlocalizedString: String {
         return MessageCenterResources.localizedString(key: self) ?? self
     }
 }

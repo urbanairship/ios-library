@@ -43,7 +43,7 @@ class PreferenceCenterResources {
 }
 
 extension String {
-    var localized: String {
+    var preferenceCenterlocalizedString: String {
         return PreferenceCenterResources.localizedString(key: self) ?? self
     }
 }

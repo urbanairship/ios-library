@@ -52,12 +52,10 @@ Pod::Spec.new do |s|
    end
 
    s.subspec "MessageCenter" do |messageCenter|
-      messageCenter.ios.public_header_files   = "Airship/AirshipMessageCenter/Source/Public/*.h"
-      messageCenter.ios.source_files          = "Airship/AirshipMessageCenter/Source/**/*.{h,m}", "Airship/AirshipMessageCenter/Source/Public/**/*.{h,m}"
-      messageCenter.ios.private_header_files  = "Airship/AirshipMessageCenter/Source/**/*+Internal*.h"
-      messageCenter.ios.resource_bundle       = { 'AirshipMessageCenterResources' => "Airship/AirshipMessageCenter/Resources/*" }
-      messageCenter.ios.exclude_files         = "Airship/AirshipMessageCenter/Resources/Info.plist", "Airship/AirshipMessageCenter/Source/AirshipMessageCenter.h"
-      messageCenter.dependency                  "Airship/Core"
+      messageCenter.ios.source_files          = "Airship/AirshipMessageCenter/Source/**/*.{h,m,swift}"
+      messageCenter.ios.exclude_files         = "Airship/AirshipMessageCenter/Source/AirshipMessageCenter.h"
+      messageCenter.ios.resource_bundle       = { 'AirshipMessageCenterResources' => "Airship/AirshipMessageCenter/Resources/**/*" }
+      messageCenter.dependency                "Airship/Core"
    end
 
    s.subspec "PreferenceCenter" do |preferenceCenter|

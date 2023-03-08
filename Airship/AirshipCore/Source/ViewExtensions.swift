@@ -4,9 +4,9 @@ import Foundation
 import SwiftUI
 
 
-extension View {
+public extension View {
     @ViewBuilder
-    func ignoreKeyboardSafeArea() -> some View {
+    internal func ignoreKeyboardSafeArea() -> some View {
         self.ignoresSafeArea(.keyboard)
     }
 
@@ -22,7 +22,7 @@ extension View {
         }
     }
 
-    func addTapGesture(action: @escaping () -> Void) -> some View {
+    internal func addTapGesture(action: @escaping () -> Void) -> some View {
         #if os(tvOS)
         // broken on tvOS for now
         self
@@ -32,7 +32,7 @@ extension View {
     }
 
     @ViewBuilder
-    func accessible(_ accessible: Accessible?) -> some View {
+    internal func accessible(_ accessible: Accessible?) -> some View {
         if let label = accessible?.contentDescription {
             self.accessibility(label: Text(label))
         } else {
@@ -41,7 +41,7 @@ extension View {
     }
 
     @ViewBuilder
-    func common<Content: BaseModel>(
+    internal func common<Content: BaseModel>(
         _ model: Content,
         formInputID: String? = nil
     ) -> some View {
@@ -53,7 +53,7 @@ extension View {
         .visibility(model.visibility)
     }
 
-    func viewModifiers<Modifiers: ViewModifier>(
+    internal func viewModifiers<Modifiers: ViewModifier>(
         @AirshipViewModifierBuilder modifiers: () -> Modifiers
     ) -> some View {
         self.modifier(modifiers())

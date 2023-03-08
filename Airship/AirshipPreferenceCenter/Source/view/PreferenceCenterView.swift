@@ -126,7 +126,7 @@ public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
             .title
         ProgressView()
             .frame(alignment: .center)
-            .navigationTitle(title ?? "ua_preference_center_title".localized)
+            .navigationTitle(title ?? "ua_preference_center_title".preferenceCenterlocalizedString)
     }
 
     @ViewBuilder
@@ -136,9 +136,9 @@ public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
             .navigationBar?
             .title
 
-        let retry = theme?.retryButtonLabel ?? "ua_retry_button".localized
+        let retry = theme?.retryButtonLabel ?? "ua_retry_button".preferenceCenterlocalizedString
         let errorMessage =
-            theme?.retryMessage ?? "ua_preference_center_empty".localized
+            theme?.retryMessage ?? "ua_preference_center_empty".preferenceCenterlocalizedString
 
         VStack {
             Text(errorMessage)
@@ -170,7 +170,7 @@ public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
                 }
             )
         }
-        .navigationTitle(title ?? "ua_preference_center_title".localized)
+        .navigationTitle(title ?? "ua_preference_center_title".preferenceCenterlocalizedString)
     }
 
     public func makePreferenceCenterView(
@@ -392,7 +392,7 @@ public struct PreferenceCenterView: View {
                 }
             }
             .navigationTitle(
-                theme.viewController?.navigationBar?.title ?? "ua_preference_center_title".localized
+                theme.viewController?.navigationBar?.title ?? "ua_preference_center_title".preferenceCenterlocalizedString
             )
         if #available(iOS 16.0, *) {
             NavigationStack {

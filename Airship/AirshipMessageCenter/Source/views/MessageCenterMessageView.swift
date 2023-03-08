@@ -108,7 +108,7 @@ struct AnyMessageViewStyle: MessageViewStyle {
     }
 }
 
-struct AirshipWebView: UIViewRepresentable {
+struct MessageCenterWebView: UIViewRepresentable {
     typealias UIViewType = WKWebView
 
     enum Phase {
@@ -191,7 +191,7 @@ struct AirshipWebView: UIViewRepresentable {
         JavaScriptCommandDelegate,
         NativeBridgeDelegate
     {
-        private let parent: AirshipWebView
+        private let parent: MessageCenterWebView
         let nativeBridge: NativeBridge
         var nativeBridgeExtensionDelegate: NativeBridgeExtensionDelegate? {
             didSet {
@@ -199,7 +199,7 @@ struct AirshipWebView: UIViewRepresentable {
             }
         }
 
-        init(_ parent: AirshipWebView) {
+        init(_ parent: MessageCenterWebView) {
             self.parent = parent
             self.nativeBridge = NativeBridge()
             super.init()
@@ -263,7 +263,7 @@ private struct MessageCenterMessageContentView: View {
     private var presentationMode: Binding<PresentationMode>
 
     @State
-    private var webViewPhase: AirshipWebView.Phase = .loading
+    private var webViewPhase: MessageCenterWebView.Phase = .loading
 
     @State
     private var message: MessageCenterMessage? = nil
@@ -337,7 +337,7 @@ private struct MessageCenterMessageContentView: View {
 
     var body: some View {
         ZStack {
-            AirshipWebView(
+            MessageCenterWebView(
                 phase: self.$webViewPhase,
                 nativeBridgeExtension: {
                     try await makeExtensionDelegate(messageID: messageID)
@@ -381,17 +381,17 @@ private struct MessageCenterMessageContentView: View {
                     error == .messageGone
                 {
                     VStack {
-                        Text("ua_mc_no_longer_available".localized)
+                        Text("ua_mc_no_longer_available".messageCenterlocalizedString)
                             .font(.headline)
                             .foregroundColor(.primary)
                     }
                 } else {
                     VStack {
-                        Text("ua_mc_failed_to_load".localized)
+                        Text("ua_mc_failed_to_load".messageCenterlocalizedString)
                             .font(.headline)
                             .foregroundColor(.primary)
 
-                        Button("ua_retry_button".localized) {
+                        Button("ua_retry_button".messageCenterlocalizedString) {
                             self.webViewPhase = .loading
                         }
                     }

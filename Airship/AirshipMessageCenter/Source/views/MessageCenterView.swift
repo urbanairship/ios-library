@@ -57,7 +57,7 @@ public struct MessageCenterView: View {
         }
         .environment(\.editMode, $editMode)
         .navigationTitle(
-            theme.navigationBarTitle ?? "ua_message_center_title".localized
+            theme.navigationBarTitle ?? "ua_message_center_title".messageCenterlocalizedString
         )
 
         if #available(iOS 16.0, *) {
@@ -90,17 +90,5 @@ extension EnvironmentValues {
 extension View {
     func addMessageCenterDismissAction(action: (() -> Void)?) -> some View {
         environment(\.messageCenterDismissAction, action)
-    }
-
-    @ViewBuilder
-    func applyIf<Content: View>(
-        _ predicate: @autoclosure () -> Bool,
-        transform: (Self) -> Content
-    ) -> some View {
-        if predicate() {
-            transform(self)
-        } else {
-            self
-        }
     }
 }
