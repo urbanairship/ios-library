@@ -32,6 +32,9 @@ extension View {
         self
         #else
         self.simultaneousGesture(TapGesture().onEnded(action))
+            .accessibilityAction(.default) {
+                action()
+            }
         #endif
     }
 

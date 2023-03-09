@@ -58,6 +58,7 @@ struct Pager : View {
                     VStack {
                         ViewFactory.createView(model: items[i].view, constraints: childConstraints)
                             .environment(\.isVisible, self.isVisible && i == index.wrappedValue)
+                            .accessibilityHiddenCompat(hidden: !(self.isVisible && i == index.wrappedValue))
                     }
                     .frame(width: metrics.size.width, height: metrics.size.height)
                 }
@@ -85,10 +86,20 @@ struct Pager : View {
                         }
                 }
             )
+            .accessibilityScrollAction { edge in
+                if (edge == Edge.leading) {
+                    attemptSwipe(index, indexOffset: 1)
+                }
+
+                if (edge == Edge.trailing) {
+                    attemptSwipe(index, indexOffset: -1)
+                }
+            }
             #else
             view
             #endif
         }
+
     }
     
     private func attemptSwipe(_ index: Binding<Int>, indexOffset: Int) {
@@ -149,3 +160,15 @@ struct Pager : View {
     }
 }
      
+
+@available(iOS 13.0.0, tvOS 13.0, *)
+extension View {
+    @ViewBuilder
+    func accessibilityHiddenCompat(hidden: Bool) -> some View {
+        if #available(iOS 14.0.0, tvOS 14.0, *) {
+            self.accessibilityHidden(hidden)
+        } else {
+            self.accessibility(hidden: hidden)
+        }
+    }
+}

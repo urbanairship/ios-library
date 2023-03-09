@@ -19,26 +19,27 @@ struct ImageButton : View {
 
     @ViewBuilder
     var body: some View {
-        Button(action: {}) {
-            createInnerButton()
+        AirshipButton(
+            identifier: self.model.identifier,
+            description: self.model.contentDescription ?? self.model.identifier,
+            clickBehaviors: self.model.clickBehaviors,
+            actions: self.model.actions
+        ) {
+            makeInnerButton()
                 .constraints(constraints, fixedSize: true)
                 .background(self.model.backgroundColor)
                 .border(self.model.border)
                 .accessible(self.model)
-
         }
-        .buttonClick(self.model.identifier,
-                     buttonDescription: self.model.contentDescription ?? self.model.identifier,
-                     behaviors: self.model.clickBehaviors,
-                     actions: self.model.actions)
         .common(self.model)
-        .environment(\.layoutState,
-                      layoutState.override(buttonState: ButtonState(identifier: self.model.identifier)))
-
+        .environment(
+            \.layoutState,
+             layoutState.override(buttonState: ButtonState(identifier: self.model.identifier))
+        )
     }
     
     @ViewBuilder
-    private func createInnerButton() -> some View {
+    private func makeInnerButton() -> some View {
         switch(model.image) {
         case .url(let model):
             AirshipAsyncImage(url: model.url) { image, _ in

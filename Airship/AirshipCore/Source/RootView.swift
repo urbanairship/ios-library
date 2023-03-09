@@ -16,6 +16,7 @@ struct RootView<Content: View> : View {
     @State private var isVisible: Bool = false
     @State private var displayedCalled: Bool = false
 
+
     @ObservedObject var thomasEnvironment: ThomasEnvironment
 
     let layout: Layout
@@ -25,6 +26,7 @@ struct RootView<Content: View> : View {
          layout: Layout,
          @ViewBuilder content: @escaping (Orientation, WindowSize) -> Content
     ) {
+
         self.thomasEnvironment = thomasEnvironment
         self.layout = layout
         self.content = content
@@ -34,6 +36,9 @@ struct RootView<Content: View> : View {
     var body: some View {
         content(currentOrientation, resolveWindowSize())
             .environmentObject(thomasEnvironment)
+            .environmentObject(thomasEnvironment.defaultFormState)
+            .environmentObject(thomasEnvironment.defaultViewState)
+            .environmentObject(thomasEnvironment.defaultPagerState)
             .environment(\.orientation, currentOrientation)
             .environment(\.windowSize, resolveWindowSize())
             .environment(\.isVisible, isVisible)

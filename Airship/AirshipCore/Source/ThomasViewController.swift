@@ -89,6 +89,7 @@ class ThomasBannerViewController: ThomasViewController<BannerView> {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        
         createBannerConstraints()
         handleBannerConstraints()
     }
@@ -138,6 +139,14 @@ class ThomasBannerViewController: ThomasViewController<BannerView> {
 
 @available(iOS 13.0.0, tvOS 13.0, *)
 class ThomasModalViewController : ThomasViewController<ModalView> {
+
+    override init(rootView: ModalView, options: ThomasViewControllerOptions) {
+        super.init(rootView: rootView, options: options)
+    }
+
+    @objc required dynamic init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 }
 
 #endif

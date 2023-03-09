@@ -129,6 +129,7 @@ public class Thomas: NSObject {
                                     delegate: ThomasDelegate) throws -> () -> Disposable {
         
         var window: UIWindow? = UIWindow(windowScene: scene)
+        window?.accessibilityViewIsModal = true
         var viewController: ThomasModalViewController?
         
         let options = ThomasViewControllerOptions()
