@@ -6,8 +6,12 @@ import Foundation
 import AirshipCore
 #endif
 
-/// Resources for AirshipPreferenceCenter.
-class PreferenceCenterResources {
+
+/**
+ * Resources for AirshipPreferenceCenter.
+ */
+@objc(UAPreferenceCenterResources)
+public class PreferenceCenterResources : NSObject {
 
     /**
      * Resource bundle for AirshipPreferenceCenter.
@@ -18,32 +22,14 @@ class PreferenceCenterResources {
         let mainBundle = Bundle.main
         let sourceBundle = Bundle(for: Self.self)
 
-        let path =
-            mainBundle.path(
-                forResource: "Airship_AirshipPreferenceCenter",
-                ofType: "bundle"
-            ) ?? mainBundle.path(
-                forResource: "AirshipPreferenceCenterResources",
-                ofType: "bundle"
-            ) ?? sourceBundle.path(
-                forResource: "AirshipPreferenceCenterResources",
-                ofType: "bundle"
-            ) ?? ""
+        let path = mainBundle.path(forResource: "Airship_AirshipPreferenceCenter", ofType: "bundle") ??
+                   mainBundle.path(forResource: "AirshipPreferenceCenterResources", ofType: "bundle") ??
+                   sourceBundle.path(forResource: "AirshipPreferenceCenterResources", ofType: "bundle") ?? ""
 
         return Bundle(path: path) ?? sourceBundle
     }
 
     public static func localizedString(key: String) -> String? {
-        return LocalizationUtils.localizedString(
-            key,
-            withTable: "UrbanAirship",
-            moduleBundle: bundle()
-        )
-    }
-}
-
-extension String {
-    var preferenceCenterlocalizedString: String {
-        return PreferenceCenterResources.localizedString(key: self) ?? self
+        return LocalizationUtils.localizedString(key ,withTable:"UrbanAirship", moduleBundle:bundle())
     }
 }

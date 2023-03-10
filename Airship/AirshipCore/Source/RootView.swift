@@ -34,6 +34,9 @@ struct RootView<Content: View>: View {
     var body: some View {
         content(currentOrientation, resolveWindowSize())
         .environmentObject(thomasEnvironment)
+        .environmentObject(thomasEnvironment.defaultFormState)
+        .environmentObject(thomasEnvironment.defaultViewState)
+        .environmentObject(thomasEnvironment.defaultPagerState)
         .environment(\.orientation, currentOrientation)
         .environment(\.windowSize, resolveWindowSize())
         .environment(\.isVisible, isVisible)

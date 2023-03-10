@@ -62,6 +62,7 @@ struct Pager: View {
                             \.isVisible,
                             self.isVisible && i == index.wrappedValue
                         )
+                        .accessibilityHidden(!(self.isVisible && i == index.wrappedValue))
                     }
                     .frame(
                         width: metrics.size.width,
@@ -104,6 +105,15 @@ struct Pager: View {
                         }
                     }
             )
+            .accessibilityScrollAction { edge in
+                if (edge == Edge.leading) {
+                    attemptSwipe(index, indexOffset: 1)
+                }
+
+                if (edge == Edge.trailing) {
+                    attemptSwipe(index, indexOffset: -1)
+                }
+            }
             #else
             view
             #endif

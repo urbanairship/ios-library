@@ -3,6 +3,19 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 16.11.2 March 2, 2023
+Patch release that fixes a regression introduced in 16.11.0 that disables Survey's submit button and inputs, and added accessibility font scaling to Scenes & Surveys.
+
+### Changes
+- Scale fonts for Scenes & Surveys
+- Fixed Survey enablement regression
+
+## Version 16.11.1 February 28, 2023
+Patch release that exposes some Preference Center classes to Objective-C.
+
+### Changes
+- Exposes `UAPreferenceCenterResources`, `UAPreferenceCenterViewController` and `UAPreferenceAlertItemButton`to obj-c.
+
 ## Version 16.11.0 February 22, 2023
 Minor release that fixes a potential channel restore issue on second run. The impact should be small since the channel create will return the same channel ID if the app has a device token or the app installed the Message Center module. 
 

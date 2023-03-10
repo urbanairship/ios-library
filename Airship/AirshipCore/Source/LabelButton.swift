@@ -4,8 +4,8 @@ import Foundation
 import SwiftUI
 
 /// Button view.
+struct LabelButton : View {
 
-struct LabelButton: View {
     let model: LabelButtonModel
     let constraints: ViewConstraints
     @Environment(\.layoutState) var layoutState
@@ -16,7 +16,12 @@ struct LabelButton: View {
     }
 
     var body: some View {
-        Button(action: {}) {
+        AirshipButton(
+            identifier: self.model.identifier,
+            description: self.model.contentDescription ?? self.model.label.text,
+            clickBehaviors: self.model.clickBehaviors,
+            actions: self.model.actions
+        ) {
             Label(model: self.model.label, constraints: constraints)
                 .constraints(constraints, fixedSize: true)
                 .applyIf(self.constraints.height == nil) { view in
@@ -29,21 +34,13 @@ struct LabelButton: View {
                 .border(self.model.border)
                 .accessible(self.model)
         }
-        .buttonClick(
-            self.model.identifier,
-            buttonDescription: self.model.contentDescription
-                ?? self.model.label.text,
-            behaviors: self.model.clickBehaviors,
-            actions: self.model.actions
-        )
         .common(self.model)
         .buttonStyle(PlainButtonStyle())
         .environment(
             \.layoutState,
-            layoutState.override(
+             layoutState.override(
                 buttonState: ButtonState(identifier: self.model.identifier)
-            )
+             )
         )
-
     }
 }

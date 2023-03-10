@@ -143,6 +143,7 @@ internal struct AirshipTextView: UIViewRepresentable {
 
     func updateUIView(_ uiView: UITextView, context: Context) {
         uiView.applyTextAppearance(self.textAppearance, colorScheme)
+        uiView.textModifyAppearance(self.textAppearance)
         if uiView.text.isEmpty && !self.text.isEmpty {
             uiView.text = self.text
         }

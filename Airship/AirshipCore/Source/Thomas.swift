@@ -177,9 +177,11 @@ public class Thomas: NSObject {
     ) throws -> () -> Disposable {
 
         var window: UIWindow? = UIWindow(windowScene: scene)
+        window?.accessibilityViewIsModal = true
         var viewController: ThomasModalViewController?
 
         let options = ThomasViewControllerOptions()
+        options.orientation = presentation.defaultPlacement.device?.orientationLock
 
         let environment = ThomasEnvironment(
             delegate: delegate,

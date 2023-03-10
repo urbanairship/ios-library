@@ -8,6 +8,17 @@ class ThomasEnvironment: ObservableObject {
     let extensions: ThomasExtensions?
     let imageLoader: AirshipImageLoader
 
+
+    let defaultFormState = FormState(identifier: "",
+                                     formType: .form,
+                                     formResponseType: "")
+
+    let defaultViewState = ViewState()
+
+    let defaultPagerState = PagerState(identifier: "")
+
+
+
     var isDismissed = false
     @Published
     var focusedID: String? = nil

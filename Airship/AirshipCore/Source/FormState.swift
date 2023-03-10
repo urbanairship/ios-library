@@ -8,7 +8,7 @@ class FormState: ObservableObject {
     @Published var isVisible: Bool = false
     @Published var isSubmitted: Bool = false
     
-    @Published var isEnabled: Bool = false {
+    @Published var isEnabled: Bool = true {
         didSet {
             self.isFormInputEnabled = isEnabled && (self.parentFormState?.isFormInputEnabled ?? true)
         }
