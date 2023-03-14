@@ -5,13 +5,16 @@ class ChannelAuthTokenAPIClient: ChannelAuthTokenAPIClientProtocol {
     private let config: RuntimeConfig
     private let session: AirshipRequestSession
     private let decoder: JSONDecoder = JSONDecoder()
+    private let date: AirshipDate
 
     init(
         config: RuntimeConfig,
-        session: AirshipRequestSession
+        session: AirshipRequestSession,
+        date: AirshipDate = AirshipDate.shared
     ) {
         self.config = config
         self.session = session
+        self.date = date
     }
 
     convenience init(config: RuntimeConfig) {
@@ -44,12 +47,17 @@ class ChannelAuthTokenAPIClient: ChannelAuthTokenAPIClientProtocol {
     func fetchToken(
         channelID: String
     ) async throws -> AirshipHTTPResponse<ChannelAuthTokenResponse> {
+        let nonce = UUID().uuidString
+        let timestamp = AirshipUtils.ISODateFormatterUTC().string(from: date.now)
+
         let url = try makeURL(path: self.tokenPath)
         let token = try AirshipUtils.generateSignedToken(
             secret: config.appSecret,
             tokenParams: [
                 config.appKey,
-                channelID
+                channelID,
+                nonce,
+                timestamp
             ]
         )
 
@@ -58,7 +66,9 @@ class ChannelAuthTokenAPIClient: ChannelAuthTokenAPIClientProtocol {
             headers: [
                 "Accept": "application/vnd.urbanairship+json; version=3;",
                 "X-UA-Channel-ID": channelID,
-                "X-UA-App-Key": self.config.appKey
+                "X-UA-Appkey": self.config.appKey,
+                "X-UA-Nonce": nonce,
+                "X-UA-Timestamp": timestamp
             ],
             method: "GET",
             auth: .bearer(token: token)
