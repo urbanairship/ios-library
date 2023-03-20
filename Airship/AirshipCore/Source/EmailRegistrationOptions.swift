@@ -4,7 +4,7 @@ import Foundation
 
 /// Email registration options
 @objc(UAEmailRegistrationOptions)
-public class EmailRegistrationOptions: NSObject, Codable {
+public final class EmailRegistrationOptions: NSObject, Codable, Sendable {
 
     /**
      * Transactional opted-in value

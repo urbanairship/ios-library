@@ -4,14 +4,14 @@ import Foundation
 
 // NOTE: For internal use only. :nodoc:
 @objc(UAAttributeUpdateType)
-public enum AttributeUpdateType: Int, Codable {
+public enum AttributeUpdateType: Int, Codable, Sendable, Equatable {
     case remove
     case set
 }
 
 // NOTE: For internal use only. :nodoc:
 @objc(UAAttributeUpdate)
-public class AttributeUpdate: NSObject, Codable {
+public final class AttributeUpdate: NSObject, Codable, Sendable {
     @objc
     public let attribute: String
 

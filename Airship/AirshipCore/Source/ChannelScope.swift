@@ -4,7 +4,7 @@ import Foundation
 
 /// Channel scopes.
 @objc(UAChannelScopes)
-public class ChannelScopes: NSObject, Decodable {
+public final class ChannelScopes: NSObject, Decodable, Sendable {
 
     /// The scopes
     public let values: [ChannelScope]
@@ -44,7 +44,7 @@ public class ChannelScopes: NSObject, Decodable {
 
 /// Channel scope.
 @objc(UAChannelScope)
-public enum ChannelScope: Int, Codable, CustomStringConvertible {
+public enum ChannelScope: Int, Codable, CustomStringConvertible, Sendable, Equatable {
     /**
      * App channels - amazon, android, iOS
      */

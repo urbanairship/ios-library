@@ -179,6 +179,9 @@ public class AirshipContact: NSObject, Component, ContactProtocol {
     private let cachedSubscriptionListsHistory:
         CachedList<(String, ScopedSubscriptionListUpdate)>
     private let rateLimiter = RateLimiter()
+    private var isContactIDRefreshed = false
+    private let operationLock = AirshipLock()
+
 
     /// A delegate to receive callbacks where there is a contact conflict.
     @objc
@@ -189,19 +192,17 @@ public class AirshipContact: NSObject, Component, ContactProtocol {
     public var namedUserID: String? {
         var namedUserID: String? = nil
         operationLock.sync {
-            if let lastIdentifyOperation = self.getOperations().reversed()
-                .first(
-                    where: { $0.type == .reset || $0.type == .identify })
-            {
-                if lastIdentifyOperation.type == .reset {
-                    namedUserID = nil
-                } else {
-                    namedUserID =
-                        (lastIdentifyOperation.payload as? IdentifyPayload)?
-                        .identifier
+            let lastIdentifyOperation = self.getOperations()
+                .reversed()
+                .first { operation in
+                    operation.type == .reset || operation.type == .identify
                 }
-            } else {
-                namedUserID = self.lastContactInfo?.namedUserID
+            if let lastIdentifyOperation = lastIdentifyOperation {
+                if (lastIdentifyOperation == .reset) {
+                    namedUserID = nil
+                } else if case let .identify(identifier) = lastIdentifyOperation {
+                    namedUserID = identifier
+                }
             }
         }
         return namedUserID
@@ -229,26 +230,22 @@ public class AirshipContact: NSObject, Component, ContactProtocol {
 
         var contactID: String? = lastContactInfo.contactID
         operationLock.sync {
-            let containsIdentifyOperation = self.getOperations()
-                .contains(where: {
-                    if $0.type == .reset {
+            let containsIdentifyOperation = self.getOperations().contains { operation in
+                switch operation {
+                case .reset: return true
+                case .identify(let identifier):
+                    if lastContactInfo.namedUserID != identifier {
                         return true
+                    } else {
+                        return false
                     }
-
-                    if $0.type == .identify
-                        && lastContactInfo.namedUserID
-                            != ($0.payload as? IdentifyPayload)?.identifier
-                    {
-                        return true
-                    }
-
-                    return false
-                })
+                default: return false
+                }
+            }
 
             if containsIdentifyOperation {
                 contactID = nil
             }
-
         }
 
         return contactID
@@ -293,13 +290,12 @@ public class AirshipContact: NSObject, Component, ContactProtocol {
         var updates: [AttributeUpdate]!
         operationLock.sync {
             updates = getOperations()
-                .compactMap {
-                    (operation: ContactOperation) -> [AttributeUpdate]? in
-                    guard operation.type == .update else {
+                .compactMap { (operation: ContactOperation) -> [AttributeUpdate]? in
+                    guard case let .update(_, attributeUpdates, _) = operation else {
                         return nil
                     }
-                    let payload = operation.payload as? UpdatePayload
-                    return payload?.attrubuteUpdates
+
+                    return attributeUpdates
                 }
                 .reduce([], +)
         }
@@ -312,13 +308,12 @@ public class AirshipContact: NSObject, Component, ContactProtocol {
         var updates: [TagGroupUpdate]!
         operationLock.sync {
             updates = getOperations()
-                .compactMap {
-                    (operation: ContactOperation) -> [TagGroupUpdate]? in
-                    guard operation.type == .update else {
+                .compactMap { (operation: ContactOperation) -> [TagGroupUpdate]? in
+                    guard case let .update(tagUpdates, _, _) = operation else {
                         return nil
                     }
-                    let payload = operation.payload as? UpdatePayload
-                    return payload?.tagUpdates
+
+                    return tagUpdates
                 }
                 .reduce([], +)
         }
@@ -330,22 +325,18 @@ public class AirshipContact: NSObject, Component, ContactProtocol {
         var updates: [ScopedSubscriptionListUpdate]!
         operationLock.sync {
             updates = getOperations()
-                .compactMap {
-                    (operation: ContactOperation)
-                        -> [ScopedSubscriptionListUpdate]? in
-                    guard operation.type == .update else {
+                .compactMap {(operation: ContactOperation) -> [ScopedSubscriptionListUpdate]? in
+                    guard case let .update(_, _, subscriptionListsUpdates) = operation else {
                         return nil
                     }
-                    let payload = operation.payload as? UpdatePayload
-                    return payload?.subscriptionListsUpdates
+
+                    return subscriptionListsUpdates
                 }
                 .reduce([], +)
         }
         return updates
     }
 
-    private var isContactIDRefreshed = false
-    private var operationLock = AirshipLock()
 
     private let disableHelper: ComponentDisableHelper
 
@@ -493,7 +484,7 @@ public class AirshipContact: NSObject, Component, ContactProtocol {
             return
         }
 
-        self.addOperation(ContactOperation.identify(identifier: namedUserID))
+        self.addOperation(.identify(namedUserID))
         self.enqueueTask()
     }
 
@@ -504,7 +495,7 @@ public class AirshipContact: NSObject, Component, ContactProtocol {
             return
         }
 
-        self.addOperation(ContactOperation.reset())
+        self.addOperation(.reset)
         self.enqueueTask()
     }
 
@@ -526,8 +517,8 @@ public class AirshipContact: NSObject, Component, ContactProtocol {
                 return
             }
 
-            self.addOperation(ContactOperation.resolve())
-            self.addOperation(ContactOperation.update(tagUpdates: updates))
+            self.addOperation(.resolve)
+            self.addOperation(.update(tagUpdates: updates))
             self.enqueueTask()
         }
     }
@@ -559,10 +550,8 @@ public class AirshipContact: NSObject, Component, ContactProtocol {
                 return
             }
 
-            self.addOperation(ContactOperation.resolve())
-            self.addOperation(
-                ContactOperation.update(attributeUpdates: updates)
-            )
+            self.addOperation(.resolve)
+            self.addOperation(.update(attributeUpdates: updates))
             self.enqueueTask()
         }
     }
@@ -593,10 +582,8 @@ public class AirshipContact: NSObject, Component, ContactProtocol {
             return
         }
 
-        self.addOperation(ContactOperation.resolve())
-        self.addOperation(
-            ContactOperation.registerEmail(address, options: options)
-        )
+        self.addOperation(.resolve)
+        self.addOperation(.registerEmail(address: address, options: options))
         self.enqueueTask()
     }
 
@@ -614,10 +601,8 @@ public class AirshipContact: NSObject, Component, ContactProtocol {
             return
         }
 
-        self.addOperation(ContactOperation.resolve())
-        self.addOperation(
-            ContactOperation.registerSMS(msisdn, options: options)
-        )
+        self.addOperation(.resolve)
+        self.addOperation(.registerSMS(msisdn: msisdn, options: options))
         self.enqueueTask()
     }
 
@@ -635,10 +620,8 @@ public class AirshipContact: NSObject, Component, ContactProtocol {
             return
         }
 
-        self.addOperation(ContactOperation.resolve())
-        self.addOperation(
-            ContactOperation.registerOpen(address, options: options)
-        )
+        self.addOperation(.resolve)
+        self.addOperation(.registerOpen(address: address, options: options))
         self.enqueueTask()
     }
 
@@ -657,10 +640,9 @@ public class AirshipContact: NSObject, Component, ContactProtocol {
             return
         }
 
-        self.addOperation(ContactOperation.resolve())
-        self.addOperation(
-            ContactOperation.associateChannel(channelID, type: type)
-        )
+
+        self.addOperation(.resolve)
+        self.addOperation(.associateChannel(channelID: channelID, channelType: type))
         self.enqueueTask()
     }
 
@@ -696,10 +678,9 @@ public class AirshipContact: NSObject, Component, ContactProtocol {
                 }
             }
 
-            self.addOperation(ContactOperation.resolve())
-            self.addOperation(
-                ContactOperation.update(subscriptionListsUpdates: updates)
-            )
+            
+            self.addOperation(.resolve)
+            self.addOperation(.update(subscriptionListsUpdates: updates))
             self.enqueueTask()
         }
     }
@@ -797,7 +778,7 @@ public class AirshipContact: NSObject, Component, ContactProtocol {
         }
 
         if contactInfo.isAnonymous == false || self.anonContactData != nil {
-            self.addOperation(ContactOperation.reset())
+            self.addOperation(.reset)
             self.enqueueTask()
         }
     }
@@ -829,7 +810,7 @@ public class AirshipContact: NSObject, Component, ContactProtocol {
         }
 
         self.isContactIDRefreshed = false
-        self.addOperation(ContactOperation.resolve())
+        self.addOperation(.resolve)
         self.enqueueTask()
     }
     
@@ -885,17 +866,16 @@ public class AirshipContact: NSObject, Component, ContactProtocol {
         operation: ContactOperation,
         channelID: String
     ) async throws -> Bool {
-        switch operation.type {
-        case .update:
-            guard let contactInfo = self.lastContactInfo,
-                let updatePayload = operation.payload as? UpdatePayload
-            else {
+        switch operation {
+        case .update(let tagUpdates, let attributeUpdates, let subListUpdates):
+            guard let contactInfo = self.lastContactInfo else {
                 self.removeFirstOperation()
                 return false
             }
 
-            if let updates = updatePayload.subscriptionListsUpdates {
-                for update in updates {
+
+            if let subListUpdates = subListUpdates {
+                for update in subListUpdates {
                     self.cachedSubscriptionListsHistory.append(
                         (contactInfo.contactID, update),
                         expiresIn: AirshipContact.maxSubscriptionListCacheAge
@@ -905,9 +885,9 @@ public class AirshipContact: NSObject, Component, ContactProtocol {
 
             let response = try await self.contactAPIClient.update(
                 identifier: contactInfo.contactID,
-                tagGroupUpdates: updatePayload.tagUpdates,
-                attributeUpdates: updatePayload.attrubuteUpdates,
-                subscriptionListUpdates: updatePayload.subscriptionListsUpdates
+                tagGroupUpdates: tagUpdates,
+                attributeUpdates: attributeUpdates,
+                subscriptionListUpdates: subListUpdates
             )
             
             AirshipContact.logOperationResult(
@@ -917,13 +897,16 @@ public class AirshipContact: NSObject, Component, ContactProtocol {
             
             if response.isSuccess == true {
                 if contactInfo.isAnonymous {
-                    self.updateAnonData(updates: updatePayload)
+                    self.updateAnonData(
+                        tagUpdates: tagUpdates,
+                        attributeUpdates: attributeUpdates,
+                        subscriptionListsUpdates: subListUpdates
+                    )
                 }
 
                 let payload: [String: Any] = [
-                    AirshipContact.tagsKey: updatePayload.tagUpdates ?? [],
-                    AirshipContact.attributesKey: updatePayload.attrubuteUpdates
-                        ?? [],
+                    AirshipContact.tagsKey: tagUpdates ?? [],
+                    AirshipContact.attributesKey: attributeUpdates ?? [],
                 ]
                 self.notificationCenter.post(
                     name: AirshipContact.audienceUpdatedEvent,
@@ -932,12 +915,7 @@ public class AirshipContact: NSObject, Component, ContactProtocol {
             }
             
             return !response.isServerError
-        case .identify:
-            guard let identifyPayload = operation.payload as? IdentifyPayload
-            else {
-                self.removeFirstOperation()
-                return false
-            }
+        case .identify(let identifier):
             var contactID: String? = nil
             if self.lastContactInfo?.isAnonymous ?? false {
                 contactID = self.lastContactInfo?.contactID
@@ -945,7 +923,7 @@ public class AirshipContact: NSObject, Component, ContactProtocol {
 
             let response = try await self.contactAPIClient.identify(
                 channelID: channelID,
-                namedUserID: identifyPayload.identifier,
+                namedUserID: identifier,
                 contactID: contactID
             )
             
@@ -957,7 +935,7 @@ public class AirshipContact: NSObject, Component, ContactProtocol {
                 if (response.isSuccess) {
                     self.processContactResponse(
                         result,
-                        namedUserID: identifyPayload.identifier
+                        namedUserID: identifier
                     )
                 }
             }
@@ -995,18 +973,16 @@ public class AirshipContact: NSObject, Component, ContactProtocol {
 
             return !response.isServerError
 
-        case .registerEmail:
-            guard let contactInfo = self.lastContactInfo,
-                let registerPayload = operation.payload as? RegisterEmailPayload
-            else {
+        case .registerEmail(let address, let options):
+            guard let contactInfo = self.lastContactInfo else {
                 self.removeFirstOperation()
                 return false
             }
 
             let response = try await self.contactAPIClient.registerEmail(
                 identifier: contactInfo.contactID,
-                address: registerPayload.address,
-                options: registerPayload.options
+                address: address,
+                options: options
             )
             
             AirshipContact.logOperationResult(
@@ -1018,18 +994,16 @@ public class AirshipContact: NSObject, Component, ContactProtocol {
             }
             return !response.isServerError
 
-        case .registerSMS:
-            guard let contactInfo = self.lastContactInfo,
-                let registerPayload = operation.payload as? RegisterSMSPayload
-            else {
+        case .registerSMS(let msisdn, let options):
+            guard let contactInfo = self.lastContactInfo else {
                 self.removeFirstOperation()
                 return false
             }
 
             let response = try await self.contactAPIClient.registerSMS(
                 identifier: contactInfo.contactID,
-                msisdn: registerPayload.msisdn,
-                options: registerPayload.options
+                msisdn: msisdn,
+                options: options
             )
             AirshipContact.logOperationResult(
                 operation: operation,
@@ -1038,18 +1012,16 @@ public class AirshipContact: NSObject, Component, ContactProtocol {
             self.processChannelRegistration(response.result)
             return !response.isServerError
 
-        case .registerOpen:
-            guard let contactInfo = self.lastContactInfo,
-                let registerPayload = operation.payload as? RegisterOpenPayload
-            else {
+        case .registerOpen(let address, let options):
+            guard let contactInfo = self.lastContactInfo else {
                 self.removeFirstOperation()
                 return false
             }
 
             let response = try await self.contactAPIClient.registerOpen(
                 identifier: contactInfo.contactID,
-                address: registerPayload.address,
-                options: registerPayload.options
+                address: address,
+                options: options
             )
             AirshipContact.logOperationResult(
                 operation: operation,
@@ -1058,19 +1030,18 @@ public class AirshipContact: NSObject, Component, ContactProtocol {
             self.processChannelRegistration(response.result)
             return !response.isServerError
 
-        case .associateChannel:
-            guard let contactInfo = self.lastContactInfo,
-                let payload = operation.payload as? AssociateChannelPayload
-            else {
+        case .associateChannel(let channelID, let type):
+            guard let contactInfo = self.lastContactInfo else {
                 self.removeFirstOperation()
                 return false
             }
 
             let response = try await self.contactAPIClient.associateChannel(
                 identifier: contactInfo.contactID,
-                channelID: payload.channelID,
-                channelType: payload.channelType
+                channelID: channelID,
+                channelType: type
             )
+
             AirshipContact.logOperationResult(
                 operation: operation,
                 success: response.isSuccess
@@ -1086,42 +1057,26 @@ public class AirshipContact: NSObject, Component, ContactProtocol {
     )
         -> Bool
     {
-        switch operation.type {
-        case .update:
-            let payload = operation.payload as! UpdatePayload
-            if payload.attrubuteUpdates?.isEmpty ?? true
-                && payload.tagUpdates?.isEmpty ?? true
-                && payload.subscriptionListsUpdates?.isEmpty ?? true
-            {
+        switch operation {
+        case .update(let tagUpdates, let attributeUpdates, let subListUpdates):
+            if tagUpdates?.isEmpty ?? true, attributeUpdates?.isEmpty ?? true, subListUpdates?.isEmpty ?? true {
                 return true
             }
             return false
 
-        case .identify:
-            let payload = operation.payload as! IdentifyPayload
+        case .identify(let identifier):
             return self.isContactIDRefreshed
-                && self.lastContactInfo?.namedUserID == payload.identifier
+            && self.lastContactInfo?.namedUserID == identifier
 
         case .reset:
             return isNext && (self.lastContactInfo?.isAnonymous ?? false)
-                && self.anonContactData == nil
+            && self.anonContactData == nil
 
         case .resolve:
             return self.isContactIDRefreshed
 
-        case .registerEmail:
-            return false
-
-        case .registerSMS:
-            return false
-
-        case .registerOpen:
-            return false
-
-        case .associateChannel:
-            return false
+        default: return false
         }
-
     }
 
     private func onConflict(_ namedUserID: String?) {
@@ -1147,7 +1102,9 @@ public class AirshipContact: NSObject, Component, ContactProtocol {
     }
 
     private func updateAnonData(
-        updates: UpdatePayload? = nil,
+        tagUpdates: [TagGroupUpdate]? = nil,
+        attributeUpdates: [AttributeUpdate]? = nil,
+        subscriptionListsUpdates: [ScopedSubscriptionListUpdate]? = nil,
         channel: AssociatedChannel? = nil
     ) {
         let data = self.anonContactData
@@ -1156,20 +1113,20 @@ public class AirshipContact: NSObject, Component, ContactProtocol {
         var channels = data?.channels ?? []
         var subscriptionLists = data?.subscriptionLists ?? [:]
 
-        if let updates = updates {
-            tags = AudienceUtils.applyTagUpdates(
-                data?.tags,
-                updates: updates.tagUpdates
-            )
-            attributes = AudienceUtils.applyAttributeUpdates(
-                data?.attributes,
-                updates: updates.attrubuteUpdates
-            )
-            subscriptionLists = AudienceUtils.applySubscriptionListsUpdates(
-                data?.subscriptionLists,
-                updates: updates.subscriptionListsUpdates
-            )
-        }
+        tags = AudienceUtils.applyTagUpdates(
+            data?.tags,
+            updates: tagUpdates
+        )
+
+        attributes = AudienceUtils.applyAttributeUpdates(
+            data?.attributes,
+            updates: attributeUpdates
+        )
+
+        subscriptionLists = AudienceUtils.applySubscriptionListsUpdates(
+            data?.subscriptionLists,
+            updates: subscriptionListsUpdates
+        )
 
         if let channel = channel {
             channels.append(channel)
@@ -1309,77 +1266,51 @@ public class AirshipContact: NSObject, Component, ContactProtocol {
                 }
             }
 
-            if next != nil {
-                switch next?.type {
-                case .update:
+            if let nextUpdate = next {
+                switch nextUpdate {
+                case .update(let tagUpdates, let attributeUpdates, let subListUpdates):
+
+                    var combinedTags = [] + (tagUpdates ?? [])
+                    var combinedAttributes = []  + (attributeUpdates ?? [])
+                    var combinedSubscriptionLists = []  + (subListUpdates ?? [])
+
                     // Collapse any sequential updates (ignoring anything that can be skipped inbetween)
-                    while !operations.isEmpty {
-                        let first = operations.first!
-                        if self.shouldSkipOperation(first, isNext: false) {
+                    while let nextNext = operations.first {
+                        if self.shouldSkipOperation(nextNext, isNext: false) {
                             operations.removeFirst()
                             continue
                         }
 
-                        if first.type == .update {
-                            let firstPayload = first.payload as! UpdatePayload
-                            let nextPayload = next!.payload as! UpdatePayload
-
-                            var combinedTags: [TagGroupUpdate] = []
-                            combinedTags.append(
-                                contentsOf: firstPayload.tagUpdates ?? []
-                            )
-                            combinedTags.append(
-                                contentsOf: nextPayload.tagUpdates ?? []
-                            )
-
-                            var combinedAttributes: [AttributeUpdate] = []
-                            combinedAttributes.append(
-                                contentsOf: firstPayload.attrubuteUpdates ?? []
-                            )
-                            combinedAttributes.append(
-                                contentsOf: nextPayload.attrubuteUpdates ?? []
-                            )
-
-                            var combinedSubscriptionLists:
-                                [ScopedSubscriptionListUpdate] = []
-                            combinedSubscriptionLists.append(
-                                contentsOf:
-                                    firstPayload.subscriptionListsUpdates ?? []
-                            )
-                            combinedSubscriptionLists.append(
-                                contentsOf: nextPayload.subscriptionListsUpdates
-                                    ?? []
-                            )
-
+                        if case let .update(otherTagUpdates, otherAttributeUpdates, otherSubListUpdates) = nextNext {
+                            combinedTags += (otherTagUpdates ?? [])
+                            combinedAttributes += (otherAttributeUpdates ?? [])
+                            combinedSubscriptionLists += (otherSubListUpdates ?? [])
                             operations.removeFirst()
-                            next = ContactOperation.update(
-                                tagUpdates: combinedTags,
-                                attributeUpdates: combinedAttributes,
-                                subscriptionListUpdates:
-                                    combinedSubscriptionLists
-                            )
                             continue
                         }
+
+
                         break
                     }
 
-                    if next?.payload == nil {
-                        next = nil
-                    }
+                    next = .update(
+                        tagUpdates: combinedTags,
+                        attributeUpdates: combinedAttributes,
+                        subscriptionListsUpdates: combinedSubscriptionLists
+                    )
 
-                case .identify:
+                case .identify(_):
                     // Only do last identify operation if the current contact info is not anonymous (ignoring anything that can be skipped inbetween)
                     if self.isContactIDRefreshed
                         && !(self.lastContactInfo?.isAnonymous ?? false)
                     {
-                        while !operations.isEmpty {
-                            let first = operations.first!
-                            if self.shouldSkipOperation(first, isNext: false) {
+                        while let nextNext = operations.first {
+                            if self.shouldSkipOperation(nextNext, isNext: false) {
                                 operations.removeFirst()
                                 continue
                             }
 
-                            if first.type == .identify {
+                            if nextNext.type == .identify {
                                 next = operations.removeFirst()
                                 continue
                             }
@@ -1387,11 +1318,6 @@ public class AirshipContact: NSObject, Component, ContactProtocol {
                             break
                         }
                     }
-
-                    if next?.payload == nil {
-                        next = nil
-                    }
-
                 default:
                     break
                 }
@@ -1476,11 +1402,12 @@ public class AirshipContact: NSObject, Component, ContactProtocol {
             if !(pendingTagUpdates?.isEmpty ?? true
                 && pendingAttributeUpdates?.isEmpty ?? true)
             {
-                let operation = ContactOperation.update(
-                    tagUpdates: pendingTagUpdates,
-                    attributeUpdates: pendingAttributeUpdates
+                addOperation(
+                    .update(
+                        tagUpdates: pendingTagUpdates,
+                        attributeUpdates: pendingAttributeUpdates
+                    )
                 )
-                addOperation(operation)
             }
         }
     }

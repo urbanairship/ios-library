@@ -2,237 +2,222 @@
 
 import Foundation
 
+
 // NOTE: For internal use only. :nodoc:
-enum OperationType: String, Codable {
-    case update
-    case identify
+enum ContactOperation: Codable, Equatable, Sendable {
+
+    var type: OperationType {
+        switch (self) {
+        case .update(_, _, _): return .update
+        case .identify(_): return .identify
+        case .resolve: return .resolve
+        case .reset: return .reset
+        case .registerEmail(_, _): return .registerEmail
+        case .registerSMS(_, _): return .registerSMS
+        case .registerOpen(_, _): return .registerOpen
+        case .associateChannel(_, _): return .associateChannel
+        }
+    }
+
+    enum OperationType: String, Codable {
+        case update
+        case identify
+        case resolve
+        case reset
+        case registerEmail
+        case registerSMS
+        case registerOpen
+        case associateChannel
+    }
+
+    case update(
+        tagUpdates: [TagGroupUpdate]? = nil,
+        attributeUpdates: [AttributeUpdate]? = nil,
+        subscriptionListsUpdates: [ScopedSubscriptionListUpdate]? = nil
+    )
+    case identify(String)
     case resolve
     case reset
-    case registerEmail
-    case registerSMS
-    case registerOpen
-    case associateChannel
-}
+    case registerEmail(
+        address: String,
+        options: EmailRegistrationOptions
+    )
 
-// NOTE: For internal use only. :nodoc:
-struct ContactOperation: Codable {
-    let type: OperationType
-    let payload: Any?
+    case registerSMS(
+        msisdn: String,
+        options: SMSRegistrationOptions
+    )
+
+    case registerOpen(
+        address: String,
+        options: OpenRegistrationOptions
+    )
+
+    case associateChannel(
+        channelID: String,
+        channelType: ChannelType
+    )
+
 
     enum CodingKeys: String, CodingKey {
-        case payload = "payload"
-        case type = "type"
+        case payload
+        case type
     }
 
-    private init(type: OperationType, payload: Any?) {
-        self.type = type
-        self.payload = payload
+    enum PayloadCodingKeys: String, CodingKey {
+        case tagUpdates
+        case attrubuteUpdates
+        case attributeUpdates
+        case subscriptionListsUpdates
+        case address
+        case options
+        case msisdn
+        case identifier
+        case channelID
+        case channelType
     }
+
 
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(type, forKey: .type)
 
-        switch type {
-        case .update:
-            try container.encode(payload as! UpdatePayload, forKey: .payload)
-        case .identify:
-            try container.encode(payload as! IdentifyPayload, forKey: .payload)
-        case .registerEmail:
-            try container.encode(
-                payload as! RegisterEmailPayload,
-                forKey: .payload
-            )
-        case .registerSMS:
-            try container.encode(
-                payload as! RegisterSMSPayload,
-                forKey: .payload
-            )
-        case .registerOpen:
-            try container.encode(
-                payload as! RegisterOpenPayload,
-                forKey: .payload
-            )
-        case .associateChannel:
-            try container.encode(
-                payload as! AssociateChannelPayload,
-                forKey: .payload
-            )
-        case .reset:
-            try container.encodeNil(forKey: .payload)
+        switch self {
+        case .update(let tagUpdates, let attributeUpdates, let subscriptionListsUpdates):
+            var payloadContainer = container.nestedContainer(keyedBy: PayloadCodingKeys.self, forKey: .payload)
+            try payloadContainer.encodeIfPresent(tagUpdates, forKey: .tagUpdates)
+            try payloadContainer.encodeIfPresent(attributeUpdates, forKey: .attributeUpdates)
+            try payloadContainer.encodeIfPresent(subscriptionListsUpdates, forKey: .subscriptionListsUpdates)
+            try container.encode(OperationType.update, forKey: .type)
+
+        case .identify(let identifier):
+            var payloadContainer = container.nestedContainer(keyedBy: PayloadCodingKeys.self, forKey: .payload)
+            try payloadContainer.encode(identifier, forKey: .identifier)
+            try container.encode(OperationType.identify, forKey: .type)
+
         case .resolve:
             try container.encodeNil(forKey: .payload)
+            try container.encode(OperationType.resolve, forKey: .type)
+
+        case .reset:
+            try container.encodeNil(forKey: .payload)
+            try container.encode(OperationType.reset, forKey: .type)
+
+        case .registerEmail(let address, let options):
+            var payloadContainer = container.nestedContainer(keyedBy: PayloadCodingKeys.self, forKey: .payload)
+            try payloadContainer.encode(address, forKey: .address)
+            try payloadContainer.encode(options, forKey: .options)
+            try container.encode(OperationType.registerEmail, forKey: .type)
+
+        case .registerSMS(let msisdn, let options):
+            var payloadContainer = container.nestedContainer(keyedBy: PayloadCodingKeys.self, forKey: .payload)
+            try payloadContainer.encode(msisdn, forKey: .msisdn)
+            try payloadContainer.encode(options, forKey: .options)
+            try container.encode(OperationType.registerSMS, forKey: .type)
+
+        case .registerOpen(let address, let options):
+            var payloadContainer = container.nestedContainer(keyedBy: PayloadCodingKeys.self, forKey: .payload)
+            try payloadContainer.encode(address, forKey: .address)
+            try payloadContainer.encode(options, forKey: .options)
+            try container.encode(OperationType.registerOpen, forKey: .type)
+
+        case .associateChannel(let channelID, let channelType):
+            var payloadContainer = container.nestedContainer(keyedBy: PayloadCodingKeys.self, forKey: .payload)
+            try payloadContainer.encode(channelID, forKey: .channelID)
+            try payloadContainer.encode(channelType, forKey: .channelType)
+            try container.encode(OperationType.associateChannel, forKey: .type)
         }
+
+
     }
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.type = try container.decode(OperationType.self, forKey: .type)
+        let type = try container.decode(OperationType.self, forKey: .type)
 
         switch type {
         case .update:
-            self.payload = try container.decode(
-                UpdatePayload.self,
-                forKey: .payload
+            let payloadContainer = try container.nestedContainer(keyedBy: PayloadCodingKeys.self, forKey: .payload)
+            self = .update(
+                tagUpdates: try payloadContainer.decodeIfPresent(
+                    [TagGroupUpdate].self,
+                    forKey: .tagUpdates
+                ),
+                attributeUpdates: try payloadContainer.decodeIfPresent(
+                    [AttributeUpdate].self,
+                    forKey: .attributeUpdates
+                ) ?? payloadContainer.decodeIfPresent(
+                    [AttributeUpdate].self,
+                    forKey: .attrubuteUpdates
+                ),
+                subscriptionListsUpdates: try payloadContainer.decodeIfPresent(
+                    [ScopedSubscriptionListUpdate].self,
+                    forKey: .subscriptionListsUpdates
+                )
             )
         case .identify:
-            self.payload = try container.decode(
-                IdentifyPayload.self,
-                forKey: .payload
+            let payloadContainer = try container.nestedContainer(keyedBy: PayloadCodingKeys.self, forKey: .payload)
+            self = .identify(
+                try payloadContainer.decode(
+                    String.self,
+                    forKey: .identifier
+                )
             )
+
         case .registerEmail:
-            self.payload = try container.decode(
-                RegisterEmailPayload.self,
-                forKey: .payload
+            let payloadContainer = try container.nestedContainer(keyedBy: PayloadCodingKeys.self, forKey: .payload)
+            self = .registerEmail(
+                address: try payloadContainer.decode(
+                    String.self,
+                    forKey: .address
+                ),
+                options: try payloadContainer.decode(
+                    EmailRegistrationOptions.self,
+                    forKey: .options
+                )
             )
         case .registerSMS:
-            self.payload = try container.decode(
-                RegisterSMSPayload.self,
-                forKey: .payload
+            let payloadContainer = try container.nestedContainer(keyedBy: PayloadCodingKeys.self, forKey: .payload)
+            self = .registerSMS(
+                msisdn: try payloadContainer.decode(
+                    String.self,
+                    forKey: .msisdn
+                ),
+                options: try payloadContainer.decode(
+                    SMSRegistrationOptions.self,
+                    forKey: .options
+                )
             )
+
         case .registerOpen:
-            self.payload = try container.decode(
-                RegisterOpenPayload.self,
-                forKey: .payload
+            let payloadContainer = try container.nestedContainer(keyedBy: PayloadCodingKeys.self, forKey: .payload)
+            self = .registerOpen(
+                address: try payloadContainer.decode(
+                    String.self,
+                    forKey: .address
+                ),
+                options: try payloadContainer.decode(
+                    OpenRegistrationOptions.self,
+                    forKey: .options
+                )
             )
+
         case .associateChannel:
-            self.payload = try container.decode(
-                AssociateChannelPayload.self,
-                forKey: .payload
+            let payloadContainer = try container.nestedContainer(keyedBy: PayloadCodingKeys.self, forKey: .payload)
+            self = .associateChannel(
+                channelID: try payloadContainer.decode(
+                    String.self,
+                    forKey: .channelID
+                ),
+                channelType: try payloadContainer.decode(
+                    ChannelType.self,
+                    forKey: .channelType
+                )
             )
         case .resolve:
-            self.payload = nil
+            self = .resolve
         case .reset:
-            self.payload = nil
+            self = .reset
         }
     }
-
-    static func identify(identifier: String) -> ContactOperation {
-        return ContactOperation(
-            type: .identify,
-            payload: IdentifyPayload(identifier: identifier)
-        )
-    }
-
-    static func update(tagUpdates: [TagGroupUpdate]) -> ContactOperation {
-        return ContactOperation(
-            type: .update,
-            payload: UpdatePayload(tagUpdates: tagUpdates)
-        )
-    }
-
-    static func update(attributeUpdates: [AttributeUpdate]) -> ContactOperation
-    {
-        return ContactOperation(
-            type: .update,
-            payload: UpdatePayload(attrubuteUpdates: attributeUpdates)
-        )
-    }
-
-    static func update(subscriptionListsUpdates: [ScopedSubscriptionListUpdate])
-        -> ContactOperation
-    {
-        return ContactOperation(
-            type: .update,
-            payload: UpdatePayload(
-                subscriptionListsUpdates: subscriptionListsUpdates
-            )
-        )
-    }
-
-    static func update(
-        tagUpdates: [TagGroupUpdate]?,
-        attributeUpdates: [AttributeUpdate]?,
-        subscriptionListUpdates: [ScopedSubscriptionListUpdate]? = nil
-    ) -> ContactOperation {
-        return ContactOperation(
-            type: .update,
-            payload: UpdatePayload(
-                tagUpdates: tagUpdates,
-                attrubuteUpdates: attributeUpdates,
-                subscriptionListsUpdates: subscriptionListUpdates
-            )
-        )
-    }
-
-    static func reset() -> ContactOperation {
-        return ContactOperation(type: .reset, payload: nil)
-    }
-
-    static func resolve() -> ContactOperation {
-        return ContactOperation(type: .resolve, payload: nil)
-    }
-
-    static func registerEmail(
-        _ address: String,
-        options: EmailRegistrationOptions
-    ) -> ContactOperation {
-        return ContactOperation(
-            type: .registerEmail,
-            payload: RegisterEmailPayload(address: address, options: options)
-        )
-    }
-
-    static func registerSMS(_ msisdn: String, options: SMSRegistrationOptions)
-        -> ContactOperation
-    {
-        return ContactOperation(
-            type: .registerSMS,
-            payload: RegisterSMSPayload(msisdn: msisdn, options: options)
-        )
-    }
-
-    static func registerOpen(
-        _ address: String,
-        options: OpenRegistrationOptions
-    )
-        -> ContactOperation
-    {
-        return ContactOperation(
-            type: .registerOpen,
-            payload: RegisterOpenPayload(address: address, options: options)
-        )
-    }
-
-    static func associateChannel(_ channelID: String, type: ChannelType)
-        -> ContactOperation
-    {
-        return ContactOperation(
-            type: .associateChannel,
-            payload: AssociateChannelPayload(
-                channelID: channelID,
-                channelType: type
-            )
-        )
-    }
 }
 
-struct UpdatePayload: Codable {
-    var tagUpdates: [TagGroupUpdate]?
-    var attrubuteUpdates: [AttributeUpdate]?
-    var subscriptionListsUpdates: [ScopedSubscriptionListUpdate]?
-}
-
-struct RegisterEmailPayload: Codable {
-    var address: String
-    var options: EmailRegistrationOptions
-}
-
-struct RegisterSMSPayload: Codable {
-    var msisdn: String
-    var options: SMSRegistrationOptions
-}
-
-struct RegisterOpenPayload: Codable {
-    var address: String
-    var options: OpenRegistrationOptions
-}
-
-struct IdentifyPayload: Codable {
-    var identifier: String
-}
-
-struct AssociateChannelPayload: Codable {
-    var channelID: String
-    var channelType: ChannelType
-}

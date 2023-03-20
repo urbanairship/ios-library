@@ -4,7 +4,7 @@ import Foundation
 
 /// Associated channel data.
 @objc(UAAssociatedChannel)
-public class AssociatedChannel: NSObject, Codable {
+public final class AssociatedChannel: NSObject, Codable, Sendable {
 
     /**
      * Channel type

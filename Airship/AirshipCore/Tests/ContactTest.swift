@@ -59,21 +59,21 @@ class ContactTest: XCTestCase {
     func testRateLimits() async throws {
         try await self.workManager.setRateLimit(AirshipContact.updateRateLimitID, rate: 1, timeInterval: 0.5)
         try await self.workManager.setRateLimit(AirshipContact.identityRateLimitID, rate: 1, timeInterval: 5.0)
-        
+
         let limiter = self.workManager.rateLimitor
-    
+
         let rules = await limiter.rules
-     
+
         XCTAssertEqual(2, rules.count)
-        
+
         var updateRule = rules[AirshipContact.updateRateLimitID]!
         XCTAssertEqual(1, updateRule.rate)
         XCTAssertEqual(0.5, updateRule.timeInterval, accuracy: 0.01)
-        
+
         updateRule = rules[AirshipContact.updateRateLimitID]!
         XCTAssertEqual(1, updateRule.rate)
         XCTAssertEqual(0.5, updateRule.timeInterval, accuracy: 0.01)
-        
+
         let identityRule = rules[
             AirshipContact.identityRateLimitID
         ]!
@@ -223,7 +223,7 @@ class ContactTest: XCTestCase {
                 workID: AirshipContact.updateTaskID
             )
         )
-                                    
+
         XCTAssertEqual(0, self.workManager.workRequests.count)
     }
 
@@ -416,9 +416,9 @@ class ContactTest: XCTestCase {
         self.contact.identify("cool user 1")
 
         XCTAssertEqual(1, self.workManager.workRequests.count)
-        
+
         let expectation = XCTestExpectation(description: "callback called")
-    
+
         self.apiClient.identifyCallback = {
             channelID,
             namedUserID,
@@ -514,7 +514,7 @@ class ContactTest: XCTestCase {
 
         // Then register email
         let expectation = XCTestExpectation(description: "callback called")
-        
+
         self.apiClient.registerEmailCallback = {
             identifier,
             address,
@@ -645,7 +645,7 @@ class ContactTest: XCTestCase {
 
         // Then register sms
         let expectation = XCTestExpectation(description: "callback called")
-      
+
         self.apiClient.registerSMSCallback = {
             identifier,
             msisdn,
@@ -872,7 +872,7 @@ class ContactTest: XCTestCase {
                 headers: [:]
             )
         }
-        
+
         var result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
                 workID: AirshipContact.updateTaskID
@@ -1658,14 +1658,14 @@ class ContactTest: XCTestCase {
                 headers: [:]
             )
         }
-        
-       
+
+
         self.privacyManager.disableFeatures(.contacts)
         notificationCenter.post(
             name: AirshipPrivacyManager.changeEvent,
             object: nil
         )
-            
+
         // reset
         result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
@@ -1673,7 +1673,7 @@ class ContactTest: XCTestCase {
             )
         )
         XCTAssertEqual(result, .success)
-        
+
         wait(for: [expectation], timeout: 10.0)
     }
 
@@ -1909,7 +1909,7 @@ class ContactTest: XCTestCase {
             XCTFail()
         }
         catch {
-            
+
         }
     }
 
@@ -1944,7 +1944,7 @@ class ContactTest: XCTestCase {
             XCTFail()
         }
         catch {
-            
+
         }
     }
 
@@ -1954,7 +1954,7 @@ class ContactTest: XCTestCase {
             XCTFail()
         }
         catch {
-            
+
         }
     }
 
@@ -1999,10 +1999,10 @@ class ContactTest: XCTestCase {
         // Populate cache
         var expectation = XCTestExpectation(description: "callback called")
         var lists:[String: ChannelScopes] = try await self.contact.fetchSubscriptionLists()
-      
+
         XCTAssertEqual(AudienceUtils.wrap(expected), lists)
         expectation.fulfill()
-    
+
 
         wait(for: [expectation], timeout: 10.0)
 
@@ -2011,10 +2011,10 @@ class ContactTest: XCTestCase {
         // From cache
         expectation = XCTestExpectation(description: "callback called")
         lists = try await self.contact.fetchSubscriptionLists()
-      
+
         XCTAssertEqual(AudienceUtils.wrap(expected), lists)
         expectation.fulfill()
-    
+
         wait(for: [expectation], timeout: 10.0)
 
         self.date.offset += 599  // 1 second before cache should invalidate
@@ -2022,10 +2022,10 @@ class ContactTest: XCTestCase {
         // From cache
         expectation = XCTestExpectation(description: "callback called")
         lists = try await self.contact.fetchSubscriptionLists()
-      
+
         XCTAssertEqual(AudienceUtils.wrap(expected), lists)
         expectation.fulfill()
-    
+
         wait(for: [expectation], timeout: 10.0)
 
         self.date.offset += 1
@@ -2034,10 +2034,10 @@ class ContactTest: XCTestCase {
         expected = apiResult
         expectation = XCTestExpectation(description: "callback called")
         lists = try await self.contact.fetchSubscriptionLists()
-      
+
         XCTAssertEqual(AudienceUtils.wrap(expected), lists)
         expectation.fulfill()
-    
+
         wait(for: [expectation], timeout: 10.0)
     }
 
@@ -2079,14 +2079,14 @@ class ContactTest: XCTestCase {
 
         // Populate cache
         var lists:[String: ChannelScopes] = try await self.contact.fetchSubscriptionLists()
-      
+
         XCTAssertEqual(AudienceUtils.wrap(expected), lists)
 
         apiResult = ["something else": [.web]]
 
         // From cache
         lists = try await self.contact.fetchSubscriptionLists()
-      
+
         XCTAssertEqual(AudienceUtils.wrap(expected), lists)
         let expectation = XCTestExpectation(description: "callback called")
         // Resolve a new contact ID
@@ -2125,7 +2125,7 @@ class ContactTest: XCTestCase {
         // From api
         expected = apiResult
         lists = try await self.contact.fetchSubscriptionLists()
-      
+
         XCTAssertEqual(AudienceUtils.wrap(expected), lists)
     }
 
@@ -2171,7 +2171,7 @@ class ContactTest: XCTestCase {
         let expected: [String: [ChannelScope]] = ["foo": [.web], "bar": [.app]]
         let expectation = XCTestExpectation(description: "callback called")
         let lists:[String: ChannelScopes] = try await self.contact.fetchSubscriptionLists()
-      
+
         XCTAssertEqual(AudienceUtils.wrap(expected), lists)
         expectation.fulfill()
 
@@ -2244,7 +2244,7 @@ class ContactTest: XCTestCase {
         let expected: [String: [ChannelScope]] = ["foo": [.web], "bar": [.app]]
         let expectation = XCTestExpectation(description: "callback called")
         let lists:[String: ChannelScopes] = try await self.contact.fetchSubscriptionLists()
-      
+
         XCTAssertEqual(AudienceUtils.wrap(expected), lists)
         expectation.fulfill()
 

@@ -4,7 +4,7 @@ import Foundation
 
 /// Open registration options
 @objc(UAOpenRegistrationOptions)
-public class OpenRegistrationOptions: NSObject, Codable {
+public final class OpenRegistrationOptions: NSObject, Codable, Sendable {
 
     /**
      * Platform name

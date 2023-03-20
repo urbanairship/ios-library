@@ -2,7 +2,7 @@ import Foundation
 
 // NOTE: For internal use only. :nodoc:
 @objc(UATagGroupUpdateType)
-public enum TagGroupUpdateType: Int, Codable {
+public enum TagGroupUpdateType: Int, Codable, Equatable, Sendable {
     case add
     case remove
     case set
@@ -10,7 +10,7 @@ public enum TagGroupUpdateType: Int, Codable {
 
 // NOTE: For internal use only. :nodoc:
 @objc(UATagGroupUpdate)
-public class TagGroupUpdate: NSObject, Codable {
+public final class TagGroupUpdate: NSObject, Codable, Sendable {
 
     @objc
     public let group: String

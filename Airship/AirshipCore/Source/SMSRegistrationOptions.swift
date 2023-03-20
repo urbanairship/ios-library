@@ -4,7 +4,7 @@ import Foundation
 
 /// SMS registration options
 @objc(UASMSRegistrationOptions)
-public class SMSRegistrationOptions: NSObject, Codable {
+public final class SMSRegistrationOptions: NSObject, Codable, Sendable {
 
     /**
      * Sender ID
