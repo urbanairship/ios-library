@@ -603,6 +603,7 @@ public class Contact : NSObject, Component, ContactProtocol {
     @objc
     public func editSubscriptionLists() -> ScopedSubscriptionListEditor {
         return ScopedSubscriptionListEditor(date: self.date) { updates in
+
             guard !updates.isEmpty else {
                 return
             }
@@ -651,15 +652,19 @@ public class Contact : NSObject, Component, ContactProtocol {
                 var subscriptions = try self.resolveSubscriptionLists(contactID)
 
                 // Local history
-                let localHistory = self.cachedSubscriptionListsHistory.values.compactMap { cached in
-                    cached.0 == contactID ? cached.1 : nil
-                }
-                subscriptions = AudienceUtils.applySubscriptionListsUpdates(subscriptions,
-                                                                          updates: localHistory)
+                self.operationLock.sync {
+                    let localHistory = self.cachedSubscriptionListsHistory.values.compactMap { cached in
+                        cached.0 == contactID ? cached.1 : nil
+                    }
+                    let pending = self.pendingSubscriptionListUpdates
 
-                // Pending
-                subscriptions = AudienceUtils.applySubscriptionListsUpdates(subscriptions,
-                                                                            updates: self.pendingSubscriptionListUpdates)
+                    subscriptions = AudienceUtils.applySubscriptionListsUpdates(subscriptions,
+                                                                              updates: localHistory)
+
+                    // Pending
+                    subscriptions = AudienceUtils.applySubscriptionListsUpdates(subscriptions,
+                                                                                updates: pending)
+                }
 
                 callback?(AudienceUtils.wrap(subscriptions), nil)
             } catch {
@@ -756,15 +761,19 @@ public class Contact : NSObject, Component, ContactProtocol {
     }
 
     private func enqueueTask() {
+
+        let nextType: OperationType? = self.getOperations().first { !shouldSkipOperation($0, isNext: true) }?.type
+
+
         guard self.channel.identifier != nil,
               self.isComponentEnabled,
-              let next = self.prepareNextOperation() else {
+              let nextType = nextType else {
             return
         }
 
         var rateLimitIDs = [Contact.updateRateLimitID]
 
-        switch(next.type) {
+        switch(nextType) {
         case .resolve: fallthrough
         case .identify: fallthrough
         case .reset:
@@ -813,13 +822,7 @@ public class Contact : NSObject, Component, ContactProtocol {
                 completionHandler(nil)
                 return
             }
-            
-            if let updates = updatePayload.subscriptionListsUpdates {
-                for update in updates {
-                    self.cachedSubscriptionListsHistory.append((contactInfo.contactID, update))
-                }
-            }
-            
+
             self.contactAPIClient.update(identifier: contactInfo.contactID,
                                                 tagGroupUpdates: updatePayload.tagUpdates,
                                                 attributeUpdates: updatePayload.attrubuteUpdates,
@@ -829,6 +832,15 @@ public class Contact : NSObject, Component, ContactProtocol {
                     if (contactInfo.isAnonymous) {
                         self.updateAnonData(updates: updatePayload)
                     }
+
+                    self.operationLock.sync {
+                        if let updates = updatePayload.subscriptionListsUpdates {
+                            for update in updates {
+                                self.cachedSubscriptionListsHistory.append((contactInfo.contactID, update))
+                            }
+                        }
+                    }
+
                     
                     let payload : [String : Any] = [
                         Contact.tagsKey : updatePayload.tagUpdates ?? [],
@@ -1117,27 +1129,27 @@ public class Contact : NSObject, Component, ContactProtocol {
                 case .update:
                     // Collapse any sequential updates (ignoring anything that can be skipped inbetween)
                     while (!operations.isEmpty) {
-                        let first = operations.first!
-                        if (self.shouldSkipOperation(first, isNext: false)) {
+                        let nextNext = operations.first!
+                        if (self.shouldSkipOperation(nextNext, isNext: false)) {
                             operations.removeFirst()
                             continue
                         }
                         
-                        if (first.type == .update) {
-                            let firstPayload = first.payload as! UpdatePayload
+                        if (nextNext.type == .update) {
                             let nextPayload = next!.payload as! UpdatePayload
-                            
+                            let nextNextPayload = nextNext.payload as! UpdatePayload
+
                             var combinedTags: [TagGroupUpdate] = []
-                            combinedTags.append(contentsOf: firstPayload.tagUpdates ?? [])
                             combinedTags.append(contentsOf: nextPayload.tagUpdates ?? [])
+                            combinedTags.append(contentsOf: nextNextPayload.tagUpdates ?? [])
 
                             var combinedAttributes: [AttributeUpdate] = []
-                            combinedAttributes.append(contentsOf: firstPayload.attrubuteUpdates ?? [])
                             combinedAttributes.append(contentsOf: nextPayload.attrubuteUpdates ?? [])
+                            combinedAttributes.append(contentsOf: nextNextPayload.attrubuteUpdates ?? [])
                             
                             var combinedSubscriptionLists: [ScopedSubscriptionListUpdate] = []
-                            combinedSubscriptionLists.append(contentsOf: firstPayload.subscriptionListsUpdates ?? [])
                             combinedSubscriptionLists.append(contentsOf: nextPayload.subscriptionListsUpdates ?? [])
+                            combinedSubscriptionLists.append(contentsOf: nextNextPayload.subscriptionListsUpdates ?? [])
 
                             operations.removeFirst()
                             next = ContactOperation.update(tagUpdates: combinedTags,

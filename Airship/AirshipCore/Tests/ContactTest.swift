@@ -665,19 +665,35 @@ class ContactTest: XCTestCase {
     
     func testCombineSequentialUpdates() throws {
         self.contact.editTagGroups { editor in
+            editor.remove(["neat"], group: "cool")
+        }
+
+
+        self.contact.editTagGroups { editor in
             editor.add(["neat"], group: "cool")
         }
-        XCTAssertEqual(1, self.taskManager.enqueuedRequests.count)
+
+        XCTAssertEqual(2, self.taskManager.enqueuedRequests.count)
+
+        self.contact.editAttributes { editor in
+            editor.remove("one")
+        }
         
         self.contact.editAttributes { editor in
             editor.set(int: 1, attribute: "one")
         }
-        XCTAssertEqual(2, self.taskManager.enqueuedRequests.count)
-        
+
+        XCTAssertEqual(4, self.taskManager.enqueuedRequests.count)
+
+        self.contact.editSubscriptionLists { editor in
+            editor.unsubscribe("some list", scope: .app)
+        }
+
         self.contact.editSubscriptionLists { editor in
             editor.subscribe("some list", scope: .app)
         }
-        XCTAssertEqual(3, self.taskManager.enqueuedRequests.count)
+
+        XCTAssertEqual(6, self.taskManager.enqueuedRequests.count)
         
         // Should resolve first
         let resolve = XCTestExpectation(description: "resolve contact")
@@ -694,9 +710,18 @@ class ContactTest: XCTestCase {
         let update = XCTestExpectation(description: "callback called")
         self.apiClient.updateCallback = { contactID, tagUpdates, attributeUpdates, subscriptionListUpdates, callback in
             XCTAssertEqual("some-contact-id", contactID)
-            XCTAssertEqual(1, tagUpdates?.count ?? 0)
-            XCTAssertEqual(1, attributeUpdates?.count ?? 0)
-            XCTAssertEqual(1, subscriptionListUpdates?.count ?? 0)
+            XCTAssertEqual(2, tagUpdates?.count ?? 0)
+            XCTAssertEqual(TagGroupUpdateType.remove, tagUpdates?[0].type)
+            XCTAssertEqual(TagGroupUpdateType.add, tagUpdates?[1].type)
+
+            XCTAssertEqual(2, attributeUpdates?.count ?? 0)
+            XCTAssertEqual(AttributeUpdateType.remove, attributeUpdates?[0].type)
+            XCTAssertEqual(AttributeUpdateType.set, attributeUpdates?[1].type)
+
+            XCTAssertEqual(2, subscriptionListUpdates?.count ?? 0)
+            XCTAssertEqual(SubscriptionListUpdateType.unsubscribe, subscriptionListUpdates?[0].type)
+            XCTAssertEqual(SubscriptionListUpdateType.subscribe, subscriptionListUpdates?[1].type)
+
             callback(HTTPResponse(status: 200), nil)
             update.fulfill()
         }
