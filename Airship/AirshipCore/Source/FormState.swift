@@ -193,6 +193,7 @@ public struct FormInputData {
             guard let value = value else {
                 return nil
             }
+
             return [
                 FormInputData.typeKey: "text_input",
                 FormInputData.valueKey: value
@@ -209,10 +210,6 @@ public struct FormInputData {
             var childrenMap: [String: Any] = [:]
             value.forEach { value in
                 childrenMap[value.identifier] = value.getData()
-            }
-            
-            guard !childrenMap.isEmpty else {
-                return nil
             }
             
             switch formType {
