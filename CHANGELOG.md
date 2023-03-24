@@ -3,6 +3,15 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 16.11.3 March 24, 2023
+Patch release that fixing Contact update merging order, improves Scene/Survey accessibility and reporting.
+
+### Changes
+- Fixed Contact update merge order, resolving a Preference Center bug that could lead to unexpected subscription states in some circumstances.
+- Improved Scene/Survey accessibility and fixed a reporting bug related to form display events.
+- Fixed an issue with downgrading to a version older than 16.10.1 would cause the channel to be recreated.
+- Added support for transparent WebView backgrounds in HTML In-App Automations
+
 ## Version 16.11.2 March 2, 2023
 Patch release that fixes a regression introduced in 16.11.0 that disables Survey's submit button and inputs, and added accessibility font scaling to Scenes & Surveys.
 
