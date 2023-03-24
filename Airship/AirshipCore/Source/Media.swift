@@ -23,7 +23,7 @@ struct Media : View {
             .background(self.model.backgroundColor)
             .border(self.model.border)
             .common(self.model)
-            .accessible(self.model)
+            .accessible(self.model, hideIfNotSet: true)
         case .video, .youtube:
 #if !os(tvOS) && !os(watchOS)
             MediaWebView(url: model.url,
