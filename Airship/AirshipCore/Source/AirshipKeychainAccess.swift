@@ -54,15 +54,16 @@ public class AirshipKeychainAccess {
                 identifier: identifier,
                 service: self.service
             )
-
-            // Delete old
+            
+            // Write to old location in case of a downgrade
             if let bundleID = Bundle.main.bundleIdentifier {
-                Keychain.deleteCredentials(
+                let _ = Keychain.writeCredentials(
+                    credentials,
                     identifier: identifier,
                     service: bundleID
                 )
             }
-
+            
             completionHandler?(result)
         }
     }
@@ -126,42 +127,36 @@ public class AirshipKeychainAccess {
     }
 
     /// Helper method that migrates data from the old storage location to the new on read.
-    private func readCredentialsHelper(identifier: String)
-        -> AirshipKeychainCredentials?
-    {
-        var credentials = Keychain.readCredentials(
+    private func readCredentialsHelper(identifier: String) -> AirshipKeychainCredentials? {
+        if let credentials = Keychain.readCredentials(
             identifier: identifier,
             service: self.service
-        )
-
+        ) {
+            return credentials
+        }
+        
         // If we do not have a new value, check
         // the old service location
-        if credentials == nil, let bundleID = Bundle.main.bundleIdentifier {
-
-            credentials = Keychain.readCredentials(
+        if let bundleID = Bundle.main.bundleIdentifier {
+            
+            let old = Keychain.readCredentials(
                 identifier: identifier,
                 service: bundleID
             )
-
-            if let credentials = credentials {
+            
+            if let old = old {
                 // Migrate old data to new service location
-                let result = Keychain.writeCredentials(
-                    credentials,
+                let _ = Keychain.writeCredentials(
+                    old,
                     identifier: identifier,
                     service: self.service
                 )
-                if result {
-                    Keychain.deleteCredentials(
-                        identifier: identifier,
-                        service: bundleID
-                    )
-                } else {
-                    AirshipLogger.error("Failed to migrate credentials")
-                }
+
+                return old
             }
         }
-
-        return credentials
+        
+        return nil
     }
 }
 

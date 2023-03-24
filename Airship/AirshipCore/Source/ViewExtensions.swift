@@ -34,12 +34,13 @@ public extension View {
         #endif
     }
 
+
     @ViewBuilder
-    internal func accessible(_ accessible: Accessible?) -> some View {
+    internal func accessible(_ accessible: Accessible?, hideIfNotSet: Bool = false) -> some View {
         if let label = accessible?.contentDescription {
             self.accessibility(label: Text(label))
         } else {
-            self
+            self.accessibilityHidden(hideIfNotSet)
         }
     }
 

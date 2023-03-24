@@ -50,13 +50,11 @@ class ThomasEnvironment: ObservableObject {
         guard !formState.isSubmitted else {
             return
         }
-        
-        if let formResult = formState.toFormResult() {
-            self.delegate.onFormSubmitted(
-                formResult: formResult,
-                layoutContext: layoutState.toLayoutContext()
-            )
-        }
+
+        self.delegate.onFormSubmitted(
+            formResult: formState.toFormResult(),
+            layoutContext: layoutState.toLayoutContext()
+        )
 
         let channelEditor = Airship.channel.editAttributes()
         let contactEditor = Airship.contact.editAttributes()
@@ -255,14 +253,12 @@ extension FormState {
         }
     }
 
-    fileprivate func toFormResult() -> ThomasFormResult? {
-        if let data = self.data.toPayload() {
-            return ThomasFormResult(
-                identifier: self.identifier,
-                formData: data
-            )
-        }
-        return nil
+    fileprivate func toFormResult() -> ThomasFormResult {
+        return ThomasFormResult(
+            identifier: self.identifier,
+            formData: self.data.toPayload() ?? [:]
+        )
+
     }
 }
 
