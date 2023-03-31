@@ -396,7 +396,9 @@ public struct PreferenceCenterView: View {
             )
         if #available(iOS 16.0, *) {
             NavigationStack {
-                content
+                ZStack{
+                    content
+                }
             }
         } else {
             NavigationView {

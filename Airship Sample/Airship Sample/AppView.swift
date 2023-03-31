@@ -39,11 +39,9 @@ struct AppView: View {
             }
             .tag(SampleTabs.messageCenter)
 
-            NavigationView {
-                PreferenceCenterView(
-                    preferenceCenterID: MainApp.preferenceCenterID
-                )
-            }
+            PreferenceCenterView(
+                preferenceCenterID: MainApp.preferenceCenterID
+            )
             .navigationViewStyle(.stack)
             .tabItem {
                 Label(
