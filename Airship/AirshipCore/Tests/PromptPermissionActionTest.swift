@@ -42,7 +42,7 @@ class PromptPermissionActionTest: XCTestCase {
         }
     }
 
-    func testPrompt() throws {
+    func testPrompt() async throws {
         let actionValue: [String: Any] = [
             "permission": AirshipPermission.location.stringValue,
             "enable_airship_usage": true,
@@ -67,16 +67,13 @@ class PromptPermissionActionTest: XCTestCase {
             prompted.fulfill()
         }
 
-        let actionFinished = self.expectation(description: "Action finished")
-        self.action.perform(with: arguments) { result in
-            XCTAssertNil(result.value)
-            actionFinished.fulfill()
-        }
-
-        self.wait(for: [actionFinished, prompted], timeout: 1)
+    
+        let result = await self.action.perform(with: arguments)
+        XCTAssertNil(result.value)
+        await self.waitForExpectations(timeout: 10)
     }
 
-    func testPromptDefaultArguments() throws {
+    func testPromptDefaultArguments() async throws {
         let actionValue = [
             "permission": AirshipPermission.displayNotifications.stringValue
         ]
@@ -98,16 +95,13 @@ class PromptPermissionActionTest: XCTestCase {
             prompted.fulfill()
         }
 
-        let actionFinished = self.expectation(description: "Action finished")
-        self.action.perform(with: arguments) { result in
-            XCTAssertNil(result.value)
-            actionFinished.fulfill()
-        }
-
-        self.wait(for: [actionFinished, prompted], timeout: 1)
+      
+        let result = await self.action.perform(with: arguments)
+        XCTAssertNil(result.value)
+        await self.waitForExpectations(timeout: 10)
     }
 
-    func testInvalidPermission() throws {
+    func testInvalidPermission() async throws {
         let actionValue: [String: Any] = [
             "permission": "not a permission"
         ]
@@ -125,16 +119,12 @@ class PromptPermissionActionTest: XCTestCase {
             XCTFail()
         }
 
-        let actionFinished = self.expectation(description: "Action finished")
-        self.action.perform(with: arguments) { result in
-            XCTAssertNotNil(result.error)
-            actionFinished.fulfill()
-        }
-
-        self.wait(for: [actionFinished], timeout: 1)
+       
+        let result = await self.action.perform(with: arguments)
+        XCTAssertNotNil(result.error)
     }
 
-    func testResultReceiver() throws {
+    func testResultReceiver() async throws {
         let actionValue: [String: Any] = [
             "permission": AirshipPermission.location.stringValue
         ]
@@ -170,11 +160,8 @@ class PromptPermissionActionTest: XCTestCase {
             completionHandler(.notDetermined, .granted)
         }
 
-        let actionFinished = self.expectation(description: "Action finished")
-        self.action.perform(with: arguments) { _ in
-            actionFinished.fulfill()
-        }
 
-        self.wait(for: [actionFinished, resultReceived], timeout: 1)
+        _ = await self.action.perform(with: arguments)
+        await self.waitForExpectations(timeout: 10)
     }
 }

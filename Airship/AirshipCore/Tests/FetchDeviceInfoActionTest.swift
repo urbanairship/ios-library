@@ -39,25 +39,19 @@ final class FetchDeviceInfoActionTest: XCTestCase {
         }
     }
 
-    func testPerform() throws {
+    func testPerform() async throws {
         self.channel.identifier = "some-channel-id"
         self.contact.namedUserID = "some-named-user"
         self.channel.tags = ["tag1", "tag2", "tag3"]
         self.push.isPushNotificationsOptedIn = true
 
-        let expectation = self.expectation(description: "action ran")
         var actionResult: ActionResult!
-        self.action.perform(
+        actionResult = await self.action.perform(
             with: ActionArguments(
                 value: nil,
                 with: .manualInvocation
             )
-        ) { result in
-            actionResult = result
-            expectation.fulfill()
-        }
-
-        self.waitForExpectations(timeout: 10)
+        )
 
         let expectedResult = [
             "tags": ["tag1", "tag2", "tag3"],

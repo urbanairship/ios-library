@@ -95,12 +95,14 @@ public class NativeBridgeActionHandler: NSObject,
          * run-actions?<actionName>=<actionValue>&<anotherActionName>=<anotherActionValue>...
          */
         if command.name == "run-actions" {
-            self.run(
-                self.decodeActionValues(command, false),
-                metadata: metadata
-            )
-            completionHandler(nil)
-            return
+            Task {
+                await self.run(
+                    self.decodeActionValues(command, false),
+                    metadata: metadata
+                )
+                completionHandler(nil)
+                return
+            }
         }
 
         /*
@@ -110,16 +112,15 @@ public class NativeBridgeActionHandler: NSObject,
          * run-basic-actions?<actionName>=<actionValue>&<anotherActionName>=<anotherActionValue>...
          */
         if command.name == "run-basic-actions" {
-            self.run(
-                self.decodeActionValues(command, true),
-                metadata: metadata
-            )
-            completionHandler(nil)
-            return
+            Task {
+                await self.run(
+                    self.decodeActionValues(command, true),
+                    metadata: metadata
+                )
+                completionHandler(nil)
+                return
+            }
         }
-
-        completionHandler(nil)
-        return
     }
 
     /**
@@ -132,34 +133,32 @@ public class NativeBridgeActionHandler: NSObject,
     private func run(
         _ actionValues: [String: [Any?]],
         metadata: [AnyHashable: Any]?
-    ) {
+    ) async {
         for (actionName, values) in actionValues {
             for actionValue in values {
-                ActionRunner.run(
+                let result = await ActionRunner.run(
                     actionName,
                     value: actionValue,
                     situation: .webViewInvocation,
-                    metadata: metadata,
-                    completionHandler: { result in
-                        if result.status == .completed {
-                            AirshipLogger.debug(
-                                String(
-                                    format:
-                                        "action %@ completed successfully",
-                                    actionName
-                                )
-                            )
-                        } else {
-                            AirshipLogger.debug(
-                                String(
-                                    format:
-                                        "action %@ completed with an error",
-                                    actionName
-                                )
-                            )
-                        }
-                    }
-                )
+                    metadata: metadata)
+                
+                if result.status == .completed {
+                    AirshipLogger.debug(
+                        String(
+                            format:
+                                "action %@ completed successfully",
+                            actionName
+                        )
+                    )
+                } else {
+                    AirshipLogger.debug(
+                        String(
+                            format:
+                                "action %@ completed with an error",
+                            actionName
+                        )
+                    )
+                }
             }
         }
     }
@@ -185,8 +184,15 @@ public class NativeBridgeActionHandler: NSObject,
             callbackID,
             options: .fragmentsAllowed
         )
-
-        let actionCompletionHandler: (ActionResult) -> Void = { result in
+        
+        Task {
+            let result = await ActionRunner.run(
+                action,
+                value: actionValue,
+                situation: .webViewInvocation,
+                metadata: metadata
+            )
+            
             AirshipLogger.debug(
                 String(
                     format: "Action %@ finished executing with status %ld",
@@ -198,11 +204,11 @@ public class NativeBridgeActionHandler: NSObject,
                 completionHandler(nil)
                 return
             }
-
+            
             var script: String?
             var resultString: String?
             var errorMessage: String?
-
+            
             switch result.status {
             case .completed:
                 if result.value != nil {
@@ -246,7 +252,7 @@ public class NativeBridgeActionHandler: NSObject,
             @unknown default:
                 return
             }
-
+            
             if errorMessage != nil {
                 /// JSONify the error message
                 errorMessage = try? JSONUtils.string(
@@ -266,17 +272,9 @@ public class NativeBridgeActionHandler: NSObject,
                     callbackID
                 )
             }
-
+            
             completionHandler(script)
         }
-
-        ActionRunner.run(
-            action,
-            value: actionValue,
-            situation: .webViewInvocation,
-            metadata: metadata,
-            completionHandler: actionCompletionHandler
-        )
     }
 
     private class func parse(_ arguments: String) -> Any? {

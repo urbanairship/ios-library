@@ -38,10 +38,10 @@ public class ShareAction: NSObject, Action {
         return true
     }
 
+    @MainActor
     public func perform(
-        with arguments: ActionArguments,
-        completionHandler: UAActionCompletionHandler
-    ) {
+        with arguments: ActionArguments) async -> ActionResult {
+
         AirshipLogger.debug("Running share action: \(arguments)")
 
         let activityViewController = ActivityViewController(
@@ -82,7 +82,7 @@ public class ShareAction: NSObject, Action {
             animated: true
         )
 
-        completionHandler(ActionResult.empty())
+        return ActionResult.empty()
     }
 }
 #endif

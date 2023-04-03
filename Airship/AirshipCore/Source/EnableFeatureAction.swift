@@ -68,16 +68,13 @@ public class EnableFeatureAction: NSObject, Action {
     }
 
     public func perform(
-        with arguments: ActionArguments,
-        completionHandler: @escaping UAActionCompletionHandler
-    ) {
+        with arguments: ActionArguments) async -> ActionResult {
 
         var permission: AirshipPermission!
         do {
             permission = try parsePermission(arguments: arguments)
         } catch {
-            completionHandler(ActionResult(error: error))
-            return
+            return ActionResult(error: error)
         }
 
         self.permissionPrompter()
@@ -98,7 +95,7 @@ public class EnableFeatureAction: NSObject, Action {
                 }
             }
 
-        completionHandler(ActionResult.empty())
+        return ActionResult.empty()
     }
 
     private func parsePermission(arguments: ActionArguments) throws

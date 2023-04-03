@@ -237,16 +237,16 @@
  */
 - (void)verifyPerformWithArgs:(UAActionArguments *)args
            withExpectedResult:(UAActionResult *)expectedResult {
-
-    __block BOOL finished = NO;
-
+    
+    XCTestExpectation *finished = [self expectationWithDescription:@"Fetched frequency checker"];
+    
     [self.action performWithArguments:args completionHandler:^(UAActionResult *result) {
-        finished = YES;
+        [finished fulfill];
         XCTAssertEqual(result.status, expectedResult.status, @"Result status should match expected result status.");
         XCTAssertEqual(result.fetchResult, expectedResult.fetchResult, @"FetchResult should match expected fetchresult.");
     }];
-
-    XCTAssertTrue(finished, @"Action should have completed.");
+    
+    [self waitForTestExpectations];
 }
 
 /**
@@ -256,15 +256,15 @@
                    actionName:(NSString *)actionName
            withExpectedResult:(UAActionResult *)expectedResult {
 
-    __block BOOL finished = NO;
+    XCTestExpectation *finished = [self expectationWithDescription:@"Finished"];
 
     [self.action performWithArguments:args completionHandler:^(UAActionResult *result) {
-        finished = YES;
+        [finished fulfill];
         XCTAssertEqual(result.status, expectedResult.status, @"Result status should match expected result status.");
         XCTAssertEqual(result.fetchResult, expectedResult.fetchResult, @"FetchResult should match expected fetchresult.");
     }];
 
-    XCTAssertTrue(finished, @"Action should have completed.");
+    [self waitForTestExpectations];
 }
 
 /**

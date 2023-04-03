@@ -47,13 +47,10 @@ public class PromptPermissionAction: NSObject, Action {
     }
 
     public func perform(
-        with arguments: ActionArguments,
-        completionHandler: @escaping UAActionCompletionHandler
-    ) {
+        with arguments: ActionArguments) async -> ActionResult {
 
         guard let arg = arguments.value else {
-            completionHandler(ActionResult.empty())
-            return
+            return ActionResult.empty()
         }
 
         do {
@@ -79,10 +76,9 @@ public class PromptPermissionAction: NSObject, Action {
                         resultReceiver?(args.permission, start, end)
                     }
                 }
-            completionHandler(ActionResult.empty())
+            return ActionResult.empty()
         } catch {
-            completionHandler(ActionResult(error: error))
-            return
+            return ActionResult(error: error)
         }
     }
 

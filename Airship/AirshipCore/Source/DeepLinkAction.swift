@@ -29,59 +29,49 @@ public class DeepLinkAction: NSObject, Action {
     }
 
     public func perform(
-        with arguments: ActionArguments,
-        completionHandler: @escaping UAActionCompletionHandler
-    ) {
+        with arguments: ActionArguments) async -> ActionResult {
 
         guard let url = parseURL(arguments) else {
-            completionHandler(ActionResult.empty())
-            return
+            return ActionResult.empty()
         }
 
-        Airship.shared.deepLink(url) { result in
-            if result {
-                completionHandler(ActionResult.empty())
-            } else {
-                self.openURL(url, completionHandler: completionHandler)
-            }
+        let result = await Airship.shared.deepLink(url)
+        
+        if result {
+            return ActionResult.empty()
+        } else {
+            return await self.openURL(url)
         }
     }
 
     private func openURL(
-        _ url: URL,
-        completionHandler: @escaping UAActionCompletionHandler
-    ) {
-        UADispatcher.main.dispatchAsync {
+        _ url: URL) async -> ActionResult {
             guard Airship.shared.urlAllowList.isAllowed(url, scope: .openURL)
             else {
                 AirshipLogger.error(
                     "URL \(url) not allowed. Unable to open url."
                 )
-                completionHandler(
-                    ActionResult(
-                        error: AirshipErrors.error("URL \(url) not allowed")
+                return ActionResult(
+                    error: AirshipErrors.error("URL \(url) not allowed")
+                )
+            }
+    #if !os(watchOS)
+            let success = await UIApplication.shared.open(url, options: [:])
+            
+            if success {
+                return ActionResult.empty()
+            } else {
+                return ActionResult(
+                    error: AirshipErrors.error(
+                        "Failed to open url \(url)"
                     )
                 )
-                return
             }
-            #if !os(watchOS)
-            UIApplication.shared.open(url, options: [:]) { success in
-                if success {
-                    completionHandler(ActionResult.empty())
-                } else {
-                    completionHandler(
-                        ActionResult(
-                            error: AirshipErrors.error(
-                                "Failed to open url \(url)"
-                            )
-                        )
-                    )
-                }
-            }
-            #else
+            
+    #else
             WKExtension.shared().openSystemURL(url)
-            #endif
-        }
+    #endif
+            
     }
 
     private func parseURL(_ arguments: ActionArguments) -> URL? {

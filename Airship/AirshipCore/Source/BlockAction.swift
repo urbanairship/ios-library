@@ -8,7 +8,7 @@ import Foundation
 public class BlockAction: NSObject, Action {
     private let block: UAActionBlock
     private let predicate: UAActionPredicate?
-
+    
     /**
      * Block action constructor.
      *  - Parameters:
@@ -21,7 +21,7 @@ public class BlockAction: NSObject, Action {
         self.block = block
         super.init()
     }
-
+    
     /**
      * Block action constructor.
      *  - Parameters:
@@ -31,15 +31,24 @@ public class BlockAction: NSObject, Action {
     public convenience init(_ block: @escaping UAActionBlock) {
         self.init(predicate: nil, block: block)
     }
-
+    
     public func acceptsArguments(_ arguments: ActionArguments) -> Bool {
         return self.predicate?(arguments) ?? true
     }
-
-    public func perform(
+    
+    private func performBlockAction(
         with arguments: ActionArguments,
         completionHandler: @escaping UAActionCompletionHandler
     ) {
         self.block(arguments, completionHandler)
     }
-}
+    
+    public func perform(
+        with arguments: ActionArguments) async -> ActionResult {
+            await withCheckedContinuation { continuation in
+                performBlockAction(with: arguments) { result in
+                    continuation.resume(returning: result)
+                }
+            }
+        }
+    }

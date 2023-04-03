@@ -152,12 +152,13 @@ public struct DefaultPrefernceCenterAlertStyle: PrefernceCenterAlertStyle {
                                     if let actions = button.actionJSON.unWrap()
                                         as? [String: Any]
                                     {
-                                        ActionRunner.run(
-                                            actionValues: actions,
-                                            situation: .manualInvocation,
-                                            metadata: nil,
-                                            completionHandler: nil
-                                        )
+                                        Task {
+                                            await ActionRunner.run(
+                                                actionValues: actions,
+                                                situation: .manualInvocation,
+                                                metadata: nil
+                                            )
+                                        }
                                     }
                                 },
                                 label: {

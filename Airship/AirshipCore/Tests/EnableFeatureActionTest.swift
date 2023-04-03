@@ -45,7 +45,7 @@ class EnableFeatureActionTest: XCTestCase {
         }
     }
 
-    func testLocation() throws {
+    func testLocation() async throws {
         let arguments = ActionArguments(
             value: EnableFeatureAction.locationActionValue,
             with: .manualInvocation
@@ -64,16 +64,13 @@ class EnableFeatureActionTest: XCTestCase {
             prompted.fulfill()
         }
 
-        let actionFinished = self.expectation(description: "Action finished")
-        self.action.perform(with: arguments) { result in
-            XCTAssertNil(result.value)
-            actionFinished.fulfill()
-        }
-
-        self.wait(for: [actionFinished, prompted], timeout: 1)
+      
+        let result = await self.action.perform(with: arguments)
+        XCTAssertNil(result.value)
+        await self.waitForExpectations(timeout: 10)
     }
 
-    func testBackgroundLocation() throws {
+    func testBackgroundLocation() async throws {
         let arguments = ActionArguments(
             value: EnableFeatureAction.backgroundLocationActionValue,
             with: .manualInvocation
@@ -92,16 +89,12 @@ class EnableFeatureActionTest: XCTestCase {
             prompted.fulfill()
         }
 
-        let actionFinished = self.expectation(description: "Action finished")
-        self.action.perform(with: arguments) { result in
-            XCTAssertNil(result.value)
-            actionFinished.fulfill()
-        }
-
-        self.wait(for: [actionFinished, prompted], timeout: 1)
+        let result = await self.action.perform(with: arguments)
+        XCTAssertNil(result.value)
+        await self.waitForExpectations(timeout: 10)
     }
 
-    func testNotifications() throws {
+    func testNotifications() async throws {
         let arguments = ActionArguments(
             value: EnableFeatureAction.userNotificationsActionValue,
             with: .manualInvocation
@@ -120,16 +113,12 @@ class EnableFeatureActionTest: XCTestCase {
             prompted.fulfill()
         }
 
-        let actionFinished = self.expectation(description: "Action finished")
-        self.action.perform(with: arguments) { result in
-            XCTAssertNil(result.value)
-            actionFinished.fulfill()
-        }
-
-        self.wait(for: [actionFinished, prompted], timeout: 1)
+        let result = await self.action.perform(with: arguments)
+        XCTAssertNil(result.value)
+        await self.waitForExpectations(timeout: 10)
     }
 
-    func testInvalidArgument() throws {
+    func testInvalidArgument() async throws {
         let arguments = ActionArguments(
             value: "invalid",
             with: .manualInvocation
@@ -143,16 +132,12 @@ class EnableFeatureActionTest: XCTestCase {
             XCTFail()
         }
 
-        let actionFinished = self.expectation(description: "Action finished")
-        self.action.perform(with: arguments) { result in
-            XCTAssertNotNil(result.error)
-            actionFinished.fulfill()
-        }
+        let result = await self.action.perform(with: arguments)
+        XCTAssertNotNil(result.error)
 
-        self.wait(for: [actionFinished], timeout: 1)
     }
 
-    func testResultReceiver() throws {
+    func testResultReceiver() async throws {
         let resultReceived = self.expectation(description: "Result received")
 
         let resultRecevier:
@@ -184,11 +169,8 @@ class EnableFeatureActionTest: XCTestCase {
             completionHandler(.notDetermined, .granted)
         }
 
-        let actionFinished = self.expectation(description: "Action finished")
-        self.action.perform(with: arguments) { _ in
-            actionFinished.fulfill()
-        }
-
-        self.wait(for: [actionFinished, resultReceived], timeout: 1)
+      
+        _ = await self.action.perform(with: arguments)
+        await self.waitForExpectations(timeout: 10)
     }
 }

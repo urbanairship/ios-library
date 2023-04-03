@@ -65,9 +65,7 @@ public class ModifyTagsAction: NSObject, Action {
     }
 
     public func perform(
-        with arguments: ActionArguments,
-        completionHandler: UAActionCompletionHandler
-    ) {
+        with arguments: ActionArguments) async -> ActionResult {
         let channel = self.channel()
         let contact = self.contact()
 
@@ -111,7 +109,7 @@ public class ModifyTagsAction: NSObject, Action {
             }
         }
 
-        completionHandler(ActionResult.empty())
+        return ActionResult.empty()
     }
 
     open func onChannelTags(_ tags: [String], editor: TagEditor) {}

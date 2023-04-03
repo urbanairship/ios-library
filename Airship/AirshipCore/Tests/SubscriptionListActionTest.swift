@@ -58,22 +58,18 @@ class SubscriptionListActionTests: XCTestCase {
         }
     }
 
-    func testPerformWithoutArgs() throws {
-        let expectation = XCTestExpectation(description: "Completed")
+    func testPerformWithoutArgs() async throws {
         let args = ActionArguments(value: nil, with: .manualInvocation)
-        action.perform(with: args) { (result) in
-            XCTAssertNil(result.value)
-            XCTAssertNotNil(result.error)
-            expectation.fulfill()
-        }
+        let result = await action.perform(with: args)
+        XCTAssertNil(result.value)
+        XCTAssertNotNil(result.error)
 
-        wait(for: [expectation], timeout: 10.0)
 
         XCTAssertTrue(self.channelEdits.isEmpty)
         XCTAssertTrue(self.contactEdits.isEmpty)
     }
 
-    func testPerformWithValidPayload() throws {
+    func testPerformWithValidPayload() async throws {
         let actionValue = [
             [
                 "type": "channel",
@@ -89,14 +85,11 @@ class SubscriptionListActionTests: XCTestCase {
         ]
 
         let args = ActionArguments(value: actionValue, with: .manualInvocation)
-        let expectation = XCTestExpectation(description: "Completed")
-        action.perform(with: args) { (result) in
-            XCTAssertNil(result.value)
-            XCTAssertNil(result.error)
-            expectation.fulfill()
-        }
+    
+        let result = await action.perform(with: args)
+        XCTAssertNil(result.value)
+        XCTAssertNil(result.error)
 
-        wait(for: [expectation], timeout: 10.0)
 
         let expectedChannelEdits = [
             SubscriptionListUpdate(listId: "456", type: .subscribe)
@@ -114,7 +107,7 @@ class SubscriptionListActionTests: XCTestCase {
         XCTAssertEqual(expectedContactEdits, self.contactEdits)
     }
 
-    func testPerformWithAltValidPayload() throws {
+    func testPerformWithAltValidPayload() async throws {
         let actionValue = [
             "edits": [
                 [
@@ -132,14 +125,11 @@ class SubscriptionListActionTests: XCTestCase {
         ]
 
         let args = ActionArguments(value: actionValue, with: .manualInvocation)
-        let expectation = XCTestExpectation(description: "Completed")
-        action.perform(with: args) { (result) in
-            XCTAssertNil(result.value)
-            XCTAssertNil(result.error)
-            expectation.fulfill()
-        }
+        
+        let result = await action.perform(with: args)
+        XCTAssertNil(result.value)
+        XCTAssertNil(result.error)
 
-        wait(for: [expectation], timeout: 10.0)
 
         let expectedChannelEdits = [
             SubscriptionListUpdate(listId: "456", type: .subscribe)
@@ -157,7 +147,7 @@ class SubscriptionListActionTests: XCTestCase {
         XCTAssertEqual(expectedContactEdits, self.contactEdits)
     }
 
-    func testPerformWithInvalidPayload() throws {
+    func testPerformWithInvalidPayload() async throws {
         let actionValue = [
             "edits": [
                 [
@@ -174,14 +164,11 @@ class SubscriptionListActionTests: XCTestCase {
         ]
 
         let args = ActionArguments(value: actionValue, with: .manualInvocation)
-        let expectation = XCTestExpectation(description: "Completed")
-        action.perform(with: args) { (result) in
-            XCTAssertNil(result.value)
-            XCTAssertNotNil(result.error)
-            expectation.fulfill()
-        }
+        
+        let result = await action.perform(with: args)
+        XCTAssertNil(result.value)
+        XCTAssertNotNil(result.error)
 
-        wait(for: [expectation], timeout: 10.0)
 
         XCTAssertTrue(self.channelEdits.isEmpty)
         XCTAssertTrue(self.contactEdits.isEmpty)

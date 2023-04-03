@@ -45,28 +45,25 @@ public class OpenExternalURLAction: NSObject, Action {
     }
 
     public func perform(
-        with arguments: ActionArguments,
-        completionHandler: @escaping UAActionCompletionHandler
-    ) {
-        guard let url = parseURL(arguments) else {
-            completionHandler(ActionResult.empty())
-            return
-        }
-
-        #if !os(watchOS)
-        UIApplication.shared.open(url, options: [:]) { success in
+        with arguments: ActionArguments) async -> ActionResult {
+            guard let url = parseURL(arguments) else {
+                return ActionResult.empty()
+            }
+            
+    #if !os(watchOS)
+            let success = await UIApplication.shared.open(url, options: [:])
             if success {
-                completionHandler(ActionResult(value: url.absoluteString))
+                return ActionResult(value: url.absoluteString)
             } else {
                 let error = AirshipErrors.error(
                     "Unable to open url \(url)."
                 )
-                completionHandler(ActionResult(error: error))
+                return ActionResult(error: error)
             }
-        }
-        #else
-        WKExtension.shared().openSystemURL(url)
-        #endif
+            
+    #else
+            WKExtension.shared().openSystemURL(url)
+    #endif
     }
 
     func parseURL(_ arguments: ActionArguments) -> URL? {

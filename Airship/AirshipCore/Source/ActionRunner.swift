@@ -3,7 +3,7 @@
 /// A helper class for running actions by name or by reference.
 @objc(UAActionRunner)
 public class ActionRunner: NSObject {
-
+    
     /**
      * Runs a registered action with the given name.
      *
@@ -21,15 +21,16 @@ public class ActionRunner: NSObject {
         value: Any?,
         situation: Situation
     ) {
-        self.run(
-            actionName,
-            value: value,
-            situation: situation,
-            metadata: nil,
-            completionHandler: nil
-        )
+        Task {
+            self.run(
+                actionName,
+                value: value,
+                situation: situation,
+                metadata: nil
+            )
+        }
     }
-
+    
     /**
      * Runs a registered action with the given name.
      *
@@ -49,15 +50,16 @@ public class ActionRunner: NSObject {
         situation: Situation,
         metadata: [AnyHashable: Any]?
     ) {
-        self.run(
-            actionName,
-            value: value,
-            situation: situation,
-            metadata: metadata,
-            completionHandler: nil
-        )
+        Task {
+            self.run(
+                actionName,
+                value: value,
+                situation: situation,
+                metadata: metadata
+            )
+        }
     }
-
+    
     /**
      * Runs a registered action with the given name.
      *
@@ -74,18 +76,15 @@ public class ActionRunner: NSObject {
     public class func run(
         _ actionName: String,
         value: Any?,
-        situation: Situation,
-        completionHandler: UAActionCompletionHandler?
-    ) {
-        self.run(
+        situation: Situation) async -> ActionResult {
+        return await self.run(
             actionName,
             value: value,
             situation: situation,
-            metadata: nil,
-            completionHandler: completionHandler
+            metadata: nil
         )
     }
-
+    
     /**
      * Runs a registered action with the given name.
      *
@@ -104,29 +103,25 @@ public class ActionRunner: NSObject {
         _ actionName: String,
         value: Any?,
         situation: Situation,
-        metadata: [AnyHashable: Any]?,
-        completionHandler: UAActionCompletionHandler?
-    ) {
+        metadata: [AnyHashable: Any]?) async -> ActionResult {
         guard
             let entry = Airship.shared.actionRegistry.registryEntry(actionName)
         else {
             AirshipLogger.debug(
                 "No action found with name \(actionName), skipping action."
             )
-            completionHandler?(ActionResult.actionNotFound())
-            return
+            return ActionResult.actionNotFound()
         }
-
-        self.run(
+        
+        return await self.run(
             actionName,
             entry: entry,
             value: value,
             situation: situation,
-            metadata: metadata,
-            completionHandler: completionHandler
+            metadata: metadata
         )
     }
-
+    
     /**
      * Runs an action.
      *
@@ -137,15 +132,16 @@ public class ActionRunner: NSObject {
      */
     @objc(runAction:value:situation:)
     public class func run(_ action: Action, value: Any?, situation: Situation) {
-        self.run(
-            action,
-            value: value,
-            situation: situation,
-            metadata: nil,
-            completionHandler: nil
-        )
+        Task {
+            self.run(
+                action,
+                value: value,
+                situation: situation,
+                metadata: nil
+            )
+        }
     }
-
+    
     /**
      * Runs an action.
      *
@@ -162,15 +158,16 @@ public class ActionRunner: NSObject {
         situation: Situation,
         metadata: [AnyHashable: Any]?
     ) {
-        self.run(
-            action,
-            value: value,
-            situation: situation,
-            metadata: metadata,
-            completionHandler: nil
-        )
+        Task {
+            self.run(
+                action,
+                value: value,
+                situation: situation,
+                metadata: metadata
+            )
+        }
     }
-
+    
     /**
      * Runs an action.
      *
@@ -184,18 +181,15 @@ public class ActionRunner: NSObject {
     public class func run(
         _ action: Action,
         value: Any?,
-        situation: Situation,
-        completionHandler: UAActionCompletionHandler?
-    ) {
-        self.run(
+        situation: Situation) async -> ActionResult {
+        return await self.run(
             action,
             value: value,
             situation: situation,
-            metadata: nil,
-            completionHandler: completionHandler
+            metadata: nil
         )
     }
-
+    
     /**
      * Runs an action.
      *
@@ -211,17 +205,15 @@ public class ActionRunner: NSObject {
         _ action: Action,
         value: Any?,
         situation: Situation,
-        metadata: [AnyHashable: Any]?,
-        completionHandler: UAActionCompletionHandler?
-    ) {
+        metadata: [AnyHashable: Any]?) async -> ActionResult {
         let arguments = ActionArguments(
             value: value,
             with: situation,
             metadata: metadata
         )
-        self.run(action, args: arguments, completionHandler: completionHandler)
+        return await self.run(action, args: arguments)
     }
-
+    
     /**
      * Runs all actions in a given dictionary. The dictionary's keys will be treated
      * as action names, while the values will be treated as each action's argument value.
@@ -239,105 +231,81 @@ public class ActionRunner: NSObject {
     public class func run(
         actionValues: [AnyHashable: Any],
         situation: Situation,
-        metadata: [AnyHashable: Any]?,
-        completionHandler: UAActionCompletionHandler?
-    ) {
-        let aggregateResult = AggregateActionResult()
-
-        var entries: Set<ActionRegistryEntry> = Set()
-        let dispatchGroup = DispatchGroup()
-
-        actionValues.forEach { name, value in
-            if let actionName = name as? String {
-                if let entry = Airship.shared.actionRegistry.registryEntry(
-                    actionName
-                ) {
-                    if !entries.contains(entry) {
-                        entries.insert(entry)
-                        dispatchGroup.enter()
-                        self.run(
-                            actionName,
-                            entry: entry,
-                            value: value,
-                            situation: situation,
-                            metadata: metadata
-                        ) { result in
+        metadata: [AnyHashable: Any]?) async -> ActionResult {
+            let aggregateResult = AggregateActionResult()
+            
+            var entries: Set<ActionRegistryEntry> = Set()
+            
+            for (name, value) in actionValues {
+                if let actionName = name as? String {
+                    if let entry = Airship.shared.actionRegistry.registryEntry(
+                        actionName
+                    ) {
+                        if !entries.contains(entry) {
+                            entries.insert(entry)
+                            let result = await self.run(
+                                actionName,
+                                entry: entry,
+                                value: value,
+                                situation: situation,
+                                metadata: metadata
+                            )
                             aggregateResult.add(result, actionName: actionName)
-                            dispatchGroup.leave()
                         }
                     }
                 }
             }
-        }
-        dispatchGroup.notify(queue: DispatchQueue.main) {
-            completionHandler?(aggregateResult)
-        }
+            
+            return aggregateResult
     }
-
+    
     private class func run(
         _ actionName: String,
         entry: ActionRegistryEntry,
         value: Any?,
         situation: Situation,
-        metadata: [AnyHashable: Any]?,
-        completionHandler: UAActionCompletionHandler?
-    ) {
-
-        // Add the action name to the metadata
-        var fullMetadata: [AnyHashable: Any] = metadata ?? [:]
-        fullMetadata[UAActionMetadataRegisteredName] = actionName
-        let args = ActionArguments(
-            value: value,
-            with: situation,
-            metadata: fullMetadata
-        )
-        if entry.predicate?(args) == false {
-            AirshipLogger.debug(
-                "Predicate for action \(actionName) rejected args \(args)."
+        metadata: [AnyHashable: Any]?) async -> ActionResult {
+            
+            // Add the action name to the metadata
+            var fullMetadata: [AnyHashable: Any] = metadata ?? [:]
+            fullMetadata[UAActionMetadataRegisteredName] = actionName
+            let args = ActionArguments(
+                value: value,
+                with: situation,
+                metadata: fullMetadata
             )
-            completionHandler?(ActionResult.rejectedArguments())
-        } else {
-            self.run(
-                entry.action(situation: situation),
-                args: args,
-                completionHandler: completionHandler
-            )
+            if entry.predicate?(args) == false {
+                AirshipLogger.debug(
+                    "Predicate for action \(actionName) rejected args \(args)."
+                )
+                return ActionResult.rejectedArguments()
+            } else {
+                return await self.run(
+                    entry.action(situation: situation),
+                    args: args
+                )
+            }
         }
-    }
-
+    
     private class func run(
         _ action: Action,
-        args: ActionArguments,
-        completionHandler: UAActionCompletionHandler?
-    ) {
-
-        var completed = false
-        UADispatcher.main.dispatchAsyncIfNecessary {
+        args: ActionArguments) async -> ActionResult {
+            
             guard action.acceptsArguments(args) else {
                 AirshipLogger.debug(
                     "Action \(action) rejected arguments \(args)."
                 )
-                completionHandler?(ActionResult.rejectedArguments())
-                return
+                return ActionResult.rejectedArguments()
+                
             }
-
+            
             AirshipLogger.debug(
                 "Action \(action) performing with arguments \(args)."
             )
             action.willPerform?(with: args)
-            action.perform(with: args) { result in
-                UADispatcher.main.dispatchAsyncIfNecessary {
-                    guard !completed else {
-                        AirshipLogger.error(
-                            "Completion handler called multiple times for action \(action)"
-                        )
-                        return
-                    }
-                    completed = true
-                    action.didPerform?(with: args, with: result)
-                    completionHandler?(result)
-                }
-            }
+            let result = await action.perform(with: args)
+            
+            action.didPerform?(with: args, with: result)
+            return result
         }
-    }
 }

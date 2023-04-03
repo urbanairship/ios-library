@@ -45,9 +45,7 @@ public class AddCustomEventAction: NSObject, Action {
     }
 
     public func perform(
-        with arguments: ActionArguments,
-        completionHandler: UAActionCompletionHandler
-    ) {
+        with arguments: ActionArguments) async -> ActionResult {
         let dict = arguments.value as? [AnyHashable: Any]
         let eventName = parseString(dict, key: CustomEvent.eventNameKey) ?? ""
         let eventValue = parseString(dict, key: CustomEvent.eventValueKey)
@@ -89,12 +87,12 @@ public class AddCustomEventAction: NSObject, Action {
 
         if event.isValid() {
             event.track()
-            completionHandler(ActionResult.empty())
+            return ActionResult.empty()
         } else {
             let error = AirshipErrors.error(
                 "Invalid custom event \(arguments.value ?? "")"
             )
-            completionHandler(ActionResult(error: error))
+            return ActionResult(error: error)
         }
     }
 

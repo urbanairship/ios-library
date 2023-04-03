@@ -457,30 +457,25 @@ public class Airship: NSObject {
     ///     - completionHandler: The result. `true` if the link was able to be procesed, otherwise `false`.
     @objc
     public func deepLink(
-        _ deepLink: URL,
-        completionHandler: @escaping (Bool) -> Void
-    ) {
+        _ deepLink: URL) async -> Bool {
         guard deepLink.scheme != Airship.deepLinkScheme else {
             guard handleAirshipDeeplink(deepLink) else {
                 _ = self.airshipInstance.components.first(where: {
                     return $0.deepLink?(deepLink) == true
                 })
-                completionHandler(true)
-                return
+                return true
             }
-            completionHandler(true)
-            return
+           return true
         }
 
         guard let deepLinkDelegate = self.airshipInstance.deepLinkDelegate
         else {
-            completionHandler(false)
-            return
+            return  false
         }
 
-        deepLinkDelegate.receivedDeepLink(deepLink) {
-            completionHandler(true)
-        }
+        await deepLinkDelegate.receivedDeepLink(deepLink)
+        
+        return true
     }
 
     /// Handle the Airship deep links for app_settings and app_store.

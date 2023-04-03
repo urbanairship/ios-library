@@ -19,9 +19,7 @@ public class EmptyAction: NSObject, Action {
     }
 
     public func perform(
-        with arguments: ActionArguments,
-        completionHandler: @escaping UAActionCompletionHandler
-    ) {
-        completionHandler(ActionResult.empty())
+        with arguments: ActionArguments) async -> ActionResult {
+        return ActionResult.empty()
     }
 }

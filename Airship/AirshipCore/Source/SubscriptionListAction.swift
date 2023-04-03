@@ -67,16 +67,14 @@ public class SubscriptionListAction: NSObject, Action {
     }
 
     public func perform(
-        with arguments: ActionArguments,
-        completionHandler: @escaping UAActionCompletionHandler
-    ) {
+        with arguments: ActionArguments) async -> ActionResult {
         do {
             let edits = try parse(args: arguments)
             applyChannelEdits(edits)
             applyContactEdits(edits)
-            completionHandler(ActionResult.empty())
+            return ActionResult.empty()
         } catch {
-            completionHandler(ActionResult(error: error))
+            return ActionResult(error: error)
         }
     }
 

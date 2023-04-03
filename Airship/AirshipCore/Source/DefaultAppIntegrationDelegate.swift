@@ -162,19 +162,17 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
         }
 
         // Actions -> Push
-        dispatchGroup.enter()
-        ActionRunner.run(
-            actionValues: actionsPayload,
-            situation: situation,
-            metadata: metadata
-        ) { _ in
+       
+        Task {
+            _ = await ActionRunner.run(
+                actionValues: actionsPayload,
+                situation: situation,
+                metadata: metadata
+            )
+            
             self.push.didReceiveNotificationResponse(response) {
-                dispatchGroup.leave()
+                completionHandler()
             }
-        }
-
-        dispatchGroup.notify(queue: .main) {
-            completionHandler()
         }
     }
     #endif
@@ -202,45 +200,47 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
         presentationOptions: UNNotificationPresentationOptions?,
         completionHandler: @escaping (UIBackgroundFetchResult) -> Void
     ) {
-        AirshipLogger.info(
-            "Application received remote notification: \(userInfo)"
-        )
-
-        let situation =
+        Task {
+            AirshipLogger.info(
+                "Application received remote notification: \(userInfo)"
+            )
+            
+            let situation =
             isForeground
             ? Situation.foregroundPush : Situation.backgroundPush
-
-        let dispatchGroup = DispatchGroup()
-        var fetchResults: [UInt] = []
-        let lock = AirshipLock()
-        var metadata: [AnyHashable: Any] = [:]
-        metadata[UAActionMetadataPushPayloadKey] = userInfo
-
-        if let presentationOptions = presentationOptions {
-            metadata[UAActionMetadataForegroundPresentationKey] =
+            
+            let dispatchGroup = DispatchGroup()
+            var fetchResults: [UInt] = []
+            let lock = AirshipLock()
+            var metadata: [AnyHashable: Any] = [:]
+            metadata[UAActionMetadataPushPayloadKey] = userInfo
+            
+            if let presentationOptions = presentationOptions {
+                metadata[UAActionMetadataForegroundPresentationKey] =
                 self.isForegroundPresentation(presentationOptions)
-        }
-
-        // Pushable components
-        self.pushableComponents.forEach {
-            if $0.receivedRemoteNotification != nil {
-                dispatchGroup.enter()
-                $0.receivedRemoteNotification?(userInfo) { fetchResult in
-                    lock.sync {
-                        fetchResults.append(fetchResult.rawValue)
+            }
+            
+            // Pushable components
+            self.pushableComponents.forEach {
+                if $0.receivedRemoteNotification != nil {
+                    dispatchGroup.enter()
+                    $0.receivedRemoteNotification?(userInfo) { fetchResult in
+                        lock.sync {
+                            fetchResults.append(fetchResult.rawValue)
+                        }
+                        dispatchGroup.leave()
                     }
-                    dispatchGroup.leave()
                 }
             }
-        }
-
-        // Actions -> Push
-        dispatchGroup.enter()
-        ActionRunner.run(
-            actionValues: userInfo,
-            situation: situation,
-            metadata: metadata
-        ) { result in
+            
+            // Actions -> Push
+            
+            
+            let result = await ActionRunner.run(
+                actionValues: userInfo,
+                situation: situation,
+                metadata: metadata
+            )
             lock.sync {
                 fetchResults.append(UInt(result.fetchResult.rawValue))
             }
@@ -250,15 +250,11 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
             ) { pushResult in
                 lock.sync {
                     let result: UIBackgroundFetchResult =
-                        pushResult as! UIBackgroundFetchResult
+                    pushResult as! UIBackgroundFetchResult
                     fetchResults.append(result.rawValue)
                 }
-                dispatchGroup.leave()
+                completionHandler(AirshipUtils.mergeFetchResults(fetchResults))
             }
-        }
-
-        dispatchGroup.notify(queue: .main) {
-            completionHandler(AirshipUtils.mergeFetchResults(fetchResults))
         }
     }
 

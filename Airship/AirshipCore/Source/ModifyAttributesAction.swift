@@ -83,9 +83,7 @@ public class ModifyAttributesAction: NSObject, Action {
     }
 
     public func perform(
-        with arguments: ActionArguments,
-        completionHandler: UAActionCompletionHandler
-    ) {
+        with arguments: ActionArguments) async -> ActionResult {
         let dict = arguments.value as? [String: [String: Any]]
         if let channelAttributes = dict?[ModifyAttributesAction.channelsKey] {
             applyEdits(channelAttributes, editor: channel().editAttributes())
@@ -96,7 +94,7 @@ public class ModifyAttributesAction: NSObject, Action {
             applyEdits(namedUserAttributes, editor: contact().editAttributes())
         }
 
-        completionHandler(.empty())
+        return .empty()
     }
 
     func applyEdits(

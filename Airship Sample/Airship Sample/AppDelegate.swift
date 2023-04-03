@@ -65,33 +65,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate, DeepLinkDelegate,
     }
 
     func receivedDeepLink(
-        _ deepLink: URL,
-        completionHandler: @escaping () -> Void
-    ) {
-        DispatchQueue.main.async {
-            guard deepLink.host?.lowercased() == "deeplink" else {
-                self.showInvalidDeepLinkAlert(deepLink)
-                completionHandler()
-                return
-            }
+        _ deepLink: URL
+    ) async -> Void {
+        guard deepLink.host?.lowercased() == "deeplink" else {
+            self.showInvalidDeepLinkAlert(deepLink)
+            return
+        }
 
-            let components = deepLink.path.lowercased().split(separator: "/")
-            switch components.first {
-            case "settings":
-                AppState.shared.homeDestination = .settings
-                AppState.shared.selectedTab = .home
-            case "home":
-                AppState.shared.homeDestination = nil
-                AppState.shared.selectedTab = .home
-            case "preferences":
-                AppState.shared.selectedTab = .preferenceCenter
-            case "message_center":
-                AppState.shared.selectedTab = .messageCenter
-            default:
-                self.showInvalidDeepLinkAlert(deepLink)
-            }
-
-            completionHandler()
+        let components = deepLink.path.lowercased().split(separator: "/")
+        switch components.first {
+        case "settings":
+            AppState.shared.homeDestination = .settings
+            AppState.shared.selectedTab = .home
+        case "home":
+            AppState.shared.homeDestination = nil
+            AppState.shared.selectedTab = .home
+        case "preferences":
+            AppState.shared.selectedTab = .preferenceCenter
+        case "message_center":
+            AppState.shared.selectedTab = .messageCenter
+        default:
+            self.showInvalidDeepLinkAlert(deepLink)
         }
     }
 

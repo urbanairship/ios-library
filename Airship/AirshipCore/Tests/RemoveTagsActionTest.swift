@@ -96,28 +96,22 @@ final class RemoveTagsActionTest: XCTestCase {
         }
     }
 
-    func testPerformSimple() throws {
+    func testPerformSimple() async throws {
         self.channel.tags = ["foo", "bar", "tag", "another tag"]
 
-        let actionExpectation = self.expectation(description: "action")
-        self.action.perform(
+        _ = await self.action.perform(
             with: ActionArguments(
                 value: simpleValue,
                 with: .manualInvocation
             )
-        ) { result in
-            actionExpectation.fulfill()
-        }
-
-        self.waitForExpectations(timeout: 10)
-
+        )
         XCTAssertEqual(
             ["foo", "bar"],
             channel.tags
         )
     }
 
-    func testPerformComplex() throws {
+    func testPerformComplex() async throws {
         self.channel.tags = ["foo", "bar", "tag"]
 
         let tagGroupsSet = self.expectation(description: "tagGroupsSet")
@@ -159,22 +153,18 @@ final class RemoveTagsActionTest: XCTestCase {
             tagGroupsSet.fulfill()
         }
 
-        let actionExpectation = self.expectation(description: "action")
-        self.action.perform(
+        _ = await self.action.perform(
             with: ActionArguments(
                 value: complexValue,
                 with: .manualInvocation
             )
-        ) { result in
-            actionExpectation.fulfill()
-        }
-
-        self.waitForExpectations(timeout: 10)
+        )
 
         XCTAssertEqual(
             ["foo", "bar"],
             channel.tags
         )
+        await self.waitForExpectations(timeout: 10)
     }
 }
 

@@ -698,8 +698,7 @@ public class AirshipContact: NSObject, Component, ContactProtocol {
     }
 
     /// Fetches subscription lists.
-    /// - Parameter completionHandler: A completion handler.
-    /// - Returns: A Disposable.
+    /// - Returns: Subscription lists.
     @discardableResult
     public func fetchSubscriptionLists() async throws ->  [String: ChannelScopes] {
         guard let contactID = self.currentContactID else {

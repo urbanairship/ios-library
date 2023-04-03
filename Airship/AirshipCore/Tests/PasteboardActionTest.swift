@@ -66,31 +66,24 @@ final class PasteboardActionTest: XCTestCase {
         }
     }
     
-    func testPerformWithString() throws {
+    func testPerformWithString() async throws {
         let arguments = ActionArguments(value: "pasteboard_string", with: .manualInvocation)
-        
-        let actionExpectation = self.expectation(description: "action")
-        self.action.perform(
+      
+        let result = await self.action.perform(
             with: arguments
-        ) { result in
-            XCTAssertEqual(result.value as! String, arguments.value as! String)
-            actionExpectation.fulfill()
-        }
-
-        self.waitForExpectations(timeout: 10)
+        )
+        
+       XCTAssertEqual(result.value as! String, arguments.value as! String)
+        
     }
     
-    func testPerformWithDictionary() throws {
+    func testPerformWithDictionary() async throws {
         let arguments = ActionArguments(value: ["text": "pasteboard string"], with: .manualInvocation)
         
-        let actionExpectation = self.expectation(description: "action")
-        self.action.perform(
+        let result = await self.action.perform(
             with: arguments
-        ) { result in
-            XCTAssertEqual(result.value as! [String : String], arguments.value as! [String : String])
-            actionExpectation.fulfill()
-        }
-
-        self.waitForExpectations(timeout: 10)
+        )
+        
+        XCTAssertEqual(result.value as! [String : String], arguments.value as! [String : String])
     }
 }

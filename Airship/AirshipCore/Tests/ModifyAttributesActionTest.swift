@@ -63,7 +63,7 @@ final class ModifyAttributesActionTest: XCTestCase {
         }
     }
 
-    func testPerform() throws {
+    func testPerform() async throws {
         let value = [
             "channel": [
                 "set": ["name": "clive"],
@@ -125,15 +125,14 @@ final class ModifyAttributesActionTest: XCTestCase {
 
 
         let actionExpectation = self.expectation(description: "action")
-        self.action.perform(
+        _ = await self.action.perform(
             with: ActionArguments(
                 value: value,
                 with: .manualInvocation
             )
-        ) { result in
-            actionExpectation.fulfill()
-        }
+        )
+        actionExpectation.fulfill()
 
-        self.waitForExpectations(timeout: 10)
+        await self.waitForExpectations(timeout: 10)
     }
 }

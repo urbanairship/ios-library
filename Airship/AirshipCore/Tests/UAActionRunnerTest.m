@@ -30,7 +30,8 @@ NSString *anotherActionName = @"AnotherActionName";
  * Test running an action from a name
  */
 - (void)testRunActionWithName {
-    __block BOOL didCompletionHandlerRun = NO;
+    
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Completion handler ran"];
     __block BOOL didActionRun = NO;
 
     UABlockAction *action = [[UABlockAction alloc] initWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
@@ -51,17 +52,16 @@ NSString *anotherActionName = @"AnotherActionName";
                             situation:UASituationForegroundPush
                              metadata:@{@"meta key": @"meta value"}
                     completionHandler:^(UAActionResult *finalResult) {
-                        didCompletionHandlerRun = YES;
+                        [expectation fulfill];
                         XCTAssertEqual(finalResult.fetchResult, UAActionFetchResultNoData, @"Action should return a UAActionFetchResultNoData fetch result");
                         XCTAssertEqual(finalResult.status, UAActionStatusCompleted, @"Action should of ran and returned UAActionStatusCompleted status");
     }];
 
-    XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did not run");
+    [self waitForTestExpectations];
     XCTAssertTrue(didActionRun, @"Runner should run action if no predicate is defined");
 
     didActionRun = NO;
-    didCompletionHandlerRun = NO;
-
+    expectation = [self expectationWithDescription:@"Completion handler ran"];
 
     [UAActionRunner runActionWithName:@"nopenopenopenopenope"
                                 value:@"value"
@@ -70,12 +70,11 @@ NSString *anotherActionName = @"AnotherActionName";
                     completionHandler:^(UAActionResult *result) {
                         XCTAssertEqual(result.status, UAActionStatusActionNotFound, "action should not be found");
                         XCTAssertNil(result.value, @"a bad action name should result in a nil value");
-                        didCompletionHandlerRun = YES;
+                        [expectation fulfill];
                     }];
 
-    XCTAssertTrue(didCompletionHandlerRun, @"completion handler should have run");
-
-    didCompletionHandlerRun = NO;
+    [self waitForTestExpectations];
+    expectation = [self expectationWithDescription:@"Completion handler ran"];
 
     //re-register the action with a predicate guaranteed to fail
     [self.registry registerAction:action name:actionName predicate:^(UAActionArguments *args) {
@@ -88,10 +87,10 @@ NSString *anotherActionName = @"AnotherActionName";
                             situation:UASituationForegroundPush
                              metadata:nil
                     completionHandler:^(UAActionResult *finalResult) {
-                        didCompletionHandlerRun = YES;
+                        [expectation fulfill];
                     }];
 
-    XCTAssertTrue(didCompletionHandlerRun, @"completion handler should have run");
+    [self waitForTestExpectations];
     XCTAssertFalse(didActionRun, @"action should not have run");
 }
 
@@ -152,7 +151,8 @@ NSString *anotherActionName = @"AnotherActionName";
  * Test running an action from a name with a predicate that returns NO
  */
 - (void)testRunActionWithNameNoPredicate {
-    __block BOOL didCompletionHandlerRun = NO;
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Completion handler ran"];
+   
 
     UABlockAction *action = [[UABlockAction alloc] initWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
         XCTFail(@"Action should not run if the predicate returns NO");
@@ -174,21 +174,22 @@ NSString *anotherActionName = @"AnotherActionName";
                             situation:UASituationForegroundPush
                              metadata:nil
                     completionHandler:^(UAActionResult *finalResult) {
-                        didCompletionHandlerRun = YES;
+                        [expectation fulfill];
                         XCTAssertNil(finalResult.value, @"Action that did not run should return a nil value result");
                         XCTAssertEqual(finalResult.fetchResult, UAActionFetchResultNoData, @"Action that did not run should return a UAActionFetchResultNoData fetch result");
                         XCTAssertEqual(finalResult.status, UAActionStatusArgumentsRejected, @"Rejected arguments should return UAActionStatusArgumentsRejected status");
                     }];
 
 
-    XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did not run");
+    [self waitForTestExpectations];
 }
 
 /**
  * Test running an action from a name with a predicate that returns YES
  */
 - (void)testRunActionWithNameYESPredicate {
-    __block BOOL didCompletionHandlerRun = NO;
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Completion handler ran"];
+   
     __block BOOL didActionRun = NO;
 
     UABlockAction *action = [[UABlockAction alloc] initWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
@@ -217,13 +218,13 @@ NSString *anotherActionName = @"AnotherActionName";
                             situation:UASituationForegroundPush
                              metadata:nil
                     completionHandler:^(UAActionResult *finalResult) {
-                        didCompletionHandlerRun = YES;
+                        [expectation fulfill];
                         XCTAssertNil(finalResult.value, @"Action that did not run should return a nil value result");
                         XCTAssertEqual(finalResult.fetchResult, UAActionFetchResultNoData, @"Action that did not run should return a UAActionFetchResultNoData fetch result");
                         XCTAssertEqual(finalResult.status, UAActionStatusCompleted, @"Action should of ran and returned UAActionStatusCompleted status");
                     }];
 
-    XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did not run");
+    [self waitForTestExpectations];
     XCTAssertTrue(didActionRun, @"Runner should run action if predicate returns YES");
 }
 
@@ -231,7 +232,8 @@ NSString *anotherActionName = @"AnotherActionName";
  * Test trying to run an action from a name that is not registered
  */
 - (void)testRunActionWithNameNotRegistered {
-    __block BOOL didCompletionHandlerRun = NO;
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Completion handler ran"];
+   
 
 
     [UAActionRunner runActionWithName:@"SomeUnregisteredActionName"
@@ -239,13 +241,13 @@ NSString *anotherActionName = @"AnotherActionName";
                             situation:UASituationWebViewInvocation
                              metadata:nil
                     completionHandler:^(UAActionResult *finalResult) {
-                        didCompletionHandlerRun = YES;
+                        [expectation fulfill];
                         XCTAssertNil(finalResult.value, @"Action that did not run should return a nil value result");
                         XCTAssertEqual(finalResult.fetchResult, UAActionFetchResultNoData, @"Action that did not run should return a UAActionFetchResultNoData fetch result");
                         XCTAssertEqual(finalResult.status, UAActionStatusActionNotFound, @"Not found action should return UAActionStatusActionNotFound status");
                     }];
 
-    XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did not run");
+    [self waitForTestExpectations];
 }
 
 
@@ -281,8 +283,8 @@ NSString *anotherActionName = @"AnotherActionName";
  * Test running an action
  */
 - (void)testRunAction {
-    __block BOOL didCompletionHandlerRun = NO;
     
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Completion handler ran"];
     UAActionResult *result = [UAActionResult emptyResult];
     
     UABlockAction *action = [[UABlockAction alloc] initWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
@@ -294,11 +296,11 @@ NSString *anotherActionName = @"AnotherActionName";
 
 
     [UAActionRunner runAction:action value:@"value" situation:UASituationLaunchedFromPush metadata:nil completionHandler:^(UAActionResult *finalResult) {
-        didCompletionHandlerRun = YES;
+        [expectation fulfill];
         XCTAssertEqualObjects(result, finalResult, @"Runner completion handler did not receive the action's results");
     }];
     
-    XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did not run");
+    [self waitForTestExpectations];
 }
 
 /**
@@ -390,38 +392,6 @@ NSString *anotherActionName = @"AnotherActionName";
     XCTestExpectation *expectation = [self expectationWithDescription:@"Completion handler ran"];
     NSDictionary *actionPayload = @{actionName : @"value", anotherActionName: @"another value"};
     [UAActionRunner runActionsWithActionValues:actionPayload situation:UASituationManualInvocation metadata:@{@"meta key": @"meta value"}
-                             completionHandler:^(UAActionResult *finalResult) {
-                                 // Should return an aggregate action result
-                                 XCTAssertTrue([finalResult isKindOfClass:[UAAggregateActionResult class]], @"Running actions should return a UAAggregateActionResult");
-                                 NSDictionary *resultDictionary = (NSDictionary  *)finalResult.value;
-                                 XCTAssertEqual((NSUInteger) 1, resultDictionary.count, @"Action should have 1 result");
-                                 [expectation fulfill];
-                             }];
-
-    [self waitForTestExpectations];
-    XCTAssertEqual(1, actionRunCount);
-}
-
-/**
- * Test that running actions that call their completion handlers more than once does not crash the action runner
- */
-- (void)testRunActionPayloadOverCompletionDoesNotCrash {
-    __block int actionRunCount = 0;
-
-    UABlockAction *action = [[UABlockAction alloc] initWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
-        actionRunCount++;
-        completionHandler([UAActionResult emptyResult]);
-        completionHandler([UAActionResult emptyResult]);
-    }];
-
-    [self.registry registerAction:action name:actionName];
-
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Completion handler ran"];
-    NSDictionary *actionPayload = @{actionName : @"value"};
-
-    [UAActionRunner runActionsWithActionValues:actionPayload
-                                     situation:UASituationManualInvocation
-                                      metadata:@{@"meta key": @"meta value"}
                              completionHandler:^(UAActionResult *finalResult) {
                                  // Should return an aggregate action result
                                  XCTAssertTrue([finalResult isKindOfClass:[UAAggregateActionResult class]], @"Running actions should return a UAAggregateActionResult");

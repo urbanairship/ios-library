@@ -441,8 +441,7 @@ public class AirshipChannel: NSObject, Component, ChannelProtocol {
 
 
     /// Fetches subscription lists.
-    /// - Parameter completionHandler: A completion handler.
-    /// - Returns: A Disposable.
+    /// - Returns: Subscriptions lists.
     @objc
     public func fetchSubscriptionLists() async throws -> [String] {
         return try await self.audienceManager.fetchSubscriptionLists()

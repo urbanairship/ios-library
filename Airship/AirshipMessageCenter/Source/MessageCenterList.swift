@@ -491,8 +491,9 @@ public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
 
             try await self.store.updateMessages(
                 messages: messages,
-                lastModifiedTime: response.headers["Last-Modified"]
+                lastModifiedTime: lastModified
             )
+            
             return true
         } catch {
             AirshipLogger.error("Retrieve message list failed")

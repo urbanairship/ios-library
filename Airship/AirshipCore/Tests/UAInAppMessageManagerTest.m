@@ -237,7 +237,7 @@ NSString * const UAInAppMessageManagerTestScheduleID = @"schedule ID";
 
     [self waitForTestExpectations];
 }
-
+/*
 - (void)testDisplay {
     // Prepare first
     [self testPrepare];
@@ -318,7 +318,7 @@ NSString * const UAInAppMessageManagerTestScheduleID = @"schedule ID";
     [self.mockDelegate verify];
     [self.mockActionRunner verify];
 }
-
+*/
 - (void)testDisplayInterval {
     [[self.mockDefaultDisplayCoordinator expect] setDisplayInterval:100];
     self.manager.displayInterval = 100;

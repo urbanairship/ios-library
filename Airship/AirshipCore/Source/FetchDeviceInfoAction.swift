@@ -76,9 +76,7 @@ public class FetchDeviceInfoAction: NSObject, Action {
     }
 
     public func perform(
-        with arguments: ActionArguments,
-        completionHandler: UAActionCompletionHandler
-    ) {
+        with arguments: ActionArguments) async -> ActionResult {
         var dict: [String: Any] = [:]
         let channel = self.channel()
         let contact = self.contact()
@@ -95,6 +93,6 @@ public class FetchDeviceInfoAction: NSObject, Action {
         dict[FetchDeviceInfoAction.pushOptIn] =
         push.isPushNotificationsOptedIn
 
-        completionHandler(ActionResult(value: dict))
+        return ActionResult(value: dict)
     }
 }
