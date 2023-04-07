@@ -1,0 +1,415 @@
+---
+presentation:
+  android:
+    disable_back_button: false
+  default_placement:
+    device:
+      lock_orientation: portrait
+    ignore_safe_area: false
+    position:
+      horizontal: center
+      vertical: center
+    shade_color:
+      default:
+        alpha: 0.2
+        hex: "#000000"
+        type: hex
+    size:
+      height: 100%
+      max_height: 100%
+      max_width: 100%
+      min_height: 100%
+      min_width: 100%
+      width: 100%
+  dismiss_on_touch_outside: false
+  type: modal
+version: 1
+view:
+  identifier: cd53eb72-6983-43b7-a7c6-084067b3e431
+  type: pager_controller
+  view:
+    direction: vertical
+    items:
+      - size:
+          height: 100%
+          width: 100%
+        view:
+          items:
+            - position:
+                horizontal: center
+                vertical: center
+              size:
+                height: 100%
+                width: 100%
+              view:
+                disable_swipe: false
+                items:
+                  - identifier: d3fc5b7e-1a6b-4dc9-aacc-75f1a4b0f8be
+                    type: pager_item
+                    view:
+                      background_color:
+                        default:
+                          alpha: 1
+                          hex: "#FFFFFF"
+                          type: hex
+                        selectors:
+                          - color:
+                              alpha: 1
+                              hex: "#000000"
+                              type: hex
+                            dark_mode: true
+                            platform: ios
+                          - color:
+                              alpha: 1
+                              hex: "#000000"
+                              type: hex
+                            dark_mode: true
+                            platform: android
+                      items:
+                        - position:
+                            horizontal: center
+                            vertical: center
+                          size:
+                            height: 100%
+                            width: 100%
+                          view:
+                            items:
+                              - margin:
+                                  bottom: 16
+                                position:
+                                  horizontal: center
+                                  vertical: center
+                                size:
+                                  height: 100%
+                                  width: 100%
+                                view:
+                                  background_color:
+                                    default:
+                                      alpha: 1
+                                      hex: "#FFFFFF"
+                                      type: hex
+                                    selectors:
+                                      - color:
+                                          alpha: 1
+                                          hex: "#000000"
+                                          type: hex
+                                        dark_mode: true
+                                        platform: ios
+                                      - color:
+                                          alpha: 1
+                                          hex: "#000000"
+                                          type: hex
+                                        dark_mode: true
+                                        platform: android
+                                  direction: vertical
+                                  items:
+                                    - identifier: scroll_container
+                                      size:
+                                        height: 100%
+                                        width: 100%
+                                      view:
+                                        direction: vertical
+                                        type: scroll_layout
+                                        view:
+                                          direction: vertical
+                                          items:
+                                            - size:
+                                                height: auto
+                                                width: 100%
+                                              view:
+                                                media_fit: center_inside
+                                                media_type: youtube
+                                                type: media
+                                                url: https://www.youtube.com/embed/xUOQZeN8A7o
+                                                video:
+                                                  aspect_ratio: 1.77777777777778
+                                                  autoplay: false
+                                                  loop: true
+                                                  muted: true
+                                                  show_controls: true
+                                            - size:
+                                                height: auto
+                                                width: 100%
+                                              view:
+                                                media_fit: center_inside
+                                                media_type: youtube
+                                                type: media
+                                                url: https://www.youtube.com/embed/xUOQZeN8A7o
+                                                video:
+                                                  aspect_ratio: 1.77777777777778
+                                                  autoplay: true
+                                                  loop: true
+                                                  muted: true
+                                                  show_controls: true
+                                            - size:
+                                                height: 100%
+                                                width: 100%
+                                              view:
+                                                direction: horizontal
+                                                items: []
+                                                type: linear_layout
+                                          type: linear_layout
+                                  type: linear_layout
+                            type: container
+                      type: container
+                  - identifier: d3fc5b7e-1a6b-4dc9-aacc-75f1a4b0f8be
+                    type: pager_item
+                    view:
+                      background_color:
+                        default:
+                          alpha: 1
+                          hex: "#FFFFFF"
+                          type: hex
+                        selectors:
+                          - color:
+                              alpha: 1
+                              hex: "#000000"
+                              type: hex
+                            dark_mode: true
+                            platform: ios
+                          - color:
+                              alpha: 1
+                              hex: "#000000"
+                              type: hex
+                            dark_mode: true
+                            platform: android
+                      items:
+                        - position:
+                            horizontal: center
+                            vertical: center
+                          size:
+                            height: 100%
+                            width: 100%
+                          view:
+                            items:
+                              - margin:
+                                  bottom: 16
+                                position:
+                                  horizontal: center
+                                  vertical: center
+                                size:
+                                  height: 100%
+                                  width: 100%
+                                view:
+                                  background_color:
+                                    default:
+                                      alpha: 1
+                                      hex: "#FFFFFF"
+                                      type: hex
+                                    selectors:
+                                      - color:
+                                          alpha: 1
+                                          hex: "#000000"
+                                          type: hex
+                                        dark_mode: true
+                                        platform: ios
+                                      - color:
+                                          alpha: 1
+                                          hex: "#000000"
+                                          type: hex
+                                        dark_mode: true
+                                        platform: android
+                                  direction: vertical
+                                  items:
+                                    - identifier: scroll_container
+                                      size:
+                                        height: 100%
+                                        width: 100%
+                                      view:
+                                        direction: vertical
+                                        type: scroll_layout
+                                        view:
+                                          direction: vertical
+                                          items:
+                                            - size:
+                                                height: auto
+                                                width: 100%
+                                              view:
+                                                media_fit: center_inside
+                                                media_type: video
+                                                type: media
+                                                url: https://dsqqu7oxq6o1v.cloudfront.net/preview-992269-Avy3e9Poxf-high.mp4
+                                                video:
+                                                  aspect_ratio: 1.77777777777778
+                                                  autoplay: false
+                                                  loop: true
+                                                  muted: true
+                                                  show_controls: true
+                                            - size:
+                                                height: auto
+                                                width: 100%
+                                              view:
+                                                media_fit: center_inside
+                                                media_type: video
+                                                type: media
+                                                url: https://dsqqu7oxq6o1v.cloudfront.net/preview-992269-Avy3e9Poxf-high.mp4
+                                                video:
+                                                  aspect_ratio: 1.77777777777778
+                                                  autoplay: true
+                                                  loop: true
+                                                  muted: true
+                                                  show_controls: true
+                                            - size:
+                                                height: 100%
+                                                width: 100%
+                                              view:
+                                                direction: horizontal
+                                                items: []
+                                                type: linear_layout
+                                          type: linear_layout
+                                  type: linear_layout
+                            type: container
+                      type: container
+                  - identifier: a2f25df7-fdc2-4cbd-8f7e-80f2eba335d3
+                    type: pager_item
+                    view:
+                      background_color:
+                        default:
+                          alpha: 1
+                          hex: "#FFFFFF"
+                          type: hex
+                        selectors:
+                          - color:
+                              alpha: 1
+                              hex: "#000000"
+                              type: hex
+                            dark_mode: true
+                            platform: ios
+                          - color:
+                              alpha: 1
+                              hex: "#000000"
+                              type: hex
+                            dark_mode: true
+                            platform: android
+                      items:
+                        - margin:
+                            end: 0
+                            start: 0
+                          position:
+                            horizontal: center
+                            vertical: center
+                          size:
+                            height: 100%
+                            width: 100%
+                          view:
+                            media_fit: center_crop
+                            media_type: youtube
+                            type: media
+                            url: https://www.youtube.com/embed/xUOQZeN8A7o
+                            video:
+                              aspect_ratio: 0.5625
+                              autoplay: true
+                              loop: true
+                              muted: true
+                              show_controls: true
+                        - position:
+                            horizontal: center
+                            vertical: center
+                          size:
+                            height: 100%
+                            width: 100%
+                          view:
+                            items:
+                              - margin:
+                                  bottom: 16
+                                position:
+                                  horizontal: center
+                                  vertical: center
+                                size:
+                                  height: 100%
+                                  width: 100%
+                                view:
+                                  direction: vertical
+                                  items:
+                                    - identifier: scroll_container
+                                      size:
+                                        height: 100%
+                                        width: 100%
+                                      view:
+                                        direction: vertical
+                                        type: scroll_layout
+                                        view:
+                                          direction: vertical
+                                          items:
+                                            - size:
+                                                height: 100%
+                                                width: 100%
+                                              view:
+                                                direction: horizontal
+                                                items: []
+                                                type: linear_layout
+                                          type: linear_layout
+                                  type: linear_layout
+                            type: container
+                      type: container
+                type: pager
+            - position:
+                horizontal: end
+                vertical: top
+              size:
+                height: 48
+                width: 48
+              view:
+                button_click:
+                  - dismiss
+                identifier: dismiss_button
+                image:
+                  color:
+                    default:
+                      alpha: 1
+                      hex: "#000000"
+                      type: hex
+                    selectors:
+                      - color:
+                          alpha: 1
+                          hex: "#FFFFFF"
+                          type: hex
+                        dark_mode: true
+                        platform: ios
+                      - color:
+                          alpha: 1
+                          hex: "#FFFFFF"
+                          type: hex
+                        dark_mode: true
+                        platform: android
+                  icon: close
+                  scale: 0.4
+                  type: icon
+                type: image_button
+            - margin:
+                bottom: 8
+                end: 0
+                start: 0
+                top: 0
+              position:
+                horizontal: center
+                vertical: bottom
+              size:
+                height: 12
+                width: 100%
+              view:
+                bindings:
+                  selected:
+                    shapes:
+                      - aspect_ratio: 1
+                        color:
+                          default:
+                            alpha: 1
+                            hex: "#AAAAAA"
+                            type: hex
+                        scale: 1
+                        type: ellipse
+                  unselected:
+                    shapes:
+                      - aspect_ratio: 1
+                        color:
+                          default:
+                            alpha: 1
+                            hex: "#CCCCCC"
+                            type: hex
+                        scale: 1
+                        type: ellipse
+                spacing: 4
+                type: pager_indicator
+          type: container
+    type: linear_layout
