@@ -5,7 +5,6 @@
 #import "UASchedule+Internal.h"
 #import "UAScheduleTriggerContext+Internal.h"
 #import "UAInAppMessage+Internal.h"
-#import "UAInAppAudienceManager+Internal.h"
 #import "UATagSelector+Internal.h"
 #import "UARetriable+Internal.h"
 #import "UARetriablePipeline+Internal.h"
@@ -27,10 +26,10 @@ static NSTimeInterval const MaxSchedules = 1000;
 static NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairship.automation.prepare_schedule";
 
-@interface UAInAppAutomation () <UAAutomationEngineDelegate, UAInAppAudienceManagerDelegate, UAInAppRemoteDataClientDelegate, UAInAppMessagingExecutionDelegate>
+@interface UAInAppAutomation () <UAAutomationEngineDelegate, UAInAppRemoteDataClientDelegate, UAInAppMessagingExecutionDelegate>
 @property(nonatomic, strong) UAAutomationEngine *automationEngine;
 @property(nonatomic, strong) UAPreferenceDataStore *dataStore;
-@property(nonatomic, strong) UAInAppAudienceManager *audienceManager;
+@property(nonatomic, strong) UAAutomationAudienceOverridesProvider *audienceOverridesProvider;
 @property(nonatomic, strong) UAInAppRemoteDataClient *remoteDataClient;
 @property(nonatomic, strong) UARetriablePipeline *prepareSchedulePipeline;
 @property(nonatomic, strong) UAInAppMessageManager *inAppMessageManager;
@@ -52,7 +51,7 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
 }
 
 + (instancetype)automationWithEngine:(UAAutomationEngine *)automationEngine
-                     audienceManager:(UAInAppAudienceManager *)audienceManager
+           audienceOverridesProvider:(UAAutomationAudienceOverridesProvider *)audienceOverridesProvider
                     remoteDataClient:(UAInAppRemoteDataClient *)remoteDataClient
                            dataStore:(UAPreferenceDataStore *)dataStore
                  inAppMessageManager:(UAInAppMessageManager *)inAppMessageManager
@@ -62,7 +61,7 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
                       privacyManager:(UAPrivacyManager *)privacyManager {
 
     return [[self alloc] initWithAutomationEngine:automationEngine
-                                  audienceManager:audienceManager
+                        audienceOverridesProvider:audienceOverridesProvider
                                  remoteDataClient:remoteDataClient
                                         dataStore:dataStore
                               inAppMessageManager:inAppMessageManager
@@ -73,7 +72,7 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
 }
 
 + (instancetype)automationWithConfig:(UARuntimeConfig *)config
-                     audienceManager:(UAInAppAudienceManager *)audienceManager
+           audienceOverridesProvider:(UAAutomationAudienceOverridesProvider *)audienceOverridesProvider
                   remoteDataProvider:(id<UARemoteDataProvider>)remoteDataProvider
                            dataStore:(UAPreferenceDataStore *)dataStore
                              channel:(UAChannel *)channel
@@ -98,7 +97,7 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
     UAFrequencyLimitManager *frequencyLimitManager = [UAFrequencyLimitManager managerWithConfig:config];
 
     return [[UAInAppAutomation alloc] initWithAutomationEngine:automationEngine
-                                               audienceManager:audienceManager
+                                     audienceOverridesProvider:audienceOverridesProvider
                                               remoteDataClient:dataClient
                                                      dataStore:dataStore
                                            inAppMessageManager:inAppMessageManager
@@ -109,7 +108,7 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
 }
 
 - (instancetype)initWithAutomationEngine:(UAAutomationEngine *)automationEngine
-                         audienceManager:(UAInAppAudienceManager *)audienceManager
+               audienceOverridesProvider:(UAAutomationAudienceOverridesProvider *)audienceOverridesProvider
                         remoteDataClient:(UAInAppRemoteDataClient *)remoteDataClient
                                dataStore:(UAPreferenceDataStore *)dataStore
                      inAppMessageManager:(UAInAppMessageManager *)inAppMessageManager
@@ -122,7 +121,7 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
 
     if (self) {
         self.automationEngine = automationEngine;
-        self.audienceManager = audienceManager;
+        self.audienceOverridesProvider = audienceOverridesProvider;
         self.remoteDataClient = remoteDataClient;
         self.dataStore = dataStore;
         self.inAppMessageManager = inAppMessageManager;
@@ -133,7 +132,6 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
         self.frequencyCheckers = [NSMutableDictionary dictionary];
         self.privacyManager = privacyManager;
         self.automationEngine.delegate = self;
-        self.audienceManager.delegate = self;
         self.remoteDataClient.delegate = self;
         self.inAppMessageManager.executionDelegate = self;
         self.disableHelper = [[UAComponentDisableHelper alloc] initWithDataStore:dataStore
@@ -380,83 +378,89 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
 
     NSURL *url = [self.redirectURLs valueForKey:schedule.identifier] ?: deferred.URL;
 
-    [self.deferredScheduleAPIClient resolveURL:url
-                                     channelID:channelID
-                                triggerContext:triggerContext
-                                  tagOverrides:[self.audienceManager tagOverrides]
-                            attributeOverrides:[self.audienceManager attributeOverrides]
-                             completionHandler:^(UADeferredAPIClientResponse *response, NSError *error) {
-        if (error) {
-            if (error.code == UADeferredScheduleAPIClientErrorMissingAuthToken) {
-                retriableHandler(UARetriableResultRetry, 0);
-            } else {
+
+
+    [self.audienceOverridesProvider audienceOverridesWithChannelID:channelID
+                                                 completionHandler:^(UAAutomationAudienceOverrides *audienceOverrides) {
+
+        [self.deferredScheduleAPIClient resolveURL:url
+                                         channelID:channelID
+                                    triggerContext:triggerContext
+                                 audienceOverrides:audienceOverrides
+                                 completionHandler:^(UADeferredAPIClientResponse *response, NSError *error) {
+            if (error) {
                 if (deferred.retriableOnTimeout) {
                     retriableHandler(UARetriableResultRetry, 0);
                 } else {
                     retriableHandler(UARetriableResultSuccess, 0);
                     completionHandler(UAAutomationSchedulePrepareResultPenalize);
                 }
-            }
-        } else if (response.result) {
-            if (!response.result.isAudienceMatch) {
-                UA_LDEBUG(@"Audience conditions not met, skipping display for schedule: %@, missBehavior: %ld", schedule.identifier, (long)schedule.audience.missBehavior);
-                completionHandler([UAInAppAutomation prepareResultForMissedAudience:schedule.audience]);
-                retriableHandler(UARetriableResultCancel, 0);
-            } else if (response.result.message) {
-                [self.inAppMessageManager prepareMessage:response.result.message
-                                              scheduleID:schedule.identifier
-                                               campaigns:schedule.campaigns
-                                        reportingContext:schedule.reportingContext
-                                       completionHandler:completionHandler];
-                retriableHandler(UARetriableResultSuccess, 0);
-            } else {
-                completionHandler(UAAutomationSchedulePrepareResultPenalize);
-                retriableHandler(UARetriableResultSuccess, 0);
-            }
-        } else {
-            switch (response.status) {
-                case 307: {
-                    if (response.rules.location) {
-                        [self.redirectURLs setValue:[NSURL URLWithString:response.rules.location] forKey:schedule.identifier];
-                    }
-                    if (response.rules.retryTime) {
-                        NSTimeInterval backoff = response.rules.retryTime;
-                        retriableHandler(UARetriableResultRetryAfter, backoff);
-                    } else {
-                        retriableHandler(UARetriableResultRetryWithBackoffReset, 0);
-                    }
-                    break;
-                }
-                case 409: {
-                    [self.remoteDataClient attemptRemoteDataRefreshWithForce:YES
-                                                           completionHandler:^{
-                        [self.remoteDataClient notifyOnUpdate:^{
-                            completionHandler(UAAutomationSchedulePrepareResultInvalidate);
-                        }];
-                    }];
+            } else if (response.result) {
+                if (!response.result.isAudienceMatch) {
+                    UA_LDEBUG(@"Audience conditions not met, skipping display for schedule: %@, missBehavior: %ld", schedule.identifier, (long)schedule.audience.missBehavior);
+                    completionHandler([UAInAppAutomation prepareResultForMissedAudience:schedule.audience]);
                     retriableHandler(UARetriableResultCancel, 0);
-                    break;
+                } else if (response.result.message) {
+                    [self.inAppMessageManager prepareMessage:response.result.message
+                                                  scheduleID:schedule.identifier
+                                                   campaigns:schedule.campaigns
+                                            reportingContext:schedule.reportingContext
+                                           completionHandler:completionHandler];
+                    retriableHandler(UARetriableResultSuccess, 0);
+                } else {
+                    completionHandler(UAAutomationSchedulePrepareResultPenalize);
+                    retriableHandler(UARetriableResultSuccess, 0);
                 }
-                case 429: {
-                    if (response.rules.location) {
-                        [self.redirectURLs setValue:[NSURL URLWithString:response.rules.location] forKey:schedule.identifier];
-
+            } else {
+                switch (response.status) {
+                    case 307: {
+                        if (response.rules.location) {
+                            [self.redirectURLs setValue:[NSURL URLWithString:response.rules.location] forKey:schedule.identifier];
+                        }
+                        if (response.rules.retryTime) {
+                            NSTimeInterval backoff = response.rules.retryTime;
+                            retriableHandler(UARetriableResultRetryAfter, backoff);
+                        } else {
+                            retriableHandler(UARetriableResultRetryWithBackoffReset, 0);
+                        }
+                        break;
                     }
-                    if (response.rules.retryTime) {
-                        NSTimeInterval backoff = response.rules.retryTime;
-                        retriableHandler(UARetriableResultRetryAfter, backoff);
-                    } else {
+                    case 401: {
                         retriableHandler(UARetriableResultRetry, 0);
+                        break;
                     }
+                    case 409: {
+                        [self.remoteDataClient attemptRemoteDataRefreshWithForce:YES
+                                                               completionHandler:^{
+                            [self.remoteDataClient notifyOnUpdate:^{
+                                completionHandler(UAAutomationSchedulePrepareResultInvalidate);
+                            }];
+                        }];
+                        retriableHandler(UARetriableResultCancel, 0);
+                        break;
+                    }
+                    case 429: {
+                        if (response.rules.location) {
+                            [self.redirectURLs setValue:[NSURL URLWithString:response.rules.location] forKey:schedule.identifier];
 
-                    break;
+                        }
+                        if (response.rules.retryTime) {
+                            NSTimeInterval backoff = response.rules.retryTime;
+                            retriableHandler(UARetriableResultRetryAfter, backoff);
+                        } else {
+                            retriableHandler(UARetriableResultRetry, 0);
+                        }
+
+                        break;
+                    }
+                    default:
+                        retriableHandler(UARetriableResultRetry, 0);
+                        break;
                 }
-                default:
-                    retriableHandler(UARetriableResultRetry, 0);
-                    break;
             }
-        }
+        }];
     }];
+
 }
 
 + (UAAutomationSchedulePrepareResult)prepareResultForMissedAudience:(UAScheduleAudience *)audience {

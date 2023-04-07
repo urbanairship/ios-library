@@ -19,7 +19,7 @@ public final class EmailRegistrationOptions: NSObject, Codable, Sendable {
     /**
      * Properties
      */
-    let properties: JsonValue?
+    let properties: AirshipJSON?
 
     /**
      * Double opt-in value
@@ -34,7 +34,7 @@ public final class EmailRegistrationOptions: NSObject, Codable, Sendable {
     ) {
         self.transactionalOptedIn = transactionalOptedIn
         self.commercialOptedIn = commercialOptedIn
-        self.properties = JsonValue(value: properties)
+        self.properties = try? AirshipJSON.wrap(properties)
         self.doubleOptIn = doubleOptIn
     }
 
@@ -79,13 +79,57 @@ public final class EmailRegistrationOptions: NSObject, Codable, Sendable {
     /// - Parameter doubleOptIn: The double opt-in value
     /// - Returns: An Email registration options.
     @objc
-    public static func options(properties: [String: Any]?, doubleOptIn: Bool)
-        -> EmailRegistrationOptions
-    {
+    public static func options(
+        properties: [String: Any]?,
+        doubleOptIn: Bool
+    ) -> EmailRegistrationOptions {
         return EmailRegistrationOptions(
             transactionalOptedIn: nil,
             properties: properties,
             doubleOptIn: doubleOptIn
         )
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case transactionalOptedIn
+        case commercialOptedIn
+        case properties = "properties"
+        case doubleOptIn
+    }
+
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.transactionalOptedIn = try container.decodeIfPresent(Date.self, forKey: .transactionalOptedIn)
+        self.commercialOptedIn = try container.decodeIfPresent(Date.self, forKey: .commercialOptedIn)
+
+
+        self.doubleOptIn = try container.decode(Bool.self, forKey: .doubleOptIn)
+
+        do {
+            self.properties = try container.decodeIfPresent(AirshipJSON.self, forKey: .properties)
+        } catch {
+            let legacy = try? container.decodeIfPresent(JsonValue.self, forKey: .properties)
+            guard let legacy = legacy else {
+                throw error
+            }
+
+            if let decoder = decoder as? JSONDecoder {
+                self.properties = try AirshipJSON.from(
+                    json: legacy.jsonEncodedValue,
+                    decoder: decoder
+                )
+            } else {
+                self.properties = try AirshipJSON.from(
+                    json: legacy.jsonEncodedValue
+                )
+            }
+        }
+    }
+
+
+    // Migration purposes
+    fileprivate struct JsonValue: Decodable {
+        let jsonEncodedValue: String?
     }
 }

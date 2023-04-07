@@ -112,7 +112,7 @@ public class AirshipPush: NSObject, Component, PushProtocol {
 
     private let config: RuntimeConfig
     private let dataStore: PreferenceDataStore
-    private let channel: ChannelProtocol
+    private let channel: InternalAirshipChannelProtocol
     private let privacyManager: AirshipPrivacyManager
     private let permissionsManager: AirshipPermissionsManager
     private let notificationCenter: NotificationCenter
@@ -161,7 +161,7 @@ public class AirshipPush: NSObject, Component, PushProtocol {
     init(
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,
-        channel: ChannelProtocol,
+        channel: InternalAirshipChannelProtocol,
         analytics: InternalAnalyticsProtocol,
         privacyManager: AirshipPrivacyManager,
         permissionsManager: AirshipPermissionsManager,

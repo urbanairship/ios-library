@@ -62,7 +62,7 @@ public struct AirshipDebugView: View {
             Section(header: Text("Contact".localized())) {
                 makeNavItem(
                     "Named User",
-                    self.viewModel.namedUser,
+                    self.viewModel.namedUserID,
                     destination: NamedUserDebugView()
                 )
                 makeNavItem(
@@ -283,6 +283,9 @@ private class AirshipDebugViewModel: ObservableObject {
     var locale: Locale
 
     @Published
+    var namedUserID: String?
+
+    @Published
     var airshipLocaleIdentifier: String {
         didSet {
             if Airship.isFlying {
@@ -331,9 +334,6 @@ private class AirshipDebugViewModel: ObservableObject {
         }
     }
 
-    @Published
-    var namedUser: String
-
     private var subscriptions: Set<AnyCancellable> = Set()
 
     init() {
@@ -346,7 +346,6 @@ private class AirshipDebugViewModel: ObservableObject {
                 Airship.push.isPushNotificationsOptedIn
             self.airshipLocaleIdentifier =
                 Airship.shared.localeManager.currentLocale.identifier
-            self.namedUser = Airship.contact.namedUserID ?? ""
             self.userPushNotificationsEnabled =
                 Airship.push.userPushNotificationsEnabled
             self.backgroundPushEnabled =
@@ -361,7 +360,7 @@ private class AirshipDebugViewModel: ObservableObject {
             self.userPushNotificationsEnabled = false
             self.backgroundPushEnabled = false
             self.airshipLocaleIdentifier = Locale.autoupdatingCurrent.identifier
-            self.namedUser = "TakeOff not called"
+            self.namedUserID = "TakeOff not called"
             self.displayInterval = 0.0
         }
     }
@@ -382,12 +381,13 @@ private class AirshipDebugViewModel: ObservableObject {
             })
             .store(in: &self.subscriptions)
 
-        NotificationCenter.default
-            .publisher(for: AirshipContact.contactChangedEvent)
-            .sink(receiveValue: { _ in
-                self.namedUser = Airship.contact.namedUserID ?? ""
-            })
+        Airship.contact.namedUserUpdates
+            .receive(on: RunLoop.main)
+            .sink { namedUserID in
+                self.namedUserID = namedUserID
+            }
             .store(in: &self.subscriptions)
+
     }
 
     func clearLocaleOverride() {

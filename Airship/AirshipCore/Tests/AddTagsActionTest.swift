@@ -165,7 +165,7 @@ final class AddTagsActionTest: XCTestCase {
             ["foo", "bar", "tag", "another_tag"],
             channel.tags
         )
-        await self.waitForExpectations(timeout: 10)
+        await fulfillmentCompat(of: [tagGroupsSet])
     }
 }
 

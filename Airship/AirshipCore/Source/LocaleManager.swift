@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
-@objc(LocaleManagerProtocol)
-public protocol LocaleManagerProtocol {
+@objc(UALocaleManagerProtocol)
+public protocol AirshipLocaleManagerProtocol {
     /**
      * Resets the current locale.
      */
@@ -17,7 +17,7 @@ public protocol LocaleManagerProtocol {
 }
 /// Airship locale manager.
 @objc(UALocaleManager)
-public class AirshipLocaleManager: NSObject, LocaleManagerProtocol {
+public class AirshipLocaleManager: NSObject, AirshipLocaleManagerProtocol {
 
     private static let storeKey = "com.urbanairship.locale.locale"
 

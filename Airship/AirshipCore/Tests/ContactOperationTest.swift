@@ -6,17 +6,33 @@ import XCTest
 
 class ContactOperationTests: XCTestCase {
 
-    private let payload = """
+    // SDK 16 payload
+    private let legacyPayload = """
 [{\"type\":\"update\",\"payload\":{\"tagUpdates\":[{\"group\":\"group\",\"tags\":[\"tags\"],\"type\":2}]}},{\"type\":\"resolve\",\"payload\":null},{\"type\":\"identify\",\"payload\":{\"identifier\":\"some-user\"}},{\"type\":\"reset\",\"payload\":null},{\"type\":\"registerEmail\",\"payload\":{\"address\":\"ua@airship.com\",\"options\":{\"doubleOptIn\":true,\"transactionalOptedIn\":700424522.44925797,\"properties\":{\"jsonEncodedValue\":\"{\\\"interests\\\":\\\"newsletter\\\"}\"}}}},{\"type\":\"registerSMS\",\"payload\":{\"options\":{\"senderID\":\"28855\"},\"msisdn\":\"15035556789\"}},{\"type\":\"registerOpen\",\"payload\":{\"address\":\"open_address\",\"options\":{\"identifiers\":{\"model\":\"4\"},\"platformName\":\"my_platform\"}}}]
 """
 
-    func testDecode() throws {
-        let fromJSON = try JSONDecoder().decode([ContactOperation].self, from: payload.data(using: .utf8)!)
+    // SDK 17 payload
+    private let updatedPayload = """
+[{\"type\":\"update\",\"payload\":{\"tagUpdates\":[{\"group\":\"group\",\"tags\":[\"tags\"],\"type\":2}]}},{\"type\":\"resolve\",\"payload\":null},{\"type\":\"identify\",\"payload\":{\"identifier\":\"some-user\"}},{\"type\":\"reset\",\"payload\":null},{\"type\":\"registerEmail\",\"payload\":{\"address\":\"ua@airship.com\",\"options\":{\"doubleOptIn\":true,\"transactionalOptedIn\":700424522.44925797,\"properties\":{\"interests\":\"newsletter\"}}}},{\"type\":\"registerSMS\",\"payload\":{\"options\":{\"senderID\":\"28855\"},\"msisdn\":\"15035556789\"}},{\"type\":\"registerOpen\",\"payload\":{\"address\":\"open_address\",\"options\":{\"identifiers\":{\"model\":\"4\"},\"platformName\":\"my_platform\"}}}]
+"""
+
+    func testLegacyDecode() throws {
+        let fromJSON = try JSONDecoder().decode([ContactOperation].self, from: legacyPayload.data(using: .utf8)!)
         let toJSON = try JSONEncoder().encode(fromJSON)
 
         XCTAssertEqual(
             try AirshipJSON.from(json: String(data: toJSON, encoding: .utf8)),
-            try AirshipJSON.from(json: payload)
+            try AirshipJSON.from(json: legacyPayload)
+        )
+    }
+
+    func testDecode() throws {
+        let fromJSON = try JSONDecoder().decode([ContactOperation].self, from: updatedPayload.data(using: .utf8)!)
+        let toJSON = try JSONEncoder().encode(fromJSON)
+
+        XCTAssertEqual(
+            try AirshipJSON.from(json: String(data: toJSON, encoding: .utf8)),
+            try AirshipJSON.from(json: updatedPayload)
         )
     }
 
@@ -53,7 +69,7 @@ class ContactOperationTests: XCTestCase {
 
         XCTAssertEqual(
             try AirshipJSON.from(json: String(data: fromExpected, encoding: .utf8)),
-            try AirshipJSON.from(json: payload)
+            try AirshipJSON.from(json: updatedPayload)
         )
     }
 

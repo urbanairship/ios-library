@@ -10,7 +10,7 @@ class TestWorkManager: AirshipWorkManagerProtocol {
         let workHandler: (AirshipWorkRequest) async throws -> AirshipWorkResult
     }
     
-    let rateLimitor = TestWorkRateLimiter()
+    var rateLimits: [String: RateLimit] = [:]
     var workRequests: [AirshipWorkRequest] = []
     private var workHandler: ((AirshipWorkRequest) async throws -> AirshipWorkResult?)? = nil
     
@@ -35,21 +35,19 @@ class TestWorkManager: AirshipWorkManagerProtocol {
     }
     
     func setRateLimit(_ limitID: String, rate: Int, timeInterval: TimeInterval) {
+        rateLimits[limitID] = RateLimit(rate: rate, timeInterval: timeInterval)
     }
-    
-    func setRateLimit(_ limitID: String, rate: Int, timeInterval: TimeInterval) async throws {
-        try? await self.rateLimitor.set(
-            limitID,
-            rate: rate,
-            timeInterval: timeInterval
-        )
-    }
-    
+
     func dispatchWorkRequest(_ request: AirshipWorkRequest) {
         workRequests.append(request)
     }
     
     func launchTask(request: AirshipWorkRequest) async throws -> AirshipWorkResult? {
         return try await workHandler?(request)
+    }
+
+    struct RateLimit {
+        let rate: Int
+        let timeInterval: TimeInterval
     }
 }

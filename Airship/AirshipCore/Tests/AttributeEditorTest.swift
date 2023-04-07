@@ -36,10 +36,10 @@ class AttributeEditorTest: XCTestCase {
 
         XCTAssertEqual(AttributeUpdateType.remove, foo?.type)
         XCTAssertEqual(applyDate, foo?.date)
-        XCTAssertNil(foo?.jsonValue?.value())
+        XCTAssertNil(foo?.jsonValue?.unWrap())
 
         XCTAssertEqual(AttributeUpdateType.set, bar?.type)
-        XCTAssertEqual("neat", bar?.jsonValue?.value() as? String)
+        XCTAssertEqual("neat", bar?.jsonValue?.unWrap() as? String)
         XCTAssertEqual(applyDate, foo?.date)
     }
 
@@ -61,7 +61,7 @@ class AttributeEditorTest: XCTestCase {
         XCTAssertEqual(applyDate, attribute?.date)
         XCTAssertEqual(
             "1970-01-01T02:46:40",
-            attribute?.jsonValue?.value() as! String
+            attribute?.jsonValue?.unWrap() as! String
         )
     }
 
@@ -104,7 +104,7 @@ class AttributeEditorTest: XCTestCase {
 
         XCTAssertEqual(1, out?.count)
         XCTAssertEqual(AttributeUpdateType.set, out?.first?.type)
-        XCTAssertEqual(validString, out?.first?.jsonValue?.value() as? String)
+        XCTAssertEqual(validString, out?.first?.jsonValue?.unWrap() as? String)
         XCTAssertEqual(validString, out?.first?.attribute)
     }
 

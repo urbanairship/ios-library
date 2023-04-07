@@ -31,8 +31,8 @@ public class SubscriptionListAction: NSObject, Action {
     @objc
     public static let altShortName = "^sl"
 
-    private let channel: () -> ChannelProtocol
-    private let contact: () -> ContactProtocol
+    private let channel: () -> AirshipChannelProtocol
+    private let contact: () -> AirshipContactProtocol
 
     private lazy var decoder: JSONDecoder = {
         let decoder = JSONDecoder()
@@ -49,8 +49,8 @@ public class SubscriptionListAction: NSObject, Action {
     }
 
     init(
-        channel: @escaping () -> ChannelProtocol,
-        contact: @escaping () -> ContactProtocol
+        channel: @escaping () -> AirshipChannelProtocol,
+        contact: @escaping () -> AirshipContactProtocol
     ) {
         self.channel = channel
         self.contact = contact

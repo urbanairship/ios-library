@@ -25,7 +25,7 @@ final class ChannelAuthTokenProviderTest: XCTestCase {
         self.client.handler = { channelId in
             let response = ChannelAuthTokenResponse(
                 token: "my token",
-                expiresIn: 100.0
+                expiresInMillseconds: 100000
             )
             return AirshipHTTPResponse(
                 result: response,
@@ -40,7 +40,7 @@ final class ChannelAuthTokenProviderTest: XCTestCase {
         self.client.handler = { channelId in
             let response = ChannelAuthTokenResponse(
                 token: "my token",
-                expiresIn: 100.0
+                expiresInMillseconds: 100000
             )
             return AirshipHTTPResponse(
                 result: response,
@@ -61,7 +61,7 @@ final class ChannelAuthTokenProviderTest: XCTestCase {
         self.client.handler = { channelId in
             let response = ChannelAuthTokenResponse(
                 token: "my token",
-                expiresIn: 100.0
+                expiresInMillseconds: 100000
             )
             return AirshipHTTPResponse(
                 result: response,
@@ -73,7 +73,7 @@ final class ChannelAuthTokenProviderTest: XCTestCase {
         self.client.handler = { channelId in
             let response = ChannelAuthTokenResponse(
                 token: "some other token",
-                expiresIn: 100.0
+                expiresInMillseconds: 100000
             )
             return AirshipHTTPResponse(
                 result: response,

@@ -15,7 +15,7 @@ actor TestWorkRateLimiter {
 
     var hits: [String: [Date]] = [:]
     var rules: [String: RateLimitRule] = [:]
-    private let date: AirshipDate
+    private let date: AirshipDateProtocol
 
     init(date: AirshipDate = AirshipDate()) {
         self.date = date

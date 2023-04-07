@@ -48,8 +48,8 @@ public class FetchDeviceInfoAction: NSObject, Action {
     @objc
     public static let pushOptIn = "push_opt_in"
 
-    private let channel: () -> ChannelProtocol
-    private let contact: () -> ContactProtocol
+    private let channel: () -> AirshipChannelProtocol
+    private let contact: () -> AirshipContactProtocol
     private let push: () -> PushProtocol
 
     @objc
@@ -62,8 +62,8 @@ public class FetchDeviceInfoAction: NSObject, Action {
     }
 
     init(
-        channel: @escaping () -> ChannelProtocol,
-        contact: @escaping () -> ContactProtocol,
+        channel: @escaping () -> AirshipChannelProtocol,
+        contact: @escaping () -> AirshipContactProtocol,
         push: @escaping () -> PushProtocol
     ) {
         self.channel = channel
@@ -76,14 +76,15 @@ public class FetchDeviceInfoAction: NSObject, Action {
     }
 
     public func perform(
-        with arguments: ActionArguments) async -> ActionResult {
+        with arguments: ActionArguments
+    ) async -> ActionResult {
         var dict: [String: Any] = [:]
         let channel = self.channel()
         let contact = self.contact()
         let push = self.push()
 
         dict[FetchDeviceInfoAction.channelID] = channel.identifier
-        dict[FetchDeviceInfoAction.namedUser] = contact.namedUserID
+        dict[FetchDeviceInfoAction.namedUser] = await contact.namedUserID
 
         let tags = channel.tags
         if !tags.isEmpty {

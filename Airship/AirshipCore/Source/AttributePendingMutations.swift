@@ -17,12 +17,13 @@ class AttributePendingMutations: NSObject, NSSecureCoding {
 
     public var attributeUpdates: [AttributeUpdate] {
         let dateFormatter = AirshipUtils.isoDateFormatterUTCWithDelimiter()
-        return self.mutationsPayload.compactMap {
-            guard let attribute = $0["key"] as? String,
-                let action = $0["action"] as? String,
-                let dateString = $0["timestamp"] as? String
+        
+        return self.mutationsPayload.compactMap { update -> (AttributeUpdate?) in
+            guard let attribute = update["key"] as? String,
+                let action = update["action"] as? String,
+                let dateString = update["timestamp"] as? String
             else {
-                AirshipLogger.error("Invalid pending attribute \($0)")
+                AirshipLogger.error("Invalid pending attribute \(update)")
                 return nil
             }
 
@@ -32,20 +33,22 @@ class AttributePendingMutations: NSObject, NSSecureCoding {
             }
 
             if action == "set" {
-                guard let value = $0["value"] else {
+                guard let value = update["value"],
+                      let value = try? AirshipJSON.wrap(value)
+                else {
                     return nil
                 }
                 return AttributeUpdate(
                     attribute: attribute,
                     type: .set,
-                    value: value,
+                    jsonValue: value,
                     date: date
                 )
             } else if action == "remove" {
                 return AttributeUpdate(
                     attribute: attribute,
                     type: .remove,
-                    value: nil,
+                    jsonValue: nil,
                     date: date
                 )
             } else {

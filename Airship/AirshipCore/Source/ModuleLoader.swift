@@ -25,6 +25,8 @@ public class SDKDependencyKeys: NSObject {
     public static let permissionsManager = "permissions_manager"
     @objc
     public static let workManager = "work_manager"
+    @objc
+    public static let automationAudienceOverridesProvider = "automation_audience_overrides_provider"
 }
 
 /// NOTE: For internal use only. :nodoc:
@@ -55,7 +57,8 @@ public class ModuleLoader: NSObject {
         remoteData: RemoteDataManager,
         analytics: AirshipAnalytics,
         privacyManager: AirshipPrivacyManager,
-        permissionsManager: AirshipPermissionsManager
+        permissionsManager: AirshipPermissionsManager,
+        automationAudienceOverridesProvider: _AutomationAudienceOverridesProvider
     ) {
 
         let dependencies: [String: Any] = [
@@ -69,6 +72,7 @@ public class ModuleLoader: NSObject {
             SDKDependencyKeys.privacyManager: privacyManager,
             SDKDependencyKeys.permissionsManager: permissionsManager,
             SDKDependencyKeys.workManager: AirshipWorkManager.shared,
+            SDKDependencyKeys.automationAudienceOverridesProvider: automationAudienceOverridesProvider
         ]
 
         let modules = ModuleLoader.loadModules(dependencies)

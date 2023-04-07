@@ -9,9 +9,8 @@ public class ApplicationMetrics: NSObject {
     private static let lastAppVersionKey = "UAApplicationMetricsLastAppVersion"
 
     private let dataStore: PreferenceDataStore
-    private let date: AirshipDate
+    private let date: AirshipDateProtocol
     private let privacyManager: AirshipPrivacyManager
-
     private var _isAppVersionUpdated = false
 
     /**
@@ -37,20 +36,19 @@ public class ApplicationMetrics: NSObject {
      * The application's current short version string.
      */
     @objc
-    public var currentAppVersion: String? {
-        return AirshipUtils.bundleShortVersionString()
-    }
+    public let currentAppVersion: String?
 
-    @objc
-    public init(
+    init(
         dataStore: PreferenceDataStore,
         privacyManager: AirshipPrivacyManager,
-        notificationCenter: NotificationCenter,
-        date: AirshipDate
+        notificationCenter: NotificationCenter = NotificationCenter.default,
+        date: AirshipDateProtocol = AirshipDate.shared,
+        appVersion: String? = AirshipUtils.bundleShortVersionString()
     ) {
         self.dataStore = dataStore
         self.privacyManager = privacyManager
         self.date = date
+        self.currentAppVersion = appVersion
 
         super.init()
 
@@ -68,19 +66,6 @@ public class ApplicationMetrics: NSObject {
             selector: #selector(updateData),
             name: AirshipPrivacyManager.changeEvent,
             object: nil
-        )
-    }
-
-    @objc
-    public convenience init(
-        dataStore: PreferenceDataStore,
-        privacyManager: AirshipPrivacyManager
-    ) {
-        self.init(
-            dataStore: dataStore,
-            privacyManager: privacyManager,
-            notificationCenter: NotificationCenter.default,
-            date: AirshipDate()
         )
     }
 

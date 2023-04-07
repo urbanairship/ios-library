@@ -40,6 +40,7 @@ jobs:
 
   run-tests:
     runs-on: macOS-12
+    timeout-minutes: 60
     steps:
       - name: Set env variable
         run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV

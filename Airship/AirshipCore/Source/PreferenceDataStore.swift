@@ -202,6 +202,27 @@ public class PreferenceDataStore: NSObject {
         return try decoder.decode(T.self, from: data)
     }
 
+    public func safeCodable<T: Codable>(forKey key: String) -> T? {
+        do {
+            return try codable(forKey: key)
+        } catch {
+            AirshipLogger.error("Failed to read codable for key \(key)")
+            return nil
+        }
+    }
+
+
+    public func setSafeCodable<T: Codable>(
+        _ codable: T?,
+        forKey key: String
+    ) {
+        do {
+            try setCodable(codable, forKey: key)
+        } catch {
+            AirshipLogger.error("Failed to write codable for key \(key)")
+        }
+    }
+
     public func setCodable<T: Codable>(
         _ codable: T?,
         forKey key: String

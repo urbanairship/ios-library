@@ -7,8 +7,8 @@ public class ModifyTagsAction: NSObject, Action {
     static let channelKey = "channel"
     static let deviceKey = "device"
 
-    private let channel: () -> ChannelProtocol
-    private let contact: () -> ContactProtocol
+    private let channel: () -> AirshipChannelProtocol
+    private let contact: () -> AirshipContactProtocol
 
     @objc
     public override convenience init() {
@@ -19,8 +19,8 @@ public class ModifyTagsAction: NSObject, Action {
     }
 
     init(
-        channel: @escaping () -> ChannelProtocol,
-        contact: @escaping () -> ContactProtocol
+        channel: @escaping () -> AirshipChannelProtocol,
+        contact: @escaping () -> AirshipContactProtocol
     ) {
         self.channel = channel
         self.contact = contact

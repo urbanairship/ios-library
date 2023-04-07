@@ -4,15 +4,15 @@ import Foundation
 
 /// Attributes editor.
 @objc(UAAttributesEditor)
-public class AttributesEditor: NSObject {
+public final class AttributesEditor: NSObject {
 
-    private let date: AirshipDate
-    private var sets: [String: Any] = [:]
+    private let date: AirshipDateProtocol
+    private var sets: [String: AirshipJSON] = [:]
     private var removes: [String] = []
     private let completionHandler: ([AttributeUpdate]) -> Void
 
     init(
-        date: AirshipDate,
+        date: AirshipDateProtocol,
         completionHandler: @escaping ([AttributeUpdate]) -> Void
     ) {
         self.completionHandler = completionHandler
@@ -20,8 +20,7 @@ public class AttributesEditor: NSObject {
         super.init()
     }
 
-    @objc
-    public convenience init(
+    convenience init(
         completionHandler: @escaping ([AttributeUpdate]) -> Void
     ) {
         self.init(date: AirshipDate(), completionHandler: completionHandler)
@@ -49,7 +48,9 @@ public class AttributesEditor: NSObject {
     public func set(date: Date, attribute: String) {
         add(
             attribute: attribute,
-            value: AirshipUtils.isoDateFormatterUTCWithDelimiter().string(from: date)
+            value: .string(
+                AirshipUtils.isoDateFormatterUTCWithDelimiter().string(from: date)
+            )
         )
     }
 
@@ -61,7 +62,7 @@ public class AttributesEditor: NSObject {
      */
     @objc(setNumber:attribute:)
     public func set(number: NSNumber, attribute: String) {
-        add(attribute: attribute, value: number)
+        add(attribute: attribute, value: .number(number.doubleValue))
     }
 
     /**
@@ -79,7 +80,7 @@ public class AttributesEditor: NSObject {
             return
         }
 
-        add(attribute: attribute, value: string)
+        add(attribute: attribute, value: .string(string))
     }
 
     /**
@@ -89,7 +90,7 @@ public class AttributesEditor: NSObject {
      *   - attribute: The attribute.
      */
     public func set(float: Float, attribute: String) {
-        add(attribute: attribute, value: float)
+        add(attribute: attribute, value: .number(Double(float)))
     }
 
     /**
@@ -99,7 +100,7 @@ public class AttributesEditor: NSObject {
      *   - attribute: The attribute.
      */
     public func set(double: Double, attribute: String) {
-        add(attribute: attribute, value: double)
+        add(attribute: attribute, value: .number(double))
     }
 
     /**
@@ -109,7 +110,7 @@ public class AttributesEditor: NSObject {
      *   - attribute: The attribute.
      */
     public func set(int: Int, attribute: String) {
-        add(attribute: attribute, value: int)
+        add(attribute: attribute, value: .number(Double(int)))
     }
 
     /**
@@ -119,7 +120,7 @@ public class AttributesEditor: NSObject {
      *   - attribute: The attribute.
      */
     public func set(uint: UInt, attribute: String) {
-        add(attribute: attribute, value: uint)
+        add(attribute: attribute, value: .number(Double(uint)))
     }
 
     /**
@@ -143,7 +144,7 @@ public class AttributesEditor: NSObject {
         sets.removeAll()
     }
 
-    private func add(attribute: String, value: Any) {
+    private func add(attribute: String, value: AirshipJSON) {
         guard isValid(key: attribute) else { return }
         sets[attribute] = value
         removes.removeAll(where: { $0 == attribute })

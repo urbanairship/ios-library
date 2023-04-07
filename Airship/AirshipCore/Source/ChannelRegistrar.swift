@@ -31,7 +31,7 @@ class ChannelRegistrar: ChannelRegistrarProtocol {
 
     private let dataStore: PreferenceDataStore
     private let channelAPIClient: ChannelAPIClientProtocol
-    private let date: AirshipDate
+    private let date: AirshipDateProtocol
     private let workManager: AirshipWorkManagerProtocol
     private let appStateTracker: AppStateTrackerProtocol
     private let updatesSubject = PassthroughSubject<ChannelRegistrationUpdate, Never>()
@@ -82,7 +82,7 @@ class ChannelRegistrar: ChannelRegistrarProtocol {
     init(
         dataStore: PreferenceDataStore,
         channelAPIClient: ChannelAPIClientProtocol,
-        date: AirshipDate = AirshipDate.shared,
+        date: AirshipDateProtocol = AirshipDate.shared,
         workManager: AirshipWorkManagerProtocol = AirshipWorkManager.shared,
         appStateTracker: AppStateTrackerProtocol = AppStateTracker.shared
     ) {

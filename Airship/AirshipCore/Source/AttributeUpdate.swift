@@ -3,85 +3,81 @@
 import Foundation
 
 // NOTE: For internal use only. :nodoc:
-@objc(UAAttributeUpdateType)
-public enum AttributeUpdateType: Int, Codable, Sendable, Equatable {
+
+enum AttributeUpdateType: Int, Codable, Sendable, Equatable {
     case remove
     case set
 }
 
 // NOTE: For internal use only. :nodoc:
-@objc(UAAttributeUpdate)
-public final class AttributeUpdate: NSObject, Codable, Sendable {
-    @objc
-    public let attribute: String
+struct AttributeUpdate: Codable, Sendable, Equatable {
+    let attribute: String
+    let type: AttributeUpdateType
+    let jsonValue: AirshipJSON?
+    let date: Date
 
-    @objc
-    public let type: AttributeUpdateType
-
-    @objc
-    public let date: Date
-    let jsonValue: JsonValue?
-
-    @objc
-    public func value() -> Any? {
-        return jsonValue?.value()
-    }
-
-    @objc
-    public init(
+    static func remove(
         attribute: String,
-        type: AttributeUpdateType,
-        value: Any?,
-        date: Date
-    ) {
-        self.attribute = attribute
-        self.type = type
-        self.jsonValue = JsonValue(value: value)
-        self.date = date
-    }
-
-    static func remove(attribute: String, date: Date = Date())
-        -> AttributeUpdate
-    {
+        date: Date = Date()
+    ) -> AttributeUpdate {
         return AttributeUpdate(
             attribute: attribute,
             type: .remove,
-            value: nil,
+            jsonValue: nil,
             date: date
         )
     }
 
-    static func set(attribute: String, value: Any, date: Date = Date())
-        -> AttributeUpdate
-    {
+    static func set(
+        attribute: String,
+        value: AirshipJSON,
+        date: Date = Date()
+    ) -> AttributeUpdate {
         return AttributeUpdate(
             attribute: attribute,
             type: .set,
-            value: value,
+            jsonValue: value,
             date: date
         )
     }
 
-    static func == (lhs: AttributeUpdate, rhs: AttributeUpdate) -> Bool {
-        return
-            lhs.type == rhs.type && lhs.attribute == rhs.attribute
-            && lhs.jsonValue?.jsonEncodedValue
-                == rhs.jsonValue?.jsonEncodedValue
+    init(attribute: String, type: AttributeUpdateType, jsonValue: AirshipJSON?, date: Date) {
+        self.attribute = attribute
+        self.type = type
+        self.jsonValue = jsonValue
+        self.date = date
     }
 
-    public override func isEqual(_ object: Any?) -> Bool {
-        guard let object = object as? AttributeUpdate else {
-            return false
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.attribute = try container.decode(String.self, forKey: .attribute)
+        self.type = try container.decode(AttributeUpdateType.self, forKey: .type)
+        self.date = try container.decode(Date.self, forKey: .date)
+
+
+        do {
+            self.jsonValue = try container.decodeIfPresent(AirshipJSON.self, forKey: .jsonValue)
+        } catch {
+            let legacy = try? container.decodeIfPresent(JsonValue.self, forKey: .jsonValue)
+            guard let legacy = legacy else {
+                throw error
+            }
+
+            if let decoder = decoder as? JSONDecoder {
+                self.jsonValue = try AirshipJSON.from(
+                    json: legacy.jsonEncodedValue,
+                    decoder: decoder
+                )
+            } else {
+                self.jsonValue = try AirshipJSON.from(
+                    json: legacy.jsonEncodedValue
+                )
+            }
         }
-        return self == object
     }
 
-    public override var hash: Int {
-        var result = 1
-        result = 31 * result + self.attribute.hashValue
-        result =
-            31 * result + (self.jsonValue?.jsonEncodedValue?.hashValue ?? 0)
-        result = 31 * result + self.type.rawValue
-        return result
+    // Migration purposes
+    fileprivate struct JsonValue : Decodable {
+        let jsonEncodedValue: String?
     }
 }

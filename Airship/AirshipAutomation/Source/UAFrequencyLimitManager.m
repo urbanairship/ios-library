@@ -19,14 +19,14 @@
 @property(nonatomic, strong) NSMutableDictionary<UAFrequencyConstraint *, NSMutableArray<UAOccurrence *> *> *occurrencesMap;
 @property(nonatomic, strong) NSMutableArray<UAOccurrence *> *pendingOccurrences;
 @property(nonatomic, strong) UAFrequencyLimitStore *frequencyLimitStore;
-@property(nonatomic, strong) UADate *date;
+@property(nonatomic, strong) UAirshipDate *date;
 @property(nonatomic, strong) UADispatcher *dispatcher;
 @property(nonatomic, strong) id lock;
 @end
 
 @implementation UAFrequencyLimitManager
 
-- (instancetype)initWithDataStore:(UAFrequencyLimitStore *)dataStore date:(UADate *)date dispatcher:(UADispatcher *)dispatcher {
+- (instancetype)initWithDataStore:(UAFrequencyLimitStore *)dataStore date:(UAirshipDate *)date dispatcher:(UADispatcher *)dispatcher {
     self = [super init];
 
     if (self) {
@@ -41,13 +41,13 @@
     return self;
 }
 
-+ (instancetype)managerWithDataStore:(UAFrequencyLimitStore *)dataStore date:(UADate *)date dispatcher:(UADispatcher *)dispatcher {
++ (instancetype)managerWithDataStore:(UAFrequencyLimitStore *)dataStore date:(UAirshipDate *)date dispatcher:(UADispatcher *)dispatcher {
     return [[self alloc] initWithDataStore:dataStore date:date dispatcher:dispatcher];
 }
 
 + (instancetype)managerWithConfig:(UARuntimeConfig *)config {
     return [[self alloc] initWithDataStore:[UAFrequencyLimitStore storeWithConfig:config]
-                                      date:[[UADate alloc] init]
+                                      date:UAirshipDate.shared
                                 dispatcher:UADispatcher.serial];
 }
 

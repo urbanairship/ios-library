@@ -71,17 +71,22 @@ class AirshipInstance: AirshipInstanceProtocol {
         let sharedApp = WKExtension.shared()
         #endif
 
+        let audienceOverridesProvider = DefaultAudienceOverridesProvider()
+
+
         let channel = AirshipChannel(
             dataStore: dataStore,
             config: self.config,
             privacyManager: self.privacyManager,
-            localeManager: self.localeManager
+            localeManager: self.localeManager,
+            audienceOverridesProvider: audienceOverridesProvider
         )
 
         requestSession.channelAuthTokenProvider = ChannelAuthTokenProvider(
             channel: channel,
             runtimeConfig: self.config
         )
+
 
         let analytics = AirshipAnalytics(
             config: self.config,
@@ -103,15 +108,16 @@ class AirshipInstance: AirshipInstanceProtocol {
             badger: sharedApp
         )
 
+
         let contact = AirshipContact(
             dataStore: dataStore,
             config: self.config,
             channel: channel,
-            privacyManager: self.privacyManager
+            privacyManager: self.privacyManager,
+            audienceOverridesProvider: audienceOverridesProvider,
+            localeManager: self.localeManager
         )
-
-
-        let namedUser = NamedUser(dataStore: dataStore, contact: contact)
+        requestSession.contactAuthTokenProvider = contact.authTokenProvider
 
         let remoteDataManager = RemoteDataManager(
             config: self.config,
@@ -141,11 +147,14 @@ class AirshipInstance: AirshipInstanceProtocol {
             remoteData: remoteDataManager,
             analytics: analytics,
             privacyManager: self.privacyManager,
-            permissionsManager: self.permissionsManager
+            permissionsManager: self.permissionsManager,
+            automationAudienceOverridesProvider: _AutomationAudienceOverridesProvider(
+                audienceOverridesProvider: audienceOverridesProvider
+            )
         )
 
         var components: [Component] = [
-            contact, channel, analytics, namedUser, remoteDataManager, push,
+            contact, channel, analytics, remoteDataManager, push,
         ]
         components.append(contentsOf: moduleLoader.components)
 

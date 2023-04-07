@@ -173,11 +173,6 @@ public class Airship: NSObject {
         return requireComponent(ofType: AirshipChannel.self)
     }
 
-    /// Shared NamedUser instance.
-    @objc
-    public static var namedUser: NamedUser {
-        return requireComponent(ofType: NamedUser.self)
-    }
 
     init(instance: AirshipInstanceProtocol) {
         self.airshipInstance = instance
@@ -457,7 +452,8 @@ public class Airship: NSObject {
     ///     - completionHandler: The result. `true` if the link was able to be procesed, otherwise `false`.
     @objc
     public func deepLink(
-        _ deepLink: URL) async -> Bool {
+        _ deepLink: URL
+    ) async -> Bool {
         guard deepLink.scheme != Airship.deepLinkScheme else {
             guard handleAirshipDeeplink(deepLink) else {
                 _ = self.airshipInstance.components.first(where: {
@@ -468,7 +464,8 @@ public class Airship: NSObject {
            return true
         }
 
-        guard let deepLinkDelegate = self.airshipInstance.deepLinkDelegate
+        guard
+            let deepLinkDelegate = self.airshipInstance.deepLinkDelegate
         else {
             return  false
         }

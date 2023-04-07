@@ -57,18 +57,22 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
 
     XCTestExpectation *sessionFinished = [self expectationWithDescription:@"Session finished"];
 
-    NSArray *tagUpdates = @[
-        [[UATagGroupUpdate alloc] initWithGroup:@"add-group" tags:@[@"tag-1", @"tag-2"] type:UATagGroupUpdateTypeAdd],
-        [[UATagGroupUpdate alloc] initWithGroup:@"set-group" tags:@[@"tag-3", @"tag-4"] type:UATagGroupUpdateTypeSet],
-        [[UATagGroupUpdate alloc] initWithGroup:@"remove-group" tags:@[@"tag-5", @"tag-6"] type:UATagGroupUpdateTypeRemove],
-    ];
-    
+    id exepctedTagOverrides = @{ @"add": @{ @"add-group": @[@"tag-1", @"tag-2"] },
+                                 @"set": @{ @"set-group": @[@"tag-3", @"tag-4"] },
+                                 @"remove": @{ @"remove-group": @[@"tag-5", @"tag-6"] } };
+
+
+    id expectedStateOverrides = @{@"app_version" : @"1.2.3", @"sdk_version" : @"2.3.4",
+                                  @"locale_language" : @"en", @"locale_country": @"US",
+                                  @"notification_opt_in" : @(YES)};
+
     NSDate *attributeDate = NSDate.now;
-    NSArray *attributeUpdates = @[
-        [[UAAttributeUpdate alloc] initWithAttribute:@"remove-attribute" type:UAAttributeUpdateTypeRemove value:nil date:attributeDate],
-        [[UAAttributeUpdate alloc] initWithAttribute:@"set-attribute" type:UAAttributeUpdateTypeSet value:@"hi" date:attributeDate]
-    ];
-    
+    id timestamp = [UAUtils.ISODateFormatterUTCWithDelimiter stringFromDate:attributeDate];
+
+    id exepctedAttributeOverrides = @[ @{ @"action": @"remove", @"key": @"remove-attribute", @"timestamp": timestamp},
+                                       @{ @"action": @"set", @"value": @"hi", @"key": @"set-attribute", @"timestamp": timestamp} ];
+
+
     [[[self.mockSession expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
@@ -87,26 +91,8 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
 
         id expectedTrigger = @{@"type": trigger.typeName, @"goal" : trigger.goal, @"event": event};
         XCTAssertEqualObjects(body[@"trigger"], expectedTrigger);
-
-        
-        id exepctedTagOverrides = @{ @"add": @{ @"add-group": @[@"tag-1", @"tag-2"] },
-                                     @"set": @{ @"set-group": @[@"tag-3", @"tag-4"] },
-                                     @"remove": @{ @"remove-group": @[@"tag-5", @"tag-6"] } };
-        
-        
         XCTAssertEqualObjects(body[@"tag_overrides"], exepctedTagOverrides);
-
-        id timestamp = [UAUtils.ISODateFormatterUTCWithDelimiter stringFromDate:attributeDate];
-
-        id exepctedAttributeOverrides = @[ @{ @"action": @"remove", @"key": @"remove-attribute", @"timestamp": timestamp},
-                                           @{ @"action": @"set", @"value": @"hi", @"key": @"set-attribute", @"timestamp": timestamp} ];
-
         XCTAssertEqualObjects(body[@"attribute_overrides"], exepctedAttributeOverrides);
-
-        id expectedStateOverrides = @{@"app_version" : @"1.2.3", @"sdk_version" : @"2.3.4",
-                                      @"locale_language" : @"en", @"locale_country": @"US",
-                                      @"notification_opt_in" : @(YES)};
-
         XCTAssertEqualObjects(body[@"state_overrides"], expectedStateOverrides);
 
         [sessionFinished fulfill];
@@ -119,8 +105,7 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
     [self.client resolveURL:URL
                   channelID:channelID
              triggerContext:triggerContext
-               tagOverrides:tagUpdates
-         attributeOverrides:attributeUpdates
+          audienceOverrides:[[UAAutomationAudienceOverrides alloc] initWithTagsPayload:exepctedTagOverrides attributesPayload:exepctedAttributeOverrides]
           completionHandler:^(UADeferredAPIClientResponse * _Nullable response, NSError * _Nullable error) {
 
         XCTAssertNotNil(response.result);
@@ -187,8 +172,7 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
     [self.client resolveURL:URL
                   channelID:channelID
              triggerContext:triggerContext
-               tagOverrides:@[]
-         attributeOverrides:@[]
+          audienceOverrides:[[UAAutomationAudienceOverrides alloc] initWithTagsPayload:nil attributesPayload:nil]
           completionHandler:^(UADeferredAPIClientResponse * _Nullable response, NSError * _Nullable error) {
 
         XCTAssertNotNil(response.result);
@@ -243,14 +227,13 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
 
         return YES;
     }] completionHandler:OCMOCK_ANY];
-                                     
+
     XCTestExpectation *resultResolved = [self expectationWithDescription:@"Result resolved"];
 
     [self.client resolveURL:URL
                   channelID:channelID
              triggerContext:nil
-               tagOverrides:@[]
-         attributeOverrides:@[]
+          audienceOverrides:[[UAAutomationAudienceOverrides alloc] initWithTagsPayload:nil attributesPayload:nil]
           completionHandler:^(UADeferredAPIClientResponse * _Nullable response, NSError * _Nullable error) {
 
         XCTAssertNotNil(response.result);
@@ -318,15 +301,14 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
     [self.client resolveURL:URL
                   channelID:channelID
              triggerContext:triggerContext
-               tagOverrides:@[]
-         attributeOverrides:@[]
+          audienceOverrides:[[UAAutomationAudienceOverrides alloc] initWithTagsPayload:nil attributesPayload:nil]
           completionHandler:^(UADeferredAPIClientResponse * _Nullable response, NSError * _Nullable error) {
 
         XCTAssertNotNil(response.result);
         XCTAssertTrue(response.result.isAudienceMatch);
         XCTAssertNotNil(response.result.message);
         XCTAssertEqualObjects(response.result.message, [UAInAppMessage messageWithJSON:messageJSON defaultSource:UAInAppMessageSourceRemoteData error:nil]);
-        
+
         [resultResolved fulfill];
     }];
 
@@ -347,7 +329,7 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
-                
+
         NSError *error = [NSError errorWithDomain:@"error_domain" code:100 userInfo:nil];
         completionHandler(nil, self.mockResponse, error);
         [sessionFinished fulfill];
@@ -358,8 +340,7 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
     [self.client resolveURL:URL
                   channelID:channelID
              triggerContext:triggerContext
-               tagOverrides:@[]
-         attributeOverrides:@[]
+          audienceOverrides:[[UAAutomationAudienceOverrides alloc] initWithTagsPayload:nil attributesPayload:nil]
           completionHandler:^(UADeferredAPIClientResponse * _Nullable response, NSError * _Nullable error) {
 
         XCTAssertNil(response.result);
@@ -398,8 +379,7 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
     [self.client resolveURL:URL
                   channelID:channelID
              triggerContext:triggerContext
-               tagOverrides:@[]
-         attributeOverrides:@[]
+          audienceOverrides:[[UAAutomationAudienceOverrides alloc] initWithTagsPayload:nil attributesPayload:nil]
           completionHandler:^(UADeferredAPIClientResponse * _Nullable response, NSError * _Nullable error) {
 
         XCTAssertNotNil(response.result);
@@ -426,7 +406,7 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
-        
+
         completionHandler(nil, self.mockResponse, nil);
         [sessionFinished fulfill];
     }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
@@ -436,8 +416,7 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
     [self.client resolveURL:URL
                   channelID:channelID
              triggerContext:triggerContext
-               tagOverrides:@[]
-         attributeOverrides:@[]
+          audienceOverrides:[[UAAutomationAudienceOverrides alloc] initWithTagsPayload:nil attributesPayload:nil]
           completionHandler:^(UADeferredAPIClientResponse * _Nullable response, NSError * _Nullable error) {
 
         XCTAssertNil(response.result);
@@ -467,7 +446,7 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
-        
+
         completionHandler(nil, self.mockResponse, nil);
         [sessionFinished fulfill];
     }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
@@ -477,8 +456,7 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
     [self.client resolveURL:URL
                   channelID:channelID
              triggerContext:triggerContext
-               tagOverrides:@[]
-         attributeOverrides:@[]
+          audienceOverrides:[[UAAutomationAudienceOverrides alloc] initWithTagsPayload:nil attributesPayload:nil]
           completionHandler:^(UADeferredAPIClientResponse * _Nullable response, NSError * _Nullable error) {
 
         XCTAssertNil(response.result);
@@ -509,7 +487,7 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         UAHTTPRequestCompletionHandler completionHandler = (__bridge UAHTTPRequestCompletionHandler)arg;
-        
+
         completionHandler(nil, self.mockResponse, nil);
         [sessionFinished fulfill];
     }] performHTTPRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
@@ -519,8 +497,7 @@ typedef void (^UAHTTPRequestCompletionHandler)(NSData * _Nullable data, NSHTTPUR
     [self.client resolveURL:URL
                   channelID:channelID
              triggerContext:triggerContext
-               tagOverrides:@[]
-         attributeOverrides:@[]
+          audienceOverrides:[[UAAutomationAudienceOverrides alloc] initWithTagsPayload:nil attributesPayload:nil]
           completionHandler:^(UADeferredAPIClientResponse * _Nullable response, NSError * _Nullable error) {
 
         XCTAssertNil(response.result);

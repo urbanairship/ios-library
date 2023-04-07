@@ -7,7 +7,7 @@
 #import "UAFrequencyChecker+Internal.h"
 
 @class UADispatcher;
-@class UADate;
+@class UAirshipDate;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -28,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param date The date.
  * @param dispatcher A private serial dispatcher
  */
-+ (instancetype)managerWithDataStore:(UAFrequencyLimitStore *)dataStore date:(UADate *)date dispatcher:(UADispatcher *)dispatcher;
++ (instancetype)managerWithDataStore:(UAFrequencyLimitStore *)dataStore date:(UAirshipDate *)date dispatcher:(UADispatcher *)dispatcher;
 
 /**
  * Gets a frequency checker tied to the current snapshot of the passed constraints by ID.

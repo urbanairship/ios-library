@@ -47,8 +47,10 @@ final class DefaultAppStateTrackerAdapter: ApplicationStateProvider, Sendable {
             forName: WKExtension.applicationDidBecomeActiveNotification,
             object: nil,
             queue: nil,
-            using: { @MainActor _ in
-                eventHandler(.didBecomeActive)
+            using: { _ in
+                MainActor.runUnsafe {
+                    eventHandler(.didBecomeActive)
+                }
             }
         )
 
@@ -57,8 +59,10 @@ final class DefaultAppStateTrackerAdapter: ApplicationStateProvider, Sendable {
             forName: WKExtension.applicationWillResignActiveNotification,
             object: nil,
             queue: nil,
-            using: { @MainActor _ in
-                eventHandler(.willResignActive)
+            using: { _ in
+                MainActor.runUnsafe {
+                    eventHandler(.willResignActive)
+                }
             }
         )
 
@@ -67,8 +71,10 @@ final class DefaultAppStateTrackerAdapter: ApplicationStateProvider, Sendable {
             forName: WKExtension.applicationWillEnterForegroundNotification,
             object: nil,
             queue: nil,
-            using: { @MainActor _ in
-                eventHandler(.willEnterForeground)
+            using: { _ in
+                MainActor.runUnsafe {
+                    eventHandler(.willEnterForeground)
+                }
             }
         )
         
@@ -77,8 +83,10 @@ final class DefaultAppStateTrackerAdapter: ApplicationStateProvider, Sendable {
             forName: WKExtension.applicationDidEnterBackgroundNotification,
             object: nil,
             queue: nil,
-            using: { @MainActor _ in
-                eventHandler(.didEnterBackground)
+            using: { _ in
+                MainActor.runUnsafe {
+                    eventHandler(.didEnterBackground)
+                }
             }
         )
     }
@@ -111,8 +119,10 @@ final class DefaultAppStateTrackerAdapter: AppStateTrackerAdapter, Sendable {
             forName: UIApplication.didBecomeActiveNotification,
             object: nil,
             queue: nil,
-            using: { @MainActor _ in
-                eventHandler(.didBecomeActive)
+            using: {  _ in
+                MainActor.runUnsafe {
+                    eventHandler(.didBecomeActive)
+                }
             }
         )
 
@@ -121,8 +131,10 @@ final class DefaultAppStateTrackerAdapter: AppStateTrackerAdapter, Sendable {
             forName: UIApplication.willResignActiveNotification,
             object: nil,
             queue: nil,
-            using: { @MainActor _ in
-                eventHandler(.willResignActive)
+            using: {  _ in
+                MainActor.runUnsafe {
+                    eventHandler(.willResignActive)
+                }
             }
         )
 
@@ -131,8 +143,10 @@ final class DefaultAppStateTrackerAdapter: AppStateTrackerAdapter, Sendable {
             forName: UIApplication.willEnterForegroundNotification,
             object: nil,
             queue: nil,
-            using: { @MainActor _ in
-                eventHandler(.willEnterForeground)
+            using: {  _ in
+                MainActor.runUnsafe {
+                    eventHandler(.willEnterForeground)
+                }
             }
         )
         
@@ -141,8 +155,10 @@ final class DefaultAppStateTrackerAdapter: AppStateTrackerAdapter, Sendable {
             forName: UIApplication.didEnterBackgroundNotification,
             object: nil,
             queue: nil,
-            using: { @MainActor _ in
-                eventHandler(.didEnterBackground)
+            using: { _ in
+                MainActor.runUnsafe {
+                    eventHandler(.didEnterBackground)
+                }
             }
         )
         
@@ -151,10 +167,22 @@ final class DefaultAppStateTrackerAdapter: AppStateTrackerAdapter, Sendable {
             forName: UIApplication.willTerminateNotification,
             object: nil,
             queue: nil,
-            using: { @MainActor _ in
-                eventHandler(.willTerminate)
+            using: {  _ in
+                MainActor.runUnsafe {
+                    eventHandler(.willTerminate)
+                }
             }
         )
     }
+
 }
+
 #endif
+
+
+extension MainActor {
+    @MainActor(unsafe)
+    static func runUnsafe(_ block: @MainActor () -> Void) {
+        block()
+    }
+}

@@ -5,7 +5,7 @@ import Foundation
 
 /// This singleton provides an interface to the channel functionality.
 @objc(UAChannel)
-public class AirshipChannel: NSObject, Component, ChannelProtocol {
+public class AirshipChannel: NSObject, Component, AirshipChannelProtocol {
 
     private static let tagsDataStoreKey = "com.urbanairship.channel.tags"
 
@@ -37,28 +37,6 @@ public class AirshipChannel: NSObject, Component, ChannelProtocol {
         "com.urbanairship.channel.channel_updated"
     )
 
-    /**
-     * Notification event when the audience is updated.
-     * - NOTE: For internal use only. :nodoc:
-     */
-    @objc
-    public static let audienceUpdatedEvent = NSNotification.Name(
-        "com.urbanairship.channel.audience_updated"
-    )
-
-    /**
-     * Tags event key for audienceUpdatedEvent.
-     * - NOTE: For internal use only. :nodoc:
-     */
-    @objc
-    public static let audienceTagsKey = "tags"
-
-    /**
-     * Attributes event key for audienceUpdatedEvent.
-     * - NOTE: For internal use only. :nodoc:
-     */
-    @objc
-    public static let audienceAttributesKey = "attributes"
 
     // NOTE: For internal use only. :nodoc:
     @objc
@@ -67,7 +45,7 @@ public class AirshipChannel: NSObject, Component, ChannelProtocol {
     private let dataStore: PreferenceDataStore
     private let config: RuntimeConfig
     private let privacyManager: AirshipPrivacyManager
-    private let localeManager: LocaleManagerProtocol
+    private let localeManager: AirshipLocaleManagerProtocol
     private var audienceManager: ChannelAudienceManagerProtocol
     private let channelRegistrar: ChannelRegistrarProtocol
     private let notificationCenter: NotificationCenter
@@ -86,16 +64,6 @@ public class AirshipChannel: NSObject, Component, ChannelProtocol {
     /// The channel identifier.
     public var identifier: String? {
         return self.channelRegistrar.channelID
-    }
-
-    // NOTE: For internal use only. :nodoc:
-    public var pendingAttributeUpdates: [AttributeUpdate] {
-        return self.audienceManager.pendingAttributeUpdates
-    }
-
-    // NOTE: For internal use only. :nodoc:
-    public var pendingTagGroupUpdates: [TagGroupUpdate] {
-        return self.audienceManager.pendingTagGroupUpdates
     }
 
     /// The channel tags.
@@ -162,7 +130,7 @@ public class AirshipChannel: NSObject, Component, ChannelProtocol {
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,
         privacyManager: AirshipPrivacyManager,
-        localeManager: LocaleManagerProtocol,
+        localeManager: AirshipLocaleManagerProtocol,
         audienceManager: ChannelAudienceManagerProtocol,
         channelRegistrar: ChannelRegistrarProtocol,
         notificationCenter: NotificationCenter,
@@ -241,12 +209,12 @@ public class AirshipChannel: NSObject, Component, ChannelProtocol {
     }
 
     // NOTE: For internal use only. :nodoc:
-    @objc
-    convenience public init(
+    convenience init(
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,
         privacyManager: AirshipPrivacyManager,
-        localeManager: LocaleManagerProtocol
+        localeManager: AirshipLocaleManagerProtocol,
+        audienceOverridesProvider: AudienceOverridesProvider
     ) {
         self.init(
             dataStore: dataStore,
@@ -256,7 +224,8 @@ public class AirshipChannel: NSObject, Component, ChannelProtocol {
             audienceManager: ChannelAudienceManager(
                 dataStore: dataStore,
                 config: config,
-                privacyManager: privacyManager
+                privacyManager: privacyManager,
+                audienceOverridesProvider: audienceOverridesProvider
             ),
             channelRegistrar: ChannelRegistrar(
                 config: config,
@@ -711,7 +680,7 @@ extension AirshipChannel: PushableComponent {
     }
 }
 
-extension AirshipChannel: InternalChannelProtocol {
+extension AirshipChannel: InternalAirshipChannelProtocol {
     public func addRegistrationExtender(
         _ extender: @escaping (ChannelRegistrationPayload) async -> ChannelRegistrationPayload
     ) {
@@ -720,10 +689,8 @@ extension AirshipChannel: InternalChannelProtocol {
         )
     }
 
-    func processContactSubscriptionUpdates(
-        _ updates: [SubscriptionListUpdate]
-    ){
-        self.audienceManager.processContactSubscriptionUpdates(updates)
+    public func clearSubscriptionListsCache() {
+        self.audienceManager.clearSubscriptionListCache()
     }
 }
 

@@ -10,8 +10,7 @@ public class TagGroupsEditor: NSObject {
     private var allowDeviceTagGroup = false
     private let completionHandler: ([TagGroupUpdate]) -> Void
 
-    @objc
-    public init(
+    init(
         allowDeviceTagGroup: Bool,
         completionHandler: @escaping ([TagGroupUpdate]) -> Void
     ) {

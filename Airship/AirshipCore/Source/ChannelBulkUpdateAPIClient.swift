@@ -108,7 +108,7 @@ extension AudienceUpdate {
                     action: .set,
                     key: update.attribute,
                     timestamp: timestamp,
-                    value: try? AirshipJSON.wrap(update.value())
+                    value: update.jsonValue
                 )
             case .remove:
                 return ClientPayload.AttributeOperation(

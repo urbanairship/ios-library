@@ -43,16 +43,17 @@ public class AirshipAnalytics: NSObject, Component, AnalyticsProtocol {
 
     private let config: RuntimeConfig
     private let dataStore: PreferenceDataStore
-    private let channel: ChannelProtocol
+    private let channel: AirshipChannelProtocol
     private let privacyManager: AirshipPrivacyManager
     private let notificationCenter: NotificationCenter
-    private let date: AirshipDate
+    private let date: AirshipDateProtocol
     private var eventManager: EventManagerProtocol
-    private let localeManager: LocaleManagerProtocol
+    private let localeManager: AirshipLocaleManagerProtocol
     private let appStateTracker: AppStateTrackerProtocol
     private let permissionsManager: AirshipPermissionsManager
     private let disableHelper: ComponentDisableHelper
     private let lifeCycleEventFactory: LifeCycleEventFactoryProtocol
+    private let serialQueue: AsyncSerialQueue = AsyncSerialQueue()
 
     private var sdkExtensions: [String] = []
 
@@ -134,8 +135,8 @@ public class AirshipAnalytics: NSObject, Component, AnalyticsProtocol {
     convenience init(
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,
-        channel: ChannelProtocol,
-        localeManager: LocaleManagerProtocol,
+        channel: AirshipChannelProtocol,
+        localeManager: AirshipLocaleManagerProtocol,
         privacyManager: AirshipPrivacyManager,
         permissionsManager: AirshipPermissionsManager
     ) {
@@ -143,10 +144,7 @@ public class AirshipAnalytics: NSObject, Component, AnalyticsProtocol {
             config: config,
             dataStore: dataStore,
             channel: channel,
-            notificationCenter: NotificationCenter.default,
-            date: AirshipDate(),
             localeManager: localeManager,
-            appStateTracker: AppStateTracker.shared,
             privacyManager: privacyManager,
             permissionsManager: permissionsManager,
             eventManager: EventManager(config: config, dataStore: dataStore)
@@ -156,11 +154,11 @@ public class AirshipAnalytics: NSObject, Component, AnalyticsProtocol {
     init(
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,
-        channel: ChannelProtocol,
-        notificationCenter: NotificationCenter,
-        date: AirshipDate,
-        localeManager: LocaleManagerProtocol,
-        appStateTracker: AppStateTrackerProtocol,
+        channel: AirshipChannelProtocol,
+        notificationCenter: NotificationCenter = NotificationCenter.default,
+        date: AirshipDateProtocol = AirshipDate.shared,
+        localeManager: AirshipLocaleManagerProtocol,
+        appStateTracker: AppStateTrackerProtocol = AppStateTracker.shared,
         privacyManager: AirshipPrivacyManager,
         permissionsManager: AirshipPermissionsManager,
         eventManager: EventManagerProtocol,
@@ -389,7 +387,7 @@ public class AirshipAnalytics: NSObject, Component, AnalyticsProtocol {
             type: event.eventType
         )
 
-        Task { @MainActor in
+        self.serialQueue.enqueue {
             guard self.isAnalyticsEnabled else {
                 return
             }
@@ -407,20 +405,23 @@ public class AirshipAnalytics: NSObject, Component, AnalyticsProtocol {
                 return
             }
 
-            if let customEvent = event as? CustomEvent {
-                self.notificationCenter.post(
-                    name: AirshipAnalytics.customEventAdded,
-                    object: self,
-                    userInfo: [AirshipAnalytics.eventKey: customEvent]
-                )
-            }
 
-            if let regionEvent = event as? RegionEvent {
-                self.notificationCenter.post(
-                    name: AirshipAnalytics.regionEventAdded,
-                    object: self,
-                    userInfo: [AirshipAnalytics.eventKey: regionEvent]
-                )
+            Task { @MainActor in
+                if let customEvent = event as? CustomEvent {
+                    self.notificationCenter.post(
+                        name: AirshipAnalytics.customEventAdded,
+                        object: self,
+                        userInfo: [AirshipAnalytics.eventKey: customEvent]
+                    )
+                }
+
+                if let regionEvent = event as? RegionEvent {
+                    self.notificationCenter.post(
+                        name: AirshipAnalytics.regionEventAdded,
+                        object: self,
+                        userInfo: [AirshipAnalytics.eventKey: regionEvent]
+                    )
+                }
             }
         }
     }

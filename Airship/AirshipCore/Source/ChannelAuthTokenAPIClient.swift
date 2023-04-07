@@ -5,12 +5,12 @@ class ChannelAuthTokenAPIClient: ChannelAuthTokenAPIClientProtocol {
     private let config: RuntimeConfig
     private let session: AirshipRequestSession
     private let decoder: JSONDecoder = JSONDecoder()
-    private let date: AirshipDate
+    private let date: AirshipDateProtocol
 
     init(
         config: RuntimeConfig,
         session: AirshipRequestSession,
-        date: AirshipDate = AirshipDate.shared
+        date: AirshipDateProtocol = AirshipDate.shared
     ) {
         self.config = config
         self.session = session
@@ -93,11 +93,11 @@ class ChannelAuthTokenAPIClient: ChannelAuthTokenAPIClientProtocol {
 
 struct ChannelAuthTokenResponse: Decodable, Sendable {
     let token: String
-    let expiresIn: TimeInterval
+    let expiresInMillseconds: UInt
 
     enum CodingKeys: String, CodingKey {
         case token = "token"
-        case expiresIn = "expires_in"
+        case expiresInMillseconds = "expires_in"
     }
 }
 

@@ -96,9 +96,7 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
             originatingURL?.isAllowed(scope: .javaScriptInterface) ?? false
 
         // Airship commands
-        if let requestURL = requestURL, isAirshipJSAllowed,
-            requestURL.isAirshipCommand
-        {
+        if let requestURL = requestURL, isAirshipJSAllowed, requestURL.isAirshipCommand {
             if navigationType == .linkActivated || navigationType == .other {
                 let command = JavaScriptCommand(for: requestURL)
                 self.handleAirshipCommand(
@@ -206,6 +204,7 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
         AirshipLogger.trace(
             "Webview finished navigation: \(String(describing: webView.url))"
         )
+
 
         if let url = webView.url, url.isAllowed(scope: .javaScriptInterface) {
             AirshipLogger.trace("Populating Airship JS bridge: \(url)")
@@ -348,7 +347,7 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
             let idArgs = command.options["id"] as? [String]
             let argument = idArgs?.first
 
-            let contact: ContactProtocol = Airship.contact
+            let contact: AirshipContactProtocol = Airship.contact
             if let identifier = argument, !identifier.isEmpty {
                 contact.identify(identifier)
             } else {

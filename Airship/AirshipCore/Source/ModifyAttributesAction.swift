@@ -43,8 +43,8 @@ public class ModifyAttributesAction: NSObject, Action {
     @objc
     public static let shortName = "^a"
 
-    private let channel: () -> ChannelProtocol
-    private let contact: () -> ContactProtocol
+    private let channel: () -> AirshipChannelProtocol
+    private let contact: () -> AirshipContactProtocol
 
     @objc
     public override convenience init() {
@@ -55,8 +55,8 @@ public class ModifyAttributesAction: NSObject, Action {
     }
 
     init(
-        channel: @escaping () -> ChannelProtocol,
-        contact: @escaping () -> ContactProtocol
+        channel: @escaping () -> AirshipChannelProtocol,
+        contact: @escaping () -> AirshipContactProtocol
     ) {
         self.channel = channel
         self.contact = contact

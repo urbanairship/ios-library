@@ -11,7 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class UAScheduleTriggerData;
 @class UARuntimeConfig;
 @class UAScheduleTriggerContext;
-@class UADate;
+@class UAirshipDate;
 
 /**
  * Manager class for the Automation CoreData store.
@@ -28,14 +28,14 @@ NS_ASSUME_NONNULL_BEGIN
 * @param config The config.
 * @param scheduleLimit The maximum number of schedules available for storage
 * @param inMemory Whether to use an in-memory database. If `NO` the store will default to SQLite.
-* @param date The UADate instance.
+* @param date The UAirshipDate instance.
 *
 * @return Automation store.
 */
 + (instancetype)automationStoreWithConfig:(UARuntimeConfig *)config
                             scheduleLimit:(NSUInteger)scheduleLimit
                                  inMemory:(BOOL)inMemory
-                                     date:(UADate *)date;
+                                     date:(UAirshipDate *)date;
 
 /**
  * Factory method for automation store.

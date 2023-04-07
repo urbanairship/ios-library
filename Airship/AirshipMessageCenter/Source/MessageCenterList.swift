@@ -67,11 +67,11 @@ public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
     )
 
     private let store: MessageCenterStore
-    private let channel: ChannelProtocol
+    private let channel: InternalAirshipChannelProtocol
     private let client: MessageCenterAPIClient
     private let config: RuntimeConfig
     private let notificationCenter: NotificationCenter
-    private let date: AirshipDate
+    private let date: AirshipDateProtocol
     private let workManager: AirshipWorkManagerProtocol
     var enabled: Bool = false {
         didSet {
@@ -143,12 +143,12 @@ public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
     private var subscriptions: Set<AnyCancellable> = Set()
 
     init(
-        channel: ChannelProtocol,
+        channel: InternalAirshipChannelProtocol,
         client: MessageCenterAPIClient,
         config: RuntimeConfig,
         store: MessageCenterStore,
-        notificationCenter: NotificationCenter,
-        date: AirshipDate,
+        notificationCenter: NotificationCenter = NotificationCenter.default,
+        date: AirshipDateProtocol = AirshipDate.shared,
         workManager: AirshipWorkManagerProtocol
     ) {
         self.channel = channel
@@ -230,7 +230,7 @@ public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
     convenience init(
         with config: RuntimeConfig,
         dataStore: PreferenceDataStore,
-        channel: ChannelProtocol,
+        channel: InternalAirshipChannelProtocol,
         workManager: AirshipWorkManagerProtocol
     ) {
         self.init(
@@ -244,8 +244,6 @@ public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
                 config: config,
                 dataStore: dataStore
             ),
-            notificationCenter: .default,
-            date: AirshipDate(),
             workManager: workManager
         )
     }

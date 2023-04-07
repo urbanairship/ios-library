@@ -15,9 +15,9 @@ class RateLimiter {
 
     private var hits: [String: [Date]] = [:]
     private var rules: [String: RateLimitRule] = [:]
-    private let date: AirshipDate
+    private let date: AirshipDateProtocol
 
-    init(date: AirshipDate = AirshipDate()) {
+    init(date: AirshipDateProtocol = AirshipDate.shared) {
         self.date = date
     }
 

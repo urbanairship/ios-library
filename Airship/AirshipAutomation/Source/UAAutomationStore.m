@@ -26,7 +26,7 @@ static NSString *const UALegacyActionAutomationStoreFileFormat = @"Automation-%@
 @interface UAAutomationStore () <UACoreDataDelegate>
 @property (nonatomic, strong) UACoreData *coreData;
 @property (nonatomic, strong) NSPersistentStore *mainStore;
-@property (nonatomic, strong) UADate *date;
+@property (nonatomic, strong) UAirshipDate *date;
 @property (nonatomic, assign) NSUInteger scheduleLimit;
 @end
 
@@ -35,7 +35,7 @@ static NSString *const UALegacyActionAutomationStoreFileFormat = @"Automation-%@
 - (instancetype)initWithConfig:(UARuntimeConfig *)config
                  scheduleLimit:(NSUInteger)scheduleLimit
                       inMemory:(BOOL)inMemory
-                          date:(UADate *)date {
+                          date:(UAirshipDate *)date {
 
     self = [super init];
 
@@ -58,7 +58,7 @@ static NSString *const UALegacyActionAutomationStoreFileFormat = @"Automation-%@
     return self;
 }
 
-+ (instancetype)automationStoreWithConfig:(UARuntimeConfig *)config scheduleLimit:(NSUInteger)scheduleLimit inMemory:(BOOL)inMemory date:(UADate *)date {
++ (instancetype)automationStoreWithConfig:(UARuntimeConfig *)config scheduleLimit:(NSUInteger)scheduleLimit inMemory:(BOOL)inMemory date:(UAirshipDate *)date {
     return [[UAAutomationStore alloc] initWithConfig:config
                                        scheduleLimit:scheduleLimit
                                             inMemory:inMemory
@@ -69,7 +69,7 @@ static NSString *const UALegacyActionAutomationStoreFileFormat = @"Automation-%@
     return [[UAAutomationStore alloc] initWithConfig:config
                                        scheduleLimit:scheduleLimit
                                             inMemory:NO
-                                                date:[[UADate alloc] init]];
+                                                date:UAirshipDate.shared];
 }
 
 - (void)persistentStoreCreated:(NSPersistentStore *)store

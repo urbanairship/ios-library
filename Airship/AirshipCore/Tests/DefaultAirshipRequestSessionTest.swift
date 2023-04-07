@@ -329,16 +329,27 @@ final class TestAuthTokenProvider: AuthTokenProvider {
 }
 
 
-fileprivate final class TestURLRequestSession: URLRequestSessionProtocol {
+fileprivate final class TestURLRequestSession: URLRequestSessionProtocol, @unchecked Sendable {
 
-    private(set) var requests: [URLRequest] = []
+    private let lock = AirshipLock()
+    private var _requests: [URLRequest] = []
+    var requests: [URLRequest] {
+        var result: [URLRequest]!
+        lock.sync {
+            result = _requests
+        }
+        return result
+    }
+
     var responses: [Response] = []
 
     func dataTask(
         request: URLRequest,
         completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void
     ) -> AirshipCancellable {
-        self.requests.append(request)
+        lock.sync {
+            self._requests.append(request)
+        }
         let response = responses.isEmpty ? nil :  responses.removeFirst()
         completionHandler(
             response?.responseBody?.data(using: .utf8),
@@ -348,6 +359,7 @@ fileprivate final class TestURLRequestSession: URLRequestSessionProtocol {
 
         return CancellabelValueHolder<String>() { _ in}
     }
+    
 }
 
 fileprivate struct Response {

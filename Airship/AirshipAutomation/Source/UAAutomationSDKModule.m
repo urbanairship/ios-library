@@ -34,18 +34,14 @@
     UAPreferenceDataStore *dataStore = dependencies[UASDKDependencyKeys.dataStore];
     UARuntimeConfig *config = dependencies[UASDKDependencyKeys.config];
     UAChannel *channel = dependencies[UASDKDependencyKeys.channel];
-    UAContact *contact = dependencies[UASDKDependencyKeys.contact];
     id<UARemoteDataProvider> remoteDataProvider = dependencies[UASDKDependencyKeys.remoteData];
     UAAnalytics *analytics = dependencies[UASDKDependencyKeys.analytics];
     UAPrivacyManager *privacyManager = dependencies[UASDKDependencyKeys.privacyManager];
-    
-    UAInAppAudienceManager *audienceManager = [UAInAppAudienceManager managerWithConfig:config
-                                                                              dataStore:dataStore
-                                                                                channel:channel
-                                                                              contact:contact];
+    UAAutomationAudienceOverridesProvider *audienceOverridesProvider = dependencies[UASDKDependencyKeys.automationAudienceOverridesProvider];
+
 
     UAInAppAutomation *inAppAutomation = [UAInAppAutomation automationWithConfig:config
-                                                                audienceManager:audienceManager
+                                                       audienceOverridesProvider:audienceOverridesProvider
                                                               remoteDataProvider:remoteDataProvider
                                                                        dataStore:dataStore
                                                                          channel:channel

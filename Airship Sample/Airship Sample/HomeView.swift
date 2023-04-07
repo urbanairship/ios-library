@@ -198,7 +198,7 @@ struct HomeView: View {
         var channelID: String? = Airship.channel.identifier
 
         @Published
-        var namedUserID: String? = Airship.contact.namedUserID
+        var namedUserID: String? = ""
 
         private var subscriptions = Set<AnyCancellable>()
 
@@ -211,13 +211,13 @@ struct HomeView: View {
                 }
                 .store(in: &self.subscriptions)
 
-            NotificationCenter.default
-                .publisher(for: AirshipContact.contactChangedEvent)
+            Airship.contact.namedUserUpdates
                 .receive(on: RunLoop.main)
-                .sink { _ in
-                    self.namedUserID = Airship.contact.namedUserID
+                .sink { namedUserID in
+                    self.namedUserID = namedUserID
                 }
                 .store(in: &self.subscriptions)
+
         }
 
         func copyChannel() {

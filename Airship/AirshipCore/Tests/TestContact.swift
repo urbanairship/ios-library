@@ -1,9 +1,40 @@
 import Foundation
+import Combine
 
 @testable import AirshipCore
 
 @objc(UATestContact)
-public class TestContact: NSObject, ContactProtocol, Component {
+class TestContact: NSObject, AirshipContactProtocol, Component {
+
+    @objc
+    public static let contactConflictEvent = NSNotification.Name(
+        "com.urbanairship.contact_conflict"
+    )
+
+    @objc
+    public static let contactConflictEventKey = "event"
+
+    @objc
+    public static let maxNamedUserIDLength = 128
+
+    
+    private let namedUserUpdatesSubject = PassthroughSubject<String?, Never>()
+    public var namedUserUpdates: AnyPublisher<String?, Never> {
+        namedUserUpdatesSubject
+            .prepend(namedUserID)
+            .removeDuplicates()
+            .eraseToAnyPublisher()
+    }
+
+    public var subscriptionListEdits: AnyPublisher<AirshipCore.ScopedSubscriptionListEdit, Never> {
+        subscriptionListEditsSubject.eraseToAnyPublisher()
+    }
+    private let subscriptionListEditsSubject = PassthroughSubject<ScopedSubscriptionListEdit, Never>()
+
+    public func _getNamedUserID() async -> String? {
+        return self.namedUserID
+    }
+
 
     public var isComponentEnabled: Bool = true
 
@@ -83,7 +114,11 @@ public class TestContact: NSObject, ContactProtocol, Component {
         editor.apply()
     }
 
-    public func fetchSubscriptionLists() async throws ->  [String: ChannelScopes] {
+    public func fetchSubscriptionLists() async throws ->  [String: [ChannelScope]] {
+        return [:]
+    }
+
+    public func _fetchSubscriptionLists() async throws ->  [String: ChannelScopes] {
         return [:]
     }
 }

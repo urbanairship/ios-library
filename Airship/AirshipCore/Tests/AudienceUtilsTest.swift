@@ -64,12 +64,12 @@ class AudienceUtilsTest: XCTestCase {
             AttributeUpdate.remove(attribute: "some-attribute", date: date),
             AttributeUpdate.set(
                 attribute: "some-attribute",
-                value: "neat",
+                value: .string("neat"),
                 date: date
             ),
             AttributeUpdate.set(
                 attribute: "some-other-attribute",
-                value: 12,
+                value: .number(12),
                 date: date
             ),
             AttributeUpdate.remove(
@@ -82,12 +82,12 @@ class AudienceUtilsTest: XCTestCase {
 
         XCTAssertEqual(2, collapsed.count)
         XCTAssertEqual("some-attribute", collapsed[0].attribute)
-        XCTAssertEqual("neat", collapsed[0].jsonValue?.value() as! String)
+        XCTAssertEqual("neat", collapsed[0].jsonValue?.unWrap() as! String)
         XCTAssertEqual(.set, collapsed[0].type)
         XCTAssertEqual(date, collapsed[0].date)
 
         XCTAssertEqual("some-other-attribute", collapsed[1].attribute)
-        XCTAssertNil(collapsed[1].jsonValue?.value())
+        XCTAssertNil(collapsed[1].jsonValue?.unWrap())
         XCTAssertEqual(.remove, collapsed[1].type)
         XCTAssertEqual(.set, collapsed[0].type)
     }

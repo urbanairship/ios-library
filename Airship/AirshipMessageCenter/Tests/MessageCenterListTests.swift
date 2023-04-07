@@ -53,8 +53,6 @@ final class MessageCenterListTest: XCTestCase {
         ),
         config: config,
         store: store,
-        notificationCenter: .default,
-        date: AirshipDate(),
         workManager: workManager
     )
 

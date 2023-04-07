@@ -416,14 +416,4 @@ class ChannelTest: XCTestCase {
         let payload = await self.channelRegistrar.channelPayload
         XCTAssertFalse(payload.channel.isActive)
     }
-
-    func testForwardContactSubscriptionListUpdates() throws {
-        let updates = [
-            SubscriptionListUpdate(listId: "bar", type: .subscribe),
-            SubscriptionListUpdate(listId: "baz", type: .unsubscribe),
-        ]
-
-        self.channel.processContactSubscriptionUpdates(updates)
-        XCTAssertEqual(updates, self.audienceManager.contactUpdates)
-    }
 }

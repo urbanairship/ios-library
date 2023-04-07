@@ -11,11 +11,11 @@ import AirshipKit
 
 struct NamedUserDebugView: View {
 
-    @State
-    private var namedUserID: String = Airship.contact.namedUserID ?? ""
+    @StateObject
+    private var viewModel: ViewModel = ViewModel()
 
     private func updateNamedUser() {
-        let normalized = namedUserID.trimmingCharacters(
+        let normalized = self.viewModel.namedUserID.trimmingCharacters(
             in: .whitespacesAndNewlines
         )
 
@@ -38,18 +38,30 @@ struct NamedUserDebugView: View {
                 )
             ) {
                 if #available(iOS 15.0, *) {
-                    TextField(title, text: self.$namedUserID)
+                    TextField(title, text: self.$viewModel.namedUserID)
                         .onSubmit {
                             updateNamedUser()
                         }
                         .freeInput()
                 } else {
-                    TextField(title, text: self.$namedUserID) {
+                    TextField(title, text: self.$viewModel.namedUserID) {
                         updateNamedUser()
                     }
                 }
             }
         }
         .navigationTitle(title)
+    }
+
+
+    private class ViewModel: ObservableObject {
+        @Published
+        public var namedUserID: String = ""
+
+        init() {
+            Task { @MainActor in
+                self.namedUserID = await Airship.contact.namedUserID ?? ""
+            }
+        }
     }
 }

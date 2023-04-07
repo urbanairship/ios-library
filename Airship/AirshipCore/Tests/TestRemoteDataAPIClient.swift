@@ -1,8 +1,9 @@
 import Foundation
 
-@testable import AirshipCore
+@testable
+import AirshipCore
 
-public class TestRemoteDataAPIClient: NSObject, RemoteDataAPIClientProtocol {
+class TestRemoteDataAPIClient: RemoteDataAPIClientProtocol {
     
     @objc
     public var metdataCallback: ((Locale, String?) -> [AnyHashable: String])?

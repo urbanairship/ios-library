@@ -7,11 +7,11 @@ import Foundation
 public class ScopedSubscriptionListEditor: NSObject {
 
     private var subscriptionListUpdates: [ScopedSubscriptionListUpdate] = []
-    private let date: AirshipDate
+    private let date: AirshipDateProtocol
     private let completionHandler: ([ScopedSubscriptionListUpdate]) -> Void
 
     init(
-        date: AirshipDate,
+        date: AirshipDateProtocol,
         completionHandler: @escaping ([ScopedSubscriptionListUpdate]) -> Void
     ) {
         self.date = date

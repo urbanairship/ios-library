@@ -6,20 +6,19 @@ import XCTest
 
 class ContactAPIClientTest: XCTestCase {
 
-    var config: RuntimeConfig!
-    var localeManager: AirshipLocaleManager!
     private let session: TestAirshipRequestSession = TestAirshipRequestSession()
-    var contactAPIClient: ContactAPIClient!
+    private var contactAPIClient: ContactAPIClient!
+    private var config: RuntimeConfig!
+    private let date: UATestDate = UATestDate(offset: 0, dateOverride: Date())
+    private let currentLocale = Locale(identifier: "fr-CA")
 
     override func setUpWithError() throws {
         let airshipConfig = AirshipConfig()
+        airshipConfig.deviceAPIURL = "https://example.com"
         airshipConfig.requireInitialRemoteConfigEnabled = false
         self.config = RuntimeConfig(
             config: airshipConfig,
             dataStore: PreferenceDataStore(appKey: UUID().uuidString)
-        )
-        self.localeManager = AirshipLocaleManager(
-            dataStore: PreferenceDataStore(appKey: config.appKey)
         )
         self.session.response = HTTPURLResponse(
             url: URL(string: "https://contacts_test")!,
@@ -28,58 +27,196 @@ class ContactAPIClientTest: XCTestCase {
             headerFields: [String: String]()
         )
 
-        self.contactAPIClient = ContactAPIClient.init(
+        self.contactAPIClient = ContactAPIClient(
             config: self.config,
-            session: self.session
+            session: self.session,
+            date: self.date
         )
     }
 
     func testIdentify() async throws {
         self.session.data = """
             {
-                "contact_id": "56779"
+              "ok": true,
+              "contact": {
+                "contact_id": "1a32e8c7-5a73-47c0-9716-99fd3d41924b",
+                "is_anonymous": true,
+                "channel_association_timestamp": "2022-12-29T10:15:30.00"
+              },
+              "token": "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJLSHVNTE15RmVmYjdoeXR3WkV5VTF4IiwiaWF0IjoxNjAyMDY4NDIxLCJleHAiOjE2MDIwNjg0MjEsInN1YiI6InVMa2hSaktBYzVXQW1SdTFPTFZSVncifQ.kJPu3enbLJMX10xEtzlxxeum66R2ZWLs02OSVPhjomQ",
+              "token_expires_in": 3600000
             }
             """
             .data(using: .utf8)
 
         let response = try await contactAPIClient.identify(
             channelID: "test_channel",
-            namedUserID: "contact",
+            namedUserID: "my-named-user",
             contactID: nil
         )
-        
+
+        let expected = ContactIdentifyResult(
+            contact: ContactIdentifyResult.ContactInfo(
+                channelAssociatedDate: AirshipUtils.parseISO8601Date(from: "2022-12-29T10:15:30.00")!,
+                contactID: "1a32e8c7-5a73-47c0-9716-99fd3d41924b",
+                isAnonymous: true
+            ),
+            token: "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJLSHVNTE15RmVmYjdoeXR3WkV5VTF4IiwiaWF0IjoxNjAyMDY4NDIxLCJleHAiOjE2MDIwNjg0MjEsInN1YiI6InVMa2hSaktBYzVXQW1SdTFPTFZSVncifQ.kJPu3enbLJMX10xEtzlxxeum66R2ZWLs02OSVPhjomQ",
+            tokenExpiresInMilliseconds: 3600000
+        )
+
         XCTAssertTrue(response.isSuccess)
-        XCTAssertNotNil(response.result!.contactID)
-        XCTAssertNotNil(response.result!.isAnonymous)
+        XCTAssertEqual(response.result!, expected)
+
+        let request = session.lastRequest!
+
+        let requestBody = try AirshipJSON.from(data: request.body).unWrap() as! [String: AnyHashable]
+        let expectedBody = [
+            "device_info": [
+                "device_type": "ios"
+            ],
+            "action": [
+                "type": "identify",
+                "named_user_id": "my-named-user"
+              ]
+            ]
+
+        XCTAssertEqual(expectedBody, requestBody)
+        XCTAssertEqual(request.url?.absoluteString, "https://example.com/api/contacts/identify/v2")
+        XCTAssertEqual(request.method, "POST")
+        XCTAssertEqual(
+            request.headers,
+            [
+                "X-UA-Timestamp": AirshipUtils.ISODateFormatterUTC().string(from: self.date.now),
+                "Content-Type": "application/json",
+                "Accept": "application/vnd.urbanairship+json; version=3;",
+                "X-UA-Nonce": request.headers["X-UA-Nonce"],
+                "X-UA-Appkey": "",
+                "X-UA-Channel-ID": "test_channel"
+            ]
+        )
     }
 
     func testResolve() async throws {
         self.session.data = """
             {
-                "contact_id": "56779",
-                "is_anonymous": true
+              "ok": true,
+              "contact": {
+                "contact_id": "1a32e8c7-5a73-47c0-9716-99fd3d41924b",
+                "is_anonymous": true,
+                "channel_association_timestamp": "2022-12-29T10:15:30.00"
+              },
+              "token": "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJLSHVNTE15RmVmYjdoeXR3WkV5VTF4IiwiaWF0IjoxNjAyMDY4NDIxLCJleHAiOjE2MDIwNjg0MjEsInN1YiI6InVMa2hSaktBYzVXQW1SdTFPTFZSVncifQ.kJPu3enbLJMX10xEtzlxxeum66R2ZWLs02OSVPhjomQ",
+              "token_expires_in": 3600000
             }
             """
             .data(using: .utf8)
 
-        let response = try await contactAPIClient.resolve(channelID: "test_channel")
-        
+        let response = try await contactAPIClient.resolve(
+            channelID: "test_channel",
+            contactID: "some contact id"
+        )
+
+        let expected = ContactIdentifyResult(
+            contact: ContactIdentifyResult.ContactInfo(
+                channelAssociatedDate: AirshipUtils.parseISO8601Date(from: "2022-12-29T10:15:30.00")!,
+                contactID: "1a32e8c7-5a73-47c0-9716-99fd3d41924b",
+                isAnonymous: true
+            ),
+            token: "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJLSHVNTE15RmVmYjdoeXR3WkV5VTF4IiwiaWF0IjoxNjAyMDY4NDIxLCJleHAiOjE2MDIwNjg0MjEsInN1YiI6InVMa2hSaktBYzVXQW1SdTFPTFZSVncifQ.kJPu3enbLJMX10xEtzlxxeum66R2ZWLs02OSVPhjomQ",
+            tokenExpiresInMilliseconds: 3600000
+        )
+
         XCTAssertTrue(response.isSuccess)
-        XCTAssertNotNil(response.result!.contactID)
+        XCTAssertEqual(response.result!, expected)
+
+        let request = session.lastRequest!
+
+        let requestBody = try AirshipJSON.from(data: request.body).unWrap() as! [String: AnyHashable]
+        let expectedBody = [
+            "device_info": [
+                "device_type": "ios"
+            ],
+            "action": [
+                "type": "resolve",
+                "contact_id": "some contact id"
+              ]
+            ]
+
+        XCTAssertEqual(expectedBody, requestBody)
+        XCTAssertEqual(request.url?.absoluteString, "https://example.com/api/contacts/identify/v2")
+        XCTAssertEqual(request.method, "POST")
+        XCTAssertEqual(
+            request.headers,
+            [
+                "X-UA-Timestamp": AirshipUtils.ISODateFormatterUTC().string(from: self.date.now),
+                "Content-Type": "application/json",
+                "Accept": "application/vnd.urbanairship+json; version=3;",
+                "X-UA-Nonce": request.headers["X-UA-Nonce"],
+                "X-UA-Appkey": "",
+                "X-UA-Channel-ID": "test_channel"
+            ]
+        )
     }
 
     func testReset() async throws {
         self.session.data = """
             {
-                "contact_id": "56779",
+              "ok": true,
+              "contact": {
+                "contact_id": "1a32e8c7-5a73-47c0-9716-99fd3d41924b",
+                "is_anonymous": true,
+                "channel_association_timestamp": "2022-12-29T10:15:30.00"
+              },
+              "token": "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJLSHVNTE15RmVmYjdoeXR3WkV5VTF4IiwiaWF0IjoxNjAyMDY4NDIxLCJleHAiOjE2MDIwNjg0MjEsInN1YiI6InVMa2hSaktBYzVXQW1SdTFPTFZSVncifQ.kJPu3enbLJMX10xEtzlxxeum66R2ZWLs02OSVPhjomQ",
+              "token_expires_in": 3600000
             }
             """
             .data(using: .utf8)
 
-        let response = try await contactAPIClient.reset(channelID: "test_channel")
-        
+        let response = try await contactAPIClient.reset(
+            channelID: "test_channel"
+        )
+
+        let expected = ContactIdentifyResult(
+            contact: ContactIdentifyResult.ContactInfo(
+                channelAssociatedDate: AirshipUtils.parseISO8601Date(from: "2022-12-29T10:15:30.00")!,
+                contactID: "1a32e8c7-5a73-47c0-9716-99fd3d41924b",
+                isAnonymous: true
+            ),
+            token: "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJLSHVNTE15RmVmYjdoeXR3WkV5VTF4IiwiaWF0IjoxNjAyMDY4NDIxLCJleHAiOjE2MDIwNjg0MjEsInN1YiI6InVMa2hSaktBYzVXQW1SdTFPTFZSVncifQ.kJPu3enbLJMX10xEtzlxxeum66R2ZWLs02OSVPhjomQ",
+            tokenExpiresInMilliseconds: 3600000
+        )
+
         XCTAssertTrue(response.isSuccess)
-        XCTAssertNotNil(response.result!.contactID)
+        XCTAssertEqual(response.result!, expected)
+
+        let request = session.lastRequest!
+
+        let requestBody = try AirshipJSON.from(data: request.body).unWrap() as! [String: AnyHashable]
+        let expectedBody = [
+            "device_info": [
+                "device_type": "ios"
+            ],
+            "action": [
+                "type": "reset",
+              ]
+            ]
+
+        XCTAssertEqual(expectedBody, requestBody)
+        XCTAssertEqual(request.url?.absoluteString, "https://example.com/api/contacts/identify/v2")
+        XCTAssertEqual(request.method, "POST")
+        XCTAssertEqual(
+            request.headers,
+            [
+                "X-UA-Timestamp": AirshipUtils.ISODateFormatterUTC().string(from: self.date.now),
+                "Content-Type": "application/json",
+                "Accept": "application/vnd.urbanairship+json; version=3;",
+                "X-UA-Nonce": request.headers["X-UA-Nonce"],
+                "X-UA-Appkey": "",
+                "X-UA-Channel-ID": "test_channel"
+            ]
+        )
     }
 
     func testRegisterEmail() async throws {
@@ -91,40 +228,40 @@ class ContactAPIClientTest: XCTestCase {
             .data(using: .utf8)
         let date = Date()
         let response = try await contactAPIClient.registerEmail(
-            identifier: "some-contact-id",
+            contactID: "some-contact-id",
             address: "ua@airship.com",
             options: EmailRegistrationOptions.options(
                 transactionalOptedIn: date,
                 properties: ["interests": "newsletter"],
                 doubleOptIn: true
-            )
+            ),
+            locale: currentLocale
         )
 
         XCTAssertTrue(response.isSuccess)
         XCTAssertEqual("some-channel", response.result!.channelID)
         XCTAssertEqual(.email, response.result!.channelType)
-        
+
         let previousRequest = self.session.previousRequest!
         XCTAssertNotNil(previousRequest)
         XCTAssertEqual(
-            "https://device-api.urbanairship.com/api/channels/restricted/email",
+            "https://example.com/api/channels/restricted/email",
             previousRequest.url!.absoluteString
         )
 
         let previousBody = try JSONSerialization.jsonObject(
             with: previousRequest.body!,
             options: []
-        )
-        let currentLocale = self.localeManager.currentLocale
+        ) as! [String : AnyHashable]
 
         let formatter = AirshipUtils.isoDateFormatterUTCWithDelimiter()
-        let previousExpectedBody: Any = [
+        let previousExpectedBody: [String : AnyHashable] = [
             "channel": [
                 "type": "email",
                 "address": "ua@airship.com",
                 "timezone": TimeZone.current.identifier,
-                "locale_country": currentLocale.regionCode ?? "",
-                "locale_language": currentLocale.languageCode ?? "",
+                "locale_country": "CA",
+                "locale_language": "fr",
                 "transactional_opted_in": formatter.string(from: date),
             ],
             "opt_in_mode": "double",
@@ -132,22 +269,24 @@ class ContactAPIClientTest: XCTestCase {
                 "interests": "newsletter"
             ],
         ]
+
         XCTAssertEqual(
-            previousBody as! NSDictionary,
-            previousExpectedBody as! NSDictionary
+            previousBody,
+            previousExpectedBody
         )
 
         let lastRequest = self.session.lastRequest!
         XCTAssertEqual(
-            "https://device-api.urbanairship.com/api/contacts/some-contact-id",
+            "https://example.com/api/contacts/some-contact-id",
             lastRequest.url!.absoluteString
         )
 
         let lastBody = try JSONSerialization.jsonObject(
             with: lastRequest.body!,
             options: []
-        )
-        let lastExpectedBody: Any = [
+        ) as! [String : AnyHashable]
+
+        let lastExpectedBody:[String : AnyHashable] = [
             "associate": [
                 [
                     "device_type": "email",
@@ -156,8 +295,8 @@ class ContactAPIClientTest: XCTestCase {
             ]
         ]
         XCTAssertEqual(
-            lastBody as! NSDictionary,
-            lastExpectedBody as! NSDictionary
+            lastBody,
+            lastExpectedBody
         )
     }
 
@@ -170,19 +309,20 @@ class ContactAPIClientTest: XCTestCase {
             .data(using: .utf8)
 
         let response = try await contactAPIClient.registerSMS(
-            identifier: "some-contact-id",
+            contactID: "some-contact-id",
             msisdn: "15035556789",
-            options: SMSRegistrationOptions.optIn(senderID: "28855")
+            options: SMSRegistrationOptions.optIn(senderID: "28855"),
+            locale: currentLocale
         )
-      
+
         XCTAssertTrue(response.isSuccess)
         XCTAssertEqual("some-channel", response.result!.channelID)
         XCTAssertEqual(.sms, response.result!.channelType)
-        
+
         let previousRequest = self.session.previousRequest!
         XCTAssertNotNil(previousRequest)
         XCTAssertEqual(
-            "https://device-api.urbanairship.com/api/channels/restricted/sms",
+            "https://example.com/api/channels/restricted/sms",
             previousRequest.url!.absoluteString
         )
 
@@ -190,7 +330,6 @@ class ContactAPIClientTest: XCTestCase {
             with: previousRequest.body!,
             options: []
         )
-        let currentLocale = self.localeManager.currentLocale
         let previousExpectedBody: Any = [
             "msisdn": "15035556789",
             "sender": "28855",
@@ -205,7 +344,7 @@ class ContactAPIClientTest: XCTestCase {
 
         let lastRequest = self.session.lastRequest!
         XCTAssertEqual(
-            "https://device-api.urbanairship.com/api/contacts/some-contact-id",
+            "https://example.com/api/contacts/some-contact-id",
             lastRequest.url!.absoluteString
         )
 
@@ -236,14 +375,15 @@ class ContactAPIClientTest: XCTestCase {
             .data(using: .utf8)
 
         let response = try await contactAPIClient.registerOpen(
-            identifier: "some-contact-id",
+            contactID: "some-contact-id",
             address: "open_address",
             options: OpenRegistrationOptions.optIn(
                 platformName: "my_platform",
                 identifiers: ["model": "4", "category": "1"]
-            )
+            ),
+            locale: currentLocale
         )
-        
+
         XCTAssertTrue(response.isSuccess)
         XCTAssertEqual("some-channel", response.result!.channelID)
         XCTAssertEqual(.open, response.result!.channelType)
@@ -251,7 +391,7 @@ class ContactAPIClientTest: XCTestCase {
         let previousRequest = self.session.previousRequest!
         XCTAssertNotNil(previousRequest)
         XCTAssertEqual(
-            "https://device-api.urbanairship.com/api/channels/restricted/open",
+            "https://example.com/api/channels/restricted/open",
             previousRequest.url!.absoluteString
         )
 
@@ -259,8 +399,7 @@ class ContactAPIClientTest: XCTestCase {
             with: previousRequest.body!,
             options: []
         )
-        let currentLocale = self.localeManager.currentLocale
-        let previousExpectedBody: Any = [
+        let previousExpectedBody: [String: Any] = [
             "channel": [
                 "type": "open",
                 "address": "open_address",
@@ -274,17 +413,17 @@ class ContactAPIClientTest: XCTestCase {
                         "model": "4",
                         "category": "1",
                     ],
-                ],
-            ]
+                ] as [String : Any],
+            ] as [String : Any]
         ]
         XCTAssertEqual(
             previousBody as! NSDictionary,
-            previousExpectedBody as! NSDictionary
+            previousExpectedBody as NSDictionary
         )
 
         let lastRequest = self.session.lastRequest!
         XCTAssertEqual(
-            "https://device-api.urbanairship.com/api/contacts/some-contact-id",
+            "https://example.com/api/contacts/some-contact-id",
             lastRequest.url!.absoluteString
         )
 
@@ -308,18 +447,18 @@ class ContactAPIClientTest: XCTestCase {
 
     func testAssociateChannel() async throws {
         let response = try await contactAPIClient.associateChannel(
-            identifier: "some-contact-id",
+            contactID: "some-contact-id",
             channelID: "some-channel",
             channelType: .sms
         )
-        
+
         XCTAssertTrue(response.isSuccess)
         XCTAssertEqual("some-channel", response.result!.channelID)
         XCTAssertEqual(.sms, response.result!.channelType)
 
         let request = self.session.lastRequest!
         XCTAssertEqual(
-            "https://device-api.urbanairship.com/api/contacts/some-contact-id",
+            "https://example.com/api/contacts/some-contact-id",
             request.url!.absoluteString
         )
 
@@ -358,12 +497,12 @@ class ContactAPIClientTest: XCTestCase {
         let attributeUpdates = [
             AttributeUpdate.set(
                 attribute: "some-string",
-                value: "Hello",
+                value: .string("Hello"),
                 date: date
             ),
             AttributeUpdate.set(
                 attribute: "some-number",
-                value: 32.0,
+                value: .number(32.0),
                 date: date
             ),
             AttributeUpdate.remove(attribute: "some-remove", date: date),
@@ -385,36 +524,37 @@ class ContactAPIClientTest: XCTestCase {
         ]
 
         let response = try await contactAPIClient.update(
-            identifier: "some-contact-id",
+            contactID: "some-contact-id",
             tagGroupUpdates: tagUpdates,
             attributeUpdates: attributeUpdates,
             subscriptionListUpdates: listUpdates
         )
 
         XCTAssertTrue(response.isSuccess)
-        
+
         let request = self.session.lastRequest!
         XCTAssertEqual(
-            "https://device-api.urbanairship.com/api/contacts/some-contact-id",
+            "https://example.com/api/contacts/some-contact-id",
             request.url!.absoluteString
         )
 
         let body = try JSONSerialization.jsonObject(
             with: request.body!,
             options: []
-        )
+        ) as! [String: Any]
+
         let formattedDate = AirshipUtils.isoDateFormatterUTCWithDelimiter()
             .string(
                 from: date
             )
-        let expectedBody: Any = [
+        let expectedBody = [
             "attributes": [
                 [
                     "action": "set",
                     "key": "some-string",
                     "timestamp": formattedDate,
                     "value": "Hello",
-                ],
+                ] as [String : Any],
                 [
                     "action": "set",
                     "key": "some-number",
@@ -459,143 +599,8 @@ class ContactAPIClientTest: XCTestCase {
                     "timestamp": formattedDate,
                 ],
             ],
-        ]
+        ] as [String : Any]
 
-        XCTAssertEqual(body as! NSDictionary, expectedBody as! NSDictionary)
-    }
-
-    func testUpdateMixValidInvalidAttributes() async throws {
-        let date = Date()
-        let attributeUpdates = [
-            AttributeUpdate(
-                attribute: "some-string",
-                type: .set,
-                value: nil,
-                date: date
-            ),
-            AttributeUpdate.set(
-                attribute: "some-string",
-                value: "Hello",
-                date: date
-            ),
-        ]
-
-        let response = try await contactAPIClient.update(
-            identifier: "some-contact-id",
-            tagGroupUpdates: [],
-            attributeUpdates: attributeUpdates,
-            subscriptionListUpdates: nil
-        )
-        
-        XCTAssertTrue(response.isSuccess)
-
-        let request = self.session.lastRequest!
-        XCTAssertEqual(
-            "https://device-api.urbanairship.com/api/contacts/some-contact-id",
-            request.url!.absoluteString
-        )
-
-        let body = try JSONSerialization.jsonObject(
-            with: request.body!,
-            options: []
-        )
-        let formattedDate = AirshipUtils.isoDateFormatterUTCWithDelimiter()
-            .string(
-                from: date
-            )
-        let expectedBody: Any = [
-            "attributes": [
-                [
-                    "action": "set",
-                    "key": "some-string",
-                    "timestamp": formattedDate,
-                    "value": "Hello",
-                ]
-            ]
-        ]
-
-        XCTAssertEqual(body as! NSDictionary, expectedBody as! NSDictionary)
-    }
-
-    func testGetContactLists() async throws {
-        let responseBody = """
-            {
-               "ok" : true,
-               "subscription_lists": [
-                  {
-                     "list_ids": ["example_listId-1", "example_listId-3"],
-                      "scope": "email"
-                  },
-                  {
-                     "list_ids": ["example_listId-2", "example_listId-4"],
-                     "scope": "app"
-                  },
-                  {
-                     "list_ids": ["example_listId-2"],
-                     "scope": "web"
-                  }
-               ],
-            }
-            """
-
-        self.session.response = HTTPURLResponse(
-            url: URL(string: "https://neat")!,
-            statusCode: 200,
-            httpVersion: "",
-            headerFields: [String: String]()
-        )
-        self.session.data = responseBody.data(using: .utf8)
-
-        let expected: [String: [ChannelScope]] = [
-            "example_listId-1": [.email],
-            "example_listId-2": [.app, .web],
-            "example_listId-3": [.email],
-            "example_listId-4": [.app],
-        ]
-
-        let response = try await self.contactAPIClient.fetchSubscriptionLists("some-contact")
-        XCTAssertTrue(response.isSuccess)
-    
-        XCTAssertEqual(expected, response.result!)
-       
-        XCTAssertEqual("GET", self.session.lastRequest?.method)
-        XCTAssertEqual(
-            "https://device-api.urbanairship.com/api/subscription_lists/contacts/some-contact",
-            self.session.lastRequest?.url?.absoluteString
-        )
-    }
-
-    func testGetContactListParseError() async throws {
-        let responseBody = "What?"
-
-        self.session.data = responseBody.data(using: .utf8)
-        
-        self.session.response = HTTPURLResponse(
-            url: URL(string: "https://neat")!,
-            statusCode: 200,
-            httpVersion: "",
-            headerFields: [String: String]()
-        )
-
-        do {
-            _ = try await self.contactAPIClient.fetchSubscriptionLists("some-contact")
-            XCTFail()
-        }
-        catch {
-    
-        }
-    }
-
-    func testGetContactListError() async throws {
-        let sessionError = AirshipErrors.error("error!")
-        self.session.error = sessionError
-
-        do {
-            _ = try await self.contactAPIClient.fetchSubscriptionLists("some-contact")
-            XCTFail()
-        }
-        catch {
-
-        }
+        XCTAssertEqual(body as NSDictionary, expectedBody as NSDictionary)
     }
 }

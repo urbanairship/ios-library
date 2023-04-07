@@ -4,10 +4,6 @@ import Combine
 import Foundation
 
 protocol ChannelAudienceManagerProtocol {
-    var pendingAttributeUpdates: [AttributeUpdate] { get }
-
-    var pendingTagGroupUpdates: [TagGroupUpdate] { get }
-
     var channelID: String? { get set }
 
     var enabled: Bool { get set }
@@ -24,7 +20,7 @@ protocol ChannelAudienceManagerProtocol {
 
     func fetchSubscriptionLists() async throws -> [String]
 
-    func processContactSubscriptionUpdates(_ updates: [SubscriptionListUpdate])
+    func clearSubscriptionListCache()
 }
 
 // NOTE: For internal use only. :nodoc:
@@ -44,42 +40,21 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
     private let workManager: AirshipWorkManagerProtocol
     private let subscriptionListClient: SubscriptionListAPIClientProtocol
     private let updateClient: ChannelBulkUpdateAPIClientProtocol
-    private let notificationCenter: NotificationCenter
+    private let audienceOverridesProvider: AudienceOverridesProvider
 
-    private let date: AirshipDate
+    private let date: AirshipDateProtocol
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
     private let updateLock = AirshipLock()
 
     private let cachedSubscriptionLists: CachedValue<[String]>
-    private let cachedSubscriptionListsHistory:
-        CachedList<SubscriptionListUpdate>
 
     private let subscriptionListEditsSubject = PassthroughSubject<
         SubscriptionListEdit, Never
     >()
 
-    var subscriptionListEdits: AnyPublisher<SubscriptionListEdit, Never>
-    {
+    var subscriptionListEdits: AnyPublisher<SubscriptionListEdit, Never> {
         self.subscriptionListEditsSubject.eraseToAnyPublisher()
-    }
-
-   var pendingAttributeUpdates: [AttributeUpdate] {
-        var updates: [AttributeUpdate]!
-        updateLock.sync {
-            updates = getUpdates().compactMap { $0.attributeUpdates }
-                .reduce([], +)
-        }
-        return updates
-    }
-
-    var pendingTagGroupUpdates: [TagGroupUpdate] {
-        var updates: [TagGroupUpdate]!
-        updateLock.sync {
-            updates = getUpdates().compactMap { $0.tagGroupUpdates }
-                .reduce([], +)
-        }
-        return updates
     }
 
     var channelID: String? {
@@ -100,23 +75,18 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
         subscriptionListClient: SubscriptionListAPIClientProtocol,
         updateClient: ChannelBulkUpdateAPIClientProtocol,
         privacyManager: AirshipPrivacyManager,
-        notificationCenter: NotificationCenter,
-        date: AirshipDate
+        notificationCenter: NotificationCenter =  NotificationCenter.default,
+        date: AirshipDateProtocol = AirshipDate.shared,
+        audienceOverridesProvider: AudienceOverridesProvider
     ) {
-
         self.dataStore = dataStore
         self.workManager = workManager
         self.privacyManager = privacyManager
         self.subscriptionListClient = subscriptionListClient
         self.updateClient = updateClient
-        self.notificationCenter = notificationCenter
         self.date = date
-        self.cachedSubscriptionLists = CachedValue(
-            date: date
-        )
-        self.cachedSubscriptionListsHistory = CachedList(
-            date: date
-        )
+        self.cachedSubscriptionLists = CachedValue(date: date)
+        self.audienceOverridesProvider = audienceOverridesProvider
 
         self.workManager.registerWorker(
             ChannelAudienceManager.updateTaskID,
@@ -142,12 +112,19 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
         )
 
         self.checkPrivacyManager()
+
+        Task {
+            await self.audienceOverridesProvider.setPendingChannelOverridesProvider { channelID in
+                return self.pendingOverrides(channelID: channelID)
+            }
+        }
     }
 
     convenience init(
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,
-        privacyManager: AirshipPrivacyManager
+        privacyManager: AirshipPrivacyManager,
+        audienceOverridesProvider: AudienceOverridesProvider
     ) {
         self.init(
             dataStore: dataStore,
@@ -155,8 +132,7 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
             subscriptionListClient: SubscriptionListAPIClient(config: config),
             updateClient: ChannelBulkUpdateAPIClient(config: config),
             privacyManager: privacyManager,
-            notificationCenter: NotificationCenter.default,
-            date: AirshipDate()
+            audienceOverridesProvider: audienceOverridesProvider
         )
     }
 
@@ -243,23 +219,41 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
             channelID: channelID
         )
 
-        // Localy history
-        listIDs = self.applySubscriptionListUpdates(
-            listIDs,
-            updates: self.cachedSubscriptionListsHistory.values
+        let overrides = await self.audienceOverridesProvider.channelOverrides(
+            channelID: channelID
         )
 
-        // Pending
-        if let pending = AudienceUpdate.collapse(self.getUpdates()) {
-            listIDs = self.applySubscriptionListUpdates(
-                listIDs,
-                updates: pending.subscriptionListUpdates
-            )
-        }
+        listIDs = self.applySubscriptionListUpdates(
+            listIDs,
+            updates: overrides.subscriptionLists
+        )
 
         return listIDs
     }
 
+    func pendingOverrides(channelID: String) -> ChannelAudienceOverrides {
+        guard self.channelID == channelID else {
+            return ChannelAudienceOverrides()
+        }
+
+        var tags: [TagGroupUpdate] = []
+        var attributes: [AttributeUpdate] = []
+        var subscriptionLists: [SubscriptionListUpdate] = []
+
+        self.updateLock.sync {
+            self.getUpdates().forEach { update in
+                attributes += update.attributeUpdates
+                tags += update.tagGroupUpdates
+                subscriptionLists += update.subscriptionListUpdates
+            }
+        }
+
+        return ChannelAudienceOverrides(
+            tags: tags,
+            attributes: attributes,
+            subscriptionLists: subscriptionLists
+        )
+    }
 
     private func resolveSubscriptionLists(
         channelID: String
@@ -291,6 +285,10 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
         _ ids: [String],
         updates: [SubscriptionListUpdate]
     ) -> [String] {
+        guard !updates.isEmpty else {
+            return ids
+        }
+
         var result = ids
         updates.forEach { update in
             switch update.type {
@@ -336,13 +334,6 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
             return .success
         }
 
-        for listUpdate in update.subscriptionListUpdates {
-            self.cachedSubscriptionListsHistory.append(
-                listUpdate,
-                expiresIn: ChannelAudienceManager.maxCacheTime
-            )
-        }
-
         let response = try await self.updateClient.update(
             update,
             channelID: channelID
@@ -357,19 +348,16 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
             return response.isServerError ? .failure : .success
         }
 
+
+        await self.audienceOverridesProvider.channelUpdated(
+            channelID: channelID,
+            tags: update.tagGroupUpdates,
+            attributes: update.attributeUpdates,
+            subscriptionLists: update.subscriptionListUpdates
+        )
+
         self.popFirstUpdate()
         self.enqueueTask()
-
-        let payload: [String: Any] = [
-            AirshipChannel.audienceTagsKey: update.tagGroupUpdates,
-            AirshipChannel.audienceAttributesKey: update.attributeUpdates,
-        ]
-
-        self.notificationCenter.post(
-            name: AirshipChannel.audienceUpdatedEvent,
-            object: nil,
-            userInfo: payload
-        )
 
         return .success
     }
@@ -514,14 +502,8 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
         }
     }
 
-    func processContactSubscriptionUpdates(_ updates: [SubscriptionListUpdate])
-    {
-        updates.forEach {
-            self.cachedSubscriptionListsHistory.append(
-                $0,
-                expiresIn: ChannelAudienceManager.maxCacheTime
-            )
-        }
+    func clearSubscriptionListCache() {
+        self.cachedSubscriptionLists.expire()
     }
 }
 
@@ -574,5 +556,4 @@ internal struct AudienceUpdate: Codable {
 
         return collapsed.isEmpty ? nil : collapsed
     }
-
 }

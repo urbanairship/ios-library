@@ -6,7 +6,6 @@
 #import "UAAutomationEngine+Internal.h"
 #import "UAInAppMessage.h"
 #import "UASchedule.h"
-#import "UAInAppAudienceManager+Internal.h"
 #import "UAInAppRemoteDataClient+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
 #import "UADeferredScheduleAPIClient+Internal.h"
@@ -16,6 +15,7 @@
 @class UAChannel;
 @class UAAnalytics;
 @class UAPrivacyManager;
+@class UAAutomationAudienceOverridesProvider;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -29,7 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Factory method. Use for testing.
  *
  * @param automationEngine The automation engine.
- * @param audienceManager The audience manager.
+ * @param audienceOverridesProvider The audience overides provider.
  * @param remoteDataClient The remote data client.
  * @param dataStore The preference data store.
  * @param inAppMessageManager The in-app message manager instance.
@@ -40,7 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @return A in-app automation manager instance.
  */
 + (instancetype)automationWithEngine:(UAAutomationEngine *)automationEngine
-                     audienceManager:(UAInAppAudienceManager *)audienceManager
+           audienceOverridesProvider:(UAAutomationAudienceOverridesProvider *)audienceOverridesProvider
                     remoteDataClient:(UAInAppRemoteDataClient *)remoteDataClient
                            dataStore:(UAPreferenceDataStore *)dataStore
                  inAppMessageManager:(UAInAppMessageManager *)inAppMessageManager
@@ -53,7 +53,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Factory method.
  *
  * @param config The UARuntimeConfigInstance.
- * @param audienceManager The audience manager.
+ * @param audienceOverridesProvider The audience overides provider.
  * @param remoteDataProvider The remote data provider.
  * @param dataStore The preference data store.
  * @param channel The channel.
@@ -62,7 +62,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @return A in-app automation manager instance.
  */
 + (instancetype)automationWithConfig:(UARuntimeConfig *)config
-                     audienceManager:(UAInAppAudienceManager *)audienceManager
+           audienceOverridesProvider:(UAAutomationAudienceOverridesProvider *)audienceOverridesProvider
                   remoteDataProvider:(id<UARemoteDataProvider>)remoteDataProvider
                            dataStore:(UAPreferenceDataStore *)dataStore
                              channel:(UAChannel *)channel

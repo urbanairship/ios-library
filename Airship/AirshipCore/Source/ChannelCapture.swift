@@ -15,9 +15,9 @@ public class ChannelCapture: NSObject {
     private static let pasteboardExpirationSeconds: TimeInterval = 60
 
     private let config: RuntimeConfig
-    private let channel: ChannelProtocol
+    private let channel: AirshipChannelProtocol
     private let notificationCenter: NotificationCenter
-    private let date: AirshipDate
+    private let date: AirshipDateProtocol
     private let pasteboard: AirshipPasteboardProtocol
 
     private var knockTimes: [Date] = []
@@ -35,10 +35,10 @@ public class ChannelCapture: NSObject {
 
     init(
         config: RuntimeConfig,
-        channel: ChannelProtocol,
-        notificationCenter: NotificationCenter,
-        date: AirshipDate,
-        pasteboard: AirshipPasteboardProtocol
+        channel: AirshipChannelProtocol,
+        notificationCenter: NotificationCenter = NotificationCenter.default,
+        date: AirshipDateProtocol = AirshipDate.shared,
+        pasteboard: AirshipPasteboardProtocol = UIPasteboard.general
     ) {
         self.config = config
         self.channel = channel
@@ -55,20 +55,6 @@ public class ChannelCapture: NSObject {
             selector: #selector(applicationDidTransitionToForeground),
             name: AppStateTracker.didTransitionToForeground,
             object: nil
-        )
-    }
-
-    convenience init(
-        config: RuntimeConfig,
-        channel: AirshipChannel
-    ) {
-
-        self.init(
-            config: config,
-            channel: channel,
-            notificationCenter: NotificationCenter.default,
-            date: AirshipDate(),
-            pasteboard: UIPasteboard.general
         )
     }
 

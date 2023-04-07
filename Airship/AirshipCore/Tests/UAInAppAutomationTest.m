@@ -22,7 +22,7 @@
 @interface UAInAppAutomationTest : UAAirshipBaseTest
 @property(nonatomic, strong) UAInAppAutomation *inAppAutomation;
 @property(nonatomic, strong) id mockAutomationEngine;
-@property(nonatomic, strong) id mockAudienceManager;
+@property(nonatomic, strong) id mockAudienceOverridesProvider;
 @property(nonatomic, strong) id mockRemoteDataClient;
 @property(nonatomic, strong) id mockInAppMessageManager;
 @property(nonatomic, strong) id mockDeferredClient;
@@ -49,7 +49,7 @@
     self.privacyManager = [[UAPrivacyManager alloc] initWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
 
     self.mockAutomationEngine = [self mockForClass:[UAAutomationEngine class]];
-    self.mockAudienceManager = [self mockForClass:[UAInAppAudienceManager class]];
+    self.mockAudienceOverridesProvider = [self mockForClass:[UAAutomationAudienceOverridesProvider class]];
     self.mockRemoteDataClient = [self mockForClass:[UAInAppRemoteDataClient class]];
     self.mockInAppMessageManager = [self mockForClass:[UAInAppMessageManager class]];
     self.mockDeferredClient = [self mockForClass:[UADeferredScheduleAPIClient class]];
@@ -62,20 +62,20 @@
         void(^callback)(void) =  (__bridge void (^)(void))arg;
         callback();
     }] attemptRemoteDataRefreshWithForce:NO completionHandler:OCMOCK_ANY];
-    
+
     [[[self.mockAutomationEngine stub] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:2];
         self.engineDelegate =  (__bridge id<UAAutomationEngineDelegate>)arg;
     }] setDelegate:OCMOCK_ANY];
-    
+
     self.airship = [[UATestAirshipInstance alloc] init];
     self.airship.components = @[self.mockChannel];
     self.airship.privacyManager = self.privacyManager;
     [self.airship makeShared];
 
     self.inAppAutomation = [UAInAppAutomation automationWithEngine:self.mockAutomationEngine
-                                                   audienceManager:self.mockAudienceManager
+                                         audienceOverridesProvider:self.mockAudienceOverridesProvider
                                                   remoteDataClient:self.mockRemoteDataClient
                                                          dataStore:self.dataStore
                                                inAppMessageManager:self.mockInAppMessageManager
@@ -335,7 +335,7 @@
     }];
 
     UADeferredScheduleResult *deferredResult = [UADeferredScheduleResult resultWithMessage:message audienceMatch:YES];
-    
+
     UADeferredAPIClientResponse *deferredResponse = [UADeferredAPIClientResponse responseWithStatus:200 result:deferredResult rules:nil];
 
     UAScheduleTrigger *trigger = [UAScheduleTrigger foregroundTriggerWithCount:1];
@@ -350,22 +350,6 @@
         builder.identifier = @"schedule ID";
         builder.campaigns = @{@"some": @"campaigns object"};
     }];
-
-    NSArray *tagOverrides = @[
-        [[UATagGroupUpdate alloc] initWithGroup:@"group1" tags:@[@"baz", @"boz"] type:UATagGroupUpdateTypeSet],
-        [[UATagGroupUpdate alloc] initWithGroup:@"group2" tags:@[@"bleep", @"bloop"] type:UATagGroupUpdateTypeSet]
-    ];
-    
-    NSArray *attributeOverrides = @[
-        [[UAAttributeUpdate alloc] initWithAttribute:@"breakfastDrink"
-                                                  type:UAAttributeUpdateTypeSet
-                                                 value:@"coffee"
-                                                  date:NSDate.now],
-        [[UAAttributeUpdate alloc] initWithAttribute:@"lunchDrink"
-                                                type:UAAttributeUpdateTypeSet
-                                               value:@"code-red"
-                                                date:NSDate.now]
-    ];
 
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
@@ -386,16 +370,20 @@
      reportingContext:@{}
      completionHandler:OCMOCK_ANY];
 
-    [[[self.mockAudienceManager expect] andReturn:tagOverrides] tagOverrides];
-    [[[self.mockAudienceManager expect] andReturn:attributeOverrides] attributeOverrides];
+    UAAutomationAudienceOverrides *overrides = [[UAAutomationAudienceOverrides alloc] initWithTagsPayload:nil attributesPayload:nil];
+    [[[self.mockAudienceOverridesProvider expect] andDo:^(NSInvocation *invocation) {
+        void (^block)(UAAutomationAudienceOverrides *);
+        [invocation getArgument:&block atIndex:3];
+        block(overrides);
+    }] audienceOverridesWithChannelID:@"channel ID" completionHandler:OCMOCK_ANY];
 
     [[[self.mockDeferredClient expect] andDo:^(NSInvocation *invocation) {
         void (^block)(UADeferredAPIClientResponse *, NSError *);
-        [invocation getArgument:&block atIndex:7];
+        [invocation getArgument:&block atIndex:6];
         block(deferredResponse, nil);
     }] resolveURL:deferred.URL
      channelID:@"channel ID" triggerContext:triggerContext
-     tagOverrides:tagOverrides attributeOverrides:attributeOverrides completionHandler:OCMOCK_ANY];
+     audienceOverrides:overrides completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
     [self.engineDelegate prepareSchedule:schedule
@@ -408,7 +396,7 @@
     [self waitForTestExpectations];
     [self.mockDeferredClient verify];
     [self.mockInAppMessageManager verify];
-    [self.mockAudienceManager verify];
+    [self.mockAudienceOverridesProvider verify];
 }
 
 - (void)testPrepareDeferredUnderLimit {
@@ -418,7 +406,7 @@
     }];
 
     UADeferredScheduleResult *deferredResult = [UADeferredScheduleResult resultWithMessage:message audienceMatch:YES];
-    
+
     UADeferredAPIClientResponse *deferredResponse = [UADeferredAPIClientResponse responseWithStatus:200 result:deferredResult rules:nil];
 
     UAScheduleTrigger *trigger = [UAScheduleTrigger foregroundTriggerWithCount:1];
@@ -428,22 +416,7 @@
     UAScheduleDeferredData *deferred = [UAScheduleDeferredData deferredDataWithURL:[NSURL URLWithString:@"https://airship.com"]
                                                                 retriableOnTimeout:YES];
 
-    NSArray *tagOverrides = @[
-        [[UATagGroupUpdate alloc] initWithGroup:@"group1" tags:@[@"baz", @"boz"] type:UATagGroupUpdateTypeSet],
-        [[UATagGroupUpdate alloc] initWithGroup:@"group2" tags:@[@"bleep", @"bloop"] type:UATagGroupUpdateTypeSet]
-    ];
-    
-    NSArray *attributeOverrides = @[
-        [[UAAttributeUpdate alloc] initWithAttribute:@"breakfastDrink"
-                                                  type:UAAttributeUpdateTypeSet
-                                                 value:@"coffee"
-                                                  date:NSDate.now],
-        [[UAAttributeUpdate alloc] initWithAttribute:@"lunchDrink"
-                                                type:UAAttributeUpdateTypeSet
-                                               value:@"code-red"
-                                                date:NSDate.now]
-    ];
-    
+
     UASchedule *schedule = [UADeferredSchedule scheduleWithDeferredData:deferred builderBlock:^(UAScheduleBuilder *builder) {
         builder.triggers = @[trigger];
         builder.identifier = @"schedule ID";
@@ -459,8 +432,12 @@
         block(UAInAppMessagePrepareResultSuccess);
     }] prepareMessage:message scheduleID:@"schedule ID" campaigns:@{@"some": @"campaigns object"} reportingContext:@{} completionHandler:OCMOCK_ANY];
 
-    [[[self.mockAudienceManager expect] andReturn:tagOverrides] tagOverrides];
-    [[[self.mockAudienceManager expect] andReturn:attributeOverrides] attributeOverrides];
+    UAAutomationAudienceOverrides *overrides = [[UAAutomationAudienceOverrides alloc] initWithTagsPayload:nil attributesPayload:nil];
+    [[[self.mockAudienceOverridesProvider expect] andDo:^(NSInvocation *invocation) {
+        void (^block)(UAAutomationAudienceOverrides *);
+        [invocation getArgument:&block atIndex:3];
+        block(overrides);
+    }] audienceOverridesWithChannelID:@"channel ID" completionHandler:OCMOCK_ANY];
 
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -475,11 +452,11 @@
 
     [[[self.mockDeferredClient expect] andDo:^(NSInvocation *invocation) {
         void (^block)(UADeferredAPIClientResponse *, NSError *);
-        [invocation getArgument:&block atIndex:7];
+        [invocation getArgument:&block atIndex:6];
         block(deferredResponse, nil);
     }] resolveURL:deferred.URL
      channelID:@"channel ID" triggerContext:triggerContext
-     tagOverrides:tagOverrides attributeOverrides:attributeOverrides completionHandler:OCMOCK_ANY];
+     audienceOverrides:overrides completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
     [self.engineDelegate prepareSchedule:schedule
@@ -492,7 +469,7 @@
     [self waitForTestExpectations];
     [self.mockDeferredClient verify];
     [self.mockInAppMessageManager verify];
-    [self.mockAudienceManager verify];
+    [self.mockAudienceOverridesProvider verify];
     [self.mockFrequencyLimitManager verify];
 }
 
@@ -526,8 +503,8 @@
         }]);
     }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-    [[self.mockDeferredClient reject] resolveURL:OCMOCK_ANY channelID:OCMOCK_ANY triggerContext:OCMOCK_ANY tagOverrides:OCMOCK_ANY
-                              attributeOverrides:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    [[self.mockDeferredClient reject] resolveURL:OCMOCK_ANY channelID:OCMOCK_ANY triggerContext:OCMOCK_ANY audienceOverrides:OCMOCK_ANY
+                              completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
     [self.engineDelegate prepareSchedule:schedule
@@ -540,7 +517,6 @@
     [self waitForTestExpectations];
     [self.mockDeferredClient verify];
     [self.mockInAppMessageManager verify];
-    [self.mockAudienceManager verify];
 }
 
 - (void)testPrepareDeferredTimedOut {
@@ -548,7 +524,7 @@
 
     UADeferredAPIClientResponse *deferredResponse = [UADeferredAPIClientResponse responseWithStatus:401 result:nil rules:nil];
 
-    NSError *deferredError = [NSError errorWithDomain:UADeferredScheduleAPIClientErrorDomain
+    NSError *deferredError = [NSError errorWithDomain:@"deferred error"
                                                   code:100
                                               userInfo:nil];
 
@@ -559,9 +535,13 @@
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         builder.identifier = @"schedule ID";
     }];
-    
-    [[[self.mockAudienceManager expect] andReturn:@[]] tagOverrides];
-    [[[self.mockAudienceManager expect] andReturn:@[]] attributeOverrides];
+
+    UAAutomationAudienceOverrides *overrides = [[UAAutomationAudienceOverrides alloc] initWithTagsPayload:nil attributesPayload:nil];
+    [[[self.mockAudienceOverridesProvider expect] andDo:^(NSInvocation *invocation) {
+        void (^block)(UAAutomationAudienceOverrides *);
+        [invocation getArgument:&block atIndex:3];
+        block(overrides);
+    }] audienceOverridesWithChannelID:@"channel ID" completionHandler:OCMOCK_ANY];
 
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
@@ -579,10 +559,10 @@
 
     [[[self.mockDeferredClient expect] andDo:^(NSInvocation *invocation) {
         void (^block)(UADeferredAPIClientResponse *, NSError *);
-        [invocation getArgument:&block atIndex:7];
+        [invocation getArgument:&block atIndex:6];
         block(deferredResponse, deferredError);
     }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:nil
-     tagOverrides:@[] attributeOverrides:@[] completionHandler:OCMOCK_ANY];
+     audienceOverrides:overrides completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
     [self.engineDelegate prepareSchedule:schedule
@@ -608,9 +588,13 @@
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         builder.identifier = @"schedule ID";
     }];
-    
-    [[[self.mockAudienceManager expect] andReturn:@[]] tagOverrides];
-    [[[self.mockAudienceManager expect] andReturn:@[]] attributeOverrides];
+
+    UAAutomationAudienceOverrides *overrides = [[UAAutomationAudienceOverrides alloc] initWithTagsPayload:nil attributesPayload:nil];
+    [[[self.mockAudienceOverridesProvider expect] andDo:^(NSInvocation *invocation) {
+        void (^block)(UAAutomationAudienceOverrides *);
+        [invocation getArgument:&block atIndex:3];
+        block(overrides);
+    }] audienceOverridesWithChannelID:@"channel ID" completionHandler:OCMOCK_ANY];
 
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
@@ -620,13 +604,13 @@
         [invocation getArgument:&block atIndex:2];
         block();
     }] notifyOnUpdate:OCMOCK_ANY];
-    
+
     [[[self.mockRemoteDataClient expect] andDo:^(NSInvocation *invocation) {
         void (^block)(void);
         [invocation getArgument:&block atIndex:3];
         block();
     }] attemptRemoteDataRefreshWithForce:YES completionHandler:OCMOCK_ANY];
-    
+
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
@@ -640,10 +624,10 @@
 
     [[[self.mockDeferredClient expect] andDo:^(NSInvocation *invocation) {
         void (^block)(UADeferredAPIClientResponse *, NSError *);
-        [invocation getArgument:&block atIndex:7];
+        [invocation getArgument:&block atIndex:6];
         block(deferredResponse, nil);
     }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:nil
-     tagOverrides:@[] attributeOverrides:@[] completionHandler:OCMOCK_ANY];
+     audienceOverrides:overrides completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
     [self.engineDelegate prepareSchedule:schedule
@@ -670,9 +654,13 @@
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         builder.identifier = @"schedule ID";
     }];
-    
-    [[[self.mockAudienceManager expect] andReturn:@[]] tagOverrides];
-    [[[self.mockAudienceManager expect] andReturn:@[]] attributeOverrides];
+
+    UAAutomationAudienceOverrides *overrides = [[UAAutomationAudienceOverrides alloc] initWithTagsPayload:nil attributesPayload:nil];
+    [[[self.mockAudienceOverridesProvider expect] andDo:^(NSInvocation *invocation) {
+        void (^block)(UAAutomationAudienceOverrides *);
+        [invocation getArgument:&block atIndex:3];
+        block(overrides);
+    }] audienceOverridesWithChannelID:@"channel ID" completionHandler:OCMOCK_ANY];
 
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
@@ -690,10 +678,10 @@
 
     [[[self.mockDeferredClient expect] andDo:^(NSInvocation *invocation) {
         void (^block)(UADeferredAPIClientResponse *, NSError *);
-        [invocation getArgument:&block atIndex:7];
+        [invocation getArgument:&block atIndex:6];
         block(deferredResponse, nil);
     }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:nil
-     tagOverrides:@[] attributeOverrides:@[] completionHandler:OCMOCK_ANY];
+     audienceOverrides:overrides completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
     [self.inAppAutomation prepareDeferredSchedule:schedule triggerContext:nil retriableHandler:^(UARetriableResult result, NSTimeInterval time) {
@@ -701,7 +689,7 @@
         XCTAssertEqual(time, 5);
         [prepareFinished fulfill];
     } completionHandler:^(UAAutomationSchedulePrepareResult result) {}];
-    
+
     [self waitForTestExpectations];
     [self.mockDeferredClient verify];
 }
@@ -718,9 +706,13 @@
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         builder.identifier = @"schedule ID";
     }];
-    
-    [[[self.mockAudienceManager expect] andReturn:@[]] tagOverrides];
-    [[[self.mockAudienceManager expect] andReturn:@[]] attributeOverrides];
+
+    UAAutomationAudienceOverrides *overrides = [[UAAutomationAudienceOverrides alloc] initWithTagsPayload:nil attributesPayload:nil];
+    [[[self.mockAudienceOverridesProvider expect] andDo:^(NSInvocation *invocation) {
+        void (^block)(UAAutomationAudienceOverrides *);
+        [invocation getArgument:&block atIndex:3];
+        block(overrides);
+    }] audienceOverridesWithChannelID:@"channel ID" completionHandler:OCMOCK_ANY];
 
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
@@ -738,10 +730,10 @@
 
     [[[self.mockDeferredClient expect] andDo:^(NSInvocation *invocation) {
         void (^block)(UADeferredAPIClientResponse *, NSError *);
-        [invocation getArgument:&block atIndex:7];
+        [invocation getArgument:&block atIndex:6];
         block(deferredResponse, nil);
     }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:nil
-     tagOverrides:@[] attributeOverrides:@[] completionHandler:OCMOCK_ANY];
+     audienceOverrides:overrides completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
     [self.inAppAutomation prepareDeferredSchedule:schedule triggerContext:nil retriableHandler:^(UARetriableResult result, NSTimeInterval time) {
@@ -749,7 +741,7 @@
         XCTAssertEqual(time, 0);
         [prepareFinished fulfill];
     } completionHandler:^(UAAutomationSchedulePrepareResult result) {}];
-    
+
     [self waitForTestExpectations];
     [self.mockDeferredClient verify];
 }
@@ -767,9 +759,13 @@
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         builder.identifier = @"schedule ID";
     }];
-    
-    [[[self.mockAudienceManager expect] andReturn:@[]] tagOverrides];
-    [[[self.mockAudienceManager expect] andReturn:@[]] attributeOverrides];
+
+    UAAutomationAudienceOverrides *overrides = [[UAAutomationAudienceOverrides alloc] initWithTagsPayload:nil attributesPayload:nil];
+    [[[self.mockAudienceOverridesProvider expect] andDo:^(NSInvocation *invocation) {
+        void (^block)(UAAutomationAudienceOverrides *);
+        [invocation getArgument:&block atIndex:3];
+        block(overrides);
+    }] audienceOverridesWithChannelID:@"channel ID" completionHandler:OCMOCK_ANY];
 
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
@@ -787,10 +783,10 @@
 
     [[[self.mockDeferredClient expect] andDo:^(NSInvocation *invocation) {
         void (^block)(UADeferredAPIClientResponse *, NSError *);
-        [invocation getArgument:&block atIndex:7];
+        [invocation getArgument:&block atIndex:6];
         block(deferredResponse, nil);
     }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:nil
-     tagOverrides:@[] attributeOverrides:@[] completionHandler:OCMOCK_ANY];
+     audienceOverrides:overrides completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
     [self.inAppAutomation prepareDeferredSchedule:schedule triggerContext:nil retriableHandler:^(UARetriableResult result, NSTimeInterval time) {
@@ -798,7 +794,7 @@
         XCTAssertEqual(time, 5);
         [prepareFinished fulfill];
     } completionHandler:^(UAAutomationSchedulePrepareResult result) {}];
-    
+
     [self waitForTestExpectations];
     [self.mockDeferredClient verify];
 }
@@ -815,9 +811,13 @@
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         builder.identifier = @"schedule ID";
     }];
-    
-    [[[self.mockAudienceManager expect] andReturn:@[]] tagOverrides];
-    [[[self.mockAudienceManager expect] andReturn:@[]] attributeOverrides];
+
+    UAAutomationAudienceOverrides *overrides = [[UAAutomationAudienceOverrides alloc] initWithTagsPayload:nil attributesPayload:nil];
+    [[[self.mockAudienceOverridesProvider expect] andDo:^(NSInvocation *invocation) {
+        void (^block)(UAAutomationAudienceOverrides *);
+        [invocation getArgument:&block atIndex:3];
+        block(overrides);
+    }] audienceOverridesWithChannelID:@"channel ID" completionHandler:OCMOCK_ANY];
 
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
@@ -835,10 +835,10 @@
 
     [[[self.mockDeferredClient expect] andDo:^(NSInvocation *invocation) {
         void (^block)(UADeferredAPIClientResponse *, NSError *);
-        [invocation getArgument:&block atIndex:7];
+        [invocation getArgument:&block atIndex:6];
         block(deferredResponse, nil);
     }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:nil
-     tagOverrides:@[] attributeOverrides:@[] completionHandler:OCMOCK_ANY];
+     audienceOverrides:overrides completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
     [self.inAppAutomation prepareDeferredSchedule:schedule triggerContext:nil retriableHandler:^(UARetriableResult result, NSTimeInterval time) {
@@ -846,7 +846,7 @@
         XCTAssertEqual(time, 0);
         [prepareFinished fulfill];
     } completionHandler:^(UAAutomationSchedulePrepareResult result) {}];
-    
+
     [self waitForTestExpectations];
     [self.mockDeferredClient verify];
 }
@@ -855,7 +855,7 @@
     [[[self.mockChannel stub] andReturn:@"channel ID"] identifier];
 
     UADeferredScheduleResult *deferredResult = [UADeferredScheduleResult resultWithMessage:nil audienceMatch:NO];
-    
+
     UADeferredAPIClientResponse *deferredResponse = [UADeferredAPIClientResponse responseWithStatus:200 result:deferredResult rules:nil];
 
     UAScheduleDeferredData *deferred = [UAScheduleDeferredData deferredDataWithURL:[NSURL URLWithString:@"https://airship.com"]
@@ -869,8 +869,12 @@
         }];
     }];
 
-    [[[self.mockAudienceManager expect] andReturn:@[]] tagOverrides];
-    [[[self.mockAudienceManager expect] andReturn:@[]] attributeOverrides];
+    UAAutomationAudienceOverrides *overrides = [[UAAutomationAudienceOverrides alloc] initWithTagsPayload:nil attributesPayload:nil];
+    [[[self.mockAudienceOverridesProvider expect] andDo:^(NSInvocation *invocation) {
+        void (^block)(UAAutomationAudienceOverrides *);
+        [invocation getArgument:&block atIndex:3];
+        block(overrides);
+    }] audienceOverridesWithChannelID:@"channel ID" completionHandler:OCMOCK_ANY];
 
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
@@ -884,10 +888,10 @@
 
     [[[self.mockDeferredClient expect] andDo:^(NSInvocation *invocation) {
         void (^block)(UADeferredAPIClientResponse *, NSError *);
-        [invocation getArgument:&block atIndex:7];
+        [invocation getArgument:&block atIndex:6];
         block(deferredResponse, nil);
     }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:nil
-     tagOverrides:@[] attributeOverrides:@[] completionHandler:OCMOCK_ANY];
+     audienceOverrides:overrides completionHandler:OCMOCK_ANY];
 
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
@@ -906,7 +910,7 @@
     [[[self.mockChannel stub] andReturn:@"channel ID"] identifier];
 
     UADeferredScheduleResult *deferredResult = [UADeferredScheduleResult resultWithMessage:nil audienceMatch:YES];
-    
+
     UADeferredAPIClientResponse *deferredResponse = [UADeferredAPIClientResponse responseWithStatus:200 result:deferredResult rules:nil];
 
     UAScheduleDeferredData *deferred = [UAScheduleDeferredData deferredDataWithURL:[NSURL URLWithString:@"https://airship.com"]
@@ -920,8 +924,12 @@
         }];
     }];
 
-    [[[self.mockAudienceManager expect] andReturn:@[]] tagOverrides];
-    [[[self.mockAudienceManager expect] andReturn:@[]] attributeOverrides];
+    UAAutomationAudienceOverrides *overrides = [[UAAutomationAudienceOverrides alloc] initWithTagsPayload:nil attributesPayload:nil];
+    [[[self.mockAudienceOverridesProvider expect] andDo:^(NSInvocation *invocation) {
+        void (^block)(UAAutomationAudienceOverrides *);
+        [invocation getArgument:&block atIndex:3];
+        block(overrides);
+    }] audienceOverridesWithChannelID:@"channel ID" completionHandler:OCMOCK_ANY];
 
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
@@ -935,10 +943,10 @@
 
     [[[self.mockDeferredClient expect] andDo:^(NSInvocation *invocation) {
         void (^block)(UADeferredAPIClientResponse *, NSError *);
-        [invocation getArgument:&block atIndex:7];
+        [invocation getArgument:&block atIndex:6];
         block(deferredResponse, nil);
     }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:nil
-     tagOverrides:@[] attributeOverrides:@[] completionHandler:OCMOCK_ANY];
+     audienceOverrides:overrides completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
     [self.engineDelegate prepareSchedule:schedule
@@ -999,7 +1007,7 @@
         void(^callback)(BOOL ) =  (__bridge void (^)(BOOL ))arg;
         callback(NO);
     }] checkDisplayAudienceConditions:schedule.audience completionHandler:OCMOCK_ANY];
-    
+
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
 
@@ -1457,21 +1465,25 @@
     }];
 
     UADeferredScheduleResult *deferredResult = [UADeferredScheduleResult resultWithMessage:message audienceMatch:YES];
-    
+
     UADeferredAPIClientResponse *deferredResponse = [UADeferredAPIClientResponse responseWithStatus:200 result:deferredResult rules:nil];
 
     UAScheduleTrigger *trigger = [UAScheduleTrigger foregroundTriggerWithCount:1];
     UAScheduleTriggerContext *triggerContext = [UAScheduleTriggerContext triggerContextWithTrigger:trigger
                                                                                              event:@"some event"];
 
-    [[[self.mockAudienceManager expect] andReturn:@[]] tagOverrides];
-    [[[self.mockAudienceManager expect] andReturn:@[]] attributeOverrides];
+    UAAutomationAudienceOverrides *overrides = [[UAAutomationAudienceOverrides alloc] initWithTagsPayload:nil attributesPayload:nil];
+    [[[self.mockAudienceOverridesProvider expect] andDo:^(NSInvocation *invocation) {
+        void (^block)(UAAutomationAudienceOverrides *);
+        [invocation getArgument:&block atIndex:3];
+        block(overrides);
+    }] audienceOverridesWithChannelID:@"channel ID" completionHandler:OCMOCK_ANY];
 
     [[[self.mockDeferredClient expect] andDo:^(NSInvocation *invocation) {
         void (^block)(UADeferredAPIClientResponse *, NSError *);
-        [invocation getArgument:&block atIndex:7];
+        [invocation getArgument:&block atIndex:6];
         block(deferredResponse, nil);
-    }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:triggerContext tagOverrides:@[] attributeOverrides:@[] completionHandler:OCMOCK_ANY];
+    }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:triggerContext audienceOverrides:overrides completionHandler:OCMOCK_ANY];
 
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
@@ -1512,7 +1524,7 @@
 
     XCTAssertEqual(UAAutomationScheduleReadyResultContinue, result);
 
-    [self.mockAudienceManager verify];
+    [self.mockAudienceOverridesProvider verify];
     [self.mockInAppMessageManager verify];
     [self.mockFrequencyLimitManager verify];
 }
@@ -1536,27 +1548,31 @@
     }];
 
     UADeferredScheduleResult *deferredResult = [UADeferredScheduleResult resultWithMessage:message audienceMatch:YES];
-    
+
     UADeferredAPIClientResponse *deferredResponse = [UADeferredAPIClientResponse responseWithStatus:200 result:deferredResult rules:nil];
 
     UAScheduleTrigger *trigger = [UAScheduleTrigger foregroundTriggerWithCount:1];
     UAScheduleTriggerContext *triggerContext = [UAScheduleTriggerContext triggerContextWithTrigger:trigger
                                                                                              event:@"some event"];
-    
-    [[[self.mockAudienceManager expect] andReturn:@[]] tagOverrides];
-    [[[self.mockAudienceManager expect] andReturn:@[]] attributeOverrides];
+
+    UAAutomationAudienceOverrides *overrides = [[UAAutomationAudienceOverrides alloc] initWithTagsPayload:nil attributesPayload:nil];
+    [[[self.mockAudienceOverridesProvider expect] andDo:^(NSInvocation *invocation) {
+        void (^block)(UAAutomationAudienceOverrides *);
+        [invocation getArgument:&block atIndex:3];
+        block(overrides);
+    }] audienceOverridesWithChannelID:@"channel ID" completionHandler:OCMOCK_ANY];
 
     [[[self.mockDeferredClient expect] andDo:^(NSInvocation *invocation) {
         void (^block)(UADeferredAPIClientResponse *, NSError *);
-        [invocation getArgument:&block atIndex:7];
+        [invocation getArgument:&block atIndex:6];
         block(deferredResponse, nil);
-    }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:triggerContext tagOverrides:@[] attributeOverrides:@[] completionHandler:OCMOCK_ANY];
+    }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:triggerContext audienceOverrides:overrides completionHandler:OCMOCK_ANY];
 
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
     [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
 
     [[[self.mockInAppMessageManager expect] andReturnValue:@(UAAutomationScheduleReadyResultContinue)] isReadyToDisplay:@"schedule ID"];
-    
+
     __block BOOL overLimit = NO;
     __block BOOL checkAndIncrement = YES;
 
@@ -1598,7 +1614,7 @@
 
     XCTAssertEqual(UAAutomationScheduleReadyResultSkip, result);
 
-    [self.mockAudienceManager verify];
+    [self.mockAudienceOverridesProvider verify];
     [self.mockInAppMessageManager verify];
     [self.mockFrequencyLimitManager verify];
 }

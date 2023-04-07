@@ -24,13 +24,13 @@ actor EventUploadScheduler: EventUploadSchedulerProtocol {
 
     private let workManager: AirshipWorkManagerProtocol
     private let appStateTracker: AppStateTrackerProtocol
-    private let date: AirshipDate
+    private let date: AirshipDateProtocol
     private let delayer: (TimeInterval) async throws -> Void
 
     init(
         appStateTracker: AppStateTrackerProtocol = AppStateTracker.shared,
         workManager: AirshipWorkManagerProtocol = AirshipWorkManager.shared,
-        date: AirshipDate = AirshipDate(),
+        date: AirshipDateProtocol = AirshipDate.shared,
         delayer: ((TimeInterval) async throws -> Void)? = nil
     ) {
         self.appStateTracker = appStateTracker

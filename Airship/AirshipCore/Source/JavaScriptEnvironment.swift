@@ -20,19 +20,20 @@ public class JavaScriptEnvironment: NSObject, JavaScriptEnvironmentProtocol {
                 UIDevice.current.model
             )
         )
-        let contact: ContactProtocol = Airship.requireComponent(
-            ofType: ContactProtocol.self
-        )
-        if contact.namedUserID != nil {
-            defaults.insert(
-                JavaScriptEnvironment.stringGetter(
-                    "getNamedUser",
-                    contact.namedUserID!
-                )
-            )
-        }
-        let channel: ChannelProtocol = Airship.requireComponent(
-            ofType: ChannelProtocol.self
+//        let contact: AirshipContactProtocol = Airship.requireComponent(
+//            ofType: AirshipContactProtocol.self
+//        )
+//        
+//        if contact.namedUserID != nil {
+//            defaults.insert(
+//                JavaScriptEnvironment.stringGetter(
+//                    "getNamedUser",
+//                    contact.namedUserID!
+//                )
+//            )
+//        }
+        let channel: AirshipChannelProtocol = Airship.requireComponent(
+            ofType: AirshipChannelProtocol.self
         )
         if channel.identifier != nil {
             defaults.insert(

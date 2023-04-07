@@ -23,3 +23,14 @@ extension AirshipHTTPResponse {
         return self.statusCode >= 500 && self.statusCode <= 599
     }
 }
+
+
+extension AirshipHTTPResponse {
+    func map<R>(onMap: (AirshipHTTPResponse<T>) throws -> R?) throws -> AirshipHTTPResponse<R> {
+        return AirshipHTTPResponse<R>(
+            result:  try onMap(self),
+            statusCode: self.statusCode,
+            headers: self.headers
+        )
+    }
+}

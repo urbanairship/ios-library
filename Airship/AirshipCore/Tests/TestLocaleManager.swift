@@ -3,7 +3,7 @@ import Foundation
 @testable import AirshipCore
 
 @objc(UATestLocaleManager)
-public class TestLocaleManager: NSObject, LocaleManagerProtocol {
+public class TestLocaleManager: NSObject, AirshipLocaleManagerProtocol {
 
     public var _locale: Locale? = nil
 

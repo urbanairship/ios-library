@@ -5,20 +5,11 @@ import Foundation
 
 /// Airship Channel protocol.
 @objc(UAChannelProtocol)
-public protocol BaseChannelProtocol {
-
+public protocol BaseAirshipChannelProtocol {
     /**
      * The Channel ID.
      */
     var identifier: String? { get }
-
-    // NOTE: For internal use only. :nodoc:
-    @objc
-    var pendingAttributeUpdates: [AttributeUpdate] { get }
-
-    // NOTE: For internal use only. :nodoc:
-    @objc
-    var pendingTagGroupUpdates: [TagGroupUpdate] { get }
 
     /**
      * Device tags
@@ -36,16 +27,6 @@ public protocol BaseChannelProtocol {
      */
     @objc
     var isChannelTagRegistrationEnabled: Bool { get set }
-
-    /**
-     * Updates channel registration if needed. Appications should not need to call this method.
-     */
-    @objc
-    func updateRegistration()
-
-    // NOTE: For internal use only. :nodoc:
-    @objc(updateRegistrationForcefully:)
-    func updateRegistration(forcefully: Bool)
 
     /**
      * Edits channel tags.
@@ -121,15 +102,23 @@ public protocol BaseChannelProtocol {
     func enableChannelCreation()
 }
 
-public protocol ChannelProtocol: BaseChannelProtocol {
-    // NOTE: For internal use only. :nodoc:
+public protocol AirshipChannelProtocol: BaseAirshipChannelProtocol {
+
+}
+
+// NOTE: For internal use only. :nodoc:
+public protocol InternalAirshipChannelProtocol: AirshipChannelProtocol {
     func addRegistrationExtender(
         _ extender: @escaping (ChannelRegistrationPayload) async -> ChannelRegistrationPayload
     )
-}
 
-protocol InternalChannelProtocol: ChannelProtocol {
-    func processContactSubscriptionUpdates(_ updates: [SubscriptionListUpdate])
+    /**
+     * Updates channel registration if needed. Appications should not need to call this method.
+     */
+    func updateRegistration()
 
+    // NOTE: For internal use only. :nodoc:
+    func updateRegistration(forcefully: Bool)
 
+    func clearSubscriptionListsCache()
 }

@@ -24,10 +24,10 @@ public class RemoteDataManager: NSObject, Component, RemoteDataProvider {
     private let dataStore: PreferenceDataStore
     private let apiClient: RemoteDataAPIClientProtocol
     private let remoteDataStore: RemoteDataStore
-    private let date: AirshipDate
+    private let date: AirshipDateProtocol
     private let notificationCenter: NotificationCenter
     private let appStateTracker: AppStateTrackerProtocol
-    private let localeManager: LocaleManagerProtocol
+    private let localeManager: AirshipLocaleManagerProtocol
     private let workManager: AirshipWorkManagerProtocol
     private let privacyManager: AirshipPrivacyManager
     private let networkMonitor: NetworkMonitor
@@ -145,7 +145,7 @@ public class RemoteDataManager: NSObject, Component, RemoteDataProvider {
     convenience init(
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,
-        localeManager: LocaleManagerProtocol,
+        localeManager: AirshipLocaleManagerProtocol,
         privacyManager: AirshipPrivacyManager
     ) {
         self.init(
@@ -161,12 +161,12 @@ public class RemoteDataManager: NSObject, Component, RemoteDataProvider {
 
     init(
         dataStore: PreferenceDataStore,
-        localeManager: LocaleManagerProtocol,
+        localeManager: AirshipLocaleManagerProtocol,
         privacyManager: AirshipPrivacyManager,
         apiClient: RemoteDataAPIClientProtocol,
         remoteDataStore: RemoteDataStore,
         workManager: AirshipWorkManagerProtocol = AirshipWorkManager.shared,
-        date: AirshipDate = AirshipDate.shared,
+        date: AirshipDateProtocol = AirshipDate.shared,
         notificationCenter: NotificationCenter = NotificationCenter.default,
         appStateTracker: AppStateTrackerProtocol = AppStateTracker.shared,
         networkMonitor: NetworkMonitor = NetworkMonitor()

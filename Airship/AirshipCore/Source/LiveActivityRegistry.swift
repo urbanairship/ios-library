@@ -26,11 +26,11 @@ actor LiveActivityRegistry {
     private let updatesContinuation:
         AsyncStream<LiveActivityUpdate>.Continuation
     private let dataStore: PreferenceDataStore
-    private let date: AirshipDate
+    private let date: AirshipDateProtocol
 
     init(
         dataStore: PreferenceDataStore,
-        date: AirshipDate = AirshipDate()
+        date: AirshipDateProtocol = AirshipDate.shared
     ) {
         self.date = date
         self.dataStore = dataStore

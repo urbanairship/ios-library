@@ -50,7 +50,7 @@ final class ModifyAttributesActionTest: XCTestCase {
             XCTAssertTrue(self.action.acceptsArguments(validArgs))
 
             let invalidArgs = ActionArguments(
-                value: [[:]],
+                value: nil,
                 with: situation
             )
             XCTAssertFalse(self.action.acceptsArguments(invalidArgs))
@@ -64,28 +64,28 @@ final class ModifyAttributesActionTest: XCTestCase {
     }
 
     func testPerform() async throws {
-        let value = [
+        let value: [String: Any] = [
             "channel": [
                 "set": ["name": "clive"],
                 "remove": ["zipcode"]
-            ],
+            ] as [String : Any],
             "named_user": [
                 "set": ["some other name": "owen"],
                 "remove": ["location"]
-            ]
+            ] as [String : Any]
         ]
 
         let expectedChannelAttributes = [
             AttributeUpdate(
                 attribute: "zipcode",
                 type: .remove,
-                value: nil,
+                jsonValue: nil,
                 date: self.date.now
             ),
             AttributeUpdate(
                 attribute: "name",
                 type: .set,
-                value: "clive",
+                jsonValue: .string("clive"),
                 date: self.date.now
             )
         ]
@@ -94,13 +94,13 @@ final class ModifyAttributesActionTest: XCTestCase {
             AttributeUpdate(
                 attribute: "location",
                 type: .remove,
-                value: nil,
+                jsonValue: nil,
                 date: self.date.now
             ),
             AttributeUpdate(
                 attribute: "some other name",
                 type: .set,
-                value: "owen",
+                jsonValue: .string("owen"),
                 date: self.date.now
             )
         ]
@@ -124,15 +124,14 @@ final class ModifyAttributesActionTest: XCTestCase {
         }
 
 
-        let actionExpectation = self.expectation(description: "action")
-        _ = await self.action.perform(
+        let _ = await self.action.perform(
             with: ActionArguments(
                 value: value,
                 with: .manualInvocation
             )
         )
-        actionExpectation.fulfill()
 
-        await self.waitForExpectations(timeout: 10)
+        await fulfillmentCompat(of: [attributesSet])
+
     }
 }

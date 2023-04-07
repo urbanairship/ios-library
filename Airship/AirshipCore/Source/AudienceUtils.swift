@@ -3,12 +3,11 @@
 import Foundation
 
 // NOTE: For internal use only. :nodoc:
-@objc(UAAudienceUtils)
-public class AudienceUtils: NSObject {
+final class AudienceUtils {
 
-    class func collapse(_ updates: [ScopedSubscriptionListUpdate])
-        -> [ScopedSubscriptionListUpdate]
-    {
+    class func collapse(
+        _ updates: [ScopedSubscriptionListUpdate]
+    ) -> [ScopedSubscriptionListUpdate] {
         var handled = Set<String>()
         var collapsed: [ScopedSubscriptionListUpdate] = []
 
@@ -24,9 +23,9 @@ public class AudienceUtils: NSObject {
         return collapsed.reversed()
     }
 
-    class func collapse(_ updates: [SubscriptionListUpdate])
-        -> [SubscriptionListUpdate]
-    {
+    class func collapse(
+        _ updates: [SubscriptionListUpdate]
+    ) -> [SubscriptionListUpdate] {
         var handled = Set<String>()
         var collapsed: [SubscriptionListUpdate] = []
 
@@ -41,9 +40,9 @@ public class AudienceUtils: NSObject {
         return collapsed.reversed()
     }
 
-    @objc(collapseTagGroupUpdates:)
-    public class func collapse(_ updates: [TagGroupUpdate]) -> [TagGroupUpdate]
-    {
+    class func collapse(
+        _ updates: [TagGroupUpdate]
+    ) -> [TagGroupUpdate] {
         var adds: [String: [String]] = [:]
         var removes: [String: [String]] = [:]
         var sets: [String: [String]] = [:]
@@ -105,10 +104,9 @@ public class AudienceUtils: NSObject {
         return setUpdates + addUpdates + removeUpdates
     }
 
-    @objc(collapseAttributeUpdates:)
-    public class func collapse(_ updates: [AttributeUpdate])
-        -> [AttributeUpdate]
-    {
+    class func collapse(
+        _ updates: [AttributeUpdate]
+    ) -> [AttributeUpdate] {
         var found: [String] = []
         let latest: [AttributeUpdate] = updates.reversed()
             .compactMap { update in
@@ -121,8 +119,7 @@ public class AudienceUtils: NSObject {
         return latest.reversed()
     }
 
-    @objc
-    public class func applyTagUpdates(
+    class func applyTagUpdates(
         _ tagGroups: [String: [String]]?,
         updates: [TagGroupUpdate]?
     ) -> [String: [String]] {
@@ -147,8 +144,9 @@ public class AudienceUtils: NSObject {
         return updated.compactMapValues({ $0.isEmpty ? nil : $0 })
     }
 
-    @objc
-    public class func normalizeTags(_ tags: [String]) -> [String] {
+    class func normalizeTags(
+        _ tags: [String]
+    ) -> [String] {
         var normalized: [String] = []
 
         for tag in tags {
@@ -168,15 +166,14 @@ public class AudienceUtils: NSObject {
         return normalized
     }
 
-    @objc
-    public class func normalizeTagGroup(_ group: String) -> String {
+    class func normalizeTagGroup(_ group: String) -> String {
         return group.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     class func applyAttributeUpdates(
-        _ attributes: [String: JsonValue]?,
+        _ attributes: [String: AirshipJSON]?,
         updates: [AttributeUpdate]?
-    ) -> [String: JsonValue] {
+    ) -> [String: AirshipJSON] {
         var updated = attributes ?? [:]
 
         updates?

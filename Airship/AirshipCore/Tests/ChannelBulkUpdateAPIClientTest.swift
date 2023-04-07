@@ -60,7 +60,7 @@ class ChannelBulkUpdateAPIClientTest: XCTestCase {
                 AttributeUpdate(
                     attribute: "some-attribute",
                     type: .set,
-                    value: "hello",
+                    jsonValue: .string("hello"),
                     date: date
                 )
             ]
@@ -124,7 +124,6 @@ class ChannelBulkUpdateAPIClientTest: XCTestCase {
         let sessionError = AirshipErrors.error("error!")
         self.session.error = sessionError
 
-        let expectation = XCTestExpectation(description: "callback called")
 
         let update = AudienceUpdate(
             subscriptionListUpdates: [

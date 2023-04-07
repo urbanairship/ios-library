@@ -3,10 +3,11 @@
 import Foundation
 
 /// - Note: For internal use only. :nodoc:
-@objc(UADate)
-open class AirshipDate: NSObject {
+@objc(UAirshipDate)
+public final class AirshipDate: NSObject, AirshipDateProtocol {
 
-    static var shared = AirshipDate()
+    @objc
+    public static var shared = AirshipDate()
 
     @objc
     public override init() {
@@ -14,7 +15,12 @@ open class AirshipDate: NSObject {
     }
 
     @objc
-    open var now: Date {
+    public var now: Date {
         return Date()
     }
+}
+
+/// - Note: For internal use only. :nodoc:
+public protocol AirshipDateProtocol: Sendable {
+    var now: Date { get }
 }

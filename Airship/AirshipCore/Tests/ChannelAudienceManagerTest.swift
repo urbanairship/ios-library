@@ -7,22 +7,16 @@ import XCTest
 class ChannelAudienceManagerTest: XCTestCase {
 
     private let workManager = TestWorkManager()
-    var notificationCenter: NotificationCenter!
-    var date: UATestDate!
-    var privacyManager: AirshipPrivacyManager!
-    var dataStore: PreferenceDataStore!
-    var subscriptionListClient: TestSubscriptionListAPIClient!
-    var updateClient: TestChannelBulkUpdateAPIClient!
-
-    var audienceManager: ChannelAudienceManager!
+    private let notificationCenter: NotificationCenter = NotificationCenter()
+    private let date: UATestDate = UATestDate()
+    private let dataStore: PreferenceDataStore = PreferenceDataStore(appKey: UUID().uuidString)
+    private let subscriptionListClient: TestSubscriptionListAPIClient = TestSubscriptionListAPIClient()
+    private let updateClient: TestChannelBulkUpdateAPIClient = TestChannelBulkUpdateAPIClient()
+    private let audienceOverridesProvider: DefaultAudienceOverridesProvider = DefaultAudienceOverridesProvider()
+    private var privacyManager: AirshipPrivacyManager!
+    private var audienceManager: ChannelAudienceManager!
 
     override func setUpWithError() throws {
-        self.notificationCenter = NotificationCenter()
-        self.subscriptionListClient = TestSubscriptionListAPIClient()
-        self.updateClient = TestChannelBulkUpdateAPIClient()
-
-        self.date = UATestDate()
-        self.dataStore = PreferenceDataStore(appKey: UUID().uuidString)
         self.privacyManager = AirshipPrivacyManager(
             dataStore: self.dataStore,
             defaultEnabledFeatures: .all,
@@ -36,7 +30,8 @@ class ChannelAudienceManagerTest: XCTestCase {
             updateClient: self.updateClient,
             privacyManager: self.privacyManager,
             notificationCenter: self.notificationCenter,
-            date: self.date
+            date: self.date,
+            audienceOverridesProvider: self.audienceOverridesProvider
         )
 
         self.audienceManager.enabled = true
@@ -95,7 +90,7 @@ class ChannelAudienceManagerTest: XCTestCase {
             )
         )
         XCTAssertEqual(result, .success)
-        wait(for: [expectation], timeout: 10.0)
+        await fulfillmentCompat(of: [expectation])
 
         result = try? await self.workManager.launchTask(
             request: AirshipWorkRequest(
@@ -197,7 +192,7 @@ class ChannelAudienceManagerTest: XCTestCase {
         )
     }
 
-    func testMigrateMutations() throws {
+    func testMigrateMutations() async throws {
         let testDate = UATestDate()
         testDate.dateOverride = Date()
 
@@ -238,30 +233,36 @@ class ChannelAudienceManagerTest: XCTestCase {
 
         self.audienceManager.migrateMutations()
 
-        let pendingTagUpdates = [
-            TagGroupUpdate(group: "some-group", tags: ["tag"], type: .add)
-        ]
+        let pending = await self.audienceOverridesProvider.pendingOverrides(channelID: "some-channel")
         XCTAssertEqual(
-            pendingTagUpdates,
-            self.audienceManager.pendingTagGroupUpdates
+            [
+                TagGroupUpdate(group: "some-group", tags: ["tag"], type: .add)
+            ],
+            pending?.tags
         )
 
-        let pendingAttributeUpdates = [
-            AttributeUpdate.remove(attribute: "some-attribute")
-        ]
         XCTAssertEqual(
-            pendingAttributeUpdates,
-            self.audienceManager.pendingAttributeUpdates
+            [
+                AttributeUpdate.remove(
+                    attribute: "some-attribute",
+                    date: AirshipUtils.parseISO8601Date(from: attributePayload["timestamp"]!)!
+                )
+            ],
+            pending?.attributes
         )
     }
 
-    func testContactSubscriptionListUpdates() async throws {
-        let updates = [
-            SubscriptionListUpdate(listId: "bar", type: .subscribe),
-            SubscriptionListUpdate(listId: "baz", type: .unsubscribe),
-        ]
+    func testGetSubscriptionListOverrides() async throws {
+        await self.audienceOverridesProvider.contactUpdaed(
+            contactID: "some contact ID",
+            tags: nil,
+            attributes: nil,
+            subscriptionLists: [
+                ScopedSubscriptionListUpdate(listId: "bar", type: .subscribe, scope: .app, date: Date()),
+                ScopedSubscriptionListUpdate(listId: "baz", type: .unsubscribe, scope: .app, date: Date())
+            ]
+        )
 
-        self.audienceManager.processContactSubscriptionUpdates(updates)
 
         self.subscriptionListClient.getCallback = { identifier in
             return AirshipHTTPResponse(
@@ -327,7 +328,7 @@ class ChannelAudienceManagerTest: XCTestCase {
             )
         )
         XCTAssertEqual(result, .success)
-        wait(for: [expectation], timeout: 10.0)
+        await fulfillmentCompat(of: [expectation])
     }
 
     func testLiveActivityUpdateAdjustTimestamps() async throws {
@@ -411,7 +412,7 @@ class ChannelAudienceManagerTest: XCTestCase {
             )
         )
         XCTAssertEqual(result, .success)
-        wait(for: [expectation], timeout: 10.0)
+        await fulfillmentCompat(of: [expectation])
     }
 
 }

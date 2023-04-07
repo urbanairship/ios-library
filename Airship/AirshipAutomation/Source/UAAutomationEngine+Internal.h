@@ -11,7 +11,7 @@
 @class UANetworkMonitor;
 @class UADispatcher;
 @class UATaskManager;
-@class UADate;
+@class UAirshipDate;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -173,7 +173,7 @@ typedef NS_ENUM(NSInteger, UAAutomationScheduleReadyResult) {
  * @param notificationCenter The notification center.
  * @param dispatcher The dispatcher to dispatch main queue blocks.
  * @param application The main application.
- * @param date The UADate instance.
+ * @param date The UAirshipDate instance.
  *
  * @return Initialized Automation Engine instance
  */
@@ -184,7 +184,7 @@ typedef NS_ENUM(NSInteger, UAAutomationScheduleReadyResult) {
                                  notificationCenter:(NSNotificationCenter *)notificationCenter
                                          dispatcher:(UADispatcher *)dispatcher
                                         application:(UIApplication *)application
-                                               date:(UADate *)date;
+                                               date:(UAirshipDate *)date;
 
 /**
  * Starts the Automation Engine.

@@ -29,7 +29,8 @@ public class DeepLinkAction: NSObject, Action {
     }
 
     public func perform(
-        with arguments: ActionArguments) async -> ActionResult {
+        with arguments: ActionArguments
+    ) async -> ActionResult {
 
         guard let url = parseURL(arguments) else {
             return ActionResult.empty()

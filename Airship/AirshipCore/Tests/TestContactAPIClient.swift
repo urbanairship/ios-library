@@ -2,102 +2,96 @@ import Foundation
 
 @testable import AirshipCore
 
-public class TestContactAPIClient: ContactsAPIClientProtocol {
+class TestContactAPIClient: ContactsAPIClientProtocol {
 
     var resolveCallback:
-        ((String) async throws -> AirshipHTTPResponse<ContactAPIResponse>)?
-   
+        ((String, String?) async throws -> AirshipHTTPResponse<ContactIdentifyResult>)?
+
     var identifyCallback:
-        ((String, String, String?) async throws -> AirshipHTTPResponse<ContactAPIResponse>)?
-  
+        ((String, String, String?) async throws -> AirshipHTTPResponse<ContactIdentifyResult>)?
+
     var resetCallback:
-        ((String) async throws -> AirshipHTTPResponse<ContactAPIResponse>)?
-    
+        ((String) async throws -> AirshipHTTPResponse<ContactIdentifyResult>)?
+
     var updateCallback:
         ((String, [TagGroupUpdate]?, [AttributeUpdate]?, [ScopedSubscriptionListUpdate]?) async throws -> AirshipHTTPResponse<Void>)?
-    
+
     var associateChannelCallback:
         ((String, String, ChannelType) async throws -> AirshipHTTPResponse<AssociatedChannel>)?
-    
+
     var registerEmailCallback:
-        ((String, String, EmailRegistrationOptions) async throws -> AirshipHTTPResponse<AssociatedChannel>)?
-    
+        ((String, String, EmailRegistrationOptions, Locale) async throws -> AirshipHTTPResponse<AssociatedChannel>)?
+
     var registerSMSCallback:
-        ((String, String, SMSRegistrationOptions) async throws -> AirshipHTTPResponse<AssociatedChannel>)?
-    
+        ((String, String, SMSRegistrationOptions, Locale) async throws -> AirshipHTTPResponse<AssociatedChannel>)?
+
     var registerOpenCallback:
-        ((String, String, OpenRegistrationOptions) async throws -> AirshipHTTPResponse<AssociatedChannel>)?
-    
-    var fetchSubscriptionListsCallback:
-        ((String) async throws -> AirshipHTTPResponse<[String: [ChannelScope]]>)?
-    
+        ((String, String, OpenRegistrationOptions, Locale) async throws -> AirshipHTTPResponse<AssociatedChannel>)?
+
     init() {}
 
     public func resolve(
-        channelID: String
-    ) async throws -> AirshipHTTPResponse<ContactAPIResponse> {
-        return try await resolveCallback!(channelID)
+        channelID: String,
+        contactID: String?
+    ) async throws -> AirshipHTTPResponse<ContactIdentifyResult> {
+        return try await resolveCallback!(channelID, contactID)
     }
 
     public func identify(
         channelID: String,
         namedUserID: String,
         contactID: String?
-    ) async throws -> AirshipHTTPResponse<ContactAPIResponse> {
+    ) async throws -> AirshipHTTPResponse<ContactIdentifyResult> {
         return try await identifyCallback!(channelID, namedUserID, contactID)
     }
 
     public func reset(
         channelID: String
-    ) async throws -> AirshipHTTPResponse<ContactAPIResponse> {
+    ) async throws -> AirshipHTTPResponse<ContactIdentifyResult> {
         return try await resetCallback!(channelID)
     }
 
     public func update(
-        identifier: String,
+        contactID: String,
         tagGroupUpdates: [TagGroupUpdate]?,
         attributeUpdates: [AttributeUpdate]?,
         subscriptionListUpdates: [ScopedSubscriptionListUpdate]?
     ) async throws -> AirshipHTTPResponse<Void> {
-        return try await updateCallback!(identifier, tagGroupUpdates, attributeUpdates, subscriptionListUpdates)
+        return try await updateCallback!(contactID, tagGroupUpdates, attributeUpdates, subscriptionListUpdates)
     }
 
     public func associateChannel(
-        identifier: String,
+        contactID: String,
         channelID: String,
         channelType: ChannelType
     ) async throws -> AirshipHTTPResponse<AssociatedChannel> {
-        return try await associateChannelCallback!(identifier, channelID, channelType)
+        return try await associateChannelCallback!(contactID, channelID, channelType)
     }
 
     public func registerEmail(
-        identifier: String,
+        contactID: String,
         address: String,
-        options: EmailRegistrationOptions
+        options: EmailRegistrationOptions,
+        locale: Locale
     ) async throws -> AirshipHTTPResponse<AssociatedChannel> {
-        return try await registerEmailCallback!(identifier, address, options)
+        return try await registerEmailCallback!(contactID, address, options, locale)
     }
 
     public func registerSMS(
-        identifier: String,
+        contactID: String,
         msisdn: String,
-        options: SMSRegistrationOptions
+        options: SMSRegistrationOptions,
+        locale: Locale
     ) async throws -> AirshipHTTPResponse<AssociatedChannel> {
-        return try await registerSMSCallback!(identifier, msisdn, options)
+        return try await registerSMSCallback!(contactID, msisdn, options, locale)
     }
 
     public func registerOpen(
-        identifier: String,
+        contactID: String,
         address: String,
-        options: OpenRegistrationOptions
+        options: OpenRegistrationOptions,
+        locale: Locale
     ) async throws -> AirshipHTTPResponse<AssociatedChannel> {
-        return try await registerOpenCallback!(identifier, address, options)
+        return try await registerOpenCallback!(contactID, address, options, locale)
     }
-    
-    public func fetchSubscriptionLists(
-        _ identifier: String
-    ) async throws -> AirshipHTTPResponse<[String: [ChannelScope]]> {
-        return try await fetchSubscriptionListsCallback!(identifier)
-    }
-
 }

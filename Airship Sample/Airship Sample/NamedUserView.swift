@@ -7,11 +7,12 @@ import SwiftUI
 
 struct NamedUserView: View {
 
-    @State
-    private var namedUserID: String = Airship.contact.namedUserID ?? ""
+    @StateObject
+    private var viewModel: ViewModel = ViewModel()
+
 
     private func updateNamedUser() {
-        let normalized = namedUserID.trimmingCharacters(
+        let normalized = self.viewModel.namedUserID.trimmingCharacters(
             in: .whitespacesAndNewlines
         )
 
@@ -25,14 +26,14 @@ struct NamedUserView: View {
     @ViewBuilder
     private func makeTextInput() -> some View {
         if #available(iOS 15.0, *) {
-            TextField("Named User", text: self.$namedUserID)
+            TextField("Named User", text: self.$viewModel.namedUserID)
                 .onSubmit {
                     updateNamedUser()
                 }
                 .textInputAutocapitalization(.never)
                 .disableAutocorrection(true)
         } else {
-            TextField("Named User", text: self.$namedUserID) {
+            TextField("Named User", text:self.$viewModel.namedUserID) {
                 updateNamedUser()
             }
 
@@ -55,5 +56,17 @@ struct NamedUserView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .navigationTitle("Named User")
         .padding()
+    }
+
+
+    private class ViewModel: ObservableObject {
+        @Published
+        public var namedUserID: String = ""
+
+        init() {
+            Task { @MainActor in
+                self.namedUserID = await Airship.contact.namedUserID ?? ""
+            }
+        }
     }
 }

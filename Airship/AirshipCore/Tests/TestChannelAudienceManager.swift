@@ -3,10 +3,7 @@ import Foundation
 
 @testable import AirshipCore
 
-public class TestChannelAudienceManager: ChannelAudienceManagerProtocol
-{
-
-
+class TestChannelAudienceManager: ChannelAudienceManagerProtocol {
 
     public let subscriptionListEditsSubject = PassthroughSubject<
         SubscriptionListEdit, Never
@@ -62,5 +59,9 @@ public class TestChannelAudienceManager: ChannelAudienceManagerProtocol
     }
 
     public func addLiveActivityUpdate(_ update: LiveActivityUpdate) {
+    }
+
+    public func clearSubscriptionListCache() {
+        
     }
 }

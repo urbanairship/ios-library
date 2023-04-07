@@ -138,7 +138,6 @@ final class DefaultAirshipRequestSession: AirshipRequestSession, @unchecked Send
             responseParser: responseParser
         )
 
-        // If we get a 401 and the auth can be expired, expire it and try again
         if (result.shouldRetry) {
             return try await self.doPerformHTTPRequest(
                 request,

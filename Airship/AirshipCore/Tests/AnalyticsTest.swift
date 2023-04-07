@@ -49,15 +49,17 @@ class AnalyticsTest: XCTestCase {
         await self.analytics.airshipReady()
 
         let events = try await self.produceEvents(count: 2) {
-            self.notificationCenter.post(
-                name: AppStateTracker.didTransitionToForeground,
-                object: nil
-            )
+            await Task { @MainActor in
+                self.notificationCenter.post(
+                    name: AppStateTracker.didTransitionToForeground,
+                    object: nil
+                )
 
-            self.notificationCenter.post(
-                name: AppStateTracker.didTransitionToForeground,
-                object: nil
-            )
+                self.notificationCenter.post(
+                    name: AppStateTracker.didTransitionToForeground,
+                    object: nil
+                )
+            }.value
         }
 
         XCTAssertEqual("app_init", events[0].type)
@@ -76,10 +78,12 @@ class AnalyticsTest: XCTestCase {
         await self.analytics.airshipReady()
 
         let events = try await self.produceEvents(count: 2) {
-            notificationCenter.post(
-                name: AppStateTracker.didEnterBackgroundNotification,
-                object: nil
-            )
+            await Task { @MainActor in
+                self.notificationCenter.post(
+                    name: AppStateTracker.didEnterBackgroundNotification,
+                    object: nil
+                )
+            }.value
         }
 
         XCTAssertEqual("app_init", events[0].type)
@@ -93,10 +97,13 @@ class AnalyticsTest: XCTestCase {
         }
 
         let events = try await self.produceEvents(count: 1) {
-            self.notificationCenter.post(
-                name: AppStateTracker.didEnterBackgroundNotification,
-                object: nil
-            )
+            await Task { @MainActor in
+
+                self.notificationCenter.post(
+                    name: AppStateTracker.didEnterBackgroundNotification,
+                    object: nil
+                )
+            }.value
         }
 
         XCTAssertEqual("app_background", events[0].type)
@@ -112,10 +119,12 @@ class AnalyticsTest: XCTestCase {
         self.analytics.trackScreen("test_screen")
 
         let events = try await self.produceEvents(count: 2) {
-            self.notificationCenter.post(
-                name: AppStateTracker.didEnterBackgroundNotification,
-                object: nil
-            )
+            await Task { @MainActor in
+                self.notificationCenter.post(
+                    name: AppStateTracker.didEnterBackgroundNotification,
+                    object: nil
+                )
+            }.value
         }
 
         XCTAssertEqual("app_background", events[0].type)
@@ -132,10 +141,12 @@ class AnalyticsTest: XCTestCase {
         self.analytics.trackScreen("test_screen")
 
         let events = try await self.produceEvents(count: 1) {
-            self.notificationCenter.post(
-                name: AppStateTracker.willTerminateNotification,
-                object: nil
-            )
+            await Task { @MainActor in
+                self.notificationCenter.post(
+                    name: AppStateTracker.willTerminateNotification,
+                    object: nil
+                )
+            }.value
         }
 
         XCTAssertEqual("screen_tracking", events[0].type)
@@ -145,9 +156,11 @@ class AnalyticsTest: XCTestCase {
         self.date.dateOverride = Date(timeIntervalSince1970: 100.0)
 
         let events = try await self.produceEvents(count: 1) {
-            self.analytics.trackScreen("test_screen")
-            self.date.offset = 3.0
-            self.analytics.trackScreen("another_screen")
+            await Task { @MainActor in
+                self.analytics.trackScreen("test_screen")
+                self.date.offset = 3.0
+                self.analytics.trackScreen("another_screen")
+            }.value
         }
 
         let expectedData = [
@@ -433,7 +446,7 @@ class AnalyticsTest: XCTestCase {
 
     func produceEvents(
         count: Int,
-        eventProducingAction: @Sendable () async -> Void
+        eventProducingAction: @escaping @Sendable () async -> Void
     ) async throws -> [AirshipEventData] {
         var subscription: AnyCancellable?
         defer {
@@ -442,7 +455,7 @@ class AnalyticsTest: XCTestCase {
 
         let stream = AsyncThrowingStream<AirshipEventData, Error> { continuation in
             let cancelTask = Task {
-                try await Task.sleep(nanoseconds: 3_000_000_000)
+                try await Task.sleep(nanoseconds: 10_000_000_000)
                 continuation.finish(
                     throwing: AirshipErrors.error("Failed to get event")
                 )
@@ -459,7 +472,7 @@ class AnalyticsTest: XCTestCase {
                     }
                 }
         }
-        
+
         await eventProducingAction()
 
         var result: [AirshipEventData] = []

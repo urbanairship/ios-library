@@ -2,8 +2,7 @@ import Foundation
 
 @testable import AirshipCore
 
-@objc(UATestChannel)
-public class TestChannel: NSObject, BaseChannelProtocol, Component {
+class TestChannel: NSObject, BaseAirshipChannelProtocol, Component {
 
     public var isComponentEnabled: Bool = true
 
@@ -123,7 +122,11 @@ public class TestChannel: NSObject, BaseChannelProtocol, Component {
     }
 }
 
-extension TestChannel: InternalChannelProtocol {}
-extension TestChannel: ChannelProtocol {
+extension TestChannel: InternalAirshipChannelProtocol {
+    func clearSubscriptionListsCache() {
+        
+    }
+}
+extension TestChannel: AirshipChannelProtocol {
 
 }

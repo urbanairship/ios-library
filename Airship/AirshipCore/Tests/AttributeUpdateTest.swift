@@ -10,7 +10,7 @@ class AttributeUpdateTest: XCTestCase {
         let original = AttributeUpdate(
             attribute: "some attribute",
             type: .set,
-            value: 42,
+            jsonValue: .number(42),
             date: Date()
         )
 
@@ -20,8 +20,8 @@ class AttributeUpdateTest: XCTestCase {
 
         XCTAssertEqual(original.attribute, decoded.attribute)
         XCTAssertEqual(
-            original.jsonValue?.value() as! Int,
-            decoded.jsonValue?.value() as! Int
+            original.jsonValue!,
+            decoded.jsonValue!
         )
         XCTAssertEqual(original.date, decoded.date)
 
@@ -31,7 +31,7 @@ class AttributeUpdateTest: XCTestCase {
         let original = AttributeUpdate(
             attribute: "some attribute",
             type: .set,
-            value: "neat",
+            jsonValue: .string("neat"),
             date: Date()
         )
 
@@ -41,8 +41,8 @@ class AttributeUpdateTest: XCTestCase {
 
         XCTAssertEqual(original.attribute, decoded.attribute)
         XCTAssertEqual(
-            original.jsonValue?.value() as! String,
-            decoded.jsonValue?.value() as! String
+            original.jsonValue!,
+            decoded.jsonValue!
         )
         XCTAssertEqual(original.date, decoded.date)
 

@@ -5,104 +5,90 @@ import Foundation
 // NOTE: For internal use only. :nodoc:
 protocol ContactsAPIClientProtocol {
     func resolve(
-        channelID: String
-    ) async throws ->  AirshipHTTPResponse<ContactAPIResponse>
+        channelID: String,
+        contactID: String?
+    ) async throws ->  AirshipHTTPResponse<ContactIdentifyResult>
 
     func identify(
         channelID: String,
         namedUserID: String,
         contactID: String?
-    ) async throws ->  AirshipHTTPResponse<ContactAPIResponse>
+    ) async throws ->  AirshipHTTPResponse<ContactIdentifyResult>
 
     func reset(
         channelID: String
-    ) async throws ->  AirshipHTTPResponse<ContactAPIResponse>
+    ) async throws ->  AirshipHTTPResponse<ContactIdentifyResult>
 
     func update(
-        identifier: String,
+        contactID: String,
         tagGroupUpdates: [TagGroupUpdate]?,
         attributeUpdates: [AttributeUpdate]?,
         subscriptionListUpdates: [ScopedSubscriptionListUpdate]?
     ) async throws ->  AirshipHTTPResponse<Void>
 
     func associateChannel(
-        identifier: String,
+        contactID: String,
         channelID: String,
         channelType: ChannelType
     ) async throws ->  AirshipHTTPResponse<AssociatedChannel>
 
     func registerEmail(
-        identifier: String,
+        contactID: String,
         address: String,
-        options: EmailRegistrationOptions
+        options: EmailRegistrationOptions,
+        locale: Locale
     ) async throws ->  AirshipHTTPResponse<AssociatedChannel>
 
     func registerSMS(
-        identifier: String,
+        contactID: String,
         msisdn: String,
-        options: SMSRegistrationOptions
+        options: SMSRegistrationOptions,
+        locale: Locale
     ) async throws ->  AirshipHTTPResponse<AssociatedChannel>
 
     func registerOpen(
-        identifier: String,
+        contactID: String,
         address: String,
-        options: OpenRegistrationOptions
+        options: OpenRegistrationOptions,
+        locale: Locale
     ) async throws ->  AirshipHTTPResponse<AssociatedChannel>
-
-    func fetchSubscriptionLists(
-        _ identifier: String
-    ) async throws ->  AirshipHTTPResponse<[String: [ChannelScope]]>
 }
 
 // NOTE: For internal use only. :nodoc:
 class ContactAPIClient: ContactsAPIClientProtocol {
-    private static let path = "/api/contacts"
-    private static let channelsPath = "/api/channels"
-
-    private static let subscriptionListPath =
-        "/api/subscription_lists/contacts/"
-
-    private static let channelIDKey = "channel_id"
-    private static let namedUserIDKey = "named_user_id"
-    private static let contactIDKey = "contact_id"
-    private static let deviceTypeKey = "device_type"
-    private static let channelKey = "channel"
-    private static let typeKey = "type"
-    private static let commercialOptedInKey = "commercial_opted_in"
-    private static let commercialOptedOutKey = "commercial_opted_out"
-    private static let transactionalOptedInKey = "transactional_opted_in"
-    private static let transactionalOptedOutKey = "transactional_opted_out"
-    private static let optInModeKey = "opt_in_mode"
-    private static let propertiesKey = "properties"
-    private static let addressKey = "address"
-    private static let msisdnKey = "msisdn"
-    private static let senderKey = "sender"
-    private static let optedInKey = "opted_in"
-    private static let timezoneKey = "timezone"
-    private static let localeCountryKey = "locale_country"
-    private static let localeLanguageKey = "locale_language"
-    private static let identifiersKey = "identifiers"
-    private static let openKey = "open"
-    private static let openPlatformName = "open_platform_name"
-    private static let optInKey = "opt_in"
-    private static let associateKey = "associate"
-
     private let config: RuntimeConfig
     private let session: AirshipRequestSession
-    private let localeManager: AirshipLocaleManager
+    private let date: AirshipDateProtocol
 
     private lazy var decoder: JSONDecoder = {
         let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
+        decoder.dateDecodingStrategy = .custom({ (decoder) -> Date in
+            let container = try decoder.singleValueContainer()
+            let dateStr = try container.decode(String.self)
+
+            guard let date = AirshipUtils.parseISO8601Date(from: dateStr) else {
+                throw AirshipErrors.error("Invalid date \(dateStr)")
+            }
+            return date
+        })
         return decoder
     }()
 
-    init(config: RuntimeConfig, session: AirshipRequestSession) {
+    private lazy var encoder: JSONEncoder = {
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .custom({ date, encoder in
+            var container = encoder.singleValueContainer()
+            try container.encode(
+                AirshipUtils.isoDateFormatterUTCWithDelimiter().string(from: date)
+            )
+        })
+        return encoder
+    }()
+
+    init(config: RuntimeConfig, session: AirshipRequestSession, date: AirshipDateProtocol = AirshipDate.shared) {
         self.config = config
         self.session = session
-        self.localeManager = AirshipLocaleManager(
-            dataStore: PreferenceDataStore(appKey: config.appKey)
-        )
+        self.date = date
     }
 
     convenience init(config: RuntimeConfig) {
@@ -110,672 +96,658 @@ class ContactAPIClient: ContactsAPIClientProtocol {
     }
     
     func resolve(
-        channelID: String
-    ) async throws ->  AirshipHTTPResponse<ContactAPIResponse> {
-        AirshipLogger.debug("Resolving contact with channel ID \(channelID)")
-        
-        guard let deviceAPIURL = config.deviceAPIURL else {
-            throw AirshipErrors.error("The deviceAPI URL is nil")
-        }
-        
-        let payload: [String: String] = [
-            ContactAPIClient.channelIDKey: channelID,
-            ContactAPIClient.deviceTypeKey: "ios",
-        ]
-        
-        let request = self.request(
-            payload,
-            "\(deviceAPIURL)\(ContactAPIClient.path)/resolve"
+        channelID: String,
+        contactID: String?
+    ) async throws ->  AirshipHTTPResponse<ContactIdentifyResult> {
+        return try await self.performIdentify(
+            channelID: channelID,
+            identifyRequest: .resolve(contactID: contactID)
         )
-        
-        return try await session.performHTTPRequest(
-            request) { (data, response) in
-                if response.statusCode == 200 {
-                    do {
-                        guard data != nil else {
-                            throw AirshipErrors.error("Missing body")
-                        }
-                        
-                        let jsonResponse =
-                        try JSONSerialization.jsonObject(
-                            with: data!,
-                            options: .allowFragments
-                        ) as? [AnyHashable: Any]
-                        guard
-                            let contactID = jsonResponse?["contact_id"]
-                                as? String
-                        else {
-                            throw AirshipErrors.error("Missing contact_id")
-                        }
-                        guard
-                            let isAnonymous = jsonResponse?["is_anonymous"]
-                                as? Bool
-                        else {
-                            throw AirshipErrors.error("Missing is_anonymous")
-                        }
-                        
-                        AirshipLogger.debug(
-                            "Resolved contact with response: \(response)"
-                        )
-                        let contactDataResponse = ContactAPIResponse(
-                            contactID: contactID,
-                            isAnonymous: isAnonymous
-                        )
-                        return contactDataResponse
-                    } catch {
-                        throw AirshipErrors.error("Invalid response body \(String(describing: data))")
-                    }
-                } else {
-                    let contactDataResponse = ContactAPIResponse(
-                        contactID: nil,
-                        isAnonymous: false
-                    )
-                    return contactDataResponse
-                }
-            }
     }
-    
+
+    func reset(
+        channelID: String
+    ) async throws ->  AirshipHTTPResponse<ContactIdentifyResult> {
+        return try await self.performIdentify(
+            channelID: channelID,
+            identifyRequest: .reset()
+        )
+    }
+
     func identify(
         channelID: String,
         namedUserID: String,
         contactID: String?
-    ) async throws ->  AirshipHTTPResponse<ContactAPIResponse> {
-        AirshipLogger.debug("Identifying contact with channel ID \(channelID)")
-        
-        guard let deviceAPIURL = config.deviceAPIURL else {
-            throw AirshipErrors.error("The deviceAPI URL is nil")
-        }
-        
-        var payload: [String: String] = [
-            ContactAPIClient.channelIDKey: channelID,
-            ContactAPIClient.namedUserIDKey: namedUserID,
-            ContactAPIClient.deviceTypeKey: "ios",
-        ]
-        
-        if contactID != nil {
-            payload[ContactAPIClient.contactIDKey] = contactID
-        }
-        
-        let request = self.request(
-            payload,
-            "\(deviceAPIURL)\(ContactAPIClient.path)/identify"
+    ) async throws ->  AirshipHTTPResponse<ContactIdentifyResult> {
+        return try await self.performIdentify(
+            channelID: channelID,
+            identifyRequest: .identify(namedUserID: namedUserID, contactID: contactID)
         )
-        
-        return try await session.performHTTPRequest(
-            request) { (data, response) in
-                if response.statusCode == 200 {
-                    do {
-                        guard data != nil else {
-                            throw AirshipErrors.error("Missing body")
-                        }
-                        
-                        let jsonResponse =
-                        try JSONSerialization.jsonObject(
-                            with: data!,
-                            options: .allowFragments
-                        ) as? [AnyHashable: Any]
-                        guard
-                            let contactID = jsonResponse?["contact_id"]
-                                as? String
-                        else {
-                            throw AirshipErrors.error("Missing contact_id")
-                        }
-                        
-                        AirshipLogger.debug(
-                            "Identified contact with response: \(response)"
-                        )
-                        let contactDataResponse = ContactAPIResponse(
-                            contactID: contactID,
-                            isAnonymous: false
-                        )
-                        return contactDataResponse
-                    } catch {
-                        throw AirshipErrors.error("Invalid response body \(String(describing: data))")
-                    }
-                } else {
-                    let contactDataResponse = ContactAPIResponse(
-                        contactID: nil,
-                        isAnonymous: false
-                    )
-                    return contactDataResponse
-                }
-            }
     }
-    
-    func reset(
-        channelID: String
-    ) async throws ->  AirshipHTTPResponse<ContactAPIResponse> {
-        AirshipLogger.debug("Resetting contact with channel ID \(channelID)")
-        
-        guard let deviceAPIURL = config.deviceAPIURL else {
-            throw AirshipErrors.error("The deviceAPI URL is nil")
-        }
-        
-        let payload: [String: String] = [
-            ContactAPIClient.channelIDKey: channelID,
-            ContactAPIClient.deviceTypeKey: "ios",
-        ]
-        
-        let request = self.request(
-            payload,
-            "\(deviceAPIURL)\(ContactAPIClient.path)/reset"
-        )
-        
-        return try await session.performHTTPRequest(
-            request) { (data, response) in
-                if response.statusCode == 200 {
-                    do {
-                        guard data != nil else {
-                            throw AirshipErrors.error("Missing body")
-                        }
-                        
-                        let jsonResponse =
-                        try JSONSerialization.jsonObject(
-                            with: data!,
-                            options: .allowFragments
-                        ) as? [AnyHashable: Any]
-                        guard
-                            let contactID = jsonResponse?["contact_id"]
-                                as? String
-                        else {
-                            throw AirshipErrors.error("Missing contact_id")
-                        }
-                        
-                        AirshipLogger.debug(
-                            "Reset contact with response: \(response)"
-                        )
-                        let contactDataResponse = ContactAPIResponse(
-                            contactID: contactID,
-                            isAnonymous: false
-                        )
-                        return contactDataResponse
-                    } catch {
-                        throw AirshipErrors.error("Invalid response body \(String(describing: data))")
-                    }
-                } else {
-                    let contactDataResponse = ContactAPIResponse(
-                        contactID: nil,
-                        isAnonymous: false
-                    )
-                    return contactDataResponse
-                }
-            }
-    }
-    
+
     func update(
-        identifier: String,
+        contactID: String,
         tagGroupUpdates: [TagGroupUpdate]?,
         attributeUpdates: [AttributeUpdate]?,
         subscriptionListUpdates: [ScopedSubscriptionListUpdate]?
     ) async throws ->  AirshipHTTPResponse<Void> {
-        AirshipLogger.debug("Updating contact with identifier \(identifier)")
-        
-        guard let deviceAPIURL = config.deviceAPIURL else {
-            throw AirshipErrors.error("The deviceAPI URL is nil")
-        }
-        
-        var payload: [String: Any] = [:]
-        
-        if let attributeUpdates = attributeUpdates, !attributeUpdates.isEmpty {
-            payload["attributes"] = map(attributeUpdates: attributeUpdates)
-        }
-        
-        if let tagGroupUpdates = tagGroupUpdates, !tagGroupUpdates.isEmpty {
-            payload["tags"] = map(tagUpdates: tagGroupUpdates)
-        }
-        
-        if let subscriptionListUpdates = subscriptionListUpdates,
-           !subscriptionListUpdates.isEmpty
-        {
-            payload["subscription_lists"] = map(
-                subscriptionListUpdates: subscriptionListUpdates
-            )
-        }
-        
-        let request = self.request(
-            payload,
-            "\(deviceAPIURL)/api/contacts/\(identifier)"
+        let requestBody = ContactUpdateRequestBody(
+            attributes: try attributeUpdates?.toRequestBody(),
+            tags: tagGroupUpdates?.toRequestBody(),
+            subscriptionLists: subscriptionListUpdates?.toRequestBody(),
+            associate: nil
         )
-        
-        return try await session.performHTTPRequest(
-            request) { (data, response) in
-                AirshipLogger.debug(
-                    "Update finished with response: \(response)"
-                )
-                
-                return nil
-            }
+
+        return try await performUpdate(contactID: contactID, requestBody: requestBody)
     }
     
     func associateChannel(
-        identifier: String,
+        contactID: String,
         channelID: String,
         channelType: ChannelType
     ) async throws ->  AirshipHTTPResponse<AssociatedChannel> {
-        
-        AirshipLogger.debug(
-            "Associate channel \(channelID) with contact \(identifier)"
-        )
-        
-        guard let deviceAPIURL = config.deviceAPIURL else {
-            throw AirshipErrors.error("The deviceAPI URL is nil")
-        }
-        
-        let payload: [String: Any] = [
-            ContactAPIClient.associateKey: [
-                [
-                    ContactAPIClient.deviceTypeKey: channelType.stringValue,
-                    ContactAPIClient.channelIDKey: channelID,
-                ]
-            ]
-        ]
-        
-        let request = self.request(
-            payload,
-            "\(deviceAPIURL)/api/contacts/\(identifier)"
-        )
-        
-        return try await session.performHTTPRequest(request) { data, response in
-            AirshipLogger.debug(
-                "Associate channel finished with response: \(response)"
-            )
-            if response.statusCode == 200 {
-                let channel = AssociatedChannel(
-                    channelType: channelType,
+        let requestBody = ContactUpdateRequestBody(
+            attributes: nil,
+            tags: nil,
+            subscriptionLists: nil,
+            associate: [
+                ContactUpdateRequestBody.AssociateChannelOperation(
+                    deviceType: channelType.stringValue,
                     channelID: channelID
                 )
-                return channel
+            ]
+        )
+
+        return try await performUpdate(
+            contactID: contactID,
+            requestBody: requestBody
+        ).map { response in
+            if (response.isSuccess) {
+                return AssociatedChannel(channelType: channelType, channelID: channelID)
             } else {
                 return nil
             }
         }
     }
-    
+
     func registerEmail(
-        identifier: String,
+        contactID: String,
         address: String,
-        options: EmailRegistrationOptions
+        options: EmailRegistrationOptions,
+        locale: Locale
     ) async throws ->  AirshipHTTPResponse<AssociatedChannel> {
-        guard let deviceAPIURL = config.deviceAPIURL else {
-            throw AirshipErrors.error("The deviceAPI URL is nil")
-        }
-        
-        let currentLocale = self.localeManager.currentLocale
-        
-        var channelPayload: [String: Any] = [
-            ContactAPIClient.typeKey: "email",
-            ContactAPIClient.addressKey: address,
-            ContactAPIClient.timezoneKey: TimeZone.current.identifier,
-            ContactAPIClient.localeCountryKey: currentLocale.regionCode ?? "",
-            ContactAPIClient.localeLanguageKey: currentLocale.languageCode
-            ?? "",
-        ]
-        
-        let formatter = AirshipUtils.isoDateFormatterUTCWithDelimiter()
-        if let transactionalOptedIn = options.transactionalOptedIn {
-            channelPayload[ContactAPIClient.transactionalOptedInKey] =
-            formatter.string(from: transactionalOptedIn)
-        }
-        
-        if let commercialOptedIn = options.commercialOptedIn {
-            channelPayload[ContactAPIClient.commercialOptedInKey] =
-            formatter.string(
-                from: commercialOptedIn
-            )
-        }
-        
-        var payload: [String: Any] = [
-            ContactAPIClient.channelKey: channelPayload,
-            ContactAPIClient.optInModeKey: options.doubleOptIn
-            ? "double" : "classic",
-        ]
-        
-        if let properties = options.properties {
-            payload[ContactAPIClient.propertiesKey] = properties.value()
-        }
-        
-        let request = self.request(
-            payload,
-            "\(deviceAPIURL)\(ContactAPIClient.channelsPath)/restricted/email"
-        )
-        
-        AirshipLogger.debug("Creating an Email channel with address \(address)")
-        return try await registerChannel(
-            identifier,
-            request: request,
+        return try await performChannelRegistration(
+            contactID: contactID,
+            requestBody: EmailChannelRegistrationBody(
+                address: address,
+                options: options,
+                locale: locale,
+                timezone: TimeZone.current.identifier
+            ),
             channelType: .email
         )
-        
     }
-    
+
     func registerSMS(
-        identifier: String,
+        contactID: String,
         msisdn: String,
-        options: SMSRegistrationOptions
+        options: SMSRegistrationOptions,
+        locale: Locale
     ) async throws ->  AirshipHTTPResponse<AssociatedChannel> {
-        guard let deviceAPIURL = config.deviceAPIURL else {
-            throw AirshipErrors.error("The deviceAPI URL is nil")
-        }
-        
-        let currentLocale = self.localeManager.currentLocale
-        let payload: [String: Any] = [
-            ContactAPIClient.msisdnKey: msisdn,
-            ContactAPIClient.senderKey: options.senderID,
-            ContactAPIClient.timezoneKey: TimeZone.current.identifier,
-            ContactAPIClient.localeCountryKey: currentLocale.regionCode ?? "",
-            ContactAPIClient.localeLanguageKey: currentLocale.languageCode
-            ?? "",
-        ]
-        
-        let request = self.request(
-            payload,
-            "\(deviceAPIURL)\(ContactAPIClient.channelsPath)/restricted/sms"
-        )
-        
-        AirshipLogger.debug(
-            "Registering an SMS channel with msisdn \(msisdn) and sender \(options.senderID)"
-        )
-        return try await registerChannel(
-            identifier,
-            request: request,
+        return try await performChannelRegistration(
+            contactID: contactID,
+            requestBody: SMSRegistrationBody(
+                msisdn: msisdn,
+                options: options,
+                locale: locale,
+                timezone: TimeZone.current.identifier
+            ),
             channelType: .sms
         )
     }
-    
+
     func registerOpen(
-        identifier: String,
+        contactID: String,
         address: String,
-        options: OpenRegistrationOptions
+        options: OpenRegistrationOptions,
+        locale: Locale
     ) async throws ->  AirshipHTTPResponse<AssociatedChannel> {
-        guard let deviceAPIURL = config.deviceAPIURL else {
-            throw AirshipErrors.error("The deviceAPI URL is nil")
-        }
-        
-        let currentLocale = self.localeManager.currentLocale
-        
-        var openPayload: [String: Any] = [
-            ContactAPIClient.openPlatformName: options.platformName
-        ]
-        
-        if let identifiers = options.identifiers {
-            var identifiersPayload: [String: Any] = [:]
-            for (key, value) in identifiers {
-                identifiersPayload[key] = value
-            }
-            openPayload[ContactAPIClient.identifiersKey] = identifiersPayload
-        }
-        
-        let payload: [String: Any] = [
-            ContactAPIClient.channelKey: [
-                ContactAPIClient.typeKey: "open",
-                ContactAPIClient.addressKey: address,
-                ContactAPIClient.timezoneKey: TimeZone.current.identifier,
-                ContactAPIClient.localeCountryKey: currentLocale.regionCode
-                ?? "",
-                ContactAPIClient.localeLanguageKey: currentLocale.languageCode
-                ?? "",
-                ContactAPIClient.optInKey: true,
-                ContactAPIClient.openKey: openPayload,
-            ] as [String : Any]
-        ]
-        
-        let request = self.request(
-            payload,
-            "\(deviceAPIURL)\(ContactAPIClient.channelsPath)/restricted/open"
-        )
-        
-        AirshipLogger.debug(
-            "Registering an open channel with address \(address)"
-        )
-        return try await registerChannel(
-            identifier,
-            request: request,
+        return try await performChannelRegistration(
+            contactID: contactID,
+            requestBody: OpenChannelRegistrationBody(
+                address: address,
+                options: options,
+                locale: locale,
+                timezone: TimeZone.current.identifier
+            ),
             channelType: .open
         )
     }
-    
-    private func registerChannel(
-        _ identifier: String,
-        request: AirshipRequest,
+
+    private func makeURL(path: String) throws -> URL {
+        guard let deviceAPIURL = self.config.deviceAPIURL else {
+            throw AirshipErrors.error("Initial config not resolved.")
+        }
+
+        let urlString = "\(deviceAPIURL)\(path)"
+
+        guard let url = URL(string: "\(deviceAPIURL)\(path)") else {
+            throw AirshipErrors.error("Invalid ContactAPIClient URL: \(String(describing: urlString))")
+        }
+
+        return url
+    }
+
+    private func makeChannelCreateURL(channelType: ChannelType) throws -> URL {
+        switch(channelType) {
+        case .email:
+            return try self.makeURL(path: "/api/channels/restricted/email")
+        case .open:
+            return try self.makeURL(path: "/api/channels/restricted/open")
+        case .sms:
+            return try self.makeURL(path: "/api/channels/restricted/sms")
+        }
+    }
+
+    private func performChannelRegistration<T: Encodable>(
+        contactID: String,
+        requestBody: T,
         channelType: ChannelType
     ) async throws ->  AirshipHTTPResponse<AssociatedChannel> {
-        
-        var channelID: String? = nil
-        let response: AirshipHTTPResponse<AssociatedChannel> = try await session.performHTTPRequest(
-            request) { (data, response) in
-                AirshipLogger.debug(
-                    "Contact channel \(channelType) created with response: \(response)"
-                )
-                guard response.statusCode == 200 || response.statusCode == 201
-                else {
-                    return nil
-                }
-                
-                do {
-                    guard let parsedChannelID = try self.parseChannelID(data: data)
-                    else {
-                        throw AirshipErrors.error("Missing channel ID")
-                    }
-                    channelID = parsedChannelID
-                } catch {
-                    throw AirshipErrors.error("Invalid response body \(String(describing: data))")
-                }
-                return nil
-            }
-        if let channelID = channelID {
-            return try await self.associateChannel(identifier: identifier,
-                                                   channelID: channelID,
-                                                   channelType: channelType)
-        } else {
-            return response
-        }
-    }
-    
-    private func parseChannelID(data: Data?) throws -> String? {
-        guard let data = data else {
-            return nil
-        }
-        
-        let jsonResponse =
-        try JSONSerialization.jsonObject(
-            with: data,
-            options: .allowFragments
-        )
-        as? [AnyHashable: Any]
-        
-        return jsonResponse?["channel_id"] as? String
-    }
-    
-    private func request(_ payload: [AnyHashable: Any], _ urlString: String)
-    -> AirshipRequest
-    {
-        return AirshipRequest(
-            url:  URL(string: urlString),
+        let request = AirshipRequest(
+            url: try self.makeChannelCreateURL(channelType: channelType),
             headers: [
                 "Accept":  "application/vnd.urbanairship+json; version=3;",
                 "Content-Type": "application/json"
             ],
             method: "POST",
             auth: .basicAppAuth,
-            body: try? JSONUtils.data(payload, options: [])
+            body: try self.encoder.encode(requestBody)
         )
-    }
-    
-    private func map(subscriptionListUpdates: [ScopedSubscriptionListUpdate])
-    -> [[AnyHashable: Any]]
-    {
-        return AudienceUtils.collapse(subscriptionListUpdates)
-            .map {
-                (list) -> ([AnyHashable: Any]) in
-                var action: String
-                switch list.type {
-                case .subscribe:
-                    action = "subscribe"
-                case .unsubscribe:
-                    action = "unsubscribe"
-                }
-                return [
-                    "action": action,
-                    "list_id": list.listId,
-                    "scope": list.scope.stringValue,
-                    "timestamp": AirshipUtils.isoDateFormatterUTCWithDelimiter()
-                        .string(
-                            from: list.date
-                        ),
-                ]
+
+        let createResponse: AirshipHTTPResponse<ChannelCreateResult> = try await self.session.performHTTPRequest(
+            request
+        ) { (data, response) in
+            AirshipLogger.debug(
+                "Channel \(channelType) created with response: \(response)"
+            )
+
+            guard let data = data, response.statusCode == 200 || response.statusCode == 201 else {
+                return nil
             }
-    }
-    
-    private func map(attributeUpdates: [AttributeUpdate]) -> [[AnyHashable:
-                                                                Any]]
-    {
-        return AudienceUtils.collapse(attributeUpdates)
-            .compactMap {
-                (attribute) -> ([AnyHashable: Any]?) in
-                switch attribute.type {
-                case .set:
-                    guard let value = attribute.jsonValue?.value() else {
-                        return nil
-                    }
-                    
-                    return [
-                        "action": "set",
-                        "key": attribute.attribute,
-                        "value": value,
-                        "timestamp": AirshipUtils.isoDateFormatterUTCWithDelimiter()
-                            .string(
-                                from: attribute.date
-                            ),
-                    ]
-                case .remove:
-                    return [
-                        "action": "remove",
-                        "key": attribute.attribute,
-                        "timestamp": AirshipUtils.isoDateFormatterUTCWithDelimiter()
-                            .string(
-                                from: attribute.date
-                            ),
-                    ]
-                }
-            }
-    }
-    
-    private func map(tagUpdates: [TagGroupUpdate]) -> [AnyHashable: Any] {
-        var tagsPayload: [String: [String: [String]]] = [:]
-        
-        AudienceUtils.collapse(tagUpdates)
-            .forEach { tagUpdate in
-                switch tagUpdate.type {
-                case .add:
-                    if tagsPayload["add"] == nil {
-                        tagsPayload["add"] = [:]
-                    }
-                    tagsPayload["add"]?[tagUpdate.group] = tagUpdate.tags
-                    break
-                case .remove:
-                    if tagsPayload["remove"] == nil {
-                        tagsPayload["remove"] = [:]
-                    }
-                    tagsPayload["remove"]?[tagUpdate.group] = tagUpdate.tags
-                    break
-                case .set:
-                    if tagsPayload["set"] == nil {
-                        tagsPayload["set"] = [:]
-                    }
-                    tagsPayload["set"]?[tagUpdate.group] = tagUpdate.tags
-                    break
-                }
-            }
-        
-        return tagsPayload
-    }
-    
-    func fetchSubscriptionLists(
-        _ identifier: String
-    ) async throws -> AirshipHTTPResponse<[String: [ChannelScope]]> {
-        AirshipLogger.debug(
-            "Retrieving subscription lists associated with a contact"
-        )
-        
-        guard let deviceAPIURL = config.deviceAPIURL else {
-            throw AirshipErrors.error("The deviceAPI URL is nil")
+
+            return try self.decoder.decode(ChannelCreateResult.self, from: data)
         }
-        
-        let request = AirshipRequest(
-            url: URL(
-                string:
-                    "\(deviceAPIURL)\(ContactAPIClient.subscriptionListPath)\(identifier)"
-            ),
-            headers: [
-                "Accept":  "application/vnd.urbanairship+json; version=3;"
-            ],
-            method: "GET",
-            auth: .basicAppAuth
+
+        guard createResponse.isSuccess, let channelID = createResponse.result?.channelID else {
+            return try createResponse.map { _ in return nil }
+        }
+
+        return try await associateChannel(
+            contactID: contactID,
+            channelID: channelID,
+            channelType: channelType
         )
-        
-        return try await session.performHTTPRequest(
-            request) { data, response in
-                if response.statusCode == 200 {
-                    AirshipLogger.debug(
-                        "Retrieved lists with response: \(response)"
-                    )
-                    
-                    do {
-                        guard let data = data else {
-                            throw AirshipErrors.error("Missing body")
-                        }
-                        
-                        let parsedBody = try self.decoder.decode(
-                            SubscriptionResponseBody.self,
-                            from: data
-                        )
-                        let scopedLists =
-                        try parsedBody.toScopedSubscriptionLists()
-                        return scopedLists
-                    } catch {
-                        throw AirshipErrors.error("Invalid response body \(String(describing: data))")
-                    }
-                } else {
-                    return nil
-                }
+    }
+
+    private func performIdentify(
+        channelID: String,
+        identifyRequest: ContactIdentifyRequestBody
+    ) async throws ->  AirshipHTTPResponse<ContactIdentifyResult> {
+        AirshipLogger.debug("Identifying contact for channel ID \(channelID) request \(identifyRequest)")
+
+        let nonce = UUID().uuidString
+        let timestamp = AirshipUtils.ISODateFormatterUTC().string(from: date.now)
+        let token = try AirshipUtils.generateSignedToken(
+            secret: config.appSecret,
+            tokenParams: [
+                config.appKey,
+                channelID,
+                nonce,
+                timestamp
+            ]
+        )
+
+        let request = AirshipRequest(
+            url: try makeURL(path: "/api/contacts/identify/v2"),
+            headers: [
+                "Accept": "application/vnd.urbanairship+json; version=3;",
+                "Content-Type": "application/json",
+                "X-UA-Channel-ID": channelID,
+                "X-UA-Appkey": self.config.appKey,
+                "X-UA-Nonce": nonce,
+                "X-UA-Timestamp": timestamp
+            ],
+            method: "POST",
+            auth: .bearer(token: token),
+            body: try self.encoder.encode(identifyRequest)
+        )
+
+        return try await session.performHTTPRequest(request) { (data, response) in
+            AirshipLogger.debug("Contact identify request finished with response: \(response)")
+
+            guard response.statusCode == 200, let data = data else {
+                return nil
             }
+
+            return try self.decoder.decode(ContactIdentifyResult.self, from: data)
+        }
+    }
+
+    private func performUpdate(
+        contactID: String,
+        requestBody: ContactUpdateRequestBody
+    ) async throws -> AirshipHTTPResponse<Void> {
+        AirshipLogger.debug("Updating contact \(contactID) with \(requestBody)")
+
+        let request =  AirshipRequest(
+            url: try self.makeURL(path: "/api/contacts/\(contactID)"),
+            headers: [
+                "Accept":  "application/vnd.urbanairship+json; version=3;",
+                "Content-Type": "application/json",
+                "X-UA-Appkey": self.config.appKey,
+            ],
+            method: "POST",
+            auth: .contactAuthToken(identifier: contactID),
+            body: try self.encoder.encode(requestBody)
+        )
+
+        return try await session.performHTTPRequest(request) { (data, response) in
+            AirshipLogger.debug(
+                "Update finished with response: \(response)"
+            )
+
+            return nil
+        }
     }
 }
 
-struct ContactAPIResponse {
-    let contactID: String?
-    let isAnonymous: Bool?
-}
-
-internal struct SubscriptionResponseBody: Decodable {
-    let subscriptionLists: [Entry]
+struct ContactIdentifyResult: Decodable, Equatable {
+    let contact: ContactInfo
+    let token: String
+    let tokenExpiresInMilliseconds: UInt
 
     enum CodingKeys: String, CodingKey {
-        case subscriptionLists = "subscription_lists"
+        case tokenExpiresInMilliseconds = "token_expires_in"
+        case token = "token"
+        case contact = "contact"
     }
 
-    struct Entry: Decodable, Equatable {
-        let lists: [String]
-        let scope: String
+    struct ContactInfo: Decodable, Equatable {
+        let channelAssociatedDate: Date
+        let contactID: String
+        let isAnonymous: Bool
 
         enum CodingKeys: String, CodingKey {
-            case lists = "list_ids"
-            case scope = "scope"
+            case channelAssociatedDate = "channel_association_timestamp"
+            case contactID = "contact_id"
+            case isAnonymous = "is_anonymous"
+        }
+    }
+}
+
+fileprivate struct ContactUpdateRequestBody: Encodable {
+    let attributes: [AttributeOperation]?
+    let tags: TagUpdates?
+    let subscriptionLists: [SubscriptionListOperation]?
+    let associate: [AssociateChannelOperation]?
+
+    enum CodingKeys: String, CodingKey {
+        case attributes = "attributes"
+        case tags = "tags"
+        case subscriptionLists = "subscription_lists"
+        case associate = "associate"
+    }
+
+    enum AttributeOperationAction: String, Encodable {
+        case set
+        case remove
+    }
+
+    struct AttributeOperation: Encodable {
+        let action: AttributeOperationAction
+        let key: String
+        let value: AirshipJSON?
+        let timestamp: Date
+    }
+
+    struct TagUpdates: Encodable {
+        let adds: [String: [String]]?
+        let removes: [String: [String]]?
+        let sets: [String: [String]]?
+
+        enum CodingKeys: String, CodingKey {
+            case adds = "add"
+            case removes = "remove"
+            case sets = "set"
         }
     }
 
-    func toScopedSubscriptionLists() throws -> [String: [ChannelScope]] {
-        var parsed: [String: [ChannelScope]] = [:]
-        try self.subscriptionLists.forEach { entry in
-            let scope = try ChannelScope.fromString(entry.scope)
-            entry.lists.forEach { listID in
-                var scopes = parsed[listID] ?? []
-                if !scopes.contains(scope) {
-                    scopes.append(scope)
-                    parsed[listID] = scopes
-                }
+    enum SubscriptionListOperationAction: String, Encodable {
+        case subscribe
+        case unsubscribe
+    }
+
+    struct SubscriptionListOperation: Encodable {
+        let action: SubscriptionListOperationAction
+        let scope: String
+        let timestamp: Date
+        let listID: String
+
+        enum CodingKeys: String, CodingKey {
+            case action
+            case scope
+            case timestamp
+            case listID = "list_id"
+        }
+    }
+
+    struct AssociateChannelOperation: Encodable {
+        let deviceType: String
+        let channelID: String
+
+        enum CodingKeys: String, CodingKey {
+            case deviceType = "device_type"
+            case channelID = "channel_id"
+        }
+    }
+}
+
+
+fileprivate struct ContactIdentifyRequestBody: Encodable {
+    private let deviceInfo = DeviceInfo()
+    private let action: RequestAction
+
+    internal init(action: RequestAction) {
+        self.action = action
+    }
+
+    static func identify(namedUserID: String, contactID: String?) -> ContactIdentifyRequestBody {
+        return ContactIdentifyRequestBody(
+            action: RequestAction(type: "identify", namedUserID: namedUserID, contactID: contactID)
+        )
+    }
+
+    static func reset() -> ContactIdentifyRequestBody {
+        return ContactIdentifyRequestBody(
+            action: RequestAction(type: "reset", namedUserID: nil, contactID: nil)
+        )
+    }
+
+    static func resolve(contactID: String?) -> ContactIdentifyRequestBody {
+        return ContactIdentifyRequestBody(
+            action: RequestAction(type: "resolve", namedUserID: nil, contactID: contactID)
+        )
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case deviceInfo = "device_info"
+        case action = "action"
+    }
+
+    internal struct DeviceInfo: Codable {
+        let deviceType = "ios"
+
+        enum CodingKeys: String, CodingKey {
+            case deviceType = "device_type"
+        }
+    }
+
+    internal struct RequestAction: Codable {
+        let type: String
+        let namedUserID: String?
+        let contactID: String?
+
+        enum CodingKeys: String, CodingKey {
+            case type = "type"
+            case namedUserID = "named_user_id"
+            case contactID = "contact_id"
+        }
+    }
+}
+
+fileprivate struct OpenChannelRegistrationBody: Encodable {
+    let channel: ChannelPayload
+
+    init(
+        address: String,
+        options: OpenRegistrationOptions,
+        locale: Locale,
+        timezone: String
+    ) {
+        self.channel = ChannelPayload(
+            address: address,
+            timezone: timezone,
+            localeCountry: locale.regionCode,
+            localeLanguage: locale.languageCode,
+            openInfo: OpenPayload(
+                platformName: options.platformName,
+                identifiers: options.identifiers
+            )
+        )
+    }
+
+    internal struct ChannelPayload: Encodable {
+        let type = "open"
+        let optIn = true
+        let address: String
+        let timezone: String
+        let localeCountry: String?
+        let localeLanguage: String?
+        let openInfo: OpenPayload
+
+        enum CodingKeys: String, CodingKey {
+            case type
+            case optIn = "opt_in"
+            case address
+            case timezone
+            case localeCountry = "locale_country"
+            case localeLanguage  = "locale_language"
+            case openInfo = "open"
+        }
+    }
+
+    internal struct OpenPayload: Encodable {
+        let platformName: String
+        let identifiers: [String: String]?
+
+        enum CodingKeys: String, CodingKey {
+            case platformName = "open_platform_name"
+            case identifiers
+        }
+    }
+}
+
+fileprivate struct EmailChannelRegistrationBody: Encodable {
+    let channel: ChannelPayload
+    let properties: AirshipJSON?
+    let optInMode: OptInMode
+
+    init(
+        address: String,
+        options: EmailRegistrationOptions,
+        locale: Locale,
+        timezone: String
+    ) {
+        self.channel = ChannelPayload(
+            address: address,
+            timezone: timezone,
+            localeCountry: locale.regionCode,
+            localeLanguage: locale.languageCode,
+            commercialOptedIn: options.commercialOptedIn,
+            transactionalOptedIn: options.transactionalOptedIn
+        )
+
+        self.optInMode = options.doubleOptIn ? .double : .classic
+        self.properties = options.properties
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case channel
+        case properties
+        case optInMode = "opt_in_mode"
+    }
+
+    internal enum OptInMode: String, Encodable {
+        case classic
+        case double
+    }
+
+    internal struct ChannelPayload: Encodable {
+        let type = "email"
+        let address: String
+        let timezone: String
+        let localeCountry: String?
+        let localeLanguage: String?
+        let commercialOptedIn: Date?
+        let transactionalOptedIn: Date?
+
+        enum CodingKeys: String, CodingKey {
+            case type
+            case address
+            case timezone
+            case localeCountry = "locale_country"
+            case localeLanguage  = "locale_language"
+            case commercialOptedIn = "commercial_opted_in"
+            case transactionalOptedIn = "transactional_opted_in"
+        }
+    }
+
+    internal struct OpenPayload: Encodable {
+        let platformName: String
+        let identifiers: [String: String]?
+
+        enum CodingKeys: String, CodingKey {
+            case platformName = "open_platform_name"
+            case identifiers
+        }
+    }
+}
+
+fileprivate struct SMSRegistrationBody: Encodable {
+    let msisdn: String
+    let sender: String
+    let timezone: String
+    let localeCountry: String?
+    let localeLanguage: String?
+
+    init(
+        msisdn: String,
+        options: SMSRegistrationOptions,
+        locale: Locale,
+        timezone: String
+    ) {
+        self.msisdn = msisdn
+        self.sender = options.senderID
+        self.timezone = timezone
+        self.localeCountry = locale.regionCode
+        self.localeLanguage = locale.languageCode
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case msisdn
+        case sender
+        case timezone
+        case localeCountry = "locale_country"
+        case localeLanguage  = "locale_language"
+    }
+}
+
+
+fileprivate struct ChannelCreateResult: Decodable {
+    let channelID: String
+
+    enum CodingKeys: String, CodingKey {
+        case channelID = "channel_id"
+    }
+}
+
+
+fileprivate extension Array where Element == TagGroupUpdate {
+    func toRequestBody() -> ContactUpdateRequestBody.TagUpdates? {
+        var adds: [String: [String]] = [:]
+        var removes: [String: [String]] = [:]
+        var sets: [String: [String]] = [:]
+
+
+        self.forEach { update in
+            switch update.type {
+            case .add:
+                adds[update.group] = update.tags
+            case .remove:
+                removes[update.group] = update.tags
+            case .set:
+                sets[update.group] = update.tags
             }
         }
-        return parsed
+
+        guard !adds.isEmpty || !removes.isEmpty || !sets.isEmpty else {
+            return nil
+        }
+
+        return ContactUpdateRequestBody.TagUpdates(
+            adds: adds.isEmpty ? nil : adds,
+            removes: removes.isEmpty ? nil : removes,
+            sets: sets.isEmpty ? nil : sets
+        )
+    }
+}
+
+
+fileprivate extension Array where Element == ScopedSubscriptionListUpdate {
+    func toRequestBody() -> [ContactUpdateRequestBody.SubscriptionListOperation]? {
+        let mapped = self.map { update in
+            switch(update.type) {
+            case .subscribe:
+                return ContactUpdateRequestBody.SubscriptionListOperation(
+                    action: .subscribe,
+                    scope: update.scope.stringValue,
+                    timestamp: update.date,
+                    listID: update.listId
+                )
+            case .unsubscribe:
+                return ContactUpdateRequestBody.SubscriptionListOperation(
+                    action: .unsubscribe,
+                    scope: update.scope.stringValue,
+                    timestamp: update.date,
+                    listID: update.listId
+                )
+            }
+        }
+
+        guard !mapped.isEmpty else {
+            return nil
+        }
+
+        return mapped
+    }
+}
+
+fileprivate extension Array where Element == AttributeUpdate {
+    func toRequestBody() throws -> [ContactUpdateRequestBody.AttributeOperation]? {
+        let mapped = self.map { update in
+            switch(update.type) {
+            case .set:
+                return ContactUpdateRequestBody.AttributeOperation(
+                    action: .set,
+                    key: update.attribute,
+                    value: update.jsonValue,
+                    timestamp: update.date
+                )
+            case .remove:
+                return ContactUpdateRequestBody.AttributeOperation(
+                    action: .remove,
+                    key: update.attribute,
+                    value: nil,
+                    timestamp: update.date
+                )
+            }
+        }
+
+        guard !mapped.isEmpty else {
+            return nil
+        }
+
+        return mapped
     }
 }

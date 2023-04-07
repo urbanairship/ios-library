@@ -57,7 +57,7 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
 @property (nonnull, strong) UADispatcher *dispatcher;
 @property (nonnull, strong) UIApplication *application;
 @property (nonnull, strong) NSNotificationCenter *notificationCenter;
-@property (nonnull, nonatomic, strong) UADate *date;
+@property (nonnull, nonatomic, strong) UAirshipDate *date;
 
 @property (nonatomic, copy) NSString *currentScreen;
 @property (nonatomic, copy, nullable) NSString * currentRegion;
@@ -88,7 +88,7 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
                      notificationCenter:(NSNotificationCenter *)notificationCenter
                              dispatcher:(UADispatcher *)dispatcher
                             application:(UIApplication *)application
-                                   date:(UADate *)date {
+                                   date:(UAirshipDate *)date {
     self = [super init];
 
     if (self) {
@@ -141,7 +141,7 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
                                  notificationCenter:(NSNotificationCenter *)notificationCenter
                                          dispatcher:(UADispatcher *)dispatcher
                                         application:(UIApplication *)application
-                                               date:(UADate *)date {
+                                               date:(UAirshipDate *)date {
 
     return [[UAAutomationEngine alloc] initWithAutomationStore:automationStore
                                                appStateTracker:appStateTracker
@@ -161,7 +161,7 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
                                             notificationCenter:[NSNotificationCenter defaultCenter]
                                                     dispatcher:UADispatcher.main
                                                    application:[UIApplication sharedApplication]
-                                                          date:[[UADate alloc] init]];
+                                                          date:[[UAirshipDate alloc] init]];
 }
 
 #pragma mark -

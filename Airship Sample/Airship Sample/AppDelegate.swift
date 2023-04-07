@@ -64,9 +64,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, DeepLinkDelegate,
         )
     }
 
-    func receivedDeepLink(
-        _ deepLink: URL
-    ) async -> Void {
+    @MainActor
+    func receivedDeepLink(_ deepLink: URL) async  {
         guard deepLink.host?.lowercased() == "deeplink" else {
             self.showInvalidDeepLinkAlert(deepLink)
             return

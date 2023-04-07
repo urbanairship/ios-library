@@ -2,8 +2,8 @@
 
 import Foundation
 
-final class CachedValue<Value> where Value: Any {
-    private let date: AirshipDate
+final class CachedValue<Value>: @unchecked Sendable where Value: Any {
+    private let date: AirshipDateProtocol
     private let lock = AirshipLock()
     private var expiration: Date?
 
@@ -60,7 +60,13 @@ final class CachedValue<Value> where Value: Any {
         }
     }
 
-    init(date: AirshipDate = AirshipDate.shared) {
+    func expire() {
+        lock.sync {
+            self._value = nil
+        }
+    }
+
+    init(date: AirshipDateProtocol = AirshipDate.shared) {
         self.date = date
     }
 }

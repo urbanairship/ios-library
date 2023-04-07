@@ -290,13 +290,11 @@ public class ActionRunner: NSObject {
     private class func run(
         _ action: Action,
         args: ActionArguments) async -> ActionResult {
-            
             guard action.acceptsArguments(args) else {
                 AirshipLogger.debug(
                     "Action \(action) rejected arguments \(args)."
                 )
                 return ActionResult.rejectedArguments()
-                
             }
             
             AirshipLogger.debug(
@@ -304,7 +302,6 @@ public class ActionRunner: NSObject {
             )
             action.willPerform?(with: args)
             let result = await action.perform(with: args)
-            
             action.didPerform?(with: args, with: result)
             return result
         }

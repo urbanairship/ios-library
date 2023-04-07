@@ -2,6 +2,7 @@
 
 import AirshipCore
 import UIKit
+import Combine
 
 class PushSettingsViewController: UITableViewController, RegistrationDelegate {
 
@@ -15,13 +16,20 @@ class PushSettingsViewController: UITableViewController, RegistrationDelegate {
     var namedUser: String = "Not Set"
     var tags: Array = ["Not Set"]
     var analytics: Bool = false
-
+    private var subscriptions: Set<AnyCancellable> = Set()
     var defaultDetailVC: UIViewController!
     var namedUserDetailVC: UIViewController!
     var tagsDetailVC: UIViewController!
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        Airship.contact.namedUserUpdates
+            .receive(on: RunLoop.main)
+            .sink { [weak self] namedUserID in
+                self?.namedUserCell.detailTextLabel?.text =
+                namedUserID ?? "Not Set"
+            }.store(in: &self.subscriptions)
 
         Airship.push.registrationDelegate = self
 
@@ -63,8 +71,6 @@ class PushSettingsViewController: UITableViewController, RegistrationDelegate {
 
         analyticsEnabledCell.accessoryType = analytics ? .checkmark : .none
 
-        namedUserCell.detailTextLabel?.text =
-            Airship.contact.namedUserID ?? "Not Set"
         tagsCell.detailTextLabel?.text =
             (Airship.channel.tags.count > 0)
             ? Airship.channel.tags.joined(separator: ", ") : "Not Set"
