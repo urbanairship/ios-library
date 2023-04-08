@@ -110,7 +110,7 @@ NSString *const UAInAppNativeBridgeDismissCommand = @"dismiss";
     [super viewDidLoad];
 
     self.nativeBridge = [[UANativeBridge alloc] init];
-    self.nativeBridge.nativeBridgeExtensionDelegate = self.nativeBridgeExtension;
+    self.nativeBridge.nativeBridgeExtensionDelegate = self.nativeBridgeExtension.nativeBridgeExtension;
     self.nativeBridge.forwardNavigationDelegate = self;
     self.nativeBridge.javaScriptCommandDelegate = self;
     self.nativeBridge.nativeBridgeDelegate = self;

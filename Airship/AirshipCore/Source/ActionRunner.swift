@@ -21,14 +21,12 @@ public class ActionRunner: NSObject {
         value: Any?,
         situation: Situation
     ) {
-        Task {
-            self.run(
-                actionName,
-                value: value,
-                situation: situation,
-                metadata: nil
-            )
-        }
+        self.run(
+            actionName,
+            value: value,
+            situation: situation,
+            metadata: nil
+        )
     }
     
     /**
@@ -51,7 +49,7 @@ public class ActionRunner: NSObject {
         metadata: [AnyHashable: Any]?
     ) {
         Task {
-            self.run(
+            await self.run(
                 actionName,
                 value: value,
                 situation: situation,
@@ -76,7 +74,8 @@ public class ActionRunner: NSObject {
     public class func run(
         _ actionName: String,
         value: Any?,
-        situation: Situation) async -> ActionResult {
+        situation: Situation
+    ) async -> ActionResult {
         return await self.run(
             actionName,
             value: value,
@@ -103,7 +102,8 @@ public class ActionRunner: NSObject {
         _ actionName: String,
         value: Any?,
         situation: Situation,
-        metadata: [AnyHashable: Any]?) async -> ActionResult {
+        metadata: [AnyHashable: Any]?
+    ) async -> ActionResult {
         guard
             let entry = Airship.shared.actionRegistry.registryEntry(actionName)
         else {
@@ -258,13 +258,14 @@ public class ActionRunner: NSObject {
             
             return aggregateResult
     }
-    
+
     private class func run(
         _ actionName: String,
         entry: ActionRegistryEntry,
         value: Any?,
         situation: Situation,
-        metadata: [AnyHashable: Any]?) async -> ActionResult {
+        metadata: [AnyHashable: Any]?
+    ) async -> ActionResult {
             
             // Add the action name to the metadata
             var fullMetadata: [AnyHashable: Any] = metadata ?? [:]
@@ -286,10 +287,12 @@ public class ActionRunner: NSObject {
                 )
             }
         }
-    
+
+    @MainActor
     private class func run(
         _ action: Action,
-        args: ActionArguments) async -> ActionResult {
+        args: ActionArguments
+    ) async -> ActionResult {
             guard action.acceptsArguments(args) else {
                 AirshipLogger.debug(
                     "Action \(action) rejected arguments \(args)."

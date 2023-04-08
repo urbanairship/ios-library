@@ -1,15 +1,14 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+import WebKit
 
 #if canImport(AirshipCore)
 import AirshipCore
 #endif
 
 @objc(UAMessageCenterNativeBridgeExtension)
-public class MessageCenterNativeBridgeExtension: NSObject,
-    NativeBridgeExtensionDelegate
-{
+public class MessageCenterNativeBridgeExtension: NSObject, NativeBridgeExtensionDelegate {
 
     let message: MessageCenterMessage
     let user: MessageCenterUser
@@ -35,7 +34,7 @@ public class MessageCenterNativeBridgeExtension: NSObject,
     public func extendJavaScriptEnvironment(
         _ js: JavaScriptEnvironmentProtocol,
         webView: WKWebView
-    ) {
+    ) async {
         js.add("getMessageId", string: self.message.id)
         js.add("getMessageTitle", string: self.message.title)
         js.add(

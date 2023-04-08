@@ -80,6 +80,8 @@ struct WebViewView: UIViewRepresentable {
     class Coordinator: NSObject, UANavigationDelegate,
         JavaScriptCommandDelegate, NativeBridgeDelegate
     {
+
+
         private let parent: WebViewView
         let nativeBridge: NativeBridge
 
@@ -120,9 +122,7 @@ struct WebViewView: UIViewRepresentable {
             }
         }
 
-        func perform(_ command: JavaScriptCommand, webView: WKWebView)
-            -> Bool
-        {
+        func performCommand(_ command: JavaScriptCommand, webView: WKWebView) -> Bool {
             return false
         }
 

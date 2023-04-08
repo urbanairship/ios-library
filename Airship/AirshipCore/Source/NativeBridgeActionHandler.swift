@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#if !os(tvOS)
+#if !os(tvOS) && !os(watchOS)
 
 import Foundation
 
@@ -315,7 +315,7 @@ public class NativeBridgeActionHandler: NSObject,
         _ command: JavaScriptCommand,
         _ basicEncoding: Bool
     ) -> [String: [Any?]] {
-        if command.options.count == 0 {
+        guard !command.options.isEmpty else {
             AirshipLogger.error("Error no options available to decode")
             return [:]
         }
@@ -325,12 +325,7 @@ public class NativeBridgeActionHandler: NSObject,
         for (actionName, optionValues) in command.options {
             var values: [Any?] = []
 
-            for actionArg in optionValues as! [Any?] {
-                guard let actionArg = actionArg as? String else {
-                    values.append(nil)
-                    continue
-                }
-
+            for actionArg in optionValues {
                 var value: Any?
 
                 if basicEncoding || actionArg.count == 0 {
@@ -352,7 +347,7 @@ public class NativeBridgeActionHandler: NSObject,
                 values.append(value)
             }
 
-            actionValues[actionName as! String] = values
+            actionValues[actionName] = values
         }
         return actionValues
     }

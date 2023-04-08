@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 #import "UABaseTest.h"
-#import "UAJavaScriptCommand.h"
 
 @import AirshipCore;
 

@@ -18,6 +18,8 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
     private static let setNamedUserCommand = "named_user"
     private static let multiCommand = "multi"
 
+    private var jsRequests: [JSBridgeLoadRequest] = []
+
     private static let forwardSchemes = [
         "itms-apps", "maps", "sms", "tel", "mailto",
     ]
@@ -43,12 +45,10 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
 
     /// Optional delegate to extend the native bridge.
     @objc
-    public weak var nativeBridgeExtensionDelegate:
-        NativeBridgeExtensionDelegate?
+    public weak var nativeBridgeExtensionDelegate: NativeBridgeExtensionDelegate?
 
-    private var actionHandler: NativeBridgeActionHandlerProtocol
-    private var javaScriptEnvironmentFactoryBlock:
-        () -> JavaScriptEnvironmentProtocol
+    private let actionHandler: NativeBridgeActionHandlerProtocol
+    private let javaScriptEnvironmentFactoryBlock: () -> JavaScriptEnvironmentProtocol
 
     /// NativeBridge initializer.
     /// - Note: For internal use only. :nodoc:
@@ -57,8 +57,7 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
     @objc(initWithActionHandler:javaScriptEnvironmentFactoryBlock:)
     public init(
         actionHandler: NativeBridgeActionHandlerProtocol,
-        javaScriptEnvironmentFactoryBlock: @escaping () ->
-            JavaScriptEnvironmentProtocol
+        javaScriptEnvironmentFactoryBlock: @escaping () -> JavaScriptEnvironmentProtocol
     ) {
         self.actionHandler = actionHandler
         self.javaScriptEnvironmentFactoryBlock =
@@ -83,6 +82,7 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
      * If a uairship:// URL, process it ourselves
      */
     @available(iOSApplicationExtension, unavailable)
+    @MainActor
     public func webView(
         _ webView: WKWebView,
         decidePolicyFor navigationAction: WKNavigationAction,
@@ -98,7 +98,7 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
         // Airship commands
         if let requestURL = requestURL, isAirshipJSAllowed, requestURL.isAirshipCommand {
             if navigationType == .linkActivated || navigationType == .other {
-                let command = JavaScriptCommand(for: requestURL)
+                let command = JavaScriptCommand(url: requestURL)
                 self.handleAirshipCommand(
                     command: command,
                     webView: webView
@@ -197,6 +197,7 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
     /**
      * Called when the navigation is complete. :nodoc:
      */
+    @MainActor
     public func webView(
         _ webView: WKWebView,
         didFinish navigation: WKNavigation!
@@ -205,17 +206,16 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
             "Webview finished navigation: \(String(describing: webView.url))"
         )
 
+        cancelJSRequest(webView: webView)
 
         if let url = webView.url, url.isAllowed(scope: .javaScriptInterface) {
-            AirshipLogger.trace("Populating Airship JS bridge: \(url)")
-            let js: JavaScriptEnvironmentProtocol =
-                self.javaScriptEnvironmentFactoryBlock()
-            self.nativeBridgeExtensionDelegate?
-                .extendJavaScriptEnvironment?(
-                    js,
-                    webView: webView
-                )
-            webView.evaluateJavaScript(js.build(), completionHandler: nil)
+            AirshipLogger.trace("Loading Airship JS bridge: \(url)")
+
+            let request = JSBridgeLoadRequest(webView: webView) {
+                return await self.makeJSEnvironment(webView: webView)
+            }
+            self.jsRequests.append(request)
+            request.start()
         }
 
         self.forwardNavigationDelegate?.webView?(
@@ -250,10 +250,12 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
     /**
      * Called when web content begins to load in a web view. :nodoc:
      */
+    @MainActor
     public func webView(
         _ webView: WKWebView,
         didStartProvisionalNavigation navigation: WKNavigation!
     ) {
+        self.cancelJSRequest(webView: webView)
         self.forwardNavigationDelegate?.webView?(
             webView,
             didStartProvisionalNavigation: navigation
@@ -335,6 +337,18 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
         forward(webView, challenge, completionHandler)
     }
 
+    private func makeJSEnvironment(webView: WKWebView) async -> String {
+        let jsEnvironment: JavaScriptEnvironmentProtocol = self.javaScriptEnvironmentFactoryBlock()
+
+        await self.nativeBridgeExtensionDelegate?.extendJavaScriptEnvironment(
+            jsEnvironment,
+            webView: webView
+        )
+
+        return await jsEnvironment.build()
+    }
+
+    @MainActor
     private func handleAirshipCommand(
         command: JavaScriptCommand,
         webView: WKWebView
@@ -344,7 +358,7 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
             self.nativeBridgeDelegate?.close()
 
         case NativeBridge.setNamedUserCommand:
-            let idArgs = command.options["id"] as? [String]
+            let idArgs = command.options["id"]
             let argument = idArgs?.first
 
             let contact: AirshipContactProtocol = Airship.contact
@@ -363,7 +377,7 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
                     $0.isAirshipCommand
                 }
                 .forEach {
-                    let command = JavaScriptCommand(for: $0)
+                    let command = JavaScriptCommand(url: $0)
                     self.handleAirshipCommand(
                         command: command,
                         webView: webView
@@ -373,7 +387,7 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
         default:
             if NativeBridgeActionHandler.isActionCommand(command: command) {
                 let metadata = self.nativeBridgeExtensionDelegate?
-                    .actionsMetadata?(
+                    .actionsMetadata(
                         for: command,
                         webView: webView
                     )
@@ -400,20 +414,21 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
         }
     }
 
+    @MainActor
     private func forwardAirshipCommand(
         _ command: JavaScriptCommand,
         webView: WKWebView
     ) -> Bool {
         /// Local JavaScript command delegate
         if self.javaScriptCommandDelegate?
-            .perform(command, webView: webView)
+            .performCommand(command, webView: webView)
             == true
         {
             return true
         }
 
         if Airship.shared.javaScriptCommandDelegate?
-            .perform(
+            .performCommand(
                 command,
                 webView: webView
             ) == true
@@ -424,6 +439,16 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
         return false
     }
 
+    @MainActor
+    private func cancelJSRequest(webView: WKWebView) {
+        jsRequests.removeAll { request in
+            if request.webView == nil || request.webView == webView {
+                request.cancel()
+                return true
+            }
+            return false
+        }
+    }
     /**
      * Handles a link click.
      *
@@ -474,6 +499,40 @@ extension URL {
 
     fileprivate func isAllowed(scope: URLAllowListScope) -> Bool {
         return Airship.shared.urlAllowList.isAllowed(self, scope: scope)
+    }
+}
+
+
+@MainActor
+fileprivate class JSBridgeLoadRequest: Sendable {
+    private(set) weak var webView: WKWebView?
+    private let jsFactoryBlock: () async throws -> String
+    private var task: Task<Void, Never>?
+
+    init(webView: WKWebView? = nil, jsFactoryBlock: @escaping () async throws -> String) {
+        self.webView = webView
+        self.jsFactoryBlock = jsFactoryBlock
+    }
+
+    func start() {
+        task?.cancel()
+        self.task = Task { @MainActor in
+            do {
+                try Task.checkCancellation()
+                let js = try await jsFactoryBlock()
+                try Task.checkCancellation()
+                if let webView = webView {
+                    try await webView.evaluateJavaScript(js)
+                    AirshipLogger.trace("Native bridge injected")
+                }
+            } catch {
+
+            }
+        }
+    }
+
+    func cancel() {
+        self.task?.cancel()
     }
 }
 

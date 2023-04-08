@@ -4,138 +4,92 @@
 
 import Foundation
 
-/// The JavaScript environment builder that is used by the native bridge.
-@objc(UAJavaScriptEnvironment)
-public class JavaScriptEnvironment: NSObject, JavaScriptEnvironmentProtocol {
+@objc(UAJavaScriptEnvironmentProtocol)
+public protocol JavaScriptEnvironmentProtocol: Sendable {
 
-    private var extensions: Set<String> = {
-        return defaultExtensions()
-    }()
 
-    private class func defaultExtensions() -> Set<String> {
-        var defaults: Set<String> = []
-        defaults.insert(
-            JavaScriptEnvironment.stringGetter(
-                "getDeviceModel",
-                UIDevice.current.model
-            )
-        )
-//        let contact: AirshipContactProtocol = Airship.requireComponent(
-//            ofType: AirshipContactProtocol.self
-//        )
-//        
-//        if contact.namedUserID != nil {
-//            defaults.insert(
-//                JavaScriptEnvironment.stringGetter(
-//                    "getNamedUser",
-//                    contact.namedUserID!
-//                )
-//            )
-//        }
-        let channel: AirshipChannelProtocol = Airship.requireComponent(
-            ofType: AirshipChannelProtocol.self
-        )
-        if channel.identifier != nil {
-            defaults.insert(
-                JavaScriptEnvironment.stringGetter(
-                    "getChannelId",
-                    channel.identifier!
-                )
-            )
-        }
-        defaults.insert(
-            JavaScriptEnvironment.stringGetter(
-                "getAppKey",
-                Airship.shared.config.appKey
-            )
-        )
-        return defaults
-    }
     /// Adds a string getter to the Airship JavaScript environment.
     /// - Parameter getter: The getter's name.
     /// - Parameter string: The getter's value.
     @objc(addStringGetter:value:)
-    public func add(_ getter: String, string: String?) {
-        guard let value = string else {
-            let ext = String(
-                format: "_UAirship.%@ = function() {return null;};",
-                getter
-            )
-            self.extensions.insert(ext)
-            return
-        }
-        self.extensions.insert(
-            JavaScriptEnvironment.stringGetter(getter, value)
-        )
-    }
+    func add(_ getter: String, string: String?)
 
     /// Adds a number getter to the Airship JavaScript environment.
     /// - Parameter getter: The getter's name.
     /// - Parameter number: The getter's value.
     @objc(addNumberGetter:value:)
-    public func add(_ getter: String, number: NSNumber?) {
-        let ext = String(
-            format: "_UAirship.%@ = function() {return %@;};",
-            getter,
-            number ?? -1
-        )
-        self.extensions.insert(ext)
-    }
+    func add(_ getter: String, number: NSNumber?)
 
     /// Adds a dictionary getter to the Airship JavaScript environment.
     /// - Parameter getter: The getter's name.
     /// - Parameter dictionary: The getter's value.
     @objc(addDictionaryGetter:value:)
-    public func add(_ getter: String, dictionary: [AnyHashable: Any]?) {
-        let ext: String
-        guard let value = dictionary,
-            JSONSerialization.isValidJSONObject(value)
-        else {
-            ext = String(
-                format: "_UAirship.%@ = function() {return null;};",
-                getter
-            )
-            self.extensions.insert(ext)
-            return
-        }
-
-        let jsonData: Data
-
-        do {
-            jsonData = try JSONSerialization.data(
-                withJSONObject: value,
-                options: .prettyPrinted
-            )
-        } catch {
-            ext = String(
-                format: "_UAirship.%@ = function() {return null;};",
-                getter
-            )
-            self.extensions.insert(ext)
-            return
-        }
-
-        guard let jsonString = String.init(data: jsonData, encoding: .utf8)
-        else {
-            return
-        }
-
-        ext = String(
-            format: "_UAirship.%@ = function() {return %@;};",
-            getter,
-            jsonString
-        )
-        self.extensions.insert(ext)
-    }
+    func add(_ getter: String, dictionary: [AnyHashable: Any]?)
 
     /**
      * Builds the script that can be injected into a web view.
      * - Returns: The script.
      */
-    @objc(build)
-    public func build() -> String {
+    @objc
+    func build() async -> String
+}
+
+
+/// The JavaScript environment builder that is used by the native bridge.
+@objc(UAJavaScriptEnvironment)
+public final class JavaScriptEnvironment: NSObject, JavaScriptEnvironmentProtocol, @unchecked Sendable {
+
+    private var extensions: [String] = []
+    private var lock: AirshipLock = AirshipLock()
+    private let channel: () -> AirshipChannelProtocol
+    private let contact: () -> AirshipContactProtocol
+
+    @objc
+    public override convenience init() {
+        self.init(
+            channel: Airship.componentSupplier(),
+            contact: Airship.componentSupplier()
+        )
+    }
+
+    init(
+        channel: @escaping () -> AirshipChannelProtocol,
+        contact: @escaping () -> AirshipContactProtocol
+    ) {
+        self.channel = channel
+        self.contact = contact
+    }
+
+    @objc(addStringGetter:value:)
+    public func add(_ getter: String, string: String?) {
+        self.addExtension(
+            makeGetter(name: getter, string: string)
+        )
+    }
+
+    @objc(addNumberGetter:value:)
+    public func add(_ getter: String, number: NSNumber?) {
+        self.addExtension(
+            makeGetter(name: getter, number: number)
+        )
+    }
+
+    @objc(addDictionaryGetter:value:)
+    public func add(_ getter: String, dictionary: [AnyHashable: Any]?) {
+        self.addExtension(
+            makeGetter(name: getter, dictionary: dictionary)
+        )
+    }
+
+    @objc
+    public func build() async -> String {
         var js = "var _UAirship = {};"
-        for ext in self.extensions {
+        var extensions: [String] = await self.makeDefaultExtensions()
+        lock.sync {
+            extensions += self.extensions
+        }
+
+        for ext in extensions {
             js = js.appending(ext)
         }
 
@@ -165,9 +119,47 @@ public class JavaScriptEnvironment: NSObject, JavaScriptEnvironmentProtocol {
         return js.appending(bridge)
     }
 
-    private class func stringGetter(_ name: String, _ value: String)
-        -> String
-    {
+    private func makeDefaultExtensions() async -> [String] {
+        return await [
+            makeGetter(
+                name: "getDeviceModel",
+                string: UIDevice.current.model
+            ),
+
+            makeGetter(
+                name: "getNamedUser",
+                string: self.contact().namedUserID
+            ),
+
+            makeGetter(
+                name: "getChannelId",
+                string: self.channel().identifier
+            ),
+
+            makeGetter(
+                name: "getAppKey",
+                string: Airship.shared.config.appKey
+            )
+        ]
+    }
+
+    private func addExtension(_ ext: String) {
+        lock.sync {
+            self.extensions.append(ext)
+        }
+    }
+
+    private func makeGetter(
+        name: String,
+        string: String?
+    ) -> String {
+        guard let value = string else {
+            return String(
+                format: "_UAirship.%@ = function() {return null;};",
+                name
+            )
+        }
+
         let encodedValue = value.addingPercentEncoding(
             withAllowedCharacters: CharacterSet.urlHostAllowed
         )
@@ -179,6 +171,38 @@ public class JavaScriptEnvironment: NSObject, JavaScriptEnvironmentProtocol {
         )
     }
 
+    private func makeGetter(
+        name: String,
+        number: NSNumber?
+    ) -> String {
+        String(
+            format: "_UAirship.%@ = function() {return %@;};",
+            name,
+            number ?? -1
+        )
+    }
+
+    private func makeGetter(name: String, dictionary: [AnyHashable: Any]?) -> String {
+        guard let value = dictionary,
+              JSONSerialization.isValidJSONObject(value),
+              let jsonData: Data = try? JSONSerialization.data(
+                  withJSONObject: value,
+                  options: []
+              ),
+              let jsonString = String.init(data: jsonData, encoding: .utf8)
+        else {
+            return String(
+                format: "_UAirship.%@ = function() {return null;};",
+                name
+            )
+        }
+
+        return String(
+            format: "_UAirship.%@ = function() {return %@;};",
+            name,
+            jsonString
+        )
+    }
 }
 
 #endif

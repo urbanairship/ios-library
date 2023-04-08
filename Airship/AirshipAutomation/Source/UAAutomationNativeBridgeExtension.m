@@ -9,7 +9,8 @@
 #else
 @import AirshipCore;
 #endif
-@interface UAAutomationNativeBridgeExtension()
+
+@interface UAAutomationNativeBridgeExtension() <UANativeBridgeExtensionDelegate>
 @property(nonatomic, strong) UAInAppMessage *message;
 @end
 
@@ -22,9 +23,18 @@
     return extension;
 }
 
-- (void)extendJavaScriptEnvironment:(id<UAJavaScriptEnvironmentProtocol>)js webView:(WKWebView *)webView {
+- (NSDictionary * _Nonnull)actionsMetadataForCommand:(UAJavaScriptCommand * _Nonnull)command webView:(WKWebView * _Nonnull)webView {
+    return @{};
+}
+
+- (void)extendJavaScriptEnvironment:(id<UAJavaScriptEnvironmentProtocol> _Nonnull)js webView:(WKWebView * _Nonnull)webView completionHandler:(void (^ _Nonnull)(void))completionHandler {
     // Message data
     [js addDictionaryGetter:@"getMessageExtras" value:self.message.extras];
+    completionHandler();
+}
+
+- (id<UANativeBridgeExtensionDelegate>)nativeBridgeExtension {
+    return self;
 }
 
 @end

@@ -5,6 +5,9 @@
 #import "UAInAppMessageUtils+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
 
+#import <WebKit/WebKit.h>
+
+
 #if __has_include("AirshipKit/AirshipKit-Swift.h")
 #import <AirshipKit/AirshipKit-Swift.h>
 #elif __has_include("AirshipKit-Swift.h")

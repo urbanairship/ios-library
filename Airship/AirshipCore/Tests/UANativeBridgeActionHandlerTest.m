@@ -238,7 +238,7 @@
     id ran = [self expectationWithDescription:@"Performing command"];
 
     __block NSString *result;
-    UAJavaScriptCommand *command = [UAJavaScriptCommand commandForURL:URL];
+    UAJavaScriptCommand *command = [[UAJavaScriptCommand alloc] initWithURL:URL];
     [self.actionHandler runActionsForCommand:command metadata:@{} completionHandler:^(NSString *script) {
         result = script;
         [ran fulfill];

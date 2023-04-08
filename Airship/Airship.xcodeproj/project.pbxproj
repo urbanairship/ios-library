@@ -299,26 +299,18 @@
 		6E43214126EA84A5009228AB /* UAFeature.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43212A26EA84A4009228AB /* UAFeature.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E43214226EA84A5009228AB /* UAActionArguments.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43212B26EA84A4009228AB /* UAActionArguments.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E43214326EA84A5009228AB /* UAActionArguments.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43212B26EA84A4009228AB /* UAActionArguments.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E43214426EA84A5009228AB /* UAJavaScriptCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43212C26EA84A4009228AB /* UAJavaScriptCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E43214526EA84A5009228AB /* UAJavaScriptCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43212C26EA84A4009228AB /* UAJavaScriptCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E43214626EA84A5009228AB /* UAJavaScriptEnvironmentProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43212D26EA84A4009228AB /* UAJavaScriptEnvironmentProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E43214726EA84A5009228AB /* UAJavaScriptEnvironmentProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43212D26EA84A4009228AB /* UAJavaScriptEnvironmentProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E43214826EA84A5009228AB /* UAPush.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43212E26EA84A4009228AB /* UAPush.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E43214926EA84A5009228AB /* UAPush.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43212E26EA84A4009228AB /* UAPush.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E43214A26EA84A5009228AB /* UAAppIntegrationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43212F26EA84A4009228AB /* UAAppIntegrationDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E43214B26EA84A5009228AB /* UAAppIntegrationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43212F26EA84A4009228AB /* UAAppIntegrationDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E43214C26EA84A5009228AB /* UAAutoIntegration.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213026EA84A4009228AB /* UAAutoIntegration.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E43214D26EA84A5009228AB /* UAAutoIntegration.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213026EA84A4009228AB /* UAAutoIntegration.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E43215026EA84A5009228AB /* UAJavaScriptCommandDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213226EA84A4009228AB /* UAJavaScriptCommandDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E43215126EA84A5009228AB /* UAJavaScriptCommandDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213226EA84A4009228AB /* UAJavaScriptCommandDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E43215226EA84A5009228AB /* AirshipBasementLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213326EA84A4009228AB /* AirshipBasementLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E43215326EA84A5009228AB /* AirshipBasementLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213326EA84A4009228AB /* AirshipBasementLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E43215626EA84A5009228AB /* UAActionPredicateProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213526EA84A4009228AB /* UAActionPredicateProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E43215726EA84A5009228AB /* UAActionPredicateProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213526EA84A4009228AB /* UAActionPredicateProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E43215826EA84A5009228AB /* UACompression.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213626EA84A4009228AB /* UACompression.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E43215926EA84A5009228AB /* UACompression.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213626EA84A4009228AB /* UACompression.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E43215A26EA84A5009228AB /* UANativeBridgeExtensionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213726EA84A4009228AB /* UANativeBridgeExtensionDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E43215B26EA84A5009228AB /* UANativeBridgeExtensionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213726EA84A4009228AB /* UANativeBridgeExtensionDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E43215C26EA84A5009228AB /* UAEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213826EA84A4009228AB /* UAEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E43215D26EA84A5009228AB /* UAEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213826EA84A4009228AB /* UAEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E43215E26EA84A5009228AB /* UAURLAllowListScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213926EA84A4009228AB /* UAURLAllowListScope.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -345,8 +337,6 @@
 		6E43217F26EA84BE009228AB /* UACompression.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E43217026EA84BE009228AB /* UACompression.m */; };
 		6E43218026EA84BE009228AB /* UAActionArguments+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43217126EA84BE009228AB /* UAActionArguments+Internal.h */; };
 		6E43218126EA84BE009228AB /* UAActionArguments+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43217126EA84BE009228AB /* UAActionArguments+Internal.h */; };
-		6E43218426EA84BE009228AB /* UAJavaScriptCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E43217326EA84BE009228AB /* UAJavaScriptCommand.m */; };
-		6E43218526EA84BE009228AB /* UAJavaScriptCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E43217326EA84BE009228AB /* UAJavaScriptCommand.m */; };
 		6E43218626EA84BE009228AB /* UAActionResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E43217426EA84BE009228AB /* UAActionResult.m */; };
 		6E43218726EA84BE009228AB /* UAActionResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E43217426EA84BE009228AB /* UAActionResult.m */; };
 		6E43218826EA84BE009228AB /* UASwizzler+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43217526EA84BE009228AB /* UASwizzler+Internal.h */; };
@@ -508,6 +498,15 @@
 		6E68203228EDE3E200A4F90B /* LiveActivityRestorer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E68203128EDE3E200A4F90B /* LiveActivityRestorer.swift */; };
 		6E68203328EDE3E200A4F90B /* LiveActivityRestorer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E68203128EDE3E200A4F90B /* LiveActivityRestorer.swift */; };
 		6E68203428EDE3E200A4F90B /* LiveActivityRestorer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E68203128EDE3E200A4F90B /* LiveActivityRestorer.swift */; };
+		6E692AFD29E0CB2F00D96CCC /* JavaScriptCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E692AFC29E0CB2F00D96CCC /* JavaScriptCommand.swift */; };
+		6E692AFF29E0CB4100D96CCC /* JavaScriptCommandDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E692AFE29E0CB4100D96CCC /* JavaScriptCommandDelegate.swift */; };
+		6E692B0329E0CBB500D96CCC /* NativeBridgeExtensionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E692B0229E0CBB500D96CCC /* NativeBridgeExtensionDelegate.swift */; };
+		6E692B0429E0DA5100D96CCC /* JavaScriptCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E692AFC29E0CB2F00D96CCC /* JavaScriptCommand.swift */; };
+		6E692B0529E0DA5100D96CCC /* NativeBridgeExtensionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E692B0229E0CBB500D96CCC /* NativeBridgeExtensionDelegate.swift */; };
+		6E692B0629E0DA5100D96CCC /* JavaScriptCommandDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E692AFE29E0CB4100D96CCC /* JavaScriptCommandDelegate.swift */; };
+		6E692B0729E0DA5200D96CCC /* JavaScriptCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E692AFC29E0CB2F00D96CCC /* JavaScriptCommand.swift */; };
+		6E692B0829E0DA5200D96CCC /* NativeBridgeExtensionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E692B0229E0CBB500D96CCC /* NativeBridgeExtensionDelegate.swift */; };
+		6E692B0929E0DA5200D96CCC /* JavaScriptCommandDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E692AFE29E0CB4100D96CCC /* JavaScriptCommandDelegate.swift */; };
 		6E698DEC26790AC300654DB2 /* PreferenceDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698DE826790AC300654DB2 /* PreferenceDataStore.swift */; };
 		6E698DED26790AC300654DB2 /* PreferenceDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698DE826790AC300654DB2 /* PreferenceDataStore.swift */; };
 		6E698DF026790AC300654DB2 /* AirshipLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698DEA26790AC300654DB2 /* AirshipLogger.swift */; };
@@ -1415,7 +1414,6 @@
 		A6722AC9281A9FEE0033F54D /* UADisposable.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E88EF022703D9B100469E2A /* UADisposable.m */; };
 		A6722ACA281A9FEE0033F54D /* UAAutoIntegration.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E43216E26EA84BE009228AB /* UAAutoIntegration.m */; };
 		A6722ACB281A9FEE0033F54D /* UACompression.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E43217026EA84BE009228AB /* UACompression.m */; };
-		A6722ACD281A9FEE0033F54D /* UAJavaScriptCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E43217326EA84BE009228AB /* UAJavaScriptCommand.m */; };
 		A6722ACF281A9FEE0033F54D /* UASwizzler.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E43216D26EA84BE009228AB /* UASwizzler.m */; };
 		A6722AD1281A9FFB0033F54D /* UAActionArguments.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E43216F26EA84BE009228AB /* UAActionArguments.m */; };
 		A6722AD4281AA05A0033F54D /* UADisposable.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E88EF082703D9C700469E2A /* UADisposable.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1433,10 +1431,6 @@
 		A6722AE0281AA05B0033F54D /* UAEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213826EA84A4009228AB /* UAEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6722AE1281AA05B0033F54D /* UAFeature.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43212A26EA84A4009228AB /* UAFeature.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6722AE2281AA05B0033F54D /* UAGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213E26EA84A5009228AB /* UAGlobal.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A6722AE3281AA05B0033F54D /* UAJavaScriptCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43212C26EA84A4009228AB /* UAJavaScriptCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A6722AE4281AA05B0033F54D /* UAJavaScriptCommandDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213226EA84A4009228AB /* UAJavaScriptCommandDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A6722AE5281AA05B0033F54D /* UAJavaScriptEnvironmentProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43212D26EA84A4009228AB /* UAJavaScriptEnvironmentProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A6722AE8281AA05B0033F54D /* UANativeBridgeExtensionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213726EA84A4009228AB /* UANativeBridgeExtensionDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6722AE9281AA05B0033F54D /* UAPush.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43212E26EA84A4009228AB /* UAPush.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6722AEA281AA05B0033F54D /* UASDKModule.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213B26EA84A5009228AB /* UASDKModule.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6722AEB281AA05B0033F54D /* UASwizzler+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43217526EA84BE009228AB /* UASwizzler+Internal.h */; };
@@ -2079,16 +2073,12 @@
 		6E43212626EA819A009228AB /* AirshipBasement.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipBasement.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E43212A26EA84A4009228AB /* UAFeature.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAFeature.h; path = Public/UAFeature.h; sourceTree = "<group>"; };
 		6E43212B26EA84A4009228AB /* UAActionArguments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAActionArguments.h; path = Public/UAActionArguments.h; sourceTree = "<group>"; };
-		6E43212C26EA84A4009228AB /* UAJavaScriptCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAJavaScriptCommand.h; path = Public/UAJavaScriptCommand.h; sourceTree = "<group>"; };
-		6E43212D26EA84A4009228AB /* UAJavaScriptEnvironmentProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAJavaScriptEnvironmentProtocol.h; path = Public/UAJavaScriptEnvironmentProtocol.h; sourceTree = "<group>"; };
 		6E43212E26EA84A4009228AB /* UAPush.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAPush.h; path = Public/UAPush.h; sourceTree = "<group>"; };
 		6E43212F26EA84A4009228AB /* UAAppIntegrationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAAppIntegrationDelegate.h; path = Public/UAAppIntegrationDelegate.h; sourceTree = "<group>"; };
 		6E43213026EA84A4009228AB /* UAAutoIntegration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAAutoIntegration.h; path = Public/UAAutoIntegration.h; sourceTree = "<group>"; };
-		6E43213226EA84A4009228AB /* UAJavaScriptCommandDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAJavaScriptCommandDelegate.h; path = Public/UAJavaScriptCommandDelegate.h; sourceTree = "<group>"; };
 		6E43213326EA84A4009228AB /* AirshipBasementLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirshipBasementLib.h; path = Public/AirshipBasementLib.h; sourceTree = "<group>"; };
 		6E43213526EA84A4009228AB /* UAActionPredicateProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAActionPredicateProtocol.h; path = Public/UAActionPredicateProtocol.h; sourceTree = "<group>"; };
 		6E43213626EA84A4009228AB /* UACompression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UACompression.h; path = Public/UACompression.h; sourceTree = "<group>"; };
-		6E43213726EA84A4009228AB /* UANativeBridgeExtensionDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UANativeBridgeExtensionDelegate.h; path = Public/UANativeBridgeExtensionDelegate.h; sourceTree = "<group>"; };
 		6E43213826EA84A4009228AB /* UAEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAEvent.h; path = Public/UAEvent.h; sourceTree = "<group>"; };
 		6E43213926EA84A4009228AB /* UAURLAllowListScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAURLAllowListScope.h; path = Public/UAURLAllowListScope.h; sourceTree = "<group>"; };
 		6E43213A26EA84A5009228AB /* UAActionResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAActionResult.h; path = Public/UAActionResult.h; sourceTree = "<group>"; };
@@ -2102,7 +2092,6 @@
 		6E43216F26EA84BE009228AB /* UAActionArguments.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAActionArguments.m; path = Internal/UAActionArguments.m; sourceTree = "<group>"; };
 		6E43217026EA84BE009228AB /* UACompression.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UACompression.m; path = Internal/UACompression.m; sourceTree = "<group>"; };
 		6E43217126EA84BE009228AB /* UAActionArguments+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UAActionArguments+Internal.h"; path = "Internal/UAActionArguments+Internal.h"; sourceTree = "<group>"; };
-		6E43217326EA84BE009228AB /* UAJavaScriptCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAJavaScriptCommand.m; path = Internal/UAJavaScriptCommand.m; sourceTree = "<group>"; };
 		6E43217426EA84BE009228AB /* UAActionResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAActionResult.m; path = Internal/UAActionResult.m; sourceTree = "<group>"; };
 		6E43217526EA84BE009228AB /* UASwizzler+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UASwizzler+Internal.h"; path = "Internal/UASwizzler+Internal.h"; sourceTree = "<group>"; };
 		6E43218E26EA89B5009228AB /* AirshipCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AirshipCore.h; sourceTree = "<group>"; };
@@ -2207,6 +2196,9 @@
 		6E664BE626C5B21600A2C8E5 /* ModifyAttributesAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModifyAttributesAction.swift; sourceTree = "<group>"; };
 		6E664BE926C6DB7500A2C8E5 /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		6E68203128EDE3E200A4F90B /* LiveActivityRestorer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityRestorer.swift; sourceTree = "<group>"; };
+		6E692AFC29E0CB2F00D96CCC /* JavaScriptCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JavaScriptCommand.swift; sourceTree = "<group>"; };
+		6E692AFE29E0CB4100D96CCC /* JavaScriptCommandDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JavaScriptCommandDelegate.swift; sourceTree = "<group>"; };
+		6E692B0229E0CBB500D96CCC /* NativeBridgeExtensionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeBridgeExtensionDelegate.swift; sourceTree = "<group>"; };
 		6E698DE826790AC300654DB2 /* PreferenceDataStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferenceDataStore.swift; sourceTree = "<group>"; };
 		6E698DEA26790AC300654DB2 /* AirshipLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirshipLogger.swift; sourceTree = "<group>"; };
 		6E698DEB26790AC300654DB2 /* UAPrivacyManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UAPrivacyManager.swift; sourceTree = "<group>"; };
@@ -3564,6 +3556,9 @@
 				A6A5530926D548AF002B20F6 /* NativeBridge.swift */,
 				A6A5530F26D548D6002B20F6 /* JavaScriptEnvironment.swift */,
 				A6A5531226D548FF002B20F6 /* NativeBridgeActionHandler.swift */,
+				6E692AFC29E0CB2F00D96CCC /* JavaScriptCommand.swift */,
+				6E692AFE29E0CB4100D96CCC /* JavaScriptCommandDelegate.swift */,
+				6E692B0229E0CBB500D96CCC /* NativeBridgeExtensionDelegate.swift */,
 			);
 			name = "Native Bridge";
 			sourceTree = "<group>";
@@ -3729,11 +3724,6 @@
 				6E43213826EA84A4009228AB /* UAEvent.h */,
 				6E43212A26EA84A4009228AB /* UAFeature.h */,
 				6E43213E26EA84A5009228AB /* UAGlobal.h */,
-				6E43212C26EA84A4009228AB /* UAJavaScriptCommand.h */,
-				6E43217326EA84BE009228AB /* UAJavaScriptCommand.m */,
-				6E43213226EA84A4009228AB /* UAJavaScriptCommandDelegate.h */,
-				6E43212D26EA84A4009228AB /* UAJavaScriptEnvironmentProtocol.h */,
-				6E43213726EA84A4009228AB /* UANativeBridgeExtensionDelegate.h */,
 				6E43212E26EA84A4009228AB /* UAPush.h */,
 				6E43213B26EA84A5009228AB /* UASDKModule.h */,
 				6E43216D26EA84BE009228AB /* UASwizzler.m */,
@@ -4944,8 +4934,6 @@
 				6E43216A26EA84A5009228AB /* AirshipBasement.h in Headers */,
 				6E43214C26EA84A5009228AB /* UAAutoIntegration.h in Headers */,
 				6E43215C26EA84A5009228AB /* UAEvent.h in Headers */,
-				6E43214626EA84A5009228AB /* UAJavaScriptEnvironmentProtocol.h in Headers */,
-				6E43215A26EA84A5009228AB /* UANativeBridgeExtensionDelegate.h in Headers */,
 				6E43215826EA84A5009228AB /* UACompression.h in Headers */,
 				6E43216026EA84A5009228AB /* UAActionResult.h in Headers */,
 				6E43216626EA84A5009228AB /* UAComponent.h in Headers */,
@@ -4955,13 +4943,11 @@
 				6E43215226EA84A5009228AB /* AirshipBasementLib.h in Headers */,
 				6E43215E26EA84A5009228AB /* UAURLAllowListScope.h in Headers */,
 				6EF1934828380BE1005F192A /* UALegacyLoggingBridge.h in Headers */,
-				6E43215026EA84A5009228AB /* UAJavaScriptCommandDelegate.h in Headers */,
 				6E43216226EA84A5009228AB /* UASDKModule.h in Headers */,
 				6E43215626EA84A5009228AB /* UAActionPredicateProtocol.h in Headers */,
 				6E43218026EA84BE009228AB /* UAActionArguments+Internal.h in Headers */,
 				6E43214226EA84A5009228AB /* UAActionArguments.h in Headers */,
 				6E43214826EA84A5009228AB /* UAPush.h in Headers */,
-				6E43214426EA84A5009228AB /* UAJavaScriptCommand.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4975,8 +4961,6 @@
 				6E43216B26EA84A5009228AB /* AirshipBasement.h in Headers */,
 				6E43214D26EA84A5009228AB /* UAAutoIntegration.h in Headers */,
 				6E43215D26EA84A5009228AB /* UAEvent.h in Headers */,
-				6E43214726EA84A5009228AB /* UAJavaScriptEnvironmentProtocol.h in Headers */,
-				6E43215B26EA84A5009228AB /* UANativeBridgeExtensionDelegate.h in Headers */,
 				6E43215926EA84A5009228AB /* UACompression.h in Headers */,
 				6E43216126EA84A5009228AB /* UAActionResult.h in Headers */,
 				6E43216726EA84A5009228AB /* UAComponent.h in Headers */,
@@ -4986,13 +4970,11 @@
 				6E43215326EA84A5009228AB /* AirshipBasementLib.h in Headers */,
 				6E43215F26EA84A5009228AB /* UAURLAllowListScope.h in Headers */,
 				6EF1934928380BE1005F192A /* UALegacyLoggingBridge.h in Headers */,
-				6E43215126EA84A5009228AB /* UAJavaScriptCommandDelegate.h in Headers */,
 				6E43216326EA84A5009228AB /* UASDKModule.h in Headers */,
 				6E43215726EA84A5009228AB /* UAActionPredicateProtocol.h in Headers */,
 				6E43218126EA84BE009228AB /* UAActionArguments+Internal.h in Headers */,
 				6E43214326EA84A5009228AB /* UAActionArguments.h in Headers */,
 				6E43214926EA84A5009228AB /* UAPush.h in Headers */,
-				6E43214526EA84A5009228AB /* UAJavaScriptCommand.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5163,15 +5145,11 @@
 				A6722AE2281AA05B0033F54D /* UAGlobal.h in Headers */,
 				A6722AE1281AA05B0033F54D /* UAFeature.h in Headers */,
 				A6722AE0281AA05B0033F54D /* UAEvent.h in Headers */,
-				A6722AE3281AA05B0033F54D /* UAJavaScriptCommand.h in Headers */,
-				A6722AE4281AA05B0033F54D /* UAJavaScriptCommandDelegate.h in Headers */,
 				A6722ADC281AA05B0033F54D /* UAAppIntegrationDelegate.h in Headers */,
 				A6722AE9281AA05B0033F54D /* UAPush.h in Headers */,
-				A6722AE8281AA05B0033F54D /* UANativeBridgeExtensionDelegate.h in Headers */,
 				A6722AEA281AA05B0033F54D /* UASDKModule.h in Headers */,
 				A6722AEC281AA05C0033F54D /* UAURLAllowListScope.h in Headers */,
 				A684358E285B67E600FB6394 /* UALegacyLoggingBridge.h in Headers */,
-				A6722AE5281AA05B0033F54D /* UAJavaScriptEnvironmentProtocol.h in Headers */,
 				A6722AD5281AA05A0033F54D /* AirshipBasement.h in Headers */,
 				A6722AD9281AA05B0033F54D /* UAActionArguments+Internal.h in Headers */,
 				A6722AEB281AA05B0033F54D /* UASwizzler+Internal.h in Headers */,
@@ -6050,6 +6028,7 @@
 				6E92EC90284954B10038802D /* ButtonState.swift in Sources */,
 				6E6ED1572683DBC300A2CBD0 /* ViewUtils.swift in Sources */,
 				6E152BCA2743235800788402 /* Icons.swift in Sources */,
+				6E692AFD29E0CB2F00D96CCC /* JavaScriptCommand.swift in Sources */,
 				6E698E59267BF63B00654DB2 /* AppStateTracker.swift in Sources */,
 				6E91B45426883B6E00DDB1A8 /* AppForegroundEvent.swift in Sources */,
 				6EF27DE32730E6F900548DA3 /* RadioInputController.swift in Sources */,
@@ -6070,6 +6049,7 @@
 				6E95292F268BBD7D00398B54 /* RetailEventTemplate.swift in Sources */,
 				6E4E5B3B26E7F91600198175 /* LocalizationUtils.swift in Sources */,
 				6E1892B1268CE8FE00417887 /* Lock.swift in Sources */,
+				6E692B0329E0CBB500D96CCC /* NativeBridgeExtensionDelegate.swift in Sources */,
 				6E698E0C267A88D600654DB2 /* EventAPIClient.swift in Sources */,
 				6E15B6F426CD85C40099C92D /* RuntimeConfig.swift in Sources */,
 				6ED8079A273DA56000D1F455 /* ThomasViewController.swift in Sources */,
@@ -6175,6 +6155,7 @@
 				6EB11C872697ACBF00DC698F /* ContactOperation.swift in Sources */,
 				6E664BA526C4417400A2C8E5 /* ShareActionPredicate.swift in Sources */,
 				8401769A26C5725800373AF7 /* JSONUtils.swift in Sources */,
+				6E692AFF29E0CB4100D96CCC /* JavaScriptCommandDelegate.swift in Sources */,
 				6E887CD1272C5E8400E83363 /* CheckboxState.swift in Sources */,
 				6E87BDB526DEE61F0005D20D /* ComponentDisableHelper.swift in Sources */,
 				3CA84ABA26DE257200A59685 /* AnalyticsProtocol.swift in Sources */,
@@ -6230,7 +6211,6 @@
 				6E43217C26EA84BE009228AB /* UAActionArguments.m in Sources */,
 				6E88EF042703D9B100469E2A /* UADisposable.m in Sources */,
 				6E43217E26EA84BE009228AB /* UACompression.m in Sources */,
-				6E43218426EA84BE009228AB /* UAJavaScriptCommand.m in Sources */,
 				6E43217A26EA84BE009228AB /* UAAutoIntegration.m in Sources */,
 				6E43218626EA84BE009228AB /* UAActionResult.m in Sources */,
 				6E43217826EA84BE009228AB /* UASwizzler.m in Sources */,
@@ -6245,7 +6225,6 @@
 				6E43217D26EA84BE009228AB /* UAActionArguments.m in Sources */,
 				6E88EF052703D9B100469E2A /* UADisposable.m in Sources */,
 				6E43217F26EA84BE009228AB /* UACompression.m in Sources */,
-				6E43218526EA84BE009228AB /* UAJavaScriptCommand.m in Sources */,
 				6E43217B26EA84BE009228AB /* UAAutoIntegration.m in Sources */,
 				6E43218726EA84BE009228AB /* UAActionResult.m in Sources */,
 				6E43217926EA84BE009228AB /* UASwizzler.m in Sources */,
@@ -6419,7 +6398,9 @@
 			files = (
 				A68C74A8285CB0FF00EEA2F4 /* RegistrationDelegate.swift in Sources */,
 				A68C74A7285CB0E900EEA2F4 /* Atomic.swift in Sources */,
+				6E692B0529E0DA5100D96CCC /* NativeBridgeExtensionDelegate.swift in Sources */,
 				A68C74A6285CB09100EEA2F4 /* Badger.swift in Sources */,
+				6E692B0629E0DA5100D96CCC /* JavaScriptCommandDelegate.swift in Sources */,
 				A68C74A5285CB08D00EEA2F4 /* APNSRegistrar.swift in Sources */,
 				6E91E45A28EF423400B6F25E /* AirshipWorkResult.swift in Sources */,
 				A68C74A4285CB08700EEA2F4 /* PushNotificationDelegate.swift in Sources */,
@@ -6541,6 +6522,7 @@
 				A6722A5D281A9EB80033F54D /* AttributesEditor.swift in Sources */,
 				A6722A5E281A9EB80033F54D /* AttributeMutations.swift in Sources */,
 				A6722A5F281A9EB80033F54D /* AttributePendingMutations.swift in Sources */,
+				6E692B0429E0DA5100D96CCC /* JavaScriptCommand.swift in Sources */,
 				A6722A60281A9EB80033F54D /* Attributes.swift in Sources */,
 				A6722A61281A9EB80033F54D /* ChannelRegistrationPayload.swift in Sources */,
 				A6722A62281A9EB80033F54D /* ChannelAudienceManager.swift in Sources */,
@@ -6720,7 +6702,6 @@
 				A6722AC9281A9FEE0033F54D /* UADisposable.m in Sources */,
 				A6722ACA281A9FEE0033F54D /* UAAutoIntegration.m in Sources */,
 				A6722ACB281A9FEE0033F54D /* UACompression.m in Sources */,
-				A6722ACD281A9FEE0033F54D /* UAJavaScriptCommand.m in Sources */,
 				A6722ACF281A9FEE0033F54D /* UASwizzler.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6951,6 +6932,7 @@
 				6E712BDA29CCD7BA0012FE27 /* ContactManager.swift in Sources */,
 				6E87BD6526D594870005D20D /* ChannelRegistrationPayload.swift in Sources */,
 				6E91E45928EF423400B6F25E /* AirshipWorkResult.swift in Sources */,
+				6E692B0929E0DA5200D96CCC /* JavaScriptCommandDelegate.swift in Sources */,
 				6E95292D268B98A200398B54 /* MediaEventTemplate.swift in Sources */,
 				A67EC24D279ED8E5009089E1 /* ScopedSubscriptionListEditor.swift in Sources */,
 				6E739D6926B9DB9000BC6F6D /* AttributeMutations.swift in Sources */,
@@ -7052,6 +7034,7 @@
 				6E92ECAA284AC6770038802D /* PromptPermissionActionPredicate.swift in Sources */,
 				6E952921268A6C1500398B54 /* SearchEventTemplate.swift in Sources */,
 				6E92EC91284954B10038802D /* ButtonState.swift in Sources */,
+				6E692B0729E0DA5200D96CCC /* JavaScriptCommand.swift in Sources */,
 				6E152BCB2743235800788402 /* Icons.swift in Sources */,
 				6E510C1C2721DA6A006D9126 /* ViewFactory.swift in Sources */,
 				6EF1934028380648005F192A /* AirshipLogHandler.swift in Sources */,
@@ -7144,6 +7127,7 @@
 				A6F6726226E11633008C69C3 /* VersionMatcher.swift in Sources */,
 				6E4E5B3E26E7F91600198175 /* Attributes.swift in Sources */,
 				6E664B9F26C21B6F00A2C8E5 /* AggregateActionResult.swift in Sources */,
+				6E692B0829E0DA5200D96CCC /* NativeBridgeExtensionDelegate.swift in Sources */,
 				6E43219326EA89B6009228AB /* NativeBridgeDelegate.swift in Sources */,
 				6E0B8763294CE0DC0064B7BD /* FarmHashFingerprint64.swift in Sources */,
 				6E510C242721DA86006D9126 /* ViewConstraintsViewModifier.swift in Sources */,

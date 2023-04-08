@@ -143,7 +143,7 @@
     assetImageProvider.assets = self.assets;
 
     UAThomasExtensions *extensions = [[UAThomasExtensions alloc]
-                                      initWithNativeBridgeExtension:nativeBridgeExtension
+                                      initWithNativeBridgeExtension:nativeBridgeExtension.nativeBridgeExtension
                                       imageProvider:assetImageProvider];
 
     self.deferredDisplay = [UAThomas deferredDisplayWithJson:self.displayContent.layout

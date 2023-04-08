@@ -4,6 +4,7 @@
 #import "UAAutomationNativeBridgeExtension+Internal.h"
 #import "UAInAppMessage.h"
 #import "UAInAppMessageCustomDisplayContent.h"
+#import <WebKit/WebKit.h>
 
 #if __has_include("AirshipKit/AirshipKit-Swift.h")
 #import <AirshipKit/AirshipKit-Swift.h>
@@ -43,8 +44,14 @@
     [[javaScriptEnvironment expect] addDictionaryGetter:@"getMessageExtras" value:self.message.extras];
 
     // Extend the environment
-    [self.extension extendJavaScriptEnvironment:javaScriptEnvironment webView:self.mockWebView];
+    id extended = [self expectationWithDescription:@"Performing command"];
+    [self.extension.nativeBridgeExtension extendJavaScriptEnvironment:javaScriptEnvironment
+                                                              webView:self.mockWebView
+                                                    completionHandler:^{
+        [extended fulfill];
+    }];
 
+    [self waitForTestExpectations];
     // Verify
     [javaScriptEnvironment verify];
 }
@@ -68,8 +75,15 @@
     [[javaScriptEnvironment expect] addDictionaryGetter:@"getMessageExtras" value:self.message.extras];
 
     // Extend the environment
-    [self.extension extendJavaScriptEnvironment:javaScriptEnvironment webView:self.mockWebView];
+    UAAutomationNativeBridgeExtension *extension = self.extension;
+    id extended = [self expectationWithDescription:@"Performing command"];
 
+    [self.extension.nativeBridgeExtension extendJavaScriptEnvironment:javaScriptEnvironment webView:self.mockWebView completionHandler:^{
+        [extended fulfill];
+    }];
+
+    [self waitForTestExpectations];
+    
     // Verify
     [javaScriptEnvironment verify];
 }

@@ -5,12 +5,15 @@
 
 #import "UAInAppMessage.h"
 
+
 NS_ASSUME_NONNULL_BEGIN
+
+@protocol UANativeBridgeExtensionDelegate;
 
 /**
  * Automation native bridge extension.
  */
-@interface UAAutomationNativeBridgeExtension : NSObject<UANativeBridgeExtensionDelegate>
+@interface UAAutomationNativeBridgeExtension : NSObject
 
 /**
  * UAAutomationNativeBridgeExtension factory method.
@@ -19,6 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (instancetype)extensionWithMessage:(UAInAppMessage *)message;
 
+@property (nonatomic, nonnull, readonly) id<UANativeBridgeExtensionDelegate> nativeBridgeExtension;
 @end
 
 NS_ASSUME_NONNULL_END

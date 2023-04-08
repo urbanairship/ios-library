@@ -2,6 +2,7 @@
 
 #import "UAAirshipBaseTest.h"
 #import "AirshipTests-Swift.h"
+#import <WebKit/WebKit.h>
 
 @import AirshipCore;
 
@@ -33,7 +34,7 @@
     UAURLAllowList *URLAllowList = [UAURLAllowList allowListWithConfig:self.config];
 
     self.mockActionHandler = [self mockForProtocol:@protocol(UANativeBridgeActionHandlerProtocol)];
-    
+
     // Airship JavaScript command delegate
     self.mockAirshipJavaScriptCommandDelegate = [self mockForProtocol:@protocol(UAJavaScriptCommandDelegate)];
 
@@ -59,13 +60,13 @@
     // NativeBridge delegate
     self.mockNativeBridgeDelegate = [self mockForProtocol:@protocol(UANativeBridgeDelegate)];
     self.nativeBridge.nativeBridgeDelegate = self.mockNativeBridgeDelegate;
-    
+
     self.mockContact = [self mockForClass:[UAContact class]];
 
     // Mock application
     self.mockApplication = [self mockForClass:[UIApplication class]];
     [[[self.mockApplication stub] andReturn:self.mockApplication] sharedApplication];
-    
+
     self.airship = [[UATestAirshipInstance alloc] init];
     self.airship.components = @[self.mockContact];
     self.airship.urlAllowList = URLAllowList;
@@ -102,7 +103,7 @@
 - (void)testDecidePolicyForNavigationActionDecisionHandlerForwardDelegate {
     id mockWKNavigationAction = [self mockForClass:[WKNavigationAction class]];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://www.youtube.com"]];
-   
+
     [[[mockWKNavigationAction stub] andReturn:request] request];
     // Stub the navigation delegate to return the response
     [[[self.mockNavigationDelegate expect] andDo:^(NSInvocation *invocation) {
@@ -134,7 +135,7 @@
     [[[self.mockWKWebView stub] andReturn:originatingURL] URL];
 
     self.nativeBridge.forwardNavigationDelegate = nil;
-    
+
     [[self.mockApplication reject] openURL:OCMOCK_ANY options:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [self.nativeBridge webView:self.mockWKWebView decidePolicyForNavigationAction:mockWKNavigationAction decisionHandler:^(WKNavigationActionPolicy delegatePolicy) {
@@ -167,7 +168,7 @@
     [[self.mockApplication reject] openURL:OCMOCK_ANY options:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [self.mockNavigationDelegate verify];
-    
+
     // Stub the navigation delegate to return the response
     [[[self.mockNavigationDelegate expect] andDo:^(NSInvocation *invocation) {
         void (^decisionHandler)(WKNavigationActionPolicy policy) = nil;
@@ -199,14 +200,14 @@
     [[[self.mockWKWebView stub] andReturn:originatingURL] URL];
 
     self.nativeBridge.forwardNavigationDelegate = nil;
-    
+
     [[[self.mockApplication expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:4];
         void (^completionHandler)(BOOL) = (__bridge void(^)(BOOL))arg;
         completionHandler(YES);
     }] openURL:OCMOCK_ANY options:OCMOCK_ANY completionHandler:OCMOCK_ANY];
-    
+
     [self.nativeBridge webView:self.mockWKWebView decidePolicyForNavigationAction:mockWKNavigationAction decisionHandler:^(WKNavigationActionPolicy delegatePolicy) {
         XCTAssertEqual(delegatePolicy, WKNavigationActionPolicyCancel);
     }];
@@ -240,10 +241,10 @@
         void (^completionHandler)(BOOL) = (__bridge void(^)(BOOL))arg;
         completionHandler(YES);
     }] openURL:OCMOCK_ANY options:OCMOCK_ANY completionHandler:OCMOCK_ANY];
-    
-    
+
+
     [self.mockNavigationDelegate verify];
-    
+
     // Stub the navigation delegate to return the response
     [[[self.mockNavigationDelegate expect] andDo:^(NSInvocation *invocation) {
         void (^decisionHandler)(WKNavigationActionPolicy policy) = nil;
@@ -257,7 +258,7 @@
 
     [self.mockNavigationDelegate verify];
     [self.mockApplication verify];
-    
+
 }
 
 - (void)testDecisionHandlerMultipleCalls  {
@@ -278,13 +279,13 @@
         decisionHandler(WKNavigationActionPolicyAllow);
     }] webView:OCMOCK_ANY decidePolicyForNavigationAction:OCMOCK_ANY decisionHandler:OCMOCK_ANY];
 
-    
+
 
     XCTestExpectation *finished = [self expectationWithDescription:@"Fetched frequency checker"];
     [self.nativeBridge webView:self.mockWKWebView decidePolicyForNavigationAction:mockWKNavigationAction decisionHandler:^(WKNavigationActionPolicy delegatePolicy) {
         [finished fulfill];
     }];
-    
+
     [self waitForTestExpectations];
 }
 
@@ -303,9 +304,9 @@
     [[[self.mockWKWebView stub] andReturn:originatingURL] URL];
 
     self.nativeBridge.forwardNavigationDelegate = nil;
-    
+
     XCTestExpectation *testExpectation = [self expectationWithDescription:@"decision handler called"];
-    
+
     [[[self.mockApplication expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:4];
@@ -319,7 +320,7 @@
     }];
 
     [self waitForTestExpectations];
-    
+
     [self.mockNavigationDelegate verify];
     [self.mockApplication verify];
 }
@@ -346,7 +347,7 @@
     [[self.mockApplication reject] openURL:OCMOCK_ANY options:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [self.mockNavigationDelegate verify];
-    
+
     // Stub the navigation delegate to return the response
     [[[self.mockNavigationDelegate expect] andDo:^(NSInvocation *invocation) {
         void (^decisionHandler)(WKNavigationActionPolicy policy) = nil;
@@ -360,7 +361,7 @@
 
     [self.mockNavigationDelegate verify];
     [self.mockApplication verify];
-    
+
 }
 
 /**
@@ -563,16 +564,16 @@
  * Test that the multiple commands are handled properly by the native bridge.
  */
 - (void)testMultiCommand {
-    
+
     NSString *firstURLString = @"uairship://close?";
     NSString *secondURLString = @"uairship://run-basic-actions?add_tags_action=coffee&remove_tags_action=tea";
-   
+
     NSMutableCharacterSet *characterSet = NSCharacterSet.URLQueryAllowedCharacterSet.mutableCopy;
     [characterSet removeCharactersInRange:NSMakeRange('&', 1)];
-    
+
     NSString *finalURLString = [NSString stringWithFormat:@"uairship://multi?%@&%@", [firstURLString stringByAddingPercentEncodingWithAllowedCharacters:characterSet], [secondURLString stringByAddingPercentEncodingWithAllowedCharacters:characterSet]];
-    
-    
+
+
     // Airship JavaScript request
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:finalURLString]];
     NSURL *originatingURL = [NSURL URLWithString:@"https://foo.urbanairship.com/whatever.html"];;
@@ -584,11 +585,11 @@
     [[[self.mockWKWebView stub] andReturn:originatingURL] URL];
 
     [[self.mockNativeBridgeDelegate expect] close];
-    
+
     NSDictionary *customMetadata = @{ @"cool": @"story" };
 
     [[[self.mockNativeBridgeExtensionDelegate stub] andReturn:customMetadata] actionsMetadataForCommand:OCMOCK_ANY webView:self.mockWKWebView];
-    
+
     // Expect the js delegate to be called with the correct command
     [[self.mockActionHandler expect] runActionsForCommand:[OCMArg checkWithBlock:^BOOL(id obj) {
         return [((UAJavaScriptCommand *)obj).URL isEqual:[NSURL URLWithString:secondURLString]]; }]
@@ -608,15 +609,15 @@
  */
 - (void)testMultiCommandWithNonAllowedURLs {
     // Airship JavaScript request
-    
+
     NSString *firstURLString = @"https://close?";
     NSString *secondURLString = @"https://run-basic-actions?add_tags_action=coffee&remove_tags_action=tea";
-    
+
     NSMutableCharacterSet *characterSet = NSCharacterSet.URLQueryAllowedCharacterSet.mutableCopy;
     [characterSet removeCharactersInRange:NSMakeRange('&', 1)];
-    
+
     NSString *finalURLString = [NSString stringWithFormat:@"uairship://multi?%@&%@", [firstURLString stringByAddingPercentEncodingWithAllowedCharacters:characterSet], [secondURLString stringByAddingPercentEncodingWithAllowedCharacters:characterSet]];
-    
+
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:finalURLString]];
     NSURL *originatingURL = [NSURL URLWithString:@"https://foo.urbanairship.com/whatever.html"];;
 
@@ -627,7 +628,7 @@
     [[[self.mockWKWebView stub] andReturn:originatingURL] URL];
 
     [[self.mockNativeBridgeDelegate reject] close];
-    
+
     // Reject any calls to the JS Delegate
     [[self.mockActionHandler reject] runActionsForCommand:OCMOCK_ANY metadata:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
@@ -647,11 +648,30 @@
     [[[self.mockWKWebView stub] andReturn:originatingURL] URL];
     id mockWKNavigation = [self mockForClass:[WKNavigation class]];
 
-    [[[self.mockJavaScriptEnvironment stub] andReturn:@"script!"] build];
-    [[self.mockWKWebView expect] evaluateJavaScript:@"script!" completionHandler:OCMOCK_ANY];
+    id expectation = [self expectationWithDescription:@"extended"];
+    [[[self.mockJavaScriptEnvironment expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:2];
+        void(^callback)(NSString *) =  (__bridge void (^)(NSString *))arg;
+        callback(@"script!");
+        [expectation fulfill];
+    }] buildWithCompletionHandler:OCMOCK_ANY];
+
+    [[[self.mockNativeBridgeExtensionDelegate stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+        void(^callback)(void) =  (__bridge void (^)(void))arg;
+        callback();
+    }] extendJavaScriptEnvironment:self.mockJavaScriptEnvironment webView:self.mockWKWebView completionHandler:OCMOCK_ANY];
+
+    id called = [self expectationWithDescription:@"called"];
+    [[[self.mockWKWebView expect] andDo:^(NSInvocation *invocation) {
+        [called fulfill];
+    }] evaluateJavaScript:@"script!" completionHandler:OCMOCK_ANY];
 
     [self.nativeBridge webView:self.mockWKWebView didFinishNavigation:mockWKNavigation];
 
+    [self waitForTestExpectations];
     [self.mockWKWebView verify];
 }
 
@@ -664,13 +684,28 @@
     id mockWKNavigation = [self mockForClass:[WKNavigation class]];
 
     [[[self.mockNativeBridgeExtensionDelegate stub] andDo:^(NSInvocation *invocation) {
-        [[[self.mockJavaScriptEnvironment stub] andReturn:@"extended script!"] build];
-    }] extendJavaScriptEnvironment:self.mockJavaScriptEnvironment webView:self.mockWKWebView];
+        void *arg;
+        [invocation getArgument:&arg atIndex:4];
+        void(^callback)(void) =  (__bridge void (^)(void))arg;
 
-    [[self.mockWKWebView expect] evaluateJavaScript:@"extended script!" completionHandler:OCMOCK_ANY];
+        [[[self.mockJavaScriptEnvironment expect] andDo:^(NSInvocation *invocation) {
+            void *arg;
+            [invocation getArgument:&arg atIndex:2];
+            void(^callback)(NSString *) =  (__bridge void (^)(NSString *))arg;
+            callback(@"extended script!");
+        }] buildWithCompletionHandler:OCMOCK_ANY];
+        callback();
+    }] extendJavaScriptEnvironment:self.mockJavaScriptEnvironment webView:self.mockWKWebView completionHandler:OCMOCK_ANY];
+
+
+    id called = [self expectationWithDescription:@"called"];
+    [[[self.mockWKWebView expect] andDo:^(NSInvocation *invocation) {
+        [called fulfill];
+    }] evaluateJavaScript:@"extended script!" completionHandler:OCMOCK_ANY];
 
     [self.nativeBridge webView:self.mockWKWebView didFinishNavigation:mockWKNavigation];
 
+    [self waitForTestExpectations];
     [self.mockWKWebView verify];
 }
 
@@ -695,12 +730,12 @@
  */
 - (void)testNamedUserCommand {
     // Mock AirshipNamedUser
-    
+
     // Airship JavaScript request
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"uairship://named_user?id=cool"]];
     NSURL *originatingURL = [NSURL URLWithString:@"https://foo.urbanairship.com/whatever.html"];
     NSString *expectedName = @"cool";
-    
+
     id mockWKNavigationAction = [self mockForClass:[WKNavigationAction class]];
     [[[mockWKNavigationAction stub] andReturn:request] request];
     id mockWKFrameInfo = [self mockForClass:[WKFrameInfo class]];
@@ -725,7 +760,7 @@
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"uairship://named_user?id=my%2Fname%26%20user"]];
     NSURL *originatingURL = [NSURL URLWithString:@"https://foo.urbanairship.com/whatever.html"];
     NSString *expectedName = @"my/name& user";
-    
+
     id mockWKNavigationAction = [self mockForClass:[WKNavigationAction class]];
     [[[mockWKNavigationAction stub] andReturn:request] request];
     id mockWKFrameInfo = [self mockForClass:[WKFrameInfo class]];
@@ -733,7 +768,7 @@
     [[[self.mockWKWebView stub] andReturn:originatingURL] URL];
 
     [[self.mockContact expect] identify:expectedName];
-    
+
     [self.nativeBridge webView:self.mockWKWebView decidePolicyForNavigationAction:mockWKNavigationAction decisionHandler:^(WKNavigationActionPolicy delegatePolicy) {
        XCTAssertEqual(delegatePolicy, WKNavigationActionPolicyCancel);
     }];
@@ -748,7 +783,7 @@
         // Airship JavaScript request
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"uairship://named_user?id="]];
     NSURL *originatingURL = [NSURL URLWithString:@"https://foo.urbanairship.com/whatever.html"];
-    
+
     id mockWKNavigationAction = [self mockForClass:[WKNavigationAction class]];
     [[[mockWKNavigationAction stub] andReturn:request] request];
     id mockWKFrameInfo = [self mockForClass:[WKFrameInfo class]];

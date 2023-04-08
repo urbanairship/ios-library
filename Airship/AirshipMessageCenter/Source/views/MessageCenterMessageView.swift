@@ -3,6 +3,7 @@
 import Combine
 import Foundation
 import SwiftUI
+import WebKit
 
 #if canImport(AirshipCore)
 import AirshipCore
@@ -191,6 +192,8 @@ struct MessageCenterWebView: UIViewRepresentable {
         JavaScriptCommandDelegate,
         NativeBridgeDelegate
     {
+
+
         private let parent: MessageCenterWebView
         let nativeBridge: NativeBridge
         var nativeBridgeExtensionDelegate: NativeBridgeExtensionDelegate? {
@@ -231,10 +234,7 @@ struct MessageCenterWebView: UIViewRepresentable {
             }
         }
 
-        func perform(
-            _ command: JavaScriptCommand,
-            webView: WKWebView
-        ) -> Bool {
+        func performCommand(_ command: JavaScriptCommand, webView: WKWebView) -> Bool {
             return false
         }
 
