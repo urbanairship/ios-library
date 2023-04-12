@@ -480,17 +480,19 @@ public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
                 lastModified: lastModified
             )
 
-            guard response.isSuccess,
-                let messages = response.result
+            guard
+                response.isSuccess || response.statusCode == 304
             else {
                 AirshipLogger.error("Retrieve list message failed")
                 return false
             }
 
-            try await self.store.updateMessages(
-                messages: messages,
-                lastModifiedTime: response.headers["Last-Modified"]
-            )
+            if response.isSuccess, let messages = response.result {
+                try await self.store.updateMessages(
+                    messages: messages,
+                    lastModifiedTime: response.headers["Last-Modified"]
+                )
+            }
             
             return true
         } catch {

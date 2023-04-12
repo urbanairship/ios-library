@@ -68,8 +68,6 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol {
 
     private static let channelIDHeader = "X-UA-Channel-ID"
     private static let lastModifiedIDHeader = "If-Modified-Since"
-    private static let lastMessageListModifiedTime =
-        "UALastMessageListModifiedTime.%@"
 
     private let config: RuntimeConfig
     private let session: AirshipRequestSession
@@ -107,9 +105,7 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol {
 
         AirshipLogger.trace("Request to retrieve message list: \(urlString)")
 
-        return try await self.session.performHTTPRequest(request) {
-            data,
-            response in
+        return try await self.session.performHTTPRequest(request) { data, response in
             guard response.isSuccess else { return nil }
 
             let parsed: MessageListResponse = try JSONUtils.decode(data: data)
