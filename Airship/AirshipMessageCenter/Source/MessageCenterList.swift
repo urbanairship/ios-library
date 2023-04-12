@@ -489,7 +489,7 @@ public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
 
             try await self.store.updateMessages(
                 messages: messages,
-                lastModifiedTime: lastModified
+                lastModifiedTime: response.headers["Last-Modified"]
             )
             
             return true
